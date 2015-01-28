@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 namespace SuperManCore
 {
     public static class SendSmsHelper
-    {
+    { 
         public static SendSmsStatus SendSendSmsSaveLog(string mobile, string content, string smsSource)
         {
-            // superMan
-            int supplierId = 4;
             SMSServiceReference.SmsSoapClient sms = new SMSServiceReference.SmsSoapClient();
-            string result = sms.SendSmsSaveLog(mobile, content, supplierId, smsSource);
+            string result = sms.SendSmsSaveLogB2B(mobile/*手机号码*/, content/*信息内容*/, smsSource/*短信来源*/, null/*餐厅ID（可以为null）*/, 1/*餐厅所属集团ID*/, "YX"/*短信平台*/);  
             if (result == "发送成功")
             {
                 return SendSmsStatus.Sending;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="9e092d83-7172-437b-978c-1223c110ac4e" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="25bfed3e-e5f4-4eb6-8008-1d0338cde621" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
     <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
     <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
@@ -19,11 +19,11 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="http://sms.ygkj.com/Sms.asmx" Protocol="http" SourceId="1" />
+    <MetadataSource Address="http://service.etaoshi.com/sms.asmx" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="Sms.wsdl" MetadataType="Wsdl" ID="8c82bbd0-980c-4795-b8e2-bc54f03e0c2d" SourceId="1" SourceUrl="http://sms.ygkj.com/Sms.asmx?wsdl" />
-    <MetadataFile FileName="Sms.disco" MetadataType="Disco" ID="b098218c-9a54-4d0f-899c-795ef87d2dc7" SourceId="1" SourceUrl="http://sms.ygkj.com/Sms.asmx?disco" />
+    <MetadataFile FileName="sms.wsdl" MetadataType="Wsdl" ID="e335a41e-6be4-4aff-860f-185b10a68dc7" SourceId="1" SourceUrl="http://service.etaoshi.com/sms.asmx?wsdl" />
+    <MetadataFile FileName="sms.disco" MetadataType="Disco" ID="6094e903-5fa6-426e-9a6d-887120282bfd" SourceId="1" SourceUrl="http://service.etaoshi.com/sms.asmx?disco" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

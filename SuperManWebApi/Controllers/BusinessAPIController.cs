@@ -17,6 +17,8 @@ using SuperManCommonModel.Models;
 using SuperManCore.Paging;
 using System.Threading.Tasks;
 using SuperManCommonModel;
+using System.Text;
+using System.Net;
 namespace SuperManWebApi.Controllers
 {
     public class BusinessAPIController : ApiController
@@ -243,28 +245,26 @@ namespace SuperManWebApi.Controllers
         [HttpGet]
         public SimpleResultModel CheckCode(string PhoneNumber)
         {
-            if (!CommonValidator.IsValidPhoneNumber(PhoneNumber))
+            if (!CommonValidator.IsValidPhoneNumber(PhoneNumber))  //验证电话号码合法性
             {
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.InvlidPhoneNumber);
             }
-
-            var randomCode = new Random().Next(100000).ToString("D6");
-            var msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode);
+            var randomCode = new Random().Next(100000).ToString("D6");  //生成短信验证码
+            var msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode);  //获取提示用语信息
             try
             {
                 SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);
-                // 更新短信通道 
+                 //更新短信通道 
                 Task.Factory.StartNew(() =>
-                {
+                { 
                     SendSmsHelper.SendSendSmsSaveLog(PhoneNumber, msg, ConstValues.SMSSOURCE);
                 });
-                return SimpleResultModel.Conclude(SendCheckCodeStatus.Sending);
-
+                return SimpleResultModel.Conclude(SendCheckCodeStatus.Sending);  
             }
             catch (Exception)
             {
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.SendFailure);
-            }
+            }  
         }
 
         /// <summary>
@@ -276,12 +276,11 @@ namespace SuperManWebApi.Controllers
         [HttpGet]
         public SimpleResultModel CheckCodeFindPwd(string PhoneNumber)
         {
-            if (!CommonValidator.IsValidPhoneNumber(PhoneNumber))
+            if (!CommonValidator.IsValidPhoneNumber(PhoneNumber))  //检查手机号码的合法性
             {
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.InvlidPhoneNumber);
             }
-
-            var randomCode = new Random().Next(100000).ToString("D6");
+            var randomCode = new Random().Next(100000).ToString("D6");  
             var msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode);
             try
             {                

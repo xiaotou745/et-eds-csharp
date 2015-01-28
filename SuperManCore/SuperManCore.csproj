@@ -82,11 +82,41 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Service References\SMSServiceReference\Sms.wsdl" />
-    <None Include="Service References\SMSServiceReference\SuperManCore.SMSServiceReference.HelloWorldResponse.datasource">
+    <None Include="Service References\SMSServiceReference\sms.wsdl" />
+    <None Include="Service References\SMSServiceReference\SuperManCore.SMSServiceReference.GetSendedSmsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SMSServiceReference\SuperManCore.SMSServiceReference.MsgSendSmsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SMSServiceReference\SuperManCore.SMSServiceReference.MsgSendSmsSaveLogResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SMSServiceReference\SuperManCore.SMSServiceReference.SendSmsBaseResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SMSServiceReference\SuperManCore.SMSServiceReference.SendSmsBaseSaveLogResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SMSServiceReference\SuperManCore.SMSServiceReference.SendSmsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SMSServiceReference\SuperManCore.SMSServiceReference.SendSmsResultResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SMSServiceReference\SuperManCore.SMSServiceReference.SendSmsSaveLogB2BResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SMSServiceReference\SuperManCore.SMSServiceReference.SendSmsSaveLogNewResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SMSServiceReference\SuperManCore.SMSServiceReference.SendSmsSaveLogNoSignResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\SMSServiceReference\SuperManCore.SMSServiceReference.SendSmsSaveLogResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SMSServiceReference\SuperManCore.SMSServiceReference.VoiceSendSmsResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
   </ItemGroup>
@@ -94,7 +124,7 @@
     <WCFMetadataStorage Include="Service References\SMSServiceReference\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\SMSServiceReference\Sms.disco" />
+    <None Include="Service References\SMSServiceReference\sms.disco" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Service References\SMSServiceReference\configuration91.svcinfo" />

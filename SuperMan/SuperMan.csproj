@@ -402,7 +402,7 @@
       <LastGenOutput>Authorities1.cs</LastGenOutput>
     </Content>
     <Content Include="Authority\EnumSettings.config" />
-    <None Include="Properties\PublishProfiles\supermanAdmin.pubxml" />
+    <None Include="Properties\PublishProfiles\MyWeb.pubxml" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="Scripts\bootbox.js" />
     <Content Include="Scripts\bootstrap-datepicker.js" />
@@ -463,7 +463,9 @@
     <Content Include="Scripts\view\supplierEdit.js" />
     <Content Include="Scripts\view\orderList.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>

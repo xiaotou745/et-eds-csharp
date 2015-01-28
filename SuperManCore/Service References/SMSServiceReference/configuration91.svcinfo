@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="KcTkjvIgc7/hkkdKDFDahMjogFA=">
+<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="1w9Y4BQWH/suXM+hOtc48fUuJQI=">
   <bindingConfigurations>
     <bindingConfiguration bindingType="basicHttpBinding" name="SmsSoap">
       <properties>
@@ -112,10 +112,10 @@
     </bindingConfiguration>
   </bindingConfigurations>
   <endpoints>
-    <endpoint name="SmsSoap" contract="SMSServiceReference.SmsSoap" bindingType="basicHttpBinding" address="http://sms.ygkj.com/Sms.asmx" bindingConfiguration="SmsSoap">
+    <endpoint name="SmsSoap" contract="SMSServiceReference.SmsSoap" bindingType="basicHttpBinding" address="http://service.etaoshi.com/sms.asmx" bindingConfiguration="SmsSoap">
       <properties>
         <property path="/address" isComplexType="false" isExplicitlyDefined="true" clrType="System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>http://sms.ygkj.com/Sms.asmx</serializedValue>
+          <serializedValue>http://service.etaoshi.com/sms.asmx</serializedValue>
         </property>
         <property path="/behaviorConfiguration" isComplexType="false" isExplicitlyDefined="false" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />
