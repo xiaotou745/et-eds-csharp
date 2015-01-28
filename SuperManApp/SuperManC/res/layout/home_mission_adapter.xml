@@ -1,0 +1,299 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="7dp"
+    android:paddingLeft="7dp"
+    android:paddingRight="7dp" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ebf4fa"
+        android:orientation="horizontal"
+        android:padding="5dp"
+        android:weightSum="3" >
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+            <TextView
+                android:id="@+id/incomeMoney"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="5.0元"
+                android:textSize="18sp"
+                android:textColor="@color/price_red_color" />
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/incomeMoney"
+                android:layout_centerHorizontal="true" 
+                android:layout_marginTop="3dp">
+
+                <ImageView
+                    android:id="@+id/iconIncome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/icon_price" 
+                    android:layout_centerVertical="true"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@id/iconIncome"
+                    android:text="收入" 
+                    android:textColor="@color/gray_text_color"
+                    android:layout_marginLeft="3dp"/>
+                
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:layout_weight="1" >
+
+            <TextView
+                android:id="@+id/distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="1.7公里" 
+                android:singleLine="true"
+                android:textSize="18sp"
+                android:textColor="@color/gray_deep_color"/>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/distance"
+                android:layout_centerHorizontal="true" >
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="15dp"
+                    android:layout_alignParentLeft="true"
+                    android:background="@color/line_color" />
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                android:layout_marginTop="3dp">
+
+                    <ImageView
+                        android:id="@+id/icondistance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/icon_map_gray"
+                    android:layout_centerVertical="true" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/icondistance"
+                        android:text="距离" 
+                        android:textColor="@color/gray_text_color"
+                        android:layout_marginLeft="3dp"/>
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="15dp"
+                    android:layout_alignParentRight="true"
+                    android:background="@color/line_color" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+            <TextView
+                android:id="@+id/incomeTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="5.0元" 
+                android:textSize="18sp"
+                android:singleLine="true"
+                android:textColor="@color/gray_deep_color"/>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/incomeTime"
+                android:layout_centerHorizontal="true" 
+                android:layout_marginTop="3dp">
+
+                <ImageView
+                    android:id="@+id/iconTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/icon_time" 
+                    android:layout_centerVertical="true"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@id/iconTime"
+                    android:text="发布时间" 
+                    android:textColor="@color/gray_text_color"
+                    android:layout_marginLeft="3dp"/>
+            </RelativeLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        android:padding="7dp" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" >
+
+            <TextView
+                android:id="@+id/shopName1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="发货："
+                android:textColor="@color/gray_text_color" />
+
+            <TextView
+                android:id="@+id/shopName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/shopName1"
+                android:text="嘉和一品"
+                android:textColor="@color/gray_deep_color" />
+
+            <TextView
+                android:id="@+id/shopAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/shopName"
+                android:layout_toRightOf="@id/shopName1"
+                android:text="北京市朝阳区南磨房路37号" 
+                android:textColor="@color/gray_deep_color"/>
+
+            <LinearLayout
+                android:id="@+id/fromAddressIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:orientation="vertical"
+                android:layout_marginRight="3dp" >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/icon_map_green" 
+                    android:layout_gravity="center_horizontal"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="地图" 
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/green"/>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/line_color"
+            android:layout_marginTop="7dp"
+            android:layout_marginBottom="7dp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/shopName1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="收货："
+                android:textColor="@color/gray_text_color" />
+
+            <TextView
+                android:id="@+id/toUserName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/shopName1"
+                android:text="嘉和一品"
+                android:textColor="@color/gray_deep_color" />
+
+            <TextView
+                android:id="@+id/toUserAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/toUserName"
+                android:layout_toRightOf="@id/shopName1"
+                android:text="北京市朝阳区南磨房路37号" 
+                android:textColor="@color/gray_deep_color"/>
+
+            <LinearLayout
+                android:id="@+id/toAddressIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:orientation="vertical"
+                android:visibility="invisible"
+                android:layout_marginRight="3dp" >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/icon_map_green" 
+                    android:layout_gravity="center_horizontal"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="地图" 
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/green"/>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" 
+            android:paddingTop="7dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="金额：" 
+                android:textColor="@color/gray_text_color"/>
+
+            <TextView
+                android:id="@+id/orderMoney"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="88.0元" 
+                android:textColor="@color/gray_deep_color"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

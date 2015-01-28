@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background_tab_pressed">#6633B5E5</color>
+    <color name="green">#00b383</color>
+    <color name="white">@android:color/white</color>
+    <color name="gray">@android:color/darker_gray</color>
+    <color name="bgColor">#d8dde5</color>
+    <color name="layout_bg">#D1D6DE</color>
+    <color name="text_black">#606266</color>
+    <color name="text_lite">#BBC0C7</color>
+    <color name="button_bg">#01BC87</color>
+    <color name="danlan">#ebf4fa</color>
+    <color name="green_btn_press">#009970</color>
+    <color name="green_btn_normal">#00b383</color>
+    <color name="yellow_btn_press">#e5b400</color>
+    <color name="yellow_btn_normal">#ffc600</color>
+    <color name="line_color">#d1d6de</color>
+    <color name="price_red_color">#ff6c00</color>
+    <color name="gray_text_color">#bbc0c7</color>
+    <color name="gray_deep_color">#606266</color>
+    <color name="already_complete">#01c401</color>
+</resources>

@@ -1,0 +1,25 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"  
+    xmlns:tools="http://schemas.android.com/tools"  
+    tools:context="com.supermanc.activity.HomeActivity">  
+  
+    <item  
+        android:id="@+id/my_mission"  
+        android:icon="@drawable/title_icon01_nor"  
+        android:showAsAction="ifRoom"  
+        android:title="我的任务"/>  
+        
+    <item  
+        android:id="@+id/id_user"
+        android:title="未登录"/>  
+        
+    <item  
+        android:id="@+id/id_check"  
+        android:title="身份验证"/>  
+    <item  
+        android:id="@+id/my_money"  
+        android:title="我的余额"/>  
+    <item  
+        android:id="@+id/action_settings"  
+        android:title="设置"/>  
+  
+</menu>  

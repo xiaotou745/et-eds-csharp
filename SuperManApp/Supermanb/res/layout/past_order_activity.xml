@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/layoutPadding"
+    android:background="@color/layout_bg"
+    >
+<Button android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/button_selector"
+    android:id="@+id/btn_refresh"
+    android:text="刷新列表"
+    android:layout_marginBottom="@dimen/_20dp"
+    android:textColor="@android:color/white"
+    android:layout_alignParentBottom="true"/>
+<ListView android:layout_width="match_parent"
+    android:id="@+id/lv_pastOrder"
+    android:scrollbars="none"
+    android:divider="@null"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/_80dp"></ListView>
+</RelativeLayout>
