@@ -29,7 +29,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="model">注册用户基本数据信息</param>
         /// <returns></returns>
         [ActionStatus(typeof(CustomerRegisterStatus))]
-        [HttpGet]
+        [HttpPost]
         public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(RegisterInfoModel model)
         {
             if (string.IsNullOrEmpty(model.phoneNo))   //手机号非空验证
