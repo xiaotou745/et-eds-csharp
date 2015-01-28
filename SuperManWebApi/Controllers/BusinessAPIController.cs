@@ -24,30 +24,31 @@ namespace SuperManWebApi.Controllers
     public class BusinessAPIController : ApiController
     {
         /// <summary>
-        /// B端注册
+        ///  B端注册 
         /// </summary>
+        /// <param name="model">注册用户基本数据信息</param>
         /// <returns></returns>
         [ActionStatus(typeof(CustomerRegisterStatus))]
         [HttpPost]
         public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(RegisterInfoModel model)
         {
-            if (string.IsNullOrEmpty(model.phoneNo)) 
+            if (string.IsNullOrEmpty(model.phoneNo))   //手机号非空验证
             {
                 return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
             }
-            if (BusiLogic.busiLogic().CheckExistPhone(model.phoneNo)) 
+            if (BusiLogic.busiLogic().CheckExistPhone(model.phoneNo))  //判断该手机号是否已经注册过
             {
                 return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberRegistered);
             }
-            if (string.IsNullOrEmpty(model.passWord)) 
+            if (string.IsNullOrEmpty(model.passWord))   //密码非空验证
             {
                 return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PasswordEmpty);
             }
             //验证码
-            //if (model.verifyCode != SupermanApiCaching.Instance.Get(model.phoneNo))
-            //{
-            //    return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode);
-            //}
+            if (model.verifyCode != SupermanApiCaching.Instance.Get(model.phoneNo))  //判断验证法录入是否正确
+            {
+                return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode); //CustomerRegisterStatus用户注册信息枚举
+            }
             var business = RegisterInfoModelTranslator.Instance.Translate(model);
             bool result = BusiLogic.busiLogic().Add(business);
 
