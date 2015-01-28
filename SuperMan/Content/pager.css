@@ -1,0 +1,144 @@
+﻿
+        .imageItem img {
+            width: 260px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .t-refresh, .t-arrow-first, .t-arrow-prev, .t-arrow-next, .t-arrow-last, .t-arrow-first-gray, .t-arrow-prev-gray, .t-arrow-next-gray, .t-arrow-last-gray, .add-openbox .xbtn, .author .titleIcon, .production .titleIcon, .orderlist .titleIcon, .orderManage .order-item .msgBox i, #J_replybox .comment .im-l dd i, #J_replybox .comment .im-r dd i, .atrworkFl .icondele, .atrworkFl .iconadd {
+            background: url("/content/i/sprite-icon.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+        }
+
+        .crumbs {
+            border-bottom: 1px solid #DCDCDC;
+            color: #333333;
+            font-size: 12px;
+            height: 32px;
+            line-height: 32px;
+            padding-left: 10px;
+        }
+
+        .biaored {
+            color: #FF0000;
+            margin-right: 5px;
+        }
+
+        .btn {
+            cursor: pointer;
+            padding: 2px 15px;
+        }
+
+        .grid-pager {
+            margin-top: 10px;
+            width: 100%;
+        }
+
+            .grid-pager .refresh, .grid-pager .t-pager, .grid-pager .t-status-text {
+                float: right;
+            }
+
+        .t-refresh {
+            background-position: -73px -17px;
+            display: block;
+            font-size: 0;
+            height: 19px;
+            line-height: 0;
+            margin-right: 15px;
+            overflow: hidden;
+            text-align: center;
+            text-indent: -3333px;
+            vertical-align: middle;
+            width: 19px;
+        }
+
+        .t-arrow-first, .t-arrow-prev, .t-arrow-next, .t-arrow-last, .t-arrow-first-gray, .t-arrow-prev-gray, .t-arrow-next-gray, .t-arrow-last-gray {
+            display: inline-block;
+            font-size: 0;
+            height: 16px;
+            line-height: 0;
+            overflow: hidden;
+            text-align: center;
+            text-indent: -3333px;
+            vertical-align: middle;
+            width: 16px;
+        }
+
+        .t-arrow-first {
+            background-position: 0 -29px;
+        }
+
+        .t-arrow-prev {
+            background-position: -15px -29px;
+        }
+
+        .t-arrow-next {
+            background-position: -25px -29px;
+        }
+
+        .t-arrow-last {
+            background-position: -43px -29px;
+        }
+
+        .t-arrow-first-gray {
+            background-position: 0 -13px;
+        }
+
+        .t-arrow-prev-gray {
+            background-position: -15px -13px;
+        }
+
+        .t-arrow-next-gray {
+            background-position: -25px -13px;
+        }
+
+        .t-arrow-last-gray {
+            background-position: -43px -13px;
+        }
+
+        .t-numeric {
+            display: inline-block;
+        }
+
+        .t-pager .t-link {
+            border-width: 0;
+            line-height: 16px;
+            padding: 1px;
+            text-decoration: none;
+        }
+
+        .t-numeric .t-link, .t-numeric .t-state-active {
+            line-height: 22px;
+            margin-top: 0;
+            padding: 0 5px;
+            vertical-align: top;
+        }
+
+        .t-state-disabled {
+            cursor: default;
+        }
+
+        .t-state-active {
+            border: 1px solid #DDDDDD;
+            border-radius: 3px;
+        }
+
+        .grid-pager .num {
+            border: 1px solid #FFFFFF;
+            color: #AD1B32;
+            font-weight: bold;
+        }
+
+            .grid-pager .num:hover {
+                background: none repeat scroll 0 0 #E6E6E6;
+                border: 1px solid #A7BAC5;
+                border-radius: 3px;
+                cursor: pointer;
+            }
+
+        .grid-pager .t-status-text {
+            font-size: 12px;
+            padding-top: 1px;
+        }
+        .ipw_topage {   border: 1px solid #CCCCCC; width: 30px; }

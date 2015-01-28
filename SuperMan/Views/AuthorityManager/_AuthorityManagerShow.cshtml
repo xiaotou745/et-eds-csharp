@@ -1,0 +1,67 @@
+﻿@{
+    Layout = null;
+}
+
+<div class="add-openbox add-form" id="AuthorityManagerShow" style="width:500px">
+    <h2>
+        <p id="statusFin">设置权限</p>
+        <a class="J_closebox x_close"></a>
+    </h2>
+     
+        <fieldset>
+            <input type="hidden" name="accountid" id="accountid" class="form-control">
+            <div class="control-group">
+                <!-- Text input-->
+                <label class="control-label" for="input01">订单管理</label>
+                <div class="controls">
+                    <input type="checkbox" id="ck_orderView" authorityfuncid="1" value="1" /><label for="ck_orderView">查看</label>
+                    <p class="help-block"></p>
+                </div>
+            </div>
+            <div class="control-group">
+                <!-- Text input-->
+                <label class="control-label" for="input01">超人管理</label>
+                <div class="controls">
+                    <input type="checkbox" id="ck_supermanView" authorityfuncid="2" /><label for="ck_supermanView">查看</label>
+                    <input type="checkbox" id="ck_supermanCheck" authorityfuncid="3" /> <label for="ck_supermanCheck"> 审核</label>
+                    <input type="checkbox" id="ck_supermanclear" authorityfuncid="4" /><label for="ck_supermanclear">清除余额</label>
+                    <p class="help-block"></p>
+                </div>
+            </div>
+            <div class="control-group">
+                <!-- Text input-->
+                <label class="control-label" for="input01">商户设置</label>
+                <div class="controls">
+                    <input type="checkbox" id="ck_businessView" authorityfuncid="5" /> <label for="ck_businessView" > 查看</label>
+                    <input type="checkbox" id="ck_businessCheck" authorityfuncid="6" /> <label for="ck_businessCheck">审核</label>
+                    <p class="help-block"></p>
+                </div>
+            </div>
+            <div class="control-group">
+                <!-- Text input-->
+                <label class="control-label" for="input01">补贴设置</label>
+                <div class="controls">
+                    <input type="checkbox" id="ck_subsidySet" authorityfuncid="7" /><label for="ck_subsidySet">设置</label>
+                    <p class="help-block"></p>
+                </div>
+            </div>
+        </fieldset>
+ 
+    <p class="btnbox">
+        <input value="确定" type="button" id="btnSetAuthority" class="yesBtn" />
+        <input value="关闭" type="button" class="J_closebox qxBtn" />
+    </p>
+</div>
+@{ int[] auth = (int[])ViewBag.auth;
+}
+<script type="text/javascript">
+    //var authid = 1;
+    //$("input[authorityfuncid='" + authid + "']").attr("checked", 'true');
+    @{
+        foreach(var item in auth)
+        {
+            @Html.Raw("$(\"input[authorityfuncid='"+@item+"']\").attr('checked','true');");                
+        }        
+    }
+
+</script>

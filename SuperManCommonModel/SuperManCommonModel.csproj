@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{4E298C44-CA42-4074-8D27-6A1951BFD7E6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SuperManCommonModel</RootNamespace>
+    <AssemblyName>SuperManCommonModel</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CalculateCommon">
+      <HintPath>..\SuperManWebApi\bin\CalculateCommon.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BusiOrderModel.cs" />
+    <Compile Include="Common\AccountType.cs" />
+    <Compile Include="Common\ConstValues.cs" />
+    <Compile Include="Common\UserLoginResults.cs" />
+    <Compile Include="Entities\AuthoritySearchCriteria.cs" />
+    <Compile Include="Entities\BusinessSearchCriteria.cs" />
+    <Compile Include="Entities\BusiOrderSearchCriteria.cs" />
+    <Compile Include="Entities\ClienterSearchCriteria.cs" />
+    <Compile Include="Entities\ClientOrderSearchCriteria.cs" />
+    <Compile Include="Entities\HomeCountCriteria.cs" />
+    <Compile Include="Entities\MyIncomeSearchCriteria.cs" />
+    <Compile Include="Entities\OrderSearchCriteria.cs" />
+    <Compile Include="Models\AuthorityListModel.cs" />
+    <Compile Include="Models\AuthorityManage.cs" />
+    <Compile Include="Models\BusinessManage.cs" />
+    <Compile Include="Models\BusinessModel.cs" />
+    <Compile Include="Models\BusiOrderCountResultModel.cs" />
+    <Compile Include="Models\ClienterManage.cs" />
+    <Compile Include="Models\ClienterModel.cs" />
+    <Compile Include="Models\HomeCountTitleModel.cs" />
+    <Compile Include="Models\MyIncomeModel.cs" />
+    <Compile Include="Models\HomeCountManage.cs" />
+    <Compile Include="Models\OrderCountModel.cs" />
+    <Compile Include="Models\OrderModel.cs" />
+    <Compile Include="Models\OrderManage.cs" />
+    <Compile Include="Models\SubsidyManage.cs" />
+    <Compile Include="Models\SubsidyModel.cs" />
+    <Compile Include="Models\SubsidyResultModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SuperManCore\SuperManCore.csproj">
+      <Project>{f52d02c9-103a-46b1-aee7-3d11e64777d7}</Project>
+      <Name>SuperManCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SuperManDataAccess\SuperManDataAccess.csproj">
+      <Project>{f54d4c48-f635-42ca-9940-19873a691693}</Project>
+      <Name>SuperManDataAccess</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,45 @@
+﻿@model SuperManCommonModel.Models.OrderCountManageList
+<div>    
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+        <thead>
+            <tr class="tdbg">
+                <th width="%5">序号</th>
+                <th>区域</th>
+                <th>订单数</th>
+                <th>订单金额</th>
+                <th>配送费</th>
+                <th>订单佣金</th>
+                <th>配送补贴</th>
+                <th>网站补贴</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                var i = 0;
+                foreach (var item in Model.orderCountModel)
+                {
+                    i++;
+                    <tr>
+                        <td>@i</td>
+                        <td>@item.district</td>
+                        <td>@item.orderCount</td>
+                        <td>@item.orderAmount</td>
+                        <td>@item.deliverAmount</td>
+                        <td>@item.orderCommission</td>
+                        <td>@item.distribSubsidy</td>
+                        <td>@item.websiteSubsidy</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    @Html.Partial("_Pager", Model.PagingResult)
+</div>
+
+<script type="text/javascript">
+    $("#orderCountSelect").change(function () {
+        var status = $("#orderCountSelect").val();
+        var url = "/HomeCount/orderCount";
+        refresh(0, url, status, "dataListOrder");
+    });
+</script>

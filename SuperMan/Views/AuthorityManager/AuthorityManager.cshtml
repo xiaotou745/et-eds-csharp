@@ -1,0 +1,152 @@
+﻿@model AuthorityManage
+@using SuperManCommonModel.Models;
+@{
+    ViewBag.Title = "Authority";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@*<script src="~/Scripts/view/authoritylist.js"></script>*@
+    <div class="zpManage zpSh">
+        <h2 class="crumbs">
+            您所在位置：账号管理 > 账号管理
+        </h2>
+        <div class="SearchMd">
+            <table border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td>
+                        <span class="">用户名: </span>
+                        <input id="txtName" type="text" />
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                        <input type="button" value="添加用户" class="searchBtn" id="btnAdd" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="bd clearfix" id="dataList">
+            @Html.Partial("_AuthorityManagerList", Model.authorityManageList)
+        </div>
+    </div>
+@*添加帐号*@
+<div class="selectSupplierDish">
+    <div class="add-openbox add-form" id="AddAccountShow" style="width:500px">
+        <h2>
+            <p id="statusFin">添加帐号</p>
+            <a class="J_closebox x_close"></a>
+        </h2>
+
+        <form class="AddAccountfrom">
+            <fieldset>
+                <input type="hidden" name="Id" id="hddsupplierdishid" class="form-control">
+                <div class="control-group">
+                    <!-- Text input-->
+                    <label class="control-label" for="input01">帐号名称</label>
+                    <div class="controls">
+                        <input placeholder="帐号名称" name="accountName" id="accountName" class="input-xlarge" required="required" type="text"><i style="color:red">*</i>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <!-- Text input-->
+                    <label class="control-label" for="input01">登录名</label>
+                    <div class="controls">
+                        <input placeholder="登录名" name="loginName" id="loginName" class="input-xlarge" required="required" type="text"><i style="color:red">*</i>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <!-- Text input-->
+                    <label class="control-label" for="input01">密码</label>
+                    <div class="controls">
+                        <input placeholder="密码" name="password" id="password" class="input-xlarge" required="required" type="password"><i style="color:red">*</i>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+            </fieldset>
+            <p class="btnbox">
+                <input value="确定" type="submit" id="btnAddAccount" class="yesBtn" />
+                <input value="关闭" type="button" class="J_closebox qxBtn" />
+            </p>
+        </form>
+        
+    </div>
+</div>
+@*修改密码*@
+<div class="selectSupplierDish">
+    <div class="add-openbox add-form" id="ModifyPwdShow" style="width:500px">
+        <h2>
+            <p id="statusFin">修改密码</p>
+            <a class="J_closebox x_close"></a>
+        </h2>
+
+        <form class="form-horizontal" role="form" id="ModifyPwdForm" method="post">
+            <fieldset>
+                <input type="hidden" name="Id" id="hddsupplierdishid" class="form-control">                
+                <div class="control-group">
+                    <!-- Text input-->
+                    <label class="control-label" for="input01">密码</label>
+                    <div class="controls">
+                        <input placeholder="密码" name="modifypassword" id="modifypassword" class="input-xlarge" required="required" type="password"><i style="color:red">*</i>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <!-- Text input-->
+                    <label class="control-label" for="input01">确认密码</label>
+                    <div class="controls">
+                        <input placeholder="确认密码" name="confirepassword" id="modifypassword" class="input-xlarge" required="required" type="password"><i style="color:red">*</i>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+            </fieldset>
+            <p class="btnbox">
+                <input value="确定" type="submit" id="btnModifyPwd" class="yesBtn" />
+                <input value="关闭" type="button" class="J_closebox qxBtn" />
+            </p>
+        </form>        
+    </div>
+</div>
+@*设置权限*@
+<div class="selectSupplierDish" id="_AuthorityDiv">
+    <div class="=J_closebox"></div>
+</div>
+<script>
+    var adminjs = new adminglass(); //实例化后台类
+    var DEFAULT_PAGESIZE = 15;
+    var criteria = { PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE } };
+    $(document).ready(function () {
+        
+        //查询
+        $("#btnSearch").on('click', function () {
+            criteria = {
+                UserName: $("#txtName").val(),
+                PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE }
+            };
+            refresh(0);
+        });
+        //添加帐户
+        $("#btnAdd").on('click', function () {
+            adminjs.openwinbox('#AddAccountShow');
+        });
+ 
+    })
+    ////分页
+    art.ui.control.Pager.enablePaging(document, refresh);
+    function refresh(pageIndex) {
+        var url = "/AuthorityManager/AuthorityManager";
+        if (pageIndex !== undefined) {
+            criteria.PagingRequest.PageIndex = pageIndex;
+        }
+        webExpress.utility.ajax.request
+            (
+                url,
+                criteria,
+                function (data) {
+                    $("#dataList").html(data);
+                });
+    };
+
+
+   
+
+
+
+</script>

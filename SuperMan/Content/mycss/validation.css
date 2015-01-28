@@ -1,0 +1,9 @@
+﻿input.error,select.error { border: 1px solid red; }
+label.error {
+  background:url("/content/images/no.png") no-repeat 0px 0px;
+  padding-left: 20px;
+  margin-left:2em;
+  font-weight: bold;
+  color: red;
+}
+

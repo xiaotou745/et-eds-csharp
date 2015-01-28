@@ -1,0 +1,91 @@
+﻿@model BusinessManage
+@using SuperManCommonModel.Models;
+@{
+    ViewBag.Title = "Order";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：商户 > 商户管理
+    </h2>
+    <div class="SearchMd">
+        <table border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td>
+                    <span class="">商户名称: </span>
+                    <input id="txtBusinessName" type="tel" />
+                    <span class="">审核状态: </span>
+                    <select name="select" class="selectw" id="businessStatus" style="width:143px">
+                        <option value="-1">全部</option>
+                        <option value="1">审核通过</option>
+                        <option value="0">未审核</option>
+                        <option value="2">未审核且未添加地址</option>
+                        <option value="3">审核中</option>
+                        <option value="4">审核被拒绝</option>
+                    </select>
+                    <span class="">商户电话: </span>
+                    <input id="txtBusinessPhone" type="text" />
+                    <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="bd clearfix" id="dataList">
+        @Html.Partial("_BusinessManageList", Model.businessManageList)
+    </div>
+</div>
+@*弹出图片*@
+<div class="selectSupplierDish">
+    <div class="add-openbox add-form" id="BusiPicShow" style="width:500px">
+        <h2>
+            <p id="statusFin">查看图片</p>
+        </h2>
+        <form class="form-horizontal" role="form" id="BusiPicForm" method="post">
+            <fieldset>
+                <img id="showBusiImage" />
+            </fieldset>
+            <p class="btnbox">                
+                <input value="关闭" type="button" class="J_closebox qxBtn" />
+            </p>
+        </form>
+    </div>
+</div>
+<script>
+    var adminjs = new adminglass(); //实例化后台类
+    var DEFAULT_PAGESIZE = 15;
+    var criteria = { PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE } };
+    $(document).ready(function () {
+        //查询
+        $("#btnSearch").on('click', function () {
+            criteria = {
+                BusinessName: $("#txtBusinessName").val(), //商户名称
+                BusinessPhone: $("#txtBusinessPhone").val(),////商户电话
+                status: $("#businessStatus").val(),
+                PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE }
+            };
+            refresh(0);
+        });
+    })
+    ////分页
+    art.ui.control.Pager.enablePaging(document, refresh);
+    function refresh(pageIndex) {
+        var url = "/BusinessManager/BusinessManager";
+        if (pageIndex !== undefined) {
+            criteria.PagingRequest.PageIndex = pageIndex;
+        }
+        criteria.status = $("#businessStatus").val();
+        webExpress.utility.ajax.request
+            (
+                url,
+                criteria,
+                function (data) {
+                    $("#dataList").html(data);
+                });
+    };
+    //关闭弹层
+    $('.J_closebox').click(function () {
+        adminjs.closewinbox('.add-openbox');
+        return false;
+    });
+</script>

@@ -1,0 +1,147 @@
+﻿@model  SuperMan.Models.LoginModel
+@{    
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>管理后台</title>
+    <link href="~/Content/fromwangying/header.css" rel="stylesheet" />
+    <link href="~/Content/fromwangying/admin.css" rel="stylesheet" />
+    <link href="~/Content/jquery.loadmask.css" rel="stylesheet" />
+
+    <style>
+        .error, .validation-summary-errors {
+            color: red;
+        }
+
+        .loginBg .loginwin p .hidden {
+            display: none;
+        }
+
+        .loginBg .loginwin .inp, .loginBg .loginwin .inp-yzm {
+            color: initial;
+        }
+    </style>
+    <link rel="shortcut icon" type="image/ico" href="/favicon.ico">
+</head>
+<body class="loginBg">
+    <div class="wabPage loginwin">
+        <div class=""><h1 style="font-size:44px;">管理后台</h1></div>
+        <form name="from1" action="Login" method="post" onsubmit="return check();">
+            @Html.AntiForgeryToken()
+            <div class="clearfix t-errormessage" style="display: none">
+                @Html.ValidationSummary()
+            </div>
+            <p>
+                <input type="text" value="@Model.UserName" name="UserName" id="UserName" class="inp J_inp" placeholder="用户名" />
+                <span class="wrongMsg hidden">请输入用户名</span>
+            </p>
+            <p>
+                <input type="Password" name="Password" id="Password" class="inp J_inp" placeholder="密码" />
+                <span class="wrongMsg hidden">请输入密码</span>
+            </p>
+            <p class="clearfix">
+                <input type="text" name="Captcha" id="Captcha" class="inp-yzm" maxlength="4" placeholder="验证码" autocomplete="off" /><span class="yzm" style="width: 110px; height: 52px; margin-bottom: 10px"><img src="@Url.Action("CaptchaImage")" class="captcha" style="margin:10px" /></span>
+                <span class="wrongMsg hidden">请输入验证码</span>
+            </p>
+            <p class="ckbox">
+                <input type="checkbox" name="RememberMe" @(Model.RememberMe ? "checked='checked'" : "") class="inpcheck" id="RememberMe"  value="记住登录状态"/><label for="RememberMe">记住登录状态</label>
+            </p>
+            <p>
+                <input type="submit" name="btnSubmit" value="登录" class="loginBtn J_loginBtn" />
+            </p>
+        </form>
+        <div class="phone_copyright">           
+            <p class="copyright">
+                Copyright Reserved 2014-2015<br>
+                ****有限公司<br />京ICP备-----号
+            </p>
+        </div>
+    </div>
+
+    <!--账号关闭提示 start-->
+    <div class="add-openbox " id="J_userClose">
+        <h2>账号关闭提示</h2>
+        <p class="t-text">
+            您的账号已被锁定，<br>
+        </p>
+
+        <p class="btnbox">
+            <input value="确定" type="button" class="yesBtn" />
+            <input value="取消" type="button" class="J_closebox qxBtn" />
+        </p>
+    </div>
+    <!--关闭提示 end-->
+     
+    <script src="~/Scripts/jquery-1.8.2.min.js"></script>
+    <script src="~/Scripts/jquery.loadmask.js"></script>
+    <script src="~/Scripts/fromwangying/admin.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/jquery.placeholder.js"></script>
+    <script src="~/Scripts/Extension/jquery.validate.Extension.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            var adminjs = new adminglass();//实例化后台类
+
+            //关闭弹层
+            $('.J_closebox').click(function () {
+                adminjs.closewinbox('.add-openbox');
+                return false;
+            });
+            $("[name=RememberMe]").click(function () {
+                $(this).val(this.checked);
+            });
+
+            $("img.captcha").click(function () {
+                $(this).attr("src", $(this).attr("src") + "?a=" + new Date().getTime());
+            });
+
+            var errorLi = $(".validation-summary-errors li");
+            if (errorLi.length > 0) {
+                for (var i = 0; i < errorLi.length; i++) {
+                    var mess = $.trim(errorLi[i].innerHTML);
+                    if (mess.indexOf("验证码") > -1) {
+                        $("#Captcha").nextAll(".wrongMsg").removeClass("hidden").html(mess);
+                    } else if (mess.indexOf("密码") > -1) {
+                        $("#Password").nextAll(".wrongMsg").removeClass("hidden").html(mess);
+                    } else if (mess.indexOf("用户") > -1) {
+                        $("#UserName").nextAll(".wrongMsg").removeClass("hidden").html(mess);
+                    } else if (mess.indexOf("帐号已关闭") > -1) {
+                        adminjs.openwinbox('#J_userClose');
+                    }
+                }
+            }
+
+        });
+        function check(obj) {
+            var pass = true;
+            var $selector;
+            if (obj) {
+                $selector = $(obj);
+            } else {
+                $selector = $("#UserName,#Password,#Captcha");
+            }
+            $selector.each(function () {
+                if (!$.trim(this.value)) {
+                    pass = false;
+                    $(this).nextAll(".wrongMsg").removeClass("hidden").html("请输入" + $(this).attr("placeholder"));
+                } else {
+                    $(this).nextAll(".wrongMsg").addClass("hidden");
+                }
+            });
+            return pass;
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+

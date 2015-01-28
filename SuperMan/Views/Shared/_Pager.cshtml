@@ -1,0 +1,96 @@
+﻿@model SuperManCore.Paging.PagingResult
+<div class="grid-pager clearfix">
+    <div class="t-status-text">显示记录@(Model.RecordCount)条,共@(Model.TotalCount)条</div>
+    <div class="t-pager t-reset">
+        <a href="javascript:void(0)" class="t-link">
+            <!--变灰不可选-->
+            @*<span class="t-icon t-arrow-first-gray">first</span>*@
+            <!--变高亮可选
+                <span class="t-icon t-arrow-first">first</span>
+                -->
+            @if (Model.HasPreviousPage)
+            {
+                <span class="t-icon t-arrow-first">first</span>
+            }
+            else
+            {
+                <span class="t-icon t-arrow-first-gray">first</span>
+            }
+        </a>
+        <a href="javascript:void(0)" class="t-link">
+
+            @if (Model.HasPreviousPage)
+            {
+                <span class="t-icon t-arrow-prev">prev</span>
+            }
+            else
+            {
+                <span class="t-icon t-arrow-prev-gray">prev</span>
+            }
+        </a>
+        <div class="t-numeric">
+            @{
+                var fromIndex = Math.Max(Model.PageIndex - 5, 0);
+                var maxPageIndex = Math.Max(Model.TotalPages - 1, 0);
+                var toIndex = Math.Min(Model.PageIndex + 4, maxPageIndex);
+                while (toIndex - fromIndex < 9)
+                {
+                    if (toIndex < maxPageIndex)
+                    {
+                        toIndex++;
+                    }
+                    else if (fromIndex > 0)
+                    {
+                        fromIndex--;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+            @for (int i = fromIndex; i <= toIndex; i++)
+            {
+                if (Model.PageIndex == i)
+                {
+                    <a class="t-state-active">@(i + 1)</a>
+                }
+                else
+                {
+                    <a pageindex="@i" class="t-link num">@(i + 1)</a>
+                }
+            }
+
+        </div>
+        <a href="javascript:void(0)" class="t-link">
+
+            @if (Model.HasNextPage)
+            {
+                <!--高亮可选-->
+                <span class="t-icon t-arrow-next">next</span>
+            }
+            else
+            {
+                <!--变灰不可选-->
+                <span class="t-icon t-arrow-next-gray">next</span>
+            }
+        </a>
+        <a href="javascript:void(0)" class="t-link">
+            @if (Model.HasNextPage)
+            {
+                <!--高亮可选-->
+                <span class="t-icon t-arrow-last" pageindex="@Model.TotalPages">last</span>
+            }
+            else
+            {
+                <!--变灰不可选-->
+                <span class="t-icon t-arrow-last-gray">last</span>
+            }
+        </a>
+        <input type="text" name="_topage" class="ipw_topage" maxpage="@(Model.TotalPages)" value="@(Model.PageIndex+1)" /><input type="button" id="_btn_topage" value="go" />
+    </div>
+
+    <div class="refresh">
+        <a href="javascript:void(0);" class="t-refresh">刷新</a>
+    </div>
+</div>

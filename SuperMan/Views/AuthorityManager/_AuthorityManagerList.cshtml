@@ -1,0 +1,52 @@
+﻿@model SuperManCommonModel.Models.AuthorityManageList
+<script src="~/Scripts/view/authoritylist.js"></script>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+    <thead>
+
+        <tr class="tdbg">
+            <th width="%5">序号</th>
+            <th>用户名</th>
+            <th>登录名</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var i = 0;
+            foreach (var item in Model.accountModel)
+            {
+                i++;
+                <tr id="@item.Id">
+                    <td>@i</td>
+                    <td>@item.UserName</td>
+                    <td>@item.LoginName</td>
+                    <td>
+                        <a href="javascript:void(0)" businessid="@item.Id" class="setAuthority">设置权限</a>
+                        <a href="javascript:void(0)" businessid="@item.Id" class="modifyPwd">修改密码</a>
+                        @*<a href="javascript:void(0)" businessid="@item.Id" class="accountView">查看</a>*@
+                        <a href="javascript:void(0)" businessid="@item.Id" class="accountDel">删除</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+@Html.Partial("_Pager", Model.PagingResult)
+<div class="add-openbox zpsh-openw" id="Close_deletebox">
+    <h2>删除确认</h2>
+    <p class="textinfo">确定要删除此用户吗? 清除后不可恢复!</p>
+    <p class="btnbox">
+        <input value="删除" type="button" class="yesBtn" id="btnyesDel" />
+        <input value="取消" type="button" class="J_closebox qxBtn" />
+    </p>
+</div>
+<script type="text/javascript">
+    var adminjs = new adminglass(); //实例化后台类
+    var DEFAULT_PAGESIZE = 15;
+    var criteria = { PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE } };
+    var currentId;
+    $(document).ready(function () {        
+        
+    });
+
+</script>

@@ -1,0 +1,95 @@
+﻿@model SuperManCommonModel.Models.ClienterCountManageList
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+    <thead>
+
+        <tr class="tdbg">
+            <th width="%5">序号</th>
+            <th>姓名</th>
+            <th>电话</th>
+            <th>身份证号</th>
+            <th>申请时间</th>
+            <th>帐户余额</th>
+            <th>任务</th>
+            <th>审核状态</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var i = 0;
+            foreach (var item in Model.clienterViewModel)
+            {
+                i++;
+                <tr id="@item.Id">
+                    <td>@item.Id</td>
+                    <td>@item.Name</td>
+                    <td>@item.PhoneNo</td>
+                    <td>@item.IDCard</td>
+                    <td>@item.InsertTime</td>
+                    <td style="color:red;font-weight:600">@item.AccountBalance</td>
+                    <td>@item.OrderCount</td>
+                    @{
+                var statusView = "";
+                if (@item.Status == 1)
+                {
+                    statusView = "审核通过";
+                }
+
+                else if (@item.Status == 0)
+                {
+                    statusView = "审核未通过";
+                }
+                    }
+                    <td>@statusView</td>
+                    <td>
+                        <a href="javascript:void(0)" supermanid="@item.Id" class="superManOk">审核通过</a>
+                        <a href="javascript:void(0)" supermanid="@item.Id" class="superManCel">取消资格</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+
+</table>
+@Html.Partial("_Pager", Model.PagingResult)
+
+<script type="text/javascript">
+    var currentId;
+    $(document).ready(function () {
+        $(".superManOk").bind("click", function () {
+            currentId = $(this).attr("supermanid");
+            var paramaters = { "id": currentId };
+            var url = "/SuperManManager/AuditOK";
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: paramaters,
+                success: function (result) {
+                    if (result.IsSuccess) {
+                        window.location.href = "/SuperManManager/SuperManManager";
+                    } else {
+                        alert(result.Message);
+                    }
+                }
+            });
+        });
+        $(".superManCel").bind("click", function () {
+            currentId = $(this).attr("supermanid");
+            var paramaters = { "id": currentId };
+            var url = "/SuperManManager/AuditCel";
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: paramaters,
+                success: function (result) {
+                    if (result.IsSuccess) {
+                        window.location.href = "/SuperManManager/SuperManManager";
+                    } else {
+                        alert(result.Message);
+                    }
+                }
+            });
+        });
+    });
+</script>

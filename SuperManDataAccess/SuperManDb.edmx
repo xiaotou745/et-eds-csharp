@@ -1,0 +1,753 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="supermanModel.Store" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.6" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="account">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Password" Type="varchar" MaxLength="45" />
+          <Property Name="UserName" Type="varchar" MaxLength="45" />
+          <Property Name="LoginName" Type="varchar" MaxLength="45" />
+          <Property Name="Status" Type="int" />
+          <Property Name="AccountType" Type="int" />
+          <Property Name="FADateTime" Type="datetime" Precision="0" />
+          <Property Name="FAUser" Type="varchar" MaxLength="45" />
+          <Property Name="LCDateTime" Type="datetime" Precision="0" />
+          <Property Name="LCUser" Type="varchar" MaxLength="45" />
+        </EntityType>
+        <EntityType Name="accountauthority">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AccountId" Type="int" />
+          <Property Name="AuthorityId" Type="int" />
+        </EntityType>
+        <EntityType Name="areacity">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="45" />
+          <Property Name="Provice_Id" Type="int" />
+        </EntityType>
+        <EntityType Name="areacounty">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="45" />
+          <Property Name="City_Id" Type="int" />
+        </EntityType>
+        <EntityType Name="areaprovice">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="45" />
+        </EntityType>
+        <EntityType Name="authority">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AuthorityType" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="200" Nullable="false" />
+        </EntityType>
+        <EntityType Name="business">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="100" />
+          <Property Name="City" Type="varchar" MaxLength="100" />
+          <Property Name="district" Type="varchar" MaxLength="200" />
+          <Property Name="PhoneNo" Type="varchar" MaxLength="20" />
+          <Property Name="PhoneNo2" Type="varchar" MaxLength="20" />
+          <Property Name="Password" Type="varchar" MaxLength="10" />
+          <Property Name="CheckPicUrl" Type="varchar" MaxLength="255" />
+          <Property Name="IDCard" Type="varchar" MaxLength="45" />
+          <Property Name="Address" Type="varchar" MaxLength="255" />
+          <Property Name="Landline" Type="varchar" MaxLength="15" />
+          <Property Name="Longitude" Type="double" />
+          <Property Name="Latitude" Type="double" />
+          <Property Name="Status" Type="tinyint" />
+          <Property Name="InsertTime" Type="datetime" Precision="0" />
+          <Property Name="districtId" Type="varchar" MaxLength="45" />
+          <Property Name="CityId" Type="varchar" MaxLength="45" />
+        </EntityType>
+        <EntityType Name="clienter">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PhoneNo" Type="varchar" MaxLength="20" />
+          <Property Name="LoginName" Type="varchar" MaxLength="20" />
+          <Property Name="Password" Type="varchar" MaxLength="10" />
+          <Property Name="TrueName" Type="varchar" MaxLength="20" />
+          <Property Name="IDCard" Type="char" MaxLength="18" />
+          <Property Name="PicWithHandUrl" Type="varchar" MaxLength="255" />
+          <Property Name="PicUrl" Type="varchar" MaxLength="255" />
+          <Property Name="Status" Type="tinyint" />
+          <Property Name="AccountBalance" Type="decimal" Precision="7" Scale="2" />
+          <Property Name="InsertTime" Type="datetime" Precision="0" />
+          <Property Name="InviteCode" Type="varchar" MaxLength="45" />
+        </EntityType>
+        <EntityType Name="myincome">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PhoneNo" Type="varchar" MaxLength="45" />
+          <Property Name="MyIncome" Type="varchar" MaxLength="45" />
+          <Property Name="MyInComeAmount" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="InsertTime" Type="datetime" Precision="0" />
+        </EntityType>
+        <EntityType Name="order">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OrderNo" Type="varchar" MaxLength="45" Nullable="false" />
+          <Property Name="PickUpAddress" Type="varchar" MaxLength="255" />
+          <Property Name="PubDate" Type="datetime" Precision="0" />
+          <Property Name="ReceviceName" Type="varchar" MaxLength="45" />
+          <Property Name="RecevicePhoneNo" Type="varchar" MaxLength="45" />
+          <Property Name="ReceviceAddress" Type="varchar" MaxLength="255" />
+          <Property Name="ActualDoneDate" Type="datetime" Precision="0" />
+          <Property Name="IsPay" Type="bool" />
+          <Property Name="Amount" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="OrderCommission" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="DistribSubsidy" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="WebsiteSubsidy" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="Remark" Type="varchar" MaxLength="200" />
+          <Property Name="Status" Type="tinyint" />
+          <Property Name="clienterId" Type="int" />
+          <Property Name="businessId" Type="int" />
+          <Property Name="ReceviceCity" Type="varchar" MaxLength="45" />
+          <Property Name="ReceviceLongitude" Type="double" />
+          <Property Name="ReceviceLatitude" Type="double" />
+        </EntityType>
+        <EntityType Name="pushmessage">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title" Type="varchar" MaxLength="200" />
+          <Property Name="Alert" Type="varchar" MaxLength="200" />
+          <Property Name="Content" Type="varchar" MaxLength="2000" />
+          <Property Name="PushDate" Type="datetime" Precision="0" />
+          <Property Name="AreaId" Type="int" />
+        </EntityType>
+        <EntityType Name="pushmessagestatus">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MessageId" Type="varchar" MaxLength="200" />
+          <Property Name="AndroidDeliveredCount" Type="int" />
+          <Property Name="PushMessageId" Type="int" />
+        </EntityType>
+        <EntityType Name="region">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="13" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="64" Nullable="false" />
+          <Property Name="ChnName" Type="varchar" MaxLength="32" />
+          <Property Name="BriefName" Type="varchar" MaxLength="50" />
+          <Property Name="EnName" Type="varchar" MaxLength="32" />
+          <Property Name="Creator" Type="varchar" MaxLength="32" />
+          <Property Name="CreateDate" Type="datetime" Precision="0" />
+          <Property Name="ModifyUser" Type="varchar" MaxLength="32" />
+          <Property Name="ModifyDate" Type="datetime" Precision="0" />
+          <Property Name="Fid" Type="int" Nullable="false" />
+          <Property Name="Provinceid" Type="int" Nullable="false" />
+          <Property Name="Cityid" Type="int" Nullable="false" />
+          <Property Name="Depth" Type="int" Nullable="false" />
+          <Property Name="Isbroad" Type="int" />
+          <Property Name="QPing" Type="varchar" MaxLength="128" />
+          <Property Name="JPing" Type="varchar" MaxLength="64" />
+          <Property Name="BriefQPing" Type="varchar" MaxLength="128" />
+          <Property Name="BriefJPing" Type="varchar" MaxLength="64" />
+          <Property Name="IsGov" Type="bit" />
+          <Property Name="Host" Type="varchar" MaxLength="30" />
+          <Property Name="BaiduLat" Type="varchar" MaxLength="64" />
+          <Property Name="BaiduLong" Type="varchar" MaxLength="64" />
+        </EntityType>
+        <EntityType Name="subsidy">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OrderCommission" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="DistribSubsidy" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="WebsiteSubsidy" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="StartDate" Type="datetime" Precision="0" />
+          <Property Name="EndDate" Type="datetime" Precision="0" />
+          <Property Name="Status" Type="tinyint" />
+        </EntityType>
+        <Association Name="accountId">
+          <End Role="account" Type="Self.account" Multiplicity="0..1" />
+          <End Role="accountauthority" Type="Self.accountauthority" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="account">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="accountauthority">
+              <PropertyRef Name="AccountId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="authorityId">
+          <End Role="authority" Type="Self.authority" Multiplicity="0..1" />
+          <End Role="accountauthority" Type="Self.accountauthority" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="authority">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="accountauthority">
+              <PropertyRef Name="AuthorityId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="businessId">
+          <End Role="business" Type="Self.business" Multiplicity="0..1" />
+          <End Role="order" Type="Self.order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="business">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="order">
+              <PropertyRef Name="businessId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="supermanModelStoreContainer">
+          <EntitySet Name="account" EntityType="Self.account" Schema="superman" store:Type="Tables" />
+          <EntitySet Name="accountauthority" EntityType="Self.accountauthority" Schema="superman" store:Type="Tables" />
+          <EntitySet Name="areacity" EntityType="Self.areacity" Schema="superman" store:Type="Tables" />
+          <EntitySet Name="areacounty" EntityType="Self.areacounty" Schema="superman" store:Type="Tables" />
+          <EntitySet Name="areaprovice" EntityType="Self.areaprovice" Schema="superman" store:Type="Tables" />
+          <EntitySet Name="authority" EntityType="Self.authority" Schema="superman" store:Type="Tables" />
+          <EntitySet Name="business" EntityType="Self.business" Schema="superman" store:Type="Tables" />
+          <EntitySet Name="clienter" EntityType="Self.clienter" Schema="superman" store:Type="Tables" />
+          <EntitySet Name="myincome" EntityType="Self.myincome" Schema="superman" store:Type="Tables" />
+          <EntitySet Name="order" EntityType="Self.order" Schema="superman" store:Type="Tables" />
+          <EntitySet Name="pushmessage" EntityType="Self.pushmessage" Schema="superman" store:Type="Tables" />
+          <EntitySet Name="pushmessagestatus" EntityType="Self.pushmessagestatus" Schema="superman" store:Type="Tables" />
+          <EntitySet Name="region" EntityType="Self.region" Schema="superman" store:Type="Tables" />
+          <EntitySet Name="subsidy" EntityType="Self.subsidy" Schema="superman" store:Type="Tables" />
+          <AssociationSet Name="accountId" Association="Self.accountId">
+            <End Role="account" EntitySet="account" />
+            <End Role="accountauthority" EntitySet="accountauthority" />
+          </AssociationSet>
+          <AssociationSet Name="authorityId" Association="Self.authorityId">
+            <End Role="authority" EntitySet="authority" />
+            <End Role="accountauthority" EntitySet="accountauthority" />
+          </AssociationSet>
+          <AssociationSet Name="businessId" Association="Self.businessId">
+            <End Role="business" EntitySet="business" />
+            <End Role="order" EntitySet="order" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="supermanModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="supermanEntities" annotation:LazyLoadingEnabled="true" >
+          <EntitySet Name="areacity" EntityType="supermanModel.areacity" />
+          <EntitySet Name="areacounty" EntityType="supermanModel.areacounty" />
+          <EntitySet Name="areaprovice" EntityType="supermanModel.areaprovice" />
+          <EntitySet Name="business" EntityType="supermanModel.business" />
+          <EntitySet Name="clienter" EntityType="supermanModel.clienter" />
+          <EntitySet Name="order" EntityType="supermanModel.order" />
+          <EntitySet Name="region" EntityType="supermanModel.region" />
+          <AssociationSet Name="businessId" Association="supermanModel.businessId">
+            <End Role="business" EntitySet="business" />
+            <End Role="order" EntitySet="order" />
+          </AssociationSet>
+          <EntitySet Name="myincome" EntityType="supermanModel.myincome" />
+          <EntitySet Name="pushmessage" EntityType="supermanModel.pushmessage" />
+          <EntitySet Name="pushmessagestatus" EntityType="supermanModel.pushmessagestatus" />
+          <EntitySet Name="subsidy" EntityType="supermanModel.subsidy" />
+          <EntitySet Name="accountauthority" EntityType="supermanModel.accountauthority" />
+          <EntitySet Name="authority" EntityType="supermanModel.authority" />
+          <AssociationSet Name="authorityId" Association="supermanModel.authorityId">
+            <End Role="authority" EntitySet="authority" />
+            <End Role="accountauthority" EntitySet="accountauthority" />
+          </AssociationSet>
+          <EntitySet Name="account" EntityType="supermanModel.account" />
+          <AssociationSet Name="accountId" Association="supermanModel.accountId">
+            <End Role="account" EntitySet="account" />
+            <End Role="accountauthority" EntitySet="accountauthority" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="areacity">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="Provice_Id" Type="Int32" />
+        </EntityType>
+        <EntityType Name="areacounty">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="City_Id" Type="Int32" />
+        </EntityType>
+        <EntityType Name="areaprovice">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="business">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="City" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="district" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="PhoneNo" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="PhoneNo2" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="CheckPicUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="IDCard" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="Address" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Landline" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="Longitude" Type="Double" />
+          <Property Name="Latitude" Type="Double" />
+          <Property Name="Status" Type="SByte" />
+          <Property Name="InsertTime" Type="DateTime" />
+          <NavigationProperty Name="order" Relationship="supermanModel.businessId" FromRole="business" ToRole="order" />
+          <Property Name="districtId" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="CityId" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="clienter">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PhoneNo" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="LoginName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="TrueName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="IDCard" Type="String" MaxLength="18" FixedLength="false" Unicode="false" />
+          <Property Name="PicWithHandUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="PicUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="SByte" />
+          <Property Name="AccountBalance" Type="Decimal" />
+          <Property Name="InsertTime" Type="DateTime" />
+          <Property Name="InviteCode" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="order">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OrderNo" Type="String" Nullable="false" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="PickUpAddress" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="PubDate" Type="DateTime" />
+          <Property Name="ReceviceName" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="RecevicePhoneNo" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="ReceviceAddress" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="ActualDoneDate" Type="DateTime" />
+          <Property Name="IsPay" Type="Boolean" />
+          <Property Name="Amount" Type="Decimal" />
+          <Property Name="OrderCommission" Type="Decimal" />
+          <Property Name="DistribSubsidy" Type="Decimal" />
+          <Property Name="WebsiteSubsidy" Type="Decimal" />
+          <Property Name="Remark" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="SByte" />
+          <Property Name="clienterId" Type="Int32" />
+          <Property Name="businessId" Type="Int32" />
+          <Property Name="ReceviceCity" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="ReceviceLongitude" Type="Double" />
+          <Property Name="ReceviceLatitude" Type="Double" />
+          <NavigationProperty Name="business" Relationship="supermanModel.businessId" FromRole="order" ToRole="business" />
+        </EntityType>
+        <EntityType Name="region">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="13" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />
+          <Property Name="ChnName" Type="String" MaxLength="32" FixedLength="false" Unicode="false" />
+          <Property Name="BriefName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EnName" Type="String" MaxLength="32" FixedLength="false" Unicode="false" />
+          <Property Name="Creator" Type="String" MaxLength="32" FixedLength="false" Unicode="false" />
+          <Property Name="CreateDate" Type="DateTime" />
+          <Property Name="ModifyUser" Type="String" MaxLength="32" FixedLength="false" Unicode="false" />
+          <Property Name="ModifyDate" Type="DateTime" />
+          <Property Name="Fid" Type="Int32" Nullable="false" />
+          <Property Name="Provinceid" Type="Int32" Nullable="false" />
+          <Property Name="Cityid" Type="Int32" Nullable="false" />
+          <Property Name="Depth" Type="Int32" Nullable="false" />
+          <Property Name="Isbroad" Type="Int32" />
+          <Property Name="QPing" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
+          <Property Name="JPing" Type="String" MaxLength="64" FixedLength="false" Unicode="false" />
+          <Property Name="BriefQPing" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
+          <Property Name="BriefJPing" Type="String" MaxLength="64" FixedLength="false" Unicode="false" />
+          <Property Name="IsGov" Type="Boolean" />
+          <Property Name="Host" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="BaiduLat" Type="String" MaxLength="64" FixedLength="false" Unicode="false" />
+          <Property Name="BaiduLong" Type="String" MaxLength="64" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <Association Name="businessId">
+          <End Type="supermanModel.business" Role="business" Multiplicity="0..1" />
+          <End Type="supermanModel.order" Role="order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="business">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="order">
+              <PropertyRef Name="businessId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="myincome">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PhoneNo" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="MyIncome1" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="MyInComeAmount" Type="Decimal" />
+          <Property Name="InsertTime" Type="DateTime" />
+        </EntityType>
+        <EntityType Name="pushmessage">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Alert" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Content" Type="String" MaxLength="2000" FixedLength="false" Unicode="false" />
+          <Property Name="PushDate" Type="DateTime" />
+          <Property Name="AreaId" Type="Int32" />
+        </EntityType>
+        <EntityType Name="pushmessagestatus">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MessageId" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="AndroidDeliveredCount" Type="Int32" />
+          <Property Name="PushMessageId" Type="Int32" />
+        </EntityType>
+        <EntityType Name="subsidy">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OrderCommission" Type="Decimal" />
+          <Property Name="DistribSubsidy" Type="Decimal" />
+          <Property Name="WebsiteSubsidy" Type="Decimal" />
+          <Property Name="StartDate" Type="DateTime" />
+          <Property Name="EndDate" Type="DateTime" />
+          <Property Name="Status" Type="SByte" />
+        </EntityType>
+        <EntityType Name="accountauthority">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AccountId" Type="Int32" />
+          <Property Name="AuthorityId" Type="Int32" />
+          <NavigationProperty Name="authority" Relationship="supermanModel.authorityId" FromRole="accountauthority" ToRole="authority" />
+          <NavigationProperty Name="account" Relationship="supermanModel.accountId" FromRole="accountauthority" ToRole="account" />
+        </EntityType>
+        <EntityType Name="authority">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AuthorityType" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="accountauthority" Relationship="supermanModel.authorityId" FromRole="authority" ToRole="accountauthority" />
+        </EntityType>
+        <Association Name="authorityId">
+          <End Type="supermanModel.authority" Role="authority" Multiplicity="0..1" />
+          <End Type="supermanModel.accountauthority" Role="accountauthority" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="authority">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="accountauthority">
+              <PropertyRef Name="AuthorityId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="account">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Password" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="UserName" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="LoginName" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="Int32" />
+          <Property Name="AccountType" Type="Int32" />
+          <Property Name="FADateTime" Type="DateTime" />
+          <Property Name="FAUser" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="LCDateTime" Type="DateTime" />
+          <Property Name="LCUser" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="accountauthority" Relationship="supermanModel.accountId" FromRole="account" ToRole="accountauthority" />
+        </EntityType>
+        <Association Name="accountId">
+          <End Type="supermanModel.account" Role="account" Multiplicity="0..1" />
+          <End Type="supermanModel.accountauthority" Role="accountauthority" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="account">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="accountauthority">
+              <PropertyRef Name="AccountId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="supermanModelStoreContainer" CdmEntityContainer="supermanEntities" >
+          <EntitySetMapping Name="areacity">
+            <EntityTypeMapping TypeName="supermanModel.areacity">
+              <MappingFragment StoreEntitySet="areacity">
+                <ScalarProperty Name="Provice_Id" ColumnName="Provice_Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="areacounty">
+            <EntityTypeMapping TypeName="supermanModel.areacounty">
+              <MappingFragment StoreEntitySet="areacounty">
+                <ScalarProperty Name="City_Id" ColumnName="City_Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="areaprovice">
+            <EntityTypeMapping TypeName="supermanModel.areaprovice">
+              <MappingFragment StoreEntitySet="areaprovice">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="business">
+            <EntityTypeMapping TypeName="supermanModel.business">
+              <MappingFragment StoreEntitySet="business">
+                <ScalarProperty Name="CityId" ColumnName="CityId" />
+                <ScalarProperty Name="districtId" ColumnName="districtId" />
+                <ScalarProperty Name="InsertTime" ColumnName="InsertTime" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="Landline" ColumnName="Landline" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="IDCard" ColumnName="IDCard" />
+                <ScalarProperty Name="CheckPicUrl" ColumnName="CheckPicUrl" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="PhoneNo2" ColumnName="PhoneNo2" />
+                <ScalarProperty Name="PhoneNo" ColumnName="PhoneNo" />
+                <ScalarProperty Name="district" ColumnName="district" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="clienter">
+            <EntityTypeMapping TypeName="supermanModel.clienter">
+              <MappingFragment StoreEntitySet="clienter">
+                <ScalarProperty Name="InviteCode" ColumnName="InviteCode" />
+                <ScalarProperty Name="InsertTime" ColumnName="InsertTime" />
+                <ScalarProperty Name="AccountBalance" ColumnName="AccountBalance" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="PicUrl" ColumnName="PicUrl" />
+                <ScalarProperty Name="PicWithHandUrl" ColumnName="PicWithHandUrl" />
+                <ScalarProperty Name="IDCard" ColumnName="IDCard" />
+                <ScalarProperty Name="TrueName" ColumnName="TrueName" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="LoginName" ColumnName="LoginName" />
+                <ScalarProperty Name="PhoneNo" ColumnName="PhoneNo" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="order">
+            <EntityTypeMapping TypeName="supermanModel.order">
+              <MappingFragment StoreEntitySet="order">
+                <ScalarProperty Name="ReceviceLatitude" ColumnName="ReceviceLatitude" />
+                <ScalarProperty Name="ReceviceLongitude" ColumnName="ReceviceLongitude" />
+                <ScalarProperty Name="ReceviceCity" ColumnName="ReceviceCity" />
+                <ScalarProperty Name="businessId" ColumnName="businessId" />
+                <ScalarProperty Name="clienterId" ColumnName="clienterId" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+                <ScalarProperty Name="WebsiteSubsidy" ColumnName="WebsiteSubsidy" />
+                <ScalarProperty Name="DistribSubsidy" ColumnName="DistribSubsidy" />
+                <ScalarProperty Name="OrderCommission" ColumnName="OrderCommission" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="IsPay" ColumnName="IsPay" />
+                <ScalarProperty Name="ActualDoneDate" ColumnName="ActualDoneDate" />
+                <ScalarProperty Name="ReceviceAddress" ColumnName="ReceviceAddress" />
+                <ScalarProperty Name="RecevicePhoneNo" ColumnName="RecevicePhoneNo" />
+                <ScalarProperty Name="ReceviceName" ColumnName="ReceviceName" />
+                <ScalarProperty Name="PubDate" ColumnName="PubDate" />
+                <ScalarProperty Name="PickUpAddress" ColumnName="PickUpAddress" />
+                <ScalarProperty Name="OrderNo" ColumnName="OrderNo" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="region">
+            <EntityTypeMapping TypeName="supermanModel.region">
+              <MappingFragment StoreEntitySet="region">
+                <ScalarProperty Name="BaiduLong" ColumnName="BaiduLong" />
+                <ScalarProperty Name="BaiduLat" ColumnName="BaiduLat" />
+                <ScalarProperty Name="Host" ColumnName="Host" />
+                <ScalarProperty Name="IsGov" ColumnName="IsGov" />
+                <ScalarProperty Name="BriefJPing" ColumnName="BriefJPing" />
+                <ScalarProperty Name="BriefQPing" ColumnName="BriefQPing" />
+                <ScalarProperty Name="JPing" ColumnName="JPing" />
+                <ScalarProperty Name="QPing" ColumnName="QPing" />
+                <ScalarProperty Name="Isbroad" ColumnName="Isbroad" />
+                <ScalarProperty Name="Depth" ColumnName="Depth" />
+                <ScalarProperty Name="Cityid" ColumnName="Cityid" />
+                <ScalarProperty Name="Provinceid" ColumnName="Provinceid" />
+                <ScalarProperty Name="Fid" ColumnName="Fid" />
+                <ScalarProperty Name="ModifyDate" ColumnName="ModifyDate" />
+                <ScalarProperty Name="ModifyUser" ColumnName="ModifyUser" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="Creator" ColumnName="Creator" />
+                <ScalarProperty Name="EnName" ColumnName="EnName" />
+                <ScalarProperty Name="BriefName" ColumnName="BriefName" />
+                <ScalarProperty Name="ChnName" ColumnName="ChnName" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="myincome">
+            <EntityTypeMapping TypeName="supermanModel.myincome">
+              <MappingFragment StoreEntitySet="myincome">
+                <ScalarProperty Name="InsertTime" ColumnName="InsertTime" />
+                <ScalarProperty Name="MyInComeAmount" ColumnName="MyInComeAmount" />
+                <ScalarProperty Name="MyIncome1" ColumnName="MyIncome" />
+                <ScalarProperty Name="PhoneNo" ColumnName="PhoneNo" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="pushmessage">
+            <EntityTypeMapping TypeName="supermanModel.pushmessage">
+              <MappingFragment StoreEntitySet="pushmessage">
+                <ScalarProperty Name="AreaId" ColumnName="AreaId" />
+                <ScalarProperty Name="PushDate" ColumnName="PushDate" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="Alert" ColumnName="Alert" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="pushmessagestatus">
+            <EntityTypeMapping TypeName="supermanModel.pushmessagestatus">
+              <MappingFragment StoreEntitySet="pushmessagestatus">
+                <ScalarProperty Name="PushMessageId" ColumnName="PushMessageId" />
+                <ScalarProperty Name="AndroidDeliveredCount" ColumnName="AndroidDeliveredCount" />
+                <ScalarProperty Name="MessageId" ColumnName="MessageId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="subsidy">
+            <EntityTypeMapping TypeName="supermanModel.subsidy">
+              <MappingFragment StoreEntitySet="subsidy">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="WebsiteSubsidy" ColumnName="WebsiteSubsidy" />
+                <ScalarProperty Name="DistribSubsidy" ColumnName="DistribSubsidy" />
+                <ScalarProperty Name="OrderCommission" ColumnName="OrderCommission" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="accountauthority">
+            <EntityTypeMapping TypeName="supermanModel.accountauthority">
+              <MappingFragment StoreEntitySet="accountauthority">
+                <ScalarProperty Name="AuthorityId" ColumnName="AuthorityId" />
+                <ScalarProperty Name="AccountId" ColumnName="AccountId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="authority">
+            <EntityTypeMapping TypeName="supermanModel.authority">
+              <MappingFragment StoreEntitySet="authority">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="AuthorityType" ColumnName="AuthorityType" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="account">
+            <EntityTypeMapping TypeName="supermanModel.account">
+              <MappingFragment StoreEntitySet="account">
+                <ScalarProperty Name="LCUser" ColumnName="LCUser" />
+                <ScalarProperty Name="LCDateTime" ColumnName="LCDateTime" />
+                <ScalarProperty Name="FAUser" ColumnName="FAUser" />
+                <ScalarProperty Name="FADateTime" ColumnName="FADateTime" />
+                <ScalarProperty Name="AccountType" ColumnName="AccountType" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="LoginName" ColumnName="LoginName" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="无" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

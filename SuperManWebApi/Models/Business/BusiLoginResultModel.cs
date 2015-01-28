@@ -1,0 +1,24 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace SuperManWebApi.Models.Business
+{
+    /// <summary>
+    /// 登录成功返回的数据
+    /// </summary>
+    public class BusiLoginResultModel
+    {
+        public int userId { get; set; }
+        public sbyte? status { get; set; }
+        public string city { get; set; }
+        public string districtId { get; set; }
+        public string district { get; set; }
+        public string Address { get; set; }
+        public string Landline { get; set; }
+        public string Name { get; set; }
+        public string cityId { get; set; }
+        public string phoneNo { get; set; }
+    }
+}

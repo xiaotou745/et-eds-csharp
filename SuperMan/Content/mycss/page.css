@@ -1,0 +1,28 @@
+﻿.search-criteria{
+    padding: 20px 0;
+    border-bottom: 1px dotted #e2e2e2;
+}
+
+    .search-criteria .form-inline .form-group {
+        margin-right: 2em;
+        margin-bottom:1em;
+    }
+
+.error-message {
+    color: #a94442;
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: 5px;
+    font-weight: bold;
+    margin-right:2em;
+    display:none;
+}
+.publish-up {
+    color:#f00;
+}
+.publish-down{
+    color:#00ff21
+}
+.table-center th, .table-center td {text-align:center;}
+#authSetModal .list-group .active {cursor:pointer;}
+#authSetModal .list-group .glyphicon {float:right;}

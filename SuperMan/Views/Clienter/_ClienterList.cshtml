@@ -1,0 +1,102 @@
+﻿@model SuperManCommonModel.Models.ClienterManageList
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+    <thead>
+
+        <tr class="tdbg">
+            <th width="%5">序号</th>
+            <th>姓名</th>
+            <th>电话</th>
+            <th>身份证号</th>
+            <th>申请时间</th>
+            <th>帐户余额</th>
+            <th>任务</th>
+            <th>审核状态</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var i = 0;
+            foreach (var item in Model.clienterModel)
+            {
+                i++;
+                <tr id="@item.Id">
+                    <td>@i</td>
+                    <td>@item.TrueName</td>
+                    <td>@item.PhoneNo</td>
+                    <td>@item.IDCard</td>
+                    <td>@item.InsertTime</td>
+                    <td>@item.AccountBalance</td>            
+                    @{
+                        var statusView = "";
+                        if (@item.Status == SuperManCommonModel.ConstValues.CLIENTER_AUDITPASS)
+                        {
+                            statusView = "审核通过";
+                        }
+
+                        else if (@item.Status == SuperManCommonModel.ConstValues.CLIENTER_AUDITCANCEL)
+                        {
+                            statusView = "审核被拒绝";
+                        }
+                        else if (@item.Status == SuperManCommonModel.ConstValues.CLIENTER_AUDITPASSING)
+                        {
+                            statusView = "审核中";
+                        }
+                        else if (@item.Status == SuperManCommonModel.ConstValues.CLIENTER_NOAUDIT)
+                        {
+                            statusView = "未审核";
+                        }
+                    }
+                    <td>@statusView</td>
+                    <td>
+                        <a href="javascript:void(0)" superManid="@item.Id" class="superManOk">审核通过</a>
+                        <a href="javascript:void(0)" supermanid="@item.Id" class="superManCel">取消资格</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+
+</table>
+@Html.Partial("_Pager", Model._PagingResult)
+
+<script type="text/javascript">
+    var currentId;
+    $(document).ready(function () {
+        $(".superManOk").bind("click", function () {
+            currentId = $(this).attr("supermanid");
+            var paramaters = { "id": currentId };
+            var url = "/SuperManManager/AuditOK";
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: paramaters,
+                success: function (result) {
+                    if (result.IsSuccess) {
+                        window.location.href = "/SuperManManager/SuperManManager";
+                    } else {
+                        alert(result.Message);
+                    }
+                }
+            });
+        });
+        $(".superManCel").bind("click", function () {
+            currentId = $(this).attr("supermanid");
+            var paramaters = { "id": currentId };
+            var url = "/SuperManManager/AuditCel";
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: paramaters,
+                success: function (result) {
+                    if (result.IsSuccess) {
+                        window.location.href = "/SuperManManager/SuperManManager";
+                    } else {
+                        alert(result.Message);
+                    }
+                }
+            });
+        });
+    });
+</script>

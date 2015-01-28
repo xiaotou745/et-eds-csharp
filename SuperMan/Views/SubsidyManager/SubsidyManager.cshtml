@@ -1,0 +1,184 @@
+﻿@model SuperManCommonModel.Models.SubsidyManage
+@using SuperManCommonModel.Models;
+@{
+    ViewBag.Title = "Order";
+}
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：补贴设置
+    </h2>
+    <div class="SearchMd">
+        <form id="subsidyForm" border="0" cellspacing="0" cellpadding="0">
+            <div>
+                <dl>
+                    <dt><i>* </i>订单佣金: </dt>
+                    <dd>
+                        <input id="txtOrderCommission" name="txtOrderCommission" type="text" />%
+                        <text id="labOrderCommission" style="color:red" hidden="hidden">不能为空</text>
+                    </dd>
+                </dl>
+                <dl>
+                    <dt><i>* </i>配送费补贴: </dt>
+                    <dd>
+                        <input id="txtDistribSubsidy" name="txtDistribSubsidy" type="text" />
+                        <text id="labDistribSubsidy" style="color:red" hidden="hidden">不能为空</text>
+                    </dd>
+                </dl>
+            </div>
+            <div>
+
+            </div>
+            <div>
+                <dl>
+                    <dt><i>* </i>网站补贴: </dt>
+                    <dd>
+                        <input id="txtWebsiteSubsidy" name="txtWebsiteSubsidy" type="text" />
+                        <text id="labWebsiteSubsidy" style="color:red" hidden="hidden">不能为空</text>
+                    </dd>
+                </dl>
+            </div>
+            <div>
+                <dl>
+                    <dt class="">有效时间:</dt>
+                    <dd>
+                        <input id="selectDateStart" name="selectDateStart" readonly="readonly" type="text" />
+                        <text id="labDateStart" style="color:red" hidden="hidden">不能为空</text>
+                    </dd>
+                    <dt class="">至:</dt>
+                    <dd>
+                        <input id="selectDateEnd" name="selectDateEnd" readonly="readonly" type="text" />
+                        <text id="labDateEnd" style="color:red" hidden="hidden">不能为空</text>
+                    </dd>
+                </dl>
+            </div>
+            <div>
+                <dl>
+                    <dd>
+                        <input type="button" value="保存" class="searchBtn" id="btnSave" />
+                    </dd>
+                </dl>
+            </div>
+        </form>
+    </div>
+</div>
+<div>
+    <h4 style="color:black;font-weight:600">补帖设置记录</h4>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+        <thead>
+            <tr class="tdbg">
+                <th width="%5">序号</th>
+                <th>网站补帖(%)</th>
+                <th>配送补帖</th>
+                <th>网站补贴</th>
+                <th>开始日期</th>
+                <th>结束日期</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                var i = 0;
+                foreach (var item in Model.orderCountManageList.subsidyModel)
+                {
+                    i++;
+                    <tr>
+                        <td>@i</td>
+                        <td>@(item.OrderCommission.Value * 100)</td>
+                        <td>@item.DistribSubsidy</td>
+                        <td>@item.WebsiteSubsidy</td>
+                        <td>@item.StartDate.Value.ToShortDateString()</td>
+                        <td>@item.EndDate.Value.ToShortDateString()</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    @Html.Partial("_Pager", Model.orderCountManageList.PagingResult)
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#selectDateStart').datepicker();
+        $('#selectDateEnd').datepicker();
+
+        //$('#subsidyForm').validate({
+        //    rules: {
+        //        txtOrderCommission: "required",
+        //        txtDistribSubsidy: "required",
+        //        txtWebsiteSubsidy: "required",
+        //        selectDateStart: "required",
+        //        selectDateEnd: "required",
+        //    },
+        //    messages: {
+        //    txtOrderCommission: "不能为空",
+        //    txtDistribSubsidy: "不能为空",
+        //    }
+        //});
+    });
+    $("#btnSave").click(function () {
+        var OrderCommission = $('#txtOrderCommission').val();
+        var DistribSubsidy = $('#txtDistribSubsidy').val();
+        var WebsiteSubsidy = $('#txtWebsiteSubsidy').val();
+        var startDate = $('#selectDateStart').val();
+        var endDate = $('#selectDateEnd').val();
+
+        if (OrderCommission == "" || OrderCommission == null) {
+            $('#labOrderCommission').show();
+            return false;
+        }
+        if (DistribSubsidy == "" || DistribSubsidy == null) {
+            $('#labDistribSubsidy').show();
+            return false;
+        }
+        if (WebsiteSubsidy == "" || WebsiteSubsidy == null) {
+            $('#labWebsiteSubsidy').show();
+            return false;
+        }
+        if (startDate == "" || startDate == null) {
+            $('#labDateStart').show();
+            return false;
+        }
+        if (endDate == "" || endDate == null) {
+            $('#labDateEnd').show();
+            return false;
+        }
+        if (endDate < startDate) {
+            alert("开始日期不能大于结束日期");
+            return false;
+        }
+        var paramaters = { "OrderCommission": OrderCommission, "DistribSubsidy": DistribSubsidy, "WebsiteSubsidy": WebsiteSubsidy, "StartDate": startDate, "EndDate": endDate };
+
+        var url = "/SubsidyManager/Save";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert("添加成功");
+                    window.location.href = "/SubsidyManager/SubsidyManager";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    });
+    $('#txtOrderCommission').keyup(function () {
+        $('#txtOrderCommission').val().replace(/[^\d.]/g, '');
+        $('#labOrderCommission').hide();
+    });
+    $('#txtDistribSubsidy').keyup(function () {
+        $('#labDistribSubsidy').hide();
+    });
+    $('#txtWebsiteSubsidy').keyup(function () {
+        $('#labWebsiteSubsidy').hide();
+    });
+    $('#selectDateStart').keyup(function () {
+        $('#labDateStart').hide();
+    });
+    $('#selectDateEnd').keyup(function () {
+        $('#labDateEnd').hide();
+    });
+</script>

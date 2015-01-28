@@ -1,0 +1,97 @@
+.header {
+    background: url("../i/img-x.png") repeat-x;
+    height: auto;
+    position: relative;
+    width: 100%;
+}
+.header .logo {
+    background: url("../i/logo.png") no-repeat;
+    display: block;
+    height: 60px;
+    text-decoration: none;
+    width: 340px;
+}
+.header .links {
+    font-size: 14px;
+    position: absolute;
+    right: 30px;
+    text-align: right;
+    top: 22px;
+}
+.header .links a:hover{text-decoration:underline}
+.header .login-info {
+    color: #333333;
+    font-size: 14px;
+    position: absolute;
+    right: 145px;
+    text-align: right;
+    top: 22px;
+}
+
+.header-menu {
+    width: 100%;
+}
+
+.header-menu .menuul {
+    background:#C3233A;
+    border: 1px solid #9E1326;
+    height:37px;
+}
+
+.header-menu .menuul .lilist{
+    border-style: solid;
+    border-width: 0 1px 0 0;
+    float:left;
+    position: relative;
+    vertical-align: top;
+    border-color: #9E1326;
+    height:37px;
+
+    font-size:14px;
+    line-height: 37px;
+}
+
+.header-menu .menuul .lilist .t-image{margin-right:5px;}
+.header-menu .menuul .lilist .t-link{
+    color:#fff;
+    width:120px;
+    display:block;
+    text-align:center;
+    font-weight:bold
+}
+
+.header-menu .menuul .lilist .t-link:hover,.header-menu .menuul .licurrent{
+    background:#ad1732;
+}
+.header-menu .menuul .lilist span{
+    margin:15px 0 0 2px;
+    vertical-align: top;
+    background:url("../i/down-icon.png") no-repeat;
+    display:inline-block;
+    font-size: 0;
+    height: 7px;
+    line-height: 0;
+    overflow: hidden;
+    text-align: center;
+    text-indent: -3333px;
+    width: 7px;
+}
+/*图标向上旋转*/
+.hover-up{
+    transition-duration: .5s;
+    transform: rotate(180deg);
+    -webkit-transform: rotate(180deg);
+}
+/*图标向下旋转*/
+.hover-down{
+    transition-duration: .5s;
+    transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+}
+
+.header-menu .menuul .lilist .drop-down-list{position:absolute;left:-1px;top:37px;border:1px solid #9E1326;border-top-width:0px;display:none;width:120px;cursor: pointer;background:#fff}
+.header-menu .menuul .lilist .drop-down-list li{text-align:center;}
+.header-menu .menuul .lilist .drop-down-list li a{display:block;padding:10px 0;color:#c51f36}
+.header-menu .menuul .lilist .drop-down-list li a:hover{background:#ffcfcf;}
+
+.footer{width:100%;padding-bottom:20px;color:#333;text-align:center;margin-top:30px;}

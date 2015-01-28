@@ -1,0 +1,100 @@
+﻿@model OrderManage
+@using SuperManCommonModel.Models;
+@{
+    ViewBag.Title = "Order";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：订单 > 订单管理
+    </h2>
+    <div class="SearchMd">
+        <table border="0" cellspacing="0" cellpadding="0" style="width:1080px">
+            <tr>
+                <td>
+                    <span class="">超人电话: </span>
+                    <input id="txtSuperManPhone" type="tel" />
+                    <span class="">商户电话: </span>
+                    <input id="txtBusinessPhone" type="tel" />
+                    <span class="">订单号: </span>
+                    <input id="txtOrderNo" type="text" />
+                    <span class="">发布时间: </span>
+                    <input id="txtOrderPubStart" readonly="readonly" type="text" />
+                    <span class="">到: </span>
+                    <input id="txtOrderPubEnd" readonly="readonly" type="text" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="">超人姓名: </span>
+                    <input id="txtSuperManName" type="text" />
+                    <span class="">商户名称: </span>
+                    <input id="txtBusinessName" type="text" />
+                    <span class="">订单状态: </span>
+                    <select name="select" class="selectw" id="StatusSelect" style="width:143px">
+                        <option value="-1">全部</option>
+                        <option value="0">未接单</option>
+                        <option value="1">已完成</option>
+                        <option value="2">已接单</option>
+                        <option value="3">已取消</option>
+                    </select>
+                    <input type="button" value="查询" class="searchBtn" id="btnSearch" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="bd clearfix" id="dataList">
+        @Html.Partial("_PartialOrderList", Model.orderManageList)
+    </div>
+</div>
+
+<script type="text/javascript">
+    var adminjs = new adminglass(); //实例化后台类
+    var DEFAULT_PAGESIZE = 15;
+    var criteria = { PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE } };
+    $(document).ready(function () {        
+        $('#txtOrderPubStart').datepicker();
+        $('#txtOrderPubEnd').datepicker();
+        //查询
+        $("#btnSearch").on('click', function () {
+            var startDate = $('#txtOrderPubStart').val();
+            var endDate = $('#txtOrderPubEnd').val();
+            if (endDate < startDate) {
+                alert("开始日期不能大于结束日期");
+                return false;
+            }
+            criteria = {
+                superManPhone: $("#txtSuperManPhone").val(),
+                businessPhone: $("#txtBusinessPhone").val(),
+                orderId: $("#txtOrderNo").val(),
+                superManName: $("#txtSuperManName").val(),
+                businessName: $("#txtBusinessName").val(),
+                orderStatus: $("#StatusSelect").val(),
+                OrderPubStart: startDate,
+                OrderPubEnd: endDate,
+                PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE }
+            };
+            refresh(0);
+        });
+    });
+    ////分页
+    art.ui.control.Pager.enablePaging(document, refresh);
+    function refresh(pageIndex) {
+        var url = "/Order/OrderList";
+        if (pageIndex !== undefined) {
+            criteria.PagingRequest.PageIndex = pageIndex;
+        }
+        criteria.orderStatus = $("#StatusSelect").val();
+        webExpress.utility.ajax.request
+            (
+                url,
+                criteria,
+                function (data) {
+                    $("#dataList").html(data);
+                });
+    };
+</script>

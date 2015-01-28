@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace SuperManWebApi.Models.Clienter
+{
+    /// <summary>
+    /// 登录成功返回的数据
+    /// </summary>
+    public class ClienterLoginResultModel
+    {
+        public int userId { get; set; }
+        public sbyte? status { get; set; }
+        public decimal? Amount { get; set; }
+        public string phoneNo { get; set; }
+    }
+
+    public class ClienterModifyPwdResultModel
+    {
+        public string result { get; set; }
+    }
+}

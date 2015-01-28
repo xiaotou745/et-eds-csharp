@@ -1,0 +1,30 @@
+﻿@model SuperManCommonModel.Models.BusinessCountManageList
+<div>
+    
+    <table width="50%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+        <thead>
+            <tr class="tdbg">
+                <th width="%5">序号</th>
+                <th>姓名</th>
+                <th>订单</th>
+                <th>金额</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                var k = 0;
+                foreach (var item in Model.businessModel)
+                {
+                    k++;
+                    <tr>
+                        <td>@k</td>
+                        <td>@item.Name</td>
+                        <td>@item.OrderCount</td>
+                        <td>@item.OrderAmountCount</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    @Html.Partial("_Pager", Model.PagingResult)
+</div>

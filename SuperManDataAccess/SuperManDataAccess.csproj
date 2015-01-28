@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F54D4C48-F635-42CA-9940-19873A691693}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SuperManDataAccess</RootNamespace>
+    <AssemblyName>SuperManDataAccess</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=6.9.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\MySql.Data.6.9.5\lib\net45\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data.Entity.EF6, Version=6.9.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.Entity.6.9.5\lib\net45\MySql.Data.Entity.EF6.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="account.cs">
+      <DependentUpon>SuperManDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="accountauthority.cs">
+      <DependentUpon>SuperManDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="areacity.cs">
+      <DependentUpon>SuperManDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="areacounty.cs">
+      <DependentUpon>SuperManDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="areaprovice.cs">
+      <DependentUpon>SuperManDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="authority.cs">
+      <DependentUpon>SuperManDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="business.cs">
+      <DependentUpon>SuperManDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="clienter.cs">
+      <DependentUpon>SuperManDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="myincome.cs">
+      <DependentUpon>SuperManDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="order.cs">
+      <DependentUpon>SuperManDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="pushmessage.cs">
+      <DependentUpon>SuperManDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="pushmessagestatus.cs">
+      <DependentUpon>SuperManDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="region.cs">
+      <DependentUpon>SuperManDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="subsidy.cs">
+      <DependentUpon>SuperManDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SuperManDb.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SuperManDb.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SuperManDb.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SuperManDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SuperManDb.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SuperManDb.edmx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.Config" />
+    <None Include="packages.config" />
+    <EntityDeploy Include="SuperManDb.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>SuperManDb.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="SuperManDb.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>SuperManDb.edmx</DependentUpon>
+      <LastGenOutput>SuperManDb.Context.cs</LastGenOutput>
+    </None>
+    <None Include="SuperManDb.edmx.diagram">
+      <DependentUpon>SuperManDb.edmx</DependentUpon>
+    </None>
+    <None Include="SuperManDb.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>SuperManDb.edmx</DependentUpon>
+      <LastGenOutput>SuperManDb.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

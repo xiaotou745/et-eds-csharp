@@ -1,0 +1,69 @@
+﻿@model ClienterManage
+@using SuperManCommonModel.Models;
+@{
+    ViewBag.Title = "Order";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：超人 > 超人管理
+    </h2>
+    <div class="SearchMd">
+        <table border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td>
+                    <span class="">超人名称: </span>
+                    <input id="txtSuperManName" type="tel" />
+                    <span class="">审核状态: </span>
+                    <select name="select" class="selectw" id="superManStatus" style="width:143px">
+                        <option value="-1">全部</option>
+                        <option value="1">审核通过</option>
+                        <option value="0">被拒绝</option>
+                        <option value="2">未审核</option>
+                        <option value="3">审核中</option>
+                    </select>
+                    <span class="">超人电话: </span>
+                    <input id="txtSuperManPhone" type="text" />
+                    <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="bd clearfix" id="dataList">
+        @Html.Partial("_ClienterList", Model.clienterManageList)
+    </div>
+</div>
+
+<script>
+    var adminjs = new adminglass(); //实例化后台类
+    var DEFAULT_PAGESIZE = 15;
+    var criteria = { PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE } };
+    $(document).ready(function () {
+        //查询
+        $("#btnSearch").on('click', function () {
+            criteria = {
+                BusinessName: $("#txtSuperManName").val(), //商户名称
+                BusinessPhone: $("#txtSuperManPhone").val(),////商户电话
+                status: $("#superManStatus").val(),
+                PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE }
+            };
+            refresh(0);
+        });
+    })
+    ////分页
+    art.ui.control.Pager.enablePaging(document, refresh);
+    function refresh(pageIndex) {
+        var url = "/SuperManManager/SuperManManager";
+        if (pageIndex !== undefined) {
+            criteria.PagingRequest.PageIndex = pageIndex;
+        }
+        webExpress.utility.ajax.request
+            (
+                url,
+                criteria,
+                function (data) {
+                    $("#dataList").html(data);
+                });
+    };
+</script>
