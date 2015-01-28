@@ -19,7 +19,7 @@
     <tbody>
         @{
             var i = 0;
-            var puth = SuperManCore.CustomerIconUploader.Instance.RelativePath;
+            var puth = SuperManCore.CustomerIconUploader.Instance.FolderName;
             //var path=System.IO.Path.Combine(SuperManCore.CustomerIconUploader.Instance.RelativePath,).ToForwardSlashPath();
             foreach (var item in Model.businessModel)
             {
@@ -30,7 +30,7 @@
                     <td>@item.PhoneNo</td>
                     <td>@item.Address</td>
                     <td>
-                        <a href="javascript:void(0)" class="businessOk" onclick="funcPicView('@puth','@item.CheckPicUrl')">查看</a>
+                        <a href="javascript:void(0)" class="businessOk" onclick="funcPicView('/@puth','@item.CheckPicUrl')">查看</a>
                     </td>
                     <td>@item.InsertTime</td>
                     @{
