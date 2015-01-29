@@ -84,6 +84,13 @@ namespace SuperManCore
                 return ConfigurationManager.AppSettings["ServicePhoneNumber"];
             }
         }
+        /// <summary>
+        /// WebApi地址
+        /// </summary>
+        public string PicHost
+        {
+            get { return ConfigurationManager.AppSettings["WebApiAddress"]; }
+        }
 
 
         public string WebSetting(string key)
