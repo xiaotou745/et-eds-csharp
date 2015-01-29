@@ -117,7 +117,7 @@ namespace SuperManBusinessLogic.Order_Logic
                     if (g != 0)
                     {
                         result = true;
-                        Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty);
+                        Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty); //激光推送
                     }
                 }
             }

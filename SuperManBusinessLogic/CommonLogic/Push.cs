@@ -10,6 +10,14 @@ namespace SuperManBusinessLogic.CommonLogic
 {
     public class Push
     {
+        /// <summary>
+        /// 极光消息推送
+        /// </summary>
+        /// <param name="tagId">来源标识（B端/C端）</param>
+        /// <param name="title">提示title</param>
+        /// <param name="alert"></param>
+        /// <param name="content"></param>
+        /// <param name="RegistrationId">商户id  注册ID 数组。多个注册ID之间是 OR 关系，即取并集。 设备标识。一次推送最多 1000 个。 </param>
         public static void PushMessage(int tagId, string title, string alert, string content, string RegistrationId)
         {
             string appKey = "";
@@ -28,21 +36,18 @@ namespace SuperManBusinessLogic.CommonLogic
             Dictionary<string, string> customizedValues = new Dictionary<string, string>();
             //customizedValues.Add("CK1", "CV1");
             //customizedValues.Add("CK2", "CV2");
-
             JPushClientV3 client = new JPushClientV3(appKey, masterSecret);
             Audience audience = new Audience();
-
             // In JPush V3, tag can be multiple added with different values.
             // In following code, it is to send push to those who are in ((Tag1 AND Tag2) AND (Tag3 OR Tag4))
             // If you want to send to all, please use: audience.Add(PushTypeV3.Broadcast, null);
-
             // audience.Add(PushTypeV3.ByTagWithinAnd, new List<string>(new string[] { "Tag1", "Tag2" }));
             //audience.Add(PushTypeV3.ByTagWithinOr, new List<string>(new string[] { tagId.ToString() }));
-            if (tagId == 0)
+            if (tagId == 0)  //C端
             {
                 audience.Add(PushTypeV3.Broadcast, new List<string>(new string[] { "all" }));
             }
-            if (tagId == 1)
+            else if (tagId == 1) //B端
             {
                 if (!string.IsNullOrEmpty(RegistrationId))
                 {
@@ -51,7 +56,6 @@ namespace SuperManBusinessLogic.CommonLogic
             }           
 
             //// audience.Add(PushTypeV3.Broadcast,null);
-
             // In JPush V3, Notification would not be display on screen, it would be transferred to app instead.
             // And different platform can provide different notification data.
             Notification notification = new Notification
@@ -91,20 +95,16 @@ namespace SuperManBusinessLogic.CommonLogic
             // Console.WriteLine(response.ResponseCode.ToString() + ":" + response.ResponseMessage);
             //Console.WriteLine("Push sent.");
             // Console.WriteLine(response.ResponseCode.ToString() + ":" + response.ResponseMessage);
-
-
             List<string> idToCheck = new List<string>();
             idToCheck.Add(response.MessageId);
 
             //var statusList = client.QueryPushMessageStatus(idToCheck);
-
             //SuperManDataAccess.pushmessage pushMessage = new SuperManDataAccess.pushmessage();
             //pushMessage.Title = title;
             //pushMessage.Alert = alert;
             //pushMessage.Content = content;
             //pushMessage.PushDate = DateTime.Now;
             //pushMessage.AreaId = tagId;
-
             //using (var ctx = new SuperManDataAccess.supermanEntities())
             //{
             //    ctx.pushmessage.Add(pushMessage);

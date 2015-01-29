@@ -21,7 +21,6 @@ namespace SuperManCore
             string result = "";
             if(appType==AppType.B端)
             {
-
                 result = "1" + DateTime.Now.ToString("MMddHHmm")+phoneNo.Substring(6);
             }
             if(appType==AppType.C端)

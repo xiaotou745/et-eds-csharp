@@ -65,15 +65,15 @@ namespace SuperManWebApi.Models.Business
 
         public override order Translate(BusiOrderInfoModel from)
         {
-            var to = new order();
-            to.OrderNo = Helper.generateOrderCode(from.userId);
-            to.businessId = from.userId;
-            var business = BusiLogic.busiLogic().GetBusinessById(from.userId);
+            order to = new order();
+            to.OrderNo = Helper.generateOrderCode(from.userId);  //根据userId生成订单号(15位)
+            to.businessId = from.userId; //当前发布者
+            business business = BusiLogic.busiLogic().GetBusinessById(from.userId);  //根据发布者id,获取发布者的相关信息实体
             if (business != null)
             {
-                to.PickUpAddress = business.Address;
-                to.PubDate = DateTime.Now;
-                to.ReceviceCity = business.City;
+                to.PickUpAddress = business.Address;  //提取地址
+                to.PubDate = DateTime.Now; //提起时间
+                to.ReceviceCity = business.City; //城市
             }
             to.Remark = from.Remark;
             to.ReceviceName = from.receviceName;
