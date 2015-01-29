@@ -251,13 +251,13 @@ namespace SuperManWebApi.Controllers
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.InvlidPhoneNumber);
             }
             var randomCode = new Random().Next(100000).ToString("D6");  //生成短信验证码
-            var msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode);  //获取提示用语信息
+            var msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode,ConstValues.MessageBusiness);  //获取提示用语信息
             try
             {
                 SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);
                  //更新短信通道 
                 Task.Factory.StartNew(() =>
-                { 
+                {
                     SendSmsHelper.SendSendSmsSaveLog(PhoneNumber, msg, ConstValues.SMSSOURCE);
                 });
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.Sending);  
@@ -281,8 +281,8 @@ namespace SuperManWebApi.Controllers
             {
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.InvlidPhoneNumber);
             }
-            var randomCode = new Random().Next(100000).ToString("D6");  
-            var msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode);
+            var randomCode = new Random().Next(100000).ToString("D6");
+            var msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode,ConstValues.MessageBusiness);
             try
             {                
                 SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);

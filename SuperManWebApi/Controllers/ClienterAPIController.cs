@@ -461,11 +461,11 @@ namespace SuperManWebApi.Controllers
             string msg = string.Empty;
             if (type == "0")//注册
             {
-                msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode);
+                msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode,ConstValues.MessageBusiness);  
             }
             else //修改密码
             {
-                msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode);
+                msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode,ConstValues.MessageBusiness);
             }
             try
             {
