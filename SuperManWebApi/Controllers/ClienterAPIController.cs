@@ -456,17 +456,12 @@ namespace SuperManWebApi.Controllers
             {
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.InvlidPhoneNumber);
             }
-
             var randomCode = new Random().Next(100000).ToString("D6");
             string msg = string.Empty;
             if (type == "0")//注册
-            {
                 msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode,ConstValues.MessageBusiness);  
-            }
             else //修改密码
-            {
-                msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode,ConstValues.MessageBusiness);
-            }
+                msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode,ConstValues.MessageClinenter);
             try
             {
                 SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);
