@@ -4,6 +4,26 @@
     <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
 </div>
 
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script>
+    $(function () {
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: '/ClienterAPI/PostLogin_C',
+            data: {
+                //city: "", CityId: "dasda", phoneNo: "18553507220", passWord: "zhangsa", verifyCode: "asda"
+                phoneNo: "18600405462", passWord: "123456"
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () {
+
+            }
+        });
+    });
+</script>
 <div class="row">
     <div class="col-md-4">
         <h2>Getting started</h2>
