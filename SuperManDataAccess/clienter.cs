@@ -26,5 +26,7 @@ namespace SuperManDataAccess
         public Nullable<decimal> AccountBalance { get; set; }
         public Nullable<System.DateTime> InsertTime { get; set; }
         public string InviteCode { get; set; }
+        public string City { get; set; }
+        public string CityId { get; set; }
     }
 }

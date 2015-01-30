@@ -29,7 +29,6 @@ namespace SuperManDataAccess
         public virtual DbSet<areacounty> areacounty { get; set; }
         public virtual DbSet<areaprovice> areaprovice { get; set; }
         public virtual DbSet<business> business { get; set; }
-        public virtual DbSet<clienter> clienter { get; set; }
         public virtual DbSet<order> order { get; set; }
         public virtual DbSet<region> region { get; set; }
         public virtual DbSet<myincome> myincome { get; set; }
@@ -39,5 +38,6 @@ namespace SuperManDataAccess
         public virtual DbSet<accountauthority> accountauthority { get; set; }
         public virtual DbSet<authority> authority { get; set; }
         public virtual DbSet<account> account { get; set; }
+        public virtual DbSet<clienter> clienter { get; set; }
     }
 }

@@ -33,25 +33,17 @@ namespace SuperManWebApi.Controllers
         public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(RegisterInfoModel model)
         {
             if (string.IsNullOrEmpty(model.phoneNo))   //手机号非空验证
-            {
                 return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
-            }
-            if (BusiLogic.busiLogic().CheckExistPhone(model.phoneNo))  //判断该手机号是否已经注册过
-            {
+            else if (BusiLogic.busiLogic().CheckExistPhone(model.phoneNo))  //判断该手机号是否已经注册过
                 return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberRegistered);
-            }
-            if (string.IsNullOrEmpty(model.passWord))   //密码非空验证
-            {
+            else if (string.IsNullOrEmpty(model.passWord))   //密码非空验证
                 return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PasswordEmpty);
-            }
-            //验证码
-            if (model.verifyCode != SupermanApiCaching.Instance.Get(model.phoneNo))  //判断验证法录入是否正确
-            {
+            else if (model.verifyCode != SupermanApiCaching.Instance.Get(model.phoneNo))  //判断验证法录入是否正确
                 return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode); //CustomerRegisterStatus用户注册信息枚举
-            }
+            else if (string.IsNullOrEmpty(model.city) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
+                return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
             var business = RegisterInfoModelTranslator.Instance.Translate(model);
             bool result = BusiLogic.busiLogic().Add(business);
-
             var resultModel = new BusiRegisterResultModel
             {
                 userId = business.Id

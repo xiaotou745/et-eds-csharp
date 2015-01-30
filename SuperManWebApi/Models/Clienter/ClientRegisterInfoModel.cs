@@ -65,6 +65,8 @@ namespace SuperManWebApi.Models.Clienter
             to.InviteCode = from.inviteCode;
             to.Status = ConstValues.CLIENTER_NOAUDIT;
             to.InsertTime = DateTime.Now;
+            to.City = from.City;
+            to.CityId = from.CityId;
             return to;
         }
     }

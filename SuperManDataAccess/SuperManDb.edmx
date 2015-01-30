@@ -97,6 +97,8 @@
           <Property Name="AccountBalance" Type="decimal" Precision="7" Scale="2" />
           <Property Name="InsertTime" Type="datetime" Precision="0" />
           <Property Name="InviteCode" Type="varchar" MaxLength="45" />
+          <Property Name="City" Type="varchar" MaxLength="100" />
+          <Property Name="CityId" Type="varchar" MaxLength="45" />
         </EntityType>
         <EntityType Name="myincome">
           <Key>
@@ -266,7 +268,6 @@
           <EntitySet Name="areacounty" EntityType="supermanModel.areacounty" />
           <EntitySet Name="areaprovice" EntityType="supermanModel.areaprovice" />
           <EntitySet Name="business" EntityType="supermanModel.business" />
-          <EntitySet Name="clienter" EntityType="supermanModel.clienter" />
           <EntitySet Name="order" EntityType="supermanModel.order" />
           <EntitySet Name="region" EntityType="supermanModel.region" />
           <AssociationSet Name="businessId" Association="supermanModel.businessId">
@@ -288,6 +289,7 @@
             <End Role="account" EntitySet="account" />
             <End Role="accountauthority" EntitySet="accountauthority" />
           </AssociationSet>
+          <EntitySet Name="clienter" EntityType="supermanModel.clienter" />
         </EntityContainer>
         <EntityType Name="areacity">
           <Key>
@@ -334,23 +336,6 @@
           <NavigationProperty Name="order" Relationship="supermanModel.businessId" FromRole="business" ToRole="order" />
           <Property Name="districtId" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
           <Property Name="CityId" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <EntityType Name="clienter">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="PhoneNo" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="LoginName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="Password" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-          <Property Name="TrueName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="IDCard" Type="String" MaxLength="18" FixedLength="false" Unicode="false" />
-          <Property Name="PicWithHandUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="PicUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="Status" Type="SByte" />
-          <Property Name="AccountBalance" Type="Decimal" />
-          <Property Name="InsertTime" Type="DateTime" />
-          <Property Name="InviteCode" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="order">
           <Key>
@@ -519,6 +504,25 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="clienter">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PhoneNo" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="LoginName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="TrueName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="IDCard" Type="String" MaxLength="18" FixedLength="false" Unicode="false" />
+          <Property Name="PicWithHandUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="PicUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="SByte" />
+          <Property Name="AccountBalance" Type="Decimal" />
+          <Property Name="InsertTime" Type="DateTime" />
+          <Property Name="InviteCode" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="City" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="CityId" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -570,24 +574,6 @@
                 <ScalarProperty Name="district" ColumnName="district" />
                 <ScalarProperty Name="City" ColumnName="City" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="clienter">
-            <EntityTypeMapping TypeName="supermanModel.clienter">
-              <MappingFragment StoreEntitySet="clienter">
-                <ScalarProperty Name="InviteCode" ColumnName="InviteCode" />
-                <ScalarProperty Name="InsertTime" ColumnName="InsertTime" />
-                <ScalarProperty Name="AccountBalance" ColumnName="AccountBalance" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="PicUrl" ColumnName="PicUrl" />
-                <ScalarProperty Name="PicWithHandUrl" ColumnName="PicWithHandUrl" />
-                <ScalarProperty Name="IDCard" ColumnName="IDCard" />
-                <ScalarProperty Name="TrueName" ColumnName="TrueName" />
-                <ScalarProperty Name="Password" ColumnName="Password" />
-                <ScalarProperty Name="LoginName" ColumnName="LoginName" />
-                <ScalarProperty Name="PhoneNo" ColumnName="PhoneNo" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -723,6 +709,26 @@
                 <ScalarProperty Name="LoginName" ColumnName="LoginName" />
                 <ScalarProperty Name="UserName" ColumnName="UserName" />
                 <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="clienter">
+            <EntityTypeMapping TypeName="supermanModel.clienter">
+              <MappingFragment StoreEntitySet="clienter">
+                <ScalarProperty Name="CityId" ColumnName="CityId" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="InviteCode" ColumnName="InviteCode" />
+                <ScalarProperty Name="InsertTime" ColumnName="InsertTime" />
+                <ScalarProperty Name="AccountBalance" ColumnName="AccountBalance" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="PicUrl" ColumnName="PicUrl" />
+                <ScalarProperty Name="PicWithHandUrl" ColumnName="PicWithHandUrl" />
+                <ScalarProperty Name="IDCard" ColumnName="IDCard" />
+                <ScalarProperty Name="TrueName" ColumnName="TrueName" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="LoginName" ColumnName="LoginName" />
+                <ScalarProperty Name="PhoneNo" ColumnName="PhoneNo" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

@@ -28,26 +28,19 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<ClientRegisterResultModel> PostRegisterInfo_C(ClientRegisterInfoModel model)
         {
-            if (string.IsNullOrEmpty(model.phoneNo))
-            {
+            if (string.IsNullOrEmpty(model.phoneNo))  //手机号非空验证
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
-            }
-            if (ClienterLogic.clienterLogic().CheckExistPhone(model.phoneNo))
-            {
+            else if (ClienterLogic.clienterLogic().CheckExistPhone(model.phoneNo))  //判断该手机号是否已经注册过
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberRegistered);
-            }
-            if (string.IsNullOrEmpty(model.passWord))
-            {
+            else if (string.IsNullOrEmpty(model.passWord)) //密码非空验证
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PasswordEmpty);
-            }
+            else if (string.IsNullOrEmpty(model.City) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
+                return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
             //验证码
-            //if (model.verifyCode != SupermanApiCaching.Instance.Get(model.phoneNo))
-            //{
-            //    return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode);
-            //}
+            else if (model.verifyCode != SupermanApiCaching.Instance.Get(model.phoneNo)) //判断验证法录入是否正确
+                return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode);
             var clienter = ClientRegisterInfoModelTranslator.Instance.Translate(model);
             bool result = ClienterLogic.clienterLogic().Add(clienter);
-            
             var resultModel = new ClientRegisterResultModel
             {
                 userId = clienter.Id
