@@ -14,6 +14,15 @@ namespace SuperManWebApi.Models.Clienter
         public sbyte? status { get; set; }
         public decimal? Amount { get; set; }
         public string phoneNo { get; set; }
+
+        /// <summary>
+        /// 城市
+        /// </summary>
+        public string City { get; set; }
+        /// <summary>
+        /// 城市编码
+        /// </summary>
+        public string CityId { get; set; }
     }
 
     public class ClienterModifyPwdResultModel

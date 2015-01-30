@@ -66,7 +66,9 @@ namespace SuperManWebApi.Controllers
                 userId = business.Id,
                 phoneNo=business.PhoneNo,
                 status = business.Status,
-                Amount = business.AccountBalance
+                Amount = business.AccountBalance,
+                City=business.City,  //城市
+                CityId=business.CityId  //城市编码
             };
             return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.Success, result);
         }
