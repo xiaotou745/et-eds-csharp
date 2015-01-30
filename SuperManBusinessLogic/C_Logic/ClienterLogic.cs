@@ -253,6 +253,14 @@ namespace SuperManBusinessLogic.C_Logic
                 {
                     query = query.Where(i => i.clienterId == criteria.userId);
                 }
+                if (!string.IsNullOrWhiteSpace(criteria.city))
+                {
+                    query = query.Where(i => i.business.City == criteria.city);
+                }
+                if (!string.IsNullOrWhiteSpace(criteria.cityId))
+                {
+                    query = query.Where(i => i.business.CityId == criteria.cityId);
+                }
                 if (criteria.status != -1 && criteria.status!=null)
                 {
                     query = query.Where(i => i.Status.Value == criteria.status);

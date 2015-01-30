@@ -32,5 +32,9 @@ namespace SuperManWebApi.Models.Clienter
         /// </summary>
         public int? pageIndex { get; set; }
         public sbyte? status { get; set; }
+        //城市名称
+        public string city { get; set; }
+        //城市Id
+        public string cityId { get; set; }
     }
 }

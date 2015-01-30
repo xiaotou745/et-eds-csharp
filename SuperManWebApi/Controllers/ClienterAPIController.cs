@@ -166,7 +166,9 @@ namespace SuperManWebApi.Controllers
                 PagingRequest = new PagingResult(pIndex, pSize),
                 userId = model.userId,
                 status = model.status,
-                isLatest=model.isLatest
+                isLatest=model.isLatest,
+                city = model.city,
+                cityId = model.cityId
             };
             var pagedList = ClienterLogic.clienterLogic().GetOrders(criteria);
             var lists = ClientOrderResultModelTranslator.Instance.Translate(pagedList);
