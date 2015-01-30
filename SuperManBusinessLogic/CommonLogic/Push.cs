@@ -46,7 +46,7 @@ namespace SuperManBusinessLogic.CommonLogic
             if (tagId == 0)  //C端
                 audience = Audience.s_tag_and(city.Trim());
             else if (tagId == 1&&string.IsNullOrEmpty(RegistrationId)) //B端
-                    audience = Audience.s_tag_and(RegistrationId);        
+                audience = Audience.s_tag_and(RegistrationId);        
             PushPayload pushPayload = new PushPayload();
             pushPayload.platform = Platform.android_ios();
             pushPayload.audience = audience;
