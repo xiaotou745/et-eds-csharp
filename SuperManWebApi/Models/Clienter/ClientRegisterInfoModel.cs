@@ -43,6 +43,15 @@ namespace SuperManWebApi.Models.Clienter
     public class ClientRegisterResultModel
     {
         public int userId { get; set; }
+        /// <summary>
+        /// 城市
+        /// </summary>
+        public string city { get; set; }
+        /// <summary>
+        /// 城市编码
+        /// </summary>
+        public string cityId { get; set; }
+
     }
 
     public class ClientRegisterInfoModelTranslator : TranslatorBase<clienter, ClientRegisterInfoModel>

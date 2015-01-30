@@ -43,7 +43,9 @@ namespace SuperManWebApi.Controllers
             bool result = ClienterLogic.clienterLogic().Add(clienter);
             var resultModel = new ClientRegisterResultModel
             {
-                userId = clienter.Id
+                userId = clienter.Id,
+                city = clienter.City, //城市  
+                cityId=clienter.CityId //城市编码
             };
             return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
         }
@@ -67,8 +69,8 @@ namespace SuperManWebApi.Controllers
                 phoneNo=business.PhoneNo,
                 status = business.Status,
                 Amount = business.AccountBalance,
-                City=business.City,  //城市
-                CityId=business.CityId  //城市编码
+                city=business.City,  //城市
+                cityId=business.CityId  //城市编码
             };
             return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.Success, result);
         }
@@ -474,12 +476,5 @@ namespace SuperManWebApi.Controllers
             }
         }
 
-        [HttpGet]
-        public SimpleResultModel testPush()
-        {
-            //Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty);
-            Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", "14");
-            return SimpleResultModel.Conclude(SendCheckCodeStatus.Sending);
-        }
     }
 }

@@ -18,11 +18,11 @@ namespace SuperManWebApi.Models.Clienter
         /// <summary>
         /// 城市
         /// </summary>
-        public string City { get; set; }
+        public string city { get; set; }
         /// <summary>
         /// 城市编码
         /// </summary>
-        public string CityId { get; set; }
+        public string cityId { get; set; }
     }
 
     public class ClienterModifyPwdResultModel

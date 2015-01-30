@@ -407,7 +407,7 @@ namespace SuperManBusinessLogic.C_Logic
                 int i = db.SaveChanges();
                 if (i != 0)
                 {
-                    Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", query.businessId.Value.ToString());
+                    Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", query.businessId.Value.ToString(), string.Empty);
                     result = true;
                 }
             }
@@ -457,7 +457,7 @@ namespace SuperManBusinessLogic.C_Logic
                 int i = db.SaveChanges();
                 if (i != 0)
                 {
-                    Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", query.businessId.Value.ToString());
+                    Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", query.businessId.Value.ToString(),string.Empty);
                     result = 2;
                 }
             }
