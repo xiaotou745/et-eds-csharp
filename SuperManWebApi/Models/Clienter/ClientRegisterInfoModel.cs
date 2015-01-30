@@ -30,6 +30,15 @@ namespace SuperManWebApi.Models.Clienter
         /// 邀请码
         /// </summary>
         public string inviteCode { get; set; }
+
+        /// <summary>
+        /// 城市
+        /// </summary>
+        public string City { get; set; }
+        /// <summary>
+        /// 城市编码
+        /// </summary>
+        public string CityId { get; set; }
     }
     public class ClientRegisterResultModel
     {
