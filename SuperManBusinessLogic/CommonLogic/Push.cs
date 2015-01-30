@@ -44,7 +44,7 @@ namespace SuperManBusinessLogic.CommonLogic
             JPushClient client = new JPushClient(appKey, masterSecret);
             Audience audience = null;
             if (tagId == 0)  //C端
-                audience = Audience.s_tag_and(city);
+                audience = Audience.s_tag_and(city.Trim());
             else if (tagId == 1&&string.IsNullOrEmpty(RegistrationId)) //B端
                     audience = Audience.s_tag_and(RegistrationId);        
             PushPayload pushPayload = new PushPayload();

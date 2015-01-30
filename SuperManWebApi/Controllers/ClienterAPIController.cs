@@ -44,8 +44,8 @@ namespace SuperManWebApi.Controllers
             var resultModel = new ClientRegisterResultModel
             {
                 userId = clienter.Id,
-                city = clienter.City, //城市  
-                cityId=clienter.CityId //城市编码
+                city = clienter.City.Trim(),  //城市
+                cityId = clienter.CityId.Trim()  //城市编码
             };
             return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
         }
@@ -69,8 +69,8 @@ namespace SuperManWebApi.Controllers
                 phoneNo=business.PhoneNo,
                 status = business.Status,
                 Amount = business.AccountBalance,
-                city=business.City,  //城市
-                cityId=business.CityId  //城市编码
+                city=business.City.Trim(),  //城市
+                cityId=business.CityId.Trim()  //城市编码
             };
             return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.Success, result);
         }

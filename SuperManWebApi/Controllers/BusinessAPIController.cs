@@ -300,10 +300,10 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeIsEmpty);
             }
             //start 需要验证 验证码是否正确
-            //if (SupermanApiCaching.Instance.Get(model.phoneNumber) != model.checkCode)
-            //{
-            //    return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong);
-            //}
+            if (SupermanApiCaching.Instance.Get(model.phoneNumber) != model.checkCode)
+            {
+                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong);
+            }
             //end
             var business = BusiLogic.busiLogic().GetBusinessByPhoneNo(model.phoneNumber);
             if (business == null)
