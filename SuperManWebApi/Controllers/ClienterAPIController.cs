@@ -237,12 +237,20 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <returns></returns>
         [ActionStatus(typeof(GetOrdersNoLoginStatus))]
-        [HttpGet]
-        public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListNoLoginLatest_C()
+        [HttpPost]
+        public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListNoLoginLatest_C(ClientOrderInfoModel model)
         {
             degree.longitude = 0;
             degree.latitude = 0;
-            var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLoginLatest();
+            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
+            var pSize = model.pageSize.HasValue ? model.pageIndex.Value : int.MaxValue;
+            ClientOrderSearchCriteria criteria = new ClientOrderSearchCriteria()
+            {
+                PagingRequest = new PagingResult(pIndex, pSize),
+                city = model.city,
+                cityId = model.cityId
+            };
+            var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLoginLatest(criteria);
             var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
             return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
         }
