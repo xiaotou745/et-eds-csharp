@@ -111,13 +111,15 @@ namespace SuperManBusinessLogic.Order_Logic
             {
                 if (model != null)
                 {
+                    business businessmodel = db.business.Where(p => p.Id == model.businessId).FirstOrDefault();
+                    if (businessmodel == null)
+                        return result;
                     db.order.Add(model);
                     int g = db.SaveChanges();
-                    
                     if (g != 0)
                     {
                         result = true;
-                        Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty,""); //激光推送
+                        Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, businessmodel.City); //激光推送
                     }
                 }
             }

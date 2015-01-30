@@ -255,11 +255,11 @@ namespace SuperManBusinessLogic.C_Logic
                 }
                 if (!string.IsNullOrWhiteSpace(criteria.city))
                 {
-                    query = query.Where(i => i.business.City == criteria.city);
+                    query = query.Where(i => i.business.City == criteria.city.Trim());
                 }
                 if (!string.IsNullOrWhiteSpace(criteria.cityId))
                 {
-                    query = query.Where(i => i.business.CityId == criteria.cityId);
+                    query = query.Where(i => i.business.CityId == criteria.cityId.Trim());
                 }
                 if (criteria.status != -1 && criteria.status!=null)
                 {
@@ -321,11 +321,20 @@ namespace SuperManBusinessLogic.C_Logic
                 return result;
             }
         }
-        public List<order> GetOrdersNoLoginLatest()
+        /// <summary>
+        /// 未登录时获取最新任务 edit by caoheyang 20150130
+        /// </summary>
+        /// <param name="criteria">查询实体</param>
+        /// <returns></returns>
+        public List<order> GetOrdersNoLoginLatest(ClientOrderSearchCriteria criteria)
         {
             using (var dbEntity = new supermanEntities())
             {
                 var query = dbEntity.order.AsQueryable();
+                if (!string.IsNullOrWhiteSpace(criteria.city))
+                    query = query.Where(i => i.business.City == criteria.city.Trim());
+                if (!string.IsNullOrWhiteSpace(criteria.cityId))
+                    query = query.Where(i => i.business.CityId == criteria.cityId.Trim());
                 query = query.Where(i => i.Status.Value == ConstValues.ORDER_NEW);
                 query = query.OrderByDescending(i => i.PubDate);
                 var result = query.ToList();

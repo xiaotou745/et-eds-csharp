@@ -44,8 +44,8 @@ namespace SuperManWebApi.Controllers
             var resultModel = new ClientRegisterResultModel
             {
                 userId = clienter.Id,
-                city = clienter.City, //城市  
-                cityId=clienter.CityId //城市编码
+                city = clienter.City.Trim(),  //城市
+                cityId = clienter.CityId.Trim()  //城市编码
             };
             return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
         }
@@ -69,8 +69,8 @@ namespace SuperManWebApi.Controllers
                 phoneNo=business.PhoneNo,
                 status = business.Status,
                 Amount = business.AccountBalance,
-                city=business.City,  //城市
-                cityId=business.CityId  //城市编码
+                city=business.City.Trim(),  //城市
+                cityId=business.CityId.Trim()  //城市编码
             };
             return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.Success, result);
         }
@@ -237,12 +237,20 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <returns></returns>
         [ActionStatus(typeof(GetOrdersNoLoginStatus))]
-        [HttpGet]
-        public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListNoLoginLatest_C()
+        [HttpPost]
+        public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListNoLoginLatest_C(ClientOrderInfoModel model)
         {
             degree.longitude = 0;
             degree.latitude = 0;
-            var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLoginLatest();
+            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
+            var pSize = model.pageSize.HasValue ? model.pageIndex.Value : int.MaxValue;
+            ClientOrderSearchCriteria criteria = new ClientOrderSearchCriteria()
+            {
+                PagingRequest = new PagingResult(pIndex, pSize),
+                city = model.city,
+                cityId = model.cityId
+            };
+            var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLoginLatest(criteria);
             var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
             return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
         }
