@@ -167,8 +167,8 @@ namespace SuperManWebApi.Controllers
                 userId = model.userId,
                 status = model.status,
                 isLatest=model.isLatest,
-                city = model.city,
-                cityId = model.cityId
+                city = model.city.Trim(),
+                cityId = model.cityId.Trim()
             };
             var pagedList = ClienterLogic.clienterLogic().GetOrders(criteria);
             var lists = ClientOrderResultModelTranslator.Instance.Translate(pagedList);
