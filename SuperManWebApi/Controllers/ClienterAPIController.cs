@@ -15,6 +15,7 @@ using SuperManBusinessLogic.CommonLogic;
 using System.Threading.Tasks;
 using SuperManDataAccess;
 using SuperManCommonModel;
+
 namespace SuperManWebApi.Controllers
 {
     public class ClienterAPIController : ApiController
@@ -237,9 +238,12 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <returns></returns>
         [ActionStatus(typeof(GetOrdersNoLoginStatus))]
-        [HttpPost]
-        public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListNoLoginLatest_C(ClientOrderInfoModel model)
+        [HttpGet]
+        public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListNoLoginLatest_C()
         {
+            ClientOrderInfoModel model = new ClientOrderInfoModel();
+            model.city = HttpContext.Current.Request["city"];//城市
+            model.cityId = HttpContext.Current.Request["cityId"]; //城市编码
             degree.longitude = 0;
             degree.latitude = 0;
             var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
