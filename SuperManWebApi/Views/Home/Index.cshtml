@@ -7,42 +7,54 @@
 <script src="~/Scripts/jquery-1.10.2.min.js"></script>
 <script>
     $(function () {
+        //$.ajax({
+        //    type: 'POST',
+        //    dataType: 'json',
+        //    url: '/ClienterAPI/GetJobList_C',
+        //    data: {
+        //        //city: "", CityId: "dasda", phoneNo: "18553507220", passWord: "zhangsa", verifyCode: "asda"
+        //        //phoneNo: "18600405462", passWord: "123456"
+        //        //userid: "41", receviceName: "232323", recevicePhone: "18553507220",
+        //        //receviceAddress: "dasdsad", Amount: "",
+        //        //IsPay:true,longitude:"232",laitude:"23232",Remark:""
+        //        //longitude:"15",latitude:"",city:"北京市"
+        //        userid: "43",status:"2"
+        //    },
+        //    success: function (data) {
+        //        console.log(data);
+        //    },
+        //    error: function () {
+
+        //    }
+        //});
+
+        //$.ajax({
+        //    type: 'GET',
+        //    dataType: 'json',
+        //    url: '/ClienterAPI/GetJobListNoLoginLatest_C',
+        //    data: {
+        //        city: "", CityId: ""
+        //    },
+        //    success: function (data) {
+        //        console.log(data);
+        //    },
+        //    error: function () {
+
+        //    }
+        //});
+ 
+        
         $.ajax({
             type: 'POST',
             dataType: 'json',
-            url: '/ClienterAPI/GetJobList_C',
+            url: '/ClienterAPI/PostLogin_C',
             data: {
-                //city: "", CityId: "dasda", phoneNo: "18553507220", passWord: "zhangsa", verifyCode: "asda"
-                //phoneNo: "18600405462", passWord: "123456"
-                //userid: "41", receviceName: "232323", recevicePhone: "18553507220",
-                //receviceAddress: "dasdsad", Amount: "",
-                //IsPay:true,longitude:"232",laitude:"23232",Remark:""
-                //longitude:"15",latitude:"",city:"北京市"
-                userid: "43",status:"2"
+                phoneNo: "18600405462", passWord: "123456"
             },
             success: function (data) {
                 console.log(data);
-            },
-            error: function () {
-
             }
         });
-
-        $.ajax({
-            type: 'GET',
-            dataType: 'json',
-            url: '/ClienterAPI/GetJobListNoLoginLatest_C',
-            data: {
-                city: "", CityId: ""
-            },
-            success: function (data) {
-                console.log(data);
-            },
-            error: function () {
-
-            }
-        });
-        
     });
 </script>
 <div class="row">

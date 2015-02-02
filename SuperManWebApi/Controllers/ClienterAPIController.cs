@@ -70,8 +70,8 @@ namespace SuperManWebApi.Controllers
                 phoneNo=business.PhoneNo,
                 status = business.Status,
                 Amount = business.AccountBalance,
-                city=business.City.Trim(),  //城市
-                cityId=business.CityId.Trim()  //城市编码
+                city = string.IsNullOrWhiteSpace(business.City) ? null : business.City.Trim(),  //城市
+                cityId = string.IsNullOrWhiteSpace(business.CityId) ? null : business.CityId.Trim()  //城市编码
             };
             return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.Success, result);
         }
@@ -168,8 +168,8 @@ namespace SuperManWebApi.Controllers
                 userId = model.userId,
                 status = model.status,
                 isLatest=model.isLatest,
-                city = model.city,
-                cityId = model.cityId
+                city =string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
+                cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim() 
             };
             var pagedList = ClienterLogic.clienterLogic().GetOrders(criteria);
             var lists = ClientOrderResultModelTranslator.Instance.Translate(pagedList);
@@ -242,8 +242,8 @@ namespace SuperManWebApi.Controllers
         public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListNoLoginLatest_C()
         {
             ClientOrderInfoModel model = new ClientOrderInfoModel();
-            model.city = HttpContext.Current.Request["city"];//城市
-            model.cityId = HttpContext.Current.Request["cityId"]; //城市编码
+            model.city = string.IsNullOrWhiteSpace(HttpContext.Current.Request["city"]) ? null : HttpContext.Current.Request["city"].Trim();//城市
+            model.cityId = string.IsNullOrWhiteSpace(HttpContext.Current.Request["cityId"]) ? null : HttpContext.Current.Request["cityId"].Trim(); //城市编码
             degree.longitude = 0;
             degree.latitude = 0;
             var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
