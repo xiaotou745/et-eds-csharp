@@ -324,7 +324,7 @@
           <Property Name="district" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Name="PhoneNo" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="PhoneNo2" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="Password" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="CheckPicUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="IDCard" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
           <Property Name="Address" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
@@ -481,7 +481,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Password" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="UserName" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
           <Property Name="LoginName" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
           <Property Name="Status" Type="Int32" />
@@ -511,7 +511,7 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="PhoneNo" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="LoginName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="Password" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="TrueName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="IDCard" Type="String" MaxLength="18" FixedLength="false" Unicode="false" />
           <Property Name="PicWithHandUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
