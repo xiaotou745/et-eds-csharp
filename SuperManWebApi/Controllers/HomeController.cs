@@ -21,7 +21,7 @@ namespace SuperManWebApi.Controllers
             //    db.clienter.ToList<clienter>().ForEach(item => item.Password = MD5Helper.MD5(item.Password));
             //    db.business.ToList<business>().ForEach(item => item.Password = MD5Helper.MD5(item.Password));
             //    db.account.ToList<account>().ForEach(item => item.Password = MD5Helper.MD5(item.Password));
-            //    int res= db.SaveChanges();
+            //    int res = db.SaveChanges();
             //    db.Configuration.ValidateOnSaveEnabled = true;
             //}
             return View();
