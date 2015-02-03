@@ -39,6 +39,11 @@ namespace SuperManWebApi.Models.Clienter
         /// 城市编码
         /// </summary>
         public string CityId { get; set; }
+
+        /// <summary>
+        /// 推荐人手机号
+        /// </summary>
+        public string recommendPhone { get; set; }
     }
     public class ClientRegisterResultModel
     {
@@ -76,6 +81,7 @@ namespace SuperManWebApi.Models.Clienter
             to.InsertTime = DateTime.Now;
             to.City = from.City;
             to.CityId = from.CityId;
+            to.recommendPhone = from.recommendPhone;
             return to;
         }
     }
