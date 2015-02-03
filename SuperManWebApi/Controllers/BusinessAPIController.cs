@@ -299,10 +299,10 @@ namespace SuperManWebApi.Controllers
         {
             if (string.IsNullOrEmpty(model.password))  //密码非空验证
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.NewPwdEmpty);
-            if (string.IsNullOrEmpty(model.checkCode)) //验证码非空验证
-                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeIsEmpty);
-            if (SupermanApiCaching.Instance.Get(model.phoneNumber) != model.checkCode) //验证码正确性验证
-                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong);
+            //if (string.IsNullOrEmpty(model.checkCode)) //验证码非空验证
+            //    return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeIsEmpty);
+            //if (SupermanApiCaching.Instance.Get(model.phoneNumber) != model.checkCode) //验证码正确性验证
+            //    return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong);
             var business = BusiLogic.busiLogic().GetBusinessByPhoneNo(model.phoneNumber);
             if (business == null)  //用户是否存在
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.ClienterIsNotExist);
