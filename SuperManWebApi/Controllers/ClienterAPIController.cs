@@ -45,8 +45,8 @@ namespace SuperManWebApi.Controllers
             var resultModel = new ClientRegisterResultModel
             {
                 userId = clienter.Id,
-                city = clienter.City.Trim(),  //城市
-                cityId = clienter.CityId.Trim()  //城市编码
+                city = string.IsNullOrWhiteSpace(clienter.City) ? null : clienter.City.Trim(),  //城市
+                cityId = string.IsNullOrWhiteSpace(clienter.CityId) ? null : clienter.CityId.Trim()  //城市编码
             };
             return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
         }
