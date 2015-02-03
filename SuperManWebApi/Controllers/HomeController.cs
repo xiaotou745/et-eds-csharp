@@ -1,6 +1,9 @@
-﻿using System;
+﻿using SuperManCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 
@@ -10,8 +13,9 @@ namespace SuperManWebApi.Controllers
     {
         public ActionResult Index()
         {
+            string va = MD5Helper.md5("abc123456");
+            string vc = MD5Helper.md5("123456");
             ViewBag.Title = "Home Page";
-
             return View();
         }
     }
