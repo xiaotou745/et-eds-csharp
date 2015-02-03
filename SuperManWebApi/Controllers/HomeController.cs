@@ -1,4 +1,5 @@
 ﻿using SuperManCore;
+using SuperManDataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +14,16 @@ namespace SuperManWebApi.Controllers
     {
         public ActionResult Index()
         {
-            string va = MD5Helper.md5("abc123456");
-            string vc = MD5Helper.md5("123456");
             ViewBag.Title = "Home Page";
+            using (var db = new supermanEntities())
+            {
+                db.Configuration.ValidateOnSaveEnabled = false;
+                db.clienter.ToList<clienter>().ForEach(item => item.Password = MD5Helper.MD5(item.Password));
+                db.business.ToList<business>().ForEach(item => item.Password = MD5Helper.MD5(item.Password));
+                db.account.ToList<account>().ForEach(item => item.Password = MD5Helper.MD5(item.Password));
+                int res= db.SaveChanges();
+                db.Configuration.ValidateOnSaveEnabled = true;
+            }
             return View();
         }
     }

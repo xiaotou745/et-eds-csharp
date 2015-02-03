@@ -22,9 +22,9 @@ namespace SuperManCore
         /// </summary>
         /// <param name="inputStr">待加密字符串</param>
         /// <returns></returns>
-        public static string md5(string inputStr)
+        public static string MD5(string inputStr)
         {
-            return encodeByMD5(KEY + inputStr);
+            return EncodeByMD5(KEY + inputStr);
         }
 
         /// <summary>
@@ -32,9 +32,9 @@ namespace SuperManCore
         /// </summary>
         /// <param name="inputStr">待加密字符串</param>
         /// <returns></returns>
-        public static string md5NoKey(string inputStr)
+        public static string MD5NoKey(string inputStr)
         {
-            return encodeByMD5(inputStr);
+            return EncodeByMD5(inputStr);
         }
 
         /// <summary>
@@ -43,9 +43,9 @@ namespace SuperManCore
         /// <param name="password">真正的密码（加密后的真密码）</param>
         /// <param name="inputString">输入的字符串</param>
         /// <returns>n 验证结果，boolean类型</returns>
-        public static bool authenticatePassword(string password, string inputString)
+        public static bool AuthenticatePassword(string password, string inputString)
         {
-            if (password.Equals(encodeByMD5(inputString)))
+            if (password.Equals(EncodeByMD5(inputString)))
             {
                 return true;
             }
@@ -60,7 +60,7 @@ namespace SuperManCore
         /// </summary>
         /// <param name="originString">字符串</param>
         /// <returns></returns>
-        private static String encodeByMD5(string originString)
+        private static string EncodeByMD5(string originString)
         {
             if (originString != null)
             {
@@ -68,7 +68,7 @@ namespace SuperManCore
                 {
                     MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
                     byte[] results = md5.ComputeHash(Encoding.UTF8.GetBytes(originString));   //得到加密字节数组
-                    string result = byteArrayToHexString(results);  // 将得到的字节数组变成字符串返回
+                    string result = ByteArrayToHexString(results);  // 将得到的字节数组变成字符串返回
                     return result;
                 }
                 catch (Exception e)
@@ -84,12 +84,12 @@ namespace SuperManCore
         /// </summary>
         /// <param name="b">字节数组</param>
         /// <returns>十六进制字符串</returns>
-        private static String byteArrayToHexString(byte[] b)
+        private static string ByteArrayToHexString(byte[] b)
         {
             StringBuilder resultSb = new StringBuilder();
             for (int i = 0; i < b.Length; i++)
             {
-                resultSb.Append(byteToHexString(b[i]));
+                resultSb.Append(ByteToHexString(b[i]));
             }
             return resultSb.ToString();
         }
@@ -99,7 +99,7 @@ namespace SuperManCore
         /// </summary>
         /// <param name="b">字符串</param>
         /// <returns></returns>
-        private static string byteToHexString(byte b)
+        private static string ByteToHexString(byte b)
         {
             int n = b;
             if (n < 0)
