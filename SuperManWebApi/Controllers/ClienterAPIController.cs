@@ -344,31 +344,19 @@ namespace SuperManWebApi.Controllers
         [HttpGet]
         public ResultModel<RushOrderResultModel> RushOrder_C(int userId, string orderNo)
         {
-            if (userId==0)
-            {
-                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
-            }
-            if (string.IsNullOrEmpty(orderNo))
-            {
+            if (userId==0) //用户id验证
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);  
+            if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
-            }
-            if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null)
-            {
+            if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null) //查询订单是否存在
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotExist);
-            }
-            if (!ClienterLogic.clienterLogic().CheckOrderIsAllowRush(orderNo))
-            {
+            if (!ClienterLogic.clienterLogic().CheckOrderIsAllowRush(orderNo))  //查询订单是否被抢
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
-            }
             bool bResult = ClienterLogic.clienterLogic().RushOrder(userId, orderNo);
             if (bResult)
-            {
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Success);
-            }
             else
-            {
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Failed);
-            }
         }
         /// <summary>
         /// 完成订单
