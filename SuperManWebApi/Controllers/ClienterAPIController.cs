@@ -15,6 +15,7 @@ using SuperManBusinessLogic.CommonLogic;
 using System.Threading.Tasks;
 using SuperManDataAccess;
 using SuperManCommonModel;
+using SuperManBusinessLogic.B_Logic;
 
 namespace SuperManWebApi.Controllers
 {
@@ -37,11 +38,12 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PasswordEmpty);
             else if (string.IsNullOrEmpty(model.City) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
-            //验证码
             else if (model.verifyCode != SupermanApiCaching.Instance.Get(model.phoneNo)) //判断验证法录入是否正确
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode);
+            else if ((!ClienterLogic.clienterLogic().CheckExistPhone(model.recommendPhone))&&(!BusiLogic.busiLogic().CheckExistPhone(model.phoneNo))) //如果推荐人手机号在B端C端都不存在提示信息
+                return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberNotExist);
             var clienter = ClientRegisterInfoModelTranslator.Instance.Translate(model);
-            bool result = ClienterLogic.clienterLogic().Add(clienter);
+            bool result = false;//ClienterLogic.clienterLogic().Add(clienter);
             var resultModel = new ClientRegisterResultModel
             {
                 userId = clienter.Id,
