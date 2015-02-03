@@ -45,11 +45,11 @@
  
         
         $.ajax({
-            type: 'GET',
+            type: 'POST',
             dataType: 'json',
-            url: '/ClienterAPI/RushOrder_C?USERID=1&orderNo=61150114144245067',
+            url: '/BusinessAPI/PostForgetPwd_B',
             data: {
-                
+                phoneNumber: "15206418047", passWord: "2A8450A0C76EBC0D49ECCE17E98C9816"
             },
             success: function (data) {
                 console.log(data);
