@@ -402,6 +402,7 @@
       <LastGenOutput>Authorities1.cs</LastGenOutput>
     </Content>
     <Content Include="Authority\EnumSettings.config" />
+    <Content Include="App.config" />
     <None Include="Properties\PublishProfiles\MyWeb.pubxml" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="Scripts\bootbox.js" />
@@ -520,6 +521,10 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LogHelper\LogHelper.csproj">
+      <Project>{941955b7-79e8-4a8a-874b-5137e6242b10}</Project>
+      <Name>LogHelper</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SuperManBusinessLogic\SuperManBusinessLogic.csproj">
       <Project>{72ca336e-dc5e-4f98-9275-3a3a258189d6}</Project>
       <Name>SuperManBusinessLogic</Name>

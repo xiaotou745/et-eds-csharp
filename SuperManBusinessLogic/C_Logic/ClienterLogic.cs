@@ -10,11 +10,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace SuperManBusinessLogic.C_Logic
 {
     public class ClienterLogic
     {        
+        
         //public static ClienterLogic clienterLogic()
         //{
         //    return new ClienterLogic();
