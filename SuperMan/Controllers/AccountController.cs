@@ -19,7 +19,7 @@ using System.Web.Security;
 namespace SuperMan.Controllers
 {
     [Authorize]
-    [AppHandleError]
+    [WebHandleErrorAttribute]
     public class AccountController : Controller
     {
         private ApplicationSignInManager _signInManager;
@@ -49,8 +49,8 @@ namespace SuperMan.Controllers
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
-            string x = "da";
-            int y = Convert.ToInt32(x);
+            //string x = "da";
+            //int y = Convert.ToInt32(x);
 
 
             ViewBag.ReturnUrl = returnUrl;
