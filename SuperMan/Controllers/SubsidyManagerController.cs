@@ -11,6 +11,7 @@ using SuperManCore.Paging;
 namespace SuperMan.Controllers
 {
     [Authorize]
+    [WebHandleError]
     public class SubsidyManagerController : Controller
     {
         // GET: SubsidyManager

@@ -19,6 +19,7 @@ using SuperManBusinessLogic.B_Logic;
 
 namespace SuperManWebApi.Controllers
 {
+    [ApiHandleError]
     public class ClienterAPIController : ApiController
     {
         /// <summary>

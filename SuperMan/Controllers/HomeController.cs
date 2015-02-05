@@ -8,6 +8,7 @@ using SuperManCommonModel.Entities;
 namespace SuperMan.Controllers
 {
     [Authorize]
+    [WebHandleError]
     public class HomeController : Controller
     {
         public ActionResult Index()

@@ -21,6 +21,7 @@ using System.Text;
 using System.Net;
 namespace SuperManWebApi.Controllers
 {
+    [ApiHandleError]
     public class BusinessAPIController : ApiController
     {
         /// <summary>

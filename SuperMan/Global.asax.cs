@@ -21,7 +21,7 @@ namespace SuperMan
         }
 
         /// <summary>
-        /// 注册全局过滤器 add by 曹赫洋 20150205
+        /// 注册全局过滤器 add by caoheyang 20150205
         /// </summary>
         /// <param name="filters"></param>
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
