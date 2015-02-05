@@ -432,10 +432,10 @@ namespace SuperManBusinessLogic.C_Logic
         }
 
         /// <summary>
-        /// 完成订单
+        /// 完成订单 edit by caoheyang 20150204
         /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="orderNo"></param>
+        /// <param name="userId">C端用户id</param>
+        /// <param name="orderNo">订单号码</param>
         /// <returns></returns>
         public int FinishOrder(int userId, string orderNo)
         {
@@ -455,8 +455,8 @@ namespace SuperManBusinessLogic.C_Logic
                     query.Status = ConstValues.ORDER_FINISH;
                     query.ActualDoneDate = DateTime.Now;
                 }
-                var client = db.clienter.Where(p => p.Id == userId).FirstOrDefault();
-                if (client != null)
+                var client = db.clienter.Where(p => p.Id == userId).FirstOrDefault();//查询用户
+                if (client != null)  //更新用户相关金额数据
                 {
                     if (client.AccountBalance != null)
                         client.AccountBalance = client.AccountBalance.Value + query.DistribSubsidy + query.OrderCommission + query.WebsiteSubsidy;
