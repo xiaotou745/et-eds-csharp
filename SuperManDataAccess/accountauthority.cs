@@ -18,7 +18,7 @@ namespace SuperManDataAccess
         public Nullable<int> AccountId { get; set; }
         public Nullable<int> AuthorityId { get; set; }
     
-        public virtual authority authority { get; set; }
         public virtual account account { get; set; }
+        public virtual authority authority { get; set; }
     }
 }

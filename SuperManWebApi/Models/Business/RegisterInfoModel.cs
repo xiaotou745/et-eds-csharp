@@ -69,6 +69,8 @@ namespace SuperManWebApi.Models.Business
         [DisplayText("昵称已被注册")]
         NickNameAlreadyRegistered,
         [DisplayText("手机号已被注册")]
-        PhoneNumberRegistered
+        PhoneNumberRegistered,
+        [DisplayText("您输入的的号码不存在,请检查并修改！")]  //推荐人不存在
+        PhoneNumberNotExist
     }
 }

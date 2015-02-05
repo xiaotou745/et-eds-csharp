@@ -65,7 +65,7 @@ namespace SuperManBusinessLogic.B_Logic
             IQueryable<BusinessViewModel> items = null;
             using (var db = new supermanEntities())
             {
-                if(criteria.searchType==1)
+                if (criteria.searchType == 1)
                 {
                     items = from m in db.business
                             join n in db.order
@@ -182,14 +182,14 @@ namespace SuperManBusinessLogic.B_Logic
             bool bResult = false;
             using (var db = new supermanEntities())
             {
-                if(!string.IsNullOrEmpty(phoneNo))
+                if (!string.IsNullOrEmpty(phoneNo))
                 {
                     var item = db.business.Where(p => p.PhoneNo == phoneNo).FirstOrDefault();
                     if (item != null)
                     {
                         bResult = true;
                     }
-                }                
+                }
             }
             return bResult;
         }
@@ -282,7 +282,7 @@ namespace SuperManBusinessLogic.B_Logic
                                        select new BusiOrderCountResultModel
                                        {
                                            todayPublish = g.Count(),
-                                           todayPublishAmount = Math.Round(g.Sum(m => m.Amount).Value,2).ToString()
+                                           todayPublishAmount = Math.Round(g.Sum(m => m.Amount).Value, 2).ToString()
                                        };
 
                     var tydayDone = from n in db.order
@@ -345,7 +345,7 @@ namespace SuperManBusinessLogic.B_Logic
             return model;
         }
 
-        
+
 
         /// <summary>
         /// 根据商户Id查询城市
@@ -355,7 +355,7 @@ namespace SuperManBusinessLogic.B_Logic
         public string GetCityByBusiId(int id)
         {
             string strResult = string.Empty;
-            using (var db=new supermanEntities())
+            using (var db = new supermanEntities())
             {
                 var query = db.business.Where(p => p.Id == id).FirstOrDefault();
                 if (query != null)
@@ -416,23 +416,28 @@ namespace SuperManBusinessLogic.B_Logic
             }
             return null;
         }
-        
-        public bool ModifyPwd(business business, string password)
+
+        /// <summary>
+        /// B端修改密码
+        /// </summary>
+        /// <param name="businessid"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public bool ModifyPwd(int businessid, string password)
         {
             bool result = false;
             using (var db = new supermanEntities())
             {
-                if (business != null)
+                db.Configuration.ValidateOnSaveEnabled = false;
+                var query = db.business.Where(p => p.Id == businessid).FirstOrDefault();
+                if (query != null)
                 {
-                    var query = db.business.Where(p => p.Id == business.Id).FirstOrDefault();
-                    if(query!=null)
-                    {
-                        business.Password = password;
-                        int i = db.SaveChanges();
-                        if (i != 0)
-                            result = true;
-                    }                    
+                    query.Password = password;
+                    int i = db.SaveChanges();
+                    if (i != 0)
+                        result = true;
                 }
+                db.Configuration.ValidateOnSaveEnabled = true;
             }
             return result;
         }

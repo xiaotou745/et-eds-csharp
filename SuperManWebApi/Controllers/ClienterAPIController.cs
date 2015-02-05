@@ -15,6 +15,7 @@ using SuperManBusinessLogic.CommonLogic;
 using System.Threading.Tasks;
 using SuperManDataAccess;
 using SuperManCommonModel;
+using SuperManBusinessLogic.B_Logic;
 
 namespace SuperManWebApi.Controllers
 {
@@ -37,16 +38,18 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PasswordEmpty);
             else if (string.IsNullOrEmpty(model.City) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
-            //验证码
             else if (model.verifyCode != SupermanApiCaching.Instance.Get(model.phoneNo)) //判断验证法录入是否正确
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode);
+            else if ((!ClienterLogic.clienterLogic().CheckExistPhone(model.recommendPhone))
+                &&(!BusiLogic.busiLogic().CheckExistPhone(model.phoneNo))) //如果推荐人手机号在B端C端都不存在提示信息
+                return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberNotExist);
             var clienter = ClientRegisterInfoModelTranslator.Instance.Translate(model);
-            bool result = ClienterLogic.clienterLogic().Add(clienter);
+            bool result =ClienterLogic.clienterLogic().Add(clienter);
             var resultModel = new ClientRegisterResultModel
             {
                 userId = clienter.Id,
-                city = clienter.City.Trim(),  //城市
-                cityId = clienter.CityId.Trim()  //城市编码
+                city = string.IsNullOrWhiteSpace(clienter.City) ? null : clienter.City.Trim(),  //城市
+                cityId = string.IsNullOrWhiteSpace(clienter.CityId) ? null : clienter.CityId.Trim()  //城市编码
             };
             return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
         }
@@ -359,24 +362,24 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Failed);
         }
         /// <summary>
-        /// 完成订单
+        /// 完成订单 edit by caoheyang 20150204
         /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="orderNo"></param>
+        /// <param name="userId">C端用户id</param>
+        /// <param name="orderNo">订单号码</param>
         /// <returns></returns>
         [ActionStatus(typeof(FinishOrderStatus))]
         [HttpGet]
         public ResultModel<FinishOrderResultModel> FinishOrder_C(int userId, string orderNo)
         {
-            if (userId == 0)
+            if (userId == 0)  //用户id非空验证
             {
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.userIdEmpty);
             }
-            if (string.IsNullOrEmpty(orderNo))
+            if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
             {
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderEmpty);
             }
-            if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null)
+            if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null) //订单是否存在验证
             {
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderIsNotExist);
             }
@@ -405,7 +408,7 @@ namespace SuperManWebApi.Controllers
         /// <summary>
         /// 获取我的余额
         /// </summary>
-        /// <param name="phoneNo"></param>
+        /// <param name="phoneNo">手机号</param>
         /// <returns></returns>
         [ActionStatus(typeof(RushOrderStatus))]
         [HttpGet]
@@ -426,7 +429,7 @@ namespace SuperManWebApi.Controllers
         /// <summary>
         /// 获取我的余额动态
         /// </summary>
-        /// <param name="phoneNo"></param>
+        /// <param name="phoneNo">手机号</param>
         /// <returns></returns>
         [ActionStatus(typeof(RushOrderStatus))]
         [HttpGet]
@@ -445,8 +448,11 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary>
-        /// 请求动态验证码 
-        /// c</summary>
+        /// 请求动态验证码
+        /// </summary>
+        /// <param name="PhoneNumber">手机号</param>
+        /// <param name="type">操作类型： 0 注册 1修改密码</param>
+        /// <returns></returns>
         [ActionStatus(typeof(SendCheckCodeStatus))]
         [HttpGet]
         public SimpleResultModel CheckCode(string PhoneNumber,string type)

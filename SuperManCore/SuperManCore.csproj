@@ -62,6 +62,7 @@
     <Compile Include="IImageFileTransformer.cs" />
     <Compile Include="ImageSizeTransformManager.cs" />
     <Compile Include="LiteralCaptcha.cs" />
+    <Compile Include="MD5Helper.cs" />
     <Compile Include="PagedList.cs" />
     <Compile Include="Paging\OrderByItem.cs" />
     <Compile Include="Paging\PagingRequest.cs" />

@@ -432,13 +432,14 @@ namespace SuperManBusinessLogic.C_Logic
         }
 
         /// <summary>
-        /// 完成订单
+        /// 完成订单 edit by caoheyang 20150204
         /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="orderNo"></param>
+        /// <param name="userId">C端用户id</param>
+        /// <param name="orderNo">订单号码</param>
         /// <returns></returns>
         public int FinishOrder(int userId, string orderNo)
         {
+            
             var result = -1;
             using (var db = new supermanEntities())
             {
@@ -454,8 +455,8 @@ namespace SuperManBusinessLogic.C_Logic
                     query.Status = ConstValues.ORDER_FINISH;
                     query.ActualDoneDate = DateTime.Now;
                 }
-                var client = db.clienter.Where(p => p.Id == userId).FirstOrDefault();
-                if (client != null)
+                var client = db.clienter.Where(p => p.Id == userId).FirstOrDefault();//查询用户
+                if (client != null)  //更新用户相关金额数据
                 {
                     if (client.AccountBalance != null)
                         client.AccountBalance = client.AccountBalance.Value + query.DistribSubsidy + query.OrderCommission + query.WebsiteSubsidy;
@@ -470,13 +471,13 @@ namespace SuperManBusinessLogic.C_Logic
                 model.MyInComeAmount = query.DistribSubsidy + query.OrderCommission + query.WebsiteSubsidy;
                 model.InsertTime = DateTime.Now;
                 db.myincome.Add(model);
-                //end add
-                int i = db.SaveChanges();
+                //end add 
+                int i = db.SaveChanges(); 
                 if (i != 0)
                 {
                     Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", query.businessId.Value.ToString(),string.Empty);
                     result = 2;
-                }
+                } 
             }
             return result;
         }

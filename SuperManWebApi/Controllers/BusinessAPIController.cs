@@ -287,42 +287,31 @@ namespace SuperManWebApi.Controllers
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.SendFailure);
             }
         }
+
+        /// <summary>
+        /// b端修改密码 edit by caoheyang 20150203 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [ActionStatus(typeof(ForgetPwdStatus))]
         [HttpPost]
         public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model)
         {
-            if (string.IsNullOrEmpty(model.password))
-            {
+            if (string.IsNullOrEmpty(model.password))  //密码非空验证
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.NewPwdEmpty);
-            }
-            if (string.IsNullOrEmpty(model.checkCode))
-            {
+            if (string.IsNullOrEmpty(model.checkCode)) //验证码非空验证
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeIsEmpty);
-            }
-            //start 需要验证 验证码是否正确
-            if (SupermanApiCaching.Instance.Get(model.phoneNumber) != model.checkCode)
-            {
+            if (SupermanApiCaching.Instance.Get(model.phoneNumber) != model.checkCode) //验证码正确性验证
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong);
-            }
-            //end
             var business = BusiLogic.busiLogic().GetBusinessByPhoneNo(model.phoneNumber);
-            if (business == null)
-            {
+            if (business == null)  //用户是否存在
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.ClienterIsNotExist);
-            }
-            if (business.Password == model.password)
-            {
+            if (business.Password == model.password) //您要找回的密码正是当前密码
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.PwdIsSave);
-            }
-            bool b = BusiLogic.busiLogic().ModifyPwd(business, model.password);
-            if (b)
-            {
+            if (BusiLogic.busiLogic().ModifyPwd(business.Id, model.password))
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.Success);
-            }
             else
-            {
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.FailedModifyPwd);
-            }
         }
         /// <summary>
         /// 取消订单
