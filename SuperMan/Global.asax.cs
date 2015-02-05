@@ -43,7 +43,7 @@ namespace SuperMan
         /// <param name="filterContext">上下文对象  该类继承于ControllerContext</param>
         public override void OnException(ExceptionContext filterContext)
         {
-            LogHelper.LogWriterFromFilter(filterContext.HttpContext, filterContext.Exception);
+            LogHelper.LogWriterFromFilter(filterContext.Exception);
         }
     }
 }

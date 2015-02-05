@@ -159,7 +159,7 @@ namespace SuperManCore
            }
        }
 
-       public new static void LogWriterFromFilter(HttpContextBase httpContext, Exception error)
+       public new static void LogWriterFromFilter(Exception error)
        {
            try
            {
