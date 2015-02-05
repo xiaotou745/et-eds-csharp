@@ -91,7 +91,20 @@ namespace SuperManCore
         {
             get { return ConfigurationManager.AppSettings["WebApiAddress"]; }
         }
-
+        /// <summary>
+        /// 获取Email服务器地址
+        /// </summary>
+        public string EmailAdress
+        {
+            get { return ConfigurationManager.AppSettings["EmailAddress"]; }
+        }
+        /// <summary>
+        /// 获取Email服务器密码
+        /// </summary>
+        public string EmailPwd
+        {
+            get { return ConfigurationManager.AppSettings["EmailPwd"]; }
+        }
 
         public string WebSetting(string key)
         {
