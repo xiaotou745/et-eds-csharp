@@ -34,7 +34,7 @@ namespace SuperManCore
                {
                    logstr = logstr + "函数的参数有:" + pm[i].Name.ToString() + "\r\n";
                }
-               logstr += "------------------end---------------------\r\n";
+               logstr += "--------------------end---------------------\r\n";
                //写日志
                logger.Info(logstr);
            }
@@ -67,17 +67,14 @@ namespace SuperManCore
                {
                    logstr = logstr + "函数的参数有:" + pm[i].Name.ToString() + "\r\n";
                }
-
-               logstr += "------------------end---------------------\r\n";
+               logstr += "--------------------end---------------------\r\n";
                //写日志
                logger.Info(logstr);
            }
            catch (Exception)
            {
-
                throw;
            }
-
        }
        /// <summary>
        /// 日志
@@ -87,8 +84,6 @@ namespace SuperManCore
        {
            try
            {
-
-
                string logstr = "\r\n-----------------start----------------------\r\n";
                MethodBase m = new StackTrace().GetFrame(1).GetMethod();
                ParameterInfo[] pm = m.GetParameters();
@@ -104,13 +99,12 @@ namespace SuperManCore
                }
                JavaScriptSerializer jsonSerializer = new JavaScriptSerializer();
                logstr = logstr + "函数参数值:" + jsonSerializer.Serialize(dec) + "\r\n";
-               logstr += "------------------end---------------------\r\n";
+               logstr += "--------------------end---------------------\r\n";
                //写日志
                logger.Info(logstr);
            }
            catch (Exception)
            {
-
                throw;
            }
 
@@ -124,8 +118,6 @@ namespace SuperManCore
        {
            try
            {
-
-
                string logstr = "\r\n-----------------start----------------------\r\n";
                MethodBase m = new StackTrace().GetFrame(1).GetMethod();
                ParameterInfo[] pm = m.GetParameters();
@@ -142,7 +134,7 @@ namespace SuperManCore
                }
                JavaScriptSerializer jsonSerializer = new JavaScriptSerializer();
                logstr = logstr + "函数参数值:" + jsonSerializer.Serialize(dec) + "\r\n";
-               logstr += "------------------end---------------------\r\n";
+               logstr += "--------------------end---------------------\r\n";
                //写日志
                logger.Info(logstr);
            }
@@ -160,8 +152,7 @@ namespace SuperManCore
        public new static void LogWriter(Exception ex)
        {
            try
-           {
-
+           { 
                string logstr = "\r\n-----------------start----------------------\r\n";
                MethodBase m = new StackTrace().GetFrame(1).GetMethod();
                ParameterInfo[] pm = m.GetParameters();
@@ -176,7 +167,7 @@ namespace SuperManCore
                    logstr = logstr + "函数的参数有:" + pm[i].Name.ToString() + "\r\n";
                }
                logstr = logstr + "函数异常:" + ex.ToString() + "\r\n";
-               logstr += "------------------end---------------------\r\n";
+               logstr += "--------------------end---------------------\r\n";
                //写日志
                logger.Info(logstr);
            }
@@ -196,7 +187,6 @@ namespace SuperManCore
        {
            try
            {
-
                string logstr = "\r\n-----------------start----------------------\r\n";
                MethodBase m = new StackTrace().GetFrame(1).GetMethod();
                ParameterInfo[] pm = m.GetParameters();
@@ -212,13 +202,12 @@ namespace SuperManCore
                    logstr = logstr + "函数的参数有:" + pm[i].Name.ToString() + "\r\n";
                }
                logstr = logstr + "函数异常:" + ex.ToString() + "\r\n";
-               logstr += "------------------end---------------------\r\n";
+               logstr += "--------------------end---------------------\r\n";
                //写日志
                logger.Info(logstr);
            }
            catch (Exception)
            {
-
                throw;
            }
 
@@ -248,13 +237,12 @@ namespace SuperManCore
                JavaScriptSerializer jsonSerializer = new JavaScriptSerializer();
                logstr = logstr + "函数参数值:" + jsonSerializer.Serialize(dec) + "\r\n";
                logstr = logstr + "函数异常:" + ex.ToString() + "\r\n";
-               logstr += "------------------end---------------------\r\n";
+               logstr += "--------------------end---------------------\r\n";
                //写日志
                logger.Info(logstr);
            }
            catch (Exception)
            {
-
                throw;
            }
 
@@ -287,13 +275,12 @@ namespace SuperManCore
                JavaScriptSerializer jsonSerializer = new JavaScriptSerializer();
                logstr = logstr + "函数参数值:" + jsonSerializer.Serialize(dec) + "\r\n";
                logstr = logstr + "函数异常:" + ex.ToString() + "\r\n";
-               logstr += "------------------end---------------------\r\n";
+               logstr += "--------------------end---------------------\r\n";
                //写日志
                logger.Info(logstr);
            }
            catch (Exception)
            {
-
                throw;
            }
        }
