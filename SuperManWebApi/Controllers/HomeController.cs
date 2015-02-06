@@ -10,7 +10,6 @@ using System.Web.Mvc;
 
 namespace SuperManWebApi.Controllers
 {
-    [ApiHandleError]
     public class HomeController : Controller
     {
         public ActionResult Index()

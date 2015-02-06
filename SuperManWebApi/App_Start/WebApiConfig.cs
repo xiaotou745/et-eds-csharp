@@ -16,7 +16,7 @@ namespace SuperManWebApi
             // 将 Web API 配置为仅使用不记名令牌身份验证。
             config.SuppressDefaultHostAuthentication();
             config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
-
+            config.Filters.Add(new ApiHandleErrorAttribute());  //注册全局异常过滤器 add by caoheyang 20150206
             // Web API 路由
             config.MapHttpAttributeRoutes();
 

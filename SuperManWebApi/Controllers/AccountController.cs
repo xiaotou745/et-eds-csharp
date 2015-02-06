@@ -19,7 +19,6 @@ using SuperManWebApi.Results;
 
 namespace SuperManWebApi.Controllers
 {
-    [ApiHandleError]
     [Authorize]
     [RoutePrefix("api/Account")]
     public class AccountController : ApiController
