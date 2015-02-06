@@ -94,16 +94,30 @@ namespace SuperManCore
         /// <summary>
         /// 获取Email服务器地址
         /// </summary>
-        public string EmailAdress
+        public string EmailFromAdress
         {
-            get { return ConfigurationManager.AppSettings["EmailAddress"]; }
+            get { return ConfigurationManager.AppSettings["EmailFromAddress"]; }
         }
         /// <summary>
         /// 获取Email服务器密码
         /// </summary>
         public string EmailPwd
         {
-            get { return ConfigurationManager.AppSettings["EmailPwd"]; }
+            get { return ConfigurationManager.AppSettings["EmailFromPwd"]; }
+        }
+        /// <summary>
+        /// 接收人邮件地址
+        /// </summary>
+        public string EmailToAdress
+        {
+            get { return ConfigurationManager.AppSettings["EmailToAddress"]; }
+        }
+        /// <summary>
+        /// 是否发送邮件
+        /// </summary>
+        public string IsSendMail
+        {
+            get { return ConfigurationManager.AppSettings["IsSendMail"]; }
         }
 
         public string WebSetting(string key)

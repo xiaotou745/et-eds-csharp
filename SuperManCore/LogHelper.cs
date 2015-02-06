@@ -158,7 +158,10 @@ namespace SuperManCore
                throw;
            }
        }
-
+       /// <summary>
+       /// 捕获全局异常
+       /// </summary>
+       /// <param name="error"></param>
        public new static void LogWriterFromFilter(Exception error)
        {
            try
@@ -171,6 +174,12 @@ namespace SuperManCore
                logstr = logstr + "异常:" + error.ToString() + "\r\n";
                 
                logstr += "--------------------end---------------------\r\n";
+               //发送邮件
+               if (ConfigSettings.Instance.IsSendMail == "true")
+               {
+                   string emailToAddress = ConfigSettings.Instance.EmailToAdress;
+                   EmailHelper.SendEmailTo(logstr, emailToAddress);
+               }              
                //写日志
                logger.Info(logstr);
            }

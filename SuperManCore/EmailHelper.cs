@@ -57,12 +57,12 @@ namespace SuperManCore
             try
             {
                 string address = "";
-                string[] mailNames = emailAddress.Split(';');
-                var from = new MailAddress(ConfigSettings.Instance.EmailAdress, displayName);
+                string[] mailNames = emailAddress.Split(new char[]{';'},StringSplitOptions.RemoveEmptyEntries);
+                var from = new MailAddress(ConfigSettings.Instance.EmailFromAdress, displayName);
                 var client = new SmtpClient
                 {
                     Host = "smtp.exmail.qq.com",
-                    Credentials = new NetworkCredential(ConfigSettings.Instance.EmailAdress, EncodeAndDecode.DecodeBase64(Encoding.UTF8, ConfigSettings.Instance.EmailPwd)),
+                    Credentials = new NetworkCredential(ConfigSettings.Instance.EmailFromAdress, EncodeAndDecode.DecodeBase64(Encoding.UTF8, ConfigSettings.Instance.EmailPwd)),
                     Port = 25
                 };
                 var mail = new MailMessage();
@@ -96,7 +96,7 @@ namespace SuperManCore
                     mail.Attachments.Add(new Attachment(stream, attachName));
                 }
                 // 回复至
-                mail.ReplyToList.Add(ConfigSettings.Instance.EmailAdress);
+                mail.ReplyToList.Add(ConfigSettings.Instance.EmailFromAdress);
                 client.DeliveryMethod = SmtpDeliveryMethod.Network;
                 client.Send(mail);
                 return true;
