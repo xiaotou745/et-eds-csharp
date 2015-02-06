@@ -148,7 +148,7 @@ namespace SuperManWebApi.Controllers
         [ActionStatus(typeof(PubOrderStatus))]
         [HttpPost]
         public ResultModel<BusiOrderResultModel> PostPublishOrder_B(BusiOrderInfoModel model)
-        {
+        { 
             //System.Diagnostics.Debug.WriteLine("getPost" + Guid.NewGuid());
             order dborder = BusiOrderInfoModelTranslator.Instance.Translate(model);  //整合订单信息
             bool result = OrderLogic.orderLogic().AddModel(dborder);    //添加订单记录，并且触发极光推送。          
