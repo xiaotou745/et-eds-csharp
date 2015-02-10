@@ -34,13 +34,8 @@ public class UserUtil {
 
             // 再次封装
             ObjectInputStream bis = new ObjectInputStream(bais);
-            try {
-                // 读取对象
-                user = (User) bis.readObject();
-            } catch (ClassNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            user = (User) bis.readObject();
+
         } catch (StreamCorruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

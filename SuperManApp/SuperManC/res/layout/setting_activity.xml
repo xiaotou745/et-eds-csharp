@@ -57,7 +57,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="关于e代送兼职神器" 
+                    android:text="关于 e代送配送版" 
                     android:textColor="@color/gray_deep_color"
                     android:textSize="17sp" />
             </LinearLayout>

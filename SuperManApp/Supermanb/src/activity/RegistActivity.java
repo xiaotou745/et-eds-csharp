@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import picker.CityMode;
 import picker.CityWorker;
+import utils.MD5;
 import utils.StringUtil;
 import utils.UserUtil;
 import utils.VolleyUtil;
@@ -47,6 +48,7 @@ public class RegistActivity extends BaseActionBarActivity implements OnClickList
     private VolleyUtil util;
     private CityAdapter adapter;
     private ProgressDialog dialog;
+    private CityWorker mCityWorkerDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +68,13 @@ public class RegistActivity extends BaseActionBarActivity implements OnClickList
     }
 
     private void initDate() {
-        ArrayList<CityMode> list = new CityWorker(this).getCity();
-        String[] filterStr = this.getResources().getStringArray(R.array.city_open_name);
-        ArrayList<CityMode> filterList = StringUtil.filterCityByName(list, filterStr);
-
+        mCityWorkerDB = new CityWorker(this);
+        ArrayList<CityMode> filterList = new ArrayList<CityMode>();
+        if (mCityWorkerDB != null) {
+            ArrayList<CityMode> list = mCityWorkerDB.getCity();
+            String[] filterStr = this.getResources().getStringArray(R.array.city_open_name);
+            filterList = StringUtil.filterCityByName(list, filterStr);
+        }
         adapter = new CityAdapter(this, filterList);
         spinner.setAdapter(adapter);
         util = new VolleyUtil(this);
@@ -127,7 +132,8 @@ public class RegistActivity extends BaseActionBarActivity implements OnClickList
             parms.put("city", adapter.getItem((int) spinner.getSelectedItemId()).getName());
             parms.put("cityId", "" + adapter.getItem((int) spinner.getSelectedItemId()).getPcode());
             parms.put("phoneNo", etPhone.getText().toString());
-            parms.put("passWord", etPassword.getText().toString());
+            String strPwd = MD5.md5(etPassword.getText().toString());
+            parms.put("passWord", strPwd);
             parms.put("verifyCode", etCord.getText().toString());
             util.post(parms, Constants.URL_REGIST, RegistActivity.this, 2);
             break;
@@ -218,4 +224,13 @@ public class RegistActivity extends BaseActionBarActivity implements OnClickList
         etPassword.setText("");
         etCord.setText("");
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mCityWorkerDB != null) {
+            mCityWorkerDB.closeCityWorker();
+        }
+    }
+
 }

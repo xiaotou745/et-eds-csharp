@@ -89,6 +89,7 @@ public class VerificationActivity extends BaseActivity implements HttpRequestLis
         backLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                VerificationActivity.this.setResult(Constants.DEFAULT_RESULT_CODE);
                 VerificationActivity.this.finish();
             }
         });
@@ -261,6 +262,7 @@ public class VerificationActivity extends BaseActivity implements HttpRequestLis
                 user.setStatus(3);// 设置正在审核中
                 vo.setResult(user);
                 UserTools.saveUser(this, vo);
+                this.setResult(Constants.DEFAULT_RESULT_CODE);
                 this.finish();
             } else {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show();

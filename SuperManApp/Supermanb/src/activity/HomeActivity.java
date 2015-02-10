@@ -316,10 +316,6 @@ public class HomeActivity extends BaseActionBarActivity implements
 		case R.id.address:
 			sendMsg("商户地址管理");
 			intent = new Intent(this, AddAdressActivity.class);
-//			CityMode cityMode = new CityMode();
-//			cityMode.setName("北京");
-//			cityMode.setPcode("7");
-//			intent.putExtra("CitMode", cityMode);
 			startActivity(intent);
 			break;
 		case R.id.verification:

@@ -4,18 +4,18 @@ public class Constants {
     /**
      * 模式
      */
-    public static final boolean MODE_DEBUG = false;// 是否为debug模式
+    public static final boolean MODE_DEBUG = true;// 是否为debug模式
     /**
      * 日志
      */
-    public static final boolean LOAD_LOG_MSG = false;// 本地保存日志
+    public static final boolean LOAD_LOG_MSG = true;// 本地保存日志
     public static final String TIME_FROMAT_LOG = "yyyy-MM-dd HH:mm:ss";
 
     /*
      * OrderStatus 1 已完成 0 待抢单 2 已接单 3 已取消
      */
-    // public static final String host = "http://10.8.8.148:8091/BusinessAPI/";
-    public static final String host = "http://api.edaisong.com.cn/BusinessAPI/";
+    // public static final String host = "http://api.edaisong.com.cn/BusinessAPI/";// 线上服务器
+    public static final String host = "http://10.8.7.40:7178/BusinessAPI/";// 开发服务器
 
     public static final String URL_PostRegisterInfo = "PostRegisterInfo_B";
 

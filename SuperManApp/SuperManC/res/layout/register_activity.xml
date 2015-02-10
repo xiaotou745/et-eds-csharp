@@ -31,9 +31,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:hint="请输入6-16位数字或者字母密码"
-            android:maxLength="16"
             android:inputType="textPassword"
-            android:textColorHint="@color/gray_text_color"/>
+            android:maxLength="16"
+            android:textColorHint="@color/gray_text_color" />
 
         <EditText
             android:id="@+id/repassword"
@@ -43,7 +43,7 @@
             android:hint="请重新输入密码"
             android:inputType="textPassword"
             android:maxLength="16"
-            android:textColorHint="@color/gray_text_color"/>
+            android:textColorHint="@color/gray_text_color" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -55,30 +55,84 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
                 android:padding="5dp"
                 android:text="获取验证码"
-                android:textColor="@color/green"
-                android:layout_centerVertical="true" />
-            
+                android:textColor="@color/green" />
+
             <TextView
                 android:id="@+id/tvDaojishi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
                 android:padding="5dp"
-                android:textColor="@color/gray" 
-                android:visibility="gone"
-                android:layout_centerVertical="true" />
+                android:textColor="@color/gray"
+                android:visibility="gone" />
 
             <EditText
                 android:id="@+id/checkCode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/getCode"
-                android:hint="请输入验证码" 
                 android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/getCode"
+                android:hint="请输入验证码"
                 android:textColorHint="@color/gray_text_color" />
         </RelativeLayout>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp" >
+
+            <Spinner
+                android:id="@+id/sp_choose_city"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:gravity="bottom"
+                android:text="选择城市"
+                 android:padding="5dp"
+                android:textColor="@color/text_black"
+                android:textSize="@dimen/_18sp" />
+        </TableRow>
+        <!-- 推荐人姓名 -->
+
+        <EditText
+            android:id="@+id/recommend_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="请输入推荐人姓名(选填)"
+            android:maxLength="16"
+            android:visibility="gone"
+            android:textColorHint="@color/gray_text_color" />
+        <!-- 推荐人联系方式 -->
+
+        <EditText
+            android:id="@+id/recommend_phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="请输入推荐人手机号(选填)"
+            android:maxLength="16"
+            android:textColorHint="@color/gray_text_color" />
+        <!-- 推荐码 -->
+
+        <EditText
+            android:id="@+id/recommend_code"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"            
+            android:hint="请输入推荐码(选填)"
+            android:maxLength="16"
+            android:visibility="gone"
+            android:textColorHint="@color/gray_text_color" />
 
         <Button
             android:id="@+id/register"
@@ -88,7 +142,6 @@
             android:background="@drawable/green_btn_selector"
             android:text="注册"
             android:textColor="@color/white" />
-        
     </LinearLayout>
 
 </LinearLayout>

@@ -41,6 +41,8 @@ public class UserVo {
         private String password;
         private int status;// 0未通过 1通过 2审核未通过
         private String Amount;
+        private String city;
+        private String cityId;
 
         public int getStatus() {
             return status;
@@ -82,10 +84,26 @@ public class UserVo {
             this.password = password;
         }
 
+        public String getCity() {
+            return city;
+        }
+
+        public String getCityId() {
+            return cityId;
+        }
+
+        public void setCity(String city) {
+            this.city = city;
+        }
+
+        public void setCityId(String cityId) {
+            this.cityId = cityId;
+        }
+
         @Override
         public String toString() {
             return "User [userId=" + userId + ", userName=" + userName + ", status=" + status + ", Amount=" + Amount
-                    + "]";
+                    + ",city=" + city + ",cityId=" + cityId + "]";
         }
     }
 
