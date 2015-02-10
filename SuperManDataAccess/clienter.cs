@@ -17,6 +17,7 @@ namespace SuperManDataAccess
         public int Id { get; set; }
         public string PhoneNo { get; set; }
         public string LoginName { get; set; }
+        public string recommendPhone { get; set; }
         public string Password { get; set; }
         public string TrueName { get; set; }
         public string IDCard { get; set; }
@@ -26,5 +27,7 @@ namespace SuperManDataAccess
         public Nullable<decimal> AccountBalance { get; set; }
         public Nullable<System.DateTime> InsertTime { get; set; }
         public string InviteCode { get; set; }
+        public string City { get; set; }
+        public string CityId { get; set; }
     }
 }

@@ -15,5 +15,10 @@ namespace SuperManCommonModel.Entities
         public bool isLatest { get; set; }
         public double longitude { get; set; }
         public double latitude { get; set; }
+        //城市名称
+        public string city { get; set; }
+        //城市Id
+        public string cityId { get; set; }
+
     }
 }

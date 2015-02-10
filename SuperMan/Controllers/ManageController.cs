@@ -11,6 +11,7 @@ using SuperMan.Models;
 namespace SuperMan.Controllers
 {
     [Authorize]
+    [WebHandleError]
     public class ManageController : Controller
     {
         private ApplicationSignInManager _signInManager;

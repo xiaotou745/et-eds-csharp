@@ -30,10 +30,33 @@ namespace SuperManWebApi.Models.Clienter
         /// 邀请码
         /// </summary>
         public string inviteCode { get; set; }
+
+        /// <summary>
+        /// 城市
+        /// </summary>
+        public string City { get; set; }
+        /// <summary>
+        /// 城市编码
+        /// </summary>
+        public string CityId { get; set; }
+
+        /// <summary>
+        /// 推荐人手机号
+        /// </summary>
+        public string recommendPhone { get; set; }
     }
     public class ClientRegisterResultModel
     {
         public int userId { get; set; }
+        /// <summary>
+        /// 城市
+        /// </summary>
+        public string city { get; set; }
+        /// <summary>
+        /// 城市编码
+        /// </summary>
+        public string cityId { get; set; }
+
     }
 
     public class ClientRegisterInfoModelTranslator : TranslatorBase<clienter, ClientRegisterInfoModel>
@@ -56,6 +79,9 @@ namespace SuperManWebApi.Models.Clienter
             to.InviteCode = from.inviteCode;
             to.Status = ConstValues.CLIENTER_NOAUDIT;
             to.InsertTime = DateTime.Now;
+            to.City = from.City;
+            to.CityId = from.CityId;
+            to.recommendPhone = from.recommendPhone;
             return to;
         }
     }

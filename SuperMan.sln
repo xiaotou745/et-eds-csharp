@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperMan", "SuperMan\SuperMan.csproj", "{FC62F0EE-873C-437E-B845-78F9ABC16145}"
 EndProject
@@ -14,6 +14,19 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperManBusinessLogic", "SuperManBusinessLogic\SuperManBusinessLogic.csproj", "{72CA336E-DC5E-4F98-9275-3A3A258189D6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperManCore", "SuperManCore\SuperManCore.csproj", "{F52D02C9-103A-46B1-AEE7-3D11E64777D7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{1D78A913-F249-45D5-BAA5-8D88B45864E3}"
+	ProjectSection(SolutionItems) = preProject
+		Doc\E代送订单流程.vsd = Doc\E代送订单流程.vsd
+		Doc\SuperMan.pdb = Doc\SuperMan.pdb
+		Doc\SuperMan.pdm = Doc\SuperMan.pdm
+		Doc\短信接口说明.docx = Doc\短信接口说明.docx
+		Doc\超人后台数据库表结构说明文档.docx = Doc\超人后台数据库表结构说明文档.docx
+		Doc\超人接收订单WebApi接口文档V1.0.docx = Doc\超人接收订单WebApi接口文档V1.0.docx
+		Doc\超人项目WebApi端接口文档.docx = Doc\超人项目WebApi端接口文档.docx
+		Doc\超人项目交接接口.docx = Doc\超人项目交接接口.docx
+		Doc\超人项目总结.xlsx = Doc\超人项目总结.xlsx
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,8 +61,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

@@ -402,6 +402,7 @@
       <LastGenOutput>Authorities1.cs</LastGenOutput>
     </Content>
     <Content Include="Authority\EnumSettings.config" />
+    <Content Include="Nlog.config" />
     <None Include="Properties\PublishProfiles\MyWeb.pubxml" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="Scripts\bootbox.js" />

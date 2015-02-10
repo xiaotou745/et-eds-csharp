@@ -10,11 +10,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace SuperManBusinessLogic.C_Logic
 {
     public class ClienterLogic
     {        
+        
         //public static ClienterLogic clienterLogic()
         //{
         //    return new ClienterLogic();
@@ -253,6 +253,14 @@ namespace SuperManBusinessLogic.C_Logic
                 {
                     query = query.Where(i => i.clienterId == criteria.userId);
                 }
+                if (!string.IsNullOrWhiteSpace(criteria.city))
+                {
+                    query = query.Where(i => i.business.City == criteria.city.Trim());
+                }
+                if (!string.IsNullOrWhiteSpace(criteria.cityId))
+                {
+                    query = query.Where(i => i.business.CityId == criteria.cityId.Trim());
+                }
                 if (criteria.status != -1 && criteria.status!=null)
                 {
                     query = query.Where(i => i.Status.Value == criteria.status);
@@ -313,11 +321,20 @@ namespace SuperManBusinessLogic.C_Logic
                 return result;
             }
         }
-        public List<order> GetOrdersNoLoginLatest()
+        /// <summary>
+        /// 未登录时获取最新任务 edit by caoheyang 20150130
+        /// </summary>
+        /// <param name="criteria">查询实体</param>
+        /// <returns></returns>
+        public List<order> GetOrdersNoLoginLatest(ClientOrderSearchCriteria criteria)
         {
             using (var dbEntity = new supermanEntities())
             {
                 var query = dbEntity.order.AsQueryable();
+                if (!string.IsNullOrWhiteSpace(criteria.city))
+                    query = query.Where(i => i.business.City == criteria.city.Trim());
+                if (!string.IsNullOrWhiteSpace(criteria.cityId))
+                    query = query.Where(i => i.business.CityId == criteria.cityId.Trim());
                 query = query.Where(i => i.Status.Value == ConstValues.ORDER_NEW);
                 query = query.OrderByDescending(i => i.PubDate);
                 var result = query.ToList();
@@ -407,7 +424,7 @@ namespace SuperManBusinessLogic.C_Logic
                 int i = db.SaveChanges();
                 if (i != 0)
                 {
-                    Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", query.businessId.Value.ToString());
+                    Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", query.businessId.Value.ToString(), string.Empty);
                     result = true;
                 }
             }
@@ -415,13 +432,14 @@ namespace SuperManBusinessLogic.C_Logic
         }
 
         /// <summary>
-        /// 完成订单
+        /// 完成订单 edit by caoheyang 20150204
         /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="orderNo"></param>
+        /// <param name="userId">C端用户id</param>
+        /// <param name="orderNo">订单号码</param>
         /// <returns></returns>
         public int FinishOrder(int userId, string orderNo)
         {
+            
             var result = -1;
             using (var db = new supermanEntities())
             {
@@ -437,8 +455,8 @@ namespace SuperManBusinessLogic.C_Logic
                     query.Status = ConstValues.ORDER_FINISH;
                     query.ActualDoneDate = DateTime.Now;
                 }
-                var client = db.clienter.Where(p => p.Id == userId).FirstOrDefault();
-                if (client != null)
+                var client = db.clienter.Where(p => p.Id == userId).FirstOrDefault();//查询用户
+                if (client != null)  //更新用户相关金额数据
                 {
                     if (client.AccountBalance != null)
                         client.AccountBalance = client.AccountBalance.Value + query.DistribSubsidy + query.OrderCommission + query.WebsiteSubsidy;
@@ -453,13 +471,13 @@ namespace SuperManBusinessLogic.C_Logic
                 model.MyInComeAmount = query.DistribSubsidy + query.OrderCommission + query.WebsiteSubsidy;
                 model.InsertTime = DateTime.Now;
                 db.myincome.Add(model);
-                //end add
-                int i = db.SaveChanges();
+                //end add 
+                int i = db.SaveChanges(); 
                 if (i != 0)
                 {
-                    Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", query.businessId.Value.ToString());
+                    Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", query.businessId.Value.ToString(),string.Empty);
                     result = 2;
-                }
+                } 
             }
             return result;
         }

@@ -12,6 +12,7 @@ using SuperManCore.Paging;
 namespace SuperMan.Controllers
 {
     [Authorize]
+    [WebHandleError]
     public class OrderController : Controller
     {
         //Get: /Order  订单管理

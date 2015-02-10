@@ -30,6 +30,27 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NLog">
+      <HintPath>..\packages\NLog\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI">
+      <HintPath>..\packages\NPOI\NPOI.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.DDF">
+      <HintPath>..\packages\NPOI\NPOI.DDF.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.HPSF">
+      <HintPath>..\packages\NPOI\NPOI.HPSF.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.HSSF">
+      <HintPath>..\packages\NPOI\NPOI.HSSF.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.POIFS">
+      <HintPath>..\packages\NPOI\NPOI.POIFS.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.Util">
+      <HintPath>..\packages\NPOI\NPOI.Util.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -37,6 +58,7 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -51,8 +73,11 @@
     <Compile Include="ConfigSettings.cs" />
     <Compile Include="CustomerIconUploader.cs" />
     <Compile Include="DisplayTextAttribute.cs" />
+    <Compile Include="EmailHelper.cs" />
+    <Compile Include="EncodeAndDecode.cs" />
     <Compile Include="EnumExtenstion.cs" />
     <Compile Include="EnumItem.cs" />
+    <Compile Include="ExcelHelper.cs" />
     <Compile Include="FileUploaderBase.cs" />
     <Compile Include="FixedDimensionTransformerAttribute.cs" />
     <Compile Include="FixedDimensionUploader.cs" />
@@ -62,6 +87,8 @@
     <Compile Include="IImageFileTransformer.cs" />
     <Compile Include="ImageSizeTransformManager.cs" />
     <Compile Include="LiteralCaptcha.cs" />
+    <Compile Include="LogHelper.cs" />
+    <Compile Include="MD5Helper.cs" />
     <Compile Include="PagedList.cs" />
     <Compile Include="Paging\OrderByItem.cs" />
     <Compile Include="Paging\PagingRequest.cs" />

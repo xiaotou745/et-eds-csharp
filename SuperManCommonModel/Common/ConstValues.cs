@@ -74,5 +74,19 @@ namespace SuperManCommonModel
         /// 帐号不可用
         /// </summary>
         public const int AccountDisabled = 0;
+
+        #region 短信息 B端C端区分标识 add by caoheyang 20150129 
+
+        /// <summary>
+        /// 帐号可用
+        /// </summary>
+        public const string MessageBusiness = "e代送商家版";
+
+        /// <summary>
+        /// 帐号可用
+        /// </summary>
+        public const string MessageClinenter = "e代送外送员版";
+
+        #endregion
     }
 }

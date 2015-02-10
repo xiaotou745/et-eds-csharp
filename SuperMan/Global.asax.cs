@@ -5,6 +5,8 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using SuperManCore;
+
 
 namespace SuperMan
 {
@@ -18,4 +20,6 @@ namespace SuperMan
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
     }
+
+
 }

@@ -15,8 +15,11 @@ using SuperManBusinessLogic.CommonLogic;
 using System.Threading.Tasks;
 using SuperManDataAccess;
 using SuperManCommonModel;
+using SuperManBusinessLogic.B_Logic;
+
 namespace SuperManWebApi.Controllers
 {
+
     public class ClienterAPIController : ApiController
     {
         /// <summary>
@@ -28,29 +31,26 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<ClientRegisterResultModel> PostRegisterInfo_C(ClientRegisterInfoModel model)
         {
-            if (string.IsNullOrEmpty(model.phoneNo))
-            {
+            if (string.IsNullOrEmpty(model.phoneNo))  //手机号非空验证
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
-            }
-            if (ClienterLogic.clienterLogic().CheckExistPhone(model.phoneNo))
-            {
+            else if (ClienterLogic.clienterLogic().CheckExistPhone(model.phoneNo))  //判断该手机号是否已经注册过
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberRegistered);
-            }
-            if (string.IsNullOrEmpty(model.passWord))
-            {
+            else if (string.IsNullOrEmpty(model.passWord)) //密码非空验证
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PasswordEmpty);
-            }
-            //验证码
-            //if (model.verifyCode != SupermanApiCaching.Instance.Get(model.phoneNo))
-            //{
-            //    return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode);
-            //}
+            else if (string.IsNullOrEmpty(model.City) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
+                return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
+            else if (model.verifyCode != SupermanApiCaching.Instance.Get(model.phoneNo)) //判断验证法录入是否正确
+                return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode);
+            else if ((!ClienterLogic.clienterLogic().CheckExistPhone(model.recommendPhone))
+                &&(!BusiLogic.busiLogic().CheckExistPhone(model.phoneNo))) //如果推荐人手机号在B端C端都不存在提示信息
+                return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberNotExist);
             var clienter = ClientRegisterInfoModelTranslator.Instance.Translate(model);
-            bool result = ClienterLogic.clienterLogic().Add(clienter);
-            
+            bool result =ClienterLogic.clienterLogic().Add(clienter);
             var resultModel = new ClientRegisterResultModel
             {
-                userId = clienter.Id
+                userId = clienter.Id,
+                city = string.IsNullOrWhiteSpace(clienter.City) ? null : clienter.City.Trim(),  //城市
+                cityId = string.IsNullOrWhiteSpace(clienter.CityId) ? null : clienter.CityId.Trim()  //城市编码
             };
             return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
         }
@@ -73,7 +73,9 @@ namespace SuperManWebApi.Controllers
                 userId = business.Id,
                 phoneNo=business.PhoneNo,
                 status = business.Status,
-                Amount = business.AccountBalance
+                Amount = business.AccountBalance,
+                city = string.IsNullOrWhiteSpace(business.City) ? null : business.City.Trim(),  //城市
+                cityId = string.IsNullOrWhiteSpace(business.CityId) ? null : business.CityId.Trim()  //城市编码
             };
             return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.Success, result);
         }
@@ -169,7 +171,9 @@ namespace SuperManWebApi.Controllers
                 PagingRequest = new PagingResult(pIndex, pSize),
                 userId = model.userId,
                 status = model.status,
-                isLatest=model.isLatest
+                isLatest=model.isLatest,
+                city =string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
+                cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim() 
             };
             var pagedList = ClienterLogic.clienterLogic().GetOrders(criteria);
             var lists = ClientOrderResultModelTranslator.Instance.Translate(pagedList);
@@ -241,9 +245,20 @@ namespace SuperManWebApi.Controllers
         [HttpGet]
         public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListNoLoginLatest_C()
         {
+            ClientOrderInfoModel model = new ClientOrderInfoModel();
+            model.city = string.IsNullOrWhiteSpace(HttpContext.Current.Request["city"]) ? null : HttpContext.Current.Request["city"].Trim();//城市
+            model.cityId = string.IsNullOrWhiteSpace(HttpContext.Current.Request["cityId"]) ? null : HttpContext.Current.Request["cityId"].Trim(); //城市编码
             degree.longitude = 0;
             degree.latitude = 0;
-            var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLoginLatest();
+            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
+            var pSize = model.pageSize.HasValue ? model.pageIndex.Value : int.MaxValue;
+            ClientOrderSearchCriteria criteria = new ClientOrderSearchCriteria()
+            {
+                PagingRequest = new PagingResult(pIndex, pSize),
+                city = model.city,
+                cityId = model.cityId
+            };
+            var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLoginLatest(criteria);
             var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
             return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
         }
@@ -333,51 +348,39 @@ namespace SuperManWebApi.Controllers
         [HttpGet]
         public ResultModel<RushOrderResultModel> RushOrder_C(int userId, string orderNo)
         {
-            if (userId==0)
-            {
-                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
-            }
-            if (string.IsNullOrEmpty(orderNo))
-            {
+            if (userId==0) //用户id验证
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);  
+            if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
-            }
-            if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null)
-            {
+            if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null) //查询订单是否存在
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotExist);
-            }
-            if (!ClienterLogic.clienterLogic().CheckOrderIsAllowRush(orderNo))
-            {
+            if (!ClienterLogic.clienterLogic().CheckOrderIsAllowRush(orderNo))  //查询订单是否被抢
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
-            }
             bool bResult = ClienterLogic.clienterLogic().RushOrder(userId, orderNo);
             if (bResult)
-            {
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Success);
-            }
             else
-            {
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Failed);
-            }
         }
         /// <summary>
-        /// 完成订单
+        /// 完成订单 edit by caoheyang 20150204
         /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="orderNo"></param>
+        /// <param name="userId">C端用户id</param>
+        /// <param name="orderNo">订单号码</param>
         /// <returns></returns>
         [ActionStatus(typeof(FinishOrderStatus))]
         [HttpGet]
         public ResultModel<FinishOrderResultModel> FinishOrder_C(int userId, string orderNo)
         {
-            if (userId == 0)
+            if (userId == 0)  //用户id非空验证
             {
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.userIdEmpty);
             }
-            if (string.IsNullOrEmpty(orderNo))
+            if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
             {
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderEmpty);
             }
-            if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null)
+            if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null) //订单是否存在验证
             {
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderIsNotExist);
             }
@@ -406,7 +409,7 @@ namespace SuperManWebApi.Controllers
         /// <summary>
         /// 获取我的余额
         /// </summary>
-        /// <param name="phoneNo"></param>
+        /// <param name="phoneNo">手机号</param>
         /// <returns></returns>
         [ActionStatus(typeof(RushOrderStatus))]
         [HttpGet]
@@ -427,7 +430,7 @@ namespace SuperManWebApi.Controllers
         /// <summary>
         /// 获取我的余额动态
         /// </summary>
-        /// <param name="phoneNo"></param>
+        /// <param name="phoneNo">手机号</param>
         /// <returns></returns>
         [ActionStatus(typeof(RushOrderStatus))]
         [HttpGet]
@@ -446,8 +449,11 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary>
-        /// 请求动态验证码 
-        /// c</summary>
+        /// 请求动态验证码
+        /// </summary>
+        /// <param name="PhoneNumber">手机号</param>
+        /// <param name="type">操作类型： 0 注册 1修改密码</param>
+        /// <returns></returns>
         [ActionStatus(typeof(SendCheckCodeStatus))]
         [HttpGet]
         public SimpleResultModel CheckCode(string PhoneNumber,string type)
@@ -456,17 +462,12 @@ namespace SuperManWebApi.Controllers
             {
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.InvlidPhoneNumber);
             }
-
             var randomCode = new Random().Next(100000).ToString("D6");
             string msg = string.Empty;
             if (type == "0")//注册
-            {
-                msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode);
-            }
+                msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode,ConstValues.MessageBusiness);  
             else //修改密码
-            {
-                msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode);
-            }
+                msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode,ConstValues.MessageClinenter);
             try
             {
                 SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);
@@ -484,12 +485,5 @@ namespace SuperManWebApi.Controllers
             }
         }
 
-        [HttpGet]
-        public SimpleResultModel testPush()
-        {
-            //Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty);
-            Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", "14");
-            return SimpleResultModel.Conclude(SendCheckCodeStatus.Sending);
-        }
     }
 }

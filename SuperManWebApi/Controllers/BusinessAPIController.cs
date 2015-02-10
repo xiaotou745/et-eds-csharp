@@ -24,33 +24,26 @@ namespace SuperManWebApi.Controllers
     public class BusinessAPIController : ApiController
     {
         /// <summary>
-        /// B端注册
+        ///  B端注册 
         /// </summary>
+        /// <param name="model">注册用户基本数据信息</param>
         /// <returns></returns>
         [ActionStatus(typeof(CustomerRegisterStatus))]
         [HttpPost]
         public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(RegisterInfoModel model)
         {
-            if (string.IsNullOrEmpty(model.phoneNo)) 
-            {
+            if (string.IsNullOrEmpty(model.phoneNo))   //手机号非空验证
                 return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
-            }
-            if (BusiLogic.busiLogic().CheckExistPhone(model.phoneNo)) 
-            {
+            else if (BusiLogic.busiLogic().CheckExistPhone(model.phoneNo))  //判断该手机号是否已经注册过
                 return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberRegistered);
-            }
-            if (string.IsNullOrEmpty(model.passWord)) 
-            {
+            else if (string.IsNullOrEmpty(model.passWord))   //密码非空验证
                 return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PasswordEmpty);
-            }
-            //验证码
-            //if (model.verifyCode != SupermanApiCaching.Instance.Get(model.phoneNo))
-            //{
-            //    return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode);
-            //}
+            else if (model.verifyCode != SupermanApiCaching.Instance.Get(model.phoneNo))  //判断验证法录入是否正确
+                return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode); //CustomerRegisterStatus用户注册信息枚举
+            else if (string.IsNullOrEmpty(model.city) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
+                return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
             var business = RegisterInfoModelTranslator.Instance.Translate(model);
             bool result = BusiLogic.busiLogic().Add(business);
-
             var resultModel = new BusiRegisterResultModel
             {
                 userId = business.Id
@@ -155,17 +148,13 @@ namespace SuperManWebApi.Controllers
         [ActionStatus(typeof(PubOrderStatus))]
         [HttpPost]
         public ResultModel<BusiOrderResultModel> PostPublishOrder_B(BusiOrderInfoModel model)
-        {
+        { 
             //System.Diagnostics.Debug.WriteLine("getPost" + Guid.NewGuid());
-
-            var dborder = BusiOrderInfoModelTranslator.Instance.Translate(model);
-            bool result = OrderLogic.orderLogic().AddModel(dborder);            
+            order dborder = BusiOrderInfoModelTranslator.Instance.Translate(model);  //整合订单信息
+            bool result = OrderLogic.orderLogic().AddModel(dborder);    //添加订单记录，并且触发极光推送。          
             if(result)
             {
-                var resultModel = new BusiOrderResultModel
-                {
-                    userId = model.userId
-                };
+                BusiOrderResultModel resultModel = new BusiOrderResultModel { userId = model.userId };
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
             }
             else
@@ -250,13 +239,13 @@ namespace SuperManWebApi.Controllers
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.InvlidPhoneNumber);
             }
             var randomCode = new Random().Next(100000).ToString("D6");  //生成短信验证码
-            var msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode);  //获取提示用语信息
+            var msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode,ConstValues.MessageBusiness);  //获取提示用语信息
             try
             {
                 SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);
                  //更新短信通道 
                 Task.Factory.StartNew(() =>
-                { 
+                {
                     SendSmsHelper.SendSendSmsSaveLog(PhoneNumber, msg, ConstValues.SMSSOURCE);
                 });
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.Sending);  
@@ -280,8 +269,8 @@ namespace SuperManWebApi.Controllers
             {
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.InvlidPhoneNumber);
             }
-            var randomCode = new Random().Next(100000).ToString("D6");  
-            var msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode);
+            var randomCode = new Random().Next(100000).ToString("D6");
+            var msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode,ConstValues.MessageBusiness);
             try
             {                
                 SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);
@@ -298,42 +287,31 @@ namespace SuperManWebApi.Controllers
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.SendFailure);
             }
         }
+
+        /// <summary>
+        /// b端修改密码 edit by caoheyang 20150203 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [ActionStatus(typeof(ForgetPwdStatus))]
         [HttpPost]
         public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model)
         {
-            if (string.IsNullOrEmpty(model.password))
-            {
+            if (string.IsNullOrEmpty(model.password))  //密码非空验证
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.NewPwdEmpty);
-            }
-            if (string.IsNullOrEmpty(model.checkCode))
-            {
+            if (string.IsNullOrEmpty(model.checkCode)) //验证码非空验证
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeIsEmpty);
-            }
-            //start 需要验证 验证码是否正确
-            //if (SupermanApiCaching.Instance.Get(model.phoneNumber) != model.checkCode)
-            //{
-            //    return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong);
-            //}
-            //end
+            if (SupermanApiCaching.Instance.Get(model.phoneNumber) != model.checkCode) //验证码正确性验证
+                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong);
             var business = BusiLogic.busiLogic().GetBusinessByPhoneNo(model.phoneNumber);
-            if (business == null)
-            {
+            if (business == null)  //用户是否存在
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.ClienterIsNotExist);
-            }
-            if (business.Password == model.password)
-            {
+            if (business.Password == model.password) //您要找回的密码正是当前密码
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.PwdIsSave);
-            }
-            bool b = BusiLogic.busiLogic().ModifyPwd(business, model.password);
-            if (b)
-            {
+            if (BusiLogic.busiLogic().ModifyPwd(business.Id, model.password))
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.Success);
-            }
             else
-            {
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.FailedModifyPwd);
-            }
         }
         /// <summary>
         /// 取消订单

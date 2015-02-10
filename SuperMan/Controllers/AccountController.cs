@@ -19,6 +19,7 @@ using System.Web.Security;
 namespace SuperMan.Controllers
 {
     [Authorize]
+    [WebHandleError]
     public class AccountController : Controller
     {
         private ApplicationSignInManager _signInManager;
@@ -72,7 +73,7 @@ namespace SuperMan.Controllers
 
             if (ModelState.IsValid)
             {
-                var loginResult = _accountBussinessLogic.ValidateUser(model.UserName, model.Password);
+                var loginResult = _accountBussinessLogic.ValidateUser(model.UserName, MD5Helper.MD5(model.Password));
                 switch (loginResult)
                 {
                     case UserLoginResults.Successful:
