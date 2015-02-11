@@ -130,7 +130,7 @@ public class MyMoneyActivity extends BaseActivity implements OnClickListener, HT
     }
 
     private void call() {
-        Uri telUri = Uri.parse("tel:400 0000 6");
+        Uri telUri = Uri.parse("tel:" + Constants.CASH_TEL);
         Intent intent = new Intent(Intent.ACTION_DIAL, telUri);
         startActivity(intent);
     }

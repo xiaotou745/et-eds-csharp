@@ -38,4 +38,7 @@ public class Constants {
     public static int ORDER_RECIVED = 2;
     public static final String CODE_TYPE = "utf-8";
 
+    // 客服电话
+    public static final String CUSTOM_TEL = "";
+
 }
