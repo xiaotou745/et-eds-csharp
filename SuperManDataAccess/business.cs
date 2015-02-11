@@ -36,6 +36,8 @@ namespace SuperManDataAccess
         public Nullable<System.DateTime> InsertTime { get; set; }
         public string districtId { get; set; }
         public string CityId { get; set; }
+        public Nullable<int> GroupId { get; set; }
+        public Nullable<int> OriginalBusiId { get; set; }
     
         public virtual ICollection<order> order { get; set; }
     }

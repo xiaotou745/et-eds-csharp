@@ -32,9 +32,12 @@ namespace SuperManDataAccess
         public virtual DbSet<areaprovice> areaprovice { get; set; }
         public virtual DbSet<authority> authority { get; set; }
         public virtual DbSet<business> business { get; set; }
+        public virtual DbSet<channel> channel { get; set; }
         public virtual DbSet<clienter> clienter { get; set; }
+        public virtual DbSet<group> group { get; set; }
         public virtual DbSet<myincome> myincome { get; set; }
         public virtual DbSet<order> order { get; set; }
+        public virtual DbSet<orderlog> orderlog { get; set; }
         public virtual DbSet<pushmessage> pushmessage { get; set; }
         public virtual DbSet<pushmessagestatus> pushmessagestatus { get; set; }
         public virtual DbSet<region> region { get; set; }
