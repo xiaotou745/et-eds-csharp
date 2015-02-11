@@ -53,7 +53,7 @@
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
     <application
-        android:name="com.supermanc.SuperManCApplication"
+        android:name="com.eds.supermanc.SuperManCApplication"
         android:allowBackup="true"
         android:icon="@drawable/logo"
         android:debuggable="true"
@@ -64,7 +64,7 @@
             android:value="W4Usbyz3G5snbKyz2j2fshcl" />
 
         <activity
-            android:name="com.supermanc.activity.HomeActivity"
+            android:name="com.eds.supermanc.activity.HomeActivityvity"
             android:icon="@drawable/logo"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
@@ -74,32 +74,32 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.supermanc.activity.LoginActivity" 
+        <activity android:name="com.eds.supermanc.activity.LoginActivityvity" 
             android:screenOrientation="portrait"/>
-        <activity android:name="com.supermanc.activity.RegisterActivity" 
+        <activity android:name="com.eds.supermanc.activity.RegisterActivityvity" 
             android:screenOrientation="portrait"/>
-        <activity android:name="com.supermanc.activity.SettingActivity"
+        <activity android:name="com.eds.supermanc.activity.SettingActivityvity"
             android:screenOrientation="portrait" />
-        <activity android:name="com.supermanc.activity.UpdatePasswordActivity" 
+        <activity android:name="com.eds.supermanc.activity.UpdatePasswordActivityvity" 
             android:screenOrientation="portrait"/>
-        <activity android:name="com.supermanc.activity.MyMissionActivity" 
+        <activity android:name="com.eds.supermanc.activity.MyMissionActivityvity" 
             android:screenOrientation="portrait"/>
-        <activity android:name="com.supermanc.activity.BaiduMapActivity" 
+        <activity android:name="com.eds.supermanc.activity.BaiduMapActivityvity" 
             android:screenOrientation="portrait"/>
-        <activity android:name="com.supermanc.activity.MyMoneyActivity" 
+        <activity android:name="com.eds.supermanc.activity.MyMoneyActivityvity" 
             android:screenOrientation="portrait"/>
         <activity
-            android:name="com.supermanc.activity.SelectPicActivity"
+            android:name="com.eds.supermanc.activity.SelectPicActivityvity"
             android:theme="@style/DialogStyleBottom" 
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name="com.supermanc.activity.VerificationActivity" 
+        <activity android:name="com.eds.supermanc.activity.VerificationActivityvity" 
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name="com.supermanc.activity.MissionDetailActivity"
+        <activity android:name="com.eds.supermanc.activity.MissionDetailActivityvity"
 android:screenOrientation="portrait">
         </activity>
-        <activity android:name="com.supermanc.activity.ForgetPasswordActivity" 
+        <activity android:name="com.eds.supermanc.activity.ForgetPasswordActivityvity" 
             android:screenOrientation="portrait">
         </activity>
 
