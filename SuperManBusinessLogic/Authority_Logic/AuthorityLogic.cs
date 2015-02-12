@@ -29,15 +29,21 @@ namespace SuperManBusinessLogic.Authority_Logic
             return _instance;
         }
 
+
+        /// <summary>
+        ///  后台用户列表查询 add by caohheyang 20150212
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
         public AuthorityManage GetAuthorityManage(AuthoritySearchCriteria criteria)
         {
             using (var db = new supermanEntities())
             {
                 var items = db.account.Where(p => p.Status == ConstValues.AccountAvailable);
                 if (!string.IsNullOrEmpty(criteria.UserName))
-                {
                     items = items.Where(p => p.UserName == criteria.UserName);
-                }
+                if (criteria.GroupId != null)  //集团查询
+                    items = items.Where(p => p.GroupId == criteria.GroupId);
                 var pagedQuery = new AuthorityManage();
                 var resultModel = new PagedList<account>(items.ToList(), criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
                 var businesslists = new AuthorityManageList(resultModel.ToList(), resultModel.PagingResult);
@@ -83,6 +89,10 @@ namespace SuperManBusinessLogic.Authority_Logic
         {
 
         }
+        /// <summary>
+        /// 更新后台用户权限信息
+        /// </summary>
+        /// <param name="model"></param>
         public void UpdateAuthority(AuthorityListModel model)
         {
             using (var db = new supermanEntities())
@@ -92,7 +102,7 @@ namespace SuperManBusinessLogic.Authority_Logic
                 if (account != null)
                 {
                     var oldauid = db.accountauthority.Where(p => p.AccountId.Value == account.Id).ToList();
-                    List<int> existAuid = new List<int>();
+                    List<int> existAuid = new List<int>(); 
                     List<accountauthority> toRemove = new List<accountauthority>();
                     foreach (var oldid in oldauid)
                     {

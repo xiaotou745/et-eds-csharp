@@ -1,4 +1,5 @@
-﻿@model SuperManCommonModel.Models.BusinessManageList
+﻿@using SuperManBusinessLogic.Group_Logic
+@model SuperManCommonModel.Models.BusinessManageList
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
     <thead>
@@ -10,6 +11,7 @@
             <th>地址</th>
             <th>照片</th>
             <th>申请时间</th>
+            <th>所属集团</th>
             @*<th>订单</th>
                 <th>订单金额</th>*@
             <th>审核状态</th>
@@ -35,6 +37,12 @@
                         <a href="javascript:void(0)" class="businessOk" onclick="funcPicView('@String.Format("{0}{1}",PicHost,puth)','@item.CheckPicUrl')">查看</a>
                     </td>
                     <td>@item.InsertTime</td>
+                    <td>
+                        @if (item.GroupId != null) //当前商户有集团信息
+                        {
+                            @Html.Raw(GroupLogic.groupLogic().GetGroupName(Convert.ToInt32(item.GroupId)))
+                        }
+                    </td>
                     @{
                 var statusView = "";
                 if (@item.Status == SuperManCommonModel.ConstValues.BUSINESS_AUDITPASS)

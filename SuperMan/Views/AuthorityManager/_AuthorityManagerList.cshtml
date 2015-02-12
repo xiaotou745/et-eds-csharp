@@ -1,4 +1,7 @@
 ﻿@model SuperManCommonModel.Models.AuthorityManageList
+@using SuperMan.App_Start
+@using SuperManBusinessLogic.Group_Logic
+
 <script src="~/Scripts/view/authoritylist.js"></script>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
     <thead>
@@ -7,6 +10,7 @@
             <th width="%5">序号</th>
             <th>用户名</th>
             <th>登录名</th>
+            <th>所属集团</th>
             <th>操作</th>
         </tr>
     </thead>
@@ -21,10 +25,27 @@
                     <td>@item.UserName</td>
                     <td>@item.LoginName</td>
                     <td>
-                        <a href="javascript:void(0)" businessid="@item.Id" class="setAuthority">设置权限</a>
-                        <a href="javascript:void(0)" businessid="@item.Id" class="modifyPwd">修改密码</a>
+                        @if (item.GroupId != null) //当前商户有集团信息
+                        {
+                            @Html.Raw(GroupLogic.groupLogic().GetGroupName(Convert.ToInt32(item.GroupId)))
+                        }
+                    </td>
+                    <td>
+                        @if ((SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.AccountEdit) || UserContext.Current.Name == "admin")&&
+                            item.UserName != UserContext.Current.Name)
+                        {
+                            <a href="javascript:void(0)" businessid="@item.Id" class="setAuthority">设置权限</a>
+                        }
+                      @if (SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.AccountEditPassword) || UserContext.Current.Name == "admin")
+                            {
+                            <a href="javascript:void(0)" businessid="@item.Id" class="modifyPwd">修改密码</a>
+                      }
                         @*<a href="javascript:void(0)" businessid="@item.Id" class="accountView">查看</a>*@
-                        <a href="javascript:void(0)" businessid="@item.Id" class="accountDel">删除</a>
+                       @if ((SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.AccountDelete) || UserContext.Current.Name == "admin")&&
+                        item.UserName != UserContext.Current.Name)    
+                        {
+                         <a href="javascript:void(0)" businessid="@item.Id" class="accountDel">删除</a>
+                       }
                     </td>
                 </tr>
             }

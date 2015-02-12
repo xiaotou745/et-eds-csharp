@@ -31,8 +31,18 @@ namespace SuperMan
 		public const string BusiView = "商户设置-查看";
 		
 		public const string BusiAudit = "商户设置-审核";
-		
-		public const string BusSet = "补贴设置-设置";
+
+        public const string AccountView = "账号权限管理-查看";
+
+        public const string AccountAdd = "账号权限管理-新增";
+
+        public const string AccountEditPassword = "账号权限管理-修改密码";
+
+        public const string AccountEdit = "账号权限管理-设置权限";
+
+        public const string AccountDelete = "账号权限管理-删除";
+
+        public const string BusSet = "补贴设置-设置";
 		
 	}
 

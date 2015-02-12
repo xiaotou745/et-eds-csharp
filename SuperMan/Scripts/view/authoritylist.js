@@ -24,7 +24,6 @@
     $("#btnAddAccount").click(function () {
 
         $(".AddAccountfrom").validate({
-
             rules: {
                 accountName: {
                     required: true
@@ -54,7 +53,8 @@
                 var accountName = $('#accountName').val();
                 var loginName = $('#loginName').val();
                 var password = $('#password').val();
-                var paramaters = { "accountName": accountName, "loginName": loginName, "password": password };
+                var groupId = $('#AddGroupId').val();
+                var paramaters = { "accountName": accountName, "loginName": loginName, "password": password, "GroupId": groupId };
                 var url = "/AuthorityManager/Add";
                 $.ajax({
                     type: 'POST',
@@ -77,6 +77,7 @@
         return false;
     });
 
+    /*配置权限保存功能*/
     $(document).on("click", "#btnSetAuthority",function(){
     // $("#btnSetAuthority").bind("click", function () {
         var id = currentId;

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using SuperManDataAccess;
 
 namespace SuperMan.Controllers
 {
@@ -17,7 +18,11 @@ namespace SuperMan.Controllers
         // GET: BusinessManager
         public ActionResult BusinessManager()
         {
-            var criteria = new BusinessSearchCriteria() { PagingRequest = new PagingResult(0, 15) };
+            account account = HttpContext.Session["user"] as account;
+            if (account == null)
+                Response.Redirect("/account/login");
+            ViewBag.txtGroupId = account.GroupId;//集团id
+            var criteria = new BusinessSearchCriteria() { PagingRequest = new PagingResult(0, 15), GroupId = account.GroupId };
             criteria.Status = -1; //默认加载全部
             var pagedList = BusiLogic.busiLogic().GetBusinesses(criteria);
             return View(pagedList);
