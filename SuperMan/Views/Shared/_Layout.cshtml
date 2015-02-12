@@ -96,7 +96,7 @@
                         }
                     </li>
                     <li>
-                        @if (UserContext.Current.Name=="admin")
+                       @if (UserContext.Current.HasAuthority(AuthorityNames.AccountEdit)||UserContext.Current.Name=="admin")
                         {
                             <a class="dropdown-toggle" href="javascript:void(0);">
                                 <i class="skuicon"></i>
