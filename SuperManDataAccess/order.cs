@@ -39,6 +39,11 @@ namespace SuperManDataAccess
         public string OriginalOrderNo { get; set; }
         public Nullable<int> Quantity { get; set; }
         public Nullable<decimal> Weight { get; set; }
+        public string ReceiveProvince { get; set; }
+        public string ReceiveArea { get; set; }
+        public string ReceiveProvinceCode { get; set; }
+        public string ReceiveCityCode { get; set; }
+        public string ReceiveAreaCode { get; set; }
     
         public virtual business business { get; set; }
     }
