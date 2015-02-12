@@ -169,6 +169,11 @@
           <Property Name="OriginalOrderNo" Type="varchar" MaxLength="100" />
           <Property Name="Quantity" Type="int" />
           <Property Name="Weight" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="ReceiveProvince" Type="varchar" MaxLength="45" />
+          <Property Name="ReceiveArea" Type="varchar" MaxLength="45" />
+          <Property Name="ReceiveProvinceCode" Type="varchar" MaxLength="20" />
+          <Property Name="ReceiveCityCode" Type="varchar" MaxLength="45" />
+          <Property Name="ReceiveAreaCode" Type="varchar" MaxLength="45" />
         </EntityType>
         <EntityType Name="orderlog">
           <Key>
@@ -515,6 +520,11 @@
           <Property Name="OriginalOrderNo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Quantity" Type="Int32" />
           <Property Name="Weight" Type="Decimal" />
+          <Property Name="ReceiveProvince" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="ReceiveArea" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="ReceiveProvinceCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="ReceiveCityCode" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="ReceiveAreaCode" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="business" Relationship="supermanModel.businessId" FromRole="order" ToRole="business" />
         </EntityType>
         <EntityType Name="orderlog">
@@ -782,6 +792,11 @@
           <EntitySetMapping Name="order">
             <EntityTypeMapping TypeName="supermanModel.order">
               <MappingFragment StoreEntitySet="order">
+                <ScalarProperty Name="ReceiveAreaCode" ColumnName="ReceiveAreaCode" />
+                <ScalarProperty Name="ReceiveCityCode" ColumnName="ReceiveCityCode" />
+                <ScalarProperty Name="ReceiveProvinceCode" ColumnName="ReceiveProvinceCode" />
+                <ScalarProperty Name="ReceiveArea" ColumnName="ReceiveArea" />
+                <ScalarProperty Name="ReceiveProvince" ColumnName="ReceiveProvince" />
                 <ScalarProperty Name="Weight" ColumnName="Weight" />
                 <ScalarProperty Name="Quantity" ColumnName="Quantity" />
                 <ScalarProperty Name="OriginalOrderNo" ColumnName="OriginalOrderNo" />
