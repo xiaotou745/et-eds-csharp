@@ -1,6 +1,6 @@
 ﻿@model AuthorityManage
 @using SuperMan.App_Start
-
+@using SuperManBusinessLogic.Group_Logic
 
 @using SuperManCommonModel.Models;
 @{
@@ -73,13 +73,7 @@
                         <!-- Text input-->
                         <label class="control-label" for="input01">集团</label>
                         <div class="controls">
-                            <select name="AddGroupId" class="selectw" id="AddGroupId" style="width:143px">
-                                <option>全部</option>
-                                <option value="0">未接单</option>
-                                <option value="1">已完成</option>
-                                <option value="2">已接单</option>
-                                <option value="3">已取消</option>
-                            </select>
+                            @Html.DropDownList("AddGroupId", new SelectList(GroupLogic.groupLogic().GetGroups(), "Id", "GroupName"), "--无--", new { @class = "selectw", style = "width:143px" })
                         </div>
                     </div>
                 }

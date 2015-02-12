@@ -53,5 +53,18 @@ namespace SuperManBusinessLogic.Group_Logic
 
             }
         }
+
+        /// <summary>
+        /// 获取所有可用的集团信息数据  add by caoheyang 20150212
+        /// </summary>
+        /// <returns></returns>
+        public IList<group> GetGroups()
+        {
+            using (var db = new supermanEntities())
+            {
+                List<group> groups = db.group.Where(p=>p.IsValid == ConstValues.GroupIsIsValid).ToList();
+                return groups;
+            }
+        }
     }
 }
