@@ -52,6 +52,10 @@ namespace SuperManBusinessLogic.B_Logic
                 {
                     items = items.Where(p => p.Status == criteria.Status);
                 }
+                if (criteria.GroupId != null)
+                {
+                    items = items.Where(p => p.GroupId == criteria.GroupId);
+                }
                 var pagedQuery = new BusinessManage();
                 var resultModel = new PagedList<business>(items.ToList(), criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
                 var businesslists = new BusinessManageList(resultModel.ToList(), resultModel.PagingResult);

@@ -26,6 +26,7 @@
                     </select>
                     <span class="">商户电话: </span>
                     <input id="txtBusinessPhone" type="text" />
+                    <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" />
                     <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                 </td>
             </tr>
@@ -62,6 +63,7 @@
                 BusinessName: $("#txtBusinessName").val(), //商户名称
                 BusinessPhone: $("#txtBusinessPhone").val(),////商户电话
                 status: $("#businessStatus").val(),
+                GroupId: $("#txtGroupId").val(),
                 PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE }
             };
             refresh(0);
