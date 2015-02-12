@@ -1,4 +1,7 @@
 ﻿@model AuthorityManage
+@using SuperMan.App_Start
+
+
 @using SuperManCommonModel.Models;
 @{
     ViewBag.Title = "Authority";
@@ -16,7 +19,10 @@
                         <span class="">用户名: </span>
                         <input id="txtName" type="text" />
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
-                        <input type="button" value="添加用户" class="searchBtn" id="btnAdd" />
+                        @if (SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.AccountAdd) || UserContext.Current.Name == "admin")
+                        { 
+                                     <input type="button" value="添加用户" class="searchBtn" id="btnAdd" />
+                        }
                     </td>
                 </tr>
             </table>
@@ -60,6 +66,27 @@
                         <p class="help-block"></p>
                     </div>
                 </div>
+                @if (ViewBag.txtGroupId == null)
+                {
+                    <div class="control-group">
+                        <!-- Text input-->
+                        <label class="control-label" for="input01">集团</label>
+                        <div class="controls">
+                            <select name="GroupId" class="selectw" id="GroupId" style="width:143px">
+                                <option value="-1">全部</option>
+                                <option value="0">未接单</option>
+                                <option value="1">已完成</option>
+                                <option value="2">已接单</option>
+                                <option value="3">已取消</option>
+                            </select>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <input name="GroupId" id="GroupId" type="hidden"  value="@ViewBag.GroupId"/>
+                }
+             
             </fieldset>
             <p class="btnbox">
                 <input value="确定" type="submit" id="btnAddAccount" class="yesBtn" />

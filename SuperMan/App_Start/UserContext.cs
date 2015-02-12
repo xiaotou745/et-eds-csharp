@@ -22,7 +22,6 @@ namespace SuperMan.App_Start
                 if (HttpContext.Current.Items[CurrentUserContextCacheKey] == null)
                 {
                     var user = HttpContext.Current.User.Identity;
-
                     var bllAccount = new AccountBussinessLogic();
                     var account = bllAccount.Get(user.Name);
                     if (account == null)

@@ -1,4 +1,6 @@
 ﻿@model SuperManCommonModel.Models.AuthorityManageList
+@using SuperMan.App_Start
+
 <script src="~/Scripts/view/authoritylist.js"></script>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
     <thead>
@@ -21,10 +23,19 @@
                     <td>@item.UserName</td>
                     <td>@item.LoginName</td>
                     <td>
-                        <a href="javascript:void(0)" businessid="@item.Id" class="setAuthority">设置权限</a>
-                        <a href="javascript:void(0)" businessid="@item.Id" class="modifyPwd">修改密码</a>
+                        @if (SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.AccountEdit) || UserContext.Current.Name == "admin")
+                        {
+                            <a href="javascript:void(0)" businessid="@item.Id" class="setAuthority">设置权限</a>
+                        }
+                      @if (SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.AccountEditPassword) || UserContext.Current.Name == "admin")
+                            {
+                            <a href="javascript:void(0)" businessid="@item.Id" class="modifyPwd">修改密码</a>
+                      }
                         @*<a href="javascript:void(0)" businessid="@item.Id" class="accountView">查看</a>*@
-                        <a href="javascript:void(0)" businessid="@item.Id" class="accountDel">删除</a>
+                       @if (SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.AccountDelete) || UserContext.Current.Name == "admin")
+                            {
+                         <a href="javascript:void(0)" businessid="@item.Id" class="accountDel">删除</a>
+                       }
                     </td>
                 </tr>
             }
