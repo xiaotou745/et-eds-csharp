@@ -229,6 +229,7 @@
     <Compile Include="Models\Business\BusiOrderResultModel.cs" />
     <Compile Include="Models\Business\BusiModifyPwdResultModel.cs" />
     <Compile Include="Models\Business\LoginModel.cs" />
+    <Compile Include="Models\Business\NewRegisterInfoModel.cs" />
     <Compile Include="Models\Business\RegisterInfoModel.cs" />
     <Compile Include="Models\Business\UploadIconModel.cs" />
     <Compile Include="Models\Clienter\ClienterLoginResultModel.cs" />
