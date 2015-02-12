@@ -21,5 +21,6 @@ namespace SuperManDataAccess
         public Nullable<System.DateTime> StartDate { get; set; }
         public Nullable<System.DateTime> EndDate { get; set; }
         public Nullable<sbyte> Status { get; set; }
+        public Nullable<int> GroupId { get; set; }
     }
 }

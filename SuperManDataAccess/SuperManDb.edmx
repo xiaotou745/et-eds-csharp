@@ -247,6 +247,7 @@
           <Property Name="StartDate" Type="datetime" Precision="0" />
           <Property Name="EndDate" Type="datetime" Precision="0" />
           <Property Name="Status" Type="tinyint" />
+          <Property Name="GroupId" Type="int" />
         </EntityType>
         <Association Name="accountId">
           <End Role="account" Type="Self.account" Multiplicity="0..1" />
@@ -598,6 +599,7 @@
           <Property Name="StartDate" Type="DateTime" />
           <Property Name="EndDate" Type="DateTime" />
           <Property Name="Status" Type="SByte" />
+          <Property Name="GroupId" Type="Int32" />
         </EntityType>
         <Association Name="accountId">
           <End Type="supermanModel.account" Role="account" Multiplicity="0..1" />
@@ -891,6 +893,7 @@
           <EntitySetMapping Name="subsidy">
             <EntityTypeMapping TypeName="supermanModel.subsidy">
               <MappingFragment StoreEntitySet="subsidy">
+                <ScalarProperty Name="GroupId" ColumnName="GroupId" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="EndDate" ColumnName="EndDate" />
                 <ScalarProperty Name="StartDate" ColumnName="StartDate" />
