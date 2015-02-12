@@ -2,6 +2,7 @@
 using SuperManCommonModel;
 using SuperManCommonModel.Entities;
 using SuperManCommonModel.Models;
+using SuperManCore;
 using SuperManCore.Common;
 using SuperManCore.Paging;
 using SuperManDataAccess;
@@ -57,7 +58,7 @@ namespace SuperMan.Controllers
             var account = new account();
             account.LoginName = loginName;
             account.UserName = accountName;
-            account.Password = password;
+            account.Password = MD5Helper.MD5(password);
             account.Status = ConstValues.AccountAvailable;
             AuthorityLogic.authorityLogic().AddAccount(account);
             return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);

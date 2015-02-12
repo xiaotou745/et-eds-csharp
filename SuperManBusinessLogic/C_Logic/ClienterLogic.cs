@@ -37,23 +37,24 @@ namespace SuperManBusinessLogic.C_Logic
 
         public PagedList<ClienterViewModel> resultModel { get; set; }
 
+        /// <summary>
+        /// 超人列表查询 add by caohheyang 20150212
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
         public ClienterManage GetClienteres(ClienterSearchCriteria criteria)
         {
             using (var db = new supermanEntities())
             {
                 var items = db.clienter.AsQueryable();
                 if (!string.IsNullOrEmpty(criteria.clienterName))
-                {
                     items = items.Where(p => p.TrueName == criteria.clienterName);
-                }
                 if (!string.IsNullOrEmpty(criteria.clienterPhone))
-                {
                     items = items.Where(p => p.PhoneNo == criteria.clienterPhone);
-                }
                 if (criteria.Status != -1)
-                {
                     items = items.Where(p => p.Status == criteria.Status);
-                }
+                if (criteria.GroupId != null)  //集团查询
+                    items = items.Where(p => p.GroupId == criteria.GroupId);
                 var pagedQuery = new ClienterManage();
                 var clienters = new PagedList<clienter>(items.ToList(), criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
                 var businesslists = new ClienterManageList(clienters, clienters.PagingResult);

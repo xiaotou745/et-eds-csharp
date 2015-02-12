@@ -2,6 +2,7 @@
 using SuperManCommonModel.Entities;
 using SuperManCore.Common;
 using SuperManCore.Paging;
+using SuperManDataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,8 +18,11 @@ namespace SuperMan.Controllers
         // GET: BusinessManager
         public ActionResult SuperManManager()
         {
-            var criteria = new ClienterSearchCriteria() { PagingRequest = new PagingResult(0, 15) };
-            criteria.Status = -1;
+            account account = HttpContext.Session["user"] as account;
+            if (account == null)
+                Response.Redirect("/account/login");
+            ViewBag.txtGroupId = account.GroupId;//集团id
+            var criteria = new ClienterSearchCriteria() { PagingRequest = new PagingResult(0, 15), Status = -1,GroupId=account.GroupId};
             var pagedList = ClienterLogic.clienterLogic().GetClienteres(criteria);
             return View(pagedList);
         }

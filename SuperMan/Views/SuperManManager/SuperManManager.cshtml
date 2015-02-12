@@ -24,6 +24,7 @@
                     </select>
                     <span class="">超人电话: </span>
                     <input id="txtSuperManPhone" type="text" />
+                    <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" />
                     <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                 </td>
             </tr>
@@ -37,7 +38,7 @@
 <script>
     var adminjs = new adminglass(); //实例化后台类
     var DEFAULT_PAGESIZE = 15;
-    var criteria = { PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE } };
+    var criteria = { PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE }, GroupId: $("#txtGroupId").val() };
     $(document).ready(function () {
         //查询
         $("#btnSearch").on('click', function () {
@@ -45,6 +46,7 @@
                 clienterName: $("#txtSuperManName").val(),
                 clienterPhone: $("#txtSuperManPhone").val(),
                 status: $("#superManStatus").val(),
+                GroupId: $("#txtGroupId").val(),
                 PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE }
             };
             refresh(0);
