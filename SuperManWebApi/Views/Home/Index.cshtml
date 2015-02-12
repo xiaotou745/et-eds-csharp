@@ -10,15 +10,22 @@
         //$.ajax({
         //    type: 'POST',
         //    dataType: 'json',
-        //    url: '/ClienterAPI/PostRegisterInfo_C',
+        //    url: '/BusinessAPI/NewPostPublishOrder_B',
         //    data: {
-        //        city: "", CityId: "dasda", phoneNo: "13854538433", passWord: "zhangsa", verifyCode: "asda",
-        //        recommendPhone:"18553507220",status:"0"
-        //        //userid: "41", receviceName: "232323", recevicePhone: "18553507220",
-        //        //receviceAddress: "dasdsad", Amount: "",
-        //        //IsPay:true,longitude:"232",laitude:"23232",Remark:""
-        //        //longitude:"15",latitude:"",city:"北京市"
-        //        //userid: "43",status:"2"
+        //        OriginalOrderNo: "1155201502121730",
+        //        IsPay: "true",
+        //        OriginalBusinessId: "15",
+        //        PubDate: "2015-02-12 12:12:12",
+        //        Quantity: "10",
+        //        Receive_Address: "尚8国际广告园",
+        //        Receive_Area: "朝阳区",
+        //        Receive_City: "北京市",
+        //        Receive_Province: "北京市",
+        //        ReceiveName: "王子龙",
+        //        ReceivePhoneNo: "15652225526",
+        //        Weight: "1.26",
+        //        Amount: "26",
+        //        OrderFrom :3
         //    },
         //    success: function (data) {
         //        console.log(data);
@@ -27,6 +34,22 @@
 
         //    }
         //});
+
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: '/BusinessAPI/OrderCancel',
+            data: {
+                OriginalOrderNo: '201223213', OrderFrom: '15'
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () {
+
+            }
+        });
+
 
         //$.ajax({
         //    type: 'POST',
@@ -42,19 +65,7 @@
 
         //    }
         //});
- 
-        
-        //$.ajax({
-        //    type: 'POST',
-        //    dataType: 'json',
-        //    url: '/BusinessAPI/PostPublishOrder_B',
-        //    data: {
-        //        userId:1
-        //    },
-        //    success: function (data) {
-        //        console.log(data);
-        //    }
-        //});
+  
     });
 </script>
 <div class="row">

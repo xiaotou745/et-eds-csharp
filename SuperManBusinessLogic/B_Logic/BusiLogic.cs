@@ -380,6 +380,33 @@ namespace SuperManBusinessLogic.B_Logic
         }
 
         /// <summary>
+        /// 根据原平台商户Id和订单来源获取该商户信息
+        /// </summary>
+        /// <param name="oriBusiId"></param>
+        /// <param name="orderFrom"></param>
+        /// <returns></returns>
+        public business GetBusiByOriIdAndOrderFrom(int oriBusiId, int orderFrom)
+        {
+            try
+            {
+                using (var db = new supermanEntities())
+                {
+                    var query = db.business.Where(p => p.OriginalBusiId == oriBusiId && p.GroupId == orderFrom).FirstOrDefault();
+                    if (query != null)
+                    {
+                        return query;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(new { oriBusiId = oriBusiId, orderFrom = orderFrom }, ex, "根据原平台订单号和订单来源获取商户信息"); 
+            }
+            return null;
+        }
+
+
+        /// <summary>
         /// 更新一个business
         /// </summary>
         /// <param name="business"></param>

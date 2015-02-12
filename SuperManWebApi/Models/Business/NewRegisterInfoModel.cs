@@ -54,15 +54,15 @@ namespace SuperManWebApi.Models.Business
         /// <summary>
         /// 省
         /// </summary>
-        public string B_ProvinceId { get; set; }
+        public int B_ProvinceId { get; set; }
         /// <summary>
         /// 市
         /// </summary>
-        public string B_CityId { get; set; }
+        public int B_CityId { get; set; }
         /// <summary>
         /// 区域
         /// </summary>
-        public string B_AreaId { get; set; }
+        public int B_AreaId { get; set; }
         /// <summary>
         /// 商户所在区域经度
         /// </summary>
@@ -87,15 +87,26 @@ namespace SuperManWebApi.Models.Business
         {
             var to = new business();
             //to.Id = Helper.generateCode(from.phoneNo,AppType.B端);
+            to.CityId = from.B_CityId.ToString();
             to.City = from.B_City;
+            to.districtId = from.B_AreaId.ToString();
+            to.district = from.B_Area;
+            to.Address = from.Address;
+
+
             to.GroupId = from.B_GroupId;
+
             to.IDCard = from.B_IdCard;
-            to.districtId = "0";
             to.Password = MD5Helper.MD5(from.B_Password);
             to.PhoneNo = from.PhoneNo;
             to.PhoneNo2 = from.PhoneNo2;
+            to.Latitude = from.B_Latitude;
+            to.Longitude = from.B_Longitude;
+            to.Name = from.B_Name;
+
+            to.OriginalBusiId = from.B_OriginalId;
             to.InsertTime = DateTime.Now;
-            
+
             return to;
         }
     }

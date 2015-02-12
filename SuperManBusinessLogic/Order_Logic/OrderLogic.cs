@@ -203,6 +203,33 @@ namespace SuperManBusinessLogic.Order_Logic
         }
 
         /// <summary>
+        /// 更新订单状态，通过第三方订单号 和 订单 来源更新
+        /// </summary>
+        /// <param name="order"></param>
+        /// <param name="orderStatus"></param>
+        public bool UpdateOrder(string oriOrderNo,int orderFrom, OrderStatus orderStatus)
+        {
+            bool bResult = false;
+            using (var db = new supermanEntities())
+            {
+                var query = db.order.Where(p => p.OriginalOrderNo == oriOrderNo && p.OrderFrom == orderFrom && p.Status == ConstValues.ORDER_NEW).FirstOrDefault();
+                if (query != null)
+                {
+                    if (orderStatus == OrderStatus.订单已取消)
+                    {
+                        query.Status = ConstValues.ORDER_CANCEL;
+                    }
+                    int i = db.SaveChanges();
+                    if (i == 1)
+                    {
+                        bResult = true;
+                    }
+                }
+            }
+            return bResult;
+        }
+
+        /// <summary>
         /// 订单统计
         /// </summary>
         /// <param name="criteria"></param>
@@ -310,6 +337,20 @@ namespace SuperManBusinessLogic.Order_Logic
                 model.TodayOrdersAmount = TodayOrders.Count() == 0 ? 0.00m : TodayOrders.Sum(p => p.Amount).Value;
             }
             return model;
+        }
+        /// <summary>
+        /// 根据
+        /// </summary>
+        /// <param name="orderNO">第三方平台的原订单号</param>
+        /// <param name="orderFrom">订单来源</param>
+        /// <returns></returns>
+        public order GetOrderByOrderNoAndOrderFrom(string orderNO,int orderFrom)
+        {
+            using (var dbEntity = new supermanEntities())
+            {
+                var query = dbEntity.order.Where(p => p.OriginalOrderNo == orderNO && p.OrderFrom == orderFrom);
+                return query.FirstOrDefault();
+            }
         }
     }
 }

@@ -58,6 +58,8 @@ namespace SuperManWebApi.Models.Business
     public enum CustomerRegisterStatus : int
     {
         Success = 0,
+        [DisplayText("商户名称不能为空")]
+        BusiNameEmpty,
         [DisplayText("城市不能为空")]
         cityIdEmpty,
         [DisplayText("手机号不能为空")]
@@ -71,6 +73,10 @@ namespace SuperManWebApi.Models.Business
         [DisplayText("手机号已被注册")]
         PhoneNumberRegistered,
         [DisplayText("您输入的的号码不存在,请检查并修改！")]  //推荐人不存在
-        PhoneNumberNotExist
+        PhoneNumberNotExist,
+
+        [DisplayText("商户地址省市区地址不能为空")]  //推荐人不存在
+        BusiAddressEmpty
+
     }
 }

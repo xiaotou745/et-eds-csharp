@@ -57,6 +57,8 @@ namespace SuperManCore.Common
     {
         [DisplayText("取消成功")]
         Success,
+        [DisplayText("订单来源不能为空")]
+        OrderFromEmpty,
         [DisplayText("订单号不能为空")]
         OrderEmpty,
         [DisplayText("订单不存在")]
