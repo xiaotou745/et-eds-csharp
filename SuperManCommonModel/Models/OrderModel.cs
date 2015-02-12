@@ -97,6 +97,16 @@ namespace SuperManCommonModel.Models
         /// 原平台订单号
         /// </summary>
         public string OriginalOrderNo { get; set; }
+
+        /// <summary>
+        /// 集团id
+        /// </summary>
+        public int? GroupId { get; set; }
+
+        /// <summary>
+        /// 集团名称
+        /// </summary>
+        public string GroupName { get; set; }
     }
 
     /// <summary>

@@ -137,4 +137,13 @@ namespace SuperManCore.Common
         [DisplayText("手机号不能为空")]
         PhoneEmpty
     }
+
+    /// <summary>
+    /// 集团状态枚举  add by caohehang 20150212
+    /// </summary>
+    public enum GroupIsValidStatus
+    {
+       正常= 1,
+       不可用 = 0
+    }
 }

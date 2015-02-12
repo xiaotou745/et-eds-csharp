@@ -78,15 +78,28 @@ namespace SuperManCommonModel
         #region 短信息 B端C端区分标识 add by caoheyang 20150129 
 
         /// <summary>
-        /// 帐号可用
+        /// 代送商家版
         /// </summary>
         public const string MessageBusiness = "e代送商家版";
 
         /// <summary>
-        /// 帐号可用
+        /// 代送外送员版
         /// </summary>
         public const string MessageClinenter = "e代送外送员版";
 
+        #endregion
+
+
+        #region 集团状态标识 add by caoheyang 20150212
+
+        /// <summary>
+        /// 可用
+        /// </summary>
+        public const int GroupIsIsValid = 1;
+        /// <summary>
+        /// 不可用
+        /// </summary>
+        public const int GroupIsIsValidFasle = 0;
         #endregion
     }
 }

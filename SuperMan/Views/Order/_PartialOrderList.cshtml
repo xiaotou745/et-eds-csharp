@@ -15,6 +15,7 @@
             <th>配送补贴</th>
             <th>网站补贴</th>
             <th>原平台订单号</th>
+            <th>所属集团</th>
             <th>订单状态</th>
             <th>操作</th>
         </tr>
@@ -38,6 +39,7 @@
                     <td>@item.DistribSubsidy</td>
                     <td>@item.WebsiteSubsidy</td>
                     <td>@item.OriginalOrderNo</td>
+                    <td>@item.GroupName</td>
                     @{
                         var strstatus = "";
                         if (@item.Status == SuperManCommonModel.ConstValues.ORDER_FINISH)
