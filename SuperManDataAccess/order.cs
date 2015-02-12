@@ -34,7 +34,7 @@ namespace SuperManDataAccess
         public string ReceviceCity { get; set; }
         public Nullable<double> ReceviceLongitude { get; set; }
         public Nullable<double> ReceviceLatitude { get; set; }
-        public sbyte OrderFrom { get; set; }
+        public int OrderFrom { get; set; }
         public Nullable<long> OriginalOrderId { get; set; }
         public string OriginalOrderNo { get; set; }
         public Nullable<int> Quantity { get; set; }

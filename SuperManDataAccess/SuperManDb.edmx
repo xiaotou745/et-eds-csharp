@@ -164,7 +164,7 @@
           <Property Name="ReceviceCity" Type="varchar" MaxLength="45" />
           <Property Name="ReceviceLongitude" Type="double" />
           <Property Name="ReceviceLatitude" Type="double" />
-          <Property Name="OrderFrom" Type="tinyint" Nullable="false" />
+          <Property Name="OrderFrom" Type="int" Nullable="false" />
           <Property Name="OriginalOrderId" Type="bigint" />
           <Property Name="OriginalOrderNo" Type="varchar" MaxLength="100" />
           <Property Name="Quantity" Type="int" />
@@ -509,7 +509,7 @@
           <Property Name="ReceviceCity" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
           <Property Name="ReceviceLongitude" Type="Double" />
           <Property Name="ReceviceLatitude" Type="Double" />
-          <Property Name="OrderFrom" Type="SByte" Nullable="false" />
+          <Property Name="OrderFrom" Type="Int32" Nullable="false" />
           <Property Name="OriginalOrderId" Type="Int64" />
           <Property Name="OriginalOrderNo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Quantity" Type="Int32" />
