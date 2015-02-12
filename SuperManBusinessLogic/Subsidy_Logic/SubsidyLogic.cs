@@ -67,6 +67,7 @@ namespace SuperManBusinessLogic.Subsidy_Logic
                     dbModel.OrderCommission = 0.1m;
                 }
                 dbModel.StartDate = model.StartDate;
+                dbModel.GroupId = model.GroupId;
                 dbModel.EndDate = model.EndDate;
                 dbModel.Status = 1;
                 db.subsidy.Add(dbModel);
@@ -86,6 +87,10 @@ namespace SuperManBusinessLogic.Subsidy_Logic
             {
                 items = db.subsidy.OrderByDescending(p=>p.StartDate).AsQueryable();
                 items = items.OrderByDescending(p => p.EndDate);
+                if (criteria.GroupId != null)
+                {
+                    items = items.Where(p => p.GroupId == criteria.GroupId);
+                }
                 var resultModel = new PagedList<subsidy>(items.ToList(), criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
                 var businesslists = new SubsidyManageList(resultModel.ToList(), resultModel.PagingResult);
                 var pagedQuery = businesslists;
