@@ -53,7 +53,7 @@
                 var accountName = $('#accountName').val();
                 var loginName = $('#loginName').val();
                 var password = $('#password').val();
-                var groupId = $('#GroupId').val();
+                var groupId = $('#AddGroupId').val();
                 var paramaters = { "accountName": accountName, "loginName": loginName, "password": password, "GroupId": groupId };
                 var url = "/AuthorityManager/Add";
                 $.ajax({

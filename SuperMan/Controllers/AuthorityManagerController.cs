@@ -19,17 +19,27 @@ namespace SuperMan.Controllers
     [WebHandleError]
     public class AuthorityManagerController : Controller
     {
+        
         // GET: AuthorityManager
+       /// <summary>
+       /// 后台用户管理列表页面
+       /// </summary>
+       /// <returns></returns>
         public ActionResult AuthorityManager()
         {
             account account = HttpContext.Session["user"] as account;
             if (account == null)
                 Response.Redirect("/account/login");
             ViewBag.txtGroupId = account.GroupId;//集团id
-            var criteria = new AuthoritySearchCriteria() { PagingRequest = new PagingResult(0, 15) };
+            var criteria = new AuthoritySearchCriteria() { PagingRequest = new PagingResult(0, 15),GroupId=account.GroupId};
             var authorityModel = AuthorityLogic.authorityLogic().GetAuthorityManage(criteria);
             return View(authorityModel);
         }
+        /// <summary>
+        /// 后台用户管理列表页面 异步加载区域
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult AuthorityManager(AuthoritySearchCriteria criteria)
         {
