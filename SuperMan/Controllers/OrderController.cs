@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using SuperManCore;
 using SuperManCore.Paging;
+using SuperManDataAccess;
 
 namespace SuperMan.Controllers
 {
@@ -18,7 +19,13 @@ namespace SuperMan.Controllers
         //Get: /Order  订单管理
         public ActionResult Order()
         {
-            var criteria = new OrderSearchCriteria() { orderStatus = -1, PagingRequest = new PagingResult(0, 15) };
+            account account = HttpContext.Session["user"] as account;
+            if (account == null)
+            {
+                Response.Redirect("/account/login");
+            }
+            ViewBag.txtGroupId = account.GroupId;//集团id
+            var criteria = new OrderSearchCriteria() { orderStatus = -1, PagingRequest = new PagingResult(0, 15),GroupId=account.GroupId };
             var pagedList = OrderLogic.orderLogic().GetOrders(criteria);
             return View(pagedList);
         }

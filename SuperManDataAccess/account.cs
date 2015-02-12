@@ -29,6 +29,7 @@ namespace SuperManDataAccess
         public string FAUser { get; set; }
         public Nullable<System.DateTime> LCDateTime { get; set; }
         public string LCUser { get; set; }
+        public Nullable<int> GroupId { get; set; }
     
         public virtual ICollection<accountauthority> accountauthority { get; set; }
     }

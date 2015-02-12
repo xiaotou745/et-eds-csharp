@@ -89,6 +89,10 @@ namespace SuperManBusinessLogic.Order_Logic
                     var dt = DateTime.Parse(criteria.orderPubEnd);
                     items = items.Where(p => p.PubDate.Value <= dt);
                 }
+                if (criteria.GroupId!=null)
+                {
+                    items = items.Where(p => p.business.GroupId == criteria.GroupId);
+                }
                 var pagedQuery = new OrderManage();
                 var orderModel = OrderModelTranslator.Instance.Translate(items.ToList());
                 resultModel = new PagedList<OrderModel>(orderModel, criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);

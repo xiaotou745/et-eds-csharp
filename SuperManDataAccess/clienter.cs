@@ -29,5 +29,6 @@ namespace SuperManDataAccess
         public string InviteCode { get; set; }
         public string City { get; set; }
         public string CityId { get; set; }
+        public Nullable<int> GroupId { get; set; }
     }
 }

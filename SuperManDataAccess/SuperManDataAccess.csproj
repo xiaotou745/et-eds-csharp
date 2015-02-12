@@ -79,13 +79,22 @@
     <Compile Include="business.cs">
       <DependentUpon>SuperManDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="channel.cs">
+      <DependentUpon>SuperManDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="clienter.cs">
+      <DependentUpon>SuperManDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="group.cs">
       <DependentUpon>SuperManDb.tt</DependentUpon>
     </Compile>
     <Compile Include="myincome.cs">
       <DependentUpon>SuperManDb.tt</DependentUpon>
     </Compile>
     <Compile Include="order.cs">
+      <DependentUpon>SuperManDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="orderlog.cs">
       <DependentUpon>SuperManDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

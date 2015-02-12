@@ -18,6 +18,7 @@ namespace SuperManBusinessLogic.Order_Logic
         {
             var to = new OrderModel();
             to.Id = from.Id;
+            to.OrderNo = from.OrderNo;
             to.BusinessModel = ConventValue(from.business);
             if (from.clienterId != null)
             {
@@ -40,6 +41,8 @@ namespace SuperManBusinessLogic.Order_Logic
             to.WebsiteSubsidy = from.WebsiteSubsidy;
             to.Remark = from.Remark;
             to.Status = from.Status;
+            to.OriginalOrderNo = from.OriginalOrderNo;//原平台订单号
+            to.OriginalOrderId = from.OriginalOrderId;//原平台订单id
 
             if (from.business != null && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
             {

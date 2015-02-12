@@ -14,6 +14,7 @@
             <th>订单佣金</th>
             <th>配送补贴</th>
             <th>网站补贴</th>
+            <th>原平台订单号</th>
             <th>订单状态</th>
             <th>操作</th>
         </tr>
@@ -25,7 +26,7 @@
             {
                 i++;
                 <tr id="@item.Id">
-                    <td>@item.Id</td>
+                    <td>@item.OrderNo</td>
                     <td>@item.BusinessModel.Name <br> @item.BusinessModel.PhoneNo</td>
                     <td>@item.ClienterName <br> @item.ClienterPhoneNo</td>
                     <td>@item.PubDate</td>
@@ -36,7 +37,7 @@
                     <td>@item.OrderCommission</td>
                     <td>@item.DistribSubsidy</td>
                     <td>@item.WebsiteSubsidy</td>
-
+                    <td>@item.OriginalOrderNo</td>
                     @{
                         var strstatus = "";
                         if (@item.Status == SuperManCommonModel.ConstValues.ORDER_FINISH)

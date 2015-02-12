@@ -48,4 +48,7 @@ public class Constants {
     public static final int DEFAULT_RESULT_CODE = 10002;// 默认请求
     public static final int SET_JPUSH_TAG_RESULT_CODE = 10003;
 
+    // 提现电话
+    public static final String CASH_TEL = "";
+
 }

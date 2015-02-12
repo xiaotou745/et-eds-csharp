@@ -88,6 +88,15 @@ namespace SuperManCommonModel.Models
         /// 商家到收货人的距离
         /// </summary>
         public double distanceB2R { get; set; }
+
+        /// <summary>
+        /// 原平台订单id
+        /// </summary>
+        public long? OriginalOrderId { get; set; }
+        /// <summary>
+        /// 原平台订单号
+        /// </summary>
+        public string OriginalOrderNo { get; set; }
     }
 
     /// <summary>
