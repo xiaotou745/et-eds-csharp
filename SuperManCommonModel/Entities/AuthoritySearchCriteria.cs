@@ -11,5 +11,9 @@ namespace SuperManCommonModel.Entities
     {
         public PagingResult PagingRequest { get; set; }
         public string UserName { get; set; }
+        /// <summary>
+        /// 集团id
+        /// </summary>
+        public int? GroupId { get; set; }
     }
 }

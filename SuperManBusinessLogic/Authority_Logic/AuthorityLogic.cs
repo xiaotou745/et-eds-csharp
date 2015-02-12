@@ -29,15 +29,21 @@ namespace SuperManBusinessLogic.Authority_Logic
             return _instance;
         }
 
+
+        /// <summary>
+        ///  后台用户列表查询 add by caohheyang 20150212
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
         public AuthorityManage GetAuthorityManage(AuthoritySearchCriteria criteria)
         {
             using (var db = new supermanEntities())
             {
                 var items = db.account.Where(p => p.Status == ConstValues.AccountAvailable);
                 if (!string.IsNullOrEmpty(criteria.UserName))
-                {
                     items = items.Where(p => p.UserName == criteria.UserName);
-                }
+                if (criteria.GroupId != null)  //集团查询
+                    items = items.Where(p => p.GroupId == criteria.GroupId);
                 var pagedQuery = new AuthorityManage();
                 var resultModel = new PagedList<account>(items.ToList(), criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
                 var businesslists = new AuthorityManageList(resultModel.ToList(), resultModel.PagingResult);
