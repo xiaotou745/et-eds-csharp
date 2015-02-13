@@ -109,7 +109,7 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult ModifyPassword(int id, string modifypassword)
         {
-            bool b = AuthorityLogic.authorityLogic().ModifyPwdById(id, modifypassword);
+            bool b = AuthorityLogic.authorityLogic().ModifyPwdById(id, MD5Helper.MD5(modifypassword));
             if (b)
             {
                 return Json(new ResultModel(true, "修改成功"), JsonRequestBehavior.AllowGet);
