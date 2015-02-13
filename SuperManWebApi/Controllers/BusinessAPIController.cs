@@ -136,14 +136,14 @@ namespace SuperManWebApi.Controllers
             if (string.IsNullOrWhiteSpace(model.ReceivePhoneNo)) //手机号
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.ReceivePhoneEmpty);
 
-            if (string.IsNullOrWhiteSpace(model.Receive_Province))  //所在省
+            if (string.IsNullOrWhiteSpace(model.Receive_Province) || string.IsNullOrWhiteSpace(model.Receive_ProvinceCode))  //所在省
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.ReceiveProvinceEmpty);
 
-            if (string.IsNullOrWhiteSpace(model.Receive_City))  //所在市
+            if (string.IsNullOrWhiteSpace(model.Receive_City) || string.IsNullOrWhiteSpace(model.Receive_CityCode))  //所在市
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude
                     (OrderPublicshStatus.ReceiveCityEmpty);
 
-            if (string.IsNullOrWhiteSpace(model.Receive_Area))  //所在区
+            if (string.IsNullOrWhiteSpace(model.Receive_Area) || string.IsNullOrWhiteSpace(model.Receive_AreaCode))  //所在区
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.ReceiveAreaEmpty);
 
             if (string.IsNullOrWhiteSpace(model.Receive_Address))   //收货地址
