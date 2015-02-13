@@ -87,14 +87,21 @@ namespace SuperManWebApi.Models.Business
         {
             var to = new business();
             //to.Id = Helper.generateCode(from.phoneNo,AppType.B端);
+           
+            to.Province = from.B_Province;
+            to.ProvinceCode = from.B_ProvinceCode;
+
+            
+            to.CityCode = from.B_CityCode;
             to.CityId = from.B_CityCode.ToString();
             to.City = from.B_City;
+
             to.districtId = from.B_AreaCode.ToString();
             to.district = from.B_Area;
+            to.AreaCode = from.B_AreaCode;
 
             to.Address = from.Address;
-
-
+             
             to.GroupId = from.B_GroupId;
 
             to.IDCard = from.B_IdCard;

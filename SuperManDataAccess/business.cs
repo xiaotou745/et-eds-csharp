@@ -38,6 +38,10 @@ namespace SuperManDataAccess
         public string CityId { get; set; }
         public Nullable<int> GroupId { get; set; }
         public Nullable<int> OriginalBusiId { get; set; }
+        public string ProvinceCode { get; set; }
+        public string CityCode { get; set; }
+        public string AreaCode { get; set; }
+        public string Province { get; set; }
     
         public virtual ICollection<order> order { get; set; }
     }
