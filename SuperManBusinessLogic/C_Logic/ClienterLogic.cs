@@ -592,7 +592,7 @@ namespace SuperManBusinessLogic.C_Logic
                     query.TrueName = trueName;
                     query.IDCard = IDCard;
                     //query.Status = ConstValues.CLIENTER_AUDITPASSING;
-                    query.Status = ConstValues.CLIENTER_AUDITPASS;
+                    query.Status = ConstValues.CLIENTER_AUDITPASSING;
                     db.SaveChanges();
                 }
             }

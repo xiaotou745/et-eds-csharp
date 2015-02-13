@@ -72,7 +72,7 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty); 
                      
             if (string.IsNullOrEmpty(model.B_Password))   //密码为空时 设置默认密码
-                model.B_Password = MD5Helper.MD5("etaoshi");
+                model.B_Password = MD5Helper.MD5("haidilao");
 
             var business = NewRegisterInfoModelTranslator.Instance.Translate(model);
             bool result = BusiLogic.busiLogic().Add(business);

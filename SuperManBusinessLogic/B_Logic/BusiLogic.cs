@@ -424,7 +424,7 @@ namespace SuperManBusinessLogic.B_Logic
                 {
                     query.CheckPicUrl = picUrl;
                     //query.Status = ConstValues.BUSINESS_AUDITPASSING;
-                    query.Status = ConstValues.BUSINESS_AUDITPASS;
+                    query.Status = ConstValues.BUSINESS_AUDITPASSING;
                     int i = db.SaveChanges();
                     if (i == 1)
                     {

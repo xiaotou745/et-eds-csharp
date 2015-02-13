@@ -52,6 +52,13 @@ namespace SuperManWebApi.Models.Business
             to.InsertTime = DateTime.Now;
             to.CityId = from.CityId;
             to.districtId = "0";
+
+            //海底捞
+            if (ConfigSettings.Instance.IsGroupPush)   //TODO 暂时有效
+            {
+                to.GroupId = 2;
+            }
+            
             return to;
         }
     }
@@ -72,10 +79,10 @@ namespace SuperManWebApi.Models.Business
         NickNameAlreadyRegistered,
         [DisplayText("手机号已被注册")]
         PhoneNumberRegistered,
-        [DisplayText("您输入的的号码不存在,请检查并修改！")]  //推荐人不存在
+        [DisplayText("您输入的的号码不存在,请检查并修改！")]   
         PhoneNumberNotExist,
 
-        [DisplayText("商户地址省市区地址不能为空")]  //推荐人不存在
+        [DisplayText("商户地址省市区地址不能为空")]   
         BusiAddressEmpty
 
     }
