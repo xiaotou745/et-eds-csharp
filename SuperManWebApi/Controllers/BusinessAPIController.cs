@@ -127,6 +127,15 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OriginalOrderNoEmpty);
             if (model.OriginalBusinessId == 0)   //原平台商户Id非空验证
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OriginalBusinessIdEmpty);
+
+            if (string.IsNullOrWhiteSpace(model.OrderFrom.ToString()))   //订单来源
+                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OrderFromEmpty);
+
+            var busi = BusiLogic.busiLogic().GetBusiByOriIdAndOrderFrom(model.OriginalBusinessId, model.OrderFrom);
+            if (busi == null)
+            {
+                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.BusinessNoExist);
+            }
             if (string.IsNullOrWhiteSpace(model.IsPay.ToString()))   //请确认是否已付款
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.IsPayEmpty);
 
@@ -149,8 +158,7 @@ namespace SuperManWebApi.Controllers
             if (string.IsNullOrWhiteSpace(model.Receive_Address))   //收货地址
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude
                     (OrderPublicshStatus.ReceiveAddressEmpty);
-            if (string.IsNullOrWhiteSpace(model.OrderFrom.ToString()))   //订单来源
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OrderFromEmpty);
+            
 
             order dborder = NewBusiOrderInfoModelTranslator.Instance.Translate(model);  //整合订单信息
             bool result = OrderLogic.orderLogic().AddModel(dborder);    //添加订单记录，并且触发极光推送。          
