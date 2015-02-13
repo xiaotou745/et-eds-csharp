@@ -28,8 +28,12 @@ namespace SuperMan.Controllers
         public ActionResult AuthorityManager()
         {
             account account = HttpContext.Session["user"] as account;
-            if (account == null)
-                Response.Redirect("/account/login");
+           if (account == null)
+           {
+               Response.Redirect("/account/login");
+               return null;
+           }
+                
             ViewBag.txtGroupId = account.GroupId;//集团id
             var criteria = new AuthoritySearchCriteria() { PagingRequest = new PagingResult(0, 15),GroupId=account.GroupId};
             var authorityModel = AuthorityLogic.authorityLogic().GetAuthorityManage(criteria);

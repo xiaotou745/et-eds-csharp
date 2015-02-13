@@ -17,51 +17,35 @@
             <div>
                 
                 <dl>
-                    <dt><i> </i>集团信息： </dt>
-                    <dd>
-                        @Html.DropDownList("AddGroupId", new SelectList(GroupLogic.groupLogic().GetGroups(), "Id", "GroupName"), "--无--", new {  style = "width:135px" })
-                    </dd>
+                    <dt><i> </i>&nbsp;&nbsp;集团信息: 
+                    @if (ViewBag.txtGroupId > 0)
+                    {
+                        @Html.DropDownList("AddGroupId", new SelectList(GroupLogic.groupLogic().GetGroups().Where(p => p.Id == ViewBag.txtGroupId), "Id", "GroupName"), "--无--", new {style = "width:155px"});
+                    }
+                    else
+                    {
+                        @Html.DropDownList("AddGroupId", new SelectList(GroupLogic.groupLogic().GetGroups(), "Id", "GroupName"), "--无--", new {style = "width:155px"});
+                    }
+                    </dt>
                 </dl>
 
                 <dl>
-                    <dt><i>* </i>订单佣金: </dt>
-                    <dd>
-                        <input id="txtOrderCommission" name="txtOrderCommission" type="text" />%
-                        <text id="labOrderCommission" style="color:red" hidden="hidden">不能为空</text>
-                    </dd>
+                    <dt><i>* </i>订单佣金: <input id="txtOrderCommission" name="txtOrderCommission" type="text" />% <text id="labOrderCommission" style="color:red" hidden="hidden">不能为空</text></dt>
                 </dl>
-                <dl>
-                    <dt><i>* </i>配送费补贴: </dt>
-                    <dd>
-                        <input id="txtDistribSubsidy" name="txtDistribSubsidy" type="text" />
-                        <text id="labDistribSubsidy" style="color:red" hidden="hidden">不能为空</text>
-                    </dd>
-                </dl>
-            </div>
-            <div>
 
+                <dl>
+                    <dt><i>* </i>配送补贴: <input id="txtDistribSubsidy" name="txtDistribSubsidy" type="text" /><text id="labDistribSubsidy" style="color:red" hidden="hidden">不能为空</text></dt>
+                </dl>
             </div>
+          
             <div>
                 <dl>
-                    <dt><i>* </i>网站补贴: </dt>
-                    <dd>
-                        <input id="txtWebsiteSubsidy" name="txtWebsiteSubsidy" type="text" />
-                        <text id="labWebsiteSubsidy" style="color:red" hidden="hidden">不能为空</text>
-                    </dd>
+                    <dt><i>* </i>网站补贴: <input id="txtWebsiteSubsidy" name="txtWebsiteSubsidy" type="text" /><text id="labWebsiteSubsidy" style="color:red" hidden="hidden">不能为空</text></dt>
                 </dl>
             </div>
             <div>
                 <dl>
-                    <dt class="">有效时间:</dt>
-                    <dd>
-                        <input id="selectDateStart" name="selectDateStart" readonly="readonly" type="text" />
-                        <text id="labDateStart" style="color:red" hidden="hidden">不能为空</text>
-                    </dd>
-                    <dt class="">至:</dt>
-                    <dd>
-                        <input id="selectDateEnd" name="selectDateEnd" readonly="readonly" type="text" />
-                        <text id="labDateEnd" style="color:red" hidden="hidden">不能为空</text>
-                    </dd>
+                    <dt class="">&nbsp;&nbsp;有效时间: <input id="selectDateStart" name="selectDateStart" readonly="readonly" type="text" /><text id="labDateStart" style="color:red" hidden="hidden">不能为空</text> 至: <input id="selectDateEnd" name="selectDateEnd" readonly="readonly" type="text" /><text id="labDateEnd" style="color:red" hidden="hidden">不能为空</text></dt>
                 </dl>
             </div>
             <div>
