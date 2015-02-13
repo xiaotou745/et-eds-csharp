@@ -83,6 +83,10 @@
           <Property Name="CityId" Type="varchar" MaxLength="45" />
           <Property Name="GroupId" Type="int" />
           <Property Name="OriginalBusiId" Type="int" />
+          <Property Name="ProvinceCode" Type="varchar" MaxLength="20" />
+          <Property Name="CityCode" Type="varchar" MaxLength="20" />
+          <Property Name="AreaCode" Type="varchar" MaxLength="20" />
+          <Property Name="Province" Type="varchar" MaxLength="20" />
         </EntityType>
         <EntityType Name="channel">
           <Key>
@@ -433,6 +437,10 @@
           <Property Name="CityId" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
           <Property Name="GroupId" Type="Int32" />
           <Property Name="OriginalBusiId" Type="Int32" />
+          <Property Name="ProvinceCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="CityCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="AreaCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Province" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="order" Relationship="supermanModel.businessId" FromRole="business" ToRole="order" />
         </EntityType>
         <EntityType Name="channel">
@@ -707,6 +715,10 @@
           <EntitySetMapping Name="business">
             <EntityTypeMapping TypeName="supermanModel.business">
               <MappingFragment StoreEntitySet="business">
+                <ScalarProperty Name="Province" ColumnName="Province" />
+                <ScalarProperty Name="AreaCode" ColumnName="AreaCode" />
+                <ScalarProperty Name="CityCode" ColumnName="CityCode" />
+                <ScalarProperty Name="ProvinceCode" ColumnName="ProvinceCode" />
                 <ScalarProperty Name="OriginalBusiId" ColumnName="OriginalBusiId" />
                 <ScalarProperty Name="GroupId" ColumnName="GroupId" />
                 <ScalarProperty Name="CityId" ColumnName="CityId" />
