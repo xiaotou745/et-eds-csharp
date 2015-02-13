@@ -35,28 +35,12 @@
         //    }
         //});
 
-        $.ajax({
-            type: 'POST',
-            dataType: 'json',
-            url: '/BusinessAPI/OrderCancel',
-            data: {
-                OriginalOrderNo: '201223213', OrderFrom: '15'
-            },
-            success: function (data) {
-                console.log(data);
-            },
-            error: function () {
-
-            }
-        });
-
-
         //$.ajax({
         //    type: 'POST',
         //    dataType: 'json',
-        //    url: '/ClienterAPI/PostLogin_C',
+        //    url: '/BusinessAPI/OrderCancel',
         //    data: {
-        //        phoneNo:"15652662526",passWord:"111111"
+        //        OriginalOrderNo: '201223213', OrderFrom: '15'
         //    },
         //    success: function (data) {
         //        console.log(data);
@@ -65,6 +49,27 @@
 
         //    }
         //});
+
+
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: '/BusinessAPI/NewPostRegisterInfo_B',
+            data: {
+                B_Name: '可能你想来',
+                B_OriginalBusiId: '11',
+                B_GroupId: '15',
+                PhoneNo: '15263252563',
+                
+
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () {
+
+            }
+        });
   
     });
 </script>

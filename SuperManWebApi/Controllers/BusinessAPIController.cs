@@ -64,12 +64,13 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
             else if (BusiLogic.busiLogic().CheckExistPhone(model.PhoneNo))  //判断该手机号是否已经注册过
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberRegistered);
-            else if (string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_CityId.ToString())) //城市以及城市编码非空验证
+            else if (string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_CityCode.ToString())) //城市以及城市编码非空验证
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
             else if (string.IsNullOrEmpty(model.B_Name.Trim())) //商户名称
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiNameEmpty);
             else if (string.IsNullOrWhiteSpace(model.Address) || string.IsNullOrWhiteSpace(model.B_Province) || string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_Area))  //商户地址不能为空
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
+                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty); 
+                     
             if (string.IsNullOrEmpty(model.B_Password))   //密码为空时 设置默认密码
                 model.B_Password = MD5Helper.MD5("etaoshi");
 
@@ -304,15 +305,15 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<BusiAddAddressResultModel> PostManagerAddress_B(BusiAddAddressInfoModel model)
         {
-            if (string.IsNullOrEmpty(model.phoneNo))
+            if (string.IsNullOrWhiteSpace(model.phoneNo))
             {
                 return ResultModel<BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.PhoneNumberEmpty);
             }
-            if (string.IsNullOrEmpty(model.Address))
+            if (string.IsNullOrWhiteSpace(model.Address))
             {
                 return ResultModel<BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.AddressEmpty);
             }
-            if (string.IsNullOrEmpty(model.businessName))
+            if (string.IsNullOrWhiteSpace(model.businessName))
             {
                 return ResultModel<BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.businessNameEmpty);
             }
