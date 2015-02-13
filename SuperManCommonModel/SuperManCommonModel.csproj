@@ -45,6 +45,7 @@
     <Compile Include="BusiOrderModel.cs" />
     <Compile Include="Common\AccountType.cs" />
     <Compile Include="Common\ConstValues.cs" />
+    <Compile Include="Common\JPushModel.cs" />
     <Compile Include="Common\UserLoginResults.cs" />
     <Compile Include="Entities\AuthoritySearchCriteria.cs" />
     <Compile Include="Entities\BusinessSearchCriteria.cs" />
