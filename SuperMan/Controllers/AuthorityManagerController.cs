@@ -28,8 +28,12 @@ namespace SuperMan.Controllers
         public ActionResult AuthorityManager()
         {
             account account = HttpContext.Session["user"] as account;
-            if (account == null)
-                Response.Redirect("/account/login");
+           if (account == null)
+           {
+               Response.Redirect("/account/login");
+               return null;
+           }
+                
             ViewBag.txtGroupId = account.GroupId;//集团id
             var criteria = new AuthoritySearchCriteria() { PagingRequest = new PagingResult(0, 15),GroupId=account.GroupId};
             var authorityModel = AuthorityLogic.authorityLogic().GetAuthorityManage(criteria);
@@ -48,7 +52,16 @@ namespace SuperMan.Controllers
             var item = authorityModel.authorityManageList;
             return PartialView("_AuthorityManagerList", item);
         }
-
+        /// <summary>
+        /// 判断用户名是否存在 
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult HasAccountName(string accountName, string loginName)
+        { 
+            var account = new account {LoginName = loginName, UserName = accountName};
+            return Json(AuthorityLogic.authorityLogic().HasAccountName(account) ? new ResultModel(true, "用户名已存在") : new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
+        }
         /// <summary>
         /// 添加用户 
         /// </summary>
@@ -75,6 +88,10 @@ namespace SuperMan.Controllers
             account.GroupId = groupId;//集团id  
             account.Password = MD5Helper.MD5(password);
             account.Status = ConstValues.AccountAvailable;
+            if (AuthorityLogic.authorityLogic().HasAccountName(account))
+            {
+                return Json(new ResultModel(true, "用户名已存在"), JsonRequestBehavior.AllowGet);
+            }
             AuthorityLogic.authorityLogic().AddAccount(account);
             return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
         }
@@ -109,7 +126,7 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult ModifyPassword(int id, string modifypassword)
         {
-            bool b = AuthorityLogic.authorityLogic().ModifyPwdById(id, modifypassword);
+            bool b = AuthorityLogic.authorityLogic().ModifyPwdById(id, MD5Helper.MD5(modifypassword));
             if (b)
             {
                 return Json(new ResultModel(true, "修改成功"), JsonRequestBehavior.AllowGet);

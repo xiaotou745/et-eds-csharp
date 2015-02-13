@@ -20,7 +20,11 @@ namespace SuperMan.Controllers
         {
             account account = HttpContext.Session["user"] as account;
             if (account == null)
+            {
                 Response.Redirect("/account/login");
+                return null;
+            }
+                
             ViewBag.txtGroupId = account.GroupId;//集团id
             var criteria = new BusinessSearchCriteria() { PagingRequest = new PagingResult(0, 15), GroupId = account.GroupId };
             criteria.Status = -1; //默认加载全部

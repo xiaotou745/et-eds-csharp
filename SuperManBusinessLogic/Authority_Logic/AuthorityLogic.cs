@@ -72,6 +72,25 @@ namespace SuperManBusinessLogic.Authority_Logic
             return bResult;
         }
 
+        /// <summary>
+        /// 是否存在该用户
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        public bool HasAccountName(account account)
+        {
+            bool bResult = false;
+            using (var db = new supermanEntities())
+            {
+                var oldauid = db.account.Where(a => a.UserName == account.UserName || a.LoginName == account.LoginName).ToList();
+                if ( oldauid.Count > 0)
+                {
+                    bResult=true;
+                } 
+            }
+            return bResult;
+        }
+
         public bool GetAccountById(int id)
         {
             bool result = false;
