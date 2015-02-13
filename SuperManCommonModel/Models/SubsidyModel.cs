@@ -31,5 +31,12 @@ namespace SuperManCommonModel.Models
         /// 状态
         /// </summary>
         public sbyte Status { get; set; }
+
+        /// <summary>
+        /// 集团id
+        /// </summary>
+        public int GroupId { get; set; }
+        
+
     }
 }

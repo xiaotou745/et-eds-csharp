@@ -1,4 +1,5 @@
 ﻿@model SuperManCommonModel.Models.SubsidyManage
+@using SuperManBusinessLogic.Group_Logic
 @using SuperManCommonModel.Models;
 @{
     ViewBag.Title = "Order";
@@ -14,6 +15,14 @@
     <div class="SearchMd">
         <form id="subsidyForm" border="0" cellspacing="0" cellpadding="0">
             <div>
+                
+                <dl>
+                    <dt><i> </i>集团信息： </dt>
+                    <dd>
+                        @Html.DropDownList("AddGroupId", new SelectList(GroupLogic.groupLogic().GetGroups(), "Id", "GroupName"), "--无--", new {  style = "width:135px" })
+                    </dd>
+                </dl>
+
                 <dl>
                     <dt><i>* </i>订单佣金: </dt>
                     <dd>
@@ -76,6 +85,7 @@
                 <th>网站补贴</th>
                 <th>开始日期</th>
                 <th>结束日期</th>
+                <th>所属集团</th>
             </tr>
         </thead>
         <tbody>
@@ -91,6 +101,12 @@
                         <td>@item.WebsiteSubsidy</td>
                         <td>@item.StartDate.Value.ToShortDateString()</td>
                         <td>@item.EndDate.Value.ToShortDateString()</td>
+                        <td>
+                            @if (item.GroupId != null) //当前商户有集团信息
+                            {
+                                @Html.Raw(GroupLogic.groupLogic().GetGroupName(Convert.ToInt32(item.GroupId)))
+                            }
+                        </td>
                     </tr>
                 }
             }
@@ -123,7 +139,7 @@
         var WebsiteSubsidy = $('#txtWebsiteSubsidy').val();
         var startDate = $('#selectDateStart').val();
         var endDate = $('#selectDateEnd').val();
-
+        var groupId = $('#AddGroupId').val();
         if (OrderCommission == "" || OrderCommission == null) {
             $('#labOrderCommission').show();
             return false;
@@ -148,7 +164,9 @@
             alert("开始日期不能大于结束日期");
             return false;
         }
-        var paramaters = { "OrderCommission": OrderCommission, "DistribSubsidy": DistribSubsidy, "WebsiteSubsidy": WebsiteSubsidy, "StartDate": startDate, "EndDate": endDate };
+        var paramaters = {
+            "OrderCommission": OrderCommission, "DistribSubsidy": DistribSubsidy, "WebsiteSubsidy": WebsiteSubsidy, "StartDate": startDate, "EndDate": endDate
+        ,"groupId":groupId};
 
         var url = "/SubsidyManager/Save";
         $.ajax({
