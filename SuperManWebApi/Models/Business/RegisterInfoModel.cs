@@ -80,10 +80,15 @@ namespace SuperManWebApi.Models.Business
         [DisplayText("手机号已被注册")]
         PhoneNumberRegistered,
         [DisplayText("您输入的的号码不存在,请检查并修改！")]   
-        PhoneNumberNotExist,
-
+        PhoneNumberNotExist,        
+        [DisplayText("原平台商户Id不能为空")]   
+        OriginalBusiIdEmpty,        
+        [DisplayText("原平台商户Id重复")]
+        OriginalBusiIdRepeat,
         [DisplayText("商户地址省市区地址不能为空")]   
-        BusiAddressEmpty
+        BusiAddressEmpty,
+        [DisplayText("集团Id不能为空")]
+        GroupIdEmpty
 
     }
 }

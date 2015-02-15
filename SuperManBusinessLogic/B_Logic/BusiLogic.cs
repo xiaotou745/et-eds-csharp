@@ -198,6 +198,23 @@ namespace SuperManBusinessLogic.B_Logic
             return bResult;
         }
 
+        public bool CheckExistBusi(int originalBusiId, int groupId)
+        {
+            bool bResult = false;
+            using (var db = new supermanEntities())
+            {
+                if (!string.IsNullOrEmpty(originalBusiId.ToString()))
+                {
+                    var item = db.business.Where(p => p.OriginalBusiId == originalBusiId && p.GroupId == groupId).FirstOrDefault();
+                    if (item != null)
+                    {
+                        bResult = true;
+                    }
+                }
+            }
+            return bResult;
+        }
+
         /// <summary>
         /// 添加一个商户
         /// </summary>
