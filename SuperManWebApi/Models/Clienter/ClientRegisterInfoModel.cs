@@ -82,6 +82,11 @@ namespace SuperManWebApi.Models.Clienter
             to.City = from.City;
             to.CityId = from.CityId;
             to.recommendPhone = from.recommendPhone;
+            //海底捞
+            if (ConfigSettings.Instance.IsGroupPush)   //TODO 暂时有效
+            {
+                to.GroupId = 2;
+            }
             return to;
         }
     }

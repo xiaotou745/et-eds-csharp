@@ -75,6 +75,11 @@ namespace SuperManWebApi.Models.Business
                 to.PubDate = DateTime.Now; //提起时间
                 to.ReceviceCity = business.City; //城市
             }
+            //海底捞
+            if (ConfigSettings.Instance.IsGroupPush)
+            {
+                to.OrderFrom = 2;
+            }
             to.Remark = from.Remark;
             to.ReceviceName = from.receviceName;
             to.RecevicePhoneNo = from.recevicePhone;
