@@ -85,6 +85,9 @@
     <Compile Include="clienter.cs">
       <DependentUpon>SuperManDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="commissiontype.cs">
+      <DependentUpon>SuperManDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="group.cs">
       <DependentUpon>SuperManDb.tt</DependentUpon>
     </Compile>
