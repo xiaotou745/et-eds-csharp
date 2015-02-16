@@ -87,6 +87,7 @@
           <Property Name="CityCode" Type="varchar" MaxLength="20" />
           <Property Name="AreaCode" Type="varchar" MaxLength="20" />
           <Property Name="Province" Type="varchar" MaxLength="20" />
+          <Property Name="CommissionTypeId" Type="int" />
         </EntityType>
         <EntityType Name="channel">
           <Key>
@@ -121,6 +122,15 @@
           <Property Name="City" Type="varchar" MaxLength="100" />
           <Property Name="CityId" Type="varchar" MaxLength="45" />
           <Property Name="GroupId" Type="int" />
+        </EntityType>
+        <EntityType Name="commissiontype">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CommissionName" Type="varchar" MaxLength="100" />
+          <Property Name="IsValid" Type="tinyint" />
+          <Property Name="Remark" Type="varchar" MaxLength="500" />
         </EntityType>
         <EntityType Name="group">
           <Key>
@@ -300,6 +310,7 @@
           <EntitySet Name="business" EntityType="Self.business" Schema="supermanhdl" store:Type="Tables" />
           <EntitySet Name="channel" EntityType="Self.channel" Schema="supermanhdl" store:Type="Tables" />
           <EntitySet Name="clienter" EntityType="Self.clienter" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="commissiontype" EntityType="Self.commissiontype" Schema="supermanhdl" store:Type="Tables" />
           <EntitySet Name="group" EntityType="Self.group" Schema="supermanhdl" store:Type="Tables" />
           <EntitySet Name="myincome" EntityType="Self.myincome" Schema="supermanhdl" store:Type="Tables" />
           <EntitySet Name="order" EntityType="Self.order" Schema="supermanhdl" store:Type="Tables" />
@@ -335,6 +346,7 @@
           <EntitySet Name="business" EntityType="supermanModel.business" />
           <EntitySet Name="channel" EntityType="supermanModel.channel" />
           <EntitySet Name="clienter" EntityType="supermanModel.clienter" />
+          <EntitySet Name="commissiontype" EntityType="supermanModel.commissiontype" />
           <EntitySet Name="group" EntityType="supermanModel.group" />
           <EntitySet Name="myincome" EntityType="supermanModel.myincome" />
           <EntitySet Name="order" EntityType="supermanModel.order" />
@@ -442,6 +454,7 @@
           <Property Name="CityCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="AreaCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="Province" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="CommissionTypeId" Type="Int32" />
           <NavigationProperty Name="order" Relationship="supermanModel.businessId" FromRole="business" ToRole="order" />
         </EntityType>
         <EntityType Name="channel">
@@ -477,6 +490,15 @@
           <Property Name="City" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="CityId" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
           <Property Name="GroupId" Type="Int32" />
+        </EntityType>
+        <EntityType Name="commissiontype">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CommissionName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="IsValid" Type="SByte" />
+          <Property Name="Remark" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="group">
           <Key>
@@ -717,6 +739,7 @@
           <EntitySetMapping Name="business">
             <EntityTypeMapping TypeName="supermanModel.business">
               <MappingFragment StoreEntitySet="business">
+                <ScalarProperty Name="CommissionTypeId" ColumnName="CommissionTypeId" />
                 <ScalarProperty Name="Province" ColumnName="Province" />
                 <ScalarProperty Name="AreaCode" ColumnName="AreaCode" />
                 <ScalarProperty Name="CityCode" ColumnName="CityCode" />
@@ -775,6 +798,16 @@
                 <ScalarProperty Name="recommendPhone" ColumnName="recommendPhone" />
                 <ScalarProperty Name="LoginName" ColumnName="LoginName" />
                 <ScalarProperty Name="PhoneNo" ColumnName="PhoneNo" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="commissiontype">
+            <EntityTypeMapping TypeName="supermanModel.commissiontype">
+              <MappingFragment StoreEntitySet="commissiontype">
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+                <ScalarProperty Name="IsValid" ColumnName="IsValid" />
+                <ScalarProperty Name="CommissionName" ColumnName="CommissionName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

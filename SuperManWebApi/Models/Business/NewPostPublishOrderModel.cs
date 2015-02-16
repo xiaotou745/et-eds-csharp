@@ -165,7 +165,14 @@ namespace SuperManWebApi.Models.Business
             to.DistribSubsidy = subsidy.DistribSubsidy;
             if (subsidy.OrderCommission != null)
             {
-                to.OrderCommission = subsidy.OrderCommission.Value * from.Amount;
+                if (ConfigSettings.Instance.IsGroupPush)
+                {
+                    to.OrderCommission = subsidy.OrderCommission.Value * from.SongCanFei;
+                }
+                else
+                {
+                    to.OrderCommission = subsidy.OrderCommission.Value * from.Amount;
+                }
             }
             else
             {
