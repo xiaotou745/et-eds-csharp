@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using SuperManCommonModel.Models;
+using SuperManCore;
 using SuperManCore.Common;
+using SuperManWebApi.Models.Business;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,5 +33,13 @@ namespace TestWebApi
 
         //    sites.ToList().ForEach(x => Console.WriteLine(x.Message + "：" + x.Result + "：" + x.Status));
         //} 
+
+        public void Test11()
+        {
+            
+             
+        }
+        
+       
     }
 }

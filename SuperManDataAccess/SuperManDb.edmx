@@ -178,6 +178,7 @@
           <Property Name="ReceiveProvinceCode" Type="varchar" MaxLength="20" />
           <Property Name="ReceiveCityCode" Type="varchar" MaxLength="45" />
           <Property Name="ReceiveAreaCode" Type="varchar" MaxLength="45" />
+          <Property Name="SongCanFei" Type="decimal" Precision="10" Scale="2" />
         </EntityType>
         <EntityType Name="orderlog">
           <Key>
@@ -290,23 +291,23 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="supermanModelStoreContainer">
-          <EntitySet Name="account" EntityType="Self.account" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="accountauthority" EntityType="Self.accountauthority" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="areacity" EntityType="Self.areacity" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="areacounty" EntityType="Self.areacounty" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="areaprovice" EntityType="Self.areaprovice" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="authority" EntityType="Self.authority" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="business" EntityType="Self.business" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="channel" EntityType="Self.channel" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="clienter" EntityType="Self.clienter" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="group" EntityType="Self.group" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="myincome" EntityType="Self.myincome" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="order" EntityType="Self.order" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="orderlog" EntityType="Self.orderlog" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="pushmessage" EntityType="Self.pushmessage" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="pushmessagestatus" EntityType="Self.pushmessagestatus" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="region" EntityType="Self.region" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="subsidy" EntityType="Self.subsidy" Schema="superman" store:Type="Tables" />
+          <EntitySet Name="account" EntityType="Self.account" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="accountauthority" EntityType="Self.accountauthority" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="areacity" EntityType="Self.areacity" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="areacounty" EntityType="Self.areacounty" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="areaprovice" EntityType="Self.areaprovice" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="authority" EntityType="Self.authority" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="business" EntityType="Self.business" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="channel" EntityType="Self.channel" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="clienter" EntityType="Self.clienter" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="group" EntityType="Self.group" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="myincome" EntityType="Self.myincome" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="order" EntityType="Self.order" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="orderlog" EntityType="Self.orderlog" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="pushmessage" EntityType="Self.pushmessage" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="pushmessagestatus" EntityType="Self.pushmessagestatus" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="region" EntityType="Self.region" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="subsidy" EntityType="Self.subsidy" Schema="supermanhdl" store:Type="Tables" />
           <AssociationSet Name="accountId" Association="Self.accountId">
             <End Role="account" EntitySet="account" />
             <End Role="accountauthority" EntitySet="accountauthority" />
@@ -533,6 +534,7 @@
           <Property Name="ReceiveProvinceCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="ReceiveCityCode" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
           <Property Name="ReceiveAreaCode" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="SongCanFei" Type="Decimal" />
           <NavigationProperty Name="business" Relationship="supermanModel.businessId" FromRole="order" ToRole="business" />
         </EntityType>
         <EntityType Name="orderlog">
@@ -804,6 +806,7 @@
           <EntitySetMapping Name="order">
             <EntityTypeMapping TypeName="supermanModel.order">
               <MappingFragment StoreEntitySet="order">
+                <ScalarProperty Name="SongCanFei" ColumnName="SongCanFei" />
                 <ScalarProperty Name="ReceiveAreaCode" ColumnName="ReceiveAreaCode" />
                 <ScalarProperty Name="ReceiveCityCode" ColumnName="ReceiveCityCode" />
                 <ScalarProperty Name="ReceiveProvinceCode" ColumnName="ReceiveProvinceCode" />

@@ -164,7 +164,13 @@ namespace SuperManWebApi.Controllers
             if (string.IsNullOrWhiteSpace(model.Receive_Address))   //收货地址
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude
                     (OrderPublicshStatus.ReceiveAddressEmpty);
-            
+            if (ConfigSettings.Instance.IsGroupPush)
+            {
+                if (model.SongCanFei != null)
+                {
+                    return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.SongCanFeiEmpty);
+                }
+            }
 
             order dborder = NewBusiOrderInfoModelTranslator.Instance.Translate(model);  //整合订单信息
             bool result = OrderLogic.orderLogic().AddModel(dborder);    //添加订单记录，并且触发极光推送。          

@@ -93,6 +93,10 @@ namespace SuperManWebApi.Models.Business
         /// 订单总重量
         /// </summary>
         public decimal? Weight { get; set; }
+        /// <summary>
+        /// 送餐费
+        /// </summary>
+        public decimal? SongCanFei { get; set; } 
     }
     public class NewBusiOrderInfoModelTranslator : TranslatorBase<order, NewPostPublishOrderModel>
     {
@@ -152,7 +156,10 @@ namespace SuperManWebApi.Models.Business
             to.Weight = from.Weight;
             
             to.IsPay = from.IsPay;
-            to.Amount = from.Amount; 
+            to.Amount = from.Amount;
+
+            to.SongCanFei = from.SongCanFei;
+
             var subsidy = SubsidyLogic.subsidyLogic().GetCurrentSubsidy();
             to.WebsiteSubsidy = subsidy.WebsiteSubsidy;
             to.DistribSubsidy = subsidy.DistribSubsidy;
@@ -204,6 +211,9 @@ namespace SuperManWebApi.Models.Business
         [DisplayText("订单来源不能为空")]
         OrderFromEmpty,
         [DisplayText("商户不存在,请先注册商户")]
-        BusinessNoExist
+        BusinessNoExist,
+        [DisplayText("送餐费不能为空")]
+        SongCanFeiEmpty
+
     }
 }
