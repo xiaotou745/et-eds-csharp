@@ -75,11 +75,13 @@ namespace SuperManWebApi.Controllers
             else if (string.IsNullOrEmpty(model.B_Name.Trim())) //商户名称
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiNameEmpty);
             else if (string.IsNullOrWhiteSpace(model.Address) || string.IsNullOrWhiteSpace(model.B_Province) || string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_Area))  //商户地址不能为空
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty); 
-                     
+                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
+            else if (model.CommissionTypeId == 0)
+            {
+                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
+            }
             if (string.IsNullOrEmpty(model.B_Password))   //密码为空时 设置默认密码
-                model.B_Password = MD5Helper.MD5("haidilao");
-
+                model.B_Password = MD5Helper.MD5("abc123");
             var business = NewRegisterInfoModelTranslator.Instance.Translate(model);
             bool result = BusiLogic.busiLogic().Add(business);
             var resultModel = new NewBusiRegisterResultModel
@@ -97,7 +99,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(CancelOrderStatus))]
         [HttpPost]
-        public ResultModel<OrderCancelResultModel> OrderCancel(OrderCancelModel model)
+        public ResultModel<OrderCancelResultModel> NewOrderCancel(OrderCancelModel model)
         { 
             if (string.IsNullOrEmpty(model.OriginalOrderNo))   //订单号非空验证
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderEmpty); 
@@ -119,7 +121,6 @@ namespace SuperManWebApi.Controllers
             }     
         }
 
-
         /// <summary>
         /// 接收订单，供第三方使用
         /// </summary>
@@ -133,7 +134,6 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OriginalOrderNoEmpty);
             if (model.OriginalBusinessId == 0)   //原平台商户Id非空验证
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OriginalBusinessIdEmpty);
-
             if (string.IsNullOrWhiteSpace(model.OrderFrom.ToString()))   //订单来源
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OrderFromEmpty);
 
@@ -163,15 +163,7 @@ namespace SuperManWebApi.Controllers
 
             if (string.IsNullOrWhiteSpace(model.Receive_Address))   //收货地址
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude
-                    (OrderPublicshStatus.ReceiveAddressEmpty);
-            if (ConfigSettings.Instance.IsGroupPush)
-            {
-                if (model.SongCanFei != null)
-                {
-                    return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.SongCanFeiEmpty);
-                }
-            }
-
+                    (OrderPublicshStatus.ReceiveAddressEmpty); 
             order dborder = NewBusiOrderInfoModelTranslator.Instance.Translate(model);  //整合订单信息
             bool result = OrderLogic.orderLogic().AddModel(dborder);    //添加订单记录，并且触发极光推送。          
             if (result)

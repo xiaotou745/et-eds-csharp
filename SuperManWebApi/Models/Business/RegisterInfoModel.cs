@@ -57,7 +57,12 @@ namespace SuperManWebApi.Models.Business
             if (ConfigSettings.Instance.IsGroupPush)   //TODO 暂时有效
             {
                 to.GroupId = 2;
+                to.CommissionTypeId = 2;
             }
+            else
+            {
+                to.CommissionTypeId = 1;
+            }      
             
             return to;
         }
@@ -88,7 +93,9 @@ namespace SuperManWebApi.Models.Business
         [DisplayText("商户地址省市区地址不能为空")]   
         BusiAddressEmpty,
         [DisplayText("集团Id不能为空")]
-        GroupIdEmpty
+        GroupIdEmpty,
+        [DisplayText("请填写佣金类型")]
+        CommissionTypeIdEmpty
 
     }
 }

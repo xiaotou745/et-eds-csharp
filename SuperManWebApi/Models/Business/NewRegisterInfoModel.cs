@@ -71,6 +71,10 @@ namespace SuperManWebApi.Models.Business
         /// 商户所在区域纬度
         /// </summary>
         public double B_Latitude { get; set; }
+        /// <summary>
+        /// 佣金类型Id
+        /// </summary>
+        public int CommissionTypeId { get; set; }
     }
     public class NewRegisterInfoModelTranslator : TranslatorBase<business, NewRegisterInfoModel>
     {
@@ -114,7 +118,22 @@ namespace SuperManWebApi.Models.Business
 
             to.OriginalBusiId = from.B_OriginalBusiId;
             to.InsertTime = DateTime.Now;
-
+            //这里 佣金类型  在 接下来整合版本时，需要 调用接口方 传递过来
+            //if (ConfigSettings.Instance.IsGroupPush)
+            //{
+            //    to.CommissionTypeId = 2;
+            //}
+            //else
+            //{
+            //    to.CommissionTypeId = 1;
+            //}
+            if (from.CommissionTypeId != 0)
+            {
+                to.CommissionTypeId = from.CommissionTypeId;
+            }else
+            {
+                to.CommissionTypeId = 1;
+            }
             return to;
         }
     }

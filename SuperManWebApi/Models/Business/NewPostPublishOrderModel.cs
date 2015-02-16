@@ -165,11 +165,11 @@ namespace SuperManWebApi.Models.Business
             to.DistribSubsidy = subsidy.DistribSubsidy;
             if (subsidy.OrderCommission != null)
             {
-                if (ConfigSettings.Instance.IsGroupPush)
+                if (abusiness.CommissionTypeId == 2) //佣金类型2 ，按送餐费计算佣金
                 {
                     to.OrderCommission = subsidy.OrderCommission.Value * from.SongCanFei;
                 }
-                else
+                if (abusiness.CommissionTypeId == 1)  //佣金类型1 ，按订单总金额计算佣金
                 {
                     to.OrderCommission = subsidy.OrderCommission.Value * from.Amount;
                 }
@@ -218,9 +218,6 @@ namespace SuperManWebApi.Models.Business
         [DisplayText("订单来源不能为空")]
         OrderFromEmpty,
         [DisplayText("商户不存在,请先注册商户")]
-        BusinessNoExist,
-        [DisplayText("送餐费不能为空")]
-        SongCanFeiEmpty
-
+        BusinessNoExist
     }
 }

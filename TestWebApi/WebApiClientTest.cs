@@ -13,30 +13,14 @@ using System.Threading.Tasks;
 namespace TestWebApi
 {
     public class WebApiClientTest
-    {
-        //[Fact]
-        //public void WebApi_SiteList_Test()
-        //{
-        //    var requestJson = JsonConvert.SerializeObject(new { startId = 1, itemcount = 3 });
-
-        //    HttpContent httpContent = new StringContent(requestJson);
-        //    httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-        //    var httpClient = new HttpClient();
-
-        //    var responseJson = httpClient.PostAsync("http://localhost:7178/BusinessAPI/OrderCount_B/1", httpContent)
-        //        .Result.Content.ReadAsStringAsync().Result;
-
-
-
-        //    var sites = JsonConvert.DeserializeObject<IList<ResultModel<BusiOrderCountResultModel>>>(responseJson);
-
-        //    sites.ToList().ForEach(x => Console.WriteLine(x.Message + "：" + x.Result + "：" + x.Status));
-        //} 
-
+    { 
         public void Test11()
         {
-            
+            TestApiHelper test = new TestApiHelper();
+            test.TestApi<NewRegisterInfoModel>("http://localhost:9263/BusinessAPI/NewPostPublishOrder_B", new NewRegisterInfoModel()
+            {           
+                 CommissionTypeId =1
+            });
              
         }
         
