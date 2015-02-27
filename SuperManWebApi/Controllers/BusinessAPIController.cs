@@ -136,12 +136,6 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OriginalBusinessIdEmpty);
             if (string.IsNullOrWhiteSpace(model.OrderFrom.ToString()))   //订单来源
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OrderFromEmpty);
-
-            var busi = BusiLogic.busiLogic().GetBusiByOriIdAndOrderFrom(model.OriginalBusinessId, model.OrderFrom);
-            if (busi == null)
-            {
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.BusinessNoExist);
-            }
             if (string.IsNullOrWhiteSpace(model.IsPay.ToString()))   //请确认是否已付款
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.IsPayEmpty);
 
@@ -163,7 +157,19 @@ namespace SuperManWebApi.Controllers
 
             if (string.IsNullOrWhiteSpace(model.Receive_Address))   //收货地址
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude
-                    (OrderPublicshStatus.ReceiveAddressEmpty); 
+                    (OrderPublicshStatus.ReceiveAddressEmpty);  
+            //验证原平台商户是否已经注册
+            var busi = BusiLogic.busiLogic().GetBusiByOriIdAndOrderFrom(model.OriginalBusinessId, model.OrderFrom);
+            if (busi == null)
+            {
+                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.BusinessNoExist);
+            }
+            //验证该平台 商户 订单号 是否存在
+            var order = OrderLogic.orderLogic().GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom);
+            if(order != null){
+                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OrderHadExist);
+            }
+
             order dborder = NewBusiOrderInfoModelTranslator.Instance.Translate(model);  //整合订单信息
             bool result = OrderLogic.orderLogic().AddModel(dborder);    //添加订单记录，并且触发极光推送。          
             if (result)

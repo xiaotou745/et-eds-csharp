@@ -302,10 +302,15 @@
 
     });
     $('#btnSuperConfim').bind('click', function () {
-        if ($("#superUnFin").val() == "") {
+        if ($("#superUnFin").val().trim() == "") {
             alert("超人姓名不能为空");
             return false;
+        } else {
+            alert('代开发');
+            adminjs.closewinbox('.add-openbox');
+            return false;
         }
+        
     });
     function funcViewOrder(id, pubDate, businessName, busiPhone, busiAddress, yongjin, disBuTie, WebBuTie, revPhone, revName, revAddress, Amount, isPay, superId, status) {
         if (status == 1 || status == 2 || status == 3) {

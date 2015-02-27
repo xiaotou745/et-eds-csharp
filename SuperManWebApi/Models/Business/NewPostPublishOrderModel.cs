@@ -218,6 +218,9 @@ namespace SuperManWebApi.Models.Business
         [DisplayText("订单来源不能为空")]
         OrderFromEmpty,
         [DisplayText("商户不存在,请先注册商户")]
-        BusinessNoExist
+        BusinessNoExist,
+        [DisplayText("该订单已存在")]
+        OrderHadExist
+
     }
 }
