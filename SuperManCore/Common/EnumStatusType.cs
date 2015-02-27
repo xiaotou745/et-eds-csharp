@@ -56,15 +56,15 @@ namespace SuperManCore.Common
     public enum CancelOrderStatus
     {
         [DisplayText("取消成功")]
-        Success,
+        Success = 1,
         [DisplayText("订单来源不能为空")]
-        OrderFromEmpty,
+        OrderFromEmpty = 201,
         [DisplayText("订单号不能为空")]
-        OrderEmpty,
+        OrderEmpty =202,
         [DisplayText("订单不存在")]
-        OrderIsNotExist,
+        OrderIsNotExist =203,
         [DisplayText("订单已被抢,无法取消")]
-        FailedCancelOrder
+        FailedCancelOrder=204
     }
     public enum OrderStatus
     {

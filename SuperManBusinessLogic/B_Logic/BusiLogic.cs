@@ -228,7 +228,7 @@ namespace SuperManBusinessLogic.B_Logic
                 if (business != null)
                 {
                     business.Status = ConstValues.BUSINESS_NOADDRESS;
-                    db.business.Add(business);
+                    db.business.Add(business); 
                     int i = db.SaveChanges();
                     if (i != 0)
                         result = true;

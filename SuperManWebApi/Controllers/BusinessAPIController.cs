@@ -74,7 +74,7 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
             else if (string.IsNullOrEmpty(model.B_Name.Trim())) //商户名称
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiNameEmpty);
-            else if (string.IsNullOrWhiteSpace(model.Address) || string.IsNullOrWhiteSpace(model.B_Province) || string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_Area))  //商户地址不能为空
+            else if (string.IsNullOrWhiteSpace(model.Address) || string.IsNullOrWhiteSpace(model.B_Province) || string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_Area) || string.IsNullOrWhiteSpace(model.B_AreaCode) || string.IsNullOrWhiteSpace(model.B_CityCode) || string.IsNullOrWhiteSpace(model.B_ProvinceCode))  //商户地址 省市区 不能为空
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
             else if (model.CommissionTypeId == 0)
             {
@@ -174,11 +174,12 @@ namespace SuperManWebApi.Controllers
             bool result = OrderLogic.orderLogic().AddModel(dborder);    //添加订单记录，并且触发极光推送。          
             if (result)
             {
-                NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { OriginalOrderNo = model.OriginalOrderNo };
+                NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { OriginalOrderNo = model.OriginalOrderNo,OrderNo = dborder.OrderNo };
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Success, resultModel);
             }
             else
             {
+                NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { Remark="订单发布失败" };
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Failed);
             }    
         }

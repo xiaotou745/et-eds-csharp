@@ -15,7 +15,7 @@ namespace SuperManWebApi.Models.Business
         /// <summary>
         /// 易代送平台的商户Id
         /// </summary>
-        public int BusinessId { get; set;}
+        public int BusinessId { get; set; }
         /// <summary>
         /// 原订单号
         /// </summary>
@@ -96,7 +96,7 @@ namespace SuperManWebApi.Models.Business
         /// <summary>
         /// 送餐费
         /// </summary>
-        public decimal? SongCanFei { get; set; } 
+        public decimal? SongCanFei { get; set; }
     }
     public class NewBusiOrderInfoModelTranslator : TranslatorBase<order, NewPostPublishOrderModel>
     {
@@ -116,7 +116,9 @@ namespace SuperManWebApi.Models.Business
             if (abusiness != null)
             {
                 from.BusinessId = abusiness.Id;
-            }else{
+            }
+            else
+            {
                 return null;
             }
             to.OrderNo = Helper.generateOrderCode(abusiness.Id);  //根据userId生成订单号(15位)
@@ -128,7 +130,7 @@ namespace SuperManWebApi.Models.Business
                 to.PubDate = DateTime.Now; //提起时间
                 to.ReceviceCity = business.City; //城市
             }
-            
+
             to.Remark = from.Remark;
 
             to.ReceviceName = from.ReceiveName;
@@ -154,7 +156,7 @@ namespace SuperManWebApi.Models.Business
             to.OriginalOrderNo = from.OriginalOrderNo;
 
             to.Weight = from.Weight;
-            
+
             to.IsPay = from.IsPay;
             to.Amount = from.Amount;
 
@@ -187,40 +189,39 @@ namespace SuperManWebApi.Models.Business
         [DisplayText("订单发布成功")]
         Success = 1,
         [DisplayText("订单发布失败")]
-        Failed = 0,
-
+        Failed = 0, 
         [DisplayText("原始订单号不能为空")]
-        OriginalOrderNoEmpty,
+        OriginalOrderNoEmpty = 301,
 
         [DisplayText("原平台商户Id不能为空")]
-        OriginalBusinessIdEmpty,
+        OriginalBusinessIdEmpty = 302,
 
         [DisplayText("请确认是否已付款")]
-        IsPayEmpty,
-
+        IsPayEmpty = 303, 
         [DisplayText("收货人不能为空")]
-        ReceiveNameEmpty,
+        ReceiveNameEmpty = 304,
         [DisplayText("收货人手机号不能为空")]
-        ReceivePhoneEmpty,
+        ReceivePhoneEmpty = 305,
 
         [DisplayText("收货人所在省不能为空")]
-        ReceiveProvinceEmpty,
+        ReceiveProvinceEmpty = 306,
 
         [DisplayText("收货人所在市不能为空")]
-        ReceiveCityEmpty,
+        ReceiveCityEmpty = 307,
 
         [DisplayText("收货人所在区不能为空")]
-        ReceiveAreaEmpty,
+        ReceiveAreaEmpty = 308,
 
         [DisplayText("收货人地址不能为空")]
-        ReceiveAddressEmpty,
+        ReceiveAddressEmpty = 309,
 
         [DisplayText("订单来源不能为空")]
-        OrderFromEmpty,
+        OrderFromEmpty = 310,
         [DisplayText("商户不存在,请先注册商户")]
-        BusinessNoExist,
+        BusinessNoExist = 311,
         [DisplayText("该订单已存在")]
-        OrderHadExist
+        OrderHadExist = 312
 
     }
 }
+

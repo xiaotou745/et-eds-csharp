@@ -93,24 +93,24 @@ namespace SuperManWebApi.Models.Business
             //to.Id = Helper.generateCode(from.phoneNo,AppType.B端);
            
             to.Province = from.B_Province;
-            to.ProvinceCode = from.B_ProvinceCode;
+            to.ProvinceCode = from.B_ProvinceCode.Trim();
 
             
             to.CityCode = from.B_CityCode;
-            to.CityId = from.B_CityCode.ToString();
+            to.CityId = from.B_CityCode.Trim();
             to.City = from.B_City;
 
-            to.districtId = from.B_AreaCode.ToString();
+            to.districtId = from.B_AreaCode.Trim();
             to.district = from.B_Area;
-            to.AreaCode = from.B_AreaCode;
+            to.AreaCode = from.B_AreaCode.Trim();
 
-            to.Address = from.Address;
+            to.Address = from.Address.Trim();
              
             to.GroupId = from.B_GroupId;
 
             to.IDCard = from.B_IdCard;
             to.Password = from.B_Password;
-            to.PhoneNo = from.PhoneNo;
+            to.PhoneNo = from.PhoneNo.Trim();
             to.PhoneNo2 = from.PhoneNo2;
             to.Latitude = from.B_Latitude;
             to.Longitude = from.B_Longitude;
