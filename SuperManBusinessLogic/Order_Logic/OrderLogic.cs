@@ -218,12 +218,12 @@ namespace SuperManBusinessLogic.Order_Logic
                     if (orderStatus == OrderStatus.订单已取消)
                     {
                         query.Status = ConstValues.ORDER_CANCEL;
-                    }
-                    int i = db.SaveChanges();
-                    if (i == 1)
-                    {
-                        bResult = true;
-                    }
+                        int i = db.SaveChanges();
+                        if (i == 1)
+                        {
+                            bResult = true;
+                        }
+                    }                    
                 }
             }
             return bResult;

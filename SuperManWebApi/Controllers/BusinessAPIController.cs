@@ -110,6 +110,10 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderIsNotExist);
             }
+            if (order.Status == 3)
+            {
+                return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.Success);
+            }
             bool b = OrderLogic.orderLogic().UpdateOrder(model.OriginalOrderNo, model.OrderFrom, OrderStatus.订单已取消);
             if (b == true)
             {
@@ -117,7 +121,7 @@ namespace SuperManWebApi.Controllers
             }
             else
             {
-                return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.FailedCancelOrder);
+                return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.NotCancelOrder, new OrderCancelResultModel { Remark="取消失败，非取消订单请勿调用" });
             }     
         }
 

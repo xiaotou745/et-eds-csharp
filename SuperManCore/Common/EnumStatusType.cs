@@ -64,7 +64,10 @@ namespace SuperManCore.Common
         [DisplayText("订单不存在")]
         OrderIsNotExist =203,
         [DisplayText("订单已被抢,无法取消")]
-        FailedCancelOrder=204
+        FailedCancelOrder=204,
+        [DisplayText("非取消订单请勿调用")]
+        NotCancelOrder = 205
+
     }
     public enum OrderStatus
     {
