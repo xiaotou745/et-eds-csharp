@@ -33,18 +33,20 @@ namespace SuperManBusinessLogic.Subsidy_Logic
 
         public SubsidyResultModel GetCurrentSubsidy()
         {
-            var resultModel = new SubsidyResultModel();
+            SubsidyResultModel resultModel = new SubsidyResultModel();
             using (var db = new supermanEntities())
             {
                 //start 取补贴信息 
                 var subsidyQuery = db.subsidy.AsQueryable();
                 if (ConfigSettings.Instance.IsGroupPush)
                 {
-                    subsidyQuery = subsidyQuery.Where(i => i.StartDate <= DateTime.Now && i.EndDate >= DateTime.Now && i.Status.Value == 1 && i.GroupId == 2).OrderByDescending(i => i.StartDate.Value); //获取当前有效期内的补贴
+                    subsidyQuery = subsidyQuery.Where(i => i.StartDate <= DateTime.Now && i.EndDate >= DateTime.Now && i.Status.Value == 1 && i.GroupId == 2)
+                        .OrderByDescending(i => i.StartDate.Value); //获取当前有效期内的补贴
                 }
                 else
                 {
-                    subsidyQuery = subsidyQuery.Where(i => i.StartDate <= DateTime.Now && i.EndDate >= DateTime.Now && i.Status.Value == 1 && i.GroupId != 2).OrderByDescending(i => i.StartDate.Value); //获取当前有效期内的补贴
+                    subsidyQuery = subsidyQuery.Where(i => i.StartDate <= DateTime.Now && i.EndDate >= DateTime.Now && i.Status.Value == 1 && i.GroupId != 2)
+                        .OrderByDescending(i => i.StartDate.Value); //获取当前有效期内的补贴
                 }
                 var subsidy = subsidyQuery.FirstOrDefault();
                 // end 
@@ -57,6 +59,8 @@ namespace SuperManBusinessLogic.Subsidy_Logic
             }
             return resultModel;
         }
+
+
         public bool SaveData(SubsidyModel model)
         {
             bool bResult = false;
