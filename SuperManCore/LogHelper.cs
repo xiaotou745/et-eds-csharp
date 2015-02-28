@@ -25,6 +25,7 @@ namespace SuperManCore
            try
            {
                string logstr = "\r\n-----------------start----------------------\r\n";
+               logstr = logstr + DateTime.Now.ToString() + "\r\n";
                MethodBase m = new StackTrace().GetFrame(1).GetMethod();
                ParameterInfo[] pm = m.GetParameters();
                string classname = m.DeclaringType.ToString();
@@ -62,6 +63,7 @@ namespace SuperManCore
            try
            {
                string logstr = "\r\n-----------------start----------------------\r\n";
+               logstr = logstr + DateTime.Now.ToString() + "\r\n";
                MethodBase m = new StackTrace().GetFrame(1).GetMethod();
                ParameterInfo[] pm = m.GetParameters();
                string classname = m.DeclaringType.ToString();
@@ -96,6 +98,7 @@ namespace SuperManCore
            try
            {
                string logstr = "\r\n-----------------start----------------------\r\n";
+               logstr = logstr + DateTime.Now.ToString() + "\r\n";
                MethodBase m = new StackTrace().GetFrame(1).GetMethod();
                ParameterInfo[] pm = m.GetParameters();
                string classname = m.DeclaringType.ToString();
@@ -132,6 +135,7 @@ namespace SuperManCore
            try
            {
                string logstr = "\r\n-----------------start----------------------\r\n";
+               logstr = logstr + DateTime.Now.ToString() + "\r\n";
                MethodBase m = new StackTrace().GetFrame(1).GetMethod();
                ParameterInfo[] pm = m.GetParameters();
                string classname = m.DeclaringType.ToString();
@@ -166,7 +170,8 @@ namespace SuperManCore
        {
            try
            {
-               string logstr = "\r\n-----------------start----------------------\r\n"; 
+               string logstr = "\r\n-----------------start----------------------\r\n";
+               logstr = logstr + DateTime.Now.ToString() + "\r\n";
                //异常发生地址
                logstr = logstr + "异常发生地址:" + HttpContext.Current.Request.Url.AbsoluteUri.ToString() + "\r\n";
                logstr = logstr + "请求类型:" + HttpContext.Current.Request.RequestType.ToString() + "\r\n";

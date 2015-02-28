@@ -47,7 +47,7 @@ namespace SuperManWebApi.Controllers
             var resultModel = new BusiRegisterResultModel
             {
                 userId = business.Id
-            };
+            };            
             return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
         }
 
@@ -88,6 +88,7 @@ namespace SuperManWebApi.Controllers
             {
                 BusiRegisterId = business.Id
             };
+            LogHelper.LogWriter("第三方调用商户注册接口", new { model = model, Message = CustomerRegisterStatus.Success });
             return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
         }
 
@@ -179,11 +180,13 @@ namespace SuperManWebApi.Controllers
             if (result)
             {
                 NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { OriginalOrderNo = model.OriginalOrderNo,OrderNo = dborder.OrderNo };
+                LogHelper.LogWriter("订单发布成功", new { model = model,resultModel=resultModel });
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Success, resultModel);
             }
             else
             {
                 NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { Remark="订单发布失败" };
+                LogHelper.LogWriter("订单发布失败", new { model = model});
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Failed);
             }    
         }
