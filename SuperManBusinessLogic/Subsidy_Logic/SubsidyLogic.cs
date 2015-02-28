@@ -31,8 +31,8 @@ namespace SuperManBusinessLogic.Subsidy_Logic
             return _instance;
         }
 
-        public SubsidyResultModel GetCurrentSubsidy()
-        {
+        public SubsidyResultModel GetCurrentSubsidy(int groupId=0)
+        { 
             SubsidyResultModel resultModel = new SubsidyResultModel();
             using (var db = new supermanEntities())
             {
@@ -40,12 +40,15 @@ namespace SuperManBusinessLogic.Subsidy_Logic
                 var subsidyQuery = db.subsidy.AsQueryable();
                 if (ConfigSettings.Instance.IsGroupPush)
                 {
-                    subsidyQuery = subsidyQuery.Where(i => i.StartDate <= DateTime.Now && i.EndDate >= DateTime.Now && i.Status.Value == 1 && i.GroupId == 2)
-                        .OrderByDescending(i => i.StartDate.Value); //获取当前有效期内的补贴
+                    if (groupId > 0)
+                    {
+                        subsidyQuery = subsidyQuery.Where(i => i.StartDate <= DateTime.Now && i.EndDate >= DateTime.Now && i.Status.Value == 1 && i.GroupId == groupId)
+                            .OrderByDescending(i => i.StartDate.Value); //获取当前有效期内的补贴
+                    }
                 }
                 else
                 {
-                    subsidyQuery = subsidyQuery.Where(i => i.StartDate <= DateTime.Now && i.EndDate >= DateTime.Now && i.Status.Value == 1 && i.GroupId != 2)
+                    subsidyQuery = subsidyQuery.Where(i => i.StartDate <= DateTime.Now && i.EndDate >= DateTime.Now && i.Status.Value == 1 && (i.GroupId == null || i.GroupId == 0))
                         .OrderByDescending(i => i.StartDate.Value); //获取当前有效期内的补贴
                 }
                 var subsidy = subsidyQuery.FirstOrDefault();
