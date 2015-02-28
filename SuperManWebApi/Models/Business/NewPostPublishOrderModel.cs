@@ -162,7 +162,7 @@ namespace SuperManWebApi.Models.Business
 
             to.SongCanFei = from.SongCanFei;
 
-            var subsidy = SubsidyLogic.subsidyLogic().GetCurrentSubsidy();
+            var subsidy = SubsidyLogic.subsidyLogic().GetCurrentSubsidy(business.GroupId.Value);
             to.WebsiteSubsidy = subsidy.WebsiteSubsidy;
             to.DistribSubsidy = subsidy.DistribSubsidy;
             if (subsidy.OrderCommission != null)
