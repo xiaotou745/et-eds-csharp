@@ -220,7 +220,10 @@ namespace SuperManWebApi.Models.Business
         [DisplayText("商户不存在,请先注册商户")]
         BusinessNoExist = 311,
         [DisplayText("该订单已存在")]
-        OrderHadExist = 312
+        OrderHadExist = 312,
+        [DisplayText("商户未审核")]
+        BusinessNotAudit = 313
+
 
     }
 }

@@ -79,9 +79,9 @@ namespace SuperManBusinessLogic.Order_Logic
                     if (superman != null)
                         items = items.Where(p => p.clienterId == superman.Id);
                 }
-                if(!string.IsNullOrEmpty(criteria.orderPubStart))
+                if (!string.IsNullOrEmpty(criteria.orderPubStart))
                 {
-                    var dt=DateTime.Parse(criteria.orderPubStart);
+                    var dt = DateTime.Parse(criteria.orderPubStart);
                     items = items.Where(p => p.PubDate.Value >= dt);
                 }
                 if (!string.IsNullOrEmpty(criteria.orderPubEnd))
@@ -89,7 +89,7 @@ namespace SuperManBusinessLogic.Order_Logic
                     var dt = DateTime.Parse(criteria.orderPubEnd);
                     items = items.Where(p => p.PubDate.Value <= dt);
                 }
-                if (criteria.GroupId!=null)
+                if (criteria.GroupId != null)
                 {
                     items = items.Where(p => p.business.GroupId == criteria.GroupId);
                 }
@@ -207,23 +207,28 @@ namespace SuperManBusinessLogic.Order_Logic
         /// </summary>
         /// <param name="order"></param>
         /// <param name="orderStatus"></param>
-        public bool UpdateOrder(string oriOrderNo,int orderFrom, OrderStatus orderStatus)
+        public bool UpdateOrder(string oriOrderNo, int orderFrom, OrderStatus orderStatus)
         {
             bool bResult = false;
             using (var db = new supermanEntities())
             {
-                var query = db.order.Where(p => p.OriginalOrderNo == oriOrderNo && p.OrderFrom == orderFrom && p.Status == ConstValues.ORDER_NEW).FirstOrDefault();
+                var query = db.order.Where(p => p.OriginalOrderNo == oriOrderNo && p.OrderFrom == orderFrom).FirstOrDefault();
                 if (query != null)
                 {
-                    if (orderStatus == OrderStatus.订单已取消)
+                    if ((OrderStatus)query.Status == OrderStatus.订单已取消)
+                    {
+                        bResult = true;
+                    }
+                    else
                     {
                         query.Status = ConstValues.ORDER_CANCEL;
                         int i = db.SaveChanges();
                         if (i == 1)
                         {
+                            Push.PushMessage(0, "订单提醒", "订单被客户取消了！", "订单被客户取消了！", query.clienterId.Value.ToString(), string.Empty);
                             bResult = true;
                         }
-                    }                    
+                    }
                 }
             }
             return bResult;
@@ -344,7 +349,7 @@ namespace SuperManBusinessLogic.Order_Logic
         /// <param name="orderNO">第三方平台的原订单号</param>
         /// <param name="orderFrom">订单来源</param>
         /// <returns></returns>
-        public order GetOrderByOrderNoAndOrderFrom(string orderNO,int orderFrom)
+        public order GetOrderByOrderNoAndOrderFrom(string orderNO, int orderFrom)
         {
             using (var dbEntity = new supermanEntities())
             {

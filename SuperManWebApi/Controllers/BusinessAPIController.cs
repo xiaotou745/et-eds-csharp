@@ -169,6 +169,13 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.BusinessNoExist);
             }
+            else
+            {
+                if (busi.Status != ConstValues.BUSINESS_AUDITPASS)
+                {
+                    return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.BusinessNotAudit);
+                }
+            }
             //验证该平台 商户 订单号 是否存在
             var order = OrderLogic.orderLogic().GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom);
             if(order != null){
