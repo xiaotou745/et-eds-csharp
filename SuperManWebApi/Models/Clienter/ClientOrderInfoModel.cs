@@ -36,5 +36,10 @@ namespace SuperManWebApi.Models.Clienter
         public string city { get; set; }
         //城市Id
         public string cityId { get; set; }
+        ///// <summary>
+        ///// 是否送餐订单：1送餐订单，2收锅订单
+        ///// </summary>
+        //public int OrderType { get; set; }
+        
     }
 }
