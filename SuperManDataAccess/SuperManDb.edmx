@@ -496,7 +496,7 @@
           <Property Name="PicUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="Status" Type="SByte" />
           <Property Name="AccountBalance" Type="Decimal" />
-          <Property Name="InsertTime" Type="DateTime" />
+          <Property Name="InsertTime" Type="DateTime" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="InviteCode" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
           <Property Name="City" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="CityId" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
@@ -576,8 +576,8 @@
           <Property Name="ReceiveAreaCode" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
           <Property Name="SongCanFei" Type="Decimal" />
           <Property Name="OrderType" Type="Int32" />
-          <NavigationProperty Name="business" Relationship="supermanModel.businessId" FromRole="order" ToRole="business" />
           <Property Name="KM" Type="Double" />
+          <NavigationProperty Name="business" Relationship="supermanModel.businessId" FromRole="order" ToRole="business" />
         </EntityType>
         <EntityType Name="orderlog">
           <Key>
