@@ -234,11 +234,35 @@
                         <p class="help-block"></p>
                     </div>
                 </div>
-                <div class="control-group">
+                @*<div class="control-group">
                     <!-- Text input-->
                     <label class="control-label" for="input01">补贴</label>
                     <div class="controls">
                         <input style="width:320px" placeholder="补贴" name="buTieUnFin" id="buTieUnFin" class="input-xlarge" required="required" type="text">
+                        <p class="help-block"></p>
+                    </div>
+                </div>*@
+                <div class="control-group">
+                    <!-- Text input-->
+                    <label class="control-label" for="input01">订单佣金</label>
+                    <div class="controls">
+                        <input placeholder="订单佣金" name="OrderCommissionUnFin" id="OrderCommissionUnFin" class="input-xlarge" required="required" type="text">
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <!-- Text input-->
+                    <label class="control-label" for="input01">配送补贴</label>
+                    <div class="controls">
+                        <input  placeholder="配送补贴" name="DistribSubsidyUnFin" id="DistribSubsidyUnFin" class="input-xlarge" required="required" type="text">
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <!-- Text input-->
+                    <label class="control-label" for="input01">网站补贴</label>
+                    <div class="controls">
+                        <input  placeholder="网站补贴" name="WebsiteSubsidyUnFin" id="WebsiteSubsidyUnFin" class="input-xlarge" required="required" type="text">
                         <p class="help-block"></p>
                     </div>
                 </div>
@@ -321,6 +345,7 @@
             $("#businessAddressFin").val(busiAddress).attr('disabled', 'disabled');
             var yongjin = "订单佣金:" + yongjin + "," + "配送补贴:" + disBuTie + "," + "网站补贴:" + WebBuTie;
             $("#buTieFin").val(yongjin).attr('readonly', 'readonly');
+           
             $("#RecPhoneFin").val(revPhone).attr('disabled', 'disabled');
             $("#RecAddressFin").val(revAddress).attr('disabled', 'disabled');
             $("#AmountFin").val(Amount).attr('disabled', 'disabled');
@@ -345,8 +370,11 @@
             $("#businessNameUnFin").val(businessName).attr('disabled', 'disabled');
             $("#businessPhoneUnFin").val(busiPhone).attr('disabled', 'disabled');
             $("#businessAddressUnFin").val(busiAddress).attr('disabled', 'disabled');
-            var yongjin = "订单佣金:" + yongjin + "," + "配送补贴:" + disBuTie + "," + "网站补贴:" + WebBuTie;
-            $("#buTieUnFin").val(yongjin).attr('readonly', 'readonly');
+            //var yongjin = "订单佣金:" + yongjin + "," + "配送补贴:" + disBuTie + "," + "网站补贴:" + WebBuTie;
+            $("#OrderCommissionUnFin").val(yongjin);
+            $("#DistribSubsidyUnFin").val(disBuTie).attr('disabled', 'disabled');
+            $("#WebsiteSubsidyUnFin").val(WebBuTie).attr('disabled', 'disabled');
+            //$("#buTieUnFin").val(yongjin).attr('readonly', 'readonly');
             $("#RecPhoneUnFin").val(revPhone).attr('disabled', 'disabled');
             $("#RecAddressUnFin").val(revAddress).attr('disabled', 'disabled');
             $("#AmountUnFin").val(Amount).attr('disabled', 'disabled');
