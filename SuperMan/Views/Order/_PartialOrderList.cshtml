@@ -327,13 +327,33 @@
 
     });
     $('#btnSuperConfim').bind('click', function () {
-        if ($("#superUnFin").val().trim() == "") {
-            alert("超人姓名不能为空");
+        var orderCommission = $('#OrderCommissionUnFin').val();
+        var orderNo = $('#orderNoUnFin').val();
+        var superName = $('#superUnFin').val();
+        if ($("#superUnFin").val().trim() == "" || $("#OrderCommissionUnFin").val().trim() == "")
+        {
+            alert("订单佣金和超人姓名不能为空！");
             return false;
-        } else {
-            alert('代开发');
+        }
+        else
+        {
+            var paramaters = {"OrderCommission": orderCommission, "SuperName": superName, "OrderNo": orderNo };
+            var url = "/Order/SaveOrderInfo";
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: paramaters,
+                success: function (result) {
+                    if (result.IsSuccess) {
+                        alert("订单信息更新成功");
+                        window.location.href = "/Order/Order";
+                    } else {
+                        alert(result.Message);
+                    }
+                }
+            });
             adminjs.closewinbox('.add-openbox');
-            return false;
+            return true;
         }
         
     });

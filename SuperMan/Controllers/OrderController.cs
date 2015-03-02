@@ -1,4 +1,5 @@
 ﻿using SuperManBusinessLogic.Order_Logic;
+using SuperManBusinessLogic.Subsidy_Logic;
 using SuperManCommonModel.Entities;
 using SuperManCommonModel.Models;
 using System;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using SuperManCore;
+using SuperManCore.Common;
 using SuperManCore.Paging;
 using SuperManDataAccess;
 
@@ -42,6 +44,12 @@ namespace SuperMan.Controllers
         public ActionResult OrderCount()
         {
             return View();
-        }        
+        }
+        [HttpPost]
+        public JsonResult SaveOrderInfo(order model)
+        {
+            bool reg = OrderLogic.orderLogic().UpdateOrderInfo(model);
+            return Json(new ResultModel(reg, string.Empty), JsonRequestBehavior.AllowGet);
+        }
     }
 }
