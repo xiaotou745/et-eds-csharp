@@ -243,8 +243,7 @@ namespace SuperManBusinessLogic.Order_Logic
             bool bResult = false;
             using (var db = new supermanEntities())
             {
-                int orderId = Convert.ToInt32(order.OrderNo);
-                var query = db.order.Where(p => p.Id == orderId).FirstOrDefault();
+                var query = db.order.Where(p => p.OrderNo == order.OrderNo).FirstOrDefault();
                 if (query != null)
                 {
                     query.OrderCommission = order.OrderCommission;
