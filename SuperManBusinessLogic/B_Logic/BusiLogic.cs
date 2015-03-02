@@ -35,6 +35,25 @@ namespace SuperManBusinessLogic.B_Logic
 
         public PagedList<BusinessViewModel> resultModel { get; set; }
 
+        /// <summary>
+        ///  根据城市信息查询当前城市下该集团的所有商户信息  add by caoheyang 20150302         
+        /// </summary>
+        /// <param name="criteria">条件 </param>
+        /// <returns></returns>
+        public dynamic GetBussinessByCityInfo(BusinessSearchCriteria criteria)
+        {
+            List<business> bussiness = new List<business>();
+            supermanEntities db = new supermanEntities();
+            var items = db.business.AsQueryable();
+            items = items.Where(p => p.GroupId == criteria.GroupId);
+            if (!string.IsNullOrWhiteSpace(criteria.ProvinceCode))
+                items = items.Where(p => p.ProvinceCode == criteria.ProvinceCode);
+            if (!string.IsNullOrWhiteSpace(criteria.CityCode))
+                items = items.Where(p => p.CityCode == criteria.CityCode);
+            var res = from p in items select new { Name = p.Name, Id = p.Id };
+            return res;
+        }
+
         public BusinessManage GetBusinesses(BusinessSearchCriteria criteria)
         {
             using (var db = new supermanEntities())
@@ -65,24 +84,7 @@ namespace SuperManBusinessLogic.B_Logic
             }
         }
 
-        /// <summary>
-        ///  根据城市信息查询当前城市下该集团的所有商户信息  add by caoheyang 20150302
-        /// </summary>
-        /// <param name="criteria">条件 </param>
-        /// <returns></returns>
-        public IList<business> GetBussinessByCityInfo(BusinessSearchCriteria criteria) 
-        {
-            using (var db = new supermanEntities())
-            {
-                var items = db.business.AsQueryable();
-                items = items.Where(p => p.GroupId == criteria.GroupId);
-                if (!string.IsNullOrWhiteSpace(criteria.ProvinceCode))
-                    items = items.Where(p => p.ProvinceCode == criteria.ProvinceCode);
-                if (!string.IsNullOrWhiteSpace(criteria.CityCode))
-                    items = items.Where(p => p.CityCode == criteria.CityCode);
-                return items.ToList();
-            }
-        }
+ 
 
         public BusinessCountManage GetBusinessesCount(BusinessSearchCriteria criteria)
         {

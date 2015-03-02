@@ -158,6 +158,12 @@
                 } else {
                     $('#labBoxTrueName').hide();
                 }
+                if (bussinessID == "" || bussinessID == null) {  //所属门店非空验证
+                    $('#labBoxBussinessID').show();
+                    result = false;
+                } else {
+                    $('#labBoxBussinessID').hide();
+                }
                 if (phoneNo == "" || phoneNo == null) {  //手机号非空验证
                     $('#labBoxPhoneNo').html("不能为空").show();
                     result = false;
@@ -192,11 +198,15 @@
                         data: {
                             TrueName: trueName, PhoneNo: phoneNo, HealthCardID: healthCardID, InternalDepart: internalDepart,
                             ProvinceCode: provinceCode, CityCode: cityCode, IDCard: idCard, Password: password, City: $("#BoxProvinceCode").find("option:selected").text(),
-                            CityId: provinceCode, Province: $("#BoxProvinceCode").find("option:selected").text(), GroupId: $("#HidGroupID").val()
+                            CityId: provinceCode, Province: $("#BoxProvinceCode").find("option:selected").text(), GroupId: $("#HidGroupID").val(),
+                            BussinessID:bussinessID
                         },
                         success: function (result) {
                             if (result.IsSuccess) {
+                                alert("新增超人成功！");
                                 window.location.href = "/SuperManManager/SuperManManager";
+                            } else {
+                                alert(result.Message);
                             }
                         },
                         error: function () {

@@ -60,7 +60,7 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         [HttpPost]
         public JsonResult GetBussinessByCityInfo(BusinessSearchCriteria model) {
-            return Json(BusiLogic.busiLogic().GetBussinessByCityInfo(model), JsonRequestBehavior.DenyGet);
+             return Json(BusiLogic.busiLogic().GetBussinessByCityInfo(model), JsonRequestBehavior.DenyGet);
         }
     }
 }

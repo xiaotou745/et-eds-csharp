@@ -91,11 +91,12 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult AddSuperMan(clienter clienter)
         {
+            if (ClienterLogic.clienterLogic().CheckExistPhone(clienter.PhoneNo))  //判断该手机号是否已经注册过
+                return Json(new ResultModel(false, "手机号已被注册"));
             if (string.IsNullOrWhiteSpace(clienter.Password))
                 clienter.Password = "edaisong";
             clienter.Password = MD5Helper.MD5(clienter.Password);
-
-            return null;
+            return Json(new ResultModel(ClienterLogic.clienterLogic().Add(clienter), ""));
         }
     }
 }
