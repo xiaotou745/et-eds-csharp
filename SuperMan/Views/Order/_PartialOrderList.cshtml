@@ -62,7 +62,7 @@
                     }
 
                     <td>
-                        <a href="javascript:void(0)" orderid=@item.Id businessname=@item.BusinessModel.Name id="linkView" onclick="funcViewOrder('@item.OrderNo','@item.PubDate','@item.BusinessModel.Name','@item.BusinessModel.PhoneNo','@item.BusinessModel.Address','@item.OrderCommission','@item.DistribSubsidy','@item.WebsiteSubsidy','@item.RecevicePhoneNo','@item.ReceviceName','@item.ReceviceAddress','@item.Amount','@item.IsPay','@item.clienterId','@item.Status')">查看</a>
+                        <a href="javascript:void(0)" orderid=@item.Id businessname=@item.BusinessModel.Name id="linkView" onclick="funcViewOrder('@item.OrderNo','@item.PubDate','@item.BusinessModel.Name','@item.BusinessModel.PhoneNo','@item.BusinessModel.Address','@item.OrderCommission','@item.DistribSubsidy','@item.WebsiteSubsidy','@item.RecevicePhoneNo','@item.ReceviceName','@item.ReceviceAddress','@item.Amount','@item.IsPay','@item.clienterId','@item.Status','@item.ClienterName')">查看</a>
                     </td>
                 </tr>
             }
@@ -380,8 +380,8 @@
         return true;
         
     }); 
-    function funcViewOrder(id, pubDate, businessName, busiPhone, busiAddress, yongjin, disBuTie, WebBuTie, revPhone, revName, revAddress, Amount, isPay, superId, status) {
-        if (status == 1 || status == 2 || status == 3) {
+    function funcViewOrder(id, pubDate, businessName, busiPhone, busiAddress, yongjin, disBuTie, WebBuTie, revPhone, revName, revAddress, Amount, isPay, superId, status, superManName) {
+        if (status == 1 || status == 2 || status == 3) { 
             $("#orderNoFin").val(id).attr('disabled', 'disabled');
             $("#PubDateFin").val(pubDate).attr('disabled', 'disabled');
             $("#businessNameFin").val(businessName).attr('disabled', 'disabled');
@@ -397,7 +397,7 @@
                 $("#isPayFin").val("顾客已付款").attr('disabled', 'disabled');
             else
                 $("#isPayFin").val('顾客未付款').attr('disabled', 'disabled');
-            $("#superFin").val(superId).attr('disabled', 'disabled');
+            $("#superFin").val(superManName).attr('disabled', 'disabled');
             if (status == 1)
                 $("#statusFin").text("已完成");
             else if (status == 2) {
