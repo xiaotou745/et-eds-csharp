@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using SuperManCore;
 
 namespace SuperMan.Controllers
 {
@@ -42,18 +43,25 @@ namespace SuperMan.Controllers
                     {
                         //MessageBoxAndReturn(string.Format("您的上传文件格式错误({0})！", allUploadExts.Replace(".", "")));
                     }
-                } 
-
-                //保存文件
-                string saveDoc = "/uploads";
-                string rdFileName = getRandomFileName();
-                string newFileName = rdFileName + fileExt;
-                if (!Directory.Exists(Path.GetDirectoryName(Server.MapPath(saveDoc))))
-                {
-                    Directory.CreateDirectory(Server.MapPath(saveDoc));
                 }
-                // 文件上传  
-                file.SaveAs(Server.MapPath(saveDoc + newFileName)); 
+                var fileName = string.Format("{0}_{1}", DateTime.Now.ToString("yyyyMMddhhmmss"), file.FileName);
+ 
+                if (!System.IO.Directory.Exists(CustomerIconUploader.Instance.PhysicalPath))
+                {
+                    System.IO.Directory.CreateDirectory(CustomerIconUploader.Instance.PhysicalPath);
+                }
+                var fullFilePath = Path.Combine(CustomerIconUploader.Instance.PhysicalPath, fileName);
+ 
+                file.SaveAs(fullFilePath);
+    
+                var transformer = new FixedDimensionTransformerAttribute(CustomerIconUploader.Instance.Width, CustomerIconUploader.Instance.Height, CustomerIconUploader.Instance.MaxBytesLength / 1024);
+
+                var destFileName = string.Format("{0}_{1}{2}", DateTime.Now.ToString("yyyyMMddhhmmss"), new Random().Next(1000), Path.GetExtension(file.FileName));
+                var destFullFileName = System.IO.Path.Combine(CustomerIconUploader.Instance.PhysicalPath, destFileName);
+                transformer.Transform(fullFilePath, destFullFileName); 
+                 
+                var picUrl = System.IO.Path.GetFileName(destFullFileName); 
+                
             }
             return View();
         }
