@@ -94,6 +94,15 @@ namespace SuperManWebApi.Models.Business
         /// </summary>
         public decimal? Weight { get; set; }
         /// <summary>
+        /// 订单类型： 1送餐订单，2取餐盒订单
+        /// </summary>
+        public int? OrderType { get; set; }
+        /// <summary>
+        /// 公里数，商户地址到收货人地址的距离
+        /// </summary>
+        public double KM { get; set; }
+
+        /// <summary>
         /// 送餐费
         /// </summary>
         public decimal? SongCanFei { get; set; }
@@ -161,6 +170,8 @@ namespace SuperManWebApi.Models.Business
             to.Amount = from.Amount;
 
             to.SongCanFei = from.SongCanFei;
+            to.OrderType = from.OrderType == null ? 1 : from.OrderType; //订单类型 1送餐订单 2取餐盒订单 
+            to.KM= from.KM; //送餐距离
 
             var subsidy = SubsidyLogic.subsidyLogic().GetCurrentSubsidy(business.GroupId.Value);
             to.WebsiteSubsidy = subsidy.WebsiteSubsidy;

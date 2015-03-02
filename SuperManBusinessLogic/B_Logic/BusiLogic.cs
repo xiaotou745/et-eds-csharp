@@ -440,6 +440,7 @@ namespace SuperManBusinessLogic.B_Logic
                 using (var db = new supermanEntities())
                 {
                     var query = db.business.Where(p => p.OriginalBusiId == oriBusiId && p.GroupId == orderFrom).FirstOrDefault();
+                    LogHelper.LogWriter("根据原平台订单号和订单来源获取商户信息",new { query = query }); 
                     if (query != null)
                     {
                         return query;

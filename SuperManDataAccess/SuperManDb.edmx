@@ -117,7 +117,7 @@
           <Property Name="PicUrl" Type="varchar" MaxLength="255" />
           <Property Name="Status" Type="tinyint" />
           <Property Name="AccountBalance" Type="decimal" Precision="7" Scale="2" />
-          <Property Name="InsertTime" Type="datetime" Precision="0" />
+          <Property Name="InsertTime" Type="datetime" Precision="0" StoreGeneratedPattern="Identity" />
           <Property Name="InviteCode" Type="varchar" MaxLength="45" />
           <Property Name="City" Type="varchar" MaxLength="100" />
           <Property Name="CityId" Type="varchar" MaxLength="45" />
@@ -125,9 +125,10 @@
           <Property Name="HealthCardID" Type="char" MaxLength="18" />
           <Property Name="InternalDepart" Type="varchar" MaxLength="20" />
           <Property Name="ProvinceCode" Type="varchar" MaxLength="20" />
-          <Property Name="CityCode" Type="varchar" MaxLength="20" />
           <Property Name="AreaCode" Type="varchar" MaxLength="20" />
+          <Property Name="CityCode" Type="varchar" MaxLength="20" />
           <Property Name="Province" Type="varchar" MaxLength="20" />
+          <Property Name="BussinessID" Type="int" />
         </EntityType>
         <EntityType Name="commissiontype">
           <Key>
@@ -195,7 +196,8 @@
           <Property Name="ReceiveCityCode" Type="varchar" MaxLength="45" />
           <Property Name="ReceiveAreaCode" Type="varchar" MaxLength="45" />
           <Property Name="SongCanFei" Type="decimal" Precision="10" Scale="2" />
-          <Property Name="IsRecovery" Type="int" />
+          <Property Name="OrderType" Type="int" />
+          <Property Name="KM" Type="double" />
         </EntityType>
         <EntityType Name="orderlog">
           <Key>
@@ -270,6 +272,8 @@
           <Property Name="EndDate" Type="datetime" Precision="0" />
           <Property Name="Status" Type="tinyint" />
           <Property Name="GroupId" Type="int" />
+          <Property Name="PKMCost" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="OrderType" Type="int" />
         </EntityType>
         <Association Name="accountId">
           <End Role="account" Type="Self.account" Multiplicity="0..1" />
@@ -500,9 +504,10 @@
           <Property Name="HealthCardID" Type="String" MaxLength="18" FixedLength="false" Unicode="false" />
           <Property Name="InternalDepart" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="ProvinceCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="CityCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="AreaCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="CityCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="Province" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="BussinessID" Type="Int32" />
         </EntityType>
         <EntityType Name="commissiontype">
           <Key>
@@ -570,8 +575,9 @@
           <Property Name="ReceiveCityCode" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
           <Property Name="ReceiveAreaCode" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
           <Property Name="SongCanFei" Type="Decimal" />
-          <Property Name="IsRecovery" Type="Int32" />
+          <Property Name="OrderType" Type="Int32" />
           <NavigationProperty Name="business" Relationship="supermanModel.businessId" FromRole="order" ToRole="business" />
+          <Property Name="KM" Type="Double" />
         </EntityType>
         <EntityType Name="orderlog">
           <Key>
@@ -646,6 +652,8 @@
           <Property Name="EndDate" Type="DateTime" />
           <Property Name="Status" Type="SByte" />
           <Property Name="GroupId" Type="Int32" />
+          <Property Name="PKMCost" Type="Decimal" />
+          <Property Name="OrderType" Type="Int32" />
         </EntityType>
         <Association Name="accountId">
           <End Type="supermanModel.account" Role="account" Multiplicity="0..1" />
@@ -797,9 +805,10 @@
           <EntitySetMapping Name="clienter">
             <EntityTypeMapping TypeName="supermanModel.clienter">
               <MappingFragment StoreEntitySet="clienter">
+                <ScalarProperty Name="BussinessID" ColumnName="BussinessID" />
                 <ScalarProperty Name="Province" ColumnName="Province" />
-                <ScalarProperty Name="AreaCode" ColumnName="AreaCode" />
                 <ScalarProperty Name="CityCode" ColumnName="CityCode" />
+                <ScalarProperty Name="AreaCode" ColumnName="AreaCode" />
                 <ScalarProperty Name="ProvinceCode" ColumnName="ProvinceCode" />
                 <ScalarProperty Name="InternalDepart" ColumnName="InternalDepart" />
                 <ScalarProperty Name="HealthCardID" ColumnName="HealthCardID" />
@@ -859,7 +868,8 @@
           <EntitySetMapping Name="order">
             <EntityTypeMapping TypeName="supermanModel.order">
               <MappingFragment StoreEntitySet="order">
-                <ScalarProperty Name="IsRecovery" ColumnName="IsRecovery" />
+                <ScalarProperty Name="KM" ColumnName="KM" />
+                <ScalarProperty Name="OrderType" ColumnName="OrderType" />
                 <ScalarProperty Name="SongCanFei" ColumnName="SongCanFei" />
                 <ScalarProperty Name="ReceiveAreaCode" ColumnName="ReceiveAreaCode" />
                 <ScalarProperty Name="ReceiveCityCode" ColumnName="ReceiveCityCode" />
@@ -962,6 +972,8 @@
           <EntitySetMapping Name="subsidy">
             <EntityTypeMapping TypeName="supermanModel.subsidy">
               <MappingFragment StoreEntitySet="subsidy">
+                <ScalarProperty Name="OrderType" ColumnName="OrderType" />
+                <ScalarProperty Name="PKMCost" ColumnName="PKMCost" />
                 <ScalarProperty Name="GroupId" ColumnName="GroupId" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="EndDate" ColumnName="EndDate" />
