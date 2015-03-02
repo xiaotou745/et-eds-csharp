@@ -1,4 +1,6 @@
-﻿using SuperManBusinessLogic.CommonLogic;
+﻿using System.Runtime.InteropServices;
+using cn.jpush.api.report;
+using SuperManBusinessLogic.CommonLogic;
 using SuperManCommonModel;
 using SuperManCommonModel.Entities;
 using SuperManCommonModel.Models;
@@ -36,6 +38,21 @@ namespace SuperManBusinessLogic.C_Logic
         }
 
         public PagedList<ClienterViewModel> resultModel { get; set; }
+
+
+        /// <summary>
+        /// 根据集团id获取超人列表 add by 平扬 2015.03.2
+        /// </summary>
+        /// <param name="groupId">集团id</param>
+        /// <returns>IList<ClienterModel></returns>
+        public IList<ClienterModel> GetClienterModelByGroupID(int groupId)
+        {
+            using (var db = new supermanEntities())
+            { 
+                var item =db.clienter.Where(p => p.GroupId == groupId && p.Status==1).ToList();
+                return ClienterModelTranslator.Instance.Translate(item);
+            }
+        }
 
         /// <summary>
         /// 超人列表查询 add by caohheyang 20150212

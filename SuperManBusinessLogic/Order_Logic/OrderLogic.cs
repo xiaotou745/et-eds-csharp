@@ -235,6 +235,29 @@ namespace SuperManBusinessLogic.Order_Logic
         }
 
         /// <summary>
+        /// 更新订单配送骑士和订单佣金
+        /// </summary>
+        /// <param name="order"></param>
+        public bool UpdateOrderInfo(order order)
+        {
+            bool bResult = false;
+            using (var db = new supermanEntities())
+            {
+                var query = db.order.Where(p => p.OrderNo == order.OrderNo).FirstOrDefault();
+                if (query != null)
+                {
+                    query.OrderCommission = order.OrderCommission;
+                    int i = db.SaveChanges();
+                    if (i == 1)
+                    {
+                        bResult = true;
+                    }
+                }
+            }
+            return bResult;
+        }
+
+        /// <summary>
         /// 订单统计
         /// </summary>
         /// <param name="criteria"></param>

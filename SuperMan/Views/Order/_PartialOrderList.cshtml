@@ -7,8 +7,8 @@
             <th>商户信息</th>
             <th>超人信息</th>
             <th>发布时间</th>
-            <th>取货地址</th>
-            <th>送货地址</th>
+            <th width="%5">取货地址</th>
+            <th width="%5">送货地址</th>
             <th>实际完成时间</th>
             <th>订单金额</th>
             <th>订单佣金</th>
@@ -62,7 +62,7 @@
                     }
 
                     <td>
-                        <a href="javascript:void(0)" orderid=@item.Id businessname=@item.BusinessModel.Name id="linkView" onclick="funcViewOrder('@item.Id','@item.PubDate','@item.BusinessModel.Name','@item.BusinessModel.PhoneNo','@item.BusinessModel.Address','@item.OrderCommission','@item.DistribSubsidy','@item.WebsiteSubsidy','@item.RecevicePhoneNo','@item.ReceviceName','@item.ReceviceAddress','@item.Amount','@item.IsPay','@item.clienterId','@item.Status')">查看</a>
+                        <a href="javascript:void(0)" orderid=@item.Id businessname=@item.BusinessModel.Name id="linkView" onclick="funcViewOrder('@item.OrderNo','@item.PubDate','@item.BusinessModel.Name','@item.BusinessModel.PhoneNo','@item.BusinessModel.Address','@item.OrderCommission','@item.DistribSubsidy','@item.WebsiteSubsidy','@item.RecevicePhoneNo','@item.ReceviceName','@item.ReceviceAddress','@item.Amount','@item.IsPay','@item.clienterId','@item.Status')">查看</a>
                     </td>
                 </tr>
             }
@@ -307,7 +307,15 @@
                     <!-- Text input-->
                     <label class="control-label" for="input01">指派超人</label>
                     <div class="controls">
-                        <input placeholder="超人姓名" name="superUnFin" id="superUnFin" class="input-xlarge" required="required" type="text">
+                        <select id="superSelect" name="superSelect" >
+                            <option value="-1">请选择超人</option>
+                            @{
+                                foreach (var item in ViewBag.superManModel)
+                                {
+                                    <option id="supperSelect_@item.Id" value="@item.Id">@item.TrueName-@item.PhoneNo</option>
+                                }
+                            } 
+                        </select>   
                         <p class="help-block"></p>
                     </div>
                 </div>
@@ -319,24 +327,56 @@
         </p>
     </div>
 </div>
-<!--end-->
-
+<!--end--> 
 <script type="text/javascript">
     var adminjs = new adminglass(); //实例化后台类
     $(function () {
 
     });
+
     $('#btnSuperConfim').bind('click', function () {
-        if ($("#superUnFin").val().trim() == "") {
-            alert("超人姓名不能为空");
-            return false;
-        } else {
-            alert('代开发');
-            adminjs.closewinbox('.add-openbox');
+        var orderCommission = $('#OrderCommissionUnFin').val();
+        var orderNo = $('#orderNoUnFin').val();
+        var superID = $("#superSelect").val().trim();
+        if ($("#OrderCommissionUnFin").val().trim() == "")
+        {
+            alert("订单佣金不能为空！");
             return false;
         }
+        if (superID == "" || superID == "-1") {
+            alert("请选择超人!");
+            return false;
+        }
+        var isUpdate = false;
+        var paramaters = {"OrderCommission": orderCommission, "SuperName": "", "OrderNo": orderNo };
+        var url = "/Order/SaveOrderInfo";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    isUpdate = true;
+                } else {
+                    isUpdate = false;
+                } 
+            }
+        });
+        $.post("/Order/RushOrder", { SuperID: superID, OrderNo: orderNo }, function(data) {
+            if (data) {
+                isUpdate = true;
+            } else {
+                isUpdate = false;
+            }
+        });
+        if (isUpdate) {
+            alert("更新订单成功!");
+            window.location.href = location.href;
+        }
+        adminjs.closewinbox('.add-openbox');
+        return true;
         
-    });
+    }); 
     function funcViewOrder(id, pubDate, businessName, busiPhone, busiAddress, yongjin, disBuTie, WebBuTie, revPhone, revName, revAddress, Amount, isPay, superId, status) {
         if (status == 1 || status == 2 || status == 3) {
             $("#orderNoFin").val(id).attr('disabled', 'disabled');
