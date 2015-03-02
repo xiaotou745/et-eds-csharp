@@ -26,6 +26,7 @@
                     <input id="txtSuperManPhone" type="text" />
                     <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" />
                     <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                    <input id="btnAdd" class="searchBtn" type="button" value="新增超人">
                 </td>
             </tr>
         </table>
@@ -35,6 +36,86 @@
     </div>
 </div>
 
+<!--新增超人弹出窗部分  add by caoheyang20140228-->
+<div class="selectSupplierDish">
+    <div class="add-openbox add-form" id="AddSuperManShow" style="width:500px">
+        <h2>
+            <p id="statusUnFin">新增超人</p>
+            <a class="J_closebox x_close"></a>
+        </h2>
+        <form class="form-horizontal" role="form" id="menufrom" method="post" action="/MenuManagement/Add">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="TrueName"><span style="color:red;">*</span>姓名</label>
+                    <div class="controls">
+                        <input placeholder="姓名" name="TrueName" id="BoxTrueName" class="input-xlarge" required="required" type="text">
+                        <text id="labBoxTrueName" style="color:red" hidden="hidden">不能为空</text>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="PhoneNo"><span style="color:red;">*</span>电话</label>
+                    <div class="controls">
+                        <input placeholder="电话" name="PhoneNo" id="BoxPhoneNo" class="input-xlarge" required="required" type="text">
+                        <text id="labBoxPhoneNo" style="color:red" hidden="hidden">不能为空</text>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="input01">照片</label>
+                    <div class="controls">
+                        <input placeholder="照片" name="orderNoUnFin" id="BoxorderNoUnFin" class="input-xlarge" required="required" type="text">
+                        <text id="labBoxorderNoUnFin" style="color:red" hidden="hidden">不能为空</text>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="HealthCardID"><span style="color:red;">*</span>健康证ID</label>
+                    <div class="controls">
+                        <input placeholder="健康证ID" name="HealthCardID" id="BoxHealthCardID" class="input-xlarge" required="required" type="text">
+                        <text id="labHealthCardID" style="color:red" hidden="hidden">不能为空</text>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="input01"><span style="color:red;">*</span>所属城市</label>
+                    <div class="controls">
+                        @Html.DropDownList("ProvinceCode", new SelectList( , "Id", "GroupName"), "--请选择--", new { style = "width:155px", id = "BoxProvinceCode" });
+
+                        <input placeholder="所属城市" name="orderNoUnFin" id="BoxorderNoUnFin" class="input-xlarge" required="required" type="text">
+                        <text id="labBoxTrueName" style="color:red" hidden="hidden">不能为空</text>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="input01"><span style="color:red;">*</span>所属门店</label>
+                    <div class="controls">
+                        <input placeholder="所属门店" name="orderNoUnFin" id="BoxorderNoUnFin" class="input-xlarge" required="required" type="text">
+                        <text id="labBoxTrueName" style="color:red" hidden="hidden">不能为空</text>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="InternalDepart">内部部门</label>
+                    <div class="controls">
+                        <input placeholder="内部部门" name="InternalDepart" id="BoxInternalDepart" class="input-xlarge" type="text">
+                    </div>
+                    <input type="hidden" id="HidGroupID" value="@ViewBag.txtGroupId" />
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="IDCard">身份证号</label>
+                    <div class="controls">
+                        <input placeholder="身份证号" name="IDCard" id="BoxIDCard" class="input-xlarge" type="text">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="Password">密码</label>
+                    <div class="controls">
+                        <input placeholder="默认edaisong" name="IDCard" id="BoxPassword" class="input-xlarge" type="text">
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+        <p class="btnbox">
+            <input value="确认" type="button" id="btnSuperConfim" class="yesBtn" />
+            <input value="关闭" type="button" class="J_closebox qxBtn" />
+        </p>
+    </div>
+</div>
 <script>
     var adminjs = new adminglass(); //实例化后台类
     var DEFAULT_PAGESIZE = 15;
@@ -51,6 +132,45 @@
             };
             refresh(0);
         });
+
+        //新增超人保存按钮点击事件    add by caoheyang 20150302
+        $("#btnSuperConfim").click(
+            function () {
+                var result = true;//验证结果
+                var TrueName = $('#BoxTrueName').val();//姓名
+                var PhoneNo = $('#BoxPhoneNo').val();//手机号
+                var orderNoUnFin = $('#BoxorderNoUnFin').val(); //照片
+                var HealthCardID = $('#BoxHealthCardID').val(); //健康证ID
+                var InternalDepart = $('#BoxInternalDepart').val(); //内外部门
+                if (TrueName == "" || TrueName == null) {  //姓名非空验证
+                    $('#labBoxTrueName').show();
+                    result = false;
+                }
+                if (PhoneNo == "" || PhoneNo == null) {  //手机号非空验证
+                    $('#labBoxPhoneNo').html("不能为空").show();
+                    result = false;
+                } else {
+                    var myreg = /^((\+?86)|(\(\+86\)))?(13[012356789][0-9]{8}|15[012356789][0-9]{8}|18[02356789][0-9]{8}|147[0-9]{8}|1349[0-9]{7})$/;
+                    if (!myreg.test(PhoneNo)) {
+                        $('#labBoxPhoneNo').html("手机号格式不正确").show();
+                    }
+                }
+                if (HealthCardID == "" || HealthCardID == null) {  //健康证非空验证
+                    $('#labHealthCardID').show();
+                    result = false;
+                }
+                if (result == false) {
+                    return result;
+                }
+            }
+         );
+
+        //新增超人按钮点击事件   add by caoheyang 20150228
+        $("#btnAdd").click(
+            function () {
+                adminjs.openwinbox('#AddSuperManShow');
+            }
+         );
     })
     ////分页
     art.ui.control.Pager.enablePaging(document, refresh);
