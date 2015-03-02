@@ -1,4 +1,5 @@
 ﻿using SuperManBusinessLogic.C_Logic;
+using SuperManCommonModel;
 using SuperManCommonModel.Entities;
 using SuperManCore;
 using SuperManCore.Common;
@@ -96,6 +97,7 @@ namespace SuperMan.Controllers
             if (string.IsNullOrWhiteSpace(clienter.Password))
                 clienter.Password = "edaisong";
             clienter.Password = MD5Helper.MD5(clienter.Password);
+            clienter.Status = ConstValues.CLIENTER_AUDITPASS;
             return Json(new ResultModel(ClienterLogic.clienterLogic().Add(clienter), ""));
         }
     }
