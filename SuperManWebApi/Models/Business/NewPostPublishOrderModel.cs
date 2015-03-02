@@ -98,7 +98,7 @@ namespace SuperManWebApi.Models.Business
         /// </summary>
         public int? OrderType { get; set; }
         /// <summary>
-        /// 距离，商户地址到收货人地址的距离
+        /// 公里数，商户地址到收货人地址的距离
         /// </summary>
         public double KM { get; set; }
 
