@@ -82,6 +82,10 @@ namespace SuperManWebApi.Controllers
             }
             if (string.IsNullOrEmpty(model.B_Password))   //密码为空时 设置默认密码
                 model.B_Password = MD5Helper.MD5("abc123");
+            else
+            {
+                model.B_Password = MD5Helper.MD5(model.B_Password);
+            }
             var business = NewRegisterInfoModelTranslator.Instance.Translate(model);
             bool result = BusiLogic.busiLogic().Add(business,true);
             var resultModel = new NewBusiRegisterResultModel
@@ -135,6 +139,7 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<NewPostPublishOrderResultModel> NewPostPublishOrder_B(NewPostPublishOrderModel model)
         {
+            LogHelper.LogWriter("订单发布请求实体", new { model = model});
             if (string.IsNullOrWhiteSpace(model.OriginalOrderNo))   //原始订单号非空验证
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OriginalOrderNoEmpty);
             if (model.OriginalBusinessId == 0)   //原平台商户Id非空验证

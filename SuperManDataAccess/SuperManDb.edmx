@@ -117,7 +117,7 @@
           <Property Name="PicUrl" Type="varchar" MaxLength="255" />
           <Property Name="Status" Type="tinyint" />
           <Property Name="AccountBalance" Type="decimal" Precision="7" Scale="2" />
-          <Property Name="InsertTime" Type="datetime" Precision="0" />
+          <Property Name="InsertTime" Type="datetime" Precision="0" StoreGeneratedPattern="Identity" />
           <Property Name="InviteCode" Type="varchar" MaxLength="45" />
           <Property Name="City" Type="varchar" MaxLength="100" />
           <Property Name="CityId" Type="varchar" MaxLength="45" />
@@ -128,6 +128,7 @@
           <Property Name="AreaCode" Type="varchar" MaxLength="20" />
           <Property Name="CityCode" Type="varchar" MaxLength="20" />
           <Property Name="Province" Type="varchar" MaxLength="20" />
+          <Property Name="BussinessID" Type="int" />
         </EntityType>
         <EntityType Name="commissiontype">
           <Key>
@@ -271,6 +272,8 @@
           <Property Name="EndDate" Type="datetime" Precision="0" />
           <Property Name="Status" Type="tinyint" />
           <Property Name="GroupId" Type="int" />
+          <Property Name="PKMCost" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="OrderType" Type="int" />
         </EntityType>
         <Association Name="accountId">
           <End Role="account" Type="Self.account" Multiplicity="0..1" />
@@ -504,6 +507,7 @@
           <Property Name="AreaCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="CityCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="Province" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="BussinessID" Type="Int32" />
         </EntityType>
         <EntityType Name="commissiontype">
           <Key>
@@ -648,6 +652,8 @@
           <Property Name="EndDate" Type="DateTime" />
           <Property Name="Status" Type="SByte" />
           <Property Name="GroupId" Type="Int32" />
+          <Property Name="PKMCost" Type="Decimal" />
+          <Property Name="OrderType" Type="Int32" />
         </EntityType>
         <Association Name="accountId">
           <End Type="supermanModel.account" Role="account" Multiplicity="0..1" />
@@ -799,6 +805,7 @@
           <EntitySetMapping Name="clienter">
             <EntityTypeMapping TypeName="supermanModel.clienter">
               <MappingFragment StoreEntitySet="clienter">
+                <ScalarProperty Name="BussinessID" ColumnName="BussinessID" />
                 <ScalarProperty Name="Province" ColumnName="Province" />
                 <ScalarProperty Name="CityCode" ColumnName="CityCode" />
                 <ScalarProperty Name="AreaCode" ColumnName="AreaCode" />
@@ -965,6 +972,8 @@
           <EntitySetMapping Name="subsidy">
             <EntityTypeMapping TypeName="supermanModel.subsidy">
               <MappingFragment StoreEntitySet="subsidy">
+                <ScalarProperty Name="OrderType" ColumnName="OrderType" />
+                <ScalarProperty Name="PKMCost" ColumnName="PKMCost" />
                 <ScalarProperty Name="GroupId" ColumnName="GroupId" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="EndDate" ColumnName="EndDate" />
