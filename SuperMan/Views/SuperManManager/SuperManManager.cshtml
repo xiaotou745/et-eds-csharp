@@ -78,7 +78,7 @@
                     <label class="control-label" for="input01"><span style="color:red;">*</span>所属城市</label>
                     <div class="controls">
                         @Html.DropDownList("ProvinceCode", new SelectList(RegionLogic.regionLogic().GetRegionsByFid(), "Code", "Name"), "--请选择--", new { style = "width:90px", id = "BoxProvinceCode" })
-                        <select name="CityCode" id="BoxCityCode" style="width:90px;">
+                        <select name="CityCode" id="BoxCityCode" style="width:103px;">
                             <option>--城市--</option>
                         </select>
                         <text id="labBoxCode" style="color:red" hidden="hidden">不能为空</text>
@@ -87,8 +87,8 @@
                 <div class="control-group">
                     <label class="control-label" for="BussinessID"><span style="color:red;">*</span>所属门店</label>
                     <div class="controls">
-                        <select name="BussinessID" id="BoxBussinessID" style="width:180px;">
-                            <option>--所属门店--</option>
+                        <select name="BussinessID" id="BoxBussinessID" style="width:198px;">
+                            <option value="">--所属门店--</option>
                         </select>
                         <text id="labBoxBussinessID" style="color:red" hidden="hidden">不能为空</text>
                     </div>
