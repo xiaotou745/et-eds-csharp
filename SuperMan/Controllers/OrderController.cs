@@ -1,5 +1,8 @@
+
 ﻿using SuperManBusinessLogic.C_Logic;
 using SuperManBusinessLogic.Order_Logic;
+﻿using SuperManBusinessLogic.Order_Logic;
+using SuperManBusinessLogic.Subsidy_Logic;
 using SuperManCommonModel.Entities;
 using SuperManCommonModel.Models;
 using System;
@@ -50,6 +53,7 @@ namespace SuperMan.Controllers
         public ActionResult OrderCount()
         {
             return View();
+
         }   
         /// <summary>
         /// 超人抢单--平扬 2015.3.2
@@ -61,7 +65,7 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult RushOrder(int SuperID, string OrderNo)
         {
-            if (SuperID == 0) //用户id验证
+            if (SuperID == 0) //超人id验证
                 return Json(new ResultModel(false, "超人不能为空"), JsonRequestBehavior.AllowGet);
             if (string.IsNullOrEmpty(OrderNo)) //订单号码非空验证
                 return Json(new ResultModel(false, "订单不能为空"), JsonRequestBehavior.AllowGet);
@@ -71,6 +75,13 @@ namespace SuperMan.Controllers
                 return Json(new ResultModel(false, "订单已被抢或者已完成"), JsonRequestBehavior.AllowGet);
             var bResult = ClienterLogic.clienterLogic().RushOrder(SuperID, OrderNo);
             return Json(bResult ? new ResultModel(true, "抢单成功") : new ResultModel(false, "抢单失败"), JsonRequestBehavior.AllowGet);
+
+        }
+        [HttpPost]
+        public JsonResult SaveOrderInfo(order model)
+        {
+            bool reg = OrderLogic.orderLogic().UpdateOrderInfo(model);
+            return Json(new ResultModel(reg, string.Empty), JsonRequestBehavior.AllowGet);
         }
     }
 }

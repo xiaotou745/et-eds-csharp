@@ -333,25 +333,48 @@
     $(function () {
 
     });
-    $('#btnSuperConfim').bind('click', function () { 
-        var superID = $("#superSelect").val().trim();
-        if (superID == "" || superID == "-1") {
-            alert("请选择超人");
-            return false;
-        } else { 
-            var orderNo = $("#orderNoUnFin").val();
-            alert(orderNo);
-            $.post("/Order/RushOrder", { SuperID: superID, OrderNo: orderNo }, function (data) {
-                if (data) {
-                    alert("分配成功");
 
-                } else {
-                    alert("分配失败");
-                }
-            });
-            adminjs.closewinbox('.add-openbox');
+    $('#btnSuperConfim').bind('click', function () {
+        var orderCommission = $('#OrderCommissionUnFin').val();
+        var orderNo = $('#orderNoUnFin').val();
+        var superID = $("#superSelect").val().trim();
+        if ($("#OrderCommissionUnFin").val().trim() == "")
+        {
+            alert("订单佣金不能为空！");
             return false;
         }
+        if (superID == "" || superID == "-1") {
+            alert("请选择超人!");
+            return false;
+        }
+        var isUpdate = false;
+        var paramaters = {"OrderCommission": orderCommission, "SuperName": "", "OrderNo": orderNo };
+        var url = "/Order/SaveOrderInfo";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    isUpdate = true;
+                } else {
+                    isUpdate = false;
+                } 
+            }
+        });
+        $.post("/Order/RushOrder", { SuperID: superID, OrderNo: orderNo }, function(data) {
+            if (data) {
+                isUpdate = true;
+            } else {
+                isUpdate = false;
+            }
+        });
+        if (isUpdate) {
+            alert("更新订单成功!");
+            window.location.href = location.href;
+        }
+        adminjs.closewinbox('.add-openbox');
+        return true;
         
     }); 
     function funcViewOrder(id, pubDate, businessName, busiPhone, busiAddress, yongjin, disBuTie, WebBuTie, revPhone, revName, revAddress, Amount, isPay, superId, status) {
