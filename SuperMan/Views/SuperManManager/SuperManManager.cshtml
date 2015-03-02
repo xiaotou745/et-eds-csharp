@@ -1,6 +1,7 @@
 ﻿@model ClienterManage
 @using SuperManCommonModel.Models;
 @using SuperManBusinessLogic.CommonLogic
+ @using SuperManBusinessLogic.Group_Logic
 @{
     ViewBag.Title = "Order";
 }
@@ -98,8 +99,21 @@
                     <div class="controls">
                         <input placeholder="内外部门" name="InternalDepart" id="BoxInternalDepart" class="input-xlarge" type="text">
                     </div>
-                    <input type="hidden" id="HidGroupID" value="@ViewBag.txtGroupId" />
+
                 </div>
+                @if (ViewBag.txtGroupId <= 0)
+                {
+                    <input type="hidden" id="HidGroupID" value="@ViewBag.txtGroupId" />
+                }
+                else
+                {
+                    <div class="control-group">
+                        <label class="control-label" for="InternalDepart">集团信息</label>
+                        <div class="controls">
+                            @Html.DropDownList("HidGroupID", new SelectList(GroupLogic.groupLogic().GetGroups(), "Id", "GroupName"), "--无--")
+                        </div>
+                    </div>
+                }
                 <div class="control-group">
                     <label class="control-label" for="IDCard">身份证号</label>
                     <div class="controls">
@@ -149,7 +163,7 @@
                 var provinceCode = $('#BoxProvinceCode').val(); //省
                 var cityCode = $('#BoxCityCode').val(); //市
                 var idCard = $('#BoxIDCard').val(); //身份证号
-                var password = $('#BoxPassword').val()==null||$('#BoxPassword').val()==""?"edaisong":$('#BoxPassword').val(); //密码
+                var password = $('#BoxPassword').val() == null || $('#BoxPassword').val() == "" ? "edaisong" : $('#BoxPassword').val(); //密码
                 var bussinessID = $('#BoxBussinessID').val(); //所属门店
 
                 if (trueName == "" || trueName == null) {  //姓名非空验证
@@ -199,7 +213,7 @@
                             TrueName: trueName, PhoneNo: phoneNo, HealthCardID: healthCardID, InternalDepart: internalDepart,
                             ProvinceCode: provinceCode, CityCode: cityCode, IDCard: idCard, Password: password, City: $("#BoxProvinceCode").find("option:selected").text(),
                             CityId: provinceCode, Province: $("#BoxProvinceCode").find("option:selected").text(), GroupId: $("#HidGroupID").val(),
-                            BussinessID:bussinessID
+                            BussinessID: bussinessID
                         },
                         success: function (result) {
                             if (result.IsSuccess) {
@@ -212,7 +226,7 @@
                         error: function () {
                         }
                     });
-                    
+
                 }
             }
          );
@@ -223,7 +237,7 @@
             selCityCode.empty();  //清除选择的城市信息
             $('#BoxBussinessID').empty();  //清除选择的门店信息
             selCityCode.append('<option value="" selected="selected">--城市--</option>');
-            if ($(this).val() != null && $(this).val()!="") {
+            if ($(this).val() != null && $(this).val() != "") {
                 $.post("/Common/GetRegionsByCode", { Code: $(this).val() }, function (data) {
                     $.each(data, function (i, item) {
                         selCityCode.append('<option  value="' + item.Code + '">' + item.Name + '</option>');
@@ -241,10 +255,10 @@
                 $.post("/BusinessManager/GetBussinessByCityInfo",
                     { ProvinceCode: $("#BoxProvinceCode").val(), CityCode: $(this).val(), GroupId: $("#HidGroupID").val() },
                     function (data) {
-                    $.each(data, function (i, item) {
-                        selBussinessID.append('<option  value="' + item.Id + '">' + item.Name + '</option>');
+                        $.each(data, function (i, item) {
+                            selBussinessID.append('<option  value="' + item.Id + '">' + item.Name + '</option>');
+                        });
                     });
-                });
             }
         });
 
