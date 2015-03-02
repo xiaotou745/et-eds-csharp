@@ -350,33 +350,27 @@
             alert("请选择超人!");
             return false;
         }
-        var isUpdate = false;
+
         var paramaters = {"OrderCommission": orderCommission, "SuperName": "", "OrderNo": orderNo };
         var url = "/Order/SaveOrderInfo";
         $.ajax({
             type: 'POST',
             url: url,
             data: paramaters,
-            success: function (result) {
-                if (result.IsSuccess) {
-                    isUpdate = true;
-                } else {
-                    isUpdate = false;
-                } 
+            success: function (result) { 
+                $.post("/Order/RushOrder", { SuperID: superID, OrderNo: orderNo }, function (data) { 
+                    if (data.IsSuccess) {
+                        alert("更新订单成功!");
+                        window.location.href = location.href;
+                        adminjs.closewinbox('.add-openbox');
+                    }else {
+                        alert(222);
+                    }
+                }); 
             }
         });
-        $.post("/Order/RushOrder", { SuperID: superID, OrderNo: orderNo }, function(data) {
-            if (data) {
-                isUpdate = true;
-            } else {
-                isUpdate = false;
-            }
-        });
-        if (isUpdate) {
-            alert("更新订单成功!");
-            window.location.href = location.href;
-        }
-        adminjs.closewinbox('.add-openbox');
+        
+ 
         return true;
         
     }); 
