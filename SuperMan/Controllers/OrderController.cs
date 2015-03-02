@@ -32,7 +32,7 @@ namespace SuperMan.Controllers
             }
             ViewBag.txtGroupId = account.GroupId;//集团id
 
-            var superManModel = SuperManBusinessLogic.C_Logic.ClienterLogic.clienterLogic().GetClienterModelByGroupID(ViewBag.txtGroupId);
+            var superManModel = ClienterLogic.clienterLogic().GetClienterModelByGroupID(ViewBag.txtGroupId);
             if (superManModel != null)
             {
                 ViewBag.superManModel = superManModel;
@@ -44,6 +44,20 @@ namespace SuperMan.Controllers
         [HttpPost]
         public ActionResult OrderList(OrderSearchCriteria criteria)
         {
+            account account = HttpContext.Session["user"] as account;
+            if (account == null)
+            {
+                Response.Redirect("/account/login");
+                return null;
+            }
+            ViewBag.txtGroupId = account.GroupId;//集团id
+
+            var superManModel = ClienterLogic.clienterLogic().GetClienterModelByGroupID(ViewBag.txtGroupId);
+            if (superManModel != null)
+            {
+                ViewBag.superManModel = superManModel;
+            } 
+
             var pagedList = OrderLogic.orderLogic().GetOrders(criteria);
             var item = pagedList.orderManageList; 
             return PartialView("_PartialOrderList",item);
