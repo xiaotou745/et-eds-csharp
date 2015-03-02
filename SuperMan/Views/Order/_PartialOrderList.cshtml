@@ -310,9 +310,12 @@
                         <select id="superSelect" name="superSelect" >
                             <option value="-1">请选择超人</option>
                             @{
-                                foreach (var item in ViewBag.superManModel)
+                                if (ViewBag.superManModel != null)
                                 {
-                                    <option id="supperSelect_@item.Id" value="@item.Id">@item.TrueName-@item.PhoneNo</option>
+                                    foreach (var item in ViewBag.superManModel)
+                                    {
+                                        <option id="supperSelect_@item.Id" value="@item.Id">@item.TrueName-@item.PhoneNo</option>
+                                    }
                                 }
                             } 
                         </select>   
