@@ -26,6 +26,12 @@ namespace SuperMan.Controllers
                 return null;
             }
             ViewBag.txtGroupId = account.GroupId;//集团id
+
+            var superManModel = SuperManBusinessLogic.C_Logic.ClienterLogic.clienterLogic().GetClienterModelByGroupID(ViewBag.txtGroupId);
+            if (superManModel != null)
+            {
+                ViewBag.superManModel = superManModel;
+            } 
             var criteria = new OrderSearchCriteria() { orderStatus = -1, PagingRequest = new PagingResult(0, 15), GroupId = account.GroupId };
             var pagedList = OrderLogic.orderLogic().GetOrders(criteria);
             return View(pagedList);
@@ -34,7 +40,7 @@ namespace SuperMan.Controllers
         public ActionResult OrderList(OrderSearchCriteria criteria)
         {
             var pagedList = OrderLogic.orderLogic().GetOrders(criteria);
-            var item = pagedList.orderManageList;
+            var item = pagedList.orderManageList; 
             return PartialView("_PartialOrderList",item);
         }
 
