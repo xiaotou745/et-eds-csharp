@@ -1,5 +1,6 @@
 ﻿using SuperManBusinessLogic.C_Logic;
 using SuperManCommonModel.Entities;
+using SuperManCore;
 using SuperManCore.Common;
 using SuperManCore.Paging;
 using SuperManDataAccess;
@@ -80,6 +81,21 @@ namespace SuperMan.Controllers
                 return Json(new ResultModel(false, "清零失败"), JsonRequestBehavior.AllowGet);
             }
         }
-        
+
+
+        /// <summary>
+        /// 帐户清零
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult AddSuperMan(clienter clienter)
+        {
+            if (string.IsNullOrWhiteSpace(clienter.Password))
+                clienter.Password = "edaisong";
+            clienter.Password = MD5Helper.MD5(clienter.Password);
+
+            return null;
+        }
     }
 }

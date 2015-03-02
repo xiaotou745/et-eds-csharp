@@ -29,5 +29,15 @@ namespace SuperManCommonModel.Entities
         /// 集团id
         /// </summary>
         public int? GroupId { get; set; }
+
+        /// <summary>
+        /// 省编码
+        /// </summary>
+        public string ProvinceCode { get; set; }
+
+        /// <summary>
+        /// 市编码
+        /// </summary>
+        public string CityCode { get; set; }
     }
 }

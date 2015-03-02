@@ -1,5 +1,6 @@
 ﻿@model ClienterManage
 @using SuperManCommonModel.Models;
+@using SuperManBusinessLogic.CommonLogic
 @{
     ViewBag.Title = "Order";
 }
@@ -76,23 +77,26 @@
                 <div class="control-group">
                     <label class="control-label" for="input01"><span style="color:red;">*</span>所属城市</label>
                     <div class="controls">
-                        @Html.DropDownList("ProvinceCode", new SelectList( , "Id", "GroupName"), "--请选择--", new { style = "width:155px", id = "BoxProvinceCode" });
-
-                        <input placeholder="所属城市" name="orderNoUnFin" id="BoxorderNoUnFin" class="input-xlarge" required="required" type="text">
-                        <text id="labBoxTrueName" style="color:red" hidden="hidden">不能为空</text>
+                        @Html.DropDownList("ProvinceCode", new SelectList(RegionLogic.regionLogic().GetRegionsByFid(), "Code", "Name"), "--请选择--", new { style = "width:90px", id = "BoxProvinceCode" })
+                        <select name="CityCode" id="BoxCityCode" style="width:90px;">
+                            <option>--城市--</option>
+                        </select>
+                        <text id="labBoxCode" style="color:red" hidden="hidden">不能为空</text>
                     </div>
                 </div>
                 <div class="control-group">
-                    <label class="control-label" for="input01"><span style="color:red;">*</span>所属门店</label>
+                    <label class="control-label" for="BussinessID"><span style="color:red;">*</span>所属门店</label>
                     <div class="controls">
-                        <input placeholder="所属门店" name="orderNoUnFin" id="BoxorderNoUnFin" class="input-xlarge" required="required" type="text">
-                        <text id="labBoxTrueName" style="color:red" hidden="hidden">不能为空</text>
+                        <select name="BussinessID" id="BoxBussinessID" style="width:180px;">
+                            <option>--所属门店--</option>
+                        </select>
+                        <text id="labBoxBussinessID" style="color:red" hidden="hidden">不能为空</text>
                     </div>
                 </div>
                 <div class="control-group">
-                    <label class="control-label" for="InternalDepart">内部部门</label>
+                    <label class="control-label" for="InternalDepart">内外部门</label>
                     <div class="controls">
-                        <input placeholder="内部部门" name="InternalDepart" id="BoxInternalDepart" class="input-xlarge" type="text">
+                        <input placeholder="内外部门" name="InternalDepart" id="BoxInternalDepart" class="input-xlarge" type="text">
                     </div>
                     <input type="hidden" id="HidGroupID" value="@ViewBag.txtGroupId" />
                 </div>
@@ -105,7 +109,7 @@
                 <div class="control-group">
                     <label class="control-label" for="Password">密码</label>
                     <div class="controls">
-                        <input placeholder="默认edaisong" name="IDCard" id="BoxPassword" class="input-xlarge" type="text">
+                        <input placeholder="默认edaisong" name="IDCard" id="BoxPassword" class="input-xlarge" type="text" value="edaisong">
                     </div>
                 </div>
             </fieldset>
@@ -137,33 +141,102 @@
         $("#btnSuperConfim").click(
             function () {
                 var result = true;//验证结果
-                var TrueName = $('#BoxTrueName').val();//姓名
-                var PhoneNo = $('#BoxPhoneNo').val();//手机号
+                var trueName = $('#BoxTrueName').val();//姓名
+                var phoneNo = $('#BoxPhoneNo').val();//手机号
                 var orderNoUnFin = $('#BoxorderNoUnFin').val(); //照片
-                var HealthCardID = $('#BoxHealthCardID').val(); //健康证ID
-                var InternalDepart = $('#BoxInternalDepart').val(); //内外部门
-                if (TrueName == "" || TrueName == null) {  //姓名非空验证
+                var healthCardID = $('#BoxHealthCardID').val(); //健康证ID
+                var internalDepart = $('#BoxInternalDepart').val(); //内外部门
+                var provinceCode = $('#BoxProvinceCode').val(); //省
+                var cityCode = $('#BoxCityCode').val(); //市
+                var idCard = $('#BoxIDCard').val(); //身份证号
+                var password = $('#BoxPassword').val()==null||$('#BoxPassword').val()==""?"edaisong":$('#BoxPassword').val(); //密码
+                var bussinessID = $('#BoxBussinessID').val(); //所属门店
+
+                if (trueName == "" || trueName == null) {  //姓名非空验证
                     $('#labBoxTrueName').show();
                     result = false;
+                } else {
+                    $('#labBoxTrueName').hide();
                 }
-                if (PhoneNo == "" || PhoneNo == null) {  //手机号非空验证
+                if (phoneNo == "" || phoneNo == null) {  //手机号非空验证
                     $('#labBoxPhoneNo').html("不能为空").show();
                     result = false;
                 } else {
                     var myreg = /^((\+?86)|(\(\+86\)))?(13[012356789][0-9]{8}|15[012356789][0-9]{8}|18[02356789][0-9]{8}|147[0-9]{8}|1349[0-9]{7})$/;
-                    if (!myreg.test(PhoneNo)) {
+                    if (!myreg.test(phoneNo)) {  //手机号码格式验证
                         $('#labBoxPhoneNo').html("手机号格式不正确").show();
+                        result = false;
+                    } else {
+                        $('#labBoxPhoneNo').hide();
                     }
                 }
-                if (HealthCardID == "" || HealthCardID == null) {  //健康证非空验证
+                if (provinceCode == "" || provinceCode == null || cityCode == "" || cityCode == null) {  //省/市非空验证
+                    $('#labBoxCode').show();
+                    result = false;
+                } else {
+                    $('#labBoxCode').hide();
+                }
+                if (healthCardID == "" || healthCardID == null) {  //健康证非空验证
                     $('#labHealthCardID').show();
                     result = false;
+                } else {
+                    $('#labHealthCardID').hide();
                 }
                 if (result == false) {
                     return result;
+                } else {
+                    $.ajax({
+                        type: 'POST',
+                        dataType: 'json',
+                        url: '/SuperManManager/AddSuperMan',
+                        data: {
+                            TrueName: trueName, PhoneNo: phoneNo, HealthCardID: healthCardID, InternalDepart: internalDepart,
+                            ProvinceCode: provinceCode, CityCode: cityCode, IDCard: idCard, Password: password, City: $("#BoxProvinceCode").find("option:selected").text(),
+                            CityId: provinceCode, Province: $("#BoxProvinceCode").find("option:selected").text(), GroupId: $("#HidGroupID").val()
+                        },
+                        success: function (result) {
+                            if (result.IsSuccess) {
+                                window.location.href = "/SuperManManager/SuperManManager";
+                            }
+                        },
+                        error: function () {
+                        }
+                    });
+                    
                 }
             }
          );
+
+        //省下拉框下拉触发事件  add by caoheyang 20150302
+        $('#BoxProvinceCode').change(function () {
+            var selCityCode = $("#BoxCityCode");
+            selCityCode.empty();  //清除选择的城市信息
+            $('#BoxBussinessID').empty();  //清除选择的门店信息
+            selCityCode.append('<option value="" selected="selected">--城市--</option>');
+            if ($(this).val() != null && $(this).val()!="") {
+                $.post("/Common/GetRegionsByCode", { Code: $(this).val() }, function (data) {
+                    $.each(data, function (i, item) {
+                        selCityCode.append('<option  value="' + item.Code + '">' + item.Name + '</option>');
+                    });
+                });
+            }
+        });
+
+        //城市下拉框下拉触发事件  add by caoheyang 20150302
+        $('#BoxCityCode').change(function () {
+            var selBussinessID = $('#BoxBussinessID');  //清除选择的门店信息
+            selBussinessID.empty();
+            selBussinessID.append('<option value="" selected="selected">--所属门店--</option>');
+            if ($(this).val() != null && $(this).val() != "") {
+                $.post("/BusinessManager/GetBussinessByCityInfo",
+                    { ProvinceCode: $("#BoxProvinceCode").val(), CityCode: $(this).val(), GroupId: $("#HidGroupID").val() },
+                    function (data) {
+                    $.each(data, function (i, item) {
+                        selBussinessID.append('<option  value="' + item.Id + '">' + item.Name + '</option>');
+                    });
+                });
+            }
+        });
 
         //新增超人按钮点击事件   add by caoheyang 20150228
         $("#btnAdd").click(

@@ -56,11 +56,31 @@ namespace SuperManBusinessLogic.B_Logic
                 {
                     items = items.Where(p => p.GroupId == criteria.GroupId);
                 }
+              
                 var pagedQuery = new BusinessManage();
                 var resultModel = new PagedList<business>(items.ToList(), criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
                 var businesslists = new BusinessManageList(resultModel.ToList(), resultModel.PagingResult);
                 pagedQuery.businessManageList = businesslists;
                 return pagedQuery;
+            }
+        }
+
+        /// <summary>
+        ///  根据城市信息查询当前城市下该集团的所有商户信息  add by caoheyang 20150302
+        /// </summary>
+        /// <param name="criteria">条件 </param>
+        /// <returns></returns>
+        public IList<business> GetBussinessByCityInfo(BusinessSearchCriteria criteria) 
+        {
+            using (var db = new supermanEntities())
+            {
+                var items = db.business.AsQueryable();
+                items = items.Where(p => p.GroupId == criteria.GroupId);
+                if (!string.IsNullOrWhiteSpace(criteria.ProvinceCode))
+                    items = items.Where(p => p.ProvinceCode == criteria.ProvinceCode);
+                if (!string.IsNullOrWhiteSpace(criteria.CityCode))
+                    items = items.Where(p => p.CityCode == criteria.CityCode);
+                return items.ToList();
             }
         }
 

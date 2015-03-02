@@ -176,6 +176,7 @@
       <DependentUpon>Authorities.tt</DependentUpon>
     </Compile>
     <Compile Include="Authority\IAuthenticationService.cs" />
+    <Compile Include="Controllers\CommonController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AuthorityManagerController.cs" />
     <Compile Include="Controllers\BusinessController.cs" />
