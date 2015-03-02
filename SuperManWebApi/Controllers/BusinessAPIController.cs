@@ -83,7 +83,7 @@ namespace SuperManWebApi.Controllers
             if (string.IsNullOrEmpty(model.B_Password))   //密码为空时 设置默认密码
                 model.B_Password = MD5Helper.MD5("abc123");
             var business = NewRegisterInfoModelTranslator.Instance.Translate(model);
-            bool result = BusiLogic.busiLogic().Add(business);
+            bool result = BusiLogic.busiLogic().Add(business,true);
             var resultModel = new NewBusiRegisterResultModel
             {
                 BusiRegisterId = business.Id
@@ -169,13 +169,13 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.BusinessNoExist);
             }
-            else
-            {
-                if (busi.Status != ConstValues.BUSINESS_AUDITPASS)
-                {
-                    return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.BusinessNotAudit);
-                }
-            }
+            //else
+            //{
+            //    if (busi.Status != ConstValues.BUSINESS_AUDITPASS)
+            //    {
+            //        return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.BusinessNotAudit);
+            //    }
+            //}
             //验证该平台 商户 订单号 是否存在
             var order = OrderLogic.orderLogic().GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom);
             if(order != null){

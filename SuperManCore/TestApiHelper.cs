@@ -14,8 +14,9 @@ namespace SuperManCore
         public string TestApi<T>(string url, T postModel)
         {
 
-            Uri myUri = new Uri(" http://localhost:9263/BusinessAPI/PostRegisterInfo_B");
+            Uri myUri = new Uri(url);
             string postData = ObjToJson(postModel);
+            // Uri myUri = new Uri(" http://localhost:9263/BusinessAPI/PostRegisterInfo_B");
             //string signdata = @"{""city"":""北京"",""CityId"":""1"",""phoneNo"":""18612635758"",""passWord"":""7AFBE62485A901909693C3D713034F0F"",""verifyCode"":"""" }";
             return PostDataGetHtml(myUri, postData);
         }
