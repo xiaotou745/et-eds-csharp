@@ -1,7 +1,6 @@
 ﻿@model SuperManCommonModel.Models.ClienterManageList
 @using SuperManBusinessLogic.Group_Logic
-           
-
+          
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
     <thead>
 
@@ -189,6 +188,7 @@
         $('#showPicUrl').attr('src', puth + '/' + PicUrl); 
         adminjs.openwinbox('#ClientPicShow');
     }
+
     $('.J_closebox').click(function () {
         adminjs.closewinbox('.add-openbox');
         return false;
