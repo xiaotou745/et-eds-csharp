@@ -264,6 +264,72 @@ namespace SuperManWebApi.Controllers
             var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
             return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
         }
+
+        #region 获取海底捞 送餐任务 和 取餐盒任务
+
+        /// <summary>
+        /// 获取送餐任务
+        /// </summary>
+        /// <returns></returns>
+        [ActionStatus(typeof(GetOrdersNoLoginStatus))]
+        [HttpPost]
+        public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListSongCanTask_C(ClientOrderInfoModel model)
+        {
+            //degree.longitude = model.longitude;
+            //degree.latitude = model.latitude;
+            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
+            var pSize = model.pageSize.HasValue ? model.pageIndex.Value : int.MaxValue;
+            var criteria = new ClientOrderSearchCriteria()
+            {
+                PagingRequest = new PagingResult(pIndex, pSize),
+                userId = model.userId,
+                status = model.status,
+                isLatest = model.isLatest,           
+                city =string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
+                cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim(),
+                OrderType = 1 //送餐任务1，取餐盒任务2
+            };
+            var pagedList = ClienterLogic.clienterLogic().GetOrdersForSongCanOrQuCan(criteria);
+            var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
+            if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
+            {
+                lists = lists.OrderBy(i => i.distance).ToList();
+            }
+            return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
+        }
+
+        /// <summary>
+        /// 获取取餐盒任务
+        /// </summary>
+        /// <returns></returns>
+        [ActionStatus(typeof(GetOrdersNoLoginStatus))]
+        [HttpPost]
+        public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListCanHeTask_C(ClientOrderInfoModel model)
+        {
+            //degree.longitude = model.longitude;
+            //degree.latitude = model.latitude;
+            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
+            var pSize = model.pageSize.HasValue ? model.pageIndex.Value : int.MaxValue;
+            var criteria = new ClientOrderSearchCriteria()
+            {
+                PagingRequest = new PagingResult(pIndex, pSize),
+                userId = model.userId,
+                status = model.status,
+                isLatest = model.isLatest,
+                city = string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
+                cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim(),
+                OrderType = 2 //送餐任务1，取餐盒任务2
+            };
+            var pagedList = ClienterLogic.clienterLogic().GetOrdersForSongCanOrQuCan(criteria);
+            var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
+            if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
+            {
+                lists = lists.OrderBy(i => i.distance).ToList();
+            }
+            return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
+        }
+        #endregion
+
         /// <summary>
         /// 修改密码
         /// </summary>

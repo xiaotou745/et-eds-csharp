@@ -287,6 +287,7 @@ namespace SuperManBusinessLogic.C_Logic
                 {
                     query = query.Where(i => i.Status.Value == ConstValues.ORDER_NEW);
                 }
+                 
                 //query = query.OrderByDescending(i => i.Id);
 
                 var result = new PagedList<order>(query.ToList(), criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
@@ -311,6 +312,7 @@ namespace SuperManBusinessLogic.C_Logic
                 {
                     query = query.Where(i => i.Status.Value == ConstValues.ORDER_ACCEPT);
                 }
+                
                 query = query.OrderByDescending(i => i.Id);
 
                 var result = new PagedList<order>(query.ToList(), criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
@@ -331,8 +333,7 @@ namespace SuperManBusinessLogic.C_Logic
                 if (criteria.status != null && criteria.status.Value != -1)
                 {
                     query = query.Where(i => i.Status.Value == criteria.status.Value);
-                }
-
+                } 
                 query = query.OrderByDescending(i => i.PubDate);
 
                 var result = new PagedList<order>(query.ToList(), criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
@@ -358,6 +359,31 @@ namespace SuperManBusinessLogic.C_Logic
                 var result = query.ToList();
                 return result;
             }
+        }
+        /// <summary>
+        /// 获取送餐 或者 取餐盒 订单
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public List<order> GetOrdersForSongCanOrQuCan(ClientOrderSearchCriteria criteria)
+        {
+            using (var dbEntity = new supermanEntities())
+            {
+                var query = dbEntity.order.AsQueryable();
+                if (!string.IsNullOrWhiteSpace(criteria.city))
+                    query = query.Where(i => i.business.City == criteria.city.Trim());
+                if (!string.IsNullOrWhiteSpace(criteria.cityId))
+                    query = query.Where(i => i.business.CityId == criteria.cityId.Trim());
+                //1送餐订单 还是  2取餐盒订单
+                query = query.Where(i => i.OrderType == criteria.OrderType);
+                //订单状态
+                query = query.Where(i => i.Status.Value == ConstValues.ORDER_NEW);
+                //排序
+                query = query.OrderByDescending(i => i.PubDate);
+                var result = query.ToList();
+                return result;
+            }
+
         }
         /// <summary>
         /// 修改超人密码

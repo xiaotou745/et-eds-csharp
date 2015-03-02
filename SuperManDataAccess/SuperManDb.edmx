@@ -125,8 +125,8 @@
           <Property Name="HealthCardID" Type="char" MaxLength="18" />
           <Property Name="InternalDepart" Type="varchar" MaxLength="20" />
           <Property Name="ProvinceCode" Type="varchar" MaxLength="20" />
-          <Property Name="CityCode" Type="varchar" MaxLength="20" />
           <Property Name="AreaCode" Type="varchar" MaxLength="20" />
+          <Property Name="CityCode" Type="varchar" MaxLength="20" />
           <Property Name="Province" Type="varchar" MaxLength="20" />
         </EntityType>
         <EntityType Name="commissiontype">
@@ -195,7 +195,8 @@
           <Property Name="ReceiveCityCode" Type="varchar" MaxLength="45" />
           <Property Name="ReceiveAreaCode" Type="varchar" MaxLength="45" />
           <Property Name="SongCanFei" Type="decimal" Precision="10" Scale="2" />
-          <Property Name="IsRecovery" Type="int" />
+          <Property Name="OrderType" Type="int" />
+          <Property Name="KM" Type="double" />
         </EntityType>
         <EntityType Name="orderlog">
           <Key>
@@ -500,8 +501,8 @@
           <Property Name="HealthCardID" Type="String" MaxLength="18" FixedLength="false" Unicode="false" />
           <Property Name="InternalDepart" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="ProvinceCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="CityCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="AreaCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="CityCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="Province" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="commissiontype">
@@ -570,8 +571,9 @@
           <Property Name="ReceiveCityCode" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
           <Property Name="ReceiveAreaCode" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
           <Property Name="SongCanFei" Type="Decimal" />
-          <Property Name="IsRecovery" Type="Int32" />
+          <Property Name="OrderType" Type="Int32" />
           <NavigationProperty Name="business" Relationship="supermanModel.businessId" FromRole="order" ToRole="business" />
+          <Property Name="KM" Type="Double" />
         </EntityType>
         <EntityType Name="orderlog">
           <Key>
@@ -798,8 +800,8 @@
             <EntityTypeMapping TypeName="supermanModel.clienter">
               <MappingFragment StoreEntitySet="clienter">
                 <ScalarProperty Name="Province" ColumnName="Province" />
-                <ScalarProperty Name="AreaCode" ColumnName="AreaCode" />
                 <ScalarProperty Name="CityCode" ColumnName="CityCode" />
+                <ScalarProperty Name="AreaCode" ColumnName="AreaCode" />
                 <ScalarProperty Name="ProvinceCode" ColumnName="ProvinceCode" />
                 <ScalarProperty Name="InternalDepart" ColumnName="InternalDepart" />
                 <ScalarProperty Name="HealthCardID" ColumnName="HealthCardID" />
@@ -859,7 +861,8 @@
           <EntitySetMapping Name="order">
             <EntityTypeMapping TypeName="supermanModel.order">
               <MappingFragment StoreEntitySet="order">
-                <ScalarProperty Name="IsRecovery" ColumnName="IsRecovery" />
+                <ScalarProperty Name="KM" ColumnName="KM" />
+                <ScalarProperty Name="OrderType" ColumnName="OrderType" />
                 <ScalarProperty Name="SongCanFei" ColumnName="SongCanFei" />
                 <ScalarProperty Name="ReceiveAreaCode" ColumnName="ReceiveAreaCode" />
                 <ScalarProperty Name="ReceiveCityCode" ColumnName="ReceiveCityCode" />
