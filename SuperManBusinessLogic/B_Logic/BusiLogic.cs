@@ -220,14 +220,21 @@ namespace SuperManBusinessLogic.B_Logic
         /// </summary>
         /// <param name="business"></param>
         /// <returns></returns>
-        public bool Add(business business)
+        public bool Add(business business,bool isAuditPass = false)
         {
             bool result = false;
             using (var db = new supermanEntities())
             {
                 if (business != null)
                 {
-                    business.Status = ConstValues.BUSINESS_NOADDRESS;
+                    if (!isAuditPass)
+                    {
+                        business.Status = ConstValues.BUSINESS_NOADDRESS;
+                    }
+                    else
+                    {
+                        business.Status = ConstValues.BUSINESS_AUDITPASS;
+                    }
                     db.business.Add(business); 
                     int i = db.SaveChanges();
                     if (i != 0)
