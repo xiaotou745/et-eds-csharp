@@ -45,6 +45,7 @@ namespace SuperManDataAccess
         public string ReceiveCityCode { get; set; }
         public string ReceiveAreaCode { get; set; }
         public Nullable<decimal> SongCanFei { get; set; }
+        public Nullable<int> IsRecovery { get; set; }
     
         public virtual business business { get; set; }
     }
