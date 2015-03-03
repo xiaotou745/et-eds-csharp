@@ -31,7 +31,7 @@ namespace SuperManBusinessLogic.Subsidy_Logic
             return _instance;
         }
 
-        public SubsidyResultModel GetCurrentSubsidy(int groupId=0)
+        public SubsidyResultModel GetCurrentSubsidy(int groupId=0,int orderType=0)
         { 
             SubsidyResultModel resultModel = new SubsidyResultModel();
             using (var db = new supermanEntities())
@@ -40,10 +40,18 @@ namespace SuperManBusinessLogic.Subsidy_Logic
                 var subsidyQuery = db.subsidy.AsQueryable();
                 if (ConfigSettings.Instance.IsGroupPush)
                 {
-                    if (groupId > 0)
+                    if (groupId > 0)  // 集团
                     {
-                        subsidyQuery = subsidyQuery.Where(i => i.StartDate <= DateTime.Now && i.EndDate >= DateTime.Now && i.Status.Value == 1 && i.GroupId == groupId)
-                            .OrderByDescending(i => i.StartDate.Value); //获取当前有效期内的补贴
+                        if (orderType > 0)  //订单类型 1送餐订单  2取餐盒订单
+                        {
+                            subsidyQuery = subsidyQuery.Where(i => i.StartDate <= DateTime.Now && i.EndDate >= DateTime.Now && i.Status.Value == 1 && i.GroupId == groupId && i.OrderType == orderType)
+                                .OrderByDescending(i => i.StartDate.Value); //获取当前有效期内的补贴
+                        }
+                        else
+                        {
+                            subsidyQuery = subsidyQuery.Where(i => i.StartDate <= DateTime.Now && i.EndDate >= DateTime.Now && i.Status.Value == 1 && i.GroupId == groupId)
+                                .OrderByDescending(i => i.StartDate.Value); //获取当前有效期内的补贴
+                        }
                     }
                 }
                 else
@@ -58,6 +66,8 @@ namespace SuperManBusinessLogic.Subsidy_Logic
                     resultModel.DistribSubsidy = subsidy.DistribSubsidy;
                     resultModel.OrderCommission = subsidy.OrderCommission;
                     resultModel.WebsiteSubsidy = subsidy.WebsiteSubsidy;
+                    resultModel.OrderType = subsidy.OrderType.Value;
+                    resultModel.PKMCost = subsidy.PKMCost.Value;
                 }
             }
             return resultModel;

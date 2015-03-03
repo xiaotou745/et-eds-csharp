@@ -1,6 +1,7 @@
 ﻿@model ClienterManage
 @using SuperManCommonModel.Models;
 @using SuperManBusinessLogic.CommonLogic
+ @using SuperManBusinessLogic.Group_Logic
 @{
     ViewBag.Title = "Order";
 }
@@ -44,7 +45,7 @@
             <p id="statusUnFin">新增超人</p>
             <a class="J_closebox x_close"></a>
         </h2>
-        <form class="form-horizontal" role="form" id="menufrom" name="menufrom" method="post" action="/MenuManagement/Add">
+        <form class="form-horizontal" role="form" id="AddSuperManForm" method="post" action="/SuperManManager/AddSuperMan">
             <fieldset>
                 <div class="control-group">
                     <label class="control-label" for="TrueName"><span style="color:red;">*</span>姓名</label>
@@ -70,10 +71,10 @@
                 </div>
                 <div class="control-group">
                     <label class="control-label" for="input01">照片</label>
-                    <div class="controls">  
-                        <input type="file" id="fileUpload" name="fileUpload"/>
-                        <input name="hidupload" id="hidupload" type="text"/>
-                        <text id="labfileupload" style="color:red" hidden="hidden">不能为空</text>
+                    <div class="controls">
+                        <input placeholder="手持验证照片" name="PicWithHandUrl" id="BoxPicWithHandUrl" class="input-xlarge" required="required" type="file">
+                        <text id="labBoxorderNoUnFin" style="color:red" hidden="hidden">不能为空</text>
+
                     </div>
                 </div>
                 <div class="control-group">
@@ -107,8 +108,21 @@
                     <div class="controls">
                         <input placeholder="内外部门" name="InternalDepart" id="BoxInternalDepart" class="input-xlarge" type="text">
                     </div>
-                    <input type="hidden" id="HidGroupID" value="@ViewBag.txtGroupId" />
+
                 </div>
+                @if (ViewBag.txtGroupId <= 0)
+                {
+                    <input type="hidden" id="HidGroupID" value="@ViewBag.txtGroupId" />
+                }
+                else
+                {
+                    <div class="control-group">
+                        <label class="control-label" for="InternalDepart">集团信息</label>
+                        <div class="controls">
+                            @Html.DropDownList("HidGroupID", new SelectList(GroupLogic.groupLogic().GetGroups(), "Id", "GroupName"), "--无--")
+                        </div>
+                    </div>
+                }
                 <div class="control-group">
                     <label class="control-label" for="IDCard">身份证号</label>
                     <div class="controls">
@@ -196,9 +210,9 @@
                 var provinceCode = $('#BoxProvinceCode').val(); //省
                 var cityCode = $('#BoxCityCode').val(); //市
                 var idCard = $('#BoxIDCard').val(); //身份证号
-                var password = $('#BoxPassword').val()==null||$('#BoxPassword').val()==""?"edaisong":$('#BoxPassword').val(); //密码
+                var password = $('#BoxPassword').val() == null || $('#BoxPassword').val() == "" ? "edaisong" : $('#BoxPassword').val(); //密码
                 var bussinessID = $('#BoxBussinessID').val(); //所属门店
-
+              
                 if (trueName == "" || trueName == null) {  //姓名非空验证
                     $('#labBoxTrueName').show();
                     result = false;
@@ -273,7 +287,7 @@
                         error: function () {
                         }
                     });
-                    
+
                 }
             }
          );
@@ -284,7 +298,7 @@
             selCityCode.empty();  //清除选择的城市信息
             $('#BoxBussinessID').empty();  //清除选择的门店信息
             selCityCode.append('<option value="" selected="selected">--城市--</option>');
-            if ($(this).val() != null && $(this).val()!="") {
+            if ($(this).val() != null && $(this).val() != "") {
                 $.post("/Common/GetRegionsByCode", { Code: $(this).val() }, function (data) {
                     $.each(data, function (i, item) {
                         selCityCode.append('<option  value="' + item.Code + '">' + item.Name + '</option>');
@@ -295,19 +309,33 @@
 
         //城市下拉框下拉触发事件  add by caoheyang 20150302
         $('#BoxCityCode').change(function () {
+            LoadBussinessInfo();
+        });
+
+        //加载门店信息  add by caoheyang 20150303
+        function LoadBussinessInfo() {
             var selBussinessID = $('#BoxBussinessID');  //清除选择的门店信息
             selBussinessID.empty();
             selBussinessID.append('<option value="" selected="selected">--所属门店--</option>');
-            if ($(this).val() != null && $(this).val() != "") {
+            if ($('#BoxCityCode').val() != null && $('#BoxCityCode').val() != "") {
                 $.post("/BusinessManager/GetBussinessByCityInfo",
-                    { ProvinceCode: $("#BoxProvinceCode").val(), CityCode: $(this).val(), GroupId: $("#HidGroupID").val() },
+                    { ProvinceCode: $("#BoxProvinceCode").val(), CityCode: $('#BoxCityCode').val(), GroupId: $("#HidGroupID").val() },
                     function (data) {
-                    $.each(data, function (i, item) {
-                        selBussinessID.append('<option  value="' + item.Id + '">' + item.Name + '</option>');
+                        $.each(data, function (i, item) {
+                            selBussinessID.append('<option  value="' + item.Id + '">' + item.Name + '</option>');
+                        });
                     });
-                });
             }
-        });
+        }
+
+        //当集团可选（即：当前登陆人员非管理员时，为集团下拉绑定事件  add by caoheyang 20150303）
+        if ($("#HidGroupID").attr("type") != "hidden") {
+            //当集团选项发生改变时，重选商户。
+            $("#HidGroupID").change(function () {
+                $('#BoxBussinessID').val("");
+                LoadBussinessInfo();
+            });
+        }
 
         //新增超人按钮点击事件   add by caoheyang 20150228
         $("#btnAdd").click(
@@ -336,4 +364,4 @@
         adminjs.closewinbox('.add-openbox');
         return false;
     });
-</script>
+</script>  

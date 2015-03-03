@@ -574,7 +574,6 @@
           <Property Name="ReceiveProvinceCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="ReceiveCityCode" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
           <Property Name="ReceiveAreaCode" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="SongCanFei" Type="Decimal" />
           <Property Name="OrderType" Type="Int32" />
           <Property Name="KM" Type="Double" />
           <NavigationProperty Name="business" Relationship="supermanModel.businessId" FromRole="order" ToRole="business" />
@@ -870,7 +869,6 @@
               <MappingFragment StoreEntitySet="order">
                 <ScalarProperty Name="KM" ColumnName="KM" />
                 <ScalarProperty Name="OrderType" ColumnName="OrderType" />
-                <ScalarProperty Name="SongCanFei" ColumnName="SongCanFei" />
                 <ScalarProperty Name="ReceiveAreaCode" ColumnName="ReceiveAreaCode" />
                 <ScalarProperty Name="ReceiveCityCode" ColumnName="ReceiveCityCode" />
                 <ScalarProperty Name="ReceiveProvinceCode" ColumnName="ReceiveProvinceCode" />

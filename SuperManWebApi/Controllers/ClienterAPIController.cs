@@ -65,21 +65,30 @@ namespace SuperManWebApi.Controllers
         [ActionStatus(typeof(LoginModelStatus))]
         public ResultModel<ClienterLoginResultModel> PostLogin_C(LoginModel model)
         {
-            var business = ClienterLogic.clienterLogic().GetClienter(model.phoneNo, model.passWord);
-            if (business == null)
+            LogHelper.LogWriter("用户登录", new { model = model });
+            try
             {
+                var aClienter = ClienterLogic.clienterLogic().GetClienter(model.phoneNo, model.passWord);
+                if (aClienter == null)
+                {
+                    return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
+                }
+                var result = new ClienterLoginResultModel()
+                {
+                    userId = aClienter.Id,
+                    phoneNo = aClienter.PhoneNo,
+                    status = aClienter.Status,
+                    Amount = aClienter.AccountBalance,
+                    city = string.IsNullOrWhiteSpace(aClienter.City) ? null : aClienter.City.Trim(),  //城市
+                    cityId = string.IsNullOrWhiteSpace(aClienter.CityId) ? null : aClienter.CityId.Trim()  //城市编码
+                };
+                return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.Success, result);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter("登录错误", new { ex = ex });
                 return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
             }
-            var result = new ClienterLoginResultModel()
-            {
-                userId = business.Id,
-                phoneNo=business.PhoneNo,
-                status = business.Status,
-                Amount = business.AccountBalance,
-                city = string.IsNullOrWhiteSpace(business.City) ? null : business.City.Trim(),  //城市
-                cityId = string.IsNullOrWhiteSpace(business.CityId) ? null : business.CityId.Trim()  //城市编码
-            };
-            return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.Success, result);
         }
         /// <summary>
         /// C端上传图片
