@@ -76,6 +76,22 @@
         //    }
         //});
 
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: 'http://10.8.7.40:7178/ClienterAPI/PostLogin_C',
+            data: {
+                phoneNo: '15652662526',
+                passWord: 'A06F6A211CBEDF374FC367FA231865DE'
+
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () {
+
+            }
+        });
 
         //http://59.151.43.221:7178/ClienterAPI/PostLogin_C
   

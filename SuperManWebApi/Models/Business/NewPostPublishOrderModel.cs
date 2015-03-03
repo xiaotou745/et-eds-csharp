@@ -96,16 +96,11 @@ namespace SuperManWebApi.Models.Business
         /// <summary>
         /// 订单类型： 1送餐订单，2取餐盒订单
         /// </summary>
-        public int? OrderType { get; set; }
+        public int OrderType { get; set; }
         /// <summary>
         /// 公里数，商户地址到收货人地址的距离
         /// </summary>
-        public double KM { get; set; }
-
-        /// <summary>
-        /// 送餐费
-        /// </summary>
-        public decimal? SongCanFei { get; set; }
+        public double KM { get; set; } 
     }
     public class NewBusiOrderInfoModelTranslator : TranslatorBase<order, NewPostPublishOrderModel>
     {
@@ -168,29 +163,45 @@ namespace SuperManWebApi.Models.Business
 
             to.IsPay = from.IsPay;
             to.Amount = from.Amount;
+             
+            try
+            {
+                to.OrderType = from.OrderType; //订单类型 1送餐订单 2取餐盒订单 
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter("订单类型", new { OrderType = to.OrderType,ex = ex });
+            }
+            to.KM = from.KM; //送餐距离
 
-            to.SongCanFei = from.SongCanFei;
-            to.OrderType = from.OrderType == null ? 1 : from.OrderType; //订单类型 1送餐订单 2取餐盒订单 
-            to.KM= from.KM; //送餐距离
-
-            var subsidy = SubsidyLogic.subsidyLogic().GetCurrentSubsidy(business.GroupId.Value);
+            //计算订单佣金
+            var subsidy = SubsidyLogic.subsidyLogic().GetCurrentSubsidy(business.GroupId.Value,from.OrderType);
             to.WebsiteSubsidy = subsidy.WebsiteSubsidy;
             to.DistribSubsidy = subsidy.DistribSubsidy;
-            if (subsidy.OrderCommission != null)
+            if (subsidy.OrderType > 0 )
             {
-                if (abusiness.CommissionTypeId == 2) //佣金类型2 ，按送餐费计算佣金
-                {
-                    to.OrderCommission = subsidy.OrderCommission.Value * from.SongCanFei;
-                }
-                if (abusiness.CommissionTypeId == 1)  //佣金类型1 ，按订单总金额计算佣金
-                {
-                    to.OrderCommission = subsidy.OrderCommission.Value * from.Amount;
-                }
+                subsidy.OrderCommission = Convert.ToDecimal(from.KM) * subsidy.PKMCost;  //每公里费用*公里数
             }
             else
             {
-                to.OrderCommission = subsidy.OrderCommission;
+                to.OrderCommission = subsidy.OrderCommission.Value * from.Amount;
             }
+
+            //if (subsidy.OrderCommission != null)
+            //{
+            //    if (abusiness.CommissionTypeId == 2) //佣金类型2 ，按送餐费计算佣金
+            //    {
+            //        to.OrderCommission = subsidy.OrderCommission.Value * from.SongCanFei;
+            //    }
+            //    if (abusiness.CommissionTypeId == 1)  //佣金类型1 ，按订单总金额计算佣金
+            //    {
+            //        to.OrderCommission = subsidy.OrderCommission.Value * from.Amount;
+            //    }
+            //}
+            //else
+            //{
+            //    to.OrderCommission = subsidy.OrderCommission;
+            //}
             to.Status = ConstValues.ORDER_NEW;
             return to;
         }
