@@ -64,7 +64,7 @@
                 <div class="control-group">
                     <label class="control-label" for="input01">手持照片</label>
                     <div class="controls">
-                        <input type="file" id="fileUploadHand" name="fileUploadHand"/>
+                        <input type="file" id="fileUploadHand" name="fileUploadHand" class="input-xlarge" required="required"/>
                         <input type="text" id="hidHandUpload"/>
                         <text id="labfileuploadHand" style="color:red" hidden="hidden">不能为空</text>
                     </div>
@@ -72,9 +72,9 @@
                 <div class="control-group">
                     <label class="control-label" for="input01">照片</label>
                     <div class="controls">
-                        <input placeholder="手持验证照片" name="PicWithHandUrl" id="BoxPicWithHandUrl" class="input-xlarge" required="required" type="file">
-                        <text id="labBoxorderNoUnFin" style="color:red" hidden="hidden">不能为空</text>
-
+                        <input placeholder="验证照片" name="fileUpload" id="fileUpload" class="input-xlarge" required="required" type="file">
+                        <input type="text" id="hidupload"/>
+                        <text id="labBoxorderNoUnFin" style="color:red" hidden="hidden">不能为空</text> 
                     </div>
                 </div>
                 <div class="control-group">
@@ -162,6 +162,7 @@
             };
             refresh(0);
         });
+        //手持身份证图片上传
         $("#fileUploadHand").fileupload({
             url: "/UploadTest/Upload",//文件上传地址，当然也可以直接写在input的data-url属性内
             formData: {},//如果需要额外添加参数可以在这里添加
@@ -179,6 +180,7 @@
                 }
             }
         });
+        //图片上传
         $("#fileUpload").fileupload({
             url: "/UploadTest/Upload",//文件上传地址，当然也可以直接写在input的data-url属性内
             formData: {},//如果需要额外添加参数可以在这里添加
@@ -188,7 +190,6 @@
                 //返回的数据在result.result中，假设我们服务器返回了一个json对象
                 var result = results.result;
                 if (result.IsSuccess) {
-                    alert(result.Message);
                     $('#hidupload').val(result.Message).show();
                 } else {
                     alert(result.Message);
