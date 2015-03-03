@@ -66,8 +66,14 @@ namespace SuperManBusinessLogic.Subsidy_Logic
                     resultModel.DistribSubsidy = subsidy.DistribSubsidy;
                     resultModel.OrderCommission = subsidy.OrderCommission;
                     resultModel.WebsiteSubsidy = subsidy.WebsiteSubsidy;
-                    resultModel.OrderType = subsidy.OrderType.Value;
-                    resultModel.PKMCost = subsidy.PKMCost.Value;
+                    if (subsidy.OrderType != null)
+                    {
+                        resultModel.OrderType = subsidy.OrderType.Value;
+                    }
+                    if (subsidy.PKMCost != null)
+                    {
+                        resultModel.PKMCost = subsidy.PKMCost.Value;
+                    }
                 }
             }
             return resultModel;

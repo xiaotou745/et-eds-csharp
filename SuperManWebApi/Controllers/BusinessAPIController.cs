@@ -105,7 +105,8 @@ namespace SuperManWebApi.Controllers
         [ActionStatus(typeof(CancelOrderStatus))]
         [HttpPost]
         public ResultModel<OrderCancelResultModel> NewOrderCancel(OrderCancelModel model)
-        { 
+        {
+            LogHelper.LogWriter("第三方调用取消订单：", new { model = model});
             if (string.IsNullOrEmpty(model.OriginalOrderNo))   //订单号非空验证
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderEmpty); 
             if (string.IsNullOrEmpty(model.OrderFrom.ToString()))   //订单来源非空验证

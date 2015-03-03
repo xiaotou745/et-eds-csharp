@@ -11,8 +11,6 @@ namespace SuperManWebApi.Models.Business
 
         public string OriginalOrderNo { get; set; }
 
-        public int PubOrderStatus { get; set; }
-
         public string Remark { get; set; }
 
     }

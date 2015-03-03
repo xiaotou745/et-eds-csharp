@@ -217,26 +217,33 @@ namespace SuperManBusinessLogic.Order_Logic
         public bool UpdateOrder(string oriOrderNo, int orderFrom, OrderStatus orderStatus)
         {
             bool bResult = false;
-            using (var db = new supermanEntities())
+            try
             {
-                var query = db.order.Where(p => p.OriginalOrderNo == oriOrderNo && p.OrderFrom == orderFrom).FirstOrDefault();
-                if (query != null)
+                using (var db = new supermanEntities())
                 {
-                    if ((OrderStatus)query.Status == OrderStatus.订单已取消)
+                    var query = db.order.Where(p => p.OriginalOrderNo == oriOrderNo && p.OrderFrom == orderFrom).FirstOrDefault();
+                    if (query != null)
                     {
-                        bResult = true;
-                    }
-                    else
-                    {
-                        query.Status = ConstValues.ORDER_CANCEL;
-                        int i = db.SaveChanges();
-                        if (i == 1)
+                        if ((OrderStatus)query.Status == OrderStatus.订单已取消)
                         {
-                            Push.PushMessage(0, "订单提醒", "订单被客户取消了！", "订单被客户取消了！", query.clienterId.Value.ToString(), string.Empty);
                             bResult = true;
+                        }
+                        else
+                        {
+                            query.Status = ConstValues.ORDER_CANCEL;
+                            int i = db.SaveChanges();
+                            if (i == 1)
+                            {
+                                Push.PushMessage(0, "订单提醒", "订单被客户取消了！", "订单被客户取消了！", query.clienterId.Value.ToString(), string.Empty);
+                                bResult = true;
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter("第三方取消订单异常：", new { ex = ex });
             }
             return bResult;
         }
