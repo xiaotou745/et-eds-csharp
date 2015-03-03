@@ -7,43 +7,44 @@
 <script src="~/Scripts/jquery-1.10.2.min.js"></script>
 <script>
     $(function () {
-        $.ajax({
-            type: 'POST',
-            dataType: 'json',
-            url: '/BusinessAPI/NewPostPublishOrder_B',
-            data: {
-                OriginalOrderNo: "1155201502121730",
-                IsPay: "true",
-                OriginalBusinessId: "168889",
-                PubDate: "2015-02-12 12:12:12",
-                Quantity: "10",
-                Receive_Address: "尚8国际广告园",
-                Receive_Area: "朝阳区",
-                Receive_City: "北京市",
-                Receive_Province: "北京市",
-                Receive_ProvinceCode: "102",
-                Receive_CityCode: "10201",
-                Receive_AreaCode: "1020105",
-                ReceiveName: "王子龙",
-                ReceivePhoneNo: "15652225526",
-                Weight: "1.26",
-                Amount: "26",
-                OrderFrom :1
-            },
-            success: function (data) {
-                console.log(data);
-            },
-            error: function () {
+        //$.ajax({
+        //    type: 'POST',
+        //    dataType: 'json',
+        //    url: '/BusinessAPI/NewPostPublishOrder_B',
+        //    data: {
+        //        //OriginalOrderNo: "1155201502121730",
+        //        //IsPay: "true",
+        //        //OriginalBusinessId: "168889",
+        //        //PubDate: "2015-02-12 12:12:12",
+        //        //Quantity: "10",
+        //        //Receive_Address: "尚8国际广告园",
+        //        //Receive_Area: "朝阳区",
+        //        //Receive_City: "北京市",
+        //        //Receive_Province: "北京市",
+        //        //Receive_ProvinceCode: "102",
+        //        //Receive_CityCode: "10201",
+        //        //Receive_AreaCode: "1020105",
+        //        //ReceiveName: "王子龙",
+        //        //ReceivePhoneNo: "15652225526",
+        //        //Weight: "1.26",
+        //        //Amount: "26",
+        //        //OrderFrom :1
+        //        "BusinessId": 11858, "OriginalOrderNo": "1036346525", "OriginalBusinessId": 11858, "PubDate": "\/Date(1425349826777)\/", "ReceiveName": "测试", "ReceivePhoneNo": "18910712425", "IsPay": false, "Amount": 59.0000, "Quantity": 1, "Receive_Province": "北京市", "Receive_City": "北京城区", "Receive_Area": "朝阳区", "Receive_ProvinceCode": "102", "Receive_CityCode": "10201", "Receive_AreaCode": "1020105", "Receive_Address": "北京市朝阳区北苑", "OrderFrom": 1, "OrderCommission": 0.0, "DistribSubsidy": 0.0, "WebsiteSubsidy": 0.0, "Receive_Longitude": 0, "Receive_Latitude": 0, "Remark": null, "Weight": 0.0, "OrderType": 0, "KM": 0
+        //    },
+        //    success: function (data) {
+        //        console.log(data);
+        //    },
+        //    error: function () {
 
-            }
-        });
+        //    }
+        //});
 
         //$.ajax({
         //    type: 'POST',
         //    dataType: 'json',
-        //    url: '/BusinessAPI/OrderCancel',
+        //    url: '/BusinessAPI/NewOrderCancel',
         //    data: {
-        //        OriginalOrderNo: '201223213', OrderFrom: '15'
+        //        OriginalOrderNo: '1036346493', OrderFrom: '1'
         //    },
         //    success: function (data) {
         //        console.log(data);
