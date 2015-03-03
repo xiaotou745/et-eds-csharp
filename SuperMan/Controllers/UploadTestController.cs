@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using SuperManCore;
+using SuperManCore.Common;
 
 namespace SuperMan.Controllers
 {
@@ -12,24 +13,29 @@ namespace SuperMan.Controllers
     [WebHandleError]
     public class UploadTestController : Controller
     { 
-        public ActionResult Upload()
+        public ActionResult Index()
         {
-            HttpPostedFileBase file = Request.Files["fileUpload"];
+            return View();
+        } 
+        [HttpPost]
+        public JsonResult Upload()
+        {
+            HttpPostedFileBase file = Request.Files[0]; 
             if (file != null)
             {
                 if (file.ContentLength > 2097152)
                 {
-                    //MessageBoxAndReturn("文件超过大小限制！");
+                    return Json(new ResultModel(false, "图片太大"), JsonRequestBehavior.AllowGet);  
                 }
                 string fileExt = Path.GetExtension(file.FileName).ToLower();
                 if (string.IsNullOrEmpty(fileExt))
                 {
-                    //("上传的文件格式有问题！");
+                    return Json(new ResultModel(false, "格式不对"), JsonRequestBehavior.AllowGet);  
                 }
                 else
                 {
                     bool allowUploadExt = false;
-                    string allUploadExts = ".gif|.jpg|.jpeg";
+                    string allUploadExts = ".gif|.jpg|.jpeg|.png";
                     string[] exps = allUploadExts.Split('|');
                     foreach (string exp in exps)
                     {
@@ -41,9 +47,10 @@ namespace SuperMan.Controllers
                     }
                     if (!allowUploadExt)
                     {
-                        //MessageBoxAndReturn(string.Format("您的上传文件格式错误({0})！", allUploadExts.Replace(".", "")));
+                        return Json(new ResultModel(false, "请上传正确的格式"), JsonRequestBehavior.AllowGet);  
                     }
                 }
+
                 var fileName = string.Format("{0}_{1}", DateTime.Now.ToString("yyyyMMddhhmmss"), file.FileName);
  
                 if (!System.IO.Directory.Exists(CustomerIconUploader.Instance.PhysicalPath))
@@ -60,23 +67,11 @@ namespace SuperMan.Controllers
                 var destFullFileName = System.IO.Path.Combine(CustomerIconUploader.Instance.PhysicalPath, destFileName);
                 transformer.Transform(fullFilePath, destFullFileName); 
                  
-                var picUrl = System.IO.Path.GetFileName(destFullFileName); 
-                
+                var picUrl = System.IO.Path.GetFileName(destFullFileName);
+                return Json(new ResultModel(true, picUrl), JsonRequestBehavior.AllowGet);  
             }
-            return View();
-        }
 
-        /// <summary>
-        /// 自动命名,返回文件名：年_月_日_时_分_秒_随机数
-        /// </summary>
-        /// <param name="Ext">扩展名</param>
-        /// <returns>返回文件名如：2005_10_1_12_10_10_2345</returns>
-        public static string getRandomFileName()
-        {
-            Random rdom = new Random();
-            DateTime dtime = DateTime.Now;
-            string Filename = dtime.Year + "_" + dtime.Month + "_" + dtime.Day + "_" + dtime.Hour + "_" + dtime.Minute + "_" + dtime.Second + "_" + rdom.Next(10000);
-            return Filename;
-        }
+            return Json(new ResultModel(false, ""), JsonRequestBehavior.AllowGet);
+        } 
     }
 }

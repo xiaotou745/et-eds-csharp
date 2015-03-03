@@ -45,7 +45,8 @@ namespace SuperManBusinessLogic.B_Logic
             List<business> bussiness = new List<business>();
             supermanEntities db = new supermanEntities();
             var items = db.business.AsQueryable();
-            items = items.Where(p => p.GroupId == criteria.GroupId);
+            if (criteria.GroupId != null && criteria.GroupId!=0)
+                items = items.Where(p => p.GroupId == criteria.GroupId);
             if (!string.IsNullOrWhiteSpace(criteria.ProvinceCode))
                 items = items.Where(p => p.ProvinceCode == criteria.ProvinceCode);
             if (!string.IsNullOrWhiteSpace(criteria.CityCode))
