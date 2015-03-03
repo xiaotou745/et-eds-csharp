@@ -65,7 +65,7 @@
                     <label class="control-label" for="input01">手持照片</label>
                     <div class="controls">
                         <input type="file" id="fileUploadHand" name="fileUploadHand" class="input-xlarge" required="required"/>
-                        <input type="text" id="hidHandUpload"/>
+                        <input type="hidden" id="hidHandUpload"/>
                         <text id="labfileuploadHand" style="color:red" hidden="hidden">不能为空</text>
                     </div>
                 </div>
@@ -73,7 +73,7 @@
                     <label class="control-label" for="input01">照片</label>
                     <div class="controls">
                         <input placeholder="验证照片" name="fileUpload" id="fileUpload" class="input-xlarge" required="required" type="file">
-                        <input type="text" id="hidupload"/>
+                        <input type="hidden" id="hidupload"/>
                         <text id="labBoxorderNoUnFin" style="color:red" hidden="hidden">不能为空</text> 
                     </div>
                 </div>
@@ -176,7 +176,6 @@
                 } else {
                     alert(result.Message);
                     $('#labfileuploadHand').val(result.Message).show();
-                    
                 }
             }
         });
