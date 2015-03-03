@@ -37,11 +37,11 @@ namespace SuperManDataAccess
         public virtual DbSet<commissiontype> commissiontype { get; set; }
         public virtual DbSet<group> group { get; set; }
         public virtual DbSet<myincome> myincome { get; set; }
+        public virtual DbSet<order> order { get; set; }
         public virtual DbSet<orderlog> orderlog { get; set; }
         public virtual DbSet<pushmessage> pushmessage { get; set; }
         public virtual DbSet<pushmessagestatus> pushmessagestatus { get; set; }
         public virtual DbSet<region> region { get; set; }
         public virtual DbSet<subsidy> subsidy { get; set; }
-        public virtual DbSet<order> order { get; set; }
     }
 }
