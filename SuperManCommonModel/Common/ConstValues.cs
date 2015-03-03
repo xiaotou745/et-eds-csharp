@@ -6,7 +6,7 @@ using System.Web;
 namespace SuperManCommonModel
 {
     public class ConstValues
-    {
+    { 
         /// <summary>
         /// 订单新增
         /// </summary>
@@ -23,7 +23,10 @@ namespace SuperManCommonModel
         /// 订单已取消 
         /// </summary>
         public const int ORDER_CANCEL = 3;
-
+        /// <summary>
+        /// 待客审
+        /// </summary>
+        public const int ORDER_WAITAUDIT = 4;
         /// <summary>
         /// 超人审核通过        已通过
         /// </summary>

@@ -355,9 +355,18 @@ namespace SuperManBusinessLogic.Order_Logic
                                 orderAmount = g.Sum(i => i.Amount).Value
                             };
                 }
-                var resultModel = new PagedList<OrderCountModel>(items.ToList(), criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
-                var businesslists = new OrderCountManageList(resultModel.ToList(), resultModel.PagingResult);
-                var pagedQuery = businesslists;
+                OrderCountManageList pagedQuery = null;
+                try
+                {
+                    var resultModel = new PagedList<OrderCountModel>(items.ToList(), criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
+                    var businesslists = new OrderCountManageList(resultModel.ToList(), resultModel.PagingResult);
+                      pagedQuery = businesslists;
+                }
+                catch (Exception ex)
+                {
+                    LogHelper.LogWriter("获取订单XX异常", new { ex = ex });
+                    
+                }
                 return pagedQuery;
             }
         }
