@@ -225,6 +225,7 @@ namespace SuperManBusinessLogic.C_Logic
             using (var db = new supermanEntities())
             {
                 var query = db.clienter.Where(p => p.PhoneNo == phoneNo && p.Password == pwd);
+                LogHelper.LogWriter("登录结果",new { query = query });
                 return query.FirstOrDefault();
             }
         }

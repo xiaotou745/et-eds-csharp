@@ -176,15 +176,19 @@ namespace SuperManWebApi.Models.Business
 
             //计算订单佣金
             var subsidy = SubsidyLogic.subsidyLogic().GetCurrentSubsidy(business.GroupId.Value,from.OrderType);
-            to.WebsiteSubsidy = subsidy.WebsiteSubsidy;
-            to.DistribSubsidy = subsidy.DistribSubsidy;
-            if (subsidy.OrderType > 0 )
+            if (subsidy != null)
             {
-                subsidy.OrderCommission = Convert.ToDecimal(from.KM) * subsidy.PKMCost;  //每公里费用*公里数
-            }
-            else
-            {
-                to.OrderCommission = subsidy.OrderCommission.Value * from.Amount;
+
+                to.WebsiteSubsidy = subsidy.WebsiteSubsidy;
+                to.DistribSubsidy = subsidy.DistribSubsidy;
+                if (subsidy.OrderType > 0)
+                {
+                    subsidy.OrderCommission = Convert.ToDecimal(from.KM) * subsidy.PKMCost;  //每公里费用*公里数
+                }
+                else
+                {
+                    to.OrderCommission = subsidy.OrderCommission.Value * from.Amount;
+                }
             }
 
             //if (subsidy.OrderCommission != null)
