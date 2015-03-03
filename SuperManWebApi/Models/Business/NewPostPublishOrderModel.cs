@@ -187,7 +187,10 @@ namespace SuperManWebApi.Models.Business
                 }
                 else
                 {
-                    to.OrderCommission = subsidy.OrderCommission.Value * from.Amount;
+                    if (subsidy.OrderCommission != null)
+                    {
+                        to.OrderCommission = subsidy.OrderCommission.Value * from.Amount;
+                    }
                 }
             }
 

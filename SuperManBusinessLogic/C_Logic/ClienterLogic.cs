@@ -201,15 +201,22 @@ namespace SuperManBusinessLogic.C_Logic
         public bool Add(clienter clienter)
         {
             bool result = false;
-            using (var db = new supermanEntities())
+            try
             {
-                if (clienter != null)
+                using (var db = new supermanEntities())
                 {
-                    db.clienter.Add(clienter);
-                    int i = db.SaveChanges();
-                    if (i != 0)
-                        result = true;
+                    if (clienter != null)
+                    {
+                        db.clienter.Add(clienter);
+                        int i = db.SaveChanges();
+                        if (i != 0)
+                            result = true;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter("添加超人异常", new { ex = ex, clienter = clienter });
             }
             return result;
         }

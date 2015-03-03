@@ -75,7 +75,7 @@ namespace SuperManBusinessLogic.B_Logic
                 {
                     items = items.Where(p => p.GroupId == criteria.GroupId);
                 }
-              
+
                 var pagedQuery = new BusinessManage();
                 var resultModel = new PagedList<business>(items.ToList(), criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
                 var businesslists = new BusinessManageList(resultModel.ToList(), resultModel.PagingResult);
@@ -84,7 +84,7 @@ namespace SuperManBusinessLogic.B_Logic
             }
         }
 
- 
+
 
         public BusinessCountManage GetBusinessesCount(BusinessSearchCriteria criteria)
         {
@@ -242,26 +242,33 @@ namespace SuperManBusinessLogic.B_Logic
         /// </summary>
         /// <param name="business"></param>
         /// <returns></returns>
-        public bool Add(business business,bool isAuditPass = false)
+        public bool Add(business business, bool isAuditPass = false)
         {
             bool result = false;
-            using (var db = new supermanEntities())
+            try
             {
-                if (business != null)
+                using (var db = new supermanEntities())
                 {
-                    if (!isAuditPass)
+                    if (business != null)
                     {
-                        business.Status = ConstValues.BUSINESS_NOADDRESS;
+                        if (!isAuditPass)
+                        {
+                            business.Status = ConstValues.BUSINESS_NOADDRESS;
+                        }
+                        else
+                        {
+                            business.Status = ConstValues.BUSINESS_AUDITPASS;
+                        }
+                        db.business.Add(business);
+                        int i = db.SaveChanges();
+                        if (i != 0)
+                            result = true;
                     }
-                    else
-                    {
-                        business.Status = ConstValues.BUSINESS_AUDITPASS;
-                    }
-                    db.business.Add(business); 
-                    int i = db.SaveChanges();
-                    if (i != 0)
-                        result = true;
                 }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter("添加商户异常", new { ex = ex, business = business });
             }
             return result;
         }
@@ -442,7 +449,6 @@ namespace SuperManBusinessLogic.B_Logic
                 using (var db = new supermanEntities())
                 {
                     var query = db.business.Where(p => p.OriginalBusiId == oriBusiId && p.GroupId == orderFrom).FirstOrDefault();
-                    LogHelper.LogWriter("根据原平台订单号和订单来源获取商户信息",new { query = query }); 
                     if (query != null)
                     {
                         return query;
@@ -451,7 +457,7 @@ namespace SuperManBusinessLogic.B_Logic
             }
             catch (Exception ex)
             {
-                LogHelper.LogWriter(new { oriBusiId = oriBusiId, orderFrom = orderFrom }, ex, "根据原平台订单号和订单来源获取商户信息"); 
+                LogHelper.LogWriter(new { oriBusiId = oriBusiId, orderFrom = orderFrom }, ex, "根据原平台订单号和订单来源获取商户信息");
             }
             return null;
         }

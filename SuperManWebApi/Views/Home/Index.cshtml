@@ -7,33 +7,36 @@
 <script src="~/Scripts/jquery-1.10.2.min.js"></script>
 <script>
     $(function () {
-        //$.ajax({
-        //    type: 'POST',
-        //    dataType: 'json',
-        //    url: '/BusinessAPI/NewPostPublishOrder_B',
-        //    data: {
-        //        OriginalOrderNo: "1155201502121730",
-        //        IsPay: "true",
-        //        OriginalBusinessId: "15",
-        //        PubDate: "2015-02-12 12:12:12",
-        //        Quantity: "10",
-        //        Receive_Address: "尚8国际广告园",
-        //        Receive_Area: "朝阳区",
-        //        Receive_City: "北京市",
-        //        Receive_Province: "北京市",
-        //        ReceiveName: "王子龙",
-        //        ReceivePhoneNo: "15652225526",
-        //        Weight: "1.26",
-        //        Amount: "26",
-        //        OrderFrom :3
-        //    },
-        //    success: function (data) {
-        //        console.log(data);
-        //    },
-        //    error: function () {
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: '/BusinessAPI/NewPostPublishOrder_B',
+            data: {
+                OriginalOrderNo: "1155201502121730",
+                IsPay: "true",
+                OriginalBusinessId: "168889",
+                PubDate: "2015-02-12 12:12:12",
+                Quantity: "10",
+                Receive_Address: "尚8国际广告园",
+                Receive_Area: "朝阳区",
+                Receive_City: "北京市",
+                Receive_Province: "北京市",
+                Receive_ProvinceCode: "102",
+                Receive_CityCode: "10201",
+                Receive_AreaCode: "1020105",
+                ReceiveName: "王子龙",
+                ReceivePhoneNo: "15652225526",
+                Weight: "1.26",
+                Amount: "26",
+                OrderFrom :1
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () {
 
-        //    }
-        //});
+            }
+        });
 
         //$.ajax({
         //    type: 'POST',
@@ -76,22 +79,20 @@
         //    }
         //});
 
-        $.ajax({
-            type: 'POST',
-            dataType: 'json',
-            url: 'http://10.8.7.40:7178/ClienterAPI/PostLogin_C',
-            data: {
-                phoneNo: '15652662526',
-                passWord: 'A06F6A211CBEDF374FC367FA231865DE'
-
-            },
-            success: function (data) {
-                console.log(data);
-            },
-            error: function () {
-
-            }
-        });
+        //$.ajax({
+        //    type: 'POST',
+        //    dataType: 'json',
+        //    url: 'http://10.8.7.40:7178/ClienterAPI/PostLogin_C',
+        //    data: {
+        //        phoneNo: '15652662526',
+        //        passWord: 'A06F6A211CBEDF374FC367FA231865DE'
+        //    },
+        //    success: function (data) {
+        //        console.log(data);
+        //    },
+        //    error: function () {
+        //    }
+        //});
 
         //http://59.151.43.221:7178/ClienterAPI/PostLogin_C
   

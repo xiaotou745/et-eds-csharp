@@ -17,7 +17,6 @@
         <EntityTypeShape EntityType="supermanModel.commissiontype" Width="1.5" PointX="9.75" PointY="7.75" />
         <EntityTypeShape EntityType="supermanModel.group" Width="1.5" PointX="7.75" PointY="10.75" />
         <EntityTypeShape EntityType="supermanModel.myincome" Width="1.5" PointX="9.75" PointY="10.75" />
-        <EntityTypeShape EntityType="supermanModel.order" Width="1.5" PointX="5" PointY="5.25" />
         <EntityTypeShape EntityType="supermanModel.orderlog" Width="1.5" PointX="11.75" PointY="0.75" />
         <EntityTypeShape EntityType="supermanModel.pushmessage" Width="1.5" PointX="11.75" PointY="4.75" />
         <EntityTypeShape EntityType="supermanModel.pushmessagestatus" Width="1.5" PointX="11.75" PointY="7.75" />
@@ -25,6 +24,7 @@
         <EntityTypeShape EntityType="supermanModel.subsidy" Width="1.5" PointX="0.75" PointY="12.75" />
         <AssociationConnector Association="supermanModel.accountId" />
         <AssociationConnector Association="supermanModel.authorityId" />
+        <EntityTypeShape EntityType="supermanModel.order" Width="1.5" PointX="5" PointY="5.25" />
         <AssociationConnector Association="supermanModel.businessId" />
       </Diagram>
     </edmx:Diagrams>

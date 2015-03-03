@@ -111,21 +111,28 @@ namespace SuperManBusinessLogic.Order_Logic
         public bool AddModel(order model)
         {
             bool result = false;
-            using (var db = new supermanEntities())
+            try
             {
-                if (model != null)
+                using (var db = new supermanEntities())
                 {
-                    business businessmodel = db.business.Where(p => p.Id == model.businessId).FirstOrDefault();
-                    if (businessmodel == null)
-                        return result;
-                    db.order.Add(model);
-                    int g = db.SaveChanges();
-                    if (g != 0)
+                    if (model != null)
                     {
-                        result = true;
-                        Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, businessmodel.City); //激光推送
+                        business businessmodel = db.business.Where(p => p.Id == model.businessId).FirstOrDefault();
+                        if (businessmodel == null)
+                            return result;
+                        db.order.Add(model);
+                        int g = db.SaveChanges();
+                        if (g != 0)
+                        {
+                            result = true;
+                            Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, businessmodel.City); //激光推送
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter("添加订单异常", new { ex = ex, model = model });
             }
             return result;
         }
