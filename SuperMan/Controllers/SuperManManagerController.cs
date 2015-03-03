@@ -1,5 +1,7 @@
 ﻿using SuperManBusinessLogic.C_Logic;
+using SuperManCommonModel;
 using SuperManCommonModel.Entities;
+using SuperManCore;
 using SuperManCore.Common;
 using SuperManCore.Paging;
 using SuperManDataAccess;
@@ -80,6 +82,23 @@ namespace SuperMan.Controllers
                 return Json(new ResultModel(false, "清零失败"), JsonRequestBehavior.AllowGet);
             }
         }
-        
+
+
+        /// <summary>
+        /// 帐户清零
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult AddSuperMan(clienter clienter)
+        {
+            if (ClienterLogic.clienterLogic().CheckExistPhone(clienter.PhoneNo))  //判断该手机号是否已经注册过
+                return Json(new ResultModel(false, "手机号已被注册"));
+            if (string.IsNullOrWhiteSpace(clienter.Password))
+                clienter.Password = "edaisong";
+            clienter.Password = MD5Helper.MD5(clienter.Password);
+            clienter.Status = ConstValues.CLIENTER_AUDITPASS;
+            return Json(new ResultModel(ClienterLogic.clienterLogic().Add(clienter), ""));
+        }
     }
 }

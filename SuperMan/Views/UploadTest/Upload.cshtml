@@ -1,0 +1,12 @@
+﻿  
+   
+    <div>
+        上传页面 
+@using (Html.BeginForm("Upload", "UploadTest", FormMethod.Post, new {enctype = "multipart/form-data"}))
+{
+    <input type="file" id="fileUpload" name="fileUpload"/>
+    <input type="submit" id="submit" value="上传"/>
+}
+    </div>
+ 
+ 

@@ -100,6 +100,23 @@ namespace SuperManCommonModel
         /// 不可用
         /// </summary>
         public const int GroupIsIsValidFasle = 0;
+
+        #endregion
+
+        #region 省市级联相关常量 add by caoheyang 20150212
+
+        /// <summary>
+        /// 全国省   
+        /// </summary>
+        public const int Fid1 = 1;
+
+
+        /// <summary>
+        /// 全国省   
+        /// </summary>
+        public const string Code1 = "1";
+
+
         #endregion
     }
 }

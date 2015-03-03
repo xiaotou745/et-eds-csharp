@@ -51,5 +51,16 @@ namespace SuperMan.Controllers
             BusiLogic.busiLogic().UpdateAuditStatus(id, EnumStatusType.审核取消);
             return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
         }
+
+
+        /// <summary>
+        /// 根据城市信息查询当前城市下该集团的所有商户信息  add by caoheyang 20150302
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult GetBussinessByCityInfo(BusinessSearchCriteria model) {
+             return Json(BusiLogic.busiLogic().GetBussinessByCityInfo(model), JsonRequestBehavior.DenyGet);
+        }
     }
 }
