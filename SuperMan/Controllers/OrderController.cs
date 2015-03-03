@@ -14,6 +14,8 @@ using SuperManCore;
 using SuperManCore.Common;
 using SuperManCore.Paging;
 using SuperManDataAccess;
+using SuperManBusinessLogic.CommonLogic;
+using SuperManBusinessLogic.B_Logic;
 
 namespace SuperMan.Controllers
 {
@@ -79,14 +81,22 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult RushOrder(int SuperID, string OrderNo)
         {
-            if (SuperID == 0) //超人id验证
-                return Json(new ResultModel(false, "超人不能为空"), JsonRequestBehavior.AllowGet);
+            //if (SuperID == -1) //超人id验证
+            //    return Json(new ResultModel(false, "超人不能为空"), JsonRequestBehavior.AllowGet);
+
             if (string.IsNullOrEmpty(OrderNo)) //订单号码非空验证
                 return Json(new ResultModel(false, "订单不能为空"), JsonRequestBehavior.AllowGet);
-            if (ClienterLogic.clienterLogic().GetOrderByNo(OrderNo) == null) //查询订单是否存在
+            var order = ClienterLogic.clienterLogic().GetOrderByNo(OrderNo);
+            if (order == null) //查询订单是否存在
                 return Json(new ResultModel(false, "订单不存在"), JsonRequestBehavior.AllowGet);
             if (!ClienterLogic.clienterLogic().CheckOrderIsAllowRush(OrderNo))  //查询订单是否被抢
                 return Json(new ResultModel(false, "订单已被抢或者已完成"), JsonRequestBehavior.AllowGet);
+            if (SuperID == -1) //未指派超人 ，触发极光推送  ，指派超人的情况下，建立订单和超人的关系
+            {
+                var busi = BusiLogic.busiLogic().GetBusinessById(order.businessId.Value);
+                Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, busi.City); // 极光推送
+                return Json(new ResultModel(true, "有新订单可抢"), JsonRequestBehavior.AllowGet);
+            }
             var bResult = ClienterLogic.clienterLogic().RushOrder(SuperID, OrderNo);
             return Json(bResult ? new ResultModel(true, "抢单成功") : new ResultModel(false, "抢单失败"), JsonRequestBehavior.AllowGet);
 
