@@ -1,0 +1,35 @@
+﻿  @{
+    Layout = "";
+  }
+<script type="text/javascript" src="/Scripts/jquery-1.11.1.min.js"></script>
+  <script type="text/javascript" src="~/Scripts/jquery.form.min.js"></script>
+<body bgcolor="#F9F9F9" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+    <div>
+        @using (Html.BeginForm("Upload", "UploadTest", FormMethod.Post, new {id="from1",name="from1",enctype = "multipart/form-data"}))
+        {
+            <input type="file" id="fileUpload" name="fileUpload"/>
+            <input type="button" id="submit" value="上传"/>
+        }
+    </div>
+</body>
+<script type="text/javascript">
+    $("#submit").click(function() {
+        alert(111);
+        var options = {
+            beforeSubmit: showRequest,  //提交前处理 
+            success: showResponse,  //处理完成 
+            resetForm: true,
+            dataType: 'json'
+        };
+        $("#from1").ajaxSubmit(options);
+    });
+    function showRequest(formData, jqForm, options) {
+       
+        return true;
+    }
+
+    function showResponse(responseText, statusText) { 
+        alert(responseText.Message); 
+    }
+</script>
+ 
