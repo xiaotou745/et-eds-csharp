@@ -43,7 +43,6 @@ import com.eds.supermanb.utils.VolleyUtil;
 import com.eds.supermanb.utils.VolleyUtil.HTTPListener;
 import com.supermanb.supermanb.R;
 
-
 public class AddAdressActivity extends BaseActionBarActivity implements OnClickListener, OnGetGeoCoderResultListener,
         HTTPListener {
     private Spinner spinner1;
@@ -263,7 +262,7 @@ public class AddAdressActivity extends BaseActionBarActivity implements OnClickL
     @Override
     protected void onResume() {
         super.onResume();
-        mMyHandler.sendEmptyMessageDelayed(0, 500);
+        mMyHandler.sendEmptyMessageDelayed(0, 200);
     }
 
     @Override

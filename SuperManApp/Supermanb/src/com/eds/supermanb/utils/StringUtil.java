@@ -3,10 +3,10 @@ package com.eds.supermanb.utils;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.eds.supermanb.picker.CityMode;
-
 import android.os.Environment;
 import android.text.TextUtils;
+
+import com.eds.supermanb.picker.CityMode;
 
 public class StringUtil {
     public static boolean isMobileNO(String mobiles) {
@@ -104,7 +104,7 @@ public class StringUtil {
      */
     public static int getIndexOfListByKey(ArrayList<CityMode> data, String key) {
         int iIndex = 0;
-        if (!"".equals(key) && data != null && data.size() > 0) {
+        if (key != null && !"".equals(key) && data != null && data.size() > 0) {
             int isize = data.size();
             for (int i = 0; i < isize; i++) {
                 String strName = data.get(i).getName();
