@@ -72,7 +72,7 @@
                 <div class="control-group">
                     <label class="control-label" for="input01"><span style="color:red;">*</span>照片</label>
                     <div class="controls">
-                        <input placeholder="验证照片" name="fileUpload" id="fileUpload" class="input-xlarge" required="required" type="file">
+                        <input placeholder="验证照片" name="fileUpload" id="fileUpload" class="inpu.t-xlarge" required="required" type="file">
                         <input type="hidden" id="hidupload"/>
                         <text id="labfileupload" style="color:red" hidden="hidden">不能为空</text> 
                     </div>
@@ -88,7 +88,7 @@
                     <label class="control-label" for="input01"><span style="color:red;">*</span>所属城市</label>
                     <div class="controls">
                         @Html.DropDownList("ProvinceCode", new SelectList(RegionLogic.regionLogic().GetRegionsByFid(), "Code", "Name"), "--请选择--", new { style = "width:90px", id = "BoxProvinceCode" })
-                        <select name="CityCode" id="BoxCityCode" style="width:103px;">
+                        <select name="CityCode" id="BoxCityCode" style="width:103px;">l
                             <option>--城市--</option>
                         </select>
                         <text id="labBoxCode" style="color:red" hidden="hidden">不能为空</text>

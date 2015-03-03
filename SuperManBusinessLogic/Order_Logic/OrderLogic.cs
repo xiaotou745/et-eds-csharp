@@ -63,19 +63,23 @@ namespace SuperManBusinessLogic.Order_Logic
                 {
                     items = items.Where(p => p.OrderNo == criteria.orderId);
                 }
+                if (!string.IsNullOrEmpty(criteria.OriginalOrderNo))
+                {
+                    items = items.Where(p => p.OriginalOrderNo == criteria.OriginalOrderNo);
+                }
                 if (criteria.orderStatus != -1)
                 {
                     items = items.Where(p => p.Status == criteria.orderStatus);
                 }
                 if (!string.IsNullOrEmpty(criteria.superManName))
                 {
-                    var superman = db.clienter.Where(p => p.TrueName == criteria.superManName).FirstOrDefault();
+                    var superman = db.clienter.FirstOrDefault(p => p.TrueName == criteria.superManName);
                     if (superman != null)
                         items = items.Where(p => p.clienterId == superman.Id);
                 }
                 if (!string.IsNullOrEmpty(criteria.superManPhone))
                 {
-                    var superman = db.clienter.Where(p => p.PhoneNo == criteria.superManPhone).FirstOrDefault();
+                    var superman = db.clienter.FirstOrDefault(p => p.PhoneNo == criteria.superManPhone);
                     if (superman != null)
                         items = items.Where(p => p.clienterId == superman.Id);
                 }
