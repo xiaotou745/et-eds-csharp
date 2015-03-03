@@ -1,5 +1,4 @@
 ﻿@model SuperManCommonModel.Models.SubsidyManage
-@using SuperManBusinessLogic.Group_Logic
 @using SuperManCommonModel.Models;
 @{
     ViewBag.Title = "Order";
@@ -15,38 +14,45 @@
     <div class="SearchMd">
         <form id="subsidyForm" border="0" cellspacing="0" cellpadding="0">
             <div>
-                @if (ViewBag.txtGroupId > 0)
-                {
-                    <input type="hidden" id="AddGroupId" value="@ViewBag.txtGroupId" />
-                }
-                else
-                {
-                    <dl>
-                        <dt>
-                            <i> </i>&nbsp;&nbsp;集团信息:
-                            @Html.DropDownList("AddGroupId", new SelectList(GroupLogic.groupLogic().GetGroups(), "Id", "GroupName"), "--无--", new { style = "width:155px" });
-                        </dt>
-                    </dl>
-                }
                 <dl>
-                    <dt><i>* </i>订单佣金: <input id="txtOrderCommission" name="txtOrderCommission" type="text" />% <text id="labOrderCommission" style="color:red" hidden="hidden">不能为空</text></dt>
+                    <dt><i>* </i>订单佣金: </dt>
+                    <dd>
+                        <input id="txtOrderCommission" name="txtOrderCommission" type="text" />%
+                        <text id="labOrderCommission" style="color:red" hidden="hidden">不能为空</text>
+                    </dd>
                 </dl>
-
                 <dl>
-                    <dt><i>* </i>配送补贴: <input id="txtDistribSubsidy" name="txtDistribSubsidy" type="text" /><text id="labDistribSubsidy" style="color:red" hidden="hidden">不能为空</text></dt>
+                    <dt><i>* </i>配送费补贴: </dt>
+                    <dd>
+                        <input id="txtDistribSubsidy" name="txtDistribSubsidy" type="text" />
+                        <text id="labDistribSubsidy" style="color:red" hidden="hidden">不能为空</text>
+                    </dd>
                 </dl>
             </div>
+            <div>
 
-
-          
+            </div>
             <div>
                 <dl>
-                    <dt><i>* </i>网站补贴: <input id="txtWebsiteSubsidy" name="txtWebsiteSubsidy" type="text" /><text id="labWebsiteSubsidy" style="color:red" hidden="hidden">不能为空</text></dt>
+                    <dt><i>* </i>网站补贴: </dt>
+                    <dd>
+                        <input id="txtWebsiteSubsidy" name="txtWebsiteSubsidy" type="text" />
+                        <text id="labWebsiteSubsidy" style="color:red" hidden="hidden">不能为空</text>
+                    </dd>
                 </dl>
             </div>
             <div>
                 <dl>
-                    <dt class="">&nbsp;&nbsp;有效时间: <input id="selectDateStart" name="selectDateStart" readonly="readonly" type="text" /><text id="labDateStart" style="color:red" hidden="hidden">不能为空</text> 至: <input id="selectDateEnd" name="selectDateEnd" readonly="readonly" type="text" /><text id="labDateEnd" style="color:red" hidden="hidden">不能为空</text></dt>
+                    <dt class="">有效时间:</dt>
+                    <dd>
+                        <input id="selectDateStart" name="selectDateStart" readonly="readonly" type="text" />
+                        <text id="labDateStart" style="color:red" hidden="hidden">不能为空</text>
+                    </dd>
+                    <dt class="">至:</dt>
+                    <dd>
+                        <input id="selectDateEnd" name="selectDateEnd" readonly="readonly" type="text" />
+                        <text id="labDateEnd" style="color:red" hidden="hidden">不能为空</text>
+                    </dd>
                 </dl>
             </div>
             <div>
@@ -70,7 +76,6 @@
                 <th>网站补贴</th>
                 <th>开始日期</th>
                 <th>结束日期</th>
-                <th>所属集团</th>
             </tr>
         </thead>
         <tbody>
@@ -86,12 +91,6 @@
                         <td>@item.WebsiteSubsidy</td>
                         <td>@item.StartDate.Value.ToShortDateString()</td>
                         <td>@item.EndDate.Value.ToShortDateString()</td>
-                        <td>
-                            @if (item.GroupId != null) //当前商户有集团信息
-                            {
-                                @Html.Raw(GroupLogic.groupLogic().GetGroupName(Convert.ToInt32(item.GroupId)))
-                            }
-                        </td>
                     </tr>
                 }
             }
@@ -124,7 +123,7 @@
         var WebsiteSubsidy = $('#txtWebsiteSubsidy').val();
         var startDate = $('#selectDateStart').val();
         var endDate = $('#selectDateEnd').val();
-        var groupId = $('#AddGroupId').val();
+
         if (OrderCommission == "" || OrderCommission == null) {
             $('#labOrderCommission').show();
             return false;
@@ -149,9 +148,7 @@
             alert("开始日期不能大于结束日期");
             return false;
         }
-        var paramaters = {
-            "OrderCommission": OrderCommission, "DistribSubsidy": DistribSubsidy, "WebsiteSubsidy": WebsiteSubsidy, "StartDate": startDate, "EndDate": endDate
-        ,"groupId":groupId};
+        var paramaters = { "OrderCommission": OrderCommission, "DistribSubsidy": DistribSubsidy, "WebsiteSubsidy": WebsiteSubsidy, "StartDate": startDate, "EndDate": endDate };
 
         var url = "/SubsidyManager/Save";
         $.ajax({

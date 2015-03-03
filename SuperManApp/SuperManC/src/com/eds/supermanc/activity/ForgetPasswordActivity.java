@@ -29,6 +29,13 @@ import com.eds.supermanc.utils.VolleyTool;
 import com.eds.supermanc.utils.VolleyTool.HTTPListener;
 import com.supermanc.R;
 
+/**
+ * 忘记密码 (Description)
+ * 
+ * @author zaokafei
+ * @version 1.0
+ * @date 2015-2-28
+ */
 public class ForgetPasswordActivity extends BaseActivity implements HTTPListener, OnClickListener {
 
     private EditText mPhoneNumber;

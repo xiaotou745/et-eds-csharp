@@ -29,13 +29,5 @@ namespace SuperManDataAccess
         public string InviteCode { get; set; }
         public string City { get; set; }
         public string CityId { get; set; }
-        public Nullable<int> GroupId { get; set; }
-        public string HealthCardID { get; set; }
-        public string InternalDepart { get; set; }
-        public string ProvinceCode { get; set; }
-        public string AreaCode { get; set; }
-        public string CityCode { get; set; }
-        public string Province { get; set; }
-        public Nullable<int> BussinessID { get; set; }
     }
 }

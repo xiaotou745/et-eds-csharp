@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SuperManBusinessLogic.Group_Logic;
 
 namespace SuperManBusinessLogic.Order_Logic
 {
@@ -17,9 +16,8 @@ namespace SuperManBusinessLogic.Order_Logic
         public static readonly OrderModelTranslator Instance = new OrderModelTranslator();
         public override OrderModel Translate(order from)
         {
-            OrderModel to = new OrderModel();
+            var to = new OrderModel();
             to.Id = from.Id;
-            to.OrderNo = from.OrderNo;
             to.BusinessModel = ConventValue(from.business);
             if (from.clienterId != null)
             {
@@ -42,13 +40,7 @@ namespace SuperManBusinessLogic.Order_Logic
             to.WebsiteSubsidy = from.WebsiteSubsidy;
             to.Remark = from.Remark;
             to.Status = from.Status;
-            to.OriginalOrderNo = from.OriginalOrderNo;//原平台订单号
-            to.OriginalOrderId = from.OriginalOrderId;//原平台订单id
-            if (from.business != null) {
-                to.GroupId = from.business.GroupId;
-                if (to.GroupId != null) //当前商户有集团信息
-                    to.GroupName = GroupLogic.groupLogic().GetGroupName(Convert.ToInt32(to.GroupId));
-            }
+
             if (from.business != null && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
             {
                 var d1 = new Degree(from.business.Longitude.Value, from.business.Latitude.Value);

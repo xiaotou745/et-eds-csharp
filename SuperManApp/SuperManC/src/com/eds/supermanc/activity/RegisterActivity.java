@@ -34,6 +34,13 @@ import com.eds.supermanc.utils.VolleyTool;
 import com.eds.supermanc.utils.VolleyTool.HTTPListener;
 import com.supermanc.R;
 
+/**
+ * 注册页面 (Description)
+ * 
+ * @author zaokafei
+ * @version 1.0
+ * @date 2015-2-28
+ */
 public class RegisterActivity extends BaseActivity implements HTTPListener, OnClickListener {
 
     private EditText mPhoneNumber;
@@ -157,7 +164,7 @@ public class RegisterActivity extends BaseActivity implements HTTPListener, OnCl
             Toast.makeText(this, "两次输入的密码不一致", Toast.LENGTH_SHORT).show();
             return false;
         }
-        if (!Utils.isMobileNO(recommendPhone)) {
+        if (recommendPhone != null && !"".equals(recommendPhone) && !Utils.isMobileNO(recommendPhone)) {
             Toast.makeText(this, "请输入正确的推荐人手机号", Toast.LENGTH_SHORT).show();
             return false;
         }

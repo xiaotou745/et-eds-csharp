@@ -31,26 +31,14 @@ namespace SuperManBusinessLogic.Subsidy_Logic
             return _instance;
         }
 
-        public SubsidyResultModel GetCurrentSubsidy(int groupId=0)
-        { 
-            SubsidyResultModel resultModel = new SubsidyResultModel();
+        public SubsidyResultModel GetCurrentSubsidy()
+        {
+            var resultModel = new SubsidyResultModel();
             using (var db = new supermanEntities())
             {
                 //start 取补贴信息 
                 var subsidyQuery = db.subsidy.AsQueryable();
-                if (ConfigSettings.Instance.IsGroupPush)
-                {
-                    if (groupId > 0)
-                    {
-                        subsidyQuery = subsidyQuery.Where(i => i.StartDate <= DateTime.Now && i.EndDate >= DateTime.Now && i.Status.Value == 1 && i.GroupId == groupId)
-                            .OrderByDescending(i => i.StartDate.Value); //获取当前有效期内的补贴
-                    }
-                }
-                else
-                {
-                    subsidyQuery = subsidyQuery.Where(i => i.StartDate <= DateTime.Now && i.EndDate >= DateTime.Now && i.Status.Value == 1 && (i.GroupId == null || i.GroupId == 0))
-                        .OrderByDescending(i => i.StartDate.Value); //获取当前有效期内的补贴
-                }
+                subsidyQuery = subsidyQuery.Where(i => i.StartDate <= DateTime.Now && i.EndDate >= DateTime.Now && i.Status.Value == 1).OrderByDescending(i => i.StartDate.Value); //获取当前有效期内的补贴
                 var subsidy = subsidyQuery.FirstOrDefault();
                 // end 
                 if (subsidy != null)
@@ -62,8 +50,6 @@ namespace SuperManBusinessLogic.Subsidy_Logic
             }
             return resultModel;
         }
-
-
         public bool SaveData(SubsidyModel model)
         {
             bool bResult = false;
@@ -81,7 +67,6 @@ namespace SuperManBusinessLogic.Subsidy_Logic
                     dbModel.OrderCommission = 0.1m;
                 }
                 dbModel.StartDate = model.StartDate;
-                dbModel.GroupId = model.GroupId;
                 dbModel.EndDate = model.EndDate;
                 dbModel.Status = 1;
                 db.subsidy.Add(dbModel);
@@ -101,10 +86,6 @@ namespace SuperManBusinessLogic.Subsidy_Logic
             {
                 items = db.subsidy.OrderByDescending(p=>p.StartDate).AsQueryable();
                 items = items.OrderByDescending(p => p.EndDate);
-                if (criteria.GroupId != null)
-                {
-                    items = items.Where(p => p.GroupId == criteria.GroupId);
-                }
                 var resultModel = new PagedList<subsidy>(items.ToList(), criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
                 var businesslists = new SubsidyManageList(resultModel.ToList(), resultModel.PagingResult);
                 var pagedQuery = businesslists;

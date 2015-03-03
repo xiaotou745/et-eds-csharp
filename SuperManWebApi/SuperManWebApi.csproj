@@ -229,12 +229,6 @@
     <Compile Include="Models\Business\BusiOrderResultModel.cs" />
     <Compile Include="Models\Business\BusiModifyPwdResultModel.cs" />
     <Compile Include="Models\Business\LoginModel.cs" />
-    <Compile Include="Models\Business\NewBusiRegisterResultModel.cs" />
-    <Compile Include="Models\Business\NewPostPublishOrderModel.cs" />
-    <Compile Include="Models\Business\NewPostPublishOrderResultModel.cs" />
-    <Compile Include="Models\Business\NewRegisterInfoModel.cs" />
-    <Compile Include="Models\Business\OrderCancelModel.cs" />
-    <Compile Include="Models\Business\OrderCancelResultModel.cs" />
     <Compile Include="Models\Business\RegisterInfoModel.cs" />
     <Compile Include="Models\Business\UploadIconModel.cs" />
     <Compile Include="Models\Clienter\ClienterLoginResultModel.cs" />
@@ -281,7 +275,6 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
     <Content Include="Nlog.config" />
-    <None Include="Properties\PublishProfiles\hdlwebapi.pubxml" />
     <None Include="Properties\PublishProfiles\SuperManApi.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />

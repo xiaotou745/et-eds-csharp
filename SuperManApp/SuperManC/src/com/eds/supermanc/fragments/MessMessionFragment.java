@@ -1,3 +1,8 @@
+/*
+ * File Name: MessOrderFragment.java 
+ * History:
+ * Created by Administrator on 2015-3-2
+ */
 package com.eds.supermanc.fragments;
 
 import java.util.HashMap;
@@ -20,26 +25,49 @@ import com.eds.supermanc.Constants;
 import com.eds.supermanc.adapter.HomeMissionAdapter;
 import com.eds.supermanc.beans.MissionBean;
 import com.eds.supermanc.beans.UserVo.User;
+import com.eds.supermanc.utils.EtsCLog;
 import com.eds.supermanc.utils.UserTools;
 import com.eds.supermanc.utils.VolleyTool;
 import com.eds.supermanc.utils.VolleyTool.HTTPListener;
 import com.supermanc.R;
 
 /**
- * 最近任务页面 (Description)
+ * 餐盒订单页面 (Description)
  * 
  * @author zaokafei
  * @version 1.0
- * @date 2015-2-28
+ * @date 2015-3-2
  */
-public class LatestMissionFragment extends Fragment implements HTTPListener {
-
+public class MessMessionFragment extends Fragment implements HTTPListener {
+    // ==========================================================================
     private RelativeLayout mFlagmentLayout;
     private RelativeLayout loadLayout;
     private ListView listView;
     private TextView info;
     private Context mContext;
 
+    // Constants
+    // ==========================================================================
+
+    // ==========================================================================
+    // Fields
+    // ==========================================================================
+
+    // ==========================================================================
+    // Constructors
+    // ==========================================================================
+
+    // ==========================================================================
+    // Getters
+    // ==========================================================================
+
+    // ==========================================================================
+    // Setters
+    // ==========================================================================
+
+    // ==========================================================================
+    // Methods
+    // ==========================================================================
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -51,7 +79,7 @@ public class LatestMissionFragment extends Fragment implements HTTPListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mFlagmentLayout = (RelativeLayout) inflater.inflate(R.layout.mission_fragment, container, false);
         initView();
-        refresh();
+        // refresh();
         return mFlagmentLayout;
     }
 
@@ -76,7 +104,9 @@ public class LatestMissionFragment extends Fragment implements HTTPListener {
             params.put("city", "");
             params.put("cityId", "");
         }
-        VolleyTool.get(Constants.GET_LATEST_MISSION_URL, params, this, Constants.GETLATESTMISSION, MissionBean.class);
+        EtsCLog.d("MessMessionFragment:post ");
+        VolleyTool.post(Constants.GET_MESS_MISSION_URL, params, this, Constants.GETMESSMISSION, MissionBean.class);
+        // VolleyTool.get(Constants.GET_MESS_MISSION_URL, params, this, Constants.GETMESSMISSION, MissionBean.class);
     }
 
     @Override
@@ -90,10 +120,21 @@ public class LatestMissionFragment extends Fragment implements HTTPListener {
         initData();
     }
 
+    private void beforeRequest() {
+        loadLayout.setVisibility(View.VISIBLE);
+    }
+
+    private void afterRequestComplete() {
+        loadLayout.setVisibility(View.GONE);
+    }
+
+    // ==========================================================================
+    // Inner/Nested Classes
+    // ==========================================================================
     @Override
     public <T> void onResponse(T t, int requestCode) {
         afterRequestComplete();
-        if (requestCode == Constants.GETLATESTMISSION) {
+        if (requestCode == Constants.GETMESSMISSION) {
             MissionBean mb = (MissionBean) t;
             if (mb != null && mb.getResult().size() > 0) {
                 HomeMissionAdapter adapter = new HomeMissionAdapter(this.getActivity());
@@ -113,13 +154,5 @@ public class LatestMissionFragment extends Fragment implements HTTPListener {
         afterRequestComplete();
         info.setVisibility(View.GONE);
         listView.setVisibility(View.GONE);
-    }
-
-    private void beforeRequest() {
-        loadLayout.setVisibility(View.VISIBLE);
-    }
-
-    private void afterRequestComplete() {
-        loadLayout.setVisibility(View.GONE);
     }
 }

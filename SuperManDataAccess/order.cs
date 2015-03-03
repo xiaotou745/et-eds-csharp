@@ -34,19 +34,6 @@ namespace SuperManDataAccess
         public string ReceviceCity { get; set; }
         public Nullable<double> ReceviceLongitude { get; set; }
         public Nullable<double> ReceviceLatitude { get; set; }
-        public int OrderFrom { get; set; }
-        public Nullable<long> OriginalOrderId { get; set; }
-        public string OriginalOrderNo { get; set; }
-        public Nullable<int> Quantity { get; set; }
-        public Nullable<decimal> Weight { get; set; }
-        public string ReceiveProvince { get; set; }
-        public string ReceiveArea { get; set; }
-        public string ReceiveProvinceCode { get; set; }
-        public string ReceiveCityCode { get; set; }
-        public string ReceiveAreaCode { get; set; }
-        public Nullable<decimal> SongCanFei { get; set; }
-        public Nullable<int> OrderType { get; set; }
-        public Nullable<double> KM { get; set; }
     
         public virtual business business { get; set; }
     }

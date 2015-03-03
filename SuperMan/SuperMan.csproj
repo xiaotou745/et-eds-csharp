@@ -176,7 +176,6 @@
       <DependentUpon>Authorities.tt</DependentUpon>
     </Compile>
     <Compile Include="Authority\IAuthenticationService.cs" />
-    <Compile Include="Controllers\CommonController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AuthorityManagerController.cs" />
     <Compile Include="Controllers\BusinessController.cs" />
@@ -187,7 +186,6 @@
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\SubsidyManagerController.cs" />
     <Compile Include="Controllers\SuperManManagerController.cs" />
-    <Compile Include="Controllers\UploadTestController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -405,7 +403,6 @@
     </Content>
     <Content Include="Authority\EnumSettings.config" />
     <Content Include="Nlog.config" />
-    <None Include="Properties\PublishProfiles\HDL.pubxml" />
     <None Include="Properties\PublishProfiles\MyWeb.pubxml" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="Scripts\bootbox.js" />
@@ -515,11 +512,9 @@
     <Content Include="Views\HomeCount\_PartialOrderCount.cshtml" />
     <Content Include="Views\HomeCount\_PartialSuperManCount.cshtml" />
     <Content Include="Views\HomeCount\_PartialBisuCount.cshtml" />
-    <Content Include="Views\UploadTest\Upload.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="uploads\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

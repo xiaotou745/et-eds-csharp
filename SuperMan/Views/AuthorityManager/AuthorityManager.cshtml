@@ -1,7 +1,4 @@
 ﻿@model AuthorityManage
-@using SuperMan.App_Start
-@using SuperManBusinessLogic.Group_Logic
-
 @using SuperManCommonModel.Models;
 @{
     ViewBag.Title = "Authority";
@@ -18,12 +15,8 @@
                     <td>
                         <span class="">用户名: </span>
                         <input id="txtName" type="text" />
-                        <input name="txtGroupId" id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" />
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
-                        @if (SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.AccountAdd) || UserContext.Current.Name == "admin")
-                        { 
-                             <input type="button" value="添加用户" class="searchBtn" id="btnAdd" />
-                        }
+                        <input type="button" value="添加用户" class="searchBtn" id="btnAdd" />
                     </td>
                 </tr>
             </table>
@@ -46,7 +39,6 @@
                 <div class="control-group">
                     <!-- Text input-->
                     <label class="control-label" for="input01">帐号名称</label>
-
                     <div class="controls">
                         <input placeholder="帐号名称" name="accountName" id="accountName" class="input-xlarge" required="required" type="text"><i style="color:red">*</i>
                         <p class="help-block"></p>
@@ -68,21 +60,6 @@
                         <p class="help-block"></p>
                     </div>
                 </div>
-                @if (ViewBag.txtGroupId == null)
-                {
-                    <div class="control-group">
-                        <!-- Text input-->
-                        <label class="control-label" for="input01">集团</label>
-                        <div class="controls">
-                            @Html.DropDownList("AddGroupId", new SelectList(GroupLogic.groupLogic().GetGroups(), "Id", "GroupName"), "--无--", new { @class = "selectw", style = "width:143px" })
-                        </div>
-                    </div>
-                }
-                else
-                {
-                    <input name="AddGroupId" id="AddGroupId" type="hidden" value="@ViewBag.txtGroupId" />
-                }
-             
             </fieldset>
             <p class="btnbox">
                 <input value="确定" type="submit" id="btnAddAccount" class="yesBtn" />
@@ -134,14 +111,14 @@
 <script>
     var adminjs = new adminglass(); //实例化后台类
     var DEFAULT_PAGESIZE = 15;
-    var criteria = { PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE }, GroupId: $("#txtGroupId").val() };
+    var criteria = { PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE } };
     $(document).ready(function () {
         
         //查询
         $("#btnSearch").on('click', function () {
             criteria = {
                 UserName: $("#txtName").val(),
-                PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE, GroupId: $("#txtGroupId").val() }
+                PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE }
             };
             refresh(0);
         });
@@ -166,4 +143,10 @@
                     $("#dataList").html(data);
                 });
     };
+
+
+   
+
+
+
 </script>

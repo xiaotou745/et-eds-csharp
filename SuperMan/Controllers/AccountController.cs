@@ -79,8 +79,6 @@ namespace SuperMan.Controllers
                     case UserLoginResults.Successful:
                         FormsAuthentication.SetAuthCookie(model.UserName, model.RememberMe);
                         _authenticationService.SignIn(model.UserName, model.RememberMe);
-                        HttpContext.Session["user"] = _accountBussinessLogic.Get(model.UserName);
-                        HttpContext.Session.Timeout =Convert.ToInt32( Math.Floor(FormsAuthentication.Timeout.TotalMinutes));
                         return RedirectToLocal(returnUrl);
                     case UserLoginResults.UserNotExist:
                         ModelState.AddModelError("", "用户不存在");

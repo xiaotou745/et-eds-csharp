@@ -20,19 +20,20 @@ import com.eds.supermanc.Constants;
 import com.eds.supermanc.adapter.HomeMissionAdapter;
 import com.eds.supermanc.beans.MissionBean;
 import com.eds.supermanc.beans.UserVo.User;
+import com.eds.supermanc.utils.EtsCLog;
 import com.eds.supermanc.utils.UserTools;
 import com.eds.supermanc.utils.VolleyTool;
 import com.eds.supermanc.utils.VolleyTool.HTTPListener;
 import com.supermanc.R;
 
 /**
- * 最近任务页面 (Description)
+ * 送餐任务
  * 
  * @author zaokafei
  * @version 1.0
  * @date 2015-2-28
  */
-public class LatestMissionFragment extends Fragment implements HTTPListener {
+public class SendMissionFragment extends Fragment implements HTTPListener {
 
     private RelativeLayout mFlagmentLayout;
     private RelativeLayout loadLayout;
@@ -51,7 +52,7 @@ public class LatestMissionFragment extends Fragment implements HTTPListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mFlagmentLayout = (RelativeLayout) inflater.inflate(R.layout.mission_fragment, container, false);
         initView();
-        refresh();
+        // refresh();
         return mFlagmentLayout;
     }
 
@@ -76,7 +77,8 @@ public class LatestMissionFragment extends Fragment implements HTTPListener {
             params.put("city", "");
             params.put("cityId", "");
         }
-        VolleyTool.get(Constants.GET_LATEST_MISSION_URL, params, this, Constants.GETLATESTMISSION, MissionBean.class);
+        EtsCLog.d("SendMissionFragment:post ");
+        VolleyTool.post(Constants.GET_SEND_MISSION_URL, params, this, Constants.GETSENDMISSION, MissionBean.class);
     }
 
     @Override
@@ -93,7 +95,7 @@ public class LatestMissionFragment extends Fragment implements HTTPListener {
     @Override
     public <T> void onResponse(T t, int requestCode) {
         afterRequestComplete();
-        if (requestCode == Constants.GETLATESTMISSION) {
+        if (requestCode == Constants.GETSENDMISSION) {
             MissionBean mb = (MissionBean) t;
             if (mb != null && mb.getResult().size() > 0) {
                 HomeMissionAdapter adapter = new HomeMissionAdapter(this.getActivity());

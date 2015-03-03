@@ -19,10 +19,6 @@ namespace SuperManCommonModel.Entities
         public string city { get; set; }
         //城市Id
         public string cityId { get; set; }
-        /// <summary>
-        /// 订单类型：1送餐订单，2收锅订单
-        /// </summary>
-        public int OrderType { get; set; }
 
     }
 }

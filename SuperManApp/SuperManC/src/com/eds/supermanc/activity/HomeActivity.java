@@ -41,8 +41,8 @@ import com.android.volley.VolleyError;
 import com.eds.supermanc.Constants;
 import com.eds.supermanc.beans.UserVo;
 import com.eds.supermanc.beans.UserVo.User;
-import com.eds.supermanc.fragments.LatestMissionFragment;
-import com.eds.supermanc.fragments.NearMissionFragment;
+import com.eds.supermanc.fragments.MessMessionFragment;
+import com.eds.supermanc.fragments.SendMissionFragment;
 import com.eds.supermanc.utils.EtsCLog;
 import com.eds.supermanc.utils.MD5;
 import com.eds.supermanc.utils.UserTools;
@@ -55,10 +55,19 @@ import com.umeng.update.UmengDialogButtonListener;
 import com.umeng.update.UmengUpdateAgent;
 import com.umeng.update.UpdateStatus;
 
+/**
+ * 主页面 (Description)
+ * 
+ * @author zaokafei
+ * @version 1.0
+ * @date 2015-2-28
+ */
 public class HomeActivity extends FragmentActivity implements OnClickListener, HTTPListener {
 
-    private NearMissionFragment nearMissionFragment;
-    private LatestMissionFragment latestMissionFragment;
+    // private NearMissionFragment nearMissionFragment;// 附近任务
+    // private LatestMissionFragment latestMissionFragment;// 最新任务
+    private SendMissionFragment sendMissionFragment;// 送餐任务
+    private MessMessionFragment messMissionFragment;// 餐盒任务
     private PagerSlidingTabStrip tabs;
     private LinearLayout unLoginLayout;
     private LinearLayout loginLayout;
@@ -82,8 +91,9 @@ public class HomeActivity extends FragmentActivity implements OnClickListener, H
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
         preferences = this.getSharedPreferences("supermancpush", Context.MODE_PRIVATE);
-        latestMissionFragment = new LatestMissionFragment();
-        nearMissionFragment = new NearMissionFragment();
+        sendMissionFragment = new SendMissionFragment();
+        // nearMissionFragment = new NearMissionFragment();
+        messMissionFragment = new MessMessionFragment();
         initView();
         UmengUpdateAgent.update(this);
         UmengUpdateAgent.setDialogListener(new UmengDialogButtonListener() {
@@ -124,6 +134,11 @@ public class HomeActivity extends FragmentActivity implements OnClickListener, H
         String strTag = preferences.getString(Constants.USER_CITY_NAME_TAG, "北京市");
         Set<String> sets = new HashSet<String>();
         sets.add(strTag.toString().trim());
+        String[] arrTags = Constants.TAGS_ARR;
+        int iLeng = arrTags.length;
+        for (int i = 0; i < iLeng; i++) {
+            sets.add(arrTags[i]);
+        }
         JPushInterface.setTags(this, JPushInterface.filterValidTags(sets), mAliasCallback);
     }
 
@@ -242,8 +257,9 @@ public class HomeActivity extends FragmentActivity implements OnClickListener, H
             goOtherActivity(R.id.btnLogin);
             break;
         case R.id.refresh:
-            nearMissionFragment.refresh();
-            latestMissionFragment.refresh();
+            // nearMissionFragment.refresh();
+            messMissionFragment.refresh();
+            sendMissionFragment.refresh();
             break;
         case R.id.idValidate:
             goOtherActivity(R.id.idValidate);
@@ -272,7 +288,8 @@ public class HomeActivity extends FragmentActivity implements OnClickListener, H
             super(fm);
         }
 
-        private final String[] titles = { "最新任务", "附近任务" };
+        // private final String[] titles = { "最新任务", "附近任务" };
+        private final String[] titles = { "送餐任务", "餐盒任务" };
 
         @Override
         public CharSequence getPageTitle(int position) {
@@ -291,12 +308,13 @@ public class HomeActivity extends FragmentActivity implements OnClickListener, H
                 /*
                  * if (latestMissionFragment == null) { latestMissionFragment = new LatestMissionFragment(); }
                  */
-                return latestMissionFragment;
+                return sendMissionFragment;
             case 1:
                 /*
                  * if (nearMissionFragment == null) { nearMissionFragment = new NearMissionFragment(); }
                  */
-                return nearMissionFragment;
+                // return nearMissionFragment;
+                return messMissionFragment;
             default:
                 return null;
             }

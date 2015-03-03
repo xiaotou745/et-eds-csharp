@@ -24,9 +24,5 @@ namespace SuperManCommonModel.Entities
         /// 查询类型,按当天,本周,还是本月
         /// </summary>
         public int searchType { get; set; }
-        /// <summary>
-        /// 集团id
-        /// </summary>
-        public int? GroupId { get; set; }
     }
 }

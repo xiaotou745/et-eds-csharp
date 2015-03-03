@@ -1,0 +1,16 @@
+2015-02-05 10:42:50.9187 SuperManCore.LogHelper.LogWriter  INFO SuperMan.Controllers [WANGCHAO-PC]  - - 
+------------------start---------------------
+备注:sdsjfsfkdsfjdlsfjdlfdfsd
+函数类名:SuperMan.Controllers.OrderController
+函数名称为:OrderList
+函数的参数有:criteria
+------------------end---------------------
+ 
+2015-02-05 10:54:57.4392 SuperManCore.LogHelper.LogWriter  INFO SuperManCore.LogHelper [WANGCHAO-PC]  - - 
+-----------------start----------------------
+函数类名:SuperMan.Controllers.OrderController
+函数名称为:OrderList
+函数的参数有:criteria
+函数参数值:{"criteria":{"PagingRequest":{"PageIndex":0,"PageSize":15,"TotalCount":0,"RecordCount":0,"TotalPages":0,"HasPreviousPage":false,"HasNextPage":false},"OrderByItems":null,"superManPhone":null,"businessPhone":null,"orderId":null,"superManName":null,"businessName":null,"orderStatus":-1,"orderPubStart":null,"orderPubEnd":null}}
+------------------end---------------------
+ 

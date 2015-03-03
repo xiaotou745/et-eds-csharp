@@ -33,6 +33,13 @@ import com.eds.supermanc.utils.VolleyTool;
 import com.eds.supermanc.utils.VolleyTool.HTTPListener;
 import com.supermanc.R;
 
+/**
+ * 我的余额 (Description)
+ * 
+ * @author zaokafei
+ * @version 1.0
+ * @date 2015-2-28
+ */
 public class MyMoneyActivity extends BaseActivity implements OnClickListener, HTTPListener {
 
     private TextView mMyMoney;

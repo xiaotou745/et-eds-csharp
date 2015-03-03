@@ -24,20 +24,5 @@ namespace SuperManCommonModel.Entities
         /// 查询类型,按当天,本周,还是本月
         /// </summary>
         public int searchType { get; set; }
-
-        /// <summary>
-        /// 集团id
-        /// </summary>
-        public int? GroupId { get; set; }
-
-        /// <summary>
-        /// 省编码
-        /// </summary>
-        public string ProvinceCode { get; set; }
-
-        /// <summary>
-        /// 市编码
-        /// </summary>
-        public string CityCode { get; set; }
     }
 }

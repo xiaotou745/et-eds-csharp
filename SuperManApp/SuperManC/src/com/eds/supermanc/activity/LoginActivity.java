@@ -26,6 +26,13 @@ import com.eds.supermanc.utils.VolleyTool;
 import com.eds.supermanc.utils.VolleyTool.HTTPListener;
 import com.supermanc.R;
 
+/**
+ * 登录页面 (Description)
+ * 
+ * @author zaokafei
+ * @version 1.0
+ * @date 2015-2-28
+ */
 public class LoginActivity extends BaseActivity implements HTTPListener, OnClickListener {
 
     private EditText mPhoneNumber;

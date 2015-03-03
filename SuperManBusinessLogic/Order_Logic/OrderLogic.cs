@@ -79,19 +79,15 @@ namespace SuperManBusinessLogic.Order_Logic
                     if (superman != null)
                         items = items.Where(p => p.clienterId == superman.Id);
                 }
-                if (!string.IsNullOrEmpty(criteria.orderPubStart))
+                if(!string.IsNullOrEmpty(criteria.orderPubStart))
                 {
-                    var dt = DateTime.Parse(criteria.orderPubStart);
+                    var dt=DateTime.Parse(criteria.orderPubStart);
                     items = items.Where(p => p.PubDate.Value >= dt);
                 }
                 if (!string.IsNullOrEmpty(criteria.orderPubEnd))
                 {
                     var dt = DateTime.Parse(criteria.orderPubEnd);
                     items = items.Where(p => p.PubDate.Value <= dt);
-                }
-                if (criteria.GroupId != null)
-                {
-                    items = items.Where(p => p.business.GroupId == criteria.GroupId);
                 }
                 var pagedQuery = new OrderManage();
                 var orderModel = OrderModelTranslator.Instance.Translate(items.ToList());
@@ -192,61 +188,6 @@ namespace SuperManBusinessLogic.Order_Logic
                     {
                         query.Status = ConstValues.ORDER_CANCEL;
                     }
-                    int i = db.SaveChanges();
-                    if (i == 1)
-                    {
-                        bResult = true;
-                    }
-                }
-            }
-            return bResult;
-        }
-
-        /// <summary>
-        /// 更新订单状态，通过第三方订单号 和 订单 来源更新
-        /// </summary>
-        /// <param name="order"></param>
-        /// <param name="orderStatus"></param>
-        public bool UpdateOrder(string oriOrderNo, int orderFrom, OrderStatus orderStatus)
-        {
-            bool bResult = false;
-            using (var db = new supermanEntities())
-            {
-                var query = db.order.Where(p => p.OriginalOrderNo == oriOrderNo && p.OrderFrom == orderFrom).FirstOrDefault();
-                if (query != null)
-                {
-                    if ((OrderStatus)query.Status == OrderStatus.订单已取消)
-                    {
-                        bResult = true;
-                    }
-                    else
-                    {
-                        query.Status = ConstValues.ORDER_CANCEL;
-                        int i = db.SaveChanges();
-                        if (i == 1)
-                        {
-                            Push.PushMessage(0, "订单提醒", "订单被客户取消了！", "订单被客户取消了！", query.clienterId.Value.ToString(), string.Empty);
-                            bResult = true;
-                        }
-                    }
-                }
-            }
-            return bResult;
-        }
-
-        /// <summary>
-        /// 更新订单配送骑士和订单佣金
-        /// </summary>
-        /// <param name="order"></param>
-        public bool UpdateOrderInfo(order order)
-        {
-            bool bResult = false;
-            using (var db = new supermanEntities())
-            {
-                var query = db.order.Where(p => p.OrderNo == order.OrderNo).FirstOrDefault();
-                if (query != null)
-                {
-                    query.OrderCommission = order.OrderCommission;
                     int i = db.SaveChanges();
                     if (i == 1)
                     {
@@ -365,20 +306,6 @@ namespace SuperManBusinessLogic.Order_Logic
                 model.TodayOrdersAmount = TodayOrders.Count() == 0 ? 0.00m : TodayOrders.Sum(p => p.Amount).Value;
             }
             return model;
-        }
-        /// <summary>
-        /// 根据
-        /// </summary>
-        /// <param name="orderNO">第三方平台的原订单号</param>
-        /// <param name="orderFrom">订单来源</param>
-        /// <returns></returns>
-        public order GetOrderByOrderNoAndOrderFrom(string orderNO, int orderFrom)
-        {
-            using (var dbEntity = new supermanEntities())
-            {
-                var query = dbEntity.order.Where(p => p.OriginalOrderNo == orderNO && p.OrderFrom == orderFrom);
-                return query.FirstOrDefault();
-            }
         }
     }
 }

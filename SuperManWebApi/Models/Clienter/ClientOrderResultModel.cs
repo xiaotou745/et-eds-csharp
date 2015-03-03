@@ -95,10 +95,6 @@ namespace SuperManWebApi.Models.Clienter
         /// </summary>
         public string OrderNo { get; set; }
         /// <summary>
-        /// 源订单号
-        /// </summary>
-        public string OriginalOrderNo { get; set; }
-        /// <summary>
         /// 收入
         /// </summary>
         public decimal? income { get; set; }
@@ -246,7 +242,6 @@ namespace SuperManWebApi.Models.Clienter
             if (from.clienterId != null)
                 resultModel.userId = from.clienterId.Value;
             resultModel.OrderNo = from.OrderNo;
-            resultModel.OriginalOrderNo = from.OriginalOrderNo; //来源订单号
             resultModel.income = from.DistribSubsidy + from.WebsiteSubsidy + from.OrderCommission;
             resultModel.Amount = from.Amount.Value;
             business _business = null;

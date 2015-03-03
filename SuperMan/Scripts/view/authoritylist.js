@@ -24,6 +24,7 @@
     $("#btnAddAccount").click(function () {
 
         $(".AddAccountfrom").validate({
+
             rules: {
                 accountName: {
                     required: true
@@ -53,8 +54,7 @@
                 var accountName = $('#accountName').val();
                 var loginName = $('#loginName').val();
                 var password = $('#password').val();
-                var groupId = $('#AddGroupId').val();
-                var paramaters = { "accountName": accountName, "loginName": loginName, "password": password, "GroupId": groupId };
+                var paramaters = { "accountName": accountName, "loginName": loginName, "password": password };
                 var url = "/AuthorityManager/Add";
                 $.ajax({
                     type: 'POST',
@@ -77,7 +77,6 @@
         return false;
     });
 
-    /*配置权限保存功能*/
     $(document).on("click", "#btnSetAuthority",function(){
     // $("#btnSetAuthority").bind("click", function () {
         var id = currentId;
@@ -90,10 +89,10 @@
         var subsidySet = $('#subsidySet').is(':checked');
     
         var auids = new Array();
-        $('#AuthorityManagerShow input[type="checkbox"]:checked').each(function() {
+        $('#AuthorityManagerShow input[type="checkbox"]:checked').each(function(){
             // alert($(this).attr("authorityfuncid"));
             auids.push($(this).attr("authorityfuncid"));
-        }); 
+        }) 
         var AuthorityListModel = { "id": id, "auths": auids };
         $.post("/AuthorityManager/saveAuthority", AuthorityListModel, function (data) {
             if (data) {
@@ -107,7 +106,6 @@
     //修改密码弹出框
     $(".modifyPwd").bind("click", function () {
         currentId = $(this).closest("tr").attr("id");
-        $("#hddsupplierdishid").val(currentId);
         adminjs.openwinbox('#ModifyPwdShow');
     });
     //修改密码
@@ -138,7 +136,7 @@
                 }
             },
             submitHandler: function (form) {
-                var id = $("#hddsupplierdishid").val();
+                var id = currentId;
                 var modifypassword = $('#modifypassword').val();
                 var confirepassword = $('#confirepassword').val();
                 var paramaters = { "id": id, "modifypassword": modifypassword };

@@ -58,9 +58,7 @@
     <Compile Include="B_Logic\BusiGetOrderModelTranslator.cs" />
     <Compile Include="B_Logic\BusiLogic.cs" />
     <Compile Include="CommonLogic\Push.cs" />
-    <Compile Include="CommonLogic\RegionLogic.cs" />
     <Compile Include="C_Logic\ClienterLogic.cs" />
-    <Compile Include="Group_Logic\GroupLogic.cs" />
     <Compile Include="Order_Logic\OrderLogic.cs" />
     <Compile Include="Order_Logic\OrderModelTranslator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -120,17 +120,6 @@ namespace SuperManCore
             get { return ConfigurationManager.AppSettings["IsSendMail"]; }
         }
 
-
-         /// <summary>
-        /// 是否根据集团推送订单
-        /// </summary>
-        public bool IsGroupPush
-        {
-            get { return  Convert.ToBoolean(ConfigurationManager.AppSettings["IsGroupPush"]); }
-        }
- 
-
-
         public string WebSetting(string key)
         {
             return ConfigurationManager.AppSettings[key];

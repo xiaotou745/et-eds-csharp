@@ -9,15 +9,62 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content" 
+        android:background="@android:color/white"
+        >
+		<LinearLayout
+            android:id="@+id/linear_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:orientation="vertical" 
+            android:layout_marginRight="3dp"
+            android:layout_marginLeft="3dip"
+            >
 
+            <ImageView
+                android:id="@+id/statusIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/icon_complete" 
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:id="@+id/statusMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="已完成"
+                android:layout_gravity="center"
+                android:textColor="@color/already_complete" 
+                android:layout_marginTop="3dp"/>
+        </LinearLayout>
         <LinearLayout
+            android:id="@+id/linear_mission_msg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/white"
             android:orientation="vertical"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@id/linear_img"
             android:padding="14dp" >
+			<LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="单号：" 
+                    android:textColor="@color/gray_text_color"/>
+
+                <TextView
+                    android:id="@+id/originalOrderNo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/price_red_color"/>
+                
+            </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -70,7 +117,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:layout_marginRight="50dp"
+                android:layout_marginRight="5dp"
                 android:background="@color/line_color" 
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"/>
@@ -105,31 +152,7 @@
             </RelativeLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:orientation="vertical" 
-            android:padding="5dp"
-            android:layout_marginRight="7dp">
-
-            <ImageView
-                android:id="@+id/statusIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/icon_complete" 
-                android:layout_gravity="center"/>
-
-            <TextView
-                android:id="@+id/statusMessage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="已完成"
-                android:layout_gravity="center"
-                android:textColor="@color/already_complete" 
-                android:layout_marginTop="3dp"/>
-        </LinearLayout>
+        
     </RelativeLayout>
 
 </LinearLayout>

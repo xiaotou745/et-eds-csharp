@@ -2,7 +2,6 @@
 using SuperManCommonModel;
 using SuperManCommonModel.Entities;
 using SuperManCommonModel.Models;
-using SuperManCore;
 using SuperManCore.Common;
 using SuperManCore.Paging;
 using SuperManDataAccess;
@@ -19,31 +18,13 @@ namespace SuperMan.Controllers
     [WebHandleError]
     public class AuthorityManagerController : Controller
     {
-        
         // GET: AuthorityManager
-       /// <summary>
-       /// 后台用户管理列表页面
-       /// </summary>
-       /// <returns></returns>
         public ActionResult AuthorityManager()
         {
-            account account = HttpContext.Session["user"] as account;
-           if (account == null)
-           {
-               Response.Redirect("/account/login");
-               return null;
-           }
-                
-            ViewBag.txtGroupId = account.GroupId;//集团id
-            var criteria = new AuthoritySearchCriteria() { PagingRequest = new PagingResult(0, 15),GroupId=account.GroupId};
+            var criteria = new AuthoritySearchCriteria() { PagingRequest = new PagingResult(0, 15) };
             var authorityModel = AuthorityLogic.authorityLogic().GetAuthorityManage(criteria);
             return View(authorityModel);
         }
-        /// <summary>
-        /// 后台用户管理列表页面 异步加载区域
-        /// </summary>
-        /// <param name="criteria"></param>
-        /// <returns></returns>
         [HttpPost]
         public ActionResult AuthorityManager(AuthoritySearchCriteria criteria)
         {
@@ -52,22 +33,13 @@ namespace SuperMan.Controllers
             var item = authorityModel.authorityManageList;
             return PartialView("_AuthorityManagerList", item);
         }
-        /// <summary>
-        /// 判断用户名是否存在 
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost]
-        public JsonResult HasAccountName(string accountName, string loginName)
-        { 
-            var account = new account {LoginName = loginName, UserName = accountName};
-            return Json(AuthorityLogic.authorityLogic().HasAccountName(account) ? new ResultModel(true, "用户名已存在") : new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
-        }
+
         /// <summary>
         /// 添加用户 
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult Add(string accountName, string loginName, string password, int? groupId)
+        public JsonResult Add(string accountName, string loginName, string password)
         {
             if (string.IsNullOrEmpty(accountName.Trim()))
             {
@@ -85,13 +57,8 @@ namespace SuperMan.Controllers
             var account = new account();
             account.LoginName = loginName;
             account.UserName = accountName;
-            account.GroupId = groupId;//集团id  
-            account.Password = MD5Helper.MD5(password);
+            account.Password = password;
             account.Status = ConstValues.AccountAvailable;
-            if (AuthorityLogic.authorityLogic().HasAccountName(account))
-            {
-                return Json(new ResultModel(true, "用户名已存在"), JsonRequestBehavior.AllowGet);
-            }
             AuthorityLogic.authorityLogic().AddAccount(account);
             return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
         }
@@ -126,7 +93,7 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult ModifyPassword(int id, string modifypassword)
         {
-            bool b = AuthorityLogic.authorityLogic().ModifyPwdById(id, MD5Helper.MD5(modifypassword));
+            bool b = AuthorityLogic.authorityLogic().ModifyPwdById(id, modifypassword);
             if (b)
             {
                 return Json(new ResultModel(true, "修改成功"), JsonRequestBehavior.AllowGet);
@@ -142,12 +109,7 @@ namespace SuperMan.Controllers
             var authorities = AuthorityLogic.authorityLogic().GetAuthorities(accountId);
             return Json(authorities);
         }
-        
-        /// <summary>
-        /// 修改后台用户权限
-        /// </summary>
-        /// <param name="id">后台用户id</param>
-        /// <returns></returns>
+
         [HttpGet]
         [ActionName("AuthorityEdit")]
         public PartialViewResult _AuthorityManagerShow(int id)

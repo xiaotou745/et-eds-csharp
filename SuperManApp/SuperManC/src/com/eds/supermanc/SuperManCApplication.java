@@ -1,6 +1,7 @@
 package com.eds.supermanc;
 
 import android.app.Application;
+import android.os.StrictMode;
 import android.text.TextUtils;
 import cn.jpush.android.api.JPushInterface;
 
@@ -32,6 +33,8 @@ public class SuperManCApplication extends Application {
         // 在使用 SDK 各组间之前初始化 context 信息，传入 ApplicationContext
         SDKInitializer.initialize(this.getApplicationContext());
         mInstance = this;
+        // 启动检测策略
+        // setStrickModeParams();
     }
 
     public RequestQueue getRequestQueue() {
@@ -64,5 +67,15 @@ public class SuperManCApplication extends Application {
         if (mRequestQueue != null) {
             mRequestQueue.cancelAll(tag);
         }
+    }
+
+    /**
+     * 设置监控策略
+     */
+    public void setStrickModeParams() {
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites()
+                .detectNetwork().penaltyLog().penaltyDialog().build());
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectLeakedSqlLiteObjects().penaltyLog()
+                .penaltyDeath().build());
     }
 }

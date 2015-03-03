@@ -26,10 +26,6 @@ namespace SuperManCommonModel.Entities
         public int orderStatus { get; set; }      //订单状态
         public string orderPubStart { get; set; }
         public string orderPubEnd { get; set; }
-        /// <summary>
-        /// 集团id
-        /// </summary>
-        public int? GroupId { get; set; }
     }
 
     public class OrderByItem<Tentity>

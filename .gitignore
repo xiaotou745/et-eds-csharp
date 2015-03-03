@@ -23,9 +23,7 @@ Thumbs.db
 *.sbr
 *.swp
 *.xls
-logs/
 obj/
 [Rr]elease*/
 _ReSharper*/
 [Tt]est[Rr]esult**/Logs
-/SuperMan/logs

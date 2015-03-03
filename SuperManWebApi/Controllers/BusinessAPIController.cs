@@ -47,160 +47,8 @@ namespace SuperManWebApi.Controllers
             var resultModel = new BusiRegisterResultModel
             {
                 userId = business.Id
-            };            
-            return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
-        }
-
-        /// <summary>
-        /// B端注册，供第三方使用
-        /// </summary>
-        /// <param name="model">注册用户基本数据信息</param>
-        /// <returns></returns>
-        [ActionStatus(typeof(CustomerRegisterStatus))]
-        [HttpPost]
-        public ResultModel<NewBusiRegisterResultModel> NewPostRegisterInfo_B(NewRegisterInfoModel model)
-        {
-            if (string.IsNullOrWhiteSpace(model.PhoneNo))   //手机号非空验证
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
-            //else if (BusiLogic.busiLogic().CheckExistPhone(model.PhoneNo))  //判断该手机号是否已经注册过
-            //    return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberRegistered);
-            else if (string.IsNullOrWhiteSpace(model.B_OriginalBusiId.ToString()))  //判断原平台商户Id不能为空
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.OriginalBusiIdEmpty);
-            else if (string.IsNullOrWhiteSpace(model.B_GroupId.ToString()))  //集团Id不能为空
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.GroupIdEmpty);
-            else if(BusiLogic.busiLogic().CheckExistBusi(model.B_OriginalBusiId,model.B_GroupId))
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.OriginalBusiIdRepeat);
-            else if (string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_CityCode.ToString())) //城市以及城市编码非空验证
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
-            else if (string.IsNullOrEmpty(model.B_Name.Trim())) //商户名称
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiNameEmpty);
-            else if (string.IsNullOrWhiteSpace(model.Address) || string.IsNullOrWhiteSpace(model.B_Province) || string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_Area) || string.IsNullOrWhiteSpace(model.B_AreaCode) || string.IsNullOrWhiteSpace(model.B_CityCode) || string.IsNullOrWhiteSpace(model.B_ProvinceCode))  //商户地址 省市区 不能为空
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
-            else if (model.CommissionTypeId == 0)
-            {
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
-            }
-            if (string.IsNullOrEmpty(model.B_Password))   //密码为空时 设置默认密码
-                model.B_Password = MD5Helper.MD5("abc123");
-            else
-            {
-                model.B_Password = MD5Helper.MD5(model.B_Password);
-            }
-            var business = NewRegisterInfoModelTranslator.Instance.Translate(model);
-            bool result = BusiLogic.busiLogic().Add(business,true);
-            var resultModel = new NewBusiRegisterResultModel
-            {
-                BusiRegisterId = business.Id
             };
-            LogHelper.LogWriter("第三方调用商户注册接口", new { model = model, Message = CustomerRegisterStatus.Success });
-            return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
-        }
-
-        
-        /// <summary>
-        /// B端取消订单，供第三方使用
-        /// </summary>
-        /// <param name="model">订单基本数据信息</param>
-        /// <returns></returns>
-        [ActionStatus(typeof(CancelOrderStatus))]
-        [HttpPost]
-        public ResultModel<OrderCancelResultModel> NewOrderCancel(OrderCancelModel model)
-        { 
-            if (string.IsNullOrEmpty(model.OriginalOrderNo))   //订单号非空验证
-                return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderEmpty); 
-            if (string.IsNullOrEmpty(model.OrderFrom.ToString()))   //订单来源非空验证
-                return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderFromEmpty);
-            var order = OrderLogic.orderLogic().GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom);
-            if (order == null)
-            {
-                return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderIsNotExist);
-            }
-            if (order.Status == 3)
-            {
-                return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.Success);
-            }
-            bool b = OrderLogic.orderLogic().UpdateOrder(model.OriginalOrderNo, model.OrderFrom, OrderStatus.订单已取消);
-            if (b == true)
-            {
-                return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.Success);
-            }
-            else
-            {
-                return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.NotCancelOrder, new OrderCancelResultModel { Remark="取消失败，非取消订单请勿调用" });
-            }     
-        }
-
-        /// <summary>
-        /// 接收订单，供第三方使用
-        /// </summary>
-        /// <param name="model">订单基本数据信息</param>
-        /// <returns></returns>
-        [ActionStatus(typeof(OrderPublicshStatus))]
-        [HttpPost]
-        public ResultModel<NewPostPublishOrderResultModel> NewPostPublishOrder_B(NewPostPublishOrderModel model)
-        {
-            LogHelper.LogWriter("订单发布请求实体", new { model = model});
-            if (string.IsNullOrWhiteSpace(model.OriginalOrderNo))   //原始订单号非空验证
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OriginalOrderNoEmpty);
-            if (model.OriginalBusinessId == 0)   //原平台商户Id非空验证
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OriginalBusinessIdEmpty);
-            if (string.IsNullOrWhiteSpace(model.OrderFrom.ToString()))   //订单来源
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OrderFromEmpty);
-            if (string.IsNullOrWhiteSpace(model.IsPay.ToString()))   //请确认是否已付款
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.IsPayEmpty);
-
-            if (string.IsNullOrWhiteSpace(model.ReceiveName))    //收货人名称
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.ReceiveNameEmpty);
-
-            if (string.IsNullOrWhiteSpace(model.ReceivePhoneNo)) //手机号
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.ReceivePhoneEmpty);
-
-            if (string.IsNullOrWhiteSpace(model.Receive_Province) || string.IsNullOrWhiteSpace(model.Receive_ProvinceCode))  //所在省
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.ReceiveProvinceEmpty);
-
-            if (string.IsNullOrWhiteSpace(model.Receive_City) || string.IsNullOrWhiteSpace(model.Receive_CityCode))  //所在市
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude
-                    (OrderPublicshStatus.ReceiveCityEmpty);
-
-            if (string.IsNullOrWhiteSpace(model.Receive_Area) || string.IsNullOrWhiteSpace(model.Receive_AreaCode))  //所在区
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.ReceiveAreaEmpty);
-
-            if (string.IsNullOrWhiteSpace(model.Receive_Address))   //收货地址
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude
-                    (OrderPublicshStatus.ReceiveAddressEmpty);  
-            //验证原平台商户是否已经注册
-            var busi = BusiLogic.busiLogic().GetBusiByOriIdAndOrderFrom(model.OriginalBusinessId, model.OrderFrom);
-            if (busi == null)
-            {
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.BusinessNoExist);
-            }
-            //else
-            //{
-            //    if (busi.Status != ConstValues.BUSINESS_AUDITPASS)
-            //    {
-            //        return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.BusinessNotAudit);
-            //    }
-            //}
-            //验证该平台 商户 订单号 是否存在
-            var order = OrderLogic.orderLogic().GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom);
-            if(order != null){
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OrderHadExist);
-            }
-
-            order dborder = NewBusiOrderInfoModelTranslator.Instance.Translate(model);  //整合订单信息
-            bool result = OrderLogic.orderLogic().AddModel(dborder);    //添加订单记录，并且触发极光推送。          
-            if (result)
-            {
-                NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { OriginalOrderNo = model.OriginalOrderNo,OrderNo = dborder.OrderNo };
-                LogHelper.LogWriter("订单发布成功", new { model = model,resultModel=resultModel });
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Success, resultModel);
-            }
-            else
-            {
-                NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { Remark="订单发布失败" };
-                LogHelper.LogWriter("订单发布失败", new { model = model});
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Failed);
-            }    
+            return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
         }
 
         /// <summary>
@@ -292,6 +140,7 @@ namespace SuperManWebApi.Controllers
             }
         }
 
+
         /// <summary>
         /// 发布订单
         /// </summary>
@@ -343,15 +192,15 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<BusiAddAddressResultModel> PostManagerAddress_B(BusiAddAddressInfoModel model)
         {
-            if (string.IsNullOrWhiteSpace(model.phoneNo))
+            if (string.IsNullOrEmpty(model.phoneNo))
             {
                 return ResultModel<BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.PhoneNumberEmpty);
             }
-            if (string.IsNullOrWhiteSpace(model.Address))
+            if (string.IsNullOrEmpty(model.Address))
             {
                 return ResultModel<BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.AddressEmpty);
             }
-            if (string.IsNullOrWhiteSpace(model.businessName))
+            if (string.IsNullOrEmpty(model.businessName))
             {
                 return ResultModel<BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.businessNameEmpty);
             }
