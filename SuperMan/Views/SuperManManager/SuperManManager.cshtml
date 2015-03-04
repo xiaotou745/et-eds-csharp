@@ -5,7 +5,10 @@
 @{
     ViewBag.Title = "Order";
 }
-
+<link href="~/Content/jQuery-File-Upload/css/jquery.fileupload-ui.css" rel="stylesheet" />
+<script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.ui.widget.js"></script>
+<script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.iframe-transport.js"></script>
+<script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.fileupload.js"></script>
 <div class="zpManage zpSh">
     <h2 class="crumbs">
         您所在位置：超人 > 超人管理
@@ -50,21 +53,21 @@
                 <div class="control-group">
                     <label class="control-label" for="TrueName"><span style="color:red;">*</span>姓名</label>
                     <div class="controls">
-                        <input placeholder="姓名" name="TrueName" id="BoxTrueName" class="input-xlarge" required="required" type="text">
+                        <input placeholder="姓名" name="TrueName" id="BoxTrueName" required="required" type="text">
                         <text id="labBoxTrueName" style="color:red" hidden="hidden">不能为空</text>
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" for="PhoneNo"><span style="color:red;">*</span>电话</label>
                     <div class="controls">
-                        <input placeholder="电话" name="PhoneNo" id="BoxPhoneNo" class="input-xlarge" required="required" type="text">
+                        <input placeholder="电话" name="PhoneNo" id="BoxPhoneNo" required="required" type="text">
                         <text id="labBoxPhoneNo" style="color:red" hidden="hidden">不能为空</text>
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" for="fileUploadHand"><span style="color:red;">*</span>手持照片</label>
                     <div class="controls">
-                        <input type="file" id="fileUploadHand" name="fileUploadHand" class="input-xlarge" required="required"/>
+                        <input type="file" id="fileUploadHand" name="fileUploadHand" required="required"/>
                         <input type="hidden" id="hidHandUpload"/>
                         <text id="labfileuploadHand" style="color:red" hidden="hidden">不能为空</text>
                     </div>
@@ -72,7 +75,7 @@
                 <div class="control-group">
                     <label class="control-label" for="fileUpload"><span style="color:red;">*</span>照片</label>
                     <div class="controls">
-                        <input placeholder="验证照片" name="fileUpload" id="fileUpload" class="input-xlarge" required="required" type="file">
+                        <input type="file" placeholder="验证照片" name="fileUpload" id="fileUpload" required="required"/>
                         <input type="hidden" id="hidupload"/>
                         <text id="labfileupload" style="color:red" hidden="hidden">不能为空</text> 
                     </div>
@@ -80,7 +83,7 @@
                 <div class="control-group">
                     <label class="control-label" for="HealthCardID"><span style="color:red;">*</span>健康证ID</label>
                     <div class="controls">
-                        <input placeholder="健康证ID" name="HealthCardID" id="BoxHealthCardID" class="input-xlarge" required="required" type="text">
+                        <input placeholder="健康证ID" name="HealthCardID" id="BoxHealthCardID" required="required" type="text">
                         <text id="labHealthCardID" style="color:red" hidden="hidden">不能为空</text>
                     </div>
                 </div>
@@ -106,7 +109,7 @@
                 <div class="control-group">
                     <label class="control-label" for="InternalDepart">内外部门</label>
                     <div class="controls">
-                        <input placeholder="内外部门" name="InternalDepart" id="BoxInternalDepart" class="input-xlarge" type="text">
+                        <input placeholder="内外部门" name="InternalDepart" id="BoxInternalDepart" type="text">
                     </div>
 
                 </div>
@@ -126,13 +129,13 @@
                 <div class="control-group">
                     <label class="control-label" for="IDCard">身份证号</label>
                     <div class="controls">
-                        <input placeholder="身份证号" name="IDCard" id="BoxIDCard" class="input-xlarge" type="text">
+                        <input placeholder="身份证号" name="IDCard" id="BoxIDCard" type="text">
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" for="Password">密码</label>
                     <div class="controls">
-                        <input placeholder="默认edaisong" name="IDCard" id="BoxPassword" class="input-xlarge" type="text" value="edaisong">
+                        <input placeholder="默认edaisong" name="IDCard" id="BoxPassword" type="text" value="edaisong">
                     </div>
                 </div>
             </fieldset>
@@ -142,10 +145,7 @@
             <input value="关闭" type="button" class="J_closebox qxBtn" />
         </p>
     </div>
-</div>
-<script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.ui.widget.js"></script>
-<script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.iframe-transport.js"></script>
-<script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.fileupload.js"></script>
+</div> 
 <script>
     var adminjs = new adminglass(); //实例化后台类
     var DEFAULT_PAGESIZE = 15;
@@ -170,6 +170,9 @@
         $("#fileUploadHand").fileupload({
             url: "/UploadTest/Upload",//文件上传地址，当然也可以直接写在input的data-url属性内
             formData: {},//如果需要额外添加参数可以在这里添加
+            autoUpload: false,
+            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+            maxFileSize: 5000000, // 5 MB
             done: function(e, results) {
                 //done方法就是上传完毕的回调函数，其他回调函数可以自行查看api
                 //注意result要和jquery的ajax的data参数区分，这个对象包含了整个请求信息
@@ -188,6 +191,9 @@
         $("#fileUpload").fileupload({
             url: "/UploadTest/Upload",//文件上传地址，当然也可以直接写在input的data-url属性内
             formData: {},//如果需要额外添加参数可以在这里添加
+            autoUpload: false,
+            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+            maxFileSize: 5000000, // 5 MB
             done: function (e, results) {
                 //done方法就是上传完毕的回调函数，其他回调函数可以自行查看api
                 //注意result要和jquery的ajax的data参数区分，这个对象包含了整个请求信息
@@ -292,8 +298,7 @@
                         },
                         error: function () {
                         }
-                    });
-
+                    }); 
                 }
             }
          );
@@ -342,7 +347,6 @@
                 LoadBussinessInfo();
             });
         }
-
         //新增超人按钮点击事件   add by caoheyang 20150228
         $("#btnAdd").click(
             function () {
