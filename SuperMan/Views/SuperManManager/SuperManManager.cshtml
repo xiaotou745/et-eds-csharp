@@ -6,6 +6,7 @@
     ViewBag.Title = "Order";
 }
 <link href="~/Content/jQuery-File-Upload/css/jquery.fileupload-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-2.1.1.intellisense.js"></script>
 <script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.ui.widget.js"></script>
 <script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.iframe-transport.js"></script>
 <script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.fileupload.js"></script>
@@ -64,22 +65,23 @@
                         <text id="labBoxPhoneNo" style="color:red" hidden="hidden">不能为空</text>
                     </div>
                 </div>
+               
                 <div class="control-group">
                     <label class="control-label" for="fileUploadHand"><span style="color:red;">*</span>手持照片</label>
                     <div class="controls">
-                        <input type="file" id="fileUploadHand" name="fileUploadHand" required="required"/>
+                        <input type="file" id="fileUploadHand" required="required" name="files[]" multiple>
                         <input type="hidden" id="hidHandUpload"/>
                         <text id="labfileuploadHand" style="color:red" hidden="hidden">不能为空</text>
                     </div>
                 </div>
-                <div class="control-group">
+                @*<div class="control-group">
                     <label class="control-label" for="fileUpload"><span style="color:red;">*</span>照片</label>
                     <div class="controls">
-                        <input type="file" placeholder="验证照片" name="fileUpload" id="fileUpload" required="required"/>
+                        <input type="file" placeholder="验证照片" required="required" id="fileUpload" name="files[]" multiple >
                         <input type="hidden" id="hidupload"/>
                         <text id="labfileupload" style="color:red" hidden="hidden">不能为空</text> 
                     </div>
-                </div>
+                </div>*@
                 <div class="control-group">
                     <label class="control-label" for="HealthCardID"><span style="color:red;">*</span>健康证ID</label>
                     <div class="controls">
@@ -88,7 +90,7 @@
                     </div>
                 </div>
                 <div class="control-group">
-                    <label class="control-label" for="input01"><span style="color:red;">*</span>所属城市</label>
+                    <label class="control-label"><span style="color:red;">*</span>所属城市</label>
                     <div class="controls">
                         @Html.DropDownList("ProvinceCode", new SelectList(RegionLogic.regionLogic().GetRegionsByFid(), "Code", "Name"), "--请选择--", new { style = "width:90px", id = "BoxProvinceCode" })
                         <select name="CityCode" id="BoxCityCode" style="width:103px;">l
@@ -210,7 +212,8 @@
         });
  
         //新增超人保存按钮点击事件    add by caoheyang 20150302
-        $("#btnSuperConfim").click(function () {
+        $("#btnSuperConfim").click(
+            function () {
                 var result = true;//验证结果
                 var trueName = $('#BoxTrueName').val();//姓名
                 var phoneNo = $('#BoxPhoneNo').val();//手机号
