@@ -68,7 +68,7 @@ namespace SuperMan.Controllers
                 transformer.Transform(fullFilePath, destFullFileName); 
                  
                 var picUrl = System.IO.Path.GetFileName(destFullFileName);
-                return Json(new ResultModel(true, picUrl), JsonRequestBehavior.AllowGet);  
+                return Json(new ResultModel(true, picUrl + "|" + file.FileName), JsonRequestBehavior.AllowGet);  
             }
 
             return Json(new ResultModel(false, ""), JsonRequestBehavior.AllowGet);
