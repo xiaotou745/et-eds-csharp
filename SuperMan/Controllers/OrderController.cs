@@ -97,6 +97,7 @@ namespace SuperMan.Controllers
                 Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, busi.City); // 极光推送
                 return Json(new ResultModel(true, "有新订单可抢"), JsonRequestBehavior.AllowGet);
             }
+
             var bResult = ClienterLogic.clienterLogic().RushOrder(SuperID, OrderNo);
             return Json(bResult ? new ResultModel(true, "抢单成功") : new ResultModel(false, "抢单失败"), JsonRequestBehavior.AllowGet);
 
