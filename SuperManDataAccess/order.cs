@@ -46,6 +46,8 @@ namespace SuperManDataAccess
         public string ReceiveAreaCode { get; set; }
         public Nullable<int> OrderType { get; set; }
         public Nullable<double> KM { get; set; }
+        public Nullable<int> GuoJuQty { get; set; }
+        public Nullable<int> LuJuQty { get; set; }
     
         public virtual business business { get; set; }
     }

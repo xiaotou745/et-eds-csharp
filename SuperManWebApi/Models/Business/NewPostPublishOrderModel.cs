@@ -100,7 +100,17 @@ namespace SuperManWebApi.Models.Business
         /// <summary>
         /// 公里数，商户地址到收货人地址的距离
         /// </summary>
-        public double KM { get; set; } 
+        public double KM { get; set; }
+        /// <summary>
+        /// 锅具数量
+        /// </summary>
+        public int GuoJuQty { get; set; }
+        /// <summary>
+        /// 炉具数量
+        /// </summary>
+        public int LuJuQty { get; set; }
+
+
     }
     public class NewBusiOrderInfoModelTranslator : TranslatorBase<order, NewPostPublishOrderModel>
     {
@@ -164,15 +174,12 @@ namespace SuperManWebApi.Models.Business
             to.IsPay = from.IsPay;
             to.Amount = from.Amount;
              
-            try
-            {
-                to.OrderType = from.OrderType; //订单类型 1送餐订单 2取餐盒订单 
-            }
-            catch (Exception ex)
-            {
-                LogHelper.LogWriter("订单类型", new { OrderType = to.OrderType,ex = ex });
-            }
+           
+            to.OrderType = from.OrderType; //订单类型 1送餐订单 2取餐盒订单 
             to.KM = from.KM; //送餐距离
+
+            to.GuoJuQty = from.GuoJuQty; //锅具数量
+            to.LuJuQty = from.LuJuQty;  //炉具数量
 
             //计算订单佣金
             var subsidy = SubsidyLogic.subsidyLogic().GetCurrentSubsidy(business.GroupId.Value,from.OrderType);
@@ -209,7 +216,22 @@ namespace SuperManWebApi.Models.Business
             //{
             //    to.OrderCommission = subsidy.OrderCommission;
             //}
-            to.Status = ConstValues.ORDER_NEW;
+
+            ////订单状态 标记
+            if(from.OrderType == 1 && (from.GuoJuQty >=3 || from.LuJuQty >=3) ) //送餐订单 锅具或者炉具数量大于3,订单状态标记为 待客审
+            {
+                to.Status = ConstValues.ORDER_WAITAUDIT;
+            }
+            else if (from.OrderType == 2 && (from.GuoJuQty >= 4 || from.LuJuQty >= 4)) //取餐订单 锅具或者炉具数量大于4,订单状态标记为 待客审
+            {
+                to.Status = ConstValues.ORDER_WAITAUDIT;
+            }
+            else
+            {
+                to.Status = ConstValues.ORDER_NEW;
+            }
+
+            
             return to;
         }
     }
