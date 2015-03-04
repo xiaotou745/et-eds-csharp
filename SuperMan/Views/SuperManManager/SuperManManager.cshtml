@@ -62,7 +62,7 @@
                     </div>
                 </div>
                 <div class="control-group">
-                    <label class="control-label" for="input01"><span style="color:red;">*</span>手持照片</label>
+                    <label class="control-label" for="fileUploadHand"><span style="color:red;">*</span>手持照片</label>
                     <div class="controls">
                         <input type="file" id="fileUploadHand" name="fileUploadHand" class="input-xlarge" required="required"/>
                         <input type="hidden" id="hidHandUpload"/>
@@ -70,7 +70,7 @@
                     </div>
                 </div>
                 <div class="control-group">
-                    <label class="control-label" for="input01"><span style="color:red;">*</span>照片</label>
+                    <label class="control-label" for="fileUpload"><span style="color:red;">*</span>照片</label>
                     <div class="controls">
                         <input placeholder="验证照片" name="fileUpload" id="fileUpload" class="inpu.t-xlarge" required="required" type="file">
                         <input type="hidden" id="hidupload"/>
@@ -151,6 +151,10 @@
     var DEFAULT_PAGESIZE = 15;
     var criteria = { PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE }, GroupId: $("#txtGroupId").val() };
     $(document).ready(function () {
+        $('#hidupload').val(''); //页面加载时清空隐藏域的值。
+        $('#hidHandUpload').val(''); //页面加载时清空隐藏域的值。
+        $("#fileUpload").val("");
+        $("#fileUploadHand").val('');
         //查询
         $("#btnSearch").on('click', function () {
             criteria = {
@@ -171,11 +175,12 @@
                 //注意result要和jquery的ajax的data参数区分，这个对象包含了整个请求信息
                 //返回的数据在result.result中，假设我们服务器返回了一个json对象
                 var result = results.result;
+                var picNames = result.Message.split('|');
                 if (result.IsSuccess) {
-                    $('#hidHandUpload').val(result.Message);
+                    $('#hidHandUpload').val(picNames[0]);
                 } else {
                     alert(result.Message);
-                    $('#labfileuploadHand').val(result.Message).show();
+                    $('#labfileuploadHand').val(picNames[0]).show();
                 }
             }
         });
@@ -188,11 +193,12 @@
                 //注意result要和jquery的ajax的data参数区分，这个对象包含了整个请求信息
                 //返回的数据在result.result中，假设我们服务器返回了一个json对象
                 var result = results.result;
+                var picNames = result.Message.split('|');
                 if (result.IsSuccess) {
-                    $('#hidupload').val(result.Message).show();
+                    $('#hidupload').val(picNames[0]).show();
                 } else {
                     alert(result.Message);
-                    $('#labfileupload').val(result.Message).show();
+                    $('#labfileupload').val(picNames[0]).show();
                 }
             }
         });

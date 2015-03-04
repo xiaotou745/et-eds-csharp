@@ -51,19 +51,19 @@ namespace SuperManBusinessLogic.Order_Logic
             using (var db = new supermanEntities())
             {
                 var items = db.order.AsQueryable();
-                if (!string.IsNullOrEmpty(criteria.businessName))
+                if (!string.IsNullOrWhiteSpace(criteria.businessName))
                 {
                     items = items.Where(p => p.business.Name == criteria.businessName);
                 }
-                if (!string.IsNullOrEmpty(criteria.businessPhone))
+                if (!string.IsNullOrWhiteSpace(criteria.businessPhone))
                 {
                     items = items.Where(p => p.business.PhoneNo == criteria.businessPhone);
                 }
-                if (!string.IsNullOrEmpty(criteria.orderId))
+                if (!string.IsNullOrWhiteSpace(criteria.orderId))
                 {
                     items = items.Where(p => p.OrderNo == criteria.orderId);
                 }
-                if (!string.IsNullOrEmpty(criteria.OriginalOrderNo))
+                if (!string.IsNullOrWhiteSpace(criteria.OriginalOrderNo))
                 {
                     items = items.Where(p => p.OriginalOrderNo == criteria.OriginalOrderNo);
                 }
@@ -71,24 +71,24 @@ namespace SuperManBusinessLogic.Order_Logic
                 {
                     items = items.Where(p => p.Status == criteria.orderStatus);
                 }
-                if (!string.IsNullOrEmpty(criteria.superManName))
+                if (!string.IsNullOrWhiteSpace(criteria.superManName))
                 {
                     var superman = db.clienter.FirstOrDefault(p => p.TrueName == criteria.superManName);
                     if (superman != null)
                         items = items.Where(p => p.clienterId == superman.Id);
                 }
-                if (!string.IsNullOrEmpty(criteria.superManPhone))
+                if (!string.IsNullOrWhiteSpace(criteria.superManPhone))
                 {
                     var superman = db.clienter.FirstOrDefault(p => p.PhoneNo == criteria.superManPhone);
                     if (superman != null)
                         items = items.Where(p => p.clienterId == superman.Id);
                 }
-                if (!string.IsNullOrEmpty(criteria.orderPubStart))
+                if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))
                 {
                     var dt = DateTime.Parse(criteria.orderPubStart);
                     items = items.Where(p => p.PubDate.Value >= dt);
                 }
-                if (!string.IsNullOrEmpty(criteria.orderPubEnd))
+                if (!string.IsNullOrWhiteSpace(criteria.orderPubEnd))
                 {
                     var dt = DateTime.Parse(criteria.orderPubEnd);
                     items = items.Where(p => p.PubDate.Value <= dt);
@@ -129,7 +129,10 @@ namespace SuperManBusinessLogic.Order_Logic
                         if (g != 0)
                         {
                             result = true;
-                            Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, businessmodel.City); //激光推送
+                            if (model.Status != 4)  //订单状态是 4待客审 时不触发极光推送
+                            {
+                                Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, businessmodel.City); //激光推送
+                            }                            
                         }
                     }
                 }
