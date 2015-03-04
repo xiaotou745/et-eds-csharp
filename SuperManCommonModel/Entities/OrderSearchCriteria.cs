@@ -21,6 +21,7 @@ namespace SuperManCommonModel.Entities
         public string superManPhone { get; set; } //超人电话
         public string businessPhone { get; set; } //商家电话
         public string orderId { get; set; }          //订单号
+        public string OriginalOrderNo { get; set; } //原平台订单号
         public string superManName { get; set; }  //超人姓名
         public string businessName { get; set; }  //商户名称
         public int orderStatus { get; set; }      //订单状态

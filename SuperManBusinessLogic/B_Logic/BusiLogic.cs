@@ -35,6 +35,26 @@ namespace SuperManBusinessLogic.B_Logic
 
         public PagedList<BusinessViewModel> resultModel { get; set; }
 
+        /// <summary>
+        ///  根据城市信息查询当前城市下该集团的所有商户信息  add by caoheyang 20150302         
+        /// </summary>
+        /// <param name="criteria">条件 </param>
+        /// <returns></returns>
+        public dynamic GetBussinessByCityInfo(BusinessSearchCriteria criteria)
+        {
+            List<business> bussiness = new List<business>();
+            supermanEntities db = new supermanEntities();
+            var items = db.business.AsQueryable();
+            if (criteria.GroupId != null && criteria.GroupId!=0)
+                items = items.Where(p => p.GroupId == criteria.GroupId);
+            if (!string.IsNullOrWhiteSpace(criteria.ProvinceCode))
+                items = items.Where(p => p.ProvinceCode == criteria.ProvinceCode);
+            if (!string.IsNullOrWhiteSpace(criteria.CityCode))
+                items = items.Where(p => p.CityCode == criteria.CityCode);
+            var res = from p in items select new { Name = p.Name, Id = p.Id };
+            return res;
+        }
+
         public BusinessManage GetBusinesses(BusinessSearchCriteria criteria)
         {
             using (var db = new supermanEntities())
@@ -52,6 +72,11 @@ namespace SuperManBusinessLogic.B_Logic
                 {
                     items = items.Where(p => p.Status == criteria.Status);
                 }
+                if (criteria.GroupId != null)
+                {
+                    items = items.Where(p => p.GroupId == criteria.GroupId);
+                }
+
                 var pagedQuery = new BusinessManage();
                 var resultModel = new PagedList<business>(items.ToList(), criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
                 var businesslists = new BusinessManageList(resultModel.ToList(), resultModel.PagingResult);
@@ -59,6 +84,8 @@ namespace SuperManBusinessLogic.B_Logic
                 return pagedQuery;
             }
         }
+
+
 
         public BusinessCountManage GetBusinessesCount(BusinessSearchCriteria criteria)
         {
@@ -194,24 +221,55 @@ namespace SuperManBusinessLogic.B_Logic
             return bResult;
         }
 
+        public bool CheckExistBusi(int originalBusiId, int groupId)
+        {
+            bool bResult = false;
+            using (var db = new supermanEntities())
+            {
+                if (!string.IsNullOrEmpty(originalBusiId.ToString()))
+                {
+                    var item = db.business.Where(p => p.OriginalBusiId == originalBusiId && p.GroupId == groupId).FirstOrDefault();
+                    if (item != null)
+                    {
+                        bResult = true;
+                    }
+                }
+            }
+            return bResult;
+        }
+
         /// <summary>
         /// 添加一个商户
         /// </summary>
         /// <param name="business"></param>
         /// <returns></returns>
-        public bool Add(business business)
+        public bool Add(business business, bool isAuditPass = false)
         {
             bool result = false;
-            using (var db = new supermanEntities())
+            try
             {
-                if (business != null)
+                using (var db = new supermanEntities())
                 {
-                    business.Status = ConstValues.BUSINESS_NOADDRESS;
-                    db.business.Add(business);
-                    int i = db.SaveChanges();
-                    if (i != 0)
-                        result = true;
+                    if (business != null)
+                    {
+                        if (!isAuditPass)
+                        {
+                            business.Status = ConstValues.BUSINESS_NOADDRESS;
+                        }
+                        else
+                        {
+                            business.Status = ConstValues.BUSINESS_AUDITPASS;
+                        }
+                        db.business.Add(business);
+                        int i = db.SaveChanges();
+                        if (i != 0)
+                            result = true;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter("添加商户异常", new { ex = ex, business = business });
             }
             return result;
         }
@@ -380,6 +438,33 @@ namespace SuperManBusinessLogic.B_Logic
         }
 
         /// <summary>
+        /// 根据原平台商户Id和订单来源获取该商户信息
+        /// </summary>
+        /// <param name="oriBusiId"></param>
+        /// <param name="orderFrom"></param>
+        /// <returns></returns>
+        public business GetBusiByOriIdAndOrderFrom(int oriBusiId, int orderFrom)
+        {
+            try
+            {
+                using (var db = new supermanEntities())
+                {
+                    var query = db.business.Where(p => p.OriginalBusiId == oriBusiId && p.GroupId == orderFrom).FirstOrDefault();
+                    if (query != null)
+                    {
+                        return query;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(new { oriBusiId = oriBusiId, orderFrom = orderFrom }, ex, "根据原平台订单号和订单来源获取商户信息");
+            }
+            return null;
+        }
+
+
+        /// <summary>
         /// 更新一个business
         /// </summary>
         /// <param name="business"></param>
@@ -393,7 +478,7 @@ namespace SuperManBusinessLogic.B_Logic
                 {
                     query.CheckPicUrl = picUrl;
                     //query.Status = ConstValues.BUSINESS_AUDITPASSING;
-                    query.Status = ConstValues.BUSINESS_AUDITPASS;
+                    query.Status = ConstValues.BUSINESS_AUDITPASSING;
                     int i = db.SaveChanges();
                     if (i == 1)
                     {
