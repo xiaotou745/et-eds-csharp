@@ -150,7 +150,7 @@
     var adminjs = new adminglass(); //实例化后台类
     var DEFAULT_PAGESIZE = 15;
     var criteria = { PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE }, GroupId: $("#txtGroupId").val() };
-    $(document).ready(function () {
+    $(function () {
         $('#hidupload').val(''); //页面加载时清空隐藏域的值。
         $('#hidHandUpload').val(''); //页面加载时清空隐藏域的值。
         $("#fileUpload").val("");
@@ -210,8 +210,7 @@
         });
  
         //新增超人保存按钮点击事件    add by caoheyang 20150302
-        $("#btnSuperConfim").click(
-            function () {
+        $("#btnSuperConfim").click(function () {
                 var result = true;//验证结果
                 var trueName = $('#BoxTrueName').val();//姓名
                 var phoneNo = $('#BoxPhoneNo').val();//手机号
