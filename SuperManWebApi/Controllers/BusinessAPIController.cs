@@ -229,7 +229,8 @@ namespace SuperManWebApi.Controllers
                 Landline = business.Landline,
                 Name = business.Name,
                 cityId = business.CityId,
-                phoneNo = business.PhoneNo2 == null ? business.PhoneNo : business.PhoneNo2
+                phoneNo = business.PhoneNo2 == null ? business.PhoneNo : business.PhoneNo2,
+                DistribSubsidy=business.DistribSubsidy
             };
             return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.Success, result);
         }

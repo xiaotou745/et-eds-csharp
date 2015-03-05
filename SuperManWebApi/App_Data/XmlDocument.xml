@@ -827,6 +827,41 @@
             登录成功返回的数据
             </summary>
         </member>
+        <member name="P:SuperManWebApi.Models.Business.BusiLoginResultModel.userId">
+            <summary>
+            用户id
+            </summary>
+        </member>
+        <member name="P:SuperManWebApi.Models.Business.BusiLoginResultModel.city">
+            <summary>
+            城市
+            </summary>
+        </member>
+        <member name="P:SuperManWebApi.Models.Business.BusiLoginResultModel.Address">
+            <summary>
+            地址
+            </summary>
+        </member>
+        <member name="P:SuperManWebApi.Models.Business.BusiLoginResultModel.Name">
+            <summary>
+            姓名
+            </summary>
+        </member>
+        <member name="P:SuperManWebApi.Models.Business.BusiLoginResultModel.cityId">
+            <summary>
+            城市id
+            </summary>
+        </member>
+        <member name="P:SuperManWebApi.Models.Business.BusiLoginResultModel.phoneNo">
+            <summary>
+            手机号
+            </summary>
+        </member>
+        <member name="P:SuperManWebApi.Models.Business.BusiLoginResultModel.DistribSubsidy">
+             <summary>
+            外送费
+             </summary>
+        </member>
         <member name="T:SuperManWebApi.Models.Business.BusiOrderInfoModel">
             <summary>
             B端发布订单所需数据
