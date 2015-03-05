@@ -88,6 +88,7 @@
           <Property Name="AreaCode" Type="varchar" MaxLength="20" />
           <Property Name="Province" Type="varchar" MaxLength="20" />
           <Property Name="CommissionTypeId" Type="int" />
+          <Property Name="DistribSubsidy" Type="decimal" Precision="5" Scale="2" />
         </EntityType>
         <EntityType Name="channel">
           <Key>
@@ -471,6 +472,7 @@
           <Property Name="Province" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="CommissionTypeId" Type="Int32" />
           <NavigationProperty Name="order" Relationship="supermanModel.businessId" FromRole="business" ToRole="order" />
+          <Property Name="DistribSubsidy" Type="Decimal" />
         </EntityType>
         <EntityType Name="channel">
           <Key>
@@ -769,6 +771,7 @@
           <EntitySetMapping Name="business">
             <EntityTypeMapping TypeName="supermanModel.business">
               <MappingFragment StoreEntitySet="business">
+                <ScalarProperty Name="DistribSubsidy" ColumnName="DistribSubsidy" />
                 <ScalarProperty Name="CommissionTypeId" ColumnName="CommissionTypeId" />
                 <ScalarProperty Name="Province" ColumnName="Province" />
                 <ScalarProperty Name="AreaCode" ColumnName="AreaCode" />
