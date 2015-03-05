@@ -28,8 +28,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{1D78A913-F24
 		Doc\超人项目总结.xlsx = Doc\超人项目总结.xlsx
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestWebApi", "TestWebApi\TestWebApi.csproj", "{A8B97EA9-5C33-483B-BF1D-526C419120B5}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,10 +58,6 @@ Global
 		{F52D02C9-103A-46B1-AEE7-3D11E64777D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F52D02C9-103A-46B1-AEE7-3D11E64777D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F52D02C9-103A-46B1-AEE7-3D11E64777D7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A8B97EA9-5C33-483B-BF1D-526C419120B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A8B97EA9-5C33-483B-BF1D-526C419120B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A8B97EA9-5C33-483B-BF1D-526C419120B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A8B97EA9-5C33-483B-BF1D-526C419120B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
