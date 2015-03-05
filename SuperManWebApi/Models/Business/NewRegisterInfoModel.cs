@@ -75,6 +75,10 @@ namespace SuperManWebApi.Models.Business
         /// 佣金类型Id
         /// </summary>
         public int CommissionTypeId { get; set; }
+        /// <summary>
+        /// 外送费
+        /// </summary>
+        public decimal DistribSubsidy { get; set; }
     }
     public class NewRegisterInfoModelTranslator : TranslatorBase<business, NewRegisterInfoModel>
     {
