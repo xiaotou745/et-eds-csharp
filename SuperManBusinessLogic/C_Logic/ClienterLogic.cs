@@ -285,10 +285,7 @@ namespace SuperManBusinessLogic.C_Logic
                 else
                     query = query.Where(i => i.Status.Value == ConstValues.ORDER_NEW);
                 query = query.OrderByDescending(i => i.Id);
-                query.ToList().ForEach(
-                    item => {
-                        item.Amount = item.Amount + item.OrderCount * item.DistribSubsidy; ///C端任务列表时显示订单金额需要加上外送费 edit by caoheyang 20150305  
-                    });   
+
                 var result = new PagedList<order>(query.ToList(), criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
                 return result;
             }
@@ -313,7 +310,6 @@ namespace SuperManBusinessLogic.C_Logic
                 else
                     query = query.Where(i => i.Status.Value == ConstValues.ORDER_ACCEPT);
                 query = query.OrderByDescending(i => i.Id);
-                query.ToList().ForEach(item => { item.Amount = item.Amount + item.OrderCount * item.DistribSubsidy; });  //C端任务列表时显示订单金额需要加上外送费 edit by caoheyang 20150305  
                 var result = new PagedList<order>(query.ToList(), criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
                 return result;
             }
@@ -355,7 +351,6 @@ namespace SuperManBusinessLogic.C_Logic
                     query = query.Where(i => i.business.CityId == criteria.cityId.Trim());
                 query = query.Where(i => i.Status.Value == ConstValues.ORDER_NEW);
                 query = query.OrderByDescending(i => i.PubDate);
-                query.ToList().ForEach(item => { item.Amount = item.Amount + item.OrderCount * item.DistribSubsidy; });  ///C端任务列表时显示订单金额需要加上外送费  edit by caoheyang 20150305  
                 var result = query.ToList();
                 return result;
             }

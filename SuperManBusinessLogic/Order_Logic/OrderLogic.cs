@@ -430,5 +430,18 @@ namespace SuperManBusinessLogic.Order_Logic
             else
                 return Convert.ToDecimal(model.Amount) * commissionRate + distribe * orderCount;//计算佣金
         }
+
+        /// <summary>
+        ///C端 获取订单的金额 add by caoheyang 0150305
+        /// </summary>
+        /// <param name="model">订单</param>
+        /// <returns></returns>
+        public decimal GetCurrenOrderPrice(order model) {
+            decimal amount = model.Amount == null ? 0 : Convert.ToDecimal(model.Amount); //佣金比例 
+            int orderCount = model.OrderCount == null ? 0 : Convert.ToInt32(model.OrderCount); //佣金比例 
+            decimal distribSubsidy = model.DistribSubsidy == null ? 0 : Convert.ToDecimal(model.DistribSubsidy);  //外送费
+            return amount + orderCount * distribSubsidy; 
+        }
+
     }
 }
