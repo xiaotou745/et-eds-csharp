@@ -31,14 +31,7 @@
                 <dl>
                     <dt><i>* </i>订单佣金: <input id="txtOrderCommission" name="txtOrderCommission" type="text" />% <text id="labOrderCommission" style="color:red" hidden="hidden">不能为空</text></dt>
                 </dl>
-
-                <dl>
-                    <dt><i>* </i>配送补贴: <input id="txtDistribSubsidy" name="txtDistribSubsidy" type="text" /><text id="labDistribSubsidy" style="color:red" hidden="hidden">不能为空</text></dt>
-                </dl>
             </div>
-
-
-          
             <div>
                 <dl>
                     <dt><i>* </i>网站补贴: <input id="txtWebsiteSubsidy" name="txtWebsiteSubsidy" type="text" /><text id="labWebsiteSubsidy" style="color:red" hidden="hidden">不能为空</text></dt>
@@ -66,7 +59,6 @@
             <tr class="tdbg">
                 <th width="%5">序号</th>
                 <th>订单佣金(%)</th>
-                <th>配送补帖</th>
                 <th>网站补贴</th>
                 <th>开始日期</th>
                 <th>结束日期</th>
@@ -84,7 +76,6 @@
                     <tr>
                         <td>@i</td>
                         <td>@(item.OrderCommission.Value * 100)</td>
-                        <td>@item.DistribSubsidy</td>
                         <td>@item.WebsiteSubsidy</td>
                         <td>@item.StartDate.Value.ToShortDateString()</td>
                         <td>@item.EndDate.Value.ToShortDateString()</td>

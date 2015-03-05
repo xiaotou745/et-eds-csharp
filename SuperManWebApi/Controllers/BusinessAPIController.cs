@@ -293,14 +293,16 @@ namespace SuperManWebApi.Controllers
             }
         }
 
-        /// <summary>
-        /// 发布订单
+        /// <summary> 
+        /// 发布订单 Edit by caoheyang 20150305
         /// </summary>
         /// <returns></returns>
         [ActionStatus(typeof(PubOrderStatus))]
         [HttpPost]
         public ResultModel<BusiOrderResultModel> PostPublishOrder_B(BusiOrderInfoModel model)
-        { 
+        {
+            if (model.OrderCount<=0||model.OrderCount>15)   //判断录入订单数量是否符合要求
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
             //System.Diagnostics.Debug.WriteLine("getPost" + Guid.NewGuid());
             order dborder = BusiOrderInfoModelTranslator.Instance.Translate(model);  //整合订单信息
             bool result = OrderLogic.orderLogic().AddModel(dborder);    //添加订单记录，并且触发极光推送。          
@@ -310,9 +312,7 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
             }
             else
-            {
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.InvalidPubOrder);
-            }            
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.InvalidPubOrder);         
         }
         /// <summary>
         /// 获取订单列表
