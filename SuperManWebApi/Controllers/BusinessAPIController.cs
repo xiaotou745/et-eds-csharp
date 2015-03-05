@@ -127,7 +127,7 @@ namespace SuperManWebApi.Controllers
             }
             else
             {
-                return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.NotCancelOrder, new OrderCancelResultModel { Remark="取消失败，非取消订单请勿调用" });
+                return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.NotCancelOrder, new OrderCancelResultModel { Remark="取消失败" });
             }     
         }
 
