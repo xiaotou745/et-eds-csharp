@@ -148,7 +148,7 @@ namespace SuperManWebApi.Models.Business
                 to.PubDate = DateTime.Now; //提起时间
                 to.ReceviceCity = business.City; //城市
             }
-            //to.SongCanDate = from.SongCanDate; //送餐时间
+            to.SongCanDate = from.SongCanDate; //送餐时间
             to.Remark = from.Remark;
 
             to.ReceviceName = from.ReceiveName;
