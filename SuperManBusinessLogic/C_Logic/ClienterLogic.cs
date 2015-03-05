@@ -388,8 +388,17 @@ namespace SuperManBusinessLogic.C_Logic
                 query = query.Where(i => i.Status.Value == ConstValues.ORDER_NEW);
                 //排序
                 query = query.OrderByDescending(i => i.PubDate);
-                var result = query.ToList();
-                return result;
+                try
+                {
+                    var result = query.ToList();
+                    return result;
+                }
+                catch (Exception ex)
+                {
+                    LogHelper.LogWriter("获取送餐任务异常：", new { ex = ex });
+                    return null;
+                }
+                
             }
 
         }

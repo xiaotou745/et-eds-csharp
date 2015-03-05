@@ -95,6 +95,28 @@
         //    }
         //});
 
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            //url: 'http://localhost:9263/ClienterAPI/GetJobListSongCanTask_C',
+            url:'http://localhost:9263/ClienterAPI/GetJobListCanHeTask_C',
+            data: {
+                "userId": 1, 
+                "isLatest": true,
+                "pageSize": 1,
+                "pageIndex": 1,
+             
+                "city": "北京市",
+                "cityId": "10201"
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () {
+            }
+        });
+        
+
         //http://59.151.43.221:7178/ClienterAPI/PostLogin_C
   
     }); 
