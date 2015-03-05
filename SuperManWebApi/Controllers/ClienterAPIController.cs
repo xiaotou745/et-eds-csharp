@@ -337,6 +337,8 @@ namespace SuperManWebApi.Controllers
             }
             return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
         }
+        
+        
         #endregion
 
         /// <summary>
