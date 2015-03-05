@@ -178,6 +178,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="APITestTools.aspx.cs">
+      <DependentUpon>APITestTools.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="APITestTools.aspx.designer.cs">
+      <DependentUpon>APITestTools.aspx</DependentUpon>
+    </Compile>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\IdentityConfig.cs" />
@@ -253,6 +260,7 @@
     <Compile Include="SupermanApiCaching.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="APITestTools.aspx" />
     <Content Include="Areas\HelpPage\HelpPage.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />

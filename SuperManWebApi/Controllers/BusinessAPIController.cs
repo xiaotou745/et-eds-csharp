@@ -465,6 +465,31 @@ namespace SuperManWebApi.Controllers
             else
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.FailedModifyPwd);
         }
+
+        /// <summary> 
+        /// 商家设置外卖费 平扬 20105.3.5
+        /// </summary>
+        /// <returns></returns>
+        [ActionStatus(typeof (DistribSubsidyStatus))]
+        [HttpPost]
+        public SimpleResultModel PostDistribSubsidy_B(int userId, decimal price)
+        {
+            if (userId <= 0 || price < 0) //判断传入参数是否正常
+                return SimpleResultModel.Conclude(DistribSubsidyStatus.Failed);
+            var business = BusiLogic.busiLogic().GetBusinessById(userId);
+            if (business == null) //商户是否存在
+                return SimpleResultModel.Conclude(DistribSubsidyStatus.Failed);
+            bool result = BusiLogic.busiLogic().ModifyWaiMaiPrice(userId, price);
+            if (result)
+            {
+                return SimpleResultModel.Conclude(DistribSubsidyStatus.Success);
+            }
+            else
+            {
+                return SimpleResultModel.Conclude(DistribSubsidyStatus.Failed);
+            } 
+        } 
+
         /// <summary>
         /// 取消订单
         /// </summary>

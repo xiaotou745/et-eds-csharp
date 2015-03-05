@@ -43,6 +43,7 @@ namespace SuperManDataAccess
         public string AreaCode { get; set; }
         public string Province { get; set; }
         public Nullable<int> CommissionTypeId { get; set; }
+        public Nullable<decimal> DistribSubsidy { get; set; }
     
         public virtual ICollection<order> order { get; set; }
     }

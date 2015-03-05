@@ -144,7 +144,17 @@ namespace SuperManCore.Common
         [DisplayText("手机号不能为空")]
         PhoneEmpty
     }
-
+   
+    /// <summary>
+    /// 修改外卖费状态
+    /// </summary>
+    public enum DistribSubsidyStatus
+    {
+        [DisplayText("成功")]
+        Success,
+        [DisplayText("失败")]
+        Failed
+    }
     /// <summary>
     /// 集团状态枚举  add by caohehang 20150212
     /// </summary>
