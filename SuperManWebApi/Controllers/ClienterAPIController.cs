@@ -165,7 +165,7 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary>
-        /// C端获取我的任务列表
+        /// C端获取我的任务列表 最近任务    登录未登录根据城市有没有值判断。
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -195,6 +195,13 @@ namespace SuperManWebApi.Controllers
             return ResultModel<ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, lists.ToArray());
         }
 
+
+
+        /// <summary>
+        /// 获取我的任务   根据状态判断是已完成任务还是我的任务
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [ActionStatus(typeof(GetOrdersStatus))]
         [HttpPost]
         public ResultModel<ClientOrderResultModel[]> GetMyJobList_C(ClientOrderInfoModel model)
@@ -220,7 +227,7 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary>
-        /// C端未登录时首页获取任务列表
+        /// C端未登录时首页获取任务列表     
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -249,7 +256,7 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary>
-        /// 未登录时获取最新任务
+        /// 未登录时获取最新任务     登录未登录根据城市有没有值判断。
         /// </summary>
         /// <returns></returns>
         [ActionStatus(typeof(GetOrdersNoLoginStatus))]

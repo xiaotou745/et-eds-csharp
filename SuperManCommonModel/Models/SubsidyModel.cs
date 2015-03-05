@@ -14,7 +14,7 @@ namespace SuperManCommonModel.Models
         /// </summary>
         public decimal? OrderCommission { get; set; }
         /// <summary>
-        /// 配送补贴
+        /// 外送费
         /// </summary>
         public decimal? DistribSubsidy { get; set; }
         /// <summary>
