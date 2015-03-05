@@ -230,7 +230,7 @@ namespace SuperManWebApi.Controllers
                 Name = business.Name,
                 cityId = business.CityId,
                 phoneNo = business.PhoneNo2 == null ? business.PhoneNo : business.PhoneNo2,
-                DistribSubsidy=business.DistribSubsidy
+                DistribSubsidy = business.DistribSubsidy == null ? 0 : business.DistribSubsidy 
             };
             return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.Success, result);
         }
