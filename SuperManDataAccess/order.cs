@@ -49,6 +49,8 @@ namespace SuperManDataAccess
         public Nullable<int> GuoJuQty { get; set; }
         public Nullable<int> LuJuQty { get; set; }
         public Nullable<System.DateTime> SongCanDate { get; set; }
+        public Nullable<int> OrderCount { get; set; }
+        public Nullable<decimal> CommissionRate { get; set; }
     
         public virtual business business { get; set; }
     }

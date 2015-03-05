@@ -200,6 +200,8 @@
           <Property Name="GuoJuQty" Type="int" />
           <Property Name="LuJuQty" Type="int" />
           <Property Name="SongCanDate" Type="datetime" Precision="0" />
+          <Property Name="OrderCount" Type="int" />
+          <Property Name="CommissionRate" Type="decimal" Precision="5" Scale="2" />
         </EntityType>
         <EntityType Name="orderlog">
           <Key>
@@ -582,6 +584,8 @@
           <Property Name="LuJuQty" Type="Int32" />
           <Property Name="SongCanDate" Type="DateTime" />
           <NavigationProperty Name="business" Relationship="supermanModel.businessId" FromRole="order" ToRole="business" />
+          <Property Name="OrderCount" Type="Int32" />
+          <Property Name="CommissionRate" Type="Decimal" />
         </EntityType>
         <EntityType Name="orderlog">
           <Key>
@@ -872,6 +876,8 @@
           <EntitySetMapping Name="order">
             <EntityTypeMapping TypeName="supermanModel.order">
               <MappingFragment StoreEntitySet="order">
+                <ScalarProperty Name="CommissionRate" ColumnName="CommissionRate" />
+                <ScalarProperty Name="OrderCount" ColumnName="OrderCount" />
                 <ScalarProperty Name="SongCanDate" ColumnName="SongCanDate" />
                 <ScalarProperty Name="LuJuQty" ColumnName="LuJuQty" />
                 <ScalarProperty Name="GuoJuQty" ColumnName="GuoJuQty" />
