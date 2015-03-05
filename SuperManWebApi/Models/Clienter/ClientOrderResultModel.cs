@@ -247,7 +247,7 @@ namespace SuperManWebApi.Models.Clienter
                 resultModel.userId = from.clienterId.Value;
             resultModel.OrderNo = from.OrderNo;
             resultModel.OriginalOrderNo = from.OriginalOrderNo; //来源订单号
-            resultModel.income = from.DistribSubsidy + from.WebsiteSubsidy + from.OrderCommission; //骑士的收入= 网站补贴+ 配送补贴 + 订单佣金
+            resultModel.income = from.DistribSubsidy + from.WebsiteSubsidy + from.OrderCommission; //骑士的收入= 网站补贴+ 外送费 + 订单佣金
             resultModel.Amount = from.Amount.Value;
             business _business = null;
             if (from.businessId.HasValue)

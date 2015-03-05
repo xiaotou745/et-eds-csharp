@@ -67,7 +67,7 @@ namespace SuperManCore.Common
         OrderIsNotExist =203,
         [DisplayText("订单已被抢,无法取消")]
         FailedCancelOrder=204,
-        [DisplayText("非取消订单请勿调用")]
+        [DisplayText("取消失败")]
         NotCancelOrder = 205
 
     }

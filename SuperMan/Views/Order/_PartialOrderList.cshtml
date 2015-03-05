@@ -13,7 +13,7 @@
             <th>实际完成时间</th>
             <th>订单金额</th>
             <th>订单佣金</th>
-            <th>配送补贴</th>
+            <th>外送费</th>
             <th>网站补贴</th>
             <th>所属集团</th>
             <th>订单状态</th>
@@ -255,9 +255,9 @@
                 </div>
                 <div class="control-group">
                     <!-- Text input-->
-                    <label class="control-label" for="input01">配送补贴</label>
+                    <label class="control-label" for="input01">外送费</label>
                     <div class="controls">
-                        <input placeholder="配送补贴" name="DistribSubsidyUnFin" id="DistribSubsidyUnFin" class="input-xlarge" required="required" type="text">
+                        <input placeholder="外送费" name="DistribSubsidyUnFin" id="DistribSubsidyUnFin" class="input-xlarge" required="required" type="text">
                         <p class="help-block"></p>
                     </div>
                 </div>
@@ -378,7 +378,7 @@
             $("#businessNameFin").val(businessName).attr('disabled', 'disabled');
             $("#businessPhoneFin").val(busiPhone).attr('disabled', 'disabled');
             $("#businessAddressFin").val(busiAddress).attr('disabled', 'disabled');
-            var yongjin = "订单佣金:" + yongjin + "," + "配送补贴:" + disBuTie + "," + "网站补贴:" + WebBuTie;
+            var yongjin = "订单佣金:" + yongjin + "," + "外送费:" + disBuTie + "," + "网站补贴:" + WebBuTie;
             $("#buTieFin").val(yongjin).attr('readonly', 'readonly');
 
             $("#RecPhoneFin").val(revPhone).attr('disabled', 'disabled');
@@ -405,7 +405,7 @@
             $("#businessNameUnFin").val(businessName).attr('disabled', 'disabled');
             $("#businessPhoneUnFin").val(busiPhone).attr('disabled', 'disabled');
             $("#businessAddressUnFin").val(busiAddress).attr('disabled', 'disabled');
-            //var yongjin = "订单佣金:" + yongjin + "," + "配送补贴:" + disBuTie + "," + "网站补贴:" + WebBuTie;
+            //var yongjin = "订单佣金:" + yongjin + "," + "外送费:" + disBuTie + "," + "网站补贴:" + WebBuTie;
             $("#OrderCommissionUnFin").val(yongjin);
             $("#DistribSubsidyUnFin").val(disBuTie).attr('disabled', 'disabled');
             $("#WebsiteSubsidyUnFin").val(WebBuTie).attr('disabled', 'disabled');

@@ -3323,7 +3323,7 @@ LABL 0 新宋体,8,N</a:FontList>
 <a:Creator>admin</a:Creator>
 <a:ModificationDate>1423468819</a:ModificationDate>
 <a:Modifier>admin</a:Modifier>
-<a:Comment>配送补贴</a:Comment>
+<a:Comment>外送费</a:Comment>
 <a:DataType>decimal(5,2)</a:DataType>
 <a:Length>5</a:Length>
 <a:Precision>2</a:Precision>
@@ -4108,7 +4108,7 @@ LABL 0 新宋体,8,N</a:FontList>
 <a:Creator>admin</a:Creator>
 <a:ModificationDate>1423468819</a:ModificationDate>
 <a:Modifier>admin</a:Modifier>
-<a:Comment>配送补贴</a:Comment>
+<a:Comment>外送费</a:Comment>
 <a:DataType>decimal(5,2)</a:DataType>
 <a:Length>5</a:Length>
 <a:Precision>2</a:Precision>
