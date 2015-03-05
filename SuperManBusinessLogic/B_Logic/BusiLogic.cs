@@ -219,8 +219,7 @@ namespace SuperManBusinessLogic.B_Logic
                 }
             }
             return bResult;
-        }
-
+        } 
         public bool CheckExistBusi(int originalBusiId, int groupId)
         {
             bool bResult = false;
