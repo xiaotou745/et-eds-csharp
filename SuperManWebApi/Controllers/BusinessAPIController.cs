@@ -467,7 +467,7 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary> 
-        /// 商家设置外卖费 平扬 20105.3.5
+        /// 商家设置外卖费 平扬 2015.3.5
         /// </summary>
         /// <returns></returns>
         [ActionStatus(typeof (DistribSubsidyStatus))]
