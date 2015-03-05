@@ -812,6 +812,16 @@
             纬度
             </summary>
         </member>
+        <member name="P:SuperManWebApi.Models.Business.BusiDistribInfoModel.userId">
+            <summary>
+            商户id
+            </summary>
+        </member>
+        <member name="P:SuperManWebApi.Models.Business.BusiDistribInfoModel.price">
+            <summary>
+            外送费价格
+            </summary>
+        </member>
         <member name="T:SuperManWebApi.Models.Business.BusiLoginResultModel">
             <summary>
             登录成功返回的数据
@@ -1102,6 +1112,11 @@
         <member name="P:SuperManWebApi.Models.Business.NewRegisterInfoModel.CommissionTypeId">
             <summary>
             佣金类型Id
+            </summary>
+        </member>
+        <member name="P:SuperManWebApi.Models.Business.NewRegisterInfoModel.DistribSubsidy">
+            <summary>
+            外送费
             </summary>
         </member>
         <member name="P:SuperManWebApi.Models.Business.OrderCancelModel.OriginalOrderNo">
