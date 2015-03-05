@@ -228,6 +228,32 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary>
+        /// 未登录时获取最新任务     登录未登录根据城市有没有值判断。
+        /// </summary>
+        /// <returns></returns>
+        [ActionStatus(typeof(GetOrdersNoLoginStatus))]
+        [HttpGet]
+        public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListNoLoginLatest_C()
+        {
+            ClientOrderInfoModel model = new ClientOrderInfoModel();
+            model.city = string.IsNullOrWhiteSpace(HttpContext.Current.Request["city"]) ? null : HttpContext.Current.Request["city"].Trim();//城市
+            model.cityId = string.IsNullOrWhiteSpace(HttpContext.Current.Request["cityId"]) ? null : HttpContext.Current.Request["cityId"].Trim(); //城市编码
+            degree.longitude = 0;
+            degree.latitude = 0;
+            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
+            var pSize = model.pageSize.HasValue ? model.pageIndex.Value : int.MaxValue;
+            ClientOrderSearchCriteria criteria = new ClientOrderSearchCriteria()
+            {
+                PagingRequest = new PagingResult(pIndex, pSize),
+                city = model.city,
+                cityId = model.cityId
+            };
+            var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLoginLatest(criteria);
+            var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
+            return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
+        }
+
+        /// <summary>
         /// C端未登录时首页获取任务列表     
         /// </summary>
         /// <param name="model"></param>
@@ -256,31 +282,7 @@ namespace SuperManWebApi.Controllers
             return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
         }
 
-        /// <summary>
-        /// 未登录时获取最新任务     登录未登录根据城市有没有值判断。
-        /// </summary>
-        /// <returns></returns>
-        [ActionStatus(typeof(GetOrdersNoLoginStatus))]
-        [HttpGet]
-        public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListNoLoginLatest_C()
-        {
-            ClientOrderInfoModel model = new ClientOrderInfoModel();
-            model.city = string.IsNullOrWhiteSpace(HttpContext.Current.Request["city"]) ? null : HttpContext.Current.Request["city"].Trim();//城市
-            model.cityId = string.IsNullOrWhiteSpace(HttpContext.Current.Request["cityId"]) ? null : HttpContext.Current.Request["cityId"].Trim(); //城市编码
-            degree.longitude = 0;
-            degree.latitude = 0;
-            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
-            var pSize = model.pageSize.HasValue ? model.pageIndex.Value : int.MaxValue;
-            ClientOrderSearchCriteria criteria = new ClientOrderSearchCriteria()
-            {
-                PagingRequest = new PagingResult(pIndex, pSize),
-                city = model.city,
-                cityId = model.cityId
-            };
-            var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLoginLatest(criteria);
-            var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
-            return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
-        }
+       
 
         #region 获取海底捞 送餐任务 和 取餐盒任务
 

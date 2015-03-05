@@ -1,5 +1,6 @@
 ﻿using CalculateCommon;
 using SuperManBusinessLogic.B_Logic;
+using SuperManBusinessLogic.Order_Logic;
 using SuperManCommonModel.Models;
 using SuperManCore;
 using SuperManDataAccess;
@@ -179,7 +180,8 @@ namespace SuperManWebApi.Models.Clienter
             if (from.clienterId != null)
                 resultModel.userId = from.clienterId.Value;
             resultModel.OrderNo = from.OrderNo;
-            resultModel.income = from.DistribSubsidy + from.WebsiteSubsidy + from.OrderCommission;
+            resultModel.income = OrderLogic.orderLogic().GetCurrenOrderCommission(from);  //计算设置当前订单骑士可获取的佣金 Edit bycaoheyang 20150305
+            //resultModel.income = from.DistribSubsidy + from.WebsiteSubsidy + from.OrderCommission;
             resultModel.Amount = from.Amount.Value;
             business _business = null;
             if (from.businessId.HasValue)
@@ -247,7 +249,8 @@ namespace SuperManWebApi.Models.Clienter
                 resultModel.userId = from.clienterId.Value;
             resultModel.OrderNo = from.OrderNo;
             resultModel.OriginalOrderNo = from.OriginalOrderNo; //来源订单号
-            resultModel.income = from.DistribSubsidy + from.WebsiteSubsidy + from.OrderCommission; //骑士的收入= 网站补贴+ 外送费 + 订单佣金
+            resultModel.income = OrderLogic.orderLogic().GetCurrenOrderCommission(from);  //计算设置当前订单骑士可获取的佣金 Edit bycaoheyang 20150305
+            //resultModel.income = from.DistribSubsidy + from.WebsiteSubsidy + from.OrderCommission; //骑士的收入= 网站补贴+ 外送费 + 订单佣金
             resultModel.Amount = from.Amount.Value;
             business _business = null;
             if (from.businessId.HasValue)

@@ -693,17 +693,17 @@
             <param name="model"></param>
             <returns></returns>
         </member>
+        <member name="M:SuperManWebApi.Controllers.ClienterAPIController.GetJobListNoLoginLatest_C">
+            <summary>
+            未登录时获取最新任务     登录未登录根据城市有没有值判断。
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:SuperManWebApi.Controllers.ClienterAPIController.GetJobListNoLogin_C(SuperManWebApi.Models.Clienter.ClientOrderInfoModel)">
             <summary>
             C端未登录时首页获取任务列表     
             </summary>
             <param name="model"></param>
-            <returns></returns>
-        </member>
-        <member name="M:SuperManWebApi.Controllers.ClienterAPIController.GetJobListNoLoginLatest_C">
-            <summary>
-            未登录时获取最新任务     登录未登录根据城市有没有值判断。
-            </summary>
             <returns></returns>
         </member>
         <member name="M:SuperManWebApi.Controllers.ClienterAPIController.GetJobListSongCanTask_C(SuperManWebApi.Models.Clienter.ClientOrderInfoModel)">
