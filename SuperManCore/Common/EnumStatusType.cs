@@ -67,7 +67,7 @@ namespace SuperManCore.Common
         OrderIsNotExist =203,
         [DisplayText("订单已被抢,无法取消")]
         FailedCancelOrder=204,
-        [DisplayText("非取消订单请勿调用")]
+        [DisplayText("取消失败")]
         NotCancelOrder = 205
 
     }
@@ -144,7 +144,17 @@ namespace SuperManCore.Common
         [DisplayText("手机号不能为空")]
         PhoneEmpty
     }
-
+   
+    /// <summary>
+    /// 修改外卖费状态
+    /// </summary>
+    public enum DistribSubsidyStatus
+    {
+        [DisplayText("成功")]
+        Success,
+        [DisplayText("失败")]
+        Failed
+    }
     /// <summary>
     /// 集团状态枚举  add by caohehang 20150212
     /// </summary>
