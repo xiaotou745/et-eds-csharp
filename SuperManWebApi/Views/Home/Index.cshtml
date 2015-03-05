@@ -83,6 +83,24 @@
 
         //    }
         //});
+
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: '/ClienterAPI/GetMyJobList_C',
+            data: {
+                "userId": 65
+
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () {
+
+            }
+        });
+        
+
             //});
         //$.ajax({
         //    type: 'POST',

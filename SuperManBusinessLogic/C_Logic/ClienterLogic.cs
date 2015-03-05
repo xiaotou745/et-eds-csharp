@@ -265,7 +265,7 @@ namespace SuperManBusinessLogic.C_Logic
         }
 
         /// <summary>
-        /// 获取我的任务订单 PagedList
+        /// 获取我的任务订单 PagedList 最近任务    登录未登录根据城市有没有值判断。
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
@@ -275,53 +275,42 @@ namespace SuperManBusinessLogic.C_Logic
             {
                 var query = dbEntity.order.AsQueryable();
                 if (criteria.userId != 0)
-                {
                     query = query.Where(i => i.clienterId == criteria.userId);
-                }
                 if (!string.IsNullOrWhiteSpace(criteria.city))
-                {
                     query = query.Where(i => i.business.City == criteria.city.Trim());
-                }
                 if (!string.IsNullOrWhiteSpace(criteria.cityId))
-                {
                     query = query.Where(i => i.business.CityId == criteria.cityId.Trim());
-                }
                 if (criteria.status != -1 && criteria.status!=null)
-                {
                     query = query.Where(i => i.Status.Value == criteria.status);
-                }
                 else
-                {
                     query = query.Where(i => i.Status.Value == ConstValues.ORDER_NEW);
-                }
-                 
-                //query = query.OrderByDescending(i => i.Id);
-
+                query = query.OrderByDescending(i => i.Id);
+                query.ToList().ForEach(item => { item.Amount = item.Amount + item.OrderCount * item.DistribSubsidy; });  ///C端任务列表时显示订单金额需要加上外送费  edit by caoheyang 20150305  
                 var result = new PagedList<order>(query.ToList(), criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
                 return result;
             }
         }
 
+
+        /// <summary>
+        /// 获取我的任务   根据状态判断是已完成任务还是我的任务
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
         public PagedList<order> GetMyOrders(ClientOrderSearchCriteria criteria)
         {
             using (var dbEntity = new supermanEntities())
             {
                 var query = dbEntity.order.AsQueryable();
+               
                 if (criteria.userId != 0)
-                {
                     query = query.Where(i => i.clienterId == criteria.userId);
-                }
                 if (criteria.status != null && criteria.status.Value != -1)
-                {
                     query = query.Where(i => i.Status.Value == criteria.status.Value);
-                }
                 else
-                {
                     query = query.Where(i => i.Status.Value == ConstValues.ORDER_ACCEPT);
-                }
-                
                 query = query.OrderByDescending(i => i.Id);
-
+                query.ToList().ForEach(item => { item.Amount = item.Amount + item.OrderCount * item.DistribSubsidy; });  //C端任务列表时显示订单金额需要加上外送费 edit by caoheyang 20150305  
                 var result = new PagedList<order>(query.ToList(), criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
                 return result;
             }
@@ -338,15 +327,15 @@ namespace SuperManBusinessLogic.C_Logic
             {
                 var query = db.order.AsQueryable();
                 if (criteria.status != null && criteria.status.Value != -1)
-                {
                     query = query.Where(i => i.Status.Value == criteria.status.Value);
-                } 
                 query = query.OrderByDescending(i => i.PubDate);
 
                 var result = new PagedList<order>(query.ToList(), criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
                 return result;
             }
         }
+
+
         /// <summary>
         /// 未登录时获取最新任务 edit by caoheyang 20150130
         /// </summary>
@@ -363,6 +352,7 @@ namespace SuperManBusinessLogic.C_Logic
                     query = query.Where(i => i.business.CityId == criteria.cityId.Trim());
                 query = query.Where(i => i.Status.Value == ConstValues.ORDER_NEW);
                 query = query.OrderByDescending(i => i.PubDate);
+                query.ToList().ForEach(item => { item.Amount = item.Amount + item.OrderCount * item.DistribSubsidy; });  ///C端任务列表时显示订单金额需要加上外送费  edit by caoheyang 20150305  
                 var result = query.ToList();
                 return result;
             }

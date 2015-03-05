@@ -467,19 +467,19 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary> 
-        /// 商家设置外卖费 平扬 20105.3.5
+        /// 商家设置外卖费 平扬 2015.3.5
         /// </summary>
         /// <returns></returns>
         [ActionStatus(typeof (DistribSubsidyStatus))]
         [HttpPost]
-        public SimpleResultModel PostDistribSubsidy_B(int userId, decimal price)
+        public SimpleResultModel PostDistribSubsidy_B(BusiDistribInfoModel mod)
         {
-            if (userId <= 0 || price < 0) //判断传入参数是否正常
+            if (mod.userId <= 0 || mod.price < 0) //判断传入参数是否正常
                 return SimpleResultModel.Conclude(DistribSubsidyStatus.Failed);
-            var business = BusiLogic.busiLogic().GetBusinessById(userId);
+            var business = BusiLogic.busiLogic().GetBusinessById(mod.userId);
             if (business == null) //商户是否存在
                 return SimpleResultModel.Conclude(DistribSubsidyStatus.Failed);
-            bool result = BusiLogic.busiLogic().ModifyWaiMaiPrice(userId, price);
+            bool result = BusiLogic.busiLogic().ModifyWaiMaiPrice(mod.userId, mod.price);
             if (result)
             {
                 return SimpleResultModel.Conclude(DistribSubsidyStatus.Success);

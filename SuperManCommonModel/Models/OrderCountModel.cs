@@ -33,7 +33,7 @@ namespace SuperManCommonModel.Models
         /// </summary>
         public decimal orderCommission { get; set; }
         /// <summary>
-        /// 配送补贴
+        /// 外送费
         /// </summary>
         public decimal distribSubsidy { get; set; }
         /// <summary>
