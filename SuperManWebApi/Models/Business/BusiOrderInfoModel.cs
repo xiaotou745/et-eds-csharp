@@ -103,13 +103,13 @@ namespace SuperManWebApi.Models.Business
             to.ReceviceLatitude = from.laitude;
             var subsidy = SubsidyLogic.subsidyLogic().GetCurrentSubsidy(groupId: business.GroupId == null ? 0 : Convert.ToInt32(business.GroupId));
             to.WebsiteSubsidy = subsidy.WebsiteSubsidy;  //网站补贴
-            to.CommissionRate = subsidy.OrderCommission; //佣金比例 
+            to.CommissionRate = subsidy.OrderCommission == null ? 0 : subsidy.OrderCommission; //佣金比例 
             decimal distribe = 0;  //默认外送费，网站补贴都为0
             if (to.DistribSubsidy != null)//如果外送费有数据，按照外送费计算骑士佣金
                 distribe = Convert.ToDecimal(to.DistribSubsidy);
             else if (to.WebsiteSubsidy != null)//如果外送费没数据，按照网站补贴计算骑士佣金
                 distribe = Convert.ToDecimal(to.WebsiteSubsidy);
-            to.OrderCommission = from.Amount * (to.CommissionRate == null ? 0 : Convert.ToDecimal(to.CommissionRate)) + distribe*to.OrderCount;//计算佣金
+            to.OrderCommission = from.Amount *to.CommissionRate + distribe*to.OrderCount;//计算佣金
             to.Status = ConstValues.ORDER_NEW;
             return to;
         }
