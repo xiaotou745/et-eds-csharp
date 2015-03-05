@@ -230,6 +230,7 @@
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Business\BusiAddAddressResultModel.cs" />
+    <Compile Include="Models\Business\BusiDistribInfoModel.cs" />
     <Compile Include="Models\Business\BusiForgetPwdInfoModel.cs" />
     <Compile Include="Models\Business\BusiLoginResultModel.cs" />
     <Compile Include="Models\Business\BusiOrderInfoModel.cs" />
