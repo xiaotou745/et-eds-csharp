@@ -45,7 +45,7 @@ namespace SuperManBusinessLogic.C_Logic
         /// </summary>
         /// <param name="groupId">集团id</param>
         /// <returns>IList<ClienterModel></returns>
-        public IList<ClienterModel> GetClienterModelByGroupID(int groupId)
+        public IList<ClienterModel> GetClienterModelByGroupID(int? groupId)
         {
             using (var db = new supermanEntities())
             { 
