@@ -502,6 +502,31 @@ namespace SuperManBusinessLogic.B_Logic
         }
 
         /// <summary>
+        /// B端修改外卖费
+        /// </summary>
+        /// <param name="businessid"></param>
+        /// <param name="price"></param>
+        /// <returns></returns>
+        public bool ModifyWaiMaiPrice(int businessid, decimal price)
+        {
+            bool result = false;
+            using (var db = new supermanEntities())
+            {
+                db.Configuration.ValidateOnSaveEnabled = false;
+                var query = db.business.Where(p => p.Id == businessid).FirstOrDefault();
+                if (query != null)
+                {
+                    query.DistribSubsidy = price;
+                    int i = db.SaveChanges();
+                    if (i != 0)
+                        result = true;
+                }
+                db.Configuration.ValidateOnSaveEnabled = true;
+            }
+            return result;
+        }
+
+        /// <summary>
         /// B端修改密码
         /// </summary>
         /// <param name="businessid"></param>
