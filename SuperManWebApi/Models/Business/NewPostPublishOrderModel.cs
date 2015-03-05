@@ -109,6 +109,10 @@ namespace SuperManWebApi.Models.Business
         /// 炉具数量
         /// </summary>
         public int LuJuQty { get; set; }
+        /// <summary>
+        /// 送餐时间 客户要求的送餐时间
+        /// </summary>
+        public DateTime? SongCanDate { get; set; }
 
 
     }
@@ -144,7 +148,7 @@ namespace SuperManWebApi.Models.Business
                 to.PubDate = DateTime.Now; //提起时间
                 to.ReceviceCity = business.City; //城市
             }
-
+            //to.SongCanDate = from.SongCanDate; //送餐时间
             to.Remark = from.Remark;
 
             to.ReceviceName = from.ReceiveName;
@@ -164,7 +168,6 @@ namespace SuperManWebApi.Models.Business
 
             to.ReceviceAddress = from.Receive_Address;
 
-
             to.OrderFrom = from.OrderFrom;
             to.Quantity = from.Quantity;
             to.OriginalOrderNo = from.OriginalOrderNo;
@@ -172,8 +175,7 @@ namespace SuperManWebApi.Models.Business
             to.Weight = from.Weight;
 
             to.IsPay = from.IsPay;
-            to.Amount = from.Amount;
-             
+            to.Amount = from.Amount;             
            
             to.OrderType = from.OrderType; //订单类型 1送餐订单 2取餐盒订单 
             to.KM = from.KM; //送餐距离
