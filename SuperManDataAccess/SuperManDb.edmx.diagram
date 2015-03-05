@@ -11,20 +11,20 @@
         <EntityTypeShape EntityType="supermanModel.areacounty" Width="1.5" PointX="7.75" PointY="0.75" />
         <EntityTypeShape EntityType="supermanModel.areaprovice" Width="1.5" PointX="7.75" PointY="3.75" />
         <EntityTypeShape EntityType="supermanModel.authority" Width="1.5" PointX="0.75" PointY="1" />
-        <EntityTypeShape EntityType="supermanModel.business" Width="1.5" PointX="2.75" PointY="5" />
+        <EntityTypeShape EntityType="supermanModel.business" Width="1.5" PointX="2.75" PointY="5.25" />
         <EntityTypeShape EntityType="supermanModel.channel" Width="1.5" PointX="7.75" PointY="6.75" />
         <EntityTypeShape EntityType="supermanModel.clienter" Width="1.5" PointX="9.75" PointY="0.75" />
         <EntityTypeShape EntityType="supermanModel.commissiontype" Width="1.5" PointX="9.75" PointY="7.75" />
         <EntityTypeShape EntityType="supermanModel.group" Width="1.5" PointX="7.75" PointY="10.75" />
         <EntityTypeShape EntityType="supermanModel.myincome" Width="1.5" PointX="9.75" PointY="10.75" />
+        <EntityTypeShape EntityType="supermanModel.order" Width="1.5" PointX="5" PointY="4.25" />
         <EntityTypeShape EntityType="supermanModel.orderlog" Width="1.5" PointX="11.75" PointY="0.75" />
-        <EntityTypeShape EntityType="supermanModel.pushmessage" Width="1.5" PointX="0.75" PointY="11.75" />
-        <EntityTypeShape EntityType="supermanModel.pushmessagestatus" Width="1.5" PointX="11.75" PointY="4.75" />
-        <EntityTypeShape EntityType="supermanModel.region" Width="1.5" PointX="11.75" PointY="7.75" />
-        <EntityTypeShape EntityType="supermanModel.subsidy" Width="1.5" PointX="2.75" PointY="12.75" />
+        <EntityTypeShape EntityType="supermanModel.pushmessage" Width="1.5" PointX="11.75" PointY="4.75" />
+        <EntityTypeShape EntityType="supermanModel.pushmessagestatus" Width="1.5" PointX="11.75" PointY="7.75" />
+        <EntityTypeShape EntityType="supermanModel.region" Width="1.5" PointX="11.75" PointY="10.75" />
+        <EntityTypeShape EntityType="supermanModel.subsidy" Width="1.5" PointX="0.75" PointY="12.75" />
         <AssociationConnector Association="supermanModel.accountId" />
         <AssociationConnector Association="supermanModel.authorityId" />
-        <EntityTypeShape EntityType="supermanModel.order" Width="1.5" PointX="5" PointY="4" />
         <AssociationConnector Association="supermanModel.businessId" />
       </Diagram>
     </edmx:Diagrams>
