@@ -15,5 +15,10 @@ namespace SuperManWebApi.Models.Business
         /// 订单来源
         /// </summary>
         public int OrderFrom { get; set; }
+
+        /// <summary>
+        /// 订单类型
+        /// </summary>
+        public int OrderType { get; set; }
     }
 }
