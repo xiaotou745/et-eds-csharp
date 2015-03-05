@@ -27,7 +27,9 @@ namespace SuperManCore.Common
     {
         Success,
         [DisplayText("订单发布失败")]
-        InvalidPubOrder
+        InvalidPubOrder,
+        [DisplayText("订单数量不符合规则")]
+        OrderCountError
     }
     public enum GetOrdersStatus
     {

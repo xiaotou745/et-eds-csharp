@@ -51,6 +51,12 @@ namespace SuperManWebApi.Models.Business
         /// 配送说明
         /// </summary>
         public string Remark { get; set; }
+
+        /// <summary>
+        /// 订单数量
+        /// </summary>
+        public int OrderCount { get; set; }
+
     }
     public class BusiOrderInfoModelTranslator : TranslatorBase<order, BusiOrderInfoModel>
     {
@@ -63,6 +69,11 @@ namespace SuperManWebApi.Models.Business
 
 
 
+        /// <summary>
+        /// 整合订单信息  Edit by caoheyang 20150305
+        /// </summary>
+        /// <param name="from">C端订单数据</param>
+        /// <returns></returns>
         public override order Translate(BusiOrderInfoModel from)
         {
             order to = new order();
@@ -86,6 +97,7 @@ namespace SuperManWebApi.Models.Business
             to.ReceviceAddress = from.receviceAddress;
             to.IsPay = from.IsPay;
             to.Amount = from.Amount;
+            to.OrderCount = from.OrderCount;  //订单数量
             to.ReceviceLongitude = from.longitude;
             to.ReceviceLatitude = from.laitude;
             var subsidy = SubsidyLogic.subsidyLogic().GetCurrentSubsidy();
