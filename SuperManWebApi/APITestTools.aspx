@@ -10,7 +10,9 @@
 <body>
     <form id="form1" runat="server">
     <div>
-    
+        JSON转换工具:
+        <a  target="_blank" href="http://www.bejson.com/go.html?u=http://www.bejson.com/jsonviewernew/">JSON转换工具</a>
+        <br/>
         API地址:<asp:TextBox ID="TextBox1" runat="server" Width="529px" Height="90px"></asp:TextBox>
         <br />
         参数:<asp:TextBox ID="TextBox2" Rows="50" runat="server" Height="170px" Width="560px"></asp:TextBox>
