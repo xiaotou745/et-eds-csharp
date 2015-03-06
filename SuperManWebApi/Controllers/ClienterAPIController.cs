@@ -193,6 +193,7 @@ namespace SuperManWebApi.Controllers
             //{
             lists = lists.OrderBy(i => i.distance).ToList();
             //}
+
             return ResultModel<ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, lists.ToArray());
         }
 
