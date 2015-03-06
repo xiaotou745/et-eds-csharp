@@ -106,7 +106,8 @@ namespace SuperManCommonModel.Models
         /// <summary>
         /// 集团名称
         /// </summary>
-        public string GroupName { get; set; }
+        public string GroupName { get; set; } 
+        
     }
 
     /// <summary>

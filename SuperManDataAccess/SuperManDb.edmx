@@ -88,7 +88,6 @@
           <Property Name="AreaCode" Type="varchar" MaxLength="20" />
           <Property Name="Province" Type="varchar" MaxLength="20" />
           <Property Name="CommissionTypeId" Type="int" />
-          <Property Name="DistribSubsidy" Type="decimal" Precision="5" Scale="2" />
         </EntityType>
         <EntityType Name="channel">
           <Key>
@@ -200,9 +199,6 @@
           <Property Name="KM" Type="double" />
           <Property Name="GuoJuQty" Type="int" />
           <Property Name="LuJuQty" Type="int" />
-          <Property Name="SongCanDate" Type="datetime" Precision="0" />
-          <Property Name="OrderCount" Type="int" />
-          <Property Name="CommissionRate" Type="decimal" Precision="5" Scale="2" />
         </EntityType>
         <EntityType Name="orderlog">
           <Key>
@@ -317,24 +313,24 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="supermanModelStoreContainer">
-          <EntitySet Name="account" EntityType="Self.account" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="accountauthority" EntityType="Self.accountauthority" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="areacity" EntityType="Self.areacity" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="areacounty" EntityType="Self.areacounty" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="areaprovice" EntityType="Self.areaprovice" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="authority" EntityType="Self.authority" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="business" EntityType="Self.business" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="channel" EntityType="Self.channel" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="clienter" EntityType="Self.clienter" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="commissiontype" EntityType="Self.commissiontype" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="group" EntityType="Self.group" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="myincome" EntityType="Self.myincome" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="order" EntityType="Self.order" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="orderlog" EntityType="Self.orderlog" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="pushmessage" EntityType="Self.pushmessage" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="pushmessagestatus" EntityType="Self.pushmessagestatus" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="region" EntityType="Self.region" Schema="superman" store:Type="Tables" />
-          <EntitySet Name="subsidy" EntityType="Self.subsidy" Schema="superman" store:Type="Tables" />
+          <EntitySet Name="account" EntityType="Self.account" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="accountauthority" EntityType="Self.accountauthority" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="areacity" EntityType="Self.areacity" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="areacounty" EntityType="Self.areacounty" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="areaprovice" EntityType="Self.areaprovice" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="authority" EntityType="Self.authority" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="business" EntityType="Self.business" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="channel" EntityType="Self.channel" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="clienter" EntityType="Self.clienter" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="commissiontype" EntityType="Self.commissiontype" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="group" EntityType="Self.group" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="myincome" EntityType="Self.myincome" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="order" EntityType="Self.order" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="orderlog" EntityType="Self.orderlog" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="pushmessage" EntityType="Self.pushmessage" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="pushmessagestatus" EntityType="Self.pushmessagestatus" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="region" EntityType="Self.region" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="subsidy" EntityType="Self.subsidy" Schema="supermanhdl" store:Type="Tables" />
           <AssociationSet Name="accountId" Association="Self.accountId">
             <End Role="account" EntitySet="account" />
             <End Role="accountauthority" EntitySet="accountauthority" />
@@ -472,7 +468,6 @@
           <Property Name="Province" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="CommissionTypeId" Type="Int32" />
           <NavigationProperty Name="order" Relationship="supermanModel.businessId" FromRole="business" ToRole="order" />
-          <Property Name="DistribSubsidy" Type="Decimal" />
         </EntityType>
         <EntityType Name="channel">
           <Key>
@@ -584,10 +579,7 @@
           <Property Name="KM" Type="Double" />
           <Property Name="GuoJuQty" Type="Int32" />
           <Property Name="LuJuQty" Type="Int32" />
-          <Property Name="SongCanDate" Type="DateTime" />
           <NavigationProperty Name="business" Relationship="supermanModel.businessId" FromRole="order" ToRole="business" />
-          <Property Name="OrderCount" Type="Int32" />
-          <Property Name="CommissionRate" Type="Decimal" />
         </EntityType>
         <EntityType Name="orderlog">
           <Key>
@@ -771,7 +763,6 @@
           <EntitySetMapping Name="business">
             <EntityTypeMapping TypeName="supermanModel.business">
               <MappingFragment StoreEntitySet="business">
-                <ScalarProperty Name="DistribSubsidy" ColumnName="DistribSubsidy" />
                 <ScalarProperty Name="CommissionTypeId" ColumnName="CommissionTypeId" />
                 <ScalarProperty Name="Province" ColumnName="Province" />
                 <ScalarProperty Name="AreaCode" ColumnName="AreaCode" />
@@ -879,9 +870,6 @@
           <EntitySetMapping Name="order">
             <EntityTypeMapping TypeName="supermanModel.order">
               <MappingFragment StoreEntitySet="order">
-                <ScalarProperty Name="CommissionRate" ColumnName="CommissionRate" />
-                <ScalarProperty Name="OrderCount" ColumnName="OrderCount" />
-                <ScalarProperty Name="SongCanDate" ColumnName="SongCanDate" />
                 <ScalarProperty Name="LuJuQty" ColumnName="LuJuQty" />
                 <ScalarProperty Name="GuoJuQty" ColumnName="GuoJuQty" />
                 <ScalarProperty Name="KM" ColumnName="KM" />

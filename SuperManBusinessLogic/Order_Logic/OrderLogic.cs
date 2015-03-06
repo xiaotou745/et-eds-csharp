@@ -401,13 +401,23 @@ namespace SuperManBusinessLogic.Order_Logic
         /// </summary>
         /// <param name="orderNO">第三方平台的原订单号</param>
         /// <param name="orderFrom">订单来源</param>
+        /// <param name="orderType">订单类型</param>
         /// <returns></returns>
-        public order GetOrderByOrderNoAndOrderFrom(string orderNO, int orderFrom)
+        public order GetOrderByOrderNoAndOrderFrom(string orderNO, int orderFrom,int orderType)
         {
             using (var dbEntity = new supermanEntities())
-            {
-                var query = dbEntity.order.Where(p => p.OriginalOrderNo == orderNO && p.OrderFrom == orderFrom);
-                return query.FirstOrDefault();
+            { 
+                if (orderType > 0)
+                {
+                    var query = dbEntity.order.Where(p => p.OriginalOrderNo == orderNO && p.OrderFrom == orderFrom && p.OrderType == orderType);
+                    return query.FirstOrDefault();
+                }
+                else
+                {
+                    var query = dbEntity.order.Where(p => p.OriginalOrderNo == orderNO && p.OrderFrom == orderFrom);
+                    return query.FirstOrDefault();
+                }
+                
             }
         }
 

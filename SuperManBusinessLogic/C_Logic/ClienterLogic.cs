@@ -362,6 +362,9 @@ namespace SuperManBusinessLogic.C_Logic
         /// <returns></returns>
         public List<order> GetOrdersForSongCanOrQuCan(ClientOrderSearchCriteria criteria)
         {
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+            
             using (var dbEntity = new supermanEntities())
             {
                 var query = dbEntity.order.AsQueryable();
@@ -375,8 +378,19 @@ namespace SuperManBusinessLogic.C_Logic
                 query = query.Where(i => i.Status.Value == ConstValues.ORDER_NEW);
                 //排序
                 query = query.OrderByDescending(i => i.PubDate);
-                var result = query.ToList();
-                return result;
+                try
+                {
+                    var result = query.ToList();
+                    sw.Stop();
+                    LogHelper.LogWriter("获取送餐任务运行时间：", new { criteria=criteria, date = sw.Elapsed });
+                    return result;
+                }
+                catch (Exception ex)
+                {
+                    LogHelper.LogWriter("获取送餐任务异常：", new { ex = ex });
+                    return null;
+                }
+                
             }
 
         }
