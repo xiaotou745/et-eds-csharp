@@ -113,6 +113,10 @@ namespace SuperManWebApi.Models.Business
         /// 送餐时间 客户要求的送餐时间
         /// </summary>
         public DateTime? SongCanDate { get; set; }
+        /// <summary>
+        /// 订单数量
+        /// </summary>
+        public int OrderCount { get; set; }
 
 
     }
@@ -175,52 +179,40 @@ namespace SuperManWebApi.Models.Business
             to.Weight = from.Weight;
 
             to.IsPay = from.IsPay;
-            to.Amount = from.Amount;             
-           
+            to.Amount = from.Amount;
+
             to.OrderType = from.OrderType; //订单类型 1送餐订单 2取餐盒订单 
             to.KM = from.KM; //送餐距离
 
             to.GuoJuQty = from.GuoJuQty; //锅具数量
             to.LuJuQty = from.LuJuQty;  //炉具数量
 
+            to.DistribSubsidy = from.DistribSubsidy; //外送费
+            to.OrderCount = from.OrderCount == 0 ? 1 : from.OrderCount; //订单数量
             //计算订单佣金
-            var subsidy = SubsidyLogic.subsidyLogic().GetCurrentSubsidy(business.GroupId.Value,from.OrderType);
+            var subsidy = SubsidyLogic.subsidyLogic().GetCurrentSubsidy(business.GroupId.Value);
             if (subsidy != null)
             {
-
-                to.WebsiteSubsidy = subsidy.WebsiteSubsidy;
-                to.DistribSubsidy = subsidy.DistribSubsidy;
-                if (subsidy.OrderType > 0)
-                {
-                    subsidy.OrderCommission = Convert.ToDecimal(from.KM) * subsidy.PKMCost;  //每公里费用*公里数
-                }
-                else
-                {
-                    if (subsidy.OrderCommission != null)
-                    {
-                        to.OrderCommission = subsidy.OrderCommission.Value * from.Amount;
-                    }
-                }
+                to.WebsiteSubsidy = subsidy.WebsiteSubsidy == null ? 0 : subsidy.WebsiteSubsidy; //网站补贴 
+                to.CommissionRate = subsidy.OrderCommission == null ? 0 : subsidy.OrderCommission; //佣金比例 
             }
+            else
+            {
+                to.WebsiteSubsidy = 0m;
+                to.CommissionRate = 0m;
+            }
+            decimal distribe = 0;  //默认外送费，网站补贴都为0
+            if (to.DistribSubsidy != null)//如果外送费有数据，按照外送费计算骑士佣金
+                distribe = Convert.ToDecimal(to.DistribSubsidy);
+            else if (to.WebsiteSubsidy != null)//如果外送费没数据，按照网站补贴计算骑士佣金
+                distribe = Convert.ToDecimal(to.WebsiteSubsidy);
 
-            //if (subsidy.OrderCommission != null)
-            //{
-            //    if (abusiness.CommissionTypeId == 2) //佣金类型2 ，按送餐费计算佣金
-            //    {
-            //        to.OrderCommission = subsidy.OrderCommission.Value * from.SongCanFei;
-            //    }
-            //    if (abusiness.CommissionTypeId == 1)  //佣金类型1 ，按订单总金额计算佣金
-            //    {
-            //        to.OrderCommission = subsidy.OrderCommission.Value * from.Amount;
-            //    }
-            //}
-            //else
-            //{
-            //    to.OrderCommission = subsidy.OrderCommission;
-            //}
+            to.OrderCommission = from.Amount * to.CommissionRate + distribe * to.OrderCount;//计算佣金
+
+            to.Status = ConstValues.ORDER_NEW;
 
             ////订单状态 标记
-            if(from.OrderType == 1 && (from.GuoJuQty >=3 || from.LuJuQty >=3) ) //送餐订单 锅具或者炉具数量大于3,订单状态标记为 待客审
+            if (from.OrderType == 1 && (from.GuoJuQty >= 3 || from.LuJuQty >= 3)) //送餐订单 锅具或者炉具数量大于3,订单状态标记为 待客审
             {
                 to.Status = ConstValues.ORDER_WAITAUDIT;
             }
@@ -233,7 +225,7 @@ namespace SuperManWebApi.Models.Business
                 to.Status = ConstValues.ORDER_NEW;
             }
 
-            
+
             return to;
         }
     }
@@ -242,7 +234,7 @@ namespace SuperManWebApi.Models.Business
         [DisplayText("订单发布成功")]
         Success = 1,
         [DisplayText("订单发布失败")]
-        Failed = 0, 
+        Failed = 0,
         [DisplayText("原始订单号不能为空")]
         OriginalOrderNoEmpty = 301,
 
@@ -250,7 +242,7 @@ namespace SuperManWebApi.Models.Business
         OriginalBusinessIdEmpty = 302,
 
         [DisplayText("请确认是否已付款")]
-        IsPayEmpty = 303, 
+        IsPayEmpty = 303,
         [DisplayText("收货人不能为空")]
         ReceiveNameEmpty = 304,
         [DisplayText("收货人手机号不能为空")]
