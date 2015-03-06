@@ -293,11 +293,23 @@ namespace SuperManWebApi.Controllers
                 PagingRequest = new PagingResult(pIndex, pSize),
                 userId = model.userId,
                 status = model.status,
-                isLatest = model.isLatest,           
+                isLatest = model.isLatest,   
                 city =string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
                 cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim(),
                 OrderType = 1 //送餐任务1，取餐盒任务2
             };
+
+            if (!string.IsNullOrWhiteSpace(model.city))
+            {
+                if (model.city.Contains("北京"))
+                {
+                    criteria.cityId = "10201";
+                }
+                if (model.city.Contains("上海"))
+                {
+                    criteria.cityId = "11101";
+                }
+            }
             var pagedList = ClienterLogic.clienterLogic().GetOrdersForSongCanOrQuCan(criteria);
             var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
             if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
@@ -329,6 +341,18 @@ namespace SuperManWebApi.Controllers
                 cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim(),
                 OrderType = 2 //送餐任务1，取餐盒任务2
             };
+
+            if (!string.IsNullOrWhiteSpace(model.city))
+            {
+                if (model.city == "北京市")
+                {
+                    criteria.cityId = "10201";
+                }
+                if (model.city == "上海市")
+                {
+                    criteria.cityId = "11101";
+                }
+            }
             var pagedList = ClienterLogic.clienterLogic().GetOrdersForSongCanOrQuCan(criteria);
             var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
             if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
