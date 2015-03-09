@@ -391,9 +391,11 @@ namespace SuperManBusinessLogic.C_Logic
                 query = query.Where(i => i.Status.Value == ConstValues.ORDER_NEW);
                 //排序
                 query = query.OrderByDescending(i => i.PubDate);
+               
                 try
                 {
-                    var result = query.ToList();
+                    //var result = query.ToList();
+                    var result = new PagedList<order>(query.ToList(), criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
                     sw.Stop();
                     LogHelper.LogWriter("获取送餐任务运行时间：", new { criteria=criteria, date = sw.Elapsed });
                     return result;

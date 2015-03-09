@@ -25,7 +25,7 @@ namespace SuperManWebApi.Models.Clienter
         /// </summary>
         public decimal? income { get; set; }
         /// <summary>
-        /// 距你
+        /// 距离（骑士到商户的距离）
         /// </summary>
         //public double distance { get; set; }
         public string distance { get; set; }
@@ -103,7 +103,7 @@ namespace SuperManWebApi.Models.Clienter
         /// </summary>
         public decimal? income { get; set; }
         /// <summary>
-        /// 距你
+        /// 距离
         /// </summary>
         //public double distance { get; set; }
         public string distance { get; set; }

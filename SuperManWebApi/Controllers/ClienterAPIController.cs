@@ -283,10 +283,10 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListSongCanTask_C(ClientOrderInfoModel model)
         {
-            //degree.longitude = model.longitude;
-            //degree.latitude = model.latitude;
-            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
-            var pSize = model.pageSize.HasValue ? model.pageIndex.Value : int.MaxValue;
+            degree.longitude = model.longitude;
+            degree.latitude = model.latitude;
+            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 1;
+            var pSize = model.pageSize.HasValue ? model.pageIndex.Value : 10;
             var criteria = new ClientOrderSearchCriteria()
             {
                 PagingRequest = new PagingResult(pIndex, pSize),
@@ -326,10 +326,10 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListCanHeTask_C(ClientOrderInfoModel model)
         {
-            //degree.longitude = model.longitude;
-            //degree.latitude = model.latitude;
-            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
-            var pSize = model.pageSize.HasValue ? model.pageIndex.Value : int.MaxValue;
+            degree.longitude = model.longitude;
+            degree.latitude = model.latitude;
+            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 1;
+            var pSize = model.pageSize.HasValue ? model.pageIndex.Value : 10;
             var criteria = new ClientOrderSearchCriteria()
             {
                 PagingRequest = new PagingResult(pIndex, pSize),
