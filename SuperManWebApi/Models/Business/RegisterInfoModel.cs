@@ -30,6 +30,10 @@ namespace SuperManWebApi.Models.Business
         /// 验证码
         /// </summary>
         public string verifyCode { get; set; }
+        /// <summary>
+        /// 集团Id
+        /// </summary>
+        public int GroupId { get; set; }
     }
     public class RegisterInfoModelTranslator : TranslatorBase<business, RegisterInfoModel>
     {
@@ -54,15 +58,20 @@ namespace SuperManWebApi.Models.Business
             to.districtId = "0";
 
             //海底捞
-            if (ConfigSettings.Instance.IsGroupPush)   //TODO 暂时有效
+            //if (ConfigSettings.Instance.IsGroupPush)   //TODO 暂时有效
+            //{
+            //    to.GroupId = 2;
+            //    to.CommissionTypeId = 2;
+            //}
+            //else
+            //{
+            //    to.CommissionTypeId = 1;
+            //}  
+            if (from.GroupId != 0)
             {
-                to.GroupId = 2;
-                to.CommissionTypeId = 2;
+                to.GroupId = from.GroupId;
             }
-            else
-            {
-                to.CommissionTypeId = 1;
-            }      
+            to.CommissionTypeId = 1;
             
             return to;
         }

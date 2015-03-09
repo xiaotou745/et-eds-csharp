@@ -45,8 +45,7 @@ namespace SuperManWebApi.Controllers
                 &&(!BusiLogic.busiLogic().CheckExistPhone(model.phoneNo))) //如果推荐人手机号在B端C端都不存在提示信息
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberNotExist);
             var clienter = ClientRegisterInfoModelTranslator.Instance.Translate(model);
-
-
+             
             bool result =ClienterLogic.clienterLogic().Add(clienter);
             var resultModel = new ClientRegisterResultModel
             {
