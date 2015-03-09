@@ -1204,6 +1204,11 @@
             验证码
             </summary>
         </member>
+        <member name="P:SuperManWebApi.Models.Business.RegisterInfoModel.GroupId">
+            <summary>
+            集团Id
+            </summary>
+        </member>
         <member name="T:SuperManWebApi.Models.Clienter.ClienterLoginResultModel">
             <summary>
             登录成功返回的数据
@@ -1467,6 +1472,11 @@
         <member name="P:SuperManWebApi.Models.Clienter.ClientRegisterInfoModel.recommendPhone">
             <summary>
             推荐人手机号
+            </summary>
+        </member>
+        <member name="P:SuperManWebApi.Models.Clienter.ClientRegisterInfoModel.GroupId">
+            <summary>
+            集团Id
             </summary>
         </member>
         <member name="P:SuperManWebApi.Models.Clienter.ClientRegisterResultModel.city">
