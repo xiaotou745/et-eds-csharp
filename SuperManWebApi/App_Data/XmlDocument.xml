@@ -1169,6 +1169,11 @@
             订单来源
             </summary>
         </member>
+        <member name="P:SuperManWebApi.Models.Business.OrderCancelModel.OrderType">
+            <summary>
+            订单类型
+            </summary>
+        </member>
         <member name="P:SuperManWebApi.Models.Business.OrderCancelResultModel.Remark">
             <summary>
             失败原因描述
