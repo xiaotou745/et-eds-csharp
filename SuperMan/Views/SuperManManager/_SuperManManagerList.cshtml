@@ -103,7 +103,10 @@
         <p id="statusFin"><h2>查看图片</h2></p>
         <form class="form-horizontal" role="form" id="BusiPicForm" method="post">
             <fieldset>
-                <img width="160" height="160" id="showPicHandWithUrl" /><img width="160" height="160" id="showPicUrl" />
+                <img width="160" height="160" id="showPicHandWithUrl" />
+                <a id="showBigPicHWU" href="" target="_blank">查看大图</a>
+                <img width="160" height="160" id="showPicUrl" />
+                <a id="showBigPicUrl" href="" target="_blank">查看大图</a>
             </fieldset>
             <p class="btnbox">
                 <input value="关闭" type="button" class="J_closebox qxBtn" />
@@ -186,6 +189,9 @@
     function funcPicView(puth, PicWithHandUrl,PicUrl) { 
         $('#showPicHandWithUrl').attr('src', puth + '/' + PicWithHandUrl);
         $('#showPicUrl').attr('src', puth + '/' + PicUrl); 
+        $('#showBigPicHWU').attr('href',puth + '/' + PicWithHandUrl);
+        $('#showBigPicUrl').attr('href',puth + '/' + PicUrl);
+
         adminjs.openwinbox('#ClientPicShow');
     }
 
