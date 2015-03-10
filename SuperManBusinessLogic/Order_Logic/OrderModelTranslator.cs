@@ -23,8 +23,12 @@ namespace SuperManBusinessLogic.Order_Logic
             to.BusinessModel = ConventValue(from.business);
             if (from.clienterId != null)
             {
-                to.ClienterName = ClienterLogic.clienterLogic().GetClienterById(from.clienterId.Value).TrueName;
-                to.ClienterPhoneNo = ClienterLogic.clienterLogic().GetClienterById(from.clienterId.Value).PhoneNo;
+                clienter c = ClienterLogic.clienterLogic().GetClienterById(from.clienterId.Value);
+                if (c != null)
+                {
+                    to.ClienterName = c.TrueName;
+                    to.ClienterPhoneNo = c.PhoneNo;
+                }
             }                
             to.PickUpAddress = from.PickUpAddress;
             if (from.PubDate.HasValue)
