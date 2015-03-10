@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{BBA67A86-AFD6-46F2-BBD9-5DFB5BFDAFE2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ETS</RootNamespace>
+    <AssemblyName>ETS.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Common.Logging">
+      <HintPath>..\lib\Common.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Expand\AttribDescription.cs" />
+    <Compile Include="Expand\EnumerableExpand.cs" />
+    <Compile Include="Extension\DataRowExtension.cs" />
+    <Compile Include="Extension\DataSetExtenstion.cs" />
+    <Compile Include="Extension\DataTableExtension.cs" />
+    <Compile Include="Extension\ListExtensions.cs" />
+    <Compile Include="Extension\StringExtension.cs" />
+    <Compile Include="IO\Common.cs" />
+    <Compile Include="IO\Excel.cs" />
+    <Compile Include="IO\ExcelWriter.cs" />
+    <Compile Include="IO\FileIO.cs" />
+    <Compile Include="IO\INIFileManager.cs" />
+    <Compile Include="IO\IniParser.cs" />
+    <Compile Include="Page\IPagedDataTable.cs" />
+    <Compile Include="Page\IPagedList.cs" />
+    <Compile Include="Page\PagedDataTable.cs" />
+    <Compile Include="Page\PagedList.cs" />
+    <Compile Include="Page\PaginatorDTO.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\DES.cs" />
+    <Compile Include="Security\MD5.cs" />
+    <Compile Include="StartOverTimePair.cs" />
+    <Compile Include="Threading\CallContextStorage.cs" />
+    <Compile Include="Threading\IThreadStorage.cs" />
+    <Compile Include="Threading\LogicalThreadContext.cs" />
+    <Compile Include="Threading\ThreadStaticStorage.cs" />
+    <Compile Include="Util\AssertUtils.cs" />
+    <Compile Include="Util\ConfigUtils.cs" />
+    <Compile Include="Util\DnsUtils.cs" />
+    <Compile Include="Util\EnumUtils.cs" />
+    <Compile Include="Util\Log.cs" />
+    <Compile Include="Util\MailUtils.cs" />
+    <Compile Include="Util\ParseHelper.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

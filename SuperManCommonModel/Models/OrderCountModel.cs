@@ -23,7 +23,7 @@ namespace SuperManCommonModel.Models
         /// <summary>
         /// 订单金额
         /// </summary>
-        public decimal orderAmount { get; set; }
+        public decimal? orderAmount { get; set; }
         /// <summary>
         /// 配送费
         /// </summary>
@@ -31,14 +31,14 @@ namespace SuperManCommonModel.Models
         /// <summary>
         /// 订单佣金
         /// </summary>
-        public decimal orderCommission { get; set; }
+        public decimal? orderCommission { get; set; }
         /// <summary>
         /// 外送费
         /// </summary>
-        public decimal distribSubsidy { get; set; }
+        public decimal? distribSubsidy { get; set; }
         /// <summary>
         /// 网站补贴
         /// </summary>
-        public decimal websiteSubsidy { get; set; }
+        public decimal? websiteSubsidy { get; set; }
     }
 }
