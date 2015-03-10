@@ -30,7 +30,4 @@ _ReSharper*/
 [Tt]est[Rr]esult**/Logs
 /SuperMan/logs
 /SuperManWebApi/App_Data/XmlDocument.xml
-<<<<<<< HEAD
-=======
 /SuperManWebApi/App_Data/SuperManWebApi.XML
->>>>>>> 0fdbbc8814a156fbc61b2ed98fcf07bb45a1befd
