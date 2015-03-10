@@ -86,23 +86,23 @@
                             }
                         </td>
                         <td>@item.PKMCost</td>
-                       
-                            @{
-                    var orderTypeName = "";
-                    if (item.OrderType == 1)
-                    {
-                        orderTypeName = "送餐";
-                    }
-                    else if (item.OrderType == 2)
-                    {
-                        orderTypeName = "收餐具";
-                    }
-                    else
-                    {
-                        orderTypeName = "";
-                    }
-                    <td>@orderTypeName</td>
-                            }                        
+
+                        @{
+                            var orderTypeName = "";
+                            if (item.OrderType == 1)
+                            {
+                                orderTypeName = "送餐";
+                            }
+                            else if (item.OrderType == 2)
+                            {
+                                orderTypeName = "收餐具";
+                            }
+                            else
+                            {
+                                orderTypeName = "";
+                            }
+                            <td>@orderTypeName</td>
+                        }
                     </tr>
                 }
             }
@@ -131,17 +131,12 @@
     });
     $("#btnSave").click(function () {
         var OrderCommission = $('#txtOrderCommission').val();
-        var DistribSubsidy = $('#txtDistribSubsidy').val();
         var WebsiteSubsidy = $('#txtWebsiteSubsidy').val();
         var startDate = $('#selectDateStart').val();
         var endDate = $('#selectDateEnd').val();
         var groupId = $('#AddGroupId').val();
         if (OrderCommission == "" || OrderCommission == null) {
             $('#labOrderCommission').show();
-            return false;
-        }
-        if (DistribSubsidy == "" || DistribSubsidy == null) {
-            $('#labDistribSubsidy').show();
             return false;
         }
         if (WebsiteSubsidy == "" || WebsiteSubsidy == null) {
@@ -161,8 +156,9 @@
             return false;
         }
         var paramaters = {
-            "OrderCommission": OrderCommission, "DistribSubsidy": DistribSubsidy, "WebsiteSubsidy": WebsiteSubsidy, "StartDate": startDate, "EndDate": endDate
-        ,"groupId":groupId};
+            "OrderCommission": OrderCommission, "WebsiteSubsidy": WebsiteSubsidy, "StartDate": startDate, "EndDate": endDate
+        , "groupId": groupId
+        };
 
         var url = "/SubsidyManager/Save";
         $.ajax({
