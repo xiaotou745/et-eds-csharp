@@ -1,4 +1,4 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <doc>
     <assembly>
         <name>SuperManWebApi</name>
@@ -917,6 +917,11 @@
             订单数量
             </summary>
         </member>
+        <member name="P:SuperManWebApi.Models.Business.BusiOrderInfoModel.OrderFrom">
+            <summary>
+            订单来源
+            </summary>
+        </member>
         <member name="M:SuperManWebApi.Models.Business.BusiOrderInfoModelTranslator.Translate(SuperManWebApi.Models.Business.BusiOrderInfoModel)">
             <summary>
             整合订单信息  Edit by caoheyang 20150305
@@ -1069,14 +1074,11 @@
             送餐时间 客户要求的送餐时间
             </summary>
         </member>
-<<<<<<< HEAD
-=======
         <member name="P:SuperManWebApi.Models.Business.NewPostPublishOrderModel.OrderCount">
             <summary>
             订单数量
             </summary>
         </member>
->>>>>>> f6b9a2c39b6a0e3608f8b4eb909ffdec01317a66
         <member name="P:SuperManWebApi.Models.Business.NewRegisterInfoModel.B_Name">
             <summary>
             商户名称
@@ -1172,14 +1174,11 @@
             订单来源
             </summary>
         </member>
-<<<<<<< HEAD
-=======
         <member name="P:SuperManWebApi.Models.Business.OrderCancelModel.OrderType">
             <summary>
             订单类型
             </summary>
         </member>
->>>>>>> f6b9a2c39b6a0e3608f8b4eb909ffdec01317a66
         <member name="P:SuperManWebApi.Models.Business.OrderCancelResultModel.Remark">
             <summary>
             失败原因描述
@@ -1210,7 +1209,6 @@
             验证码
             </summary>
         </member>
-
         <member name="P:SuperManWebApi.Models.Business.RegisterInfoModel.GroupId">
             <summary>
             集团Id
@@ -1481,14 +1479,11 @@
             推荐人手机号
             </summary>
         </member>
-<<<<<<< HEAD
-=======
         <member name="P:SuperManWebApi.Models.Clienter.ClientRegisterInfoModel.GroupId">
             <summary>
             集团Id
             </summary>
         </member>
->>>>>>> f6b9a2c39b6a0e3608f8b4eb909ffdec01317a66
         <member name="P:SuperManWebApi.Models.Clienter.ClientRegisterResultModel.city">
             <summary>
             城市
