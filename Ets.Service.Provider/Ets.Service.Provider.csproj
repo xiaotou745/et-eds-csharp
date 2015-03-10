@@ -40,10 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="User\UserOpeation.cs" />
     <Compile Include="User\UserProvider.cs" />
-    <Compile Include="User\UserProviderhaidilao.cs" />
-    <Compile Include="User\UserProvidermeizhoudongpo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ets.Dao\Ets.Dao.csproj">

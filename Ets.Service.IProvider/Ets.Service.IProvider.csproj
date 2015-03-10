@@ -41,8 +41,6 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="User\IUser.cs" />
-    <Compile Include="User\IUserhaidilao.cs" />
-    <Compile Include="User\IUsermeizhoudongpo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ets.Model\Ets.Model.csproj">

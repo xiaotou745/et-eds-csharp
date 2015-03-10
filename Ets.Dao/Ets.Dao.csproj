@@ -41,8 +41,6 @@
   <ItemGroup>
     <Compile Include="DaoBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="User\UserDaohaidilao.cs" />
-    <Compile Include="User\UserDaomeizhoudongpo.cs" />
     <Compile Include="User\UserDao.cs" />
   </ItemGroup>
   <ItemGroup>
