@@ -71,7 +71,7 @@
                     <div class="controls">
                         <input type="file" id="fileUploadHand" required="required" name="files[]" multiple>
                         <input type="hidden" id="hidHandUpload"/>
-                        <text id="labfileuploadHand" style="color:red" hidden="hidden">不能为空</text>
+                        <input type="text" id="labfileuploadHand" readonly="readonly" hidden="hidden" style="color:red" name="labfileuploadHand" value="不能为空"/>
                     </div>
                 </div>
                 <div class="control-group">
@@ -79,7 +79,7 @@
                     <div class="controls">
                         <input type="file" placeholder="验证照片" required="required" id="fileUpload" name="files[]" multiple >
                         <input type="hidden" id="hidupload"/>
-                        <text id="labfileupload" style="color:red" hidden="hidden">不能为空</text> 
+                        <input type="text" id="labfileupload" hidden="hidden" readonly="readonly" style="color:red" name="labfileupload" value="不能为空"/>
                     </div>
                 </div>
                 <div class="control-group">
@@ -172,9 +172,9 @@
         $("#fileUploadHand").fileupload({
             url: "/UploadTest/Upload",//文件上传地址，当然也可以直接写在input的data-url属性内
             formData: {},//如果需要额外添加参数可以在这里添加
-            autoUpload: false,
+            autoUpload: true,
             acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
-            maxFileSize: 5000000, // 5 MB
+            maxFileSize: 2000000, // 5 MB
             done: function(e, results) {
                 //done方法就是上传完毕的回调函数，其他回调函数可以自行查看api
                 //注意result要和jquery的ajax的data参数区分，这个对象包含了整个请求信息
@@ -182,9 +182,12 @@
                 var result = results.result;
                 var picNames = result.Message.split('|');
                 if (result.IsSuccess) {
+                    $('#fileUploadHand').hide();
                     $('#hidHandUpload').val(picNames[0]);
+                    $('#labfileuploadHand').val(picNames[0]+"-上传成功").show();
                 } else {
                     alert(result.Message);
+                    $('#fileUploadHand').show();
                     $('#labfileuploadHand').val(picNames[0]).show();
                 }
             }
@@ -193,9 +196,9 @@
         $("#fileUpload").fileupload({
             url: "/UploadTest/Upload",//文件上传地址，当然也可以直接写在input的data-url属性内
             formData: {},//如果需要额外添加参数可以在这里添加
-            autoUpload: false,
+            autoUpload: true,
             acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
-            maxFileSize: 5000000, // 5 MB
+            maxFileSize: 2000000, // 5 MB
             done: function (e, results) {
                 //done方法就是上传完毕的回调函数，其他回调函数可以自行查看api
                 //注意result要和jquery的ajax的data参数区分，这个对象包含了整个请求信息
@@ -203,9 +206,12 @@
                 var result = results.result;
                 var picNames = result.Message.split('|');
                 if (result.IsSuccess) {
-                    $('#hidupload').val(picNames[0]).show();
+                    $('#fileUpload').hide();
+                    $('#hidupload').val(picNames[0]);
+                    $('#labfileupload').val(picNames[0] + "-上传成功").show();
                 } else {
                     alert(result.Message);
+                    $('#fileUpload').show();
                     $('#labfileupload').val(picNames[0]).show();
                 }
             }
