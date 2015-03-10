@@ -30,7 +30,7 @@ namespace SuperManBusinessLogic.Order_Logic
             if (from.PubDate.HasValue)
             {
                 to.PubDate = from.PubDate.Value.ToString();
-            }
+            } 
             to.ReceviceName = from.ReceviceName;
             to.RecevicePhoneNo = from.RecevicePhoneNo;
             to.ReceviceAddress = from.ReceviceAddress;
@@ -42,6 +42,7 @@ namespace SuperManBusinessLogic.Order_Logic
             to.WebsiteSubsidy = from.WebsiteSubsidy;
             to.Remark = from.Remark;
             to.Status = from.Status;
+            
             to.OriginalOrderNo = from.OriginalOrderNo;//原平台订单号
             to.OriginalOrderId = from.OriginalOrderId;//原平台订单id
             if (from.business != null) {

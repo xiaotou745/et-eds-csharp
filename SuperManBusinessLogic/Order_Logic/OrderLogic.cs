@@ -401,13 +401,23 @@ namespace SuperManBusinessLogic.Order_Logic
         /// </summary>
         /// <param name="orderNO">第三方平台的原订单号</param>
         /// <param name="orderFrom">订单来源</param>
+        /// <param name="orderType">订单类型</param>
         /// <returns></returns>
-        public order GetOrderByOrderNoAndOrderFrom(string orderNO, int orderFrom)
+        public order GetOrderByOrderNoAndOrderFrom(string orderNO, int orderFrom,int orderType)
         {
             using (var dbEntity = new supermanEntities())
-            {
-                var query = dbEntity.order.Where(p => p.OriginalOrderNo == orderNO && p.OrderFrom == orderFrom);
-                return query.FirstOrDefault();
+            { 
+                if (orderType > 0)
+                {
+                    var query = dbEntity.order.Where(p => p.OriginalOrderNo == orderNO && p.OrderFrom == orderFrom && p.OrderType == orderType);
+                    return query.FirstOrDefault();
+                }
+                else
+                {
+                    var query = dbEntity.order.Where(p => p.OriginalOrderNo == orderNO && p.OrderFrom == orderFrom);
+                    return query.FirstOrDefault();
+                }
+                
             }
         }
 
@@ -428,7 +438,7 @@ namespace SuperManBusinessLogic.Order_Logic
             if (model.Amount == null)
                 return 0;
             else
-                return Convert.ToDecimal(model.Amount) * commissionRate + distribe * orderCount;//计算佣金
+                return Decimal.Round(Convert.ToDecimal(model.Amount) * commissionRate + distribe * orderCount,2);//计算佣金
         }
 
         /// <summary>
@@ -440,7 +450,7 @@ namespace SuperManBusinessLogic.Order_Logic
             decimal amount = model.Amount == null ? 0 : Convert.ToDecimal(model.Amount); //佣金比例 
             int orderCount = model.OrderCount == null ? 0 : Convert.ToInt32(model.OrderCount); //佣金比例 
             decimal distribSubsidy = model.DistribSubsidy == null ? 0 : Convert.ToDecimal(model.DistribSubsidy);  //外送费
-            return amount + orderCount * distribSubsidy; 
+            return Decimal.Round(amount + orderCount * distribSubsidy, 2); 
         }
 
     }

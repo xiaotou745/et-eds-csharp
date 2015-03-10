@@ -45,6 +45,11 @@ namespace SuperManWebApi.Models.Clienter
         /// 推荐人手机号
         /// </summary>
         public string recommendPhone { get; set; }
+        /// <summary>
+        /// 集团Id
+        /// </summary>
+        public int GroupId { get; set; }
+
     }
     public class ClientRegisterResultModel
     {
@@ -83,11 +88,15 @@ namespace SuperManWebApi.Models.Clienter
             to.City = from.City;
             to.CityId = from.CityId;
             to.recommendPhone = from.recommendPhone;
-            //海底捞
-            if (ConfigSettings.Instance.IsGroupPush)   //TODO 暂时有效
+            if (from.GroupId != 0)
             {
-                to.GroupId = 2;
+                to.GroupId = from.GroupId;
             }
+            //海底捞
+            //if (ConfigSettings.Instance.IsGroupPush)   //TODO 暂时有效
+            //{
+            //    to.GroupId = 2;
+            //}
             return to;
         }
     }
