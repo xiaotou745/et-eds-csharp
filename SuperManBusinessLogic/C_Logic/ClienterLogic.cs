@@ -216,7 +216,8 @@ namespace SuperManBusinessLogic.C_Logic
             }
             catch (Exception ex)
             {
-                LogHelper.LogWriter("添加超人异常", new { ex = ex, clienter = clienter });
+                LogHelper.LogWriter(clienter, ex);
+                result = false;
             }
             return result;
         }

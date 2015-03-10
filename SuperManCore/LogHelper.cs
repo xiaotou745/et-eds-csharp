@@ -45,7 +45,7 @@ namespace SuperManCore
                //写日志
                logger.Info(logstr);
            }
-           catch (Exception)
+           catch (Exception ex)
            {
 
                throw;

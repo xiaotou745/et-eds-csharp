@@ -69,7 +69,7 @@
                 <div class="control-group">
                     <label class="control-label" for="fileUploadHand"><span style="color:red;">*</span>手持照片</label>
                     <div class="controls">
-                        <input type="file" id="fileUploadHand" required="required" name="files[]" multiple>
+                        <input type="file" id="fileUploadHand" required="required" name="fileUploadHand" multiple>
                         <input type="hidden" id="hidHandUpload"/>
                         <input type="text" id="labfileuploadHand" readonly="readonly" hidden="hidden" style="color:red" name="labfileuploadHand" value="不能为空"/>
                     </div>
@@ -77,7 +77,7 @@
                 <div class="control-group">
                     <label class="control-label" for="fileUpload"><span style="color:red;">*</span>照片</label>
                     <div class="controls">
-                        <input type="file" placeholder="验证照片" required="required" id="fileUpload" name="files[]" multiple >
+                        <input type="file" placeholder="验证照片" required="required" id="fileUpload" name="fileUpload" multiple >
                         <input type="hidden" id="hidupload"/>
                         <input type="text" id="labfileupload" hidden="hidden" readonly="readonly" style="color:red" name="labfileupload" value="不能为空"/>
                     </div>
@@ -155,8 +155,8 @@
     $(function () {
         $('#hidupload').val(''); //页面加载时清空隐藏域的值。
         $('#hidHandUpload').val(''); //页面加载时清空隐藏域的值。
-        $("#fileUpload").val("");
-        $("#fileUploadHand").val('');
+        $("#fileUpload").val("").show();
+        $("#fileUploadHand").val('').show();
         //查询
         $("#btnSearch").on('click', function () {
             criteria = {
@@ -261,13 +261,13 @@
                     $('#labfileuploadHand').val("不能为空").show();
                     result = false;
                 } else {
-                    $('#labfileuploadHand').hide();
+                    //$('#labfileuploadHand').hide();
                 }
                 if (hidupload == "" || hidupload == null) {  //照片
                     $('#labfileupload').val("不能为空").show();
                     result = false;
                 } else {
-                    $('#labfileupload').hide();
+                    //$('#labfileupload').hide();
                 }
 
 

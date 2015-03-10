@@ -98,7 +98,12 @@ namespace SuperMan.Controllers
                 clienter.Password = "edaisong";
             clienter.Password = MD5Helper.MD5(clienter.Password);
             clienter.Status = ConstValues.CLIENTER_AUDITPASS;
-            return Json(new ResultModel(ClienterLogic.clienterLogic().Add(clienter), ""));
+            bool result = ClienterLogic.clienterLogic().Add(clienter);
+            if (result)
+            {
+                return Json(new ResultModel(true, "成功"));
+            }
+            return Json(new ResultModel(result, "添加超人失败，请重试!"));
         }
     }
 }
