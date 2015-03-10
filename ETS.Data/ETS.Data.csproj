@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{BE8B43E2-DF1E-4BFD-B4EF-63E3E0F53EA2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ETS</RootNamespace>
+    <AssemblyName>ETS.Data</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Common.Logging">
+      <HintPath>..\lib\Common.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Dao\CannotCreateConnectionHolderException.cs" />
+    <Compile Include="Dao\ConnStringCreateException.cs" />
+    <Compile Include="Dao\DataAccessException.cs" />
+    <Compile Include="Dao\DbProviderException.cs" />
+    <Compile Include="Dao\InvalidConnectionHolderException.cs" />
+    <Compile Include="Dao\InvalidUnitOfWorkDefinitionException.cs" />
+    <Compile Include="Dao\InValidUnitOfWorkException.cs" />
+    <Compile Include="Dao\SqlExecuteResultNotValidedException.cs" />
+    <Compile Include="Dao\TransactionTimeoutException.cs" />
+    <Compile Include="Dao\TypeMismatchDataAccessException.cs" />
+    <Compile Include="Data\AbstractDaoBase.cs" />
+    <Compile Include="Data\ConnString\Common\ConfigConnectionString.cs" />
+    <Compile Include="Data\ConnString\Common\ConfigConnStringCreator.cs" />
+    <Compile Include="Data\ConnString\Common\ConnectionStringFactory.cs" />
+    <Compile Include="Data\ConnString\Common\ConnStringUtil.cs" />
+    <Compile Include="Data\ConnString\Common\IConnectionString.cs" />
+    <Compile Include="Data\ConnString\Common\IConnectionStringCreator.cs" />
+    <Compile Include="Data\ConnString\DatabaseType.cs" />
+    <Compile Include="Data\ConnString\WMS\WMSConnectionString.cs" />
+    <Compile Include="Data\ConnString\WMS\WMSConnectionStrings.cs" />
+    <Compile Include="Data\ConnString\WMS\WMSConnStringCreator.cs" />
+    <Compile Include="Data\ConnString\WMS\WMSConnStringSynchronizationManager.cs" />
+    <Compile Include="Data\ConnString\WMS\WMSConnStringUtil.cs" />
+    <Compile Include="Data\Core\ConnectionHolder.cs" />
+    <Compile Include="Data\Core\ConnectionTxPair.cs" />
+    <Compile Include="Data\Core\ConnectionUtils.cs" />
+    <Compile Include="Data\Core\DbParameters.cs" />
+    <Compile Include="Data\Core\DbProvider.cs" />
+    <Compile Include="Data\Core\DbProviderFactoryObj.cs" />
+    <Compile Include="Data\Core\IDbParameters.cs" />
+    <Compile Include="Data\Core\IDbProvider.cs" />
+    <Compile Include="Data\Core\ParameterUtils.cs" />
+    <Compile Include="Data\Core\TransactionSynchronizationManager.cs" />
+    <Compile Include="Data\DaoBaseOfWMS.cs" />
+    <Compile Include="Data\DbHelper.cs" />
+    <Compile Include="Data\DbLogManager.cs" />
+    <Compile Include="Data\Generic\IResultSetExtractor.cs" />
+    <Compile Include="Data\Generic\IRowMapper.cs" />
+    <Compile Include="Data\Generic\RowMapperResultSetExtractor.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Transaction\Common\AbstractUnitOfWork.cs" />
+    <Compile Include="Transaction\Common\AdoNetUnitOfWork.cs" />
+    <Compile Include="Transaction\Common\AdoNetUnitOfWorkFactory.cs" />
+    <Compile Include="Transaction\Common\DefaultUnitOfWorkDefinition.cs" />
+    <Compile Include="Transaction\Common\ITransactionScopeFactory.cs" />
+    <Compile Include="Transaction\Common\IUnitOfWork.cs" />
+    <Compile Include="Transaction\Common\IUnitOfWorkDefinition.cs" />
+    <Compile Include="Transaction\Common\IUnitOfWorkFactory.cs" />
+    <Compile Include="Transaction\Common\TransactionScopeUnitOfWork.cs" />
+    <Compile Include="Transaction\Common\TransactionScopeUnitOfWorkFactory.cs" />
+    <Compile Include="Transaction\Common\UnitOfWorkDefinition.cs" />
+    <Compile Include="Transaction\Common\UnitOfWorkFactory.cs" />
+    <Compile Include="Transaction\Common\UnitOfWorkStackManager.cs" />
+    <Compile Include="Transaction\DZUtilOfWorkFactory.cs" />
+    <Compile Include="Transaction\WMS\ConnectionStringsUtil.cs" />
+    <Compile Include="Transaction\WMS\IWMSUnitOfWorkDefinition.cs" />
+    <Compile Include="Transaction\WMS\UnitOfWorkUtil.cs" />
+    <Compile Include="Transaction\WMS\WMSDatabase.cs" />
+    <Compile Include="Transaction\WMS\WMSUnitOfWorkDefinition.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ETS.Core\ETS.Core.csproj">
+      <Project>{bba67a86-afd6-46f2-bbd9-5dfb5bfdafe2}</Project>
+      <Name>ETS.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
