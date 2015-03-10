@@ -2,7 +2,7 @@
     var currentId;
     var currentName;
 
-    var _orderView=false;
+    var _orderView = false;
     var _supermanView = false;
     var _supermanCheck = false;
     var _supermanclear = false;
@@ -10,10 +10,10 @@
     var _businessCheck = false;
     var _subsidySet = false;
     //设置权限弹出框
-    $(".setAuthority").bind("click", function () {        
+    $(".setAuthority").bind("click", function () {
         currentId = $(this).closest("tr").attr("id");
         var accountId = { "id": currentId };
-    
+
         $.get("/AuthorityManager/AuthorityEdit", accountId, function (data) {
             $("#_AuthorityDiv").html(data);
             adminjs.openwinbox('#AuthorityManagerShow');
@@ -72,14 +72,14 @@
         });
     });
     // close box 
-    $(document).on("click",".J_closebox" ,function () {
+    $(document).on("click", ".J_closebox", function () {
         adminjs.closewinbox('.add-openbox');
         return false;
     });
 
     /*配置权限保存功能*/
-    $(document).on("click", "#btnSetAuthority",function(){
-    // $("#btnSetAuthority").bind("click", function () {
+    $(document).on("click", "#btnSetAuthority", function () {
+        // $("#btnSetAuthority").bind("click", function () {
         var id = currentId;
         var orderView = $('#ck_orderView').is(':checked');
         var supermanView = $('#ck_supermanView').is(':checked');
@@ -88,12 +88,12 @@
         var businessView = $('#businessView').is(':checked');
         var businessCheck = $('#businessCheck').is(':checked');
         var subsidySet = $('#subsidySet').is(':checked');
-    
+
         var auids = new Array();
-        $('#AuthorityManagerShow input[type="checkbox"]:checked').each(function() {
+        $('#AuthorityManagerShow input[type="checkbox"]:checked').each(function () {
             // alert($(this).attr("authorityfuncid"));
             auids.push($(this).attr("authorityfuncid"));
-        }); 
+        });
         var AuthorityListModel = { "id": id, "auths": auids };
         $.post("/AuthorityManager/saveAuthority", AuthorityListModel, function (data) {
             if (data) {
@@ -113,7 +113,6 @@
     //修改密码
     $("#btnModifyPwd").click(function () {
         $("#ModifyPwdForm").validate({
-
             rules: {
                 modifypassword: {
                     required: true,
@@ -158,27 +157,27 @@
                 });
             }
         });
-        //查看
-        $(".accountView").bind("click", function () {
+    });
+    //查看
+    $(".accountView").bind("click", function () {
 
-        });
-        //删除
-        $(".accountDel").bind("click", function () {
-            var id = $(this).closest("tr").attr("id");
-            var paramaters = { "id": id };
-            var url = "/AuthorityManager/Delete";
-            $.ajax({
-                type: 'POST',
-                url: url,
-                data: paramaters,
-                success: function (result) {
-                    if (result.IsSuccess) {
-                        window.location.href = "/AuthorityManager/AuthorityManager";
-                    } else {
-                        alert(result.Message);
-                    }
+    });
+    //删除
+    $(".accountDel").bind("click", function () {
+        var id = $(this).closest("tr").attr("id");
+        var paramaters = { "id": id };
+        var url = "/AuthorityManager/Delete";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    window.location.href = "/AuthorityManager/AuthorityManager";
+                } else {
+                    alert(result.Message);
                 }
-            });
+            }
         });
-    })
+    });
 });
