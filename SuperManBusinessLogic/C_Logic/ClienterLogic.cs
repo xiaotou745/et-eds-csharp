@@ -207,8 +207,10 @@ namespace SuperManBusinessLogic.C_Logic
                 {
                     if (clienter != null)
                     {
+                        db.Configuration.ValidateOnSaveEnabled = false;
                         db.clienter.Add(clienter);
                         int i = db.SaveChanges();
+                        db.Configuration.ValidateOnSaveEnabled = true;  
                         if (i != 0)
                             result = true;
                     }
