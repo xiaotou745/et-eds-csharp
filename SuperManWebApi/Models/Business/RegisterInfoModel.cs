@@ -60,7 +60,7 @@ namespace SuperManWebApi.Models.Business
             {
                 to.GroupId = from.GroupId;
             }
-            
+            to.CommissionTypeId = 1;
             ////海底捞
             //if (ConfigSettings.Instance.IsGroupPush)   //TODO 暂时有效
             //{
