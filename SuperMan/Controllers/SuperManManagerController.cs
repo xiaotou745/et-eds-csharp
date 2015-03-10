@@ -85,7 +85,7 @@ namespace SuperMan.Controllers
 
 
         /// <summary>
-        /// 帐户清零
+        /// 注册超人
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>

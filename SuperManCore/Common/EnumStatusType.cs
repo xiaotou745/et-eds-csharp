@@ -19,9 +19,9 @@ namespace SuperManCore.Common
     }
     public enum LoginModelStatus
     {
-        Success=1,
+        Success=0,
         [DisplayText("用户名或密码错误")]
-        InvalidCredential=0
+        InvalidCredential=1
     }
     public enum PubOrderStatus
     {
@@ -37,9 +37,9 @@ namespace SuperManCore.Common
     }
     public enum GetOrdersNoLoginStatus
     {
-        Success=1,
+        Success=0,
         [DisplayText("获取订单失败")]
-        FailedGetOrders=0
+        FailedGetOrders=1
     }
     public enum SendCheckCodeStatus
     {
