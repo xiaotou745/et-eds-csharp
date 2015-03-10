@@ -57,6 +57,11 @@ namespace SuperManWebApi.Models.Business
         /// </summary>
         public int OrderCount { get; set; }
 
+        /// <summary>
+        /// 订单来源
+        /// </summary>
+        public int OrderFrom { get; set; }
+
     }
     public class BusiOrderInfoModelTranslator : TranslatorBase<order, BusiOrderInfoModel>
     {
@@ -87,10 +92,13 @@ namespace SuperManWebApi.Models.Business
                 to.ReceviceCity = business.City; //城市
                 to.DistribSubsidy = business.DistribSubsidy;//设置外送费,从商户中找。
             }
-            //海底捞
+            
             if (ConfigSettings.Instance.IsGroupPush)
             {
-                to.OrderFrom = 2;
+                if (from.OrderFrom != 0)
+                    to.OrderFrom = from.OrderFrom;
+                else
+                    to.OrderFrom = 0;
             }
             to.Remark = from.Remark;
             to.ReceviceName = from.receviceName;
