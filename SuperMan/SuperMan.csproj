@@ -516,6 +516,7 @@
     <Content Include="Views\HomeCount\_PartialSuperManCount.cshtml" />
     <Content Include="Views\HomeCount\_PartialBisuCount.cshtml" />
     <Content Include="Views\UploadTest\Index.cshtml" />
+    <Content Include="Views\BusinessManager\BusinessSettlementSet.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
