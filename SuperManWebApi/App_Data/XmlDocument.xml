@@ -917,6 +917,11 @@
             订单数量
             </summary>
         </member>
+        <member name="P:SuperManWebApi.Models.Business.BusiOrderInfoModel.OrderFrom">
+            <summary>
+            订单来源
+            </summary>
+        </member>
         <member name="M:SuperManWebApi.Models.Business.BusiOrderInfoModelTranslator.Translate(SuperManWebApi.Models.Business.BusiOrderInfoModel)">
             <summary>
             整合订单信息  Edit by caoheyang 20150305
