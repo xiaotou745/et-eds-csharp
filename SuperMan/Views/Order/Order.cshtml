@@ -70,7 +70,9 @@
         //查询
         $("#btnSearch").on('click', function () { 
             var startDate = $('#txtOrderPubStart').val();
+            alert(startDate);
             var endDate = $('#txtOrderPubEnd').val();
+            alert(endDate);
             if (endDate < startDate) {
                 bootbox.alert("开始日期不能大于结束日期");
                 return false;
