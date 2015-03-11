@@ -39,6 +39,7 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
@@ -48,11 +49,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cacheing\AbstractCache.cs" />
+    <Compile Include="Cacheing\CacheFactory.cs" />
+    <Compile Include="Cacheing\LocalCache.cs" />
+    <Compile Include="Config.cs" />
     <Compile Include="Expand\AttribDescription.cs" />
     <Compile Include="Expand\EnumerableExpand.cs" />
     <Compile Include="Extension\DataRowExtension.cs" />
     <Compile Include="Extension\DataSetExtenstion.cs" />
     <Compile Include="Extension\DataTableExtension.cs" />
+    <Compile Include="Extension\DataTableHelper.cs" />
     <Compile Include="Extension\ListExtensions.cs" />
     <Compile Include="Extension\StringExtension.cs" />
     <Compile Include="IO\Common.cs" />

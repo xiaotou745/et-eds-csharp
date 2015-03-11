@@ -334,6 +334,10 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ETS.Core\ETS.Core.csproj">
+      <Project>{bba67a86-afd6-46f2-bbd9-5dfb5bfdafe2}</Project>
+      <Name>ETS.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SuperManBusinessLogic\SuperManBusinessLogic.csproj">
       <Project>{72ca336e-dc5e-4f98-9275-3a3a258189d6}</Project>
       <Name>SuperManBusinessLogic</Name>

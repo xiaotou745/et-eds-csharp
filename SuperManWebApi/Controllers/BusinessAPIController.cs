@@ -1,4 +1,5 @@
-﻿using SuperManCore;
+﻿using System.Web.Caching;
+using SuperManCore;
 using SuperManCore.Common;
 using SuperManWebApi.Models;
 using SuperManWebApi.Models.Business;
@@ -23,6 +24,11 @@ namespace SuperManWebApi.Controllers
 {
     public class BusinessAPIController : ApiController
     {
+        /// <summary>
+        /// 线程安全
+        /// </summary>
+        private static object lockHelper = new object();
+
         /// <summary>
         ///  B端注册 
         /// </summary>
@@ -305,27 +311,76 @@ namespace SuperManWebApi.Controllers
             }
         }
 
-        /// <summary> 
-        /// 发布订单 Edit by caoheyang 20150305
+      
+        /// <summary>
+        /// 商户发布订单接口  2015.3.11 平扬 增加订单重复性验证
         /// </summary>
+        /// <param name="model">订单数据</param>
         /// <returns></returns>
         [ActionStatus(typeof(PubOrderStatus))]
         [HttpPost]
         public ResultModel<BusiOrderResultModel> PostPublishOrder_B(BusiOrderInfoModel model)
         {
-            if (model.OrderCount<=0||model.OrderCount>15)   //判断录入订单数量是否符合要求
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
-            //System.Diagnostics.Debug.WriteLine("getPost" + Guid.NewGuid());
-            order dborder = BusiOrderInfoModelTranslator.Instance.Translate(model);  //整合订单信息
-            bool result = OrderLogic.orderLogic().AddModel(dborder);    //添加订单记录，并且触发极光推送。          
-            if(result)
+            #region 缓存验证 
+            
+            //该订单是否已经插入过
+            bool HasExist = false;
+            //缓存键
+            string cacheKey = "PostPublishOrderB." + model.userId; 
+            //当前订单在缓存中的唯一值
+            string cacheValue = model.userId.ToString()+"."+model.OrderSign;
+            //缓存值List<string>,存储商户所有已插入订单唯一凭证
+            var cacheList = ETS.Cacheing.CacheFactory.Instance[cacheKey];
+            if (cacheList == null)//该商户没有缓存
             {
-                BusiOrderResultModel resultModel = new BusiOrderResultModel { userId = model.userId };
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
+                HasExist = false; 
+                cacheList = new List<string>();
+            }
+            else//有缓存
+            {
+                var listCache = (List<string>)cacheList;
+                if (listCache.Contains(cacheValue))//该订单缓存过(代表已经插入过)
+                {
+                    HasExist = true; 
+                }
+            }
+            #endregion
+
+            if (!HasExist)
+            {
+                if (model.OrderCount <= 0 || model.OrderCount > 15)   //判断录入订单数量是否符合要求
+                    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
+                order dborder = BusiOrderInfoModelTranslator.Instance.Translate(model);  //整合订单信息
+                bool result = OrderLogic.orderLogic().AddModel(dborder);    //添加订单记录，并且触发极光推送。          
+                if (result)
+                {
+                    #region 缓存操作 
+                    lock (lockHelper)
+                    {
+                        //加入缓存
+                        var listCache = (List<string>)cacheList;
+                        listCache.Add(cacheValue);
+                        ETS.Cacheing.CacheFactory.Instance.RemoveObject(cacheKey);
+                        ETS.Cacheing.CacheFactory.Instance.AddObject(cacheKey, listCache, DateTime.Now.AddHours(1));
+                    }
+                    #endregion
+                    BusiOrderResultModel resultModel = new BusiOrderResultModel {userId = model.userId};
+                    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
+                }
+                else
+                {
+                    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.InvalidPubOrder);   
+                }
+                    
             }
             else
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.InvalidPubOrder);         
-        }
+            { 
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderHasExist);
+            }
+            
+                
+        } 
+
         /// <summary>
         /// 获取订单列表
         /// </summary>
@@ -335,10 +390,10 @@ namespace SuperManWebApi.Controllers
         public ResultModel<BusiGetOrderModel[]> GetOrderList_B(int userId, int? pagedSize, int? pagedIndex, sbyte? Status)
         {
             var pIndex = pagedIndex.HasValue ? pagedIndex.Value : 0;
-           var pSize = pagedSize.HasValue ? pagedSize.Value : int.MaxValue;
+            var pSize = pagedSize.HasValue ? pagedSize.Value : int.MaxValue;
             var criteria = new BusiOrderSearchCriteria()
             {
-                 PagingRequest = new PagingResult(pIndex, pSize),
+                PagingRequest = new PagingResult(pIndex, pSize),
                 userId = userId,
                 Status = Status
             };

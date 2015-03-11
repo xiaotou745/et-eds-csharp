@@ -55,6 +55,36 @@ namespace SuperManBusinessLogic.B_Logic
             return res;
         }
 
+        /// <summary>
+        /// 设置商家结算比例
+        /// </summary>
+        /// <param name="id">商家id</param>
+        /// <param name="commission">结算比例</param>
+        /// <returns></returns>
+        public bool setCommission(int id,decimal commission)
+        { 
+            bool bResult = false;
+            using (var db = new supermanEntities())
+            {
+                db.Configuration.ValidateOnSaveEnabled = false;
+                var query = db.business.FirstOrDefault(p => p.Id == id);
+                if (query != null)
+                {
+                    query.BusinessCommission = commission;
+                    var i = db.SaveChanges();
+                    if (i != 0)
+                        bResult = true;
+                }
+                db.Configuration.ValidateOnSaveEnabled = true;
+            }
+            return bResult;
+        }
+
+        /// <summary>
+        /// 根据条件查询商户信息
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
         public BusinessManage GetBusinesses(BusinessSearchCriteria criteria)
         {
             using (var db = new supermanEntities())
@@ -71,6 +101,10 @@ namespace SuperManBusinessLogic.B_Logic
                 if (criteria.Status != -1)
                 {
                     items = items.Where(p => p.Status == criteria.Status);
+                }
+                if (criteria.BusinessCommission > 0)
+                {
+                    items = items.Where(p => p.BusinessCommission == criteria.BusinessCommission);
                 }
                 if (criteria.GroupId != null)
                 {

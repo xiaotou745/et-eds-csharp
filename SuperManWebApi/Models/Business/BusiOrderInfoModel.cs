@@ -62,6 +62,11 @@ namespace SuperManWebApi.Models.Business
         /// </summary>
         public int OrderFrom { get; set; }
 
+        /// <summary>
+        /// 订单签名（保证唯一性）
+        /// </summary>
+        public string OrderSign { get; set; }
+
     }
     public class BusiOrderInfoModelTranslator : TranslatorBase<order, BusiOrderInfoModel>
     {

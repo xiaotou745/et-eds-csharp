@@ -26,6 +26,8 @@
                     </select>
                     <span class="">商户电话: </span>
                     <input id="txtBusinessPhone" type="text" />
+                     <span class="">结算比例: </span>
+                    <input id="txtBusinessCommission" type="text" />
                     <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" />
                     <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                 </td>
@@ -36,8 +38,39 @@
         @Html.Partial("_BusinessManageList", Model.businessManageList)
     </div>
 </div>
+@*结算比例弹窗*@
+<div class="BusinessCommissionDish">
+    <div class="add-openbox add-form" id="BusinessCommissionDiv" style="width:500px">
+        <h2>
+            <p id="statusFin">设置结算比例</p>
+        </h2>
+     <fieldset>
+            <input type="hidden" id="busCommissionHid" value="0"/>
+        <div class="control-group">
+            <label >商家</label> 
+                <input  name="busCommissionName" id="busCommissionName" readonly="readonly" type="text">
+        </div> 
+        <div class="control-group">
+            <label >地址</label> 
+                <input  name="busCommissionAddress" id="busCommissionAddress" style="width: 200px;" readonly="readonly" type="text">
+        </div> 
+         <div class="control-group">
+             <label >电话</label> 
+             <input  name="busCommissionPhone" id="busCommissionPhone" readonly="readonly" type="text">
+         </div>
+        <div class="control-group">
+            <label >结算比例</label> 
+                <input  name="busCommissionText" id="busCommissionText" style="width: 45px;" type="text">%
+        </div>
+</fieldset>
+        <p class="btnbox">
+                <input value="确认" type="button" id="btnCommissionConfim" class="yesBtn" />                
+                <input value="关闭" type="button" class="J_closebox qxBtn" />
+            </p>
+    </div>
+</div>
 @*弹出图片*@
-<div class="selectSupplierDish">
+<div class="selectCommonDish">
     <div class="add-openbox add-form" id="BusiPicShow" style="width:500px">
         <h2>
             <p id="statusFin">查看图片</p>
@@ -63,6 +96,7 @@
             criteria = {
                 BusinessName: $("#txtBusinessName").val(), //商户名称
                 BusinessPhone: $("#txtBusinessPhone").val(),////商户电话
+                BusinessCommission: $("#txtBusinessCommission").val(),////商户结算比例
                 status: $("#businessStatus").val(),
                 GroupId: $("#txtGroupId").val(),
                 PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE }
@@ -86,6 +120,34 @@
                     $("#dataList").html(data);
                 });
     };
+    //设置结算比例
+    $("#btnCommissionConfim").on('click', function () {
+        var busCommissionHid = $("#busCommissionHid").val(); //商户id
+        var busCommissionText = $("#busCommissionText").val(); ////商户结算比例
+        if (busCommissionText < 0) {
+            alert("请输入大于零的值!");
+            return;
+        }
+        if (isNaN(busCommissionText)) { alert("请输入正确的数字!");
+            return;
+        }
+        var paramaters = { "id": busCommissionHid, "commission": busCommissionText };
+        var url = "/BusinessManager/SetCommission";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert("设置成功!");
+                    window.location.href = "/BusinessManager/BusinessManager";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    });
+    
     //关闭弹层
     $('.J_closebox').click(function () {
         adminjs.closewinbox('.add-openbox');

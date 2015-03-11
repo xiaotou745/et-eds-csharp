@@ -67,5 +67,23 @@ namespace SuperMan.Controllers
         {
             return View("BusinessSettlementSet");
         }
+
+        /// <summary>
+        /// 设置商家结算比例
+        /// </summary>
+        /// <param name="id">商家id</param>
+        /// <param name="commission">结算比例</param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult SetCommission(int id,decimal commission)
+        {
+            if (commission <= 0)
+            {
+                return Json(new ResultModel(false,"结算比例不能小于零!"), JsonRequestBehavior.AllowGet);
+            }
+            return Json(new ResultModel(BusiLogic.busiLogic().setCommission(id, commission), "成功!"), JsonRequestBehavior.AllowGet);
+        }
+
+        
     }
 }
