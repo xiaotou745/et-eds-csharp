@@ -379,10 +379,10 @@ namespace SuperManWebApi.Controllers
         public ResultModel<BusiGetOrderModel[]> GetOrderList_B(int userId, int? pagedSize, int? pagedIndex, sbyte? Status)
         {
             var pIndex = pagedIndex.HasValue ? pagedIndex.Value : 0;
-           var pSize = pagedSize.HasValue ? pagedSize.Value : int.MaxValue;
+            var pSize = pagedSize.HasValue ? pagedSize.Value : int.MaxValue;
             var criteria = new BusiOrderSearchCriteria()
             {
-                 PagingRequest = new PagingResult(pIndex, pSize),
+                PagingRequest = new PagingResult(pIndex, pSize),
                 userId = userId,
                 Status = Status
             };

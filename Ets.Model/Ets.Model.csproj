@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ParameterModel\Bussiness\BussOrderParaModelApp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserModel.cs" />
   </ItemGroup>
@@ -49,7 +50,6 @@
     <Folder Include="DomainModel\Bussiness\" />
     <Folder Include="DomainModel\Clienter\" />
     <Folder Include="DomainModel\Order\" />
-    <Folder Include="ParameterModel\Bussiness\" />
     <Folder Include="ParameterModel\Clienter\" />
     <Folder Include="ParameterModel\Order\" />
   </ItemGroup>
