@@ -19,7 +19,7 @@ namespace Ets.Dao.User
         /// 商户获取订单   add by caoheyang 20150311
         /// </summary>
         /// <param name="paraModel">查询条件实体</param>
-        public virtual void GetOrdersAppToSql(Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp paraModel)
+        public virtual PageInfo<T> GetOrdersAppToSql<T>(Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp paraModel)
         {
             string whereStr = "1=1 ";  //where查询条件实体类
             string orderByColumn = "a.id ";  //排序条件
@@ -34,8 +34,7 @@ namespace Ets.Dao.User
                 else
                     whereStr = whereStr + " and a.Status=" + paraModel.Status.ToString();
             }
-            PageInfo<Ets.Model.UserModel> pinfo = new PageHelper().GetPages<Ets.Model.UserModel>(Config.SuperMan_Read, 1, "1=1", "id", "id", "account", 1, true);
-            
+            return new PageHelper().GetPages<T>(Config.SuperMan_Read, 1, whereStr, orderByColumn, columnList, tableList, 10, true);  
         }
     }
 }

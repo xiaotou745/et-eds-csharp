@@ -1,6 +1,7 @@
 ﻿using Ets.Dao.User;
 using Ets.Service.IProvider;
 using Ets.Service.IProvider.User;
+using ETS.Data.PageData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,9 +21,9 @@ namespace Ets.Service.Provider.User
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public virtual IList<int> GetOrdersApp()
+        public virtual PageInfo<T> GetOrdersApp<T>(Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp paraModel)
         {
-            return null;
+            return new BusinessDao().GetOrdersAppToSql<T>(paraModel);
         }
     }
 }
