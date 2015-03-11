@@ -38,5 +38,21 @@ namespace SuperMan.Controllers
             bool b = SubsidyLogic.subsidyLogic().SaveData(model);
             return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
         }
+        /// <summary>
+        /// 结算功能
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult SettlementFunction()
+        {
+            account account = HttpContext.Session["user"] as account;
+            if (account == null)
+            {
+                Response.Redirect("/account/login");
+                return null;
+            }
+            
+            return View();
+        }
     }
 }

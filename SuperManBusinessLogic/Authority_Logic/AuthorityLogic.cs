@@ -82,7 +82,7 @@ namespace SuperManBusinessLogic.Authority_Logic
             bool bResult = false;
             using (var db = new supermanEntities())
             {
-                var oldauid = db.account.Where(a => a.UserName == account.UserName || a.LoginName == account.LoginName).ToList();
+                var oldauid = db.account.Where(a => (a.UserName == account.UserName || a.LoginName == account.LoginName) && a.Status == 1 ).ToList();
                 if ( oldauid.Count > 0)
                 {
                     bResult=true;

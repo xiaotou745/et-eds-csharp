@@ -68,6 +68,8 @@
     <Compile Include="Models\OrderCountModel.cs" />
     <Compile Include="Models\OrderModel.cs" />
     <Compile Include="Models\OrderManage.cs" />
+    <Compile Include="Models\SettlementFucntionViewModel.cs" />
+    <Compile Include="Models\SettlementManage.cs" />
     <Compile Include="Models\SubsidyManage.cs" />
     <Compile Include="Models\SubsidyModel.cs" />
     <Compile Include="Models\SubsidyResultModel.cs" />

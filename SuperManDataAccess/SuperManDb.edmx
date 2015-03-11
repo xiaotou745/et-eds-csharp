@@ -91,7 +91,6 @@
           <Property Name="Province" Type="nvarchar" MaxLength="20" />
           <Property Name="CommissionTypeId" Type="int" />
           <Property Name="DistribSubsidy" Type="numeric" Precision="5" Scale="2" />
-          <Property Name="BusinessCommission" Type="numeric" Precision="5" Scale="2" />
         </EntityType>
         <EntityType Name="channel">
           <Key>
@@ -133,6 +132,7 @@
           <Property Name="CityCode" Type="nvarchar" MaxLength="20" />
           <Property Name="Province" Type="nvarchar" MaxLength="20" />
           <Property Name="BussinessID" Type="int" />
+          <Property Name="WorkStatus" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="commissiontype">
           <Key>
@@ -484,6 +484,7 @@
           <Property Name="CityCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <Property Name="Province" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <Property Name="BussinessID" Type="Int32" />
+          <Property Name="WorkStatus" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="commissiontype">
           <Key>
@@ -695,7 +696,6 @@
           <Property Name="Province" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <Property Name="CommissionTypeId" Type="Int32" />
           <Property Name="DistribSubsidy" Type="Decimal" Precision="5" Scale="2" />
-          <Property Name="BusinessCommission" Type="Decimal" Precision="5" Scale="2" />
           <NavigationProperty Name="order" Relationship="supermanModel.fk3" FromRole="business" ToRole="order" />
         </EntityType>
         <Association Name="fk3">
@@ -786,6 +786,7 @@
           <EntitySetMapping Name="clienter">
             <EntityTypeMapping TypeName="supermanModel.clienter">
               <MappingFragment StoreEntitySet="clienter">
+                <ScalarProperty Name="WorkStatus" ColumnName="WorkStatus" />
                 <ScalarProperty Name="BussinessID" ColumnName="BussinessID" />
                 <ScalarProperty Name="Province" ColumnName="Province" />
                 <ScalarProperty Name="CityCode" ColumnName="CityCode" />
@@ -981,7 +982,6 @@
           <EntitySetMapping Name="business">
             <EntityTypeMapping TypeName="supermanModel.business">
               <MappingFragment StoreEntitySet="business">
-                <ScalarProperty Name="BusinessCommission" ColumnName="BusinessCommission" />
                 <ScalarProperty Name="DistribSubsidy" ColumnName="DistribSubsidy" />
                 <ScalarProperty Name="CommissionTypeId" ColumnName="CommissionTypeId" />
                 <ScalarProperty Name="Province" ColumnName="Province" />

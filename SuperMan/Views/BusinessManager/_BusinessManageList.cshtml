@@ -137,6 +137,12 @@
 
     function funcPicView(puth, CheckPicUrl) {
         $('#showBusiImage').attr('src', puth + '/' + CheckPicUrl);
+         
+        var originSize = '_0_0';
+        var fileLastDot = CheckPicUrl.lastIndexOf('.');
+        var fileHandHouZhui = CheckPicUrl.substr(fileLastDot, CheckPicUrl.length - fileLastDot);
+        var bigFileName = CheckPicUrl.substring(0, fileLastDot) + originSize + fileHandHouZhui;
+        $('#showBigBusiImage').attr('href', puth + '/' + bigFileName);
         adminjs.openwinbox('#BusiPicShow');
     }
 

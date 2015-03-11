@@ -268,24 +268,35 @@ namespace SuperManWebApi.Controllers
                 //{
                 //    return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.InvalidFileFormat);
                 //}
-                var fileName = string.Format("{0}_{1}", DateTime.Now.ToString("yyyyMMddhhmmss"), file.FileName);
+                string originSize = "_0_0";
+
+                //var fileName = string.Format("{0}_{1}", DateTime.Now.ToString("yyyyMMddhhmmss"), file.FileName);
+
+                var fileName = string.Format("{0}_{1}_{2}", DateTime.Now.ToString("yyyyMMddhhmmssfff"), new Random().Next(1000), file.FileName);
+                int fileNameLastDot = fileName.LastIndexOf('.');
+
+                string rFileName = string.Format("{0}{1}{2}", fileName.Substring(0, fileNameLastDot), originSize, Path.GetExtension(fileName));
+
                 if (!System.IO.Directory.Exists(CustomerIconUploader.Instance.PhysicalPath))
                 {
                     System.IO.Directory.CreateDirectory(CustomerIconUploader.Instance.PhysicalPath);
                 }
-                var fullFilePath = System.IO.Path.Combine(CustomerIconUploader.Instance.PhysicalPath, fileName);
+                var fullFilePath = System.IO.Path.Combine(CustomerIconUploader.Instance.PhysicalPath, rFileName);
 
                 file.SaveAs(fullFilePath);
+
                 var transformer = new FixedDimensionTransformerAttribute(CustomerIconUploader.Instance.Width, CustomerIconUploader.Instance.Height, CustomerIconUploader.Instance.MaxBytesLength / 1024);
-                var destFileName = string.Format("{0}_{1}{2}", DateTime.Now.ToString("yyyyMMddhhmmss"), new Random().Next(1000), Path.GetExtension(file.FileName));
-                var destFullFileName = System.IO.Path.Combine(CustomerIconUploader.Instance.PhysicalPath, destFileName);
+                //var destFileName = string.Format("{0}_{1}{2}", DateTime.Now.ToString("yyyyMMddhhmmss"), new Random().Next(1000), Path.GetExtension(file.FileName));
+                //var destFullFileName = System.IO.Path.Combine(CustomerIconUploader.Instance.PhysicalPath, destFileName);
+                var destFullFileName = System.IO.Path.Combine(CustomerIconUploader.Instance.PhysicalPath, fileName);
+
                 transformer.Transform(fullFilePath, destFullFileName);
 
 
                 var picUrl = System.IO.Path.GetFileName(destFullFileName);
                 var _status = BusiLogic.busiLogic().UpdateBusi(business, picUrl);
 
-                var relativePath = System.IO.Path.Combine(CustomerIconUploader.Instance.RelativePath, destFileName).ToForwardSlashPath();
+                var relativePath = System.IO.Path.Combine(CustomerIconUploader.Instance.RelativePath, fileName).ToForwardSlashPath();
                 return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.Success, new UploadIconModel() { Id = 1, ImagePath = relativePath, status = _status });
             }
             catch (Exception)
