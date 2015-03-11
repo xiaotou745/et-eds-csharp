@@ -80,7 +80,11 @@ namespace SuperManBusinessLogic.B_Logic
             return bResult;
         }
 
-
+        /// <summary>
+        /// 根据条件查询商户信息
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
         public BusinessManage GetBusinesses(BusinessSearchCriteria criteria)
         {
             using (var db = new supermanEntities())
@@ -97,6 +101,10 @@ namespace SuperManBusinessLogic.B_Logic
                 if (criteria.Status != -1)
                 {
                     items = items.Where(p => p.Status == criteria.Status);
+                }
+                if (criteria.BusinessCommission > 0)
+                {
+                    items = items.Where(p => p.BusinessCommission == criteria.BusinessCommission);
                 }
                 if (criteria.GroupId != null)
                 {

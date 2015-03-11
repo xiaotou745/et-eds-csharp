@@ -18,6 +18,7 @@ namespace SuperManCommonModel.Entities
 
         public string businessName { get; set; } //商户名称
         public string businessPhone { get; set; } //商户电话
+        public decimal BusinessCommission { get; set; } //商户结算比例
         public int Status { get; set; }      //订单状态
 
         /// <summary>

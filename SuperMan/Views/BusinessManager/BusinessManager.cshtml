@@ -26,6 +26,8 @@
                     </select>
                     <span class="">商户电话: </span>
                     <input id="txtBusinessPhone" type="text" />
+                     <span class="">结算比例: </span>
+                    <input id="txtBusinessCommission" type="text" />
                     <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" />
                     <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                 </td>
@@ -50,7 +52,7 @@
         </div> 
         <div class="control-group">
             <label >地址</label> 
-                <input  name="busCommissionAddress" id="busCommissionAddress" style="width: 60px;" readonly="readonly" type="text">
+                <input  name="busCommissionAddress" id="busCommissionAddress" style="width: 200px;" readonly="readonly" type="text">
         </div> 
          <div class="control-group">
              <label >电话</label> 
@@ -58,7 +60,7 @@
          </div>
         <div class="control-group">
             <label >结算比例</label> 
-                <input  name="busCommissionText" id="busCommissionText" style="width: 25px;" type="text">%
+                <input  name="busCommissionText" id="busCommissionText" style="width: 45px;" type="text">%
         </div>
 </fieldset>
         <p class="btnbox">
@@ -93,6 +95,7 @@
             criteria = {
                 BusinessName: $("#txtBusinessName").val(), //商户名称
                 BusinessPhone: $("#txtBusinessPhone").val(),////商户电话
+                BusinessCommission: $("#txtBusinessCommission").val(),////商户结算比例
                 status: $("#businessStatus").val(),
                 GroupId: $("#txtGroupId").val(),
                 PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE }
@@ -120,6 +123,13 @@
     $("#btnCommissionConfim").on('click', function () {
         var busCommissionHid = $("#busCommissionHid").val(); //商户id
         var busCommissionText = $("#busCommissionText").val(); ////商户结算比例
+        if (busCommissionText < 0) {
+            alert("请输入大于零的值!");
+            return;
+        }
+        if (isNaN(busCommissionText)) { alert("请输入正确的数字!");
+            return;
+        }
         var paramaters = { "id": busCommissionHid, "commission": busCommissionText };
         var url = "/BusinessManager/SetCommission";
         $.ajax({
