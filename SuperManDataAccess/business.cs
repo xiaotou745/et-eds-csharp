@@ -44,7 +44,6 @@ namespace SuperManDataAccess
         public string Province { get; set; }
         public Nullable<int> CommissionTypeId { get; set; }
         public Nullable<decimal> DistribSubsidy { get; set; }
-        public Nullable<decimal> BusinessCommission { get; set; }
     
         public virtual ICollection<order> order { get; set; }
     }

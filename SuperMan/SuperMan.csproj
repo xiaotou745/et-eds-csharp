@@ -518,6 +518,8 @@
     <Content Include="Views\HomeCount\_PartialBisuCount.cshtml" />
     <Content Include="Views\UploadTest\Index.cshtml" />
     <Content Include="Views\BusinessManager\BusinessSettlementSet.cshtml" />
+    <Content Include="Views\SubsidyManager\SettlementFunction.cshtml" />
+    <Content Include="Views\SubsidyManager\_SettlementFunctionList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -533,6 +535,7 @@
       <Project>{b9d2361d-7e2c-45ba-89ec-4eca1bf7c456}</Project>
       <Name>Ets.Model</Name>
     </ProjectReference>
+
     <ProjectReference Include="..\Ets.Service.IProvider\Ets.Service.IProvider.csproj">
       <Project>{73ff8127-9703-4d8c-bd1c-4190a926a5ba}</Project>
       <Name>Ets.Service.IProvider</Name>

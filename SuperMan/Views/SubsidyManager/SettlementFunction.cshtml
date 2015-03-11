@@ -1,0 +1,33 @@
+﻿@model SettlementManage
+@using SuperManCommonModel.Models;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：结算功能
+    </h2>
+    <div class="SearchMd">
+        <table border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td>
+                    <span class="">商户名称: </span>
+                    <input id="txtBusinessName" type="text" />
+                    <span class="">开始时间: </span>
+                    <input id="txtSetStart" readonly="readonly" type="text" />
+                    <span class="">到: </span>
+                    <input id="txtSetEnd" readonly="readonly" type="text" />
+                    <input type="button" value="查询" class="searchBtn" id="btnSearch" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="bd clearfix" id="dataList">
+        
+    </div>
+</div>

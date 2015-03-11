@@ -135,31 +135,61 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.InvalidFileFormat);
             }
 
-            var fileName = string.Format("{0}_{1}", DateTime.Now.ToString("yyyyMMddhhmmss"), file.FileName);
-            var fileHandName = string.Format("{0}_{1}", DateTime.Now.ToString("yyyyMMddhhmmss"), fileHand.FileName);
+            string originSize = "_0_0";
+
+            var fileHandName = string.Format("{0}_{1}_{2}", DateTime.Now.ToString("yyyyMMddhhmmssfff"),new Random().Next(1000), fileHand.FileName);
+            var fileName = string.Format("{0}_{1}_{2}", DateTime.Now.ToString("yyyyMMddhhmmssfff"), new Random().Next(1000), file.FileName);
+
+
+            int fileHandNameLastDot = fileHandName.LastIndexOf('.');
+
+            int fileNameLastDot = fileName.LastIndexOf('.');
+
+            //增加 原图 尺寸标记 _0_0
+            string rFileHandName = string.Format("{0}{1}{2}", fileHandName.Substring(0, fileHandNameLastDot), originSize , Path.GetExtension(fileHandName));
+            string rFileName = string.Format("{0}{1}{2}",fileName.Substring(0, fileNameLastDot) , originSize , Path.GetExtension(fileName));
+             
+
             if (!System.IO.Directory.Exists(CustomerIconUploader.Instance.PhysicalPath))
             {
                 System.IO.Directory.CreateDirectory(CustomerIconUploader.Instance.PhysicalPath);
             }
-            var fullFilePath = Path.Combine(CustomerIconUploader.Instance.PhysicalPath, fileName);
-            var fullFileHandPath = Path.Combine(CustomerIconUploader.Instance.PhysicalPath, fileHandName);
+            var fullFilePath = Path.Combine(CustomerIconUploader.Instance.PhysicalPath, rFileName);
+            var fullFileHandPath = Path.Combine(CustomerIconUploader.Instance.PhysicalPath, rFileHandName);
+            //LogHelper.LogWriter("原图手持名称："+ rFileHandName + "   路径："+fullFileHandPath);
+            //LogHelper.LogWriter("tupian名称：" + rFileName + "   路径：" + fullFilePath);
+
+            //保存原图
             file.SaveAs(fullFilePath);
             fileHand.SaveAs(fullFileHandPath);
+
+            //裁图
             var transformer = new FixedDimensionTransformerAttribute(CustomerIconUploader.Instance.Width, CustomerIconUploader.Instance.Height, CustomerIconUploader.Instance.MaxBytesLength / 1024);
 
-            var destFileName = string.Format("{0}_{1}{2}", DateTime.Now.ToString("yyyyMMddhhmmss"), new Random().Next(1000), Path.GetExtension(file.FileName));
-            var destFullFileName = System.IO.Path.Combine(CustomerIconUploader.Instance.PhysicalPath, destFileName);
-            transformer.Transform(fullFilePath, destFullFileName);
+            //var destFileName = string.Format("{0}_{1}{2}", DateTime.Now.ToString("yyyyMMddhhmmss"), new Random().Next(1000), Path.GetExtension(file.FileName));
+            //var destFullFileName = System.IO.Path.Combine(CustomerIconUploader.Instance.PhysicalPath, destFileName);
 
-            var destFileHandName = string.Format("{0}_{1}{2}", DateTime.Now.ToString("yyyyMMddhhmmss"), new Random().Next(1000), Path.GetExtension(fileHand.FileName));
-            var destFullFileHandName = System.IO.Path.Combine(CustomerIconUploader.Instance.PhysicalPath, destFileHandName);
+            var destFullFileName = System.IO.Path.Combine(CustomerIconUploader.Instance.PhysicalPath, fileName);
+            transformer.Transform(fullFilePath, destFullFileName);
+            //LogHelper.LogWriter("裁剪后图片名称：" + destFullFileName);
+
+            //var destFileHandName = string.Format("{0}_{1}{2}", DateTime.Now.ToString("yyyyMMddhhmmss"), new Random().Next(1000), Path.GetExtension(fileHand.FileName));
+            //var destFullFileHandName = System.IO.Path.Combine(CustomerIconUploader.Instance.PhysicalPath, destFileHandName);
+
+            var destFullFileHandName = System.IO.Path.Combine(CustomerIconUploader.Instance.PhysicalPath, fileHandName);
             transformer.Transform(fullFileHandPath, destFullFileHandName);
+            //LogHelper.LogWriter("裁剪后手持图片名称：" + destFullFileHandName);
 
             var picUrl = System.IO.Path.GetFileName(destFullFileName);
             var picUrlWithHand = System.IO.Path.GetFileName(destFullFileHandName);
+
+            //LogHelper.LogWriter("picUrl：" + picUrl);
+            //LogHelper.LogWriter("picUrlWithHand：" + picUrlWithHand);
+
             ClienterLogic.clienterLogic().UpdateClient(customer, picUrl, picUrlWithHand, trueName, strIDCard);
 
-            var relativePath = System.IO.Path.Combine(CustomerIconUploader.Instance.RelativePath, destFileName).ToForwardSlashPath();
+
+            var relativePath = System.IO.Path.Combine(CustomerIconUploader.Instance.RelativePath, fileName).ToForwardSlashPath();
             return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.Success, new UploadIconModel() { Id = 1, ImagePath = relativePath });
         }
 

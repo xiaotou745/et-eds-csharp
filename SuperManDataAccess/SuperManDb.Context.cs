@@ -31,7 +31,6 @@ namespace SuperManDataAccess
         public virtual DbSet<areacounty> areacounty { get; set; }
         public virtual DbSet<authority> authority { get; set; }
         public virtual DbSet<channel> channel { get; set; }
-        public virtual DbSet<clienter> clienter { get; set; }
         public virtual DbSet<commissiontype> commissiontype { get; set; }
         public virtual DbSet<group> group { get; set; }
         public virtual DbSet<myincome> myincome { get; set; }
@@ -43,5 +42,6 @@ namespace SuperManDataAccess
         public virtual DbSet<subsidy> subsidy { get; set; }
         public virtual DbSet<areaprovice> areaprovice { get; set; }
         public virtual DbSet<business> business { get; set; }
+        public virtual DbSet<clienter> clienter { get; set; }
     }
 }
