@@ -29,7 +29,9 @@ namespace SuperManCore.Common
         [DisplayText("订单发布失败")]
         InvalidPubOrder,
         [DisplayText("订单数量不符合规则")]
-        OrderCountError
+        OrderCountError,
+        [DisplayText("订单已经存在")]
+        OrderHasExist
     }
     public enum GetOrdersStatus
     {
