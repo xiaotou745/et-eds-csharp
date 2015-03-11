@@ -87,8 +87,8 @@
     <Compile Include="Data\Generic\IResultSetExtractor.cs" />
     <Compile Include="Data\Generic\IRowMapper.cs" />
     <Compile Include="Data\Generic\RowMapperResultSetExtractor.cs" />
-    <Compile Include="Data\PageData\PageHelper.cs" />
-    <Compile Include="Data\PageData\PageInfo.cs" />
+    <Compile Include="PageData\PageHelper.cs" />
+    <Compile Include="PageData\PageInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Transaction\Common\AbstractUnitOfWork.cs" />
     <Compile Include="Transaction\Common\AdoNetUnitOfWork.cs" />

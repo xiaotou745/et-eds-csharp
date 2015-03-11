@@ -26,7 +26,7 @@ namespace Ets.Dao.User
             //object executeScalar = DbHelper.ExecuteScalar(ConnStringOfETS, insertSql, dbParameters);
             //int a = ParseHelper.ToInt(executeScalar, 0);
             //DbHelper.QueryWithRowMapper
-            PageInfo pinfo = new PageHelper().GetPages(Config.SuperMan_Read, 1, "1=1", "id", "id", "account", 1, true);
+            PageInfo<Ets.Model.UserModel> pinfo = new PageHelper().GetPages<Ets.Model.UserModel>(Config.SuperMan_Read, 1, "1=1", "id", "id", "account", 1, true);
 
         }
     }

@@ -6,11 +6,11 @@ using System.Text;
 
 namespace ETS.Data.PageData
 {
-    public class PageInfo
+    public class PageInfo<T>
     {
         private int _Count;
         private int _Index;
-        private DataTable _dt;
+        private IList<T> _dt;
         private int _pageSize;
         private int _totalPage;
         /// <summary>
@@ -18,11 +18,11 @@ namespace ETS.Data.PageData
         /// </summary>
         /// <param name="Count">总记录数</param>
         /// <param name="dt">当前页的记录</param>
-        public PageInfo(int Count, int index, DataTable dt, int totalPage)
+        public PageInfo(int Count, int index, IList<T> dt, int totalPage)
         {
             _dt = dt;
             if (_dt == null)
-                _dt = new DataTable();
+                _dt = new List<T>();
             _Count = Count;
             _Index = index;
             _totalPage = totalPage;
@@ -50,7 +50,7 @@ namespace ETS.Data.PageData
         /// <summary>
         /// 当前页的记录
         /// </summary>
-        public DataTable Records
+        public IList<T> Records
         {
             get
             {
