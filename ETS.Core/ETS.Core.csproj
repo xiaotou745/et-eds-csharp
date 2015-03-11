@@ -53,6 +53,7 @@
     <Compile Include="Cacheing\CacheFactory.cs" />
     <Compile Include="Cacheing\LocalCache.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="Const\OrderConst.cs" />
     <Compile Include="Expand\AttribDescription.cs" />
     <Compile Include="Expand\EnumerableExpand.cs" />
     <Compile Include="Extension\DataRowExtension.cs" />
