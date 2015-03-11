@@ -45,8 +45,8 @@
           <Property Name="Name" Type="nvarchar" MaxLength="45" />
           <Property Name="City_Id" Type="int" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'superman.dbo.areaprovice' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--生成过程中发现错误:
+警告 6002: 表/视图“superman.dbo.areaprovice”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
         <EntityType Name="areaprovice">
           <Key>
             <PropertyRef Name="Id" />
@@ -91,6 +91,7 @@ warning 6002: The table/view 'superman.dbo.areaprovice' does not have a primary 
           <Property Name="Province" Type="nvarchar" MaxLength="20" />
           <Property Name="CommissionTypeId" Type="int" />
           <Property Name="DistribSubsidy" Type="numeric" Precision="5" Scale="2" />
+          <Property Name="BusinessCommission" Type="numeric" Precision="5" Scale="2" />
         </EntityType>
         <EntityType Name="channel">
           <Key>
@@ -365,7 +366,6 @@ warning 6002: The table/view 'superman.dbo.areaprovice' does not have a primary 
           <EntitySet Name="areacity" EntityType="supermanModel.areacity" />
           <EntitySet Name="areacounty" EntityType="supermanModel.areacounty" />
           <EntitySet Name="authority" EntityType="supermanModel.authority" />
-          <EntitySet Name="business" EntityType="supermanModel.business" />
           <EntitySet Name="channel" EntityType="supermanModel.channel" />
           <EntitySet Name="clienter" EntityType="supermanModel.clienter" />
           <EntitySet Name="commissiontype" EntityType="supermanModel.commissiontype" />
@@ -386,6 +386,7 @@ warning 6002: The table/view 'superman.dbo.areaprovice' does not have a primary 
             <End Role="authority" EntitySet="authority" />
             <End Role="accountauthority" EntitySet="accountauthority" />
           </AssociationSet>
+          <EntitySet Name="business" EntityType="supermanModel.business" />
           <AssociationSet Name="fk3" Association="supermanModel.fk3">
             <End Role="business" EntitySet="business" />
             <End Role="order" EntitySet="order" />
@@ -442,37 +443,6 @@ warning 6002: The table/view 'superman.dbo.areaprovice' does not have a primary 
           <Property Name="AuthorityType" Type="Int32" Nullable="false" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="accountauthority" Relationship="supermanModel.FK2" FromRole="authority" ToRole="accountauthority" />
-        </EntityType>
-        <EntityType Name="business">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="City" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="district" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="PhoneNo" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="PhoneNo2" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="Password" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="CheckPicUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="IDCard" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
-          <Property Name="Address" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="Landline" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
-          <Property Name="Longitude" Type="Double" />
-          <Property Name="Latitude" Type="Double" />
-          <Property Name="Status" Type="Byte" />
-          <Property Name="InsertTime" Type="DateTime" Precision="3" />
-          <Property Name="districtId" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
-          <Property Name="CityId" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
-          <Property Name="GroupId" Type="Int32" />
-          <Property Name="OriginalBusiId" Type="Int32" />
-          <Property Name="ProvinceCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="CityCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="AreaCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="Province" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="CommissionTypeId" Type="Int32" />
-          <Property Name="DistribSubsidy" Type="Decimal" Precision="5" Scale="2" />
-          <NavigationProperty Name="order" Relationship="supermanModel.fk3" FromRole="business" ToRole="order" />
         </EntityType>
         <EntityType Name="channel">
           <Key>
@@ -696,6 +666,38 @@ warning 6002: The table/view 'superman.dbo.areaprovice' does not have a primary 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="business">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="district" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNo" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNo2" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="CheckPicUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="IDCard" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="Address" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Landline" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="Longitude" Type="Double" />
+          <Property Name="Latitude" Type="Double" />
+          <Property Name="Status" Type="Byte" />
+          <Property Name="InsertTime" Type="DateTime" Precision="3" />
+          <Property Name="districtId" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="CityId" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="GroupId" Type="Int32" />
+          <Property Name="OriginalBusiId" Type="Int32" />
+          <Property Name="ProvinceCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="CityCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="AreaCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Province" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="CommissionTypeId" Type="Int32" />
+          <Property Name="DistribSubsidy" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="BusinessCommission" Type="Decimal" Precision="5" Scale="2" />
+          <NavigationProperty Name="order" Relationship="supermanModel.fk3" FromRole="business" ToRole="order" />
+        </EntityType>
         <Association Name="fk3">
           <End Type="supermanModel.business" Role="business" Multiplicity="0..1" />
           <End Type="supermanModel.order" Role="order" Multiplicity="*" />
@@ -763,37 +765,6 @@ warning 6002: The table/view 'superman.dbo.areaprovice' does not have a primary 
               <MappingFragment StoreEntitySet="authority">
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="AuthorityType" ColumnName="AuthorityType" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="business">
-            <EntityTypeMapping TypeName="supermanModel.business">
-              <MappingFragment StoreEntitySet="business">
-                <ScalarProperty Name="DistribSubsidy" ColumnName="DistribSubsidy" />
-                <ScalarProperty Name="CommissionTypeId" ColumnName="CommissionTypeId" />
-                <ScalarProperty Name="Province" ColumnName="Province" />
-                <ScalarProperty Name="AreaCode" ColumnName="AreaCode" />
-                <ScalarProperty Name="CityCode" ColumnName="CityCode" />
-                <ScalarProperty Name="ProvinceCode" ColumnName="ProvinceCode" />
-                <ScalarProperty Name="OriginalBusiId" ColumnName="OriginalBusiId" />
-                <ScalarProperty Name="GroupId" ColumnName="GroupId" />
-                <ScalarProperty Name="CityId" ColumnName="CityId" />
-                <ScalarProperty Name="districtId" ColumnName="districtId" />
-                <ScalarProperty Name="InsertTime" ColumnName="InsertTime" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
-                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
-                <ScalarProperty Name="Landline" ColumnName="Landline" />
-                <ScalarProperty Name="Address" ColumnName="Address" />
-                <ScalarProperty Name="IDCard" ColumnName="IDCard" />
-                <ScalarProperty Name="CheckPicUrl" ColumnName="CheckPicUrl" />
-                <ScalarProperty Name="Password" ColumnName="Password" />
-                <ScalarProperty Name="PhoneNo2" ColumnName="PhoneNo2" />
-                <ScalarProperty Name="PhoneNo" ColumnName="PhoneNo" />
-                <ScalarProperty Name="district" ColumnName="district" />
-                <ScalarProperty Name="City" ColumnName="City" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -1002,6 +973,38 @@ warning 6002: The table/view 'superman.dbo.areaprovice' does not have a primary 
           <EntitySetMapping Name="areaprovice">
             <EntityTypeMapping TypeName="supermanModel.areaprovice">
               <MappingFragment StoreEntitySet="areaprovice">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="business">
+            <EntityTypeMapping TypeName="supermanModel.business">
+              <MappingFragment StoreEntitySet="business">
+                <ScalarProperty Name="BusinessCommission" ColumnName="BusinessCommission" />
+                <ScalarProperty Name="DistribSubsidy" ColumnName="DistribSubsidy" />
+                <ScalarProperty Name="CommissionTypeId" ColumnName="CommissionTypeId" />
+                <ScalarProperty Name="Province" ColumnName="Province" />
+                <ScalarProperty Name="AreaCode" ColumnName="AreaCode" />
+                <ScalarProperty Name="CityCode" ColumnName="CityCode" />
+                <ScalarProperty Name="ProvinceCode" ColumnName="ProvinceCode" />
+                <ScalarProperty Name="OriginalBusiId" ColumnName="OriginalBusiId" />
+                <ScalarProperty Name="GroupId" ColumnName="GroupId" />
+                <ScalarProperty Name="CityId" ColumnName="CityId" />
+                <ScalarProperty Name="districtId" ColumnName="districtId" />
+                <ScalarProperty Name="InsertTime" ColumnName="InsertTime" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="Landline" ColumnName="Landline" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="IDCard" ColumnName="IDCard" />
+                <ScalarProperty Name="CheckPicUrl" ColumnName="CheckPicUrl" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="PhoneNo2" ColumnName="PhoneNo2" />
+                <ScalarProperty Name="PhoneNo" ColumnName="PhoneNo" />
+                <ScalarProperty Name="district" ColumnName="district" />
+                <ScalarProperty Name="City" ColumnName="City" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
