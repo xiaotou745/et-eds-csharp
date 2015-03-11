@@ -302,7 +302,7 @@ namespace SuperManWebApi.Controllers
 
       
         /// <summary>
-        /// 商户发布订单接口
+        /// 商户发布订单接口  2015.3.11 平扬 增加订单重复性验证
         /// </summary>
         /// <param name="model">订单数据</param>
         /// <returns></returns>
