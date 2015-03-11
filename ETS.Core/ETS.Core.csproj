@@ -48,11 +48,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config.cs" />
     <Compile Include="Expand\AttribDescription.cs" />
     <Compile Include="Expand\EnumerableExpand.cs" />
     <Compile Include="Extension\DataRowExtension.cs" />
     <Compile Include="Extension\DataSetExtenstion.cs" />
     <Compile Include="Extension\DataTableExtension.cs" />
+    <Compile Include="Extension\DataTableHelper.cs" />
     <Compile Include="Extension\ListExtensions.cs" />
     <Compile Include="Extension\StringExtension.cs" />
     <Compile Include="IO\Common.cs" />
