@@ -39,7 +39,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
+    <Compile Include="DomainModel\Bussiness\BussOrderDModelApp.cs" />
+=======
     <Compile Include="Common\SimpleResultModel.cs" />
+>>>>>>> d11231b75a878a6977799b814a4716ca56d8b59c
     <Compile Include="ParameterModel\Bussiness\BussOrderParaModelApp.cs" />
     <Compile Include="ParameterModel\Order\ClientOrderInfoModel.cs" />
     <Compile Include="ParameterModel\Order\ClientOrderSearchCriteria.cs" />
@@ -50,7 +54,6 @@
     <Folder Include="DataModel\Bussiness\" />
     <Folder Include="DataModel\Clienter\" />
     <Folder Include="DataModel\Order\" />
-    <Folder Include="DomainModel\Bussiness\" />
     <Folder Include="DomainModel\Clienter\" />
     <Folder Include="DomainModel\Order\" />
     <Folder Include="ParameterModel\Clienter\" />
