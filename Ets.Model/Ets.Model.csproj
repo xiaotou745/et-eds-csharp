@@ -42,6 +42,7 @@
     <Compile Include="Common\SimpleResultModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BussOrderParaModelApp.cs" />
     <Compile Include="ParameterModel\Order\ClientOrderInfoModel.cs" />
+    <Compile Include="ParameterModel\Order\ClientOrderSearchCriteria.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserModel.cs" />
   </ItemGroup>

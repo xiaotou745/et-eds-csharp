@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ets.Model
+namespace Ets.Service.IProvider.Order
 {
-    public class Class1
+    interface  IOrder
     {
+        //PagedList<order> GetOrders(ClientOrderSearchCriteria criteria);
     }
 }
