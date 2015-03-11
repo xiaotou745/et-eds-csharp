@@ -32,7 +32,7 @@ namespace SuperManDataAccess
         public string Landline { get; set; }
         public Nullable<double> Longitude { get; set; }
         public Nullable<double> Latitude { get; set; }
-        public Nullable<sbyte> Status { get; set; }
+        public Nullable<byte> Status { get; set; }
         public Nullable<System.DateTime> InsertTime { get; set; }
         public string districtId { get; set; }
         public string CityId { get; set; }

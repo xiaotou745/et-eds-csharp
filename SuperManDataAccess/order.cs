@@ -28,7 +28,7 @@ namespace SuperManDataAccess
         public Nullable<decimal> DistribSubsidy { get; set; }
         public Nullable<decimal> WebsiteSubsidy { get; set; }
         public string Remark { get; set; }
-        public Nullable<sbyte> Status { get; set; }
+        public Nullable<byte> Status { get; set; }
         public Nullable<int> clienterId { get; set; }
         public Nullable<int> businessId { get; set; }
         public string ReceviceCity { get; set; }

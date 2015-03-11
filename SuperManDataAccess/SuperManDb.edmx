@@ -4,21 +4,21 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="supermanModel.Store" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.6" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="supermanModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="account">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Password" Type="varchar" MaxLength="255" />
-          <Property Name="UserName" Type="varchar" MaxLength="45" />
-          <Property Name="LoginName" Type="varchar" MaxLength="45" />
+          <Property Name="Password" Type="nvarchar" MaxLength="255" />
+          <Property Name="UserName" Type="nvarchar" MaxLength="45" />
+          <Property Name="LoginName" Type="nvarchar" MaxLength="45" />
           <Property Name="Status" Type="int" />
           <Property Name="AccountType" Type="int" />
-          <Property Name="FADateTime" Type="datetime" Precision="0" />
-          <Property Name="FAUser" Type="varchar" MaxLength="45" />
-          <Property Name="LCDateTime" Type="datetime" Precision="0" />
-          <Property Name="LCUser" Type="varchar" MaxLength="45" />
+          <Property Name="FADateTime" Type="datetime" />
+          <Property Name="FAUser" Type="nvarchar" MaxLength="45" />
+          <Property Name="LCDateTime" Type="datetime" />
+          <Property Name="LCUser" Type="nvarchar" MaxLength="45" />
           <Property Name="GroupId" Type="int" />
         </EntityType>
         <EntityType Name="accountauthority">
@@ -33,24 +33,26 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
-          <Property Name="Name" Type="varchar" MaxLength="45" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="45" />
           <Property Name="Provice_Id" Type="int" />
         </EntityType>
         <EntityType Name="areacounty">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
-          <Property Name="Name" Type="varchar" MaxLength="45" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="45" />
           <Property Name="City_Id" Type="int" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'superman.dbo.areaprovice' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="areaprovice">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
-          <Property Name="Name" Type="varchar" MaxLength="45" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="45" />
         </EntityType>
         <EntityType Name="authority">
           <Key>
@@ -58,76 +60,77 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="AuthorityType" Type="int" Nullable="false" />
-          <Property Name="Name" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="200" Nullable="false" />
         </EntityType>
         <EntityType Name="business">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Name" Type="varchar" MaxLength="100" />
-          <Property Name="City" Type="varchar" MaxLength="100" />
-          <Property Name="district" Type="varchar" MaxLength="200" />
-          <Property Name="PhoneNo" Type="varchar" MaxLength="20" />
-          <Property Name="PhoneNo2" Type="varchar" MaxLength="20" />
-          <Property Name="Password" Type="varchar" MaxLength="255" />
-          <Property Name="CheckPicUrl" Type="varchar" MaxLength="255" />
-          <Property Name="IDCard" Type="varchar" MaxLength="45" />
-          <Property Name="Address" Type="varchar" MaxLength="255" />
-          <Property Name="Landline" Type="varchar" MaxLength="15" />
-          <Property Name="Longitude" Type="double" />
-          <Property Name="Latitude" Type="double" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" />
+          <Property Name="City" Type="nvarchar" MaxLength="100" />
+          <Property Name="district" Type="nvarchar" MaxLength="200" />
+          <Property Name="PhoneNo" Type="nvarchar" MaxLength="20" />
+          <Property Name="PhoneNo2" Type="nvarchar" MaxLength="20" />
+          <Property Name="Password" Type="nvarchar" MaxLength="255" />
+          <Property Name="CheckPicUrl" Type="nvarchar" MaxLength="255" />
+          <Property Name="IDCard" Type="nvarchar" MaxLength="45" />
+          <Property Name="Address" Type="nvarchar" MaxLength="255" />
+          <Property Name="Landline" Type="nvarchar" MaxLength="15" />
+          <Property Name="Longitude" Type="float" />
+          <Property Name="Latitude" Type="float" />
           <Property Name="Status" Type="tinyint" />
-          <Property Name="InsertTime" Type="datetime" Precision="0" />
-          <Property Name="districtId" Type="varchar" MaxLength="45" />
-          <Property Name="CityId" Type="varchar" MaxLength="45" />
+          <Property Name="InsertTime" Type="datetime" />
+          <Property Name="districtId" Type="nvarchar" MaxLength="45" />
+          <Property Name="CityId" Type="nvarchar" MaxLength="45" />
           <Property Name="GroupId" Type="int" />
           <Property Name="OriginalBusiId" Type="int" />
-          <Property Name="ProvinceCode" Type="varchar" MaxLength="20" />
-          <Property Name="CityCode" Type="varchar" MaxLength="20" />
-          <Property Name="AreaCode" Type="varchar" MaxLength="20" />
-          <Property Name="Province" Type="varchar" MaxLength="20" />
+          <Property Name="ProvinceCode" Type="nvarchar" MaxLength="20" />
+          <Property Name="CityCode" Type="nvarchar" MaxLength="20" />
+          <Property Name="AreaCode" Type="nvarchar" MaxLength="20" />
+          <Property Name="Province" Type="nvarchar" MaxLength="20" />
           <Property Name="CommissionTypeId" Type="int" />
+          <Property Name="DistribSubsidy" Type="numeric" Precision="5" Scale="2" />
         </EntityType>
         <EntityType Name="channel">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="ChannelName" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="CreateName" Type="varchar" MaxLength="50" />
-          <Property Name="CreateTime" Type="datetime" Precision="0" />
-          <Property Name="ModifyName" Type="varchar" MaxLength="50" />
-          <Property Name="ModifyTime" Type="datetime" Precision="0" />
+          <Property Name="ChannelName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="CreateName" Type="nvarchar" MaxLength="50" />
+          <Property Name="CreateTime" Type="datetime" />
+          <Property Name="ModifyName" Type="nvarchar" MaxLength="50" />
+          <Property Name="ModifyTime" Type="datetime" />
           <Property Name="IsValid" Type="tinyint" />
-          <Property Name="Remark" Type="varchar" MaxLength="500" />
+          <Property Name="Remark" Type="nvarchar" MaxLength="500" />
         </EntityType>
         <EntityType Name="clienter">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="PhoneNo" Type="varchar" MaxLength="20" />
-          <Property Name="LoginName" Type="varchar" MaxLength="20" />
-          <Property Name="recommendPhone" Type="varchar" MaxLength="20" />
-          <Property Name="Password" Type="varchar" MaxLength="255" />
-          <Property Name="TrueName" Type="varchar" MaxLength="20" />
-          <Property Name="IDCard" Type="char" MaxLength="18" />
-          <Property Name="PicWithHandUrl" Type="varchar" MaxLength="255" />
-          <Property Name="PicUrl" Type="varchar" MaxLength="255" />
+          <Property Name="PhoneNo" Type="nvarchar" MaxLength="20" />
+          <Property Name="LoginName" Type="nvarchar" MaxLength="20" />
+          <Property Name="recommendPhone" Type="nvarchar" MaxLength="20" />
+          <Property Name="Password" Type="nvarchar" MaxLength="255" />
+          <Property Name="TrueName" Type="nvarchar" MaxLength="20" />
+          <Property Name="IDCard" Type="nvarchar" MaxLength="18" />
+          <Property Name="PicWithHandUrl" Type="nvarchar" MaxLength="255" />
+          <Property Name="PicUrl" Type="nvarchar" MaxLength="255" />
           <Property Name="Status" Type="tinyint" />
-          <Property Name="AccountBalance" Type="decimal" Precision="7" Scale="2" />
-          <Property Name="InsertTime" Type="datetime" Precision="0" />
-          <Property Name="InviteCode" Type="varchar" MaxLength="45" />
-          <Property Name="City" Type="varchar" MaxLength="100" />
-          <Property Name="CityId" Type="varchar" MaxLength="45" />
+          <Property Name="AccountBalance" Type="numeric" Precision="7" Scale="2" />
+          <Property Name="InsertTime" Type="datetime" />
+          <Property Name="InviteCode" Type="nvarchar" MaxLength="45" />
+          <Property Name="City" Type="nvarchar" MaxLength="100" />
+          <Property Name="CityId" Type="nvarchar" MaxLength="45" />
           <Property Name="GroupId" Type="int" />
-          <Property Name="HealthCardID" Type="char" MaxLength="1" />
-          <Property Name="InternalDepart" Type="varchar" MaxLength="20" />
-          <Property Name="ProvinceCode" Type="varchar" MaxLength="20" />
-          <Property Name="AreaCode" Type="varchar" MaxLength="20" />
-          <Property Name="CityCode" Type="varchar" MaxLength="20" />
-          <Property Name="Province" Type="varchar" MaxLength="20" />
+          <Property Name="HealthCardID" Type="nchar" MaxLength="1" />
+          <Property Name="InternalDepart" Type="nvarchar" MaxLength="20" />
+          <Property Name="ProvinceCode" Type="nvarchar" MaxLength="20" />
+          <Property Name="AreaCode" Type="nvarchar" MaxLength="20" />
+          <Property Name="CityCode" Type="nvarchar" MaxLength="20" />
+          <Property Name="Province" Type="nvarchar" MaxLength="20" />
           <Property Name="BussinessID" Type="int" />
         </EntityType>
         <EntityType Name="commissiontype">
@@ -135,20 +138,20 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="CommissionName" Type="varchar" MaxLength="100" />
+          <Property Name="CommissionName" Type="nvarchar" MaxLength="100" />
           <Property Name="IsValid" Type="tinyint" />
-          <Property Name="Remark" Type="varchar" MaxLength="500" />
+          <Property Name="Remark" Type="nvarchar" MaxLength="500" />
         </EntityType>
         <EntityType Name="group">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="GroupName" Type="varchar" MaxLength="100" />
-          <Property Name="CreateName" Type="varchar" MaxLength="40" />
-          <Property Name="CreateTime" Type="datetime" Precision="0" />
-          <Property Name="ModifyName" Type="varchar" MaxLength="40" />
-          <Property Name="ModifyTime" Type="datetime" Precision="0" />
+          <Property Name="GroupName" Type="nvarchar" MaxLength="100" />
+          <Property Name="CreateName" Type="nvarchar" MaxLength="40" />
+          <Property Name="CreateTime" Type="datetime" />
+          <Property Name="ModifyName" Type="nvarchar" MaxLength="40" />
+          <Property Name="ModifyTime" Type="datetime" />
           <Property Name="IsValid" Type="tinyint" />
         </EntityType>
         <EntityType Name="myincome">
@@ -156,49 +159,52 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="PhoneNo" Type="varchar" MaxLength="45" />
-          <Property Name="MyIncome" Type="varchar" MaxLength="45" />
-          <Property Name="MyInComeAmount" Type="decimal" Precision="10" Scale="2" />
-          <Property Name="InsertTime" Type="datetime" Precision="0" />
+          <Property Name="PhoneNo" Type="nvarchar" MaxLength="45" />
+          <Property Name="MyIncome" Type="nvarchar" MaxLength="45" />
+          <Property Name="MyInComeAmount" Type="numeric" Precision="10" Scale="2" />
+          <Property Name="InsertTime" Type="datetime" />
         </EntityType>
         <EntityType Name="order">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="OrderNo" Type="varchar" MaxLength="45" Nullable="false" />
-          <Property Name="PickUpAddress" Type="varchar" MaxLength="255" />
-          <Property Name="PubDate" Type="datetime" Precision="0" />
-          <Property Name="ReceviceName" Type="varchar" MaxLength="45" />
-          <Property Name="RecevicePhoneNo" Type="varchar" MaxLength="45" />
-          <Property Name="ReceviceAddress" Type="varchar" MaxLength="255" />
-          <Property Name="ActualDoneDate" Type="datetime" Precision="0" />
-          <Property Name="IsPay" Type="bool" />
-          <Property Name="Amount" Type="decimal" Precision="10" Scale="2" />
-          <Property Name="OrderCommission" Type="decimal" Precision="5" Scale="2" />
-          <Property Name="DistribSubsidy" Type="decimal" Precision="5" Scale="2" />
-          <Property Name="WebsiteSubsidy" Type="decimal" Precision="5" Scale="2" />
-          <Property Name="Remark" Type="varchar" MaxLength="200" />
+          <Property Name="OrderNo" Type="nvarchar" MaxLength="45" Nullable="false" />
+          <Property Name="PickUpAddress" Type="nvarchar" MaxLength="255" />
+          <Property Name="PubDate" Type="datetime" />
+          <Property Name="ReceviceName" Type="nvarchar" MaxLength="45" />
+          <Property Name="RecevicePhoneNo" Type="nvarchar" MaxLength="45" />
+          <Property Name="ReceviceAddress" Type="nvarchar" MaxLength="255" />
+          <Property Name="ActualDoneDate" Type="datetime" />
+          <Property Name="IsPay" Type="bit" />
+          <Property Name="Amount" Type="numeric" Precision="10" Scale="2" />
+          <Property Name="OrderCommission" Type="numeric" Precision="5" Scale="2" />
+          <Property Name="DistribSubsidy" Type="numeric" Precision="5" Scale="2" />
+          <Property Name="WebsiteSubsidy" Type="numeric" Precision="5" Scale="2" />
+          <Property Name="Remark" Type="nvarchar" MaxLength="200" />
           <Property Name="Status" Type="tinyint" />
           <Property Name="clienterId" Type="int" />
           <Property Name="businessId" Type="int" />
-          <Property Name="ReceviceCity" Type="varchar" MaxLength="45" />
-          <Property Name="ReceviceLongitude" Type="double" />
-          <Property Name="ReceviceLatitude" Type="double" />
+          <Property Name="ReceviceCity" Type="nvarchar" MaxLength="45" />
+          <Property Name="ReceviceLongitude" Type="float" />
+          <Property Name="ReceviceLatitude" Type="float" />
           <Property Name="OrderFrom" Type="int" Nullable="false" />
           <Property Name="OriginalOrderId" Type="bigint" />
-          <Property Name="OriginalOrderNo" Type="varchar" MaxLength="100" />
+          <Property Name="OriginalOrderNo" Type="nvarchar" MaxLength="100" />
           <Property Name="Quantity" Type="int" />
-          <Property Name="Weight" Type="decimal" Precision="10" Scale="2" />
-          <Property Name="ReceiveProvince" Type="varchar" MaxLength="45" />
-          <Property Name="ReceiveArea" Type="varchar" MaxLength="45" />
-          <Property Name="ReceiveProvinceCode" Type="varchar" MaxLength="20" />
-          <Property Name="ReceiveCityCode" Type="varchar" MaxLength="45" />
-          <Property Name="ReceiveAreaCode" Type="varchar" MaxLength="45" />
+          <Property Name="Weight" Type="numeric" Precision="10" Scale="2" />
+          <Property Name="ReceiveProvince" Type="nvarchar" MaxLength="45" />
+          <Property Name="ReceiveArea" Type="nvarchar" MaxLength="45" />
+          <Property Name="ReceiveProvinceCode" Type="nvarchar" MaxLength="20" />
+          <Property Name="ReceiveCityCode" Type="nvarchar" MaxLength="45" />
+          <Property Name="ReceiveAreaCode" Type="nvarchar" MaxLength="45" />
           <Property Name="OrderType" Type="int" />
-          <Property Name="KM" Type="double" />
+          <Property Name="KM" Type="float" />
           <Property Name="GuoJuQty" Type="int" />
           <Property Name="LuJuQty" Type="int" />
+          <Property Name="SongCanDate" Type="datetime" />
+          <Property Name="OrderCount" Type="int" />
+          <Property Name="CommissionRate" Type="numeric" Precision="5" Scale="2" />
         </EntityType>
         <EntityType Name="orderlog">
           <Key>
@@ -207,21 +213,21 @@
           <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="OrderId" Type="int" Nullable="false" />
           <Property Name="OrderStatus" Type="tinyint" />
-          <Property Name="OptionDescription" Type="varchar" MaxLength="500" />
-          <Property Name="OptionPerson" Type="varchar" MaxLength="50" />
-          <Property Name="OptionTIme" Type="datetime" Precision="0" />
+          <Property Name="OptionDescription" Type="nvarchar" MaxLength="500" />
+          <Property Name="OptionPerson" Type="nvarchar" MaxLength="50" />
+          <Property Name="OptionTIme" Type="datetime" />
           <Property Name="IsValid" Type="tinyint" />
-          <Property Name="Remark" Type="varchar" MaxLength="500" />
+          <Property Name="Remark" Type="nvarchar" MaxLength="500" />
         </EntityType>
         <EntityType Name="pushmessage">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Title" Type="varchar" MaxLength="200" />
-          <Property Name="Alert" Type="varchar" MaxLength="200" />
-          <Property Name="Content" Type="varchar" MaxLength="2000" />
-          <Property Name="PushDate" Type="datetime" Precision="0" />
+          <Property Name="Title" Type="nvarchar" MaxLength="200" />
+          <Property Name="Alert" Type="nvarchar" MaxLength="200" />
+          <Property Name="Content" Type="nvarchar" MaxLength="2000" />
+          <Property Name="PushDate" Type="datetime" />
           <Property Name="AreaId" Type="int" />
         </EntityType>
         <EntityType Name="pushmessagestatus">
@@ -229,7 +235,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="MessageId" Type="varchar" MaxLength="200" />
+          <Property Name="MessageId" Type="nvarchar" MaxLength="200" />
           <Property Name="AndroidDeliveredCount" Type="int" />
           <Property Name="PushMessageId" Type="int" />
         </EntityType>
@@ -237,46 +243,46 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
-          <Property Name="Code" Type="varchar" MaxLength="13" Nullable="false" />
-          <Property Name="Name" Type="varchar" MaxLength="64" Nullable="false" />
-          <Property Name="ChnName" Type="varchar" MaxLength="32" />
-          <Property Name="BriefName" Type="varchar" MaxLength="50" />
-          <Property Name="EnName" Type="varchar" MaxLength="32" />
-          <Property Name="Creator" Type="varchar" MaxLength="32" />
-          <Property Name="CreateDate" Type="datetime" Precision="0" />
-          <Property Name="ModifyUser" Type="varchar" MaxLength="32" />
-          <Property Name="ModifyDate" Type="datetime" Precision="0" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="13" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="64" Nullable="false" />
+          <Property Name="ChnName" Type="nvarchar" MaxLength="32" />
+          <Property Name="BriefName" Type="nvarchar" MaxLength="50" />
+          <Property Name="EnName" Type="nvarchar" MaxLength="32" />
+          <Property Name="Creator" Type="nvarchar" MaxLength="32" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="ModifyUser" Type="nvarchar" MaxLength="32" />
+          <Property Name="ModifyDate" Type="datetime" />
           <Property Name="Fid" Type="int" Nullable="false" />
           <Property Name="Provinceid" Type="int" Nullable="false" />
           <Property Name="Cityid" Type="int" Nullable="false" />
           <Property Name="Depth" Type="int" Nullable="false" />
           <Property Name="Isbroad" Type="int" />
-          <Property Name="QPing" Type="varchar" MaxLength="128" />
-          <Property Name="JPing" Type="varchar" MaxLength="64" />
-          <Property Name="BriefQPing" Type="varchar" MaxLength="128" />
-          <Property Name="BriefJPing" Type="varchar" MaxLength="64" />
+          <Property Name="QPing" Type="nvarchar" MaxLength="128" />
+          <Property Name="JPing" Type="nvarchar" MaxLength="64" />
+          <Property Name="BriefQPing" Type="nvarchar" MaxLength="128" />
+          <Property Name="BriefJPing" Type="nvarchar" MaxLength="64" />
           <Property Name="IsGov" Type="bit" />
-          <Property Name="Host" Type="varchar" MaxLength="30" />
-          <Property Name="BaiduLat" Type="varchar" MaxLength="64" />
-          <Property Name="BaiduLong" Type="varchar" MaxLength="64" />
+          <Property Name="Host" Type="nvarchar" MaxLength="30" />
+          <Property Name="BaiduLat" Type="nvarchar" MaxLength="64" />
+          <Property Name="BaiduLong" Type="nvarchar" MaxLength="64" />
         </EntityType>
         <EntityType Name="subsidy">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="OrderCommission" Type="decimal" Precision="5" Scale="2" />
-          <Property Name="DistribSubsidy" Type="decimal" Precision="5" Scale="2" />
-          <Property Name="WebsiteSubsidy" Type="decimal" Precision="5" Scale="2" />
-          <Property Name="StartDate" Type="datetime" Precision="0" />
-          <Property Name="EndDate" Type="datetime" Precision="0" />
+          <Property Name="OrderCommission" Type="numeric" Precision="5" Scale="2" />
+          <Property Name="DistribSubsidy" Type="numeric" Precision="5" Scale="2" />
+          <Property Name="WebsiteSubsidy" Type="numeric" Precision="5" Scale="2" />
+          <Property Name="StartDate" Type="datetime2" Precision="7" />
+          <Property Name="EndDate" Type="datetime2" Precision="7" />
           <Property Name="Status" Type="tinyint" />
           <Property Name="GroupId" Type="int" />
-          <Property Name="PKMCost" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="PKMCost" Type="numeric" Precision="10" Scale="2" />
           <Property Name="OrderType" Type="int" />
         </EntityType>
-        <Association Name="accountId">
+        <Association Name="FK1">
           <End Role="account" Type="Self.account" Multiplicity="0..1" />
           <End Role="accountauthority" Type="Self.accountauthority" Multiplicity="*" />
           <ReferentialConstraint>
@@ -288,7 +294,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="authorityId">
+        <Association Name="FK2">
           <End Role="authority" Type="Self.authority" Multiplicity="0..1" />
           <End Role="accountauthority" Type="Self.accountauthority" Multiplicity="*" />
           <ReferentialConstraint>
@@ -300,7 +306,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="businessId">
+        <Association Name="fk3">
           <End Role="business" Type="Self.business" Multiplicity="0..1" />
           <End Role="order" Type="Self.order" Multiplicity="*" />
           <ReferentialConstraint>
@@ -313,33 +319,38 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="supermanModelStoreContainer">
-          <EntitySet Name="account" EntityType="Self.account" Schema="supermanhdl" store:Type="Tables" />
-          <EntitySet Name="accountauthority" EntityType="Self.accountauthority" Schema="supermanhdl" store:Type="Tables" />
-          <EntitySet Name="areacity" EntityType="Self.areacity" Schema="supermanhdl" store:Type="Tables" />
-          <EntitySet Name="areacounty" EntityType="Self.areacounty" Schema="supermanhdl" store:Type="Tables" />
-          <EntitySet Name="areaprovice" EntityType="Self.areaprovice" Schema="supermanhdl" store:Type="Tables" />
-          <EntitySet Name="authority" EntityType="Self.authority" Schema="supermanhdl" store:Type="Tables" />
-          <EntitySet Name="business" EntityType="Self.business" Schema="supermanhdl" store:Type="Tables" />
-          <EntitySet Name="channel" EntityType="Self.channel" Schema="supermanhdl" store:Type="Tables" />
-          <EntitySet Name="clienter" EntityType="Self.clienter" Schema="supermanhdl" store:Type="Tables" />
-          <EntitySet Name="commissiontype" EntityType="Self.commissiontype" Schema="supermanhdl" store:Type="Tables" />
-          <EntitySet Name="group" EntityType="Self.group" Schema="supermanhdl" store:Type="Tables" />
-          <EntitySet Name="myincome" EntityType="Self.myincome" Schema="supermanhdl" store:Type="Tables" />
-          <EntitySet Name="order" EntityType="Self.order" Schema="supermanhdl" store:Type="Tables" />
-          <EntitySet Name="orderlog" EntityType="Self.orderlog" Schema="supermanhdl" store:Type="Tables" />
-          <EntitySet Name="pushmessage" EntityType="Self.pushmessage" Schema="supermanhdl" store:Type="Tables" />
-          <EntitySet Name="pushmessagestatus" EntityType="Self.pushmessagestatus" Schema="supermanhdl" store:Type="Tables" />
-          <EntitySet Name="region" EntityType="Self.region" Schema="supermanhdl" store:Type="Tables" />
-          <EntitySet Name="subsidy" EntityType="Self.subsidy" Schema="supermanhdl" store:Type="Tables" />
-          <AssociationSet Name="accountId" Association="Self.accountId">
+          <EntitySet Name="account" EntityType="Self.account" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="accountauthority" EntityType="Self.accountauthority" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="areacity" EntityType="Self.areacity" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="areacounty" EntityType="Self.areacounty" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="authority" EntityType="Self.authority" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="business" EntityType="Self.business" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="channel" EntityType="Self.channel" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="clienter" EntityType="Self.clienter" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="commissiontype" EntityType="Self.commissiontype" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="group" EntityType="Self.group" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="myincome" EntityType="Self.myincome" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="order" EntityType="Self.order" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="orderlog" EntityType="Self.orderlog" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="pushmessage" EntityType="Self.pushmessage" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="pushmessagestatus" EntityType="Self.pushmessagestatus" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="region" EntityType="Self.region" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="subsidy" EntityType="Self.subsidy" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="areaprovice" EntityType="Self.areaprovice" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [areaprovice].[Id] AS [Id], 
+    [areaprovice].[Name] AS [Name]
+    FROM [dbo].[areaprovice] AS [areaprovice]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK1" Association="Self.FK1">
             <End Role="account" EntitySet="account" />
             <End Role="accountauthority" EntitySet="accountauthority" />
           </AssociationSet>
-          <AssociationSet Name="authorityId" Association="Self.authorityId">
+          <AssociationSet Name="FK2" Association="Self.FK2">
             <End Role="authority" EntitySet="authority" />
             <End Role="accountauthority" EntitySet="accountauthority" />
           </AssociationSet>
-          <AssociationSet Name="businessId" Association="Self.businessId">
+          <AssociationSet Name="fk3" Association="Self.fk3">
             <End Role="business" EntitySet="business" />
             <End Role="order" EntitySet="order" />
           </AssociationSet>
@@ -353,7 +364,6 @@
           <EntitySet Name="accountauthority" EntityType="supermanModel.accountauthority" />
           <EntitySet Name="areacity" EntityType="supermanModel.areacity" />
           <EntitySet Name="areacounty" EntityType="supermanModel.areacounty" />
-          <EntitySet Name="areaprovice" EntityType="supermanModel.areaprovice" />
           <EntitySet Name="authority" EntityType="supermanModel.authority" />
           <EntitySet Name="business" EntityType="supermanModel.business" />
           <EntitySet Name="channel" EntityType="supermanModel.channel" />
@@ -367,15 +377,16 @@
           <EntitySet Name="pushmessagestatus" EntityType="supermanModel.pushmessagestatus" />
           <EntitySet Name="region" EntityType="supermanModel.region" />
           <EntitySet Name="subsidy" EntityType="supermanModel.subsidy" />
-          <AssociationSet Name="accountId" Association="supermanModel.accountId">
+          <EntitySet Name="areaprovice" EntityType="supermanModel.areaprovice" />
+          <AssociationSet Name="FK1" Association="supermanModel.FK1">
             <End Role="account" EntitySet="account" />
             <End Role="accountauthority" EntitySet="accountauthority" />
           </AssociationSet>
-          <AssociationSet Name="authorityId" Association="supermanModel.authorityId">
+          <AssociationSet Name="FK2" Association="supermanModel.FK2">
             <End Role="authority" EntitySet="authority" />
             <End Role="accountauthority" EntitySet="accountauthority" />
           </AssociationSet>
-          <AssociationSet Name="businessId" Association="supermanModel.businessId">
+          <AssociationSet Name="fk3" Association="supermanModel.fk3">
             <End Role="business" EntitySet="business" />
             <End Role="order" EntitySet="order" />
           </AssociationSet>
@@ -385,17 +396,17 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Password" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="UserName" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="LoginName" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="UserName" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="LoginName" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
           <Property Name="Status" Type="Int32" />
           <Property Name="AccountType" Type="Int32" />
-          <Property Name="FADateTime" Type="DateTime" />
-          <Property Name="FAUser" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="LCDateTime" Type="DateTime" />
-          <Property Name="LCUser" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="FADateTime" Type="DateTime" Precision="3" />
+          <Property Name="FAUser" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="LCDateTime" Type="DateTime" Precision="3" />
+          <Property Name="LCUser" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
           <Property Name="GroupId" Type="Int32" />
-          <NavigationProperty Name="accountauthority" Relationship="supermanModel.accountId" FromRole="account" ToRole="accountauthority" />
+          <NavigationProperty Name="accountauthority" Relationship="supermanModel.FK1" FromRole="account" ToRole="accountauthority" />
         </EntityType>
         <EntityType Name="accountauthority">
           <Key>
@@ -404,31 +415,24 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="AccountId" Type="Int32" />
           <Property Name="AuthorityId" Type="Int32" />
-          <NavigationProperty Name="account" Relationship="supermanModel.accountId" FromRole="accountauthority" ToRole="account" />
-          <NavigationProperty Name="authority" Relationship="supermanModel.authorityId" FromRole="accountauthority" ToRole="authority" />
+          <NavigationProperty Name="account" Relationship="supermanModel.FK1" FromRole="accountauthority" ToRole="account" />
+          <NavigationProperty Name="authority" Relationship="supermanModel.FK2" FromRole="accountauthority" ToRole="authority" />
         </EntityType>
         <EntityType Name="areacity">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
           <Property Name="Provice_Id" Type="Int32" />
         </EntityType>
         <EntityType Name="areacounty">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
           <Property Name="City_Id" Type="Int32" />
-        </EntityType>
-        <EntityType Name="areaprovice">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="authority">
           <Key>
@@ -436,78 +440,79 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="AuthorityType" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="accountauthority" Relationship="supermanModel.authorityId" FromRole="authority" ToRole="accountauthority" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="accountauthority" Relationship="supermanModel.FK2" FromRole="authority" ToRole="accountauthority" />
         </EntityType>
         <EntityType Name="business">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="City" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="district" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Name="PhoneNo" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="PhoneNo2" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="Password" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="CheckPicUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="IDCard" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="Address" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="Landline" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="district" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNo" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNo2" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="CheckPicUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="IDCard" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="Address" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Landline" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
           <Property Name="Longitude" Type="Double" />
           <Property Name="Latitude" Type="Double" />
-          <Property Name="Status" Type="SByte" />
-          <Property Name="InsertTime" Type="DateTime" />
-          <Property Name="districtId" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="CityId" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="Byte" />
+          <Property Name="InsertTime" Type="DateTime" Precision="3" />
+          <Property Name="districtId" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="CityId" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
           <Property Name="GroupId" Type="Int32" />
           <Property Name="OriginalBusiId" Type="Int32" />
-          <Property Name="ProvinceCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="CityCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="AreaCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="Province" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="ProvinceCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="CityCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="AreaCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Province" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <Property Name="CommissionTypeId" Type="Int32" />
-          <NavigationProperty Name="order" Relationship="supermanModel.businessId" FromRole="business" ToRole="order" />
+          <Property Name="DistribSubsidy" Type="Decimal" Precision="5" Scale="2" />
+          <NavigationProperty Name="order" Relationship="supermanModel.fk3" FromRole="business" ToRole="order" />
         </EntityType>
         <EntityType Name="channel">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ChannelName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="CreateName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="CreateTime" Type="DateTime" />
-          <Property Name="ModifyName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModifyTime" Type="DateTime" />
-          <Property Name="IsValid" Type="SByte" />
-          <Property Name="Remark" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="ChannelName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CreateName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CreateTime" Type="DateTime" Precision="3" />
+          <Property Name="ModifyName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ModifyTime" Type="DateTime" Precision="3" />
+          <Property Name="IsValid" Type="Byte" />
+          <Property Name="Remark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="clienter">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="PhoneNo" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="LoginName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="recommendPhone" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="Password" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="TrueName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="IDCard" Type="String" MaxLength="18" FixedLength="false" Unicode="false" />
-          <Property Name="PicWithHandUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="PicUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="Status" Type="SByte" />
-          <Property Name="AccountBalance" Type="Decimal" />
-          <Property Name="InsertTime" Type="DateTime" />
-          <Property Name="InviteCode" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="City" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="CityId" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="PhoneNo" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="LoginName" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="recommendPhone" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="TrueName" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="IDCard" Type="String" MaxLength="18" FixedLength="false" Unicode="true" />
+          <Property Name="PicWithHandUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="PicUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="Byte" />
+          <Property Name="AccountBalance" Type="Decimal" Precision="7" Scale="2" />
+          <Property Name="InsertTime" Type="DateTime" Precision="3" />
+          <Property Name="InviteCode" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CityId" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
           <Property Name="GroupId" Type="Int32" />
-          <Property Name="HealthCardID" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
-          <Property Name="InternalDepart" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="ProvinceCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="AreaCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="CityCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="Province" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="HealthCardID" Type="String" MaxLength="1" FixedLength="true" Unicode="true" />
+          <Property Name="InternalDepart" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="ProvinceCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="AreaCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="CityCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Province" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <Property Name="BussinessID" Type="Int32" />
         </EntityType>
         <EntityType Name="commissiontype">
@@ -515,71 +520,74 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="CommissionName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="IsValid" Type="SByte" />
-          <Property Name="Remark" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="CommissionName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="IsValid" Type="Byte" />
+          <Property Name="Remark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="group">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="GroupName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="CreateName" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
-          <Property Name="CreateTime" Type="DateTime" />
-          <Property Name="ModifyName" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
-          <Property Name="ModifyTime" Type="DateTime" />
-          <Property Name="IsValid" Type="SByte" />
+          <Property Name="GroupName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CreateName" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="CreateTime" Type="DateTime" Precision="3" />
+          <Property Name="ModifyName" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="ModifyTime" Type="DateTime" Precision="3" />
+          <Property Name="IsValid" Type="Byte" />
         </EntityType>
         <EntityType Name="myincome">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="PhoneNo" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="MyIncome1" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="MyInComeAmount" Type="Decimal" />
-          <Property Name="InsertTime" Type="DateTime" />
+          <Property Name="PhoneNo" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="MyIncome1" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="MyInComeAmount" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="InsertTime" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="order">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="OrderNo" Type="String" Nullable="false" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="PickUpAddress" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="PubDate" Type="DateTime" />
-          <Property Name="ReceviceName" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="RecevicePhoneNo" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="ReceviceAddress" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="ActualDoneDate" Type="DateTime" />
+          <Property Name="OrderNo" Type="String" Nullable="false" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="PickUpAddress" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="PubDate" Type="DateTime" Precision="3" />
+          <Property Name="ReceviceName" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="RecevicePhoneNo" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="ReceviceAddress" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ActualDoneDate" Type="DateTime" Precision="3" />
           <Property Name="IsPay" Type="Boolean" />
-          <Property Name="Amount" Type="Decimal" />
-          <Property Name="OrderCommission" Type="Decimal" />
-          <Property Name="DistribSubsidy" Type="Decimal" />
-          <Property Name="WebsiteSubsidy" Type="Decimal" />
-          <Property Name="Remark" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Name="Status" Type="SByte" />
+          <Property Name="Amount" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="OrderCommission" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="DistribSubsidy" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="WebsiteSubsidy" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="Remark" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="Byte" />
           <Property Name="clienterId" Type="Int32" />
           <Property Name="businessId" Type="Int32" />
-          <Property Name="ReceviceCity" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="ReceviceCity" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
           <Property Name="ReceviceLongitude" Type="Double" />
           <Property Name="ReceviceLatitude" Type="Double" />
           <Property Name="OrderFrom" Type="Int32" Nullable="false" />
           <Property Name="OriginalOrderId" Type="Int64" />
-          <Property Name="OriginalOrderNo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="OriginalOrderNo" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Quantity" Type="Int32" />
-          <Property Name="Weight" Type="Decimal" />
-          <Property Name="ReceiveProvince" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="ReceiveArea" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="ReceiveProvinceCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="ReceiveCityCode" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="ReceiveAreaCode" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="Weight" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="ReceiveProvince" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="ReceiveArea" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="ReceiveProvinceCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="ReceiveCityCode" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="ReceiveAreaCode" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
           <Property Name="OrderType" Type="Int32" />
           <Property Name="KM" Type="Double" />
           <Property Name="GuoJuQty" Type="Int32" />
           <Property Name="LuJuQty" Type="Int32" />
-          <NavigationProperty Name="business" Relationship="supermanModel.businessId" FromRole="order" ToRole="business" />
+          <Property Name="SongCanDate" Type="DateTime" Precision="3" />
+          <Property Name="OrderCount" Type="Int32" />
+          <Property Name="CommissionRate" Type="Decimal" Precision="5" Scale="2" />
+          <NavigationProperty Name="business" Relationship="supermanModel.fk3" FromRole="order" ToRole="business" />
         </EntityType>
         <EntityType Name="orderlog">
           <Key>
@@ -587,22 +595,22 @@
           </Key>
           <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="OrderId" Type="Int32" Nullable="false" />
-          <Property Name="OrderStatus" Type="SByte" />
-          <Property Name="OptionDescription" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="OptionPerson" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="OptionTIme" Type="DateTime" />
-          <Property Name="IsValid" Type="SByte" />
-          <Property Name="Remark" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="OrderStatus" Type="Byte" />
+          <Property Name="OptionDescription" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="OptionPerson" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="OptionTIme" Type="DateTime" Precision="3" />
+          <Property Name="IsValid" Type="Byte" />
+          <Property Name="Remark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="pushmessage">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Title" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Name="Alert" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Name="Content" Type="String" MaxLength="2000" FixedLength="false" Unicode="false" />
-          <Property Name="PushDate" Type="DateTime" />
+          <Property Name="Title" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Alert" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Content" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="PushDate" Type="DateTime" Precision="3" />
           <Property Name="AreaId" Type="Int32" />
         </EntityType>
         <EntityType Name="pushmessagestatus">
@@ -610,7 +618,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MessageId" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="MessageId" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
           <Property Name="AndroidDeliveredCount" Type="Int32" />
           <Property Name="PushMessageId" Type="Int32" />
         </EntityType>
@@ -618,46 +626,53 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="Code" Type="String" Nullable="false" MaxLength="13" FixedLength="false" Unicode="false" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />
-          <Property Name="ChnName" Type="String" MaxLength="32" FixedLength="false" Unicode="false" />
-          <Property Name="BriefName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="EnName" Type="String" MaxLength="32" FixedLength="false" Unicode="false" />
-          <Property Name="Creator" Type="String" MaxLength="32" FixedLength="false" Unicode="false" />
-          <Property Name="CreateDate" Type="DateTime" />
-          <Property Name="ModifyUser" Type="String" MaxLength="32" FixedLength="false" Unicode="false" />
-          <Property Name="ModifyDate" Type="DateTime" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="13" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="ChnName" Type="String" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="BriefName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="EnName" Type="String" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="Creator" Type="String" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="ModifyUser" Type="String" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="ModifyDate" Type="DateTime" Precision="3" />
           <Property Name="Fid" Type="Int32" Nullable="false" />
           <Property Name="Provinceid" Type="Int32" Nullable="false" />
           <Property Name="Cityid" Type="Int32" Nullable="false" />
           <Property Name="Depth" Type="Int32" Nullable="false" />
           <Property Name="Isbroad" Type="Int32" />
-          <Property Name="QPing" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
-          <Property Name="JPing" Type="String" MaxLength="64" FixedLength="false" Unicode="false" />
-          <Property Name="BriefQPing" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
-          <Property Name="BriefJPing" Type="String" MaxLength="64" FixedLength="false" Unicode="false" />
+          <Property Name="QPing" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="JPing" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="BriefQPing" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="BriefJPing" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
           <Property Name="IsGov" Type="Boolean" />
-          <Property Name="Host" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
-          <Property Name="BaiduLat" Type="String" MaxLength="64" FixedLength="false" Unicode="false" />
-          <Property Name="BaiduLong" Type="String" MaxLength="64" FixedLength="false" Unicode="false" />
+          <Property Name="Host" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="BaiduLat" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="BaiduLong" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="subsidy">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="OrderCommission" Type="Decimal" />
-          <Property Name="DistribSubsidy" Type="Decimal" />
-          <Property Name="WebsiteSubsidy" Type="Decimal" />
-          <Property Name="StartDate" Type="DateTime" />
-          <Property Name="EndDate" Type="DateTime" />
-          <Property Name="Status" Type="SByte" />
+          <Property Name="OrderCommission" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="DistribSubsidy" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="WebsiteSubsidy" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="StartDate" Type="DateTime" Precision="7" />
+          <Property Name="EndDate" Type="DateTime" Precision="7" />
+          <Property Name="Status" Type="Byte" />
           <Property Name="GroupId" Type="Int32" />
-          <Property Name="PKMCost" Type="Decimal" />
+          <Property Name="PKMCost" Type="Decimal" Precision="10" Scale="2" />
           <Property Name="OrderType" Type="Int32" />
         </EntityType>
-        <Association Name="accountId">
+        <EntityType Name="areaprovice">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <Association Name="FK1">
           <End Type="supermanModel.account" Role="account" Multiplicity="0..1" />
           <End Type="supermanModel.accountauthority" Role="accountauthority" Multiplicity="*" />
           <ReferentialConstraint>
@@ -669,7 +684,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="authorityId">
+        <Association Name="FK2">
           <End Type="supermanModel.authority" Role="authority" Multiplicity="0..1" />
           <End Type="supermanModel.accountauthority" Role="accountauthority" Multiplicity="*" />
           <ReferentialConstraint>
@@ -681,7 +696,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="businessId">
+        <Association Name="fk3">
           <End Type="supermanModel.business" Role="business" Multiplicity="0..1" />
           <End Type="supermanModel.order" Role="order" Multiplicity="*" />
           <ReferentialConstraint>
@@ -743,14 +758,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="areaprovice">
-            <EntityTypeMapping TypeName="supermanModel.areaprovice">
-              <MappingFragment StoreEntitySet="areaprovice">
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="authority">
             <EntityTypeMapping TypeName="supermanModel.authority">
               <MappingFragment StoreEntitySet="authority">
@@ -763,6 +770,7 @@
           <EntitySetMapping Name="business">
             <EntityTypeMapping TypeName="supermanModel.business">
               <MappingFragment StoreEntitySet="business">
+                <ScalarProperty Name="DistribSubsidy" ColumnName="DistribSubsidy" />
                 <ScalarProperty Name="CommissionTypeId" ColumnName="CommissionTypeId" />
                 <ScalarProperty Name="Province" ColumnName="Province" />
                 <ScalarProperty Name="AreaCode" ColumnName="AreaCode" />
@@ -870,6 +878,9 @@
           <EntitySetMapping Name="order">
             <EntityTypeMapping TypeName="supermanModel.order">
               <MappingFragment StoreEntitySet="order">
+                <ScalarProperty Name="CommissionRate" ColumnName="CommissionRate" />
+                <ScalarProperty Name="OrderCount" ColumnName="OrderCount" />
+                <ScalarProperty Name="SongCanDate" ColumnName="SongCanDate" />
                 <ScalarProperty Name="LuJuQty" ColumnName="LuJuQty" />
                 <ScalarProperty Name="GuoJuQty" ColumnName="GuoJuQty" />
                 <ScalarProperty Name="KM" ColumnName="KM" />
@@ -984,6 +995,14 @@
                 <ScalarProperty Name="WebsiteSubsidy" ColumnName="WebsiteSubsidy" />
                 <ScalarProperty Name="DistribSubsidy" ColumnName="DistribSubsidy" />
                 <ScalarProperty Name="OrderCommission" ColumnName="OrderCommission" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="areaprovice">
+            <EntityTypeMapping TypeName="supermanModel.areaprovice">
+              <MappingFragment StoreEntitySet="areaprovice">
+                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

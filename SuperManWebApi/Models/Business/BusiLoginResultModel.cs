@@ -14,7 +14,7 @@ namespace SuperManWebApi.Models.Business
         /// 用户id
         /// </summary>
         public int userId { get; set; }
-        public sbyte? status { get; set; }
+        public byte? status { get; set; }
        
         /// <summary>
         /// 城市

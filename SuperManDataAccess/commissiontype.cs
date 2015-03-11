@@ -16,7 +16,7 @@ namespace SuperManDataAccess
     {
         public int Id { get; set; }
         public string CommissionName { get; set; }
-        public Nullable<sbyte> IsValid { get; set; }
+        public Nullable<byte> IsValid { get; set; }
         public string Remark { get; set; }
     }
 }

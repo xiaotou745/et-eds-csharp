@@ -20,7 +20,7 @@ namespace SuperManDataAccess
         public Nullable<decimal> WebsiteSubsidy { get; set; }
         public Nullable<System.DateTime> StartDate { get; set; }
         public Nullable<System.DateTime> EndDate { get; set; }
-        public Nullable<sbyte> Status { get; set; }
+        public Nullable<byte> Status { get; set; }
         public Nullable<int> GroupId { get; set; }
         public Nullable<decimal> PKMCost { get; set; }
         public Nullable<int> OrderType { get; set; }

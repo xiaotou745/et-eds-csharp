@@ -83,7 +83,7 @@ namespace SuperManCommonModel.Models
         /// <summary>
         /// 订单状态
         /// </summary>
-        public sbyte? Status { get; set; }
+        public byte? Status { get; set; }
         /// <summary>
         /// 商家到收货人的距离
         /// </summary>
@@ -161,7 +161,7 @@ namespace SuperManCommonModel.Models
         /// <summary>
         /// 订单状态
         /// </summary>
-        public sbyte? Status { get; set; }
+        public byte? Status { get; set; }
         /// <summary>
         /// 商家到收货人的距离
         /// </summary>

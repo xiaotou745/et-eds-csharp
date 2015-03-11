@@ -16,11 +16,11 @@ namespace SuperManDataAccess
     {
         public long Id { get; set; }
         public int OrderId { get; set; }
-        public Nullable<sbyte> OrderStatus { get; set; }
+        public Nullable<byte> OrderStatus { get; set; }
         public string OptionDescription { get; set; }
         public string OptionPerson { get; set; }
         public Nullable<System.DateTime> OptionTIme { get; set; }
-        public Nullable<sbyte> IsValid { get; set; }
+        public Nullable<byte> IsValid { get; set; }
         public string Remark { get; set; }
     }
 }

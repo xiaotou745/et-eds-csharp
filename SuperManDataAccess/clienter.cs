@@ -23,7 +23,7 @@ namespace SuperManDataAccess
         public string IDCard { get; set; }
         public string PicWithHandUrl { get; set; }
         public string PicUrl { get; set; }
-        public Nullable<sbyte> Status { get; set; }
+        public Nullable<byte> Status { get; set; }
         public Nullable<decimal> AccountBalance { get; set; }
         public Nullable<System.DateTime> InsertTime { get; set; }
         public string InviteCode { get; set; }

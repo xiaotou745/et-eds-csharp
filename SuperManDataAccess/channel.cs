@@ -20,7 +20,7 @@ namespace SuperManDataAccess
         public Nullable<System.DateTime> CreateTime { get; set; }
         public string ModifyName { get; set; }
         public Nullable<System.DateTime> ModifyTime { get; set; }
-        public Nullable<sbyte> IsValid { get; set; }
+        public Nullable<byte> IsValid { get; set; }
         public string Remark { get; set; }
     }
 }
