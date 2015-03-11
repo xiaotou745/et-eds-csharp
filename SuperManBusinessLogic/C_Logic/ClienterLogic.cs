@@ -512,9 +512,9 @@ namespace SuperManBusinessLogic.C_Logic
                 if (client != null)  //更新用户相关金额数据
                 {
                     if (client.AccountBalance != null)  //TODO
-                        client.AccountBalance = client.AccountBalance.Value +query.OrderCommission;
-                    else //TODO
-                        client.AccountBalance = query.OrderCommission;
+                        client.AccountBalance = client.AccountBalance.Value + (query.OrderCommission == null ? 0 : Convert.ToDecimal(query.OrderCommission));
+                    else
+                        client.AccountBalance = query.OrderCommission == null ? 0 : Convert.ToDecimal(query.OrderCommission);
                 }
 
                 // add 完成订单时添加收入

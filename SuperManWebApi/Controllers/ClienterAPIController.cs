@@ -485,19 +485,12 @@ namespace SuperManWebApi.Controllers
         public ResultModel<FinishOrderResultModel> FinishOrder_C(int userId, string orderNo)
         {
             if (userId == 0)  //用户id非空验证
-            {
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.userIdEmpty);
-            }
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
-            {
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderEmpty);
-            }
             if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null) //订单是否存在验证
-            {
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderIsNotExist);
-            }
             int bResult = ClienterLogic.clienterLogic().FinishOrder(userId, orderNo);
-
             if (bResult == 2)
             {
                 var clienter = ClienterLogic.clienterLogic().GetClienterById(userId);
