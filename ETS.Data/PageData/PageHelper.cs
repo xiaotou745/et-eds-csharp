@@ -22,12 +22,12 @@ namespace ETS.Data.PageData
         /// <param name="PageSize">每页显示条数</param>
         /// <param name="IsAccount">是否返回总条数、总页数</param>
         /// <returns></returns>
-        public PageInfo GetPages(string connectionString, int currentPage, string where_, string OrderByColumn, string ColumnList, string TableList, int PageSize, bool IsAccounte)
+        public PageInfo<T> GetPages<T>(string connectionString, int currentPage, string where_, string OrderByColumn, string ColumnList, string TableList, int PageSize, bool IsAccounte)
         {
             int TotalRecord = 0;
             int TotalPage = 0;
             var _table = GetPages(connectionString,currentPage, where_, OrderByColumn, ColumnList, TableList, PageSize, IsAccounte, out TotalRecord, out TotalPage);
-            var pageInfo = new PageInfo(TotalRecord, currentPage, _table, TotalPage);
+            var pageInfo = new PageInfo<T>(TotalRecord, currentPage, ETS.Extension.DataTableHelper.ConvertDataTableList<T>(_table), TotalPage);
             return pageInfo;
         }
 
