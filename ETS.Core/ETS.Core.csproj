@@ -54,6 +54,7 @@
     <Compile Include="Cacheing\LocalCache.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Expand\ActionStatusAttribute.cs" />
+    <Compile Include="Const\OrderConst.cs" />
     <Compile Include="Expand\AttribDescription.cs" />
     <Compile Include="Expand\DisplayTextAttribute.cs" />
     <Compile Include="Expand\EnumerableExpand.cs" />
