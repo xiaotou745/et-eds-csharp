@@ -59,7 +59,7 @@ namespace SuperManCommonModel.Models
         public double? Latitude { get; set; }
 
         public DateTime? InsertTime { get; set; }
-        public sbyte? Status { get; set; }
+        public byte? Status { get; set; }
     }
 
     public class BusinessViewModel

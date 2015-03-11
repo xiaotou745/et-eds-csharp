@@ -52,7 +52,7 @@ namespace SuperManCommonModel.Models
         /// <summary>
         /// 状态
         /// </summary>
-        public sbyte? Status { get; set; }
+        public byte? Status { get; set; }
     }
 
     public class ClienterViewModel

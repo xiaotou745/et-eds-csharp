@@ -62,5 +62,10 @@ namespace SuperMan.Controllers
         public JsonResult GetBussinessByCityInfo(BusinessSearchCriteria model) {
              return Json(BusiLogic.busiLogic().GetBussinessByCityInfo(model), JsonRequestBehavior.DenyGet);
         }
+        [HttpGet]
+        public ActionResult BusinessSettlementSet()
+        {
+            return View("BusinessSettlementSet");
+        }
     }
 }

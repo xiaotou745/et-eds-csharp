@@ -11,7 +11,7 @@ namespace SuperManWebApi.Models.Clienter
     public class ClienterLoginResultModel
     {
         public int userId { get; set; }
-        public sbyte? status { get; set; }
+        public byte? status { get; set; }
         public decimal? Amount { get; set; }
         public string phoneNo { get; set; }
 
