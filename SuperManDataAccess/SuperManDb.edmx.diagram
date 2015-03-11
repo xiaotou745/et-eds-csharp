@@ -11,7 +11,6 @@
         <EntityTypeShape EntityType="supermanModel.areacounty" Width="1.5" PointX="7.75" PointY="0.75" />
         <EntityTypeShape EntityType="supermanModel.authority" Width="1.5" PointX="0.75" PointY="5.75" />
         <EntityTypeShape EntityType="supermanModel.channel" Width="1.5" PointX="7.75" PointY="3.75" />
-        <EntityTypeShape EntityType="supermanModel.clienter" Width="1.5" PointX="7.75" PointY="7.75" />
         <EntityTypeShape EntityType="supermanModel.commissiontype" Width="1.5" PointX="9.75" PointY="0.75" />
         <EntityTypeShape EntityType="supermanModel.group" Width="1.5" PointX="9.75" PointY="3.75" />
         <EntityTypeShape EntityType="supermanModel.myincome" Width="1.5" PointX="9.75" PointY="7.75" />
@@ -26,6 +25,7 @@
         <AssociationConnector Association="supermanModel.FK2" />
         <EntityTypeShape EntityType="supermanModel.business" Width="1.5" PointX="2.75" PointY="17.375" />
         <AssociationConnector Association="supermanModel.fk3" />
+        <EntityTypeShape EntityType="supermanModel.clienter" Width="1.5" PointX="12.375" PointY="13.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
