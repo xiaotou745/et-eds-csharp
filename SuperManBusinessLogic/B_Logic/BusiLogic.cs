@@ -70,7 +70,7 @@ namespace SuperManBusinessLogic.B_Logic
                 var query = db.business.FirstOrDefault(p => p.Id == id);
                 if (query != null)
                 {
-                    query.BusinessCommission = commission;
+                    //query.BusinessCommission = commission;
                     var i = db.SaveChanges();
                     if (i != 0)
                         bResult = true;
@@ -102,10 +102,10 @@ namespace SuperManBusinessLogic.B_Logic
                 {
                     items = items.Where(p => p.Status == criteria.Status);
                 }
-                if (criteria.BusinessCommission > 0)
-                {
-                    items = items.Where(p => p.BusinessCommission == criteria.BusinessCommission);
-                }
+                //if (criteria.BusinessCommission > 0)
+                //{
+                //    items = items.Where(p => p.BusinessCommission == criteria.BusinessCommission);
+                //}
                 if (criteria.GroupId != null)
                 {
                     items = items.Where(p => p.GroupId == criteria.GroupId);
