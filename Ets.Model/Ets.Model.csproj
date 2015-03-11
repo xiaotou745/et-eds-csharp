@@ -43,9 +43,15 @@
     <Compile Include="UserModel.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DataModel\" />
-    <Folder Include="DomainModel\" />
-    <Folder Include="ParameterModel\" />
+    <Folder Include="DataModel\Bussiness\" />
+    <Folder Include="DataModel\Clienter\" />
+    <Folder Include="DataModel\Order\" />
+    <Folder Include="DomainModel\Bussiness\" />
+    <Folder Include="DomainModel\Clienter\" />
+    <Folder Include="DomainModel\Order\" />
+    <Folder Include="ParameterModel\Bussiness\" />
+    <Folder Include="ParameterModel\Clienter\" />
+    <Folder Include="ParameterModel\Order\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
