@@ -42,7 +42,7 @@ namespace SuperMan.Controllers
                 return null;
             } 
             ViewBag.txtGroupId = account.GroupId;//集团id
-            DateTime t1=new DateTime(2014,1,1);
+            DateTime t1=new DateTime(1997,1,1);
             DateTime t2 = DateTime.Now;
             var result = iBusinessProvider.GetBusinessCommission(t1, t2, "", account.GroupId??0);
             if (!result.Result)
