@@ -39,8 +39,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Order\IOrderService.cs" />
     <Compile Include="Clienter\IClienterProvider.cs" />
-    <Compile Include="Order\IOrder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="User\IBusinessProvider.cs" />
     <Compile Include="User\IUser.cs" />
