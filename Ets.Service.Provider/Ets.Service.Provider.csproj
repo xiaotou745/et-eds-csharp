@@ -44,12 +44,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Clienter\ClienterProvider.cs" />
-<<<<<<< HEAD
     <Compile Include="Order\OrderCommissionProvider.cs" />
     <Compile Include="Order\OrderService.cs" />
-=======
     <Compile Include="Order\OrderProvider.cs" />
->>>>>>> 9ca60dcda0cb1bc5a785aa71cbe72962f1889cff
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="User\BusinessProvider.cs.cs" />
     <Compile Include="User\UserProvider.cs" />

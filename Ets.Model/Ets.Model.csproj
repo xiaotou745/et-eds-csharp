@@ -39,12 +39,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-<<<<<<< HEAD
     <Compile Include="DataModel\Order\OrderCommission.cs" />
-=======
     <Compile Include="Common\PaginResult.cs" />
     <Compile Include="Common\ResultInfo.cs" />
->>>>>>> 9ca60dcda0cb1bc5a785aa71cbe72962f1889cff
     <Compile Include="DomainModel\Clienter\ClientOrderModel.cs" />
     <Compile Include="ParameterModel\Pages\PagingResult.cs" />
     <Compile Include="DataModel\Clienter\Clienter.cs" />
