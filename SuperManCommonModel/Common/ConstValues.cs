@@ -24,10 +24,6 @@ namespace SuperManCommonModel
         /// </summary>
         public const int ORDER_CANCEL = 3;
         /// <summary>
-        /// 待客审
-        /// </summary>
-        public const int ORDER_WAITAUDIT = 4;
-        /// <summary>
         /// 超人审核通过        已通过
         /// </summary>
         public const int CLIENTER_AUDITPASS = 1;

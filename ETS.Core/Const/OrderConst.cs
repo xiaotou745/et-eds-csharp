@@ -28,10 +28,6 @@ namespace ETS.Const
         /// 订单已取消 
         /// </summary>
         public const int OrderStatus3 = 3;
-        /// <summary>
-        /// 待客审
-        /// </summary>
-        public const int OrderStatus4 = 4;
         #endregion
     }
 }

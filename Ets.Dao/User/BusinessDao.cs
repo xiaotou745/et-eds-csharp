@@ -28,12 +28,7 @@ namespace Ets.Dao.User
             if (paraModel.userId != null)  //订单商户id
                 whereStr = whereStr + " and a.businessId=" + paraModel.userId.ToString();
             if (paraModel.Status != null)  //订单状态
-            {
-                if (paraModel.Status == OrderConst.OrderStatus4)
-                     whereStr = whereStr + " and (a.Status=" + OrderConst.OrderStatus0.ToString()+" or a.Status="+OrderConst.OrderStatus2.ToString()+")";
-                else
-                    whereStr = whereStr + " and a.Status=" + paraModel.Status.ToString();
-            }
+                whereStr = whereStr + " and a.Status=" + paraModel.Status.ToString();
             return new PageHelper().GetPages<T>(SuperMan_Read, 1, whereStr, orderByColumn, columnList, tableList, 10, true);  
         }
     }

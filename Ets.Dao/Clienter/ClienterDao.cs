@@ -60,5 +60,21 @@ namespace Ets.Dao.Clienter
             int a = ParseHelper.ToInt(executeScalar, 0);
             return a;
         }
+
+
+        /// <summary>
+        /// 骑士上下班功能   add by caoheyang 20150311
+        /// </summary>
+        /// <param name="paraModel">参数实体</param>
+        public virtual int QueryOrderount(Ets.Model.ParameterModel.Clienter.ChangeWorkStatusPM paraModel)
+        {
+            const string querySql = @"select count(id) from dbo.[order]  WHERE clienterId=@clienterId and Status=@Status";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("clienterId", paraModel.Id);    //超人id
+            dbParameters.AddWithValue("Status", paraModel.OrderStatus);  //目标超人工作状态
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Write, querySql, dbParameters);
+            int a = ParseHelper.ToInt(executeScalar, 0);
+            return a;
+        }
     }
 }
