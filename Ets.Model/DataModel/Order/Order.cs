@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ets.Model.DataModel.Order
 {
-    public partial class order
+    public class order
     {
         public int Id { get; set; }
         public string OrderNo { get; set; }
@@ -45,5 +45,7 @@ namespace Ets.Model.DataModel.Order
         public Nullable<System.DateTime> SongCanDate { get; set; }
         public Nullable<int> OrderCount { get; set; }
         public Nullable<decimal> CommissionRate { get; set; }
+
+        public virtual business business { get; set; }
     }
 }
