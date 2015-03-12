@@ -46,6 +46,6 @@ namespace Ets.Model.DataModel.Order
         public Nullable<int> OrderCount { get; set; }
         public Nullable<decimal> CommissionRate { get; set; }
 
-        public virtual business business { get; set; }
+        
     }
 }
