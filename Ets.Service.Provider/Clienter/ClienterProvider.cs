@@ -21,6 +21,8 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="paraModel"></param>
         /// <returns></returns>
         public int ChangeWorkStatus(Ets.Model.ParameterModel.Clienter.ChangeWorkStatusPM paraModel) {
+            if (paraModel.WorkStatus == ETS.Const.ClienterConst.ClienterWorkStatus1)  //如果要下班，先判断超人是否还有为完成的订单
+                return 1;
             return clienterDao.ChangeWorkStatusToSql(paraModel);
         }
     }
