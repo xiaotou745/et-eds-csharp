@@ -1,9 +1,8 @@
 ﻿using ETS.Data.PageData;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Ets.Model.Common;
+using Ets.Model.DomainModel.Bussiness;
 
 namespace Ets.Service.IProvider.User
 {
@@ -17,5 +16,20 @@ namespace Ets.Service.IProvider.User
         /// </summary>
         /// <returns></returns>
         PageInfo<T> GetOrdersApp<T>(Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp paraModel);
+
+        /// <summary>
+        /// 生成商户结算excel文件2015.3.12 平扬
+        /// </summary>
+        /// <returns></returns>
+        string CreateExcel(BusinessCommissionModel paraModel);
+
+        /// <summary>
+        /// 商户结算列表--2015.3.12 平扬
+        /// </summary>
+        /// <param name="t1">开始计算日期</param>
+        /// <param name="t2">结束日期</param>
+        /// <param name="name">商户姓名</param>
+        /// <returns></returns>
+        ResultInfo<IList<BusinessCommissionModel>> GetBusinessCommission(DateTime t1, DateTime t2, string name,int groupid);
     }
 }

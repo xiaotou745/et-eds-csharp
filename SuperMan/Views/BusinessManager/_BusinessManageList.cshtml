@@ -12,7 +12,7 @@
             <th>照片</th>
             <th>申请时间</th>
             <th>所属集团</th>
-            @*<th>结算比例</th>*@
+            <th>结算比例</th>
             @*<th>订单</th>
                 <th>订单金额</th>*@
             <th>审核状态</th>
@@ -44,11 +44,11 @@
                             @Html.Raw(GroupLogic.groupLogic().GetGroupName(Convert.ToInt32(item.GroupId)))
                         }
                     </td>
-                    @*<td>
+                    <td>
                         @{
                             decimal? commission = @item.BusinessCommission ?? 0;
                         }@commission%
-                    </td>*@
+                    </td>
                     @{
                 var statusView = "";
                 if (@item.Status == SuperManCommonModel.ConstValues.BUSINESS_AUDITPASS)
@@ -93,7 +93,7 @@
                     }
                 }
                         }
-                    @*<a href="javascript:void(0)" onclick="funcComView(@item.Id,'@item.Name','@item.Address','@item.PhoneNo','@item.BusinessCommission')">设置结算比例</a>*@
+                    <a href="javascript:void(0)" onclick="funcComView(@item.Id,'@item.Name','@item.Address','@item.PhoneNo','@item.BusinessCommission')">设置结算比例</a>
                     </td>
                 </tr>
             }

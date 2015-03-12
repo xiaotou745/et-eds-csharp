@@ -176,6 +176,7 @@
       <DependentUpon>Authorities.tt</DependentUpon>
     </Compile>
     <Compile Include="Authority\IAuthenticationService.cs" />
+    <Compile Include="Controllers\BusinessCommissionController.cs" />
     <Compile Include="Controllers\CommonController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AuthorityManagerController.cs" />
@@ -517,7 +518,7 @@
     <Content Include="Views\HomeCount\_PartialSuperManCount.cshtml" />
     <Content Include="Views\HomeCount\_PartialBisuCount.cshtml" />
     <Content Include="Views\UploadTest\Index.cshtml" />
-    <Content Include="Views\BusinessManager\BusinessSettlementSet.cshtml" />
+    <Content Include="Views\BusinessCommission\BusinessCommission.cshtml" />
     <Content Include="Views\SubsidyManager\SettlementFunction.cshtml" />
     <Content Include="Views\SubsidyManager\_SettlementFunctionList.cshtml" />
   </ItemGroup>
@@ -531,11 +532,14 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ETS.Core\ETS.Core.csproj">
+      <Project>{bba67a86-afd6-46f2-bbd9-5dfb5bfdafe2}</Project>
+      <Name>ETS.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Ets.Model\Ets.Model.csproj">
       <Project>{b9d2361d-7e2c-45ba-89ec-4eca1bf7c456}</Project>
       <Name>Ets.Model</Name>
     </ProjectReference>
-
     <ProjectReference Include="..\Ets.Service.IProvider\Ets.Service.IProvider.csproj">
       <Project>{73ff8127-9703-4d8c-bd1c-4190a926a5ba}</Project>
       <Name>Ets.Service.IProvider</Name>
