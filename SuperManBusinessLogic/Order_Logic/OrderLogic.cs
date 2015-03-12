@@ -98,7 +98,7 @@ namespace SuperManBusinessLogic.Order_Logic
                     items = items.Where(p => p.business.GroupId == criteria.GroupId);
                 }
                 //按照发布时间降序排列
-                items = items.OrderByDescending(i => i.PubDate);
+                items = items.OrderByDescending(i => i.Id);
 
                 var pagedQuery = new OrderManage();
                 var orderModel = OrderModelTranslator.Instance.Translate(items.ToList());

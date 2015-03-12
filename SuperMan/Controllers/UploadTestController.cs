@@ -57,6 +57,7 @@ namespace SuperMan.Controllers
                 {
                     System.IO.Directory.CreateDirectory(CustomerIconUploader.Instance.PhysicalPath);
                 }
+               
                 var fullFilePath = Path.Combine(CustomerIconUploader.Instance.PhysicalPath, fileName);
  
                 file.SaveAs(fullFilePath);
