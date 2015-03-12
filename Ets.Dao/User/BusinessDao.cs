@@ -34,7 +34,7 @@ namespace Ets.Dao.User
                 else
                     whereStr = whereStr + " and a.Status=" + paraModel.Status.ToString();
             }
-            return new PageHelper().GetPages<T>(Config.SuperMan_Read, 1, whereStr, orderByColumn, columnList, tableList, 10, true);  
+            return new PageHelper().GetPages<T>(SuperMan_Read, 1, whereStr, orderByColumn, columnList, tableList, 10, true);  
         }
     }
 }

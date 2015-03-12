@@ -45,6 +45,7 @@
     <Compile Include="DomainModel\Bussiness\BussOrderDModelApp.cs" />
     <Compile Include="Common\SimpleResultModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BussOrderParaModelApp.cs" />
+    <Compile Include="ParameterModel\Clienter\ChangeWorkStatusPM.cs" />
     <Compile Include="ParameterModel\Order\ClientOrderInfoModel.cs" />
     <Compile Include="ParameterModel\Order\ClientOrderSearchCriteria.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -54,7 +55,6 @@
     <Folder Include="DataModel\Bussiness\" />
     <Folder Include="DomainModel\Clienter\" />
     <Folder Include="DomainModel\Order\" />
-    <Folder Include="ParameterModel\Clienter\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ETS.Core\ETS.Core.csproj">

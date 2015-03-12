@@ -23,6 +23,8 @@ namespace SuperManWebApi.Controllers
 
     public class ClienterAPIController : ApiController
     {
+
+        readonly Ets.Service.IProvider.Clienter.IClienterProvider iClienterProvider = new Ets.Service.Provider.Clienter.ClienterProvider();
         /// <summary>
         /// C端注册 
         /// </summary>
@@ -621,5 +623,22 @@ namespace SuperManWebApi.Controllers
             }
         }
 
+
+
+        /// <summary>
+        /// 骑士上下班功能 add by caoheyang 20150312
+        /// </summary>
+        /// <param name="paraModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public Ets.Model.Common.ResultModel<FinishOrderResultModel> ChangeWorkStatus(Ets.Model.ParameterModel.Clienter.ChangeWorkStatusPM paraModel)
+        {
+            if(paraModel.WorkStatus==null) //检查非空
+                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.Failed);
+            if (paraModel.Id == null) //检查非空
+                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.Failed);
+            int result = iClienterProvider.ChangeWorkStatus(paraModel);
+            return null;
+        }
     }
 }

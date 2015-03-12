@@ -13,17 +13,17 @@ namespace ETS.Dao
         /// <summary>
         /// ETS数据库连接字符串
         /// </summary>
-        protected string ConnStringOfETS
+        protected string SuperMan_Write
         {
-            get { return GetConnString("ConnStringOfETS"); }
+            get { return GetConnString("SuperMan_Write"); }
         }
 
         /// <summary>
         /// 主读
         /// </summary>
-        protected string ReadonlyConnStringOfETS
+        protected string SuperMan_Read
         {
-            get { return GetConnString("ReadonlyConnStringOfETS"); }
+            get { return GetConnString("SuperMan_Read"); }
         }
 
         /// <summary>
