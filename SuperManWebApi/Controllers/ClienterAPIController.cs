@@ -18,6 +18,7 @@ using SuperManCommonModel;
 using SuperManBusinessLogic.B_Logic;
 using System.ComponentModel;
 using ETS.Util;
+using LogHelper = ETS.Util.LogHelper;
 
 
 namespace SuperManWebApi.Controllers
@@ -249,7 +250,7 @@ namespace SuperManWebApi.Controllers
             var pSize = model.pageSize.HasValue ? model.pageSize.Value : 20;
             var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
             {
-                PagingRequest = new Ets.Model.DataModel.Clienter.PagingResult(pIndex, pSize),
+                PagingRequest = new ETS.Util.PagingResult(pIndex, pSize),
                 userId = model.userId,
                 status = model.status,
                 isLatest = model.isLatest,
@@ -257,7 +258,7 @@ namespace SuperManWebApi.Controllers
                 cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim()
             };
              
-            var pagedList = new Ets.Service.Provider.Order.OrderService().GetOrders(criteria);
+            var pagedList = new Ets.Service.Provider.Order.OrderProvider().GetOrders(criteria);
             //var lists = ClientOrderResultModelTranslator.Instance.Translate(pagedList);
 
 

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Ets.Service.IProvider.Order
 {
-    public interface  IOrderService
+    public interface IOrderProvider
     {
         PagedList<order> GetOrders(ClientOrderSearchCriteria criteria);
     }
