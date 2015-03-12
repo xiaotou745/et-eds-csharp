@@ -13,6 +13,6 @@ namespace Ets.Service.IProvider.Clienter
         /// </summary>
         /// <param name="paraModel"></param>
         /// <returns></returns>
-        int ChangeWorkStatus(Ets.Model.ParameterModel.Clienter.ChangeWorkStatusPM paraModel);
+        ETS.Enums.ChangeWorkStatusEnum ChangeWorkStatus(Ets.Model.ParameterModel.Clienter.ChangeWorkStatusPM paraModel);
     }
 }

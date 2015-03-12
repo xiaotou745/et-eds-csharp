@@ -631,14 +631,13 @@ namespace SuperManWebApi.Controllers
         /// <param name="paraModel"></param>
         /// <returns></returns>
         [HttpPost]
-        public Ets.Model.Common.ResultModel<FinishOrderResultModel> ChangeWorkStatus(Ets.Model.ParameterModel.Clienter.ChangeWorkStatusPM paraModel)
+        public Ets.Model.Common.SimpleResultModel ChangeWorkStatus(Ets.Model.ParameterModel.Clienter.ChangeWorkStatusPM paraModel)
         {
             if(paraModel.WorkStatus==null) //检查非空
-                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.Failed);
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.ChangeWorkStatusEnum.WorkStatusError);
             if (paraModel.Id == null) //检查非空
-                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.Failed);
-            int result = iClienterProvider.ChangeWorkStatus(paraModel);
-            return null;
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.ChangeWorkStatusEnum.ClienterError);
+            return Ets.Model.Common.SimpleResultModel.Conclude(iClienterProvider.ChangeWorkStatus(paraModel));
         }
     }
 }
