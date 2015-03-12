@@ -13,7 +13,7 @@ namespace Ets.Model.ParameterModel.Bussiness
         /// <summary>
         /// 商户id
         /// </summary>
-        public int userId { get; set; }
+        public int? userId { get; set; }
         /// <summary>
         /// 订单状态
         /// </summary>

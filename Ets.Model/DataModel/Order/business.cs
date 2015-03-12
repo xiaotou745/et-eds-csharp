@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ets.Model
+namespace Ets.Model.DataModel.Order
 {
-    public class Class1
+    public class business
     {
     }
 }

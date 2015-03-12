@@ -1,5 +1,8 @@
+using ETS.Data.PageData;
+using System.Collections.Generic;
 ﻿using Ets.Model.DataModel.Bussiness;
 using Ets.Model.ParameterModel.Bussiness;
+﻿using ETS.Data.PageData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,5 +27,8 @@ namespace Ets.Service.IProvider.User
         /// </summary>
         /// <returns></returns>
         IList<ClientOrderResultModel> GetMyOrders(ClientOrderSearchCriteria clientOrderModel);
+
+
+        PageInfo<T> GetOrdersApp<T>(Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp paraModel);
     }
 }

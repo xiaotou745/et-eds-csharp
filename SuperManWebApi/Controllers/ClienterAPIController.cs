@@ -24,6 +24,8 @@ namespace SuperManWebApi.Controllers
 
     public class ClienterAPIController : ApiController
     {
+
+        readonly Ets.Service.IProvider.Clienter.IClienterProvider iClienterProvider = new Ets.Service.Provider.Clienter.ClienterProvider();
         /// <summary>
         /// C端注册 
         /// </summary>
@@ -216,8 +218,11 @@ namespace SuperManWebApi.Controllers
                 city = string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
                 cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim()
             };
+
             var pagedList = ClienterLogic.clienterLogic().GetOrders(criteria);
             var lists = ClientOrderResultModelTranslator.Instance.Translate(pagedList);
+             
+
             //if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
             //{
             lists = lists.OrderBy(i => i.distance).ToList();
@@ -225,8 +230,7 @@ namespace SuperManWebApi.Controllers
 
             return ResultModel<ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, lists.ToArray());
         }
-
-
+         
 
         /// <summary>
         /// 获取我的任务   根据状态判断是已完成任务还是我的任务
@@ -622,5 +626,21 @@ namespace SuperManWebApi.Controllers
             }
         }
 
+
+
+        /// <summary>
+        /// 骑士上下班功能 add by caoheyang 20150312
+        /// </summary>
+        /// <param name="paraModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public Ets.Model.Common.SimpleResultModel ChangeWorkStatus(Ets.Model.ParameterModel.Clienter.ChangeWorkStatusPM paraModel)
+        {
+            if(paraModel.WorkStatus==null) //检查非空
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.ChangeWorkStatusEnum.WorkStatusError);
+            if (paraModel.Id == null) //检查非空
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.ChangeWorkStatusEnum.ClienterError);
+            return Ets.Model.Common.SimpleResultModel.Conclude(iClienterProvider.ChangeWorkStatus(paraModel));
+        }
     }
 }
