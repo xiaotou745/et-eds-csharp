@@ -1,12 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using Ets.Dao.Clienter;
+using Ets.Model.DataModel.Clienter;
+using Ets.Model.DataModel.Order;
 
 namespace Ets.Service.Provider.Clienter
 {
-    class ClienterProvider
+    public class ClienterProvider
     {
+        readonly ClienterDao clienterDao=new ClienterDao();
+
+        public List<order> GetOrdersNoLoginLatest(ClientOrderSearchCriteria criteria)
+        {
+            return clienterDao.GetOrdersNoLoginLatest(criteria);
+        }
     }
 }

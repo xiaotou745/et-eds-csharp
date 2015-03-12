@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Clienter\ClienterProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="User\BusinessProvider.cs.cs" />
     <Compile Include="User\UserProvider.cs" />
