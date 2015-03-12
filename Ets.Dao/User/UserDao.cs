@@ -16,7 +16,6 @@ namespace Ets.Dao.User
     {
         public virtual void RegisterToSql(Ets.Model.UserModel user)
         {
-            //DbHelper.ExecuteNonQuery();
             //const string insertSql = @"insert into user(............) values (@userid, @username) select @@identity";
 
             //IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -25,7 +24,6 @@ namespace Ets.Dao.User
 
             //object executeScalar = DbHelper.ExecuteScalar(ConnStringOfETS, insertSql, dbParameters);
             //int a = ParseHelper.ToInt(executeScalar, 0);
-            //DbHelper.QueryWithRowMapper
             PageInfo<Ets.Model.UserModel> pinfo = new PageHelper().GetPages<Ets.Model.UserModel>(Config.SuperMan_Read, 1, "1=1", "id", "id", "account", 1, true);
 
         }

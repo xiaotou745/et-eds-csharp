@@ -211,21 +211,6 @@ namespace SuperManWebApi.Models.Business
 
             to.Status = ConstValues.ORDER_NEW;
 
-            ////订单状态 标记
-            if (from.OrderType == 1 && (from.GuoJuQty >= 3 || from.LuJuQty >= 3)) //送餐订单 锅具或者炉具数量大于3,订单状态标记为 待客审
-            {
-                to.Status = ConstValues.ORDER_WAITAUDIT;
-            }
-            else if (from.OrderType == 2 && (from.GuoJuQty >= 4 || from.LuJuQty >= 4)) //取餐订单 锅具或者炉具数量大于4,订单状态标记为 待客审
-            {
-                to.Status = ConstValues.ORDER_WAITAUDIT;
-            }
-            else
-            {
-                to.Status = ConstValues.ORDER_NEW;
-            }
-
-
             return to;
         }
     }

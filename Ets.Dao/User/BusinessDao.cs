@@ -12,6 +12,8 @@ using System.Text;
 using System.Threading.Tasks;
 using ETS.Const;
 using Ets.Model.DomainModel.Bussiness;
+using Ets.Model.DomainModel.Clienter;
+
 
 namespace Ets.Dao.User
 {
@@ -30,13 +32,8 @@ namespace Ets.Dao.User
             if (paraModel.userId != null)  //订单商户id
                 whereStr = whereStr + " and a.businessId=" + paraModel.userId.ToString();
             if (paraModel.Status != null)  //订单状态
-            {
-                if (paraModel.Status == OrderConst.OrderStatus4)
-                     whereStr = whereStr + " and (a.Status=" + OrderConst.OrderStatus0.ToString()+" or a.Status="+OrderConst.OrderStatus2.ToString()+")";
-                else
-                    whereStr = whereStr + " and a.Status=" + paraModel.Status.ToString();
-            }
-            return new PageHelper().GetPages<T>(Config.SuperMan_Read, 1, whereStr, orderByColumn, columnList, tableList, 10, true);  
+                whereStr = whereStr + " and a.Status=" + paraModel.Status.ToString();
+            return new PageHelper().GetPages<T>(SuperMan_Read, 1, whereStr, orderByColumn, columnList, tableList, 10, true);  
         }
 
      
@@ -132,7 +129,6 @@ namespace Ets.Dao.User
             }
             return list;
         } 
-
 
     }
 }

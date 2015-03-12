@@ -67,6 +67,10 @@
     <Compile Include="Subsidy_Logic\SubsidyLogic.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Ets.Service.IProvider\Ets.Service.IProvider.csproj">
+      <Project>{73ff8127-9703-4d8c-bd1c-4190a926a5ba}</Project>
+      <Name>Ets.Service.IProvider</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SuperManCommonModel\SuperManCommonModel.csproj">
       <Project>{4e298c44-ca42-4074-8d27-6a1951bfd7e6}</Project>
       <Name>SuperManCommonModel</Name>

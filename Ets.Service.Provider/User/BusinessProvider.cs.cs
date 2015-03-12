@@ -92,6 +92,11 @@ namespace Ets.Service.Provider.User
             strBuilder.AppendLine("</table>");
             return strBuilder.ToString();
         } 
+        public IList<int> GetOrdersApp()
+        {
+            throw new NotImplementedException();
+        }
 
-    } 
+        
+    }
 }

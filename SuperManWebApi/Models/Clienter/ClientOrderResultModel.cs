@@ -30,6 +30,10 @@ namespace SuperManWebApi.Models.Clienter
         /// </summary>
         //public double distance { get; set; }
         public string distance { get; set; }
+        
+        /// <summary>
+        ///  商户到收货人的距离
+        /// </summary>
         public string distanceB2R { get; set; }
         /// <summary>
         /// 发布时间
@@ -226,7 +230,7 @@ namespace SuperManWebApi.Models.Clienter
                 var dTmp = CoordDispose.GetDistanceGoogle(d1, d2) / 1000;
                 var sTmp = dTmp.ToString("f2");
                 //resultModel.distanceB2R = CoordDispose.GetDistanceGoogle(d1, d2);
-                resultModel.distanceB2R = sTmp;
+                resultModel.distanceB2R = sTmp; //计算商户到收货人的距离
             }
             else
                 resultModel.distanceB2R = "0.0";
@@ -300,7 +304,7 @@ namespace SuperManWebApi.Models.Clienter
                 var dTmp = CoordDispose.GetDistanceGoogle(d1, d2) / 1000;
                 var sTmp = dTmp.ToString("f2");
                 //resultModel.distanceB2R = CoordDispose.GetDistanceGoogle(d1, d2);
-                resultModel.distanceB2R = sTmp;
+                resultModel.distanceB2R = sTmp;  //计算商户到收货人的距离
             }
             else
                 resultModel.distanceB2R = "0.0";
