@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using Ets.Model.DataModel.Clienter;
+using Ets.Model.DataModel.Order;
 
 namespace Ets.Service.IProvider.Clienter
 {
-    class IClienterProvider
+    public interface IClienterProvider
     {
+        List<order> GetOrdersNoLoginLatest(ClientOrderSearchCriteria criteria);
     }
 }
