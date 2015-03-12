@@ -92,6 +92,8 @@
     <Compile Include="Util\IEnumItem.cs" />
     <Compile Include="Util\Log.cs" />
     <Compile Include="Util\MailUtils.cs" />
+    <Compile Include="Util\PagedList.cs" />
+    <Compile Include="Util\PagingResult.cs" />
     <Compile Include="Util\ParseHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
