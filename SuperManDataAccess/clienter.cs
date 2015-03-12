@@ -37,5 +37,6 @@ namespace SuperManDataAccess
         public string CityCode { get; set; }
         public string Province { get; set; }
         public Nullable<int> BussinessID { get; set; }
+        public int WorkStatus { get; set; }
     }
 }
