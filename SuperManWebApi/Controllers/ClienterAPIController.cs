@@ -316,7 +316,7 @@ namespace SuperManWebApi.Controllers
             var pSize = model.pageSize.HasValue ? model.pageSize.Value : 20;
             var criteria = new ClientOrderSearchCriteria()
             {
-                PagingRequest = new PagingResult(pIndex, pSize),
+                PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
                 userId = model.userId,
                 status = model.status,
                 isLatest = model.isLatest
