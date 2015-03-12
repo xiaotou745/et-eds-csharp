@@ -3,6 +3,21 @@ using System.Collections.Generic;
 using ETS.Dao;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Order;
+using ETS.Data.Core;
+using ETS.Util;
+
+
+//using ETS;
+//using ETS.Dao;
+//using ETS.Data;
+//using ETS.Data.Core;
+//using ETS.Data.PageData;
+//using ETS.Util;
+//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Text;
+//using System.Threading.Tasks;
 
 namespace Ets.Dao.Clienter
 {
@@ -30,5 +45,36 @@ namespace Ets.Dao.Clienter
             return null;
         }
 
+
+        /// <summary>
+        /// 骑士上下班功能   add by caoheyang 20150311
+        /// </summary>
+        /// <param name="paraModel">参数实体</param>
+        public virtual int ChangeWorkStatusToSql(Ets.Model.ParameterModel.Clienter.ChangeWorkStatusPM paraModel)
+        {
+            const string updateSql = @"UPDATE dbo.clienter SET WorkStatus =@WorkStatus  WHERE id=@id";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("id", paraModel.Id);    //超人id
+            dbParameters.AddWithValue("WorkStatus", paraModel.WorkStatus);  //目标超人工作状态
+            object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+            int a = ParseHelper.ToInt(executeScalar, 0);
+            return a;
+        }
+
+
+        /// <summary>
+        /// 骑士上下班功能   add by caoheyang 20150311
+        /// </summary>
+        /// <param name="paraModel">参数实体</param>
+        public virtual int QueryOrderount(Ets.Model.ParameterModel.Clienter.ChangeWorkStatusPM paraModel)
+        {
+            const string querySql = @"select count(id) from dbo.[order]  WHERE clienterId=@clienterId and Status=@Status";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("clienterId", paraModel.Id);    //超人id
+            dbParameters.AddWithValue("Status", paraModel.OrderStatus);  //目标超人工作状态
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Write, querySql, dbParameters);
+            int a = ParseHelper.ToInt(executeScalar, 0);
+            return a;
+        }
     }
 }

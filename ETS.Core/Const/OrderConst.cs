@@ -11,6 +11,7 @@ namespace ETS.Const
     /// </summary>
     public class OrderConst
     {
+        #region 订单状态 add by caoheyang 20150311
         /// <summary>
         /// 订单新增
         /// </summary>
@@ -27,9 +28,6 @@ namespace ETS.Const
         /// 订单已取消 
         /// </summary>
         public const int OrderStatus3 = 3;
-        /// <summary>
-        /// 待客审
-        /// </summary>
-        public const int OrderStatus4 = 4;
+        #endregion
     }
 }

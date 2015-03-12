@@ -53,6 +53,8 @@
     <Compile Include="Cacheing\CacheFactory.cs" />
     <Compile Include="Cacheing\LocalCache.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="Const\ClienterConst.cs" />
+    <Compile Include="Enums\ClienterEnum.cs" />
     <Compile Include="Expand\ActionStatusAttribute.cs" />
     <Compile Include="Const\OrderConst.cs" />
     <Compile Include="Expand\AttribDescription.cs" />
