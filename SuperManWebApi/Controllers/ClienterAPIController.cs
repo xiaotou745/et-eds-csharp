@@ -250,7 +250,7 @@ namespace SuperManWebApi.Controllers
             var pSize = model.pageSize.HasValue ? model.pageSize.Value : 20;
             var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
             {
-                PagingRequest = new Ets.Model.DataModel.Clienter.PagingResult(pIndex, pSize),
+                PagingRequest = new ETS.Util.PagingResult(pIndex, pSize),
                 userId = model.userId,
                 status = model.status,
                 isLatest = model.isLatest,
