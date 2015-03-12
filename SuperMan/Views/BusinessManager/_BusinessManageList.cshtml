@@ -150,6 +150,8 @@
         var fileHandHouZhui = CheckPicUrl.substr(fileLastDot, CheckPicUrl.length - fileLastDot);
         var bigFileName = CheckPicUrl.substring(0, fileLastDot) + originSize + fileHandHouZhui;
         $('#showBigBusiImage').attr('href', puth + '/' + bigFileName);
+
+        adminjs.openwinbox('#ClientPicShow');
     }
         
     //弹出结算比例层
