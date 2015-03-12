@@ -46,6 +46,15 @@ namespace Ets.Model.DataModel.Order
         public Nullable<int> OrderCount { get; set; }
         public Nullable<decimal> CommissionRate { get; set; }
 
+        public string BusinessName { get; set; }
+
+        public string BusinessPhone { get; set; }
+
+        public string PickUpCity { get; set; }
+
+        public Nullable<double> BusiLongitude { get; set; }
+        public Nullable<double> BusiLatitude { get; set; }
+
         
     }
 }

@@ -32,6 +32,7 @@
   <ItemGroup>
     <Reference Include="CalculateCommon">
       <HintPath>..\lib\CalculateCommon.dll</HintPath>
+      <HintPath>..\packages\CalculateCommon.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

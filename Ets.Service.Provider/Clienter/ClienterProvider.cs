@@ -96,15 +96,13 @@ namespace Ets.Service.Provider.Clienter
                 model.distanceB2R = distanceB2R;
                 listOrder.Add(model);
             }
+
+            return listOrder;
         }
 
         #region 计算收入支出
 
-        public class degree
-        {
-            public static double longitude { get; set; }
-            public static double latitude { get; set; }
-        }
+       
 
         /// <summary>
         /// 获取订单的骑士佣金 add by caoheyang 0150305
