@@ -47,7 +47,7 @@ namespace Ets.Dao.Clienter
 
 
         /// <summary>
-        /// 商户获取订单   add by caoheyang 20150311
+        /// 骑士上下班功能   add by caoheyang 20150311
         /// </summary>
         /// <param name="paraModel">参数实体</param>
         public virtual int ChangeWorkStatusToSql(Ets.Model.ParameterModel.Clienter.ChangeWorkStatusPM paraModel)
@@ -56,7 +56,7 @@ namespace Ets.Dao.Clienter
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("id", paraModel.Id);    //超人id
             dbParameters.AddWithValue("WorkStatus", paraModel.WorkStatus);  //目标超人工作状态
-            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Write, updateSql, dbParameters);
+            object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
             int a = ParseHelper.ToInt(executeScalar, 0);
             return a;
         }
