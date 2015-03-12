@@ -13,7 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 namespace Ets.Service.Provider.Order
 {
-    public class OrderService
+    public class OrderProvider :IOrderProvider
     {
 
         private OrderDao OrderDao = new OrderDao();
@@ -81,6 +81,11 @@ namespace Ets.Service.Provider.Order
               
            } 
            return list;
+        }
+
+        ETS.Util.PagedList<order> IOrderProvider.GetOrders(ClientOrderSearchCriteria criteria)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -258,7 +258,7 @@ namespace SuperManWebApi.Controllers
                 cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim()
             };
              
-            var pagedList = new Ets.Service.Provider.Order.OrderService().GetOrders(criteria);
+            var pagedList = new Ets.Service.Provider.Order.OrderProvider().GetOrders(criteria);
             //var lists = ClientOrderResultModelTranslator.Instance.Translate(pagedList);
 
 
