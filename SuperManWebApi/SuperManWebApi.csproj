@@ -338,11 +338,10 @@
       <Project>{bba67a86-afd6-46f2-bbd9-5dfb5bfdafe2}</Project>
       <Name>ETS.Core</Name>
     </ProjectReference>
-<<<<<<< HEAD
     <ProjectReference Include="..\ETS.Data\ETS.Data.csproj">
       <Project>{be8b43e2-df1e-4bfd-b4ef-63e3e0f53ea2}</Project>
       <Name>ETS.Data</Name>
-=======
+    </ProjectReference>
     <ProjectReference Include="..\Ets.Model\Ets.Model.csproj">
       <Project>{b9d2361d-7e2c-45ba-89ec-4eca1bf7c456}</Project>
       <Name>Ets.Model</Name>
@@ -354,7 +353,6 @@
     <ProjectReference Include="..\Ets.Service.Provider\Ets.Service.Provider.csproj">
       <Project>{61c59e53-67c8-44fe-b0ad-1e9025d7e568}</Project>
       <Name>Ets.Service.Provider</Name>
->>>>>>> ca4d0a7680fa12bd841020ac70c57e3ac70e7498
     </ProjectReference>
     <ProjectReference Include="..\SuperManBusinessLogic\SuperManBusinessLogic.csproj">
       <Project>{72ca336e-dc5e-4f98-9275-3a3a258189d6}</Project>

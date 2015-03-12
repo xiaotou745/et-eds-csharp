@@ -95,7 +95,6 @@ namespace Ets.Dao.User
                             ORDER BY o.Id DESC
                             ";
 
-
         }
 
     }

@@ -212,7 +212,7 @@ namespace SuperManWebApi.Controllers
             var pSize = model.pageSize.HasValue ? model.pageIndex.Value : int.MaxValue;
             var criteria = new ClientOrderSearchCriteria()
             {
-                PagingRequest = new PagingResult(pIndex, pSize),
+                PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
                 userId = model.userId,
                 status = model.status,
                 isLatest = model.isLatest,
@@ -249,7 +249,7 @@ namespace SuperManWebApi.Controllers
 
             var criteria = new ClientOrderSearchCriteria()
             {
-                PagingRequest = new PagingResult(pIndex, pSize),
+                PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
                 userId = model.userId,
                 status = model.status,
                 isLatest = model.isLatest
@@ -280,7 +280,7 @@ namespace SuperManWebApi.Controllers
             var pSize = model.pageSize.HasValue ? model.pageIndex.Value : int.MaxValue;
             ClientOrderSearchCriteria criteria = new ClientOrderSearchCriteria()
             {
-                PagingRequest = new PagingResult(pIndex, pSize),
+                PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
                 city = model.city,
                 cityId = model.cityId
             };
@@ -304,7 +304,7 @@ namespace SuperManWebApi.Controllers
             var pSize = model.pageSize.HasValue ? model.pageIndex.Value : int.MaxValue;
             var criteria = new ClientOrderSearchCriteria()
             {
-                PagingRequest = new PagingResult(pIndex, pSize),
+                PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
                 userId = model.userId,
                 status = model.status,
                 isLatest = model.isLatest
@@ -336,7 +336,7 @@ namespace SuperManWebApi.Controllers
             var pSize = model.pageSize.HasValue ? model.pageIndex.Value : int.MaxValue;
             var criteria = new ClientOrderSearchCriteria()
             {
-                PagingRequest = new PagingResult(pIndex, pSize),
+                PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
                 userId = model.userId,
                 status = model.status,
                 isLatest = model.isLatest,
@@ -379,7 +379,7 @@ namespace SuperManWebApi.Controllers
             var pSize = model.pageSize.HasValue ? model.pageIndex.Value : int.MaxValue;
             var criteria = new ClientOrderSearchCriteria()
             {
-                PagingRequest = new PagingResult(pIndex, pSize),
+                PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
                 userId = model.userId,
                 status = model.status,
                 isLatest = model.isLatest,
@@ -582,7 +582,7 @@ namespace SuperManWebApi.Controllers
             var pSize = pagedSize.HasValue ? pagedSize.Value : int.MaxValue;
             var criteria = new MyIncomeSearchCriteria()
             {
-                PagingRequest = new PagingResult(pIndex, pSize),
+                PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
                 phoneNo = phoneNo
             };
             var pagedList = ClienterLogic.clienterLogic().GetMyIncomeList(criteria);
