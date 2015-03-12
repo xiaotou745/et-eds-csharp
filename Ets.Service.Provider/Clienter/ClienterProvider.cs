@@ -7,6 +7,7 @@ using Ets.Model.DomainModel.Clienter;
 using ETS.Data.PageData;
 using System;
 using CalculateCommon;
+using Ets.Service.Provider.Order;
 
 namespace Ets.Service.Provider.Clienter
 {
@@ -52,8 +53,20 @@ namespace Ets.Service.Provider.Clienter
                 ClientOrderResultModel model = new ClientOrderResultModel();
                 model.userId = item.UserId;
                 model.OrderNo = item.OrderNo;
-                model.income = GetCurrenOrderCommission(item);  //计算设置当前订单骑士可获取的佣金 Edit bycaoheyang 20150305
-                model.Amount = GetCurrenOrderPrice(item); //C端 获取订单的金额 Edit bycaoheyang 20150305
+
+                #region 骑士佣金计算
+                OrderCommission oCommission = new OrderCommission()
+                {
+                    Amount = item.Amount,
+                    CommissionRate = item.CommissionRate,
+                    DistribSubsidy = item.DistribSubsidy,
+                    OrderCount = item.OrderCount,
+                    WebsiteSubsidy = item.WebsiteSubsidy
+                };
+                #endregion
+
+                model.income = OrderCommissionProvider.GetCurrenOrderCommission(oCommission);  //计算设置当前订单骑士可获取的佣金 Edit bycaoheyang 20150305
+                model.Amount = OrderCommissionProvider.GetCurrenOrderPrice(oCommission); //C端 获取订单的金额 Edit bycaoheyang 20150305
 
                 model.businessName = item.BusinessName;
                 model.businessPhone = item.BusinessPhone;
@@ -72,7 +85,7 @@ namespace Ets.Service.Provider.Clienter
                 #region 计算经纬度
                 string distance = "0.0";
                 string distanceB2R = "0.0";
-                if (item.BusinessId >0)
+                if (item.BusinessId > 0)
                 {
                     var degree1 = new Degree(degree.longitude, degree.latitude);
                     var degree2 = new Degree(item.Longitude, item.Latitude);
@@ -100,43 +113,5 @@ namespace Ets.Service.Provider.Clienter
             return listOrder;
         }
 
-        #region 计算收入支出
-
-       
-
-        /// <summary>
-        /// 获取订单的骑士佣金 add by caoheyang 0150305
-        /// </summary>
-        /// <param name="model">订单</param>
-        /// <returns></returns>
-        private decimal GetCurrenOrderCommission(ClientOrderModel model)
-        {
-            decimal distribe = 0;  //默认外送费，网站补贴都为0
-            decimal commissionRate = model.CommissionRate == null ? 0 : Convert.ToDecimal(model.CommissionRate); //佣金比例 
-            int orderCount = model.OrderCount == null ? 0 : Convert.ToInt32(model.OrderCount); //佣金比例 
-            if (model.DistribSubsidy != null)//如果外送费有数据，按照外送费计算骑士佣金
-                distribe = Convert.ToDecimal(model.DistribSubsidy);
-            else if (model.WebsiteSubsidy != null)//如果外送费没数据，按照网站补贴计算骑士佣金
-                distribe = Convert.ToDecimal(model.WebsiteSubsidy);
-            if (model.Amount == null)
-                return 0;
-            else
-                return Decimal.Round(Convert.ToDecimal(model.Amount) * commissionRate + distribe * orderCount, 2);//计算佣金
-        }
-
-        /// <summary>
-        ///C端 获取订单的金额 add by caoheyang 0150305
-        /// </summary>
-        /// <param name="model">订单</param>
-        /// <returns></returns>
-        private decimal GetCurrenOrderPrice(ClientOrderModel model)
-        {
-            decimal amount = model.Amount == null ? 0 : Convert.ToDecimal(model.Amount); //佣金比例 
-            int orderCount = model.OrderCount == null ? 0 : Convert.ToInt32(model.OrderCount); //佣金比例 
-            decimal distribSubsidy = model.DistribSubsidy == null ? 0 : Convert.ToDecimal(model.DistribSubsidy);  //外送费
-            return Decimal.Round(amount + orderCount * distribSubsidy, 2);
-        }
-
-        #endregion
     }
 }

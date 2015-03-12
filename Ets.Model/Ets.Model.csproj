@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataModel\Order\OrderCommission.cs" />
     <Compile Include="Common\PaginResult.cs" />
     <Compile Include="Common\ResultInfo.cs" />
     <Compile Include="DomainModel\Clienter\ClientOrderModel.cs" />
