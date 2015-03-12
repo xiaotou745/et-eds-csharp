@@ -300,36 +300,6 @@ namespace SuperManWebApi.Controllers
             return ResultModel<ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, lists.ToArray());
         }
 
-
-        /// <summary>
-        /// 获取我的任务   根据状态判断是已完成任务还是我的任务
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        [ActionStatus(typeof(GetOrdersStatus))]
-        [HttpPost]
-        public ResultModel<ClientOrderResultModel[]> GetMyJobList_C_WangChao(ClientOrderInfoModel model)
-        {
-            degree.longitude = model.longitude;
-            degree.latitude = model.latitude;
-            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
-            var pSize = model.pageSize.HasValue ? model.pageSize.Value : 20;
-            var criteria = new ClientOrderSearchCriteria()
-            {
-                PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
-                userId = model.userId,
-                status = model.status,
-                isLatest = model.isLatest
-            };
-            var pagedList = ClienterLogic.clienterLogic().GetMyOrders(criteria);
-            var lists = ClientOrderResultModelTranslator.Instance.Translate(pagedList);
-            if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
-            {
-                lists = lists.OrderBy(i => i.distance).ToList();
-            }
-            return ResultModel<ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, lists.ToArray());
-        }
-
         /// <summary>
         /// 未登录时获取最新任务     登录未登录根据城市有没有值判断。
         /// </summary>
