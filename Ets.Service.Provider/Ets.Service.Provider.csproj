@@ -45,7 +45,6 @@
   <ItemGroup>
     <Compile Include="Clienter\ClienterProvider.cs" />
     <Compile Include="Order\OrderCommissionProvider.cs" />
-    <Compile Include="Order\OrderService.cs" />
     <Compile Include="Order\OrderProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="User\BusinessProvider.cs.cs" />
