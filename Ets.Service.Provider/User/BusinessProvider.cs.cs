@@ -24,5 +24,14 @@ namespace Ets.Service.Provider.User
         {
             return null;
         }
+
+        /// <summary>
+        /// 获取我的任务   根据状态判断是已完成任务还是我的任务
+        /// </summary>
+        /// <returns></returns>
+        public IList<Model.DataModel.Bussiness.ClientOrderResultModel> GetMyOrders(Model.ParameterModel.Bussiness.ClientOrderSearchCriteria clientOrderModel)
+        {
+            return null;
+        }
     }
 }

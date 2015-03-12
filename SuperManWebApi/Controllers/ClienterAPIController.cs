@@ -17,6 +17,7 @@ using SuperManDataAccess;
 using SuperManCommonModel;
 using SuperManBusinessLogic.B_Logic;
 using System.ComponentModel;
+using ETS.Util;
 
 namespace SuperManWebApi.Controllers
 {
@@ -42,11 +43,11 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
             else if (model.verifyCode != SupermanApiCaching.Instance.Get(model.phoneNo)) //判断验码法录入是否正确
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode);
-            else if (model.recommendPhone!=null&&(!ClienterLogic.clienterLogic().CheckExistPhone(model.recommendPhone))
+            else if (model.recommendPhone != null && (!ClienterLogic.clienterLogic().CheckExistPhone(model.recommendPhone))
                 && (!BusiLogic.busiLogic().CheckExistPhone(model.recommendPhone))) //如果推荐人手机号在B端C端都不存在提示信息
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberNotExist);
             var clienter = ClientRegisterInfoModelTranslator.Instance.Translate(model);
-            bool result =ClienterLogic.clienterLogic().Add(clienter);
+            bool result = ClienterLogic.clienterLogic().Add(clienter);
             var resultModel = new ClientRegisterResultModel
             {
                 userId = clienter.Id,
@@ -107,13 +108,13 @@ namespace SuperManWebApi.Controllers
             var customer = ClienterLogic.clienterLogic().GetClienterById(int.Parse(strUserId));
             if (customer == null)
             {
-               return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.InvalidUserId);
+                return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.InvalidUserId);
             }
             if (HttpContext.Current.Request.Files.Count == 0)
             {
                 return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.InvalidFileFormat);
             }
-            if(string.IsNullOrEmpty(trueName))
+            if (string.IsNullOrEmpty(trueName))
             {
                 return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.TrueNameEmpty);
             }
@@ -137,7 +138,7 @@ namespace SuperManWebApi.Controllers
 
             string originSize = "_0_0";
 
-            var fileHandName = string.Format("{0}_{1}_{2}", DateTime.Now.ToString("yyyyMMddhhmmssfff"),new Random().Next(1000), fileHand.FileName);
+            var fileHandName = string.Format("{0}_{1}_{2}", DateTime.Now.ToString("yyyyMMddhhmmssfff"), new Random().Next(1000), fileHand.FileName);
             var fileName = string.Format("{0}_{1}_{2}", DateTime.Now.ToString("yyyyMMddhhmmssfff"), new Random().Next(1000), file.FileName);
 
 
@@ -146,9 +147,9 @@ namespace SuperManWebApi.Controllers
             int fileNameLastDot = fileName.LastIndexOf('.');
 
             //增加 原图 尺寸标记 _0_0
-            string rFileHandName = string.Format("{0}{1}{2}", fileHandName.Substring(0, fileHandNameLastDot), originSize , Path.GetExtension(fileHandName));
-            string rFileName = string.Format("{0}{1}{2}",fileName.Substring(0, fileNameLastDot) , originSize , Path.GetExtension(fileName));
-             
+            string rFileHandName = string.Format("{0}{1}{2}", fileHandName.Substring(0, fileHandNameLastDot), originSize, Path.GetExtension(fileHandName));
+            string rFileName = string.Format("{0}{1}{2}", fileName.Substring(0, fileNameLastDot), originSize, Path.GetExtension(fileName));
+
 
             if (!System.IO.Directory.Exists(CustomerIconUploader.Instance.PhysicalPath))
             {
@@ -211,9 +212,9 @@ namespace SuperManWebApi.Controllers
                 PagingRequest = new PagingResult(pIndex, pSize),
                 userId = model.userId,
                 status = model.status,
-                isLatest=model.isLatest,
-                city =string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
-                cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim() 
+                isLatest = model.isLatest,
+                city = string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
+                cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim()
             };
             var pagedList = ClienterLogic.clienterLogic().GetOrders(criteria);
             var lists = ClientOrderResultModelTranslator.Instance.Translate(pagedList);
@@ -238,8 +239,9 @@ namespace SuperManWebApi.Controllers
         {
             degree.longitude = model.longitude;
             degree.latitude = model.latitude;
-            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
-            var pSize = model.pageSize.HasValue ? model.pageIndex.Value : int.MaxValue;
+            var pIndex = ParseHelper.ToInt(model.pageIndex, 0);
+            var pSize = ParseHelper.ToInt(model.pageSize, 10);
+
             var criteria = new ClientOrderSearchCriteria()
             {
                 PagingRequest = new PagingResult(pIndex, pSize),
@@ -304,14 +306,14 @@ namespace SuperManWebApi.Controllers
             };
             var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLogin(criteria);
             var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
-            if(!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
+            if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
             {
                 lists = lists.OrderBy(i => i.distance).ToList();
             }
             return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
         }
 
-       
+
 
         #region 获取海底捞 送餐任务 和 取餐盒任务
 
@@ -332,8 +334,8 @@ namespace SuperManWebApi.Controllers
                 PagingRequest = new PagingResult(pIndex, pSize),
                 userId = model.userId,
                 status = model.status,
-                isLatest = model.isLatest,   
-                city =string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
+                isLatest = model.isLatest,
+                city = string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
                 cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim(),
                 OrderType = 1 //送餐任务1，取餐盒任务2
             };
@@ -357,7 +359,7 @@ namespace SuperManWebApi.Controllers
             }
             return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
         }
-         
+
         /// <summary>
         /// 获取取餐盒任务
         /// </summary>
@@ -400,8 +402,8 @@ namespace SuperManWebApi.Controllers
             }
             return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
         }
-        
-        
+
+
         #endregion
 
         /// <summary>
@@ -490,8 +492,8 @@ namespace SuperManWebApi.Controllers
         [HttpGet]
         public ResultModel<RushOrderResultModel> RushOrder_C(int userId, string orderNo)
         {
-            if (userId==0) //用户id验证
-                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);  
+            if (userId == 0) //用户id验证
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
             if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null) //查询订单是否存在
@@ -550,7 +552,7 @@ namespace SuperManWebApi.Controllers
         [HttpGet]
         public ResultModel<MyBalanceResultModel> GetMyBalance(string phoneNo)
         {
-            if(string.IsNullOrEmpty(phoneNo))
+            if (string.IsNullOrEmpty(phoneNo))
             {
                 return ResultModel<MyBalanceResultModel>.Conclude(GetMyBalanceStatus.PhoneEmpty);
             }
@@ -559,7 +561,7 @@ namespace SuperManWebApi.Controllers
             {
                 MyBalance = item
             };
-            return ResultModel<MyBalanceResultModel>.Conclude(FinishOrderStatus.Success,result);
+            return ResultModel<MyBalanceResultModel>.Conclude(FinishOrderStatus.Success, result);
         }
 
         /// <summary>
@@ -591,7 +593,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(SendCheckCodeStatus))]
         [HttpGet]
-        public SimpleResultModel CheckCode(string PhoneNumber,string type)
+        public SimpleResultModel CheckCode(string PhoneNumber, string type)
         {
             if (!CommonValidator.IsValidPhoneNumber(PhoneNumber))
             {
@@ -600,9 +602,9 @@ namespace SuperManWebApi.Controllers
             var randomCode = new Random().Next(100000).ToString("D6");
             string msg = string.Empty;
             if (type == "0")//注册
-                msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode,ConstValues.MessageBusiness);  
+                msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode, ConstValues.MessageBusiness);
             else //修改密码
-                msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode,ConstValues.MessageClinenter);
+                msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode, ConstValues.MessageClinenter);
             try
             {
                 SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);

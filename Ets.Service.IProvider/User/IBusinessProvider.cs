@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Ets.Model.DataModel.Bussiness;
+using Ets.Model.ParameterModel.Bussiness;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,5 +18,11 @@ namespace Ets.Service.IProvider.User
         /// </summary>
         /// <returns></returns>
         IList<int> GetOrdersApp();
+
+        /// <summary>
+        /// 获取我的任务   根据状态判断是已完成任务还是我的任务
+        /// </summary>
+        /// <returns></returns>
+        IList<ClientOrderResultModel> GetMyOrders(ClientOrderSearchCriteria clientOrderModel);
     }
 }
