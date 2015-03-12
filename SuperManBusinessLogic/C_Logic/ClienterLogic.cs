@@ -521,7 +521,7 @@ namespace SuperManBusinessLogic.C_Logic
                 var model = new myincome();
                 model.PhoneNo = client.PhoneNo;
                 model.MyIncome1 = "收入";
-                model.MyInComeAmount = query.DistribSubsidy + query.OrderCommission + query.WebsiteSubsidy;
+                model.MyInComeAmount = query.OrderCommission == null ? 0 : Convert.ToDecimal(query.OrderCommission);// query.DistribSubsidy + query.OrderCommission + query.WebsiteSubsidy;
                 model.InsertTime = DateTime.Now;
                 db.myincome.Add(model);
                 //end add 
