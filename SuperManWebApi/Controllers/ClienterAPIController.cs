@@ -293,6 +293,7 @@ namespace SuperManWebApi.Controllers
             };
             var pagedList = ClienterLogic.clienterLogic().GetMyOrders(criteria);
             var lists = ClientOrderResultModelTranslator.Instance.Translate(pagedList);
+            //IList<>
             if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
             {
                 lists = lists.OrderBy(i => i.distance).ToList();
