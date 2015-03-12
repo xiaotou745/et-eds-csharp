@@ -18,6 +18,7 @@ using SuperManCommonModel;
 using SuperManBusinessLogic.B_Logic;
 using System.ComponentModel;
 
+
 namespace SuperManWebApi.Controllers
 {
 
@@ -270,8 +271,8 @@ namespace SuperManWebApi.Controllers
             ClientOrderInfoModel model = new ClientOrderInfoModel();
             model.city = string.IsNullOrWhiteSpace(HttpContext.Current.Request["city"]) ? null : HttpContext.Current.Request["city"].Trim();//城市
             model.cityId = string.IsNullOrWhiteSpace(HttpContext.Current.Request["cityId"]) ? null : HttpContext.Current.Request["cityId"].Trim(); //城市编码
-            degree.longitude = 0;
-            degree.latitude = 0;
+            degree.longitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["longitude"]);
+            degree.latitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["latitude"]);
             var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
             var pSize = model.pageSize.HasValue ? model.pageIndex.Value : int.MaxValue;
             ClientOrderSearchCriteria criteria = new ClientOrderSearchCriteria()
