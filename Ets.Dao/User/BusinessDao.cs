@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ETS.Const;
+using Ets.Model.DomainModel.Clienter;
 
 namespace Ets.Dao.User
 {
@@ -31,5 +32,7 @@ namespace Ets.Dao.User
                 whereStr = whereStr + " and a.Status=" + paraModel.Status.ToString();
             return new PageHelper().GetPages<T>(SuperMan_Read, 1, whereStr, orderByColumn, columnList, tableList, 10, true);  
         }
+
+      
     }
 }

@@ -25,5 +25,11 @@ namespace Ets.Service.Provider.User
         {
             return new BusinessDao().GetOrdersAppToSql<T>(paraModel);
         }
+
+
+        public IList<int> GetOrdersApp()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

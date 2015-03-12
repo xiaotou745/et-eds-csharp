@@ -1,3 +1,6 @@
+using ETS.Data.PageData;
+using System.Collections.Generic;
+using Ets.Model.ParameterModel.Bussiness;
 ﻿using ETS.Data.PageData;
 using System;
 using System.Collections.Generic;
@@ -16,6 +19,8 @@ namespace Ets.Service.IProvider.User
         /// 商户获取订单   add by caoheyang 20150311
         /// </summary>
         /// <returns></returns>
+        IList<int> GetOrdersApp();
+      
         PageInfo<T> GetOrdersApp<T>(Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp paraModel);
     }
 }
