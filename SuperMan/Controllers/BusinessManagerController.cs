@@ -1,4 +1,6 @@
-﻿using SuperManBusinessLogic.B_Logic;
+﻿using Ets.Service.IProvider.User;
+using Ets.Service.Provider.User;
+using SuperManBusinessLogic.B_Logic;
 using SuperManCommonModel.Entities;
 using SuperManCore.Common;
 using SuperManCore.Paging;
@@ -81,7 +83,8 @@ namespace SuperMan.Controllers
             {
                 return Json(new ResultModel(false,"结算比例不能小于零!"), JsonRequestBehavior.AllowGet);
             }
-            return Json(new ResultModel(BusiLogic.busiLogic().setCommission(id, commission), "成功!"), JsonRequestBehavior.AllowGet);
+            IBusinessProvider iBus=new BusinessProvider();
+            return Json(new ResultModel(iBus.SetCommission(id, commission), "成功!"), JsonRequestBehavior.AllowGet);
         }
 
         
