@@ -218,6 +218,8 @@ namespace SuperManWebApi.Controllers
 
             var pagedList = ClienterLogic.clienterLogic().GetOrders(criteria);
             var lists = ClientOrderResultModelTranslator.Instance.Translate(pagedList);
+             
+
             //if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
             //{
             lists = lists.OrderBy(i => i.distance).ToList();
@@ -225,8 +227,7 @@ namespace SuperManWebApi.Controllers
 
             return ResultModel<ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, lists.ToArray());
         }
-
-
+         
 
         /// <summary>
         /// 获取我的任务   根据状态判断是已完成任务还是我的任务

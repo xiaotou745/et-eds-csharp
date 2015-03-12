@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ets.Service.IProvider.Order;
 namespace SuperManBusinessLogic.C_Logic
 {
     public class ClienterLogic
@@ -290,8 +291,7 @@ namespace SuperManBusinessLogic.C_Logic
                 return result;
             }
         }
-
-
+        
         /// <summary>
         /// 获取我的任务   根据状态判断是已完成任务还是我的任务
         /// </summary>

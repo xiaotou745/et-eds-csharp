@@ -90,11 +90,13 @@
     <Compile Include="Util\EnumItem.cs" />
     <Compile Include="Util\EnumUtils.cs" />
     <Compile Include="Util\IEnumItem.cs" />
+    <Compile Include="Util\ITranslator.cs" />
     <Compile Include="Util\Log.cs" />
     <Compile Include="Util\MailUtils.cs" />
     <Compile Include="Util\PagedList.cs" />
     <Compile Include="Util\PagingResult.cs" />
     <Compile Include="Util\ParseHelper.cs" />
+    <Compile Include="Util\TranslatorBase.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
