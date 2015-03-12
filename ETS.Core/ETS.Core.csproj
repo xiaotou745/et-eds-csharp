@@ -53,8 +53,10 @@
     <Compile Include="Cacheing\CacheFactory.cs" />
     <Compile Include="Cacheing\LocalCache.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="Expand\ActionStatusAttribute.cs" />
     <Compile Include="Const\OrderConst.cs" />
     <Compile Include="Expand\AttribDescription.cs" />
+    <Compile Include="Expand\DisplayTextAttribute.cs" />
     <Compile Include="Expand\EnumerableExpand.cs" />
     <Compile Include="Extension\DataRowExtension.cs" />
     <Compile Include="Extension\DataSetExtenstion.cs" />
@@ -84,9 +86,14 @@
     <Compile Include="Util\AssertUtils.cs" />
     <Compile Include="Util\ConfigUtils.cs" />
     <Compile Include="Util\DnsUtils.cs" />
+    <Compile Include="Extension\EnumExtenstion.cs" />
+    <Compile Include="Util\EnumItem.cs" />
     <Compile Include="Util\EnumUtils.cs" />
+    <Compile Include="Util\IEnumItem.cs" />
     <Compile Include="Util\Log.cs" />
     <Compile Include="Util\MailUtils.cs" />
+    <Compile Include="Util\PagedList.cs" />
+    <Compile Include="Util\PagingResult.cs" />
     <Compile Include="Util\ParseHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

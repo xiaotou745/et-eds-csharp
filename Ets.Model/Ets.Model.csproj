@@ -39,19 +39,37 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <Compile Include="DataModel\Clienter\Clienter.cs" />
     <Compile Include="DataModel\Order\Order.cs" />
+=======
+    <Compile Include="DataModel\Order\business.cs" />
+    <Compile Include="DataModel\Order\order.cs" />
+    <Compile Include="DomainModel\Bussiness\BussOrderDModelApp.cs" />
+    <Compile Include="Common\SimpleResultModel.cs" />
+>>>>>>> 08cee3d768ab9d6e87119f2fee76928cd7187ea7
     <Compile Include="ParameterModel\Bussiness\BussOrderParaModelApp.cs" />
+    <Compile Include="ParameterModel\Order\ClientOrderInfoModel.cs" />
+    <Compile Include="ParameterModel\Order\ClientOrderSearchCriteria.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DataModel\Bussiness\" />
+<<<<<<< HEAD
     <Folder Include="DomainModel\Bussiness\" />
+=======
+    <Folder Include="DataModel\Clienter\" />
+>>>>>>> 08cee3d768ab9d6e87119f2fee76928cd7187ea7
     <Folder Include="DomainModel\Clienter\" />
     <Folder Include="DomainModel\Order\" />
     <Folder Include="ParameterModel\Clienter\" />
-    <Folder Include="ParameterModel\Order\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ETS.Core\ETS.Core.csproj">
+      <Project>{bba67a86-afd6-46f2-bbd9-5dfb5bfdafe2}</Project>
+      <Name>ETS.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -215,6 +215,7 @@ namespace SuperManWebApi.Controllers
                 city =string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
                 cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim() 
             };
+
             var pagedList = ClienterLogic.clienterLogic().GetOrders(criteria);
             var lists = ClientOrderResultModelTranslator.Instance.Translate(pagedList);
             //if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
