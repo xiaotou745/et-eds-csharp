@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Ets.Model.DomainModel.Clienter
 {
     public class ClientOrderResultModel
-    {
+    { 
         /// <summary>
         /// 当前登录用户Id
         /// </summary>

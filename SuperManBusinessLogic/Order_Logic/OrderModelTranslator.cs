@@ -45,7 +45,7 @@ namespace SuperManBusinessLogic.Order_Logic
             to.WebsiteSubsidy = from.WebsiteSubsidy;
             to.Remark = from.Remark;
             to.Status = from.Status;
-            
+            to.OrderCount = from.OrderCount;//订单数量
             to.OriginalOrderNo = from.OriginalOrderNo;//原平台订单号
             to.OriginalOrderId = from.OriginalOrderId;//原平台订单id
             if (from.business != null) {

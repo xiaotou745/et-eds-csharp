@@ -45,8 +45,8 @@
           <Property Name="Name" Type="nvarchar" MaxLength="45" />
           <Property Name="City_Id" Type="int" />
         </EntityType>
-        <!--生成过程中发现错误:
-警告 6002: 表/视图“superman.dbo.areaprovice”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'superman.dbo.areaprovice' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="areaprovice">
           <Key>
             <PropertyRef Name="Id" />
@@ -367,10 +367,13 @@
           <EntitySet Name="areacity" EntityType="supermanModel.areacity" />
           <EntitySet Name="areacounty" EntityType="supermanModel.areacounty" />
           <EntitySet Name="authority" EntityType="supermanModel.authority" />
+          <EntitySet Name="business" EntityType="supermanModel.business" />
           <EntitySet Name="channel" EntityType="supermanModel.channel" />
+          <EntitySet Name="clienter" EntityType="supermanModel.clienter" />
           <EntitySet Name="commissiontype" EntityType="supermanModel.commissiontype" />
           <EntitySet Name="group" EntityType="supermanModel.group" />
           <EntitySet Name="myincome" EntityType="supermanModel.myincome" />
+          <EntitySet Name="order" EntityType="supermanModel.order" />
           <EntitySet Name="orderlog" EntityType="supermanModel.orderlog" />
           <EntitySet Name="pushmessage" EntityType="supermanModel.pushmessage" />
           <EntitySet Name="pushmessagestatus" EntityType="supermanModel.pushmessagestatus" />
@@ -385,9 +388,6 @@
             <End Role="authority" EntitySet="authority" />
             <End Role="accountauthority" EntitySet="accountauthority" />
           </AssociationSet>
-          <EntitySet Name="business" EntityType="supermanModel.business" />
-          <EntitySet Name="clienter" EntityType="supermanModel.clienter" />
-          <EntitySet Name="order" EntityType="supermanModel.order" />
           <AssociationSet Name="fk3" Association="supermanModel.fk3">
             <End Role="business" EntitySet="business" />
             <End Role="order" EntitySet="order" />
@@ -445,6 +445,38 @@
           <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="accountauthority" Relationship="supermanModel.FK2" FromRole="authority" ToRole="accountauthority" />
         </EntityType>
+        <EntityType Name="business">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="district" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNo" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNo2" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="CheckPicUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="IDCard" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="Address" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Landline" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="Longitude" Type="Double" />
+          <Property Name="Latitude" Type="Double" />
+          <Property Name="Status" Type="Byte" />
+          <Property Name="InsertTime" Type="DateTime" Precision="3" />
+          <Property Name="districtId" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="CityId" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="GroupId" Type="Int32" />
+          <Property Name="OriginalBusiId" Type="Int32" />
+          <Property Name="ProvinceCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="CityCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="AreaCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Province" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="CommissionTypeId" Type="Int32" />
+          <Property Name="DistribSubsidy" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="BusinessCommission" Type="Decimal" Precision="5" Scale="2" />
+          <NavigationProperty Name="order" Relationship="supermanModel.fk3" FromRole="business" ToRole="order" />
+        </EntityType>
         <EntityType Name="channel">
           <Key>
             <PropertyRef Name="Id" />
@@ -457,6 +489,35 @@
           <Property Name="ModifyTime" Type="DateTime" Precision="3" />
           <Property Name="IsValid" Type="Byte" />
           <Property Name="Remark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="clienter">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PhoneNo" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="LoginName" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="recommendPhone" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="TrueName" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="IDCard" Type="String" MaxLength="18" FixedLength="false" Unicode="true" />
+          <Property Name="PicWithHandUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="PicUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="Byte" />
+          <Property Name="AccountBalance" Type="Decimal" Precision="7" Scale="2" />
+          <Property Name="InsertTime" Type="DateTime" Precision="3" />
+          <Property Name="InviteCode" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CityId" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="GroupId" Type="Int32" />
+          <Property Name="HealthCardID" Type="String" MaxLength="1" FixedLength="true" Unicode="true" />
+          <Property Name="InternalDepart" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="ProvinceCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="AreaCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="CityCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Province" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="BussinessID" Type="Int32" />
+          <Property Name="WorkStatus" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="commissiontype">
           <Key>
@@ -488,6 +549,49 @@
           <Property Name="MyIncome1" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
           <Property Name="MyInComeAmount" Type="Decimal" Precision="10" Scale="2" />
           <Property Name="InsertTime" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="order">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OrderNo" Type="String" Nullable="false" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="PickUpAddress" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="PubDate" Type="DateTime" Precision="3" />
+          <Property Name="ReceviceName" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="RecevicePhoneNo" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="ReceviceAddress" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ActualDoneDate" Type="DateTime" Precision="3" />
+          <Property Name="IsPay" Type="Boolean" />
+          <Property Name="Amount" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="OrderCommission" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="DistribSubsidy" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="WebsiteSubsidy" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="Remark" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="Byte" />
+          <Property Name="clienterId" Type="Int32" />
+          <Property Name="businessId" Type="Int32" />
+          <Property Name="ReceviceCity" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="ReceviceLongitude" Type="Double" />
+          <Property Name="ReceviceLatitude" Type="Double" />
+          <Property Name="OrderFrom" Type="Int32" Nullable="false" />
+          <Property Name="OriginalOrderId" Type="Int64" />
+          <Property Name="OriginalOrderNo" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Quantity" Type="Int32" />
+          <Property Name="Weight" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="ReceiveProvince" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="ReceiveArea" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="ReceiveProvinceCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="ReceiveCityCode" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="ReceiveAreaCode" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="OrderType" Type="Int32" />
+          <Property Name="KM" Type="Double" />
+          <Property Name="GuoJuQty" Type="Int32" />
+          <Property Name="LuJuQty" Type="Int32" />
+          <Property Name="SongCanDate" Type="DateTime" Precision="3" />
+          <Property Name="OrderCount" Type="Int32" />
+          <Property Name="CommissionRate" Type="Decimal" Precision="5" Scale="2" />
+          <NavigationProperty Name="business" Relationship="supermanModel.fk3" FromRole="order" ToRole="business" />
         </EntityType>
         <EntityType Name="orderlog">
           <Key>
@@ -596,110 +700,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="business">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="City" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="district" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="PhoneNo" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="PhoneNo2" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="Password" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="CheckPicUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="IDCard" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
-          <Property Name="Address" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="Landline" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
-          <Property Name="Longitude" Type="Double" />
-          <Property Name="Latitude" Type="Double" />
-          <Property Name="Status" Type="Byte" />
-          <Property Name="InsertTime" Type="DateTime" Precision="3" />
-          <Property Name="districtId" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
-          <Property Name="CityId" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
-          <Property Name="GroupId" Type="Int32" />
-          <Property Name="OriginalBusiId" Type="Int32" />
-          <Property Name="ProvinceCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="CityCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="AreaCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="Province" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="CommissionTypeId" Type="Int32" />
-          <Property Name="DistribSubsidy" Type="Decimal" Precision="5" Scale="2" />
-          <Property Name="BusinessCommission" Type="Decimal" Precision="5" Scale="2" />
-          <NavigationProperty Name="order" Relationship="supermanModel.fk3" FromRole="business" ToRole="order" />
-        </EntityType>
-        <EntityType Name="clienter">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="PhoneNo" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="LoginName" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="recommendPhone" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="Password" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="TrueName" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="IDCard" Type="String" MaxLength="18" FixedLength="false" Unicode="true" />
-          <Property Name="PicWithHandUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="PicUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="Status" Type="Byte" />
-          <Property Name="AccountBalance" Type="Decimal" Precision="7" Scale="2" />
-          <Property Name="InsertTime" Type="DateTime" Precision="3" />
-          <Property Name="InviteCode" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
-          <Property Name="City" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="CityId" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
-          <Property Name="GroupId" Type="Int32" />
-          <Property Name="HealthCardID" Type="String" MaxLength="1" FixedLength="true" Unicode="true" />
-          <Property Name="InternalDepart" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="ProvinceCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="AreaCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="CityCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="Province" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="BussinessID" Type="Int32" />
-          <Property Name="WorkStatus" Type="Int32" Nullable="false" />
-        </EntityType>
-        <EntityType Name="order">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="OrderNo" Type="String" Nullable="false" MaxLength="45" FixedLength="false" Unicode="true" />
-          <Property Name="PickUpAddress" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="PubDate" Type="DateTime" Precision="3" />
-          <Property Name="ReceviceName" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
-          <Property Name="RecevicePhoneNo" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
-          <Property Name="ReceviceAddress" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="ActualDoneDate" Type="DateTime" Precision="3" />
-          <Property Name="IsPay" Type="Boolean" />
-          <Property Name="Amount" Type="Decimal" Precision="10" Scale="2" />
-          <Property Name="OrderCommission" Type="Decimal" Precision="5" Scale="2" />
-          <Property Name="DistribSubsidy" Type="Decimal" Precision="5" Scale="2" />
-          <Property Name="WebsiteSubsidy" Type="Decimal" Precision="5" Scale="2" />
-          <Property Name="Remark" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="Status" Type="Byte" />
-          <Property Name="clienterId" Type="Int32" />
-          <Property Name="businessId" Type="Int32" />
-          <Property Name="ReceviceCity" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
-          <Property Name="ReceviceLongitude" Type="Double" />
-          <Property Name="ReceviceLatitude" Type="Double" />
-          <Property Name="OrderFrom" Type="Int32" Nullable="false" />
-          <Property Name="OriginalOrderId" Type="Int64" />
-          <Property Name="OriginalOrderNo" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="Quantity" Type="Int32" />
-          <Property Name="Weight" Type="Decimal" Precision="10" Scale="2" />
-          <Property Name="ReceiveProvince" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
-          <Property Name="ReceiveArea" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
-          <Property Name="ReceiveProvinceCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="ReceiveCityCode" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
-          <Property Name="ReceiveAreaCode" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
-          <Property Name="OrderType" Type="Int32" />
-          <Property Name="KM" Type="Double" />
-          <Property Name="GuoJuQty" Type="Int32" />
-          <Property Name="LuJuQty" Type="Int32" />
-          <Property Name="SongCanDate" Type="DateTime" Precision="3" />
-          <Property Name="OrderCount" Type="Int32" />
-          <Property Name="CommissionRate" Type="Decimal" Precision="5" Scale="2" />
-          <NavigationProperty Name="business" Relationship="supermanModel.fk3" FromRole="order" ToRole="business" />
-        </EntityType>
         <Association Name="fk3">
           <End Type="supermanModel.business" Role="business" Multiplicity="0..1" />
           <End Type="supermanModel.order" Role="order" Multiplicity="*" />
@@ -771,6 +771,38 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="business">
+            <EntityTypeMapping TypeName="supermanModel.business">
+              <MappingFragment StoreEntitySet="business">
+                <ScalarProperty Name="BusinessCommission" ColumnName="BusinessCommission" />
+                <ScalarProperty Name="DistribSubsidy" ColumnName="DistribSubsidy" />
+                <ScalarProperty Name="CommissionTypeId" ColumnName="CommissionTypeId" />
+                <ScalarProperty Name="Province" ColumnName="Province" />
+                <ScalarProperty Name="AreaCode" ColumnName="AreaCode" />
+                <ScalarProperty Name="CityCode" ColumnName="CityCode" />
+                <ScalarProperty Name="ProvinceCode" ColumnName="ProvinceCode" />
+                <ScalarProperty Name="OriginalBusiId" ColumnName="OriginalBusiId" />
+                <ScalarProperty Name="GroupId" ColumnName="GroupId" />
+                <ScalarProperty Name="CityId" ColumnName="CityId" />
+                <ScalarProperty Name="districtId" ColumnName="districtId" />
+                <ScalarProperty Name="InsertTime" ColumnName="InsertTime" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="Landline" ColumnName="Landline" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="IDCard" ColumnName="IDCard" />
+                <ScalarProperty Name="CheckPicUrl" ColumnName="CheckPicUrl" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="PhoneNo2" ColumnName="PhoneNo2" />
+                <ScalarProperty Name="PhoneNo" ColumnName="PhoneNo" />
+                <ScalarProperty Name="district" ColumnName="district" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="channel">
             <EntityTypeMapping TypeName="supermanModel.channel">
               <MappingFragment StoreEntitySet="channel">
@@ -781,6 +813,36 @@
                 <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
                 <ScalarProperty Name="CreateName" ColumnName="CreateName" />
                 <ScalarProperty Name="ChannelName" ColumnName="ChannelName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="clienter">
+            <EntityTypeMapping TypeName="supermanModel.clienter">
+              <MappingFragment StoreEntitySet="clienter">
+                <ScalarProperty Name="WorkStatus" ColumnName="WorkStatus" />
+                <ScalarProperty Name="BussinessID" ColumnName="BussinessID" />
+                <ScalarProperty Name="Province" ColumnName="Province" />
+                <ScalarProperty Name="CityCode" ColumnName="CityCode" />
+                <ScalarProperty Name="AreaCode" ColumnName="AreaCode" />
+                <ScalarProperty Name="ProvinceCode" ColumnName="ProvinceCode" />
+                <ScalarProperty Name="InternalDepart" ColumnName="InternalDepart" />
+                <ScalarProperty Name="HealthCardID" ColumnName="HealthCardID" />
+                <ScalarProperty Name="GroupId" ColumnName="GroupId" />
+                <ScalarProperty Name="CityId" ColumnName="CityId" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="InviteCode" ColumnName="InviteCode" />
+                <ScalarProperty Name="InsertTime" ColumnName="InsertTime" />
+                <ScalarProperty Name="AccountBalance" ColumnName="AccountBalance" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="PicUrl" ColumnName="PicUrl" />
+                <ScalarProperty Name="PicWithHandUrl" ColumnName="PicWithHandUrl" />
+                <ScalarProperty Name="IDCard" ColumnName="IDCard" />
+                <ScalarProperty Name="TrueName" ColumnName="TrueName" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="recommendPhone" ColumnName="recommendPhone" />
+                <ScalarProperty Name="LoginName" ColumnName="LoginName" />
+                <ScalarProperty Name="PhoneNo" ColumnName="PhoneNo" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -815,6 +877,49 @@
                 <ScalarProperty Name="MyInComeAmount" ColumnName="MyInComeAmount" />
                 <ScalarProperty Name="MyIncome1" ColumnName="MyIncome" />
                 <ScalarProperty Name="PhoneNo" ColumnName="PhoneNo" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="order">
+            <EntityTypeMapping TypeName="supermanModel.order">
+              <MappingFragment StoreEntitySet="order">
+                <ScalarProperty Name="CommissionRate" ColumnName="CommissionRate" />
+                <ScalarProperty Name="OrderCount" ColumnName="OrderCount" />
+                <ScalarProperty Name="SongCanDate" ColumnName="SongCanDate" />
+                <ScalarProperty Name="LuJuQty" ColumnName="LuJuQty" />
+                <ScalarProperty Name="GuoJuQty" ColumnName="GuoJuQty" />
+                <ScalarProperty Name="KM" ColumnName="KM" />
+                <ScalarProperty Name="OrderType" ColumnName="OrderType" />
+                <ScalarProperty Name="ReceiveAreaCode" ColumnName="ReceiveAreaCode" />
+                <ScalarProperty Name="ReceiveCityCode" ColumnName="ReceiveCityCode" />
+                <ScalarProperty Name="ReceiveProvinceCode" ColumnName="ReceiveProvinceCode" />
+                <ScalarProperty Name="ReceiveArea" ColumnName="ReceiveArea" />
+                <ScalarProperty Name="ReceiveProvince" ColumnName="ReceiveProvince" />
+                <ScalarProperty Name="Weight" ColumnName="Weight" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="OriginalOrderNo" ColumnName="OriginalOrderNo" />
+                <ScalarProperty Name="OriginalOrderId" ColumnName="OriginalOrderId" />
+                <ScalarProperty Name="OrderFrom" ColumnName="OrderFrom" />
+                <ScalarProperty Name="ReceviceLatitude" ColumnName="ReceviceLatitude" />
+                <ScalarProperty Name="ReceviceLongitude" ColumnName="ReceviceLongitude" />
+                <ScalarProperty Name="ReceviceCity" ColumnName="ReceviceCity" />
+                <ScalarProperty Name="businessId" ColumnName="businessId" />
+                <ScalarProperty Name="clienterId" ColumnName="clienterId" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+                <ScalarProperty Name="WebsiteSubsidy" ColumnName="WebsiteSubsidy" />
+                <ScalarProperty Name="DistribSubsidy" ColumnName="DistribSubsidy" />
+                <ScalarProperty Name="OrderCommission" ColumnName="OrderCommission" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="IsPay" ColumnName="IsPay" />
+                <ScalarProperty Name="ActualDoneDate" ColumnName="ActualDoneDate" />
+                <ScalarProperty Name="ReceviceAddress" ColumnName="ReceviceAddress" />
+                <ScalarProperty Name="RecevicePhoneNo" ColumnName="RecevicePhoneNo" />
+                <ScalarProperty Name="ReceviceName" ColumnName="ReceviceName" />
+                <ScalarProperty Name="PubDate" ColumnName="PubDate" />
+                <ScalarProperty Name="PickUpAddress" ColumnName="PickUpAddress" />
+                <ScalarProperty Name="OrderNo" ColumnName="OrderNo" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -904,111 +1009,6 @@
             <EntityTypeMapping TypeName="supermanModel.areaprovice">
               <MappingFragment StoreEntitySet="areaprovice">
                 <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="business">
-            <EntityTypeMapping TypeName="supermanModel.business">
-              <MappingFragment StoreEntitySet="business">
-                <ScalarProperty Name="BusinessCommission" ColumnName="BusinessCommission" />
-                <ScalarProperty Name="DistribSubsidy" ColumnName="DistribSubsidy" />
-                <ScalarProperty Name="CommissionTypeId" ColumnName="CommissionTypeId" />
-                <ScalarProperty Name="Province" ColumnName="Province" />
-                <ScalarProperty Name="AreaCode" ColumnName="AreaCode" />
-                <ScalarProperty Name="CityCode" ColumnName="CityCode" />
-                <ScalarProperty Name="ProvinceCode" ColumnName="ProvinceCode" />
-                <ScalarProperty Name="OriginalBusiId" ColumnName="OriginalBusiId" />
-                <ScalarProperty Name="GroupId" ColumnName="GroupId" />
-                <ScalarProperty Name="CityId" ColumnName="CityId" />
-                <ScalarProperty Name="districtId" ColumnName="districtId" />
-                <ScalarProperty Name="InsertTime" ColumnName="InsertTime" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
-                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
-                <ScalarProperty Name="Landline" ColumnName="Landline" />
-                <ScalarProperty Name="Address" ColumnName="Address" />
-                <ScalarProperty Name="IDCard" ColumnName="IDCard" />
-                <ScalarProperty Name="CheckPicUrl" ColumnName="CheckPicUrl" />
-                <ScalarProperty Name="Password" ColumnName="Password" />
-                <ScalarProperty Name="PhoneNo2" ColumnName="PhoneNo2" />
-                <ScalarProperty Name="PhoneNo" ColumnName="PhoneNo" />
-                <ScalarProperty Name="district" ColumnName="district" />
-                <ScalarProperty Name="City" ColumnName="City" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="clienter">
-            <EntityTypeMapping TypeName="supermanModel.clienter">
-              <MappingFragment StoreEntitySet="clienter">
-                <ScalarProperty Name="WorkStatus" ColumnName="WorkStatus" />
-                <ScalarProperty Name="BussinessID" ColumnName="BussinessID" />
-                <ScalarProperty Name="Province" ColumnName="Province" />
-                <ScalarProperty Name="CityCode" ColumnName="CityCode" />
-                <ScalarProperty Name="AreaCode" ColumnName="AreaCode" />
-                <ScalarProperty Name="ProvinceCode" ColumnName="ProvinceCode" />
-                <ScalarProperty Name="InternalDepart" ColumnName="InternalDepart" />
-                <ScalarProperty Name="HealthCardID" ColumnName="HealthCardID" />
-                <ScalarProperty Name="GroupId" ColumnName="GroupId" />
-                <ScalarProperty Name="CityId" ColumnName="CityId" />
-                <ScalarProperty Name="City" ColumnName="City" />
-                <ScalarProperty Name="InviteCode" ColumnName="InviteCode" />
-                <ScalarProperty Name="InsertTime" ColumnName="InsertTime" />
-                <ScalarProperty Name="AccountBalance" ColumnName="AccountBalance" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="PicUrl" ColumnName="PicUrl" />
-                <ScalarProperty Name="PicWithHandUrl" ColumnName="PicWithHandUrl" />
-                <ScalarProperty Name="IDCard" ColumnName="IDCard" />
-                <ScalarProperty Name="TrueName" ColumnName="TrueName" />
-                <ScalarProperty Name="Password" ColumnName="Password" />
-                <ScalarProperty Name="recommendPhone" ColumnName="recommendPhone" />
-                <ScalarProperty Name="LoginName" ColumnName="LoginName" />
-                <ScalarProperty Name="PhoneNo" ColumnName="PhoneNo" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="order">
-            <EntityTypeMapping TypeName="supermanModel.order">
-              <MappingFragment StoreEntitySet="order">
-                <ScalarProperty Name="CommissionRate" ColumnName="CommissionRate" />
-                <ScalarProperty Name="OrderCount" ColumnName="OrderCount" />
-                <ScalarProperty Name="SongCanDate" ColumnName="SongCanDate" />
-                <ScalarProperty Name="LuJuQty" ColumnName="LuJuQty" />
-                <ScalarProperty Name="GuoJuQty" ColumnName="GuoJuQty" />
-                <ScalarProperty Name="KM" ColumnName="KM" />
-                <ScalarProperty Name="OrderType" ColumnName="OrderType" />
-                <ScalarProperty Name="ReceiveAreaCode" ColumnName="ReceiveAreaCode" />
-                <ScalarProperty Name="ReceiveCityCode" ColumnName="ReceiveCityCode" />
-                <ScalarProperty Name="ReceiveProvinceCode" ColumnName="ReceiveProvinceCode" />
-                <ScalarProperty Name="ReceiveArea" ColumnName="ReceiveArea" />
-                <ScalarProperty Name="ReceiveProvince" ColumnName="ReceiveProvince" />
-                <ScalarProperty Name="Weight" ColumnName="Weight" />
-                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
-                <ScalarProperty Name="OriginalOrderNo" ColumnName="OriginalOrderNo" />
-                <ScalarProperty Name="OriginalOrderId" ColumnName="OriginalOrderId" />
-                <ScalarProperty Name="OrderFrom" ColumnName="OrderFrom" />
-                <ScalarProperty Name="ReceviceLatitude" ColumnName="ReceviceLatitude" />
-                <ScalarProperty Name="ReceviceLongitude" ColumnName="ReceviceLongitude" />
-                <ScalarProperty Name="ReceviceCity" ColumnName="ReceviceCity" />
-                <ScalarProperty Name="businessId" ColumnName="businessId" />
-                <ScalarProperty Name="clienterId" ColumnName="clienterId" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="Remark" ColumnName="Remark" />
-                <ScalarProperty Name="WebsiteSubsidy" ColumnName="WebsiteSubsidy" />
-                <ScalarProperty Name="DistribSubsidy" ColumnName="DistribSubsidy" />
-                <ScalarProperty Name="OrderCommission" ColumnName="OrderCommission" />
-                <ScalarProperty Name="Amount" ColumnName="Amount" />
-                <ScalarProperty Name="IsPay" ColumnName="IsPay" />
-                <ScalarProperty Name="ActualDoneDate" ColumnName="ActualDoneDate" />
-                <ScalarProperty Name="ReceviceAddress" ColumnName="ReceviceAddress" />
-                <ScalarProperty Name="RecevicePhoneNo" ColumnName="RecevicePhoneNo" />
-                <ScalarProperty Name="ReceviceName" ColumnName="ReceviceName" />
-                <ScalarProperty Name="PubDate" ColumnName="PubDate" />
-                <ScalarProperty Name="PickUpAddress" ColumnName="PickUpAddress" />
-                <ScalarProperty Name="OrderNo" ColumnName="OrderNo" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

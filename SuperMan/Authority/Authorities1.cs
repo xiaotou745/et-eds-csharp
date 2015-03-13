@@ -43,6 +43,8 @@ namespace SuperMan
         public const string AccountDelete = "账号权限管理-删除";
 
         public const string BusSet = "补贴设置-设置";
+
+        public const string AdminTools = "管理员工具-设置";
 		
 	}
 
@@ -61,7 +63,9 @@ namespace SuperMan
 		
 		public AuthorityItem BusiAudit = new AuthorityItem( AuthorityNames.BusiAudit,(AuthorityType)1);		
 		
-		public AuthorityItem BusSet = new AuthorityItem( AuthorityNames.BusSet,(AuthorityType)1);		
+		public AuthorityItem BusSet = new AuthorityItem( AuthorityNames.BusSet,(AuthorityType)1);
+
+        public AuthorityItem AdminTools = new AuthorityItem(AuthorityNames.AdminTools, (AuthorityType)1);
 		
 	}
 
@@ -77,6 +81,7 @@ namespace SuperMan
 								defaultAuthorities.Add(AuthorityNames.BusiView);
 								defaultAuthorities.Add(AuthorityNames.BusiAudit);
 								defaultAuthorities.Add(AuthorityNames.BusSet);
+                                defaultAuthorities.Add(AuthorityNames.AdminTools);
 				        }
         public static List<string> DefaultAuthorities
         {

@@ -35,7 +35,7 @@
                     <td>@item.PhoneNo</td>
                     <td>@item.Address</td>
                     <td>
-                        <a href="javascript:void(0)" class="businessOk" onclick="funcPicView('@String.Format("{0}{1}",PicHost,puth)','@item.CheckPicUrl')">查看</a>
+                        <a href="javascript:void(0)" onclick="funcPicView('@String.Format("{0}{1}",PicHost,puth)','@item.CheckPicUrl')">查看</a>
                     </td>
                     <td>@item.InsertTime</td>
                     <td>
@@ -150,6 +150,8 @@
         var fileHandHouZhui = CheckPicUrl.substr(fileLastDot, CheckPicUrl.length - fileLastDot);
         var bigFileName = CheckPicUrl.substring(0, fileLastDot) + originSize + fileHandHouZhui;
         $('#showBigBusiImage').attr('href', puth + '/' + bigFileName);
+
+        adminjs.openwinbox('#BusiPicShow');
     }
         
     //弹出结算比例层

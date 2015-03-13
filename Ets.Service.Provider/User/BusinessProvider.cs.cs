@@ -62,6 +62,14 @@ namespace Ets.Service.Provider.User
             return result;
         }
 
+        /// <summary>
+        /// 设置结算比例2015.3.12 平扬
+        /// </summary>
+        /// <returns></returns>
+        public bool SetCommission(int id, decimal price)
+        {
+            return dao.setCommission(id, price);
+        }
 
         /// <summary>
         /// 生成商户结算excel文件2015.3.12 平扬

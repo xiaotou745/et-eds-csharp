@@ -4,9 +4,15 @@ using ETS.Dao;
 using ETS.Data;
 using ETS.Data.Core;
 using ETS.Data.PageData;
+using ETS.Util;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using ETS.Const;
 using Ets.Model.DomainModel.Bussiness;
+using Ets.Model.DomainModel.Clienter;
 
 
 namespace Ets.Dao.User
@@ -122,7 +128,33 @@ namespace Ets.Dao.User
                 throw;
             }
             return list;
-        } 
+        }
+        /// <summary>
+        /// 设置结算比例-平扬 2015.3.12
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="price"></param>
+        /// <returns></returns>
+        public bool setCommission(int id, decimal price)
+        {
+            bool reslut = false;
+            try
+            {
+                string sql = " update business set BusinessCommission=@BusinessCommission where id=@id ";
+                IDbParameters dbParameters = DbHelper.CreateDbParameters();
+                dbParameters.AddWithValue("BusinessCommission", price);
+                dbParameters.AddWithValue("id", id);
+                int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Read, sql, dbParameters);
+                if (i > 0) reslut= true;
+            }
+            catch (Exception ex)
+            {
+                reslut = false;
+                LogHelper.LogWriter(ex, "设置结算比例");
+                throw;
+            }
+            return reslut;
 
+        }
     }
 }

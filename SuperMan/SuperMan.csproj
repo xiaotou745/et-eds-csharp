@@ -176,6 +176,7 @@
       <DependentUpon>Authorities.tt</DependentUpon>
     </Compile>
     <Compile Include="Authority\IAuthenticationService.cs" />
+    <Compile Include="Controllers\AdminToolsController.cs" />
     <Compile Include="Controllers\BusinessCommissionController.cs" />
     <Compile Include="Controllers\CommonController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -521,6 +522,8 @@
     <Content Include="Views\BusinessCommission\BusinessCommission.cshtml" />
     <Content Include="Views\SubsidyManager\SettlementFunction.cshtml" />
     <Content Include="Views\SubsidyManager\_SettlementFunctionList.cshtml" />
+    <Content Include="Views\AdminTools\AdminTools.cshtml" />
+    <Content Include="Views\AdminTools\_AdminToolsList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

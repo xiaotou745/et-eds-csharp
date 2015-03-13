@@ -6,6 +6,7 @@
         <tr class="tdbg">
             <th width="%5">序号</th>
             <th>姓名</th>
+            <th>工作状态</th>
             <th>电话</th>
             <th>身份证号</th>
             <th>照片</th>
@@ -27,6 +28,16 @@
                 <tr id="@item.Id">
                     <td>@i</td>
                     <td>@item.TrueName</td>
+                    <td>
+                        @if (@item.WorkStatus == 0)
+                        {
+                            @Html.Raw("上班")
+                        }
+                        else if (@item.WorkStatus == 1)
+                        {
+                            @Html.Raw("下班")
+                        }
+                        </td>
                     <td>@item.PhoneNo</td>
                     <td>@item.IDCard</td>
                     <td>
@@ -202,7 +213,7 @@
         //var bigFileName = PicUrl.substring(0, fileLastDot) + originSize + fileHandHouZhui;
 
         $('#showBigPicUrl').attr('href', puth + '/' + BigPicName(PicUrl, originSize));
-        adminjs.openwinbox('#ClientPicShow');
+        adminjs.openwinbox('#BusiPicShow');
     }
 
     $('.J_closebox').click(function () {
