@@ -1,13 +1,11 @@
 using ETS.Data.PageData;
 using System.Collections.Generic;
-﻿using Ets.Model.DataModel.Bussiness;
 using Ets.Model.ParameterModel.Bussiness;
 ﻿using ETS.Data.PageData;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Ets.Model.Common;
+using Ets.Model.DomainModel.Bussiness;
 
 namespace Ets.Service.IProvider.User
 {
@@ -21,14 +19,28 @@ namespace Ets.Service.IProvider.User
         /// </summary>
         /// <returns></returns>
         IList<int> GetOrdersApp();
+      
+        PageInfo<T> GetOrdersApp<T>(Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp paraModel);
 
         /// <summary>
-        /// 获取我的任务   根据状态判断是已完成任务还是我的任务
+        /// 生成商户结算excel文件2015.3.12 平扬
         /// </summary>
         /// <returns></returns>
-        IList<ClientOrderResultModel> GetMyOrders(ClientOrderSearchCriteria clientOrderModel);
+        string CreateExcel(BusinessCommissionModel paraModel);
 
+        /// <summary>
+        /// 设置结算比例2015.3.12 平扬
+        /// </summary>
+        /// <returns></returns>
+        bool SetCommission(int id,decimal price);
 
-        PageInfo<T> GetOrdersApp<T>(Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp paraModel);
+        /// <summary>
+        /// 商户结算列表--2015.3.12 平扬
+        /// </summary>
+        /// <param name="t1">开始计算日期</param>
+        /// <param name="t2">结束日期</param>
+        /// <param name="name">商户姓名</param>
+        /// <returns></returns>
+        ResultInfo<IList<BusinessCommissionModel>> GetBusinessCommission(DateTime t1, DateTime t2, string name,int groupid);
     }
 }

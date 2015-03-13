@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CalculateCommon">
+      <HintPath>..\lib\CalculateCommon.dll</HintPath>
+      <HintPath>..\packages\CalculateCommon.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -40,8 +44,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Clienter\ClienterProvider.cs" />
-    <Compile Include="Order\OrderService.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Common\AdminToolsProvider.cs" />
+    <Compile Include="Order\OrderCommissionProvider.cs" />
+    <Compile Include="Order\OrderProvider.cs" />     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="User\BusinessProvider.cs.cs" />
     <Compile Include="User\UserProvider.cs" />
   </ItemGroup>

@@ -1,4 +1,8 @@
-﻿using ETS.Dao;
+﻿using Ets.Model.DataModel.Clienter;
+using ETS;
+using ETS.Dao;
+using ETS.Data.Core;
+using ETS.Data.PageData;
 using ETS.Page;
 using System;
 using System.Collections.Generic;
@@ -10,12 +14,13 @@ namespace Ets.Dao.Order
 {
     public class OrderDao : DaoBase
     {
-        public PagedList<Model.DataModel.Order.order> GetOrders(Model.ParameterModel.Order.ClientOrderSearchCriteria criteria)
+        public PagedList<Model.DataModel.Order.order> GetOrders(ClientOrderSearchCriteria criteria)
         {
             PagedList<Model.DataModel.Order.order> orderPageList = new PagedList<Model.DataModel.Order.order>();
-             
+            //排序
+            string orderByStr = " o.Id ";
             //列名
-            StringBuilder columnStr = new StringBuilder(@"
+            StringBuilder columnStr = new StringBuilder(@" 
         o.Id ,
         o.OrderNo ,
         o.PickUpAddress ,
@@ -40,54 +45,53 @@ namespace Ets.Dao.Order
         o.OriginalOrderId ,
         o.OriginalOrderNo ,
         o.Quantity ,
-        o.Weight ,
         o.ReceiveProvince ,
         o.ReceiveArea ,
         o.ReceiveProvinceCode ,
         o.ReceiveCityCode ,
-        o.ReceiveAreaCode ,
-        o.OrderType ,
-        o.KM ,
-        o.GuoJuQty ,
-        o.LuJuQty ,
+        o.ReceiveAreaCode , 
         o.SongCanDate ,
         o.OrderCount ,
-        o.CommissionRate ");
+        o.CommissionRate ,
+        b.Name BusinessName,
+        b.PhoneNo BusinessPhone,
+        b.City PickUpCity,
+        b.BusiLongitude,
+        b.BusiLatitude ");
+            //关联表
+            StringBuilder tableListStr = new StringBuilder();
+            tableListStr.Append(@" dbo.[order] o WITH ( NOLOCK )
+        LEFT JOIN dbo.clienter c WITH ( NOLOCK ) ON c.Id = o.clienterId
+        LEFT JOIN dbo.business b WITH ( NOLOCK ) ON b.Id = o.businessId "); 
             //条件
             StringBuilder whereStr = new StringBuilder(" 1=1 ");
             if (criteria.userId != 0)
             {
-                whereStr.Append(" AND o.clienterId =  @clienterId ");
+                whereStr.AppendFormat(" AND o.clienterId = {0}",criteria.userId);
             }
             if (!string.IsNullOrWhiteSpace(criteria.city))
             {
-                whereStr.Append(" AND b.City =  @City ");
+                whereStr.AppendFormat(" AND b.City = {0}", criteria.city);
             }
             if (!string.IsNullOrWhiteSpace(criteria.cityId))
             {
-                whereStr.Append(" AND b.CityId =  @CityId ");
+                whereStr.AppendFormat(" AND b.CityId = {0}", criteria.cityId);
             }
             if (criteria.status != -1 && criteria.status != null)
             {
-                whereStr.Append(" AND o.[Status] =  @Status ");
+                whereStr.AppendFormat(" AND o.[Status] = {0}", criteria.status);
             }
             else
             {
                 whereStr.Append(" AND o.[Status] = 0 ");  //这里改为枚举值
             }
-            //排序
-            string orderByStr = " o.Id ";
-            //关联表
-            StringBuilder tableListStr = new StringBuilder();
-            tableListStr.Append(@" dbo.[order] o WITH ( NOLOCK )
-        LEFT JOIN dbo.clienter c WITH ( NOLOCK ) ON c.Id = o.clienterId
-        LEFT JOIN dbo.business b WITH ( NOLOCK ) ON b.Id = o.businessId");
-
             
+            var pageInfo = new PageHelper().GetPages<Model.DataModel.Order.order>(SuperMan_Read, criteria.PagingRequest.PageIndex, whereStr.ToString(), orderByStr, columnStr.ToString(), tableListStr.ToString(), criteria.PagingRequest.PageSize, true);
 
-
-
-
+            orderPageList.ContentList = pageInfo.Records.ToList();
+            orderPageList.CurrentPage = pageInfo.Index;  //当前页
+            orderPageList.PageCount = pageInfo.PageCount;//总页数
+            orderPageList.PageSize = criteria.PagingRequest.PageSize;
 
             return orderPageList;
         } 

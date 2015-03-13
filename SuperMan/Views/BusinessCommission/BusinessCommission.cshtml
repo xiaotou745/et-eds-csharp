@@ -1,0 +1,100 @@
+﻿@model IList<Ets.Model.DomainModel.Bussiness.BusinessCommissionModel>
+ @{
+    ViewBag.Title = "BusinessCommission";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+ } 
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：商户 > 商户结算
+    </h2>
+    <div class="SearchMd">
+@using (Html.BeginForm("BusinessCommissions", "BusinessCommission", FormMethod.Post, new {id="from1",name="from1"}))
+        { 
+            <table border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td>
+                        <span class="">商户名称: </span>
+                        <input id="txtBusinessName" name="txtBusinessName" type="tel" /> 
+                        <span class="">开始时间: </span>
+                        <input id="txtDateStart" name="txtDateStart" readonly="readonly" type="text" />
+                        <span class="">到: </span>
+                        <input id="txtDateEnd" name="txtDateEnd" readonly="readonly" type="text" />
+                        <input id="txtGroupId" name="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" />
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                    </td>
+                </tr>
+            </table>
+  } 
+    </div>
+    <div class="bd clearfix" id="dataList">
+         <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+    <thead> 
+        <tr class="tdbg">
+            <th width="%5">序号</th>
+            <th>商户名称</th>
+            <th>订单金额</th>
+            <th>订单数量</th>
+            <th>结算比例</th>
+            <th>开始时间</th>
+            <th>结束时间</th>
+            <th>结算金额</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var i = 0;
+            if (Model != null)
+            { 
+            foreach (var item in Model)
+            {
+                i++;
+                <tr id="@item.id">
+                    <td>@i</td>
+                    <td>@item.Name</td>
+                    <td>@item.Amount</td>
+                    <td>@item.OrderCount</td>
+                    <td>@item.BusinessCommission</td>
+                    <td>@item.T1</td>
+                    <td>@item.T2</td>
+                    <td>@item.TotalAmount</td> 
+                    <td>
+                        <a href="javascript:void(0)" onclick=" DataDaoCHu(@item.id, '@item.Name', '@item.Amount', '@item.OrderCount', '@item.BusinessCommission', '@item.T1', '@item.T2', '@item.TotalAmount') ">导出</a> 
+                    </td>
+                </tr>
+            }
+            }
+        }
+    </tbody> 
+</table>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        //查询
+        $('#txtDateStart').datepicker();
+        $('#txtDateEnd').datepicker();
+        $("#btnSearch").on('click', function() {
+            var txtBusinessName = $("#txtBusinessName").val(); //商户名称
+            var groupId = $("#txtGroupId").val();
+            if (groupId == "") { groupId =0}
+            var startDate = $('#txtDateStart').val();
+            var endDate = $('#txtDateEnd').val();
+            if (endDate < startDate) {
+                alert("开始日期不能大于结束日期");
+                return false;
+            }
+            return true;
+
+        });
+    });
+
+    function DataDaoCHu(id,name,amount,count,commission,t1,t2,total) {
+        var url = "/BusinessCommission/CreateBusinessCommissionsExcel?id=" + id + "&name=" + name + "&amount=" + amount + "&ordercount=" + count + "&BusinessCommission=" + commission + "&TotalAmount=" + total + "&T1=" + t1 + "&T2=" + t2;
+        window.location.href = url;
+    }
+</script>
