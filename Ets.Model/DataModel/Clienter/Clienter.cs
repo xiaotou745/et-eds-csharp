@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ETS.Util;
+using Ets.Model.Common;
 
 
 namespace Ets.Model.DataModel.Clienter
