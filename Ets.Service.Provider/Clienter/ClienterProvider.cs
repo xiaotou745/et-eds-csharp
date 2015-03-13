@@ -80,7 +80,7 @@ namespace Ets.Service.Provider.Clienter
                 model.Remark = item.Remark;
                 model.Status = item.Status;
                 model.OrderCount = item.OrderCount;
-                #region 计算经纬度
+                #region 计算经纬度     待封装  add by caoheyang 20150313
 
                 if (item.Longitude == null || item.Longitude == 0 || item.Latitude == null || item.Latitude == 0)
                 {
