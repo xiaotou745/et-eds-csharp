@@ -64,8 +64,8 @@ namespace Ets.Dao.User
                                     b.Longitude,
                                     b.Latitude,
                                     b.Name as PickUpName,
-                                    c.TrueName as superManName,
-                                    c.PhoneNo as superManPhone ";
+                                    c.TrueName as SuperManName,
+                                    c.PhoneNo as SuperManPhone ";
             string tableList = @" [order](nolock) as o
                                     join business(nolock) as b on o.businessId=b.Id
                                     join clienter(nolock) as c on o.clienterId=c.Id ";  //表名

@@ -110,7 +110,7 @@ namespace Ets.Service.Provider.User
         /// 生成商户结算excel文件2015.3.12 平扬
         /// </summary>
         /// <returns></returns>
-        public virtual string CreateExcel(BusinessCommissionModel paraModel)
+        public string CreateExcel(BusinessCommissionModel paraModel)
         {
             StringBuilder strBuilder = new StringBuilder();
             strBuilder.AppendLine("<table border=1 cellspacing=0 cellpadding=5 rules=all>");
@@ -135,5 +135,7 @@ namespace Ets.Service.Provider.User
             strBuilder.AppendLine("</table>");
             return strBuilder.ToString();
         }
+
+      
     }
 }

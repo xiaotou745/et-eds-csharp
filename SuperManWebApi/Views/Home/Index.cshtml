@@ -145,7 +145,22 @@
         //    }
         //});
 
+        $.ajax({
+            type: 'get',
+            dataType: 'json',
+            url: '/BusinessAPI/GetOrderList_B?userId=30&pagedSize=10&pageIndex=1&Status=1',
+            data: {
+               m:Math.random()
+               
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () {
 
+            }
+        });
+        
         //$.ajax({
         //    type: 'get',
         //    dataType: 'json',
