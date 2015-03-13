@@ -11,6 +11,7 @@
             <th width="%5">取货地址</th>
             <th width="%5">送货地址</th>
             <th>实际完成时间</th>
+            <th>订单数量</th>
             <th>订单金额</th>
             <th>订单佣金</th>
             <th>外送费</th>
@@ -35,6 +36,7 @@
                     <td>@item.PickUpAddress</td>
                     <td>@item.ReceviceAddress</td>
                     <td>@item.ActualDoneDate</td>
+                    <td>@item.OrderCount</td>
                     <td style="color:red;font-weight:600">@item.Amount</td>
                     <td>@item.OrderCommission</td>
                     <td>@item.DistribSubsidy</td>
@@ -57,10 +59,6 @@
                 else if (@item.Status == SuperManCommonModel.ConstValues.ORDER_CANCEL)
                 {
                     strstatus = "已取消";
-                }
-                else if (@item.Status == SuperManCommonModel.ConstValues.ORDER_WAITAUDIT)
-                {
-                    strstatus = "待审核";
                 }
                 <td>@strstatus</td>
                     }

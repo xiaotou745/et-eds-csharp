@@ -106,7 +106,12 @@ namespace SuperManCommonModel.Models
         /// <summary>
         /// 集团名称
         /// </summary>
-        public string GroupName { get; set; } 
+        public string GroupName { get; set; }
+
+        /// <summary>
+        /// 订单数量
+        /// </summary>
+        public int? OrderCount { get; set; }
         
     }
 
