@@ -87,6 +87,10 @@ namespace SuperManWebApi.Models.Clienter
         /// 订单状态
         /// </summary>
         public byte? Status { get; set; }
+        /// <summary>
+        /// 订单数量
+        /// </summary>
+        public int? OrderCount { get; set; }
     }
 
     public class ClientOrderNoLoginResultModel
@@ -169,6 +173,11 @@ namespace SuperManWebApi.Models.Clienter
         /// 订单状态
         /// </summary>
         public byte? Status { get; set; }
+
+        /// <summary>
+        /// 订单数量
+        /// </summary>
+        public int? OrderCount { get; set; }
     }
     public class degree
     {
@@ -212,6 +221,7 @@ namespace SuperManWebApi.Models.Clienter
             resultModel.IsPay = from.IsPay.Value;
             resultModel.Remark = from.Remark;
             resultModel.Status = from.Status.Value;
+            resultModel.OrderCount = from.OrderCount;
             if (_business != null)
             {
                 var degree1 = new Degree(degree.longitude, degree.latitude);
@@ -287,6 +297,7 @@ namespace SuperManWebApi.Models.Clienter
             resultModel.IsPay = from.IsPay.Value;
             resultModel.Remark = from.Remark;
             resultModel.Status = from.Status.Value;
+            resultModel.OrderCount = from.OrderCount;
             if (degree.longitude != null && degree.latitude != null && _business.Longitude != null && _business.Latitude != null)
             {
                 var degree1 = new Degree(degree.longitude, degree.latitude);
