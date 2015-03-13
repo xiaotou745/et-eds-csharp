@@ -1,0 +1,86 @@
+﻿@using System.Data
+@{
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+ 
+<div class="zpManage zpSh"  >
+    <h2 class="crumbs">
+        您所在位置：管理员工具 > 管理员工具
+    </h2>
+    <div class="SearchMd">
+        <table border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td>
+                    <span class="">执行SQL: </span>
+                </td>
+                <td>
+                    <textarea id="txtSql" rows="6" cols="80">
+                        @{if (ViewBag.SQL != null) {@Html.Raw(ViewBag.SQL)}}
+                    </textarea>
+                </td>
+                <td>
+                    <input type="button" value="查询" class="searchBtn" id="btnSearch" />
+                    <input type="button" value="修改" class="searchBtn" id="btnEdit" />
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="bd clearfix" id="dataList" >
+        @Html.Partial("_AdminToolsList")
+    </div>
+</div>
+
+<script>
+    var criteria = { strSql: $("#txtSql").val() };
+    $(document).ready(function () {
+
+        //查询
+        $("#btnSearch").on('click', function () {
+            query();
+        });
+        //修改
+        $("#btnEdit").on('click', function () {
+            edit();
+        });
+
+    })
+    function query() {
+        var sql = $("#txtSql").val();
+        if (sql.trim() == "") {
+            $("#dataList").html("请输入查询SQL！");
+            return;
+        }
+        criteria = { strSql: sql };
+
+        var url = "/AdminTools/AdminTools";
+        webExpress.utility.ajax.request
+            (
+                url,
+                criteria,
+                function (data) {
+                    $("#dataList").html(data);
+                });
+    };
+    function edit() {
+        var sql = $("#txtSql").val();
+        if (sql.trim() == "") {
+            $("#dataList").html("请输入修改SQL！");
+            return;
+        }
+        criteria = { strSql: sql };
+
+        var url = "/AdminTools/Edit";
+        webExpress.utility.ajax.request
+            (
+                url,
+                criteria,
+                function (data) {
+                    if (data >= 1) {
+                        $("#dataList").html("SQL执行成功!");
+                    }
+
+                });
+    };
+</script>

@@ -89,6 +89,10 @@ namespace SuperManCommonModel.Models
         /// 审核状态
         /// </summary>
         public sbyte? Status { get; set; }
+        /// <summary>
+        /// 工作状态
+        /// </summary>
+        public int WorkStatus { get; set; }
     }
 
     public class ClienterModelTranslator : TranslatorBase<clienter, ClienterModel>

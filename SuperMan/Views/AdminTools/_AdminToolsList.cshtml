@@ -1,0 +1,34 @@
+﻿
+@using System.Data
+<label>共计条数：【@(ViewBag.Quantity)】条</label>
+<table  border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+    @{
+        System.Data.DataTable Table = ViewBag.Data;
+        if (Table != null && Table.Rows.Count > 0)
+        {
+            <thead>
+                <tr class="tdbg" style="background: #f6f6f6;" >
+                    @for (int k = 0; k < Table.Columns.Count; k++)
+                    {
+                        <th align="center">
+                            @Table.Columns[k].ColumnName (@Table.Columns[k].DataType.ToString().Split('.')[1].ToString())
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Table.Rows.Count; i++)
+                {
+                    <tr style="width:600px">
+                        @for (int j = 0; j < Table.Columns.Count; j++)
+                        {
+                            <td>
+                                @Table.Rows[i][j].ToString()
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        }
+    }
+</table>
