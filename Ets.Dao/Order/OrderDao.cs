@@ -56,8 +56,8 @@ namespace Ets.Dao.Order
         b.Name BusinessName,
         b.PhoneNo BusinessPhone,
         b.City PickUpCity,
-        b.BusiLongitude,
-        b.BusiLatitude ");
+        b.Longitude BusiLongitude,
+        b.Latitude BusiLatitude ");
             //关联表
             StringBuilder tableListStr = new StringBuilder();
             tableListStr.Append(@" dbo.[order] o WITH ( NOLOCK )
@@ -71,11 +71,11 @@ namespace Ets.Dao.Order
             }
             if (!string.IsNullOrWhiteSpace(criteria.city))
             {
-                whereStr.AppendFormat(" AND b.City = {0}", criteria.city);
+                whereStr.AppendFormat(" AND b.City = '{0}'", criteria.city);
             }
             if (!string.IsNullOrWhiteSpace(criteria.cityId))
             {
-                whereStr.AppendFormat(" AND b.CityId = {0}", criteria.cityId);
+                whereStr.AppendFormat(" AND b.CityId = '{0}'", criteria.cityId);
             }
             if (criteria.status != -1 && criteria.status != null)
             {
