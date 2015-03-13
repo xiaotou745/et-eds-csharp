@@ -359,6 +359,7 @@ namespace SuperManWebApi.Controllers
             var pIndex = ETS.Util.ParseHelper.ToInt(pagedIndex, 1);
             pIndex = pIndex <= 0 ? 1 : pIndex;
             var pSize = ETS.Util.ParseHelper.ToInt(pagedSize, 100);
+           
             Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp criteria = new Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp()
             {
                 PagingResult = new Ets.Model.Common.PagingResult(pIndex, pSize),
