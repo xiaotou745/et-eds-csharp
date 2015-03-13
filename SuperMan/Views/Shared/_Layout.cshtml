@@ -29,7 +29,8 @@
     <script type="text/javascript" src="~/Scripts/usaarea.retriever.js"></script>
 
 </head>
-<body>
+<body >
+    `
     <div class="container-fluid">
         <header class="hd clearfix">
             <div class="logo">
@@ -37,112 +38,128 @@
                     SuperMan管理后台
                 </div>
             </div>
-            <div class="loginInfo" style="width: 460px;">@*@TempData["LayoutUserName"]*@
-                您好： <strong>@UserContext.Current.Name</strong>，欢迎使用<span class="line">|</span><a href="/Account/LogOff" class="importMsg">退出</a>
-            </div>
-        </header>
+            <div class="loginInfo" style="width: 460px;">
+                @*@TempData["LayoutUserName"]*@
+            您好： <strong>@UserContext.Current.Name</strong>，欢迎使用<span class="line">|</span><a href="/Account/LogOff" class="importMsg">退出</a>
+        </div>
+    </header>
 
-        <div class="main-container">
-            <div class="sidebar">
-                <ul class="nav nav-list">
-                    <li>
-                        <a href="/HomeCount/Index">
-                            <i class="homeicon"></i>
-                            <span class="menu-text">后台首页</span>
+    <div class="main-container">
+        <div class="sidebar">
+            <ul class="nav nav-list">
+                <li>
+                    <a href="/HomeCount/Index">
+                        <i class="homeicon"></i>
+                        <span class="menu-text">后台首页</span>
+                    </a>
+                </li>
+                <li>
+                    @if (UserContext.Current.HasAuthority(AuthorityNames.OrderView))
+                    {
+                        <a class="dropdown-toggle" href="javascript:void(0);">
+                            <i class="skuicon"></i>
+                            <span class="menu-text">订单管理</span>
+                            <b class="arrow icon-angle-down"></b>
                         </a>
-                    </li>
-                    <li>
-                        @if (UserContext.Current.HasAuthority(AuthorityNames.OrderView))
-                        {
-                            <a class="dropdown-toggle" href="javascript:void(0);">
-                                <i class="skuicon"></i>
-                                <span class="menu-text">订单管理</span>
-                                <b class="arrow icon-angle-down"></b>
-                            </a>
-                            <ul class="submenu">
+                        <ul class="submenu">
 
-                                <li><a href="/Order/Order" data-url-def="#">订单管理</a></li>
+                            <li><a href="/Order/Order" data-url-def="#">订单管理</a></li>
 
-                            </ul>
-                        }
-                    </li>
+                        </ul>
+                    }
+                </li>
 
-                    <li>
-                        @if (UserContext.Current.HasAuthority(AuthorityNames.SupperView) || UserContext.Current.HasAuthority(AuthorityNames.SuperAudit) || UserContext.Current.HasAuthority(AuthorityNames.SuperClear))
-                        {
-                            <a class="dropdown-toggle" href="javascript:void(0);">
-                                <i class="skuicon"></i>
-                                <span class="menu-text">超人管理</span>
-                                <b class="arrow icon-angle-down"></b>
-                            </a>
-                            <ul class="submenu">
+                <li>
+                    @if (UserContext.Current.HasAuthority(AuthorityNames.SupperView) || UserContext.Current.HasAuthority(AuthorityNames.SuperAudit) || UserContext.Current.HasAuthority(AuthorityNames.SuperClear))
+                    {
+                        <a class="dropdown-toggle" href="javascript:void(0);">
+                            <i class="skuicon"></i>
+                            <span class="menu-text">超人管理</span>
+                            <b class="arrow icon-angle-down"></b>
+                        </a>
+                        <ul class="submenu">
 
-                                <li><a href="/SuperManManager/SuperManManager" data-url-def="#">超人管理</a></li>
+                            <li><a href="/SuperManManager/SuperManManager" data-url-def="#">超人管理</a></li>
 
-                            </ul>
-                        }
-                    </li>
-                    <li>
-                        @if (UserContext.Current.HasAuthority(AuthorityNames.BusiView) || UserContext.Current.HasAuthority(AuthorityNames.BusiAudit))
-                        {
-                            <a class="dropdown-toggle" href="javascript:void(0);">
-                                <i class="skuicon"></i>
-                                <span class="menu-text">商户管理</span>
-                                <b class="arrow icon-angle-down"></b>
-                            </a>
-                            <ul class="submenu">
+                        </ul>
+                    }
+                </li>
+                <li>
+                    @if (UserContext.Current.HasAuthority(AuthorityNames.BusiView) || UserContext.Current.HasAuthority(AuthorityNames.BusiAudit))
+                    {
+                        <a class="dropdown-toggle" href="javascript:void(0);">
+                            <i class="skuicon"></i>
+                            <span class="menu-text">商户管理</span>
+                            <b class="arrow icon-angle-down"></b>
+                        </a>
+                        <ul class="submenu">
 
-                                <li><a href="/BusinessManager/BusinessManager" data-url-def="#">商户管理</a></li>
+                            <li><a href="/BusinessManager/BusinessManager" data-url-def="#">商户管理</a></li>
 
-                            </ul>
-                        }
-                    </li>
-                    <li>
-                       @if (UserContext.Current.HasAuthority(AuthorityNames.AccountEdit)||UserContext.Current.Name=="admin")
-                        {
-                            <a class="dropdown-toggle" href="javascript:void(0);">
-                                <i class="skuicon"></i>
-                                <span class="menu-text">账号权限管理</span>
-                                <b class="arrow icon-angle-down"></b>
-                            </a>
-                            <ul class="submenu">
+                        </ul>
+                    }
+                </li>
+                <li>
+                    @if (UserContext.Current.HasAuthority(AuthorityNames.AccountEdit) || UserContext.Current.Name == "admin")
+                    {
+                        <a class="dropdown-toggle" href="javascript:void(0);">
+                            <i class="skuicon"></i>
+                            <span class="menu-text">账号权限管理</span>
+                            <b class="arrow icon-angle-down"></b>
+                        </a>
+                        <ul class="submenu">
 
-                                <li><a href="/AuthorityManager/AuthorityManager" data-url-def="#">账号权限管理</a></li>
+                            <li><a href="/AuthorityManager/AuthorityManager" data-url-def="#">账号权限管理</a></li>
 
-                            </ul>
-                        }
-                    </li>
-                    <li>
-                        @if (UserContext.Current.HasAuthority(AuthorityNames.BusSet))
-                        {
-                            <a class="dropdown-toggle" href="javascript:void(0);">
-                                <i class="skuicon"></i>
-                                <span class="menu-text">补贴设置</span>
-                                <b class="arrow icon-angle-down"></b>
-                            </a>
-                            <ul class="submenu">
+                        </ul>
+                    }
+                </li>
+                <li>
+                    @if (UserContext.Current.HasAuthority(AuthorityNames.BusSet))
+                    {
+                        <a class="dropdown-toggle" href="javascript:void(0);">
+                            <i class="skuicon"></i>
+                            <span class="menu-text">补贴设置</span>
+                            <b class="arrow icon-angle-down"></b>
+                        </a>
+                        <ul class="submenu">
 
-                                <li><a href="/SubsidyManager/SubsidyManager" data-url-def="#">补贴设置</a></li>
-                                <li><a href="/SubsidyManager/SettlementFunction" data-url-def="#">结算功能</a></li>
-                            </ul>
-                        }
-                    </li>
-                </ul>
-                <div id="sidebar-collapse" class="sidebar-collapse">
-                    <i data-icon2="icon-double-angle-right" data-icon1="icon-double-angle-left" class="icon-double-angle-left"></i>
-                </div>
+                            <li><a href="/SubsidyManager/SubsidyManager" data-url-def="#">补贴设置</a></li>
+                            <li><a href="/SubsidyManager/SettlementFunction" data-url-def="#">结算功能</a></li>
+                        </ul>
+                    }
+                </li>
+                <li>
+                    @if (UserContext.Current.HasAuthority(AuthorityNames.AdminTools) || UserContext.Current.Name == "admin")
+                    {
+                        <a class="dropdown-toggle" href="javascript:void(0);">
+                            <i class="skuicon"></i>
+                            <span class="menu-text">管理员工具</span>
+                            <b class="arrow icon-angle-down"></b>
+                        </a>
+                        <ul class="submenu">
+
+                            <li><a href="/AdminTools/AdminTools" data-url-def="#">管理员工具</a></li>
+                        </ul>
+                    }
+                </li>
+            </ul>
+            <div id="sidebar-collapse" class="sidebar-collapse">
+                <i data-icon2="icon-double-angle-right" data-icon1="icon-double-angle-left" class="icon-double-angle-left"></i>
             </div>
-            <div class="main-content">
-                <div class="page-content">
-                    @RenderBody()
-                </div>
+        </div>
+        <div class="main-content">
+            <div class="page-content">
+                @RenderBody()
             </div>
         </div>
     </div>
-    @Scripts.Render("~/js")
-    <script type="text/javascript" src="~/Scripts/bootstrap.min.js"></script>
-    <script type="text/javascript" src="~/Scripts/Layout/Layout.js"></script>
-    <script type="text/javascript" src="~/Scripts/jquery.colorbox-min.js"></script>
-    @RenderSection("scripts", false)
+</div>
+@Scripts.Render("~/js")
+<script type="text/javascript" src="~/Scripts/bootstrap.min.js"></script>
+<script type="text/javascript" src="~/Scripts/Layout/Layout.js"></script>
+<script type="text/javascript" src="~/Scripts/jquery.colorbox-min.js"></script>
+@RenderSection("scripts", false)
 </body>
+
 </html>
