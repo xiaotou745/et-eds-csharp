@@ -59,31 +59,26 @@ namespace Ets.Service.Provider.Order
                 resultModel.recevicePhone = from.RecevicePhoneNo;
                 resultModel.IsPay = from.IsPay.Value;
                 resultModel.Remark = from.Remark;
-                resultModel.Status = from.Status.Value;
+                resultModel.Status = from.Status.Value; 
                 if (from.BusiLatitude.Value != null && from.BusiLongitude.Value != null)
                 {
-                    var degree1 = new Degree(degree.longitude, degree.latitude);
-                    var degree2 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);
-
-                    var dTmp = CoordDispose.GetDistanceGoogle(degree1, degree2) / 1000;
-                    var sTmp = dTmp.ToString("f2");
-                    resultModel.distance = sTmp;
+                    Degree degree1 = new Degree(degree.longitude, degree.latitude);
+                    Degree degree2 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);
+                    double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
+                    resultModel.distance = res < 1000 ? (res.ToString("f2") + "m") : ((res / 1000).ToString("f2") + "km");
                 }
                 else
-                    resultModel.distance = "0.0";
-                if (from.BusiLatitude.Value != null && from.BusiLongitude.Value != null && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
+                    resultModel.distance = "--";
+                if (from.BusiLatitude.Value != null && from.BusiLongitude.Value != null)
                 {
-                    var d1 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);
-                    var d2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);
-                    var dTmp = CoordDispose.GetDistanceGoogle(d1, d2) / 1000;
-                    var sTmp = dTmp.ToString("f2");
-
-                    resultModel.distanceB2R = sTmp;
+                    Degree degree1 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);
+                    Degree degree2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);
+                    double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
+                    resultModel.distanceB2R = res < 1000 ? (res.ToString("f2") + "m") : ((res / 1000).ToString("f2") + "km");
                 }
                 else
-                { 
-                    resultModel.distanceB2R = "0.0"; 
-                }
+                    resultModel.distanceB2R = "--"; 
+
                 list.Add(resultModel);
             }
             return list;
@@ -130,28 +125,22 @@ namespace Ets.Service.Provider.Order
                 resultModel.Status = from.Status.Value;
                 if (from.BusiLatitude.Value != null && from.BusiLongitude.Value != null)
                 {
-                    var degree1 = new Degree(degree.longitude, degree.latitude);
-                    var degree2 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);
-
-                    var dTmp = CoordDispose.GetDistanceGoogle(degree1, degree2) / 1000;
-                    var sTmp = dTmp.ToString("f2");
-                    resultModel.distance = sTmp;
+                    Degree degree1 = new Degree(degree.longitude, degree.latitude);
+                    Degree degree2 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);
+                    double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
+                    resultModel.distance = res < 1000 ? (res.ToString("f2") + "m") : ((res / 1000).ToString("f2") + "km");
                 }
                 else
-                    resultModel.distance = "0.0";
-                if (from.BusiLatitude.Value != null && from.BusiLongitude.Value != null && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
+                    resultModel.distance = "--";
+                if (from.BusiLatitude.Value != null && from.BusiLongitude.Value != null)
                 {
-                    var d1 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);
-                    var d2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);
-                    var dTmp = CoordDispose.GetDistanceGoogle(d1, d2) / 1000;
-                    var sTmp = dTmp.ToString("f2");
-
-                    resultModel.distanceB2R = sTmp;
+                    Degree degree1 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);
+                    Degree degree2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);
+                    double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
+                    resultModel.distanceB2R = res < 1000 ? (res.ToString("f2") + "m") : ((res / 1000).ToString("f2") + "km");
                 }
                 else
-                {
-                    resultModel.distanceB2R = "0.0";
-                }
+                    resultModel.distanceB2R = "--"; 
                 list.Add(resultModel);
             }
             return list;
