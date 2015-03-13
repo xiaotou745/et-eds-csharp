@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Ets.Model.DomainModel.Clienter
 {
     public class ClientOrderResultModel
-    { 
+    {
         /// <summary>
         /// 当前登录用户Id
         /// </summary>
@@ -25,6 +25,10 @@ namespace Ets.Model.DomainModel.Clienter
         /// </summary>
         //public double distance { get; set; }
         public string distance { get; set; }
+
+        /// <summary>
+        ///  商户到收货人的距离
+        /// </summary>
         public string distanceB2R { get; set; }
         /// <summary>
         /// 发布时间
@@ -78,6 +82,10 @@ namespace Ets.Model.DomainModel.Clienter
         /// 订单状态
         /// </summary>
         public byte? Status { get; set; }
+        /// <summary>
+        /// 订单数量
+        /// </summary>
+        public int? OrderCount { get; set; }
     }
     public class ClientOrderNoLoginResultModel
     {

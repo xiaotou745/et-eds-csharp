@@ -20,8 +20,8 @@ namespace Ets.Model.DomainModel.Clienter
         public bool IsPay { get; set; }
         public string Remark { get; set; }
         public byte Status { get; set; }
-        public double ReceviceLongitude { get; set; }
-        public double ReceviceLatitude { get; set; }
+        public double? ReceviceLongitude { get; set; }
+        public double? ReceviceLatitude { get; set; }
         public decimal CommissionRate { get; set; }
         public int OrderCount { get; set; }
         public decimal DistribSubsidy { get; set; }
@@ -32,8 +32,8 @@ namespace Ets.Model.DomainModel.Clienter
         public string BusinessName { get; set; }
         public string BusinessPhone { get; set; }
         public string pickUpCity { get; set; }
-        public double Longitude { get; set; }
-        public double Latitude { get; set; }
+        public double? Longitude { get; set; }
+        public double? Latitude { get; set; }
 
 
     }

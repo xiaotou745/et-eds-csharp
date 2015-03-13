@@ -46,14 +46,12 @@ namespace Ets.Service.Provider.Clienter
             //throw new System.NotImplementedException();
             PageInfo<ClientOrderModel> pageinfo = new ClienterDao().GetMyOrders(clientOrderModel);
             IList<ClientOrderModel> list = pageinfo.Records;
-
             IList<ClientOrderResultModel> listOrder = new List<ClientOrderResultModel>();//组装成新的对象
             foreach (ClientOrderModel item in list)
             {
                 ClientOrderResultModel model = new ClientOrderResultModel();
                 model.userId = item.UserId;
                 model.OrderNo = item.OrderNo;
-
                 #region 骑士佣金计算
                 OrderCommission oCommission = new OrderCommission()
                 {
@@ -81,32 +79,37 @@ namespace Ets.Service.Provider.Clienter
                 model.IsPay = item.IsPay;
                 model.Remark = item.Remark;
                 model.Status = item.Status;
-
+                model.OrderCount = item.OrderCount;
                 #region 计算经纬度
-                string distance = "0.0";
-                string distanceB2R = "0.0";
-                if (item.BusinessId > 0)
-                {
-                    var degree1 = new Degree(degree.longitude, degree.latitude);
-                    var degree2 = new Degree(item.Longitude, item.Latitude);
-                    //resultModel.distance = CoordDispose.GetDistanceGoogle(degree1, degree2);
-                    var dTmp = CoordDispose.GetDistanceGoogle(degree1, degree2) / 1000;
-                    var sTmp = dTmp.ToString("f2");
-                    distance = sTmp;
-                }
 
-                if (item.BusinessId > 0 && item.ReceviceLongitude != null && item.ReceviceLatitude != null)
+                if (item.Longitude == null || item.Longitude == 0 || item.Latitude == null || item.Latitude == 0)
                 {
-                    var d1 = new Degree(item.Longitude, item.Latitude);
-                    var d2 = new Degree(item.ReceviceLongitude, item.ReceviceLatitude);
-                    var dTmp = CoordDispose.GetDistanceGoogle(d1, d2) / 1000;
-                    var sTmp = dTmp.ToString("f2");
-                    //resultModel.distanceB2R = CoordDispose.GetDistanceGoogle(d1, d2);
-                    distanceB2R = sTmp; //计算商户到收货人的距离
+                    model.distance = "--";
+                    model.distanceB2R = "--";
                 }
+                else
+                {
+                    if (degree.longitude == 0 || degree.latitude == 0 || item.BusinessId <= 0)
+                        model.distance = "--";
+                    else if (item.BusinessId > 0)  //计算超人当前到商户的距离
+                    {
+                        Degree degree1 = new Degree(degree.longitude, degree.latitude);   //超人当前的经纬度
+                        Degree degree2 = new Degree(item.Longitude.Value, item.Latitude.Value); //商户经纬度
+                        double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
+                        model.distance = res < 1000 ? (res.ToString("f2") + "m") : ((res / 1000).ToString("f2") + "km");
+                    }
+                    if (item.BusinessId > 0 && item.ReceviceLongitude != null && item.ReceviceLatitude != null
+                        && item.ReceviceLongitude != 0 && item.ReceviceLatitude != 0)  //计算商户到收货人的距离
+                    {
+                        Degree degree1 = new Degree(item.Longitude.Value, item.Latitude.Value);  //商户经纬度
+                        Degree degree2 = new Degree(item.ReceviceLongitude.Value, item.ReceviceLatitude.Value);  //收货人经纬度
+                        double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
+                        model.distanceB2R = res < 1000 ? (res.ToString("f2") + "m") : ((res / 1000).ToString("f2") + "km");
+                    }
+                    else
+                        model.distanceB2R = "--";
+                }        
                 #endregion
-                model.distance = distance;
-                model.distanceB2R = distanceB2R;
                 listOrder.Add(model);
             }
 

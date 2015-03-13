@@ -243,8 +243,8 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]> GetMyJobList_C(ClientOrderInfoModel model)
         {
-            degree.longitude = model.longitude;
-            degree.latitude = model.latitude;
+            Ets.Model.DomainModel.Clienter.degree.longitude = model.longitude;
+            Ets.Model.DomainModel.Clienter.degree.latitude = model.latitude;
             var pIndex = ParseHelper.ToInt(model.pageIndex, 1);
             var pSize = ParseHelper.ToInt(model.pageSize, 100);
 
@@ -304,20 +304,20 @@ namespace SuperManWebApi.Controllers
         //{
         //    Ets.Model.DomainModel.Clienter.degree.longitude = model.longitude;
         //    Ets.Model.DomainModel.Clienter.degree.latitude = model.latitude;
-        //    var pIndex = ParseHelper.ToInt( model.pageIndex.Value , 0);
-        //    var pSize = ParseHelper.ToInt( model.pageSize.Value , 20);
+        //    var pIndex = ParseHelper.ToInt(model.pageIndex.Value, 0);
+        //    var pSize = ParseHelper.ToInt(model.pageSize.Value, 20);
         //    var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
         //    {
-        //        PagingRequest = new ETS.Util.PagingResult(pIndex, pSize),
+        //        PagingRequest = new Ets.Model.Common.PagingResult(pIndex, pSize),
         //        userId = model.userId,
         //        status = model.status,
         //        isLatest = model.isLatest,
         //        city = string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
         //        cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim()
         //    };
-             
+
         //    var pagedList = new Ets.Service.Provider.Order.OrderProvider().GetOrders(criteria);
-             
+
         //    if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
         //    {
         //        pagedList = pagedList.OrderBy(i => i.distance).ToList();
@@ -347,10 +347,10 @@ namespace SuperManWebApi.Controllers
         //    Ets.Model.DomainModel.Clienter.degree.longitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["longitude"]);
         //    Ets.Model.DomainModel.Clienter.degree.latitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["latitude"]);
         //    var pIndex = ParseHelper.ToInt(model.pageIndex.Value, 0);
-        //    var pSize = ParseHelper.ToInt( model.pageSize.Value , 20);
+        //    var pSize = ParseHelper.ToInt(model.pageSize.Value, 20);
         //    var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
         //    {
-        //        PagingRequest = new ETS.Util.PagingResult(pIndex, pSize),
+        //        PagingRequest = new Ets.Model.Common.PagingResult(pIndex, pSize),
         //        city = model.city,
         //        cityId = model.cityId
         //    };
