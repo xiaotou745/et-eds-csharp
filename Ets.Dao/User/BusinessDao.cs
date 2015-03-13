@@ -28,23 +28,23 @@ namespace Ets.Dao.User
             #region where
             string whereStr = "1=1 ";  //where查询条件实体类
             if (paraModel.userId != null)  //订单商户id
-                whereStr += " and a.businessId=" + paraModel.userId.ToString();
+                whereStr += " and o.businessId=" + paraModel.userId.ToString();
             //订单状态
             if (paraModel.Status != null)
             {
                 if (paraModel.Status == 4)
                 {
-                    whereStr += " and (a.Status=" + OrderConst.ORDER_NEW + " || " + " a.Status=" + OrderConst.ORDER_ACCEPT + ")";
+                    whereStr += " and (o.Status=" + OrderConst.ORDER_NEW + " || " + " o.Status=" + OrderConst.ORDER_ACCEPT + ")";
                 }
                 else
                 {
-                    whereStr += " and a.Status=" + paraModel.Status.ToString();
+                    whereStr += " and o.Status=" + paraModel.Status.ToString();
                 }
             }
 
             #endregion
 
-            string orderByColumn = "a.id ";  //排序条件
+            string orderByColumn = "o.id ";  //排序条件
             string columnList = @"
                                     CONVERT(VARCHAR(5),o.ActualDoneDate,108) AS ActualDoneDate,
                                     o.Amount,
