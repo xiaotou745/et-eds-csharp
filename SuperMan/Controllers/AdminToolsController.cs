@@ -38,11 +38,8 @@ namespace SuperMan.Controllers
             {
                 var data = adminToolsProvider.UpdateDataInfoBySql(strSql.Trim());
                 ViewBag.SQL = strSql;
-                if (data > 0)
-                {
-                    ViewBag.Data = data;
-                    return new ContentResult() { Content = data.ToString() };
-                } 
+                ViewBag.Data = data;
+                return new ContentResult() { Content = data.ToString() };
             }
             ViewBag.Data = null;
             return new ContentResult() {  Content=""};
