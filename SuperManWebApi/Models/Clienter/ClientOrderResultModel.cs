@@ -224,26 +224,22 @@ namespace SuperManWebApi.Models.Clienter
             resultModel.OrderCount = from.OrderCount;
             if (_business != null)
             {
-                var degree1 = new Degree(degree.longitude, degree.latitude);
-                var degree2 = new Degree(_business.Longitude.Value, _business.Latitude.Value);
-                //resultModel.distance = CoordDispose.GetDistanceGoogle(degree1, degree2);
-                var dTmp = CoordDispose.GetDistanceGoogle(degree1, degree2) / 1000;
-                var sTmp = dTmp.ToString("f2");
-                resultModel.distance = sTmp;
+                Degree degree1 = new Degree(degree.longitude, degree.latitude);
+                Degree degree2 = new Degree(_business.Longitude.Value, _business.Latitude.Value);
+                double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
+                resultModel.distance = res < 1000 ? (res.ToString("f2") + "m") : ((res / 1000).ToString("f2") + "kn");
             }
             else
-                resultModel.distance = "0.0";
+                resultModel.distance = "--";
             if (_business != null && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
             {
-                var d1 = new Degree(_business.Longitude.Value, _business.Latitude.Value);
-                var d2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);
-                var dTmp = CoordDispose.GetDistanceGoogle(d1, d2) / 1000;
-                var sTmp = dTmp.ToString("f2");
-                //resultModel.distanceB2R = CoordDispose.GetDistanceGoogle(d1, d2);
-                resultModel.distanceB2R = sTmp; //计算商户到收货人的距离
+                Degree degree1 = new Degree(_business.Longitude.Value, _business.Latitude.Value);
+                Degree degree2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);
+                double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
+                resultModel.distanceB2R = res < 1000 ? (res.ToString("f2") + "m") : ((res / 1000).ToString("f2") + "kn");
             }
             else
-                resultModel.distanceB2R = "0.0";
+                resultModel.distanceB2R = "--";
             return resultModel;
         }
 
@@ -300,25 +296,22 @@ namespace SuperManWebApi.Models.Clienter
             resultModel.OrderCount = from.OrderCount;
             if (degree.longitude != null && degree.latitude != null && _business.Longitude != null && _business.Latitude != null)
             {
-                var degree1 = new Degree(degree.longitude, degree.latitude);
-                var degree2 = new Degree(_business.Longitude.Value, _business.Latitude.Value);
-                var dTmp = CoordDispose.GetDistanceGoogle(degree1, degree2) / 1000;
-                var sTmp = dTmp.ToString("f2");
-                resultModel.distance = sTmp;
+                Degree degree1 = new Degree(degree.longitude, degree.latitude);
+                Degree degree2 = new Degree(_business.Longitude.Value, _business.Latitude.Value);
+                double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
+                resultModel.distance = res < 1000 ? (res.ToString("f2") + "m") : ((res / 1000).ToString("f2") + "km");
             }
             else
-                resultModel.distance = "0.0";
+                resultModel.distance = "--";
             if (_business != null && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
             {
-                var d1 = new Degree(_business.Longitude.Value, _business.Latitude.Value);
-                var d2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);
-                var dTmp = CoordDispose.GetDistanceGoogle(d1, d2) / 1000;
-                var sTmp = dTmp.ToString("f2");
-                //resultModel.distanceB2R = CoordDispose.GetDistanceGoogle(d1, d2);
-                resultModel.distanceB2R = sTmp;  //计算商户到收货人的距离
+                Degree degree1 = new Degree(_business.Longitude.Value, _business.Latitude.Value);
+                Degree degree2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);
+                double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
+                resultModel.distanceB2R = res < 1000 ? (res.ToString("f2") + "m") : ((res / 1000).ToString("f2") + "km");
             }
             else
-                resultModel.distanceB2R = "0.0";
+                resultModel.distanceB2R = "--";
             return resultModel;
         }
 
