@@ -52,11 +52,10 @@
     function query() {
         var sql = $("#txtSql").val();
         if (sql.trim() == "") {
-            $("#dataList").html("");
+            $("#dataList").html("请输入查询SQL！");
             return;
         }
         criteria = { strSql: sql };
-
         var url = "/AdminTools/AdminTools";
         webExpress.utility.ajax.request
             (
@@ -67,9 +66,12 @@
                 });
     };
     function edit() {
-
-        criteria = { strSql: $("#txtSql").val() };
-
+        var sql = $("#txtSql").val();
+        if (sql.trim() == "") {
+            $("#dataList").html("请输入修改SQL！");
+            return;
+        }
+        criteria = { strSql: sql };
         var url = "/AdminTools/Edit";
         webExpress.utility.ajax.request
             (
@@ -77,7 +79,7 @@
                 criteria,
                 function (data) {
                     if (data >= 1) {
-                        alert("SQL执行成功!");
+                        $("#dataList").html("SQL执行成功!");
                     }
 
                 });

@@ -22,14 +22,12 @@ namespace SuperMan.Controllers
             {
                 var data = adminToolsProvider.GetDataInfoBySql(strSql.Trim());
                 ViewBag.SQL = strSql;
-                if (data.Columns.Count > 0)
-                {
-                    base.ViewBag.Data = data;
-                    return PartialView("_AdminToolsList");
-                }
-                
+                ViewBag.Quantity = data.Rows.Count;
+                ViewBag.Data = data;
+                return PartialView("_AdminToolsList");
             }
-            base.ViewBag.Data = null;
+            ViewBag.Quantity = 0;
+            ViewBag.Data = null;
             return View();
         } 
 
@@ -42,11 +40,11 @@ namespace SuperMan.Controllers
                 ViewBag.SQL = strSql;
                 if (data > 0)
                 {
-                    base.ViewBag.Data = data;
+                    ViewBag.Data = data;
                     return new ContentResult() { Content = data.ToString() };
                 } 
             }
-            base.ViewBag.Data = null;
+            ViewBag.Data = null;
             return new ContentResult() {  Content=""};
         }
     
