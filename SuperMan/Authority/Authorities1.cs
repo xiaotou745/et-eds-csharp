@@ -32,6 +32,8 @@ namespace SuperMan
 		
 		public const string BusiAudit = "商户设置-审核";
 
+        public const string BusiCommi = "商户结算设置-查看";
+
         public const string AccountView = "账号权限管理-查看";
 
         public const string AccountAdd = "账号权限管理-新增";
@@ -59,7 +61,9 @@ namespace SuperMan
 		
 		public AuthorityItem SuperClear = new AuthorityItem( AuthorityNames.SuperClear,(AuthorityType)1);		
 		
-		public AuthorityItem BusiView = new AuthorityItem( AuthorityNames.BusiView,(AuthorityType)1);		
+		public AuthorityItem BusiView = new AuthorityItem( AuthorityNames.BusiView,(AuthorityType)1);
+
+        public AuthorityItem BusiCommiView = new AuthorityItem(AuthorityNames.BusiCommi, (AuthorityType)1);	 
 		
 		public AuthorityItem BusiAudit = new AuthorityItem( AuthorityNames.BusiAudit,(AuthorityType)1);		
 		
