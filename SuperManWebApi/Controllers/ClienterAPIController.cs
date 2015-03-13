@@ -243,8 +243,8 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]> GetMyJobList_C(ClientOrderInfoModel model)
         {
-            degree.longitude = model.longitude;
-            degree.latitude = model.latitude;
+            Ets.Model.DomainModel.Clienter.degree.longitude = model.longitude;
+            Ets.Model.DomainModel.Clienter.degree.latitude = model.latitude;
             var pIndex = ParseHelper.ToInt(model.pageIndex, 1);
             var pSize = ParseHelper.ToInt(model.pageSize, 10);
 
