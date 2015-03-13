@@ -19,6 +19,7 @@ using SuperManBusinessLogic.B_Logic;
 using System.ComponentModel;
 using ETS.Util;
 using LogHelper = ETS.Util.LogHelper;
+using Ets.Service.Provider.Clienter;
 
 
 namespace SuperManWebApi.Controllers
@@ -278,28 +279,28 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(GetOrdersStatus))]
         [HttpPost]
-        public ResultModel<ClientOrderResultModel[]> GetMyJobList_C(ClientOrderInfoModel model)
+        public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]> GetMyJobList_C(ClientOrderInfoModel model)
         {
             degree.longitude = model.longitude;
             degree.latitude = model.latitude;
             var pIndex = ParseHelper.ToInt(model.pageIndex, 0);
             var pSize = ParseHelper.ToInt(model.pageSize, 10);
 
-            var criteria = new ClientOrderSearchCriteria()
+            var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
             {
                 
                 userId = model.userId,
                 status = model.status,
                 isLatest = model.isLatest
             };
-            var pagedList = ClienterLogic.clienterLogic().GetMyOrders(criteria);
-            var lists = ClientOrderResultModelTranslator.Instance.Translate(pagedList);
-            //IList<>
+            //var pagedList = ClienterLogic.clienterLogic().GetMyOrders(criteria);
+            //var lists = ClientOrderResultModelTranslator.Instance.Translate(pagedList);
+            IList<Ets.Model.DomainModel.Clienter.ClientOrderResultModel> lists = new ClienterProvider().GetMyOrders(criteria);
             if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
             {
                 lists = lists.OrderBy(i => i.distance).ToList();
             }
-            return ResultModel<ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, lists.ToArray());
+            return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, lists.ToArray());
         }
 
         /// <summary>
