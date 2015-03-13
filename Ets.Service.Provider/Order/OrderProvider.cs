@@ -60,7 +60,7 @@ namespace Ets.Service.Provider.Order
                 resultModel.IsPay = from.IsPay.Value;
                 resultModel.Remark = from.Remark;
                 resultModel.Status = from.Status.Value; 
-                if (from.BusiLatitude.Value != null && from.BusiLongitude.Value != null)
+                if (from.BusiLatitude != null && from.BusiLongitude != null)
                 {
                     Degree degree1 = new Degree(degree.longitude, degree.latitude);
                     Degree degree2 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);
@@ -69,7 +69,7 @@ namespace Ets.Service.Provider.Order
                 }
                 else
                     resultModel.distance = "--";
-                if (from.BusiLatitude.Value != null && from.BusiLongitude.Value != null)
+                if (from.BusiLatitude != null && from.BusiLongitude != null)
                 {
                     Degree degree1 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);
                     Degree degree2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);
@@ -123,7 +123,7 @@ namespace Ets.Service.Provider.Order
                 resultModel.IsPay = from.IsPay.Value;
                 resultModel.Remark = from.Remark;
                 resultModel.Status = from.Status.Value;
-                if (from.BusiLatitude.Value != null && from.BusiLongitude.Value != null)
+                if (from.BusiLatitude != null && from.BusiLongitude != null)
                 {
                     Degree degree1 = new Degree(degree.longitude, degree.latitude);
                     Degree degree2 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);
@@ -132,7 +132,7 @@ namespace Ets.Service.Provider.Order
                 }
                 else
                     resultModel.distance = "--";
-                if (from.BusiLatitude.Value != null && from.BusiLongitude.Value != null)
+                if (from.BusiLatitude != null && from.BusiLongitude != null)
                 {
                     Degree degree1 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);
                     Degree degree2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);
@@ -144,6 +144,6 @@ namespace Ets.Service.Provider.Order
                 list.Add(resultModel);
             }
             return list;
-        }        
-    }
+        }  
+    } 
 }
