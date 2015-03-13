@@ -43,12 +43,13 @@
     <Compile Include="DataModel\Order\OrderCommission.cs" />
     <Compile Include="Common\PaginResult.cs" />
     <Compile Include="Common\ResultInfo.cs" />
+    <Compile Include="DomainModel\Bussiness\BusiOrderSqlModel.cs" />
     <Compile Include="DomainModel\Clienter\ClientOrderModel.cs" />
     <Compile Include="DataModel\Clienter\Clienter.cs" />
     <Compile Include="DataModel\Order\Order.cs" />
     <Compile Include="DataModel\Order\business.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessCommissionModel.cs" />
-    <Compile Include="DomainModel\Bussiness\BussOrderDModelApp.cs" />
+    <Compile Include="DomainModel\Bussiness\BusiGetOrderModel.cs" />
     <Compile Include="Common\ResultModel.cs" />
     <Compile Include="DomainModel\Clienter\ClientOrderResultModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BussOrderParaModelApp.cs" />

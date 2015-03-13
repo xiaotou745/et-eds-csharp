@@ -41,7 +41,7 @@ namespace Ets.Service.Provider.Clienter
         /// 获取我的任务   根据状态判断是已完成任务还是我的任务
         /// </summary>
         /// <returns></returns>
-        public IList<ClientOrderResultModel> GetMyOrders(ClientOrderSearchCriteria clientOrderModel)
+        public virtual IList<ClientOrderResultModel> GetMyOrders(ClientOrderSearchCriteria clientOrderModel)
         {
             //throw new System.NotImplementedException();
             PageInfo<ClientOrderModel> pageinfo = new ClienterDao().GetMyOrders(clientOrderModel);

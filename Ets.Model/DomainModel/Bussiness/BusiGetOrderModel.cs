@@ -8,7 +8,7 @@ namespace Ets.Model.DomainModel.Bussiness
     /// <summary>
     /// B端获取订单app查询数据实体 add by caoheyang 20140311
     /// </summary>
-    public class BussOrderDModelApp
+    public class BusiGetOrderModel
     {
         /// <summary>
         /// 订单号

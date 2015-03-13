@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using SuperManCommonModel;
 using System.Text;
 using System.Net;
+using Ets.Service.Provider.User;
 namespace SuperManWebApi.Controllers
 {
     public class BusinessAPIController : ApiController
@@ -351,19 +352,20 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(GetOrdersStatus))]
         [HttpGet]
-        public ResultModel<BusiGetOrderModel[]> GetOrderList_B(int userId, int? pagedSize, int? pagedIndex, sbyte? Status)
+        public ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]> GetOrderList_B(int userId, int? pagedSize, int? pagedIndex, sbyte? Status)
         {
             var pIndex = pagedIndex.HasValue ? pagedIndex.Value : 0;
             var pSize = pagedSize.HasValue ? pagedSize.Value : int.MaxValue;
-            var criteria = new BusiOrderSearchCriteria()
+            var criteria = new Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp()
             {
-                PagingRequest = new PagingResult(pIndex, pSize),
+                PagingResult = new Ets.Model.Common.PagingResult(pIndex, pSize),
                 userId = userId,
                 Status = Status
             };
-            var pagedList = OrderLogic.orderLogic().GetOrders(criteria);
-            var list = BusiGetOrderModelTranslator.Instance.Translate(pagedList);
-            return ResultModel<BusiGetOrderModel[]>.Conclude(GetOrdersStatus.Success, list.ToArray());
+            //var pagedList = OrderLogic.orderLogic().GetOrders(criteria);
+            //var list = BusiGetOrderModelTranslator.Instance.Translate(pagedList);
+            IList<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel> list = new BusinessProvider().GetOrdersApp(criteria);
+            return ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]>.Conclude(GetOrdersStatus.Success, list.ToArray());
         }
 
         /// <summary>
