@@ -356,7 +356,7 @@ namespace SuperManWebApi.Controllers
         {
             var pIndex = pagedIndex.HasValue ? pagedIndex.Value : 1;
             var pSize = pagedSize.HasValue ? pagedSize.Value : int.MaxValue;
-            var criteria = new Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp()
+            Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp criteria = new Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp()
             {
                 PagingResult = new Ets.Model.Common.PagingResult(pIndex, pSize),
                 userId = userId,
