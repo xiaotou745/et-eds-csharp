@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ETS.Util
+namespace Ets.Model.Common
 {
     /// <summary>
     /// Paged list

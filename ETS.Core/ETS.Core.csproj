@@ -118,8 +118,6 @@
     <Compile Include="Util\Log.cs" />
     <Compile Include="Util\LogHelper.cs" />
     <Compile Include="Util\MailUtils.cs" />
-    <Compile Include="Util\PagedList.cs" />
-    <Compile Include="Util\PagingResult.cs" />
     <Compile Include="Util\ParseHelper.cs" />
     <Compile Include="Util\TranslatorBase.cs" />
   </ItemGroup>
