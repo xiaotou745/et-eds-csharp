@@ -53,7 +53,7 @@ namespace SuperManWebApi.Controllers
             var resultModel = new BusiRegisterResultModel
             {
                 userId = business.Id
-            };            
+            };
             return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
         }
 
@@ -74,7 +74,7 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.OriginalBusiIdEmpty);
             else if (string.IsNullOrWhiteSpace(model.B_GroupId.ToString()))  //集团Id不能为空
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.GroupIdEmpty);
-            else if(BusiLogic.busiLogic().CheckExistBusi(model.B_OriginalBusiId,model.B_GroupId))
+            else if (BusiLogic.busiLogic().CheckExistBusi(model.B_OriginalBusiId, model.B_GroupId))
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.OriginalBusiIdRepeat);
             else if (string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_CityCode.ToString())) //城市以及城市编码非空验证
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
@@ -93,7 +93,7 @@ namespace SuperManWebApi.Controllers
                 model.B_Password = MD5Helper.MD5(model.B_Password);
             }
             var business = NewRegisterInfoModelTranslator.Instance.Translate(model);
-            bool result = BusiLogic.busiLogic().Add(business,true);
+            bool result = BusiLogic.busiLogic().Add(business, true);
             var resultModel = new NewBusiRegisterResultModel
             {
                 BusiRegisterId = business.Id
@@ -102,7 +102,7 @@ namespace SuperManWebApi.Controllers
             return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
         }
 
-        
+
         /// <summary>
         /// B端取消订单，供第三方使用
         /// </summary>
@@ -112,12 +112,12 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<OrderCancelResultModel> NewOrderCancel(OrderCancelModel model)
         {
-            LogHelper.LogWriter("第三方调用取消订单：", new { model = model});
+            LogHelper.LogWriter("第三方调用取消订单：", new { model = model });
             if (string.IsNullOrEmpty(model.OriginalOrderNo))   //订单号非空验证
-                return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderEmpty); 
+                return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderEmpty);
             if (string.IsNullOrEmpty(model.OrderFrom.ToString()))   //订单来源非空验证
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderFromEmpty);
-            var order = OrderLogic.orderLogic().GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom,model.OrderType);
+            var order = OrderLogic.orderLogic().GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom, model.OrderType);
             if (order == null)
             {
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderIsNotExist);
@@ -133,8 +133,8 @@ namespace SuperManWebApi.Controllers
             }
             else
             {
-                return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.NotCancelOrder, new OrderCancelResultModel { Remark="取消失败" });
-            }     
+                return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.NotCancelOrder, new OrderCancelResultModel { Remark = "取消失败" });
+            }
         }
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<NewPostPublishOrderResultModel> NewPostPublishOrder_B(NewPostPublishOrderModel model)
         {
-            LogHelper.LogWriter("订单发布请求实体", new { model = model});
+            LogHelper.LogWriter("订单发布请求实体", new { model = model });
             if (string.IsNullOrWhiteSpace(model.OriginalOrderNo))   //原始订单号非空验证
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OriginalOrderNoEmpty);
             if (model.OriginalBusinessId == 0)   //原平台商户Id非空验证
@@ -174,7 +174,7 @@ namespace SuperManWebApi.Controllers
 
             if (string.IsNullOrWhiteSpace(model.Receive_Address))   //收货地址
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude
-                    (OrderPublicshStatus.ReceiveAddressEmpty);  
+                    (OrderPublicshStatus.ReceiveAddressEmpty);
             //验证原平台商户是否已经注册
             var busi = BusiLogic.busiLogic().GetBusiByOriIdAndOrderFrom(model.OriginalBusinessId, model.OrderFrom);
             if (busi == null)
@@ -189,8 +189,9 @@ namespace SuperManWebApi.Controllers
                 }
             }
             //验证该平台 商户 订单号 是否存在
-            var order = OrderLogic.orderLogic().GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom,model.OrderType);
-            if(order != null){
+            var order = OrderLogic.orderLogic().GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom, model.OrderType);
+            if (order != null)
+            {
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OrderHadExist);
             }
 
@@ -198,16 +199,16 @@ namespace SuperManWebApi.Controllers
             bool result = OrderLogic.orderLogic().AddModel(dborder);    //添加订单记录，并且触发极光推送。          
             if (result)
             {
-                NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { OriginalOrderNo = model.OriginalOrderNo,OrderNo = dborder.OrderNo };
-                LogHelper.LogWriter("订单发布成功", new { model = model,resultModel=resultModel });
+                NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { OriginalOrderNo = model.OriginalOrderNo, OrderNo = dborder.OrderNo };
+                LogHelper.LogWriter("订单发布成功", new { model = model, resultModel = resultModel });
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Success, resultModel);
             }
             else
             {
-                NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { Remark="订单发布失败" };
-                LogHelper.LogWriter("订单发布失败", new { model = model});
+                NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { Remark = "订单发布失败" };
+                LogHelper.LogWriter("订单发布失败", new { model = model });
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Failed);
-            }    
+            }
         }
 
         /// <summary>
@@ -220,7 +221,7 @@ namespace SuperManWebApi.Controllers
         public ResultModel<BusiLoginResultModel> PostLogin_B(LoginModel model)
         {
             var business = BusiLogic.busiLogic().GetBusiness(model.phoneNo, model.passWord);
-            if(business==null)
+            if (business == null)
             {
                 return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
             }
@@ -236,7 +237,7 @@ namespace SuperManWebApi.Controllers
                 Name = business.Name,
                 cityId = business.CityId,
                 phoneNo = business.PhoneNo2 == null ? business.PhoneNo : business.PhoneNo2,
-                DistribSubsidy = business.DistribSubsidy == null ? 0 : business.DistribSubsidy 
+                DistribSubsidy = business.DistribSubsidy == null ? 0 : business.DistribSubsidy
             };
             return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.Success, result);
         }
@@ -311,7 +312,7 @@ namespace SuperManWebApi.Controllers
             }
         }
 
-      
+
         /// <summary>
         /// 商户发布订单接口  2015.3.11 平扬 增加订单重复性验证
         /// </summary>
@@ -321,65 +322,28 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<BusiOrderResultModel> PostPublishOrder_B(BusiOrderInfoModel model)
         {
-            #region 缓存验证 
-            
-            //该订单是否已经插入过
-            bool HasExist = false;
-            //缓存键
-            string cacheKey = "PostPublishOrderB." + model.userId; 
-            //当前订单在缓存中的唯一值
-            string cacheValue = model.userId.ToString()+"."+model.OrderSign;
-            //缓存值List<string>,存储商户所有已插入订单唯一凭证
+            #region 缓存验证
+            string cacheKey = model.userId.ToString() + "_" + model.OrderSign;
             var cacheList = ETS.Cacheing.CacheFactory.Instance[cacheKey];
-            if (cacheList == null)//该商户没有缓存
+            if (cacheList != null)
             {
-                HasExist = false; 
-                cacheList = new List<string>();
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderHasExist);//当前时间戳内重复提交,订单已存在 
             }
-            else//有缓存
-            {
-                var listCache = (List<string>)cacheList;
-                if (listCache.Contains(cacheValue))//该订单缓存过(代表已经插入过)
-                {
-                    HasExist = true; 
-                }
-            }
+            ETS.Cacheing.CacheFactory.Instance.AddObject(cacheKey, "1", DateTime.Now.AddMinutes(10));//添加当前时间戳记录
             #endregion
 
-            if (!HasExist)
+            if (model.OrderCount <= 0 || model.OrderCount > 15)   //判断录入订单数量是否符合要求
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
+            order dborder = BusiOrderInfoModelTranslator.Instance.Translate(model);  //整合订单信息
+            bool result = OrderLogic.orderLogic().AddModel(dborder);    //添加订单记录，并且触发极光推送。          
+            if (!result)
             {
-                if (model.OrderCount <= 0 || model.OrderCount > 15)   //判断录入订单数量是否符合要求
-                    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
-                order dborder = BusiOrderInfoModelTranslator.Instance.Translate(model);  //整合订单信息
-                bool result = OrderLogic.orderLogic().AddModel(dborder);    //添加订单记录，并且触发极光推送。          
-                if (result)
-                {
-                    #region 缓存操作 
-                    lock (lockHelper)
-                    {
-                        //加入缓存
-                        var listCache = (List<string>)cacheList;
-                        listCache.Add(cacheValue);
-                        ETS.Cacheing.CacheFactory.Instance.RemoveObject(cacheKey);
-                        ETS.Cacheing.CacheFactory.Instance.AddObject(cacheKey, listCache, DateTime.Now.AddHours(1));
-                    }
-                    #endregion
-                    BusiOrderResultModel resultModel = new BusiOrderResultModel {userId = model.userId};
-                    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
-                }
-                else
-                {
-                    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.InvalidPubOrder);   
-                }
-                    
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.InvalidPubOrder);//当前订单执行失败
             }
-            else
-            { 
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderHasExist);
-            }
-            
-                
-        } 
+            BusiOrderResultModel resultModel = new BusiOrderResultModel { userId = model.userId };
+            return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
+
+        }
 
         /// <summary>
         /// 获取订单列表
@@ -458,21 +422,21 @@ namespace SuperManWebApi.Controllers
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.InvlidPhoneNumber);
             }
             var randomCode = new Random().Next(100000).ToString("D6");  //生成短信验证码
-            var msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode,ConstValues.MessageBusiness);  //获取提示用语信息
+            var msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode, ConstValues.MessageBusiness);  //获取提示用语信息
             try
             {
                 SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);
-                 //更新短信通道 
+                //更新短信通道 
                 Task.Factory.StartNew(() =>
                 {
                     SendSmsHelper.SendSendSmsSaveLog(PhoneNumber, msg, ConstValues.SMSSOURCE);
                 });
-                return SimpleResultModel.Conclude(SendCheckCodeStatus.Sending);  
+                return SimpleResultModel.Conclude(SendCheckCodeStatus.Sending);
             }
             catch (Exception)
             {
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.SendFailure);
-            }  
+            }
         }
 
         /// <summary>
@@ -489,9 +453,9 @@ namespace SuperManWebApi.Controllers
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.InvlidPhoneNumber);
             }
             var randomCode = new Random().Next(100000).ToString("D6");
-            var msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode,ConstValues.MessageBusiness);
+            var msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode, ConstValues.MessageBusiness);
             try
-            {                
+            {
                 SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);
                 // 更新短信通道 
                 Task.Factory.StartNew(() =>
@@ -537,7 +501,7 @@ namespace SuperManWebApi.Controllers
         /// 商家设置外卖费 平扬 2015.3.5
         /// </summary>
         /// <returns></returns>
-        [ActionStatus(typeof (DistribSubsidyStatus))]
+        [ActionStatus(typeof(DistribSubsidyStatus))]
         [HttpPost]
         public SimpleResultModel PostDistribSubsidy_B(BusiDistribInfoModel mod)
         {
@@ -554,8 +518,8 @@ namespace SuperManWebApi.Controllers
             else
             {
                 return SimpleResultModel.Conclude(DistribSubsidyStatus.Failed);
-            } 
-        } 
+            }
+        }
 
         /// <summary>
         /// 取消订单
@@ -574,15 +538,15 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<bool>.Conclude(CancelOrderStatus.OrderIsNotExist);
             }
-            bool b= OrderLogic.orderLogic().UpdateOrder(order, OrderStatus.订单已取消);
-            if(b==true)
+            bool b = OrderLogic.orderLogic().UpdateOrder(order, OrderStatus.订单已取消);
+            if (b == true)
             {
                 return ResultModel<bool>.Conclude(CancelOrderStatus.Success, true);
             }
             else
             {
                 return ResultModel<bool>.Conclude(CancelOrderStatus.FailedCancelOrder, true);
-            }            
+            }
         }
         /// <summary>
         /// 流转图片
