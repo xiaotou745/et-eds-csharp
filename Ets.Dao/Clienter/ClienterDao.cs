@@ -128,7 +128,7 @@ namespace Ets.Dao.Clienter
                                     o.BusinessId,
                                     b.Name AS BusinessName,
                                     b.PhoneNo AS BusinessPhone,
-                                    REPLACE(b.City,'市','') AS PickUpCity,
+                                    REPLACE(b.City,'市','') AS pickUpCity,
                                     b.Longitude,
                                     b.Latitude";
             return new PageHelper().GetPages<ClientOrderModel>(SuperMan_Read, criteria.PagingRequest.PageIndex, where, "o.Id", columnStr, "[order](NOLOCK) AS o LEFT JOIN business(NOLOCK) AS b ON o.businessId=b.Id", criteria.PagingRequest.PageSize, false);
