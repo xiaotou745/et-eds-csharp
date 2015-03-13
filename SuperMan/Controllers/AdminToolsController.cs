@@ -22,29 +22,34 @@ namespace SuperMan.Controllers
             {
                 var data = adminToolsProvider.GetDataInfoBySql(strSql.Trim());
                 ViewBag.SQL = strSql;
-                if (data.Columns.Count > 0)
+                if (data.Rows.Count > 0)
                 {
-                    base.ViewBag.Data = data;
+                    ViewBag.Data = data;
+                    ViewBag.Quantity = data.Rows.Count;
+                    return PartialView("_AdminToolsList");
+                }
+                else
+                {
+                    ViewBag.Data = null;
+                    ViewBag.Quantity = data.Rows.Count;
                     return PartialView("_AdminToolsList");
                 }
                 
             }
+            base.ViewBag.Quantity = 0;
             base.ViewBag.Data = null;
             return View();
         } 
 
         // GET: AdminTools
-        public ContentResult Edit(string strSql)
+        public ActionResult Edit(string strSql)
         {
             if (!string.IsNullOrEmpty(strSql))
             {
                 var data = adminToolsProvider.UpdateDataInfoBySql(strSql.Trim());
                 ViewBag.SQL = strSql;
-                if (data > 0)
-                {
-                    base.ViewBag.Data = data;
-                    return new ContentResult() { Content = data.ToString() };
-                } 
+                ViewBag.Data = data;
+                return new ContentResult() { Content = data.ToString() };
             }
             base.ViewBag.Data = null;
             return new ContentResult() {  Content=""};
