@@ -227,7 +227,7 @@ namespace SuperManWebApi.Models.Clienter
                 Degree degree1 = new Degree(degree.longitude, degree.latitude);
                 Degree degree2 = new Degree(_business.Longitude.Value, _business.Latitude.Value);
                 double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
-                resultModel.distance = res < 1000 ? (res.ToString("f2") + "m") : ((res / 1000).ToString("f2") + "kn");
+                resultModel.distance = res < 1000 ? (res.ToString("f2") + "m") : ((res / 1000).ToString("f2") + "km");
             }
             else
                 resultModel.distance = "--";
@@ -236,7 +236,7 @@ namespace SuperManWebApi.Models.Clienter
                 Degree degree1 = new Degree(_business.Longitude.Value, _business.Latitude.Value);
                 Degree degree2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);
                 double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
-                resultModel.distanceB2R = res < 1000 ? (res.ToString("f2") + "m") : ((res / 1000).ToString("f2") + "kn");
+                resultModel.distanceB2R = res < 1000 ? (res.ToString("f2") + "m") : ((res / 1000).ToString("f2") + "km");
             }
             else
                 resultModel.distanceB2R = "--";
