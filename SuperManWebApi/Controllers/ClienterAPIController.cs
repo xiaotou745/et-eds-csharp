@@ -245,12 +245,12 @@ namespace SuperManWebApi.Controllers
         {
             degree.longitude = model.longitude;
             degree.latitude = model.latitude;
-            var pIndex = ParseHelper.ToInt(model.pageIndex, 0);
+            var pIndex = ParseHelper.ToInt(model.pageIndex, 1);
             var pSize = ParseHelper.ToInt(model.pageSize, 10);
 
             var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
             {
-                PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
+                PagingRequest = new Ets.Model.Common.PagingResult(pIndex, pSize),
                 userId = model.userId,
                 status = model.status,
                 isLatest = model.isLatest

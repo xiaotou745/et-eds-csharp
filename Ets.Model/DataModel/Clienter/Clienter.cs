@@ -11,7 +11,7 @@ namespace Ets.Model.DataModel.Clienter
  
     public class ClientOrderSearchCriteria
     {
-        public PagingResult PagingRequest { get; set; }
+        public Ets.Model.Common.PagingResult PagingRequest { get; set; }
         public int userId { get; set; }
         public sbyte? status { get; set; }
         public bool isLatest { get; set; }
