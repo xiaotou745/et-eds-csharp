@@ -78,6 +78,10 @@ namespace Ets.Model.DomainModel.Clienter
         /// 订单状态
         /// </summary>
         public byte? Status { get; set; }
+        /// <summary>
+        /// 订单数量
+        /// </summary>
+        public int? OrderCount { get; set; }
     }
     public class ClientOrderNoLoginResultModel
     {
@@ -159,6 +163,10 @@ namespace Ets.Model.DomainModel.Clienter
         /// 订单状态
         /// </summary>
         public byte? Status { get; set; }
+        /// <summary>
+        /// 订单数量
+        /// </summary>
+        public int? OrderCount { get; set; }
     }
     public class degree
     {

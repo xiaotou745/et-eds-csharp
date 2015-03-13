@@ -169,6 +169,10 @@ namespace SuperManWebApi.Models.Clienter
         /// 订单状态
         /// </summary>
         public byte? Status { get; set; }
+        /// <summary>
+        /// 订单数量
+        /// </summary>
+        public int? OrderCount { get; set; }
     }
     public class degree
     {
@@ -204,6 +208,8 @@ namespace SuperManWebApi.Models.Clienter
             {
                 resultModel.pubDate = from.PubDate.Value.ToShortTimeString();
             }
+            
+            //model.pageSize.HasValue ? model.pageSize.Value : 20;
             resultModel.pickUpAddress = from.PickUpAddress;
             resultModel.receviceName = from.ReceviceName;
             resultModel.receviceCity = from.ReceviceCity;
@@ -268,6 +274,7 @@ namespace SuperManWebApi.Models.Clienter
                 resultModel.businessPhone = _business.PhoneNo2;
                 resultModel.pickUpCity = _business.City.Replace("市", "");
             }
+            
             //if (from.business != null)
             //{
             //    resultModel.businessName = from.business.Name;
