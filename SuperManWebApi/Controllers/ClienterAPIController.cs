@@ -28,6 +28,7 @@ namespace SuperManWebApi.Controllers
     {
 
         readonly Ets.Service.IProvider.Clienter.IClienterProvider iClienterProvider = new Ets.Service.Provider.Clienter.ClienterProvider();
+        readonly Ets.Service.IProvider.Order.IOrderProvider iOrderProvider = new Ets.Service.Provider.Order.OrderProvider();
         /// <summary>
         /// C端注册 
         /// </summary>
@@ -246,8 +247,8 @@ namespace SuperManWebApi.Controllers
         {
             Ets.Model.DomainModel.Clienter.degree.longitude = model.longitude;
             Ets.Model.DomainModel.Clienter.degree.latitude = model.latitude;
-            var pIndex = ParseHelper.ToInt( model.pageIndex.Value , 0);
-            var pSize = ParseHelper.ToInt( model.pageSize.Value , 20);
+            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
+            var pSize = model.pageSize.HasValue ? model.pageSize.Value : 20;
             var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
             {
                 PagingRequest = new ETS.Util.PagingResult(pIndex, pSize),
@@ -284,8 +285,8 @@ namespace SuperManWebApi.Controllers
         {
             degree.longitude = model.longitude;
             degree.latitude = model.latitude;
-            var pIndex = ParseHelper.ToInt(model.pageIndex, 0);
-            var pSize = ParseHelper.ToInt(model.pageSize, 10);
+            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
+            var pSize = model.pageSize.HasValue ? model.pageSize.Value : 20;
 
             var criteria = new ClientOrderSearchCriteria()
             {
@@ -345,8 +346,8 @@ namespace SuperManWebApi.Controllers
             model.cityId = string.IsNullOrWhiteSpace(HttpContext.Current.Request["cityId"]) ? null : HttpContext.Current.Request["cityId"].Trim(); //城市编码
             Ets.Model.DomainModel.Clienter.degree.longitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["longitude"]);
             Ets.Model.DomainModel.Clienter.degree.latitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["latitude"]);
-            var pIndex = ParseHelper.ToInt(model.pageIndex.Value, 0);
-            var pSize = ParseHelper.ToInt( model.pageSize.Value , 20);
+            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
+            var pSize = model.pageSize.HasValue ? model.pageSize.Value : 20;
             var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
             {
                 PagingRequest = new ETS.Util.PagingResult(pIndex, pSize),
