@@ -34,7 +34,7 @@ namespace Ets.Service.Provider.Order
                 if (from.clienterId != null)
                     resultModel.userId = from.clienterId.Value;
                 resultModel.OrderNo = from.OrderNo;
-
+                resultModel.OrderCount = from.OrderCount;
                 var orderComm = new OrderCommission() { Amount = from.Amount, CommissionRate = from.CommissionRate, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount, WebsiteSubsidy = from.WebsiteSubsidy };
                 var income = OrderCommissionProvider.GetCurrenOrderCommission(orderComm);
                 var amount = OrderCommissionProvider.GetCurrenOrderPrice(orderComm);
@@ -58,7 +58,7 @@ namespace Ets.Service.Provider.Order
                 resultModel.receviceAddress = from.ReceviceAddress;
                 resultModel.recevicePhone = from.RecevicePhoneNo;
                 resultModel.IsPay = from.IsPay.Value;
-                resultModel.Remark = from.Remark;
+                resultModel.Remark = from.Remark == null ?"":from.Remark;
                 resultModel.Status = from.Status.Value; 
  
                 if (from.BusiLatitude == null || from.BusiLatitude == 0 || from.BusiLongitude == null || from.BusiLongitude == 0)
@@ -106,7 +106,7 @@ namespace Ets.Service.Provider.Order
                 if (from.clienterId != null)
                     resultModel.userId = from.clienterId.Value;
                 resultModel.OrderNo = from.OrderNo;
-
+                resultModel.OrderCount = from.OrderCount;
                 var orderComm = new OrderCommission() { Amount = from.Amount, CommissionRate = from.CommissionRate, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount, WebsiteSubsidy = from.WebsiteSubsidy };
                 var income = OrderCommissionProvider.GetCurrenOrderCommission(orderComm);
                 var amount = OrderCommissionProvider.GetCurrenOrderPrice(orderComm);
