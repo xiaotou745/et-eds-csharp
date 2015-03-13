@@ -108,10 +108,10 @@ namespace Ets.Dao.Clienter
                                     o.OrderNo,
                                     o.OriginalOrderNo,
                                     CONVERT(VARCHAR(5),o.PubDate,108) AS PubDate,
-                                    o.pickUpAddress,
-                                    o.receviceName,
-                                    o.receviceCity,
-                                    o.receviceAddress,
+                                    o.PickUpAddress,
+                                    o.ReceviceName,
+                                    o.ReceviceCity,
+                                    o.ReceviceAddress,
                                     o.RecevicePhoneNo,
                                     o.IsPay,
                                     o.Remark,
@@ -126,9 +126,9 @@ namespace Ets.Dao.Clienter
                                     o.Amount,
                                     --补贴
                                     o.BusinessId,
-                                    b.Name AS businessName,
-                                    b.PhoneNo AS businessPhone,
-                                    REPLACE(b.City,'市','') AS pickUpCity,
+                                    b.Name AS BusinessName,
+                                    b.PhoneNo AS BusinessPhone,
+                                    REPLACE(b.City,'市','') AS PickUpCity,
                                     b.Longitude,
                                     b.Latitude";
             return new PageHelper().GetPages<ClientOrderModel>(SuperMan_Read, criteria.PagingRequest.PageIndex, where, "o.Id", columnStr, "[order](NOLOCK) AS o LEFT JOIN business(NOLOCK) AS b ON o.businessId=b.Id", criteria.PagingRequest.PageSize, false);

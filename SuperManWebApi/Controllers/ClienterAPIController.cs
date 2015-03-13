@@ -246,7 +246,7 @@ namespace SuperManWebApi.Controllers
             degree.longitude = model.longitude;
             degree.latitude = model.latitude;
             var pIndex = ParseHelper.ToInt(model.pageIndex, 1);
-            var pSize = ParseHelper.ToInt(model.pageSize, 10);
+            var pSize = ParseHelper.ToInt(model.pageSize, 100);
 
             var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
             {

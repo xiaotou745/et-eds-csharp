@@ -25,18 +25,55 @@ namespace Ets.Dao.User
         /// <param name="paraModel">查询条件实体</param>
         public virtual PageInfo<T> GetOrdersAppToSql<T>(Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp paraModel)
         {
+            #region where
             string whereStr = "1=1 ";  //where查询条件实体类
-            string orderByColumn = "a.id ";  //排序条件
-            string columnList = "a.* ";  //列名
-            string tableList = "dbo.[order] AS a ";  //表名
             if (paraModel.userId != null)  //订单商户id
-                whereStr = whereStr + " and a.businessId=" + paraModel.userId.ToString();
-            if (paraModel.Status != null)  //订单状态
-                whereStr = whereStr + " and a.Status=" + paraModel.Status.ToString();
-            return new PageHelper().GetPages<T>(SuperMan_Read, 1, whereStr, orderByColumn, columnList, tableList, 10, true);  
+                whereStr += " and a.businessId=" + paraModel.userId.ToString();
+            //订单状态
+            if (paraModel.Status != null)
+            {
+                if (paraModel.Status == 4)
+                {
+                    whereStr += " and (a.Status=" + OrderConst.ORDER_NEW + " || " + " a.Status=" + OrderConst.ORDER_ACCEPT + ")";
+                }
+                else
+                {
+                    whereStr += " and a.Status=" + paraModel.Status.ToString();
+                }
+            }
+
+            #endregion
+
+            string orderByColumn = "a.id ";  //排序条件
+            string columnList = @"
+                                    CONVERT(VARCHAR(5),o.ActualDoneDate,108) AS ActualDoneDate,
+                                    o.Amount,
+                                    o.IsPay,
+                                    o.OrderNo,
+                                    o.PickUpAddress,
+                                    CONVERT(VARCHAR(5),o.PubDate,108) AS PubDate,
+                                    o.ReceviceAddress,
+                                    o.ReceviceName,
+                                    o.RecevicePhoneNo,
+                                    o.Remark,
+                                    o.Status,
+                                    o.ReceviceLongitude,
+                                    o.ReceviceLatitude,
+                                    b.Id as BusinessId,
+                                    b.Name as BusinessName,
+                                    b.Longitude,
+                                    b.Latitude,
+                                    b.Name as PickUpName,
+                                    c.TrueName as superManName,
+                                    c.PhoneNo as superManPhone ";
+            string tableList = @" [order](nolock) as o
+                                    join business(nolock) as b on o.businessId=b.Id
+                                    join clienter(nolock) as c on o.clienterId=c.Id ";  //表名
+
+            return new PageHelper().GetPages<T>(SuperMan_Read, paraModel.PagingResult.PageIndex, whereStr, orderByColumn, columnList, tableList, paraModel.PagingResult.PageSize, true);
         }
 
-     
+
         /// <summary>
         /// 商户结算列表--2015.3.12 平扬
         /// </summary>
@@ -46,7 +83,7 @@ namespace Ets.Dao.User
         /// <returns></returns>
         public IList<BusinessCommissionModel> GetBusinessCommission(DateTime t1, DateTime t2, string name, int groupid)
         {
-            IList<BusinessCommissionModel> list=new List<BusinessCommissionModel>();
+            IList<BusinessCommissionModel> list = new List<BusinessCommissionModel>();
             try
             {
                 string sql = " select BB.id,BB.Name,T.Amount,T.OrderCount,isnull(BB.BusinessCommission,0) BusinessCommission, CAST(isnull(BB.BusinessCommission,0) * T.Amount*0.01 as decimal(5,2)) as TotalAmount,@t1 as T1,@t2 as T2 " +
@@ -56,8 +93,8 @@ namespace Ets.Dao.User
                         " where O.[Status]=1  {0}  group by B.Id,B.Name) as T on BB.Id=T.Id";
                 string where = " and DATEDIFF(s, O.ActualDoneDate,@t2)>1 and DATEDIFF(s, @t1,O.ActualDoneDate)>1 ";
 
-                
-                IDbParameters dbParameters = DbHelper.CreateDbParameters(); 
+
+                IDbParameters dbParameters = DbHelper.CreateDbParameters();
                 dbParameters.AddWithValue("groupid", groupid);
                 dbParameters.AddWithValue("t1", t1);
                 dbParameters.AddWithValue("t2", t2);
@@ -77,7 +114,7 @@ namespace Ets.Dao.User
                 list = ConvertDataTableList<BusinessCommissionModel>(dt);
             }
             catch (Exception)
-            { 
+            {
                 throw;
             }
             return list;
@@ -145,7 +182,7 @@ namespace Ets.Dao.User
                 dbParameters.AddWithValue("BusinessCommission", price);
                 dbParameters.AddWithValue("id", id);
                 int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Read, sql, dbParameters);
-                if (i > 0) reslut= true;
+                if (i > 0) reslut = true;
             }
             catch (Exception ex)
             {
