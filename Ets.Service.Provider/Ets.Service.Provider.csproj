@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CalculateCommon">
+      <HintPath>..\lib\CalculateCommon.dll</HintPath>
+      <HintPath>..\packages\CalculateCommon.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -41,11 +45,16 @@
   <ItemGroup>
     <Compile Include="Clienter\ClienterProvider.cs" />
     <Compile Include="Common\AdminToolsProvider.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Order\OrderCommissionProvider.cs" />
+    <Compile Include="Order\OrderProvider.cs" />     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="User\BusinessProvider.cs.cs" />
     <Compile Include="User\UserProvider.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ETS.Core\ETS.Core.csproj">
+      <Project>{bba67a86-afd6-46f2-bbd9-5dfb5bfdafe2}</Project>
+      <Name>ETS.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Ets.Dao\Ets.Dao.csproj">
       <Project>{dd95fa95-b979-4802-8f79-b08d35939f4e}</Project>
       <Name>Ets.Dao</Name>
@@ -63,6 +72,7 @@
       <Name>Ets.Service.IProvider</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

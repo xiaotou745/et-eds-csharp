@@ -36,6 +36,24 @@
     <Reference Include="Common.Logging">
       <HintPath>..\lib\Common.Logging.dll</HintPath>
     </Reference>
+    <Reference Include="NPOI">
+      <HintPath>..\packages\NPOI\NPOI.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.DDF">
+      <HintPath>..\packages\NPOI\NPOI.DDF.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.HPSF">
+      <HintPath>..\packages\NPOI\NPOI.HPSF.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.HSSF">
+      <HintPath>..\packages\NPOI\NPOI.HSSF.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.POIFS">
+      <HintPath>..\packages\NPOI\NPOI.POIFS.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.Util">
+      <HintPath>..\packages\NPOI\NPOI.Util.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -53,6 +71,8 @@
     <Compile Include="Cacheing\CacheFactory.cs" />
     <Compile Include="Cacheing\LocalCache.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="Const\ClienterConst.cs" />
+    <Compile Include="Enums\ClienterEnum.cs" />
     <Compile Include="Expand\ActionStatusAttribute.cs" />
     <Compile Include="Const\OrderConst.cs" />
     <Compile Include="Expand\AttribDescription.cs" />
@@ -84,17 +104,24 @@
     <Compile Include="Threading\LogicalThreadContext.cs" />
     <Compile Include="Threading\ThreadStaticStorage.cs" />
     <Compile Include="Util\AssertUtils.cs" />
+    <Compile Include="Util\ConfigSettings.cs" />
     <Compile Include="Util\ConfigUtils.cs" />
     <Compile Include="Util\DnsUtils.cs" />
     <Compile Include="Extension\EnumExtenstion.cs" />
+    <Compile Include="Util\EmilHelper.cs" />
+    <Compile Include="Util\EncodeAndDecode.cs" />
     <Compile Include="Util\EnumItem.cs" />
     <Compile Include="Util\EnumUtils.cs" />
+    <Compile Include="Util\Excel.cs" />
     <Compile Include="Util\IEnumItem.cs" />
+    <Compile Include="Util\ITranslator.cs" />
     <Compile Include="Util\Log.cs" />
+    <Compile Include="Util\LogHelper.cs" />
     <Compile Include="Util\MailUtils.cs" />
     <Compile Include="Util\PagedList.cs" />
     <Compile Include="Util\PagingResult.cs" />
     <Compile Include="Util\ParseHelper.cs" />
+    <Compile Include="Util\TranslatorBase.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -12,7 +12,7 @@
             <th>照片</th>
             <th>申请时间</th>
             <th>所属集团</th>
-            @*<th>结算比例</th>*@
+            <th>结算比例</th>
             @*<th>订单</th>
                 <th>订单金额</th>*@
             <th>审核状态</th>
@@ -35,7 +35,7 @@
                     <td>@item.PhoneNo</td>
                     <td>@item.Address</td>
                     <td>
-                        <a href="javascript:void(0)" class="businessOk" onclick="funcPicView('@String.Format("{0}{1}",PicHost,puth)','@item.CheckPicUrl')">查看</a>
+                        <a href="javascript:void(0)" onclick="funcPicView('@String.Format("{0}{1}",PicHost,puth)','@item.CheckPicUrl')">查看</a>
                     </td>
                     <td>@item.InsertTime</td>
                     <td>
@@ -44,11 +44,11 @@
                             @Html.Raw(GroupLogic.groupLogic().GetGroupName(Convert.ToInt32(item.GroupId)))
                         }
                     </td>
-                    @*<td>
+                    <td>
                         @{
                             decimal? commission = @item.BusinessCommission ?? 0;
                         }@commission%
-                    </td>*@
+                    </td>
                     @{
                 var statusView = "";
                 if (@item.Status == SuperManCommonModel.ConstValues.BUSINESS_AUDITPASS)
@@ -93,7 +93,7 @@
                     }
                 }
                         }
-                    @*<a href="javascript:void(0)" onclick="funcComView(@item.Id,'@item.Name','@item.Address','@item.PhoneNo','@item.BusinessCommission')">设置结算比例</a>*@
+                    <a href="javascript:void(0)" onclick="funcComView(@item.Id,'@item.Name','@item.Address','@item.PhoneNo','@item.BusinessCommission')">设置结算比例</a>
                     </td>
                 </tr>
             }
@@ -150,6 +150,8 @@
         var fileHandHouZhui = CheckPicUrl.substr(fileLastDot, CheckPicUrl.length - fileLastDot);
         var bigFileName = CheckPicUrl.substring(0, fileLastDot) + originSize + fileHandHouZhui;
         $('#showBigBusiImage').attr('href', puth + '/' + bigFileName);
+
+        adminjs.openwinbox('#ClientPicShow');
     }
         
     //弹出结算比例层
