@@ -34,7 +34,7 @@ namespace Ets.Dao.User
             {
                 if (paraModel.Status == 4)
                 {
-                    whereStr += " and (o.Status=" + OrderConst.ORDER_NEW  + " or o.Status=" + OrderConst.ORDER_ACCEPT + ")";
+                    whereStr += " and (o.Status=" + OrderConst.ORDER_NEW + " or " + " o.Status=" + OrderConst.ORDER_ACCEPT + ")";
                 }
                 else
                 {

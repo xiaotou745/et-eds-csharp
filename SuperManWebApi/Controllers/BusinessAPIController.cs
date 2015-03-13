@@ -354,8 +354,12 @@ namespace SuperManWebApi.Controllers
         [HttpGet]
         public ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]> GetOrderList_B(int userId, int? pagedSize, int? pagedIndex, sbyte? Status)
         {
-            var pIndex = pagedIndex.HasValue ? pagedIndex.Value : 0;
-            var pSize = pagedSize.HasValue ? pagedSize.Value : int.MaxValue;
+            //var pIndex = pagedIndex.HasValue ? pagedIndex.Value : 0;
+            //var pSize = pagedSize.HasValue ? pagedSize.Value : int.MaxValue;
+            var pIndex = ETS.Util.ParseHelper.ToInt(pagedIndex, 1);
+            pIndex = pIndex <= 0 ? 1 : pIndex;
+            var pSize = ETS.Util.ParseHelper.ToInt(pagedSize, 100);
+           
             Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp criteria = new Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp()
             {
                 PagingResult = new Ets.Model.Common.PagingResult(pIndex, pSize),
