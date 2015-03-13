@@ -34,14 +34,13 @@ namespace Ets.Service.Provider.Order
                 if (from.clienterId != null)
                     resultModel.userId = from.clienterId.Value;
                 resultModel.OrderNo = from.OrderNo;
-                resultModel.OrderCount = from.OrderCount.HasValue ? from.OrderCount.Value : 1;
-                var orderComm = new OrderCommission() { Amount = from.Amount, CommissionRate = from.CommissionRate, DistribSubsidy = from.DistribSubsidy, OrderCount = resultModel.OrderCount, WebsiteSubsidy = from.WebsiteSubsidy };
+
+                var orderComm = new OrderCommission() { Amount = from.Amount, CommissionRate = from.CommissionRate, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount, WebsiteSubsidy = from.WebsiteSubsidy };
                 var income = OrderCommissionProvider.GetCurrenOrderCommission(orderComm);
                 var amount = OrderCommissionProvider.GetCurrenOrderPrice(orderComm);
 
                 resultModel.income = income;  //计算设置当前订单骑士可获取的佣金 Edit bycaoheyang 20150305
                 resultModel.Amount = amount; //C端 获取订单的金额 Edit bycaoheyang 20150305
-
                 
 
                 resultModel.businessName = from.BusinessName;
@@ -103,8 +102,8 @@ namespace Ets.Service.Provider.Order
                 if (from.clienterId != null)
                     resultModel.userId = from.clienterId.Value;
                 resultModel.OrderNo = from.OrderNo;
-                resultModel.OrderCount = from.OrderCount.HasValue ? from.OrderCount.Value : 1;
-                var orderComm = new OrderCommission() { Amount = from.Amount, CommissionRate = from.CommissionRate, DistribSubsidy = from.DistribSubsidy, OrderCount = resultModel.OrderCount, WebsiteSubsidy = from.WebsiteSubsidy };
+
+                var orderComm = new OrderCommission() { Amount = from.Amount, CommissionRate = from.CommissionRate, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount, WebsiteSubsidy = from.WebsiteSubsidy };
                 var income = OrderCommissionProvider.GetCurrenOrderCommission(orderComm);
                 var amount = OrderCommissionProvider.GetCurrenOrderPrice(orderComm);
 

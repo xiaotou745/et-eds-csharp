@@ -28,7 +28,6 @@ namespace SuperManWebApi.Controllers
     {
 
         readonly Ets.Service.IProvider.Clienter.IClienterProvider iClienterProvider = new Ets.Service.Provider.Clienter.ClienterProvider();
-        readonly Ets.Service.IProvider.Order.IOrderProvider iOrderProvider = new Ets.Service.Provider.Order.OrderProvider();
         /// <summary>
         /// C端注册 
         /// </summary>
@@ -234,46 +233,6 @@ namespace SuperManWebApi.Controllers
             return ResultModel<ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, lists.ToArray());
         }
 
-
-        /// <summary>
-        /// Ado.net  add  王超
-        /// C端获取我的任务列表 最近任务 登录未登录根据城市有没有值判断。
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        [ActionStatus(typeof(GetOrdersStatus))]
-        [HttpPost]
-        public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]> GetJobList_C_WangChao(Ets.Model.ParameterModel.Clienter.ClientOrderInfoModel model)
-        {
-            Ets.Model.DomainModel.Clienter.degree.longitude = model.longitude;
-            Ets.Model.DomainModel.Clienter.degree.latitude = model.latitude;
-            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
-            var pSize = model.pageSize.HasValue ? model.pageSize.Value : 20;
-            var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
-            {
-                PagingRequest = new ETS.Util.PagingResult(pIndex, pSize),
-                userId = model.userId,
-                status = model.status,
-                isLatest = model.isLatest,
-                city = string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
-                cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim()
-            };
-             
-            var pagedList = new Ets.Service.Provider.Order.OrderProvider().GetOrders(criteria);
-             
-            if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
-            {
-                pagedList = pagedList.OrderBy(i => i.distance).ToList();
-            }
-            else
-            {
-                pagedList = pagedList.OrderByDescending(i => i.pubDate).ToList();
-            }
-
-            return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, pagedList.ToArray());
-        }
-         
-
         /// <summary>
         /// 获取我的任务   根据状态判断是已完成任务还是我的任务
         /// </summary>
@@ -285,12 +244,12 @@ namespace SuperManWebApi.Controllers
         {
             degree.longitude = model.longitude;
             degree.latitude = model.latitude;
-            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
-            var pSize = model.pageSize.HasValue ? model.pageSize.Value : 20;
+            var pIndex = ParseHelper.ToInt(model.pageIndex, 0);
+            var pSize = ParseHelper.ToInt(model.pageSize, 10);
 
             var criteria = new ClientOrderSearchCriteria()
             {
-                
+                PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
                 userId = model.userId,
                 status = model.status,
                 isLatest = model.isLatest
@@ -333,6 +292,46 @@ namespace SuperManWebApi.Controllers
 
 
         /// <summary>
+        /// Ado.net  add  王超
+        /// C端获取我的任务列表 最近任务 登录未登录根据城市有没有值判断。
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [ActionStatus(typeof(GetOrdersStatus))]
+        [HttpPost]
+        public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]> GetJobList_C_WangChao(Ets.Model.ParameterModel.Clienter.ClientOrderInfoModel model)
+        {
+            Ets.Model.DomainModel.Clienter.degree.longitude = model.longitude;
+            Ets.Model.DomainModel.Clienter.degree.latitude = model.latitude;
+            var pIndex = ParseHelper.ToInt( model.pageIndex.Value , 0);
+            var pSize = ParseHelper.ToInt( model.pageSize.Value , 20);
+            var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
+            {
+                PagingRequest = new ETS.Util.PagingResult(pIndex, pSize),
+                userId = model.userId,
+                status = model.status,
+                isLatest = model.isLatest,
+                city = string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
+                cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim()
+            };
+             
+            var pagedList = new Ets.Service.Provider.Order.OrderProvider().GetOrders(criteria);
+             
+            if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
+            {
+                pagedList = pagedList.OrderBy(i => i.distance).ToList();
+            }
+            else
+            {
+                pagedList = pagedList.OrderByDescending(i => i.pubDate).ToList();
+            }
+
+            return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, pagedList.ToArray());
+        }
+         
+
+
+        /// <summary>
         /// Ado.net add 王超
         /// 未登录时获取最新任务     登录未登录根据城市有没有值判断。
         /// </summary>
@@ -346,8 +345,8 @@ namespace SuperManWebApi.Controllers
             model.cityId = string.IsNullOrWhiteSpace(HttpContext.Current.Request["cityId"]) ? null : HttpContext.Current.Request["cityId"].Trim(); //城市编码
             Ets.Model.DomainModel.Clienter.degree.longitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["longitude"]);
             Ets.Model.DomainModel.Clienter.degree.latitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["latitude"]);
-            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
-            var pSize = model.pageSize.HasValue ? model.pageSize.Value : 20;
+            var pIndex = ParseHelper.ToInt(model.pageIndex.Value, 0);
+            var pSize = ParseHelper.ToInt( model.pageSize.Value , 20);
             var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
             {
                 PagingRequest = new ETS.Util.PagingResult(pIndex, pSize),
