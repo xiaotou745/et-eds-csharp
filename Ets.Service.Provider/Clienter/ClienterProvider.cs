@@ -46,14 +46,12 @@ namespace Ets.Service.Provider.Clienter
             //throw new System.NotImplementedException();
             PageInfo<ClientOrderModel> pageinfo = new ClienterDao().GetMyOrders(clientOrderModel);
             IList<ClientOrderModel> list = pageinfo.Records;
-
             IList<ClientOrderResultModel> listOrder = new List<ClientOrderResultModel>();//组装成新的对象
             foreach (ClientOrderModel item in list)
             {
                 ClientOrderResultModel model = new ClientOrderResultModel();
                 model.userId = item.UserId;
                 model.OrderNo = item.OrderNo;
-
                 #region 骑士佣金计算
                 OrderCommission oCommission = new OrderCommission()
                 {
@@ -81,7 +79,7 @@ namespace Ets.Service.Provider.Clienter
                 model.IsPay = item.IsPay;
                 model.Remark = item.Remark;
                 model.Status = item.Status;
-
+                model.OrderCount = item.OrderCount;
                 #region 计算经纬度
 
                 if (item.Longitude == null || item.Longitude == 0 || item.Latitude == null || item.Latitude == 0)
