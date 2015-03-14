@@ -53,7 +53,7 @@ namespace SuperManBusinessLogic.Order_Logic
                 if (to.GroupId != null) //当前商户有集团信息
                     to.GroupName = GroupLogic.groupLogic().GetGroupName(Convert.ToInt32(to.GroupId));
             }
-            if (from.business != null && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
+            if (from.business != null && from.business.Longitude !=null && from.business.Latitude!=null && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
             {
                 var d1 = new Degree(from.business.Longitude.Value, from.business.Latitude.Value);
                 var d2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);
