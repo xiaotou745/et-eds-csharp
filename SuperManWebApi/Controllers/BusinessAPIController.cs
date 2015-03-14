@@ -323,20 +323,22 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<BusiOrderResultModel> PostPublishOrder_B(BusiOrderInfoModel model)
         {
-            #region 缓存验证
-            string cacheKey = model.userId.ToString() + "_" + model.OrderSign;
-            var cacheList = ETS.Cacheing.CacheFactory.Instance[cacheKey];
-            LogHelper.LogWriter("订单发布~商户时间戳", new { cacheKey = cacheKey,model=model });
-            if (cacheList != null)
+            lock (lockHelper)
             {
-                LogHelper.LogWriter("cacheList是否存在同一的商户时间戳：", new { cacheList = cacheList });
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderHasExist);//当前时间戳内重复提交,订单已存在 
+                #region 缓存验证
+                string cacheKey = model.userId.ToString() + "_" + model.OrderSign;
+                var cacheList = ETS.Cacheing.CacheFactory.Instance[cacheKey];
+                LogHelper.LogWriter("订单发布~商户时间戳", new { cacheKey = cacheKey, model = model });
+                if (cacheList != null)
+                {
+                    LogHelper.LogWriter("cacheList是否存在同一的商户时间戳：", new { cacheList = cacheList });
+                    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderHasExist);//当前时间戳内重复提交,订单已存在 
+                }
+                LogHelper.LogWriter("如果存在会继续往下执行？cacheList是否存在商户时间戳：", new { cacheList = cacheList, model = model });
+                ETS.Cacheing.CacheFactory.Instance.AddObject(cacheKey, "1", DateTime.Now.AddMinutes(10));//添加当前时间戳记录
+                LogHelper.LogWriter("在缓存里添加时间戳：", new { cacheKey = cacheKey, obj = 1, guoqishijian = DateTime.Now.AddMinutes(10), model = model });
+                #endregion
             }
-            LogHelper.LogWriter("如果存在会继续往下执行？cacheList是否存在商户时间戳：", new { cacheList = cacheList,model=model });
-            ETS.Cacheing.CacheFactory.Instance.AddObject(cacheKey, "1", DateTime.Now.AddMinutes(10));//添加当前时间戳记录
-            LogHelper.LogWriter("在缓存里添加时间戳：", new { cacheKey = cacheKey, obj = 1, guoqishijian = DateTime.Now.AddMinutes(10),model=model });
-            #endregion
-
             if (model.OrderCount <= 0 || model.OrderCount > 15)   //判断录入订单数量是否符合要求
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
             order dborder = BusiOrderInfoModelTranslator.Instance.Translate(model);  //整合订单信息
