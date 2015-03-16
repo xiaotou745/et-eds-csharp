@@ -184,7 +184,6 @@
     <Compile Include="Controllers\BusinessController.cs" />
     <Compile Include="Controllers\BusinessManagerController.cs" />
     <Compile Include="Controllers\DownloadController.cs" />
-    <Compile Include="Controllers\GroupManagerController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HomeCountController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -524,11 +523,7 @@
     <Content Include="Views\BusinessCommission\BusinessCommission.cshtml" />
     <Content Include="Views\AdminTools\AdminTools.cshtml" />
     <Content Include="Views\AdminTools\_AdminToolsList.cshtml" />
-    <Content Include="Views\Download\edsB.cshtml" />
-    <Content Include="Views\Download\edsC.cshtml" />
-    <Content Include="Views\GroupManager\_GroupManageList.cshtml" />
-    <Content Include="Views\GroupManager\GroupManager.cshtml" />
-    <Content Include="Views\Shared\_NewPager.cshtml" />
+    <Content Include="Views\Download\Download.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
