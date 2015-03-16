@@ -13,8 +13,8 @@ namespace Ets.Service.IProvider.Common
         /// 窦海超
         /// 2015年3月16日 11:44:54
         /// </summary>
-        /// <param name="CityId">城市ID</param>
+        /// <param name="CityName">城市名称</param>
         /// <returns></returns>
-        string GetCustomerServicePhone(int CityId);
+        string GetCustomerServicePhone(string CityName);
     }
 }
