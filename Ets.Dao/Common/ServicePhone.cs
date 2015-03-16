@@ -8,8 +8,8 @@ namespace Ets.Dao.Common
 {
     public class ServicePhone
     {
-        public string GetCustomerServicePhone(int CityId) { 
-            
+        public string GetCustomerServicePhone(int CityId) {
+            return string.Empty;
         }
     }
 }

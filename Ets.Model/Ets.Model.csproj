@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\PagedList.cs" />
+    <Compile Include="DataModel\Bussiness\BusiRegisterResultModel.cs" />
     <Compile Include="DataModel\Order\OrderCommission.cs" />
     <Compile Include="Common\PaginResult.cs" />
     <Compile Include="Common\ResultInfo.cs" />
@@ -53,6 +54,7 @@
     <Compile Include="Common\ResultModel.cs" />
     <Compile Include="DomainModel\Clienter\ClientOrderResultModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BussOrderParaModelApp.cs" />
+    <Compile Include="ParameterModel\Bussiness\RegisterInfoModel.cs" />
     <Compile Include="ParameterModel\Clienter\ChangeWorkStatusPM.cs" />
     <Compile Include="ParameterModel\Clienter\ClientOrderInfoModel.cs" />
     <Compile Include="ParameterModel\Order\ClientOrderInfoModel.cs" />
@@ -60,7 +62,6 @@
     <Compile Include="UserModel.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DataModel\Bussiness\" />
     <Folder Include="DomainModel\Order\" />
   </ItemGroup>
   <ItemGroup>

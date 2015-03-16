@@ -721,5 +721,7 @@ namespace SuperManWebApi.Controllers
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.ChangeWorkStatusEnum.ClienterError);
             return Ets.Model.Common.SimpleResultModel.Conclude(iClienterProvider.ChangeWorkStatus(paraModel));
         }
+
+
     }
 }
