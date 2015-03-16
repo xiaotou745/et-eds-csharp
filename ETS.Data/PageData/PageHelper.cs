@@ -1,4 +1,5 @@
-﻿using ETS.Extension;
+﻿
+using ETS.Extension;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -27,7 +28,7 @@ namespace ETS.Data.PageData
             int TotalRecord = 0;
             int TotalPage = 0;
             var _table = GetPages(connectionString,currentPage, where_, OrderByColumn, ColumnList, TableList, PageSize, IsAccounte, out TotalRecord, out TotalPage);
-            var pageInfo = new PageInfo<T>(TotalRecord, currentPage, ETS.Extension.DataTableHelper.ConvertDataTableList<T>(_table), TotalPage);
+            var pageInfo = new PageInfo<T>(TotalRecord, currentPage, DataTableHelper.ConvertDataTableList<T>(_table), TotalPage);
             return pageInfo;
         }
 
