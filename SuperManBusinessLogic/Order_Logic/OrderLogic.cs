@@ -98,6 +98,7 @@ namespace SuperManBusinessLogic.Order_Logic
                     items = items.Where(p => p.business.GroupId == criteria.GroupId);
                 }
                 //按照发布时间降序排列
+                items = items.OrderBy(i => i.Status); //先按照订单的状态 未接单的在前 ，然后按照订单发布时间逆序
                 items = items.OrderByDescending(i => i.Id);
 
                 var pagedQuery = new OrderManage();

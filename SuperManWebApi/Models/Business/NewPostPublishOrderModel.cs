@@ -110,6 +110,11 @@ namespace SuperManWebApi.Models.Business
         /// </summary>
         public int LuJuQty { get; set; }
 
+        /// <summary>
+        /// 送餐时间
+        /// </summary>
+        public DateTime SongCanDate { get; set; }
+
 
     }
     public class NewBusiOrderInfoModelTranslator : TranslatorBase<order, NewPostPublishOrderModel>
@@ -180,6 +185,8 @@ namespace SuperManWebApi.Models.Business
 
             to.GuoJuQty = from.GuoJuQty; //锅具数量
             to.LuJuQty = from.LuJuQty;  //炉具数量
+
+            to.SongCanDate = from.SongCanDate;  //送餐时间
 
             //计算订单佣金
             var subsidy = SubsidyLogic.subsidyLogic().GetCurrentSubsidy(business.GroupId.Value,from.OrderType);

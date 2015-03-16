@@ -132,7 +132,7 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary>
-        /// 接收订单，供第三方使用
+        /// 接收订单，供第三方使用  wangchao
         /// </summary>
         /// <param name="model">订单基本数据信息</param>
         /// <returns></returns>

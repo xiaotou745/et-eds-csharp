@@ -72,6 +72,8 @@ namespace SuperManBusinessLogic.C_Logic
                     items = items.Where(p => p.Status == criteria.Status);
                 if (criteria.GroupId != null)  //集团查询
                     items = items.Where(p => p.GroupId == criteria.GroupId);
+
+                items = items.OrderByDescending(i => i.InsertTime);  //查询超人 按照时间 倒序
                 var pagedQuery = new ClienterManage();
                 var clienters = new PagedList<clienter>(items.ToList(), criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
                 var businesslists = new ClienterManageList(clienters, clienters.PagingResult);

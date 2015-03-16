@@ -76,7 +76,7 @@ namespace SuperManBusinessLogic.B_Logic
                 {
                     items = items.Where(p => p.GroupId == criteria.GroupId);
                 }
-
+                items = items.OrderByDescending(i => i.InsertTime);
                 var pagedQuery = new BusinessManage();
                 var resultModel = new PagedList<business>(items.ToList(), criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
                 var businesslists = new BusinessManageList(resultModel.ToList(), resultModel.PagingResult);
