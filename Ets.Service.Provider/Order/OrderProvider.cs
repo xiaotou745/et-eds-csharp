@@ -1,11 +1,16 @@
 ﻿using CalculateCommon;
 using Ets.Dao.Order;
+using Ets.Model.Common;
 using Ets.Model.DataModel.Bussiness;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DomainModel.Clienter;
 using Ets.Model.ParameterModel.Order;
 using Ets.Service.IProvider.Order;
+using Ets.Service.IProvider.Subsidy;
+using Ets.Service.IProvider.User;
+using Ets.Service.Provider.Subsidy;
+using Ets.Service.Provider.User;
 using ETS.Page;
 using ETS.Util;
 using System;
@@ -19,6 +24,8 @@ namespace Ets.Service.Provider.Order
     {
 
         private OrderDao OrderDao = new OrderDao();
+        private IBusinessProvider iBusinessProvider = new BusinessProvider();
+        private ISubsidyProvider iSubsidyProvider = new SubsidyProvider();
 
         /// <summary>
         /// 获取订单
@@ -170,49 +177,73 @@ namespace Ets.Service.Provider.Order
             return list;
         }
 
-
+        /// <summary>
+        /// 转换B端发布的订单信息为 数据库中需要的 订单 数据
+        /// </summary>
+        /// <param name="busiOrderInfoModel"></param>
+        /// <returns></returns>
         public order TranslateOrder(Model.ParameterModel.Bussiness.BusiOrderInfoModel busiOrderInfoModel)
         {
             order to = new order();
 
             to.OrderNo = Helper.generateOrderCode(busiOrderInfoModel.userId);  //根据userId生成订单号(15位)
             to.businessId = busiOrderInfoModel.userId; //当前发布者
+            business business = iBusinessProvider.GetBusiness(busiOrderInfoModel.userId);
             //business business = BusiLogic.busiLogic().GetBusinessById(busiOrderInfoModel.userId);  //根据发布者id,获取发布者的相关信息实体
-            //if (business != null)
-            //{
-            //    to.PickUpAddress = business.Address;  //提取地址
-            //    to.PubDate = DateTime.Now; //提起时间
-            //    to.ReceviceCity = business.City; //城市
-            //    to.DistribSubsidy = business.DistribSubsidy;//设置外送费,从商户中找。
-            //}
+            if (business != null)
+            {
+                to.PickUpCity = business.City;  //商户所在城市
+                to.PickUpAddress = business.Address;  //提取地址
+                to.PubDate = DateTime.Now; //提起时间
+                to.ReceviceCity = business.City; //城市
+                to.DistribSubsidy = business.DistribSubsidy;//设置外送费,从商户中找。
+            } 
+            if (ConfigSettings.Instance.IsGroupPush)
+            {
+                if (busiOrderInfoModel.OrderFrom != 0)
+                    to.OrderFrom = busiOrderInfoModel.OrderFrom;
+                else
+                    to.OrderFrom = 0;
+            }
+            to.Remark = busiOrderInfoModel.Remark;
+            to.ReceviceName = busiOrderInfoModel.receviceName;
+            to.RecevicePhoneNo = busiOrderInfoModel.recevicePhone;
+            to.ReceviceAddress = busiOrderInfoModel.receviceAddress;
+            to.IsPay = busiOrderInfoModel.IsPay;
+            to.Amount = busiOrderInfoModel.Amount;
+            to.OrderCount = busiOrderInfoModel.OrderCount;  //订单数量
+            to.ReceviceLongitude = busiOrderInfoModel.longitude;
+            to.ReceviceLatitude = busiOrderInfoModel.laitude;
 
-            //if (ConfigSettings.Instance.IsGroupPush)
-            //{
-            //    if (busiOrderInfoModel.OrderFrom != 0)
-            //        to.OrderFrom = busiOrderInfoModel.OrderFrom;
-            //    else
-            //        to.OrderFrom = 0;
-            //}
-            //to.Remark = busiOrderInfoModel.Remark;
-            //to.ReceviceName = busiOrderInfoModel.receviceName;
-            //to.RecevicePhoneNo = busiOrderInfoModel.recevicePhone;
-            //to.ReceviceAddress = busiOrderInfoModel.receviceAddress;
-            //to.IsPay = busiOrderInfoModel.IsPay;
-            //to.Amount = busiOrderInfoModel.Amount;
-            //to.OrderCount = busiOrderInfoModel.OrderCount;  //订单数量
-            //to.ReceviceLongitude = busiOrderInfoModel.longitude;
-            //to.ReceviceLatitude = busiOrderInfoModel.laitude;
             //var subsidy = SubsidyLogic.subsidyLogic().GetCurrentSubsidy(groupId: business.GroupId == null ? 0 : Convert.ToInt32(business.GroupId));
-            //to.WebsiteSubsidy = subsidy.WebsiteSubsidy;  //网站补贴
-            //to.CommissionRate = subsidy.OrderCommission == null ? 0 : subsidy.OrderCommission; //佣金比例 
-            //decimal distribe = 0;  //默认外送费，网站补贴都为0
-            //if (to.DistribSubsidy != null)//如果外送费有数据，按照外送费计算骑士佣金
-            //    distribe = Convert.ToDecimal(to.DistribSubsidy);
-            //else if (to.WebsiteSubsidy != null)//如果外送费没数据，按照网站补贴计算骑士佣金
-            //    distribe = Convert.ToDecimal(to.WebsiteSubsidy);
-            //to.OrderCommission = busiOrderInfoModel.Amount * to.CommissionRate + distribe * to.OrderCount;//计算佣金
-            //to.Status = ConstValues.ORDER_NEW;
+
+            var subsidy =  iSubsidyProvider.GetCurrentSubsidy(groupId: business.GroupId == null ? 0 : Convert.ToInt32(business.GroupId));
+
+            if (subsidy != null)
+            { 
+                to.WebsiteSubsidy = subsidy.WebsiteSubsidy;  //网站补贴
+                to.CommissionRate = subsidy.OrderCommission == null ? 0 : subsidy.OrderCommission; //佣金比例 
+
+                decimal distribe = 0;  //默认外送费，网站补贴都为0
+                if (to.DistribSubsidy != null)//如果外送费有数据，按照外送费计算骑士佣金
+                    distribe = Convert.ToDecimal(to.DistribSubsidy);
+                else if (to.WebsiteSubsidy != null)//如果外送费没数据，按照网站补贴计算骑士佣金
+                    distribe = Convert.ToDecimal(to.WebsiteSubsidy);
+
+                to.OrderCommission = busiOrderInfoModel.Amount * to.CommissionRate + distribe * to.OrderCount;//计算佣金
+            }
+            to.Status = ConstValues.ORDER_NEW;
             return to; 
+        }
+
+        /// <summary>
+        /// 添加一条 订单信息
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns></returns>
+        public string AddOrder(order order)
+        {
+            return OrderDao.AddOrder(order);
         }
     } 
 }

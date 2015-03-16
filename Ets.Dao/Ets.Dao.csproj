@@ -45,6 +45,7 @@
     <Compile Include="DaoBase.cs" />
     <Compile Include="Order\OrderDao.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Subsidy\SubsidyDao.cs" />
     <Compile Include="User\BusinessDao.cs" />
     <Compile Include="User\UserDao.cs" />
   </ItemGroup>
@@ -60,6 +61,10 @@
     <ProjectReference Include="..\Ets.Model\Ets.Model.csproj">
       <Project>{b9d2361d-7e2c-45ba-89ec-4eca1bf7c456}</Project>
       <Name>Ets.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SuperManBusinessLogic\SuperManBusinessLogic.csproj">
+      <Project>{72ca336e-dc5e-4f98-9275-3a3a258189d6}</Project>
+      <Name>SuperManBusinessLogic</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
