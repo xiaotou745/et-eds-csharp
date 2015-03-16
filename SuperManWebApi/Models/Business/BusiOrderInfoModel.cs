@@ -96,8 +96,7 @@ namespace SuperManWebApi.Models.Business
                 to.PubDate = DateTime.Now; //提起时间
                 to.ReceviceCity = business.City; //城市
                 to.DistribSubsidy = business.DistribSubsidy;//设置外送费,从商户中找。
-            }
-            
+            } 
             if (ConfigSettings.Instance.IsGroupPush)
             {
                 if (from.OrderFrom != 0)

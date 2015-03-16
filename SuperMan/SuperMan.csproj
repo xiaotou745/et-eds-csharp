@@ -183,7 +183,11 @@
     <Compile Include="Controllers\AuthorityManagerController.cs" />
     <Compile Include="Controllers\BusinessController.cs" />
     <Compile Include="Controllers\BusinessManagerController.cs" />
+<<<<<<< HEAD
     <Compile Include="Controllers\DownloadController.cs" />
+=======
+    <Compile Include="Controllers\GroupManagerController.cs" />
+>>>>>>> 835ae1b3dd4d75ef0883978648e7cdd1419c5fbf
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HomeCountController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -523,8 +527,14 @@
     <Content Include="Views\BusinessCommission\BusinessCommission.cshtml" />
     <Content Include="Views\AdminTools\AdminTools.cshtml" />
     <Content Include="Views\AdminTools\_AdminToolsList.cshtml" />
+<<<<<<< HEAD
     <Content Include="Views\Download\edsB.cshtml" />
     <Content Include="Views\Download\edsC.cshtml" />
+=======
+    <Content Include="Views\GroupManager\_GroupManageList.cshtml" />
+    <Content Include="Views\GroupManager\GroupManager.cshtml" />
+    <Content Include="Views\Shared\_NewPager.cshtml" />
+>>>>>>> 835ae1b3dd4d75ef0883978648e7cdd1419c5fbf
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
