@@ -224,9 +224,10 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(LoginModelStatus))]
         [HttpPost]
-        public ResultModel<BusiLoginResultModel> PostLogin_B(LoginModel model)
+        public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Bussiness.BusiLoginResultModel> PostLogin_B(Ets.Model.ParameterModel.Bussiness.LoginModel model)
         {
-            var business = BusiLogic.busiLogic().GetBusiness(model.phoneNo, model.passWord);
+
+            /*var business = BusiLogic.busiLogic().GetBusiness(model.phoneNo, model.passWord);
             if (business == null)
             {
                 return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
@@ -245,7 +246,11 @@ namespace SuperManWebApi.Controllers
                 phoneNo = business.PhoneNo2 == null ? business.PhoneNo : business.PhoneNo2,
                 DistribSubsidy = business.DistribSubsidy == null ? 0 : business.DistribSubsidy
             };
-            return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.Success, result);
+             return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.Success, result);
+            */
+
+            return new BusinessProvider().PostLogin_B(model);
+
         }
 
         /// <summary>

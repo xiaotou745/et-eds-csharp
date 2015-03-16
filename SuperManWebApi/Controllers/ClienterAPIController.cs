@@ -731,7 +731,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="CityName">城市名称</param>
         /// <returns></returns>
         [HttpGet]
-        public string GetCustomerServicePhone(string CityName)
+        public Ets.Model.Common.ResultModelServicePhone GetCustomerServicePhone(string CityName)
         {
             return new ServicePhone().GetCustomerServicePhone(CityName);
         }

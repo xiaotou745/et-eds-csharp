@@ -143,17 +143,33 @@
         */
 
        
+        //$.ajax({
+        //    type: 'post',
+        //    dataType: 'json',
+        //    url: '/BusinessAPI/PostRegisterInfo_B',
+        //    data: {
+        //        city: '北京市',
+        //        CityId:"1",
+        //        phoneNo: '13426401621',
+        //        passWord:"123456",
+        //        verifyCode:"1234",
+        //        GroupId:0
+        //    },
+        //    success: function (data) {
+        //        console.log(data);
+        //    },
+        //    error: function () {
+
+        //    }
+        //});
+
         $.ajax({
             type: 'post',
             dataType: 'json',
-            url: '/BusinessAPI/PostRegisterInfo_B',
+            url: '/BusinessAPI/PostLogin_B',
             data: {
-                city: '北京市',
-                CityId:"1",
-                phoneNo: '13426401621',
-                passWord:"123456",
-                verifyCode:"1234",
-                GroupId:0
+                phoneNo: '13612345678',
+                passWord: "11733AB332773A418F55687306134FF2"
             },
             success: function (data) {
                 console.log(data);

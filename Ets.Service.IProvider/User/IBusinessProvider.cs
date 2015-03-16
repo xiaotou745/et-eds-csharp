@@ -48,5 +48,14 @@ namespace Ets.Service.IProvider.User
         /// <param name="model"></param>
         /// <returns></returns>
         ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(RegisterInfoModel model);
+
+        /// <summary>
+        /// B端登录
+        /// 窦海超
+        /// 2015年3月16日 16:11:59
+        /// </summary>
+        /// <param name="model">用户名，密码对象</param>
+        /// <returns>登录后返回实体对象</returns>
+        ResultModel<BusiLoginResultModel> PostLogin_B(LoginModel model);
     }
 }
