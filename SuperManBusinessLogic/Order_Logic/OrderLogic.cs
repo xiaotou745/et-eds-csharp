@@ -97,6 +97,8 @@ namespace SuperManBusinessLogic.Order_Logic
                 {
                     items = items.Where(p => p.business.GroupId == criteria.GroupId);
                 }
+                //订单查询 先按 状态排序 ，未接单的 放在前面
+                items = items.OrderBy(i => i.Status);
                 var pagedQuery = new OrderManage();
                 var orderModel = OrderModelTranslator.Instance.Translate(items.ToList());
                 resultModel = new PagedList<OrderModel>(orderModel, criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
