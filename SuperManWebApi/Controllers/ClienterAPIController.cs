@@ -28,6 +28,7 @@ namespace SuperManWebApi.Controllers
     public class ClienterAPIController : ApiController
     {
 
+        private static object lockHelper = new object();
         readonly Ets.Service.IProvider.Clienter.IClienterProvider iClienterProvider = new Ets.Service.Provider.Clienter.ClienterProvider();
         /// <summary>
         /// C端注册 
@@ -579,11 +580,14 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotExist);
             if (!ClienterLogic.clienterLogic().CheckOrderIsAllowRush(orderNo))  //查询订单是否被抢
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
-            bool bResult = ClienterLogic.clienterLogic().RushOrder(userId, orderNo);
-            if (bResult)
-                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Success);
-            else
-                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Failed);
+            lock (lockHelper)
+            {
+                bool bResult = ClienterLogic.clienterLogic().RushOrder(userId, orderNo);
+                if (bResult)
+                    return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Success);
+                else
+                    return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Failed);
+            }
         }
         /// <summary>
         /// 完成订单 edit by caoheyang 20150204
