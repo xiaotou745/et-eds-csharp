@@ -168,6 +168,10 @@ namespace SuperManWebApi.Models.Clienter
         /// 送餐时间
         /// </summary>
         public DateTime SongCanDate { get; set; }
+        /// <summary>
+        /// 订单类型 1送餐订单  2取餐盒订单
+        /// </summary>
+        public int OrderType { get; set; }
     }
     public class degree
     {
