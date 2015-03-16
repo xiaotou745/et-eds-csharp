@@ -17,6 +17,7 @@ namespace Ets.Service.Provider.Order
 {
     public class OrderProvider : IOrderProvider
     {
+        OrderDao OrderDao = new OrderDao();
         #region 获取订单
         /// <summary>
         /// 获取订单
