@@ -19,6 +19,7 @@ namespace Ets.Dao.User
 {
     public class BusinessDao : DaoBase
     {
+
         /// <summary>
         /// 商户获取订单   add by caoheyang 20150311
         /// </summary>
@@ -166,6 +167,8 @@ namespace Ets.Dao.User
             }
             return list;
         }
+
+
         /// <summary>
         /// 设置结算比例-平扬 2015.3.12
         /// </summary>
@@ -193,5 +196,8 @@ namespace Ets.Dao.User
             return reslut;
 
         }
+
+
+
     }
 }

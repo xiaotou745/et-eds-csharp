@@ -136,6 +136,17 @@ namespace Ets.Service.Provider.User
             return strBuilder.ToString();
         }
 
-      
+
+        /// <summary>
+        /// B端注册 
+        /// 窦海超
+        /// 2015年3月16日 10:19:45
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public Model.DataModel.Bussiness.BusiRegisterResultModel PostRegisterInfo_B(Model.ParameterModel.Bussiness.RegisterInfoModel model)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
