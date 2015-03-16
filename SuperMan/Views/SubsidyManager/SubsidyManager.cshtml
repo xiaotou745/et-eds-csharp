@@ -24,12 +24,14 @@
                     <dl>
                         <dt>
                             <i> </i>&nbsp;&nbsp;集团信息:
-                            @Html.DropDownList("AddGroupId", new SelectList(GroupLogic.groupLogic().GetGroups(), "Id", "GroupName"), "--无--", new { style = "width:155px" });
+                            @Html.DropDownList("AddGroupId", new SelectList(GroupLogic.groupLogic().GetGroups(), "Id", "GroupName"), "--无--", new { style = "width:155px" })
                         </dt>
                     </dl>
                 }
                 <dl>
-                    <dt><i>* </i>订单佣金: <input id="txtOrderCommission" name="txtOrderCommission" type="text" />% <text id="labOrderCommission" style="color:red" hidden="hidden">不能为空</text></dt>
+                    <dt><i>* </i>订单佣金(%): <input id="txtOrderCommission" name="txtOrderCommission" type="text" />
+                    <text id="labOrderCommission" style="color:red" hidden="hidden">不能为空</text>
+                    </dt>
                 </dl>
             </div>
             <div>
@@ -63,8 +65,8 @@
                 <th>开始日期</th>
                 <th>结束日期</th>
                 <th>所属集团</th>
-                <th>每公里费用</th>
-                <th>订单类型</th>
+                @*<th>每公里费用</th>
+                <th>订单类型</th>*@
             </tr>
         </thead>
         <tbody>
@@ -85,7 +87,7 @@
                                 @Html.Raw(GroupLogic.groupLogic().GetGroupName(Convert.ToInt32(item.GroupId)))
                             }
                         </td>
-                        <td>@item.PKMCost</td>
+                        @*<td>@item.PKMCost</td>
                        
                             @{
                     var orderTypeName = "";
@@ -102,7 +104,7 @@
                         orderTypeName = "";
                     }
                     <td>@orderTypeName</td>
-                            }                        
+                            }*@                        
                     </tr>
                 }
             }
@@ -115,23 +117,23 @@
         $('#selectDateStart').datepicker();
         $('#selectDateEnd').datepicker();
 
-        //$('#subsidyForm').validate({
-        //    rules: {
-        //        txtOrderCommission: "required",
-        //        txtDistribSubsidy: "required",
-        //        txtWebsiteSubsidy: "required",
-        //        selectDateStart: "required",
-        //        selectDateEnd: "required",
-        //    },
-        //    messages: {
-        //    txtOrderCommission: "不能为空",
-        //    txtDistribSubsidy: "不能为空",
-        //    }
-        //});
+        $('#subsidyForm').validate({
+            rules: {
+                txtOrderCommission: "required",
+                //txtDistribSubsidy: "required",
+                txtWebsiteSubsidy: "required",
+                selectDateStart: "required",
+                selectDateEnd: "required",
+            },
+            messages: {
+            txtOrderCommission: "不能为空",
+            //txtDistribSubsidy: "不能为空",
+            }
+        });
     });
     $("#btnSave").click(function () {
         var OrderCommission = $('#txtOrderCommission').val();
-        var DistribSubsidy = $('#txtDistribSubsidy').val();
+        //var DistribSubsidy = $('#txtDistribSubsidy').val();
         var WebsiteSubsidy = $('#txtWebsiteSubsidy').val();
         var startDate = $('#selectDateStart').val();
         var endDate = $('#selectDateEnd').val();
@@ -140,10 +142,10 @@
             $('#labOrderCommission').show();
             return false;
         }
-        if (DistribSubsidy == "" || DistribSubsidy == null) {
-            $('#labDistribSubsidy').show();
-            return false;
-        }
+        //if (DistribSubsidy == "" || DistribSubsidy == null) {
+        //    $('#labDistribSubsidy').show();
+        //    return false;
+        //}
         if (WebsiteSubsidy == "" || WebsiteSubsidy == null) {
             $('#labWebsiteSubsidy').show();
             return false;
@@ -161,7 +163,7 @@
             return false;
         }
         var paramaters = {
-            "OrderCommission": OrderCommission, "DistribSubsidy": DistribSubsidy, "WebsiteSubsidy": WebsiteSubsidy, "StartDate": startDate, "EndDate": endDate
+            "OrderCommission": OrderCommission, "WebsiteSubsidy": WebsiteSubsidy, "StartDate": startDate, "EndDate": endDate
         ,"groupId":groupId};
 
         var url = "/SubsidyManager/Save";
@@ -183,9 +185,9 @@
         $('#txtOrderCommission').val().replace(/[^\d.]/g, '');
         $('#labOrderCommission').hide();
     });
-    $('#txtDistribSubsidy').keyup(function () {
-        $('#labDistribSubsidy').hide();
-    });
+    //$('#txtDistribSubsidy').keyup(function () {
+    //    $('#labDistribSubsidy').hide();
+    //});
     $('#txtWebsiteSubsidy').keyup(function () {
         $('#labWebsiteSubsidy').hide();
     });

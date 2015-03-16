@@ -34,7 +34,7 @@ namespace Ets.Service.Provider.Order
                 if (from.clienterId != null)
                     resultModel.userId = from.clienterId.Value;
                 resultModel.OrderNo = from.OrderNo;
-
+                resultModel.OrderCount = from.OrderCount;
                 var orderComm = new OrderCommission() { Amount = from.Amount, CommissionRate = from.CommissionRate, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount, WebsiteSubsidy = from.WebsiteSubsidy };
                 var income = OrderCommissionProvider.GetCurrenOrderCommission(orderComm);
                 var amount = OrderCommissionProvider.GetCurrenOrderPrice(orderComm);
@@ -58,32 +58,36 @@ namespace Ets.Service.Provider.Order
                 resultModel.receviceAddress = from.ReceviceAddress;
                 resultModel.recevicePhone = from.RecevicePhoneNo;
                 resultModel.IsPay = from.IsPay.Value;
-                resultModel.Remark = from.Remark;
-                resultModel.Status = from.Status.Value;
-                if (from.BusiLatitude.Value != null && from.BusiLongitude.Value != null)
+                resultModel.Remark = from.Remark == null ?"":from.Remark;
+                resultModel.Status = from.Status.Value; 
+ 
+                if (from.BusiLatitude == null || from.BusiLatitude == 0 || from.BusiLongitude == null || from.BusiLongitude == 0)
                 {
-                    var degree1 = new Degree(degree.longitude, degree.latitude);
-                    var degree2 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);
-
-                    var dTmp = CoordDispose.GetDistanceGoogle(degree1, degree2) / 1000;
-                    var sTmp = dTmp.ToString("f2");
-                    resultModel.distance = sTmp;
+                    resultModel.distance = "--";
+                    resultModel.distanceB2R = "--";
                 }
                 else
-                    resultModel.distance = "0.0";
-                if (from.BusiLatitude.Value != null && from.BusiLongitude.Value != null && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
                 {
-                    var d1 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);
-                    var d2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);
-                    var dTmp = CoordDispose.GetDistanceGoogle(d1, d2) / 1000;
-                    var sTmp = dTmp.ToString("f2");
-
-                    resultModel.distanceB2R = sTmp;
-                }
-                else
-                { 
-                    resultModel.distanceB2R = "0.0"; 
-                }
+                    if (degree.longitude == 0 || degree.latitude == 0)
+                        resultModel.distance = "--";
+                    else //计算超人当前到商户的距离
+                    {
+                        Degree degree1 = new Degree(degree.longitude, degree.latitude);   //超人当前的经纬度
+                        Degree degree2 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value); ; //商户经纬度
+                        double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
+                        resultModel.distance = res < 1000 ? (res.ToString("f2") + "m") : ((res / 1000).ToString("f2") + "km");
+                    }
+                    if ( from.ReceviceLongitude != null && from.ReceviceLatitude != null
+                        && from.ReceviceLongitude != 0 && from.ReceviceLatitude != 0)  //计算商户到收货人的距离
+                    {
+                        Degree degree1 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);  //商户经纬度
+                        Degree degree2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);  //收货人经纬度
+                        double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
+                        resultModel.distanceB2R = res < 1000 ? (res.ToString("f2") + "m") : ((res / 1000).ToString("f2") + "km");
+                    }
+                    else
+                        resultModel.distanceB2R = "--";
+                }        
                 list.Add(resultModel);
             }
             return list;
@@ -102,7 +106,7 @@ namespace Ets.Service.Provider.Order
                 if (from.clienterId != null)
                     resultModel.userId = from.clienterId.Value;
                 resultModel.OrderNo = from.OrderNo;
-
+                resultModel.OrderCount = from.OrderCount;
                 var orderComm = new OrderCommission() { Amount = from.Amount, CommissionRate = from.CommissionRate, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount, WebsiteSubsidy = from.WebsiteSubsidy };
                 var income = OrderCommissionProvider.GetCurrenOrderCommission(orderComm);
                 var amount = OrderCommissionProvider.GetCurrenOrderPrice(orderComm);
@@ -128,33 +132,40 @@ namespace Ets.Service.Provider.Order
                 resultModel.IsPay = from.IsPay.Value;
                 resultModel.Remark = from.Remark;
                 resultModel.Status = from.Status.Value;
-                if (from.BusiLatitude.Value != null && from.BusiLongitude.Value != null)
-                {
-                    var degree1 = new Degree(degree.longitude, degree.latitude);
-                    var degree2 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);
 
-                    var dTmp = CoordDispose.GetDistanceGoogle(degree1, degree2) / 1000;
-                    var sTmp = dTmp.ToString("f2");
-                    resultModel.distance = sTmp;
-                }
-                else
-                    resultModel.distance = "0.0";
-                if (from.BusiLatitude.Value != null && from.BusiLongitude.Value != null && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
-                {
-                    var d1 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);
-                    var d2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);
-                    var dTmp = CoordDispose.GetDistanceGoogle(d1, d2) / 1000;
-                    var sTmp = dTmp.ToString("f2");
 
-                    resultModel.distanceB2R = sTmp;
+                if (from.BusiLatitude == null || from.BusiLatitude == 0 || from.BusiLongitude == null || from.BusiLongitude == 0)
+                {
+                    resultModel.distance = "--";
+                    resultModel.distanceB2R = "--";
                 }
                 else
                 {
-                    resultModel.distanceB2R = "0.0";
-                }
+                    if (degree.longitude == 0 || degree.latitude == 0)
+                        resultModel.distance = "--";
+                    else //计算超人当前到商户的距离
+                    {
+                        Degree degree1 = new Degree(degree.longitude, degree.latitude);   //超人当前的经纬度
+                        Degree degree2 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value); ; //商户经纬度
+                        double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
+                        resultModel.distance = res < 1000 ? (res.ToString("f2") + "m") : ((res / 1000).ToString("f2") + "km");
+                    }
+                    if (from.ReceviceLongitude != null && from.ReceviceLatitude != null
+                        && from.ReceviceLongitude != 0 && from.ReceviceLatitude != 0)  //计算商户到收货人的距离
+                    {
+                        Degree degree1 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);  //商户经纬度
+                        Degree degree2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);  //收货人经纬度
+                        double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
+                        resultModel.distanceB2R = res < 1000 ? (res.ToString("f2") + "m") : ((res / 1000).ToString("f2") + "km");
+                    }
+                    else
+                        resultModel.distanceB2R = "--";
+                } 
+
+
                 list.Add(resultModel);
             }
             return list;
-        }        
-    }
+        }  
+    } 
 }

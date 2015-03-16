@@ -7,6 +7,7 @@ using Ets.Service.IProvider.User;
 using ETS.Data.PageData;
 using System;
 using System.Collections.Generic;
+using CalculateCommon;
 
 namespace Ets.Service.Provider.User
 {
@@ -22,9 +23,43 @@ namespace Ets.Service.Provider.User
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public virtual PageInfo<T> GetOrdersApp<T>(Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp paraModel)
+        public IList<BusiGetOrderModel> GetOrdersApp(Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp paraModel)
         {
-            return new BusinessDao().GetOrdersAppToSql<T>(paraModel);
+            PageInfo<BusiOrderSqlModel> pageinfo= dao.GetOrdersAppToSql<BusiOrderSqlModel>(paraModel);
+            IList<BusiOrderSqlModel> list = pageinfo.Records;
+
+            List<BusiGetOrderModel> listOrder = new List<BusiGetOrderModel>();
+            foreach (BusiOrderSqlModel from in list)
+            {
+                BusiGetOrderModel model = new BusiGetOrderModel();
+                model.ActualDoneDate = from.ActualDoneDate;
+                model.Amount = from.Amount;
+                model.IsPay = from.IsPay;
+                model.OrderNo = from.OrderNo;
+                model.PickUpAddress = from.PickUpAddress;
+                if (from.PubDate != null)
+                {
+                    model.PubDate = from.PubDate;
+                }
+                    model.PickUpName =from.BusinessName;
+                model.ReceviceAddress = from.ReceviceAddress;
+                model.ReceviceName = from.ReceviceName;
+                model.RecevicePhoneNo = from.RecevicePhoneNo;
+                    model.Remark = from.Remark;
+                model.Status = from.Status;
+                model.superManName = from.SuperManName;
+                model.superManPhone = from.SuperManPhone;
+                if (from.BusinessId>0 && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
+                {
+                    var d1 = new Degree(from.Longitude.Value, from.Latitude.Value);
+                    var d2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);
+                    model.distanceB2R = CoordDispose.GetDistanceGoogle(d1, d2);
+                }
+                else
+                    model.distanceB2R = 0;
+                listOrder.Add(model);
+            }
+            return listOrder;
         }
 
         /// <summary>
@@ -34,9 +69,9 @@ namespace Ets.Service.Provider.User
         /// <param name="t2"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        public ResultInfo<IList<BusinessCommissionModel>> GetBusinessCommission(DateTime t1, DateTime t2, string name,int groupid)
-        { 
-            var result=new ResultInfo<IList<BusinessCommissionModel>> {Data = null, Result = false, Message = ""};
+        public ResultInfo<IList<BusinessCommissionModel>> GetBusinessCommission(DateTime t1, DateTime t2, string name, int groupid)
+        {
+            var result = new ResultInfo<IList<BusinessCommissionModel>> { Data = null, Result = false, Message = "" };
             try
             {
                 if (t1 > t2)
@@ -45,7 +80,7 @@ namespace Ets.Service.Provider.User
                     result.Message = "开始时间不能大于结束时间";
                     return result;
                 }
-                var list = dao.GetBusinessCommission(t1, t2, name,groupid);
+                var list = dao.GetBusinessCommission(t1, t2, name, groupid);
                 if (list != null && list.Count > 0)
                 {
                     result.Data = list;
@@ -76,7 +111,7 @@ namespace Ets.Service.Provider.User
         /// </summary>
         /// <returns></returns>
         public string CreateExcel(BusinessCommissionModel paraModel)
-        { 
+        {
             StringBuilder strBuilder = new StringBuilder();
             strBuilder.AppendLine("<table border=1 cellspacing=0 cellpadding=5 rules=all>");
             //输出表头.
@@ -99,12 +134,8 @@ namespace Ets.Service.Provider.User
             strBuilder.AppendLine(string.Format("<td>{0}</td></tr>", paraModel.TotalAmount));
             strBuilder.AppendLine("</table>");
             return strBuilder.ToString();
-        } 
-        public IList<int> GetOrdersApp()
-        {
-            throw new NotImplementedException();
         }
 
-        
+      
     }
 }

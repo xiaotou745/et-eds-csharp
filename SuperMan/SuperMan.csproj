@@ -520,8 +520,6 @@
     <Content Include="Views\HomeCount\_PartialBisuCount.cshtml" />
     <Content Include="Views\UploadTest\Index.cshtml" />
     <Content Include="Views\BusinessCommission\BusinessCommission.cshtml" />
-    <Content Include="Views\SubsidyManager\SettlementFunction.cshtml" />
-    <Content Include="Views\SubsidyManager\_SettlementFunctionList.cshtml" />
     <Content Include="Views\AdminTools\AdminTools.cshtml" />
     <Content Include="Views\AdminTools\_AdminToolsList.cshtml" />
   </ItemGroup>

@@ -85,7 +85,7 @@
                     }
                 </li>
                 <li>
-                    @if (UserContext.Current.HasAuthority(AuthorityNames.BusiView) || UserContext.Current.HasAuthority(AuthorityNames.BusiAudit))
+                    @if (UserContext.Current.HasAuthority(AuthorityNames.BusiView) || UserContext.Current.HasAuthority(AuthorityNames.BusiAudit) || UserContext.Current.HasAuthority(AuthorityNames.BusiCommi))
                     {
                         <a class="dropdown-toggle" href="javascript:void(0);">
                             <i class="skuicon"></i>
@@ -122,10 +122,8 @@
                             <span class="menu-text">补贴设置</span>
                             <b class="arrow icon-angle-down"></b>
                         </a>
-                        <ul class="submenu">
-
+                        <ul class="submenu"> 
                             <li><a href="/SubsidyManager/SubsidyManager" data-url-def="#">补贴设置</a></li>
-                            <li><a href="/SubsidyManager/SettlementFunction" data-url-def="#">结算功能</a></li>
                         </ul>
                     }
                 </li>

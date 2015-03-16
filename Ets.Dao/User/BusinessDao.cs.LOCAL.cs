@@ -34,7 +34,7 @@ namespace Ets.Dao.User
             {
                 if (paraModel.Status == 4)
                 {
-                    whereStr += " and (o.Status = " + OrderConst.ORDER_NEW  + " or o.Status=" + OrderConst.ORDER_ACCEPT + ")";
+                    whereStr += " and (o.Status=" + OrderConst.ORDER_NEW + " or " + " o.Status=" + OrderConst.ORDER_ACCEPT + ")";
                 }
                 else
                 {
@@ -66,9 +66,9 @@ namespace Ets.Dao.User
                                     b.Name as PickUpName,
                                     c.TrueName as SuperManName,
                                     c.PhoneNo as SuperManPhone ";
-            string tableList = @" [order](nolock) as o 
-                                   LEFT join business(nolock) as b on o.businessId=b.Id
-                                   LEFT join clienter(nolock) as c on o.clienterId=c.Id ";  //表名
+            string tableList = @" [order](nolock) as o
+                                    join business(nolock) as b on o.businessId=b.Id
+                                    join clienter(nolock) as c on o.clienterId=c.Id ";  //表名
 
             return new PageHelper().GetPages<T>(SuperMan_Read, paraModel.PagingResult.PageIndex, whereStr, orderByColumn, columnList, tableList, paraModel.PagingResult.PageSize, true);
         }

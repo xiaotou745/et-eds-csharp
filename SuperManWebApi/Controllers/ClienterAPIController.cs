@@ -28,6 +28,7 @@ namespace SuperManWebApi.Controllers
     public class ClienterAPIController : ApiController
     {
 
+        private static object lockHelper = new object();
         readonly Ets.Service.IProvider.Clienter.IClienterProvider iClienterProvider = new Ets.Service.Provider.Clienter.ClienterProvider();
         /// <summary>
         /// C端注册 
@@ -204,35 +205,35 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [ActionStatus(typeof(GetOrdersStatus))]
-        [HttpPost]
-        public ResultModel<ClientOrderResultModel[]> GetJobList_C(ClientOrderInfoModel model)
-        {
-            degree.longitude = model.longitude;
-            degree.latitude = model.latitude;
-            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
-            var pSize = model.pageSize.HasValue ? model.pageSize.Value : 20;
-            var criteria = new ClientOrderSearchCriteria()
-            {
-                PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
-                userId = model.userId,
-                status = model.status,
-                isLatest = model.isLatest,
-                city = string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
-                cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim()
-            };
+        //[ActionStatus(typeof(GetOrdersStatus))]
+        //[HttpPost]
+        //public ResultModel<ClientOrderResultModel[]> GetJobList_C(ClientOrderInfoModel model)
+        //{
+        //    degree.longitude = model.longitude;
+        //    degree.latitude = model.latitude;
+        //    var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
+        //    var pSize = model.pageSize.HasValue ? model.pageSize.Value : 20;
+        //    var criteria = new ClientOrderSearchCriteria()
+        //    {
+        //        PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
+        //        userId = model.userId,
+        //        status = model.status,
+        //        isLatest = model.isLatest,
+        //        city = string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
+        //        cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim()
+        //    };
 
-            var pagedList = ClienterLogic.clienterLogic().GetOrders(criteria);
-            var lists = ClientOrderResultModelTranslator.Instance.Translate(pagedList);
+        //    var pagedList = ClienterLogic.clienterLogic().GetOrders(criteria);
+        //    var lists = ClientOrderResultModelTranslator.Instance.Translate(pagedList);
              
 
-            //if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
-            //{
-            lists = lists.OrderBy(i => i.distance).ToList();
-            //}
+        //    //if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
+        //    //{
+        //    lists = lists.OrderBy(i => i.distance).ToList();
+        //    //}
 
-            return ResultModel<ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, lists.ToArray());
-        }
+        //    return ResultModel<ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, lists.ToArray());
+        //}
 
         /// <summary>
         /// 获取我的任务   根据状态判断是已完成任务还是我的任务
@@ -243,10 +244,11 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]> GetMyJobList_C(ClientOrderInfoModel model)
         {
-            degree.longitude = model.longitude;
-            degree.latitude = model.latitude;
+            Ets.Model.DomainModel.Clienter.degree.longitude = model.longitude;
+            Ets.Model.DomainModel.Clienter.degree.latitude = model.latitude;
             var pIndex = ParseHelper.ToInt(model.pageIndex, 1);
-            var pSize = ParseHelper.ToInt(model.pageSize, 10);
+            pIndex = pIndex <= 0 ? 1 : pIndex;
+            var pSize = ParseHelper.ToInt(model.pageSize, 100);
 
             var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
             {
@@ -269,27 +271,27 @@ namespace SuperManWebApi.Controllers
         /// 未登录时获取最新任务     登录未登录根据城市有没有值判断。
         /// </summary>
         /// <returns></returns>
-        [ActionStatus(typeof(GetOrdersNoLoginStatus))]
-        [HttpGet]
-        public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListNoLoginLatest_C()
-        {
-            ClientOrderInfoModel model = new ClientOrderInfoModel();
-            model.city = string.IsNullOrWhiteSpace(HttpContext.Current.Request["city"]) ? null : HttpContext.Current.Request["city"].Trim();//城市
-            model.cityId = string.IsNullOrWhiteSpace(HttpContext.Current.Request["cityId"]) ? null : HttpContext.Current.Request["cityId"].Trim(); //城市编码
-            degree.longitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["longitude"]);
-            degree.latitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["latitude"]);
-            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
-            var pSize = model.pageSize.HasValue ? model.pageSize.Value : 20;
-            ClientOrderSearchCriteria criteria = new ClientOrderSearchCriteria()
-            {
-                PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
-                city = model.city,
-                cityId = model.cityId
-            };
-            var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLoginLatest(criteria);
-            var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
-            return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
-        }
+        //[ActionStatus(typeof(GetOrdersNoLoginStatus))]
+        //[HttpGet]
+        //public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListNoLoginLatest_C()
+        //{
+        //    ClientOrderInfoModel model = new ClientOrderInfoModel();
+        //    model.city = string.IsNullOrWhiteSpace(HttpContext.Current.Request["city"]) ? null : HttpContext.Current.Request["city"].Trim();//城市
+        //    model.cityId = string.IsNullOrWhiteSpace(HttpContext.Current.Request["cityId"]) ? null : HttpContext.Current.Request["cityId"].Trim(); //城市编码
+        //    degree.longitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["longitude"]);
+        //    degree.latitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["latitude"]);
+        //    var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
+        //    var pSize = model.pageSize.HasValue ? model.pageSize.Value : 20;
+        //    ClientOrderSearchCriteria criteria = new ClientOrderSearchCriteria()
+        //    {
+        //        PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
+        //        city = model.city,
+        //        cityId = model.cityId
+        //    };
+        //    var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLoginLatest(criteria);
+        //    var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
+        //    return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
+        //}
 
 
         /// <summary>
@@ -298,37 +300,37 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        //[ActionStatus(typeof(GetOrdersStatus))]
-        //[HttpPost]
-        //public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]> GetJobList_C_WangChao(Ets.Model.ParameterModel.Clienter.ClientOrderInfoModel model)
-        //{
-        //    Ets.Model.DomainModel.Clienter.degree.longitude = model.longitude;
-        //    Ets.Model.DomainModel.Clienter.degree.latitude = model.latitude;
-        //    var pIndex = ParseHelper.ToInt( model.pageIndex.Value , 0);
-        //    var pSize = ParseHelper.ToInt( model.pageSize.Value , 20);
-        //    var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
-        //    {
-        //        PagingRequest = new ETS.Util.PagingResult(pIndex, pSize),
-        //        userId = model.userId,
-        //        status = model.status,
-        //        isLatest = model.isLatest,
-        //        city = string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
-        //        cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim()
-        //    };
-             
-        //    var pagedList = new Ets.Service.Provider.Order.OrderProvider().GetOrders(criteria);
-             
-        //    if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
-        //    {
-        //        pagedList = pagedList.OrderBy(i => i.distance).ToList();
-        //    }
-        //    else
-        //    {
-        //        pagedList = pagedList.OrderByDescending(i => i.pubDate).ToList();
-        //    }
+        [ActionStatus(typeof(GetOrdersStatus))]
+        [HttpPost]
+        public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]> GetJobList_C(Ets.Model.ParameterModel.Clienter.ClientOrderInfoModel model)
+        {
+            Ets.Model.DomainModel.Clienter.degree.longitude = model.longitude;
+            Ets.Model.DomainModel.Clienter.degree.latitude = model.latitude;
+            var pIndex = ParseHelper.ToInt(model.pageIndex, 1);
+            var pSize = ParseHelper.ToInt(model.pageSize, 20);
+            var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
+            {
+                PagingRequest = new Ets.Model.Common.PagingResult(pIndex, pSize),
+                userId = model.userId,
+                status = model.status,
+                isLatest = model.isLatest,
+                city = string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
+                cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim()
+            };
 
-        //    return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, pagedList.ToArray());
-        //}
+            var pagedList = new Ets.Service.Provider.Order.OrderProvider().GetOrders(criteria);
+
+            if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
+            {
+                pagedList = pagedList.OrderBy(i => i.distance).ToList();
+            }
+            else
+            {
+                pagedList = pagedList.OrderByDescending(i => i.pubDate).ToList();
+            }
+
+            return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, pagedList.ToArray());
+        }
          
 
 
@@ -337,29 +339,29 @@ namespace SuperManWebApi.Controllers
         /// 未登录时获取最新任务     登录未登录根据城市有没有值判断。
         /// </summary>
         /// <returns></returns>
-        //[ActionStatus(typeof(GetOrdersNoLoginStatus))]
-        //[HttpGet]
-        //public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderNoLoginResultModel[]> GetJobListNoLoginLatest_C_WangChao()
-        //{
-        //    Ets.Model.ParameterModel.Clienter.ClientOrderInfoModel model = new Ets.Model.ParameterModel.Clienter.ClientOrderInfoModel();
-        //    model.city = string.IsNullOrWhiteSpace(HttpContext.Current.Request["city"]) ? null : HttpContext.Current.Request["city"].Trim();//城市
-        //    model.cityId = string.IsNullOrWhiteSpace(HttpContext.Current.Request["cityId"]) ? null : HttpContext.Current.Request["cityId"].Trim(); //城市编码
-        //    Ets.Model.DomainModel.Clienter.degree.longitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["longitude"]);
-        //    Ets.Model.DomainModel.Clienter.degree.latitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["latitude"]);
-        //    var pIndex = ParseHelper.ToInt(model.pageIndex.Value, 0);
-        //    var pSize = ParseHelper.ToInt( model.pageSize.Value , 20);
-        //    var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
-        //    {
-        //        PagingRequest = new ETS.Util.PagingResult(pIndex, pSize),
-        //        city = model.city,
-        //        cityId = model.cityId
-        //    };
-        //    var pagedList = new Ets.Service.Provider.Order.OrderProvider().GetOrdersNoLoginLatest(criteria);
-        //    //var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLoginLatest(criteria);
-        //    //var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
+        [ActionStatus(typeof(GetOrdersNoLoginStatus))]
+        [HttpGet]
+        public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderNoLoginResultModel[]> GetJobListNoLoginLatest_C()
+        {
+            Ets.Model.ParameterModel.Clienter.ClientOrderInfoModel model = new Ets.Model.ParameterModel.Clienter.ClientOrderInfoModel();
+            model.city = string.IsNullOrWhiteSpace(HttpContext.Current.Request["city"]) ? null : HttpContext.Current.Request["city"].Trim();//城市
+            model.cityId = string.IsNullOrWhiteSpace(HttpContext.Current.Request["cityId"]) ? null : HttpContext.Current.Request["cityId"].Trim(); //城市编码
+            Ets.Model.DomainModel.Clienter.degree.longitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["longitude"]);
+            Ets.Model.DomainModel.Clienter.degree.latitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["latitude"]);
+            var pIndex = ParseHelper.ToInt(model.pageIndex, 1);
+            var pSize = ParseHelper.ToInt(model.pageSize, 20);
+            var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
+            {
+                PagingRequest = new Ets.Model.Common.PagingResult(pIndex, pSize),
+                city = model.city,
+                cityId = model.cityId
+            };
+            var pagedList = new Ets.Service.Provider.Order.OrderProvider().GetOrdersNoLoginLatest(criteria);
+            //var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLoginLatest(criteria);
+            //var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
 
-        //    return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, pagedList.ToArray());
-        //}
+            return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, pagedList.ToArray());
+        }
 
 
         /// <summary>
@@ -578,11 +580,14 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotExist);
             if (!ClienterLogic.clienterLogic().CheckOrderIsAllowRush(orderNo))  //查询订单是否被抢
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
-            bool bResult = ClienterLogic.clienterLogic().RushOrder(userId, orderNo);
-            if (bResult)
-                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Success);
-            else
-                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Failed);
+            lock (lockHelper)
+            {
+                bool bResult = ClienterLogic.clienterLogic().RushOrder(userId, orderNo);
+                if (bResult)
+                    return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Success);
+                else
+                    return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Failed);
+            }
         }
         /// <summary>
         /// 完成订单 edit by caoheyang 20150204
