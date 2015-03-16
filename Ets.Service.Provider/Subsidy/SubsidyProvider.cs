@@ -14,11 +14,10 @@ namespace Ets.Service.Provider.Subsidy
     {
         private SubsidyDao subsidyDao = new SubsidyDao();
         public SubsidyResultModel GetCurrentSubsidy(int groupId = 0)
-        {
-            SubsidyResultModel sidyModel = new SubsidyResultModel();
+        { 
             var subsidyResultModel = subsidyDao.GetCurrentSubsidy(groupId);
 
-            return sidyModel;
+            return subsidyResultModel;
 
         }
     }

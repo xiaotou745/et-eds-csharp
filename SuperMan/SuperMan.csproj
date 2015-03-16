@@ -183,6 +183,7 @@
     <Compile Include="Controllers\AuthorityManagerController.cs" />
     <Compile Include="Controllers\BusinessController.cs" />
     <Compile Include="Controllers\BusinessManagerController.cs" />
+    <Compile Include="Controllers\DownloadController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HomeCountController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -526,6 +527,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="uploads\" />
+    <Folder Include="Views\Download\" />
     <Folder Include="Views\Test\" />
   </ItemGroup>
   <ItemGroup>
