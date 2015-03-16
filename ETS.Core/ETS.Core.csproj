@@ -73,6 +73,8 @@
     <Compile Include="Config.cs" />
     <Compile Include="Const\ClienterConst.cs" />
     <Compile Include="Enums\ClienterEnum.cs" />
+    <Compile Include="Enums\EnumStatusType.cs" />
+    <Compile Include="Enums\CustomerRegisterStatusEnum.cs" />
     <Compile Include="Expand\ActionStatusAttribute.cs" />
     <Compile Include="Const\OrderConst.cs" />
     <Compile Include="Expand\AttribDescription.cs" />
@@ -113,6 +115,7 @@
     <Compile Include="Util\EnumItem.cs" />
     <Compile Include="Util\EnumUtils.cs" />
     <Compile Include="Util\Excel.cs" />
+    <Compile Include="Util\Helper.cs" />
     <Compile Include="Util\IEnumItem.cs" />
     <Compile Include="Util\ITranslator.cs" />
     <Compile Include="Util\Log.cs" />
@@ -120,6 +123,9 @@
     <Compile Include="Util\MailUtils.cs" />
     <Compile Include="Util\ParseHelper.cs" />
     <Compile Include="Util\TranslatorBase.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="MyPush\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

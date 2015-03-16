@@ -39,7 +39,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\ConstValues.cs" />
     <Compile Include="Common\PagedList.cs" />
+    <Compile Include="Common\ResultModelServicePhone.cs" />
+    <Compile Include="DataModel\Bussiness\BusiLoginResultModel.cs" />
     <Compile Include="DataModel\Bussiness\BusiRegisterResultModel.cs" />
     <Compile Include="DataModel\Group\GroupModel.cs" />
     <Compile Include="DataModel\Order\OrderCommission.cs" />
@@ -49,18 +52,22 @@
     <Compile Include="DomainModel\Clienter\ClientOrderModel.cs" />
     <Compile Include="DataModel\Clienter\Clienter.cs" />
     <Compile Include="DataModel\Order\Order.cs" />
-    <Compile Include="DataModel\Order\business.cs" />
+    <Compile Include="DataModel\Bussiness\business.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessCommissionModel.cs" />
     <Compile Include="DomainModel\Bussiness\BusiGetOrderModel.cs" />
     <Compile Include="Common\ResultModel.cs" />
     <Compile Include="DomainModel\Clienter\ClientOrderResultModel.cs" />
     <Compile Include="DomainModel\Group\GroupApiConfigModel.cs" />
+    <Compile Include="DomainModel\Subsidy\SubsidyResultModel.cs" />
+    <Compile Include="ParameterModel\Bussiness\BusiOrderInfoModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BussOrderParaModelApp.cs" />
+    <Compile Include="ParameterModel\Bussiness\LoginModel.cs" />
     <Compile Include="ParameterModel\Bussiness\RegisterInfoModel.cs" />
     <Compile Include="ParameterModel\Clienter\ChangeWorkStatusPM.cs" />
     <Compile Include="ParameterModel\Clienter\ClientOrderInfoModel.cs" />
     <Compile Include="ParameterModel\Group\GroupListModel.cs" />
     <Compile Include="ParameterModel\Group\GroupParaModel.cs" />
+    <Compile Include="ParameterModel\Order\BusiOrderResultModel.cs" />
     <Compile Include="ParameterModel\Order\ClientOrderInfoModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserModel.cs" />

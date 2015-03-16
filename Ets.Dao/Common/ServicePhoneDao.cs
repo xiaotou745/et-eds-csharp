@@ -13,6 +13,8 @@ namespace Ets.Dao.Common
     {
         /// <summary>
         /// 获取所有客服电话
+        /// 窦海超
+        /// 2015年3月16日 13:35:29
         /// </summary>
         /// <returns></returns>
         public DataTable GetCustomerServicePhone()

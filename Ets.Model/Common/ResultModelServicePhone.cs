@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ets.Model.DataModel.Order
+namespace Ets.Model.Common
 {
-    public class business
+    public class ResultModelServicePhone
     {
+        public string Phone { get; set; }
     }
 }

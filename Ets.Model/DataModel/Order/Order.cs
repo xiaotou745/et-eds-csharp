@@ -53,8 +53,6 @@ namespace Ets.Model.DataModel.Order
         public string PickUpCity { get; set; }
 
         public Nullable<double> BusiLongitude { get; set; }
-        public Nullable<double> BusiLatitude { get; set; }
-
-        
+        public Nullable<double> BusiLatitude { get; set; } 
     }
 }
