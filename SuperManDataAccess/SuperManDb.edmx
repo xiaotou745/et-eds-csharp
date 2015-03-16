@@ -275,7 +275,7 @@
           <Property Name="EndDate" Type="datetime" Precision="0" />
           <Property Name="Status" Type="tinyint" />
           <Property Name="GroupId" Type="int" />
-          <Property Name="PKMCost" Type="double" />
+          <Property Name="PKMCost" Type="decimal" Precision="5" Scale="2" />
           <Property Name="OrderType" Type="int" />
         </EntityType>
         <Association Name="accountId">
@@ -367,7 +367,6 @@
           <EntitySet Name="pushmessage" EntityType="supermanModel.pushmessage" />
           <EntitySet Name="pushmessagestatus" EntityType="supermanModel.pushmessagestatus" />
           <EntitySet Name="region" EntityType="supermanModel.region" />
-          <EntitySet Name="subsidy" EntityType="supermanModel.subsidy" />
           <AssociationSet Name="accountId" Association="supermanModel.accountId">
             <End Role="account" EntitySet="account" />
             <End Role="accountauthority" EntitySet="accountauthority" />
@@ -381,6 +380,7 @@
             <End Role="business" EntitySet="business" />
             <End Role="order" EntitySet="order" />
           </AssociationSet>
+          <EntitySet Name="subsidy" EntityType="supermanModel.subsidy" />
         </EntityContainer>
         <EntityType Name="account">
           <Key>
@@ -604,21 +604,6 @@
           <Property Name="BaiduLat" Type="String" MaxLength="64" FixedLength="false" Unicode="false" />
           <Property Name="BaiduLong" Type="String" MaxLength="64" FixedLength="false" Unicode="false" />
         </EntityType>
-        <EntityType Name="subsidy">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="OrderCommission" Type="Decimal" />
-          <Property Name="DistribSubsidy" Type="Decimal" />
-          <Property Name="WebsiteSubsidy" Type="Decimal" />
-          <Property Name="StartDate" Type="DateTime" />
-          <Property Name="EndDate" Type="DateTime" />
-          <Property Name="Status" Type="SByte" />
-          <Property Name="GroupId" Type="Int32" />
-          <Property Name="PKMCost" Type="Decimal" />
-          <Property Name="OrderType" Type="Int32" />
-        </EntityType>
         <Association Name="accountId">
           <End Type="supermanModel.account" Role="account" Multiplicity="0..1" />
           <End Type="supermanModel.accountauthority" Role="accountauthority" Multiplicity="*" />
@@ -697,6 +682,21 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="subsidy">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OrderCommission" Type="Decimal" />
+          <Property Name="DistribSubsidy" Type="Decimal" />
+          <Property Name="WebsiteSubsidy" Type="Decimal" />
+          <Property Name="StartDate" Type="DateTime" />
+          <Property Name="EndDate" Type="DateTime" />
+          <Property Name="Status" Type="SByte" />
+          <Property Name="GroupId" Type="Int32" />
+          <Property Name="PKMCost" Type="Decimal" />
+          <Property Name="OrderType" Type="Int32" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -936,22 +936,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="subsidy">
-            <EntityTypeMapping TypeName="supermanModel.subsidy">
-              <MappingFragment StoreEntitySet="subsidy">
-                <ScalarProperty Name="OrderType" ColumnName="OrderType" />
-                <ScalarProperty Name="PKMCost" ColumnName="PKMCost" />
-                <ScalarProperty Name="GroupId" ColumnName="GroupId" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
-                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
-                <ScalarProperty Name="WebsiteSubsidy" ColumnName="WebsiteSubsidy" />
-                <ScalarProperty Name="DistribSubsidy" ColumnName="DistribSubsidy" />
-                <ScalarProperty Name="OrderCommission" ColumnName="OrderCommission" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="order">
             <EntityTypeMapping TypeName="supermanModel.order">
               <MappingFragment StoreEntitySet="order">
@@ -990,6 +974,22 @@
                 <ScalarProperty Name="PubDate" ColumnName="PubDate" />
                 <ScalarProperty Name="PickUpAddress" ColumnName="PickUpAddress" />
                 <ScalarProperty Name="OrderNo" ColumnName="OrderNo" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="subsidy">
+            <EntityTypeMapping TypeName="supermanModel.subsidy">
+              <MappingFragment StoreEntitySet="subsidy">
+                <ScalarProperty Name="OrderType" ColumnName="OrderType" />
+                <ScalarProperty Name="PKMCost" ColumnName="PKMCost" />
+                <ScalarProperty Name="GroupId" ColumnName="GroupId" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="WebsiteSubsidy" ColumnName="WebsiteSubsidy" />
+                <ScalarProperty Name="DistribSubsidy" ColumnName="DistribSubsidy" />
+                <ScalarProperty Name="OrderCommission" ColumnName="OrderCommission" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

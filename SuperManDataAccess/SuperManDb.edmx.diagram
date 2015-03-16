@@ -21,11 +21,11 @@
         <EntityTypeShape EntityType="supermanModel.pushmessage" Width="1.5" PointX="0.75" PointY="11.75" />
         <EntityTypeShape EntityType="supermanModel.pushmessagestatus" Width="1.5" PointX="11.75" PointY="4.75" />
         <EntityTypeShape EntityType="supermanModel.region" Width="1.5" PointX="11.75" PointY="7.75" />
-        <EntityTypeShape EntityType="supermanModel.subsidy" Width="1.5" PointX="2.75" PointY="12.75" />
         <AssociationConnector Association="supermanModel.accountId" />
         <AssociationConnector Association="supermanModel.authorityId" />
         <EntityTypeShape EntityType="supermanModel.order" Width="1.5" PointX="5" PointY="4" />
         <AssociationConnector Association="supermanModel.businessId" />
+        <EntityTypeShape EntityType="supermanModel.subsidy" Width="1.5" PointX="3.375" PointY="13.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
