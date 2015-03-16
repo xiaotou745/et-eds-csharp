@@ -47,6 +47,6 @@ namespace Ets.Service.IProvider.User
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        BusiRegisterResultModel PostRegisterInfo_B(RegisterInfoModel model);
+        ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(RegisterInfoModel model);
     }
 }
