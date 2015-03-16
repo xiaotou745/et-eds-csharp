@@ -44,6 +44,7 @@
     <Compile Include="Common\ResultModelServicePhone.cs" />
     <Compile Include="DataModel\Bussiness\BusiLoginResultModel.cs" />
     <Compile Include="DataModel\Bussiness\BusiRegisterResultModel.cs" />
+    <Compile Include="DataModel\Group\GroupModel.cs" />
     <Compile Include="DataModel\Order\OrderCommission.cs" />
     <Compile Include="Common\PaginResult.cs" />
     <Compile Include="Common\ResultInfo.cs" />
@@ -56,6 +57,7 @@
     <Compile Include="DomainModel\Bussiness\BusiGetOrderModel.cs" />
     <Compile Include="Common\ResultModel.cs" />
     <Compile Include="DomainModel\Clienter\ClientOrderResultModel.cs" />
+    <Compile Include="DomainModel\Group\GroupApiConfigModel.cs" />
     <Compile Include="DomainModel\Subsidy\SubsidyResultModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BusiOrderInfoModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BussOrderParaModelApp.cs" />
@@ -63,6 +65,8 @@
     <Compile Include="ParameterModel\Bussiness\RegisterInfoModel.cs" />
     <Compile Include="ParameterModel\Clienter\ChangeWorkStatusPM.cs" />
     <Compile Include="ParameterModel\Clienter\ClientOrderInfoModel.cs" />
+    <Compile Include="ParameterModel\Group\GroupListModel.cs" />
+    <Compile Include="ParameterModel\Group\GroupParaModel.cs" />
     <Compile Include="ParameterModel\Order\BusiOrderResultModel.cs" />
     <Compile Include="ParameterModel\Order\ClientOrderInfoModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -75,6 +79,10 @@
     <ProjectReference Include="..\ETS.Core\ETS.Core.csproj">
       <Project>{bba67a86-afd6-46f2-bbd9-5dfb5bfdafe2}</Project>
       <Name>ETS.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SuperManCore\SuperManCore.csproj">
+      <Project>{F52D02C9-103A-46B1-AEE7-3D11E64777D7}</Project>
+      <Name>SuperManCore</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

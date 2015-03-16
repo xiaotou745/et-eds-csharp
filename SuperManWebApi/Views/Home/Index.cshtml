@@ -66,15 +66,10 @@
         $.ajax({
             type: 'POST',
             dataType: 'json',
-            url: '/BusinessAPI/PostPublishOrder_B',
+            url: '/BusinessAPI/PostLogin_B',
             data: {
-                "userId": 25,
-                "ReceiveName": "测试",
-                "ReceivePhoneNo": "18910712425",
-                "Amount": 100,
-                "IsPay": false,
-                "Remark": null,
-                "OrderCount":10
+                "phoneNo": "13811247642",
+                "passWord": "123456"
             },
             success: function (data) {
                 console.log(data);
@@ -83,6 +78,26 @@
 
             }
         });
+        //$.ajax({
+        //    type: 'POST',
+        //    dataType: 'json',
+        //    url: '/BusinessAPI/PostPublishOrder_B',
+        //    data: {
+        //        "userId": 41,
+        //        "ReceiveName": "测试",
+        //        "ReceivePhoneNo": "18910712425",
+        //        "Amount": 59.0000,
+        //        "IsPay": false,
+        //        "Remark": null,
+        //        "OrderCount":10
+        //    },
+        //    success: function (data) {
+        //        console.log(data);
+        //    },
+        //    error: function () {
+
+        //    }
+        //});
 
         //$.ajax({
         //    type: 'POST',
@@ -265,6 +280,8 @@
         //    }
         //});
 
+
+
         //$.ajax({
         //    type: 'POST',
         //    dataType: 'json',
@@ -301,7 +318,6 @@
         //});
         
 
-        //http://59.151.43.221:7178/ClienterAPI/PostLogin_C
 
 
 
