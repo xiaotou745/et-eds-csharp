@@ -164,6 +164,10 @@ namespace SuperManWebApi.Models.Clienter
         /// 订单状态
         /// </summary>
         public sbyte? Status { get; set; }
+        /// <summary>
+        /// 送餐时间
+        /// </summary>
+        public DateTime SongCanDate { get; set; }
     }
     public class degree
     {
