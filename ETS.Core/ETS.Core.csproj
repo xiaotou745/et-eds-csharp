@@ -75,7 +75,6 @@
     <Compile Include="Enums\ClienterEnum.cs" />
     <Compile Include="Enums\EnumStatusType.cs" />
     <Compile Include="Enums\CustomerRegisterStatusEnum.cs" />
-    <Compile Include="Enums\LoginModelStatus.cs" />
     <Compile Include="Expand\ActionStatusAttribute.cs" />
     <Compile Include="Const\OrderConst.cs" />
     <Compile Include="Expand\AttribDescription.cs" />
