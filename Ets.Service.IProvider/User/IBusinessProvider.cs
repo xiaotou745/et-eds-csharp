@@ -4,7 +4,6 @@ using Ets.Model.ParameterModel.Bussiness;
 using System;
 using Ets.Model.Common;
 using Ets.Model.DomainModel.Bussiness;
-using Ets.Model.DataModel.Order;
 using Ets.Model.DataModel.Bussiness;
 
 namespace Ets.Service.IProvider.User
@@ -40,6 +39,15 @@ namespace Ets.Service.IProvider.User
         /// <param name="name">商户姓名</param>
         /// <returns></returns>
         ResultInfo<IList<BusinessCommissionModel>> GetBusinessCommission(DateTime t1, DateTime t2, string name, int groupid);
+
+        /// <summary>
+        /// B端注册 
+        /// 窦海超
+        /// 2015年3月16日 10:19:45
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(RegisterInfoModel model);
         /// <summary>
         /// 根据商户Id获取商户信息  
         /// </summary>

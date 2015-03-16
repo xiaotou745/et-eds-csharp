@@ -8,6 +8,7 @@ using ETS.Data.PageData;
 using System;
 using System.Collections.Generic;
 using CalculateCommon;
+using ETS.Enums;
 using Ets.Model.DataModel.Bussiness;
 
 namespace Ets.Service.Provider.User
@@ -26,7 +27,7 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public IList<BusiGetOrderModel> GetOrdersApp(Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp paraModel)
         {
-            PageInfo<BusiOrderSqlModel> pageinfo= dao.GetOrdersAppToSql<BusiOrderSqlModel>(paraModel);
+            PageInfo<BusiOrderSqlModel> pageinfo = dao.GetOrdersAppToSql<BusiOrderSqlModel>(paraModel);
             IList<BusiOrderSqlModel> list = pageinfo.Records;
 
             List<BusiGetOrderModel> listOrder = new List<BusiGetOrderModel>();
@@ -42,15 +43,15 @@ namespace Ets.Service.Provider.User
                 {
                     model.PubDate = from.PubDate;
                 }
-                    model.PickUpName =from.BusinessName;
+                model.PickUpName = from.BusinessName;
                 model.ReceviceAddress = from.ReceviceAddress;
                 model.ReceviceName = from.ReceviceName;
                 model.RecevicePhoneNo = from.RecevicePhoneNo;
-                    model.Remark = from.Remark;
+                model.Remark = from.Remark;
                 model.Status = from.Status;
                 model.superManName = from.SuperManName;
                 model.superManPhone = from.SuperManPhone;
-                if (from.BusinessId>0 && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
+                if (from.BusinessId > 0 && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
                 {
                     var d1 = new Degree(from.Longitude.Value, from.Latitude.Value);
                     var d2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);
@@ -135,6 +136,42 @@ namespace Ets.Service.Provider.User
             strBuilder.AppendLine(string.Format("<td>{0}</td></tr>", paraModel.TotalAmount));
             strBuilder.AppendLine("</table>");
             return strBuilder.ToString();
+        }
+
+
+        /// <summary>
+        /// B端注册 
+        /// 窦海超
+        /// 2015年3月16日 10:19:45
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(Model.ParameterModel.Bussiness.RegisterInfoModel model)
+        {
+            Enum returnEnum = null;
+            if (string.IsNullOrEmpty(model.phoneNo))
+                returnEnum = CustomerRegisterStatusEnum.PhoneNumberEmpty; //手机号非空验证
+            else if (string.IsNullOrEmpty(model.passWord))
+                returnEnum = CustomerRegisterStatusEnum.PasswordEmpty;//密码非空验证
+
+            else if (model.verifyCode != ETS.Cacheing.CacheFactory.Get(model.phoneNo))
+                returnEnum = CustomerRegisterStatusEnum.IncorrectCheckCode; //判断验证法录入是否正确
+            else if (dao.CheckBusinessExistPhone(model.phoneNo))
+                returnEnum = CustomerRegisterStatusEnum.PhoneNumberRegistered;//判断该手机号是否已经注册过
+
+            else if (string.IsNullOrEmpty(model.city) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
+                returnEnum = CustomerRegisterStatusEnum.cityIdEmpty;
+            if (returnEnum != null)
+            {
+                return ResultModel<BusiRegisterResultModel>.Conclude(returnEnum);
+            }
+
+            BusiRegisterResultModel resultModel = new BusiRegisterResultModel()
+            {
+                userId = dao.InsertBusiness(model)
+            };
+            return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatusEnum.Success, resultModel);// CustomerRegisterStatusEnum.Success;//默认是成功状态
+
         }
         /// <summary>
         /// 根据商户Id获取商户信息

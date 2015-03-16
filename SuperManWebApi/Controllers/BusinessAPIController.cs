@@ -37,8 +37,9 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(CustomerRegisterStatus))]
         [HttpPost]
-        public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(RegisterInfoModel model)
+        public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Bussiness.BusiRegisterResultModel> PostRegisterInfo_B(Ets.Model.ParameterModel.Bussiness.RegisterInfoModel model)
         {
+            /*
             if (string.IsNullOrEmpty(model.phoneNo))   //手机号非空验证
                 return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
             else if (BusiLogic.busiLogic().CheckExistPhone(model.phoneNo))  //判断该手机号是否已经注册过
@@ -56,6 +57,10 @@ namespace SuperManWebApi.Controllers
                 userId = business.Id
             };
             return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
+             * 
+             * */
+            BusinessProvider bprovider = new BusinessProvider();
+            return bprovider.PostRegisterInfo_B(model);
         }
 
         /// <summary>
@@ -365,7 +370,7 @@ namespace SuperManWebApi.Controllers
             var pIndex = ETS.Util.ParseHelper.ToInt(pagedIndex, 1);
             pIndex = pIndex <= 0 ? 1 : pIndex;
             var pSize = ETS.Util.ParseHelper.ToInt(pagedSize, 100);
-           
+
             Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp criteria = new Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp()
             {
                 PagingResult = new Ets.Model.Common.PagingResult(pIndex, pSize),

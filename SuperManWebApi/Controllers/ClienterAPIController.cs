@@ -20,6 +20,7 @@ using System.ComponentModel;
 using ETS.Util;
 using LogHelper = ETS.Util.LogHelper;
 using Ets.Service.Provider.Clienter;
+using Ets.Service.Provider.Common;
 
 
 namespace SuperManWebApi.Controllers
@@ -225,7 +226,7 @@ namespace SuperManWebApi.Controllers
 
         //    var pagedList = ClienterLogic.clienterLogic().GetOrders(criteria);
         //    var lists = ClientOrderResultModelTranslator.Instance.Translate(pagedList);
-             
+
 
         //    //if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
         //    //{
@@ -331,7 +332,7 @@ namespace SuperManWebApi.Controllers
 
             return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, pagedList.ToArray());
         }
-         
+
 
 
         /// <summary>
@@ -715,11 +716,25 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public Ets.Model.Common.SimpleResultModel ChangeWorkStatus(Ets.Model.ParameterModel.Clienter.ChangeWorkStatusPM paraModel)
         {
-            if(paraModel.WorkStatus==null) //检查非空
+            if (paraModel.WorkStatus == null) //检查非空
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.ChangeWorkStatusEnum.WorkStatusError);
             if (paraModel.Id == null) //检查非空
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.ChangeWorkStatusEnum.ClienterError);
             return Ets.Model.Common.SimpleResultModel.Conclude(iClienterProvider.ChangeWorkStatus(paraModel));
         }
+
+        /// <summary>
+        /// 客服电话获取
+        /// 窦海超
+        /// 2015年3月16日 11:44:54
+        /// </summary>
+        /// <param name="CityName">城市名称</param>
+        /// <returns></returns>
+        [HttpGet]
+        public string GetCustomerServicePhone(string CityName)
+        {
+            return new ServicePhone().GetCustomerServicePhone(CityName);
+        }
+
     }
 }
