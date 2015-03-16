@@ -26,8 +26,14 @@ namespace Ets.Service.IProvider.Order
         /// <param name="criteria"></param>
         /// <returns></returns>
         IList<ClientOrderNoLoginResultModel> GetOrdersNoLoginLatest(ClientOrderSearchCriteria criteria);
+
         /// <summary>
-        /// 商户发布订单信息转换为数据库对应实体
+        /// 订单状态查询功能  add by caoheyang 20150316
+        /// </summary>
+        /// <param name="orderNo">订单号</param>
+        /// <returns></returns>
+        int? GetStatus(string orderNo);
+        /// </summary>        /// 商户发布订单信息转换为数据库对应实体
         /// </summary>
         /// <param name="busiOrderInfoModel"></param>
         /// <returns></returns>

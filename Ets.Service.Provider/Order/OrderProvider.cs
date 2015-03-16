@@ -22,7 +22,6 @@ namespace Ets.Service.Provider.Order
 {
     public class OrderProvider : IOrderProvider
     {
-
         private OrderDao OrderDao = new OrderDao();
         private IBusinessProvider iBusinessProvider = new BusinessProvider();
         private ISubsidyProvider iSubsidyProvider = new SubsidyProvider();
@@ -102,8 +101,8 @@ namespace Ets.Service.Provider.Order
             return list;
         }
 
-
-
+        
+        #region
         public IList<ClientOrderNoLoginResultModel> GetOrdersNoLoginLatest(ClientOrderSearchCriteria criteria)
         {
             IList<ClientOrderNoLoginResultModel> list = new List<ClientOrderNoLoginResultModel>();
@@ -169,14 +168,28 @@ namespace Ets.Service.Provider.Order
                     }
                     else
                         resultModel.distanceB2R = "--";
-                } 
+                }
 
 
                 list.Add(resultModel);
             }
             return list;
         }
+        #endregion
 
+        #region 订单状态查询功能  add by caoheyang 20150316
+        /// <summary>
+        /// 订单状态查询功能  add by caoheyang 20150316
+        /// </summary>
+        /// <param name="orderNo">订单号码</param>
+        /// <returns></returns>
+        public int? GetStatus(string orderNo)
+        {
+            OrderDao OrderDao = new OrderDao();
+            return OrderDao.GetStatus(orderNo);
+        }
+
+        #endregion
         /// <summary>
         /// 转换B端发布的订单信息为 数据库中需要的 订单 数据
         /// </summary>

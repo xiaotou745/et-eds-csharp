@@ -609,5 +609,21 @@ namespace SuperManWebApi.Controllers
                 return ms.ToArray();
             }
         }
+
+
+
+        /// <summary>
+        /// 客服电话获取
+        /// 窦海超
+        /// 2015年3月16日 11:44:54
+        /// </summary>
+        /// <param name="CityName">城市名称</param>
+        /// <returns></returns>
+        [HttpGet]
+        public Ets.Model.Common.ResultModelServicePhone GetCustomerServicePhone(string CityName)
+        {
+            return new Ets.Service.Provider.Common.ServicePhone().GetCustomerServicePhone(CityName);
+        }
+
     }
 }
