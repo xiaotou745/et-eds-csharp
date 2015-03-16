@@ -21,10 +21,13 @@ using SuperManCommonModel;
 using System.Text;
 using System.Net;
 using Ets.Service.Provider.User;
+using Ets.Service.IProvider.Order;
+using Ets.Service.Provider.Order;
 namespace SuperManWebApi.Controllers
 {
     public class BusinessAPIController : ApiController
     {
+        IOrderProvider iOrderProvider = new OrderProvider();
         /// <summary>
         /// 线程安全
         /// </summary>
@@ -331,7 +334,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(PubOrderStatus))]
         [HttpPost]
-        public ResultModel<BusiOrderResultModel> PostPublishOrder_B(BusiOrderInfoModel model)
+        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel> PostPublishOrder_B(Ets.Model.ParameterModel.Bussiness.BusiOrderInfoModel model)
         {
             lock (lockHelper)
             {
@@ -342,7 +345,7 @@ namespace SuperManWebApi.Controllers
                 if (cacheList != null)
                 {
                     LogHelper.LogWriter("cacheList是否存在同一的商户时间戳：", new { cacheList = cacheList });
-                    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderHasExist);//当前时间戳内重复提交,订单已存在 
+                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(PubOrderStatus.OrderHasExist);//当前时间戳内重复提交,订单已存在 
                 }
                 LogHelper.LogWriter("如果存在会继续往下执行？cacheList是否存在商户时间戳：", new { cacheList = cacheList, model = model });
                 ETS.Cacheing.CacheFactory.Instance.AddObject(cacheKey, "1", DateTime.Now.AddMinutes(10));//添加当前时间戳记录
@@ -350,15 +353,19 @@ namespace SuperManWebApi.Controllers
                 #endregion
             }
             if (model.OrderCount <= 0 || model.OrderCount > 15)   //判断录入订单数量是否符合要求
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
-            order dborder = BusiOrderInfoModelTranslator.Instance.Translate(model);  //整合订单信息
-            bool result = OrderLogic.orderLogic().AddModel(dborder);    //添加订单记录，并且触发极光推送。          
-            if (!result)
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
+            //order dborder = BusiOrderInfoModelTranslator.Instance.Translate(model);  //整合订单信息
+            //bool result = OrderLogic.orderLogic().AddModel(dborder);    //添加订单记录，并且触发极光推送。          
+
+            Ets.Model.DataModel.Order.order order = iOrderProvider.TranslateOrder(model);
+            string result = iOrderProvider.AddOrder(order);
+
+            if (result == "0")
             {
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.InvalidPubOrder);//当前订单执行失败
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(PubOrderStatus.InvalidPubOrder);//当前订单执行失败
             }
-            BusiOrderResultModel resultModel = new BusiOrderResultModel { userId = model.userId };
-            return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
+            Ets.Model.ParameterModel.Order.BusiOrderResultModel resultModel = new Ets.Model.ParameterModel.Order.BusiOrderResultModel { userId = model.userId };
+            return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
 
         }
 

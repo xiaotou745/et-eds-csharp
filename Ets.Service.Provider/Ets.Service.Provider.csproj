@@ -45,10 +45,12 @@
   <ItemGroup>
     <Compile Include="Clienter\ClienterProvider.cs" />
     <Compile Include="Common\AdminToolsProvider.cs" />
+    <Compile Include="Common\GroupProvider.cs" />
     <Compile Include="Common\ServicePhone.cs" />
     <Compile Include="Order\OrderCommissionProvider.cs" />
     <Compile Include="Order\OrderProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Subsidy\SubsidyProvider.cs" />
     <Compile Include="User\BusinessProvider.cs" />
     <Compile Include="User\UserProvider.cs" />
   </ItemGroup>

@@ -322,9 +322,45 @@ namespace Ets.Dao.User
                         FROM business(nolock) where PhoneNo=@PhoneNo AND Password=@Password order by id desc";
 
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@PhoneNo",model.phoneNo);
-            parm.AddWithValue("@Password",model.passWord);
+            parm.AddWithValue("@PhoneNo", model.phoneNo);
+            parm.AddWithValue("@Password", model.passWord);
             return DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
-        } 
+        }
+
+        public business GetBusiness(int busiId)
+        {
+            business busi = new business();
+            string selSql = @" SELECT  
+         Id ,
+         Name ,
+         City ,
+         district ,
+         PhoneNo ,
+         PhoneNo2 ,
+         IDCard ,
+         [Address] ,
+         Landline ,
+         Longitude ,
+         Latitude ,
+         [Status] ,
+         InsertTime ,
+         districtId ,
+         CityId ,
+         GroupId , 
+         ProvinceCode ,
+         CityCode ,
+         AreaCode ,
+         Province ,
+         DistribSubsidy FROM dbo.business WITH(NOLOCK) WHERE Id = @busiId";
+
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@busiId", busiId);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
+            if (dt != null)
+            {
+                busi = DataTableHelper.ConvertDataTableList<business>(dt)[0];
+            }
+            return busi;
+        }
     }
 }

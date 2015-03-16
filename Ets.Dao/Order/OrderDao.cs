@@ -6,6 +6,7 @@ using ETS.Data.PageData;
 using ETS.Extension;
 using ETS.Page;
 using ETS.Util;
+using SuperManBusinessLogic.CommonLogic;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -98,8 +99,7 @@ namespace Ets.Dao.Order
 
             return orderPageList;
         }
-
-        #region   订单状态查询功能  add by caoheyang 20150316
+#region   订单状态查询功能  add by caoheyang 20150316
         /// <summary>
         /// 订单状态查询功能  add by caoheyang 20150316
         /// </summary>
@@ -114,5 +114,87 @@ namespace Ets.Dao.Order
             return ParseHelper.ToInt(executeScalar);
         }
         #endregion
+        public string AddOrder(Model.DataModel.Order.order order)
+        {
+            StringBuilder insertOrder = new StringBuilder();
+
+            insertOrder.Append(@"INSERT INTO dbo.[order]
+         ( OrderNo ,
+           PickUpAddress ,
+           PubDate ,
+           ReceviceName ,
+           RecevicePhoneNo ,
+           ReceviceAddress ,
+           IsPay ,
+           Amount ,
+           OrderCommission ,
+           DistribSubsidy ,
+           WebsiteSubsidy ,
+           Remark ,
+           OrderFrom ,
+           Status ,
+           businessId ,
+           ReceviceCity ,
+           ReceviceLongitude ,
+           ReceviceLatitude ,
+           OrderCount ,
+           CommissionRate
+         )
+ VALUES  ( @OrderNo ,
+           @PickUpAddress ,
+           @PubDate ,
+           @ReceviceName ,
+           @RecevicePhoneNo ,
+           @ReceviceAddress ,
+           @IsPay ,
+           @Amount ,
+           @OrderCommission ,
+           @DistribSubsidy ,
+           @WebsiteSubsidy ,
+           @Remark ,
+           @OrderFrom ,
+           @Status ,
+           @businessId ,
+           @ReceviceCity ,
+           @ReceviceLongitude ,
+           @ReceviceLatitude ,
+           @OrderCount ,
+           @CommissionRate
+         )");
+
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@OrderNo", order.OrderNo);
+            parm.AddWithValue("@PickUpAddress", order.PickUpAddress);
+            parm.AddWithValue("@PubDate", order.PubDate);
+            parm.AddWithValue("@ReceviceName", order.ReceviceName);
+            parm.AddWithValue("@RecevicePhoneNo", order.RecevicePhoneNo);
+
+            parm.AddWithValue("@ReceviceAddress", order.ReceviceAddress);
+            parm.AddWithValue("@IsPay", order.IsPay);
+            parm.AddWithValue("@Amount", order.Amount);
+            parm.AddWithValue("@OrderCommission", order.OrderCommission);
+            parm.AddWithValue("@DistribSubsidy", order.DistribSubsidy);
+
+            parm.AddWithValue("@WebsiteSubsidy", order.WebsiteSubsidy);
+            parm.AddWithValue("@Remark", order.Remark);
+            parm.AddWithValue("@OrderFrom", order.OrderFrom);
+            parm.AddWithValue("@Status", order.Status);
+            parm.AddWithValue("@businessId", order.businessId);
+
+            parm.AddWithValue("@ReceviceCity", order.ReceviceCity);
+            parm.AddWithValue("@ReceviceLongitude", order.ReceviceLongitude);
+            parm.AddWithValue("@ReceviceLatitude", order.ReceviceLatitude);
+            parm.AddWithValue("@OrderCount", order.OrderCount);
+            parm.AddWithValue("@CommissionRate", order.CommissionRate);
+            int result = DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrder.ToString(), parm);
+            if (result > 0)
+            {
+                Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity); //激光推送
+                return "1";
+            }else
+            {
+                return "0";
+            }
+        }
     }
 }

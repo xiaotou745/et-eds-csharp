@@ -1,0 +1,145 @@
+﻿@model GroupListModel
+@using Ets.Model.ParameterModel.Group;
+@{
+    ViewBag.Title = "Group";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：集团 > 集团管理
+    </h2>
+    <div class="SearchMd">
+        <table border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td>
+                    <span class="">集团名称: </span>
+                    <input id="txtGroupName" type="text" />
+                    <span class="">集团AppKey: </span> 
+                    <input id="txtAppkey" type="text" />
+                    <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                    <input type="button" value="新增集团" class="searchBtn" id="btnAdd" /> 
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="bd clearfix" id="dataList">
+        @Html.Partial("_GroupManageList", Model)
+    </div>
+</div>
+
+@*新增集团窗口*@
+<div class="GroupAddDish">
+    <div class="add-openbox add-form" id="GroupAddDivShow" style="width:500px">
+        <h2>
+            <p id="statusFin">新增集团</p>
+        </h2>
+     <fieldset>
+            <div class="control-group">
+                <label >集团名称</label> 
+                    <input  name="txtaddGroupName" id="txtaddGroupName" type="text">
+            </div>  
+     </fieldset>
+        <p class="btnbox">
+                <input value="确认" type="button" id="btnAddGroup" class="yesBtn" />                
+                <input value="关闭" type="button" class="J_closebox qxBtn" />
+            </p>
+    </div>
+</div>
+
+@*设置App配置*@
+<div class="GroupAppConfig">
+    <div class="add-openbox add-form" id="GroupAppConfig" style="width:500px">
+        <h2>
+            <p id="statusFin">设置集团AppConfig</p>
+        </h2>
+     <fieldset>
+            <input type="hidden" id="HidGroupID" value="0"/>
+         <div class="control-group">
+             <div class="control-group">
+            <label >集团名称</label> 
+                <input  name="txtAppGroupName" id="txtAppGroupName" type="text">
+        </div> 
+             <label >AppKey</label> 
+             <input  name="txtAppKeys" id="txtAppKeys" type="text">
+         </div> 
+        <div class="control-group">
+            <label >AppSecret</label> 
+                <input  name="txtAppSecret" readonly="readonly" id="txtAppSecret" type="text"><label style="color:red">自动生成</label>
+        </div> 
+         <div class="control-group">
+            <label >App版本</label> 
+                <input  name="txtAppVersion" id="txtAppVersion" type="text">
+        </div> 
+     </fieldset>
+        <p class="btnbox">
+                <input value="确认" type="button" id="btnAddGroupConfig" class="yesBtn" />                
+                <input value="关闭" type="button" class="J_closebox qxBtn" />
+            </p>
+    </div>
+</div>
+<script>
+    var adminjs = new adminglass(); //实例化后台类
+    var DEFAULT_PAGESIZE = 15;
+    var criteria = { PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE } };
+    $(document).ready(function() {
+        //查询
+        $("#btnSearch").on('click', function() {
+            criteria = {
+                GroupName: $("#txtGroupName").val(), //商户名称
+                AppKey: $("#txtAppkey").val(),////商户电话
+                PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE }
+            };
+            refresh(0);
+        });
+        $("#btnAdd").on('click', function () {
+            adminjs.openwinbox('#GroupAddDivShow');
+        }); 
+    });
+    ////分页
+    art.ui.control.Pager.enablePaging(document, refresh);
+    function refresh(pageIndex) {
+        var url = "/GroupManager/GroupManager";
+        if (pageIndex !== undefined) {
+            criteria.PagingRequest.PageIndex = pageIndex;
+        }
+        webExpress.utility.ajax.request
+            (
+                url,
+                criteria,
+                function (data) {
+                    $("#dataList").html(data);
+                });
+    }; 
+    //关闭弹层
+    $('.J_closebox').click(function () {
+        adminjs.closewinbox('.add-openbox');
+        return false;
+    });
+    //添加集团
+    $("#btnAddGroup").on('click', function () {
+        var txtGroupName = $("#txtaddGroupName").val(); //商户id
+        if (txtGroupName == "") {
+            alert("集团名称不能为空!");
+            return;
+        }
+        var pars = { "groupname": txtGroupName };
+        var url = "/GroupManager/AddGroup";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: pars,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert("添加成功!");
+                    window.location.href = "/GroupManager/GroupManager";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    });
+    $("#btnAddGroupConfig").on('click',function() {
+        
+    });
+</script>

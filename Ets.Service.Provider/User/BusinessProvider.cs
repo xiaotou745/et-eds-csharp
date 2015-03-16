@@ -214,7 +214,7 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public business GetBusiness(int busiId)
         {
-            throw new NotImplementedException();
+           return dao.GetBusiness(busiId);
         }
     }
 }
