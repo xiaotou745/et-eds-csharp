@@ -8,6 +8,7 @@ using ETS.Data.PageData;
 using System;
 using System.Collections.Generic;
 using CalculateCommon;
+using Ets.Model.DataModel.Bussiness;
 
 namespace Ets.Service.Provider.User
 {
@@ -135,7 +136,14 @@ namespace Ets.Service.Provider.User
             strBuilder.AppendLine("</table>");
             return strBuilder.ToString();
         }
-
-      
+        /// <summary>
+        /// 根据商户Id获取商户信息
+        /// </summary>
+        /// <param name="busiId"></param>
+        /// <returns></returns>
+        public business GetBusiness(int busiId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

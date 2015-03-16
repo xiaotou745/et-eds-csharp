@@ -408,7 +408,7 @@ namespace SuperManWebApi.Controllers
             //degree.longitude = model.longitude;
             //degree.latitude = model.latitude;
             var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
-            var pSize = model.pageSize.HasValue ? model.pageIndex.Value : int.MaxValue;
+            var pSize = model.pageSize.HasValue ? model.pageSize.Value : int.MaxValue;
             var criteria = new ClientOrderSearchCriteria()
             {
                 PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
@@ -451,7 +451,7 @@ namespace SuperManWebApi.Controllers
             //degree.longitude = model.longitude;
             //degree.latitude = model.latitude;
             var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
-            var pSize = model.pageSize.HasValue ? model.pageIndex.Value : int.MaxValue;
+            var pSize = model.pageSize.HasValue ? model.pageSize.Value : int.MaxValue;
             var criteria = new ClientOrderSearchCriteria()
             {
                 PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),

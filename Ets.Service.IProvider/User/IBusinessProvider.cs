@@ -4,6 +4,8 @@ using Ets.Model.ParameterModel.Bussiness;
 using System;
 using Ets.Model.Common;
 using Ets.Model.DomainModel.Bussiness;
+using Ets.Model.DataModel.Order;
+using Ets.Model.DataModel.Bussiness;
 
 namespace Ets.Service.IProvider.User
 {
@@ -38,5 +40,12 @@ namespace Ets.Service.IProvider.User
         /// <param name="name">商户姓名</param>
         /// <returns></returns>
         ResultInfo<IList<BusinessCommissionModel>> GetBusinessCommission(DateTime t1, DateTime t2, string name, int groupid);
+        /// <summary>
+        /// 根据商户Id获取商户信息  
+        /// </summary>
+        /// <param name="busiId"></param>
+        /// <returns></returns>
+        business GetBusiness(int busiId);
+         
     }
 }
