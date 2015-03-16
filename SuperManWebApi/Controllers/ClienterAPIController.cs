@@ -286,7 +286,7 @@ namespace SuperManWebApi.Controllers
             degree.longitude = model.longitude;
             degree.latitude = model.latitude;
             var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 1;
-            var pSize = model.pageSize.HasValue ? model.pageIndex.Value : 10;
+            var pSize = model.pageSize.HasValue ? model.pageSize.Value : 10;
             var criteria = new ClientOrderSearchCriteria()
             {
                 PagingRequest = new PagingResult(pIndex, pSize),
@@ -315,6 +315,7 @@ namespace SuperManWebApi.Controllers
             {
                 lists = lists.OrderBy(i => i.distance).ToList();
             }
+            //LogHelper.LogWriter("送餐任务数据：", new { lists = lists });
             return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
         }
          
@@ -329,7 +330,7 @@ namespace SuperManWebApi.Controllers
             degree.longitude = model.longitude;
             degree.latitude = model.latitude;
             var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 1;
-            var pSize = model.pageSize.HasValue ? model.pageIndex.Value : 10;
+            var pSize = model.pageSize.HasValue ? model.pageSize.Value : 10;
             var criteria = new ClientOrderSearchCriteria()
             {
                 PagingRequest = new PagingResult(pIndex, pSize),
@@ -358,6 +359,7 @@ namespace SuperManWebApi.Controllers
             {
                 lists = lists.OrderBy(i => i.distance).ToList();
             }
+            //LogHelper.LogWriter("餐盒任务数据", new { lists = lists });
             return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
         }
         
