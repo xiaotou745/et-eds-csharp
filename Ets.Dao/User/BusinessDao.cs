@@ -14,6 +14,8 @@ using ETS.Const;
 using Ets.Model.DomainModel.Bussiness;
 using Ets.Model.DomainModel.Clienter;
 using Ets.Model.ParameterModel.Bussiness;
+using Ets.Model.DataModel.Bussiness;
+using ETS.Extension;
 
 
 namespace Ets.Dao.User
@@ -296,5 +298,33 @@ namespace Ets.Dao.User
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm));
         }
 
+
+        /// <summary>
+        /// B端登录
+        /// </summary>
+        /// <param name="model">用户名称，用户密码</param>
+        /// <returns>返回该用户实体</returns>
+        public DataTable LoginSql(LoginModel model)
+        {
+            string sql = @"SELECT  top 1 
+                        Id AS userId,
+                        status,
+                        city ,
+                        districtId,
+                        district,
+                        Address,
+                        Landline,
+                        Name,
+                        cityId,
+                        phoneNo,
+                        PhoneNo2,
+                        DistribSubsidy
+                        FROM business(nolock) where PhoneNo=@PhoneNo AND Password=@Password order by id desc";
+
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@PhoneNo",model.phoneNo);
+            parm.AddWithValue("@Password",model.passWord);
+            return DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
+        } 
     }
 }

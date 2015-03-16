@@ -1,4 +1,5 @@
 ﻿using Ets.Dao.Common;
+using Ets.Model.Common;
 using Ets.Service.IProvider.Common;
 using System;
 using System.Collections.Generic;
@@ -20,17 +21,17 @@ namespace Ets.Service.Provider.Common
         /// </summary>
         /// <param name="CityName">城市名称</param>
         /// <returns></returns>
-        public string GetCustomerServicePhone(string CityName)
+        public ResultModelServicePhone GetCustomerServicePhone(string CityName)
         {
-            if (string.IsNullOrEmpty( CityName))
+            if (string.IsNullOrEmpty(CityName))
             {
                 CityName = "北京市";
             }
             DataTable dt = null;
-            if (tryCount>3)
+            if (tryCount > 3)
             {
                 //重试次数4次
-                return string.Empty;
+                return new ResultModelServicePhone();
             }
             #region 缓存验证
 
@@ -50,9 +51,12 @@ namespace Ets.Service.Provider.Common
             if (dt != null && dt.Rows.Count > 0)
             {
                 DataRow[] rows = dt.Select("CityName='" + CityName + "'");
-                if (rows.Length>0)
+                if (rows.Length > 0)
                 {
-                    return rows[0]["Phone"].ToString();
+                    return new ResultModelServicePhone()
+                    {
+                        Phone = rows[0]["Phone"].ToString()
+                    };
                 }
             }
             tryCount++;//重试次数
