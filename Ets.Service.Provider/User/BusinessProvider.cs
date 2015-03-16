@@ -184,28 +184,34 @@ namespace Ets.Service.Provider.User
         /// <returns>登录后返回实体对象</returns>
         public ResultModel<BusiLoginResultModel> PostLogin_B(Model.ParameterModel.Bussiness.LoginModel model)
         {
-            DataTable dt = dao.LoginSql(model);
+            try
+            {
+                DataTable dt = dao.LoginSql(model);
+                if (dt == null || dt.Rows.Count <= 0)
+                {
+                    return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
+                }
 
-
-            if (dt == null || dt.Rows.Count <= 0)
+                BusiLoginResultModel resultMode = new BusiLoginResultModel();
+                DataRow row = dt.Rows[0];
+                resultMode.userId = ParseHelper.ToInt(row["userId"]);
+                resultMode.status = Convert.ToByte(row["status"]);
+                resultMode.city = row["city"].ToString();
+                resultMode.Address = row["Address"].ToString();
+                resultMode.districtId = row["districtId"].ToString();
+                resultMode.district = row["district"].ToString();
+                resultMode.Landline = row["Landline"].ToString();
+                resultMode.Name = row["Name"].ToString();
+                resultMode.cityId = row["cityId"].ToString();
+                resultMode.phoneNo = row["PhoneNo2"] == null ? row["PhoneNo"].ToString() : row["PhoneNo2"].ToString();
+                resultMode.DistribSubsidy = row["DistribSubsidy"] == null ? 0 : ParseHelper.ToDecimal(row["DistribSubsidy"]);
+                return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.Success, resultMode);
+            }
+            catch (Exception ex)
             {
                 return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
+                throw;
             }
-
-            BusiLoginResultModel resultMode = new BusiLoginResultModel();
-            DataRow row = dt.Rows[0];
-            resultMode.userId = ParseHelper.ToInt(row["userId"]);
-            resultMode.status = Convert.ToByte(row["status"]);
-            resultMode.city = row["city"].ToString();
-            resultMode.Address = row["Address"].ToString();
-            resultMode.districtId = row["districtId"].ToString();
-            resultMode.district = row["district"].ToString();
-            resultMode.Landline = row["Landline"].ToString();
-            resultMode.Name = row["Name"].ToString();
-            resultMode.cityId = row["cityId"].ToString();
-            resultMode.phoneNo = row["PhoneNo2"] == null ? row["PhoneNo"].ToString() : row["PhoneNo2"].ToString();
-            resultMode.DistribSubsidy = row["DistribSubsidy"] == null ? 0 : ParseHelper.ToDecimal(row["DistribSubsidy"]);
-            return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.Success, resultMode);
         }
         /// <summary>
         /// 根据商户Id获取商户信息

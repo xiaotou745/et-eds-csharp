@@ -63,6 +63,21 @@
 
 
     $(function () {
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: '/BusinessAPI/PostLogin_B',
+            data: {
+                "phoneNo": "13811247642",
+                "passWord": "123456"
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () {
+
+            }
+        });
         //$.ajax({
         //    type: 'POST',
         //    dataType: 'json',
@@ -264,6 +279,8 @@
 
         //    }
         //});
+
+
 
         //$.ajax({
         //    type: 'POST',
