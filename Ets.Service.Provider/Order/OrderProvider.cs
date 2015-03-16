@@ -15,9 +15,7 @@ namespace Ets.Service.Provider.Order
 {
     public class OrderProvider : IOrderProvider
     {
-
-        private OrderDao OrderDao = new OrderDao();
-
+        #region 获取订单
         /// <summary>
         /// 获取订单
         /// </summary>
@@ -25,6 +23,7 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public IList<ClientOrderResultModel> GetOrders(ClientOrderSearchCriteria criteria)
         {
+            OrderDao OrderDao = new OrderDao();
             IList<ClientOrderResultModel> list = new List<ClientOrderResultModel>();
             var orderList = OrderDao.GetOrders(criteria);
             for (int i = 0; i < orderList.ContentList.Count; i++)
@@ -93,10 +92,12 @@ namespace Ets.Service.Provider.Order
             return list;
         }
 
+        #endregion
 
-
+        #region
         public IList<ClientOrderNoLoginResultModel> GetOrdersNoLoginLatest(ClientOrderSearchCriteria criteria)
         {
+            OrderDao OrderDao = new OrderDao();
             IList<ClientOrderNoLoginResultModel> list = new List<ClientOrderNoLoginResultModel>();
             var orderList = OrderDao.GetOrders(criteria);
             for (int i = 0; i < orderList.ContentList.Count; i++)
@@ -166,6 +167,22 @@ namespace Ets.Service.Provider.Order
                 list.Add(resultModel);
             }
             return list;
-        }  
+        }
+
+        #endregion
+
+        #region 订单状态查询功能  add by caoheyang 20150316
+        /// <summary>
+        /// 订单状态查询功能  add by caoheyang 20150316
+        /// </summary>
+        /// <param name="orderNo">订单号码</param>
+        /// <returns></returns>
+        public int? GetStatus(string orderNo)
+        {
+            OrderDao OrderDao = new OrderDao();
+            return OrderDao.GetStatus(orderNo);
+        }
+
+        #endregion
     } 
 }
