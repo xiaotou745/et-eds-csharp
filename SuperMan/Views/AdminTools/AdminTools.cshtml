@@ -24,9 +24,6 @@
                     <input type="button" value="修改" class="searchBtn" id="btnEdit" />
                 </td>
             </tr>
-            <tr>
-                <td></td>
-            </tr>
         </table>
     </div>
 
@@ -38,7 +35,6 @@
 <script>
     var criteria = { strSql: $("#txtSql").val() };
     $(document).ready(function () {
-
         //查询
         $("#btnSearch").on('click', function () {
             query();
@@ -47,7 +43,6 @@
         $("#btnEdit").on('click', function () {
             edit();
         });
-
     })
     function query() {
         var sql = $("#txtSql").val();
