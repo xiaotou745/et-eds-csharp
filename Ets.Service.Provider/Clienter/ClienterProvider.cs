@@ -8,6 +8,8 @@ using ETS.Data.PageData;
 using System;
 using CalculateCommon;
 using Ets.Service.Provider.Order;
+using ETS.Enums;
+using Ets.Model.Common;
 
 namespace Ets.Service.Provider.Clienter
 {
@@ -108,7 +110,7 @@ namespace Ets.Service.Provider.Clienter
                     }
                     else
                         model.distanceB2R = "--";
-                }        
+                }
                 #endregion
                 listOrder.Add(model);
             }
@@ -116,5 +118,30 @@ namespace Ets.Service.Provider.Clienter
             return listOrder;
         }
 
+
+        /// <summary>
+        /// c端用户登录
+        /// 窦海超
+        /// 2015年3月17日 15:11:46
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public Model.Common.ResultModel<ClienterLoginResultModel> PostLogin_C(Model.ParameterModel.Clienter.LoginModel model)
+        {
+            try
+            {
+                ClienterLoginResultModel resultModel = clienterDao.PostLogin_CSql(model);
+                if (resultModel == null)
+                {
+                    return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
+                }
+                return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.Success, resultModel);
+            }
+            catch (Exception ex)
+            {
+                return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
+                throw;
+            }
+        }
     }
 }

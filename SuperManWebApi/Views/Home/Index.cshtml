@@ -198,20 +198,20 @@
         //});
 
 
-        $.ajax({
-            type: 'post',
-            dataType: 'json',
-            url: '/BusinessAPI/PostRegisterInfo_B',
-            data: {
-                city: "北京市", CityId: "1", phoneNo: "13426401627", passWord: "123456", verifyCode: "1234", GroupId: 0
-            },
-            success: function (data) {
-                console.log(data);
-            },
-            error: function () {
+        //$.ajax({
+        //    type: 'post',
+        //    dataType: 'json',
+        //    url: '/BusinessAPI/PostRegisterInfo_B',
+        //    data: {
+        //        city: "北京市", CityId: "1", phoneNo: "13426401627", passWord: "123456", verifyCode: "1234", GroupId: 0
+        //    },
+        //    success: function (data) {
+        //        console.log(data);
+        //    },
+        //    error: function () {
 
-            }
-        });
+        //    }
+        //});
 
         //$.ajax({
         //    type: 'get',
@@ -297,20 +297,20 @@
 
 
 
-        //$.ajax({
-        //    type: 'POST',
-        //    dataType: 'json',
-        //    url: 'http://10.8.7.40:7178/ClienterAPI/PostLogin_C',
-        //    data: {
-        //        phoneNo: '15652662526',
-        //        passWord: 'A06F6A211CBEDF374FC367FA231865DE'
-        //    },
-        //    success: function (data) {
-        //        console.log(data);z
-        //    },
-        //    error: function () {
-        //    }
-        //});
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: '/ClienterAPI/PostLogin_C',
+            data: {
+                phoneNo: '18810740024',
+                passWord: '4EBFEE4020735B6D2FC8C9A6504A9676'
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () {
+            }
+        });
 
         //$.ajax({
         //    type: 'POST',

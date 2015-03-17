@@ -69,8 +69,9 @@ namespace SuperManWebApi.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [ActionStatus(typeof(LoginModelStatus))]
-        public ResultModel<ClienterLoginResultModel> PostLogin_C(LoginModel model)
+        public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterLoginResultModel> PostLogin_C(Ets.Model.ParameterModel.Clienter.LoginModel model)
         {
+            /*
             SuperManCore.LogHelper.LogWriter("用户登录", new { model = model });
             try
             {
@@ -95,6 +96,8 @@ namespace SuperManWebApi.Controllers
                 SuperManCore.LogHelper.LogWriter("登录错误", new { ex = ex });
                 return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
             }
+             * */
+            return new ClienterProvider().PostLogin_C(model);
         }
         /// <summary>
         /// C端上传图片

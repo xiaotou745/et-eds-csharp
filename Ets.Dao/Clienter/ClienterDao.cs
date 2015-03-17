@@ -8,6 +8,9 @@ using ETS.Util;
 using ETS.Const;
 using ETS.Data.PageData;
 using Ets.Model.DomainModel.Clienter;
+using Ets.Model.ParameterModel.Clienter;
+using System.Data;
+using ETS.Extension;
 
 
 //using ETS;
@@ -134,5 +137,39 @@ namespace Ets.Dao.Clienter
             return new PageHelper().GetPages<ClientOrderModel>(SuperMan_Read, criteria.PagingRequest.PageIndex, where, "o.Id", columnStr, "[order](NOLOCK) AS o LEFT JOIN business(NOLOCK) AS b ON o.businessId=b.Id", criteria.PagingRequest.PageSize, false);
         }
 
+        /// <summary>
+        /// c端用户登录
+        /// 窦海超
+        /// 2015年3月17日 15:11:46
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public ClienterLoginResultModel PostLogin_CSql(LoginModel model)
+        {
+            string sql = @"SELECT 
+                        Id AS userId ,
+                        PhoneNo,
+                        status,
+                        AccountBalance AS Amount,
+                        city,
+                        cityId 
+                        FROM dbo.clienter(NOLOCK) WHERE PhoneNo=@PhoneNo AND [Password]=@Password";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@PhoneNo", model.phoneNo);
+            parm.AddWithValue("@Password", model.passWord);
+            DataSet set = DbHelper.ExecuteDataset(SuperMan_Read, sql, parm);
+
+            DataTable dt = DataTableHelper.GetTable(set);
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+                return null;
+            }
+            IList<ClienterLoginResultModel> list = MapRows<ClienterLoginResultModel>(dt);
+            if (list == null || list.Count <= 0)
+            {
+                return null;
+            }
+            return list[0];
+        }
     }
 }
