@@ -228,6 +228,8 @@
     <Content Include="Content\fromwangying\datepicker.css" />
     <Content Include="Content\fromwangying\header.css" />
     <Content Include="Content\header.css" />
+    <Content Include="Content\images\b.png" />
+    <Content Include="Content\images\c.png" />
     <Content Include="Content\images\carousel1.jpg" />
     <Content Include="Content\images\carousel2.jpg" />
     <Content Include="Content\images\carousel3.jpg" />

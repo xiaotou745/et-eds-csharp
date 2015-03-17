@@ -13,7 +13,9 @@ namespace Ets.Model.ParameterModel.Bussiness
 {
     public class BusinessSearchCriteria
     {
-        public PagingResult PagingRequest { get; set; }
+        //public PagingResult PagingRequest { get; set; }
+        public NewPagingResult PagingRequest { get; set; }
+        
         public IList<OrderByItem<BusListResultModel>> OrderByItems { get; set; }
 
         public string businessName { get; set; } //商户名称

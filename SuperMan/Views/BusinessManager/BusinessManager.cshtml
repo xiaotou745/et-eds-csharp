@@ -4,7 +4,7 @@
     ViewBag.Title = "Order";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<script src="~/Scripts/common/NewPager.js"></script>
 <div class="zpManage zpSh">
     <h2 class="crumbs">
         您所在位置：商户 > 商户管理
@@ -89,7 +89,7 @@
 <script>
     var adminjs = new adminglass(); //实例化后台类
     var DEFAULT_PAGESIZE = 15;
-    var criteria = { PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE } };
+    var criteria = { PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE } };
     $(document).ready(function () {
         //查询
         $("#btnSearch").on('click', function () {
@@ -99,13 +99,13 @@
                 BusinessCommission: $("#txtBusinessCommission").val(),////商户结算比例
                 status: $("#businessStatus").val(),
                 GroupId: $("#txtGroupId").val(),
-                PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE }
+                PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }
             };
             refresh(0);
         });
     })
     ////分页
-    art.ui.control.Pager.enablePaging(document, refresh);
+    art.ui.control.NewPager.enablePaging(document, refresh);
     function refresh(pageIndex) {
         var url = "/BusinessManager/BusinessManager";
         if (pageIndex !== undefined) {

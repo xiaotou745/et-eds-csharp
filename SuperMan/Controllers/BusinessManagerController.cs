@@ -33,7 +33,7 @@ namespace SuperMan.Controllers
             }
                 
             ViewBag.txtGroupId = account.GroupId;//集团id
-            var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria() { PagingRequest = new Ets.Model.Common.PagingResult (0, 15), GroupId = account.GroupId };
+            var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria() { PagingRequest = new Ets.Model.Common.NewPagingResult (1, 15), GroupId = account.GroupId };
             criteria.Status = -1; //默认加载全部
             //var pagedList = BusiLogic.busiLogic().GetBusinesses(criteria);
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
