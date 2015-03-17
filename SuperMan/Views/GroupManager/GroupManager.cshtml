@@ -94,16 +94,16 @@
 <script>
     var adminjs = new adminglass(); //实例化后台类
     var DEFAULT_PAGESIZE = 6;
-    var criteria = { PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE } };
+    var criteria = { PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE } };
     $(document).ready(function() {
         //查询
         $("#btnSearch").on('click', function() {
             criteria = {
                 GroupName: $("#txtGroupName").val(), //商户名称
                 AppKey: $("#txtAppkey").val(),////商户电话
-                PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE }
+                PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }
             };
-            refresh(0);
+            refresh(1);
         });
         $("#btnAdd").on('click', function () {
             adminjs.openwinbox('#GroupAddDivShow');

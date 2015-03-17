@@ -18,14 +18,12 @@
     </thead>
     <tbody>
         @{
-            int i = 0;
             if (Model != null)
             { 
             foreach (var item in Model.GroupApiConfigListModel)
             {
-                i++;
-                <tr id="@item.Id">
-                    <td>@i</td>
+                <tr id="@item.GroupId">
+                    <td>@item.GroupId</td>
                     <td width="10%">@item.GroupName</td>
                     <td width="10%">@item.CreateTime</td>
                     <td>@item.AppKey</td> 
