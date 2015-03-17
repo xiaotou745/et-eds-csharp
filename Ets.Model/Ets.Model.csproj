@@ -73,6 +73,7 @@
     <Compile Include="ParameterModel\Group\GroupParaModel.cs" />
     <Compile Include="ParameterModel\Order\BusiOrderResultModel.cs" />
     <Compile Include="ParameterModel\Order\ClientOrderInfoModel.cs" />
+    <Compile Include="ParameterModel\Order\CreatePM_OpenApi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserModel.cs" />
   </ItemGroup>
