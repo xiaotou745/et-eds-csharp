@@ -17,6 +17,8 @@ using Ets.Model.ParameterModel.Bussiness;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DataModel.Bussiness;
 using ETS.Extension;
+using ETS.Enums;
+using Ets.Model.Common;
 
 
 namespace Ets.Dao.User
@@ -188,7 +190,7 @@ namespace Ets.Dao.User
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
                 dbParameters.AddWithValue("BusinessCommission", price);
                 dbParameters.AddWithValue("id", id);
-                int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Read, sql, dbParameters);
+                int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Write, sql, dbParameters);
                 if (i > 0) reslut = true;
             }
             catch (Exception ex)
@@ -418,6 +420,42 @@ namespace Ets.Dao.User
                 busi = DataTableHelper.ConvertDataTableList<BusListResultModel>(dt)[0];
             }
             return busi;
+        }
+
+        /// <summary>
+        /// 更新审核状态
+        /// danny-20150317
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="enumStatusType"></param>
+        /// <returns></returns>
+        public bool UpdateAuditStatus(int id, EnumStatusType enumStatusType)
+        {
+            bool reslut = false;
+            try
+            {
+                string sql = string.Empty;
+                if (enumStatusType == EnumStatusType.审核通过)
+                {
+
+                    sql = string.Format(" update business set Status=1 where id=@id ", ConstValues.BUSINESS_AUDITPASS);
+                }
+                else if (enumStatusType == EnumStatusType.审核取消)
+                {
+                    sql = string.Format(" update business set Status=4 where id=@id ",ConstValues.BUSINESS_AUDITCANCEL);
+                }
+                IDbParameters dbParameters = DbHelper.CreateDbParameters();
+                dbParameters.AddWithValue("id", id);
+                int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Write, sql, dbParameters);
+                if (i > 0) reslut = true;
+            }
+            catch (Exception ex)
+            {
+                reslut = false;
+                LogHelper.LogWriter(ex, "更新审核状态");
+                throw;
+            }
+            return reslut;
         }
     }
 }

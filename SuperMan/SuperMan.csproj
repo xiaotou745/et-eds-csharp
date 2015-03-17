@@ -426,6 +426,7 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\common\admin.js" />
+    <Content Include="Scripts\common\NewPager.js" />
     <Content Include="Scripts\common\Pager.js" />
     <Content Include="Scripts\common\usa.js" />
     <Content Include="Scripts\common\webExpress.js" />
