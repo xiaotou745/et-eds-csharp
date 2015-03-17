@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web;
 
 namespace OpenApi.Controllers
 {
@@ -18,18 +19,27 @@ namespace OpenApi.Controllers
     //[RoutePrefix("api/order/")]
     public class OrderController : ApiController
     {
-        // GET: Order
+        // POSR: Order GetStatus
         /// <summary>
         /// 订单状态查询功能  add by caoheyang 20150316
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
-
+        [HttpPost]
         public void GetStatus()
         {
             IOrderProvider orderProvider = new OrderProvider();
-            int? status = orderProvider.GetStatus("23150313162254057");
+            int status = orderProvider.GetStatus(HttpContext.Current.Request.Form["order_no"]);  //todo  缺少非空验证
+        }
 
+        // POSR: Order Create
+        /// <summary>
+        /// 物流订单接收接口  add by caoheyang 201503167
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public void Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
+        {
+            IOrderProvider orderProvider = new OrderProvider(); 
         }
 
     }

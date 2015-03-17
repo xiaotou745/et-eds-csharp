@@ -21,7 +21,7 @@ namespace Ets.Service.IProvider.Common
         /// </summary>
         /// <param name="config"></param>
         /// <returns>配置id</returns>
-        ResultInfo<int> CreateGroupApiConfig(GroupApiConfigModel config);
+        ResultInfo<bool> CreateGroupApiConfig(GroupApiConfigModel config);
         /// <summary>
         /// 创建集团
         /// </summary>

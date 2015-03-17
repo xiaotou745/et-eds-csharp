@@ -6,7 +6,7 @@
     <thead>
 
         <tr class="tdbg">
-            <th width="%5">序号</th>
+            <th width="%5">编号</th>
             <th>商户名称</th>
             <th>电话</th>
             <th>地址</th>
@@ -31,7 +31,8 @@
             {
                 i++;
                 <tr id="@item.Id">
-                    <td>@i</td>
+                    <td>@item.Id</td>
+                    @*<td>@i</td>*@
                     <td>@item.Name</td>
                     <td>@item.PhoneNo</td>
                     <td>@item.Address</td>
