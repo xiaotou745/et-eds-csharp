@@ -69,8 +69,9 @@ namespace SuperManWebApi.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [ActionStatus(typeof(LoginModelStatus))]
-        public ResultModel<ClienterLoginResultModel> PostLogin_C(LoginModel model)
+        public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterLoginResultModel> PostLogin_C(Ets.Model.ParameterModel.Clienter.LoginModel model)
         {
+            /*
             SuperManCore.LogHelper.LogWriter("用户登录", new { model = model });
             try
             {
@@ -95,6 +96,8 @@ namespace SuperManWebApi.Controllers
                 SuperManCore.LogHelper.LogWriter("登录错误", new { ex = ex });
                 return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
             }
+             * */
+            return new ClienterProvider().PostLogin_C(model);
         }
         /// <summary>
         /// C端上传图片
@@ -246,9 +249,9 @@ namespace SuperManWebApi.Controllers
         {
             Ets.Model.DomainModel.Clienter.degree.longitude = model.longitude;
             Ets.Model.DomainModel.Clienter.degree.latitude = model.latitude;
-            var pIndex = ParseHelper.ToInt(model.pageIndex, 1);
+            var pIndex = ParseHelper.ToInt(model.pageIndex + 1, 1);
 
-            var pSize = ParseHelper.ToInt(model.pageSize, Ets.Model.Common.ConstValues.App_PageSize);
+            var pSize = ParseHelper.ToInt(model.pageSize, 100);
 
             var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
             {
@@ -306,8 +309,8 @@ namespace SuperManWebApi.Controllers
         {
             Ets.Model.DomainModel.Clienter.degree.longitude = model.longitude;
             Ets.Model.DomainModel.Clienter.degree.latitude = model.latitude;
-            var pIndex = ParseHelper.ToInt(model.pageIndex, 1);
-            var pSize = ParseHelper.ToInt(model.pageSize, Ets.Model.Common.ConstValues.App_PageSize);
+            var pIndex = ParseHelper.ToInt(model.pageIndex + 1, 1);
+            var pSize = ParseHelper.ToInt(model.pageSize, 20);
             var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
             {
                 PagingRequest = new Ets.Model.Common.PagingResult(pIndex, pSize),
@@ -346,16 +349,13 @@ namespace SuperManWebApi.Controllers
             Ets.Model.ParameterModel.Clienter.ClientOrderInfoModel model = new Ets.Model.ParameterModel.Clienter.ClientOrderInfoModel();
             model.city = string.IsNullOrWhiteSpace(HttpContext.Current.Request["city"]) ? null : HttpContext.Current.Request["city"].Trim();//城市
             model.cityId = string.IsNullOrWhiteSpace(HttpContext.Current.Request["cityId"]) ? null : HttpContext.Current.Request["cityId"].Trim(); //城市编码
-
-            model.pageSize = ParseHelper.ToInt(HttpContext.Current.Request["pageSize"], Ets.Model.Common.ConstValues.App_PageSize);
-            model.pageIndex = ParseHelper.ToInt(HttpContext.Current.Request["pageIndex"], 1);
-            
             Ets.Model.DomainModel.Clienter.degree.longitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["longitude"]);
             Ets.Model.DomainModel.Clienter.degree.latitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["latitude"]);
-            
+            var pIndex = ParseHelper.ToInt(model.pageIndex + 1, 1);
+            var pSize = ParseHelper.ToInt(model.pageSize, 20);
             var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
             {
-                PagingRequest = new Ets.Model.Common.PagingResult(model.pageIndex.Value, model.pageSize.Value),
+                PagingRequest = new Ets.Model.Common.PagingResult(pIndex, pSize),
                 city = model.city,
                 cityId = model.cityId
             };
@@ -378,8 +378,8 @@ namespace SuperManWebApi.Controllers
         {
             degree.longitude = model.longitude;
             degree.latitude = model.latitude;
-            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 1;
-            var pSize = model.pageSize.HasValue ? model.pageSize.Value : Ets.Model.Common.ConstValues.App_PageSize;
+            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
+            var pSize = model.pageSize.HasValue ? model.pageSize.Value : 20;
             var criteria = new ClientOrderSearchCriteria()
             {
                 PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
@@ -411,7 +411,7 @@ namespace SuperManWebApi.Controllers
             //degree.longitude = model.longitude;
             //degree.latitude = model.latitude;
             var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
-            var pSize = model.pageSize.HasValue ? model.pageSize.Value : Ets.Model.Common.ConstValues.App_PageSize;
+            var pSize = model.pageSize.HasValue ? model.pageSize.Value : int.MaxValue;
             var criteria = new ClientOrderSearchCriteria()
             {
                 PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
@@ -454,7 +454,7 @@ namespace SuperManWebApi.Controllers
             //degree.longitude = model.longitude;
             //degree.latitude = model.latitude;
             var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
-            var pSize = model.pageSize.HasValue ? model.pageSize.Value : Ets.Model.Common.ConstValues.App_PageSize;
+            var pSize = model.pageSize.HasValue ? model.pageSize.Value : int.MaxValue;
             var criteria = new ClientOrderSearchCriteria()
             {
                 PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),

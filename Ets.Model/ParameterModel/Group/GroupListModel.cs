@@ -9,7 +9,7 @@ namespace Ets.Model.ParameterModel.Group
     /// </summary>
     public class GroupListModel
     {
-        public GroupListModel(IList<GroupApiConfigModel> _list, NewPagingResult pagingResult)
+        public GroupListModel(IList<GroupApiConfigModel> _list, PagingResult pagingResult)
         {
             GroupApiConfigListModel = _list;
             PagingResult = pagingResult;
@@ -21,6 +21,6 @@ namespace Ets.Model.ParameterModel.Group
         /// <summary>
         /// 分页参数
         /// </summary>
-        public NewPagingResult PagingResult { get; set; }
+        public PagingResult PagingResult { get; set; }
     }
 }
