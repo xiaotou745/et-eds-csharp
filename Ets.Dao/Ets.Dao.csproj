@@ -63,10 +63,6 @@
       <Project>{b9d2361d-7e2c-45ba-89ec-4eca1bf7c456}</Project>
       <Name>Ets.Model</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SuperManBusinessLogic\SuperManBusinessLogic.csproj">
-      <Project>{72ca336e-dc5e-4f98-9275-3a3a258189d6}</Project>
-      <Name>SuperManBusinessLogic</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
