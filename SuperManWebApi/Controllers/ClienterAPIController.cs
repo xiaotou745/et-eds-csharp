@@ -18,7 +18,6 @@ using SuperManCommonModel;
 using SuperManBusinessLogic.B_Logic;
 using System.ComponentModel;
 using ETS.Util;
-using LogHelper = ETS.Util.LogHelper;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.Provider.Common;
 
@@ -72,7 +71,7 @@ namespace SuperManWebApi.Controllers
         [ActionStatus(typeof(LoginModelStatus))]
         public ResultModel<ClienterLoginResultModel> PostLogin_C(LoginModel model)
         {
-            LogHelper.LogWriter("用户登录", new { model = model });
+            SuperManCore.LogHelper.LogWriter("用户登录", new { model = model });
             try
             {
                 var aClienter = ClienterLogic.clienterLogic().GetClienter(model.phoneNo, model.passWord);
@@ -93,7 +92,7 @@ namespace SuperManWebApi.Controllers
             }
             catch (Exception ex)
             {
-                LogHelper.LogWriter("登录错误", new { ex = ex });
+                SuperManCore.LogHelper.LogWriter("登录错误", new { ex = ex });
                 return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
             }
         }
@@ -247,8 +246,8 @@ namespace SuperManWebApi.Controllers
         {
             Ets.Model.DomainModel.Clienter.degree.longitude = model.longitude;
             Ets.Model.DomainModel.Clienter.degree.latitude = model.latitude;
-            var pIndex = ParseHelper.ToInt(model.pageIndex, 1);
-            pIndex = pIndex <= 0 ? 1 : pIndex;
+            var pIndex = ParseHelper.ToInt(model.pageIndex+1, 1);
+            
             var pSize = ParseHelper.ToInt(model.pageSize, 100);
 
             var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
@@ -307,7 +306,7 @@ namespace SuperManWebApi.Controllers
         {
             Ets.Model.DomainModel.Clienter.degree.longitude = model.longitude;
             Ets.Model.DomainModel.Clienter.degree.latitude = model.latitude;
-            var pIndex = ParseHelper.ToInt(model.pageIndex, 1);
+            var pIndex = ParseHelper.ToInt(model.pageIndex+1, 1);
             var pSize = ParseHelper.ToInt(model.pageSize, 20);
             var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
             {
@@ -349,7 +348,7 @@ namespace SuperManWebApi.Controllers
             model.cityId = string.IsNullOrWhiteSpace(HttpContext.Current.Request["cityId"]) ? null : HttpContext.Current.Request["cityId"].Trim(); //城市编码
             Ets.Model.DomainModel.Clienter.degree.longitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["longitude"]);
             Ets.Model.DomainModel.Clienter.degree.latitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["latitude"]);
-            var pIndex = ParseHelper.ToInt(model.pageIndex, 1);
+            var pIndex = ParseHelper.ToInt(model.pageIndex + 1, 1);
             var pSize = ParseHelper.ToInt(model.pageSize, 20);
             var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
             {

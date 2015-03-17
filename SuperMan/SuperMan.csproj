@@ -486,9 +486,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Manage\AddPhoneNumber.cshtml" />
     <Content Include="Views\Manage\ChangePassword.cshtml" />
     <Content Include="Views\Manage\Index.cshtml" />
@@ -526,9 +523,15 @@
     <Content Include="Views\AdminTools\AdminTools.cshtml" />
     <Content Include="Views\AdminTools\_AdminToolsList.cshtml" />
     <Content Include="Views\Download\Download.cshtml" />
-    <Content Include="Views\GroupManager\GroupManager.cshtml" />
-    <Content Include="Views\GroupManager\_GroupManageList.cshtml" />
-    <Content Include="Views\Shared\_NewPager.cshtml" />
+    <Content Include="Views\Home\About.cshtml" />
+    <Content Include="Views\Home\Contact.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Home\About.cshtml" />
+    <Content Include="Views\Home\Contact.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Download\edsC.cshtml" />
+    <Content Include="Views\Download\edsB.cshtml" />
+    <Content Include="Views\Download\ViewPage1.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

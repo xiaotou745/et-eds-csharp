@@ -223,6 +223,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BusinessAPIController.cs" />
     <Compile Include="Controllers\ClienterAPIController.cs" />
+    <Compile Include="Controllers\DownloadController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
@@ -304,6 +305,9 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="SuperMan\CustomerIcon\20141229101848_920.png" />
+    <Content Include="SuperMan\CustomerIcon\20141230095624_0.jpg" />
+    <Content Include="SuperMan\CustomerIcon\www.google.com.png" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -322,9 +326,12 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+    <Content Include="Views\Download\edsB.cshtml" />
+    <Content Include="Views\Download\edsC.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Content\app\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

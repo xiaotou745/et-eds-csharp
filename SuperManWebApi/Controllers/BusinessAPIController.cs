@@ -330,6 +330,7 @@ namespace SuperManWebApi.Controllers
 
         /// <summary>
         /// 商户发布订单接口  2015.3.11 平扬 增加订单重复性验证
+        /// achao 修改为ado.net
         /// </summary>
         /// <param name="model">订单数据</param>
         /// <returns></returns>
@@ -355,8 +356,6 @@ namespace SuperManWebApi.Controllers
             }
             if (model.OrderCount <= 0 || model.OrderCount > 15)   //判断录入订单数量是否符合要求
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
-            //order dborder = BusiOrderInfoModelTranslator.Instance.Translate(model);  //整合订单信息
-            //bool result = OrderLogic.orderLogic().AddModel(dborder);    //添加订单记录，并且触发极光推送。          
 
             Ets.Model.DataModel.Order.order order = iOrderProvider.TranslateOrder(model);
             string result = iOrderProvider.AddOrder(order);
@@ -369,6 +368,46 @@ namespace SuperManWebApi.Controllers
             return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
 
         }
+
+
+        //[ActionStatus(typeof(PubOrderStatus))]
+        //[HttpPost]
+        //public ResultModel<BusiOrderResultModel> PostPublishOrder_B(BusiOrderInfoModel model)
+        //{
+        //    lock (lockHelper)
+        //    {
+        //        #region 缓存验证
+        //        string cacheKey = model.userId.ToString() + "_" + model.OrderSign;
+        //        var cacheList = ETS.Cacheing.CacheFactory.Instance[cacheKey];
+        //        LogHelper.LogWriter("订单发布~商户时间戳", new { cacheKey = cacheKey, model = model });
+        //        if (cacheList != null)
+        //        {
+        //            LogHelper.LogWriter("cacheList是否存在同一的商户时间戳：", new { cacheList = cacheList });
+        //            return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderHasExist);//当前时间戳内重复提交,订单已存在 
+        //        }
+        //        LogHelper.LogWriter("如果存在会继续往下执行？cacheList是否存在商户时间戳：", new { cacheList = cacheList, model = model });
+        //        ETS.Cacheing.CacheFactory.Instance.AddObject(cacheKey, "1", DateTime.Now.AddMinutes(10));//添加当前时间戳记录
+        //        LogHelper.LogWriter("在缓存里添加时间戳：", new { cacheKey = cacheKey, obj = 1, guoqishijian = DateTime.Now.AddMinutes(10), model = model });
+        //        #endregion
+        //    }
+        //    if (model.OrderCount <= 0 || model.OrderCount > 15)   //判断录入订单数量是否符合要求
+        //        return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
+        //    order dborder = BusiOrderInfoModelTranslator.Instance.Translate(model);  //整合订单信息
+        //    bool result = OrderLogic.orderLogic().AddModel(dborder);    //添加订单记录，并且触发极光推送。          
+
+        //    //Ets.Model.DataModel.Order.order order = iOrderProvider.TranslateOrder(model);
+        //    //string result = iOrderProvider.AddOrder(order);
+
+        //    if (!result)
+        //    {
+        //        return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.InvalidPubOrder);//当前订单执行失败
+        //    }
+        //    BusiOrderResultModel resultModel = new BusiOrderResultModel { userId = model.userId };
+        //    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
+
+        //}
+
+
 
         /// <summary>
         /// 获取订单列表
