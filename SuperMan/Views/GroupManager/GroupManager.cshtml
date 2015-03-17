@@ -71,30 +71,31 @@
         <h2>
             <p id="statusFinApp">设置集团AppConfig</p>
         </h2>
-     <fieldset>
+        <fieldset>
             <input type="hidden" id="HidGroupID" value="0"/>
-         <div class="control-group">
-             <label >AppKey</label> 
-             <input  name="txtAppKeys" id="txtAppKeys" type="text"><label style="color: red">建议为"appkey_"+集团名称小写全拼</label>
-         </div>  
-         <div class="control-group">
-            <label >App版本</label> 
-             <input  name="txtAppVersion" value="1.0" title="1.0"  id="txtAppVersion" type="text"/>默认1.0
-         </div> 
-        <div class="control-group"> 
-                 <label style="color:red">AppSecret会自动生成</label>
-        </div>
-     </fieldset>
+            <div class="control-group">
+                <label >AppKey</label> 
+                <input  name="txtAppKeys" id="txtAppKeys" type="text"><label style="color: red">建议为"appkey_"+集团名称小写全拼</label>
+            </div>  
+            <div class="control-group">
+                <label >App版本</label> 
+                <input  name="txtAppVersion" value="1.0" title="1.0"  id="txtAppVersion" type="text"/>默认1.0
+            </div> 
+            <div class="control-group"> 
+                <label style="color:red">AppSecret会自动生成</label>
+            </div>
+        </fieldset>
         <p class="btnbox">
-                <input value="确认" type="button" id="btnAddGroupConfig" class="yesBtn" />                
-                <input value="关闭" type="button" class="J_closebox qxBtn" />
-            </p>
+            <input value="确认" type="button" id="btnAddGroupConfig" class="yesBtn" />                
+            <input value="关闭" type="button" class="J_closebox qxBtn" />
+        </p>
     </div>
 </div>
+<script src="~/Scripts/common/NewPager.js"></script>
 <script>
     var adminjs = new adminglass(); //实例化后台类
     var DEFAULT_PAGESIZE = 6;
-    var criteria = { PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE } };
+    var criteria = { PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE } };
     $(document).ready(function() {
         //查询
         $("#btnSearch").on('click', function() {
@@ -110,7 +111,7 @@
         }); 
     });
     ////分页
-    art.ui.control.Pager.enablePaging(document, refresh);
+    art.ui.control.NewPager.enablePaging(document, refresh);
     function refresh(pageIndex) {
         var url = "/GroupManager/GroupManager";
         if (pageIndex !== undefined) {

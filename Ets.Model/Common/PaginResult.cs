@@ -8,17 +8,27 @@ namespace Ets.Model.Common
 {
     public class NewPagingResult
     {
+        private int _pageIndex;
+
         public NewPagingResult()
         {
 
         }
         public NewPagingResult(int pageIndex, int pageSize)
         {
-            this.PageIndex = pageIndex;
+            this._pageIndex = pageIndex;
             this.PageSize = pageSize;
         }
 
-        public int PageIndex { get; set; }
+        public int PageIndex
+        {
+            get
+            {
+                return _pageIndex == 0 ? 1 : _pageIndex;
+            }
+            set { _pageIndex = value; }
+        }
+
         public int PageSize { get; set; }
 
         public int TotalCount { get; set; }
