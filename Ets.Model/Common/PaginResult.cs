@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ets.Model.Common
 {
+    /// <summary>
+    /// 最新分页请求实体 平扬2015.3.17
+    /// </summary>
     public class NewPagingResult
     {
         private int _pageIndex;
