@@ -183,13 +183,14 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <param name="orderNo">订单号码</param>
         /// <returns></returns>
-        public int? GetStatus(string orderNo)
+        public int GetStatus(string orderNo)
         {
             OrderDao OrderDao = new OrderDao();
             return OrderDao.GetStatus(orderNo);
         }
 
         #endregion
+
         /// <summary>
         /// 转换B端发布的订单信息为 数据库中需要的 订单 数据
         /// </summary>
@@ -258,5 +259,21 @@ namespace Ets.Service.Provider.Order
         {
             return OrderDao.AddOrder(order);
         }
+
+
+        #region  第三方对接 物流订单接收接口  add by caoheyang 201503167
+
+        /// <summary>
+        /// 第三方对接 物流订单接收接口  add by caoheyang 201503167
+        /// </summary>
+        /// <param name="paramodel">参数实体</param>
+        /// <returns></returns>
+        public int Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
+        {
+
+            return 1;
+        }
+
+        #endregion
     } 
 }

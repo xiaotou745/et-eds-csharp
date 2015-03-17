@@ -32,7 +32,7 @@ namespace Ets.Service.IProvider.Order
         /// </summary>
         /// <param name="orderNo">订单号</param>
         /// <returns></returns>
-        int? GetStatus(string orderNo);
+        int GetStatus(string orderNo);
         /// </summary>        /// 商户发布订单信息转换为数据库对应实体
         /// </summary>
         /// <param name="busiOrderInfoModel"></param>
@@ -43,5 +43,12 @@ namespace Ets.Service.IProvider.Order
         /// 添加一条订单记录
         /// </summary>
         string AddOrder(order order);
+
+        /// <summary>
+        /// 第三方对接 物流订单接收接口  add by caoheyang 201503167
+        /// </summary>
+        /// <param name="paramodel">参数实体</param>
+        /// <returns></returns>
+        int Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel);
     }
 }
