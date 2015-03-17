@@ -30,7 +30,7 @@ namespace Ets.Service.Provider.Common
             try
             {
                 var a = _dao.GetGroupList(criteria);
-                var pageresult = new PagingResult(a.Index-1, criteria.PagingRequest.PageSize)
+                var pageresult = new PagingResult(criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize)
                 {
                     TotalCount = a.All,
                     RecordCount = a.Records.Count

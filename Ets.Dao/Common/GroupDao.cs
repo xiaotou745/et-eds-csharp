@@ -199,8 +199,7 @@ namespace Ets.Dao.Common
             {
                 where += string.Format(" and AppKey= '{0}' ", model.AppKey); 
             }
-            int pageIndex = model.PagingRequest.PageIndex + 1;
-            return new PageHelper().GetPages<GroupApiConfigModel>(SuperMan_Read, pageIndex, where, "g.Id", sqlcolomn, " [group] g with(nolock) left join GroupApiConfig gc with(nolock) on g.Id = gc.GroupId ", model.PagingRequest.PageSize, true);
+            return new PageHelper().GetPages<GroupApiConfigModel>(SuperMan_Read, model.PagingRequest.PageIndex + 1, where, "g.Id", sqlcolomn, " [group] g with(nolock) left join GroupApiConfig gc with(nolock) on g.Id = gc.GroupId ", model.PagingRequest.PageSize, true);
         }
     }
 }
