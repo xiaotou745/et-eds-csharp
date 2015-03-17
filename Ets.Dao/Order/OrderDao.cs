@@ -195,53 +195,69 @@ namespace Ets.Dao.Order
         /// <summary>
         /// 第三方对接 物流订单接收接口  add by caoheyang 201503167
         /// </summary>
-        /// <param name="paramodel">参数实体</param>
-        /// <returns></returns>
-        public int CreateToSql(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
+        /// <param name="paramodel">订单号码</param>
+        /// <returns>订单号</returns>
+        public string CreateToSql(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
         {
-            #region 操作插入business表
-            ///商户插入sql
-            const string insertBussinesssql = @"
+            #region 操作business表取商户id
+            int bussinessId;//商户id
+            ///查询该商户是否已存在
+            const string queryBussinesssql = @"
+                select top 1 id from  dbo.business
+                where GroupId=@GroupId and OriginalBusiId=@OriginalBusiId;";
+            IDbParameters queryBdbParameters = DbHelper.CreateDbParameters();
+            queryBdbParameters.AddWithValue("@GroupId", paramodel.store_info.group); //集团id
+            queryBdbParameters.AddWithValue("@OriginalBusiId", paramodel.store_info.store_id);    //对接方店铺ID第三方平台推送过来的商家Id
+            bussinessId = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, queryBussinesssql, queryBdbParameters));
+            if (bussinessId == 0)  //如果商户不存在
+            {
+                ///商户插入sql
+                const string insertBussinesssql = @"
                 INSERT INTO dbo.business
                 (OriginalBusiId,Name,GroupId,IDCard,
                 PhoneNo,PhoneNo2,Address,ProvinceCode,CityCode,AreaCode,
-                Longitude,Latitude,DistribSubsidy,CommissionTypeId)
+                Longitude,Latitude,DistribSubsidy,CommissionTypeId)  
+                OUTPUT Inserted.Id   
                 values(@OriginalBusiId,@Name,@GroupId,@IDCard,
                 @PhoneNo,@PhoneNo2,@Address,@ProvinceCode,@CityCode,@AreaCode,
-                @Longitude,@Latitude,@DistribSubsidy,@CommissionTypeId)";
-            IDbParameters insertBdbParameters = DbHelper.CreateDbParameters();
-            ///基本参数信息
-            insertBdbParameters.AddWithValue("@OriginalBusiId", paramodel.store_info.store_id); //对接方店铺ID第三方平台推送过来的商家Id
-            insertBdbParameters.AddWithValue("@Name", paramodel.store_info.store_name);    //店铺名称
-            insertBdbParameters.AddWithValue("@GroupId", paramodel.store_info.group);    //集团：3:万达
-            insertBdbParameters.AddWithValue("@IDCard", paramodel.store_info.id_card);    //店铺身份证号
-            insertBdbParameters.AddWithValue("@PhoneNo", paramodel.store_info.phone);    //门店联系电话
-            insertBdbParameters.AddWithValue("@PhoneNo2", paramodel.store_info.phone2);    //门店第二联系电话
-            insertBdbParameters.AddWithValue("@Address", paramodel.store_info.address);    //门店地址
-            insertBdbParameters.AddWithValue("@ProvinceCode", paramodel.store_info.city_code);    //门店所在省份code
-            insertBdbParameters.AddWithValue("@CityCode", paramodel.store_info.city_code);    //门店所在城市code
-            insertBdbParameters.AddWithValue("@AreaCode", paramodel.store_info.area_code);    //门店所在区域code
-            insertBdbParameters.AddWithValue("@Longitude", paramodel.store_info.longitude);    //门店所在区域经度
-            insertBdbParameters.AddWithValue("@Latitude", paramodel.store_info.latitude);    //门店所在区域纬度
-            insertBdbParameters.AddWithValue("@DistribSubsidy", paramodel.store_info.delivery_fee);    //外送费,默认为0
-            insertBdbParameters.AddWithValue("@CommissionTypeId", paramodel.store_info.commission_type);    //佣金类型，涉及到快递员的佣金计算方式，默认1
+                @Longitude,@Latitude,@DistribSubsidy,@CommissionTypeId);";
+                IDbParameters insertBdbParameters = DbHelper.CreateDbParameters();
+                ///基本参数信息
+                insertBdbParameters.AddWithValue("@OriginalBusiId", paramodel.store_info.store_id); //对接方店铺ID第三方平台推送过来的商家Id
+                insertBdbParameters.AddWithValue("@Name", paramodel.store_info.store_name);    //店铺名称
+                insertBdbParameters.AddWithValue("@GroupId", paramodel.store_info.group);    //集团：3:万达
+                insertBdbParameters.AddWithValue("@IDCard", paramodel.store_info.id_card);    //店铺身份证号
+                insertBdbParameters.AddWithValue("@PhoneNo", paramodel.store_info.phone);    //门店联系电话
+                insertBdbParameters.AddWithValue("@PhoneNo2", paramodel.store_info.phone2);    //门店第二联系电话
+                insertBdbParameters.AddWithValue("@Address", paramodel.store_info.address);    //门店地址
+                insertBdbParameters.AddWithValue("@ProvinceCode", paramodel.store_info.city_code);    //门店所在省份code
+                insertBdbParameters.AddWithValue("@CityCode", paramodel.store_info.city_code);    //门店所在城市code
+                insertBdbParameters.AddWithValue("@AreaCode", paramodel.store_info.area_code);    //门店所在区域code
+                insertBdbParameters.AddWithValue("@Longitude", paramodel.store_info.longitude);    //门店所在区域经度
+                insertBdbParameters.AddWithValue("@Latitude", paramodel.store_info.latitude);    //门店所在区域纬度
+                insertBdbParameters.AddWithValue("@DistribSubsidy", paramodel.store_info.delivery_fee);    //外送费,默认为0
+                insertBdbParameters.AddWithValue("@CommissionTypeId", paramodel.store_info.commission_type);    //佣金类型，涉及到快递员的佣金计算方式，默认1
+                bussinessId = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, insertBussinesssql, insertBdbParameters));
+            }
             #endregion
 
             #region 操作插入order表
             ///订单插入sql
             const string insertOrdersql = @" 
-                INSERT INTO dbo.[order](
+                INSERT INTO dbo.[order](OrderNo,
                 OriginalOrderNo,PubDate,IsPay,Amount,
                 Remark,Weight,DistribSubsidy,OrderCount,ReceviceName,
                 RecevicePhoneNo,ReceiveProvinceCode,ReceiveCityCode,ReceiveAreaCode,ReceviceAddress,
-                ReceviceLongitude,ReceviceLatitude)
-                Values(
-                @OriginalOrderNo,@PubDate，@IsPay，@Amount,
+                ReceviceLongitude,ReceviceLatitude,businessId,OrderFrom)
+                OUTPUT Inserted.OrderNo 
+                Values(@OrderNo,
+                @OriginalOrderNo,@PubDate,@IsPay,@Amount,
                 @Remark,@Weight,@DistribSubsidy,@OrderCount,@ReceviceName,
                 @RecevicePhoneNo,@ReceiveProvinceCode,@ReceiveCityCode,@ReceiveAreaCode,@ReceviceAddress,
-                @ReceviceLongitude,@ReceviceLatitude)";
+                @ReceviceLongitude,@ReceviceLatitude,@BusinessId,@OrderFrom)";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             ///基本参数信息
+            dbParameters.AddWithValue("@OrderNo", "121212121212121212");    //其它平台的来源订单号
             dbParameters.AddWithValue("@OriginalOrderNo", paramodel.order_id);    //其它平台的来源订单号
             dbParameters.AddWithValue("@PubDate", paramodel.create_time);    //订单下单时间
             //要求送餐时间
@@ -260,10 +276,29 @@ namespace Ets.Dao.Order
             dbParameters.AddWithValue("@ReceviceAddress", paramodel.address.address);    //用户收货地址
             dbParameters.AddWithValue("@ReceviceLongitude", paramodel.address.longitude);    //用户收货地址所在区域经度
             dbParameters.AddWithValue("@ReceviceLatitude", paramodel.address.latitude);    //用户收货地址所在区域纬度
-            object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Read,insertOrdersql, dbParameters);
+            dbParameters.AddWithValue("@BusinessId", bussinessId);    //商户id
+            dbParameters.AddWithValue("@OrderFrom", 0);    //订单来源  默认0
+            string orderNo = ParseHelper.ToString(DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrdersql, dbParameters));
             #endregion
 
-            return ParseHelper.ToInt(executeScalar);
+            #region 操作插入OrderDetail表
+            for (int i = 0; i < paramodel.order_details.Length; i++)
+            {
+                ///订单详情插入sql
+                const string insertOrderDetailsql = @" 
+                 INSERT INTO dbo.OrderDetail
+                 (OrderNo ,ProductName , UnitPrice ,Quantity)
+                 VALUES  (@OrderNo ,@ProductName ,@UnitPrice ,@Quantity)";
+                IDbParameters insertOrderDetaiParas = DbHelper.CreateDbParameters();
+                ///基本参数信息
+                insertOrderDetaiParas.AddWithValue("@OrderNo", orderNo);    //订单号
+                insertOrderDetaiParas.AddWithValue("@ProductName", paramodel.order_details[i].product_name);    //商品名称
+                insertOrderDetaiParas.AddWithValue("@UnitPrice", paramodel.order_details[i].unit_price);    //商品单价，精确到两位小数
+                insertOrderDetaiParas.AddWithValue("@Quantity", paramodel.order_details[i].quantity);    //商品数量
+                int orderdetailId = ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrderDetailsql, insertOrderDetaiParas));
+            }
+            #endregion
+            return orderNo;
         }
         #endregion
 
