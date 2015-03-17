@@ -51,13 +51,15 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult AuditOK(int id)
         {
-            BusiLogic.busiLogic().UpdateAuditStatus(id,EnumStatusType.审核通过);
+            //BusiLogic.busiLogic().UpdateAuditStatus(id,EnumStatusType.审核通过);
+            iBusinessProvider.UpdateAuditStatus(id, ETS.Enums.EnumStatusType.审核通过);
             return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
         public JsonResult AuditCel(int id)
         {
-            BusiLogic.busiLogic().UpdateAuditStatus(id, EnumStatusType.审核取消);
+            //BusiLogic.busiLogic().UpdateAuditStatus(id, EnumStatusType.审核取消);
+            iBusinessProvider.UpdateAuditStatus(id, ETS.Enums.EnumStatusType.审核取消);
             return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
         }
 

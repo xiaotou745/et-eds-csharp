@@ -241,5 +241,16 @@ namespace Ets.Service.Provider.User
             pagedQuery.businessManageList = businesslists;
             return pagedQuery;
         }
+        /// <summary>
+        /// 更新审核状态
+        /// danny-20150317
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="price"></param>
+        /// <returns></returns>
+        public bool UpdateAuditStatus(int id, EnumStatusType enumStatusType)
+        {
+            return dao.UpdateAuditStatus(id, enumStatusType);
+        }
     }
 }
