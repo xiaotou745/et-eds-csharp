@@ -19,13 +19,14 @@ namespace Ets.Model.DomainModel.Bussiness
     }
     public class BusinessManageList
     {
-        public BusinessManageList(List<BusListResultModel> _businessModel, PagingResult pagingResult)
+        public BusinessManageList(List<BusListResultModel> _businessModel, NewPagingResult pagingResult)
         {
             businessModel = _businessModel;
             PagingResult = pagingResult;
         }
         public List<BusListResultModel> businessModel { get; set; }
-        public PagingResult PagingResult { get; set; }
+        public NewPagingResult PagingResult { get; set; }
+        //public PagingResult PagingResult { get; set; }
     }
 
     public class BusinessCountManageList

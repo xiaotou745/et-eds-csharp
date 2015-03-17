@@ -234,7 +234,7 @@ namespace Ets.Service.Provider.User
         {
             var pagedQuery = new BusinessManage();
             PageInfo<BusListResultModel> pageinfo = dao.GetBusinesses<BusListResultModel>(criteria);
-            PagingResult pr = new PagingResult() { PageIndex = criteria.PagingRequest.PageIndex, PageSize = criteria.PagingRequest.PageSize, RecordCount=pageinfo.All, TotalCount = pageinfo.All };
+            NewPagingResult pr = new NewPagingResult() { PageIndex = criteria.PagingRequest.PageIndex, PageSize = criteria.PagingRequest.PageSize, RecordCount = pageinfo.All, TotalCount = pageinfo.All };
             List<BusListResultModel> list = pageinfo.Records.ToList();
             //List<business> list = new List<business>();
             var businesslists = new BusinessManageList(list, pr);
