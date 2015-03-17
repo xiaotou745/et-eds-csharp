@@ -23,6 +23,7 @@ using System.Net;
 using Ets.Service.Provider.User;
 using Ets.Service.IProvider.Order;
 using Ets.Service.Provider.Order;
+using Ets.Service.Provider.Common;
 namespace SuperManWebApi.Controllers
 {
     public class BusinessAPIController : ApiController
@@ -619,10 +620,14 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="CityName">城市名称</param>
         /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.ServicePhoneStatus))]
         [HttpGet]
-        public Ets.Model.Common.ResultModelServicePhone GetCustomerServicePhone(string CityName)
+        public Ets.Model.Common.ResultModel<Ets.Model.Common.ResultModelServicePhone> GetCustomerServicePhone(string CityName)
         {
-            return new Ets.Service.Provider.Common.ServicePhone().GetCustomerServicePhone(CityName);
+            return Ets.Model.Common.ResultModel<Ets.Model.Common.ResultModelServicePhone>.Conclude(
+                GetOrdersStatus.Success,
+                new ServicePhone().GetCustomerServicePhone(CityName)
+                );
         }
 
     }

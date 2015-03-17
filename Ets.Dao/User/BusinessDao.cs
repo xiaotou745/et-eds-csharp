@@ -206,7 +206,7 @@ namespace Ets.Dao.User
         /// 2015年3月16日 13:56:18
         /// </summary>
         /// <param name="PhoneNo">电话号码</param>
-        /// <returns>是否存在,true存在，false不慧</returns>
+        /// <returns>是否存在,true存在，false不存在</returns>
         public bool CheckBusinessExistPhone(string PhoneNo)
         {
             try
