@@ -346,13 +346,20 @@ namespace SuperManWebApi.Controllers
             Ets.Model.ParameterModel.Clienter.ClientOrderInfoModel model = new Ets.Model.ParameterModel.Clienter.ClientOrderInfoModel();
             model.city = string.IsNullOrWhiteSpace(HttpContext.Current.Request["city"]) ? null : HttpContext.Current.Request["city"].Trim();//城市
             model.cityId = string.IsNullOrWhiteSpace(HttpContext.Current.Request["cityId"]) ? null : HttpContext.Current.Request["cityId"].Trim(); //城市编码
+
+            model.pageSize = ParseHelper.ToInt(HttpContext.Current.Request["pageSize"], 20);
+            model.pageIndex = ParseHelper.ToInt(HttpContext.Current.Request["pageIndex"], 1);
+            if (model.pageIndex <= 0)
+            {
+                model.pageIndex += 1;
+            }
             Ets.Model.DomainModel.Clienter.degree.longitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["longitude"]);
             Ets.Model.DomainModel.Clienter.degree.latitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["latitude"]);
-            var pIndex = ParseHelper.ToInt(model.pageIndex + 1, 1);
-            var pSize = ParseHelper.ToInt(model.pageSize, 20);
+            //var pIndex = ParseHelper.ToInt(model.pageIndex + 1, 1);
+            //var pSize = ParseHelper.ToInt(model.pageSize, 20);
             var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
             {
-                PagingRequest = new Ets.Model.Common.PagingResult(pIndex, pSize),
+                PagingRequest = new Ets.Model.Common.PagingResult(model.pageIndex.Value, model.pageSize.Value),
                 city = model.city,
                 cityId = model.cityId
             };
