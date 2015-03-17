@@ -46,5 +46,10 @@ namespace SuperMan.Controllers
 
             return View();
         }
+
+        public ActionResult ViewPage1()
+        {
+            return View();
+        }
     }
 }

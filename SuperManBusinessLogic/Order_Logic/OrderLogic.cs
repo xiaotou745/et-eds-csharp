@@ -99,6 +99,7 @@ namespace SuperManBusinessLogic.Order_Logic
                 }
                 //订单查询 先按 状态排序 ，未接单的 放在前面
                 items = items.OrderBy(i => i.Status);
+                items = items.OrderByDescending(i => i.PubDate);
                 var pagedQuery = new OrderManage();
                 var orderModel = OrderModelTranslator.Instance.Translate(items.ToList());
                 resultModel = new PagedList<OrderModel>(orderModel, criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
