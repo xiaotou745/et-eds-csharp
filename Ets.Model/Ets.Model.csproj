@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\ConstValues.cs" />
+    <Compile Include="Common\JPushModel.cs" />
     <Compile Include="Common\PagedList.cs" />
     <Compile Include="Common\ResultModelServicePhone.cs" />
     <Compile Include="DataModel\Bussiness\BusiLoginResultModel.cs" />
