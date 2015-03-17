@@ -101,9 +101,9 @@
             criteria = {
                 GroupName: $("#txtGroupName").val(), //商户名称
                 AppKey: $("#txtAppkey").val(),////商户电话
-                PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE }
+                PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }
             };
-            refresh(0);
+            refresh(1);
         });
         $("#btnAdd").on('click', function () {
             adminjs.openwinbox('#GroupAddDivShow');

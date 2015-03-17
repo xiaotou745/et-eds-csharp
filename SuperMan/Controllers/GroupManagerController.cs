@@ -31,7 +31,7 @@ namespace SuperMan.Controllers
                 Response.Redirect("/account/login");
                 return null;
             }
-            var criteria = new GroupParaModel() { PagingRequest = new PagingResult(0,6) };
+            var criteria = new GroupParaModel() { PagingRequest = new PagingResult(0, 6) };
             var pagedList = iGroupServices.GetGroupList(criteria);
             return View(pagedList.Data);
         }
