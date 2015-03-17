@@ -83,10 +83,6 @@
       <Project>{bba67a86-afd6-46f2-bbd9-5dfb5bfdafe2}</Project>
       <Name>ETS.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SuperManCore\SuperManCore.csproj">
-      <Project>{F52D02C9-103A-46B1-AEE7-3D11E64777D7}</Project>
-      <Name>SuperManCore</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

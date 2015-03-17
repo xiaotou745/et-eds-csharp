@@ -545,6 +545,10 @@
       <Project>{bba67a86-afd6-46f2-bbd9-5dfb5bfdafe2}</Project>
       <Name>ETS.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ETS.Data\ETS.Data.csproj">
+      <Project>{be8b43e2-df1e-4bfd-b4ef-63e3e0f53ea2}</Project>
+      <Name>ETS.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Ets.Model\Ets.Model.csproj">
       <Project>{b9d2361d-7e2c-45ba-89ec-4eca1bf7c456}</Project>
       <Name>Ets.Model</Name>
