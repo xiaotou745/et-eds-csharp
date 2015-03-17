@@ -12,6 +12,10 @@
 /// 1.00
 /// </version>
 //----------------------------------------------------------------------------------
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Ets.Model.Common
 {

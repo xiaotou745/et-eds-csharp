@@ -412,7 +412,7 @@
     <Content Include="Authority\EnumSettings.config" />
     <Content Include="Nlog.config" />
     <None Include="Properties\PublishProfiles\HDL.pubxml" />
-    <None Include="Properties\PublishProfiles\众包Web.pubxml" />
+    <None Include="Properties\PublishProfiles\MyWeb.pubxml" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="Scripts\bootbox.js" />
     <Content Include="Scripts\bootstrap-datepicker.js" />
@@ -532,6 +532,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Download\edsC.cshtml" />
     <Content Include="Views\Download\edsB.cshtml" />
+    <Content Include="Views\Download\ViewPage1.cshtml" />
     <Content Include="Views\Shared\_NewPager.cshtml" />
     <Content Include="Views\GroupManager\GroupManager.cshtml" />
     <Content Include="Views\GroupManager\_GroupManageList.cshtml" />

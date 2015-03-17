@@ -31,6 +31,3 @@ _ReSharper*/
 /SuperMan/logs
 /SuperManWebApi/App_Data/XmlDocument.xml
 /SuperManWebApi/App_Data/SuperManWebApi.XML
-/Ets.Model/Ets.Model.csproj
-/Ets.Service.IProvider/*.csproj
-*.csproj
