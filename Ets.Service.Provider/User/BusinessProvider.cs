@@ -8,6 +8,9 @@ using ETS.Data.PageData;
 using System;
 using System.Collections.Generic;
 using CalculateCommon;
+using Ets.Model.ParameterModel.Bussiness;
+using Ets.Model.DataModel.Order;
+using System.Linq;
 
 namespace Ets.Service.Provider.User
 {
@@ -147,6 +150,23 @@ namespace Ets.Service.Provider.User
         public Model.DataModel.Bussiness.BusiRegisterResultModel PostRegisterInfo_B(Model.ParameterModel.Bussiness.RegisterInfoModel model)
         {
             throw new NotImplementedException();
+        }
+        /// <summary>
+        /// 获取商户信息
+        /// danny-20150316
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public BusinessManage GetBusinesses(BusinessSearchCriteria criteria)
+        {
+            var pagedQuery = new BusinessManage();
+            PageInfo<business> pageinfo = dao.GetBusinesses<business>(criteria);
+            PagingResult pr = new PagingResult() { PageIndex = criteria.PagingRequest.PageIndex, PageSize = criteria.PagingRequest.PageSize, RecordCount=pageinfo.All, TotalCount = pageinfo.All };
+            List<business> list = pageinfo.Records.ToList();
+            //List<business> list = new List<business>();
+            var businesslists = new BusinessManageList(list, pr);
+            pagedQuery.businessManageList = businesslists;
+            return pagedQuery;
         }
     }
 }

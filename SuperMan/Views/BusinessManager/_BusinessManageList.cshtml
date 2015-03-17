@@ -1,5 +1,6 @@
 ﻿@using SuperManBusinessLogic.Group_Logic
-@model SuperManCommonModel.Models.BusinessManageList
+
+@model Ets.Model.DomainModel.Bussiness.BusinessManageList
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
     <thead>
@@ -51,27 +52,48 @@
                     </td>
                     @{
                 var statusView = "";
-                if (@item.Status == SuperManCommonModel.ConstValues.BUSINESS_AUDITPASS)
+                if (@item.Status == Ets.Model.Common.ConstValues.BUSINESS_AUDITPASS)
                 {
                     statusView = "审核通过";
                 }
 
-                else if (@item.Status == SuperManCommonModel.ConstValues.BUSINESS_AUDITPASSING)
+                else if (@item.Status == Ets.Model.Common.ConstValues.BUSINESS_AUDITPASSING)
                 {
                     statusView = "审核中";
                 }
-                else if (@item.Status == SuperManCommonModel.ConstValues.BUSINESS_NOADDRESS)
+                else if (@item.Status == Ets.Model.Common.ConstValues.BUSINESS_NOADDRESS)
                 {
                     statusView = "未审核且未添加地址";
                 }
-                else if (@item.Status == SuperManCommonModel.ConstValues.BUSINESS_NOAUDIT)
+                else if (@item.Status == Ets.Model.Common.ConstValues.BUSINESS_NOAUDIT)
                 {
                     statusView = "未审核";
                 }
-                else if (@item.Status == SuperManCommonModel.ConstValues.BUSINESS_AUDITCANCEL)
+                else if (@item.Status == Ets.Model.Common.ConstValues.BUSINESS_AUDITCANCEL)
                 {
                     statusView = "审核被拒绝";
                 }
+                //if (@item.Status == SuperManCommonModel.ConstValues.BUSINESS_AUDITPASS)
+                //{
+                //    statusView = "审核通过";
+                //}
+
+                //else if (@item.Status == SuperManCommonModel.ConstValues.BUSINESS_AUDITPASSING)
+                //{
+                //    statusView = "审核中";
+                //}
+                //else if (@item.Status == SuperManCommonModel.ConstValues.BUSINESS_NOADDRESS)
+                //{
+                //    statusView = "未审核且未添加地址";
+                //}
+                //else if (@item.Status == SuperManCommonModel.ConstValues.BUSINESS_NOAUDIT)
+                //{
+                //    statusView = "未审核";
+                //}
+                //else if (@item.Status == SuperManCommonModel.ConstValues.BUSINESS_AUDITCANCEL)
+                //{
+                //    statusView = "审核被拒绝";
+                //}
                     }
                     <td>@statusView</td>
                     <td>

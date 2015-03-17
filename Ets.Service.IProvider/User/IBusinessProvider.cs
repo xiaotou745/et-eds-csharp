@@ -48,5 +48,12 @@ namespace Ets.Service.IProvider.User
         /// <param name="model"></param>
         /// <returns></returns>
         BusiRegisterResultModel PostRegisterInfo_B(RegisterInfoModel model);
+        /// <summary>
+        /// 获取商户信息
+        /// danny-20150316
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        BusinessManage GetBusinesses(BusinessSearchCriteria criteria);
     }
 }

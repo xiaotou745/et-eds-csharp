@@ -13,6 +13,8 @@ using System.Threading.Tasks;
 using ETS.Const;
 using Ets.Model.DomainModel.Bussiness;
 using Ets.Model.DomainModel.Clienter;
+using Ets.Model.DataModel.Order;
+using Ets.Model.ParameterModel.Bussiness;
 
 
 namespace Ets.Dao.User
@@ -196,8 +198,64 @@ namespace Ets.Dao.User
             return reslut;
 
         }
-
-
-
+        /// <summary>
+        /// 获取商户信息
+        /// danny-20150316
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<T> GetBusinesses<T>(BusinessSearchCriteria criteria)
+        {
+            string columnList = @"   b.Id
+                                    ,b.Name
+                                    ,b.City
+                                    ,b.district
+                                    ,b.PhoneNo
+                                    ,b.PhoneNo2
+                                    ,b.Password
+                                    ,b.CheckPicUrl
+                                    ,b.IDCard
+                                    ,b.Address
+                                    ,b.Landline
+                                    ,b.Longitude
+                                    ,b.Latitude
+                                    ,b.Status
+                                    ,b.InsertTime
+                                    ,b.districtId
+                                    ,b.CityId
+                                    ,b.GroupId
+                                    ,b.OriginalBusiId
+                                    ,b.ProvinceCode
+                                    ,b.CityCode
+                                    ,b.AreaCode
+                                    ,b.Province
+                                    ,b.CommissionTypeId
+                                    ,b.DistribSubsidy
+                                    ,b.BusinessCommission ";
+            var sbSqlWhere = new StringBuilder(" 1=1 ");
+            if (!string.IsNullOrEmpty(criteria.businessName))
+            {
+                sbSqlWhere.AppendFormat(" AND b.Name={0} ", criteria.businessName);
+            }
+            if (!string.IsNullOrEmpty(criteria.businessPhone))
+            {
+                sbSqlWhere.AppendFormat(" AND b.PhoneNo={0} ", criteria.businessPhone);
+            }
+            if (criteria.Status != -1)
+            {
+                sbSqlWhere.AppendFormat(" AND b.Status={0} ", criteria.Status);
+            }
+            if (criteria.BusinessCommission > 0)
+            {
+                sbSqlWhere.AppendFormat(" AND b.BusinessCommission={0} ", criteria.BusinessCommission);
+            }
+            if (criteria.GroupId != null)
+            {
+                sbSqlWhere.AppendFormat(" AND b.GroupId={0} ", criteria.GroupId);
+            }
+            string tableList = @" business  b WITH (NOLOCK)   ";
+            string orderByColumn = " b.InsertTime ";
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex+1, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
+        }
     }
 }
