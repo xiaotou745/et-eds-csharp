@@ -252,5 +252,17 @@ namespace Ets.Service.Provider.User
         {
             return dao.UpdateAuditStatus(id, enumStatusType);
         }
+
+        /// <summary>
+        ///  根据城市信息查询当前城市下该集团的所有商户信息
+        ///  danny-20150317
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="enumStatusType"></param>
+        /// <returns></returns>
+        public IList<BusListResultModel> GetBussinessByCityInfo(BusinessSearchCriteria criteria)
+        {
+            return dao.GetBussinessByCityInfo(criteria);
+        }
     }
 }

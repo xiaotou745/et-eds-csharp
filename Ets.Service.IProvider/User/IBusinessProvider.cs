@@ -6,6 +6,7 @@ using Ets.Model.Common;
 using Ets.Model.DomainModel.Bussiness;
 using Ets.Model.DataModel.Bussiness;
 using ETS.Enums;
+using System.Data;
 
 namespace Ets.Service.IProvider.User
 {
@@ -79,5 +80,12 @@ namespace Ets.Service.IProvider.User
         /// <param name="enumStatusType"></param>
         /// <returns></returns>
         bool UpdateAuditStatus(int id, EnumStatusType enumStatusType);
+        /// <summary>
+        /// 根据城市信息查询当前城市下该集团的所有商户信息
+        ///  danny-20150317
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        IList<BusListResultModel> GetBussinessByCityInfo(BusinessSearchCriteria criteria);
     }
 }
