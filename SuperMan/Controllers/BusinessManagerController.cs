@@ -10,6 +10,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using SuperManDataAccess;
+using Ets.Model.ParameterModel.Bussiness;
 
 namespace SuperMan.Controllers
 {
@@ -17,6 +18,10 @@ namespace SuperMan.Controllers
     [WebHandleError]
     public class BusinessManagerController : Controller
     {
+        /// <summary>
+        /// 商户业务类
+        /// </summary>
+        Ets.Service.IProvider.User.IBusinessProvider iBusinessProvider = new BusinessProvider(); 
         // GET: BusinessManager
         public ActionResult BusinessManager()
         {
@@ -28,15 +33,17 @@ namespace SuperMan.Controllers
             }
                 
             ViewBag.txtGroupId = account.GroupId;//集团id
-            var criteria = new BusinessSearchCriteria() { PagingRequest = new PagingResult(0, 15), GroupId = account.GroupId };
+            var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria() { PagingRequest = new Ets.Model.Common.PagingResult (0, 15), GroupId = account.GroupId };
             criteria.Status = -1; //默认加载全部
-            var pagedList = BusiLogic.busiLogic().GetBusinesses(criteria);
+            //var pagedList = BusiLogic.busiLogic().GetBusinesses(criteria);
+            var pagedList = iBusinessProvider.GetBusinesses(criteria);
             return View(pagedList);
         }
         [HttpPost]
-        public ActionResult BusinessManager(BusinessSearchCriteria criteria)
+        public ActionResult BusinessManager(Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria criteria)
         {
-            var pagedList = BusiLogic.busiLogic().GetBusinesses(criteria);
+            //var pagedList = BusiLogic.busiLogic().GetBusinesses(criteria);
+            var pagedList = iBusinessProvider.GetBusinesses(criteria);
             var item = pagedList.businessManageList;
             return PartialView("_BusinessManageList", item);
         }
@@ -61,7 +68,7 @@ namespace SuperMan.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult GetBussinessByCityInfo(BusinessSearchCriteria model) {
+        public JsonResult GetBussinessByCityInfo(SuperManCommonModel.Entities.BusinessSearchCriteria model) {
              return Json(BusiLogic.busiLogic().GetBussinessByCityInfo(model), JsonRequestBehavior.DenyGet);
         }
         [HttpGet]

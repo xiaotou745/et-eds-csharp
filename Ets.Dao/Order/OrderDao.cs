@@ -6,7 +6,6 @@ using ETS.Data.PageData;
 using ETS.Extension;
 using ETS.Page;
 using ETS.Util;
-using SuperManBusinessLogic.CommonLogic;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -114,7 +113,7 @@ namespace Ets.Dao.Order
             return ParseHelper.ToInt(executeScalar);
         }
         #endregion
-        public string AddOrder(Model.DataModel.Order.order order)
+        public int AddOrder(Model.DataModel.Order.order order)
         {
             StringBuilder insertOrder = new StringBuilder();
 
@@ -186,15 +185,8 @@ namespace Ets.Dao.Order
             parm.AddWithValue("@ReceviceLatitude", order.ReceviceLatitude);
             parm.AddWithValue("@OrderCount", order.OrderCount);
             parm.AddWithValue("@CommissionRate", order.CommissionRate);
-            int result = DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrder.ToString(), parm);
-            if (result > 0)
-            {
-                Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity); //激光推送
-                return "1";
-            }else
-            {
-                return "0";
-            }
+            return DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrder.ToString(), parm);
+
         }
     }
 }

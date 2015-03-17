@@ -68,9 +68,9 @@ namespace Ets.Dao.Common
         /// </summary>
         /// <param name="config"></param>
         /// <returns></returns>
-        public int CreateGroupApiConfig(GroupApiConfigModel model)
+        public bool CreateGroupApiConfig(GroupApiConfigModel model)
         {
-            string sql = @" if not exists (select 1 from GroupApiConfig with(nolock) where AppKey=@AppKey) begin INSERT INTO GroupApiConfig
+            string sql = @" if not exists (select 1 from GroupApiConfig with(nolock) where AppKey=@AppKey and AppVersion=@AppVersion) begin INSERT INTO GroupApiConfig
                                    (AppKey
                                    ,AppSecret
                                    ,AppVersion
@@ -88,9 +88,9 @@ namespace Ets.Dao.Common
             object i = DbHelper.ExecuteScalar(Config.SuperMan_Write, sql, dbParameters);
             if (i!=null)
             {
-                return int.Parse(i.ToString());
+                return int.Parse(i.ToString())>0;
             }
-            return 0;
+            return false;
         }
         /// <summary>
         /// 修改集团api配置
@@ -199,8 +199,8 @@ namespace Ets.Dao.Common
             {
                 where += string.Format(" and AppKey= '{0}' ", model.AppKey); 
             }
-            int pageIndex = model.PagingRequest.PageIndex > 0 ? model.PagingRequest.PageIndex : 1;
-            return new PageHelper().GetPages<GroupApiConfigModel>(SuperMan_Read, pageIndex, where, "g.Id", sqlcolomn, " [group] g with(nolock) left join GroupApiConfig gc with(nolock) on g.Id = gc.GroupId ", model.PagingRequest.PageSize, false);
+            int pageIndex = model.PagingRequest.PageIndex + 1;
+            return new PageHelper().GetPages<GroupApiConfigModel>(SuperMan_Read, pageIndex, where, "g.Id", sqlcolomn, " [group] g with(nolock) left join GroupApiConfig gc with(nolock) on g.Id = gc.GroupId ", model.PagingRequest.PageSize, true);
         }
     }
 }

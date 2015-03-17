@@ -62,6 +62,13 @@ namespace Ets.Service.IProvider.User
         /// </summary>
         /// <param name="busiId"></param>
         /// <returns></returns>
-        business GetBusiness(int busiId);
+        BusListResultModel GetBusiness(int busiId);
+        /// <summary>
+        /// 获取商户信息
+        /// danny-20150316
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        BusinessManage GetBusinesses(BusinessSearchCriteria criteria);
     }
 }

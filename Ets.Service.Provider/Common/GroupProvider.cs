@@ -17,7 +17,7 @@ namespace Ets.Service.Provider.Common
         /// <summary>
         /// 数据访问类
         /// </summary>
-        GroupDao dao=new GroupDao();
+        readonly GroupDao _dao=new GroupDao();
 
         /// <summary>
         /// 获取集团分页列表
@@ -26,13 +26,11 @@ namespace Ets.Service.Provider.Common
         /// <returns></returns>
         public ResultInfo<GroupListModel> GetGroupList(GroupParaModel criteria)
         {
-            var result = new ResultInfo<GroupListModel>();
-            result.Data = null;
-            result.Result = false;
+            var result = new ResultInfo<GroupListModel> {Data = null, Result = false};
             try
             {
-                var a = dao.GetGroupList(criteria);
-                var pageresult = new PagingResult(a.Index, criteria.PagingRequest.PageSize)
+                var a = _dao.GetGroupList(criteria);
+                var pageresult = new PagingResult(a.Index-1, criteria.PagingRequest.PageSize)
                 {
                     TotalCount = a.All,
                     RecordCount = a.Records.Count
@@ -54,12 +52,13 @@ namespace Ets.Service.Provider.Common
         /// </summary>
         /// <param name="config"></param>
         /// <returns></returns>
-        public ResultInfo<int> CreateGroupApiConfig(GroupApiConfigModel config)
+        public ResultInfo<bool> CreateGroupApiConfig(GroupApiConfigModel config)
         {
-            var result = new ResultInfo<int> { Message = "", Result = false, Data = 0 };
+            var result = new ResultInfo<bool> { Message = "", Result = false, Data = false };
             try
             {
-                result.Data = dao.CreateGroupApiConfig(config);
+                config.AppSecret = Helper.Uuid().ToUpper();
+                result.Data = _dao.CreateGroupApiConfig(config);
                 result.Message = "执行成功";
                 result.Result = true;
             }
@@ -81,7 +80,7 @@ namespace Ets.Service.Provider.Common
             var result = new ResultInfo<bool> { Message = "", Result = false, Data = false };
             try
             {
-                result.Data = dao.UpdateGroupApiConfig(config);
+                result.Data = _dao.UpdateGroupApiConfig(config);
                 result.Message = "执行成功";
                 result.Result = true;
             }
@@ -103,7 +102,7 @@ namespace Ets.Service.Provider.Common
             var result = new ResultInfo<bool> { Message = "", Result = false, Data = false };
             try
             {
-                result.Data = dao.UpdateGroupName(model);
+                result.Data = _dao.UpdateGroupName(model);
                 result.Message = "执行成功";
                 result.Result = true;
             }
@@ -125,7 +124,7 @@ namespace Ets.Service.Provider.Common
             var result = new ResultInfo<bool> { Message = "", Result = false, Data = false };
             try
             {
-                result.Data = dao.UpdateGroupStatus(model);
+                result.Data = _dao.UpdateGroupStatus(model);
                 result.Message = "执行成功";
                 result.Result = true;
             }
@@ -148,7 +147,7 @@ namespace Ets.Service.Provider.Common
             var result = new ResultInfo<GroupApiConfigModel> {Data = null, Message = "", Result = false};
             try
             {
-                result.Data = dao.GetGroupApiConfigByAppKey(appkey, version);
+                result.Data = _dao.GetGroupApiConfigByAppKey(appkey, version);
                 result.Message = "执行成功";
                 result.Result = true;
             }
@@ -172,7 +171,7 @@ namespace Ets.Service.Provider.Common
             var result = new ResultInfo<bool> { Message = "", Result = false, Data = false };
             try
             {
-                result.Data = dao.HasExistsGroup(model);
+                result.Data = _dao.HasExistsGroup(model);
                 result.Message = "执行成功";
                 result.Result = true;
             }
@@ -195,7 +194,7 @@ namespace Ets.Service.Provider.Common
             var result = new ResultInfo<int> { Message = "", Result = false, Data = 0 };
             try
             {
-                result.Data = dao.AddGroup(model);
+                result.Data = _dao.AddGroup(model);
                 result.Message = "执行成功";
                 result.Result = true;
             }

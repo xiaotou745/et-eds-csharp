@@ -6,6 +6,7 @@ using SuperManBusinessLogic.Order_Logic;
 using SuperManCommonModel.Entities;
 using SuperManCommonModel.Models;
 using SuperManCore.Paging;
+using SuperManDataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +26,12 @@ namespace SuperMan.Controllers
             //{
             //    Redirect("/Account/Login");
             //};
-
+            account account = HttpContext.Session["user"] as account;
+            if (account == null)
+            {
+                Response.Redirect("/account/login");
+                return null;
+            } 
 
             HomeCountManage homeCountManage = new HomeCountManage();
             var criteria = new HomeCountCriteria() { PagingRequest = new PagingResult(0, 15), searchType = 1 };
