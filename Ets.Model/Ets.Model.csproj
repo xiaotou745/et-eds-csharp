@@ -46,6 +46,7 @@
     <Compile Include="Common\ResultModelServicePhone.cs" />
     <Compile Include="DataModel\Bussiness\BusiLoginResultModel.cs" />
     <Compile Include="DataModel\Bussiness\BusiRegisterResultModel.cs" />
+    <Compile Include="DataModel\Clienter\ClienterLoginResultModel.cs" />
     <Compile Include="DataModel\Group\GroupModel.cs" />
     <Compile Include="DataModel\Order\OrderCommission.cs" />
     <Compile Include="Common\PaginResult.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="ParameterModel\Bussiness\RegisterInfoModel.cs" />
     <Compile Include="ParameterModel\Clienter\ChangeWorkStatusPM.cs" />
     <Compile Include="ParameterModel\Clienter\ClientOrderInfoModel.cs" />
+    <Compile Include="ParameterModel\Clienter\LoginModel.cs" />
     <Compile Include="ParameterModel\Group\GroupListModel.cs" />
     <Compile Include="ParameterModel\Group\GroupParaModel.cs" />
     <Compile Include="ParameterModel\Order\BusiOrderResultModel.cs" />

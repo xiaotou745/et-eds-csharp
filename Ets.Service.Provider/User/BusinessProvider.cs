@@ -234,12 +234,35 @@ namespace Ets.Service.Provider.User
         {
             var pagedQuery = new BusinessManage();
             PageInfo<BusListResultModel> pageinfo = dao.GetBusinesses<BusListResultModel>(criteria);
-            PagingResult pr = new PagingResult() { PageIndex = criteria.PagingRequest.PageIndex, PageSize = criteria.PagingRequest.PageSize, RecordCount=pageinfo.All, TotalCount = pageinfo.All };
+            NewPagingResult pr = new NewPagingResult() { PageIndex = criteria.PagingRequest.PageIndex, PageSize = criteria.PagingRequest.PageSize, RecordCount = pageinfo.All, TotalCount = pageinfo.All };
             List<BusListResultModel> list = pageinfo.Records.ToList();
             //List<business> list = new List<business>();
             var businesslists = new BusinessManageList(list, pr);
             pagedQuery.businessManageList = businesslists;
             return pagedQuery;
+        }
+        /// <summary>
+        /// 更新审核状态
+        /// danny-20150317
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="price"></param>
+        /// <returns></returns>
+        public bool UpdateAuditStatus(int id, EnumStatusType enumStatusType)
+        {
+            return dao.UpdateAuditStatus(id, enumStatusType);
+        }
+
+        /// <summary>
+        ///  根据城市信息查询当前城市下该集团的所有商户信息
+        ///  danny-20150317
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="enumStatusType"></param>
+        /// <returns></returns>
+        public IList<BusListResultModel> GetBussinessByCityInfo(BusinessSearchCriteria criteria)
+        {
+            return dao.GetBussinessByCityInfo(criteria);
         }
     }
 }

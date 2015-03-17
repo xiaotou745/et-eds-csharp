@@ -18,6 +18,6 @@ namespace Ets.Model.ParameterModel.Group
         /// <summary>
         /// 分页
         /// </summary>
-        public PagingResult PagingRequest { get; set; }
+        public NewPagingResult PagingRequest { get; set; }
     }
 }

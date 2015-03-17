@@ -228,6 +228,8 @@
     <Content Include="Content\fromwangying\datepicker.css" />
     <Content Include="Content\fromwangying\header.css" />
     <Content Include="Content\header.css" />
+    <Content Include="Content\images\b.png" />
+    <Content Include="Content\images\c.png" />
     <Content Include="Content\images\carousel1.jpg" />
     <Content Include="Content\images\carousel2.jpg" />
     <Content Include="Content\images\carousel3.jpg" />
@@ -412,7 +414,6 @@
     <Content Include="Authority\EnumSettings.config" />
     <Content Include="Nlog.config" />
     <None Include="Properties\PublishProfiles\HDL.pubxml" />
-    <None Include="Properties\PublishProfiles\众包Web.pubxml" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="Scripts\bootbox.js" />
     <Content Include="Scripts\bootstrap-datepicker.js" />
@@ -426,6 +427,7 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\common\admin.js" />
+    <Content Include="Scripts\common\NewPager.js" />
     <Content Include="Scripts\common\Pager.js" />
     <Content Include="Scripts\common\usa.js" />
     <Content Include="Scripts\common\webExpress.js" />
@@ -600,7 +602,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>50437</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

@@ -2,7 +2,6 @@
 using ETS.Threading;
 using ETS.Util;
 
-
 namespace ETS.Data.ConnString.WMS
 {
 	/// <summary>

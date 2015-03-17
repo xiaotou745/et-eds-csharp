@@ -17,6 +17,8 @@ using Ets.Model.ParameterModel.Bussiness;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DataModel.Bussiness;
 using ETS.Extension;
+using ETS.Enums;
+using Ets.Model.Common;
 
 
 namespace Ets.Dao.User
@@ -188,7 +190,7 @@ namespace Ets.Dao.User
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
                 dbParameters.AddWithValue("BusinessCommission", price);
                 dbParameters.AddWithValue("id", id);
-                int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Read, sql, dbParameters);
+                int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Write, sql, dbParameters);
                 if (i > 0) reslut = true;
             }
             catch (Exception ex)
@@ -260,11 +262,11 @@ namespace Ets.Dao.User
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrEmpty(criteria.businessName))
             {
-                sbSqlWhere.AppendFormat(" AND b.Name={0} ", criteria.businessName);
+                sbSqlWhere.AppendFormat(" AND b.Name='{0}' ", criteria.businessName);
             }
             if (!string.IsNullOrEmpty(criteria.businessPhone))
             {
-                sbSqlWhere.AppendFormat(" AND b.PhoneNo={0} ", criteria.businessPhone);
+                sbSqlWhere.AppendFormat(" AND b.PhoneNo='{0}' ", criteria.businessPhone);
             }
             if (criteria.Status != -1)
             {
@@ -280,7 +282,7 @@ namespace Ets.Dao.User
             }
             string tableList = @" business  b WITH (NOLOCK)   ";
             string orderByColumn = " b.Id DESC";
-            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex+1, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
         }
         /// <summary>
         ///  新增店铺
@@ -418,6 +420,73 @@ namespace Ets.Dao.User
                 busi = DataTableHelper.ConvertDataTableList<BusListResultModel>(dt)[0];
             }
             return busi;
+        }
+
+        /// <summary>
+        /// 更新审核状态
+        /// danny-20150317
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="enumStatusType"></param>
+        /// <returns></returns>
+        public bool UpdateAuditStatus(int id, EnumStatusType enumStatusType)
+        {
+            bool reslut = false;
+            try
+            {
+                string sql = string.Empty;
+                if (enumStatusType == EnumStatusType.审核通过)
+                {
+
+                    sql = string.Format(" update business set Status=1 where id=@id ", ConstValues.BUSINESS_AUDITPASS);
+                }
+                else if (enumStatusType == EnumStatusType.审核取消)
+                {
+                    sql = string.Format(" update business set Status=4 where id=@id ",ConstValues.BUSINESS_AUDITCANCEL);
+                }
+                IDbParameters dbParameters = DbHelper.CreateDbParameters();
+                dbParameters.AddWithValue("id", id);
+                int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Write, sql, dbParameters);
+                if (i > 0) reslut = true;
+            }
+            catch (Exception ex)
+            {
+                reslut = false;
+                LogHelper.LogWriter(ex, "更新审核状态");
+                throw;
+            }
+            return reslut;
+        }
+        /// <summary>
+        /// 根据城市信息查询当前城市下该集团的所有商户信息
+        ///  danny-20150317
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public IList<BusListResultModel> GetBussinessByCityInfo(BusinessSearchCriteria criteria)
+        {
+            string sql = @"SELECT  Id 
+                        Name
+                        FROM business(nolock) where 1=1";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@GroupId", criteria.GroupId);
+            parm.AddWithValue("@ProvinceCode", criteria.ProvinceCode);
+            parm.AddWithValue("@CityCode", criteria.CityCode);
+            if (criteria.GroupId != null && criteria.GroupId != 0)
+            {
+                sql+=" AND GroupId=@GroupId";
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.ProvinceCode))
+            {
+                sql+=" AND ProvinceCode=@ProvinceCode";
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.CityCode))
+            {
+                sql += " AND CityCode=@CityCode";
+            }
+            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
+            var list = ConvertDataTableList<BusListResultModel>(dt);
+            return list;
         }
     }
 }
