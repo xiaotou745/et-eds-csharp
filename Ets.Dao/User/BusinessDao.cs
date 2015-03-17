@@ -279,7 +279,7 @@ namespace Ets.Dao.User
                 sbSqlWhere.AppendFormat(" AND b.GroupId={0} ", criteria.GroupId);
             }
             string tableList = @" business  b WITH (NOLOCK)   ";
-            string orderByColumn = " b.InsertTime ";
+            string orderByColumn = " b.InsertTime DESC";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex+1, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
         }
         /// <summary>
