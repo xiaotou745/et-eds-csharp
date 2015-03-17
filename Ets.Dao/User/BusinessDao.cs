@@ -262,11 +262,11 @@ namespace Ets.Dao.User
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrEmpty(criteria.businessName))
             {
-                sbSqlWhere.AppendFormat(" AND b.Name={0} ", criteria.businessName);
+                sbSqlWhere.AppendFormat(" AND b.Name='{0}' ", criteria.businessName);
             }
             if (!string.IsNullOrEmpty(criteria.businessPhone))
             {
-                sbSqlWhere.AppendFormat(" AND b.PhoneNo={0} ", criteria.businessPhone);
+                sbSqlWhere.AppendFormat(" AND b.PhoneNo='{0}' ", criteria.businessPhone);
             }
             if (criteria.Status != -1)
             {
