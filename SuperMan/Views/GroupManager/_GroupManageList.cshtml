@@ -1,0 +1,64 @@
+﻿
+@model GroupListModel
+@using Ets.Model.ParameterModel.Group;
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+    <thead>
+
+        <tr class="tdbg">
+            <th width="%5">序号</th>
+            <th>集团名称</th>
+            <th>集团创建时间</th>
+            <th>集团AppKey</th>
+            <th>集团AppSecret</th>
+            <th>APP版本</th>
+            <th>状态</th>
+            <th>操作人</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int i = 0;
+            if (Model != null)
+            { 
+            foreach (var item in Model.GroupApiConfigListModel)
+            {
+                i++;
+                <tr id="@item.Id">
+                    <td>@i</td>
+                    <td width="10%">@item.GroupName</td>
+                    <td width="10%">@item.CreateTime</td>
+                    <td>@item.AppKey</td> 
+                    <td>@item.AppSecret</td>
+                    <td>@item.AppVersion</td>
+                    @if (item.IsValid == 1)
+                    {
+                        <td width="5%"><a href="javascript:void();" onclick="SetGourpStatus(@item.GroupId)">启用</a></td>
+                    }
+                    else
+                    {
+                        <td width="5%"><a href="javascript:void();" onclick="SetGourpStatus(@item.GroupId)">未启用</a></td>
+                    }                  
+                    <td>@item.CreateName</td> 
+                    <td width="15%"> 
+                        <a href="javascript:void(0)" onclick="funcShowView(@item.GroupId,'@item.GroupName','@item.AppKey','@item.AppSecret','@item.AppVersion')">修改</a>
+                    </td>
+                </tr>
+            }
+  }
+        }
+    </tbody>
+
+</table>
+@Html.Partial("_NewPager", Model.PagingResult)
+
+<script type="text/javascript">
+    function funcShowView(gid,gname,appkey,appsecret,appversion) {
+        $("#HidGroupID").val(gid);
+        $('#txtAppGroupName').val(gname);
+        $('#txtAppKeys').val(appkey);
+        $('#txtAppSecret').val(appsecret);
+        $('#txtAppVersion').val(appversion);
+        adminjs.openwinbox('#GroupAppConfig');
+    } 
+</script>

@@ -409,7 +409,7 @@ namespace SuperManWebApi.Controllers
             //degree.longitude = model.longitude;
             //degree.latitude = model.latitude;
             var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
-            var pSize = model.pageSize.HasValue ? model.pageIndex.Value : int.MaxValue;
+            var pSize = model.pageSize.HasValue ? model.pageSize.Value : int.MaxValue;
             var criteria = new ClientOrderSearchCriteria()
             {
                 PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
@@ -452,7 +452,7 @@ namespace SuperManWebApi.Controllers
             //degree.longitude = model.longitude;
             //degree.latitude = model.latitude;
             var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
-            var pSize = model.pageSize.HasValue ? model.pageIndex.Value : int.MaxValue;
+            var pSize = model.pageSize.HasValue ? model.pageSize.Value : int.MaxValue;
             var criteria = new ClientOrderSearchCriteria()
             {
                 PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
@@ -730,10 +730,15 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="CityName">城市名称</param>
         /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.ServicePhoneStatus))]
         [HttpGet]
-        public string GetCustomerServicePhone(string CityName)
+        public Ets.Model.Common.ResultModel<Ets.Model.Common.ResultModelServicePhone> GetCustomerServicePhone(string CityName)
         {
-            return new ServicePhone().GetCustomerServicePhone(CityName);
+            return Ets.Model.Common.ResultModel<Ets.Model.Common.ResultModelServicePhone>.Conclude(
+                GetOrdersStatus.Success,
+                new ServicePhone().GetCustomerServicePhone(CityName)
+                );
+
         }
 
     }

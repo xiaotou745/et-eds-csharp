@@ -11,7 +11,9 @@ using CalculateCommon;
 using Ets.Model.ParameterModel.Bussiness;
 using Ets.Model.DataModel.Order;
 using System.Linq;
-
+using ETS.Enums;
+using Ets.Model.DataModel.Bussiness;
+using ETS.Util;
 namespace Ets.Service.Provider.User
 {
 
@@ -28,7 +30,7 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public IList<BusiGetOrderModel> GetOrdersApp(Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp paraModel)
         {
-            PageInfo<BusiOrderSqlModel> pageinfo= dao.GetOrdersAppToSql<BusiOrderSqlModel>(paraModel);
+            PageInfo<BusiOrderSqlModel> pageinfo = dao.GetOrdersAppToSql<BusiOrderSqlModel>(paraModel);
             IList<BusiOrderSqlModel> list = pageinfo.Records;
 
             List<BusiGetOrderModel> listOrder = new List<BusiGetOrderModel>();
@@ -44,15 +46,15 @@ namespace Ets.Service.Provider.User
                 {
                     model.PubDate = from.PubDate;
                 }
-                    model.PickUpName =from.BusinessName;
+                model.PickUpName = from.BusinessName;
                 model.ReceviceAddress = from.ReceviceAddress;
                 model.ReceviceName = from.ReceviceName;
                 model.RecevicePhoneNo = from.RecevicePhoneNo;
-                    model.Remark = from.Remark;
+                model.Remark = from.Remark;
                 model.Status = from.Status;
                 model.superManName = from.SuperManName;
                 model.superManPhone = from.SuperManPhone;
-                if (from.BusinessId>0 && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
+                if (from.BusinessId > 0 && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
                 {
                     var d1 = new Degree(from.Longitude.Value, from.Latitude.Value);
                     var d2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);
@@ -147,11 +149,82 @@ namespace Ets.Service.Provider.User
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public Model.DataModel.Bussiness.BusiRegisterResultModel PostRegisterInfo_B(Model.ParameterModel.Bussiness.RegisterInfoModel model)
+        public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(Model.ParameterModel.Bussiness.RegisterInfoModel model)
         {
-            throw new NotImplementedException();
+            Enum returnEnum = null;
+            if (string.IsNullOrEmpty(model.phoneNo))
+                returnEnum = CustomerRegisterStatusEnum.PhoneNumberEmpty; //手机号非空验证
+            else if (string.IsNullOrEmpty(model.passWord))
+                returnEnum = CustomerRegisterStatusEnum.PasswordEmpty;//密码非空验证
+
+            else if (model.verifyCode != ETS.Cacheing.CacheFactory.Get(model.phoneNo))
+                returnEnum = CustomerRegisterStatusEnum.IncorrectCheckCode; //判断验证法录入是否正确
+            else if (dao.CheckBusinessExistPhone(model.phoneNo))
+                returnEnum = CustomerRegisterStatusEnum.PhoneNumberRegistered;//判断该手机号是否已经注册过
+
+            else if (string.IsNullOrEmpty(model.city) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
+                returnEnum = CustomerRegisterStatusEnum.cityIdEmpty;
+            if (returnEnum != null)
+            {
+                return ResultModel<BusiRegisterResultModel>.Conclude(returnEnum);
+            }
+
+            BusiRegisterResultModel resultModel = new BusiRegisterResultModel()
+            {
+                userId = dao.InsertBusiness(model)
+            };
+            return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatusEnum.Success, resultModel);// CustomerRegisterStatusEnum.Success;//默认是成功状态
+
+        }
+
+        /// <summary>
+        /// B端登录
+        /// 窦海超
+        /// 2015年3月16日 16:11:59
+        /// </summary>
+        /// <param name="model">用户名，密码对象</param>
+        /// <returns>登录后返回实体对象</returns>
+        public ResultModel<BusiLoginResultModel> PostLogin_B(Model.ParameterModel.Bussiness.LoginModel model)
+        {
+            try
+            {
+                DataTable dt = dao.LoginSql(model);
+                if (dt == null || dt.Rows.Count <= 0)
+                {
+                    return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
+                }
+
+                BusiLoginResultModel resultMode = new BusiLoginResultModel();
+                DataRow row = dt.Rows[0];
+                resultMode.userId = ParseHelper.ToInt(row["userId"]);
+                resultMode.status = Convert.ToByte(row["status"]);
+                resultMode.city = row["city"].ToString();
+                resultMode.Address = row["Address"].ToString();
+                resultMode.districtId = row["districtId"].ToString();
+                resultMode.district = row["district"].ToString();
+                resultMode.Landline = row["Landline"].ToString();
+                resultMode.Name = row["Name"].ToString();
+                resultMode.cityId = row["cityId"].ToString();
+                resultMode.phoneNo = row["PhoneNo2"] == null ? row["PhoneNo"].ToString() : row["PhoneNo2"].ToString();
+                resultMode.DistribSubsidy = row["DistribSubsidy"] == null ? 0 : ParseHelper.ToDecimal(row["DistribSubsidy"]);
+                return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.Success, resultMode);
+            }
+            catch (Exception ex)
+            {
+                return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
+                throw;
+            }
         }
         /// <summary>
+        /// 根据商户Id获取商户信息
+        /// </summary>
+        /// <param name="busiId"></param>
+        /// <returns></returns>
+        public BusListResultModel GetBusiness(int busiId)
+        {
+           return dao.GetBusiness(busiId);
+        }
+		 /// <summary>
         /// 获取商户信息
         /// danny-20150316
         /// </summary>
@@ -160,9 +233,9 @@ namespace Ets.Service.Provider.User
         public BusinessManage GetBusinesses(BusinessSearchCriteria criteria)
         {
             var pagedQuery = new BusinessManage();
-            PageInfo<business> pageinfo = dao.GetBusinesses<business>(criteria);
+            PageInfo<BusListResultModel> pageinfo = dao.GetBusinesses<BusListResultModel>(criteria);
             PagingResult pr = new PagingResult() { PageIndex = criteria.PagingRequest.PageIndex, PageSize = criteria.PagingRequest.PageSize, RecordCount=pageinfo.All, TotalCount = pageinfo.All };
-            List<business> list = pageinfo.Records.ToList();
+            List<BusListResultModel> list = pageinfo.Records.ToList();
             //List<business> list = new List<business>();
             var businesslists = new BusinessManageList(list, pr);
             pagedQuery.businessManageList = businesslists;

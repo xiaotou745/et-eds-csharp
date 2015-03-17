@@ -177,12 +177,15 @@
     </Compile>
     <Compile Include="Authority\IAuthenticationService.cs" />
     <Compile Include="Controllers\AdminToolsController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\BusinessCommissionController.cs" />
     <Compile Include="Controllers\CommonController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AuthorityManagerController.cs" />
     <Compile Include="Controllers\BusinessController.cs" />
     <Compile Include="Controllers\BusinessManagerController.cs" />
+    <Compile Include="Controllers\DownloadController.cs" />
+    <Compile Include="Controllers\GroupManagerController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HomeCountController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -522,9 +525,14 @@
     <Content Include="Views\BusinessCommission\BusinessCommission.cshtml" />
     <Content Include="Views\AdminTools\AdminTools.cshtml" />
     <Content Include="Views\AdminTools\_AdminToolsList.cshtml" />
+    <Content Include="Views\Download\Download.cshtml" />
+    <Content Include="Views\GroupManager\GroupManager.cshtml" />
+    <Content Include="Views\GroupManager\_GroupManageList.cshtml" />
+    <Content Include="Views\Shared\_NewPager.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Content\app\" />
     <Folder Include="uploads\" />
     <Folder Include="Views\Test\" />
   </ItemGroup>

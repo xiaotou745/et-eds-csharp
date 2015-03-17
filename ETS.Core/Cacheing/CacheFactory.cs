@@ -60,6 +60,14 @@ namespace ETS.Cacheing
             }
         }
 
+        public static string Get(string key)
+        {
+            if (Instance[key] == null)
+            {
+                return string.Empty;
+            }
+            return Instance[key].ToString();
+        }
         #endregion
     }
 }

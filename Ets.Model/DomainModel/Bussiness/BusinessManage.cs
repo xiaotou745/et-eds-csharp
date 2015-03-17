@@ -1,4 +1,5 @@
 ﻿using Ets.Model.Common;
+using Ets.Model.DataModel.Bussiness;
 using Ets.Model.DataModel.Order;
 using System;
 using System.Collections.Generic;
@@ -18,12 +19,12 @@ namespace Ets.Model.DomainModel.Bussiness
     }
     public class BusinessManageList
     {
-        public BusinessManageList(List<business> _businessModel, PagingResult pagingResult)
+        public BusinessManageList(List<BusListResultModel> _businessModel, PagingResult pagingResult)
         {
             businessModel = _businessModel;
             PagingResult = pagingResult;
         }
-        public List<business> businessModel { get; set; }
+        public List<BusListResultModel> businessModel { get; set; }
         public PagingResult PagingResult { get; set; }
     }
 

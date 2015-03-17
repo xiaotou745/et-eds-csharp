@@ -1,4 +1,5 @@
 ﻿using Ets.Model.Common;
+using Ets.Model.DataModel.Bussiness;
 using Ets.Model.DataModel.Order;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace Ets.Model.ParameterModel.Bussiness
     public class BusinessSearchCriteria
     {
         public PagingResult PagingRequest { get; set; }
-        public IList<OrderByItem<business>> OrderByItems { get; set; }
+        public IList<OrderByItem<BusListResultModel>> OrderByItems { get; set; }
 
         public string businessName { get; set; } //商户名称
         public string businessPhone { get; set; } //商户电话

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ets.Model.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,6 @@ namespace Ets.Service.IProvider.Common
         /// </summary>
         /// <param name="CityName">城市名称</param>
         /// <returns></returns>
-        string GetCustomerServicePhone(string CityName);
+        ResultModelServicePhone GetCustomerServicePhone(string CityName);
     }
 }

@@ -3,9 +3,13 @@ using ETS;
 using ETS.Dao;
 using ETS.Data.Core;
 using ETS.Data.PageData;
+using ETS.Extension;
 using ETS.Page;
+using ETS.Util;
+using SuperManBusinessLogic.CommonLogic;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -62,12 +66,12 @@ namespace Ets.Dao.Order
             StringBuilder tableListStr = new StringBuilder();
             tableListStr.Append(@" dbo.[order] o WITH ( NOLOCK )
         LEFT JOIN dbo.clienter c WITH ( NOLOCK ) ON c.Id = o.clienterId
-        LEFT JOIN dbo.business b WITH ( NOLOCK ) ON b.Id = o.businessId "); 
+        LEFT JOIN dbo.business b WITH ( NOLOCK ) ON b.Id = o.businessId ");
             //条件
             StringBuilder whereStr = new StringBuilder(" 1=1 ");
             if (criteria.userId != 0)
             {
-                whereStr.AppendFormat(" AND o.clienterId = {0}",criteria.userId);
+                whereStr.AppendFormat(" AND o.clienterId = {0}", criteria.userId);
             }
             if (!string.IsNullOrWhiteSpace(criteria.city))
             {
@@ -85,7 +89,7 @@ namespace Ets.Dao.Order
             {
                 whereStr.Append(" AND o.[Status] = 0 ");  //这里改为枚举值
             }
-            
+
             var pageInfo = new PageHelper().GetPages<Model.DataModel.Order.order>(SuperMan_Read, criteria.PagingRequest.PageIndex, whereStr.ToString(), orderByStr, columnStr.ToString(), tableListStr.ToString(), criteria.PagingRequest.PageSize, true);
 
             orderPageList.ContentList = pageInfo.Records.ToList();
@@ -94,6 +98,103 @@ namespace Ets.Dao.Order
             orderPageList.PageSize = criteria.PagingRequest.PageSize;
 
             return orderPageList;
-        } 
+        }
+#region   订单状态查询功能  add by caoheyang 20150316
+        /// <summary>
+        /// 订单状态查询功能  add by caoheyang 20150316
+        /// </summary>
+        /// <param name="orderNo">订单号码</param>
+        /// <returns></returns>
+        public int? GetStatus(string orderNo)
+        {
+            const string querySql = @"SELECT top 1  [Status] FROM [order]  WITH ( NOLOCK ) WHERE OrderNo=@OrderNo";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@OrderNo", orderNo);    //订单号
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
+            return ParseHelper.ToInt(executeScalar);
+        }
+        #endregion
+        public string AddOrder(Model.DataModel.Order.order order)
+        {
+            StringBuilder insertOrder = new StringBuilder();
+
+            insertOrder.Append(@"INSERT INTO dbo.[order]
+         ( OrderNo ,
+           PickUpAddress ,
+           PubDate ,
+           ReceviceName ,
+           RecevicePhoneNo ,
+           ReceviceAddress ,
+           IsPay ,
+           Amount ,
+           OrderCommission ,
+           DistribSubsidy ,
+           WebsiteSubsidy ,
+           Remark ,
+           OrderFrom ,
+           Status ,
+           businessId ,
+           ReceviceCity ,
+           ReceviceLongitude ,
+           ReceviceLatitude ,
+           OrderCount ,
+           CommissionRate
+         )
+ VALUES  ( @OrderNo ,
+           @PickUpAddress ,
+           @PubDate ,
+           @ReceviceName ,
+           @RecevicePhoneNo ,
+           @ReceviceAddress ,
+           @IsPay ,
+           @Amount ,
+           @OrderCommission ,
+           @DistribSubsidy ,
+           @WebsiteSubsidy ,
+           @Remark ,
+           @OrderFrom ,
+           @Status ,
+           @businessId ,
+           @ReceviceCity ,
+           @ReceviceLongitude ,
+           @ReceviceLatitude ,
+           @OrderCount ,
+           @CommissionRate
+         )");
+
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@OrderNo", order.OrderNo);
+            parm.AddWithValue("@PickUpAddress", order.PickUpAddress);
+            parm.AddWithValue("@PubDate", order.PubDate);
+            parm.AddWithValue("@ReceviceName", order.ReceviceName);
+            parm.AddWithValue("@RecevicePhoneNo", order.RecevicePhoneNo);
+
+            parm.AddWithValue("@ReceviceAddress", order.ReceviceAddress);
+            parm.AddWithValue("@IsPay", order.IsPay);
+            parm.AddWithValue("@Amount", order.Amount);
+            parm.AddWithValue("@OrderCommission", order.OrderCommission);
+            parm.AddWithValue("@DistribSubsidy", order.DistribSubsidy);
+
+            parm.AddWithValue("@WebsiteSubsidy", order.WebsiteSubsidy);
+            parm.AddWithValue("@Remark", order.Remark);
+            parm.AddWithValue("@OrderFrom", order.OrderFrom);
+            parm.AddWithValue("@Status", order.Status);
+            parm.AddWithValue("@businessId", order.businessId);
+
+            parm.AddWithValue("@ReceviceCity", order.ReceviceCity);
+            parm.AddWithValue("@ReceviceLongitude", order.ReceviceLongitude);
+            parm.AddWithValue("@ReceviceLatitude", order.ReceviceLatitude);
+            parm.AddWithValue("@OrderCount", order.OrderCount);
+            parm.AddWithValue("@CommissionRate", order.CommissionRate);
+            int result = DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrder.ToString(), parm);
+            if (result > 0)
+            {
+                Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity); //激光推送
+                return "1";
+            }else
+            {
+                return "0";
+            }
+        }
     }
 }
