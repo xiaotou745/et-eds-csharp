@@ -195,7 +195,6 @@
           <Property Name="ReceiveProvinceCode" Type="varchar" MaxLength="20" />
           <Property Name="ReceiveCityCode" Type="varchar" MaxLength="45" />
           <Property Name="ReceiveAreaCode" Type="varchar" MaxLength="45" />
-          <Property Name="SongCanFei" Type="decimal" Precision="10" Scale="2" />
           <Property Name="OrderType" Type="int" />
           <Property Name="KM" Type="double" />
           <Property Name="GuoJuQty" Type="int" />
@@ -363,10 +362,12 @@
           <EntitySet Name="commissiontype" EntityType="supermanModel.commissiontype" />
           <EntitySet Name="group" EntityType="supermanModel.group" />
           <EntitySet Name="myincome" EntityType="supermanModel.myincome" />
+          <EntitySet Name="order" EntityType="supermanModel.order" />
           <EntitySet Name="orderlog" EntityType="supermanModel.orderlog" />
           <EntitySet Name="pushmessage" EntityType="supermanModel.pushmessage" />
           <EntitySet Name="pushmessagestatus" EntityType="supermanModel.pushmessagestatus" />
           <EntitySet Name="region" EntityType="supermanModel.region" />
+          <EntitySet Name="subsidy" EntityType="supermanModel.subsidy" />
           <AssociationSet Name="accountId" Association="supermanModel.accountId">
             <End Role="account" EntitySet="account" />
             <End Role="accountauthority" EntitySet="accountauthority" />
@@ -375,12 +376,10 @@
             <End Role="authority" EntitySet="authority" />
             <End Role="accountauthority" EntitySet="accountauthority" />
           </AssociationSet>
-          <EntitySet Name="order" EntityType="supermanModel.order" />
           <AssociationSet Name="businessId" Association="supermanModel.businessId">
             <End Role="business" EntitySet="business" />
             <End Role="order" EntitySet="order" />
           </AssociationSet>
-          <EntitySet Name="subsidy" EntityType="supermanModel.subsidy" />
         </EntityContainer>
         <EntityType Name="account">
           <Key>
@@ -543,6 +542,47 @@
           <Property Name="MyInComeAmount" Type="Decimal" />
           <Property Name="InsertTime" Type="DateTime" />
         </EntityType>
+        <EntityType Name="order">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OrderNo" Type="String" Nullable="false" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="PickUpAddress" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="PubDate" Type="DateTime" />
+          <Property Name="ReceviceName" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="RecevicePhoneNo" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="ReceviceAddress" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="ActualDoneDate" Type="DateTime" />
+          <Property Name="IsPay" Type="Boolean" />
+          <Property Name="Amount" Type="Decimal" />
+          <Property Name="OrderCommission" Type="Decimal" />
+          <Property Name="DistribSubsidy" Type="Decimal" />
+          <Property Name="WebsiteSubsidy" Type="Decimal" />
+          <Property Name="Remark" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="SByte" />
+          <Property Name="clienterId" Type="Int32" />
+          <Property Name="businessId" Type="Int32" />
+          <Property Name="ReceviceCity" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="ReceviceLongitude" Type="Double" />
+          <Property Name="ReceviceLatitude" Type="Double" />
+          <Property Name="OrderFrom" Type="Int32" Nullable="false" />
+          <Property Name="OriginalOrderId" Type="Int64" />
+          <Property Name="OriginalOrderNo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Quantity" Type="Int32" />
+          <Property Name="Weight" Type="Decimal" />
+          <Property Name="ReceiveProvince" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="ReceiveArea" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="ReceiveProvinceCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="ReceiveCityCode" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="ReceiveAreaCode" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="OrderType" Type="Int32" />
+          <Property Name="KM" Type="Double" />
+          <Property Name="GuoJuQty" Type="Int32" />
+          <Property Name="LuJuQty" Type="Int32" />
+          <Property Name="SongCanDate" Type="DateTime" />
+          <NavigationProperty Name="business" Relationship="supermanModel.businessId" FromRole="order" ToRole="business" />
+        </EntityType>
         <EntityType Name="orderlog">
           <Key>
             <PropertyRef Name="Id" />
@@ -604,6 +644,21 @@
           <Property Name="BaiduLat" Type="String" MaxLength="64" FixedLength="false" Unicode="false" />
           <Property Name="BaiduLong" Type="String" MaxLength="64" FixedLength="false" Unicode="false" />
         </EntityType>
+        <EntityType Name="subsidy">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OrderCommission" Type="Decimal" />
+          <Property Name="DistribSubsidy" Type="Decimal" />
+          <Property Name="WebsiteSubsidy" Type="Decimal" />
+          <Property Name="StartDate" Type="DateTime" />
+          <Property Name="EndDate" Type="DateTime" />
+          <Property Name="Status" Type="SByte" />
+          <Property Name="GroupId" Type="Int32" />
+          <Property Name="PKMCost" Type="Decimal" />
+          <Property Name="OrderType" Type="Int32" />
+        </EntityType>
         <Association Name="accountId">
           <End Type="supermanModel.account" Role="account" Multiplicity="0..1" />
           <End Type="supermanModel.accountauthority" Role="accountauthority" Multiplicity="*" />
@@ -628,48 +683,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="order">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="OrderNo" Type="String" Nullable="false" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="PickUpAddress" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="PubDate" Type="DateTime" />
-          <Property Name="ReceviceName" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="RecevicePhoneNo" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="ReceviceAddress" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="ActualDoneDate" Type="DateTime" />
-          <Property Name="IsPay" Type="Boolean" />
-          <Property Name="Amount" Type="Decimal" />
-          <Property Name="OrderCommission" Type="Decimal" />
-          <Property Name="DistribSubsidy" Type="Decimal" />
-          <Property Name="WebsiteSubsidy" Type="Decimal" />
-          <Property Name="Remark" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Name="Status" Type="SByte" />
-          <Property Name="clienterId" Type="Int32" />
-          <Property Name="businessId" Type="Int32" />
-          <Property Name="ReceviceCity" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="ReceviceLongitude" Type="Double" />
-          <Property Name="ReceviceLatitude" Type="Double" />
-          <Property Name="OrderFrom" Type="Int32" Nullable="false" />
-          <Property Name="OriginalOrderId" Type="Int64" />
-          <Property Name="OriginalOrderNo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Quantity" Type="Int32" />
-          <Property Name="Weight" Type="Decimal" />
-          <Property Name="ReceiveProvince" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="ReceiveArea" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="ReceiveProvinceCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="ReceiveCityCode" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="ReceiveAreaCode" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="SongCanFei" Type="Decimal" />
-          <Property Name="OrderType" Type="Int32" />
-          <Property Name="KM" Type="Double" />
-          <Property Name="GuoJuQty" Type="Int32" />
-          <Property Name="LuJuQty" Type="Int32" />
-          <Property Name="SongCanDate" Type="DateTime" />
-          <NavigationProperty Name="business" Relationship="supermanModel.businessId" FromRole="order" ToRole="business" />
-        </EntityType>
         <Association Name="businessId">
           <End Type="supermanModel.business" Role="business" Multiplicity="0..1" />
           <End Type="supermanModel.order" Role="order" Multiplicity="*" />
@@ -682,21 +695,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="subsidy">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="OrderCommission" Type="Decimal" />
-          <Property Name="DistribSubsidy" Type="Decimal" />
-          <Property Name="WebsiteSubsidy" Type="Decimal" />
-          <Property Name="StartDate" Type="DateTime" />
-          <Property Name="EndDate" Type="DateTime" />
-          <Property Name="Status" Type="SByte" />
-          <Property Name="GroupId" Type="Int32" />
-          <Property Name="PKMCost" Type="Decimal" />
-          <Property Name="OrderType" Type="Int32" />
-        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -871,6 +869,47 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="order">
+            <EntityTypeMapping TypeName="supermanModel.order">
+              <MappingFragment StoreEntitySet="order">
+                <ScalarProperty Name="SongCanDate" ColumnName="SongCanDate" />
+                <ScalarProperty Name="LuJuQty" ColumnName="LuJuQty" />
+                <ScalarProperty Name="GuoJuQty" ColumnName="GuoJuQty" />
+                <ScalarProperty Name="KM" ColumnName="KM" />
+                <ScalarProperty Name="OrderType" ColumnName="OrderType" />
+                <ScalarProperty Name="ReceiveAreaCode" ColumnName="ReceiveAreaCode" />
+                <ScalarProperty Name="ReceiveCityCode" ColumnName="ReceiveCityCode" />
+                <ScalarProperty Name="ReceiveProvinceCode" ColumnName="ReceiveProvinceCode" />
+                <ScalarProperty Name="ReceiveArea" ColumnName="ReceiveArea" />
+                <ScalarProperty Name="ReceiveProvince" ColumnName="ReceiveProvince" />
+                <ScalarProperty Name="Weight" ColumnName="Weight" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="OriginalOrderNo" ColumnName="OriginalOrderNo" />
+                <ScalarProperty Name="OriginalOrderId" ColumnName="OriginalOrderId" />
+                <ScalarProperty Name="OrderFrom" ColumnName="OrderFrom" />
+                <ScalarProperty Name="ReceviceLatitude" ColumnName="ReceviceLatitude" />
+                <ScalarProperty Name="ReceviceLongitude" ColumnName="ReceviceLongitude" />
+                <ScalarProperty Name="ReceviceCity" ColumnName="ReceviceCity" />
+                <ScalarProperty Name="businessId" ColumnName="businessId" />
+                <ScalarProperty Name="clienterId" ColumnName="clienterId" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+                <ScalarProperty Name="WebsiteSubsidy" ColumnName="WebsiteSubsidy" />
+                <ScalarProperty Name="DistribSubsidy" ColumnName="DistribSubsidy" />
+                <ScalarProperty Name="OrderCommission" ColumnName="OrderCommission" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="IsPay" ColumnName="IsPay" />
+                <ScalarProperty Name="ActualDoneDate" ColumnName="ActualDoneDate" />
+                <ScalarProperty Name="ReceviceAddress" ColumnName="ReceviceAddress" />
+                <ScalarProperty Name="RecevicePhoneNo" ColumnName="RecevicePhoneNo" />
+                <ScalarProperty Name="ReceviceName" ColumnName="ReceviceName" />
+                <ScalarProperty Name="PubDate" ColumnName="PubDate" />
+                <ScalarProperty Name="PickUpAddress" ColumnName="PickUpAddress" />
+                <ScalarProperty Name="OrderNo" ColumnName="OrderNo" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="orderlog">
             <EntityTypeMapping TypeName="supermanModel.orderlog">
               <MappingFragment StoreEntitySet="orderlog">
@@ -932,48 +971,6 @@
                 <ScalarProperty Name="ChnName" ColumnName="ChnName" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="order">
-            <EntityTypeMapping TypeName="supermanModel.order">
-              <MappingFragment StoreEntitySet="order">
-                <ScalarProperty Name="SongCanDate" ColumnName="SongCanDate" />
-                <ScalarProperty Name="LuJuQty" ColumnName="LuJuQty" />
-                <ScalarProperty Name="GuoJuQty" ColumnName="GuoJuQty" />
-                <ScalarProperty Name="KM" ColumnName="KM" />
-                <ScalarProperty Name="OrderType" ColumnName="OrderType" />
-                <ScalarProperty Name="SongCanFei" ColumnName="SongCanFei" />
-                <ScalarProperty Name="ReceiveAreaCode" ColumnName="ReceiveAreaCode" />
-                <ScalarProperty Name="ReceiveCityCode" ColumnName="ReceiveCityCode" />
-                <ScalarProperty Name="ReceiveProvinceCode" ColumnName="ReceiveProvinceCode" />
-                <ScalarProperty Name="ReceiveArea" ColumnName="ReceiveArea" />
-                <ScalarProperty Name="ReceiveProvince" ColumnName="ReceiveProvince" />
-                <ScalarProperty Name="Weight" ColumnName="Weight" />
-                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
-                <ScalarProperty Name="OriginalOrderNo" ColumnName="OriginalOrderNo" />
-                <ScalarProperty Name="OriginalOrderId" ColumnName="OriginalOrderId" />
-                <ScalarProperty Name="OrderFrom" ColumnName="OrderFrom" />
-                <ScalarProperty Name="ReceviceLatitude" ColumnName="ReceviceLatitude" />
-                <ScalarProperty Name="ReceviceLongitude" ColumnName="ReceviceLongitude" />
-                <ScalarProperty Name="ReceviceCity" ColumnName="ReceviceCity" />
-                <ScalarProperty Name="businessId" ColumnName="businessId" />
-                <ScalarProperty Name="clienterId" ColumnName="clienterId" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="Remark" ColumnName="Remark" />
-                <ScalarProperty Name="WebsiteSubsidy" ColumnName="WebsiteSubsidy" />
-                <ScalarProperty Name="DistribSubsidy" ColumnName="DistribSubsidy" />
-                <ScalarProperty Name="OrderCommission" ColumnName="OrderCommission" />
-                <ScalarProperty Name="Amount" ColumnName="Amount" />
-                <ScalarProperty Name="IsPay" ColumnName="IsPay" />
-                <ScalarProperty Name="ActualDoneDate" ColumnName="ActualDoneDate" />
-                <ScalarProperty Name="ReceviceAddress" ColumnName="ReceviceAddress" />
-                <ScalarProperty Name="RecevicePhoneNo" ColumnName="RecevicePhoneNo" />
-                <ScalarProperty Name="ReceviceName" ColumnName="ReceviceName" />
-                <ScalarProperty Name="PubDate" ColumnName="PubDate" />
-                <ScalarProperty Name="PickUpAddress" ColumnName="PickUpAddress" />
-                <ScalarProperty Name="OrderNo" ColumnName="OrderNo" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

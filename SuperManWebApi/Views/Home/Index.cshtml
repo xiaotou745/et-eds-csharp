@@ -95,25 +95,25 @@
         //    }
         //});
 
-        //$.ajax({
-        //    type: 'POST',
-        //    dataType: 'json',
-        //    url: 'http://localhost:9263/ClienterAPI/GetJobListSongCanTask_C',
-        //    //url:'http://localhost:9263/ClienterAPI/GetJobListCanHeTask_C',
-        //    data: {
-        //        //"userId": 77, 
-        //        //"isLatest": true,
-        //        "pageSize": 10,
-        //        "pageIndex": 0, 
-        //        //"city": "北京市",
-        //        //"cityId": "10201"
-        //    },
-        //    success: function (data) {
-        //        console.log(data);
-        //    },
-        //    error: function () {
-        //    }
-        //});
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: 'http://localhost:9263/ClienterAPI/GetJobListSongCanTask_C',
+            //url:'http://localhost:9263/ClienterAPI/GetJobListCanHeTask_C',
+            data: {
+                //"userId": 77, 
+                //"isLatest": true,
+                "pageSize": 100,
+                "pageIndex": 0, 
+                //"city": "北京市",
+                //"cityId": "10201"
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () {
+            }
+        });
         
 
         //http://59.151.43.221:7178/ClienterAPI/PostLogin_C

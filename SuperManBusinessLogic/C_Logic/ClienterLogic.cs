@@ -393,7 +393,7 @@ namespace SuperManBusinessLogic.C_Logic
                 //1送餐订单 还是  2取餐盒订单
                 query = query.Where(i => i.OrderType == criteria.OrderType);
                 //订单状态
-                query = query.Where(i => i.Status.Value == ConstValues.ORDER_NEW);
+                query = query.Where(i => i.Status == ConstValues.ORDER_NEW);
                 //排序
                 query = query.OrderByDescending(i => i.PubDate);
                
