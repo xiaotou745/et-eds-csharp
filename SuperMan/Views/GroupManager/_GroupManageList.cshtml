@@ -33,15 +33,19 @@
                     <td>@item.AppVersion</td>
                     @if (item.IsValid == 1)
                     {
-                        <td width="5%"><a href="javascript:void();" onclick="SetGourpStatus(@item.GroupId)">启用</a></td>
+                        <td width="5%"><a href="javascript:void(0);" onclick="SetGourpStatus(@item.GroupId,@item.IsValid)">启用</a></td>
                     }
                     else
                     {
-                        <td width="5%"><a href="javascript:void();" onclick="SetGourpStatus(@item.GroupId)">未启用</a></td>
+                        <td width="5%"><a href="javascript:void(0);" onclick="SetGourpStatus(@item.GroupId,@item.IsValid)">未启用</a></td>
                     }                  
                     <td>@item.CreateName</td> 
                     <td width="15%"> 
-                        <a href="javascript:void(0)" onclick="funcShowView(@item.GroupId,'@item.GroupName','@item.AppKey','@item.AppSecret','@item.AppVersion')">修改</a>
+                        <a href="javascript:void(0)" onclick="funcGShowView(@item.GroupId,'@item.GroupName')">修改</a>
+                        @if (string.IsNullOrEmpty(item.AppKey) || item.AppKey == "")
+                        {
+                            <a href="javascript:void(0)" onclick="funcAShowView(@item.GroupId,'@item.GroupName')">设置AppKey</a>        
+                        }
                     </td>
                 </tr>
             }
@@ -50,15 +54,38 @@
     </tbody>
 
 </table>
-@Html.Partial("_NewPager", Model.PagingResult)
-
+@Html.Partial("_NewPager", Model.PagingResult) 
 <script type="text/javascript">
-    function funcShowView(gid,gname,appkey,appsecret,appversion) {
-        $("#HidGroupID").val(gid);
-        $('#txtAppGroupName').val(gname);
-        $('#txtAppKeys').val(appkey);
-        $('#txtAppSecret').val(appsecret);
-        $('#txtAppVersion').val(appversion);
+    //显示修改集团弹出层
+    function funcGShowView(gid, gname) {
+        $("#hiduGroupID").val(gid);
+        $('#txtuGroupName').val(gname);
+        adminjs.openwinbox('#GroupUpdateDivShow');
+    }
+    //显示设置config弹出层
+    function funcAShowView(gid,gname) {
+        $("#HidGroupID").val(gid); 
+        $("#statusFinApp").text("配置-" + gname+"-AppConfig");
         adminjs.openwinbox('#GroupAppConfig');
-    } 
+    }
+    function SetGourpStatus(id, status) {
+        if (confirm("确定要更新此状态吗？")) {
+            var pars = { "id": id, "status": status };
+            var url = "/GroupManager/UpdateStatus";
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: pars,
+                success: function(result) {
+                    if (result.IsSuccess) {
+                        window.location.href = "/GroupManager/GroupManager";
+                    } else {
+                        alert(result.Message);
+                        return false;
+                    }
+                }
+        });
+        }
+        return false;
+    }
 </script>
