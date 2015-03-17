@@ -531,7 +531,6 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Download\edsC.cshtml" />
     <Content Include="Views\Download\edsB.cshtml" />
-    <Content Include="Views\Download\ViewPage1.cshtml" />
     <Content Include="Views\Shared\_NewPager.cshtml" />
     <Content Include="Views\GroupManager\GroupManager.cshtml" />
     <Content Include="Views\GroupManager\_GroupManageList.cshtml" />
