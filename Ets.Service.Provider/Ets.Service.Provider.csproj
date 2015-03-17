@@ -34,6 +34,10 @@
       <HintPath>..\lib\CalculateCommon.dll</HintPath>
       <HintPath>..\packages\CalculateCommon.dll</HintPath>
     </Reference>
+    <Reference Include="jpush-api, Version=1.0.0.27500, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\JPush.NET.1.2.3.27974\lib\jpush-api.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -47,6 +51,7 @@
     <Compile Include="Common\AdminToolsProvider.cs" />
     <Compile Include="Common\GroupProvider.cs" />
     <Compile Include="Common\ServicePhone.cs" />
+    <Compile Include="MyPush\Push.cs" />
     <Compile Include="Order\OrderCommissionProvider.cs" />
     <Compile Include="Order\OrderProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

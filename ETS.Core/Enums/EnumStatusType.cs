@@ -166,4 +166,15 @@ namespace ETS.Enums
         正常 = 1,
         不可用 = 0
     }
+
+    /// <summary>
+    /// 客服电话状态
+    /// </summary>
+    public enum ServicePhoneStatus
+    {
+        [DisplayText("成功")]
+        Success = 0,
+        [DisplayText("失败")]
+        Failed = 1
+    }
 }

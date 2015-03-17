@@ -8,10 +8,12 @@ using ETS.Data.PageData;
 using System;
 using System.Collections.Generic;
 using CalculateCommon;
+using Ets.Model.ParameterModel.Bussiness;
+using Ets.Model.DataModel.Order;
+using System.Linq;
 using ETS.Enums;
 using Ets.Model.DataModel.Bussiness;
 using ETS.Util;
-
 namespace Ets.Service.Provider.User
 {
 
@@ -218,9 +220,26 @@ namespace Ets.Service.Provider.User
         /// </summary>
         /// <param name="busiId"></param>
         /// <returns></returns>
-        public business GetBusiness(int busiId)
+        public BusListResultModel GetBusiness(int busiId)
         {
            return dao.GetBusiness(busiId);
+        }
+		 /// <summary>
+        /// 获取商户信息
+        /// danny-20150316
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public BusinessManage GetBusinesses(BusinessSearchCriteria criteria)
+        {
+            var pagedQuery = new BusinessManage();
+            PageInfo<BusListResultModel> pageinfo = dao.GetBusinesses<BusListResultModel>(criteria);
+            PagingResult pr = new PagingResult() { PageIndex = criteria.PagingRequest.PageIndex, PageSize = criteria.PagingRequest.PageSize, RecordCount=pageinfo.All, TotalCount = pageinfo.All };
+            List<BusListResultModel> list = pageinfo.Records.ToList();
+            //List<business> list = new List<business>();
+            var businesslists = new BusinessManageList(list, pr);
+            pagedQuery.businessManageList = businesslists;
+            return pagedQuery;
         }
     }
 }
