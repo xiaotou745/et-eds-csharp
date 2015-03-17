@@ -37,5 +37,19 @@ namespace ETS.Util
             string result = userId.ToString() + DateTime.Now.ToString("yyMMddHHmmss") + new Random().Next(100).ToString("D3");
             return result;
         }
+        /// <summary>
+        /// 生成guid
+        /// </summary>
+        /// <returns></returns>
+        public static string Uuid()
+        {
+            StringBuilder SB = new StringBuilder();
+            string[] uuid = Guid.NewGuid().ToString().Split('-');
+            foreach (var item in uuid)
+            {
+                SB.Append(item);
+            }
+            return SB.ToString();
+        }
     }
 }
