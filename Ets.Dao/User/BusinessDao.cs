@@ -190,7 +190,7 @@ namespace Ets.Dao.User
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
                 dbParameters.AddWithValue("BusinessCommission", price);
                 dbParameters.AddWithValue("id", id);
-                int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Read, sql, dbParameters);
+                int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Write, sql, dbParameters);
                 if (i > 0) reslut = true;
             }
             catch (Exception ex)
