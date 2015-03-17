@@ -11,12 +11,12 @@
         });
 
         $(pagerContainer).on("click", ".t-arrow-prev", function () {
-            var pageIndex = getCurrentPageIndex();
+            var pageIndex = parseInt(getCurrentPageIndex()) - 1;
             redirectToPage(pageIndex);
         });
 
         $(pagerContainer).on("click", ".t-arrow-next", function () {
-            var pageIndex = getCurrentPageIndex();
+            var pageIndex = parseInt(getCurrentPageIndex()) + 1;
             redirectToPage(pageIndex);
         });
         $(pagerContainer).on("click", ".t-arrow-last", function () {
@@ -70,13 +70,13 @@
                 redirectToPage(pageIndex);
             });
 
-            $(pagerContainer).on("click", ".t-arrow-prev", function () {
-                var pageIndex = _searchCriteria.PagingRequest.PageIndex;
+            $(pagerContainer).on("click", ".t-arrow-prev", function () { 
+                var pageIndex = parseInt(_searchCriteria.PagingRequest.PageIndex) - 1;
                 redirectToPage(pageIndex);
             });
 
             $(pagerContainer).on("click", ".t-arrow-next", function () {
-                var pageIndex = _searchCriteria.PagingRequest.PageIndex;
+                var pageIndex = parseInt(_searchCriteria.PagingRequest.PageIndex) + 1;
                 redirectToPage(pageIndex);
             });
             $(pagerContainer).on("click", ".t-arrow-last", function () {
