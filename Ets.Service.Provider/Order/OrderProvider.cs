@@ -9,6 +9,7 @@ using Ets.Model.ParameterModel.Order;
 using Ets.Service.IProvider.Order;
 using Ets.Service.IProvider.Subsidy;
 using Ets.Service.IProvider.User;
+using Ets.Service.Provider.MyPush;
 using Ets.Service.Provider.Subsidy;
 using Ets.Service.Provider.User;
 using ETS.Page;
@@ -201,7 +202,7 @@ namespace Ets.Service.Provider.Order
 
             to.OrderNo = Helper.generateOrderCode(busiOrderInfoModel.userId);  //根据userId生成订单号(15位)
             to.businessId = busiOrderInfoModel.userId; //当前发布者
-            business business = iBusinessProvider.GetBusiness(busiOrderInfoModel.userId);
+            BusListResultModel business = iBusinessProvider.GetBusiness(busiOrderInfoModel.userId);
             //business business = BusiLogic.busiLogic().GetBusinessById(busiOrderInfoModel.userId);  //根据发布者id,获取发布者的相关信息实体
             if (business != null)
             {
@@ -256,7 +257,16 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public string AddOrder(order order)
         {
-            return OrderDao.AddOrder(order);
+            int result = OrderDao.AddOrder(order);
+            if (result > 0)
+            {
+                Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity); //激光推送
+                return "1";
+            }
+            else
+            {
+                return "0";
+            }
         }
     } 
 }

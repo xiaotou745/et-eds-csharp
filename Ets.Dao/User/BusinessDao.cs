@@ -14,6 +14,7 @@ using ETS.Const;
 using Ets.Model.DomainModel.Bussiness;
 using Ets.Model.DomainModel.Clienter;
 using Ets.Model.ParameterModel.Bussiness;
+using Ets.Model.DataModel.Order;
 using Ets.Model.DataModel.Bussiness;
 using ETS.Extension;
 
@@ -199,14 +200,13 @@ namespace Ets.Dao.User
             return reslut;
 
         }
-
         /// <summary>
         /// 检查当前商户是否存在 
         /// 窦海超
         /// 2015年3月16日 13:56:18
         /// </summary>
         /// <param name="PhoneNo">电话号码</param>
-        /// <returns>是否存在,true存在，false不慧</returns>
+        /// <returns>是否存在,true存在，false不存在</returns>
         public bool CheckBusinessExistPhone(string PhoneNo)
         {
             try
@@ -223,8 +223,65 @@ namespace Ets.Dao.User
                 throw;
             }
         }
-
-
+        /// <summary>
+        /// 获取商户信息
+        /// danny-20150316
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<T> GetBusinesses<T>(BusinessSearchCriteria criteria)
+        {
+            string columnList = @"   b.Id
+                                    ,b.Name
+                                    ,b.City
+                                    ,b.district
+                                    ,b.PhoneNo
+                                    ,b.PhoneNo2
+                                    ,b.Password
+                                    ,b.CheckPicUrl
+                                    ,b.IDCard
+                                    ,b.Address
+                                    ,b.Landline
+                                    ,b.Longitude
+                                    ,b.Latitude
+                                    ,b.Status
+                                    ,b.InsertTime
+                                    ,b.districtId
+                                    ,b.CityId
+                                    ,b.GroupId
+                                    ,b.OriginalBusiId
+                                    ,b.ProvinceCode
+                                    ,b.CityCode
+                                    ,b.AreaCode
+                                    ,b.Province
+                                    ,b.CommissionTypeId
+                                    ,b.DistribSubsidy
+                                    ,b.BusinessCommission ";
+            var sbSqlWhere = new StringBuilder(" 1=1 ");
+            if (!string.IsNullOrEmpty(criteria.businessName))
+            {
+                sbSqlWhere.AppendFormat(" AND b.Name={0} ", criteria.businessName);
+            }
+            if (!string.IsNullOrEmpty(criteria.businessPhone))
+            {
+                sbSqlWhere.AppendFormat(" AND b.PhoneNo={0} ", criteria.businessPhone);
+            }
+            if (criteria.Status != -1)
+            {
+                sbSqlWhere.AppendFormat(" AND b.Status={0} ", criteria.Status);
+            }
+            if (criteria.BusinessCommission > 0)
+            {
+                sbSqlWhere.AppendFormat(" AND b.BusinessCommission={0} ", criteria.BusinessCommission);
+            }
+            if (criteria.GroupId != null)
+            {
+                sbSqlWhere.AppendFormat(" AND b.GroupId={0} ", criteria.GroupId);
+            }
+            string tableList = @" business  b WITH (NOLOCK)   ";
+            string orderByColumn = " b.Id DESC";
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex+1, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
+        }
         /// <summary>
         ///  新增店铺
         ///  窦海超
@@ -327,9 +384,9 @@ namespace Ets.Dao.User
             return DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
         }
 
-        public business GetBusiness(int busiId)
+        public BusListResultModel GetBusiness(int busiId)
         {
-            business busi = new business();
+            BusListResultModel busi = new BusListResultModel();
             string selSql = @" SELECT  
          Id ,
          Name ,
@@ -358,7 +415,7 @@ namespace Ets.Dao.User
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
             if (dt != null)
             {
-                busi = DataTableHelper.ConvertDataTableList<business>(dt)[0];
+                busi = DataTableHelper.ConvertDataTableList<BusListResultModel>(dt)[0];
             }
             return busi;
         }

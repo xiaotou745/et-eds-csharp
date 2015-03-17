@@ -3,7 +3,6 @@
     <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS, and JavaScript.</p>
     <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
 </div>
-
 <script src="~/Scripts/jquery-1.10.2.min.js"></script>
 <script>
     //$(function () {
@@ -31,26 +30,26 @@
     //            //OrderFrom :1
     //            "BusinessId": 11858,
     //            "OriginalOrderNo": "1036346525",
-    //            "OriginalBusinessId": 11858, 
-    //            "PubDate": "\/Date(1425349826777)\/", 
+    //            "OriginalBusinessId": 11858,
+    //            "PubDate": "\/Date(1425349826777)\/",
     //            "ReceiveName": "测试",
-    //            "ReceivePhoneNo": "18910712425", 
+    //            "ReceivePhoneNo": "18910712425",
     //            "IsPay": false,
-    //            "Amount": 59.0000, 
+    //            "Amount": 59.0000,
     //            "Quantity": 1,
-    //            "Receive_Province": "北京市", 
-    //            "Receive_City": "北京城区", 
-    //            "Receive_Area": "朝阳区", 
+    //            "Receive_Province": "北京市",
+    //            "Receive_City": "北京城区",
+    //            "Receive_Area": "朝阳区",
     //            "Receive_ProvinceCode": "102",
-    //            "Receive_CityCode": "10201", 
-    //            "Receive_AreaCode": "1020105", 
+    //            "Receive_CityCode": "10201",
+    //            "Receive_AreaCode": "1020105",
     //            "Receive_Address": "北京市朝阳区北苑",
     //            "OrderFrom": 1, "OrderCommission": 0.0,
-    //            "DistribSubsidy": 0.0, 
+    //            "DistribSubsidy": 0.0,
     //            "WebsiteSubsidy": 0.0,
-    //            "Receive_Longitude": 0, 
-    //            "Receive_Latitude": 0, 
-    //            "Remark": null, 
+    //            "Receive_Longitude": 0,
+    //            "Receive_Latitude": 0,
+    //            "Remark": null,
     //            "Weight": 0.0, "OrderType": 0, "KM": 0
     //        },
     //        success: function (data) {
@@ -137,7 +136,7 @@
 
         //    }
         //});
-        
+
         //$.ajax({
         //    type: 'post',
         //    dataType: 'json',
@@ -167,7 +166,7 @@
         //    url: '/BusinessAPI/GetOrderList_B?userId=30&pagedSize=10&pageIndex=1&Status=1',
         //    data: {
         //       m:Math.random()
-               
+
         //    },
         //    success: function (data) {
         //        console.log(data);
@@ -198,13 +197,29 @@
         //    }
         //});
 
+
+        $.ajax({
+            type: 'post',
+            dataType: 'json',
+            url: '/BusinessAPI/PostRegisterInfo_B',
+            data: {
+                city: "北京市", CityId: "1", phoneNo: "13426401627", passWord: "123456", verifyCode: "1234", GroupId: 0
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () {
+
+            }
+        });
+
         //$.ajax({
         //    type: 'get',
         //    dataType: 'json',
         //    url: '/BusinessAPI/GetOrderList_B?userId=30&pagedSize=10&pageIndex=1&Status=1',
         //    data: {
         //       m:Math.random()
-               
+
         //    },
         //    success: function (data) {
         //        console.log(data);
@@ -214,7 +229,7 @@
 
         //    }
         //});
-        
+
         //$.ajax({
         //    type: 'get',
         //    dataType: 'json',
@@ -238,7 +253,7 @@
         //    }
         //});
 
-            //});
+        //});
         //$.ajax({
         //    type: 'POST',
         //    dataType: 'json',
@@ -303,10 +318,10 @@
         //    url: 'http://localhost:9263/ClienterAPI/GetJobListSongCanTask_C',
         //    //url:'http://localhost:9263/ClienterAPI/GetJobListCanHeTask_C',
         //    data: {
-        //        "userId": 77, 
+        //        "userId": 77,
         //        "isLatest": true,
         //        "pageSize": 1,
-        //        "pageIndex": 1, 
+        //        "pageIndex": 1,
         //        "city": "北京市",
         //        "cityId": "10201"
         //    },
@@ -316,7 +331,7 @@
         //    error: function () {
         //    }
         //});
-        
+
 
 
 
@@ -355,20 +370,20 @@
         //    error: function () {
         //    }
         //});
-        
-  
-    }); 
+
+
+    });
 </script>
 <div class="row">
     <div class="col-md-4">
-            <h2>Getting started</h2>
-            <p>
-                ASP.NET Web API is a framework that makes it easy to build HTTP services that reach
-                a broad range of clients, including browsers and mobile devices. ASP.NET Web API
-                is an ideal platform for building RESTful applications on the .NET Framework.
-            </p>
-            <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301870">Learn more &raquo;</a></p>
-</div>
+        <h2>Getting started</h2>
+        <p>
+            ASP.NET Web API is a framework that makes it easy to build HTTP services that reach
+            a broad range of clients, including browsers and mobile devices. ASP.NET Web API
+            is an ideal platform for building RESTful applications on the .NET Framework.
+        </p>
+        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301870">Learn more &raquo;</a></p>
+    </div>
     <div class="col-md-4">
         <h2>Get more libraries</h2>
         <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
