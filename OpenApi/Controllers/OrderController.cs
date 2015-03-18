@@ -13,6 +13,11 @@ using System.ComponentModel.DataAnnotations;
 using Ets.Model.Common;
 using ETS.Enums;
 using Ets.Model.ParameterModel.Order;
+using Ets.Service.Provider.Common;
+using Ets.Service.IProvider.Common;
+using Ets.Model.DomainModel.Group;
+using ETS.Security;
+
 
 namespace OpenApi.Controllers
 {
@@ -29,45 +34,39 @@ namespace OpenApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
+        [SignOpenApi]
         public ResultModel<dynamic> GetStatus(ParaModel<GetStatusPM_OpenApi> paramodel)
         {
             try
             {
-                if (base.ModelState.Count > 0 || paramodel == null)
-                    return ResultModel<dynamic>.Conclude(OrderApiStatusType.ParaError);
-                else
-                    return (new OrderProvider().GetStatus(paramodel.fields.order_no) < 0) ?
-                     ResultModel<dynamic>.Conclude(OrderApiStatusType.ParaError) :    //订单不存在返回参数错误提示
-                        ResultModel<dynamic>.Conclude(OrderApiStatusType.Success, new
-                        {
-                            status = new OrderProvider().GetStatus(paramodel.fields.order_no)
-                        });
+                return (new OrderProvider().GetStatus(paramodel.fields.order_no) < 0) ?
+                ResultModel<dynamic>.Conclude(OrderApiStatusType.ParaError) :    //订单不存在返回参数错误提示
+                ResultModel<dynamic>.Conclude(OrderApiStatusType.Success, new
+                {
+                    status = new OrderProvider().GetStatus(paramodel.fields.order_no)
+                });
             }
             catch
             {
                 return ResultModel<dynamic>.Conclude(OrderApiStatusType.SystemError);       //返回系统错误提示
             }
         }
-
         // POST: Order Create
         /// <summary>
         /// 物流订单接收接口  add by caoheyang 201503167
         /// </summary>
         /// <returns></returns>
         [HttpPost]
+        [SignOpenApi]
         public ResultModel<dynamic> Create(ParaModel<CreatePM_OpenApi> paramodel)
         {
             try
             {
-                if (base.ModelState.Count > 0 || paramodel == null)
-                    return ResultModel<dynamic>.Conclude(OrderApiStatusType.ParaError);       //返回参数错误提示
-                else
-                {
-                    IOrderProvider orderProvider = new OrderProvider();
-                    string orderNo = orderProvider.Create(paramodel.fields);
-                    return string.IsNullOrWhiteSpace(orderNo) ? ResultModel<dynamic>.Conclude(OrderApiStatusType.SystemError) :
-                        ResultModel<dynamic>.Conclude(OrderApiStatusType.Success, new { order_no = orderNo });
-                }
+                paramodel.fields.store_info.group = paramodel.group;  //设置集团信息到具体的门店上  在dao层会用到 
+                IOrderProvider orderProvider = new OrderProvider();
+                string orderNo = orderProvider.Create(paramodel.fields);
+                return string.IsNullOrWhiteSpace(orderNo) ? ResultModel<dynamic>.Conclude(OrderApiStatusType.SystemError) :
+                    ResultModel<dynamic>.Conclude(OrderApiStatusType.Success, new { order_no = orderNo });
             }
             catch
             {
@@ -76,4 +75,5 @@ namespace OpenApi.Controllers
         }
 
     }
+
 }

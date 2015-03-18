@@ -1,5 +1,6 @@
 ﻿@model ClienterManage
-@using SuperManCommonModel.Models;
+@*@using SuperManCommonModel.Models;*@
+@using Ets.Model.DomainModel.Clienter;
 @using SuperManBusinessLogic.CommonLogic
  @using SuperManBusinessLogic.Group_Logic
 @{
@@ -12,13 +13,13 @@
 <script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.fileupload.js"></script>
 <div class="zpManage zpSh">
     <h2 class="crumbs">
-        您所在位置：超人 > 超人管理
+        您所在位置：骑士 > 骑士管理
     </h2>
     <div class="SearchMd">
         <table border="0" cellspacing="0" cellpadding="0">
             <tr>
                 <td>
-                    <span class="">超人名称: </span>
+                    <span class="">骑士名称: </span>
                     <input id="txtSuperManName" type="tel" />
                     <span class="">审核状态: </span>
                     <select name="select" class="selectw" id="superManStatus" style="width:143px">
@@ -28,11 +29,11 @@
                         <option value="2">未审核</option>
                         <option value="3">审核中</option>
                     </select>
-                    <span class="">超人电话: </span>
+                    <span class="">骑士电话: </span>
                     <input id="txtSuperManPhone" type="text" />
                     <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" />
                     <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
-                    @*<input id="btnAdd" class="searchBtn" type="button" value="新增超人">*@
+                    @*<input id="btnAdd" class="searchBtn" type="button" value="新增骑士">*@
                 </td>
             </tr>
         </table>
@@ -42,11 +43,11 @@
     </div>
 </div>
 
-<!--新增超人弹出窗部分  add by caoheyang20140228-->
+<!--新增骑士弹出窗部分  add by caoheyang20140228-->
 <div class="selectSupplierDish">
     <div class="add-openbox add-form" id="AddSuperManShow" style="width:500px">
         <h2>
-            <p id="statusUnFin">新增超人</p>
+            <p id="statusUnFin">新增骑士</p>
             <a class="J_closebox x_close"></a>
         </h2>
         <form class="form-horizontal" role="form" id="AddSuperManForm" method="post" action="/SuperManManager/AddSuperMan">
@@ -151,7 +152,7 @@
 <script>
     var adminjs = new adminglass(); //实例化后台类
     var DEFAULT_PAGESIZE = 15;
-    var criteria = { PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE }, GroupId: $("#txtGroupId").val() };
+    var criteria = { PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }, GroupId: $("#txtGroupId").val() };
     $(function () {
         $('#hidupload').val(''); //页面加载时清空隐藏域的值。
         $('#hidHandUpload').val(''); //页面加载时清空隐藏域的值。
@@ -164,7 +165,7 @@
                 clienterPhone: $("#txtSuperManPhone").val(),
                 status: $("#superManStatus").val(),
                 GroupId: $("#txtGroupId").val(),
-                PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE }
+                PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }
             };
             refresh(0);
         });
@@ -211,7 +212,7 @@
             }
         });
  
-        //新增超人保存按钮点击事件    add by caoheyang 20150302
+        //新增骑士保存按钮点击事件    add by caoheyang 20150302
         $("#btnSuperConfim").click(
             function () {
                 var result = true;//验证结果
@@ -292,7 +293,7 @@
                         },
                         success: function (result) {
                             if (result.IsSuccess) {
-                                alert("新增超人成功！");
+                                alert("新增骑士成功！");
                                 window.location.href = "/SuperManManager/SuperManManager";
                             } else {
                                 alert(result.Message);
@@ -349,7 +350,7 @@
                 LoadBussinessInfo();
             });
         }
-        //新增超人按钮点击事件   add by caoheyang 20150228
+        //新增骑士按钮点击事件   add by caoheyang 20150228
         $("#btnAdd").click(
             function () {
                 adminjs.openwinbox('#AddSuperManShow');

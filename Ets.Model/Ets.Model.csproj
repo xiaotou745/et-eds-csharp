@@ -49,6 +49,7 @@
     <Compile Include="DataModel\Bussiness\BusiLoginResultModel.cs" />
     <Compile Include="DataModel\Bussiness\BusiRegisterResultModel.cs" />
     <Compile Include="DataModel\Clienter\ClienterLoginResultModel.cs" />
+    <Compile Include="DataModel\Clienter\ClienterListModel.cs" />
     <Compile Include="DataModel\Group\GroupModel.cs" />
     <Compile Include="DataModel\Order\OrderCommission.cs" />
     <Compile Include="Common\PaginResult.cs" />
@@ -56,6 +57,9 @@
     <Compile Include="DomainModel\Bussiness\BusinessManage.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessModel.cs" />
     <Compile Include="DomainModel\Bussiness\BusiOrderSqlModel.cs" />
+    <Compile Include="DomainModel\Clienter\ClienterManage.cs" />
+    <Compile Include="DomainModel\Clienter\ClienterSearchCriteria.cs" />
+    <Compile Include="DomainModel\Clienter\ClienterModel.cs" />
     <Compile Include="DomainModel\Clienter\ClientOrderModel.cs" />
     <Compile Include="DataModel\Clienter\Clienter.cs" />
     <Compile Include="DataModel\Order\Order.cs" />

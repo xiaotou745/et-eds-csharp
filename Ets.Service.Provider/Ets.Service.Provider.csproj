@@ -52,6 +52,7 @@
     <Compile Include="Common\GroupProvider.cs" />
     <Compile Include="Common\HomeCountProvider.cs" />
     <Compile Include="Common\ServicePhone.cs" />
+    <Compile Include="Distribution\DistributionProvider.cs" />
     <Compile Include="MyPush\Push.cs" />
     <Compile Include="Order\OrderCommissionProvider.cs" />
     <Compile Include="Order\OrderProvider.cs" />

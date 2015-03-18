@@ -354,7 +354,7 @@ namespace Ets.Dao.User
             parm.AddWithValue("@PhoneNo", model.phoneNo);
             parm.AddWithValue("@CityId", model.CityId);
             parm.AddWithValue("@GroupId", model.GroupId);
-            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm));
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm));
         }
 
 
