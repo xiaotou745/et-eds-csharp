@@ -51,7 +51,7 @@ namespace OpenApi.Controllers
                 return ResultModel<dynamic>.Conclude(OrderApiStatusType.SystemError);       //返回系统错误提示
             }
         }
-        // POST: Order Create  paramodel 固定 必须是 paramodel  
+        // POST: Order Create   paramodel 固定 必须是 paramodel  
         /// <summary>
         /// 物流订单接收接口  add by caoheyang 201503167
         /// </summary>

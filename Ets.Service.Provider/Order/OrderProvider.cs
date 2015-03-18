@@ -13,6 +13,8 @@ using Ets.Service.Provider.MyPush;
 using Ets.Service.Provider.Subsidy;
 using Ets.Service.Provider.User;
 using ETS.Page;
+using ETS.Transaction;
+using ETS.Transaction.Common;
 using ETS.Util;
 using System;
 using System.Collections.Generic;
@@ -50,7 +52,7 @@ namespace Ets.Service.Provider.Order
 
                 resultModel.income = income;  //计算设置当前订单骑士可获取的佣金 Edit bycaoheyang 20150305
                 resultModel.Amount = amount; //C端 获取订单的金额 Edit bycaoheyang 20150305
-                
+
 
                 resultModel.businessName = from.BusinessName;
                 resultModel.businessPhone = from.BusinessPhone;
@@ -67,9 +69,9 @@ namespace Ets.Service.Provider.Order
                 resultModel.receviceAddress = from.ReceviceAddress;
                 resultModel.recevicePhone = from.RecevicePhoneNo;
                 resultModel.IsPay = from.IsPay.Value;
-                resultModel.Remark = from.Remark == null ?"":from.Remark;
-                resultModel.Status = from.Status.Value; 
- 
+                resultModel.Remark = from.Remark == null ? "" : from.Remark;
+                resultModel.Status = from.Status.Value;
+
                 if (from.BusiLatitude == null || from.BusiLatitude == 0 || from.BusiLongitude == null || from.BusiLongitude == 0)
                 {
                     resultModel.distance = "--";
@@ -86,7 +88,7 @@ namespace Ets.Service.Provider.Order
                         double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
                         resultModel.distance = res < 1000 ? (res.ToString("f2") + "米") : ((res / 1000).ToString("f2") + "公里");
                     }
-                    if ( from.ReceviceLongitude != null && from.ReceviceLatitude != null
+                    if (from.ReceviceLongitude != null && from.ReceviceLatitude != null
                         && from.ReceviceLongitude != 0 && from.ReceviceLatitude != 0)  //计算商户到收货人的距离
                     {
                         Degree degree1 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);  //商户经纬度
@@ -96,13 +98,13 @@ namespace Ets.Service.Provider.Order
                     }
                     else
                         resultModel.distanceB2R = "--";
-                }        
+                }
                 list.Add(resultModel);
             }
             return list;
         }
 
-        
+
         #region
         public IList<ClientOrderNoLoginResultModel> GetOrdersNoLoginLatest(ClientOrderSearchCriteria criteria)
         {
@@ -212,7 +214,7 @@ namespace Ets.Service.Provider.Order
                 to.PubDate = DateTime.Now; //提起时间
                 to.ReceviceCity = business.City; //城市
                 to.DistribSubsidy = business.DistribSubsidy;//设置外送费,从商户中找。
-            } 
+            }
             if (ConfigSettings.Instance.IsGroupPush)
             {
                 if (busiOrderInfoModel.OrderFrom != 0)
@@ -232,10 +234,10 @@ namespace Ets.Service.Provider.Order
 
             //var subsidy = SubsidyLogic.subsidyLogic().GetCurrentSubsidy(groupId: business.GroupId == null ? 0 : Convert.ToInt32(business.GroupId));
 
-            var subsidy =  iSubsidyProvider.GetCurrentSubsidy(groupId: business.GroupId == null ? 0 : Convert.ToInt32(business.GroupId));
+            var subsidy = iSubsidyProvider.GetCurrentSubsidy(groupId: business.GroupId == null ? 0 : Convert.ToInt32(business.GroupId));
 
             if (subsidy != null)
-            { 
+            {
                 to.WebsiteSubsidy = subsidy.WebsiteSubsidy;  //网站补贴
                 to.CommissionRate = subsidy.OrderCommission == null ? 0 : subsidy.OrderCommission; //佣金比例 
 
@@ -248,7 +250,7 @@ namespace Ets.Service.Provider.Order
                 to.OrderCommission = busiOrderInfoModel.Amount * to.CommissionRate + distribe * to.OrderCount;//计算佣金
             }
             to.Status = ConstValues.ORDER_NEW;
-            return to; 
+            return to;
         }
 
         /// <summary>
@@ -280,13 +282,17 @@ namespace Ets.Service.Provider.Order
         /// <returns>订单号码</returns>
         public string Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
         {
-            string orderNo = OrderDao.CreateToSql(paramodel);
-            if(!string.IsNullOrWhiteSpace(orderNo))
-                Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！"
-                    , string.Empty, paramodel.address.city_code); //激光推送   bug  原来是根据城市推送的，现在没要求传城市相关信息
-            return orderNo;
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                string orderNo = OrderDao.CreateToSql(paramodel);
+                if (!string.IsNullOrWhiteSpace(orderNo))
+                    Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！"
+                        , string.Empty, paramodel.address.city_code); //激光推送   bug  原来是根据城市推送的，现在没要求传城市相关信息
+                tran.Complete();
+                return orderNo;
+            }
         }
 
         #endregion
-    } 
+    }
 }
