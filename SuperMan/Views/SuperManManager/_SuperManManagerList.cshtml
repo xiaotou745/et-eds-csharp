@@ -1,10 +1,11 @@
-﻿@model SuperManCommonModel.Models.ClienterManageList
+﻿@*@model SuperManCommonModel.Models.ClienterManageList*@
+@model Ets.Model.DomainModel.Clienter.ClienterManageList
 @using SuperManBusinessLogic.Group_Logic
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
     <thead>
 
         <tr class="tdbg">
-            <th width="%5">序号</th>
+            <th width="%5">编号</th>
             <th>姓名</th>
             <th>工作状态</th>
             <th>电话</th>
@@ -26,7 +27,7 @@
             {
                 i++;
                 <tr id="@item.Id">
-                    <td>@i</td>
+                    <td>@item.Id</td>
                     <td>@item.TrueName</td>
                     <td>
                         @if (@item.WorkStatus == 0)
@@ -53,20 +54,20 @@
                     </td>
                     @{
                 var statusView = "";
-                if (@item.Status == SuperManCommonModel.ConstValues.CLIENTER_AUDITPASS)
+                if (@item.Status == Ets.Model.Common.ConstValues.CLIENTER_AUDITPASS)
                 {
                     statusView = "审核通过";
                 }
 
-                else if (@item.Status == SuperManCommonModel.ConstValues.CLIENTER_AUDITCANCEL)
+                else if (@item.Status == Ets.Model.Common.ConstValues.CLIENTER_AUDITCANCEL)
                 {
                     statusView = "审核被拒绝";
                 }
-                else if (@item.Status == SuperManCommonModel.ConstValues.CLIENTER_AUDITPASSING)
+                else if (@item.Status == Ets.Model.Common.ConstValues.CLIENTER_AUDITPASSING)
                 {
                     statusView = "审核中";
                 }
-                else if (@item.Status == SuperManCommonModel.ConstValues.CLIENTER_NOAUDIT)
+                else if (@item.Status == Ets.Model.Common.ConstValues.CLIENTER_NOAUDIT)
                 {
                     statusView = "未审核";
                 }
@@ -106,7 +107,7 @@
     </tbody>
 
 </table>
-@Html.Partial("_Pager", Model._PagingResult)
+@Html.Partial("_NewPager", Model._PagingResult)
 @*弹出图片*@
 <div class="selectSupplierDish">
     <div class="add-openbox add-form" id="ClientPicShow" style="width:500px">
@@ -126,7 +127,7 @@
 </div>
 <div class="add-openbox zpsh-openw" id="Close_Clearbox">
     <h2>余额清零</h2>
-    <p class="textinfo">确定要清除此超人的余额吗? 清除后不可恢复!</p>
+    <p class="textinfo">确定要清除此骑士的余额吗? 清除后不可恢复!</p>
     <p class="btnbox">
         <input value="清除" type="button" class="yesBtn" id="btnClear" />
         <input value="取消" type="button" class="J_closebox qxBtn" />
