@@ -354,7 +354,7 @@ namespace Ets.Dao.User
             parm.AddWithValue("@PhoneNo", model.phoneNo);
             parm.AddWithValue("@CityId", model.CityId);
             parm.AddWithValue("@GroupId", model.GroupId);
-            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm));
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm));
         }
 
 
@@ -438,11 +438,11 @@ namespace Ets.Dao.User
                 if (enumStatusType == EnumStatusType.审核通过)
                 {
 
-                    sql = string.Format(" update business set Status=1 where id=@id ", ConstValues.BUSINESS_AUDITPASS);
+                    sql = string.Format(" update business set Status={0} where id=@id ", ConstValues.BUSINESS_AUDITPASS);
                 }
                 else if (enumStatusType == EnumStatusType.审核取消)
                 {
-                    sql = string.Format(" update business set Status=4 where id=@id ",ConstValues.BUSINESS_AUDITCANCEL);
+                    sql = string.Format(" update business set Status={0} where id=@id ",ConstValues.BUSINESS_AUDITCANCEL);
                 }
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
                 dbParameters.AddWithValue("id", id);

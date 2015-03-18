@@ -1,0 +1,55 @@
+﻿using Ets.Model.DataModel.Clienter;
+using Ets.Model.DomainModel.Clienter;
+using ETS.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Ets.Service.IProvider.Distribution
+{
+    /// <summary>
+    /// 骑士业务逻辑接口 
+    /// danny-20150318
+    /// </summary>
+    public interface IDistributionProvider
+    {
+        /// <summary>
+        /// 获取骑士信息
+        /// danny-20150318
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        ClienterManage GetClienteres(ClienterSearchCriteria criteria);
+        /// <summary>
+        /// 更新审核状态
+        /// danny-20150318
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="enumStatusType"></param>
+        /// <returns></returns>
+        bool UpdateAuditStatus(int id, EnumStatusType enumStatusType);
+        /// <summary>
+        ///  清空帐户余额
+        /// danny-20150318
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        bool ClearSuperManAmount(int id);
+        /// <summary>
+        /// 检查骑士手机号码是否存在
+        /// danny-20150318
+        /// </summary>
+        /// <param name="phoneNo"></param>
+        /// <returns></returns>
+        bool CheckExistPhone(string phoneNo);
+        /// <summary>
+        /// 添加骑士
+        /// danny-20150318
+        /// </summary>
+        /// <param name="clienter"></param>
+        /// <returns></returns>
+        bool AddClienter(ClienterListModel clienter);
+    }
+}

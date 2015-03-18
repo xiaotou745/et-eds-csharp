@@ -42,6 +42,7 @@
     <Compile Include="Common\IAdminToolsProvider.cs" />
     <Compile Include="Common\IGroupProvider.cs" />
     <Compile Include="Common\IServicePhone.cs" />
+    <Compile Include="Distribution\IDistributionProvider.cs" />
     <Compile Include="Order\IOrderProvider.cs" />
     <Compile Include="Clienter\IClienterProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
