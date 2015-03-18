@@ -39,5 +39,10 @@ namespace Ets.Model.Common
         [Required]
         public T fields { get; set; }
 
+        /// <summary>
+        /// 集团：3:万达    查询得到。赋值
+        /// </summary>
+        public int group { get; set; }
+
     }
 }
