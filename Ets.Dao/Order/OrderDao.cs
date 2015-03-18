@@ -111,7 +111,7 @@ namespace Ets.Dao.Order
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@OrderNo", orderNo);    //订单号
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
-            return ParseHelper.ToInt(executeScalar,-1);
+            return ParseHelper.ToInt(executeScalar, -1);
         }
         #endregion
 
@@ -239,7 +239,8 @@ namespace Ets.Dao.Order
                 insertBdbParameters.AddWithValue("@CommissionTypeId", paramodel.store_info.commission_type == null ?
                     1 : paramodel.store_info.commission_type);   //佣金类型，涉及到快递员的佣金计算方式，默认1
                 bussinessId = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, insertBussinesssql, insertBdbParameters));
-                if (bussinessId == 0) {//添加失败 回滚 返回空 
+                if (bussinessId == 0)
+                {//添加失败 回滚 返回空 
                     return null;
                 }
             }
@@ -305,19 +306,47 @@ namespace Ets.Dao.Order
                 insertOrderDetaiParas.AddWithValue("@UnitPrice", paramodel.order_details[i].unit_price);    //商品单价，精确到两位小数
                 insertOrderDetaiParas.AddWithValue("@Quantity", paramodel.order_details[i].quantity);    //商品数量
                 int orderdetailId = ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrderDetailsql, insertOrderDetaiParas));
-                if (orderdetailId==null)//添加失败 回滚 返回空 
+                if (orderdetailId == null)//添加失败 回滚 返回空 
                 {
                     addBool = false; //添加失败
                     break;
                 }
             }
-            if (!addBool) {   //添加失败
+            if (!addBool)
+            {   //添加失败
                 return null;
             }
             #endregion
             return orderNo;
         }
         #endregion
+
+
+        /// <summary>
+        /// 获取当天订单完成数量和金额
+        /// 窦海超
+        /// 2015年3月18日 17:23:14
+        /// </summary>
+        /// <param name="Count">返回数量</param>
+        /// <param name="Money">返回金额</param>
+        public void GetCurrentDateCountAndMoney(out int Count, out decimal Money)
+        {
+            Count = 0; Money = 0;
+            string sql = @" SELECT 
+                             COUNT(id) AS acount,
+                             SUM(Amount) amount
+                             FROM dbo.[order](NOLOCK) WHERE  CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120)
+                             AND [Status]=1";
+            DataSet set = DbHelper.ExecuteDataset(SuperMan_Read, sql);
+            DataTable dt = DataTableHelper.GetTable(set);
+            if (dt == null && dt.Rows.Count <= 0)
+            {
+                return;
+            }
+            DataRow row = dt.Rows[0];
+            Count = ParseHelper.ToInt(row["acount"], 0);
+            Money = ParseHelper.ToDecimal(row["amount"], 0);
+        }
 
     }
 }

@@ -442,7 +442,7 @@ namespace Ets.Dao.User
                 }
                 else if (enumStatusType == EnumStatusType.审核取消)
                 {
-                    sql = string.Format(" update business set Status={0} where id=@id ",ConstValues.BUSINESS_AUDITCANCEL);
+                    sql = string.Format(" update business set Status={0} where id=@id ", ConstValues.BUSINESS_AUDITCANCEL);
                 }
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
                 dbParameters.AddWithValue("id", id);
@@ -474,11 +474,11 @@ namespace Ets.Dao.User
             parm.AddWithValue("@CityCode", criteria.CityCode);
             if (criteria.GroupId != null && criteria.GroupId != 0)
             {
-                sql+=" AND GroupId=@GroupId";
+                sql += " AND GroupId=@GroupId";
             }
             if (!string.IsNullOrWhiteSpace(criteria.ProvinceCode))
             {
-                sql+=" AND ProvinceCode=@ProvinceCode";
+                sql += " AND ProvinceCode=@ProvinceCode";
             }
             if (!string.IsNullOrWhiteSpace(criteria.CityCode))
             {
@@ -487,6 +487,20 @@ namespace Ets.Dao.User
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
             var list = ConvertDataTableList<BusListResultModel>(dt);
             return list;
+        }
+
+
+
+        /// <summary>
+        /// 获取骑士数量
+        /// 窦海超
+        /// 2015年3月18日 17:23:14
+        /// </summary>
+        /// <returns>骑士数量</returns>
+        public int GetBusinessCount()
+        {
+            string sql = @" SELECT COUNT(Id) FROM dbo.business(NOLOCK) WHERE [Status]=1";
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql));
         }
     }
 }

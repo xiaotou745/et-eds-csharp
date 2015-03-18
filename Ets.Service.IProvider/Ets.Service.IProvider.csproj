@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="Common\IAdminToolsProvider.cs" />
     <Compile Include="Common\IGroupProvider.cs" />
+    <Compile Include="Common\IHomeCountProvider.cs" />
     <Compile Include="Common\IServicePhone.cs" />
     <Compile Include="Order\IOrderProvider.cs" />
     <Compile Include="Clienter\IClienterProvider.cs" />
