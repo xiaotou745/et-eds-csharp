@@ -262,11 +262,11 @@ namespace Ets.Dao.User
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrEmpty(criteria.businessName))
             {
-                sbSqlWhere.AppendFormat(" AND b.Name={0} ", criteria.businessName);
+                sbSqlWhere.AppendFormat(" AND b.Name='{0}' ", criteria.businessName);
             }
             if (!string.IsNullOrEmpty(criteria.businessPhone))
             {
-                sbSqlWhere.AppendFormat(" AND b.PhoneNo={0} ", criteria.businessPhone);
+                sbSqlWhere.AppendFormat(" AND b.PhoneNo='{0}' ", criteria.businessPhone);
             }
             if (criteria.Status != -1)
             {
@@ -456,6 +456,37 @@ namespace Ets.Dao.User
                 throw;
             }
             return reslut;
+        }
+        /// <summary>
+        /// 根据城市信息查询当前城市下该集团的所有商户信息
+        ///  danny-20150317
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public IList<BusListResultModel> GetBussinessByCityInfo(BusinessSearchCriteria criteria)
+        {
+            string sql = @"SELECT  Id 
+                        Name
+                        FROM business(nolock) where 1=1";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@GroupId", criteria.GroupId);
+            parm.AddWithValue("@ProvinceCode", criteria.ProvinceCode);
+            parm.AddWithValue("@CityCode", criteria.CityCode);
+            if (criteria.GroupId != null && criteria.GroupId != 0)
+            {
+                sql+=" AND GroupId=@GroupId";
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.ProvinceCode))
+            {
+                sql+=" AND ProvinceCode=@ProvinceCode";
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.CityCode))
+            {
+                sql += " AND CityCode=@CityCode";
+            }
+            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
+            var list = ConvertDataTableList<BusListResultModel>(dt);
+            return list;
         }
     }
 }

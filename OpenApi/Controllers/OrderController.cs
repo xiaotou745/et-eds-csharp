@@ -9,13 +9,16 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web;
+using System.ComponentModel.DataAnnotations;
+using Ets.Model.Common;
+using ETS.Enums;
 
 namespace OpenApi.Controllers
 {
     /// <summary>
     /// 对外公开接口  订单相关功能  add by caoheyang 20150316
     /// </summary>
- 
+
     //[RoutePrefix("api/order/")]
     public class OrderController : ApiController
     {
@@ -25,10 +28,21 @@ namespace OpenApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public void GetStatus()
+        public ResultModel<dynamic> GetStatus()
         {
-            IOrderProvider orderProvider = new OrderProvider();
-            int status = orderProvider.GetStatus(HttpContext.Current.Request.Form["order_no"]);  //todo  缺少非空验证
+            try
+            {
+                IOrderProvider orderProvider = new OrderProvider();
+                return HttpContext.Current.Request.Form["order_no"] == null ?
+                     ResultModel<dynamic>.Conclude(OrderApiStatusType.ParaError) :
+                     ResultModel<dynamic>.Conclude(OrderApiStatusType.Success, new
+                     {
+                         status = orderProvider.GetStatus(HttpContext.Current.Request.Form["order_no"])
+                     });
+            }
+            catch {
+                return ResultModel<dynamic>.Conclude(OrderApiStatusType.SystemError);       //返回系统错误提示
+            }
         }
 
         // POSR: Order Create
@@ -37,9 +51,24 @@ namespace OpenApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public void Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
+        public ResultModel<dynamic> Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
         {
-            IOrderProvider orderProvider = new OrderProvider(); 
+            try
+            {
+                if (base.ModelState.Count > 0 || paramodel == null)
+                    return ResultModel<dynamic>.Conclude(OrderApiStatusType.ParaError);       //返回参数错误提示
+                else
+                {
+                    IOrderProvider orderProvider = new OrderProvider();
+                    string orderNo = orderProvider.Create(paramodel);
+                    return string.IsNullOrWhiteSpace(orderNo) ? ResultModel<dynamic>.Conclude(OrderApiStatusType.SystemError) :
+                        ResultModel<dynamic>.Conclude(OrderApiStatusType.Success, new { order_no = orderNo });
+                }
+            }
+            catch
+            {
+                return ResultModel<dynamic>.Conclude(OrderApiStatusType.SystemError);       //返回系统错误提示
+            }
         }
 
     }

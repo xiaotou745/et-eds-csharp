@@ -70,9 +70,14 @@ namespace SuperMan.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult GetBussinessByCityInfo(SuperManCommonModel.Entities.BusinessSearchCriteria model) {
-             return Json(BusiLogic.busiLogic().GetBussinessByCityInfo(model), JsonRequestBehavior.DenyGet);
+        public JsonResult GetBussinessByCityInfo(Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria model) {
+             //return Json(BusiLogic.busiLogic().GetBussinessByCityInfo(model), JsonRequestBehavior.DenyGet);
+            return Json(iBusinessProvider.GetBussinessByCityInfo(model).ToList(), JsonRequestBehavior.DenyGet);
         }
+        //public JsonResult GetBussinessByCityInfo(SuperManCommonModel.Entities.BusinessSearchCriteria model)
+        //{
+        //    return Json(BusiLogic.busiLogic().GetBussinessByCityInfo(model), JsonRequestBehavior.DenyGet);
+        //}
         [HttpGet]
         public ActionResult BusinessSettlementSet()
         {

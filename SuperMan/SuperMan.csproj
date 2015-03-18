@@ -414,7 +414,6 @@
     <Content Include="Authority\EnumSettings.config" />
     <Content Include="Nlog.config" />
     <None Include="Properties\PublishProfiles\HDL.pubxml" />
-    <None Include="Properties\PublishProfiles\MyWeb.pubxml" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="Scripts\bootbox.js" />
     <Content Include="Scripts\bootstrap-datepicker.js" />
@@ -603,7 +602,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>50437</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
