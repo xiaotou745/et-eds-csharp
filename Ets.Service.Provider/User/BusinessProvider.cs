@@ -188,13 +188,12 @@ namespace Ets.Service.Provider.User
         {
             try
             {
+                BusiLoginResultModel resultMode = new BusiLoginResultModel();
                 DataTable dt = dao.LoginSql(model);
                 if (dt == null || dt.Rows.Count <= 0)
                 {
-                    return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
+                    return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential, resultMode);
                 }
-
-                BusiLoginResultModel resultMode = new BusiLoginResultModel();
                 DataRow row = dt.Rows[0];
                 resultMode.userId = ParseHelper.ToInt(row["userId"]);
                 resultMode.status = Convert.ToByte(row["status"]);
