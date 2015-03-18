@@ -280,7 +280,11 @@ namespace Ets.Service.Provider.Order
         /// <returns>订单号码</returns>
         public string Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
         {
-            return OrderDao.CreateToSql(paramodel);
+            string orderNo = OrderDao.CreateToSql(paramodel);
+            if(!string.IsNullOrWhiteSpace(orderNo))
+                Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！"
+                    , string.Empty, paramodel.address.city_code); //激光推送   bug  原来是根据城市推送的，现在没要求传城市相关信息
+            return orderNo;
         }
 
         #endregion
