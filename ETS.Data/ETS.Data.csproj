@@ -104,11 +104,6 @@
     <Compile Include="Transaction\Common\UnitOfWorkFactory.cs" />
     <Compile Include="Transaction\Common\UnitOfWorkStackManager.cs" />
     <Compile Include="Transaction\DZUtilOfWorkFactory.cs" />
-    <Compile Include="Transaction\WMS\ConnectionStringsUtil.cs" />
-    <Compile Include="Transaction\WMS\IWMSUnitOfWorkDefinition.cs" />
-    <Compile Include="Transaction\WMS\UnitOfWorkUtil.cs" />
-    <Compile Include="Transaction\WMS\WMSDatabase.cs" />
-    <Compile Include="Transaction\WMS\WMSUnitOfWorkDefinition.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ETS.Core\ETS.Core.csproj">

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using ETS.Data;
 using ETS.Extension;
+using System.Data.Common;
 
 namespace ETS.Dao
 {
@@ -153,5 +154,6 @@ namespace ETS.Dao
             }
             return lstT;
         }
+
     }
 }

@@ -10,7 +10,7 @@ namespace Ets.Service.IProvider.User
 {
     public interface IUser
     {
-        List<int> Register(UserModel user);
+        List<int> Register(Model.UserModel user);
 
     }
 }

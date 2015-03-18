@@ -3,25 +3,11 @@ using ETS.Transaction.Common;
 
 namespace ETS.Transaction
 {
-    public class DZUtilOfWorkFactory
+    public class EdsUtilOfWorkFactory
     {
-        public static IUnitOfWork GetUnitOfWorkOfEAdmin()
+        public static IUnitOfWork GetUnitOfWorkOfEDS()
         {
-            return UnitOfWorkFactory.GetAdoNetUnitOfWork(ConnStringUtil.GetConnectionString("dz_d_planEntities"));
-        }
-
-        public static IUnitOfWork GetUnitOfWorkOfBuy()
-        {
-            return UnitOfWorkFactory.GetAdoNetUnitOfWork(ConnStringUtil.GetConnectionString("ConnStringOfDZ"));
-        }
-
-        public static IUnitOfWork GetUnitOfWordOfDZ()
-        {
-            return UnitOfWorkFactory.GetAdoNetUnitOfWork(ConnStringUtil.GetConnectionString("dz"));
-        }
-        public static IUnitOfWork GetUnitOfWordOfDZNew()
-        {
-            return UnitOfWorkFactory.GetAdoNetUnitOfWork(ConnStringUtil.GetConnectionString("ConnStringOfDZ"));
+            return UnitOfWorkFactory.GetAdoNetUnitOfWork(ConnStringUtil.GetConnectionString("SuperMan_Write"));
         }
     }
 }
