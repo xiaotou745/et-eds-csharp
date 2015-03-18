@@ -28,7 +28,7 @@ namespace OpenApi.Controllers
     //[RoutePrefix("api/order/")]
     public class OrderController : ApiController
     {
-        // POSR: Order GetStatus
+        // POSR: Order GetStatus    paramodel 固定 必须是 paramodel
         /// <summary>
         /// 订单状态查询功能  add by caoheyang 20150316
         /// </summary>
@@ -51,7 +51,7 @@ namespace OpenApi.Controllers
                 return ResultModel<dynamic>.Conclude(OrderApiStatusType.SystemError);       //返回系统错误提示
             }
         }
-        // POST: Order Create
+        // POST: Order Create  paramodel 固定 必须是 paramodel  
         /// <summary>
         /// 物流订单接收接口  add by caoheyang 201503167
         /// </summary>
