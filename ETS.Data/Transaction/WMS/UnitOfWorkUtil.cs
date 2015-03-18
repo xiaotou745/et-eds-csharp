@@ -14,7 +14,7 @@ namespace ETS.Transaction.WMS
 		/// 获取SCM库的事务管理对象
 		/// </summary>
 		/// <returns></returns>
-		public static IUnitOfWork GetUnitOfWorkOfSCM()
+		public static IUnitOfWork GetUnitOfWorkOfEDS()
 		{
 			return GetUnitOfWork(WMSDatabase.Vancl, string.Empty);
 		}

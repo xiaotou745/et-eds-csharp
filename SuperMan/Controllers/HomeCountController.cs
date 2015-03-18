@@ -41,8 +41,8 @@ namespace SuperMan.Controllers
             homeCountManage.busiCountManagerList = BusiLogic.busiLogic().GetBusinessesCount(busiCriteria);
             homeCountManage.clientCountManagerList = ClienterLogic.clienterLogic().GetClienteresCount(clientCriteria);
 
-            HomeCountTitleModel homeCountTitleModel = OrderLogic.orderLogic().GetHomeCountTitle();
-            ViewBag.homeCountTitleModel = homeCountTitleModel;
+            //HomeCountTitleModel homeCountTitleModel = OrderLogic.orderLogic().GetHomeCountTitle();
+            ViewBag.homeCountTitleModel = new Ets.Service.Provider.Common.HomeCountProvider().GetHomeCountTitle();
             return View(homeCountManage);
         }
         [HttpPost]
