@@ -29,19 +29,22 @@ namespace OpenApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public ResultModel<dynamic> GetStatus()
+        public ResultModel<dynamic> GetStatus(ParaModel<GetStatusPM_OpenApi> paramodel)
         {
             try
             {
-                IOrderProvider orderProvider = new OrderProvider();
-                return HttpContext.Current.Request.Form["order_no"] == null ?
-                     ResultModel<dynamic>.Conclude(OrderApiStatusType.ParaError) :
-                     ResultModel<dynamic>.Conclude(OrderApiStatusType.Success, new
-                     {
-                         status = orderProvider.GetStatus(HttpContext.Current.Request.Form["order_no"])
-                     });
+                if (base.ModelState.Count > 0 || paramodel == null)
+                    return ResultModel<dynamic>.Conclude(OrderApiStatusType.ParaError);
+                else
+                    return (new OrderProvider().GetStatus(paramodel.fields.order_no) < 0) ?
+                     ResultModel<dynamic>.Conclude(OrderApiStatusType.ParaError) :    //订单不存在返回参数错误提示
+                        ResultModel<dynamic>.Conclude(OrderApiStatusType.Success, new
+                        {
+                            status = new OrderProvider().GetStatus(paramodel.fields.order_no)
+                        });
             }
-            catch {
+            catch
+            {
                 return ResultModel<dynamic>.Conclude(OrderApiStatusType.SystemError);       //返回系统错误提示
             }
         }
