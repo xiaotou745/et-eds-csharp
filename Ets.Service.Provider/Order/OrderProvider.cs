@@ -277,11 +277,10 @@ namespace Ets.Service.Provider.Order
         /// 第三方对接 物流订单接收接口  add by caoheyang 201503167
         /// </summary>
         /// <param name="paramodel">参数实体</param>
-        /// <returns></returns>
-        public int Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
+        /// <returns>订单号码</returns>
+        public string Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
         {
-
-            return 1;
+            return OrderDao.CreateToSql(paramodel);
         }
 
         #endregion

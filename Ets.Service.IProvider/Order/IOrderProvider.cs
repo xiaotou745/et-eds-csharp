@@ -48,7 +48,7 @@ namespace Ets.Service.IProvider.Order
         /// 第三方对接 物流订单接收接口  add by caoheyang 201503167
         /// </summary>
         /// <param name="paramodel">参数实体</param>
-        /// <returns></returns>
-        int Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel);
+        /// <returns>订单号</returns>
+        string Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel);
     }
 }
