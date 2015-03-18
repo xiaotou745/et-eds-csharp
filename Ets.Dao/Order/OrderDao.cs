@@ -111,7 +111,7 @@ namespace Ets.Dao.Order
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@OrderNo", orderNo);    //订单号
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
-            return ParseHelper.ToInt(executeScalar);
+            return ParseHelper.ToInt(executeScalar,-1);
         }
         #endregion
 
