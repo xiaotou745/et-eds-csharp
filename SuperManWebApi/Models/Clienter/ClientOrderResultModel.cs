@@ -279,6 +279,7 @@ namespace SuperManWebApi.Models.Clienter
             {
                 resultModel.pubDate = from.PubDate.Value.ToShortTimeString();
             }
+            resultModel.OrderType = from.OrderType.Value; //订单类型
             resultModel.pickUpAddress = from.PickUpAddress;
             resultModel.receviceName = from.ReceviceName;
             resultModel.receviceCity = from.ReceviceCity;
