@@ -236,8 +236,12 @@ namespace Ets.Dao.Order
                 insertBdbParameters.AddWithValue("@Longitude", paramodel.store_info.longitude);    //门店所在区域经度
                 insertBdbParameters.AddWithValue("@Latitude", paramodel.store_info.latitude);    //门店所在区域纬度
                 insertBdbParameters.AddWithValue("@DistribSubsidy", paramodel.store_info.delivery_fee);    //外送费,默认为0
-                insertBdbParameters.AddWithValue("@CommissionTypeId", paramodel.store_info.commission_type);    //佣金类型，涉及到快递员的佣金计算方式，默认1
+                insertBdbParameters.AddWithValue("@CommissionTypeId", paramodel.store_info.commission_type == null ?
+                    1 : paramodel.store_info.commission_type);   //佣金类型，涉及到快递员的佣金计算方式，默认1
                 bussinessId = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, insertBussinesssql, insertBdbParameters));
+                if (bussinessId == 0) {//添加失败 回滚 返回空 
+                    return null;
+                }
             }
             #endregion
 
@@ -245,28 +249,28 @@ namespace Ets.Dao.Order
             ///订单插入sql
             const string insertOrdersql = @" 
                 INSERT INTO dbo.[order](OrderNo,
-                OriginalOrderNo,PubDate,IsPay,Amount,
+                OriginalOrderNo,PubDate,SongCanDate,IsPay,Amount,
                 Remark,Weight,DistribSubsidy,OrderCount,ReceviceName,
                 RecevicePhoneNo,ReceiveProvinceCode,ReceiveCityCode,ReceiveAreaCode,ReceviceAddress,
                 ReceviceLongitude,ReceviceLatitude,businessId,OrderFrom)
                 OUTPUT Inserted.OrderNo 
                 Values(@OrderNo,
-                @OriginalOrderNo,@PubDate,@IsPay,@Amount,
+                @OriginalOrderNo,@PubDate,@SongCanDate,@IsPay,@Amount,
                 @Remark,@Weight,@DistribSubsidy,@OrderCount,@ReceviceName,
                 @RecevicePhoneNo,@ReceiveProvinceCode,@ReceiveCityCode,@ReceiveAreaCode,@ReceviceAddress,
                 @ReceviceLongitude,@ReceviceLatitude,@BusinessId,@OrderFrom)";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             ///基本参数信息
-            dbParameters.AddWithValue("@OrderNo", "121212121212121212");    //其它平台的来源订单号
+            dbParameters.AddWithValue("@OrderNo", Helper.generateOrderCode(bussinessId));  //根据商户id生成订单号(15位));
             dbParameters.AddWithValue("@OriginalOrderNo", paramodel.order_id);    //其它平台的来源订单号
             dbParameters.AddWithValue("@PubDate", paramodel.create_time);    //订单下单时间
-            //要求送餐时间
+            dbParameters.AddWithValue("@SongCanDate", paramodel.receive_time);  ///要求送餐时间
             dbParameters.AddWithValue("@IsPay", paramodel.is_pay);    //是否已付款
             dbParameters.AddWithValue("@Amount", paramodel.total_price);    //订单金额
             dbParameters.AddWithValue("@Remark", paramodel.remark);    //备注
             dbParameters.AddWithValue("@Weight", paramodel.weight);    //重量，默认?
             dbParameters.AddWithValue("@DistribSubsidy", paramodel.delivery_fee);    //外送费,默认？
-            dbParameters.AddWithValue("@OrderCount", paramodel.package_count);    //订单数量，默认为1
+            dbParameters.AddWithValue("@OrderCount", paramodel.package_count == null ? 1 : paramodel.package_count);   //订单数量，默认为1
             ///收货地址信息
             dbParameters.AddWithValue("@ReceviceName", paramodel.address.user_name);    //用户姓名 收货人姓名
             dbParameters.AddWithValue("@RecevicePhoneNo", paramodel.address.user_phone);    //用户联系电话  收货人电话
@@ -278,10 +282,15 @@ namespace Ets.Dao.Order
             dbParameters.AddWithValue("@ReceviceLatitude", paramodel.address.latitude);    //用户收货地址所在区域纬度
             dbParameters.AddWithValue("@BusinessId", bussinessId);    //商户id
             dbParameters.AddWithValue("@OrderFrom", 0);    //订单来源  默认0
-            string orderNo = ParseHelper.ToString(DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrdersql, dbParameters));
+            string orderNo = ParseHelper.ToString(DbHelper.ExecuteScalar(SuperMan_Read, insertOrdersql, dbParameters));
+            if (string.IsNullOrWhiteSpace(orderNo))//添加失败 回滚 返回空 
+            {
+                return null;
+            }
             #endregion
 
             #region 操作插入OrderDetail表
+            bool addBool = true;  //添加是否成功
             for (int i = 0; i < paramodel.order_details.Length; i++)
             {
                 ///订单详情插入sql
@@ -296,6 +305,14 @@ namespace Ets.Dao.Order
                 insertOrderDetaiParas.AddWithValue("@UnitPrice", paramodel.order_details[i].unit_price);    //商品单价，精确到两位小数
                 insertOrderDetaiParas.AddWithValue("@Quantity", paramodel.order_details[i].quantity);    //商品数量
                 int orderdetailId = ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrderDetailsql, insertOrderDetaiParas));
+                if (orderdetailId==null)//添加失败 回滚 返回空 
+                {
+                    addBool = false; //添加失败
+                    break;
+                }
+            }
+            if (!addBool) {   //添加失败
+                return null;
             }
             #endregion
             return orderNo;

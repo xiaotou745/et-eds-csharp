@@ -12,6 +12,7 @@ using System.Web;
 using System.ComponentModel.DataAnnotations;
 using Ets.Model.Common;
 using ETS.Enums;
+using Ets.Model.ParameterModel.Order;
 
 namespace OpenApi.Controllers
 {
@@ -45,13 +46,13 @@ namespace OpenApi.Controllers
             }
         }
 
-        // POSR: Order Create
+        // POST: Order Create
         /// <summary>
         /// 物流订单接收接口  add by caoheyang 201503167
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public ResultModel<dynamic> Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
+        public ResultModel<dynamic> Create(ParaModel<CreatePM_OpenApi> paramodel)
         {
             try
             {
@@ -60,7 +61,7 @@ namespace OpenApi.Controllers
                 else
                 {
                     IOrderProvider orderProvider = new OrderProvider();
-                    string orderNo = orderProvider.Create(paramodel);
+                    string orderNo = orderProvider.Create(paramodel.fields);
                     return string.IsNullOrWhiteSpace(orderNo) ? ResultModel<dynamic>.Conclude(OrderApiStatusType.SystemError) :
                         ResultModel<dynamic>.Conclude(OrderApiStatusType.Success, new { order_no = orderNo });
                 }

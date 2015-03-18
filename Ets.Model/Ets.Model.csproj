@@ -43,6 +43,7 @@
     <Compile Include="Common\ConstValues.cs" />
     <Compile Include="Common\JPushModel.cs" />
     <Compile Include="Common\PagedList.cs" />
+    <Compile Include="Common\ParaModel.cs" />
     <Compile Include="Common\ResultModelServicePhone.cs" />
     <Compile Include="DataModel\Bussiness\BusiLoginResultModel.cs" />
     <Compile Include="DataModel\Bussiness\BusiRegisterResultModel.cs" />
