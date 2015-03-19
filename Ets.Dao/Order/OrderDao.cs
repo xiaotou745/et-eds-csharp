@@ -337,7 +337,7 @@ namespace Ets.Dao.Order
             if (dt == null && dt.Rows.Count <= 0)
             {
                 return;
-            }
+            } 
             DataRow row = dt.Rows[0];
             Count = ParseHelper.ToInt(row["acount"], 0);
             Money = ParseHelper.ToDecimal(row["amount"], 0);
