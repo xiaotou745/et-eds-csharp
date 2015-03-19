@@ -38,7 +38,7 @@ namespace OpenApi
                 dynamic paramodel = actionContext.ActionArguments["paramodel"]; //当前请求的参数对象 
                 if (actionContext.ModelState.Count > 0 || paramodel == null) //参数错误，请求中止
                     actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
-                            (actionContext.ControllerContext, ResultModel<dynamic>.Conclude(OrderApiStatusType.ParaError));
+                            (actionContext.ControllerContext, ResultModel<object>.Conclude(OrderApiStatusType.ParaError));
                 IGroupProvider groupProvider = new GroupProvider();
                 GroupApiConfigModel groupCofigInfo = groupProvider.GetGroupApiConfigByAppKey(paramodel.app_key, paramodel.v).Data;
                 if (groupCofigInfo != null && groupCofigInfo.IsValid == 1)//集团可用，且有appkey信息
@@ -49,11 +49,11 @@ namespace OpenApi
                     actionContext.ActionArguments["paramodel"] = paramodel; ;
                     if (sign != paramodel.sign)   //sign错误，请求中止
                         actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
-                            (actionContext.ControllerContext, ResultModel<dynamic>.Conclude(OrderApiStatusType.SignError));
+                            (actionContext.ControllerContext, ResultModel<object>.Conclude(OrderApiStatusType.SignError));
                 }
                 else
                     actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
-                           (actionContext.ControllerContext, ResultModel<dynamic>.Conclude(OrderApiStatusType.SignError));  //sign错误，请求中止
+                           (actionContext.ControllerContext, ResultModel<object>.Conclude(OrderApiStatusType.SignError));  //sign错误，请求中止
             }
         }
     }
@@ -89,7 +89,7 @@ namespace OpenApi
         public override void OnException(HttpActionExecutedContext filterContext)
         {
             filterContext.Response = filterContext.ActionContext.ActionDescriptor.ResultConverter.
-              Convert(filterContext.ActionContext.ControllerContext, ResultModel<dynamic>.Conclude(OrderApiStatusType.SystemError));
+              Convert(filterContext.ActionContext.ControllerContext, ResultModel<object>.Conclude(OrderApiStatusType.SystemError));
         }
     }
 

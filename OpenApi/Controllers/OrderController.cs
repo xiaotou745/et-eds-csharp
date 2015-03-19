@@ -36,11 +36,11 @@ namespace OpenApi.Controllers
         [HttpPost]
         [SignOpenApi] //sign验证过滤器 设计参数验证，sign验证 add by caoheyang 201503167
         [OpenApiActionError] //异常过滤器 add by caoheyang 一旦发生异常，客户端返回系统内部错误提示
-        public ResultModel<dynamic> GetStatus(ParaModel<GetStatusPM_OpenApi> paramodel)
+        public ResultModel<object> GetStatus(ParaModel<GetStatusPM_OpenApi> paramodel)
         {
             return (new OrderProvider().GetStatus(paramodel.fields.order_no) < 0) ?
-            ResultModel<dynamic>.Conclude(OrderApiStatusType.ParaError) :    //订单不存在返回参数错误提示
-            ResultModel<dynamic>.Conclude(OrderApiStatusType.Success, new
+            ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :    //订单不存在返回参数错误提示
+            ResultModel<object>.Conclude(OrderApiStatusType.Success, new
             {
                 status = new OrderProvider().GetStatus(paramodel.fields.order_no)
             });
@@ -53,13 +53,13 @@ namespace OpenApi.Controllers
         [HttpPost]
         [SignOpenApi] //sign验证过滤器 设计参数验证，sign验证 add by caoheyang 201503167
         [OpenApiActionError]  //异常过滤器 add by caoheyang  201503167 一旦发生异常，客户端返回系统内部错误提示
-        public ResultModel<dynamic> Create(ParaModel<CreatePM_OpenApi> paramodel)
+        public ResultModel<object> Create(ParaModel<CreatePM_OpenApi> paramodel)
         {
             paramodel.fields.store_info.group = paramodel.group;  //设置集团信息到具体的门店上  在dao层会用到 
             IOrderProvider orderProvider = new OrderProvider();
             string orderNo = orderProvider.Create(paramodel.fields);
-            return string.IsNullOrWhiteSpace(orderNo) ? ResultModel<dynamic>.Conclude(OrderApiStatusType.SystemError) :
-                ResultModel<dynamic>.Conclude(OrderApiStatusType.Success, new { order_no = orderNo });
+            return string.IsNullOrWhiteSpace(orderNo) ? ResultModel<object>.Conclude(OrderApiStatusType.SystemError) :
+                ResultModel<object>.Conclude(OrderApiStatusType.Success, new { order_no = orderNo });
 
         }
 
