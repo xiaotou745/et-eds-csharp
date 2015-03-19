@@ -39,8 +39,6 @@ namespace OpenApi.Controllers
         {
             try
             {
-                dynamic x = "s";
-                int x1= x + 1;
                 return (new OrderProvider().GetStatus(paramodel.fields.order_no) < 0) ?
                 ResultModel<dynamic>.Conclude(OrderApiStatusType.ParaError) :    //订单不存在返回参数错误提示
                 ResultModel<dynamic>.Conclude(OrderApiStatusType.Success, new
