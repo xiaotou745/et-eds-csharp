@@ -16,7 +16,7 @@ namespace ETS.Enums
         Success = 0,
         [DisplayText("签名错误")]
         SignError = 10000,
-        [DisplayText("签名错误")]
+        [DisplayText("系统错误")]
         SystemError = 10001,
         [DisplayText("参数错误")]
         ParaError = 10002
