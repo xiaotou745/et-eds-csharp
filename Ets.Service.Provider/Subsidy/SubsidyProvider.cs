@@ -13,6 +13,12 @@ namespace Ets.Service.Provider.Subsidy
     public class SubsidyProvider : ISubsidyProvider
     {
         private SubsidyDao subsidyDao = new SubsidyDao();
+       
+        /// <summary>
+        /// 获取补贴设置  集团可选。
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
         public SubsidyResultModel GetCurrentSubsidy(int groupId = 0)
         { 
             var subsidyResultModel = subsidyDao.GetCurrentSubsidy(groupId);
