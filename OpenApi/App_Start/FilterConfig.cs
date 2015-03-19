@@ -6,6 +6,7 @@ using ETS.Enums;
 using ETS.Security;
 using ETS.Util;
 using System.Web;
+using System.Web.Http.Filters;
 using System.Web.Mvc;
 
 namespace OpenApi
@@ -29,8 +30,7 @@ namespace OpenApi
         /// <param name="actionContext"></param>
         public override void OnActionExecuting(System.Web.Http.Controllers.HttpActionContext actionContext)
         {
-            try
-            {
+
                 dynamic paramodel = actionContext.ActionArguments["paramodel"]; //当前请求的参数对象 
                 lock (paramodel)
                 {
@@ -54,12 +54,23 @@ namespace OpenApi
                         actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
                                (actionContext.ControllerContext, ResultModel<dynamic>.Conclude(OrderApiStatusType.SignError));  //sign错误，请求中止
                 }
-            }
-            catch (System.Exception ex)
-            {
-                actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
-                                  (actionContext.ControllerContext, ResultModel<dynamic>.Conclude(OrderApiStatusType.SystemError));  //系统异常，请求中止
-            }
+    
+     
+        }
+    }
+
+    /// <summary>
+    /// 自定义异常处理类  add by caoheyang 20150205
+    /// </summary>
+    public class ApiHandleErrorAttribute : ExceptionFilterAttribute
+    {
+        /// <summary>
+        /// 重写异常处理方法 add by caoheyang 20150205
+        /// </summary>
+        /// <param name="filterContext">上下文对象  该类继承于ControllerContext</param>
+        public override void OnException(HttpActionExecutedContext filterContext)
+        {
+            LogHelper.LogWriterFromFilter(filterContext.Exception);
         }
     }
 }
