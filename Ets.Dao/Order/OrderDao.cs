@@ -329,7 +329,7 @@ namespace Ets.Dao.Order
             Count = 0; Money = 0;
             string sql = @" SELECT 
                              SUM(OrderCount) AS acount,
-                             SUM(Amount) amount
+                             SUM(Amount) amount 
                              FROM dbo.[order](NOLOCK) WHERE  CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120)
                              AND [Status]=1";
             DataSet set = DbHelper.ExecuteDataset(SuperMan_Read, sql);
