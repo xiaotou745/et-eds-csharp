@@ -1,5 +1,4 @@
-﻿using Common.Logging;
-using NLog;
+﻿using Common.Logging; 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,7 +14,7 @@ namespace ETS.Util
 {
     public class LogHelper
     {
-        private static readonly Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly ILog logger = LogManager.GetCurrentClassLogger();
  
 
         /// <summary>
