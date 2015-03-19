@@ -39,6 +39,8 @@ namespace OpenApi.Controllers
         {
             try
             {
+                dynamic x = "s";
+                int x1= x + 1;
                 return (new OrderProvider().GetStatus(paramodel.fields.order_no) < 0) ?
                 ResultModel<dynamic>.Conclude(OrderApiStatusType.ParaError) :    //订单不存在返回参数错误提示
                 ResultModel<dynamic>.Conclude(OrderApiStatusType.Success, new
@@ -46,10 +48,12 @@ namespace OpenApi.Controllers
                     status = new OrderProvider().GetStatus(paramodel.fields.order_no)
                 });
             }
-            catch
+            catch(Exception ex)
             {
+                ETS.Util.LogHelper.LogWriterFromFilter(ex);
                 return ResultModel<dynamic>.Conclude(OrderApiStatusType.SystemError);       //返回系统错误提示
             }
+
         }
         // POST: Order Create   paramodel 固定 必须是 paramodel  
         /// <summary>
@@ -68,8 +72,9 @@ namespace OpenApi.Controllers
                 return string.IsNullOrWhiteSpace(orderNo) ? ResultModel<dynamic>.Conclude(OrderApiStatusType.SystemError) :
                     ResultModel<dynamic>.Conclude(OrderApiStatusType.Success, new { order_no = orderNo });
             }
-            catch
+            catch (Exception ex)
             {
+                ETS.Util.LogHelper.LogWriterFromFilter(ex);
                 return ResultModel<dynamic>.Conclude(OrderApiStatusType.SystemError);       //返回系统错误提示
             }
         }
