@@ -92,7 +92,7 @@ namespace SuperManWebApi.Models.Business
         NickNameAlreadyRegistered = 106,
         [DisplayText("手机号已被注册")]
         PhoneNumberRegistered = 107,
-        [DisplayText("推荐人的号码不存在")]
+        [DisplayText("您输入的推荐人号码不存在")]
         PhoneNumberNotExist = 108,        
         [DisplayText("原平台商户Id不能为空")]
         OriginalBusiIdEmpty = 109,        
