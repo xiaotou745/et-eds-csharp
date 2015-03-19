@@ -214,11 +214,11 @@ namespace Ets.Dao.Order
                 ///商户插入sql
                 const string insertBussinesssql = @"
                 INSERT INTO dbo.business
-                (OriginalBusiId,Name,GroupId,IDCard,
+                (OriginalBusiId,Name,GroupId,IDCard,Password,
                 PhoneNo,PhoneNo2,Address,ProvinceCode,CityCode,AreaCode,
                 Longitude,Latitude,DistribSubsidy,CommissionTypeId)  
                 OUTPUT Inserted.Id   
-                values(@OriginalBusiId,@Name,@GroupId,@IDCard,
+                values(@OriginalBusiId,@Name,@GroupId,@IDCard,@Password,
                 @PhoneNo,@PhoneNo2,@Address,@ProvinceCode,@CityCode,@AreaCode,
                 @Longitude,@Latitude,@DistribSubsidy,@CommissionTypeId);";
                 IDbParameters insertBdbParameters = DbHelper.CreateDbParameters();
@@ -227,6 +227,7 @@ namespace Ets.Dao.Order
                 insertBdbParameters.AddWithValue("@Name", paramodel.store_info.store_name);    //店铺名称
                 insertBdbParameters.AddWithValue("@GroupId", paramodel.store_info.group);    //集团：3:万达
                 insertBdbParameters.AddWithValue("@IDCard", paramodel.store_info.id_card);    //店铺身份证号
+                insertBdbParameters.AddWithValue("@Password", MD5Helper.MD5("123456"));    //初始化密码  后期个改为常量
                 insertBdbParameters.AddWithValue("@PhoneNo", paramodel.store_info.phone);    //门店联系电话
                 insertBdbParameters.AddWithValue("@PhoneNo2", paramodel.store_info.phone2);    //门店第二联系电话
                 insertBdbParameters.AddWithValue("@Address", paramodel.store_info.address);    //门店地址
@@ -240,9 +241,7 @@ namespace Ets.Dao.Order
                     1 : paramodel.store_info.commission_type);   //佣金类型，涉及到快递员的佣金计算方式，默认1
                 bussinessId = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, insertBussinesssql, insertBdbParameters));
                 if (bussinessId == 0)
-                {//添加失败 回滚 返回空 
-                    return null;
-                }
+                    return null;//添加失败 
             }
             #endregion
 
@@ -283,10 +282,8 @@ namespace Ets.Dao.Order
             dbParameters.AddWithValue("@ReceviceLatitude", paramodel.address.latitude);    //用户收货地址所在区域纬度
             dbParameters.AddWithValue("@BusinessId", bussinessId);    //商户id
             string orderNo = ParseHelper.ToString(DbHelper.ExecuteScalar(SuperMan_Read, insertOrdersql, dbParameters));
-            if (string.IsNullOrWhiteSpace(orderNo))//添加失败 回滚 返回空 
-            {
+            if (string.IsNullOrWhiteSpace(orderNo))//添加失败 
                 return null;
-            }
             #endregion
 
             #region 操作插入OrderDetail表
@@ -312,9 +309,7 @@ namespace Ets.Dao.Order
                 }
             }
             if (!addBool)
-            {   //添加失败
-                return null;
-            }
+                return null;  //添加失败
             #endregion
             return orderNo;
         }
