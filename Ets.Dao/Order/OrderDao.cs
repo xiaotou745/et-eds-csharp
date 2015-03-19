@@ -332,7 +332,7 @@ namespace Ets.Dao.Order
         {
             Count = 0; Money = 0;
             string sql = @" SELECT 
-                             COUNT(id) AS acount,
+                             SUM(OrderCount) AS acount,
                              SUM(Amount) amount
                              FROM dbo.[order](NOLOCK) WHERE  CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120)
                              AND [Status]=1";
