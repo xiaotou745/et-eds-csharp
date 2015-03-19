@@ -50,5 +50,7 @@ namespace Ets.Service.IProvider.Order
         /// <param name="paramodel">参数实体</param>
         /// <returns>订单号</returns>
         string Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel);
+
+
     }
 }

@@ -618,6 +618,35 @@ namespace SuperManWebApi.Controllers
             }
         }
         /// <summary>
+        /// 取消订单 ado.net  wangchao
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="OrderId"></param>
+        /// <returns></returns>
+        public Ets.Model.Common.ResultModel<bool> CancelOrder_B_WC(string userId, string OrderId)
+        {
+            if (OrderId == null)
+            {
+                return Ets.Model.Common.ResultModel<bool>.Conclude(CancelOrderStatus.OrderEmpty);
+            }
+            var order = OrderLogic.orderLogic().GetOrderById(OrderId);
+            if (order == null)
+            {
+                return Ets.Model.Common.ResultModel<bool>.Conclude(CancelOrderStatus.OrderIsNotExist);
+            }
+            bool b = OrderLogic.orderLogic().UpdateOrder(order, OrderStatus.订单已取消);
+            if (b == true)
+            {
+                return Ets.Model.Common.ResultModel<bool>.Conclude(CancelOrderStatus.Success, true);
+            }
+            else
+            {
+                return Ets.Model.Common.ResultModel<bool>.Conclude(CancelOrderStatus.FailedCancelOrder, true);
+            }
+        }
+
+
+        /// <summary>
         /// 流转图片
         /// </summary>
         /// <param name="Bytes"></param>
