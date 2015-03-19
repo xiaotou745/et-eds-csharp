@@ -29,26 +29,36 @@ namespace OpenApi
         /// <param name="actionContext"></param>
         public override void OnActionExecuting(System.Web.Http.Controllers.HttpActionContext actionContext)
         {
-            dynamic paramodel = actionContext.ActionArguments["paramodel"]; //当前请求的参数对象 
-            if (actionContext.ModelState.Count > 0 || paramodel == null) //参数错误，请求中止
-                actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
-                        (actionContext.ControllerContext, ResultModel<dynamic>.Conclude(OrderApiStatusType.ParaError));
-            IGroupProvider groupProvider = new GroupProvider();
-            GroupApiConfigModel groupCofigInfo = groupProvider.GetGroupApiConfigByAppKey(paramodel.app_key, paramodel.v).Data;
-            if (groupCofigInfo != null && groupCofigInfo.IsValid == 1)
+            try
             {
-                string signStr = groupCofigInfo.AppSecret + "app_key=" + paramodel.app_key + ",timestamp" + paramodel.timestamp + ",v=" + paramodel.v + groupCofigInfo.AppSecret;
-                string sign = MD5.Encrypt(signStr);
-                paramodel.group = ParseHelper.ToInt(groupCofigInfo.GroupId,0);
-                actionContext.ActionArguments["paramodel"] = paramodel; ;
-                if (sign != paramodel.sign)   //sign错误，请求中止
-                    actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
-                        (actionContext.ControllerContext, ResultModel<dynamic>.Conclude(OrderApiStatusType.SignError));
+                dynamic paramodel = actionContext.ActionArguments["paramodel"]; //当前请求的参数对象 
+                lock (paramodel)
+                {
+                    if (actionContext.ModelState.Count > 0 || paramodel == null) //参数错误，请求中止
+                        actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
+                                (actionContext.ControllerContext, ResultModel<dynamic>.Conclude(OrderApiStatusType.ParaError));
+                    IGroupProvider groupProvider = new GroupProvider();
+                    GroupApiConfigModel groupCofigInfo = groupProvider.GetGroupApiConfigByAppKey(paramodel.app_key, paramodel.v).Data;
+                    if (groupCofigInfo != null && groupCofigInfo.IsValid == 1)
+                    {
+                        string signStr = groupCofigInfo.AppSecret + "app_key=" + paramodel.app_key + "timestamp" + paramodel.timestamp + "v=" + paramodel.v + groupCofigInfo.AppSecret;
+                        string sign = MD5.Encrypt(signStr);
+                        paramodel.group = ParseHelper.ToInt(groupCofigInfo.GroupId, 0);
+                        actionContext.ActionArguments["paramodel"] = paramodel; ;
+                        if (sign != paramodel.sign)   //sign错误，请求中止
+                            actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
+                                (actionContext.ControllerContext, ResultModel<dynamic>.Conclude(OrderApiStatusType.SignError));
+                    }
+                    else
+                        actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
+                               (actionContext.ControllerContext, ResultModel<dynamic>.Conclude(OrderApiStatusType.SignError));  //sign错误，请求中止
+                }
             }
-            else
+            catch (System.Exception ex)
+            {
                 actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
-                       (actionContext.ControllerContext, ResultModel<dynamic>.Conclude(OrderApiStatusType.SignError));  //sign错误，请求中止
-
+                                  (actionContext.ControllerContext, ResultModel<dynamic>.Conclude(OrderApiStatusType.SystemError));  //系统异常，请求中止
+            }
         }
     }
 }
