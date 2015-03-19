@@ -5,7 +5,6 @@ using Ets.Model.DataModel.Bussiness;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DomainModel.Clienter;
-using Ets.Model.DomainModel.Subsidy;
 using Ets.Model.ParameterModel.Order;
 using Ets.Service.IProvider.Order;
 using Ets.Service.IProvider.Subsidy;
@@ -285,19 +284,6 @@ namespace Ets.Service.Provider.Order
         {
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                ISubsidyProvider subsidyProvider = new SubsidyProvider();//补贴记录
-                SubsidyResultModel subsidy = subsidyProvider.GetCurrentSubsidy(paramodel.store_info.group);
-                //计算获得订单骑士佣金
-                paramodel.ordercommission = OrderCommissionProvider.GetCurrenOrderCommission(new OrderCommission()
-                {
-                    CommissionRate = subsidy.OrderCommission,/*佣金比例*/
-                    Amount = paramodel.total_price, /*订单金额*/
-                    DistribSubsidy = paramodel.delivery_fee,/*外送费*/
-                    OrderCount = paramodel.package_count,/*订单数量*/
-                    WebsiteSubsidy = subsidy.WebsiteSubsidy
-                }/*网站补贴*/);
-                paramodel.websitesubsidy = ParseHelper.ToDecimal(subsidy.WebsiteSubsidy);//网站补贴
-                paramodel.commissionrate = ParseHelper.ToDecimal(subsidy.OrderCommission);//订单佣金比例
                 string orderNo = OrderDao.CreateToSql(paramodel);
                 if (!string.IsNullOrWhiteSpace(orderNo))
                     Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！"

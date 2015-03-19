@@ -5,101 +5,101 @@
 </div>
 <script src="~/Scripts/jquery-1.10.2.min.js"></script>
 <script>
-    $(function () {
-        $.ajax({
-            type: 'POST',
-            dataType: 'json',
-            url: '/order/create',
-            data: {
-                "app_key": "appkey_1qa2wsx",
-                "timestamp": "2015-03-11 20:42:33",
-                "v": "1.0",
-                "sign": "6173E2FD1CAD39631E8AEFA4710CA34A",
-                "fields": {
-                    "order_id": "123456",
-                    "create_time": "2015-03-12 00:21:42",
-                    "receive_time": "2015-03-12 00:21:42",
-                    "is_pay": true,
-                    "total_price": 55,
-                    "address": {
-                        "user_name": "张三",
-                        "user_phone": "13612345678",
-                        "province_code": "000000",
-                        "city_code": "000000",
-                        "area_code": "000000",
-                        "address": "建国路93号院万达广场4号楼2705",
-                        "longitude": 11.11,
-                        "latitude": 11.11
-                    },
-                    "store_info": {
-                        "store_id": "1",
-                        "store_name": "天下第一名厨大望路店",
-                        "group": "3",
-                        "id_card": "130212201503101234",
-                        "phone": "010-12345678",
-                        "phone2": "13612345678",
-                        "province_code": "000000",
-                        "city_code": "000000",
-                        "area_code": "000000",
-                        "address": "建国路93号院万达广场4号楼2705",
-                        "longitude": 11.11,
-                        "latitude": 11.11,
-                        "delivery_fee": 5,
-                        "commission_type": "1"
-                    },
-                    "order_details": [
-                        {
-                            "detail_id": 1,
-                            "product_name": "鱼香肉丝",
-                            "unit_price": 15,
-                            "quantity": 1
-                        },
-                        {
-                            "detail_id": 2,
-                            "product_name": "宫爆鸡丁",
-                            "unit_price": 20,
-                            "quantity": 2
-                        }
-                    ],
-                    "remark": "快点，饿",
-                    "weight": 0,
-                    "delivery_fee": 5,
-                    "package_count": 3
-                }
-            },
-            success: function (data) {
-                console.log(data);
-            },
-            error: function () {
-
-            }
-        });
-    });
-
     //$(function () {
-    //    $(function () {
-    //        $.ajax({
-    //            type: 'POST',
-    //            dataType: 'json',
-    //            url: '/order/GetStatus',
-    //            data: {
-    //                "app_key": "appkey_1qa2wsx",
-    //                "timestamp": "2015-03-11 20:42:33",
-    //                "v": "1.0",
-    //                "sign": "6173E2FD1CAD39631E8AEFA4710CA34A",
-    //                "fields": {
-    //                    "order_no": "36150318105934025"
-    //                }
-    //            },
-    //            success: function (data) {
-    //                            console.log(data);
-    //                        },
-    //                        error: function () {
+    //    $.ajax({
+    //        type: 'POST',
+    //        dataType: 'json',
+    //        url: '/order/create',
+    //        data: {
+    //            "app_key": "appkey_1qa2wsx",
+    //            "timestamp": "2015-03-11 20:42:33",
+    //            "v": "1.0",
+    //            "sign": "52580F9692C1241787F29F8531794216",
+    //            "fields": {
+    //                "order_id": "123456",
+    //                "create_time": "2015-03-12 00:21:42",
+    //                "receive_time": "2015-03-12 00:21:42",
+    //                "is_pay": true,
+    //                "total_price": 55,
+    //                "address": {
+    //                    "user_name": "张三",
+    //                    "user_phone": "13612345678",
+    //                    "province_code": "000000",
+    //                    "city_code": "000000",
+    //                    "area_code": "000000",
+    //                    "address": "建国路93号院万达广场4号楼2705",
+    //                    "longitude": 11.11,
+    //                    "latitude": 11.11
+    //                },
+    //                "store_info": {
+    //                    "store_id": "1",
+    //                    "store_name": "天下第一名厨大望路店",
+    //                    "group": "3",
+    //                    "id_card": "130212201503101234",
+    //                    "phone": "010-12345678",
+    //                    "phone2": "13612345678",
+    //                    "province_code": "000000",
+    //                    "city_code": "000000",
+    //                    "area_code": "000000",
+    //                    "address": "建国路93号院万达广场4号楼2705",
+    //                    "longitude": 11.11,
+    //                    "latitude": 11.11,
+    //                    "delivery_fee": 0,
+    //                    "commission_type": "1"
+    //                },
+    //                "order_details": [
+    //                    {
+    //                        "detail_id": 1,
+    //                        "product_name": "鱼香肉丝",
+    //                        "unit_price": 15,
+    //                        "quantity": 1
+    //                    },
+    //                    {
+    //                        "detail_id": 2,
+    //                        "product_name": "宫爆鸡丁",
+    //                        "unit_price": 20,
+    //                        "quantity": 2
+    //                    }
+    //                ],
+    //                "remark": "快点，饿",
+    //                "weight": 0,
+    //                "delivery_fee": 0,
+    //                "package_count": 1
+    //            }
+    //        },
+    //        success: function (data) {
+    //            console.log(data);
+    //        },
+    //        error: function () {
 
-    //                        }
-    //        })
+    //        }
     //    });
     //});
+
+    $(function () {
+        $(function () {
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: '/order/GetStatus',
+                data: {
+                    "app_key": "appkey_1qa2wsx",
+                    "timestamp": "2015-03-11 20:42:33",
+                    "v": "1.0",
+                    "sign": "6173E2FD1CAD39631E8AEFA4710CA34A",
+                    "fields": {
+                        "order_no": "36150318105934025"
+                    }
+                },
+                success: function (data) {
+                                console.log(data);
+                            },
+                            error: function () {
+
+                            }
+            })
+        });
+    });
 </script>
 <div class="row">
     <div class="col-md-4">
