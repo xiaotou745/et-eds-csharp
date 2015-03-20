@@ -13,7 +13,7 @@ namespace SuperManWebApi.Controllers
     {
 
         /// <summary>
-        /// 客服电话获取
+        /// 获取开通城市的省市区
         /// 窦海超
         /// 2015年3月16日 11:44:54
         /// </summary>
