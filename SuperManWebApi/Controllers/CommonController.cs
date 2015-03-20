@@ -1,18 +1,30 @@
-﻿using System;
+﻿using Ets.Service.Provider.Common;
+using ETS.Expand;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using System.Net;
+using System.Net.Http;
 using System.Web.Http;
-using System.Web.Mvc;
 
 namespace SuperManWebApi.Controllers
 {
     public class CommonController : ApiController
     {
-        // GET: Common
-        public ActionResult Index()
+
+        /// <summary>
+        /// 客服电话获取
+        /// 窦海超
+        /// 2015年3月16日 11:44:54
+        /// </summary>
+        /// <param name="Version">版本号</param>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.CityStatus))]
+        [HttpGet]
+        public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Area.AreaModelList> GetOpenCity(string Version)
         {
-            return View();
+            AreaProvider area = new AreaProvider();
+            return area.GetOpenCity(Version);
         }
     }
 }

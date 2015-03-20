@@ -54,6 +54,8 @@
     <Compile Include="DataModel\Order\OrderCommission.cs" />
     <Compile Include="Common\PaginResult.cs" />
     <Compile Include="Common\ResultInfo.cs" />
+    <Compile Include="DomainModel\Area\AreaModel.cs" />
+    <Compile Include="DomainModel\Area\AreaModelList.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessManage.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessModel.cs" />
     <Compile Include="DomainModel\Bussiness\BusiOrderSqlModel.cs" />
