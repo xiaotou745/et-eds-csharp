@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="Clienter\ClienterDao.cs" />
     <Compile Include="Common\AdminToolsDao.cs" />
+    <Compile Include="Common\AreaDao.cs" />
     <Compile Include="Common\GroupDao.cs" />
     <Compile Include="Common\ServicePhoneDao.cs" />
     <Compile Include="DaoBase.cs" />

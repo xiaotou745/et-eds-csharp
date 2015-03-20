@@ -223,6 +223,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BusinessAPIController.cs" />
     <Compile Include="Controllers\ClienterAPIController.cs" />
+    <Compile Include="Controllers\CommonController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
@@ -329,6 +330,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\app\" />
+    <Folder Include="Views\Common\" />
     <Folder Include="Views\Download\" />
   </ItemGroup>
   <ItemGroup>

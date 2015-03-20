@@ -25,7 +25,7 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult GroupManager()
         {
-            account account = HttpContext.Session["user"] as account;
+            SuperManDataAccess.account account = HttpContext.Session["user"] as SuperManDataAccess.account;
             if (account == null)
             {
                 Response.Redirect("/account/login");
@@ -66,7 +66,7 @@ namespace SuperMan.Controllers
             }
             if (HttpContext.Session != null && HttpContext.Session["user"] != null)
             {
-                var account = HttpContext.Session["user"] as account;
+                var account = HttpContext.Session["user"] as SuperManDataAccess.account;
                 var mode=new GroupModel {GroupName = groupname.Trim(), CreateName = account.LoginName, CreateTime = DateTime.Now};
                 var result = iGroupServices.HasExistsGroup(mode);
                 if (result.Result)
@@ -105,7 +105,7 @@ namespace SuperMan.Controllers
             }
             if (HttpContext.Session != null && HttpContext.Session["user"] !=null)
             {
-                var account = HttpContext.Session["user"] as account;
+                var account = HttpContext.Session["user"] as SuperManDataAccess.account;
                 var mode=new GroupModel {Id=id,GroupName = groupname.Trim(), CreateName = account.LoginName, CreateTime = DateTime.Now};
                 var result = iGroupServices.HasExistsGroup(mode);
                 if (result.Result)

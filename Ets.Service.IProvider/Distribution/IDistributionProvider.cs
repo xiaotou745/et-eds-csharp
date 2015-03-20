@@ -1,5 +1,6 @@
 ﻿using Ets.Model.DataModel.Clienter;
 using Ets.Model.DomainModel.Clienter;
+using Ets.Model.ParameterModel.Clienter;
 using ETS.Enums;
 using System;
 using System.Collections.Generic;
@@ -51,5 +52,12 @@ namespace Ets.Service.IProvider.Distribution
         /// <param name="clienter"></param>
         /// <returns></returns>
         bool AddClienter(ClienterListModel clienter);
+        /// <summary>
+        /// 根据集团id获取超人列表
+        /// danny-20150319
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
+        IList<ClienterListModel> GetClienterModelByGroupID(int? groupId);
     }
 }
