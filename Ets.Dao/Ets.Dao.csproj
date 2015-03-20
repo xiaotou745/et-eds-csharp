@@ -41,9 +41,11 @@
   <ItemGroup>
     <Compile Include="Clienter\ClienterDao.cs" />
     <Compile Include="Common\AdminToolsDao.cs" />
+    <Compile Include="Common\AreaDao.cs" />
     <Compile Include="Common\GroupDao.cs" />
     <Compile Include="Common\ServicePhoneDao.cs" />
     <Compile Include="DaoBase.cs" />
+    <Compile Include="MenuSet\AuthoritySetDao.cs" />
     <Compile Include="Distribution\DistributionDao.cs" />
     <Compile Include="Order\OrderDao.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

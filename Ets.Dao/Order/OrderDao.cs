@@ -108,12 +108,16 @@ namespace Ets.Dao.Order
         /// 订单状态查询功能  add by caoheyang 20150316
         /// </summary>
         /// <param name="orderNo">订单号码</param>
-        /// <returns></returns>
-        public int GetStatus(string orderNo)
+        /// <param name="groupId">集团id</param>
+        /// <returns>订单状态</returns>
+        public int GetStatus(string OriginalOrderNo, int groupId)
         {
-            const string querySql = @"SELECT top 1  [Status] FROM [order]  WITH ( NOLOCK ) WHERE OrderNo=@OrderNo";
+            const string querySql = @"SELECT top 1  a.Status FROM [order] a  WITH ( NOLOCK )  
+            LEFT JOIN  dbo.business AS b ON a.businessId=b.Id
+            WHERE OriginalOrderNo=@OriginalOrderNo AND b.GroupId=@GroupId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@OrderNo", orderNo);    //订单号
+            dbParameters.AddWithValue("@OriginalOrderNo", OriginalOrderNo);    //第三方平台订单号
+            dbParameters.AddWithValue("@GroupId", groupId);    //集团id
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
             return ParseHelper.ToInt(executeScalar, -1);
         }
@@ -203,6 +207,7 @@ namespace Ets.Dao.Order
         /// <returns>订单号</returns>
         public string CreateToSql(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
         {
+
             #region 操作business表取商户id
             int bussinessId;//商户id
             ///查询该商户是否已存在
@@ -250,6 +255,15 @@ namespace Ets.Dao.Order
             #endregion
 
             #region 操作插入order表
+
+            const string queryOrderSql = @"SELECT count(a.id) FROM [order] a  WITH ( NOLOCK )  LEFT JOIN  dbo.business AS b ON a.businessId=b.Id
+                     WHERE OriginalOrderNo=@OriginalOrderNo AND b.GroupId=@GroupId";
+            IDbParameters queryOrderSqldbParameters = DbHelper.CreateDbParameters();
+            queryOrderSqldbParameters.AddWithValue("@OriginalOrderNo", paramodel.order_id);    //第三方平台订单号
+            queryOrderSqldbParameters.AddWithValue("@GroupId", paramodel.store_info.group);    //集团id
+            int orderExists = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, queryOrderSql, queryOrderSqldbParameters));
+            if(orderExists>0)
+                return null;//添加失败 
             ///订单插入sql
             const string insertOrdersql = @" 
                 INSERT INTO dbo.[order](OrderNo,
@@ -299,20 +313,17 @@ namespace Ets.Dao.Order
                 ///订单详情插入sql
                 const string insertOrderDetailsql = @" 
                  INSERT INTO dbo.OrderDetail
-                 (OrderNo ,ProductName , UnitPrice ,Quantity)
-                 VALUES  (@OrderNo ,@ProductName ,@UnitPrice ,@Quantity)";
+                 (OrderNo ,ProductName , UnitPrice ,Quantity,FormDetailID,GroupID)
+                 VALUES  (@OrderNo ,@ProductName ,@UnitPrice ,@Quantity,@FormDetailID,@GroupID)";
                 IDbParameters insertOrderDetaiParas = DbHelper.CreateDbParameters();
                 ///基本参数信息
                 insertOrderDetaiParas.AddWithValue("@OrderNo", orderNo);    //订单号
                 insertOrderDetaiParas.AddWithValue("@ProductName", paramodel.order_details[i].product_name);    //商品名称
                 insertOrderDetaiParas.AddWithValue("@UnitPrice", paramodel.order_details[i].unit_price);    //商品单价，精确到两位小数
                 insertOrderDetaiParas.AddWithValue("@Quantity", paramodel.order_details[i].quantity);    //商品数量
+                insertOrderDetaiParas.AddWithValue("@FormDetailID", paramodel.order_details[i].detail_id);    //第三方平台明细id,与GroupID组成联合唯一约束
+                insertOrderDetaiParas.AddWithValue("@GroupID", paramodel.store_info.group);    //集团id,与第三方平台明细id组成联合唯一约束
                 int orderdetailId = ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrderDetailsql, insertOrderDetaiParas));
-                if (orderdetailId == null)//添加失败 回滚 返回空 
-                {
-                    addBool = false; //添加失败
-                    break;
-                }
             }
             if (!addBool)
                 return null;  //添加失败
@@ -342,7 +353,7 @@ namespace Ets.Dao.Order
             if (dt == null && dt.Rows.Count <= 0)
             {
                 return;
-            } 
+            }
             DataRow row = dt.Rows[0];
             Count = ParseHelper.ToInt(row["acount"], 0);
             Money = ParseHelper.ToDecimal(row["amount"], 0);

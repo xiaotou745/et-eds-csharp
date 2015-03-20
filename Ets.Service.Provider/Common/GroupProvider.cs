@@ -43,7 +43,7 @@ namespace Ets.Service.Provider.Common
             {
                 result.Message = ex.ToString();
                 result.Result = false;
-                LogHelper.LogWriter(ex, "创建集团Api配置");
+                LogHelper.LogWriterFromFilter(ex);
             }
             return result;
         }
@@ -66,7 +66,7 @@ namespace Ets.Service.Provider.Common
             {
                 result.Message = ex.ToString();
                 result.Result = false;
-                LogHelper.LogWriter(ex, "创建集团Api配置");
+                LogHelper.LogWriterFromFilter(ex);
             }
             return result;
         }
@@ -88,7 +88,7 @@ namespace Ets.Service.Provider.Common
             {
                 result.Message = ex.ToString();
                 result.Result = false;
-                LogHelper.LogWriter(ex, "修改集团api配置");
+                LogHelper.LogWriterFromFilter(ex);
             }
             return result;
         }
@@ -110,7 +110,7 @@ namespace Ets.Service.Provider.Common
             {
                 result.Message = ex.ToString();
                 result.Result = false;
-                LogHelper.LogWriter(ex, "修改集团api配置");
+                LogHelper.LogWriterFromFilter(ex);
             }
             return result;
         }
@@ -132,7 +132,7 @@ namespace Ets.Service.Provider.Common
             {
                 result.Message = ex.ToString();
                 result.Result = false;
-                LogHelper.LogWriter(ex, "修改集团api配置");
+                LogHelper.LogWriterFromFilter(ex);
             }
             return result;
         }
@@ -155,7 +155,7 @@ namespace Ets.Service.Provider.Common
             {
                 result.Message = ex.ToString();
                 result.Result = false;
-                LogHelper.LogWriter(ex, "根据appkey和版本查询配置信息");
+                LogHelper.LogWriterFromFilter(ex);
             }
             return result;
         }
@@ -179,7 +179,7 @@ namespace Ets.Service.Provider.Common
             {
                 result.Message = ex.ToString();
                 result.Result = false;
-                LogHelper.LogWriter(ex, "创建集团");
+                LogHelper.LogWriterFromFilter(ex);
             }
             return result;
         }
@@ -202,7 +202,7 @@ namespace Ets.Service.Provider.Common
             {
                 result.Message = ex.ToString();
                 result.Result = false;
-                LogHelper.LogWriter(ex, "创建集团");
+                LogHelper.LogWriterFromFilter(ex);
             }
             return result;
         }

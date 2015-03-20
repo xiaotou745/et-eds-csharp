@@ -16,6 +16,19 @@ namespace ETS
         /// </summary>
         public static string SuperMan_Write { get { return ConfigConnectionStrings("SuperMan_Write"); } }
 
+
+        /// <summary>
+        /// 开通城市CODE
+        /// </summary>
+        public static string OpenCityCode { get { return ConfigKey("OpenCityCode"); } }
+
+        /// <summary>
+        /// 开通城市版本号
+        /// </summary>
+        public static string OpenCityVersion { get { return ConfigKey("OpenCityVersion"); } }
+
+
+
         #region 取Web.Config值
 
         /// <summary>

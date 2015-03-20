@@ -39,7 +39,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuthorityMenu\IAuhorityMenu.cs" />
     <Compile Include="Common\IAdminToolsProvider.cs" />
+    <Compile Include="Common\IAreaProvider.cs" />
     <Compile Include="Common\IGroupProvider.cs" />
     <Compile Include="Common\IHomeCountProvider.cs" />
     <Compile Include="Common\IServicePhone.cs" />

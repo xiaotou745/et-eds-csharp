@@ -163,6 +163,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Start\AutorityValidateAttribute.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\IdentityConfig.cs" />
@@ -189,6 +190,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HomeCountController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\MenuManagerController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\SubsidyManagerController.cs" />
     <Compile Include="Controllers\SuperManManagerController.cs" />
@@ -538,6 +540,11 @@
     <Content Include="Views\GroupManager\GroupManager.cshtml" />
     <Content Include="Views\GroupManager\_GroupManageList.cshtml" />
     <Content Include="Views\SubsidyManager\_SubsidyManagerList.cshtml" />
+    <Content Include="Views\Shared\_LayoutNew.cshtml" />
+    <Content Include="Views\MenuManager\RoleManager.cshtml" />
+    <Content Include="Views\MenuManager\Menu.cshtml" />
+    <Content Include="Views\MenuManager\Department.cshtml" />
+    <Content Include="Views\MenuManager\AccountManager.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
