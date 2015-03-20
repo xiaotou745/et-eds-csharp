@@ -1,5 +1,7 @@
-﻿@model OrderManage
-@using SuperManCommonModel.Models;
+﻿@*@model OrderManage*@
+@*@using SuperManCommonModel.Models;*@
+@model Ets.Model.DomainModel.Order.OrderManage
+@using Ets.Model
 @{
     ViewBag.Title = "Order";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -63,7 +65,7 @@
 <script type="text/javascript">
     var adminjs = new adminglass(); //实例化后台类
     var DEFAULT_PAGESIZE = 15;
-    var criteria = { PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE }, GroupId: $("#txtGroupId").val() };
+    var criteria = { PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }, GroupId: $("#txtGroupId").val() };
     $(document).ready(function () {        
         $('#txtOrderPubStart').datepicker();
         $('#txtOrderPubEnd').datepicker();
@@ -86,13 +88,13 @@
                 OrderPubStart: startDate,
                 OrderPubEnd: endDate,
                 GroupId: $("#txtGroupId").val(),
-                PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE }
+                PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }
             };
             refresh(0);
         });
     });
     ////分页
-    art.ui.control.Pager.enablePaging(document, refresh);
+    art.ui.control.NewPager.enablePaging(document, refresh);
     function refresh(pageIndex) {
         var url = "/Order/OrderList";
         if (pageIndex !== undefined) {

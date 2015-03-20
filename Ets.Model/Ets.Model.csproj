@@ -40,6 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\Account.cs" />
+    <Compile Include="Common\Accountauthority.cs" />
+    <Compile Include="Common\Authority.cs" />
     <Compile Include="Common\ConstValues.cs" />
     <Compile Include="Common\HomeCountTitleModel.cs" />
     <Compile Include="Common\JPushModel.cs" />
@@ -54,11 +57,11 @@
     <Compile Include="DataModel\Order\OrderCommission.cs" />
     <Compile Include="Common\PaginResult.cs" />
     <Compile Include="Common\ResultInfo.cs" />
+    <Compile Include="DataModel\Order\OrderListModel.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessManage.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessModel.cs" />
     <Compile Include="DomainModel\Bussiness\BusiOrderSqlModel.cs" />
     <Compile Include="DomainModel\Clienter\ClienterManage.cs" />
-    <Compile Include="DomainModel\Clienter\ClienterSearchCriteria.cs" />
     <Compile Include="DomainModel\Clienter\ClienterModel.cs" />
     <Compile Include="DomainModel\Clienter\ClientOrderModel.cs" />
     <Compile Include="DataModel\Clienter\Clienter.cs" />
@@ -69,6 +72,8 @@
     <Compile Include="Common\ResultModel.cs" />
     <Compile Include="DomainModel\Clienter\ClientOrderResultModel.cs" />
     <Compile Include="DomainModel\Group\GroupApiConfigModel.cs" />
+    <Compile Include="DomainModel\Order\OrderManage.cs" />
+    <Compile Include="DomainModel\Order\OrderModel.cs" />
     <Compile Include="DomainModel\Subsidy\SubsidyResultModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BusiOrderInfoModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BussOrderParaModelApp.cs" />
@@ -76,6 +81,7 @@
     <Compile Include="ParameterModel\Bussiness\LoginModel.cs" />
     <Compile Include="ParameterModel\Bussiness\RegisterInfoModel.cs" />
     <Compile Include="ParameterModel\Clienter\ChangeWorkStatusPM.cs" />
+    <Compile Include="ParameterModel\Clienter\ClienterSearchCriteria.cs" />
     <Compile Include="ParameterModel\Clienter\ClientOrderInfoModel.cs" />
     <Compile Include="ParameterModel\Clienter\LoginModel.cs" />
     <Compile Include="ParameterModel\Group\GroupListModel.cs" />
@@ -84,12 +90,11 @@
     <Compile Include="ParameterModel\Order\ClientOrderInfoModel.cs" />
     <Compile Include="ParameterModel\Order\GetStatusPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\CreatePM_OpenApi.cs" />
+    <Compile Include="ParameterModel\Order\OrderSearchCriteria.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserModel.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DomainModel\Order\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\ETS.Core\ETS.Core.csproj">
       <Project>{bba67a86-afd6-46f2-bbd9-5dfb5bfdafe2}</Project>

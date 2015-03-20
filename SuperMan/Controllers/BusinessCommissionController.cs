@@ -35,7 +35,7 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult BusinessCommission()
         {
-            account account = HttpContext.Session["user"] as account;
+            SuperManDataAccess.account account = HttpContext.Session["user"] as SuperManDataAccess.account;
             if (account == null)
             {
                 Response.Redirect("/account/login");

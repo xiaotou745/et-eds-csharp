@@ -3,6 +3,7 @@ using Ets.Model.Common;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DomainModel.Bussiness;
 using Ets.Model.DomainModel.Clienter;
+using Ets.Model.ParameterModel.Clienter;
 using Ets.Service.IProvider.Distribution;
 using ETS.Data.PageData;
 using ETS.Enums;
@@ -78,5 +79,16 @@ namespace Ets.Service.Provider.Distribution
         {
             return dao.AddClienter(clienter);
         }
+        /// <summary>
+        /// 根据集团id获取超人列表
+        /// danny-20150319
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
+        public IList<ClienterListModel> GetClienterModelByGroupID(int? groupId)
+        {
+            return dao.GetClienterModelByGroupID(groupId);
+        }
+        
     }
 }

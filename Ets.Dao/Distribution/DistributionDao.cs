@@ -1,10 +1,12 @@
 ﻿using Ets.Model.Common;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DomainModel.Clienter;
+using Ets.Model.ParameterModel.Clienter;
 using ETS.Dao;
 using ETS.Data.Core;
 using ETS.Data.PageData;
 using ETS.Enums;
+using ETS.Extension;
 using ETS.Util;
 using System;
 using System.Collections.Generic;
@@ -245,6 +247,49 @@ namespace Ets.Dao.Distribution
                 return false;
                 throw;
             }
+        }
+        /// <summary>
+        /// 根据集团id获取超人列表
+        /// danny-20150319
+        /// </summary>
+        /// <param name="groupId">集团id</param>
+        /// <returns>IList<ClienterModel></returns>
+        public IList<ClienterListModel> GetClienterModelByGroupID(int? groupId)
+        {
+            string sql = @"SELECT  [Id]
+                                  ,[PhoneNo]
+                                  ,[LoginName]
+                                  ,[recommendPhone]
+                                  ,[Password]
+                                  ,[TrueName]
+                                  ,[IDCard]
+                                  ,[PicWithHandUrl]
+                                  ,[PicUrl]
+                                  ,[Status]
+                                  ,[AccountBalance]
+                                  ,[InsertTime]
+                                  ,[InviteCode]
+                                  ,[City]
+                                  ,[CityId]
+                                  ,[GroupId]
+                                  ,[HealthCardID]
+                                  ,[InternalDepart]
+                                  ,[ProvinceCode]
+                                  ,[AreaCode]
+                                  ,[CityCode]
+                                  ,[Province]
+                                  ,[BussinessID]
+                                  ,[WorkStatus]
+                              FROM clienter WITH (NOLOCK) where 1=1 AND Status = 1";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@GroupId", groupId);
+            if (groupId != null && groupId != 0)
+            {
+                sql += " AND GroupId=@GroupId";
+            }
+            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
+            var list = ConvertDataTableList<ClienterListModel>(dt);
+            return list;
         }
     }
 }
