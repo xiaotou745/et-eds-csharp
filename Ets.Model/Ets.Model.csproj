@@ -55,6 +55,7 @@
     <Compile Include="Common\PaginResult.cs" />
     <Compile Include="Common\ResultInfo.cs" />
     <Compile Include="DataModel\Order\OrderListModel.cs" />
+    <Compile Include="DataModel\Subsidy\subsidy.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessManage.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessModel.cs" />
     <Compile Include="DomainModel\Bussiness\BusiOrderSqlModel.cs" />
@@ -71,6 +72,8 @@
     <Compile Include="DomainModel\Group\GroupApiConfigModel.cs" />
     <Compile Include="DomainModel\Order\OrderManage.cs" />
     <Compile Include="DomainModel\Order\OrderModel.cs" />
+    <Compile Include="DomainModel\Subsidy\HomeCountCriteria.cs" />
+    <Compile Include="DomainModel\Subsidy\SubsidyManage.cs" />
     <Compile Include="DomainModel\Subsidy\SubsidyResultModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BusiOrderInfoModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BussOrderParaModelApp.cs" />
@@ -88,6 +91,7 @@
     <Compile Include="ParameterModel\Order\GetStatusPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\CreatePM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\OrderSearchCriteria.cs" />
+    <Compile Include="ParameterModel\Subsidy\SubsidyModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserModel.cs" />
   </ItemGroup>

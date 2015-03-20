@@ -9,6 +9,8 @@ using SuperManBusinessLogic.Subsidy_Logic;
 using SuperManCommonModel.Entities;
 using SuperManCore.Paging;
 using SuperManDataAccess;
+using Ets.Service.IProvider.Subsidy;
+using Ets.Service.Provider.Subsidy;
 
 namespace SuperMan.Controllers
 {
@@ -16,6 +18,7 @@ namespace SuperMan.Controllers
     [WebHandleError]
     public class SubsidyManagerController : Controller
     {
+        ISubsidyProvider iSubsidyProvider = new SubsidyProvider();
         // GET: SubsidyManager
         public ActionResult SubsidyManager()
         {
@@ -26,16 +29,26 @@ namespace SuperMan.Controllers
                 return null;
             }  
             ViewBag.txtGroupId = account.GroupId;//集团id
-            SubsidyManage subsidyManage = new SubsidyManage();
-            var criteria = new HomeCountCriteria() { PagingRequest = new PagingResult(0, 15), GroupId = account.GroupId };
-            subsidyManage.orderCountManageList = SubsidyLogic.subsidyLogic().GetSubsidyList(criteria);
+            Ets.Model.DomainModel.Subsidy.SubsidyManage subsidyManage = new Ets.Model.DomainModel.Subsidy.SubsidyManage();
+            var criteria = new Ets.Model.DomainModel.Subsidy.HomeCountCriteria() { PagingRequest = new Ets.Model.Common.NewPagingResult (1, 15), GroupId = account.GroupId };
+            //subsidyManage.orderCountManageList = SubsidyLogic.subsidyLogic().GetSubsidyList(criteria);
+            subsidyManage=iSubsidyProvider.GetSubsidyList(criteria);
             return View(subsidyManage);
+        }
+        [HttpPost]
+        public ActionResult SubsidyManager(Ets.Model.DomainModel.Subsidy.HomeCountCriteria criteria)
+        {
+            //var pagedList = ClienterLogic.clienterLogic().GetClienteres(criteria);
+            var pagedList = iSubsidyProvider.GetSubsidyList(criteria);
+            var item = pagedList.subsidyManageList;
+            return PartialView("_SubsidyManagerList", item);
         }
 
         [HttpPost]
-        public JsonResult Save(SubsidyModel model)
+        public JsonResult Save(Ets.Model.ParameterModel.Subsidy.SubsidyModel model)
         {
-            bool b = SubsidyLogic.subsidyLogic().SaveData(model);
+            //bool b = SubsidyLogic.subsidyLogic().SaveData(model);
+            bool b = iSubsidyProvider.SaveData(model);
             return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
         }
         /// <summary>
