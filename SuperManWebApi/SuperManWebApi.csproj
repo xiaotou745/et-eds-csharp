@@ -223,6 +223,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BusinessAPIController.cs" />
     <Compile Include="Controllers\ClienterAPIController.cs" />
+    <Compile Include="Controllers\CommonController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
@@ -291,6 +292,7 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
     <Content Include="Nlog.config" />
+    <None Include="Properties\PublishProfiles\dhcapi.pubxml" />
     <None Include="Properties\PublishProfiles\hdlwebapi.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -328,6 +330,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\app\" />
+    <Folder Include="Views\Common\" />
     <Folder Include="Views\Download\" />
   </ItemGroup>
   <ItemGroup>
@@ -341,6 +344,10 @@
     <ProjectReference Include="..\ETS.Core\ETS.Core.csproj">
       <Project>{bba67a86-afd6-46f2-bbd9-5dfb5bfdafe2}</Project>
       <Name>ETS.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Ets.Dao\Ets.Dao.csproj">
+      <Project>{dd95fa95-b979-4802-8f79-b08d35939f4e}</Project>
+      <Name>Ets.Dao</Name>
     </ProjectReference>
     <ProjectReference Include="..\ETS.Data\ETS.Data.csproj">
       <Project>{be8b43e2-df1e-4bfd-b4ef-63e3e0f53ea2}</Project>

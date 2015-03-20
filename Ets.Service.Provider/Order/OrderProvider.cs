@@ -5,6 +5,7 @@ using Ets.Model.DataModel.Bussiness;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DomainModel.Clienter;
+using Ets.Model.DomainModel.Order;
 using Ets.Model.ParameterModel.Order;
 using Ets.Service.IProvider.Order;
 using Ets.Service.IProvider.Subsidy;
@@ -12,7 +13,10 @@ using Ets.Service.IProvider.User;
 using Ets.Service.Provider.MyPush;
 using Ets.Service.Provider.Subsidy;
 using Ets.Service.Provider.User;
+using ETS.Data.PageData;
 using ETS.Page;
+using ETS.Transaction;
+using ETS.Transaction.Common;
 using ETS.Util;
 using System;
 using System.Collections.Generic;
@@ -50,12 +54,14 @@ namespace Ets.Service.Provider.Order
 
                 resultModel.income = income;  //计算设置当前订单骑士可获取的佣金 Edit bycaoheyang 20150305
                 resultModel.Amount = amount; //C端 获取订单的金额 Edit bycaoheyang 20150305
-                
+
 
                 resultModel.businessName = from.BusinessName;
                 resultModel.businessPhone = from.BusinessPhone;
-                resultModel.pickUpCity = from.PickUpCity.Replace("市", "");
-
+                if (from.PickUpCity != null)
+                {
+                    resultModel.pickUpCity = from.PickUpCity.Replace("市", "");
+                }
 
                 if (from.PubDate.HasValue)
                 {
@@ -67,9 +73,9 @@ namespace Ets.Service.Provider.Order
                 resultModel.receviceAddress = from.ReceviceAddress;
                 resultModel.recevicePhone = from.RecevicePhoneNo;
                 resultModel.IsPay = from.IsPay.Value;
-                resultModel.Remark = from.Remark == null ?"":from.Remark;
-                resultModel.Status = from.Status.Value; 
- 
+                resultModel.Remark = from.Remark == null ? "" : from.Remark;
+                resultModel.Status = from.Status.Value;
+
                 if (from.BusiLatitude == null || from.BusiLatitude == 0 || from.BusiLongitude == null || from.BusiLongitude == 0)
                 {
                     resultModel.distance = "--";
@@ -86,7 +92,7 @@ namespace Ets.Service.Provider.Order
                         double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
                         resultModel.distance = res < 1000 ? (res.ToString("f2") + "米") : ((res / 1000).ToString("f2") + "公里");
                     }
-                    if ( from.ReceviceLongitude != null && from.ReceviceLatitude != null
+                    if (from.ReceviceLongitude != null && from.ReceviceLatitude != null
                         && from.ReceviceLongitude != 0 && from.ReceviceLatitude != 0)  //计算商户到收货人的距离
                     {
                         Degree degree1 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);  //商户经纬度
@@ -96,13 +102,13 @@ namespace Ets.Service.Provider.Order
                     }
                     else
                         resultModel.distanceB2R = "--";
-                }        
+                }
                 list.Add(resultModel);
             }
             return list;
         }
 
-        
+
         #region
         public IList<ClientOrderNoLoginResultModel> GetOrdersNoLoginLatest(ClientOrderSearchCriteria criteria)
         {
@@ -126,8 +132,11 @@ namespace Ets.Service.Provider.Order
 
                 resultModel.businessName = from.BusinessName;
                 resultModel.businessPhone = from.BusinessPhone;
-                resultModel.pickUpCity = from.PickUpCity.Replace("市", "");
 
+                if (from.PickUpCity != null)
+                {
+                    resultModel.pickUpCity = from.PickUpCity.Replace("市", "");
+                }
 
                 if (from.PubDate.HasValue)
                 {
@@ -183,11 +192,12 @@ namespace Ets.Service.Provider.Order
         /// 订单状态查询功能  add by caoheyang 20150316
         /// </summary>
         /// <param name="orderNo">订单号码</param>
-        /// <returns></returns>
-        public int GetStatus(string orderNo)
+        /// <param name="groupId">集团id</param>
+        /// <returns>订单状态</returns>
+        public int GetStatus(string OriginalOrderNo, int groupId)
         {
             OrderDao OrderDao = new OrderDao();
-            return OrderDao.GetStatus(orderNo);
+            return OrderDao.GetStatus(OriginalOrderNo, groupId);
         }
 
         #endregion
@@ -212,7 +222,7 @@ namespace Ets.Service.Provider.Order
                 to.PubDate = DateTime.Now; //提起时间
                 to.ReceviceCity = business.City; //城市
                 to.DistribSubsidy = business.DistribSubsidy;//设置外送费,从商户中找。
-            } 
+            }
             if (ConfigSettings.Instance.IsGroupPush)
             {
                 if (busiOrderInfoModel.OrderFrom != 0)
@@ -232,10 +242,10 @@ namespace Ets.Service.Provider.Order
 
             //var subsidy = SubsidyLogic.subsidyLogic().GetCurrentSubsidy(groupId: business.GroupId == null ? 0 : Convert.ToInt32(business.GroupId));
 
-            var subsidy =  iSubsidyProvider.GetCurrentSubsidy(groupId: business.GroupId == null ? 0 : Convert.ToInt32(business.GroupId));
+            var subsidy = iSubsidyProvider.GetCurrentSubsidy(groupId: business.GroupId == null ? 0 : Convert.ToInt32(business.GroupId));
 
             if (subsidy != null)
-            { 
+            {
                 to.WebsiteSubsidy = subsidy.WebsiteSubsidy;  //网站补贴
                 to.CommissionRate = subsidy.OrderCommission == null ? 0 : subsidy.OrderCommission; //佣金比例 
 
@@ -248,7 +258,7 @@ namespace Ets.Service.Provider.Order
                 to.OrderCommission = busiOrderInfoModel.Amount * to.CommissionRate + distribe * to.OrderCount;//计算佣金
             }
             to.Status = ConstValues.ORDER_NEW;
-            return to; 
+            return to;
         }
 
         /// <summary>
@@ -280,9 +290,71 @@ namespace Ets.Service.Provider.Order
         /// <returns>订单号码</returns>
         public string Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
         {
-            return OrderDao.CreateToSql(paramodel);
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                string orderNo = OrderDao.CreateToSql(paramodel);
+                if (!string.IsNullOrWhiteSpace(orderNo))
+                    Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！"
+                        , string.Empty, paramodel.address.city_code); //激光推送   bug  原来是根据城市推送的，现在没要求传城市相关信息
+                tran.Complete();
+                return orderNo;
+            }
         }
 
         #endregion
-    } 
+        /// <summary>
+        /// 根据参数获取订单
+        /// danny-20150319
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public OrderManage GetOrders(OrderSearchCriteria criteria)
+        {
+            var pagedQuery = new OrderManage();
+            PageInfo<OrderListModel> pageinfo = OrderDao.GetOrders<OrderListModel>(criteria);
+            
+
+
+            NewPagingResult pr = new NewPagingResult() { PageIndex = criteria.PagingRequest.PageIndex, PageSize = criteria.PagingRequest.PageSize, RecordCount = pageinfo.All, TotalCount = pageinfo.All };
+            List<OrderListModel> list = pageinfo.Records.ToList();
+            var orderlists = new OrderManageList(list, pr);
+            pagedQuery.orderManageList = orderlists;
+            return pagedQuery;
+        }
+        /// <summary>
+        /// 更新订单佣金
+        /// danny-20150320
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns></returns>
+        public bool UpdateOrderInfo(order order)
+        {
+            return OrderDao.UpdateOrderInfo(order);
+        }
+        /// <summary>
+        /// 根据订单号查订单信息
+        /// danny-20150320
+        /// </summary>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        public OrderListModel GetOrderByNo(string orderNo)
+        {
+            return OrderDao.GetOrderByNo(orderNo);
+        }
+        /// <summary>
+        /// 订单指派超人
+        /// danny-20150320
+       /// </summary>
+       /// <param name="order"></param>
+       /// <returns></returns>
+        public bool RushOrder(OrderListModel order)
+        {
+            if( OrderDao.RushOrder(order))
+            {
+                Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", order.businessId.ToString(), string.Empty);
+                return true;
+            }
+            return false;
+        }
+    }
 }

@@ -171,5 +171,30 @@ namespace Ets.Dao.Clienter
             }
             return list[0];
         }
+
+        /// <summary>
+        /// 获取已申请超人，通过超人数量 
+        /// 窦海超
+        /// 2015年3月18日 17:23:14
+        /// </summary>
+        /// <param name="Applycount">审核通过数量</param>
+        /// <param name="Money">申请数量</param>
+        public void GetCountAndMoney(out int Applycount, out int Bcount)
+        {
+            Applycount = 0; Bcount = 0;
+            string sql = @"SELECT 
+                            SUM(CASE WHEN [Status]<>0 THEN 1 ELSE 0 END) AS applycount,
+                            SUM(CASE WHEN [Status]=1 THEN 1 ELSE 0 END) AS bcount
+                             FROM dbo.clienter(NOLOCK)";
+            DataSet set = DbHelper.ExecuteDataset(SuperMan_Read, sql);
+            DataTable dt = DataTableHelper.GetTable(set);
+            if (dt == null && dt.Rows.Count <= 0)
+            {
+                return;
+            }
+            DataRow row = dt.Rows[0];
+            Applycount = ParseHelper.ToInt(row["applycount"], 0);
+            Bcount = ParseHelper.ToInt(row["bcount"], 0);
+        }
     }
 }

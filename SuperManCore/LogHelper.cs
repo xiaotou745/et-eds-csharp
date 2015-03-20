@@ -13,7 +13,7 @@ namespace SuperManCore
 {
    public class LogHelper
     {
-       public static Logger logger = LogManager.GetLogger("SuperManCore.LogHelper");
+       public static Logger logger = NLog.LogManager.GetLogger("SuperManCore.LogHelper");
   
        /// <summary>
        /// 备注日志

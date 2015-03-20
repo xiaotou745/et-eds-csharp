@@ -15,7 +15,7 @@ namespace Ets.Service.Provider.Order
 
 
         /// <summary>
-        /// 获取订单的骑士佣金 add by caoheyang 0150305
+        /// 获取订单的骑士佣金 add by caoheyang 20150305
         /// </summary>
         /// <param name="model">订单</param>
         /// <returns></returns>

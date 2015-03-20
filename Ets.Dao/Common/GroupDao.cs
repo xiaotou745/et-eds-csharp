@@ -166,10 +166,11 @@ namespace Ets.Dao.Common
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("AppKey", appkey);
             dbParameters.AddWithValue("AppVersion", version);
-            var dr = DbHelper.ExecuteReader(Config.SuperMan_Read, sql, dbParameters); 
-            var config=new GroupApiConfigModel {AppKey = appkey, AppVersion = version};
+            var dr = DbHelper.ExecuteReader(Config.SuperMan_Read, sql, dbParameters);
+            GroupApiConfigModel config = null;
             if (dr.Read())
             {
+                config=new GroupApiConfigModel {AppKey = appkey, AppVersion = version};
                 if (dr["AppSecret"] != null)
                 { 
                     config.AppSecret = dr["AppSecret"].ToString();

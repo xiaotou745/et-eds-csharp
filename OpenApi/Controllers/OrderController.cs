@@ -12,64 +12,53 @@ using System.Web;
 using System.ComponentModel.DataAnnotations;
 using Ets.Model.Common;
 using ETS.Enums;
+using Ets.Model.ParameterModel.Order;
+using Ets.Service.Provider.Common;
+using Ets.Service.IProvider.Common;
+using Ets.Model.DomainModel.Group;
+using ETS.Security;
+
 
 namespace OpenApi.Controllers
 {
     /// <summary>
     /// 对外公开接口  订单相关功能  add by caoheyang 20150316
     /// </summary>
-
-    //[RoutePrefix("api/order/")]
     public class OrderController : ApiController
     {
-        // POSR: Order GetStatus
+        // POSR: Order GetStatus    paramodel 固定 必须是 paramodel
         /// <summary>
         /// 订单状态查询功能  add by caoheyang 20150316
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public ResultModel<dynamic> GetStatus()
+        [SignOpenApi] //sign验证过滤器 设计参数验证，sign验证 add by caoheyang 201503167
+        [OpenApiActionError] //异常过滤器 add by caoheyang 一旦发生异常，客户端返回系统内部错误提示
+        public ResultModel<object> GetStatus(ParaModel<GetStatusPM_OpenApi> paramodel)
         {
-            try
-            {
-                IOrderProvider orderProvider = new OrderProvider();
-                return HttpContext.Current.Request.Form["order_no"] == null ?
-                     ResultModel<dynamic>.Conclude(OrderApiStatusType.ParaError) :
-                     ResultModel<dynamic>.Conclude(OrderApiStatusType.Success, new
-                     {
-                         status = orderProvider.GetStatus(HttpContext.Current.Request.Form["order_no"])
-                     });
-            }
-            catch {
-                return ResultModel<dynamic>.Conclude(OrderApiStatusType.SystemError);       //返回系统错误提示
-            }
+            int status = new OrderProvider().GetStatus(paramodel.fields.order_no, paramodel.group);
+            return status < 0 ?
+            ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :    //订单不存在返回参数错误提示
+            ResultModel<object>.Conclude(OrderApiStatusType.Success, new { order_status = status });
         }
 
-        // POSR: Order Create
+        // POST: Order Create   paramodel 固定 必须是 paramodel  
         /// <summary>
         /// 物流订单接收接口  add by caoheyang 201503167
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public ResultModel<dynamic> Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
+        [SignOpenApi] //sign验证过滤器 设计参数验证，sign验证 add by caoheyang 201503167
+        [OpenApiActionError]  //异常过滤器 add by caoheyang  201503167 一旦发生异常，客户端返回系统内部错误提示
+        public ResultModel<object> Create(ParaModel<CreatePM_OpenApi> paramodel)
         {
-            try
-            {
-                if (base.ModelState.Count > 0 || paramodel == null)
-                    return ResultModel<dynamic>.Conclude(OrderApiStatusType.ParaError);       //返回参数错误提示
-                else
-                {
-                    IOrderProvider orderProvider = new OrderProvider();
-                    string orderNo = orderProvider.Create(paramodel);
-                    return string.IsNullOrWhiteSpace(orderNo) ? ResultModel<dynamic>.Conclude(OrderApiStatusType.SystemError) :
-                        ResultModel<dynamic>.Conclude(OrderApiStatusType.Success, new { order_no = orderNo });
-                }
-            }
-            catch
-            {
-                return ResultModel<dynamic>.Conclude(OrderApiStatusType.SystemError);       //返回系统错误提示
-            }
+            paramodel.fields.store_info.group = paramodel.group;  //设置集团信息到具体的门店上  在dao层会用到 
+            IOrderProvider orderProvider = new OrderProvider();
+            string orderNo = orderProvider.Create(paramodel.fields);
+            return string.IsNullOrWhiteSpace(orderNo) ? ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :
+                ResultModel<object>.Conclude(OrderApiStatusType.Success, new { order_no = orderNo });
         }
 
     }
+
 }

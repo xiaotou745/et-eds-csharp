@@ -6,7 +6,7 @@
 <h3 style="color:black;font-weight:600">数据统计</h3>
 <div>
     @{
-        var resultList = @ViewBag.homeCountTitleModel as SuperManCommonModel.Models.HomeCountTitleModel;
+        var resultList = @ViewBag.homeCountTitleModel as Ets.Model.Common.HomeCountTitleModel;
         <p>签约商户：@resultList.SignBusiness 家  已申请超人：@resultList.ApplySuperMan 个，通过超人 @resultList.AuditPassSuperMan 个，今日订单： @resultList.TodayOrders ，今日订单金额： @resultList.TodayOrdersAmount 元</p>
     }
 </div>

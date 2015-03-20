@@ -16,41 +16,53 @@ namespace Ets.Model.ParameterModel.Order
         /// 订单号
         /// </summary>
         [Required]
-        public  string order_id { get; set; }
+        public string order_id { get; set; }
 
         /// <summary>
         /// 订单下单时间
         /// </summary>
+        [Required]
         public DateTime create_time { get; set; }
 
         /// <summary>
         /// 要求送餐时间
         /// </summary>
+        [Required]
         public DateTime receive_time { get; set; }
 
         /// <summary>
         /// 用户是否已付款，true 已付款 false 未付款
         /// </summary>
+        [Required]
         public bool is_pay { get; set; }
+
+        /// <summary>
+        /// 支付类型 默认0  0 现金
+        /// </summary>
+        public int payment { get; set; }
 
         /// <summary>
         /// 订单金额，精确到两位小数
         /// </summary>
+        [Required]
         public decimal total_price { get; set; }
 
         /// <summary>
         /// 收货地址信息
         /// </summary>
+        [Required]
         public Address address { get; set; }
 
         /// <summary>
         /// 门店信息
         /// </summary>
+        [Required]
         public Store store_info { get; set; }
 
         /// <summary>
         /// 订单明细
         /// </summary>
+        [Required]
         public OrderDetail[] order_details { get; set; }
 
         /// <summary>
@@ -71,7 +83,7 @@ namespace Ets.Model.ParameterModel.Order
         /// <summary>
         /// 订单数量，默认为1（并单时使用)
         /// </summary>
-        public int package_count { get; set; }
+        public int? package_count { get; set; }
 
     }
 
@@ -83,43 +95,49 @@ namespace Ets.Model.ParameterModel.Order
         /// <summary>
         /// 用户姓名
         /// </summary>
+        [Required]
         public string user_name { get; set; }
 
         /// <summary>
         /// 用户联系电话
         /// </summary>
+        [Required]
         public string user_phone { get; set; }
 
         /// <summary>
         /// 用户所在省份code
         /// </summary>
+        [Required]
         public string province_code { get; set; }
 
         /// <summary>
         /// 用户所在城市code
         /// </summary>
+        [Required]
         public string city_code { get; set; }
 
         /// <summary>
         /// 用户所在区域code
         /// </summary>
+        [Required]
         public string area_code { get; set; }
 
         /// <summary>
         /// 用户收货地址
         /// </summary>
+        [Required]
         public string address { get; set; }
 
         /// <summary>
         /// 用户收货地址所在区域经度
         /// </summary>
-        public decimal longitude { get; set; }
+        public decimal? longitude { get; set; }
 
         /// <summary>
         /// 用户收货地址所在区域纬度
         /// </summary>
-        public decimal latitude { get; set; }
-      
+        public decimal? latitude { get; set; }
+
     }
 
     /// <summary>
@@ -130,15 +148,17 @@ namespace Ets.Model.ParameterModel.Order
         /// <summary>
         /// 对接方店铺ID
         /// </summary>
+        [Required]
         public int store_id { get; set; }
 
         /// <summary>
         /// 店铺名称
         /// </summary>
+        [Required]
         public string store_name { get; set; }
 
         /// <summary>
-        /// 集团：3:万达
+        /// 集团：3:万达    查询得到。赋值
         /// </summary>
         public int group { get; set; }
 
@@ -150,6 +170,7 @@ namespace Ets.Model.ParameterModel.Order
         /// <summary>
         /// 门店联系电话
         /// </summary>
+        [Required]
         public string phone { get; set; }
 
         /// <summary>
@@ -166,27 +187,30 @@ namespace Ets.Model.ParameterModel.Order
         /// <summary>
         /// 门店所在省份code
         /// </summary>
+        [Required]
         public string province_code { get; set; }
 
         /// <summary>
         /// 门店所在城市code
         /// </summary>
+        [Required]
         public string city_code { get; set; }
 
         /// <summary>
         /// 门店所在区域code
         /// </summary>
-        public  string area_code { get; set; }
+        [Required]
+        public string area_code { get; set; }
 
         /// <summary>
         /// 门店所在区域经度
         /// </summary>
-        public decimal longitude { get; set; }
+        public decimal? longitude { get; set; }
 
         /// <summary>
         /// 门店所在区域纬度
         /// </summary>
-        public decimal latitude { get; set; }
+        public decimal? latitude { get; set; }
 
         /// <summary>
         /// 外送费,默认为0
@@ -196,7 +220,7 @@ namespace Ets.Model.ParameterModel.Order
         /// <summary>
         /// 佣金类型，涉及到快递员的佣金计算方式，默认1
         /// </summary>
-        public string commission_type { get; set; }
+        public int? commission_type { get; set; }
 
     }
 
@@ -207,23 +231,27 @@ namespace Ets.Model.ParameterModel.Order
     public class OrderDetail
     {
         /// <summary>
-        /// 明细ID，默认为0
+        ///  第三方订单明细id
         /// </summary>
-        public decimal detail_id { get; set; }
+        [Required]
+        public int detail_id { get; set; }
 
         /// <summary>
         /// 商品名称
         /// </summary>
+        [Required]
         public string product_name { get; set; }
 
         /// <summary>
         /// 商品单价，精确到两位小数
         /// </summary>
+        [Required]
         public decimal unit_price { get; set; }
 
         /// <summary>
         /// 商品数量
         /// </summary>
+        [Required]
         public int quantity { get; set; }
     }
 }
