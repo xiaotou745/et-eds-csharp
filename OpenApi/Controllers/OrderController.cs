@@ -24,8 +24,6 @@ namespace OpenApi.Controllers
     /// <summary>
     /// 对外公开接口  订单相关功能  add by caoheyang 20150316
     /// </summary>
-
-    //[RoutePrefix("api/order/")]
     public class OrderController : ApiController
     {
         // POSR: Order GetStatus    paramodel 固定 必须是 paramodel
@@ -38,13 +36,12 @@ namespace OpenApi.Controllers
         [OpenApiActionError] //异常过滤器 add by caoheyang 一旦发生异常，客户端返回系统内部错误提示
         public ResultModel<object> GetStatus(ParaModel<GetStatusPM_OpenApi> paramodel)
         {
-            return (new OrderProvider().GetStatus(paramodel.fields.order_no) < 0) ?
+            int status = new OrderProvider().GetStatus(paramodel.fields.order_no, paramodel.group);
+            return status < 0 ?
             ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :    //订单不存在返回参数错误提示
-            ResultModel<object>.Conclude(OrderApiStatusType.Success, new
-            {
-                status = new OrderProvider().GetStatus(paramodel.fields.order_no)
-            });
+            ResultModel<object>.Conclude(OrderApiStatusType.Success, new { order_status = status });
         }
+
         // POST: Order Create   paramodel 固定 必须是 paramodel  
         /// <summary>
         /// 物流订单接收接口  add by caoheyang 201503167
@@ -58,9 +55,8 @@ namespace OpenApi.Controllers
             paramodel.fields.store_info.group = paramodel.group;  //设置集团信息到具体的门店上  在dao层会用到 
             IOrderProvider orderProvider = new OrderProvider();
             string orderNo = orderProvider.Create(paramodel.fields);
-            return string.IsNullOrWhiteSpace(orderNo) ? ResultModel<object>.Conclude(OrderApiStatusType.SystemError) :
+            return string.IsNullOrWhiteSpace(orderNo) ? ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :
                 ResultModel<object>.Conclude(OrderApiStatusType.Success, new { order_no = orderNo });
-
         }
 
     }
