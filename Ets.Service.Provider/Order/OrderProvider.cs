@@ -190,11 +190,12 @@ namespace Ets.Service.Provider.Order
         /// 订单状态查询功能  add by caoheyang 20150316
         /// </summary>
         /// <param name="orderNo">订单号码</param>
-        /// <returns></returns>
-        public int GetStatus(string orderNo)
+        /// <param name="groupId">集团id</param>
+        /// <returns>订单状态</returns>
+        public int GetStatus(string OriginalOrderNo, int groupId)
         {
             OrderDao OrderDao = new OrderDao();
-            return OrderDao.GetStatus(orderNo);
+            return OrderDao.GetStatus(OriginalOrderNo, groupId);
         }
 
         #endregion

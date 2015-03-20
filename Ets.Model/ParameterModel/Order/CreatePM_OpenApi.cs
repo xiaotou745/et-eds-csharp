@@ -230,6 +230,11 @@ namespace Ets.Model.ParameterModel.Order
     /// </summary>
     public class OrderDetail
     {
+        /// <summary>
+        ///  第三方订单明细id
+        /// </summary>
+        [Required]
+        public int detail_id { get; set; }
 
         /// <summary>
         /// 商品名称
