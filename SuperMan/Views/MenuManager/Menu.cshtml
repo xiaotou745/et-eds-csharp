@@ -1,0 +1,243 @@
+﻿@using Ets.Model.DataModel.Authority
+@model List<AuthorityMenuModel>
+@{
+    ViewBag.Title = "Menu";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+    var partMenu = ViewBag.PartMenu as AuthorityMenuModel;
+} 
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：权限 > 菜单设置
+    </h2>
+    <div class="SearchMd">
+        <table border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td>
+                    @if (partMenu!=null)
+                    { 
+                        <span class="">上级菜单:@partMenu.MenuName </span>
+                    }
+                    else
+                    {
+                        <span class="">一级菜单</span>
+                    }
+                    <input type="submit" value="新增菜单" class="searchBtn" onclick="showAdd();" id="btnAdd" />
+                    @if (ViewBag.ParId > 0)
+                    {
+                        <input type="submit" value="返回上一级" class="searchBtn" onclick="window.location = '/MenuManager/Menu/';" id="btnAdd" />
+                    }
+
+                </td>
+            </tr>
+        </table>
+    </div>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+        <thead> 
+            <tr class="tdbg">
+                <th width="%5">编号</th>
+                <th>菜单名称</th>
+                @if (ViewBag.ParId > 0)
+                {
+                    <th>菜单地址</th>
+                    <th>父级菜单</th>
+                    <th>是否按钮</th>
+                } 
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+        @{
+        if (Model != null)
+        { 
+            foreach (var item in Model)
+            {
+                var isButton = @item.IsButton == true ? 1 : 0;
+                <tr>
+                    <td>@item.Id</td> 
+                    <td>@item.MenuName</td>
+                    @if (ViewBag.ParId > 0)
+                    {
+                        <td>@item.Url</td>
+                        <td>@partMenu.MenuName</td>
+                        <td>@item.IsButton</td>
+                    } 
+                    <td>
+                    @if (ViewBag.ParId == 0)
+                    {
+                        <a href="javascript:void(0)" onclick="showUpdate('@item.MenuName',@item.Id)">修改</a>
+                        <a href="javascript:void(0)" onclick="window.location='/MenuManager/Menu/@item.Id/'">查看子菜单</a> 
+                    }
+                    else
+                    {
+                        <a href="javascript:void(0)" onclick="showUpdateChild('@item.MenuName','@item.Url','@isButton',@item.Id)">修改</a>
+                    }
+                    </td> 
+                </tr> 
+            }
+        }
+        }
+        </tbody> 
+    </table>
+</div>
+
+@*新增菜单*@
+<div>
+    <div class="add-openbox add-form" id="addDiv" style="width:500px">
+        <h2>
+            <p id="statusFin">新增菜单</p>
+        </h2>
+        <input type="hidden" value="@ViewBag.ParId" id="hidParId"/>
+        <fieldset>
+            <div class="control-group" style="width: 250px;margin: 0 auto;">
+                <label >菜单名称</label> 
+                <input  name="txtName" id="txtName" type="text">
+            </div> 
+            @if (ViewBag.ParId > 0)
+            {
+                <div class="control-group" style="width: 250px;margin: 0 auto;">
+                    <label >菜单Url</label> 
+                    <input  name="txtUrl" id="txtUrl" type="text">
+                </div> 
+                <div class="control-group" style="width: 250px;margin: 0 auto;">
+                    <label >是否按钮</label> 
+                    <input  name="radBtn" id="radBtn1"  checked="checked"  value="1" type="radio">是
+                    <input  name="radBtn" id="radBtn2" value="0" type="radio">否
+                </div>
+            } 
+        </fieldset>
+        <p class="btnbox">
+            <input value="确认" type="button" id="btnConfim" class="yesBtn" />                
+            <input value="关闭" type="button" class="J_closebox qxBtn" />
+        </p>
+    </div>
+</div>
+@*修改菜单*@
+<div>
+    <div class="add-openbox add-form" id="updateDiv" style="width:500px">
+        <h2>
+            <p id="statusFin">修改菜单</p>
+        </h2>
+        <input type="hidden" value="" id="hidId"/>
+        <fieldset>
+            <div class="control-group" style="width: 250px;margin: 0 auto;">
+                <label >菜单名称</label> 
+                <input  name="txtuName" id="txtuName" type="text">
+            </div> 
+            @if (ViewBag.ParId > 0)
+            {
+                <div class="control-group" style="width: 250px;margin: 0 auto;">
+                    <label >菜单Url</label> 
+                    <input  name="txtuUrl" id="txtuUrl" type="text">
+                </div> 
+                <div class="control-group" style="width: 250px;margin: 0 auto;">
+                    <label >是否按钮</label> 
+                    <input  name="radBtnu" id="radBtnu1" value="1" type="radio">是
+                    <input  name="radBtnu" id="radBtnu0" value="0" type="radio">否
+                </div> 
+            } 
+        </fieldset>
+        <p class="btnbox">
+            <input value="确认" type="button" id="btnUpdateConfim" class="yesBtn" />                
+            <input value="关闭" type="button" class="J_closebox qxBtn" />
+        </p>
+    </div>
+</div>
+
+<script>
+    var adminjs = new adminglass(); //实例化后台类  
+    //新增菜单
+    $("#btnConfim").on('click', function () {  
+        var txtName = $("#txtName").val(); //菜单名称
+        var txtUrl = $("#txtUrl").val(); //菜单Url
+        var hidParId = $("#hidParId").val();
+        var radval = $("input[name='radBtn']:checked").val();
+        var isbutton = false;
+        if (radval == 1) {
+            isbutton = true;
+        } else { isbutton = false; }
+        if (txtName == "") {
+            alert("请输入菜单名称!");
+            return;
+        }
+        
+        if (hidParId!="" && txtUrl == "") {
+            alert("请输入菜单Url!");
+            return;
+        }
+        var pars = { "ParId": hidParId, "BeLock": 0, "IsButton": isbutton, "MenuName": txtName, "Url": txtUrl };
+        var url = "/MenuManager/AddMenu";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: pars,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert("添加成功!");
+                    window.location.href = "/MenuManager/Menu/" + hidParId;
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    });
+
+    //修改菜单
+    $("#btnUpdateConfim").on('click', function () {
+        var txtName = $("#txtuName").val(); //菜单名称
+        var txtUrl = $("#txtuUrl").val(); //菜单Url
+        var hidParId = $("#hidParId").val();
+        var hidId = $("#hidId").val(); //菜单id
+        var radval = $("input[name='radBtnu']:checked").val();
+        var isbutton = false;
+        if (radval==1) {
+            isbutton = true;
+        } else { isbutton = false;}
+        if (txtName == "") {
+            alert("请输入菜单名称!");
+            return;
+        }
+
+        if (hidParId != "" && txtUrl == "") {
+            alert("请输入菜单Url!");
+            return;
+        }
+        var pars = { "Id": hidId, "ParId": hidParId, "IsButton": isbutton, "MenuName": txtName, "Url": txtUrl };
+        var url = "/MenuManager/UpdateMenu";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: pars,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert("修改成功!");
+                    window.location.href = "/MenuManager/Menu/" + hidParId;
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    });
+    
+    function showUpdateChild(name,url,isbutton,id) {
+        $("#txtuName").val(name); //菜单名称
+        $("#txtuUrl").val(url); //菜单Url
+        $("#hidId").val(id); //菜单id
+        //$("#radBtnu1").removeAttr("checked");
+        //$("#radBtnu0").removeAttr("checked");
+        //$("#radBtnu"+isbutton).attr("checked", 'checked');
+        adminjs.openwinbox('#updateDiv');
+    }
+    function showUpdate(name,id) {
+        $("#txtuName").val(name); //菜单名称
+        $("#hidId").val(id); //菜单id
+        adminjs.openwinbox('#updateDiv');
+    }
+    function showAdd() {
+        adminjs.openwinbox('#addDiv');
+    }
+    //关闭弹层
+    $('.J_closebox').click(function () {
+        adminjs.closewinbox('.add-openbox');
+        return false;
+    });
+</script>
