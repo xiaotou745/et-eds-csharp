@@ -44,6 +44,12 @@
     <Compile Include="Common\JPushModel.cs" />
     <Compile Include="Common\PagedList.cs" />
     <Compile Include="Common\ResultModelServicePhone.cs" />
+    <Compile Include="DataModel\Authority\AccountModel.cs" />
+    <Compile Include="DataModel\Authority\AuthorityAccountMenuSet.cs" />
+    <Compile Include="DataModel\Authority\AuthorityDepartmentModel.cs" />
+    <Compile Include="DataModel\Authority\AuthorityRoleModel.cs" />
+    <Compile Include="DataModel\Authority\AuthorityRoleMentMenuSet.cs" />
+    <Compile Include="DataModel\Authority\AuthorityMenuModel.cs" />
     <Compile Include="DataModel\Bussiness\BusiLoginResultModel.cs" />
     <Compile Include="DataModel\Bussiness\BusiRegisterResultModel.cs" />
     <Compile Include="DataModel\Clienter\ClienterLoginResultModel.cs" />
