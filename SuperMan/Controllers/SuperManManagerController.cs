@@ -1,4 +1,5 @@
 ﻿using Ets.Model.DataModel.Clienter;
+using Ets.Service.Provider.Clienter;
 using Ets.Service.Provider.Distribution;
 using SuperManBusinessLogic.C_Logic;
 using SuperManCommonModel;
@@ -19,7 +20,9 @@ namespace SuperMan.Controllers
     [WebHandleError]
     public class SuperManManagerController : Controller
     {
-        Ets.Service.IProvider.Distribution.IDistributionProvider iDistributionProvider = new DistributionProvider(); 
+        Ets.Service.IProvider.Distribution.IDistributionProvider iDistributionProvider = new DistributionProvider();
+
+        ClienterProvider cliterProvider = new ClienterProvider();
         // GET: BusinessManager
         public ActionResult SuperManManager()
         {
@@ -29,7 +32,7 @@ namespace SuperMan.Controllers
                 Response.Redirect("/account/login");
                 return null;
             }
-               
+
             ViewBag.txtGroupId = account.GroupId;//集团id
             var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria() { PagingRequest = new Ets.Model.Common.NewPagingResult(1, 15), Status = -1, GroupId = account.GroupId };
             //var pagedList = ClienterLogic.clienterLogic().GetClienteres(criteria);
@@ -81,7 +84,7 @@ namespace SuperMan.Controllers
         {
             //bool b = ClienterLogic.clienterLogic().ClearSuperManAmount(id);
             bool b = iDistributionProvider.ClearSuperManAmount(id);
-            if(b)
+            if (b)
             {
                 return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
             }
@@ -109,6 +112,21 @@ namespace SuperMan.Controllers
             clienter.Status = ConstValues.CLIENTER_AUDITPASS;
             return Json(new ResultModel(iDistributionProvider.AddClienter(clienter), ""));
             //return Json(new ResultModel(ClienterLogic.clienterLogic().Add(clienter), ""));
+        }
+
+
+        /// <summary>
+        /// 获取当前配送员的流水信息
+        /// 窦海超
+        /// 2015年3月20日 17:12:11
+        /// </summary>
+        /// <param name="UserId">用户ID</param>
+        /// <returns></returns>
+        public ActionResult WtihdrawRecords(int UserId)
+        {
+            var pagedList = cliterProvider.WtihdrawRecords(UserId);
+            ViewBag.pagedList = pagedList;
+            return View();
         }
     }
 }

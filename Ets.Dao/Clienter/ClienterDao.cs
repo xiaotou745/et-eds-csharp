@@ -11,6 +11,7 @@ using Ets.Model.DomainModel.Clienter;
 using Ets.Model.ParameterModel.Clienter;
 using System.Data;
 using ETS.Extension;
+using ETS.Enums;
 
 
 //using ETS;
@@ -196,5 +197,42 @@ namespace Ets.Dao.Clienter
             Applycount = ParseHelper.ToInt(row["applycount"], 0);
             Bcount = ParseHelper.ToInt(row["bcount"], 0);
         }
+
+        /// <summary>
+        /// 获取当前用户的信息
+        /// 窦海超
+        /// 2015年3月20日 16:55:11
+        /// </summary>
+        /// <param name="UserId">用户ID</param>
+        /// <returns></returns>
+        public ClienterModel GetUserInfoByUserId(int UserId)
+        {
+            string sql = "SELECT TrueName,PhoneNo,AccountBalance FROM dbo.clienter(NOLOCK) WHERE Id=" + UserId;
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
+            IList<ClienterModel> list = MapRows<ClienterModel>(dt);
+            if (list == null && list.Count <= 0)
+            {
+                return null;
+            }
+            return list[0];
+        }
+
+        /// <summary>
+        /// 获取C端账户流水信息
+        /// 窦海超
+        /// 2015年3月20日 17:08:05
+        /// </summary>
+        /// <param name="UserId">用户ID</param>
+        /// <returns></returns>
+        public IList<ClienterRecordsModel> GetClienterRecordsByUserId(int UserId)
+        {
+            string sql = @"SELECT r.Id,Amount,Balance,CreateTime,a.UserName AS AdminName FROM Records(NOLOCK) AS r 
+                            LEFT JOIN dbo.account AS a ON r.adminid=a.Id
+                             WHERE [platform]=1 AND userid=" + UserId;
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
+            return MapRows<ClienterRecordsModel>(dt);
+        }
+
+
     }
 }

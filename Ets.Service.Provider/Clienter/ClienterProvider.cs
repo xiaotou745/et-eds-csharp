@@ -143,5 +143,21 @@ namespace Ets.Service.Provider.Clienter
                 throw;
             }
         }
+
+
+        /// <summary>
+        /// 获取当前配送员的流水信息
+        /// 窦海超
+        /// 2015年3月20日 17:12:11
+        /// </summary>
+        /// <param name="UserId">用户ID</param>
+        /// <returns></returns>
+        public ClienterRecordsListModel WtihdrawRecords(int UserId)
+        {
+            ClienterRecordsListModel listModel = new ClienterRecordsListModel();
+            listModel.clienterModel = clienterDao.GetUserInfoByUserId(UserId);
+            listModel.listClienterRecordsModel = clienterDao.GetClienterRecordsByUserId(UserId);
+            return listModel;
+        }
     }
 }

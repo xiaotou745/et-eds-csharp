@@ -62,6 +62,7 @@
     <Compile Include="DomainModel\Bussiness\BusiOrderSqlModel.cs" />
     <Compile Include="DomainModel\Clienter\ClienterManage.cs" />
     <Compile Include="DomainModel\Clienter\ClienterModel.cs" />
+    <Compile Include="DomainModel\Clienter\ClienterRecordsModel.cs" />
     <Compile Include="DomainModel\Clienter\ClientOrderModel.cs" />
     <Compile Include="DataModel\Clienter\Clienter.cs" />
     <Compile Include="DataModel\Order\Order.cs" />
