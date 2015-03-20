@@ -1,6 +1,7 @@
 ﻿using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DomainModel.Clienter;
+using Ets.Model.DomainModel.Order;
 using Ets.Model.ParameterModel.Bussiness;
 using Ets.Model.ParameterModel.Order;
 using ETS.Util;
@@ -50,5 +51,33 @@ namespace Ets.Service.IProvider.Order
         /// <param name="paramodel">参数实体</param>
         /// <returns>订单号</returns>
         string Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel);
+        /// <summary>
+        /// 根据参数获取订单
+        /// danny-20150319
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        OrderManage GetOrders(OrderSearchCriteria criteria);
+        /// <summary>
+        /// 更新订单佣金
+        /// danny-20150320
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns></returns>
+        bool UpdateOrderInfo(order order);
+        /// <summary>
+        /// 根据订单号查订单信息
+        /// danny-20150320
+        /// </summary>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        OrderListModel GetOrderByNo(string orderNo);
+        /// <summary>
+        /// 订单指派超人
+        /// danny-20150320
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns></returns>
+        bool RushOrder(OrderListModel order);
     }
 }

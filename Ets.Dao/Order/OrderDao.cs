@@ -1,4 +1,8 @@
-﻿using Ets.Model.DataModel.Clienter;
+﻿using Ets.Model.Common;
+using Ets.Model.DataModel.Clienter;
+using Ets.Model.DataModel.Order;
+using Ets.Model.DomainModel.Order;
+using Ets.Model.ParameterModel.Order;
 using ETS;
 using ETS.Dao;
 using ETS.Data.Core;
@@ -17,9 +21,9 @@ namespace Ets.Dao.Order
 {
     public class OrderDao : DaoBase
     {
-        public PagedList<Model.DataModel.Order.order> GetOrders(ClientOrderSearchCriteria criteria)
+        public ETS.Page.PagedList<Model.DataModel.Order.order> GetOrders(ClientOrderSearchCriteria criteria)
         {
-            PagedList<Model.DataModel.Order.order> orderPageList = new PagedList<Model.DataModel.Order.order>();
+            ETS.Page.PagedList<Model.DataModel.Order.order> orderPageList = new ETS.Page.PagedList<Model.DataModel.Order.order>();
             //排序
             string orderByStr = " o.Id ";
             //列名
@@ -252,13 +256,13 @@ namespace Ets.Dao.Order
                 OriginalOrderNo,PubDate,SongCanDate,IsPay,Amount,
                 Remark,Weight,DistribSubsidy,OrderCount,ReceviceName,
                 RecevicePhoneNo,ReceiveProvinceCode,ReceiveCityCode,ReceiveAreaCode,ReceviceAddress,
-                ReceviceLongitude,ReceviceLatitude,businessId,PickUpAddress)
-                OUTPUT Inserted.OrderNo 
+                ReceviceLongitude,ReceviceLatitude,businessId,PickUpAddress,Payment )
+                OUTPUT Inserted.OrderNo
                 Values(@OrderNo,
                 @OriginalOrderNo,@PubDate,@SongCanDate,@IsPay,@Amount,
                 @Remark,@Weight,@DistribSubsidy,@OrderCount,@ReceviceName,
                 @RecevicePhoneNo,@ReceiveProvinceCode,@ReceiveCityCode,@ReceiveAreaCode,@ReceviceAddress,
-                @ReceviceLongitude,@ReceviceLatitude,@BusinessId,@PickUpAddress)";
+                @ReceviceLongitude,@ReceviceLatitude,@BusinessId,@PickUpAddress,@Payment)";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             ///基本参数信息
             dbParameters.AddWithValue("@OrderNo", Helper.generateOrderCode(bussinessId));  //根据商户id生成订单号(15位));
@@ -282,6 +286,7 @@ namespace Ets.Dao.Order
             dbParameters.AddWithValue("@ReceviceLatitude", paramodel.address.latitude);    //用户收货地址所在区域纬度
             dbParameters.AddWithValue("@BusinessId", bussinessId);    //商户id
             dbParameters.AddWithValue("@PickUpAddress", paramodel.store_info.address);    //取货地址即商户地址
+            dbParameters.AddWithValue("@Payment", paramodel.payment);    //取货地址即商户地址
             string orderNo = ParseHelper.ToString(DbHelper.ExecuteScalar(SuperMan_Read, insertOrdersql, dbParameters));
             if (string.IsNullOrWhiteSpace(orderNo))//添加失败 
                 return null;
@@ -341,6 +346,242 @@ namespace Ets.Dao.Order
             DataRow row = dt.Rows[0];
             Count = ParseHelper.ToInt(row["acount"], 0);
             Money = ParseHelper.ToDecimal(row["amount"], 0);
+        }
+        /// <summary>
+        /// 根据参数获取订单
+        /// danny-20150319
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<T> GetOrders<T>(OrderSearchCriteria criteria)
+        {
+                string columnList = @"   o.[Id]
+                                    ,o.[OrderNo]
+                                    ,o.[PickUpAddress]
+                                    ,o.[PubDate]
+                                    ,o.[ReceviceName]
+                                    ,o.[RecevicePhoneNo]
+                                    ,o.[ReceviceAddress]
+                                    ,o.[ActualDoneDate]
+                                    ,o.[IsPay]
+                                    ,o.[Amount]
+                                    ,o.[OrderCommission]
+                                    ,o.[DistribSubsidy]
+                                    ,o.[WebsiteSubsidy]
+                                    ,o.[Remark]
+                                    ,o.[Status]
+                                    ,o.[clienterId]
+                                    ,o.[businessId]
+                                    ,o.[ReceviceCity]
+                                    ,o.[ReceviceLongitude]
+                                    ,o.[ReceviceLatitude]
+                                    ,o.[OrderFrom]
+                                    ,o.[OriginalOrderId]
+                                    ,o.[OriginalOrderNo]
+                                    ,o.[Quantity]
+                                    ,o.[Weight]
+                                    ,o.[ReceiveProvince]
+                                    ,o.[ReceiveArea]
+                                    ,o.[ReceiveProvinceCode]
+                                    ,o.[ReceiveCityCode]
+                                    ,o.[ReceiveAreaCode]
+                                    ,o.[OrderType]
+                                    ,o.[KM]
+                                    ,o.[GuoJuQty]
+                                    ,o.[LuJuQty]
+                                    ,o.[SongCanDate]
+                                    ,o.[OrderCount]
+                                    ,o.[CommissionRate]
+                                    ,o.[OrderSign]
+                                    ,c.TrueName ClienterName
+                                    ,c.PhoneNo ClienterPhoneNo
+                                    ,b.Name BusinessName
+                                    ,b.PhoneNo BusinessPhoneNo
+                                    ,b.Address BusinessAddress
+                                    ,g.GroupName";
+                IDbParameters parm = DbHelper.CreateDbParameters();
+                parm.AddWithValue("@businessName", criteria.businessName);
+                parm.AddWithValue("@businessPhone", criteria.businessPhone);
+                parm.AddWithValue("@orderId", criteria.orderId);
+                parm.AddWithValue("@OriginalOrderNo", criteria.OriginalOrderNo);
+                parm.AddWithValue("@orderStatus", criteria.orderStatus);
+                parm.AddWithValue("@superManName", criteria.superManName);
+                parm.AddWithValue("@superManPhone", criteria.superManPhone);
+                parm.AddWithValue("@orderPubStart", criteria.orderPubStart);
+                parm.AddWithValue("@orderPubEnd", criteria.orderPubEnd);
+                parm.AddWithValue("@GroupId", criteria.GroupId);
+                var sbSqlWhere = new StringBuilder(" 1=1 ");
+                if (!string.IsNullOrWhiteSpace(criteria.businessName))
+                {
+                    sbSqlWhere.AppendFormat(" AND b.Name='{0}' ", criteria.businessName);
+                }
+                if (!string.IsNullOrWhiteSpace(criteria.businessPhone))
+                {
+                    sbSqlWhere.AppendFormat(" AND b.PhoneNo='{0}' ", criteria.businessPhone);
+                }
+                if (!string.IsNullOrWhiteSpace(criteria.orderId))
+                {
+                    sbSqlWhere.AppendFormat(" AND o.OrderNo='{0}' ", criteria.orderId);
+                }
+                if (!string.IsNullOrWhiteSpace(criteria.OriginalOrderNo))
+                {
+                    sbSqlWhere.AppendFormat(" AND o.OriginalOrderNo='{0}' ", criteria.OriginalOrderNo);
+                }
+                if (criteria.orderStatus != -1)
+                {
+                    sbSqlWhere.AppendFormat(" AND o.Status={0} ", criteria.orderStatus);
+                }
+                if (!string.IsNullOrWhiteSpace(criteria.superManName))
+                {
+                    sbSqlWhere.AppendFormat(" AND c.TrueName='{0}' ", criteria.superManName);
+                }
+                if (!string.IsNullOrWhiteSpace(criteria.superManPhone))
+                {
+                    sbSqlWhere.AppendFormat(" AND c.PhoneNo='{0}' ", criteria.superManPhone);
+                }
+                if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))
+                {
+                    sbSqlWhere.AppendFormat(" AND o.PubDate>='{0}' ", criteria.orderPubStart);
+                }
+                if (!string.IsNullOrWhiteSpace(criteria.orderPubEnd))
+                {
+                    sbSqlWhere.AppendFormat(" AND o.PubDate<='{0}' ", criteria.orderPubEnd);
+                }
+                if (criteria.GroupId != null)
+                {
+                    sbSqlWhere.AppendFormat(" AND o.GroupId={0} ", criteria.GroupId);
+                }
+                string tableList = @" dbo.[order] o WITH ( NOLOCK )
+                                LEFT JOIN dbo.clienter c WITH ( NOLOCK ) ON c.Id = o.clienterId
+                                LEFT JOIN dbo.business b WITH ( NOLOCK ) ON b.Id = o.businessId
+                                LEFT JOIN [dbo].[group] g WITH ( NOLOCK ) ON g.Id = b.GroupId ";
+                string orderByColumn = " o.Status ASC,o.PubDate DESC ";
+                return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
+        }
+        /// <summary>
+        /// 更新订单佣金
+        /// danny-20150320
+        /// </summary>
+        /// <param name="order"></param>
+        public bool UpdateOrderInfo(order order)
+        {
+            bool reslut = false;
+            try
+            {
+                string sql = @" update [dbo].[order] set OrderCommission=@OrderCommission where OrderNo=@OrderNo "; 
+                IDbParameters dbParameters = DbHelper.CreateDbParameters();
+                dbParameters.AddWithValue("@OrderNo", order.OrderNo);
+                dbParameters.AddWithValue("@OrderCommission", order.OrderCommission);
+                int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
+                if (i > 0) reslut = true;
+            }
+            catch (Exception ex)
+            {
+                reslut = false;
+                LogHelper.LogWriter(ex, "更新审核状态");
+                throw;
+            }
+            return reslut;
+        }
+
+        /// <summary>
+        /// 根据订单号查订单信息
+        /// danny-20150320
+        /// </summary>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        public OrderListModel GetOrderByNo(string orderNo)
+        {
+            string sql = @"SELECT top 1 o.[Id]
+                                        ,o.[OrderNo]
+                                        ,o.[PickUpAddress]
+                                        ,o.[PubDate]
+                                        ,o.[ReceviceName]
+                                        ,o.[RecevicePhoneNo]
+                                        ,o.[ReceviceAddress]
+                                        ,o.[ActualDoneDate]
+                                        ,o.[IsPay]
+                                        ,o.[Amount]
+                                        ,o.[OrderCommission]
+                                        ,o.[DistribSubsidy]
+                                        ,o.[WebsiteSubsidy]
+                                        ,o.[Remark]
+                                        ,o.[Status]
+                                        ,o.[clienterId]
+                                        ,o.[businessId]
+                                        ,o.[ReceviceCity]
+                                        ,o.[ReceviceLongitude]
+                                        ,o.[ReceviceLatitude]
+                                        ,o.[OrderFrom]
+                                        ,o.[OriginalOrderId]
+                                        ,o.[OriginalOrderNo]
+                                        ,o.[Quantity]
+                                        ,o.[Weight]
+                                        ,o.[ReceiveProvince]
+                                        ,o.[ReceiveArea]
+                                        ,o.[ReceiveProvinceCode]
+                                        ,o.[ReceiveCityCode]
+                                        ,o.[ReceiveAreaCode]
+                                        ,o.[OrderType]
+                                        ,o.[KM]
+                                        ,o.[GuoJuQty]
+                                        ,o.[LuJuQty]
+                                        ,o.[SongCanDate]
+                                        ,o.[OrderCount]
+                                        ,o.[CommissionRate]
+                                        ,o.[OrderSign]
+                                        ,b.[City] BusinessCity
+                                    FROM [dbo].[order] o WITH ( NOLOCK )
+                                    LEFT JOIN dbo.business b WITH ( NOLOCK ) ON b.Id = o.businessId
+                                    WHERE 1=1 ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@OrderNo", orderNo);
+            if (!string.IsNullOrWhiteSpace(orderNo))
+            {
+                sql += " AND OrderNo=@OrderNo";
+            }
+            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
+            var list = ConvertDataTableList<OrderListModel>(dt);
+            if(list!=null&&list.Count>0)
+            {
+                return list[0];
+            }
+            else
+            {
+                return null;
+            }
+            
+        }
+
+        /// <summary>
+        /// 订单指派超人
+        /// danny-20150320
+       /// </summary>
+       /// <param name="order"></param>
+       /// <returns></returns>
+        public bool RushOrder(OrderListModel order)
+        {
+            bool reslut = false;
+            try
+            {
+                string sql = @" update [order] set clienterId=@clienterId,Status=@Status where OrderNo=@OrderNo ";
+                IDbParameters dbParameters = DbHelper.CreateDbParameters();
+                dbParameters.AddWithValue("@clienterId", order.clienterId);
+                dbParameters.AddWithValue("@Status", ConstValues.ORDER_ACCEPT);
+                dbParameters.AddWithValue("@OrderNo", order.OrderNo);
+                int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
+                if (i > 0)
+                {
+                    reslut = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                reslut = false;
+                LogHelper.LogWriter(ex, "订单指派超人");
+                throw;
+            }
+            return reslut;
         }
 
     }

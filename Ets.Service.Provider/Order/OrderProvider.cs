@@ -5,6 +5,7 @@ using Ets.Model.DataModel.Bussiness;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DomainModel.Clienter;
+using Ets.Model.DomainModel.Order;
 using Ets.Model.ParameterModel.Order;
 using Ets.Service.IProvider.Order;
 using Ets.Service.IProvider.Subsidy;
@@ -12,6 +13,7 @@ using Ets.Service.IProvider.User;
 using Ets.Service.Provider.MyPush;
 using Ets.Service.Provider.Subsidy;
 using Ets.Service.Provider.User;
+using ETS.Data.PageData;
 using ETS.Page;
 using ETS.Transaction;
 using ETS.Transaction.Common;
@@ -56,8 +58,10 @@ namespace Ets.Service.Provider.Order
 
                 resultModel.businessName = from.BusinessName;
                 resultModel.businessPhone = from.BusinessPhone;
-                resultModel.pickUpCity = from.PickUpCity.Replace("市", "");
-
+                if (from.PickUpCity != null)
+                {
+                    resultModel.pickUpCity = from.PickUpCity.Replace("市", "");
+                }
 
                 if (from.PubDate.HasValue)
                 {
@@ -128,8 +132,11 @@ namespace Ets.Service.Provider.Order
 
                 resultModel.businessName = from.BusinessName;
                 resultModel.businessPhone = from.BusinessPhone;
-                resultModel.pickUpCity = from.PickUpCity.Replace("市", "");
 
+                if (from.PickUpCity != null)
+                {
+                    resultModel.pickUpCity = from.PickUpCity.Replace("市", "");
+                }
 
                 if (from.PubDate.HasValue)
                 {
@@ -294,5 +301,59 @@ namespace Ets.Service.Provider.Order
         }
 
         #endregion
+        /// <summary>
+        /// 根据参数获取订单
+        /// danny-20150319
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public OrderManage GetOrders(OrderSearchCriteria criteria)
+        {
+            var pagedQuery = new OrderManage();
+            PageInfo<OrderListModel> pageinfo = OrderDao.GetOrders<OrderListModel>(criteria);
+            
+
+
+            NewPagingResult pr = new NewPagingResult() { PageIndex = criteria.PagingRequest.PageIndex, PageSize = criteria.PagingRequest.PageSize, RecordCount = pageinfo.All, TotalCount = pageinfo.All };
+            List<OrderListModel> list = pageinfo.Records.ToList();
+            var orderlists = new OrderManageList(list, pr);
+            pagedQuery.orderManageList = orderlists;
+            return pagedQuery;
+        }
+        /// <summary>
+        /// 更新订单佣金
+        /// danny-20150320
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns></returns>
+        public bool UpdateOrderInfo(order order)
+        {
+            return OrderDao.UpdateOrderInfo(order);
+        }
+        /// <summary>
+        /// 根据订单号查订单信息
+        /// danny-20150320
+        /// </summary>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        public OrderListModel GetOrderByNo(string orderNo)
+        {
+            return OrderDao.GetOrderByNo(orderNo);
+        }
+        /// <summary>
+        /// 订单指派超人
+        /// danny-20150320
+       /// </summary>
+       /// <param name="order"></param>
+       /// <returns></returns>
+        public bool RushOrder(OrderListModel order)
+        {
+            if( OrderDao.RushOrder(order))
+            {
+                Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", order.businessId.ToString(), string.Empty);
+                return true;
+            }
+            return false;
+        }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Ets.Model.Common;
-using Ets.Model.DataModel.Clienter;
+using Ets.Model.DomainModel.Clienter;
 using Ets.Model.ParameterModel.Bussiness;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ets.Model.DomainModel.Clienter
+namespace Ets.Model.ParameterModel.Clienter
 {
     public class ClienterSearchCriteria
     {

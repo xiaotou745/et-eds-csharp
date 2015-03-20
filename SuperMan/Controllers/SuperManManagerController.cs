@@ -31,13 +31,13 @@ namespace SuperMan.Controllers
             }
                
             ViewBag.txtGroupId = account.GroupId;//集团id
-            var criteria = new Ets.Model.DomainModel.Clienter.ClienterSearchCriteria() { PagingRequest = new Ets.Model.Common.NewPagingResult(1, 15), Status = -1, GroupId = account.GroupId };
+            var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria() { PagingRequest = new Ets.Model.Common.NewPagingResult(1, 15), Status = -1, GroupId = account.GroupId };
             //var pagedList = ClienterLogic.clienterLogic().GetClienteres(criteria);
             var pagedList = iDistributionProvider.GetClienteres(criteria);
             return View(pagedList);
         }
         [HttpPost]
-        public ActionResult SuperManManager(Ets.Model.DomainModel.Clienter.ClienterSearchCriteria criteria)
+        public ActionResult SuperManManager(Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria criteria)
         {
             //var pagedList = ClienterLogic.clienterLogic().GetClienteres(criteria);
             var pagedList = iDistributionProvider.GetClienteres(criteria);
