@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using SuperMan.Models;
-using SuperMan.Models;
+﻿using System.Web;
+using Ets.Service.IProvider.AuthorityMenu;
+using Ets.Service.Provider.Authority;
 using SuperManCommonModel;
 using SuperManBusinessLogic.Authority_Logic;
 
@@ -22,17 +19,17 @@ namespace SuperMan.App_Start
                 if (HttpContext.Current.Items[CurrentUserContextCacheKey] == null)
                 {
                     var user = HttpContext.Current.User.Identity;
-                    var bllAccount = new AccountBussinessLogic();
-                    var account = bllAccount.Get(user.Name);
+                    IAuthorityMenuProvider bllAccount = new AuthorityMenuProvider(); 
+                    var account = bllAccount.GetAccountByName(user.Name);
                     if (account == null)
                     {
                         return UserContext.Empty;
-                    }
-
+                    } 
                     var userContext = new UserContext
                     {
                         Id = account.Id,
                         Name = account.LoginName,
+                        RoleId = account.RoleId,
                         AccountType = AccountType.AdminUser // (AccountType)account.AccountType,
                     };
                     //AppChannel accountChannel = account.AppChannels.FirstOrDefault();
@@ -67,7 +64,7 @@ namespace SuperMan.App_Start
         public int Id { get; set; }
 
         public int AppChannelId { get; set; }
-
+        public int RoleId { get; set; }
         public AccountType AccountType { get; set; }
 
         public string Name { get; set; }

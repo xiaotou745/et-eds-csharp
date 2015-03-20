@@ -1,6 +1,8 @@
-﻿@model SuperManCommonModel.Models.SubsidyManage
+﻿@*@model SuperManCommonModel.Models.SubsidyManage*@
+@model Ets.Model.DomainModel.Subsidy.SubsidyManage
 @using SuperManBusinessLogic.Group_Logic
-@using SuperManCommonModel.Models;
+@*@using SuperManCommonModel.Models;*@
+@using Ets.Model
 @{
     ViewBag.Title = "Order";
 }
@@ -54,64 +56,10 @@
         </form>
     </div>
 </div>
-<div>
-    <h4 style="color:black;font-weight:600">补帖设置记录</h4>
-    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
-        <thead>
-            <tr class="tdbg">
-                <th width="%5">序号</th>
-                <th>订单佣金(%)</th>
-                <th>网站补贴</th>
-                <th>开始日期</th>
-                <th>结束日期</th>
-                <th>所属集团</th>
-                @*<th>每公里费用</th>
-                <th>订单类型</th>*@
-            </tr>
-        </thead>
-        <tbody>
-            @{
-                var i = 0;
-                foreach (var item in Model.orderCountManageList.subsidyModel)
-                {
-                    i++;
-                    <tr>
-                        <td>@i</td>
-                        <td>@(item.OrderCommission.Value * 100)</td>
-                        <td>@item.WebsiteSubsidy</td>
-                        <td>@item.StartDate.Value.ToShortDateString()</td>
-                        <td>@item.EndDate.Value.ToShortDateString()</td>
-                        <td>
-                            @if (item.GroupId != null) //当前商户有集团信息
-                            {
-                                @Html.Raw(GroupLogic.groupLogic().GetGroupName(Convert.ToInt32(item.GroupId)))
-                            }
-                        </td>
-                        @*<td>@item.PKMCost</td>
-                       
-                            @{
-                    var orderTypeName = "";
-                    if (item.OrderType == 1)
-                    {
-                        orderTypeName = "送餐";
-                    }
-                    else if (item.OrderType == 2)
-                    {
-                        orderTypeName = "收餐具";
-                    }
-                    else
-                    {
-                        orderTypeName = "";
-                    }
-                    <td>@orderTypeName</td>
-                            }*@                        
-                    </tr>
-                }
-            }
-        </tbody>
-    </table>
-    @Html.Partial("_Pager", Model.orderCountManageList.PagingResult)
+<div class="bd clearfix" id="dataList">
+    @Html.Partial("_SubsidyManagerList", Model.subsidyManageList)
 </div>
+
 <script type="text/javascript">
     $(document).ready(function () {
         $('#selectDateStart').datepicker();
@@ -197,4 +145,22 @@
     $('#selectDateEnd').keyup(function () {
         $('#labDateEnd').hide();
     });
+    ////分页
+    var DEFAULT_PAGESIZE = 15;
+    var criteria = { PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE } };
+    art.ui.control.NewPager.enablePaging(document, refresh);
+    function refresh(pageIndex) {
+        var url = "/SubsidyManager/SubsidyManager";
+        if (pageIndex !== undefined) {
+            criteria.PagingRequest.PageIndex = pageIndex;
+        }
+        webExpress.utility.ajax.request
+            (
+                url,
+                criteria,
+                function (data) {
+                    $("#dataList").html(data);
+                });
+    };
+
 </script>

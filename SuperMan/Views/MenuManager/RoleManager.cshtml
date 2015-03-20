@@ -1,0 +1,259 @@
+﻿@using Ets.Model.DataModel.Authority
+@model List<AuthorityRoleModel>
+@{
+    ViewBag.Title = "Role";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}  
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：权限 > 角色设置
+    </h2>
+    <div class="SearchMd">
+        <table border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td> 
+                    <input type="submit" value="新增角色" class="searchBtn" onclick="showAdd();" id="btnAdd" /> 
+                </td>
+            </tr>
+        </table>
+    </div>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+        <thead> 
+            <tr class="tdbg">
+                <th width="%5">编号</th>
+                <th>角色名称</th> 
+                <th>状态</th> 
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                if (Model != null)
+                { 
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Id</td> 
+                            <td>@item.RoleName</td>
+                            @if (@item.BeLock)
+                            {
+                                <td>锁定</td>
+                            }
+                            else
+                            {
+                                <td>可用</td>
+                            }
+                            <td>
+                                <a href="javascript:void(0)" onclick="showUpdate(@item.Id,'@item.RoleName')">修改</a>
+                                <a href="javascript:void(0)" onclick="showMenu(@item.Id,'@item.RoleName')">分配权限</a>
+                            </td>
+                        </tr> 
+                    }
+                }
+            }
+        </tbody> 
+    </table>
+</div>
+
+@*新增角色*@
+<div>
+    <div class="add-openbox add-form" id="addDiv" style="width:500px">
+        <h2>
+            <p id="statusFin">新增角色</p>
+        </h2>
+        <fieldset>
+            <div class="control-group" style="width: 250px;margin: 0 auto;">
+                <label >角色称</label> 
+                <input  name="txtName" id="txtName" type="text">
+            </div>  
+        </fieldset>
+        <p class="btnbox">
+            <input value="确认" type="button" id="btnConfim" class="yesBtn" />                
+            <input value="关闭" type="button" class="J_closebox qxBtn" />
+        </p>
+    </div>
+</div>
+@*修改角色*@
+<div>
+    <div class="add-openbox add-form" id="updateDiv" style="width:500px">
+        <h2>
+            <p id="statusFin">修改角色</p>
+        </h2>
+        <input type="hidden" id="hidId"/>
+        <fieldset>
+            <div class="control-group" style="width: 250px;margin: 0 auto;">
+                <label >角色称</label> 
+                <input  name="txtuName" id="txtuName" type="text">
+            </div>  
+        </fieldset>
+        <p class="btnbox">
+            <input value="确认" type="button" id="btnUpdateConfim" class="yesBtn" />                
+            <input value="关闭" type="button" class="J_closebox qxBtn" />
+        </p>
+    </div>
+</div>
+@*菜单权限列表*@
+<div>
+    <div class="add-openbox add-form" id="MenuDiv" style="width:500px">
+        <h2>
+            <p id="statusFinMenu">菜单权限列表</p>
+        </h2>
+        <fieldset>
+            <input type="hidden" id="hidRid"/>
+            @{
+                var AllMenu = ViewBag.AllMenu as List<AuthorityMenuModel>;
+                if (AllMenu != null && AllMenu.Count > 0)
+                {
+                    List<AuthorityMenuModel> partMenus = (from m in AllMenu where m.ParId == 0 select m).ToList();
+                    foreach (AuthorityMenuModel pMenu in partMenus)
+                    {
+                        <div class="control-group">
+                            <label class="control-label" style="margin-top:8px">@pMenu.MenuName</label>
+                             <div class="controls">
+                                @{
+                                    List<AuthorityMenuModel> childMenus = (from m in AllMenu where m.ParId == pMenu.Id select m).ToList();
+                                    if (childMenus!=null && childMenus.Count > 0)
+                                    {
+                                        foreach(var cMenu in childMenus)
+                                        {
+                                            var checkid = "chkMenu"+@cMenu.Id;
+                                            <input type="checkbox" id="@checkid" name="checkMenus" authorityfuncid="@cMenu.Id" value="@cMenu.Id" /><label for="@checkid">@cMenu.MenuName</label>
+                                        }  
+                                    }
+                                    else
+                                    {
+                                        var noCheck ="nochekc"+ pMenu.Id;
+                                        <input type="checkbox" id="@noCheck"  disabled="disabled"/><label for="@noCheck">没子菜单</label>
+                                    }
+                                } 
+                             </div> 
+                        </div> 
+                    }
+                } 
+            }
+            
+        </fieldset>
+        <p class="btnbox">
+            <input value="确认" type="button" id="btnMenuConfim" class="yesBtn" />                
+            <input value="关闭" type="button" class="J_closebox qxBtn" />
+        </p>
+    </div>
+</div>
+
+<script>
+    var adminjs = new adminglass(); //实例化后台类  
+    //新增角色
+    $("#btnConfim").on('click', function () {
+        var txtName = $("#txtName").val(); //角色名称 
+        if (txtName == "") {
+            alert("请输入角色名称!");
+            return;
+        } 
+        var pars = { "RoleName": txtName };
+        var url = "/MenuManager/AddRole";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: pars,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert("添加成功!");
+                    window.location.href = "/MenuManager/RoleManager/";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    });
+
+    //修改角色
+    $("#btnUpdateConfim").on('click', function () {
+        var txtName = $("#txtuName").val(); //角色名称
+        var hidId = $("#hidId").val(); //角色id
+
+        if (txtName == "") {
+            alert("请输入角色名称!");
+            return;
+        } 
+        var pars = { "Id": hidId, "RoleName": txtName };
+        var url = "/MenuManager/UpdateRole";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: pars,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert("修改成功!");
+                    window.location.href = "/MenuManager/RoleManager/";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    }); 
+    
+    //显示权限菜单
+    function showMenu(id, name) {
+        $("#statusFinMenu").text("分配:"+name+"的权限"); 
+        $("#hidRid").val(id);
+        var pars = { "roleid": id };
+        var url = "/MenuManager/GetMenusByRole";
+        $('input[name=checkMenus]').removeAttr("checked");
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: pars,
+            success: function (result) {
+                if (result.IsSuccess) { 
+                    if (result.Data != "") {
+                        $.each(result.Data, function (key, val) {
+                            $('input[authorityfuncid=' + val + ']').attr('checked', 'true');
+                        }); 
+                    } 
+                    adminjs.openwinbox('#MenuDiv');
+                } else {
+                    alert(result.Message);
+                }
+            }
+        }); 
+        
+    }
+    //修改权限
+    $("#btnMenuConfim").on('click', function () {
+        var ids = "";
+        $('input[name="checkMenus"]:checked').each(function () {
+            var i = $(this).val();
+            ids += i+",";
+        });
+        var hidId = $("#hidRid").val(); //角色id 
+        var pars = { "rid": hidId, "ids": ids };
+        var url = "/MenuManager/EditRoleMenus";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: pars,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert("修改成功!");
+                    window.location.href = "/MenuManager/RoleManager/";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    });
+    
+    function showUpdate(id,name) {
+        $("#txtuName").val(name); //菜单名称
+        $("#hidId").val(id); //菜单id
+        adminjs.openwinbox('#updateDiv');
+    }
+    function showAdd() {
+        adminjs.openwinbox('#addDiv');
+    }
+    //关闭弹层
+    $('.J_closebox').click(function () {
+        adminjs.closewinbox('.add-openbox');
+        return false;
+    });
+</script>

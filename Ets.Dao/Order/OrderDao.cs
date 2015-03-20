@@ -207,6 +207,7 @@ namespace Ets.Dao.Order
         /// <returns>订单号</returns>
         public string CreateToSql(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
         {
+
             #region 操作business表取商户id
             int bussinessId;//商户id
             ///查询该商户是否已存在
@@ -323,11 +324,6 @@ namespace Ets.Dao.Order
                 insertOrderDetaiParas.AddWithValue("@FormDetailID", paramodel.order_details[i].detail_id);    //第三方平台明细id,与GroupID组成联合唯一约束
                 insertOrderDetaiParas.AddWithValue("@GroupID", paramodel.store_info.group);    //集团id,与第三方平台明细id组成联合唯一约束
                 int orderdetailId = ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrderDetailsql, insertOrderDetaiParas));
-                if (orderdetailId == null)//添加失败 回滚 返回空 
-                {
-                    addBool = false; //添加失败
-                    break;
-                }
             }
             if (!addBool)
                 return null;  //添加失败

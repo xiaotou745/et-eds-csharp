@@ -1,0 +1,102 @@
+﻿
+@using Ets.Model.DataModel.Authority
+@using Ets.Service.Provider.Authority
+@using SuperMan.App_Start
+@using Ets.Service.IProvider.AuthorityMenu;
+@{
+    Layout = null;
+    IAuthorityMenuProvider iauthority=new AuthorityMenuProvider();
+    List<int> myMenus = iauthority.GetMenuIdsByRoloId(UserContext.Current.RoleId);
+    List<AuthorityMenuModel> menus = iauthority.GetAllMenuList();
+}
+<!DOCTYPE html>
+
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>管理后台</title>
+    <link href="~/Content/fromwangying/admin.css" rel="stylesheet" />
+    <link href="~/Content/css/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/pager.css" rel="stylesheet" />
+    @Styles.Render("~/css")
+    <link rel="shortcut icon" type="image/ico" href="/favicon.ico">
+    @RenderSection("styles", false)
+    <script type="text/javascript" src="/Scripts/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/Scripts/common/admin.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/bootbox.js"></script>
+    <script type="text/javascript" src="~/Scripts/common/webExpress.js"></script>
+    <script type="text/javascript" src="~/Scripts/common/usa.js"></script>
+    <script type="text/javascript" src="~/Scripts/common/Pager.js"></script>
+    <script type="text/javascript" src="~/Scripts/common/NewPager.js"></script>
+    <script type="text/javascript" src="~/Scripts/common/webExpress.utility.js"></script>
+    <script type="text/javascript" src="~/Scripts/common/webExpress.utility.ajax.js"></script>
+    <script type="text/javascript" src="~/Scripts/usaArea.js"></script>
+    <script type="text/javascript" src="~/Scripts/usaarea.retriever.js"></script>
+
+</head>
+<body>
+    <div class="container-fluid">
+        <header class="hd clearfix">
+            <div class="logo">
+                <div class="toptitle">
+                    SuperMan管理后台
+                </div>
+            </div>
+            <div class="loginInfo" style="width: 460px;">
+                您好： <strong>@UserContext.Current.Name</strong>，欢迎使用<span class="line">|</span><a href="/Account/LogOff" class="importMsg">退出</a>
+            </div>
+        </header>
+        <div class="main-container">
+            <div class="sidebar">
+                <ul class="nav nav-list">
+                    <li>
+                        <a href="/HomeCount/Index">
+                            <i class="homeicon"></i>
+                            <span class="menu-text">后台首页</span>
+                        </a>
+                    </li> 
+                        @{
+                            List<AuthorityMenuModel> partMenus = (from m in menus where m.ParId == 0 select m).ToList();
+                            foreach (var pMenu in partMenus)
+                            { <li>
+                                <a class="dropdown-toggle" href="javascript:void(0);">
+                                    <i class="skuicon"></i>
+                                    <span class="menu-text">@pMenu.MenuName</span>
+                                    <b class="arrow icon-angle-down"></b>
+                                </a>
+                                <ul class="submenu">
+                                    @{
+                                        List<AuthorityMenuModel> childMenus = (from m in menus where m.ParId == pMenu.Id && pMenu.IsButton==false select m).ToList();
+                                        if (childMenus!=null && childMenus.Count > 0)
+                                        {
+                                            foreach(var cMenu in childMenus)
+                                            {
+                                                if(myMenus.Contains(cMenu.Id) && !cMenu.IsButton){<li><a href="@cMenu.Url" data-url-def="#">@cMenu.MenuName</a></li> }
+                                            }  
+                                        }
+                                    }  
+                                </ul> </li>  
+                            }
+                        }  
+                </ul>
+                <div id="sidebar-collapse" class="sidebar-collapse">
+                    <i data-icon2="icon-double-angle-right" data-icon1="icon-double-angle-left" class="icon-double-angle-left"></i>
+                </div>
+            </div>
+            <div class="main-content">
+                <div class="page-content">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+   </div>
+    @Scripts.Render("~/js")
+    <script type="text/javascript" src="~/Scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/Layout/Layout.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.colorbox-min.js"></script>
+    @RenderSection("scripts", false)
+</body>
+</html>
