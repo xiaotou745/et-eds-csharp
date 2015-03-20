@@ -58,8 +58,10 @@ namespace Ets.Service.Provider.Order
 
                 resultModel.businessName = from.BusinessName;
                 resultModel.businessPhone = from.BusinessPhone;
-                resultModel.pickUpCity = from.PickUpCity.Replace("市", "");
-
+                if (from.PickUpCity != null)
+                {
+                    resultModel.pickUpCity = from.PickUpCity.Replace("市", "");
+                }
 
                 if (from.PubDate.HasValue)
                 {
@@ -130,8 +132,11 @@ namespace Ets.Service.Provider.Order
 
                 resultModel.businessName = from.BusinessName;
                 resultModel.businessPhone = from.BusinessPhone;
-                resultModel.pickUpCity = from.PickUpCity.Replace("市", "");
 
+                if (from.PickUpCity != null)
+                {
+                    resultModel.pickUpCity = from.PickUpCity.Replace("市", "");
+                }
 
                 if (from.PubDate.HasValue)
                 {

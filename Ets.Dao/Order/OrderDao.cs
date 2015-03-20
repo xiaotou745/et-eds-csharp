@@ -256,13 +256,13 @@ namespace Ets.Dao.Order
                 OriginalOrderNo,PubDate,SongCanDate,IsPay,Amount,
                 Remark,Weight,DistribSubsidy,OrderCount,ReceviceName,
                 RecevicePhoneNo,ReceiveProvinceCode,ReceiveCityCode,ReceiveAreaCode,ReceviceAddress,
-                ReceviceLongitude,ReceviceLatitude,businessId)
-                OUTPUT Inserted.OrderNo 
+                ReceviceLongitude,ReceviceLatitude,businessId,PickUpAddress,Payment )
+                OUTPUT Inserted.OrderNo
                 Values(@OrderNo,
                 @OriginalOrderNo,@PubDate,@SongCanDate,@IsPay,@Amount,
                 @Remark,@Weight,@DistribSubsidy,@OrderCount,@ReceviceName,
                 @RecevicePhoneNo,@ReceiveProvinceCode,@ReceiveCityCode,@ReceiveAreaCode,@ReceviceAddress,
-                @ReceviceLongitude,@ReceviceLatitude,@BusinessId)";
+                @ReceviceLongitude,@ReceviceLatitude,@BusinessId,@PickUpAddress,@Payment)";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             ///基本参数信息
             dbParameters.AddWithValue("@OrderNo", Helper.generateOrderCode(bussinessId));  //根据商户id生成订单号(15位));
@@ -285,6 +285,8 @@ namespace Ets.Dao.Order
             dbParameters.AddWithValue("@ReceviceLongitude", paramodel.address.longitude);    //用户收货地址所在区域经度
             dbParameters.AddWithValue("@ReceviceLatitude", paramodel.address.latitude);    //用户收货地址所在区域纬度
             dbParameters.AddWithValue("@BusinessId", bussinessId);    //商户id
+            dbParameters.AddWithValue("@PickUpAddress", paramodel.store_info.address);    //取货地址即商户地址
+            dbParameters.AddWithValue("@Payment", paramodel.payment);    //取货地址即商户地址
             string orderNo = ParseHelper.ToString(DbHelper.ExecuteScalar(SuperMan_Read, insertOrdersql, dbParameters));
             if (string.IsNullOrWhiteSpace(orderNo))//添加失败 
                 return null;
@@ -331,8 +333,8 @@ namespace Ets.Dao.Order
         {
             Count = 0; Money = 0;
             string sql = @" SELECT 
-                             COUNT(id) AS acount,
-                             SUM(Amount) amount
+                             SUM(OrderCount) AS acount,
+                             SUM(Amount) amount 
                              FROM dbo.[order](NOLOCK) WHERE  CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120)
                              AND [Status]=1";
             DataSet set = DbHelper.ExecuteDataset(SuperMan_Read, sql);
@@ -340,7 +342,7 @@ namespace Ets.Dao.Order
             if (dt == null && dt.Rows.Count <= 0)
             {
                 return;
-            }
+            } 
             DataRow row = dt.Rows[0];
             Count = ParseHelper.ToInt(row["acount"], 0);
             Money = ParseHelper.ToDecimal(row["amount"], 0);
