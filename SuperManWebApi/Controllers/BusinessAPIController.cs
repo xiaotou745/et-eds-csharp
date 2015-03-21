@@ -630,6 +630,7 @@ namespace SuperManWebApi.Controllers
                 return Ets.Model.Common.ResultModel<bool>.Conclude(CancelOrderStatus.OrderEmpty);
             }
             var order = OrderLogic.orderLogic().GetOrderById(OrderId);
+            //int result = iOrderProvider.GetOrderByOrderNo(OrderId);
             if (order == null)
             {
                 return Ets.Model.Common.ResultModel<bool>.Conclude(CancelOrderStatus.OrderIsNotExist);

@@ -12,6 +12,7 @@ using Ets.Service.IProvider.User;
 using Ets.Service.Provider.MyPush;
 using Ets.Service.Provider.Subsidy;
 using Ets.Service.Provider.User;
+using ETS.Enums;
 using ETS.Page;
 using ETS.Transaction;
 using ETS.Transaction.Common;
@@ -299,5 +300,27 @@ namespace Ets.Service.Provider.Order
         }
 
         #endregion
+
+        /// <summary>
+        /// 根据订单号查询 是否存在该订单
+        /// wangchao 
+        /// </summary>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        public int GetOrderByOrderNo(string orderNo)
+        {
+            return OrderDao.GetOrderByOrderNo(orderNo);
+        }
+        /// <summary>
+        /// 根据订单号 修改订单状态
+        /// wc
+        /// </summary>
+        /// <param name="orderNo">订单号</param>
+        /// <param name="orderStatus">订单状态</param>
+        /// <returns></returns>
+        public int UpdateOrderStatus(string orderNo, int orderStatus)
+        {
+            return OrderDao.CancelOrderStatus(orderNo, orderStatus);
+        }
     }
 }
