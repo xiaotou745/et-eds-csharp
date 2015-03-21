@@ -46,6 +46,12 @@
     <Compile Include="Common\PagedList.cs" />
     <Compile Include="Common\ParaModel.cs" />
     <Compile Include="Common\ResultModelServicePhone.cs" />
+    <Compile Include="DataModel\Authority\AccountModel.cs" />
+    <Compile Include="DataModel\Authority\AuthorityAccountMenuSet.cs" />
+    <Compile Include="DataModel\Authority\AuthorityDepartmentModel.cs" />
+    <Compile Include="DataModel\Authority\AuthorityRoleModel.cs" />
+    <Compile Include="DataModel\Authority\AuthorityRoleMentMenuSet.cs" />
+    <Compile Include="DataModel\Authority\AuthorityMenuModel.cs" />
     <Compile Include="DataModel\Bussiness\BusiLoginResultModel.cs" />
     <Compile Include="DataModel\Bussiness\BusiRegisterResultModel.cs" />
     <Compile Include="DataModel\Clienter\ClienterLoginResultModel.cs" />
@@ -54,11 +60,14 @@
     <Compile Include="DataModel\Order\OrderCommission.cs" />
     <Compile Include="Common\PaginResult.cs" />
     <Compile Include="Common\ResultInfo.cs" />
+    <Compile Include="DomainModel\Area\AreaModel.cs" />
+    <Compile Include="DataModel\Order\OrderListModel.cs" />
+    <Compile Include="DataModel\Subsidy\subsidy.cs" />
+    <Compile Include="DomainModel\Area\AreaModelList.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessManage.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessModel.cs" />
     <Compile Include="DomainModel\Bussiness\BusiOrderSqlModel.cs" />
     <Compile Include="DomainModel\Clienter\ClienterManage.cs" />
-    <Compile Include="DomainModel\Clienter\ClienterSearchCriteria.cs" />
     <Compile Include="DomainModel\Clienter\ClienterModel.cs" />
     <Compile Include="DomainModel\Clienter\ClientOrderModel.cs" />
     <Compile Include="DataModel\Clienter\Clienter.cs" />
@@ -69,6 +78,10 @@
     <Compile Include="Common\ResultModel.cs" />
     <Compile Include="DomainModel\Clienter\ClientOrderResultModel.cs" />
     <Compile Include="DomainModel\Group\GroupApiConfigModel.cs" />
+    <Compile Include="DomainModel\Order\OrderManage.cs" />
+    <Compile Include="DomainModel\Order\OrderModel.cs" />
+    <Compile Include="DomainModel\Subsidy\HomeCountCriteria.cs" />
+    <Compile Include="DomainModel\Subsidy\SubsidyManage.cs" />
     <Compile Include="DomainModel\Subsidy\SubsidyResultModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BusiOrderInfoModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BussOrderParaModelApp.cs" />
@@ -76,6 +89,7 @@
     <Compile Include="ParameterModel\Bussiness\LoginModel.cs" />
     <Compile Include="ParameterModel\Bussiness\RegisterInfoModel.cs" />
     <Compile Include="ParameterModel\Clienter\ChangeWorkStatusPM.cs" />
+    <Compile Include="ParameterModel\Clienter\ClienterSearchCriteria.cs" />
     <Compile Include="ParameterModel\Clienter\ClientOrderInfoModel.cs" />
     <Compile Include="ParameterModel\Clienter\LoginModel.cs" />
     <Compile Include="ParameterModel\Group\GroupListModel.cs" />
@@ -84,12 +98,12 @@
     <Compile Include="ParameterModel\Order\ClientOrderInfoModel.cs" />
     <Compile Include="ParameterModel\Order\GetStatusPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\CreatePM_OpenApi.cs" />
+    <Compile Include="ParameterModel\Order\OrderSearchCriteria.cs" />
+    <Compile Include="ParameterModel\Subsidy\SubsidyModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserModel.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DomainModel\Order\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\ETS.Core\ETS.Core.csproj">
       <Project>{bba67a86-afd6-46f2-bbd9-5dfb5bfdafe2}</Project>

@@ -43,26 +43,6 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Bussiness.BusiRegisterResultModel> PostRegisterInfo_B(Ets.Model.ParameterModel.Bussiness.RegisterInfoModel model)
         {
-            /*
-            if (string.IsNullOrEmpty(model.phoneNo))   //手机号非空验证
-                return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
-            else if (BusiLogic.busiLogic().CheckExistPhone(model.phoneNo))  //判断该手机号是否已经注册过
-                return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberRegistered);
-            else if (string.IsNullOrEmpty(model.passWord))   //密码非空验证
-                return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PasswordEmpty);
-            else if (model.verifyCode != SupermanApiCaching.Instance.Get(model.phoneNo))  //判断验证法录入是否正确
-                return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode); //CustomerRegisterStatus用户注册信息枚举
-            else if (string.IsNullOrEmpty(model.city) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
-                return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
-            var business = RegisterInfoModelTranslator.Instance.Translate(model);
-            bool result = BusiLogic.busiLogic().Add(business);
-            var resultModel = new BusiRegisterResultModel
-            {
-                userId = business.Id
-            };
-            return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
-             * 
-             * */
             BusinessProvider bprovider = new BusinessProvider();
             return bprovider.PostRegisterInfo_B(model);
         }
@@ -230,29 +210,6 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Bussiness.BusiLoginResultModel> PostLogin_B(Ets.Model.ParameterModel.Bussiness.LoginModel model)
         {
-
-            /*var business = BusiLogic.busiLogic().GetBusiness(model.phoneNo, model.passWord);
-            if (business == null)
-            {
-                return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
-            }
-            var result = new BusiLoginResultModel()
-            {
-                userId = business.Id,
-                status = business.Status,
-                city = business.City,
-                Address = business.Address,
-                districtId = business.districtId,
-                district = business.district,
-                Landline = business.Landline,
-                Name = business.Name,
-                cityId = business.CityId,
-                phoneNo = business.PhoneNo2 == null ? business.PhoneNo : business.PhoneNo2,
-                DistribSubsidy = business.DistribSubsidy == null ? 0 : business.DistribSubsidy
-            };
-             return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.Success, result);
-            */
-
             return new BusinessProvider().PostLogin_B(model);
 
         }

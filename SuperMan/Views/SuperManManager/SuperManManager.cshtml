@@ -1,8 +1,7 @@
 ﻿@model ClienterManage
-@*@using SuperManCommonModel.Models;*@
 @using Ets.Model.DomainModel.Clienter;
 @using SuperManBusinessLogic.CommonLogic
- @using SuperManBusinessLogic.Group_Logic
+@using SuperManBusinessLogic.Group_Logic
 @{
     ViewBag.Title = "Order";
 }
@@ -358,7 +357,7 @@
          );
     })
     ////分页
-    art.ui.control.Pager.enablePaging(document, refresh);
+    art.ui.control.NewPager.enablePaging(document, refresh);
     function refresh(pageIndex) {
         var url = "/SuperManManager/SuperManManager";
         if (pageIndex !== undefined) {

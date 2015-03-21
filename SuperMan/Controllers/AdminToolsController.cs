@@ -6,16 +6,17 @@ using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using SuperMan.App_Start;
 
 namespace SuperMan.Controllers
-{
+{ 
     public class AdminToolsController : Controller
     {
         private static IAdminToolsProvider adminToolsProvider
         {
             get { return new AdminToolsProvider(); }
         }
-        // GET: AdminTools
+        // GET: AdminTools 
         public ActionResult AdminTools(string strSql)
         { 
             if(!string.IsNullOrWhiteSpace(strSql))

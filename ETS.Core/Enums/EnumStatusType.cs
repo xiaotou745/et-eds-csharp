@@ -177,4 +177,16 @@ namespace ETS.Enums
         [DisplayText("失败")]
         Failed = 1
     }
+
+    /// <summary>
+    /// 省市区信息
+    /// </summary>
+    public enum CityStatus
+    {
+        [DisplayText("最新")]
+        Newest = 0,
+        [DisplayText("非最新")]
+        UnNewest = 1
+    }
+
 }

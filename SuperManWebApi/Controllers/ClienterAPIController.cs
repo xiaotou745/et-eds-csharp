@@ -71,32 +71,6 @@ namespace SuperManWebApi.Controllers
         [ActionStatus(typeof(LoginModelStatus))]
         public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterLoginResultModel> PostLogin_C(Ets.Model.ParameterModel.Clienter.LoginModel model)
         {
-            /*
-            SuperManCore.LogHelper.LogWriter("用户登录", new { model = model });
-            try
-            {
-                var aClienter = ClienterLogic.clienterLogic().GetClienter(model.phoneNo, model.passWord);
-                if (aClienter == null)
-                {
-                    return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
-                }
-                var result = new ClienterLoginResultModel()
-                {
-                    userId = aClienter.Id,
-                    phoneNo = aClienter.PhoneNo,
-                    status = aClienter.Status,
-                    Amount = aClienter.AccountBalance,
-                    city = string.IsNullOrWhiteSpace(aClienter.City) ? null : aClienter.City.Trim(),  //城市
-                    cityId = string.IsNullOrWhiteSpace(aClienter.CityId) ? null : aClienter.CityId.Trim()  //城市编码
-                };
-                return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.Success, result);
-            }
-            catch (Exception ex)
-            {
-                SuperManCore.LogHelper.LogWriter("登录错误", new { ex = ex });
-                return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
-            }
-             * */
             return new ClienterProvider().PostLogin_C(model);
         }
         /// <summary>

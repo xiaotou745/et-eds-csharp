@@ -37,6 +37,11 @@ namespace Ets.Model.ParameterModel.Order
         public bool is_pay { get; set; }
 
         /// <summary>
+        /// 支付类型 默认0  0 现金
+        /// </summary>
+        public int payment { get; set; }
+
+        /// <summary>
         /// 订单金额，精确到两位小数
         /// </summary>
         [Required]
@@ -225,6 +230,11 @@ namespace Ets.Model.ParameterModel.Order
     /// </summary>
     public class OrderDetail
     {
+        /// <summary>
+        ///  第三方订单明细id
+        /// </summary>
+        [Required]
+        public int detail_id { get; set; }
 
         /// <summary>
         /// 商品名称
