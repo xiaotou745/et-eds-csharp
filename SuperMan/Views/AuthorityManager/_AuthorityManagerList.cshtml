@@ -1,4 +1,5 @@
-﻿@model SuperManCommonModel.Models.AuthorityManageList
+﻿@*@model SuperManCommonModel.Models.AuthorityManageList*@
+@model Ets.Model.DomainModel.Authority.AuthorityManageList
 @using SuperMan.App_Start
 @using SuperManBusinessLogic.Group_Logic
 
@@ -52,7 +53,7 @@
         }
     </tbody>
 </table>
-@Html.Partial("_Pager", Model.PagingResult)
+@Html.Partial("_NewPager", Model.PagingResult)
 <div class="add-openbox zpsh-openw" id="Close_deletebox">
     <h2>删除确认</h2>
     <p class="textinfo">确定要删除此用户吗? 清除后不可恢复!</p>
@@ -64,7 +65,7 @@
 <script type="text/javascript">
     var adminjs = new adminglass(); //实例化后台类
     var DEFAULT_PAGESIZE = 15;
-    var criteria = { PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE } };
+    var criteria = { PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE } };
     var currentId;
     $(document).ready(function () {        
         

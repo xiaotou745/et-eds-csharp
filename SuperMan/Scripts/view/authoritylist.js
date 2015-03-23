@@ -181,4 +181,27 @@
             });
         });
     })
+    //查看
+    $(".accountView").bind("click", function () {
+
+    });
+    //删除
+    $(".accountDel").bind("click", function () {
+        var id = $(this).closest("tr").attr("id");
+        var paramaters = { "id": id };
+        var url = "/AuthorityManager/Delete";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    window.location.href = "/AuthorityManager/AuthorityManager";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    });
+
 });

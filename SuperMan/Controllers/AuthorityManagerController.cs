@@ -1,4 +1,6 @@
-﻿using SuperManBusinessLogic.Authority_Logic;
+﻿using Ets.Service.IProvider.AuthorityMenu;
+using Ets.Service.Provider.Authority;
+using SuperManBusinessLogic.Authority_Logic;
 using SuperManCommonModel;
 using SuperManCommonModel.Entities;
 using SuperManCommonModel.Models;
@@ -19,7 +21,7 @@ namespace SuperMan.Controllers
     [WebHandleError]
     public class AuthorityManagerController : Controller
     {
-        
+        IAuthorityMenuProvider iAuthorityMenuProvider = new AuthorityMenuProvider();
         // GET: AuthorityManager
        /// <summary>
        /// 后台用户管理列表页面
@@ -35,8 +37,9 @@ namespace SuperMan.Controllers
            }
                 
             ViewBag.txtGroupId = account.GroupId;//集团id
-            var criteria = new AuthoritySearchCriteria() { PagingRequest = new PagingResult(0, 15),GroupId=account.GroupId};
-            var authorityModel = AuthorityLogic.authorityLogic().GetAuthorityManage(criteria);
+            var criteria = new Ets.Model.ParameterModel.Authority.AuthoritySearchCriteria() { PagingRequest = new Ets.Model.Common.NewPagingResult (1, 15),GroupId=account.GroupId};
+            var authorityModel = iAuthorityMenuProvider.GetAuthorityManage(criteria);
+            //var authorityModel = AuthorityLogic.authorityLogic().GetAuthorityManage(criteria);
             return View(authorityModel);
         }
         /// <summary>
@@ -45,10 +48,11 @@ namespace SuperMan.Controllers
         /// <param name="criteria"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult AuthorityManager(AuthoritySearchCriteria criteria)
+        public ActionResult AuthorityManager(Ets.Model.ParameterModel.Authority.AuthoritySearchCriteria criteria)
         {
             //var criteria = new AuthoritySearchCriteria() { PagingRequest = new PagingResult(0, 15) };
-            var authorityModel = AuthorityLogic.authorityLogic().GetAuthorityManage(criteria);
+            //var authorityModel = AuthorityLogic.authorityLogic().GetAuthorityManage(criteria);
+            var authorityModel = iAuthorityMenuProvider.GetAuthorityManage(criteria);
             var item = authorityModel.authorityManageList;
             return PartialView("_AuthorityManagerList", item);
         }
@@ -59,8 +63,9 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult HasAccountName(string accountName, string loginName)
         { 
-            var account = new account {LoginName = loginName, UserName = accountName};
-            return Json(AuthorityLogic.authorityLogic().HasAccountName(account) ? new ResultModel(true, "用户名已存在") : new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
+            var account = new Ets.Model.DataModel.Authority.account  {LoginName = loginName, UserName = accountName};
+            return Json(iAuthorityMenuProvider.CheckHasAccountName(account) ? new Ets.Model.Common.ResultModel(true, "用户名已存在") : new Ets.Model.Common.ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
+            //return Json(AuthorityLogic.authorityLogic().HasAccountName(account) ? new ResultModel(true, "用户名已存在") : new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
         }
         /// <summary>
         /// 添加用户 
@@ -71,29 +76,30 @@ namespace SuperMan.Controllers
         {
             if (string.IsNullOrEmpty(accountName.Trim()))
             {
-                return Json(new ResultModel(true, "用户名不能为空"), JsonRequestBehavior.AllowGet);
+                return Json(new Ets.Model.Common.ResultModel(true, "用户名不能为空"), JsonRequestBehavior.AllowGet);
             }
             if (string.IsNullOrEmpty(loginName.Trim()))
             {
-                return Json(new ResultModel(true, "登录名不能为空"), JsonRequestBehavior.AllowGet);
+                return Json(new Ets.Model.Common.ResultModel(true, "登录名不能为空"), JsonRequestBehavior.AllowGet);
             }
             if (string.IsNullOrEmpty(password.Trim()))
             {
-                return Json(new ResultModel(true, "密码不能为空"), JsonRequestBehavior.AllowGet);
+                return Json(new Ets.Model.Common.ResultModel(true, "密码不能为空"), JsonRequestBehavior.AllowGet);
             }
 
-            var account = new account();
+            var account = new Ets.Model.DataModel.Authority.account();
             account.LoginName = loginName;
             account.UserName = accountName;
             account.GroupId = groupId;//集团id  
             account.Password = MD5Helper.MD5(password);
-            account.Status = ConstValues.AccountAvailable;
-            if (AuthorityLogic.authorityLogic().HasAccountName(account))
+            account.Status = Ets.Model.Common.ConstValues.AccountAvailable;
+            if (iAuthorityMenuProvider.CheckHasAccountName(account))
             {
-                return Json(new ResultModel(true, "用户名已存在"), JsonRequestBehavior.AllowGet);
+                return Json(new Ets.Model.Common.ResultModel(true, "用户名已存在"), JsonRequestBehavior.AllowGet);
             }
-            AuthorityLogic.authorityLogic().AddAccount(account);
-            return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
+            //AuthorityLogic.authorityLogic().AddAccount(account);
+            iAuthorityMenuProvider.AddAccount(account);
+            return Json(new Ets.Model.Common.ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
         public JsonResult saveAuthority(AuthorityListModel model)
@@ -113,20 +119,22 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult Delete(int id)
         {
-            bool b = AuthorityLogic.authorityLogic().DeleteById(id);
+            //bool b = AuthorityLogic.authorityLogic().DeleteById(id);
+            bool b = iAuthorityMenuProvider.DeleteAccountById(id);
             if (b)
             {
-                return Json(new ResultModel(true, "删除成功"), JsonRequestBehavior.AllowGet);
+                return Json(new Ets.Model.Common.ResultModel(true, "删除成功"), JsonRequestBehavior.AllowGet);
             }
             else
             {
-                return Json(new ResultModel(false, "删除失败"), JsonRequestBehavior.AllowGet);
+                return Json(new Ets.Model.Common.ResultModel(false, "删除失败"), JsonRequestBehavior.AllowGet);
             }
         }
         [HttpPost]
         public JsonResult ModifyPassword(int id, string modifypassword)
         {
-            bool b = AuthorityLogic.authorityLogic().ModifyPwdById(id, MD5Helper.MD5(modifypassword));
+            //bool b = AuthorityLogic.authorityLogic().ModifyPwdById(id, MD5Helper.MD5(modifypassword));
+            bool b =iAuthorityMenuProvider.ModifyPwdById(id, MD5Helper.MD5(modifypassword));
             if (b)
             {
                 return Json(new ResultModel(true, "修改成功"), JsonRequestBehavior.AllowGet);

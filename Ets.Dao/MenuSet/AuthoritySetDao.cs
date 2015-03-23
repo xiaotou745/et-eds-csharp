@@ -8,6 +8,10 @@ namespace Ets.Dao.MenuSet
     using ETS.Data.Core;
     using Model.DataModel.Authority;
     using System.Collections.Generic;
+    using Ets.Model.ParameterModel.Authority;
+    using ETS.Data.PageData;
+    using System.Text;
+    using System;
 
     /// <summary>
     /// 菜单权限数据操作类-平扬 2015.3.18
@@ -491,5 +495,183 @@ namespace Ets.Dao.MenuSet
         } 
         
         #endregion
+
+        /// <summary>
+        /// 后台用户列表查询
+        /// danny-20150320
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<T> GetAuthorityManage<T>(AuthoritySearchCriteria criteria)
+        {
+            string columnList = @"   [Id]
+                                    ,[Password]
+                                    ,[UserName]
+                                    ,[LoginName]
+                                    ,[Status]
+                                    ,[AccountType]
+                                    ,[FADateTime]
+                                    ,[FAUser]
+                                    ,[LCDateTime]
+                                    ,[LCUser]
+                                    ,[GroupId]
+                                    ,[RoleId] ";
+            var sbSqlWhere = new StringBuilder(" 1=1 AND Status=1 ");
+            if (criteria.GroupId != null)
+            {
+                sbSqlWhere.AppendFormat(" AND GroupId={0} ", criteria.GroupId);
+            }
+            if (!string.IsNullOrEmpty(criteria.UserName))
+            {
+                sbSqlWhere.AppendFormat(" AND UserName={0} ", criteria.UserName);
+            }
+            string tableList = @" account  WITH (NOLOCK)   ";
+            string orderByColumn = " Id DESC ";
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
+        }
+
+        /// <summary>
+        /// 检查当前用户是否存在
+        /// danny-20150323
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        public bool CheckHasAccountName(account account)
+        {
+            try
+            {
+                string sql = "SELECT COUNT(*) FROM account WITH (NOLOCK) WHERE (UserName=@UserName OR LoginName=@LoginName) AND Status = 1 ";
+                IDbParameters parm = DbHelper.CreateDbParameters();
+                parm.AddWithValue("@UserName", account.UserName);
+                parm.AddWithValue("@LoginName", account.LoginName);
+                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm)) > 0 ? true : false;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex, "检查当前用户是否存在");
+                return false;
+                throw;
+            }
+        }
+       
+
+        /// <summary>
+        /// 添加用户
+        /// danny-20150323
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        public bool AddAccount(account account)
+        {
+            try
+            {
+                string sql = @"
+                           INSERT INTO account
+                               ([Password]
+                               ,[UserName]
+                               ,[LoginName]
+                               ,[Status]
+                               ,[AccountType]
+                               ,[FADateTime]
+                               ,[FAUser]
+                               ,[LCDateTime]
+                               ,[LCUser]
+                               ,[GroupId]
+                               ,[RoleId])
+                         VALUES
+                               (@Password
+                               ,@UserName
+                               ,@LoginName
+                               ,@Status
+                               ,@AccountType
+                               ,@FADateTime
+                               ,@FAUser
+                               ,@LCDateTime
+                               ,@LCUser
+                               ,@GroupId
+                               ,@RoleId)SELECT @@IDENTITY
+                        ";
+                IDbParameters parm = DbHelper.CreateDbParameters();
+                parm.AddWithValue("@Password", account.Password);
+                parm.AddWithValue("@UserName", account.UserName);
+                parm.AddWithValue("@LoginName", account.LoginName);
+                parm.AddWithValue("@Status", account.Status);
+                parm.AddWithValue("@AccountType", account.AccountType);
+                parm.AddWithValue("@FADateTime", account.FADateTime);
+                parm.AddWithValue("@FAUser", account.FAUser);
+                parm.AddWithValue("@LCDateTime", account.LCDateTime);
+                parm.AddWithValue("@LCUser", account.LCUser);
+                parm.AddWithValue("@GroupId", account.GroupId);
+                parm.AddWithValue("@RoleId", account.RoleId);
+                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm)) > 0 ? true : false;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter("添加用户", new { ex = ex, account = account });
+                return false;
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///  删除用户
+        /// danny-20150323
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public bool DeleteAccountById(int id)
+        {
+            bool reslut = false;
+            try
+            {
+                string sql = " update account set Status=@Status where Id=@id ";
+                IDbParameters dbParameters = DbHelper.CreateDbParameters();
+                dbParameters.AddWithValue("id", id);
+                dbParameters.AddWithValue("Status", Ets.Model.Common.ConstValues.AccountDisabled);
+                int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
+                if (i > 0) reslut = true;
+            }
+            catch (Exception ex)
+            {
+                reslut = false;
+                LogHelper.LogWriter(ex, "删除用户");
+                throw;
+            }
+            return reslut;
+        }
+
+        /// <summary>
+        /// 用户修改密码
+        /// danny-20150323
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="modifypassword"></param>
+        /// <returns></returns>
+        public bool ModifyPwdById(int id, string modifypassword)
+        {
+            bool reslut = false;
+            try
+            {
+                string sql = " update account set Password=@Password where Id=@id ";
+                IDbParameters dbParameters = DbHelper.CreateDbParameters();
+                dbParameters.AddWithValue("id", id);
+                dbParameters.AddWithValue("Password", modifypassword);
+                int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
+                if (i > 0) reslut = true;
+            }
+            catch (Exception ex)
+            {
+                reslut = false;
+                LogHelper.LogWriter(ex, "用户修改密码");
+                throw;
+            }
+            return reslut;
+        }
+
+       
+
+        
+
+
     }
 }

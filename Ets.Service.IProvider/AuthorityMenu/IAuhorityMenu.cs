@@ -2,6 +2,8 @@
 {
     using System.Collections.Generic;
     using Model.DataModel.Authority;
+    using Ets.Model.DomainModel.Authority;
+    using Ets.Model.ParameterModel.Authority;
   
     /// <summary>
     /// 权限操作接口类 平扬 2015.3.18
@@ -157,5 +159,41 @@
         List<AuthorityMenuModel> GetMenusByAccountId(int aId);
 
         #endregion
+        /// <summary>
+        /// 后台用户列表查询
+        /// danny-20150320
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        AuthorityManage GetAuthorityManage(AuthoritySearchCriteria criteria);
+        /// <summary>
+        /// 检查当前用户是否存在
+        /// danny-20150323
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        bool CheckHasAccountName(account account);
+        /// <summary>
+        /// 添加用户
+        /// danny-20150323
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        bool AddAccount(account account);
+        /// <summary>
+        /// 删除用户
+        /// danny-20150323
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        bool DeleteAccountById(int id);
+        /// <summary>
+        /// 用户修改密码
+        /// danny-20150323
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="modifypassword"></param>
+        /// <returns></returns>
+        bool ModifyPwdById(int id, string modifypassword);
     }
 }
