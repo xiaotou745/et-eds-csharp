@@ -87,5 +87,14 @@ namespace Ets.Service.IProvider.User
         /// <param name="criteria"></param>
         /// <returns></returns>
         IList<BusListResultModel> GetBussinessByCityInfo(BusinessSearchCriteria criteria);
+
+        /// <summary>
+        /// 修改商户密码
+        /// 窦海超
+        /// 2015年3月23日 19:11:54
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model);
     }
 }

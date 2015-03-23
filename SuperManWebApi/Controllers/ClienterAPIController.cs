@@ -471,30 +471,32 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(ModifyPwdStatus))]
         [HttpPost]
-        public ResultModel<ClienterModifyPwdResultModel> PostModifyPwd_C(ModifyPwdInfoModel model)
+        public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel> PostModifyPwd_C(Ets.Model.DataModel.Clienter.ModifyPwdInfoModel model)
         {
-            if (string.IsNullOrEmpty(model.newPassword))
-            {
-                return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.NewPwdEmpty);
-            }
-            var clienter = ClienterLogic.clienterLogic().GetClienter(model.phoneNo);
-            if (clienter == null)
-            {
-                return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.ClienterIsNotExist);
-            }
-            if (clienter.Password == model.newPassword)
-            {
-                return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.PwdIsSame);
-            }
-            bool b = ClienterLogic.clienterLogic().ModifyPwd(clienter, model.newPassword);
-            if (b)
-            {
-                return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.Success);
-            }
-            else
-            {
-                return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.FailedModifyPwd);
-            }
+            //if (string.IsNullOrEmpty(model.newPassword))
+            //{
+            //    return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.NewPwdEmpty);
+            //}
+            //var clienter = ClienterLogic.clienterLogic().GetClienter(model.phoneNo);
+            //if (clienter == null)
+            //{
+            //    return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.ClienterIsNotExist);
+            //}
+            //if (clienter.Password == model.newPassword)
+            //{
+            //    return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.PwdIsSame);
+            //}
+            //bool b = ClienterLogic.clienterLogic().ModifyPwd(clienter, model.newPassword);
+            //if (b)
+            //{
+            //    return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.Success);
+            //}
+            //else
+            //{
+            //    return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.FailedModifyPwd);
+            //}
+            ClienterProvider cliProvider = new ClienterProvider();
+            return cliProvider.PostForgetPwd_C(model);
         }
         /// <summary>
         /// 忘记密码

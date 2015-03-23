@@ -333,7 +333,7 @@
         //});
 
 
-
+        /*
         $.ajax({
             type: 'POST',
             dataType: 'json',
@@ -351,7 +351,45 @@
             error: function () {
             }
         });
+        */
 
+        /*
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: '/ClienterAPI/PostModifyPwd_C',
+            data: {
+                "phoneNo": "13426401627",
+                "newPassword": "123456"
+              
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () {
+            }
+        });
+        */
+
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: '/BusinessAPI/PostForgetPwd_B',
+            data: {
+                "phoneNumber": "13426401627",
+                "password": "123456",
+                "checkCode":"1234"
+
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () {
+            }
+        });
+
+
+        PostModifyPwd_C
 
         //$.ajax({
         //    type: 'POST',

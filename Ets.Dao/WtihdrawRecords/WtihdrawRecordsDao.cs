@@ -1,8 +1,10 @@
-﻿using Ets.Model.ParameterModel.WtihdrawRecords;
+﻿using Ets.Model.DomainModel.Clienter;
+using Ets.Model.ParameterModel.WtihdrawRecords;
 using ETS.Dao;
 using ETS.Data.Core;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -83,6 +85,22 @@ namespace Ets.Dao.WtihdrawRecords
             parm.AddWithValue("@Balance", model.Balance);
             parm.AddWithValue("@AdminId", model.AdminId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+        }
+
+        /// <summary>
+        /// 获取C端账户流水信息
+        /// 窦海超
+        /// 2015年3月20日 17:08:05
+        /// </summary>
+        /// <param name="UserId">用户ID</param>
+        /// <returns></returns>
+        public IList<ClienterRecordsModel> GetClienterRecordsByUserId(int UserId)
+        {
+            string sql = @"SELECT r.Id,Amount,Balance,CreateTime,a.UserName AS AdminName FROM Records(NOLOCK) AS r 
+                            LEFT JOIN dbo.account AS a ON r.adminid=a.Id
+                             WHERE [platform]=1 AND userid=" + UserId;
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
+            return MapRows<ClienterRecordsModel>(dt);
         }
 
     }

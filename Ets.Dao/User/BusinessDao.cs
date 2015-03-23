@@ -502,5 +502,46 @@ namespace Ets.Dao.User
             string sql = @" SELECT COUNT(Id) FROM dbo.business(NOLOCK) WHERE [Status]=1";
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql));
         }
+        
+
+        /// <summary>
+        /// 根据手机号获取用商家信息
+        /// 窦海超
+        /// 2015年3月23日 19:00:52
+        /// </summary>
+        /// <param name="PhoneNo">手机号</param>
+        /// <returns>商家信息</returns>
+        public BusListResultModel GetBusinessByPhoneNo(string PhoneNo)
+        {
+            string sql = @"SELECT Id FROM dbo.business(NOLOCK) WHERE PhoneNo=@PhoneNo";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@PhoneNo",PhoneNo);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql,parm);
+            IList<BusListResultModel> list = MapRows<BusListResultModel>(dt);
+            if (list == null && list.Count <= 0)
+            {
+                return null;
+            }
+            return list[0]; 
+        }
+
+        /// <summary>
+        /// 更新商户端密码
+        /// 窦海超
+        /// 2015年3月23日 19:05:39
+        /// </summary>
+        /// <param name="BusinessId">商户ID</param>
+        /// <param name="BusinessPwd">更新密码</param>
+        /// <returns></returns>
+        public bool UpdateBusinessPwdSql(int BusinessId,string BusinessPwd) {
+            if (BusinessId <= 0)
+            {
+                return false;
+            }
+            string sql = "UPDATE dbo.business SET [Password]=@Password WHERE id =" + BusinessId;
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Password", BusinessPwd);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+        }
     }
 }
