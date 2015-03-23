@@ -497,29 +497,27 @@ namespace SuperManWebApi.Controllers
             if (userId == 0) //用户id验证
                 return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
- 
                 return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
             if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null) //查询订单是否存在
                 return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotExist);
             if (!ClienterLogic.clienterLogic().CheckOrderIsAllowRush(orderNo))  //查询订单是否被抢
                 return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
- 
-                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
+
             var myorder = ClienterLogic.clienterLogic().GetOrderByNo(orderNo);
             if (myorder != null)
             {
                 if (myorder.Status == ConstValues.ORDER_CANCEL)   //判断订单状态是否为 已取消
                 {
-                    return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderHadCancel);  //订单不存在
+                    return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderHadCancel);  //订单不存在
                 }
                 if (myorder.Status == ConstValues.ORDER_ACCEPT || myorder.Status == ConstValues.ORDER_FINISH)  //订单已接单，被抢  或 已完成
                 {
-                    return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
+                    return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
                 }
             }
             else
             {
-                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotExist);  //订单不存在
+                return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotExist);  //订单不存在
             }
             
             //if (!ClienterLogic.clienterLogic().CheckOrderIsAllowRush(orderNo))  //查询订单是否被抢
