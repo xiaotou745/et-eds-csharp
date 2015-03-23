@@ -22,9 +22,6 @@ using System.ComponentModel;
 using ETS.Util;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.Provider.Common;
-//using ConstValues = SuperManCommonModel.ConstValues;
-//using SimpleResultModel = SuperManCore.Common.SimpleResultModel;
-
 
 namespace SuperManWebApi.Controllers
 {
@@ -431,6 +428,13 @@ namespace SuperManWebApi.Controllers
         {
             if (userId == 0) //用户id验证
                 return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
+            else  
+            {
+                if (iClienterProvider.HaveQualification(userId))  //判断 该骑士 是否 有资格 抢单 wc
+                {
+                    return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.HadCancelQualification);
+                }
+            }
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
                 return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
             if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null) //查询订单是否存在

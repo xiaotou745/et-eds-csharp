@@ -543,5 +543,28 @@ namespace Ets.Dao.User
             parm.AddWithValue("@Password", BusinessPwd);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
+        /// <summary>
+        /// 判断该 商户是否有资格 
+        /// wc
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <returns></returns>
+        public bool HaveQualification(int businessId)
+        {
+            try
+            {
+                //状态为1 表示该骑士 已通过审核
+                string sql = "SELECT COUNT(1) FROM dbo.business(NOLOCK) WHERE [Status] = 1 AND Id = @businessId ";
+                IDbParameters parm = DbHelper.CreateDbParameters();
+                parm.AddWithValue("@businessId", businessId);
+                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm)) > 0 ? true : false;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex, "检查当前商户是否存在");
+                return false;
+                throw;
+            }
+        }
     }
 }

@@ -103,5 +103,12 @@ namespace Ets.Service.IProvider.User
         /// <param name="PhoneNo"></param>
         /// <returns></returns>
         bool CheckBusinessExistPhone(string PhoneNo);
+        /// <summary>
+        /// 判断该 商户是否有资格 
+        /// wc
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <returns></returns>
+        bool HaveQualification(int businessId);
     }
 }
