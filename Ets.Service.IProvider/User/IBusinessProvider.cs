@@ -105,5 +105,19 @@ namespace Ets.Service.IProvider.User
         /// <param name="BusinessId">商户ID</param>
         /// <returns></returns>
         BusiOrderCountResultModel GetOrderCountData(int BusinessId);
+        /// <summary>
+        /// 验证商户手机号 是否 注册
+        /// wc
+        /// </summary>
+        /// <param name="PhoneNo"></param>
+        /// <returns></returns>
+        bool CheckBusinessExistPhone(string PhoneNo);
+        /// <summary>
+        /// 判断该 商户是否有资格 
+        /// wc
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <returns></returns>
+        bool HaveQualification(int businessId);
     }
 }

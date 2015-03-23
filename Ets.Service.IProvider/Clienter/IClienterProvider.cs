@@ -51,5 +51,19 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="model"></param>
         /// <returns></returns>
         ResultModel<ClienterModifyPwdResultModel> PostForgetPwd_C(Ets.Model.DataModel.Clienter.ModifyPwdInfoModel model);
+        /// <summary>
+        /// 判断 骑士端 手机号 是否注册过
+        /// wc
+        /// </summary>
+        /// <param name="PhoneNo"></param>
+        /// <returns></returns>
+        bool CheckClienterExistPhone(string PhoneNo);
+        /// <summary>
+        /// 根据骑士Id 验证该骑士是否有资格
+        /// wc
+        /// </summary>
+        /// <param name="clienterId"></param>
+        /// <returns></returns>
+        bool HaveQualification(int clienterId);
     }
 }

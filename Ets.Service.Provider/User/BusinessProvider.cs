@@ -49,7 +49,7 @@ namespace Ets.Service.Provider.User
                 }
                 model.PickUpName = from.BusinessName;
                 model.ReceviceAddress = from.ReceviceAddress;
-                model.ReceviceName = from.ReceviceName;
+                model.ReceviceName = from.ReceviceName == null ? "匿名" : from.ReceviceName.Trim();
                 model.RecevicePhoneNo = from.RecevicePhoneNo;
                 model.Remark = from.Remark;
                 model.Status = from.Status;
@@ -304,6 +304,26 @@ namespace Ets.Service.Provider.User
         public BusiOrderCountResultModel GetOrderCountData(int BusinessId)
         {
             return dao.GetOrderCountDataSql(BusinessId);
+        }
+        /// <summary>
+        /// 验证 商户 手机号 是否注册
+        /// wc
+        /// </summary>
+        /// <param name="PhoneNo"></param>
+        /// <returns></returns>
+        public bool CheckBusinessExistPhone(string PhoneNo)
+        {
+            return dao.CheckBusinessExistPhone(PhoneNo);
+        }
+        /// <summary>
+        /// 判断该 商户是否有资格 
+        /// wc
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <returns></returns>
+        public bool HaveQualification(int businessId)
+        {
+            return dao.HaveQualification(businessId);
         }
     }
 }

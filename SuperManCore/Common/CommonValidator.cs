@@ -15,7 +15,12 @@ namespace SuperManCore.Common
             {
                 return false;
             }
-            return Regex.IsMatch(phoneNumber, @"^(13|14|15|16|18|19)\d{9}$");
+            if (!phoneNumber.StartsWith("1") || phoneNumber.Length != 11)
+            {
+                return false;
+            }
+            return true;
+            //return Regex.IsMatch(phoneNumber, @"^(13|14|15|16|18|19)\d{9}$");
         }
 
         public static bool IsValidEMail(string email)

@@ -267,5 +267,50 @@ namespace Ets.Dao.Clienter
             parm.AddWithValue("@Password", UserPwd);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
+ /// <summary>
+        /// 检查 骑士 手机号 是否注册过 
+        /// wc
+        /// </summary>
+        /// <param name="PhoneNo"></param>
+        /// <returns></returns>
+        public bool CheckClienterExistPhone(string PhoneNo)
+        {
+            try
+            {
+                string sql = "SELECT COUNT(1) FROM dbo.clienter(NOLOCK) WHERE PhoneNo =@PhoneNo";
+                IDbParameters parm = DbHelper.CreateDbParameters();
+                parm.AddWithValue("@PhoneNo", PhoneNo);
+                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm)) > 0 ? true : false;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex, "检查当前骑士是否存在");
+                return false;
+                throw;
+            }
+        }
+        /// <summary>
+        /// 判断该骑士是否有资格 
+        /// wc
+        /// </summary>
+        /// <param name="clienterId"></param>
+        /// <returns></returns>
+        public bool HaveQualification(int clienterId)
+        {
+            try
+            {
+                //状态为1 表示该骑士 已通过审核
+                string sql = "SELECT COUNT(1) FROM dbo.clienter(NOLOCK) WHERE [Status] = 1 AND Id = @clienterId ";
+                IDbParameters parm = DbHelper.CreateDbParameters();
+                parm.AddWithValue("@clienterId", clienterId);
+                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm)) > 0 ? true : false;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex, "检查当前骑士是否存在");
+                return false;
+                throw;
+            }
+        }
     }
 }

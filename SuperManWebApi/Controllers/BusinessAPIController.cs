@@ -24,11 +24,13 @@ using Ets.Service.Provider.User;
 using Ets.Service.IProvider.Order;
 using Ets.Service.Provider.Order;
 using Ets.Service.Provider.Common;
+using Ets.Service.IProvider.User;
 namespace SuperManWebApi.Controllers
 {
     public class BusinessAPIController : ApiController
     {
         IOrderProvider iOrderProvider = new OrderProvider();
+        IBusinessProvider iBusinessProvider = new BusinessProvider();
         /// <summary>
         /// 线程安全
         /// </summary>
@@ -297,6 +299,11 @@ namespace SuperManWebApi.Controllers
         {
             lock (lockHelper)
             {
+                //首先验证该 商户有无 资格 发布订单 wc
+                if (iBusinessProvider.HaveQualification(model.userId)) 
+                {
+                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(PubOrderStatus.HadCancelQualification);
+                }  
                 #region 缓存验证
                 string cacheKey = model.userId.ToString() + "_" + model.OrderSign;
                 var cacheList = ETS.Cacheing.CacheFactory.Instance[cacheKey];
@@ -435,14 +442,14 @@ namespace SuperManWebApi.Controllers
             var resultModel = BusiLogic.busiLogic().GetOrderCountData(userId);
             return ResultModel<Ets.Model.DomainModel.Bussiness.BusiOrderCountResultModel>.Conclude(LoginModelStatus.Success, resultModel);
         }
-
+        
         /// <summary>
         /// 请求动态验证码  (注册)
         /// c</summary>
         [ActionStatus(typeof(SendCheckCodeStatus))]
         [HttpGet]
         public SimpleResultModel CheckCode(string PhoneNumber)
-        {
+        {  
             if (!CommonValidator.IsValidPhoneNumber(PhoneNumber))  //验证电话号码合法性
             {
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.InvlidPhoneNumber);
@@ -451,10 +458,12 @@ namespace SuperManWebApi.Controllers
             var msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode, ConstValues.MessageBusiness);  //获取提示用语信息
             try
             {
-                if (BusiLogic.busiLogic().CheckExistPhone(PhoneNumber))  //判断该手机号是否已经注册过
-                {
-                    return SimpleResultModel.Conclude(SendCheckCodeStatus.AlreadyExists);
-                }
+                //if (BusiLogic.busiLogic().CheckExistPhone(PhoneNumber))  //判断该手机号是否已经注册过
+                //{
+                //    return SimpleResultModel.Conclude(SendCheckCodeStatus.AlreadyExists);
+                //}
+                if (iBusinessProvider.CheckBusinessExistPhone(PhoneNumber))  //判断该手机号是否已经注册过
+                    return SimpleResultModel.Conclude(SendCheckCodeStatus.AlreadyExists); 
                 else
                 {
                     SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);
