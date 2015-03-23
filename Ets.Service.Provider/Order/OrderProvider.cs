@@ -317,9 +317,6 @@ namespace Ets.Service.Provider.Order
         {
             var pagedQuery = new OrderManage();
             PageInfo<OrderListModel> pageinfo = OrderDao.GetOrders<OrderListModel>(criteria);
-            
-
-
             NewPagingResult pr = new NewPagingResult() { PageIndex = criteria.PagingRequest.PageIndex, PageSize = criteria.PagingRequest.PageSize, RecordCount = pageinfo.All, TotalCount = pageinfo.All };
             List<OrderListModel> list = pageinfo.Records.ToList();
             var orderlists = new OrderManageList(list, pr);

@@ -31,8 +31,25 @@ namespace Ets.Model.Common
             PagingResult.RecordCount = data.Count;
 
             this.AddRange(data);
+        } 
+    }
+    /// <summary>
+    /// Paged list
+    /// </summary>
+    /// <typeparam name="T">T</typeparam>
+    [Serializable]
+    public class NewPagedList<T> : List<T>
+    {
+        public NewPagingResult PagingResult { get; set; }
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="source">source</param>
+        /// <param name="pageIndex">Page index</param>
+        /// <param name="pageSize">Page size</param>
+        public NewPagedList(IList<T> source)
+        {
+            this.AddRange(source);
         }
-
-
     }
 }

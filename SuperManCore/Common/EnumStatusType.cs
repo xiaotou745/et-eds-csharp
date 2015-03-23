@@ -123,7 +123,10 @@ namespace SuperManCore.Common
         [DisplayText("订单不存在")]
         OrderIsNotExist,
         [DisplayText("订单已被抢或者已完成")]
-        OrderIsNotAllowRush
+        OrderIsNotAllowRush,
+        [DisplayText("订单已取消")]
+        OrderHadCancel
+
     }
     public enum FinishOrderStatus
     {

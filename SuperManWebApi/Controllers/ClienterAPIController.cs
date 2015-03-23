@@ -1,4 +1,7 @@
-﻿using SuperManCore.Common;
+﻿using Ets.Model.Common;
+using Ets.Service.Provider.WtihdrawRecords;
+using Microsoft.Ajax.Utilities;
+using SuperManCore.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +17,13 @@ using SuperManCommonModel.Entities;
 using SuperManBusinessLogic.CommonLogic;
 using System.Threading.Tasks;
 using SuperManDataAccess;
-using SuperManCommonModel;
 using SuperManBusinessLogic.B_Logic;
 using System.ComponentModel;
 using ETS.Util;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.Provider.Common;
+using ConstValues = SuperManCommonModel.ConstValues;
+using SimpleResultModel = SuperManCore.Common.SimpleResultModel;
 
 
 namespace SuperManWebApi.Controllers
@@ -37,21 +41,21 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(CustomerRegisterStatus))]
         [HttpPost]
-        public ResultModel<ClientRegisterResultModel> PostRegisterInfo_C(ClientRegisterInfoModel model)
+        public SuperManCore.Common.ResultModel<ClientRegisterResultModel> PostRegisterInfo_C(ClientRegisterInfoModel model)
         {
             if (string.IsNullOrEmpty(model.phoneNo))  //手机号非空验证
-                return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
+                return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
             else if (ClienterLogic.clienterLogic().CheckExistPhone(model.phoneNo))  //判断该手机号是否已经注册过
-                return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberRegistered);
+                return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberRegistered);
             else if (string.IsNullOrEmpty(model.passWord)) //密码非空验证
-                return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PasswordEmpty);
+                return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PasswordEmpty);
             else if (string.IsNullOrEmpty(model.City) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
-                return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
+                return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
             else if (model.verifyCode != SupermanApiCaching.Instance.Get(model.phoneNo)) //判断验码法录入是否正确
-                return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode);
+                return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode);
             else if (model.recommendPhone != null && (!ClienterLogic.clienterLogic().CheckExistPhone(model.recommendPhone))
                 && (!BusiLogic.busiLogic().CheckExistPhone(model.recommendPhone))) //如果推荐人手机号在B端C端都不存在提示信息
-                return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberNotExist);
+                return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberNotExist);
             var clienter = ClientRegisterInfoModelTranslator.Instance.Translate(model);
             bool result = ClienterLogic.clienterLogic().Add(clienter);
             var resultModel = new ClientRegisterResultModel
@@ -60,7 +64,7 @@ namespace SuperManWebApi.Controllers
                 city = string.IsNullOrWhiteSpace(clienter.City) ? null : clienter.City.Trim(),  //城市
                 cityId = string.IsNullOrWhiteSpace(clienter.CityId) ? null : clienter.CityId.Trim()  //城市编码
             };
-            return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
+            return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
         }
 
         /// <summary>
@@ -78,11 +82,11 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public ResultModel<UploadIconModel> PostAudit_C()
+        public SuperManCore.Common.ResultModel<UploadIconModel> PostAudit_C()
         {
             if (HttpContext.Current.Request.Form.Count == 0)
             {
-                return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.NOFormParameter);
+                return SuperManCore.Common.ResultModel<UploadIconModel>.Conclude(UploadIconStatus.NOFormParameter);
             }
             var strUserId = HttpContext.Current.Request.Form["userId"]; //用户Id
             var strIDCard = HttpContext.Current.Request.Form["IDCard"]; //身份证号
@@ -91,15 +95,15 @@ namespace SuperManWebApi.Controllers
             var customer = ClienterLogic.clienterLogic().GetClienterById(int.Parse(strUserId));
             if (customer == null)
             {
-                return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.InvalidUserId);
+                return SuperManCore.Common.ResultModel<UploadIconModel>.Conclude(UploadIconStatus.InvalidUserId);
             }
             if (HttpContext.Current.Request.Files.Count == 0)
             {
-                return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.InvalidFileFormat);
+                return SuperManCore.Common.ResultModel<UploadIconModel>.Conclude(UploadIconStatus.InvalidFileFormat);
             }
             if (string.IsNullOrEmpty(trueName))
             {
-                return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.TrueNameEmpty);
+                return SuperManCore.Common.ResultModel<UploadIconModel>.Conclude(UploadIconStatus.TrueNameEmpty);
             }
             var fileHand = HttpContext.Current.Request.Files[0]; //手持照片
             var file = HttpContext.Current.Request.Files[1]; //照片
@@ -116,7 +120,7 @@ namespace SuperManWebApi.Controllers
             }
             catch (Exception)
             {
-                return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.InvalidFileFormat);
+                return SuperManCore.Common.ResultModel<UploadIconModel>.Conclude(UploadIconStatus.InvalidFileFormat);
             }
 
             string originSize = "_0_0";
@@ -174,43 +178,9 @@ namespace SuperManWebApi.Controllers
 
 
             var relativePath = System.IO.Path.Combine(CustomerIconUploader.Instance.RelativePath, fileName).ToForwardSlashPath();
-            return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.Success, new UploadIconModel() { Id = 1, ImagePath = relativePath });
+            return SuperManCore.Common.ResultModel<UploadIconModel>.Conclude(UploadIconStatus.Success, new UploadIconModel() { Id = 1, ImagePath = relativePath });
         }
 
-        /// <summary>
-        /// C端获取我的任务列表 最近任务    登录未登录根据城市有没有值判断。
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        //[ActionStatus(typeof(GetOrdersStatus))]
-        //[HttpPost]
-        //public ResultModel<ClientOrderResultModel[]> GetJobList_C(ClientOrderInfoModel model)
-        //{
-        //    degree.longitude = model.longitude;
-        //    degree.latitude = model.latitude;
-        //    var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
-        //    var pSize = model.pageSize.HasValue ? model.pageSize.Value : 20;
-        //    var criteria = new ClientOrderSearchCriteria()
-        //    {
-        //        PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
-        //        userId = model.userId,
-        //        status = model.status,
-        //        isLatest = model.isLatest,
-        //        city = string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
-        //        cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim()
-        //    };
-
-        //    var pagedList = ClienterLogic.clienterLogic().GetOrders(criteria);
-        //    var lists = ClientOrderResultModelTranslator.Instance.Translate(pagedList);
-
-
-        //    //if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
-        //    //{
-        //    lists = lists.OrderBy(i => i.distance).ToList();
-        //    //}
-
-        //    return ResultModel<ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, lists.ToArray());
-        //}
 
         /// <summary>
         /// 获取我的任务   根据状态判断是已完成任务还是我的任务
@@ -244,31 +214,6 @@ namespace SuperManWebApi.Controllers
             return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, lists.ToArray());
         }
 
-        /// <summary>
-        /// 未登录时获取最新任务     登录未登录根据城市有没有值判断。
-        /// </summary>
-        /// <returns></returns>
-        //[ActionStatus(typeof(GetOrdersNoLoginStatus))]
-        //[HttpGet]
-        //public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListNoLoginLatest_C()
-        //{
-        //    ClientOrderInfoModel model = new ClientOrderInfoModel();
-        //    model.city = string.IsNullOrWhiteSpace(HttpContext.Current.Request["city"]) ? null : HttpContext.Current.Request["city"].Trim();//城市
-        //    model.cityId = string.IsNullOrWhiteSpace(HttpContext.Current.Request["cityId"]) ? null : HttpContext.Current.Request["cityId"].Trim(); //城市编码
-        //    degree.longitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["longitude"]);
-        //    degree.latitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["latitude"]);
-        //    var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
-        //    var pSize = model.pageSize.HasValue ? model.pageSize.Value : 20;
-        //    ClientOrderSearchCriteria criteria = new ClientOrderSearchCriteria()
-        //    {
-        //        PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
-        //        city = model.city,
-        //        cityId = model.cityId
-        //    };
-        //    var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLoginLatest(criteria);
-        //    var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
-        //    return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
-        //}
 
 
         /// <summary>
@@ -348,7 +293,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(GetOrdersNoLoginStatus))]
         [HttpPost]
-        public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListNoLogin_C(ClientOrderInfoModel model)
+        public SuperManCore.Common.ResultModel<ClientOrderNoLoginResultModel[]> GetJobListNoLogin_C(ClientOrderInfoModel model)
         {
             degree.longitude = model.longitude;
             degree.latitude = model.latitude;
@@ -367,7 +312,7 @@ namespace SuperManWebApi.Controllers
             {
                 lists = lists.OrderBy(i => i.distance).ToList();
             }
-            return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
+            return SuperManCore.Common.ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
         }
 
 
@@ -380,7 +325,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(GetOrdersNoLoginStatus))]
         [HttpPost]
-        public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListSongCanTask_C(ClientOrderInfoModel model)
+        public SuperManCore.Common.ResultModel<ClientOrderNoLoginResultModel[]> GetJobListSongCanTask_C(ClientOrderInfoModel model)
         {
             //degree.longitude = model.longitude;
             //degree.latitude = model.latitude;
@@ -414,7 +359,7 @@ namespace SuperManWebApi.Controllers
             {
                 lists = lists.OrderBy(i => i.distance).ToList();
             }
-            return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
+            return SuperManCore.Common.ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
         }
 
         /// <summary>
@@ -423,7 +368,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(GetOrdersNoLoginStatus))]
         [HttpPost]
-        public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListCanHeTask_C(ClientOrderInfoModel model)
+        public SuperManCore.Common.ResultModel<ClientOrderNoLoginResultModel[]> GetJobListCanHeTask_C(ClientOrderInfoModel model)
         {
             //degree.longitude = model.longitude;
             //degree.latitude = model.latitude;
@@ -457,7 +402,7 @@ namespace SuperManWebApi.Controllers
             {
                 lists = lists.OrderBy(i => i.distance).ToList();
             }
-            return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
+            return SuperManCore.Common.ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
         }
 
 
@@ -498,6 +443,31 @@ namespace SuperManWebApi.Controllers
             ClienterProvider cliProvider = new ClienterProvider();
             return cliProvider.PostForgetPwd_C(model);
         }
+        public SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel> PostModifyPwd_C(ModifyPwdInfoModel model)
+        {
+            if (string.IsNullOrEmpty(model.newPassword))
+            {
+                return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.NewPwdEmpty);
+            }
+            var clienter = ClienterLogic.clienterLogic().GetClienter(model.phoneNo);
+            if (clienter == null)
+            {
+                return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.ClienterIsNotExist);
+            }
+            if (clienter.Password == model.newPassword)
+            {
+                return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.PwdIsSame);
+            }
+            bool b = ClienterLogic.clienterLogic().ModifyPwd(clienter, model.newPassword);
+            if (b)
+            {
+                return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.Success);
+            }
+            else
+            {
+                return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.FailedModifyPwd);
+            }
+        }
         /// <summary>
         /// 忘记密码
         /// </summary>
@@ -506,15 +476,15 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(ForgetPwdStatus))]
         [HttpPost]
-        public ResultModel<ClienterModifyPwdResultModel> PostForgetPwd_C(ForgetPwdInfoModel model)
+        public SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel> PostForgetPwd_C(ForgetPwdInfoModel model)
         {
             if (string.IsNullOrEmpty(model.password))
             {
-                return ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.NewPwdEmpty);
+                return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.NewPwdEmpty);
             }
             if (string.IsNullOrEmpty(model.checkCode))
             {
-                return ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeIsEmpty);
+                return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeIsEmpty);
             }
             //start 需要验证 验证码是否正确
             //if (SupermanApiCaching.Instance.Get(model.phoneNo) != model.checkCode)
@@ -525,20 +495,20 @@ namespace SuperManWebApi.Controllers
             var clienter = ClienterLogic.clienterLogic().GetClienter(model.phoneNo);
             if (clienter == null)
             {
-                return ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.ClienterIsNotExist);
+                return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.ClienterIsNotExist);
             }
             if (clienter.Password == model.password)
             {
-                return ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.PwdIsSave);
+                return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.PwdIsSave);
             }
             bool b = ClienterLogic.clienterLogic().ModifyPwd(clienter, model.password);
             if (b)
             {
-                return ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.Success);
+                return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.Success);
             }
             else
             {
-                return ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.FailedModifyPwd);
+                return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.FailedModifyPwd);
             }
         }
         /// <summary>
@@ -549,23 +519,45 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(RushOrderStatus))]
         [HttpGet]
-        public ResultModel<RushOrderResultModel> RushOrder_C(int userId, string orderNo)
+        public SuperManCore.Common.ResultModel<RushOrderResultModel> RushOrder_C(int userId, string orderNo)
         {
             if (userId == 0) //用户id验证
-                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
+                return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
-                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
+                return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
             if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null) //查询订单是否存在
-                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotExist);
+                return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotExist);
             if (!ClienterLogic.clienterLogic().CheckOrderIsAllowRush(orderNo))  //查询订单是否被抢
-                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
+                return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
+
+            var myorder = ClienterLogic.clienterLogic().GetOrderByNo(orderNo);
+            if (myorder != null)
+            {
+                if (myorder.Status == ConstValues.ORDER_CANCEL)   //判断订单状态是否为 已取消
+                {
+                    return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderHadCancel);  //订单不存在
+                }
+                if (myorder.Status == ConstValues.ORDER_ACCEPT || myorder.Status == ConstValues.ORDER_FINISH)  //订单已接单，被抢  或 已完成
+                {
+                    return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
+                }
+            }
+            else
+            {
+                return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotExist);  //订单不存在
+            }
+
+            //if (!ClienterLogic.clienterLogic().CheckOrderIsAllowRush(orderNo))  //查询订单是否被抢
+            //    return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
+
+
             lock (lockHelper)
             {
                 bool bResult = ClienterLogic.clienterLogic().RushOrder(userId, orderNo);
                 if (bResult)
-                    return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Success);
+                    return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Success);
                 else
-                    return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Failed);
+                    return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Failed);
             }
         }
         /// <summary>
@@ -576,14 +568,14 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(FinishOrderStatus))]
         [HttpGet]
-        public ResultModel<FinishOrderResultModel> FinishOrder_C(int userId, string orderNo)
+        public SuperManCore.Common.ResultModel<FinishOrderResultModel> FinishOrder_C(int userId, string orderNo)
         {
             if (userId == 0)  //用户id非空验证
-                return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.userIdEmpty);
+                return SuperManCore.Common.ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.userIdEmpty);
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
-                return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderEmpty);
+                return SuperManCore.Common.ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderEmpty);
             if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null) //订单是否存在验证
-                return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderIsNotExist);
+                return SuperManCore.Common.ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderIsNotExist);
             int bResult = ClienterLogic.clienterLogic().FinishOrder(userId, orderNo);
             if (bResult == 2)
             {
@@ -594,15 +586,15 @@ namespace SuperManWebApi.Controllers
                     model.balanceAmount = clienter.AccountBalance.Value;
                 else
                     model.balanceAmount = 0.0m;
-                return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.Success, model);
+                return SuperManCore.Common.ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.Success, model);
             }
             else if (bResult == 1)
             {
-                return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderIsNotAllowRush);
+                return SuperManCore.Common.ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderIsNotAllowRush);
             }
             else
             {
-                return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.Failed);
+                return SuperManCore.Common.ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.Failed);
             }
         }
         /// <summary>
@@ -612,18 +604,18 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(RushOrderStatus))]
         [HttpGet]
-        public ResultModel<MyBalanceResultModel> GetMyBalance(string phoneNo)
+        public SuperManCore.Common.ResultModel<MyBalanceResultModel> GetMyBalance(string phoneNo)
         {
             if (string.IsNullOrEmpty(phoneNo))
             {
-                return ResultModel<MyBalanceResultModel>.Conclude(GetMyBalanceStatus.PhoneEmpty);
+                return SuperManCore.Common.ResultModel<MyBalanceResultModel>.Conclude(GetMyBalanceStatus.PhoneEmpty);
             }
             var item = ClienterLogic.clienterLogic().GetMyBalanceByPhoneNo(phoneNo);
             var result = new MyBalanceResultModel()
             {
                 MyBalance = item
             };
-            return ResultModel<MyBalanceResultModel>.Conclude(FinishOrderStatus.Success, result);
+            return SuperManCore.Common.ResultModel<MyBalanceResultModel>.Conclude(FinishOrderStatus.Success, result);
         }
 
         /// <summary>
@@ -633,18 +625,22 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(RushOrderStatus))]
         [HttpGet]
-        public ResultModel<MyBalanceListResultModel[]> GetMyBalanceDynamic(string phoneNo, int? pagedSize, int? pagedIndex)
+        public SuperManCore.Common.ResultModel<Ets.Model.DomainModel.MyBalanceListResultModel[]> GetMyBalanceDynamic(string phoneNo, int? pagedSize, int? pagedIndex)
         {
             var pIndex = pagedIndex.HasValue ? pagedIndex.Value : 0;
             var pSize = pagedSize.HasValue ? pagedSize.Value : int.MaxValue;
-            var criteria = new MyIncomeSearchCriteria()
+            var criteria = new Ets.Model.ParameterModel.WtihdrawRecords.MyIncomeSearchCriteria()
             {
-                PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
+                PagingRequest = new Ets.Model.Common.PagingResult(pIndex, pSize),
                 phoneNo = phoneNo
             };
-            var pagedList = ClienterLogic.clienterLogic().GetMyIncomeList(criteria);
-            var lists = MyBalanceListResultModelTranslator.Instance.Translate(pagedList);
-            return ResultModel<MyBalanceListResultModel[]>.Conclude(RushOrderStatus.Success, lists.ToArray());
+
+            //平扬2015.3.23 改为从 Records表查询金额记录,myincome表作废
+            // var pagedList = ClienterLogic.clienterLogic().GetMyIncomeList(criteria);
+            var withrecord = new WtihdrawRecordsProvider();
+            var pagedList = withrecord.GetMyIncomeList(criteria);
+            var lists = Ets.Model.DomainModel.MyBalanceListResultModelTranslator.Instance.Translate(pagedList);
+            return SuperManCore.Common.ResultModel<Ets.Model.DomainModel.MyBalanceListResultModel[]>.Conclude(RushOrderStatus.Success, lists.ToArray());
         }
 
         /// <summary>
@@ -669,7 +665,8 @@ namespace SuperManWebApi.Controllers
                 {
                     return SimpleResultModel.Conclude(SendCheckCodeStatus.AlreadyExists);
                 }
-                msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode, ConstValues.MessageBusiness);
+                //msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode, ConstValues.MessageBusiness);
+                msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode, ConstValues.MessageClinenter);
             }
             else //修改密码
             {

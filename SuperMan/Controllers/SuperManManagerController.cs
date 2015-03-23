@@ -157,6 +157,10 @@ namespace SuperMan.Controllers
             {
                 return Json(new ResultModel(false, "提现失败，金额不足"), JsonRequestBehavior.AllowGet);
             }
+            if ((0-Price) < 1000)
+            {
+                return Json(new ResultModel(false, "提现失败，提现金额需大于1000元"), JsonRequestBehavior.AllowGet);
+            }
             int adminId = maccount == null ? 0 : maccount.Id;
             Ets.Model.ParameterModel.WtihdrawRecords.WithdrawRecordsModel model = new Ets.Model.ParameterModel.WtihdrawRecords.WithdrawRecordsModel()
             {
