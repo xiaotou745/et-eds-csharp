@@ -444,10 +444,7 @@ namespace SuperManWebApi.Controllers
         [ActionStatus(typeof(SendCheckCodeStatus))]
         [HttpGet]
         public SimpleResultModel CheckCode(string PhoneNumber)
-        { 
-            if (!iBusinessProvider.CheckBusinessExistPhone(PhoneNumber))  //判断该手机号是否已经注册过
-                return SimpleResultModel.Conclude(SendCheckCodeStatus.PhoneNumberHadRegiste); 
-
+        {  
             if (!CommonValidator.IsValidPhoneNumber(PhoneNumber))  //验证电话号码合法性
             {
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.InvlidPhoneNumber);
@@ -456,10 +453,12 @@ namespace SuperManWebApi.Controllers
             var msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode, ConstValues.MessageBusiness);  //获取提示用语信息
             try
             {
-                if (BusiLogic.busiLogic().CheckExistPhone(PhoneNumber))  //判断该手机号是否已经注册过
-                {
-                    return SimpleResultModel.Conclude(SendCheckCodeStatus.AlreadyExists);
-                }
+                //if (BusiLogic.busiLogic().CheckExistPhone(PhoneNumber))  //判断该手机号是否已经注册过
+                //{
+                //    return SimpleResultModel.Conclude(SendCheckCodeStatus.AlreadyExists);
+                //}
+                if (iBusinessProvider.CheckBusinessExistPhone(PhoneNumber))  //判断该手机号是否已经注册过
+                    return SimpleResultModel.Conclude(SendCheckCodeStatus.AlreadyExists); 
                 else
                 {
                     SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);

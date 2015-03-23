@@ -55,7 +55,7 @@ namespace SuperManCore.Common
 
         [DisplayText("发送失败")]
         SendFailure,
-         [DisplayText("该用户已注册")]
+        [DisplayText("该用户已注册")]
         AlreadyExists
     }
 
