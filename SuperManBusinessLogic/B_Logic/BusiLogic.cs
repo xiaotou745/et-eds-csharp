@@ -406,21 +406,21 @@ namespace SuperManBusinessLogic.B_Logic
                     {
                         model.todayPublish = todayPublish.FirstOrDefault().todayPublish;
                         model.todayPublishAmount = todayPublish.FirstOrDefault().todayPublishAmount;
-                        if (string.IsNullOrEmpty(model.todayPublishAmount))
+                        if (model.todayPublishAmount==null ||  string.IsNullOrEmpty(model.todayPublishAmount))
                             model.todayPublishAmount = "0.00";
                     }
                     if (tydayDone.FirstOrDefault() != null)
                     {
                         model.todayDone = tydayDone.FirstOrDefault().todayDone;
                         model.todayDoneAmount = tydayDone.FirstOrDefault().todayDoneAmount;
-                        if (string.IsNullOrEmpty(model.todayDoneAmount))
+                        if (model.todayDoneAmount==null || string.IsNullOrEmpty(model.todayDoneAmount))
                             model.todayDoneAmount = "0.00";
                     }
                     if (monthPublish.FirstOrDefault() != null)
                     {
                         model.monthPublish = monthPublish.FirstOrDefault().monthPublish;
                         model.monthPublishAmount = monthPublish.FirstOrDefault().monthPublishAmount;
-                        if (string.IsNullOrEmpty(model.monthPublishAmount))
+                        if (model.monthPublishAmount==null || string.IsNullOrEmpty(model.monthPublishAmount))
                             model.monthPublishAmount = "0.00";
                     }
 
@@ -428,7 +428,7 @@ namespace SuperManBusinessLogic.B_Logic
                     {
                         model.monthDone = monthDone.FirstOrDefault().monthDone;
                         model.monthDoneAmount = monthDone.FirstOrDefault().monthDoneAmount;
-                        if (string.IsNullOrEmpty(model.monthDoneAmount))
+                        if (model.monthDoneAmount==null || string.IsNullOrEmpty(model.monthDoneAmount))
                             model.monthDoneAmount = "0.00";
                     }
                 }
