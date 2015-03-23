@@ -44,7 +44,8 @@ namespace OpenApi
                 GroupApiConfigModel groupCofigInfo = groupProvider.GetGroupApiConfigByAppKey(paramodel.app_key, paramodel.v).Data;
                 if (groupCofigInfo != null && groupCofigInfo.IsValid == 1)//集团可用，且有appkey信息
                 {
-                    string signStr = groupCofigInfo.AppSecret + "app_key=" + paramodel.app_key + "timestamp" + paramodel.timestamp + "v=" + paramodel.v + groupCofigInfo.AppSecret;
+                    string signStr = groupCofigInfo.AppSecret + "app_key=" + paramodel.app_key + "timestamp" 
+                        + paramodel.timestamp + "v=" + paramodel.v + groupCofigInfo.AppSecret;
                     string sign = MD5.Encrypt(signStr);
                     paramodel.group = ParseHelper.ToInt(groupCofigInfo.GroupId, 0);
                     actionContext.ActionArguments["paramodel"] = paramodel; ;

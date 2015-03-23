@@ -284,13 +284,15 @@ namespace Ets.Dao.Order
                 OriginalOrderNo,PubDate,SongCanDate,IsPay,Amount,
                 Remark,Weight,DistribSubsidy,OrderCount,ReceviceName,
                 RecevicePhoneNo,ReceiveProvinceCode,ReceiveCityCode,ReceiveAreaCode,ReceviceAddress,
-                ReceviceLongitude,ReceviceLatitude,businessId,PickUpAddress,Payment )
+                ReceviceLongitude,ReceviceLatitude,businessId,PickUpAddress,Payment,OrderCommission,
+                WebsiteSubsidy,CommissionRate )
                 OUTPUT Inserted.OrderNo
                 Values(@OrderNo,
                 @OriginalOrderNo,@PubDate,@SongCanDate,@IsPay,@Amount,
                 @Remark,@Weight,@DistribSubsidy,@OrderCount,@ReceviceName,
                 @RecevicePhoneNo,@ReceiveProvinceCode,@ReceiveCityCode,@ReceiveAreaCode,@ReceviceAddress,
-                @ReceviceLongitude,@ReceviceLatitude,@BusinessId,@PickUpAddress,@Payment)";
+                @ReceviceLongitude,@ReceviceLatitude,@BusinessId,@PickUpAddress,@Payment,@OrderCommission,
+                @WebsiteSubsidy,@CommissionRate)";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             ///基本参数信息
             dbParameters.AddWithValue("@OrderNo", Helper.generateOrderCode(bussinessId));  //根据商户id生成订单号(15位));
@@ -301,7 +303,8 @@ namespace Ets.Dao.Order
             dbParameters.AddWithValue("@Amount", paramodel.total_price);    //订单金额
             dbParameters.AddWithValue("@Remark", paramodel.remark);    //备注
             dbParameters.AddWithValue("@Weight", paramodel.weight);    //重量，默认?
-            dbParameters.AddWithValue("@DistribSubsidy", paramodel.delivery_fee);    //外送费,默认？
+            //订单外送费  目前 接收了两个外送费 理论必须一致 ，若不一致，以订单上的为准，方便后续扩展
+            dbParameters.AddWithValue("@DistribSubsidy", paramodel.delivery_fee);  
             dbParameters.AddWithValue("@OrderCount", paramodel.package_count == null ? 1 : paramodel.package_count);   //订单数量，默认为1
             ///收货地址信息
             dbParameters.AddWithValue("@ReceviceName", paramodel.address.user_name);    //用户姓名 收货人姓名
@@ -315,6 +318,9 @@ namespace Ets.Dao.Order
             dbParameters.AddWithValue("@BusinessId", bussinessId);    //商户id
             dbParameters.AddWithValue("@PickUpAddress", paramodel.store_info.address);    //取货地址即商户地址
             dbParameters.AddWithValue("@Payment", paramodel.payment);    //取货地址即商户地址
+            dbParameters.AddWithValue("@OrderCommission", paramodel.ordercommission);    //订单骑士佣金
+            dbParameters.AddWithValue("@WebsiteSubsidy", paramodel.websitesubsidy);    //网站补贴
+            dbParameters.AddWithValue("@CommissionRate", paramodel.commissionrate);    //订单佣金比例
             string orderNo = ParseHelper.ToString(DbHelper.ExecuteScalar(SuperMan_Read, insertOrdersql, dbParameters));
             if (string.IsNullOrWhiteSpace(orderNo))//添加失败 
                 return null;
