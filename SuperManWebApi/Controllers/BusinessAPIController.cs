@@ -451,13 +451,20 @@ namespace SuperManWebApi.Controllers
             var msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode, ConstValues.MessageBusiness);  //获取提示用语信息
             try
             {
-                SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);
-                //更新短信通道 
-                Task.Factory.StartNew(() =>
+                if (BusiLogic.busiLogic().CheckExistPhone(PhoneNumber))  //判断该手机号是否已经注册过
                 {
-                    SendSmsHelper.SendSendSmsSaveLog(PhoneNumber, msg, ConstValues.SMSSOURCE);
-                });
-                return SimpleResultModel.Conclude(SendCheckCodeStatus.Sending);
+                    return SimpleResultModel.Conclude(SendCheckCodeStatus.AlreadyExists);
+                }
+                else
+                {
+                    SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);
+                    //更新短信通道 
+                    Task.Factory.StartNew(() =>
+                    {
+                        SendSmsHelper.SendSendSmsSaveLog(PhoneNumber, msg, ConstValues.SMSSOURCE);
+                    });
+                    return SimpleResultModel.Conclude(SendCheckCodeStatus.Sending);
+                }
             }
             catch (Exception)
             {

@@ -662,9 +662,17 @@ namespace SuperManWebApi.Controllers
             var randomCode = new Random().Next(100000).ToString("D6");
             string msg = string.Empty;
             if (type == "0")//注册
+            {
+                if (ClienterLogic.clienterLogic().CheckExistPhone(PhoneNumber))  //判断该手机号是否已经注册过
+                {
+                    return SimpleResultModel.Conclude(SendCheckCodeStatus.AlreadyExists);
+                }
                 msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode, ConstValues.MessageBusiness);
+            }
             else //修改密码
+            {
                 msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode, ConstValues.MessageClinenter);
+            }
             try
             {
                 SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);
