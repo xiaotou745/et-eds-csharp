@@ -12,6 +12,8 @@ using Ets.Model.ParameterModel.Clienter;
 using System.Data;
 using ETS.Extension;
 using ETS.Enums;
+using Ets.Model.ParameterModel.WtihdrawRecords;
+//using Ets.Model.DataModel.WithdrawRecords;
 
 
 //using ETS;
@@ -233,6 +235,29 @@ namespace Ets.Dao.Clienter
             return MapRows<ClienterRecordsModel>(dt);
         }
 
+        /// <summary>
+        /// 更新用户余额
+        /// 窦海超
+        /// 2015年3月23日 12:47:54
+        /// </summary>
+        /// <param name="UserId">用户ID</param>
+        /// <param name="Account">提现金额</param>
+        /// <returns></returns>
+        public bool UpdateClienterAccountBalance(WithdrawRecordsModel model)
+        {
+            Ets.Model.DomainModel.Clienter.ClienterModel cliterModel = new ClienterDao().GetUserInfoByUserId(model.UserId);//获取当前用户余额
+            decimal balance= ParseHelper.ToDecimal(cliterModel.AccountBalance,0);
+            decimal Money =balance + model.Amount;
+            if (Money < 0)//如果提现金额大于当前余额则不能提现
+            {
+                return false;
+            }
+            model.Balance = balance;
+            string sql = @"UPDATE dbo.clienter SET AccountBalance=@Money WHERE id=" + model.UserId;
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Money", Money);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+        }
 
     }
 }

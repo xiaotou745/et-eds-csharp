@@ -1,6 +1,7 @@
 ﻿using Ets.Model.DataModel.Clienter;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.Provider.Distribution;
+using Ets.Service.Provider.WtihdrawRecords;
 using SuperManBusinessLogic.C_Logic;
 using SuperManCommonModel;
 using SuperManCommonModel.Entities;
@@ -124,9 +125,50 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult WtihdrawRecords(int UserId)
         {
+
             var pagedList = cliterProvider.WtihdrawRecords(UserId);
             ViewBag.pagedList = pagedList;
+            ViewBag.UserId = UserId;
             return View();
+        }
+
+        /// <summary>
+        /// 提现，并增加流水日志
+        /// 窦海超
+        /// 2015年3月23日 08:58:11
+        /// </summary>
+        /// <param name="Price">金额</param>
+        /// <param name="UserId">用户ID</param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult WtihdrawRecords(decimal Price, int UserId)
+        {
+            account maccount = HttpContext.Session["user"] as account;
+            if (maccount == null)
+            {
+                return Json(new ResultModel(false, "提现失败，需要重新登录"), JsonRequestBehavior.AllowGet);
+            }
+            if (Price >= 0)
+            {
+                return Json(new ResultModel(false, "提现失败，金额不足"), JsonRequestBehavior.AllowGet);
+            }
+            int adminId = maccount == null ? 0 : maccount.Id;
+            Ets.Model.ParameterModel.WtihdrawRecords.WithdrawRecordsModel model = new Ets.Model.ParameterModel.WtihdrawRecords.WithdrawRecordsModel()
+            {
+                AdminId = adminId,
+                Amount = Price,
+                Balance = 0,
+                Platform = 1,
+                UserId = UserId
+            };
+
+            WtihdrawRecordsProvider withdrawRecords = new WtihdrawRecordsProvider();
+            bool checkWithdraw = withdrawRecords.AddWtihdrawRecords(model);
+            if (checkWithdraw)
+            {
+                return Json(new ResultModel(true, "提现成功"), JsonRequestBehavior.AllowGet);
+            }
+            return Json(new ResultModel(false, "提现失败"), JsonRequestBehavior.AllowGet);
         }
     }
 }

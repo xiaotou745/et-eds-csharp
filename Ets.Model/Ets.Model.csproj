@@ -101,6 +101,7 @@
     <Compile Include="ParameterModel\Order\CreatePM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\OrderSearchCriteria.cs" />
     <Compile Include="ParameterModel\Subsidy\SubsidyModel.cs" />
+    <Compile Include="ParameterModel\WtihdrawRecords\WithdrawRecordsModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserModel.cs" />
   </ItemGroup>
