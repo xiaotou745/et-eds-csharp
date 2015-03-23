@@ -521,7 +521,7 @@ namespace SuperManWebApi.Controllers
         [HttpGet]
         public SuperManCore.Common.ResultModel<RushOrderResultModel> RushOrder_C(int userId, string orderNo)
         {
-            if (userId == 0) //用户id验证
+            if (userId == 0 || new Ets.Dao.Clienter.ClienterDao().GetUserInfoByUserId(userId) == null) //用户id验证
                 return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
                 return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);

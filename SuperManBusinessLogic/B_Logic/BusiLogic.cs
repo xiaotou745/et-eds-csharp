@@ -45,7 +45,7 @@ namespace SuperManBusinessLogic.B_Logic
             List<business> bussiness = new List<business>();
             supermanEntities db = new supermanEntities();
             var items = db.business.AsQueryable();
-            if (criteria.GroupId != null && criteria.GroupId!=0)
+            if (criteria.GroupId != null && criteria.GroupId != 0)
                 items = items.Where(p => p.GroupId == criteria.GroupId);
             if (!string.IsNullOrWhiteSpace(criteria.ProvinceCode))
                 items = items.Where(p => p.ProvinceCode == criteria.ProvinceCode);
@@ -61,8 +61,8 @@ namespace SuperManBusinessLogic.B_Logic
         /// <param name="id">商家id</param>
         /// <param name="commission">结算比例</param>
         /// <returns></returns>
-        public bool setCommission(int id,decimal commission)
-        { 
+        public bool setCommission(int id, decimal commission)
+        {
             bool bResult = false;
             using (var db = new supermanEntities())
             {
@@ -253,7 +253,7 @@ namespace SuperManBusinessLogic.B_Logic
                 }
             }
             return bResult;
-        } 
+        }
         public bool CheckExistBusi(int originalBusiId, int groupId)
         {
             bool bResult = false;
@@ -365,86 +365,91 @@ namespace SuperManBusinessLogic.B_Logic
             BusiOrderCountResultModel model = new BusiOrderCountResultModel();
             using (var db = new supermanEntities())
             {
-                if (userId != 0)
+                if (userId <= 0)
                 {
-                    var todayPublish = from n in db.order
-                                       where n.businessId == userId && n.PubDate.Value.Day == DateTime.Now.Day && (n.Status == ConstValues.ORDER_NEW || n.Status == ConstValues.ORDER_FINISH)  //未接单
-                                       group n by new { n.businessId } into g
-                                       select new BusiOrderCountResultModel
-                                       {
-                                           todayPublish = g.Count(),
-                                           todayPublishAmount = Math.Round(g.Sum(m => m.Amount).Value, 2).ToString()
-                                       };
+                    return model;
+                }
+                var todayPublish = from n in db.order
+                                   where n.businessId == userId && n.PubDate.Value.Day == DateTime.Now.Day && (n.Status == ConstValues.ORDER_NEW || n.Status == ConstValues.ORDER_FINISH)  //未接单
+                                   group n by new { n.businessId } into g
+                                   select new BusiOrderCountResultModel
+                                   {
+                                       todayPublish = g.Count(),
+                                       todayPublishAmount = Math.Round(g.Sum(m => m.Amount).Value, 2).ToString()
+                                   };
 
-                    var tydayDone = from n in db.order
-                                    where n.businessId == userId && n.PubDate.Value.Day == DateTime.Now.Day && n.Status == ConstValues.ORDER_FINISH //已完成
-                                    group n by new { n.businessId } into g
-                                    select new BusiOrderCountResultModel
-                                    {
-                                        todayDone = g.Count(),
-                                        todayDoneAmount = Math.Round(g.Sum(m => m.Amount).Value, 2).ToString()
-                                    };
+                var tydayDone = from n in db.order
+                                where n.businessId == userId && n.PubDate.Value.Day == DateTime.Now.Day && n.Status == ConstValues.ORDER_FINISH //已完成
+                                group n by new { n.businessId } into g
+                                select new BusiOrderCountResultModel
+                                {
+                                    todayDone = g.Count(),
+                                    todayDoneAmount = Math.Round(g.Sum(m => m.Amount).Value, 2).ToString()
+                                };
 
-                    var monthPublish = from n in db.order
-                                       where n.businessId == userId && n.PubDate.Value.Month == DateTime.Now.Month && (n.Status == ConstValues.ORDER_NEW || n.Status == ConstValues.ORDER_FINISH)//未接单
-                                       group n by new { n.businessId } into g
-                                       select new BusiOrderCountResultModel
-                                       {
-                                           monthPublish = g.Count(),
-                                           monthPublishAmount = Math.Round(g.Sum(m => m.Amount).Value, 2).ToString()
-                                       };
+                var monthPublish = from n in db.order
+                                   where n.businessId == userId && n.PubDate.Value.Month == DateTime.Now.Month && (n.Status == ConstValues.ORDER_NEW || n.Status == ConstValues.ORDER_FINISH)//未接单
+                                   group n by new { n.businessId } into g
+                                   select new BusiOrderCountResultModel
+                                   {
+                                       monthPublish = g.Count(),
+                                       monthPublishAmount = Math.Round(g.Sum(m => m.Amount).Value, 2).ToString()
+                                   };
 
-                    var monthDone = from n in db.order
-                                    where n.businessId == userId && n.ActualDoneDate.Value.Month == DateTime.Now.Month && n.Status == ConstValues.ORDER_FINISH //已完成
-                                    group n by new { n.businessId } into g
-                                    select new BusiOrderCountResultModel
-                                    {
-                                        monthDone = g.Count(),
-                                        monthDoneAmount = Math.Round(g.Sum(m => m.Amount).Value, 2).ToString()
-                                    };
+                var monthDone = from n in db.order
+                                where n.businessId == userId && n.ActualDoneDate.Value.Month == DateTime.Now.Month && n.Status == ConstValues.ORDER_FINISH //已完成
+                                group n by new { n.businessId } into g
+                                select new BusiOrderCountResultModel
+                                {
+                                    monthDone = g.Count(),
+                                    monthDoneAmount = Math.Round(g.Sum(m => m.Amount).Value, 2).ToString()
+                                };
 
 
-                    if (todayPublish.FirstOrDefault() != null)
-                    {
-                        model.todayPublish = todayPublish.FirstOrDefault().todayPublish;
-                        model.todayPublishAmount = todayPublish.FirstOrDefault().todayPublishAmount;
-                        if (string.IsNullOrEmpty(model.todayPublishAmount))
-                            model.todayPublishAmount = "0.00";
-                    }
-                    else {
+                if (todayPublish.FirstOrDefault() != null)
+                {
+                    model.todayPublish = todayPublish.FirstOrDefault().todayPublish;
+                    model.todayPublishAmount = todayPublish.FirstOrDefault().todayPublishAmount;
+                    if (string.IsNullOrEmpty(model.todayPublishAmount))
                         model.todayPublishAmount = "0.00";
-                    }
-                    if (tydayDone.FirstOrDefault() != null)
-                    {
-                        model.todayDone = tydayDone.FirstOrDefault().todayDone;
-                        model.todayDoneAmount = tydayDone.FirstOrDefault().todayDoneAmount;
-                        if (string.IsNullOrEmpty(model.todayDoneAmount))
-                            model.todayDoneAmount = "0.00";
-                    }
-                    else {
+                }
+                else
+                {
+                    model.todayPublishAmount = "0.00";
+                }
+                if (tydayDone.FirstOrDefault() != null)
+                {
+                    model.todayDone = tydayDone.FirstOrDefault().todayDone;
+                    model.todayDoneAmount = tydayDone.FirstOrDefault().todayDoneAmount;
+                    if (string.IsNullOrEmpty(model.todayDoneAmount))
                         model.todayDoneAmount = "0.00";
-                    }
-                    if (monthPublish.FirstOrDefault() != null)
-                    {
-                        model.monthPublish = monthPublish.FirstOrDefault().monthPublish;
-                        model.monthPublishAmount = monthPublish.FirstOrDefault().monthPublishAmount;
-                        if (string.IsNullOrEmpty(model.monthPublishAmount))
-                            model.monthPublishAmount = "0.00";
-                    }
-                    else {
+                }
+                else
+                {
+                    model.todayDoneAmount = "0.00";
+                }
+                if (monthPublish.FirstOrDefault() != null)
+                {
+                    model.monthPublish = monthPublish.FirstOrDefault().monthPublish;
+                    model.monthPublishAmount = monthPublish.FirstOrDefault().monthPublishAmount;
+                    if (string.IsNullOrEmpty(model.monthPublishAmount))
                         model.monthPublishAmount = "0.00";
-                    }
+                }
+                else
+                {
+                    model.monthPublishAmount = "0.00";
+                }
 
-                    if (monthDone.FirstOrDefault() != null)
-                    {
-                        model.monthDone = monthDone.FirstOrDefault().monthDone;
-                        model.monthDoneAmount = monthDone.FirstOrDefault().monthDoneAmount;
-                        if (string.IsNullOrEmpty(model.monthDoneAmount))
-                            model.monthDoneAmount = "0.00";
-                    }
-                    else {
+                if (monthDone.FirstOrDefault() != null)
+                {
+                    model.monthDone = monthDone.FirstOrDefault().monthDone;
+                    model.monthDoneAmount = monthDone.FirstOrDefault().monthDoneAmount;
+                    if (string.IsNullOrEmpty(model.monthDoneAmount))
                         model.monthDoneAmount = "0.00";
-                    }
+                }
+                else
+                {
+                    model.monthDoneAmount = "0.00";
                 }
             }
             return model;
