@@ -283,6 +283,7 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListSongCanTask_C(ClientOrderInfoModel model)
         {
+            LogHelper.LogWriter("查询送餐：", new { model = model });
             degree.longitude = model.longitude;
             degree.latitude = model.latitude;
             var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;

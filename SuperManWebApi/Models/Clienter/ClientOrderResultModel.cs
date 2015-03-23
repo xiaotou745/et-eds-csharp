@@ -167,7 +167,7 @@ namespace SuperManWebApi.Models.Clienter
         /// <summary>
         /// 送餐时间
         /// </summary>
-        public DateTime SongCanDate { get; set; }
+        public string SongCanDate { get; set; }
         /// <summary>
         /// 订单类型 1送餐订单  2取餐盒订单
         /// </summary>
@@ -257,6 +257,10 @@ namespace SuperManWebApi.Models.Clienter
             resultModel.OriginalOrderNo = from.OriginalOrderNo; //来源订单号
             resultModel.income = from.DistribSubsidy + from.WebsiteSubsidy + from.OrderCommission; //骑士的收入= 网站补贴+ 配送补贴 + 订单佣金
             resultModel.Amount = from.Amount.Value;
+            if (from.SongCanDate != null)
+            {
+                resultModel.SongCanDate = from.SongCanDate.Value.ToString();  //送餐时间
+            }
             business _business = null;
             if (from.businessId.HasValue)
             {
@@ -266,7 +270,10 @@ namespace SuperManWebApi.Models.Clienter
             {
                 resultModel.businessName = _business.Name;
                 resultModel.businessPhone = _business.PhoneNo2;
-                resultModel.pickUpCity = _business.City.Replace("市", "");
+                if (_business.City != null)
+                {
+                    resultModel.pickUpCity = _business.City.Replace("市", "");
+                }
             }
             //if (from.business != null)
             //{
@@ -279,7 +286,10 @@ namespace SuperManWebApi.Models.Clienter
             {
                 resultModel.pubDate = from.PubDate.Value.ToShortTimeString();
             }
-            resultModel.OrderType = from.OrderType.Value; //订单类型
+            if (from.OrderType != null)
+            {
+                resultModel.OrderType = from.OrderType.Value; //订单类型
+            }
             resultModel.pickUpAddress = from.PickUpAddress;
             resultModel.receviceName = from.ReceviceName;
             resultModel.receviceCity = from.ReceviceCity;

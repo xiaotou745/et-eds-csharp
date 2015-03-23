@@ -380,8 +380,8 @@ namespace SuperManBusinessLogic.C_Logic
         /// <returns></returns>
         public List<order> GetOrdersForSongCanOrQuCan(ClientOrderSearchCriteria criteria)
         {
-            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-            sw.Start();
+            //System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            //sw.Start();
             
             using (var dbEntity = new supermanEntities())
             {
@@ -401,8 +401,8 @@ namespace SuperManBusinessLogic.C_Logic
                 {
                     //var result = query.ToList();
                     var result = new PagedList<order>(query.ToList(), criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
-                    sw.Stop();
-                    LogHelper.LogWriter("获取送餐任务运行时间：", new { criteria=criteria, date = sw.Elapsed });
+                   // sw.Stop();
+                   // LogHelper.LogWriter("获取送餐任务运行时间：", new { criteria=criteria, date = sw.Elapsed });
                     return result;
                 }
                 catch (Exception ex)
