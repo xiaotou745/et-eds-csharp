@@ -58,5 +58,12 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="PhoneNo"></param>
         /// <returns></returns>
         bool CheckClienterExistPhone(string PhoneNo);
+        /// <summary>
+        /// 根据骑士Id 验证该骑士是否有资格
+        /// wc
+        /// </summary>
+        /// <param name="clienterId"></param>
+        /// <returns></returns>
+        bool HaveQualification(int clienterId);
     }
 }

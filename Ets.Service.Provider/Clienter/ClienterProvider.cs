@@ -189,7 +189,7 @@ namespace Ets.Service.Provider.Clienter
                 return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.FailedModifyPwd);
             }
         }
-/// <summary>
+        /// <summary>
         /// 判断 骑士端 手机号 是否注册过
         /// wc
         /// </summary>
@@ -197,7 +197,17 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         public bool CheckClienterExistPhone(string PhoneNo)
         {
-           return clienterDao.CheckClienterExistPhone(PhoneNo);
+            return clienterDao.CheckClienterExistPhone(PhoneNo);
+        }
+        /// <summary>
+        /// 判断该骑士是否有资格 
+        /// wc
+        /// </summary>
+        /// <param name="clienterId"></param>
+        /// <returns></returns>
+        public bool HaveQualification(int clienterId)
+        {
+            return clienterDao.HaveQualification(clienterId);
         }
     }
 }

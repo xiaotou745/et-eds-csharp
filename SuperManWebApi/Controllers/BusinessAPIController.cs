@@ -299,6 +299,11 @@ namespace SuperManWebApi.Controllers
         {
             lock (lockHelper)
             {
+                //首先验证该 商户有无 资格 发布订单 wc
+                if (iBusinessProvider.HaveQualification(model.userId)) 
+                {
+                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(PubOrderStatus.HadCancelQualification);
+                }  
                 #region 缓存验证
                 string cacheKey = model.userId.ToString() + "_" + model.OrderSign;
                 var cacheList = ETS.Cacheing.CacheFactory.Instance[cacheKey];
@@ -432,10 +437,10 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(LoginModelStatus))]
         [HttpGet]
-        public ResultModel<BusiOrderCountResultModel> OrderCount_B(int userId)
+        public ResultModel<Ets.Model.DomainModel.Bussiness.BusiOrderCountResultModel> OrderCount_B(int userId)
         {
             var resultModel = BusiLogic.busiLogic().GetOrderCountData(userId);
-            return ResultModel<BusiOrderCountResultModel>.Conclude(LoginModelStatus.Success, resultModel);
+            return ResultModel<Ets.Model.DomainModel.Bussiness.BusiOrderCountResultModel>.Conclude(LoginModelStatus.Success, resultModel);
         }
         
         /// <summary>
