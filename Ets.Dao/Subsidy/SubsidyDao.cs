@@ -26,28 +26,26 @@ namespace Ets.Dao.Subsidy
         TOP 1 
         OrderCommission ,
         DistribSubsidy ,
-        WebsiteSubsidy
+        WebsiteSubsidy  
 FROM    dbo.subsidy sub WITH ( NOLOCK )
-WHERE   sub.StartDate <= GETDATE()
-        AND sub.EndDate >= GETDATE()
-        AND sub.[Status] = 1 ");
+WHERE   sub.[Status] = 1 ");
 
             if (groupId > 0)
             {
                 selSql.Append(" AND sub.GroupId = @groupId ");
             }
 
-            selSql.Append(" ORDER BY sub.StartDate DESC ");
+            selSql.Append(" ORDER BY id DESC ");
 
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@groupId", groupId);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql.ToString(), parm));
-            if (dt != null)
+            if (dt != null && dt.Rows.Count != 0)
             {
                 subsidyResultModel = DataTableHelper.ConvertDataTableList<SubsidyResultModel>(dt)[0];
             }
 
-            return subsidyResultModel;
+            return subsidyResultModel; 
         }
 
 

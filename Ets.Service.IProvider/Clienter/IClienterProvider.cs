@@ -33,5 +33,14 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="model">用户名称，用户密码</param>
         /// <returns>用户信息</returns>
         ResultModel<ClienterLoginResultModel> PostLogin_C(LoginModel model);
+        
+        /// <summary>
+        /// 获取当前配送员的流水信息
+        /// 窦海超
+        /// 2015年3月20日 17:12:11
+        /// </summary>
+        /// <param name="UserId">用户ID</param>
+        /// <returns></returns>
+        ClienterRecordsListModel WtihdrawRecords(int UserId);
     }
 }

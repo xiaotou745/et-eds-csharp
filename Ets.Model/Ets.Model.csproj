@@ -46,7 +46,10 @@
     <Compile Include="Common\PagedList.cs" />
     <Compile Include="Common\ParaModel.cs" />
     <Compile Include="Common\ResultModelServicePhone.cs" />
+    <Compile Include="DataModel\Authority\account.cs" />
+    <Compile Include="DataModel\Authority\accountauthority.cs" />
     <Compile Include="DataModel\Authority\AccountModel.cs" />
+    <Compile Include="DataModel\Authority\authority.cs" />
     <Compile Include="DataModel\Authority\AuthorityAccountMenuSet.cs" />
     <Compile Include="DataModel\Authority\AuthorityDepartmentModel.cs" />
     <Compile Include="DataModel\Authority\AuthorityRoleModel.cs" />
@@ -64,11 +67,13 @@
     <Compile Include="DataModel\Order\OrderListModel.cs" />
     <Compile Include="DataModel\Subsidy\subsidy.cs" />
     <Compile Include="DomainModel\Area\AreaModelList.cs" />
+    <Compile Include="DomainModel\Authority\AuthorityManage.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessManage.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessModel.cs" />
     <Compile Include="DomainModel\Bussiness\BusiOrderSqlModel.cs" />
     <Compile Include="DomainModel\Clienter\ClienterManage.cs" />
     <Compile Include="DomainModel\Clienter\ClienterModel.cs" />
+    <Compile Include="DomainModel\Clienter\ClienterRecordsModel.cs" />
     <Compile Include="DomainModel\Clienter\ClientOrderModel.cs" />
     <Compile Include="DataModel\Clienter\Clienter.cs" />
     <Compile Include="DataModel\Order\Order.cs" />
@@ -83,6 +88,7 @@
     <Compile Include="DomainModel\Subsidy\HomeCountCriteria.cs" />
     <Compile Include="DomainModel\Subsidy\SubsidyManage.cs" />
     <Compile Include="DomainModel\Subsidy\SubsidyResultModel.cs" />
+    <Compile Include="ParameterModel\Authority\AuthoritySearchCriteria.cs" />
     <Compile Include="ParameterModel\Bussiness\BusiOrderInfoModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BussOrderParaModelApp.cs" />
     <Compile Include="ParameterModel\Bussiness\BusinessSearchCriteria.cs" />
@@ -100,6 +106,7 @@
     <Compile Include="ParameterModel\Order\CreatePM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\OrderSearchCriteria.cs" />
     <Compile Include="ParameterModel\Subsidy\SubsidyModel.cs" />
+    <Compile Include="ParameterModel\WtihdrawRecords\WithdrawRecordsModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserModel.cs" />
   </ItemGroup>

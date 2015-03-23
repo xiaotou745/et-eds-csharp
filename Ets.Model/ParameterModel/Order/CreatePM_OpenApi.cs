@@ -85,6 +85,21 @@ namespace Ets.Model.ParameterModel.Order
         /// </summary>
         public int? package_count { get; set; }
 
+        /// <summary>
+        /// 骑士订单佣金 目前由业务逻辑层计算赋值所得
+        /// </summary>
+        public decimal ordercommission { get; set; }
+
+        /// <summary>
+        /// 网站补贴 目前由业务逻辑层计算查询所得
+        /// </summary>
+        public decimal websitesubsidy { get; set; }
+
+        /// <summary>
+        /// 订单佣金比例  目前由业务逻辑层计算查询所得
+        /// </summary>
+        public decimal commissionrate { get; set; }
+
     }
 
     /// <summary>

@@ -1,12 +1,17 @@
 ﻿
 namespace Ets.Service.Provider.Authority
 {
-    using System;
-    using System.Collections.Generic;
-    using ETS.Util;
-    using Dao.MenuSet; 
-    using IProvider.AuthorityMenu;
-    using Model.DataModel.Authority;
+using System;
+using System.Collections.Generic;
+using ETS.Util;
+using Dao.MenuSet; 
+using IProvider.AuthorityMenu;
+using Model.DataModel.Authority;
+using Ets.Model.DomainModel.Authority;
+using Ets.Model.ParameterModel.Authority;
+using Ets.Model.Common;
+using System.Linq;
+using ETS.Data.PageData;
     /// <summary>
     /// 权限业务操作类-平扬 2015.3.18
     /// </summary>
@@ -445,6 +450,63 @@ namespace Ets.Service.Provider.Authority
 
         #endregion 
     
+        /// <summary>
+        /// 后台用户列表查询
+        /// danny-20150320
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public AuthorityManage GetAuthorityManage(AuthoritySearchCriteria criteria)
+        {
+            var pagedQuery = new AuthorityManage();
+            PageInfo<account> pageinfo = _dao.GetAuthorityManage<account>(criteria);
+            NewPagingResult pr = new NewPagingResult() { PageIndex = criteria.PagingRequest.PageIndex, PageSize = criteria.PagingRequest.PageSize, RecordCount = pageinfo.All, TotalCount = pageinfo.All };
+            List<account> list = pageinfo.Records.ToList();
+            var authoritylists = new AuthorityManageList(list, pr);
+            pagedQuery.authorityManageList = authoritylists;
+            return pagedQuery;
+        }
+        /// <summary>
+        /// 检查当前用户是否存在
+        /// danny-20150323
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        public bool CheckHasAccountName(account account)
+        {
+            return _dao.CheckHasAccountName(account);
+        }
+        /// <summary>
+        /// 添加用户
+        /// danny-20150323
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        public bool AddAccount(account account)
+        {
+            return _dao.AddAccount(account);
+        }
+        /// <summary>
+        ///  删除用户
+        /// danny-20150323
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public bool DeleteAccountById(int id)
+        {
+            return _dao.DeleteAccountById(id);
+        }
+        /// <summary>
+        /// 用户修改密码
+        /// danny-20150323
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="modifypassword"></param>
+        /// <returns></returns>
+        public bool ModifyPwdById(int id, string modifypassword)
+        {
+            return _dao.ModifyPwdById(id, modifypassword);
+        }
 
       
     }
