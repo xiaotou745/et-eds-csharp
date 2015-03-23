@@ -55,10 +55,8 @@ namespace SuperManCore.Common
 
         [DisplayText("发送失败")]
         SendFailure,
-
-        [DisplayText("手机号已注册")]
-        PhoneNumberHadRegiste
-
+         [DisplayText("该用户已注册")]
+        AlreadyExists
     }
 
     public enum CancelOrderStatus

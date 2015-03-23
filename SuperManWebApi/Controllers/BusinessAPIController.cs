@@ -456,13 +456,20 @@ namespace SuperManWebApi.Controllers
             var msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode, ConstValues.MessageBusiness);  //获取提示用语信息
             try
             {
-                SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);
-                //更新短信通道 
-                Task.Factory.StartNew(() =>
+                if (BusiLogic.busiLogic().CheckExistPhone(PhoneNumber))  //判断该手机号是否已经注册过
                 {
-                    SendSmsHelper.SendSendSmsSaveLog(PhoneNumber, msg, ConstValues.SMSSOURCE);
-                });
-                return SimpleResultModel.Conclude(SendCheckCodeStatus.Sending);
+                    return SimpleResultModel.Conclude(SendCheckCodeStatus.AlreadyExists);
+                }
+                else
+                {
+                    SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);
+                    //更新短信通道 
+                    Task.Factory.StartNew(() =>
+                    {
+                        SendSmsHelper.SendSendSmsSaveLog(PhoneNumber, msg, ConstValues.SMSSOURCE);
+                    });
+                    return SimpleResultModel.Conclude(SendCheckCodeStatus.Sending);
+                }
             }
             catch (Exception)
             {
@@ -509,23 +516,24 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(ForgetPwdStatus))]
         [HttpPost]
-        public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model)
+        public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Bussiness.BusiModifyPwdResultModel> PostForgetPwd_B(Ets.Model.DataModel.Bussiness.BusiForgetPwdInfoModel model)
         {
-            if (string.IsNullOrEmpty(model.password))  //密码非空验证
-                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.NewPwdEmpty);
-            if (string.IsNullOrEmpty(model.checkCode)) //验证码非空验证
-                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeIsEmpty);
-            if (SupermanApiCaching.Instance.Get(model.phoneNumber) != model.checkCode) //验证码正确性验证
-                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong);
-            var business = BusiLogic.busiLogic().GetBusinessByPhoneNo(model.phoneNumber);
-            if (business == null)  //用户是否存在
-                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.ClienterIsNotExist);
-            if (business.Password == model.password) //您要找回的密码正是当前密码
-                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.PwdIsSave);
-            if (BusiLogic.busiLogic().ModifyPwd(business.Id, model.password))
-                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.Success);
-            else
-                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.FailedModifyPwd);
+            //if (string.IsNullOrEmpty(model.password))  //密码非空验证
+            //    return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.NewPwdEmpty);
+            //if (string.IsNullOrEmpty(model.checkCode)) //验证码非空验证
+            //    return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeIsEmpty);
+            //if (SupermanApiCaching.Instance.Get(model.phoneNumber) != model.checkCode) //验证码正确性验证
+            //    return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong);
+            //var business = BusiLogic.busiLogic().GetBusinessByPhoneNo(model.phoneNumber);
+            //if (business == null)  //用户是否存在
+            //    return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.ClienterIsNotExist);
+            //if (business.Password == model.password) //您要找回的密码正是当前密码
+            //    return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.PwdIsSave);
+            //if (BusiLogic.busiLogic().ModifyPwd(business.Id, model.password))
+            //    return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.Success);
+            //else
+            //    return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.FailedModifyPwd);
+            return  new BusinessProvider().PostForgetPwd_B(model);
         }
 
         /// <summary> 

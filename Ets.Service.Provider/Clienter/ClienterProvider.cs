@@ -10,6 +10,7 @@ using CalculateCommon;
 using Ets.Service.Provider.Order;
 using ETS.Enums;
 using Ets.Model.Common;
+using Ets.Dao.WtihdrawRecords;
 
 namespace Ets.Service.Provider.Clienter
 {
@@ -155,11 +156,40 @@ namespace Ets.Service.Provider.Clienter
         public ClienterRecordsListModel WtihdrawRecords(int UserId)
         {
             ClienterRecordsListModel listModel = new ClienterRecordsListModel();
-            listModel.clienterModel = clienterDao.GetUserInfoByUserId(UserId);
-            listModel.listClienterRecordsModel = clienterDao.GetClienterRecordsByUserId(UserId);
+            //listModel.clienterModel = clienterDao.GetUserInfoByUserId(UserId);
+            listModel.listClienterRecordsModel = new WtihdrawRecordsDao().GetClienterRecordsByUserId(UserId);
             return listModel;
         }
+
         /// <summary>
+        ///  修改密码
+        ///  窦海超
+        ///  2015年3月23日 18:45:54
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public ResultModel<ClienterModifyPwdResultModel> PostForgetPwd_C(Ets.Model.DataModel.Clienter.ModifyPwdInfoModel model)
+        {
+            if (string.IsNullOrEmpty(model.newPassword))
+            {
+                return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.NewPwdEmpty);
+            }
+            var clienter = clienterDao.GetUserInfoByUserPhoneNo(model.phoneNo);
+            if (clienter == null)
+            {
+                return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.ClienterIsNotExist);
+            }
+            bool b = clienterDao.UpdateClienterPwdSql(clienter.Id, model.newPassword);
+            if (b)
+            {
+                return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.Success);
+            }
+            else
+            {
+                return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.FailedModifyPwd);
+            }
+        }
+/// <summary>
         /// 判断 骑士端 手机号 是否注册过
         /// wc
         /// </summary>

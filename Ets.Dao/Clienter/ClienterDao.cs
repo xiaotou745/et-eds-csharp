@@ -13,20 +13,6 @@ using System.Data;
 using ETS.Extension;
 using ETS.Enums;
 using Ets.Model.ParameterModel.WtihdrawRecords;
-//using Ets.Model.DataModel.WithdrawRecords;
-
-
-//using ETS;
-//using ETS.Dao;
-//using ETS.Data;
-//using ETS.Data.Core;
-//using ETS.Data.PageData;
-//using ETS.Util;
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
 
 namespace Ets.Dao.Clienter
 {
@@ -220,19 +206,24 @@ namespace Ets.Dao.Clienter
         }
 
         /// <summary>
-        /// 获取C端账户流水信息
+        /// 根据电话获取当前用户的信息
         /// 窦海超
-        /// 2015年3月20日 17:08:05
+        /// 2015年3月20日 16:55:11
         /// </summary>
-        /// <param name="UserId">用户ID</param>
+        /// <param name="PhoneNo">用户手机号</param>
         /// <returns></returns>
-        public IList<ClienterRecordsModel> GetClienterRecordsByUserId(int UserId)
+        public ClienterModel GetUserInfoByUserPhoneNo(string PhoneNo)
         {
-            string sql = @"SELECT r.Id,Amount,Balance,CreateTime,a.UserName AS AdminName FROM Records(NOLOCK) AS r 
-                            LEFT JOIN dbo.account AS a ON r.adminid=a.Id
-                             WHERE [platform]=1 AND userid=" + UserId;
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
-            return MapRows<ClienterRecordsModel>(dt);
+            string sql = "SELECT Id,TrueName,PhoneNo,AccountBalance FROM dbo.clienter(NOLOCK) WHERE PhoneNo=@PhoneNo";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@PhoneNo", PhoneNo);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            IList<ClienterModel> list = MapRows<ClienterModel>(dt);
+            if (list == null && list.Count <= 0)
+            {
+                return null;
+            }
+            return list[0];
         }
 
         /// <summary>
@@ -246,8 +237,8 @@ namespace Ets.Dao.Clienter
         public bool UpdateClienterAccountBalance(WithdrawRecordsModel model)
         {
             Ets.Model.DomainModel.Clienter.ClienterModel cliterModel = new ClienterDao().GetUserInfoByUserId(model.UserId);//获取当前用户余额
-            decimal balance= ParseHelper.ToDecimal(cliterModel.AccountBalance,0);
-            decimal Money =balance + model.Amount;
+            decimal balance = ParseHelper.ToDecimal(cliterModel.AccountBalance, 0);
+            decimal Money = balance + model.Amount;
             if (Money < 0)//如果提现金额大于当前余额则不能提现
             {
                 return false;
@@ -260,6 +251,23 @@ namespace Ets.Dao.Clienter
         }
 
         /// <summary>
+        /// 根据用户ID更新密码
+        /// </summary>
+        /// <param name="UserId">用户ID</param>
+        /// <param name="UserPwd">新密码</param>
+        /// <returns></returns>
+        public bool UpdateClienterPwdSql(int UserId, string UserPwd)
+        {
+            if (UserId <= 0)
+            {
+                return false;
+            }
+            string sql = "UPDATE dbo.clienter SET [Password]=@Password WHERE id=" + UserId;
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Password", UserPwd);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+        }
+ /// <summary>
         /// 检查 骑士 手机号 是否注册过 
         /// wc
         /// </summary>

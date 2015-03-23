@@ -14,6 +14,7 @@ using System.Linq;
 using ETS.Enums;
 using Ets.Model.DataModel.Bussiness;
 using ETS.Util;
+using ETS.Cacheing;
 namespace Ets.Service.Provider.User
 {
 
@@ -177,53 +178,53 @@ namespace Ets.Service.Provider.User
 
 		}
 
-		/// <summary>
-		/// B端登录
-		/// 窦海超
-		/// 2015年3月16日 16:11:59
-		/// </summary>
-		/// <param name="model">用户名，密码对象</param>
-		/// <returns>登录后返回实体对象</returns>
-		public ResultModel<BusiLoginResultModel> PostLogin_B(Model.ParameterModel.Bussiness.LoginModel model)
-		{
-			try
-			{
-				BusiLoginResultModel resultMode = new BusiLoginResultModel();
-				DataTable dt = dao.LoginSql(model);
-				if (dt == null || dt.Rows.Count <= 0)
-				{
-					return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential, resultMode);
-				}
-				DataRow row = dt.Rows[0];
-				resultMode.userId = ParseHelper.ToInt(row["userId"]);
-				resultMode.status = Convert.ToByte(row["status"]);
-				resultMode.city = row["city"].ToString();
-				resultMode.Address = row["Address"].ToString();
-				resultMode.districtId = row["districtId"].ToString();
-				resultMode.district = row["district"].ToString();
-				resultMode.Landline = row["Landline"].ToString();
-				resultMode.Name = row["Name"].ToString();
-				resultMode.cityId = row["cityId"].ToString();
-				resultMode.phoneNo = row["PhoneNo2"] == null ? row["PhoneNo"].ToString() : row["PhoneNo2"].ToString();
-				resultMode.DistribSubsidy = row["DistribSubsidy"] == null ? 0 : ParseHelper.ToDecimal(row["DistribSubsidy"]);
-				return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.Success, resultMode);
-			}
-			catch (Exception ex)
-			{
-				return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
-				throw;
-			}
-		}
-		/// <summary>
-		/// 根据商户Id获取商户信息
-		/// </summary>
-		/// <param name="busiId"></param>
-		/// <returns></returns>
-		public BusListResultModel GetBusiness(int busiId)
-		{
-		   return dao.GetBusiness(busiId);
-		}
-		 /// <summary>
+        /// <summary>
+        /// B端登录
+        /// 窦海超
+        /// 2015年3月16日 16:11:59
+        /// </summary>
+        /// <param name="model">用户名，密码对象</param>
+        /// <returns>登录后返回实体对象</returns>
+        public ResultModel<BusiLoginResultModel> PostLogin_B(Model.ParameterModel.Bussiness.LoginModel model)
+        {
+            try
+            {
+                BusiLoginResultModel resultMode = new BusiLoginResultModel();
+                DataTable dt = dao.LoginSql(model);
+                if (dt == null || dt.Rows.Count <= 0)
+                {
+                    return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential, resultMode);
+                }
+                DataRow row = dt.Rows[0];
+                resultMode.userId = ParseHelper.ToInt(row["userId"]);
+                resultMode.status = Convert.ToByte(row["status"]);
+                resultMode.city = row["city"].ToString();
+                resultMode.Address = row["Address"].ToString();
+                resultMode.districtId = row["districtId"].ToString();
+                resultMode.district = row["district"].ToString();
+                resultMode.Landline = row["Landline"].ToString();
+                resultMode.Name = row["Name"].ToString();
+                resultMode.cityId = row["cityId"].ToString();
+                resultMode.phoneNo = row["PhoneNo2"] == null ? row["PhoneNo"].ToString() : row["PhoneNo2"].ToString();
+                resultMode.DistribSubsidy = row["DistribSubsidy"] == null ? 0 : ParseHelper.ToDecimal(row["DistribSubsidy"]);
+                return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.Success, resultMode);
+            }
+            catch (Exception ex)
+            {
+                return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
+                throw;
+            }
+        }
+        /// <summary>
+        /// 根据商户Id获取商户信息
+        /// </summary>
+        /// <param name="busiId"></param>
+        /// <returns></returns>
+        public BusListResultModel GetBusiness(int busiId)
+        {
+            return dao.GetBusiness(busiId);
+        }
+        /// <summary>
 		/// 获取商户信息
 		/// danny-20150316
 		/// </summary>
@@ -251,18 +252,48 @@ namespace Ets.Service.Provider.User
 			return dao.UpdateAuditStatus(id, enumStatusType);
 		}
 
-		/// <summary>
-		///  根据城市信息查询当前城市下该集团的所有商户信息
-		///  danny-20150317
-		/// </summary>
-		/// <param name="id"></param>
-		/// <param name="enumStatusType"></param>
-		/// <returns></returns>
-		public IList<BusListResultModel> GetBussinessByCityInfo(BusinessSearchCriteria criteria)
-		{
-			return dao.GetBussinessByCityInfo(criteria);
-		}
-		/// <summary>
+        /// <summary>
+        ///  根据城市信息查询当前城市下该集团的所有商户信息
+        ///  danny-20150317
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="enumStatusType"></param>
+        /// <returns></returns>
+        public IList<BusListResultModel> GetBussinessByCityInfo(BusinessSearchCriteria criteria)
+        {
+            return dao.GetBussinessByCityInfo(criteria);
+        }
+
+        /// <summary>
+        /// 修改商户密码
+        /// 窦海超
+        /// 2015年3月23日 19:11:54
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model)
+        {
+            if (string.IsNullOrEmpty(model.password))  //密码非空验证
+                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.NewPwdEmpty);
+            if (string.IsNullOrEmpty(model.checkCode)) //验证码非空验证
+            {
+                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeIsEmpty);
+            }
+            var code = CacheFactory.Instance[model.phoneNumber];
+
+            if (code == null || code.ToString() != model.checkCode) //验证码正确性验证
+                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong);
+
+            BusinessDao businessDao = new BusinessDao();
+            var business = businessDao.GetBusinessByPhoneNo(model.phoneNumber);
+            if (business == null)  //用户是否存在
+                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.ClienterIsNotExist);
+            if (businessDao.UpdateBusinessPwdSql(business.Id, model.password))
+                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.Success);
+            else
+                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.FailedModifyPwd);
+        }
+/// <summary>
 		/// 验证 商户 手机号 是否注册
 		/// wc
 		/// </summary>
@@ -272,5 +303,5 @@ namespace Ets.Service.Provider.User
 		{
             return dao.CheckBusinessExistPhone(PhoneNo);
 		}
-	}
+    }
 }

@@ -42,6 +42,15 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="UserId">用户ID</param>
         /// <returns></returns>
         ClienterRecordsListModel WtihdrawRecords(int UserId);
+
+        /// <summary>
+        ///  修改密码
+        ///  窦海超
+        ///  2015年3月23日 18:45:54
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        ResultModel<ClienterModifyPwdResultModel> PostForgetPwd_C(Ets.Model.DataModel.Clienter.ModifyPwdInfoModel model);
         /// <summary>
         /// 判断 骑士端 手机号 是否注册过
         /// wc

@@ -55,10 +55,15 @@
     <Compile Include="DataModel\Authority\AuthorityRoleModel.cs" />
     <Compile Include="DataModel\Authority\AuthorityRoleMentMenuSet.cs" />
     <Compile Include="DataModel\Authority\AuthorityMenuModel.cs" />
+    <Compile Include="DataModel\Bussiness\BusiForgetPwdInfoModel.cs" />
     <Compile Include="DataModel\Bussiness\BusiLoginResultModel.cs" />
+    <Compile Include="DataModel\Bussiness\BusiModifyPwdResultModel.cs" />
     <Compile Include="DataModel\Bussiness\BusiRegisterResultModel.cs" />
     <Compile Include="DataModel\Clienter\ClienterLoginResultModel.cs" />
     <Compile Include="DataModel\Clienter\ClienterListModel.cs" />
+    <Compile Include="DataModel\Clienter\ClienterModifyPwdResultModel.cs" />
+    <Compile Include="DataModel\Clienter\ForgetPwdInfoModel.cs" />
+    <Compile Include="DataModel\Clienter\ModifyPwdInfoModel.cs" />
     <Compile Include="DataModel\Group\GroupModel.cs" />
     <Compile Include="DataModel\Order\OrderCommission.cs" />
     <Compile Include="Common\PaginResult.cs" />
@@ -88,6 +93,7 @@
     <Compile Include="DomainModel\Subsidy\HomeCountCriteria.cs" />
     <Compile Include="DomainModel\Subsidy\SubsidyManage.cs" />
     <Compile Include="DomainModel\Subsidy\SubsidyResultModel.cs" />
+    <Compile Include="DomainModel\WithdrawRecordsModel.cs" />
     <Compile Include="ParameterModel\Authority\AuthoritySearchCriteria.cs" />
     <Compile Include="ParameterModel\Bussiness\BusiOrderInfoModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BussOrderParaModelApp.cs" />
@@ -106,6 +112,8 @@
     <Compile Include="ParameterModel\Order\CreatePM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\OrderSearchCriteria.cs" />
     <Compile Include="ParameterModel\Subsidy\SubsidyModel.cs" />
+    <Compile Include="ParameterModel\WtihdrawRecords\IncomeModel.cs" />
+    <Compile Include="ParameterModel\WtihdrawRecords\MyIncomeSearchCriteria.cs" />
     <Compile Include="ParameterModel\WtihdrawRecords\WithdrawRecordsModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserModel.cs" />

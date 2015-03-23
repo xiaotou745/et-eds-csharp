@@ -1,5 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using cn.jpush.api.report;
+using Ets.Model.ParameterModel.WtihdrawRecords;
+using Ets.Service.Provider.WtihdrawRecords;
 using SuperManBusinessLogic.CommonLogic;
 using SuperManCommonModel;
 using SuperManCommonModel.Entities;
@@ -13,6 +15,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ets.Service.IProvider.Order;
+using MyIncomeSearchCriteria = SuperManCommonModel.Entities.MyIncomeSearchCriteria;
+
 namespace SuperManBusinessLogic.C_Logic
 {
     public class ClienterLogic
@@ -497,7 +501,7 @@ namespace SuperManBusinessLogic.C_Logic
             var result = -1;
             using (var db = new supermanEntities())
             {
-                var query = db.order.Where(p => p.OrderNo == orderNo).FirstOrDefault();
+                var query = db.order.FirstOrDefault(p => p.OrderNo == orderNo);
                 if (query != null)
                 {
                     if(query.Status==ConstValues.ORDER_FINISH) //已完成状态不做处理
@@ -509,23 +513,39 @@ namespace SuperManBusinessLogic.C_Logic
                     query.Status = ConstValues.ORDER_FINISH;
                     query.ActualDoneDate = DateTime.Now;
                 }
-                var client = db.clienter.Where(p => p.Id == userId).FirstOrDefault();//查询用户
+                var client = db.clienter.FirstOrDefault(p => p.Id == userId);//查询用户
+                decimal? AccountBalance = 0;
                 if (client != null)  //更新用户相关金额数据
                 {
-                    if (client.AccountBalance != null)  //TODO
-                        client.AccountBalance = client.AccountBalance.Value + (query.OrderCommission == null ? 0 : Convert.ToDecimal(query.OrderCommission));
+                    if (client.AccountBalance.HasValue)
+                        AccountBalance = client.AccountBalance.Value + (query.OrderCommission == null ? 0 : Convert.ToDecimal(query.OrderCommission));
                     else
-                        client.AccountBalance = query.OrderCommission == null ? 0 : Convert.ToDecimal(query.OrderCommission);
+                        AccountBalance = query.OrderCommission == null ? 0 : Convert.ToDecimal(query.OrderCommission);
                 }
-
+                client.AccountBalance = AccountBalance;
+                #region 2015.3.23 平扬 修改 插入到新增的 Records表，原先的MyIncome表作废 
                 // add 完成订单时添加收入
-                var model = new myincome();
-                model.PhoneNo = client.PhoneNo;
-                model.MyIncome1 = "收入";
-                model.MyInComeAmount = query.OrderCommission == null ? 0 : Convert.ToDecimal(query.OrderCommission);// query.DistribSubsidy + query.OrderCommission + query.WebsiteSubsidy;
-                model.InsertTime = DateTime.Now;
-                db.myincome.Add(model);
+                //var model = new myincome();
+                //model.PhoneNo = client.PhoneNo;
+                //model.MyIncome1 = "收入";
+                //model.MyInComeAmount = query.OrderCommission == null ? 0 : Convert.ToDecimal(query.OrderCommission);// query.DistribSubsidy + query.OrderCommission + query.WebsiteSubsidy;
+                //model.InsertTime = DateTime.Now;
+                //db.myincome.Add(model); 
                 //end add 
+
+                //2015.3.23 平扬 修改
+                //插入到新增的 Records表，原先的MyIncome表作废
+                var model=new WithdrawRecordsModel
+                {
+                    AdminId = 1,
+                    Amount = query.OrderCommission == null ? 0 : Convert.ToDecimal(query.OrderCommission),
+                    Balance = AccountBalance ?? 0,
+                    UserId = userId,
+                    Platform = 1
+                };
+                Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords=new WtihdrawRecordsProvider();
+                iRecords.AddRecords(model);
+                #endregion
                 int i = db.SaveChanges(); 
                 if (i != 0)
                 {
