@@ -55,10 +55,15 @@
     <Compile Include="DataModel\Authority\AuthorityRoleModel.cs" />
     <Compile Include="DataModel\Authority\AuthorityRoleMentMenuSet.cs" />
     <Compile Include="DataModel\Authority\AuthorityMenuModel.cs" />
+    <Compile Include="DataModel\Bussiness\BusiForgetPwdInfoModel.cs" />
     <Compile Include="DataModel\Bussiness\BusiLoginResultModel.cs" />
+    <Compile Include="DataModel\Bussiness\BusiModifyPwdResultModel.cs" />
     <Compile Include="DataModel\Bussiness\BusiRegisterResultModel.cs" />
     <Compile Include="DataModel\Clienter\ClienterLoginResultModel.cs" />
     <Compile Include="DataModel\Clienter\ClienterListModel.cs" />
+    <Compile Include="DataModel\Clienter\ClienterModifyPwdResultModel.cs" />
+    <Compile Include="DataModel\Clienter\ForgetPwdInfoModel.cs" />
+    <Compile Include="DataModel\Clienter\ModifyPwdInfoModel.cs" />
     <Compile Include="DataModel\Group\GroupModel.cs" />
     <Compile Include="DataModel\Order\OrderCommission.cs" />
     <Compile Include="Common\PaginResult.cs" />

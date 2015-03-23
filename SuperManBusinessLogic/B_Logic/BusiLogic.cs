@@ -402,12 +402,17 @@ namespace SuperManBusinessLogic.B_Logic
                                         monthDone = g.Count(),
                                         monthDoneAmount = Math.Round(g.Sum(m => m.Amount).Value, 2).ToString()
                                     };
+
+
                     if (todayPublish.FirstOrDefault() != null)
                     {
                         model.todayPublish = todayPublish.FirstOrDefault().todayPublish;
                         model.todayPublishAmount = todayPublish.FirstOrDefault().todayPublishAmount;
                         if (string.IsNullOrEmpty(model.todayPublishAmount))
                             model.todayPublishAmount = "0.00";
+                    }
+                    else {
+                        model.todayPublishAmount = "0.00";
                     }
                     if (tydayDone.FirstOrDefault() != null)
                     {
@@ -416,12 +421,18 @@ namespace SuperManBusinessLogic.B_Logic
                         if (string.IsNullOrEmpty(model.todayDoneAmount))
                             model.todayDoneAmount = "0.00";
                     }
+                    else {
+                        model.todayDoneAmount = "0.00";
+                    }
                     if (monthPublish.FirstOrDefault() != null)
                     {
                         model.monthPublish = monthPublish.FirstOrDefault().monthPublish;
                         model.monthPublishAmount = monthPublish.FirstOrDefault().monthPublishAmount;
                         if (string.IsNullOrEmpty(model.monthPublishAmount))
                             model.monthPublishAmount = "0.00";
+                    }
+                    else {
+                        model.monthPublishAmount = "0.00";
                     }
 
                     if (monthDone.FirstOrDefault() != null)
@@ -430,6 +441,9 @@ namespace SuperManBusinessLogic.B_Logic
                         model.monthDoneAmount = monthDone.FirstOrDefault().monthDoneAmount;
                         if (string.IsNullOrEmpty(model.monthDoneAmount))
                             model.monthDoneAmount = "0.00";
+                    }
+                    else {
+                        model.monthDoneAmount = "0.00";
                     }
                 }
             }

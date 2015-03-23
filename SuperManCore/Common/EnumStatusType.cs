@@ -54,7 +54,9 @@ namespace SuperManCore.Common
         InvlidPhoneNumber,
 
         [DisplayText("发送失败")]
-        SendFailure
+        SendFailure,
+        [DisplayText("该用户已注册")]
+        AlreadyExists
     }
 
     public enum CancelOrderStatus

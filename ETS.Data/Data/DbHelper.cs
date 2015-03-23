@@ -233,6 +233,18 @@ namespace ETS.Data
 			return ExecuteDataset(connString, CommandType.Text, commandText, TIMEOUT_DEFAULT, parameterValues);
 		}
 
+        /// <summary>
+        /// 执行SQL, 返回DataTable
+        /// </summary>
+        /// <param name="connString">the ConnectionString</param>
+        /// <param name="commandText">the execute sql</param>
+        /// <param name="parameterValues">the sql parameters</param>
+        /// <returns>return a DataTable</returns>
+        public DataTable ExecuteDataTable(string connString, string commandText, IDbParameters parameterValues)
+        {
+            return DataTableHelper.GetTable(ExecuteDataset(connString, CommandType.Text, commandText, TIMEOUT_DEFAULT, parameterValues));
+        }
+
 		/// <summary>
 		/// 执行SQL, 返回Dataset
 		/// </summary>
