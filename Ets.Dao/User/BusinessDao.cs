@@ -556,22 +556,25 @@ namespace Ets.Dao.User
         {
             string sql = @"
                     SELECT 
-                    ISNULL(SUM(CASE WHEN ([Status]=0 OR [Status]=1) AND CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) THEN 1 ELSE 0 END ),0) AS TodayPublish,
-                    ISNULL(SUM(CASE WHEN ([Status]=0 OR [Status]=1) AND CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) THEN Amount ELSE 0 END),0) AS TodayPublishAmount,
+                    ISNULL(SUM(CASE WHEN ([Status]=@order_new OR [Status]=@order_Finish) AND CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) THEN 1 ELSE 0 END ),0) AS TodayPublish,
+                    ISNULL(SUM(CASE WHEN ([Status]=@order_new  OR [Status]=@order_Finish) AND CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) THEN Amount ELSE 0 END),0) AS TodayPublishAmount,
 
-                    ISNULL(SUM(CASE WHEN [Status]=1 AND CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) THEN 1 ELSE 0 END),0) AS TodayDone,
-                    ISNULL(SUM(CASE WHEN [Status]=1 AND CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) THEN Amount ELSE 0 END),0) AS TodayDoneAmount,
+                    ISNULL(SUM(CASE WHEN [Status]=@order_Finish AND CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) THEN 1 ELSE 0 END),0) AS TodayDone,
+                    ISNULL(SUM(CASE WHEN [Status]=@order_Finish AND CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) THEN Amount ELSE 0 END),0) AS TodayDoneAmount,
 
-                    ISNULL(SUM(CASE WHEN ([Status]=0 OR [Status]=1) AND CONVERT(CHAR(7),PubDate,120)=CONVERT(CHAR(7),GETDATE(),120) THEN 1 ELSE 0 END),0) AS MonthPublish,
-                    ISNULL(SUM(CASE WHEN ([Status]=0 OR [Status]=1) AND CONVERT(CHAR(7),PubDate,120)=CONVERT(CHAR(7),GETDATE(),120) THEN Amount ELSE 0 END),0) AS MonthPublishAmount,
+                    ISNULL(SUM(CASE WHEN ([Status]=@order_new  OR [Status]=@order_Finish) AND CONVERT(CHAR(7),PubDate,120)=CONVERT(CHAR(7),GETDATE(),120) THEN 1 ELSE 0 END),0) AS MonthPublish,
+                    ISNULL(SUM(CASE WHEN ([Status]=@order_new  OR [Status]=@order_Finish) AND CONVERT(CHAR(7),PubDate,120)=CONVERT(CHAR(7),GETDATE(),120) THEN Amount ELSE 0 END),0) AS MonthPublishAmount,
 
-                    ISNULL(SUM(CASE WHEN [Status]=1 AND CONVERT(CHAR(7),PubDate,120)=CONVERT(CHAR(7),GETDATE(),120) THEN 1 ELSE 0 END),0) AS MonthDone,
-                    ISNULL(SUM(CASE WHEN [Status]=1 AND CONVERT(CHAR(7),PubDate,120)=CONVERT(CHAR(7),GETDATE(),120) THEN Amount ELSE 0 END),0) AS MonthDoneAmount
+                    ISNULL(SUM(CASE WHEN [Status]=@order_Finish AND CONVERT(CHAR(7),PubDate,120)=CONVERT(CHAR(7),GETDATE(),120) THEN 1 ELSE 0 END),0) AS MonthDone,
+                    ISNULL(SUM(CASE WHEN [Status]=@order_Finish AND CONVERT(CHAR(7),PubDate,120)=CONVERT(CHAR(7),GETDATE(),120) THEN Amount ELSE 0 END),0) AS MonthDoneAmount
                      FROM dbo.[order](NOLOCK)
                     WHERE businessId=@businessId
                 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@businessId", BusinessId);
+            parm.AddWithValue("@order_new", ConstValues.ORDER_NEW);
+            parm.AddWithValue("@order_Finish", ConstValues.ORDER_FINISH);
+
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             IList<BusiOrderCountResultModel> list= MapRows<BusiOrderCountResultModel>(dt);
             if (list==null || list.Count<=0)
