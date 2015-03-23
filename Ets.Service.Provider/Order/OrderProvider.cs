@@ -13,6 +13,7 @@ using Ets.Service.IProvider.User;
 using Ets.Service.Provider.MyPush;
 using Ets.Service.Provider.Subsidy;
 using Ets.Service.Provider.User;
+using ETS.Enums;
 using ETS.Data.PageData;
 using ETS.Page;
 using ETS.Transaction;
@@ -23,6 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ets.Model.DomainModel.Subsidy;
 namespace Ets.Service.Provider.Order
 {
     public class OrderProvider : IOrderProvider
@@ -292,6 +294,19 @@ namespace Ets.Service.Provider.Order
         {
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
+                ISubsidyProvider subsidyProvider = new SubsidyProvider();//补贴记录
+                SubsidyResultModel subsidy = subsidyProvider.GetCurrentSubsidy(paramodel.store_info.group);
+                //计算获得订单骑士佣金
+                paramodel.ordercommission = OrderCommissionProvider.GetCurrenOrderCommission(new OrderCommission()
+                {
+                    CommissionRate = subsidy.OrderCommission,/*佣金比例*/
+                    Amount = paramodel.total_price, /*订单金额*/
+                    DistribSubsidy = paramodel.delivery_fee,/*外送费*/
+                    OrderCount = paramodel.package_count,/*订单数量*/
+                    WebsiteSubsidy = subsidy.WebsiteSubsidy
+                }/*网站补贴*/);
+                paramodel.websitesubsidy = ParseHelper.ToDecimal(subsidy.WebsiteSubsidy);//网站补贴
+                paramodel.commissionrate = ParseHelper.ToDecimal(subsidy.OrderCommission);//订单佣金比例
                 string orderNo = OrderDao.CreateToSql(paramodel);
                 if (!string.IsNullOrWhiteSpace(orderNo))
                     Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！"
@@ -355,6 +370,28 @@ namespace Ets.Service.Provider.Order
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// 根据订单号查询 是否存在该订单
+        /// wangchao 
+        /// </summary>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        public int GetOrderByOrderNo(string orderNo)
+        {
+            return OrderDao.GetOrderByOrderNo(orderNo);
+        }
+        /// <summary>
+        /// 根据订单号 修改订单状态
+        /// wc
+        /// </summary>
+        /// <param name="orderNo">订单号</param>
+        /// <param name="orderStatus">订单状态</param>
+        /// <returns></returns>
+        public int UpdateOrderStatus(string orderNo, int orderStatus)
+        {
+            return OrderDao.CancelOrderStatus(orderNo, orderStatus);
         }
     }
 }
