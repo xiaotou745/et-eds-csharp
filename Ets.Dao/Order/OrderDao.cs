@@ -78,12 +78,26 @@ namespace Ets.Dao.Order
             }
             if (!string.IsNullOrWhiteSpace(criteria.city))
             {
-                whereStr.AppendFormat(" AND b.City = '{0}'", criteria.city);
+                if (criteria.city.Contains("北京"))   //易淘食注册的商家 city  为北京城区， 通过b端注册是 北京市，不统一 wc 
+                {
+                    whereStr.AppendFormat(" AND b.City LIKE '北京%'", criteria.city);
+                }
+                else
+                {
+                    whereStr.AppendFormat(" AND b.City = '{0}'", criteria.city);
+                }
             }
-            if (!string.IsNullOrWhiteSpace(criteria.cityId))
-            {
-                whereStr.AppendFormat(" AND b.CityId = '{0}'", criteria.cityId);
-            }
+            //if (!string.IsNullOrWhiteSpace(criteria.cityId))
+            //{
+            //    if (criteria.cityId == "1")  //目前北京市 的 id 在 康珍那里是  1 ， 但是 第三方过来的是code  10201 ，需要统一，康珍那里改
+            //    {
+            //        whereStr.AppendFormat(" AND ( b.CityId = '{0}' OR b.CityId = '10201' )", criteria.cityId);
+            //    }
+            //    else
+            //    {
+            //        whereStr.AppendFormat(" AND b.CityId = '{0}'", criteria.cityId);
+            //    }
+            //}
             if (criteria.status != -1 && criteria.status != null)
             {
                 whereStr.AppendFormat(" AND o.[Status] = {0}", criteria.status);
@@ -595,5 +609,46 @@ namespace Ets.Dao.Order
             return reslut;
         }
 
+        /// <summary>
+        /// 根据订单 号查询 订单是否存在  
+        /// wangchao 
+        /// </summary>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        public int GetOrderByOrderNo(string orderNo)
+        { 
+            string selSql = string.Format(@" SELECT COUNT(1)
+ FROM   dbo.[order] WITH ( NOLOCK ) 
+ WHERE  OrderNo = @orderNo");
+             
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@orderNo", orderNo);    //订单号
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, selSql, dbParameters);
+
+            return ParseHelper.ToInt(executeScalar, -1);
+             
+        }
+
+        /// <summary>
+        /// 根据订单号 修改订单状态 B端商家取消订单
+        /// wc
+        /// </summary>
+        /// <param name="orderNo">订单号</param>
+        /// <param name="orderStatus">订单状态</param>
+        /// <returns></returns>
+        public int CancelOrderStatus(string orderNo, int orderStatus)
+        {
+            string upSql = string.Format(@" UPDATE dbo.[order]
+ SET    [Status] = @status
+ WHERE  OrderNo = @orderNo");
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@orderNo", orderNo);    //订单号
+            dbParameters.AddWithValue("@status", orderStatus);    //订单号
+
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, upSql, dbParameters);
+
+            return ParseHelper.ToInt(executeScalar, -1);
+        }
     }
 }

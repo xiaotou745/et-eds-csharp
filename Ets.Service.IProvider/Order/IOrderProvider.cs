@@ -82,5 +82,21 @@ namespace Ets.Service.IProvider.Order
         /// <param name="order"></param>
         /// <returns></returns>
         bool RushOrder(OrderListModel order);
+ /// <summary>
+        /// 根据订单号获取订单信息
+        /// wc
+        /// </summary>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        int GetOrderByOrderNo(string orderNo);
+        /// <summary>
+        /// 根据订单号 修改订单状态
+        /// wc
+        /// </summary>
+        /// <param name="orderNo">订单号</param>
+        /// <param name="orderStatus">订单状态</param>
+        /// <returns></returns>
+        int UpdateOrderStatus(string orderNo, int orderStatus);
+
     }
 }
