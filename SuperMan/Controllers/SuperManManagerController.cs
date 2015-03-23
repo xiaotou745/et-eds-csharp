@@ -125,7 +125,12 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult WtihdrawRecords(int UserId)
         {
-
+            account maccount = HttpContext.Session["user"] as account;
+            if (maccount == null)
+            {
+                Response.Redirect("/account/login");
+                return null;
+            }
             var pagedList = cliterProvider.WtihdrawRecords(UserId);
             ViewBag.pagedList = pagedList;
             ViewBag.UserId = UserId;
