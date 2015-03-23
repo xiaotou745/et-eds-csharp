@@ -65,7 +65,12 @@
     $(function () {
         $("#btnWithdraw").click(function () {
             $.post("/SuperManManager/WtihdrawRecords", { Price: -$("#txtMoney").val(), UserId: $("#hidUserId").val(), m: Math.random() }, function (d) {
-                debugger
+                if (d.IsSuccess) {
+                    alert("提现成功");
+                    window.location.href = window.location.href;
+                } else {
+                    alert(d.Message);
+                }
             });
         });
     });
