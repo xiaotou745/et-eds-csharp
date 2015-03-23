@@ -29,24 +29,34 @@
                     </dl>
                 }
                 <dl>
-                    <dt><i>* </i>订单佣金: <input id="txtOrderCommission" name="txtOrderCommission" type="text" />% <text id="labOrderCommission" style="color:red" hidden="hidden">不能为空</text></dt>
+                    <dt><i>* </i>订单佣金:<input id="txtOrderCommission" name="txtOrderCommission" type="text" />% <text id="labOrderCommission" style="color:red" hidden="hidden">不能为空</text></dt>
+                </dl>
+                <dl>
+                    <dt>
+                        <i>*</i>订单类型:
+                        <select>
+                            <option id="songCan">送餐</option>
+                            <option id="quCanHe">取餐盒</option>
+                        </select>
+                    </dt>
+                </dl>
+                <dl>
+                    <dt><i>* </i>每公里费用(元):<input id="txtPKMCost" name="txtPKMCost" type="text" /><text id="labPKMCost" style="color:red" hidden="hidden">不能为空</text></dt>
                 </dl>
 
-                <dl>
+                @*<dl>
                     <dt><i>* </i>配送补贴: <input id="txtDistribSubsidy" name="txtDistribSubsidy" type="text" /><text id="labDistribSubsidy" style="color:red" hidden="hidden">不能为空</text></dt>
-                </dl>
-            </div>
-
-
-          
-            <div>
-                <dl>
-                    <dt><i>* </i>网站补贴: <input id="txtWebsiteSubsidy" name="txtWebsiteSubsidy" type="text" /><text id="labWebsiteSubsidy" style="color:red" hidden="hidden">不能为空</text></dt>
-                </dl>
+                </dl>*@
             </div>
             <div>
+
                 <dl>
-                    <dt class="">&nbsp;&nbsp;有效时间: <input id="selectDateStart" name="selectDateStart" readonly="readonly" type="text" /><text id="labDateStart" style="color:red" hidden="hidden">不能为空</text> 至: <input id="selectDateEnd" name="selectDateEnd" readonly="readonly" type="text" /><text id="labDateEnd" style="color:red" hidden="hidden">不能为空</text></dt>
+                    <dt><i>* </i>网站补贴:<input id="txtWebsiteSubsidy" name="txtWebsiteSubsidy" type="text" /><text id="labWebsiteSubsidy" style="color:red" hidden="hidden">不能为空</text></dt>
+                </dl>
+            </div>
+            <div>
+                <dl>
+                    <dt class="">&nbsp;&nbsp;有效时间:<input id="selectDateStart" name="selectDateStart" readonly="readonly" type="text" /><text id="labDateStart" style="color:red" hidden="hidden">不能为空</text> 至: <input id="selectDateEnd" name="selectDateEnd" readonly="readonly" type="text" /><text id="labDateEnd" style="color:red" hidden="hidden">不能为空</text></dt>
                 </dl>
             </div>
             <div>
@@ -124,23 +134,23 @@
         $('#selectDateStart').datepicker();
         $('#selectDateEnd').datepicker();
 
-        //$('#subsidyForm').validate({
-        //    rules: {
-        //        txtOrderCommission: "required",
-        //        txtDistribSubsidy: "required",
-        //        txtWebsiteSubsidy: "required",
-        //        selectDateStart: "required",
-        //        selectDateEnd: "required",
-        //    },
-        //    messages: {
-        //    txtOrderCommission: "不能为空",
-        //    txtDistribSubsidy: "不能为空",
-        //    }
-        //});
+        $('#subsidyForm').validate({
+            rules: {
+                txtOrderCommission: "required",
+                //txtDistribSubsidy: "required",
+                txtWebsiteSubsidy: "required",
+                selectDateStart: "required",
+                selectDateEnd: "required",
+            },
+            messages: {
+            txtOrderCommission: "不能为空",
+            //txtDistribSubsidy: "不能为空",
+            }
+        });
     });
     $("#btnSave").click(function () {
         var OrderCommission = $('#txtOrderCommission').val();
-        var DistribSubsidy = $('#txtDistribSubsidy').val();
+        //var DistribSubsidy = $('#txtDistribSubsidy').val();
         var WebsiteSubsidy = $('#txtWebsiteSubsidy').val();
         var startDate = $('#selectDateStart').val();
         var endDate = $('#selectDateEnd').val();
@@ -149,10 +159,10 @@
             $('#labOrderCommission').show();
             return false;
         }
-        if (DistribSubsidy == "" || DistribSubsidy == null) {
-            $('#labDistribSubsidy').show();
-            return false;
-        }
+        //if (DistribSubsidy == "" || DistribSubsidy == null) {
+        //    $('#labDistribSubsidy').show();
+        //    return false;
+        //}
         if (WebsiteSubsidy == "" || WebsiteSubsidy == null) {
             $('#labWebsiteSubsidy').show();
             return false;
@@ -170,7 +180,7 @@
             return false;
         }
         var paramaters = {
-            "OrderCommission": OrderCommission, "DistribSubsidy": DistribSubsidy, "WebsiteSubsidy": WebsiteSubsidy, "StartDate": startDate, "EndDate": endDate
+            "OrderCommission": OrderCommission, "WebsiteSubsidy": WebsiteSubsidy, "StartDate": startDate, "EndDate": endDate
         ,"groupId":groupId};
 
         var url = "/SubsidyManager/Save";
@@ -192,9 +202,9 @@
         $('#txtOrderCommission').val().replace(/[^\d.]/g, '');
         $('#labOrderCommission').hide();
     });
-    $('#txtDistribSubsidy').keyup(function () {
-        $('#labDistribSubsidy').hide();
-    });
+    //$('#txtDistribSubsidy').keyup(function () {
+    //    $('#labDistribSubsidy').hide();
+    //});
     $('#txtWebsiteSubsidy').keyup(function () {
         $('#labWebsiteSubsidy').hide();
     });

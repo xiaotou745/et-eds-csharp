@@ -114,7 +114,7 @@ namespace SuperManCore.Common
         userIdEmpty,
         [DisplayText("订单不能为空")]
         OrderEmpty,
-        [DisplayText("订单不存在")]
+        [DisplayText("订单不存在或订单已取消")]
         OrderIsNotExist,
         [DisplayText("订单已被抢或者已完成")]
         OrderIsNotAllowRush
