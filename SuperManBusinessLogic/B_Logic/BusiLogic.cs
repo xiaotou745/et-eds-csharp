@@ -402,34 +402,48 @@ namespace SuperManBusinessLogic.B_Logic
                                         monthDone = g.Count(),
                                         monthDoneAmount = Math.Round(g.Sum(m => m.Amount).Value, 2).ToString()
                                     };
+
+
                     if (todayPublish.FirstOrDefault() != null)
                     {
                         model.todayPublish = todayPublish.FirstOrDefault().todayPublish;
                         model.todayPublishAmount = todayPublish.FirstOrDefault().todayPublishAmount;
-                        if (model.todayPublishAmount==null ||  string.IsNullOrEmpty(model.todayPublishAmount))
+                        if (string.IsNullOrEmpty(model.todayPublishAmount))
                             model.todayPublishAmount = "0.00";
+                    }
+                    else {
+                        model.todayPublishAmount = "0.00";
                     }
                     if (tydayDone.FirstOrDefault() != null)
                     {
                         model.todayDone = tydayDone.FirstOrDefault().todayDone;
                         model.todayDoneAmount = tydayDone.FirstOrDefault().todayDoneAmount;
-                        if (model.todayDoneAmount==null || string.IsNullOrEmpty(model.todayDoneAmount))
+                        if (string.IsNullOrEmpty(model.todayDoneAmount))
                             model.todayDoneAmount = "0.00";
+                    }
+                    else {
+                        model.todayDoneAmount = "0.00";
                     }
                     if (monthPublish.FirstOrDefault() != null)
                     {
                         model.monthPublish = monthPublish.FirstOrDefault().monthPublish;
                         model.monthPublishAmount = monthPublish.FirstOrDefault().monthPublishAmount;
-                        if (model.monthPublishAmount==null || string.IsNullOrEmpty(model.monthPublishAmount))
+                        if (string.IsNullOrEmpty(model.monthPublishAmount))
                             model.monthPublishAmount = "0.00";
+                    }
+                    else {
+                        model.monthPublishAmount = "0.00";
                     }
 
                     if (monthDone.FirstOrDefault() != null)
                     {
                         model.monthDone = monthDone.FirstOrDefault().monthDone;
                         model.monthDoneAmount = monthDone.FirstOrDefault().monthDoneAmount;
-                        if (model.monthDoneAmount==null || string.IsNullOrEmpty(model.monthDoneAmount))
+                        if (string.IsNullOrEmpty(model.monthDoneAmount))
                             model.monthDoneAmount = "0.00";
+                    }
+                    else {
+                        model.monthDoneAmount = "0.00";
                     }
                 }
             }
