@@ -283,7 +283,7 @@ namespace SuperManWebApi.Controllers
 
 
         /// <summary>
-        /// C端未登录时首页获取任务列表     
+        /// C端未登录时首页获取任务列表       这个接口 康 那边没有用过吧？ wc
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -517,7 +517,10 @@ namespace SuperManWebApi.Controllers
         [ActionStatus(typeof(SendCheckCodeStatus))]
         [HttpGet]
         public SimpleResultModel CheckCode(string PhoneNumber, string type)
-        {
+        { 
+            if (!iClienterProvider.CheckClienterExistPhone(PhoneNumber))  //判断该手机号是否已经注册过
+                return SimpleResultModel.Conclude(SendCheckCodeStatus.PhoneNumberHadRegiste); 
+
             if (!CommonValidator.IsValidPhoneNumber(PhoneNumber))
             {
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.InvlidPhoneNumber);

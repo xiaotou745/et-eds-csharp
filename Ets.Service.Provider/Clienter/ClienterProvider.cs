@@ -159,5 +159,15 @@ namespace Ets.Service.Provider.Clienter
             listModel.listClienterRecordsModel = clienterDao.GetClienterRecordsByUserId(UserId);
             return listModel;
         }
+        /// <summary>
+        /// 判断 骑士端 手机号 是否注册过
+        /// wc
+        /// </summary>
+        /// <param name="PhoneNo"></param>
+        /// <returns></returns>
+        public bool CheckClienterExistPhone(string PhoneNo)
+        {
+           return clienterDao.CheckClienterExistPhone(PhoneNo);
+        }
     }
 }

@@ -259,5 +259,27 @@ namespace Ets.Dao.Clienter
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
 
+        /// <summary>
+        /// 检查 骑士 手机号 是否注册过 
+        /// wc
+        /// </summary>
+        /// <param name="PhoneNo"></param>
+        /// <returns></returns>
+        public bool CheckClienterExistPhone(string PhoneNo)
+        {
+            try
+            {
+                string sql = "SELECT COUNT(1) FROM dbo.clienter(NOLOCK) WHERE PhoneNo =@PhoneNo";
+                IDbParameters parm = DbHelper.CreateDbParameters();
+                parm.AddWithValue("@PhoneNo", PhoneNo);
+                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm)) > 0 ? true : false;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex, "检查当前骑士是否存在");
+                return false;
+                throw;
+            }
+        }
     }
 }

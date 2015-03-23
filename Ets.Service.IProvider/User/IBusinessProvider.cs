@@ -87,5 +87,12 @@ namespace Ets.Service.IProvider.User
         /// <param name="criteria"></param>
         /// <returns></returns>
         IList<BusListResultModel> GetBussinessByCityInfo(BusinessSearchCriteria criteria);
+        /// <summary>
+        /// 验证商户手机号 是否 注册
+        /// wc
+        /// </summary>
+        /// <param name="PhoneNo"></param>
+        /// <returns></returns>
+        bool CheckBusinessExistPhone(string PhoneNo);
     }
 }

@@ -16,7 +16,12 @@ namespace Ets.Dao.Subsidy
 {
     public class SubsidyDao : DaoBase
     {
-
+        /// <summary>
+        /// 获取最新 的 一条 补贴设置 
+        /// wc
+        /// </summary> 
+        /// <param name="groupId"></param>
+        /// <returns></returns>
         public SubsidyResultModel GetCurrentSubsidy(int groupId)
         {
             SubsidyResultModel subsidyResultModel = new SubsidyResultModel();
@@ -33,6 +38,10 @@ WHERE   sub.[Status] = 1 ");
             if (groupId > 0)
             {
                 selSql.Append(" AND sub.GroupId = @groupId ");
+            }
+            else
+            {
+                selSql.Append(" AND sub.GroupId = 0 ");  //没有集团就 取 系统中默认设置的 补贴记录
             }
 
             selSql.Append(" ORDER BY id DESC ");

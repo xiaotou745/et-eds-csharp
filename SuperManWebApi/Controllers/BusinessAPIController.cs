@@ -24,11 +24,13 @@ using Ets.Service.Provider.User;
 using Ets.Service.IProvider.Order;
 using Ets.Service.Provider.Order;
 using Ets.Service.Provider.Common;
+using Ets.Service.IProvider.User;
 namespace SuperManWebApi.Controllers
 {
     public class BusinessAPIController : ApiController
     {
         IOrderProvider iOrderProvider = new OrderProvider();
+        IBusinessProvider iBusinessProvider = new BusinessProvider();
         /// <summary>
         /// 线程安全
         /// </summary>
@@ -435,14 +437,17 @@ namespace SuperManWebApi.Controllers
             var resultModel = BusiLogic.busiLogic().GetOrderCountData(userId);
             return ResultModel<BusiOrderCountResultModel>.Conclude(LoginModelStatus.Success, resultModel);
         }
-
+        
         /// <summary>
         /// 请求动态验证码  (注册)
         /// c</summary>
         [ActionStatus(typeof(SendCheckCodeStatus))]
         [HttpGet]
         public SimpleResultModel CheckCode(string PhoneNumber)
-        {
+        { 
+            if (!iBusinessProvider.CheckBusinessExistPhone(PhoneNumber))  //判断该手机号是否已经注册过
+                return SimpleResultModel.Conclude(SendCheckCodeStatus.PhoneNumberHadRegiste); 
+
             if (!CommonValidator.IsValidPhoneNumber(PhoneNumber))  //验证电话号码合法性
             {
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.InvlidPhoneNumber);
