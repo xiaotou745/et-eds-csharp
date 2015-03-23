@@ -430,10 +430,10 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(LoginModelStatus))]
         [HttpGet]
-        public ResultModel<BusiOrderCountResultModel> OrderCount_B(int userId)
+        public ResultModel<Ets.Model.DomainModel.Bussiness.BusiOrderCountResultModel> OrderCount_B(int userId)
         {
             var resultModel = BusiLogic.busiLogic().GetOrderCountData(userId);
-            return ResultModel<BusiOrderCountResultModel>.Conclude(LoginModelStatus.Success, resultModel);
+            return ResultModel<Ets.Model.DomainModel.Bussiness.BusiOrderCountResultModel>.Conclude(LoginModelStatus.Success, resultModel);
         }
 
         /// <summary>

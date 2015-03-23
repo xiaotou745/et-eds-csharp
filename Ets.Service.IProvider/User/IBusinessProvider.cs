@@ -96,5 +96,14 @@ namespace Ets.Service.IProvider.User
         /// <param name="model"></param>
         /// <returns></returns>
         ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model);
+
+        /// <summary>
+        /// 获取商户端的统计数量
+        /// 窦海超
+        /// 2015年3月23日 20:19:02
+        /// </summary>
+        /// <param name="BusinessId">商户ID</param>
+        /// <returns></returns>
+        BusiOrderCountResultModel GetOrderCountData(int BusinessId);
     }
 }

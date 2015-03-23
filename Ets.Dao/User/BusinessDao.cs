@@ -502,7 +502,7 @@ namespace Ets.Dao.User
             string sql = @" SELECT COUNT(Id) FROM dbo.business(NOLOCK) WHERE [Status]=1";
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql));
         }
-        
+
 
         /// <summary>
         /// 根据手机号获取用商家信息
@@ -515,14 +515,14 @@ namespace Ets.Dao.User
         {
             string sql = @"SELECT Id FROM dbo.business(NOLOCK) WHERE PhoneNo=@PhoneNo";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@PhoneNo",PhoneNo);
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql,parm);
+            parm.AddWithValue("@PhoneNo", PhoneNo);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             IList<BusListResultModel> list = MapRows<BusListResultModel>(dt);
             if (list == null && list.Count <= 0)
             {
                 return null;
             }
-            return list[0]; 
+            return list[0];
         }
 
         /// <summary>
@@ -533,7 +533,8 @@ namespace Ets.Dao.User
         /// <param name="BusinessId">商户ID</param>
         /// <param name="BusinessPwd">更新密码</param>
         /// <returns></returns>
-        public bool UpdateBusinessPwdSql(int BusinessId,string BusinessPwd) {
+        public bool UpdateBusinessPwdSql(int BusinessId, string BusinessPwd)
+        {
             if (BusinessId <= 0)
             {
                 return false;
@@ -543,5 +544,42 @@ namespace Ets.Dao.User
             parm.AddWithValue("@Password", BusinessPwd);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
+        
+        /// <summary>
+        /// 获取商户端的统计数量
+        /// 窦海超
+        /// 2015年3月23日 20:19:02
+        /// </summary>
+        /// <param name="BusinessId">商户ID</param>
+        /// <returns></returns>
+        public BusiOrderCountResultModel GetOrderCountDataSql(int BusinessId)
+        {
+            string sql = @"
+                    SELECT 
+                    ISNULL(SUM(CASE WHEN ([Status]=0 OR [Status]=1) AND CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) THEN 1 ELSE 0 END ),0) AS TodayPublish,
+                    ISNULL(SUM(CASE WHEN ([Status]=0 OR [Status]=1) AND CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) THEN Amount ELSE 0 END),0) AS TodayPublishAmount,
+
+                    ISNULL(SUM(CASE WHEN [Status]=1 AND CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) THEN 1 ELSE 0 END),0) AS TodayDone,
+                    ISNULL(SUM(CASE WHEN [Status]=1 AND CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) THEN Amount ELSE 0 END),0) AS TodayDoneAmount,
+
+                    ISNULL(SUM(CASE WHEN ([Status]=0 OR [Status]=1) AND CONVERT(CHAR(7),PubDate,120)=CONVERT(CHAR(7),GETDATE(),120) THEN 1 ELSE 0 END),0) AS MonthPublish,
+                    ISNULL(SUM(CASE WHEN ([Status]=0 OR [Status]=1) AND CONVERT(CHAR(7),PubDate,120)=CONVERT(CHAR(7),GETDATE(),120) THEN Amount ELSE 0 END),0) AS MonthPublishAmount,
+
+                    ISNULL(SUM(CASE WHEN [Status]=1 AND CONVERT(CHAR(7),PubDate,120)=CONVERT(CHAR(7),GETDATE(),120) THEN 1 ELSE 0 END),0) AS MonthDone,
+                    ISNULL(SUM(CASE WHEN [Status]=1 AND CONVERT(CHAR(7),PubDate,120)=CONVERT(CHAR(7),GETDATE(),120) THEN Amount ELSE 0 END),0) AS MonthDoneAmount
+                     FROM dbo.[order](NOLOCK)
+                    WHERE businessId=@businessId
+                ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@businessId", BusinessId);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            IList<BusiOrderCountResultModel> list= MapRows<BusiOrderCountResultModel>(dt);
+            if (list==null || list.Count<=0)
+            {
+                return null;
+            }
+            return list[0];
+        }
+
     }
 }

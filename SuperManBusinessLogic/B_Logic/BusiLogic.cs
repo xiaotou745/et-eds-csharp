@@ -9,6 +9,7 @@ using SuperManCommonModel.Models;
 using SuperManCore.Common;
 using SuperManCore;
 using SuperManCommonModel;
+using Ets.Service.Provider.User;
 namespace SuperManBusinessLogic.B_Logic
 {
     public class BusiLogic
@@ -360,10 +361,15 @@ namespace SuperManBusinessLogic.B_Logic
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public BusiOrderCountResultModel GetOrderCountData(int userId)
+        public Ets.Model.DomainModel.Bussiness.BusiOrderCountResultModel GetOrderCountData(int businessId)
         {
-            BusiOrderCountResultModel model = new BusiOrderCountResultModel();
-            using (var db = new supermanEntities())
+            Ets.Model.DomainModel.Bussiness.BusiOrderCountResultModel model = new Ets.Model.DomainModel.Bussiness.BusiOrderCountResultModel();
+            if (businessId <= 0)
+            {
+                return model;
+            }
+            return new BusinessProvider().GetOrderCountData(businessId);
+            /*using (var db = new supermanEntities())
             {
                 if (userId <= 0)
                 {
@@ -453,6 +459,7 @@ namespace SuperManBusinessLogic.B_Logic
                 }
             }
             return model;
+             * */
         }
 
 

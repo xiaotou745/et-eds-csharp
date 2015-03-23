@@ -293,5 +293,17 @@ namespace Ets.Service.Provider.User
             else
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.FailedModifyPwd);
         }
+
+        /// <summary>
+        /// 获取商户端的统计数量
+        /// 窦海超
+        /// 2015年3月23日 20:19:02
+        /// </summary>
+        /// <param name="BusinessId">商户ID</param>
+        /// <returns></returns>
+        public BusiOrderCountResultModel GetOrderCountData(int BusinessId)
+        {
+            return dao.GetOrderCountDataSql(BusinessId);
+        }
     }
 }
