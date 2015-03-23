@@ -312,7 +312,6 @@ namespace SuperManWebApi.Controllers
             {
                 lists = lists.OrderBy(i => i.distance).ToList();
             }
-<<<<<<< HEAD
             return SuperManCore.Common.ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
         }
 
@@ -408,11 +407,7 @@ namespace SuperManWebApi.Controllers
 
 
         #endregion
-
-=======
-            return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
-        } 
->>>>>>> 49ebec0f38899707e0ce673e697b05973ebe922d
+ 
         /// <summary>
         /// 修改密码
         /// </summary>
@@ -502,13 +497,13 @@ namespace SuperManWebApi.Controllers
             if (userId == 0) //用户id验证
                 return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
-<<<<<<< HEAD
+ 
                 return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
             if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null) //查询订单是否存在
                 return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotExist);
             if (!ClienterLogic.clienterLogic().CheckOrderIsAllowRush(orderNo))  //查询订单是否被抢
                 return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
-=======
+ 
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
             var myorder = ClienterLogic.clienterLogic().GetOrderByNo(orderNo);
             if (myorder != null)
@@ -530,7 +525,7 @@ namespace SuperManWebApi.Controllers
             //if (!ClienterLogic.clienterLogic().CheckOrderIsAllowRush(orderNo))  //查询订单是否被抢
             //    return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
 
->>>>>>> 49ebec0f38899707e0ce673e697b05973ebe922d
+ 
             lock (lockHelper)
             {
                 bool bResult = ClienterLogic.clienterLogic().RushOrder(userId, orderNo);
