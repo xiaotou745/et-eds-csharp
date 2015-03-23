@@ -177,41 +177,7 @@ namespace SuperManWebApi.Controllers
             return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.Success, new UploadIconModel() { Id = 1, ImagePath = relativePath });
         }
 
-        /// <summary>
-        /// C端获取我的任务列表 最近任务    登录未登录根据城市有没有值判断。
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        //[ActionStatus(typeof(GetOrdersStatus))]
-        //[HttpPost]
-        //public ResultModel<ClientOrderResultModel[]> GetJobList_C(ClientOrderInfoModel model)
-        //{
-        //    degree.longitude = model.longitude;
-        //    degree.latitude = model.latitude;
-        //    var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
-        //    var pSize = model.pageSize.HasValue ? model.pageSize.Value : 20;
-        //    var criteria = new ClientOrderSearchCriteria()
-        //    {
-        //        PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
-        //        userId = model.userId,
-        //        status = model.status,
-        //        isLatest = model.isLatest,
-        //        city = string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
-        //        cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim()
-        //    };
-
-        //    var pagedList = ClienterLogic.clienterLogic().GetOrders(criteria);
-        //    var lists = ClientOrderResultModelTranslator.Instance.Translate(pagedList);
-
-
-        //    //if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
-        //    //{
-        //    lists = lists.OrderBy(i => i.distance).ToList();
-        //    //}
-
-        //    return ResultModel<ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, lists.ToArray());
-        //}
-
+         
         /// <summary>
         /// 获取我的任务   根据状态判断是已完成任务还是我的任务
         /// </summary>
@@ -244,32 +210,7 @@ namespace SuperManWebApi.Controllers
             return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, lists.ToArray());
         }
 
-        /// <summary>
-        /// 未登录时获取最新任务     登录未登录根据城市有没有值判断。
-        /// </summary>
-        /// <returns></returns>
-        //[ActionStatus(typeof(GetOrdersNoLoginStatus))]
-        //[HttpGet]
-        //public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListNoLoginLatest_C()
-        //{
-        //    ClientOrderInfoModel model = new ClientOrderInfoModel();
-        //    model.city = string.IsNullOrWhiteSpace(HttpContext.Current.Request["city"]) ? null : HttpContext.Current.Request["city"].Trim();//城市
-        //    model.cityId = string.IsNullOrWhiteSpace(HttpContext.Current.Request["cityId"]) ? null : HttpContext.Current.Request["cityId"].Trim(); //城市编码
-        //    degree.longitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["longitude"]);
-        //    degree.latitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["latitude"]);
-        //    var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
-        //    var pSize = model.pageSize.HasValue ? model.pageSize.Value : 20;
-        //    ClientOrderSearchCriteria criteria = new ClientOrderSearchCriteria()
-        //    {
-        //        PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
-        //        city = model.city,
-        //        cityId = model.cityId
-        //    };
-        //    var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLoginLatest(criteria);
-        //    var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
-        //    return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
-        //}
-
+         
 
         /// <summary>
         /// Ado.net  add  王超
@@ -368,101 +309,7 @@ namespace SuperManWebApi.Controllers
                 lists = lists.OrderBy(i => i.distance).ToList();
             }
             return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
-        }
-
-
-
-        #region 获取海底捞 送餐任务 和 取餐盒任务
-
-        /// <summary>
-        /// 获取送餐任务
-        /// </summary>
-        /// <returns></returns>
-        [ActionStatus(typeof(GetOrdersNoLoginStatus))]
-        [HttpPost]
-        public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListSongCanTask_C(ClientOrderInfoModel model)
-        {
-            //degree.longitude = model.longitude;
-            //degree.latitude = model.latitude;
-            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
-            var pSize = model.pageSize.HasValue ? model.pageSize.Value : int.MaxValue;
-            var criteria = new ClientOrderSearchCriteria()
-            {
-                PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
-                userId = model.userId,
-                status = model.status,
-                isLatest = model.isLatest,
-                city = string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
-                cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim(),
-                OrderType = 1 //送餐任务1，取餐盒任务2
-            };
-
-            if (!string.IsNullOrWhiteSpace(model.city))
-            {
-                if (model.city.Contains("北京"))
-                {
-                    criteria.cityId = "10201";
-                }
-                if (model.city.Contains("上海"))
-                {
-                    criteria.cityId = "11101";
-                }
-            }
-            var pagedList = ClienterLogic.clienterLogic().GetOrdersForSongCanOrQuCan(criteria);
-            var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
-            if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
-            {
-                lists = lists.OrderBy(i => i.distance).ToList();
-            }
-            return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
-        }
-
-        /// <summary>
-        /// 获取取餐盒任务
-        /// </summary>
-        /// <returns></returns>
-        [ActionStatus(typeof(GetOrdersNoLoginStatus))]
-        [HttpPost]
-        public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListCanHeTask_C(ClientOrderInfoModel model)
-        {
-            //degree.longitude = model.longitude;
-            //degree.latitude = model.latitude;
-            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
-            var pSize = model.pageSize.HasValue ? model.pageSize.Value : int.MaxValue;
-            var criteria = new ClientOrderSearchCriteria()
-            {
-                PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
-                userId = model.userId,
-                status = model.status,
-                isLatest = model.isLatest,
-                city = string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
-                cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim(),
-                OrderType = 2 //送餐任务1，取餐盒任务2
-            };
-
-            if (!string.IsNullOrWhiteSpace(model.city))
-            {
-                if (model.city == "北京市")
-                {
-                    criteria.cityId = "10201";
-                }
-                if (model.city == "上海市")
-                {
-                    criteria.cityId = "11101";
-                }
-            }
-            var pagedList = ClienterLogic.clienterLogic().GetOrdersForSongCanOrQuCan(criteria);
-            var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
-            if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
-            {
-                lists = lists.OrderBy(i => i.distance).ToList();
-            }
-            return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
-        }
-
-
-        #endregion
-
+        } 
         /// <summary>
         /// 修改密码
         /// </summary>
@@ -553,10 +400,26 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
-            if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null) //查询订单是否存在
-                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotExist);
-            if (!ClienterLogic.clienterLogic().CheckOrderIsAllowRush(orderNo))  //查询订单是否被抢
-                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
+            var myorder = ClienterLogic.clienterLogic().GetOrderByNo(orderNo);
+            if (myorder != null)
+            {
+                if (myorder.Status == ConstValues.ORDER_CANCEL)   //判断订单状态是否为 已取消
+                {
+                    return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderHadCancel);  //订单不存在
+                }
+                if (myorder.Status == ConstValues.ORDER_ACCEPT || myorder.Status == ConstValues.ORDER_FINISH)  //订单已接单，被抢  或 已完成
+                {
+                    return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
+                }
+            }
+            else
+            {
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotExist);  //订单不存在
+            }
+            
+            //if (!ClienterLogic.clienterLogic().CheckOrderIsAllowRush(orderNo))  //查询订单是否被抢
+            //    return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
+
             lock (lockHelper)
             {
                 bool bResult = ClienterLogic.clienterLogic().RushOrder(userId, orderNo);
@@ -662,7 +525,7 @@ namespace SuperManWebApi.Controllers
             var randomCode = new Random().Next(100000).ToString("D6");
             string msg = string.Empty;
             if (type == "0")//注册
-                msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode, ConstValues.MessageBusiness);
+                msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode, ConstValues.MessageClinenter);
             else //修改密码
                 msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode, ConstValues.MessageClinenter);
             try

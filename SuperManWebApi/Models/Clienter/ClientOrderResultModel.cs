@@ -274,24 +274,18 @@ namespace SuperManWebApi.Models.Clienter
                 resultModel.businessPhone = _business.PhoneNo2;
                 resultModel.pickUpCity = _business.City.Replace("市", "");
             }
-            //if (from.business != null)
-            //{
-            //    resultModel.businessName = from.business.Name;
-            //    resultModel.businessPhone = from.business.PhoneNo2;
-            //    if (from.business.City != null)
-            //        resultModel.pickUpCity = from.business.City.Replace("市", "");
-            //}
+          
             if (from.PubDate.HasValue)
             {
                 resultModel.pubDate = from.PubDate.Value.ToShortTimeString();
             }
-            resultModel.pickUpAddress = from.PickUpAddress;
-            resultModel.receviceName = from.ReceviceName;
-            resultModel.receviceCity = from.ReceviceCity;
-            resultModel.receviceAddress = from.ReceviceAddress;
-            resultModel.recevicePhone = from.RecevicePhoneNo;
+            resultModel.pickUpAddress = from.PickUpAddress.Trim();
+            resultModel.receviceName = from.ReceviceName.Trim();
+            resultModel.receviceCity = from.ReceviceCity.Trim();
+            resultModel.receviceAddress = from.ReceviceAddress.Trim();
+            resultModel.recevicePhone = from.RecevicePhoneNo.Trim();
             resultModel.IsPay = from.IsPay.Value;
-            resultModel.Remark = from.Remark;
+            resultModel.Remark = from.Remark.Trim();
             resultModel.Status = from.Status.Value;
             resultModel.OrderCount = from.OrderCount;
             if (degree.longitude != null && degree.latitude != null && _business.Longitude != null && _business.Latitude != null)
