@@ -156,7 +156,7 @@ namespace Ets.Service.Provider.Clienter
         public ClienterRecordsListModel WtihdrawRecords(int UserId)
         {
             ClienterRecordsListModel listModel = new ClienterRecordsListModel();
-            //listModel.clienterModel = clienterDao.GetUserInfoByUserId(UserId);
+            listModel.clienterModel = clienterDao.GetUserInfoByUserId(UserId);
             listModel.listClienterRecordsModel = new WtihdrawRecordsDao().GetClienterRecordsByUserId(UserId);
             return listModel;
         }
