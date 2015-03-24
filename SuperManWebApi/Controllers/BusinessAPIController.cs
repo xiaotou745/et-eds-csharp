@@ -599,7 +599,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         public Ets.Model.Common.ResultModel<bool> CancelOrder_B_WC(string userId, string OrderId)
         {
-            if (OrderId == null)
+            if (string.IsNullOrWhiteSpace(OrderId))
             {
                 return Ets.Model.Common.ResultModel<bool>.Conclude(CancelOrderStatus.OrderEmpty);
             }
