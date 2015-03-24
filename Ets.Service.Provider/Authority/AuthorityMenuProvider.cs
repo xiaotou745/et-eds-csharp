@@ -507,6 +507,17 @@ using ETS.Data.PageData;
         {
             return _dao.ModifyPwdById(id, modifypassword);
         }
+        /// <summary>
+        /// 验证用户权限
+        /// danny-20150324
+        /// </summary>
+        /// <param name="accountId"></param>
+        /// <param name="authorityName"></param>
+        /// <returns></returns>
+        public bool HasAuthority(int accountId, string authorityName)
+        {
+            return _dao.HasAuthority(accountId, authorityName);
+        }
 
       
     }
