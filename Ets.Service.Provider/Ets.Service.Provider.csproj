@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Account\AccountProvider.cs" />
     <Compile Include="Authority\AuthorityMenuProvider.cs" />
     <Compile Include="Clienter\ClienterProvider.cs" />
     <Compile Include="Common\AdminToolsProvider.cs" />

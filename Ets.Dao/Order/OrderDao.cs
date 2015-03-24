@@ -433,62 +433,62 @@ namespace Ets.Dao.Order
                                     ,b.PhoneNo BusinessPhoneNo
                                     ,b.Address BusinessAddress
                                     ,g.GroupName";
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@businessName", criteria.businessName);
-            parm.AddWithValue("@businessPhone", criteria.businessPhone);
-            parm.AddWithValue("@orderId", criteria.orderId);
-            parm.AddWithValue("@OriginalOrderNo", criteria.OriginalOrderNo);
-            parm.AddWithValue("@orderStatus", criteria.orderStatus);
-            parm.AddWithValue("@superManName", criteria.superManName);
-            parm.AddWithValue("@superManPhone", criteria.superManPhone);
-            parm.AddWithValue("@orderPubStart", criteria.orderPubStart);
-            parm.AddWithValue("@orderPubEnd", criteria.orderPubEnd);
-            parm.AddWithValue("@GroupId", criteria.GroupId);
-            var sbSqlWhere = new StringBuilder(" 1=1 ");
-            if (!string.IsNullOrWhiteSpace(criteria.businessName))
-            {
-                sbSqlWhere.AppendFormat(" AND b.Name='{0}' ", criteria.businessName);
-            }
-            if (!string.IsNullOrWhiteSpace(criteria.businessPhone))
-            {
-                sbSqlWhere.AppendFormat(" AND b.PhoneNo='{0}' ", criteria.businessPhone);
-            }
-            if (!string.IsNullOrWhiteSpace(criteria.orderId))
-            {
-                sbSqlWhere.AppendFormat(" AND o.OrderNo='{0}' ", criteria.orderId);
-            }
-            if (!string.IsNullOrWhiteSpace(criteria.OriginalOrderNo))
-            {
-                sbSqlWhere.AppendFormat(" AND o.OriginalOrderNo='{0}' ", criteria.OriginalOrderNo);
-            }
-            if (criteria.orderStatus != -1)
-            {
-                sbSqlWhere.AppendFormat(" AND o.Status={0} ", criteria.orderStatus);
-            }
-            if (!string.IsNullOrWhiteSpace(criteria.superManName))
-            {
-                sbSqlWhere.AppendFormat(" AND c.TrueName='{0}' ", criteria.superManName);
-            }
-            if (!string.IsNullOrWhiteSpace(criteria.superManPhone))
-            {
-                sbSqlWhere.AppendFormat(" AND c.PhoneNo='{0}' ", criteria.superManPhone);
-            }
-            if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))
-            {
-                sbSqlWhere.AppendFormat(" AND o.PubDate>='{0}' ", criteria.orderPubStart);
-            }
-            if (!string.IsNullOrWhiteSpace(criteria.orderPubEnd))
-            {
-                sbSqlWhere.AppendFormat(" AND o.PubDate<='{0}' ", criteria.orderPubEnd);
-            }
-            if (criteria.GroupId != null)
-            {
-                sbSqlWhere.AppendFormat(" AND o.GroupId={0} ", criteria.GroupId);
-            }
-            string tableList = @" dbo.[order] o WITH ( NOLOCK )
-                                LEFT JOIN dbo.clienter c WITH ( NOLOCK ) ON c.Id = o.clienterId
-                                LEFT JOIN dbo.business b WITH ( NOLOCK ) ON b.Id = o.businessId
-                                LEFT JOIN [dbo].[group] g WITH ( NOLOCK ) ON g.Id = b.GroupId ";
+                IDbParameters parm = DbHelper.CreateDbParameters();
+                parm.AddWithValue("@businessName", criteria.businessName);
+                parm.AddWithValue("@businessPhone", criteria.businessPhone);
+                parm.AddWithValue("@orderId", criteria.orderId);
+                parm.AddWithValue("@OriginalOrderNo", criteria.OriginalOrderNo);
+                parm.AddWithValue("@orderStatus", criteria.orderStatus);
+                parm.AddWithValue("@superManName", criteria.superManName);
+                parm.AddWithValue("@superManPhone", criteria.superManPhone);
+                parm.AddWithValue("@orderPubStart", criteria.orderPubStart);
+                parm.AddWithValue("@orderPubEnd", criteria.orderPubEnd);
+                parm.AddWithValue("@GroupId", criteria.GroupId);
+                var sbSqlWhere = new StringBuilder(" 1=1 ");
+                if (!string.IsNullOrWhiteSpace(criteria.businessName))
+                {
+                    sbSqlWhere.AppendFormat(" AND b.Name='{0}' ", criteria.businessName);
+                }
+                if (!string.IsNullOrWhiteSpace(criteria.businessPhone))
+                {
+                    sbSqlWhere.AppendFormat(" AND b.PhoneNo='{0}' ", criteria.businessPhone);
+                }
+                if (!string.IsNullOrWhiteSpace(criteria.orderId))
+                {
+                    sbSqlWhere.AppendFormat(" AND o.OrderNo='{0}' ", criteria.orderId);
+                }
+                if (!string.IsNullOrWhiteSpace(criteria.OriginalOrderNo))
+                {
+                    sbSqlWhere.AppendFormat(" AND o.OriginalOrderNo='{0}' ", criteria.OriginalOrderNo);
+                }
+                if (criteria.orderStatus != -1)
+                {
+                    sbSqlWhere.AppendFormat(" AND o.Status={0} ", criteria.orderStatus);
+                }
+                if (!string.IsNullOrWhiteSpace(criteria.superManName))
+                {
+                    sbSqlWhere.AppendFormat(" AND c.TrueName='{0}' ", criteria.superManName);
+                }
+                if (!string.IsNullOrWhiteSpace(criteria.superManPhone))
+                {
+                    sbSqlWhere.AppendFormat(" AND c.PhoneNo='{0}' ", criteria.superManPhone);
+                }
+                if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))
+                {
+                    sbSqlWhere.AppendFormat(" AND o.PubDate>='{0}' ", criteria.orderPubStart);
+                }
+                if (!string.IsNullOrWhiteSpace(criteria.orderPubEnd))
+                {
+                    sbSqlWhere.AppendFormat(" AND o.PubDate<='{0}' ", criteria.orderPubEnd);
+                }
+                if (criteria.GroupId != null)
+                {
+                    sbSqlWhere.AppendFormat(" AND o.GroupId={0} ", criteria.GroupId);
+                }
+                string tableList = @" [order] o WITH ( NOLOCK )
+                                LEFT JOIN clienter c WITH ( NOLOCK ) ON c.Id = o.clienterId
+                                LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
+                                LEFT JOIN [group] g WITH ( NOLOCK ) ON g.Id = b.GroupId ";
             string orderByColumn = " o.Status ASC,o.PubDate DESC ";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
         }
@@ -502,7 +502,7 @@ namespace Ets.Dao.Order
             bool reslut = false;
             try
             {
-                string sql = @" update [dbo].[order] set OrderCommission=@OrderCommission where OrderNo=@OrderNo ";
+                string sql = @" update [order] set OrderCommission=@OrderCommission where OrderNo=@OrderNo "; 
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
                 dbParameters.AddWithValue("@OrderNo", order.OrderNo);
                 dbParameters.AddWithValue("@OrderCommission", order.OrderCommission);
@@ -565,8 +565,8 @@ namespace Ets.Dao.Order
                                         ,o.[CommissionRate]
                                         ,o.[OrderSign]
                                         ,b.[City] BusinessCity
-                                    FROM [dbo].[order] o WITH ( NOLOCK )
-                                    LEFT JOIN dbo.business b WITH ( NOLOCK ) ON b.Id = o.businessId
+                                    FROM [order] o WITH ( NOLOCK )
+                                    LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     WHERE 1=1 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OrderNo", orderNo);

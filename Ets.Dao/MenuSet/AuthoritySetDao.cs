@@ -667,6 +667,33 @@ namespace Ets.Dao.MenuSet
             }
             return reslut;
         }
+        /// <summary>
+        /// 验证用户权限
+        /// danny-20150324
+        /// </summary>
+        /// <param name="accountId"></param>
+        /// <param name="authorityName"></param>
+        /// <returns></returns>
+        public bool HasAuthority(int accountId, string authorityName)
+        {
+            try
+            {
+                string sql = @" SELECT COUNT(*) 
+                                FROM accountauthority aa WITH (NOLOCK)
+                                JOIN authority a WITH (NOLOCK) ON aa.AuthorityId=a.Id
+                                WHERE aa.AccountId=@AccountId AND a.Name =@Name ";
+                IDbParameters parm = DbHelper.CreateDbParameters();
+                parm.AddWithValue("@AccountId", accountId);
+                parm.AddWithValue("@Name", authorityName);
+                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm)) > 0 ? true : false;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex, "验证用户权限");
+                return false;
+                throw;
+            }
+        }
 
        
 
