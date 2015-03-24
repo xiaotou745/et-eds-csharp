@@ -39,32 +39,32 @@ namespace Ets.Model.Common
         /// <summary>
         /// 商户平均发布订单
         /// </summary>
-        public int BusinessAverageOrderCount { get; set; }
+        public double BusinessAverageOrderCount { get; set; }
 
         /// <summary>
         /// 任务平均订单量
         /// </summary>
-        public int MissionAverageOrderCount { get; set; }
+        public double MissionAverageOrderCount { get; set; }
 
         /// <summary>
         /// 骑士平均完成订单量
         /// </summary>
-        public int ClienterAverageOrderCount { get; set; }
+        public double ClienterAverageOrderCount { get; set; }
 
 
         /// <summary>
         /// 商户结算金额（应收）
         /// </summary>
-        public double YsPrice { get; set; }
+        public decimal YsPrice { get; set; }
 
         /// <summary>
         /// 骑士佣金总计（应付）
         /// </summary>
-        public double YfPrice { get; set; }
+        public decimal YfPrice { get; set; }
 
         /// <summary>
         /// 盈亏总计
         /// </summary>
-        public double YkPrice { get; set; }
+        public decimal YkPrice { get; set; }
     }
 }

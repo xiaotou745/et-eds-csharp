@@ -365,9 +365,9 @@ namespace Ets.Dao.Order
         {
 
             string sql = @"SELECT 
-                            ISNULL(SUM(OrderCount),0) AS OrderPrice, --订单金额
+                            SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
                             ISNULL(COUNT(Id),0) AS MisstionCount,--任务量
-                            ISNULL(SUM(OrderCount),0) AS OrderCount --订单量
+                            SUM(ISNULL(OrderCount,0)) AS OrderCount --订单量
                              FROM dbo.[order](NOLOCK) WHERE CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) AND [Status]=1";
             DataSet set = DbHelper.ExecuteDataset(SuperMan_Read, sql);
             DataTable dt = DataTableHelper.GetTable(set);

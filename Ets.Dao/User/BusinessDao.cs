@@ -656,7 +656,7 @@ namespace Ets.Dao.User
         {
             string sql = @"
                             SELECT 
-                            ISNULL(SUM(o.Amount*ISNULL(b.BusinessCommission,0)+ ISNULL( b.DistribSubsidy ,0)* o.OrderCount),0) AS ysPrice
+                            ISNULL(SUM(o.Amount*ISNULL(b.BusinessCommission,0)+ ISNULL( b.DistribSubsidy ,0)* o.OrderCount),0) AS YsPrice
                              FROM dbo.[order](NOLOCK) AS o
                              LEFT JOIN dbo.business(NOLOCK) AS b ON o.businessId=b.Id
                               where CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) 

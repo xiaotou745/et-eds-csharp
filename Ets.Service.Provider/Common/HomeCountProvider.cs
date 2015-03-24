@@ -42,16 +42,16 @@ namespace Ets.Service.Provider.Common
             model.BusinessCount = temp.BusinessCount;//商家总数
 
             temp = businessDao.GetCurrentBusinessYSPrice(model);//商户结算金额（应收）
-            model.YsPrice = temp.YsPrice;// 商户结算金额（应收）
+            model.YsPrice = Math.Round(temp.YsPrice,2);// 商户结算金额（应收）
 
             temp = clienterDao.GetCurrentBusinessYFPrice(model);//骑士佣金总计（应付）
-            model.YfPrice = temp.YfPrice;// 骑士佣金总计（应付）
+            model.YfPrice =  Math.Round(temp.YfPrice,2);// 骑士佣金总计（应付）
 
-            model.YkPrice = model.YsPrice - model.YfPrice; //盈亏总计：+
+            model.YkPrice = Math.Round(model.YsPrice - model.YfPrice, 2); //盈亏总计：+
 
-            model.BusinessAverageOrderCount = (int)ParseHelper.ToDivision(model.OrderCount, model.BusinessCount);//商户平均发布订单：
-            model.MissionAverageOrderCount = Convert.ToInt32(ParseHelper.ToDivision(model.OrderCount, model.MisstionCount));//任务平均订单量
-            model.ClienterAverageOrderCount = (int)ParseHelper.ToDivision(model.OrderCount, model.RzqsCount);//骑士平均完成订单量：
+            model.BusinessAverageOrderCount = ParseHelper.ToDivision(model.OrderCount, model.BusinessCount);//商户平均发布订单：
+            model.MissionAverageOrderCount = ParseHelper.ToDivision(model.OrderCount, model.MisstionCount);//任务平均订单量
+            model.ClienterAverageOrderCount = ParseHelper.ToDivision(model.OrderCount, model.RzqsCount);//骑士平均完成订单量：
 
             return model;
         }
