@@ -7,6 +7,7 @@ using Ets.Model.DomainModel.Bussiness;
 using Ets.Model.DataModel.Bussiness;
 using ETS.Enums;
 using System.Data;
+using Ets.Model.DataModel.Group;
 
 namespace Ets.Service.IProvider.User
 {
@@ -126,5 +127,11 @@ namespace Ets.Service.IProvider.User
         /// <param name="groupId"></param>
         /// <returns></returns>
         string GetGroupNameById(int groupId);
+        /// <summary>
+        /// 获取所有可用的集团信息数据
+        /// danny-20150324
+        /// </summary>
+        /// <returns></returns>
+        IList<GroupModel> GetGroups();
     }
 }

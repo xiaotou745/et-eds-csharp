@@ -15,6 +15,7 @@ using ETS.Enums;
 using Ets.Model.DataModel.Bussiness;
 using ETS.Util;
 using ETS.Cacheing;
+using Ets.Model.DataModel.Group;
 namespace Ets.Service.Provider.User
 {
 
@@ -334,6 +335,15 @@ namespace Ets.Service.Provider.User
         public string GetGroupNameById(int groupId)
         {
             return dao.GetGroupNameById(groupId);
+        }
+        /// <summary>
+        /// 获取所有可用的集团信息数据
+        /// danny-20150324
+        /// </summary>
+        /// <returns></returns>
+        public IList<GroupModel> GetGroups()
+        {
+            return dao.GetGroups();
         }
     }
 }

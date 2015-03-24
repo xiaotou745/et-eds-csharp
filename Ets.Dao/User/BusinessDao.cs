@@ -19,6 +19,7 @@ using Ets.Model.DataModel.Bussiness;
 using ETS.Extension;
 using ETS.Enums;
 using Ets.Model.Common;
+using Ets.Model.DataModel.Group;
 
 
 namespace Ets.Dao.User
@@ -625,6 +626,22 @@ namespace Ets.Dao.User
                 return dt.Rows[0]["Name"].ToString();
             }
             return null;
+        }
+        /// <summary>
+        /// 获取所有可用的集团信息数据
+        /// danny-20150324
+        /// </summary>
+        /// <returns></returns>
+        public IList<GroupModel> GetGroups()
+        {
+            string sql = @"SELECT    [Id]
+                                    ,[GroupName]
+                          FROM [group] WHERE IsValid=@IsValid";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@IsValid", ConstValues.GroupIsIsValid);
+            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
+            var list = ConvertDataTableList<GroupModel>(dt);
+            return list;
         }
     }
 }
