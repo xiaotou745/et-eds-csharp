@@ -11,34 +11,34 @@ namespace Ets.Model.DomainModel.Bussiness
         /// <summary>
         /// 今日已发布订单数
         /// </summary>
-        public int TodayPublish { get; set; }
+        public int todayPublish { get; set; }
         /// <summary>
         /// 今日已发布订单金额
         /// </summary>
-        public Decimal TodayPublishAmount { get; set; }
+        public Decimal todayPublishAmount { get; set; }
         /// <summary>
         /// 今日已完成订单数
         /// </summary>
-        public int TodayDone { get; set; }
+        public int todayDone { get; set; }
         /// <summary>
         /// 今日已完成订单金额
         /// </summary>
-        public Decimal TodayDoneAmount { get; set; }
+        public Decimal todayDoneAmount { get; set; }
         /// <summary>
         /// 本月已发布订单数
         /// </summary>
-        public int MonthPublish { get; set; }
+        public int monthPublish { get; set; }
         /// <summary>
         /// 本月已发布订单金额
         /// </summary>
-        public Decimal MonthPublishAmount { get; set; }
+        public Decimal monthPublishAmount { get; set; }
         /// <summary>
         /// 本月已完成订单数
         /// </summary>
-        public int MonthDone { get; set; }
+        public int monthDone { get; set; }
         /// <summary>
         /// 本月已完成订单金额
         /// </summary>
-        public Decimal MonthDoneAmount { get; set; }
+        public Decimal monthDoneAmount { get; set; }
     }
 }
