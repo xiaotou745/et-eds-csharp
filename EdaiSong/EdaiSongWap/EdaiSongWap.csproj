@@ -188,8 +188,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\index.css" />
     <Content Include="Global.asax" />
+    <None Include="Properties\PublishProfiles\wap.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Images\ad.png" />
     <Content Include="Images\ios.png" />
@@ -226,6 +226,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Content\" />
     <Folder Include="Filters\" />
     <Folder Include="Models\" />
   </ItemGroup>
