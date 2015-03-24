@@ -1,42 +1,54 @@
 ﻿@model SuperManCommonModel.Models.HomeCountManage
 @{
     ViewBag.Title = "后台统计";
-   Layout = "~/Views/Shared/_LayoutNew.cshtml";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
 }
 
-<h3 style="color:black;font-weight:600">数据统计</h3>
+<h3 style="color:black;font-weight:600">今日数据统计</h3>
+<style type="text/css">
+    .trclass {
+       text-align:left;
+       line-height:35px;
+       padding:15px;
+       width:auto;
+       min-width:800px;
+    }
+
+    .trclass  td {
+        padding-left:15px;
+        width:225px;
+    }
+</style>
 <div>
     @{
         var resultList = @ViewBag.homeCountTitleModel as Ets.Model.Common.HomeCountTitleModel;
-      
-
-    <p>
-        <table class="tbstyle" width="1000" border="1">
-    <tr>
-        <td>
-        商家总数：@resultList.BusinessCount
-        认证骑士数量：
-        等待认证骑士：
-        </td>
-        <td>
-        订单金额:
-        任务量：
-        订单量：
-        </td>
-        <td>
-        商户平均发布订单：
-        任务平均订单量：
-        骑士平均完成订单量：
-        </td>
-        <td>
-        商户结算金额（应收）：
-        骑士佣金总计（应付）：
-        盈亏总计：+
-        </td>
-    </tr>
-</table>
-    </p>
-}
+        <p>
+            <table class="tbstyle" width="1000" border="1">
+                <tr class="trclass">
+                    <td>
+                        商家总数：@resultList.BusinessCount    <br />
+                        认证骑士数量：@resultList.RzqsCount <br />
+                        等待认证骑士：@resultList.DdrzqsCount  <br />
+                    </td>
+                    <td>
+                        订单金额:@resultList.OrderPrice  <br />
+                        任务量：@resultList.MisstionCount  <br />
+                        订单量：@resultList.OrderCount <br />
+                    </td>
+                    <td>
+                        商户平均发布订单：@resultList.BusinessAverageOrderCount  <br />
+                        任务平均订单量：@resultList.MissionAverageOrderCount  <br />
+                        骑士平均完成订单量：@resultList.ClienterAverageOrderCount <br />
+                    </td>
+                    <td>
+                        商户结算金额（应收）：@resultList.YsPrice  <br />
+                        骑士佣金总计（应付）：@resultList.YfPrice  <br />
+                        盈亏总计：@resultList.YkPrice <br />
+                    </td>
+                </tr>
+            </table>
+        </p>
+    }
 </div>
 <hr />
 <h4 style="color:black;font-weight:600">订单统计</h4>
@@ -74,7 +86,7 @@
     var DEFAULT_PAGESIZE = 15;
     var criteria = { PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE } };
     $(function () {
-        
+
         $("#supermanCountSelect").on("change", function () {
             var status = $("#supermanCountSelect").val();
             var url = "/HomeCount/supermanCount";
