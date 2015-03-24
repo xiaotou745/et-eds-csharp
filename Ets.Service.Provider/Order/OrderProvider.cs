@@ -273,7 +273,7 @@ namespace Ets.Service.Provider.Order
         }
 
 
-        #region  第三方对接 物流订单接收接口  add by caoheyang 201503167
+        #region  第三方对接 物流订单接收接口  add by caoheyang 20150317
 
         /// <summary>
         /// 第三方对接 物流订单接收接口  add by caoheyang 201503167
