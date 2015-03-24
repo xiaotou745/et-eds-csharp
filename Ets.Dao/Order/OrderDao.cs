@@ -482,10 +482,10 @@ namespace Ets.Dao.Order
                 {
                     sbSqlWhere.AppendFormat(" AND o.GroupId={0} ", criteria.GroupId);
                 }
-                string tableList = @" dbo.[order] o WITH ( NOLOCK )
-                                LEFT JOIN dbo.clienter c WITH ( NOLOCK ) ON c.Id = o.clienterId
-                                LEFT JOIN dbo.business b WITH ( NOLOCK ) ON b.Id = o.businessId
-                                LEFT JOIN [dbo].[group] g WITH ( NOLOCK ) ON g.Id = b.GroupId ";
+                string tableList = @" [order] o WITH ( NOLOCK )
+                                LEFT JOIN clienter c WITH ( NOLOCK ) ON c.Id = o.clienterId
+                                LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
+                                LEFT JOIN [group] g WITH ( NOLOCK ) ON g.Id = b.GroupId ";
                 string orderByColumn = " o.Status ASC,o.PubDate DESC ";
                 return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
         }
@@ -499,7 +499,7 @@ namespace Ets.Dao.Order
             bool reslut = false;
             try
             {
-                string sql = @" update [dbo].[order] set OrderCommission=@OrderCommission where OrderNo=@OrderNo "; 
+                string sql = @" update [order] set OrderCommission=@OrderCommission where OrderNo=@OrderNo "; 
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
                 dbParameters.AddWithValue("@OrderNo", order.OrderNo);
                 dbParameters.AddWithValue("@OrderCommission", order.OrderCommission);
@@ -562,8 +562,8 @@ namespace Ets.Dao.Order
                                         ,o.[CommissionRate]
                                         ,o.[OrderSign]
                                         ,b.[City] BusinessCity
-                                    FROM [dbo].[order] o WITH ( NOLOCK )
-                                    LEFT JOIN dbo.business b WITH ( NOLOCK ) ON b.Id = o.businessId
+                                    FROM [order] o WITH ( NOLOCK )
+                                    LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     WHERE 1=1 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OrderNo", orderNo);
