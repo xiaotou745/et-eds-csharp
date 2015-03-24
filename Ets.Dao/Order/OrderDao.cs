@@ -485,7 +485,7 @@ namespace Ets.Dao.Order
                                 LEFT JOIN clienter c WITH ( NOLOCK ) ON c.Id = o.clienterId
                                 LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                 LEFT JOIN [group] g WITH ( NOLOCK ) ON g.Id = b.GroupId ";
-            string orderByColumn = " o.Status ASC,o.PubDate DESC ";
+            string orderByColumn = " o.Status ASC,o.Id DESC ";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
         }
         /// <summary>
