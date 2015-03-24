@@ -1,5 +1,4 @@
-﻿@*@model SuperManCommonModel.Models.OrderManageList*@
-@model Ets.Model.DomainModel.Order.OrderManageList
+﻿@model Ets.Model.DomainModel.Order.OrderManageList
 <script src="~/Scripts/view/orderList.js"></script>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
     <thead>
@@ -47,19 +46,19 @@
                     <td>@item.GroupName</td>
                     @{
                 var strstatus = "";
-                if (@item.Status == SuperManCommonModel.ConstValues.ORDER_FINISH)
+                if (@item.Status ==Ets.Model.Common.ConstValues.ORDER_FINISH)
                 {
                     strstatus = "已完成";
                 }
-                else if (@item.Status == SuperManCommonModel.ConstValues.ORDER_NEW)
+                else if (@item.Status == Ets.Model.Common.ConstValues.ORDER_NEW)
                 {
                     strstatus = "未接单";
                 }
-                else if (@item.Status == SuperManCommonModel.ConstValues.ORDER_ACCEPT)
+                else if (@item.Status == Ets.Model.Common.ConstValues.ORDER_ACCEPT)
                 {
                     strstatus = "已接单";
                 }
-                else if (@item.Status == SuperManCommonModel.ConstValues.ORDER_CANCEL)
+                else if (@item.Status == Ets.Model.Common.ConstValues.ORDER_CANCEL)
                 {
                     strstatus = "已取消";
                 }
