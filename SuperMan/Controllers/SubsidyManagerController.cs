@@ -31,14 +31,12 @@ namespace SuperMan.Controllers
             ViewBag.txtGroupId = account.GroupId;//集团id
             Ets.Model.DomainModel.Subsidy.SubsidyManage subsidyManage = new Ets.Model.DomainModel.Subsidy.SubsidyManage();
             var criteria = new Ets.Model.DomainModel.Subsidy.HomeCountCriteria() { PagingRequest = new Ets.Model.Common.NewPagingResult (1, 15), GroupId = account.GroupId };
-            //subsidyManage.orderCountManageList = SubsidyLogic.subsidyLogic().GetSubsidyList(criteria);
             subsidyManage=iSubsidyProvider.GetSubsidyList(criteria);
             return View(subsidyManage);
         }
         [HttpPost]
         public ActionResult SubsidyManager(Ets.Model.DomainModel.Subsidy.HomeCountCriteria criteria)
         {
-            //var pagedList = ClienterLogic.clienterLogic().GetClienteres(criteria);
             var pagedList = iSubsidyProvider.GetSubsidyList(criteria);
             var item = pagedList.subsidyManageList;
             return PartialView("_SubsidyManagerList", item);
@@ -47,7 +45,6 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult Save(Ets.Model.ParameterModel.Subsidy.SubsidyModel model)
         {
-            //bool b = SubsidyLogic.subsidyLogic().SaveData(model);
             bool b = iSubsidyProvider.SaveData(model);
             return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
         }

@@ -1,7 +1,5 @@
-﻿@*@model SuperManCommonModel.Models.SubsidyManage*@
-@model Ets.Model.DomainModel.Subsidy.SubsidyManage
-@using SuperManBusinessLogic.Group_Logic
-@*@using SuperManCommonModel.Models;*@
+﻿@model Ets.Model.DomainModel.Subsidy.SubsidyManage
+@using Ets.Service.Provider.User
 @using Ets.Model
 @{
     ViewBag.Title = "Order";
@@ -27,7 +25,7 @@
                     <dl>
                         <dt>
                             <i> </i>&nbsp;&nbsp;集团信息:
-                            @Html.DropDownList("AddGroupId", new SelectList(GroupLogic.groupLogic().GetGroups(), "Id", "GroupName"), "--无--", new { style = "width:155px" })
+                            @Html.DropDownList("AddGroupId", new SelectList(new BusinessProvider().GetGroups(), "Id", "GroupName"), "--无--", new { style = "width:155px" })
                         </dt>
                     </dl>
                 }
