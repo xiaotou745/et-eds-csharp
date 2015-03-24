@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+ <!--
+/**
+ * WAP视图
+ * 默认页面
+ * author 祁恩孝
+ * copyright 2015
+ */
+-->
+<html>
+<head>
+  <title>易代送</title>
+        <meta charset="UTF-8">
+        <!--wap站mata标签-->
+        <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0, user-scalable=yes" name="viewport">
+        <meta content="yes" name="apple-mobile-web-app-capable">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta content="telephone=no" name="format-detection">
+        <meta name="format-detection" content="telephone=no">
+        <meta name="format-detection" content="address=no">
+    	<style>
+		*{margin:0;padding:0;font-family:"微软雅黑";color:#444;}
+		.index_center{padding:0 20px;}
+		.d1{float:left;}
+		.d2{float:right;}	
+		h3{
+			height:25px;
+			line-height:25px;
+			color:#3b7abe;
+			font-weight:normal;
+			font-size:14px;
+			padding-left:30px;
+			margin-top:14px;
+			background:url(/Images/sj_1.png) no-repeat;
+		}
+		h4{
+			clear:both;
+			height:25px;
+			line-height:25px;
+			color:#ea543a;
+			font-weight:normal;
+			font-size:14px;
+			padding-left:30px;
+			padding-top:14px;
+			background:url(/Images/sj.png) 0 14px no-repeat;
+		}	
+		p{
+			line-height:25px;
+			margin-top:14px;
+		}
+		.blue a{
+			width:133px;
+			height:35px;
+			display:block;
+			background:#3b7abe;
+			border-radius:3px;
+			text-align:center;
+		}
+		.blue2 a{
+			width:133px;
+			height:35px;
+			display:block;
+			background:#ea543a;
+			border-radius:3px;
+			text-align:center;
+		}	
+		.blue a img,.blue2 a img{
+			margin:8px 0;
+		}
+		a.d2{
+			display:block;
+			background:#cecece;
+		}	
+		</style>
+</head> 
+    <body>
+        <div>
+            <img src="~/Images/top.jpg" width="100%" />
+        </div><!--页头-->
+		@RenderBody()
+    </body>
+</html>

@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperMan", "SuperMan\SuperMan.csproj", "{FC62F0EE-873C-437E-B845-78F9ABC16145}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperManDataAccess", "SuperManDataAccess\SuperManDataAccess.csproj", "{F54D4C48-F635-42CA-9940-19873A691693}"
@@ -43,6 +41,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ets.Service.Provider", "Ets.Service.Provider\Ets.Service.Provider.csproj", "{61C59E53-67C8-44FE-B0AD-1E9025D7E568}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApi", "OpenApi\OpenApi.csproj", "{AB5CD24D-45A0-46E9-9CFE-9181D16A8671}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EdaiSong", "EdaiSong", "{F1A5BBA2-CC9A-4C6B-A8CB-735BDD084D87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdaiSongWap", "EdaiSong\EdaiSongWap\EdaiSongWap.csproj", "{EB1CD8EE-674E-4C8D-832D-100F2CE9C28A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdaiSongWeb", "EdaiSong\EdaiSongWeb\EdaiSongWeb.csproj", "{EB2EB83A-7933-476F-B7DC-259D09EEC263}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -102,6 +106,14 @@ Global
 		{AB5CD24D-45A0-46E9-9CFE-9181D16A8671}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB5CD24D-45A0-46E9-9CFE-9181D16A8671}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB5CD24D-45A0-46E9-9CFE-9181D16A8671}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB1CD8EE-674E-4C8D-832D-100F2CE9C28A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB1CD8EE-674E-4C8D-832D-100F2CE9C28A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB1CD8EE-674E-4C8D-832D-100F2CE9C28A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB1CD8EE-674E-4C8D-832D-100F2CE9C28A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB2EB83A-7933-476F-B7DC-259D09EEC263}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB2EB83A-7933-476F-B7DC-259D09EEC263}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB2EB83A-7933-476F-B7DC-259D09EEC263}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB2EB83A-7933-476F-B7DC-259D09EEC263}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -113,5 +125,7 @@ Global
 		{B9D2361D-7E2C-45BA-89EC-4ECA1BF7C456} = {EE99F08B-9284-4D4B-A832-AA91D252A46B}
 		{73FF8127-9703-4D8C-BD1C-4190A926A5BA} = {EE99F08B-9284-4D4B-A832-AA91D252A46B}
 		{61C59E53-67C8-44FE-B0AD-1E9025D7E568} = {EE99F08B-9284-4D4B-A832-AA91D252A46B}
+		{EB1CD8EE-674E-4C8D-832D-100F2CE9C28A} = {F1A5BBA2-CC9A-4C6B-A8CB-735BDD084D87}
+		{EB2EB83A-7933-476F-B7DC-259D09EEC263} = {F1A5BBA2-CC9A-4C6B-A8CB-735BDD084D87}
 	EndGlobalSection
 EndGlobal
