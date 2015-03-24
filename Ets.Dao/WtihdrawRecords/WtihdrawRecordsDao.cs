@@ -99,7 +99,7 @@ namespace Ets.Dao.WtihdrawRecords
         {
             string sql = @"SELECT r.Id,Amount,Balance,CreateTime,a.UserName AS AdminName FROM Records(NOLOCK) AS r 
                             LEFT JOIN dbo.account AS a ON r.adminid=a.Id
-                             WHERE [platform]=1 AND userid=" + UserId;
+                             WHERE [platform]=1 AND Amount < 0 AND userid=" + UserId;
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             return MapRows<ClienterRecordsModel>(dt);
         }
