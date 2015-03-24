@@ -88,6 +88,7 @@
     <Compile Include="DomainModel\Subsidy\SubsidyManage.cs" />
     <Compile Include="DomainModel\Subsidy\SubsidyResultModel.cs" />
     <Compile Include="ParameterModel\Authority\AuthoritySearchCriteria.cs" />
+    <Compile Include="ParameterModel\Authority\LoginModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BusiOrderInfoModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BussOrderParaModelApp.cs" />
     <Compile Include="ParameterModel\Bussiness\BusinessSearchCriteria.cs" />
