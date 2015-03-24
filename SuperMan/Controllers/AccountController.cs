@@ -15,6 +15,8 @@ using SuperMan.Authority;
 using SuperManBusinessLogic.Authority_Logic;
 using SuperManCommonModel;
 using System.Web.Security;
+using Ets.Service.IProvider.Account;
+using Ets.Service.Provider.Account;
 
 namespace SuperMan.Controllers
 {
@@ -26,7 +28,7 @@ namespace SuperMan.Controllers
         private ApplicationUserManager _userManager;
         private IAuthenticationService _authenticationService;
         private AccountBussinessLogic _accountBussinessLogic;
-
+        IAccountProvider iAccountProvider = new AccountProvider();
         public AccountController()
         {
             _authenticationService = new AdminAuthenticationService();
@@ -56,7 +58,7 @@ namespace SuperMan.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult Login(LoginModel model, string returnUrl)
+        public ActionResult Login(Ets.Model.ParameterModel.Authority.LoginModel model, string returnUrl)
         {
             var captcha = Session["captcha"];
             if (captcha == null)
@@ -73,22 +75,22 @@ namespace SuperMan.Controllers
 
             if (ModelState.IsValid)
             {
-                var loginResult = _accountBussinessLogic.ValidateUser(model.UserName, MD5Helper.MD5(model.Password));
+                var loginResult = iAccountProvider.ValidateUser(model.UserName, MD5Helper.MD5(model.Password));
                 switch (loginResult)
                 {
-                    case UserLoginResults.Successful:
+                    case ETS.Enums.UserLoginResults.Successful:
                         FormsAuthentication.SetAuthCookie(model.UserName, model.RememberMe);
                         _authenticationService.SignIn(model.UserName, model.RememberMe);
                         HttpContext.Session["user"] = _accountBussinessLogic.Get(model.UserName);
                         HttpContext.Session.Timeout =Convert.ToInt32( Math.Floor(FormsAuthentication.Timeout.TotalMinutes));
                         return RedirectToLocal(returnUrl);
-                    case UserLoginResults.UserNotExist:
+                    case ETS.Enums.UserLoginResults.UserNotExist:
                         ModelState.AddModelError("", "用户不存在");
                         break;
-                    case UserLoginResults.AccountClosed:
+                    case ETS.Enums.UserLoginResults.AccountClosed:
                         ModelState.AddModelError("", "帐号已关闭");
                         break;
-                    case UserLoginResults.WrongPassword:
+                    case ETS.Enums.UserLoginResults.WrongPassword:
                     default:
                         ModelState.AddModelError("", "密码错误");
                         break;

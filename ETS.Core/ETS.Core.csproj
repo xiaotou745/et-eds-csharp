@@ -72,10 +72,12 @@
     <Compile Include="Cacheing\LocalCache.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Const\ClienterConst.cs" />
+    <Compile Include="Enums\AccountType.cs" />
     <Compile Include="Enums\ApiOrderEnum.cs" />
     <Compile Include="Enums\ClienterEnum.cs" />
     <Compile Include="Enums\EnumStatusType.cs" />
     <Compile Include="Enums\CustomerRegisterStatusEnum.cs" />
+    <Compile Include="Enums\UserLoginResults.cs" />
     <Compile Include="Expand\ActionStatusAttribute.cs" />
     <Compile Include="Const\OrderConst.cs" />
     <Compile Include="Expand\AttribDescription.cs" />
