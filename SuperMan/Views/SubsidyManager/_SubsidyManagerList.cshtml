@@ -1,6 +1,5 @@
-﻿
-@model Ets.Model.DomainModel.Subsidy.SubsidyManageList
-@using SuperManBusinessLogic.Group_Logic
+﻿@model Ets.Model.DomainModel.Subsidy.SubsidyManageList
+@using Ets.Service.Provider.User
 <div>
     <h4 style="color:black;font-weight:600">补帖设置记录</h4>
     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
@@ -31,7 +30,7 @@
                         <td>
                             @if (item.GroupId != null) //当前商户有集团信息
                             {
-                                @Html.Raw(GroupLogic.groupLogic().GetGroupName(Convert.ToInt32(item.GroupId)))
+                                @Html.Raw(new BusinessProvider().GetGroupNameById(Convert.ToInt32(item.GroupId)))
                             }
                         </td>
                         @*<td>@item.PKMCost</td>
