@@ -13,6 +13,7 @@ using System.Data;
 using ETS.Extension;
 using ETS.Enums;
 using Ets.Model.ParameterModel.WtihdrawRecords;
+using Ets.Model.Common;
 
 namespace Ets.Dao.Clienter
 {
@@ -162,28 +163,25 @@ namespace Ets.Dao.Clienter
         }
 
         /// <summary>
-        /// 获取已申请超人，通过超人数量 
+        /// 获取当天
+        /// 商家总数：
+        /// 认证骑士数量：
+        /// 等待认证骑士：
         /// 窦海超
         /// 2015年3月18日 17:23:14
         /// </summary>
-        /// <param name="Applycount">审核通过数量</param>
-        /// <param name="Money">申请数量</param>
-        public void GetCountAndMoney(out int Applycount, out int Bcount)
+        public HomeCountTitleModel GetCountAndMoney(HomeCountTitleModel model)
         {
-            Applycount = 0; Bcount = 0;
             string sql = @"SELECT 
-                            SUM(CASE WHEN [Status]<>0 THEN 1 ELSE 0 END) AS applycount,
-                            SUM(CASE WHEN [Status]=1 THEN 1 ELSE 0 END) AS bcount
-                             FROM dbo.clienter(NOLOCK)";
-            DataSet set = DbHelper.ExecuteDataset(SuperMan_Read, sql);
-            DataTable dt = DataTableHelper.GetTable(set);
+                        ISNULL(SUM(CASE WHEN [Status]=1 THEN 1 ELSE 0 END),0) AS RzqsCount, --认证骑士数量
+                        ISNULL(SUM(CASE WHEN [Status]=0 THEN 1 ELSE 0 END),0) AS DdrzqsCount --等待认证骑士
+                         FROM dbo.clienter(NOLOCK) WHERE CONVERT(CHAR(10),InsertTime,120)=CONVERT(CHAR(10),GETDATE(),120)--认证骑士数量,等待认证骑士";
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             if (dt == null && dt.Rows.Count <= 0)
             {
-                return;
+                return model;
             }
-            DataRow row = dt.Rows[0];
-            Applycount = ParseHelper.ToInt(row["applycount"], 0);
-            Bcount = ParseHelper.ToInt(row["bcount"], 0);
+            return MapRows<HomeCountTitleModel>(dt)[0];
         }
 
         /// <summary>
@@ -267,7 +265,7 @@ namespace Ets.Dao.Clienter
             parm.AddWithValue("@Password", UserPwd);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
- /// <summary>
+        /// <summary>
         /// 检查 骑士 手机号 是否注册过 
         /// wc
         /// </summary>
@@ -311,6 +309,31 @@ namespace Ets.Dao.Clienter
                 return false;
                 throw;
             }
+        }
+
+
+        /// <summary>
+        /// 获取当天 骑士佣金总计（应付）
+        /// 窦海超
+        /// 2015年3月24日 14:15:00
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public HomeCountTitleModel GetCurrentBusinessYFPrice(HomeCountTitleModel model)
+        {
+            string sql = @"
+                         SELECT 
+                        ISNULL( SUM( OrderCommission),0) AS yfPrice
+                         FROM dbo.[order](NOLOCK)  AS o
+                        WHERE o.[Status]=1 AND
+                        CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) 
+                            ";
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+                return model;
+            }
+            return MapRows<HomeCountTitleModel>(dt)[0];
         }
     }
 }

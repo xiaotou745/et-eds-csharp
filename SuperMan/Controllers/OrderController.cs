@@ -56,11 +56,15 @@ namespace SuperMan.Controllers
                 return null;
             }
             ViewBag.txtGroupId = account.GroupId;//集团id
-            var superManModel = iDistributionProvider.GetClienterModelByGroupID(ViewBag.txtGroupId);
-            if (superManModel != null)
-            {
-                ViewBag.superManModel = superManModel;
-            } 
+
+
+            //指派超人时  以下代码 有用，现在 注释掉  wc 
+            //var superManModel = iDistributionProvider.GetClienterModelByGroupID(ViewBag.txtGroupId);
+            //if (superManModel != null)
+            //{
+            //    ViewBag.superManModel = superManModel;
+            //} 
+
             var pagedList = iOrderProvider.GetOrders(criteria);
             var item = pagedList.orderManageList; 
             return PartialView("_PartialOrderList",item);

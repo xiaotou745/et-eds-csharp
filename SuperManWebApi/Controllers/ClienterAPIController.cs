@@ -190,9 +190,9 @@ namespace SuperManWebApi.Controllers
         {
             Ets.Model.DomainModel.Clienter.degree.longitude = model.longitude;
             Ets.Model.DomainModel.Clienter.degree.latitude = model.latitude;
-            var pIndex = ParseHelper.ToInt(model.pageIndex + 1, 1);
+            var pIndex = ParseHelper.ToInt(model.pageIndex, 1);
 
-            var pSize = ParseHelper.ToInt(model.pageSize, 100);
+            var pSize = ParseHelper.ToInt(model.pageSize, ConstValues.App_PageSize);
 
             var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
             {
@@ -204,10 +204,8 @@ namespace SuperManWebApi.Controllers
             //var pagedList = ClienterLogic.clienterLogic().GetMyOrders(criteria);
             //var lists = ClientOrderResultModelTranslator.Instance.Translate(pagedList);
             IList<Ets.Model.DomainModel.Clienter.ClientOrderResultModel> lists = new ClienterProvider().GetMyOrders(criteria);
-            if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
-            {
-                lists = lists.OrderBy(i => i.distance).ToList();
-            }
+
+            lists = lists.OrderByDescending(i => i.pubDate).ToList();  //按照发布时间倒序排列
             return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, lists.ToArray());
         }
 
@@ -225,8 +223,8 @@ namespace SuperManWebApi.Controllers
         {
             Ets.Model.DomainModel.Clienter.degree.longitude = model.longitude;
             Ets.Model.DomainModel.Clienter.degree.latitude = model.latitude;
-            var pIndex = ParseHelper.ToInt(model.pageIndex + 1, 1);
-            var pSize = ParseHelper.ToInt(model.pageSize, 20);
+            var pIndex = ParseHelper.ToInt(model.pageIndex, 1);
+            var pSize = ParseHelper.ToInt(model.pageSize, ConstValues.App_PageSize);
             var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
             {
                 PagingRequest = new Ets.Model.Common.PagingResult(pIndex, pSize),
@@ -239,14 +237,7 @@ namespace SuperManWebApi.Controllers
 
             var pagedList = new Ets.Service.Provider.Order.OrderProvider().GetOrders(criteria);
 
-            if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
-            {
-                pagedList = pagedList.OrderBy(i => i.distance).ToList();
-            }
-            else
-            {
-                pagedList = pagedList.OrderByDescending(i => i.pubDate).ToList();
-            }
+            pagedList = pagedList.OrderByDescending(i => i.pubDate).ToList();  //按照发布时间倒序排列
 
             return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, pagedList.ToArray());
         }
@@ -267,8 +258,8 @@ namespace SuperManWebApi.Controllers
             model.cityId = string.IsNullOrWhiteSpace(HttpContext.Current.Request["cityId"]) ? null : HttpContext.Current.Request["cityId"].Trim(); //城市编码
             Ets.Model.DomainModel.Clienter.degree.longitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["longitude"]);
             Ets.Model.DomainModel.Clienter.degree.latitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["latitude"]);
-            var pIndex = ParseHelper.ToInt(model.pageIndex + 1, 1);
-            var pSize = ParseHelper.ToInt(model.pageSize, 20);
+            var pIndex = ParseHelper.ToInt(model.pageIndex, 1);
+            var pSize = ParseHelper.ToInt(model.pageSize, ConstValues.App_PageSize);
             var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
             {
                 PagingRequest = new Ets.Model.Common.PagingResult(pIndex, pSize),
@@ -276,6 +267,7 @@ namespace SuperManWebApi.Controllers
                 cityId = model.cityId
             };
             var pagedList = new Ets.Service.Provider.Order.OrderProvider().GetOrdersNoLoginLatest(criteria);
+            pagedList = pagedList.OrderByDescending(i => i.pubDate).ToList();
             //var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLoginLatest(criteria);
             //var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
 
@@ -295,7 +287,7 @@ namespace SuperManWebApi.Controllers
             degree.longitude = model.longitude;
             degree.latitude = model.latitude;
             var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
-            var pSize = model.pageSize.HasValue ? model.pageSize.Value : 20;
+            var pSize = model.pageSize.HasValue ? model.pageSize.Value : ConstValues.App_PageSize;
             var criteria = new ClientOrderSearchCriteria()
             {
                 PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
@@ -311,7 +303,7 @@ namespace SuperManWebApi.Controllers
             }
             return SuperManCore.Common.ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
         }
-         
+
 
         /// <summary>
         /// 修改密码
@@ -428,9 +420,9 @@ namespace SuperManWebApi.Controllers
         {
             if (userId == 0 || new Ets.Dao.Clienter.ClienterDao().GetUserInfoByUserId(userId) == null) //用户id验证
                 return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
-            else  
+            else
             {
-                if (iClienterProvider.HaveQualification(userId))  //判断 该骑士 是否 有资格 抢单 wc
+                if (!iClienterProvider.HaveQualification(userId))  //判断 该骑士 是否 有资格 抢单 wc
                 {
                     return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.HadCancelQualification);
                 }
@@ -564,7 +556,7 @@ namespace SuperManWebApi.Controllers
         [ActionStatus(typeof(SendCheckCodeStatus))]
         [HttpGet]
         public Ets.Model.Common.SimpleResultModel CheckCode(string PhoneNumber, string type)
-        {  
+        {
             if (!CommonValidator.IsValidPhoneNumber(PhoneNumber))
             {
                 return Ets.Model.Common.SimpleResultModel.Conclude(SendCheckCodeStatus.InvlidPhoneNumber);
@@ -578,7 +570,7 @@ namespace SuperManWebApi.Controllers
                 //    return SimpleResultModel.Conclude(SendCheckCodeStatus.AlreadyExists);
                 //}  
                 if (iClienterProvider.CheckClienterExistPhone(PhoneNumber))  //判断该手机号是否已经注册过
-                    return Ets.Model.Common.SimpleResultModel.Conclude(SendCheckCodeStatus.AlreadyExists); 
+                    return Ets.Model.Common.SimpleResultModel.Conclude(SendCheckCodeStatus.AlreadyExists);
 
                 msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode, ConstValues.MessageClinenter);
             }

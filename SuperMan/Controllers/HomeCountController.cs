@@ -22,17 +22,12 @@ namespace SuperMan.Controllers
         // GET: HomeCount
         public ActionResult Index()
         {
-            //if (!UserContext.Current.HasAuthority(AuthorityNames.OrderView))
-            //{
-            //    Redirect("/Account/Login");
-            //};
             account account = HttpContext.Session["user"] as account;
             if (account == null)
             {
                 Response.Redirect("/account/login");
                 return null;
             } 
-
             HomeCountManage homeCountManage = new HomeCountManage();
             var criteria = new HomeCountCriteria() { PagingRequest = new PagingResult(0, 15), searchType = 1 };
             var busiCriteria = new BusinessSearchCriteria() { PagingRequest = new PagingResult(0, 15), searchType = 1 };
@@ -40,7 +35,6 @@ namespace SuperMan.Controllers
             homeCountManage.orderCountManageList = OrderLogic.orderLogic().GetOrderCount(criteria);
             homeCountManage.busiCountManagerList = BusiLogic.busiLogic().GetBusinessesCount(busiCriteria);
             homeCountManage.clientCountManagerList = ClienterLogic.clienterLogic().GetClienteresCount(clientCriteria);
-
             //HomeCountTitleModel homeCountTitleModel = OrderLogic.orderLogic().GetHomeCountTitle();
             ViewBag.homeCountTitleModel = new Ets.Service.Provider.Common.HomeCountProvider().GetHomeCountTitle();
             return View(homeCountManage);
