@@ -325,5 +325,15 @@ namespace Ets.Service.Provider.User
         {
             return dao.HaveQualification(businessId);
         }
+        /// <summary>
+        /// 根据集团id获取集团名称
+        /// danny-20150324
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
+        public string GetGroupNameById(int groupId)
+        {
+            return dao.GetGroupNameById(groupId);
+        }
     }
 }

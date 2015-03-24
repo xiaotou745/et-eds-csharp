@@ -607,5 +607,24 @@ namespace Ets.Dao.User
                 throw;
             }
         }
+        /// <summary>
+        /// 根据集团id获取集团名称
+        /// danny-20150324
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
+        public string GetGroupNameById(int groupId)
+        {
+            string sql = @"SELECT  Name
+                        FROM business WITH(NOLOCK) WHERE  GroupId=@GroupId ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@GroupId", groupId);
+            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                return dt.Rows[0]["Name"].ToString();
+            }
+            return null;
+        }
     }
 }

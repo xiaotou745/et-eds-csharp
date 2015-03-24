@@ -119,5 +119,12 @@ namespace Ets.Service.IProvider.User
         /// <param name="businessId"></param>
         /// <returns></returns>
         bool HaveQualification(int businessId);
+        /// <summary>
+        /// 根据集团id获取集团名称
+        /// danny-20150324
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
+        string GetGroupNameById(int groupId);
     }
 }
