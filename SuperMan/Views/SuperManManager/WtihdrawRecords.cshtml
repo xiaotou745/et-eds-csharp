@@ -64,14 +64,16 @@
 <script>
     $(function () {
         $("#btnWithdraw").click(function () {
-            $.post("/SuperManManager/WtihdrawRecords", { Price: -$("#txtMoney").val(), UserId: $("#hidUserId").val(), m: Math.random() }, function (d) {
-                if (d.IsSuccess) {
-                    alert("提现成功");
-                    window.location.href = window.location.href;
-                } else {
-                    alert(d.Message);
-                }
-            });
+            if(confirm("确定提现吗?")){
+                $.post("/SuperManManager/WtihdrawRecords", { Price: -$("#txtMoney").val(), UserId: $("#hidUserId").val(), m: Math.random() }, function (d) {
+                    if (d.IsSuccess) {
+                        alert("提现成功");
+                        window.location.href = window.location.href;
+                    } else {
+                        alert(d.Message);
+                    }
+                });
+            }
         });
     });
 </script>
