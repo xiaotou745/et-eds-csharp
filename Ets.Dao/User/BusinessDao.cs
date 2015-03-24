@@ -19,6 +19,7 @@ using Ets.Model.DataModel.Bussiness;
 using ETS.Extension;
 using ETS.Enums;
 using Ets.Model.Common;
+using Ets.Model.DataModel.Group;
 
 
 namespace Ets.Dao.User
@@ -606,6 +607,41 @@ namespace Ets.Dao.User
                 return false;
                 throw;
             }
+        }
+        /// <summary>
+        /// 根据集团id获取集团名称
+        /// danny-20150324
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
+        public string GetGroupNameById(int groupId)
+        {
+            string sql = @"SELECT  Name
+                        FROM business WITH(NOLOCK) WHERE  GroupId=@GroupId ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@GroupId", groupId);
+            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                return dt.Rows[0]["Name"].ToString();
+            }
+            return null;
+        }
+        /// <summary>
+        /// 获取所有可用的集团信息数据
+        /// danny-20150324
+        /// </summary>
+        /// <returns></returns>
+        public IList<GroupModel> GetGroups()
+        {
+            string sql = @"SELECT    [Id]
+                                    ,[GroupName]
+                          FROM [group] WHERE IsValid=@IsValid";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@IsValid", ConstValues.GroupIsIsValid);
+            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
+            var list = ConvertDataTableList<GroupModel>(dt);
+            return list;
         }
     }
 }

@@ -35,14 +35,12 @@ namespace SuperMan.Controllers
             ViewBag.txtGroupId = account.GroupId;//集团id
             var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria() { PagingRequest = new Ets.Model.Common.NewPagingResult (1, 15), GroupId = account.GroupId };
             criteria.Status = -1; //默认加载全部
-            //var pagedList = BusiLogic.busiLogic().GetBusinesses(criteria);
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
             return View(pagedList);
         }
         [HttpPost]
         public ActionResult BusinessManager(Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria criteria)
         {
-            //var pagedList = BusiLogic.busiLogic().GetBusinesses(criteria);
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
             var item = pagedList.businessManageList;
             return PartialView("_BusinessManageList", item);
@@ -51,14 +49,12 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult AuditOK(int id)
         {
-            //BusiLogic.busiLogic().UpdateAuditStatus(id,EnumStatusType.审核通过);
             iBusinessProvider.UpdateAuditStatus(id, ETS.Enums.EnumStatusType.审核通过);
             return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
         public JsonResult AuditCel(int id)
         {
-            //BusiLogic.busiLogic().UpdateAuditStatus(id, EnumStatusType.审核取消);
             iBusinessProvider.UpdateAuditStatus(id, ETS.Enums.EnumStatusType.审核取消);
             return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
         }
@@ -71,13 +67,8 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         [HttpPost]
         public JsonResult GetBussinessByCityInfo(Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria model) {
-             //return Json(BusiLogic.busiLogic().GetBussinessByCityInfo(model), JsonRequestBehavior.DenyGet);
             return Json(iBusinessProvider.GetBussinessByCityInfo(model).ToList(), JsonRequestBehavior.DenyGet);
         }
-        //public JsonResult GetBussinessByCityInfo(SuperManCommonModel.Entities.BusinessSearchCriteria model)
-        //{
-        //    return Json(BusiLogic.busiLogic().GetBussinessByCityInfo(model), JsonRequestBehavior.DenyGet);
-        //}
         [HttpGet]
         public ActionResult BusinessSettlementSet()
         {
