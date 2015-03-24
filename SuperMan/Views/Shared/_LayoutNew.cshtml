@@ -6,7 +6,12 @@
 @{
     Layout = null;
     IAuthorityMenuProvider iauthority=new AuthorityMenuProvider();
-    List<int> myMenus = iauthority.GetMenuIdsByRoloId(UserContext.Current.RoleId);
+    List<int> myMenusR = iauthority.GetMenuIdsByRoloId(UserContext.Current.RoleId);
+    List<int> myMenus = iauthority.GetMenuIdsByAccountId(UserContext.Current.Id);
+    if (myMenusR!=null)
+    {
+        myMenus.AddRange(myMenusR);
+    } 
     List<AuthorityMenuModel> menus = iauthority.GetAllMenuList();
 }
 <!DOCTYPE html>
@@ -42,7 +47,7 @@
         <header class="hd clearfix">
             <div class="logo">
                 <div class="toptitle">
-                    SuperMan管理后台
+                    e代送管理后台
                 </div>
             </div>
             <div class="loginInfo" style="width: 460px;">

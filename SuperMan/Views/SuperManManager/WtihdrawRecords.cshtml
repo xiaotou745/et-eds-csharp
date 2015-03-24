@@ -1,0 +1,77 @@
+﻿@{
+    ViewBag.Title = "提现更改余额";
+}
+
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：骑士管理 > 提现更改余额
+    </h2>
+    <div class="SearchMd">
+        @{var resultList = @ViewBag.pagedList as Ets.Model.DomainModel.Clienter.ClienterRecordsListModel;
+        var clienter = resultList.clienterModel;
+
+        }
+        <table border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td>
+                    姓名：@clienter.TrueName
+                </td>
+                <td>电话：@clienter.PhoneNo</td>
+            </tr>
+            <tr>
+                <td>
+                    当前余额：￥@clienter.AccountBalance
+                </td>
+                <td>
+                    提现金额：￥<input id="txtMoney"  />
+                    <input type="button" id="btnWithdraw" value="确认提现" />
+                </td>
+
+            </tr>
+        </table>
+    </div>
+    <div class="bd clearfix" id="dataList">
+    </div>
+
+    <div class="SearchMd">
+
+        <table border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td>操作日期</td>
+                <td>提现金额</td>
+                <td>余额</td>
+                <td>操作人</td>
+            </tr>
+            @{
+                var clienterrecords = resultList.listClienterRecordsModel; 
+                foreach (var item in clienterrecords)
+                {
+                    <tr>
+                        <td>@item.CreateTime</td>
+                        <td>@item.Amount</td>
+                        <td>@item.Balance</td>
+                        <td>@item.AdminName</td>
+                    </tr>
+
+                }}
+        </table>
+    </div>
+    <div class="bd clearfix" id="dataList">
+    </div>
+
+</div>
+<input type="hidden" value="@ViewBag.UserId" id="hidUserId" />
+<script>
+    $(function () {
+        $("#btnWithdraw").click(function () {
+            $.post("/SuperManManager/WtihdrawRecords", { Price: -$("#txtMoney").val(), UserId: $("#hidUserId").val(), m: Math.random() }, function (d) {
+                if (d.IsSuccess) {
+                    alert("提现成功");
+                    window.location.href = window.location.href;
+                } else {
+                    alert(d.Message);
+                }
+            });
+        });
+    });
+</script>

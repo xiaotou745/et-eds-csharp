@@ -33,5 +33,37 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="model">用户名称，用户密码</param>
         /// <returns>用户信息</returns>
         ResultModel<ClienterLoginResultModel> PostLogin_C(LoginModel model);
+        
+        /// <summary>
+        /// 获取当前配送员的流水信息
+        /// 窦海超
+        /// 2015年3月20日 17:12:11
+        /// </summary>
+        /// <param name="UserId">用户ID</param>
+        /// <returns></returns>
+        ClienterRecordsListModel WtihdrawRecords(int UserId);
+
+        /// <summary>
+        ///  修改密码
+        ///  窦海超
+        ///  2015年3月23日 18:45:54
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        ResultModel<ClienterModifyPwdResultModel> PostForgetPwd_C(Ets.Model.DataModel.Clienter.ModifyPwdInfoModel model);
+        /// <summary>
+        /// 判断 骑士端 手机号 是否注册过
+        /// wc
+        /// </summary>
+        /// <param name="PhoneNo"></param>
+        /// <returns></returns>
+        bool CheckClienterExistPhone(string PhoneNo);
+        /// <summary>
+        /// 根据骑士Id 验证该骑士是否有资格
+        /// wc
+        /// </summary>
+        /// <param name="clienterId"></param>
+        /// <returns></returns>
+        bool HaveQualification(int clienterId);
     }
 }

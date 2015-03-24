@@ -11,19 +11,8 @@ using Ets.Model.DomainModel.Clienter;
 using Ets.Model.ParameterModel.Clienter;
 using System.Data;
 using ETS.Extension;
-
-
-//using ETS;
-//using ETS.Dao;
-//using ETS.Data;
-//using ETS.Data.Core;
-//using ETS.Data.PageData;
-//using ETS.Util;
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
+using ETS.Enums;
+using Ets.Model.ParameterModel.WtihdrawRecords;
 
 namespace Ets.Dao.Clienter
 {
@@ -195,6 +184,133 @@ namespace Ets.Dao.Clienter
             DataRow row = dt.Rows[0];
             Applycount = ParseHelper.ToInt(row["applycount"], 0);
             Bcount = ParseHelper.ToInt(row["bcount"], 0);
+        }
+
+        /// <summary>
+        /// 获取当前用户的信息
+        /// 窦海超
+        /// 2015年3月20日 16:55:11
+        /// </summary>
+        /// <param name="UserId">用户ID</param>
+        /// <returns></returns>
+        public ClienterModel GetUserInfoByUserId(int UserId)
+        {
+            string sql = "SELECT TrueName,PhoneNo,AccountBalance FROM dbo.clienter(NOLOCK) WHERE Id=" + UserId;
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
+            IList<ClienterModel> list = MapRows<ClienterModel>(dt);
+            if (list == null && list.Count <= 0)
+            {
+                return null;
+            }
+            return list[0];
+        }
+
+        /// <summary>
+        /// 根据电话获取当前用户的信息
+        /// 窦海超
+        /// 2015年3月20日 16:55:11
+        /// </summary>
+        /// <param name="PhoneNo">用户手机号</param>
+        /// <returns></returns>
+        public ClienterModel GetUserInfoByUserPhoneNo(string PhoneNo)
+        {
+            string sql = "SELECT Id,TrueName,PhoneNo,AccountBalance FROM dbo.clienter(NOLOCK) WHERE PhoneNo=@PhoneNo";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@PhoneNo", PhoneNo);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            IList<ClienterModel> list = MapRows<ClienterModel>(dt);
+            if (list == null && list.Count <= 0)
+            {
+                return null;
+            }
+            return list[0];
+        }
+
+        /// <summary>
+        /// 更新用户余额
+        /// 窦海超
+        /// 2015年3月23日 12:47:54
+        /// </summary>
+        /// <param name="UserId">用户ID</param>
+        /// <param name="Account">提现金额</param>
+        /// <returns></returns>
+        public bool UpdateClienterAccountBalance(WithdrawRecordsModel model)
+        {
+            Ets.Model.DomainModel.Clienter.ClienterModel cliterModel = new ClienterDao().GetUserInfoByUserId(model.UserId);//获取当前用户余额
+            decimal balance = ParseHelper.ToDecimal(cliterModel.AccountBalance, 0);
+            decimal Money = balance + model.Amount;
+            if (Money < 0)//如果提现金额大于当前余额则不能提现
+            {
+                return false;
+            }
+            model.Balance = balance;
+            string sql = @"UPDATE dbo.clienter SET AccountBalance=@Money WHERE id=" + model.UserId;
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Money", Money);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+        }
+
+        /// <summary>
+        /// 根据用户ID更新密码
+        /// </summary>
+        /// <param name="UserId">用户ID</param>
+        /// <param name="UserPwd">新密码</param>
+        /// <returns></returns>
+        public bool UpdateClienterPwdSql(int UserId, string UserPwd)
+        {
+            if (UserId <= 0)
+            {
+                return false;
+            }
+            string sql = "UPDATE dbo.clienter SET [Password]=@Password WHERE id=" + UserId;
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Password", UserPwd);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+        }
+ /// <summary>
+        /// 检查 骑士 手机号 是否注册过 
+        /// wc
+        /// </summary>
+        /// <param name="PhoneNo"></param>
+        /// <returns></returns>
+        public bool CheckClienterExistPhone(string PhoneNo)
+        {
+            try
+            {
+                string sql = "SELECT COUNT(1) FROM dbo.clienter(NOLOCK) WHERE PhoneNo =@PhoneNo";
+                IDbParameters parm = DbHelper.CreateDbParameters();
+                parm.AddWithValue("@PhoneNo", PhoneNo);
+                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm)) > 0 ? true : false;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex, "检查当前骑士是否存在");
+                return false;
+                throw;
+            }
+        }
+        /// <summary>
+        /// 判断该骑士是否有资格 
+        /// wc
+        /// </summary>
+        /// <param name="clienterId"></param>
+        /// <returns></returns>
+        public bool HaveQualification(int clienterId)
+        {
+            try
+            {
+                //状态为1 表示该骑士 已通过审核
+                string sql = "SELECT COUNT(1) FROM dbo.clienter(NOLOCK) WHERE [Status] = 1 AND Id = @clienterId ";
+                IDbParameters parm = DbHelper.CreateDbParameters();
+                parm.AddWithValue("@clienterId", clienterId);
+                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm)) > 0 ? true : false;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex, "检查当前骑士是否存在");
+                return false;
+                throw;
+            }
         }
     }
 }

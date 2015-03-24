@@ -14,6 +14,7 @@ using System.Linq;
 using ETS.Enums;
 using Ets.Model.DataModel.Bussiness;
 using ETS.Util;
+using ETS.Cacheing;
 namespace Ets.Service.Provider.User
 {
 
@@ -48,7 +49,7 @@ namespace Ets.Service.Provider.User
                 }
                 model.PickUpName = from.BusinessName;
                 model.ReceviceAddress = from.ReceviceAddress;
-                model.ReceviceName = from.ReceviceName;
+                model.ReceviceName = from.ReceviceName == null ? "匿名" : from.ReceviceName.Trim();
                 model.RecevicePhoneNo = from.RecevicePhoneNo;
                 model.Remark = from.Remark;
                 model.Status = from.Status;
@@ -221,9 +222,9 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public BusListResultModel GetBusiness(int busiId)
         {
-           return dao.GetBusiness(busiId);
+            return dao.GetBusiness(busiId);
         }
-		 /// <summary>
+        /// <summary>
         /// 获取商户信息
         /// danny-20150316
         /// </summary>
@@ -261,6 +262,68 @@ namespace Ets.Service.Provider.User
         public IList<BusListResultModel> GetBussinessByCityInfo(BusinessSearchCriteria criteria)
         {
             return dao.GetBussinessByCityInfo(criteria);
+        }
+
+        /// <summary>
+        /// 修改商户密码
+        /// 窦海超
+        /// 2015年3月23日 19:11:54
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model)
+        {
+            if (string.IsNullOrEmpty(model.password))  //密码非空验证
+                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.NewPwdEmpty);
+            if (string.IsNullOrEmpty(model.checkCode)) //验证码非空验证
+            {
+                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeIsEmpty);
+            }
+            var code = CacheFactory.Instance[model.phoneNumber];
+
+            if (code == null || code.ToString() != model.checkCode) //验证码正确性验证
+                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong);
+
+            BusinessDao businessDao = new BusinessDao();
+            var business = businessDao.GetBusinessByPhoneNo(model.phoneNumber);
+            if (business == null)  //用户是否存在
+                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.ClienterIsNotExist);
+            if (businessDao.UpdateBusinessPwdSql(business.Id, model.password))
+                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.Success);
+            else
+                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.FailedModifyPwd);
+        }
+
+        /// <summary>
+        /// 获取商户端的统计数量
+        /// 窦海超
+        /// 2015年3月23日 20:19:02
+        /// </summary>
+        /// <param name="BusinessId">商户ID</param>
+        /// <returns></returns>
+        public BusiOrderCountResultModel GetOrderCountData(int BusinessId)
+        {
+            return dao.GetOrderCountDataSql(BusinessId);
+        }
+        /// <summary>
+        /// 验证 商户 手机号 是否注册
+        /// wc
+        /// </summary>
+        /// <param name="PhoneNo"></param>
+        /// <returns></returns>
+        public bool CheckBusinessExistPhone(string PhoneNo)
+        {
+            return dao.CheckBusinessExistPhone(PhoneNo);
+        }
+        /// <summary>
+        /// 判断该 商户是否有资格 
+        /// wc
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <returns></returns>
+        public bool HaveQualification(int businessId)
+        {
+            return dao.HaveQualification(businessId);
         }
     }
 }

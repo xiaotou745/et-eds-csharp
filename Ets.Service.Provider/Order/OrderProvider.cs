@@ -241,23 +241,13 @@ namespace Ets.Service.Provider.Order
             to.OrderCount = busiOrderInfoModel.OrderCount;  //订单数量
             to.ReceviceLongitude = busiOrderInfoModel.longitude;
             to.ReceviceLatitude = busiOrderInfoModel.laitude;
-
-            //var subsidy = SubsidyLogic.subsidyLogic().GetCurrentSubsidy(groupId: business.GroupId == null ? 0 : Convert.ToInt32(business.GroupId));
-
-            var subsidy = iSubsidyProvider.GetCurrentSubsidy(groupId: business.GroupId == null ? 0 : Convert.ToInt32(business.GroupId));
-
+            SubsidyResultModel subsidy = iSubsidyProvider.GetCurrentSubsidy(groupId: business.GroupId == null ? 0 : Convert.ToInt32(business.GroupId));
             if (subsidy != null)
             {
                 to.WebsiteSubsidy = subsidy.WebsiteSubsidy;  //网站补贴
                 to.CommissionRate = subsidy.OrderCommission == null ? 0 : subsidy.OrderCommission; //佣金比例 
-
-                decimal distribe = 0;  //默认外送费，网站补贴都为0
-                if (to.DistribSubsidy != null)//如果外送费有数据，按照外送费计算骑士佣金
-                    distribe = Convert.ToDecimal(to.DistribSubsidy);
-                else if (to.WebsiteSubsidy != null)//如果外送费没数据，按照网站补贴计算骑士佣金
-                    distribe = Convert.ToDecimal(to.WebsiteSubsidy);
-
-                to.OrderCommission = busiOrderInfoModel.Amount * to.CommissionRate + distribe * to.OrderCount;//计算佣金
+                OrderCommission orderComm = new OrderCommission() { Amount = busiOrderInfoModel.Amount, CommissionRate = subsidy.OrderCommission, DistribSubsidy = to.DistribSubsidy, OrderCount = busiOrderInfoModel.OrderCount, WebsiteSubsidy = subsidy.WebsiteSubsidy }; //必须写to.DistribSubsidy ，防止bussiness为空情况
+                 to.OrderCommission=OrderCommissionProvider.GetCurrenOrderCommission(orderComm);
             }
             to.Status = ConstValues.ORDER_NEW;
             return to;
@@ -327,9 +317,6 @@ namespace Ets.Service.Provider.Order
         {
             var pagedQuery = new OrderManage();
             PageInfo<OrderListModel> pageinfo = OrderDao.GetOrders<OrderListModel>(criteria);
-            
-
-
             NewPagingResult pr = new NewPagingResult() { PageIndex = criteria.PagingRequest.PageIndex, PageSize = criteria.PagingRequest.PageSize, RecordCount = pageinfo.All, TotalCount = pageinfo.All };
             List<OrderListModel> list = pageinfo.Records.ToList();
             var orderlists = new OrderManageList(list, pr);

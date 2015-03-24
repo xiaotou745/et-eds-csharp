@@ -6,6 +6,7 @@ using Common.Logging;
 using ETS.Data.Core;
 using ETS.Data.Generic;
 using ETS.Util;
+using ETS.Extension;
 
 namespace ETS.Data
 {
@@ -209,6 +210,17 @@ namespace ETS.Data
 			return ExecuteDataset(connString, CommandType.Text, commandText, TIMEOUT_DEFAULT, null);
 		}
 
+        /// <summary>
+        /// 执行SQL, 返回DataTable
+        /// </summary>
+        /// <param name="connString">the ConnectionString</param>
+        /// <param name="commandText">the execute sql</param>
+        /// <returns>return a Dataset</returns>
+        public DataTable ExecuteDataTable(string connString, string commandText)
+        {
+            return DataTableHelper.GetTable(ExecuteDataset(connString, CommandType.Text, commandText, TIMEOUT_DEFAULT, null));
+        }
+
 		/// <summary>
 		/// 执行SQL, 返回Dataset
 		/// </summary>
@@ -220,6 +232,18 @@ namespace ETS.Data
 		{
 			return ExecuteDataset(connString, CommandType.Text, commandText, TIMEOUT_DEFAULT, parameterValues);
 		}
+
+        /// <summary>
+        /// 执行SQL, 返回DataTable
+        /// </summary>
+        /// <param name="connString">the ConnectionString</param>
+        /// <param name="commandText">the execute sql</param>
+        /// <param name="parameterValues">the sql parameters</param>
+        /// <returns>return a DataTable</returns>
+        public DataTable ExecuteDataTable(string connString, string commandText, IDbParameters parameterValues)
+        {
+            return DataTableHelper.GetTable(ExecuteDataset(connString, CommandType.Text, commandText, TIMEOUT_DEFAULT, parameterValues));
+        }
 
 		/// <summary>
 		/// 执行SQL, 返回Dataset

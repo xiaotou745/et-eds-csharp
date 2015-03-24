@@ -87,5 +87,37 @@ namespace Ets.Service.IProvider.User
         /// <param name="criteria"></param>
         /// <returns></returns>
         IList<BusListResultModel> GetBussinessByCityInfo(BusinessSearchCriteria criteria);
+
+        /// <summary>
+        /// 修改商户密码
+        /// 窦海超
+        /// 2015年3月23日 19:11:54
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model);
+
+        /// <summary>
+        /// 获取商户端的统计数量
+        /// 窦海超
+        /// 2015年3月23日 20:19:02
+        /// </summary>
+        /// <param name="BusinessId">商户ID</param>
+        /// <returns></returns>
+        BusiOrderCountResultModel GetOrderCountData(int BusinessId);
+        /// <summary>
+        /// 验证商户手机号 是否 注册
+        /// wc
+        /// </summary>
+        /// <param name="PhoneNo"></param>
+        /// <returns></returns>
+        bool CheckBusinessExistPhone(string PhoneNo);
+        /// <summary>
+        /// 判断该 商户是否有资格 
+        /// wc
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <returns></returns>
+        bool HaveQualification(int businessId);
     }
 }

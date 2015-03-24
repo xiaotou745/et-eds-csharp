@@ -539,6 +539,7 @@
     <Content Include="Views\Shared\_NewPager.cshtml" />
     <Content Include="Views\GroupManager\GroupManager.cshtml" />
     <Content Include="Views\GroupManager\_GroupManageList.cshtml" />
+    <Content Include="Views\SuperManManager\WtihdrawRecords.cshtml" />
     <Content Include="Views\SubsidyManager\_SubsidyManagerList.cshtml" />
     <Content Include="Views\Shared\_LayoutNew.cshtml" />
     <Content Include="Views\MenuManager\RoleManager.cshtml" />

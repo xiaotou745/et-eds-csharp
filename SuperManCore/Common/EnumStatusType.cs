@@ -31,7 +31,10 @@ namespace SuperManCore.Common
         [DisplayText("订单数量不符合规则")]
         OrderCountError,
         [DisplayText("订单已经存在")]
-        OrderHasExist
+        OrderHasExist,
+        [DisplayText("您已取消资格")]
+        HadCancelQualification
+
     }
     public enum GetOrdersStatus
     {
@@ -54,7 +57,9 @@ namespace SuperManCore.Common
         InvlidPhoneNumber,
 
         [DisplayText("发送失败")]
-        SendFailure
+        SendFailure,
+        [DisplayText("该用户已注册")]
+        AlreadyExists
     }
 
     public enum CancelOrderStatus
@@ -121,7 +126,13 @@ namespace SuperManCore.Common
         [DisplayText("订单不存在")]
         OrderIsNotExist,
         [DisplayText("订单已被抢或者已完成")]
-        OrderIsNotAllowRush
+        OrderIsNotAllowRush,
+        [DisplayText("订单已取消")]
+        OrderHadCancel,
+        [DisplayText("您已取消资格")]
+        HadCancelQualification
+
+
     }
     public enum FinishOrderStatus
     {

@@ -173,10 +173,11 @@
         //余额清零
         $(".superManClear").bind("click", function () {
             currentId = $(this).attr("supermanid");
-            amount = $(this).attr("amount");
-            if (amount == 0)
-                return false;
-            adminjs.openwinbox('#Close_Clearbox');
+            //amount = $(this).attr("amount");
+            //if (amount == 0)
+            //    return false;
+            //adminjs.openwinbox('#Close_Clearbox');
+            window.location.href = "/SuperManManager/WtihdrawRecords?UserId=" + currentId;
         });
 
         $("#btnClear").click(function () {
