@@ -1,7 +1,6 @@
-﻿@*@model SuperManCommonModel.Models.AuthorityManageList*@
-@model Ets.Model.DomainModel.Authority.AuthorityManageList
+﻿@model Ets.Model.DomainModel.Authority.AuthorityManageList
 @using SuperMan.App_Start
-@using SuperManBusinessLogic.Group_Logic
+@using Ets.Service.Provider.User
 
 <script src="~/Scripts/view/authoritylist.js"></script>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
@@ -28,7 +27,7 @@
                     <td>
                         @if (item.GroupId != null) //当前商户有集团信息
                         {
-                            @Html.Raw(GroupLogic.groupLogic().GetGroupName(Convert.ToInt32(item.GroupId)))
+                            @Html.Raw(new BusinessProvider().GetGroupNameById(Convert.ToInt32(item.GroupId)))
                         }
                     </td>
                     <td>

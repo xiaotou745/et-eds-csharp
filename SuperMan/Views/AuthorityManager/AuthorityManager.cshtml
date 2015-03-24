@@ -1,10 +1,7 @@
-﻿@*@model AuthorityManage*@
-@model Ets.Model.DomainModel.Authority.AuthorityManage
+﻿@model Ets.Model.DomainModel.Authority.AuthorityManage
 @using SuperMan.App_Start
-@using SuperManBusinessLogic.Group_Logic
+@using Ets.Service.Provider.User
 @using Ets.Model
-
-@*@using SuperManCommonModel.Models;*@
 @{
     ViewBag.Title = "Authority";
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
@@ -76,7 +73,7 @@
                         <!-- Text input-->
                         <label class="control-label" for="input01">集团</label>
                         <div class="controls">
-                            @Html.DropDownList("AddGroupId", new SelectList(GroupLogic.groupLogic().GetGroups(), "Id", "GroupName"), "--无--", new { @class = "selectw", style = "width:143px" })
+                            @Html.DropDownList("AddGroupId", new SelectList(new BusinessProvider().GetGroups() , "Id", "GroupName"), "--无--", new { @class = "selectw", style = "width:143px" })
                         </div>
                     </div>
                 }

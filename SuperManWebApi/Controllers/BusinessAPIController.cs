@@ -300,7 +300,7 @@ namespace SuperManWebApi.Controllers
             lock (lockHelper)
             {
                 //首先验证该 商户有无 资格 发布订单 wc
-                if (iBusinessProvider.HaveQualification(model.userId)) 
+                if (!iBusinessProvider.HaveQualification(model.userId)) 
                 {
                     return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(PubOrderStatus.HadCancelQualification);
                 }  

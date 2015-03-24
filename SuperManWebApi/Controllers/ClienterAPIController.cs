@@ -447,7 +447,7 @@ namespace SuperManWebApi.Controllers
             {
                 if (myorder.Status == ConstValues.ORDER_CANCEL)   //判断订单状态是否为 已取消
                 {
-                    return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderHadCancel);  //订单不存在
+                    return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderHadCancel);  //订单已被取消
                 }
                 if (myorder.Status == ConstValues.ORDER_ACCEPT || myorder.Status == ConstValues.ORDER_FINISH)  //订单已接单，被抢  或 已完成
                 {
