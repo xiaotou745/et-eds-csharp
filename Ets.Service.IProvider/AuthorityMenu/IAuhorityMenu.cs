@@ -195,5 +195,13 @@
         /// <param name="modifypassword"></param>
         /// <returns></returns>
         bool ModifyPwdById(int id, string modifypassword);
+        /// <summary>
+        /// 验证用户权限
+        /// danny-20150324
+        /// </summary>
+        /// <param name="accountId"></param>
+        /// <param name="authorityName"></param>
+        /// <returns></returns>
+        bool HasAuthority(int accountId, string authorityName);
     }
 }

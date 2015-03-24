@@ -8,8 +8,35 @@
 <div>
     @{
         var resultList = @ViewBag.homeCountTitleModel as Ets.Model.Common.HomeCountTitleModel;
-        <p>签约商户：@resultList.SignBusiness 家  已申请超人：@resultList.ApplySuperMan 个，通过超人 @resultList.AuditPassSuperMan 个，今日订单： @resultList.TodayOrders ，今日订单金额： @resultList.TodayOrdersAmount 元</p>
-    }
+      
+
+    <p>
+        <table class="tbstyle" width="1000" border="1">
+    <tr>
+        <td>
+        商家总数：@resultList.BusinessCount
+        认证骑士数量：
+        等待认证骑士：
+        </td>
+        <td>
+        订单金额:
+        任务量：
+        订单量：
+        </td>
+        <td>
+        商户平均发布订单：
+        任务平均订单量：
+        骑士平均完成订单量：
+        </td>
+        <td>
+        商户结算金额（应收）：
+        骑士佣金总计（应付）：
+        盈亏总计：+
+        </td>
+    </tr>
+</table>
+    </p>
+}
 </div>
 <hr />
 <h4 style="color:black;font-weight:600">订单统计</h4>

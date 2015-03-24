@@ -276,7 +276,7 @@ namespace Ets.Dao.Order
             queryOrderSqldbParameters.AddWithValue("@OriginalOrderNo", paramodel.order_id);    //第三方平台订单号
             queryOrderSqldbParameters.AddWithValue("@GroupId", paramodel.store_info.group);    //集团id
             int orderExists = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, queryOrderSql, queryOrderSqldbParameters));
-            if(orderExists>0)
+            if (orderExists > 0)
                 return null;//添加失败 
             ///订单插入sql
             const string insertOrdersql = @" 
@@ -304,7 +304,7 @@ namespace Ets.Dao.Order
             dbParameters.AddWithValue("@Remark", paramodel.remark);    //备注
             dbParameters.AddWithValue("@Weight", paramodel.weight);    //重量，默认?
             //订单外送费  目前 接收了两个外送费 理论必须一致 ，若不一致，以订单上的为准，方便后续扩展
-            dbParameters.AddWithValue("@DistribSubsidy", paramodel.delivery_fee);  
+            dbParameters.AddWithValue("@DistribSubsidy", paramodel.delivery_fee);
             dbParameters.AddWithValue("@OrderCount", paramodel.package_count == null ? 1 : paramodel.package_count);   //订单数量，默认为1
             ///收货地址信息
             dbParameters.AddWithValue("@ReceviceName", paramodel.address.user_name);    //用户姓名 收货人姓名
@@ -354,29 +354,32 @@ namespace Ets.Dao.Order
 
 
         /// <summary>
-        /// 获取当天订单完成数量和金额
+        ///获取当天
+        ///订单金额
+        ///任务量
+        ///订单量 
         /// 窦海超
         /// 2015年3月18日 17:23:14
         /// </summary>
-        /// <param name="Count">返回数量</param>
-        /// <param name="Money">返回金额</param>
-        public void GetCurrentDateCountAndMoney(out int Count, out decimal Money)
+        public HomeCountTitleModel GetCurrentDateCountAndMoney(HomeCountTitleModel model)
         {
-            Count = 0; Money = 0;
-            string sql = @" SELECT 
-                             SUM(OrderCount) AS acount,
-                             SUM(Amount) amount 
-                             FROM dbo.[order](NOLOCK) WHERE  CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120)
-                             AND [Status]=1";
+
+            string sql = @"SELECT 
+                            ISNULL(SUM(OrderCount),0) AS OrderPrice, --订单金额
+                            ISNULL(COUNT(Id),0) AS MisstionCount,--任务量
+                            ISNULL(SUM(OrderCount),0) AS OrderCount --订单量
+                             FROM dbo.[order](NOLOCK) WHERE CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) AND [Status]=1";
             DataSet set = DbHelper.ExecuteDataset(SuperMan_Read, sql);
             DataTable dt = DataTableHelper.GetTable(set);
             if (dt == null && dt.Rows.Count <= 0)
             {
-                return;
+                return model;
             }
-            DataRow row = dt.Rows[0];
-            Count = ParseHelper.ToInt(row["acount"], 0);
-            Money = ParseHelper.ToDecimal(row["amount"], 0);
+
+            //DataRow row = dt.Rows[0];
+            //Count = ParseHelper.ToInt(row["acount"], 0);
+            //Money = ParseHelper.ToDecimal(row["amount"], 0);
+           return MapRows<HomeCountTitleModel>(dt)[0];
         }
         /// <summary>
         /// 根据参数获取订单
@@ -386,7 +389,7 @@ namespace Ets.Dao.Order
         /// <returns></returns>
         public PageInfo<T> GetOrders<T>(OrderSearchCriteria criteria)
         {
-                string columnList = @"   o.[Id]
+            string columnList = @"   o.[Id]
                                     ,o.[OrderNo]
                                     ,o.[PickUpAddress]
                                     ,o.[PubDate]
@@ -482,12 +485,12 @@ namespace Ets.Dao.Order
                 {
                     sbSqlWhere.AppendFormat(" AND o.GroupId={0} ", criteria.GroupId);
                 }
-                string tableList = @" dbo.[order] o WITH ( NOLOCK )
-                                LEFT JOIN dbo.clienter c WITH ( NOLOCK ) ON c.Id = o.clienterId
-                                LEFT JOIN dbo.business b WITH ( NOLOCK ) ON b.Id = o.businessId
-                                LEFT JOIN [dbo].[group] g WITH ( NOLOCK ) ON g.Id = b.GroupId ";
-                string orderByColumn = " o.Status ASC,o.PubDate DESC ";
-                return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
+                string tableList = @" [order] o WITH ( NOLOCK )
+                                LEFT JOIN clienter c WITH ( NOLOCK ) ON c.Id = o.clienterId
+                                LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
+                                LEFT JOIN [group] g WITH ( NOLOCK ) ON g.Id = b.GroupId ";
+            string orderByColumn = " o.Status ASC,o.PubDate DESC ";
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
         }
         /// <summary>
         /// 更新订单佣金
@@ -499,7 +502,7 @@ namespace Ets.Dao.Order
             bool reslut = false;
             try
             {
-                string sql = @" update [dbo].[order] set OrderCommission=@OrderCommission where OrderNo=@OrderNo "; 
+                string sql = @" update [order] set OrderCommission=@OrderCommission where OrderNo=@OrderNo "; 
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
                 dbParameters.AddWithValue("@OrderNo", order.OrderNo);
                 dbParameters.AddWithValue("@OrderCommission", order.OrderCommission);
@@ -562,8 +565,8 @@ namespace Ets.Dao.Order
                                         ,o.[CommissionRate]
                                         ,o.[OrderSign]
                                         ,b.[City] BusinessCity
-                                    FROM [dbo].[order] o WITH ( NOLOCK )
-                                    LEFT JOIN dbo.business b WITH ( NOLOCK ) ON b.Id = o.businessId
+                                    FROM [order] o WITH ( NOLOCK )
+                                    LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     WHERE 1=1 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OrderNo", orderNo);
@@ -573,7 +576,7 @@ namespace Ets.Dao.Order
             }
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
             var list = ConvertDataTableList<OrderListModel>(dt);
-            if(list!=null&&list.Count>0)
+            if (list != null && list.Count > 0)
             {
                 return list[0];
             }
@@ -581,15 +584,15 @@ namespace Ets.Dao.Order
             {
                 return null;
             }
-            
+
         }
 
         /// <summary>
         /// 订单指派超人
         /// danny-20150320
-       /// </summary>
-       /// <param name="order"></param>
-       /// <returns></returns>
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns></returns>
         public bool RushOrder(OrderListModel order)
         {
             bool reslut = false;
@@ -622,17 +625,17 @@ namespace Ets.Dao.Order
         /// <param name="orderNo"></param>
         /// <returns></returns>
         public int GetOrderByOrderNo(string orderNo)
-        { 
+        {
             string selSql = string.Format(@" SELECT COUNT(1)
  FROM   dbo.[order] WITH ( NOLOCK ) 
  WHERE  OrderNo = @orderNo");
-             
+
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@orderNo", orderNo);    //订单号
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, selSql, dbParameters);
 
             return ParseHelper.ToInt(executeScalar, -1);
-             
+
         }
 
         /// <summary>

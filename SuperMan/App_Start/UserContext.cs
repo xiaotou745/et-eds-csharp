@@ -56,8 +56,7 @@ namespace SuperMan.App_Start
             {
                 return false;
             }
-            var bllAccount = new AccountBussinessLogic();
-            bool has =  bllAccount.HasAuthority(UserContext.Current.Id, authorityName);
+            bool has = new AuthorityMenuProvider().HasAuthority(UserContext.Current.Id, authorityName);
             return has;
         }
 

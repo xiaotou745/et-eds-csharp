@@ -491,20 +491,6 @@ namespace Ets.Dao.User
         }
 
 
-
-        /// <summary>
-        /// 获取骑士数量
-        /// 窦海超
-        /// 2015年3月18日 17:23:14
-        /// </summary>
-        /// <returns>骑士数量</returns>
-        public int GetBusinessCount()
-        {
-            string sql = @" SELECT COUNT(Id) FROM dbo.business(NOLOCK) WHERE [Status]=1";
-            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql));
-        }
-
-
         /// <summary>
         /// 根据手机号获取用商家信息
         /// 窦海超
@@ -545,7 +531,7 @@ namespace Ets.Dao.User
             parm.AddWithValue("@Password", BusinessPwd);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
-        
+
         /// <summary>
         /// 获取商户端的统计数量
         /// 窦海超
@@ -577,8 +563,8 @@ namespace Ets.Dao.User
             parm.AddWithValue("@order_Finish", ConstValues.ORDER_FINISH);
 
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
-            IList<BusiOrderCountResultModel> list= MapRows<BusiOrderCountResultModel>(dt);
-            if (list==null || list.Count<=0)
+            IList<BusiOrderCountResultModel> list = MapRows<BusiOrderCountResultModel>(dt);
+            if (list == null || list.Count <= 0)
             {
                 return null;
             }
@@ -642,6 +628,45 @@ namespace Ets.Dao.User
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
             var list = ConvertDataTableList<GroupModel>(dt);
             return list;
+        }
+
+        /// <summary>
+        /// 获取当天商家总数
+        /// 窦海超
+        /// 2015年3月24日 14:11:10
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public HomeCountTitleModel GetCurrentBusinessCount(HomeCountTitleModel model)
+        {
+            string sql = @"SELECT COUNT(Id) AS BusinessCount FROM dbo.business(NOLOCK) 
+                           WHERE CONVERT(CHAR(10),InsertTime,120)=CONVERT(CHAR(10),GETDATE(),120) and [status]=1  --商家总数：";
+            model.BusinessCount = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql));
+            return model;
+        }
+
+        /// <summary>
+        /// 获取当天 商户结算金额（应收）
+        /// 窦海超
+        /// 2015年3月24日 14:15:00
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public HomeCountTitleModel GetCurrentBusinessYSPrice(HomeCountTitleModel model)
+        {
+            string sql = @"
+                            SELECT 
+                            ISNULL(SUM(o.Amount*ISNULL(b.BusinessCommission,0)+ ISNULL( b.DistribSubsidy ,0)* o.OrderCount),0) AS ysPrice
+                             FROM dbo.[order](NOLOCK) AS o
+                             LEFT JOIN dbo.business(NOLOCK) AS b ON o.businessId=b.Id
+                              where CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) 
+                            ";
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+                return model;
+            }
+            return MapRows<HomeCountTitleModel>(dt)[0];
         }
     }
 }
