@@ -83,7 +83,7 @@
                     }
                     if (SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.SuperClear))
                     {
-                        <a href="javascript:void(0)" amount="@item.AccountBalance" supermanid="@item.Id" class="superManClear">余额清零</a>
+                        <a href="javascript:void(0)" amount="@item.AccountBalance" supermanid="@item.Id" class="superManClear">提现</a>
                     }
                 }
                 else
@@ -95,7 +95,7 @@
                     }
                     if (SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.SuperClear))
                     {
-                        <a href="javascript:void(0)" amount="@item.AccountBalance" supermanid="@item.Id" class="superManClear">余额清零</a>
+                        <a href="javascript:void(0)" amount="@item.AccountBalance" supermanid="@item.Id" class="superManClear">提现</a>
                     } 
                 }
                         }
@@ -173,10 +173,11 @@
         //余额清零
         $(".superManClear").bind("click", function () {
             currentId = $(this).attr("supermanid");
-            amount = $(this).attr("amount");
-            if (amount == 0)
-                return false;
-            adminjs.openwinbox('#Close_Clearbox');
+            //amount = $(this).attr("amount");
+            //if (amount == 0)
+            //    return false;
+            //adminjs.openwinbox('#Close_Clearbox');
+            window.location.href = "/SuperManManager/WtihdrawRecords?UserId=" + currentId;
         });
 
         $("#btnClear").click(function () {

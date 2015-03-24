@@ -1,5 +1,5 @@
-﻿@model ClienterManage
-@using SuperManCommonModel.Models;
+﻿@model Ets.Model.DomainModel.Clienter.ClienterManage
+@using Ets.Model;
 @{
     ViewBag.Title = "Order";
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
@@ -7,13 +7,13 @@
 
 <div class="zpManage zpSh">
     <h2 class="crumbs">
-        您所在位置：超人 > 超人管理
+        您所在位置：骑士管理 > 骑士管理
     </h2>
     <div class="SearchMd">
         <table border="0" cellspacing="0" cellpadding="0">
             <tr>
                 <td>
-                    <span class="">超人名称: </span>
+                    <span class="">骑士名称: </span>
                     <input id="txtSuperManName" type="tel" />
                     <span class="">审核状态: </span>
                     <select name="select" class="selectw" id="superManStatus" style="width:143px">
@@ -23,7 +23,7 @@
                         <option value="2">未审核</option>
                         <option value="3">审核中</option>
                     </select>
-                    <span class="">超人电话: </span>
+                    <span class="">骑士电话: </span>
                     <input id="txtSuperManPhone" type="text" />
                     <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                 </td>
@@ -38,7 +38,7 @@
 <script>
     var adminjs = new adminglass(); //实例化后台类
     var DEFAULT_PAGESIZE = 15;
-    var criteria = { PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE } };
+    var criteria = { PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE } };
     $(document).ready(function () {
         //查询
         $("#btnSearch").on('click', function () {
@@ -46,13 +46,13 @@
                 BusinessName: $("#txtSuperManName").val(), //商户名称
                 BusinessPhone: $("#txtSuperManPhone").val(),////商户电话
                 status: $("#superManStatus").val(),
-                PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE }
+                PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }
             };
             refresh(0);
         });
     })
     ////分页
-    art.ui.control.Pager.enablePaging(document, refresh);
+    art.ui.control.NewPager.enablePaging(document, refresh);
     function refresh(pageIndex) {
         var url = "/SuperManManager/SuperManManager";
         if (pageIndex !== undefined) {

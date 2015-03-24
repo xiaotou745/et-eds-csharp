@@ -23,7 +23,7 @@ namespace Ets.Model.DataModel.Order
         /// <summary>
         /// 发布时间
         /// </summary>
-        public string PubDate { get; set; }
+        public DateTime? PubDate { get; set; }
         /// <summary>
         /// 收货人
         /// </summary>

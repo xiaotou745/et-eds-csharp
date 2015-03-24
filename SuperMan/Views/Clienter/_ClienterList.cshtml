@@ -1,4 +1,4 @@
-﻿@model SuperManCommonModel.Models.ClienterManageList
+﻿@model Ets.Model.DomainModel.Clienter.ClienterManageList
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
     <thead>
@@ -30,20 +30,20 @@
                     <td>@item.AccountBalance</td>            
                     @{
                         var statusView = "";
-                        if (@item.Status == SuperManCommonModel.ConstValues.CLIENTER_AUDITPASS)
+                        if (@item.Status == Ets.Model.Common.ConstValues.CLIENTER_AUDITPASS)
                         {
                             statusView = "审核通过";
                         }
 
-                        else if (@item.Status == SuperManCommonModel.ConstValues.CLIENTER_AUDITCANCEL)
+                        else if (@item.Status == Ets.Model.Common.ConstValues.CLIENTER_AUDITCANCEL)
                         {
                             statusView = "审核被拒绝";
                         }
-                        else if (@item.Status == SuperManCommonModel.ConstValues.CLIENTER_AUDITPASSING)
+                        else if (@item.Status == Ets.Model.Common.ConstValues.CLIENTER_AUDITPASSING)
                         {
                             statusView = "审核中";
                         }
-                        else if (@item.Status == SuperManCommonModel.ConstValues.CLIENTER_NOAUDIT)
+                        else if (@item.Status == Ets.Model.Common.ConstValues.CLIENTER_NOAUDIT)
                         {
                             statusView = "未审核";
                         }
@@ -59,7 +59,7 @@
     </tbody>
 
 </table>
-@Html.Partial("_Pager", Model._PagingResult)
+@Html.Partial("_NewPager", Model._PagingResult)
 
 <script type="text/javascript">
     var currentId;
