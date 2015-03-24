@@ -174,7 +174,7 @@ namespace Ets.Dao.Clienter
         {
             string sql = @"SELECT 
                         ISNULL(SUM(CASE WHEN [Status]=1 THEN 1 ELSE 0 END),0) AS RzqsCount, --认证骑士数量
-                        ISNULL(SUM(CASE WHEN [Status]=1 THEN 1 ELSE 0 END),0) AS DdrzqsCount --等待认证骑士
+                        ISNULL(SUM(CASE WHEN [Status]=0 THEN 1 ELSE 0 END),0) AS DdrzqsCount --等待认证骑士
                          FROM dbo.clienter(NOLOCK) WHERE CONVERT(CHAR(10),InsertTime,120)=CONVERT(CHAR(10),GETDATE(),120)--认证骑士数量,等待认证骑士";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             if (dt == null && dt.Rows.Count <= 0)
