@@ -641,33 +641,10 @@ namespace Ets.Dao.User
         public HomeCountTitleModel GetCurrentBusinessCount(HomeCountTitleModel model)
         {
             string sql = @"SELECT COUNT(Id) AS BusinessCount FROM dbo.business(NOLOCK) 
-                           WHERE CONVERT(CHAR(10),InsertTime,120)=CONVERT(CHAR(10),GETDATE(),120) and [status]=1  --商家总数：";
+                           WHERE [status]=1  --商家总数：";
             model.BusinessCount = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql));
             return model;
         }
 
-        /// <summary>
-        /// 获取当天 商户结算金额（应收）
-        /// 窦海超
-        /// 2015年3月24日 14:15:00
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public HomeCountTitleModel GetCurrentBusinessYSPrice(HomeCountTitleModel model)
-        {
-            string sql = @"
-                            SELECT 
-                            ISNULL(SUM(o.Amount*ISNULL(b.BusinessCommission,0)+ ISNULL( b.DistribSubsidy ,0)* o.OrderCount),0) AS YsPrice
-                             FROM dbo.[order](NOLOCK) AS o
-                             LEFT JOIN dbo.business(NOLOCK) AS b ON o.businessId=b.Id
-                              where CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) 
-                            ";
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
-            if (dt == null || dt.Rows.Count <= 0)
-            {
-                return model;
-            }
-            return MapRows<HomeCountTitleModel>(dt)[0];
-        }
     }
 }

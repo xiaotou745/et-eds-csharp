@@ -203,9 +203,19 @@ namespace ETS.Util
             {
                 return 0;
             }
-            double numtmp= num1 / num2;
+            double numtmp = num1 / num2;
             return Math.Round(numtmp,2);
         }
+
+        //public static decimal ToDivision(decimal num1, decimal num2)
+        //{
+        //    if (num2 <= 0)
+        //    {
+        //        return 0;
+        //    }
+        //    decimal numtmp = num1 / num2;
+        //    return Math.Round(numtmp, 2);
+        //}
         #endregion
     }
 }

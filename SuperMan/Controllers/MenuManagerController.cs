@@ -13,7 +13,7 @@ namespace SuperMan.Controllers
     /// 权限业务操作类--平扬 2015.3.18
     /// </summary>
     [WebHandleError]
-    public class MenuManagerController : Controller
+    public class MenuManagerController : BaseController
     {
         /// <summary>
         /// 菜单权限服务操作类
@@ -29,11 +29,11 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult Menu(int? id)
         {
-            if (UserContext.Current.Id == 0)
-            {
-                Response.Redirect("/account/login");
-                return null;
-            }
+            //if (UserContext.Current.Id == 0)
+            //{
+            //    Response.Redirect("/account/login");
+            //    return null;
+            //}
             int parid = id ?? 0;
             ViewBag.ParId = parid;
             if (parid > 0)

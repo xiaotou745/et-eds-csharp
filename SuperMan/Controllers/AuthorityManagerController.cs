@@ -20,7 +20,7 @@ namespace SuperMan.Controllers
 {
     [Authorize]
     [WebHandleError]
-    public class AuthorityManagerController : Controller
+    public class AuthorityManagerController : BaseController
     {
         IAuthorityMenuProvider iAuthorityMenuProvider = new AuthorityMenuProvider();
         // GET: AuthorityManager
@@ -30,11 +30,7 @@ namespace SuperMan.Controllers
        /// <returns></returns>
         public ActionResult AuthorityManager()
         {
-            if (SuperMan.App_Start.UserContext.Current.Id == 0)
-           {
-               Response.Redirect("/account/login");
-               return null;
-           }
+
            ViewBag.txtGroupId = UserContext.Current.GroupId;//集团id
            var criteria = new Ets.Model.ParameterModel.Authority.AuthoritySearchCriteria() { PagingRequest = new Ets.Model.Common.NewPagingResult(1, 15), GroupId = ViewBag.txtGroupId };
             var authorityModel = iAuthorityMenuProvider.GetAuthorityManage(criteria);

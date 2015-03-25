@@ -16,25 +16,26 @@ namespace SuperMan.App_Start
         {
             get
             {
-                if (HttpContext.Current.Items[CurrentUserContextCacheKey] == null)
+                //if (HttpContext.Current.Items[CurrentUserContextCacheKey] == null)
+                //{
+                var cookie = ETS.Util.CookieHelper.ReadCookie(SystemConst.cookieName);
+                if (cookie == "")
                 {
-                    var cookie = ETS.Util.CookieHelper.ReadCookie(SystemConst.cookieName);
-                    if (cookie == "")
-                    {
-                        return UserContext.Empty; 
-                    }
-                    var userInfo = Letao.Util.JsonHelper.ToObject<SimpleUserInfoModel>(cookie);
-                    var userContext = new UserContext
-                    {
-                        Id = userInfo.Id,
-                        Name = userInfo.LoginName,
-                        RoleId = userInfo.RoleId,
-                        GroupId = userInfo.GroupId,
-                        AccountType = AccountType.AdminUser
-                    };
-                    HttpContext.Current.Items[CurrentUserContextCacheKey] = userContext;
+                    return UserContext.Empty;
                 }
-                return HttpContext.Current.Items[CurrentUserContextCacheKey] as UserContext;
+                var userInfo = Letao.Util.JsonHelper.ToObject<SimpleUserInfoModel>(cookie);
+                var userContext = new UserContext
+                {
+                    Id = userInfo.Id,
+                    Name = userInfo.LoginName,
+                    RoleId = userInfo.RoleId,
+                    GroupId = ETS.Util.ParseHelper.ToInt(userInfo.GroupId, 0),
+                    AccountType = AccountType.AdminUser
+                };
+                //HttpContext.Current.Items[CurrentUserContextCacheKey] = userContext;
+                //}
+                //return HttpContext.Current.Items[CurrentUserContextCacheKey] as UserContext;
+                return userContext;
             }
         }
 
@@ -62,12 +63,12 @@ namespace SuperMan.App_Start
             return new AuthorityMenuProvider().HasAuthority(UserContext.Current.Id, menuid);
         }
 
-        public int Id { get; set; } 
+        public int Id { get; set; }
         public int GroupId { get; set; }
         public int AppChannelId { get; set; }
         public int RoleId { get; set; }
-        public AccountType AccountType { get; set; } 
-        public string Name { get; set; } 
-        
+        public AccountType AccountType { get; set; }
+        public string Name { get; set; }
+
     }
 }
