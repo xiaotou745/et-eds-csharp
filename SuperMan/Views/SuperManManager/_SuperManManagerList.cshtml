@@ -1,5 +1,7 @@
-﻿@model Ets.Model.DomainModel.Clienter.ClienterManageList
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Clienter.ClienterListModel>
 @using SuperManBusinessLogic.Group_Logic
+@using Webdiyer.WebControls.Mvc
+
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
     <thead>
 
@@ -22,7 +24,7 @@
             var i = 0;
             var puth = SuperManCore.CustomerIconUploader.Instance.RelativePath;
             var PicHost = SuperManCore.CustomerIconUploader.Instance.PicHost;
-            foreach (var item in Model.clienterModel)
+            foreach (var item in Model.Records)
             {
                 i++;
                 <tr id="@item.Id">
@@ -37,7 +39,7 @@
                         {
                             @Html.Raw("下班")
                         }
-                        </td>
+                    </td>
                     <td>@item.PhoneNo</td>
                     <td>@item.IDCard</td>
                     <td>
@@ -46,30 +48,30 @@
                     <td>@item.InsertTime</td>
                     <td style="color:red;font-weight:600">@item.AccountBalance</td>
                     <td>
-                @if (item.GroupId != null) //当前商户有集团信息
-                {
-                 @Html.Raw(  GroupLogic.groupLogic().GetGroupName(Convert.ToInt32(item.GroupId)))
-                }
+                        @if (item.GroupId != null) //当前商户有集团信息
+                        {
+                            @Html.Raw(GroupLogic.groupLogic().GetGroupName(Convert.ToInt32(item.GroupId)))
+                        }
                     </td>
                     @{
-                var statusView = "";
-                if (@item.Status == Ets.Model.Common.ConstValues.CLIENTER_AUDITPASS)
-                {
-                    statusView = "审核通过";
-                }
+                        var statusView = "";
+                        if (@item.Status == Ets.Model.Common.ConstValues.CLIENTER_AUDITPASS)
+                        {
+                            statusView = "审核通过";
+                        }
 
-                else if (@item.Status == Ets.Model.Common.ConstValues.CLIENTER_AUDITCANCEL)
-                {
-                    statusView = "审核被拒绝";
-                }
-                else if (@item.Status == Ets.Model.Common.ConstValues.CLIENTER_AUDITPASSING)
-                {
-                    statusView = "审核中";
-                }
-                else if (@item.Status == Ets.Model.Common.ConstValues.CLIENTER_NOAUDIT)
-                {
-                    statusView = "未审核";
-                }
+                        else if (@item.Status == Ets.Model.Common.ConstValues.CLIENTER_AUDITCANCEL)
+                        {
+                            statusView = "审核被拒绝";
+                        }
+                        else if (@item.Status == Ets.Model.Common.ConstValues.CLIENTER_AUDITPASSING)
+                        {
+                            statusView = "审核中";
+                        }
+                        else if (@item.Status == Ets.Model.Common.ConstValues.CLIENTER_NOAUDIT)
+                        {
+                            statusView = "未审核";
+                        }
                     }
                     <td>@statusView</td>
                     <td>
@@ -96,7 +98,7 @@
                     if (SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.SuperClear))
                     {
                         <a href="javascript:void(0)" amount="@item.AccountBalance" supermanid="@item.Id" class="superManClear">提现</a>
-                    } 
+                    }
                 }
                         }
                     </td>
@@ -106,7 +108,8 @@
     </tbody>
 
 </table>
-@Html.Partial("_NewPager", Model._PagingResult)
+@Html.Partial("~/views/shared/PagerControl.cshtml", Model)
+
 @*弹出图片*@
 <div class="selectSupplierDish">
     <div class="add-openbox add-form" id="ClientPicShow" style="width:500px">
@@ -197,16 +200,16 @@
             });
         });
     });
-    function funcPicView(puth, PicWithHandUrl,PicUrl) { 
+    function funcPicView(puth, PicWithHandUrl,PicUrl) {
         $('#showPicHandWithUrl').attr('src', puth + '/' + PicWithHandUrl);
-        $('#showPicUrl').attr('src', puth + '/' + PicUrl); 
+        $('#showPicUrl').attr('src', puth + '/' + PicUrl);
 
         var originSize = '_0_0';
 
         //var handLastDot = PicWithHandUrl.lastIndexOf('.');
         //var handHouZhui = PicWithHandUrl.substr(handLastDot, PicWithHandUrl.length - handLastDot);
         //var bigHandName = PicWithHandUrl.substring(0, handLastDot) + originSize + handHouZhui;
-         
+
         $('#showBigPicHWU').attr('href', puth + '/' + BigPicName(PicWithHandUrl,originSize));
 
         //var fileLastDot = PicUrl.lastIndexOf('.');

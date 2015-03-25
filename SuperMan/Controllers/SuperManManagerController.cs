@@ -33,18 +33,19 @@ namespace SuperMan.Controllers
                 Response.Redirect("/account/login");
                 return null;
             }
-
             ViewBag.txtGroupId = account.GroupId;//集团id
-            var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria() { PagingRequest = new Ets.Model.Common.NewPagingResult(1, 15), Status = -1, GroupId = account.GroupId };
+            var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria() {  Status = -1, GroupId = account.GroupId };
             var pagedList = iDistributionProvider.GetClienteres(criteria);
             return View(pagedList);
         }
+
         [HttpPost]
-        public ActionResult SuperManManager(Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria criteria)
+        public ActionResult PostSuperManManager(int pageindex=1)
         {
+            Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria();
+            TryUpdateModel(criteria);
             var pagedList = iDistributionProvider.GetClienteres(criteria);
-            var item = pagedList.clienterManageList;
-            return PartialView("_SuperManManagerList", item);
+            return PartialView("_SuperManManagerList", pagedList);
         }
 
         /// <summary>
