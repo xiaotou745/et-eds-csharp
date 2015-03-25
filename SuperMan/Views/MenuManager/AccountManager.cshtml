@@ -83,7 +83,7 @@
                                                 foreach(var cButton in childButton)
                                                 {
                                                     var cid = "chkMenu"+@cButton.Id;
-                                                    <input type="checkbox" id="@cid" name="checkMenus" authorityfuncid="@cButton.Id" value="@cButton.Id" /><label for="@cid">@cButton.MenuName</label>
+                                                    <input type="checkbox" id="@cid" name="checkMenus" authorityfuncid="@cButton.Id" value="@cButton.Id" /><label style="color: red" for="@cid">@cButton.MenuName</label>
                                                 }  
                                             }
                                             var checkid = "chkMenu"+@cMenu.Id;
