@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Ets.Model.ParameterModel.Clienter
 {
-    public class ClienterSearchCriteria
+    /// <summary>
+    /// 管理后台 超人管理列表页查询条件实体
+    /// </summary>
+    public class ClienterSearchCriteria:ListParaBase
     {
-
-        private int pageindex = 1; //默认第一页
-        private int pagesize=20; //默认每页20
         private int status = -1; //默认查询所有状态
         public NewPagingResult PagingRequest { get; set; }
         public IList<OrderByItem<ClienterModel>> OrderByItems { get; set; }
@@ -35,24 +35,7 @@ namespace Ets.Model.ParameterModel.Clienter
         /// </summary>
         public int? GroupId { get; set; }
 
-        /// <summary>
-        /// 当前页码
-        /// </summary>
-        public int PageIndex
-        {
-            get { return pageindex; }
-            set { pageindex = value; }
-        }
-
-
-        /// <summary>
-        /// 页容量
-        /// </summary>
-        public int PageSize
-        {
-            get { return pagesize; }
-            set {  pagesize=value; }
-        }
+     
 
     }
 }

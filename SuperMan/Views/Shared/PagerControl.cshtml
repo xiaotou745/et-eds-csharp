@@ -10,10 +10,10 @@
 <div>
     <div style="float:left;width:50%;padding-right: 0px;padding-left: 0px;font-size: 13px;padding-bottom: 10px;color: #48b9ef;padding-top: 10px;font-family: arial, helvetica, sans-serif;background-color: #fff;">
         <span style="">
-            @pageCount 页 @all 条记录，当前为第 @index 页,本页 @recordsCount 条
+            共 @pageCount 页 @all 条记录，当前为第 @index 页,本页 @recordsCount 条
         </span>
     </div>
-    @Ajax.Pager(all, 20,index, "PostSuperManManager", null, null,
+    @Ajax.Pager(all, ETS.Const.SystemConst.PageSize, index, "PostSuperManManager", null, null,
           new PagerOptions
           {
               PageIndexParameterName = "pageindex",
