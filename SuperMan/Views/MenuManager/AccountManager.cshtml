@@ -24,7 +24,6 @@
                 <th width="%5">编号</th>
                 <th>名称</th> 
                 <th>状态</th> 
-                <th>角色</th> 
                 <th>操作</th>
             </tr>
         </thead>
@@ -45,10 +44,8 @@
                             {
                                 <td>锁定</td>
                             }
-                            <td>@item.RoleId</td>
                             <td>
                                 <a href="javascript:void(0)" onclick="showMenu(@item.Id,'@item.LoginName')">分配权限</a>
-                                <a href="javascript:void(0)" onclick="showRole(@item.Id,'@item.LoginName')">分配角色</a>
                             </td>
                         </tr> 
                     }

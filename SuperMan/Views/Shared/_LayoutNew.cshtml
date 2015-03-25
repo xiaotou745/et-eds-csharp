@@ -63,7 +63,9 @@
                             <span class="menu-text">后台首页</span>
                         </a>
                     </li> 
-                        @{
+                    @{
+                        if (menus != null)
+                        { 
                             List<AuthorityMenuModel> partMenus = (from m in menus where m.ParId == 0 select m).ToList();
                             foreach (var pMenu in partMenus)
                             { <li>
@@ -85,6 +87,8 @@
                                     }  
                                 </ul> </li>  
                             }
+                            }
+
                         }  
                 </ul>
                 <div id="sidebar-collapse" class="sidebar-collapse">
