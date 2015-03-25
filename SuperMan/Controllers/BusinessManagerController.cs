@@ -16,7 +16,7 @@ namespace SuperMan.Controllers
 {
     [Authorize]
     [WebHandleError]
-    public class BusinessManagerController : Controller
+    public class BusinessManagerController : BaseController
     {
         /// <summary>
         /// 商户业务类
@@ -25,15 +25,15 @@ namespace SuperMan.Controllers
         // GET: BusinessManager
         public ActionResult BusinessManager()
         {
-            account account = HttpContext.Session["user"] as account;
-            if (account == null)
-            {
-                Response.Redirect("/account/login");
-                return null;
-            }
-                
-            ViewBag.txtGroupId = account.GroupId;//集团id
-            var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria() { PagingRequest = new Ets.Model.Common.NewPagingResult (1, 15), GroupId = account.GroupId };
+            //account account = HttpContext.Session["user"] as account;
+            //if (account == null)
+            //{
+            //    Response.Redirect("/account/login");
+            //    return null;
+            //}
+
+            ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
+            var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria() { PagingRequest = new Ets.Model.Common.NewPagingResult(1, 15), GroupId = SuperMan.App_Start.UserContext.Current.GroupId };
             criteria.Status = -1; //默认加载全部
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
             return View(pagedList);

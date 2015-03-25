@@ -17,16 +17,16 @@ namespace SuperMan.Controllers
 {
     [Authorize]
     [WebHandleError]
-    public class HomeCountController : Controller
+    public class HomeCountController : BaseController
     {
         // GET: HomeCount
         public ActionResult Index()
         {
-            if (UserContext.Current.Id == 0)
-            {
-                Response.Redirect("/account/login");
-                return null;
-            }
+            //if (UserContext.Current.Id == 0)
+            //{
+            //    Response.Redirect("/account/login");
+            //    return null;
+            //}
             //HomeCountManage homeCountManage = new HomeCountManage();
             //var criteria = new HomeCountCriteria() { PagingRequest = new PagingResult(0, 15), searchType = 1 };
             //var busiCriteria = new BusinessSearchCriteria() { PagingRequest = new PagingResult(0, 15), searchType = 1 };

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SuperMan.App_Start;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -9,9 +10,12 @@ namespace SuperMan.Controllers
     public class BaseController : Controller
     {
         // GET: Base
-        public ActionResult Index()
+        protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            return View();
+            if (UserContext.Current.Id == 0)
+            {
+                Response.Redirect("/account/login");
+            }
         }
     }
 }

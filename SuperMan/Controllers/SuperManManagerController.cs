@@ -19,7 +19,7 @@ namespace SuperMan.Controllers
 {
     [Authorize]
     [WebHandleError]
-    public class SuperManManagerController : Controller
+    public class SuperManManagerController : BaseController
     {
         Ets.Service.IProvider.Distribution.IDistributionProvider iDistributionProvider = new DistributionProvider();
 
@@ -27,14 +27,14 @@ namespace SuperMan.Controllers
         // GET: BusinessManager
         public ActionResult SuperManManager()
         {
-            account account = HttpContext.Session["user"] as account;
-            if (account == null)
-            {
-                Response.Redirect("/account/login");
-                return null;
-            }
-            ViewBag.txtGroupId = account.GroupId;//集团id
-            var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria() {  Status = -1, GroupId = account.GroupId };
+            //account account = HttpContext.Session["user"] as account;
+            //if (account == null)
+            //{
+            //    Response.Redirect("/account/login");
+            //    return null;
+            //}
+            ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId; ;//集团id
+            var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria() {  Status = -1, GroupId = SuperMan.App_Start.UserContext.Current.GroupId };
             var pagedList = iDistributionProvider.GetClienteres(criteria);
             return View(pagedList);
         }
@@ -119,12 +119,12 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult WtihdrawRecords(int UserId)
         {
-            account maccount = HttpContext.Session["user"] as account;
-            if (maccount == null)
-            {
-                Response.Redirect("/account/login");
-                return null;
-            }
+            //account maccount = HttpContext.Session["user"] as account;
+            //if (maccount == null)
+            //{
+            //    Response.Redirect("/account/login");
+            //    return null;
+            //}
             var pagedList = cliterProvider.WtihdrawRecords(UserId);
             ViewBag.pagedList = pagedList;
             ViewBag.UserId = UserId;
