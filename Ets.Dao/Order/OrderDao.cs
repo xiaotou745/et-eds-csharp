@@ -476,7 +476,7 @@ namespace Ets.Dao.Order
                 {
                     sbSqlWhere.AppendFormat(" AND o.PubDate<='{0}' ", criteria.orderPubEnd);
                 }
-                if (criteria.GroupId != null)
+                if (criteria.GroupId != null && criteria.GroupId !=0)
                 {
                     sbSqlWhere.AppendFormat(" AND o.GroupId={0} ", criteria.GroupId);
                 }

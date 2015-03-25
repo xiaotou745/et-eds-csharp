@@ -25,7 +25,7 @@ namespace Ets.Model.DataModel.Authority
         public string LCUser { get; set; }
         public Nullable<int> GroupId { get; set; }
         public int RoleId { get; set; }
-        
+        public string GroupName { get; set; }
 
         public virtual ICollection<accountauthority> accountauthority { get; set; }
     }

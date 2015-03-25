@@ -66,23 +66,24 @@ WHERE   sub.[Status] = 1 ");
         /// <returns></returns>
         public PageInfo<T> GetSubsidyList<T>(HomeCountCriteria criteria)
         {
-            string columnList = @"   [Id]
-                                    ,[OrderCommission]
-                                    ,[DistribSubsidy]
-                                    ,[WebsiteSubsidy]
-                                    ,[StartDate]
-                                    ,[EndDate]
-                                    ,[Status]
-                                    ,[GroupId]
-                                    ,[PKMCost]
-                                    ,[OrderType] ";
+            string columnList = @"   s.[Id]
+                                    ,s.[OrderCommission]
+                                    ,s.[DistribSubsidy]
+                                    ,s.[WebsiteSubsidy]
+                                    ,s.[StartDate]
+                                    ,s.[EndDate]
+                                    ,s.[Status]
+                                    ,s.[GroupId]
+                                    ,s.[PKMCost]
+                                    ,s.[OrderType]
+                                    ,g.GroupName";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
-            if (criteria.GroupId != null)
+            if (criteria.GroupId != null && criteria.GroupId !=0)
             {
-                sbSqlWhere.AppendFormat(" AND GroupId={0} ", criteria.GroupId);
+                sbSqlWhere.AppendFormat(" AND s.GroupId={0} ", criteria.GroupId);
             }
-            string tableList = @" subsidy  WITH (NOLOCK)   ";
-            string orderByColumn = " StartDate DESC,EndDate DESC ";
+            string tableList = @" subsidy s WITH (NOLOCK)  LEFT JOIN dbo.[group] g WITH(NOLOCK) ON g.Id = s.GroupId ";
+            string orderByColumn = " s.StartDate DESC,s.EndDate DESC ";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
         }
 

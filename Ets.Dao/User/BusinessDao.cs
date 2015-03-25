@@ -259,7 +259,8 @@ namespace Ets.Dao.User
                                     ,b.Province
                                     ,b.CommissionTypeId
                                     ,b.DistribSubsidy
-                                    ,b.BusinessCommission ";
+                                    ,b.BusinessCommission
+                                    ,g.GroupName";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrEmpty(criteria.businessName))
             {
@@ -281,7 +282,7 @@ namespace Ets.Dao.User
             {
                 sbSqlWhere.AppendFormat(" AND b.GroupId={0} ", criteria.GroupId);
             }
-            string tableList = @" business  b WITH (NOLOCK)   ";
+            string tableList = @" business  b WITH (NOLOCK)  LEFT JOIN dbo.[group] g WITH(NOLOCK) ON g.Id = b.GroupId ";
             string orderByColumn = " b.Id DESC";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
         }
