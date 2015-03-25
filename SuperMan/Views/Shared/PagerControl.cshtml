@@ -1,0 +1,27 @@
+﻿@model dynamic
+@using Webdiyer.WebControls.Mvc;
+@{
+    int pageCount = Model.PageCount; //总页数
+    int all = Model.All; //总记录数
+    int index = Model.Index; //页码
+    int recordsCount = Model.Records.Count; //本页容量
+}
+<link rel="stylesheet" type="text/css" href="~/Content/pagestyle/pagerstyles.css" />
+<div>
+    <div style="float:left;width:50%;padding-right: 0px;padding-left: 0px;font-size: 13px;padding-bottom: 10px;color: #48b9ef;padding-top: 10px;font-family: arial, helvetica, sans-serif;background-color: #fff;">
+        <span style="">
+            @pageCount 页 @all 条记录，当前为第 @index 页,本页 @recordsCount 条
+        </span>
+    </div>
+    @Ajax.Pager(all, 20,index, "PostSuperManManager", null, null,
+          new PagerOptions
+          {
+              PageIndexParameterName = "pageindex",
+              ShowPageIndexBox = true,
+              PageIndexBoxType = PageIndexBoxType.DropDownList,
+              ShowGoButton = false,
+              CurrentPagerItemWrapperFormatString = "<span class=\"current\">{0}</span>",
+          }, null,
+                 new MvcAjaxOptions { UpdateTargetId = "dataList", HttpMethod = "Post", DataFormId = "searchForm" }, new { style = "float:right", id = "badoopager" })
+</div>
+
