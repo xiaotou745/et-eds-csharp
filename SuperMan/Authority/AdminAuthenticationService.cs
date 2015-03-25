@@ -20,6 +20,7 @@ namespace SuperMan.Authority
         public void SignOut()
         {
             CookieHelper.RemoveCookie(cookieName);
+            CookieHelper.RemoveCookie("menulist");
         }
     }
 }
