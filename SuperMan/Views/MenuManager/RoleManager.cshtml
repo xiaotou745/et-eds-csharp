@@ -198,16 +198,18 @@
         $("#hidRid").val(id);
         var pars = { "roleid": id };
         var url = "/MenuManager/GetMenusByRole";
-        $('input[name=checkMenus]').removeAttr("checked");
         $.ajax({
             type: 'POST',
             url: url,
             data: pars,
             success: function (result) {
-                if (result.IsSuccess) { 
+                if (result.IsSuccess) {
+                    $("input[name='checkMenus']").each(function () {
+                        $(this).removeAttr("checked");
+                    });
                     if (result.Data != "") {
                         $.each(result.Data, function (key, val) {
-                            $('input[authorityfuncid=' + val + ']').attr('checked', 'true');
+                            $('input[authorityfuncid=' + val + ']').prop("checked", true);
                         }); 
                     } 
                     adminjs.openwinbox('#MenuDiv');

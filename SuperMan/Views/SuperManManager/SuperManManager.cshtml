@@ -12,378 +12,378 @@
 <script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.ui.widget.js"></script>
 <script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.iframe-transport.js"></script>
 <script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.fileupload.js"></script>
-    <div class="zpManage zpSh">
-        <h2 class="crumbs">
-            您所在位置：骑士 > 骑士管理
-        </h2>
-        @using (Ajax.BeginForm("PostSuperManManager", new RouteValueDictionary { { "pageindex", "" } },
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：骑士 > 骑士管理
+    </h2>
+    @using (Ajax.BeginForm("PostSuperManManager", new RouteValueDictionary { { "pageindex", "" } },
         new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
         new RouteValueDictionary { { "id", "searchForm" } }))
-        {
-            <div class="SearchMd">
-                <table border="0" cellspacing="0" cellpadding="0">
-                    <tr>
-                        <td>
-                            <span class="">骑士名称: </span>
-                            <input id="txtSuperManName" type="tel" name="clienterName" />
-                            <span class="">审核状态: </span>
-                            <select name="status" class="selectw" id="superManStatus" style="width:143px">
-                                <option value="-1">全部</option>
-                                <option value="1">审核通过</option>
-                                <option value="0">被拒绝</option>
-                                <option value="2">未审核</option>
-                                <option value="3">审核中</option>
-                            </select>
-                            <span class="">骑士电话: </span>
-                            <input id="txtSuperManPhone" type="text" name="clienterPhone" value="" />
-                            <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" name="GroupId" />
-                            <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
-                            @*<input id="btnAdd" class="searchBtn" type="button" value="新增骑士">*@
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        }
-        @section Scripts{@{Html.RegisterMvcPagerScriptResource();}}
-        <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
-        <div class="bd clearfix" id="dataList">
-            @Html.Partial("_SuperManManagerList", Model)
+    {
+        <div class="SearchMd">
+            <table border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td>
+                        <span class="">骑士名称: </span>
+                        <input id="txtSuperManName" type="tel" name="clienterName" />
+                        <span class="">审核状态: </span>
+                        <select name="status" class="selectw" id="superManStatus" style="width:143px">
+                            <option value="-1">全部</option>
+                            <option value="1">审核通过</option>
+                            <option value="0">被拒绝</option>
+                            <option value="2">未审核</option>
+                            <option value="3">审核中</option>
+                        </select>
+                        <span class="">骑士电话: </span>
+                        <input id="txtSuperManPhone" type="text" name="clienterPhone" value="" />
+                        <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" name="GroupId" />
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                        @*<input id="btnAdd" class="searchBtn" type="button" value="新增骑士">*@
+                    </td>
+                </tr>
+            </table>
         </div>
+    }
+    @*@section Scripts{@{Html.RegisterMvcPagerScriptResource();}}*@
+    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <div class="bd clearfix" id="dataList">
+        @Html.Partial("_SuperManManagerList", Model)
     </div>
+</div>
 
-    <!--新增骑士弹出窗部分  add by caoheyang20140228-->
-    <div class="selectSupplierDish">
-        <div class="add-openbox add-form" id="AddSuperManShow" style="width:500px">
-            <h2>
-                <p id="statusUnFin">新增骑士</p>
-                <a class="J_closebox x_close"></a>
-            </h2>
-            <form class="form-horizontal" role="form" id="AddSuperManForm" method="post" action="/SuperManManager/AddSuperMan">
-                <fieldset>
-                    <div class="control-group">
-                        <label class="control-label" for="TrueName"><span style="color:red;">*</span>姓名</label>
-                        <div class="controls">
-                            <input placeholder="姓名" name="TrueName" id="BoxTrueName" required="required" type="text">
-                            <text id="labBoxTrueName" style="color:red" hidden="hidden">不能为空</text>
-                        </div>
+<!--新增骑士弹出窗部分  add by caoheyang20140228-->
+<div class="selectSupplierDish">
+    <div class="add-openbox add-form" id="AddSuperManShow" style="width:500px">
+        <h2>
+            <p id="statusUnFin">新增骑士</p>
+            <a class="J_closebox x_close"></a>
+        </h2>
+        <form class="form-horizontal" role="form" id="AddSuperManForm" method="post" action="/SuperManManager/AddSuperMan">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="TrueName"><span style="color:red;">*</span>姓名</label>
+                    <div class="controls">
+                        <input placeholder="姓名" name="TrueName" id="BoxTrueName" required="required" type="text">
+                        <text id="labBoxTrueName" style="color:red" hidden="hidden">不能为空</text>
                     </div>
-                    <div class="control-group">
-                        <label class="control-label" for="PhoneNo"><span style="color:red;">*</span>电话</label>
-                        <div class="controls">
-                            <input placeholder="电话" name="PhoneNo" id="BoxPhoneNo" required="required" type="text">
-                            <text id="labBoxPhoneNo" style="color:red" hidden="hidden">不能为空</text>
-                        </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="PhoneNo"><span style="color:red;">*</span>电话</label>
+                    <div class="controls">
+                        <input placeholder="电话" name="PhoneNo" id="BoxPhoneNo" required="required" type="text">
+                        <text id="labBoxPhoneNo" style="color:red" hidden="hidden">不能为空</text>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="fileUploadHand"><span style="color:red;">*</span>手持照片</label>
+                    <div class="controls">
+                        <input type="file" id="fileUploadHand" required="required" name="files[]" multiple>
+                        <input type="hidden" id="hidHandUpload" />
+                        <text id="labfileuploadHand" style="color:red" hidden="hidden">不能为空</text>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="fileUpload"><span style="color:red;">*</span>照片</label>
+                    <div class="controls">
+                        <input type="file" placeholder="验证照片" required="required" id="fileUpload" name="files[]" multiple>
+                        <input type="hidden" id="hidupload" />
+                        <text id="labfileupload" style="color:red" hidden="hidden">不能为空</text>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="HealthCardID"><span style="color:red;">*</span>健康证ID</label>
+                    <div class="controls">
+                        <input placeholder="健康证ID" name="HealthCardID" id="BoxHealthCardID" required="required" type="text">
+                        <text id="labHealthCardID" style="color:red" hidden="hidden">不能为空</text>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label"><span style="color:red;">*</span>所属城市</label>
+                    <div class="controls">
+                        @Html.DropDownList("ProvinceCode", new SelectList(RegionLogic.regionLogic().GetRegionsByFid(), "Code", "Name"), "--请选择--", new { style = "width:90px", id = "BoxProvinceCode" })
+                        <select name="CityCode" id="BoxCityCode" style="width:103px;">
+                            l
+                            <option>--城市--</option>
+                        </select>
+                        <text id="labBoxCode" style="color:red" hidden="hidden">不能为空</text>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="BussinessID"><span style="color:red;">*</span>所属门店</label>
+                    <div class="controls">
+                        <select name="BussinessID" id="BoxBussinessID" style="width:198px;">
+                            <option value="">--所属门店--</option>
+                        </select>
+                        <text id="labBoxBussinessID" style="color:red" hidden="hidden">不能为空</text>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="InternalDepart">内外部门</label>
+                    <div class="controls">
+                        <input placeholder="内外部门" name="InternalDepart" id="BoxInternalDepart" type="text">
                     </div>
 
-                    <div class="control-group">
-                        <label class="control-label" for="fileUploadHand"><span style="color:red;">*</span>手持照片</label>
-                        <div class="controls">
-                            <input type="file" id="fileUploadHand" required="required" name="files[]" multiple>
-                            <input type="hidden" id="hidHandUpload" />
-                            <text id="labfileuploadHand" style="color:red" hidden="hidden">不能为空</text>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="fileUpload"><span style="color:red;">*</span>照片</label>
-                        <div class="controls">
-                            <input type="file" placeholder="验证照片" required="required" id="fileUpload" name="files[]" multiple>
-                            <input type="hidden" id="hidupload" />
-                            <text id="labfileupload" style="color:red" hidden="hidden">不能为空</text>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="HealthCardID"><span style="color:red;">*</span>健康证ID</label>
-                        <div class="controls">
-                            <input placeholder="健康证ID" name="HealthCardID" id="BoxHealthCardID" required="required" type="text">
-                            <text id="labHealthCardID" style="color:red" hidden="hidden">不能为空</text>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label"><span style="color:red;">*</span>所属城市</label>
-                        <div class="controls">
-                            @Html.DropDownList("ProvinceCode", new SelectList(RegionLogic.regionLogic().GetRegionsByFid(), "Code", "Name"), "--请选择--", new { style = "width:90px", id = "BoxProvinceCode" })
-                            <select name="CityCode" id="BoxCityCode" style="width:103px;">
-                                l
-                                <option>--城市--</option>
-                            </select>
-                            <text id="labBoxCode" style="color:red" hidden="hidden">不能为空</text>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="BussinessID"><span style="color:red;">*</span>所属门店</label>
-                        <div class="controls">
-                            <select name="BussinessID" id="BoxBussinessID" style="width:198px;">
-                                <option value="">--所属门店--</option>
-                            </select>
-                            <text id="labBoxBussinessID" style="color:red" hidden="hidden">不能为空</text>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="InternalDepart">内外部门</label>
-                        <div class="controls">
-                            <input placeholder="内外部门" name="InternalDepart" id="BoxInternalDepart" type="text">
-                        </div>
-
-                    </div>
-                    @if (ViewBag.txtGroupId > 0)
+                </div>
+                @if (ViewBag.txtGroupId > 0)
                 {
-                <input type="hidden" id="HidGroupID" value="@ViewBag.txtGroupId" />
+                    <input type="hidden" id="HidGroupID" value="@ViewBag.txtGroupId" />
                 }
                 else
                 {
+                    <div class="control-group">
+                        <label class="control-label" for="InternalDepart">集团信息</label>
+                        <div class="controls">
+                            @Html.DropDownList("HidGroupID", new SelectList(GroupLogic.groupLogic().GetGroups(), "Id", "GroupName"), "--无--")
+                        </div>
+                    </div>
+                }
                 <div class="control-group">
-                    <label class="control-label" for="InternalDepart">集团信息</label>
+                    <label class="control-label" for="IDCard">身份证号</label>
                     <div class="controls">
-                        @Html.DropDownList("HidGroupID", new SelectList(GroupLogic.groupLogic().GetGroups(), "Id", "GroupName"), "--无--")
+                        <input placeholder="身份证号" name="IDCard" id="BoxIDCard" type="text">
                     </div>
                 </div>
-                }
-                    <div class="control-group">
-                        <label class="control-label" for="IDCard">身份证号</label>
-                        <div class="controls">
-                            <input placeholder="身份证号" name="IDCard" id="BoxIDCard" type="text">
-                        </div>
+                <div class="control-group">
+                    <label class="control-label" for="Password">密码</label>
+                    <div class="controls">
+                        <input placeholder="默认edaisong" name="IDCard" id="BoxPassword" type="text" value="edaisong">
                     </div>
-                    <div class="control-group">
-                        <label class="control-label" for="Password">密码</label>
-                        <div class="controls">
-                            <input placeholder="默认edaisong" name="IDCard" id="BoxPassword" type="text" value="edaisong">
-                        </div>
-                    </div>
-                </fieldset>
-            </form>
-            <p class="btnbox">
-                <input value="确认" type="button" id="btnSuperConfim" class="yesBtn" />
-                <input value="关闭" type="button" class="J_closebox qxBtn" />
-            </p>
-        </div>
+                </div>
+            </fieldset>
+        </form>
+        <p class="btnbox">
+            <input value="确认" type="button" id="btnSuperConfim" class="yesBtn" />
+            <input value="关闭" type="button" class="J_closebox qxBtn" />
+        </p>
     </div>
-    <script>
-        var adminjs = new adminglass(); //实例化后台类
-        //var DEFAULT_PAGESIZE = 15;
-        //var criteria = { PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }, GroupId: $("#txtGroupId").val() };
-        $(function () {
-            $('#hidupload').val(''); //页面加载时清空隐藏域的值。
-            $('#hidHandUpload').val(''); //页面加载时清空隐藏域的值。
-            $("#fileUpload").val("");
-            $("#fileUploadHand").val('');
-            //查询
-            //$("#btnSearch").on('click', function () {
-            //    criteria = {
-            //        clienterName: $("#txtSuperManName").val(),
-            //        clienterPhone: $("#txtSuperManPhone").val(),
-            //        status: $("#superManStatus").val(),
-            //        GroupId: $("#txtGroupId").val(),
-            //        PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }
-            //    };
-            //    refresh(0);
-            //});
-            //手持身份证图片上传
-            $("#fileUploadHand").fileupload({
-                url: "/UploadTest/Upload",//文件上传地址，当然也可以直接写在input的data-url属性内
-                formData: {},//如果需要额外添加参数可以在这里添加
-                autoUpload: false,
-                acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
-                maxFileSize: 5000000, // 5 MB
-                done: function (e, results) {
-                    //done方法就是上传完毕的回调函数，其他回调函数可以自行查看api
-                    //注意result要和jquery的ajax的data参数区分，这个对象包含了整个请求信息
-                    //返回的数据在result.result中，假设我们服务器返回了一个json对象
-                    var result = results.result;
-                    var picNames = result.Message.split('|');
-                    if (result.IsSuccess) {
-                        $('#hidHandUpload').val(picNames[0]);
+</div>
+<script>
+    var adminjs = new adminglass(); //实例化后台类
+    $(function () {
+        $('#hidupload').val(''); //页面加载时清空隐藏域的值。
+        $('#hidHandUpload').val(''); //页面加载时清空隐藏域的值。
+        $("#fileUpload").val("");
+        $("#fileUploadHand").val('');
+        //查询
+        //$("#btnSearch").on('click', function () {
+        //    criteria = {
+        //        clienterName: $("#txtSuperManName").val(),
+        //        clienterPhone: $("#txtSuperManPhone").val(),
+        //        status: $("#superManStatus").val(),
+        //        GroupId: $("#txtGroupId").val(),
+        //        PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }
+        //    };
+        //    refresh(0);
+        //});
+        //手持身份证图片上传
+        $("#fileUploadHand").fileupload({
+            url: "/UploadTest/Upload",//文件上传地址，当然也可以直接写在input的data-url属性内
+            formData: {},//如果需要额外添加参数可以在这里添加
+            autoUpload: false,
+            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+            maxFileSize: 5000000, // 5 MB
+            done: function (e, results) {
+                //done方法就是上传完毕的回调函数，其他回调函数可以自行查看api
+                //注意result要和jquery的ajax的data参数区分，这个对象包含了整个请求信息
+                //返回的数据在result.result中，假设我们服务器返回了一个json对象
+                var result = results.result;
+                var picNames = result.Message.split('|');
+                if (result.IsSuccess) {
+                    $('#hidHandUpload').val(picNames[0]);
+                } else {
+                    alert(result.Message);
+                    $('#labfileuploadHand').val(picNames[0]).show();
+                }
+            }
+        });
+        //图片上传
+        $("#fileUpload").fileupload({
+            url: "/UploadTest/Upload",//文件上传地址，当然也可以直接写在input的data-url属性内
+            formData: {},//如果需要额外添加参数可以在这里添加
+            autoUpload: false,
+            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+            maxFileSize: 5000000, // 5 MB
+            done: function (e, results) {
+                //done方法就是上传完毕的回调函数，其他回调函数可以自行查看api
+                //注意result要和jquery的ajax的data参数区分，这个对象包含了整个请求信息
+                //返回的数据在result.result中，假设我们服务器返回了一个json对象
+                var result = results.result;
+                var picNames = result.Message.split('|');
+                if (result.IsSuccess) {
+                    $('#hidupload').val(picNames[0]).show();
+                } else {
+                    alert(result.Message);
+                    $('#labfileupload').val(picNames[0]).show();
+                }
+            }
+        });
+
+        //新增骑士保存按钮点击事件    add by caoheyang 20150302
+        $("#btnSuperConfim").click(
+            function () {
+                var result = true;//验证结果
+                var trueName = $('#BoxTrueName').val();//姓名
+                var phoneNo = $('#BoxPhoneNo').val();//手机号
+                var hidHandUpload = $('#hidHandUpload').val(); //手持照片
+                var hidupload = $('#hidupload').val(); //照片
+                var healthCardID = $('#BoxHealthCardID').val(); //健康证ID
+                var internalDepart = $('#BoxInternalDepart').val(); //内外部门
+                var provinceCode = $('#BoxProvinceCode').val(); //省
+                var cityCode = $('#BoxCityCode').val(); //市
+                var idCard = $('#BoxIDCard').val(); //身份证号
+                var password = $('#BoxPassword').val() == null || $('#BoxPassword').val() == "" ? "edaisong" : $('#BoxPassword').val(); //密码
+                var bussinessID = $('#BoxBussinessID').val(); //所属门店
+
+                if (trueName == "" || trueName == null) {  //姓名非空验证
+                    $('#labBoxTrueName').show();
+                    result = false;
+                } else {
+                    $('#labBoxTrueName').hide();
+                }
+                if (bussinessID == "" || bussinessID == null) {  //所属门店非空验证
+                    $('#labBoxBussinessID').show();
+                    result = false;
+                } else {
+                    $('#labBoxBussinessID').hide();
+                }
+                if (phoneNo == "" || phoneNo == null) {  //手机号非空验证
+                    $('#labBoxPhoneNo').html("不能为空").show();
+                    result = false;
+                } else {
+                    var myreg = /^((\+?86)|(\(\+86\)))?(13[012356789][0-9]{8}|15[012356789][0-9]{8}|18[02356789][0-9]{8}|147[0-9]{8}|1349[0-9]{7})$/;
+                    if (!myreg.test(phoneNo)) {  //手机号码格式验证
+                        $('#labBoxPhoneNo').html("手机号格式不正确").show();
+                        result = false;
                     } else {
-                        alert(result.Message);
-                        $('#labfileuploadHand').val(picNames[0]).show();
+                        $('#labBoxPhoneNo').hide();
                     }
                 }
-            });
-            //图片上传
-            $("#fileUpload").fileupload({
-                url: "/UploadTest/Upload",//文件上传地址，当然也可以直接写在input的data-url属性内
-                formData: {},//如果需要额外添加参数可以在这里添加
-                autoUpload: false,
-                acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
-                maxFileSize: 5000000, // 5 MB
-                done: function (e, results) {
-                    //done方法就是上传完毕的回调函数，其他回调函数可以自行查看api
-                    //注意result要和jquery的ajax的data参数区分，这个对象包含了整个请求信息
-                    //返回的数据在result.result中，假设我们服务器返回了一个json对象
-                    var result = results.result;
-                    var picNames = result.Message.split('|');
-                    if (result.IsSuccess) {
-                        $('#hidupload').val(picNames[0]).show();
-                    } else {
-                        alert(result.Message);
-                        $('#labfileupload').val(picNames[0]).show();
-                    }
+                if (hidHandUpload == "" || hidHandUpload == null) {  //手持照片
+                    $('#labfileuploadHand').val("不能为空").show();
+                    result = false;
+                } else {
+                    $('#labfileuploadHand').hide();
                 }
-            });
-
-            //新增骑士保存按钮点击事件    add by caoheyang 20150302
-            $("#btnSuperConfim").click(
-                function () {
-                    var result = true;//验证结果
-                    var trueName = $('#BoxTrueName').val();//姓名
-                    var phoneNo = $('#BoxPhoneNo').val();//手机号
-                    var hidHandUpload = $('#hidHandUpload').val(); //手持照片
-                    var hidupload = $('#hidupload').val(); //照片
-                    var healthCardID = $('#BoxHealthCardID').val(); //健康证ID
-                    var internalDepart = $('#BoxInternalDepart').val(); //内外部门
-                    var provinceCode = $('#BoxProvinceCode').val(); //省
-                    var cityCode = $('#BoxCityCode').val(); //市
-                    var idCard = $('#BoxIDCard').val(); //身份证号
-                    var password = $('#BoxPassword').val() == null || $('#BoxPassword').val() == "" ? "edaisong" : $('#BoxPassword').val(); //密码
-                    var bussinessID = $('#BoxBussinessID').val(); //所属门店
-
-                    if (trueName == "" || trueName == null) {  //姓名非空验证
-                        $('#labBoxTrueName').show();
-                        result = false;
-                    } else {
-                        $('#labBoxTrueName').hide();
-                    }
-                    if (bussinessID == "" || bussinessID == null) {  //所属门店非空验证
-                        $('#labBoxBussinessID').show();
-                        result = false;
-                    } else {
-                        $('#labBoxBussinessID').hide();
-                    }
-                    if (phoneNo == "" || phoneNo == null) {  //手机号非空验证
-                        $('#labBoxPhoneNo').html("不能为空").show();
-                        result = false;
-                    } else {
-                        var myreg = /^((\+?86)|(\(\+86\)))?(13[012356789][0-9]{8}|15[012356789][0-9]{8}|18[02356789][0-9]{8}|147[0-9]{8}|1349[0-9]{7})$/;
-                        if (!myreg.test(phoneNo)) {  //手机号码格式验证
-                            $('#labBoxPhoneNo').html("手机号格式不正确").show();
-                            result = false;
-                        } else {
-                            $('#labBoxPhoneNo').hide();
-                        }
-                    }
-                    if (hidHandUpload == "" || hidHandUpload == null) {  //手持照片
-                        $('#labfileuploadHand').val("不能为空").show();
-                        result = false;
-                    } else {
-                        $('#labfileuploadHand').hide();
-                    }
-                    if (hidupload == "" || hidupload == null) {  //照片
-                        $('#labfileupload').val("不能为空").show();
-                        result = false;
-                    } else {
-                        $('#labfileupload').hide();
-                    }
+                if (hidupload == "" || hidupload == null) {  //照片
+                    $('#labfileupload').val("不能为空").show();
+                    result = false;
+                } else {
+                    $('#labfileupload').hide();
+                }
 
 
-                    if (provinceCode == "" || provinceCode == null || cityCode == "" || cityCode == null) {  //省/市非空验证
-                        $('#labBoxCode').show();
-                        result = false;
-                    } else {
-                        $('#labBoxCode').hide();
-                    }
-                    if (healthCardID == "" || healthCardID == null) {  //健康证非空验证
-                        $('#labHealthCardID').show();
-                        result = false;
-                    } else {
-                        $('#labHealthCardID').hide();
-                    }
-                    if (result == false) {
-                        return result;
-                    } else {
-                        $.ajax({
-                            type: 'POST',
-                            dataType: 'json',
-                            url: '/SuperManManager/AddSuperMan',
-                            data: {
-                                TrueName: trueName, PhoneNo: phoneNo, HealthCardID: healthCardID, InternalDepart: internalDepart,
-                                ProvinceCode: provinceCode, CityCode: cityCode, IDCard: idCard, Password: password, City: $("#BoxProvinceCode").find("option:selected").text(),
-                                CityId: provinceCode, Province: $("#BoxProvinceCode").find("option:selected").text(), GroupId: $("#HidGroupID").val(),
-                                BussinessID: bussinessID, PicWithHandUrl: hidHandUpload, PicUrl: hidupload
-                            },
-                            success: function (result) {
-                                if (result.IsSuccess) {
-                                    alert("新增骑士成功！");
-                                    window.location.href = "/SuperManManager/SuperManManager";
-                                } else {
-                                    alert(result.Message);
-                                }
-                            },
-                            error: function () {
+                if (provinceCode == "" || provinceCode == null || cityCode == "" || cityCode == null) {  //省/市非空验证
+                    $('#labBoxCode').show();
+                    result = false;
+                } else {
+                    $('#labBoxCode').hide();
+                }
+                if (healthCardID == "" || healthCardID == null) {  //健康证非空验证
+                    $('#labHealthCardID').show();
+                    result = false;
+                } else {
+                    $('#labHealthCardID').hide();
+                }
+                if (result == false) {
+                    return result;
+                } else {
+                    $.ajax({
+                        type: 'POST',
+                        dataType: 'json',
+                        url: '/SuperManManager/AddSuperMan',
+                        data: {
+                            TrueName: trueName, PhoneNo: phoneNo, HealthCardID: healthCardID, InternalDepart: internalDepart,
+                            ProvinceCode: provinceCode, CityCode: cityCode, IDCard: idCard, Password: password, City: $("#BoxProvinceCode").find("option:selected").text(),
+                            CityId: provinceCode, Province: $("#BoxProvinceCode").find("option:selected").text(), GroupId: $("#HidGroupID").val(),
+                            BussinessID: bussinessID, PicWithHandUrl: hidHandUpload, PicUrl: hidupload
+                        },
+                        success: function (result) {
+                            if (result.IsSuccess) {
+                                alert("新增骑士成功！");
+                                window.location.href = "/SuperManManager/SuperManManager";
+                            } else {
+                                alert(result.Message);
                             }
-                        });
-                    }
-                }
-             );
-
-            //省下拉框下拉触发事件  add by caoheyang 20150302
-            $('#BoxProvinceCode').change(function () {
-                var selCityCode = $("#BoxCityCode");
-                selCityCode.empty();  //清除选择的城市信息
-                $('#BoxBussinessID').empty();  //清除选择的门店信息
-                selCityCode.append('<option value="" selected="selected">--城市--</option>');
-                if ($(this).val() != null && $(this).val() != "") {
-                    $.post("/Common/GetRegionsByCode", { Code: $(this).val() }, function (data) {
-                        $.each(data, function (i, item) {
-                            selCityCode.append('<option  value="' + item.Code + '">' + item.Name + '</option>');
-                        });
+                        },
+                        error: function () {
+                        }
                     });
                 }
-            });
-
-            //城市下拉框下拉触发事件  add by caoheyang 20150302
-            $('#BoxCityCode').change(function () {
-                LoadBussinessInfo();
-            });
-
-            //加载门店信息  add by caoheyang 20150303
-            function LoadBussinessInfo() {
-                var selBussinessID = $('#BoxBussinessID');  //清除选择的门店信息
-                selBussinessID.empty();
-                selBussinessID.append('<option value="" selected="selected">--所属门店--</option>');
-                if ($('#BoxCityCode').val() != null && $('#BoxCityCode').val() != "") {
-                    $.post("/BusinessManager/GetBussinessByCityInfo",
-                        { ProvinceCode: $("#BoxProvinceCode").val(), CityCode: $('#BoxCityCode').val(), GroupId: $("#HidGroupID").val() },
-                        function (data) {
-                            $.each(data, function (i, item) {
-                                selBussinessID.append('<option  value="' + item.Id + '">' + item.Name + '</option>');
-                            });
-                        });
-                }
             }
+         );
 
-            //当集团可选（即：当前登陆人员非管理员时，为集团下拉绑定事件  add by caoheyang 20150303）
-            if ($("#HidGroupID").attr("type") != "hidden") {
-                //当集团选项发生改变时，重选商户。
-                $("#HidGroupID").change(function () {
-                    $('#BoxBussinessID').val("");
-                    LoadBussinessInfo();
+        //省下拉框下拉触发事件  add by caoheyang 20150302
+        $('#BoxProvinceCode').change(function () {
+            var selCityCode = $("#BoxCityCode");
+            selCityCode.empty();  //清除选择的城市信息
+            $('#BoxBussinessID').empty();  //清除选择的门店信息
+            selCityCode.append('<option value="" selected="selected">--城市--</option>');
+            if ($(this).val() != null && $(this).val() != "") {
+                $.post("/Common/GetRegionsByCode", { Code: $(this).val() }, function (data) {
+                    $.each(data, function (i, item) {
+                        selCityCode.append('<option  value="' + item.Code + '">' + item.Name + '</option>');
+                    });
                 });
             }
-            //新增骑士按钮点击事件   add by caoheyang 20150228
-            $("#btnAdd").click(
-                function () {
-                    adminjs.openwinbox('#AddSuperManShow');
-                }
-             );
-        })
-        //////分页
-        //art.ui.control.NewPager.enablePaging(document, refresh);
-        //function refresh(pageIndex) {
-        //    var url = "/SuperManManager/SuperManManager";
-        //    if (pageIndex !== undefined) {
-        //        criteria.PagingRequest.PageIndex = pageIndex;
-        //    }
-        //    criteria.status = $("#superManStatus").val();
-        //    webExpress.utility.ajax.request
-        //        (
-        //            url,
-        //            criteria,
-        //            function (data) {
-        //                $("#dataList").html(data);
-        //            });
-        //};
-        $('.J_closebox').click(function () {
-            adminjs.closewinbox('.add-openbox');
-            return false;
         });
-    </script>
+
+        //城市下拉框下拉触发事件  add by caoheyang 20150302
+        $('#BoxCityCode').change(function () {
+            LoadBussinessInfo();
+        });
+
+        //加载门店信息  add by caoheyang 20150303
+        function LoadBussinessInfo() {
+            var selBussinessID = $('#BoxBussinessID');  //清除选择的门店信息
+            selBussinessID.empty();
+            selBussinessID.append('<option value="" selected="selected">--所属门店--</option>');
+            if ($('#BoxCityCode').val() != null && $('#BoxCityCode').val() != "") {
+                $.post("/BusinessManager/GetBussinessByCityInfo",
+                    { ProvinceCode: $("#BoxProvinceCode").val(), CityCode: $('#BoxCityCode').val(), GroupId: $("#HidGroupID").val() },
+                    function (data) {
+                        $.each(data, function (i, item) {
+                            selBussinessID.append('<option  value="' + item.Id + '">' + item.Name + '</option>');
+                        });
+                    });
+            }
+        }
+
+        //当集团可选（即：当前登陆人员非管理员时，为集团下拉绑定事件  add by caoheyang 20150303）
+        if ($("#HidGroupID").attr("type") != "hidden") {
+            //当集团选项发生改变时，重选商户。
+            $("#HidGroupID").change(function () {
+                $('#BoxBussinessID').val("");
+                LoadBussinessInfo();
+            });
+        }
+        //新增骑士按钮点击事件   add by caoheyang 20150228
+        $("#btnAdd").click(
+            function () {
+                adminjs.openwinbox('#AddSuperManShow');
+            }
+         );
+        window.location.hash = '';
+    })
+    //////分页
+    //art.ui.control.NewPager.enablePaging(document, refresh);
+    //function refresh(pageIndex) {
+    //    var url = "/SuperManManager/SuperManManager";
+    //    if (pageIndex !== undefined) {
+    //        criteria.PagingRequest.PageIndex = pageIndex;
+    //    }
+    //    criteria.status = $("#superManStatus").val();
+    //    webExpress.utility.ajax.request
+    //        (
+    //            url,
+    //            criteria,
+    //            function (data) {
+    //                $("#dataList").html(data);
+    //            });
+    //};
+    $('.J_closebox').click(function () {
+        adminjs.closewinbox('.add-openbox');
+        return false;
+    });
+</script>
+<script src="~/Scripts/mvcpager.js"></script>

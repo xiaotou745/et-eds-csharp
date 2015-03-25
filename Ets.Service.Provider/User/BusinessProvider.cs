@@ -340,5 +340,17 @@ namespace Ets.Service.Provider.User
         {
             return dao.GetGroups();
         }
+
+        /// <summary>
+        /// 商户修改外送费
+        /// wc
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <param name="waiSongFei"></param>
+        /// <returns></returns>
+        public int ModifyWaiMaiPrice(int businessId, decimal waiSongFei)
+        {
+            return dao.ModifyWaiMaiPrice(businessId, waiSongFei);
+        }
     }
 }

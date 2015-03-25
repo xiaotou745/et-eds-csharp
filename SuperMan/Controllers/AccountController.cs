@@ -1,22 +1,24 @@
 ﻿using System;
-using System.Globalization;
+using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Ets.Model.ParameterModel.Authority;
+using Ets.Service.Provider.Authority;
+using ETS.Util;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using SuperMan.Models;
 using SuperManCore;
-using System.Web.ApplicationServices;
 using SuperMan.Authority;
 using SuperManBusinessLogic.Authority_Logic;
-using SuperManCommonModel;
-using System.Web.Security;
 using Ets.Service.IProvider.Account;
 using Ets.Service.Provider.Account;
+using LoginModel = Ets.Model.ParameterModel.Authority.LoginModel;
+using MD5Helper = SuperManCore.MD5Helper;
 
 namespace SuperMan.Controllers
 {
@@ -40,8 +42,7 @@ namespace SuperMan.Controllers
         //[ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
-            _authenticationService.SignOut();
-
+            _authenticationService.SignOut(); 
             return RedirectToAction("Login", "Account");
         }
 
@@ -79,11 +80,31 @@ namespace SuperMan.Controllers
                 switch (loginResult)
                 {
                     case ETS.Enums.UserLoginResults.Successful:
-                        FormsAuthentication.SetAuthCookie(model.UserName, model.RememberMe);
-                        _authenticationService.SignIn(model.UserName, model.RememberMe);
-                        HttpContext.Session["user"] = _accountBussinessLogic.Get(model.UserName);
-                        HttpContext.Session.Timeout =Convert.ToInt32( Math.Floor(FormsAuthentication.Timeout.TotalMinutes));
-                        return RedirectToLocal(returnUrl);
+                        var authorityProvider = new AuthorityMenuProvider();
+                        var account = authorityProvider.GetAccountByName(model.UserName);
+                        var userInfo=new SimpleUserInfoModel
+                        {
+                            Id = account.Id,
+                            LoginName = account.LoginName,
+                            GroupId = account.GroupId,
+                            RoleId = account.RoleId, 
+                        };
+                         string json = Letao.Util.JsonHelper.ToJson(userInfo);
+                        _authenticationService.SignIn(json);
+                        //获取用户权限菜单id数组，存入cookie中
+                        List<int> myMenusR = authorityProvider.GetMenuIdsByRoloId(account.RoleId);
+                        List<int> myMenus = authorityProvider.GetMenuIdsByAccountId(account.Id);
+                        if (myMenusR!=null)
+                        {
+                            foreach (var i in myMenusR.Where(i => !myMenus.Contains(i)))
+                            {
+                                myMenus.Add(i);
+                            }
+                        } 
+                        string menujson = Letao.Util.JsonHelper.ToJson(myMenus);
+                        CookieHelper.WriteCookie("menulist", menujson, DateTime.Now.AddHours(1));  
+                       
+                        return RedirectToAction("Index", "HomeCount");
                     case ETS.Enums.UserLoginResults.UserNotExist:
                         ModelState.AddModelError("", "用户不存在");
                         break;

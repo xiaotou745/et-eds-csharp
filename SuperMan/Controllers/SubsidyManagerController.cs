@@ -16,20 +16,20 @@ namespace SuperMan.Controllers
 {
     [Authorize]
     [WebHandleError]
-    public class SubsidyManagerController : Controller
+    public class SubsidyManagerController : BaseController
     {
         ISubsidyProvider iSubsidyProvider = new SubsidyProvider();
         // GET: SubsidyManager
         public ActionResult SubsidyManager()
         {
-            account account = HttpContext.Session["user"] as account;
-            if (account == null)
-            {
-                Response.Redirect("/account/login");
-                return null;
-            }  
-            ViewBag.txtGroupId = account.GroupId;//集团id
-            var criteria = new Ets.Model.DomainModel.Subsidy.HomeCountCriteria() { GroupId = account.GroupId };
+            //account account = HttpContext.Session["user"] as account;
+            //if (account == null)
+            //{
+            //    Response.Redirect("/account/login");
+            //    return null;
+            //}  
+            ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
+            var criteria = new Ets.Model.DomainModel.Subsidy.HomeCountCriteria() { GroupId = SuperMan.App_Start.UserContext.Current.GroupId };
             var pagedList = iSubsidyProvider.GetSubsidyList(criteria);
             return View(pagedList);
         }
@@ -55,12 +55,12 @@ namespace SuperMan.Controllers
         [HttpGet]
         public ActionResult SettlementFunction()
         {
-            account account = HttpContext.Session["user"] as account;
-            if (account == null)
-            {
-                Response.Redirect("/account/login");
-                return null;
-            }
+            //account account = HttpContext.Session["user"] as account;
+            //if (account == null)
+            //{
+            //    Response.Redirect("/account/login");
+            //    return null;
+            //}
             
             return View();
         }

@@ -531,8 +531,8 @@ namespace SuperManWebApi.Controllers
         [HttpGet]
         public SuperManCore.Common.ResultModel<Ets.Model.DomainModel.MyBalanceListResultModel[]> GetMyBalanceDynamic(string phoneNo, int? pagedSize, int? pagedIndex)
         {
-            var pIndex = pagedIndex.HasValue ? pagedIndex.Value : 0;
-            var pSize = pagedSize.HasValue ? pagedSize.Value : int.MaxValue;
+            int pIndex = ParseHelper.ToInt(pagedIndex.HasValue, 1);
+            int pSize = ParseHelper.ToInt(pagedSize.HasValue, 50);
             var criteria = new Ets.Model.ParameterModel.WtihdrawRecords.MyIncomeSearchCriteria()
             {
                 PagingRequest = new Ets.Model.Common.PagingResult(pIndex, pSize),

@@ -70,6 +70,6 @@ namespace Ets.Model.Common
         /// <summary>
         /// 发布时间
         /// </summary>
-        //public DateTime InsertTime { get; set; }
+        public string PubDate { get; set; }
     }
 }

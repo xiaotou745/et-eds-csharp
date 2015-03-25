@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using SuperMan.App_Start;
+
 namespace SuperMan.Controllers
 {
     using System.Web.Mvc;
@@ -11,7 +13,7 @@ namespace SuperMan.Controllers
     /// 权限业务操作类--平扬 2015.3.18
     /// </summary>
     [WebHandleError]
-    public class MenuManagerController : Controller
+    public class MenuManagerController : BaseController
     {
         /// <summary>
         /// 菜单权限服务操作类
@@ -27,6 +29,11 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult Menu(int? id)
         {
+            //if (UserContext.Current.Id == 0)
+            //{
+            //    Response.Redirect("/account/login");
+            //    return null;
+            //}
             int parid = id ?? 0;
             ViewBag.ParId = parid;
             if (parid > 0)
@@ -186,11 +193,11 @@ namespace SuperMan.Controllers
         /// 返回账户权限菜单
         /// </summary>
         /// <returns></returns>
-        [HttpPost]
+        [HttpGet]
         public JsonResult GetMenusByAccount(int aid)
         {
-            var list = _iAuhority.GetMenuIdsByAccountId(aid) ?? new List<int>();
-            return Json(new ResultModel(true, "", list), JsonRequestBehavior.AllowGet);
+            var list = _iAuhority.GetMenuIdsByAccountId(aid); 
+            return Json(list!=null ? new ResultModel(true, string.Empty,list) : new ResultModel(false, "设置失败!"), JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>
@@ -207,6 +214,26 @@ namespace SuperMan.Controllers
         }
 
         #endregion
+
+         
+        /// <summary>
+        /// 返回按钮视图
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult MenuButton(int pid)
+        {
+            ViewBag.ParId = pid;
+            ViewBag.PartMenu = _iAuhority.GetMenuById(pid);
+            if (ViewBag.PartMenu == null)
+            {
+                Response.Redirect("/MenuManager/Menu/"+pid);
+                return null;
+            }
+            var list = _iAuhority.GetMenuList(pid);
+            return View(list);
+        }
+
+        
 
     }
 }

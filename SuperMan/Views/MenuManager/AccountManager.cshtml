@@ -24,7 +24,6 @@
                 <th width="%5">编号</th>
                 <th>名称</th> 
                 <th>状态</th> 
-                <th>角色</th> 
                 <th>操作</th>
             </tr>
         </thead>
@@ -45,10 +44,8 @@
                             {
                                 <td>锁定</td>
                             }
-                            <td>@item.RoleId</td>
                             <td>
                                 <a href="javascript:void(0)" onclick="showMenu(@item.Id,'@item.LoginName')">分配权限</a>
-                                <a href="javascript:void(0)" onclick="showRole(@item.Id,'@item.LoginName')">分配角色</a>
                             </td>
                         </tr> 
                     }
@@ -79,7 +76,16 @@
                                     if (childMenus!=null && childMenus.Count > 0)
                                     {
                                         foreach(var cMenu in childMenus)
-                                        {
+                                        { 
+                                            List<AuthorityMenuModel> childButton = (from m in AllMenu where m.ParId == cMenu.Id select m).ToList();
+                                            if (childButton!=null && childButton.Count > 0)
+                                            {
+                                                foreach(var cButton in childButton)
+                                                {
+                                                    var cid = "chkMenu"+@cButton.Id;
+                                                    <input type="checkbox" id="@cid" name="checkMenus" authorityfuncid="@cButton.Id" value="@cButton.Id" /><label style="color: red" for="@cid">@cButton.MenuName</label>
+                                                }  
+                                            }
                                             var checkid = "chkMenu"+@cMenu.Id;
                                             <input type="checkbox" id="@checkid" name="checkMenus" authorityfuncid="@cMenu.Id" value="@cMenu.Id" /><label for="@checkid">@cMenu.MenuName</label>
                                         }  
@@ -114,14 +120,18 @@
         var pars = { "aid": id };
         var url = "/MenuManager/GetMenusByAccount";
         $.ajax({
-            type: 'POST',
+            type: 'GET',
             url: url,
             data: pars,
+            cache: false,
             success: function (result) {
-                if (result.IsSuccess) { 
-                    if (result.Data != "") {
+                if (result.IsSuccess) {
+                    $("input[name='checkMenus']").each(function () {
+                        $(this).removeAttr("checked");
+                    }); 
+                    if (result.Data != null) { 
                         $.each(result.Data, function (key, val) {
-                            $('input[authorityfuncid=' + val + ']').attr('checked', 'true');
+                            $('input[value=' + val + ']').prop("checked", true);
                         }); 
                     } 
                     adminjs.openwinbox('#MenuDiv');

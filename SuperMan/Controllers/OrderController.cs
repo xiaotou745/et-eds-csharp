@@ -23,39 +23,39 @@ namespace SuperMan.Controllers
 {
     [Authorize]
     [WebHandleError]
-    public class OrderController : Controller
+    public class OrderController : BaseController
     {
         Ets.Service.IProvider.Distribution.IDistributionProvider iDistributionProvider = new DistributionProvider();
         Ets.Service.IProvider.Order.IOrderProvider iOrderProvider = new OrderProvider();
         //Get: /Order  订单管理
         public ActionResult Order()
         {
-            SuperManDataAccess.account account = HttpContext.Session["user"] as SuperManDataAccess.account;
-            if (account == null)
-            {
-                Response.Redirect("/account/login");
-                return null;
-            }
-            ViewBag.txtGroupId = account.GroupId;//集团id
+            //SuperManDataAccess.account account = HttpContext.Session["user"] as SuperManDataAccess.account;
+            //if (account == null)
+            //{
+            //    Response.Redirect("/account/login");
+            //    return null;
+            //}
+            ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
             var superManModel = iDistributionProvider.GetClienterModelByGroupID(ViewBag.txtGroupId);
             if (superManModel != null)
             {
                 ViewBag.superManModel = superManModel;
             }
-            var criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria() { orderStatus = -1, GroupId = account.GroupId };
+            var criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria() { orderStatus = -1, GroupId = SuperMan.App_Start.UserContext.Current.GroupId };
             var pagedList = iOrderProvider.GetOrders(criteria);
             return View(pagedList);
         }
         [HttpPost]
         public ActionResult PostOrder(int pageindex = 1)
         {
-            SuperManDataAccess.account account = HttpContext.Session["user"] as SuperManDataAccess.account;
-            if (account == null)
-            {
-                Response.Redirect("/account/login");
-                return null;
-            }
-            ViewBag.txtGroupId = account.GroupId;//集团id
+            //SuperManDataAccess.account account = HttpContext.Session["user"] as SuperManDataAccess.account;
+            //if (account == null)
+            //{
+            //    Response.Redirect("/account/login");
+            //    return null;
+            //}
+            ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId; ;//集团id
 
             Ets.Model.ParameterModel.Order.OrderSearchCriteria criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria();
             TryUpdateModel(criteria);

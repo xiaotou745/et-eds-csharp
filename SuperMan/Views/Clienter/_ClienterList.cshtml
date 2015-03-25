@@ -50,8 +50,13 @@
                     }
                     <td>@statusView</td>
                     <td>
+                        if (SuperMan.App_Start.UserContext.Current.HasAuthority(18))
+                    {
                         <a href="javascript:void(0)" superManid="@item.Id" class="superManOk">审核通过</a>
                         <a href="javascript:void(0)" supermanid="@item.Id" class="superManCel">取消资格</a>
+                    }
+                        
+                        
                     </td>
                 </tr>
             }

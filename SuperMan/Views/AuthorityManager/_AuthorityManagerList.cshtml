@@ -27,19 +27,12 @@
                     <td>
                        @item.GroupName
                     </td>
-                    <td>
-                        @*@if ((SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.AccountEdit) || UserContext.Current.Name == "admin")&&
-                            item.UserName != UserContext.Current.Name && item.UserName!="admin")
-                        {
-                            <a href="javascript:void(0)" businessid="@item.Id" class="setAuthority">设置权限</a>
-                        }*@
-                      @if ((SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.AccountEditPassword)&&item.UserName!="admin") || UserContext.Current.Name == "admin")
+                    <td> 
+                      @if (UserContext.Current.HasAuthority(27))
                       {
                               <a href="javascript:void(0)" businessid="@item.Id" class="modifyPwd">修改密码</a>
-                      }
-                        @*<a href="javascript:void(0)" businessid="@item.Id" class="accountView">查看</a>*@
-                       @if ((SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.AccountDelete) || UserContext.Current.Name == "admin")&&
-                        item.UserName != UserContext.Current.Name && item.UserName != "admin")    
+                      } 
+                       @if (UserContext.Current.HasAuthority(28))    
                         {
                          <a href="javascript:void(0)" businessid="@item.Id" class="accountDel">删除</a>
                        }

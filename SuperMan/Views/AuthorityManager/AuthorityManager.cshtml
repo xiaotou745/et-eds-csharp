@@ -23,7 +23,7 @@
                         <input id="txtName" type="text" name="UserName" />
                         <input name="GroupId" id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" />
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
-                        @if (SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.AccountAdd) || UserContext.Current.Name == "admin")
+                        @if (UserContext.Current.HasAuthority(26))
                         { 
                              <input type="button" value="添加用户" class="searchBtn" id="btnAdd" />
                         }

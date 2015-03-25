@@ -358,28 +358,38 @@ namespace Ets.Dao.Order
         ///订单金额
         ///任务量
         ///订单量 
+        ///商户结算金额（应收）;
+        ///骑士佣金总计（应付）
         /// 窦海超
         /// 2015年3月18日 17:23:14
         /// </summary>
-        public HomeCountTitleModel GetCurrentDateCountAndMoney(HomeCountTitleModel model)
+        public IList<HomeCountTitleModel> GetCurrentDateCountAndMoney(string StartTime, string EndTime)
         {
-
-            string sql = @"SELECT 
-                            SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
-                            ISNULL(COUNT(Id),0) AS MisstionCount,--任务量
-                            SUM(ISNULL(OrderCount,0)) AS OrderCount --订单量
-                             FROM dbo.[order](NOLOCK) WHERE CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) AND [Status]=1";
-            DataSet set = DbHelper.ExecuteDataset(SuperMan_Read, sql);
-            DataTable dt = DataTableHelper.GetTable(set);
-            if (dt == null && dt.Rows.Count <= 0)
+            if (string.IsNullOrEmpty(StartTime) || string.IsNullOrEmpty(EndTime))
             {
-                return model;
+                return null;
             }
-
-            //DataRow row = dt.Rows[0];
-            //Count = ParseHelper.ToInt(row["acount"], 0);
-            //Money = ParseHelper.ToDecimal(row["amount"], 0);
-           return MapRows<HomeCountTitleModel>(dt)[0];
+            string sql = @"SELECT 
+                         CONVERT(CHAR(10),PubDate,120) AS PubDate, --发布时间
+                        SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
+                        ISNULL(COUNT(o.Id),0) AS MisstionCount,--任务量
+                        SUM(ISNULL(OrderCount,0)) AS OrderCount,--订单量
+                         ISNULL(SUM(o.Amount*ISNULL(b.BusinessCommission,0)/100+ ISNULL( b.DistribSubsidy ,0)* o.OrderCount),0) AS YsPrice,  -- 应收金额
+                          ISNULL( SUM( OrderCommission),0) AS YfPrice  --应付金额
+                        FROM dbo.[order](NOLOCK) AS o
+                        LEFT JOIN dbo.business(NOLOCK) AS b ON o.businessId=b.Id
+                         WHERE  
+                        o.[Status]=1 AND 
+                        CONVERT(CHAR(10),PubDate,120)>=CONVERT(CHAR(10),@StartTime,120) and 
+                        CONVERT(CHAR(10),PubDate,120)<=CONVERT(CHAR(10),@EndTime,120)
+                        GROUP BY CONVERT(CHAR(10),PubDate,120)
+                        ORDER BY PubDate DESC
+                        ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@StartTime", StartTime);
+            parm.AddWithValue("@EndTime", EndTime);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            return MapRows<HomeCountTitleModel>(dt);
         }
         /// <summary>
         /// 根据参数获取订单
@@ -428,59 +438,59 @@ namespace Ets.Dao.Order
                                     ,b.PhoneNo BusinessPhoneNo
                                     ,b.Address BusinessAddress
                                     ,g.GroupName";
-                IDbParameters parm = DbHelper.CreateDbParameters();
-                parm.AddWithValue("@businessName", criteria.businessName);
-                parm.AddWithValue("@businessPhone", criteria.businessPhone);
-                parm.AddWithValue("@orderId", criteria.orderId);
-                parm.AddWithValue("@OriginalOrderNo", criteria.OriginalOrderNo);
-                parm.AddWithValue("@orderStatus", criteria.orderStatus);
-                parm.AddWithValue("@superManName", criteria.superManName);
-                parm.AddWithValue("@superManPhone", criteria.superManPhone);
-                parm.AddWithValue("@orderPubStart", criteria.orderPubStart);
-                parm.AddWithValue("@orderPubEnd", criteria.orderPubEnd);
-                parm.AddWithValue("@GroupId", criteria.GroupId);
-                var sbSqlWhere = new StringBuilder(" 1=1 ");
-                if (!string.IsNullOrWhiteSpace(criteria.businessName))
-                {
-                    sbSqlWhere.AppendFormat(" AND b.Name='{0}' ", criteria.businessName);
-                }
-                if (!string.IsNullOrWhiteSpace(criteria.businessPhone))
-                {
-                    sbSqlWhere.AppendFormat(" AND b.PhoneNo='{0}' ", criteria.businessPhone);
-                }
-                if (!string.IsNullOrWhiteSpace(criteria.orderId))
-                {
-                    sbSqlWhere.AppendFormat(" AND o.OrderNo='{0}' ", criteria.orderId);
-                }
-                if (!string.IsNullOrWhiteSpace(criteria.OriginalOrderNo))
-                {
-                    sbSqlWhere.AppendFormat(" AND o.OriginalOrderNo='{0}' ", criteria.OriginalOrderNo);
-                }
-                if (criteria.orderStatus != -1)
-                {
-                    sbSqlWhere.AppendFormat(" AND o.Status={0} ", criteria.orderStatus);
-                }
-                if (!string.IsNullOrWhiteSpace(criteria.superManName))
-                {
-                    sbSqlWhere.AppendFormat(" AND c.TrueName='{0}' ", criteria.superManName);
-                }
-                if (!string.IsNullOrWhiteSpace(criteria.superManPhone))
-                {
-                    sbSqlWhere.AppendFormat(" AND c.PhoneNo='{0}' ", criteria.superManPhone);
-                }
-                if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))
-                {
-                    sbSqlWhere.AppendFormat(" AND o.PubDate>='{0}' ", criteria.orderPubStart);
-                }
-                if (!string.IsNullOrWhiteSpace(criteria.orderPubEnd))
-                {
-                    sbSqlWhere.AppendFormat(" AND o.PubDate<='{0}' ", criteria.orderPubEnd);
-                }
-                if (criteria.GroupId != null && criteria.GroupId !=0)
-                {
-                    sbSqlWhere.AppendFormat(" AND o.GroupId={0} ", criteria.GroupId);
-                }
-                string tableList = @" [order] o WITH ( NOLOCK )
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@businessName", criteria.businessName);
+            parm.AddWithValue("@businessPhone", criteria.businessPhone);
+            parm.AddWithValue("@orderId", criteria.orderId);
+            parm.AddWithValue("@OriginalOrderNo", criteria.OriginalOrderNo);
+            parm.AddWithValue("@orderStatus", criteria.orderStatus);
+            parm.AddWithValue("@superManName", criteria.superManName);
+            parm.AddWithValue("@superManPhone", criteria.superManPhone);
+            parm.AddWithValue("@orderPubStart", criteria.orderPubStart);
+            parm.AddWithValue("@orderPubEnd", criteria.orderPubEnd);
+            parm.AddWithValue("@GroupId", criteria.GroupId);
+            var sbSqlWhere = new StringBuilder(" 1=1 ");
+            if (!string.IsNullOrWhiteSpace(criteria.businessName))
+            {
+                sbSqlWhere.AppendFormat(" AND b.Name='{0}' ", criteria.businessName);
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.businessPhone))
+            {
+                sbSqlWhere.AppendFormat(" AND b.PhoneNo='{0}' ", criteria.businessPhone);
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.orderId))
+            {
+                sbSqlWhere.AppendFormat(" AND o.OrderNo='{0}' ", criteria.orderId);
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.OriginalOrderNo))
+            {
+                sbSqlWhere.AppendFormat(" AND o.OriginalOrderNo='{0}' ", criteria.OriginalOrderNo);
+            }
+            if (criteria.orderStatus != -1)
+            {
+                sbSqlWhere.AppendFormat(" AND o.Status={0} ", criteria.orderStatus);
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.superManName))
+            {
+                sbSqlWhere.AppendFormat(" AND c.TrueName='{0}' ", criteria.superManName);
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.superManPhone))
+            {
+                sbSqlWhere.AppendFormat(" AND c.PhoneNo='{0}' ", criteria.superManPhone);
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))
+            {
+                sbSqlWhere.AppendFormat(" AND o.PubDate>='{0}' ", criteria.orderPubStart);
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.orderPubEnd))
+            {
+                sbSqlWhere.AppendFormat(" AND o.PubDate<='{0}' ", criteria.orderPubEnd);
+            }
+            if (criteria.GroupId != null && criteria.GroupId != 0)
+            {
+                sbSqlWhere.AppendFormat(" AND o.GroupId={0} ", criteria.GroupId);
+            }
+            string tableList = @" [order] o WITH ( NOLOCK )
                                 LEFT JOIN clienter c WITH ( NOLOCK ) ON c.Id = o.clienterId
                                 LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                 LEFT JOIN [group] g WITH ( NOLOCK ) ON g.Id = b.GroupId ";
@@ -497,7 +507,7 @@ namespace Ets.Dao.Order
             bool reslut = false;
             try
             {
-                string sql = @" update [order] set OrderCommission=@OrderCommission where OrderNo=@OrderNo "; 
+                string sql = @" update [order] set OrderCommission=@OrderCommission where OrderNo=@OrderNo ";
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
                 dbParameters.AddWithValue("@OrderNo", order.OrderNo);
                 dbParameters.AddWithValue("@OrderCommission", order.OrderCommission);
@@ -652,6 +662,29 @@ namespace Ets.Dao.Order
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, upSql, dbParameters);
 
             return ParseHelper.ToInt(executeScalar, -1);
+        }
+
+
+        /// <summary>
+        /// 获取总统计数据
+        /// 窦海超
+        /// 2015年3月25日 15:33:00
+        /// </summary>
+        /// <returns></returns>
+        public HomeCountTitleModel GetHomeCountTitleToAllDataSql()
+        {
+            string sql = @"SELECT 
+                        SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
+                        COUNT(1) AS MisstionCount,--任务量
+                        SUM(ISNULL(OrderCount,0)) AS OrderCount,--订单量
+                        SUM(o.Amount*ISNULL(b.BusinessCommission,0)/100+ ISNULL(b.DistribSubsidy ,0) * o.OrderCount) AS YsPrice,  -- 应收金额
+                        SUM(ISNULL( OrderCommission,0)) AS YfPrice  --应付金额
+                        FROM dbo.[order](NOLOCK) AS o
+                        JOIN dbo.business(NOLOCK) AS b ON o.businessId=b.Id
+                         WHERE  
+                        o.[Status]=1 ";
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
+            return MapRows<HomeCountTitleModel>(dt)[0];
         }
     }
 }

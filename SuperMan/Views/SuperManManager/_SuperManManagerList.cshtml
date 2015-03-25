@@ -77,25 +77,25 @@
                     <td>
                         @{
                 if (@item.Status == 1)
-                {
-                    if (SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.SuperAudit))
+                { 
+                    if (SuperMan.App_Start.UserContext.Current.HasAuthority(18) || SuperMan.App_Start.UserContext.Current.HasAuthority(19))
                     {
                         <a href="javascript:void(0)" style="color:gray" supermanid="@item.Id" class="superManOk">审核通过</a>
                             <a href="javascript:void(0)" supermanid="@item.Id" class="superManCel">取消资格</a>
                     }
-                    if (SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.SuperClear))
+                    if (SuperMan.App_Start.UserContext.Current.HasAuthority(20))
                     {
                         <a href="javascript:void(0)" amount="@item.AccountBalance" supermanid="@item.Id" class="superManClear">提现</a>
                     }
                 }
                 else
                 {
-                    if (SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.SuperAudit))
+if (SuperMan.App_Start.UserContext.Current.HasAuthority(18) || SuperMan.App_Start.UserContext.Current.HasAuthority(19))
                     {
                         <a href="javascript:void(0)" supermanid="@item.Id" class="superManOk">审核通过</a>
                             <a href="javascript:void(0)" style="color:gray" supermanid="@item.Id" class="superManCel">取消资格</a>
                     }
-                    if (SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.SuperClear))
+                    if (SuperMan.App_Start.UserContext.Current.HasAuthority(20))
                     {
                         <a href="javascript:void(0)" amount="@item.AccountBalance" supermanid="@item.Id" class="superManClear">提现</a>
                     }

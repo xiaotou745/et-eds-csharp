@@ -52,7 +52,11 @@
             <div>
                 <dl>
                     <dd>
-                        <input type="button" value="保存" class="searchBtn" id="btnSave" />
+                     @if (SuperMan.App_Start.UserContext.Current.HasAuthority(25))
+                    {
+                       <input type="button" value="保存" class="searchBtn" id="btnSave" />
+                    }
+                       
                     </dd>
                 </dl>
             </div>
