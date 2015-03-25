@@ -669,5 +669,21 @@ namespace Ets.Dao.User
             }
             return MapRows<HomeCountTitleModel>(dt)[0];
         }
+        /// <summary>
+        /// 根据商户Id修改外送费
+        /// wc
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <param name="waiSongFei"></param>
+        /// <returns></returns>
+        public int ModifyWaiMaiPrice(int businessId, decimal waiSongFei)
+        {
+            string upSql = @"UPDATE dbo.business SET DistribSubsidy = @waiSongFei WHERE Id = @businessId";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@waiSongFei", waiSongFei);
+            parm.AddWithValue("@businessId", businessId);
+            object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Write, upSql, parm);
+            return ParseHelper.ToInt(executeScalar, 0);
+        }
     }
 }

@@ -8,30 +8,51 @@ namespace Ets.Model.DomainModel.Area
 {
     public class AreaModel
     {
+        ///// <summary>
+        ///// 省ID
+        ///// </summary>
+        //public int ProvinceCode { get; set; }
+        ///// <summary>
+        ///// 省名称
+        ///// </summary>
+        //public string ProvinceName { get; set; }
+        ///// <summary>
+        ///// 市ID
+        ///// </summary>
+        //public int CityCode { get; set; }
+        ///// <summary>
+        ///// 市名称
+        ///// </summary>
+        //public string CityName { get; set; }
+        ///// <summary>
+        ///// 区ID
+        ///// </summary>
+        //public int AreaCode { get; set; }
+        ///// <summary>
+        ///// 区名称
+        ///// </summary>
+        //public string AreaName { get; set; }
+        ///// <summary>
+        ///// 级别
+        ///// </summary>
+        //public int JiBie {get;set;}
+
         /// <summary>
-        /// 省ID
+        /// 省
         /// </summary>
-        public int ProvinceCode { get; set; }
+        public int Code { get; set; }
         /// <summary>
-        /// 省名称
+        /// 名称
         /// </summary>
-        public string ProvinceName { get; set; }
+        public string Name { get; set; }
         /// <summary>
-        /// 市ID
+        /// 父级ID
         /// </summary>
-        public int CityCode { get; set; }
+        public int ParentId { get; set; }
         /// <summary>
-        /// 市名称
+        /// 级别
         /// </summary>
-        public string CityName { get; set; }
-        /// <summary>
-        /// 区ID
-        /// </summary>
-        public int AreaCode { get; set; }
-        /// <summary>
-        /// 区名称
-        /// </summary>
-        public string AreaName { get; set; }
+        public int JiBie { get; set; }
 
     }
 }

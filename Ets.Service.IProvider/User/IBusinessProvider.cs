@@ -133,5 +133,13 @@ namespace Ets.Service.IProvider.User
         /// </summary>
         /// <returns></returns>
         IList<GroupModel> GetGroups();
+        /// <summary>
+        /// 商户修改外送费
+        /// wc
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <param name="waiSongFei"></param>
+        /// <returns></returns>
+        int ModifyWaiMaiPrice(int businessId, decimal waiSongFei);
     }
 }
