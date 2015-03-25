@@ -83,7 +83,7 @@ namespace SuperMan.Controllers
                         _authenticationService.SignIn(model.UserName, model.RememberMe);
                         HttpContext.Session["user"] = _accountBussinessLogic.Get(model.UserName);
                         HttpContext.Session.Timeout =Convert.ToInt32( Math.Floor(FormsAuthentication.Timeout.TotalMinutes));
-                        return RedirectToLocal(returnUrl);
+                        return RedirectToAction("Index", "HomeCount");
                     case ETS.Enums.UserLoginResults.UserNotExist:
                         ModelState.AddModelError("", "用户不存在");
                         break;
