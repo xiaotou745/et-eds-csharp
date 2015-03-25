@@ -1,4 +1,4 @@
-﻿@model BusinessManage
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Bussiness.BusListResultModel>
 @using Ets.Model.DomainModel.Bussiness;
 @{
     ViewBag.Title = "Order";
@@ -9,15 +9,19 @@
     <h2 class="crumbs">
         您所在位置：商户 > 商户管理
     </h2>
-    <div class="SearchMd">
+    @using (Ajax.BeginForm("PostBusinessManager", new RouteValueDictionary { { "pageindex", "" } },
+    new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+    new RouteValueDictionary { { "id", "searchForm" } }))
+    {
+        <div class="SearchMd">
         <table border="0" cellspacing="0" cellpadding="0">
             <tr>
                 <td>
                     <span class="">商户名称: </span>
-                    <input id="txtBusinessName" type="tel" />
+                    <input id="txtBusinessName" name="BusinessName" type="tel" />
                     <span class="">审核状态: </span>
-                    <select name="select" class="selectw" id="businessStatus" style="width:143px">
-                        <option value="-1">全部</option>
+                    <select name="status" class="selectw" id="businessStatus" style="width:143px">
+                        <option value="-1" selected="selected">全部</option>
                         <option value="1">审核通过</option>
                         <option value="0">未审核</option>
                         <option value="2">未审核且未添加地址</option>
@@ -25,17 +29,19 @@
                         <option value="4">审核被拒绝</option>
                     </select>
                     <span class="">商户电话: </span>
-                    <input id="txtBusinessPhone" type="text" />
+                    <input id="txtBusinessPhone" type="text" name="BusinessPhone" />
                      <span class="">结算比例: </span>
-                    <input id="txtBusinessCommission" type="text" />
-                    <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" />
+                    <input id="txtBusinessCommission" type="text" name="BusinessCommission" />
+                    <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" name="GroupId" />
                     <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                 </td>
             </tr>
         </table>
     </div>
+    }
+    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
     <div class="bd clearfix" id="dataList">
-        @Html.Partial("_BusinessManageList", Model.businessManageList)
+        @Html.Partial("_BusinessManageList", Model)
     </div>
 </div>
 @*结算比例弹窗*@
@@ -88,38 +94,39 @@
 </div>
 <script>
     var adminjs = new adminglass(); //实例化后台类
-    var DEFAULT_PAGESIZE = 15;
-    var criteria = { PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE } };
+    //var DEFAULT_PAGESIZE = 15;
+    //var criteria = { PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE } };
     $(document).ready(function () {
+        window.location.hash = '';
         //查询
-        $("#btnSearch").on('click', function () {
-            criteria = {
-                BusinessName: $("#txtBusinessName").val(), //商户名称
-                BusinessPhone: $("#txtBusinessPhone").val(),////商户电话
-                BusinessCommission: $("#txtBusinessCommission").val(),////商户结算比例
-                status: $("#businessStatus").val(),
-                GroupId: $("#txtGroupId").val(),
-                PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }
-            };
-            refresh(0);
-        });
+        //$("#btnSearch").on('click', function () {
+        //    criteria = {
+        //        BusinessName: $("#txtBusinessName").val(), //商户名称
+        //        BusinessPhone: $("#txtBusinessPhone").val(),////商户电话
+        //        BusinessCommission: $("#txtBusinessCommission").val(),////商户结算比例
+        //        status: $("#businessStatus").val(),
+        //        GroupId: $("#txtGroupId").val(),
+        //        PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }
+        //    };
+        //    refresh(0);
+        //});
     })
     ////分页
-    art.ui.control.NewPager.enablePaging(document, refresh);
-    function refresh(pageIndex) {
-        var url = "/BusinessManager/BusinessManager";
-        if (pageIndex !== undefined) {
-            criteria.PagingRequest.PageIndex = pageIndex;
-        }
-        criteria.status = $("#businessStatus").val();
-        webExpress.utility.ajax.request
-            (
-                url,
-                criteria,
-                function (data) {
-                    $("#dataList").html(data);
-                });
-    };
+    //art.ui.control.NewPager.enablePaging(document, refresh);
+    //function refresh(pageIndex) {
+    //    var url = "/BusinessManager/BusinessManager";
+    //    if (pageIndex !== undefined) {
+    //        criteria.PagingRequest.PageIndex = pageIndex;
+    //    }
+    //    criteria.status = $("#businessStatus").val();
+    //    webExpress.utility.ajax.request
+    //        (
+    //            url,
+    //            criteria,
+    //            function (data) {
+    //                $("#dataList").html(data);
+    //            });
+    //};
     //设置结算比例
     $("#btnCommissionConfim").on('click', function () {
         var busCommissionHid = $("#busCommissionHid").val(); //商户id
@@ -154,3 +161,4 @@
         return false;
     });
 </script>
+<script src="~/Scripts/mvcpager.js"></script>

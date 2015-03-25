@@ -29,17 +29,17 @@ namespace SuperMan.Controllers
                 return null;
             }  
             ViewBag.txtGroupId = account.GroupId;//集团id
-            Ets.Model.DomainModel.Subsidy.SubsidyManage subsidyManage = new Ets.Model.DomainModel.Subsidy.SubsidyManage();
-            var criteria = new Ets.Model.DomainModel.Subsidy.HomeCountCriteria() { PagingRequest = new Ets.Model.Common.NewPagingResult (1, 15), GroupId = account.GroupId };
-            subsidyManage=iSubsidyProvider.GetSubsidyList(criteria);
-            return View(subsidyManage);
+            var criteria = new Ets.Model.DomainModel.Subsidy.HomeCountCriteria() { GroupId = account.GroupId };
+            var pagedList = iSubsidyProvider.GetSubsidyList(criteria);
+            return View(pagedList);
         }
         [HttpPost]
-        public ActionResult SubsidyManager(Ets.Model.DomainModel.Subsidy.HomeCountCriteria criteria)
+        public ActionResult PostSubsidyManager(int pageindex = 1)
         {
+            Ets.Model.DomainModel.Subsidy.HomeCountCriteria criteria = new Ets.Model.DomainModel.Subsidy.HomeCountCriteria();
+            TryUpdateModel(criteria);
             var pagedList = iSubsidyProvider.GetSubsidyList(criteria);
-            var item = pagedList.subsidyManageList;
-            return PartialView("_SubsidyManagerList", item);
+            return PartialView("_SubsidyManagerList", pagedList);
         }
 
         [HttpPost]

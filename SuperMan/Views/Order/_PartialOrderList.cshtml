@@ -1,4 +1,4 @@
-﻿@model Ets.Model.DomainModel.Order.OrderManageList
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Order.OrderListModel>
 <script src="~/Scripts/view/orderList.js"></script>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
     <thead>
@@ -24,7 +24,7 @@
     <tbody>
         @{
             var i = 0;
-            foreach (var item in Model.orderModel)
+            foreach (var item in Model.Records)
             {
                 var diffHour = (DateTime.Now - DateTime.Parse(item.PubDate != null ? item.PubDate.ToString() : DateTime.Now.ToString())).TotalHours;
                 string val = diffHour > 10 && item.Status == 0 ? "red" : diffHour > 8 && item.Status == 0 ? "blue" : diffHour > 5 && item.Status == 0 ? "yellow" : "none";
@@ -73,7 +73,9 @@
         }
     </tbody>
 </table>
-@Html.Partial("_NewPager", Model.PagingResult)
+@{ViewBag.ActionName = "PostOrder";}
+@Html.Partial("~/views/shared/PagerControl.cshtml", Model)
+
 
 <!--状态为已完成的订单弹出画面 start-->
 <div class="selectSupplierDish">

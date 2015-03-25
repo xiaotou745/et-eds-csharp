@@ -1,4 +1,4 @@
-﻿@model Ets.Model.DomainModel.Subsidy.SubsidyManage
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Subsidy.subsidy>
 @using Ets.Service.Provider.User
 @using Ets.Model
 @{
@@ -13,12 +13,16 @@
     <h2 class="crumbs">
         您所在位置：补贴设置
     </h2>
-    <div class="SearchMd">
+    @using (Ajax.BeginForm("PostSubsidyManager", new RouteValueDictionary { { "pageindex", "" } },
+    new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+    new RouteValueDictionary { { "id", "searchForm" } }))
+    {
+         <div class="SearchMd">
         <form id="subsidyForm" border="0" cellspacing="0" cellpadding="0">
             <div>
                 @if (ViewBag.txtGroupId > 0)
                 {
-                    <input type="hidden" id="AddGroupId" value="@ViewBag.txtGroupId" />
+                    <input type="hidden" id="AddGroupId" value="@ViewBag.txtGroupId" name="groupId" />
                 }
                 else
                 {
@@ -30,19 +34,19 @@
                     </dl>
                 }
                 <dl>
-                    <dt><i>* </i>订单佣金(%): <input id="txtOrderCommission" name="txtOrderCommission" type="text" />
+                    <dt><i>* </i>订单佣金(%): <input id="txtOrderCommission" name="OrderCommission" type="text" />
                     <text id="labOrderCommission" style="color:red" hidden="hidden">不能为空</text>
                     </dt>
                 </dl>
             </div>
             <div>
                 <dl>
-                    <dt><i>* </i>网站补贴: <input id="txtWebsiteSubsidy" name="txtWebsiteSubsidy" type="text" /><text id="labWebsiteSubsidy" style="color:red" hidden="hidden">不能为空</text></dt>
+                    <dt><i>* </i>网站补贴: <input id="txtWebsiteSubsidy" name="WebsiteSubsidy" type="text" /><text id="labWebsiteSubsidy" style="color:red" hidden="hidden">不能为空</text></dt>
                 </dl>
             </div>
             <div>
                 <dl>
-                    <dt class="">&nbsp;&nbsp;有效时间: <input id="selectDateStart" name="selectDateStart" readonly="readonly" type="text" /><text id="labDateStart" style="color:red" hidden="hidden">不能为空</text> 至: <input id="selectDateEnd" name="selectDateEnd" readonly="readonly" type="text" /><text id="labDateEnd" style="color:red" hidden="hidden">不能为空</text></dt>
+                    <dt class="">&nbsp;&nbsp;有效时间: <input id="selectDateStart" name="StartDate" readonly="readonly" type="text" /><text id="labDateStart" style="color:red" hidden="hidden">不能为空</text> 至: <input id="selectDateEnd" name="EndDate" readonly="readonly" type="text" /><text id="labDateEnd" style="color:red" hidden="hidden">不能为空</text></dt>
                 </dl>
             </div>
             <div>
@@ -54,9 +58,11 @@
             </div>
         </form>
     </div>
+    }
 </div>
+<script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
 <div class="bd clearfix" id="dataList">
-    @Html.Partial("_SubsidyManagerList", Model.subsidyManageList)
+    @Html.Partial("_SubsidyManagerList", Model)
 </div>
 
 <script type="text/javascript">
@@ -77,6 +83,7 @@
             //txtDistribSubsidy: "不能为空",
             }
         });
+        window.location.hash = '';
     });
     $("#btnSave").click(function () {
         var OrderCommission = $('#txtOrderCommission').val();
@@ -145,21 +152,22 @@
         $('#labDateEnd').hide();
     });
     ////分页
-    var DEFAULT_PAGESIZE = 15;
-    var criteria = { PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE } };
-    art.ui.control.NewPager.enablePaging(document, refresh);
-    function refresh(pageIndex) {
-        var url = "/SubsidyManager/SubsidyManager";
-        if (pageIndex !== undefined) {
-            criteria.PagingRequest.PageIndex = pageIndex;
-        }
-        webExpress.utility.ajax.request
-            (
-                url,
-                criteria,
-                function (data) {
-                    $("#dataList").html(data);
-                });
-    };
+    //var DEFAULT_PAGESIZE = 15;
+    //var criteria = { PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE } };
+    //art.ui.control.NewPager.enablePaging(document, refresh);
+    //function refresh(pageIndex) {
+    //    var url = "/SubsidyManager/SubsidyManager";
+    //    if (pageIndex !== undefined) {
+    //        criteria.PagingRequest.PageIndex = pageIndex;
+    //    }
+    //    webExpress.utility.ajax.request
+    //        (
+    //            url,
+    //            criteria,
+    //            function (data) {
+    //                $("#dataList").html(data);
+    //            });
+    //};
 
 </script>
+<script src="~/Scripts/mvcpager.js"></script>

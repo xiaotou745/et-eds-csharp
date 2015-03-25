@@ -1,4 +1,4 @@
-﻿@model Ets.Model.DomainModel.Authority.AuthorityManageList
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Authority.account>
 @using SuperMan.App_Start
 @using Ets.Service.Provider.User
 
@@ -17,7 +17,7 @@
     <tbody>
         @{
             var i = 0;
-            foreach (var item in Model.accountModel)
+            foreach (var item in Model.Records)
             {
                 i++;
                 <tr id="@item.Id">
@@ -49,7 +49,8 @@
         }
     </tbody>
 </table>
-@Html.Partial("_NewPager", Model.PagingResult)
+@{ViewBag.ActionName = "PostAuthorityManager";}
+@Html.Partial("~/views/shared/PagerControl.cshtml", Model)
 <div class="add-openbox zpsh-openw" id="Close_deletebox">
     <h2>删除确认</h2>
     <p class="textinfo">确定要删除此用户吗? 清除后不可恢复!</p>

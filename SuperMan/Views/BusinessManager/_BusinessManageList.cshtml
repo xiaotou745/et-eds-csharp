@@ -1,5 +1,5 @@
 ﻿@using Ets.Service.Provider.User
-@model Ets.Model.DomainModel.Bussiness.BusinessManageList
+@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Bussiness.BusListResultModel>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
     <thead>
 
@@ -25,7 +25,7 @@
             var puth = SuperManCore.CustomerIconUploader.Instance.RelativePath;
             var PicHost = SuperManCore.CustomerIconUploader.Instance.PicHost;
             //var path=System.IO.Path.Combine(SuperManCore.CustomerIconUploader.Instance.RelativePath,).ToForwardSlashPath();
-            foreach (var item in Model.businessModel)
+            foreach (var item in Model.Records)
             {
                 i++;
                 <tr id="@item.Id">
@@ -97,9 +97,9 @@
             }
         }
     </tbody>
-
 </table>
-@Html.Partial("_NewPager", Model.PagingResult)
+@{ViewBag.ActionName = "PostBusinessManager";}
+@Html.Partial("~/views/shared/PagerControl.cshtml", Model)
 
 <script type="text/javascript">
     var currentId;

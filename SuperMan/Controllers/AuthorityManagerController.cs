@@ -37,7 +37,7 @@ namespace SuperMan.Controllers
            }
                 
             ViewBag.txtGroupId = account.GroupId;//集团id
-            var criteria = new Ets.Model.ParameterModel.Authority.AuthoritySearchCriteria() { PagingRequest = new Ets.Model.Common.NewPagingResult (1, 15),GroupId=account.GroupId};
+            var criteria = new Ets.Model.ParameterModel.Authority.AuthoritySearchCriteria() { GroupId=account.GroupId};
             var authorityModel = iAuthorityMenuProvider.GetAuthorityManage(criteria);
             return View(authorityModel);
         }
@@ -47,11 +47,12 @@ namespace SuperMan.Controllers
         /// <param name="criteria"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult AuthorityManager(Ets.Model.ParameterModel.Authority.AuthoritySearchCriteria criteria)
+        public ActionResult PostAuthorityManager(int pageindex = 1)
         {
+            Ets.Model.ParameterModel.Authority.AuthoritySearchCriteria criteria = new Ets.Model.ParameterModel.Authority.AuthoritySearchCriteria();
+            TryUpdateModel(criteria);
             var authorityModel = iAuthorityMenuProvider.GetAuthorityManage(criteria);
-            var item = authorityModel.authorityManageList;
-            return PartialView("_AuthorityManagerList", item);
+            return PartialView("_AuthorityManagerList", authorityModel);
         }
         /// <summary>
         /// 判断用户名是否存在 

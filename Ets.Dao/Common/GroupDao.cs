@@ -188,7 +188,7 @@ namespace Ets.Dao.Common
         }
 
 
-        public PageInfo<GroupApiConfigModel> GetGroupList(GroupParaModel model)
+        public PageInfo<T> GetGroupList<T>(GroupParaModel model)
         {
             string sqlcolomn = @" g.id as GroupId,g.GroupName,g.CreateName,g.CreateTime,g.IsValid,isnull(gc.AppKey,'') AppKey,isnull(gc.AppSecret,'') AppSecret,isnull(gc.AppVersion,'') AppVersion  ";
             string where = " 1=1 ";
@@ -200,7 +200,7 @@ namespace Ets.Dao.Common
             {
                 where += string.Format(" and AppKey= '{0}' ", model.AppKey); 
             }
-            return new PageHelper().GetPages<GroupApiConfigModel>(SuperMan_Read, model.PagingRequest.PageIndex, where, "g.Id", sqlcolomn, " [group] g with(nolock) left join GroupApiConfig gc with(nolock) on g.Id = gc.GroupId ", model.PagingRequest.PageSize, true);
+            return new PageHelper().GetPages<T>(SuperMan_Read, model.PageIndex, where, "g.Id", sqlcolomn, " [group] g with(nolock) left join GroupApiConfig gc with(nolock) on g.Id = gc.GroupId ", model.PageSize, true);
         }
     }
 }

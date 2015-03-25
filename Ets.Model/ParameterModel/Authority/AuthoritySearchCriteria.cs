@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ets.Model.ParameterModel.Authority
 {
-    public class AuthoritySearchCriteria
+    public class AuthoritySearchCriteria : ListParaBase
     {
         public NewPagingResult PagingRequest { get; set; }
         public string UserName { get; set; }

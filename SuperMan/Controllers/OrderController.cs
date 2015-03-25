@@ -42,12 +42,12 @@ namespace SuperMan.Controllers
             {
                 ViewBag.superManModel = superManModel;
             }
-            var criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria() { orderStatus = -1, PagingRequest = new Ets.Model.Common.NewPagingResult(1, 15), GroupId = account.GroupId };
+            var criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria() { orderStatus = -1, GroupId = account.GroupId };
             var pagedList = iOrderProvider.GetOrders(criteria);
             return View(pagedList);
         }
         [HttpPost]
-        public ActionResult OrderList(Ets.Model.ParameterModel.Order.OrderSearchCriteria criteria)
+        public ActionResult PostOrder(int pageindex = 1)
         {
             SuperManDataAccess.account account = HttpContext.Session["user"] as SuperManDataAccess.account;
             if (account == null)
@@ -57,7 +57,8 @@ namespace SuperMan.Controllers
             }
             ViewBag.txtGroupId = account.GroupId;//集团id
 
-
+            Ets.Model.ParameterModel.Order.OrderSearchCriteria criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria();
+            TryUpdateModel(criteria);
             //指派超人时  以下代码 有用，现在 注释掉  wc 
             //var superManModel = iDistributionProvider.GetClienterModelByGroupID(ViewBag.txtGroupId);
             //if (superManModel != null)
@@ -66,8 +67,7 @@ namespace SuperMan.Controllers
             //} 
 
             var pagedList = iOrderProvider.GetOrders(criteria);
-            var item = pagedList.orderManageList; 
-            return PartialView("_PartialOrderList",item);
+            return PartialView("_PartialOrderList", pagedList);
         }
 
         //Get: /OrderCount  订单统计

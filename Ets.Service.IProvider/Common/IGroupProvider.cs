@@ -2,6 +2,7 @@
 using Ets.Model.DataModel.Group;
 using Ets.Model.DomainModel.Group;
 using Ets.Model.ParameterModel.Group;
+using ETS.Data.PageData;
 
 namespace Ets.Service.IProvider.Common
 {
@@ -15,7 +16,7 @@ namespace Ets.Service.IProvider.Common
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        ResultInfo<GroupListModel> GetGroupList(GroupParaModel criteria);
+        PageInfo<GroupApiConfigModel> GetGroupList(GroupParaModel criteria);
         /// <summary>
         /// 创建集团Api配置
         /// </summary>
