@@ -421,8 +421,7 @@ namespace Ets.Dao.Order
                                     ,o.[ReceiveAreaCode] 
                                     ,o.[SongCanDate]
                                     ,o.[OrderCount]
-                                    ,o.[CommissionRate]
-                                    ,o.[OrderSign]
+                                    ,o.[CommissionRate] 
                                     ,c.TrueName ClienterName
                                     ,c.PhoneNo ClienterPhoneNo
                                     ,b.Name BusinessName
@@ -558,8 +557,7 @@ namespace Ets.Dao.Order
                                         ,o.[LuJuQty]
                                         ,o.[SongCanDate]
                                         ,o.[OrderCount]
-                                        ,o.[CommissionRate]
-                                        ,o.[OrderSign]
+                                        ,o.[CommissionRate] 
                                         ,b.[City] BusinessCity
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
