@@ -10,6 +10,7 @@ namespace ETS.Const
     /// </summary>
     public class SystemConst
     {
+        public const string cookieName = "userinfo_edaisong";
 
         #region 分页相关常量 add by caoheyang  20150325
 

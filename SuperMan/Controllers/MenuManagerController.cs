@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using SuperMan.App_Start;
+
 namespace SuperMan.Controllers
 {
     using System.Web.Mvc;
@@ -27,6 +29,11 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult Menu(int? id)
         {
+            if (UserContext.Current.Id == 0)
+            {
+                Response.Redirect("/account/login");
+                return null;
+            }
             int parid = id ?? 0;
             ViewBag.ParId = parid;
             if (parid > 0)

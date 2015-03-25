@@ -22,12 +22,11 @@ namespace SuperMan.Controllers
         // GET: HomeCount
         public ActionResult Index()
         {
-            account account = HttpContext.Session["user"] as account;
-            if (account == null)
+            if (UserContext.Current.Id == 0)
             {
                 Response.Redirect("/account/login");
                 return null;
-            } 
+            }
             HomeCountManage homeCountManage = new HomeCountManage();
             var criteria = new HomeCountCriteria() { PagingRequest = new PagingResult(0, 15), searchType = 1 };
             var busiCriteria = new BusinessSearchCriteria() { PagingRequest = new PagingResult(0, 15), searchType = 1 };
