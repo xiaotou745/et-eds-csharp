@@ -197,13 +197,14 @@ namespace ETS.Util
         /// <param name="num1"></param>
         /// <param name="num2"></param>
         /// <returns></returns>
-        public static object ToDivision(double num1, double num2)
+        public static double ToDivision(double num1, double num2)
         {
             if (num2<=0)
             {
                 return 0;
             }
-            return num1 / num2;
+            double numtmp= num1 / num2;
+            return Math.Round(numtmp,2);
         }
         #endregion
     }

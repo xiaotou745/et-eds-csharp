@@ -29,7 +29,8 @@
                 var diffHour = (DateTime.Now - DateTime.Parse(item.PubDate != null ? item.PubDate.ToString() : DateTime.Now.ToString())).TotalHours;
                 string val = diffHour > 10 && item.Status == 0 ? "red" : diffHour > 8 && item.Status == 0 ? "blue" : diffHour > 5 && item.Status == 0 ? "yellow" : "none";
                 i++;
-                <tr id="@item.Id" style="background-color:@Html.Raw(val)" >
+                @*<tr id="@item.Id" style="background-color:@Html.Raw(val)" >*@
+                <tr id="@item.Id">
                     <td>@item.OrderNo</td>
                     <td>@item.OriginalOrderNo</td>
                     <td>@item.BusinessName <br> @item.BusinessPhoneNo</td>
@@ -62,7 +63,7 @@
                 {
                     strstatus = "已取消";
                 }
-                <td>@strstatus</td>
+                <td style="color:@Html.Raw(val)">@strstatus</td>
                     }
                     <td>
                         <a href="javascript:void(0)" orderid=@item.Id businessname=@item.BusinessName id="linkView" onclick="funcViewOrder('@item.OrderNo','@item.PubDate','@item.BusinessName','@item.BusinessPhoneNo','@item.BusinessAddress','@item.OrderCommission','@item.DistribSubsidy','@item.WebsiteSubsidy','@item.RecevicePhoneNo','@item.ReceviceName','@item.ReceviceAddress','@item.Amount','@item.IsPay','@item.clienterId','@item.Status','@item.ClienterName')">查看</a>

@@ -323,7 +323,7 @@ namespace Ets.Dao.Clienter
         {
             string sql = @"
                          SELECT 
-                        ISNULL( SUM( OrderCommission),0) AS yfPrice
+                        ISNULL( SUM( OrderCommission),0) AS YfPrice
                          FROM dbo.[order](NOLOCK)  AS o
                         WHERE o.[Status]=1 AND
                         CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) 

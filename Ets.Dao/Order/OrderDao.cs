@@ -365,9 +365,9 @@ namespace Ets.Dao.Order
         {
 
             string sql = @"SELECT 
-                            ISNULL(SUM(OrderCount),0) AS OrderPrice, --订单金额
+                            SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
                             ISNULL(COUNT(Id),0) AS MisstionCount,--任务量
-                            ISNULL(SUM(OrderCount),0) AS OrderCount --订单量
+                            SUM(ISNULL(OrderCount,0)) AS OrderCount --订单量
                              FROM dbo.[order](NOLOCK) WHERE CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) AND [Status]=1";
             DataSet set = DbHelper.ExecuteDataset(SuperMan_Read, sql);
             DataTable dt = DataTableHelper.GetTable(set);
@@ -421,8 +421,7 @@ namespace Ets.Dao.Order
                                     ,o.[ReceiveAreaCode] 
                                     ,o.[SongCanDate]
                                     ,o.[OrderCount]
-                                    ,o.[CommissionRate]
-                                    ,o.[OrderSign]
+                                    ,o.[CommissionRate] 
                                     ,c.TrueName ClienterName
                                     ,c.PhoneNo ClienterPhoneNo
                                     ,b.Name BusinessName
@@ -485,7 +484,7 @@ namespace Ets.Dao.Order
                                 LEFT JOIN clienter c WITH ( NOLOCK ) ON c.Id = o.clienterId
                                 LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                 LEFT JOIN [group] g WITH ( NOLOCK ) ON g.Id = b.GroupId ";
-            string orderByColumn = " o.Status ASC,o.PubDate DESC ";
+            string orderByColumn = " o.Status ASC,o.Id DESC ";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
         }
         /// <summary>
@@ -558,8 +557,7 @@ namespace Ets.Dao.Order
                                         ,o.[LuJuQty]
                                         ,o.[SongCanDate]
                                         ,o.[OrderCount]
-                                        ,o.[CommissionRate]
-                                        ,o.[OrderSign]
+                                        ,o.[CommissionRate] 
                                         ,b.[City] BusinessCity
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
