@@ -66,5 +66,10 @@ namespace Ets.Model.Common
         /// 盈亏总计
         /// </summary>
         public decimal YkPrice { get; set; }
+
+        /// <summary>
+        /// 发布时间
+        /// </summary>
+        //public DateTime InsertTime { get; set; }
     }
 }
