@@ -22,8 +22,7 @@ namespace SuperMan.Controllers
         // GET: HomeCount
         public ActionResult Index()
         {
-            account account = HttpContext.Session["user"] as account;
-            if (account == null)
+            if (UserContext.Current.Id == 0)
             {
                 Response.Redirect("/account/login");
                 return null;

@@ -1,8 +1,8 @@
 ﻿using System.Web;
-using Ets.Service.IProvider.AuthorityMenu;
+using ETS.Const;
+using Ets.Model.ParameterModel.Authority;
 using Ets.Service.Provider.Authority;
 using SuperManCommonModel;
-using SuperManBusinessLogic.Authority_Logic;
 
 namespace SuperMan.App_Start
 {
@@ -18,32 +18,20 @@ namespace SuperMan.App_Start
             {
                 if (HttpContext.Current.Items[CurrentUserContextCacheKey] == null)
                 {
-                    var user = HttpContext.Current.User.Identity;
-                    IAuthorityMenuProvider bllAccount = new AuthorityMenuProvider(); 
-                    var account = bllAccount.GetAccountByName(user.Name);
-                    if (account == null)
+                    var cookie = ETS.Util.CookieHelper.ReadCookie(SystemConst.cookieName);
+                    if (cookie == "")
                     {
-                        return UserContext.Empty;
-                    } 
+                        return UserContext.Empty; 
+                    }
+                    var userInfo = Letao.Util.JsonHelper.ToObject<SimpleUserInfoModel>(cookie);
                     var userContext = new UserContext
                     {
-                        Id = account.Id,
-                        Name = account.LoginName,
-                        RoleId = account.RoleId,
-                        AccountType = AccountType.AdminUser // (AccountType)account.AccountType,
+                        Id = userInfo.Id,
+                        Name = userInfo.LoginName,
+                        RoleId = userInfo.RoleId,
+                        GroupId = userInfo.GroupId,
+                        AccountType = AccountType.AdminUser
                     };
-                    //AppChannel accountChannel = account.AppChannels.FirstOrDefault();
-                    //if (accountChannel != null)
-                    //{
-                    //    userContext.AppChannelId = accountChannel.Id;
-                    //}
-
-                    //if (userContext.AccountType == AccountType.General)
-                    //{
-                    //    var gallery = DependencyResolver.Current.GetService<IGalleryBussinessLogic>().GetByAccountId(userContext.Id);
-                    //    userContext.Gallery = gallery;
-                    //}
-
                     HttpContext.Current.Items[CurrentUserContextCacheKey] = userContext;
                 }
                 return HttpContext.Current.Items[CurrentUserContextCacheKey] as UserContext;
@@ -74,20 +62,12 @@ namespace SuperMan.App_Start
             return new AuthorityMenuProvider().HasAuthority(UserContext.Current.Id, menuid);
         }
 
-        public int Id { get; set; }
-
+        public int Id { get; set; } 
+        public int GroupId { get; set; }
         public int AppChannelId { get; set; }
         public int RoleId { get; set; }
-        public AccountType AccountType { get; set; }
-
-        public string Name { get; set; }
-
-        //public UserContextModel UserContextModel
-        //{
-        //    get
-        //    {
-        //        return new UserContextModel(this.AccountType, this.Id, this.Gallery == null ? 0 : this.Gallery.Id);
-        //    }
-        //}
+        public AccountType AccountType { get; set; } 
+        public string Name { get; set; } 
+        
     }
 }

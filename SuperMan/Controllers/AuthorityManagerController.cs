@@ -1,5 +1,6 @@
 ﻿using Ets.Service.IProvider.AuthorityMenu;
 using Ets.Service.Provider.Authority;
+using SuperMan.App_Start;
 using SuperManBusinessLogic.Authority_Logic;
 using SuperManCommonModel;
 using SuperManCommonModel.Entities;
@@ -29,15 +30,13 @@ namespace SuperMan.Controllers
        /// <returns></returns>
         public ActionResult AuthorityManager()
         {
-            account account = HttpContext.Session["user"] as account;
-           if (account == null)
+           if (UserContext.Current.Id == 0)
            {
                Response.Redirect("/account/login");
                return null;
            }
-                
-            ViewBag.txtGroupId = account.GroupId;//集团id
-            var criteria = new Ets.Model.ParameterModel.Authority.AuthoritySearchCriteria() { PagingRequest = new Ets.Model.Common.NewPagingResult (1, 15),GroupId=account.GroupId};
+           ViewBag.txtGroupId = UserContext.Current.GroupId;//集团id
+           var criteria = new Ets.Model.ParameterModel.Authority.AuthoritySearchCriteria() { PagingRequest = new Ets.Model.Common.NewPagingResult(1, 15), GroupId = ViewBag.txtGroupId };
             var authorityModel = iAuthorityMenuProvider.GetAuthorityManage(criteria);
             return View(authorityModel);
         }

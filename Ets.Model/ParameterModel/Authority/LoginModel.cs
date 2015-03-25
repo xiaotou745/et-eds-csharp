@@ -23,4 +23,17 @@ namespace Ets.Model.ParameterModel.Authority
 
         public bool RememberMe { get; set; }
     }
+    /// <summary>
+    /// 登录后存储用户登录信息实体类
+    /// </summary>
+    public class SimpleUserInfoModel
+    { 
+        public int Id { get; set; }
+        public string Password { get; set; }
+        public string UserName { get; set; }
+        public string LoginName { get; set; }
+        public int GroupId { get; set; }
+        public int RoleId { get; set; }
+    }
+
 }

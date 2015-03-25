@@ -113,6 +113,7 @@
     <Compile Include="Util\ConfigSettings.cs" />
     <Compile Include="Util\ConfigUtils.cs" />
     <Compile Include="Util\ConvertHelper.cs" />
+    <Compile Include="Util\CookieHelper.cs" />
     <Compile Include="Util\DnsUtils.cs" />
     <Compile Include="Extension\EnumExtenstion.cs" />
     <Compile Include="Util\EmilHelper.cs" />
