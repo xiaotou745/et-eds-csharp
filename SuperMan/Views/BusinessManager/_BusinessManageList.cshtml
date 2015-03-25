@@ -39,10 +39,7 @@
                     </td>
                     <td>@item.InsertTime</td>
                     <td>
-                        @if (item.GroupId != null) //当前商户有集团信息
-                        {
-                            @Html.Raw(new BusinessProvider().GetGroupNameById(Convert.ToInt32(item.GroupId)))
-                        }
+                        @item.GroupName
                     </td>
                     <td>
                         @{

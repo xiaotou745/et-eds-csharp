@@ -18,5 +18,9 @@ namespace Ets.Model.DataModel.Subsidy
         public Nullable<int> GroupId { get; set; }
         public Nullable<decimal> PKMCost { get; set; }
         public Nullable<int> OrderType { get; set; }
+        /// <summary>
+        /// 集团名称
+        /// </summary>
+        public string GroupName { get; set; }
     }
 }

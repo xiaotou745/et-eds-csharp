@@ -44,6 +44,10 @@
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="MvcPager, Version=2.0.0.1, Culture=neutral, PublicKeyToken=f6872c5a09aed72c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\MvcPager.dll</HintPath>
+    </Reference>
     <Reference Include="MySql.Data, Version=6.9.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\MySql.Data.6.9.5\lib\net45\MySql.Data.dll</HintPath>
@@ -326,6 +330,7 @@
     <Content Include="Content\mycss\page.css" />
     <Content Include="Content\mycss\validation.css" />
     <Content Include="Content\pager.css" />
+    <Content Include="Content\pagestyle\pagerstyles.css" />
     <Content Include="Content\select2-bootstrap.css" />
     <Content Include="Content\select2.css" />
     <Content Include="Content\select2.png" />
@@ -455,6 +460,7 @@
     <Content Include="Scripts\jquery.colorbox-min.js" />
     <Content Include="Scripts\jquery.loadmask.js" />
     <Content Include="Scripts\jquery.ui.datepicker-zh-CN.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -545,6 +551,7 @@
     <Content Include="Views\MenuManager\Menu.cshtml" />
     <Content Include="Views\MenuManager\Department.cshtml" />
     <Content Include="Views\MenuManager\AccountManager.cshtml" />
+    <Content Include="Views\Shared\PagerControl.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

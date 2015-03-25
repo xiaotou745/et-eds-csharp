@@ -1,6 +1,7 @@
 ﻿using Ets.Model.DataModel.Clienter;
 using Ets.Model.DomainModel.Clienter;
 using Ets.Model.ParameterModel.Clienter;
+using ETS.Data.PageData;
 using ETS.Enums;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace Ets.Service.IProvider.Distribution
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        ClienterManage GetClienteres(ClienterSearchCriteria criteria);
+        PageInfo<ClienterListModel> GetClienteres(ClienterSearchCriteria criteria);
         /// <summary>
         /// 更新审核状态
         /// danny-20150318
