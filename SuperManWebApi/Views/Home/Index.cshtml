@@ -77,6 +77,7 @@
 
         //    }
         //});
+
         //$.ajax({
         //    type: 'POST',
         //    dataType: 'json',
@@ -97,6 +98,23 @@
 
         //    }
         //});
+        $.ajax({
+            type: 'get',
+            dataType: 'json',
+            url: '/ClienterAPI/GetMyBalanceDynamic',
+            data: {
+                "phoneNo": "13426401627",
+                "pagedSize": 20,
+                "pagedIndex": 1
+            },
+            success: function (data) {
+                alert(data.MyIncomeName + "," + data.MyInComeAmount + "," + data.InsertTime);
+                console.log(data);
+            },
+            error: function () {
+
+            }
+        });
 
         //$.ajax({
         //    type: 'POST',
@@ -371,25 +389,24 @@
         });
         */
 
-        $.ajax({
-            type: 'POST',
-            dataType: 'json',
-            url: '/BusinessAPI/PostForgetPwd_B',
-            data: {
-                "phoneNumber": "13426401627",
-                "password": "123456",
-                "checkCode":"1234"
+        //$.ajax({
+        //    type: 'POST',
+        //    dataType: 'json',
+        //    url: '/BusinessAPI/PostForgetPwd_B',
+        //    data: {
+        //        "phoneNumber": "13426401627",
+        //        "password": "123456",
+        //        "checkCode":"1234"
 
-            },
-            success: function (data) {
-                console.log(data);
-            },
-            error: function () {
-            }
-        });
+        //    },
+        //    success: function (data) {
+        //        console.log(data);
+        //    },
+        //    error: function () {
+        //    }
+        //});
 
 
-        PostModifyPwd_C
 
         //$.ajax({
         //    type: 'POST',
