@@ -30,7 +30,7 @@ namespace SuperMan.Controllers
        /// <returns></returns>
         public ActionResult AuthorityManager()
         {
-           if (UserContext.Current.Id == 0)
+            if (SuperMan.App_Start.UserContext.Current.Id == 0)
            {
                Response.Redirect("/account/login");
                return null;
