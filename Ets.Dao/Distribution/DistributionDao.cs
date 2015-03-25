@@ -63,7 +63,7 @@ namespace Ets.Dao.Distribution
             {
                 sbSqlWhere.AppendFormat(" AND Status={0} ", criteria.Status);
             }
-            if (criteria.GroupId != null)
+            if (criteria.GroupId != null && criteria.GroupId > 0)
             {
                 sbSqlWhere.AppendFormat(" AND GroupId={0} ", criteria.GroupId);
             }

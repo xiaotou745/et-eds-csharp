@@ -8,7 +8,7 @@ namespace SuperMan.Authority
 {
     public interface IAuthenticationService
     {
-        void SignIn(string userId, bool createPersistentCookie);
+        void SignIn(string data);
         void SignOut();
     }
 }

@@ -9,6 +9,28 @@ namespace Ets.Service.IProvider.Common
 {
     public interface IHomeCountProvider
     {
+        /// <summary>
+        /// 获取首页统计数据
+        /// 窦海超
+        /// 2015年3月25日 14:16:25
+        /// </summary>
+        /// <returns></returns>
         HomeCountTitleModel GetHomeCountTitle();
+
+        /// <summary>
+        /// 获取首页统计数据的列表
+        /// 窦海超
+        /// 2015年3月25日 14:16:25
+        /// </summary>
+        /// <returns></returns>
+        IList<HomeCountTitleModel> GetHomeCountTitleToList(int DayCount);
+
+            /// <summary>
+        /// 获取总统计数据
+        /// 窦海超
+        /// 2015年3月25日 15:33:00
+        /// </summary>
+        /// <returns></returns>
+        HomeCountTitleModel GetHomeCountTitleToAllData();
     }
 }
