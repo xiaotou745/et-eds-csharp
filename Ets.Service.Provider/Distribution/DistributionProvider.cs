@@ -28,15 +28,11 @@ namespace Ets.Service.Provider.Distribution
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        public ClienterManage GetClienteres(ClienterSearchCriteria criteria)
+        public PageInfo<ClienterListModel> GetClienteres(ClienterSearchCriteria criteria)
         {
             var pagedQuery = new ClienterManage();
             PageInfo<ClienterListModel> pageinfo = dao.GetClienteres<ClienterListModel>(criteria);
-            NewPagingResult pr = new NewPagingResult() { PageIndex = criteria.PagingRequest.PageIndex, PageSize = criteria.PagingRequest.PageSize, RecordCount = pageinfo.All, TotalCount = pageinfo.All };
-            List<ClienterListModel> list = pageinfo.Records.ToList();
-            var clenterlists = new ClienterManageList(list, pr);
-            pagedQuery.clienterManageList = clenterlists;
-            return pagedQuery;
+            return pageinfo;
         }
         /// <summary>
         /// 更新审核状态

@@ -187,6 +187,7 @@
     });
     //删除
     $(".accountDel").bind("click", function () {
+        
         var id = $(this).closest("tr").attr("id");
         var paramaters = { "id": id };
         var url = "/AuthorityManager/Delete";

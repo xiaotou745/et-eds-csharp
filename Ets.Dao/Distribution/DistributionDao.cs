@@ -69,7 +69,7 @@ namespace Ets.Dao.Distribution
             }
             string tableList = @" clienter  WITH (NOLOCK)   ";
             string orderByColumn = " Id DESC";
-            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
         /// <summary>
         /// 更新审核状态
