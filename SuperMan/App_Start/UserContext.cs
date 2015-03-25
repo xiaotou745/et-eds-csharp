@@ -60,6 +60,20 @@ namespace SuperMan.App_Start
             return has;
         }
 
+        /// <summary>
+        /// 判断用户是否有某权限()
+        /// </summary>
+        /// <param name="menuid">权限id</param>
+        /// <returns></returns>
+        public bool HasAuthority(int menuid)
+        {
+            if (this == UserContext.Empty)
+            {
+                return false;
+            }
+            return new AuthorityMenuProvider().HasAuthority(UserContext.Current.Id, menuid);
+        }
+
         public int Id { get; set; }
 
         public int AppChannelId { get; set; }

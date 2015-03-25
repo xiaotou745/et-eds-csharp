@@ -186,11 +186,11 @@ namespace SuperMan.Controllers
         /// 返回账户权限菜单
         /// </summary>
         /// <returns></returns>
-        [HttpPost]
+        [HttpGet]
         public JsonResult GetMenusByAccount(int aid)
         {
-            var list = _iAuhority.GetMenuIdsByAccountId(aid) ?? new List<int>();
-            return Json(new ResultModel(true, "", list), JsonRequestBehavior.AllowGet);
+            var list = _iAuhority.GetMenuIdsByAccountId(aid); 
+            return Json(list!=null ? new ResultModel(true, string.Empty,list) : new ResultModel(false, "设置失败!"), JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>
@@ -207,6 +207,26 @@ namespace SuperMan.Controllers
         }
 
         #endregion
+
+         
+        /// <summary>
+        /// 返回按钮视图
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult MenuButton(int pid)
+        {
+            ViewBag.ParId = pid;
+            ViewBag.PartMenu = _iAuhority.GetMenuById(pid);
+            if (ViewBag.PartMenu == null)
+            {
+                Response.Redirect("/MenuManager/Menu/"+pid);
+                return null;
+            }
+            var list = _iAuhority.GetMenuList(pid);
+            return View(list);
+        }
+
+        
 
     }
 }

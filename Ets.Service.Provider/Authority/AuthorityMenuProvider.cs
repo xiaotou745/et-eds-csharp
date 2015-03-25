@@ -519,6 +519,17 @@ using ETS.Data.PageData;
             return _dao.HasAuthority(accountId, authorityName);
         }
 
+        /// <summary>
+        /// 验证用户权限
+        /// danny-20150324
+        /// </summary>
+        /// <param name="accountId"></param>
+        /// <param name="menuid"></param>
+        /// <returns></returns>
+        public bool HasAuthority(int accountId, int  menuid)
+        {
+            return _dao.CheckPermission(accountId, menuid);
+        }
       
     }
 }

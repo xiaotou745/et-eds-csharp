@@ -545,6 +545,7 @@
     <Content Include="Views\MenuManager\Menu.cshtml" />
     <Content Include="Views\MenuManager\Department.cshtml" />
     <Content Include="Views\MenuManager\AccountManager.cshtml" />
+    <Content Include="Views\MenuManager\MenuButton.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
