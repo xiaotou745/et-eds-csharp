@@ -1,18 +1,28 @@
 ﻿
 @using Ets.Model.DataModel.Authority
 @using Ets.Service.Provider.Authority
+@using ETS.Util
 @using SuperMan.App_Start
 @using Ets.Service.IProvider.AuthorityMenu;
 @{
-    Layout = null;
+    Layout = null; 
     IAuthorityMenuProvider iauthority=new AuthorityMenuProvider();
-    List<int> myMenusR = iauthority.GetMenuIdsByRoloId(UserContext.Current.RoleId);
-    List<int> myMenus = iauthority.GetMenuIdsByAccountId(UserContext.Current.Id);
-    if (myMenusR!=null)
+    List<AuthorityMenuModel> menus = iauthority.GetAllMenuList(); //所有菜单权限
+    List<int> myMenus = null;//我的权限菜单数组
+    string cookieValue =CookieHelper.ReadCookie("menulist");
+    if (cookieValue == "")
     {
-        myMenus.AddRange(myMenusR);
+        List<int> myMenusR = iauthority.GetMenuIdsByRoloId(UserContext.Current.RoleId);
+        myMenus = iauthority.GetMenuIdsByAccountId(UserContext.Current.Id);
+        if (myMenusR!=null)
+        {
+            myMenus.AddRange(myMenusR);
+        }  
+    }
+    else
+    {
+        myMenus = Letao.Util.JsonHelper.ToObject<List<int>>(cookieValue); 
     } 
-    List<AuthorityMenuModel> menus = iauthority.GetAllMenuList();
 }
 <!DOCTYPE html>
 

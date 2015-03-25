@@ -22,7 +22,7 @@ namespace SuperMan.Controllers
     /// </summary>
     [Authorize]
     [WebHandleError]
-    public class BusinessCommissionController : Controller
+    public class BusinessCommissionController : BaseController
     {
         /// <summary>
         /// 商户业务类
@@ -35,16 +35,17 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult BusinessCommission()
         {
-            SuperManDataAccess.account account = HttpContext.Session["user"] as SuperManDataAccess.account;
-            if (account == null)
-            {
-                Response.Redirect("/account/login");
-                return null;
-            } 
-            ViewBag.txtGroupId = account.GroupId;//集团id
+            //SuperManDataAccess.account account = HttpContext.Session["user"] as SuperManDataAccess.account;
+            //if (account == null)
+            //{
+            //    Response.Redirect("/account/login");
+            //    return null;
+            //} 
+            //ViewBag.txtGroupId = account.GroupId;//集团id
+            ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;
             DateTime t1=new DateTime(1997,1,1);
             DateTime t2 = DateTime.Now;
-            var result = iBusinessProvider.GetBusinessCommission(t1, t2, "", account.GroupId??0);
+            var result = iBusinessProvider.GetBusinessCommission(t1, t2, "", SuperMan.App_Start.UserContext.Current.GroupId);
             if (!result.Result)
             {
                 return View();

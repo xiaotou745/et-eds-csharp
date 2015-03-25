@@ -76,7 +76,8 @@
                         @{
                 if (@item.Status == 1)
                 {
-                    if (SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.BusiAudit))
+
+                    if (SuperMan.App_Start.UserContext.Current.HasAuthority(22))
                     {
                         <a href="javascript:void(0)" style="color:gray" businessid="@item.Id" class="businessOk">审核通过</a>
                             <a href="javascript:void(0)" businessid="@item.Id" class="businessCel">取消资格</a>
@@ -84,14 +85,18 @@
                 }
                 else
                 {
-                    if (SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.BusiAudit))
+                    if (SuperMan.App_Start.UserContext.Current.HasAuthority(22))
                     {
                         <a href="javascript:void(0)" businessid="@item.Id" class="businessOk">审核通过</a>
                             <a href="javascript:void(0)" style="color:gray" businessid="@item.Id" class="businessCel">取消资格</a>
                     }
                 }
                         }
-                    <a href="javascript:void(0)" onclick="funcComView(@item.Id,'@item.Name','@item.Address','@item.PhoneNo','@item.BusinessCommission')">设置结算比例</a>
+                    @if (SuperMan.App_Start.UserContext.Current.HasAuthority(24))
+                    {
+                         <a href="javascript:void(0)" onclick="funcComView(@item.Id,'@item.Name','@item.Address','@item.PhoneNo','@item.BusinessCommission')">设置结算比例</a>
+                    }
+                   
                     </td>
                 </tr>
             }

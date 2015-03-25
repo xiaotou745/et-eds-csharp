@@ -1,52 +1,34 @@
-﻿using System.Web;
-using Ets.Service.IProvider.AuthorityMenu;
+﻿using System.Collections.Generic;
+using System.Web;
+using ETS.Const;
+using Ets.Model.ParameterModel.Authority;
 using Ets.Service.Provider.Authority;
+using ETS.Util;
 using SuperManCommonModel;
-using SuperManBusinessLogic.Authority_Logic;
 
 namespace SuperMan.App_Start
 {
     public class UserContext
     {
-        private static readonly UserContext Empty = new UserContext();
-
-        private const string CurrentUserContextCacheKey = "UserContext";
-
+        private static readonly UserContext Empty = new UserContext(); 
         public static UserContext Current
         {
             get
             {
-                if (HttpContext.Current.Items[CurrentUserContextCacheKey] == null)
+                var cookie = ETS.Util.CookieHelper.ReadCookie(SystemConst.cookieName);
+                if (cookie == "")
                 {
-                    var user = HttpContext.Current.User.Identity;
-                    IAuthorityMenuProvider bllAccount = new AuthorityMenuProvider(); 
-                    var account = bllAccount.GetAccountByName(user.Name);
-                    if (account == null)
-                    {
-                        return UserContext.Empty;
-                    } 
-                    var userContext = new UserContext
-                    {
-                        Id = account.Id,
-                        Name = account.LoginName,
-                        RoleId = account.RoleId,
-                        AccountType = AccountType.AdminUser // (AccountType)account.AccountType,
-                    };
-                    //AppChannel accountChannel = account.AppChannels.FirstOrDefault();
-                    //if (accountChannel != null)
-                    //{
-                    //    userContext.AppChannelId = accountChannel.Id;
-                    //}
-
-                    //if (userContext.AccountType == AccountType.General)
-                    //{
-                    //    var gallery = DependencyResolver.Current.GetService<IGalleryBussinessLogic>().GetByAccountId(userContext.Id);
-                    //    userContext.Gallery = gallery;
-                    //}
-
-                    HttpContext.Current.Items[CurrentUserContextCacheKey] = userContext;
+                    return UserContext.Empty;
                 }
-                return HttpContext.Current.Items[CurrentUserContextCacheKey] as UserContext;
+                var userInfo = Letao.Util.JsonHelper.ToObject<SimpleUserInfoModel>(cookie);
+                return new UserContext
+                {
+                    Id = userInfo.Id,
+                    Name = userInfo.LoginName,
+                    RoleId = userInfo.RoleId,
+                    GroupId = ETS.Util.ParseHelper.ToInt(userInfo.GroupId, 0),
+                    AccountType = AccountType.AdminUser
+                };
             }
         }
 
@@ -71,23 +53,24 @@ namespace SuperMan.App_Start
             {
                 return false;
             }
-            return new AuthorityMenuProvider().HasAuthority(UserContext.Current.Id, menuid);
+            string cookieValue = CookieHelper.ReadCookie("menulist");
+            if (cookieValue == "")
+            {
+                return new AuthorityMenuProvider().HasAuthority(UserContext.Current.Id, menuid);
+            }
+            else
+            {
+                var list = Letao.Util.JsonHelper.ToObject<List<int>>(cookieValue);
+                return list.Contains(menuid);
+            } 
         }
 
         public int Id { get; set; }
-
+        public int GroupId { get; set; }
         public int AppChannelId { get; set; }
         public int RoleId { get; set; }
         public AccountType AccountType { get; set; }
-
         public string Name { get; set; }
 
-        //public UserContextModel UserContextModel
-        //{
-        //    get
-        //    {
-        //        return new UserContextModel(this.AccountType, this.Id, this.Gallery == null ? 0 : this.Gallery.Id);
-        //    }
-        //}
     }
 }

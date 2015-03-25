@@ -16,21 +16,21 @@ namespace SuperMan.Controllers
 {
     [Authorize]
     [WebHandleError]
-    public class SubsidyManagerController : Controller
+    public class SubsidyManagerController : BaseController
     {
         ISubsidyProvider iSubsidyProvider = new SubsidyProvider();
         // GET: SubsidyManager
         public ActionResult SubsidyManager()
         {
-            account account = HttpContext.Session["user"] as account;
-            if (account == null)
-            {
-                Response.Redirect("/account/login");
-                return null;
-            }  
-            ViewBag.txtGroupId = account.GroupId;//集团id
+            //account account = HttpContext.Session["user"] as account;
+            //if (account == null)
+            //{
+            //    Response.Redirect("/account/login");
+            //    return null;
+            //}  
+            ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
             Ets.Model.DomainModel.Subsidy.SubsidyManage subsidyManage = new Ets.Model.DomainModel.Subsidy.SubsidyManage();
-            var criteria = new Ets.Model.DomainModel.Subsidy.HomeCountCriteria() { PagingRequest = new Ets.Model.Common.NewPagingResult (1, 15), GroupId = account.GroupId };
+            var criteria = new Ets.Model.DomainModel.Subsidy.HomeCountCriteria() { PagingRequest = new Ets.Model.Common.NewPagingResult (1, 15), GroupId = SuperMan.App_Start.UserContext.Current.GroupId };
             subsidyManage=iSubsidyProvider.GetSubsidyList(criteria);
             return View(subsidyManage);
         }
@@ -55,12 +55,12 @@ namespace SuperMan.Controllers
         [HttpGet]
         public ActionResult SettlementFunction()
         {
-            account account = HttpContext.Session["user"] as account;
-            if (account == null)
-            {
-                Response.Redirect("/account/login");
-                return null;
-            }
+            //account account = HttpContext.Session["user"] as account;
+            //if (account == null)
+            //{
+            //    Response.Redirect("/account/login");
+            //    return null;
+            //}
             
             return View();
         }

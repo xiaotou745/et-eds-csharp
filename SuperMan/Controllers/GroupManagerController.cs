@@ -11,12 +11,12 @@ namespace SuperMan.Controllers
 {
     [Authorize]
     [WebHandleError]
-    public class GroupManagerController : Controller
+    public class GroupManagerController : BaseController
     {
         /// <summary>
         /// 集团业务操作类
         /// </summary>
-        readonly IGroupProvider iGroupServices=new GroupProvider();
+        readonly IGroupProvider iGroupServices = new GroupProvider();
 
         // GET: BusinessManager
         /// <summary>
@@ -25,12 +25,12 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult GroupManager()
         {
-            SuperManDataAccess.account account = HttpContext.Session["user"] as SuperManDataAccess.account;
-            if (account == null)
-            {
-                Response.Redirect("/account/login");
-                return null;
-            }
+            //SuperManDataAccess.account account = HttpContext.Session["user"] as SuperManDataAccess.account;
+            //if (account == null)
+            //{
+            //    Response.Redirect("/account/login");
+            //    return null;
+            //}
             var criteria = new GroupParaModel() { PagingRequest = new NewPagingResult(0, 6) };
             var pagedList = iGroupServices.GetGroupList(criteria);
             return View(pagedList.Data);
@@ -62,33 +62,33 @@ namespace SuperMan.Controllers
         {
             if (string.IsNullOrEmpty(groupname))
             {
-                return Json(new ResultModel(false, "集团名称不能为空")); 
+                return Json(new ResultModel(false, "集团名称不能为空"));
             }
-            if (HttpContext.Session != null && HttpContext.Session["user"] != null)
+            //if (HttpContext.Session != null && HttpContext.Session["user"] != null)
+            //{
+            var account = HttpContext.Session["user"] as SuperManDataAccess.account;
+            var mode = new GroupModel { GroupName = groupname.Trim(), CreateName = account.LoginName, CreateTime = DateTime.Now };
+            var result = iGroupServices.HasExistsGroup(mode);
+            if (result.Result)
             {
-                var account = HttpContext.Session["user"] as SuperManDataAccess.account;
-                var mode=new GroupModel {GroupName = groupname.Trim(), CreateName = account.LoginName, CreateTime = DateTime.Now};
-                var result = iGroupServices.HasExistsGroup(mode);
-                if (result.Result)
+                if (result.Data)
                 {
-                    if (result.Data)
-                    {
-                        return Json(new ResultModel(false, "集团名称已经存在"));
-                    }
+                    return Json(new ResultModel(false, "集团名称已经存在"));
                 }
-                else
-                {
-                    return Json(new ResultModel(false, "服务器异常"));
-                }
-                mode.IsValid = 1;
-                var res = iGroupServices.AddGroup(mode);
-                return Json(res.Result ? new ResultModel(true, "成功") : new ResultModel(false, "服务器异常"));
             }
             else
             {
-                Response.Redirect("/account/login");
-                return null;
+                return Json(new ResultModel(false, "服务器异常"));
             }
+            mode.IsValid = 1;
+            var res = iGroupServices.AddGroup(mode);
+            return Json(res.Result ? new ResultModel(true, "成功") : new ResultModel(false, "服务器异常"));
+            //}
+            //else
+            //{
+            //    Response.Redirect("/account/login");
+            //    return null;
+            //}
         }
 
         /// <summary>
@@ -97,37 +97,37 @@ namespace SuperMan.Controllers
         /// <param name="groupname"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult UpdateGroup(int id,string groupname)
+        public JsonResult UpdateGroup(int id, string groupname)
         {
             if (string.IsNullOrEmpty(groupname))
             {
-                return Json(new ResultModel(false, "集团名称不能为空")); 
+                return Json(new ResultModel(false, "集团名称不能为空"));
             }
-            if (HttpContext.Session != null && HttpContext.Session["user"] !=null)
+            //if (HttpContext.Session != null && HttpContext.Session["user"] != null)
+            //{
+            var account = HttpContext.Session["user"] as SuperManDataAccess.account;
+            var mode = new GroupModel { Id = id, GroupName = groupname.Trim(), CreateName = account.LoginName, CreateTime = DateTime.Now };
+            var result = iGroupServices.HasExistsGroup(mode);
+            if (result.Result)
             {
-                var account = HttpContext.Session["user"] as SuperManDataAccess.account;
-                var mode=new GroupModel {Id=id,GroupName = groupname.Trim(), CreateName = account.LoginName, CreateTime = DateTime.Now};
-                var result = iGroupServices.HasExistsGroup(mode);
-                if (result.Result)
+                if (result.Data)
                 {
-                    if (result.Data)
-                    {
-                        return Json(new ResultModel(false, "集团名称已经存在"));
-                    }
+                    return Json(new ResultModel(false, "集团名称已经存在"));
                 }
-                else
-                {
-                    return Json(new ResultModel(false, "服务器异常"));
-                }
-                var res = iGroupServices.UpdateGroupName(mode);
-                return Json(res.Result ? new ResultModel(true, "成功") : new ResultModel(false, "服务器异常"));
             }
             else
             {
-                Response.Redirect("/account/login");
-                return null;
+                return Json(new ResultModel(false, "服务器异常"));
             }
-        } 
+            var res = iGroupServices.UpdateGroupName(mode);
+            return Json(res.Result ? new ResultModel(true, "成功") : new ResultModel(false, "服务器异常"));
+            //}
+            //else
+            //{
+            //    Response.Redirect("/account/login");
+            //    return null;
+            //}
+        }
 
         /// <summary>
         /// 添加集团Api配置信息
@@ -137,10 +137,10 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult AddGroupConfig(GroupApiConfigModel model)
         {
-            if (model.GroupId==0)
+            if (model.GroupId == 0)
             {
                 return Json(new ResultModel(false, "集团ID不能为空"));
-            } 
+            }
             if (string.IsNullOrEmpty(model.AppKey))
             {
                 return Json(new ResultModel(false, "集团AppKey不能为空"));
@@ -157,7 +157,7 @@ namespace SuperMan.Controllers
             return Json(new ResultModel(false, "服务器异常"));
         }
 
-     
+
         /// <summary>
         /// 更新集团状态
         /// </summary>
@@ -165,13 +165,13 @@ namespace SuperMan.Controllers
         /// <param name="status"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult UpdateStatus(int id,byte status)
+        public JsonResult UpdateStatus(int id, byte status)
         {
             if (id == 0)
             {
                 return Json(new ResultModel(false, "集团ID不能为空"));
-            }  
-            var mod=new GroupModel {Id = id, IsValid =(byte?)(status > 0 ? 0 : 1)};
+            }
+            var mod = new GroupModel { Id = id, IsValid = (byte?)(status > 0 ? 0 : 1) };
             var res = iGroupServices.UpdateGroupStatus(mod);
             if (res.Result)
             {
@@ -180,7 +180,7 @@ namespace SuperMan.Controllers
             return Json(new ResultModel(false, "服务器异常"));
         }
 
-        
+
 
     }
 }
