@@ -8,7 +8,7 @@
 }
 <link rel="stylesheet" type="text/css" href="~/Content/pagestyle/pagerstyles.css" />
 <div>
-    <div style="float:left;width:50%;padding-right: 0px;padding-left: 0px;font-size: 13px;padding-bottom: 10px;color: #48b9ef;padding-top: 10px;font-family: arial, helvetica, sans-serif;background-color: #fff;">
+    <div style="float:left;padding-right: 0px;padding-left: 0px;font-size: 13px;padding-bottom: 10px;color: #48b9ef;padding-top: 10px;font-family: arial, helvetica, sans-serif;background-color: #fff;">
         <span style="">
             共 @pageCount 页 @all 条记录，当前为第 @index 页,本页 @recordsCount 条
         </span>
@@ -18,8 +18,8 @@
           {
               PageIndexParameterName = "pageindex",
               ShowPageIndexBox = true,
-              PageIndexBoxType = PageIndexBoxType.DropDownList,
-              ShowGoButton = false,
+              PageIndexBoxType = PageIndexBoxType.TextBox,
+              ShowGoButton =true,
               CurrentPagerItemWrapperFormatString = "<span class=\"current\">{0}</span>",
           }, null,
                  new MvcAjaxOptions { UpdateTargetId = "dataList", HttpMethod = "Post", DataFormId = "searchForm" }, new { style = "float:right", id = "badoopager" })
