@@ -1,5 +1,4 @@
-﻿@model SuperManCommonModel.Models.HomeCountManage
-@{
+﻿@{
     ViewBag.Title = "后台统计";
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
 }
@@ -22,6 +21,8 @@
 <div>
     @{
         var resultList = @ViewBag.homeCountTitleModel as Ets.Model.Common.HomeCountTitleModel;
+        var homeCountByList=@ViewBag.homeCountTitleToList;
+        var homeCountAllData = @ViewBag.homeCountTitleToAllData as Ets.Model.Common.HomeCountTitleModel;
         <p>
             <table class="tbstyle" width="1000" border="1">
                 <tr class="trclass">
@@ -41,9 +42,13 @@
                         骑士平均完成订单量：@resultList.ClienterAverageOrderCount <br />
                     </td>
                     <td>
-                        商户结算金额（应收）：@resultList.YsPrice  <br />
-                        骑士佣金总计（应付）：@resultList.YfPrice  <br />
-                        盈亏总计：@resultList.YkPrice <br />
+                        商户结算金额（应收）：￥@resultList.YsPrice  <br />
+                        骑士佣金总计（应付）：￥@resultList.YfPrice  <br />
+                        @{
+                            decimal ykPrice = resultList.YkPrice;
+                            string ykStyle = ykPrice>0?"red":"green";
+                        }
+                        盈亏总计：￥<span style="color:@ykStyle">@resultList.YkPrice </span><br />
                     </td>
                 </tr>
             </table>
@@ -51,67 +56,69 @@
     }
 </div>
 <hr />
-<h4 style="color:black;font-weight:600">订单统计</h4>
-<select name="select" class="selectw" id="orderCountSelect" style="margin-bottom:5px; width:143px">
-    <option value="1">今日</option>
-    <option value="2">本周</option>
-    <option value="3">本月</option>
-</select>
-<br />
-<div class="bd clearfix" id="dataListOrder">
-    @Html.Partial("_PartialOrderCount", Model.orderCountManageList)
-</div>
-<hr />
-<h4 style="color:black;font-weight:600">超人统计</h4>
-<select name="select" class="selectw" id="supermanCountSelect" style="margin-bottom:5px;width:143px">
-    <option value="1">今日</option>
-    <option value="2">本周</option>
-    <option value="3">本月</option>
-</select>
-<div class="bd clearfix" id="dataListSuperMan">
-    @Html.Partial("_PartialSuperManCount", Model.clientCountManagerList.clienterCountManageList)
-</div>
-<hr />
-<h4 style="color:black;font-weight:600">商户统计</h4>
-<select name="select" class="selectw" id="busiCountSelect" style="margin-bottom:5px;width:143px">
-    <option value="1">今日</option>
-    <option value="2">本周</option>
-    <option value="3">本月</option>
-</select>
-<div class="bd clearfix" id="dataListBusi">
-    @Html.Partial("_PartialBisuCount", Model.busiCountManagerList.businessCountManageList)
-</div>
+<h3 style="color:black;font-weight:600">总数据统计</h3>
+<div>
+    <p>
+        <table class="tbstyle" width="1000" border="1">
+            <tr class="trclass">
+                <td>总任务量</td>
+                <td>总订单量</td>
+                <td>总订单金额</td>
+                <td>总商户结算金额（应收)</td>
+                <td>总骑士佣金总计（应付)</td>
+                <td>总盈亏总计</td>
+            </tr>
 
-<script type="text/javascript">
-    var DEFAULT_PAGESIZE = 15;
-    var criteria = { PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE } };
-    $(function () {
+            @{
+                double ykAllPirce = (double)Math.Round(homeCountAllData.YsPrice - homeCountAllData.YfPrice, 2);
+                string ykAllStyle = ykAllPirce > 0 ? "red" : "green";
+                    <tr class="trclass">
+                        <td>@homeCountAllData.MisstionCount</td>
+                        <td>@homeCountAllData.OrderCount</td>
+                        <td>@homeCountAllData.OrderPrice</td>
+                        <td>￥@Math.Round(homeCountAllData.YsPrice, 2)</td>
+                        <td>￥@Math.Round(homeCountAllData.YfPrice, 2)</td>
+                        <td>￥<span style="color:@ykAllStyle">@ykAllPirce</span></td>
+                    </tr>
+                }
+        </table>
+    </p>
+    
+    <hr />
 
-        $("#supermanCountSelect").on("change", function () {
-            var status = $("#supermanCountSelect").val();
-            var url = "/HomeCount/supermanCount";
-            refresh(0, url, status, "dataListSuperMan");
-        });
-        $("#busiCountSelect").on("change", function () {
-            var status = $("#busiCountSelect").val();
-            var url = "/HomeCount/busiCount";
-            refresh(0, url, status, "dataListBusi");
-        });
-    });
-    ////分页
-    art.ui.control.Pager.enablePaging(document, refresh);
-    function refresh(pageIndex, url, status, controlId) {
+    <h3 style="color:black;font-weight:600">最近20天数据统计</h3>
+    <div>
+        <p>
+            <table class="tbstyle" width="1000" border="1">
+                <tr class="trclass">
+                    <td>日期</td>
+                    <td>任务总量</td>
+                    <td>订单总量</td>
+                    <td>订单金额</td>
+                    <td>商户结算金额（应收)</td>
+                    <td>骑士佣金总计（应付)</td>
+                    <td>盈亏总计</td>
+                </tr>
 
-        if (pageIndex !== undefined) {
-            criteria.PagingRequest.PageIndex = pageIndex;
-        }
-        criteria.searchType = status;
-        webExpress.utility.ajax.request
-            (
-                url,
-                criteria,
-                function (data) {
-                    $("#" + controlId).html(data);
-                });
-    };
-</script>
+                @{
+                    foreach (var item in homeCountByList)
+                    {
+                        double lykPirce = (double)Math.Round(item.YsPrice - item.YfPrice, 2);
+                        string lykStyle = lykPirce > 0 ? "red" : "green";
+                        <tr class="trclass">
+                            <td>@item.PubDate</td>
+                            <td>@item.MisstionCount</td>
+                            <td>@item.OrderCount</td>
+                            <td>@item.OrderPrice</td>
+                            <td>￥@Math.Round(item.YsPrice, 2)</td>
+                            <td>￥@Math.Round(item.YfPrice, 2)</td>
+                            <td>￥<span style="color:@lykStyle">@lykPirce</span></td>
+                        </tr>
+                    }
+
+
+                }
+            </table>
+        </p>
+
+    </div>

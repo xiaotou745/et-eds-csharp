@@ -28,11 +28,23 @@ namespace Ets.Service.Provider.Common
             BusinessDao businessDao = new BusinessDao();
             OrderDao orderDao = new OrderDao();
             HomeCountTitleModel temp = new HomeCountTitleModel();
-            temp = orderDao.GetCurrentDateCountAndMoney(model);//获取当天,订单金额:任务量：订单量：
+
+            //获取当天,订单金额:任务量：订单量：
+            //商户结算金额（应收）; 骑士佣金总计（应付）
+            string CurrentTime = DateTime.Now.ToString("yyyy-MM-dd");
+            IList<HomeCountTitleModel> homeCountList = orderDao.GetCurrentDateCountAndMoney(CurrentTime, CurrentTime);
+            if (homeCountList != null && homeCountList.Count > 0)
+            {
+                temp = homeCountList[0];
+            }
 
             model.OrderPrice = temp.OrderPrice;// 订单金额
             model.MisstionCount = temp.MisstionCount;// 任务量
             model.OrderCount = temp.OrderCount;// 订单量
+            model.YsPrice = Math.Round(temp.YsPrice, 2);// 商户结算金额（应收）
+            model.YfPrice = Math.Round(temp.YfPrice, 2);// 骑士佣金总计（应付）
+            model.YkPrice = Math.Round(model.YsPrice - model.YfPrice, 2); //盈亏总计：+
+            model.PubDate = temp.PubDate;//发布时间
 
             temp = clienterDao.GetCountAndMoney(model);//获取已申请骑士，通过骑士数量 
             model.RzqsCount = temp.RzqsCount; // 认证骑士数量
@@ -40,14 +52,6 @@ namespace Ets.Service.Provider.Common
 
             temp = businessDao.GetCurrentBusinessCount(model);// 商家总数：
             model.BusinessCount = temp.BusinessCount;//商家总数
-
-            temp = businessDao.GetCurrentBusinessYSPrice(model);//商户结算金额（应收）
-            model.YsPrice = Math.Round(temp.YsPrice,2);// 商户结算金额（应收）
-
-            temp = clienterDao.GetCurrentBusinessYFPrice(model);//骑士佣金总计（应付）
-            model.YfPrice =  Math.Round(temp.YfPrice,2);// 骑士佣金总计（应付）
-
-            model.YkPrice = Math.Round(model.YsPrice - model.YfPrice, 2); //盈亏总计：+
 
             model.BusinessAverageOrderCount = ParseHelper.ToDivision(model.OrderCount, model.BusinessCount);//商户平均发布订单：
             model.MissionAverageOrderCount = ParseHelper.ToDivision(model.OrderCount, model.MisstionCount);//任务平均订单量
@@ -57,5 +61,30 @@ namespace Ets.Service.Provider.Common
         }
 
 
+
+        /// <summary>
+        /// 获取首页统计数据的列表
+        /// 窦海超
+        /// 2015年3月25日 14:16:25
+        /// </summary>
+        /// <returns></returns>
+        public IList<HomeCountTitleModel> GetHomeCountTitleToList(int DayCount)
+        {
+            string StartTime = DateTime.Now.AddDays(ParseHelper.ToInt("-" + DayCount, 1)).ToString("yyyy-MM-dd");
+
+            string EndTime = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
+           return new OrderDao().GetCurrentDateCountAndMoney(StartTime, EndTime);
+        }
+
+
+        /// <summary>
+        /// 获取总统计数据
+        /// 窦海超
+        /// 2015年3月25日 15:33:00
+        /// </summary>
+        /// <returns></returns>
+        public HomeCountTitleModel GetHomeCountTitleToAllData() {
+           return new OrderDao().GetHomeCountTitleToAllDataSql();
+        }
     }
 }

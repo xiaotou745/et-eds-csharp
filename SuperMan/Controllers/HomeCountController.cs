@@ -27,17 +27,22 @@ namespace SuperMan.Controllers
             {
                 Response.Redirect("/account/login");
                 return null;
-            } 
-            HomeCountManage homeCountManage = new HomeCountManage();
-            var criteria = new HomeCountCriteria() { PagingRequest = new PagingResult(0, 15), searchType = 1 };
-            var busiCriteria = new BusinessSearchCriteria() { PagingRequest = new PagingResult(0, 15), searchType = 1 };
-            var clientCriteria = new ClienterSearchCriteria() { PagingRequest = new PagingResult(0, 15), searchType = 1 };
-            homeCountManage.orderCountManageList = OrderLogic.orderLogic().GetOrderCount(criteria);
-            homeCountManage.busiCountManagerList = BusiLogic.busiLogic().GetBusinessesCount(busiCriteria);
-            homeCountManage.clientCountManagerList = ClienterLogic.clienterLogic().GetClienteresCount(clientCriteria);
-            //HomeCountTitleModel homeCountTitleModel = OrderLogic.orderLogic().GetHomeCountTitle();
-            ViewBag.homeCountTitleModel = new Ets.Service.Provider.Common.HomeCountProvider().GetHomeCountTitle();
-            return View(homeCountManage);
+            }
+            //HomeCountManage homeCountManage = new HomeCountManage();
+            //var criteria = new HomeCountCriteria() { PagingRequest = new PagingResult(0, 15), searchType = 1 };
+            //var busiCriteria = new BusinessSearchCriteria() { PagingRequest = new PagingResult(0, 15), searchType = 1 };
+            //var clientCriteria = new ClienterSearchCriteria() { PagingRequest = new PagingResult(0, 15), searchType = 1 };
+            //homeCountManage.orderCountManageList = OrderLogic.orderLogic().GetOrderCount(criteria);
+            //homeCountManage.busiCountManagerList = BusiLogic.busiLogic().GetBusinessesCount(busiCriteria);
+            //homeCountManage.clientCountManagerList = ClienterLogic.clienterLogic().GetClienteresCount(clientCriteria);
+
+
+            Ets.Service.Provider.Common.HomeCountProvider homeCountProvider = new Ets.Service.Provider.Common.HomeCountProvider();
+
+            ViewBag.homeCountTitleToAllData = homeCountProvider.GetHomeCountTitleToAllData();
+            ViewBag.homeCountTitleToList = homeCountProvider.GetHomeCountTitleToList(21);
+            ViewBag.homeCountTitleModel = homeCountProvider.GetHomeCountTitle();
+            return View();
         }
         [HttpPost]
         public ActionResult orderCount(HomeCountCriteria criteria)
