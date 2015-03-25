@@ -44,9 +44,8 @@
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="MvcPager, Version=2.0.0.1, Culture=neutral, PublicKeyToken=f6872c5a09aed72c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\MvcPager.dll</HintPath>
+    <Reference Include="MvcPager">
+      <HintPath>..\lib\MvcPager.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data, Version=6.9.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <Private>True</Private>
