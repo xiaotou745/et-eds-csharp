@@ -456,15 +456,10 @@ using ETS.Data.PageData;
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        public AuthorityManage GetAuthorityManage(AuthoritySearchCriteria criteria)
+        public PageInfo<account> GetAuthorityManage(AuthoritySearchCriteria criteria)
         {
-            var pagedQuery = new AuthorityManage();
             PageInfo<account> pageinfo = _dao.GetAuthorityManage<account>(criteria);
-            NewPagingResult pr = new NewPagingResult() { PageIndex = criteria.PagingRequest.PageIndex, PageSize = criteria.PagingRequest.PageSize, RecordCount = pageinfo.All, TotalCount = pageinfo.All };
-            List<account> list = pageinfo.Records.ToList();
-            var authoritylists = new AuthorityManageList(list, pr);
-            pagedQuery.authorityManageList = authoritylists;
-            return pagedQuery;
+            return pageinfo;
         }
         /// <summary>
         /// 检查当前用户是否存在

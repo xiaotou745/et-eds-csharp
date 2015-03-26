@@ -10,8 +10,9 @@ using System.Threading.Tasks;
 
 namespace Ets.Model.ParameterModel.Order
 {
-    public class OrderSearchCriteria
+    public class OrderSearchCriteria : ListParaBase
     {
+        private int status = -1; //默认查询所有状态
         public NewPagingResult PagingRequest { get; set; }
         public IList<OrderByItem<order>> OrderByItems { get; set; }
 
@@ -22,7 +23,11 @@ namespace Ets.Model.ParameterModel.Order
         public string OriginalOrderNo { get; set; } //原平台订单号
         public string superManName { get; set; }  //超人姓名
         public string businessName { get; set; }  //商户名称
-        public int orderStatus { get; set; }      //订单状态
+        public int orderStatus  //订单状态
+        {
+            get { return status; }
+            set { status = value; }
+        }   
         public string orderPubStart { get; set; }
         public string orderPubEnd { get; set; }
         /// <summary>

@@ -231,15 +231,10 @@ namespace Ets.Service.Provider.User
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        public BusinessManage GetBusinesses(BusinessSearchCriteria criteria)
+        public PageInfo<BusListResultModel> GetBusinesses(BusinessSearchCriteria criteria)
         {
-            var pagedQuery = new BusinessManage();
             PageInfo<BusListResultModel> pageinfo = dao.GetBusinesses<BusListResultModel>(criteria);
-            NewPagingResult pr = new NewPagingResult() { PageIndex = criteria.PagingRequest.PageIndex, PageSize = criteria.PagingRequest.PageSize, RecordCount = pageinfo.All, TotalCount = pageinfo.All };
-            List<BusListResultModel> list = pageinfo.Records.ToList();
-            var businesslists = new BusinessManageList(list, pr);
-            pagedQuery.businessManageList = businesslists;
-            return pagedQuery;
+            return pageinfo;
         }
         /// <summary>
         /// 更新审核状态
@@ -344,6 +339,18 @@ namespace Ets.Service.Provider.User
         public IList<GroupModel> GetGroups()
         {
             return dao.GetGroups();
+        }
+
+        /// <summary>
+        /// 商户修改外送费
+        /// wc
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <param name="waiSongFei"></param>
+        /// <returns></returns>
+        public int ModifyWaiMaiPrice(int businessId, decimal waiSongFei)
+        {
+            return dao.ModifyWaiMaiPrice(businessId, waiSongFei);
         }
     }
 }

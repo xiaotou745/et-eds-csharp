@@ -5,7 +5,7 @@ namespace Ets.Model.ParameterModel.Group
     /// <summary>
     /// 集团查询条件实体-平扬 2015.3.16
     /// </summary>
-    public class GroupParaModel
+    public class GroupParaModel : ListParaBase
     {
         /// <summary>
         /// app_key唯一值

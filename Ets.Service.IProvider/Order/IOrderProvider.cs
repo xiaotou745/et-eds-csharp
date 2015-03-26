@@ -4,6 +4,7 @@ using Ets.Model.DomainModel.Clienter;
 using Ets.Model.DomainModel.Order;
 using Ets.Model.ParameterModel.Bussiness;
 using Ets.Model.ParameterModel.Order;
+using ETS.Data.PageData;
 using ETS.Util;
 using System;
 using System.Collections.Generic;
@@ -48,7 +49,7 @@ namespace Ets.Service.IProvider.Order
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        OrderManage GetOrders(OrderSearchCriteria criteria);
+        PageInfo<OrderListModel> GetOrders(OrderSearchCriteria criteria);
         /// <summary>
         /// 更新订单佣金
         /// danny-20150320

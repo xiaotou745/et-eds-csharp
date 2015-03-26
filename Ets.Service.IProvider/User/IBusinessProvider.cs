@@ -72,7 +72,7 @@ namespace Ets.Service.IProvider.User
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        BusinessManage GetBusinesses(BusinessSearchCriteria criteria);
+        PageInfo<BusListResultModel> GetBusinesses(BusinessSearchCriteria criteria);
         /// <summary>
         /// 更新审核状态
         /// danny-20150317
@@ -133,5 +133,13 @@ namespace Ets.Service.IProvider.User
         /// </summary>
         /// <returns></returns>
         IList<GroupModel> GetGroups();
+        /// <summary>
+        /// 商户修改外送费
+        /// wc
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <param name="waiSongFei"></param>
+        /// <returns></returns>
+        int ModifyWaiMaiPrice(int businessId, decimal waiSongFei);
     }
 }

@@ -284,7 +284,7 @@ namespace Ets.Dao.User
             }
             string tableList = @" business  b WITH (NOLOCK)  LEFT JOIN dbo.[group] g WITH(NOLOCK) ON g.Id = b.GroupId ";
             string orderByColumn = " b.Id DESC";
-            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
         /// <summary>
         ///  新增店铺
@@ -646,5 +646,21 @@ namespace Ets.Dao.User
             return model;
         }
 
+        /// <summary>
+        /// 根据商户Id修改外送费
+        /// wc
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <param name="waiSongFei"></param>
+        /// <returns></returns>
+        public int ModifyWaiMaiPrice(int businessId, decimal waiSongFei)
+        {
+            string upSql = @"UPDATE dbo.business SET DistribSubsidy = @waiSongFei WHERE Id = @businessId";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@waiSongFei", waiSongFei);
+            parm.AddWithValue("@businessId", businessId);
+            object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Write, upSql, parm);
+            return ParseHelper.ToInt(executeScalar, 0);
+        }
     }
 }
