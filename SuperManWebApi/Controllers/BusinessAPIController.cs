@@ -43,51 +43,65 @@ namespace SuperManWebApi.Controllers
             return bprovider.PostRegisterInfo_B(model);
         }
 
+        ///// <summary>
+        ///// B端注册，供第三方使用
+        ///// </summary>
+        ///// <param name="model">注册用户基本数据信息</param>
+        ///// <returns></returns>
+        //[ActionStatus(typeof(CustomerRegisterStatus))]
+        //[HttpPost]
+        //public ResultModel<NewBusiRegisterResultModel> NewPostRegisterInfo_B(NewRegisterInfoModel model)
+        //{
+        //    if (string.IsNullOrWhiteSpace(model.PhoneNo))   //手机号非空验证
+        //        return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
+        //    //else if (BusiLogic.busiLogic().CheckExistPhone(model.PhoneNo))  //判断该手机号是否已经注册过
+        //    //    return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberRegistered);
+        //    else if (string.IsNullOrWhiteSpace(model.B_OriginalBusiId.ToString()))  //判断原平台商户Id不能为空
+        //        return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.OriginalBusiIdEmpty);
+        //    else if (string.IsNullOrWhiteSpace(model.B_GroupId.ToString()))  //集团Id不能为空
+        //        return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.GroupIdEmpty);
+        //    else if (BusiLogic.busiLogic().CheckExistBusi(model.B_OriginalBusiId, model.B_GroupId))
+        //        return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.OriginalBusiIdRepeat);
+        //    else if (string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_CityCode.ToString())) //城市以及城市编码非空验证
+        //        return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
+        //    else if (string.IsNullOrEmpty(model.B_Name.Trim())) //商户名称
+        //        return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiNameEmpty);
+        //    else if (string.IsNullOrWhiteSpace(model.Address) || string.IsNullOrWhiteSpace(model.B_Province) || string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_Area) || string.IsNullOrWhiteSpace(model.B_AreaCode) || string.IsNullOrWhiteSpace(model.B_CityCode) || string.IsNullOrWhiteSpace(model.B_ProvinceCode))  //商户地址 省市区 不能为空
+        //        return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
+        //    else if (model.CommissionTypeId == 0)
+        //    {
+        //        return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
+        //    }
+        //    if (string.IsNullOrEmpty(model.B_Password))   //密码为空时 设置默认密码
+        //        model.B_Password = MD5Helper.MD5("abc123");
+        //    else
+        //    {
+        //        model.B_Password = MD5Helper.MD5(model.B_Password);
+        //    }
+        //    var business = NewRegisterInfoModelTranslator.Instance.Translate(model);
+        //    bool result = BusiLogic.busiLogic().Add(business, true);
+        //    var resultModel = new NewBusiRegisterResultModel
+        //    {
+        //        BusiRegisterId = business.Id
+        //    };
+        //    LogHelper.LogWriter("第三方调用商户注册接口", new { model = model, Message = CustomerRegisterStatus.Success });
+        //    return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
+        //}
+
+
         /// <summary>
-        /// B端注册，供第三方使用
+        /// B端注册，供第三方使用-平扬 2015.3.26修改成 ado方式
         /// </summary>
         /// <param name="model">注册用户基本数据信息</param>
         /// <returns></returns>
-        [ActionStatus(typeof(CustomerRegisterStatus))]
+        [ActionStatus(typeof(Ets.Model.ParameterModel.Bussiness.CustomerRegisterStatus))]
         [HttpPost]
-        public ResultModel<NewBusiRegisterResultModel> NewPostRegisterInfo_B(NewRegisterInfoModel model)
+        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.NewBusiRegisterResultModel> NewPostRegisterInfo_B(Ets.Model.ParameterModel.Bussiness.NewRegisterInfoModel model)
         {
-            if (string.IsNullOrWhiteSpace(model.PhoneNo))   //手机号非空验证
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
-            //else if (BusiLogic.busiLogic().CheckExistPhone(model.PhoneNo))  //判断该手机号是否已经注册过
-            //    return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberRegistered);
-            else if (string.IsNullOrWhiteSpace(model.B_OriginalBusiId.ToString()))  //判断原平台商户Id不能为空
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.OriginalBusiIdEmpty);
-            else if (string.IsNullOrWhiteSpace(model.B_GroupId.ToString()))  //集团Id不能为空
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.GroupIdEmpty);
-            else if (BusiLogic.busiLogic().CheckExistBusi(model.B_OriginalBusiId, model.B_GroupId))
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.OriginalBusiIdRepeat);
-            else if (string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_CityCode.ToString())) //城市以及城市编码非空验证
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
-            else if (string.IsNullOrEmpty(model.B_Name.Trim())) //商户名称
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiNameEmpty);
-            else if (string.IsNullOrWhiteSpace(model.Address) || string.IsNullOrWhiteSpace(model.B_Province) || string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_Area) || string.IsNullOrWhiteSpace(model.B_AreaCode) || string.IsNullOrWhiteSpace(model.B_CityCode) || string.IsNullOrWhiteSpace(model.B_ProvinceCode))  //商户地址 省市区 不能为空
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
-            else if (model.CommissionTypeId == 0)
-            {
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
-            }
-            if (string.IsNullOrEmpty(model.B_Password))   //密码为空时 设置默认密码
-                model.B_Password = MD5Helper.MD5("abc123");
-            else
-            {
-                model.B_Password = MD5Helper.MD5(model.B_Password);
-            }
-            var business = NewRegisterInfoModelTranslator.Instance.Translate(model);
-            bool result = BusiLogic.busiLogic().Add(business, true);
-            var resultModel = new NewBusiRegisterResultModel
-            {
-                BusiRegisterId = business.Id
-            };
-            LogHelper.LogWriter("第三方调用商户注册接口", new { model = model, Message = CustomerRegisterStatus.Success });
-            return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
+            var bprovider = new BusinessProvider();
+            return bprovider.NewPostRegisterInfo_B(model);
         }
-
+         
 
         /// <summary>
         /// B端取消订单，供第三方使用
