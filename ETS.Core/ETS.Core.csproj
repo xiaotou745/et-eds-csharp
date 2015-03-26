@@ -134,6 +134,7 @@
     <Compile Include="Util\ParseHelper.cs" />
     <Compile Include="Util\StringHelper.cs" />
     <Compile Include="Util\StringVerify.cs" />
+    <Compile Include="Util\TimeHelper.cs" />
     <Compile Include="Util\TranslatorBase.cs" />
     <Compile Include="Util\ValidationHelper.cs" />
     <Compile Include="Util\XmlHelper.cs" />

@@ -17,5 +17,10 @@ namespace Ets.Model.ParameterModel.Order
         /// </summary>
         [Required]
         public string order_no { get; set; }
+        /// <summary>
+        /// E代送内部订单状态
+        /// </summary>
+        [Required]
+        public int status { get; set; }
     }
 }
