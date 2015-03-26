@@ -28,9 +28,10 @@
             //var path=System.IO.Path.Combine(SuperManCore.CustomerIconUploader.Instance.RelativePath,).ToForwardSlashPath();
             foreach (var item in Model.Records)
             {
-                var address = !string.IsNullOrEmpty(@item.Address) ? @item.Address: "";
-                address = Regex.Replace(address, @"\r\n", "");
-                address = address.Replace(" ", "");
+ 
+                var address = !string.IsNullOrEmpty(@item.Address) ? @item.Address: "无地址";                
+                address = address.Replace((char)13, (char)0);
+                address = address.Replace((char)10, (char)0);
                 i++;
                 <tr id="@item.Id">
                     <td>@item.Id</td>
