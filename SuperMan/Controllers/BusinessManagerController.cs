@@ -1,4 +1,5 @@
-﻿using Ets.Service.IProvider.User;
+﻿using System.Text.RegularExpressions;
+using Ets.Service.IProvider.User;
 using Ets.Service.Provider.User;
 using SuperManBusinessLogic.B_Logic;
 using SuperManCommonModel.Entities;
@@ -26,13 +27,6 @@ namespace SuperMan.Controllers
         [HttpGet]
         public ActionResult BusinessManager()
         {
-            //account account = HttpContext.Session["user"] as account;
-            //if (account == null)
-            //{
-            //    Response.Redirect("/account/login");
-            //    return null;
-            //}
-
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
             var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria() { Status = -1, GroupId = SuperMan.App_Start.UserContext.Current.GroupId };
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
