@@ -32,6 +32,11 @@ namespace ETS
         /// </summary>
         public static string SmsContentFindPassword { get { return ConfigKey("SmsContentCheckCodeFindPwd"); } }
 
+        /// <summary>
+        /// 验证手机号是否存在
+        /// </summary>
+        public static string SmsContentCheckCode { get { return ConfigKey("SmsContentCheckCode"); } }
+
         #region 取Web.Config值
 
         /// <summary>

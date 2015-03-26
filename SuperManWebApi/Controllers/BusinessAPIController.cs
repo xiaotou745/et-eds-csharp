@@ -434,11 +434,16 @@ namespace SuperManWebApi.Controllers
 
         /// <summary>
         /// 请求动态验证码  (注册)
-        /// c</summary>
+        /// 窦海超
+        /// 2015年3月26日 17:46:08
+        /// </summary>
+        /// <param name="PhoneNumber">手机号码</param>
+        /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.SendCheckCodeStatus))]
         [HttpGet]
         public Ets.Model.Common.SimpleResultModel CheckCode(string PhoneNumber)
         {
+            /*
             if (!CommonValidator.IsValidPhoneNumber(PhoneNumber))  //验证电话号码合法性
             {
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
@@ -463,7 +468,8 @@ namespace SuperManWebApi.Controllers
             catch (Exception)
             {
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.SendFailure);
-            }
+            }*/
+            return new BusinessProvider().CheckCode(PhoneNumber);
         }
 
         /// <summary>
