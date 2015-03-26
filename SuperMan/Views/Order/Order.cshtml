@@ -1,4 +1,4 @@
-﻿@model Ets.Model.DomainModel.Order.OrderManage
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Order.OrderListModel>
 @using Ets.Model
 @{
     ViewBag.Title = "Order";
@@ -12,24 +12,28 @@
     <h2 class="crumbs">
         您所在位置：订单 > 订单管理
     </h2>
-    <div class="SearchMd">
+    @using (Ajax.BeginForm("PostOrder", new RouteValueDictionary { { "pageindex", "" } },
+    new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+    new RouteValueDictionary { { "id", "searchForm" } }))
+    {
+         <div class="SearchMd">
         <table border="0" cellspacing="0" cellpadding="0" style="width:1080px">
             <tr>
                 <td>
                     <span class="">超人电话: </span>
-                    <input id="txtSuperManPhone" type="tel" />
+                    <input id="txtSuperManPhone" type="tel" name="superManPhone" />
                     <span class="">超人姓名: </span>
-                    <input id="txtSuperManName" type="text" width="90px" />
+                    <input id="txtSuperManName" type="text" width="90px" name="superManName" />
                     <span class="">商户电话: </span>
-                    <input id="txtBusinessPhone" type="tel" />
+                    <input id="txtBusinessPhone" type="tel" name="businessPhone" />
                     <span class="">商户名称: </span>
-                    <input id="txtBusinessName" type="text" />
+                    <input id="txtBusinessName" type="text" name="businessName" />
                 </td>
             </tr>
             <tr>
                 <td>                
                     <span class="">订单状态: </span>
-                    <select name="select" class="selectw" id="StatusSelect" style="width:157px">
+                    <select name="orderStatus" class="selectw" id="StatusSelect" style="width:157px">
                         <option value="-1">全部</option>
                         <option value="0">未接单</option>
                         <option value="1">已完成</option>
@@ -38,73 +42,77 @@
                         <option value="4">待审核</option>
                     </select> 
                     <span class="">发布时间: </span>
-                    <input id="txtOrderPubStart" readonly="readonly" type="text" />
+                    <input id="txtOrderPubStart" readonly="readonly" type="text" name="OrderPubStart" />
                     <span class="">到: </span>
-                    <input id="txtOrderPubEnd" readonly="readonly" type="text" />
-                    <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" />
+                    <input id="txtOrderPubEnd" readonly="readonly" type="text" name="OrderPubEnd" />
+                    <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" name="GroupId" />
                 </td>
             </tr>
             <tr>
                 <td>
                     <span class="">原订单号: </span>
-                    <input id="txtOriginalOrderNo" type="text" /> 
+                    <input id="txtOriginalOrderNo" type="text" name="OriginalOrderNo" /> 
                     <span class="">订单号: </span>
-                    <input id="txtOrderNo" type="text" />
-                    <input type="button" value="查询" class="searchBtn" id="btnSearch" />
+                    <input id="txtOrderNo" type="text" name="orderId" />
+                    <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                 </td>
             </tr>
         </table>
     </div>
+    }
+    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
     <div class="bd clearfix" id="dataList">
-        @Html.Partial("_PartialOrderList", Model.orderManageList)
+        @Html.Partial("_PartialOrderList", Model)
     </div>
 </div>
 
 <script type="text/javascript">
     var adminjs = new adminglass(); //实例化后台类
-    var DEFAULT_PAGESIZE = 15;
-    var criteria = { PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }, GroupId: $("#txtGroupId").val() };
+    //var DEFAULT_PAGESIZE = 15;
+    //var criteria = { PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }, GroupId: $("#txtGroupId").val() };
     $(document).ready(function () {        
         $('#txtOrderPubStart').datepicker();
         $('#txtOrderPubEnd').datepicker();
+        window.location.hash = '';
         //查询
-        $("#btnSearch").on('click', function () { 
-            var startDate = $('#txtOrderPubStart').val();
-            var endDate = $('#txtOrderPubEnd').val();
-            if (endDate < startDate) {
-                bootbox.alert("开始日期不能大于结束日期");
-                return false;
-            }
-            criteria = {
-                superManPhone: $("#txtSuperManPhone").val(),
-                businessPhone: $("#txtBusinessPhone").val(),
-                orderId: $("#txtOrderNo").val(),
-                OriginalOrderNo: $("#txtOriginalOrderNo").val(), 
-                superManName: $("#txtSuperManName").val(),
-                businessName: $("#txtBusinessName").val(),
-                orderStatus: $("#StatusSelect").val(),
-                OrderPubStart: startDate,
-                OrderPubEnd: endDate,
-                GroupId: $("#txtGroupId").val(),
-                PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }
-            };
-            refresh(0);
-        });
+        //$("#btnSearch").on('click', function () { 
+        //    var startDate = $('#txtOrderPubStart').val();
+        //    var endDate = $('#txtOrderPubEnd').val();
+        //    if (endDate < startDate) {
+        //        bootbox.alert("开始日期不能大于结束日期");
+        //        return false;
+        //    }
+        //    criteria = {
+        //        superManPhone: $("#txtSuperManPhone").val(),
+        //        businessPhone: $("#txtBusinessPhone").val(),
+        //        orderId: $("#txtOrderNo").val(),
+        //        OriginalOrderNo: $("#txtOriginalOrderNo").val(), 
+        //        superManName: $("#txtSuperManName").val(),
+        //        businessName: $("#txtBusinessName").val(),
+        //        orderStatus: $("#StatusSelect").val(),
+        //        OrderPubStart: startDate,
+        //        OrderPubEnd: endDate,
+        //        GroupId: $("#txtGroupId").val(),
+        //        PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }
+        //    };
+        //    refresh(0);
+        //});
     });
     ////分页
-    art.ui.control.NewPager.enablePaging(document, refresh);
-    function refresh(pageIndex) {
-        var url = "/Order/OrderList";
-        if (pageIndex !== undefined) {
-            criteria.PagingRequest.PageIndex = pageIndex;
-        }
-        criteria.orderStatus = $("#StatusSelect").val();
-        webExpress.utility.ajax.request
-            (
-                url,
-                criteria,
-                function (data) {
-                    $("#dataList").html(data);
-                });
-    };
+    //art.ui.control.NewPager.enablePaging(document, refresh);
+    //function refresh(pageIndex) {
+    //    var url = "/Order/OrderList";
+    //    if (pageIndex !== undefined) {
+    //        criteria.PagingRequest.PageIndex = pageIndex;
+    //    }
+    //    criteria.orderStatus = $("#StatusSelect").val();
+    //    webExpress.utility.ajax.request
+    //        (
+    //            url,
+    //            criteria,
+    //            function (data) {
+    //                $("#dataList").html(data);
+    //            });
+    //};
 </script>
+<script src="~/Scripts/mvcpager.js"></script>

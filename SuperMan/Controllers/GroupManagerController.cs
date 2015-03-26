@@ -31,9 +31,9 @@ namespace SuperMan.Controllers
             //    Response.Redirect("/account/login");
             //    return null;
             //}
-            var criteria = new GroupParaModel() { PagingRequest = new NewPagingResult(0, 6) };
+            var criteria = new GroupParaModel();
             var pagedList = iGroupServices.GetGroupList(criteria);
-            return View(pagedList.Data);
+            return View(pagedList);
         }
 
         /// <summary>
@@ -42,14 +42,13 @@ namespace SuperMan.Controllers
         /// <param name="criteria"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult GroupManager(GroupParaModel criteria)
+        public ActionResult PostGroupManager(int pageindex = 1)
         {
-            var result = iGroupServices.GetGroupList(criteria);
-            if (result.Result)
-            {
-                return PartialView("_GroupManageList", result.Data);
-            }
-            return PartialView("_GroupManageList", null);
+            GroupParaModel criteria = new GroupParaModel();
+            TryUpdateModel(criteria);
+            var pagedList = iGroupServices.GetGroupList(criteria);
+
+            return PartialView("_GroupManageList", pagedList);
         }
 
         /// <summary>

@@ -144,7 +144,9 @@
     <Content Include="Images\iphone_2.jpg" />
     <Content Include="Images\iphone_2.png" />
     <Content Include="Images\logo.png" />
+    <Content Include="Images\peisong.png" />
     <Content Include="Images\red.png" />
+    <Content Include="Images\shop.png" />
     <Content Include="Images\top_bj.jpg" />
     <Content Include="Images\wem1.png" />
     <Content Include="Scripts\jquery-1.8.2.js" />

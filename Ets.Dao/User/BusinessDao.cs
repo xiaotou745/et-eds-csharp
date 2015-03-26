@@ -94,7 +94,7 @@ namespace Ets.Dao.User
             IList<BusinessCommissionModel> list = new List<BusinessCommissionModel>();
             try
             {
-                string sql = " select BB.id,BB.Name,T.Amount,T.OrderCount,isnull(BB.BusinessCommission,0) BusinessCommission, CAST(isnull(BB.BusinessCommission,0) * T.Amount*0.01 as decimal(5,2)) as TotalAmount,@t1 as T1,@t2 as T2 " +
+                string sql = " select top 20 BB.id,BB.Name,T.Amount,T.OrderCount,isnull(BB.BusinessCommission,0) BusinessCommission, CAST(isnull(BB.BusinessCommission,0) * T.Amount*0.01 as decimal(10,2)) as TotalAmount,@t1 as T1,@t2 as T2 " +
                          " from business BB with(nolock) inner join " +
                          " (select B.id,B.Name,sum(O.Amount) as Amount,sum(ISNULL(O.OrderCount,1)) as OrderCount " +
                          " from dbo.[order] O with(nolock) inner join dbo.business B with(nolock) on O.businessId=B.Id " +
@@ -284,7 +284,7 @@ namespace Ets.Dao.User
             }
             string tableList = @" business  b WITH (NOLOCK)  LEFT JOIN dbo.[group] g WITH(NOLOCK) ON g.Id = b.GroupId ";
             string orderByColumn = " b.Id DESC";
-            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
         /// <summary>
         ///  新增店铺

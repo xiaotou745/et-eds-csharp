@@ -32,7 +32,7 @@ namespace OpenApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [SignOpenApi] //sign验证过滤器 设计参数验证，sign验证 add by caoheyang 201503167
+        [SignOpenApi] //sign验证过滤器 设计参数验证，sign验证 add by caoheyang 20150316
         [OpenApiActionError] //异常过滤器 add by caoheyang 一旦发生异常，客户端返回系统内部错误提示
         public ResultModel<object> GetStatus(ParaModel<GetStatusPM_OpenApi> paramodel)
         {
@@ -48,8 +48,8 @@ namespace OpenApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [SignOpenApi] //sign验证过滤器 设计参数验证，sign验证 add by caoheyang 201503167
-        [OpenApiActionError]  //异常过滤器 add by caoheyang  201503167 一旦发生异常，客户端返回系统内部错误提示
+        [SignOpenApi] //sign验证过滤器 设计参数验证，sign验证 add by caoheyang 20150316
+        [OpenApiActionError]  //异常过滤器 add by caoheyang  20150316 一旦发生异常，客户端返回系统内部错误提示
         public ResultModel<object> Create(ParaModel<CreatePM_OpenApi> paramodel)
         {
             paramodel.fields.store_info.group = paramodel.group;  //设置集团信息到具体的门店上  在dao层会用到 
@@ -59,6 +59,21 @@ namespace OpenApi.Controllers
                 ResultModel<object>.Conclude(OrderApiStatusType.Success, new { order_no = orderNo });
         }
 
+        // POST: Order Create   paramodel 固定 必须是 paramodel  
+        /// <summary>
+        /// 查看订单详情接口  add by caoheyang 20150325
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [SignOpenApi] 
+        [OpenApiActionError] 
+        public ResultModel<object> OrderDetail(ParaModel<OrderDetailPM_OpenApi> paramodel)
+        {
+            IOrderProvider orderProvider = new OrderProvider();
+            var order = orderProvider.OrderDetail(paramodel.fields);
+            return order!=null ? ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :
+                ResultModel<object>.Conclude(OrderApiStatusType.Success, order);
+        }
     }
 
 }

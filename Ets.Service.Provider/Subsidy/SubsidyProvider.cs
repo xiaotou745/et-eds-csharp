@@ -36,15 +36,11 @@ namespace Ets.Service.Provider.Subsidy
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        public SubsidyManage GetSubsidyList(HomeCountCriteria criteria)
+        public PageInfo<subsidy> GetSubsidyList(HomeCountCriteria criteria)
         {
-            var pagedQuery = new SubsidyManage();
+           
             PageInfo<subsidy> pageinfo = subsidyDao.GetSubsidyList<subsidy>(criteria);
-            NewPagingResult pr = new NewPagingResult() { PageIndex = criteria.PagingRequest.PageIndex, PageSize = criteria.PagingRequest.PageSize, RecordCount = pageinfo.All, TotalCount = pageinfo.All };
-            List<subsidy> list = pageinfo.Records.ToList();
-            var subsidylists = new SubsidyManageList(list, pr);
-            pagedQuery.subsidyManageList = subsidylists;
-            return pagedQuery;
+            return pageinfo;
         }
         /// <summary>
         /// 添加补贴配置记录

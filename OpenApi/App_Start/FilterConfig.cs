@@ -25,7 +25,7 @@ namespace OpenApi
     /// <summary>
     /// sign 以及参数合法性验证过滤器 add by caoheyang 20150318
     /// </summary>
-    [System.AttributeUsage(System.AttributeTargets.Method)]
+    [System.AttributeUsage(System.AttributeTargets.Method | System.AttributeTargets.Class)]
     public class SignOpenApiAttribute : System.Web.Http.Filters.ActionFilterAttribute
     {
         /// <summary>
@@ -44,7 +44,7 @@ namespace OpenApi
                 GroupApiConfigModel groupCofigInfo = groupProvider.GetGroupApiConfigByAppKey(paramodel.app_key, paramodel.v).Data;
                 if (groupCofigInfo != null && groupCofigInfo.IsValid == 1)//集团可用，且有appkey信息
                 {
-                    string signStr = groupCofigInfo.AppSecret + "app_key=" + paramodel.app_key + "timestamp" 
+                    string signStr = groupCofigInfo.AppSecret + "app_key=" + paramodel.app_key + "timestamp"
                         + paramodel.timestamp + "v=" + paramodel.v + groupCofigInfo.AppSecret;
                     string sign = MD5.Encrypt(signStr);
                     paramodel.group = ParseHelper.ToInt(groupCofigInfo.GroupId, 0);
@@ -81,9 +81,8 @@ namespace OpenApi
 
     /// <summary>
     /// 自定义action异常处理类,捕获异常，返回系统错误提示信息  add by caoheyang 20150319
-   
-   [System.AttributeUsage(System.AttributeTargets.Method)]
     /// </summary>
+    [System.AttributeUsage(System.AttributeTargets.Method | System.AttributeTargets.Class)]
     public class OpenApiActionErrorAttribute : ExceptionFilterAttribute
     {
         /// <summary>

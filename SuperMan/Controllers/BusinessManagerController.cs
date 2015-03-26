@@ -23,6 +23,7 @@ namespace SuperMan.Controllers
         /// </summary>
         Ets.Service.IProvider.User.IBusinessProvider iBusinessProvider = new BusinessProvider(); 
         // GET: BusinessManager
+        [HttpGet]
         public ActionResult BusinessManager()
         {
             //account account = HttpContext.Session["user"] as account;
@@ -33,17 +34,19 @@ namespace SuperMan.Controllers
             //}
 
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
-            var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria() { PagingRequest = new Ets.Model.Common.NewPagingResult(1, 15), GroupId = SuperMan.App_Start.UserContext.Current.GroupId };
-            criteria.Status = -1; //默认加载全部
+            var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria() { Status = -1, GroupId = SuperMan.App_Start.UserContext.Current.GroupId };
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
             return View(pagedList);
         }
+
+
         [HttpPost]
-        public ActionResult BusinessManager(Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria criteria)
+        public ActionResult PostBusinessManager(int pageindex = 1)
         {
+            Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria();
+            TryUpdateModel(criteria);
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
-            var item = pagedList.businessManageList;
-            return PartialView("_BusinessManageList", item);
+            return PartialView("_BusinessManageList", pagedList);
         }
 
         [HttpPost]

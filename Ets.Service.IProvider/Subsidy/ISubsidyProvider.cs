@@ -1,5 +1,7 @@
-﻿using Ets.Model.DomainModel.Subsidy;
+﻿using Ets.Model.DataModel.Subsidy;
+using Ets.Model.DomainModel.Subsidy;
 using Ets.Model.ParameterModel.Subsidy;
+using ETS.Data.PageData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +19,7 @@ namespace Ets.Service.IProvider.Subsidy
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        SubsidyManage GetSubsidyList(HomeCountCriteria criteria);
+        PageInfo<subsidy> GetSubsidyList(HomeCountCriteria criteria);
         /// <summary>
         /// 添加补贴配置记录
         /// danny-20150320

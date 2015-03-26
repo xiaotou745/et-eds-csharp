@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ets.Model.DomainModel.Subsidy
 {
-    public class HomeCountCriteria
+    public class HomeCountCriteria : ListParaBase
     {
         public NewPagingResult PagingRequest { get; set; }
 

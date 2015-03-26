@@ -1,4 +1,4 @@
-﻿@model GroupListModel
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Group.GroupApiConfigModel>
 @using Ets.Model.ParameterModel.Group;
 @{
     ViewBag.Title = "Group";
@@ -9,20 +9,26 @@
     <h2 class="crumbs">
         您所在位置：集团 > 集团管理
     </h2>
-    <div class="SearchMd">
+    @using (Ajax.BeginForm("PostGroupManager", new RouteValueDictionary { { "pageindex", "" } },
+    new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+    new RouteValueDictionary { { "id", "searchForm" } }))
+    {
+      <div class="SearchMd">
         <table border="0" cellspacing="0" cellpadding="0">
             <tr>
                 <td>
                     <span class="">集团名称: </span>
-                    <input id="txtGroupName" type="text" />
+                    <input id="txtGroupName" type="text" name="GroupName" />
                     <span class="">集团AppKey: </span> 
-                    <input id="txtAppkey" type="text" />
+                    <input id="txtAppkey" type="text" name="Appkey" />
                     <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                     <input type="button" value="新增集团" class="searchBtn" id="btnAdd" /> 
                 </td>
             </tr>
         </table>
     </div>
+    }
+    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
     <div class="bd clearfix" id="dataList">
         @Html.Partial("_GroupManageList", Model)
     </div>
@@ -93,37 +99,38 @@
 </div>
 <script>
     var adminjs = new adminglass(); //实例化后台类
-    var DEFAULT_PAGESIZE = 6;
-    var criteria = { PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE } };
+    //var DEFAULT_PAGESIZE = 6;
+    //var criteria = { PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE } };
     $(document).ready(function() {
-        //查询
-        $("#btnSearch").on('click', function() {
-            criteria = {
-                GroupName: $("#txtGroupName").val(), //商户名称
-                AppKey: $("#txtAppkey").val(),////商户电话
-                PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }
-            };
-            refresh(1);
-        });
+        ////查询
+        //$("#btnSearch").on('click', function() {
+        //    criteria = {
+        //        GroupName: $("#txtGroupName").val(), //商户名称
+        //        AppKey: $("#txtAppkey").val(),////商户电话
+        //        PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }
+        //    };
+        //    refresh(1);
+        //});
         $("#btnAdd").on('click', function () {
             adminjs.openwinbox('#GroupAddDivShow');
-        }); 
+        });
+        window.location.hash = '';
     });
     ////分页
-    art.ui.control.NewPager.enablePaging(document, refresh);
-    function refresh(pageIndex) {
-        var url = "/GroupManager/GroupManager";
-        if (pageIndex !== undefined) {
-            criteria.PagingRequest.PageIndex = pageIndex;
-        }
-        webExpress.utility.ajax.request
-            (
-                url,
-                criteria,
-                function (data) {
-                    $("#dataList").html(data);
-                });
-    }; 
+    //art.ui.control.NewPager.enablePaging(document, refresh);
+    //function refresh(pageIndex) {
+    //    var url = "/GroupManager/GroupManager";
+    //    if (pageIndex !== undefined) {
+    //        criteria.PagingRequest.PageIndex = pageIndex;
+    //    }
+    //    webExpress.utility.ajax.request
+    //        (
+    //            url,
+    //            criteria,
+    //            function (data) {
+    //                $("#dataList").html(data);
+    //            });
+    //}; 
     
     //修改集团
     $("#btnuGroup").on('click', function () {
@@ -208,3 +215,4 @@
         return false;
     });
 </script>
+<script src="~/Scripts/mvcpager.js"></script>

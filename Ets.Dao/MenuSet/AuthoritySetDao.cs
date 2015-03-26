@@ -524,11 +524,11 @@ namespace Ets.Dao.MenuSet
             }
             if (!string.IsNullOrEmpty(criteria.UserName))
             {
-                sbSqlWhere.AppendFormat(" AND a.UserName={0} ", criteria.UserName);
+                sbSqlWhere.AppendFormat(" AND a.UserName='{0}' ", criteria.UserName);
             }
             string tableList = @" account a  WITH (NOLOCK) LEFT JOIN dbo.[group] g WITH(NOLOCK) ON g.Id = a.GroupId   ";
             string orderByColumn = " a.Id DESC ";
-            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
 
         /// <summary>

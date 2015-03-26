@@ -108,6 +108,7 @@ if (SuperMan.App_Start.UserContext.Current.HasAuthority(18) || SuperMan.App_Star
     </tbody>
 
 </table>
+@{ViewBag.ActionName="PostSuperManManager";}
 @Html.Partial("~/views/shared/PagerControl.cshtml", Model)
 
 @*弹出图片*@
