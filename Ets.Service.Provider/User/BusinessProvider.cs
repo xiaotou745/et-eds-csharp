@@ -16,6 +16,10 @@ using Ets.Model.DataModel.Bussiness;
 using ETS.Util;
 using ETS.Cacheing;
 using Ets.Model.DataModel.Group;
+using ETS.Validator;
+using ETS;
+using System.Threading.Tasks;
+using ETS.Sms;
 namespace Ets.Service.Provider.User
 {
 
@@ -354,10 +358,10 @@ namespace Ets.Service.Provider.User
         /// </summary>
         /// <param name="PhoneNo"></param>
         /// <returns></returns>
-        public bool CheckBusinessExistPhone(string PhoneNo)
-        {
-            return dao.CheckBusinessExistPhone(PhoneNo);
-        }
+        //public bool CheckBusinessExistPhone(string PhoneNo)
+        //{
+        //    return dao.CheckBusinessExistPhone(PhoneNo);
+        //}
         /// <summary>
         /// 判断该 商户是否有资格 
         /// wc
@@ -425,6 +429,76 @@ namespace Ets.Service.Provider.User
             to.Latitude = businessModel.latitude;
             to.Status = ConstValues.BUSINESS_NOAUDIT;
             return to;
+        }
+
+        /// <summary>
+        /// 请求动态验证码  (找回密码)
+        /// 窦海超
+        /// 2015年3月26日 17:16:02
+        /// </summary>
+        /// <param name="PhoneNumber">手机号码</param>
+        /// <returns></returns>
+        public SimpleResultModel CheckCodeFindPwd(string PhoneNumber)
+        {
+            if (!CommonValidator.IsValidPhoneNumber(PhoneNumber))  //检查手机号码的合法性
+            {
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
+            }
+            var randomCode = new Random().Next(100000).ToString("D6");
+            var msg = string.Format(Config.SmsContentFindPassword, randomCode, Ets.Model.Common.ConstValues.MessageBusiness);
+            try
+            {
+                CacheFactory.Instance.AddObject(PhoneNumber, randomCode);
+                // 更新短信通道 
+                Task.Factory.StartNew(() =>
+                {
+                    SendSmsHelper.SendSendSmsSaveLog(PhoneNumber, msg, Ets.Model.Common.ConstValues.SMSSOURCE);
+                });
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.Sending);
+
+            }
+            catch (Exception)
+            {
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.SendFailure);
+            }
+        }
+
+
+        /// <summary>
+        /// 请求动态验证码  (注册)
+        /// 窦海超
+        /// 2015年3月26日 17:46:08
+        /// </summary>
+        /// <param name="PhoneNumber">手机号码</param>
+        /// <returns></returns>
+        public SimpleResultModel CheckCode(string PhoneNumber)
+        {
+            if (!CommonValidator.IsValidPhoneNumber(PhoneNumber))  //验证电话号码合法性
+            {
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
+            }
+            var randomCode = new Random().Next(100000).ToString("D6");  //生成短信验证码
+            var msg = string.Format(Config.SmsContentCheckCode, randomCode, Ets.Model.Common.ConstValues.MessageBusiness);  //获取提示用语信息
+            try
+            {
+                if (dao.CheckBusinessExistPhone(PhoneNumber))  //判断该手机号是否已经注册过  .CheckBusinessExistPhone(PhoneNumber)
+                    return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.AlreadyExists);
+                else
+                {
+                    //SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);
+                    CacheFactory.Instance.AddObject(PhoneNumber, randomCode);
+                    //更新短信通道 
+                    Task.Factory.StartNew(() =>
+                    {
+                        SendSmsHelper.SendSendSmsSaveLog(PhoneNumber, msg, Ets.Model.Common.ConstValues.SMSSOURCE);
+                    });
+                    return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.Sending);
+                }
+            }
+            catch (Exception)
+            {
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.SendFailure);
+            }
         }
     }
 }
