@@ -380,5 +380,15 @@ namespace Ets.Service.Provider.Order
         {
             return OrderDao.CancelOrderStatus(orderNo, orderStatus);
         }
+
+
+        /// <summary>
+        /// 查看订单详情接口  add by caoheyang 20150325
+        /// </summary>
+        /// <param name="paramodel">参数实体</param>
+        /// <returns>订单详情</returns>
+        public OrderDetailDM_OpenApi OrderDetail(OrderDetailPM_OpenApi paramodel) {
+            return null;
+        }
     }
 }

@@ -25,7 +25,7 @@ namespace OpenApi
     /// <summary>
     /// sign 以及参数合法性验证过滤器 add by caoheyang 20150318
     /// </summary>
-    [System.AttributeUsage(System.AttributeTargets.Method)]
+    [System.AttributeUsage(System.AttributeTargets.Method | System.AttributeTargets.Class)]
     public class SignOpenApiAttribute : System.Web.Http.Filters.ActionFilterAttribute
     {
         /// <summary>
@@ -81,8 +81,8 @@ namespace OpenApi
 
     /// <summary>
     /// 自定义action异常处理类,捕获异常，返回系统错误提示信息  add by caoheyang 20150319
-   
-   [System.AttributeUsage(System.AttributeTargets.Method)]
+
+   [System.AttributeUsage(System.AttributeTargets.Method | System.AttributeTargets.Class)]
     /// </summary>
     public class OpenApiActionErrorAttribute : ExceptionFilterAttribute
     {

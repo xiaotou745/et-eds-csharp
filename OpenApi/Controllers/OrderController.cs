@@ -59,6 +59,21 @@ namespace OpenApi.Controllers
                 ResultModel<object>.Conclude(OrderApiStatusType.Success, new { order_no = orderNo });
         }
 
+        // POST: Order Create   paramodel 固定 必须是 paramodel  
+        /// <summary>
+        /// 查看订单详情接口  add by caoheyang 20150325
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [SignOpenApi] //sign验证过滤器 设计参数验证，sign验证 add by caoheyang 20150325
+        [OpenApiActionError]  //异常过滤器 add by caoheyang  20150325 一旦发生异常，客户端返回系统内部错误提示
+        public ResultModel<object> OrderDetail(ParaModel<CreatePM_OpenApi> paramodel)
+        {
+            IOrderProvider orderProvider = new OrderProvider();
+            string orderNo = orderProvider.Create(paramodel.fields);
+            return string.IsNullOrWhiteSpace(orderNo) ? ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :
+                ResultModel<object>.Conclude(OrderApiStatusType.Success, new { order_no = orderNo });
+        }
     }
 
 }
