@@ -50,7 +50,7 @@ namespace SuperManBusinessLogic.Order_Logic
             to.OriginalOrderId = from.OriginalOrderId;//原平台订单id
             if (from.business != null) {
                 to.GroupId = from.business.GroupId;
-                if (to.GroupId != null) //当前商户有集团信息
+                if (to.GroupId != null && to.GroupId!=0) //当前商户有集团信息
                     to.GroupName = GroupLogic.groupLogic().GetGroupName(Convert.ToInt32(to.GroupId));
             }
             if (from.business != null && from.business.Longitude !=null && from.business.Latitude!=null && from.ReceviceLongitude != null && from.ReceviceLatitude != null)

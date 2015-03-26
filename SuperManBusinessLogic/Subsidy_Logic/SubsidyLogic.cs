@@ -122,7 +122,7 @@ namespace SuperManBusinessLogic.Subsidy_Logic
             {
                 items = db.subsidy.OrderByDescending(p => p.StartDate).AsQueryable();
                 items = items.OrderByDescending(p => p.EndDate);
-                if (criteria.GroupId != null)
+                if (criteria.GroupId != null && criteria.GroupId!=0)
                 {
                     items = items.Where(p => p.GroupId == criteria.GroupId);
                 }

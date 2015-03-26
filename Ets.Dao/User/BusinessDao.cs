@@ -264,11 +264,11 @@ namespace Ets.Dao.User
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrEmpty(criteria.businessName))
             {
-                sbSqlWhere.AppendFormat(" AND b.Name='{0}' ", criteria.businessName);
+                sbSqlWhere.AppendFormat(" AND b.Name='{0}' ", criteria.businessName.Trim());
             }
             if (!string.IsNullOrEmpty(criteria.businessPhone))
             {
-                sbSqlWhere.AppendFormat(" AND b.PhoneNo='{0}' ", criteria.businessPhone);
+                sbSqlWhere.AppendFormat(" AND b.PhoneNo='{0}' ", criteria.businessPhone.Trim());
             }
             if (criteria.Status != -1)
             {
@@ -278,7 +278,7 @@ namespace Ets.Dao.User
             {
                 sbSqlWhere.AppendFormat(" AND b.BusinessCommission={0} ", criteria.BusinessCommission);
             }
-            if (criteria.GroupId != null)
+            if (criteria.GroupId != null && criteria.GroupId !=0)
             {
                 sbSqlWhere.AppendFormat(" AND b.GroupId={0} ", criteria.GroupId);
             }

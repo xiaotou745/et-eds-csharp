@@ -32,7 +32,9 @@ namespace ETS.Enums
         [DisplayText("订单数量不符合规则")]
         OrderCountError,
         [DisplayText("订单已经存在")]
-        OrderHasExist
+        OrderHasExist,
+        [DisplayText("您已取消资格")]
+        HadCancelQualification
     }
     public enum GetOrdersStatus
     {
