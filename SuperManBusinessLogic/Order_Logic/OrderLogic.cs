@@ -93,7 +93,7 @@ namespace SuperManBusinessLogic.Order_Logic
                     var dt = DateTime.Parse(criteria.orderPubEnd);
                     items = items.Where(p => p.PubDate.Value <= dt);
                 }
-                if (criteria.GroupId != null)
+                if (criteria.GroupId != null && criteria.GroupId!=0)
                 {
                     items = items.Where(p => p.business.GroupId == criteria.GroupId);
                 }

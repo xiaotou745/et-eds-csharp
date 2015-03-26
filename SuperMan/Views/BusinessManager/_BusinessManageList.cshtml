@@ -27,13 +27,14 @@
             //var path=System.IO.Path.Combine(SuperManCore.CustomerIconUploader.Instance.RelativePath,).ToForwardSlashPath();
             foreach (var item in Model.Records)
             {
+                var address = !string.IsNullOrEmpty(@item.Address) ? @item.Address.TrimEnd('\n').TrimEnd('\r') : "";
                 i++;
                 <tr id="@item.Id">
                     <td>@item.Id</td>
                     @*<td>@i</td>*@
                     <td>@item.Name</td>
                     <td>@item.PhoneNo</td>
-                    <td>@item.Address</td>
+                    <td>@address</td>
                     <td>
                         <a href="javascript:void(0)" onclick="funcPicView('@String.Format("{0}{1}",PicHost,puth)','@item.CheckPicUrl')">查看</a>
                     </td>
@@ -94,7 +95,7 @@
                         }
                     @if (SuperMan.App_Start.UserContext.Current.HasAuthority(24))
                     {
-                         <a href="javascript:void(0)" onclick="funcComView(@item.Id,'@item.Name','@item.Address','@item.PhoneNo','@item.BusinessCommission')">设置结算比例</a>
+                         <a href="javascript:void(0)" onclick="funcComView(@item.Id,'@item.Name','@address','@item.PhoneNo','@item.BusinessCommission')">设置结算比例</a>
                     }
                    
                     </td>

@@ -62,6 +62,10 @@ textarea {color:#256193;overflow-x:hidden;overflow-y:auto;}
 .ewm_left{
 	float:left;
 }
+.ewm_left p{
+	text-align:center;
+	margin-top:8px;
+}
 .ewm_right,.ewm_right2{
 	float:left;
 	margin-left:23px;

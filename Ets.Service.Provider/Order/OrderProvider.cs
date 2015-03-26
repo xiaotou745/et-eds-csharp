@@ -218,7 +218,14 @@ namespace Ets.Service.Provider.Order
                     to.OrderFrom = 0;
             }
             to.Remark = busiOrderInfoModel.Remark;
-            to.ReceviceName = busiOrderInfoModel.receviceName;
+            if (string.IsNullOrWhiteSpace(busiOrderInfoModel.receviceName))
+            {
+                to.ReceviceName = "匿名";
+            }
+            else
+            {
+                to.ReceviceName = busiOrderInfoModel.receviceName;
+            }
             to.RecevicePhoneNo = busiOrderInfoModel.recevicePhone;
             to.ReceviceAddress = busiOrderInfoModel.receviceAddress;
             to.IsPay = busiOrderInfoModel.IsPay;

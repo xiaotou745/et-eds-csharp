@@ -94,7 +94,7 @@ namespace Ets.Dao.User
             IList<BusinessCommissionModel> list = new List<BusinessCommissionModel>();
             try
             {
-                string sql = " select BB.id,BB.Name,T.Amount,T.OrderCount,isnull(BB.BusinessCommission,0) BusinessCommission, CAST(isnull(BB.BusinessCommission,0) * T.Amount*0.01 as decimal(5,2)) as TotalAmount,@t1 as T1,@t2 as T2 " +
+                string sql = " select top 20 BB.id,BB.Name,T.Amount,T.OrderCount,isnull(BB.BusinessCommission,0) BusinessCommission, CAST(isnull(BB.BusinessCommission,0) * T.Amount*0.01 as decimal(10,2)) as TotalAmount,@t1 as T1,@t2 as T2 " +
                          " from business BB with(nolock) inner join " +
                          " (select B.id,B.Name,sum(O.Amount) as Amount,sum(ISNULL(O.OrderCount,1)) as OrderCount " +
                          " from dbo.[order] O with(nolock) inner join dbo.business B with(nolock) on O.businessId=B.Id " +
@@ -264,11 +264,11 @@ namespace Ets.Dao.User
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrEmpty(criteria.businessName))
             {
-                sbSqlWhere.AppendFormat(" AND b.Name='{0}' ", criteria.businessName);
+                sbSqlWhere.AppendFormat(" AND b.Name='{0}' ", criteria.businessName.Trim());
             }
             if (!string.IsNullOrEmpty(criteria.businessPhone))
             {
-                sbSqlWhere.AppendFormat(" AND b.PhoneNo='{0}' ", criteria.businessPhone);
+                sbSqlWhere.AppendFormat(" AND b.PhoneNo='{0}' ", criteria.businessPhone.Trim());
             }
             if (criteria.Status != -1)
             {
@@ -278,7 +278,7 @@ namespace Ets.Dao.User
             {
                 sbSqlWhere.AppendFormat(" AND b.BusinessCommission={0} ", criteria.BusinessCommission);
             }
-            if (criteria.GroupId != null)
+            if (criteria.GroupId != null && criteria.GroupId !=0)
             {
                 sbSqlWhere.AppendFormat(" AND b.GroupId={0} ", criteria.GroupId);
             }
