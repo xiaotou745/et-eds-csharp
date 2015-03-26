@@ -189,21 +189,6 @@ namespace Ets.Service.Provider.Order
         }
         #endregion
 
-        #region 订单状态查询功能  add by caoheyang 20150316
-        /// <summary>
-        /// 订单状态查询功能  add by caoheyang 20150316
-        /// </summary>
-        /// <param name="orderNo">订单号码</param>
-        /// <param name="groupId">集团id</param>
-        /// <returns>订单状态</returns>
-        public int GetStatus(string OriginalOrderNo, int groupId)
-        {
-            OrderDao OrderDao = new OrderDao();
-            return OrderDao.GetStatus(OriginalOrderNo, groupId);
-        }
-
-        #endregion
-
         /// <summary>
         /// 转换B端发布的订单信息为 数据库中需要的 订单 数据
         /// </summary>
@@ -272,41 +257,6 @@ namespace Ets.Service.Provider.Order
             }
         }
 
-
-        #region  第三方对接 物流订单接收接口  add by caoheyang 20150317
-
-        /// <summary>
-        /// 第三方对接 物流订单接收接口  add by caoheyang 201503167
-        /// </summary>
-        /// <param name="paramodel">参数实体</param>
-        /// <returns>订单号码</returns>
-        public string Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
-        {
-            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
-            {
-                ISubsidyProvider subsidyProvider = new SubsidyProvider();//补贴记录
-                SubsidyResultModel subsidy = subsidyProvider.GetCurrentSubsidy(paramodel.store_info.group);
-                //计算获得订单骑士佣金
-                paramodel.ordercommission = OrderCommissionProvider.GetCurrenOrderCommission(new OrderCommission()
-                {
-                    CommissionRate = subsidy.OrderCommission,/*佣金比例*/
-                    Amount = paramodel.total_price, /*订单金额*/
-                    DistribSubsidy = paramodel.delivery_fee,/*外送费*/
-                    OrderCount = paramodel.package_count,/*订单数量*/
-                    WebsiteSubsidy = subsidy.WebsiteSubsidy
-                }/*网站补贴*/);
-                paramodel.websitesubsidy = ParseHelper.ToDecimal(subsidy.WebsiteSubsidy);//网站补贴
-                paramodel.commissionrate = ParseHelper.ToDecimal(subsidy.OrderCommission);//订单佣金比例
-                string orderNo = OrderDao.CreateToSql(paramodel);
-                if (!string.IsNullOrWhiteSpace(orderNo))
-                    Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！"
-                        , string.Empty, paramodel.address.city_code); //激光推送   bug  原来是根据城市推送的，现在没要求传城市相关信息
-                tran.Complete();
-                return orderNo;
-            }
-        }
-
-        #endregion
         /// <summary>
         /// 根据参数获取订单
         /// danny-20150319
@@ -377,13 +327,62 @@ namespace Ets.Service.Provider.Order
         }
 
 
+
+        #region openapi 接口使用 add by caoheyang  20150325
+
+        /// <summary>
+        /// 第三方对接 物流订单接收接口  add by caoheyang 201503167
+        /// </summary>
+        /// <param name="paramodel">参数实体</param>
+        /// <returns>订单号码</returns>
+        public string Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
+        {
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                ISubsidyProvider subsidyProvider = new SubsidyProvider();//补贴记录
+                SubsidyResultModel subsidy = subsidyProvider.GetCurrentSubsidy(paramodel.store_info.group);
+                //计算获得订单骑士佣金
+                paramodel.ordercommission = OrderCommissionProvider.GetCurrenOrderCommission(new OrderCommission()
+                {
+                    CommissionRate = subsidy.OrderCommission,/*佣金比例*/
+                    Amount = paramodel.total_price, /*订单金额*/
+                    DistribSubsidy = paramodel.delivery_fee,/*外送费*/
+                    OrderCount = paramodel.package_count,/*订单数量*/
+                    WebsiteSubsidy = subsidy.WebsiteSubsidy
+                }/*网站补贴*/);
+                paramodel.websitesubsidy = ParseHelper.ToDecimal(subsidy.WebsiteSubsidy);//网站补贴
+                paramodel.commissionrate = ParseHelper.ToDecimal(subsidy.OrderCommission);//订单佣金比例
+                string orderNo = OrderDao.CreateToSql(paramodel);
+                if (!string.IsNullOrWhiteSpace(orderNo))
+                    Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！"
+                        , string.Empty, paramodel.address.city_code); //激光推送   bug  原来是根据城市推送的，现在没要求传城市相关信息
+                tran.Complete();
+                return orderNo;
+            }
+        }
+
+        /// <summary>
+        /// 订单状态查询功能  add by caoheyang 20150316
+        /// </summary>
+        /// <param name="orderNo">订单号码</param>
+        /// <param name="groupId">集团id</param>
+        /// <returns>订单状态</returns>
+        public int GetStatus(string OriginalOrderNo, int groupId)
+        {
+            OrderDao OrderDao = new OrderDao();
+            return OrderDao.GetStatus(OriginalOrderNo, groupId);
+        }
+
+
         /// <summary>
         /// 查看订单详情接口  add by caoheyang 20150325
         /// </summary>
         /// <param name="paramodel">参数实体</param>
         /// <returns>订单详情</returns>
-        public OrderDetailDM_OpenApi OrderDetail(OrderDetailPM_OpenApi paramodel) {
+        public OrderDetailDM_OpenApi OrderDetail(OrderDetailPM_OpenApi paramodel)
+        {
             return null;
         }
+        #endregion
     }
 }
