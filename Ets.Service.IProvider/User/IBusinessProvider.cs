@@ -106,13 +106,13 @@ namespace Ets.Service.IProvider.User
         /// <param name="BusinessId">商户ID</param>
         /// <returns></returns>
         BusiOrderCountResultModel GetOrderCountData(int BusinessId);
-        /// <summary>
-        /// 验证商户手机号 是否 注册
-        /// wc
-        /// </summary>
-        /// <param name="PhoneNo"></param>
-        /// <returns></returns>
-        bool CheckBusinessExistPhone(string PhoneNo);
+        ///// <summary>
+        ///// 验证商户手机号 是否 注册
+        ///// wc
+        ///// </summary>
+        ///// <param name="PhoneNo"></param>
+        ///// <returns></returns>
+        //bool CheckBusinessExistPhone(string PhoneNo);
         /// <summary>
         /// 判断该 商户是否有资格 
         /// wc
@@ -141,7 +141,30 @@ namespace Ets.Service.IProvider.User
         /// <param name="waiSongFei"></param>
         /// <returns></returns>
         int ModifyWaiMaiPrice(int businessId, decimal waiSongFei);
+        /// <summary>
+        /// 修改商户地址信息
+        /// wc
+        /// </summary>
+        /// <param name="businessModel"></param>
+        /// <returns></returns>
+        int UpdateBusinessAddressInfo(BusiAddAddressInfoModel businessModel);
 
-        //int UpdateBusinessInfo(BusinessModel)
+        /// <summary>
+        /// 请求动态验证码  (找回密码)
+        /// 窦海超
+        /// 2015年3月26日 17:16:02
+        /// </summary>
+        /// <param name="PhoneNumber">手机号码</param>
+        /// <returns></returns>
+        Ets.Model.Common.SimpleResultModel CheckCodeFindPwd(string PhoneNumber);
+
+        /// <summary>
+        /// 请求动态验证码  (注册)
+        /// 窦海超
+        /// 2015年3月26日 17:46:08
+        /// </summary>
+        /// <param name="PhoneNumber">手机号码</param>
+        /// <returns></returns>
+        Ets.Model.Common.SimpleResultModel CheckCode(string PhoneNumber);
     }
 }

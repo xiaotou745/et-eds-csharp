@@ -17,6 +17,12 @@ using Ets.Service.Provider.Common;
 using Ets.Service.IProvider.Common;
 using Ets.Model.DomainModel.Group;
 using ETS.Security;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using System.Text;
+using System.IO;
+using System.Web.Script.Serialization;
+using ETS.Util;
 
 
 namespace OpenApi.Controllers
@@ -59,21 +65,62 @@ namespace OpenApi.Controllers
                 ResultModel<object>.Conclude(OrderApiStatusType.Success, new { order_no = orderNo });
         }
 
-        // POST: Order Create   paramodel 固定 必须是 paramodel  
+        // POST: Order OrderDetail   paramodel 固定 必须是 paramodel  
         /// <summary>
         /// 查看订单详情接口  add by caoheyang 20150325
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [SignOpenApi] 
-        [OpenApiActionError] 
+        [SignOpenApi]
+        [OpenApiActionError]
         public ResultModel<object> OrderDetail(ParaModel<OrderDetailPM_OpenApi> paramodel)
         {
             IOrderProvider orderProvider = new OrderProvider();
             var order = orderProvider.OrderDetail(paramodel.fields);
-            return order!=null ? ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :
+            return order != null ? ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :
                 ResultModel<object>.Conclude(OrderApiStatusType.Success, order);
         }
-    }
 
+        // POST: Order Create   paramodel 固定 必须是 paramodel  
+        /// <summary>
+        /// 第三方订单状态同步   add by caoheyang 20150326  目前支持万达
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        //[SignOpenApi]
+        //[OpenApiActionError]
+        public ResultModel<object> AsyncStatus(ParaModel<AsyncStatusPM_OpenApi> paramodel)
+        {
+            //ParaModel<AsyncStatusPM_OpenApi> paramodel = new ParaModel<AsyncStatusPM_OpenApi>();
+            //paramodel.app_key = "wandajituan";
+            //paramodel.timestamp = "2015-03-11 20:42:33";
+            //paramodel.v = "1.0";
+            //paramodel.sign = "F76092BEA33576DDA2413AA5BDFB541E";
+            //paramodel.fields = new AsyncStatusPM_OpenApi() { order_no = "123456" };
+            var model = new
+            {
+                app_key = paramodel.app_key, // app_key
+                sign = paramodel.app_key, // sign
+                method = "POST", //请求方式 
+                ts = TimeHelper.GetTimeStamp(), //时间戳
+                orderId = paramodel.fields.order_no, //订单 ID
+                staus = 1,  //物流变更状态
+                statusDesc = "1",  //事件状态描述
+                syncTime = DateTime.Now, //同步时间
+                operatorId = 0, //操作人ID, 来源系统的账号id
+                @operator = "E代送系统"// 操作人姓名
+            };
+
+            switch (paramodel.group)
+            {
+                case 2:
+                    ResultModel<object> json = new HttpClient().PostAsJsonAsync("http://192.168.1.130:8082/order/GetStatus", model).Result.Content.ReadAsAsync<ResultModel<object>>().Result;
+                    break;
+            }
+            return ResultModel<object>.Conclude(OrderApiStatusType.Success);
+        }
+
+
+
+    }
 }

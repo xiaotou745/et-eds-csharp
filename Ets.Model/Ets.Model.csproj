@@ -59,6 +59,7 @@
     <Compile Include="DataModel\Bussiness\BusiForgetPwdInfoModel.cs" />
     <Compile Include="DataModel\Bussiness\BusiLoginResultModel.cs" />
     <Compile Include="DataModel\Bussiness\BusiModifyPwdResultModel.cs" />
+    <Compile Include="DataModel\Bussiness\Business.cs" />
     <Compile Include="DataModel\Bussiness\BusiRegisterResultModel.cs" />
     <Compile Include="DataModel\Clienter\ClienterLoginResultModel.cs" />
     <Compile Include="DataModel\Clienter\ClienterListModel.cs" />
@@ -100,6 +101,7 @@
     <Compile Include="DomainModel\WithdrawRecordsModel.cs" />
     <Compile Include="ParameterModel\Authority\AuthoritySearchCriteria.cs" />
     <Compile Include="ParameterModel\Authority\LoginModel.cs" />
+    <Compile Include="ParameterModel\Bussiness\BusiAddAddressInfoModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BusiAddAddressResultModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BusiOrderInfoModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BussOrderParaModelApp.cs" />
@@ -114,6 +116,7 @@
     <Compile Include="ParameterModel\Group\GroupParaModel.cs" />
     <Compile Include="ParameterModel\Order\BusiOrderResultModel.cs" />
     <Compile Include="ParameterModel\Order\ClientOrderInfoModel.cs" />
+    <Compile Include="ParameterModel\Order\AsyncStatusPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\OrderDetailPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\GetStatusPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\CreatePM_OpenApi.cs" />

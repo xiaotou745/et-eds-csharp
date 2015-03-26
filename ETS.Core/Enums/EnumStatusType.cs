@@ -192,5 +192,21 @@ namespace ETS.Enums
         [DisplayText("非最新")]
         UnNewest = 1
     }
+    public enum BusiAddAddressStatus : int
+    {
+        Success = 0,
+        [DisplayText("地址不能为空")]
+        AddressEmpty,
+        [DisplayText("手机号不能为空")]
+        PhoneNumberEmpty,
+        [DisplayText("商务地址不能为空")]
+        businessNameEmpty,
+        [DisplayText("验证码不正确")]
+        IncorrectCheckCode,
+        [DisplayText("昵称已被注册")]
+        NickNameAlreadyRegistered,
+        [DisplayText("手机号已被注册")]
+        PhoneNumberRegistered
+    }
 
 }

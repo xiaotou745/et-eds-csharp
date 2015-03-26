@@ -50,6 +50,7 @@
     <Compile Include="Distribution\DistributionDao.cs" />
     <Compile Include="Order\OrderDao.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Statistics\StatisticsDao.cs" />
     <Compile Include="Subsidy\SubsidyDao.cs" />
     <Compile Include="User\BusinessDao.cs" />
     <Compile Include="User\UserDao.cs" />
