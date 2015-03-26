@@ -23,5 +23,19 @@ namespace Ets.Model.ParameterModel.Order
         /// </summary>
         [Required]
         public int status { get; set; }
+        /// <summary>
+        /// 超人名称    TODO  后续根据第三方对接集团的增加，可能要扩展成实体对象形式
+        /// </summary>
+        public string ClienterTrueName { get; set; }
+
+
+        /// <summary>
+        /// 超人电话    TODO  后续根据第三方对接集团的增加，可能要扩展成实体对象形式
+        /// </summary>
+        public string ClienterPhoneNo { get; set; }
+        /// <summary>
+        /// 商户名称
+        /// </summary>
+        public string BusinessName { get; set; }
     }
 }

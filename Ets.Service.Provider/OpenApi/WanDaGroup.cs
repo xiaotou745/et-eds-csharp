@@ -38,11 +38,11 @@ namespace Ets.Service.IProvider.OpenApi
                     break;
                 case OrderConst.OrderStatus2:
                     status = "sending";
-                    statusDesc = "谁谁谁在配送，联系电话..";
+                    statusDesc = string.Format("{0}在配送，联系电话{1}", paramodel.fields.ClienterTrueName, paramodel.fields.ClienterPhoneNo);
                     break;
                 case OrderConst.OrderStatus3:
                     status = "cancel";
-                    statusDesc = "XXX商户取消该订单";
+                    statusDesc = string.Format("{0}商户取消该订单", paramodel.fields.BusinessName);
                     break;
                 default:
                     break;
