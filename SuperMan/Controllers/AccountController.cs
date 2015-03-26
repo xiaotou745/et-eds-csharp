@@ -42,7 +42,7 @@ namespace SuperMan.Controllers
         //[ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
-            _authenticationService.SignOut(); 
+            _authenticationService.SignOut();
             return RedirectToAction("Login", "Account");
         }
 
@@ -62,61 +62,56 @@ namespace SuperMan.Controllers
         public ActionResult Login(Ets.Model.ParameterModel.Authority.LoginModel model, string returnUrl)
         {
             var captcha = Session["captcha"];
-            if (captcha == null)
+            if (captcha == null || model.Captcha != captcha.ToString())
             {
                 ModelState.AddModelError("", "验证码不正确");
                 return View(model);
             }
-
-            if (model.Captcha != captcha.ToString())
+            if (!ModelState.IsValid)
             {
-                ModelState.AddModelError("", "验证码不正确");
-                return View(model);
+                return View(model); 
+            }
+            var loginResult = iAccountProvider.ValidateUser(model.UserName, MD5Helper.MD5(model.Password));
+            switch (loginResult)
+            {
+                case ETS.Enums.UserLoginResults.Successful:
+                    var authorityProvider = new AuthorityMenuProvider();
+                    var account = authorityProvider.GetAccountByName(model.UserName);
+                    var userInfo = new SimpleUserInfoModel
+                    {
+                        Id = account.Id,
+                        LoginName = account.LoginName,
+                        GroupId = account.GroupId,
+                        RoleId = account.RoleId,
+                    };
+                    string json = Letao.Util.JsonHelper.ToJson(userInfo);
+                    _authenticationService.SignIn(json);
+                    //获取用户权限菜单id数组，存入cookie中
+                    List<int> myMenusR = authorityProvider.GetMenuIdsByRoloId(account.RoleId);
+                    List<int> myMenus = authorityProvider.GetMenuIdsByAccountId(account.Id);
+                    if (myMenusR != null)
+                    {
+                        foreach (var i in myMenusR.Where(i => !myMenus.Contains(i)))
+                        {
+                            myMenus.Add(i);
+                        }
+                    }
+                    string menujson = Letao.Util.JsonHelper.ToJson(myMenus);
+                    CookieHelper.WriteCookie("menulist", menujson, DateTime.Now.AddHours(10));
+
+                    return RedirectToAction("Index", "HomeCount");
+                case ETS.Enums.UserLoginResults.UserNotExist:
+                    ModelState.AddModelError("", "用户不存在");
+                    break;
+                case ETS.Enums.UserLoginResults.AccountClosed:
+                    ModelState.AddModelError("", "帐号已关闭");
+                    break;
+                case ETS.Enums.UserLoginResults.WrongPassword:
+                default:
+                    ModelState.AddModelError("", "密码错误");
+                    break;
             }
 
-            if (ModelState.IsValid)
-            {
-                var loginResult = iAccountProvider.ValidateUser(model.UserName, MD5Helper.MD5(model.Password));
-                switch (loginResult)
-                {
-                    case ETS.Enums.UserLoginResults.Successful:
-                        var authorityProvider = new AuthorityMenuProvider();
-                        var account = authorityProvider.GetAccountByName(model.UserName);
-                        var userInfo=new SimpleUserInfoModel
-                        {
-                            Id = account.Id,
-                            LoginName = account.LoginName,
-                            GroupId = account.GroupId,
-                            RoleId = account.RoleId, 
-                        };
-                         string json = Letao.Util.JsonHelper.ToJson(userInfo);
-                        _authenticationService.SignIn(json);
-                        //获取用户权限菜单id数组，存入cookie中
-                        List<int> myMenusR = authorityProvider.GetMenuIdsByRoloId(account.RoleId);
-                        List<int> myMenus = authorityProvider.GetMenuIdsByAccountId(account.Id);
-                        if (myMenusR!=null)
-                        {
-                            foreach (var i in myMenusR.Where(i => !myMenus.Contains(i)))
-                            {
-                                myMenus.Add(i);
-                            }
-                        } 
-                        string menujson = Letao.Util.JsonHelper.ToJson(myMenus);
-                        CookieHelper.WriteCookie("menulist", menujson, DateTime.Now.AddHours(1));  
-                       
-                        return RedirectToAction("Index", "HomeCount");
-                    case ETS.Enums.UserLoginResults.UserNotExist:
-                        ModelState.AddModelError("", "用户不存在");
-                        break;
-                    case ETS.Enums.UserLoginResults.AccountClosed:
-                        ModelState.AddModelError("", "帐号已关闭");
-                        break;
-                    case ETS.Enums.UserLoginResults.WrongPassword:
-                    default:
-                        ModelState.AddModelError("", "密码错误");
-                        break;
-                }
-            }
             return View(model);
         }
 
