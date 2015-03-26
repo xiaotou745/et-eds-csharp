@@ -148,5 +148,14 @@ namespace Ets.Service.IProvider.User
         /// <param name="businessModel"></param>
         /// <returns></returns>
         int UpdateBusinessAddressInfo(BusiAddAddressInfoModel businessModel);
+
+        /// <summary>
+        /// 请求动态验证码  (找回密码)
+        /// 窦海超
+        /// 2015年3月26日 17:16:02
+        /// </summary>
+        /// <param name="PhoneNumber">手机号码</param>
+        /// <returns></returns>
+        Ets.Model.Common.SimpleResultModel CheckCodeFindPwd(string PhoneNumber);
     }
 }

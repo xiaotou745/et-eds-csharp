@@ -19,6 +19,7 @@ using Ets.Service.IProvider.Order;
 using Ets.Service.Provider.Order;
 using Ets.Service.Provider.Common;
 using Ets.Service.IProvider.User;
+using ETS.Cacheing;
 namespace SuperManWebApi.Controllers
 {
     public class BusinessAPIController : ApiController
@@ -294,10 +295,10 @@ namespace SuperManWebApi.Controllers
             lock (lockHelper)
             {
                 //首先验证该 商户有无 资格 发布订单 wc
-                if (!iBusinessProvider.HaveQualification(model.userId)) 
+                if (!iBusinessProvider.HaveQualification(model.userId))
                 {
                     return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.HadCancelQualification);
-                }  
+                }
                 #region 缓存验证
                 string cacheKey = model.userId.ToString() + "_" + model.OrderSign;
                 var cacheList = ETS.Cacheing.CacheFactory.Instance[cacheKey];
@@ -326,7 +327,7 @@ namespace SuperManWebApi.Controllers
             return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.Success, resultModel);
 
         }
-          
+
         /// <summary>
         /// 获取订单列表
         /// </summary>
@@ -427,17 +428,17 @@ namespace SuperManWebApi.Controllers
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiOrderCountResultModel> OrderCount_B(int userId)
         {
             var resultModel = BusiLogic.busiLogic().GetOrderCountData(userId);
-              
+
             return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiOrderCountResultModel>.Conclude(ETS.Enums.LoginModelStatus.Success, resultModel);
         }
-        
+
         /// <summary>
         /// 请求动态验证码  (注册)
         /// c</summary>
         [ActionStatus(typeof(ETS.Enums.SendCheckCodeStatus))]
         [HttpGet]
         public Ets.Model.Common.SimpleResultModel CheckCode(string PhoneNumber)
-        {  
+        {
             if (!CommonValidator.IsValidPhoneNumber(PhoneNumber))  //验证电话号码合法性
             {
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
@@ -447,7 +448,7 @@ namespace SuperManWebApi.Controllers
             try
             {
                 if (iBusinessProvider.CheckBusinessExistPhone(PhoneNumber))  //判断该手机号是否已经注册过
-                    return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.AlreadyExists); 
+                    return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.AlreadyExists);
                 else
                 {
                     SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);
@@ -474,27 +475,30 @@ namespace SuperManWebApi.Controllers
         [HttpGet]
         public Ets.Model.Common.SimpleResultModel CheckCodeFindPwd(string PhoneNumber)
         {
-            if (!CommonValidator.IsValidPhoneNumber(PhoneNumber))  //检查手机号码的合法性
-            {
-                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
-            }
-            var randomCode = new Random().Next(100000).ToString("D6");
-            var msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode, Ets.Model.Common.ConstValues.MessageBusiness);
-            try
-            {
-                SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);
-                // 更新短信通道 
-                Task.Factory.StartNew(() =>
-                {
-                    SendSmsHelper.SendSendSmsSaveLog(PhoneNumber, msg, Ets.Model.Common.ConstValues.SMSSOURCE);
-                });
-                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.Sending);
+            /* if (!CommonValidator.IsValidPhoneNumber(PhoneNumber))  //检查手机号码的合法性
+             {
+                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
+             }
+             var randomCode = new Random().Next(100000).ToString("D6");
+             var msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode, Ets.Model.Common.ConstValues.MessageBusiness);
+             try
+             {
+                 SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);
+             
+                 // 更新短信通道 
+                 Task.Factory.StartNew(() =>
+                 {
+                     SendSmsHelper.SendSendSmsSaveLog(PhoneNumber, msg, Ets.Model.Common.ConstValues.SMSSOURCE);
+                 });
+                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.Sending);
 
-            }
-            catch (Exception)
-            {
-                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.SendFailure);
-            }
+             }
+             catch (Exception)
+             {
+                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.SendFailure);
+             }*/
+            BusinessProvider businessProvider = new BusinessProvider();
+            return businessProvider.CheckCodeFindPwd(PhoneNumber);
         }
 
         /// <summary>
@@ -521,7 +525,7 @@ namespace SuperManWebApi.Controllers
             //    return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.Success);
             //else
             //    return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.FailedModifyPwd);
-            return  new BusinessProvider().PostForgetPwd_B(model);
+            return new BusinessProvider().PostForgetPwd_B(model);
         }
 
         /// <summary> 
@@ -565,7 +569,7 @@ namespace SuperManWebApi.Controllers
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.DistribSubsidyStatus.Failed);
             int modResult = iBusinessProvider.ModifyWaiMaiPrice(mod.userId, mod.price);
 
-            if (modResult>0)
+            if (modResult > 0)
             {
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.DistribSubsidyStatus.Success);
             }
