@@ -11,8 +11,9 @@ using System.Threading.Tasks;
 
 namespace Ets.Model.ParameterModel.Bussiness
 {
-    public class BusinessSearchCriteria
+    public class BusinessSearchCriteria : ListParaBase
     {
+        private int status = -1; //默认查询所有状态
         //public PagingResult PagingRequest { get; set; }
         public NewPagingResult PagingRequest { get; set; }
         
@@ -21,7 +22,12 @@ namespace Ets.Model.ParameterModel.Bussiness
         public string businessName { get; set; } //商户名称
         public string businessPhone { get; set; } //商户电话
         public decimal BusinessCommission { get; set; } //商户结算比例
-        public int Status { get; set; }      //订单状态
+        public int Status
+        {
+            get { return status; }
+            set { status = value; }
+        }     
+        //public int Status { get; set; }      //订单状态
 
         /// <summary>
         /// 查询类型,按当天,本周,还是本月

@@ -13,7 +13,7 @@
             共 @pageCount 页 @all 条记录，当前为第 @index 页,本页 @recordsCount 条
         </span>
     </div>
-    @Ajax.Pager(all, ETS.Const.SystemConst.PageSize, index, "PostSuperManManager", null, null,
+    @Ajax.Pager(all, ETS.Const.SystemConst.PageSize, index, (string)ViewBag.ActionName, null, null,
           new PagerOptions
           {
               PageIndexParameterName = "pageindex",

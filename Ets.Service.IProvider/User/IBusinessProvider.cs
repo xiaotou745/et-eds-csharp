@@ -72,7 +72,7 @@ namespace Ets.Service.IProvider.User
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        BusinessManage GetBusinesses(BusinessSearchCriteria criteria);
+        PageInfo<BusListResultModel> GetBusinesses(BusinessSearchCriteria criteria);
         /// <summary>
         /// 更新审核状态
         /// danny-20150317

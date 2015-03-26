@@ -1,4 +1,4 @@
-﻿@model Ets.Model.DomainModel.Subsidy.SubsidyManageList
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Subsidy.subsidy>
 @using Ets.Service.Provider.User
 <div>
     <h4 style="color:black;font-weight:600">补帖设置记录</h4>
@@ -16,7 +16,7 @@
         <tbody>
             @{
                 var i = 0;
-                foreach (var item in Model.subsidyModel)
+                foreach (var item in Model.Records)
                 {
                     i++;
                     <tr>
@@ -33,6 +33,7 @@
             }
         </tbody>
 </table>
- @Html.Partial("_NewPager", Model.PagingResult)
+@{ViewBag.ActionName = "PostSubsidyManager";}
+@Html.Partial("~/views/shared/PagerControl.cshtml", Model)
    
 

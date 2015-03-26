@@ -4,6 +4,7 @@
     using Model.DataModel.Authority;
     using Ets.Model.DomainModel.Authority;
     using Ets.Model.ParameterModel.Authority;
+    using ETS.Data.PageData;
   
     /// <summary>
     /// 权限操作接口类 平扬 2015.3.18
@@ -165,7 +166,7 @@
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        AuthorityManage GetAuthorityManage(AuthoritySearchCriteria criteria);
+        PageInfo<account> GetAuthorityManage(AuthoritySearchCriteria criteria);
         /// <summary>
         /// 检查当前用户是否存在
         /// danny-20150323

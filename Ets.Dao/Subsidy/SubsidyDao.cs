@@ -84,7 +84,7 @@ WHERE   sub.[Status] = 1 ");
             }
             string tableList = @" subsidy s WITH (NOLOCK)  LEFT JOIN dbo.[group] g WITH(NOLOCK) ON g.Id = s.GroupId ";
             string orderByColumn = " s.StartDate DESC,s.EndDate DESC ";
-            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
 
 

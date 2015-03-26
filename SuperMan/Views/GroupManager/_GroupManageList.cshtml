@@ -1,5 +1,4 @@
-﻿
-@model GroupListModel
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Group.GroupApiConfigModel>
 @using Ets.Model.ParameterModel.Group;
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
     <thead>
@@ -19,8 +18,8 @@
     <tbody>
         @{
             if (Model != null)
-            { 
-            foreach (var item in Model.GroupApiConfigListModel)
+            {
+                foreach (var item in Model.Records)
             {
                 <tr id="@item.GroupId">
                     <td>@item.GroupId</td>
@@ -52,7 +51,8 @@
     </tbody>
 
 </table>
-@Html.Partial("_NewPager", Model.PagingResult) 
+@{ViewBag.ActionName = "PostGroupManager";}
+@Html.Partial("~/views/shared/PagerControl.cshtml", Model)
 <script type="text/javascript">
     //显示修改集团弹出层
     function funcGShowView(gid, gname) {

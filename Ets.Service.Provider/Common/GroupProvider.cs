@@ -6,6 +6,7 @@ using Ets.Model.DomainModel.Group;
 using Ets.Model.ParameterModel.Group;
 using Ets.Service.IProvider.Common;
 using ETS.Util;
+using ETS.Data.PageData;
 
 namespace Ets.Service.Provider.Common
 {
@@ -24,28 +25,10 @@ namespace Ets.Service.Provider.Common
         /// </summary>
         /// <param name="criteria">查询条件</param>
         /// <returns></returns>
-        public ResultInfo<GroupListModel> GetGroupList(GroupParaModel criteria)
+        public PageInfo<GroupApiConfigModel> GetGroupList(GroupParaModel criteria)
         {
-            var result = new ResultInfo<GroupListModel> {Data = null, Result = false};
-            try
-            {
-                var a = _dao.GetGroupList(criteria);
-                var pageresult = new NewPagingResult(criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize)
-                {
-                    TotalCount = a.All,
-                    RecordCount = a.Records.Count
-                };
-                result.Data = new GroupListModel(a.Records, pageresult);
-                result.Message = "执行成功";
-                result.Result = true;
-            }
-            catch (Exception ex)
-            {
-                result.Message = ex.ToString();
-                result.Result = false;
-                LogHelper.LogWriterFromFilter(ex);
-            }
-            return result;
+            PageInfo<GroupApiConfigModel> pageinfo = _dao.GetGroupList<GroupApiConfigModel>(criteria);
+            return pageinfo;
         }
         /// <summary>
         /// 创建集团Api配置

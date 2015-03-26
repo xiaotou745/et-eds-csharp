@@ -1,4 +1,4 @@
-﻿@model Ets.Model.DomainModel.Authority.AuthorityManage
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Authority.account>
 @using SuperMan.App_Start
 @using Ets.Service.Provider.User
 @using Ets.Model
@@ -11,13 +11,17 @@
         <h2 class="crumbs">
             您所在位置：账号管理 > 账号管理
         </h2>
-        <div class="SearchMd">
+        @using (Ajax.BeginForm("PostAuthorityManager", new RouteValueDictionary { { "pageindex", "" } },
+        new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+        new RouteValueDictionary { { "id", "searchForm" } }))
+        {
+              <div class="SearchMd">
             <table border="0" cellspacing="0" cellpadding="0">
                 <tr>
                     <td>
                         <span class="">用户名: </span>
-                        <input id="txtName" type="text" />
-                        <input name="txtGroupId" id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" />
+                        <input id="txtName" type="text" name="UserName" />
+                        <input name="GroupId" id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" />
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                         @if (UserContext.Current.HasAuthority(26))
                         { 
@@ -27,8 +31,10 @@
                 </tr>
             </table>
         </div>
+        }
+        <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
         <div class="bd clearfix" id="dataList">
-            @Html.Partial("_AuthorityManagerList", Model.authorityManageList)
+            @Html.Partial("_AuthorityManagerList", Model)
         </div>
     </div>
 @*添加帐号*@
@@ -132,37 +138,39 @@
 </div>
 <script>
     var adminjs = new adminglass(); //实例化后台类
-    var DEFAULT_PAGESIZE = 15;
-    var criteria = { PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }, GroupId: $("#txtGroupId").val() };
+    //var DEFAULT_PAGESIZE = 15;
+    //var criteria = { PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }, GroupId: $("#txtGroupId").val() };
     $(document).ready(function () {
         
-        //查询
-        $("#btnSearch").on('click', function () {
-            criteria = {
-                UserName: $("#txtName").val(),
-                PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE, GroupId: $("#txtGroupId").val() }
-            };
-            refresh(0);
-        });
+        ////查询
+        //$("#btnSearch").on('click', function () {
+        //    criteria = {
+        //        UserName: $("#txtName").val(),
+        //        PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE, GroupId: $("#txtGroupId").val() }
+        //    };
+        //    refresh(0);
+        //});
         //添加帐户
         $("#btnAdd").on('click', function () {
             adminjs.openwinbox('#AddAccountShow');
         });
+        window.location.hash = '';
  
     })
-    ////分页
-    art.ui.control.NewPager.enablePaging(document, refresh);
-    function refresh(pageIndex) {
-        var url = "/AuthorityManager/AuthorityManager";
-        if (pageIndex !== undefined) {
-            criteria.PagingRequest.PageIndex = pageIndex;
-        }
-        webExpress.utility.ajax.request
-            (
-                url,
-                criteria,
-                function (data) {
-                    $("#dataList").html(data);
-                });
-    };
+    //////分页
+    //art.ui.control.NewPager.enablePaging(document, refresh);
+    //function refresh(pageIndex) {
+    //    var url = "/AuthorityManager/AuthorityManager";
+    //    if (pageIndex !== undefined) {
+    //        criteria.PagingRequest.PageIndex = pageIndex;
+    //    }
+    //    webExpress.utility.ajax.request
+    //        (
+    //            url,
+    //            criteria,
+    //            function (data) {
+    //                $("#dataList").html(data);
+    //            });
+    //};
 </script>
+<script src="~/Scripts/mvcpager.js"></script>
