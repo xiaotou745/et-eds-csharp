@@ -2,6 +2,7 @@
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DomainModel.Order;
+using Ets.Model.DomainModel.Subsidy;
 using Ets.Model.ParameterModel.Order;
 using ETS;
 using ETS.Dao;
@@ -438,17 +439,6 @@ namespace Ets.Dao.Order
                                     ,b.PhoneNo BusinessPhoneNo
                                     ,b.Address BusinessAddress
                                     ,g.GroupName";
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@businessName", criteria.businessName);
-            parm.AddWithValue("@businessPhone", criteria.businessPhone);
-            parm.AddWithValue("@orderId", criteria.orderId);
-            parm.AddWithValue("@OriginalOrderNo", criteria.OriginalOrderNo);
-            parm.AddWithValue("@orderStatus", criteria.orderStatus);
-            parm.AddWithValue("@superManName", criteria.superManName);
-            parm.AddWithValue("@superManPhone", criteria.superManPhone);
-            parm.AddWithValue("@orderPubStart", criteria.orderPubStart);
-            parm.AddWithValue("@orderPubEnd", criteria.orderPubEnd);
-            parm.AddWithValue("@GroupId", criteria.GroupId);
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.businessName))
             {
@@ -686,5 +676,78 @@ namespace Ets.Dao.Order
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             return MapRows<HomeCountTitleModel>(dt)[0];
         }
+
+
+        /// <summary>
+        /// 订单统计
+        /// danny-20150326
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<T> GetOrderCount<T>(HomeCountCriteria criteria)
+        {
+            string columnList = @"  b.district
+				                    ,COUNT(*) orderCount
+				                    ,SUM(o.DistribSubsidy)distribSubsidy
+				                    ,SUM(o.WebsiteSubsidy)websiteSubsidy
+				                    ,SUM(o.OrderCommission)orderCommission
+				                    ,SUM(o.DistribSubsidy+o.WebsiteSubsidy+o.OrderCommission)deliverAmount
+				                    ,SUM(Amount)orderAmount ";
+            var sbSqlWhere = new StringBuilder(" 1=1 ");
+            if (criteria.searchType == 1)//当天
+            {
+                sbSqlWhere.Append(" AND DateDiff(DAY, GetDate(),o.PubDate)=0 ");
+            }
+            else if (criteria.searchType == 2)//本周
+            {
+                sbSqlWhere.Append(" AND DateDiff(WEEK, GetDate(),DATEADD (DAY, -1,o.PubDate))=0 ");
+            }
+            else if (criteria.searchType == 3)//本月
+            {
+                sbSqlWhere.Append(" AND DateDiff(MONTH, GetDate(),o.PubDate)=0 ");
+            }
+            sbSqlWhere.Append(" group by b.district ");
+            string tableList = @" business b with(nolock)
+                                  join [order] o with(nolock) on b.Id=o.businessId ";
+            string orderByColumn = " COUNT(*) DESC ";
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
+//            var sbtbl = new StringBuilder(@" (select   b.district
+//				                    ,COUNT(*) orderCount
+//				                    ,SUM(o.DistribSubsidy)distribSubsidy
+//				                    ,SUM(o.WebsiteSubsidy)websiteSubsidy
+//				                    ,SUM(o.OrderCommission)orderCommission
+//				                    ,SUM(o.DistribSubsidy+o.WebsiteSubsidy+o.OrderCommission)deliverAmount
+//				                    ,SUM(Amount)orderAmount
+//                                    from business b with(nolock)
+//                                    join [order] o with(nolock) on b.Id=o.businessId
+//                                    where 1=1");
+//            if (criteria.searchType == 1)//当天
+//            {
+//                sbtbl.Append(" AND DateDiff(DAY, GetDate(),o.PubDate)=0 ");
+//            }
+//            else if (criteria.searchType == 2)//本周
+//            {
+//                sbtbl.Append(" AND DateDiff(WEEK, GetDate(),DATEADD (DAY, -1,o.PubDate))=0 ");
+//            }
+//            else if (criteria.searchType == 3)//本月
+//            {
+//                sbtbl.Append(" AND DateDiff(MONTH, GetDate(),o.PubDate)=0 ");
+//            }
+//            sbtbl.Append(" group by b.district ) tbl ");
+//            string columnList = @"  tbl.district
+//				                    ,tbl.orderCount
+//				                    ,tbl.distribSubsidy
+//				                    ,tbl.websiteSubsidy
+//				                    ,tbl.orderCommission
+//				                    ,tbl.deliverAmount
+//				                    ,tbl.orderAmount ";
+
+//            var sbSqlWhere = new StringBuilder(" 1=1 ");
+//            string tableList = sbtbl.ToString();
+//            string orderByColumn = " tbl.orderCount DESC ";
+//            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
+        }
+        
     }
 }

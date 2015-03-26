@@ -192,6 +192,7 @@
     <Compile Include="Controllers\GroupManagerController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HomeCountController.cs" />
+    <Compile Include="Controllers\StatisticsController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MenuManagerController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
@@ -553,6 +554,11 @@
     <Content Include="Views\MenuManager\AccountManager.cshtml" />
     <Content Include="Views\MenuManager\MenuButton.cshtml" />
     <Content Include="Views\Shared\PagerControl.cshtml" />
+    <Content Include="Views\Statistics\Statistics.cshtml" />
+    <Content Include="Views\Statistics\OrderCount.cshtml" />
+    <Content Include="Views\Statistics\SuperManCount.cshtml" />
+    <Content Include="Views\Statistics\BusinessCount.cshtml" />
+    <Content Include="Views\Statistics\_PartialOrderCountNew.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

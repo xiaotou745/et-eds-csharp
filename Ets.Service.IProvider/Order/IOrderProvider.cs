@@ -2,6 +2,7 @@
 using Ets.Model.DataModel.Order;
 using Ets.Model.DomainModel.Clienter;
 using Ets.Model.DomainModel.Order;
+using Ets.Model.DomainModel.Subsidy;
 using Ets.Model.ParameterModel.Bussiness;
 using Ets.Model.ParameterModel.Order;
 using ETS.Data.PageData;
@@ -113,5 +114,12 @@ namespace Ets.Service.IProvider.Order
         OrderDetailDM_OpenApi OrderDetail(OrderDetailPM_OpenApi paramodel);
 
         #endregion
+        /// <summary>
+        /// 订单统计
+        /// danny-20150326
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        PageInfo<OrderCountModel> GetOrderCount(HomeCountCriteria criteria);
     }
 }
