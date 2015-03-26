@@ -15,25 +15,21 @@ namespace Ets.Model.ParameterModel.Order
         /// <summary>
         /// 订单号
         /// </summary>
-        [Required]
         public string order_id { get; set; }
 
         /// <summary>
         /// 订单下单时间
         /// </summary>
-        [Required]
         public DateTime create_time { get; set; }
 
         /// <summary>
         /// 要求送餐时间
         /// </summary>
-        [Required]
         public DateTime receive_time { get; set; }
 
         /// <summary>
         /// 用户是否已付款，true 已付款 false 未付款
         /// </summary>
-        [Required]
         public bool is_pay { get; set; }
 
         /// <summary>
@@ -44,25 +40,22 @@ namespace Ets.Model.ParameterModel.Order
         /// <summary>
         /// 订单金额，精确到两位小数
         /// </summary>
-        [Required]
         public decimal total_price { get; set; }
 
         /// <summary>
         /// 收货地址信息
         /// </summary>
-        [Required]
+        
         public Address address { get; set; }
 
         /// <summary>
         /// 门店信息
-        /// </summary>
-        [Required]
+        /// </summary>   
         public Store store_info { get; set; }
 
         /// <summary>
         /// 订单明细
         /// </summary>
-        [Required]
         public OrderDetail[] order_details { get; set; }
 
         /// <summary>
@@ -91,12 +84,12 @@ namespace Ets.Model.ParameterModel.Order
         public decimal ordercommission { get; set; }
 
         /// <summary>
-        /// 网站补贴 目前由业务逻辑层计算查询所得
+        /// 网站补贴 
         /// </summary>
         public decimal websitesubsidy { get; set; }
 
         /// <summary>
-        /// 订单佣金比例  目前由业务逻辑层计算查询所得
+        /// 订单佣金比例  
         /// </summary>
         public decimal commissionrate { get; set; }
 
