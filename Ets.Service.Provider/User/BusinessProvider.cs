@@ -352,5 +352,32 @@ namespace Ets.Service.Provider.User
         {
             return dao.ModifyWaiMaiPrice(businessId, waiSongFei);
         }
+        /// <summary>
+        /// 修改商户地址信息 
+        /// wc
+        /// </summary>
+        /// <param name="businessModel"></param>
+        /// <returns></returns>
+        public int UpdateBusinessAddressInfo(BusiAddAddressInfoModel businessModel)
+        {
+            Business business =  TranslateBusiness(businessModel);
+            return 0;
+        }
+
+        private Business TranslateBusiness(BusiAddAddressInfoModel businessModel)
+        {
+            var to = new Business();
+            to.Id = businessModel.userId;
+            to.Address = businessModel.Address;
+            to.Name = businessModel.businessName;
+            to.Landline = businessModel.landLine;
+            to.PhoneNo2 = businessModel.phoneNo;
+            to.districtId = businessModel.districtId;
+            to.district = businessModel.districtName;
+            to.Longitude = businessModel.longitude;
+            to.Latitude = businessModel.latitude;
+            to.Status = ConstValues.BUSINESS_NOAUDIT;
+            return to;
+        }
     }
 }

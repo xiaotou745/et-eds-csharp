@@ -350,12 +350,11 @@ namespace SuperManWebApi.Controllers
             //var pagedList = OrderLogic.orderLogic().GetOrders(criteria);
             //var list = BusiGetOrderModelTranslator.Instance.Translate(pagedList);
             IList<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel> list = new BusinessProvider().GetOrdersApp(criteria);
-            return ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]>.Conclude(GetOrdersStatus.Success, list.ToArray());
+            return ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]>.Conclude(ETS.Enums.GetOrdersStatus.Success, list.ToArray());
         }
 
         /// <summary>
         /// 地址管理
-        /// 改 ado.net wc
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -391,32 +390,32 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [ActionStatus(typeof(BusiAddAddressStatus))]
-        [HttpPost]
-        public ResultModel<BusiAddAddressResultModel> PostManagerAddress_B_WC(BusiAddAddressInfoModel model)
-        {
-            if (string.IsNullOrWhiteSpace(model.phoneNo))
-            {
-                return ResultModel<BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.PhoneNumberEmpty);
-            }
-            if (string.IsNullOrWhiteSpace(model.Address))
-            {
-                return ResultModel<BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.AddressEmpty);
-            }
-            if (string.IsNullOrWhiteSpace(model.businessName))
-            {
-                return ResultModel<BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.businessNameEmpty);
-            }
-            var business = BusiAddAddressInfoModelTranslator.Instance.Translate(model);
-            var result = BusiLogic.busiLogic().Update(business);
+        //[ActionStatus(typeof(ETS.Enums.BusiAddAddressStatus))]
+        //[HttpPost]
+        //public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel> PostManagerAddress_B_WC(Ets.Model.ParameterModel.Bussiness.BusiAddAddressInfoModel model)
+        //{
+        //    if (string.IsNullOrWhiteSpace(model.phoneNo))
+        //    {
+        //        return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.PhoneNumberEmpty);
+        //    }
+        //    if (string.IsNullOrWhiteSpace(model.Address))
+        //    {
+        //        return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.AddressEmpty);
+        //    }
+        //    if (string.IsNullOrWhiteSpace(model.businessName))
+        //    {
+        //        return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.businessNameEmpty);
+        //    }
+        //    var business = BusiAddAddressInfoModelTranslator.Instance.Translate(model);
+        //    var result = BusiLogic.busiLogic().Update(business);
 
-            var resultModel = new BusiAddAddressResultModel
-            {
-                userId = business.Id,
-                status = result
-            };
-            return ResultModel<BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.Success, resultModel);
-        }
+        //    var resultModel = new BusiAddAddressResultModel
+        //    {
+        //        userId = business.Id,
+        //        status = result
+        //    };
+        //    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel>.Conclude(ETS.Enums.BusiAddAddressStatus.Success, resultModel);
+        //}
         /// <summary>
         /// B端订单统计
         /// 改 ado.net
