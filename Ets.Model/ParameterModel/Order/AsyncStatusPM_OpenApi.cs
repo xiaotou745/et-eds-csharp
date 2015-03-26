@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using Ets.Model.Common;
 
 namespace Ets.Model.ParameterModel.Order
 {
