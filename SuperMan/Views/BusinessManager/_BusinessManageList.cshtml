@@ -1,4 +1,6 @@
-﻿@using Ets.Service.Provider.User
+﻿@using System.Activities.Expressions
+@using System.Text.RegularExpressions
+@using Ets.Service.Provider.User
 @model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Bussiness.BusListResultModel>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
     <thead>
@@ -20,14 +22,16 @@
     </thead>
     <tbody>
         @{
-            var i = 0;
-           
+            var i = 0; 
             var puth = SuperManCore.CustomerIconUploader.Instance.RelativePath;
             var PicHost = SuperManCore.CustomerIconUploader.Instance.PicHost;
             //var path=System.IO.Path.Combine(SuperManCore.CustomerIconUploader.Instance.RelativePath,).ToForwardSlashPath();
             foreach (var item in Model.Records)
             {
-                var address = !string.IsNullOrEmpty(@item.Address) ? @item.Address.TrimEnd('\n').TrimEnd('\r') : "";
+ 
+                var address = !string.IsNullOrEmpty(@item.Address) ? @item.Address: "无地址";                
+                address = address.Replace((char)13, (char)0);
+                address = address.Replace((char)10, (char)0);
                 i++;
                 <tr id="@item.Id">
                     <td>@item.Id</td>

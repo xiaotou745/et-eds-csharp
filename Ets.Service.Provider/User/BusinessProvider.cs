@@ -16,6 +16,10 @@ using Ets.Model.DataModel.Bussiness;
 using ETS.Util;
 using ETS.Cacheing;
 using Ets.Model.DataModel.Group;
+using ETS.Validator;
+using ETS;
+using System.Threading.Tasks;
+using ETS.Sms;
 namespace Ets.Service.Provider.User
 {
 
@@ -180,6 +184,53 @@ namespace Ets.Service.Provider.User
         }
 
         /// <summary>
+        /// B端注册，供第三方使用 
+        /// 平扬
+        /// 2015年3月26日 17:19:45
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public ResultModel<NewBusiRegisterResultModel> NewPostRegisterInfo_B(NewRegisterInfoModel model)
+        {
+            if (string.IsNullOrWhiteSpace(model.PhoneNo))   //手机号非空验证
+                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
+            if (string.IsNullOrWhiteSpace(model.B_OriginalBusiId.ToString()))  //判断原平台商户Id不能为空
+                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.OriginalBusiIdEmpty);
+            if (string.IsNullOrWhiteSpace(model.B_GroupId.ToString()))  //集团Id不能为空
+                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.GroupIdEmpty);
+            //是否存在该商户
+            if (dao.CheckExistBusiness(model.B_OriginalBusiId, model.B_GroupId))
+                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.OriginalBusiIdRepeat);
+
+            if (string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_CityCode.ToString())) //城市以及城市编码非空验证
+                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
+            if (string.IsNullOrEmpty(model.B_Name.Trim())) //商户名称
+                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiNameEmpty);
+            if (string.IsNullOrWhiteSpace(model.Address) || string.IsNullOrWhiteSpace(model.B_Province) || string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_Area) || string.IsNullOrWhiteSpace(model.B_AreaCode) || string.IsNullOrWhiteSpace(model.B_CityCode) || string.IsNullOrWhiteSpace(model.B_ProvinceCode))  //商户地址 省市区 不能为空
+                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
+            if (model.CommissionTypeId == 0)
+            {
+                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
+            }
+            model.B_Password = MD5Helper.MD5(string.IsNullOrEmpty(model.B_Password) ? "abc123" : model.B_Password);
+            var business = NewRegisterInfoModelTranslator.Instance.Translate(model);
+            business.Status = ConstValues.BUSINESS_AUDITPASS;
+            int businessid = dao.InsertOtherBusiness(business);
+            if (businessid > 0)
+            {
+                var resultModel = new NewBusiRegisterResultModel
+                {
+                    BusiRegisterId = businessid
+                };
+                LogHelper.LogWriter("第三方调用商户注册接口", new { model = model, Message = CustomerRegisterStatus.Success });
+                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
+            }
+            return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.Faild);
+
+        }
+
+
+        /// <summary>
         /// B端登录
         /// 窦海超
         /// 2015年3月16日 16:11:59
@@ -307,10 +358,10 @@ namespace Ets.Service.Provider.User
         /// </summary>
         /// <param name="PhoneNo"></param>
         /// <returns></returns>
-        public bool CheckBusinessExistPhone(string PhoneNo)
-        {
-            return dao.CheckBusinessExistPhone(PhoneNo);
-        }
+        //public bool CheckBusinessExistPhone(string PhoneNo)
+        //{
+        //    return dao.CheckBusinessExistPhone(PhoneNo);
+        //}
         /// <summary>
         /// 判断该 商户是否有资格 
         /// wc
@@ -378,6 +429,76 @@ namespace Ets.Service.Provider.User
             to.Latitude = businessModel.latitude;
             to.Status = ConstValues.BUSINESS_NOAUDIT;
             return to;
+        }
+
+        /// <summary>
+        /// 请求动态验证码  (找回密码)
+        /// 窦海超
+        /// 2015年3月26日 17:16:02
+        /// </summary>
+        /// <param name="PhoneNumber">手机号码</param>
+        /// <returns></returns>
+        public SimpleResultModel CheckCodeFindPwd(string PhoneNumber)
+        {
+            if (!CommonValidator.IsValidPhoneNumber(PhoneNumber))  //检查手机号码的合法性
+            {
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
+            }
+            var randomCode = new Random().Next(100000).ToString("D6");
+            var msg = string.Format(Config.SmsContentFindPassword, randomCode, Ets.Model.Common.ConstValues.MessageBusiness);
+            try
+            {
+                CacheFactory.Instance.AddObject(PhoneNumber, randomCode);
+                // 更新短信通道 
+                Task.Factory.StartNew(() =>
+                {
+                    SendSmsHelper.SendSendSmsSaveLog(PhoneNumber, msg, Ets.Model.Common.ConstValues.SMSSOURCE);
+                });
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.Sending);
+
+            }
+            catch (Exception)
+            {
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.SendFailure);
+            }
+        }
+
+
+        /// <summary>
+        /// 请求动态验证码  (注册)
+        /// 窦海超
+        /// 2015年3月26日 17:46:08
+        /// </summary>
+        /// <param name="PhoneNumber">手机号码</param>
+        /// <returns></returns>
+        public SimpleResultModel CheckCode(string PhoneNumber)
+        {
+            if (!CommonValidator.IsValidPhoneNumber(PhoneNumber))  //验证电话号码合法性
+            {
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
+            }
+            var randomCode = new Random().Next(100000).ToString("D6");  //生成短信验证码
+            var msg = string.Format(Config.SmsContentCheckCode, randomCode, Ets.Model.Common.ConstValues.MessageBusiness);  //获取提示用语信息
+            try
+            {
+                if (dao.CheckBusinessExistPhone(PhoneNumber))  //判断该手机号是否已经注册过  .CheckBusinessExistPhone(PhoneNumber)
+                    return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.AlreadyExists);
+                else
+                {
+                    //SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);
+                    CacheFactory.Instance.AddObject(PhoneNumber, randomCode);
+                    //更新短信通道 
+                    Task.Factory.StartNew(() =>
+                    {
+                        SendSmsHelper.SendSendSmsSaveLog(PhoneNumber, msg, Ets.Model.Common.ConstValues.SMSSOURCE);
+                    });
+                    return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.Sending);
+                }
+            }
+            catch (Exception)
+            {
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.SendFailure);
+            }
         }
     }
 }

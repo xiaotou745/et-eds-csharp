@@ -106,6 +106,8 @@
     <Compile Include="ParameterModel\Bussiness\BussOrderParaModelApp.cs" />
     <Compile Include="ParameterModel\Bussiness\BusinessSearchCriteria.cs" />
     <Compile Include="ParameterModel\Bussiness\LoginModel.cs" />
+    <Compile Include="ParameterModel\Bussiness\NewBusiRegisterResultModel.cs" />
+    <Compile Include="ParameterModel\Bussiness\NewRegisterInfoModel.cs" />
     <Compile Include="ParameterModel\Bussiness\RegisterInfoModel.cs" />
     <Compile Include="ParameterModel\Clienter\ChangeWorkStatusPM.cs" />
     <Compile Include="ParameterModel\Clienter\ClienterSearchCriteria.cs" />
