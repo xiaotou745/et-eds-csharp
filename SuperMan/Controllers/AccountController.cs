@@ -98,7 +98,6 @@ namespace SuperMan.Controllers
                     }
                     string menujson = Letao.Util.JsonHelper.ToJson(myMenus);
                     CookieHelper.WriteCookie("menulist", menujson, DateTime.Now.AddHours(10));
-
                     return RedirectToAction("Index", "HomeCount");
                 case ETS.Enums.UserLoginResults.UserNotExist:
                     ModelState.AddModelError("", "用户不存在");

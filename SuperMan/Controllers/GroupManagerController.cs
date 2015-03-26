@@ -5,6 +5,7 @@ using Ets.Model.DataModel.Group;
 using Ets.Model.ParameterModel.Group;
 using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
+using SuperMan.App_Start;
 using SuperManDataAccess;
 using Ets.Model.DomainModel.Group;
 namespace SuperMan.Controllers
@@ -24,13 +25,7 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <returns></returns>
         public ActionResult GroupManager()
-        {
-            //SuperManDataAccess.account account = HttpContext.Session["user"] as SuperManDataAccess.account;
-            //if (account == null)
-            //{
-            //    Response.Redirect("/account/login");
-            //    return null;
-            //}
+        { 
             var criteria = new GroupParaModel();
             var pagedList = iGroupServices.GetGroupList(criteria);
             return View(pagedList);
@@ -62,11 +57,8 @@ namespace SuperMan.Controllers
             if (string.IsNullOrEmpty(groupname))
             {
                 return Json(new ResultModel(false, "集团名称不能为空"));
-            }
-            //if (HttpContext.Session != null && HttpContext.Session["user"] != null)
-            //{
-            var account = HttpContext.Session["user"] as SuperManDataAccess.account;
-            var mode = new GroupModel { GroupName = groupname.Trim(), CreateName = account.LoginName, CreateTime = DateTime.Now };
+            } 
+            var mode = new GroupModel { GroupName = groupname.Trim(), CreateName = UserContext.Current.Name, CreateTime = DateTime.Now };
             var result = iGroupServices.HasExistsGroup(mode);
             if (result.Result)
             {
@@ -81,13 +73,7 @@ namespace SuperMan.Controllers
             }
             mode.IsValid = 1;
             var res = iGroupServices.AddGroup(mode);
-            return Json(res.Result ? new ResultModel(true, "成功") : new ResultModel(false, "服务器异常"));
-            //}
-            //else
-            //{
-            //    Response.Redirect("/account/login");
-            //    return null;
-            //}
+            return Json(res.Result ? new ResultModel(true, "成功") : new ResultModel(false, "服务器异常")); 
         }
 
         /// <summary>
@@ -101,11 +87,8 @@ namespace SuperMan.Controllers
             if (string.IsNullOrEmpty(groupname))
             {
                 return Json(new ResultModel(false, "集团名称不能为空"));
-            }
-            //if (HttpContext.Session != null && HttpContext.Session["user"] != null)
-            //{
-            var account = HttpContext.Session["user"] as SuperManDataAccess.account;
-            var mode = new GroupModel { Id = id, GroupName = groupname.Trim(), CreateName = account.LoginName, CreateTime = DateTime.Now };
+            } 
+            var mode = new GroupModel { Id = id, GroupName = groupname.Trim(), CreateName = UserContext.Current.Name, CreateTime = DateTime.Now };
             var result = iGroupServices.HasExistsGroup(mode);
             if (result.Result)
             {
