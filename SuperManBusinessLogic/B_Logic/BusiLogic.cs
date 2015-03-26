@@ -107,7 +107,7 @@ namespace SuperManBusinessLogic.B_Logic
                 {
                     items = items.Where(p => p.BusinessCommission == criteria.BusinessCommission);
                 }
-                if (criteria.GroupId != null)
+                if (criteria.GroupId != null && criteria.GroupId!=0)
                 {
                     items = items.Where(p => p.GroupId == criteria.GroupId);
                 }

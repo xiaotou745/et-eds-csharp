@@ -141,5 +141,7 @@ namespace Ets.Service.IProvider.User
         /// <param name="waiSongFei"></param>
         /// <returns></returns>
         int ModifyWaiMaiPrice(int businessId, decimal waiSongFei);
+
+        //int UpdateBusinessInfo(BusinessModel)
     }
 }

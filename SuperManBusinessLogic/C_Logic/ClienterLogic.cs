@@ -75,7 +75,7 @@ namespace SuperManBusinessLogic.C_Logic
                     items = items.Where(p => p.PhoneNo == criteria.clienterPhone);
                 if (criteria.Status != -1)
                     items = items.Where(p => p.Status == criteria.Status);
-                if (criteria.GroupId != null)  //集团查询
+                if (criteria.GroupId != null && criteria.GroupId!=0)  //集团查询
                     items = items.Where(p => p.GroupId == criteria.GroupId);
                 items = items.OrderByDescending(p => p.InsertTime);
                 var pagedQuery = new ClienterManage();
