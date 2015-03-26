@@ -50,7 +50,7 @@ namespace Ets.Dao.Account
         /// <returns></returns>
         private account GetAccountInfoByLoginName(string name)
         {
-
+            //获取登陆用户时 判断 status = 1   wc改
             string sql = @" SELECT TOP 1 [Id]
                                           ,[Password]
                                           ,[UserName]
@@ -63,7 +63,7 @@ namespace Ets.Dao.Account
                                           ,[LCUser]
                                           ,[GroupId]
                                           ,[RoleId]
-                                      FROM [account] with(nolock) where LoginName=@LoginName ";
+                                      FROM [account] with(nolock) where LoginName=@LoginName AND [Status] = 1";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("LoginName", name);
             var dr = DbHelper.ExecuteReader(SuperMan_Read, sql, dbParameters);
