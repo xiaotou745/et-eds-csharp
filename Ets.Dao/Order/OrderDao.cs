@@ -668,15 +668,17 @@ namespace Ets.Dao.Order
         public HomeCountTitleModel GetHomeCountTitleToAllDataSql()
         {
             string sql = @"SELECT 
-                        SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
-                        COUNT(1) AS MisstionCount,--任务量
-                        SUM(ISNULL(OrderCount,0)) AS OrderCount,--订单量
-                        SUM(o.Amount*ISNULL(b.BusinessCommission,0)/100+ ISNULL(b.DistribSubsidy ,0) * o.OrderCount) AS YsPrice,  -- 应收金额
-                        SUM(ISNULL( OrderCommission,0)) AS YfPrice  --应付金额
-                        FROM dbo.[order](NOLOCK) AS o
-                        JOIN dbo.business(NOLOCK) AS b ON o.businessId=b.Id
-                         WHERE  
-                        o.[Status]=1 ";
+                            (SELECT SUM (AccountBalance) FROM dbo.clienter(NOLOCK)  WHERE AccountBalance>=1000) AS  WithdrawPrice,--提现金额
+                            SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
+                            COUNT(1) AS MisstionCount,--任务量
+                            SUM(ISNULL(OrderCount,0)) AS OrderCount,--订单量
+                            SUM(o.Amount*ISNULL(b.BusinessCommission,0)/100+ ISNULL(b.DistribSubsidy ,0) * o.OrderCount) AS YsPrice,  -- 应收金额
+                            SUM(ISNULL( OrderCommission,0)) AS YfPrice  --应付金额
+                            FROM dbo.[order](NOLOCK) AS o
+                            JOIN dbo.business(NOLOCK) AS b ON o.businessId=b.Id
+                            LEFT JOIN dbo.clienter(NOLOCK) AS c ON o.clienterId=c.Id
+                            WHERE  
+                            o.[Status]=1 ";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             return MapRows<HomeCountTitleModel>(dt)[0];
         }

@@ -135,6 +135,7 @@
   <ItemGroup>
     <Content Include="Content\index.css" />
     <Content Include="Global.asax" />
+    <None Include="Properties\PublishProfiles\www.edaisong.com.cn.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Images\body.jpg" />
     <Content Include="Images\ed.png" />
