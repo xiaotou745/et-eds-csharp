@@ -540,5 +540,31 @@ namespace Ets.Service.Provider.User
             return pageinfo;
         }
 
+     
+
+        /// <summary>
+        /// 第三方平台取消订单 平扬-2015.3.27
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public ResultModel<OrderCancelResultModel> NewOrderCancel(OrderCancelModel model)
+        {  
+            LogHelper.LogWriter("第三方调用取消订单：", new { model = model });
+            if (string.IsNullOrEmpty(model.OriginalOrderNo))   //订单号非空验证
+                return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderEmpty);
+            if (string.IsNullOrEmpty(model.OrderFrom.ToString()))   //订单来源非空验证
+                return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderFromEmpty);
+            bool isorder = dao.GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom, model.OrderType);
+            if (!isorder)//订单不存在
+            {
+                return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderIsNotExist);
+            } 
+            bool b = dao.UpdateOrder(model.OriginalOrderNo, model.OrderFrom, OrderStatus.订单已取消); 
+            if (b)
+            {
+                return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.Success);
+            }
+            return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.NotCancelOrder, new OrderCancelResultModel { Remark = "取消失败" });
+        }
     }
 }
