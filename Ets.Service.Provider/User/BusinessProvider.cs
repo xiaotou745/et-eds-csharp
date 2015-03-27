@@ -453,5 +453,17 @@ namespace Ets.Service.Provider.User
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.SendFailure);
             }
         }
+        /// <summary>
+        /// 商户统计
+        /// danny-20150326
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<BusinessViewModel> GetBusinessesCount(BusinessSearchCriteria criteria)
+        {
+            PageInfo<BusinessViewModel> pageinfo = dao.GetBusinessesCount<BusinessViewModel>(criteria);
+            return pageinfo;
+        }
+
     }
 }

@@ -403,5 +403,17 @@ namespace Ets.Service.Provider.Order
             PageInfo<OrderCountModel> pageinfo = OrderDao.GetOrderCount<OrderCountModel>(criteria);
             return pageinfo;
         }
+        /// <summary>
+        ///  首页最近数据统计
+        /// danny-20150327
+        /// </summary>
+        /// <param name="StartTime"></param>
+        /// <param name="EndTime"></param>
+        /// <returns></returns>
+        public PageInfo<HomeCountTitleModel> GetCurrentDateCountAndMoney(OrderSearchCriteria criteria)
+        {
+            PageInfo<HomeCountTitleModel> pageinfo = OrderDao.GetCurrentDateCountAndMoney<HomeCountTitleModel>(criteria);
+            return pageinfo;
+        }
     }
 }

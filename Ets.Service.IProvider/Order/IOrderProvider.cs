@@ -1,4 +1,5 @@
-﻿using Ets.Model.DataModel.Clienter;
+﻿using Ets.Model.Common;
+using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DomainModel.Clienter;
 using Ets.Model.DomainModel.Order;
@@ -121,5 +122,12 @@ namespace Ets.Service.IProvider.Order
         /// <param name="criteria"></param>
         /// <returns></returns>
         PageInfo<OrderCountModel> GetOrderCount(HomeCountCriteria criteria);
+        /// <summary>
+        /// 首页最近数据统计
+        /// danny-20150327
+        /// </summary>
+        /// <param name="DayCount"></param>
+        /// <returns></returns>
+        PageInfo<HomeCountTitleModel> GetCurrentDateCountAndMoney(OrderSearchCriteria criteria);
     }
 }

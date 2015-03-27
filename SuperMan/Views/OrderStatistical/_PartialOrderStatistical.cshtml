@@ -1,5 +1,5 @@
 ﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Order.OrderCountModel>
-
+@using Webdiyer.WebControls.Mvc;
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
     <thead>
         <tr class="tdbg">
@@ -33,5 +33,5 @@
         }
     </tbody>
 </table>
-@{ViewBag.ActionName = "PostOrderCountNew";}
+@{ViewBag.ActionName = "PostOrderStatistical";}
 @Html.Partial("~/views/shared/PagerControl.cshtml", Model)

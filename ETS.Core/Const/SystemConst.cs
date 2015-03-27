@@ -22,7 +22,7 @@ namespace ETS.Const
         /// <summary>
         /// 默认页容量
         /// </summary>
-        public const int PageSize =3;
+        public const int PageSize =15;
 
         #endregion
     }

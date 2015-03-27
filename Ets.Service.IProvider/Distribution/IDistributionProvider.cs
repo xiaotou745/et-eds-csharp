@@ -60,5 +60,12 @@ namespace Ets.Service.IProvider.Distribution
         /// <param name="groupId"></param>
         /// <returns></returns>
         IList<ClienterListModel> GetClienterModelByGroupID(int? groupId);
+        /// <summary>
+        /// 骑士统计
+        /// danny-20150326
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        PageInfo<ClienterViewModel> GetClienteresCount(ClienterSearchCriteria criteria);
     }
 }

@@ -1,0 +1,39 @@
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Bussiness.BusinessViewModel>
+@using Webdiyer.WebControls.Mvc;
+@{
+    ViewBag.Title = "商户统计";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：数据统计 > 商户统计
+    </h2>
+    @using (Ajax.BeginForm("PostBusinessStatistical", new RouteValueDictionary { { "pageindex", "" } },
+    new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+    new RouteValueDictionary { { "id", "searchForm" } }))
+    {
+        <div class="SearchMd">
+            <h4 style="color:black;font-weight:600">商户统计</h4>
+            <select name="searchType" class="selectw" id="busiCountSelect" style="margin-bottom:5px;width:143px">
+                <option value="1">今日</option>
+                <option value="2">本周</option>
+                <option value="3">本月</option>
+            </select>
+        </div>
+    }
+    <script type="text/javascript" src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <div class="bd clearfix" id="dataList">
+        @Html.Partial("_PartialBusinessStatistical", Model)
+    </div>
+    <hr />
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("#busiCountSelect").change(function () {
+            var status = $("#busiCountSelect").val();
+            $("#searchForm").submit();
+        });
+        window.location.hash = '';
+    });
+</script>
+<script src="~/Scripts/mvcpager.js"></script>
