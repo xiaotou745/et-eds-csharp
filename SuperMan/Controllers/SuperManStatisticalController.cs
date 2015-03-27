@@ -14,16 +14,15 @@ namespace SuperMan.Controllers
         IDistributionProvider iDistributionProvider = new DistributionProvider();
         public ActionResult SuperManStatistical()
         {
-            var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria() { searchType = 1 };
+            var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria() { PagingRequest = new Ets.Model.Common.NewPagingResult(1, Ets.Model.Common.ConstValues.Web_PageSize), searchType = 1 };
             var pagedList = iDistributionProvider.GetClienteresCount(criteria);
             return View(pagedList);
         }
 
         [HttpPost]
-        public ActionResult PostSuperManStatistical(int pageindex = 1)
+        public ActionResult SuperManStatistical(Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria criteria)
         {
-            var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria();
-            TryUpdateModel(criteria);
+           
             var pagedList = iDistributionProvider.GetClienteresCount(criteria);
             return PartialView("_PartialSuperManStatistical", pagedList);
         }

@@ -1,4 +1,4 @@
-﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Bussiness.BusinessViewModel>
+﻿@model Ets.Model.Common.BusinessCountManageList
 @using Webdiyer.WebControls.Mvc;
 <table width="50%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
     <thead>
@@ -12,7 +12,7 @@
     <tbody>
         @{
             var k = 0;
-            foreach (var item in Model.Records)
+            foreach (var item in Model.businessModel)
             {
                 k++;
                 <tr>
@@ -25,6 +25,5 @@
         }
     </tbody>
 </table>
-@{ViewBag.ActionName = "PostBusinessStatistical";}
-@Html.Partial("~/views/shared/PagerControl.cshtml", Model)
+@Html.Partial("_NewPager", Model.PagingResult)
 

@@ -427,10 +427,13 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        public PageInfo<OrderCountModel> GetOrderCount(HomeCountCriteria criteria)
+        public OrderCountManageList GetOrderCount(HomeCountCriteria criteria)
         {
             PageInfo<OrderCountModel> pageinfo = OrderDao.GetOrderCount<OrderCountModel>(criteria);
-            return pageinfo;
+            NewPagingResult pr = new NewPagingResult() { PageIndex = criteria.PagingRequest.PageIndex, PageSize = criteria.PagingRequest.PageSize, RecordCount = pageinfo.All, TotalCount = pageinfo.All };
+            List<OrderCountModel> list = pageinfo.Records.ToList();
+            var orderCountManageList = new OrderCountManageList(list, pr);
+            return orderCountManageList;
         }
         /// <summary>
         ///  首页最近数据统计

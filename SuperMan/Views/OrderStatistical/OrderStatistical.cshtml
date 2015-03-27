@@ -1,4 +1,5 @@
-﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Order.OrderCountModel>
+﻿@*@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Order.OrderCountModel>*@
+@model Ets.Model.Common.OrderCountManageList
 @using Webdiyer.WebControls.Mvc;
 @{
     ViewBag.Title = "订单统计";
@@ -10,10 +11,10 @@
     <h2 class="crumbs">
         您所在位置：数据统计 > 订单统计
     </h2>
-    @using (Ajax.BeginForm("PostOrderStatistical", new RouteValueDictionary { { "pageindex", "" } },
+    @*@using (Ajax.BeginForm("PostOrderStatistical", new RouteValueDictionary { { "pageindex", "" } },
         new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace, HttpMethod="Post" },
         new RouteValueDictionary { { "id", "searchForm" } }))
-    {
+    {*@
         <div class="SearchMd">
             <h4 style="color:black;font-weight:600">订单统计</h4>
             <select name="searchType" class="selectw" id="orderCountSelect" style="margin-bottom:5px; width:143px">
@@ -23,19 +24,38 @@
             </select>
             <br />
         </div>
-    }
-    <script type="text/javascript" src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    @*}*@
+    @*<script type="text/javascript" src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>*@
     <div class="bd clearfix" id="dataList">
         @Html.Partial("_PartialOrderStatistical", Model)
     </div>
     <hr />
 </div>
 <script type="text/javascript">
+    var DEFAULT_PAGESIZE = 15;
+    var criteria = { PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE } };
     $(function () {
-        $("#orderCountSelect").change(function () {
+
+        $("#orderCountSelect").on("change", function () {
             var status = $("#orderCountSelect").val();
-            $("#searchForm").submit();
+            var url = "/OrderStatistical/OrderStatistical";
+            refresh(0, url, status, "dataList");
         });
     });
+    ////分页
+    art.ui.control.Pager.enablePaging(document, refresh);
+    function refresh(pageIndex, url, status, controlId) {
+
+        if (pageIndex !== undefined) {
+            criteria.PagingRequest.PageIndex = pageIndex;
+        }
+        criteria.searchType = status;
+        webExpress.utility.ajax.request
+            (
+                url,
+                criteria,
+                function (data) {
+                    $("#dataList").html(data);
+                });
+    };
 </script>
-<script src="~/Scripts/mvcpager.js"></script>

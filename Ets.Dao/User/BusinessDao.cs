@@ -826,7 +826,7 @@ namespace Ets.Dao.User
             }
             string tableList = sbtbl.ToString();
             string orderByColumn = " tbl.OrderCount DESC ";
-            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
         }
 /// <summary>
         /// 修改商户地址西信息

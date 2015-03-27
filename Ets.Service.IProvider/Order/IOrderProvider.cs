@@ -121,7 +121,7 @@ namespace Ets.Service.IProvider.Order
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        PageInfo<OrderCountModel> GetOrderCount(HomeCountCriteria criteria);
+        OrderCountManageList GetOrderCount(HomeCountCriteria criteria);
         /// <summary>
         /// 首页最近数据统计
         /// danny-20150327

@@ -534,10 +534,14 @@ namespace Ets.Service.Provider.User
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        public PageInfo<BusinessViewModel> GetBusinessesCount(BusinessSearchCriteria criteria)
+        public Ets.Model.Common.BusinessCountManageList GetBusinessesCount(BusinessSearchCriteria criteria)
         {
+
             PageInfo<BusinessViewModel> pageinfo = dao.GetBusinessesCount<BusinessViewModel>(criteria);
-            return pageinfo;
+            NewPagingResult pr = new NewPagingResult() { PageIndex = criteria.PagingRequest.PageIndex, PageSize = criteria.PagingRequest.PageSize, RecordCount = pageinfo.All, TotalCount = pageinfo.All };
+            List<BusinessViewModel> list = pageinfo.Records.ToList();
+            var businessCountManageList = new Ets.Model.Common.BusinessCountManageList(list, pr);
+            return businessCountManageList;
         }
 
     }
