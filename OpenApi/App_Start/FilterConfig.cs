@@ -75,7 +75,7 @@ namespace OpenApi
         /// <param name="filterContext">上下文对象  该类继承于ControllerContext</param>
         public override void OnException(HttpActionExecutedContext filterContext)
         {
-            LogHelper.LogWriterFromFilter(filterContext.Exception);
+            SuperManCore.LogHelper.LogWriterFromFilter(filterContext.Exception);
         }
     }
 

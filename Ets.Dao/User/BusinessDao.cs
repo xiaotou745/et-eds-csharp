@@ -689,6 +689,51 @@ namespace Ets.Dao.User
             }
             return false;
         }
+
+        /// <summary>
+        /// 原平台id和订单来源查询订单,是否存在该订单
+        /// 平扬
+        /// 2015年3月26日 17:00:52
+        /// </summary>
+        /// <param name="orderNO">原平台商户Id</param>
+        /// <param name="orderFrom">订单来源</param>
+        /// <param name="orderType">orderType</param>
+        /// <returns>商家信息</returns 
+        public bool GetOrderByOrderNoAndOrderFrom(string orderNO, int orderFrom, int orderType)
+        {
+            string sql = @" select 1 from dbo.[order] with(nolock) where OriginalOrderNo=@OriginalOrderNo and OrderFrom=@OrderFrom ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@OriginalOrderNo", orderNO);
+            parm.AddWithValue("@OrderFrom", orderFrom); 
+            if (orderType > 0)
+            {
+                sql += " and OrderType=@OrderType ";
+                parm.AddWithValue("@OrderType", orderType);
+            }
+            object i = DbHelper.ExecuteScalar(SuperMan_Read, sql, parm);
+            if (i != null)
+            {
+                return int.Parse(i.ToString()) > 0;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 更新订单状态，通过第三方订单号 和 订单 来源更新
+        /// </summary>
+        /// <param name="order"></param>
+        /// <param name="orderStatus"></param>
+        public bool UpdateOrder(string oriOrderNo, int orderFrom, OrderStatus orderStatus)
+        {
+            string sql = "UPDATE dbo.[order] SET [Status]=@Status WHERE OriginalOrderNo=@OriginalOrderNo and OrderFrom=@OrderFrom ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@OriginalOrderNo", oriOrderNo);
+            parm.AddWithValue("@OrderFrom", orderFrom);
+            parm.AddWithValue("@Status", orderStatus);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0; 
+        }
+
+
         /// <summary>
         ///  新增第三方店铺
         ///  窦海超

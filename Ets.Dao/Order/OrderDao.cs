@@ -567,6 +567,7 @@ namespace Ets.Dao.Order
                                         ,c.PhoneNo ClienterPhoneNo
                                         ,c.TrueName ClienterTrueName
                                         ,b.GroupId
+                                        ,o.OriginalOrderNo
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                      LEFT JOIN dbo.clienter c WITH (NOLOCK) ON o.clienterId=c.Id
@@ -658,7 +659,7 @@ namespace Ets.Dao.Order
             dbParameters.AddWithValue("@orderNo", orderNo);    //订单号
             dbParameters.AddWithValue("@status", orderStatus);    //订单号
 
-            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, upSql, dbParameters);
+            object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Read, upSql, dbParameters);
 
             return ParseHelper.ToInt(executeScalar, -1);
         }
@@ -673,6 +674,7 @@ namespace Ets.Dao.Order
         public HomeCountTitleModel GetHomeCountTitleToAllDataSql()
         {
             string sql = @"SELECT 
+                        (SELECT SUM (AccountBalance) FROM dbo.clienter(NOLOCK)  WHERE AccountBalance>=1000) AS  WithdrawPrice,--提现金额
                         SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
                         COUNT(1) AS MisstionCount,--任务量
                         SUM(ISNULL(OrderCount,0)) AS OrderCount,--订单量

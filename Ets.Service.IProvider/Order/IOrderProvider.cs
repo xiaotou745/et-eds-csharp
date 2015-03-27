@@ -114,6 +114,15 @@ namespace Ets.Service.IProvider.Order
         /// <returns>订单详情</returns>
         OrderDetailDM_OpenApi OrderDetail(OrderDetailPM_OpenApi paramodel);
 
+
+        
+        /// <summary>
+        ///  supermanapi通过openapi同步第三方订单状态  add by caoheyang 20150327 
+        /// </summary>
+        /// <param name="paramodel">参数实体</param>
+        /// <returns>订单详情</returns>
+        ResultModel<object> AsyncOrderStatus(string orderNo);
+
         #endregion
         /// <summary>
         /// 订单统计

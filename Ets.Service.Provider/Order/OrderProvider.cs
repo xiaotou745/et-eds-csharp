@@ -25,11 +25,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ets.Model.DomainModel.Subsidy;
-using System.Net.Http;
 using Newtonsoft.Json.Linq;
 using Ets.Service.IProvider.OpenApi;
 using Ets.Service.Provider.OpenApi;
 using System.Configuration;
+using System.Net.Http;
+
 namespace Ets.Service.Provider.Order
 {
     public class OrderProvider : IOrderProvider
@@ -336,6 +337,10 @@ namespace Ets.Service.Provider.Order
         public int UpdateOrderStatus(string orderNo, int orderStatus)
         {
             int result = OrderDao.CancelOrderStatus(orderNo, orderStatus);
+            if (result > 0) //更该订单状态时，同步第三方订单状态
+            {
+                AsyncOrderStatus(orderNo);
+            } 
             return result;
         }
 
@@ -368,7 +373,7 @@ namespace Ets.Service.Provider.Order
                 string orderNo = OrderDao.CreateToSql(paramodel);
                 if (!string.IsNullOrWhiteSpace(orderNo))
                     Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！"
-                        , string.Empty, paramodel.address.city_code); //激光推送   bug  原来是根据城市推送的，现在没要求传城市相关信息
+                        , string.Empty, paramodel.address.city_code); //激光推送   
                 tran.Complete();
                 return orderNo;
             }
@@ -402,17 +407,17 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <param name="paramodel">参数实体</param>
         /// <returns>订单详情</returns>
-        public ResultModel<object> AsyncOrderStatus(string orderNo )
+        public ResultModel<object> AsyncOrderStatus(string orderNo)
         {
-
             OrderListModel orderlistModel = OrderDao.GetOrderByNo(orderNo);
-            ParaModel<AsyncStatusPM_OpenApi> paramodel = new ParaModel<AsyncStatusPM_OpenApi>() { group=orderlistModel.GroupId};
+            ParaModel<AsyncStatusPM_OpenApi> paramodel = new ParaModel<AsyncStatusPM_OpenApi>() { group=orderlistModel.GroupId,fields=new AsyncStatusPM_OpenApi()};
             if (paramodel.GetSign() == null)//为当前集团参数实体生成sign签名信息
                 return null;
             paramodel.fields.status = ParseHelper.ToInt(orderlistModel.Status, -1);
             paramodel.fields.ClienterTrueName = orderlistModel.ClienterTrueName;
             paramodel.fields.ClienterPhoneNo = orderlistModel.ClienterPhoneNo;
-            paramodel.fields.BusinessName = orderlistModel.BusinessName; 
+            paramodel.fields.BusinessName = orderlistModel.BusinessName;
+            paramodel.fields.OriginalOrderNo = orderlistModel.OriginalOrderNo;
             string url = ConfigurationManager.AppSettings["AsyncStatus"];
             string json = new HttpClient().PostAsJsonAsync(url, paramodel).Result.Content.ReadAsStringAsync().Result;
             JObject jobject = JObject.Parse(json);
