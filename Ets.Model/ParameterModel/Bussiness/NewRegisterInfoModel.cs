@@ -95,8 +95,6 @@ namespace Ets.Model.ParameterModel.Bussiness
         public override Business Translate(NewRegisterInfoModel from)
         {
             var to = new Business();
-            //to.Id = Helper.generateCode(from.phoneNo,AppType.B端);
-
             to.Province = from.B_Province;
             to.ProvinceCode = from.B_ProvinceCode.Trim();
 
@@ -110,7 +108,8 @@ namespace Ets.Model.ParameterModel.Bussiness
             to.AreaCode = from.B_AreaCode.Trim();
 
             to.Address = from.Address.Trim();
-
+            to.Address = to.Address.Replace((char)13, (char)0);
+            to.Address = to.Address.Replace((char)10, (char)0);
             to.GroupId = from.B_GroupId;
 
             to.IDCard = from.B_IdCard;
