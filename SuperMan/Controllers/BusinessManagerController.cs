@@ -12,6 +12,8 @@ using System.Web;
 using System.Web.Mvc;
 using SuperManDataAccess;
 using Ets.Model.ParameterModel.Bussiness;
+using Ets.Service.Provider.Common;
+using Ets.Service.IProvider.Common;
 
 namespace SuperMan.Controllers
 {
@@ -22,12 +24,14 @@ namespace SuperMan.Controllers
         /// <summary>
         /// 商户业务类
         /// </summary>
-        Ets.Service.IProvider.User.IBusinessProvider iBusinessProvider = new BusinessProvider(); 
+        Ets.Service.IProvider.User.IBusinessProvider iBusinessProvider = new BusinessProvider();
+        IAreaProvider iAreaProvider = new AreaProvider();
         // GET: BusinessManager
         [HttpGet]
         public ActionResult BusinessManager()
         {
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
+            ViewBag.openCityList = iAreaProvider.GetOpenCityInfo();
             var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria() { Status = -1, GroupId = SuperMan.App_Start.UserContext.Current.GroupId };
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
             return View(pagedList);
@@ -39,6 +43,7 @@ namespace SuperMan.Controllers
         {
             Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria();
             TryUpdateModel(criteria);
+            ViewBag.openCityList = iAreaProvider.GetOpenCityInfo();
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
             return PartialView("_BusinessManageList", pagedList);
         }

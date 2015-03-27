@@ -34,7 +34,10 @@ namespace Ets.Model.ParameterModel.Clienter
         /// 集团id
         /// </summary>
         public int? GroupId { get; set; }
-
+        /// <summary>
+        /// 商户城市
+        /// </summary>
+        public string businessCity { get; set; }
      
 
     }

@@ -67,6 +67,10 @@ namespace Ets.Dao.Distribution
             {
                 sbSqlWhere.AppendFormat(" AND GroupId={0} ", criteria.GroupId);
             }
+            if (!string.IsNullOrEmpty(criteria.businessCity))
+            {
+                sbSqlWhere.AppendFormat(" AND City='{0}' ", criteria.businessCity.Trim());
+            }
             string tableList = @" clienter  WITH (NOLOCK)   ";
             string orderByColumn = " Id DESC";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);

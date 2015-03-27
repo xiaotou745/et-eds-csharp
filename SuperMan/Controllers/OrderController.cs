@@ -18,6 +18,8 @@ using SuperManBusinessLogic.CommonLogic;
 using SuperManBusinessLogic.B_Logic;
 using Ets.Service.Provider.Distribution;
 using Ets.Service.Provider.Order;
+using Ets.Service.IProvider.Common;
+using Ets.Service.Provider.Common;
 
 namespace SuperMan.Controllers
 {
@@ -27,6 +29,7 @@ namespace SuperMan.Controllers
     {
         Ets.Service.IProvider.Distribution.IDistributionProvider iDistributionProvider = new DistributionProvider();
         Ets.Service.IProvider.Order.IOrderProvider iOrderProvider = new OrderProvider();
+        IAreaProvider iAreaProvider = new AreaProvider();
         //Get: /Order  订单管理
         public ActionResult Order()
         {
@@ -37,6 +40,7 @@ namespace SuperMan.Controllers
             //    return null;
             //}
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
+            ViewBag.openCityList = iAreaProvider.GetOpenCityInfo();
             var superManModel = iDistributionProvider.GetClienterModelByGroupID(ViewBag.txtGroupId);
             if (superManModel != null)
             {
@@ -56,7 +60,7 @@ namespace SuperMan.Controllers
             //    return null;
             //}
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId; ;//集团id
-
+            ViewBag.openCityList = iAreaProvider.GetOpenCityInfo();
             Ets.Model.ParameterModel.Order.OrderSearchCriteria criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria();
             TryUpdateModel(criteria);
             //指派超人时  以下代码 有用，现在 注释掉  wc 

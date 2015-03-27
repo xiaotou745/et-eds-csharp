@@ -128,7 +128,13 @@ namespace ETS.Util
         {
             get { return Convert.ToBoolean(ConfigurationManager.AppSettings["IsGroupPush"]); }
         }
-
+        /// <summary>
+        /// 开放城市代码
+        /// </summary>
+        public string OpenCityCode
+        {
+            get { return ConfigurationManager.AppSettings["OpenCityCode"]; }
+        }
 
 
         public string WebSetting(string key)
