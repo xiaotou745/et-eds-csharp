@@ -119,11 +119,12 @@ namespace Ets.Service.Provider.Common
             }
             return result;
         }
+
         /// <summary>
         /// 根据appkey和版本查询配置信息
         /// </summary>
-        /// <param name="appkey"></param>
-        /// <param name="version"></param>
+        /// <param name="appkey">appkey</param>
+        /// <param name="version">版本号码</param>
         /// <returns></returns>
         public ResultInfo<GroupApiConfigModel> GetGroupApiConfigByAppKey(string appkey, string version)
         {

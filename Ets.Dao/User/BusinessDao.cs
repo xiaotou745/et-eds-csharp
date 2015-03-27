@@ -182,14 +182,15 @@ namespace Ets.Dao.User
         /// <param name="id"></param>
         /// <param name="price"></param>
         /// <returns></returns>
-        public bool setCommission(int id, decimal price)
+        public bool setCommission(int id, decimal price,decimal waisongfei)
         {
             bool reslut = false;
             try
             {
-                string sql = " update business set BusinessCommission=@BusinessCommission where id=@id ";
+                string sql = " update business set BusinessCommission=@BusinessCommission,DistribSubsidy=@DistribSubsidy where id=@id ";
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
                 dbParameters.AddWithValue("BusinessCommission", price);
+                dbParameters.AddWithValue("DistribSubsidy", waisongfei);
                 dbParameters.AddWithValue("id", id);
                 int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Write, sql, dbParameters);
                 if (i > 0) reslut = true;
@@ -197,7 +198,7 @@ namespace Ets.Dao.User
             catch (Exception ex)
             {
                 reslut = false;
-                LogHelper.LogWriter(ex, "设置结算比例");
+                LogHelper.LogWriter(ex, "设置结算比例-外送费");
                 throw;
             }
             return reslut;
@@ -661,6 +662,259 @@ namespace Ets.Dao.User
             parm.AddWithValue("@businessId", businessId);
             object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Write, upSql, parm);
             return ParseHelper.ToInt(executeScalar, 0);
+        }
+
+        /// <summary>
+        /// 原平台id和集团id判断是否存在该商户
+        /// 平扬
+        /// 2015年3月26日 17:00:52
+        /// </summary>
+        /// <param name="bid">原平台商户Id</param>
+        /// <param name="groupid">集团id</param>
+        /// <returns>商家信息</returns>
+        public bool CheckExistBusiness(int bid, int groupid)
+        {
+            string sql = @"select 1 from dbo.business where OriginalBusiId=@OriginalBusiId and GroupId=@GroupId";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@OriginalBusiId", bid);
+            parm.AddWithValue("@GroupId", groupid);
+            object i = DbHelper.ExecuteScalar(SuperMan_Read, sql, parm);
+            if (i != null)
+            {
+                return int.Parse(i.ToString()) > 0;
+            }
+            return false;
+        }
+        /// <summary>
+        ///  新增第三方店铺
+        ///  窦海超
+        ///  2015年3月16日 15:19:47
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>返回商铺ID</returns>
+        public int InsertOtherBusiness(Business model)
+        {
+            string sql = @"
+                           INSERT INTO dbo.business
+                            ( Name ,
+                              City ,
+                              district ,
+                              PhoneNo ,
+                              PhoneNo2 ,
+                              Password ,
+                              CheckPicUrl ,
+                              IDCard ,
+                              Address ,
+                              Landline ,
+                              Longitude ,
+                              Latitude ,
+                              Status ,
+                              InsertTime ,
+                              districtId ,
+                              CityId ,
+                              GroupId ,
+                              OriginalBusiId ,
+                              ProvinceCode ,
+                              CityCode ,
+                              AreaCode ,
+                              Province ,
+                              CommissionTypeId ,
+                              DistribSubsidy ,
+                              BusinessCommission
+                            )
+                    VALUES  ( @Name , -- Name - nvarchar(100)
+                              @City , -- City - nvarchar(100)
+                              @district , -- district - nvarchar(200)
+                              @PhoneNo , -- PhoneNo - nvarchar(20)
+                              @PhoneNo2 , -- PhoneNo2 - nvarchar(20)
+                              @Password , -- Password - nvarchar(255)
+                              N'' , -- CheckPicUrl - nvarchar(255)
+                              @IDCard , -- IDCard - nvarchar(45)
+                              @Address , -- Address - nvarchar(255)
+                              N'' , -- Landline - nvarchar(15)
+                              @Longitude , -- Longitude - float
+                              @Latitude , -- Latitude - float
+                              @Status, -- Status - tinyint
+                              GETDATE() , -- InsertTime - datetime
+                              @districtId , -- districtId - nvarchar(45)
+                              @CityId , -- CityId - nvarchar(45)
+                              @GroupId , -- GroupId - int
+                              @OriginalBusiId , -- OriginalBusiId - int
+                              N'' , -- ProvinceCode - nvarchar(20)
+                              @CityCode , -- CityCode - nvarchar(20)
+                              @AreaCode , -- AreaCode - nvarchar(20)
+                              @Province , -- Province - nvarchar(20)
+                              @CommissionTypeId , -- CommissionTypeId - int
+                              @DistribSubsidy , -- DistribSubsidy - numeric
+                              NULL  -- BusinessCommission - decimal
+                            );select SCOPE_IDENTITY() as id;
+                        ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Name", model.Name);
+            parm.AddWithValue("@City", model.City);
+            parm.AddWithValue("@district", model.district);
+            parm.AddWithValue("@PhoneNo", model.PhoneNo);
+            parm.AddWithValue("@PhoneNo2", model.PhoneNo2);
+            parm.AddWithValue("@Password", model.Password);
+            parm.AddWithValue("@IDCard", model.IDCard);
+            parm.AddWithValue("@Address", model.Address);
+            parm.AddWithValue("@Longitude", model.Longitude);
+            parm.AddWithValue("@Latitude", model.Latitude);
+            parm.AddWithValue("@Status", model.Status);
+            parm.AddWithValue("@districtId", model.districtId);
+            parm.AddWithValue("@CityId", model.CityId);
+            parm.AddWithValue("@GroupId", model.GroupId);
+            parm.AddWithValue("@OriginalBusiId", model.OriginalBusiId);
+            parm.AddWithValue("@CityCode", model.CityCode);
+            parm.AddWithValue("@AreaCode", model.AreaCode);
+            parm.AddWithValue("@Province", model.Province);
+            parm.AddWithValue("@CommissionTypeId", model.CommissionTypeId);
+            parm.AddWithValue("@DistribSubsidy", model.DistribSubsidy);
+            object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, parm);
+            if (i != null)
+            {
+                return ParseHelper.ToInt(i.ToString());
+            }
+            return 0;
+        }
+        /// <summary>
+        /// 商户统计
+        /// danny-20150326
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<T> GetBusinessesCount<T>(BusinessSearchCriteria criteria)
+        {
+            var sbtbl = new StringBuilder(@" (select	b.Name,
+		                                                b.PhoneNo,
+		                                                COUNT(*) OrderCount,
+		                                                SUM(o.Amount) OrderAmountCount
+                                                from business b with(nolock)
+                                                join [order] o on b.Id=o.businessId
+                                                where 1=1 ");
+            if (criteria.searchType == 1)//当天
+            {
+                sbtbl.Append(" AND DateDiff(DAY, GetDate(),o.PubDate)=0 ");
+            }
+            else if (criteria.searchType == 2)//本周
+            {
+                sbtbl.Append(" AND DateDiff(WEEK, GetDate(),DATEADD (DAY, -1,o.PubDate))=0 ");
+            }
+            else if (criteria.searchType == 3)//本月
+            {
+                sbtbl.Append(" AND DateDiff(MONTH, GetDate(),o.PubDate)=0 ");
+            }
+            sbtbl.Append(" group by b.Id,b.Name,b.PhoneNo ) tbl ");
+            string columnList = @"   tbl.Name
+                                    ,tbl.PhoneNo
+            				        ,tbl.OrderCount
+            				        ,tbl.OrderAmountCount ";
+
+            var sbSqlWhere = new StringBuilder(" 1=1 ");
+            if (!string.IsNullOrEmpty(criteria.businessName))
+            {
+                sbSqlWhere.AppendFormat(" AND Name='{0}' ", criteria.businessName);
+            }
+            if (!string.IsNullOrEmpty(criteria.businessPhone))
+            {
+                sbSqlWhere.AppendFormat(" AND PhoneNo='{0}' ", criteria.businessPhone);
+            }
+            string tableList = sbtbl.ToString();
+            string orderByColumn = " tbl.OrderCount DESC ";
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
+        }
+/// <summary>
+        /// 修改商户地址西信息
+        /// 返回商户修改后的状态
+        /// wc
+        /// </summary>
+        /// <param name="business"></param>
+        /// <returns>商户的当前状态</returns>
+        public int UpdateBusinessAddressInfo(Business business)
+        {
+            string upSql = @"UPDATE  dbo.business
+SET     [Address] = @Address ,
+        PhoneNo2 = @PhoneNo2 ,
+        [Name] = @Name ,
+        Landline = @Landline ,
+        district = @district ,
+        districtId = @districtId ,
+        Longitude = @Longitude ,
+        Latitude = @Latitude ,
+        [Status]= @Status
+OUTPUT  Inserted.[Status]
+WHERE   Id = @busiID";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            IDbParameters parm = DbHelper.CreateDbParameters();
+
+            parm.AddWithValue("@Address", business.Address);
+            parm.AddWithValue("@PhoneNo2", business.PhoneNo2);
+            parm.AddWithValue("@Name", business.Name);
+            parm.AddWithValue("@Landline", business.Landline);
+            parm.AddWithValue("@district", business.district);
+            parm.AddWithValue("@districtId", business.districtId);
+            parm.AddWithValue("@Longitude", business.Longitude);
+            parm.AddWithValue("@Latitude", business.Latitude);
+            parm.AddWithValue("@Status", business.Status);
+            parm.AddWithValue("@busiID", business.Id);
+            try
+            {
+                object executeScalar = DbHelper.ExecuteScalar(SuperMan_Write, upSql, parm);
+                return ParseHelper.ToInt(executeScalar, -1);
+            }
+            catch (Exception ex)
+            {
+                //记日志
+                return -1;
+            }
+            
+        }
+        /// <summary>
+        /// 更新图片地址信息 
+        /// wc
+        /// </summary>
+        /// <param name="busiId"></param>
+        /// <param name="picName"></param>
+        /// <returns></returns>
+        public int UpdateBusinessPicInfo(int busiId, string picName)
+        {
+            string upSql = @"UPDATE  dbo.business
+SET     CheckPicUrl = @CheckPicUrl ,
+        [Status] = @Status
+OUTPUT  Inserted.[Status]
+WHERE   Id = @busiID ";
+
+            IDbParameters parm = DbHelper.CreateDbParameters();
+
+            parm.AddWithValue("@CheckPicUrl", picName);
+            parm.AddWithValue("@Status", ConstValues.BUSINESS_AUDITPASSING);
+            parm.AddWithValue("@busiID", busiId); 
+
+            try
+            {
+                object executeScalar = DbHelper.ExecuteScalar(SuperMan_Write, upSql, parm);
+                return ParseHelper.ToInt(executeScalar, -1);
+            }
+            catch (Exception ex)
+            {
+                //记日志
+                return -1;
+            }
         }
     }
 }

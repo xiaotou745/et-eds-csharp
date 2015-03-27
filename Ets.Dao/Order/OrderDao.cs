@@ -2,6 +2,7 @@
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DomainModel.Order;
+using Ets.Model.DomainModel.Subsidy;
 using Ets.Model.ParameterModel.Order;
 using ETS;
 using ETS.Dao;
@@ -438,17 +439,6 @@ namespace Ets.Dao.Order
                                     ,b.PhoneNo BusinessPhoneNo
                                     ,b.Address BusinessAddress
                                     ,g.GroupName";
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@businessName", criteria.businessName);
-            parm.AddWithValue("@businessPhone", criteria.businessPhone);
-            parm.AddWithValue("@orderId", criteria.orderId);
-            parm.AddWithValue("@OriginalOrderNo", criteria.OriginalOrderNo);
-            parm.AddWithValue("@orderStatus", criteria.orderStatus);
-            parm.AddWithValue("@superManName", criteria.superManName);
-            parm.AddWithValue("@superManPhone", criteria.superManPhone);
-            parm.AddWithValue("@orderPubStart", criteria.orderPubStart);
-            parm.AddWithValue("@orderPubEnd", criteria.orderPubEnd);
-            parm.AddWithValue("@GroupId", criteria.GroupId);
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.businessName))
             {
@@ -687,6 +677,117 @@ namespace Ets.Dao.Order
                             o.[Status]=1 ";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             return MapRows<HomeCountTitleModel>(dt)[0];
+        }
+
+
+        /// <summary>
+        /// 订单统计
+        /// danny-20150326
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<T> GetOrderCount<T>(HomeCountCriteria criteria)
+        {
+//            string columnList = @"  b.district
+//				                    ,COUNT(*) orderCount
+//				                    ,SUM(o.DistribSubsidy)distribSubsidy
+//				                    ,SUM(o.WebsiteSubsidy)websiteSubsidy
+//				                    ,SUM(o.OrderCommission)orderCommission
+//				                    ,SUM(o.DistribSubsidy+o.WebsiteSubsidy+o.OrderCommission)deliverAmount
+//				                    ,SUM(Amount)orderAmount ";
+//            var sbSqlWhere = new StringBuilder(" 1=1 ");
+//            if (criteria.searchType == 1)//当天
+//            {
+//                sbSqlWhere.Append(" AND DateDiff(DAY, GetDate(),o.PubDate)=0 ");
+//            }
+//            else if (criteria.searchType == 2)//本周
+//            {
+//                sbSqlWhere.Append(" AND DateDiff(WEEK, GetDate(),DATEADD (DAY, -1,o.PubDate))=0 ");
+//            }
+//            else if (criteria.searchType == 3)//本月
+//            {
+//                sbSqlWhere.Append(" AND DateDiff(MONTH, GetDate(),o.PubDate)=0 ");
+//            }
+//            sbSqlWhere.Append(" group by b.district ");
+//            string tableList = @" business b with(nolock)
+//                                  join [order] o with(nolock) on b.Id=o.businessId ";
+//            string orderByColumn = " COUNT(*) DESC ";
+//            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
+            var sbtbl = new StringBuilder(@" (select   b.district
+				                    ,COUNT(*) orderCount
+				                    ,SUM(o.DistribSubsidy)distribSubsidy
+				                    ,SUM(o.WebsiteSubsidy)websiteSubsidy
+				                    ,SUM(o.OrderCommission)orderCommission
+				                    ,SUM(o.DistribSubsidy+o.WebsiteSubsidy+o.OrderCommission)deliverAmount
+				                    ,SUM(Amount)orderAmount
+                                    from business b with(nolock)
+                                    join [order] o with(nolock) on b.Id=o.businessId
+                                    where 1=1");
+            if (criteria.searchType == 1)//当天
+            {
+                sbtbl.Append(" AND DateDiff(DAY, GetDate(),o.PubDate)=0 ");
+            }
+            else if (criteria.searchType == 2)//本周
+            {
+                sbtbl.Append(" AND DateDiff(WEEK, GetDate(),DATEADD (DAY, -1,o.PubDate))=0 ");
+            }
+            else if (criteria.searchType == 3)//本月
+            {
+                sbtbl.Append(" AND DateDiff(MONTH, GetDate(),o.PubDate)=0 ");
+            }
+            sbtbl.Append(" group by b.district ) tbl ");
+            string columnList = @"  tbl.district
+				                    ,tbl.orderCount
+				                    ,tbl.distribSubsidy
+				                    ,tbl.websiteSubsidy
+				                    ,tbl.orderCommission
+				                    ,tbl.deliverAmount
+				                    ,tbl.orderAmount ";
+
+            var sbSqlWhere = new StringBuilder(" 1=1 ");
+            string tableList = sbtbl.ToString();
+            string orderByColumn = " tbl.orderCount DESC ";
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
+        }
+        /// <summary>
+        /// 首页最近数据统计
+        /// danny-20150327
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<T> GetCurrentDateCountAndMoney<T>(OrderSearchCriteria criteria)
+        {
+            var sbtbl = new StringBuilder(@" (SELECT CONVERT(CHAR(10),PubDate,120) AS PubDate, --发布时间
+                                                     SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
+                                                     ISNULL(COUNT(o.Id),0) AS MisstionCount,--任务量
+                                                     SUM(ISNULL(OrderCount,0)) AS OrderCount,--订单量
+                                                     ISNULL(SUM(o.Amount*ISNULL(b.BusinessCommission,0)/100+ ISNULL( b.DistribSubsidy ,0)* o.OrderCount),0) AS YsPrice,  -- 应收金额
+                                                     ISNULL( SUM( OrderCommission),0) AS YfPrice  --应付金额
+                                            FROM dbo.[order](NOLOCK) AS o
+                                            LEFT JOIN dbo.business(NOLOCK) AS b ON o.businessId=b.Id
+                                            WHERE o.[Status]=1 ");
+            if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))
+            {
+                sbtbl.AppendFormat(" AND  CONVERT(CHAR(10),PubDate,120)>=CONVERT(CHAR(10),'{0}',120) ", criteria.orderPubStart);
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.orderPubEnd))
+            {
+                sbtbl.AppendFormat(" AND CONVERT(CHAR(10),PubDate,120)<=CONVERT(CHAR(10),'{0}',120) ", criteria.orderPubEnd);
+            }
+            sbtbl.Append(@" GROUP BY CONVERT(CHAR(10),PubDate,120) ) tbl");
+            string columnList = @"  tbl.PubDate
+				                    ,tbl.OrderPrice
+				                    ,tbl.MisstionCount
+				                    ,tbl.OrderCount
+				                    ,tbl.YsPrice
+				                    ,tbl.YfPrice ";
+
+            var sbSqlWhere = new StringBuilder(" 1=1 ");
+            string tableList = sbtbl.ToString();
+            string orderByColumn = " tbl.PubDate DESC  ";
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
     }
 }

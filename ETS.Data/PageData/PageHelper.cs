@@ -23,11 +23,18 @@ namespace ETS.Data.PageData
         /// <returns></returns>
         public PageInfo<T> GetPages<T>(string connectionString, int currentPage, string where_, string OrderByColumn, string ColumnList, string TableList, int PageSize, bool IsAccounte)
         {
+            try
+            {
                 int TotalRecord = 0;
                 int TotalPage = 0;
                 var _table = GetPages(connectionString, currentPage, where_, OrderByColumn, ColumnList, TableList, PageSize, IsAccounte, out TotalRecord, out TotalPage);
                 var pageInfo = new PageInfo<T>(TotalRecord, currentPage, DataTableHelper.ConvertDataTableList<T>(_table), TotalPage);
                 return pageInfo;
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
         }
 
 

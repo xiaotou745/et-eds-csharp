@@ -1,8 +1,12 @@
-﻿@{
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.Common.HomeCountTitleModel>
+@{
     ViewBag.Title = "后台统计";
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
 }
-
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
 <h3 style="color:black;font-weight:600">今日数据统计</h3>
 <style type="text/css">
     .trclass {
@@ -73,54 +77,48 @@
             @{
                 double ykAllPirce = (double)Math.Round(homeCountAllData.YsPrice - homeCountAllData.YfPrice, 2);
                 string ykAllStyle = ykAllPirce > 0 ? "red" : "green";
-                    <tr class="trclass">
-                        <td>@homeCountAllData.MisstionCount</td>
-                        <td>@homeCountAllData.OrderCount</td>
-                        <td>@homeCountAllData.OrderPrice</td>
-                        <td>￥@Math.Round(homeCountAllData.YsPrice, 2)</td>
-                        <td>￥@Math.Round(homeCountAllData.YfPrice, 2)</td>
-                        <td>￥@Math.Round(homeCountAllData.WithdrawPrice, 2)</td>
-                        <td>￥<span style="color:@ykAllStyle">@ykAllPirce</span></td>
-                    </tr>
-                }
+                <tr class="trclass">
+                    <td>@homeCountAllData.MisstionCount</td>
+                    <td>@homeCountAllData.OrderCount</td>
+                    <td>@homeCountAllData.OrderPrice</td>
+                    <td>￥@Math.Round(homeCountAllData.YsPrice, 2)</td>
+                    <td>￥@Math.Round(homeCountAllData.YfPrice, 2)</td>
+                    <td>￥<span style="color:@ykAllStyle">@ykAllPirce</span></td>
+                </tr>
+            }
         </table>
     </p>
-    
-    <hr />
 
-    <h3 style="color:black;font-weight:600">最近20天数据统计</h3>
+    <hr />
+    @*<h3 style="color:black;font-weight:600">最近20天数据统计</h3>*@
     <div>
         <p>
-            <table class="tbstyle" width="1000" border="1">
-                <tr class="trclass">
-                    <td>日期</td>
-                    <td>任务总量</td>
-                    <td>订单总量</td>
-                    <td>订单金额</td>
-                    <td>商户结算金额（应收)</td>
-                    <td>骑士佣金总计（应付)</td>
-                    <td>盈亏总计</td>
-                </tr>
-
-                @{
-                    foreach (var item in homeCountByList)
-                    {
-                        double lykPirce = (double)Math.Round(item.YsPrice - item.YfPrice, 2);
-                        string lykStyle = lykPirce > 0 ? "red" : "green";
-                        <tr class="trclass">
-                            <td>@item.PubDate</td>
-                            <td>@item.MisstionCount</td>
-                            <td>@item.OrderCount</td>
-                            <td>@item.OrderPrice</td>
-                            <td>￥@Math.Round(item.YsPrice, 2)</td>
-                            <td>￥@Math.Round(item.YfPrice, 2)</td>
-                            <td>￥<span style="color:@lykStyle">@lykPirce</span></td>
-                        </tr>
-                    }
-
-
-                }
-            </table>
+            @using (Ajax.BeginForm("PostIndex", new RouteValueDictionary { { "pageindex", "" } },
+            new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+            new RouteValueDictionary { { "id", "searchForm" } }))
+            {
+                <div class="SearchMd" style="padding:0">
+                    <h3 style="color:black;font-weight:600">每天数据统计</h3>
+                    <input id="txtOrderPubStart" readonly="readonly" type="text" name="orderPubStart" />
+                    <span class="">到: </span>
+                    <input id="txtOrderPubEnd" readonly="readonly" type="text" name="orderPubEnd" />
+                    <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                </div>
+            }
+            <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+            <div class="bd clearfix" id="dataList">
+                @Html.Partial("_PartialIndex", Model)
+            </div>
+                
         </p>
-
     </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#txtOrderPubStart').datepicker();
+        $('#txtOrderPubEnd').datepicker();
+        window.location.hash = '';
+    });
+    
+</script>
+<script src="~/Scripts/mvcpager.js"></script>

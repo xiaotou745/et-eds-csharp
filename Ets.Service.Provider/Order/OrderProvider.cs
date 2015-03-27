@@ -330,7 +330,8 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public int UpdateOrderStatus(string orderNo, int orderStatus)
         {
-            return OrderDao.CancelOrderStatus(orderNo, orderStatus);
+            int result = OrderDao.CancelOrderStatus(orderNo, orderStatus);
+            return result;
         }
 
 
@@ -391,5 +392,29 @@ namespace Ets.Service.Provider.Order
             return null;
         }
         #endregion
+
+        /// <summary>
+        /// 订单统计
+        /// danny-20150326
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<OrderCountModel> GetOrderCount(HomeCountCriteria criteria)
+        {
+            PageInfo<OrderCountModel> pageinfo = OrderDao.GetOrderCount<OrderCountModel>(criteria);
+            return pageinfo;
+        }
+        /// <summary>
+        ///  首页最近数据统计
+        /// danny-20150327
+        /// </summary>
+        /// <param name="StartTime"></param>
+        /// <param name="EndTime"></param>
+        /// <returns></returns>
+        public PageInfo<HomeCountTitleModel> GetCurrentDateCountAndMoney(OrderSearchCriteria criteria)
+        {
+            PageInfo<HomeCountTitleModel> pageinfo = OrderDao.GetCurrentDateCountAndMoney<HomeCountTitleModel>(criteria);
+            return pageinfo;
+        }
     }
 }

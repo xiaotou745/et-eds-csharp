@@ -85,6 +85,17 @@ namespace Ets.Service.Provider.Distribution
         {
             return dao.GetClienterModelByGroupID(groupId);
         }
+        /// <summary>
+        /// 骑士统计
+        /// danny-20150326
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<ClienterViewModel> GetClienteresCount(ClienterSearchCriteria criteria)
+        {
+            PageInfo<ClienterViewModel> pageinfo = dao.GetClienteresCount<ClienterViewModel>(criteria);
+            return pageinfo;
+        }
         
     }
 }

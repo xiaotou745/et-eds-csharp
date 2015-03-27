@@ -472,14 +472,14 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(FinishOrderStatus))]
         [HttpGet]
-        public SuperManCore.Common.ResultModel<FinishOrderResultModel> FinishOrder_C(int userId, string orderNo)
+        public Ets.Model.Common.ResultModel<FinishOrderResultModel> FinishOrder_C(int userId, string orderNo)
         {
             if (userId == 0)  //用户id非空验证
-                return SuperManCore.Common.ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.userIdEmpty);
+                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.userIdEmpty);
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
-                return SuperManCore.Common.ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderEmpty);
+                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderEmpty);
             if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null) //订单是否存在验证
-                return SuperManCore.Common.ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderIsNotExist);
+                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderIsNotExist);
             int bResult = ClienterLogic.clienterLogic().FinishOrder(userId, orderNo);
             if (bResult == 2)
             {
@@ -490,15 +490,15 @@ namespace SuperManWebApi.Controllers
                     model.balanceAmount = clienter.AccountBalance.Value;
                 else
                     model.balanceAmount = 0.0m;
-                return SuperManCore.Common.ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.Success, model);
+                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Success, model);
             }
             else if (bResult == 1)
             {
-                return SuperManCore.Common.ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderIsNotAllowRush);
+                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderIsNotAllowRush);
             }
             else
             {
-                return SuperManCore.Common.ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.Failed);
+                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Failed);
             }
         }
         /// <summary>
@@ -506,20 +506,20 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="phoneNo">手机号</param>
         /// <returns></returns>
-        [ActionStatus(typeof(RushOrderStatus))]
+        [ActionStatus(typeof(ETS.Enums.RushOrderStatus))]
         [HttpGet]
-        public SuperManCore.Common.ResultModel<MyBalanceResultModel> GetMyBalance(string phoneNo)
+        public Ets.Model.Common.ResultModel<MyBalanceResultModel> GetMyBalance(string phoneNo)
         {
             if (string.IsNullOrEmpty(phoneNo))
             {
-                return SuperManCore.Common.ResultModel<MyBalanceResultModel>.Conclude(GetMyBalanceStatus.PhoneEmpty);
+                return Ets.Model.Common.ResultModel<MyBalanceResultModel>.Conclude(ETS.Enums.GetMyBalanceStatus.PhoneEmpty);
             }
             var item = ClienterLogic.clienterLogic().GetMyBalanceByPhoneNo(phoneNo);
             var result = new MyBalanceResultModel()
             {
                 MyBalance = item
             };
-            return SuperManCore.Common.ResultModel<MyBalanceResultModel>.Conclude(FinishOrderStatus.Success, result);
+            return Ets.Model.Common.ResultModel<MyBalanceResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Success, result);
         }
 
         /// <summary>
@@ -527,12 +527,12 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="phoneNo">手机号</param>
         /// <returns></returns>
-        [ActionStatus(typeof(RushOrderStatus))]
+        [ActionStatus(typeof(ETS.Enums.RushOrderStatus))]
         [HttpGet]
-        public SuperManCore.Common.ResultModel<Ets.Model.DomainModel.MyBalanceListResultModel[]> GetMyBalanceDynamic(string phoneNo, int? pagedSize, int? pagedIndex)
+        public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.MyBalanceListResultModel[]> GetMyBalanceDynamic(string phoneNo, int? pagedSize, int? pagedIndex)
         {
             int pIndex = ParseHelper.ToInt(pagedIndex.HasValue, 1);
-            int pSize = ParseHelper.ToInt(pagedSize.HasValue, 50);
+            int pSize = ParseHelper.ToInt(pagedSize.HasValue, ConstValues.App_PageSize);
             var criteria = new Ets.Model.ParameterModel.WtihdrawRecords.MyIncomeSearchCriteria()
             {
                 PagingRequest = new Ets.Model.Common.PagingResult(pIndex, pSize),
@@ -544,7 +544,7 @@ namespace SuperManWebApi.Controllers
             var withrecord = new WtihdrawRecordsProvider();
             var pagedList = withrecord.GetMyIncomeList(criteria);
             var lists = Ets.Model.DomainModel.MyBalanceListResultModelTranslator.Instance.Translate(pagedList);
-            return SuperManCore.Common.ResultModel<Ets.Model.DomainModel.MyBalanceListResultModel[]>.Conclude(RushOrderStatus.Success, lists.ToArray());
+            return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.MyBalanceListResultModel[]>.Conclude(ETS.Enums.RushOrderStatus.Success, lists.ToArray());
         }
 
         /// <summary>
@@ -553,7 +553,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="PhoneNumber">手机号</param>
         /// <param name="type">操作类型： 0 注册 1修改密码</param>
         /// <returns></returns>
-        [ActionStatus(typeof(SendCheckCodeStatus))]
+        [ActionStatus(typeof(ETS.Enums.SendCheckCodeStatus))]
         [HttpGet]
         public Ets.Model.Common.SimpleResultModel CheckCode(string PhoneNumber, string type)
         {
