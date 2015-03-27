@@ -230,23 +230,24 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public ResultModel<UploadIconModel> PostAudit_B()
+        public Ets.Model.Common.ResultModel<UploadIconModel> PostAudit_B()
         {
             var strUserId = HttpContext.Current.Request.Form["UserId"];
             int userId;
             if (!Int32.TryParse(strUserId, out userId))
             {
-                return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.InvalidUserId);
+                return Ets.Model.Common.ResultModel<UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidUserId);
             }
 
-            var business = BusiLogic.busiLogic().GetBusinessById(userId);
+            //var business = BusiLogic.busiLogic().GetBusinessById(userId);
+            var business = iBusinessProvider.GetBusiness(userId);  //判断商户是否存在
             if (business == null)
             {
-                return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.InvalidUserId);
+                return Ets.Model.Common.ResultModel<UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidUserId);
             }
             if (HttpContext.Current.Request.Files.Count != 1)
             {
-                return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.InvalidFileFormat);
+                return Ets.Model.Common.ResultModel<UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidFileFormat);
             }
             var file = HttpContext.Current.Request.Files[0];
 
@@ -281,17 +282,24 @@ namespace SuperManWebApi.Controllers
                 var destFullFileName = System.IO.Path.Combine(CustomerIconUploader.Instance.PhysicalPath, fileName);
 
                 transformer.Transform(fullFilePath, destFullFileName);
-
-
+                 
                 var picUrl = System.IO.Path.GetFileName(destFullFileName);
-                var _status = BusiLogic.busiLogic().UpdateBusi(business, picUrl);
 
+                //var _status = BusiLogic.busiLogic().UpdateBusi(business, picUrl);
+                var upResult = iBusinessProvider.UpdateBusinessPicInfo(userId, picUrl);
                 var relativePath = System.IO.Path.Combine(CustomerIconUploader.Instance.RelativePath, fileName).ToForwardSlashPath();
-                return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.Success, new UploadIconModel() { Id = 1, ImagePath = relativePath, status = _status });
+                if (upResult == -1)
+                {
+                    return Ets.Model.Common.ResultModel<UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed, new UploadIconModel() { Id = 1, ImagePath = relativePath, status = upResult.ToString() });
+                }
+                else
+                {
+                    return Ets.Model.Common.ResultModel<UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new UploadIconModel() { Id = 1, ImagePath = relativePath, status = upResult.ToString() });
+                }
             }
             catch (Exception)
             {
-                return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.InvalidFileFormat);
+                return Ets.Model.Common.ResultModel<UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidFileFormat);
             }
         }
 
@@ -348,7 +356,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(GetOrdersStatus))]
         [HttpGet]
-        public ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]> GetOrderList_B(int userId, int? pagedSize, int? pagedIndex, sbyte? Status)
+        public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]> GetOrderList_B(int userId, int? pagedSize, int? pagedIndex, sbyte? Status)
         {
             //var pIndex = pagedIndex.HasValue ? pagedIndex.Value : 0;
             //var pSize = pagedSize.HasValue ? pagedSize.Value : int.MaxValue;
@@ -365,7 +373,7 @@ namespace SuperManWebApi.Controllers
             //var pagedList = OrderLogic.orderLogic().GetOrders(criteria);
             //var list = BusiGetOrderModelTranslator.Instance.Translate(pagedList);
             IList<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel> list = new BusinessProvider().GetOrdersApp(criteria);
-            return ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]>.Conclude(ETS.Enums.GetOrdersStatus.Success, list.ToArray());
+            return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]>.Conclude(ETS.Enums.GetOrdersStatus.Success, list.ToArray());
         }
 
         /// <summary>
@@ -405,32 +413,40 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        //[ActionStatus(typeof(ETS.Enums.BusiAddAddressStatus))]
-        //[HttpPost]
-        //public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel> PostManagerAddress_B_WC(Ets.Model.ParameterModel.Bussiness.BusiAddAddressInfoModel model)
-        //{
-        //    if (string.IsNullOrWhiteSpace(model.phoneNo))
-        //    {
-        //        return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.PhoneNumberEmpty);
-        //    }
-        //    if (string.IsNullOrWhiteSpace(model.Address))
-        //    {
-        //        return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.AddressEmpty);
-        //    }
-        //    if (string.IsNullOrWhiteSpace(model.businessName))
-        //    {
-        //        return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.businessNameEmpty);
-        //    }
-        //    var business = BusiAddAddressInfoModelTranslator.Instance.Translate(model);
-        //    var result = BusiLogic.busiLogic().Update(business);
+        [ActionStatus(typeof(ETS.Enums.BusiAddAddressStatus))]
+        [HttpPost]
+        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel> PostManagerAddress_B_WC(Ets.Model.ParameterModel.Bussiness.BusiAddAddressInfoModel model)
+        {
+            if (string.IsNullOrWhiteSpace(model.phoneNo))
+            {
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel>.Conclude(ETS.Enums.BusiAddAddressStatus.PhoneNumberEmpty);
+            }
+            if (string.IsNullOrWhiteSpace(model.Address))
+            {
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel>.Conclude(ETS.Enums.BusiAddAddressStatus.AddressEmpty);
+            }
+            if (string.IsNullOrWhiteSpace(model.businessName))
+            {
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel>.Conclude(ETS.Enums.BusiAddAddressStatus.businessNameEmpty);
+            }
+            //修改商户地址信息，返回当前商户的状态
+            int upResult = iBusinessProvider.UpdateBusinessAddressInfo(model);
 
-        //    var resultModel = new BusiAddAddressResultModel
-        //    {
-        //        userId = business.Id,
-        //        status = result
-        //    };
-        //    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel>.Conclude(ETS.Enums.BusiAddAddressStatus.Success, resultModel);
-        //}
+            var resultModel = new Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel
+            {
+                userId = model.userId,
+                status = upResult.ToString()
+            };
+            if (upResult == -1)  //-1表示更新状态失败
+            {
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel>.Conclude(ETS.Enums.BusiAddAddressStatus.UpdateFailed, resultModel);
+            }
+            else
+            {
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel>.Conclude
+                    (ETS.Enums.BusiAddAddressStatus.Success, resultModel);
+            }
+        }
         /// <summary>
         /// B端订单统计
         /// 改 ado.net
@@ -637,9 +653,7 @@ namespace SuperManWebApi.Controllers
         public Ets.Model.Common.ResultModel<bool> CancelOrder_B(string userId, string OrderId)
         {
             if (string.IsNullOrWhiteSpace(OrderId))
-            {
                 return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.OrderEmpty);
-            }
             //查询该订单是否存在
             int selResult = iOrderProvider.GetOrderByOrderNo(OrderId);
             if (selResult > 0)
@@ -647,13 +661,9 @@ namespace SuperManWebApi.Controllers
                 //存在的情况下  取消订单  3
                 int cacelResult = iOrderProvider.UpdateOrderStatus(OrderId, Ets.Model.Common.ConstValues.ORDER_CANCEL);
                 if (cacelResult > 0)
-                {
                     return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.Success, true);
-                }
                 else
-                {
                     return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.FailedCancelOrder, true);
-                }
             }
             else
             {

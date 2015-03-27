@@ -114,6 +114,7 @@ namespace ETS.Enums
         [DisplayText("您要找回的密码正是当前密码")]
         PwdIsSave,
     }
+     
     public enum RushOrderStatus
     {
         Success,
@@ -126,7 +127,13 @@ namespace ETS.Enums
         [DisplayText("订单不存在")]
         OrderIsNotExist,
         [DisplayText("订单已被抢或者已完成")]
-        OrderIsNotAllowRush
+        OrderIsNotAllowRush,
+        [DisplayText("订单已取消")]
+        OrderHadCancel,
+        [DisplayText("您已取消资格")]
+        HadCancelQualification
+
+
     }
     public enum FinishOrderStatus
     {
@@ -206,7 +213,30 @@ namespace ETS.Enums
         [DisplayText("昵称已被注册")]
         NickNameAlreadyRegistered,
         [DisplayText("手机号已被注册")]
-        PhoneNumberRegistered
+        PhoneNumberRegistered,
+        [DisplayText("更新信息失败")]
+        UpdateFailed
+    }
+    public enum UploadIconStatus
+    {
+        Success,
+
+        [DisplayText("未传过来任何变量")]
+        NOFormParameter,
+
+        [DisplayText("无效的用户")]
+        InvalidUserId,
+
+        [DisplayText("真实姓名不能为空")]
+        TrueNameEmpty,
+
+        [DisplayText("无效的文件格式")]
+        InvalidFileFormat,
+
+        [DisplayText("图片的尺寸最小为150px*150px")]
+        InvalidImageSize,
+        [DisplayText("上传图片失败")]
+        UpFailed,
     }
 
 }

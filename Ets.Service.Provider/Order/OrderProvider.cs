@@ -330,7 +330,8 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public int UpdateOrderStatus(string orderNo, int orderStatus)
         {
-            return OrderDao.CancelOrderStatus(orderNo, orderStatus);
+            int result = OrderDao.CancelOrderStatus(orderNo, orderStatus);
+            return result;
         }
 
 
