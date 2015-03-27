@@ -768,11 +768,11 @@ namespace Ets.Dao.Order
                                             WHERE o.[Status]=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))
             {
-                sbtbl.AppendFormat(" AND  CONVERT(CHAR(10),PubDate,120)>=CONVERT(CHAR(10),{0},120) ", criteria.orderPubStart);
+                sbtbl.AppendFormat(" AND  CONVERT(CHAR(10),PubDate,120)>=CONVERT(CHAR(10),'{0}',120) ", criteria.orderPubStart);
             }
             if (!string.IsNullOrWhiteSpace(criteria.orderPubEnd))
             {
-                sbtbl.AppendFormat(" AND CONVERT(CHAR(10),PubDate,120)<=CONVERT(CHAR(10),{0},120) ", criteria.orderPubEnd);
+                sbtbl.AppendFormat(" AND CONVERT(CHAR(10),PubDate,120)<=CONVERT(CHAR(10),'{0}',120) ", criteria.orderPubEnd);
             }
             sbtbl.Append(@" GROUP BY CONVERT(CHAR(10),PubDate,120) ) tbl");
             string columnList = @"  tbl.PubDate
