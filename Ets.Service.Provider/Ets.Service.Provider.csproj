@@ -65,6 +65,7 @@
     <Compile Include="Common\GroupProvider.cs" />
     <Compile Include="Common\HomeCountProvider.cs" />
     <Compile Include="Common\ServicePhone.cs" />
+    <Compile Include="Common\SignProvider.cs" />
     <Compile Include="Distribution\DistributionProvider.cs" />
     <Compile Include="MyPush\Push.cs" />
     <Compile Include="OpenApi\OpenApiGroupFactory.cs" />

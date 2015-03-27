@@ -637,9 +637,7 @@ namespace SuperManWebApi.Controllers
         public Ets.Model.Common.ResultModel<bool> CancelOrder_B(string userId, string OrderId)
         {
             if (string.IsNullOrWhiteSpace(OrderId))
-            {
                 return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.OrderEmpty);
-            }
             //查询该订单是否存在
             int selResult = iOrderProvider.GetOrderByOrderNo(OrderId);
             if (selResult > 0)
@@ -647,13 +645,9 @@ namespace SuperManWebApi.Controllers
                 //存在的情况下  取消订单  3
                 int cacelResult = iOrderProvider.UpdateOrderStatus(OrderId, Ets.Model.Common.ConstValues.ORDER_CANCEL);
                 if (cacelResult > 0)
-                {
                     return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.Success, true);
-                }
                 else
-                {
                     return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.FailedCancelOrder, true);
-                }
             }
             else
             {

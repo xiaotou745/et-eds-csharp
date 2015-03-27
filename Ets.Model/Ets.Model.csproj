@@ -66,6 +66,7 @@
     <Compile Include="DataModel\Clienter\ClienterModifyPwdResultModel.cs" />
     <Compile Include="DataModel\Clienter\ForgetPwdInfoModel.cs" />
     <Compile Include="DataModel\Clienter\ModifyPwdInfoModel.cs" />
+    <Compile Include="DataModel\Group\GroupApiConfig.cs" />
     <Compile Include="DataModel\Group\GroupModel.cs" />
     <Compile Include="DataModel\Order\OrderCommission.cs" />
     <Compile Include="Common\PaginResult.cs" />
