@@ -51,10 +51,9 @@ namespace Ets.Service.Provider.Order
                 resultModel.OrderNo = from.OrderNo;
                 resultModel.OrderCount = from.OrderCount;
                 var orderComm = new OrderCommission() { Amount = from.Amount, CommissionRate = from.CommissionRate, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount, WebsiteSubsidy = from.WebsiteSubsidy };
-                var income = OrderCommissionProvider.GetCurrenOrderCommission(orderComm);
                 var amount = OrderCommissionProvider.GetCurrenOrderPrice(orderComm);
 
-                resultModel.income = income;  //计算设置当前订单骑士可获取的佣金 Edit bycaoheyang 20150305
+                resultModel.income = from.OrderCommission;  //佣金 Edit bycaoheyang 20150327
                 resultModel.Amount = amount; //C端 获取订单的金额 Edit bycaoheyang 20150305
 
 
@@ -110,7 +109,11 @@ namespace Ets.Service.Provider.Order
             return list;
         }
 
-
+        /// <summary>
+        /// 未登录时获取最新任务     登录未登录根据城市有没有值判断。
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
         #region
         public IList<ClientOrderNoLoginResultModel> GetOrdersNoLoginLatest(ClientOrderSearchCriteria criteria)
         {
@@ -125,13 +128,9 @@ namespace Ets.Service.Provider.Order
                 resultModel.OrderNo = from.OrderNo;
                 resultModel.OrderCount = from.OrderCount;
                 var orderComm = new OrderCommission() { Amount = from.Amount, CommissionRate = from.CommissionRate, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount, WebsiteSubsidy = from.WebsiteSubsidy };
-                var income = OrderCommissionProvider.GetCurrenOrderCommission(orderComm);
                 var amount = OrderCommissionProvider.GetCurrenOrderPrice(orderComm);
-
-                resultModel.income = income;  //计算设置当前订单骑士可获取的佣金 Edit bycaoheyang 20150305
+                resultModel.income = from.OrderCommission;  //计算设置当前订单骑士可获取的佣金 Edit bycaoheyang 20150305
                 resultModel.Amount = amount; //C端 获取订单的金额 Edit bycaoheyang 20150305
-
-
                 resultModel.businessName = from.BusinessName;
                 resultModel.businessPhone = from.BusinessPhone;
 
@@ -238,7 +237,8 @@ namespace Ets.Service.Provider.Order
             {
                 to.WebsiteSubsidy = subsidy.WebsiteSubsidy;  //网站补贴
                 to.CommissionRate = subsidy.OrderCommission == null ? 0 : subsidy.OrderCommission; //佣金比例 
-                OrderCommission orderComm = new OrderCommission() { Amount = busiOrderInfoModel.Amount, CommissionRate = subsidy.OrderCommission, DistribSubsidy = to.DistribSubsidy, OrderCount = busiOrderInfoModel.OrderCount, WebsiteSubsidy = subsidy.WebsiteSubsidy }; //必须写to.DistribSubsidy ，防止bussiness为空情况
+                OrderCommission orderComm = new OrderCommission() { Amount = busiOrderInfoModel.Amount, CommissionRate = subsidy.OrderCommission, DistribSubsidy = to.DistribSubsidy, OrderCount = busiOrderInfoModel.OrderCount, WebsiteSubsidy = subsidy.WebsiteSubsidy }; 
+                //必须写to.DistribSubsidy ，防止bussiness为空情况
                  to.OrderCommission=OrderCommissionProvider.GetCurrenOrderCommission(orderComm);
             }
             to.Status = ConstValues.ORDER_NEW;

@@ -34,7 +34,7 @@ namespace Ets.Model.DomainModel.Clienter
         public string pickUpCity { get; set; }
         public double? Longitude { get; set; }
         public double? Latitude { get; set; }
-
+        public decimal? OrderCommission { get; set; }
 
     }
 }

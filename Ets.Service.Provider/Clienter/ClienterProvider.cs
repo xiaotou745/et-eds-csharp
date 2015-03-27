@@ -66,7 +66,7 @@ namespace Ets.Service.Provider.Clienter
                 };
                 #endregion
 
-                model.income = OrderCommissionProvider.GetCurrenOrderCommission(oCommission);  //计算设置当前订单骑士可获取的佣金 Edit bycaoheyang 20150305
+                model.income = item.OrderCommission;  //佣金 Edit bycaoheyang 20150327
                 model.Amount = OrderCommissionProvider.GetCurrenOrderPrice(oCommission); //C端 获取订单的金额 Edit bycaoheyang 20150305
 
                 model.businessName = item.BusinessName;
