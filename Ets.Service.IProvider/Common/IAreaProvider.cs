@@ -19,5 +19,11 @@ namespace Ets.Service.IProvider.Common
         /// <param name="version">当前版本号</param>
         /// <returns></returns>
         ResultModel<AreaModelList> GetOpenCity(string version);
+        /// <summary>
+        /// 获取开通城市
+        /// danny-20150327
+        /// </summary>
+        /// <returns></returns>
+        Model.Common.ResultModel<List<AreaModel>> GetOpenCityInfo();
     }
 }

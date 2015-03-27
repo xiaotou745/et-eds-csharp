@@ -480,6 +480,10 @@ namespace Ets.Dao.Order
             {
                 sbSqlWhere.AppendFormat(" AND o.GroupId={0} ", criteria.GroupId);
             }
+            if (!string.IsNullOrWhiteSpace(criteria.businessCity))
+            {
+                sbSqlWhere.AppendFormat(" AND b.City='{0}' ", criteria.businessCity);
+            }
             string tableList = @" [order] o WITH ( NOLOCK )
                                 LEFT JOIN clienter c WITH ( NOLOCK ) ON c.Id = o.clienterId
                                 LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId

@@ -34,6 +34,8 @@ namespace Ets.Model.ParameterModel.Order
         /// 集团id
         /// </summary>
         public int? GroupId { get; set; }
+        public string businessCity { get; set; }  //商户城市
+        
     }
 
     public class OrderByItem<Tentity>

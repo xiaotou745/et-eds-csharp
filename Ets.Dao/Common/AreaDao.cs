@@ -2,6 +2,7 @@
 using ETS;
 using ETS.Dao;
 using ETS.Extension;
+using ETS.Util;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -72,6 +73,25 @@ WITH    t AS ( SELECT   a.Code ,
 
 
 
+            DataSet ds = DbHelper.ExecuteDataset(SuperMan_Read, sql);
+            return MapRows<AreaModel>(DataTableHelper.GetTable(ds));
+        }
+        /// <summary>
+        /// 获取开通城市
+        /// danny-20150327
+        /// </summary>
+        /// <returns></returns>
+        public IList<AreaModel> GetOpenCityInfoSql()
+        {
+
+            string sql = string.Format(@" SELECT   a.Code ,
+                        a.Name ,
+                        a.ParentId ,
+                        JiBie = 1
+               FROM     dbo.PublicProvinceCity a ( NOLOCK )
+               WHERE    a.ParentId = 0
+                        AND a.Code IN ( {0} )
+            ", ConfigSettings.Instance.OpenCityCode);
             DataSet ds = DbHelper.ExecuteDataset(SuperMan_Read, sql);
             return MapRows<AreaModel>(DataTableHelper.GetTable(ds));
         }

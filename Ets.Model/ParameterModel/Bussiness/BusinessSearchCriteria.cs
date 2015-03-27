@@ -48,6 +48,11 @@ namespace Ets.Model.ParameterModel.Bussiness
         /// 市编码
         /// </summary>
         public string CityCode { get; set; }
+        /// <summary>
+        /// 商户城市
+        /// </summary>
+        public string businessCity { get; set; }
+        
     }
     public class OrderByItem<Tentity>
     {

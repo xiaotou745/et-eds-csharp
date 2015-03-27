@@ -283,6 +283,10 @@ namespace Ets.Dao.User
             {
                 sbSqlWhere.AppendFormat(" AND b.GroupId={0} ", criteria.GroupId);
             }
+            if (!string.IsNullOrEmpty(criteria.businessCity))
+            {
+                sbSqlWhere.AppendFormat(" AND b.City='{0}' ", criteria.businessCity.Trim());
+            }
             string tableList = @" business  b WITH (NOLOCK)  LEFT JOIN dbo.[group] g WITH(NOLOCK) ON g.Id = b.GroupId ";
             string orderByColumn = " b.Id DESC";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
