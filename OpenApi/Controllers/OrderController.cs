@@ -91,8 +91,8 @@ namespace OpenApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        //[SignOpenApi]
-        //[OpenApiActionError]
+        [SignOpenApi]
+        [OpenApiActionError]
         public ResultModel<object> AsyncStatus(ParaModel<AsyncStatusPM_OpenApi> paramodel)
         {
             //paramodel = new ParaModel<AsyncStatusPM_OpenApi>();
