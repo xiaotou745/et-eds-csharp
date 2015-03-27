@@ -664,7 +664,7 @@ namespace Ets.Dao.Order
         public HomeCountTitleModel GetHomeCountTitleToAllDataSql()
         {
             string sql = @"SELECT 
-                            SUM(CASE WHEN ISNULL(c.AccountBalance,0)>=1000 THEN c.AccountBalance ELSE 0 END) WithdrawPrice,--提现金额
+                            (SELECT SUM (AccountBalance) FROM dbo.clienter(NOLOCK)  WHERE AccountBalance>=1000) AS  WithdrawPrice,--提现金额
                             SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
                             COUNT(1) AS MisstionCount,--任务量
                             SUM(ISNULL(OrderCount,0)) AS OrderCount,--订单量
