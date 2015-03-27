@@ -402,11 +402,13 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <param name="paramodel">参数实体</param>
         /// <returns>订单详情</returns>
-        public ResultModel<object> AsyncOrderStatus(ParaModel<AsyncStatusPM_OpenApi> paramodel)
+        public ResultModel<object> AsyncOrderStatus(string orderNo )
         {
+
+            OrderListModel orderlistModel = OrderDao.GetOrderByNo(orderNo);
+            ParaModel<AsyncStatusPM_OpenApi> paramodel = new ParaModel<AsyncStatusPM_OpenApi>() { group=orderlistModel.GroupId};
             if (paramodel.GetSign() == null)//为当前集团参数实体生成sign签名信息
                 return null;
-            OrderListModel orderlistModel= OrderDao.GetOrderByNo(paramodel.fields.order_no);
             paramodel.fields.status = ParseHelper.ToInt(orderlistModel.Status, -1);
             paramodel.fields.ClienterTrueName = orderlistModel.ClienterTrueName;
             paramodel.fields.ClienterPhoneNo = orderlistModel.ClienterPhoneNo;
