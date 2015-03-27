@@ -98,6 +98,7 @@ namespace OpenApi.Controllers
             //paramodel = new ParaModel<AsyncStatusPM_OpenApi>();
             //paramodel.group = 2;
             //paramodel.fields = new AsyncStatusPM_OpenApi() { order_no = "123456" ,status=1};
+            //工厂，根据集团获取相对应的集团的业务实体对象
             IGroupProviderOpenApi groupProvider = OpenApiGroupFactory.Create(paramodel.group);
             if (groupProvider == null)
                 ResultModel<object>.Conclude(OrderApiStatusType.Success);  //无集团信息，不需要同步返回成功，实际应该不会该情况

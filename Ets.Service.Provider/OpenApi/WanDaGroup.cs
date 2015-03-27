@@ -47,7 +47,7 @@ namespace Ets.Service.IProvider.OpenApi
                 default:
                     break;
             }
-            var model = new
+            var model = new      //匿名类 第三方接口参数
             {
                 app_key = paramodel.app_key, // app_key
                 sign = paramodel.app_key, // sign
