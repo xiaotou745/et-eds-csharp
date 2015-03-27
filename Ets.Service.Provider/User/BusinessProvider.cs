@@ -112,9 +112,9 @@ namespace Ets.Service.Provider.User
         /// 设置结算比例2015.3.12 平扬
         /// </summary>
         /// <returns></returns>
-        public bool SetCommission(int id, decimal price)
+        public bool SetCommission(int id, decimal price,decimal waisongfei)
         {
-            return dao.setCommission(id, price);
+            return dao.setCommission(id, price, waisongfei);
         }
 
         /// <summary>

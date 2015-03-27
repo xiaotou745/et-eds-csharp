@@ -182,14 +182,15 @@ namespace Ets.Dao.User
         /// <param name="id"></param>
         /// <param name="price"></param>
         /// <returns></returns>
-        public bool setCommission(int id, decimal price)
+        public bool setCommission(int id, decimal price,decimal waisongfei)
         {
             bool reslut = false;
             try
             {
-                string sql = " update business set BusinessCommission=@BusinessCommission where id=@id ";
+                string sql = " update business set BusinessCommission=@BusinessCommission,DistribSubsidy=@DistribSubsidy where id=@id ";
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
                 dbParameters.AddWithValue("BusinessCommission", price);
+                dbParameters.AddWithValue("DistribSubsidy", waisongfei);
                 dbParameters.AddWithValue("id", id);
                 int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Write, sql, dbParameters);
                 if (i > 0) reslut = true;
@@ -197,7 +198,7 @@ namespace Ets.Dao.User
             catch (Exception ex)
             {
                 reslut = false;
-                LogHelper.LogWriter(ex, "设置结算比例");
+                LogHelper.LogWriter(ex, "设置结算比例-外送费");
                 throw;
             }
             return reslut;
