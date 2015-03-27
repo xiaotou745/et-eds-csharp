@@ -1,4 +1,4 @@
-﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Clienter.ClienterViewModel>
+﻿@model Ets.Model.Common.ClienterCountManageList
 @using Webdiyer.WebControls.Mvc;
     <table width="50%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
         <thead>
@@ -12,7 +12,7 @@
         <tbody>
             @{
                 var j = 0;
-                foreach (var item in Model.Records)
+                foreach (var item in Model.clienterViewModel)
                 {
                     j++;
                     <tr>
@@ -25,5 +25,4 @@
             }
         </tbody>
     </table>
- @{ViewBag.ActionName = "PostSuperManStatistical";}
-@Html.Partial("~/views/shared/PagerControl.cshtml", Model)
+@Html.Partial("_NewPager", Model.PagingResult)

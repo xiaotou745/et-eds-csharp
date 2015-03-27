@@ -1,4 +1,4 @@
-﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Clienter.ClienterViewModel>
+﻿@model Ets.Model.Common.ClienterCountManageList
 @using Webdiyer.WebControls.Mvc;
 @{
     ViewBag.Title = "骑士统计";
@@ -8,10 +8,6 @@
     <h2 class="crumbs">
         您所在位置：数据统计 > 骑士统计
     </h2>
-    @using (Ajax.BeginForm("PostSuperManStatistical", new RouteValueDictionary { { "pageindex", "" } },
-    new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
-    new RouteValueDictionary { { "id", "searchForm" } }))
-    {
          <div class="SearchMd">
         <h4 style="color:black;font-weight:600">骑士统计</h4>
              <select name="searchType" class="selectw" id="supermanCountSelect" style="margin-bottom:5px;width:143px">
@@ -20,22 +16,36 @@
                  <option value="3">本月</option>
              </select>
     </div>
-    }
-    <script type="text/javascript" src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
     <div class="bd clearfix" id="dataList">
         @Html.Partial("_PartialSuperManStatistical", Model)
     </div>
     <hr />
 </div>
 <script type="text/javascript">
+    var DEFAULT_PAGESIZE = 15;
+    var criteria = { PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE } };
     $(function () {
 
-        $("#supermanCountSelect").change(function () {
+        $("#supermanCountSelect").on("change", function () {
             var status = $("#supermanCountSelect").val();
-            $("#searchForm").submit();
+            var url = "/SuperManStatistical/SuperManStatistical";
+            refresh(0, url, status, "dataList");
         });
-        window.location.hash = '';
     });
-    
+    ////分页
+    art.ui.control.Pager.enablePaging(document, refresh);
+    function refresh(pageIndex, url, status, controlId) {
+
+        if (pageIndex !== undefined) {
+            criteria.PagingRequest.PageIndex = pageIndex;
+        }
+        criteria.searchType = status;
+        webExpress.utility.ajax.request
+            (
+                url,
+                criteria,
+                function (data) {
+                    $("#dataList").html(data);
+                });
+    };
 </script>
-<script src="~/Scripts/mvcpager.js"></script>

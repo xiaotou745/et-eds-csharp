@@ -91,10 +91,13 @@ namespace Ets.Service.Provider.Distribution
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        public PageInfo<ClienterViewModel> GetClienteresCount(ClienterSearchCriteria criteria)
+        public Ets.Model.Common.ClienterCountManageList GetClienteresCount(ClienterSearchCriteria criteria)
         {
             PageInfo<ClienterViewModel> pageinfo = dao.GetClienteresCount<ClienterViewModel>(criteria);
-            return pageinfo;
+            NewPagingResult pr = new NewPagingResult() { PageIndex = criteria.PagingRequest.PageIndex, PageSize = criteria.PagingRequest.PageSize, RecordCount = pageinfo.All, TotalCount = pageinfo.All };
+            List<ClienterViewModel> list = pageinfo.Records.ToList();
+            var clienterCountManageList = new Ets.Model.Common.ClienterCountManageList(list, pr);
+            return clienterCountManageList;
         }
         
     }

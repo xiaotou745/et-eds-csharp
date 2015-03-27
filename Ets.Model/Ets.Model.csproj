@@ -40,10 +40,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\BusinessCountManageList.cs" />
+    <Compile Include="Common\ClienterCountManageList.cs" />
     <Compile Include="Common\ConstValues.cs" />
     <Compile Include="Common\HomeCountTitleModel.cs" />
     <Compile Include="Common\JPushModel.cs" />
     <Compile Include="Common\ListParaBase.cs" />
+    <Compile Include="Common\OrderCountManageList.cs" />
     <Compile Include="Common\PagedList.cs" />
     <Compile Include="Common\ParaModel.cs" />
     <Compile Include="Common\ResultModelServicePhone.cs" />

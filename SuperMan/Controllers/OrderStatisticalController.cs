@@ -14,16 +14,16 @@ namespace SuperMan.Controllers
         IOrderProvider iOrderProvider = new OrderProvider();
         public ActionResult OrderStatistical()
         {
-            var criteria = new Ets.Model.DomainModel.Subsidy.HomeCountCriteria() { searchType = 1};
+            var criteria = new Ets.Model.DomainModel.Subsidy.HomeCountCriteria() { PagingRequest = new Ets.Model.Common.NewPagingResult(1, Ets.Model.Common.ConstValues.Web_PageSize), searchType = 1 };
             var pagedList = iOrderProvider.GetOrderCount(criteria);
             return View(pagedList);
         }
 
         [HttpPost]
-        public ActionResult PostOrderStatistical(int pageindex = 1)
+        public ActionResult OrderStatistical(Ets.Model.DomainModel.Subsidy.HomeCountCriteria criteria)
         {
-            var criteria = new Ets.Model.DomainModel.Subsidy.HomeCountCriteria();
-            TryUpdateModel(criteria);
+            //var criteria = new Ets.Model.DomainModel.Subsidy.HomeCountCriteria();
+            //TryUpdateModel(criteria);
             var pagedList = iOrderProvider.GetOrderCount(criteria);
             return PartialView("_PartialOrderStatistical", pagedList);
         }

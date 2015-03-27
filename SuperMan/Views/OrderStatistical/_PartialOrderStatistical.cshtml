@@ -1,4 +1,5 @@
-﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Order.OrderCountModel>
+﻿@*@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Order.OrderCountModel>*@
+@model Ets.Model.Common.OrderCountManageList
 @using Webdiyer.WebControls.Mvc;
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
     <thead>
@@ -16,7 +17,7 @@
     <tbody>
         @{
             var i = 0;
-            foreach (var item in Model.Records)
+            foreach (var item in Model.orderCountModel)
             {
                 i++;
                 <tr>
@@ -33,5 +34,6 @@
         }
     </tbody>
 </table>
-@{ViewBag.ActionName = "PostOrderStatistical";}
-@Html.Partial("~/views/shared/PagerControl.cshtml", Model)
+@Html.Partial("_NewPager", Model.PagingResult)
+@*@{ViewBag.ActionName = "PostOrderStatistical";}
+@Html.Partial("~/views/shared/PagerControl.cshtml", Model)*@

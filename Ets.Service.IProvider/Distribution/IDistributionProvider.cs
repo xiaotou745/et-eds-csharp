@@ -66,6 +66,6 @@ namespace Ets.Service.IProvider.Distribution
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        PageInfo<ClienterViewModel> GetClienteresCount(ClienterSearchCriteria criteria);
+        Ets.Model.Common.ClienterCountManageList GetClienteresCount(ClienterSearchCriteria criteria);
     }
 }

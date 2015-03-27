@@ -1,4 +1,4 @@
-﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Bussiness.BusinessViewModel>
+﻿@model Ets.Model.Common.BusinessCountManageList
 @using Webdiyer.WebControls.Mvc;
 @{
     ViewBag.Title = "商户统计";
@@ -8,32 +8,45 @@
     <h2 class="crumbs">
         您所在位置：数据统计 > 商户统计
     </h2>
-    @using (Ajax.BeginForm("PostBusinessStatistical", new RouteValueDictionary { { "pageindex", "" } },
-    new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
-    new RouteValueDictionary { { "id", "searchForm" } }))
-    {
-        <div class="SearchMd">
-            <h4 style="color:black;font-weight:600">商户统计</h4>
-            <select name="searchType" class="selectw" id="busiCountSelect" style="margin-bottom:5px;width:143px">
-                <option value="1">今日</option>
-                <option value="2">本周</option>
-                <option value="3">本月</option>
-            </select>
-        </div>
-    }
-    <script type="text/javascript" src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+    <div class="SearchMd">
+        <h4 style="color:black;font-weight:600">商户统计</h4>
+        <select name="searchType" class="selectw" id="busiCountSelect" style="margin-bottom:5px;width:143px">
+            <option value="1">今日</option>
+            <option value="2">本周</option>
+            <option value="3">本月</option>
+        </select>
+    </div>
     <div class="bd clearfix" id="dataList">
         @Html.Partial("_PartialBusinessStatistical", Model)
     </div>
     <hr />
 </div>
 <script type="text/javascript">
+    var DEFAULT_PAGESIZE = 15;
+    var criteria = { PagingRequest: { PageIndex: 0, PageSize: DEFAULT_PAGESIZE } };
     $(function () {
-        $("#busiCountSelect").change(function () {
+
+        $("#busiCountSelect").on("change", function () {
             var status = $("#busiCountSelect").val();
-            $("#searchForm").submit();
+            var url = "/BusinessStatistical/BusinessStatistical";
+            refresh(0, url, status, "dataList");
         });
-        window.location.hash = '';
     });
+    ////分页
+    art.ui.control.Pager.enablePaging(document, refresh);
+    function refresh(pageIndex, url, status, controlId) {
+
+        if (pageIndex !== undefined) {
+            criteria.PagingRequest.PageIndex = pageIndex;
+        }
+        criteria.searchType = status;
+        webExpress.utility.ajax.request
+            (
+                url,
+                criteria,
+                function (data) {
+                    $("#dataList").html(data);
+                });
+    };
 </script>
-<script src="~/Scripts/mvcpager.js"></script>

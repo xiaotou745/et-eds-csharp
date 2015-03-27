@@ -179,6 +179,6 @@ namespace Ets.Service.IProvider.User
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        PageInfo<BusinessViewModel> GetBusinessesCount(BusinessSearchCriteria criteria);
+        Ets.Model.Common.BusinessCountManageList GetBusinessesCount(BusinessSearchCriteria criteria);
     }
 }
