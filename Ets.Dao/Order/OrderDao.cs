@@ -655,7 +655,7 @@ namespace Ets.Dao.Order
             dbParameters.AddWithValue("@orderNo", orderNo);    //订单号
             dbParameters.AddWithValue("@status", orderStatus);    //订单号
 
-            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, upSql, dbParameters);
+            object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Read, upSql, dbParameters);
 
             return ParseHelper.ToInt(executeScalar, -1);
         }

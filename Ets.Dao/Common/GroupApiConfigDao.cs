@@ -1,6 +1,7 @@
 ﻿using Ets.Model.DataModel.Group;
 using ETS.Dao;
 using ETS.Data.Core;
+using ETS.Extension;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -20,11 +21,10 @@ namespace Ets.Dao.Common
         /// <returns></returns>
          public GroupApiConfig GetGroupApiConfigByGroupID(int groupId)
         {
-            string sql = @"SELECT a.* FROM dbo.GroupApiConfig (NOLOCK) AS a 
-                    LEFT JOIN dbo.[group](NOLOCK) AS b ON a.GroupId=b.Id  WHERE b.IsValid=1 and GroupId=@GroupId";
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@GroupId", groupId);
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
+            string sql = string.Format(@"SELECT a.* FROM dbo.GroupApiConfig (NOLOCK) AS a 
+                    LEFT JOIN dbo.[group](NOLOCK) AS b ON a.GroupId=b.Id  WHERE b.IsValid=1 and GroupId={0}"
+                ,groupId);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql));
             if (dt == null && dt.Rows.Count <= 0)
                 return null;
             return MapRows<GroupApiConfig>(dt)[0];
