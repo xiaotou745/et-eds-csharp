@@ -15,19 +15,20 @@
         new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace, HttpMethod="Post" },
         new RouteValueDictionary { { "id", "searchForm" } }))
     {*@
-        <div class="SearchMd">
-            <h4 style="color:black;font-weight:600">订单统计</h4>
-            <select name="searchType" class="selectw" id="orderCountSelect" style="margin-bottom:5px; width:143px">
-                <option value="1">今日</option>
-                <option value="2">本周</option>
-                <option value="3">本月</option>
-            </select>
-            <br />
+    <div class="SearchMd" style="width:1000px">
+        <h4 style="color:black;font-weight:600">订单统计</h4>
+        <select name="searchType" class="selectw" id="orderCountSelect" style="margin-bottom:5px; width:143px">
+            <option value="1">今日</option>
+            <option value="2">本周</option>
+            <option value="3">本月</option>
+        </select>
+        <br />
+
+        @*}*@
+        @*<script type="text/javascript" src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>*@
+        <div class="bd clearfix" id="dataList">
+            @Html.Partial("_PartialOrderStatistical", Model)
         </div>
-    @*}*@
-    @*<script type="text/javascript" src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>*@
-    <div class="bd clearfix" id="dataList">
-        @Html.Partial("_PartialOrderStatistical", Model)
     </div>
     <hr />
 </div>
