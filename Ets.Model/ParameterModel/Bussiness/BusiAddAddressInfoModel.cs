@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Ets.Model.ParameterModel.Bussiness
 {
+    /// <summary>
+    /// 商户地址修改入口参数
+    /// </summary>
     public class BusiAddAddressInfoModel
     {
         public int userId { get; set; }
