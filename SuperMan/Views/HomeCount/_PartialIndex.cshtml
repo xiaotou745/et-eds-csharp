@@ -1,0 +1,37 @@
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.Common.HomeCountTitleModel>
+@using Webdiyer.WebControls.Mvc;
+@{
+    var homeCountByList = ViewBag.homeCountTitleToList;
+}
+<table class="tbstyle" width="1000" border="1">
+    <tr class="trclass">
+        <td>日期</td>
+        <td>任务总量</td>
+        <td>订单总量</td>
+        <td>订单金额</td>
+        <td>商户结算金额（应收)</td>
+        <td>骑士佣金总计（应付)</td>
+        <td>盈亏总计</td>
+    </tr>
+
+    @{
+    foreach (var item in Model.Records)
+        {
+            double lykPirce = (double)Math.Round(item.YsPrice - item.YfPrice, 2);
+            string lykStyle = lykPirce > 0 ? "red" : "green";
+            <tr class="trclass">
+                <td>@item.PubDate</td>
+                <td>@item.MisstionCount</td>
+                <td>@item.OrderCount</td>
+                <td>@item.OrderPrice</td>
+                <td>￥@Math.Round(item.YsPrice, 2)</td>
+                <td>￥@Math.Round(item.YfPrice, 2)</td>
+                <td>￥<span style="color:@lykStyle">@lykPirce</span></td>
+            </tr>
+        }
+
+
+    }
+</table>
+@{ViewBag.ActionName = "PostBusinessStatistical";}
+@Html.Partial("~/views/shared/PagerControl.cshtml", Model)

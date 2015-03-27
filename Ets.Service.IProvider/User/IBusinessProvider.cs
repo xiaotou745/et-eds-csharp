@@ -173,5 +173,12 @@ namespace Ets.Service.IProvider.User
         /// <param name="PhoneNumber">手机号码</param>
         /// <returns></returns>
         Ets.Model.Common.SimpleResultModel CheckCode(string PhoneNumber);
+        /// <summary>
+        /// 商户统计
+        /// danny-20150326
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        PageInfo<BusinessViewModel> GetBusinessesCount(BusinessSearchCriteria criteria);
     }
 }

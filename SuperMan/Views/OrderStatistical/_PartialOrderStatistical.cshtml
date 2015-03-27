@@ -1,0 +1,37 @@
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Order.OrderCountModel>
+@using Webdiyer.WebControls.Mvc;
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+    <thead>
+        <tr class="tdbg">
+            <th width="%5">序号</th>
+            <th>区域</th>
+            <th>订单数</th>
+            <th>订单金额</th>
+            <th>配送费</th>
+            <th>订单佣金</th>
+            <th>外送费</th>
+            <th>网站补贴</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var i = 0;
+            foreach (var item in Model.Records)
+            {
+                i++;
+                <tr>
+                    <td>@i</td>
+                    <td>@item.district</td>
+                    <td>@item.orderCount</td>
+                    <td>@item.orderAmount</td>
+                    <td>@item.deliverAmount</td>
+                    <td>@item.orderCommission</td>
+                    <td>@item.distribSubsidy</td>
+                    <td>@item.websiteSubsidy</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+@{ViewBag.ActionName = "PostOrderStatistical";}
+@Html.Partial("~/views/shared/PagerControl.cshtml", Model)

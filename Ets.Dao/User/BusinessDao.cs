@@ -777,6 +777,53 @@ namespace Ets.Dao.User
             }
             return 0;
         }
+        /// <summary>
+        /// 商户统计
+        /// danny-20150326
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<T> GetBusinessesCount<T>(BusinessSearchCriteria criteria)
+        {
+            var sbtbl = new StringBuilder(@" (select	b.Name,
+		                                                b.PhoneNo,
+		                                                COUNT(*) OrderCount,
+		                                                SUM(o.Amount) OrderAmountCount
+                                                from business b with(nolock)
+                                                join [order] o on b.Id=o.businessId
+                                                where 1=1 ");
+            if (criteria.searchType == 1)//当天
+            {
+                sbtbl.Append(" AND DateDiff(DAY, GetDate(),o.PubDate)=0 ");
+            }
+            else if (criteria.searchType == 2)//本周
+            {
+                sbtbl.Append(" AND DateDiff(WEEK, GetDate(),DATEADD (DAY, -1,o.PubDate))=0 ");
+            }
+            else if (criteria.searchType == 3)//本月
+            {
+                sbtbl.Append(" AND DateDiff(MONTH, GetDate(),o.PubDate)=0 ");
+            }
+            sbtbl.Append(" group by b.Id,b.Name,b.PhoneNo ) tbl ");
+            string columnList = @"   tbl.Name
+                                    ,tbl.PhoneNo
+            				        ,tbl.OrderCount
+            				        ,tbl.OrderAmountCount ";
+
+            var sbSqlWhere = new StringBuilder(" 1=1 ");
+            if (!string.IsNullOrEmpty(criteria.businessName))
+            {
+                sbSqlWhere.AppendFormat(" AND Name='{0}' ", criteria.businessName);
+            }
+            if (!string.IsNullOrEmpty(criteria.businessPhone))
+            {
+                sbSqlWhere.AppendFormat(" AND PhoneNo='{0}' ", criteria.businessPhone);
+            }
+            string tableList = sbtbl.ToString();
+            string orderByColumn = " tbl.OrderCount DESC ";
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
+        }
 /// <summary>
         /// 修改商户地址西信息
         /// 返回商户修改后的状态
@@ -798,6 +845,20 @@ SET     [Address] = @Address ,
         [Status]= @Status
 OUTPUT  Inserted.[Status]
 WHERE   Id = @busiID";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             IDbParameters parm = DbHelper.CreateDbParameters();
 

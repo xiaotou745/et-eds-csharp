@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SuperManCommonModel.Entities
 {
-    public class HomeCountCriteria
+    public class HomeCountCriteria 
     {
         public PagingResult PagingRequest { get; set; }
 

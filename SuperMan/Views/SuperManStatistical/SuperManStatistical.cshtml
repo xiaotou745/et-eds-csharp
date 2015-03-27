@@ -1,0 +1,41 @@
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Clienter.ClienterViewModel>
+@using Webdiyer.WebControls.Mvc;
+@{
+    ViewBag.Title = "骑士统计";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：数据统计 > 骑士统计
+    </h2>
+    @using (Ajax.BeginForm("PostSuperManStatistical", new RouteValueDictionary { { "pageindex", "" } },
+    new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+    new RouteValueDictionary { { "id", "searchForm" } }))
+    {
+         <div class="SearchMd">
+        <h4 style="color:black;font-weight:600">骑士统计</h4>
+             <select name="searchType" class="selectw" id="supermanCountSelect" style="margin-bottom:5px;width:143px">
+                 <option value="1">今日</option>
+                 <option value="2">本周</option>
+                 <option value="3">本月</option>
+             </select>
+    </div>
+    }
+    <script type="text/javascript" src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <div class="bd clearfix" id="dataList">
+        @Html.Partial("_PartialSuperManStatistical", Model)
+    </div>
+    <hr />
+</div>
+<script type="text/javascript">
+    $(function () {
+
+        $("#supermanCountSelect").change(function () {
+            var status = $("#supermanCountSelect").val();
+            $("#searchForm").submit();
+        });
+        window.location.hash = '';
+    });
+    
+</script>
+<script src="~/Scripts/mvcpager.js"></script>
