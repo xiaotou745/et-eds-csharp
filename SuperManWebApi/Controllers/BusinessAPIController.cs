@@ -91,7 +91,7 @@ namespace SuperManWebApi.Controllers
 
 
         /// <summary>
-        /// B端注册，供第三方使用-平扬 2015.3.26修改成 ado方式
+        /// B端注册，供第三方使用-平扬 2015.3.27修改成 ado方式
         /// </summary>
         /// <param name="model">注册用户基本数据信息</param>
         /// <returns></returns>
