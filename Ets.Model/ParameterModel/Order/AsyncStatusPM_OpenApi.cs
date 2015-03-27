@@ -16,7 +16,7 @@ namespace Ets.Model.ParameterModel.Order
         /// <summary>
         /// 订单号
         /// </summary>
-        [Required]
+
         public string order_no { get; set; }
         /// <summary>
         /// E代送内部订单状态
@@ -41,6 +41,7 @@ namespace Ets.Model.ParameterModel.Order
         /// <summary>
         /// 第三方订单号
         /// </summary>
+                [Required]
         public string OriginalOrderNo { get; set; }
         
     }
