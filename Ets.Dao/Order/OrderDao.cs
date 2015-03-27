@@ -563,6 +563,7 @@ namespace Ets.Dao.Order
                                         ,c.PhoneNo ClienterPhoneNo
                                         ,c.TrueName ClienterTrueName
                                         ,b.GroupId
+                                        ,o.OriginalOrderNo
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                      LEFT JOIN dbo.clienter c WITH (NOLOCK) ON o.clienterId=c.Id

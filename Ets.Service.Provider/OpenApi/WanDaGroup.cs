@@ -53,7 +53,7 @@ namespace Ets.Service.IProvider.OpenApi
                 sign = paramodel.app_key, // sign
                 method = "POST", //请求方式 
                 ts = TimeHelper.GetTimeStamp(), //时间戳
-                orderId = paramodel.fields.order_no, //订单 ID
+                orderId = paramodel.fields.OriginalOrderNo, //订单 ID
                 staus = status,  //物流变更状态
                 statusDesc = statusDesc,  //事件状态描述
                 syncTime = DateTime.Now, //同步时间

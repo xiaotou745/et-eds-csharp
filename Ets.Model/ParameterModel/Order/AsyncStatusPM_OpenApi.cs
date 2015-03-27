@@ -37,5 +37,11 @@ namespace Ets.Model.ParameterModel.Order
         /// 商户名称
         /// </summary>
         public string BusinessName { get; set; }
+
+        /// <summary>
+        /// 第三方订单号
+        /// </summary>
+        public string OriginalOrderNo { get; set; }
+        
     }
 }
