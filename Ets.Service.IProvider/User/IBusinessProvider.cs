@@ -29,10 +29,10 @@ namespace Ets.Service.IProvider.User
         string CreateExcel(BusinessCommissionModel paraModel);
 
         /// <summary>
-        /// 设置结算比例2015.3.12 平扬
+        /// 设置结算比例-外送费2015.3.12 平扬
         /// </summary>
         /// <returns></returns>
-        bool SetCommission(int id, decimal price);
+        bool SetCommission(int id, decimal price,decimal waisongfei);
 
         /// <summary>
         /// 商户结算列表--2015.3.12 平扬
@@ -106,13 +106,13 @@ namespace Ets.Service.IProvider.User
         /// <param name="BusinessId">商户ID</param>
         /// <returns></returns>
         BusiOrderCountResultModel GetOrderCountData(int BusinessId);
-        /// <summary>
-        /// 验证商户手机号 是否 注册
-        /// wc
-        /// </summary>
-        /// <param name="PhoneNo"></param>
-        /// <returns></returns>
-        bool CheckBusinessExistPhone(string PhoneNo);
+        ///// <summary>
+        ///// 验证商户手机号 是否 注册
+        ///// wc
+        ///// </summary>
+        ///// <param name="PhoneNo"></param>
+        ///// <returns></returns>
+        //bool CheckBusinessExistPhone(string PhoneNo);
         /// <summary>
         /// 判断该 商户是否有资格 
         /// wc
@@ -155,5 +155,23 @@ namespace Ets.Service.IProvider.User
         /// <param name="picName">图片名称</param>
         /// <returns></returns>
         int UpdateBusinessPicInfo(int busiId, string picName);
+
+        /// <summary>
+        /// 请求动态验证码  (找回密码)
+        /// 窦海超
+        /// 2015年3月26日 17:16:02
+        /// </summary>
+        /// <param name="PhoneNumber">手机号码</param>
+        /// <returns></returns>
+        Ets.Model.Common.SimpleResultModel CheckCodeFindPwd(string PhoneNumber);
+
+        /// <summary>
+        /// 请求动态验证码  (注册)
+        /// 窦海超
+        /// 2015年3月26日 17:46:08
+        /// </summary>
+        /// <param name="PhoneNumber">手机号码</param>
+        /// <returns></returns>
+        Ets.Model.Common.SimpleResultModel CheckCode(string PhoneNumber);
     }
 }

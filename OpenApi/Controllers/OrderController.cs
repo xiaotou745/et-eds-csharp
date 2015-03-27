@@ -22,6 +22,11 @@ using Newtonsoft.Json;
 using System.Text;
 using System.IO;
 using System.Web.Script.Serialization;
+using ETS.Util;
+using System.Configuration;
+using ETS.Const;
+using Ets.Service.Provider.OpenApi;
+using Ets.Service.IProvider.OpenApi;
 
 
 namespace OpenApi.Controllers
@@ -82,30 +87,23 @@ namespace OpenApi.Controllers
 
         // POST: Order Create   paramodel 固定 必须是 paramodel  
         /// <summary>
-        /// 第三方订单状态同步   add by caoheyang 20150326  目前支持万达
+        /// 第三方订单状态同步   add by caoheyang 20150326  目前仅支持万达
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [SignOpenApi] 
+        [SignOpenApi]
         [OpenApiActionError]
         public ResultModel<object> AsyncStatus(ParaModel<AsyncStatusPM_OpenApi> paramodel)
         {
-            //ParaModel<AsyncStatusPM_OpenApi> paramodel = new ParaModel<AsyncStatusPM_OpenApi>();
-            //paramodel.app_key = "wandajituan";
-            //paramodel.timestamp = "2015-03-11 20:42:33";
-            //paramodel.v = "1.0";
-            //paramodel.sign = "F76092BEA33576DDA2413AA5BDFB541E";
-            //paramodel.fields = new AsyncStatusPM_OpenApi() { order_no = "123456" };
-
-            
-            switch (paramodel.group)
-            { 
-                case 2:
-                    ResultModel<object> json = new HttpClient().PostAsJsonAsync("http://192.168.1.130:8082/order/GetStatus", paramodel).Result.Content.ReadAsAsync<ResultModel<object>>().Result;
-                    break;
-            }
-            return ResultModel<object>.Conclude(OrderApiStatusType.Success);
+            //paramodel = new ParaModel<AsyncStatusPM_OpenApi>();
+            //paramodel.group = 2;
+            //paramodel.fields = new AsyncStatusPM_OpenApi() { order_no = "123456" ,status=1};
+            //工厂，根据集团获取相对应的集团的业务实体对象
+            IGroupProviderOpenApi groupProvider = OpenApiGroupFactory.Create(paramodel.group);
+            if (groupProvider == null)
+                ResultModel<object>.Conclude(OrderApiStatusType.Success);  //无集团信息，不需要同步返回成功，实际应该不会该情况
+            OrderApiStatusType statusType = groupProvider.AsyncStatus(paramodel);
+            return ResultModel<object>.Conclude(statusType);
         }
     }
-
 }

@@ -19,6 +19,7 @@ using Ets.Service.IProvider.Order;
 using Ets.Service.Provider.Order;
 using Ets.Service.Provider.Common;
 using Ets.Service.IProvider.User;
+using ETS.Cacheing;
 namespace SuperManWebApi.Controllers
 {
     public class BusinessAPIController : ApiController
@@ -43,51 +44,65 @@ namespace SuperManWebApi.Controllers
             return bprovider.PostRegisterInfo_B(model);
         }
 
+        ///// <summary>
+        ///// B端注册，供第三方使用
+        ///// </summary>
+        ///// <param name="model">注册用户基本数据信息</param>
+        ///// <returns></returns>
+        //[ActionStatus(typeof(CustomerRegisterStatus))]
+        //[HttpPost]
+        //public ResultModel<NewBusiRegisterResultModel> NewPostRegisterInfo_B(NewRegisterInfoModel model)
+        //{
+        //    if (string.IsNullOrWhiteSpace(model.PhoneNo))   //手机号非空验证
+        //        return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
+        //    //else if (BusiLogic.busiLogic().CheckExistPhone(model.PhoneNo))  //判断该手机号是否已经注册过
+        //    //    return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberRegistered);
+        //    else if (string.IsNullOrWhiteSpace(model.B_OriginalBusiId.ToString()))  //判断原平台商户Id不能为空
+        //        return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.OriginalBusiIdEmpty);
+        //    else if (string.IsNullOrWhiteSpace(model.B_GroupId.ToString()))  //集团Id不能为空
+        //        return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.GroupIdEmpty);
+        //    else if (BusiLogic.busiLogic().CheckExistBusi(model.B_OriginalBusiId, model.B_GroupId))
+        //        return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.OriginalBusiIdRepeat);
+        //    else if (string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_CityCode.ToString())) //城市以及城市编码非空验证
+        //        return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
+        //    else if (string.IsNullOrEmpty(model.B_Name.Trim())) //商户名称
+        //        return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiNameEmpty);
+        //    else if (string.IsNullOrWhiteSpace(model.Address) || string.IsNullOrWhiteSpace(model.B_Province) || string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_Area) || string.IsNullOrWhiteSpace(model.B_AreaCode) || string.IsNullOrWhiteSpace(model.B_CityCode) || string.IsNullOrWhiteSpace(model.B_ProvinceCode))  //商户地址 省市区 不能为空
+        //        return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
+        //    else if (model.CommissionTypeId == 0)
+        //    {
+        //        return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
+        //    }
+        //    if (string.IsNullOrEmpty(model.B_Password))   //密码为空时 设置默认密码
+        //        model.B_Password = MD5Helper.MD5("abc123");
+        //    else
+        //    {
+        //        model.B_Password = MD5Helper.MD5(model.B_Password);
+        //    }
+        //    var business = NewRegisterInfoModelTranslator.Instance.Translate(model);
+        //    bool result = BusiLogic.busiLogic().Add(business, true);
+        //    var resultModel = new NewBusiRegisterResultModel
+        //    {
+        //        BusiRegisterId = business.Id
+        //    };
+        //    LogHelper.LogWriter("第三方调用商户注册接口", new { model = model, Message = CustomerRegisterStatus.Success });
+        //    return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
+        //}
+
+
         /// <summary>
-        /// B端注册，供第三方使用
+        /// B端注册，供第三方使用-平扬 2015.3.26修改成 ado方式
         /// </summary>
         /// <param name="model">注册用户基本数据信息</param>
         /// <returns></returns>
-        [ActionStatus(typeof(CustomerRegisterStatus))]
+        [ActionStatus(typeof(Ets.Model.ParameterModel.Bussiness.CustomerRegisterStatus))]
         [HttpPost]
-        public ResultModel<NewBusiRegisterResultModel> NewPostRegisterInfo_B(NewRegisterInfoModel model)
+        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.NewBusiRegisterResultModel> NewPostRegisterInfo_B(Ets.Model.ParameterModel.Bussiness.NewRegisterInfoModel model)
         {
-            if (string.IsNullOrWhiteSpace(model.PhoneNo))   //手机号非空验证
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
-            //else if (BusiLogic.busiLogic().CheckExistPhone(model.PhoneNo))  //判断该手机号是否已经注册过
-            //    return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberRegistered);
-            else if (string.IsNullOrWhiteSpace(model.B_OriginalBusiId.ToString()))  //判断原平台商户Id不能为空
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.OriginalBusiIdEmpty);
-            else if (string.IsNullOrWhiteSpace(model.B_GroupId.ToString()))  //集团Id不能为空
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.GroupIdEmpty);
-            else if (BusiLogic.busiLogic().CheckExistBusi(model.B_OriginalBusiId, model.B_GroupId))
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.OriginalBusiIdRepeat);
-            else if (string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_CityCode.ToString())) //城市以及城市编码非空验证
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
-            else if (string.IsNullOrEmpty(model.B_Name.Trim())) //商户名称
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiNameEmpty);
-            else if (string.IsNullOrWhiteSpace(model.Address) || string.IsNullOrWhiteSpace(model.B_Province) || string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_Area) || string.IsNullOrWhiteSpace(model.B_AreaCode) || string.IsNullOrWhiteSpace(model.B_CityCode) || string.IsNullOrWhiteSpace(model.B_ProvinceCode))  //商户地址 省市区 不能为空
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
-            else if (model.CommissionTypeId == 0)
-            {
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
-            }
-            if (string.IsNullOrEmpty(model.B_Password))   //密码为空时 设置默认密码
-                model.B_Password = MD5Helper.MD5("abc123");
-            else
-            {
-                model.B_Password = MD5Helper.MD5(model.B_Password);
-            }
-            var business = NewRegisterInfoModelTranslator.Instance.Translate(model);
-            bool result = BusiLogic.busiLogic().Add(business, true);
-            var resultModel = new NewBusiRegisterResultModel
-            {
-                BusiRegisterId = business.Id
-            };
-            LogHelper.LogWriter("第三方调用商户注册接口", new { model = model, Message = CustomerRegisterStatus.Success });
-            return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
+            var bprovider = new BusinessProvider();
+            return bprovider.NewPostRegisterInfo_B(model);
         }
-
+         
 
         /// <summary>
         /// B端取消订单，供第三方使用
@@ -302,10 +317,10 @@ namespace SuperManWebApi.Controllers
             lock (lockHelper)
             {
                 //首先验证该 商户有无 资格 发布订单 wc
-                if (!iBusinessProvider.HaveQualification(model.userId)) 
+                if (!iBusinessProvider.HaveQualification(model.userId))
                 {
                     return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.HadCancelQualification);
-                }  
+                }
                 #region 缓存验证
                 string cacheKey = model.userId.ToString() + "_" + model.OrderSign;
                 var cacheList = ETS.Cacheing.CacheFactory.Instance[cacheKey];
@@ -334,7 +349,7 @@ namespace SuperManWebApi.Controllers
             return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.Success, resultModel);
 
         }
-          
+
         /// <summary>
         /// 获取订单列表
         /// </summary>
@@ -443,17 +458,22 @@ namespace SuperManWebApi.Controllers
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiOrderCountResultModel> OrderCount_B(int userId)
         {
             var resultModel = BusiLogic.busiLogic().GetOrderCountData(userId);
-              
+
             return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiOrderCountResultModel>.Conclude(ETS.Enums.LoginModelStatus.Success, resultModel);
         }
-        
+
         /// <summary>
         /// 请求动态验证码  (注册)
-        /// c</summary>
+        /// 窦海超
+        /// 2015年3月26日 17:46:08
+        /// </summary>
+        /// <param name="PhoneNumber">手机号码</param>
+        /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.SendCheckCodeStatus))]
         [HttpGet]
         public Ets.Model.Common.SimpleResultModel CheckCode(string PhoneNumber)
-        {  
+        {
+            /*
             if (!CommonValidator.IsValidPhoneNumber(PhoneNumber))  //验证电话号码合法性
             {
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
@@ -463,7 +483,7 @@ namespace SuperManWebApi.Controllers
             try
             {
                 if (iBusinessProvider.CheckBusinessExistPhone(PhoneNumber))  //判断该手机号是否已经注册过
-                    return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.AlreadyExists); 
+                    return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.AlreadyExists);
                 else
                 {
                     SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);
@@ -478,7 +498,8 @@ namespace SuperManWebApi.Controllers
             catch (Exception)
             {
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.SendFailure);
-            }
+            }*/
+            return new BusinessProvider().CheckCode(PhoneNumber);
         }
 
         /// <summary>
@@ -490,27 +511,30 @@ namespace SuperManWebApi.Controllers
         [HttpGet]
         public Ets.Model.Common.SimpleResultModel CheckCodeFindPwd(string PhoneNumber)
         {
-            if (!CommonValidator.IsValidPhoneNumber(PhoneNumber))  //检查手机号码的合法性
-            {
-                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
-            }
-            var randomCode = new Random().Next(100000).ToString("D6");
-            var msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode, Ets.Model.Common.ConstValues.MessageBusiness);
-            try
-            {
-                SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);
-                // 更新短信通道 
-                Task.Factory.StartNew(() =>
-                {
-                    SendSmsHelper.SendSendSmsSaveLog(PhoneNumber, msg, Ets.Model.Common.ConstValues.SMSSOURCE);
-                });
-                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.Sending);
+            /* if (!CommonValidator.IsValidPhoneNumber(PhoneNumber))  //检查手机号码的合法性
+             {
+                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
+             }
+             var randomCode = new Random().Next(100000).ToString("D6");
+             var msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode, Ets.Model.Common.ConstValues.MessageBusiness);
+             try
+             {
+                 SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);
+             
+                 // 更新短信通道 
+                 Task.Factory.StartNew(() =>
+                 {
+                     SendSmsHelper.SendSendSmsSaveLog(PhoneNumber, msg, Ets.Model.Common.ConstValues.SMSSOURCE);
+                 });
+                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.Sending);
 
-            }
-            catch (Exception)
-            {
-                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.SendFailure);
-            }
+             }
+             catch (Exception)
+             {
+                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.SendFailure);
+             }*/
+            BusinessProvider businessProvider = new BusinessProvider();
+            return businessProvider.CheckCodeFindPwd(PhoneNumber);
         }
 
         /// <summary>
@@ -537,7 +561,7 @@ namespace SuperManWebApi.Controllers
             //    return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.Success);
             //else
             //    return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.FailedModifyPwd);
-            return  new BusinessProvider().PostForgetPwd_B(model);
+            return new BusinessProvider().PostForgetPwd_B(model);
         }
 
         /// <summary> 
@@ -581,7 +605,7 @@ namespace SuperManWebApi.Controllers
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.DistribSubsidyStatus.Failed);
             int modResult = iBusinessProvider.ModifyWaiMaiPrice(mod.userId, mod.price);
 
-            if (modResult>0)
+            if (modResult > 0)
             {
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.DistribSubsidyStatus.Success);
             }
