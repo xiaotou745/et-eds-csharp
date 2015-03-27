@@ -123,7 +123,7 @@ namespace Ets.Dao.Clienter
                                     b.PhoneNo AS BusinessPhone,
                                     REPLACE(b.City,'市','') AS pickUpCity,
                                     b.Longitude,
-                                    b.Latitude";
+                                    b.Latitude,o.OrderCommission";
             return new PageHelper().GetPages<ClientOrderModel>(SuperMan_Read, criteria.PagingRequest.PageIndex, where, "o.Id", columnStr, "[order](NOLOCK) AS o LEFT JOIN business(NOLOCK) AS b ON o.businessId=b.Id", criteria.PagingRequest.PageSize, false);
         }
 

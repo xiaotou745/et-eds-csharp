@@ -11,9 +11,6 @@ namespace Ets.Service.Provider.Order
     {
 
         #region 计算收入支出
-
-
-
         /// <summary>
         /// 获取订单的骑士佣金 add by caoheyang 20150305
         /// </summary>
