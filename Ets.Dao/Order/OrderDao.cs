@@ -559,8 +559,12 @@ namespace Ets.Dao.Order
                                         ,o.[OrderCount]
                                         ,o.[CommissionRate] 
                                         ,b.[City] BusinessCity
+                                        ,b.Name BusinessName
+                                        ,c.PhoneNo ClienterPhoneNo
+                                        ,c.TrueName ClienterTrueName
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
+                                    LEFT JOIN dbo.clienter c WITH (NOLOCK) ON o.clienterId=c.Id
                                     WHERE 1=1 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OrderNo", orderNo);

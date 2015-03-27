@@ -177,8 +177,12 @@ namespace Ets.Model.DataModel.Order
         /// 商家所在城市
         /// </summary>
         public string BusinessCity { get; set; }
-        
 
+        /// <summary>
+        /// 超人姓名
+        /// </summary>
+        public string ClienterTrueName { get; set; }
+        
        
     }
 }

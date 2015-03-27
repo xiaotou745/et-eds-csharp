@@ -44,6 +44,7 @@ namespace Ets.Model.Common
         /// </summary>
         public int group { get; set; }
 
+
     }
 
      /// <summary>

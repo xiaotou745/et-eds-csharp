@@ -25,6 +25,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ets.Model.DomainModel.Subsidy;
+using System.Net.Http;
+using Newtonsoft.Json.Linq;
+using Ets.Service.IProvider.OpenApi;
+using Ets.Service.Provider.OpenApi;
+using System.Configuration;
 namespace Ets.Service.Provider.Order
 {
     public class OrderProvider : IOrderProvider
@@ -391,6 +396,27 @@ namespace Ets.Service.Provider.Order
         {
             return null;
         }
+
+        /// <summary>
+        ///  supermanapi通过openapi同步第三方订单状态  add by caoheyang 20150327 
+        /// </summary>
+        /// <param name="paramodel">参数实体</param>
+        /// <returns>订单详情</returns>
+        public ResultModel<object> AsyncOrderStatus(ParaModel<AsyncStatusPM_OpenApi> paramodel)
+        {
+            if (paramodel.GetSign() == null)//为当前集团参数实体生成sign签名信息
+                return null;
+            OrderListModel orderlistModel= OrderDao.GetOrderByNo(paramodel.fields.order_no);
+            paramodel.fields.status = ParseHelper.ToInt(orderlistModel.Status, -1);
+            paramodel.fields.ClienterTrueName = orderlistModel.ClienterTrueName;
+            paramodel.fields.ClienterPhoneNo = orderlistModel.ClienterPhoneNo;
+            paramodel.fields.BusinessName = orderlistModel.BusinessName; 
+            string url = ConfigurationManager.AppSettings["AsyncStatus"];
+            string json = new HttpClient().PostAsJsonAsync(url, paramodel).Result.Content.ReadAsStringAsync().Result;
+            JObject jobject = JObject.Parse(json);
+            return null;
+        }
+
         #endregion
 
         /// <summary>
