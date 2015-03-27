@@ -182,7 +182,11 @@ namespace Ets.Model.DataModel.Order
         /// 超人姓名
         /// </summary>
         public string ClienterTrueName { get; set; }
+
+        /// <summary>
+        /// 集团id
+        /// </summary>
+        public int GroupId { get; set; }
         
-       
     }
 }
