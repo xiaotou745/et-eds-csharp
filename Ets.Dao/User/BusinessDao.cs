@@ -662,5 +662,83 @@ namespace Ets.Dao.User
             object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Write, upSql, parm);
             return ParseHelper.ToInt(executeScalar, 0);
         }
+        /// <summary>
+        /// 修改商户地址西信息
+        /// 返回商户修改后的状态
+        /// wc
+        /// </summary>
+        /// <param name="business"></param>
+        /// <returns>商户的当前状态</returns>
+        public int UpdateBusinessAddressInfo(Business business)
+        {
+            string upSql = @"UPDATE  dbo.business
+SET     [Address] = @Address ,
+        PhoneNo2 = @PhoneNo2 ,
+        [Name] = @Name ,
+        Landline = @Landline ,
+        district = @district ,
+        districtId = @districtId ,
+        Longitude = @Longitude ,
+        Latitude = @Latitude ,
+        [Status]= @Status
+OUTPUT  Inserted.[Status]
+WHERE   Id = @busiID";
+
+            IDbParameters parm = DbHelper.CreateDbParameters();
+
+            parm.AddWithValue("@Address", business.Address);
+            parm.AddWithValue("@PhoneNo2", business.PhoneNo2);
+            parm.AddWithValue("@Name", business.Name);
+            parm.AddWithValue("@Landline", business.Landline);
+            parm.AddWithValue("@district", business.district);
+            parm.AddWithValue("@districtId", business.districtId);
+            parm.AddWithValue("@Longitude", business.Longitude);
+            parm.AddWithValue("@Latitude", business.Latitude);
+            parm.AddWithValue("@Status", business.Status);
+            parm.AddWithValue("@busiID", business.Id);
+            try
+            {
+                object executeScalar = DbHelper.ExecuteScalar(SuperMan_Write, upSql, parm);
+                return ParseHelper.ToInt(executeScalar, -1);
+            }
+            catch (Exception ex)
+            {
+                //记日志
+                return -1;
+            }
+            
+        }
+        /// <summary>
+        /// 更新图片地址信息 
+        /// wc
+        /// </summary>
+        /// <param name="busiId"></param>
+        /// <param name="picName"></param>
+        /// <returns></returns>
+        public int UpdateBusinessPicInfo(int busiId, string picName)
+        {
+            string upSql = @"UPDATE  dbo.business
+SET     CheckPicUrl = @CheckPicUrl ,
+        [Status] = @Status
+OUTPUT  Inserted.[Status]
+WHERE   Id = @busiID ";
+
+            IDbParameters parm = DbHelper.CreateDbParameters();
+
+            parm.AddWithValue("@CheckPicUrl", picName);
+            parm.AddWithValue("@Status", ConstValues.BUSINESS_AUDITPASSING);
+            parm.AddWithValue("@busiID", busiId); 
+
+            try
+            {
+                object executeScalar = DbHelper.ExecuteScalar(SuperMan_Write, upSql, parm);
+                return ParseHelper.ToInt(executeScalar, -1);
+            }
+            catch (Exception ex)
+            {
+                //记日志
+                return -1;
+            }
+        }
     }
 }

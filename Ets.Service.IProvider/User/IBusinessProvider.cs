@@ -146,7 +146,14 @@ namespace Ets.Service.IProvider.User
         /// wc
         /// </summary>
         /// <param name="businessModel"></param>
-        /// <returns></returns>
+        /// <returns>商户的当前状态</returns>
         int UpdateBusinessAddressInfo(BusiAddAddressInfoModel businessModel);
+        /// <summary>
+        /// 更新商户上传图片信息
+        /// </summary>
+        /// <param name="busiId">商户Id</param>
+        /// <param name="picName">图片名称</param>
+        /// <returns></returns>
+        int UpdateBusinessPicInfo(int busiId, string picName);
     }
 }

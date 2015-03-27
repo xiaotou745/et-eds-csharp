@@ -354,24 +354,52 @@ namespace Ets.Service.Provider.User
         }
         /// <summary>
         /// 修改商户地址信息 
+        /// 返回商户修改后的状态
         /// wc
         /// </summary>
         /// <param name="businessModel"></param>
-        /// <returns></returns>
+        /// <returns>商户的当前状态</returns>
         public int UpdateBusinessAddressInfo(BusiAddAddressInfoModel businessModel)
         {
-            Business business =  TranslateBusiness(businessModel);
-            return 0;
-        }
+            Business business = TranslateBusiness(businessModel);
 
+            var busi = dao.GetBusiness(businessModel.userId); //查询商户信息
+            if (busi.Status == ConstValues.BUSINESS_NOADDRESS)  //如果商户的状态 为未审核未添加地址，则修改商户状态为 未审核
+            {
+                business.Status = ConstValues.BUSINESS_NOAUDIT;
+            }
+            int upResult = dao.UpdateBusinessAddressInfo(business);
+
+            return upResult;
+        }
+        /// <summary>
+        /// 更新图片地址信息
+        /// wc
+        /// </summary>
+        /// <param name="busiId"></param>
+        /// <param name="picName"></param>
+        /// <returns></returns>
+        public int UpdateBusinessPicInfo(int busiId, string picName)
+        {
+
+            int upResult = dao.UpdateBusinessPicInfo(busiId, picName);
+            return upResult;
+
+        }
+        /// <summary>
+        /// 将入口参数转换为对应的 数据库 Business 实体
+        /// wc 注意这里有商户状态的转换
+        /// </summary>
+        /// <param name="businessModel"></param>
+        /// <returns></returns>
         private Business TranslateBusiness(BusiAddAddressInfoModel businessModel)
         {
             var to = new Business();
             to.Id = businessModel.userId;
-            to.Address = businessModel.Address;
-            to.Name = businessModel.businessName;
+            to.Address = businessModel.Address.Trim();
+            to.Name = businessModel.businessName.Trim();
             to.Landline = businessModel.landLine;
-            to.PhoneNo2 = businessModel.phoneNo;
+            to.PhoneNo2 = businessModel.phoneNo.Trim();
             to.districtId = businessModel.districtId;
             to.district = businessModel.districtName;
             to.Longitude = businessModel.longitude;
