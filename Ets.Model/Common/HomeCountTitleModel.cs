@@ -73,6 +73,11 @@ namespace Ets.Model.Common
         public string PubDate { get; set; }
 
         /// <summary>
+        /// 插入时间
+        /// </summary>
+        public DateTime InsertTime { get; set; }
+
+        /// <summary>
         /// 提现金额
         /// </summary>
         public decimal WithdrawPrice { get; set; }
