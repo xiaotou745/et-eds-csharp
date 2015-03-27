@@ -29,10 +29,10 @@ namespace Ets.Service.IProvider.User
         string CreateExcel(BusinessCommissionModel paraModel);
 
         /// <summary>
-        /// 设置结算比例2015.3.12 平扬
+        /// 设置结算比例-外送费2015.3.12 平扬
         /// </summary>
         /// <returns></returns>
-        bool SetCommission(int id, decimal price);
+        bool SetCommission(int id, decimal price,decimal waisongfei);
 
         /// <summary>
         /// 商户结算列表--2015.3.12 平扬
@@ -166,5 +166,12 @@ namespace Ets.Service.IProvider.User
         /// <param name="PhoneNumber">手机号码</param>
         /// <returns></returns>
         Ets.Model.Common.SimpleResultModel CheckCode(string PhoneNumber);
+        /// <summary>
+        /// 商户统计
+        /// danny-20150326
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        PageInfo<BusinessViewModel> GetBusinessesCount(BusinessSearchCriteria criteria);
     }
 }

@@ -291,5 +291,56 @@ namespace Ets.Dao.Distribution
             var list = ConvertDataTableList<ClienterListModel>(dt);
             return list;
         }
+
+        /// <summary>
+        /// 骑士统计
+        /// danny-20150326
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<T> GetClienteresCount<T>(ClienterSearchCriteria criteria)
+        {
+            var sbtbl = new StringBuilder(@" (select c.Id,
+                                                    COUNT(*) OrderCount,
+                                                    c.TrueName Name,
+                                                    c.AccountBalance,
+                                                    c.PhoneNo
+                                                from clienter c with(nolock)
+                                                join [order] o on c.Id=o.clienterId
+                                                where 1=1 ");
+            if (criteria.searchType == 1)//当天
+            {
+                sbtbl.Append(" AND DateDiff(DAY, GetDate(),o.PubDate)=0 ");
+            }
+            else if (criteria.searchType == 2)//本周
+            {
+                sbtbl.Append(" AND DateDiff(WEEK, GetDate(),DATEADD (DAY, -1,o.PubDate))=0 ");
+            }
+            else if (criteria.searchType == 3)//本月
+            {
+                sbtbl.Append(" AND DateDiff(MONTH, GetDate(),o.PubDate)=0 ");
+            }
+            sbtbl.Append(" group  by c.Id,c.TrueName,c.AccountBalance,c.PhoneNo ) tbl ");
+            string columnList = @"   tbl.Id
+                                    ,tbl.OrderCount
+            				        ,tbl.Name
+            				        ,tbl.AccountBalance 
+                                    ,tbl.PhoneNo ";
+
+            var sbSqlWhere = new StringBuilder(" 1=1 ");
+            
+            if (!string.IsNullOrEmpty(criteria.clienterName))
+            {
+                sbSqlWhere.AppendFormat(" AND Name='{0}' ", criteria.clienterName);
+            }
+            if (!string.IsNullOrEmpty(criteria.clienterPhone))
+            {
+                sbSqlWhere.AppendFormat(" AND PhoneNo='{0}' ", criteria.clienterPhone);
+            }
+            string tableList = sbtbl.ToString();
+            string orderByColumn = " tbl.OrderCount DESC ";
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
+        }
     }
 }

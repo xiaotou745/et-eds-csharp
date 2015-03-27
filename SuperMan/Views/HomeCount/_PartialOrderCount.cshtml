@@ -1,4 +1,4 @@
-﻿@model SuperManCommonModel.Models.OrderCountManageList
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Order.OrderCountModel>
 <div>    
     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
         <thead>
@@ -16,7 +16,7 @@
         <tbody>
             @{
                 var i = 0;
-                foreach (var item in Model.orderCountModel)
+                foreach (var item in Model.Records)
                 {
                     i++;
                     <tr>
@@ -33,13 +33,6 @@
             }
         </tbody>
     </table>
-    @Html.Partial("_Pager", Model.PagingResult)
+    @{ViewBag.ActionName = "PostOrderCount";}
+    @Html.Partial("~/views/shared/PagerControl.cshtml", Model)
 </div>
-
-<script type="text/javascript">
-    $("#orderCountSelect").change(function () {
-        var status = $("#orderCountSelect").val();
-        var url = "/HomeCount/orderCount";
-        refresh(0, url, status, "dataListOrder");
-    });
-</script>

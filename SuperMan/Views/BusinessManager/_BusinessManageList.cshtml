@@ -14,8 +14,8 @@
             <th>申请时间</th>
             <th>所属集团</th>
             <th>结算比例</th>
-            @*<th>订单</th>
-                <th>订单金额</th>*@
+            <th>外送费</th>
+               @* <th>订单金额</th>*@
             <th>审核状态</th>
             <th>操作</th>
         </tr>
@@ -50,7 +50,12 @@
                         @{
                             decimal? commission = @item.BusinessCommission ?? 0;
                         }@commission%
-                    </td>
+                    </td> 
+                    <td>
+                        @{
+                            decimal distribSubsidy = @item.DistribSubsidy ?? 0;
+                        }@distribSubsidy
+                    </td> 
                     @{
                 var statusView = "";
                 if (@item.Status == Ets.Model.Common.ConstValues.BUSINESS_AUDITPASS)
@@ -99,7 +104,7 @@
                         }
                     @if (SuperMan.App_Start.UserContext.Current.HasAuthority(24))
                     {
-                         <a href="javascript:void(0)" onclick="funcComView(@item.Id,'@item.Name','@address','@item.PhoneNo','@item.BusinessCommission')">设置结算比例</a>
+                         <a href="javascript:void(0)" onclick="funcComView(@item.Id,'@item.Name','@distribSubsidy','@item.PhoneNo','@commission')">设置结算比例</a>
                     }
                    
                     </td>
@@ -162,16 +167,17 @@
         adminjs.openwinbox('#BusiPicShow');
     }
         
-    //弹出结算比例层
-    function funcComView(id, name, address, phone, businessCommission) {
+    //弹出结算比例-外送费层
+    function funcComView(id, name, distribSubsidy, phone, businessCommission) {
         if (businessCommission == null || businessCommission == "") {
             businessCommission = 0;
         }
         $('#busCommissionHid').val(id);
         $('#busCommissionName').val(name);
-        $('#busCommissionAddress').val(address);
+        $('#busCommissionWaiSong').val(distribSubsidy);
         $('#busCommissionPhone').val(phone);
         $('#busCommissionText').val(businessCommission);
+        $('#statusFin').text("设置[" + name + "]结算比例-外送费");
         adminjs.openwinbox('#BusinessCommissionDiv');
     }
 

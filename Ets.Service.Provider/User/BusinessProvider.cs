@@ -112,9 +112,9 @@ namespace Ets.Service.Provider.User
         /// 设置结算比例2015.3.12 平扬
         /// </summary>
         /// <returns></returns>
-        public bool SetCommission(int id, decimal price)
+        public bool SetCommission(int id, decimal price,decimal waisongfei)
         {
-            return dao.setCommission(id, price);
+            return dao.setCommission(id, price, waisongfei);
         }
 
         /// <summary>
@@ -500,5 +500,17 @@ namespace Ets.Service.Provider.User
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.SendFailure);
             }
         }
+        /// <summary>
+        /// 商户统计
+        /// danny-20150326
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<BusinessViewModel> GetBusinessesCount(BusinessSearchCriteria criteria)
+        {
+            PageInfo<BusinessViewModel> pageinfo = dao.GetBusinessesCount<BusinessViewModel>(criteria);
+            return pageinfo;
+        }
+
     }
 }
