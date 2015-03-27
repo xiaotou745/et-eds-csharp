@@ -28,7 +28,6 @@ using ETS.Const;
 using Ets.Service.Provider.OpenApi;
 using Ets.Service.IProvider.OpenApi;
 
-
 namespace OpenApi.Controllers
 {
     /// <summary>

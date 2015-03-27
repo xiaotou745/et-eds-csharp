@@ -1,8 +1,6 @@
 ﻿@model ETS.Data.PageData.PageInfo<Ets.Model.Common.HomeCountTitleModel>
 @using Webdiyer.WebControls.Mvc;
-@{
-    var homeCountByList = ViewBag.homeCountTitleToList;
-}
+
 <table class="tbstyle" width="1000" border="1">
     <tr class="trclass">
         <td>日期</td>
@@ -20,7 +18,7 @@
             double lykPirce = (double)Math.Round(item.YsPrice - item.YfPrice, 2);
             string lykStyle = lykPirce > 0 ? "red" : "green";
             <tr class="trclass">
-                <td>@item.PubDate</td>
+                <td>@item.InsertTime.ToString("yyyy-MM-dd")</td>
                 <td>@item.MisstionCount</td>
                 <td>@item.OrderCount</td>
                 <td>@item.OrderPrice</td>

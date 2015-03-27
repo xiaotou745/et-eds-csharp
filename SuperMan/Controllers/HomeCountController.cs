@@ -54,7 +54,7 @@ namespace SuperMan.Controllers
             ViewBag.homeCountTitleToAllData = homeCountProvider.GetHomeCountTitleToAllData();
             ViewBag.homeCountTitleModel = homeCountProvider.GetHomeCountTitle();
             var pagedList = iOrderProvider.GetCurrentDateCountAndMoney(criteria);
-            return View(pagedList);
+            return PartialView("_PartialIndex", pagedList);
         }
         [HttpPost]
         public ActionResult orderCount(HomeCountCriteria criteria)

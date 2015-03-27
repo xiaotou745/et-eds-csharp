@@ -559,8 +559,13 @@ namespace Ets.Dao.Order
                                         ,o.[OrderCount]
                                         ,o.[CommissionRate] 
                                         ,b.[City] BusinessCity
+                                        ,b.Name BusinessName
+                                        ,c.PhoneNo ClienterPhoneNo
+                                        ,c.TrueName ClienterTrueName
+                                        ,b.GroupId
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
+                                     LEFT JOIN dbo.clienter c WITH (NOLOCK) ON o.clienterId=c.Id
                                     WHERE 1=1 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OrderNo", orderNo);
@@ -664,17 +669,15 @@ namespace Ets.Dao.Order
         public HomeCountTitleModel GetHomeCountTitleToAllDataSql()
         {
             string sql = @"SELECT 
-                            (SELECT SUM (AccountBalance) FROM dbo.clienter(NOLOCK)  WHERE AccountBalance>=1000) AS  WithdrawPrice,--提现金额
-                            SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
-                            COUNT(1) AS MisstionCount,--任务量
-                            SUM(ISNULL(OrderCount,0)) AS OrderCount,--订单量
-                            SUM(o.Amount*ISNULL(b.BusinessCommission,0)/100+ ISNULL(b.DistribSubsidy ,0) * o.OrderCount) AS YsPrice,  -- 应收金额
-                            SUM(ISNULL( OrderCommission,0)) AS YfPrice  --应付金额
-                            FROM dbo.[order](NOLOCK) AS o
-                            JOIN dbo.business(NOLOCK) AS b ON o.businessId=b.Id
-                            LEFT JOIN dbo.clienter(NOLOCK) AS c ON o.clienterId=c.Id
-                            WHERE  
-                            o.[Status]=1 ";
+                        SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
+                        COUNT(1) AS MisstionCount,--任务量
+                        SUM(ISNULL(OrderCount,0)) AS OrderCount,--订单量
+                        SUM(o.Amount*ISNULL(b.BusinessCommission,0)/100+ ISNULL(b.DistribSubsidy ,0) * o.OrderCount) AS YsPrice,  -- 应收金额
+                        SUM(ISNULL( OrderCommission,0)) AS YfPrice  --应付金额
+                        FROM dbo.[order](NOLOCK) AS o
+                        JOIN dbo.business(NOLOCK) AS b ON o.businessId=b.Id
+                         WHERE  
+                        o.[Status]=1 ";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             return MapRows<HomeCountTitleModel>(dt)[0];
         }
@@ -759,34 +762,32 @@ namespace Ets.Dao.Order
         /// <returns></returns>
         public PageInfo<T> GetCurrentDateCountAndMoney<T>(OrderSearchCriteria criteria)
         {
-            var sbtbl = new StringBuilder(@" (SELECT CONVERT(CHAR(10),PubDate,120) AS PubDate, --发布时间
-                                                     SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
-                                                     ISNULL(COUNT(o.Id),0) AS MisstionCount,--任务量
-                                                     SUM(ISNULL(OrderCount,0)) AS OrderCount,--订单量
-                                                     ISNULL(SUM(o.Amount*ISNULL(b.BusinessCommission,0)/100+ ISNULL( b.DistribSubsidy ,0)* o.OrderCount),0) AS YsPrice,  -- 应收金额
-                                                     ISNULL( SUM( OrderCommission),0) AS YfPrice  --应付金额
-                                            FROM dbo.[order](NOLOCK) AS o
-                                            LEFT JOIN dbo.business(NOLOCK) AS b ON o.businessId=b.Id
-                                            WHERE o.[Status]=1 ");
+            
+            string columnList = @"  [InsertTime] 
+                                  ,[BusinessCount]
+                                  ,[RzqsCount]
+                                  ,[DdrzqsCount]
+                                  ,[OrderPrice]
+                                  ,[MisstionCount]
+                                  ,[OrderCount]
+                                  ,[BusinessAverageOrderCount]
+                                  ,[MissionAverageOrderCount]
+                                  ,[ClienterAverageOrderCount]
+                                  ,[YsPrice]
+                                  ,[YfPrice]
+                                  ,[YkPrice] ";
+
+            var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))
             {
-                sbtbl.AppendFormat(" AND  CONVERT(CHAR(10),PubDate,120)>=CONVERT(CHAR(10),'{0}',120) ", criteria.orderPubStart);
+                sbSqlWhere.AppendFormat(" AND  CONVERT(CHAR(10),InsertTime,120)>=CONVERT(CHAR(10),'{0}',120) ", criteria.orderPubStart);
             }
             if (!string.IsNullOrWhiteSpace(criteria.orderPubEnd))
             {
-                sbtbl.AppendFormat(" AND CONVERT(CHAR(10),PubDate,120)<=CONVERT(CHAR(10),'{0}',120) ", criteria.orderPubEnd);
+                sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),InsertTime,120)<=CONVERT(CHAR(10),'{0}',120) ", criteria.orderPubEnd);
             }
-            sbtbl.Append(@" GROUP BY CONVERT(CHAR(10),PubDate,120) ) tbl");
-            string columnList = @"  tbl.PubDate
-				                    ,tbl.OrderPrice
-				                    ,tbl.MisstionCount
-				                    ,tbl.OrderCount
-				                    ,tbl.YsPrice
-				                    ,tbl.YfPrice ";
-
-            var sbSqlWhere = new StringBuilder(" 1=1 ");
-            string tableList = sbtbl.ToString();
-            string orderByColumn = " tbl.PubDate DESC  ";
+            string tableList = " Statistic ";
+            string orderByColumn = " id DESC  ";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
     }

@@ -1,5 +1,7 @@
 ﻿using Ets.Model.DataModel.Clienter;
+using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Clienter;
+using Ets.Service.Provider.Common;
 using Ets.Service.Provider.Distribution;
 using Ets.Service.Provider.WtihdrawRecords;
 using SuperMan.App_Start;
@@ -23,8 +25,8 @@ namespace SuperMan.Controllers
     public class SuperManManagerController : BaseController
     {
         Ets.Service.IProvider.Distribution.IDistributionProvider iDistributionProvider = new DistributionProvider();
-
         ClienterProvider cliterProvider = new ClienterProvider();
+        IAreaProvider iAreaProvider = new AreaProvider();
         // GET: BusinessManager
         public ActionResult SuperManManager()
         {
@@ -35,6 +37,7 @@ namespace SuperMan.Controllers
             //    return null;
             //}
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId; ;//集团id
+            ViewBag.openCityList = iAreaProvider.GetOpenCityInfo();
             var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria() {  Status = -1, GroupId = SuperMan.App_Start.UserContext.Current.GroupId };
             var pagedList = iDistributionProvider.GetClienteres(criteria);
             return View(pagedList);
@@ -45,6 +48,7 @@ namespace SuperMan.Controllers
         {
             Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria();
             TryUpdateModel(criteria);
+            ViewBag.openCityList = iAreaProvider.GetOpenCityInfo();
             var pagedList = iDistributionProvider.GetClienteres(criteria);
             return PartialView("_SuperManManagerList", pagedList);
         }

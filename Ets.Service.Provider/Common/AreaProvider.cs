@@ -72,5 +72,25 @@ namespace Ets.Service.Provider.Common
 
             return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.Newest, areaList);
         }
+
+        /// <summary>
+        /// 获取开通城市
+        /// danny-20150327
+        /// </summary>
+        /// <returns></returns>
+        public Model.Common.ResultModel<List<AreaModel>> GetOpenCityInfo()
+        {
+            string key = string.Concat("Ets_Service_Provider_Common_GetOpenCity_New");
+            //根据版本号判断是否读取缓存
+            List<AreaModel> cacheAreaList = CacheFactory.Instance[key] as List<AreaModel>;
+            if (cacheAreaList != null)
+            {
+                return ResultModel<List<AreaModel>>.Conclude(ETS.Enums.CityStatus.Newest, cacheAreaList);
+            }
+            //取数据库
+            List<AreaModel> list = dao.GetOpenCityInfoSql().ToList();
+            CacheFactory.Instance.AddObject(key, list);
+            return ResultModel<List<AreaModel>>.Conclude(ETS.Enums.CityStatus.Newest, list);
+        }
     }
 }

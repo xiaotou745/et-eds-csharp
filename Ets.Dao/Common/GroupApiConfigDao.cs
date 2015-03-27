@@ -20,7 +20,8 @@ namespace Ets.Dao.Common
         /// <returns></returns>
          public GroupApiConfig GetGroupApiConfigByGroupID(int groupId)
         {
-            string sql = @"SELECT * FROM dbo.GroupApiConfig (NOLOCK) where GroupId=@GroupId";
+            string sql = @"SELECT a.* FROM dbo.GroupApiConfig (NOLOCK) AS a 
+                    LEFT JOIN dbo.[group](NOLOCK) AS b ON a.GroupId=b.Id  WHERE b.IsValid=1 and GroupId=@GroupId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@GroupId", groupId);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);

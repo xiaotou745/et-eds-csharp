@@ -14,30 +14,37 @@
     new RouteValueDictionary { { "id", "searchForm" } }))
     {
         <div class="SearchMd">
-        <table border="0" cellspacing="0" cellpadding="0">
-            <tr>
-                <td>
-                    <span class="">商户名称: </span>
-                    <input id="txtBusinessName" name="BusinessName" type="tel" />
-                    <span class="">审核状态: </span>
-                    <select name="status" class="selectw" id="businessStatus" style="width:143px">
-                        <option value="-1" selected="selected">全部</option>
-                        <option value="1">审核通过</option>
-                        <option value="0">未审核</option>
-                        <option value="2">未审核且未添加地址</option>
-                        <option value="3">审核中</option>
-                        <option value="4">审核被拒绝</option>
-                    </select>
-                    <span class="">商户电话: </span>
-                    <input id="txtBusinessPhone" type="text" name="BusinessPhone" />
-                     <span class="">结算比例: </span>
-                    <input id="txtBusinessCommission" type="text" name="BusinessCommission" />
-                    <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" name="GroupId" />
-                    <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
-                </td>
-            </tr>
-        </table>
-    </div>
+            <table border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td>
+                        <span class="">商户名称: </span>
+                        <input id="txtBusinessName" name="BusinessName" type="tel" />
+                        <span class="">审核状态: </span>
+                        <select name="status" class="selectw" id="businessStatus" style="width:143px">
+                            <option value="-1" selected="selected">全部</option>
+                            <option value="1">审核通过</option>
+                            <option value="0">未审核</option>
+                            <option value="2">未审核且未添加地址</option>
+                            <option value="3">审核中</option>
+                            <option value="4">审核被拒绝</option>
+                        </select>
+                        <span class="">商户电话: </span>
+                        <input id="txtBusinessPhone" type="text" name="BusinessPhone" />
+                        <span class="">结算比例: </span>
+                        <input id="txtBusinessCommission" type="text" name="BusinessCommission" />
+                        
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="">筛选城市: </span>
+                        @Html.DropDownList("businessCity", new SelectList(ViewBag.openCityList.Result, "Name", "Name"), "--无--", new { style = "width:155px" })
+                        <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" name="GroupId" />
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                    </td>
+                </tr>
+            </table>
+        </div>
     }
     <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
     <div class="bd clearfix" id="dataList">
@@ -50,29 +57,29 @@
         <h2>
             <p id="statusFin">设置结算比例</p>
         </h2>
-     <fieldset>
-            <input type="hidden" id="busCommissionHid" value="0"/>
-        <div class="control-group">
-            <label >商家</label> 
-                <input  name="busCommissionName" id="busCommissionName" readonly="readonly" type="text">
-        </div>  
-         <div class="control-group">
-             <label >电话</label> 
-             <input  name="busCommissionPhone" id="busCommissionPhone" readonly="readonly" type="text">
-         </div>
-         <div class="control-group">
-             <label >结算比例</label> 
-             <input  name="busCommissionText" id="busCommissionText" style="width: 45px;" type="text">%
-         </div>
-        <div class="control-group">
-            <label >外送费</label> 
-                <input  name="busCommissionWaiSong" id="busCommissionWaiSong" style="width: 200px;" type="text">
-        </div> 
-</fieldset>
+        <fieldset>
+            <input type="hidden" id="busCommissionHid" value="0" />
+            <div class="control-group">
+                <label>商家</label>
+                <input name="busCommissionName" id="busCommissionName" readonly="readonly" type="text">
+            </div>
+            <div class="control-group">
+                <label>电话</label>
+                <input name="busCommissionPhone" id="busCommissionPhone" readonly="readonly" type="text">
+            </div>
+            <div class="control-group">
+                <label>结算比例</label>
+                <input name="busCommissionText" id="busCommissionText" style="width: 45px;" type="text">%
+            </div>
+            <div class="control-group">
+                <label>外送费</label>
+                <input name="busCommissionWaiSong" id="busCommissionWaiSong" style="width: 200px;" type="text">
+            </div>
+        </fieldset>
         <p class="btnbox">
-                <input value="确认" type="button" id="btnCommissionConfim" class="yesBtn" />                
-                <input value="关闭" type="button" class="J_closebox qxBtn" />
-            </p>
+            <input value="确认" type="button" id="btnCommissionConfim" class="yesBtn" />
+            <input value="关闭" type="button" class="J_closebox qxBtn" />
+        </p>
     </div>
 </div>
 @*弹出图片*@
@@ -86,7 +93,7 @@
                 <img id="showBusiImage" />
                 <a id="showBigBusiImage" href="" target="_blank">查看大图</a>
             </fieldset>
-            <p class="btnbox">                
+            <p class="btnbox">
                 <input value="关闭" type="button" class="J_closebox qxBtn" />
             </p>
         </form>
@@ -129,11 +136,12 @@
     //};
     //设置结算比例-外送费
     $("#btnCommissionConfim").on('click', function () {
-        var busCommissionHid = $("#busCommissionHid").val(); //商户id 
-        
+        var busCommissionHid = $("#busCommissionHid").val(); //商户id
+
         var busCommissionText = $("#busCommissionText").val(); ////商户结算比例
         var busCommissionWaiSong = $("#busCommissionWaiSong").val(); ////商户外送费
-        if (isNaN(busCommissionText)) { alert("请输入正确的数字!");
+        if (isNaN(busCommissionText)) {
+            alert("请输入正确的数字!");
             return;
         }
         if (busCommissionText < 0) {
@@ -164,7 +172,7 @@
             }
         });
     });
-    
+
     //关闭弹层
     $('.J_closebox').click(function () {
         adminjs.closewinbox('.add-openbox');
