@@ -20,7 +20,7 @@ namespace SuperMan.Controllers
         }
 
         [HttpPost]
-        public ActionResult BusinessStatistical(int pageindex = 1)
+        public ActionResult PostBusinessStatistical(int pageindex = 1)
         {
             var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria();
             TryUpdateModel(criteria);
