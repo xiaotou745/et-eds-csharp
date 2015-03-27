@@ -46,6 +46,7 @@
     <Compile Include="Common\IGroupProvider.cs" />
     <Compile Include="Common\IHomeCountProvider.cs" />
     <Compile Include="Common\IServicePhone.cs" />
+    <Compile Include="Common\ISignProvider.cs" />
     <Compile Include="Distribution\IDistributionProvider.cs" />
     <Compile Include="OpenApi\IGroupProviderOpenApi.cs" />
     <Compile Include="Order\IOrderProvider.cs" />
