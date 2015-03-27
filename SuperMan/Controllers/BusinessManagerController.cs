@@ -1,4 +1,5 @@
-﻿using Ets.Service.IProvider.User;
+﻿using System.Text.RegularExpressions;
+using Ets.Service.IProvider.User;
 using Ets.Service.Provider.User;
 using SuperManBusinessLogic.B_Logic;
 using SuperManCommonModel.Entities;
@@ -26,13 +27,6 @@ namespace SuperMan.Controllers
         [HttpGet]
         public ActionResult BusinessManager()
         {
-            //account account = HttpContext.Session["user"] as account;
-            //if (account == null)
-            //{
-            //    Response.Redirect("/account/login");
-            //    return null;
-            //}
-
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
             var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria() { Status = -1, GroupId = SuperMan.App_Start.UserContext.Current.GroupId };
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
@@ -79,20 +73,25 @@ namespace SuperMan.Controllers
         }
 
         /// <summary>
-        /// 设置商家结算比例
+        /// 设置商家结算比例-外送费
         /// </summary>
         /// <param name="id">商家id</param>
         /// <param name="commission">结算比例</param>
+        /// <param name="waisongfei">外送费</param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult SetCommission(int id,decimal commission)
+        public JsonResult SetCommission(int id,decimal commission,decimal waisongfei)
         {
-            if (commission <= 0)
+            if (commission < 0)
             {
                 return Json(new ResultModel(false,"结算比例不能小于零!"), JsonRequestBehavior.AllowGet);
             }
+            if (waisongfei < 0)
+            {
+                return Json(new ResultModel(false, "外送费不能小于零!"), JsonRequestBehavior.AllowGet);
+            }
             IBusinessProvider iBus=new BusinessProvider();
-            return Json(new ResultModel(iBus.SetCommission(id, commission), "成功!"), JsonRequestBehavior.AllowGet);
+            return Json(new ResultModel(iBus.SetCommission(id, commission,waisongfei), "成功!"), JsonRequestBehavior.AllowGet);
         }
 
         

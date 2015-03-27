@@ -112,9 +112,9 @@ namespace Ets.Service.Provider.User
         /// 设置结算比例2015.3.12 平扬
         /// </summary>
         /// <returns></returns>
-        public bool SetCommission(int id, decimal price)
+        public bool SetCommission(int id, decimal price,decimal waisongfei)
         {
-            return dao.setCommission(id, price);
+            return dao.setCommission(id, price, waisongfei);
         }
 
         /// <summary>
@@ -182,6 +182,53 @@ namespace Ets.Service.Provider.User
             return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatusEnum.Success, resultModel);// CustomerRegisterStatusEnum.Success;//默认是成功状态
 
         }
+
+        /// <summary>
+        /// B端注册，供第三方使用 
+        /// 平扬
+        /// 2015年3月26日 17:19:45
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public ResultModel<NewBusiRegisterResultModel> NewPostRegisterInfo_B(NewRegisterInfoModel model)
+        {
+            if (string.IsNullOrWhiteSpace(model.PhoneNo))   //手机号非空验证
+                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
+            if (string.IsNullOrWhiteSpace(model.B_OriginalBusiId.ToString()))  //判断原平台商户Id不能为空
+                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.OriginalBusiIdEmpty);
+            if (string.IsNullOrWhiteSpace(model.B_GroupId.ToString()))  //集团Id不能为空
+                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.GroupIdEmpty);
+            //是否存在该商户
+            if (dao.CheckExistBusiness(model.B_OriginalBusiId, model.B_GroupId))
+                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.OriginalBusiIdRepeat);
+
+            if (string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_CityCode.ToString())) //城市以及城市编码非空验证
+                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
+            if (string.IsNullOrEmpty(model.B_Name.Trim())) //商户名称
+                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiNameEmpty);
+            if (string.IsNullOrWhiteSpace(model.Address) || string.IsNullOrWhiteSpace(model.B_Province) || string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_Area) || string.IsNullOrWhiteSpace(model.B_AreaCode) || string.IsNullOrWhiteSpace(model.B_CityCode) || string.IsNullOrWhiteSpace(model.B_ProvinceCode))  //商户地址 省市区 不能为空
+                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
+            if (model.CommissionTypeId == 0)
+            {
+                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
+            }
+            model.B_Password = MD5Helper.MD5(string.IsNullOrEmpty(model.B_Password) ? "abc123" : model.B_Password);
+            var business = NewRegisterInfoModelTranslator.Instance.Translate(model);
+            business.Status = ConstValues.BUSINESS_AUDITPASS;
+            int businessid = dao.InsertOtherBusiness(business);
+            if (businessid > 0)
+            {
+                var resultModel = new NewBusiRegisterResultModel
+                {
+                    BusiRegisterId = businessid
+                };
+                LogHelper.LogWriter("第三方调用商户注册接口", new { model = model, Message = CustomerRegisterStatus.Success });
+                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
+            }
+            return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.Faild);
+
+        }
+
 
         /// <summary>
         /// B端登录

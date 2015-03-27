@@ -29,10 +29,10 @@ namespace Ets.Service.IProvider.User
         string CreateExcel(BusinessCommissionModel paraModel);
 
         /// <summary>
-        /// 设置结算比例2015.3.12 平扬
+        /// 设置结算比例-外送费2015.3.12 平扬
         /// </summary>
         /// <returns></returns>
-        bool SetCommission(int id, decimal price);
+        bool SetCommission(int id, decimal price,decimal waisongfei);
 
         /// <summary>
         /// 商户结算列表--2015.3.12 平扬
