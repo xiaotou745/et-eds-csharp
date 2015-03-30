@@ -28,6 +28,7 @@ namespace Ets.Service.Provider.User
     /// </summary>
     public class BusinessProvider : IBusinessProvider
     {
+        readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
         BusinessDao dao = new BusinessDao();
         /// <summary>
         /// app端商户获取订单   add by caoheyang 20150311
@@ -175,6 +176,17 @@ namespace Ets.Service.Provider.User
                 return ResultModel<BusiRegisterResultModel>.Conclude(returnEnum);
             }
 
+            //转换 编码
+            if (!string.IsNullOrWhiteSpace(model.city))
+            {
+                Model.DomainModel.Area.AreaModel areaModel = iAreaProvider.GetNationalAreaInfo(new Model.DomainModel.Area.AreaModel() { Name = model.city.Trim(), JiBie = 2 });
+                if (areaModel != null)
+                {
+                    model.city = areaModel.Name;
+                    model.CityId = areaModel.Code.ToString();
+                }
+            }
+          
             BusiRegisterResultModel resultModel = new BusiRegisterResultModel()
             {
                 userId = dao.InsertBusiness(model)
@@ -213,6 +225,27 @@ namespace Ets.Service.Provider.User
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
             }
             model.B_Password = MD5Helper.MD5(string.IsNullOrEmpty(model.B_Password) ? "abc123" : model.B_Password);
+            //转换省
+            var _province = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModel() { Name= model.B_Province, JiBie= 1 });
+            if (_province != null)
+            {
+                model.B_Province = _province.Name;
+                model.B_ProvinceCode = _province.Code.ToString();
+            }
+            //转换市
+            var _city = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModel() { Name = model.B_City, JiBie = 2 });
+            if (_city != null)
+            {
+                model.B_City = _city.Name;
+                model.B_CityCode = _city.Code.ToString();
+            }
+            //转换区
+            var _area = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModel() { Name = model.B_Area, JiBie = 3 });
+            if (_area != null)
+            {
+                model.B_Area = _area.Name;
+                model.B_AreaCode = _area.Code.ToString();
+            } 
             var business = NewRegisterInfoModelTranslator.Instance.Translate(model);
             business.Status = ConstValues.BUSINESS_AUDITPASS;
             int businessid = dao.InsertOtherBusiness(business);

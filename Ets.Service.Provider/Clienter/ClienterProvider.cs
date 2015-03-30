@@ -22,7 +22,7 @@ namespace Ets.Service.Provider.Clienter
     public class ClienterProvider : IClienterProvider
     {
         readonly ClienterDao clienterDao = new ClienterDao();
-
+        readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
         public List<order> GetOrdersNoLoginLatest(ClientOrderSearchCriteria criteria)
         {
             return clienterDao.GetOrdersNoLoginLatest(criteria);
@@ -243,6 +243,17 @@ namespace Ets.Service.Provider.Clienter
                 city = string.IsNullOrWhiteSpace(clienter.City) ? null : clienter.City.Trim(),  //城市
                 cityId = string.IsNullOrWhiteSpace(clienter.CityId) ? null : clienter.CityId.Trim()  //城市编码
             };
+            //根据用户传递的  名称，取得 国标编码 wc,这里的 city 是二级 ，已和康珍 确认过
+            //新版的 骑士 注册， 城市 非 必填
+            if (!string.IsNullOrWhiteSpace(clienter.City))
+            {
+               Model.DomainModel.Area.AreaModel areaModel = iAreaProvider.GetNationalAreaInfo(new Model.DomainModel.Area.AreaModel() { Name = clienter.City.Trim(), JiBie = 2 });
+               if (areaModel != null)
+               {
+                   resultModel.city = areaModel.Name;
+                   resultModel.cityId = areaModel.Code.ToString();
+               }
+            }
             if (id > 0)
             {
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
@@ -271,7 +282,7 @@ namespace Ets.Service.Provider.Clienter
  
 
         /// <summary>
-        /// 抢单 平扬 2015.3.30
+        /// 平扬 2015.3.30
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="orderNo"></param>
