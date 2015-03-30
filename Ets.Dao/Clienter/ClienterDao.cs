@@ -379,11 +379,12 @@ namespace Ets.Dao.Clienter
         /// <returns></returns>
         public bool RushOrder(int userId, string orderNo)
         {   
-            string sql = @" update [order] set clienterId=@clienterId,Status=@Status where OrderNo=@OrderNo and [Status]=0 ";
+            string sql = @" update [order] set clienterId=@clienterId,Status=@Status where OrderNo=@OrderNo and [Status]=0 ";//未抢订单才更新
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@clienterId", userId);
-            parm.AddWithValue("@Status",ConstValues.ORDER_ACCEPT);  
-            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm)) > 0;
+            parm.AddWithValue("@Status",ConstValues.ORDER_ACCEPT);
+            parm.AddWithValue("@OrderNo", orderNo);  
+            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Read, sql, parm)) > 0;
 
         } 
     }
