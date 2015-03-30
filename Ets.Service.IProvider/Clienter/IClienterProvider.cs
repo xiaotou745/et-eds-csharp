@@ -79,5 +79,19 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="orderNo"></param>
         /// <returns></returns>
         bool RushOrder(int userId, string orderNo);
+        /// <summary>
+        /// 根据骑士Id判断骑士是否存在
+        /// danny-20150530
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        bool CheckClienterExistById(int Id);
+        /// <summary>
+        /// 更新骑士照片信息
+        /// danny-10150330
+        /// </summary>
+        /// <param name="clienter"></param>
+        /// <returns></returns>
+        bool UpdateClientPicInfo(ClienterModel clienter);
     }
 }

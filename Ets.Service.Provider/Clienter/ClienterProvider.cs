@@ -268,6 +268,7 @@ namespace Ets.Service.Provider.Clienter
             }
             return false;
         }
+<<<<<<< HEAD
 
         /// <summary>
         /// 抢单 平扬 2015.3.30
@@ -364,6 +365,26 @@ namespace Ets.Service.Provider.Clienter
             }
             return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.FailedGetOrders);
 
+=======
+        /// <summary>
+        /// 根据骑士Id判断骑士是否存在
+        /// danny-20150530
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        public bool CheckClienterExistById(int Id)
+        {
+            return clienterDao.CheckClienterExistById(Id);
+        }
+        /// <summary>
+        /// 更新骑士照片信息
+        /// danny-10150330
+        /// </summary>
+        /// <param name="clienter"></param>
+        public bool UpdateClientPicInfo(ClienterModel clienter)
+        {
+            return clienterDao.UpdateClientPicInfo(clienter);
+>>>>>>> 6b722cfbc5ca18c113ddd3d14cdb0f59a5db5bab
         }
     }
 }

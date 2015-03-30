@@ -156,5 +156,13 @@ namespace ETS.Util
                 return _keywords;
             }
         }
+
+        /// <summary>
+        /// 当前采用的订单佣金计算规则  add by caoheyang 20150330
+        /// </summary>
+        public int OrderCommissionType
+        {
+            get { return ParseHelper.ToInt(ConfigurationManager.AppSettings["OrderCommissionType"]); }
+        }
     }
 }

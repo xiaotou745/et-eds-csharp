@@ -95,5 +95,6 @@ WITH    t AS ( SELECT   a.Code ,
             DataSet ds = DbHelper.ExecuteDataset(SuperMan_Read, sql);
             return MapRows<AreaModel>(DataTableHelper.GetTable(ds));
         }
+         
     }
 }
