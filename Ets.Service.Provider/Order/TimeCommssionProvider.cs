@@ -32,7 +32,7 @@ namespace Ets.Service.Provider.Order
             }
             else//如果外送费没数据，按照网站补贴计算骑士佣金
             {
-                if ((DateTime.Now.Hour > 10 && DateTime.Now.Hour < 13) || (DateTime.Now.Hour > 16 && DateTime.Now.Hour < 19))
+                if ((DateTime.Now.Hour >= 10 && DateTime.Now.Hour <= 13) || (DateTime.Now.Hour >= 16 && DateTime.Now.Hour <= 19))
                     return Decimal.Round(Convert.ToDecimal(model.Amount) * commissionRate + 3, 2);//计算佣金
                 else
                     return Decimal.Round(Convert.ToDecimal(model.Amount) * commissionRate + 2, 2);//计算佣金

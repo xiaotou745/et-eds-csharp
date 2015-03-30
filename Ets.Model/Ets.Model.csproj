@@ -96,6 +96,7 @@
     <Compile Include="Common\ResultModel.cs" />
     <Compile Include="DomainModel\Clienter\ClientOrderResultModel.cs" />
     <Compile Include="DomainModel\Group\GroupApiConfigModel.cs" />
+    <Compile Include="DomainModel\Order\NewPostPublishOrderResultModel.cs" />
     <Compile Include="DomainModel\Order\OrderDetailDM_OpenApi.cs" />
     <Compile Include="DomainModel\Order\OrderManage.cs" />
     <Compile Include="DomainModel\Order\OrderModel.cs" />
@@ -129,6 +130,7 @@
     <Compile Include="ParameterModel\Order\BusiOrderResultModel.cs" />
     <Compile Include="ParameterModel\Order\ClientOrderInfoModel.cs" />
     <Compile Include="ParameterModel\Order\AsyncStatusPM_OpenApi.cs" />
+    <Compile Include="ParameterModel\Order\NewPostPublishOrderModel.cs" />
     <Compile Include="ParameterModel\Order\OrderDetailPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\GetStatusPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\CreatePM_OpenApi.cs" />
