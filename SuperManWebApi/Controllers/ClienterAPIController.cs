@@ -355,26 +355,23 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(GetOrdersNoLoginStatus))]
         [HttpPost]
-        public SuperManCore.Common.ResultModel<ClientOrderNoLoginResultModel[]> GetJobListNoLogin_C(ClientOrderInfoModel model)
+        public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderNoLoginResultModel[]> GetJobListNoLogin_C(Ets.Model.ParameterModel.Clienter.ClientOrderInfoModel model)
         {
             degree.longitude = model.longitude;
             degree.latitude = model.latitude;
-            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
-            var pSize = model.pageSize.HasValue ? model.pageSize.Value : ConstValues.App_PageSize;
-            var criteria = new ClientOrderSearchCriteria()
+            var pIndex = model.pageIndex?? 1;
+            var pSize = model.pageSize?? ConstValues.App_PageSize;
+            var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
             {
-                PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
-                userId = model.userId,
+                PagingRequest = new Ets.Model.Common.PagingResult(pIndex, pSize),
                 status = model.status,
                 isLatest = model.isLatest
             };
-            var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLogin(criteria);
-            var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
-            if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
-            {
-                lists = lists.OrderBy(i => i.distance).ToList();
-            }
-            return SuperManCore.Common.ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
+            return new ClienterProvider().GetJobListNoLogin_C(criteria);
+            //var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLogin(criteria);
+            //var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
+            
+            //return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderNoLoginResultModel[]>.Conclude(ETS.Enums.GetOrdersNoLoginStatus.Success, lists.ToArray());
         }
 
 
@@ -444,17 +441,17 @@ namespace SuperManWebApi.Controllers
         /// <param name="phoneNo"></param>
         /// <param name="newPassword"></param>
         /// <returns></returns>
-        [ActionStatus(typeof(ForgetPwdStatus))]
+        [ActionStatus(typeof(ETS.Enums.ForgetPwdStatus))]
         [HttpPost]
-        public SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel> PostForgetPwd_C(ForgetPwdInfoModel model)
+        public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel> PostForgetPwd_C(Ets.Model.DataModel.Clienter.ForgetPwdInfoModel model)
         {
             if (string.IsNullOrEmpty(model.password))
             {
-                return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.NewPwdEmpty);
+                return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ForgetPwdStatus.NewPwdEmpty);
             }
             if (string.IsNullOrEmpty(model.checkCode))
             {
-                return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeIsEmpty);
+                return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ForgetPwdStatus.checkCodeIsEmpty);
             }
             //start 需要验证 验证码是否正确
             //if (SupermanApiCaching.Instance.Get(model.phoneNo) != model.checkCode)
@@ -462,25 +459,70 @@ namespace SuperManWebApi.Controllers
             //    return ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong);
             //}
             //end
-            var clienter = ClienterLogic.clienterLogic().GetClienter(model.phoneNo);
+            //var clienter = ClienterLogic.clienterLogic().GetClienter(model.phoneNo);
+            var clienter = iClienterProvider.GetUserInfoByUserPhoneNo(model.phoneNo);
             if (clienter == null)
             {
-                return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.ClienterIsNotExist);
+                return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ForgetPwdStatus.ClienterIsNotExist);
             }
             if (clienter.Password == model.password)
             {
-                return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.PwdIsSave);
+                return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ForgetPwdStatus.PwdIsSave);
             }
-            bool b = ClienterLogic.clienterLogic().ModifyPwd(clienter, model.password);
+            //bool b = ClienterLogic.clienterLogic().ModifyPwd(clienter, model.password);
+            bool b = iClienterProvider.UpdateClienterPwdByUserId(clienter.Id, model.password);
             if (b)
             {
-                return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.Success);
+                return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ForgetPwdStatus.Success);
             }
             else
             {
-                return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.FailedModifyPwd);
+                return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ForgetPwdStatus.FailedModifyPwd);
             }
         }
+        ///// <summary>
+        ///// 忘记密码
+        ///// </summary>
+        ///// <param name="phoneNo"></param>
+        ///// <param name="newPassword"></param>
+        ///// <returns></returns>
+        //[ActionStatus(typeof(ForgetPwdStatus))]
+        //[HttpPost]
+        //public SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel> PostForgetPwd_C(ForgetPwdInfoModel model)
+        //{
+        //    if (string.IsNullOrEmpty(model.password))
+        //    {
+        //        return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.NewPwdEmpty);
+        //    }
+        //    if (string.IsNullOrEmpty(model.checkCode))
+        //    {
+        //        return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeIsEmpty);
+        //    }
+        //    //start 需要验证 验证码是否正确
+        //    //if (SupermanApiCaching.Instance.Get(model.phoneNo) != model.checkCode)
+        //    //{
+        //    //    return ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong);
+        //    //}
+        //    //end
+        //    var clienter = ClienterLogic.clienterLogic().GetClienter(model.phoneNo);
+        //    if (clienter == null)
+        //    {
+        //        return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.ClienterIsNotExist);
+        //    }
+        //    if (clienter.Password == model.password)
+        //    {
+        //        return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.PwdIsSave);
+        //    }
+        //    bool b = ClienterLogic.clienterLogic().ModifyPwd(clienter, model.password);
+        //    if (b)
+        //    {
+        //        return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.Success);
+        //    }
+        //    else
+        //    {
+        //        return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.FailedModifyPwd);
+        //    }
+        //}
         /// <summary>
         /// 超人抢单-平扬  2015.3.30
         /// </summary>
