@@ -440,33 +440,33 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [ActionStatus(typeof(ModifyPwdStatus))]
-        [HttpPost]
-        public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel> PostModifyPwd_C(Ets.Model.DataModel.Clienter.ModifyPwdInfoModel model)
-        {
-            if (string.IsNullOrEmpty(model.newPassword))
-            {
-                return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ModifyPwdStatus.NewPwdEmpty);
-            }
-            var clienter = iClienterProvider.GetUserInfoByUserPhoneNo(model.phoneNo);
-            if (clienter == null)
-            {
-                return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ModifyPwdStatus.ClienterIsNotExist);
-            }
-            if (clienter.Password == model.newPassword)
-            {
-                return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ModifyPwdStatus.PwdIsSame);
-            }
-            bool b = iClienterProvider.UpdateClienterPwdByUserId(clienter.Id, model.newPassword);
-            if (b)
-            {
-                return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ModifyPwdStatus.Success);
-            }
-            else
-            {
-                return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ModifyPwdStatus.FailedModifyPwd);
-            }
-        }
+        //[ActionStatus(typeof(ModifyPwdStatus))]
+        //[HttpPost]
+        //public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel> PostModifyPwd_C(Ets.Model.DataModel.Clienter.ModifyPwdInfoModel model)
+        //{
+        //    if (string.IsNullOrEmpty(model.newPassword))
+        //    {
+        //        return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ModifyPwdStatus.NewPwdEmpty);
+        //    }
+        //    var clienter = iClienterProvider.GetUserInfoByUserPhoneNo(model.phoneNo);
+        //    if (clienter == null)
+        //    {
+        //        return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ModifyPwdStatus.ClienterIsNotExist);
+        //    }
+        //    if (clienter.Password == model.newPassword)
+        //    {
+        //        return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ModifyPwdStatus.PwdIsSame);
+        //    }
+        //    bool b = iClienterProvider.UpdateClienterPwdByUserId(clienter.Id, model.newPassword);
+        //    if (b)
+        //    {
+        //        return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ModifyPwdStatus.Success);
+        //    }
+        //    else
+        //    {
+        //        return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ModifyPwdStatus.FailedModifyPwd);
+        //    }
+        //}
         /// <summary>
         /// 忘记密码
         /// </summary>
