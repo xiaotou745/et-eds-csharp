@@ -227,11 +227,11 @@ namespace Ets.Service.Provider.Clienter
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberRegistered);
             else if (string.IsNullOrEmpty(model.passWord)) //密码非空验证
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PasswordEmpty);
-            else if (string.IsNullOrEmpty(model.City) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
-                return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
+            //else if (string.IsNullOrEmpty(model.City) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
+            //    return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
             else if (model.verifyCode != SupermanApiCaching.Instance.Get(model.phoneNo)) //判断验码法录入是否正确
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode);
-            else if (model.recommendPhone != null && (!clienterDao.CheckExistPhone(model.recommendPhone))
+            else if (!string.IsNullOrEmpty(model.recommendPhone) && (!clienterDao.CheckExistPhone(model.recommendPhone))
                 && (!new BusinessDao().CheckExistPhone(model.recommendPhone))) //如果推荐人手机号在B端C端都不存在提示信息
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberNotExist);
             var clienter = ClientRegisterInfoModelTranslator.Instance.Translate(model);
