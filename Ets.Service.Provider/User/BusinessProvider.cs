@@ -20,6 +20,10 @@ using ETS.Validator;
 using ETS;
 using System.Threading.Tasks;
 using ETS.Sms;
+using Ets.Model.DomainModel.Order;
+using Ets.Model.DataModel.Subsidy;
+using Ets.Dao.Order;
+using Ets.Model.DomainModel.Subsidy;
 namespace Ets.Service.Provider.User
 {
 
@@ -35,15 +39,15 @@ namespace Ets.Service.Provider.User
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public IList<BusiGetOrderModel> GetOrdersApp(Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp paraModel)
+        public IList<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel> GetOrdersApp(Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp paraModel)
         {
             PageInfo<BusiOrderSqlModel> pageinfo = dao.GetOrdersAppToSql<BusiOrderSqlModel>(paraModel);
             IList<BusiOrderSqlModel> list = pageinfo.Records;
 
-            List<BusiGetOrderModel> listOrder = new List<BusiGetOrderModel>();
+            List<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel> listOrder = new List<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel>();
             foreach (BusiOrderSqlModel from in list)
             {
-                BusiGetOrderModel model = new BusiGetOrderModel();
+                Ets.Model.DomainModel.Bussiness.BusiGetOrderModel model = new Ets.Model.DomainModel.Bussiness.BusiGetOrderModel();
                 model.ActualDoneDate = from.ActualDoneDate;
                 model.Amount = from.Amount;
                 model.IsPay = from.IsPay;
@@ -113,7 +117,7 @@ namespace Ets.Service.Provider.User
         /// 设置结算比例2015.3.12 平扬
         /// </summary>
         /// <returns></returns>
-        public bool SetCommission(int id, decimal price,decimal waisongfei)
+        public bool SetCommission(int id, decimal price, decimal waisongfei)
         {
             return dao.setCommission(id, price, waisongfei);
         }
@@ -577,7 +581,7 @@ namespace Ets.Service.Provider.User
             return businessCountManageList;
         }
 
-     
+
 
         /// <summary>
         /// 第三方平台取消订单 平扬-2015.3.27
@@ -585,7 +589,7 @@ namespace Ets.Service.Provider.User
         /// <param name="model"></param>
         /// <returns></returns>
         public ResultModel<OrderCancelResultModel> NewOrderCancel(OrderCancelModel model)
-        {  
+        {
             LogHelper.LogWriter("第三方调用取消订单：", new { model = model });
             if (string.IsNullOrEmpty(model.OriginalOrderNo))   //订单号非空验证
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderEmpty);
@@ -595,13 +599,15 @@ namespace Ets.Service.Provider.User
             if (!isorder)//订单不存在
             {
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderIsNotExist);
-            } 
-            bool b = dao.UpdateOrder(model.OriginalOrderNo, model.OrderFrom, OrderStatus.订单已取消); 
+            }
+            bool b = dao.UpdateOrder(model.OriginalOrderNo, model.OrderFrom, OrderStatus.订单已取消);
             if (b)
             {
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.Success);
             }
             return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.NotCancelOrder, new OrderCancelResultModel { Remark = "取消失败" });
         }
+
+       
     }
 }

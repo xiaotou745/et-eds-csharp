@@ -182,7 +182,7 @@ namespace Ets.Dao.User
         /// <param name="id"></param>
         /// <param name="price"></param>
         /// <returns></returns>
-        public bool setCommission(int id, decimal price,decimal waisongfei)
+        public bool setCommission(int id, decimal price, decimal waisongfei)
         {
             bool reslut = false;
             try
@@ -279,7 +279,7 @@ namespace Ets.Dao.User
             {
                 sbSqlWhere.AppendFormat(" AND b.BusinessCommission={0} ", criteria.BusinessCommission);
             }
-            if (criteria.GroupId != null && criteria.GroupId !=0)
+            if (criteria.GroupId != null && criteria.GroupId != 0)
             {
                 sbSqlWhere.AppendFormat(" AND b.GroupId={0} ", criteria.GroupId);
             }
@@ -704,7 +704,7 @@ namespace Ets.Dao.User
             string sql = @" select 1 from dbo.[order] with(nolock) where OriginalOrderNo=@OriginalOrderNo and OrderFrom=@OrderFrom ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OriginalOrderNo", orderNO);
-            parm.AddWithValue("@OrderFrom", orderFrom); 
+            parm.AddWithValue("@OrderFrom", orderFrom);
             if (orderType > 0)
             {
                 sql += " and OrderType=@OrderType ";
@@ -730,7 +730,7 @@ namespace Ets.Dao.User
             parm.AddWithValue("@OriginalOrderNo", oriOrderNo);
             parm.AddWithValue("@OrderFrom", orderFrom);
             parm.AddWithValue("@Status", orderStatus);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0; 
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
 
 
@@ -873,7 +873,7 @@ namespace Ets.Dao.User
             string orderByColumn = " tbl.OrderCount DESC ";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
         }
-/// <summary>
+        /// <summary>
         /// 修改商户地址西信息
         /// 返回商户修改后的状态
         /// wc
@@ -883,31 +883,17 @@ namespace Ets.Dao.User
         public int UpdateBusinessAddressInfo(Business business)
         {
             string upSql = @"UPDATE  dbo.business
-SET     [Address] = @Address ,
-        PhoneNo2 = @PhoneNo2 ,
-        [Name] = @Name ,
-        Landline = @Landline ,
-        district = @district ,
-        districtId = @districtId ,
-        Longitude = @Longitude ,
-        Latitude = @Latitude ,
-        [Status]= @Status
-OUTPUT  Inserted.[Status]
-WHERE   Id = @busiID";
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                            SET     [Address] = @Address ,
+                                    PhoneNo2 = @PhoneNo2 ,
+                                    [Name] = @Name ,
+                                    Landline = @Landline ,
+                                    district = @district ,
+                                    districtId = @districtId ,
+                                    Longitude = @Longitude ,
+                                    Latitude = @Latitude ,
+                                    [Status]= @Status
+                            OUTPUT  Inserted.[Status]
+                            WHERE   Id = @busiID";
 
             IDbParameters parm = DbHelper.CreateDbParameters();
 
@@ -931,7 +917,7 @@ WHERE   Id = @busiID";
                 //记日志
                 return -1;
             }
-            
+
         }
         /// <summary>
         /// 更新图片地址信息 
@@ -943,16 +929,16 @@ WHERE   Id = @busiID";
         public int UpdateBusinessPicInfo(int busiId, string picName)
         {
             string upSql = @"UPDATE  dbo.business
-SET     CheckPicUrl = @CheckPicUrl ,
-        [Status] = @Status
-OUTPUT  Inserted.[Status]
-WHERE   Id = @busiID ";
+                            SET     CheckPicUrl = @CheckPicUrl ,
+                                    [Status] = @Status
+                            OUTPUT  Inserted.[Status]
+                            WHERE   Id = @busiID ";
 
             IDbParameters parm = DbHelper.CreateDbParameters();
 
             parm.AddWithValue("@CheckPicUrl", picName);
             parm.AddWithValue("@Status", ConstValues.BUSINESS_AUDITPASSING);
-            parm.AddWithValue("@busiID", busiId); 
+            parm.AddWithValue("@busiID", busiId);
 
             try
             {
@@ -966,8 +952,27 @@ WHERE   Id = @busiID ";
             }
         }
 
-
-
+        /// <summary>
+        /// 根据原平台商户Id和订单来源获取该商户信息
+        /// 窦海超
+        /// 2015年3月30日 12:50:26
+        /// </summary>
+        /// <param name="oriBusiId">商户ID</param>
+        /// <param name="orderFrom">集团ID</param>
+        /// <returns></returns>
+        public Business GetBusiByOriIdAndOrderFrom(int oriBusiId, int orderFrom)
+        {
+            string sql = @"SELECT Id,[Status] FROM dbo.business(nolock) WHERE OriginalBusiId=@OriginalBusiId AND GroupId=@GroupId";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@OriginalBusiId", oriBusiId);
+            parm.AddWithValue("@GroupId", orderFrom);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+                return null;
+            }
+            return MapRows<Business>(dt)[0];
+        }
         /// <summary>
         /// 检查号码是否存在
         /// </summary>

@@ -138,5 +138,14 @@ namespace Ets.Service.IProvider.Order
         /// <param name="DayCount"></param>
         /// <returns></returns>
         PageInfo<HomeCountTitleModel> GetCurrentDateCountAndMoney(OrderSearchCriteria criteria);
+
+        /// <summary>
+        /// 接收订单，供第三方使用
+        /// 窦海超
+        /// 2015年3月30日 11:44:28
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        ResultModel<Ets.Model.DomainModel.Order.NewPostPublishOrderResultModel> NewPostPublishOrder_B(Ets.Model.ParameterModel.Order.NewPostPublishOrderModel model);
     }
 }

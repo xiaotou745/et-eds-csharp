@@ -30,6 +30,7 @@ using Ets.Service.IProvider.OpenApi;
 using Ets.Service.Provider.OpenApi;
 using System.Configuration;
 using System.Net.Http;
+using Ets.Dao.User;
 
 namespace Ets.Service.Provider.Order
 {
@@ -243,7 +244,7 @@ namespace Ets.Service.Provider.Order
             {
                 to.WebsiteSubsidy = subsidy.WebsiteSubsidy;  //网站补贴
                 to.CommissionRate = subsidy.OrderCommission == null ? 0 : subsidy.OrderCommission; //佣金比例 
-                OrderCommission orderComm = new OrderCommission() { Amount = busiOrderInfoModel.Amount, CommissionRate = subsidy.OrderCommission, DistribSubsidy = to.DistribSubsidy, OrderCount = busiOrderInfoModel.OrderCount, WebsiteSubsidy = subsidy.WebsiteSubsidy }; 
+                OrderCommission orderComm = new OrderCommission() { Amount = busiOrderInfoModel.Amount, CommissionRate = subsidy.OrderCommission, DistribSubsidy = to.DistribSubsidy, OrderCount = busiOrderInfoModel.OrderCount, WebsiteSubsidy = subsidy.WebsiteSubsidy };
                 //必须写to.DistribSubsidy ，防止bussiness为空情况
                 to.OrderCommission = CommissionFactory.GetCommission().GetCurrenOrderCommission(orderComm);
                 to.CommissionFormulaMode = ConfigSettings.Instance.OrderCommissionType;
@@ -305,12 +306,12 @@ namespace Ets.Service.Provider.Order
         /// <summary>
         /// 订单指派超人
         /// danny-20150320
-       /// </summary>
-       /// <param name="order"></param>
-       /// <returns></returns>
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns></returns>
         public bool RushOrder(OrderListModel order)
         {
-            if( OrderDao.RushOrder(order))
+            if (OrderDao.RushOrder(order))
             {
                 Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", order.businessId.ToString(), string.Empty);
                 return true;
@@ -341,7 +342,7 @@ namespace Ets.Service.Provider.Order
             if (result > 0) //更该订单状态时，同步第三方订单状态
             {
                 AsyncOrderStatus(orderNo);
-            } 
+            }
             return result;
         }
 
@@ -412,7 +413,7 @@ namespace Ets.Service.Provider.Order
         public ResultModel<object> AsyncOrderStatus(string orderNo)
         {
             OrderListModel orderlistModel = OrderDao.GetOrderByNo(orderNo);
-            ParaModel<AsyncStatusPM_OpenApi> paramodel = new ParaModel<AsyncStatusPM_OpenApi>() { group=orderlistModel.GroupId,fields=new AsyncStatusPM_OpenApi()};
+            ParaModel<AsyncStatusPM_OpenApi> paramodel = new ParaModel<AsyncStatusPM_OpenApi>() { group = orderlistModel.GroupId, fields = new AsyncStatusPM_OpenApi() };
             if (paramodel.GetSign() == null)//为当前集团参数实体生成sign签名信息
                 return null;
             paramodel.fields.status = ParseHelper.ToInt(orderlistModel.Status, -1);
@@ -454,5 +455,179 @@ namespace Ets.Service.Provider.Order
             PageInfo<HomeCountTitleModel> pageinfo = OrderDao.GetCurrentDateCountAndMoney<HomeCountTitleModel>(criteria);
             return pageinfo;
         }
+
+
+        /// <summary>
+        /// 接收订单，供第三方使用
+        /// 窦海超
+        /// 2015年3月30日 11:44:28
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [ETS.Expand.ActionStatus(typeof(OrderPublicshStatus))]
+        public Ets.Model.Common.ResultModel<Model.DomainModel.Order.NewPostPublishOrderResultModel> NewPostPublishOrder_B(Model.ParameterModel.Order.NewPostPublishOrderModel model)
+        {
+            if (string.IsNullOrWhiteSpace(model.OriginalOrderNo))   //原始订单号非空验证
+                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OriginalOrderNoEmpty);
+            if (model.OriginalBusinessId == 0)   //原平台商户Id非空验证
+                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OriginalBusinessIdEmpty);
+            if (string.IsNullOrWhiteSpace(model.OrderFrom.ToString()))   //订单来源
+                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OrderFromEmpty);
+            if (string.IsNullOrWhiteSpace(model.IsPay.ToString()))   //请确认是否已付款
+                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.IsPayEmpty);
+
+            if (string.IsNullOrWhiteSpace(model.ReceiveName))    //收货人名称
+                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.ReceiveNameEmpty);
+
+            if (string.IsNullOrWhiteSpace(model.ReceivePhoneNo)) //手机号
+                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.ReceivePhoneEmpty);
+
+            if (string.IsNullOrWhiteSpace(model.Receive_Province) || string.IsNullOrWhiteSpace(model.Receive_ProvinceCode))  //所在省
+                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.ReceiveProvinceEmpty);
+
+            if (string.IsNullOrWhiteSpace(model.Receive_City) || string.IsNullOrWhiteSpace(model.Receive_CityCode))  //所在市
+                return ResultModel<NewPostPublishOrderResultModel>.Conclude
+                    (OrderPublicshStatus.ReceiveCityEmpty);
+
+            if (string.IsNullOrWhiteSpace(model.Receive_Area) || string.IsNullOrWhiteSpace(model.Receive_AreaCode))  //所在区
+                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.ReceiveAreaEmpty);
+
+            if (string.IsNullOrWhiteSpace(model.Receive_Address))   //收货地址
+                return ResultModel<NewPostPublishOrderResultModel>.Conclude
+                    (OrderPublicshStatus.ReceiveAddressEmpty);
+            //验证原平台商户是否已经注册
+            //var busi = BusiLogic.busiLogic().GetBusiByOriIdAndOrderFrom(model.OriginalBusinessId, model.OrderFrom);
+            BusinessDao busDao = new BusinessDao();
+            Business busi = busDao.GetBusiByOriIdAndOrderFrom(model.OriginalBusinessId, model.OrderFrom);
+            if (busi == null)
+            {
+                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.BusinessNoExist);
+            }
+            else
+            {
+                if (busi.Status != ConstValues.BUSINESS_AUDITPASS)
+                {
+                    return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.BusinessNotAudit);
+                }
+            }
+            //验证该平台 商户 订单号 是否存在
+            Ets.Dao.Order.OrderDao orderDao = new Dao.Order.OrderDao();
+            var order = orderDao.GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom, model.OrderType);
+            //var order = OrderLogic.orderLogic().GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom, model.OrderType);
+            if (order != null)
+            {
+                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OrderHadExist);
+            }
+
+            order dborder = OrderInstance(model);  //整合订单信息
+            bool result = Convert.ToBoolean(AddOrder(dborder));    //添加订单记录，并且触发极光推送。          
+            if (result)
+            {
+                NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { OriginalOrderNo = model.OriginalOrderNo, OrderNo = dborder.OrderNo };
+                LogHelper.LogWriter("订单发布成功", new { model = model, resultModel = resultModel });
+                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Success, resultModel);
+            }
+            else
+            {
+                NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { Remark = "订单发布失败" };
+                LogHelper.LogWriter("订单发布失败", new { model = model });
+                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Failed);
+            }
+        }
+
+        /// <summary>
+        /// 获取订单信息
+        /// 窦海超
+        /// 2015年3月30日 17:12:17
+        /// </summary>
+        /// <param name="from">参数对象</param>
+        /// <returns></returns>
+        private order OrderInstance(Model.ParameterModel.Order.NewPostPublishOrderModel from)
+        {
+            order to = new order();
+            BusinessDao businessDao = new BusinessDao();
+            Business abusiness = businessDao.GetBusiByOriIdAndOrderFrom(from.OriginalBusinessId, from.OrderFrom);
+
+            if (abusiness != null)
+            {
+                from.BusinessId = abusiness.Id;
+            }
+            else
+            {
+                return null;
+            }
+            to.OrderNo = Helper.generateOrderCode(abusiness.Id);  //根据userId生成订单号(15位)
+            to.businessId = abusiness.Id; //当前发布者
+            BusListResultModel business = businessDao.GetBusiness(abusiness.Id);  //根据发布者id,获取发布者的相关信息实体
+            if (business != null)
+            {
+                to.PickUpAddress = business.Address;  //提取地址
+                to.PubDate = DateTime.Now; //提起时间
+                to.ReceviceCity = business.City; //城市
+            }
+            to.SongCanDate = from.SongCanDate; //送餐时间
+            to.Remark = from.Remark;
+
+            to.ReceviceName = from.ReceiveName;
+            to.RecevicePhoneNo = from.ReceivePhoneNo;
+
+            to.ReceiveProvince = from.Receive_Province;
+            to.ReceiveProvinceCode = from.Receive_ProvinceCode;
+
+            to.ReceviceCity = from.Receive_City;
+            to.ReceiveCityCode = from.Receive_CityCode;
+
+            to.ReceiveArea = from.Receive_Area;
+            to.ReceiveAreaCode = from.Receive_AreaCode;
+
+            to.ReceviceLatitude = from.Receive_Latitude;
+            to.ReceviceLongitude = from.Receive_Longitude;
+
+            to.ReceviceAddress = from.Receive_Address;
+
+            to.OrderFrom = from.OrderFrom;
+            to.Quantity = from.Quantity;
+            to.OriginalOrderNo = from.OriginalOrderNo;
+
+            to.Weight = from.Weight;
+
+            to.IsPay = from.IsPay;
+            to.Amount = from.Amount;
+
+            to.OrderType = from.OrderType; //订单类型 1送餐订单 2取餐盒订单 
+            to.KM = from.KM; //送餐距离
+
+            to.GuoJuQty = from.GuoJuQty; //锅具数量
+            to.LuJuQty = from.LuJuQty;  //炉具数量
+
+            to.DistribSubsidy = from.DistribSubsidy; //外送费
+            to.OrderCount = from.OrderCount == 0 ? 1 : from.OrderCount; //订单数量
+            //计算订单佣金
+            //var subsidy = GetCurrentSubsidy(business.GroupId);
+
+            var subsidy = new OrderDao().GetCurrentSubsidy(business.GroupId.Value);//设置结算比例
+            if (subsidy != null)
+            {
+                to.WebsiteSubsidy = subsidy.WebsiteSubsidy == null ? 0 : subsidy.WebsiteSubsidy; //网站补贴 
+                to.CommissionRate = subsidy.OrderCommission == null ? 0 : subsidy.OrderCommission; //佣金比例 
+            }
+            else
+            {
+                to.WebsiteSubsidy = 0m;
+                to.CommissionRate = 0m;
+            }
+            decimal distribe = 0;  //默认外送费，网站补贴都为0
+            if (to.DistribSubsidy != null)//如果外送费有数据，按照外送费计算骑士佣金
+                distribe = Convert.ToDecimal(to.DistribSubsidy);
+            else if (to.WebsiteSubsidy != null)//如果外送费没数据，按照网站补贴计算骑士佣金
+                distribe = Convert.ToDecimal(to.WebsiteSubsidy);
+
+            to.OrderCommission = from.Amount * to.CommissionRate + distribe * to.OrderCount;//计算佣金
+
+            to.Status = ConstValues.ORDER_NEW;
+
+            return to;
+        }
+
     }
 }

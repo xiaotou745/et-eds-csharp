@@ -224,7 +224,7 @@ namespace Ets.Service.Provider.Clienter
         {
             if (string.IsNullOrEmpty(model.phoneNo))  //手机号非空验证
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
-            else if (clienterDao.CheckExistPhone(model.phoneNo))  //判断该手机号是否已经注册过
+            else if (clienterDao.CheckClienterExistPhone(model.phoneNo))  //判断该手机号是否已经注册过
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberRegistered);
             else if (string.IsNullOrEmpty(model.passWord)) //密码非空验证
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PasswordEmpty);
@@ -232,7 +232,7 @@ namespace Ets.Service.Provider.Clienter
             //    return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
             else if (model.verifyCode != SupermanApiCaching.Instance.Get(model.phoneNo)) //判断验码法录入是否正确
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode);
-            else if (!string.IsNullOrEmpty(model.recommendPhone) && (!clienterDao.CheckExistPhone(model.recommendPhone))
+            else if (!string.IsNullOrEmpty(model.recommendPhone) && (!clienterDao.CheckClienterExistPhone(model.recommendPhone))
                 && (!new BusinessDao().CheckExistPhone(model.recommendPhone))) //如果推荐人手机号在B端C端都不存在提示信息
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberNotExist);
             var clienter = ClientRegisterInfoModelTranslator.Instance.Translate(model);

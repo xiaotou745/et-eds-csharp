@@ -105,7 +105,7 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult AddSuperMan(ClienterListModel clienter)
         {
-            if (iDistributionProvider.CheckExistPhone(clienter.PhoneNo))  //判断该手机号是否已经注册过
+            if (cliterProvider.CheckClienterExistPhone(clienter.PhoneNo))  //判断该手机号是否已经注册过
                 return Json(new ResultModel(false, "手机号已被注册"));
             if (string.IsNullOrWhiteSpace(clienter.Password))
                 clienter.Password = "edaisong";

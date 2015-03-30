@@ -37,6 +37,14 @@ namespace ETS
         /// </summary>
         public static string SmsContentCheckCode { get { return ConfigKey("SmsContentCheckCode"); } }
 
+        /// <summary>
+        /// 是否根据集团推送订单
+        /// </summary>
+        public static bool IsGroupPush
+        {
+            get { return Convert.ToBoolean(ConfigKey("IsGroupPush")); }
+        }
+
         #region 取Web.Config值
 
         /// <summary>

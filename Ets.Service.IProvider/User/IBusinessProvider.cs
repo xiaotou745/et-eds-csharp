@@ -8,6 +8,8 @@ using Ets.Model.DataModel.Bussiness;
 using ETS.Enums;
 using System.Data;
 using Ets.Model.DataModel.Group;
+//using Ets.Model.DomainModel.Order;
+//using Ets.Model.ParameterModel.Order;
 
 namespace Ets.Service.IProvider.User
 {
@@ -180,5 +182,8 @@ namespace Ets.Service.IProvider.User
         /// <param name="criteria"></param>
         /// <returns></returns>
         Ets.Model.Common.BusinessCountManageList GetBusinessesCount(BusinessSearchCriteria criteria);
+
+     
     }
 }
+
