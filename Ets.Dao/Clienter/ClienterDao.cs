@@ -310,7 +310,137 @@ namespace Ets.Dao.Clienter
                 throw;
             }
         }
+        /// <summary>
+        /// 根据骑士Id判断骑士是否存在
+        /// danny-20150530
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        public bool CheckClienterExistById(int Id)
+        {
+            try
+            {
+                string sql = "SELECT COUNT(1) FROM clienter(NOLOCK) WHERE Id =@Id ";
+                IDbParameters parm = DbHelper.CreateDbParameters();
+                parm.AddWithValue("@Id", Id);
+                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm)) > 0 ? true : false;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex, "根据骑士Id判断骑士是否存在");
+                return false;
+                throw;
+            }
+        }
 
+        /// <summary>
+        /// 更新骑士照片信息
+        /// danny-10150330
+        /// </summary>
+        /// <param name="clienter"></param>
+        public bool UpdateClientPicInfo(ClienterModel clienter)
+        {
+            bool reslut = false;
+            try
+            {
+                string sql = @" update clienter set PicUrl=@PicUrl,PicWithHandUrl=@PicWithHandUrl,TrueName=@TrueName,IDCard=@IDCard,Status=@Status where Id=@Id ";
+                IDbParameters dbParameters = DbHelper.CreateDbParameters();
+                dbParameters.AddWithValue("@PicUrl", clienter.PicUrl);
+                dbParameters.AddWithValue("@PicWithHandUrl", clienter.PicWithHandUrl);
+                dbParameters.AddWithValue("@TrueName", clienter.TrueName);
+                dbParameters.AddWithValue("@IDCard", clienter.IDCard);
+                dbParameters.AddWithValue("@Status", ConstValues.CLIENTER_AUDITPASSING);
+                dbParameters.AddWithValue("@Id", clienter.Id);
+                int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
+                if (i > 0)
+                {
+                    reslut = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                reslut = false;
+                LogHelper.LogWriter(ex, "更新骑士照片信息");
+                throw;
+            }
+            return reslut;
+        }
 
+        /// <summary>
+        /// 检查号码是否存在-平扬 2015.3.30
+        /// </summary>
+        /// <param name="phoneNo"></param>
+        /// <returns></returns>
+        public bool CheckExistPhone(string phoneNo)
+        {
+            try
+            {
+                string sql = "SELECT 1 FROM dbo.clienter(NOLOCK) WHERE PhoneNo=@PhoneNo ";
+                IDbParameters parm = DbHelper.CreateDbParameters();
+                parm.AddWithValue("@PhoneNo", phoneNo);
+                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm)) > 0;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex, "检查号码是否存在");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 注册超人
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public int AddClienter(clienter model)
+        { 
+            string sql = @"INSERT INTO clienter
+                           ([PhoneNo]
+                           ,[recommendPhone]
+                           ,[Password]
+                           ,[Status]
+                           ,[InsertTime]
+                           ,[InviteCode]
+                           ,[City]
+                           ,[CityId]
+                           ,[GroupId])
+                     VALUES
+                       (@PhoneNo,@recommendPhone,@Password,@Status,@InsertTime,@InviteCode,@City,@CityId,@GroupId );select SCOPE_IDENTITY() as id;";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@PhoneNo", model.PhoneNo);
+            parm.AddWithValue("@recommendPhone", model.recommendPhone);
+            parm.AddWithValue("@Password", model.Password);
+            parm.AddWithValue("@Status", model.Status);
+            parm.AddWithValue("@InsertTime", model.InsertTime);
+            parm.AddWithValue("@InviteCode", model.InviteCode);
+            parm.AddWithValue("@City", model.City);
+            parm.AddWithValue("@CityId", model.CityId);
+            parm.AddWithValue("@GroupId", model.GroupId); 
+            object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, parm);
+            if (i != null)
+            {
+                return ParseHelper.ToInt(i.ToString());
+            }
+            return 0;
+
+        }
+
+         
+        /// <summary>
+        /// 抢单
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        public bool RushOrder(int userId, string orderNo)
+        {   
+            string sql = @" update [order] set clienterId=@clienterId,Status=@Status where OrderNo=@OrderNo and [Status]=0 ";//未抢订单才更新
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@clienterId", userId);
+            parm.AddWithValue("@Status",ConstValues.ORDER_ACCEPT);
+            parm.AddWithValue("@OrderNo", orderNo);  
+            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Read, sql, parm)) > 0;
+
+        } 
     }
 }

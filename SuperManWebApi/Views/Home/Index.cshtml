@@ -78,43 +78,43 @@
         //    }
         //});
 
-        //$.ajax({
-        //    type: 'POST',
-        //    dataType: 'json',
-        //    url: '/BusinessAPI/PostPublishOrder_B',
-        //    data: {
-        //        "userId": 41,
-        //        "ReceiveName": "测试",
-        //        "ReceivePhoneNo": "18910712425",
-        //        "Amount": 59.0000,
-        //        "IsPay": false,
-        //        "Remark": null,
-        //        "OrderCount":10
-        //    },
-        //    success: function (data) {
-        //        console.log(data);
-        //    },
-        //    error: function () {
-
-        //    }
-        //});
         $.ajax({
-            type: 'get',
+            type: 'POST',
             dataType: 'json',
-            url: '/ClienterAPI/GetMyBalanceDynamic',
+            url: '/BusinessAPI/PostPublishOrder_B',
             data: {
-                "phoneNo": "13426401627",
-                "pagedSize": 20,
-                "pagedIndex": 1
+                "userId": 51,
+                "ReceiveName": "测试",
+                "ReceivePhoneNo": "carezsadaq",
+                "Amount": 59.0000,
+                "IsPay": false,
+                "Remark": null,
+                "OrderCount":10
             },
             success: function (data) {
-                alert(data.MyIncomeName + "," + data.MyInComeAmount + "," + data.InsertTime);
                 console.log(data);
             },
             error: function () {
 
             }
         });
+        //$.ajax({
+        //    type: 'get',
+        //    dataType: 'json',
+        //    url: '/ClienterAPI/GetMyBalanceDynamic',
+        //    data: {
+        //        "phoneNo": "13426401627",
+        //        "pagedSize": 20,
+        //        "pagedIndex": 1
+        //    },
+        //    success: function (data) {
+        //        alert(data.MyIncomeName + "," + data.MyInComeAmount + "," + data.InsertTime);
+        //        console.log(data);
+        //    },
+        //    error: function () {
+
+        //    }
+        //});
 
         //$.ajax({
         //    type: 'POST',
