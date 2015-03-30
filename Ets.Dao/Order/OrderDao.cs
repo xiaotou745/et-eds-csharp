@@ -162,7 +162,8 @@ namespace Ets.Dao.Order
            ReceviceLongitude ,
            ReceviceLatitude ,
            OrderCount ,
-           CommissionRate
+           CommissionRate,
+           CommissionFormulaMode
          )
  VALUES  ( @OrderNo ,
            @PickUpAddress ,
@@ -183,7 +184,8 @@ namespace Ets.Dao.Order
            @ReceviceLongitude ,
            @ReceviceLatitude ,
            @OrderCount ,
-           @CommissionRate
+           @CommissionRate,
+           @CommissionFormulaMode
          )");
 
             IDbParameters parm = DbHelper.CreateDbParameters();
@@ -210,6 +212,7 @@ namespace Ets.Dao.Order
             parm.AddWithValue("@ReceviceLatitude", order.ReceviceLatitude);
             parm.AddWithValue("@OrderCount", order.OrderCount);
             parm.AddWithValue("@CommissionRate", order.CommissionRate);
+            parm.AddWithValue("@CommissionFormulaMode", order.CommissionFormulaMode);
             return DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrder.ToString(), parm);
 
         }
