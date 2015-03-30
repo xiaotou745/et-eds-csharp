@@ -92,5 +92,22 @@ namespace Ets.Service.Provider.Common
             CacheFactory.Instance.AddObject(key, list);
             return ResultModel<List<AreaModel>>.Conclude(ETS.Enums.CityStatus.Newest, list);
         }
+
+        public AreaModel GetNationalAreaInfo(AreaModel from)
+        {
+            AreaModel areaModel = new AreaModel();
+
+            if (from != null)
+            {
+                string key = string.Format("Ets.Service.Provider.Common_GetNationalAreaInfo_{0}{1}", from.Name, from.Code);
+
+            }
+
+
+
+            return areaModel;
+            
+            
+        }
     }
 }
