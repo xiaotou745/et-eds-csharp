@@ -57,5 +57,24 @@ namespace ETS.Extension
         }
 
         #endregion
+        public static string ToForwardSlashPath(this string path)
+        {
+            return path.Replace('\\', '/');
+        }
+
+        public static int? AsInt(this string str)
+        {
+            int k;
+            bool b = int.TryParse(str, out k);
+            if (b)
+            {
+                return k;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
     }
 }
