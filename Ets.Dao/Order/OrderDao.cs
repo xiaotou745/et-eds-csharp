@@ -1,6 +1,7 @@
 ﻿using Ets.Model.Common;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Order;
+using Ets.Model.DataModel.Subsidy;
 using Ets.Model.DomainModel.Order;
 using Ets.Model.DomainModel.Subsidy;
 using Ets.Model.ParameterModel.Order;
@@ -698,31 +699,31 @@ namespace Ets.Dao.Order
         /// <returns></returns>
         public PageInfo<T> GetOrderCount<T>(HomeCountCriteria criteria)
         {
-//            string columnList = @"  b.district
-//				                    ,COUNT(*) orderCount
-//				                    ,SUM(o.DistribSubsidy)distribSubsidy
-//				                    ,SUM(o.WebsiteSubsidy)websiteSubsidy
-//				                    ,SUM(o.OrderCommission)orderCommission
-//				                    ,SUM(o.DistribSubsidy+o.WebsiteSubsidy+o.OrderCommission)deliverAmount
-//				                    ,SUM(Amount)orderAmount ";
-//            var sbSqlWhere = new StringBuilder(" 1=1 ");
-//            if (criteria.searchType == 1)//当天
-//            {
-//                sbSqlWhere.Append(" AND DateDiff(DAY, GetDate(),o.PubDate)=0 ");
-//            }
-//            else if (criteria.searchType == 2)//本周
-//            {
-//                sbSqlWhere.Append(" AND DateDiff(WEEK, GetDate(),DATEADD (DAY, -1,o.PubDate))=0 ");
-//            }
-//            else if (criteria.searchType == 3)//本月
-//            {
-//                sbSqlWhere.Append(" AND DateDiff(MONTH, GetDate(),o.PubDate)=0 ");
-//            }
-//            sbSqlWhere.Append(" group by b.district ");
-//            string tableList = @" business b with(nolock)
-//                                  join [order] o with(nolock) on b.Id=o.businessId ";
-//            string orderByColumn = " COUNT(*) DESC ";
-//            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
+            //            string columnList = @"  b.district
+            //				                    ,COUNT(*) orderCount
+            //				                    ,SUM(o.DistribSubsidy)distribSubsidy
+            //				                    ,SUM(o.WebsiteSubsidy)websiteSubsidy
+            //				                    ,SUM(o.OrderCommission)orderCommission
+            //				                    ,SUM(o.DistribSubsidy+o.WebsiteSubsidy+o.OrderCommission)deliverAmount
+            //				                    ,SUM(Amount)orderAmount ";
+            //            var sbSqlWhere = new StringBuilder(" 1=1 ");
+            //            if (criteria.searchType == 1)//当天
+            //            {
+            //                sbSqlWhere.Append(" AND DateDiff(DAY, GetDate(),o.PubDate)=0 ");
+            //            }
+            //            else if (criteria.searchType == 2)//本周
+            //            {
+            //                sbSqlWhere.Append(" AND DateDiff(WEEK, GetDate(),DATEADD (DAY, -1,o.PubDate))=0 ");
+            //            }
+            //            else if (criteria.searchType == 3)//本月
+            //            {
+            //                sbSqlWhere.Append(" AND DateDiff(MONTH, GetDate(),o.PubDate)=0 ");
+            //            }
+            //            sbSqlWhere.Append(" group by b.district ");
+            //            string tableList = @" business b with(nolock)
+            //                                  join [order] o with(nolock) on b.Id=o.businessId ";
+            //            string orderByColumn = " COUNT(*) DESC ";
+            //            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
             var sbtbl = new StringBuilder(@" (select   b.district
 				                    ,COUNT(*) orderCount
 				                    ,SUM(o.DistribSubsidy)distribSubsidy
@@ -768,7 +769,7 @@ namespace Ets.Dao.Order
         /// <returns></returns>
         public PageInfo<T> GetCurrentDateCountAndMoney<T>(OrderSearchCriteria criteria)
         {
-            
+
             string columnList = @"  [InsertTime] 
                                   ,[BusinessCount]
                                   ,[RzqsCount]
@@ -795,6 +796,87 @@ namespace Ets.Dao.Order
             string tableList = " Statistic ";
             string orderByColumn = " id DESC  ";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
+        }
+
+        /// <summary>
+        /// 验证该平台 商户 订单号 是否存在
+        /// 窦海超
+        /// 2015年3月30日 13:00:02
+        /// </summary>
+        /// <param name="orderNO">第三方平台的原订单号</param>
+        /// <param name="orderFrom">订单来源</param>
+        /// <param name="orderType">订单类型</param>
+        /// <returns></returns>
+        public order GetOrderByOrderNoAndOrderFrom(string orderNO, int orderFrom, int orderType)
+        {
+            string where = string.Empty;
+            if (orderType > 0)
+            {
+                where = " and OrderType =@OrderType";
+            }
+            string sql = @"SELECT * FROM [order] WHERE OriginalOrderNo = @OriginalOrderNo AND  OrderFrom = @OrderFrom " + where;
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@OriginalOrderNo", orderNO);
+            parm.AddWithValue("@OrderFrom", orderFrom);
+            parm.AddWithValue("@OrderType", orderType);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (dt==null || dt.Rows.Count<=0)
+            {
+                return null;
+            }
+            return MapRows<order>(dt)[0];
+        }
+
+
+        /// <summary>
+        /// 获取订单金额
+        /// 窦海超
+        /// 2015年3月30日 16:51:35
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <param name="orderType"></param>
+        /// <returns></returns>
+        public SubsidyResultModel GetCurrentSubsidy(int groupId = 0, int orderType = 0)
+        {
+            string where = " (GroupId=0 or GroupId is null) ";
+
+
+            if (Config.IsGroupPush)
+            {
+                if (groupId > 0)  // 集团
+                {
+                    if (orderType > 0)  //订单类型 1送餐订单  2取餐盒订单
+                    {
+                        where = " and ordertype=@ordertype ";
+                    }
+                    else
+                    {
+                        where = " GroupId=@GroupId and ordertype=@ordertype ";
+                    }
+                }
+            }
+            string sql = @"
+                         SELECT TOP 1 
+                         DistribSubsidy,
+                         OrderCommission,
+                         WebsiteSubsidy,
+                         OrderType,
+                         PKMCost
+                          FROM dbo.subsidy(NOLOCK) WHERE 
+                         StartDate<=GETDATE() AND 
+                         EndDate>=GETDATE() AND 
+                         [Status]=1 AND ";
+            sql += where;
+            sql += "ORDER BY StartDate DESC";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@ordertype", orderType);
+            parm.AddWithValue("@GroupId", groupId);
+            DataTable dt= DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (dt==null || dt.Rows.Count<=0)
+            {
+                return null;
+            }
+            return MapRows<SubsidyResultModel>(dt)[0];
         }
     }
 }

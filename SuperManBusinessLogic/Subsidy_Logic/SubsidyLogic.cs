@@ -61,8 +61,8 @@ namespace SuperManBusinessLogic.Subsidy_Logic
                 }
                 else
                 {
-                    subsidyQuery = subsidyQuery.Where(i => i.StartDate <= DateTime.Now && i.EndDate >= DateTime.Now && i.Status.Value == 1 && (i.GroupId == null || i.GroupId == 0))
-                        .OrderByDescending(i => i.StartDate.Value); //获取当前有效期内的补贴
+                        subsidyQuery = subsidyQuery.Where(i => i.StartDate <= DateTime.Now && i.EndDate >= DateTime.Now && i.Status.Value == 1 && (i.GroupId == null || i.GroupId == 0))
+                                .OrderByDescending(i => i.StartDate.Value); //获取当前有效期内的补贴
                 }
                 var subsidy = subsidyQuery.FirstOrDefault();
                 // end 
