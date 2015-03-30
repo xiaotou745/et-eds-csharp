@@ -117,6 +117,7 @@
     <Compile Include="Threading\IThreadStorage.cs" />
     <Compile Include="Threading\LogicalThreadContext.cs" />
     <Compile Include="Threading\ThreadStaticStorage.cs" />
+    <Compile Include="Util\APiCaching.cs" />
     <Compile Include="Util\AssertUtils.cs" />
     <Compile Include="Util\ConfigSettings.cs" />
     <Compile Include="Util\ConfigUtils.cs" />

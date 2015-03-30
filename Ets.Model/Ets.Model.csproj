@@ -119,7 +119,9 @@
     <Compile Include="ParameterModel\Clienter\ChangeWorkStatusPM.cs" />
     <Compile Include="ParameterModel\Clienter\ClienterSearchCriteria.cs" />
     <Compile Include="ParameterModel\Clienter\ClientOrderInfoModel.cs" />
+    <Compile Include="ParameterModel\Clienter\ClientRegisterInfoModel.cs" />
     <Compile Include="ParameterModel\Clienter\LoginModel.cs" />
+    <Compile Include="ParameterModel\Clienter\RushOrderResultModel.cs" />
     <Compile Include="ParameterModel\Group\GroupListModel.cs" />
     <Compile Include="ParameterModel\Group\GroupParaModel.cs" />
     <Compile Include="ParameterModel\Order\BusiOrderResultModel.cs" />

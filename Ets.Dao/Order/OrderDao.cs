@@ -638,9 +638,27 @@ namespace Ets.Dao.Order
             dbParameters.AddWithValue("@orderNo", orderNo);    //订单号
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, selSql, dbParameters);
 
-            return ParseHelper.ToInt(executeScalar, -1);
+            return ParseHelper.ToInt(executeScalar, 0);
 
         }
+
+          
+        /// <summary>
+        /// 订单是否被抢
+        /// 平扬 
+        /// </summary>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        public bool CheckOrderIsAllowRush(string orderNo)
+        { 
+            string selSql = string.Format(@" SELECT 1 FROM  [order] WITH(NOLOCK)  WHERE  OrderNo = @orderNo and [Status]=0 ");
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@orderNo", orderNo);    //订单号
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, selSql, dbParameters); 
+            return ParseHelper.ToInt(executeScalar, 0)>0; 
+        }
+
+        
 
         /// <summary>
         /// 根据订单号 修改订单状态 B端商家取消订单

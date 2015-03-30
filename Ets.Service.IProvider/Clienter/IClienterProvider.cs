@@ -65,5 +65,19 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="clienterId"></param>
         /// <returns></returns>
         bool HaveQualification(int clienterId);
+
+        /// <summary>
+        /// 骑士注册
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        ResultModel<ClientRegisterResultModel> PostRegisterInfo_C(ClientRegisterInfoModel model);
+        /// <summary>
+        /// 抢单 平扬 2015.3.30
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        bool RushOrder(int userId, string orderNo);
     }
 }
