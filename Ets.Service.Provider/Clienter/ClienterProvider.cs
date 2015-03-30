@@ -286,5 +286,26 @@ namespace Ets.Service.Provider.Clienter
         {
             return clienterDao.UpdateClientPicInfo(clienter);
         }
+
+        /// <summary>
+        /// 根据电话获取当前用户的信息
+        /// danny-20150330
+        /// </summary>
+        /// <param name="PhoneNo"></param>
+        /// <returns></returns>
+        public ClienterModel GetUserInfoByUserPhoneNo(string PhoneNo)
+        {
+            return clienterDao.GetUserInfoByUserPhoneNo(PhoneNo);
+        }
+        /// <summary>
+        /// 根据用户ID更新密码
+        /// </summary>
+        /// <param name="UserId">用户ID</param>
+        /// <param name="UserPwd">新密码</param>
+        /// <returns></returns>
+        public bool UpdateClienterPwdByUserId(int UserId, string UserPwd)
+        {
+            return clienterDao.UpdateClienterPwdSql(UserId, UserPwd);
+        }
     }
 }

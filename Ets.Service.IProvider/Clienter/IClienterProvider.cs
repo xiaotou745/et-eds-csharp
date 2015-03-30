@@ -93,5 +93,20 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="clienter"></param>
         /// <returns></returns>
         bool UpdateClientPicInfo(ClienterModel clienter);
+        /// <summary>
+        /// 根据电话获取当前用户的信息
+        /// danny-20150330
+        /// </summary>
+        /// <param name="PhoneNo"></param>
+        /// <returns></returns>
+        ClienterModel GetUserInfoByUserPhoneNo(string PhoneNo);
+        /// <summary>
+        /// 根据用户ID更新密码
+        /// danny-20150330
+        /// </summary>
+        /// <param name="UserId"></param>
+        /// <param name="UserPwd"></param>
+        /// <returns></returns>
+        bool UpdateClienterPwdByUserId(int UserId, string UserPwd);
     }
 }
