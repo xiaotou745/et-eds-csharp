@@ -268,7 +268,7 @@ namespace Ets.Service.Provider.Clienter
             }
             return false;
         }
-<<<<<<< HEAD
+ 
 
         /// <summary>
         /// 抢单 平扬 2015.3.30
@@ -279,20 +279,22 @@ namespace Ets.Service.Provider.Clienter
         public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListNoLogin_C(ClientOrderSearchCriteria model)
         {
             try
-            { 
+            {
                 var pageinfo = clienterDao.GetOrdersNoLogin(model);
-                if(pageinfo==null)
+                if (pageinfo == null)
                     return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.FailedGetOrders);
 
                 IList<order> list = pageinfo.Records;
-                IList<ClientOrderNoLoginResultModel> listOrder = new List<ClientOrderNoLoginResultModel>();//组装成新的对象
+                IList<ClientOrderNoLoginResultModel> listOrder = new List<ClientOrderNoLoginResultModel>(); //组装成新的对象
                 foreach (order item in list)
                 {
                     var resultModel = new ClientOrderNoLoginResultModel();
                     if (item.clienterId != null)
                         resultModel.userId = item.clienterId.Value;
                     resultModel.OrderNo = item.OrderNo;
+
                     #region 骑士佣金计算
+
                     var oCommission = new OrderCommission()
                     {
                         Amount = item.Amount,
@@ -301,10 +303,12 @@ namespace Ets.Service.Provider.Clienter
                         OrderCount = item.OrderCount,
                         WebsiteSubsidy = item.WebsiteSubsidy
                     };
+
                     #endregion
 
-                    resultModel.income = item.OrderCommission;  //佣金 Edit bycaoheyang 20150327
-                    resultModel.Amount = OrderCommissionProvider.GetCurrenOrderPrice(oCommission); //C端 获取订单的金额 Edit bycaoheyang 20150305
+                    resultModel.income = item.OrderCommission; //佣金 Edit bycaoheyang 20150327
+                    resultModel.Amount = OrderCommissionProvider.GetCurrenOrderPrice(oCommission);
+                        //C端 获取订单的金额 Edit bycaoheyang 20150305
 
                     resultModel.businessName = item.BusinessName;
                     resultModel.businessPhone = item.BusinessPhone;
@@ -316,13 +320,15 @@ namespace Ets.Service.Provider.Clienter
                     resultModel.receviceCity = item.ReceviceCity;
                     resultModel.receviceAddress = item.ReceviceAddress;
                     resultModel.recevicePhone = item.RecevicePhoneNo;
-                    resultModel.IsPay = item.IsPay??false;
+                    resultModel.IsPay = item.IsPay ?? false;
                     resultModel.Remark = item.Remark;
                     resultModel.Status = item.Status;
                     resultModel.OrderCount = item.OrderCount;
+
                     #region 计算经纬度     待封装  add by caoheyang 20150313
 
-                    if (item.BusiLongitude == null || item.BusiLongitude == 0 || item.BusiLatitude == null || item.BusiLatitude == 0)
+                    if (item.BusiLongitude == null || item.BusiLongitude == 0 || item.BusiLatitude == null ||
+                        item.BusiLatitude == 0)
                     {
                         resultModel.distance = "--";
                         resultModel.distanceB2R = "--";
@@ -331,41 +337,49 @@ namespace Ets.Service.Provider.Clienter
                     {
                         if (degree.longitude == 0 || degree.latitude == 0 || item.businessId <= 0)
                             resultModel.distance = "--";
-                        else if (item.businessId > 0)  //计算超人当前到商户的距离
+                        else if (item.businessId > 0) //计算超人当前到商户的距离
                         {
-                            Degree degree1 = new Degree(degree.longitude, degree.latitude);   //超人当前的经纬度
+                            Degree degree1 = new Degree(degree.longitude, degree.latitude); //超人当前的经纬度
                             Degree degree2 = new Degree(item.BusiLongitude.Value, item.BusiLatitude.Value); //商户经纬度
                             double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
-                            resultModel.distance = res < 1000 ? (res.ToString("f2") + "米") : ((res / 1000).ToString("f2") + "公里");
+                            resultModel.distance = res < 1000
+                                ? (res.ToString("f2") + "米")
+                                : ((res/1000).ToString("f2") + "公里");
                         }
                         if (item.businessId > 0 && item.ReceviceLongitude != null && item.ReceviceLatitude != null
-                            && item.ReceviceLongitude != 0 && item.ReceviceLatitude != 0)  //计算商户到收货人的距离
+                            && item.ReceviceLongitude != 0 && item.ReceviceLatitude != 0) //计算商户到收货人的距离
                         {
-                            Degree degree1 = new Degree(item.BusiLongitude.Value, item.BusiLatitude.Value);  //商户经纬度
-                            Degree degree2 = new Degree(item.ReceviceLongitude.Value, item.ReceviceLatitude.Value);  //收货人经纬度
+                            Degree degree1 = new Degree(item.BusiLongitude.Value, item.BusiLatitude.Value); //商户经纬度
+                            Degree degree2 = new Degree(item.ReceviceLongitude.Value, item.ReceviceLatitude.Value);
+                                //收货人经纬度
                             double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
-                            resultModel.distanceB2R = res < 1000 ? (res.ToString("f2") + "米") : ((res / 1000).ToString("f2") + "公里");
+                            resultModel.distanceB2R = res < 1000
+                                ? (res.ToString("f2") + "米")
+                                : ((res/1000).ToString("f2") + "公里");
                         }
                         else
                             resultModel.distanceB2R = "--";
                     }
+
                     #endregion
+
                     listOrder.Add(resultModel);
                 }
 
-                if (!model.isLatest)//不是最新任务，按距离排序
+                if (!model.isLatest) //不是最新任务，按距离排序
                 {
                     listOrder.OrderBy(o => o.distance);
                 }
-                return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, listOrder.ToArray());
+                return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success,
+                    listOrder.ToArray());
             }
             catch (Exception ex)
             {
                 LogHelper.LogWriterFromFilter(ex);
             }
             return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.FailedGetOrders);
+        }
 
-=======
         /// <summary>
         /// 根据骑士Id判断骑士是否存在
         /// danny-20150530
@@ -384,7 +398,6 @@ namespace Ets.Service.Provider.Clienter
         public bool UpdateClientPicInfo(ClienterModel clienter)
         {
             return clienterDao.UpdateClientPicInfo(clienter);
->>>>>>> 6b722cfbc5ca18c113ddd3d14cdb0f59a5db5bab
         }
     }
 }
