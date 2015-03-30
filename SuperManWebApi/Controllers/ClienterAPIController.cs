@@ -355,26 +355,23 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(GetOrdersNoLoginStatus))]
         [HttpPost]
-        public SuperManCore.Common.ResultModel<ClientOrderNoLoginResultModel[]> GetJobListNoLogin_C(ClientOrderInfoModel model)
+        public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderNoLoginResultModel[]> GetJobListNoLogin_C(Ets.Model.ParameterModel.Clienter.ClientOrderInfoModel model)
         {
             degree.longitude = model.longitude;
             degree.latitude = model.latitude;
-            var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
-            var pSize = model.pageSize.HasValue ? model.pageSize.Value : ConstValues.App_PageSize;
-            var criteria = new ClientOrderSearchCriteria()
+            var pIndex = model.pageIndex?? 1;
+            var pSize = model.pageSize?? ConstValues.App_PageSize;
+            var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
             {
-                PagingRequest = new SuperManCore.Paging.PagingResult(pIndex, pSize),
-                userId = model.userId,
+                PagingRequest = new Ets.Model.Common.PagingResult(pIndex, pSize),
                 status = model.status,
                 isLatest = model.isLatest
             };
-            var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLogin(criteria);
-            var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
-            if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
-            {
-                lists = lists.OrderBy(i => i.distance).ToList();
-            }
-            return SuperManCore.Common.ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
+            return new ClienterProvider().GetJobListNoLogin_C(criteria);
+            //var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLogin(criteria);
+            //var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
+            
+            //return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderNoLoginResultModel[]>.Conclude(ETS.Enums.GetOrdersNoLoginStatus.Success, lists.ToArray());
         }
 
 

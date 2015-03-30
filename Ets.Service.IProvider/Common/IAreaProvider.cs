@@ -25,5 +25,13 @@ namespace Ets.Service.IProvider.Common
         /// </summary>
         /// <returns></returns>
         Model.Common.ResultModel<List<AreaModel>> GetOpenCityInfo();
+        /// <summary>
+        /// 转换  易淘食 接口 中的  省市区 编码为国标码
+        /// wc
+        /// </summary>
+        /// <param name="from"></param>
+        /// <returns></returns>
+        AreaModel GetNationalAreaInfo(AreaModel from);
+
     }
 }
