@@ -137,28 +137,6 @@ namespace Ets.Dao.Distribution
             return reslut;
         }
 
-        /// <summary>
-        /// 检查骑士手机是否存在
-        /// danny-20150318
-        /// </summary>
-        /// <param name="phoneNo"></param>
-        /// <returns></returns>
-        public bool CheckExistPhone(string phoneNo)
-        {
-            try
-            {
-                string sql = "SELECT COUNT(*) FROM clienter WITH (NOLOCK) WHERE PhoneNo=@PhoneNo";
-                IDbParameters parm = DbHelper.CreateDbParameters();
-                parm.AddWithValue("@PhoneNo", phoneNo);
-                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm)) > 0 ? true : false;
-            }
-            catch (Exception ex)
-            {
-                LogHelper.LogWriter(ex, "检查号码是否存在");
-                return false;
-                throw;
-            }
-        }
 
         /// <summary>
         /// 添加骑士

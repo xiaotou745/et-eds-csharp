@@ -40,13 +40,6 @@ namespace Ets.Service.IProvider.Distribution
         /// <returns></returns>
         bool ClearSuperManAmount(int id);
         /// <summary>
-        /// 检查骑士手机号码是否存在
-        /// danny-20150318
-        /// </summary>
-        /// <param name="phoneNo"></param>
-        /// <returns></returns>
-        bool CheckExistPhone(string phoneNo);
-        /// <summary>
         /// 添加骑士
         /// danny-20150318
         /// </summary>
