@@ -25,18 +25,6 @@ namespace SuperMan.Controllers
         // GET: HomeCount
         public ActionResult Index()
         {
-            //if (UserContext.Current.Id == 0)
-            //{
-            //    Response.Redirect("/account/login");
-            //    return null;
-            //}
-            //HomeCountManage homeCountManage = new HomeCountManage();
-            //var criteria = new HomeCountCriteria() { PagingRequest = new PagingResult(0, 15), searchType = 1 };
-            //var busiCriteria = new BusinessSearchCriteria() { PagingRequest = new PagingResult(0, 15), searchType = 1 };
-            //var clientCriteria = new ClienterSearchCriteria() { PagingRequest = new PagingResult(0, 15), searchType = 1 };
-            //homeCountManage.orderCountManageList = OrderLogic.orderLogic().GetOrderCount(criteria);
-            //homeCountManage.busiCountManagerList = BusiLogic.busiLogic().GetBusinessesCount(busiCriteria);
-            //homeCountManage.clientCountManagerList = ClienterLogic.clienterLogic().GetClienteresCount(clientCriteria);
             Ets.Service.Provider.Common.HomeCountProvider homeCountProvider = new Ets.Service.Provider.Common.HomeCountProvider();
             var criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria();
             ViewBag.homeCountTitleToAllData = homeCountProvider.GetHomeCountTitleToAllData();
