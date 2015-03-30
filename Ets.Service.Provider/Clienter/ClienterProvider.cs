@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
 using Ets.Dao.Clienter;
+using Ets.Dao.User;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Order;
+using Ets.Model.ParameterModel.Bussiness;
+using Ets.Model.ParameterModel.Clienter;
 using Ets.Service.IProvider.Clienter;
 using Ets.Model.DomainModel.Clienter;
 using ETS.Data.PageData;
@@ -11,6 +14,7 @@ using Ets.Service.Provider.Order;
 using ETS.Enums;
 using Ets.Model.Common;
 using Ets.Dao.WtihdrawRecords;
+using ETS.Util;
 
 namespace Ets.Service.Provider.Clienter
 {
@@ -208,6 +212,60 @@ namespace Ets.Service.Provider.Clienter
         public bool HaveQualification(int clienterId)
         {
             return clienterDao.HaveQualification(clienterId);
+        }
+
+        /// <summary>
+        /// 骑士注册 平扬 2015.3.30
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public ResultModel<ClientRegisterResultModel> PostRegisterInfo_C(ClientRegisterInfoModel model)
+        {
+            if (string.IsNullOrEmpty(model.phoneNo))  //手机号非空验证
+                return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
+            else if (clienterDao.CheckExistPhone(model.phoneNo))  //判断该手机号是否已经注册过
+                return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberRegistered);
+            else if (string.IsNullOrEmpty(model.passWord)) //密码非空验证
+                return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PasswordEmpty);
+            //else if (string.IsNullOrEmpty(model.City) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
+            //    return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
+            else if (model.verifyCode != SupermanApiCaching.Instance.Get(model.phoneNo)) //判断验码法录入是否正确
+                return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode);
+            else if (!string.IsNullOrEmpty(model.recommendPhone) && (!clienterDao.CheckExistPhone(model.recommendPhone))
+                && (!new BusinessDao().CheckExistPhone(model.recommendPhone))) //如果推荐人手机号在B端C端都不存在提示信息
+                return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberNotExist);
+            var clienter = ClientRegisterInfoModelTranslator.Instance.Translate(model);
+            int id = clienterDao.AddClienter(clienter);
+            var resultModel = new ClientRegisterResultModel
+            {
+                userId = id,
+                city = string.IsNullOrWhiteSpace(clienter.City) ? null : clienter.City.Trim(),  //城市
+                cityId = string.IsNullOrWhiteSpace(clienter.CityId) ? null : clienter.CityId.Trim()  //城市编码
+            };
+            if (id > 0)
+            {
+                return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
+            }
+            return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.ClientRegisterFaild);
+        }
+
+        /// <summary>
+        /// 抢单 平扬 2015.3.30
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        public bool RushOrder(int userId, string orderNo)
+        { 
+            try
+            {
+                return clienterDao.RushOrder(userId, orderNo); 
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriterFromFilter(ex);
+            }
+            return false;
         }
         /// <summary>
         /// 根据骑士Id判断骑士是否存在

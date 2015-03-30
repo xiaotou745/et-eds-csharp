@@ -32,36 +32,38 @@ namespace SuperManWebApi.Controllers
         private static object lockHelper = new object();
         readonly Ets.Service.IProvider.Clienter.IClienterProvider iClienterProvider = new Ets.Service.Provider.Clienter.ClienterProvider();
         /// <summary>
-        /// C端注册 
+        /// C端注册 -平扬 2015.3.30
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [ActionStatus(typeof(CustomerRegisterStatus))]
+        [ActionStatus(typeof(Ets.Model.ParameterModel.Bussiness.CustomerRegisterStatus))]
         [HttpPost]
-        public SuperManCore.Common.ResultModel<ClientRegisterResultModel> PostRegisterInfo_C(ClientRegisterInfoModel model)
+        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.ClientRegisterResultModel> PostRegisterInfo_C(Ets.Model.ParameterModel.Clienter.ClientRegisterInfoModel model)
         {
-            if (string.IsNullOrEmpty(model.phoneNo))  //手机号非空验证
-                return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
-            else if (ClienterLogic.clienterLogic().CheckExistPhone(model.phoneNo))  //判断该手机号是否已经注册过
-                return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberRegistered);
-            else if (string.IsNullOrEmpty(model.passWord)) //密码非空验证
-                return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PasswordEmpty);
-            else if (string.IsNullOrEmpty(model.City) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
-                return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
-            else if (model.verifyCode != SupermanApiCaching.Instance.Get(model.phoneNo)) //判断验码法录入是否正确
-                return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode);
-            else if (model.recommendPhone != null && (!ClienterLogic.clienterLogic().CheckExistPhone(model.recommendPhone))
-                && (!BusiLogic.busiLogic().CheckExistPhone(model.recommendPhone))) //如果推荐人手机号在B端C端都不存在提示信息
-                return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberNotExist);
-            var clienter = ClientRegisterInfoModelTranslator.Instance.Translate(model);
-            bool result = ClienterLogic.clienterLogic().Add(clienter);
-            var resultModel = new ClientRegisterResultModel
-            {
-                userId = clienter.Id,
-                city = string.IsNullOrWhiteSpace(clienter.City) ? null : clienter.City.Trim(),  //城市
-                cityId = string.IsNullOrWhiteSpace(clienter.CityId) ? null : clienter.CityId.Trim()  //城市编码
-            };
-            return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
+            //if (string.IsNullOrEmpty(model.phoneNo))  //手机号非空验证
+            //    return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
+            //else if (ClienterLogic.clienterLogic().CheckExistPhone(model.phoneNo))  //判断该手机号是否已经注册过
+            //    return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberRegistered);
+            //else if (string.IsNullOrEmpty(model.passWord)) //密码非空验证
+            //    return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PasswordEmpty);
+            //else if (string.IsNullOrEmpty(model.City) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
+            //    return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
+            //else if (model.verifyCode != SupermanApiCaching.Instance.Get(model.phoneNo)) //判断验码法录入是否正确
+            //    return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode);
+            //else if (model.recommendPhone != null && (!ClienterLogic.clienterLogic().CheckExistPhone(model.recommendPhone))
+            //    && (!BusiLogic.busiLogic().CheckExistPhone(model.recommendPhone))) //如果推荐人手机号在B端C端都不存在提示信息
+            //    return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberNotExist);
+            //var clienter = ClientRegisterInfoModelTranslator.Instance.Translate(model);
+            //bool result = ClienterLogic.clienterLogic().Add(clienter);
+            //var resultModel = new ClientRegisterResultModel
+            //{
+            //    userId = clienter.Id,
+            //    city = string.IsNullOrWhiteSpace(clienter.City) ? null : clienter.City.Trim(),  //城市
+            //    cityId = string.IsNullOrWhiteSpace(clienter.CityId) ? null : clienter.CityId.Trim()  //城市编码
+            //};
+            //return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
+            return iClienterProvider.PostRegisterInfo_C(model);
+
         }
 
         /// <summary>
@@ -480,59 +482,50 @@ namespace SuperManWebApi.Controllers
             }
         }
         /// <summary>
-        /// 超人抢单
+        /// 超人抢单-平扬  2015.3.30
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="orderNo"></param>
         /// <returns></returns>
         [ActionStatus(typeof(RushOrderStatus))]
         [HttpGet]
-        public SuperManCore.Common.ResultModel<RushOrderResultModel> RushOrder_C(int userId, string orderNo)
+        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel> RushOrder_C(int userId, string orderNo)
         {
             if (userId == 0 || new Ets.Dao.Clienter.ClienterDao().GetUserInfoByUserId(userId) == null) //用户id验证
-                return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
-            else
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.userIdEmpty);
+            if (!iClienterProvider.HaveQualification(userId))  //判断 该骑士 是否 有资格 抢单 wc
             {
-                if (!iClienterProvider.HaveQualification(userId))  //判断 该骑士 是否 有资格 抢单 wc
-                {
-                    return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.HadCancelQualification);
-                }
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.HadCancelQualification);
             }
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
-                return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
-            if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null) //查询订单是否存在
-                return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotExist);
-            if (!ClienterLogic.clienterLogic().CheckOrderIsAllowRush(orderNo))  //查询订单是否被抢
-                return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
-
-            var myorder = ClienterLogic.clienterLogic().GetOrderByNo(orderNo);
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.OrderEmpty);
+            var myorder = new Ets.Dao.Order.OrderDao().GetOrderByNo(orderNo);
             if (myorder != null)
             {
                 if (myorder.Status == ConstValues.ORDER_CANCEL)   //判断订单状态是否为 已取消
                 {
-                    return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderHadCancel);  //订单已被取消
+                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.OrderHadCancel);  //订单已被取消
                 }
                 if (myorder.Status == ConstValues.ORDER_ACCEPT || myorder.Status == ConstValues.ORDER_FINISH)  //订单已接单，被抢  或 已完成
                 {
-                    return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
+                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.OrderIsNotAllowRush);
                 }
             }
             else
             {
-                return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotExist);  //订单不存在
-            }
-
-            //if (!ClienterLogic.clienterLogic().CheckOrderIsAllowRush(orderNo))  //查询订单是否被抢
-            //    return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
-
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.OrderIsNotExist);  //订单不存在
+            } 
 
             lock (lockHelper)
             {
-                bool bResult = ClienterLogic.clienterLogic().RushOrder(userId, orderNo);
+                bool bResult = iClienterProvider.RushOrder(userId, orderNo);
                 if (bResult)
-                    return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Success);
-                else
-                    return SuperManCore.Common.ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Failed);
+                {
+                    Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", myorder.businessId.ToString(), string.Empty);
+                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.Success);
+                }
+
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.Failed);
             }
         }
         /// <summary>

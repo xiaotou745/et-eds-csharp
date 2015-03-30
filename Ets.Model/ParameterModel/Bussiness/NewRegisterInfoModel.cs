@@ -165,7 +165,8 @@ namespace Ets.Model.ParameterModel.Bussiness
         [DisplayText("请填写佣金类型")]
         CommissionTypeIdEmpty = 113,
         [DisplayText("添加商铺失败")]
-        Faild = 114
-
+        Faild = 114,
+        [DisplayText("注册失败")]
+        ClientRegisterFaild=115
     }
 }
