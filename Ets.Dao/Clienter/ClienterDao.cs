@@ -441,6 +441,55 @@ namespace Ets.Dao.Clienter
             parm.AddWithValue("@OrderNo", orderNo);  
             return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Read, sql, parm)) > 0;
 
-        } 
+        }
+
+        /// <summary>
+        /// 获取附近任务 / 最新
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<order> GetOrdersNoLogin(ClientOrderSearchCriteria criteria)
+        {  
+            string where = " 1=1 "; 
+            if (criteria.status != null && criteria.status.Value != -1)
+            {
+                where += " and o.[Status]= " + criteria.status.Value;
+            }
+            string order = " o.PubDate desc "; 
+            string columnStr = @"   o.clienterId,
+                                    o.OrderNo,
+                                    o.Quantity,
+                                    o.OriginalOrderNo,
+                                    CONVERT(VARCHAR(5),o.PubDate,108) AS PubDate,
+                                    o.PickUpAddress,
+                                    o.ReceviceName,
+                                    o.ReceviceCity,
+                                    o.ReceviceAddress,
+                                    o.RecevicePhoneNo,
+                                    o.IsPay,
+                                    o.Remark,
+                                    o.Status,
+                                    o.ReceviceLongitude,
+                                    o.ReceviceLatitude,
+                                    o.OrderFrom,
+                                    o.OriginalOrderId,
+                                    o.Weight,
+                                    --补贴
+                                    o.CommissionRate,
+                                    o.OrderCount,
+                                    o.DistribSubsidy,
+                                    o.WebsiteSubsidy,
+                                    o.Amount,
+                                    --补贴
+                                    o.businessId,
+                                    b.Name AS BusinessName,
+                                    b.PhoneNo AS BusinessPhone,
+                                    REPLACE(b.City,'市','') AS pickUpCity,
+                                    b.Longitude as BusiLongitude,
+                                    b.Latitude as BusiLatitude,o.OrderCommission";
+            return new PageHelper().GetPages<order>(SuperMan_Read, criteria.PagingRequest.PageIndex, where, order, columnStr, "[order](NOLOCK) AS o LEFT JOIN business(NOLOCK) AS b ON o.businessId=b.Id", criteria.PagingRequest.PageSize, false);
+        
+        }
+
     }
 }

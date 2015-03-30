@@ -81,7 +81,7 @@ namespace Ets.Service.Provider.Common
         public Model.Common.ResultModel<List<AreaModel>> GetOpenCityInfo()
         {
             string key = string.Concat("Ets_Service_Provider_Common_GetOpenCity_New");
-            //根据版本号判断是否读取缓存
+            //读取缓存
             List<AreaModel> cacheAreaList = CacheFactory.Instance[key] as List<AreaModel>;
             if (cacheAreaList != null)
             {
@@ -91,6 +91,48 @@ namespace Ets.Service.Provider.Common
             List<AreaModel> list = dao.GetOpenCityInfoSql().ToList();
             CacheFactory.Instance.AddObject(key, list);
             return ResultModel<List<AreaModel>>.Conclude(ETS.Enums.CityStatus.Newest, list);
+        }
+        /// <summary>
+        /// 根据用户传递的  省、市、区名称、级别（省1，市2，区3）,转换为 国标码
+        /// 例如：用户传的是 Name:北京市,Code:1,级别:1，调用该方法返回：Name:北京市,Code:110000,级别:1
+        /// 在查询不到的情况下，返回null
+        /// wc
+        /// </summary>
+        /// <param name="from"></param>
+        /// <returns></returns>
+        public AreaModel GetNationalAreaInfo(AreaModel from)
+        {
+            AreaModel areaModel = new AreaModel();
+            AreaModel resultAreaModel = new AreaModel();
+            List<AreaModel> list = new List<AreaModel>();
+            string key = "Ets.Service.Provider.Common_GetNationalAreaInfo";
+        
+            List<AreaModel> cacheAreaModelList = CacheFactory.Instance[key] as List<AreaModel>;
+            if (cacheAreaModelList == null) //为null的时候，取数据库
+            {
+                list = dao.GetOpenCityInfoSql().ToList();
+                areaModel = list.FirstOrDefault(s => s.Name == from.Name.Trim() && s.JiBie == from.JiBie);
+                CacheFactory.Instance.AddObject(key, list);
+            }
+            else
+            { 
+                areaModel = cacheAreaModelList.FirstOrDefault(s => s.Name == from.Name.Trim() && s.JiBie == from.JiBie);
+            }
+
+
+            if (areaModel != null)
+            {
+                resultAreaModel.Code = areaModel.Code;
+                resultAreaModel.Name = areaModel.Name;
+                resultAreaModel.JiBie = from.JiBie;
+            }
+            else
+            {
+                resultAreaModel = null;
+            }
+            return resultAreaModel;
+            
+            
         }
     }
 }
