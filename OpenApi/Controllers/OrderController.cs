@@ -90,18 +90,10 @@ namespace OpenApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        //[SignOpenApi]
-        //[OpenApiActionError]
+        [SignOpenApi]
+        [OpenApiActionError]
         public ResultModel<object> AsyncStatus(ParaModel<AsyncStatusPM_OpenApi> paramodel)
         {
-            paramodel = new ParaModel<AsyncStatusPM_OpenApi>();
-
-            paramodel.fields = new AsyncStatusPM_OpenApi() { OriginalOrderNo = "1009358829", status = 1,order_no="1222222" };
-            paramodel.group = 2;
-
-
-
-
             IGroupProviderOpenApi groupProvider = OpenApiGroupFactory.Create(paramodel.group);
             if (groupProvider == null)
                 ResultModel<object>.Conclude(OrderApiStatusType.Success);  //无集团信息，不需要同步返回成功，实际应该不会该情况

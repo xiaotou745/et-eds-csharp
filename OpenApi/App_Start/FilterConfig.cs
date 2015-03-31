@@ -38,8 +38,11 @@ namespace OpenApi
             {
                 dynamic paramodel = actionContext.ActionArguments["paramodel"]; //当前请求的参数对象 
                 if (actionContext.ModelState.Count > 0 || paramodel == null) //参数错误，请求中止
+                {
                     actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
-                            (actionContext.ControllerContext, ResultModel<object>.Conclude(OrderApiStatusType.ParaError,actionContext.ModelState.Keys));
+                            (actionContext.ControllerContext, ResultModel<object>.Conclude(OrderApiStatusType.ParaError, actionContext.ModelState.Keys));
+                    return;
+                } 
                 IGroupProvider groupProvider = new GroupProvider();
                 GroupApiConfigModel groupCofigInfo = groupProvider.GetGroupApiConfigByAppKey(paramodel.app_key, paramodel.v).Data;
                 if (groupCofigInfo != null && groupCofigInfo.IsValid == 1)//集团可用，且有appkey信息
