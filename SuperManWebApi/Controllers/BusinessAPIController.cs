@@ -26,6 +26,7 @@ namespace SuperManWebApi.Controllers
     {
         IOrderProvider iOrderProvider = new OrderProvider();
         IBusinessProvider iBusinessProvider = new BusinessProvider();
+        readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
         /// <summary>
         /// 线程安全
         /// </summary>
@@ -102,7 +103,7 @@ namespace SuperManWebApi.Controllers
             var bprovider = new BusinessProvider();
             return bprovider.NewPostRegisterInfo_B(model);
         }
-         
+
 
         /// <summary>
         /// B端取消订单，供第三方使用-2015.3.27-平扬改
@@ -142,13 +143,17 @@ namespace SuperManWebApi.Controllers
 
         /// <summary>
         /// 接收订单，供第三方使用
+        /// 窦海超本地连调通过，因为是易淘食要对接，暂时没有内网测试
+        /// 2015年3月30日 17:41:50
         /// </summary>
         /// <param name="model">订单基本数据信息</param>
         /// <returns></returns>
-        [ActionStatus(typeof(OrderPublicshStatus))]
+
         [HttpPost]
-        public ResultModel<NewPostPublishOrderResultModel> NewPostPublishOrder_B(NewPostPublishOrderModel model)
+        public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Order.NewPostPublishOrderResultModel> NewPostPublishOrder_B(Ets.Model.ParameterModel.Order.NewPostPublishOrderModel model)
         {
+            #region 老的调用方式 
+            /*
             LogHelper.LogWriter("订单发布请求实体", new { model = model });
             if (string.IsNullOrWhiteSpace(model.OriginalOrderNo))   //原始订单号非空验证
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OriginalOrderNoEmpty);
@@ -197,6 +202,27 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OrderHadExist);
             }
+            //转换省
+            var _province = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModel() { Name = model.Receive_Province, JiBie = 1 });
+            if (_province != null)
+            {
+                model.Receive_ProvinceCode = _province.Name;
+                model.Receive_Province = _province.Code.ToString();
+            }
+            //转换市
+            var _city = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModel() { Name = model.Receive_City, JiBie = 2 });
+            if (_city != null)
+            {
+                model.Receive_City = _city.Name;
+                model.Receive_CityCode = _city.Code.ToString();
+            }
+            //转换区
+            var _area = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModel() { Name = model.Receive_Area, JiBie = 3 });
+            if (_area != null)
+            {
+                model.Receive_Area = _area.Name;
+                model.Receive_AreaCode = _area.Code.ToString();
+            } 
 
             order dborder = NewBusiOrderInfoModelTranslator.Instance.Translate(model);  //整合订单信息
             bool result = OrderLogic.orderLogic().AddModel(dborder);    //添加订单记录，并且触发极光推送。          
@@ -212,6 +238,10 @@ namespace SuperManWebApi.Controllers
                 LogHelper.LogWriter("订单发布失败", new { model = model });
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Failed);
             }
+             * 
+             * */
+            #endregion
+            return new OrderProvider().NewPostPublishOrder_B(model);
         }
 
         /// <summary>
@@ -284,7 +314,7 @@ namespace SuperManWebApi.Controllers
                 var destFullFileName = System.IO.Path.Combine(CustomerIconUploader.Instance.PhysicalPath, fileName);
 
                 transformer.Transform(fullFilePath, destFullFileName);
-                 
+
                 var picUrl = System.IO.Path.GetFileName(destFullFileName);
 
                 //var _status = BusiLogic.busiLogic().UpdateBusi(business, picUrl);
@@ -339,6 +369,8 @@ namespace SuperManWebApi.Controllers
             }
             if (model.OrderCount <= 0 || model.OrderCount > 15)   //判断录入订单数量是否符合要求
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.OrderCountError);
+
+
 
             Ets.Model.DataModel.Order.order order = iOrderProvider.TranslateOrder(model);
             string result = iOrderProvider.AddOrder(order);
@@ -651,7 +683,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="userId"></param>
         /// <param name="OrderId"></param>
         /// <returns></returns>
-       [HttpGet]
+        [HttpGet]
         [ActionStatus(typeof(ETS.Enums.CancelOrderStatus))]
         public Ets.Model.Common.ResultModel<bool> CancelOrder_B(string userId, string OrderId)
         {

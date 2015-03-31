@@ -367,27 +367,6 @@ namespace Ets.Dao.Clienter
         }
 
         /// <summary>
-        /// 检查号码是否存在-平扬 2015.3.30
-        /// </summary>
-        /// <param name="phoneNo"></param>
-        /// <returns></returns>
-        public bool CheckExistPhone(string phoneNo)
-        {
-            try
-            {
-                string sql = "SELECT 1 FROM dbo.clienter(NOLOCK) WHERE PhoneNo=@PhoneNo ";
-                IDbParameters parm = DbHelper.CreateDbParameters();
-                parm.AddWithValue("@PhoneNo", phoneNo);
-                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm)) > 0;
-            }
-            catch (Exception ex)
-            {
-                LogHelper.LogWriter(ex, "检查号码是否存在");
-                return false;
-            }
-        }
-
-        /// <summary>
         /// 注册超人
         /// </summary>
         /// <param name="model"></param>

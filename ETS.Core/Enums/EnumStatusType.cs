@@ -238,5 +238,46 @@ namespace ETS.Enums
         [DisplayText("上传图片失败")]
         UpFailed,
     }
+    public enum OrderPublicshStatus : int
+    {
+        [DisplayText("订单发布成功")]
+        Success = 1,
+        [DisplayText("订单发布失败")]
+        Failed = 0,
+        [DisplayText("原始订单号不能为空")]
+        OriginalOrderNoEmpty = 301,
 
+        [DisplayText("原平台商户Id不能为空")]
+        OriginalBusinessIdEmpty = 302,
+
+        [DisplayText("请确认是否已付款")]
+        IsPayEmpty = 303,
+        [DisplayText("收货人不能为空")]
+        ReceiveNameEmpty = 304,
+        [DisplayText("收货人手机号不能为空")]
+        ReceivePhoneEmpty = 305,
+
+        [DisplayText("收货人所在省不能为空")]
+        ReceiveProvinceEmpty = 306,
+
+        [DisplayText("收货人所在市不能为空")]
+        ReceiveCityEmpty = 307,
+
+        [DisplayText("收货人所在区不能为空")]
+        ReceiveAreaEmpty = 308,
+
+        [DisplayText("收货人地址不能为空")]
+        ReceiveAddressEmpty = 309,
+
+        [DisplayText("订单来源不能为空")]
+        OrderFromEmpty = 310,
+        [DisplayText("商户不存在,请先注册商户")]
+        BusinessNoExist = 311,
+        [DisplayText("该订单已存在")]
+        OrderHadExist = 312,
+        [DisplayText("商户未审核")]
+        BusinessNotAudit = 313
+
+
+    }
 }

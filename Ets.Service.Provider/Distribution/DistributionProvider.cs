@@ -56,16 +56,6 @@ namespace Ets.Service.Provider.Distribution
             return dao.ClearSuperManAmount(id);
         }
         /// <summary>
-        /// 检查骑士手机是否存在
-        /// danny-20150318
-        /// </summary>
-        /// <param name="phoneNo"></param>
-        /// <returns></returns>
-        public bool CheckExistPhone(string phoneNo)
-        {
-            return dao.CheckExistPhone(phoneNo);
-        }
-        /// <summary>
         /// 添加骑士
         /// danny-20150318
         /// </summary>

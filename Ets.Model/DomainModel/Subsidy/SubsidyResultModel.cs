@@ -20,5 +20,14 @@ namespace Ets.Model.DomainModel.Subsidy
         /// 网站补贴
         /// </summary>
         public decimal? WebsiteSubsidy { get; set; }
+
+        /// <summary>
+        /// 每公里费用
+        /// </summary>
+        public decimal PKMCost { get; set; }
+        /// <summary>
+        /// 订单类型
+        /// </summary>
+        public int OrderType { get; set; }
     }
 }
