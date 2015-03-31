@@ -785,9 +785,9 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.UserStatus))]
         [HttpGet]
-        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.ClienterStatusModel> GetUserStatus(int userId, string version)
+        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.ClienterStatusModel> GetUserStatus(int userId, double version_api)
         {
-            var model = new ClienterProvider().GetUserStatus(userId, version);
+            var model = new ClienterProvider().GetUserStatus(userId, version_api);
             if (model!=null)
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.ClienterStatusModel>.Conclude(

@@ -438,7 +438,7 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="UserId"></param>
         /// <param name="version"></param>
         /// <returns></returns>
-        public ClienterStatusModel GetUserStatus(int UserId, string version)
+        public ClienterStatusModel GetUserStatus(int UserId, double version)
         {
             try
             {

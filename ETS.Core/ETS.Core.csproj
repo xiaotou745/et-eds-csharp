@@ -54,6 +54,18 @@
     <Reference Include="NPOI.Util">
       <HintPath>..\packages\NPOI\NPOI.Util.dll</HintPath>
     </Reference>
+    <Reference Include="NServiceKit.Common">
+      <HintPath>..\lib\redis\NServiceKit.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="NServiceKit.Interfaces">
+      <HintPath>..\lib\redis\NServiceKit.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="NServiceKit.Redis">
+      <HintPath>..\lib\redis\NServiceKit.Redis.dll</HintPath>
+    </Reference>
+    <Reference Include="NServiceKit.Text">
+      <HintPath>..\lib\redis\NServiceKit.Text.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -72,6 +84,8 @@
     <Compile Include="Cacheing\AbstractCache.cs" />
     <Compile Include="Cacheing\CacheFactory.cs" />
     <Compile Include="Cacheing\LocalCache.cs" />
+    <Compile Include="NoSql\RedisCache\ISoaCacheService.cs" />
+    <Compile Include="NoSql\RedisCache\RedisCache.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Const\ClienterConst.cs" />
     <Compile Include="Const\SystemConst.cs" />
@@ -98,6 +112,7 @@
     <Compile Include="IO\FileIO.cs" />
     <Compile Include="IO\INIFileManager.cs" />
     <Compile Include="IO\IniParser.cs" />
+    <Compile Include="NoSql\RedisCache\RedisManager.cs" />
     <Compile Include="Page\IPagedDataTable.cs" />
     <Compile Include="Page\IPagedList.cs" />
     <Compile Include="Page\PagedDataTable.cs" />
@@ -141,6 +156,7 @@
     <Compile Include="Util\MailUtils.cs" />
     <Compile Include="Util\MD5Helper.cs" />
     <Compile Include="Util\ParseHelper.cs" />
+    <Compile Include="Util\SoaCommon.cs" />
     <Compile Include="Util\StringHelper.cs" />
     <Compile Include="Util\StringVerify.cs" />
     <Compile Include="Util\TimeHelper.cs" />

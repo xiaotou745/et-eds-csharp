@@ -14,18 +14,10 @@ namespace Ets.Model.ParameterModel.Bussiness
         /// <summary>
         /// 用户id
         /// </summary>
-        public int UserId { get; set; }
+        public int userid { get; set; }
         /// <summary>
         /// 状态
         /// </summary>
-        public int Status { get; set; } 
-        /// <summary>
-        /// 结算比例
-        /// </summary>
-        public decimal BusinessCommission { get; set; }
-        /// <summary>
-        /// 外送费
-        /// </summary>
-        public decimal DistribSubsidy { get; set; }
+        public int satus { get; set; } 
     }
 }
