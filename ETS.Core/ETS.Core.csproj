@@ -84,6 +84,7 @@
     <Compile Include="Cacheing\AbstractCache.cs" />
     <Compile Include="Cacheing\CacheFactory.cs" />
     <Compile Include="Cacheing\LocalCache.cs" />
+    <Compile Include="Const\RedissCacheKey.cs" />
     <Compile Include="NoSql\RedisCache\ISoaCacheService.cs" />
     <Compile Include="NoSql\RedisCache\RedisCache.cs" />
     <Compile Include="Config.cs" />
