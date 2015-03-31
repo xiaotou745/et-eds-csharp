@@ -157,7 +157,7 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Order.NewPostPublishOrderResultModel> NewPostPublishOrder_B(Ets.Model.ParameterModel.Order.NewPostPublishOrderModel model)
         {
-            #region 老的调用方式 
+            #region 老的调用方式
             /*
             LogHelper.LogWriter("订单发布请求实体", new { model = model });
             if (string.IsNullOrWhiteSpace(model.OriginalOrderNo))   //原始订单号非空验证
@@ -763,6 +763,17 @@ namespace SuperManWebApi.Controllers
                 new ServicePhone().GetCustomerServicePhone(CityName)
                 );
         }
+        #region redis测试方法，平扬看完可以删除
+
+        [HttpGet]
+        public void test() {
+            ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
+            redis.Add("1","123");
+
+           string ss= redis.Get<string>("1");
+        }
+        #endregion
+
 
         /// <summary>
         /// 获取用户状态
