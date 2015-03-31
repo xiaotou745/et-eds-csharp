@@ -417,7 +417,9 @@ namespace Ets.Dao.Clienter
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@clienterId", userId);
             parm.AddWithValue("@Status",ConstValues.ORDER_ACCEPT);
-            parm.AddWithValue("@OrderNo", orderNo);  
+            parm.Add("@OrderNo", SqlDbType.NVarChar);
+            parm.SetValue("@OrderNo", orderNo);
+             
             return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Read, sql, parm)) > 0;
 
         }

@@ -25,7 +25,7 @@ namespace Ets.Dao.Common
                     LEFT JOIN dbo.[group](NOLOCK) AS b ON a.GroupId=b.Id  WHERE b.IsValid=1 and GroupId={0}"
                 ,groupId);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql));
-            if (dt == null && dt.Rows.Count <= 0)
+            if (dt == null || dt.Rows.Count <= 0)
                 return null;
             return MapRows<GroupApiConfig>(dt)[0];
         }
