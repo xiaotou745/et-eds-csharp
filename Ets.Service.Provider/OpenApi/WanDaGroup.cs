@@ -39,12 +39,12 @@ namespace Ets.Service.IProvider.OpenApi
                     statusDesc = "订单已完成";
                     break;
                 case OrderConst.OrderStatus2:
-                    status = "sending";
-                    statusDesc = string.Format("{0}在配送，联系电话{1}", paramodel.fields.ClienterTrueName, paramodel.fields.ClienterPhoneNo);
+                    status = "agree";
+                    statusDesc = string.Format("{0}已确认可配送", paramodel.fields.ClienterTrueName);
                     break;
                 case OrderConst.OrderStatus3:
-                    status = "cancel";
-                    statusDesc = string.Format("{0}商户取消该订单", paramodel.fields.BusinessName);
+                    status = "refused";
+                    statusDesc = string.Format("{0}拒绝配送该订单", paramodel.fields.BusinessName);
                     break;
                 default:
                     break;
@@ -58,11 +58,13 @@ namespace Ets.Service.IProvider.OpenApi
                 method = "POST", //请求方式 
                 ts = ts, //时间戳
                 orderId = paramodel.fields.OriginalOrderNo, //订单 ID
-                staus = status,  //物流变更状态
+                status = status,  //物流变更状态
                 statusDesc = statusDesc,  //事件状态描述
-                syncTime = DateTime.Now, //同步时间
-                operatorId = 0, //操作人ID, 来源系统的账号id
-                @operator = "E代送系统"// 操作人姓名
+                syncTime =TimeHelper.GetTimeStamp(false), //同步时间
+                operatorId = 9999, //操作人ID, 来源系统的账号id
+                @operator = "E代送系统",// 操作人姓名
+                logisticsNo=paramodel.fields.order_no,
+                action = "takeoutsync"
             };
             string url = ConfigurationManager.AppSettings["WanDaAsyncStatus"];
             if (url == null)
