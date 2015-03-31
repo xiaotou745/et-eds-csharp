@@ -480,18 +480,18 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.RushOrderStatus))]
         [HttpGet]
-        public Ets.Model.Common.ResultModel<MyBalanceResultModel> GetMyBalance(string phoneNo)
+        public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.MyBalanceResultModel> GetMyBalance(string phoneNo)
         {
             if (string.IsNullOrEmpty(phoneNo))
             {
-                return Ets.Model.Common.ResultModel<MyBalanceResultModel>.Conclude(ETS.Enums.GetMyBalanceStatus.PhoneEmpty);
+                return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.MyBalanceResultModel>.Conclude(ETS.Enums.GetMyBalanceStatus.PhoneEmpty);
             }
-            var item = ClienterLogic.clienterLogic().GetMyBalanceByPhoneNo(phoneNo);
-            var result = new MyBalanceResultModel()
+            var item = iClienterProvider.GetUserInfoByUserPhoneNo(phoneNo);
+            var result = new Ets.Model.DataModel.Clienter.MyBalanceResultModel()
             {
-                MyBalance = item
+                MyBalance = item.AccountBalance
             };
-            return Ets.Model.Common.ResultModel<MyBalanceResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Success, result);
+            return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.MyBalanceResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Success, result);
         }
 
         /// <summary>
