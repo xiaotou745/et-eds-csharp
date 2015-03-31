@@ -479,10 +479,20 @@ namespace Ets.Service.Provider.Clienter
             return result.ToString();
         }
 
-
+        /// <summary>
+        /// 骑士完成订单
+        /// wc
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
         public string FinishOrder_C(int userId, string orderNo)
         {
-            throw new NotImplementedException();
+            string result = "0";
+
+
+
+            return result;
         }
     }
 }

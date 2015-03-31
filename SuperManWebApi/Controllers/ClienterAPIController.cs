@@ -32,6 +32,8 @@ namespace SuperManWebApi.Controllers
         private static object lockHelper = new object();
         readonly Ets.Service.IProvider.Clienter.IClienterProvider iClienterProvider = new Ets.Service.Provider.Clienter.ClienterProvider();
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
+        readonly Ets.Service.IProvider.Order.IOrderProvider iOrderProvider = new Ets.Service.Provider.Order.OrderProvider();
+
         /// <summary>
         /// C端注册 -平扬 2015.3.30
         /// </summary>
@@ -437,8 +439,19 @@ namespace SuperManWebApi.Controllers
 
             //完成订单时，先验证 订单状态 ，如果订单状态为已完成，则返回 该订单已完成，否则继续
             //查询 完成该订单的 骑士 信息，修改 骑士 的收入信息，同时在 Records 表中增加一条记录
+
+            Ets.Model.DataModel.Order.order myOrder = iOrderProvider.GetOrderInfoByOrderNo(orderNo);
+            if (myOrder.Status == Ets.Model.Common.ConstValues.ORDER_FINISH)   //如果订单已完成，则提示 该订单已完成
+            {
+                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderIsNotAllowRush);
+            }
              
+            
+
             int bResult = ClienterLogic.clienterLogic().FinishOrder(userId, orderNo);
+
+
+
             if (bResult == 2)
             {
                 var clienter = ClienterLogic.clienterLogic().GetClienterById(userId);

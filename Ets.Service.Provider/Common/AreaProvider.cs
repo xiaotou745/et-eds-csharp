@@ -30,6 +30,7 @@ namespace Ets.Service.Provider.Common
 
             if (version.Trim().Equals(Config.ApiVersion))//客户端请求
             {
+                areaList.Version = Config.ApiVersion;
                 ///没有最新
                 return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.UnNewest, areaList);
             }

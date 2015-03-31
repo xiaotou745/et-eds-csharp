@@ -124,13 +124,6 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="userId"></param>
         /// <param name="orderNo"></param>
         /// <returns></returns>
-        string FinishOrder(int userId, string orderNo);
-        /// <summary>
-        /// 骑士完成订单 wc
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="orderNo"></param>
-        /// <returns></returns>
-        string FinishOrder_C(int userId, string orderNo);
+        string FinishOrder(int userId, string orderNo); 
     }
 }
