@@ -113,12 +113,15 @@ namespace Ets.Dao.WtihdrawRecords
         /// <returns></returns>
         public PageInfo<IncomeModel> GetMyIncomeList(MyIncomeSearchCriteria model)
         {
-            string sqlwhere = " Amount > 0 ";
-            if (!string.IsNullOrEmpty(model.phoneNo))
+            //string sqlwhere = " Amount > 0 ";
+            if (string.IsNullOrEmpty(model.phoneNo))
             {
-                sqlwhere += " and C.PhoneNo='" + model.phoneNo+"'";
+                return null;
             }
-            return new PageHelper().GetPages<IncomeModel>(SuperMan_Read, model.PagingRequest.PageIndex, sqlwhere, " R.CreateTime ", " C.PhoneNo,'收入' as MyIncome1,Amount as MyInComeAmount,CreateTime as InsertTime ", " Records R (nolock) join clienter C (nolock) on R.UserId=C.Id ", model.PagingRequest.PageSize, true);
+            string column = @"Amount as MyInComeAmount,
+                            (CASE WHEN Amount>0 THEN '收入' ELSE '支出' END ) AS MyIncome1,
+                            CreateTime as InsertTime";
+            return new PageHelper().GetPages<IncomeModel>(SuperMan_Read, model.PagingRequest.PageIndex, "C.PhoneNo='" + model.phoneNo.Trim() + "' ", "  r.id desc ", column, " Records R (nolock) join clienter C (nolock) on R.UserId=C.Id ", model.PagingRequest.PageSize, true);
         }
 
 
