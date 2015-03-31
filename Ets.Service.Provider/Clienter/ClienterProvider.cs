@@ -17,12 +17,18 @@ using ETS.Enums;
 using Ets.Model.Common;
 using Ets.Dao.WtihdrawRecords;
 using ETS.Util;
+using ETS.Transaction.Common;
+using ETS.Transaction;
+using Ets.Dao.Order;
+using Ets.Model.ParameterModel.WtihdrawRecords;
+using Ets.Service.Provider.WtihdrawRecords;
 
 namespace Ets.Service.Provider.Clienter
 {
     public class ClienterProvider : IClienterProvider
     {
         readonly ClienterDao clienterDao = new ClienterDao();
+        readonly OrderDao orderDao = new OrderDao();
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
         public List<order> GetOrdersNoLoginLatest(ClientOrderSearchCriteria criteria)
         {
@@ -470,29 +476,50 @@ namespace Ets.Service.Provider.Clienter
         }
         public string FinishOrder(int userId, string orderNo)
         {
-            int result = -1;
+           string result = "-1";
+           using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+           {
+               //获取该订单信息和该  骑士现在的 收入金额
+               var myOrderInfo = orderDao.GetOrderInfoByOrderNo(orderNo);
 
-            //根据用户
-
-
-
-            return result.ToString();
+               //更新订单状态
+               if (myOrderInfo != null)
+               {
+                   orderDao.FinishOrderStatus(orderNo, userId, myOrderInfo);
+                   //更新骑士 金额  
+                   bool b = clienterDao.UpdateClienterAccountBalance(new WithdrawRecordsModel() { UserId = userId, Amount = myOrderInfo.OrderCommission.Value });
+                   //增加记录 
+                   decimal? AccountBalance = 0;
+                   //更新用户相关金额数据 
+                   if (myOrderInfo.AccountBalance.HasValue)
+                   {
+                       AccountBalance = myOrderInfo.AccountBalance.Value + (myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission));
+                   }
+                   else
+                   {
+                       AccountBalance = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission);
+                   }
+                   var model = new WithdrawRecordsModel
+                   {
+                       AdminId = 1,
+                       Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
+                       Balance = AccountBalance ?? 0,
+                       UserId = userId,
+                       Platform = 1
+                   };
+                   Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords = new WtihdrawRecordsProvider();
+                   iRecords.AddRecords(model); 
+                   tran.Complete();
+                   result = "1";
+               }
+           }
+           return result;
         }
 
-        /// <summary>
-        /// 骑士完成订单
-        /// wc
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="orderNo"></param>
-        /// <returns></returns>
-        public string FinishOrder_C(int userId, string orderNo)
+        public ClienterModel GetUserInfoByUserId(int UserId)
         {
-            string result = "0";
-
-
-
-            return result;
+            return clienterDao.GetUserInfoByUserId(UserId);
         }
     }
+
 }
