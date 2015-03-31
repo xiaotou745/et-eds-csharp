@@ -164,7 +164,16 @@ namespace Ets.Dao.Order
            ReceviceLatitude ,
            OrderCount ,
            CommissionRate,
-           CommissionFormulaMode
+           CommissionFormulaMode,
+           SongCanDate,
+           [Weight],
+          Quantity,
+          ReceiveProvince ,
+          ReceiveProvinceCode , 
+          ReceiveCityCode ,
+          ReceiveArea ,
+          ReceiveAreaCode,  
+          OriginalOrderNo
          )
  VALUES  ( @OrderNo ,
            @PickUpAddress ,
@@ -186,7 +195,16 @@ namespace Ets.Dao.Order
            @ReceviceLatitude ,
            @OrderCount ,
            @CommissionRate,
-           @CommissionFormulaMode
+           @CommissionFormulaMode,
+           @SongCanDate,
+           @Weight1,
+          @Quantity1,
+          @ReceiveProvince ,
+          @ReceiveProvinceCode , 
+          @ReceiveCityCode ,
+          @ReceiveArea ,
+          @ReceiveAreaCode,  
+          @OriginalOrderNo
          )");
 
             IDbParameters parm = DbHelper.CreateDbParameters(); 
@@ -215,6 +233,18 @@ namespace Ets.Dao.Order
             parm.AddWithValue("@OrderCount", order.OrderCount);
             parm.AddWithValue("@CommissionRate", order.CommissionRate);
             parm.AddWithValue("@CommissionFormulaMode", order.CommissionFormulaMode);
+
+            parm.AddWithValue("@SongCanDate", order.SongCanDate);
+            parm.AddWithValue("@Weight1", order.Weight);
+
+            parm.AddWithValue("@Quantity1", order.Quantity);
+            parm.AddWithValue("@ReceiveProvince", order.ReceiveProvince);
+            parm.AddWithValue("@ReceiveProvinceCode", order.ReceiveProvinceCode);
+            parm.AddWithValue("@ReceiveCityCode", order.ReceiveCityCode);
+            parm.AddWithValue("@ReceiveArea", order.ReceiveArea);
+            parm.AddWithValue("@ReceiveAreaCode", order.ReceiveAreaCode); 
+            parm.AddWithValue("@OriginalOrderNo", order.OriginalOrderNo);
+             
             return DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrder.ToString(), parm);
 
         }

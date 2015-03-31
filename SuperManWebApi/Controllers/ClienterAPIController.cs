@@ -41,28 +41,7 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.ClientRegisterResultModel> PostRegisterInfo_C(Ets.Model.ParameterModel.Clienter.ClientRegisterInfoModel model)
         {
-            //if (string.IsNullOrEmpty(model.phoneNo))  //手机号非空验证
-            //    return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
-            //else if (ClienterLogic.clienterLogic().CheckExistPhone(model.phoneNo))  //判断该手机号是否已经注册过
-            //    return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberRegistered);
-            //else if (string.IsNullOrEmpty(model.passWord)) //密码非空验证
-            //    return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PasswordEmpty);
-            //else if (string.IsNullOrEmpty(model.City) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
-            //    return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
-            //else if (model.verifyCode != SupermanApiCaching.Instance.Get(model.phoneNo)) //判断验码法录入是否正确
-            //    return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode);
-            //else if (model.recommendPhone != null && (!ClienterLogic.clienterLogic().CheckExistPhone(model.recommendPhone))
-            //    && (!BusiLogic.busiLogic().CheckExistPhone(model.recommendPhone))) //如果推荐人手机号在B端C端都不存在提示信息
-            //    return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberNotExist);
-            //var clienter = ClientRegisterInfoModelTranslator.Instance.Translate(model);
-            //bool result = ClienterLogic.clienterLogic().Add(clienter);
-            //var resultModel = new ClientRegisterResultModel
-            //{
-            //    userId = clienter.Id,
-            //    city = string.IsNullOrWhiteSpace(clienter.City) ? null : clienter.City.Trim(),  //城市
-            //    cityId = string.IsNullOrWhiteSpace(clienter.CityId) ? null : clienter.CityId.Trim()  //城市编码
-            //};
-            //return SuperManCore.Common.ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
+            
             return iClienterProvider.PostRegisterInfo_C(model);
 
         }
@@ -146,113 +125,7 @@ namespace SuperManWebApi.Controllers
             iClienterProvider.UpdateClientPicInfo(new Ets.Model.DomainModel.Clienter.ClienterModel { Id = int.Parse(strUserId), PicUrl = picUrl, PicWithHandUrl = picUrlWithHand, TrueName = trueName, IDCard = strIDCard });
             var relativePath = System.IO.Path.Combine(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.RelativePath, fileName).ToForwardSlashPath();
             return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id = 1, ImagePath = relativePath });
-        }
-
-        ///// <summary>
-        ///// C端上传图片
-        ///// </summary>
-        ///// <returns></returns>
-        //[HttpPost]
-        //public SuperManCore.Common.ResultModel<UploadIconModel> PostAudit_C()
-        //{
-        //    if (HttpContext.Current.Request.Form.Count == 0)
-        //    {
-        //        return SuperManCore.Common.ResultModel<UploadIconModel>.Conclude(UploadIconStatus.NOFormParameter);
-        //    }
-        //    var strUserId = HttpContext.Current.Request.Form["userId"]; //用户Id
-        //    var strIDCard = HttpContext.Current.Request.Form["IDCard"]; //身份证号
-        //    var trueName = HttpContext.Current.Request.Form["trueName"]; //真实姓名
-
-        //    var customer = ClienterLogic.clienterLogic().GetClienterById(int.Parse(strUserId));
-        //    if (customer == null)
-        //    {
-        //        return SuperManCore.Common.ResultModel<UploadIconModel>.Conclude(UploadIconStatus.InvalidUserId);
-        //    }
-        //    if (HttpContext.Current.Request.Files.Count == 0)
-        //    {
-        //        return SuperManCore.Common.ResultModel<UploadIconModel>.Conclude(UploadIconStatus.InvalidFileFormat);
-        //    }
-        //    if (string.IsNullOrEmpty(trueName))
-        //    {
-        //        return SuperManCore.Common.ResultModel<UploadIconModel>.Conclude(UploadIconStatus.TrueNameEmpty);
-        //    }
-        //    var fileHand = HttpContext.Current.Request.Files[0]; //手持照片
-        //    var file = HttpContext.Current.Request.Files[1]; //照片
-        //    System.Drawing.Image imgHand;
-        //    System.Drawing.Image img;
-        //    try
-        //    {
-        //        imgHand = System.Drawing.Image.FromStream(fileHand.InputStream);
-        //        img = System.Drawing.Image.FromStream(file.InputStream);
-        //        //if (img.Width < CustomerIconUploader.Instance.Width || img.Height < CustomerIconUploader.Instance.Height)
-        //        //{
-        //        //    return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.InvalidFileFormat);
-        //        //}
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return SuperManCore.Common.ResultModel<UploadIconModel>.Conclude(UploadIconStatus.InvalidFileFormat);
-        //    }
-
-        //    string originSize = "_0_0";
-
-        //    var fileHandName = string.Format("{0}_{1}_{2}", DateTime.Now.ToString("yyyyMMddhhmmssfff"), new Random().Next(1000), fileHand.FileName);
-        //    var fileName = string.Format("{0}_{1}_{2}", DateTime.Now.ToString("yyyyMMddhhmmssfff"), new Random().Next(1000), file.FileName);
-
-
-        //    int fileHandNameLastDot = fileHandName.LastIndexOf('.');
-
-        //    int fileNameLastDot = fileName.LastIndexOf('.');
-
-        //    //增加 原图 尺寸标记 _0_0
-        //    string rFileHandName = string.Format("{0}{1}{2}", fileHandName.Substring(0, fileHandNameLastDot), originSize, Path.GetExtension(fileHandName));
-        //    string rFileName = string.Format("{0}{1}{2}", fileName.Substring(0, fileNameLastDot), originSize, Path.GetExtension(fileName));
-
-
-        //    if (!System.IO.Directory.Exists(CustomerIconUploader.Instance.PhysicalPath))
-        //    {
-        //        System.IO.Directory.CreateDirectory(CustomerIconUploader.Instance.PhysicalPath);
-        //    }
-        //    var fullFilePath = Path.Combine(CustomerIconUploader.Instance.PhysicalPath, rFileName);
-        //    var fullFileHandPath = Path.Combine(CustomerIconUploader.Instance.PhysicalPath, rFileHandName);
-        //    //LogHelper.LogWriter("原图手持名称："+ rFileHandName + "   路径："+fullFileHandPath);
-        //    //LogHelper.LogWriter("tupian名称：" + rFileName + "   路径：" + fullFilePath);
-
-        //    //保存原图
-        //    file.SaveAs(fullFilePath);
-        //    fileHand.SaveAs(fullFileHandPath);
-
-        //    //裁图
-        //    var transformer = new FixedDimensionTransformerAttribute(CustomerIconUploader.Instance.Width, CustomerIconUploader.Instance.Height, CustomerIconUploader.Instance.MaxBytesLength / 1024);
-
-        //    //var destFileName = string.Format("{0}_{1}{2}", DateTime.Now.ToString("yyyyMMddhhmmss"), new Random().Next(1000), Path.GetExtension(file.FileName));
-        //    //var destFullFileName = System.IO.Path.Combine(CustomerIconUploader.Instance.PhysicalPath, destFileName);
-
-        //    var destFullFileName = System.IO.Path.Combine(CustomerIconUploader.Instance.PhysicalPath, fileName);
-        //    transformer.Transform(fullFilePath, destFullFileName);
-        //    //LogHelper.LogWriter("裁剪后图片名称：" + destFullFileName);
-
-        //    //var destFileHandName = string.Format("{0}_{1}{2}", DateTime.Now.ToString("yyyyMMddhhmmss"), new Random().Next(1000), Path.GetExtension(fileHand.FileName));
-        //    //var destFullFileHandName = System.IO.Path.Combine(CustomerIconUploader.Instance.PhysicalPath, destFileHandName);
-
-        //    var destFullFileHandName = System.IO.Path.Combine(CustomerIconUploader.Instance.PhysicalPath, fileHandName);
-        //    transformer.Transform(fullFileHandPath, destFullFileHandName);
-        //    //LogHelper.LogWriter("裁剪后手持图片名称：" + destFullFileHandName);
-
-        //    var picUrl = System.IO.Path.GetFileName(destFullFileName);
-        //    var picUrlWithHand = System.IO.Path.GetFileName(destFullFileHandName);
-
-        //    //LogHelper.LogWriter("picUrl：" + picUrl);
-        //    //LogHelper.LogWriter("picUrlWithHand：" + picUrlWithHand);
-
-        //    ClienterLogic.clienterLogic().UpdateClient(customer, picUrl, picUrlWithHand, trueName, strIDCard);
-
-
-        //    var relativePath = System.IO.Path.Combine(CustomerIconUploader.Instance.RelativePath, fileName).ToForwardSlashPath();
-        //    return SuperManCore.Common.ResultModel<UploadIconModel>.Conclude(UploadIconStatus.Success, new UploadIconModel() { Id = 1, ImagePath = relativePath });
-        //}
-
-
+        } 
         /// <summary>
         /// 获取我的任务   根据状态判断是已完成任务还是我的任务
         /// </summary>
@@ -275,8 +148,7 @@ namespace SuperManWebApi.Controllers
                 status = model.status,
                 isLatest = model.isLatest
             };
-            //var pagedList = ClienterLogic.clienterLogic().GetMyOrders(criteria);
-            //var lists = ClientOrderResultModelTranslator.Instance.Translate(pagedList);
+             
             IList<Ets.Model.DomainModel.Clienter.ClientOrderResultModel> lists = new ClienterProvider().GetMyOrders(criteria);
 
             lists = lists.OrderByDescending(i => i.pubDate).ToList();  //按照发布时间倒序排列
@@ -324,9 +196,7 @@ namespace SuperManWebApi.Controllers
 
             return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]>.Conclude(ETS.Enums.GetOrdersStatus.Success, pagedList.ToArray());
         }
-
-
-
+         
         /// <summary>
         /// Ado.net add 王超
         /// 未登录时获取最新任务     登录未登录根据城市有没有值判断。
@@ -391,10 +261,7 @@ namespace SuperManWebApi.Controllers
             };
 
             return new ClienterProvider().GetJobListNoLogin_C(criteria);
-            //var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLogin(criteria);
-            //var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
-            
-            //return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderNoLoginResultModel[]>.Conclude(ETS.Enums.GetOrdersNoLoginStatus.Success, lists.ToArray());
+           
         }
 
 
@@ -408,64 +275,11 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel> PostModifyPwd_C(Ets.Model.DataModel.Clienter.ModifyPwdInfoModel model)
         {
-            //if (string.IsNullOrEmpty(model.newPassword))
-            //{
-            //    return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.NewPwdEmpty);
-            //}
-            //var clienter = ClienterLogic.clienterLogic().GetClienter(model.phoneNo);
-            //if (clienter == null)
-            //{
-            //    return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.ClienterIsNotExist);
-            //}
-            //if (clienter.Password == model.newPassword)
-            //{
-            //    return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.PwdIsSame);
-            //}
-            //bool b = ClienterLogic.clienterLogic().ModifyPwd(clienter, model.newPassword);
-            //if (b)
-            //{
-            //    return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.Success);
-            //}
-            //else
-            //{
-            //    return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.FailedModifyPwd);
-            //}
+            
             ClienterProvider cliProvider = new ClienterProvider();
             return cliProvider.PostForgetPwd_C(model);
         }
-        /// <summary>
-        /// 修改密码 
-        /// wc
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        //[ActionStatus(typeof(ModifyPwdStatus))]
-        //[HttpPost]
-        //public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel> PostModifyPwd_C(Ets.Model.DataModel.Clienter.ModifyPwdInfoModel model)
-        //{
-        //    if (string.IsNullOrEmpty(model.newPassword))
-        //    {
-        //        return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ModifyPwdStatus.NewPwdEmpty);
-        //    }
-        //    var clienter = iClienterProvider.GetUserInfoByUserPhoneNo(model.phoneNo);
-        //    if (clienter == null)
-        //    {
-        //        return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ModifyPwdStatus.ClienterIsNotExist);
-        //    }
-        //    if (clienter.Password == model.newPassword)
-        //    {
-        //        return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ModifyPwdStatus.PwdIsSame);
-        //    }
-        //    bool b = iClienterProvider.UpdateClienterPwdByUserId(clienter.Id, model.newPassword);
-        //    if (b)
-        //    {
-        //        return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ModifyPwdStatus.Success);
-        //    }
-        //    else
-        //    {
-        //        return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ModifyPwdStatus.FailedModifyPwd);
-        //    }
-        //}
+         
         /// <summary>
         /// 忘记密码
         /// </summary>
@@ -511,49 +325,7 @@ namespace SuperManWebApi.Controllers
                 return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ForgetPwdStatus.FailedModifyPwd);
             }
         }
-        ///// <summary>
-        ///// 忘记密码
-        ///// </summary>
-        ///// <param name="phoneNo"></param>
-        ///// <param name="newPassword"></param>
-        ///// <returns></returns>
-        //[ActionStatus(typeof(ForgetPwdStatus))]
-        //[HttpPost]
-        //public SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel> PostForgetPwd_C(ForgetPwdInfoModel model)
-        //{
-        //    if (string.IsNullOrEmpty(model.password))
-        //    {
-        //        return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.NewPwdEmpty);
-        //    }
-        //    if (string.IsNullOrEmpty(model.checkCode))
-        //    {
-        //        return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeIsEmpty);
-        //    }
-        //    //start 需要验证 验证码是否正确
-        //    //if (SupermanApiCaching.Instance.Get(model.phoneNo) != model.checkCode)
-        //    //{
-        //    //    return ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong);
-        //    //}
-        //    //end
-        //    var clienter = ClienterLogic.clienterLogic().GetClienter(model.phoneNo);
-        //    if (clienter == null)
-        //    {
-        //        return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.ClienterIsNotExist);
-        //    }
-        //    if (clienter.Password == model.password)
-        //    {
-        //        return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.PwdIsSave);
-        //    }
-        //    bool b = ClienterLogic.clienterLogic().ModifyPwd(clienter, model.password);
-        //    if (b)
-        //    {
-        //        return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.Success);
-        //    }
-        //    else
-        //    {
-        //        return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.FailedModifyPwd);
-        //    }
-        //}
+        
         /// <summary>
         /// 超人抢单-平扬  2015.3.30
         /// </summary>
@@ -617,6 +389,10 @@ namespace SuperManWebApi.Controllers
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderEmpty);
             if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null) //订单是否存在验证
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderIsNotExist);
+            
+            //完成订单时，先验证 订单状态 ，如果订单状态为已完成，则返回 该订单已完成，否则继续
+            //查询 完成该订单的 骑士 信息，修改 骑士 的收入信息，同时在 Records 表中增加一条记录
+             
             int bResult = ClienterLogic.clienterLogic().FinishOrder(userId, orderNo);
             if (bResult == 2)
             {
@@ -638,6 +414,52 @@ namespace SuperManWebApi.Controllers
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Failed);
             }
         }
+
+
+
+        /// <summary>
+        /// 完成订单 edit by caoheyang 20150204
+        /// wc 该 ado
+        /// </summary>
+        /// <param name="userId">C端用户id</param>
+        /// <param name="orderNo">订单号码</param>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.FinishOrderStatus))]
+        [HttpGet]
+        public Ets.Model.Common.ResultModel<FinishOrderResultModel> FinishOrder_C_WC(int userId, string orderNo)
+        {
+            if (userId == 0)  //用户id非空验证
+                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.userIdEmpty);
+            if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
+                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderEmpty);
+            if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null) //订单是否存在验证
+                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderIsNotExist);
+
+            //完成订单时，先验证 订单状态 ，如果订单状态为已完成，则返回 该订单已完成，否则继续
+            //查询 完成该订单的 骑士 信息，修改 骑士 的收入信息，同时在 Records 表中增加一条记录
+             
+            int bResult = ClienterLogic.clienterLogic().FinishOrder(userId, orderNo);
+            if (bResult == 2)
+            {
+                var clienter = ClienterLogic.clienterLogic().GetClienterById(userId);
+                var model = new FinishOrderResultModel();
+                model.userId = userId;
+                if (clienter.AccountBalance != null)
+                    model.balanceAmount = clienter.AccountBalance.Value;
+                else
+                    model.balanceAmount = 0.0m;
+                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Success, model);
+            }
+            else if (bResult == 1)
+            {
+                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderIsNotAllowRush);
+            }
+            else
+            {
+                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Failed);
+            }
+        }
+
         /// <summary>
         /// 获取我的余额
         /// </summary>
@@ -645,18 +467,18 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.RushOrderStatus))]
         [HttpGet]
-        public Ets.Model.Common.ResultModel<MyBalanceResultModel> GetMyBalance(string phoneNo)
+        public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.MyBalanceResultModel> GetMyBalance(string phoneNo)
         {
             if (string.IsNullOrEmpty(phoneNo))
             {
-                return Ets.Model.Common.ResultModel<MyBalanceResultModel>.Conclude(ETS.Enums.GetMyBalanceStatus.PhoneEmpty);
+                return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.MyBalanceResultModel>.Conclude(ETS.Enums.GetMyBalanceStatus.PhoneEmpty);
             }
-            var item = ClienterLogic.clienterLogic().GetMyBalanceByPhoneNo(phoneNo);
-            var result = new MyBalanceResultModel()
+            var item = iClienterProvider.GetUserInfoByUserPhoneNo(phoneNo);
+            var result = new Ets.Model.DataModel.Clienter.MyBalanceResultModel()
             {
-                MyBalance = item
+                MyBalance = item.AccountBalance == null ? 0 : item.AccountBalance
             };
-            return Ets.Model.Common.ResultModel<MyBalanceResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Success, result);
+            return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.MyBalanceResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Success, result);
         }
 
         /// <summary>
@@ -701,11 +523,7 @@ namespace SuperManWebApi.Controllers
             var randomCode = new Random().Next(100000).ToString("D6");
             string msg = string.Empty;
             if (type == "0")//注册
-            {
-                //if (ClienterLogic.clienterLogic().CheckExistPhone(PhoneNumber))  //判断该手机号是否已经注册过
-                //{
-                //    return SimpleResultModel.Conclude(SendCheckCodeStatus.AlreadyExists);
-                //}  
+            { 
                 if (iClienterProvider.CheckClienterExistPhone(PhoneNumber))  //判断该手机号是否已经注册过
                     return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.AlreadyExists);
 

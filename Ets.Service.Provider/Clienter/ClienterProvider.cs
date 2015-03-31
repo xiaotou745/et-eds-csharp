@@ -478,5 +478,11 @@ namespace Ets.Service.Provider.Clienter
 
             return result.ToString();
         }
+
+
+        public string FinishOrder_C(int userId, string orderNo)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
