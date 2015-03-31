@@ -189,8 +189,9 @@ namespace Ets.Dao.Order
            @CommissionFormulaMode
          )");
 
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@OrderNo", order.OrderNo);
+            IDbParameters parm = DbHelper.CreateDbParameters(); 
+            parm.Add("@OrderNo", SqlDbType.NVarChar);
+            parm.SetValue("@OrderNo", order.OrderNo);
             parm.AddWithValue("@PickUpAddress", order.PickUpAddress);
             parm.AddWithValue("@PubDate", order.PubDate);
             parm.AddWithValue("@ReceviceName", order.ReceviceName);
@@ -300,7 +301,10 @@ namespace Ets.Dao.Order
                 @WebsiteSubsidy,@CommissionRate,@CommissionFormulaMode)";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             ///基本参数信息
-            dbParameters.AddWithValue("@OrderNo", Helper.generateOrderCode(bussinessId));  //根据商户id生成订单号(15位));
+            
+            dbParameters.Add("@OrderNo", SqlDbType.NVarChar);
+            dbParameters.SetValue("@OrderNo", Helper.generateOrderCode(bussinessId)); //根据商户id生成订单号(15位));
+
             dbParameters.AddWithValue("@OriginalOrderNo", paramodel.order_id);    //其它平台的来源订单号
             dbParameters.AddWithValue("@PubDate", paramodel.create_time);    //订单下单时间
             dbParameters.AddWithValue("@SongCanDate", paramodel.receive_time);  ///要求送餐时间
@@ -343,7 +347,9 @@ namespace Ets.Dao.Order
                  VALUES  (@OrderNo ,@ProductName ,@UnitPrice ,@Quantity,@FormDetailID,@GroupID)";
                 IDbParameters insertOrderDetaiParas = DbHelper.CreateDbParameters();
                 ///基本参数信息
-                insertOrderDetaiParas.AddWithValue("@OrderNo", orderNo);    //订单号
+                //订单号
+                insertOrderDetaiParas.Add("@OrderNo", SqlDbType.NVarChar);
+                insertOrderDetaiParas.SetValue("@OrderNo", orderNo);
                 insertOrderDetaiParas.AddWithValue("@ProductName", paramodel.order_details[i].product_name);    //商品名称
                 insertOrderDetaiParas.AddWithValue("@UnitPrice", paramodel.order_details[i].unit_price);    //商品单价，精确到两位小数
                 insertOrderDetaiParas.AddWithValue("@Quantity", paramodel.order_details[i].quantity);    //商品数量
@@ -508,7 +514,8 @@ namespace Ets.Dao.Order
             {
                 string sql = @" update [order] set OrderCommission=@OrderCommission where OrderNo=@OrderNo ";
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
-                dbParameters.AddWithValue("@OrderNo", order.OrderNo);
+                dbParameters.Add("@OrderNo", SqlDbType.NVarChar);
+                dbParameters.SetValue("@OrderNo", order.OrderNo);
                 dbParameters.AddWithValue("@OrderCommission", order.OrderCommission);
                 int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
                 if (i > 0) reslut = true;
@@ -578,7 +585,8 @@ namespace Ets.Dao.Order
                                      LEFT JOIN dbo.clienter c WITH (NOLOCK) ON o.clienterId=c.Id
                                     WHERE 1=1 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@OrderNo", orderNo);
+            parm.Add("@OrderNo", SqlDbType.NVarChar);
+            parm.SetValue("@OrderNo", orderNo); 
             if (!string.IsNullOrWhiteSpace(orderNo))
             {
                 sql += " AND OrderNo=@OrderNo";
@@ -611,7 +619,9 @@ namespace Ets.Dao.Order
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
                 dbParameters.AddWithValue("@clienterId", order.clienterId);
                 dbParameters.AddWithValue("@Status", ConstValues.ORDER_ACCEPT);
-                dbParameters.AddWithValue("@OrderNo", order.OrderNo);
+                dbParameters.Add("@OrderNo", SqlDbType.NVarChar);
+                dbParameters.SetValue("@OrderNo", order.OrderNo);
+               
                 int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
                 if (i > 0)
                 {
@@ -640,7 +650,9 @@ namespace Ets.Dao.Order
  WHERE  OrderNo = @orderNo");
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@orderNo", orderNo);    //订单号
+             //订单号
+            dbParameters.Add("@orderNo", SqlDbType.NVarChar);
+            dbParameters.SetValue("@orderNo", orderNo);
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, selSql, dbParameters);
 
             return ParseHelper.ToInt(executeScalar, 0);
@@ -658,7 +670,9 @@ namespace Ets.Dao.Order
         { 
             string selSql = string.Format(@" SELECT 1 FROM  [order] WITH(NOLOCK)  WHERE  OrderNo = @orderNo and [Status]=0 ");
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@orderNo", orderNo);    //订单号
+            //订单号
+            dbParameters.Add("@orderNo", SqlDbType.NVarChar);
+            dbParameters.SetValue("@orderNo", orderNo);
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, selSql, dbParameters); 
             return ParseHelper.ToInt(executeScalar, 0)>0; 
         }
@@ -679,8 +693,9 @@ namespace Ets.Dao.Order
  WHERE  OrderNo = @orderNo");
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@orderNo", orderNo);    //订单号
-            dbParameters.AddWithValue("@status", orderStatus);    //订单号
+            dbParameters.Add("@orderNo", SqlDbType.NVarChar);
+            dbParameters.SetValue("@orderNo", orderNo);  //订单号  
+            dbParameters.AddWithValue("@status", orderStatus);    
 
             object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Read, upSql, dbParameters);
 
@@ -949,7 +964,8 @@ namespace Ets.Dao.Order
         o.CommissionFormulaMode  FROM dbo.[order] o (NOLOCK)  WHERE 1 = 1 
                                      ";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@OrderNo", orderNo);
+            parm.Add("@OrderNo", SqlDbType.NVarChar);
+            parm.SetValue("@OrderNo", orderNo); 
             if (!string.IsNullOrWhiteSpace(orderNo))
             {
                 sql += " AND OrderNo=@OrderNo";

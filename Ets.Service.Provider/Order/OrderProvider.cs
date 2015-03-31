@@ -412,21 +412,22 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <param name="paramodel">参数实体</param>
         /// <returns>订单详情</returns>
-        public ResultModel<object> AsyncOrderStatus(string orderNo)
+        public void AsyncOrderStatus(string orderNo)
         {
             OrderListModel orderlistModel = OrderDao.GetOrderByNo(orderNo);
-            ParaModel<AsyncStatusPM_OpenApi> paramodel = new ParaModel<AsyncStatusPM_OpenApi>() { group = orderlistModel.GroupId, fields = new AsyncStatusPM_OpenApi() };
-            if (paramodel.GetSign() == null)//为当前集团参数实体生成sign签名信息
-                return null;
-            paramodel.fields.status = ParseHelper.ToInt(orderlistModel.Status, -1);
-            paramodel.fields.ClienterTrueName = orderlistModel.ClienterTrueName;
-            paramodel.fields.ClienterPhoneNo = orderlistModel.ClienterPhoneNo;
-            paramodel.fields.BusinessName = orderlistModel.BusinessName;
-            paramodel.fields.OriginalOrderNo = orderlistModel.OriginalOrderNo;
-            string url = ConfigurationManager.AppSettings["AsyncStatus"];
-            string json = new HttpClient().PostAsJsonAsync(url, paramodel).Result.Content.ReadAsStringAsync().Result;
-            JObject jobject = JObject.Parse(json);
-            return null;
+            if (orderlistModel.GroupId != null) {
+                ParaModel<AsyncStatusPM_OpenApi> paramodel = new ParaModel<AsyncStatusPM_OpenApi>() { group = orderlistModel.GroupId, fields = new AsyncStatusPM_OpenApi() };
+                if (paramodel.GetSign() == null)//为当前集团参数实体生成sign签名信息
+                    return;
+                paramodel.fields.status = ParseHelper.ToInt(orderlistModel.Status, -1);
+                paramodel.fields.ClienterTrueName = orderlistModel.ClienterTrueName;
+                paramodel.fields.ClienterPhoneNo = orderlistModel.ClienterPhoneNo;
+                paramodel.fields.BusinessName = orderlistModel.BusinessName;
+                paramodel.fields.OriginalOrderNo = orderlistModel.OriginalOrderNo;
+                string url = ConfigurationManager.AppSettings["AsyncStatus"];
+                string json = new HttpClient().PostAsJsonAsync(url, paramodel).Result.Content.ReadAsStringAsync().Result;
+                JObject jobject = JObject.Parse(json);
+            }
         }
 
         #endregion
