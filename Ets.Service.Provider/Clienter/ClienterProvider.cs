@@ -271,7 +271,12 @@ namespace Ets.Service.Provider.Clienter
         { 
             try
             {
-                return clienterDao.RushOrder(userId, orderNo); 
+                bool res = clienterDao.RushOrder(userId, orderNo);
+                if (res) {
+                    var orderPro = new OrderProvider();
+                    orderPro.AsyncOrderStatus(orderNo);
+                }
+                return res; 
             }
             catch (Exception ex)
             {
