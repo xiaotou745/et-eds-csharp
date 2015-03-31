@@ -545,8 +545,8 @@ namespace Ets.Service.Provider.Order
             }
             #endregion 
             order dborder = OrderInstance(model);  //整合订单信息
-            bool result = Convert.ToBoolean(AddOrder(dborder));    //添加订单记录，并且触发极光推送。          
-            if (result)
+            string addResult = AddOrder(dborder);    //添加订单记录，并且触发极光推送。          
+            if (addResult == "1")
             {
                 NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { OriginalOrderNo = model.OriginalOrderNo, OrderNo = dborder.OrderNo };
                 LogHelper.LogWriter("订单发布成功", new { model = model, resultModel = resultModel });
@@ -589,7 +589,7 @@ namespace Ets.Service.Provider.Order
                 to.PickUpAddress = business.Address;  //提取地址
                 to.PubDate = DateTime.Now; //提起时间
                 to.ReceviceCity = business.City; //城市
-            }
+            } 
             to.SongCanDate = from.SongCanDate; //送餐时间
             to.Remark = from.Remark;
 

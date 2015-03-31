@@ -95,6 +95,55 @@ WITH    t AS ( SELECT   a.Code ,
             DataSet ds = DbHelper.ExecuteDataset(SuperMan_Read, sql);
             return MapRows<AreaModel>(DataTableHelper.GetTable(ds));
         }
-         
+
+
+        /// <summary>
+        /// 根据开放城市获取 region 表中的信息,主要是国标码 
+        /// wc 
+        /// </summary>
+        /// <returns></returns>
+        public IList<AreaModelTranslate> GetRegionInfo()
+        {
+
+            string sql = string.Format(@"
+ WITH   t AS ( SELECT   a.NationalCode ,
+                        a.Name ,
+                        a.Code ,
+                        a.Id ,
+                        JiBie = 1
+               FROM     dbo.region a ( NOLOCK )
+               WHERE    a.Depth = 2
+                        AND a.NationalCode IN ( {0} )
+             )
+    SELECT  t.NationalCode ,
+            t.Name ,
+            t.Code ,
+            t.JiBie
+    FROM    t
+    UNION
+    SELECT  b.NationalCode ,
+            b.Name ,
+            b.Code ,
+            JiBie = 2
+    FROM    t
+            LEFT JOIN dbo.region (NOLOCK) AS b ON t.Id = b.Fid
+    UNION
+    SELECT  c.NationalCode ,
+            c.Name ,
+            c.Code ,
+            JiBie = 3
+    FROM    ( SELECT    b.NationalCode ,
+                        b.Name ,
+                        b.Id ,
+                        JiBie = 2
+              FROM      t
+                        LEFT JOIN dbo.region (NOLOCK) AS b ON t.Id = b.Fid
+            ) t1
+            LEFT JOIN dbo.region (NOLOCK) AS c ON t1.Id = c.Fid", Config.OpenCityCode);
+
+
+            DataSet ds = DbHelper.ExecuteDataset(SuperMan_Read, sql);
+            return MapRows<AreaModelTranslate>(DataTableHelper.GetTable(ds));
+        }
     }
 }

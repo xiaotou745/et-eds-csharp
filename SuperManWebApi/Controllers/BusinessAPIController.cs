@@ -18,13 +18,7 @@ using Ets.Service.IProvider.Order;
 using Ets.Service.Provider.Order;
 using Ets.Service.Provider.Common;
 using Ets.Service.IProvider.User;
-using ETS.Cacheing;
-using BusiAddAddressStatus = SuperManWebApi.Models.Business.BusiAddAddressStatus;
-using CancelOrderStatus = SuperManCore.Common.CancelOrderStatus;
-using GetOrdersStatus = SuperManCore.Common.GetOrdersStatus;
-using LoginModelStatus = SuperManCore.Common.LoginModelStatus;
-using PubOrderStatus = SuperManCore.Common.PubOrderStatus;
-
+using ETS.Cacheing; 
 namespace SuperManWebApi.Controllers
 {
     public class BusinessAPIController : ApiController
@@ -50,51 +44,7 @@ namespace SuperManWebApi.Controllers
             return bprovider.PostRegisterInfo_B(model);
         }
 
-        ///// <summary>
-        ///// B端注册，供第三方使用
-        ///// </summary>
-        ///// <param name="model">注册用户基本数据信息</param>
-        ///// <returns></returns>
-        //[ActionStatus(typeof(CustomerRegisterStatus))]
-        //[HttpPost]
-        //public ResultModel<NewBusiRegisterResultModel> NewPostRegisterInfo_B(NewRegisterInfoModel model)
-        //{
-        //    if (string.IsNullOrWhiteSpace(model.PhoneNo))   //手机号非空验证
-        //        return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
-        //    //else if (BusiLogic.busiLogic().CheckExistPhone(model.PhoneNo))  //判断该手机号是否已经注册过
-        //    //    return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberRegistered);
-        //    else if (string.IsNullOrWhiteSpace(model.B_OriginalBusiId.ToString()))  //判断原平台商户Id不能为空
-        //        return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.OriginalBusiIdEmpty);
-        //    else if (string.IsNullOrWhiteSpace(model.B_GroupId.ToString()))  //集团Id不能为空
-        //        return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.GroupIdEmpty);
-        //    else if (BusiLogic.busiLogic().CheckExistBusi(model.B_OriginalBusiId, model.B_GroupId))
-        //        return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.OriginalBusiIdRepeat);
-        //    else if (string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_CityCode.ToString())) //城市以及城市编码非空验证
-        //        return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
-        //    else if (string.IsNullOrEmpty(model.B_Name.Trim())) //商户名称
-        //        return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiNameEmpty);
-        //    else if (string.IsNullOrWhiteSpace(model.Address) || string.IsNullOrWhiteSpace(model.B_Province) || string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_Area) || string.IsNullOrWhiteSpace(model.B_AreaCode) || string.IsNullOrWhiteSpace(model.B_CityCode) || string.IsNullOrWhiteSpace(model.B_ProvinceCode))  //商户地址 省市区 不能为空
-        //        return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
-        //    else if (model.CommissionTypeId == 0)
-        //    {
-        //        return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
-        //    }
-        //    if (string.IsNullOrEmpty(model.B_Password))   //密码为空时 设置默认密码
-        //        model.B_Password = MD5Helper.MD5("abc123");
-        //    else
-        //    {
-        //        model.B_Password = MD5Helper.MD5(model.B_Password);
-        //    }
-        //    var business = NewRegisterInfoModelTranslator.Instance.Translate(model);
-        //    bool result = BusiLogic.busiLogic().Add(business, true);
-        //    var resultModel = new NewBusiRegisterResultModel
-        //    {
-        //        BusiRegisterId = business.Id
-        //    };
-        //    LogHelper.LogWriter("第三方调用商户注册接口", new { model = model, Message = CustomerRegisterStatus.Success });
-        //    return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
-        //}
-
+        
 
         /// <summary>
         /// B端注册，供第三方使用-平扬 2015.3.27修改成 ado方式
@@ -115,33 +65,11 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model">订单基本数据信息</param>
         /// <returns></returns>
-        [ActionStatus(typeof(CancelOrderStatus))]
+        [ActionStatus(typeof(ETS.Enums.CancelOrderStatus))]
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.OrderCancelResultModel> NewOrderCancel(Ets.Model.ParameterModel.Bussiness.OrderCancelModel model)
         {
-            //LogHelper.LogWriter("第三方调用取消订单：", new { model = model });
-            //if (string.IsNullOrEmpty(model.OriginalOrderNo))   //订单号非空验证
-            //    return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderEmpty);
-            //if (string.IsNullOrEmpty(model.OrderFrom.ToString()))   //订单来源非空验证
-            //    return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderFromEmpty);
-            //var order = OrderLogic.orderLogic().GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom, model.OrderType);
-            //if (order == null)
-            //{
-            //    return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderIsNotExist);
-            //}
-            //if (order.Status == 3)
-            //{
-            //    return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.Success);
-            //}
-            //bool b = OrderLogic.orderLogic().UpdateOrder(model.OriginalOrderNo, model.OrderFrom, OrderStatus.订单已取消);
-            //if (b == true)
-            //{
-            //    return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.Success);
-            //}
-            //else
-            //{
-            //    return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.NotCancelOrder, new OrderCancelResultModel { Remark = "取消失败" });
-            //}
+            
             var bprovider = new BusinessProvider();
             return bprovider.NewOrderCancel(model);
         }
@@ -156,96 +84,7 @@ namespace SuperManWebApi.Controllers
 
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Order.NewPostPublishOrderResultModel> NewPostPublishOrder_B(Ets.Model.ParameterModel.Order.NewPostPublishOrderModel model)
-        {
-            #region 老的调用方式
-            /*
-            LogHelper.LogWriter("订单发布请求实体", new { model = model });
-            if (string.IsNullOrWhiteSpace(model.OriginalOrderNo))   //原始订单号非空验证
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OriginalOrderNoEmpty);
-            if (model.OriginalBusinessId == 0)   //原平台商户Id非空验证
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OriginalBusinessIdEmpty);
-            if (string.IsNullOrWhiteSpace(model.OrderFrom.ToString()))   //订单来源
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OrderFromEmpty);
-            if (string.IsNullOrWhiteSpace(model.IsPay.ToString()))   //请确认是否已付款
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.IsPayEmpty);
-
-            if (string.IsNullOrWhiteSpace(model.ReceiveName))    //收货人名称
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.ReceiveNameEmpty);
-
-            if (string.IsNullOrWhiteSpace(model.ReceivePhoneNo)) //手机号
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.ReceivePhoneEmpty);
-
-            if (string.IsNullOrWhiteSpace(model.Receive_Province) || string.IsNullOrWhiteSpace(model.Receive_ProvinceCode))  //所在省
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.ReceiveProvinceEmpty);
-
-            if (string.IsNullOrWhiteSpace(model.Receive_City) || string.IsNullOrWhiteSpace(model.Receive_CityCode))  //所在市
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude
-                    (OrderPublicshStatus.ReceiveCityEmpty);
-
-            if (string.IsNullOrWhiteSpace(model.Receive_Area) || string.IsNullOrWhiteSpace(model.Receive_AreaCode))  //所在区
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.ReceiveAreaEmpty);
-
-            if (string.IsNullOrWhiteSpace(model.Receive_Address))   //收货地址
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude
-                    (OrderPublicshStatus.ReceiveAddressEmpty);
-            //验证原平台商户是否已经注册
-            var busi = BusiLogic.busiLogic().GetBusiByOriIdAndOrderFrom(model.OriginalBusinessId, model.OrderFrom);
-            if (busi == null)
-            {
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.BusinessNoExist);
-            }
-            else
-            {
-                if (busi.Status != ConstValues.BUSINESS_AUDITPASS)
-                {
-                    return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.BusinessNotAudit);
-                }
-            }
-            //验证该平台 商户 订单号 是否存在
-            var order = OrderLogic.orderLogic().GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom, model.OrderType);
-            if (order != null)
-            {
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OrderHadExist);
-            }
-            //转换省
-            var _province = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModel() { Name = model.Receive_Province, JiBie = 1 });
-            if (_province != null)
-            {
-                model.Receive_ProvinceCode = _province.Name;
-                model.Receive_Province = _province.Code.ToString();
-            }
-            //转换市
-            var _city = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModel() { Name = model.Receive_City, JiBie = 2 });
-            if (_city != null)
-            {
-                model.Receive_City = _city.Name;
-                model.Receive_CityCode = _city.Code.ToString();
-            }
-            //转换区
-            var _area = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModel() { Name = model.Receive_Area, JiBie = 3 });
-            if (_area != null)
-            {
-                model.Receive_Area = _area.Name;
-                model.Receive_AreaCode = _area.Code.ToString();
-            } 
-
-            order dborder = NewBusiOrderInfoModelTranslator.Instance.Translate(model);  //整合订单信息
-            bool result = OrderLogic.orderLogic().AddModel(dborder);    //添加订单记录，并且触发极光推送。          
-            if (result)
-            {
-                NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { OriginalOrderNo = model.OriginalOrderNo, OrderNo = dborder.OrderNo };
-                LogHelper.LogWriter("订单发布成功", new { model = model, resultModel = resultModel });
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Success, resultModel);
-            }
-            else
-            {
-                NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { Remark = "订单发布失败" };
-                LogHelper.LogWriter("订单发布失败", new { model = model });
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Failed);
-            }
-             * 
-             * */
-            #endregion
+        { 
             return new OrderProvider().NewPostPublishOrder_B(model);
         }
 
@@ -254,7 +93,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [ActionStatus(typeof(LoginModelStatus))]
+        [ActionStatus(typeof(ETS.Enums.LoginModelStatus))]
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Bussiness.BusiLoginResultModel> PostLogin_B(Ets.Model.ParameterModel.Bussiness.LoginModel model)
         {
@@ -274,9 +113,7 @@ namespace SuperManWebApi.Controllers
             if (!Int32.TryParse(strUserId, out userId))
             {
                 return Ets.Model.Common.ResultModel<UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidUserId);
-            }
-
-            //var business = BusiLogic.busiLogic().GetBusinessById(userId);
+            }  
             var business = iBusinessProvider.GetBusiness(userId);  //判断商户是否存在
             if (business == null)
             {
@@ -292,14 +129,9 @@ namespace SuperManWebApi.Controllers
             try
             {
                 img = System.Drawing.Image.FromStream(file.InputStream);
-                //if (img.Width < CustomerIconUploader.Instance.Width || img.Height < CustomerIconUploader.Instance.Height)
-                //{
-                //    return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.InvalidFileFormat);
-                //}
+               
                 string originSize = "_0_0";
-
-                //var fileName = string.Format("{0}_{1}", DateTime.Now.ToString("yyyyMMddhhmmss"), file.FileName);
-
+ 
                 var fileName = string.Format("{0}_{1}_{2}", DateTime.Now.ToString("yyyyMMddhhmmssfff"), new Random().Next(1000), file.FileName);
                 int fileNameLastDot = fileName.LastIndexOf('.');
 
@@ -314,15 +146,13 @@ namespace SuperManWebApi.Controllers
                 file.SaveAs(fullFilePath);
 
                 var transformer = new FixedDimensionTransformerAttribute(CustomerIconUploader.Instance.Width, CustomerIconUploader.Instance.Height, CustomerIconUploader.Instance.MaxBytesLength / 1024);
-                //var destFileName = string.Format("{0}_{1}{2}", DateTime.Now.ToString("yyyyMMddhhmmss"), new Random().Next(1000), Path.GetExtension(file.FileName));
-                //var destFullFileName = System.IO.Path.Combine(CustomerIconUploader.Instance.PhysicalPath, destFileName);
+                
                 var destFullFileName = System.IO.Path.Combine(CustomerIconUploader.Instance.PhysicalPath, fileName);
 
                 transformer.Transform(fullFilePath, destFullFileName);
 
                 var picUrl = System.IO.Path.GetFileName(destFullFileName);
-
-                //var _status = BusiLogic.busiLogic().UpdateBusi(business, picUrl);
+                  
                 var upResult = iBusinessProvider.UpdateBusinessPicInfo(userId, picUrl);
                 var relativePath = System.IO.Path.Combine(CustomerIconUploader.Instance.RelativePath, fileName).ToForwardSlashPath();
                 if (upResult == -1)
@@ -347,7 +177,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model">订单数据</param>
         /// <returns></returns>
-        [ActionStatus(typeof(PubOrderStatus))]
+        [ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel> PostPublishOrder_B(Ets.Model.ParameterModel.Bussiness.BusiOrderInfoModel model)
         {
@@ -393,12 +223,10 @@ namespace SuperManWebApi.Controllers
         /// 获取订单列表
         /// </summary>
         /// <returns></returns>
-        [ActionStatus(typeof(GetOrdersStatus))]
+        [ActionStatus(typeof(ETS.Enums.GetOrdersStatus))]
         [HttpGet]
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]> GetOrderList_B(int userId, int? pagedSize, int? pagedIndex, sbyte? Status)
-        {
-            //var pIndex = pagedIndex.HasValue ? pagedIndex.Value : 0;
-            //var pSize = pagedSize.HasValue ? pagedSize.Value : int.MaxValue;
+        { 
             var pIndex = ETS.Util.ParseHelper.ToInt(pagedIndex, 1);
             pIndex = pIndex <= 0 ? 1 : pIndex;
             var pSize = ETS.Util.ParseHelper.ToInt(pagedSize, 100);
@@ -408,44 +236,12 @@ namespace SuperManWebApi.Controllers
                 PagingResult = new Ets.Model.Common.PagingResult(pIndex, pSize),
                 userId = userId,
                 Status = Status
-            };
-            //var pagedList = OrderLogic.orderLogic().GetOrders(criteria);
-            //var list = BusiGetOrderModelTranslator.Instance.Translate(pagedList);
+            }; 
             IList<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel> list = new BusinessProvider().GetOrdersApp(criteria);
             return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]>.Conclude(ETS.Enums.GetOrdersStatus.Success, list.ToArray());
         }
 
-        /// <summary>
-        /// 地址管理
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        //[ActionStatus(typeof(BusiAddAddressStatus))]
-        //[HttpPost]
-        //public ResultModel<BusiAddAddressResultModel> PostManagerAddress_B(BusiAddAddressInfoModel model)
-        //{
-        //    if (string.IsNullOrWhiteSpace(model.phoneNo))
-        //    {
-        //        return ResultModel<BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.PhoneNumberEmpty);
-        //    }
-        //    if (string.IsNullOrWhiteSpace(model.Address))
-        //    {
-        //        return ResultModel<BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.AddressEmpty);
-        //    }
-        //    if (string.IsNullOrWhiteSpace(model.businessName))
-        //    {
-        //        return ResultModel<BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.businessNameEmpty);
-        //    }
-        //    var business = BusiAddAddressInfoModelTranslator.Instance.Translate(model);
-        //    var result = BusiLogic.busiLogic().Update(business);
-
-        //    var resultModel = new BusiAddAddressResultModel
-        //    {
-        //        userId = business.Id,
-        //        status = result
-        //    };
-        //    return ResultModel<BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.Success, resultModel);
-        //}
+         
         /// <summary>
         /// 地址管理
         /// 改 ado.net wc
@@ -512,32 +308,7 @@ namespace SuperManWebApi.Controllers
         [HttpGet]
         public Ets.Model.Common.SimpleResultModel CheckCode(string PhoneNumber)
         {
-            /*
-            if (!CommonValidator.IsValidPhoneNumber(PhoneNumber))  //验证电话号码合法性
-            {
-                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
-            }
-            var randomCode = new Random().Next(100000).ToString("D6");  //生成短信验证码
-            var msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode, Ets.Model.Common.ConstValues.MessageBusiness);  //获取提示用语信息
-            try
-            {
-                if (iBusinessProvider.CheckBusinessExistPhone(PhoneNumber))  //判断该手机号是否已经注册过
-                    return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.AlreadyExists);
-                else
-                {
-                    SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);
-                    //更新短信通道 
-                    Task.Factory.StartNew(() =>
-                    {
-                        SendSmsHelper.SendSendSmsSaveLog(PhoneNumber, msg, Ets.Model.Common.ConstValues.SMSSOURCE);
-                    });
-                    return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.Sending);
-                }
-            }
-            catch (Exception)
-            {
-                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.SendFailure);
-            }*/
+            
             return new BusinessProvider().CheckCode(PhoneNumber);
         }
 
@@ -549,29 +320,7 @@ namespace SuperManWebApi.Controllers
         [ActionStatus(typeof(ETS.Enums.SendCheckCodeStatus))]
         [HttpGet]
         public Ets.Model.Common.SimpleResultModel CheckCodeFindPwd(string PhoneNumber)
-        {
-            /* if (!CommonValidator.IsValidPhoneNumber(PhoneNumber))  //检查手机号码的合法性
-             {
-                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
-             }
-             var randomCode = new Random().Next(100000).ToString("D6");
-             var msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode, Ets.Model.Common.ConstValues.MessageBusiness);
-             try
-             {
-                 SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);
-             
-                 // 更新短信通道 
-                 Task.Factory.StartNew(() =>
-                 {
-                     SendSmsHelper.SendSendSmsSaveLog(PhoneNumber, msg, Ets.Model.Common.ConstValues.SMSSOURCE);
-                 });
-                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.Sending);
-
-             }
-             catch (Exception)
-             {
-                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.SendFailure);
-             }*/
+        {  
             BusinessProvider businessProvider = new BusinessProvider();
             return businessProvider.CheckCodeFindPwd(PhoneNumber);
         }
@@ -584,49 +333,11 @@ namespace SuperManWebApi.Controllers
         [ActionStatus(typeof(ETS.Enums.ForgetPwdStatus))]
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Bussiness.BusiModifyPwdResultModel> PostForgetPwd_B(Ets.Model.DataModel.Bussiness.BusiForgetPwdInfoModel model)
-        {
-            //if (string.IsNullOrEmpty(model.password))  //密码非空验证
-            //    return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.NewPwdEmpty);
-            //if (string.IsNullOrEmpty(model.checkCode)) //验证码非空验证
-            //    return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeIsEmpty);
-            //if (SupermanApiCaching.Instance.Get(model.phoneNumber) != model.checkCode) //验证码正确性验证
-            //    return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong);
-            //var business = BusiLogic.busiLogic().GetBusinessByPhoneNo(model.phoneNumber);
-            //if (business == null)  //用户是否存在
-            //    return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.ClienterIsNotExist);
-            //if (business.Password == model.password) //您要找回的密码正是当前密码
-            //    return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.PwdIsSave);
-            //if (BusiLogic.busiLogic().ModifyPwd(business.Id, model.password))
-            //    return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.Success);
-            //else
-            //    return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.FailedModifyPwd);
+        { 
             return new BusinessProvider().PostForgetPwd_B(model);
         }
 
-        /// <summary> 
-        /// 商家设置外卖费 平扬 2015.3.5
-        /// </summary>
-        /// <returns></returns>
-        //[ActionStatus(typeof(DistribSubsidyStatus))]
-        //[HttpPost]
-        //public SimpleResultModel PostDistribSubsidy_B(BusiDistribInfoModel mod)
-        //{
-        //    if (mod.userId <= 0 || mod.price < 0) //判断传入参数是否正常
-        //        return SimpleResultModel.Conclude(DistribSubsidyStatus.Failed);
-        //    var business = BusiLogic.busiLogic().GetBusinessById(mod.userId);
-        //    if (business == null) //商户是否存在
-        //        return SimpleResultModel.Conclude(DistribSubsidyStatus.Failed);
-        //    bool result = BusiLogic.busiLogic().ModifyWaiMaiPrice(mod.userId, mod.price);
-        //    if (result)
-        //    {
-        //        return SimpleResultModel.Conclude(DistribSubsidyStatus.Success);
-        //    }
-        //    else
-        //    {
-        //        return SimpleResultModel.Conclude(DistribSubsidyStatus.Failed);
-        //    }
-        //}
-
+         
         /// <summary> 
         /// 商家设置外卖费 平扬 2015.3.5
         /// wangchao  改 ado.net 
@@ -654,33 +365,7 @@ namespace SuperManWebApi.Controllers
             }
         }
 
-        ///// <summary>
-        ///// 取消订单
-        ///// </summary>
-        ///// <returns></returns>
-        //[ActionStatus(typeof(CancelOrderStatus))]
-        //[HttpGet]
-        //public ResultModel<bool> CancelOrder_B(string userId, string OrderId)
-        //{
-        //    if (OrderId == null)
-        //    {
-        //        return ResultModel<bool>.Conclude(CancelOrderStatus.OrderEmpty);
-        //    }
-        //    var order = OrderLogic.orderLogic().GetOrderById(OrderId);
-        //    if (order == null)
-        //    {
-        //        return ResultModel<bool>.Conclude(CancelOrderStatus.OrderIsNotExist);
-        //    }
-        //    bool b = OrderLogic.orderLogic().UpdateOrder(order, OrderStatus.订单已取消);
-        //    if (b == true)
-        //    {
-        //        return ResultModel<bool>.Conclude(CancelOrderStatus.Success, true);
-        //    }
-        //    else
-        //    {
-        //        return ResultModel<bool>.Conclude(CancelOrderStatus.FailedCancelOrder, true);
-        //    }
-        //}
+       
 
         /// <summary>
         /// 取消订单 ado.net  wangchao
@@ -709,9 +394,7 @@ namespace SuperManWebApi.Controllers
             {
                 return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.OrderIsNotExist);
             }
-        }
-
-
+        } 
         /// <summary>
         /// 流转图片
         /// </summary>
@@ -759,7 +442,7 @@ namespace SuperManWebApi.Controllers
         public Ets.Model.Common.ResultModel<Ets.Model.Common.ResultModelServicePhone> GetCustomerServicePhone(string CityName)
         {
             return Ets.Model.Common.ResultModel<Ets.Model.Common.ResultModelServicePhone>.Conclude(
-                GetOrdersStatus.Success,
+                ETS.Enums.GetOrdersStatus.Success,
                 new ServicePhone().GetCustomerServicePhone(CityName)
                 );
         } 

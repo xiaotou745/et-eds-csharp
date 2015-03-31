@@ -163,6 +163,7 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(Model.ParameterModel.Bussiness.RegisterInfoModel model)
         {
+            LogHelper.LogWriter("商户注册", new { model = model });
             Enum returnEnum = null;
             if (string.IsNullOrEmpty(model.phoneNo))
                 returnEnum = CustomerRegisterStatusEnum.PhoneNumberEmpty; //手机号非空验证
@@ -182,14 +183,21 @@ namespace Ets.Service.Provider.User
             }
 
             //转换 编码
-            if (!string.IsNullOrWhiteSpace(model.city))
+            try
             {
-                Model.DomainModel.Area.AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new Model.DomainModel.Area.AreaModelTranslate() { Name = model.city.Trim(), JiBie = 2 });
-                if (areaModel != null)
+                if (!string.IsNullOrWhiteSpace(model.city))
                 {
-                    model.city = areaModel.Name;
-                    model.CityId = areaModel.NationalCode.ToString();
+                    Model.DomainModel.Area.AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new Model.DomainModel.Area.AreaModelTranslate() { Name = model.city.Trim(), JiBie = 2 });
+                    if (areaModel != null)
+                    {
+                        model.city = areaModel.Name;
+                        model.CityId = areaModel.NationalCode.ToString();
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter("商户注册异常转换区域：", new { ex = ex});
             }
           
             BusiRegisterResultModel resultModel = new BusiRegisterResultModel()

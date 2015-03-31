@@ -87,7 +87,7 @@ namespace Ets.Service.Provider.Common
             List<AreaModelTranslate> cacheAreaModelList = CacheFactory.Instance[key] as List<AreaModelTranslate>;
             if (cacheAreaModelList == null) //为null的时候，取数据库
             {
-                //cacheAreaModelList = dao.GetRegionInfo().ToList();
+                cacheAreaModelList = dao.GetRegionInfo().ToList();
 
                 CacheFactory.Instance.AddObject(key, cacheAreaModelList);
             }
@@ -100,7 +100,7 @@ namespace Ets.Service.Provider.Common
 
             if (areaModel != null)
             {
-                resultAreaModel.Code = areaModel.Code;
+                resultAreaModel.NationalCode = areaModel.NationalCode;
                 resultAreaModel.Name = areaModel.Name;
                 resultAreaModel.JiBie = from.JiBie;
             }
