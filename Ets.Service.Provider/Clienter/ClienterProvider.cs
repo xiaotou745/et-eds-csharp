@@ -509,10 +509,12 @@ namespace Ets.Service.Provider.Clienter
                    };
                    Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords = new WtihdrawRecordsProvider();
                    iRecords.AddRecords(model); 
-                   tran.Complete();
+                   tran.Complete();  
                    result = "1";
-               }
+               } 
            }
+           var order = new OrderProvider();
+           order.AsyncOrderStatus(orderNo);
            return result;
         }
 
