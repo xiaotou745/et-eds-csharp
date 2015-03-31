@@ -148,6 +148,7 @@
     <Compile Include="Util\Excel.cs" />
     <Compile Include="Util\FileHelper.cs" />
     <Compile Include="Util\Helper.cs" />
+    <Compile Include="Util\HTTPHelper.cs" />
     <Compile Include="Util\IEnumItem.cs" />
     <Compile Include="Util\ITranslator.cs" />
     <Compile Include="Util\JSON.cs" />

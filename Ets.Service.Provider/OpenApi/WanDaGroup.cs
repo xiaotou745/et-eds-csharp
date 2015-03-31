@@ -8,7 +8,10 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,27 +52,13 @@ namespace Ets.Service.IProvider.OpenApi
                 default:
                     break;
             }
-
-            string ts = DateTime.Now.ToString();
-            var model = new      //匿名类 第三方接口参数
-            {
-                app_key =app_key, // app_key
-                sign = GetSign(ts), // sign
-                method = "POST", //请求方式 
-                ts = ts, //时间戳
-                orderId = paramodel.fields.OriginalOrderNo, //订单 ID
-                status = status,  //物流变更状态
-                statusDesc = statusDesc,  //事件状态描述
-                syncTime =TimeHelper.GetTimeStamp(false), //同步时间
-                operatorId = 9999, //操作人ID, 来源系统的账号id
-                @operator = "E代送系统",// 操作人姓名
-                logisticsNo=paramodel.fields.order_no,
-                action = "takeoutsync"
-            };
+            string ts = TimeHelper.GetTimeStamp(false);
             string url = ConfigurationManager.AppSettings["WanDaAsyncStatus"];
             if (url == null)
                 return OrderApiStatusType.SystemError;
-            string json = new HttpClient().PostAsJsonAsync(url, model).Result.Content.ReadAsStringAsync().Result;
+            string  json= HTTPHelper.HttpPost(url, "app_key=" + app_key + "&sign=" + GetSign(ts) + "&method=POST&ts=" + ts + "&orderId=" + paramodel.fields.OriginalOrderNo + "&status=" + status + "&statusDesc=" + statusDesc +
+                "&syncTime=" + ts + "&operatorId=9999&operator=E代送系统&logisticsNo=" +
+                 paramodel.fields.order_no + "&action=takeoutsync");
             JObject jobject = JObject.Parse(json);
             int x = jobject.Value<int>("status"); //接口调用状态 区分大小写
             return x == 200 ? OrderApiStatusType.Success : OrderApiStatusType.SystemError;
@@ -80,7 +69,8 @@ namespace Ets.Service.IProvider.OpenApi
         /// </summary>
         /// <param name="time">时间</param>
         /// <returns></returns>
-        private string GetSign(string time) {
+        private string GetSign(string time)
+        {
             //签名信息
             string method = "POST";
             List<string> @params = new List<string>() { "app_key="+ app_key,
@@ -89,5 +79,7 @@ namespace Ets.Service.IProvider.OpenApi
             string signStr = string.Join("&", @params);
             return ETS.Security.MD5.Encrypt(signStr);
         }
+
+
     }
 }
