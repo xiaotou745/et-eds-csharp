@@ -183,6 +183,15 @@ namespace Ets.Service.IProvider.User
         /// <returns></returns>
         Ets.Model.Common.BusinessCountManageList GetBusinessesCount(BusinessSearchCriteria criteria);
 
+           
+        /// <summary>
+        /// 用户状态信息
+        /// 平扬-20150331
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        Ets.Model.ParameterModel.Bussiness.BussinessStatusModel GetUserStatus(int userid,string version);
+        
      
     }
 }

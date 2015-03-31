@@ -280,4 +280,11 @@ namespace ETS.Enums
 
 
     }
+
+    public enum UserStatus
+    {
+        Success,
+        [DisplayText("获取用户状态失败")]
+        Error
+    }
 }

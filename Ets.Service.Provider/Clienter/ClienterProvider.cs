@@ -431,5 +431,24 @@ namespace Ets.Service.Provider.Clienter
         {
             return clienterDao.UpdateClienterPwdSql(UserId, UserPwd);
         }
+
+        /// <summary>
+        /// 获取用户状态
+        /// </summary>
+        /// <param name="UserId"></param>
+        /// <param name="version"></param>
+        /// <returns></returns>
+        public ClienterStatusModel GetUserStatus(int UserId, string version)
+        {
+            try
+            {
+                return clienterDao.GetUserStatus(UserId);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriterFromFilter(ex);
+            }
+            return null;
+        }
     }
 }

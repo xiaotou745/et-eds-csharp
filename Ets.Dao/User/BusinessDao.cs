@@ -993,5 +993,25 @@ namespace Ets.Dao.User
                 return false;
             } 
         }
+
+        /// <summary>
+        /// 获取用户状态信息
+        /// 平扬
+        /// 2015年3月31日 10:50:26
+        /// </summary>
+        /// <param name="userid">商户ID</param>
+        /// <returns></returns>
+        public BussinessStatusModel GetUserStatus(int userid)
+        {
+            string sql = @"select  Id as UserId,[Status],BusinessCommission,DistribSubsidy from dbo.business with(nolock) WHERE id=@id ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@id", userid); 
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+                return null;
+            }
+            return MapRows<BussinessStatusModel>(dt)[0];
+        }
     }
 }

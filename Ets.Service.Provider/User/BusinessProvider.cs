@@ -608,6 +608,27 @@ namespace Ets.Service.Provider.User
             return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.NotCancelOrder, new OrderCancelResultModel { Remark = "取消失败" });
         }
 
-       
+
+
+        /// <summary>
+        /// 获取用户状态信息
+        /// </summary>
+        /// <param name="userid"></param>
+        /// <param name="version"></param>
+        /// <returns></returns>
+        public BussinessStatusModel GetUserStatus(int userid, string version)
+        {
+            try
+            {
+                string cacheKey = string.Format("BusinessProvider_GetUserStatus_{0}", userid);
+               // var a = CacheFactory.Instance[cacheKey];
+                return dao.GetUserStatus(userid);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriterFromFilter(ex);
+            }
+            return null;
+        }
     }
 }

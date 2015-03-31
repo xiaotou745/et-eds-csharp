@@ -25,7 +25,7 @@ namespace ETS
         /// <summary>
         /// 开通城市版本号
         /// </summary>
-        public static string OpenCityVersion { get { return ConfigKey("OpenCityVersion"); } }
+        public static string ApiVersion { get { return ConfigKey("ApiVersion"); } }
 
         /// <summary>
         /// 找回密码内容
