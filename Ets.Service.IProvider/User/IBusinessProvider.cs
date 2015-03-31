@@ -190,7 +190,7 @@ namespace Ets.Service.IProvider.User
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        Ets.Model.ParameterModel.Bussiness.BussinessStatusModel GetUserStatus(int userid,string version);
+        Ets.Model.ParameterModel.Bussiness.BussinessStatusModel GetUserStatus(int userid, double version);
         
      
     }

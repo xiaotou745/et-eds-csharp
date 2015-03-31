@@ -116,6 +116,6 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="UserId"></param>
         /// <param name="version"></param>
         /// <returns></returns>
-        ClienterStatusModel GetUserStatus(int UserId, string version);
+        ClienterStatusModel GetUserStatus(int UserId, double version);
     }
 }

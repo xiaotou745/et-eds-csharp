@@ -616,7 +616,7 @@ namespace Ets.Service.Provider.User
         /// <param name="userid"></param>
         /// <param name="version"></param>
         /// <returns></returns>
-        public BussinessStatusModel GetUserStatus(int userid, string version)
+        public BussinessStatusModel GetUserStatus(int userid, double version)
         {
             try
             {
