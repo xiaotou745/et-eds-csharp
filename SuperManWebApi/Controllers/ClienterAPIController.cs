@@ -72,7 +72,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [ActionStatus(typeof(LoginModelStatus))]
+        [ActionStatus(typeof(ETS.Enums.LoginModelStatus))]
         public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterLoginResultModel> PostLogin_C(Ets.Model.ParameterModel.Clienter.LoginModel model)
         {
             return new ClienterProvider().PostLogin_C(model);
@@ -258,9 +258,9 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [ActionStatus(typeof(GetOrdersStatus))]
+        [ActionStatus(typeof(ETS.Enums.GetOrdersStatus))]
         [HttpPost]
-        public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]> GetMyJobList_C(ClientOrderInfoModel model)
+        public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]> GetMyJobList_C(Ets.Model.ParameterModel.Clienter.ClientOrderInfoModel model)
         {
             Ets.Model.DomainModel.Clienter.degree.longitude = model.longitude;
             Ets.Model.DomainModel.Clienter.degree.latitude = model.latitude;
@@ -280,7 +280,7 @@ namespace SuperManWebApi.Controllers
             IList<Ets.Model.DomainModel.Clienter.ClientOrderResultModel> lists = new ClienterProvider().GetMyOrders(criteria);
 
             lists = lists.OrderByDescending(i => i.pubDate).ToList();  //按照发布时间倒序排列
-            return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, lists.ToArray());
+            return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]>.Conclude(ETS.Enums.GetOrdersStatus.Success, lists.ToArray());
         }
 
 
@@ -291,7 +291,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [ActionStatus(typeof(GetOrdersStatus))]
+        [ActionStatus(typeof(ETS.Enums.GetOrdersStatus))]
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]> GetJobList_C(Ets.Model.ParameterModel.Clienter.ClientOrderInfoModel model)
         {
@@ -322,7 +322,7 @@ namespace SuperManWebApi.Controllers
 
             pagedList = pagedList.OrderByDescending(i => i.pubDate).ToList();  //按照发布时间倒序排列
 
-            return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, pagedList.ToArray());
+            return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]>.Conclude(ETS.Enums.GetOrdersStatus.Success, pagedList.ToArray());
         }
 
 
@@ -332,7 +332,7 @@ namespace SuperManWebApi.Controllers
         /// 未登录时获取最新任务     登录未登录根据城市有没有值判断。
         /// </summary>
         /// <returns></returns>
-        [ActionStatus(typeof(GetOrdersNoLoginStatus))]
+        [ActionStatus(typeof(ETS.Enums.GetOrdersNoLoginStatus))]
         [HttpGet]
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderNoLoginResultModel[]> GetJobListNoLoginLatest_C()
         {
@@ -366,7 +366,7 @@ namespace SuperManWebApi.Controllers
             //var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLoginLatest(criteria);
             //var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
 
-            return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, pagedList.ToArray());
+            return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderNoLoginResultModel[]>.Conclude(ETS.Enums.GetOrdersNoLoginStatus.Success, pagedList.ToArray());
         }
 
 
@@ -375,7 +375,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [ActionStatus(typeof(GetOrdersNoLoginStatus))]
+        [ActionStatus(typeof(ETS.Enums.GetOrdersNoLoginStatus))]
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderNoLoginResultModel[]> GetJobListNoLogin_C(Ets.Model.ParameterModel.Clienter.ClientOrderInfoModel model)
         {
@@ -404,7 +404,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="phoneNo"></param>
         /// <param name="newPassword"></param>
         /// <returns></returns>
-        [ActionStatus(typeof(ModifyPwdStatus))]
+        [ActionStatus(typeof(ETS.Enums.ModifyPwdStatus))]
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel> PostModifyPwd_C(Ets.Model.DataModel.Clienter.ModifyPwdInfoModel model)
         {
@@ -560,7 +560,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="userId"></param>
         /// <param name="orderNo"></param>
         /// <returns></returns>
-        [ActionStatus(typeof(RushOrderStatus))]
+        [ActionStatus(typeof(ETS.Enums.RushOrderStatus))]
         [HttpGet]
         public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel> RushOrder_C(int userId, string orderNo)
         {
@@ -607,7 +607,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="userId">C端用户id</param>
         /// <param name="orderNo">订单号码</param>
         /// <returns></returns>
-        [ActionStatus(typeof(FinishOrderStatus))]
+        [ActionStatus(typeof(ETS.Enums.FinishOrderStatus))]
         [HttpGet]
         public Ets.Model.Common.ResultModel<FinishOrderResultModel> FinishOrder_C(int userId, string orderNo)
         {
@@ -696,7 +696,7 @@ namespace SuperManWebApi.Controllers
         {
             if (!CommonValidator.IsValidPhoneNumber(PhoneNumber))
             {
-                return Ets.Model.Common.SimpleResultModel.Conclude(SendCheckCodeStatus.InvlidPhoneNumber);
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
             }
             var randomCode = new Random().Next(100000).ToString("D6");
             string msg = string.Empty;
@@ -707,7 +707,7 @@ namespace SuperManWebApi.Controllers
                 //    return SimpleResultModel.Conclude(SendCheckCodeStatus.AlreadyExists);
                 //}  
                 if (iClienterProvider.CheckClienterExistPhone(PhoneNumber))  //判断该手机号是否已经注册过
-                    return Ets.Model.Common.SimpleResultModel.Conclude(SendCheckCodeStatus.AlreadyExists);
+                    return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.AlreadyExists);
 
                 msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode, ConstValues.MessageClinenter);
             }
@@ -723,12 +723,12 @@ namespace SuperManWebApi.Controllers
                 {
                     SendSmsHelper.SendSendSmsSaveLog(PhoneNumber, msg, ConstValues.SMSSOURCE);
                 });
-                return Ets.Model.Common.SimpleResultModel.Conclude(SendCheckCodeStatus.Sending);
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.Sending);
 
             }
             catch (Exception)
             {
-                return Ets.Model.Common.SimpleResultModel.Conclude(SendCheckCodeStatus.SendFailure);
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.SendFailure);
             }
         }
 
@@ -761,7 +761,7 @@ namespace SuperManWebApi.Controllers
         public Ets.Model.Common.ResultModel<Ets.Model.Common.ResultModelServicePhone> GetCustomerServicePhone(string CityName)
         {
             return Ets.Model.Common.ResultModel<Ets.Model.Common.ResultModelServicePhone>.Conclude(
-                GetOrdersStatus.Success,
+                ETS.Enums.GetOrdersStatus.Success,
                 new ServicePhone().GetCustomerServicePhone(CityName)
                 );
 

@@ -248,11 +248,11 @@ namespace Ets.Service.Provider.Clienter
             if (!string.IsNullOrWhiteSpace(clienter.City))
             {
                 Model.DomainModel.Area.AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new Model.DomainModel.Area.AreaModelTranslate() { Name = clienter.City.Trim(), JiBie = 2 });
-               if (areaModel != null)
-               {
-                   resultModel.city = areaModel.Name;
-                   resultModel.cityId = areaModel.NationalCode.ToString();
-               }
+                if (areaModel != null)
+                {
+                    resultModel.city = areaModel.Name;
+                    resultModel.cityId = areaModel.NationalCode.ToString();
+                }
             }
             if (id > 0)
             {
@@ -268,10 +268,10 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="orderNo"></param>
         /// <returns></returns>
         public bool RushOrder(int userId, string orderNo)
-        { 
+        {
             try
             {
-                return clienterDao.RushOrder(userId, orderNo); 
+                return clienterDao.RushOrder(userId, orderNo);
             }
             catch (Exception ex)
             {
@@ -279,7 +279,7 @@ namespace Ets.Service.Provider.Clienter
             }
             return false;
         }
- 
+
 
         /// <summary>
         /// 平扬 2015.3.30
@@ -319,7 +319,7 @@ namespace Ets.Service.Provider.Clienter
 
                     resultModel.income = item.OrderCommission; //佣金 Edit bycaoheyang 20150327
                     resultModel.Amount = OrderCommissionProvider.GetCurrenOrderPrice(oCommission);
-                        //C端 获取订单的金额 Edit bycaoheyang 20150305
+                    //C端 获取订单的金额 Edit bycaoheyang 20150305
 
                     resultModel.businessName = item.BusinessName;
                     resultModel.businessPhone = item.BusinessPhone;
@@ -355,18 +355,18 @@ namespace Ets.Service.Provider.Clienter
                             double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
                             resultModel.distance = res < 1000
                                 ? (res.ToString("f2") + "米")
-                                : ((res/1000).ToString("f2") + "公里");
+                                : ((res / 1000).ToString("f2") + "公里");
                         }
                         if (item.businessId > 0 && item.ReceviceLongitude != null && item.ReceviceLatitude != null
                             && item.ReceviceLongitude != 0 && item.ReceviceLatitude != 0) //计算商户到收货人的距离
                         {
                             Degree degree1 = new Degree(item.BusiLongitude.Value, item.BusiLatitude.Value); //商户经纬度
                             Degree degree2 = new Degree(item.ReceviceLongitude.Value, item.ReceviceLatitude.Value);
-                                //收货人经纬度
+                            //收货人经纬度
                             double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
                             resultModel.distanceB2R = res < 1000
                                 ? (res.ToString("f2") + "米")
-                                : ((res/1000).ToString("f2") + "公里");
+                                : ((res / 1000).ToString("f2") + "公里");
                         }
                         else
                             resultModel.distanceB2R = "--";
@@ -450,12 +450,12 @@ namespace Ets.Service.Provider.Clienter
             }
             return null;
         }
-public string FinishOrder(int userId, string orderNo)
+        public string FinishOrder(int userId, string orderNo)
         {
             int result = -1;
 
             //根据用户
-            
+
 
 
             return result.ToString();
