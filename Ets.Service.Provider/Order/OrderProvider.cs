@@ -226,7 +226,7 @@ namespace Ets.Service.Provider.Order
             to.Remark = busiOrderInfoModel.Remark;
             if (string.IsNullOrWhiteSpace(busiOrderInfoModel.receviceName))
             {
-                to.ReceviceName = "匿名";
+                to.ReceviceName = "";
             }
             else
             {

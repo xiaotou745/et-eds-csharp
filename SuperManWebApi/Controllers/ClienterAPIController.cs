@@ -1,4 +1,5 @@
-﻿using Ets.Model.Common;
+﻿using ETS.Enums;
+using Ets.Model.Common;
 using Ets.Service.Provider.WtihdrawRecords;
 using Microsoft.Ajax.Utilities;
 using SuperManCore.Common;
@@ -22,6 +23,13 @@ using System.ComponentModel;
 using ETS.Util;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.Provider.Common;
+using FinishOrderStatus = SuperManCore.Common.FinishOrderStatus;
+using GetOrdersNoLoginStatus = SuperManCore.Common.GetOrdersNoLoginStatus;
+using GetOrdersStatus = SuperManCore.Common.GetOrdersStatus;
+using LoginModelStatus = SuperManCore.Common.LoginModelStatus;
+using ModifyPwdStatus = SuperManCore.Common.ModifyPwdStatus;
+using RushOrderStatus = SuperManCore.Common.RushOrderStatus;
+using SendCheckCodeStatus = SuperManCore.Common.SendCheckCodeStatus;
 
 namespace SuperManWebApi.Controllers
 {
@@ -31,6 +39,7 @@ namespace SuperManWebApi.Controllers
 
         private static object lockHelper = new object();
         readonly Ets.Service.IProvider.Clienter.IClienterProvider iClienterProvider = new Ets.Service.Provider.Clienter.ClienterProvider();
+        readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
         /// <summary>
         /// C端注册 -平扬 2015.3.30
         /// </summary>
@@ -307,7 +316,16 @@ namespace SuperManWebApi.Controllers
                 city = string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
                 cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim()
             };
-
+            //这里转换一下 区域 code ,转换后 修改 为根据 code 作为 查询条件，原来根据name去掉  wc
+            if (!string.IsNullOrWhiteSpace(model.city))
+            {
+               Ets.Model.DomainModel.Area.AreaModel areaModel = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModel() { Name = model.city.Trim(), JiBie = 2 });
+               if (areaModel != null)
+               {
+                   criteria.cityId = areaModel.Code.ToString();
+                   criteria.city = areaModel.Name;
+               }
+            }
             var pagedList = new Ets.Service.Provider.Order.OrderProvider().GetOrders(criteria);
 
             pagedList = pagedList.OrderByDescending(i => i.pubDate).ToList();  //按照发布时间倒序排列
@@ -339,6 +357,19 @@ namespace SuperManWebApi.Controllers
                 city = model.city,
                 cityId = model.cityId
             };
+            //根据用户传递的  名称，取得 国标编码 wc,这里的 city 是二级 ，已和康珍 确认过
+            //新版的 骑士 注册， 城市 非 必填 
+            if (!string.IsNullOrWhiteSpace(model.city))
+            {
+                Ets.Model.DomainModel.Area.AreaModel areaModel = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModel() { Name = model.city.Trim(), JiBie = 2 });
+                if (areaModel != null)
+                {
+                    criteria.cityId = areaModel.Code.ToString();
+                    criteria.city = areaModel.Name;
+                }
+            }
+
+
             var pagedList = new Ets.Service.Provider.Order.OrderProvider().GetOrdersNoLoginLatest(criteria);
             pagedList = pagedList.OrderByDescending(i => i.pubDate).ToList();
             //var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLoginLatest(criteria);
@@ -367,6 +398,7 @@ namespace SuperManWebApi.Controllers
                 status = model.status,
                 isLatest = model.isLatest
             };
+
             return new ClienterProvider().GetJobListNoLogin_C(criteria);
             //var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLogin(criteria);
             //var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
@@ -410,31 +442,39 @@ namespace SuperManWebApi.Controllers
             ClienterProvider cliProvider = new ClienterProvider();
             return cliProvider.PostForgetPwd_C(model);
         }
-        public SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel> PostModifyPwd_C(ModifyPwdInfoModel model)
-        {
-            if (string.IsNullOrEmpty(model.newPassword))
-            {
-                return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.NewPwdEmpty);
-            }
-            var clienter = ClienterLogic.clienterLogic().GetClienter(model.phoneNo);
-            if (clienter == null)
-            {
-                return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.ClienterIsNotExist);
-            }
-            if (clienter.Password == model.newPassword)
-            {
-                return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.PwdIsSame);
-            }
-            bool b = ClienterLogic.clienterLogic().ModifyPwd(clienter, model.newPassword);
-            if (b)
-            {
-                return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.Success);
-            }
-            else
-            {
-                return SuperManCore.Common.ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.FailedModifyPwd);
-            }
-        }
+        /// <summary>
+        /// 修改密码 
+        /// wc
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        //[ActionStatus(typeof(ModifyPwdStatus))]
+        //[HttpPost]
+        //public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel> PostModifyPwd_C(Ets.Model.DataModel.Clienter.ModifyPwdInfoModel model)
+        //{
+        //    if (string.IsNullOrEmpty(model.newPassword))
+        //    {
+        //        return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ModifyPwdStatus.NewPwdEmpty);
+        //    }
+        //    var clienter = iClienterProvider.GetUserInfoByUserPhoneNo(model.phoneNo);
+        //    if (clienter == null)
+        //    {
+        //        return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ModifyPwdStatus.ClienterIsNotExist);
+        //    }
+        //    if (clienter.Password == model.newPassword)
+        //    {
+        //        return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ModifyPwdStatus.PwdIsSame);
+        //    }
+        //    bool b = iClienterProvider.UpdateClienterPwdByUserId(clienter.Id, model.newPassword);
+        //    if (b)
+        //    {
+        //        return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ModifyPwdStatus.Success);
+        //    }
+        //    else
+        //    {
+        //        return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ModifyPwdStatus.FailedModifyPwd);
+        //    }
+        //}
         /// <summary>
         /// 忘记密码
         /// </summary>
@@ -734,6 +774,31 @@ namespace SuperManWebApi.Controllers
                 new ServicePhone().GetCustomerServicePhone(CityName)
                 );
 
+        }
+
+        /// <summary>
+        /// 获取用户状态
+        /// 平扬
+        /// 2015年3月31日 
+        /// </summary>
+        /// <param name="userId">userId</param>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.UserStatus))]
+        [HttpGet]
+        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.ClienterStatusModel> GetUserStatus(int userId, double version_api)
+        {
+            var model = new ClienterProvider().GetUserStatus(userId, version_api);
+            if (model!=null)
+            {
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.ClienterStatusModel>.Conclude(
+                UserStatus.Success,
+                model
+                );
+            }
+            return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.ClienterStatusModel>.Conclude(
+                UserStatus.Error,
+                null
+                ); 
         }
 
     }

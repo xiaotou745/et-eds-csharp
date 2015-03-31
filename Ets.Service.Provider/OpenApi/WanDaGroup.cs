@@ -21,6 +21,8 @@ namespace Ets.Service.IProvider.OpenApi
     /// </summary>
     public class WanDaGroup : IGroupProviderOpenApi
     {
+        public const string app_key = "6e61eb575d2b22223551af81b2812ec2";
+        public const string app_secret = "9ed652ad50274a24f4b648f0e7dad167";
         /// <summary>
         /// 回调万达接口同步订单状态  add by caoheyang 20150326
         /// </summary>
@@ -37,28 +39,32 @@ namespace Ets.Service.IProvider.OpenApi
                     statusDesc = "订单已完成";
                     break;
                 case OrderConst.OrderStatus2:
-                    status = "sending";
-                    statusDesc = string.Format("{0}在配送，联系电话{1}", paramodel.fields.ClienterTrueName, paramodel.fields.ClienterPhoneNo);
+                    status = "agree";
+                    statusDesc = string.Format("{0}已确认可配送", paramodel.fields.ClienterTrueName);
                     break;
                 case OrderConst.OrderStatus3:
-                    status = "cancel";
-                    statusDesc = string.Format("{0}商户取消该订单", paramodel.fields.BusinessName);
+                    status = "refused";
+                    statusDesc = string.Format("{0}拒绝配送该订单", paramodel.fields.BusinessName);
                     break;
                 default:
                     break;
             }
+
+            string ts = DateTime.Now.ToString();
             var model = new      //匿名类 第三方接口参数
             {
-                app_key = paramodel.app_key, // app_key
-                sign = paramodel.app_key, // sign
+                app_key =app_key, // app_key
+                sign = GetSign(ts), // sign
                 method = "POST", //请求方式 
-                ts = TimeHelper.GetTimeStamp(), //时间戳
+                ts = ts, //时间戳
                 orderId = paramodel.fields.OriginalOrderNo, //订单 ID
-                staus = status,  //物流变更状态
+                status = status,  //物流变更状态
                 statusDesc = statusDesc,  //事件状态描述
-                syncTime = DateTime.Now, //同步时间
-                operatorId = 0, //操作人ID, 来源系统的账号id
-                @operator = "E代送系统"// 操作人姓名
+                syncTime =TimeHelper.GetTimeStamp(false), //同步时间
+                operatorId = 9999, //操作人ID, 来源系统的账号id
+                @operator = "E代送系统",// 操作人姓名
+                logisticsNo=paramodel.fields.order_no,
+                action = "takeoutsync"
             };
             string url = ConfigurationManager.AppSettings["WanDaAsyncStatus"];
             if (url == null)
@@ -67,6 +73,21 @@ namespace Ets.Service.IProvider.OpenApi
             JObject jobject = JObject.Parse(json);
             int x = jobject.Value<int>("status"); //接口调用状态 区分大小写
             return x == 200 ? OrderApiStatusType.Success : OrderApiStatusType.SystemError;
+        }
+
+        /// <summary>
+        /// 获取当前集团请求时的sign信息  add by caoheyang 20150330
+        /// </summary>
+        /// <param name="time">时间</param>
+        /// <returns></returns>
+        private string GetSign(string time) {
+            //签名信息
+            string method = "POST";
+            List<string> @params = new List<string>() { "app_key="+ app_key,
+            "app_secret="+ app_secret,"method="+ method,"ts="+ time};
+            @params.Sort();
+            string signStr = string.Join("&", @params);
+            return ETS.Security.MD5.Encrypt(signStr);
         }
     }
 }

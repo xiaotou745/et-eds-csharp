@@ -1,4 +1,5 @@
-﻿using SuperManCore;
+﻿using ETS.Enums;
+using SuperManCore;
 using SuperManCore.Common;
 using SuperManWebApi.Models.Business;
 using System;
@@ -20,12 +21,19 @@ using Ets.Service.Provider.Order;
 using Ets.Service.Provider.Common;
 using Ets.Service.IProvider.User;
 using ETS.Cacheing;
+using BusiAddAddressStatus = SuperManWebApi.Models.Business.BusiAddAddressStatus;
+using CancelOrderStatus = SuperManCore.Common.CancelOrderStatus;
+using GetOrdersStatus = SuperManCore.Common.GetOrdersStatus;
+using LoginModelStatus = SuperManCore.Common.LoginModelStatus;
+using PubOrderStatus = SuperManCore.Common.PubOrderStatus;
+
 namespace SuperManWebApi.Controllers
 {
     public class BusinessAPIController : ApiController
     {
         IOrderProvider iOrderProvider = new OrderProvider();
         IBusinessProvider iBusinessProvider = new BusinessProvider();
+        readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
         /// <summary>
         /// 线程安全
         /// </summary>
@@ -201,6 +209,27 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OrderHadExist);
             }
+            //转换省
+            var _province = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModel() { Name = model.Receive_Province, JiBie = 1 });
+            if (_province != null)
+            {
+                model.Receive_ProvinceCode = _province.Name;
+                model.Receive_Province = _province.Code.ToString();
+            }
+            //转换市
+            var _city = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModel() { Name = model.Receive_City, JiBie = 2 });
+            if (_city != null)
+            {
+                model.Receive_City = _city.Name;
+                model.Receive_CityCode = _city.Code.ToString();
+            }
+            //转换区
+            var _area = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModel() { Name = model.Receive_Area, JiBie = 3 });
+            if (_area != null)
+            {
+                model.Receive_Area = _area.Name;
+                model.Receive_AreaCode = _area.Code.ToString();
+            } 
 
             order dborder = NewBusiOrderInfoModelTranslator.Instance.Translate(model);  //整合订单信息
             bool result = OrderLogic.orderLogic().AddModel(dborder);    //添加订单记录，并且触发极光推送。          
@@ -347,6 +376,8 @@ namespace SuperManWebApi.Controllers
             }
             if (model.OrderCount <= 0 || model.OrderCount > 15)   //判断录入订单数量是否符合要求
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.OrderCountError);
+
+
 
             Ets.Model.DataModel.Order.order order = iOrderProvider.TranslateOrder(model);
             string result = iOrderProvider.AddOrder(order);
@@ -746,5 +777,30 @@ namespace SuperManWebApi.Controllers
         #endregion
 
 
+        /// <summary>
+        /// 获取用户状态
+        /// 平扬
+        /// 2015年3月31日 
+        /// </summary>
+        /// <param name="userId">用户id</param>
+        /// <param name="version">version</param>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.UserStatus))]
+        [HttpGet]
+        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BussinessStatusModel> GetUserStatus(int userId, double version_api)
+        {
+            var model = iBusinessProvider.GetUserStatus(userId, version_api);
+            if (model != null)
+            {
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BussinessStatusModel>.Conclude(
+                UserStatus.Success,
+                model
+                );
+            }
+            return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BussinessStatusModel>.Conclude(
+                UserStatus.Error,
+                null
+                );
+        }
     }
 }

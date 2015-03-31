@@ -367,27 +367,6 @@ namespace Ets.Dao.Clienter
         }
 
         /// <summary>
-        /// 检查号码是否存在-平扬 2015.3.30
-        /// </summary>
-        /// <param name="phoneNo"></param>
-        /// <returns></returns>
-        public bool CheckExistPhone(string phoneNo)
-        {
-            try
-            {
-                string sql = "SELECT 1 FROM dbo.clienter(NOLOCK) WHERE PhoneNo=@PhoneNo ";
-                IDbParameters parm = DbHelper.CreateDbParameters();
-                parm.AddWithValue("@PhoneNo", phoneNo);
-                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm)) > 0;
-            }
-            catch (Exception ex)
-            {
-                LogHelper.LogWriter(ex, "检查号码是否存在");
-                return false;
-            }
-        }
-
-        /// <summary>
         /// 注册超人
         /// </summary>
         /// <param name="model"></param>
@@ -489,6 +468,25 @@ namespace Ets.Dao.Clienter
                                     b.Latitude as BusiLatitude,o.OrderCommission";
             return new PageHelper().GetPages<order>(SuperMan_Read, criteria.PagingRequest.PageIndex, where, order, columnStr, "[order](NOLOCK) AS o LEFT JOIN business(NOLOCK) AS b ON o.businessId=b.Id", criteria.PagingRequest.PageSize, false);
         
+        }
+
+        /// <summary>
+        /// 获取用户状态
+        /// </summary>
+        /// <param name="userid"></param>
+        /// <returns></returns>
+        public ClienterStatusModel GetUserStatus(int userId)
+        {
+            string sql = @" select id as userid,[status],phoneno,AccountBalance as amount from dbo.clienter with(nolock) where Id=@clienterId ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@clienterId", userId);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            IList<ClienterStatusModel> list = MapRows<ClienterStatusModel>(dt);
+            if (list == null && list.Count <= 0)
+            {
+                return null;
+            }
+            return list[0]; 
         }
 
     }
