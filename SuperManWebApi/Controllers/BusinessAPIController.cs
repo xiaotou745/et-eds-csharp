@@ -1,4 +1,5 @@
-﻿using SuperManCore;
+﻿using ETS.Enums;
+using SuperManCore;
 using SuperManCore.Common;
 using SuperManWebApi.Models.Business;
 using System;
@@ -18,6 +19,12 @@ using Ets.Service.Provider.Order;
 using Ets.Service.Provider.Common;
 using Ets.Service.IProvider.User;
 using ETS.Cacheing;
+using BusiAddAddressStatus = SuperManWebApi.Models.Business.BusiAddAddressStatus;
+using CancelOrderStatus = SuperManCore.Common.CancelOrderStatus;
+using GetOrdersStatus = SuperManCore.Common.GetOrdersStatus;
+using LoginModelStatus = SuperManCore.Common.LoginModelStatus;
+using PubOrderStatus = SuperManCore.Common.PubOrderStatus;
+
 namespace SuperManWebApi.Controllers
 {
     public class BusinessAPIController : ApiController
@@ -757,5 +764,30 @@ namespace SuperManWebApi.Controllers
                 );
         }
 
+        /// <summary>
+        /// 获取用户状态
+        /// 平扬
+        /// 2015年3月31日 
+        /// </summary>
+        /// <param name="userId">用户id</param>
+        /// <param name="version">version</param>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.UserStatus))]
+        [HttpGet]
+        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BussinessStatusModel> GetUserStatus(int userId, double version_api)
+        {
+            var model = iBusinessProvider.GetUserStatus(userId, version_api);
+            if (model != null)
+            {
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BussinessStatusModel>.Conclude(
+                UserStatus.Success,
+                model
+                );
+            }
+            return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BussinessStatusModel>.Conclude(
+                UserStatus.Error,
+                null
+                );
+        }
     }
 }

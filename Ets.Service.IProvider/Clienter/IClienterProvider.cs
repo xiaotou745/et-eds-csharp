@@ -108,6 +108,15 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="UserPwd"></param>
         /// <returns></returns>
         bool UpdateClienterPwdByUserId(int UserId, string UserPwd);
+
+        /// <summary>
+        /// 根据用户ID获取用户状态
+        /// 平扬-20150331
+        /// </summary>
+        /// <param name="UserId"></param>
+        /// <param name="version"></param>
+        /// <returns></returns>
+        ClienterStatusModel GetUserStatus(int UserId, double version);
         /// <summary>
         /// 超人 完成订单
         /// wc

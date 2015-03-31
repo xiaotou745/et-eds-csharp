@@ -1,4 +1,5 @@
-﻿using Ets.Model.Common;
+﻿using ETS.Enums;
+using Ets.Model.Common;
 using Ets.Service.Provider.WtihdrawRecords;
 using Microsoft.Ajax.Utilities;
 using SuperManCore.Common;
@@ -764,6 +765,31 @@ namespace SuperManWebApi.Controllers
                 new ServicePhone().GetCustomerServicePhone(CityName)
                 );
 
+        }
+
+        /// <summary>
+        /// 获取用户状态
+        /// 平扬
+        /// 2015年3月31日 
+        /// </summary>
+        /// <param name="userId">userId</param>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.UserStatus))]
+        [HttpGet]
+        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.ClienterStatusModel> GetUserStatus(int userId, double version_api)
+        {
+            var model = new ClienterProvider().GetUserStatus(userId, version_api);
+            if (model!=null)
+            {
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.ClienterStatusModel>.Conclude(
+                UserStatus.Success,
+                model
+                );
+            }
+            return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.ClienterStatusModel>.Conclude(
+                UserStatus.Error,
+                null
+                ); 
         }
 
     }

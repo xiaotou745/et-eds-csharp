@@ -109,6 +109,7 @@
     <Compile Include="ParameterModel\Bussiness\BusiAddAddressInfoModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BusiAddAddressResultModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BusiOrderInfoModel.cs" />
+    <Compile Include="ParameterModel\Bussiness\BussinessStatusModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BussOrderParaModelApp.cs" />
     <Compile Include="ParameterModel\Bussiness\BusinessSearchCriteria.cs" />
     <Compile Include="ParameterModel\Bussiness\LoginModel.cs" />
@@ -119,6 +120,7 @@
     <Compile Include="ParameterModel\Bussiness\RegisterInfoModel.cs" />
     <Compile Include="ParameterModel\Clienter\ChangeWorkStatusPM.cs" />
     <Compile Include="ParameterModel\Clienter\ClienterSearchCriteria.cs" />
+    <Compile Include="ParameterModel\Clienter\ClienterStatusModel.cs" />
     <Compile Include="ParameterModel\Clienter\ClientOrderInfoModel.cs" />
     <Compile Include="ParameterModel\Clienter\ClientRegisterInfoModel.cs" />
     <Compile Include="ParameterModel\Clienter\LoginModel.cs" />
