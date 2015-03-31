@@ -1,4 +1,5 @@
-﻿using Ets.Model.Common;
+﻿using ETS.Enums;
+using Ets.Model.Common;
 using Ets.Service.Provider.WtihdrawRecords;
 using Microsoft.Ajax.Utilities;
 using SuperManCore.Common;
@@ -22,6 +23,13 @@ using System.ComponentModel;
 using ETS.Util;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.Provider.Common;
+using FinishOrderStatus = SuperManCore.Common.FinishOrderStatus;
+using GetOrdersNoLoginStatus = SuperManCore.Common.GetOrdersNoLoginStatus;
+using GetOrdersStatus = SuperManCore.Common.GetOrdersStatus;
+using LoginModelStatus = SuperManCore.Common.LoginModelStatus;
+using ModifyPwdStatus = SuperManCore.Common.ModifyPwdStatus;
+using RushOrderStatus = SuperManCore.Common.RushOrderStatus;
+using SendCheckCodeStatus = SuperManCore.Common.SendCheckCodeStatus;
 
 namespace SuperManWebApi.Controllers
 {
@@ -766,6 +774,31 @@ namespace SuperManWebApi.Controllers
                 new ServicePhone().GetCustomerServicePhone(CityName)
                 );
 
+        }
+
+        /// <summary>
+        /// 获取用户状态
+        /// 平扬
+        /// 2015年3月31日 
+        /// </summary>
+        /// <param name="userId">userId</param>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.UserStatus))]
+        [HttpGet]
+        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.ClienterStatusModel> GetUserStatus(int userId, string version)
+        {
+            var model = new ClienterProvider().GetUserStatus(userId, version);
+            if (model!=null)
+            {
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.ClienterStatusModel>.Conclude(
+                UserStatus.Success,
+                model
+                );
+            }
+            return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.ClienterStatusModel>.Conclude(
+                UserStatus.Error,
+                null
+                ); 
         }
 
     }
