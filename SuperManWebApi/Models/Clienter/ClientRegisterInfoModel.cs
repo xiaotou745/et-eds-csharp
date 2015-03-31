@@ -1,7 +1,6 @@
 ﻿using SuperManCommonModel;
 using SuperManCore;
-using SuperManCore.Common;
-using SuperManDataAccess;
+using SuperManCore.Common; 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -65,39 +64,39 @@ namespace SuperManWebApi.Models.Clienter
 
     }
 
-    public class ClientRegisterInfoModelTranslator : TranslatorBase<clienter, ClientRegisterInfoModel>
-    {
-        public static readonly ClientRegisterInfoModelTranslator Instance = new ClientRegisterInfoModelTranslator();
+    //public class ClientRegisterInfoModelTranslator : TranslatorBase<clienter, ClientRegisterInfoModel>
+    //{
+    //    public static readonly ClientRegisterInfoModelTranslator Instance = new ClientRegisterInfoModelTranslator();
 
-        public override ClientRegisterInfoModel Translate(clienter from)
-        {
-            throw new NotImplementedException();
-        }
+    //    public override ClientRegisterInfoModel Translate(clienter from)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
 
 
 
-        public override clienter Translate(ClientRegisterInfoModel from)
-        {
-            var to = new clienter();
-            //to.Id = Helper.generateCode(from.phoneNo, AppType.C端);
-            to.Password = from.passWord;
-            to.PhoneNo = from.phoneNo;
-            to.InviteCode = from.inviteCode;
-            to.Status = ConstValues.CLIENTER_NOAUDIT;
-            to.InsertTime = DateTime.Now;
-            to.City = from.City;
-            to.CityId = from.CityId;
-            to.recommendPhone = from.recommendPhone;
-            if (from.GroupId != 0)
-            {
-                to.GroupId = from.GroupId;
-            }
-            //海底捞
-            //if (ConfigSettings.Instance.IsGroupPush)   //TODO 暂时有效
-            //{
-            //    to.GroupId = 2;
-            //}
-            return to;
-        }
-    }
+    //    public override clienter Translate(ClientRegisterInfoModel from)
+    //    {
+    //        var to = new clienter();
+    //        //to.Id = Helper.generateCode(from.phoneNo, AppType.C端);
+    //        to.Password = from.passWord;
+    //        to.PhoneNo = from.phoneNo;
+    //        to.InviteCode = from.inviteCode;
+    //        to.Status = ConstValues.CLIENTER_NOAUDIT;
+    //        to.InsertTime = DateTime.Now;
+    //        to.City = from.City;
+    //        to.CityId = from.CityId;
+    //        to.recommendPhone = from.recommendPhone;
+    //        if (from.GroupId != 0)
+    //        {
+    //            to.GroupId = from.GroupId;
+    //        }
+    //        //海底捞
+    //        //if (ConfigSettings.Instance.IsGroupPush)   //TODO 暂时有效
+    //        //{
+    //        //    to.GroupId = 2;
+    //        //}
+    //        return to;
+    //    }
+    //}
 }

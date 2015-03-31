@@ -147,5 +147,12 @@ namespace Ets.Service.IProvider.Order
         /// <param name="model"></param>
         /// <returns></returns>
         ResultModel<Ets.Model.DomainModel.Order.NewPostPublishOrderResultModel> NewPostPublishOrder_B(Ets.Model.ParameterModel.Order.NewPostPublishOrderModel model);
+        /// <summary>
+        /// 根据订单号获取订单信息
+        /// wc
+        /// </summary>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        order GetOrderInfoByOrderNo(string orderNo);
     }
 }

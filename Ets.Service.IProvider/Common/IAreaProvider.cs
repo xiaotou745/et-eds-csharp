@@ -33,7 +33,7 @@ namespace Ets.Service.IProvider.Common
         /// </summary>
         /// <param name="from"></param>
         /// <returns></returns>
-        AreaModel GetNationalAreaInfo(AreaModel from);
+        AreaModelTranslate GetNationalAreaInfo(AreaModelTranslate from);
 
     }
 }

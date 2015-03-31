@@ -607,10 +607,6 @@
       <Project>{f52d02c9-103a-46b1-aee7-3d11e64777d7}</Project>
       <Name>SuperManCore</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SuperManDataAccess\SuperManDataAccess.csproj">
-      <Project>{f54d4c48-f635-42ca-9940-19873a691693}</Project>
-      <Name>SuperManDataAccess</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

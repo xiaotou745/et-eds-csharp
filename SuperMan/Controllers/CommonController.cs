@@ -16,7 +16,6 @@ using SuperManBusinessLogic.Authority_Logic;
 using SuperManCommonModel;
 using System.Web.Security;
 using System.Collections.Generic;
-using SuperManDataAccess;
 using SuperManBusinessLogic.CommonLogic;
 
 namespace SuperMan.Controllers
@@ -30,10 +29,10 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <param name="Fid">父级Id</param>
         /// <returns></returns>
-        [HttpPost]
-        public JsonResult GetRegionsByCode(string code = ConstValues.Code1) {
-            return Json(RegionLogic.regionLogic().GetRegionsByCode(code), JsonRequestBehavior.DenyGet);
-        }
+        //[HttpPost]
+        //public JsonResult GetRegionsByCode(string code = ConstValues.Code1) {
+        //    return Json(RegionLogic.regionLogic().GetRegionsByCode(code), JsonRequestBehavior.DenyGet);
+        //}
 
     }
 }

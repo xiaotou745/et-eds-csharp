@@ -60,31 +60,25 @@ namespace Ets.Model.DomainModel.Area
     /// 根据第三方调用的省市区 转换 为 国标
     /// wc
     /// </summary>
-    public class AreaModelForTranslte
+    public class AreaModelTranslate
     {
         /// <summary>
-        /// 省ID
+        /// 国标码
         /// </summary>
-        public int ProvinceCode { get; set; }
+        public int NationalCode { get; set; }
         /// <summary>
-        /// 省名称
+        /// 编码
         /// </summary>
-        public string ProvinceName { get; set; }
+        public int Code { get; set; }
         /// <summary>
-        /// 市ID
+        /// 名称
         /// </summary>
-        public int CityCode { get; set; }
+        public string Name { get; set; }
+        /// <summary> 
         /// <summary>
-        /// 市名称
+        /// 级别
         /// </summary>
-        public string CityName { get; set; }
-        /// <summary>
-        /// 区ID
-        /// </summary>
-        public int AreaCode { get; set; }
-        /// <summary>
-        /// 区名称
-        /// </summary>
-        public string AreaName { get; set; } 
+        public int JiBie { get; set; }
+
     }
 }

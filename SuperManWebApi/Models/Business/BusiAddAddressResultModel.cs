@@ -2,8 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using SuperManDataAccess;
+using System.Web; 
 using SuperManCommonModel;
 namespace SuperManWebApi.Models.Business
 {
@@ -51,33 +50,33 @@ namespace SuperManWebApi.Models.Business
         public string cityId { get; set; }
     }
 
-    public class BusiAddAddressInfoModelTranslator : TranslatorBase<business, BusiAddAddressInfoModel>
-    {
-        public static readonly BusiAddAddressInfoModelTranslator Instance = new BusiAddAddressInfoModelTranslator();
+    //public class BusiAddAddressInfoModelTranslator : TranslatorBase<business, BusiAddAddressInfoModel>
+    //{
+    //    public static readonly BusiAddAddressInfoModelTranslator Instance = new BusiAddAddressInfoModelTranslator();
 
-        public override BusiAddAddressInfoModel Translate(business from)
-        {
-            throw new NotImplementedException();
-        }
+    //    public override BusiAddAddressInfoModel Translate(business from)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
 
 
 
-        public override business Translate(BusiAddAddressInfoModel from)
-        {
-            var to = new business();
-            to.Id = from.userId;
-            to.Address = from.Address;
-            to.Name = from.businessName;
-            to.Landline = from.landLine;
-            to.PhoneNo2 = from.phoneNo;
-            to.districtId = from.districtId;
-            to.district = from.districtName;
-            to.Longitude = from.longitude;
-            to.Latitude = from.latitude;
-            to.Status = ConstValues.BUSINESS_NOAUDIT;
-            return to;
-        }
-    }
+    //    public override business Translate(BusiAddAddressInfoModel from)
+    //    {
+    //        var to = new business();
+    //        to.Id = from.userId;
+    //        to.Address = from.Address;
+    //        to.Name = from.businessName;
+    //        to.Landline = from.landLine;
+    //        to.PhoneNo2 = from.phoneNo;
+    //        to.districtId = from.districtId;
+    //        to.district = from.districtName;
+    //        to.Longitude = from.longitude;
+    //        to.Latitude = from.latitude;
+    //        to.Status = ConstValues.BUSINESS_NOAUDIT;
+    //        return to;
+    //    }
+    //}
 
     public enum BusiAddAddressStatus : int
     {

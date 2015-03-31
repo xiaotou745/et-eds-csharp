@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Text;
+using ETS.Const;
 using Ets.Dao.User;
 using Ets.Model.Common;
 using Ets.Model.DomainModel.Bussiness;
@@ -59,7 +60,7 @@ namespace Ets.Service.Provider.User
                 }
                 model.PickUpName = from.BusinessName;
                 model.ReceviceAddress = from.ReceviceAddress;
-                model.ReceviceName = from.ReceviceName == null ? "匿名" : from.ReceviceName.Trim();
+                model.ReceviceName = from.ReceviceName == null ? "" : from.ReceviceName.Trim();
                 model.RecevicePhoneNo = from.RecevicePhoneNo;
                 model.Remark = from.Remark;
                 model.Status = from.Status;
@@ -183,11 +184,11 @@ namespace Ets.Service.Provider.User
             //转换 编码
             if (!string.IsNullOrWhiteSpace(model.city))
             {
-                Model.DomainModel.Area.AreaModel areaModel = iAreaProvider.GetNationalAreaInfo(new Model.DomainModel.Area.AreaModel() { Name = model.city.Trim(), JiBie = 2 });
+                Model.DomainModel.Area.AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new Model.DomainModel.Area.AreaModelTranslate() { Name = model.city.Trim(), JiBie = 2 });
                 if (areaModel != null)
                 {
                     model.city = areaModel.Name;
-                    model.CityId = areaModel.Code.ToString();
+                    model.CityId = areaModel.NationalCode.ToString();
                 }
             }
           
@@ -229,27 +230,29 @@ namespace Ets.Service.Provider.User
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
             }
             model.B_Password = MD5Helper.MD5(string.IsNullOrEmpty(model.B_Password) ? "abc123" : model.B_Password);
+            #region 转换省市区
             //转换省
-            var _province = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModel() { Name= model.B_Province, JiBie= 1 });
+            var _province = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.B_Province, JiBie = 1 });
             if (_province != null)
             {
                 model.B_Province = _province.Name;
-                model.B_ProvinceCode = _province.Code.ToString();
+                model.B_ProvinceCode = _province.NationalCode.ToString();
             }
-            //转换市
-            var _city = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModel() { Name = model.B_City, JiBie = 2 });
+            //转换市 
+            var _city = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.B_City, JiBie = 2 });
             if (_city != null)
             {
                 model.B_City = _city.Name;
-                model.B_CityCode = _city.Code.ToString();
+                model.B_CityCode = _city.NationalCode.ToString();
             }
             //转换区
-            var _area = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModel() { Name = model.B_Area, JiBie = 3 });
+            var _area = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.B_Area, JiBie = 3 });
             if (_area != null)
             {
                 model.B_Area = _area.Name;
-                model.B_AreaCode = _area.Code.ToString();
-            } 
+                model.B_AreaCode = _area.NationalCode.ToString();
+            }
+            #endregion
             var business = NewRegisterInfoModelTranslator.Instance.Translate(model);
             business.Status = ConstValues.BUSINESS_AUDITPASS;
             int businessid = dao.InsertOtherBusiness(business);
@@ -333,6 +336,9 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public bool UpdateAuditStatus(int id, EnumStatusType enumStatusType)
         {
+            ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
+            string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, id);
+            redis.Delete(cacheKey);
             return dao.UpdateAuditStatus(id, enumStatusType);
         }
 
@@ -620,9 +626,19 @@ namespace Ets.Service.Provider.User
         {
             try
             {
-                string cacheKey = string.Format("BusinessProvider_GetUserStatus_{0}", userid);
-               // var a = CacheFactory.Instance[cacheKey];
-                return dao.GetUserStatus(userid);
+                ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
+                string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, userid);
+                var cacheValue = redis.Get<string>(cacheKey);
+                if (!string.IsNullOrEmpty(cacheValue))
+                {
+                    return Letao.Util.JsonHelper.ToObject<BussinessStatusModel>(cacheValue);
+                }
+                var UserInfo = dao.GetUserStatus(userid);
+                if (UserInfo != null)
+                {
+                    redis.Add(cacheKey, Letao.Util.JsonHelper.ToJson(UserInfo));
+                }
+                return UserInfo;
             }
             catch (Exception ex)
             {

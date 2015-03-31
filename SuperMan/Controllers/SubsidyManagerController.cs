@@ -8,7 +8,6 @@ using SuperManCore.Common;
 using SuperManBusinessLogic.Subsidy_Logic;
 using SuperManCommonModel.Entities;
 using SuperManCore.Paging;
-using SuperManDataAccess;
 using Ets.Service.IProvider.Subsidy;
 using Ets.Service.Provider.Subsidy;
 

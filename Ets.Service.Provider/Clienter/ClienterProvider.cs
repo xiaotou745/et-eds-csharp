@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ETS.Const;
 using Ets.Dao.Clienter;
 using Ets.Dao.User;
 using Ets.Model.DataModel.Clienter;
@@ -247,12 +248,12 @@ namespace Ets.Service.Provider.Clienter
             //新版的 骑士 注册， 城市 非 必填
             if (!string.IsNullOrWhiteSpace(clienter.City))
             {
-               Model.DomainModel.Area.AreaModel areaModel = iAreaProvider.GetNationalAreaInfo(new Model.DomainModel.Area.AreaModel() { Name = clienter.City.Trim(), JiBie = 2 });
-               if (areaModel != null)
-               {
-                   resultModel.city = areaModel.Name;
-                   resultModel.cityId = areaModel.Code.ToString();
-               }
+                Model.DomainModel.Area.AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new Model.DomainModel.Area.AreaModelTranslate() { Name = clienter.City.Trim(), JiBie = 2 });
+                if (areaModel != null)
+                {
+                    resultModel.city = areaModel.Name;
+                    resultModel.cityId = areaModel.NationalCode.ToString();
+                }
             }
             if (id > 0)
             {
@@ -268,7 +269,7 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="orderNo"></param>
         /// <returns></returns>
         public bool RushOrder(int userId, string orderNo)
-        { 
+        {
             try
             {
                 bool res = clienterDao.RushOrder(userId, orderNo);
@@ -284,7 +285,7 @@ namespace Ets.Service.Provider.Clienter
             }
             return false;
         }
- 
+
 
         /// <summary>
         /// 平扬 2015.3.30
@@ -324,7 +325,7 @@ namespace Ets.Service.Provider.Clienter
 
                     resultModel.income = item.OrderCommission; //佣金 Edit bycaoheyang 20150327
                     resultModel.Amount = OrderCommissionProvider.GetCurrenOrderPrice(oCommission);
-                        //C端 获取订单的金额 Edit bycaoheyang 20150305
+                    //C端 获取订单的金额 Edit bycaoheyang 20150305
 
                     resultModel.businessName = item.BusinessName;
                     resultModel.businessPhone = item.BusinessPhone;
@@ -360,18 +361,18 @@ namespace Ets.Service.Provider.Clienter
                             double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
                             resultModel.distance = res < 1000
                                 ? (res.ToString("f2") + "米")
-                                : ((res/1000).ToString("f2") + "公里");
+                                : ((res / 1000).ToString("f2") + "公里");
                         }
                         if (item.businessId > 0 && item.ReceviceLongitude != null && item.ReceviceLatitude != null
                             && item.ReceviceLongitude != 0 && item.ReceviceLatitude != 0) //计算商户到收货人的距离
                         {
                             Degree degree1 = new Degree(item.BusiLongitude.Value, item.BusiLatitude.Value); //商户经纬度
                             Degree degree2 = new Degree(item.ReceviceLongitude.Value, item.ReceviceLatitude.Value);
-                                //收货人经纬度
+                            //收货人经纬度
                             double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
                             resultModel.distanceB2R = res < 1000
                                 ? (res.ToString("f2") + "米")
-                                : ((res/1000).ToString("f2") + "公里");
+                                : ((res / 1000).ToString("f2") + "公里");
                         }
                         else
                             resultModel.distanceB2R = "--";
@@ -447,13 +448,35 @@ namespace Ets.Service.Provider.Clienter
         {
             try
             {
-                return clienterDao.GetUserStatus(UserId);
+                ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
+                string cacheKey = string.Format(RedissCacheKey.ClienterProvider_GetUserStatus, UserId);
+                var cacheValue = redis.Get<string>(cacheKey);
+                if (!string.IsNullOrEmpty(cacheValue))
+                {
+                    return Letao.Util.JsonHelper.ToObject<ClienterStatusModel>(cacheValue);
+                }
+                var UserInfo = clienterDao.GetUserStatus(UserId); 
+                if (UserInfo != null)
+                {
+                    redis.Add(cacheKey, Letao.Util.JsonHelper.ToJson(UserInfo));
+                }
+                return UserInfo;
             }
             catch (Exception ex)
             {
                 LogHelper.LogWriterFromFilter(ex);
             }
             return null;
+        }
+        public string FinishOrder(int userId, string orderNo)
+        {
+            int result = -1;
+
+            //根据用户
+
+
+
+            return result.ToString();
         }
     }
 }

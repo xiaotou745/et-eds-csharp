@@ -1,6 +1,5 @@
 ﻿using SuperManCore;
-using SuperManCore.Common;
-using SuperManDataAccess;
+using SuperManCore.Common; 
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,46 +34,46 @@ namespace SuperManWebApi.Models.Business
         /// </summary>
         public int GroupId { get; set; }
     }
-    public class RegisterInfoModelTranslator : TranslatorBase<business, RegisterInfoModel>
-    {
-        public static readonly RegisterInfoModelTranslator Instance = new RegisterInfoModelTranslator();
+    //public class RegisterInfoModelTranslator : TranslatorBase<business, RegisterInfoModel>
+    //{
+    //    public static readonly RegisterInfoModelTranslator Instance = new RegisterInfoModelTranslator();
 
-        public override RegisterInfoModel Translate(business from)
-        {
-            throw new NotImplementedException();
-        }
+    //    public override RegisterInfoModel Translate(business from)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
 
 
 
-        public override business Translate(RegisterInfoModel from)
-        {
-            var to = new business();
-            //to.Id = Helper.generateCode(from.phoneNo,AppType.B端);
-            to.City = from.city;
-            to.Password = from.passWord;
-            to.PhoneNo = from.phoneNo;            
-            to.InsertTime = DateTime.Now;
-            to.CityId = from.CityId;
-            to.districtId = "0";
-            if (from.GroupId != 0)
-            {
-                to.GroupId = from.GroupId;
-            }
-            to.CommissionTypeId = 1;
-            ////海底捞
-            //if (ConfigSettings.Instance.IsGroupPush)   //TODO 暂时有效
-            //{
-            //    to.GroupId = 2;
-            //    to.CommissionTypeId = 2;
-            //}
-            //else
-            //{
-            //    to.CommissionTypeId = 1;
-            //}      
+    //    public override business Translate(RegisterInfoModel from)
+    //    {
+    //        var to = new business();
+    //        //to.Id = Helper.generateCode(from.phoneNo,AppType.B端);
+    //        to.City = from.city;
+    //        to.Password = from.passWord;
+    //        to.PhoneNo = from.phoneNo;            
+    //        to.InsertTime = DateTime.Now;
+    //        to.CityId = from.CityId;
+    //        to.districtId = "0";
+    //        if (from.GroupId != 0)
+    //        {
+    //            to.GroupId = from.GroupId;
+    //        }
+    //        to.CommissionTypeId = 1;
+    //        ////海底捞
+    //        //if (ConfigSettings.Instance.IsGroupPush)   //TODO 暂时有效
+    //        //{
+    //        //    to.GroupId = 2;
+    //        //    to.CommissionTypeId = 2;
+    //        //}
+    //        //else
+    //        //{
+    //        //    to.CommissionTypeId = 1;
+    //        //}      
             
-            return to;
-        }
-    }
+    //        return to;
+    //    }
+    //}
     public enum CustomerRegisterStatus : int
     {
         Success = 0,
