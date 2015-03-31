@@ -8,7 +8,6 @@ using SuperManCommonModel.Models;
 using SuperManCore;
 using SuperManCore.Common;
 using SuperManCore.Paging;
-using SuperManDataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;

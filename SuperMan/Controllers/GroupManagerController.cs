@@ -6,7 +6,6 @@ using Ets.Model.ParameterModel.Group;
 using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
 using SuperMan.App_Start;
-using SuperManDataAccess;
 using Ets.Model.DomainModel.Group;
 namespace SuperMan.Controllers
 {

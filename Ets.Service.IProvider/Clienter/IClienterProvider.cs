@@ -117,5 +117,13 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="version"></param>
         /// <returns></returns>
         ClienterStatusModel GetUserStatus(int UserId, double version);
+        /// <summary>
+        /// 超人 完成订单
+        /// wc
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        string FinishOrder(int userId, string orderNo);
     }
 }
