@@ -1,4 +1,5 @@
-﻿using Ets.Dao.Distribution;
+﻿using ETS.Const;
+using Ets.Dao.Distribution;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DomainModel.Bussiness;
@@ -43,6 +44,9 @@ namespace Ets.Service.Provider.Distribution
         /// <returns></returns>
         public bool UpdateAuditStatus(int id, EnumStatusType enumStatusType)
         {
+            ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
+            string cacheKey = string.Format(RedissCacheKey.ClienterProvider_GetUserStatus, id);
+            redis.Delete(cacheKey);
             return dao.UpdateAuditStatus(id, enumStatusType);
         }
         /// <summary>

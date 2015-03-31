@@ -762,19 +762,7 @@ namespace SuperManWebApi.Controllers
                 GetOrdersStatus.Success,
                 new ServicePhone().GetCustomerServicePhone(CityName)
                 );
-        }
-        #region redis测试方法，平扬看完可以删除
-
-        [HttpGet]
-        public void test() {
-            ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
-            redis.Add("1","123");
-
-           string ss= redis.Get<string>("1");
-        }
-        #endregion
-
-
+        } 
         /// <summary>
         /// 获取用户状态
         /// 平扬

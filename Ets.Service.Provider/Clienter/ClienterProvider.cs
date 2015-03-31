@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ETS.Const;
 using Ets.Dao.Clienter;
 using Ets.Dao.User;
 using Ets.Model.DataModel.Clienter;
@@ -271,7 +272,12 @@ namespace Ets.Service.Provider.Clienter
         {
             try
             {
-                return clienterDao.RushOrder(userId, orderNo);
+                bool res = clienterDao.RushOrder(userId, orderNo);
+                if (res) {
+                    var orderPro = new OrderProvider();
+                    orderPro.AsyncOrderStatus(orderNo);
+                }
+                return res; 
             }
             catch (Exception ex)
             {
@@ -442,7 +448,19 @@ namespace Ets.Service.Provider.Clienter
         {
             try
             {
-                return clienterDao.GetUserStatus(UserId);
+                ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
+                string cacheKey = string.Format(RedissCacheKey.ClienterProvider_GetUserStatus, UserId);
+                var cacheValue = redis.Get<string>(cacheKey);
+                if (!string.IsNullOrEmpty(cacheValue))
+                {
+                    return Letao.Util.JsonHelper.ToObject<ClienterStatusModel>(cacheValue);
+                }
+                var UserInfo = clienterDao.GetUserStatus(UserId); 
+                if (UserInfo != null)
+                {
+                    redis.Add(cacheKey, Letao.Util.JsonHelper.ToJson(UserInfo));
+                }
+                return UserInfo;
             }
             catch (Exception ex)
             {

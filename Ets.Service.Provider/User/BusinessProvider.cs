@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Text;
+using ETS.Const;
 using Ets.Dao.User;
 using Ets.Model.Common;
 using Ets.Model.DomainModel.Bussiness;
@@ -335,6 +336,9 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public bool UpdateAuditStatus(int id, EnumStatusType enumStatusType)
         {
+            ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
+            string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, id);
+            redis.Delete(cacheKey);
             return dao.UpdateAuditStatus(id, enumStatusType);
         }
 
@@ -622,9 +626,19 @@ namespace Ets.Service.Provider.User
         {
             try
             {
-                string cacheKey = string.Format("BusinessProvider_GetUserStatus_{0}", userid);
-               // var a = CacheFactory.Instance[cacheKey];
-                return dao.GetUserStatus(userid);
+                ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
+                string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, userid);
+                var cacheValue = redis.Get<string>(cacheKey);
+                if (!string.IsNullOrEmpty(cacheValue))
+                {
+                    return Letao.Util.JsonHelper.ToObject<BussinessStatusModel>(cacheValue);
+                }
+                var UserInfo = dao.GetUserStatus(userid);
+                if (UserInfo != null)
+                {
+                    redis.Add(cacheKey, Letao.Util.JsonHelper.ToJson(UserInfo));
+                }
+                return UserInfo;
             }
             catch (Exception ex)
             {

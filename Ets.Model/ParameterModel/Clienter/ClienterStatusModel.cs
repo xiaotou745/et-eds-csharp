@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace Ets.Model.ParameterModel.Clienter
 {
     /// <summary>

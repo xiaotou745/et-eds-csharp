@@ -18,6 +18,6 @@ namespace Ets.Model.ParameterModel.Bussiness
         /// <summary>
         /// 状态
         /// </summary>
-        public int satus { get; set; } 
+        public int status { get; set; } 
     }
 }
