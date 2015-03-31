@@ -12,7 +12,6 @@ using Ets.Model.DataModel.Clienter;
 using Ets.Model.DomainModel.Bussiness;
 using Ets.Service.Provider.User;
 using SuperManCommonModel.Entities;
-using SuperManDataAccess;
 
 
 namespace SuperMan.Controllers

@@ -39,6 +39,8 @@ namespace Ets.Service.Provider.Order
         private OrderDao OrderDao = new OrderDao();
         private IBusinessProvider iBusinessProvider = new BusinessProvider();
         private ISubsidyProvider iSubsidyProvider = new SubsidyProvider();
+        //和区域有关的  wc
+        readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
 
         /// <summary>
         /// 获取订单
@@ -518,7 +520,29 @@ namespace Ets.Service.Provider.Order
             {
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OrderHadExist);
             }
-
+            #region 转换省市区
+            //转换省
+            var _province = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.Receive_Province, JiBie = 1 });
+            if (_province != null)
+            {
+                model.Receive_ProvinceCode = _province.Name;
+                model.Receive_Province = _province.NationalCode.ToString();
+            }
+            //转换市
+            var _city = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.Receive_City, JiBie = 2 });
+            if (_city != null)
+            {
+                model.Receive_City = _city.Name;
+                model.Receive_CityCode = _city.NationalCode.ToString();
+            }
+            //转换区
+            var _area = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.Receive_Area, JiBie = 3 });
+            if (_area != null)
+            {
+                model.Receive_Area = _area.Name;
+                model.Receive_AreaCode = _area.NationalCode.ToString();
+            }
+            #endregion 
             order dborder = OrderInstance(model);  //整合订单信息
             bool result = Convert.ToBoolean(AddOrder(dborder));    //添加订单记录，并且触发极光推送。          
             if (result)
@@ -627,6 +651,16 @@ namespace Ets.Service.Provider.Order
             to.Status = ConstValues.ORDER_NEW;
 
             return to;
+        }
+        /// <summary>
+        /// 根据订单号 获取订单信息
+        /// wc
+        /// </summary>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        public order GetOrderInfoByOrderNo(string orderNo)
+        {
+            return OrderDao.GetOrderInfoByOrderNo(orderNo);
         }
 
     }

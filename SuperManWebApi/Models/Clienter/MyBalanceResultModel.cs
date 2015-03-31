@@ -1,5 +1,4 @@
 ﻿using SuperManCore;
-using SuperManDataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,24 +26,24 @@ namespace SuperManWebApi.Models.Clienter
         /// </summary>
         public string InsertTime { get; set; }
     }
-    public class MyBalanceListResultModelTranslator : TranslatorBase<myincome, MyBalanceListResultModel>
-    {
-        public readonly static MyBalanceListResultModelTranslator Instance = new MyBalanceListResultModelTranslator();
-        public override MyBalanceListResultModel Translate(myincome from)
-        {
-            var model = new MyBalanceListResultModel();
-            if(from.InsertTime!=null)
-            {
-                model.InsertTime = from.InsertTime.Value.ToString("yyyy.MM.dd");
-            }            
-            model.MyIncomeName = from.MyIncome1;
-            model.MyInComeAmount = from.MyInComeAmount;
-            return model;
-        }
+    //public class MyBalanceListResultModelTranslator : TranslatorBase<myincome, MyBalanceListResultModel>
+    //{
+    //    public readonly static MyBalanceListResultModelTranslator Instance = new MyBalanceListResultModelTranslator();
+    //    public override MyBalanceListResultModel Translate(myincome from)
+    //    {
+    //        var model = new MyBalanceListResultModel();
+    //        if(from.InsertTime!=null)
+    //        {
+    //            model.InsertTime = from.InsertTime.Value.ToString("yyyy.MM.dd");
+    //        }            
+    //        model.MyIncomeName = from.MyIncome1;
+    //        model.MyInComeAmount = from.MyInComeAmount;
+    //        return model;
+    //    }
 
-        public override myincome Translate(MyBalanceListResultModel from)
-        {
-            throw new NotImplementedException();
-        }
-    }
+    //    public override myincome Translate(MyBalanceListResultModel from)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+    //}
 }

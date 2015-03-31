@@ -1,21 +1,6 @@
 
-﻿using SuperManBusinessLogic.C_Logic;
-using SuperManBusinessLogic.Order_Logic;
-﻿using SuperManBusinessLogic.Order_Logic;
-using SuperManBusinessLogic.Subsidy_Logic;
-using SuperManCommonModel.Entities;
-using SuperManCommonModel.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using SuperManCore;
+﻿using System.Web.Mvc;
 using SuperManCore.Common;
-using SuperManCore.Paging;
-using SuperManDataAccess;
-using SuperManBusinessLogic.CommonLogic;
-using SuperManBusinessLogic.B_Logic;
 using Ets.Service.Provider.Distribution;
 using Ets.Service.Provider.Order;
 using Ets.Service.IProvider.Common;

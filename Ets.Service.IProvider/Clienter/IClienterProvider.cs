@@ -108,5 +108,13 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="UserPwd"></param>
         /// <returns></returns>
         bool UpdateClienterPwdByUserId(int UserId, string UserPwd);
+        /// <summary>
+        /// 超人 完成订单
+        /// wc
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        string FinishOrder(int userId, string orderNo);
     }
 }

@@ -100,25 +100,26 @@ namespace Ets.Service.Provider.Common
         /// </summary>
         /// <param name="from"></param>
         /// <returns></returns>
-        public AreaModel GetNationalAreaInfo(AreaModel from)
+        public AreaModelTranslate GetNationalAreaInfo(AreaModelTranslate from)
         {
-            AreaModel areaModel = new AreaModel();
-            AreaModel resultAreaModel = new AreaModel();
-            List<AreaModel> list = new List<AreaModel>();
+            AreaModelTranslate areaModel = new AreaModelTranslate();
+            AreaModelTranslate resultAreaModel = new AreaModelTranslate();
+            //List<AreaModel> list = new List<AreaModel>();
             string key = "Ets.Service.Provider.Common_GetNationalAreaInfo";
-        
-            List<AreaModel> cacheAreaModelList = CacheFactory.Instance[key] as List<AreaModel>;
+
+            List<AreaModelTranslate> cacheAreaModelList = CacheFactory.Instance[key] as List<AreaModelTranslate>;
             if (cacheAreaModelList == null) //为null的时候，取数据库
             {
-                list = dao.GetOpenCityInfoSql().ToList();
-                areaModel = list.FirstOrDefault(s => s.Name == from.Name.Trim() && s.JiBie == from.JiBie);
-                CacheFactory.Instance.AddObject(key, list);
-            }
-            else
-            { 
-                areaModel = cacheAreaModelList.FirstOrDefault(s => s.Name == from.Name.Trim() && s.JiBie == from.JiBie);
-            }
+                //cacheAreaModelList = dao.GetRegionInfo().ToList();
 
+                CacheFactory.Instance.AddObject(key, cacheAreaModelList);
+            }
+            if (from.JiBie == 2)
+            {
+                if (from.Name.Contains("北京")) { from.Name = "北京郊区"; }
+                if (from.Name.Contains("上海")) { from.Name = "上海郊区"; }
+            }
+            areaModel = cacheAreaModelList.FirstOrDefault(s => s.Name == from.Name.Trim() && s.JiBie == from.JiBie);
 
             if (areaModel != null)
             {
@@ -130,9 +131,8 @@ namespace Ets.Service.Provider.Common
             {
                 resultAreaModel = null;
             }
-            return resultAreaModel;
-            
-            
+            return resultAreaModel; 
         }
+		
     }
 }

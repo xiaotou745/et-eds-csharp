@@ -8,8 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
-//using System.Web.Mvc;
-using SuperManDataAccess;
 using SuperManBusinessLogic.B_Logic;
 using SuperManBusinessLogic.Order_Logic;
 using System.Threading.Tasks;
@@ -415,32 +413,32 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [ActionStatus(typeof(BusiAddAddressStatus))]
-        [HttpPost]
-        public ResultModel<BusiAddAddressResultModel> PostManagerAddress_B(BusiAddAddressInfoModel model)
-        {
-            if (string.IsNullOrWhiteSpace(model.phoneNo))
-            {
-                return ResultModel<BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.PhoneNumberEmpty);
-            }
-            if (string.IsNullOrWhiteSpace(model.Address))
-            {
-                return ResultModel<BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.AddressEmpty);
-            }
-            if (string.IsNullOrWhiteSpace(model.businessName))
-            {
-                return ResultModel<BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.businessNameEmpty);
-            }
-            var business = BusiAddAddressInfoModelTranslator.Instance.Translate(model);
-            var result = BusiLogic.busiLogic().Update(business);
+        //[ActionStatus(typeof(BusiAddAddressStatus))]
+        //[HttpPost]
+        //public ResultModel<BusiAddAddressResultModel> PostManagerAddress_B(BusiAddAddressInfoModel model)
+        //{
+        //    if (string.IsNullOrWhiteSpace(model.phoneNo))
+        //    {
+        //        return ResultModel<BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.PhoneNumberEmpty);
+        //    }
+        //    if (string.IsNullOrWhiteSpace(model.Address))
+        //    {
+        //        return ResultModel<BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.AddressEmpty);
+        //    }
+        //    if (string.IsNullOrWhiteSpace(model.businessName))
+        //    {
+        //        return ResultModel<BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.businessNameEmpty);
+        //    }
+        //    var business = BusiAddAddressInfoModelTranslator.Instance.Translate(model);
+        //    var result = BusiLogic.busiLogic().Update(business);
 
-            var resultModel = new BusiAddAddressResultModel
-            {
-                userId = business.Id,
-                status = result
-            };
-            return ResultModel<BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.Success, resultModel);
-        }
+        //    var resultModel = new BusiAddAddressResultModel
+        //    {
+        //        userId = business.Id,
+        //        status = result
+        //    };
+        //    return ResultModel<BusiAddAddressResultModel>.Conclude(BusiAddAddressStatus.Success, resultModel);
+        //}
         /// <summary>
         /// 地址管理
         /// 改 ado.net wc
@@ -449,7 +447,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.BusiAddAddressStatus))]
         [HttpPost]
-        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel> PostManagerAddress_B_WC(Ets.Model.ParameterModel.Bussiness.BusiAddAddressInfoModel model)
+        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel> PostManagerAddress_B(Ets.Model.ParameterModel.Bussiness.BusiAddAddressInfoModel model)
         {
             if (string.IsNullOrWhiteSpace(model.phoneNo))
             {

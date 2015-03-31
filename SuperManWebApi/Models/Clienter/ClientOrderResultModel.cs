@@ -2,8 +2,7 @@
 using SuperManBusinessLogic.B_Logic;
 using SuperManBusinessLogic.Order_Logic;
 using SuperManCommonModel.Models;
-using SuperManCore;
-using SuperManDataAccess;
+using SuperManCore; 
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -184,134 +183,134 @@ namespace SuperManWebApi.Models.Clienter
         public static double longitude { get; set; }
         public static double latitude { get; set; }
     }
-    public class ClientOrderResultModelTranslator : TranslatorBase<order, ClientOrderResultModel>
-    {
-        public static readonly ClientOrderResultModelTranslator Instance = new ClientOrderResultModelTranslator();
-        public override ClientOrderResultModel Translate(order from)
-        {
-            var resultModel = new ClientOrderResultModel();
-            if (from.clienterId != null)
-                resultModel.userId = from.clienterId.Value;
-            resultModel.OrderNo = from.OrderNo;
-            resultModel.income = OrderLogic.orderLogic().GetCurrenOrderCommission(from);  //计算设置当前订单骑士可获取的佣金 Edit bycaoheyang 20150305
-            resultModel.Amount = OrderLogic.orderLogic().GetCurrenOrderPrice(from); //C端 获取订单的金额 Edit bycaoheyang 20150305
-            //resultModel.income = from.DistribSubsidy + from.WebsiteSubsidy + from.OrderCommission;
-            //resultModel.Amount = from.Amount.Value;
-            business _business = null;
-            if (from.businessId.HasValue)
-            {
-                _business = BusiLogic.busiLogic().GetBusinessById(from.businessId.Value);
-            }
-            if (_business != null)
-            {
-                resultModel.businessName = _business.Name;
-                resultModel.businessPhone = _business.PhoneNo2;
-                resultModel.pickUpCity = _business.City.Replace("市", "");
-            }
+    //public class ClientOrderResultModelTranslator : TranslatorBase<order, ClientOrderResultModel>
+    //{
+    //    public static readonly ClientOrderResultModelTranslator Instance = new ClientOrderResultModelTranslator();
+    //    public override ClientOrderResultModel Translate(order from)
+    //    {
+    //        var resultModel = new ClientOrderResultModel();
+    //        if (from.clienterId != null)
+    //            resultModel.userId = from.clienterId.Value;
+    //        resultModel.OrderNo = from.OrderNo;
+    //        resultModel.income = OrderLogic.orderLogic().GetCurrenOrderCommission(from);  //计算设置当前订单骑士可获取的佣金 Edit bycaoheyang 20150305
+    //        resultModel.Amount = OrderLogic.orderLogic().GetCurrenOrderPrice(from); //C端 获取订单的金额 Edit bycaoheyang 20150305
+    //        //resultModel.income = from.DistribSubsidy + from.WebsiteSubsidy + from.OrderCommission;
+    //        //resultModel.Amount = from.Amount.Value;
+    //        business _business = null;
+    //        if (from.businessId.HasValue)
+    //        {
+    //            _business = BusiLogic.busiLogic().GetBusinessById(from.businessId.Value);
+    //        }
+    //        if (_business != null)
+    //        {
+    //            resultModel.businessName = _business.Name;
+    //            resultModel.businessPhone = _business.PhoneNo2;
+    //            resultModel.pickUpCity = _business.City.Replace("市", "");
+    //        }
 
-            if (from.PubDate.HasValue)
-            {
-                resultModel.pubDate = from.PubDate.Value.ToShortTimeString();
-            }
-            resultModel.pickUpAddress = from.PickUpAddress;
-            resultModel.receviceName = from.ReceviceName;
-            resultModel.receviceCity = from.ReceviceCity;
-            resultModel.receviceAddress = from.ReceviceAddress;
-            resultModel.recevicePhone = from.RecevicePhoneNo;
-            resultModel.IsPay = from.IsPay.Value;
-            resultModel.Remark = from.Remark;
-            resultModel.Status = from.Status.Value;
-            resultModel.OrderCount = from.OrderCount;
-            if (_business != null)
-            {
-                Degree degree1 = new Degree(degree.longitude, degree.latitude);
-                Degree degree2 = new Degree(_business.Longitude.Value, _business.Latitude.Value);
-                double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
-                resultModel.distance = res < 1000 ? (res.ToString("f2") + "m") : ((res / 1000).ToString("f2") + "km");
-            }
-            else
-                resultModel.distance = "--";
-            if (_business != null && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
-            {
-                Degree degree1 = new Degree(_business.Longitude.Value, _business.Latitude.Value);
-                Degree degree2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);
-                double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
-                resultModel.distanceB2R = res < 1000 ? (res.ToString("f2") + "m") : ((res / 1000).ToString("f2") + "km");
-            }
-            else
-                resultModel.distanceB2R = "--";
-            return resultModel;
-        }
+    //        if (from.PubDate.HasValue)
+    //        {
+    //            resultModel.pubDate = from.PubDate.Value.ToShortTimeString();
+    //        }
+    //        resultModel.pickUpAddress = from.PickUpAddress;
+    //        resultModel.receviceName = from.ReceviceName;
+    //        resultModel.receviceCity = from.ReceviceCity;
+    //        resultModel.receviceAddress = from.ReceviceAddress;
+    //        resultModel.recevicePhone = from.RecevicePhoneNo;
+    //        resultModel.IsPay = from.IsPay.Value;
+    //        resultModel.Remark = from.Remark;
+    //        resultModel.Status = from.Status.Value;
+    //        resultModel.OrderCount = from.OrderCount;
+    //        if (_business != null)
+    //        {
+    //            Degree degree1 = new Degree(degree.longitude, degree.latitude);
+    //            Degree degree2 = new Degree(_business.Longitude.Value, _business.Latitude.Value);
+    //            double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
+    //            resultModel.distance = res < 1000 ? (res.ToString("f2") + "m") : ((res / 1000).ToString("f2") + "km");
+    //        }
+    //        else
+    //            resultModel.distance = "--";
+    //        if (_business != null && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
+    //        {
+    //            Degree degree1 = new Degree(_business.Longitude.Value, _business.Latitude.Value);
+    //            Degree degree2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);
+    //            double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
+    //            resultModel.distanceB2R = res < 1000 ? (res.ToString("f2") + "m") : ((res / 1000).ToString("f2") + "km");
+    //        }
+    //        else
+    //            resultModel.distanceB2R = "--";
+    //        return resultModel;
+    //    }
 
-        public override order Translate(ClientOrderResultModel from)
-        {
-            throw new NotImplementedException();
-        }
-    }
+    //    public override order Translate(ClientOrderResultModel from)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+    //}
 
-    public class ClientOrderNoLoginResultModelTranslator : TranslatorBase<order, ClientOrderNoLoginResultModel>
-    {
-        public static readonly ClientOrderNoLoginResultModelTranslator Instance = new ClientOrderNoLoginResultModelTranslator();
-        public override ClientOrderNoLoginResultModel Translate(order from)
-        {
-            var resultModel = new ClientOrderNoLoginResultModel();
-            if (from.clienterId != null)
-                resultModel.userId = from.clienterId.Value;
-            resultModel.OrderNo = from.OrderNo;
-            resultModel.OriginalOrderNo = from.OriginalOrderNo; //来源订单号
-            resultModel.income = OrderLogic.orderLogic().GetCurrenOrderCommission(from);  //计算设置当前订单骑士可获取的佣金 Edit bycaoheyang 20150305
-            resultModel.Amount = OrderLogic.orderLogic().GetCurrenOrderPrice(from); //C端 获取订单的金额 Edit bycaoheyang 20150305
-            //resultModel.income = from.DistribSubsidy + from.WebsiteSubsidy + from.OrderCommission; //骑士的收入= 网站补贴+ 外送费 + 订单佣金
-            //resultModel.Amount = from.Amount.Value;
-            business _business = null;
-            if (from.businessId.HasValue)
-            {
-                _business = BusiLogic.busiLogic().GetBusinessById(from.businessId.Value);                
-            }
-            if (_business != null)
-            {
-                resultModel.businessName = _business.Name;
-                resultModel.businessPhone = _business.PhoneNo2;
-                resultModel.pickUpCity = _business.City.Replace("市", "");
-            }
+    //public class ClientOrderNoLoginResultModelTranslator : TranslatorBase<order, ClientOrderNoLoginResultModel>
+    //{
+    //    public static readonly ClientOrderNoLoginResultModelTranslator Instance = new ClientOrderNoLoginResultModelTranslator();
+    //    public override ClientOrderNoLoginResultModel Translate(order from)
+    //    {
+    //        var resultModel = new ClientOrderNoLoginResultModel();
+    //        if (from.clienterId != null)
+    //            resultModel.userId = from.clienterId.Value;
+    //        resultModel.OrderNo = from.OrderNo;
+    //        resultModel.OriginalOrderNo = from.OriginalOrderNo; //来源订单号
+    //        resultModel.income = OrderLogic.orderLogic().GetCurrenOrderCommission(from);  //计算设置当前订单骑士可获取的佣金 Edit bycaoheyang 20150305
+    //        resultModel.Amount = OrderLogic.orderLogic().GetCurrenOrderPrice(from); //C端 获取订单的金额 Edit bycaoheyang 20150305
+    //        //resultModel.income = from.DistribSubsidy + from.WebsiteSubsidy + from.OrderCommission; //骑士的收入= 网站补贴+ 外送费 + 订单佣金
+    //        //resultModel.Amount = from.Amount.Value;
+    //        business _business = null;
+    //        if (from.businessId.HasValue)
+    //        {
+    //            _business = BusiLogic.busiLogic().GetBusinessById(from.businessId.Value);                
+    //        }
+    //        if (_business != null)
+    //        {
+    //            resultModel.businessName = _business.Name;
+    //            resultModel.businessPhone = _business.PhoneNo2;
+    //            resultModel.pickUpCity = _business.City.Replace("市", "");
+    //        }
           
-            if (from.PubDate.HasValue)
-            {
-                resultModel.pubDate = from.PubDate.Value.ToShortTimeString();
-            }
-            resultModel.pickUpAddress = from.PickUpAddress.Trim();
-            resultModel.receviceName = from.ReceviceName.Trim();
-            resultModel.receviceCity = from.ReceviceCity.Trim();
-            resultModel.receviceAddress = from.ReceviceAddress.Trim();
-            resultModel.recevicePhone = from.RecevicePhoneNo.Trim();
-            resultModel.IsPay = from.IsPay.Value;
-            resultModel.Remark = from.Remark.Trim();
-            resultModel.Status = from.Status.Value;
-            resultModel.OrderCount = from.OrderCount;
-            if (degree.longitude != null && degree.latitude != null && _business.Longitude != null && _business.Latitude != null)
-            {
-                Degree degree1 = new Degree(degree.longitude, degree.latitude);
-                Degree degree2 = new Degree(_business.Longitude.Value, _business.Latitude.Value);
-                double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
-                resultModel.distance = res < 1000 ? (res.ToString("f2") + "m") : ((res / 1000).ToString("f2") + "km");
-            }
-            else
-                resultModel.distance = "--";
-            if (_business != null && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
-            {
-                Degree degree1 = new Degree(_business.Longitude.Value, _business.Latitude.Value);
-                Degree degree2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);
-                double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
-                resultModel.distanceB2R = res < 1000 ? (res.ToString("f2") + "m") : ((res / 1000).ToString("f2") + "km");
-            }
-            else
-                resultModel.distanceB2R = "--";
-            return resultModel;
-        }
+    //        if (from.PubDate.HasValue)
+    //        {
+    //            resultModel.pubDate = from.PubDate.Value.ToShortTimeString();
+    //        }
+    //        resultModel.pickUpAddress = from.PickUpAddress.Trim();
+    //        resultModel.receviceName = from.ReceviceName.Trim();
+    //        resultModel.receviceCity = from.ReceviceCity.Trim();
+    //        resultModel.receviceAddress = from.ReceviceAddress.Trim();
+    //        resultModel.recevicePhone = from.RecevicePhoneNo.Trim();
+    //        resultModel.IsPay = from.IsPay.Value;
+    //        resultModel.Remark = from.Remark.Trim();
+    //        resultModel.Status = from.Status.Value;
+    //        resultModel.OrderCount = from.OrderCount;
+    //        if (degree.longitude != null && degree.latitude != null && _business.Longitude != null && _business.Latitude != null)
+    //        {
+    //            Degree degree1 = new Degree(degree.longitude, degree.latitude);
+    //            Degree degree2 = new Degree(_business.Longitude.Value, _business.Latitude.Value);
+    //            double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
+    //            resultModel.distance = res < 1000 ? (res.ToString("f2") + "m") : ((res / 1000).ToString("f2") + "km");
+    //        }
+    //        else
+    //            resultModel.distance = "--";
+    //        if (_business != null && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
+    //        {
+    //            Degree degree1 = new Degree(_business.Longitude.Value, _business.Latitude.Value);
+    //            Degree degree2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);
+    //            double res = CoordDispose.GetDistanceGoogle(degree1, degree2);
+    //            resultModel.distanceB2R = res < 1000 ? (res.ToString("f2") + "m") : ((res / 1000).ToString("f2") + "km");
+    //        }
+    //        else
+    //            resultModel.distanceB2R = "--";
+    //        return resultModel;
+    //    }
 
-        public override order Translate(ClientOrderNoLoginResultModel from)
-        {
-            throw new NotImplementedException();
-        }
-    }
+    //    public override order Translate(ClientOrderNoLoginResultModel from)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+    //}
 }

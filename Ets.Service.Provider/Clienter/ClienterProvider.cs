@@ -247,11 +247,11 @@ namespace Ets.Service.Provider.Clienter
             //新版的 骑士 注册， 城市 非 必填
             if (!string.IsNullOrWhiteSpace(clienter.City))
             {
-               Model.DomainModel.Area.AreaModel areaModel = iAreaProvider.GetNationalAreaInfo(new Model.DomainModel.Area.AreaModel() { Name = clienter.City.Trim(), JiBie = 2 });
+                Model.DomainModel.Area.AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new Model.DomainModel.Area.AreaModelTranslate() { Name = clienter.City.Trim(), JiBie = 2 });
                if (areaModel != null)
                {
                    resultModel.city = areaModel.Name;
-                   resultModel.cityId = areaModel.Code.ToString();
+                   resultModel.cityId = areaModel.NationalCode.ToString();
                }
             }
             if (id > 0)
@@ -430,6 +430,16 @@ namespace Ets.Service.Provider.Clienter
         public bool UpdateClienterPwdByUserId(int UserId, string UserPwd)
         {
             return clienterDao.UpdateClienterPwdSql(UserId, UserPwd);
+        }
+        public string FinishOrder(int userId, string orderNo)
+        {
+            int result = -1;
+
+            //根据用户
+            
+
+
+            return result.ToString();
         }
     }
 }

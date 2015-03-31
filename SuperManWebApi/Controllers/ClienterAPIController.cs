@@ -15,14 +15,13 @@ using System.IO;
 using SuperManCore.Paging;
 using SuperManCommonModel.Entities;
 using SuperManBusinessLogic.CommonLogic;
-using System.Threading.Tasks;
-using SuperManDataAccess;
+using System.Threading.Tasks; 
 using SuperManBusinessLogic.B_Logic;
 using System.ComponentModel;
 using ETS.Util;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.Provider.Common;
-
+using SuperManDataAccess;
 namespace SuperManWebApi.Controllers
 {
 
@@ -309,15 +308,15 @@ namespace SuperManWebApi.Controllers
                 cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim()
             };
             //这里转换一下 区域 code ,转换后 修改 为根据 code 作为 查询条件，原来根据name去掉  wc
-            if (!string.IsNullOrWhiteSpace(model.city))
-            {
-               Ets.Model.DomainModel.Area.AreaModel areaModel = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModel() { Name = model.city.Trim(), JiBie = 2 });
-               if (areaModel != null)
-               {
-                   criteria.cityId = areaModel.Code.ToString();
-                   criteria.city = areaModel.Name;
-               }
-            }
+            //if (!string.IsNullOrWhiteSpace(model.city))
+            //{
+            //    Ets.Model.DomainModel.Area.AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.city.Trim(), JiBie = 2 });
+            //   if (areaModel != null)
+            //   {
+            //       criteria.cityId = areaModel.NationalCode.ToString();
+            //       criteria.city = areaModel.Name;
+            //   }
+            //}
             var pagedList = new Ets.Service.Provider.Order.OrderProvider().GetOrders(criteria);
 
             pagedList = pagedList.OrderByDescending(i => i.pubDate).ToList();  //按照发布时间倒序排列
@@ -351,17 +350,16 @@ namespace SuperManWebApi.Controllers
             };
             //根据用户传递的  名称，取得 国标编码 wc,这里的 city 是二级 ，已和康珍 确认过
             //新版的 骑士 注册， 城市 非 必填 
-            if (!string.IsNullOrWhiteSpace(model.city))
-            {
-                Ets.Model.DomainModel.Area.AreaModel areaModel = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModel() { Name = model.city.Trim(), JiBie = 2 });
-                if (areaModel != null)
-                {
-                    criteria.cityId = areaModel.Code.ToString();
-                    criteria.city = areaModel.Name;
-                }
-            }
-
-
+            //if (!string.IsNullOrWhiteSpace(model.city))
+            //{
+            //    Ets.Model.DomainModel.Area.AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.city.Trim(), JiBie = 2 });
+            //    if (areaModel != null)
+            //    {
+            //        criteria.cityId = areaModel.NationalCode.ToString();
+            //        criteria.city = areaModel.Name;
+            //    }
+            //}
+             
             var pagedList = new Ets.Service.Provider.Order.OrderProvider().GetOrdersNoLoginLatest(criteria);
             pagedList = pagedList.OrderByDescending(i => i.pubDate).ToList();
             //var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLoginLatest(criteria);

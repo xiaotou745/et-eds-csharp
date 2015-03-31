@@ -101,42 +101,42 @@ namespace SuperManCommonModel.Models
         /// </summary>
         public string statusView { get; set; }
     }
-    public class BusinessModelTranslator : TranslatorBase<business, BusinessModel>
-    {
-        public static readonly BusinessModelTranslator Instance = new BusinessModelTranslator();
-        public override BusinessModel Translate(business from)
-        {
-            var to = new BusinessModel();
-            to.Id = from.Id;
-            to.Name = from.Name;
-            to.City = from.City;
-            to.PhoneNo = from.PhoneNo;
-            to.Password = from.Password;
-            to.CheckPicUrl = from.CheckPicUrl;
-            to.IDCard = from.IDCard;
-            to.Address = from.Address;
-            to.Landline = from.Landline;
-            to.Longitude = from.Longitude;
-            to.Latitude = from.Latitude;
-            to.Status = from.Status;
-            return to;
-        }
-        public override business Translate(BusinessModel from)
-        {
-            var to = new business();
-            to.Id = from.Id;
-            to.Name = from.Name;
-            to.City = from.City;
-            to.PhoneNo = from.PhoneNo;
-            to.Password = from.Password;
-            to.CheckPicUrl = from.CheckPicUrl;
-            to.IDCard = from.IDCard;
-            to.Address = from.Address;
-            to.Landline = from.Landline;
-            to.Longitude = from.Longitude;
-            to.Latitude = from.Latitude;
-            to.Status = from.Status;
-            return to;
-        }
-    }
+    //public class BusinessModelTranslator : TranslatorBase<business, BusinessModel>
+    //{
+    //    public static readonly BusinessModelTranslator Instance = new BusinessModelTranslator();
+    //    public override BusinessModel Translate(business from)
+    //    {
+    //        var to = new BusinessModel();
+    //        to.Id = from.Id;
+    //        to.Name = from.Name;
+    //        to.City = from.City;
+    //        to.PhoneNo = from.PhoneNo;
+    //        to.Password = from.Password;
+    //        to.CheckPicUrl = from.CheckPicUrl;
+    //        to.IDCard = from.IDCard;
+    //        to.Address = from.Address;
+    //        to.Landline = from.Landline;
+    //        to.Longitude = from.Longitude;
+    //        to.Latitude = from.Latitude;
+    //        to.Status = from.Status;
+    //        return to;
+    //    }
+    //    public override business Translate(BusinessModel from)
+    //    {
+    //        var to = new business();
+    //        to.Id = from.Id;
+    //        to.Name = from.Name;
+    //        to.City = from.City;
+    //        to.PhoneNo = from.PhoneNo;
+    //        to.Password = from.Password;
+    //        to.CheckPicUrl = from.CheckPicUrl;
+    //        to.IDCard = from.IDCard;
+    //        to.Address = from.Address;
+    //        to.Landline = from.Landline;
+    //        to.Longitude = from.Longitude;
+    //        to.Latitude = from.Latitude;
+    //        to.Status = from.Status;
+    //        return to;
+    //    }
+    //}
 }

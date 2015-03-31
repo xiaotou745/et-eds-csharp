@@ -646,7 +646,7 @@ namespace Ets.Dao.Order
             return ParseHelper.ToInt(executeScalar, 0);
 
         }
-
+         
           
         /// <summary>
         /// 订单是否被抢
@@ -899,6 +899,71 @@ namespace Ets.Dao.Order
                 return null;
             }
             return MapRows<SubsidyResultModel>(dt)[0];
+        }
+        /// <summary>
+        /// 根据订单号获取订单信息
+        /// wc
+        /// </summary>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        public order GetOrderInfoByOrderNo(string orderNo)
+        {
+            string sql = @"SELECT TOP 1  o.Id ,
+        o.OrderNo ,
+        o.PickUpAddress ,
+        o.PubDate ,
+        o.ReceviceName ,
+        o.RecevicePhoneNo ,
+        o.ReceviceAddress ,
+        o.ActualDoneDate ,
+        o.IsPay ,
+        o.Amount ,
+        o.OrderCommission ,
+        o.DistribSubsidy ,
+        o.WebsiteSubsidy ,
+        o.Remark ,
+        o.Status ,
+        o.clienterId ,
+        o.businessId ,
+        o.ReceviceCity ,
+        o.ReceviceLongitude ,
+        o.ReceviceLatitude ,
+        o.OrderFrom ,
+        o.OriginalOrderId ,
+        o.OriginalOrderNo ,
+        o.Quantity ,
+        o.[Weight] ,
+        o.ReceiveProvince ,
+        o.ReceiveArea ,
+        o.ReceiveProvinceCode ,
+        o.ReceiveCityCode ,
+        o.ReceiveAreaCode ,
+        o.OrderType ,
+        o.KM ,
+        o.GuoJuQty ,
+        o.LuJuQty ,
+        o.SongCanDate ,
+        o.OrderCount ,
+        o.CommissionRate ,
+        o.Payment ,
+        o.CommissionFormulaMode  FROM dbo.[order] o (NOLOCK)  WHERE 1 = 1 
+                                     ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@OrderNo", orderNo);
+            if (!string.IsNullOrWhiteSpace(orderNo))
+            {
+                sql += " AND OrderNo=@OrderNo";
+            }
+            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
+            var list = ConvertDataTableList<order>(dt);
+            if (list != null && list.Count > 0)
+            {
+                return list[0];
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

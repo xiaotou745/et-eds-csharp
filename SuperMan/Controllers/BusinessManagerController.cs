@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using SuperManDataAccess;
 using Ets.Model.ParameterModel.Bussiness;
 using Ets.Service.Provider.Common;
 using Ets.Service.IProvider.Common;

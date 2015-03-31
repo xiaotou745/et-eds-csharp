@@ -1,8 +1,7 @@
 ﻿using SuperManBusinessLogic.B_Logic;
 using SuperManBusinessLogic.Subsidy_Logic;
 using SuperManCommonModel;
-using SuperManCore;
-using SuperManDataAccess;
+using SuperManCore; 
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -120,100 +119,100 @@ namespace SuperManWebApi.Models.Business
 
 
     }
-    public class NewBusiOrderInfoModelTranslator : TranslatorBase<order, NewPostPublishOrderModel>
-    {
-        public static readonly NewBusiOrderInfoModelTranslator Instance = new NewBusiOrderInfoModelTranslator();
+    //public class NewBusiOrderInfoModelTranslator : TranslatorBase<order, NewPostPublishOrderModel>
+    //{
+    //    public static readonly NewBusiOrderInfoModelTranslator Instance = new NewBusiOrderInfoModelTranslator();
 
-        public override NewPostPublishOrderModel Translate(order from)
-        {
-            throw new NotImplementedException();
-        }
+    //    public override NewPostPublishOrderModel Translate(order from)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
 
 
 
-        public override order Translate(NewPostPublishOrderModel from)
-        {
-            order to = new order();
-            business abusiness = BusiLogic.busiLogic().GetBusiByOriIdAndOrderFrom(from.OriginalBusinessId, from.OrderFrom);
-            if (abusiness != null)
-            {
-                from.BusinessId = abusiness.Id;
-            }
-            else
-            {
-                return null;
-            }
-            to.OrderNo = Helper.generateOrderCode(abusiness.Id);  //根据userId生成订单号(15位)
-            to.businessId = abusiness.Id; //当前发布者
-            business business = BusiLogic.busiLogic().GetBusinessById(abusiness.Id);  //根据发布者id,获取发布者的相关信息实体
-            if (business != null)
-            {
-                to.PickUpAddress = business.Address;  //提取地址
-                to.PubDate = DateTime.Now; //提起时间
-                to.ReceviceCity = business.City; //城市
-            }
-            to.SongCanDate = from.SongCanDate; //送餐时间
-            to.Remark = from.Remark;
+    //    public override order Translate(NewPostPublishOrderModel from)
+    //    {
+    //        order to = new order();
+    //        business abusiness = BusiLogic.busiLogic().GetBusiByOriIdAndOrderFrom(from.OriginalBusinessId, from.OrderFrom);
+    //        if (abusiness != null)
+    //        {
+    //            from.BusinessId = abusiness.Id;
+    //        }
+    //        else
+    //        {
+    //            return null;
+    //        }
+    //        to.OrderNo = Helper.generateOrderCode(abusiness.Id);  //根据userId生成订单号(15位)
+    //        to.businessId = abusiness.Id; //当前发布者
+    //        business business = BusiLogic.busiLogic().GetBusinessById(abusiness.Id);  //根据发布者id,获取发布者的相关信息实体
+    //        if (business != null)
+    //        {
+    //            to.PickUpAddress = business.Address;  //提取地址
+    //            to.PubDate = DateTime.Now; //提起时间
+    //            to.ReceviceCity = business.City; //城市
+    //        }
+    //        to.SongCanDate = from.SongCanDate; //送餐时间
+    //        to.Remark = from.Remark;
 
-            to.ReceviceName = from.ReceiveName;
-            to.RecevicePhoneNo = from.ReceivePhoneNo;
+    //        to.ReceviceName = from.ReceiveName;
+    //        to.RecevicePhoneNo = from.ReceivePhoneNo;
 
-            to.ReceiveProvince = from.Receive_Province;
-            to.ReceiveProvinceCode = from.Receive_ProvinceCode;
+    //        to.ReceiveProvince = from.Receive_Province;
+    //        to.ReceiveProvinceCode = from.Receive_ProvinceCode;
 
-            to.ReceviceCity = from.Receive_City;
-            to.ReceiveCityCode = from.Receive_CityCode;
+    //        to.ReceviceCity = from.Receive_City;
+    //        to.ReceiveCityCode = from.Receive_CityCode;
 
-            to.ReceiveArea = from.Receive_Area;
-            to.ReceiveAreaCode = from.Receive_AreaCode;
+    //        to.ReceiveArea = from.Receive_Area;
+    //        to.ReceiveAreaCode = from.Receive_AreaCode;
 
-            to.ReceviceLatitude = from.Receive_Latitude;
-            to.ReceviceLongitude = from.Receive_Longitude;
+    //        to.ReceviceLatitude = from.Receive_Latitude;
+    //        to.ReceviceLongitude = from.Receive_Longitude;
 
-            to.ReceviceAddress = from.Receive_Address;
+    //        to.ReceviceAddress = from.Receive_Address;
 
-            to.OrderFrom = from.OrderFrom;
-            to.Quantity = from.Quantity;
-            to.OriginalOrderNo = from.OriginalOrderNo;
+    //        to.OrderFrom = from.OrderFrom;
+    //        to.Quantity = from.Quantity;
+    //        to.OriginalOrderNo = from.OriginalOrderNo;
 
-            to.Weight = from.Weight;
+    //        to.Weight = from.Weight;
 
-            to.IsPay = from.IsPay;
-            to.Amount = from.Amount;
+    //        to.IsPay = from.IsPay;
+    //        to.Amount = from.Amount;
 
-            to.OrderType = from.OrderType; //订单类型 1送餐订单 2取餐盒订单 
-            to.KM = from.KM; //送餐距离
+    //        to.OrderType = from.OrderType; //订单类型 1送餐订单 2取餐盒订单 
+    //        to.KM = from.KM; //送餐距离
 
-            to.GuoJuQty = from.GuoJuQty; //锅具数量
-            to.LuJuQty = from.LuJuQty;  //炉具数量
+    //        to.GuoJuQty = from.GuoJuQty; //锅具数量
+    //        to.LuJuQty = from.LuJuQty;  //炉具数量
 
-            to.DistribSubsidy = from.DistribSubsidy; //外送费
-            to.OrderCount = from.OrderCount == 0 ? 1 : from.OrderCount; //订单数量
-            //计算订单佣金
-            var subsidy = SubsidyLogic.subsidyLogic().GetCurrentSubsidy(business.GroupId.Value);
-            if (subsidy != null)
-            {
-                to.WebsiteSubsidy = subsidy.WebsiteSubsidy == null ? 0 : subsidy.WebsiteSubsidy; //网站补贴 
-                to.CommissionRate = subsidy.OrderCommission == null ? 0 : subsidy.OrderCommission; //佣金比例 
-            }
-            else
-            {
-                to.WebsiteSubsidy = 0m;
-                to.CommissionRate = 0m;
-            }
-            decimal distribe = 0;  //默认外送费，网站补贴都为0
-            if (to.DistribSubsidy != null)//如果外送费有数据，按照外送费计算骑士佣金
-                distribe = Convert.ToDecimal(to.DistribSubsidy);
-            else if (to.WebsiteSubsidy != null)//如果外送费没数据，按照网站补贴计算骑士佣金
-                distribe = Convert.ToDecimal(to.WebsiteSubsidy);
+    //        to.DistribSubsidy = from.DistribSubsidy; //外送费
+    //        to.OrderCount = from.OrderCount == 0 ? 1 : from.OrderCount; //订单数量
+    //        //计算订单佣金
+    //        var subsidy = SubsidyLogic.subsidyLogic().GetCurrentSubsidy(business.GroupId.Value);
+    //        if (subsidy != null)
+    //        {
+    //            to.WebsiteSubsidy = subsidy.WebsiteSubsidy == null ? 0 : subsidy.WebsiteSubsidy; //网站补贴 
+    //            to.CommissionRate = subsidy.OrderCommission == null ? 0 : subsidy.OrderCommission; //佣金比例 
+    //        }
+    //        else
+    //        {
+    //            to.WebsiteSubsidy = 0m;
+    //            to.CommissionRate = 0m;
+    //        }
+    //        decimal distribe = 0;  //默认外送费，网站补贴都为0
+    //        if (to.DistribSubsidy != null)//如果外送费有数据，按照外送费计算骑士佣金
+    //            distribe = Convert.ToDecimal(to.DistribSubsidy);
+    //        else if (to.WebsiteSubsidy != null)//如果外送费没数据，按照网站补贴计算骑士佣金
+    //            distribe = Convert.ToDecimal(to.WebsiteSubsidy);
 
-            to.OrderCommission = from.Amount * to.CommissionRate + distribe * to.OrderCount;//计算佣金
+    //        to.OrderCommission = from.Amount * to.CommissionRate + distribe * to.OrderCount;//计算佣金
 
-            to.Status = ConstValues.ORDER_NEW;
+    //        to.Status = ConstValues.ORDER_NEW;
 
-            return to;
-        }
-    }
+    //        return to;
+    //    }
+    //}
     public enum OrderPublicshStatus : int
     {
         [DisplayText("订单发布成功")]
