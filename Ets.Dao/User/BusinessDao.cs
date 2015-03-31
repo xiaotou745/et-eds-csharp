@@ -52,7 +52,7 @@ namespace Ets.Dao.User
 
             #endregion
 
-            string orderByColumn = "o.id ";  //排序条件
+            string orderByColumn = " o.ActualDoneDate DESC ";  //排序条件
             string columnList = @"
                                     CONVERT(VARCHAR(5),o.ActualDoneDate,108) AS ActualDoneDate,
                                     o.Amount,
