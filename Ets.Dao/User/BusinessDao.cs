@@ -179,8 +179,9 @@ namespace Ets.Dao.User
         /// <summary>
         /// 设置结算比例-平扬 2015.3.12
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="price"></param>
+        /// <param name="id">用户id</param>
+        /// <param name="price">结算比例</param>
+        /// <param name="waisongfei">外送费</param>
         /// <returns></returns>
         public bool setCommission(int id, decimal price, decimal waisongfei)
         {

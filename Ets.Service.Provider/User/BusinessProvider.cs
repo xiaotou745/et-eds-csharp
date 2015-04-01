@@ -25,6 +25,9 @@ using Ets.Model.DomainModel.Order;
 using Ets.Model.DataModel.Subsidy;
 using Ets.Dao.Order;
 using Ets.Model.DomainModel.Subsidy;
+using ETS.Transaction.Common;
+using ETS.Transaction;
+using Ets.Model.ParameterModel.User;
 namespace Ets.Service.Provider.User
 {
 
@@ -114,13 +117,26 @@ namespace Ets.Service.Provider.User
             return result;
         }
 
+     
+
         /// <summary>
-        /// 设置结算比例2015.3.12 平扬
+        /// 设置商家结算比例-外送费    设置结算比例2015.3.12 平扬
         /// </summary>
+        /// <param name="id">商家id</param>
+        /// <param name="price">结算比例</param>
+        /// <param name="waisongfei">外送费</param>
+        /// <param name="model">log实体</param>
         /// <returns></returns>
-        public bool SetCommission(int id, decimal price, decimal waisongfei)
+        public bool SetCommission(int id, decimal price, decimal waisongfei, UserOptRecordPara model)
         {
-            return dao.setCommission(id, price, waisongfei);
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                bool res = dao.setCommission(id, price, waisongfei);
+                int result = new UserOptRecordDao().InsertUserOptRecord(model);
+                tran.Complete();
+                return res;
+            }
+
         }
 
         /// <summary>

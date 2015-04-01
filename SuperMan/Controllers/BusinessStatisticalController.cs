@@ -9,7 +9,7 @@ using System.Web.Mvc;
 
 namespace SuperMan.Controllers
 {
-    public class BusinessStatisticalController : Controller
+    public class BusinessStatisticalController : BaseController
     {
         // GET: BusinessStatistical
         IBusinessProvider iBusinessProvider = new BusinessProvider(); 

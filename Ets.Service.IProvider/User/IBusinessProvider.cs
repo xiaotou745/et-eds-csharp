@@ -8,6 +8,7 @@ using Ets.Model.DataModel.Bussiness;
 using ETS.Enums;
 using System.Data;
 using Ets.Model.DataModel.Group;
+using Ets.Model.ParameterModel.User;
 //using Ets.Model.DomainModel.Order;
 //using Ets.Model.ParameterModel.Order;
 
@@ -30,11 +31,16 @@ namespace Ets.Service.IProvider.User
         /// <returns></returns>
         string CreateExcel(BusinessCommissionModel paraModel);
 
+
         /// <summary>
-        /// 设置结算比例-外送费2015.3.12 平扬
+        /// 设置商家结算比例-外送费
         /// </summary>
+        /// <param name="id">商家id</param>
+        /// <param name="price">结算比例</param>
+        /// <param name="waisongfei">外送费</param>
+        /// <param name="model">log实体</param>
         /// <returns></returns>
-        bool SetCommission(int id, decimal price,decimal waisongfei);
+        bool SetCommission(int id, decimal price, decimal waisongfei, UserOptRecordPara model);
 
         /// <summary>
         /// 商户结算列表--2015.3.12 平扬
@@ -183,7 +189,7 @@ namespace Ets.Service.IProvider.User
         /// <returns></returns>
         Ets.Model.Common.BusinessCountManageList GetBusinessesCount(BusinessSearchCriteria criteria);
 
-           
+
         /// <summary>
         /// 用户状态信息
         /// 平扬-20150331
@@ -191,8 +197,8 @@ namespace Ets.Service.IProvider.User
         /// <param name="criteria"></param>
         /// <returns></returns>
         Ets.Model.ParameterModel.Bussiness.BussinessStatusModel GetUserStatus(int userid, double version);
-        
-     
+
+
     }
 }
 
