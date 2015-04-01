@@ -22,7 +22,7 @@ namespace SuperManWebApi
     }
 
     /// <summary>
-    /// 用于接口统计
+    /// 用于接口统计--平扬.2015.4.14
     /// </summary>
     [System.AttributeUsage(System.AttributeTargets.Method)]
     public class ApiTongJiAttribute : System.Web.Http.Filters.ActionFilterAttribute
