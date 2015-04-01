@@ -15,5 +15,6 @@ namespace ETS.Const
         /// 骑士用户状态缓存key
         /// </summary>
         public const string ClienterProvider_GetUserStatus = "ClienterProvider_GetUserStatus_{0}";
+        public const string Common_GetNationalAreaInfo = "Ets.Service.Provider.Common_GetNationalAreaInfo";
     }
 }

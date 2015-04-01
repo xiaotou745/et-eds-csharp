@@ -83,7 +83,7 @@ namespace Ets.Service.Provider.Common
             AreaModelTranslate areaModel = new AreaModelTranslate();
             AreaModelTranslate resultAreaModel = new AreaModelTranslate();
             //List<AreaModel> list = new List<AreaModel>();
-            string key = "Ets.Service.Provider.Common_GetNationalAreaInfo";
+            string key = ETS.Const.RedissCacheKey.Common_GetNationalAreaInfo;
 
             List<AreaModelTranslate> cacheAreaModelList = CacheFactory.Instance[key] as List<AreaModelTranslate>;
             if (cacheAreaModelList == null) //为null的时候，取数据库
