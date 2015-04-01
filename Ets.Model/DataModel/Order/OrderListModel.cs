@@ -187,6 +187,10 @@ namespace Ets.Model.DataModel.Order
         /// 集团id
         /// </summary>
         public int GroupId { get; set; }
+        /// <summary>
+        /// 骑士收入
+        /// </summary>
+        public decimal? AccountBalance { get; set; }
         
     }
 }

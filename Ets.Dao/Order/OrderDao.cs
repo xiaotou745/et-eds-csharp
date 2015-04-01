@@ -1,10 +1,13 @@
-﻿using Ets.Model.Common;
+﻿using Ets.Dao.Clienter;
+using Ets.Dao.WtihdrawRecords;
+using Ets.Model.Common;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DataModel.Subsidy;
 using Ets.Model.DomainModel.Order;
 using Ets.Model.DomainModel.Subsidy;
 using Ets.Model.ParameterModel.Order;
+using Ets.Model.ParameterModel.WtihdrawRecords;
 using ETS;
 using ETS.Dao;
 using ETS.Data.Core;
@@ -23,6 +26,8 @@ namespace Ets.Dao.Order
 {
     public class OrderDao : DaoBase
     {
+        readonly ClienterDao clienterDao = new ClienterDao();
+        readonly WtihdrawRecordsDao withDao = new WtihdrawRecordsDao();
         public ETS.Page.PagedList<Model.DataModel.Order.order> GetOrders(ClientOrderSearchCriteria criteria)
         {
             ETS.Page.PagedList<Model.DataModel.Order.order> orderPageList = new ETS.Page.PagedList<Model.DataModel.Order.order>();
@@ -732,6 +737,33 @@ namespace Ets.Dao.Order
             return ParseHelper.ToInt(executeScalar, -1);
         }
 
+        /// <summary>
+        /// 完成订单
+        /// wc
+        /// </summary>
+        /// <param name="orderNo">订单号</param>
+        /// <param name="orderStatus">订单状态</param>
+        /// <returns></returns>
+        public int FinishOrderStatus(string orderNo, int clientId,OrderListModel myOrderInfo)
+        {
+            //更新订单状态
+            StringBuilder upSql = new StringBuilder(@" UPDATE dbo.[order]
+ SET [Status] = @status WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL;");
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("@orderNo", SqlDbType.NVarChar);
+            dbParameters.SetValue("@orderNo", orderNo);  //订单号  
+            dbParameters.AddWithValue("@status", ConstValues.ORDER_FINISH);
+             
+
+            object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Read, upSql.ToString(), dbParameters);
+
+             
+           return ParseHelper.ToInt(executeScalar, -1);
+            
+
+            
+        }
 
         /// <summary>
         /// 获取总统计数据
@@ -951,57 +983,28 @@ namespace Ets.Dao.Order
         /// </summary>
         /// <param name="orderNo"></param>
         /// <returns></returns>
-        public order GetOrderInfoByOrderNo(string orderNo)
+        public OrderListModel GetOrderInfoByOrderNo(string orderNo)
         {
-            string sql = @"SELECT TOP 1  o.Id ,
-        o.OrderNo ,
-        o.PickUpAddress ,
-        o.PubDate ,
-        o.ReceviceName ,
-        o.RecevicePhoneNo ,
-        o.ReceviceAddress ,
-        o.ActualDoneDate ,
-        o.IsPay ,
-        o.Amount ,
-        o.OrderCommission ,
-        o.DistribSubsidy ,
-        o.WebsiteSubsidy ,
-        o.Remark ,
-        o.Status ,
-        o.clienterId ,
-        o.businessId ,
-        o.ReceviceCity ,
-        o.ReceviceLongitude ,
-        o.ReceviceLatitude ,
-        o.OrderFrom ,
-        o.OriginalOrderId ,
-        o.OriginalOrderNo ,
-        o.Quantity ,
-        o.[Weight] ,
-        o.ReceiveProvince ,
-        o.ReceiveArea ,
-        o.ReceiveProvinceCode ,
-        o.ReceiveCityCode ,
-        o.ReceiveAreaCode ,
-        o.OrderType ,
-        o.KM ,
-        o.GuoJuQty ,
-        o.LuJuQty ,
-        o.SongCanDate ,
-        o.OrderCount ,
-        o.CommissionRate ,
-        o.Payment ,
-        o.CommissionFormulaMode  FROM dbo.[order] o (NOLOCK)  WHERE 1 = 1 
-                                     ";
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@OrderNo", SqlDbType.NVarChar);
-            parm.SetValue("@OrderNo", orderNo); 
+            string sql = @" SELECT TOP 1 
+        o.[Id] ,
+        o.[OrderNo] , 
+        o.[Status] ,
+        c.AccountBalance,
+        c.Id clienterId,
+        o.OrderCommission 
+ FROM   [order] o WITH ( NOLOCK ) 
+        LEFT JOIN dbo.clienter c WITH ( NOLOCK ) ON o.clienterId = c.Id
+ WHERE  1 = 1 AND o.OrderNo = @orderNo";
+           
             if (!string.IsNullOrWhiteSpace(orderNo))
             {
                 sql += " AND OrderNo=@OrderNo";
             }
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@OrderNo", SqlDbType.NVarChar);
+            parm.SetValue("@OrderNo", orderNo); 
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
-            var list = ConvertDataTableList<order>(dt);
+            var list = ConvertDataTableList<OrderListModel>(dt);
             if (list != null && list.Count > 0)
             {
                 return list[0];

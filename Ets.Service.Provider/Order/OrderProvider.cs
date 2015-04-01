@@ -415,7 +415,8 @@ namespace Ets.Service.Provider.Order
         public void AsyncOrderStatus(string orderNo)
         {
             OrderListModel orderlistModel = OrderDao.GetOrderByNo(orderNo);
-            if (orderlistModel.GroupId != null) {
+            if (orderlistModel.GroupId != null && orderlistModel.GroupId >0)
+            {
                 ParaModel<AsyncStatusPM_OpenApi> paramodel = new ParaModel<AsyncStatusPM_OpenApi>() { group = orderlistModel.GroupId, fields = new AsyncStatusPM_OpenApi() };
                 if (paramodel.GetSign() == null)//为当前集团参数实体生成sign签名信息
                     return;
@@ -659,7 +660,7 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <param name="orderNo"></param>
         /// <returns></returns>
-        public order GetOrderInfoByOrderNo(string orderNo)
+        public OrderListModel GetOrderInfoByOrderNo(string orderNo)
         {
             return OrderDao.GetOrderInfoByOrderNo(orderNo);
         }

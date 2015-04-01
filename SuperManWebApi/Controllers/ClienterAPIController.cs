@@ -16,7 +16,7 @@ using System.IO;
 using SuperManCore.Paging;
 using SuperManCommonModel.Entities;
 using SuperManBusinessLogic.CommonLogic;
-using System.Threading.Tasks; 
+using System.Threading.Tasks;
 using SuperManBusinessLogic.B_Logic;
 using System.ComponentModel;
 using ETS.Util;
@@ -32,6 +32,8 @@ namespace SuperManWebApi.Controllers
         private static object lockHelper = new object();
         readonly Ets.Service.IProvider.Clienter.IClienterProvider iClienterProvider = new Ets.Service.Provider.Clienter.ClienterProvider();
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
+        readonly Ets.Service.IProvider.Order.IOrderProvider iOrderProvider = new Ets.Service.Provider.Order.OrderProvider();
+
         /// <summary>
         /// C端注册 -平扬 2015.3.30
         /// </summary>
@@ -41,7 +43,7 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.ClientRegisterResultModel> PostRegisterInfo_C(Ets.Model.ParameterModel.Clienter.ClientRegisterInfoModel model)
         {
-            
+
             return iClienterProvider.PostRegisterInfo_C(model);
 
         }
@@ -125,7 +127,7 @@ namespace SuperManWebApi.Controllers
             iClienterProvider.UpdateClientPicInfo(new Ets.Model.DomainModel.Clienter.ClienterModel { Id = int.Parse(strUserId), PicUrl = picUrl, PicWithHandUrl = picUrlWithHand, TrueName = trueName, IDCard = strIDCard });
             var relativePath = System.IO.Path.Combine(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.RelativePath, fileName).ToForwardSlashPath();
             return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id = 1, ImagePath = relativePath });
-        } 
+        }
         /// <summary>
         /// 获取我的任务   根据状态判断是已完成任务还是我的任务
         /// </summary>
@@ -148,7 +150,7 @@ namespace SuperManWebApi.Controllers
                 status = model.status,
                 isLatest = model.isLatest
             };
-             
+
             IList<Ets.Model.DomainModel.Clienter.ClientOrderResultModel> lists = new ClienterProvider().GetMyOrders(criteria);
 
             lists = lists.OrderByDescending(i => i.pubDate).ToList();  //按照发布时间倒序排列
@@ -196,7 +198,7 @@ namespace SuperManWebApi.Controllers
 
             return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]>.Conclude(ETS.Enums.GetOrdersStatus.Success, pagedList.ToArray());
         }
-         
+
         /// <summary>
         /// Ado.net add 王超
         /// 未登录时获取最新任务     登录未登录根据城市有没有值判断。
@@ -230,7 +232,7 @@ namespace SuperManWebApi.Controllers
             //        criteria.city = areaModel.Name;
             //    }
             //}
-             
+
             var pagedList = new Ets.Service.Provider.Order.OrderProvider().GetOrdersNoLoginLatest(criteria);
             pagedList = pagedList.OrderByDescending(i => i.pubDate).ToList();
             //var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLoginLatest(criteria);
@@ -251,8 +253,8 @@ namespace SuperManWebApi.Controllers
         {
             degree.longitude = model.longitude;
             degree.latitude = model.latitude;
-            var pIndex = model.pageIndex?? 1;
-            var pSize = model.pageSize?? ConstValues.App_PageSize;
+            var pIndex = model.pageIndex ?? 1;
+            var pSize = model.pageSize ?? ConstValues.App_PageSize;
             var criteria = new Ets.Model.DataModel.Clienter.ClientOrderSearchCriteria()
             {
                 PagingRequest = new Ets.Model.Common.PagingResult(pIndex, pSize),
@@ -261,7 +263,7 @@ namespace SuperManWebApi.Controllers
             };
 
             return new ClienterProvider().GetJobListNoLogin_C(criteria);
-           
+
         }
 
 
@@ -275,11 +277,11 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel> PostModifyPwd_C(Ets.Model.DataModel.Clienter.ModifyPwdInfoModel model)
         {
-            
+
             ClienterProvider cliProvider = new ClienterProvider();
             return cliProvider.PostForgetPwd_C(model);
         }
-         
+
         /// <summary>
         /// 忘记密码
         /// </summary>
@@ -325,7 +327,7 @@ namespace SuperManWebApi.Controllers
                 return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ForgetPwdStatus.FailedModifyPwd);
             }
         }
-        
+
         /// <summary>
         /// 超人抢单-平扬  2015.3.30
         /// </summary>
@@ -359,7 +361,7 @@ namespace SuperManWebApi.Controllers
             else
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.OrderIsNotExist);  //订单不存在
-            } 
+            }
 
             lock (lockHelper)
             {
@@ -379,41 +381,41 @@ namespace SuperManWebApi.Controllers
         /// <param name="userId">C端用户id</param>
         /// <param name="orderNo">订单号码</param>
         /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.FinishOrderStatus))]
-        [HttpGet]
-        public Ets.Model.Common.ResultModel<FinishOrderResultModel> FinishOrder_C(int userId, string orderNo)
-        {
-            if (userId == 0)  //用户id非空验证
-                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.userIdEmpty);
-            if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
-                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderEmpty);
-            if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null) //订单是否存在验证
-                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderIsNotExist);
-            
-            //完成订单时，先验证 订单状态 ，如果订单状态为已完成，则返回 该订单已完成，否则继续
-            //查询 完成该订单的 骑士 信息，修改 骑士 的收入信息，同时在 Records 表中增加一条记录
-             
-            int bResult = ClienterLogic.clienterLogic().FinishOrder(userId, orderNo);
-            if (bResult == 2)
-            {
-                var clienter = ClienterLogic.clienterLogic().GetClienterById(userId);
-                var model = new FinishOrderResultModel();
-                model.userId = userId;
-                if (clienter.AccountBalance != null)
-                    model.balanceAmount = clienter.AccountBalance.Value;
-                else
-                    model.balanceAmount = 0.0m;
-                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Success, model);
-            }
-            else if (bResult == 1)
-            {
-                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderIsNotAllowRush);
-            }
-            else
-            {
-                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Failed);
-            }
-        }
+        //[ActionStatus(typeof(ETS.Enums.FinishOrderStatus))]
+        //[HttpGet]
+        //public Ets.Model.Common.ResultModel<FinishOrderResultModel> FinishOrder_C(int userId, string orderNo)
+        //{
+        //    if (userId == 0)  //用户id非空验证
+        //        return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.userIdEmpty);
+        //    if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
+        //        return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderEmpty);
+        //    if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null) //订单是否存在验证
+        //        return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderIsNotExist);
+
+        //    //完成订单时，先验证 订单状态 ，如果订单状态为已完成，则返回 该订单已完成，否则继续
+        //    //查询 完成该订单的 骑士 信息，修改 骑士 的收入信息，同时在 Records 表中增加一条记录
+
+        //    int bResult = ClienterLogic.clienterLogic().FinishOrder(userId, orderNo);
+        //    if (bResult == 2)
+        //    {
+        //        var clienter = ClienterLogic.clienterLogic().GetClienterById(userId);
+        //        var model = new FinishOrderResultModel();
+        //        model.userId = userId;
+        //        if (clienter.AccountBalance != null)
+        //            model.balanceAmount = clienter.AccountBalance.Value;
+        //        else
+        //            model.balanceAmount = 0.0m;
+        //        return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Success, model);
+        //    }
+        //    else if (bResult == 1)
+        //    {
+        //        return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderIsNotAllowRush);
+        //    }
+        //    else
+        //    {
+        //        return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Failed);
+        //    }
+        //}
 
 
 
@@ -426,22 +428,28 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.FinishOrderStatus))]
         [HttpGet]
-        public Ets.Model.Common.ResultModel<FinishOrderResultModel> FinishOrder_C_WC(int userId, string orderNo)
+        public Ets.Model.Common.ResultModel<FinishOrderResultModel> FinishOrder_C(int userId, string orderNo)
         {
             if (userId == 0)  //用户id非空验证
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.userIdEmpty);
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderEmpty);
-            if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null) //订单是否存在验证
-                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderIsNotExist);
+            //if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null) //订单是否存在验证
+            //    return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderIsNotExist);
 
             //完成订单时，先验证 订单状态 ，如果订单状态为已完成，则返回 该订单已完成，否则继续
             //查询 完成该订单的 骑士 信息，修改 骑士 的收入信息，同时在 Records 表中增加一条记录
-             
-            int bResult = ClienterLogic.clienterLogic().FinishOrder(userId, orderNo);
-            if (bResult == 2)
+
+            //Ets.Model.DataModel.Order.order myOrder = iOrderProvider.GetOrderInfoByOrderNo(orderNo);
+            //if (myOrder.Status == Ets.Model.Common.ConstValues.ORDER_FINISH)   //如果订单已完成，则提示 该订单已完成
+            //{
+            //    return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderIsNotAllowRush);
+            //}
+
+            string finishResult = iClienterProvider.FinishOrder(userId, orderNo);
+            if (finishResult == "1")  //完成
             {
-                var clienter = ClienterLogic.clienterLogic().GetClienterById(userId);
+                var clienter = iClienterProvider.GetUserInfoByUserId(userId); 
                 var model = new FinishOrderResultModel();
                 model.userId = userId;
                 if (clienter.AccountBalance != null)
@@ -449,10 +457,6 @@ namespace SuperManWebApi.Controllers
                 else
                     model.balanceAmount = 0.0m;
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Success, model);
-            }
-            else if (bResult == 1)
-            {
-                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderIsNotAllowRush);
             }
             else
             {
@@ -467,18 +471,18 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.RushOrderStatus))]
         [HttpGet]
-        public Ets.Model.Common.ResultModel<MyBalanceResultModel> GetMyBalance(string phoneNo)
+        public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.MyBalanceResultModel> GetMyBalance(string phoneNo)
         {
             if (string.IsNullOrEmpty(phoneNo))
             {
-                return Ets.Model.Common.ResultModel<MyBalanceResultModel>.Conclude(ETS.Enums.GetMyBalanceStatus.PhoneEmpty);
+                return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.MyBalanceResultModel>.Conclude(ETS.Enums.GetMyBalanceStatus.PhoneEmpty);
             }
-            var item = ClienterLogic.clienterLogic().GetMyBalanceByPhoneNo(phoneNo);
-            var result = new MyBalanceResultModel()
+            var item = iClienterProvider.GetUserInfoByUserPhoneNo(phoneNo);
+            var result = new Ets.Model.DataModel.Clienter.MyBalanceResultModel()
             {
-                MyBalance = item
+                MyBalance = item.AccountBalance == null ? 0 : item.AccountBalance
             };
-            return Ets.Model.Common.ResultModel<MyBalanceResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Success, result);
+            return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.MyBalanceResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Success, result);
         }
 
         /// <summary>
@@ -523,7 +527,7 @@ namespace SuperManWebApi.Controllers
             var randomCode = new Random().Next(100000).ToString("D6");
             string msg = string.Empty;
             if (type == "0")//注册
-            { 
+            {
                 if (iClienterProvider.CheckClienterExistPhone(PhoneNumber))  //判断该手机号是否已经注册过
                     return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.AlreadyExists);
 
@@ -597,7 +601,7 @@ namespace SuperManWebApi.Controllers
         public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.ClienterStatusModel> GetUserStatus(int userId, double version_api)
         {
             var model = new ClienterProvider().GetUserStatus(userId, version_api);
-            if (model!=null)
+            if (model != null)
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.ClienterStatusModel>.Conclude(
                 UserStatus.Success,
@@ -607,7 +611,7 @@ namespace SuperManWebApi.Controllers
             return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.ClienterStatusModel>.Conclude(
                 UserStatus.Error,
                 null
-                ); 
+                );
         }
 
     }
