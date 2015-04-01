@@ -94,16 +94,16 @@ namespace Ets.Service.Provider.Common
             }
             if (from.JiBie == 2)
             {
-                if (from.Name.Contains("北京")) { from.Name = "北京市"; }
-                if (from.Name.Contains("上海")) { from.Name = "上海市"; }
+                if (from.Name.Contains("北京")) { from.Name = "北京城区"; }
+                if (from.Name.Contains("上海")) { from.Name = "上海城区"; }
             }
             areaModel = cacheAreaModelList.FirstOrDefault(s => s.Name == from.Name.Trim() && s.JiBie == from.JiBie);
 
             if (areaModel != null)
             {
                 resultAreaModel.NationalCode = areaModel.NationalCode;
-                resultAreaModel.Name = areaModel.Name;
-                resultAreaModel.JiBie = from.JiBie;
+                //resultAreaModel.Name = areaModel.Name;
+                //resultAreaModel.JiBie = from.JiBie;
             }
             else
             {

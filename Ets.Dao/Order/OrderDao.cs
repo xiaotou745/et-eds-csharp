@@ -991,7 +991,8 @@ namespace Ets.Dao.Order
         o.[Status] ,
         c.AccountBalance,
         c.Id clienterId,
-        o.OrderCommission 
+        o.OrderCommission,
+        o.businessId
  FROM   [order] o WITH ( NOLOCK ) 
         LEFT JOIN dbo.clienter c WITH ( NOLOCK ) ON o.clienterId = c.Id
  WHERE  1 = 1 AND o.OrderNo = @orderNo";

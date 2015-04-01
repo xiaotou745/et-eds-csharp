@@ -22,6 +22,7 @@ using ETS.Transaction;
 using Ets.Dao.Order;
 using Ets.Model.ParameterModel.WtihdrawRecords;
 using Ets.Service.Provider.WtihdrawRecords;
+using Ets.Service.Provider.MyPush;
 
 namespace Ets.Service.Provider.Clienter
 {
@@ -242,14 +243,10 @@ namespace Ets.Service.Provider.Clienter
             else if (!string.IsNullOrEmpty(model.recommendPhone) && (!clienterDao.CheckClienterExistPhone(model.recommendPhone))
                 && (!new BusinessDao().CheckExistPhone(model.recommendPhone))) //如果推荐人手机号在B端C端都不存在提示信息
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberNotExist);
+
+
+             
             var clienter = ClientRegisterInfoModelTranslator.Instance.Translate(model);
-            int id = clienterDao.AddClienter(clienter);
-            var resultModel = new ClientRegisterResultModel
-            {
-                userId = id,
-                city = string.IsNullOrWhiteSpace(clienter.City) ? null : clienter.City.Trim(),  //城市
-                cityId = string.IsNullOrWhiteSpace(clienter.CityId) ? null : clienter.CityId.Trim()  //城市编码
-            };
             //根据用户传递的  名称，取得 国标编码 wc,这里的 city 是二级 ，已和康珍 确认过
             //新版的 骑士 注册， 城市 非 必填
             if (!string.IsNullOrWhiteSpace(clienter.City))
@@ -257,10 +254,17 @@ namespace Ets.Service.Provider.Clienter
                 Model.DomainModel.Area.AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new Model.DomainModel.Area.AreaModelTranslate() { Name = clienter.City.Trim(), JiBie = 2 });
                 if (areaModel != null)
                 {
-                    
-                    resultModel.cityId = areaModel.NationalCode.ToString();
+                    clienter.CityId = areaModel.NationalCode.ToString();
                 }
-            }
+            } 
+            int id = clienterDao.AddClienter(clienter);
+            var resultModel = new ClientRegisterResultModel
+            {
+                userId = id,
+                city = string.IsNullOrWhiteSpace(clienter.City) ? null : clienter.City.Trim(),  //城市
+                cityId = string.IsNullOrWhiteSpace(clienter.CityId) ? null : clienter.CityId.Trim()  //城市编码
+            };
+            
             if (id > 0)
             {
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
@@ -509,7 +513,8 @@ namespace Ets.Service.Provider.Clienter
                    };
                    Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords = new WtihdrawRecordsProvider();
                    iRecords.AddRecords(model); 
-                   tran.Complete();  
+                   tran.Complete();
+                   Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", myOrderInfo.businessId.ToString(), string.Empty);
                    result = "1";
                } 
            }
