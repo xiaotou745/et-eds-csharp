@@ -303,10 +303,10 @@ namespace SuperManWebApi.Controllers
                 return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ForgetPwdStatus.checkCodeIsEmpty);
             }
             //start 需要验证 验证码是否正确
-            //if (SupermanApiCaching.Instance.Get(model.phoneNo) != model.checkCode)
-            //{
-            //    return ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong);
-            //}
+            if (SupermanApiCaching.Instance.Get(model.phoneNo) != model.checkCode)
+            {
+                return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ForgetPwdStatus.checkCodeWrong);
+            }
             //end
             //var clienter = ClienterLogic.clienterLogic().GetClienter(model.phoneNo);
             var clienter = iClienterProvider.GetUserInfoByUserPhoneNo(model.phoneNo);
