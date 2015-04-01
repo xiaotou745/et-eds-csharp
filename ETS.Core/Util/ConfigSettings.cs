@@ -171,5 +171,10 @@ namespace ETS.Util
         {
             get { return ConfigurationManager.AppSettings["VIPName"]; } 
         }
+        public string IsSendVIP
+        {
+            get { return ConfigurationManager.AppSettings["IsSendVIP"]; }
+        }
+
     }
 }

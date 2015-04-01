@@ -31,18 +31,18 @@ namespace SuperManWebApi
         /// 重写OnActionExecuting方法
         /// </summary>
         /// <param name="actionContext"></param>
-        public override void OnActionExecuting(HttpActionContext actionContext)
-        {
-            var verSion = actionContext.ActionArguments["Version"] as string;
-            var model=new ApiVersionStatisticModel
-            {
-                APIName = actionContext.Request.RequestUri.AbsolutePath,
-                CreateTime =DateTime.Now,
-                Version = verSion
-            };
-            new ApiVersionProvider().AddApiRecords(model);
+        //public override void OnActionExecuting(HttpActionContext actionContext)
+        //{
+        //    var verSion = actionContext.ActionArguments["Version"] as string;
+        //    var model=new ApiVersionStatisticModel
+        //    {
+        //        APIName = actionContext.Request.RequestUri.AbsolutePath,
+        //        CreateTime =DateTime.Now,
+        //        Version = verSion
+        //    };
+        //    new ApiVersionProvider().AddApiRecords(model);
 
-        }
+        //}
     }
 
     /// <summary>
