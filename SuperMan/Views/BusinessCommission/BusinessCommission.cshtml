@@ -18,11 +18,11 @@
                 <tr>
                     <td>
                         <span class="">商户名称: </span>
-                        <input id="txtBusinessName" name="txtBusinessName" type="tel" /> 
+                        <input id="txtBusinessName" name="txtBusinessName" type="tel" value="@ViewBag.name" /> 
                         <span class="">开始时间: </span>
-                        <input id="txtDateStart" name="txtDateStart" readonly="readonly" type="text" />
+                        <input id="txtDateStart" name="txtDateStart" readonly="readonly" type="text" value="@ViewBag.startDate" />
                         <span class="">到: </span>
-                        <input id="txtDateEnd" name="txtDateEnd" readonly="readonly" type="text" />
+                        <input id="txtDateEnd" name="txtDateEnd" readonly="readonly" type="text" value="@ViewBag.endDate" />
                         <input id="txtGroupId" name="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" />
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                     </td>
@@ -84,7 +84,7 @@
             if (groupId == "") { groupId =0}
             var startDate = $('#txtDateStart').val();
             var endDate = $('#txtDateEnd').val();
-            if (endDate < startDate) {
+            if (endDate < startDate && endDate!="") {
                 alert("开始日期不能大于结束日期");
                 return false;
             }
