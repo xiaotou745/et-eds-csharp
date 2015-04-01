@@ -124,7 +124,7 @@ namespace Ets.Dao.Clienter
                                     REPLACE(b.City,'市','') AS pickUpCity,
                                     b.Longitude,
                                     b.Latitude,o.OrderCommission";
-            return new PageHelper().GetPages<ClientOrderModel>(SuperMan_Read, criteria.PagingRequest.PageIndex, where, "o.Id", columnStr, "[order](NOLOCK) AS o LEFT JOIN business(NOLOCK) AS b ON o.businessId=b.Id", criteria.PagingRequest.PageSize, false);
+            return new PageHelper().GetPages<ClientOrderModel>(SuperMan_Read, criteria.PagingRequest.PageIndex, where, criteria.status == 1 ? "o.ActualDoneDate DESC " : " o.Id ", columnStr, "[order](NOLOCK) AS o LEFT JOIN business(NOLOCK) AS b ON o.businessId=b.Id", criteria.PagingRequest.PageSize, false);
         }
 
         /// <summary>

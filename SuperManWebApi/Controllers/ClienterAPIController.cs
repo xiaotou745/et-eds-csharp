@@ -152,8 +152,10 @@ namespace SuperManWebApi.Controllers
             };
 
             IList<Ets.Model.DomainModel.Clienter.ClientOrderResultModel> lists = new ClienterProvider().GetMyOrders(criteria);
-
-            lists = lists.OrderByDescending(i => i.pubDate).ToList();  //按照发布时间倒序排列
+            if (model.status!=1)
+            {
+                lists = lists.OrderByDescending(i => i.pubDate).ToList();  //按照发布时间倒序排列
+            }
             return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]>.Conclude(ETS.Enums.GetOrdersStatus.Success, lists.ToArray());
         }
 
@@ -301,10 +303,10 @@ namespace SuperManWebApi.Controllers
                 return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ForgetPwdStatus.checkCodeIsEmpty);
             }
             //start 需要验证 验证码是否正确
-            //if (SupermanApiCaching.Instance.Get(model.phoneNo) != model.checkCode)
-            //{
-            //    return ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong);
-            //}
+            if (SupermanApiCaching.Instance.Get(model.phoneNo) != model.checkCode)
+            {
+                return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ForgetPwdStatus.checkCodeWrong);
+            }
             //end
             //var clienter = ClienterLogic.clienterLogic().GetClienter(model.phoneNo);
             var clienter = iClienterProvider.GetUserInfoByUserPhoneNo(model.phoneNo);
