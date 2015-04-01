@@ -430,6 +430,7 @@ namespace Ets.Service.Provider.Order
                 paramodel.fields.ClienterPhoneNo = orderlistModel.ClienterPhoneNo;
                 paramodel.fields.BusinessName = orderlistModel.BusinessName;
                 paramodel.fields.OriginalOrderNo = orderlistModel.OriginalOrderNo;
+                paramodel.fields.order_no = orderlistModel.OrderNo;
                 string url = ConfigurationManager.AppSettings["AsyncStatus"];
                 string json = new HttpClient().PostAsJsonAsync(url, paramodel).Result.Content.ReadAsStringAsync().Result;
                 JObject jobject = JObject.Parse(json);

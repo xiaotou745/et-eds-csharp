@@ -59,6 +59,10 @@ namespace Ets.Service.IProvider.OpenApi
             string  json= HTTPHelper.HttpPost(url, "app_key=" + app_key + "&sign=" + GetSign(ts) + "&method=POST&ts=" + ts + "&orderId=" + paramodel.fields.OriginalOrderNo + "&status=" + status + "&statusDesc=" + statusDesc +
                 "&syncTime=" + ts + "&operatorId=9999&operator=E代送系统&logisticsNo=" +
                  paramodel.fields.order_no + "&action=takeoutsync");
+            if (string.IsNullOrWhiteSpace(json))
+                return OrderApiStatusType.ParaError;
+            else if (json == "null")
+                return OrderApiStatusType.SystemError;
             JObject jobject = JObject.Parse(json);
             int x = jobject.Value<int>("status"); //接口调用状态 区分大小写
             return x == 200 ? OrderApiStatusType.Success : OrderApiStatusType.SystemError;
