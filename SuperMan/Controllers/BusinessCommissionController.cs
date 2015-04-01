@@ -61,8 +61,12 @@ namespace SuperMan.Controllers
         {  
             DateTime date1 = DateTime.Now;
             DateTime date2 = DateTime.Now;
+            
             date1 = string.IsNullOrEmpty(criteria.txtDateStart) ? new DateTime(2014, 1, 1) : DateTime.Parse(criteria.txtDateStart);
             date2 = string.IsNullOrEmpty(criteria.txtDateEnd) ? DateTime.Now : DateTime.Parse(criteria.txtDateEnd);
+            ViewBag.startDate = criteria.txtDateStart;
+            ViewBag.endDate = criteria.txtDateEnd;
+            ViewBag.name = criteria.txtBusinessName;
             var result = iBusinessProvider.GetBusinessCommission(date1, date2, criteria.txtBusinessName, criteria.txtGroupId);
             return View("BusinessCommission", result.Data);
         }
