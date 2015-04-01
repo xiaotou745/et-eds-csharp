@@ -164,5 +164,17 @@ namespace ETS.Util
         {
             get { return ParseHelper.ToInt(ConfigurationManager.AppSettings["OrderCommissionType"]); }
         }
+        /// <summary>
+        /// 极光推送 Vip
+        /// </summary>
+        public string VIPName
+        {
+            get { return ConfigurationManager.AppSettings["VIPName"]; } 
+        }
+        public string IsSendVIP
+        {
+            get { return ConfigurationManager.AppSettings["IsSendVIP"]; }
+        }
+
     }
 }

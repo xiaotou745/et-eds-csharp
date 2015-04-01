@@ -266,6 +266,11 @@ namespace Ets.Service.Provider.Order
             if (result > 0)
             {
                 Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity); //激光推送
+                //推送给 VIP
+                if (ConfigSettings.Instance.IsSendVIP == "1")
+                {
+                    Push.PushMessageVip(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity, ConfigSettings.Instance.VIPName); //激光推送
+                }
                 return "1";
             }
             else
