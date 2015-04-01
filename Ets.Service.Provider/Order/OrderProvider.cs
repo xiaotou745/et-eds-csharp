@@ -532,21 +532,20 @@ namespace Ets.Service.Provider.Order
             var _province = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.Receive_Province, JiBie = 1 });
             if (_province != null)
             {
-                model.Receive_ProvinceCode = _province.Name;
+                 
                 model.Receive_Province = _province.NationalCode.ToString();
             }
             //转换市
             var _city = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.Receive_City, JiBie = 2 });
             if (_city != null)
             {
-                model.Receive_City = _city.Name;
+                 
                 model.Receive_CityCode = _city.NationalCode.ToString();
             }
             //转换区
             var _area = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.Receive_Area, JiBie = 3 });
             if (_area != null)
-            {
-                model.Receive_Area = _area.Name;
+            { 
                 model.Receive_AreaCode = _area.NationalCode.ToString();
             }
             #endregion 

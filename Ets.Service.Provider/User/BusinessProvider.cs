@@ -163,7 +163,6 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(Model.ParameterModel.Bussiness.RegisterInfoModel model)
         {
-            LogHelper.LogWriter("商户注册", new { model = model });
             Enum returnEnum = null;
             if (string.IsNullOrEmpty(model.phoneNo))
                 returnEnum = CustomerRegisterStatusEnum.PhoneNumberEmpty; //手机号非空验证
@@ -190,10 +189,9 @@ namespace Ets.Service.Provider.User
                     Model.DomainModel.Area.AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new Model.DomainModel.Area.AreaModelTranslate() { Name = model.city.Trim(), JiBie = 2 });
                     if (areaModel != null)
                     {
-                        model.city = areaModel.Name;
                         model.CityId = areaModel.NationalCode.ToString();
                     }
-                }
+                } 
             }
             catch (Exception ex)
             {
@@ -242,22 +240,19 @@ namespace Ets.Service.Provider.User
             //转换省
             var _province = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.B_Province, JiBie = 1 });
             if (_province != null)
-            {
-                model.B_Province = _province.Name;
+            { 
                 model.B_ProvinceCode = _province.NationalCode.ToString();
             }
             //转换市 
             var _city = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.B_City, JiBie = 2 });
             if (_city != null)
-            {
-                model.B_City = _city.Name;
+            { 
                 model.B_CityCode = _city.NationalCode.ToString();
             }
             //转换区
             var _area = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.B_Area, JiBie = 3 });
             if (_area != null)
-            {
-                model.B_Area = _area.Name;
+            { 
                 model.B_AreaCode = _area.NationalCode.ToString();
             }
             #endregion
@@ -502,7 +497,15 @@ namespace Ets.Service.Provider.User
             to.Name = businessModel.businessName.Trim();
             to.Landline = businessModel.landLine;
             to.PhoneNo2 = businessModel.phoneNo.Trim();
-            to.districtId = businessModel.districtId;
+            //修改地址转换 区域编码
+            if (!string.IsNullOrWhiteSpace(businessModel.districtName))
+            {
+                Ets.Model.DomainModel.Area.AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = businessModel.districtName.Trim(), JiBie = 3 });
+                if (areaModel != null)
+                {
+                    to.districtId = areaModel.NationalCode.ToString(); 
+                }
+            }            
             to.district = businessModel.districtName;
             to.Longitude = businessModel.longitude;
             to.Latitude = businessModel.latitude;

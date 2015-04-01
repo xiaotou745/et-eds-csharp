@@ -191,7 +191,7 @@ namespace SuperManWebApi.Controllers
             //   if (areaModel != null)
             //   {
             //       criteria.cityId = areaModel.NationalCode.ToString();
-            //       criteria.city = areaModel.Name;
+            //        
             //   }
             //}
             var pagedList = new Ets.Service.Provider.Order.OrderProvider().GetOrders(criteria);
@@ -231,7 +231,7 @@ namespace SuperManWebApi.Controllers
             //    if (areaModel != null)
             //    {
             //        criteria.cityId = areaModel.NationalCode.ToString();
-            //        criteria.city = areaModel.Name;
+            //         
             //    }
             //}
 

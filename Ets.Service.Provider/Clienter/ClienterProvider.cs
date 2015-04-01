@@ -257,7 +257,7 @@ namespace Ets.Service.Provider.Clienter
                 Model.DomainModel.Area.AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new Model.DomainModel.Area.AreaModelTranslate() { Name = clienter.City.Trim(), JiBie = 2 });
                 if (areaModel != null)
                 {
-                    resultModel.city = areaModel.Name;
+                    
                     resultModel.cityId = areaModel.NationalCode.ToString();
                 }
             }
