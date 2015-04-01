@@ -480,7 +480,6 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="Version">版本号</param>
         /// <returns></returns>
-        [ApiTongJi]
         [ActionStatus(typeof(ETS.Enums.CityStatus))]
         [HttpGet]
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Area.AreaModelList> GetOpenCity(string Version)

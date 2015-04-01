@@ -450,7 +450,7 @@ namespace SuperManWebApi.Controllers
 
             string finishResult = iClienterProvider.FinishOrder(userId, orderNo);
             if (finishResult == "1")  //完成
-            {
+            { 
                 var clienter = iClienterProvider.GetUserInfoByUserId(userId); 
                 var model = new FinishOrderResultModel();
                 model.userId = userId;
