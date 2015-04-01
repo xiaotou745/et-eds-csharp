@@ -152,8 +152,10 @@ namespace SuperManWebApi.Controllers
             };
 
             IList<Ets.Model.DomainModel.Clienter.ClientOrderResultModel> lists = new ClienterProvider().GetMyOrders(criteria);
-
-            lists = lists.OrderByDescending(i => i.pubDate).ToList();  //按照发布时间倒序排列
+            if (model.status!=1)
+            {
+                lists = lists.OrderByDescending(i => i.pubDate).ToList();  //按照发布时间倒序排列
+            }
             return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]>.Conclude(ETS.Enums.GetOrdersStatus.Success, lists.ToArray());
         }
 
