@@ -42,6 +42,7 @@
     <Compile Include="Account\AccountDao.cs" />
     <Compile Include="Clienter\ClienterDao.cs" />
     <Compile Include="Common\AdminToolsDao.cs" />
+    <Compile Include="Common\ApiVersionDao.cs" />
     <Compile Include="Common\AreaDao.cs" />
     <Compile Include="Common\GroupApiConfigDao.cs" />
     <Compile Include="Common\GroupDao.cs" />
