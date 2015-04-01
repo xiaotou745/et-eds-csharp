@@ -145,7 +145,8 @@ namespace Ets.Dao.Clienter
                         cityId 
                         FROM dbo.clienter(NOLOCK) WHERE PhoneNo=@PhoneNo AND [Password]=@Password";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@PhoneNo", model.phoneNo);
+            parm.Add("@PhoneNo",SqlDbType.NVarChar);
+            parm.SetValue("@PhoneNo", model.phoneNo);
             parm.AddWithValue("@Password", model.passWord);
             DataSet set = DbHelper.ExecuteDataset(SuperMan_Read, sql, parm);
 
@@ -214,7 +215,8 @@ namespace Ets.Dao.Clienter
         {
             string sql = "SELECT Id,TrueName,PhoneNo,AccountBalance FROM dbo.clienter(NOLOCK) WHERE PhoneNo=@PhoneNo";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@PhoneNo", PhoneNo);
+            parm.Add("@PhoneNo", SqlDbType.NVarChar);
+            parm.SetValue("@PhoneNo", PhoneNo);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             IList<ClienterModel> list = MapRows<ClienterModel>(dt);
             if (list == null && list.Count <= 0)
@@ -277,7 +279,8 @@ namespace Ets.Dao.Clienter
             {
                 string sql = "SELECT COUNT(1) FROM dbo.clienter(NOLOCK) WHERE PhoneNo =@PhoneNo";
                 IDbParameters parm = DbHelper.CreateDbParameters();
-                parm.AddWithValue("@PhoneNo", PhoneNo);
+                parm.Add("@PhoneNo", SqlDbType.NVarChar);
+                parm.SetValue("@PhoneNo", PhoneNo);
                 return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm)) > 0 ? true : false;
             }
             catch (Exception ex)
@@ -386,7 +389,8 @@ namespace Ets.Dao.Clienter
                      VALUES
                        (@PhoneNo,@recommendPhone,@Password,@Status,@InsertTime,@InviteCode,@City,@CityId,@GroupId );select SCOPE_IDENTITY() as id;";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@PhoneNo", model.PhoneNo);
+            parm.Add("@PhoneNo", SqlDbType.NVarChar);
+            parm.SetValue("@PhoneNo", model.PhoneNo);
             parm.AddWithValue("@recommendPhone", model.recommendPhone);
             parm.AddWithValue("@Password", model.Password);
             parm.AddWithValue("@Status", model.Status);
