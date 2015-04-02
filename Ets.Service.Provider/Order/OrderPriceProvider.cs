@@ -1,4 +1,5 @@
 ﻿using Ets.Model.DataModel.Order;
+using ETS.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace Ets.Service.Provider.Order
     /// <summary>
     /// 抽象类 佣金计算  add by caoheyang 20150330
     /// </summary>
-    public abstract class CommissionProvider
+    public abstract class OrderPriceProvider
     {
         /// <summary>
         /// 获取订单的骑士佣金 add by caoheyang 20150305
@@ -18,8 +19,32 @@ namespace Ets.Service.Provider.Order
         /// <param name="model">订单</param>
         /// <returns></returns>
         public abstract decimal GetCurrenOrderCommission(OrderCommission model);
+
+
         /// <summary>
-        ///C端 获取订单的金额 add by caoheyang 0150305
+        /// 获取订单的网站补贴 add by caoheyang 20150305
+        /// </summary>
+        /// <param name="model">订单</param>
+        /// <returns></returns>
+        public abstract decimal GetOrderWebSubsidy(OrderCommission model);
+
+        /// <summary>
+        /// 获取当前订单结算金额 add by caoheyang 20140402
+        /// </summary>
+        /// <param name="model">参数实体</param>
+        /// <returns></returns>
+        public virtual decimal GetSettleMoney(OrderCommission model)
+        {
+            decimal settleMoney = 
+                model.BusinessCommission == 0 ? 
+                0 : Decimal.Round(ParseHelper.ToDecimal(model.BusinessCommission / 100m) * ParseHelper.ToDecimal(model.Amount), 2);
+            return Decimal.Round(ParseHelper.ToDecimal(model.DistribSubsidy)
+                * ParseHelper.ToInt(model.OrderCount) + settleMoney, 2);
+        }
+
+
+        /// <summary>
+        ///C端 获取订单的金额 add by caoheyang 20150305
         /// </summary>
         /// <param name="model">订单</param>
         /// <returns></returns>

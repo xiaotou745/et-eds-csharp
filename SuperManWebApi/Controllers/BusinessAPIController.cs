@@ -204,9 +204,6 @@ namespace SuperManWebApi.Controllers
             }
             if (model.OrderCount <= 0 || model.OrderCount > 15)   //判断录入订单数量是否符合要求
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.OrderCountError);
-
-
-
             Ets.Model.DataModel.Order.order order = iOrderProvider.TranslateOrder(model);
             string result = iOrderProvider.AddOrder(order);
 

@@ -394,6 +394,12 @@ namespace Ets.Dao.User
             return DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
         }
 
+
+        /// <summary>
+        /// 根据商户id获取商户
+        /// </summary>
+        /// <param name="busiId"></param>
+        /// <returns></returns>
         public BusListResultModel GetBusiness(int busiId)
         {
             BusListResultModel busi = new BusListResultModel();
@@ -418,15 +424,15 @@ namespace Ets.Dao.User
          CityCode ,
          AreaCode ,
          Province ,
-         DistribSubsidy FROM dbo.business WITH(NOLOCK) WHERE Id = @busiId";
+         DistribSubsidy,
+         BusinessCommission 
+         FROM dbo.business WITH(NOLOCK) WHERE Id = @busiId";
 
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@busiId", busiId);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
             if (dt != null)
-            {
                 busi = DataTableHelper.ConvertDataTableList<BusListResultModel>(dt)[0];
-            }
             return busi;
         }
 
