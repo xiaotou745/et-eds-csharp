@@ -19,7 +19,14 @@ namespace Ets.Model.DataModel.Order
         public Nullable<bool> IsPay { get; set; }
         public Nullable<decimal> Amount { get; set; }
         public Nullable<decimal> OrderCommission { get; set; }
+       
+        /// <summary>
+        /// 外送费
+        /// </summary>
         public Nullable<decimal> DistribSubsidy { get; set; }
+        /// <summary>
+        /// 网站补贴
+        /// </summary>
         public Nullable<decimal> WebsiteSubsidy { get; set; }
         public string Remark { get; set; }
         public Nullable<byte> Status { get; set; }
@@ -60,5 +67,15 @@ namespace Ets.Model.DataModel.Order
         /// 订单佣金计算方法 0：默认 1：根据时间段设置不同补贴
         /// </summary>
         public int CommissionFormulaMode { get; set; }
+
+        /// <summary>
+        /// 商户结算比例
+        /// </summary>
+        public decimal BusinessCommission { get; set; }
+
+        /// <summary>
+        /// 应收 结算金额
+        /// </summary>
+        public decimal SettleMoney { get; set; }
     }
 }

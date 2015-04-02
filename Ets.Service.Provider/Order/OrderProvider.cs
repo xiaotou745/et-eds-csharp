@@ -37,7 +37,7 @@ namespace Ets.Service.Provider.Order
     public class OrderProvider : IOrderProvider
     {
         private OrderDao OrderDao = new OrderDao();
-        private IBusinessProvider iBusinessProvider = new BusinessProvider();
+        private BusinessProvider iBusinessProvider = new BusinessProvider();
         private ISubsidyProvider iSubsidyProvider = new SubsidyProvider();
         //和区域有关的  wc
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
@@ -60,7 +60,7 @@ namespace Ets.Service.Provider.Order
                 resultModel.OrderNo = from.OrderNo;
                 resultModel.OrderCount = from.OrderCount;
                 var orderComm = new OrderCommission() { Amount = from.Amount, CommissionRate = from.CommissionRate, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount, WebsiteSubsidy = from.WebsiteSubsidy };
-                var amount = OrderCommissionProvider.GetCurrenOrderPrice(orderComm);
+                var amount = DefaultOrPriceProvider.GetCurrenOrderPrice(orderComm);
 
                 resultModel.income = from.OrderCommission;  //佣金 Edit bycaoheyang 20150327
                 resultModel.Amount = amount; //C端 获取订单的金额 Edit bycaoheyang 20150305
@@ -137,7 +137,7 @@ namespace Ets.Service.Provider.Order
                 resultModel.OrderNo = from.OrderNo;
                 resultModel.OrderCount = from.OrderCount;
                 var orderComm = new OrderCommission() { Amount = from.Amount, CommissionRate = from.CommissionRate, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount, WebsiteSubsidy = from.WebsiteSubsidy };
-                var amount = OrderCommissionProvider.GetCurrenOrderPrice(orderComm);
+                var amount = DefaultOrPriceProvider.GetCurrenOrderPrice(orderComm);
                 resultModel.income = from.OrderCommission;  //计算设置当前订单骑士可获取的佣金 Edit bycaoheyang 20150305
                 resultModel.Amount = amount; //C端 获取订单的金额 Edit bycaoheyang 20150305
                 resultModel.businessName = from.BusinessName;
@@ -205,11 +205,9 @@ namespace Ets.Service.Provider.Order
         public order TranslateOrder(Model.ParameterModel.Bussiness.BusiOrderInfoModel busiOrderInfoModel)
         {
             order to = new order();
-
             to.OrderNo = Helper.generateOrderCode(busiOrderInfoModel.userId);  //根据userId生成订单号(15位)
             to.businessId = busiOrderInfoModel.userId; //当前发布者
             BusListResultModel business = iBusinessProvider.GetBusiness(busiOrderInfoModel.userId);
-            //business business = BusiLogic.busiLogic().GetBusinessById(busiOrderInfoModel.userId);  //根据发布者id,获取发布者的相关信息实体
             if (business != null)
             {
                 to.PickUpCity = business.City;  //商户所在城市
@@ -217,6 +215,7 @@ namespace Ets.Service.Provider.Order
                 to.PubDate = DateTime.Now; //提起时间
                 to.ReceviceCity = business.City; //城市
                 to.DistribSubsidy = business.DistribSubsidy;//设置外送费,从商户中找。
+                to.BusinessCommission = ParseHelper.ToDecimal(business.BusinessCommission);//商户结算比例
             }
             if (ConfigSettings.Instance.IsGroupPush)
             {
@@ -227,13 +226,9 @@ namespace Ets.Service.Provider.Order
             }
             to.Remark = busiOrderInfoModel.Remark;
             if (string.IsNullOrWhiteSpace(busiOrderInfoModel.receviceName))
-            {
                 to.ReceviceName = "";
-            }
             else
-            {
                 to.ReceviceName = busiOrderInfoModel.receviceName;
-            }
             to.RecevicePhoneNo = busiOrderInfoModel.recevicePhone;
             to.ReceviceAddress = busiOrderInfoModel.receviceAddress;
             to.IsPay = busiOrderInfoModel.IsPay;
@@ -244,11 +239,17 @@ namespace Ets.Service.Provider.Order
             SubsidyResultModel subsidy = iSubsidyProvider.GetCurrentSubsidy(groupId: business.GroupId == null ? 0 : Convert.ToInt32(business.GroupId));
             if (subsidy != null)
             {
-                to.WebsiteSubsidy = subsidy.WebsiteSubsidy;  //网站补贴
                 to.CommissionRate = subsidy.OrderCommission == null ? 0 : subsidy.OrderCommission; //佣金比例 
-                OrderCommission orderComm = new OrderCommission() { Amount = busiOrderInfoModel.Amount, CommissionRate = subsidy.OrderCommission, DistribSubsidy = to.DistribSubsidy, OrderCount = busiOrderInfoModel.OrderCount, WebsiteSubsidy = subsidy.WebsiteSubsidy };
                 //必须写to.DistribSubsidy ，防止bussiness为空情况
-                to.OrderCommission = CommissionFactory.GetCommission().GetCurrenOrderCommission(orderComm);
+                OrderCommission orderComm = new OrderCommission() { Amount = busiOrderInfoModel.Amount, 
+                    CommissionRate = subsidy.OrderCommission, DistribSubsidy = to.DistribSubsidy, 
+                    OrderCount = busiOrderInfoModel.OrderCount, WebsiteSubsidy = subsidy.WebsiteSubsidy,
+                    BusinessCommission = to.BusinessCommission /*商户结算比例*/
+                };
+                OrderPriceProvider commProvider = CommissionFactory.GetCommission();
+                to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
+                to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
+                to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
                 to.CommissionFormulaMode = ConfigSettings.Instance.OrderCommissionType;
             }
             to.Status = ConstValues.ORDER_NEW;
@@ -370,15 +371,17 @@ namespace Ets.Service.Provider.Order
                 ISubsidyProvider subsidyProvider = new SubsidyProvider();//补贴记录
                 SubsidyResultModel subsidy = subsidyProvider.GetCurrentSubsidy(paramodel.store_info.group);
                 //计算获得订单骑士佣金
-                paramodel.ordercommission = CommissionFactory.GetCommission().GetCurrenOrderCommission(new OrderCommission()
+                OrderCommission orderComm = new OrderCommission()
                 {
                     CommissionRate = subsidy.OrderCommission,/*佣金比例*/
                     Amount = paramodel.total_price, /*订单金额*/
                     DistribSubsidy = paramodel.delivery_fee,/*外送费*/
                     OrderCount = paramodel.package_count,/*订单数量*/
                     WebsiteSubsidy = subsidy.WebsiteSubsidy
-                }/*网站补贴*/);
-                paramodel.websitesubsidy = ParseHelper.ToDecimal(subsidy.WebsiteSubsidy);//网站补贴
+                }/*网站补贴*/;
+                OrderPriceProvider commissonPro = CommissionFactory.GetCommission();
+                paramodel.ordercommission = commissonPro.GetCurrenOrderCommission(orderComm);  //骑士佣金
+                paramodel.websitesubsidy = commissonPro.GetOrderWebSubsidy(orderComm);//网站补贴
                 paramodel.commissionrate = ParseHelper.ToDecimal(subsidy.OrderCommission);//订单佣金比例
                 string orderNo = OrderDao.CreateToSql(paramodel);
                 if (!string.IsNullOrWhiteSpace(orderNo))
@@ -420,7 +423,7 @@ namespace Ets.Service.Provider.Order
         public void AsyncOrderStatus(string orderNo)
         {
             OrderListModel orderlistModel = OrderDao.GetOrderByNo(orderNo);
-            if (orderlistModel.GroupId >0)
+            if (orderlistModel.GroupId > 0)
             {
                 ParaModel<AsyncStatusPM_OpenApi> paramodel = new ParaModel<AsyncStatusPM_OpenApi>() { group = orderlistModel.GroupId, fields = new AsyncStatusPM_OpenApi() };
                 if (paramodel.GetSign() == null)//为当前集团参数实体生成sign签名信息
@@ -533,23 +536,23 @@ namespace Ets.Service.Provider.Order
             var _province = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.Receive_Province, JiBie = 1 });
             if (_province != null)
             {
-                 
+
                 model.Receive_Province = _province.NationalCode.ToString();
             }
             //转换市
             var _city = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.Receive_City, JiBie = 2 });
             if (_city != null)
             {
-                 
+
                 model.Receive_CityCode = _city.NationalCode.ToString();
             }
             //转换区
             var _area = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.Receive_Area, JiBie = 3 });
             if (_area != null)
-            { 
+            {
                 model.Receive_AreaCode = _area.NationalCode.ToString();
             }
-            #endregion 
+            #endregion
             order dborder = OrderInstance(model);  //整合订单信息
             string addResult = AddOrder(dborder);    //添加订单记录，并且触发极光推送。          
             if (addResult == "1")
@@ -595,7 +598,7 @@ namespace Ets.Service.Provider.Order
                 to.PickUpAddress = business.Address;  //提取地址
                 to.PubDate = DateTime.Now; //提起时间
                 to.ReceviceCity = business.City; //城市
-            } 
+            }
             to.SongCanDate = from.SongCanDate; //送餐时间
             to.Remark = from.Remark;
 
