@@ -1,4 +1,5 @@
-﻿using Ets.Model.DataModel.Order;
+﻿using Ets.Dao.GlobalConfig;
+using Ets.Model.DataModel.Order;
 using ETS.Util;
 using System;
 using System.Collections.Generic;
@@ -50,7 +51,11 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public override decimal GetCommissionRate(OrderCommission model)
         {
-            return Decimal.Round(model.BusinessCommission / 100m - 0.07m, 2);
+            decimal temp = model.BusinessCommission - ParseHelper.ToDecimal(GlobalConfigDao.GlobalConfigGet.CommissionRatio);
+            if (temp == 0)
+                return 0;
+            else
+                return Decimal.Round(temp / 100m, 2);
         }
 
       

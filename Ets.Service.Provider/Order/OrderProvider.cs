@@ -31,6 +31,7 @@ using Ets.Service.Provider.OpenApi;
 using System.Configuration;
 using System.Net.Http;
 using Ets.Dao.User;
+using Ets.Dao.GlobalConfig;
 
 namespace Ets.Service.Provider.Order
 {
@@ -250,7 +251,7 @@ namespace Ets.Service.Provider.Order
                 to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
                 to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
                 to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
-                to.CommissionFormulaMode = ConfigSettings.Instance.OrderCommissionType;
+                to.CommissionFormulaMode = GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode;
             }
             to.Status = ConstValues.ORDER_NEW;
             return to;
@@ -367,7 +368,7 @@ namespace Ets.Service.Provider.Order
         {
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                paramodel.CommissionFormulaMode = ConfigSettings.Instance.OrderCommissionType;
+                paramodel.CommissionFormulaMode = GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode;
                 ISubsidyProvider subsidyProvider = new SubsidyProvider();//补贴记录
                 SubsidyResultModel subsidy = subsidyProvider.GetCurrentSubsidy(paramodel.store_info.group);
                 //计算获得订单骑士佣金
