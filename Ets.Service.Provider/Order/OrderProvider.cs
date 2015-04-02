@@ -536,10 +536,9 @@ namespace Ets.Service.Provider.Order
             //转换省
             var _province = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.Receive_Province, JiBie = 1 });
             if (_province != null)
-            {
-
-                model.Receive_Province = _province.NationalCode.ToString();
-            }
+            { 
+                model.Receive_ProvinceCode = _province.NationalCode.ToString();
+            } 
             //转换市
             var _city = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.Receive_City, JiBie = 2 });
             if (_city != null)

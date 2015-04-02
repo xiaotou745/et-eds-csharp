@@ -256,6 +256,10 @@ namespace Ets.Service.Provider.Clienter
                 {
                     clienter.CityId = areaModel.NationalCode.ToString();
                 }
+                else
+                {
+                    clienter.CityId = model.CityId;
+                }
             } 
             int id = clienterDao.AddClienter(clienter);
             var resultModel = new ClientRegisterResultModel
