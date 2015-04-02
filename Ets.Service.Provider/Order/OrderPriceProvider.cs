@@ -20,20 +20,26 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public abstract decimal GetCurrenOrderCommission(OrderCommission model);
 
-
         /// <summary>
-        /// 获取订单的网站补贴 add by caoheyang 20150305
+        /// 获取订单的网站补贴 add by caoheyang 20150402
         /// </summary>
         /// <param name="model">订单</param>
         /// <returns></returns>
         public abstract decimal GetOrderWebSubsidy(OrderCommission model);
+        
+        /// <summary>
+        /// 获取订单的佣金比例 add by caoheyang 20150402
+        /// </summary>
+        /// <param name="model">订单</param>
+        /// <returns></returns>
+        public abstract decimal GetCommissionRate(OrderCommission model);
 
         /// <summary>
         /// 获取当前订单结算金额 add by caoheyang 20140402
         /// </summary>
         /// <param name="model">参数实体</param>
         /// <returns></returns>
-        public virtual decimal GetSettleMoney(OrderCommission model)
+        public  decimal GetSettleMoney(OrderCommission model)
         {
             decimal settleMoney = 
                 model.BusinessCommission == 0 ? 

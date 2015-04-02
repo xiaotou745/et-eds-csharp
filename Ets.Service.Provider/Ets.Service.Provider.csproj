@@ -71,6 +71,7 @@
     <Compile Include="MyPush\Push.cs" />
     <Compile Include="OpenApi\OpenApiGroupFactory.cs" />
     <Compile Include="OpenApi\WanDaGroup.cs" />
+    <Compile Include="Order\BreakEvenPointOrPriceProvider.cs" />
     <Compile Include="Order\CommissionFactory.cs" />
     <Compile Include="Order\OrderPriceProvider.cs" />
     <Compile Include="Order\DefaultOrPriceProvider.cs" />
