@@ -239,14 +239,14 @@ namespace Ets.Service.Provider.Order
             SubsidyResultModel subsidy = iSubsidyProvider.GetCurrentSubsidy(groupId: business.GroupId == null ? 0 : Convert.ToInt32(business.GroupId));
             if (subsidy != null)
             {
-                to.CommissionRate = subsidy.OrderCommission == null ? 0 : subsidy.OrderCommission; //佣金比例 
                 //必须写to.DistribSubsidy ，防止bussiness为空情况
-                OrderCommission orderComm = new OrderCommission() { Amount = busiOrderInfoModel.Amount, 
-                    CommissionRate = subsidy.OrderCommission, DistribSubsidy = to.DistribSubsidy, 
-                    OrderCount = busiOrderInfoModel.OrderCount, WebsiteSubsidy = subsidy.WebsiteSubsidy,
+                OrderCommission orderComm = new OrderCommission() { Amount = busiOrderInfoModel.Amount, /*订单金额*/ 
+                    CommissionRate = subsidy.OrderCommission/*佣金比例*/, DistribSubsidy = to.DistribSubsidy,/*外送费*/
+                    OrderCount = busiOrderInfoModel.OrderCount/*订单数量*/, WebsiteSubsidy = subsidy.WebsiteSubsidy,/*网站补贴*/
                     BusinessCommission = to.BusinessCommission /*商户结算比例*/
                 };
                 OrderPriceProvider commProvider = CommissionFactory.GetCommission();
+                to.CommissionRate =commProvider.GetCommissionRate(orderComm)  ; //佣金比例 
                 to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
                 to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
                 to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
@@ -382,7 +382,7 @@ namespace Ets.Service.Provider.Order
                 OrderPriceProvider commissonPro = CommissionFactory.GetCommission();
                 paramodel.ordercommission = commissonPro.GetCurrenOrderCommission(orderComm);  //骑士佣金
                 paramodel.websitesubsidy = commissonPro.GetOrderWebSubsidy(orderComm);//网站补贴
-                paramodel.commissionrate = ParseHelper.ToDecimal(subsidy.OrderCommission);//订单佣金比例
+                paramodel.commissionrate = commissonPro.GetCommissionRate(orderComm);//订单佣金比例
                 string orderNo = OrderDao.CreateToSql(paramodel);
                 if (!string.IsNullOrWhiteSpace(orderNo))
                     Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！"

@@ -96,7 +96,7 @@ namespace OpenApi.Controllers
         {
             paramodel = new ParaModel<AsyncStatusPM_OpenApi>();
 
-            paramodel.fields = new AsyncStatusPM_OpenApi() { OriginalOrderNo = "1009359111", status = 2, order_no = "1222222" };
+            paramodel.fields = new AsyncStatusPM_OpenApi() { OriginalOrderNo = "1009359113", status = 2, order_no = "1222222" };
             paramodel.group = 2;
 
             IGroupProviderOpenApi groupProvider = OpenApiGroupFactory.Create(paramodel.group);
