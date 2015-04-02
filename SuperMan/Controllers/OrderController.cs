@@ -8,7 +8,6 @@ using Ets.Service.Provider.Common;
 
 namespace SuperMan.Controllers
 {
-    [Authorize]
     [WebHandleError]
     public class OrderController : BaseController
     {

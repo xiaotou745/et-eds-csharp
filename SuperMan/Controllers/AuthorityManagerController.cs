@@ -17,7 +17,6 @@ using System.Web.Mvc;
 
 namespace SuperMan.Controllers
 {
-    [Authorize]
     [WebHandleError]
     public class AuthorityManagerController : BaseController
     {

@@ -20,7 +20,6 @@ using SuperManBusinessLogic.CommonLogic;
 
 namespace SuperMan.Controllers
 {
-    [Authorize]
     [WebHandleError]
     public class CommonController : Controller
     {
