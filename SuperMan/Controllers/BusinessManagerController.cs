@@ -18,7 +18,6 @@ using SuperMan.App_Start;
 
 namespace SuperMan.Controllers
 {
-    [Authorize]
     [WebHandleError]
     public class BusinessManagerController : BaseController
     {

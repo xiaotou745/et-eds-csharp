@@ -13,7 +13,6 @@ using Ets.Service.Provider.Subsidy;
 
 namespace SuperMan.Controllers
 {
-    [Authorize]
     [WebHandleError]
     public class SubsidyManagerController : BaseController
     {
