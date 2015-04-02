@@ -98,6 +98,7 @@
     <Compile Include="DomainModel\Bussiness\BusiGetOrderModel.cs" />
     <Compile Include="Common\ResultModel.cs" />
     <Compile Include="DomainModel\Clienter\ClientOrderResultModel.cs" />
+    <Compile Include="DomainModel\GlobalConfig\GlobalConfigModel.cs" />
     <Compile Include="DomainModel\Group\GroupApiConfigModel.cs" />
     <Compile Include="DomainModel\Order\NewPostPublishOrderResultModel.cs" />
     <Compile Include="DomainModel\Order\OrderDetailDM_OpenApi.cs" />

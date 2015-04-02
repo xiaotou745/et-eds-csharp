@@ -40,10 +40,14 @@ namespace ETS
         /// <summary>
         /// 是否根据集团推送订单
         /// </summary>
-        public static bool IsGroupPush
-        {
-            get { return Convert.ToBoolean(ConfigKey("IsGroupPush")); }
-        }
+        public static bool IsGroupPush { get { return Convert.ToBoolean(ConfigKey("IsGroupPush")); } }
+
+        /// <summary>
+        /// 全局变量版本号,如果全局配置库变更，务必要把版本号进行更新
+        /// </summary>
+        public static string GlobalVersion { get { return ConfigKey("GlobalVersion"); } }
+
+
 
         #region 取Web.Config值
 

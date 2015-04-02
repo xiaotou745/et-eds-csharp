@@ -23,5 +23,7 @@ namespace ETS.Const
         /// 
         /// </summary>
         public const string Common_GetNationalAreaInfo = "Ets.Service.Provider.Common_GetNationalAreaInfo";
+
+        public const string Ets_Dao_GlobalConfig_GlobalConfigGet = "Ets_Dao_GlobalConfig_GlobalConfigGet";
     }
 }
