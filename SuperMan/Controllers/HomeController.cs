@@ -7,7 +7,6 @@ using SuperManBusinessLogic.Order_Logic;
 using SuperManCommonModel.Entities;
 namespace SuperMan.Controllers
 {
-    [Authorize]
     [WebHandleError]
     public class HomeController : Controller
     {

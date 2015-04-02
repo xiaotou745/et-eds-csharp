@@ -169,16 +169,10 @@
     <Compile Include="App_Start\AutorityValidateAttribute.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
-    <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\UserContext.cs" />
     <Compile Include="Authority\AdminAuthenticationService.cs" />
-    <Compile Include="Authority\Authorities1.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Authorities.tt</DependentUpon>
-    </Compile>
     <Compile Include="Authority\IAuthenticationService.cs" />
     <Compile Include="Controllers\AdminToolsController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
@@ -194,7 +188,6 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HomeCountController.cs" />
     <Compile Include="Controllers\OrderStatisticalController.cs" />
-    <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MenuManagerController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\SubsidyManagerController.cs" />
@@ -205,10 +198,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\IdentityModels.cs" />
-    <Compile Include="Models\LoginModel.cs" />
-    <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -415,12 +404,6 @@
     <Content Include="Content\i\icon.psd" />
     <Content Include="Content\i\img-x.psd" />
     <Content Include="Content\i\sprite-icon.psd" />
-    <Content Include="Authority\Authorities.config" />
-    <Content Include="Authority\Authorities.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Authorities1.cs</LastGenOutput>
-    </Content>
-    <Content Include="Authority\EnumSettings.config" />
     <Content Include="Nlog.config" />
     <None Include="Properties\PublishProfiles\HDLWEB.pubxml" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
@@ -499,12 +482,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Manage\AddPhoneNumber.cshtml" />
-    <Content Include="Views\Manage\ChangePassword.cshtml" />
-    <Content Include="Views\Manage\Index.cshtml" />
-    <Content Include="Views\Manage\ManageLogins.cshtml" />
-    <Content Include="Views\Manage\SetPassword.cshtml" />
-    <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Order\Order.cshtml" />
@@ -536,12 +513,6 @@
     <Content Include="Views\AdminTools\AdminTools.cshtml" />
     <Content Include="Views\AdminTools\_AdminToolsList.cshtml" />
     <Content Include="Views\Download\Download.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Download\edsC.cshtml" />
     <Content Include="Views\Download\edsB.cshtml" />
     <Content Include="Views\Shared\_NewPager.cshtml" />
@@ -572,7 +543,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-    <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ETS.Core\ETS.Core.csproj">

@@ -9,7 +9,6 @@ using SuperManCore.Common;
 
 namespace SuperMan.Controllers
 {
-    [Authorize]
     [WebHandleError]
     public class UploadTestController : Controller
     { 
