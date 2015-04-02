@@ -1,4 +1,5 @@
 ﻿using Ets.Model.DataModel.Order;
+using ETS.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace Ets.Service.Provider.Order
     /// <summary>
     /// 默认佣金计算规则
     /// </summary>
-    public  class OrderCommissionProvider : CommissionProvider
+    public  class DefaultOrPriceProvider : OrderPriceProvider
     {
 
         #region 计算收入支出
@@ -34,6 +35,18 @@ namespace Ets.Service.Provider.Order
             else
                 return Decimal.Round(Convert.ToDecimal(model.Amount) * commissionRate + distribe * orderCount, 2);//计算佣金
         }
+
+        /// <summary>
+        /// 获取订单的网站补贴 add by caoheyang 20150402
+        /// </summary>
+        /// <param name="model">订单</param>
+        /// <returns></returns>
+        public override decimal GetOrderWebSubsidy(OrderCommission model)
+        {
+            return ParseHelper.ToDecimal(model.DistribSubsidy);
+        }
+
+
 
         #endregion
     }

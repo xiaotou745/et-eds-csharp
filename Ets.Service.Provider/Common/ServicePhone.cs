@@ -1,4 +1,5 @@
-﻿using Ets.Dao.Common;
+﻿using ETS.Const;
+using Ets.Dao.Common;
 using Ets.Model.Common;
 using Ets.Service.IProvider.Common;
 using System;
@@ -34,17 +35,19 @@ namespace Ets.Service.Provider.Common
                 return new ResultModelServicePhone();
             }
             #region 缓存验证
-
-            string cacheKey = "Ets_Service_Provider_Common_ServicePhone";
-            var cacheList = ETS.Cacheing.CacheFactory.Instance[cacheKey];
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            const string cacheKey = RedissCacheKey.Ets_Service_Provider_Common_ServicePhone;
+            var cacheList = redis.Get<DataTable>(cacheKey); 
+            //var cacheList = ETS.Cacheing.CacheFactory.Instance[cacheKey];
             if (cacheList == null)
             {
                 dt = sPhoneDao.GetCustomerServicePhone();
-                ETS.Cacheing.CacheFactory.Instance.AddObject(cacheKey, dt, DateTime.Now.AddYears(365));//添加一年的生命周期
+                redis.Add(cacheKey, dt, DateTime.Now.AddYears(365));//添加一年的生命周期
+                //ETS.Cacheing.CacheFactory.Instance.AddObject(cacheKey, dt, DateTime.Now.AddYears(365));//添加一年的生命周期
             }
             else
             {
-                dt = cacheList as DataTable;
+                dt = cacheList;
             }
             #endregion
 

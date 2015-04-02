@@ -12,16 +12,16 @@ namespace Ets.Service.Provider.Order
     /// </summary>
     public class CommissionFactory
     {
-        public static CommissionProvider GetCommission()
+        public static OrderPriceProvider GetCommission()
         {
             switch (ConfigSettings.Instance.OrderCommissionType)
             {
                 case 0:
-                    return new OrderCommissionProvider();
+                    return new DefaultOrPriceProvider();
                 case 1:
-                    return new TimeCommssionProvider();
+                    return new TimeOrPriceProvider();
                 default:
-                    return new OrderCommissionProvider();
+                    return new DefaultOrPriceProvider();
             }
 
         }

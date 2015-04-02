@@ -80,7 +80,7 @@ namespace Ets.Service.Provider.Clienter
                 #endregion
 
                 model.income = item.OrderCommission;  //佣金 Edit bycaoheyang 20150327
-                model.Amount = OrderCommissionProvider.GetCurrenOrderPrice(oCommission); //C端 获取订单的金额 Edit bycaoheyang 20150305
+                model.Amount = DefaultOrPriceProvider.GetCurrenOrderPrice(oCommission); //C端 获取订单的金额 Edit bycaoheyang 20150305
 
                 model.businessName = item.BusinessName;
                 model.businessPhone = item.BusinessPhone;
@@ -334,7 +334,7 @@ namespace Ets.Service.Provider.Clienter
                     #endregion
 
                     resultModel.income = item.OrderCommission; //佣金 Edit bycaoheyang 20150327
-                    resultModel.Amount = OrderCommissionProvider.GetCurrenOrderPrice(oCommission);
+                    resultModel.Amount = DefaultOrPriceProvider.GetCurrenOrderPrice(oCommission);
                     //C端 获取订单的金额 Edit bycaoheyang 20150305
 
                     resultModel.businessName = item.BusinessName;

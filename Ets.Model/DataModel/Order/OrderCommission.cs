@@ -27,5 +27,10 @@ namespace Ets.Model.DataModel.Order
         /// 订单数量
         /// </summary>
         public Nullable<int> OrderCount { get; set; }
+
+        /// <summary>
+        /// 商户结算比例
+        /// </summary>
+        public decimal BusinessCommission { get; set; }
     }
 }
