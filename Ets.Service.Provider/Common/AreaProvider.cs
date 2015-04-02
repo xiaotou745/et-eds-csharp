@@ -32,14 +32,14 @@ namespace Ets.Service.Provider.Common
             {
                 areaList.Version = Config.ApiVersion;
                 ///没有最新
-                return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.UnNewest, areaList);
+                return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.Newest, areaList);
             }
 
             string key = string.Concat("Ets_Service_Provider_Common_GetOpenCity_", version);
             AreaModelList cacheAreaList = CacheFactory.Instance[key] as AreaModelList;
             if (cacheAreaList != null)
             {
-                return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.Newest, cacheAreaList);
+                return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.UnNewest, cacheAreaList);
             }
 
             //取数据库
@@ -48,7 +48,7 @@ namespace Ets.Service.Provider.Common
             areaList.AreaModels = list;
             CacheFactory.Instance.AddObject(key, areaList);
 
-            return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.Newest, areaList);
+            return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.UnNewest, areaList);
         }
 
         /// <summary>

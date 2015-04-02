@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Web.Http.Controllers;
+using System.Web.Mvc.Async;
 using Ets.Model.Common;
 using Ets.Service.Provider.Common;
 using SuperManCore;
@@ -25,24 +27,27 @@ namespace SuperManWebApi
     /// 用于接口统计--平扬.2015.4.14
     /// </summary>
     [System.AttributeUsage(System.AttributeTargets.Method)]
-    public class ApiTongJiAttribute : System.Web.Http.Filters.ActionFilterAttribute
+    public class ApiVersionStatisticAttribute : System.Web.Http.Filters.ActionFilterAttribute
     {
         /// <summary>
         /// 重写OnActionExecuting方法
         /// </summary>
         /// <param name="actionContext"></param>
         public override void OnActionExecuting(HttpActionContext actionContext)
-        {
-            var verSion = actionContext.ActionArguments["Version"] as string;
-            var model = new ApiVersionStatisticModel
+        { 
+            Task.Factory.StartNew(() =>
             {
-                APIName = actionContext.Request.RequestUri.AbsolutePath,
-                CreateTime = DateTime.Now,
-                Version = verSion
-            };
-            new ApiVersionProvider().AddApiRecords(model);
-
+                var verSion = actionContext.ActionArguments["Version"] as string;
+                var model = new ApiVersionStatisticModel
+                {
+                    APIName = actionContext.Request.RequestUri.AbsolutePath,
+                    CreateTime = DateTime.Now,
+                    Version = verSion
+                };
+                new ApiVersionProvider().AddApiRecords(model); 
+            });
         }
+
     }
 
     /// <summary>
