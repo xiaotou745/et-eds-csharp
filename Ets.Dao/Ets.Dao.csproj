@@ -56,6 +56,7 @@
     <Compile Include="Subsidy\SubsidyDao.cs" />
     <Compile Include="User\BusinessDao.cs" />
     <Compile Include="User\UserDao.cs" />
+    <Compile Include="User\UserOptRecordDao.cs" />
     <Compile Include="WtihdrawRecords\WtihdrawRecordsDao.cs" />
   </ItemGroup>
   <ItemGroup>

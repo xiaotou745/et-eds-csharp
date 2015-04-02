@@ -179,8 +179,9 @@ namespace Ets.Dao.User
         /// <summary>
         /// 设置结算比例-平扬 2015.3.12
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="price"></param>
+        /// <param name="id">用户id</param>
+        /// <param name="price">结算比例</param>
+        /// <param name="waisongfei">外送费</param>
         /// <returns></returns>
         public bool setCommission(int id, decimal price, decimal waisongfei)
         {
@@ -217,7 +218,8 @@ namespace Ets.Dao.User
             {
                 string sql = "SELECT COUNT(*) FROM dbo.business(NOLOCK) WHERE PhoneNo=@PhoneNo";
                 IDbParameters parm = DbHelper.CreateDbParameters();
-                parm.AddWithValue("@PhoneNo", PhoneNo);
+                parm.Add("@PhoneNo", SqlDbType.NVarChar);
+                parm.SetValue("@PhoneNo", PhoneNo);
                 return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm)) > 0 ? true : false;
             }
             catch (Exception ex)
@@ -358,7 +360,8 @@ namespace Ets.Dao.User
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@City", model.city);
             parm.AddWithValue("@Password", model.passWord);
-            parm.AddWithValue("@PhoneNo", model.phoneNo);
+            parm.Add("@PhoneNo", SqlDbType.NVarChar);
+            parm.SetValue("@PhoneNo", model.phoneNo);
             parm.AddWithValue("@CityId", model.CityId);
             parm.AddWithValue("@GroupId", model.GroupId);
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm));
@@ -388,7 +391,8 @@ namespace Ets.Dao.User
                         FROM business(nolock) where PhoneNo=@PhoneNo AND Password=@Password order by id desc";
 
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@PhoneNo", model.phoneNo);
+            parm.Add("@PhoneNo", SqlDbType.NVarChar);
+            parm.SetValue("@PhoneNo", model.phoneNo);
             parm.AddWithValue("@Password", model.passWord);
             return DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
         }
@@ -508,10 +512,11 @@ namespace Ets.Dao.User
         {
             string sql = @"SELECT Id FROM dbo.business(NOLOCK) WHERE PhoneNo=@PhoneNo";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@PhoneNo", PhoneNo);
+            parm.Add("@PhoneNo", SqlDbType.NVarChar);
+            parm.SetValue("@PhoneNo", PhoneNo);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             IList<BusListResultModel> list = MapRows<BusListResultModel>(dt);
-            if (list == null && list.Count <= 0)
+            if (list == null || list.Count <= 0)
             {
                 return null;
             }
@@ -802,8 +807,12 @@ namespace Ets.Dao.User
             parm.AddWithValue("@Name", model.Name);
             parm.AddWithValue("@City", model.City);
             parm.AddWithValue("@district", model.district);
-            parm.AddWithValue("@PhoneNo", model.PhoneNo);
-            parm.AddWithValue("@PhoneNo2", model.PhoneNo2);
+            parm.Add("@PhoneNo",SqlDbType.NVarChar);
+            parm.SetValue("@PhoneNo", model.PhoneNo);
+
+            parm.Add("@PhoneNo2", SqlDbType.NVarChar);
+            parm.SetValue("@PhoneNo2", model.PhoneNo2);
+
             parm.AddWithValue("@Password", model.Password);
             parm.AddWithValue("@IDCard", model.IDCard);
             parm.AddWithValue("@Address", model.Address);
@@ -898,7 +907,8 @@ namespace Ets.Dao.User
             IDbParameters parm = DbHelper.CreateDbParameters();
 
             parm.AddWithValue("@Address", business.Address);
-            parm.AddWithValue("@PhoneNo2", business.PhoneNo2);
+            parm.Add("@PhoneNo2",SqlDbType.NVarChar);
+            parm.SetValue("@PhoneNo2", business.PhoneNo2);
             parm.AddWithValue("@Name", business.Name);
             parm.AddWithValue("@Landline", business.Landline);
             parm.AddWithValue("@district", business.district);
@@ -984,14 +994,15 @@ namespace Ets.Dao.User
             {
                 string sql = "SELECT 1 FROM dbo.business(NOLOCK) WHERE PhoneNo=@PhoneNo ";
                 IDbParameters parm = DbHelper.CreateDbParameters();
-                parm.AddWithValue("@PhoneNo", phoneNo);
+                parm.Add("@PhoneNo", SqlDbType.NVarChar);
+                parm.SetValue("@PhoneNo", phoneNo);
                 return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm)) > 0;
             }
             catch (Exception ex)
             {
                 LogHelper.LogWriter(ex, "检查号码是否存在");
                 return false;
-            } 
+            }
         }
 
         /// <summary>
@@ -1005,7 +1016,7 @@ namespace Ets.Dao.User
         {
             string sql = @"select  Id as userid,[status] as status from dbo.business with(nolock) WHERE id=@id ";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@id", userid); 
+            parm.AddWithValue("@id", userid);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             if (dt == null || dt.Rows.Count <= 0)
             {

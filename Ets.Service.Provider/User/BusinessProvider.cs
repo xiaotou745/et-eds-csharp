@@ -25,6 +25,9 @@ using Ets.Model.DomainModel.Order;
 using Ets.Model.DataModel.Subsidy;
 using Ets.Dao.Order;
 using Ets.Model.DomainModel.Subsidy;
+using ETS.Transaction.Common;
+using ETS.Transaction;
+using Ets.Model.ParameterModel.User;
 namespace Ets.Service.Provider.User
 {
 
@@ -114,13 +117,26 @@ namespace Ets.Service.Provider.User
             return result;
         }
 
+     
+
         /// <summary>
-        /// 设置结算比例2015.3.12 平扬
+        /// 设置商家结算比例-外送费    设置结算比例2015.3.12 平扬
         /// </summary>
+        /// <param name="id">商家id</param>
+        /// <param name="price">结算比例</param>
+        /// <param name="waisongfei">外送费</param>
+        /// <param name="model">log实体</param>
         /// <returns></returns>
-        public bool SetCommission(int id, decimal price, decimal waisongfei)
+        public bool SetCommission(int id, decimal price, decimal waisongfei, UserOptRecordPara model)
         {
-            return dao.setCommission(id, price, waisongfei);
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                bool res = dao.setCommission(id, price, waisongfei);
+                int result = new UserOptRecordDao().InsertUserOptRecord(model);
+                tran.Complete();
+                return res;
+            }
+
         }
 
         /// <summary>
@@ -191,13 +207,13 @@ namespace Ets.Service.Provider.User
                     {
                         model.CityId = areaModel.NationalCode.ToString();
                     }
-                } 
+                }
             }
             catch (Exception ex)
             {
-                LogHelper.LogWriter("商户注册异常转换区域：", new { ex = ex});
+                LogHelper.LogWriter("商户注册异常转换区域：", new { ex = ex });
             }
-          
+
             BusiRegisterResultModel resultModel = new BusiRegisterResultModel()
             {
                 userId = dao.InsertBusiness(model)
@@ -240,19 +256,19 @@ namespace Ets.Service.Provider.User
             //转换省
             var _province = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.B_Province, JiBie = 1 });
             if (_province != null)
-            { 
+            {
                 model.B_ProvinceCode = _province.NationalCode.ToString();
             }
             //转换市 
             var _city = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.B_City, JiBie = 2 });
             if (_city != null)
-            { 
+            {
                 model.B_CityCode = _city.NationalCode.ToString();
             }
             //转换区
             var _area = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.B_Area, JiBie = 3 });
             if (_area != null)
-            { 
+            {
                 model.B_AreaCode = _area.NationalCode.ToString();
             }
             #endregion
@@ -291,6 +307,18 @@ namespace Ets.Service.Provider.User
                     return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential, resultMode);
                 }
                 DataRow row = dt.Rows[0];
+
+                string cityId = row["cityId"].ToString();
+                if (cityId.Equals("110100"))
+                {
+                    //北京
+                    cityId = "1";
+
+                }
+                else if (cityId.Equals("310100"))
+                {
+                    cityId = "73";
+                }
                 resultMode.userId = ParseHelper.ToInt(row["userId"]);
                 resultMode.status = Convert.ToByte(row["status"]);
                 resultMode.city = row["city"].ToString();
@@ -299,7 +327,7 @@ namespace Ets.Service.Provider.User
                 resultMode.district = row["district"].ToString();
                 resultMode.Landline = row["Landline"].ToString();
                 resultMode.Name = row["Name"].ToString();
-                resultMode.cityId = row["cityId"].ToString();
+                resultMode.cityId = cityId;
                 resultMode.phoneNo = row["PhoneNo2"] == null ? row["PhoneNo"].ToString() : row["PhoneNo2"].ToString();
                 resultMode.DistribSubsidy = row["DistribSubsidy"] == null ? 0 : ParseHelper.ToDecimal(row["DistribSubsidy"]);
                 return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.Success, resultMode);
@@ -503,9 +531,9 @@ namespace Ets.Service.Provider.User
                 Ets.Model.DomainModel.Area.AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = businessModel.districtName.Trim(), JiBie = 3 });
                 if (areaModel != null)
                 {
-                    to.districtId = areaModel.NationalCode.ToString(); 
+                    to.districtId = areaModel.NationalCode.ToString();
                 }
-            }            
+            }
             to.district = businessModel.districtName;
             to.Longitude = businessModel.longitude;
             to.Latitude = businessModel.latitude;

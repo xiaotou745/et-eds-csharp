@@ -13,6 +13,8 @@ using System.Web.Mvc;
 using Ets.Model.ParameterModel.Bussiness;
 using Ets.Service.Provider.Common;
 using Ets.Service.IProvider.Common;
+using Ets.Model.ParameterModel.User;
+using SuperMan.App_Start;
 
 namespace SuperMan.Controllers
 {
@@ -67,7 +69,8 @@ namespace SuperMan.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult GetBussinessByCityInfo(Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria model) {
+        public JsonResult GetBussinessByCityInfo(Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria model)
+        {
             return Json(iBusinessProvider.GetBussinessByCityInfo(model).ToList(), JsonRequestBehavior.DenyGet);
         }
         [HttpGet]
@@ -84,20 +87,24 @@ namespace SuperMan.Controllers
         /// <param name="waisongfei">外送费</param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult SetCommission(int id,decimal commission,decimal waisongfei)
+        public JsonResult SetCommission(int id, decimal commission, decimal waisongfei)
         {
             if (commission < 0)
-            {
-                return Json(new ResultModel(false,"结算比例不能小于零!"), JsonRequestBehavior.AllowGet);
-            }
+                return Json(new ResultModel(false, "结算比例不能小于零!"), JsonRequestBehavior.AllowGet);
             if (waisongfei < 0)
-            {
                 return Json(new ResultModel(false, "外送费不能小于零!"), JsonRequestBehavior.AllowGet);
-            }
-            IBusinessProvider iBus=new BusinessProvider();
-            return Json(new ResultModel(iBus.SetCommission(id, commission,waisongfei), "成功!"), JsonRequestBehavior.AllowGet);
+            IBusinessProvider iBus = new BusinessProvider();
+            UserOptRecordPara model = new UserOptRecordPara()
+            {
+                OptUserId = UserContext.Current.Id,//后台用户id
+                OptUserName = UserContext.Current.Name, //后台用户
+                UserID = id, //商户id 
+                UserType = 1, //被操作人类型
+                Remark = string.Format(string.Format("将商户id为{0}的商户外送费设置为{1},结算比例设置为{2}", id, waisongfei, commission))
+            };
+            return Json(new ResultModel(iBus.SetCommission(id, commission, waisongfei,model), "成功!"), JsonRequestBehavior.AllowGet);
         }
 
-        
+
     }
 }
