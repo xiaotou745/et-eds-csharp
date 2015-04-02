@@ -66,7 +66,8 @@ namespace Ets.Dao.GlobalConfig
                 else if (item.ItemArray[0].ToString() == "TimeSubsidies")
                 {
                     model.TimeSubsidies = item["Value"].ToString();
-                }
+                }else if(item.ItemArray[0].ToString() == "CommissionFormulaMode")
+                    model.CommissionFormulaMode = ParseHelper.ToInt(item["Value"], 0);
             }
 
             return model;

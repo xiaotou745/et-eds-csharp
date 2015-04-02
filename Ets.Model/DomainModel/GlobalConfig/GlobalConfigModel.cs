@@ -27,5 +27,10 @@ namespace Ets.Model.DomainModel.GlobalConfig
         /// </summary>
         public string TimeSubsidies { get; set; }
 
+        /// <summary>
+        /// 佣金方式计算方式
+        /// </summary>
+        public int CommissionFormulaMode { get; set; }
+
     }
 }
