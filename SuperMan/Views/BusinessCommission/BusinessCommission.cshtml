@@ -1,4 +1,5 @@
-﻿@model IList<Ets.Model.DomainModel.Bussiness.BusinessCommissionModel>
+﻿@model Ets.Model.Common.ResultInfo<IList<Ets.Model.DomainModel.Bussiness.BusinessCommissionModel>>
+
  @{
     ViewBag.Title = "BusinessCommission";
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
@@ -48,25 +49,25 @@
     <tbody>
         @{
             var i = 0;
-            if (Model != null)
+            if (Model!=null && Model.Result)
             { 
-            foreach (var item in Model)
-            {
-                i++;
-                <tr id="@item.id">
-                    <td>@i</td>
-                    <td>@item.Name</td>
-                    <td>@item.Amount</td>
-                    <td>@item.OrderCount</td>
-                    <td>@item.BusinessCommission</td>
-                    <td>@item.T1</td>
-                    <td>@item.T2</td>
-                    <td>@item.TotalAmount</td> 
-                    <td>
-                        <a href="javascript:void(0)" onclick=" DataDaoCHu(@item.id, '@item.Name', '@item.Amount', '@item.OrderCount', '@item.BusinessCommission', '@item.T1', '@item.T2', '@item.TotalAmount') ">导出</a> 
-                    </td>
-                </tr>
-            }
+                foreach (var item in Model.Data)
+                {
+                    i++;
+                    <tr id="@item.id">
+                        <td>@i</td>
+                        <td>@item.Name</td>
+                        <td>@item.Amount</td>
+                        <td>@item.OrderCount</td>
+                        <td>@item.BusinessCommission</td>
+                        <td>@item.T1</td>
+                        <td>@item.T2</td>
+                        <td>@item.TotalAmount</td> 
+                        <td>
+                            <a href="javascript:void(0)" onclick=" DataDaoCHu(@item.id, '@item.Name', '@item.Amount', '@item.OrderCount', '@item.BusinessCommission', '@item.T1', '@item.T2', '@item.TotalAmount') ">导出</a> 
+                        </td>
+                    </tr>
+                }
             }
         }
     </tbody> 
@@ -81,10 +82,23 @@
         $("#btnSearch").on('click', function() {
             var txtBusinessName = $("#txtBusinessName").val(); //商户名称
             var groupId = $("#txtGroupId").val();
-            if (groupId == "") { groupId =0}
+            if (groupId == "") {
+                groupId = 0; }
             var startDate = $('#txtDateStart').val();
             var endDate = $('#txtDateEnd').val();
-            if (endDate < startDate && endDate!="") {
+            
+            if (startDate!="" && endDate=="") {
+                alert("请输入结束时间!");
+                return false;
+            }
+            if (endDate != "" && startDate == "") {
+                alert("请输入开始时间!");
+                return false;
+            }
+            var start = new Date(startDate);
+            var end = new Date(endDate);
+            
+            if (end < start) {
                 alert("开始日期不能大于结束日期");
                 return false;
             }
