@@ -14,15 +14,14 @@ namespace SuperMan.Authority
 
         public void SignIn(string data)
         {
-            CookieHelper.WriteCookie(cookieName, data, DateTime.Now.AddHours(1)); 
-            //FormsAuthentication.SetAuthCookie(cookieName,false);
+            CookieHelper.WriteCookie(cookieName, data, DateTime.Now.AddDays(7));
+            CookieHelper.WriteCookie("userinfo", data, DateTime.Now.AddDays(7));
         }
 
         public void SignOut()
         {
             CookieHelper.RemoveCookie(cookieName);
             CookieHelper.RemoveCookie("menulist");
-           // FormsAuthentication.SignOut();
         }
     }
 }

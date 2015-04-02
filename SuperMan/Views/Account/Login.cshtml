@@ -51,12 +51,32 @@
     </div>
     <script src="~/Scripts/jquery-1.8.2.js"></script>
     <script>
+        function getCookie(objName) {//获取指定名称的cookie的值 
+            var arrStr = document.cookie.split("; ");
+            for (var i = 0; i < arrStr.length; i++) {
+                var temp = arrStr[i].split("=");
+                if (temp[0] == objName) return unescape(temp[1]);
+            }
+        };
+        document.onkeydown = function (event) {
+            var e = event || window.event || arguments.callee.caller.arguments[0]; 
+            if (e && e.keyCode == 13) { // enter 键
+                login()
+            }
+        };
         $(document).ready(function() {  
             $("img.captcha").click(function() {
                 $(this).attr("src", $(this).attr("src") + "?a=" + new Date().getTime());
-            }); 
+            });
+            var cookies = getCookie('userinfo');
+            if (cookies != null) {
+                var user = eval('(' + cookies + ')');
+                $("#UserName").val(user.LoginName);
+                $("#Password").val(user.Password);
+            }
         }); 
         function login() {
+            
             var uname = $("#UserName").val();
             var Password = $("#Password").val();
             var Captcha = $("#Captcha").val();

@@ -75,8 +75,9 @@ namespace SuperMan.Controllers
                         LoginName = account.LoginName,
                         GroupId = account.GroupId,
                         RoleId = account.RoleId,
+                        Password = model.Password
                     };
-                    string json = Letao.Util.JsonHelper.ToJson(userInfo);
+                    string json = Letao.Util.JsonHelper.ToJson(userInfo); 
                     _authenticationService.SignIn(json);
                     //获取用户权限菜单id数组，存入cookie中
                     List<int> myMenusR = authorityProvider.GetMenuIdsByRoloId(account.RoleId);
