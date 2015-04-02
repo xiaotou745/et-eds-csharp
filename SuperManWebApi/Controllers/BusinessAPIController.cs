@@ -181,32 +181,29 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel> PostPublishOrder_B(Ets.Model.ParameterModel.Bussiness.BusiOrderInfoModel model)
         {
-            lock (lockHelper)
+            //首先验证该 商户有无 资格 发布订单 wc
+            if (!iBusinessProvider.HaveQualification(model.userId))
             {
-                //首先验证该 商户有无 资格 发布订单 wc
-                if (!iBusinessProvider.HaveQualification(model.userId))
-                {
-                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.HadCancelQualification);
-                }
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.HadCancelQualification);
+            }
+            lock (lockHelper)
+            {  
                 #region 缓存验证
-                string cacheKey = model.userId.ToString() + "_" + model.OrderSign;
-                var cacheList = ETS.Cacheing.CacheFactory.Instance[cacheKey];
-                LogHelper.LogWriter("订单发布~商户时间戳", new { cacheKey = cacheKey, model = model });
-                if (cacheList != null)
-                {
-                    LogHelper.LogWriter("cacheList是否存在同一的商户时间戳：", new { cacheList = cacheList });
+                string cacheKey = "PostPublishOrder_B_" + model.userId + "_" + model.OrderSign;
+                //var cacheList = ETS.Cacheing.CacheFactory.Instance[cacheKey];
+                var redis = new ETS.NoSql.RedisCache.RedisCache(); 
+                var cacheValue = redis.Get<string>(cacheKey); 
+                if (cacheValue != null)
+                {  
                     return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.OrderHasExist);//当前时间戳内重复提交,订单已存在 
-                }
-                LogHelper.LogWriter("如果存在会继续往下执行？cacheList是否存在商户时间戳：", new { cacheList = cacheList, model = model });
-                ETS.Cacheing.CacheFactory.Instance.AddObject(cacheKey, "1", DateTime.Now.AddMinutes(10));//添加当前时间戳记录
-                LogHelper.LogWriter("在缓存里添加时间戳：", new { cacheKey = cacheKey, obj = 1, guoqishijian = DateTime.Now.AddMinutes(10), model = model });
+                } 
+                redis.Add(cacheKey, "1", DateTime.Now.AddMinutes(10));//添加当前时间戳记录
+               // ETS.Cacheing.CacheFactory.Instance.AddObject(cacheKey, "1", DateTime.Now.AddMinutes(10));//添加当前时间戳记录
                 #endregion
             }
             if (model.OrderCount <= 0 || model.OrderCount > 15)   //判断录入订单数量是否符合要求
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.OrderCountError);
-
-
-
+ 
             Ets.Model.DataModel.Order.order order = iOrderProvider.TranslateOrder(model);
             string result = iOrderProvider.AddOrder(order);
 
