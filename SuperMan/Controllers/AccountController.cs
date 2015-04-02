@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.Helpers;
 using System.Web.Mvc;
 using Ets.Model.Common;
 using Ets.Model.ParameterModel.Authority;
 using Ets.Service.Provider.Authority;
 using ETS.Util;
-using SuperMan.App_Start;
 using SuperManCore;
 using SuperMan.Authority;
 using Ets.Service.IProvider.Account;
@@ -38,19 +36,18 @@ namespace SuperMan.Controllers
         }
 
         /// <summary>
-        /// 登录
+        /// 登录页面
         /// </summary>
         /// <param name="returnUrl"></param>
         /// <returns></returns>
         [HttpGet]
         public ActionResult Login(string returnUrl)
         {
-            ViewBag.ReturnUrl = returnUrl;
-            return View(new LoginModel());
+            return View();
         }
 
         /// <summary>
-        /// 登录
+        /// 登录方法
         /// </summary>
         /// <param name="model"></param>
         /// <param name="returnUrl"></param>
