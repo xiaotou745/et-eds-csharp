@@ -10,88 +10,90 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black" /> 
     <link rel="stylesheet" href="~/Content/page.css">
 </head> 
-<body class="hb-bd">
-     <div class="wrap">
-	@RenderBody()
-    </div>
-     <div class="tips">为了更好的体验，请使用竖屏浏览</div>
-    <script type="text/javascript" src="~/Scripts/zepto.js"></script>
-    <script type="text/javascript">
-        $(function () {
-
-            var startPosY = 0, // 起始点垂直位置
-                lTouch = 0, // lTouch_rTouch 场景切换
-                rTouch = 1,
-                $container = $(".container");
-
-            $('.peisongban').on('click', function () {
-                lTouch = 1;
-                rTouch = 2;
-                $(".wrap")[0].className = 'wrap go1_2';
-            })
-            $('.shangjiaban').on('click', function () {
-                lTouch = 4;
-                rTouch = 5;
-                $(".wrap")[0].className = 'wrap go4_5';
-            })
-            // 触控开始
-            document.body.addEventListener('touchstart', function (e) {
-                if (isScrolling) { return; }
-                startPosY = e.touches[0].pageY;
-            });
-            var isScrolling = false;
-            function startScroll() {
-                isScrolling = true;
-                setTimeout(function () {
-                    isScrolling = false;
-                }, 800);
-            }
-            // 触控结束
-            document.body.addEventListener('touchend', function (e) {
-                if (isScrolling) { return; }
-                var endPosY = e.changedTouches[0].pageY;
-                if (Math.abs(endPosY - startPosY) > 50) {
-
-                    // 向下滑动
-                    if (endPosY > startPosY) {
-                        if (lTouch > 0) {
-                            startScroll();
-                            $(".wrap")[0].className = 'wrap ' + 'go' + rTouch + '_' + lTouch;
-                            lTouch -= 1;
-                            rTouch -= 1;
-                            var $lContainer = $($container[lTouch]),
-                                $rContainer = $($container[rTouch]);
-                            $('.gotop i', $rContainer).hide();
-                            $('.gotop i', $lContainer).show();
-                        }
-                    }
-
-                        // 向上滑动
-                    else {
-                        if (lTouch < 6) {
-                            var $lContainer = $($container[lTouch]),
-                                $rContainer = $($container[rTouch]);
-                            $('.gotop i', $lContainer).hide();
-                            if (lTouch != 6) {
-                                $('.gotop i', $rContainer).show();
-                            }
-                            lTouch += 1;
-                            rTouch += 1;
-                            $(".wrap")[0].className = 'wrap ' + 'go' + lTouch + '_' + rTouch;
-                            startScroll();
-                        }
-                    }
-                }
-
-            });
-
+    <body class="hb-bd"> 
+        <script>
             // 阻止滑动事件
             document.body.addEventListener('touchmove', function (e) {
                 if (e.preventDefault) {
                     e.preventDefault();
                 }
             });
-        });
+</script>
+        <div class="wrap">
+            @RenderBody()
+        </div>
+           <div class="tips">为了更好的体验，请使用竖屏浏览</div>
+    <script type="text/javascript" src="~/Scripts/zepto.js"></script>
+         <script type="text/javascript">
+             $(function () {
+
+                 var startPosY = 0, // 起始点垂直位置
+                     lTouch = 0, // lTouch_rTouch 场景切换
+                     rTouch = 1,
+                     $container = $(".container");
+
+                 $('.peisongban').on('click', function () {
+                     lTouch = 1;
+                     rTouch = 2;
+                     $(".wrap")[0].className = 'wrap go1_2';
+                 })
+                 $('.shangjiaban').on('click', function () {
+                     lTouch = 4;
+                     rTouch = 5;
+                     $(".wrap")[0].className = 'wrap go4_5';
+                 })
+                 // 触控开始
+                 document.body.addEventListener('touchstart', function (e) {
+                     if (isScrolling) { return; }
+                     startPosY = e.touches[0].pageY;
+                 });
+                 var isScrolling = false;
+                 function startScroll() {
+                     isScrolling = true;
+                     setTimeout(function () {
+                         isScrolling = false;
+                     }, 800);
+                 }
+                 // 触控结束
+                 document.body.addEventListener('touchend', function (e) {
+                     if (isScrolling) { return; }
+                     var endPosY = e.changedTouches[0].pageY;
+                     if (Math.abs(endPosY - startPosY) > 50) {
+
+                         // 向下滑动
+                         if (endPosY > startPosY) {
+                             if (lTouch > 0) {
+                                 startScroll();
+                                 $(".wrap")[0].className = 'wrap ' + 'go' + rTouch + '_' + lTouch;
+                                 lTouch -= 1;
+                                 rTouch -= 1;
+                                 var $lContainer = $($container[lTouch]),
+                                     $rContainer = $($container[rTouch]);
+                                 $('.gotop i', $rContainer).hide();
+                                 $('.gotop i', $lContainer).show();
+                             }
+                         }
+
+                             // 向上滑动
+                         else {
+                             if (lTouch < 6) {
+                                 var $lContainer = $($container[lTouch]),
+                                     $rContainer = $($container[rTouch]);
+                                 $('.gotop i', $lContainer).hide();
+                                 if (lTouch != 6) {
+                                     $('.gotop i', $rContainer).show();
+                                 }
+                                 lTouch += 1;
+                                 rTouch += 1;
+                                 $(".wrap")[0].className = 'wrap ' + 'go' + lTouch + '_' + rTouch;
+                                 startScroll();
+                             }
+                         }
+                     }
+
+                 });
+             });
     </script>
 </body>
+
 </html>
