@@ -53,8 +53,8 @@ namespace SuperMan.Controllers
             date2 = string.IsNullOrEmpty(criteria.txtDateEnd) ? DateTime.Now : DateTime.Parse(criteria.txtDateEnd);
             date1=new DateTime(date1.Year,date1.Month,date1.Day,0,0,0);
             date2 = new DateTime(date2.Year, date2.Month, date2.Day, 23, 59, 59);
-            ViewBag.startDate = date1;
-            ViewBag.endDate = date2;
+            ViewBag.startDate = criteria.txtDateStart;
+            ViewBag.endDate = criteria.txtDateEnd;
             ViewBag.name = criteria.txtBusinessName;
             var result = iBusinessProvider.GetBusinessCommission(date1, date2, criteria.txtBusinessName, criteria.txtGroupId);
             return View("BusinessCommission", result);
