@@ -396,14 +396,31 @@
         });
         */
 
+        //$.ajax({
+        //    type: 'POST',
+        //    dataType: 'json',
+        //    url: '/BusinessAPI/PostForgetPwd_B',
+        //    data: {
+        //        "phoneNumber": "13426401627",
+        //        "password": "123456",
+        //        "checkCode":"1234"
+
+        //    },
+        //    success: function (data) {
+        //        console.log(data);
+        //    },
+        //    error: function () {
+        //    }
+        //});
+
         $.ajax({
             type: 'POST',
             dataType: 'json',
-            url: '/BusinessAPI/PostForgetPwd_B',
+            url: '/ClienterAPI/PostForgetPwd_C',
             data: {
-                "phoneNumber": "13426401627",
+                "phoneNo": "13911245813",
                 "password": "123456",
-                "checkCode":"1234"
+                "checkCode": "1234"
 
             },
             success: function (data) {
@@ -412,7 +429,6 @@
             error: function () {
             }
         });
-
 
 
         //$.ajax({
