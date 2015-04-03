@@ -118,7 +118,7 @@
 
 <script type="text/javascript">
     var currentId;
-    $(document).ready(function () {
+    $(document).ready(function () { 
         $(".businessOk").bind("click", function () {
             currentId = $(this).attr("businessId");
             var paramaters = { "id": currentId };
@@ -152,19 +152,23 @@
                     }
                 }
             });
-        });
+        }); 
     });
 
     function funcPicView(puth, CheckPicUrl) {
-        $('#showBusiImage').attr('src', puth + '/' + CheckPicUrl);
          
+        $('#showBusiImage').attr('src', puth + '/' + CheckPicUrl); 
         var originSize = '_0_0';
         var fileLastDot = CheckPicUrl.lastIndexOf('.');
         var fileHandHouZhui = CheckPicUrl.substr(fileLastDot, CheckPicUrl.length - fileLastDot);
         var bigFileName = CheckPicUrl.substring(0, fileLastDot) + originSize + fileHandHouZhui;
         $('#showBigBusiImage').attr('href', puth + '/' + bigFileName);
-
-        adminjs.openwinbox('#BusiPicShow');
+        adminjs.openwinbox('#BusiPicShow'); 
+        if(CheckPicUrl.length ==0){
+            $('#showBigBusiImage').hide();
+        }else{
+            $('#showBigBusiImage').show();
+        }
     }
         
     //弹出结算比例-外送费层

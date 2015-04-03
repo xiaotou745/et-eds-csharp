@@ -219,6 +219,16 @@ if (SuperMan.App_Start.UserContext.Current.HasAuthority(18) || SuperMan.App_Star
 
         $('#showBigPicUrl').attr('href', puth + '/' + BigPicName(PicUrl, originSize));
         adminjs.openwinbox('#ClientPicShow');
+        if(PicWithHandUrl.length ==0){
+            $('#showBigPicHWU').hide();
+        }else{
+            $('#showBigPicHWU').show();
+        }
+        if(PicUrl.length ==0){
+            $('#showBigPicUrl').hide();
+        }else{
+            $('#showBigPicUrl').show();
+        }
     }
 
     $('.J_closebox').click(function () {
