@@ -84,23 +84,21 @@
                     <td>@statusView</td>
                     <td>
                         @{
-                if (@item.Status == 1)
-                {
-
-                    if (SuperMan.App_Start.UserContext.Current.HasAuthority(22))
-                    {
-                        <a href="javascript:void(0)" style="color:gray" businessid="@item.Id" class="businessOk">审核通过</a>
-                            <a href="javascript:void(0)" businessid="@item.Id" class="businessCel">取消资格</a>
-                    }
-                }
-                else
-                {
-                    if (SuperMan.App_Start.UserContext.Current.HasAuthority(22))
-                    {
-                        <a href="javascript:void(0)" businessid="@item.Id" class="businessOk">审核通过</a>
-                            <a href="javascript:void(0)" style="color:gray" businessid="@item.Id" class="businessCel">取消资格</a>
-                    }
-                }
+                             if (SuperMan.App_Start.UserContext.Current.HasAuthority(22))
+                            {
+                                 int checkAddress=string.IsNullOrEmpty(item.Address)?0:1;
+                              
+                                if (@item.Status == 1)
+                                {
+                                    <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission)" style="color:gray" businessid="@item.Id" class="businessOk">审核通过</a>
+                                    <a href="javascript:void(0)" businessid="@item.Id" class="businessCel">取消资格</a>
+                                }
+                                else
+                                {
+                                    <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission)" businessid="@item.Id" class="businessOk">审核通过</a>
+                                    <a href="javascript:void(0)" style="color:gray" businessid="@item.Id" class="businessCel">取消资格</a>
+                                }
+                            }
                         }
                     @if (SuperMan.App_Start.UserContext.Current.HasAuthority(24))
                     {
@@ -119,24 +117,10 @@
 <script type="text/javascript">
     var currentId;
     $(document).ready(function () {
-        $(".businessOk").bind("click", function () {
-            currentId = $(this).attr("businessId");
-            var paramaters = { "id": currentId };
-            var url = "/BusinessManager/AuditOK";
-            $.ajax({
-                type: 'POST',
-                url: url,
-                data: paramaters,
-                success: function (result) {
-                    if (result.IsSuccess) {
-                        window.location.href = "/BusinessManager/BusinessManager";
-                    } else {
-                        alert(result.Message);
-                    }
-                }
-            });
-        });
         $(".businessCel").bind("click", function () {
+            if (!window.confirm("是否取消审核？")) {
+                return;
+            }
             currentId = $(this).attr("businessId");
             var paramaters = { "id": currentId };
             var url = "/BusinessManager/AuditCel";
@@ -154,7 +138,35 @@
             });
         });
     });
-
+    ///操作审核验证
+    function businessOk(checkAddress, businessId, Proportion) {
+        if (!window.confirm("是否审核通过？")) {
+            return;
+        }
+        if (checkAddress==0) {
+            alert("该商家未填写配送地址，不能通过审核。")
+            return;
+        }
+        if (Proportion<10) {
+            alert("该商家结算比例小于10%，不能通过审核。")
+            return;
+        }
+        //currentId = $(this).attr("businessId");
+        var paramaters = { "id": businessId };
+        var url = "/BusinessManager/AuditOK";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    window.location.href = "/BusinessManager/BusinessManager";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    }
     function funcPicView(puth, CheckPicUrl) {
         $('#showBusiImage').attr('src', puth + '/' + CheckPicUrl);
          
