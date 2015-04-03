@@ -24,7 +24,10 @@ namespace SuperMan.Controllers
         {
             _authenticationService = new AdminAuthenticationService();
         }
-
+        public ActionResult Account()
+        {
+            return View();
+        }
         /// <summary>
         /// 退出登录
         /// </summary>
@@ -42,7 +45,7 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         [HttpGet]
         public ActionResult Login(string returnUrl)
-        {
+        { 
             return View();
         }
 
