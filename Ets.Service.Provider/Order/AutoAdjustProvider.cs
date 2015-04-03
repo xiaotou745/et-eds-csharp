@@ -23,12 +23,14 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         public void AdjustOrderService()
         {
+            //ETS.Util.Log.WriteTextToFile("执行补贴任务", ETS.Config.ConfigKey("LogPath"));
             string globalConfigModel = Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet.TimeSubsidies;
             if (string.IsNullOrEmpty(globalConfigModel))
             {
                 return;
             }
             #region 超时分钟数拼接，查库用
+            //ETS.Util.Log.WriteTextToFile("超时分钟数拼接", ETS.Config.ConfigKey("LogPath"));
             var globalConfigList = globalConfigModel.Split(';');
             string IntervalMinuteList = string.Empty;//超时分钟数串
             foreach (string globalConfigItem in globalConfigList)
@@ -47,6 +49,7 @@ namespace Ets.Service.Provider.Order
                 return;
             }
             var arrIntervalMinuteList = IntervalMinuteList.Split(',');
+            //ETS.Util.Log.WriteTextToFile("有需要调整佣金的订单", ETS.Config.ConfigKey("LogPath"));
             #region 有需要调整佣金的订单
             foreach (string item in globalConfigList)
             {
@@ -58,6 +61,7 @@ namespace Ets.Service.Provider.Order
                 {
                     continue;
                 }
+                //ETS.Util.Log.WriteTextToFile("AutoAdjustOrderCommission", ETS.Config.ConfigKey("LogPath"),true);
                 AutoAdjustOrderCommission(dealOrderList, adjustAmount, ETS.Util.ParseHelper.ToInt(arrIntervalMinuteList[dealCount - 1]));
             }
             #endregion
@@ -74,6 +78,7 @@ namespace Ets.Service.Provider.Order
             {
                 foreach (OrderAutoAdjustModel item in list)
                 {
+                    //ETS.Util.Log.WriteTextToFile("调整订单佣金AutoAdjustOrderCommission", ETS.Config.ConfigKey("LogPath"),true);
                     using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                     {
                         orderDao.UpdateOrderCommissionById(AdjustAmount, item.Id);//更新账户
@@ -84,7 +89,8 @@ namespace Ets.Service.Provider.Order
             }
             catch (Exception ex)
             {
-                ETS.Util.LogHelper.LogWriter(ex.Message);
+                //ETS.Util.LogHelper.LogWriter(ex);
+                ETS.Util.Log.WriteTextToFile("当前时间:" + DateTime.Now.ToString() + "调整订单佣金:" + ex.Message, ETS.Config.ConfigKey("LogPath"),true);
             }
         }
 
