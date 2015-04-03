@@ -15,7 +15,7 @@ namespace Ets.Service.IProvider.Order
         /// 窦海超
         /// 2015年4月3日 09:41:19
         /// </summary>
-        DealResultInfo AutoAdjustOrderCommission(IList<OrderAutoAdjustModel> list, decimal AdjustAmount);
+        bool AutoAdjustOrderCommission(IList<OrderAutoAdjustModel> list, decimal AdjustAmount,int executeMinute);
 
         /// <summary>
         /// 获取超过配置时间未抢单的订单
@@ -24,5 +24,12 @@ namespace Ets.Service.IProvider.Order
         /// <param name="IntervalMinute"></param>
         /// <returns></returns>
         IList<OrderAutoAdjustModel> GetOverTimeOrder(string IntervalMinute);
+
+        /// <summary>
+        /// 执行补贴任务
+        /// 窦海超
+        /// 2015年4月3日 15:19:46
+        /// </summary>
+        void AdjustOrderService();
     }
 }
