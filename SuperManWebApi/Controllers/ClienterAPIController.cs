@@ -1,4 +1,5 @@
-﻿using ETS.Enums;
+﻿using ETS.Const;
+using ETS.Enums;
 using Ets.Model.Common;
 using Ets.Service.Provider.WtihdrawRecords;
 using Microsoft.Ajax.Utilities;
@@ -302,8 +303,10 @@ namespace SuperManWebApi.Controllers
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ForgetPwdStatus.checkCodeIsEmpty);
             }
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            var code = redis.Get<string>(RedissCacheKey.PostForgetPwd_C+ model.phoneNo);
             //start 需要验证 验证码是否正确
-            if (SupermanApiCaching.Instance.Get(model.phoneNo) != model.checkCode)
+            if (string.IsNullOrEmpty(code) || code != model.checkCode)
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel>.Conclude(ETS.Enums.ForgetPwdStatus.checkCodeWrong);
             }
@@ -528,20 +531,24 @@ namespace SuperManWebApi.Controllers
             }
             var randomCode = new Random().Next(100000).ToString("D6");
             string msg = string.Empty;
+            string key = "";
             if (type == "0")//注册
             {
                 if (iClienterProvider.CheckClienterExistPhone(PhoneNumber))  //判断该手机号是否已经注册过
                     return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.AlreadyExists);
-
+                key = RedissCacheKey.PostRegisterInfo_C + PhoneNumber;
                 msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode, ConstValues.MessageClinenter);
             }
             else //修改密码
             {
+                key = RedissCacheKey.PostForgetPwd_C + PhoneNumber;
                 msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode, ConstValues.MessageClinenter);
             }
             try
             {
-                SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);
+                var redis = new ETS.NoSql.RedisCache.RedisCache();
+                redis.Add(key, randomCode,DateTime.Now.AddHours(1)); 
+ 
                 // 更新短信通道 
                 Task.Factory.StartNew(() =>
                 {

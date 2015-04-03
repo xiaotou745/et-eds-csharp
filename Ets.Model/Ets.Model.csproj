@@ -44,6 +44,7 @@
     <Compile Include="Common\BusinessCountManageList.cs" />
     <Compile Include="Common\ClienterCountManageList.cs" />
     <Compile Include="Common\ConstValues.cs" />
+    <Compile Include="Common\DealResultInfo.cs" />
     <Compile Include="Common\HomeCountTitleModel.cs" />
     <Compile Include="Common\JPushModel.cs" />
     <Compile Include="Common\ListParaBase.cs" />
