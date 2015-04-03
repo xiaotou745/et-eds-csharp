@@ -78,7 +78,6 @@
     <Compile Include="CommandInfo.cs" />
     <Compile Include="Common.cs" />
     <Compile Include="IDBHelper.cs" />
-    <Compile Include="MySQLDBHelper.cs" />
     <Compile Include="PropertyAccess.cs" />
     <Compile Include="IOperation.cs" />
     <Compile Include="ITask.cs" />
@@ -113,10 +112,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MySQL\MySql.Data\MySQL.Data.csproj">
-      <Project>{E9DF5ED1-4CBD-4226-B931-9A51610AC14D}</Project>
-      <Name>MySQL.Data</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Task.Common\Task.Common.csproj">
       <Project>{32f39b07-ef7c-49bb-b263-797f0e5003e0}</Project>
       <Name>Task.Common</Name>

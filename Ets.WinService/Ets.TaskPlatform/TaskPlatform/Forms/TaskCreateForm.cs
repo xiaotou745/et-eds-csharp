@@ -13,7 +13,6 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using TaskPlatform.Commom;
 using System.IO;
-using MySql.Data.MySqlClient;
 
 namespace TaskPlatform.Forms
 {
@@ -282,33 +281,33 @@ namespace TaskPlatform.Forms
                 txtDBTestResult.Clear();
                 if (rbtnMySQL.Checked)
                 {
-                    using (MySqlConnection connection = new MySqlConnection(cmbDataBaseConnectionString.Text))
-                    {
-                        connection.Open();
-                        dbOK = true;
-                        MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder(cmbDataBaseConnectionString.Text);
-                        txtDBTestResult.AppendText("驱动程序：");
-                        txtDBTestResult.AppendText(builder.ApplicationName);
-                        txtDBTestResult.AppendText(Environment.NewLine);
-                        txtDBTestResult.AppendText("数据库地址：");
-                        txtDBTestResult.AppendText(builder.Server);
-                        txtDBTestResult.AppendText("       服务器版本：");
-                        txtDBTestResult.AppendText(connection.ServerVersion);
-                        txtDBTestResult.AppendText(Environment.NewLine);
-                        txtDBTestResult.AppendText("登录数据库：");
-                        txtDBTestResult.AppendText(builder.Database);
-                        txtDBTestResult.AppendText(Environment.NewLine);
-                        txtDBTestResult.AppendText("登录用户名：");
-                        txtDBTestResult.AppendText(builder.UserID);
-                        txtDBTestResult.AppendText("       登录密码：");
-                        txtDBTestResult.AppendText(builder.Password);
-                        txtDBTestResult.AppendText(Environment.NewLine);
-                        txtDBTestResult.AppendText("客户端标识：");
-                        txtDBTestResult.AppendText(connection.WorkstationId);
-                        txtDBTestResult.AppendText(Environment.NewLine);
-                        txtDBTestResult.AppendText("测试状态：可连接");
-                        connection.Close();
-                    }
+                    //using (MySqlConnection connection = new MySqlConnection(cmbDataBaseConnectionString.Text))
+                    //{
+                    //    connection.Open();
+                    //    dbOK = true;
+                    //    MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder(cmbDataBaseConnectionString.Text);
+                    //    txtDBTestResult.AppendText("驱动程序：");
+                    //    txtDBTestResult.AppendText(builder.ApplicationName);
+                    //    txtDBTestResult.AppendText(Environment.NewLine);
+                    //    txtDBTestResult.AppendText("数据库地址：");
+                    //    txtDBTestResult.AppendText(builder.Server);
+                    //    txtDBTestResult.AppendText("       服务器版本：");
+                    //    txtDBTestResult.AppendText(connection.ServerVersion);
+                    //    txtDBTestResult.AppendText(Environment.NewLine);
+                    //    txtDBTestResult.AppendText("登录数据库：");
+                    //    txtDBTestResult.AppendText(builder.Database);
+                    //    txtDBTestResult.AppendText(Environment.NewLine);
+                    //    txtDBTestResult.AppendText("登录用户名：");
+                    //    txtDBTestResult.AppendText(builder.UserID);
+                    //    txtDBTestResult.AppendText("       登录密码：");
+                    //    txtDBTestResult.AppendText(builder.Password);
+                    //    txtDBTestResult.AppendText(Environment.NewLine);
+                    //    txtDBTestResult.AppendText("客户端标识：");
+                    //    txtDBTestResult.AppendText(connection.WorkstationId);
+                    //    txtDBTestResult.AppendText(Environment.NewLine);
+                    //    txtDBTestResult.AppendText("测试状态：可连接");
+                    //    connection.Close();
+                    //}
                 }
                 else
                 {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ets.Service.Provider.Order;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -70,96 +71,120 @@ namespace AutoAdjustOrderCommission
             #endregion
             try
             {
-                //var globalConfigModel = new GlobalConfigModel() { KeyName = "TimeSubsidies" };
-                string globalConfigModel = GlobalConfigDao.GlobalConfigGet.CommissionRatio;
-                var globalConfigList = iOrderService.GetGlobalConfigInfo(config, globalConfigModel);
-                if (globalConfigList != null && globalConfigList.Count > 0 && globalConfigList[0].DealFlag)
+                string globalConfigModel = Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet.TimeSubsidies;
+                if (string.IsNullOrEmpty(globalConfigModel))
                 {
-                    #region 根据超时时间配置调整订单佣金
-                    string IntervalMinuteList = "";
-                    var value = globalConfigList[0].Value.Split(';');
-                    for (int i = 0; i < value.Length; i++)
-                    {
-                        IntervalMinuteList += value[i].Split(',')[0].ToString() + ",";
-                    }
-                    if (!string.IsNullOrWhiteSpace(IntervalMinuteList))
-                    {
-                        IntervalMinuteList = IntervalMinuteList.Remove(IntervalMinuteList.Length - 1, 1);
-                    }
-                    config.IntervalMinuteList = IntervalMinuteList;
-                    ShowRunningLog("待调整佣金的订单获取中……");
-                    var orderList = iOrderService.GetOverTimeOrder(config);
-                    if (orderList != null && orderList.Count > 0)
-                    {
-                        #region 有需要调整佣金的订单
-                        ShowRunningLog("待调整佣金的订单获取完成，共计【" + orderList.Count + "】单");
-                        WriteLog("待调整佣金的订单获取完成，共计【" + orderList.Count + "】单");
-                        for (int i = 0; i < value.Length; i++)
-                        {
-                            int tempIntervalMinute = Convert.ToInt32(value[i].Split(',')[0]);
-                            config.IntervalMinute = tempIntervalMinute;
-                            config.AdjustAmount = Convert.ToDecimal(value[i].Split(',')[1]);
-                            var order = orderList.Where(t => t.IntervalMinute == tempIntervalMinute).ToList();
-                            if (order.Count > 0)
-                            {
-                                ShowRunningLog("超时分钟数为【" + tempIntervalMinute + "】的订单佣金调整处理中……");
-                                var dealResult = iOrderService.AdjustOrderCommission(config, order);
-                                if (dealResult.DealFlag)
-                                {
-                                    #region 全部处理成功
-                                    ShowRunningLog("超时分钟数为【" + tempIntervalMinute + "】的订单佣金调整全部成功,共计【" + order.Count + "】单，订单Id集合为：(" + dealResult.SuccessId + ")");
-                                    WriteLog("超时分钟数为【" + tempIntervalMinute + "】的订单佣金调整全部成功,共计【" + order.Count + "】单，订单Id集合为：(" + dealResult.SuccessId + ")");
-                                    #endregion
-                                }
-                                else
-                                {
-                                    #region 部分处理成功
-                                    ShowRunningLog("超时分钟数为【" + tempIntervalMinute + "】的订单佣金调整部分成功,处理成功：【" + dealResult.DealSuccQty + "】单，订单Id集合为：(" + dealResult.SuccessId + ")，处理失败：【" + (order.Count - dealResult.DealSuccQty) + "】单，订单Id集合为：(" + dealResult.FailId + ")");
-                                    WriteLog("超时分钟数为【" + tempIntervalMinute + "】的订单佣金调整部分成功,处理成功：【" + dealResult.DealSuccQty + "】单，订单Id集合为：(" + dealResult.SuccessId + ")，处理失败：【" + (order.Count - dealResult.DealSuccQty) + "】单，订单Id集合为：(" + dealResult.FailId + ")");
-                                    SendEmailTo("超时分钟数为【" + tempIntervalMinute + "】的订单佣金调整部分成功,处理成功：【" + dealResult.DealSuccQty + "】单，订单Id集合为：(" + dealResult.SuccessId + ")，处理失败：【" + (order.Count - dealResult.DealSuccQty) + "】单，订单Id集合为：(" + dealResult.FailId + ")", CustomConfig["EmailAddress"]);
-                                    #endregion
-                                }
-                            }
-                        }
-                        runTaskResult.Success = true;
-                        runTaskResult.Result = "本次订单调整佣金成功";
-                        #endregion
-                    }
-                    else
-                    {
-                        #region 没有需要调整佣金的订单
-                        runTaskResult.Success = true;
-                        runTaskResult.Result = "当前没有需要调整订单佣金的订单";
-                        ShowRunningLog("当前没有需要调整订单佣金的订单");
-                        WriteLog("当前没有需要调整订单佣金的订单");
-                        #endregion
-                    }
-                    #endregion
+                    return null;
                 }
-                else
+                var globalConfigList = globalConfigModel.Split(';');
+                #region 分钟累加，查库用
+                string IntervalMinuteList = string.Empty;
+                foreach (string globalConfigItem in globalConfigList)
                 {
-                    #region 未正常获取到超时时间配置信息
-                    if (globalConfigList == null || globalConfigList.Count == 0)
+                    if (!globalConfigItem.Contains(','))
                     {
-                        #region 没有获取到超时时间配置信息
-                        runTaskResult.Success = true;
-                        runTaskResult.Result = "没有获取到超时时间配置信息";
-                        ShowRunningLog("没有获取到超时时间配置信息");
-                        WriteLog("没有获取到超时时间配置信息");
-                        #endregion
+                        continue;
                     }
-                    else
-                    {
-                        #region 获取到超时时间配置信息异常
-                        runTaskResult.Success = false;
-                        runTaskResult.Result = globalConfigList[0].ExceptionStr;
-                        ShowRunningLog("获取超时时间配置信息遇到异常，异常信息：" + globalConfigList[0].ExceptionStr);
-                        WriteLog("获取超时时间配置信息遇到异常，异常信息：" + globalConfigList[0].ExceptionStr);
-                        SendEmailTo("获取超时时间配置信息遇到异常，异常信息：" + globalConfigList[0].ExceptionStr, CustomConfig["EmailAddress"]);
-                        #endregion
-                    }
-                    #endregion
+
+                    string minute = globalConfigItem.Split(',')[0];
+
+                    IntervalMinuteList += minute + ",";
                 }
+                //如果配置库里不存在分钟，则返回
+                if (string.IsNullOrEmpty(IntervalMinuteList))
+                {
+                    return null;
+                }
+                IntervalMinuteList = IntervalMinuteList.TrimEnd(',');
+                config.IntervalMinuteList = IntervalMinuteList;
+                #endregion
+                #region 根据超时时间配置调整订单佣金
+
+                ShowRunningLog("待调整佣金的订单获取中……");
+                var orderList = new Ets.Dao.Order.OrderDao().GetOverTimeOrder(IntervalMinuteList);
+                if (orderList == null || orderList.Count <= 0)
+                {
+                    return null;
+                }
+                #endregion
+                #region 有需要调整佣金的订单
+                ShowRunningLog("待调整佣金的订单获取完成，共计【" + orderList.Count + "】单");
+                WriteLog("待调整佣金的订单获取完成，共计【" + orderList.Count + "】单");
+
+                foreach (string item in globalConfigList)
+                {
+                    int tempIntervalMinute = Convert.ToInt32(item.Split(',')[0]);
+                    config.IntervalMinute = tempIntervalMinute;
+                    config.AdjustAmount = Convert.ToDecimal(item.Split(',')[1]);
+                    int doCount = ETS.Util.ParseHelper.ToInt(item.Split(',')[2], 1);//执行次数
+                    var order = orderList.Where(t => t.IntervalMinute == tempIntervalMinute && t.DealCount < doCount).ToList();
+                    ///当前分钟对应订单不存在 
+                    if (order.Count <= 0)
+                    {
+                        continue;
+                    }
+                    ShowRunningLog("超时分钟数为【" + tempIntervalMinute + "】的订单佣金调整处理中……");
+                    AutoAdjustProvider autoAdjustProvider = new AutoAdjustProvider();
+                    autoAdjustProvider.AutoAdjustOrderCommission(order, config.AdjustAmount);
+                    // var dealResult = iOrderService.AdjustOrderCommission(config, order);
+                }
+                #endregion
+                //                if (dealResult.DealFlag)
+                //                {
+                //                    #region 全部处理成功
+                //                    ShowRunningLog("超时分钟数为【" + tempIntervalMinute + "】的订单佣金调整全部成功,共计【" + order.Count + "】单，订单Id集合为：(" + dealResult.SuccessId + ")");
+                //                    WriteLog("超时分钟数为【" + tempIntervalMinute + "】的订单佣金调整全部成功,共计【" + order.Count + "】单，订单Id集合为：(" + dealResult.SuccessId + ")");
+                //                    #endregion
+                //                }
+                //                else
+                //                {
+                //                    #region 部分处理成功
+                //                    ShowRunningLog("超时分钟数为【" + tempIntervalMinute + "】的订单佣金调整部分成功,处理成功：【" + dealResult.DealSuccQty + "】单，订单Id集合为：(" + dealResult.SuccessId + ")，处理失败：【" + (order.Count - dealResult.DealSuccQty) + "】单，订单Id集合为：(" + dealResult.FailId + ")");
+                //                    WriteLog("超时分钟数为【" + tempIntervalMinute + "】的订单佣金调整部分成功,处理成功：【" + dealResult.DealSuccQty + "】单，订单Id集合为：(" + dealResult.SuccessId + ")，处理失败：【" + (order.Count - dealResult.DealSuccQty) + "】单，订单Id集合为：(" + dealResult.FailId + ")");
+                //                    SendEmailTo("超时分钟数为【" + tempIntervalMinute + "】的订单佣金调整部分成功,处理成功：【" + dealResult.DealSuccQty + "】单，订单Id集合为：(" + dealResult.SuccessId + ")，处理失败：【" + (order.Count - dealResult.DealSuccQty) + "】单，订单Id集合为：(" + dealResult.FailId + ")", CustomConfig["EmailAddress"]);
+                //                    #endregion
+                //                }
+                //            }
+                //        }
+                //        runTaskResult.Success = true;
+                //        runTaskResult.Result = "本次订单调整佣金成功";
+                //        #endregion
+                //    }
+                //    else
+                //    {
+                //        #region 没有需要调整佣金的订单
+                //        runTaskResult.Success = true;
+                //        runTaskResult.Result = "当前没有需要调整订单佣金的订单";
+                //        ShowRunningLog("当前没有需要调整订单佣金的订单");
+                //        WriteLog("当前没有需要调整订单佣金的订单");
+                //        #endregion
+                //    }
+                //    #endregion
+                //}
+                //else
+                //{
+                //    #region 未正常获取到超时时间配置信息
+                //    if (globalConfigList == null || globalConfigList.Count == 0)
+                //    {
+                //        #region 没有获取到超时时间配置信息
+                //        runTaskResult.Success = true;
+                //        runTaskResult.Result = "没有获取到超时时间配置信息";
+                //        ShowRunningLog("没有获取到超时时间配置信息");
+                //        WriteLog("没有获取到超时时间配置信息");
+                //        #endregion
+                //    }
+                //    else
+                //    {
+                //        #region 获取到超时时间配置信息异常
+                //        runTaskResult.Success = false;
+                //        runTaskResult.Result = globalConfigList[0].ExceptionStr;
+                //        ShowRunningLog("获取超时时间配置信息遇到异常，异常信息：" + globalConfigList[0].ExceptionStr);
+                //        WriteLog("获取超时时间配置信息遇到异常，异常信息：" + globalConfigList[0].ExceptionStr);
+                //        SendEmailTo("获取超时时间配置信息遇到异常，异常信息：" + globalConfigList[0].ExceptionStr, CustomConfig["EmailAddress"]);
+                //        #endregion
+                //    }
+
+                //}
             }
             catch (Exception ex)
             {
@@ -180,17 +205,6 @@ namespace AutoAdjustOrderCommission
         /// <returns></returns>
         public override Dictionary<string, string> UploadConfig()
         {
-#if DEBUG
-            if (!CustomConfig.ContainsKey("数据库连接字符串（读）"))
-                CustomConfig.Add("数据库连接字符串（读）", Task.Common.Parameters.TestDBConnectionStringRead);
-            if (!CustomConfig.ContainsKey("数据库连接字符串（写）"))
-                CustomConfig.Add("数据库连接字符串（写）", Task.Common.Parameters.TestDBConnectionStringWrite);
-#else
-            if (!CustomConfig.ContainsKey("数据库连接字符串（读）"))
-                CustomConfig.Add("数据库连接字符串（读）", Task.Common.Parameters.OnLineDBConnectionStringRead);
-            if (!CustomConfig.ContainsKey("数据库连接字符串（写）"))
-                CustomConfig.Add("数据库连接字符串（写）", Task.Common.Parameters.OnLineDBConnectionStringWrite);
-#endif
             if (!CustomConfig.ContainsKey("EmailAddress"))
                 CustomConfig.Add("EmailAddress", "wang.xudan@etaostars.com;");
             return CustomConfig;

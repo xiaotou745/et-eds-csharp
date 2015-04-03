@@ -501,10 +501,6 @@
     <None Include="Res\ico\Messages.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MySQL\MySql.Data\MySQL.Data.csproj">
-      <Project>{E9DF5ED1-4CBD-4226-B931-9A51610AC14D}</Project>
-      <Name>MySQL.Data</Name>
-    </ProjectReference>
     <ProjectReference Include="..\PlatformLog\PlatformLog.csproj">
       <Project>{68D98A9F-A545-4066-A213-C244E8A3E41D}</Project>
       <Name>PlatformLog</Name>

@@ -216,7 +216,7 @@ namespace Ets.Dao.Order
           @SettleMoney
          )");
 
-            IDbParameters parm = DbHelper.CreateDbParameters(); 
+            IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderNo", SqlDbType.NVarChar);
             parm.SetValue("@OrderNo", order.OrderNo);
             parm.AddWithValue("@PickUpAddress", order.PickUpAddress);
@@ -251,7 +251,7 @@ namespace Ets.Dao.Order
             parm.AddWithValue("@ReceiveProvinceCode", order.ReceiveProvinceCode);
             parm.AddWithValue("@ReceiveCityCode", order.ReceiveCityCode);
             parm.AddWithValue("@ReceiveArea", order.ReceiveArea);
-            parm.AddWithValue("@ReceiveAreaCode", order.ReceiveAreaCode); 
+            parm.AddWithValue("@ReceiveAreaCode", order.ReceiveAreaCode);
             parm.AddWithValue("@OriginalOrderNo", order.OriginalOrderNo);
             parm.AddWithValue("@BusinessCommission", order.BusinessCommission);
             parm.AddWithValue("@SettleMoney", order.SettleMoney);
@@ -341,7 +341,7 @@ namespace Ets.Dao.Order
                 @WebsiteSubsidy,@CommissionRate,@CommissionFormulaMode)";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             ///基本参数信息
-            
+
             dbParameters.Add("@OrderNo", SqlDbType.NVarChar);
             dbParameters.SetValue("@OrderNo", Helper.generateOrderCode(bussinessId)); //根据商户id生成订单号(15位));
 
@@ -626,7 +626,7 @@ namespace Ets.Dao.Order
                                     WHERE 1=1 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderNo", SqlDbType.NVarChar);
-            parm.SetValue("@OrderNo", orderNo); 
+            parm.SetValue("@OrderNo", orderNo);
             if (!string.IsNullOrWhiteSpace(orderNo))
             {
                 sql += " AND OrderNo=@OrderNo";
@@ -661,7 +661,7 @@ namespace Ets.Dao.Order
                 dbParameters.AddWithValue("@Status", ConstValues.ORDER_ACCEPT);
                 dbParameters.Add("@OrderNo", SqlDbType.NVarChar);
                 dbParameters.SetValue("@OrderNo", order.OrderNo);
-               
+
                 int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
                 if (i > 0)
                 {
@@ -690,7 +690,7 @@ namespace Ets.Dao.Order
  WHERE  OrderNo = @orderNo");
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-             //订单号
+            //订单号
             dbParameters.Add("@orderNo", SqlDbType.NVarChar);
             dbParameters.SetValue("@orderNo", orderNo);
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, selSql, dbParameters);
@@ -698,8 +698,8 @@ namespace Ets.Dao.Order
             return ParseHelper.ToInt(executeScalar, 0);
 
         }
-         
-          
+
+
         /// <summary>
         /// 订单是否被抢
         /// 平扬 
@@ -707,17 +707,17 @@ namespace Ets.Dao.Order
         /// <param name="orderNo"></param>
         /// <returns></returns>
         public bool CheckOrderIsAllowRush(string orderNo)
-        { 
+        {
             string selSql = string.Format(@" SELECT 1 FROM  [order] WITH(NOLOCK)  WHERE  OrderNo = @orderNo and [Status]=0 ");
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             //订单号
             dbParameters.Add("@orderNo", SqlDbType.NVarChar);
             dbParameters.SetValue("@orderNo", orderNo);
-            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, selSql, dbParameters); 
-            return ParseHelper.ToInt(executeScalar, 0)>0; 
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, selSql, dbParameters);
+            return ParseHelper.ToInt(executeScalar, 0) > 0;
         }
 
-        
+
 
         /// <summary>
         /// 根据订单号 修改订单状态 B端商家取消订单
@@ -735,7 +735,7 @@ namespace Ets.Dao.Order
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@orderNo", SqlDbType.NVarChar);
             dbParameters.SetValue("@orderNo", orderNo);  //订单号  
-            dbParameters.AddWithValue("@status", orderStatus);    
+            dbParameters.AddWithValue("@status", orderStatus);
 
             object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Read, upSql, dbParameters);
 
@@ -749,7 +749,7 @@ namespace Ets.Dao.Order
         /// <param name="orderNo">订单号</param>
         /// <param name="orderStatus">订单状态</param>
         /// <returns></returns>
-        public int FinishOrderStatus(string orderNo, int clientId,OrderListModel myOrderInfo)
+        public int FinishOrderStatus(string orderNo, int clientId, OrderListModel myOrderInfo)
         {
             //更新订单状态
             StringBuilder upSql = new StringBuilder(@" UPDATE dbo.[order]
@@ -759,15 +759,15 @@ namespace Ets.Dao.Order
             dbParameters.Add("@orderNo", SqlDbType.NVarChar);
             dbParameters.SetValue("@orderNo", orderNo);  //订单号  
             dbParameters.AddWithValue("@status", ConstValues.ORDER_FINISH);
-             
+
 
             object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Read, upSql.ToString(), dbParameters);
 
-             
-           return ParseHelper.ToInt(executeScalar, -1);
-            
 
-            
+            return ParseHelper.ToInt(executeScalar, -1);
+
+
+
         }
 
         /// <summary>
@@ -924,7 +924,7 @@ namespace Ets.Dao.Order
             parm.AddWithValue("@OrderFrom", orderFrom);
             parm.AddWithValue("@OrderType", orderType);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
-            if (dt==null || dt.Rows.Count<=0)
+            if (dt == null || dt.Rows.Count <= 0)
             {
                 return null;
             }
@@ -975,8 +975,8 @@ namespace Ets.Dao.Order
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@ordertype", orderType);
             parm.AddWithValue("@GroupId", groupId);
-            DataTable dt= DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
-            if (dt==null || dt.Rows.Count<=0)
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (dt == null || dt.Rows.Count <= 0)
             {
                 return null;
             }
@@ -1001,14 +1001,14 @@ namespace Ets.Dao.Order
  FROM   [order] o WITH ( NOLOCK ) 
         LEFT JOIN dbo.clienter c WITH ( NOLOCK ) ON o.clienterId = c.Id
  WHERE  1 = 1 AND o.OrderNo = @orderNo";
-           
+
             if (!string.IsNullOrWhiteSpace(orderNo))
             {
                 sql += " AND OrderNo=@OrderNo";
             }
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderNo", SqlDbType.NVarChar);
-            parm.SetValue("@OrderNo", orderNo); 
+            parm.SetValue("@OrderNo", orderNo);
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
             var list = ConvertDataTableList<OrderListModel>(dt);
             if (list != null && list.Count > 0)
@@ -1019,6 +1019,76 @@ namespace Ets.Dao.Order
             {
                 return null;
             }
+        }
+
+
+        /// <summary>
+        /// 获取超过配置时间未抢单的订单
+        /// danny-20150402
+        /// </summary>
+        /// <param name="config"></param>
+        /// <returns></returns>
+        public IList<OrderAutoAdjustModel> GetOverTimeOrder(string IntervalMinute)
+        {
+            string sql = string.Format(@"select 
+                            Id,
+                            DealCount,
+                            DateDiff(MINUTE,PubDate, GetDate()) IntervalMinute
+                            from [order] with(nolock)
+                            where Status=0 AND DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
+            return MapRows<OrderAutoAdjustModel>(dt);
+        }
+
+        /// <summary>
+        /// 修改订单佣金
+        /// danny-20150402
+        /// </summary>
+        /// <param name="config"></param>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        public bool UpdateOrderCommissionById(decimal AdjustAmount, int OrderId)
+        {
+            string sql =
+                @"update [order] 
+                      set OrderCommission+=@AdjustAmount,Adjustment+=@AdjustAmount ,
+                      DealCount+=1
+                      where Id=@OrderId and Status=0;";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@OrderId", OrderId);
+            parm.AddWithValue("@AdjustAmount", AdjustAmount);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+        }
+
+        /// <summary>
+        ///添加订单佣金日志
+        /// danny-20150402
+        /// </summary>
+        /// <param name="config"></param>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        public bool InsertOrderSubsidiesLog(decimal AdjustAmount, int OrderId, int IntervalMinute)
+        {
+            string sql =
+                @"INSERT INTO OrderSubsidiesLog
+                                (Price
+                                ,OrderId
+                                ,InsertTime
+                                ,OptName
+                                ,Remark)
+                     VALUES
+                                (@Price
+                                ,@OrderId
+                                ,Getdate()
+                                ,'服务平台'
+                                ,@Remark);";
+            string remark = string.Concat("订单超过【", IntervalMinute, "】分钟未被抢单，每单增加补贴【", AdjustAmount, "】元");
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Price", AdjustAmount);
+            parm.AddWithValue("@OrderId", OrderId);
+            parm.AddWithValue("@Remark", remark);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+
         }
     }
 }
