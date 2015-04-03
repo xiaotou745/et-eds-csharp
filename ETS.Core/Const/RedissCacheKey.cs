@@ -33,5 +33,14 @@ namespace ETS.Const
         /// 获取开通城市缓存key
         /// </summary>
         public const string Ets_Service_Provider_Common_GetOpenCity_New = "Ets_Service_Provider_Common_GetOpenCity_New";
+        /// <summary>
+        /// C端注册验证码缓存key
+        /// </summary>
+        public const string PostRegisterInfo_C = "PostRegisterInfo_C_";
+
+        /// <summary>
+        /// C端找回密码验证码缓存key
+        /// </summary>
+        public const string PostForgetPwd_C= "PostForgetPwd_C_"; 
     }
 }
