@@ -560,14 +560,14 @@ namespace Ets.Dao.User
         {
             string sql = @"
                     SELECT 
-                    ISNULL(SUM(CASE WHEN ([Status]=@order_new OR [Status]=@order_Finish) AND CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) THEN 1 ELSE 0 END ),0) AS todayPublish,
-                    ISNULL(SUM(CASE WHEN ([Status]=@order_new  OR [Status]=@order_Finish) AND CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) THEN Amount ELSE 0 END),0) AS todayPublishAmount,
+                    ISNULL(SUM(CASE WHEN ([Status]=@order_new OR [Status]=@order_Finish OR [Status]=2) AND CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) THEN 1 ELSE 0 END ),0) AS todayPublish,
+                    ISNULL(SUM(CASE WHEN ([Status]=@order_new  OR [Status]=@order_Finish OR [Status]=2) AND CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) THEN Amount ELSE 0 END),0) AS todayPublishAmount,
 
                     ISNULL(SUM(CASE WHEN [Status]=@order_Finish AND CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) THEN 1 ELSE 0 END),0) AS todayDone,
                     ISNULL(SUM(CASE WHEN [Status]=@order_Finish AND CONVERT(CHAR(10),PubDate,120)=CONVERT(CHAR(10),GETDATE(),120) THEN Amount ELSE 0 END),0) AS todayDoneAmount,
 
-                    ISNULL(SUM(CASE WHEN ([Status]=@order_new  OR [Status]=@order_Finish) AND CONVERT(CHAR(7),PubDate,120)=CONVERT(CHAR(7),GETDATE(),120) THEN 1 ELSE 0 END),0) AS monthPublish,
-                    ISNULL(SUM(CASE WHEN ([Status]=@order_new  OR [Status]=@order_Finish) AND CONVERT(CHAR(7),PubDate,120)=CONVERT(CHAR(7),GETDATE(),120) THEN Amount ELSE 0 END),0) AS monthPublishAmount,
+                    ISNULL(SUM(CASE WHEN ([Status]=@order_new  OR [Status]=@order_Finish OR [Status]=2) AND CONVERT(CHAR(7),PubDate,120)=CONVERT(CHAR(7),GETDATE(),120) THEN 1 ELSE 0 END),0) AS monthPublish,
+                    ISNULL(SUM(CASE WHEN ([Status]=@order_new  OR [Status]=@order_Finish OR [Status]=2) AND CONVERT(CHAR(7),PubDate,120)=CONVERT(CHAR(7),GETDATE(),120) THEN Amount ELSE 0 END),0) AS monthPublishAmount,
 
                     ISNULL(SUM(CASE WHEN [Status]=@order_Finish AND CONVERT(CHAR(7),PubDate,120)=CONVERT(CHAR(7),GETDATE(),120) THEN 1 ELSE 0 END),0) AS monthDone,
                     ISNULL(SUM(CASE WHEN [Status]=@order_Finish AND CONVERT(CHAR(7),PubDate,120)=CONVERT(CHAR(7),GETDATE(),120) THEN Amount ELSE 0 END),0) AS monthDoneAmount

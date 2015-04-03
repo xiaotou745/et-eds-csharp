@@ -292,10 +292,17 @@ namespace SuperManWebApi.Controllers
         [ActionStatus(typeof(ETS.Enums.LoginModelStatus))]
         [HttpGet]
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiOrderCountResultModel> OrderCount_B(int userId)
-        {
-            var resultModel = BusiLogic.busiLogic().GetOrderCountData(userId);
-
-            return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiOrderCountResultModel>.Conclude(ETS.Enums.LoginModelStatus.Success, resultModel);
+        { 
+            if (userId <= 0)
+            {
+                return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiOrderCountResultModel>.Conclude(ETS.Enums.GetOrdersStatus.FailedGetOrders, null);
+            }
+            var resultModel = new BusinessProvider().GetOrderCountData(userId);
+            if (resultModel==null)
+            {
+                return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiOrderCountResultModel>.Conclude(ETS.Enums.GetOrdersStatus.FailedGetOrders, null);
+            }
+            return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiOrderCountResultModel>.Conclude(ETS.Enums.GetOrdersStatus.Success, resultModel);
         }
 
         /// <summary>
