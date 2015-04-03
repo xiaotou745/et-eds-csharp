@@ -15,7 +15,7 @@ namespace Ets.Service.IProvider.Order
         /// 窦海超
         /// 2015年4月3日 09:41:19
         /// </summary>
-        bool AutoAdjustOrderCommission(IList<OrderAutoAdjustModel> list, decimal AdjustAmount,int executeMinute);
+        void AutoAdjustOrderCommission(IList<OrderAutoAdjustModel> list, decimal AdjustAmount, int executeMinute);
 
         /// <summary>
         /// 获取超过配置时间未抢单的订单
