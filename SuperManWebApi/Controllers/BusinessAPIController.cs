@@ -490,7 +490,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.CityStatus))]
         [HttpGet]
-       // [ApiVersionStatistic]
+        [ApiVersionStatistic]
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Area.AreaModelList> GetOpenCity(string Version)
         {
             AreaProvider area = new AreaProvider();
