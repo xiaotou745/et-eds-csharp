@@ -60,7 +60,7 @@ namespace Ets.Service.Provider.Common
         public Model.Common.ResultModel<List<AreaModel>> GetOpenCityInfo()
         {
             var redis = new ETS.NoSql.RedisCache.RedisCache();
-            string key = RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity_New;
+            string key = string.Format(RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity, Config.ApiVersion);
             //读取缓存
             var cacheValue = redis.Get<string>(key);
             if (!string.IsNullOrEmpty(cacheValue))
