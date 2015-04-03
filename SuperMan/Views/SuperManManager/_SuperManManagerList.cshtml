@@ -76,30 +76,35 @@
                     <td>@statusView</td>
                     <td>
                         @{
-                if (@item.Status == 1)
-                { 
-                    if (SuperMan.App_Start.UserContext.Current.HasAuthority(18) || SuperMan.App_Start.UserContext.Current.HasAuthority(19))
-                    {
-                        <a href="javascript:void(0)" style="color:gray" supermanid="@item.Id" class="superManOk">审核通过</a>
-                            <a href="javascript:void(0)" supermanid="@item.Id" class="superManCel">取消资格</a>
-                    }
-                    if (SuperMan.App_Start.UserContext.Current.HasAuthority(20))
-                    {
-                        <a href="javascript:void(0)" amount="@item.AccountBalance" supermanid="@item.Id" class="superManClear">提现</a>
-                    }
-                }
-                else
-                {
-if (SuperMan.App_Start.UserContext.Current.HasAuthority(18) || SuperMan.App_Start.UserContext.Current.HasAuthority(19))
-                    {
-                        <a href="javascript:void(0)" supermanid="@item.Id" class="superManOk">审核通过</a>
-                            <a href="javascript:void(0)" style="color:gray" supermanid="@item.Id" class="superManCel">取消资格</a>
-                    }
-                    if (SuperMan.App_Start.UserContext.Current.HasAuthority(20))
-                    {
-                        <a href="javascript:void(0)" amount="@item.AccountBalance" supermanid="@item.Id" class="superManClear">提现</a>
-                    }
-                }
+                        int idCard = string.IsNullOrEmpty(item.IDCard) ? 0 : 1;
+                        int picUrl = string.IsNullOrEmpty(item.PicUrl) ? 0 : 1;
+                        int picWithHandUrl = string.IsNullOrEmpty(item.PicWithHandUrl) ? 0 : 1;
+                        int trueName = string.IsNullOrEmpty(item.TrueName) ? 0 : 1;
+                        if (@item.Status == 1)
+                        {
+
+                            if (SuperMan.App_Start.UserContext.Current.HasAuthority(18) || SuperMan.App_Start.UserContext.Current.HasAuthority(19))
+                            {
+                                <a href="javascript:void(0)" style="color:gray" supermanid="@item.Id" class="superManOk" onclick="clientOk(@item.Id,@idCard,@trueName,@picUrl,@picWithHandUrl)">审核通过</a>
+                                <a href="javascript:void(0)" supermanid="@item.Id" class="superManCel">取消资格</a>
+                            }
+                            if (SuperMan.App_Start.UserContext.Current.HasAuthority(20))
+                            {
+                                <a href="javascript:void(0)" amount="@item.AccountBalance" supermanid="@item.Id" class="superManClear">提现</a>
+                            }
+                        }
+                        else
+                        {
+                            if (SuperMan.App_Start.UserContext.Current.HasAuthority(18) || SuperMan.App_Start.UserContext.Current.HasAuthority(19))
+                            {
+                                <a href="javascript:void(0)" supermanid="@item.Id" class="superManOk" onclick="clientOk(@item.Id,@idCard,@trueName,@picUrl,@picWithHandUrl)">审核通过</a>
+                                <a href="javascript:void(0)" style="color:gray" supermanid="@item.Id" class="superManCel">取消资格</a>
+                            }
+                            if (SuperMan.App_Start.UserContext.Current.HasAuthority(20))
+                            {
+                                <a href="javascript:void(0)" amount="@item.AccountBalance" supermanid="@item.Id" class="superManClear">提现</a>
+                            }
+                        }
                         }
                     </td>
                 </tr>
@@ -108,7 +113,7 @@ if (SuperMan.App_Start.UserContext.Current.HasAuthority(18) || SuperMan.App_Star
     </tbody>
 
 </table>
-@{ViewBag.ActionName="PostSuperManManager";}
+@{ViewBag.ActionName = "PostSuperManManager";}
 @Html.Partial("~/views/shared/PagerControl.cshtml", Model)
 
 @*弹出图片*@
@@ -140,23 +145,23 @@ if (SuperMan.App_Start.UserContext.Current.HasAuthority(18) || SuperMan.App_Star
     var currentId;
     var amount;
     $(document).ready(function () {
-        $(".superManOk").bind("click", function () {
-            currentId = $(this).attr("supermanid");
-            var paramaters = { "id": currentId };
-            var url = "/SuperManManager/AuditOK";
-            $.ajax({
-                type: 'POST',
-                url: url,
-                data: paramaters,
-                success: function (result) {
-                    if (result.IsSuccess) {
-                        window.location.href = "/SuperManManager/SuperManManager";
-                    } else {
-                        alert(result.Message);
-                    }
-                }
-            });
-        });
+        //$(".superManOk").bind("click", function () {
+        //    currentId = $(this).attr("supermanid");
+        //    var paramaters = { "id": currentId };
+        //    var url = "/SuperManManager/AuditOK";
+        //    $.ajax({
+        //        type: 'POST',
+        //        url: url,
+        //        data: paramaters,
+        //        success: function (result) {
+        //            if (result.IsSuccess) {
+        //                window.location.href = "/SuperManManager/SuperManManager";
+        //            } else {
+        //                alert(result.Message);
+        //            }
+        //        }
+        //    });
+        //});
         $(".superManCel").bind("click", function () {
             currentId = $(this).attr("supermanid");
             var paramaters = { "id": currentId };
@@ -201,6 +206,29 @@ if (SuperMan.App_Start.UserContext.Current.HasAuthority(18) || SuperMan.App_Star
             });
         });
     });
+    function clientOk(clientId,idCard, trueName, picUrl, picWithHandUrl) {
+        if (!window.confirm("是否审核通过？")) {
+            return;
+        }  
+        if (idCard == 0 || trueName == 0 || picUrl == 0 || picWithHandUrl == 0) {
+            alert("该骑士未上传个人资料，不能通过审核。")
+            return;
+        } 
+        var paramaters = { "id": clientId };
+        var url = "/SuperManManager/AuditOK";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    window.location.href = "/SuperManManager/SuperManManager";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    }
     function funcPicView(puth, PicWithHandUrl,PicUrl) {
         $('#showPicHandWithUrl').attr('src', puth + '/' + PicWithHandUrl);
         $('#showPicUrl').attr('src', puth + '/' + PicUrl);

@@ -87,15 +87,16 @@
                              if (SuperMan.App_Start.UserContext.Current.HasAuthority(22))
                             {
                                  int checkAddress=string.IsNullOrEmpty(item.Address)?0:1;
+                                 int checkImage = string.IsNullOrEmpty(item.CheckPicUrl) ? 0 : 1;
                               
                                 if (@item.Status == 1)
                                 {
-                                    <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission)" style="color:gray" businessid="@item.Id" class="businessOk">审核通过</a>
+                                    <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage)" style="color:gray" businessid="@item.Id" class="businessOk">审核通过</a>
                                     <a href="javascript:void(0)" businessid="@item.Id" class="businessCel">取消资格</a>
                                 }
                                 else
                                 {
-                                    <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission)" businessid="@item.Id" class="businessOk">审核通过</a>
+                                    <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage)" businessid="@item.Id" class="businessOk">审核通过</a>
                                     <a href="javascript:void(0)" style="color:gray" businessid="@item.Id" class="businessCel">取消资格</a>
                                 }
                             }
@@ -139,7 +140,7 @@
         }); 
     });
     ///操作审核验证
-    function businessOk(checkAddress, businessId, Proportion) {
+    function businessOk(checkAddress, businessId, Proportion,checkImage) {
         if (!window.confirm("是否审核通过？")) {
             return;
         }
@@ -149,6 +150,10 @@
         }
         if (Proportion<10) {
             alert("该商家结算比例小于10%，不能通过审核。")
+            return;
+        }
+        if (checkImage==0) {
+            alert("该商家未上传图片，不能通过审核。")
             return;
         }
         //currentId = $(this).attr("businessId");

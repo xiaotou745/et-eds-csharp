@@ -77,7 +77,7 @@ namespace Ets.Model.Common
         /// 帐号不可用
         /// </summary>
         public const int AccountDisabled = 0;
-
+        
         #region 短信息 B端C端区分标识 add by caoheyang 20150129
 
         /// <summary>
