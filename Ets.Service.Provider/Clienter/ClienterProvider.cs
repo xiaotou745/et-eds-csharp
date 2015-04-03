@@ -111,16 +111,16 @@ namespace Ets.Service.Provider.Clienter
                     {
                         Degree degree1 = new Degree(degree.longitude, degree.latitude);   //超人当前的经纬度
                         Degree degree2 = new Degree(item.Longitude.Value, item.Latitude.Value); //商户经纬度
-                        int res = ParseHelper.ToInt(CoordDispose.GetDistanceGoogle(degree1, degree2));
-                        model.distance = res < 1000 ? (res.ToString("f2") + "米") : ((res / 1000).ToString("f2") + "公里");
+                        var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
+                        model.distance = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
                     }
                     if (item.BusinessId > 0 && item.ReceviceLongitude != null && item.ReceviceLatitude != null
                         && item.ReceviceLongitude != 0 && item.ReceviceLatitude != 0)  //计算商户到收货人的距离
                     {
                         Degree degree1 = new Degree(item.Longitude.Value, item.Latitude.Value);  //商户经纬度
                         Degree degree2 = new Degree(item.ReceviceLongitude.Value, item.ReceviceLatitude.Value);  //收货人经纬度
-                        int res = ParseHelper.ToInt(CoordDispose.GetDistanceGoogle(degree1, degree2));
-                        model.distanceB2R = res < 1000 ? (res.ToString("f2") + "米") : ((res / 1000).ToString("f2") + "公里");
+                        var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
+                        model.distanceB2R = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
                     }
                     else
                         model.distanceB2R = "--";
@@ -375,10 +375,8 @@ namespace Ets.Service.Provider.Clienter
                         {
                             Degree degree1 = new Degree(degree.longitude, degree.latitude); //超人当前的经纬度
                             Degree degree2 = new Degree(item.BusiLongitude.Value, item.BusiLatitude.Value); //商户经纬度
-                            int  res =ParseHelper.ToInt(CoordDispose.GetDistanceGoogle(degree1, degree2));
-                            resultModel.distance = res < 1000
-                                ? (res.ToString("f2") + "米")
-                                : ((res / 1000).ToString("f2") + "公里");
+                            var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
+                            resultModel.distance = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
                         }
                         if (item.businessId > 0 && item.ReceviceLongitude != null && item.ReceviceLatitude != null
                             && item.ReceviceLongitude != 0 && item.ReceviceLatitude != 0) //计算商户到收货人的距离
@@ -386,10 +384,8 @@ namespace Ets.Service.Provider.Clienter
                             Degree degree1 = new Degree(item.BusiLongitude.Value, item.BusiLatitude.Value); //商户经纬度
                             Degree degree2 = new Degree(item.ReceviceLongitude.Value, item.ReceviceLatitude.Value);
                             //收货人经纬度
-                            int res = ParseHelper.ToInt(CoordDispose.GetDistanceGoogle(degree1, degree2));
-                            resultModel.distanceB2R = res < 1000
-                                ? (res.ToString("f2") + "米")
-                                : ((res / 1000).ToString("f2") + "公里");
+                            var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
+                            resultModel.distance = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
                         }
                         else
                             resultModel.distanceB2R = "--";

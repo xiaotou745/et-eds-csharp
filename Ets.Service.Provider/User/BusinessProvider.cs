@@ -68,7 +68,7 @@ namespace Ets.Service.Provider.User
                 {
                     var d1 = new Degree(from.Longitude.Value, from.Latitude.Value);
                     var d2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);
-                    model.distanceB2R = ParseHelper.ToInt(CoordDispose.GetDistanceGoogle(d1, d2));
+                    model.distanceB2R = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(d1, d2));
                 }
                 else
                     model.distanceB2R = 0;

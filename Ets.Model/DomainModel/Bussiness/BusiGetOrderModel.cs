@@ -66,6 +66,6 @@ namespace Ets.Model.DomainModel.Bussiness
         /// <summary>
         /// 商家到收货人的距离
         /// </summary>
-        public int distanceB2R { get; set; }
+        public double distanceB2R { get; set; }
     }
 }
