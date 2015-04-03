@@ -1025,9 +1025,9 @@ namespace Ets.Dao.Order
         /// <summary>
         /// 获取超过配置时间未抢单的订单
         /// danny-20150402
-        /// </summary>
-        /// <param name="config"></param>
-        /// <returns></returns>
+       /// </summary>
+       /// <param name="IntervalMinute"></param>
+       /// <returns></returns>
         public IList<OrderAutoAdjustModel> GetOverTimeOrder(string IntervalMinute)
         {
             string sql = string.Format(@"select 
