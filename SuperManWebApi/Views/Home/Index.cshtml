@@ -84,26 +84,27 @@
         //    }
         //});
 
-        //$.ajax({
-        //    type: 'POST',
-        //    dataType: 'json',
-        //    url: '/BusinessAPI/PostPublishOrder_B',
-        //    data: {
-        //        "userId": 51,
-        //        "ReceiveName": "测试",
-        //        "ReceivePhoneNo": "carezsadaq",
-        //        "Amount": 100.0000,
-        //        "IsPay": false,
-        //        "Remark": null,
-        //        "OrderCount": 10,
-        //        "OrderSign": "21313d"
-        //    },
-        //    success: function (data) {
-        //        console.log(data);
-        //    },
-        //    error: function () {
+    $.ajax({
+        type: 'POST',
+        dataType: 'json',
+        url: '/BusinessAPI/PostPublishOrder_B',
+        data: {
+            "userId": 103,
+            "ReceiveName": "测试",
+            "ReceivePhoneNo": "carezsadaq",
+            "Amount": 100.0000,
+            "IsPay": false,
+            "Remark": null,
+            "OrderCount": 10,
+            "OrderSign": "21313d"
+        },
+        success: function (data) {
+            console.log(data);
+        },
+        error: function () {
 
-        //    }
+        }
+    });
         //});
         //$.ajax({
         //    type: 'get',
@@ -412,25 +413,7 @@
         //    error: function () {
         //    }
         //});
-
-        $.ajax({
-            type: 'POST',
-            dataType: 'json',
-            url: '/ClienterAPI/PostForgetPwd_C',
-            data: {
-                "phoneNo": "13911245813",
-                "password": "123456",
-                "checkCode": "1234"
-
-            },
-            success: function (data) {
-                console.log(data);
-            },
-            error: function () {
-            }
-        });
-
-
+ 
         //$.ajax({
         //    type: 'POST',
         //    dataType: 'json',

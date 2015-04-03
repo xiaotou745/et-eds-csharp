@@ -205,7 +205,7 @@ namespace SuperManWebApi.Controllers
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.OrderCountError);
  
             Ets.Model.DataModel.Order.order order = iOrderProvider.TranslateOrder(model);
-            if (order.BusinessCommission <= 10m)  //商户结算比例不能小于10
+            if (order.BusinessCommission < 10m)  //商户结算比例不能小于10
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.BusiSettlementRatioError);
             }

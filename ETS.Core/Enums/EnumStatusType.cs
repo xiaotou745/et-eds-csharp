@@ -35,7 +35,7 @@ namespace ETS.Enums
         OrderHasExist,
         [DisplayText("您已取消资格")]
         HadCancelQualification,
-        [DisplayText("商户结算比例设置有误，请联系客服")]
+        [DisplayText("商户结算比例设置异常，请联系客服")]
         BusiSettlementRatioError
     }
     public enum GetOrdersStatus
