@@ -101,6 +101,7 @@
     <Compile Include="DomainModel\GlobalConfig\GlobalConfigModel.cs" />
     <Compile Include="DomainModel\Group\GroupApiConfigModel.cs" />
     <Compile Include="DomainModel\Order\NewPostPublishOrderResultModel.cs" />
+    <Compile Include="DomainModel\Order\OrderAutoAdjustModel.cs" />
     <Compile Include="DomainModel\Order\OrderDetailDM_OpenApi.cs" />
     <Compile Include="DomainModel\Order\OrderManage.cs" />
     <Compile Include="DomainModel\Order\OrderModel.cs" />

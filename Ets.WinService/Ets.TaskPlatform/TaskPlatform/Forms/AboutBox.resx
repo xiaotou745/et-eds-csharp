@@ -1,0 +1,163 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="richTextBox1.Text" xml:space="preserve">
+    <value>本人利用在家的时间，经过紧张的开发，我的第一版计划任务执行平台终于宣告开发结束。
+
+功能介绍
+1、提供定期执行任务的平台，使所有小任务统一在一个平台上运行和控制；
+2、各计划任务独立在各自的域内运行，不受平台和其他计划任务的影响，即便一个计划任务崩溃，不至于影响别的计划任务；
+3、平台提供强大的计划引擎，支持定时运行一次，以及重复执行，可指定计划任务开始执行时间和结束的时间，可配置在此时间段内每间隔n(最大60)秒(分、小时、天、月、年)执行一次；
+4、平台提供各种全局参数设置，如数据库连接字符串等，平台将在初始化计划任务时统一通知每个计划任务，计划任务只需要接收参数值即可使用；
+5、平台提供统一的控制，可以启用或停用计划，可在计划任务运行时重新配置其执行计划；
+6、平台提供计划任务的执行信息，为执行失败的计划任务以红色字体显示，更容易辨识；
+7、平台支持热添加计划。即无需停止平台的运行，只需要将写的dll(必须实现TaskPlatform.TaskInterface.dll中的接口ITask)配置文件拷贝到Configs目录，将dll拷贝到Tasks目录，平台会自动加载计划任务。此后，只需要点击链接配置其执行计划即可。
+使用方法详解
+1、创建一个类库项目；
+2、引用TaskPlatform.TaskInterface.dll;
+3、写一个类，如MyTask，并实现接口TaskPlatform.TaskInterface.ITask；
+4、函数TaskName应返回该计划任务的友好名称。如：数据库每日备份；
+5、函数TaskDescription应返回该计划任务的详细描述，如：该计划将会定时备份数据库；
+6、函数InitTask没有返回值，用于接收平台传入的参数，可以访问平台的AppSettings配置信息，可访问平台提供的数据库连接字符串；
+7、函数TaskKey，暂时没用。可返回空；
+8、函数RunTask即为计划任务的执行函数，平台将按照执行计划定时调用该函数，请返回计划任务的执行结果；
+9、生成dll文件，如MyTask.dll。将其配置文件MyTask.dll.config放入平台Configs目录，将MyTask.dll放入Tasks目录；
+10、平台(如果已经启动)将会自动加载该计划任务。
+后续功能
+1、	可实现计划任务dll的热更新，即无需停止平台即可为计划任务的dll执行更新文件操作；
+2、	实现计划任务执行日志写入文件；
+3、	实现平台的web监控，保证平台的稳定性和高可控。
+4、	更多功能，期待大家提出；
+5、	支持运行时修改数据库连接字符串和各种配置参数；
+6、	提供连接字符串、各种参数的图形配置界面；
+7、	以上功能可能只有利用年假来实现了。
+由于都是在家开发，思维可能不是太灵活和严谨，难免出错，也没进行大量测试。如果您在这一版本中发现bug或不足，请及时联系我，以便迅速修复和改正。谢谢支持。
+如果您感兴趣，愿意一同开发，一起来使这个平台更加强大，欢迎联系我加入开发组。期待……
+
+
+2012-02-01  更新版本
+
+1、	实现了日志的写入和管理；
+2、	Tasks目录下建立子目录，以支持多dll等复杂的计划任务；
+3、	计划任务的自定义配置项的平台编辑；
+4、	平台的缓存管理, 增加了缓存的管理工具(只有在安全模式下才能使用)；
+5、	安全模式(不加载任何东西)启动；
+6、	详细记录计划任务的实际执行时间，排队时间，(通知本次执行的实际耗时和排队时间)。</value>
+  </data>
+</root>

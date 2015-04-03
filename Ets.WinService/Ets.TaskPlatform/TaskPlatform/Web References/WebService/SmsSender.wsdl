@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://ws.sms.jiuxian.com/" name="SmsSender" targetNamespace="http://ws.sms.jiuxian.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xs:schema xmlns:tns="http://ws.sms.jiuxian.com/" elementFormDefault="unqualified" targetNamespace="http://ws.sms.jiuxian.com/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="send" type="tns:send" />
+      <xs:element name="sendResponse" type="tns:sendResponse" />
+      <xs:complexType name="send">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="tns:smsRequest" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="smsRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="content" type="xs:string" />
+          <xs:element minOccurs="0" name="extendId" type="xs:string" />
+          <xs:element minOccurs="0" name="guid" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="mobiles" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="sendTime" type="xs:dateTime" />
+          <xs:element minOccurs="0" name="skey" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="sendResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:smsResponse" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="smsResponse">
+        <xs:sequence>
+          <xs:element name="code" type="xs:int" />
+          <xs:element minOccurs="0" name="message" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="send">
+    <wsdl:part name="parameters" element="ns1:send" />
+  </wsdl:message>
+  <wsdl:message name="sendResponse">
+    <wsdl:part name="parameters" element="ns1:sendResponse" />
+  </wsdl:message>
+  <wsdl:portType name="SmsSender">
+    <wsdl:operation name="send">
+      <wsdl:input name="send" message="ns1:send" />
+      <wsdl:output name="sendResponse" message="ns1:sendResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>
