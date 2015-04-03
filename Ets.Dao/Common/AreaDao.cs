@@ -34,7 +34,7 @@ namespace Ets.Dao.Common
 //                            LEFT JOIN PublicProvinceCity(nolock) AS a ON c.code=a.parentid 
 //                            WHERE p.code IN (" + Config.OpenCityCode + ")";
 
-            string sql = string.Format(@"
+            string sql = @"
 with   t as ( select   a.code ,
                         a.name ,
                         a.parentid ,
@@ -71,7 +71,7 @@ with   t as ( select   a.code ,
               where     b.IsPublic = 1
             ) t1
             left join PublicProvinceCity (nolock) as c on t1.code = c.parentid
-    where   c.IsPublic = 1", Config.OpenCityCode);
+    where   c.IsPublic = 1";
 
 
 
@@ -86,8 +86,7 @@ with   t as ( select   a.code ,
         /// </summary>
         /// <returns></returns>
         public IList<AreaModel> GetOpenCityInfoSql()
-        {
-
+        { 
             string sql = string.Format(@" SELECT   a.Code ,
                         a.Name ,
                         a.ParentId ,

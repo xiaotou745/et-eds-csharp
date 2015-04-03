@@ -68,16 +68,13 @@ namespace Ets.Service.Provider.Common
                 return ResultModel<List<AreaModel>>.Conclude(ETS.Enums.CityStatus.Newest, Letao.Util.JsonHelper.ToObject<List<AreaModel>>(cacheValue));
  
             }  
-            //List<AreaModel> cacheAreaList = CacheFactory.Instance[key] as List<AreaModel>;
-            //if (cacheAreaList != null)
-            //{
-            //    return ResultModel<List<AreaModel>>.Conclude(ETS.Enums.CityStatus.Newest, cacheAreaList);
-            //}
+           
             //取数据库
-            List<AreaModel> list = dao.GetOpenCityInfoSql().ToList();
+            List<AreaModel> list = dao.GetOpenCitySql().ToList();
             //CacheFactory.Instance.AddObject(key, list);
             if (list != null)
             {
+                list = list.Where(i => i.JiBie == 2).ToList();
                 redis.Add(key, Letao.Util.JsonHelper.ToJson(list));
             }
             return ResultModel<List<AreaModel>>.Conclude(ETS.Enums.CityStatus.Newest, list);

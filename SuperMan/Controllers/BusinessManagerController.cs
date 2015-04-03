@@ -34,6 +34,7 @@ namespace SuperMan.Controllers
             ViewBag.openCityList = iAreaProvider.GetOpenCityInfo();
             var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria() { Status = -1, GroupId = SuperMan.App_Start.UserContext.Current.GroupId };
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
+           
             return View(pagedList);
         }
 
