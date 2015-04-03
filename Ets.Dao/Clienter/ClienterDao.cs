@@ -219,7 +219,7 @@ namespace Ets.Dao.Clienter
             parm.SetValue("@PhoneNo", PhoneNo);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             IList<ClienterModel> list = MapRows<ClienterModel>(dt);
-            if (list == null && list.Count <= 0)
+            if (list == null || list.Count <= 0)
             {
                 return null;
             }

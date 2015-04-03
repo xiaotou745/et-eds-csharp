@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using CalculateCommon;
 using Ets.Model.ParameterModel.Bussiness;
-using Ets.Model.DataModel.Order;
 using System.Linq;
 using ETS.Enums;
 using Ets.Model.DataModel.Bussiness;
@@ -21,10 +20,6 @@ using ETS.Validator;
 using ETS;
 using System.Threading.Tasks;
 using ETS.Sms;
-using Ets.Model.DomainModel.Order;
-using Ets.Model.DataModel.Subsidy;
-using Ets.Dao.Order;
-using Ets.Model.DomainModel.Subsidy;
 using ETS.Transaction.Common;
 using ETS.Transaction;
 using Ets.Model.ParameterModel.User;
@@ -35,7 +30,7 @@ namespace Ets.Service.Provider.User
     /// 商户业务逻辑接口实现类  add by caoheyang 20150311
     /// </summary>
     public class BusinessProvider : IBusinessProvider
-    {
+    { 
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
         BusinessDao dao = new BusinessDao();
         /// <summary>
@@ -179,14 +174,17 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(Model.ParameterModel.Bussiness.RegisterInfoModel model)
         {
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            var code = redis.Get<string>("PostRegisterInfo_B_" + model.phoneNo);
             Enum returnEnum = null;
             if (string.IsNullOrEmpty(model.phoneNo))
                 returnEnum = CustomerRegisterStatusEnum.PhoneNumberEmpty; //手机号非空验证
             else if (string.IsNullOrEmpty(model.passWord))
-                returnEnum = CustomerRegisterStatusEnum.PasswordEmpty;//密码非空验证
-
-            else if (model.verifyCode != ETS.Cacheing.CacheFactory.Get(model.phoneNo))
+                returnEnum = CustomerRegisterStatusEnum.PasswordEmpty;//密码非空验证 
+            else if (string.IsNullOrEmpty(code) || code != model.verifyCode) //验证码正确性验证
+            {
                 returnEnum = CustomerRegisterStatusEnum.IncorrectCheckCode; //判断验证法录入是否正确
+            }
             else if (dao.CheckBusinessExistPhone(model.phoneNo))
                 returnEnum = CustomerRegisterStatusEnum.PhoneNumberRegistered;//判断该手机号是否已经注册过
 
@@ -400,9 +398,10 @@ namespace Ets.Service.Provider.User
             {
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeIsEmpty);
             }
-            var code = CacheFactory.Instance[model.phoneNumber];
-
-            if (code == null || code.ToString() != model.checkCode) //验证码正确性验证
+           // var code = CacheFactory.Instance[model.phoneNumber];
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            var code = redis.Get<string>("CheckCodeFindPwd_" + model.phoneNumber);
+            if (string.IsNullOrEmpty(code) || code != model.checkCode) //验证码正确性验证
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong);
 
             BusinessDao businessDao = new BusinessDao();
@@ -559,11 +558,13 @@ namespace Ets.Service.Provider.User
             {
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
             }
-            var randomCode = new Random().Next(100000).ToString("D6");
+            string randomCode = new Random().Next(100000).ToString("D6");
             var msg = string.Format(Config.SmsContentFindPassword, randomCode, Ets.Model.Common.ConstValues.MessageBusiness);
             try
             {
-                CacheFactory.Instance.AddObject(PhoneNumber, randomCode);
+                var redis = new ETS.NoSql.RedisCache.RedisCache();
+                redis.Add("CheckCodeFindPwd_" + PhoneNumber, randomCode, DateTime.Now.AddHours(1)); 
+               // CacheFactory.Instance.AddObject(PhoneNumber, randomCode);
                 // 更新短信通道 
                 Task.Factory.StartNew(() =>
                 {
@@ -592,7 +593,7 @@ namespace Ets.Service.Provider.User
             {
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
             }
-            var randomCode = new Random().Next(100000).ToString("D6");  //生成短信验证码
+            string randomCode = new Random().Next(100000).ToString("D6");  //生成短信验证码
             var msg = string.Format(Config.SmsContentCheckCode, randomCode, Ets.Model.Common.ConstValues.MessageBusiness);  //获取提示用语信息
             try
             {
@@ -600,8 +601,9 @@ namespace Ets.Service.Provider.User
                     return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.AlreadyExists);
                 else
                 {
-                    //SupermanApiCaching.Instance.Add(PhoneNumber, randomCode);
-                    CacheFactory.Instance.AddObject(PhoneNumber, randomCode);
+                    var redis = new ETS.NoSql.RedisCache.RedisCache();
+                    redis.Add("PostRegisterInfo_B_" + PhoneNumber, randomCode, DateTime.Now.AddHours(1)); 
+                    //CacheFactory.Instance.AddObject(PhoneNumber, randomCode);
                     //更新短信通道 
                     Task.Factory.StartNew(() =>
                     {

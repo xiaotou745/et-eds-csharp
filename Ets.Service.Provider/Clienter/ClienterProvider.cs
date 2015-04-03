@@ -230,6 +230,8 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         public ResultModel<ClientRegisterResultModel> PostRegisterInfo_C(ClientRegisterInfoModel model)
         {
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            var code = redis.Get<string>(RedissCacheKey.PostRegisterInfo_C + model.phoneNo); 
             if (string.IsNullOrEmpty(model.phoneNo))  //手机号非空验证
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
             else if (clienterDao.CheckClienterExistPhone(model.phoneNo))  //判断该手机号是否已经注册过
@@ -238,7 +240,8 @@ namespace Ets.Service.Provider.Clienter
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PasswordEmpty);
             //else if (string.IsNullOrEmpty(model.City) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
             //    return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
-            else if (model.verifyCode != SupermanApiCaching.Instance.Get(model.phoneNo)) //判断验码法录入是否正确
+
+            else if (string.IsNullOrEmpty(code) ||  model.verifyCode != code) //判断验码法录入是否正确
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode);
             else if (!string.IsNullOrEmpty(model.recommendPhone) && (!clienterDao.CheckClienterExistPhone(model.recommendPhone))
                 && (!new BusinessDao().CheckExistPhone(model.recommendPhone))) //如果推荐人手机号在B端C端都不存在提示信息
