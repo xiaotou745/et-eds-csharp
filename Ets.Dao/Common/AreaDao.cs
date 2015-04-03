@@ -35,39 +35,43 @@ namespace Ets.Dao.Common
 //                            WHERE p.code IN (" + Config.OpenCityCode + ")";
 
             string sql = string.Format(@"
-WITH    t AS ( SELECT   a.Code ,
-                        a.Name ,
-                        a.ParentId ,
+with   t as ( select   a.code ,
+                        a.name ,
+                        a.parentid ,
                         JiBie = 1
-               FROM     dbo.PublicProvinceCity a ( NOLOCK )
-               WHERE    a.ParentId = 0
-                        AND a.Code IN ( {0} )
+               from     dbo.PublicProvinceCity a ( nolock )
+               where    a.parentid = 0
+                        --and a.code in ( 110000, 310000, 440000 )
+                        and a.IsPublic = 1
              )
-    SELECT  t.Code ,
-            t.Name ,
-            t.ParentId ,
+    select  t.code ,
+            t.name ,
+            t.parentid ,
             t.JiBie
-    FROM    t
-    UNION
-    SELECT  b.Code ,
-            b.Name ,
-            b.ParentId ,
+    from    t
+    union
+    select  b.code ,
+            b.name ,
+            b.parentid ,
             JiBie = 2
-    FROM    t
-            LEFT JOIN PublicProvinceCity (NOLOCK) AS b ON t.Code = b.ParentId
-    UNION
-    SELECT  c.Code ,
-            c.Name ,
-            c.ParentId ,
+    from    t
+            left join PublicProvinceCity (nolock) as b on t.code = b.parentid
+    where   b.IsPublic = 1
+    union
+    select  c.code ,
+            c.name ,
+            c.parentid ,
             JiBie = 3
-    FROM    ( SELECT    b.Code ,
-                        b.Name ,
-                        b.ParentId ,
+    from    ( select    b.code ,
+                        b.name ,
+                        b.parentid ,
                         JiBie = 2
-              FROM      t
-                        LEFT JOIN PublicProvinceCity (NOLOCK) AS b ON t.Code = b.ParentId
+              from      t
+                        left join PublicProvinceCity (nolock) as b on t.code = b.parentid
+              where     b.IsPublic = 1
             ) t1
-            LEFT JOIN PublicProvinceCity (NOLOCK) AS c ON t1.Code = c.ParentId", Config.OpenCityCode);
+            left join PublicProvinceCity (nolock) as c on t1.code = c.parentid
+    where   c.IsPublic = 1", Config.OpenCityCode);
 
 
 

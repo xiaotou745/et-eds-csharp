@@ -1,4 +1,5 @@
-﻿using ETS.Util;
+﻿using Ets.Dao.GlobalConfig;
+using ETS.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +15,14 @@ namespace Ets.Service.Provider.Order
     {
         public static OrderPriceProvider GetCommission()
         {
-            switch (ConfigSettings.Instance.OrderCommissionType)
+            switch (GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode)
             {
                 case 0:
                     return new DefaultOrPriceProvider();
                 case 1:
                     return new TimeOrPriceProvider();
+                case 2:
+                    return new BreakEvenPointOrPriceProvider();
                 default:
                     return new DefaultOrPriceProvider();
             }

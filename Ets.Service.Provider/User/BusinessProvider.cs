@@ -206,7 +206,7 @@ namespace Ets.Service.Provider.User
                     if (areaModel != null)
                     {
                         model.CityId = areaModel.NationalCode.ToString();
-                    }
+                    } 
                 }
             }
             catch (Exception ex)
@@ -533,7 +533,12 @@ namespace Ets.Service.Provider.User
                 {
                     to.districtId = areaModel.NationalCode.ToString();
                 }
+                else
+                {
+                    to.districtId = businessModel.districtId;
+                }
             }
+             
             to.district = businessModel.districtName;
             to.Longitude = businessModel.longitude;
             to.Latitude = businessModel.latitude;

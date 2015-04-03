@@ -33,22 +33,11 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult BusinessCommission()
         {
-            //SuperManDataAccess.account account = HttpContext.Session["user"] as SuperManDataAccess.account;
-            //if (account == null)
-            //{
-            //    Response.Redirect("/account/login");
-            //    return null;
-            //} 
-            //ViewBag.txtGroupId = account.GroupId;//集团id
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;
-            DateTime t1=new DateTime(1997,1,1);
-            DateTime t2 = DateTime.Now;
+            DateTime t1 = new DateTime(1997,1,1,0,0,0);
+            DateTime t2 =new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 59); 
             var result = iBusinessProvider.GetBusinessCommission(t1, t2, "", SuperMan.App_Start.UserContext.Current.GroupId);
-            if (!result.Result)
-            {
-                return View();
-            }
-            return View(result.Data);
+            return View(result);
         }
         /// <summary>
         /// 查询商户结算信息
@@ -59,15 +48,16 @@ namespace SuperMan.Controllers
         public ActionResult BusinessCommissions(BusinessCommissionSearchCriteria criteria)
         {  
             DateTime date1 = DateTime.Now;
-            DateTime date2 = DateTime.Now;
-            
-            date1 = string.IsNullOrEmpty(criteria.txtDateStart) ? new DateTime(2014, 1, 1) : DateTime.Parse(criteria.txtDateStart);
+            DateTime date2 = DateTime.Now;  
+            date1 = string.IsNullOrEmpty(criteria.txtDateStart) ? new DateTime(2014, 1, 1,0,0,0) : DateTime.Parse(criteria.txtDateStart);
             date2 = string.IsNullOrEmpty(criteria.txtDateEnd) ? DateTime.Now : DateTime.Parse(criteria.txtDateEnd);
+            date1=new DateTime(date1.Year,date1.Month,date1.Day,0,0,0);
+            date2 = new DateTime(date2.Year, date2.Month, date2.Day, 23, 59, 59);
             ViewBag.startDate = criteria.txtDateStart;
             ViewBag.endDate = criteria.txtDateEnd;
             ViewBag.name = criteria.txtBusinessName;
             var result = iBusinessProvider.GetBusinessCommission(date1, date2, criteria.txtBusinessName, criteria.txtGroupId);
-            return View("BusinessCommission", result.Data);
+            return View("BusinessCommission", result);
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
-﻿using Ets.Model.DataModel.Order;
+﻿using Ets.Dao.GlobalConfig;
+using Ets.Model.DataModel.Order;
 using ETS.Util;
 using System;
 using System.Collections.Generic;
@@ -8,16 +9,13 @@ using System.Threading.Tasks;
 
 namespace Ets.Service.Provider.Order
 {
-
     /// <summary>
-    /// 默认佣金计算规则
+    /// 收支平衡保本佣金计算方式 add by caoheyang 20150402
     /// </summary>
-    public class DefaultOrPriceProvider : OrderPriceProvider
+    public class BreakEvenPointOrPriceProvider:OrderPriceProvider
     {
-
-        #region 计算收入支出
         /// <summary>
-        /// 获取订单的骑士佣金 add by caoheyang 20150305
+        /// 保本算法订单的骑士佣金 add by caoheyang 20150402
         /// </summary>
         /// <param name="model">订单</param>
         /// <returns></returns>
@@ -25,14 +23,15 @@ namespace Ets.Service.Provider.Order
         {
             if (model.Amount == null)
                 return 0;
-            decimal distribe = 0;  //默认外送费，网站补贴都为0
-            decimal commissionRate = GetCommissionRate(model); //佣金比例 
+            decimal commissionRate = GetCommissionRate(model);//佣金比例 
             int orderCount = ParseHelper.ToInt(model.OrderCount); //订单数量 
             if (model.DistribSubsidy != null && model.DistribSubsidy > 0)//如果外送费有数据，按照外送费计算骑士佣金
-                distribe = Convert.ToDecimal(model.DistribSubsidy);
-            else if (model.WebsiteSubsidy != null)//如果外送费没数据，按照网站补贴计算骑士佣金
-                distribe = Convert.ToDecimal(model.WebsiteSubsidy);
-            return Decimal.Round(Convert.ToDecimal(model.Amount) * commissionRate + distribe * orderCount, 2);//计算佣金
+            {
+                return Decimal.Round(Convert.ToDecimal(model.Amount) * commissionRate
+                    + ParseHelper.ToDecimal(model.DistribSubsidy) * orderCount, 2);//计算佣金
+            }
+            else  //无外送费按照网站补贴计算佣金金额
+               return Decimal.Round(Convert.ToDecimal(model.Amount) * commissionRate + Convert.ToDecimal(model.WebsiteSubsidy)   * orderCount, 2);//计算佣金
         }
 
         /// <summary>
@@ -42,7 +41,7 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public override decimal GetOrderWebSubsidy(OrderCommission model)
         {
-            return ParseHelper.ToDecimal(model.DistribSubsidy);
+            return ParseHelper.ToDecimal(model.WebsiteSubsidy);  
         }
 
         /// <summary>
@@ -52,9 +51,14 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public override decimal GetCommissionRate(OrderCommission model)
         {
-            return ParseHelper.ToDecimal(model.CommissionRate);
+            decimal temp = model.BusinessCommission - ParseHelper.ToDecimal(GlobalConfigDao.GlobalConfigGet.CommissionRatio);
+            if (temp == 0)
+                return 0;
+            else
+                return Decimal.Round(temp / 100m, 2);
         }
 
-        #endregion
+      
+       
     }
 }
