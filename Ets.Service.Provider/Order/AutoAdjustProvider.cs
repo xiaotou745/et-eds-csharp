@@ -15,51 +15,79 @@ namespace Ets.Service.Provider.Order
     public class AutoAdjustProvider : IAutoAdjustProvider
     {
         OrderDao orderDao = new OrderDao();
+
+        /// <summary>
+        /// 执行补贴任务
+        /// 窦海超
+        /// 2015年4月3日 15:19:46
+        /// </summary>
+        public void AdjustOrderService()
+        {
+            string globalConfigModel = Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet.TimeSubsidies;
+            if (string.IsNullOrEmpty(globalConfigModel))
+            {
+                return;
+            }
+            #region 超时分钟数拼接，查库用
+            var globalConfigList = globalConfigModel.Split(';');
+            string IntervalMinuteList = string.Empty;//超时分钟数串
+            foreach (string globalConfigItem in globalConfigList)
+            {
+                string minute = globalConfigItem.Split(',')[0];
+                IntervalMinuteList += minute + ",";
+            }
+            if (IntervalMinuteList.Length > 0)
+            {
+                IntervalMinuteList = IntervalMinuteList.TrimEnd(',');
+            }
+            #endregion
+            var orderList = GetOverTimeOrder(IntervalMinuteList);
+            if (orderList == null || orderList.Count <= 0)
+            {
+                return;
+            }
+            var arrIntervalMinuteList = IntervalMinuteList.Split(',');
+            #region 有需要调整佣金的订单
+            foreach (string item in globalConfigList)
+            {
+                int tempIntervalMinute = Convert.ToInt32(item.Split(',')[0]);
+                decimal adjustAmount = Convert.ToDecimal(item.Split(',')[1]);
+                int dealCount = ETS.Util.ParseHelper.ToInt(item.Split(',')[2], 1);//执行次数
+                var dealOrderList = orderList.Where(t => t.IntervalMinute == tempIntervalMinute && t.DealCount < dealCount).ToList();
+                if (dealOrderList.Count <= 0)
+                {
+                    continue;
+                }
+                AutoAdjustOrderCommission(dealOrderList, adjustAmount, ETS.Util.ParseHelper.ToInt(arrIntervalMinuteList[dealCount - 1]));
+            }
+            #endregion
+        }
+
         /// <summary>
         /// 调整订单佣金
         /// 窦海超
         /// 2015年4月3日 09:41:19
         /// </summary>
-        public DealResultInfo AutoAdjustOrderCommission(IList<OrderAutoAdjustModel> list, decimal AdjustAmount)
+        public void AutoAdjustOrderCommission(IList<OrderAutoAdjustModel> list, decimal AdjustAmount, int executeMinute)
         {
-            var dealResultInfo = new DealResultInfo();
-            foreach (OrderAutoAdjustModel item in list)
+            try
             {
-                using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+                foreach (OrderAutoAdjustModel item in list)
                 {
-                    if (orderDao.UpdateOrderCommissionById(AdjustAmount, item.Id))
+                    using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                     {
-                        if (orderDao.InsertOrderSubsidiesLog(AdjustAmount, item.Id, item.IntervalMinute))
-                        {
-                            dealResultInfo.DealSuccQty++;
-                            dealResultInfo.SuccessId += item.Id.ToString()+",";
-                            tran.Complete();
-                        }
-                        else
-                        {
-                            dealResultInfo.DealFlag = false;
-                            dealResultInfo.FailId += item.Id.ToString()+",";
-                            tran.Dispose();
-                        }
-                    }
-                    else
-                    {
-                        dealResultInfo.FailId += item.Id.ToString()+",";
-                        dealResultInfo.DealFlag = false;
-                        tran.Dispose();
+                        orderDao.UpdateOrderCommissionById(AdjustAmount, item.Id);//更新账户
+                        orderDao.InsertOrderSubsidiesLog(AdjustAmount, item.Id, executeMinute);//写入日志 
+                        tran.Complete();
                     }
                 }
             }
-            if (dealResultInfo.FailId.Length > 0)
+            catch (Exception ex)
             {
-                dealResultInfo.FailId.TrimEnd(',');
+                ETS.Util.LogHelper.LogWriter(ex.Message);
             }
-            if (dealResultInfo.SuccessId.Length > 0)
-            {
-                dealResultInfo.SuccessId.TrimEnd(',');
-            }
-            return dealResultInfo;
         }
+
         /// <summary>
         /// 获取超过配置时间未抢单的订单
         /// danny-20150402
