@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{EA51E70F-5644-42F8-A41D-FAAD9B343142}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DeBangExpressGetPackByThread</RootNamespace>
+    <AssemblyName>DeBangExpressGetPackByThread</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\TaskPlatform\bin\Tasks\DeBangExpressGetPackByThread\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\TaskPlatform\bin\Tasks\DeBangExpressGetPackByThread\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DeBangExpressGetPackByThreadTask.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Task.Common\Task.Common.csproj">
+      <Project>{32f39b07-ef7c-49bb-b263-797f0e5003e0}</Project>
+      <Name>Task.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Task.Model\Task.Model.csproj">
+      <Project>{46875a76-4b07-49ba-8069-d8291bb574f9}</Project>
+      <Name>Task.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Task.Service.Impl\Task.Service.Impl.csproj">
+      <Project>{845e073d-b4bd-4fd9-83cf-f0e309930786}</Project>
+      <Name>Task.Service.Impl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Task.Service\Task.Service.csproj">
+      <Project>{147f3c05-8458-42a6-8449-49d93476c575}</Project>
+      <Name>Task.Service</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\TaskInterface\TaskInterface.csproj">
+      <Project>{173eb16a-c92d-412d-9797-6d3cabd12d53}</Project>
+      <Name>TaskInterface</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
