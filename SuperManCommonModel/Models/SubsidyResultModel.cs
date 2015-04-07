@@ -19,6 +19,9 @@ namespace SuperManCommonModel.Models
         /// 订单类型
         /// </summary>
         public int OrderType { get; set; }
-        //dsdsfdfadfdswabgdksajfdfdfds
+        //wwceshidds
+        //dsdsfdsfdfadfdswabgdksajfdfdfds
+        ///fds
+        /////dfds]fdsfdsfs
     }
 }
