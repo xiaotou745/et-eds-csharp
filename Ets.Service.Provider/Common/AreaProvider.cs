@@ -26,15 +26,21 @@ namespace Ets.Service.Provider.Common
         /// <returns></returns>
         public Model.Common.ResultModel<Model.DomainModel.Area.AreaModelList> GetOpenCity(string version)
         {
+             
             AreaModelList areaList = new AreaModelList();
 
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+             
             if (version.Trim().Equals(Config.ApiVersion))//客户端请求
             {
                 areaList.Version = Config.ApiVersion;
                 ///没有最新
                 return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.Newest, areaList);
             }
-            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            else
+            {
+                redis.Delete(string.Format(RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity, version));
+            } 
             string key = string.Format(RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity, version);
             var cacheValue = redis.Get<string>(key);
             if (!string.IsNullOrEmpty(cacheValue))
@@ -60,13 +66,14 @@ namespace Ets.Service.Provider.Common
         public Model.Common.ResultModel<List<AreaModel>> GetOpenCityInfo()
         {
             var redis = new ETS.NoSql.RedisCache.RedisCache();
-            string key = string.Format(RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity, Config.ApiVersion);
+            string key = string.Format(RedissCacheKey.Ets_Service_Provider_Common_GetOpenCityInfo, Config.ApiVersion);
             //读取缓存
             var cacheValue = redis.Get<string>(key);
+            // redis.Delete(key);
             if (!string.IsNullOrEmpty(cacheValue))
             {
                 return ResultModel<List<AreaModel>>.Conclude(ETS.Enums.CityStatus.Newest, Letao.Util.JsonHelper.ToObject<List<AreaModel>>(cacheValue));
- 
+  
             }  
            
             //取数据库
