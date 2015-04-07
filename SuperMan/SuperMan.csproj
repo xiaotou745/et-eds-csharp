@@ -527,6 +527,7 @@
     <Content Include="Views\SuperManStatistical\SuperManStatistical.cshtml" />
     <Content Include="Views\SuperManStatistical\_PartialSuperManStatistical.cshtml" />
     <Content Include="Views\HomeCount\_PartialIndex.cshtml" />
+    <Content Include="Views\SubsidyManager\TimeSubsidies.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
