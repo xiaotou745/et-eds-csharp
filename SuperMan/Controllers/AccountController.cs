@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using ETS.Const;
 using Ets.Model.Common;
 using Ets.Model.ParameterModel.Authority;
 using Ets.Service.Provider.Authority;
@@ -45,7 +46,12 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         [HttpGet]
         public ActionResult Login(string returnUrl)
-        { 
+        {
+            string userinfo = CookieHelper.ReadCookie(SystemConst.cookieName);
+            if (!string.IsNullOrEmpty(userinfo))
+            {
+                return RedirectToAction("Index", "HomeCount");
+            }
             return View();
         }
 
@@ -58,8 +64,14 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult LoginOn(LoginModel model, string returnUrl)
         {
-            var captcha = Session["captcha"];
-            if (captcha == null || model.Captcha != captcha.ToString())
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            string cachekey = CookieHelper.ReadCookie("Cookie_Verification");
+            if (string.IsNullOrEmpty(cachekey))
+            {
+                return Json(new ResultModel(false, "验证码不正确"));
+            }
+            var captcha = redis.Get<string>(cachekey); 
+            if (captcha == null || model.Captcha != captcha)
             {
                 return Json(new ResultModel(false, "验证码不正确"));
             } 
@@ -90,7 +102,7 @@ namespace SuperMan.Controllers
                         }
                     }
                     string menujson = Letao.Util.JsonHelper.ToJson(myMenus);
-                    CookieHelper.WriteCookie("menulist", menujson, DateTime.Now.AddHours(10));
+                    CookieHelper.WriteCookie("menulist", menujson, DateTime.Now.AddDays(10));
                     return Json(new ResultModel(true, "成功"));
                 case ETS.Enums.UserLoginResults.UserNotExist:
                     return Json(new ResultModel(false, "用户不存在"));
@@ -106,11 +118,18 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <returns></returns>
         public FileContentResult CaptchaImage()
-        {
+        { 
             var captcha = new LiteralCaptcha(80, 25, 4);
             var bytes = captcha.Generate();
-            Session["captcha"] = captcha.Captcha;
+            //验证码插入Redis缓存
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            string cachekey = string.Format(RedissCacheKey.CaptchaImage, ETS.Util.Helper.Uuid());
+            redis.Add(cachekey, captcha.Captcha, DateTime.Now.AddMinutes(10));  
+            //缓存key放入cookie里存储 
+            CookieHelper.WriteCookie("Cookie_Verification", cachekey, DateTime.Now.AddMinutes(10));
             return new FileContentResult(bytes, "image/jpeg"); ;
         } 
+
+        
     }
 }

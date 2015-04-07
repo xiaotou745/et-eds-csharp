@@ -44,7 +44,8 @@
                     <td>
                         客单价：@(resultList.OrderCount == 0 ? "0" : (resultList.OrderPrice/resultList.OrderCount).ToString("f2")) <br />
                         任务单价：@(resultList.MisstionCount == 0 ? "0" : (resultList.OrderPrice / resultList.MisstionCount).ToString("f2"))<br />
-                        商户平均任务数:@(resultList.MisstionCount == 0 ? "0" : (resultList.MisstionCount / resultList.BusinessCount).ToString())<br />
+                        商户平均任务数：@(resultList.MisstionCount == 0 ? "0" : (resultList.MisstionCount / resultList.BusinessCount).ToString())<br />
+
                     </td>
                     <td>
                         补贴1次人数：@ParseHelper.ToSplitByPercentile(true,resultList.OneSubsidyOrderCount)<br />

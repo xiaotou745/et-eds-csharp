@@ -521,8 +521,8 @@ namespace Ets.Dao.Order
                                     ,b.PhoneNo BusinessPhoneNo
                                     ,b.Address BusinessAddress
                                     ,g.GroupName
-                                    ,[Adjustment]
-                                    ,BusinessCommission --商家结算比例
+                                    ,o.[Adjustment]
+                                    ,o.BusinessCommission --商家结算比例
                                     ";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.businessName))
@@ -921,9 +921,9 @@ namespace Ets.Dao.Order
                                   ,[YsPrice]
                                   ,[YfPrice]
                                   ,[YkPrice]
-                                  ,ISNULL([OneSubsidyOrderCount],0)
-                                  ,ISNULL([TwoSubsidyOrderCount],0)
-                                  ,ISNULL([ThreeSubsidyOrderCount],0)";
+                                  ,[OneSubsidyOrderCount]
+                                  ,[TwoSubsidyOrderCount]
+                                  ,[ThreeSubsidyOrderCount]";
 
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))

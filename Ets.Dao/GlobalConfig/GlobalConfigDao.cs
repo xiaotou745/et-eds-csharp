@@ -1,4 +1,5 @@
-﻿using Ets.Model.DomainModel.GlobalConfig;
+﻿using ETS.Data.Core;
+using Ets.Model.DomainModel.GlobalConfig;
 using ETS.Const;
 using ETS.Util;
 using System;
@@ -71,6 +72,72 @@ namespace Ets.Dao.GlobalConfig
             }
 
             return model;
+        }
+
+           
+        /// <summary>
+        /// 获取全局变量表数据TimeSubsidies
+        /// 平扬
+        /// 2015年4月7日 11:10:49
+        /// </summary>
+        /// <returns></returns>
+        public string GetTimeSubsidies()
+        {
+            string sql = "select Value from GlobalConfig(nolock) where keyname='TimeSubsidies'";
+            object dt = DbHelper.ExecuteScalar(SuperMan_Read, sql);
+            if (dt != null)
+            {
+                return dt.ToString();
+            }
+            return null;
+        }
+
+       /// <summary>
+       /// 设置全局变量表数据TimeSubsidies
+       /// 平扬 2015年4月7日 11:10:49
+       /// </summary>
+       /// <param name="value"></param>
+       /// <returns></returns>
+        public bool UpdateTimeSubsidies(string value)
+        {
+            string sql = "update GlobalConfig set Value=@Value,LastUpdateTime=getdate() where keyname='TimeSubsidies'";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("@value", SqlDbType.NVarChar, 100);
+            dbParameters.SetValue("value", value);
+            int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters); 
+            return i > 0;
+        } 
+      
+        /// <summary>
+        /// 记录日志 GlobalConfigLog数据TimeSubsidies
+        /// 平扬 2015年4月7日 11:10:49
+        /// </summary>
+        /// <param name="keyname"></param>
+        /// <param name="opName"></param>
+        /// <returns></returns>
+        public bool AddTimeSubsidiesLog(string keyname, string opName, string Remark)
+        {
+            string sql = @"INSERT INTO GlobalConfigLog
+                               (KeyName
+                               ,Value
+                               ,InsertTime
+                               ,OptName
+                               ,Remark)
+                         SELECT KeyName
+                              ,Value
+                              ,GETDATE()
+                              ,@OptName
+                              ,@Remark
+                         FROM GlobalConfig where keyname=@keyname;SELECT @@IDENTITY";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("@keyname", SqlDbType.NVarChar, 100);
+            dbParameters.SetValue("keyname", keyname);
+            dbParameters.Add("@OptName", SqlDbType.NVarChar, 50);
+            dbParameters.SetValue("OptName", opName);
+            dbParameters.Add("@Remark", SqlDbType.NVarChar, 500);
+            dbParameters.SetValue("Remark", Remark);
+            object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, dbParameters); 
+            return ParseHelper.ToInt(i) > 0;
         }
     }
 }
