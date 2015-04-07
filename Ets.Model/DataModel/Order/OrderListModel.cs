@@ -191,6 +191,17 @@ namespace Ets.Model.DataModel.Order
         /// 骑士收入
         /// </summary>
         public decimal? AccountBalance { get; set; }
+
+
+        /// <summary>
+        /// 补贴金额
+        /// </summary>
+        public decimal Adjustment { get; set; }
+
+        /// <summary>
+        /// 商家结算比例
+        /// </summary>
+        public decimal BusinessCommission { get; set; }
         
     }
 }
