@@ -19,9 +19,5 @@ namespace SuperManCommonModel.Models
         /// 订单类型
         /// </summary>
         public int OrderType { get; set; }
- 
-        //这行代这ssss我也改改码我用来测试 git 
-        //..是山东省考......
-        // ielwl  
     }
 }

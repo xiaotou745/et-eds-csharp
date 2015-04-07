@@ -81,5 +81,22 @@ namespace Ets.Model.Common
         /// 提现金额
         /// </summary>
         public decimal WithdrawPrice { get; set; }
+
+        /// <summary>
+        /// 补贴次数
+        /// </summary>
+        public int DealCount { get; set; }
+        /// <summary>
+        /// 一次补贴订单量
+        /// </summary>
+        public int OneSubsidyOrderCount { get; set; }
+        /// <summary>
+        /// 二次补贴订单量
+        /// </summary>
+        public int TwoSubsidyOrderCount { get; set; }
+        /// <summary>
+        /// 三次补贴订单量
+        /// </summary>
+        public int ThreeSubsidyOrderCount { get; set; }
     }
 }
