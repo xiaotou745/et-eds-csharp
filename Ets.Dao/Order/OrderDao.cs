@@ -444,6 +444,36 @@ namespace Ets.Dao.Order
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             return MapRows<HomeCountTitleModel>(dt);
         }
+
+        /// <summary>
+        ///按照补贴次数分组获取当天补贴的订单量
+        /// danny-20150407
+        /// </summary>
+        public IList<HomeCountTitleModel> GetCurrentDateSubsidyOrderCount(string StartTime, string EndTime)
+        {
+            if (string.IsNullOrEmpty(StartTime) || string.IsNullOrEmpty(EndTime))
+            {
+                return null;
+            }
+            string sql = @"SELECT 
+                         CONVERT(CHAR(10),PubDate,120) AS PubDate, --发布时间
+                        SUM(ISNULL(OrderCount,0)) AS OrderCount,--订单量
+                        DealCount
+                        FROM dbo.[order](NOLOCK) AS o
+                         WHERE  
+                        o.[Status]=1 AND 
+                        DealCount>0 AND
+                        CONVERT(CHAR(10),PubDate,120)>=CONVERT(CHAR(10),@StartTime,120) and 
+                        CONVERT(CHAR(10),PubDate,120)<=CONVERT(CHAR(10),@EndTime,120)
+                        GROUP BY CONVERT(CHAR(10),PubDate,120),DealCount
+                        ORDER BY DealCount ASC
+                        ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@StartTime", StartTime);
+            parm.AddWithValue("@EndTime", EndTime);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            return MapRows<HomeCountTitleModel>(dt);
+        }
         /// <summary>
         /// 根据参数获取订单
         /// danny-20150319
