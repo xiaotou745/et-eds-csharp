@@ -917,7 +917,10 @@ namespace Ets.Dao.Order
                                   ,[ClienterAverageOrderCount]
                                   ,[YsPrice]
                                   ,[YfPrice]
-                                  ,[YkPrice] ";
+                                  ,[YkPrice]
+                                  ,ISNULL([OneSubsidyOrderCount],0)
+                                  ,ISNULL([TwoSubsidyOrderCount],0)
+                                  ,ISNULL([ThreeSubsidyOrderCount],0)";
 
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))
