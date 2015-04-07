@@ -520,7 +520,10 @@ namespace Ets.Dao.Order
                                     ,b.Name BusinessName
                                     ,b.PhoneNo BusinessPhoneNo
                                     ,b.Address BusinessAddress
-                                    ,g.GroupName";
+                                    ,g.GroupName
+                                    ,[Adjustment]
+                                    ,BusinessCommission --商家结算比例
+                                    ";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.businessName))
             {
