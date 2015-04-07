@@ -20,7 +20,8 @@ namespace SuperManCommonModel.Models
         /// </summary>
         public int OrderType { get; set; }
 
-        //这行代码我用来测试 git 
-        //........
+        //这行代dsd码我用来测试 git  ddssd
+        //.....sss...
+        //dsfdjeifjkeji
     }
 }
