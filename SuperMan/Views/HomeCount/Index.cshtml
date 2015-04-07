@@ -41,6 +41,11 @@
                         订单量：@resultList.OrderCount <br />
                     </td>
                     <td>
+                        补贴1次人数：@resultList.OneSubsidyOrderCount  <br />
+                        补贴2次人数：@resultList.TwoSubsidyOrderCount  <br />
+                        补贴3次人数：@resultList.ThreeSubsidyOrderCount <br />
+                    </td>
+                    <td>
                         商户平均发布订单：@resultList.BusinessAverageOrderCount  <br />
                         任务平均订单量：@resultList.MissionAverageOrderCount  <br />
                         骑士平均完成订单量：@resultList.ClienterAverageOrderCount <br />
@@ -72,6 +77,7 @@
                 <td>总骑士佣金总计（应付)</td>
                 <td>可提现佣金总计</td>
                 <td>总盈亏总计</td>
+                <td>客单价</td>
             </tr>
 
             @{
@@ -85,6 +91,7 @@
                     <td>￥@Math.Round(homeCountAllData.YfPrice, 2)</td>
                     <td>￥@Math.Round(homeCountAllData.WithdrawPrice, 2)</td>
                     <td>￥<span style="color:@ykAllStyle">@ykAllPirce</span></td>
+                    <td>@((homeCountAllData.OrderPrice/homeCountAllData.OrderCount).ToString("f2"))</td>
                 </tr>
             }
         </table>
