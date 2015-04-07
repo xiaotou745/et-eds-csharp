@@ -20,5 +20,7 @@ namespace SuperManCommonModel.Models
         /// </summary>
         public int OrderType { get; set; }
         //dsdsfdfadfdswabgdksajfdfdfds
+        //dsefiejd
+        //dfdsfeffsf
     }
 }
