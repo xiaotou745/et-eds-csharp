@@ -222,7 +222,11 @@ namespace ETS.Util
         {
             if (IsInt)
             {
-                return ParseHelper.ToInt(String.Format("{0:N}", obj)).ToString();
+                string temp = String.Format("{0:N}", obj).ToString();
+                if (temp.Contains(".")) {
+                    return String.Format("{0:N}", obj).ToString().Substring(0,temp.IndexOf('.'));
+                } 
+              
             }
             return String.Format("{0:N}", obj);
         }
