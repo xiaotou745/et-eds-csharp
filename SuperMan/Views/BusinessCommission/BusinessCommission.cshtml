@@ -24,8 +24,16 @@
                         <input id="txtDateStart" name="txtDateStart" readonly="readonly" type="text" value="@ViewBag.startDate" />
                         <span class="">到: </span>
                         <input id="txtDateEnd" name="txtDateEnd" readonly="readonly" type="text" value="@ViewBag.endDate" />
-                        <input id="txtGroupId" name="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" />
+                        <input id="txtGroupId" name="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" /> 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                          <span class="">筛选城市: </span>
+                        @Html.DropDownList("BusinessCity", new SelectList(ViewBag.openCityList.Result, "Code", "Name"), "所有城市", new { style = "width:155px" })
+                        <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" name="GroupId" />
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                        <input type="button" onclick="DaoCHu();" value="导出" class="searchBtn" id="btnDaochu" />
                     </td>
                 </tr>
             </table>
@@ -106,7 +114,15 @@
 
         });
     });
-
+    function DaoCHu() {
+        var txtBusinessName = $("#txtBusinessName").val();
+        var txtDateStart = $("#txtDateStart").val();
+        var txtDateEnd = $("#txtDateEnd").val();
+        var txtGroupId = $("#txtGroupId").val();
+        var BusinessCity = $("#BusinessCity").find("option:selected").text();
+        var url = "/BusinessCommission/CreateCommissionsExcel?txtBusinessName=" + txtBusinessName + "&txtGroupId=" + txtGroupId + "&txtDateStart=" + txtDateStart + "&txtDateEnd=" + txtDateEnd + "&BusinessCity=" + BusinessCity;
+        window.location.href = url;
+    }
     function DataDaoCHu(id,name,amount,count,commission,t1,t2,total) {
         var url = "/BusinessCommission/CreateBusinessCommissionsExcel?id=" + id + "&name=" + name + "&amount=" + amount + "&ordercount=" + count + "&BusinessCommission=" + commission + "&TotalAmount=" + total + "&T1=" + t1 + "&T2=" + t2;
         window.location.href = url;
