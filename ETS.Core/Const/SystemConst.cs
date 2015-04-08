@@ -25,5 +25,11 @@ namespace ETS.Const
         public const int PageSize =15;
 
         #endregion
+
+        /// <summary>
+        /// 城市尚未开放的信息 缓存用到 add by caoheyang 20150407
+        /// </summary>
+        public const string CityOpenInfo = "NotOpen";
+
     }
 }

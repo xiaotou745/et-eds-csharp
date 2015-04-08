@@ -1,6 +1,7 @@
 ﻿using Ets.Model.DomainModel.Area;
 using ETS;
 using ETS.Dao;
+using ETS.Data.Core;
 using ETS.Extension;
 using ETS.Util;
 using System;
@@ -72,14 +73,43 @@ with   t as ( select   a.code ,
             ) t1
             left join PublicProvinceCity (nolock) as c on t1.code = c.parentid
     where   c.IsPublic = 1";
-
-
-
-
-
             DataSet ds = DbHelper.ExecuteDataset(SuperMan_Read, sql);
             return MapRows<AreaModel>(DataTableHelper.GetTable(ds));
         }
+
+       /// <summary>
+        /// 根据省市区名称获取对应的省市区编码 add by caoheyang 20150407
+       /// </summary>
+       /// <param name="model">参数实体</param>
+       /// <returns></returns>
+        public DMAreaCodeInfo GetOpenCodeSql(Ets.Model.ParameterModel.Area.ParaAreaNameInfo model)
+        {
+            string sql = @"
+select  p.code as ProvinceCode,
+        p.IsPublic as ProvinceIsOpen,
+        c.code as CityCode,
+        c.IsPublic as CityIsOpen,
+        a.code as AreaCode,
+        a.IsPublic as AreaIsOpen
+from    PublicProvinceCity (nolock) as p
+        left join PublicProvinceCity (nolock) as c on p.code = c.parentid
+        left join PublicProvinceCity (nolock) as a on c.code = a.parentid
+where   p.name =@ProvinceName 
+        and c.name =@CityName
+        and a.name=@AreaName";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@ProvinceName", SqlDbType.NVarChar);
+            parm.SetValue("@ProvinceName", model.ProvinceName);
+            parm.Add("@CityName", SqlDbType.NVarChar);
+            parm.SetValue("@CityName", model.CityName);
+            parm.AddWithValue("@AreaName", SqlDbType.NVarChar);
+            parm.SetValue("@AreaName",model.AreaName);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (dt == null || dt.Rows.Count <= 0)
+                return null;
+            return MapRows<DMAreaCodeInfo>(dt)[0];
+        }
+
         /// <summary>
         /// 获取开通城市
         /// danny-20150327
