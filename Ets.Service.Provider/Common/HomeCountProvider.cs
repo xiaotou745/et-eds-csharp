@@ -38,6 +38,9 @@ namespace Ets.Service.Provider.Common
             {
                 temp = homeCountList[0];
             }
+
+
+
             model.OrderPrice = temp.OrderPrice;// 订单金额
             model.MisstionCount = temp.MisstionCount;// 任务量
             model.OrderCount = temp.OrderCount;// 订单量
@@ -55,12 +58,12 @@ namespace Ets.Service.Provider.Common
             model.BusinessAverageOrderCount = ParseHelper.ToDivision(model.OrderCount, model.BusinessCount);//商户平均发布订单：
             model.MissionAverageOrderCount = ParseHelper.ToDivision(model.OrderCount, model.MisstionCount);//任务平均订单量
             model.ClienterAverageOrderCount = ParseHelper.ToDivision(model.OrderCount, model.RzqsCount);//骑士平均完成订单量：
-            if(subsidyOrderCountList!=null&&subsidyOrderCountList.Count>0)
+            if (subsidyOrderCountList != null && subsidyOrderCountList.Count > 0)
             {
                 var oneSubsidyOrderCount = subsidyOrderCountList.Where(t => t.DealCount == 1).ToList();
                 var twoSubsidyOrderCount = subsidyOrderCountList.Where(t => t.DealCount == 2).ToList();
                 var threeSubsidyOrderCount = subsidyOrderCountList.Where(t => t.DealCount == 3).ToList();
-                model.OneSubsidyOrderCount = oneSubsidyOrderCount != null&&oneSubsidyOrderCount.Count>0 ? oneSubsidyOrderCount[0].OrderCount : 0;
+                model.OneSubsidyOrderCount = oneSubsidyOrderCount != null && oneSubsidyOrderCount.Count > 0 ? oneSubsidyOrderCount[0].OrderCount : 0;
                 model.TwoSubsidyOrderCount = twoSubsidyOrderCount != null && twoSubsidyOrderCount.Count > 0 ? twoSubsidyOrderCount[0].OrderCount : 0;
                 model.ThreeSubsidyOrderCount = threeSubsidyOrderCount != null && threeSubsidyOrderCount.Count > 0 ? threeSubsidyOrderCount[0].OrderCount : 0;
             }
@@ -70,6 +73,18 @@ namespace Ets.Service.Provider.Common
                 model.TwoSubsidyOrderCount = 0;
                 model.ThreeSubsidyOrderCount = 0;
             }
+
+            #region   获取当天，未完成任务数量，已完成任务数量，未完成订单数量，已完成订单数量
+            temp = new Ets.Dao.Statistics.StatisticsDao().GetCurrentUnFinishOrderinfo();
+            if (temp != null)
+            {
+                model.UnfinishedMissionCount = temp.UnfinishedMissionCount;
+                model.FinishedMissionCount = temp.FinishedMissionCount;
+                model.UnfinishedOrderCount = temp.UnfinishedOrderCount;
+                model.FinishedOrderCount = temp.FinishedOrderCount;
+            }
+            #endregion
+
             return model;
         }
 
@@ -86,7 +101,7 @@ namespace Ets.Service.Provider.Common
             string StartTime = DateTime.Now.AddDays(ParseHelper.ToInt("-" + DayCount, 1)).ToString("yyyy-MM-dd");
 
             string EndTime = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
-           return new OrderDao().GetCurrentDateCountAndMoney(StartTime, EndTime);
+            return new OrderDao().GetCurrentDateCountAndMoney(StartTime, EndTime);
         }
 
 
@@ -96,8 +111,9 @@ namespace Ets.Service.Provider.Common
         /// 2015年3月25日 15:33:00
         /// </summary>
         /// <returns></returns>
-        public HomeCountTitleModel GetHomeCountTitleToAllData() {
-           return new OrderDao().GetHomeCountTitleToAllDataSql();
+        public HomeCountTitleModel GetHomeCountTitleToAllData()
+        {
+            return new OrderDao().GetHomeCountTitleToAllDataSql();
         }
     }
 }

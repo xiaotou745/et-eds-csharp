@@ -98,5 +98,26 @@ namespace Ets.Model.Common
         /// 三次补贴订单量
         /// </summary>
         public int ThreeSubsidyOrderCount { get; set; }
+
+        /// <summary>
+        /// 未完成任务
+        /// </summary>
+        public int UnfinishedMissionCount { get; set; }
+
+        /// <summary>
+        /// 已完成任务
+        /// </summary>
+        public int FinishedMissionCount { get; set; }
+
+        /// <summary>
+        /// 未完成订单
+        /// </summary>
+        public int UnfinishedOrderCount { get; set; }
+
+        /// <summary>
+        /// 已完成订单
+        /// </summary>
+        public int FinishedOrderCount { get; set; }
+
     }
 }

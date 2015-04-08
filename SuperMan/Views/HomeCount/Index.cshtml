@@ -37,11 +37,12 @@
                         等待认证骑士：@ParseHelper.ToSplitByPercentile(true,resultList.DdrzqsCount)  <br />
                     </td>
                     <td>
-                        订单金额：@ParseHelper.ToSplitByPercentile(false,resultList.OrderPrice)<br />
+                      
                         任务量：@ParseHelper.ToSplitByPercentile(true,resultList.MisstionCount)<br />
                         订单量：@ParseHelper.ToSplitByPercentile(true,resultList.OrderCount)<br />
                     </td>
                     <td>
+                        订单金额：@ParseHelper.ToSplitByPercentile(false, resultList.OrderPrice)<br />
                         客单价：@(resultList.OrderCount == 0 ? "0" : (resultList.OrderPrice/resultList.OrderCount).ToString("f2")) <br />
                         任务单价：@(resultList.MisstionCount == 0 ? "0" : (resultList.OrderPrice / resultList.MisstionCount).ToString("f2"))<br />
                         商户平均任务数：@(resultList.MisstionCount == 0 ? "0" : (resultList.MisstionCount / resultList.BusinessCount).ToString())<br />
