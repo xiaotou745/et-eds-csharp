@@ -9,6 +9,7 @@ using ETS.Enums;
 using System.Data;
 using Ets.Model.DataModel.Group;
 using Ets.Model.ParameterModel.User;
+using Ets.Model.ParameterModel.Order;
 //using Ets.Model.DomainModel.Order;
 //using Ets.Model.ParameterModel.Order;
 
@@ -49,7 +50,7 @@ namespace Ets.Service.IProvider.User
         /// <param name="t2">结束日期</param>
         /// <param name="name">商户姓名</param>
         /// <returns></returns>
-        ResultInfo<IList<BusinessCommissionModel>> GetBusinessCommission(DateTime t1, DateTime t2, string name, int groupid);
+        ResultInfo<IList<BusinessCommissionModel>> GetBusinessCommission(DateTime t1, DateTime t2, string name, int groupid, string BusinessCity);
 
         /// <summary>
         /// B端注册 
@@ -81,6 +82,14 @@ namespace Ets.Service.IProvider.User
         /// <param name="criteria"></param>
         /// <returns></returns>
         PageInfo<BusListResultModel> GetBusinesses(BusinessSearchCriteria criteria);
+        /// <summary>
+        /// 商户配送统计
+        /// danny-20150408
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        PageInfo<BusinessesDistributionModel> GetBusinessesDistributionStatisticalInfo(OrderSearchCriteria criteria);
         /// <summary>
         /// 更新审核状态
         /// danny-20150317

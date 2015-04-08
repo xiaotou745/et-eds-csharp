@@ -255,7 +255,7 @@ namespace Ets.Dao.Order
             parm.AddWithValue("@OriginalOrderNo", order.OriginalOrderNo);
             parm.AddWithValue("@BusinessCommission", order.BusinessCommission);
             parm.AddWithValue("@SettleMoney", order.SettleMoney);
-              
+
             return DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrder.ToString(), parm);
 
         }
@@ -431,16 +431,17 @@ namespace Ets.Dao.Order
                 return null;
             }
             string sql = @"SELECT 
-                         CONVERT(CHAR(10),PubDate,120) AS PubDate, --发布时间
-                        SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
-                        ISNULL(COUNT(o.Id),0) AS MisstionCount,--任务量
-                        SUM(ISNULL(OrderCount,0)) AS OrderCount,--订单量
+                         CONVERT(CHAR(10),PubDate,120) AS PubDate, --
+                        sum(case when o.status=1 then amount else 0 end ) as OrderPrice, --订单金额
+                        --SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
+                        ISNULL(COUNT(o.Id),0) AS MisstionCount,--总任务量
+                        SUM(ISNULL(OrderCount,0)) AS OrderCount,--总订单量
                          ISNULL(SUM(o.Amount*ISNULL(b.BusinessCommission,0)/100+ ISNULL( b.DistribSubsidy ,0)* o.OrderCount),0) AS YsPrice,  -- 应收金额
                           ISNULL( SUM( OrderCommission),0) AS YfPrice  --应付金额
                         FROM dbo.[order](NOLOCK) AS o
                         LEFT JOIN dbo.business(NOLOCK) AS b ON o.businessId=b.Id
                          WHERE  
-                        o.[Status]=1 AND 
+                        o.[Status]<>3 AND 
                         CONVERT(CHAR(10),PubDate,120)>=CONVERT(CHAR(10),@StartTime,120) and 
                         CONVERT(CHAR(10),PubDate,120)<=CONVERT(CHAR(10),@EndTime,120)
                         GROUP BY CONVERT(CHAR(10),PubDate,120)
@@ -464,22 +465,20 @@ namespace Ets.Dao.Order
                 return null;
             }
             string sql = @"SELECT 
-                         CONVERT(CHAR(10),PubDate,120) AS PubDate, --发布时间
-                        SUM(ISNULL(OrderCount,0)) AS OrderCount,--订单量
+                        CONVERT(CHAR(10),PubDate,120) AS PubDate, --发布时间
+                        --SUM(ISNULL(OrderCount,0)) AS OrderCount,--订单量
+                        COUNT(1) AS OrderCount,--订单量
                         DealCount
                         FROM dbo.[order](NOLOCK) AS o
-                         WHERE  
-                        o.[Status]=1 AND 
-                        DealCount>0 AND
-                        CONVERT(CHAR(10),PubDate,120)>=CONVERT(CHAR(10),@StartTime,120) and 
-                        CONVERT(CHAR(10),PubDate,120)<=CONVERT(CHAR(10),@EndTime,120)
-                        GROUP BY CONVERT(CHAR(10),PubDate,120),DealCount
-                        ORDER BY DealCount ASC
-                        ";
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@StartTime", StartTime);
-            parm.AddWithValue("@EndTime", EndTime);
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+                        WHERE  
+                        o.[Status]<>3 AND 
+                        CONVERT(CHAR(10),PubDate,120)>='" + StartTime + "' and ";
+                sql += "CONVERT(CHAR(10),PubDate,120)<='" + EndTime + "'";
+                sql+="  GROUP BY CONVERT(CHAR(10),PubDate,120),DealCount ORDER BY DealCount ASC ";
+            //IDbParameters parm = DbHelper.CreateDbParameters();
+            //parm.AddWithValue("@StartTime", StartTime);
+            //parm.AddWithValue("@EndTime", EndTime);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             return MapRows<HomeCountTitleModel>(dt);
         }
         /// <summary>
@@ -823,14 +822,14 @@ namespace Ets.Dao.Order
             string sql = @"SELECT 
                         (SELECT SUM (AccountBalance) FROM dbo.clienter(NOLOCK)  WHERE AccountBalance>=1000) AS  WithdrawPrice,--提现金额
                         SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
-                        COUNT(1) AS MisstionCount,--任务量
-                        SUM(ISNULL(OrderCount,0)) AS OrderCount,--订单量
+                        COUNT(1) AS MisstionCount,--总任务量
+                        SUM(ISNULL(OrderCount,0)) AS OrderCount,--总订单量
                         SUM(o.Amount*ISNULL(b.BusinessCommission,0)/100+ ISNULL(b.DistribSubsidy ,0) * o.OrderCount) AS YsPrice,  -- 应收金额
                         SUM(ISNULL( OrderCommission,0)) AS YfPrice  --应付金额
                         FROM dbo.[order](NOLOCK) AS o
                         JOIN dbo.business(NOLOCK) AS b ON o.businessId=b.Id
                          WHERE  
-                        o.[Status]=1 ";
+                        o.[Status]<>3 ";//不等于未完成的订单 
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             return MapRows<HomeCountTitleModel>(dt)[0];
         }
@@ -1070,9 +1069,9 @@ namespace Ets.Dao.Order
         /// <summary>
         /// 获取超过配置时间未抢单的订单
         /// danny-20150402
-       /// </summary>
-       /// <param name="IntervalMinute"></param>
-       /// <returns></returns>
+        /// </summary>
+        /// <param name="IntervalMinute"></param>
+        /// <returns></returns>
         public IList<OrderAutoAdjustModel> GetOverTimeOrder(string IntervalMinute)
         {
             string sql = string.Format(@"select 
