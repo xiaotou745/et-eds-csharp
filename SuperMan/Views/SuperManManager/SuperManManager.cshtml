@@ -36,8 +36,8 @@
                         </select>
                         <span class="">骑士电话: </span>
                         <input id="txtSuperManPhone" type="text" name="clienterPhone" value="" />
-                        <span class="">筛选城市: </span>
-                        @Html.DropDownList("clienterCity", new SelectList(ViewBag.openCityList.Result, "Name", "Name"), "--无--", new { style = "width:155px" })
+                        @*<span class="">筛选城市: </span>
+                        @Html.DropDownList("clienterCity", new SelectList(ViewBag.openCityList.Result, "Code", "Name"), "--无--", new { style = "width:155px" })*@
                         <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" name="GroupId" />
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                         @*<input id="btnAdd" class="searchBtn" type="button" value="新增骑士">*@

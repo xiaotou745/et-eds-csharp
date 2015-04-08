@@ -199,12 +199,12 @@ namespace ETS.Util
         /// <returns></returns>
         public static double ToDivision(double num1, double num2)
         {
-            if (num2<=0)
+            if (num2 <= 0)
             {
                 return 0;
             }
             double numtmp = num1 / num2;
-            return Math.Round(numtmp,2);
+            return Math.Round(numtmp, 2);
         }
 
         //public static decimal ToDivision(decimal num1, decimal num2)
@@ -217,5 +217,18 @@ namespace ETS.Util
         //    return Math.Round(numtmp, 2);
         //}
         #endregion
+
+        public static string ToSplitByPercentile(bool IsInt, object obj)
+        {
+            if (IsInt)
+            {
+                string temp = String.Format("{0:N}", obj).ToString();
+                if (temp.Contains(".")) {
+                    return String.Format("{0:N}", obj).ToString().Substring(0,temp.IndexOf('.'));
+                } 
+              
+            }
+            return String.Format("{0:N}", obj);
+        }
     }
 }
