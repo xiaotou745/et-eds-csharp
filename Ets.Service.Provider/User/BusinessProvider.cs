@@ -23,6 +23,7 @@ using ETS.Sms;
 using ETS.Transaction.Common;
 using ETS.Transaction;
 using Ets.Model.ParameterModel.User;
+using Ets.Model.ParameterModel.Order;
 namespace Ets.Service.Provider.User
 {
 
@@ -354,6 +355,18 @@ namespace Ets.Service.Provider.User
         public PageInfo<BusListResultModel> GetBusinesses(BusinessSearchCriteria criteria)
         {
             PageInfo<BusListResultModel> pageinfo = dao.GetBusinesses<BusListResultModel>(criteria);
+            return pageinfo;
+        }
+        /// <summary>
+        /// 商户配送统计
+        /// danny-20150408
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<BusinessesDistributionModel> GetBusinessesDistributionStatisticalInfo(OrderSearchCriteria criteria)
+        {
+            PageInfo<BusinessesDistributionModel> pageinfo = dao.GetBusinessesDistributionStatisticalInfo<BusinessesDistributionModel>(criteria);
             return pageinfo;
         }
         /// <summary>

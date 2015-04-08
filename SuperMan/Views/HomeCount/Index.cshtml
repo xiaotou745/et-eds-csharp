@@ -27,6 +27,7 @@
     @{
         var resultList = ViewBag.homeCountTitleModel as Ets.Model.Common.HomeCountTitleModel;
         var homeCountByList=ViewBag.homeCountTitleToList;
+        var clienteStorerGrabStatisticalList = ViewBag.clienteStorerGrabStatistical as List<Ets.Model.DomainModel.Bussiness.BusinessesDistributionModel>;
         var homeCountAllData = ViewBag.homeCountTitleToAllData as Ets.Model.Common.HomeCountTitleModel;
         <p>
             <table class="tbstyle" width="1200" border="1">
@@ -108,29 +109,73 @@
     </p>
 
     <hr />
-    @*<h3 style="color:black;font-weight:600">最近20天数据统计</h3>*@
+
+    <h3 style="color:black;font-weight:600">跨店抢单骑士统计</h3>
     <div>
         <p>
-            @using (Ajax.BeginForm("PostIndex", new RouteValueDictionary { { "pageindex", "" } },
+            <table class="tbstyle" border="1">
+                <tr class="trclass">
+                    <td>日期</td>
+                    <td>抢一个店骑士数量</td>
+                    <td>2个</td>
+                    <td>3个</td>
+                    <td>4个</td>
+                    <td>5个</td>
+                    <td>6个</td>
+                    <td>7个</td>
+                    <td>8个</td>
+                    <td>9个</td>
+                    <td>>=10个</td>
+                </tr>
+
+                @{
+                    foreach (var item in clienteStorerGrabStatisticalList)
+                    {
+                        <tr class="trclass">
+                            <td>@item.PubDate.ToString()</td>
+                            <td>@item.OnceCount</td>
+                            <td>@item.TwiceCount</td>
+                            <td>@item.ThreeTimesCount</td>
+                            <td>@item.FourTimesCount</td>
+                            <td>@item.FiveTimesCount</td>
+                            <td>@item.SixTimesCount</td>
+                            <td>@item.SevenTimesCount</td>
+                            <td>@item.EightTimesCount</td>
+                            <td>@item.NineTimesCount</td>
+                            <td>@item.ExceedNineTimesCount</td>
+                        </tr>
+                    }
+                }
+            </table>
+        </p>
+
+        <hr />
+
+
+
+        @*<h3 style="color:black;font-weight:600">最近20天数据统计</h3>*@
+        <div>
+            <p>
+                @using (Ajax.BeginForm("PostIndex", new RouteValueDictionary { { "pageindex", "" } },
             new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
             new RouteValueDictionary { { "id", "searchForm" } }))
-            {
-                <div class="SearchMd" style="padding:0">
-                    <h3 style="color:black;font-weight:600">每天数据统计</h3>
-                    <input id="txtOrderPubStart" readonly="readonly" type="text" name="orderPubStart" />
-                    <span class="">到: </span>
-                    <input id="txtOrderPubEnd" readonly="readonly" type="text" name="orderPubEnd" />
-                    <input type="submit" value="查询" class="searchBtn" id="btnSearch" /><br /><br />
+                {
+                    <div class="SearchMd" style="padding:0">
+                        <h3 style="color:black;font-weight:600">每天数据统计</h3>
+                        <input id="txtOrderPubStart" readonly="readonly" type="text" name="orderPubStart" />
+                        <span class="">到: </span>
+                        <input id="txtOrderPubEnd" readonly="readonly" type="text" name="orderPubEnd" />
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" /><br /><br />
+                    </div>
+                }
+                <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+                <div class="bd clearfix" id="dataList" style="width:100%">
+                    @Html.Partial("_PartialIndex", Model)
                 </div>
-            }
-            <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
-            <div class="bd clearfix" id="dataList" style="width:100%">
-                @Html.Partial("_PartialIndex", Model)
-            </div>
-                
-        </p>
+
+            </p>
+        </div>
     </div>
-</div>
 <script type="text/javascript">
     $(document).ready(function () {
         $('#txtOrderPubStart').datepicker();

@@ -4,6 +4,9 @@ using Ets.Model.DataModel.Order;
 using Ets.Model.DomainModel.Clienter;
 using Ets.Model.Common;
 using Ets.Model.ParameterModel.Clienter;
+using ETS.Data.PageData;
+using Ets.Model.DomainModel.Bussiness;
+using Ets.Model.ParameterModel.Order;
 
 namespace Ets.Service.IProvider.Clienter
 {
@@ -127,5 +130,18 @@ namespace Ets.Service.IProvider.Clienter
         string FinishOrder(int userId, string orderNo);
 
         ClienterModel GetUserInfoByUserId(int UserId);
+        /// <summary>
+        /// 骑士配送统计
+        /// danny-20150408
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        PageInfo<BusinessesDistributionModel> GetClienterDistributionStatisticalInfo(OrderSearchCriteria criteria);
+        /// <summary>
+        /// 骑士门店抢单统计
+        /// danny-20150408
+        /// </summary>
+        /// <returns></returns>
+        IList<BusinessesDistributionModel> GetClienteStorerGrabStatisticalInfo();
     }
 }

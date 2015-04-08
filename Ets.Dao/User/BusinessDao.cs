@@ -20,6 +20,7 @@ using ETS.Extension;
 using ETS.Enums;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Group;
+using Ets.Model.ParameterModel.Order;
 
 
 namespace Ets.Dao.User
@@ -1029,6 +1030,40 @@ namespace Ets.Dao.User
                 return null;
             }
             return MapRows<BussinessStatusModel>(dt)[0];
+        }
+
+        /// <summary>
+        /// 商户配送统计
+        /// danny-20150408
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<T> GetBusinessesDistributionStatisticalInfo<T>(OrderSearchCriteria criteria)
+        {
+            var sbtbl = new StringBuilder(@" (select t.PubDate,t.clienterCount,count(t.businessId) as businessCount
+                                              from (
+                                                    select convert(char(10),o.PubDate,120) PubDate,count(DISTINCT clienterId)clienterCount ,businessId
+                                                    from [order] o(nolock)
+                                              where Status=1 ");
+            if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))
+            {
+                sbtbl.AppendFormat(" AND  CONVERT(CHAR(10),PubDate,120)>=CONVERT(CHAR(10),'{0}',120) ", criteria.orderPubStart);
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.orderPubEnd))
+            {
+                sbtbl.AppendFormat(" AND CONVERT(CHAR(10),PubDate,120)<=CONVERT(CHAR(10),'{0}',120) ", criteria.orderPubEnd);
+            }
+            sbtbl.Append(@"  group by convert(char(10),o.PubDate,120), businessId) t
+                            group by t.PubDate, t.clienterCount ) tbl ");
+            string columnList = @"   tbl.PubDate
+                                    ,tbl.clienterCount ClienterCount
+            				        ,tbl.businessCount BusinessCount ";
+
+            var sbSqlWhere = new StringBuilder(" 1=1 ");
+            string tableList = sbtbl.ToString();
+            string orderByColumn = " tbl.PubDate,tbl.clienterCount ";
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
         }
     }
 }
