@@ -31,41 +31,45 @@
         <p>
             <table class="tbstyle" width="1200" border="1">
                 <tr class="trclass">
-                    <td>
+                    <td width="150">
                         商家总数：@ParseHelper.ToSplitByPercentile(true, resultList.BusinessCount)<br />
-                        认证骑士数量：@ParseHelper.ToSplitByPercentile(true,resultList.RzqsCount) <br />
-                        等待认证骑士：@ParseHelper.ToSplitByPercentile(true,resultList.DdrzqsCount)  <br />
+                        已认证骑士数量：@ParseHelper.ToSplitByPercentile(true, resultList.RzqsCount) <br />
+                        待认证骑士数量：@ParseHelper.ToSplitByPercentile(true, resultList.DdrzqsCount)  <br />
+                        今日活跃商家数：@ParseHelper.ToSplitByPercentile(true, resultList.ActiveBusiness)<br />
+                        今日活跃骑士数：@ParseHelper.ToSplitByPercentile(true, resultList.ActiveClienter)<br />
                     </td>
                     <td>
-                      
-                        任务量：@ParseHelper.ToSplitByPercentile(true,resultList.MisstionCount)<br />
-                        订单量：@ParseHelper.ToSplitByPercentile(true,resultList.OrderCount)<br />
-                    </td>
-                    <td>
-                        订单金额：@ParseHelper.ToSplitByPercentile(false, resultList.OrderPrice)<br />
-                        客单价：@(resultList.OrderCount == 0 ? "0" : (resultList.OrderPrice/resultList.OrderCount).ToString("f2")) <br />
-                        任务单价：@(resultList.MisstionCount == 0 ? "0" : (resultList.OrderPrice / resultList.MisstionCount).ToString("f2"))<br />
-                        商户平均任务数：@(resultList.MisstionCount == 0 ? "0" : (resultList.MisstionCount / resultList.BusinessCount).ToString())<br />
-
-                    </td>
-                    <td>
-                        补贴1次任务量：@ParseHelper.ToSplitByPercentile(true,resultList.OneSubsidyOrderCount)<br />
-                        补贴2次任务量：@ParseHelper.ToSplitByPercentile(true,resultList.TwoSubsidyOrderCount)<br />
-                        补贴3次任务量：@ParseHelper.ToSplitByPercentile(true,resultList.ThreeSubsidyOrderCount)<br />
-                    </td>
-                    <td>
-                        商户平均发布订单：@resultList.BusinessAverageOrderCount  <br />
+                        总任务量：@ParseHelper.ToSplitByPercentile(true, resultList.MisstionCount)<br />
+                        未被抢任务量：@ParseHelper.ToSplitByPercentile(true, resultList.UnGrabMissionCount)<br />
+                        未完成任务量：@ParseHelper.ToSplitByPercentile(true, resultList.UnfinishedMissionCount)<br />
+                        总订单量：@ParseHelper.ToSplitByPercentile(true, resultList.OrderCount)<br />
                         任务平均订单量：@resultList.MissionAverageOrderCount  <br />
-                        骑士平均完成订单量：@resultList.ClienterAverageOrderCount <br />
                     </td>
                     <td>
-                        商户结算金额（应收）：￥@ParseHelper.ToSplitByPercentile(false,resultList.YsPrice)<br />
-                        骑士佣金总计（应付）：￥@ParseHelper.ToSplitByPercentile(false,resultList.YfPrice)<br />
+                        订单总金额：@ParseHelper.ToSplitByPercentile(false, resultList.OrderPrice)<br />
+                        客单价：@(resultList.OrderCount == 0 ? "0" : (resultList.OrderPrice / resultList.OrderCount).ToString("f2")) <br />
+                        任务单价：@(resultList.MisstionCount == 0 ? "0" : (resultList.OrderPrice / resultList.MisstionCount).ToString("f2"))<br />
+                    </td>
+                    <td>
+                        0次补贴被抢任务：@ParseHelper.ToSplitByPercentile(true, resultList.ZeroSubsidyOrderCount)<br />
+                        1次补贴被抢任务：@ParseHelper.ToSplitByPercentile(true, resultList.OneSubsidyOrderCount)<br />
+                        2次补贴被抢任务：@ParseHelper.ToSplitByPercentile(true, resultList.TwoSubsidyOrderCount)<br />
+                        3次补贴被抢任务：@ParseHelper.ToSplitByPercentile(true, resultList.ThreeSubsidyOrderCount)<br />
+                    </td>
+                    <td>
+                        商户平均发布任务：@(resultList.MisstionCount == 0 ? "0" : (resultList.MisstionCount / resultList.BusinessCount).ToString())<br />
+                        商户平均发布订单：@resultList.BusinessAverageOrderCount  <br />
+                        骑士平均完成任务：<br />
+                        骑士平均完成订单：@resultList.ClienterAverageOrderCount <br />
+                    </td>
+                    <td>
+                        商户结算金额（应收）：￥@ParseHelper.ToSplitByPercentile(false, resultList.YsPrice)<br />
+                        骑士佣金总计（应付）：￥@ParseHelper.ToSplitByPercentile(false, resultList.YfPrice)<br />
                         @{
                             decimal ykPrice = resultList.YkPrice;
-                            string ykStyle = ykPrice>0?"red":"green";
+                            string ykStyle = ykPrice > 0 ? "red" : "green";
                         }
-                        盈亏总计：￥<span style="color:@ykStyle">@ParseHelper.ToSplitByPercentile(false,resultList.YkPrice)</span><br />
+                        盈亏总计：￥<span style="color:@ykStyle">@ParseHelper.ToSplitByPercentile(false, resultList.YkPrice)</span><br />
                     </td>
                 </tr>
             </table>

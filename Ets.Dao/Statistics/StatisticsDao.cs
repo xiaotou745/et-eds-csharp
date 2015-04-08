@@ -150,10 +150,8 @@ namespace Ets.Dao.Statistics
 
         /// <summary>
         /// 获取当天
-        /// 未完成任务数量
-        /// 已完成任务数量
-        /// 未完成订单数量
-        /// 已完成订单数量 
+        /// 未完成任务量
+        /// 未被抢任务量
         /// 窦海超
         /// 2015年4月8日 14:00:14
         /// </summary>
@@ -162,11 +160,9 @@ namespace Ets.Dao.Statistics
         {
             string sql = @"
                         select 
-                        sum(case when status=0 or Status=2 then 1 else 0 end) UnfinishedMissionCount,--未完成任务
-                        sum(case when status=1 then 1 else 0 end) FinishedMissionCount,--已完成任务
-                        sum(case when status=0 or Status=2 then OrderCount else 0 end)  UnfinishedOrderCount,--未完成订单
-                        sum(case when status=1 then OrderCount else 0 end)  FinishedOrderCount --已完成订单
-                        from dbo.[order] as o
+                        sum(case when Status=2 then 1 else 0 end) UnfinishedMissionCount,--未完成任务量
+                        sum(case when status=1 then 1 else 0 end) UnGrabMissionCount--未被抢任务量
+                        from dbo.[order](nolock) as o
                         where convert(char(10),PubDate,120)=convert(char(10),getdate(),120) 
                         and Status<>4
                         group by convert(char(10),PubDate,120)
@@ -177,6 +173,26 @@ namespace Ets.Dao.Statistics
                 return null;
             }
             return MapRows<HomeCountTitleModel>(dt)[0];
+        }
+
+        /// <summary>
+        /// 获取当天活跃商家和骑士
+        /// 窦海超
+        /// 2015年4月8日 14:57:27
+        /// </summary>
+        /// <returns></returns>
+        public HomeCountTitleModel GetCurrentActiveBussinessAndClienter() { 
+            string sql=@"select 
+                        count(distinct clienterId) as ActiveClienter,
+                        count(distinct businessId) as ActiveBusiness
+                        from dbo.[order] as o 
+                        where convert(char(10),PubDate,120)=convert(char(10),getdate(),120)";
+           DataTable dt= DbHelper.ExecuteDataTable(SuperMan_Read,sql);
+           if (dt==null || dt.Rows.Count<=0)
+           {
+               return null;
+           }
+           return MapRows<HomeCountTitleModel>(dt)[0];
         }
     }
 }

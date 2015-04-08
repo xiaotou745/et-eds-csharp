@@ -39,8 +39,6 @@ namespace Ets.Service.Provider.Common
                 temp = homeCountList[0];
             }
 
-
-
             model.OrderPrice = temp.OrderPrice;// 订单金额
             model.MisstionCount = temp.MisstionCount;// 任务量
             model.OrderCount = temp.OrderCount;// 订单量
@@ -55,36 +53,47 @@ namespace Ets.Service.Provider.Common
             temp = businessDao.GetCurrentBusinessCount(model);// 商家总数：
             model.BusinessCount = temp.BusinessCount;//商家总数
 
-            model.BusinessAverageOrderCount = ParseHelper.ToDivision(model.OrderCount, model.BusinessCount);//商户平均发布订单：
+            model.BusinessAverageOrderCount = ParseHelper.ToDivision(model.OrderCount, model.BusinessCount);//商户平均发布订单
             model.MissionAverageOrderCount = ParseHelper.ToDivision(model.OrderCount, model.MisstionCount);//任务平均订单量
-            model.ClienterAverageOrderCount = ParseHelper.ToDivision(model.OrderCount, model.RzqsCount);//骑士平均完成订单量：
+            model.ClienterAverageOrderCount = ParseHelper.ToDivision(model.OrderCount, model.RzqsCount);//骑士平均完成订单量
             if (subsidyOrderCountList != null && subsidyOrderCountList.Count > 0)
             {
+                var zeroSubsidyOrderCount = subsidyOrderCountList.Where(t => t.DealCount == 0).ToList();
                 var oneSubsidyOrderCount = subsidyOrderCountList.Where(t => t.DealCount == 1).ToList();
                 var twoSubsidyOrderCount = subsidyOrderCountList.Where(t => t.DealCount == 2).ToList();
                 var threeSubsidyOrderCount = subsidyOrderCountList.Where(t => t.DealCount == 3).ToList();
+                model.ZeroSubsidyOrderCount = zeroSubsidyOrderCount != null && zeroSubsidyOrderCount.Count > 0 ? zeroSubsidyOrderCount[0].OrderCount : 0;
                 model.OneSubsidyOrderCount = oneSubsidyOrderCount != null && oneSubsidyOrderCount.Count > 0 ? oneSubsidyOrderCount[0].OrderCount : 0;
                 model.TwoSubsidyOrderCount = twoSubsidyOrderCount != null && twoSubsidyOrderCount.Count > 0 ? twoSubsidyOrderCount[0].OrderCount : 0;
                 model.ThreeSubsidyOrderCount = threeSubsidyOrderCount != null && threeSubsidyOrderCount.Count > 0 ? threeSubsidyOrderCount[0].OrderCount : 0;
             }
             else
             {
+                model.ZeroSubsidyOrderCount = 0;
                 model.OneSubsidyOrderCount = 0;
                 model.TwoSubsidyOrderCount = 0;
                 model.ThreeSubsidyOrderCount = 0;
             }
 
-            #region   获取当天，未完成任务数量，已完成任务数量，未完成订单数量，已完成订单数量
-            temp = new Ets.Dao.Statistics.StatisticsDao().GetCurrentUnFinishOrderinfo();
+            Ets.Dao.Statistics.StatisticsDao statisticsDao = new Ets.Dao.Statistics.StatisticsDao();
+            #region   获取当天，未完成任务量，未被抢任务量
+            temp = statisticsDao.GetCurrentUnFinishOrderinfo();
             if (temp != null)
             {
-                model.UnfinishedMissionCount = temp.UnfinishedMissionCount;
-                model.FinishedMissionCount = temp.FinishedMissionCount;
-                model.UnfinishedOrderCount = temp.UnfinishedOrderCount;
-                model.FinishedOrderCount = temp.FinishedOrderCount;
+                model.UnfinishedMissionCount = temp.UnfinishedMissionCount;//未完成任务量
+                model.UnGrabMissionCount = temp.UnGrabMissionCount;//未抢单任务量
             }
             #endregion
 
+            #region 获取活跃商家和活跃骑士
+            temp = statisticsDao.GetCurrentActiveBussinessAndClienter();
+            if (temp != null)
+            {
+                model.ActiveBusiness = temp.ActiveBusiness;//活跃商家
+                model.ActiveClienter = temp.ActiveClienter;//活跃骑士
+            }
+
+            #endregion
             return model;
         }
 
