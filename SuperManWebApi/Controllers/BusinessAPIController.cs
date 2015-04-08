@@ -140,7 +140,6 @@ namespace SuperManWebApi.Controllers
                 int fileNameLastDot = fileName.LastIndexOf('.');
                 //
                 string rFileName = string.Format("{0}{1}{2}", fileName.Substring(0, fileNameLastDot), originSize, Path.GetExtension(fileName));
-                 
                 //保存到数据库的目录结构，年月日
                 string saveDbPath;
                 //fullDir 保存到 磁盘的 完整路径
@@ -150,20 +149,18 @@ namespace SuperManWebApi.Controllers
                     LogHelper.LogWriter("上传图片失败：", new { ex = "检查是否有权限创建目录" });
                     return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed);
                 }
-
-
+                //保存原图到 磁盘中
                 var fullFilePath = System.IO.Path.Combine(fullDir, rFileName);
-
                 file.SaveAs(fullFilePath);
-
+                //裁图
                 var transformer = new FixedDimensionTransformerAttribute(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.Width, Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.Height, Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.MaxBytesLength / 1024);
 
-                var destFullFileName = System.IO.Path.Combine(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath, fileName);
-
+                var destFullFileName = System.IO.Path.Combine(fullDir, fileName);
+                //裁图，并保存到磁盘
                 transformer.Transform(fullFilePath, destFullFileName);
 
                 var picUrl = System.IO.Path.GetFileName(destFullFileName);
-                  
+                //保存图片目录信息到数据库
                 var upResult = iBusinessProvider.UpdateBusinessPicInfo(userId, picUrl);
                 var relativePath = System.IO.Path.Combine(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.RelativePath, fileName).ToForwardSlashPath();
                 if (upResult == -1)
