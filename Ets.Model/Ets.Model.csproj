@@ -87,6 +87,7 @@
     <Compile Include="DataModel\Subsidy\subsidy.cs" />
     <Compile Include="DomainModel\Area\AreaModelList.cs" />
     <Compile Include="DomainModel\Authority\AuthorityManage.cs" />
+    <Compile Include="DomainModel\Bussiness\BusinessesDistributionModel.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessManage.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessModel.cs" />
     <Compile Include="DomainModel\Bussiness\BusiOrderCountResultModel.cs" />
