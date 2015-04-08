@@ -787,7 +787,7 @@ namespace Ets.Dao.Order
         {
             //更新订单状态
             StringBuilder upSql = new StringBuilder(@" UPDATE dbo.[order]
- SET [Status] = @status WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL;");
+ SET [Status] = @status,ActualDoneDate=getdate() WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL;");
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@orderNo", SqlDbType.NVarChar);
