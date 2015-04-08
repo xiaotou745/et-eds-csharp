@@ -11,12 +11,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ETS.Security;
 
 namespace Ets.Service.Provider.Common
 {
     public class AreaProvider : IAreaProvider
     {
-        readonly AreaDao dao = new AreaDao(); 
+        readonly AreaDao dao = new AreaDao();
         /// <summary>
         /// 获取开通城市的省市区
         /// 窦海超
@@ -46,15 +47,15 @@ namespace Ets.Service.Provider.Common
             if (!string.IsNullOrEmpty(cacheValue))
             {
                 return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.UnNewest, Letao.Util.JsonHelper.ToObject<AreaModelList>(cacheValue));
-            }  
+            }
             //取数据库
             IList<Model.DomainModel.Area.AreaModel> list = dao.GetOpenCitySql();
             areaList.Version = Config.ApiVersion;
             areaList.AreaModels = list;
-            if (list!=null)
+            if (list != null)
             {
-                redis.Add(key, Letao.Util.JsonHelper.ToJson(areaList)); 
-            }  
+                redis.Add(key, Letao.Util.JsonHelper.ToJson(areaList));
+            }
             return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.UnNewest, areaList);
         }
 
@@ -73,9 +74,9 @@ namespace Ets.Service.Provider.Common
             if (!string.IsNullOrEmpty(cacheValue))
             {
                 return ResultModel<List<AreaModel>>.Conclude(ETS.Enums.CityStatus.Newest, Letao.Util.JsonHelper.ToObject<List<AreaModel>>(cacheValue));
-  
-            }  
-           
+
+            }
+
             //取数据库
             List<AreaModel> list = dao.GetOpenCitySql().ToList();
             //CacheFactory.Instance.AddObject(key, list);
@@ -137,8 +138,31 @@ namespace Ets.Service.Provider.Common
             {
                 resultAreaModel = null;
             }
-            return resultAreaModel; 
+            return resultAreaModel;
         }
-		
+
+        /// <summary>
+        /// 根据省市区名称获取对应的省市区编码 add by caoheyang 20150407
+        /// </summary>
+        /// <param name="model">参数实体</param>
+        /// <returns></returns>
+        public string GetOpenCode(Ets.Model.ParameterModel.Area.ParaAreaNameInfo model)
+        {
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            string key =MD5.Encrypt(string.Format("{0}_{1}_{2}",model.ProvinceName,model.CityName,model.AreaName).Replace(" ",""));
+            string cacheValue = redis.Get<string>(key);
+            if (string.IsNullOrWhiteSpace(cacheValue))
+            {
+                DMAreaCodeInfo tempModel = new AreaDao().GetOpenCodeSql(model);
+                if (tempModel == null) 
+                    return null;
+                else if (tempModel.AreaIsOpen == 0 || tempModel.ProvinceIsOpen == 0 || tempModel.CityIsOpen == 0)
+                    redis.Set(key, SystemConst.CityOpenInfo, DateTime.Now.AddDays(30));
+                else 
+                    redis.Set(key, string.Format("{0}_{1}_{2}",tempModel.ProvinceCode,tempModel.CityCode,tempModel.AreaCode)
+                        ,DateTime.Now.AddDays(30));
+            }
+            return redis.Get<string>(key);
+        }
     }
 }
