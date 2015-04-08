@@ -493,7 +493,9 @@ namespace Ets.Service.Provider.User
                 business.Status = ConstValues.BUSINESS_NOAUDIT;
             }
             int upResult = dao.UpdateBusinessAddressInfo(business);
-
+            ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
+            string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, businessModel.userId);
+            redis.Delete(cacheKey);
             return upResult;
         }
         /// <summary>
