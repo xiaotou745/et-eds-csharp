@@ -138,7 +138,7 @@ namespace SuperManWebApi.Controllers
                 var fileName = ETS.Util.ImageTools.GetFileName("B", Path.GetExtension(file.FileName));
 
                 int fileNameLastDot = fileName.LastIndexOf('.');
-                //
+                //原图
                 string rFileName = string.Format("{0}{1}{2}", fileName.Substring(0, fileNameLastDot), originSize, Path.GetExtension(fileName));
                 //保存到数据库的目录结构，年月日
                 string saveDbPath;
@@ -165,11 +165,11 @@ namespace SuperManWebApi.Controllers
                 var relativePath = System.IO.Path.Combine(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.RelativePath, fileName).ToForwardSlashPath();
                 if (upResult == -1)
                 {
-                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id = 1, ImagePath = picUrl, status = upResult.ToString() });
+                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id = userId, ImagePath = picUrl, status = upResult.ToString() });
                 }
                 else
                 {
-                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id = 1, ImagePath = picUrl, status = upResult.ToString() });
+                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id = userId, ImagePath = picUrl, status = upResult.ToString() });
                 }
             }
             catch (Exception ex)
