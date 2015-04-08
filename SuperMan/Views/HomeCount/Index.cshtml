@@ -58,10 +58,10 @@
                         3次补贴被抢任务：@ParseHelper.ToSplitByPercentile(true, resultList.ThreeSubsidyOrderCount)<br />
                     </td>
                     <td>
-                        商户平均发布任务：@(resultList.MisstionCount == 0 ? "0" : (resultList.MisstionCount / resultList.BusinessCount).ToString())<br />
-                        商户平均发布订单：@resultList.BusinessAverageOrderCount  <br />
-                        骑士平均完成任务：<br />
-                        骑士平均完成订单：@resultList.ClienterAverageOrderCount <br />
+                        商户平均发布任务：@ParseHelper.ToDivision(resultList.MisstionCount, resultList.ActiveBusiness)<br />
+                        商户平均发布订单：@ParseHelper.ToDivision(resultList.OrderCount,resultList.ActiveBusiness)  <br />
+                        骑士平均完成任务：@ParseHelper.ToDivision(resultList.MisstionCount, resultList.ActiveClienter)<br />
+                        骑士平均完成订单：@ParseHelper.ToDivision(resultList.OrderCount, resultList.ActiveClienter)  <br />
                     </td>
                     <td>
                         商户结算金额（应收）：￥@ParseHelper.ToSplitByPercentile(false, resultList.YsPrice)<br />
@@ -115,42 +115,7 @@
 
     <hr />
     <h3 style="color:black;font-weight:600">跨店抢单骑士统计</h3>
-    <p>
-        <table class="tbstyle" width="1200" border="1">
-            <tr class="trclass">
-                <td>日期</td>
-                <td>抢1个店骑士数量</td>
-                <td>2个</td>
-                <td>3个</td>
-                <td>4个</td>
-                <td>5个</td>
-                <td>6个</td>
-                <td>7个</td>
-                <td>8个</td>
-                <td>9个</td>
-                <td>>=10个</td>
-            </tr>
-
-            @{
-                //double ykAllPirce = (double)Math.Round(homeCountAllData.YsPrice - homeCountAllData.YfPrice, 2);
-                //string ykAllStyle = ykAllPirce > 0 ? "red" : "green";
-                <tr class="trclass">
-                    <td>2015-04-07</td>
-                    <td>1</td>
-                    <td>1</td>
-                    <td>1</td>
-                    <td>1</td>
-                    <td>1</td>
-                    <td>1</td>
-                    <td>1</td>
-                    <td>1</td>
-                    <td>1</td>
-                    <td>1</td>
-                </tr>
-            }
-        </table>
-    </p>
-    <hr />
+    
     @*<h3 style="color:black;font-weight:600">最近20天数据统计</h3>*@
     <div>
         <p>

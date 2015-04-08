@@ -552,7 +552,7 @@ namespace Ets.Dao.Clienter
                                   from (select convert(char(10),o.PubDate,120) PubDate,clienterId,count(distinct businessId) businessCount
                                         from dbo.[order] o(nolock)
                                         where o.PubDate> getdate()-20
-                                            and Status in(1,2)
+                                            and Status in (1,2)
                                         group by convert(char(10),o.PubDate,120), clienterId)t
                                   group by PubDate, businessCount) a
                             group by PubDate
