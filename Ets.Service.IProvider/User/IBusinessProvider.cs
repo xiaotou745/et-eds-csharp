@@ -49,7 +49,7 @@ namespace Ets.Service.IProvider.User
         /// <param name="t2">结束日期</param>
         /// <param name="name">商户姓名</param>
         /// <returns></returns>
-        ResultInfo<IList<BusinessCommissionModel>> GetBusinessCommission(DateTime t1, DateTime t2, string name, int groupid);
+        ResultInfo<IList<BusinessCommissionModel>> GetBusinessCommission(DateTime t1, DateTime t2, string name, int groupid, string BusinessCity);
 
         /// <summary>
         /// B端注册 
