@@ -159,7 +159,8 @@ namespace SuperManWebApi.Controllers
                 //裁图，并保存到磁盘
                 transformer.Transform(fullFilePath, destFullFileName);
 
-                var picUrl = System.IO.Path.GetFileName(destFullFileName);
+                //var picUrl = System.IO.Path.GetFileName(destFullFileName);
+                var picUrl = saveDbPath + fileName;
                 //保存图片目录信息到数据库
                 var upResult = iBusinessProvider.UpdateBusinessPicInfo(userId, picUrl);
                 var relativePath = System.IO.Path.Combine(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.RelativePath, fileName).ToForwardSlashPath();
