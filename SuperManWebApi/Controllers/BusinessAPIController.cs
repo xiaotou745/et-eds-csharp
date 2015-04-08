@@ -137,6 +137,9 @@ namespace SuperManWebApi.Controllers
 
                 string rFileName = string.Format("{0}{1}{2}", fileName.Substring(0, fileNameLastDot), originSize, Path.GetExtension(fileName));
 
+
+
+
                 if (!System.IO.Directory.Exists(CustomerIconUploader.Instance.PhysicalPath))
                 {
                     System.IO.Directory.CreateDirectory(CustomerIconUploader.Instance.PhysicalPath);
