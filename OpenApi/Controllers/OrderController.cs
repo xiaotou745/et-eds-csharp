@@ -63,9 +63,7 @@ namespace OpenApi.Controllers
         {
             paramodel.fields.store_info.group = paramodel.group;  //设置集团信息到具体的门店上  在dao层会用到 
             IOrderProvider orderProvider = new OrderProvider();
-            string orderNo = orderProvider.Create(paramodel.fields);
-            return string.IsNullOrWhiteSpace(orderNo) ? ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :
-                ResultModel<object>.Conclude(OrderApiStatusType.Success, new { order_no = orderNo });
+            return orderProvider.Create(paramodel.fields);
         }
 
         // POST: Order OrderDetail   paramodel 固定 必须是 paramodel  
