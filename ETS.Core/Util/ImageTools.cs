@@ -28,7 +28,7 @@ namespace ETS.Util
         public static string CreateDirectory(string uploadPath,out string virtualPath )
         {
             DateTime dateTime = DateTime.Now;
-            virtualPath = string.Format("\\{1}\\{2}\\{3}\\", dateTime.Year, dateTime.Month, dateTime.Day);
+            virtualPath = string.Format("/{0}/{1}/{2}/", dateTime.Year, dateTime.Month, dateTime.Day);
             string fileUploadDir = string.Format("{0}{1}", uploadPath, virtualPath);
             try
             {

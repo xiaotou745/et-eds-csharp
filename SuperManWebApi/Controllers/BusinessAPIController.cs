@@ -158,23 +158,23 @@ namespace SuperManWebApi.Controllers
                 var destFullFileName = System.IO.Path.Combine(fullDir, fileName);
                 //裁图，并保存到磁盘
                 transformer.Transform(fullFilePath, destFullFileName);
-
-                //var picUrl = System.IO.Path.GetFileName(destFullFileName);
+                //保存到数据库的图片路径，包含年月日
                 var picUrl = saveDbPath + fileName;
                 //保存图片目录信息到数据库
                 var upResult = iBusinessProvider.UpdateBusinessPicInfo(userId, picUrl);
                 var relativePath = System.IO.Path.Combine(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.RelativePath, fileName).ToForwardSlashPath();
                 if (upResult == -1)
                 {
-                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id = 1, ImagePath = relativePath, status = upResult.ToString() });
+                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id = 1, ImagePath = picUrl, status = upResult.ToString() });
                 }
                 else
                 {
-                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id = 1, ImagePath = relativePath, status = upResult.ToString() });
+                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id = 1, ImagePath = picUrl, status = upResult.ToString() });
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                LogHelper.LogWriter("上传失败：", new { ex = ex });
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidFileFormat);
             }
         }
