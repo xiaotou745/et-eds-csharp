@@ -144,7 +144,7 @@ namespace SuperManWebApi.Controllers
                 //保存到数据库的目录结构，年月日
                 string saveDbPath;
                 //fullDir 保存到 磁盘的 完整路径
-                string fullDir = ETS.Util.ImageTools.CreateDirectory(CustomerIconUploader.Instance.PhysicalPath,out saveDbPath);
+                string fullDir = ETS.Util.ImageTools.CreateDirectory(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath, out saveDbPath);
                 if (fullDir == "0")
                 {
                     LogHelper.LogWriter("上传图片失败：", new { ex = "检查是否有权限创建目录" });
@@ -156,28 +156,28 @@ namespace SuperManWebApi.Controllers
 
                 file.SaveAs(fullFilePath);
 
-                var transformer = new FixedDimensionTransformerAttribute(CustomerIconUploader.Instance.Width, CustomerIconUploader.Instance.Height, CustomerIconUploader.Instance.MaxBytesLength / 1024);
-                
-                var destFullFileName = System.IO.Path.Combine(CustomerIconUploader.Instance.PhysicalPath, fileName);
+                var transformer = new FixedDimensionTransformerAttribute(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.Width, Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.Height, Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.MaxBytesLength / 1024);
+
+                var destFullFileName = System.IO.Path.Combine(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath, fileName);
 
                 transformer.Transform(fullFilePath, destFullFileName);
 
                 var picUrl = System.IO.Path.GetFileName(destFullFileName);
                   
                 var upResult = iBusinessProvider.UpdateBusinessPicInfo(userId, picUrl);
-                var relativePath = System.IO.Path.Combine(CustomerIconUploader.Instance.RelativePath, fileName).ToForwardSlashPath();
+                var relativePath = System.IO.Path.Combine(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.RelativePath, fileName).ToForwardSlashPath();
                 if (upResult == -1)
                 {
-                    return Ets.Model.Common.ResultModel<UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed, new UploadIconModel() { Id = 1, ImagePath = relativePath, status = upResult.ToString() });
+                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id = 1, ImagePath = relativePath, status = upResult.ToString() });
                 }
                 else
                 {
-                    return Ets.Model.Common.ResultModel<UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new UploadIconModel() { Id = 1, ImagePath = relativePath, status = upResult.ToString() });
+                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id = 1, ImagePath = relativePath, status = upResult.ToString() });
                 }
             }
             catch (Exception)
             {
-                return Ets.Model.Common.ResultModel<UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidFileFormat);
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidFileFormat);
             }
         }
 
