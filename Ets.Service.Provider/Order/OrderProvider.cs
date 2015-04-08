@@ -32,6 +32,7 @@ using System.Configuration;
 using System.Net.Http;
 using Ets.Dao.User;
 using Ets.Dao.GlobalConfig;
+using Ets.Service.Provider.Common;
 
 namespace Ets.Service.Provider.Order
 {
@@ -364,8 +365,40 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <param name="paramodel">参数实体</param>
         /// <returns>订单号码</returns>
-        public string Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
+        public ResultModel<object> Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
         {
+            #region 设置门店的省市区编码信息 add by caoheyang 20150407
+            string storecodeInfo = new AreaProvider().GetOpenCode(new Ets.Model.ParameterModel.Area.ParaAreaNameInfo()
+            { ProvinceName = paramodel.store_info.province, CityName = paramodel.store_info.city,
+              AreaName=paramodel.store_info.area});
+            if (storecodeInfo == ETS.Const.SystemConst.CityOpenInfo||string.IsNullOrWhiteSpace(storecodeInfo)) 
+                return ResultModel<object>.Conclude(OrderApiStatusType.ParaError, "门店省市区信息错误");
+            else
+            {
+                string[] storeCodes = storecodeInfo.Split('_');
+                paramodel.store_info.province_code = storeCodes[0];
+                paramodel.store_info.city_code = storeCodes[1];
+                paramodel.store_info.area_code = storeCodes[2];
+            }
+            #endregion 
+            #region 设置用户的省市区编码信息 add by caoheyang 20150407
+            string orderCodeInfo = new AreaProvider().GetOpenCode(new Ets.Model.ParameterModel.Area.ParaAreaNameInfo()
+            {
+                ProvinceName = paramodel.address.province,
+                CityName = paramodel.address.city,
+                AreaName = paramodel.address.area
+            });
+            if (orderCodeInfo == ETS.Const.SystemConst.CityOpenInfo)
+                return ResultModel<object>.Conclude(OrderApiStatusType.ParaError, "用户省市区信息错误");
+            else
+            {
+                string[] storeCodes = storecodeInfo.Split('_');
+                paramodel.address.province_code = storeCodes[0];
+                paramodel.address.city_code = storeCodes[1];
+                paramodel.address.area_code = storeCodes[2];
+            }
+            #endregion
+            string orderNo = null; //订单号码
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 paramodel.CommissionFormulaMode = GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode;
@@ -384,13 +417,14 @@ namespace Ets.Service.Provider.Order
                 paramodel.ordercommission = commissonPro.GetCurrenOrderCommission(orderComm);  //骑士佣金
                 paramodel.websitesubsidy = commissonPro.GetOrderWebSubsidy(orderComm);//网站补贴
                 paramodel.commissionrate = commissonPro.GetCommissionRate(orderComm);//订单佣金比例
-                string orderNo = OrderDao.CreateToSql(paramodel);
+                orderNo = OrderDao.CreateToSql(paramodel);
                 if (!string.IsNullOrWhiteSpace(orderNo))
                     Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！"
-                        , string.Empty, paramodel.address.city_code); //激光推送   
+                        , string.Empty, paramodel.address.city); //激光推送   
                 tran.Complete();
-                return orderNo;
             }
+               return string.IsNullOrWhiteSpace(orderNo) ? ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :
+                ResultModel<object>.Conclude(OrderApiStatusType.Success, new { order_no = orderNo });
         }
 
         /// <summary>

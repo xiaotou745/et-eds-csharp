@@ -35,5 +35,11 @@ namespace Ets.Service.IProvider.Common
         /// <returns></returns>
         AreaModelTranslate GetNationalAreaInfo(AreaModelTranslate from);
 
+        /// <summary>
+        /// 根据省市区名称获取对应的省市区编码 add by caoheyang 20150407
+        /// </summary>
+        /// <param name="model">参数实体</param>
+        /// <returns></returns>
+        string GetOpenCode(Ets.Model.ParameterModel.Area.ParaAreaNameInfo model);
     }
 }

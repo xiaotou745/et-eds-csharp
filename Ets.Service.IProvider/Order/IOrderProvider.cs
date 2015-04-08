@@ -105,7 +105,7 @@ namespace Ets.Service.IProvider.Order
         /// </summary>
         /// <param name="paramodel">参数实体</param>
         /// <returns>订单号</returns>
-        string Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel);
+        ResultModel<object> Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel);
 
         /// <summary>
         /// 查看订单详情接口  add by caoheyang 20150325
