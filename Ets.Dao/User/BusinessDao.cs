@@ -94,7 +94,7 @@ namespace Ets.Dao.User
             IList<BusinessCommissionModel> list = new List<BusinessCommissionModel>();
             try
             {
-                string sql = @"  SELECT TOP 20
+                string sql = @"  SELECT 
                                         BB.id ,
                                         BB.Name ,
                                         T.Amount ,

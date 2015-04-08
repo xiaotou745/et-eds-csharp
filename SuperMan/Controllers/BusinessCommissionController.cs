@@ -59,6 +59,7 @@ namespace SuperMan.Controllers
             ViewBag.startDate = criteria.txtDateStart;
             ViewBag.endDate = criteria.txtDateEnd;
             ViewBag.name = criteria.txtBusinessName;
+            ViewBag.BusinessCity = criteria.BusinessCity;
             if (criteria.BusinessCity == "所有城市")
             {
                 criteria.BusinessCity = "";
@@ -85,6 +86,7 @@ namespace SuperMan.Controllers
             ViewBag.startDate = criteria.txtDateStart;
             ViewBag.endDate = criteria.txtDateEnd;
             ViewBag.name = criteria.txtBusinessName;
+            ViewBag.BusinessCity = criteria.BusinessCity;
             if (criteria.BusinessCity == "所有城市")
             {
                 criteria.BusinessCity = "";
@@ -93,8 +95,17 @@ namespace SuperMan.Controllers
             if (result.Result && result.Data.Count > 0)
             {
                 string filname = "e代送商户订单结算_" + date1.ToShortDateString() + "-" + date2.ToShortDateString() + ".xls";
-                byte[] data = Encoding.UTF8.GetBytes(CreateExcel(result.Data));
-                return File(data, "application/ms-excel", filname);
+                if (result.Data.Count > 3)
+                {
+                    byte[] data = Encoding.UTF8.GetBytes(CreateExcel(result.Data));
+                    return File(data, "application/ms-excel", filname);
+                }
+                else
+                {
+                    byte[] data = Encoding.Default.GetBytes(CreateExcel(result.Data));
+                    return File(data, "application/ms-excel", filname);
+                }
+                
             }
             return View("BusinessCommission", result);
         }
