@@ -255,7 +255,7 @@ namespace Ets.Dao.Order
             parm.AddWithValue("@OriginalOrderNo", order.OriginalOrderNo);
             parm.AddWithValue("@BusinessCommission", order.BusinessCommission);
             parm.AddWithValue("@SettleMoney", order.SettleMoney);
-              
+
             return DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrder.ToString(), parm);
 
         }
@@ -286,11 +286,11 @@ namespace Ets.Dao.Order
                 INSERT INTO dbo.business
                 (OriginalBusiId,Name,GroupId,IDCard,Password,
                 PhoneNo,PhoneNo2,Address,ProvinceCode,CityCode,AreaCode,
-                Longitude,Latitude,DistribSubsidy,CommissionTypeId)  
+                Longitude,Latitude,DistribSubsidy,Province,City,district,CityId,districtId)  
                 OUTPUT Inserted.Id   
                 values(@OriginalBusiId,@Name,@GroupId,@IDCard,@Password,
                 @PhoneNo,@PhoneNo2,@Address,@ProvinceCode,@CityCode,@AreaCode,
-                @Longitude,@Latitude,@DistribSubsidy,@CommissionTypeId);";
+                @Longitude,@Latitude,@DistribSubsidy,@Province,@City,@district,@CityId,@districtId);";
                 IDbParameters insertBdbParameters = DbHelper.CreateDbParameters();
                 ///基本参数信息
                 insertBdbParameters.AddWithValue("@OriginalBusiId", paramodel.store_info.store_id); //对接方店铺ID第三方平台推送过来的商家Id
@@ -307,6 +307,11 @@ namespace Ets.Dao.Order
                 insertBdbParameters.AddWithValue("@Longitude", paramodel.store_info.longitude);    //门店所在区域经度
                 insertBdbParameters.AddWithValue("@Latitude", paramodel.store_info.latitude);    //门店所在区域纬度
                 insertBdbParameters.AddWithValue("@DistribSubsidy", paramodel.store_info.delivery_fee);    //外送费,默认为0
+                insertBdbParameters.AddWithValue("@Province", paramodel.store_info.province);    //门店省
+                insertBdbParameters.AddWithValue("@City", paramodel.store_info.city);    //门店市编码
+                insertBdbParameters.AddWithValue("@district", paramodel.store_info.area);    //门店区编码
+                insertBdbParameters.AddWithValue("@CityId", paramodel.store_info.city_code);    //门店市编码
+                insertBdbParameters.AddWithValue("@districtId", paramodel.store_info.area_code);    //门店区编码
                 //insertBdbParameters.AddWithValue("@CommissionTypeId", paramodel.store_info.commission_type == null ?
                 //    1 : paramodel.store_info.commission_type);   //佣金类型，涉及到快递员的佣金计算方式，默认1  业务改变已经无效  
                 bussinessId = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, insertBussinesssql, insertBdbParameters));
@@ -332,14 +337,14 @@ namespace Ets.Dao.Order
                 Remark,Weight,DistribSubsidy,OrderCount,ReceviceName,
                 RecevicePhoneNo,ReceiveProvinceCode,ReceiveCityCode,ReceiveAreaCode,ReceviceAddress,
                 ReceviceLongitude,ReceviceLatitude,businessId,PickUpAddress,Payment,OrderCommission,
-                WebsiteSubsidy,CommissionRate,CommissionFormulaMode)
+                WebsiteSubsidy,CommissionRate,CommissionFormulaMode,ReceiveProvince,ReceviceCity,ReceiveArea)
                 OUTPUT Inserted.OrderNo
                 Values(@OrderNo,
                 @OriginalOrderNo,@PubDate,@SongCanDate,@IsPay,@Amount,
                 @Remark,@Weight,@DistribSubsidy,@OrderCount,@ReceviceName,
                 @RecevicePhoneNo,@ReceiveProvinceCode,@ReceiveCityCode,@ReceiveAreaCode,@ReceviceAddress,
                 @ReceviceLongitude,@ReceviceLatitude,@BusinessId,@PickUpAddress,@Payment,@OrderCommission,
-                @WebsiteSubsidy,@CommissionRate,@CommissionFormulaMode)";
+                @WebsiteSubsidy,@CommissionRate,@CommissionFormulaMode,@ReceiveProvince,@ReceviceCity,@ReceiveArea)";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             ///基本参数信息
 
@@ -372,6 +377,9 @@ namespace Ets.Dao.Order
             dbParameters.AddWithValue("@WebsiteSubsidy", paramodel.websitesubsidy);    //网站补贴
             dbParameters.AddWithValue("@CommissionRate", paramodel.commissionrate);    //订单佣金比例
             dbParameters.AddWithValue("@CommissionFormulaMode", paramodel.CommissionFormulaMode); //订单佣金计算方式
+            dbParameters.AddWithValue("@ReceiveProvince", paramodel.address.province);    //用户省
+            dbParameters.AddWithValue("@ReceviceCity", paramodel.address.city); //用户市
+            dbParameters.AddWithValue("@ReceiveArea", paramodel.address.area); //用户区
             string orderNo = ParseHelper.ToString(DbHelper.ExecuteScalar(SuperMan_Read, insertOrdersql, dbParameters));
             if (string.IsNullOrWhiteSpace(orderNo))//添加失败 
                 return null;
@@ -423,16 +431,17 @@ namespace Ets.Dao.Order
                 return null;
             }
             string sql = @"SELECT 
-                         CONVERT(CHAR(10),PubDate,120) AS PubDate, --发布时间
-                        SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
-                        ISNULL(COUNT(o.Id),0) AS MisstionCount,--任务量
-                        SUM(ISNULL(OrderCount,0)) AS OrderCount,--订单量
+                         CONVERT(CHAR(10),PubDate,120) AS PubDate, --
+                        sum(case when o.status=1 then amount else 0 end ) as OrderPrice, --订单金额
+                        --SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
+                        ISNULL(COUNT(o.Id),0) AS MisstionCount,--总任务量
+                        SUM(ISNULL(OrderCount,0)) AS OrderCount,--总订单量
                          ISNULL(SUM(o.Amount*ISNULL(b.BusinessCommission,0)/100+ ISNULL( b.DistribSubsidy ,0)* o.OrderCount),0) AS YsPrice,  -- 应收金额
                           ISNULL( SUM( OrderCommission),0) AS YfPrice  --应付金额
                         FROM dbo.[order](NOLOCK) AS o
                         LEFT JOIN dbo.business(NOLOCK) AS b ON o.businessId=b.Id
                          WHERE  
-                        o.[Status]=1 AND 
+                        o.[Status]<>3 AND 
                         CONVERT(CHAR(10),PubDate,120)>=CONVERT(CHAR(10),@StartTime,120) and 
                         CONVERT(CHAR(10),PubDate,120)<=CONVERT(CHAR(10),@EndTime,120)
                         GROUP BY CONVERT(CHAR(10),PubDate,120)
@@ -456,22 +465,20 @@ namespace Ets.Dao.Order
                 return null;
             }
             string sql = @"SELECT 
-                         CONVERT(CHAR(10),PubDate,120) AS PubDate, --发布时间
-                        SUM(ISNULL(OrderCount,0)) AS OrderCount,--订单量
+                        CONVERT(CHAR(10),PubDate,120) AS PubDate, --发布时间
+                        --SUM(ISNULL(OrderCount,0)) AS OrderCount,--订单量
+                        COUNT(1) AS OrderCount,--订单量
                         DealCount
                         FROM dbo.[order](NOLOCK) AS o
-                         WHERE  
-                        o.[Status]=1 AND 
-                        DealCount>0 AND
-                        CONVERT(CHAR(10),PubDate,120)>=CONVERT(CHAR(10),@StartTime,120) and 
-                        CONVERT(CHAR(10),PubDate,120)<=CONVERT(CHAR(10),@EndTime,120)
-                        GROUP BY CONVERT(CHAR(10),PubDate,120),DealCount
-                        ORDER BY DealCount ASC
-                        ";
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@StartTime", StartTime);
-            parm.AddWithValue("@EndTime", EndTime);
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+                        WHERE  
+                        o.[Status]<>3 AND 
+                        CONVERT(CHAR(10),PubDate,120)>='" + StartTime + "' and ";
+                sql += "CONVERT(CHAR(10),PubDate,120)<='" + EndTime + "'";
+                sql+="  GROUP BY CONVERT(CHAR(10),PubDate,120),DealCount ORDER BY DealCount ASC ";
+            //IDbParameters parm = DbHelper.CreateDbParameters();
+            //parm.AddWithValue("@StartTime", StartTime);
+            //parm.AddWithValue("@EndTime", EndTime);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             return MapRows<HomeCountTitleModel>(dt);
         }
         /// <summary>
@@ -787,7 +794,7 @@ namespace Ets.Dao.Order
         {
             //更新订单状态
             StringBuilder upSql = new StringBuilder(@" UPDATE dbo.[order]
- SET [Status] = @status WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL;");
+ SET [Status] = @status,ActualDoneDate=getdate() WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL;");
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@orderNo", SqlDbType.NVarChar);
@@ -815,14 +822,14 @@ namespace Ets.Dao.Order
             string sql = @"SELECT 
                         (SELECT SUM (AccountBalance) FROM dbo.clienter(NOLOCK)  WHERE AccountBalance>=1000) AS  WithdrawPrice,--提现金额
                         SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
-                        COUNT(1) AS MisstionCount,--任务量
-                        SUM(ISNULL(OrderCount,0)) AS OrderCount,--订单量
+                        COUNT(1) AS MisstionCount,--总任务量
+                        SUM(ISNULL(OrderCount,0)) AS OrderCount,--总订单量
                         SUM(o.Amount*ISNULL(b.BusinessCommission,0)/100+ ISNULL(b.DistribSubsidy ,0) * o.OrderCount) AS YsPrice,  -- 应收金额
                         SUM(ISNULL( OrderCommission,0)) AS YfPrice  --应付金额
                         FROM dbo.[order](NOLOCK) AS o
                         JOIN dbo.business(NOLOCK) AS b ON o.businessId=b.Id
                          WHERE  
-                        o.[Status]=1 ";
+                        o.[Status]<>3 ";//不等于未完成的订单 
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             return MapRows<HomeCountTitleModel>(dt)[0];
         }
@@ -1062,9 +1069,9 @@ namespace Ets.Dao.Order
         /// <summary>
         /// 获取超过配置时间未抢单的订单
         /// danny-20150402
-       /// </summary>
-       /// <param name="IntervalMinute"></param>
-       /// <returns></returns>
+        /// </summary>
+        /// <param name="IntervalMinute"></param>
+        /// <returns></returns>
         public IList<OrderAutoAdjustModel> GetOverTimeOrder(string IntervalMinute)
         {
             string sql = string.Format(@"select 

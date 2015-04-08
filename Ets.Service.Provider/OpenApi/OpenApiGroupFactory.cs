@@ -20,8 +20,10 @@ namespace Ets.Service.IProvider.OpenApi
         {
             switch (groupId)
             {
-                case 2:
+                case 2:  //万达
                     return new WanDaGroup();
+                case 12: //全时
+                    return new FulltimeGroup();
                 default:
                     return null;
             }
