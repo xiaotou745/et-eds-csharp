@@ -114,8 +114,44 @@
     </p>
 
     <hr />
-
     <h3 style="color:black;font-weight:600">跨店抢单骑士统计</h3>
+    <p>
+        <table class="tbstyle" width="1200" border="1">
+            <tr class="trclass">
+                <td>日期</td>
+                <td>抢1个店骑士数量</td>
+                <td>2个</td>
+                <td>3个</td>
+                <td>4个</td>
+                <td>5个</td>
+                <td>6个</td>
+                <td>7个</td>
+                <td>8个</td>
+                <td>9个</td>
+                <td>>=10个</td>
+            </tr>
+
+            @{
+                //double ykAllPirce = (double)Math.Round(homeCountAllData.YsPrice - homeCountAllData.YfPrice, 2);
+                //string ykAllStyle = ykAllPirce > 0 ? "red" : "green";
+                <tr class="trclass">
+                    <td>2015-04-07</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>1</td>
+                </tr>
+            }
+        </table>
+    </p>
+    <hr />
+    @*<h3 style="color:black;font-weight:600">最近20天数据统计</h3>*@
     <div>
         <p>
             <table class="tbstyle" border="1">
@@ -181,6 +217,8 @@
             </p>
         </div>
     </div>
+    
+</div>
 <script type="text/javascript">
     $(document).ready(function () {
         $('#txtOrderPubStart').datepicker();
