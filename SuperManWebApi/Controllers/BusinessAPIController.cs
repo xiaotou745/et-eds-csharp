@@ -18,7 +18,8 @@ using Ets.Service.IProvider.Order;
 using Ets.Service.Provider.Order;
 using Ets.Service.Provider.Common;
 using Ets.Service.IProvider.User;
-using ETS.Cacheing; 
+using ETS.Cacheing;
+using Ets.Model.ParameterModel.Clienter; 
 namespace SuperManWebApi.Controllers
 {
     public class BusinessAPIController : ApiController
@@ -106,22 +107,22 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public Ets.Model.Common.ResultModel<UploadIconModel> PostAudit_B()
+        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel> PostAudit_B()
         {
             var strUserId = HttpContext.Current.Request.Form["UserId"];
             int userId;
             if (!Int32.TryParse(strUserId, out userId))
             {
-                return Ets.Model.Common.ResultModel<UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidUserId);
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidUserId);
             }  
             var business = iBusinessProvider.GetBusiness(userId);  //判断商户是否存在
             if (business == null)
             {
-                return Ets.Model.Common.ResultModel<UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidUserId);
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidUserId);
             }
             if (HttpContext.Current.Request.Files.Count != 1)
             {
-                return Ets.Model.Common.ResultModel<UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidFileFormat);
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidFileFormat);
             }
             var file = HttpContext.Current.Request.Files[0];
 
@@ -132,19 +133,26 @@ namespace SuperManWebApi.Controllers
                
                 string originSize = "_0_0";
  
-                var fileName = string.Format("{0}_{1}_{2}", DateTime.Now.ToString("yyyyMMddhhmmssfff"), new Random().Next(1000), file.FileName);
+                //var fileName = string.Format("{0}_{1}_{2}", DateTime.Now.ToString("yyyyMMddhhmmssfff"), new Random().Next(1000), file.FileName);
+
+                var fileName = ETS.Util.ImageTools.GetFileName("B", Path.GetExtension(file.FileName));
+
                 int fileNameLastDot = fileName.LastIndexOf('.');
-
+                //
                 string rFileName = string.Format("{0}{1}{2}", fileName.Substring(0, fileNameLastDot), originSize, Path.GetExtension(fileName));
-
-
-
-
-                if (!System.IO.Directory.Exists(CustomerIconUploader.Instance.PhysicalPath))
+                 
+                //保存到数据库的目录结构，年月日
+                string saveDbPath;
+                //fullDir 保存到 磁盘的 完整路径
+                string fullDir = ETS.Util.ImageTools.CreateDirectory(CustomerIconUploader.Instance.PhysicalPath,out saveDbPath);
+                if (fullDir == "0")
                 {
-                    System.IO.Directory.CreateDirectory(CustomerIconUploader.Instance.PhysicalPath);
+                    LogHelper.LogWriter("上传图片失败：", new { ex = "检查是否有权限创建目录" });
+                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed);
                 }
-                var fullFilePath = System.IO.Path.Combine(CustomerIconUploader.Instance.PhysicalPath, rFileName);
+
+
+                var fullFilePath = System.IO.Path.Combine(fullDir, rFileName);
 
                 file.SaveAs(fullFilePath);
 

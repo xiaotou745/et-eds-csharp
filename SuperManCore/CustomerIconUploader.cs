@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SuperManCore
 {
-    public class CustomerIconUploader : FixedDimensionUploader
+    public class fullDirCustomerIconUploader : FixedDimensionUploader
     {
         public static readonly CustomerIconUploader Instance = new CustomerIconUploader();
         private CustomerIconUploader() { }
