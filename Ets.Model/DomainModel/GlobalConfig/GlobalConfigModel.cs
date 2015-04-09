@@ -32,5 +32,13 @@ namespace Ets.Model.DomainModel.GlobalConfig
         /// </summary>
         public int CommissionFormulaMode { get; set; }
 
+        /// <summary>
+        /// 按金额补贴
+        /// 50补贴1元
+        /// 80补贴2元
+        /// 80补贴3元 
+        /// </summary>
+        public string PriceSubsidies { get; set; }
+
     }
 }

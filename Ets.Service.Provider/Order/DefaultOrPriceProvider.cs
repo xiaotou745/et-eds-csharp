@@ -15,7 +15,7 @@ namespace Ets.Service.Provider.Order
     public class DefaultOrPriceProvider : OrderPriceProvider
     {
 
-        #region 计算收入支出
+
         /// <summary>
         /// 获取订单的骑士佣金 add by caoheyang 20150305
         /// </summary>
@@ -55,6 +55,14 @@ namespace Ets.Service.Provider.Order
             return ParseHelper.ToDecimal(model.CommissionRate);
         }
 
-        #endregion
+        /// <summary>
+        /// 获取订单的额外补贴金额 add by caoheyang 20150409
+        /// </summary>
+        /// <param name="model">订单</param>
+        /// <returns></returns>
+        public override decimal GetAdjustment(OrderCommission model)
+        {
+            return 0m;
+        }
     }
 }
