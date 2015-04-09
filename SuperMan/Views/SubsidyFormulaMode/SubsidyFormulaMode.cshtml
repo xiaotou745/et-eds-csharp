@@ -16,8 +16,8 @@
             <tr>
                 <td> 
                     <input type="checkbox" @isStarTimeSubsidies id="ckTimeStar" name="ckTimeStar"/> <label for="ckTimeStar" style="color: red">动态时间补贴</label>
-                    <input type="submit" value="开启动态时间补贴" style="width: 120px;" class="searchBtn" id="btnIsTimeBuTie" /> 
-                    <a href="/SubsidyManager/TimeSubsidies">查看</a>
+                    <input type="submit" value="设置动态时间补贴" style="width: 120px;" class="searchBtn" id="btnIsTimeBuTie" /> 
+                    <a href="/SubsidyManager/TimeSubsidies">查看</a> 动态时间补贴可以和任何佣金补贴策略同时存在
                 </td>
             </tr>
             <tr>
@@ -46,7 +46,7 @@
                     <td>
                         <label style="color: red">普通补贴设置</label>
                         <br /><p>
-                            佣金公式：订单总金额 * @ViewBag.GloglConfig.CommonCommissionRatio %(佣金比例可配置) +配送费/@ViewBag.GloglConfig.CommonSiteSubsidies 网站补贴*订单数量
+                            佣金公式：订单总金额 * @ViewBag.GloglConfig.CommonCommissionRatio %(佣金比例可配置) +配送费或( @ViewBag.GloglConfig.CommonSiteSubsidies 网站补贴)*订单数量
                         </p>
                         佣金参数 佣金比例:<input name="txtptCommonCommissionRatio" value="@ViewBag.GloglConfig.CommonCommissionRatio" id="txtptCommonCommissionRatio" type="text">
                         网站补贴:<input name="txttpCommonSiteSubsidies" value="@ViewBag.GloglConfig.CommonSiteSubsidies" id="txttpCommonSiteSubsidies" type="text">
@@ -63,7 +63,7 @@
                     <td>
                         <label style="color: red">时间段补贴设置</label>
                         <br /><p>
-                            佣金公式：订单总金额 * @ViewBag.GloglConfig.TimeSpanCommissionRatio %(可配置)+配送费/网站补贴（A、B）*订单数量                        
+                            佣金公式：订单总金额 * @ViewBag.GloglConfig.TimeSpanCommissionRatio %(可配置)+配送费或网站补贴（A、B）*订单数量                        
                                 <br/>（A）上午10：00-13:00 下午16：00-19:00补贴 @ViewBag.GloglConfig.TimeSpanInPrice 元
                                 <br/>（B）其他时间段补贴 @ViewBag.GloglConfig.TimeSpanOutPrice 元或者更低  
                         </p>
@@ -84,7 +84,7 @@
                         <label style="color: red">满金额补贴设置</label>
 
                         <br /><p>
-                            佣金公式: 商家结算比例 -@ViewBag.GloglConfig.PriceCommissionRatio%(满足金额补贴利润比例,可配置)）* 订单总金额 +配送费/@ViewBag.GloglConfig.PriceSiteSubsidies (网站补贴,可配置)*订单数量 +动态金额补贴
+                            佣金公式: (商家结算比例 - @ViewBag.GloglConfig.PriceCommissionRatio %(满足金额补贴利润比例,可配置)）* 订单总金额 +配送费( @ViewBag.GloglConfig.PriceSiteSubsidies  网站补贴,可配置)*订单数量 +动态金额补贴
                         </p>
                         佣金参数 利润比例:<input name="txtPriceCommissionRatio" value="@ViewBag.GloglConfig.PriceCommissionRatio" id="txtPriceCommissionRatio" type="text">
                         网站补贴:<input name="txtPriceSiteSubsidies" value="@ViewBag.GloglConfig.PriceSiteSubsidies" id="txtPriceSiteSubsidies" type="text">
@@ -135,7 +135,7 @@
                     <td>
                         <label style="color: red">保本补贴设置</label>
                         <br /><p>
-                            佣金公式：（商家结算比例– @ViewBag.GloglConfig.CommissionRatio%(可配置)）* 订单总金额 +配送费/@ViewBag.GloglConfig.SiteSubsidies (补贴,可配置)*订单数量+ 动态时间补贴
+                            佣金公式：（商家结算比例– @ViewBag.GloglConfig.CommissionRatio%(可配置)）* 订单总金额 +配送费或( @ViewBag.GloglConfig.SiteSubsidies 网站补贴,可配置)*订单数量
                         </p>
                         佣金参数 利润比例:<input name="txtCommissionRatio" value="@ViewBag.GloglConfig.CommissionRatio" id="txtCommissionRatio" type="text">
                         网站补贴:<input name="txtSiteSubsidies" value="@ViewBag.GloglConfig.SiteSubsidies" id="txtSiteSubsidies" type="text">
