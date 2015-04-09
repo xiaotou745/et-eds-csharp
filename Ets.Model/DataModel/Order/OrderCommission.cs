@@ -12,17 +12,10 @@ namespace Ets.Model.DataModel.Order
         /// </summary>
         public Nullable<decimal> Amount { get; set; }
         /// <summary>
-        /// 订单佣金比例
-        /// </summary>
-        public Nullable<decimal> CommissionRate { get; set; }
-        /// <summary>
         /// 外送费
         /// </summary>
         public Nullable<decimal> DistribSubsidy { get; set; }
-        /// <summary>
-        /// 网站补贴
-        /// </summary>
-        public Nullable<decimal> WebsiteSubsidy { get; set; }
+
         /// <summary>
         /// 订单数量
         /// </summary>

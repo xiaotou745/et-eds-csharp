@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Ets.Model.DomainModel.GlobalConfig
 {
-    public class GlobalConfigTimeSubsidies
+    public class GlobalConfigSubsidies
     {
         public int Id { get; set; }
-        public int Time { get; set; }
-        public string Price { get; set; }
+        public string Value1 { get; set; }
+        public string Value2 { get; set; }
     }
 }
