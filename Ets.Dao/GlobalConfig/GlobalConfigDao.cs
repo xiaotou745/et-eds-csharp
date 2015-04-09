@@ -76,6 +76,8 @@ namespace Ets.Dao.GlobalConfig
                     model.PriceCommissionRatio = ParseHelper.ToDouble(item["Value"], 0);
                 else if (item.ItemArray[0].ToString() == "IsStarTimeSubsidies")
                     model.IsStarTimeSubsidies = ParseHelper.ToBool(item["Value"],true);
+                else if (item.ItemArray[0].ToString() == "PriceSiteSubsidies")
+                    model.PriceSiteSubsidies = ParseHelper.ToDouble(item["Value"], 0); 
             }
 
             return model;

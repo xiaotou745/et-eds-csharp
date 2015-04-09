@@ -40,7 +40,12 @@ namespace Ets.Model.DomainModel.GlobalConfig
         /// <summary>
         /// 满足金额补贴利润比例
         /// </summary>
-        public double PriceCommissionRatio { get; set; }
+        public double PriceCommissionRatio { get; set; } 
+         
+        /// <summary>
+        /// 满足金额网站补贴
+        /// </summary>
+        public double PriceSiteSubsidies { get; set; } 
 
         /// <summary>
         /// 是否开启动态时间补贴(0不开启,1开启)
