@@ -101,8 +101,10 @@ namespace SuperMan.Controllers
         {
             bool b = new GlobalConfigProvider().UpdateSubsidies(UserContext.Current.Name, IsStarTimeSubsidies, "是否开启动态时间补贴(0不开启,1开启)-设置之后的值:" + IsStarTimeSubsidies, "IsStarTimeSubsidies");
             return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.AllowGet);
-        } 
-          
+        }
+
+        #region 设置4大佣金补贴策略 
+
         /// <summary>
         /// 设置普通补贴佣金比例和网站补贴
         /// </summary>
@@ -150,6 +152,8 @@ namespace SuperMan.Controllers
             bool b1 = new GlobalConfigProvider().UpdateSubsidies(UserContext.Current.Name, value1, "修改满足金额网站补贴-设置之后的值:" + value, "PriceSiteSubsidies");
             return Json(new ResultModel(b && b1, string.Empty), JsonRequestBehavior.AllowGet);
         }
+
+        #endregion
 
         /// <summary>
         /// 获取补贴字符串
