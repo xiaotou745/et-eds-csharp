@@ -10,12 +10,12 @@ namespace Ets.Model.DomainModel.GlobalConfig
     public class GlobalConfigModel
     {
         /// <summary>
-        ///利润比例
+        ///保本利润比例
         /// </summary>
         public double CommissionRatio { get; set; }
 
         /// <summary>
-        /// 网站补贴,暂时先不用，先用以前subsidy表里的数据
+        /// 保本网站补贴
         /// </summary>
         public double SiteSubsidies { get; set; }
 
@@ -52,6 +52,34 @@ namespace Ets.Model.DomainModel.GlobalConfig
         /// 80补贴3元 
         /// </summary>
         public string PriceSubsidies { get; set; }
+         
+        /// <summary>
+        ///普通补贴佣金比例
+        /// </summary>
+        public double CommonCommissionRatio { get; set; }
+
+        /// <summary>
+        /// 普通网站补贴
+        /// </summary>
+        public double CommonSiteSubsidies { get; set; }
+        
+        /// <summary>
+        ///时间段佣金比例
+        /// </summary>
+        public double TimeSpanCommissionRatio { get; set; }
+
+           
+        /// <summary>
+        ///时间段之内补贴价钱(（A）	上午10：00-13:00 下午16：00-19:00补贴N员)
+        /// </summary>
+        public double TimeSpanInPrice { get; set; }
+            
+        /// <summary>
+        ///时间段之外补贴价钱 （B）	其他时间段补贴2元或者更低
+        /// </summary>
+        public double TimeSpanOutPrice { get; set; }
+        
+        
 
     }
 }

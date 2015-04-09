@@ -75,9 +75,19 @@ namespace Ets.Dao.GlobalConfig
                 else if (item.ItemArray[0].ToString() == "PriceCommissionRatio")
                     model.PriceCommissionRatio = ParseHelper.ToDouble(item["Value"], 0);
                 else if (item.ItemArray[0].ToString() == "IsStarTimeSubsidies")
-                    model.IsStarTimeSubsidies = ParseHelper.ToBool(item["Value"],true);
+                    model.IsStarTimeSubsidies = item["Value"].ToString()=="1";
                 else if (item.ItemArray[0].ToString() == "PriceSiteSubsidies")
-                    model.PriceSiteSubsidies = ParseHelper.ToDouble(item["Value"], 0); 
+                    model.PriceSiteSubsidies = ParseHelper.ToDouble(item["Value"], 0);
+                else if (item.ItemArray[0].ToString() == "CommonCommissionRatio")
+                    model.CommonCommissionRatio = ParseHelper.ToDouble(item["Value"], 0);
+                else if (item.ItemArray[0].ToString() == "CommonSiteSubsidies")
+                    model.CommonSiteSubsidies = ParseHelper.ToDouble(item["Value"], 0);
+                else if (item.ItemArray[0].ToString() == "TimeSpanCommissionRatio")
+                    model.TimeSpanCommissionRatio = ParseHelper.ToDouble(item["Value"], 0);
+                else if (item.ItemArray[0].ToString() == "TimeSpanInPrice")
+                    model.TimeSpanInPrice = ParseHelper.ToDouble(item["Value"], 0);
+                else if (item.ItemArray[0].ToString() == "TimeSpanOutPrice")
+                    model.TimeSpanOutPrice = ParseHelper.ToDouble(item["Value"], 0); 
             }
 
             return model;
