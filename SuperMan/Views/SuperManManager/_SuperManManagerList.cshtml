@@ -230,8 +230,8 @@
         });
     }
     function funcPicView(puth, PicWithHandUrl,PicUrl) {
-        $('#showPicHandWithUrl').attr('src', puth + '/' + PicWithHandUrl);
-        $('#showPicUrl').attr('src', puth + '/' + PicUrl);
+        $('#showPicHandWithUrl').attr('src', puth + PicWithHandUrl);
+        $('#showPicUrl').attr('src', puth + PicUrl);
 
         var originSize = '_0_0';
 
@@ -239,13 +239,13 @@
         //var handHouZhui = PicWithHandUrl.substr(handLastDot, PicWithHandUrl.length - handLastDot);
         //var bigHandName = PicWithHandUrl.substring(0, handLastDot) + originSize + handHouZhui;
 
-        $('#showBigPicHWU').attr('href', puth + '/' + BigPicName(PicWithHandUrl,originSize));
+        $('#showBigPicHWU').attr('href', puth + BigPicName(PicWithHandUrl,originSize));
 
         //var fileLastDot = PicUrl.lastIndexOf('.');
         //var fileHandHouZhui = PicUrl.substr(fileLastDot, PicUrl.length - fileLastDot);
         //var bigFileName = PicUrl.substring(0, fileLastDot) + originSize + fileHandHouZhui;
 
-        $('#showBigPicUrl').attr('href', puth + '/' + BigPicName(PicUrl, originSize));
+        $('#showBigPicUrl').attr('href', puth + BigPicName(PicUrl, originSize));
         adminjs.openwinbox('#ClientPicShow');
         if(PicWithHandUrl.length ==0){
             $('#showBigPicHWU').hide();
