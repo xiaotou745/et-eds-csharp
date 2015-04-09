@@ -61,7 +61,7 @@ namespace Ets.Service.Provider.Order
                     resultModel.userId = from.clienterId.Value;
                 resultModel.OrderNo = from.OrderNo;
                 resultModel.OrderCount = from.OrderCount;
-                var orderComm = new OrderCommission() { Amount = from.Amount, CommissionRate = from.CommissionRate, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount, WebsiteSubsidy = from.WebsiteSubsidy };
+                var orderComm = new OrderCommission() { Amount = from.Amount, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount};
                 var amount = DefaultOrPriceProvider.GetCurrenOrderPrice(orderComm);
 
                 resultModel.income = from.OrderCommission;  //佣金 Edit bycaoheyang 20150327
@@ -138,7 +138,7 @@ namespace Ets.Service.Provider.Order
                     resultModel.userId = from.clienterId.Value;
                 resultModel.OrderNo = from.OrderNo;
                 resultModel.OrderCount = from.OrderCount;
-                var orderComm = new OrderCommission() { Amount = from.Amount, CommissionRate = from.CommissionRate, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount, WebsiteSubsidy = from.WebsiteSubsidy };
+                var orderComm = new OrderCommission() { Amount = from.Amount,DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount };
                 var amount = DefaultOrPriceProvider.GetCurrenOrderPrice(orderComm);
                 resultModel.income = from.OrderCommission;  //计算设置当前订单骑士可获取的佣金 Edit bycaoheyang 20150305
                 resultModel.Amount = amount; //C端 获取订单的金额 Edit bycaoheyang 20150305
@@ -243,8 +243,8 @@ namespace Ets.Service.Provider.Order
             {
                 //必须写to.DistribSubsidy ，防止bussiness为空情况
                 OrderCommission orderComm = new OrderCommission() { Amount = busiOrderInfoModel.Amount, /*订单金额*/ 
-                    CommissionRate = subsidy.OrderCommission/*佣金比例*/, DistribSubsidy = to.DistribSubsidy,/*外送费*/
-                    OrderCount = busiOrderInfoModel.OrderCount/*订单数量*/, WebsiteSubsidy = subsidy.WebsiteSubsidy,/*网站补贴*/
+                    DistribSubsidy = to.DistribSubsidy,/*外送费*/
+                    OrderCount = busiOrderInfoModel.OrderCount/*订单数量*/,
                     BusinessCommission = to.BusinessCommission /*商户结算比例*/
                 };
                 OrderPriceProvider commProvider = CommissionFactory.GetCommission();
@@ -408,11 +408,9 @@ namespace Ets.Service.Provider.Order
                 //计算获得订单骑士佣金
                 OrderCommission orderComm = new OrderCommission()
                 {
-                    CommissionRate = subsidy.OrderCommission,/*佣金比例*/
                     Amount = paramodel.total_price, /*订单金额*/
                     DistribSubsidy = paramodel.delivery_fee,/*外送费*/
-                    OrderCount = paramodel.package_count,/*订单数量*/
-                    WebsiteSubsidy = subsidy.WebsiteSubsidy
+                    OrderCount = paramodel.package_count/*订单数量*/
                 }/*网站补贴*/;
                 OrderPriceProvider commissonPro = CommissionFactory.GetCommission();
                 paramodel.ordercommission = commissonPro.GetCurrenOrderCommission(orderComm);  //骑士佣金
