@@ -23,6 +23,8 @@ using Ets.Dao.Order;
 using Ets.Model.ParameterModel.WtihdrawRecords;
 using Ets.Service.Provider.WtihdrawRecords;
 using Ets.Service.Provider.MyPush;
+using Ets.Model.DomainModel.Bussiness;
+using Ets.Model.ParameterModel.Order;
 
 namespace Ets.Service.Provider.Clienter
 {
@@ -529,6 +531,27 @@ namespace Ets.Service.Provider.Clienter
         public ClienterModel GetUserInfoByUserId(int UserId)
         {
             return clienterDao.GetUserInfoByUserId(UserId);
+        }
+        /// <summary>
+        /// 骑士配送统计
+        /// danny-20150408
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<BusinessesDistributionModel> GetClienterDistributionStatisticalInfo(OrderSearchCriteria criteria)
+        {
+            PageInfo<BusinessesDistributionModel> pageinfo = clienterDao.GetClienterDistributionStatisticalInfo<BusinessesDistributionModel>(criteria);
+            return pageinfo;
+        }
+         /// <summary>
+        /// 骑士门店抢单统计
+        /// danny-20150408
+        /// </summary>
+        /// <returns></returns>
+        public IList<BusinessesDistributionModel> GetClienteStorerGrabStatisticalInfo()
+        {
+            return clienterDao.GetClienteStorerGrabStatisticalInfo();
         }
     }
 

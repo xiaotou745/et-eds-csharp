@@ -1,4 +1,6 @@
-﻿using Ets.Service.IProvider.Order;
+﻿using Ets.Service.IProvider.Clienter;
+using Ets.Service.IProvider.Order;
+using Ets.Service.Provider.Clienter;
 using Ets.Service.Provider.Order;
 using SuperMan.App_Start;
 using SuperMan.Authority;
@@ -20,6 +22,7 @@ namespace SuperMan.Controllers
     public class HomeCountController : BaseController
     {
         IOrderProvider iOrderProvider = new OrderProvider();
+        IClienterProvider iClienterProvider = new ClienterProvider();
         // GET: HomeCount
         public ActionResult Index()
         {
@@ -28,6 +31,7 @@ namespace SuperMan.Controllers
             ViewBag.homeCountTitleToAllData = homeCountProvider.GetHomeCountTitleToAllData();
             //ViewBag.homeCountTitleToList = homeCountProvider.GetHomeCountTitleToList(21);
             ViewBag.homeCountTitleModel = homeCountProvider.GetHomeCountTitle();
+            ViewBag.clienteStorerGrabStatistical = iClienterProvider.GetClienteStorerGrabStatisticalInfo().ToList();
             var pagedList = iOrderProvider.GetCurrentDateCountAndMoney(criteria);
             return View(pagedList);
         }
@@ -39,6 +43,7 @@ namespace SuperMan.Controllers
             Ets.Service.Provider.Common.HomeCountProvider homeCountProvider = new Ets.Service.Provider.Common.HomeCountProvider();
             ViewBag.homeCountTitleToAllData = homeCountProvider.GetHomeCountTitleToAllData();
             ViewBag.homeCountTitleModel = homeCountProvider.GetHomeCountTitle();
+            ViewBag.clienteStorerGrabStatistical = iClienterProvider.GetClienteStorerGrabStatisticalInfo();
             var pagedList = iOrderProvider.GetCurrentDateCountAndMoney(criteria);
             return PartialView("_PartialIndex", pagedList);
         }

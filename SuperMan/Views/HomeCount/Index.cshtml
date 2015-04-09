@@ -27,49 +27,50 @@
     @{
         var resultList = ViewBag.homeCountTitleModel as Ets.Model.Common.HomeCountTitleModel;
         var homeCountByList=ViewBag.homeCountTitleToList;
+        var clienteStorerGrabStatisticalList = ViewBag.clienteStorerGrabStatistical as List<Ets.Model.DomainModel.Bussiness.BusinessesDistributionModel>;
         var homeCountAllData = ViewBag.homeCountTitleToAllData as Ets.Model.Common.HomeCountTitleModel;
         <p>
             <table class="tbstyle" width="1200" border="1">
                 <tr class="trclass">
-                    <td>
+                    <td width="150">
                         商家总数：@ParseHelper.ToSplitByPercentile(true, resultList.BusinessCount)<br />
-                        已认证骑士数量：@ParseHelper.ToSplitByPercentile(true,resultList.RzqsCount) <br />
-                        待认证骑士数量：@ParseHelper.ToSplitByPercentile(true,resultList.DdrzqsCount)  <br />
-                        今日活跃商家数：<br />
-                        今日活跃骑士数：<br />
+                        已认证骑士数量：@ParseHelper.ToSplitByPercentile(true, resultList.RzqsCount) <br />
+                        待认证骑士数量：@ParseHelper.ToSplitByPercentile(true, resultList.DdrzqsCount)  <br />
+                        今日活跃商家数：@ParseHelper.ToSplitByPercentile(true, resultList.ActiveBusiness)<br />
+                        今日活跃骑士数：@ParseHelper.ToSplitByPercentile(true, resultList.ActiveClienter)<br />
                     </td>
                     <td>
-                        总任务量：@ParseHelper.ToSplitByPercentile(true,resultList.MisstionCount)<br />
-                        未被抢任务量：<br />
-                        未完成任务量：<br />
+                        总任务量：@ParseHelper.ToSplitByPercentile(true, resultList.MisstionCount)<br />
+                        未被抢任务量：@ParseHelper.ToSplitByPercentile(true, resultList.UnGrabMissionCount)<br />
+                        未完成任务量：@ParseHelper.ToSplitByPercentile(true, resultList.UnfinishedMissionCount)<br />
                         总订单量：@ParseHelper.ToSplitByPercentile(true, resultList.OrderCount)<br />
                         任务平均订单量：@resultList.MissionAverageOrderCount  <br />
                     </td>
                     <td>
                         订单总金额：@ParseHelper.ToSplitByPercentile(false, resultList.OrderPrice)<br />
-                        客单价：@(resultList.OrderCount == 0 ? "0" : (resultList.OrderPrice/resultList.OrderCount).ToString("f2")) <br />
+                        客单价：@(resultList.OrderCount == 0 ? "0" : (resultList.OrderPrice / resultList.OrderCount).ToString("f2")) <br />
                         任务单价：@(resultList.MisstionCount == 0 ? "0" : (resultList.OrderPrice / resultList.MisstionCount).ToString("f2"))<br />
                     </td>
                     <td>
-                        0次补贴被抢任务：<br />
-                        1次补贴被抢任务：@ParseHelper.ToSplitByPercentile(true,resultList.OneSubsidyOrderCount)<br />
-                        2次补贴被抢任务：@ParseHelper.ToSplitByPercentile(true,resultList.TwoSubsidyOrderCount)<br />
-                        3次补贴被抢任务：@ParseHelper.ToSplitByPercentile(true,resultList.ThreeSubsidyOrderCount)<br />
+                        0次补贴被抢任务：@ParseHelper.ToSplitByPercentile(true, resultList.ZeroSubsidyOrderCount)<br />
+                        1次补贴被抢任务：@ParseHelper.ToSplitByPercentile(true, resultList.OneSubsidyOrderCount)<br />
+                        2次补贴被抢任务：@ParseHelper.ToSplitByPercentile(true, resultList.TwoSubsidyOrderCount)<br />
+                        3次补贴被抢任务：@ParseHelper.ToSplitByPercentile(true, resultList.ThreeSubsidyOrderCount)<br />
                     </td>
                     <td>
-                        商户平均发布任务：@(resultList.MisstionCount == 0 ? "0" : (resultList.MisstionCount / resultList.BusinessCount).ToString())<br />
-                        商户平均发布订单：@resultList.BusinessAverageOrderCount  <br />
-                        骑士平均完成任务：<br />
-                        骑士平均完成订单：@resultList.ClienterAverageOrderCount <br />
+                        商户平均发布任务：@ParseHelper.ToDivision(resultList.MisstionCount, resultList.ActiveBusiness)<br />
+                        商户平均发布订单：@ParseHelper.ToDivision(resultList.OrderCount,resultList.ActiveBusiness)  <br />
+                        骑士平均完成任务：@ParseHelper.ToDivision(resultList.MisstionCount, resultList.ActiveClienter)<br />
+                        骑士平均完成订单：@ParseHelper.ToDivision(resultList.OrderCount, resultList.ActiveClienter)  <br />
                     </td>
                     <td>
-                        商户结算金额（应收）：￥@ParseHelper.ToSplitByPercentile(false,resultList.YsPrice)<br />
-                        骑士佣金总计（应付）：￥@ParseHelper.ToSplitByPercentile(false,resultList.YfPrice)<br />
+                        商户结算金额（应收）：￥@ParseHelper.ToSplitByPercentile(false, resultList.YsPrice)<br />
+                        骑士佣金总计（应付）：￥@ParseHelper.ToSplitByPercentile(false, resultList.YfPrice)<br />
                         @{
                             decimal ykPrice = resultList.YkPrice;
-                            string ykStyle = ykPrice>0?"red":"green";
+                            string ykStyle = ykPrice > 0 ? "red" : "green";
                         }
-                        盈亏总计：￥<span style="color:@ykStyle">@ParseHelper.ToSplitByPercentile(false,resultList.YkPrice)</span><br />
+                        盈亏总计：￥<span style="color:@ykStyle">@ParseHelper.ToSplitByPercentile(false, resultList.YkPrice)</span><br />
                     </td>
                 </tr>
             </table>
@@ -114,63 +115,72 @@
 
     <hr />
     <h3 style="color:black;font-weight:600">跨店抢单骑士统计</h3>
-    <p>
-        <table class="tbstyle" width="1200" border="1">
-            <tr class="trclass">
-                <td>日期</td>
-                <td>抢1个店骑士数量</td>
-                <td>2个</td>
-                <td>3个</td>
-                <td>4个</td>
-                <td>5个</td>
-                <td>6个</td>
-                <td>7个</td>
-                <td>8个</td>
-                <td>9个</td>
-                <td>>=10个</td>
-            </tr>
-
-            @{
-                //double ykAllPirce = (double)Math.Round(homeCountAllData.YsPrice - homeCountAllData.YfPrice, 2);
-                //string ykAllStyle = ykAllPirce > 0 ? "red" : "green";
-                <tr class="trclass">
-                    <td>2015-04-07</td>
-                    <td>1</td>
-                    <td>1</td>
-                    <td>1</td>
-                    <td>1</td>
-                    <td>1</td>
-                    <td>1</td>
-                    <td>1</td>
-                    <td>1</td>
-                    <td>1</td>
-                    <td>1</td>
-                </tr>
-            }
-        </table>
-    </p>
-    <hr />
+    
     @*<h3 style="color:black;font-weight:600">最近20天数据统计</h3>*@
     <div>
         <p>
-            @using (Ajax.BeginForm("PostIndex", new RouteValueDictionary { { "pageindex", "" } },
+            <table class="tbstyle" border="1">
+                <tr class="trclass">
+                    <td>日期</td>
+                    <td>抢一个店骑士数量</td>
+                    <td>2个</td>
+                    <td>3个</td>
+                    <td>4个</td>
+                    <td>5个</td>
+                    <td>6个</td>
+                    <td>7个</td>
+                    <td>8个</td>
+                    <td>9个</td>
+                    <td>>=10个</td>
+                </tr>
+
+                @{
+                    foreach (var item in clienteStorerGrabStatisticalList)
+                    {
+                        <tr class="trclass">
+                            <td>@item.PubDate.ToString()</td>
+                            <td>@item.OnceCount</td>
+                            <td>@item.TwiceCount</td>
+                            <td>@item.ThreeTimesCount</td>
+                            <td>@item.FourTimesCount</td>
+                            <td>@item.FiveTimesCount</td>
+                            <td>@item.SixTimesCount</td>
+                            <td>@item.SevenTimesCount</td>
+                            <td>@item.EightTimesCount</td>
+                            <td>@item.NineTimesCount</td>
+                            <td>@item.ExceedNineTimesCount</td>
+                        </tr>
+                    }
+                }
+            </table>
+        </p>
+
+        <hr />
+
+
+
+        @*<h3 style="color:black;font-weight:600">最近20天数据统计</h3>*@
+        <div>
+            <p>
+                @using (Ajax.BeginForm("PostIndex", new RouteValueDictionary { { "pageindex", "" } },
             new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
             new RouteValueDictionary { { "id", "searchForm" } }))
-            {
-                <div class="SearchMd" style="padding:0">
-                    <h3 style="color:black;font-weight:600">每天数据统计</h3>
-                    <input id="txtOrderPubStart" readonly="readonly" type="text" name="orderPubStart" />
-                    <span class="">到: </span>
-                    <input id="txtOrderPubEnd" readonly="readonly" type="text" name="orderPubEnd" />
-                    <input type="submit" value="查询" class="searchBtn" id="btnSearch" /><br /><br />
+                {
+                    <div class="SearchMd" style="padding:0">
+                        <h3 style="color:black;font-weight:600">每天数据统计</h3>
+                        <input id="txtOrderPubStart" readonly="readonly" type="text" name="orderPubStart" />
+                        <span class="">到: </span>
+                        <input id="txtOrderPubEnd" readonly="readonly" type="text" name="orderPubEnd" />
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" /><br /><br />
+                    </div>
+                }
+                <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+                <div class="bd clearfix" id="dataList" style="width:100%">
+                    @Html.Partial("_PartialIndex", Model)
                 </div>
-            }
-            <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
-            <div class="bd clearfix" id="dataList" style="width:100%">
-                @Html.Partial("_PartialIndex", Model)
-            </div>
-                
-        </p>
+
+            </p>
+        </div>
     </div>
     
 </div>

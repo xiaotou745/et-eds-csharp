@@ -147,5 +147,53 @@ namespace Ets.Dao.Statistics
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
 
         }
+
+        /// <summary>
+        /// 获取当天
+        /// 未完成任务量
+        /// 未被抢任务量
+        /// 窦海超
+        /// 2015年4月8日 14:00:14
+        /// </summary>
+        /// <returns></returns>
+        public HomeCountTitleModel GetCurrentUnFinishOrderinfo()
+        {
+            string sql = @"
+                        select 
+                        sum(case when Status=2 then 1 else 0 end) UnfinishedMissionCount,--未完成任务量
+                        sum(case when Status=0 then 1 else 0 end) UnGrabMissionCount--未被抢任务量
+                        from dbo.[order](nolock) as o
+                        where convert(char(10),PubDate,120)=convert(char(10),getdate(),120) 
+                        and Status<>4
+                        group by convert(char(10),PubDate,120)
+                            ";
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                return null;
+            }
+            return MapRows<HomeCountTitleModel>(dt)[0];
+        }
+
+        /// <summary>
+        /// 获取当天活跃商家和骑士
+        /// 窦海超
+        /// 2015年4月8日 14:57:27
+        /// </summary>
+        /// <returns></returns>
+        public HomeCountTitleModel GetCurrentActiveBussinessAndClienter()
+        {
+            string sql = @"select 
+                        count(distinct clienterId) as ActiveClienter,
+                        count(distinct businessId) as ActiveBusiness
+                        from dbo.[order] as o 
+                        where convert(char(10),PubDate,120)=convert(char(10),getdate(),120) and status<>3";
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+                return null;
+            }
+            return MapRows<HomeCountTitleModel>(dt)[0];
+        }
     }
 }
