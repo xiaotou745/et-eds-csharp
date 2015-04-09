@@ -58,10 +58,10 @@
                         3次补贴被抢任务：@ParseHelper.ToSplitByPercentile(true, resultList.ThreeSubsidyOrderCount)<br />
                     </td>
                     <td>
-                        商户平均发布任务：@(resultList.MisstionCount == 0 ? "0" : (resultList.MisstionCount / resultList.BusinessCount).ToString())<br />
-                        商户平均发布订单：@resultList.BusinessAverageOrderCount  <br />
-                        骑士平均完成任务：<br />
-                        骑士平均完成订单：@resultList.ClienterAverageOrderCount <br />
+                        商户平均发布任务：@ParseHelper.ToDivision(resultList.MisstionCount, resultList.ActiveBusiness)<br />
+                        商户平均发布订单：@ParseHelper.ToDivision(resultList.OrderCount,resultList.ActiveBusiness)  <br />
+                        骑士平均完成任务：@ParseHelper.ToDivision(resultList.MisstionCount, resultList.ActiveClienter)<br />
+                        骑士平均完成订单：@ParseHelper.ToDivision(resultList.OrderCount, resultList.ActiveClienter)  <br />
                     </td>
                     <td>
                         商户结算金额（应收）：￥@ParseHelper.ToSplitByPercentile(false, resultList.YsPrice)<br />
@@ -114,8 +114,9 @@
     </p>
 
     <hr />
-
     <h3 style="color:black;font-weight:600">跨店抢单骑士统计</h3>
+    
+    @*<h3 style="color:black;font-weight:600">最近20天数据统计</h3>*@
     <div>
         <p>
             <table class="tbstyle" border="1">
@@ -181,6 +182,8 @@
             </p>
         </div>
     </div>
+    
+</div>
 <script type="text/javascript">
     $(document).ready(function () {
         $('#txtOrderPubStart').datepicker();
