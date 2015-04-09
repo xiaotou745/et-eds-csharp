@@ -561,5 +561,47 @@ namespace Ets.Dao.Clienter
             return MapRows<BusinessesDistributionModel>(dt);
         }
 
+        /// <summary>
+        /// 上传小票
+        /// </summary>
+        /// <param name="uploadReceiptModel"></param>
+        /// <returns></returns>
+        public string UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel)
+        {
+            string sql = @"
+ insert into dbo.OrderOther
+        ( OrderNo ,
+          NeedUploadCount ,
+          ReceiptPic ,
+          HadUploadCount
+        )
+ values ( @OrderNo ,
+          @NeedUploadCount , 
+          @ReceiptPic ,
+          @HadUploadCount 
+        );";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@OrderNo", SqlDbType.NVarChar);
+            parm.SetValue("@OrderNo", uploadReceiptModel.OrderNo);
+
+            parm.AddWithValue("@NeedUploadCount", uploadReceiptModel.NeedUploadCount);
+            parm.AddWithValue("@ReceiptPic", uploadReceiptModel.ReceiptPic);
+            parm.AddWithValue("@HadUploadCount", uploadReceiptModel.HadUploadCount);
+
+            try
+            {
+                object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, parm);
+                if (i != null)
+                {
+                    return ParseHelper.ToInt(i.ToString()).ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter("插入orderOther表异常：",new {ex = ex});
+                return "0";
+            }
+            return "0";
+        }
     }
 }

@@ -143,5 +143,12 @@ namespace Ets.Service.IProvider.Clienter
         /// </summary>
         /// <returns></returns>
         IList<BusinessesDistributionModel> GetClienteStorerGrabStatisticalInfo();
+        /// <summary>
+        /// 上传小票
+        /// wc
+        /// </summary>
+        /// <param name="uploadReceiptModel"></param>
+        /// <returns></returns>
+        string UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel);
     }
 }

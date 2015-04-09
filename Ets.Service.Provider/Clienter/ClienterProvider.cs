@@ -556,6 +556,16 @@ namespace Ets.Service.Provider.Clienter
         {
             return clienterDao.GetClienteStorerGrabStatisticalInfo();
         }
+        /// <summary>
+        /// 上传小票
+        /// wc
+        /// </summary>
+        /// <param name="uploadReceiptModel"></param>
+        /// <returns></returns>
+        public string UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel)
+        {
+            return clienterDao.UpdateClientReceiptPicInfo(uploadReceiptModel);
+        }
     }
 
 }
