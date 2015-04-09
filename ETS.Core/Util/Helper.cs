@@ -60,11 +60,11 @@ namespace ETS.Util
         /// 2015年4月9日 09:22:55
         /// </summary>
         /// <returns></returns>
-        public static string CreateImageName()
+        public static string CreateImageName(string fileExt = ".jpg")
         {
             ETS.NoSql.RedisCache.RedisCache redis = new NoSql.RedisCache.RedisCache();
             long imgName = redis.Incr(ETS.Const.RedissCacheKey.ImageIdentity, DateTime.Now.AddHours(1));//为当前图片增加每小时内的唯一标识
-            return string.Concat(DateTime.Now.ToString("yyyy\\MM\\dd\\HH\\mmss"), imgName, ".jpg");
+            return string.Concat(DateTime.Now.ToString("yyyy/MM/dd/HH/mmss"), imgName, fileExt);
         }
     }
 }

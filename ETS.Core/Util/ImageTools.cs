@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -13,12 +14,14 @@ namespace ETS.Util
         /// <param name="fileExt">图片后缀</param>
         /// <param name="fileMark">图片表示,B端还是C端</param>
         /// <returns></returns>
-        public static string GetFileName(string fileMark="E", string fileExt = ".jpg")
+        public static string GetFileName(string fileMark="", string fileExt = ".jpg")
         {
-            Random rdom = new Random();
-            DateTime dtime = DateTime.Now; 
-            string filename = string.Format("{0}_{1}_{2}{3}", dtime.ToString("yyyyMMddhhmmssfff"), rdom.Next(10000), fileMark, fileExt);
-            return filename;
+            //Random rdom = new Random();
+            //DateTime dtime = DateTime.Now; 
+            //string filename = string.Format("{0}_{1}_{2}{3}", dtime.ToString("yyyyMMddhhmmssfff"), rdom.Next(10000), fileMark, fileExt); 
+            string fileName = Path.GetFileName(ETS.Util.Helper.CreateImageName(fileExt));
+
+            return fileName;
         }
         /// <summary>
         /// 创建图片上传目录
@@ -28,7 +31,7 @@ namespace ETS.Util
         public static string CreateDirectory(string uploadPath,out string virtualPath )
         {
             DateTime dateTime = DateTime.Now;
-            virtualPath = string.Format("/{0}/{1}/{2}/", dateTime.Year, dateTime.Month, dateTime.Day);
+            virtualPath = DateTime.Now.ToString("/yyyy/MM/dd/HH/");
             string fileUploadDir = string.Format("{0}{1}", uploadPath, virtualPath);
             try
             {

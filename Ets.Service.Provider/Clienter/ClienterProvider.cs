@@ -429,6 +429,9 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="clienter"></param>
         public bool UpdateClientPicInfo(ClienterModel clienter)
         {
+            ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
+            string cacheKey = string.Format(RedissCacheKey.ClienterProvider_GetUserStatus, clienter.Id);
+            redis.Delete(cacheKey);
             return clienterDao.UpdateClientPicInfo(clienter);
         }
 

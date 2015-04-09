@@ -520,7 +520,9 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public int UpdateBusinessPicInfo(int busiId, string picName)
         {
-
+            ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
+            string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, busiId);
+            redis.Delete(cacheKey);
             int upResult = dao.UpdateBusinessPicInfo(busiId, picName);
             return upResult;
 
