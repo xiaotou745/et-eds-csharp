@@ -30,12 +30,7 @@ namespace Ets.Model.DomainModel.GlobalConfig
         /// <summary>
         /// 佣金方式计算方式
         /// </summary>
-        public int CommissionFormulaMode { get; set; }
-         
-        /// <summary>
-        /// 满足金额补贴
-        /// </summary>
-        public string PriceSubsidies { get; set; }
+        public int CommissionFormulaMode { get; set; } 
          
         /// <summary>
         /// 满足金额补贴利润比例
@@ -51,5 +46,12 @@ namespace Ets.Model.DomainModel.GlobalConfig
         /// 是否开启动态时间补贴(0不开启,1开启)
         /// </summary>
         public bool IsStarTimeSubsidies { get; set; }
+        /// 按金额补贴
+        /// 50补贴1元
+        /// 80补贴2元
+        /// 80补贴3元 
+        /// </summary>
+        public string PriceSubsidies { get; set; }
+
     }
 }

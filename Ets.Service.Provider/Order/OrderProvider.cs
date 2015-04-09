@@ -253,6 +253,7 @@ namespace Ets.Service.Provider.Order
                 to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
                 to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
                 to.CommissionFormulaMode = GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode;
+                to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额
             }
             to.Status = ConstValues.ORDER_NEW;
             return to;

@@ -180,7 +180,8 @@ namespace Ets.Dao.Order
           ReceiveAreaCode,  
           OriginalOrderNo,
           BusinessCommission,
-          SettleMoney
+          SettleMoney,
+          Adjustment
          )
  VALUES  ( @OrderNo ,
            @PickUpAddress ,
@@ -213,7 +214,8 @@ namespace Ets.Dao.Order
           @ReceiveAreaCode,  
           @OriginalOrderNo,
           @BusinessCommission,
-          @SettleMoney
+          @SettleMoney,
+          @Adjustment
          )");
 
             IDbParameters parm = DbHelper.CreateDbParameters();
@@ -255,7 +257,7 @@ namespace Ets.Dao.Order
             parm.AddWithValue("@OriginalOrderNo", order.OriginalOrderNo);
             parm.AddWithValue("@BusinessCommission", order.BusinessCommission);
             parm.AddWithValue("@SettleMoney", order.SettleMoney);
-
+            parm.AddWithValue("@Adjustment", order.Adjustment);
             return DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrder.ToString(), parm);
 
         }
