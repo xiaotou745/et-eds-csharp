@@ -34,10 +34,10 @@
                     {
                         <tr>
                             <td>@item.Id</td> 
-                            <td>@item.Time</td>
-                            <td>@item.Price</td>
+                            <td>@item.Value1</td>
+                            <td>@item.Value2</td>
                             <td> 
-                                <a href="javascript:void(0)" onclick="showUpdate(@item.Id,'@item.Time',@item.Price)">修改</a>
+                                <a href="javascript:void(0)" onclick="showUpdate(@item.Id,'@item.Value1',@item.Value2)">修改</a>
                                 <a href="javascript:void(0)" onclick="deleteIt(@item.Id);">删除</a> 
                             </td> 
                         </tr> 
@@ -113,7 +113,7 @@
             alert("请输入价钱!");
             return;
         }
-        var pars = { "Id": 0, "Time": txtTime, "Price": txtPrice };
+        var pars = { "Id": 0, "Value1": txtTime, "Value2": txtPrice };
         var url = "/SubsidyManager/AddTimeSubsidies";
         $.ajax({
             type: 'POST',
@@ -171,7 +171,7 @@
             alert("请输入价钱!");
             return;
         }
-        var pars = { "Id": hidid, "Time": txtTime, "Price": txtPrice };
+        var pars = { "Id": hidid, "Value1": txtTime, "Value2": txtPrice };
         var url = "/SubsidyManager/UpdateTimeSubsidies";
         $.ajax({
             type: 'POST',

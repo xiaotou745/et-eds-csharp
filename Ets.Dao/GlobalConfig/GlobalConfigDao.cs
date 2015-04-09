@@ -67,12 +67,85 @@ namespace Ets.Dao.GlobalConfig
                 else if (item.ItemArray[0].ToString() == "TimeSubsidies")
                 {
                     model.TimeSubsidies = item["Value"].ToString();
-                }else if(item.ItemArray[0].ToString() == "CommissionFormulaMode")
+                }
+                else if(item.ItemArray[0].ToString() == "CommissionFormulaMode")
                     model.CommissionFormulaMode = ParseHelper.ToInt(item["Value"], 0);
+                else if (item.ItemArray[0].ToString() == "PriceSubsidies")
+                    model.PriceSubsidies = item["Value"].ToString();
+                else if (item.ItemArray[0].ToString() == "PriceCommissionRatio")
+                    model.PriceCommissionRatio = ParseHelper.ToDouble(item["Value"], 0);
+                else if (item.ItemArray[0].ToString() == "IsStarTimeSubsidies")
+                    model.IsStarTimeSubsidies = ParseHelper.ToBool(item["Value"],true);
             }
 
             return model;
         }
+
+        /// <summary>
+        /// 获取全局变量表数据CommissionFormulaMode
+        /// 平扬
+        /// 2015年4月9日 11:10:49
+        /// </summary>
+        /// <returns></returns>
+        public string GetCommissionFormulaMode()
+        {
+            string sql = "select Value from GlobalConfig(nolock) where keyname='CommissionFormulaMode'";
+            object dt = DbHelper.ExecuteScalar(SuperMan_Read, sql);
+            if (dt != null)
+            {
+                return dt.ToString();
+            }
+            return "";
+        }
+
+        /// <summary>
+        /// 设置全局变量表数据CommissionFormulaMode
+        /// 平扬 2015年4月8日 11:10:49
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public bool UpdateCommissionFormulaMode(string value)
+        {
+            string sql = "update GlobalConfig set Value=@Value,LastUpdateTime=getdate() where keyname='CommissionFormulaMode'";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("@value", SqlDbType.NVarChar, 100);
+            dbParameters.SetValue("value", value);
+            int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
+            return i > 0;
+        } 
+
+        /// <summary>
+        /// 获取全局变量表数据PriceSubsidies
+        /// 平扬
+        /// 2015年4月9日 11:10:49
+        /// </summary>
+        /// <returns></returns>
+        public string GetPriceSubsidies()
+        {
+            string sql = "select Value from GlobalConfig(nolock) where keyname='PriceSubsidies'";
+            object dt = DbHelper.ExecuteScalar(SuperMan_Read, sql);
+            if (dt != null)
+            {
+                return dt.ToString();
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 设置全局变量表数据PriceSubsidies
+        /// 平扬 2015年4月8日 11:10:49
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public bool UpdatePriceSubsidies(string value)
+        {
+            string sql = "update GlobalConfig set Value=@Value,LastUpdateTime=getdate() where keyname='PriceSubsidies'";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("@value", SqlDbType.NVarChar, 100);
+            dbParameters.SetValue("value", value);
+            int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
+            return i > 0;
+        } 
 
            
         /// <summary>
@@ -109,13 +182,13 @@ namespace Ets.Dao.GlobalConfig
         } 
       
         /// <summary>
-        /// 记录日志 GlobalConfigLog数据TimeSubsidies
+        /// 记录日志 GlobalConfigLog数据
         /// 平扬 2015年4月7日 11:10:49
         /// </summary>
         /// <param name="keyname"></param>
         /// <param name="opName"></param>
         /// <returns></returns>
-        public bool AddTimeSubsidiesLog(string keyname, string opName, string Remark)
+        public bool AddSubsidiesLog(string keyname, string opName, string Remark)
         {
             string sql = @"INSERT INTO GlobalConfigLog
                                (KeyName
@@ -139,5 +212,46 @@ namespace Ets.Dao.GlobalConfig
             object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, dbParameters); 
             return ParseHelper.ToInt(i) > 0;
         }
+
+        /// <summary>
+        /// 获取全局变量表数据
+        /// 平扬
+        /// 2015年4月7日 11:10:49
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public string GetSubsidies(string key)
+        {
+            string sql = "select Value from GlobalConfig(nolock) where keyname=@keyname";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("@keyname", SqlDbType.NVarChar, 100);
+            dbParameters.SetValue("keyname", key);
+            object dt = DbHelper.ExecuteScalar(SuperMan_Read, sql, dbParameters);
+            if (dt != null)
+            {
+                return dt.ToString();
+            }
+            return "";
+        }
+
+        /// <summary>
+        /// 设置全局变量表数据
+        /// 平扬 2015年4月7日 11:10:49
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public bool UpdateSubsidies(string value,string key)
+        {
+            string sql = "update GlobalConfig set Value=@Value,LastUpdateTime=getdate() where keyname=@keyname";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("@value", SqlDbType.NVarChar, 100);
+            dbParameters.SetValue("value", value);
+            dbParameters.Add("@keyname", SqlDbType.NVarChar, 100);
+            dbParameters.SetValue("keyname", key);
+            int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
+            return i > 0;
+        } 
+
     }
 }
