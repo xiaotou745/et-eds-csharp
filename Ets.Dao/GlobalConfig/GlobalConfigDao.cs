@@ -55,7 +55,7 @@ namespace Ets.Dao.GlobalConfig
             {
                 return null;
             }
-            return MapRows<GlobalConfigModel>(dtGlobal)[0];
+            return ConvertDataTableList<GlobalConfigModel>(dtGlobal)[0];
         }
 
         /// <summary>

@@ -252,7 +252,7 @@ namespace Ets.Service.Provider.Order
                 to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
                 to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
                 to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
-                to.CommissionFormulaMode = GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode;
+                to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
                 to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额
             }
             to.Status = ConstValues.ORDER_NEW;
@@ -402,7 +402,7 @@ namespace Ets.Service.Provider.Order
             string orderNo = null; //订单号码
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                paramodel.CommissionFormulaMode = GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode;
+                paramodel.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
                 ISubsidyProvider subsidyProvider = new SubsidyProvider();//补贴记录
                 SubsidyResultModel subsidy = subsidyProvider.GetCurrentSubsidy(paramodel.store_info.group);
                 //计算获得订单骑士佣金
