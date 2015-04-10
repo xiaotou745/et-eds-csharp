@@ -126,8 +126,9 @@ namespace Ets.Service.IProvider.Clienter
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="orderNo"></param>
+        /// <param name="pickupCode">取货码 可空</param>
         /// <returns></returns>
-        string FinishOrder(int userId, string orderNo);
+        string FinishOrder(int userId, string orderNo,string pickupCode=null);
 
         ClienterModel GetUserInfoByUserId(int UserId);
         /// <summary>

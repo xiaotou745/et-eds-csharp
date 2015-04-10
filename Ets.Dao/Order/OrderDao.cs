@@ -71,7 +71,8 @@ namespace Ets.Dao.Order
         b.PhoneNo BusinessPhone,
         b.City PickUpCity,
         b.Longitude BusiLongitude,
-        b.Latitude BusiLatitude ");
+        b.Latitude BusiLatitude,
+        b.GroupId");
             //关联表
             StringBuilder tableListStr = new StringBuilder();
             tableListStr.Append(@" dbo.[order] o WITH ( NOLOCK )
@@ -1106,22 +1107,23 @@ namespace Ets.Dao.Order
         /// <returns></returns>
         public OrderListModel GetOrderInfoByOrderNo(string orderNo)
         {
-            string sql = @" SELECT TOP 1 
+            string sql = @"
+select top 1
         o.[Id] ,
-        o.[OrderNo] , 
+        o.[OrderNo] ,
         o.[Status] ,
-        c.AccountBalance,
-        c.Id clienterId,
-        o.OrderCommission,
-        o.businessId
- FROM   [order] o WITH ( NOLOCK ) 
-        LEFT JOIN dbo.clienter c WITH ( NOLOCK ) ON o.clienterId = c.Id
- WHERE  1 = 1 AND o.OrderNo = @orderNo";
-
-            if (!string.IsNullOrWhiteSpace(orderNo))
-            {
-                sql += " AND OrderNo=@OrderNo";
-            }
+        c.AccountBalance ,
+        c.Id clienterId ,
+        o.OrderCommission ,
+        o.businessId ,
+        b.GroupId ,
+        o.PickupCode
+from    [order] o with ( nolock )
+        left join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
+        left join dbo.business b with ( nolock ) on o.businessId = b.Id
+where   1 = 1
+        and OrderNo = @OrderNo
+";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderNo", SqlDbType.NVarChar);
             parm.SetValue("@OrderNo", orderNo);

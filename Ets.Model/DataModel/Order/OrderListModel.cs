@@ -211,6 +211,10 @@ namespace Ets.Model.DataModel.Order
         /// 商家结算比例
         /// </summary>
         public decimal BusinessCommission { get; set; }
-        
+
+        /// <summary>
+        ///  取货码（目前只有全时再用）
+        /// </summary>
+        public string PickupCode { get; set; }
     }
 }

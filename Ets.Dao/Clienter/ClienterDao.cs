@@ -126,7 +126,8 @@ namespace Ets.Dao.Clienter
                                     b.PhoneNo AS BusinessPhone,
                                     REPLACE(b.City,'市','') AS pickUpCity,
                                     b.Longitude,
-                                    b.Latitude,o.OrderCommission";
+                                    b.Latitude,o.OrderCommission,
+                                    b.GroupId";
             return new PageHelper().GetPages<ClientOrderModel>(SuperMan_Read, criteria.PagingRequest.PageIndex, where, criteria.status == 1 ? "o.ActualDoneDate DESC " : " o.Id ", columnStr, "[order](NOLOCK) AS o LEFT JOIN business(NOLOCK) AS b ON o.businessId=b.Id", criteria.PagingRequest.PageSize, false);
         }
 
@@ -200,7 +201,7 @@ namespace Ets.Dao.Clienter
             string sql = "SELECT TrueName,PhoneNo,AccountBalance FROM dbo.clienter(NOLOCK) WHERE Id=" + UserId;
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             IList<ClienterModel> list = MapRows<ClienterModel>(dt);
-            if (list == null && list.Count <= 0)
+            if (list == null || list.Count <= 0)
             {
                 return null;
             }

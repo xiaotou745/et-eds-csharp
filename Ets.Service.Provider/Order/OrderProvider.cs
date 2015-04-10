@@ -33,6 +33,7 @@ using System.Net.Http;
 using Ets.Dao.User;
 using Ets.Dao.GlobalConfig;
 using Ets.Service.Provider.Common;
+using ETS.Const;
 
 namespace Ets.Service.Provider.Order
 {
@@ -87,6 +88,10 @@ namespace Ets.Service.Provider.Order
                 resultModel.IsPay = from.IsPay.Value;
                 resultModel.Remark = from.Remark == null ? "" : from.Remark;
                 resultModel.Status = from.Status.Value;
+
+                resultModel.GroupId = from.GroupId;
+                if (from.GroupId == SystemConst.Group3) //全时 需要做验证码验证
+                    resultModel.NeedPickupCode = 1;
 
                 if (from.BusiLatitude == null || from.BusiLatitude == 0 || from.BusiLongitude == null || from.BusiLongitude == 0)
                 {
@@ -144,6 +149,10 @@ namespace Ets.Service.Provider.Order
                 resultModel.Amount = amount; //C端 获取订单的金额 Edit bycaoheyang 20150305
                 resultModel.businessName = from.BusinessName;
                 resultModel.businessPhone = from.BusinessPhone;
+
+                resultModel.GroupId = from.GroupId;
+                if (from.GroupId == SystemConst.Group3)
+                    resultModel.NeedPickupCode = 1;
 
                 if (from.PickUpCity != null)
                 {
