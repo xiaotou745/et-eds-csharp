@@ -13,7 +13,9 @@ namespace SuperManCore
         public static readonly ConfigSettings Instance = new ConfigSettings();
 
         private ConfigSettings() { }
-
+        /// <summary>
+        /// 文件上传路径
+        /// </summary>
         public string FileUploadPath
         {
             get

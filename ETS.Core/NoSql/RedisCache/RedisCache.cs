@@ -277,5 +277,26 @@ namespace ETS.NoSql.RedisCache
                 return Redis.ContainsKey(key);
             }
         }
+
+        /// <summary>
+        /// 获取自增数据
+        /// 窦海超
+        /// 2015年4月9日 09:18:02
+        /// </summary>
+        /// <param name="key">键</param>
+        /// <param name="expiredTime">生命周期</param>
+        /// <returns>自增值</returns>
+        public long Incr(string key, DateTime expiredTime)
+        {
+            using (IRedisClient Redis = RedisManager.GetClient())
+            {
+                long tempNum = Redis.IncrementValue(key);
+                if (expiredTime != null)
+                {
+                    Redis.ExpireEntryAt(key, expiredTime);
+                }
+                return tempNum;
+            }
+        }
     }
 }

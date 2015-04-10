@@ -73,7 +73,6 @@ namespace SuperManWebApi.Controllers
             var strUserId = HttpContext.Current.Request.Form["userId"]; //用户Id
             var strIDCard = HttpContext.Current.Request.Form["IDCard"]; //身份证号
             var trueName = HttpContext.Current.Request.Form["trueName"]; //真实姓名
-            //var customer = ClienterLogic.clienterLogic().GetClienterById(int.Parse(strUserId));
             if (!iClienterProvider.CheckClienterExistById(int.Parse(strUserId)))
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidUserId);
@@ -100,34 +99,54 @@ namespace SuperManWebApi.Controllers
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidFileFormat);
             }
             string originSize = "_0_0";
-            var fileHandName = string.Format("{0}_{1}_{2}", DateTime.Now.ToString("yyyyMMddhhmmssfff"), new Random().Next(1000), fileHand.FileName);
-            var fileName = string.Format("{0}_{1}_{2}", DateTime.Now.ToString("yyyyMMddhhmmssfff"), new Random().Next(1000), file.FileName);
+            
+            var fileHandName = ETS.Util.ImageTools.GetFileName("C", Path.GetExtension(fileHand.FileName));
+
+            var fileName = ETS.Util.ImageTools.GetFileName("C", Path.GetExtension(file.FileName));
+             
             int fileHandNameLastDot = fileHandName.LastIndexOf('.');
-            int fileNameLastDot = fileName.LastIndexOf('.');
+            int fileNameLastDot = fileName.LastIndexOf('.'); 
+            //原图
             string rFileHandName = string.Format("{0}{1}{2}", fileHandName.Substring(0, fileHandNameLastDot), originSize, Path.GetExtension(fileHandName));
             string rFileName = string.Format("{0}{1}{2}", fileName.Substring(0, fileNameLastDot), originSize, Path.GetExtension(fileName));
-            if (!System.IO.Directory.Exists(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath))
-            {
-                System.IO.Directory.CreateDirectory(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath);
-            }
-            var fullFilePath = Path.Combine(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath, rFileName);
-            var fullFileHandPath = Path.Combine(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath, rFileHandName);
+            
+            string saveDbFileHandPath;
+            string saveDbFilePath;
 
+            string fullFileHandDir = ETS.Util.ImageTools.CreateDirectory(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath, out saveDbFileHandPath);
+
+            string fullFileDir = ETS.Util.ImageTools.CreateDirectory(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath, out saveDbFilePath);
+
+            if (fullFileHandDir == "0" || fullFileDir == "0")
+            {
+                SuperManCore.LogHelper.LogWriter("上传图片失败：", new { ex = "检查是否有权限创建目录" });
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed);
+            }             
             //保存原图
+            var fullFilePath = Path.Combine(fullFileDir, rFileName);
+            var fullFileHandPath = Path.Combine(fullFileHandDir,rFileHandName);
             file.SaveAs(fullFilePath);
             fileHand.SaveAs(fullFileHandPath);
-
             //裁图
             var transformer = new FixedDimensionTransformerAttribute(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.Width, Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.Height, CustomerIconUploader.Instance.MaxBytesLength / 1024);
-            var destFullFileName = System.IO.Path.Combine(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath, fileName);
+            //保存到数据库的图片路径
+            var destFullFileName = System.IO.Path.Combine(fullFileDir, fileName);
             transformer.Transform(fullFilePath, destFullFileName);
-            var destFullFileHandName = System.IO.Path.Combine(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath, fileHandName);
+
+            var destFullFileHandName = System.IO.Path.Combine(fullFileHandDir, fileHandName);
             transformer.Transform(fullFileHandPath, destFullFileHandName);
-            var picUrl = System.IO.Path.GetFileName(destFullFileName);
-            var picUrlWithHand = System.IO.Path.GetFileName(destFullFileHandName);
-            iClienterProvider.UpdateClientPicInfo(new Ets.Model.DomainModel.Clienter.ClienterModel { Id = int.Parse(strUserId), PicUrl = picUrl, PicWithHandUrl = picUrlWithHand, TrueName = trueName, IDCard = strIDCard });
+
+            var picUrl = saveDbFilePath + fileName;
+
+            var picUrlWithHand =  saveDbFileHandPath + fileHandName;
+
+           var upResult = iClienterProvider.UpdateClientPicInfo(new Ets.Model.DomainModel.Clienter.ClienterModel { Id = int.Parse(strUserId), PicUrl = picUrl, PicWithHandUrl = picUrlWithHand, TrueName = trueName, IDCard = strIDCard });
+           if (!upResult)
+           {
+               return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id = ParseHelper.ToInt(strUserId), ImagePath = picUrl });
+           } 
             var relativePath = System.IO.Path.Combine(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.RelativePath, fileName).ToForwardSlashPath();
-            return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id = 1, ImagePath = relativePath });
+            return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id =ParseHelper.ToInt(strUserId), ImagePath = relativePath });
         }
         /// <summary>
         /// 获取我的任务   根据状态判断是已完成任务还是我的任务
