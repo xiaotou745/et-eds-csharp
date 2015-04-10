@@ -14,7 +14,7 @@ namespace SuperManWebApi.Controllers
     {
         public ActionResult Index()
         {
-            //Ets.Dao.GlobalConfig.GlobalConfigDao home = new Ets.Dao.GlobalConfig.GlobalConfigDao();
+            Ets.Dao.GlobalConfig.GlobalConfigDao home = new Ets.Dao.GlobalConfig.GlobalConfigDao();
 
             ViewBag.Title = "Home Page";
             return View();
