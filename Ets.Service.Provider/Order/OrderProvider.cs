@@ -270,12 +270,11 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public string AddOrder(order order)
         {
-            
-
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 //添加订单
                 int result = OrderDao.AddOrder(order);
+                //iClienterProvider.UpdateClientReceiptPicInfo()
                 if (result > 0)
                 {
                     tran.Complete();

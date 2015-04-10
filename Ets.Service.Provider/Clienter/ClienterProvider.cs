@@ -33,10 +33,7 @@ namespace Ets.Service.Provider.Clienter
         readonly ClienterDao clienterDao = new ClienterDao();
         readonly OrderDao orderDao = new OrderDao();
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
-        //public List<order> GetOrdersNoLoginLatest(ClientOrderSearchCriteria criteria)
-        //{
-        //    return clienterDao.GetOrdersNoLoginLatest(criteria);
-        //}
+         
 
         /// <summary>
         /// 骑士上下班功能 add by caoheyang 20150312
