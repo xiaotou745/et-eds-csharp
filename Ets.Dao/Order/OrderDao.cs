@@ -169,7 +169,8 @@ namespace Ets.Dao.Order
           ReceiveAreaCode,  
           OriginalOrderNo,
           BusinessCommission,
-          SettleMoney
+          SettleMoney,
+          Adjustment
          )
  VALUES  (@OrderNo ,
           @PickUpAddress ,
@@ -202,9 +203,10 @@ namespace Ets.Dao.Order
           @ReceiveAreaCode,  
           @OriginalOrderNo,
           @BusinessCommission,
-          @SettleMoney
-         );");
-             
+          @SettleMoney,
+          @Adjustment
+         );select @@IDENTITY");
+
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderNo", SqlDbType.NVarChar);
             parm.SetValue("@OrderNo", order.OrderNo);
@@ -243,8 +245,15 @@ namespace Ets.Dao.Order
             parm.AddWithValue("@ReceiveAreaCode", order.ReceiveAreaCode);
             parm.AddWithValue("@OriginalOrderNo", order.OriginalOrderNo);
             parm.AddWithValue("@BusinessCommission", order.BusinessCommission);
-            parm.AddWithValue("@SettleMoney", order.SettleMoney); 
-            return DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrder.ToString(), parm);
+            parm.AddWithValue("@SettleMoney", order.SettleMoney);
+            parm.AddWithValue("@Adjustment", order.Adjustment);
+            object i = DbHelper.ExecuteScalar(Config.SuperMan_Write, insertOrder.ToString(), parm);
+            if (i != null)
+            {
+                return int.Parse(i.ToString());
+            }
+            return 0;
+            //return DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrder.ToString(), parm);
 
         }
 
@@ -1091,6 +1100,37 @@ namespace Ets.Dao.Order
             parm.AddWithValue("@AdjustAmount", AdjustAmount);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
+
+        /// <summary>
+        ///添加订单佣金日志
+        /// danny-20150402
+        /// </summary>
+        /// <param name="config"></param>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        public bool addOrderSubsidiesLog(decimal AdjustAmount, int OrderId, string Remark)
+        {
+            string sql =
+                @"INSERT INTO OrderSubsidiesLog
+                                (Price
+                                ,OrderId
+                                ,InsertTime
+                                ,OptName
+                                ,Remark)
+                     VALUES
+                                (@Price
+                                ,@OrderId
+                                ,Getdate()
+                                ,'发布订单'
+                                ,@Remark);"; 
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Price", AdjustAmount);
+            parm.AddWithValue("@OrderId", OrderId);
+            parm.AddWithValue("@Remark", Remark);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+
+        }
+
 
         /// <summary>
         ///添加订单佣金日志

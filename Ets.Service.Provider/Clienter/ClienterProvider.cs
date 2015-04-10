@@ -72,10 +72,8 @@ namespace Ets.Service.Provider.Clienter
                 OrderCommission oCommission = new OrderCommission()
                 {
                     Amount = item.Amount,
-                    CommissionRate = item.CommissionRate,
                     DistribSubsidy = item.DistribSubsidy,
-                    OrderCount = item.OrderCount,
-                    WebsiteSubsidy = item.WebsiteSubsidy
+                    OrderCount = item.OrderCount
                 };
                 #endregion
 
@@ -332,10 +330,8 @@ namespace Ets.Service.Provider.Clienter
                     var oCommission = new OrderCommission()
                     {
                         Amount = item.Amount,
-                        CommissionRate = item.CommissionRate,
                         DistribSubsidy = item.DistribSubsidy,
-                        OrderCount = item.OrderCount,
-                        WebsiteSubsidy = item.WebsiteSubsidy
+                        OrderCount = item.OrderCount
                     };
 
                     #endregion

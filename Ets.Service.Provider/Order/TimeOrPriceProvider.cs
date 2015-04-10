@@ -1,4 +1,5 @@
-﻿using Ets.Model.DataModel.Order;
+﻿using Ets.Dao.GlobalConfig;
+using Ets.Model.DataModel.Order;
 using ETS.Util;
 using System;
 using System.Collections.Generic;
@@ -27,10 +28,7 @@ namespace Ets.Service.Provider.Order
             decimal commissionRate = GetCommissionRate(model); //佣金比例 
             int orderCount = ParseHelper.ToInt(model.OrderCount) ; //佣金比例 
             if (model.DistribSubsidy != null && model.DistribSubsidy > 0)//如果外送费有数据，按照外送费计算骑士佣金
-            {
                 distribe = Convert.ToDecimal(model.DistribSubsidy);
-                return Decimal.Round(Convert.ToDecimal(model.Amount) * commissionRate + distribe * orderCount, 2);//计算佣金
-            }
             else
                 distribe =GetOrderWebSubsidy(model);
             return Decimal.Round(Convert.ToDecimal(model.Amount) * commissionRate + distribe * orderCount, 2);//计算佣金
@@ -43,8 +41,8 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public override decimal GetOrderWebSubsidy(OrderCommission model)
         {
-            return (DateTime.Now.Hour >= 10 && DateTime.Now.Hour <= 13) || (DateTime.Now.Hour >= 16 && DateTime.Now.Hour <= 19) ?
-                    3 : 2;
+            return ParseHelper.ToDecimal((DateTime.Now.Hour >= 10 && DateTime.Now.Hour <= 13) || (DateTime.Now.Hour >= 16 && DateTime.Now.Hour <= 19) ?
+                   GlobalConfigDao.GlobalConfigGet.TimeSpanInPrice : GlobalConfigDao.GlobalConfigGet.TimeSpanOutPrice);
         }
 
         /// <summary>
@@ -54,9 +52,18 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public override decimal GetCommissionRate(OrderCommission model)
         {
-            return ParseHelper.ToDecimal(model.CommissionRate);
+            return ParseHelper.ToDecimal(GlobalConfigDao.GlobalConfigGet.TimeSpanCommissionRatio);
         }
 
+        /// <summary>
+        /// 获取订单的额外补贴金额 add by caoheyang 20150409
+        /// </summary>
+        /// <param name="model">订单</param>
+        /// <returns></returns>
+        public override decimal GetAdjustment(OrderCommission model)
+        {
+            return 0m;
+        }
         #endregion
     }
 }
