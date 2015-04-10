@@ -29,6 +29,14 @@ namespace Ets.Service.Provider.Statistics
                     continue;
                 }
                 HomeCountTitleModel model = new HomeCountTitleModel();
+                #region 获取活跃商家和活跃骑士
+                var temp = statisticsDao.GetCurrentActiveBussinessAndClienter();
+                if (temp != null)
+                {
+                    model.ActiveBusiness = temp.ActiveBusiness;//活跃商家
+                    model.ActiveClienter = temp.ActiveClienter;//活跃骑士
+                }
+                #endregion
                 model = item;
                 model.YkPrice = item.YsPrice - item.YfPrice;
                 model.BusinessAverageOrderCount = ParseHelper.ToDivision(item.OrderCount, item.BusinessCount);//商户平均发布订单
