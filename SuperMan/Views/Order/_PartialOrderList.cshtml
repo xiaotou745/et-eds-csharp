@@ -70,7 +70,8 @@
                 <td style="color:@Html.Raw(val)">@strstatus</td>
                     }
                     <td>
-                        <a href="javascript:void(0)" orderid=@item.Id businessname=@item.BusinessName id="linkView" onclick="funcViewOrder('@item.OrderNo','@item.PubDate','@item.BusinessName','@item.BusinessPhoneNo','@item.BusinessAddress','@item.OrderCommission','@item.DistribSubsidy','@item.WebsiteSubsidy','@item.RecevicePhoneNo','@item.ReceviceName','@item.ReceviceAddress','@item.Amount','@item.IsPay','@item.clienterId','@item.Status','@item.ClienterName')">查看</a>
+                        <a href="/Order/OrderDetail?OrderNo=@item.OrderNo">查看</a>
+                        @*<a href="javascript:void(0)" orderid=@item.Id businessname=@item.BusinessName id="linkView" onclick="funcViewOrder('@item.OrderNo','@item.PubDate','@item.BusinessName','@item.BusinessPhoneNo','@item.BusinessAddress','@item.OrderCommission','@item.DistribSubsidy','@item.WebsiteSubsidy','@item.RecevicePhoneNo','@item.ReceviceName','@item.ReceviceAddress','@item.Amount','@item.IsPay','@item.clienterId','@item.Status','@item.ClienterName')">查看</a>*@
                     </td>
                 </tr>
             }
@@ -82,119 +83,119 @@
 
 
 <!--状态为已完成的订单弹出画面 start-->
-<div class="selectSupplierDish">
-    <div class="add-openbox add-form" id="FinishOrderShow" style="width:500px">
-        <h2>
-            <p id="statusFin">状态</p>
-            <a class="J_closebox x_close"></a>
-        </h2>
+@*<div class="selectSupplierDish">
+        <div class="add-openbox add-form" id="FinishOrderShow" style="width:500px">
+            <h2>
+                <p id="statusFin">状态</p>
+                <a class="J_closebox x_close"></a>
+            </h2>
 
-        <form class="form-horizontal" role="form" id="menufrom" method="post" action="/MenuManagement/Add">
-            <fieldset>
-                <input type="hidden" name="Id" id="hddsupplierdishid" class="form-control">
-                <div class="control-group">
-                    <!-- Text input-->
-                    <label class="control-label" for="input01">订单号</label>
-                    <div class="controls">
-                        <input placeholder="订单号" name="orderNoFin" id="orderNoFin" class="input-xlarge" required="required" type="text">
-                        <p class="help-block"></p>
+            <form class="form-horizontal" role="form" id="menufrom" method="post" action="/MenuManagement/Add">
+                <fieldset>
+                    <input type="hidden" name="Id" id="hddsupplierdishid" class="form-control">
+                    <div class="control-group">
+                        <!-- Text input-->
+                        <label class="control-label" for="input01">订单号</label>
+                        <div class="controls">
+                            <input placeholder="订单号" name="orderNoFin" id="orderNoFin" class="input-xlarge" required="required" type="text">
+                            <p class="help-block"></p>
+                        </div>
                     </div>
-                </div>
-                <div class="control-group">
-                    <!-- Text input-->
-                    <label class="control-label" for="input01">发布时间</label>
-                    <div class="controls">
-                        <input placeholder="发布时间" name="PubDateFin" id="PubDateFin" class="input-xlarge" required="required" type="text">
-                        <p class="help-block"></p>
+                    <div class="control-group">
+                        <!-- Text input-->
+                        <label class="control-label" for="input01">发布时间</label>
+                        <div class="controls">
+                            <input placeholder="发布时间" name="PubDateFin" id="PubDateFin" class="input-xlarge" required="required" type="text">
+                            <p class="help-block"></p>
+                        </div>
                     </div>
-                </div>
-                <div class="control-group">
-                    <!-- Text input-->
-                    <label class="control-label" for="input01">商户信息</label>
-                    <div class="controls">
-                        <input placeholder="商户信息" name="businessNameFin" id="businessNameFin" class="input-xlarge" required="required" type="text">
-                        <p class="help-block"></p>
+                    <div class="control-group">
+                        <!-- Text input-->
+                        <label class="control-label" for="input01">商户信息</label>
+                        <div class="controls">
+                            <input placeholder="商户信息" name="businessNameFin" id="businessNameFin" class="input-xlarge" required="required" type="text">
+                            <p class="help-block"></p>
+                        </div>
                     </div>
-                </div>
-                <div class="control-group">
-                    <!-- Text input-->
-                    <label class="control-label" for="input01">发布人电话</label>
-                    <div class="controls">
-                        <input placeholder="发布人电话" name="businessPhoneFin" id="businessPhoneFin" class="input-xlarge" required="required" type="text">
-                        <p class="help-block"></p>
+                    <div class="control-group">
+                        <!-- Text input-->
+                        <label class="control-label" for="input01">发布人电话</label>
+                        <div class="controls">
+                            <input placeholder="发布人电话" name="businessPhoneFin" id="businessPhoneFin" class="input-xlarge" required="required" type="text">
+                            <p class="help-block"></p>
+                        </div>
                     </div>
-                </div>
-                <div class="control-group">
-                    <!-- Text input-->
-                    <label class="control-label" for="input01">发布人地址</label>
-                    <div class="controls">
-                        <input style="width:320px" placeholder="发布人地址" name="businessAddressFin" id="businessAddressFin" class="input-xlarge" required="required" type="text">
-                        <p class="help-block"></p>
+                    <div class="control-group">
+                        <!-- Text input-->
+                        <label class="control-label" for="input01">发布人地址</label>
+                        <div class="controls">
+                            <input style="width:320px" placeholder="发布人地址" name="businessAddressFin" id="businessAddressFin" class="input-xlarge" required="required" type="text">
+                            <p class="help-block"></p>
+                        </div>
                     </div>
-                </div>
-                <div class="control-group">
-                    <!-- Text input-->
-                    <label class="control-label" for="input01">补贴</label>
-                    <div class="controls">
-                        <input style="width:320px" placeholder="补贴" name="buTieFin" id="buTieFin" class="input-xlarge" required="required" type="text">
-                        <p class="help-block"></p>
+                    <div class="control-group">
+                        <!-- Text input-->
+                        <label class="control-label" for="input01">补贴</label>
+                        <div class="controls">
+                            <input style="width:320px" placeholder="补贴" name="buTieFin" id="buTieFin" class="input-xlarge" required="required" type="text">
+                            <p class="help-block"></p>
+                        </div>
                     </div>
-                </div>
-                <hr />
-                <div class="control-group">
-                    <!-- Text input-->
-                    <label class="control-label" for="input01">收货人电话</label>
-                    <div class="controls">
-                        <input placeholder="收货人电话" name="RecPhoneFin" id="RecPhoneFin" class="input-xlarge" required="required" type="text">
-                        <p class="help-block"></p>
+                    <hr />
+                    <div class="control-group">
+                        <!-- Text input-->
+                        <label class="control-label" for="input01">收货人电话</label>
+                        <div class="controls">
+                            <input placeholder="收货人电话" name="RecPhoneFin" id="RecPhoneFin" class="input-xlarge" required="required" type="text">
+                            <p class="help-block"></p>
+                        </div>
                     </div>
-                </div>
 
-                <div class="control-group">
+                    <div class="control-group">
 
-                    <!-- Text input-->
-                    <label class="control-label" for="input01">收货人地址</label>
-                    <div class="controls">
-                        <input style="width:320px" placeholder="收货人地址" name="RecAddressFin" id="RecAddressFin" class="input-xlarge" required="required" type="text">
-                        <p class="help-block"></p>
+                        <!-- Text input-->
+                        <label class="control-label" for="input01">收货人地址</label>
+                        <div class="controls">
+                            <input style="width:320px" placeholder="收货人地址" name="RecAddressFin" id="RecAddressFin" class="input-xlarge" required="required" type="text">
+                            <p class="help-block"></p>
+                        </div>
                     </div>
-                </div>
 
-                <div class="control-group">
-                    <!-- Text input-->
-                    <label class="control-label" for="input01">订单金额</label>
-                    <div class="controls">
-                        <input placeholder="订单金额" name="AmountFin" id="AmountFin" class="input-xlarge" required="required" type="text">
-                        <p class="help-block"></p>
+                    <div class="control-group">
+                        <!-- Text input-->
+                        <label class="control-label" for="input01">订单金额</label>
+                        <div class="controls">
+                            <input placeholder="订单金额" name="AmountFin" id="AmountFin" class="input-xlarge" required="required" type="text">
+                            <p class="help-block"></p>
+                        </div>
                     </div>
-                </div>
-                <div class="control-group">
-                    <!-- Text input-->
-                    <label class="control-label" for="input01">是否已付款</label>
-                    <div class="controls">
-                        <input placeholder="是否已付款" name="isPayFin" id="isPayFin" class="input-xlarge" required="required" type="text">
-                        <p class="help-block"></p>
+                    <div class="control-group">
+                        <!-- Text input-->
+                        <label class="control-label" for="input01">是否已付款</label>
+                        <div class="controls">
+                            <input placeholder="是否已付款" name="isPayFin" id="isPayFin" class="input-xlarge" required="required" type="text">
+                            <p class="help-block"></p>
+                        </div>
                     </div>
-                </div>
-                <div class="control-group">
-                    <!-- Text input-->
-                    <label class="control-label" for="input01">超人</label>
-                    <div class="controls">
-                        <input placeholder="超人" name="superFin" id="superFin" class="input-xlarge" required="required" type="text">
-                        <p class="help-block"></p>
+                    <div class="control-group">
+                        <!-- Text input-->
+                        <label class="control-label" for="input01">超人</label>
+                        <div class="controls">
+                            <input placeholder="超人" name="superFin" id="superFin" class="input-xlarge" required="required" type="text">
+                            <p class="help-block"></p>
+                        </div>
                     </div>
-                </div>
-            </fieldset>
-        </form>
-        <p class="btnbox">
-            <input value="关闭" type="button" class="J_closebox qxBtn" />
-        </p>
-    </div>
-</div>
+                </fieldset>
+            </form>
+            <p class="btnbox">
+                <input value="关闭" type="button" class="J_closebox qxBtn" />
+            </p>
+        </div>
+    </div>*@
 
 <!--end-->
 <!--状态为待接单的订单弹出画面 start-->
-<div class="selectSupplierDish">
+@*<div class="selectSupplierDish">
     <div class="add-openbox add-form" id="UnfinishOrderShow" style="width:500px">
         <h2>
             <p id="statusUnFin">状态</p>
@@ -252,97 +253,97 @@
                             <p class="help-block"></p>
                         </div>
                     </div>*@
-                <div class="control-group">
-                    <!-- Text input-->
-                    <label class="control-label" for="input01">订单佣金</label>
-                    <div class="controls">
-                        <input placeholder="订单佣金" name="OrderCommissionUnFin" id="OrderCommissionUnFin" class="input-xlarge" required="required" type="text">
-                        <p class="help-block"></p>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <!-- Text input-->
-                    <label class="control-label" for="input01">外送费</label>
-                    <div class="controls">
-                        <input placeholder="外送费" name="DistribSubsidyUnFin" id="DistribSubsidyUnFin" class="input-xlarge" required="required" type="text">
-                        <p class="help-block"></p>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <!-- Text input-->
-                    <label class="control-label" for="input01">网站补贴</label>
-                    <div class="controls">
-                        <input placeholder="网站补贴" name="WebsiteSubsidyUnFin" id="WebsiteSubsidyUnFin" class="input-xlarge" required="required" type="text">
-                        <p class="help-block"></p>
-                    </div>
-                </div>
-                <hr />
-                <div class="control-group">
-                    <!-- Text input-->
-                    <label class="control-label" for="input01">收货人电话</label>
-                    <div class="controls">
-                        <input placeholder="收货人电话" name="RecPhoneUnFin" id="RecPhoneUnFin" class="input-xlarge" required="required" type="text">
-                        <p class="help-block"></p>
-                    </div>
-                </div>
-
-                <div class="control-group">
-
-                    <!-- Text input-->
-                    <label class="control-label" for="input01">收货人地址</label>
-                    <div class="controls">
-                        <input style="width:320px" placeholder="收货人地址" name="RecAddressUnFin" id="RecAddressUnFin" class="input-xlarge" required="required" type="text">
-                        <p class="help-block"></p>
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <!-- Text input-->
-                    <label class="control-label" for="input01">订单金额</label>
-                    <div class="controls">
-                        <input placeholder="订单金额" name="AmountUnFin" id="AmountUnFin" class="input-xlarge" required="required" type="text">
-                        <p class="help-block"></p>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <!-- Text input-->
-                    <label class="control-label" for="input01">是否已付款</label>
-                    <div class="controls">
-                        <input placeholder="是否已付款" name="isPayUnFin" id="isPayUnFin" class="input-xlarge" required="required" type="text">
-                        <p class="help-block"></p>
-                    </div>
-                </div>
-                @*<div class="control-group">
-                    <!-- Text input-->
-                    <label class="control-label" for="input01">指派超人</label>
-                    <div class="controls">
-                        <select id="superSelect" name="superSelect">
-                            <option value="-1">请选择超人</option>
-                            @{
-                                if (ViewBag.superManModel != null)
-                                {
-                                    foreach (var item in ViewBag.superManModel)
-                                    {
-                                        <option id="supperSelect_@item.Id" value="@item.Id">@item.TrueName-@item.PhoneNo</option>
-                                    }
-                                }
-                            }
-                        </select>
-                        <p class="help-block"></p>
-                    </div>
-                </div>*@
-            </fieldset>
-        </form>
-        <p class="btnbox">
-            <input value="确认" type="button" id="btnSuperConfim" class="yesBtn" />
-            <input value="关闭" type="button" class="J_closebox qxBtn" />
-        </p>
+@*<div class="control-group">
+    <!-- Text input-->
+    <label class="control-label" for="input01">订单佣金</label>
+    <div class="controls">
+        <input placeholder="订单佣金" name="OrderCommissionUnFin" id="OrderCommissionUnFin" class="input-xlarge" required="required" type="text">
+        <p class="help-block"></p>
     </div>
 </div>
+<div class="control-group">
+    <!-- Text input-->
+    <label class="control-label" for="input01">外送费</label>
+    <div class="controls">
+        <input placeholder="外送费" name="DistribSubsidyUnFin" id="DistribSubsidyUnFin" class="input-xlarge" required="required" type="text">
+        <p class="help-block"></p>
+    </div>
+</div>*@
+@*<div class="control-group">
+    <!-- Text input-->
+    <label class="control-label" for="input01">网站补贴</label>
+    <div class="controls">
+        <input placeholder="网站补贴" name="WebsiteSubsidyUnFin" id="WebsiteSubsidyUnFin" class="input-xlarge" required="required" type="text">
+        <p class="help-block"></p>
+    </div>
+</div>
+<hr />
+<div class="control-group">
+    <!-- Text input-->
+    <label class="control-label" for="input01">收货人电话</label>
+    <div class="controls">
+        <input placeholder="收货人电话" name="RecPhoneUnFin" id="RecPhoneUnFin" class="input-xlarge" required="required" type="text">
+        <p class="help-block"></p>
+    </div>
+</div>
+
+<div class="control-group">
+
+    <!-- Text input-->
+    <label class="control-label" for="input01">收货人地址</label>
+    <div class="controls">
+        <input style="width:320px" placeholder="收货人地址" name="RecAddressUnFin" id="RecAddressUnFin" class="input-xlarge" required="required" type="text">
+        <p class="help-block"></p>
+    </div>
+</div>
+
+<div class="control-group">
+    <!-- Text input-->
+    <label class="control-label" for="input01">订单金额</label>
+    <div class="controls">
+        <input placeholder="订单金额" name="AmountUnFin" id="AmountUnFin" class="input-xlarge" required="required" type="text">
+        <p class="help-block"></p>
+    </div>
+</div>
+<div class="control-group">
+    <!-- Text input-->
+    <label class="control-label" for="input01">是否已付款</label>
+    <div class="controls">
+        <input placeholder="是否已付款" name="isPayUnFin" id="isPayUnFin" class="input-xlarge" required="required" type="text">
+        <p class="help-block"></p>
+    </div>
+</div>*@
+@*<div class="control-group">
+        <!-- Text input-->
+        <label class="control-label" for="input01">指派超人</label>
+        <div class="controls">
+            <select id="superSelect" name="superSelect">
+                <option value="-1">请选择超人</option>
+                @{
+                    if (ViewBag.superManModel != null)
+                    {
+                        foreach (var item in ViewBag.superManModel)
+                        {
+                            <option id="supperSelect_@item.Id" value="@item.Id">@item.TrueName-@item.PhoneNo</option>
+                        }
+                    }
+                }
+            </select>
+            <p class="help-block"></p>
+        </div>
+    </div>*@
+            @*</fieldset>
+        </form>
+<p class="btnbox">
+    <input value="确认" type="button" id="btnSuperConfim" class="yesBtn" />
+    <input value="关闭" type="button" class="J_closebox qxBtn" />
+</p>
+    </div>
+</div>*@
 <!--end-->
 <script type="text/javascript">
     var adminjs = new adminglass(); //实例化后台类
-    $(function () { 
+    $(function () {
     });
     $('#btnSuperConfim').bind('click', function () {
         var orderCommission = $('#OrderCommissionUnFin').val();
@@ -352,7 +353,7 @@
             alert("订单佣金不能为空！");
             return false;
         }
-        //if (superID == "" || superID == "-1") {            
+        //if (superID == "" || superID == "-1") {
         //    alert("请选择超人!");
         //    return false;
         //}
@@ -375,64 +376,76 @@
                     }
                 });
             }
-        }); 
+        });
         return true;
     });
     function funcViewOrder(id, pubDate, businessName, busiPhone, busiAddress, yongjin, disBuTie, WebBuTie, revPhone, revName, revAddress, Amount, isPay, superId, status, superManName) {
-        if (status == 1 || status == 2 || status == 3) {
-            $("#orderNoFin").val(id).attr('disabled', 'disabled');
-            $("#PubDateFin").val(pubDate).attr('disabled', 'disabled');
-            $("#businessNameFin").val(businessName).attr('disabled', 'disabled');
-            $("#businessPhoneFin").val(busiPhone).attr('disabled', 'disabled');
-            $("#businessAddressFin").val(busiAddress).attr('disabled', 'disabled');
-            var yongjin = "订单佣金:" + yongjin + "," + "外送费:" + disBuTie + "," + "网站补贴:" + WebBuTie;
-            $("#buTieFin").val(yongjin).attr('readonly', 'readonly');
+        var paramaters = { "OrderNo": id, "PubDate": pubDate, "BusinessName": businessName, "BusinessPhoneNo": busiPhone, "BusinessAddress": busiAddress, "OrderCommission": yongjin, "DistribSubsidy": disBuTie, "WebsiteSubsidy": WebBuTie, "RecevicePhoneNo": revPhone, "ReceviceName": revName, "ReceviceAddress": revAddress, "Amount": Amount, "IsPay": isPay, "clienterId": superId, "Status": status, "ClienterName": superManName };
+        window.location.href = "/Order/OrderDetail";
+        //var url = "/Order/OrderDetail";
+        //$.ajax({
+        //    type: 'POST',
+        //    url: url,
+        //    data: paramaters,
+        //    success: function (result) { 
+        //        // window.location.href = "/Order/OrderDetail";
+        //        alert(result);
+        //    }
+        //});
+        //if (status == 1 || status == 2 || status == 3) {
+        //    $("#orderNoFin").val(id).attr('disabled', 'disabled');
+        //    $("#PubDateFin").val(pubDate).attr('disabled', 'disabled');
+        //    $("#businessNameFin").val(businessName).attr('disabled', 'disabled');
+        //    $("#businessPhoneFin").val(busiPhone).attr('disabled', 'disabled');
+        //    $("#businessAddressFin").val(busiAddress).attr('disabled', 'disabled');
+        //    var yongjin = "订单佣金:" + yongjin + "," + "外送费:" + disBuTie + "," + "网站补贴:" + WebBuTie;
+        //    $("#buTieFin").val(yongjin).attr('readonly', 'readonly');
 
-            $("#RecPhoneFin").val(revPhone).attr('disabled', 'disabled');
-            $("#RecAddressFin").val(revAddress).attr('disabled', 'disabled');
-            $("#AmountFin").val(Amount).attr('disabled', 'disabled');
-            if (isPay)
-                $("#isPayFin").val("顾客已付款").attr('disabled', 'disabled');
-            else
-                $("#isPayFin").val('顾客未付款').attr('disabled', 'disabled');
-            $("#superFin").val(superManName).attr('disabled', 'disabled');
-            if (status == 1)
-                $("#statusFin").text("已完成");
-            else if (status == 2) {
-                $("#statusFin").text("已接单");
-            }
-            else {
-                $("#statusFin").text("已取消");
-            }
-            adminjs.openwinbox('#FinishOrderShow');
-        }
-        else if (status == 0 || status == 4) {  //待接单 和 待审核状态下 可以指定超人
-            $("#orderNoUnFin").val(id).attr('disabled', 'disabled');
-            $("#PubDateUnFin").val(pubDate).attr('disabled', 'disabled');
-            $("#businessNameUnFin").val(businessName).attr('disabled', 'disabled');
-            $("#businessPhoneUnFin").val(busiPhone).attr('disabled', 'disabled');
-            $("#businessAddressUnFin").val(busiAddress).attr('disabled', 'disabled');
-            //var yongjin = "订单佣金:" + yongjin + "," + "外送费:" + disBuTie + "," + "网站补贴:" + WebBuTie;
-            $("#OrderCommissionUnFin").val(yongjin);
-            $("#DistribSubsidyUnFin").val(disBuTie).attr('disabled', 'disabled');
-            $("#WebsiteSubsidyUnFin").val(WebBuTie).attr('disabled', 'disabled');
-            //$("#buTieUnFin").val(yongjin).attr('readonly', 'readonly');
-            $("#RecPhoneUnFin").val(revPhone).attr('disabled', 'disabled');
-            $("#RecAddressUnFin").val(revAddress).attr('disabled', 'disabled');
-            $("#AmountUnFin").val(Amount).attr('disabled', 'disabled');
-            if (isPay)
-                $("#isPayUnFin").val("顾客已付款").attr('disabled', 'disabled');
-            else
-                $("#isPayUnFin").val('顾客未付款').attr('disabled', 'disabled');
-            if (status == 0) {
-                $("#statusUnFin").text("待接单");
-            }
-            if (status == 4) {
-                $("#statusUnFin").text("待审核");
-            }
-            $("#superUnFin").val("").removeAttr('disabled');
-            adminjs.openwinbox('#UnfinishOrderShow');
-        }
+        //    $("#RecPhoneFin").val(revPhone).attr('disabled', 'disabled');
+        //    $("#RecAddressFin").val(revAddress).attr('disabled', 'disabled');
+        //    $("#AmountFin").val(Amount).attr('disabled', 'disabled');
+        //    if (isPay)
+        //        $("#isPayFin").val("顾客已付款").attr('disabled', 'disabled');
+        //    else
+        //        $("#isPayFin").val('顾客未付款').attr('disabled', 'disabled');
+        //    $("#superFin").val(superManName).attr('disabled', 'disabled');
+        //    if (status == 1)
+        //        $("#statusFin").text("已完成");
+        //    else if (status == 2) {
+        //        $("#statusFin").text("已接单");
+        //    }
+        //    else {
+        //        $("#statusFin").text("已取消");
+        //    }
+        //    adminjs.openwinbox('#FinishOrderShow');
+        //}
+        //else if (status == 0 || status == 4) {  //待接单 和 待审核状态下 可以指定超人
+        //    $("#orderNoUnFin").val(id).attr('disabled', 'disabled');
+        //    $("#PubDateUnFin").val(pubDate).attr('disabled', 'disabled');
+        //    $("#businessNameUnFin").val(businessName).attr('disabled', 'disabled');
+        //    $("#businessPhoneUnFin").val(busiPhone).attr('disabled', 'disabled');
+        //    $("#businessAddressUnFin").val(busiAddress).attr('disabled', 'disabled');
+        //    //var yongjin = "订单佣金:" + yongjin + "," + "外送费:" + disBuTie + "," + "网站补贴:" + WebBuTie;
+        //    $("#OrderCommissionUnFin").val(yongjin);
+        //    $("#DistribSubsidyUnFin").val(disBuTie).attr('disabled', 'disabled');
+        //    $("#WebsiteSubsidyUnFin").val(WebBuTie).attr('disabled', 'disabled');
+        //    //$("#buTieUnFin").val(yongjin).attr('readonly', 'readonly');
+        //    $("#RecPhoneUnFin").val(revPhone).attr('disabled', 'disabled');
+        //    $("#RecAddressUnFin").val(revAddress).attr('disabled', 'disabled');
+        //    $("#AmountUnFin").val(Amount).attr('disabled', 'disabled');
+        //    if (isPay)
+        //        $("#isPayUnFin").val("顾客已付款").attr('disabled', 'disabled');
+        //    else
+        //        $("#isPayUnFin").val('顾客未付款').attr('disabled', 'disabled');
+        //    if (status == 0) {
+        //        $("#statusUnFin").text("待接单");
+        //    }
+        //    if (status == 4) {
+        //        $("#statusUnFin").text("待审核");
+        //    }
+        //    $("#superUnFin").val("").removeAttr('disabled');
+        //    adminjs.openwinbox('#UnfinishOrderShow');
+        //}
     };
     //关闭弹层
     $('.J_closebox').click(function () {

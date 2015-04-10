@@ -170,7 +170,6 @@
     <Compile Include="Controllers\AdminToolsController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\BusinessCommissionController.cs" />
-    <Compile Include="Controllers\BusinessDistributionStatisticalController.cs" />
     <Compile Include="Controllers\BusinessStatisticalController.cs" />
     <Compile Include="Controllers\CommonController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -529,12 +528,12 @@
     <Content Include="Views\SuperManStatistical\_PartialSuperManStatistical.cshtml" />
     <Content Include="Views\HomeCount\_PartialIndex.cshtml" />
     <Content Include="Views\SubsidyManager\TimeSubsidies.cshtml" />
+    <Content Include="Views\Order\OrderDetail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\app\" />
     <Folder Include="uploads\" />
-    <Folder Include="Views\BusinessDistributionStatistical\" />
     <Folder Include="Views\Test\" />
   </ItemGroup>
   <ItemGroup>
