@@ -65,7 +65,7 @@ namespace Ets.Dao.Statistics
                                   sum(case when DealCount=2 then 1 else 0 end ) as TwoSubsidyOrderCount,
                                   sum(case when DealCount=3 then 1 else 0 end ) as ThreeSubsidyOrderCount
                            FROM [order](NOLOCK) AS o
-                           WHERE   o.[Status]=1 " + where;
+                           WHERE   o.[Status]<>3 " + where;
             sql += " GROUP BY CONVERT(CHAR(10),PubDate,120) ORDER BY PubDate ASC";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             return MapRows<HomeCountTitleModel>(dt);
