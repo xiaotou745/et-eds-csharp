@@ -33,6 +33,7 @@ using System.Net.Http;
 using Ets.Dao.User;
 using Ets.Dao.GlobalConfig;
 using Ets.Service.Provider.Common;
+using Ets.Service.Provider.Clienter;
 
 namespace Ets.Service.Provider.Order
 {
@@ -40,6 +41,8 @@ namespace Ets.Service.Provider.Order
     {
         private OrderDao OrderDao = new OrderDao();
         private BusinessProvider iBusinessProvider = new BusinessProvider();
+        private ClienterProvider iClienterProvider = new ClienterProvider();
+
         private ISubsidyProvider iSubsidyProvider = new SubsidyProvider();
         //和区域有关的  wc
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
@@ -60,6 +63,7 @@ namespace Ets.Service.Provider.Order
                 if (from.clienterId != null)
                     resultModel.userId = from.clienterId.Value;
                 resultModel.OrderNo = from.OrderNo;
+                resultModel.OrderId = from.Id; //订单Id
                 resultModel.OrderCount = from.OrderCount;
                 var orderComm = new OrderCommission() { Amount = from.Amount, CommissionRate = from.CommissionRate, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount, WebsiteSubsidy = from.WebsiteSubsidy };
                 var amount = DefaultOrPriceProvider.GetCurrenOrderPrice(orderComm);
@@ -137,6 +141,7 @@ namespace Ets.Service.Provider.Order
                 if (from.clienterId != null)
                     resultModel.userId = from.clienterId.Value;
                 resultModel.OrderNo = from.OrderNo;
+                resultModel.OrderId = from.Id;  //订单Id
                 resultModel.OrderCount = from.OrderCount;
                 var orderComm = new OrderCommission() { Amount = from.Amount, CommissionRate = from.CommissionRate, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount, WebsiteSubsidy = from.WebsiteSubsidy };
                 var amount = DefaultOrPriceProvider.GetCurrenOrderPrice(orderComm);
@@ -144,7 +149,7 @@ namespace Ets.Service.Provider.Order
                 resultModel.Amount = amount; //C端 获取订单的金额 Edit bycaoheyang 20150305
                 resultModel.businessName = from.BusinessName;
                 resultModel.businessPhone = from.BusinessPhone;
-
+                
                 if (from.PickUpCity != null)
                 {
                     resultModel.pickUpCity = from.PickUpCity.Replace("市", "");
@@ -265,21 +270,30 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public string AddOrder(order order)
         {
-            int result = OrderDao.AddOrder(order);
-            if (result > 0)
+            
+
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity); //激光推送
-                //推送给 VIP
-                if (ConfigSettings.Instance.IsSendVIP == "1")
+                //添加订单
+                int result = OrderDao.AddOrder(order);
+                if (result > 0)
                 {
-                    Push.PushMessageVip(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity, ConfigSettings.Instance.VIPName); //激光推送
+                    tran.Complete();
+                    Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity); //激光推送
+                    //推送给 VIP
+                    if (ConfigSettings.Instance.IsSendVIP == "1")
+                    {
+                        Push.PushMessageVip(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity, ConfigSettings.Instance.VIPName); //激光推送
+                    }
+                    return "1";
                 }
-                return "1";
+                else
+                {
+                    return "0";
+                }
             }
-            else
-            {
-                return "0";
-            }
+
+            
         }
 
         /// <summary>

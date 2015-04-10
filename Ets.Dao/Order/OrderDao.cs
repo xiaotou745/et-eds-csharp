@@ -94,17 +94,6 @@ namespace Ets.Dao.Order
                     whereStr.AppendFormat(" AND b.City = '{0}'", criteria.city);
                 }
             }
-            //if (!string.IsNullOrWhiteSpace(criteria.cityId))
-            //{
-            //    if (criteria.cityId == "1")  //目前北京市 的 id 在 康珍那里是  1 ， 但是 第三方过来的是code  10201 ，需要统一，康珍那里改
-            //    {
-            //        whereStr.AppendFormat(" AND ( b.CityId = '{0}' OR b.CityId = '10201' )", criteria.cityId);
-            //    }
-            //    else
-            //    {
-            //        whereStr.AppendFormat(" AND b.CityId = '{0}'", criteria.cityId);
-            //    }
-            //}
             if (criteria.status != -1 && criteria.status != null)
             {
                 whereStr.AppendFormat(" AND o.[Status] = {0}", criteria.status);
@@ -182,29 +171,29 @@ namespace Ets.Dao.Order
           BusinessCommission,
           SettleMoney
          )
- VALUES  ( @OrderNo ,
-           @PickUpAddress ,
-           @PubDate ,
-           @ReceviceName ,
-           @RecevicePhoneNo ,
-           @ReceviceAddress ,
-           @IsPay ,
-           @Amount ,
-           @OrderCommission ,
-           @DistribSubsidy ,
-           @WebsiteSubsidy ,
-           @Remark ,
-           @OrderFrom ,
-           @Status ,
-           @businessId ,
-           @ReceviceCity ,
-           @ReceviceLongitude ,
-           @ReceviceLatitude ,
-           @OrderCount ,
-           @CommissionRate,
-           @CommissionFormulaMode,
-           @SongCanDate,
-           @Weight1,
+ VALUES  (@OrderNo ,
+          @PickUpAddress ,
+          @PubDate ,
+          @ReceviceName ,
+          @RecevicePhoneNo ,
+          @ReceviceAddress ,
+          @IsPay ,
+          @Amount ,
+          @OrderCommission ,
+          @DistribSubsidy ,
+          @WebsiteSubsidy ,
+          @Remark ,
+          @OrderFrom ,
+          @Status ,
+          @businessId ,
+          @ReceviceCity ,
+          @ReceviceLongitude ,
+          @ReceviceLatitude ,
+          @OrderCount ,
+          @CommissionRate,
+          @CommissionFormulaMode,
+          @SongCanDate,
+          @Weight1,
           @Quantity1,
           @ReceiveProvince ,
           @ReceiveProvinceCode , 
@@ -214,8 +203,8 @@ namespace Ets.Dao.Order
           @OriginalOrderNo,
           @BusinessCommission,
           @SettleMoney
-         )");
-
+         );");
+             
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderNo", SqlDbType.NVarChar);
             parm.SetValue("@OrderNo", order.OrderNo);
@@ -254,8 +243,7 @@ namespace Ets.Dao.Order
             parm.AddWithValue("@ReceiveAreaCode", order.ReceiveAreaCode);
             parm.AddWithValue("@OriginalOrderNo", order.OriginalOrderNo);
             parm.AddWithValue("@BusinessCommission", order.BusinessCommission);
-            parm.AddWithValue("@SettleMoney", order.SettleMoney);
-
+            parm.AddWithValue("@SettleMoney", order.SettleMoney); 
             return DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrder.ToString(), parm);
 
         }

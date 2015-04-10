@@ -12,7 +12,7 @@ namespace Ets.Service.IProvider.Clienter
 {
     public interface IClienterProvider
     {
-        List<order> GetOrdersNoLoginLatest(ClientOrderSearchCriteria criteria);
+        //List<order> GetOrdersNoLoginLatest(ClientOrderSearchCriteria criteria);
 
         /// <summary>
         /// 骑士上下班功能 add by caoheyang 20150312
@@ -149,6 +149,6 @@ namespace Ets.Service.IProvider.Clienter
         /// </summary>
         /// <param name="uploadReceiptModel"></param>
         /// <returns></returns>
-        string UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel);
+        OrderOther UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel);
     }
 }

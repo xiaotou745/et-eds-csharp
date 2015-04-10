@@ -98,7 +98,6 @@ namespace SuperManWebApi.Controllers
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidFileFormat);
             }
-            string originSize = "_0_0";
             
             var fileHandName = ETS.Util.ImageTools.GetFileName("C", Path.GetExtension(fileHand.FileName));
 
@@ -107,15 +106,15 @@ namespace SuperManWebApi.Controllers
             int fileHandNameLastDot = fileHandName.LastIndexOf('.');
             int fileNameLastDot = fileName.LastIndexOf('.'); 
             //原图
-            string rFileHandName = string.Format("{0}{1}{2}", fileHandName.Substring(0, fileHandNameLastDot), originSize, Path.GetExtension(fileHandName));
-            string rFileName = string.Format("{0}{1}{2}", fileName.Substring(0, fileNameLastDot), originSize, Path.GetExtension(fileName));
+            string rFileHandName = string.Format("{0}{1}{2}", fileHandName.Substring(0, fileHandNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileHandName));
+            string rFileName = string.Format("{0}{1}{2}", fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
             
             string saveDbFileHandPath;
             string saveDbFilePath;
 
-            string fullFileHandDir = ETS.Util.ImageTools.CreateDirectory(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath, out saveDbFileHandPath);
+            string fullFileHandDir = ETS.Util.ImageTools.CreateDirectory(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath,"", out saveDbFileHandPath);
 
-            string fullFileDir = ETS.Util.ImageTools.CreateDirectory(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath, out saveDbFilePath);
+            string fullFileDir = ETS.Util.ImageTools.CreateDirectory(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath,"", out saveDbFilePath);
 
             if (fullFileHandDir == "0" || fullFileDir == "0")
             {
@@ -584,7 +583,11 @@ namespace SuperManWebApi.Controllers
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.NOFormParameter);
             }
-            var orderNo = HttpContext.Current.Request.Form["OrderNo"]; //订单号
+            var orderId = ParseHelper.ToInt( HttpContext.Current.Request.Form["OrderId"],0); //订单号
+            if (orderId == 0)
+            {
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidOrderId);
+            }
             var needUploadCount = ParseHelper.ToInt(HttpContext.Current.Request.Form["NeedUploadCount"], 1); //该订单总共需要上传的 小票数量
             var version = HttpContext.Current.Request.Form["Version"]; //版本号  1.0
             if (HttpContext.Current.Request.Files.Count == 0)
@@ -600,19 +603,17 @@ namespace SuperManWebApi.Controllers
             catch (Exception)
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidFileFormat);
-            }
-            string originSize = "_0_0";
-             
+            } 
             var fileName = ETS.Util.ImageTools.GetFileName(Path.GetExtension(file.FileName));
 
             
             int fileNameLastDot = fileName.LastIndexOf('.');
             //原图 
-            string rFileName = string.Format("{0}{1}{2}", fileName.Substring(0, fileNameLastDot), originSize, Path.GetExtension(fileName));
+            string rFileName = string.Format("{0}{1}{2}", fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
              
             string saveDbFilePath;
              
-            string fullFileDir = ETS.Util.ImageTools.CreateDirectory(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath, out saveDbFilePath);
+            string fullFileDir = ETS.Util.ImageTools.CreateDirectory(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath,orderId.ToString(), out saveDbFilePath);
 
             if (fullFileDir == "0")
             {
@@ -632,22 +633,22 @@ namespace SuperManWebApi.Controllers
              
             var picUrl = saveDbFilePath + fileName;
 
-            var upResult = iClienterProvider.UpdateClientReceiptPicInfo(new Ets.Model.ParameterModel.Clienter.UploadReceiptModel
+            var orderOther = iClienterProvider.UpdateClientReceiptPicInfo(new Ets.Model.ParameterModel.Clienter.UploadReceiptModel
             {
-                OrderNo = orderNo,
+                OrderId = orderId,
                 NeedUploadCount = needUploadCount,
                 ReceiptPic = picUrl,
                 HadUploadCount = 1
             });
-            if (upResult == "0")
+            if (orderOther != null)
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed, new Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel() { OrderNo = orderNo });
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed, new Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel() { OrderId = orderId });
             }
             else
             {
                 //上传成功后返回图片全路径
                 var relativePath = System.IO.Path.Combine(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.RelativePath, fileName).ToForwardSlashPath();
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel() { OrderNo = orderNo });
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel() { OrderId = orderId, HadUploadCount=orderOther.HadUploadCount, NeedUploadCount = needUploadCount});
             }
         } 
 

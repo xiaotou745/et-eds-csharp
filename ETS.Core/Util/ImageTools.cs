@@ -27,11 +27,20 @@ namespace ETS.Util
         /// 创建图片上传目录
         /// </summary>
         /// <param name="uploadPath">图片上传的物理路径</param>
+        /// <param name="saveDir">保存到哪个文件夹下,没有的话就传空字符串</param>
         /// <returns></returns>
-        public static string CreateDirectory(string uploadPath,out string virtualPath )
+        public static string CreateDirectory(string uploadPath,string saveDir,out string virtualPath)
         {
             DateTime dateTime = DateTime.Now;
-            virtualPath = DateTime.Now.ToString("/yyyy/MM/dd/HH/");
+            if (string.IsNullOrWhiteSpace(saveDir))
+            {
+                virtualPath =  DateTime.Now.ToString("/yyyy/MM/dd/HH/");
+            }
+            else
+            {
+                virtualPath = DateTime.Now.ToString("/yyyy/MM/dd/HH/") + saveDir + "/";
+            }
+            
             string fileUploadDir = string.Format("{0}{1}", uploadPath, virtualPath);
             try
             {

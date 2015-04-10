@@ -8,6 +8,7 @@ namespace Ets.Model.DomainModel.Clienter
 {
     public class ClientOrderModel
     {
+        public int OrderId { get; set; }
         public int UserId { get; set; }
         public string OrderNo { get; set; }
         public string OriginalOrderNo { get; set; }

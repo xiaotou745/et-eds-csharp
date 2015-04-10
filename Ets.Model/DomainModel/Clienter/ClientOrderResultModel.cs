@@ -13,6 +13,10 @@ namespace Ets.Model.DomainModel.Clienter
         /// </summary>
         public int userId { get; set; }
         /// <summary>
+        /// 订单Id
+        /// </summary>
+        public int OrderId { get; set; }
+        /// <summary>
         /// 订单号
         /// </summary>
         public string OrderNo { get; set; }
@@ -97,6 +101,10 @@ namespace Ets.Model.DomainModel.Clienter
         /// 订单号
         /// </summary>
         public string OrderNo { get; set; }
+        /// <summary>
+        /// 订单Id
+        /// </summary>
+        public int OrderId { get; set; }
         /// <summary>
         /// 源订单号
         /// </summary>

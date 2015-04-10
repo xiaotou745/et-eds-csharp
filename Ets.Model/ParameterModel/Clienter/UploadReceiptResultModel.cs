@@ -8,8 +8,16 @@ namespace Ets.Model.ParameterModel.Clienter
 {
     public class UploadReceiptResultModel
     {
-        public string OrderNo { get; set; }
+        public int OrderId { get; set; }
         public string[] ImagePath { get; set; }
-        public string Status { get; set; }
+        /// <summary>
+        /// 该订单总共需要上传的小票张数
+        /// </summary>
+        public int NeedUploadCount { get; set; }
+
+        /// <summary>
+        /// 已经上传的小票张数
+        /// </summary>
+        public int HadUploadCount { get; set; }
     }
 }

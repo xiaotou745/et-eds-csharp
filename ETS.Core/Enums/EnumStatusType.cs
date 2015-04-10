@@ -228,7 +228,8 @@ namespace ETS.Enums
 
         [DisplayText("无效的用户")]
         InvalidUserId,
-
+        [DisplayText("无效的订单号")]
+        InvalidOrderId,
         [DisplayText("真实姓名不能为空")]
         TrueNameEmpty,
 

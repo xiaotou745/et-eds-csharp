@@ -33,10 +33,10 @@ namespace Ets.Service.Provider.Clienter
         readonly ClienterDao clienterDao = new ClienterDao();
         readonly OrderDao orderDao = new OrderDao();
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
-        public List<order> GetOrdersNoLoginLatest(ClientOrderSearchCriteria criteria)
-        {
-            return clienterDao.GetOrdersNoLoginLatest(criteria);
-        }
+        //public List<order> GetOrdersNoLoginLatest(ClientOrderSearchCriteria criteria)
+        //{
+        //    return clienterDao.GetOrdersNoLoginLatest(criteria);
+        //}
 
         /// <summary>
         /// 骑士上下班功能 add by caoheyang 20150312
@@ -70,6 +70,7 @@ namespace Ets.Service.Provider.Clienter
                 ClientOrderResultModel model = new ClientOrderResultModel();
                 model.userId = item.UserId;
                 model.OrderNo = item.OrderNo;
+                model.OrderId = item.OrderId;
                 #region 骑士佣金计算
                 OrderCommission oCommission = new OrderCommission()
                 {
@@ -562,7 +563,7 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="uploadReceiptModel"></param>
         /// <returns></returns>
-        public string UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel)
+        public OrderOther UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel)
         {
             return clienterDao.UpdateClientReceiptPicInfo(uploadReceiptModel);
         }

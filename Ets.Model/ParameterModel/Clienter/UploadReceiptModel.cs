@@ -12,15 +12,16 @@ namespace Ets.Model.ParameterModel.Clienter
     public class UploadReceiptModel
     {
         /// <summary>
-        /// 订单号
+        /// 订单Id 订单表主键
         /// </summary>
-        public string OrderNo { get; set; }
+        public int OrderId { get; set; }
+        
         /// <summary>
         /// 总共需要上传的小票数量
         /// </summary>
         public int NeedUploadCount { get; set; }
         /// <summary>
-        /// 图片名称，带目录结构，年月日时 例如 ：  /2014/01/02/12/tupian.jpg
+        /// 图片名称，带目录结构，年月日时 例如 ：  /2014/01/02/12/订单Id/tupian.jpg
         /// </summary>
         public string ReceiptPic { get; set; }
         /// <summary>
