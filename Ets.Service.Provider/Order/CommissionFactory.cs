@@ -23,6 +23,8 @@ namespace Ets.Service.Provider.Order
                     return new TimeOrPriceProvider();
                 case 2:
                     return new BreakEvenPointOrPriceProvider();
+                case 3:
+                    return new AmountOrPriceProvider();
                 default:
                     return new DefaultOrPriceProvider();
             }
