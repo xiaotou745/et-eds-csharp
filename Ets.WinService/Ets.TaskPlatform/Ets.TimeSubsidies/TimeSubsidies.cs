@@ -35,21 +35,22 @@ namespace Ets.TimeSubsidies
             ETS.Util.Log.WriteTextToFile("服务开始了", Config.ConfigKey("LogPath"), true);
             while (true)
             {
-                bool IsStarTimeSubsidies = ETS.Util.ParseHelper.ToBool(GlobalConfigDao.GlobalConfigGet.IsStarTimeSubsidies, false);//是否开启动态时间补贴(0不开启,1开启)
-                if (IsStarTimeSubsidies)
+                ///三十秒执行一次
+                try
                 {
-                    ///三十秒执行一次
-                    try
+                    bool IsStarTimeSubsidies = Convert.ToBoolean(ETS.Util.ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.IsStarTimeSubsidies, 0));//是否开启动态时间补贴(0不开启,1开启)
+                    if (IsStarTimeSubsidies)
                     {
                         Ets.Service.Provider.Order.AutoAdjustProvider autoAdjustProvider = new Ets.Service.Provider.Order.AutoAdjustProvider();
                         autoAdjustProvider.AdjustOrderService();
                     }
-                    catch (Exception ex)
-                    {
-                        //ETS.Util.LogHelper.LogWriter("主方法体错了:" + ex.Message);
-                        ETS.Util.Log.WriteTextToFile("当前时间:" + DateTime.Now.ToString() + "主方法体错了:" + ex.Message, Config.ConfigKey("LogPath"), true);
-                    }
                 }
+                catch (Exception ex)
+                {
+                    //ETS.Util.LogHelper.LogWriter("主方法体错了:" + ex.Message);
+                    ETS.Util.Log.WriteTextToFile("当前时间:" + DateTime.Now.ToString() + "主方法体错了:" + ex.Message, Config.ConfigKey("LogPath"), true);
+                }
+
                 Thread.Sleep(30 * 1000);//睡眠30秒
             }
 
