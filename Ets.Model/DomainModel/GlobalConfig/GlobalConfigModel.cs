@@ -46,6 +46,8 @@ namespace Ets.Model.DomainModel.GlobalConfig
         /// 是否开启动态时间补贴(0不开启,1开启)
         /// </summary>
         public string IsStarTimeSubsidies { get; set; }
+
+        /// <summary>
         /// 按金额补贴
         /// 50补贴1元
         /// 80补贴2元

@@ -67,7 +67,7 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public override decimal GetAdjustment(OrderCommission model)
         {
-            string globalConfigModel = Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet.PriceSubsidies;
+            string globalConfigModel = Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet.PriceSubsidies.TrimEnd(';');
             var globalConfigList = globalConfigModel.Split(';');
             decimal adjustment = 0m; //额外补贴金额
             for (int i = globalConfigList.Length - 1; i >= 0; i--)
