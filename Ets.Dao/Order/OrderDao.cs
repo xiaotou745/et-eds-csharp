@@ -144,6 +144,73 @@ namespace Ets.Dao.Order
         }
         #endregion
 
+           /// <summary>
+        /// 订单状态查询功能  add by caoheyang 20150316
+        /// </summary>
+        /// <param name="orderNo">订单号码</param>
+        /// <param name="groupId">集团id</param>
+        /// <returns>订单状态</returns>
+        public OrderListModel GetOpenOrder(string originalOrderNo, int groupId)
+        {
+            string sql = @"SELECT top 1 o.[Id]
+                                        ,o.[OrderNo]
+                                        ,o.[PickUpAddress]
+                                        ,o.[PubDate]
+                                        ,o.[ReceviceName]
+                                        ,o.[RecevicePhoneNo]
+                                        ,o.[ReceviceAddress]
+                                        ,o.[ActualDoneDate]
+                                        ,o.[IsPay]
+                                        ,o.[Amount]
+                                        ,o.[OrderCommission]
+                                        ,o.[DistribSubsidy]
+                                        ,o.[WebsiteSubsidy]
+                                        ,o.[Remark]
+                                        ,o.[Status]
+                                        ,o.[clienterId]
+                                        ,o.[businessId]
+                                        ,o.[ReceviceCity]
+                                        ,o.[ReceviceLongitude]
+                                        ,o.[ReceviceLatitude]
+                                        ,o.[OrderFrom]
+                                        ,o.[OriginalOrderId]
+                                        ,o.[OriginalOrderNo]
+                                        ,o.[Quantity]
+                                        ,o.[Weight]
+                                        ,o.[ReceiveProvince]
+                                        ,o.[ReceiveArea]
+                                        ,o.[ReceiveProvinceCode]
+                                        ,o.[ReceiveCityCode]
+                                        ,o.[ReceiveAreaCode]
+                                        ,o.[OrderType]
+                                        ,o.[KM]
+                                        ,o.[GuoJuQty]
+                                        ,o.[LuJuQty]
+                                        ,o.[SongCanDate]
+                                        ,o.[OrderCount]
+                                        ,o.[CommissionRate] 
+                                        ,b.[City] BusinessCity
+                                        ,b.Name BusinessName
+                                        ,c.PhoneNo ClienterPhoneNo
+                                        ,c.TrueName ClienterName
+                                        ,b.GroupId
+                                        ,o.OriginalOrderNo
+                                    FROM [order] o WITH ( NOLOCK )
+                                    LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
+                                     LEFT JOIN dbo.clienter c WITH (NOLOCK) ON o.clienterId=c.Id
+                                    WHERE 1=1 and o.OriginalOrderNo=@OriginalOrderNo and b.groupid=@GroupId";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@OriginalOrderNo", SqlDbType.NVarChar);
+            parm.SetValue("@OriginalOrderNo", originalOrderNo);
+            parm.Add("@GroupId", SqlDbType.Int);
+            parm.SetValue("@GroupId", groupId);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (dt == null || dt.Rows.Count <= 0)
+                return null;
+            return MapRows<OrderListModel>(dt)[0];
+        }
+        
+
         public int AddOrder(Model.DataModel.Order.order order)
         {
             StringBuilder insertOrder = new StringBuilder();

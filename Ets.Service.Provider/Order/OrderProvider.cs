@@ -185,7 +185,7 @@ namespace Ets.Service.Provider.Order
                     {
                         Degree degree1 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);  //商户经纬度
                         Degree degree2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);  //收货人经纬度
-                        var res =ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
+                        var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
                         resultModel.distanceB2R = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
                     }
                     else
@@ -242,13 +242,17 @@ namespace Ets.Service.Provider.Order
             if (subsidy != null)
             {
                 //必须写to.DistribSubsidy ，防止bussiness为空情况
-                OrderCommission orderComm = new OrderCommission() { Amount = busiOrderInfoModel.Amount, /*订单金额*/ 
-                    CommissionRate = subsidy.OrderCommission/*佣金比例*/, DistribSubsidy = to.DistribSubsidy,/*外送费*/
-                    OrderCount = busiOrderInfoModel.OrderCount/*订单数量*/, WebsiteSubsidy = subsidy.WebsiteSubsidy,/*网站补贴*/
+                OrderCommission orderComm = new OrderCommission()
+                {
+                    Amount = busiOrderInfoModel.Amount, /*订单金额*/
+                    CommissionRate = subsidy.OrderCommission/*佣金比例*/,
+                    DistribSubsidy = to.DistribSubsidy,/*外送费*/
+                    OrderCount = busiOrderInfoModel.OrderCount/*订单数量*/,
+                    WebsiteSubsidy = subsidy.WebsiteSubsidy,/*网站补贴*/
                     BusinessCommission = to.BusinessCommission /*商户结算比例*/
                 };
                 OrderPriceProvider commProvider = CommissionFactory.GetCommission();
-                to.CommissionRate =commProvider.GetCommissionRate(orderComm)  ; //佣金比例 
+                to.CommissionRate = commProvider.GetCommissionRate(orderComm); //佣金比例 
                 to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
                 to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
                 to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
@@ -370,9 +374,12 @@ namespace Ets.Service.Provider.Order
         {
             #region 设置门店的省市区编码信息 add by caoheyang 20150407
             string storecodeInfo = new AreaProvider().GetOpenCode(new Ets.Model.ParameterModel.Area.ParaAreaNameInfo()
-            { ProvinceName = paramodel.store_info.province, CityName = paramodel.store_info.city,
-              AreaName=paramodel.store_info.area});
-            if (storecodeInfo == ETS.Const.SystemConst.CityOpenInfo||string.IsNullOrWhiteSpace(storecodeInfo)) 
+            {
+                ProvinceName = paramodel.store_info.province,
+                CityName = paramodel.store_info.city,
+                AreaName = paramodel.store_info.area
+            });
+            if (storecodeInfo == ETS.Const.SystemConst.CityOpenInfo || string.IsNullOrWhiteSpace(storecodeInfo))
                 return ResultModel<object>.Conclude(OrderApiStatusType.ParaError, "门店省市区信息错误");
             else
             {
@@ -381,7 +388,7 @@ namespace Ets.Service.Provider.Order
                 paramodel.store_info.city_code = storeCodes[1];
                 paramodel.store_info.area_code = storeCodes[2];
             }
-            #endregion 
+            #endregion
             #region 设置用户的省市区编码信息 add by caoheyang 20150407
             string orderCodeInfo = new AreaProvider().GetOpenCode(new Ets.Model.ParameterModel.Area.ParaAreaNameInfo()
             {
@@ -424,8 +431,8 @@ namespace Ets.Service.Provider.Order
                         , string.Empty, paramodel.address.city); //激光推送   
                 tran.Complete();
             }
-               return string.IsNullOrWhiteSpace(orderNo) ? ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :
-                ResultModel<object>.Conclude(OrderApiStatusType.Success, new { order_no = orderNo });
+            return string.IsNullOrWhiteSpace(orderNo) ? ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :
+             ResultModel<object>.Conclude(OrderApiStatusType.Success, new { order_no = orderNo });
         }
 
         /// <summary>
@@ -446,9 +453,15 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <param name="paramodel">参数实体</param>
         /// <returns>订单详情</returns>
-        public OrderDetailDM_OpenApi OrderDetail(OrderDetailPM_OpenApi paramodel)
+        public ResultModel<object> OrderDetail(OrderDetailPM_OpenApi paramodel)
         {
-            return null;
+            OrderDao OrderDao = new OrderDao();
+            OrderListModel order = OrderDao.GetOpenOrder(paramodel.order_no, paramodel.GroupId);
+            return order == null ? ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :
+                ResultModel<object>.Conclude(OrderApiStatusType.Success, new
+                {
+                    orderinfo = new { order_status = order.Status, clientername = order.ClienterName, clienterphoneno = order.ClienterPhoneNo }
+                });
         }
 
         /// <summary>
@@ -571,9 +584,9 @@ namespace Ets.Service.Provider.Order
             //转换省
             var _province = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.Receive_Province, JiBie = 1 });
             if (_province != null)
-            { 
+            {
                 model.Receive_ProvinceCode = _province.NationalCode.ToString();
-            } 
+            }
             //转换市
             var _city = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.Receive_City, JiBie = 2 });
             if (_city != null)

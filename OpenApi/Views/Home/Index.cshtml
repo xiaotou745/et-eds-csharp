@@ -107,6 +107,31 @@
     //        })
     //    });
     //});
+
+    $(function () {
+        $(function () {
+            $.ajax({
+                type: 'post',
+                datatype: 'json',
+                url: '/order/OrderDetail',
+                data: {
+                    "app_key": "fulltime",
+                    "timestamp": "2015-03-11 20:42:33",
+                    "v": "1.0",
+                    "sign": "8C59077F13F16FAD71A9E9D053CF215F",
+                    "fields": {
+                        "order_no": "3"
+                    }
+                },
+                success: function (data) {
+                                console.log(data);
+                            },
+                            error: function () {
+
+                            }
+            })
+        });
+    });
 </script>
 <div class="row">
     <div class="col-md-4">

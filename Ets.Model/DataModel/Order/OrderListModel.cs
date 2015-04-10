@@ -145,8 +145,17 @@ namespace Ets.Model.DataModel.Order
         /// 送餐时间
         /// </summary>
         public string SongCanDate { get; set; }
+       
+        /// <summary>
+        /// 订单数量
+        /// </summary>
         public int OrderCount { get; set; }
+        
+        /// <summary>
+        /// 佣金比例
+        /// </summary>
         public decimal CommissionRate { get; set; }
+        
         public string OrderSign { get; set; }
 
         /// <summary>
