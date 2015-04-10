@@ -252,7 +252,7 @@ namespace Ets.Service.Provider.Order
                 to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
                 to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
                 to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
-                to.CommissionFormulaMode = GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode;
+                to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
                 to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额
             }
             to.Status = ConstValues.ORDER_NEW;
@@ -269,6 +269,10 @@ namespace Ets.Service.Provider.Order
             int result = OrderDao.AddOrder(order);
             if (result > 0)
             {
+                if (order.Adjustment > 0)
+                {
+                    OrderDao.addOrderSubsidiesLog(order.Adjustment, result, "补贴加钱,订单金额:" + order.Amount + "-佣金补贴策略id:" + order.CommissionFormulaMode);
+                } 
                 Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity); //激光推送
                 //推送给 VIP
                 if (ConfigSettings.Instance.IsSendVIP == "1")
@@ -402,7 +406,7 @@ namespace Ets.Service.Provider.Order
             string orderNo = null; //订单号码
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                paramodel.CommissionFormulaMode = GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode;
+                paramodel.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
                 ISubsidyProvider subsidyProvider = new SubsidyProvider();//补贴记录
                 SubsidyResultModel subsidy = subsidyProvider.GetCurrentSubsidy(paramodel.store_info.group);
                 //计算获得订单骑士佣金

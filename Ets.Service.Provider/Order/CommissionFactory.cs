@@ -15,7 +15,7 @@ namespace Ets.Service.Provider.Order
     {
         public static OrderPriceProvider GetCommission()
         {
-            switch (GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode)
+            switch (ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode))
             {
                 case 0:
                     return new DefaultOrPriceProvider();

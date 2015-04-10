@@ -1,0 +1,155 @@
+﻿@model IList<Ets.Model.Common.TestUserModel>
+@{
+    ViewBag.Title = "TestUserManager";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：管理员 > 管理测试账号
+    </h2>
+    <div class="SearchMd">
+        <table border="0" cellspacing="0" cellpadding="0"> 
+            <tr>
+                <td>  
+                    <input type="submit" value="新增测试手机号" class="searchBtn" onclick="showAdd();" id="btnAdd" /> 
+                </td>
+            </tr>
+        </table>
+    </div>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+        <thead> 
+            <tr class="tdbg">
+                <th width="%5">编号</th>
+                <th>测试手机号</th>
+                <th>角色</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                if (Model != null)
+                { 
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Id</td> 
+                            <td>@item.PhoneNo</td>
+                            <td>@(item.IsC==1?"骑士":"") - @(item.IsB==1?"商户":"")</td>
+                            <td>
+                                <a href="javascript:void(0)" onclick="deleteClienter(@item.PhoneNo)">删除骑士</a>
+                                <a href="javascript:void(0)" onclick="deleteOrder(@item.PhoneNo);">删除订单</a>
+                                <a href="javascript:void(0)" onclick="deleteBusi(@item.PhoneNo);">删除商户</a> 
+                            </td>
+                        </tr> 
+                    }
+                }
+            }
+        </tbody> 
+    </table>
+</div>
+<div>
+    <div class="add-openbox add-form" id="addDiv" style="width:500px">
+        <h2>
+            <p id="statusFin">新增测试账号</p>
+        </h2>
+        <fieldset>
+            <div class="control-group" style="width: 250px;margin: 0 auto;">
+                <label>测试手机号</label> 
+                <input  name="txtPhone" id="txtPhone" type="text">
+            </div> 
+        </fieldset>
+        <p class="btnbox">
+            <input value="确认" type="button" id="btnConfimAdd" class="yesBtn" />                
+            <input value="关闭" type="button" class="J_closebox qxBtn" />
+        </p>
+    </div>
+</div>
+ 
+<script>
+    var adminjs = new adminglass(); //实例化后台类  
+    //新增
+    $("#btnConfimAdd").on('click', function () {
+        var phoneNo = $("#txtPhone").val();
+        if (phoneNo=="" || isNaN(phoneNo)) {
+            alert("请输入手机号!");
+            return;
+        }
+        var pars = { "phoneNo": phoneNo };
+        var url = "/TestUserManager/AddTestUser";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: pars,
+            dataType: 'json',
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert("添加成功!");
+                    window.location.href = "/TestUserManager/TestUserManager/";
+                } else {
+                    alert("添加失败!");
+                }
+            }
+        });
+    });
+
+    ///删除骑士
+    function deleteClienter(phone) {
+        if (confirm("确定删除该骑士?")) {
+            var pars = { "phoneNo": phone };
+            var url = "/TestUserManager/DeleteTestClienter";
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: pars,
+                dataType: 'json',
+                success: function (result) {
+                    alert("成功!");
+                    window.location.href = "/TestUserManager/TestUserManager/";
+                }
+            });
+        }
+    }
+    ///删除订单
+    function deleteOrder(phone) {
+        if (confirm("确定删除订单数据?")) {
+        var pars = { "phoneNo": phone };
+        var url = "/TestUserManager/DeleteTestOrder";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: pars,
+            dataType: 'json',
+            success: function (result) {
+                alert("成功!");
+                window.location.href = "/TestUserManager/TestUserManager/";
+            }
+        });
+            }
+    }
+    ///删除商户
+    function deleteBusi(phone) {
+        if (confirm("确定删除该商户?")) {
+        var pars = { "phoneNo": phone };
+        var url = "/TestUserManager/DeleteTestBusiness";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: pars,
+            dataType: 'json',
+            success: function (result) {
+                alert("成功!");
+                window.location.href = "/TestUserManager/TestUserManager/";
+            }
+        });
+            }
+    }
+    function showAdd() {
+        adminjs.openwinbox('#addDiv');
+    }
+    //关闭弹层
+    $('.J_closebox').click(function () {
+        adminjs.closewinbox('.add-openbox');
+        return false;
+    });
+</script>

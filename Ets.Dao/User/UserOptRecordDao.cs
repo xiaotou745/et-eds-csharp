@@ -44,7 +44,7 @@ namespace Ets.Dao.User
                           @Remark 
                         )";
             IDbParameters isnertLogdbParas = DbHelper.CreateDbParameters();
-            isnertLogdbParas.AddWithValue("@UserType", 1);//被操作用户类型1 B端商户 
+            isnertLogdbParas.AddWithValue("@UserType", model.UserType);//被操作用户类型1 B端商户 
             isnertLogdbParas.AddWithValue("@UserID", model.UserID);
             isnertLogdbParas.AddWithValue("@OptType", model.OptType);
             isnertLogdbParas.AddWithValue("@OptUserId", model.OptUserId);

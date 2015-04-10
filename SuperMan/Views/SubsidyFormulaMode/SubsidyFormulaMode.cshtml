@@ -4,7 +4,7 @@
     ViewBag.Title = "SubsidyFormulaMode";
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
     GlobalConfigModel globalConfigModel = ViewBag.GloglConfig;
-    string isStarTimeSubsidies = globalConfigModel.IsStarTimeSubsidies == true ? "checked=checked" : "";
+    string isStarTimeSubsidies = globalConfigModel.IsStarTimeSubsidies == "1" ? "checked=checked" : "";
 }
 
 <div class="zpManage zpSh">
@@ -22,16 +22,16 @@
             </tr>
             <tr>
                 <td> 
-                   @{var a = globalConfigModel.CommissionFormulaMode==0?"checked =checked":"";}
+                   @{var a = globalConfigModel.CommissionFormulaMode=="0"?"checked =checked":"";}
                     <input id="rCommissionFormulaMode0" @a name="rCommissionFormulaMode" onclick="changeDiv(0);" type="radio" value="0"> 
                     <label for="rCommissionFormulaMode0" onclick="changeDiv(0);"  style="color: red">普通补贴</label>
-                    @{var b = globalConfigModel.CommissionFormulaMode==1?"checked =checked":"";}
+                    @{var b = globalConfigModel.CommissionFormulaMode=="1"?"checked =checked":"";}
                     <input id="rCommissionFormulaMode1" @b name="rCommissionFormulaMode" onclick="changeDiv(1);" type="radio" value="1">
                     <label for="rCommissionFormulaMode1" onclick="changeDiv(1);"  style="color: red">时间段补贴</label>
-                    @{var c = globalConfigModel.CommissionFormulaMode==2?"checked =checked":"";}
+                    @{var c = globalConfigModel.CommissionFormulaMode=="2"?"checked =checked":"";}
                     <input id="rCommissionFormulaMode2" @c name="rCommissionFormulaMode" onclick="changeDiv(2);" type="radio" value="2">
                     <label for="rCommissionFormulaMode2" onclick="changeDiv(2);" style="color: red">保本补贴</label>
-                    @{var d = globalConfigModel.CommissionFormulaMode == 3 ? "checked =checked" : "";}
+                    @{var d = globalConfigModel.CommissionFormulaMode == "3" ? "checked =checked" : "";}
                     <input id="rCommissionFormulaMode3" @d name="rCommissionFormulaMode" onclick="changeDiv(3);" type="radio" value="3">
                     <label for="rCommissionFormulaMode3" onclick="changeDiv(3);"  style="color: red">满金额补贴</label>
                     <input type="submit" value="设置佣金补贴策略" style="width: 120px;" class="searchBtn" id="btnCommissionFormulaMode" /> 

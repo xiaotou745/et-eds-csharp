@@ -50,47 +50,12 @@ namespace Ets.Dao.GlobalConfig
         public GlobalConfigModel GlobalConfigMethod()
         {
             //这里允许用*是因为配置是需要全部加载
-            string sql = "select KeyName,Value from GlobalConfig(nolock) order by id desc";
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
-            DataRowCollection rows = dt.Rows;
-            GlobalConfigModel model = new GlobalConfigModel();
-            foreach (DataRow item in dt.Rows)
+            DataTable dtGlobal = DbHelper.StoredExecuteDataTable(SuperMan_Read, "SP_get_GlobalConfig");
+            if (dtGlobal == null || dtGlobal.Rows.Count <= 0)
             {
-                if (item.ItemArray[0].ToString() == "CommissionRatio")
-                {
-                    model.CommissionRatio = ParseHelper.ToDouble(item["Value"], 0);
-                }
-                else if (item.ItemArray[0].ToString() == "SiteSubsidies")
-                {
-                    model.SiteSubsidies = ParseHelper.ToDouble(item["Value"], 0);
-                }
-                else if (item.ItemArray[0].ToString() == "TimeSubsidies")
-                {
-                    model.TimeSubsidies = item["Value"].ToString();
-                }
-                else if(item.ItemArray[0].ToString() == "CommissionFormulaMode")
-                    model.CommissionFormulaMode = ParseHelper.ToInt(item["Value"], 0);
-                else if (item.ItemArray[0].ToString() == "PriceSubsidies")
-                    model.PriceSubsidies = item["Value"].ToString();
-                else if (item.ItemArray[0].ToString() == "PriceCommissionRatio")
-                    model.PriceCommissionRatio = ParseHelper.ToDouble(item["Value"], 0);
-                else if (item.ItemArray[0].ToString() == "IsStarTimeSubsidies")
-                    model.IsStarTimeSubsidies = item["Value"].ToString()=="1";
-                else if (item.ItemArray[0].ToString() == "PriceSiteSubsidies")
-                    model.PriceSiteSubsidies = ParseHelper.ToDouble(item["Value"], 0);
-                else if (item.ItemArray[0].ToString() == "CommonCommissionRatio")
-                    model.CommonCommissionRatio = ParseHelper.ToDouble(item["Value"], 0);
-                else if (item.ItemArray[0].ToString() == "CommonSiteSubsidies")
-                    model.CommonSiteSubsidies = ParseHelper.ToDouble(item["Value"], 0);
-                else if (item.ItemArray[0].ToString() == "TimeSpanCommissionRatio")
-                    model.TimeSpanCommissionRatio = ParseHelper.ToDouble(item["Value"], 0);
-                else if (item.ItemArray[0].ToString() == "TimeSpanInPrice")
-                    model.TimeSpanInPrice = ParseHelper.ToDouble(item["Value"], 0);
-                else if (item.ItemArray[0].ToString() == "TimeSpanOutPrice")
-                    model.TimeSpanOutPrice = ParseHelper.ToDouble(item["Value"], 0); 
+                return null;
             }
-
-            return model;
+            return ConvertDataTableList<GlobalConfigModel>(dtGlobal)[0];
         }
 
         /// <summary>
@@ -124,7 +89,7 @@ namespace Ets.Dao.GlobalConfig
             dbParameters.SetValue("value", value);
             int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
             return i > 0;
-        } 
+        }
 
         /// <summary>
         /// 获取全局变量表数据PriceSubsidies
@@ -157,9 +122,9 @@ namespace Ets.Dao.GlobalConfig
             dbParameters.SetValue("value", value);
             int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
             return i > 0;
-        } 
+        }
 
-           
+
         /// <summary>
         /// 获取全局变量表数据TimeSubsidies
         /// 平扬
@@ -177,22 +142,22 @@ namespace Ets.Dao.GlobalConfig
             return null;
         }
 
-       /// <summary>
-       /// 设置全局变量表数据TimeSubsidies
-       /// 平扬 2015年4月7日 11:10:49
-       /// </summary>
-       /// <param name="value"></param>
-       /// <returns></returns>
+        /// <summary>
+        /// 设置全局变量表数据TimeSubsidies
+        /// 平扬 2015年4月7日 11:10:49
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public bool UpdateTimeSubsidies(string value)
         {
             string sql = "update GlobalConfig set Value=@Value,LastUpdateTime=getdate() where keyname='TimeSubsidies'";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@value", SqlDbType.NVarChar, 100);
             dbParameters.SetValue("value", value);
-            int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters); 
+            int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
             return i > 0;
-        } 
-      
+        }
+
         /// <summary>
         /// 记录日志 GlobalConfigLog数据
         /// 平扬 2015年4月7日 11:10:49
@@ -221,7 +186,7 @@ namespace Ets.Dao.GlobalConfig
             dbParameters.SetValue("OptName", opName);
             dbParameters.Add("@Remark", SqlDbType.NVarChar, 500);
             dbParameters.SetValue("Remark", Remark);
-            object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, dbParameters); 
+            object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, dbParameters);
             return ParseHelper.ToInt(i) > 0;
         }
 
@@ -253,7 +218,7 @@ namespace Ets.Dao.GlobalConfig
         /// <param name="value"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        public bool UpdateSubsidies(string value,string key)
+        public bool UpdateSubsidies(string value, string key)
         {
             string sql = "update GlobalConfig set Value=@Value,LastUpdateTime=getdate() where keyname=@keyname";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -263,7 +228,7 @@ namespace Ets.Dao.GlobalConfig
             dbParameters.SetValue("keyname", key);
             int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
             return i > 0;
-        } 
+        }
 
     }
 }
