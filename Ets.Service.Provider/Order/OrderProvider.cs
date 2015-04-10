@@ -269,6 +269,10 @@ namespace Ets.Service.Provider.Order
             int result = OrderDao.AddOrder(order);
             if (result > 0)
             {
+                if (order.Adjustment > 0)
+                {
+                    OrderDao.addOrderSubsidiesLog(order.Adjustment, result, "补贴加钱,订单金额:" + order.Amount + "-佣金补贴策略id:" + order.CommissionFormulaMode);
+                } 
                 Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity); //激光推送
                 //推送给 VIP
                 if (ConfigSettings.Instance.IsSendVIP == "1")
