@@ -50,6 +50,7 @@
     <Compile Include="Common\ListParaBase.cs" />
     <Compile Include="Common\OrderCountManageList.cs" />
     <Compile Include="Common\PagedList.cs" />
+    <Compile Include="Common\TestUserModel.cs" />
     <Compile Include="DomainModel\Area\DMAreaCodeInfo.cs" />
     <Compile Include="ParameterModel\Area\ParaAreaNameInfo.cs" />
     <Compile Include="Common\ParaModel.cs" />
