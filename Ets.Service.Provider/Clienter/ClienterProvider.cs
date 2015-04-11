@@ -560,6 +560,37 @@ namespace Ets.Service.Provider.Clienter
         {
             return clienterDao.UpdateClientReceiptPicInfo(uploadReceiptModel);
         }
+
+        /// <summary>
+        /// 删除小票
+        /// wc
+        /// </summary>
+        /// <param name="uploadReceiptModel"></param>
+        /// <returns></returns>
+        public OrderOther DeleteReceipt(UploadReceiptModel uploadReceiptModel)
+        {
+            //clienterDao
+            throw new NotImplementedException();
+        }
+        /// <summary>
+        /// 新增小票信息
+        /// wc
+        /// </summary>
+        /// <param name="uploadReceiptModel"></param>
+        /// <returns></returns>
+        public OrderOther InsertReceiptInfo(UploadReceiptModel uploadReceiptModel)
+        {
+            return clienterDao.InsertReceiptInfo(uploadReceiptModel);
+        }
+        /// <summary>
+        /// 更新小票信息
+        /// </summary>
+        /// <param name="uploadReceiptModel"></param>
+        /// <returns></returns>
+        public OrderOther UpdateReceiptInfo(UploadReceiptModel uploadReceiptModel)
+        {
+            return clienterDao.UpdateReceiptInfo(uploadReceiptModel);
+        }
     }
 
 }

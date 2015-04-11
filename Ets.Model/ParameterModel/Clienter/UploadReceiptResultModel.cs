@@ -9,7 +9,7 @@ namespace Ets.Model.ParameterModel.Clienter
     public class UploadReceiptResultModel
     {
         public int OrderId { get; set; }
-        public string[] ImagePath { get; set; }
+        public List<string> ImagePath { get; set; }
         /// <summary>
         /// 该订单总共需要上传的小票张数
         /// </summary>

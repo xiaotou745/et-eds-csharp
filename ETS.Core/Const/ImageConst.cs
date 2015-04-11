@@ -8,5 +8,6 @@ namespace ETS.Const
     public class ImageConst
     {
         public const string OriginSize = "_0_0";
+         
     }
 }

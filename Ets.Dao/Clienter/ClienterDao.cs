@@ -580,7 +580,7 @@ namespace Ets.Dao.Clienter
           HadUploadCount
         )
  output Inserted.Id,Inserted.OrderId,Inserted.NeedUploadCount,Inserted.ReceiptPic,Inserted.HadUploadCount
- values ( @OrderNo ,
+ values ( @OrderId ,
           @NeedUploadCount , 
           @ReceiptPic ,
           @HadUploadCount 
@@ -668,8 +668,8 @@ where   oo.OrderId = @OrderId;";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderId", SqlDbType.Int);
             parm.SetValue("@OrderId", orderId);
-           
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
+
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             var ooList = MapRows<OrderOther>(dt);
             if (ooList != null && ooList.Count == 1)
             {
