@@ -174,7 +174,8 @@ namespace SuperManWebApi.Controllers
             IList<Ets.Model.DomainModel.Clienter.ClientOrderResultModel> lists = new ClienterProvider().GetMyOrders(criteria);
             if (model.status!=1)
             {
-                lists = lists.OrderByDescending(i => i.pubDate).ToList();  //按照发布时间倒序排列
+               // lists = lists.OrderByDescending(i => i.pubDate).ToList();  //按照发布时间倒序排列
+                lists = lists.OrderBy(i => i.distance_OrderBy).ToList(); 
             }
             return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]>.Conclude(ETS.Enums.GetOrdersStatus.Success, lists.ToArray());
         }
@@ -216,8 +217,8 @@ namespace SuperManWebApi.Controllers
             //}
             var pagedList = new Ets.Service.Provider.Order.OrderProvider().GetOrders(criteria);
 
-            pagedList = pagedList.OrderByDescending(i => i.pubDate).ToList();  //按照发布时间倒序排列
-
+           // pagedList = pagedList.OrderByDescending(i => i.pubDate).ToList();  //按照发布时间倒序排列
+            pagedList = pagedList.OrderBy(i => i.distance_OrderBy).ToList();
             return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]>.Conclude(ETS.Enums.GetOrdersStatus.Success, pagedList.ToArray());
         }
 
@@ -256,7 +257,9 @@ namespace SuperManWebApi.Controllers
             //}
 
             var pagedList = new Ets.Service.Provider.Order.OrderProvider().GetOrdersNoLoginLatest(criteria);
-            pagedList = pagedList.OrderByDescending(i => i.pubDate).ToList();
+            //pagedList = pagedList.OrderByDescending(i => i.pubDate).ToList();
+
+            pagedList = pagedList.OrderBy(i => i.distance_OrderBy).ToList();
             //var pagedList = ClienterLogic.clienterLogic().GetOrdersNoLoginLatest(criteria);
             //var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
 

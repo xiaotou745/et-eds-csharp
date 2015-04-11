@@ -25,7 +25,10 @@ namespace Ets.Model.DomainModel.Clienter
         /// </summary>
         //public double distance { get; set; }
         public string distance { get; set; }
-
+        /// <summary>
+        /// 骑士距离客户的距离用来排序
+        /// </summary>
+        public double distance_OrderBy { get; set; }
         /// <summary>
         ///  商户到收货人的距离
         /// </summary>
@@ -110,6 +113,10 @@ namespace Ets.Model.DomainModel.Clienter
         /// </summary>
         //public double distance { get; set; }
         public string distance { get; set; }
+        /// <summary>
+        /// 骑士距离客户的距离用来排序
+        /// </summary>
+        public double distance_OrderBy { get; set; }
         /// <summary>
         /// 商户到收货人的距离
         /// </summary>

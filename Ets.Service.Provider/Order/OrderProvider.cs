@@ -92,17 +92,19 @@ namespace Ets.Service.Provider.Order
                 {
                     resultModel.distance = "--";
                     resultModel.distanceB2R = "--";
+                    resultModel.distance_OrderBy = 9999999.0;
                 }
                 else
                 {
                     if (degree.longitude == 0 || degree.latitude == 0)
-                        resultModel.distance = "--";
+                    { resultModel.distance = "--"; resultModel.distance_OrderBy = 9999999.0; }
                     else //计算超人当前到商户的距离
                     {
                         Degree degree1 = new Degree(degree.longitude, degree.latitude);   //超人当前的经纬度
                         Degree degree2 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value); ; //商户经纬度
                         var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
                         resultModel.distance = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
+                        resultModel.distance_OrderBy = res;
                     }
                     if (from.ReceviceLongitude != null && from.ReceviceLatitude != null
                         && from.ReceviceLongitude != 0 && from.ReceviceLatitude != 0)  //计算商户到收货人的距离
@@ -168,17 +170,23 @@ namespace Ets.Service.Provider.Order
                 {
                     resultModel.distance = "--";
                     resultModel.distanceB2R = "--";
+
+                    resultModel.distance_OrderBy = 9999999.0; //用来排序
                 }
                 else
                 {
                     if (degree.longitude == 0 || degree.latitude == 0)
+                    {
                         resultModel.distance = "--";
+                        resultModel.distance_OrderBy = 9999999.0;
+                    }
                     else //计算超人当前到商户的距离
                     {
                         Degree degree1 = new Degree(degree.longitude, degree.latitude);   //超人当前的经纬度
                         Degree degree2 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value); ; //商户经纬度
                         var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
                         resultModel.distance = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
+                        resultModel.distance_OrderBy = res;
                     }
                     if (from.ReceviceLongitude != null && from.ReceviceLatitude != null
                         && from.ReceviceLongitude != 0 && from.ReceviceLatitude != 0)  //计算商户到收货人的距离
@@ -273,12 +281,12 @@ namespace Ets.Service.Provider.Order
                 {
                     OrderDao.addOrderSubsidiesLog(order.Adjustment, result, "补贴加钱,订单金额:" + order.Amount + "-佣金补贴策略id:" + order.CommissionFormulaMode);
                 } 
-                Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity); //激光推送
-                //推送给 VIP
-                if (ConfigSettings.Instance.IsSendVIP == "1")
-                {
-                    Push.PushMessageVip(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity, ConfigSettings.Instance.VIPName); //激光推送
-                }
+                //Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity); //激光推送
+                ////推送给 VIP
+                //if (ConfigSettings.Instance.IsSendVIP == "1")
+                //{
+                //    Push.PushMessageVip(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity, ConfigSettings.Instance.VIPName); //激光推送
+                //}
                 return "1";
             }
             else
