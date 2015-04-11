@@ -434,8 +434,8 @@ namespace Ets.Dao.Order
             }
             string sql = @"SELECT 
                          CONVERT(CHAR(10),PubDate,120) AS PubDate, --
-                        sum(case when o.status=1 then amount else 0 end ) as OrderPrice, --订单金额
-                        --SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
+                        --sum(case when o.status=1 then amount else 0 end ) as OrderPrice, --订单金额
+                        SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
                         ISNULL(COUNT(o.Id),0) AS MisstionCount,--总任务量
                         SUM(ISNULL(OrderCount,0)) AS OrderCount,--总订单量
                          ISNULL(SUM(o.Amount*ISNULL(b.BusinessCommission,0)/100+ ISNULL( b.DistribSubsidy ,0)* o.OrderCount),0) AS YsPrice,  -- 应收金额
