@@ -184,7 +184,7 @@ namespace SuperManWebApi.Controllers
 
         /// <summary>
         /// Ado.net  add  王超
-        /// C端获取我的任务列表 最近任务 登录未登录根据城市有没有值判断。
+        /// C端获取 最近任务 登录未登录根据城市有没有值判断。
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -203,7 +203,8 @@ namespace SuperManWebApi.Controllers
                 status = model.status,
                 isLatest = model.isLatest,
                 city = string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
-                cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim()
+                cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim(),
+                groupId=model.groupId
             };
             //这里转换一下 区域 code ,转换后 修改 为根据 code 作为 查询条件，原来根据name去掉  wc
             //if (!string.IsNullOrWhiteSpace(model.city))
@@ -234,6 +235,7 @@ namespace SuperManWebApi.Controllers
             Ets.Model.ParameterModel.Clienter.ClientOrderInfoModel model = new Ets.Model.ParameterModel.Clienter.ClientOrderInfoModel();
             model.city = string.IsNullOrWhiteSpace(HttpContext.Current.Request["city"]) ? null : HttpContext.Current.Request["city"].Trim();//城市
             model.cityId = string.IsNullOrWhiteSpace(HttpContext.Current.Request["cityId"]) ? null : HttpContext.Current.Request["cityId"].Trim(); //城市编码
+            model.groupId = string.IsNullOrWhiteSpace(HttpContext.Current.Request["groupId"]) ? 0 : ParseHelper.ToInt(HttpContext.Current.Request["groupId"].Trim()); //集团id
             Ets.Model.DomainModel.Clienter.degree.longitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["longitude"]);
             Ets.Model.DomainModel.Clienter.degree.latitude = ETS.Util.ParseHelper.ToDouble(HttpContext.Current.Request["latitude"]);
             var pIndex = ParseHelper.ToInt(model.pageIndex, 1);
@@ -242,7 +244,8 @@ namespace SuperManWebApi.Controllers
             {
                 PagingRequest = new Ets.Model.Common.PagingResult(pIndex, pSize),
                 city = model.city,
-                cityId = model.cityId
+                cityId = model.cityId,
+                groupId=model.groupId
             };
             //根据用户传递的  名称，取得 国标编码 wc,这里的 city 是二级 ，已和康珍 确认过
             //新版的 骑士 注册， 城市 非 必填 

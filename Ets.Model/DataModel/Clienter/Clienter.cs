@@ -45,6 +45,10 @@ namespace Ets.Model.DataModel.Clienter
         public bool isLatest { get; set; }
         public double longitude { get; set; }
         public double latitude { get; set; }
+        /// <summary>
+        /// 集团id
+        /// </summary>
+        public int groupId { get; set; }
         //城市名称
         public string city { get; set; }
         //城市Id
