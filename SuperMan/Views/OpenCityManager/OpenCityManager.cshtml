@@ -50,8 +50,6 @@
                 CloseCityCodeList = CloseCityCodeList + $(this).val() + ",";
             }
         });
-        alert(OpenCityCodeList);
-        alert(CloseCityCodeList);
         if (OpenCityCodeList.length > 0)
             OpenCityCodeList = OpenCityCodeList.substring(0, OpenCityCodeList.length - 1);
         if (CloseCityCodeList.length > 0) {
@@ -66,7 +64,7 @@
             success: function (result) {
                 if (result.IsSuccess) {
                     alert("设置成功!");
-                    window.location.href = "/OpenCityManager/OpenCityManager";
+                    //window.location.href = "/OpenCityManager/OpenCityManager";
                 } else {
                     alert(result.Message);
                 }
