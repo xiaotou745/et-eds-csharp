@@ -48,6 +48,7 @@
     <Compile Include="Common\HomeCountTitleModel.cs" />
     <Compile Include="Common\JPushModel.cs" />
     <Compile Include="Common\ListParaBase.cs" />
+    <Compile Include="Common\OpenCityModel.cs" />
     <Compile Include="Common\OrderCountManageList.cs" />
     <Compile Include="Common\PagedList.cs" />
     <Compile Include="Common\TestUserModel.cs" />
@@ -138,7 +139,7 @@
     <Compile Include="ParameterModel\Clienter\RushOrderResultModel.cs" />
     <Compile Include="ParameterModel\Clienter\UploadIconModel.cs" />
     <Compile Include="ParameterModel\Clienter\CustomerIconUploader.cs" />
-    <Compile Include="ParameterModel\Clienter\UploadReceiptModel.cs" />
+    <Compile Include="ParameterModel\Common\OpenCitySearchCriteria.cs" />
     <Compile Include="ParameterModel\Clienter\UploadReceiptResultModel.cs" />
     <Compile Include="ParameterModel\Group\GroupListModel.cs" />
     <Compile Include="ParameterModel\Group\GroupParaModel.cs" />

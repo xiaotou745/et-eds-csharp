@@ -736,20 +736,27 @@ namespace Ets.Dao.Order
                                         ,o.[CommissionRate] 
                                         ,b.[City] BusinessCity
                                         ,b.Name BusinessName
+                                        ,b.PhoneNo BusinessPhoneNo
+                                        ,b.Address BusinessAddress
                                         ,c.PhoneNo ClienterPhoneNo
                                         ,c.TrueName ClienterTrueName
+                                        ,c.TrueName ClienterName
                                         ,b.GroupId
                                         ,o.OriginalOrderNo
+                                        ,oo.NeedUploadCount
+                                        ,oo.HadUploadCount
+                                        ,oo.ReceiptPic
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
-                                     LEFT JOIN dbo.clienter c WITH (NOLOCK) ON o.clienterId=c.Id
+                                    LEFT JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
+                                    LEFT JOIN OrderOther oo WITH (NOLOCK) ON oo.OrderId=o.Id
                                     WHERE 1=1 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderNo", SqlDbType.NVarChar);
             parm.SetValue("@OrderNo", orderNo);
             if (!string.IsNullOrWhiteSpace(orderNo))
             {
-                sql += " AND OrderNo=@OrderNo";
+                sql += " AND o.OrderNo=@OrderNo";
             }
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
             var list = ConvertDataTableList<OrderListModel>(dt);
@@ -1007,9 +1014,12 @@ namespace Ets.Dao.Order
                                   ,[YsPrice]
                                   ,[YfPrice]
                                   ,[YkPrice]
+                                  ,[ZeroSubsidyOrderCount]
                                   ,[OneSubsidyOrderCount]
                                   ,[TwoSubsidyOrderCount]
-                                  ,[ThreeSubsidyOrderCount]";
+                                  ,[ThreeSubsidyOrderCount]
+                                  ,[ActiveBusiness]
+                                  ,[ActiveClienter]";
 
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))

@@ -1,7 +1,10 @@
-﻿using Ets.Model.DomainModel.Area;
+﻿using Ets.Model.Common;
+using Ets.Model.DomainModel.Area;
+using Ets.Model.ParameterModel.Common;
 using ETS;
 using ETS.Dao;
 using ETS.Data.Core;
+using ETS.Data.PageData;
 using ETS.Extension;
 using ETS.Util;
 using System;
@@ -177,6 +180,95 @@ where   p.name =@ProvinceName
 
             DataSet ds = DbHelper.ExecuteDataset(SuperMan_Read, sql);
             return MapRows<AreaModelTranslate>(DataTableHelper.GetTable(ds));
+        }
+        /// <summary>
+        /// 获取开放城市列表（非分页）
+        /// danny-20150410
+        /// </summary>
+        /// <param name="cityName"></param>
+        /// <returns></returns>
+        public IList<OpenCityModel> GetOpenCityList(string cityName)
+        {
+            StringBuilder sql =new StringBuilder( @"SELECT p.code ProvinceCode
+                                    ,p.name ProvinceName
+                                    ,c.code CityCode
+                                    ,c.name CityName
+                                    ,d.code DistrictCode
+                                    ,d.name DistrictName
+                                    ,d.IsPublic
+                            FROM PublicProvinceCity d WITH(NOLOCK)
+                                JOIN PublicProvinceCity c WITH(NOLOCK) ON d.parentid=c.code
+                                JOIN PublicProvinceCity p WITH(NOLOCK) ON c.parentid=p.code WHERE 1=1 ");
+            if (!string.IsNullOrWhiteSpace(cityName))
+            {
+                sql.AppendFormat(" AND c.name like '%{0}%' ", cityName);
+            }
+            DataSet ds = DbHelper.ExecuteDataset(SuperMan_Read, sql.ToString());
+            return MapRows<OpenCityModel>(DataTableHelper.GetTable(ds));
+        }
+        /// <summary>
+        /// 获取开通城市列表
+        /// danny-20150410
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<T> GetOpenCityList<T>(OpenCitySearchCriteria criteria)
+        {
+            string columnList = @"   p.code ProvinceCode
+                                    ,p.name ProvinceName
+                                    ,c.code CityCode
+                                    ,c.name CityName
+                                    ,d.code DistrictCode
+                                    ,d.name DistrictName
+                                    ,d.IsPublic ";
+            var sbSqlWhere = new StringBuilder(" 1=1 AND d.IsPublic=1 ");
+            if(!string.IsNullOrWhiteSpace(criteria.CityName))
+            {
+                sbSqlWhere.AppendFormat(" AND c.name like '%{0}%' ", criteria.CityName);
+            }
+            string tableList = @" PublicProvinceCity d WITH(NOLOCK)
+                                JOIN PublicProvinceCity c WITH(NOLOCK) ON d.parentid=c.code
+                                JOIN PublicProvinceCity p WITH(NOLOCK) ON c.parentid=p.code   ";
+            string orderByColumn = " d.code ";
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
+        }
+
+        /// <summary>
+        /// 修改开通城市
+        /// danny-20150413
+        /// </summary>
+        /// <param name="openCityCodeList"></param>
+        /// <returns></returns>
+        public bool ModifyOpenCityByCode(string openCityCodeList, string closeCityCodeList)
+        {
+            string sql = "";
+            if(!string.IsNullOrWhiteSpace(openCityCodeList))
+            {
+                int code = Convert.ToInt32(openCityCodeList.Split(',')[0].ToString());
+                sql += @"UPDATE PublicProvinceCity SET IsPublic=1 WHERE code IN(@openCityCodeList);";
+                sql +=string.Format(@"UPDATE PublicProvinceCity 
+                          SET IsPublic=1 
+                          WHERE code=(
+                                      SELECT parentid 
+                                        FROM PublicProvinceCity 
+                                        WHERE code={0});
+                        UPDATE PublicProvinceCity 
+                          SET IsPublic=1 
+                          WHERE code=(
+                                      SELECT c.parentid  
+                                        FROM  PublicProvinceCity d WITH(NOLOCK)
+                                          JOIN PublicProvinceCity c ON c.code=d.parentid
+                                        WHERE d.code={0});",code);
+            }
+            if (!string.IsNullOrWhiteSpace(closeCityCodeList))
+            {
+                sql += @"UPDATE PublicProvinceCity SET IsPublic=0 WHERE code IN(@closeCityCodeList);";
+            }
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@openCityCodeList", openCityCodeList);
+            parm.AddWithValue("@closeCityCodeList", closeCityCodeList);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
     }
 }
