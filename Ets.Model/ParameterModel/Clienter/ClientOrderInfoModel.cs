@@ -42,5 +42,10 @@ namespace Ets.Model.ParameterModel.Clienter
         ///// </summary>
         //public int OrderType { get; set; }
 
+        /// <summary>
+        /// 集团id
+        /// </summary>
+        public int groupId { get; set; }
+
     }
 }

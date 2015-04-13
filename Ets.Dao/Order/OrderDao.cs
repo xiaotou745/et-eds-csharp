@@ -95,6 +95,8 @@ namespace Ets.Dao.Order
                     whereStr.AppendFormat(" AND b.City = '{0}'", criteria.city);
                 }
             }
+            if (criteria.groupId != 0)
+                whereStr.AppendFormat(" AND b.groupid = {0}", criteria.groupId);
             //if (!string.IsNullOrWhiteSpace(criteria.cityId))
             //{
             //    if (criteria.cityId == "1")  //目前北京市 的 id 在 康珍那里是  1 ， 但是 第三方过来的是code  10201 ，需要统一，康珍那里改
