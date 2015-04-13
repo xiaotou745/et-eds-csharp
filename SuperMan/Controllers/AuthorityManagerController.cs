@@ -28,13 +28,6 @@ namespace SuperMan.Controllers
        /// <returns></returns>
         public ActionResult AuthorityManager()
         {
-           // account account = HttpContext.Session["user"] as account;
-           //if (account == null)
-           //{
-           //    Response.Redirect("/account/login");
-           //    return null;
-           //}
-
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
             var criteria = new Ets.Model.ParameterModel.Authority.AuthoritySearchCriteria() { GroupId = SuperMan.App_Start.UserContext.Current.GroupId };
             var authorityModel = iAuthorityMenuProvider.GetAuthorityManage(criteria);

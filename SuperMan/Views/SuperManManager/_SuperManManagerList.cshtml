@@ -14,7 +14,6 @@
             <th>照片</th>
             <th>申请时间</th>
             <th>帐户余额</th>
-            <th>集团名称</th>
             <th>审核状态</th>
             <th>操作</th>
         </tr>
@@ -46,13 +45,7 @@
                         <a href="javascript:void(0)" class="businessOk" onclick="funcPicView('@String.Format("{0}{1}",PicHost,puth)','@item.PicWithHandUrl','@item.PicUrl')">查看</a>
                     </td>
                     <td>@item.InsertTime</td>
-                    <td style="color:red;font-weight:600">@item.AccountBalance</td>
-                    <td>
-                        @if (item.GroupId != null) //当前商户有集团信息
-                        {
-                            @Html.Raw(GroupLogic.groupLogic().GetGroupName(Convert.ToInt32(item.GroupId)))
-                        }
-                    </td>
+                    <td style="color:red;font-weight:600">@item.AccountBalance</td> 
                     @{
                         var statusView = "";
                         if (@item.Status == Ets.Model.Common.ConstValues.CLIENTER_AUDITPASS)

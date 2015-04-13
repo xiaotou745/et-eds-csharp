@@ -40,7 +40,7 @@
                         @Html.DropDownList("clienterCity", new SelectList(ViewBag.openCityList.Result, "Code", "Name"), "--无--", new { style = "width:155px" })*@
                         <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" name="GroupId" />
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
-                        @*<input id="btnAdd" class="searchBtn" type="button" value="新增骑士">*@
+                        <input id="btnAdd" class="searchBtn" type="button" value="新增骑士">
                     </td>
                 </tr>
             </table>
@@ -54,7 +54,7 @@
 </div>
 
 <!--新增骑士弹出窗部分  add by caoheyang20140228-->
-@*<div class="selectSupplierDish">
+ <div class="selectSupplierDish">
     <div class="add-openbox add-form" id="AddSuperManShow" style="width:500px">
         <h2>
             <p id="statusUnFin">新增骑士</p>
@@ -100,7 +100,7 @@
                         <text id="labHealthCardID" style="color:red" hidden="hidden">不能为空</text>
                     </div>
                 </div>
-                <div class="control-group">
+                @*<div class="control-group">
                     <label class="control-label"><span style="color:red;">*</span>所属城市</label>
                     <div class="controls">
                         @Html.DropDownList("ProvinceCode", new SelectList(RegionLogic.regionLogic().GetRegionsByFid(), "Code", "Name"), "--请选择--", new { style = "width:90px", id = "BoxProvinceCode" })
@@ -110,8 +110,8 @@
                         </select>
                         <text id="labBoxCode" style="color:red" hidden="hidden">不能为空</text>
                     </div>
-                </div>
-                <div class="control-group">
+                </div>*@
+               @* <div class="control-group">
                     <label class="control-label" for="BussinessID"><span style="color:red;">*</span>所属门店</label>
                     <div class="controls">
                         <select name="BussinessID" id="BoxBussinessID" style="width:198px;">
@@ -119,7 +119,7 @@
                         </select>
                         <text id="labBoxBussinessID" style="color:red" hidden="hidden">不能为空</text>
                     </div>
-                </div>
+                </div>*@
                 <div class="control-group">
                     <label class="control-label" for="InternalDepart">内外部门</label>
                     <div class="controls">
@@ -127,19 +127,7 @@
                     </div>
 
                 </div>
-                @if (ViewBag.txtGroupId > 0)
-                {
                     <input type="hidden" id="HidGroupID" value="@ViewBag.txtGroupId" />
-                }
-                else
-                {
-                    <div class="control-group">
-                        <label class="control-label" for="InternalDepart">集团信息</label>
-                        <div class="controls">
-                            @Html.DropDownList("HidGroupID", new SelectList(GroupLogic.groupLogic().GetGroups(), "Id", "GroupName"), "--无--")
-                        </div>
-                    </div>
-                }
                 <div class="control-group">
                     <label class="control-label" for="IDCard">身份证号</label>
                     <div class="controls">
@@ -159,14 +147,14 @@
             <input value="关闭" type="button" class="J_closebox qxBtn" />
         </p>
     </div>
-</div>*@
+</div>
 <script>
     var adminjs = new adminglass(); //实例化后台类
     $(function () {
         $('#hidupload').val(''); //页面加载时清空隐藏域的值。
         $('#hidHandUpload').val(''); //页面加载时清空隐藏域的值。
-        $("#fileUpload").val("");
-        $("#fileUploadHand").val('');
+        $("#fileUpload").val("").show();
+        $("#fileUploadHand").val('').show();
         //查询
         //$("#btnSearch").on('click', function () {
         //    criteria = {
@@ -179,12 +167,13 @@
         //    refresh(0);
         //});
         //手持身份证图片上传
+        //手持身份证图片上传
         $("#fileUploadHand").fileupload({
             url: "/UploadTest/Upload",//文件上传地址，当然也可以直接写在input的data-url属性内
             formData: {},//如果需要额外添加参数可以在这里添加
-            autoUpload: false,
+            autoUpload: true,
             acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
-            maxFileSize: 5000000, // 5 MB
+            maxFileSize: 2000000, // 5 MB
             done: function (e, results) {
                 //done方法就是上传完毕的回调函数，其他回调函数可以自行查看api
                 //注意result要和jquery的ajax的data参数区分，这个对象包含了整个请求信息
@@ -192,10 +181,13 @@
                 var result = results.result;
                 var picNames = result.Message.split('|');
                 if (result.IsSuccess) {
+                    $('#fileUploadHand').hide();
                     $('#hidHandUpload').val(picNames[0]);
+                    $('#labfileuploadHand').text(picNames[0] + "-上传成功").show();
                 } else {
                     alert(result.Message);
-                    $('#labfileuploadHand').val(picNames[0]).show();
+                    $('#fileUploadHand').show();
+                    $('#labfileuploadHand').text(picNames[0]).show();
                 }
             }
         });
@@ -203,9 +195,9 @@
         $("#fileUpload").fileupload({
             url: "/UploadTest/Upload",//文件上传地址，当然也可以直接写在input的data-url属性内
             formData: {},//如果需要额外添加参数可以在这里添加
-            autoUpload: false,
+            autoUpload: true,
             acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
-            maxFileSize: 5000000, // 5 MB
+            maxFileSize: 2000000, // 5 MB
             done: function (e, results) {
                 //done方法就是上传完毕的回调函数，其他回调函数可以自行查看api
                 //注意result要和jquery的ajax的data参数区分，这个对象包含了整个请求信息
@@ -213,13 +205,17 @@
                 var result = results.result;
                 var picNames = result.Message.split('|');
                 if (result.IsSuccess) {
-                    $('#hidupload').val(picNames[0]).show();
+                    $('#fileUpload').hide();
+                    $('#hidupload').val(picNames[0]);
+                    $('#labfileupload').text(picNames[0] + "-上传成功").show();
                 } else {
                     alert(result.Message);
-                    $('#labfileupload').val(picNames[0]).show();
+                    $('#fileUpload').show();
+                    $('#labfileupload').text(picNames[0]).show();
                 }
             }
         });
+
 
         //新增骑士保存按钮点击事件    add by caoheyang 20150302
         $("#btnSuperConfim").click(
@@ -235,7 +231,7 @@
                 var cityCode = $('#BoxCityCode').val(); //市
                 var idCard = $('#BoxIDCard').val(); //身份证号
                 var password = $('#BoxPassword').val() == null || $('#BoxPassword').val() == "" ? "edaisong" : $('#BoxPassword').val(); //密码
-                var bussinessID = $('#BoxBussinessID').val(); //所属门店
+               // var bussinessID = $('#BoxBussinessID').val(); //所属门店
 
                 if (trueName == "" || trueName == null) {  //姓名非空验证
                     $('#labBoxTrueName').show();
@@ -243,12 +239,12 @@
                 } else {
                     $('#labBoxTrueName').hide();
                 }
-                if (bussinessID == "" || bussinessID == null) {  //所属门店非空验证
-                    $('#labBoxBussinessID').show();
-                    result = false;
-                } else {
-                    $('#labBoxBussinessID').hide();
-                }
+                //if (bussinessID == "" || bussinessID == null) {  //所属门店非空验证
+                //    $('#labBoxBussinessID').show();
+                //    result = false;
+                //} else {
+                //    $('#labBoxBussinessID').hide();
+                //}
                 if (phoneNo == "" || phoneNo == null) {  //手机号非空验证
                     $('#labBoxPhoneNo').html("不能为空").show();
                     result = false;
@@ -275,12 +271,12 @@
                 }
 
 
-                if (provinceCode == "" || provinceCode == null || cityCode == "" || cityCode == null) {  //省/市非空验证
-                    $('#labBoxCode').show();
-                    result = false;
-                } else {
-                    $('#labBoxCode').hide();
-                }
+                //if (provinceCode == "" || provinceCode == null || cityCode == "" || cityCode == null) {  //省/市非空验证
+                //    $('#labBoxCode').show();
+                //    result = false;
+                //} else {
+                //    $('#labBoxCode').hide();
+                //}
                 if (healthCardID == "" || healthCardID == null) {  //健康证非空验证
                     $('#labHealthCardID').show();
                     result = false;
@@ -298,7 +294,7 @@
                             TrueName: trueName, PhoneNo: phoneNo, HealthCardID: healthCardID, InternalDepart: internalDepart,
                             ProvinceCode: provinceCode, CityCode: cityCode, IDCard: idCard, Password: password, City: $("#BoxProvinceCode").find("option:selected").text(),
                             CityId: provinceCode, Province: $("#BoxProvinceCode").find("option:selected").text(), GroupId: $("#HidGroupID").val(),
-                            BussinessID: bussinessID, PicWithHandUrl: hidHandUpload, PicUrl: hidupload
+                            BussinessID: 0, PicWithHandUrl: hidHandUpload, PicUrl: hidupload
                         },
                         success: function (result) {
                             if (result.IsSuccess) {
@@ -306,6 +302,7 @@
                                 window.location.href = "/SuperManManager/SuperManManager";
                             } else {
                                 alert(result.Message);
+                                window.location.href = "/SuperManManager/SuperManManager";
                             }
                         },
                         error: function () {
@@ -351,14 +348,7 @@
             }
         }
 
-        //当集团可选（即：当前登陆人员非管理员时，为集团下拉绑定事件  add by caoheyang 20150303）
-        if ($("#HidGroupID").attr("type") != "hidden") {
-            //当集团选项发生改变时，重选商户。
-            $("#HidGroupID").change(function () {
-                $('#BoxBussinessID').val("");
-                LoadBussinessInfo();
-            });
-        }
+   
         //新增骑士按钮点击事件   add by caoheyang 20150228
         $("#btnAdd").click(
             function () {
@@ -366,23 +356,7 @@
             }
          );
         window.location.hash = '';
-    })
-    //////分页
-    //art.ui.control.NewPager.enablePaging(document, refresh);
-    //function refresh(pageIndex) {
-    //    var url = "/SuperManManager/SuperManManager";
-    //    if (pageIndex !== undefined) {
-    //        criteria.PagingRequest.PageIndex = pageIndex;
-    //    }
-    //    criteria.status = $("#superManStatus").val();
-    //    webExpress.utility.ajax.request
-    //        (
-    //            url,
-    //            criteria,
-    //            function (data) {
-    //                $("#dataList").html(data);
-    //            });
-    //};
+    }) 
     $('.J_closebox').click(function () {
         adminjs.closewinbox('.add-openbox');
         return false;

@@ -183,7 +183,7 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult AccountManager()
         {
-            var list = _iAuhority.GetListAccount();
+            var list = _iAuhority.GetListAccount(SuperMan.App_Start.UserContext.Current.GroupId);
             ViewBag.AllMenu = _iAuhority.GetAllMenuList();
             return View(list);
         }

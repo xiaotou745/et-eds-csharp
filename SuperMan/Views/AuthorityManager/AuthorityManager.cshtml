@@ -73,7 +73,7 @@
                         <p class="help-block"></p>
                     </div>
                 </div>
-                @if (ViewBag.txtGroupId == null)
+                @if (SuperMan.App_Start.UserContext.Current.Id == 1)
                 {
                     <div class="control-group">
                         <!-- Text input-->

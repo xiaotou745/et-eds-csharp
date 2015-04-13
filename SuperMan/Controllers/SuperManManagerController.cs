@@ -28,12 +28,6 @@ namespace SuperMan.Controllers
         // GET: BusinessManager
         public ActionResult SuperManManager()
         {
-            //account account = HttpContext.Session["user"] as account;
-            //if (account == null)
-            //{
-            //    Response.Redirect("/account/login");
-            //    return null;
-            //}
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId; ;//集团id
             ViewBag.openCityList = iAreaProvider.GetOpenCityInfo();
             var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria() {  Status = -1, GroupId = SuperMan.App_Start.UserContext.Current.GroupId };
@@ -109,7 +103,12 @@ namespace SuperMan.Controllers
                 clienter.Password = "edaisong";
             clienter.Password = MD5Helper.MD5(clienter.Password);
             clienter.Status = ConstValues.CLIENTER_AUDITPASS;
-            return Json(new ResultModel(iDistributionProvider.AddClienter(clienter), ""));
+            bool b = iDistributionProvider.AddClienter(clienter);
+            if (b)
+            {
+                return Json(new ResultModel(b, "成功")); 
+            }
+            return Json(new ResultModel(false, "添加超人失败"));
         }
 
 

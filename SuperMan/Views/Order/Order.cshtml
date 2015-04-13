@@ -63,7 +63,13 @@
     }
     <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
     <div class="bd clearfix" id="dataList">
-        @Html.Partial("_PartialOrderList", Model)
+        @{
+            if (Model != null)
+            {
+@Html.Partial("_PartialOrderList", Model)
+            }
+        }
+        
     </div>
 </div>
 

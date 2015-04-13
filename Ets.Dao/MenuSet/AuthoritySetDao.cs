@@ -272,7 +272,7 @@ namespace Ets.Dao.MenuSet
         /// 获取个人账户列表
         /// </summary>
         /// <returns></returns>
-        public List<AccountModel> GetListAccount()
+        public List<AccountModel> GetListAccount(int groupid)
         {
             string sql = @" SELECT [Id]
                                   ,[Password]
@@ -284,7 +284,11 @@ namespace Ets.Dao.MenuSet
                                   ,[FAUser]
                                   ,[LCDateTime]
                                   ,[LCUser]
-                                  ,[GroupId] FROM account with(nolock) ";
+                                  ,[GroupId] FROM account with(nolock)";
+            if (groupid > 0)
+            {
+                sql += string.Format(" where groupid={0} ",groupid);
+            }
             var dt = DbHelper.ExecuteDataset(SuperMan_Read, sql).Tables[0];
             return (List<AccountModel>)ConvertDataTableList<AccountModel>(dt);
         }
@@ -518,10 +522,10 @@ namespace Ets.Dao.MenuSet
                                     ,a.[RoleId]
                                     ,g.GroupName";
             var sbSqlWhere = new StringBuilder(" 1=1 AND a.Status=1 ");
-            if (criteria.GroupId != null && criteria.GroupId!=0)
+            if (criteria.GroupId!=0)
             {
                 sbSqlWhere.AppendFormat(" AND a.GroupId={0} ", criteria.GroupId);
-            }
+            } 
             if (!string.IsNullOrEmpty(criteria.UserName))
             {
                 sbSqlWhere.AppendFormat(" AND a.UserName='{0}' ", criteria.UserName);

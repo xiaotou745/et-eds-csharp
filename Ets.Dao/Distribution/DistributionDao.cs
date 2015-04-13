@@ -186,16 +186,16 @@ namespace Ets.Dao.Distribution
                                ,@AccountBalance
                                ,@InsertTime
                                ,@InviteCode
-                               ,@City
-                               ,@CityId
+                               ,''
+                               ,''
                                ,@GroupId
                                ,@HealthCardID
                                ,@InternalDepart
-                               ,@ProvinceCode
-                               ,@AreaCode
-                               ,@CityCode
-                               ,@Province
-                               ,@BussinessID
+                               ,''
+                               ,''
+                               ,''
+                               ,''
+                               ,0
                                ,@WorkStatus)SELECT @@IDENTITY
                         ";
                 IDbParameters parm = DbHelper.CreateDbParameters();
@@ -208,24 +208,24 @@ namespace Ets.Dao.Distribution
                 parm.AddWithValue("@PicWithHandUrl", clienter.PicWithHandUrl);
                 parm.AddWithValue("@PicUrl", clienter.PicUrl);
                 parm.AddWithValue("@Status", clienter.Status);
-                parm.AddWithValue("@AccountBalance", clienter.AccountBalance);
+                parm.AddWithValue("@AccountBalance", 0);
                 parm.AddWithValue("@InsertTime", clienter.InsertTime);
                 parm.AddWithValue("@InviteCode", clienter.InviteCode);
-                parm.AddWithValue("@City", clienter.City);
+                //parm.AddWithValue("@City", clienter.City);
                 parm.AddWithValue("@GroupId", clienter.GroupId);
                 parm.AddWithValue("@HealthCardID", clienter.HealthCardID);
                 parm.AddWithValue("@InternalDepart", clienter.InternalDepart);
                 parm.AddWithValue("@ProvinceCode", clienter.ProvinceCode);
-                parm.AddWithValue("@AreaCode", clienter.AreaCode);
-                parm.AddWithValue("@CityCode", clienter.CityCode);
-                parm.AddWithValue("@Province", clienter.Province);
-                parm.AddWithValue("@BussinessID", clienter.BussinessID);
+                //parm.AddWithValue("@AreaCode", clienter.AreaCode);
+                //parm.AddWithValue("@CityCode", clienter.CityCode);
+                //parm.AddWithValue("@Province", clienter.Province);
+                //parm.AddWithValue("@BussinessID", clienter.BussinessID);
                 parm.AddWithValue("@WorkStatus", clienter.WorkStatus);
                 return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm)) > 0 ? true : false;
             }
             catch (Exception ex)
             {
-                LogHelper.LogWriter("添加骑士异常", new { ex = ex, clienter = clienter });
+                LogHelper.LogWriter("添加骑士异常", new { clienter = clienter });
                 return false;
                 throw;
             }

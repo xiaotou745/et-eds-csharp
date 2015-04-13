@@ -359,11 +359,11 @@ using ETS.Data.PageData;
         /// 获取个人账户列表
         /// </summary>
         /// <returns></returns>
-        public List<AccountModel> GetListAccount()
+        public List<AccountModel> GetListAccount(int groupid)
         {
             try
             {
-                return _dao.GetListAccount();
+                return _dao.GetListAccount(groupid);
             }
             catch (Exception ex)
             {

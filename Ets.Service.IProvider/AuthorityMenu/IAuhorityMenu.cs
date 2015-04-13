@@ -129,7 +129,7 @@
         /// 获取角色列表
         /// </summary>
         /// <returns></returns>
-        List<AccountModel> GetListAccount();
+        List<AccountModel> GetListAccount(int groupid);
         /// <summary>
         /// 获取角色
         /// </summary>
