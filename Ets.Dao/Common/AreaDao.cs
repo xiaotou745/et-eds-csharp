@@ -246,7 +246,7 @@ where   p.name =@ProvinceName
             if(!string.IsNullOrWhiteSpace(openCityCodeList))
             {
                 int code = Convert.ToInt32(openCityCodeList.Split(',')[0].ToString());
-                sql += @"UPDATE PublicProvinceCity SET IsPublic=1 WHERE code IN(@openCityCodeList);";
+                sql +=string.Format( @"UPDATE PublicProvinceCity SET IsPublic=1 WHERE code IN({0});",openCityCodeList);
                 sql +=string.Format(@"UPDATE PublicProvinceCity 
                           SET IsPublic=1 
                           WHERE code=(
@@ -263,12 +263,9 @@ where   p.name =@ProvinceName
             }
             if (!string.IsNullOrWhiteSpace(closeCityCodeList))
             {
-                sql += @"UPDATE PublicProvinceCity SET IsPublic=0 WHERE code IN(@closeCityCodeList);";
+                sql += string.Format( @"UPDATE PublicProvinceCity SET IsPublic=0 WHERE code IN({0});",closeCityCodeList);
             }
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@openCityCodeList", openCityCodeList);
-            parm.AddWithValue("@closeCityCodeList", closeCityCodeList);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql) > 0 ? true : false;
         }
     }
 }
