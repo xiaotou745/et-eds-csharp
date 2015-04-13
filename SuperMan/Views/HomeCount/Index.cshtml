@@ -65,6 +65,10 @@
                         骑士平均完成订单：@ParseHelper.ToDivision(resultList.OrderCount, resultList.ActiveClienter)  <br />
                     </td>
                     <td>
+                        任务平均佣金：@ParseHelper.ToDivision(ParseHelper.ToDouble(resultList.YfPrice), resultList.MisstionCount)<br />
+                        订单平均佣金：@ParseHelper.ToDivision(ParseHelper.ToDouble(resultList.YfPrice), resultList.OrderCount)<br />
+                    </td>
+                    <td>
                         商户结算金额（应收）：￥@ParseHelper.ToSplitByPercentile(false, resultList.YsPrice)<br />
                         骑士佣金总计（应付）：￥@ParseHelper.ToSplitByPercentile(false, resultList.YfPrice)<br />
                         @{
@@ -73,6 +77,7 @@
                         }
                         盈亏总计：￥<span style="color:@ykStyle">@ParseHelper.ToSplitByPercentile(false, resultList.YkPrice)</span><br />
                     </td>
+                   
                 </tr>
             </table>
         </p>
