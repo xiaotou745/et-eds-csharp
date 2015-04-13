@@ -392,6 +392,12 @@ namespace Ets.Service.Provider.Order
         {
             #region 设置门店的省市区编码信息 add by caoheyang 20150407
             string storecodeInfo = new AreaProvider().GetOpenCode(new Ets.Model.ParameterModel.Area.ParaAreaNameInfo()
+            {
+                ProvinceName = paramodel.store_info.province,
+                CityName = paramodel.store_info.city,
+                AreaName = paramodel.store_info.area
+            });
+            if (storecodeInfo == ETS.Const.SystemConst.CityOpenInfo || string.IsNullOrWhiteSpace(storecodeInfo))
                 return ResultModel<object>.Conclude(OrderApiStatusType.ParaError, "门店省市区信息错误");
             else
             {
