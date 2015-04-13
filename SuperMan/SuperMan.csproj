@@ -180,6 +180,7 @@
     <Compile Include="Controllers\GroupManagerController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HomeCountController.cs" />
+    <Compile Include="Controllers\OpenCityManagerController.cs" />
     <Compile Include="Controllers\OrderStatisticalController.cs" />
     <Compile Include="Controllers\MenuManagerController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
@@ -529,6 +530,8 @@
     <Content Include="Views\HomeCount\_PartialIndex.cshtml" />
     <Content Include="Views\SubsidyManager\TimeSubsidies.cshtml" />
     <Content Include="Views\Order\OrderDetail.cshtml" />
+    <Content Include="Views\OpenCityManager\OpenCityManager.cshtml" />
+    <Content Include="Views\OpenCityManager\_OpenCityManagerList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

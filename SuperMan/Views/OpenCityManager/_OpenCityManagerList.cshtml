@@ -1,0 +1,42 @@
+﻿@model List<Ets.Model.Common.OpenCityModel>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+    <thead>
+
+        <tr class="tdbg">
+            <th width="%5">序号</th>
+            <th>省编号</th>
+            <th>省名称</th>
+            <th>市编号</th>
+            <th>市编名称</th>
+            <th>区县编号</th>
+            <th>区县名称</th>
+            <th>是否开放</br><input type="checkbox" name="checkAll" id="selectAll" onclick="checkAll()" />全选/取消</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var i = 0;
+            foreach (var item in Model)
+            {
+                i++;
+                <tr id="@item.DistrictCode">
+                    <td>@i</td>
+                    <td>@item.ProvinceCode</td>
+                    <td>@item.ProvinceName</td>
+                    <td>@item.CityCode</td>
+                    <td>@item.CityName</td>
+                    <td>@item.DistrictCode</td>
+                    <td>@item.DistrictName</td>
+                    <td><input type="checkbox" name="checkMenus" id="@item.DistrictCode" @(item.IsPublic == 1 ? "checked" : "") value="@item.DistrictCode" /></td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+<script>
+    function checkAll() {
+        var checkedOfAll = $("#selectAll").prop("checked");
+        $("input[name='checkMenus']").prop("checked", checkedOfAll);
+    }
+</script>
+

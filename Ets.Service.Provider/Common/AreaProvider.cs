@@ -12,6 +12,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ETS.Security;
+using ETS.Data.PageData;
+using Ets.Model.ParameterModel.Common;
 
 namespace Ets.Service.Provider.Common
 {
@@ -29,34 +31,38 @@ namespace Ets.Service.Provider.Common
         {
              
             AreaModelList areaList = new AreaModelList();
-
             var redis = new ETS.NoSql.RedisCache.RedisCache();
-             
-            if (version.Trim().Equals(Config.ApiVersion))//客户端请求
-            {
-                areaList.Version = Config.ApiVersion;
-                ///没有最新
-                return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.Newest, areaList);
-            }
-            else
-            {
-                redis.Delete(string.Format(RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity, version));
-            } 
-            string key = string.Format(RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity, version);
+            string key = RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity_New;
             var cacheValue = redis.Get<string>(key);
             if (!string.IsNullOrEmpty(cacheValue))
             {
                 return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.UnNewest, Letao.Util.JsonHelper.ToObject<AreaModelList>(cacheValue));
             }
-            //取数据库
             IList<Model.DomainModel.Area.AreaModel> list = dao.GetOpenCitySql();
-            areaList.Version = Config.ApiVersion;
             areaList.AreaModels = list;
             if (list != null)
             {
                 redis.Add(key, Letao.Util.JsonHelper.ToJson(areaList));
             }
             return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.UnNewest, areaList);
+        }
+        /// <summary>
+        /// 修改开发城市后更新Redis缓存
+        /// danny-20150413
+        /// </summary>
+        /// <param name="version"></param>
+        /// <returns></returns>
+        public void ResetOpenCityListRedis()
+        {
+
+            AreaModelList areaList = new AreaModelList();
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            IList<Model.DomainModel.Area.AreaModel> list = dao.GetOpenCitySql();
+            areaList.AreaModels = list;
+            if (list != null)
+            {
+                redis.Set(RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity_New, Letao.Util.JsonHelper.ToJson(areaList));
+            }
         }
 
         /// <summary>
@@ -163,6 +169,37 @@ namespace Ets.Service.Provider.Common
                         ,DateTime.Now.AddDays(30));
             }
             return redis.Get<string>(key);
+        }
+        /// <summary>
+        /// 获取开通城市列表
+        /// danny-20150410
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<OpenCityModel> GetOpenCityList(OpenCitySearchCriteria criteria)
+        {
+            PageInfo<OpenCityModel> pageinfo = dao.GetOpenCityList<OpenCityModel>(criteria);
+            return pageinfo;
+        }
+        /// <summary>
+        /// 获取开放城市列表（非分页）
+        /// danny-20150410
+        /// </summary>
+        /// <param name="cityName"></param>
+        /// <returns></returns>
+        public IList<OpenCityModel> GetOpenCityList(string cityName)
+        {
+            return dao.GetOpenCityList(cityName);
+        }
+        /// <summary>
+        /// 修改开通城市
+        /// danny-20150413
+        /// </summary>
+        /// <param name="openCityCodeList"></param>
+        /// <returns></returns>
+        public bool ModifyOpenCityByCode(string openCityCodeList, string closeCityCodeList)
+        {
+            return dao.ModifyOpenCityByCode(openCityCodeList, closeCityCodeList);
         }
     }
 }
