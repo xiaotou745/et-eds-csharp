@@ -44,13 +44,18 @@ namespace Ets.Service.IProvider.OpenApi
                     status = 1; //已发货
                     break;
                 default:
-                    break;
+                    return OrderApiStatusType.Success;
             }
             string ts = DateTime.Now.ToString();
             string url = ConfigurationManager.AppSettings["FulltimeAsyncStatus"];
             if (url == null)
                 return OrderApiStatusType.SystemError;
-            string json = HTTPHelper.HttpPost(url, "app_key=" + app_key + "&sign=" + GetSign(ts) + "&timestamp=" + ts + "&order_id=" + paramodel.fields.OriginalOrderNo + "&status=" + status+"&v="+v);
+            ///order_id	int	Y	订单ID ，根据订单ID改变对应的订单物流状态，一个订单只能修改一次，修改过再修改会报错。
+            /// status	int	Y	物流状态，1代表已发货，2代表已签收
+            ///send_phone	string	Y/N	配送员电话，物流状态传参是（ststus=1）的时候，配送员电话必须写，如果为（ststus=2）的时候可以不写。
+            ///send_name	string	Y/N	配送员姓名，物流状态传参是（ststus=1）的时候，配送员姓名必须写，如果为（ststus=2）的时候可以不写。
+            string json = HTTPHelper.HttpPost(url, "app_key=" + app_key + "&sign=" + GetSign(ts) + "&timestamp=" + ts + "&order_id=" + paramodel.fields.OriginalOrderNo + "&status=" + status + "&v=" + v + "&send_phone="+paramodel.fields.ClienterPhoneNo
+                + "&send_name=" + paramodel.fields.ClienterTrueName);
             if (string.IsNullOrWhiteSpace(json))
                 return OrderApiStatusType.ParaError;
             else if (json == "null")

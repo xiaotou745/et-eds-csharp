@@ -378,33 +378,22 @@ namespace SuperManWebApi.Controllers
             }
         }
         /// <summary>
-        /// 完成订单 edit by caoheyang 20150204
+        /// 完成订单 
         /// wc 该 ado
         /// </summary>
         /// <param name="userId">C端用户id</param>
         /// <param name="orderNo">订单号码</param>
+       /// <param name="pickupCode">取货码</param>
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.FinishOrderStatus))]
         [HttpGet]
-        public Ets.Model.Common.ResultModel<FinishOrderResultModel> FinishOrder_C(int userId, string orderNo)
+        public Ets.Model.Common.ResultModel<FinishOrderResultModel> FinishOrder_C(int userId, string orderNo, string pickupCode=null)
         {
             if (userId == 0)  //用户id非空验证
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.userIdEmpty);
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderEmpty);
-            //if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null) //订单是否存在验证
-            //    return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderIsNotExist);
-
-            //完成订单时，先验证 订单状态 ，如果订单状态为已完成，则返回 该订单已完成，否则继续
-            //查询 完成该订单的 骑士 信息，修改 骑士 的收入信息，同时在 Records 表中增加一条记录
-
-            //Ets.Model.DataModel.Order.order myOrder = iOrderProvider.GetOrderInfoByOrderNo(orderNo);
-            //if (myOrder.Status == Ets.Model.Common.ConstValues.ORDER_FINISH)   //如果订单已完成，则提示 该订单已完成
-            //{
-            //    return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderIsNotAllowRush);
-            //}
-
-            string finishResult = iClienterProvider.FinishOrder(userId, orderNo);
+            string finishResult = iClienterProvider.FinishOrder(userId, orderNo, pickupCode);
             if (finishResult == "1")  //完成
             { 
                 var clienter = iClienterProvider.GetUserInfoByUserId(userId); 
@@ -416,6 +405,8 @@ namespace SuperManWebApi.Controllers
                     model.balanceAmount = 0.0m;
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Success, model);
             }
+            else if (finishResult == ETS.Enums.FinishOrderStatus.PickupCodeError.ToString())
+                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.PickupCodeError);
             else
             {
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Failed);
