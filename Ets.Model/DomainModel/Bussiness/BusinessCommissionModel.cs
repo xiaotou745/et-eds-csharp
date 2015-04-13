@@ -87,6 +87,10 @@ namespace Ets.Model.DomainModel.Bussiness
             get;
             set;
         }
+        /// <summary>
+        /// 商户城市
+        /// </summary>
+        public string BusinessCity { get; set; }
     }
 
 }

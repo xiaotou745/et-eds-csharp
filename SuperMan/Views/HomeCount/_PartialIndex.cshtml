@@ -1,6 +1,6 @@
 ﻿@model ETS.Data.PageData.PageInfo<Ets.Model.Common.HomeCountTitleModel>
 @using Webdiyer.WebControls.Mvc;
-
+@using ETS.Util;
 <table class="tbstyle"  border="1">
     <tr class="trclass">
         <td>日期</td>
@@ -10,11 +10,17 @@
         <td>订单金额</td>
         <td>任务量</td>
         <td>订单量</td>
+        <td>客单价</td>
+        <td>任务单价</td>
         <td>商户平均发布订单</td>
+        <td>商户平均发布任务</td>
         <td>任务平均订单量</td>
         <td>骑士平均完成订单量</td>
         <td>商户结算金额（应收）</td>
         <td>骑士佣金总计（应付）</td>
+        <td>补贴1次任务量</td>
+        <td>补贴2次任务量</td>
+        <td>补贴3次任务量</td>
         <td>盈亏总计</td>
     </tr>
 
@@ -25,18 +31,24 @@
             string ykStyle = item.YkPrice > 0 ? "red" : "green";
             <tr class="trclass">
                 <td>@item.InsertTime.ToString("yyyy-MM-dd")</td>
-                <td>@item.BusinessCount</td>
-                <td>@item.RzqsCount</td>
-                <td>@item.DdrzqsCount</td>
-                <td>@item.OrderPrice</td>
-                <td>@item.MisstionCount</td>
-                <td>@item.OrderCount</td>
-                <td>@item.BusinessAverageOrderCount</td>
-                <td>@item.MissionAverageOrderCount</td>
-                <td>@item.ClienterAverageOrderCount</td>
-                <td>@item.YsPrice</td>
-                <td>@item.YfPrice</td>
-                <td>￥<span style="color:@ykStyle">@item.YkPrice</span></td>
+                <td>@ParseHelper.ToSplitByPercentile(true,item.BusinessCount)</td>
+                <td>@ParseHelper.ToSplitByPercentile(true,item.RzqsCount)</td>
+                <td>@ParseHelper.ToSplitByPercentile(true,item.DdrzqsCount)</td>
+                <td>@ParseHelper.ToSplitByPercentile(false,item.OrderPrice)</td>
+                <td>@ParseHelper.ToSplitByPercentile(true,item.MisstionCount)</td>
+                <td>@ParseHelper.ToSplitByPercentile(true,item.OrderCount)</td>
+                <td>@ParseHelper.ToSplitByPercentile(false,((item.OrderPrice/item.OrderCount).ToString("f2")))</td>
+                <td>@ParseHelper.ToSplitByPercentile(false,((item.OrderPrice / item.MisstionCount).ToString("f2")))</td>
+                <td>@ParseHelper.ToSplitByPercentile(true,item.BusinessAverageOrderCount)</td>
+                <td>@ParseHelper.ToSplitByPercentile(true, (item.MisstionCount == 0 ? "0" : (item.MisstionCount / item.BusinessCount).ToString()))</td>
+                <td>@ParseHelper.ToSplitByPercentile(true,item.MissionAverageOrderCount)</td>
+                <td>@ParseHelper.ToSplitByPercentile(true,item.ClienterAverageOrderCount)</td>
+                <td>@ParseHelper.ToSplitByPercentile(false,item.YsPrice)</td>
+                <td>@ParseHelper.ToSplitByPercentile(false,item.YfPrice)</td>
+                <td>@ParseHelper.ToSplitByPercentile(true,item.OneSubsidyOrderCount)</td>
+                <td>@ParseHelper.ToSplitByPercentile(true,item.TwoSubsidyOrderCount)</td>
+                <td>@ParseHelper.ToSplitByPercentile(true,item.ThreeSubsidyOrderCount)</td>
+                <td>￥<span style="color:@ykStyle">@ParseHelper.ToSplitByPercentile(false,item.YkPrice)</span></td>
             </tr>
         }
     }

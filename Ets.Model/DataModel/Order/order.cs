@@ -19,7 +19,7 @@ namespace Ets.Model.DataModel.Order
         public Nullable<bool> IsPay { get; set; }
         public Nullable<decimal> Amount { get; set; }
         public Nullable<decimal> OrderCommission { get; set; }
-       
+
         /// <summary>
         /// 外送费
         /// </summary>
@@ -77,5 +77,17 @@ namespace Ets.Model.DataModel.Order
         /// 应收 结算金额
         /// </summary>
         public decimal SettleMoney { get; set; }
+
+        /// <summary>
+        /// 额外补贴金额
+        /// </summary>
+        public decimal Adjustment { get; set; }
+
+        /// <summary>
+        /// 集团id
+        /// </summary>
+        public int GroupId { get; set; }
+
+
     }
 }

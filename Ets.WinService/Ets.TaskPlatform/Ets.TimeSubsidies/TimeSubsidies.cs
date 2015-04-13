@@ -7,6 +7,7 @@ using Quartz.Impl;
 using System.Threading;
 using System.ServiceProcess;
 using ETS;
+using Ets.Dao.GlobalConfig;
 
 namespace Ets.TimeSubsidies
 {
@@ -19,7 +20,7 @@ namespace Ets.TimeSubsidies
 
         protected override void OnStart(string[] args)
         {
-            //Thread.Sleep(1000 * 10);
+            Thread.Sleep(1000 * 10);
             Thread t = new Thread(ExecTimeSubsidies);
             t.Start();
         }
@@ -31,20 +32,25 @@ namespace Ets.TimeSubsidies
 
         private static void ExecTimeSubsidies()
         {
-            ETS.Util.Log.WriteTextToFile("服务开始了", Config.ConfigKey("LogPath"),true);
+            ETS.Util.Log.WriteTextToFile("服务开始了", Config.ConfigKey("LogPath"), true);
             while (true)
             {
                 ///三十秒执行一次
                 try
                 {
-                    Ets.Service.Provider.Order.AutoAdjustProvider autoAdjustProvider = new Ets.Service.Provider.Order.AutoAdjustProvider();
-                    autoAdjustProvider.AdjustOrderService();
+                    bool IsStarTimeSubsidies = Convert.ToBoolean(ETS.Util.ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.IsStarTimeSubsidies, 0));//是否开启动态时间补贴(0不开启,1开启)
+                    if (IsStarTimeSubsidies)
+                    {
+                        Ets.Service.Provider.Order.AutoAdjustProvider autoAdjustProvider = new Ets.Service.Provider.Order.AutoAdjustProvider();
+                        autoAdjustProvider.AdjustOrderService();
+                    }
                 }
                 catch (Exception ex)
                 {
                     //ETS.Util.LogHelper.LogWriter("主方法体错了:" + ex.Message);
                     ETS.Util.Log.WriteTextToFile("当前时间:" + DateTime.Now.ToString() + "主方法体错了:" + ex.Message, Config.ConfigKey("LogPath"), true);
                 }
+
                 Thread.Sleep(30 * 1000);//睡眠30秒
             }
 

@@ -47,6 +47,30 @@ namespace Ets.Dao.Statistics
         }
 
         /// <summary>
+        /// 获取统计数据
+        /// 窦海超
+        /// 2015年3月26日 14:48:29
+        /// </summary>
+        /// <returns></returns>
+        public IList<HomeCountTitleModel> GetSubsidyOrderCountStatistics()
+        {
+            string where = string.Empty;
+            if (Config.ConfigKey("IsFirst") == null)
+            {
+                where = " and CONVERT(CHAR(10),PubDate,120)=DATEADD(DAY,-1,CONVERT(CHAR(10),GETDATE(),120)) ";//统计昨天数据
+            }
+            string sql = @"SELECT CONVERT(CHAR(10),PubDate,120) AS PubDate, --发布时间
+                                  sum(case when DealCount=1 then 1 else 0 end ) as OneSubsidyOrderCount,
+                                  sum(case when DealCount=2 then 1 else 0 end ) as TwoSubsidyOrderCount,
+                                  sum(case when DealCount=3 then 1 else 0 end ) as ThreeSubsidyOrderCount
+                           FROM [order](NOLOCK) AS o
+                           WHERE   o.[Status]=1 " + where;
+            sql += " GROUP BY CONVERT(CHAR(10),PubDate,120) ORDER BY PubDate ASC";
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
+            return MapRows<HomeCountTitleModel>(dt);
+        }
+
+        /// <summary>
         /// 获取当前数据是否存在 
         /// 窦海超
         /// 2015年3月26日 14:48:15
@@ -81,7 +105,10 @@ namespace Ets.Dao.Statistics
                             ,[ClienterAverageOrderCount]
                             ,[YsPrice]
                             ,[YfPrice]
-                            ,[YkPrice])
+                            ,[YkPrice]
+                            ,[OneSubsidyOrderCount]
+                            ,[TwoSubsidyOrderCount]
+                            ,[ThreeSubsidyOrderCount])
                             VALUES
                             (@InsertTime
                             ,@BusinessCount
@@ -95,7 +122,10 @@ namespace Ets.Dao.Statistics
                             ,@ClienterAverageOrderCount
                             ,@YsPrice
                             ,@YfPrice
-                            ,@YkPrice)
+                            ,@YkPrice
+                            ,@OneSubsidyOrderCount
+                            ,@TwoSubsidyOrderCount
+                            ,@ThreeSubsidyOrderCount)
                             ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@InsertTime", model.PubDate);
@@ -111,8 +141,59 @@ namespace Ets.Dao.Statistics
             parm.AddWithValue("@YsPrice", model.YsPrice);
             parm.AddWithValue("@YfPrice", model.YfPrice);
             parm.AddWithValue("@YkPrice", model.YkPrice);
+            parm.AddWithValue("@OneSubsidyOrderCount", model.OneSubsidyOrderCount);
+            parm.AddWithValue("@TwoSubsidyOrderCount", model.TwoSubsidyOrderCount);
+            parm.AddWithValue("@ThreeSubsidyOrderCount", model.ThreeSubsidyOrderCount);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
 
+        }
+
+        /// <summary>
+        /// 获取当天
+        /// 未完成任务量
+        /// 未被抢任务量
+        /// 窦海超
+        /// 2015年4月8日 14:00:14
+        /// </summary>
+        /// <returns></returns>
+        public HomeCountTitleModel GetCurrentUnFinishOrderinfo()
+        {
+            string sql = @"
+                        select 
+                        sum(case when Status=2 then 1 else 0 end) UnfinishedMissionCount,--未完成任务量
+                        sum(case when Status=0 then 1 else 0 end) UnGrabMissionCount--未被抢任务量
+                        from dbo.[order](nolock) as o
+                        where convert(char(10),PubDate,120)=convert(char(10),getdate(),120) 
+                        and Status<>4
+                        group by convert(char(10),PubDate,120)
+                            ";
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                return null;
+            }
+            return MapRows<HomeCountTitleModel>(dt)[0];
+        }
+
+        /// <summary>
+        /// 获取当天活跃商家和骑士
+        /// 窦海超
+        /// 2015年4月8日 14:57:27
+        /// </summary>
+        /// <returns></returns>
+        public HomeCountTitleModel GetCurrentActiveBussinessAndClienter()
+        {
+            string sql = @"select 
+                        count(distinct clienterId) as ActiveClienter,
+                        count(distinct businessId) as ActiveBusiness
+                        from dbo.[order] as o 
+                        where convert(char(10),PubDate,120)=convert(char(10),getdate(),120) and status<>3";
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+                return null;
+            }
+            return MapRows<HomeCountTitleModel>(dt)[0];
         }
     }
 }

@@ -25,7 +25,10 @@ namespace Ets.Model.DomainModel.Clienter
         /// </summary>
         //public double distance { get; set; }
         public string distance { get; set; }
-
+        /// <summary>
+        /// 骑士距离客户的距离用来排序
+        /// </summary>
+        public double distance_OrderBy { get; set; }
         /// <summary>
         ///  商户到收货人的距离
         /// </summary>
@@ -86,6 +89,17 @@ namespace Ets.Model.DomainModel.Clienter
         /// 订单数量
         /// </summary>
         public int? OrderCount { get; set; }
+
+        /// <summary>
+        /// 集团id
+        /// </summary>
+        public int GroupId { get; set; }
+
+
+        /// <summary>
+        ///  是否需要做取货码验证 0 不需要 1 需要
+        /// </summary>
+        public int NeedPickupCode { get; set; }
     }
     public class ClientOrderNoLoginResultModel
     {
@@ -110,6 +124,10 @@ namespace Ets.Model.DomainModel.Clienter
         /// </summary>
         //public double distance { get; set; }
         public string distance { get; set; }
+        /// <summary>
+        /// 骑士距离客户的距离用来排序
+        /// </summary>
+        public double distance_OrderBy { get; set; }
         /// <summary>
         /// 商户到收货人的距离
         /// </summary>
@@ -171,6 +189,17 @@ namespace Ets.Model.DomainModel.Clienter
         /// 订单数量
         /// </summary>
         public int? OrderCount { get; set; }
+
+        /// <summary>
+        /// 集团id
+        /// </summary>
+        public int GroupId { get; set; }
+
+
+        /// <summary>
+        ///  是否需要做取货码验证 0 不需要 1 需要
+        /// </summary>
+        public int NeedPickupCode { get; set; }
     }
     public class degree
     {

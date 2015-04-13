@@ -15,7 +15,9 @@
             <th>订单金额</th>
             <th>订单佣金</th>
             <th>外送费</th>
-            <th>网站补贴</th>
+            <th>每单补贴</th>
+            <th>任务补贴</th>
+            <th>商家结算比例</th>
             <th>所属集团</th>
             <th>订单状态</th>
             <th>操作</th>
@@ -44,6 +46,8 @@
                     <td>@item.OrderCommission</td>
                     <td>@item.DistribSubsidy</td>
                     <td>@item.WebsiteSubsidy</td>
+                    <td>@item.Adjustment</td>
+                    <td>@item.BusinessCommission</td>
                     <td>@item.GroupName</td>
                     @{
                 var strstatus = "";

@@ -38,7 +38,7 @@
                 <tr>
                     <td>
                         <span class="">筛选城市: </span>
-                        @Html.DropDownList("businessCity", new SelectList(ViewBag.openCityList.Result, "Code", "Name"), "--无--", new { style = "width:155px" })
+                        @Html.DropDownList("businessCity", new SelectList(ViewBag.openCityList.Result, "Name", "Name"), "--无--", new { style = "width:155px" })
                         <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" name="GroupId" />
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                     </td>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ETS.Const;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,8 +21,10 @@ namespace Ets.Service.IProvider.OpenApi
         {
             switch (groupId)
             {
-                case 2:
+                case SystemConst.Group2:  //万达
                     return new WanDaGroup();
+                case SystemConst.Group3: //全时
+                    return new FulltimeGroup();
                 default:
                     return null;
             }

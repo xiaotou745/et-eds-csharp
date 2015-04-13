@@ -1,0 +1,204 @@
+﻿
+@{
+    ViewBag.Title = "TimeSubsidies";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：补贴设置 > 时间补贴设置
+    </h2>
+    <div class="SearchMd">
+        <table border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td> <a href="/SubsidyFormulaMode/SubsidyFormulaMode">佣金补贴策略设置</a>
+                    <input type="submit" value="新增按时间补贴" class="searchBtn" onclick="showAdd();" id="btnAdd" /> 
+                    <label style="color: red">会按补贴时间自动正序排序</label>
+                </td>
+            </tr>
+        </table>
+    </div>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+        <thead> 
+            <tr class="tdbg">
+                <th width="%5">编号</th>
+                <th>补贴时间(分钟)</th>
+                <th>补贴金额(元)</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                if (Model != null)
+                { 
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Id</td> 
+                            <td>@item.Value1</td>
+                            <td>@item.Value2</td>
+                            <td> 
+                                <a href="javascript:void(0)" onclick="showUpdate(@item.Id,'@item.Value1',@item.Value2)">修改</a>
+                                <a href="javascript:void(0)" onclick="deleteIt(@item.Id);">删除</a> 
+                            </td> 
+                        </tr> 
+                    }
+                }
+            }
+        </tbody> 
+    </table>
+</div>
+<div>
+    <div class="add-openbox add-form" id="addDiv" style="width:500px">
+        <h2>
+            <p id="statusFin">新增时间补贴</p>
+        </h2>
+        <fieldset>
+            <div class="control-group" style="width: 250px;margin: 0 auto;">
+                <label>补贴时间</label> 
+                <input  name="txtTime" id="txtTime" type="text">
+            </div>  
+            <div class="control-group" style="width: 250px;margin: 0 auto;">
+                <label>补贴金额</label> 
+                <input  name="txtPrice" id="txtPrice" type="text">
+            </div> 
+        </fieldset>
+        <p class="btnbox">
+            <input value="确认" type="button" id="btnConfimAdd" class="yesBtn" />                
+            <input value="关闭" type="button" class="J_closebox qxBtn" />
+        </p>
+    </div>
+</div>
+ 
+<div>
+    <div class="add-openbox add-form" id="updateDiv" style="width:500px">
+        <h2>
+            <p id="statusFin">修改时间补贴</p>
+        </h2>
+        <fieldset>
+            <input type="hidden" id="hidid"/>
+            <div class="control-group" style="width: 250px;margin: 0 auto;">
+                <label >补贴时间</label> 
+                <input  name="txtTimeu" id="txtTimeu" type="text">
+            </div>  
+            <div class="control-group" style="width: 250px;margin: 0 auto;">
+                <label >补贴金额</label> 
+                <input  name="txtPriceu" id="txtPriceu" type="text">
+            </div> 
+        </fieldset>
+        <p class="btnbox">
+            <input value="确认" type="button" id="btnUpdateConfim" class="yesBtn" />                
+            <input value="关闭" type="button" class="J_closebox qxBtn" />
+        </p>
+    </div>
+</div>
+<script>
+    var adminjs = new adminglass(); //实例化后台类  
+    //新增
+    $("#btnConfimAdd").on('click', function () {
+        var txtTime = $("#txtTime").val();
+        var txtPrice = $("#txtPrice").val();
+        if (txtTime == "") {
+            alert("请输入分钟数!");
+            return;
+        }
+        if (txtPrice == "") {
+            alert("请输入价钱!");
+            return;
+        }
+        if (isNaN(txtTime)) {
+            alert("请输入分钟数!");
+            return;
+        }
+        if (isNaN(txtPrice)) {
+            alert("请输入价钱!");
+            return;
+        }
+        var pars = { "Id": 0, "Value1": txtTime, "Value2": txtPrice };
+        var url = "/SubsidyManager/AddTimeSubsidies";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: pars,
+            dataType: 'json',
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert("添加成功!");
+                    window.location.href = "/SubsidyManager/TimeSubsidies/";
+                } else {
+                    alert("添加失败!");
+                }
+            }
+        });
+    });
+
+    function deleteIt(id) {
+        if (confirm("确定删除?")) { 
+            var pars = { "Id": id };
+            var url = "/SubsidyManager/DeleteTimeSubsidies?id=" + id;
+            $.ajax({
+                type: 'GET',
+                url: url,
+                data: pars,
+                success: function (result) {
+                    if (result.IsSuccess) {
+                        alert("删除成功!");
+                        window.location.href = "/SubsidyManager/TimeSubsidies/";
+                    } else {
+                        alert("删除失败!");
+                    }
+                }
+            });
+        }
+    }
+    //修改
+    $("#btnUpdateConfim").on('click', function () {
+        var txtTime = $("#txtTimeu").val();
+        var txtPrice = $("#txtPriceu").val();
+        var hidid = $("#hidid").val();
+        if (txtTime == "") {
+            alert("请输入分钟数!");
+            return;
+        }
+        if (txtPrice == "") {
+            alert("请输入价钱!");
+            return;
+        }
+        if (isNaN(txtTime)) {
+            alert("请输入分钟数!");
+            return;
+        }
+        if (isNaN(txtPrice)) {
+            alert("请输入价钱!");
+            return;
+        }
+        var pars = { "Id": hidid, "Value1": txtTime, "Value2": txtPrice };
+        var url = "/SubsidyManager/UpdateTimeSubsidies";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: pars,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert("修改成功!");
+                    window.location.href = "/SubsidyManager/TimeSubsidies/";
+                } else {
+                    alert("修改失败!");
+                }
+            }
+        });
+    });
+    function showUpdate(id,tiem,price) {
+        $("#txtTimeu").val(tiem); 
+        $("#txtPriceu").val(price); 
+        $("#hidid").val(id);
+        adminjs.openwinbox('#updateDiv');
+    }
+    function showAdd() {
+        adminjs.openwinbox('#addDiv');
+    }
+    //关闭弹层
+    $('.J_closebox').click(function () {
+        adminjs.closewinbox('.add-openbox');
+        return false;
+    });
+</script>

@@ -4,6 +4,9 @@ using Ets.Model.DataModel.Order;
 using Ets.Model.DomainModel.Clienter;
 using Ets.Model.Common;
 using Ets.Model.ParameterModel.Clienter;
+using ETS.Data.PageData;
+using Ets.Model.DomainModel.Bussiness;
+using Ets.Model.ParameterModel.Order;
 
 namespace Ets.Service.IProvider.Clienter
 {
@@ -123,9 +126,30 @@ namespace Ets.Service.IProvider.Clienter
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="orderNo"></param>
+        /// <param name="pickupCode">取货码 可空</param>
         /// <returns></returns>
-        string FinishOrder(int userId, string orderNo);
+        string FinishOrder(int userId, string orderNo,string pickupCode=null);
 
         ClienterModel GetUserInfoByUserId(int UserId);
+        /// <summary>
+        /// 骑士配送统计
+        /// danny-20150408
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        PageInfo<BusinessesDistributionModel> GetClienterDistributionStatisticalInfo(OrderSearchCriteria criteria);
+        /// <summary>
+        /// 骑士门店抢单统计
+        /// danny-20150408
+        /// </summary>
+        /// <returns></returns>
+        IList<BusinessesDistributionModel> GetClienteStorerGrabStatisticalInfo();
+        /// <summary>
+        /// 上传小票
+        /// wc
+        /// </summary>
+        /// <param name="uploadReceiptModel"></param>
+        /// <returns></returns>
+        string UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel);
     }
 }

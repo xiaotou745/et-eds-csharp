@@ -14,6 +14,9 @@ using ETS.Extension;
 using ETS.Enums;
 using Ets.Model.ParameterModel.WtihdrawRecords;
 using Ets.Model.Common;
+using Ets.Model.ParameterModel.Order;
+using System.Text;
+using Ets.Model.DomainModel.Bussiness;
 
 namespace Ets.Dao.Clienter
 {
@@ -123,7 +126,8 @@ namespace Ets.Dao.Clienter
                                     b.PhoneNo AS BusinessPhone,
                                     REPLACE(b.City,'市','') AS pickUpCity,
                                     b.Longitude,
-                                    b.Latitude,o.OrderCommission";
+                                    b.Latitude,o.OrderCommission,
+                                    b.GroupId";
             return new PageHelper().GetPages<ClientOrderModel>(SuperMan_Read, criteria.PagingRequest.PageIndex, where, criteria.status == 1 ? "o.ActualDoneDate DESC " : " o.Id ", columnStr, "[order](NOLOCK) AS o LEFT JOIN business(NOLOCK) AS b ON o.businessId=b.Id", criteria.PagingRequest.PageSize, false);
         }
 
@@ -197,7 +201,7 @@ namespace Ets.Dao.Clienter
             string sql = "SELECT TrueName,PhoneNo,AccountBalance FROM dbo.clienter(NOLOCK) WHERE Id=" + UserId;
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             IList<ClienterModel> list = MapRows<ClienterModel>(dt);
-            if (list == null && list.Count <= 0)
+            if (list == null || list.Count <= 0)
             {
                 return null;
             }
@@ -494,6 +498,111 @@ namespace Ets.Dao.Clienter
             }
             return list[0]; 
         }
+        /// <summary>
+        /// 骑士配送统计
+        /// danny-20150408
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<T> GetClienterDistributionStatisticalInfo<T>(OrderSearchCriteria criteria)
+        {
+            var sbtbl = new StringBuilder(@" (select t.PubDate,t.businessCount,count(t.clienterId) as clienterCount
+                                              from (
+                                                      select convert(char(10),o.PubDate,120) PubDate,count(DISTINCT businessId)businessCount , clienterId
+                                                      from dbo.[order] o(nolock)
+                                              where Status=1 ");
+            if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))
+            {
+                sbtbl.AppendFormat(" AND  CONVERT(CHAR(10),PubDate,120)>=CONVERT(CHAR(10),'{0}',120) ", criteria.orderPubStart);
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.orderPubEnd))
+            {
+                sbtbl.AppendFormat(" AND CONVERT(CHAR(10),PubDate,120)<=CONVERT(CHAR(10),'{0}',120) ", criteria.orderPubEnd);
+            }
+            sbtbl.Append(@"  group by convert(char(10),o.PubDate,120), clienterId) t
+                            group by t.PubDate, t.businessCount ) tbl ");
+            string columnList = @"   tbl.PubDate
+                                    ,tbl.clienterCount ClienterCount
+            				        ,tbl.businessCount BusinessCount ";
 
+            var sbSqlWhere = new StringBuilder(" 1=1 ");
+            string tableList = sbtbl.ToString();
+            string orderByColumn = " tbl.PubDate,tbl.businessCount ";
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
+        }
+        /// <summary>
+        /// 骑士门店抢单统计
+        /// danny-20150408
+        /// </summary>
+        /// <returns></returns>
+        public IList<BusinessesDistributionModel> GetClienteStorerGrabStatisticalInfo()
+        {
+            string sql = @" SELECT  PubDate ,
+                                    ISNULL(SUM(CASE when a.BusinessCount=1 THEN ClienterCount END),0) OnceCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount=2 THEN ClienterCount END),0) TwiceCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount=3 THEN ClienterCount END),0) ThreeTimesCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount=4 THEN ClienterCount END),0) FourTimesCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount=5 THEN ClienterCount END),0) FiveTimesCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount=6 THEN ClienterCount END),0) SixTimesCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount=7 THEN ClienterCount END),0) SevenTimesCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount=8 THEN ClienterCount END),0) EightTimesCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount=9 THEN ClienterCount END),0) NineTimesCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount>=10 THEN ClienterCount END),0) ExceedTenTimesCount
+                            FROM (select PubDate,businessCount BusinessCount,count(clienterId) as ClienterCount
+                                  from (select convert(char(10),o.PubDate,120) PubDate,clienterId,count(distinct businessId) businessCount
+                                        from dbo.[order] o(nolock)
+                                        where o.PubDate> getdate()-20
+                                            and Status in (1,2)
+                                        group by convert(char(10),o.PubDate,120), clienterId)t
+                                  group by PubDate, businessCount) a
+                            group by PubDate
+                            order by PubDate desc ;";
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
+            return MapRows<BusinessesDistributionModel>(dt);
+        }
+
+        /// <summary>
+        /// 上传小票
+        /// </summary>
+        /// <param name="uploadReceiptModel"></param>
+        /// <returns></returns>
+        public string UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel)
+        {
+            string sql = @"
+ insert into dbo.OrderOther
+        ( OrderNo ,
+          NeedUploadCount ,
+          ReceiptPic ,
+          HadUploadCount
+        )
+ values ( @OrderNo ,
+          @NeedUploadCount , 
+          @ReceiptPic ,
+          @HadUploadCount 
+        );";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@OrderNo", SqlDbType.NVarChar);
+            parm.SetValue("@OrderNo", uploadReceiptModel.OrderNo);
+
+            parm.AddWithValue("@NeedUploadCount", uploadReceiptModel.NeedUploadCount);
+            parm.AddWithValue("@ReceiptPic", uploadReceiptModel.ReceiptPic);
+            parm.AddWithValue("@HadUploadCount", uploadReceiptModel.HadUploadCount);
+
+            try
+            {
+                object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, parm);
+                if (i != null)
+                {
+                    return ParseHelper.ToInt(i.ToString()).ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter("插入orderOther表异常：",new {ex = ex});
+                return "0";
+            }
+            return "0";
+        }
     }
 }

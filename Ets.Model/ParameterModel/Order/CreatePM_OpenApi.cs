@@ -86,6 +86,11 @@ namespace Ets.Model.ParameterModel.Order
         public int? package_count { get; set; }
 
         /// <summary>
+        /// 取货码（目前只有全时再用）
+        /// </summary>
+        public string pickupcode { get; set; }
+
+        /// <summary>
         /// 骑士订单佣金 目前由业务逻辑层计算赋值所得
         /// </summary>
         public decimal ordercommission { get; set; }
@@ -127,20 +132,35 @@ namespace Ets.Model.ParameterModel.Order
         /// <summary>
         /// 用户所在省份code
         /// </summary>
-        [Required]
         public string province_code { get; set; }
 
         /// <summary>
         /// 用户所在城市code
         /// </summary>
-        [Required]
         public string city_code { get; set; }
 
         /// <summary>
         /// 用户所在区域code
         /// </summary>
-        [Required]
         public string area_code { get; set; }
+
+        /// <summary>
+        ///用户所在省份名称
+        /// </summary>
+        [Required]
+        public string province { get; set; }
+
+        /// <summary>
+        /// 用户所在城市名称
+        /// </summary>
+        [Required]
+        public string city { get; set; }
+
+        /// <summary>
+        /// 用户所在区域名称
+        /// </summary>
+        [Required]
+        public string area { get; set; }
 
         /// <summary>
         /// 用户收货地址
@@ -207,20 +227,35 @@ namespace Ets.Model.ParameterModel.Order
         /// <summary>
         /// 门店所在省份code
         /// </summary>
-        [Required]
         public string province_code { get; set; }
 
         /// <summary>
         /// 门店所在城市code
         /// </summary>
-        [Required]
         public string city_code { get; set; }
 
         /// <summary>
         /// 门店所在区域code
         /// </summary>
-        [Required]
         public string area_code { get; set; }
+
+        /// <summary>
+        ///门店所在省份名称
+        /// </summary>
+        [Required]
+        public string province { get; set; }
+
+        /// <summary>
+        /// 门店所在城市名称
+        /// </summary>
+        [Required]
+        public string city { get; set; }
+
+        /// <summary>
+        /// 门店所在区域名称
+        /// </summary>
+        [Required]
+        public string area { get; set; }
 
         /// <summary>
         /// 门店所在区域经度

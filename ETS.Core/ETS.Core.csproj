@@ -85,8 +85,6 @@
     <Compile Include="Cacheing\CacheFactory.cs" />
     <Compile Include="Cacheing\LocalCache.cs" />
     <Compile Include="Const\RedissCacheKey.cs" />
-    <Compile Include="NoSql\RedisCache\ISoaCacheService.cs" />
-    <Compile Include="NoSql\RedisCache\RedisCache.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Const\ClienterConst.cs" />
     <Compile Include="Const\SystemConst.cs" />
@@ -113,6 +111,8 @@
     <Compile Include="IO\FileIO.cs" />
     <Compile Include="IO\INIFileManager.cs" />
     <Compile Include="IO\IniParser.cs" />
+    <Compile Include="NoSql\RedisCache\ISoaCacheService.cs" />
+    <Compile Include="NoSql\RedisCache\RedisCache.cs" />
     <Compile Include="NoSql\RedisCache\RedisManager.cs" />
     <Compile Include="Page\IPagedDataTable.cs" />
     <Compile Include="Page\IPagedList.cs" />
@@ -150,6 +150,7 @@
     <Compile Include="Util\Helper.cs" />
     <Compile Include="Util\HTTPHelper.cs" />
     <Compile Include="Util\IEnumItem.cs" />
+    <Compile Include="Util\ImageTools.cs" />
     <Compile Include="Util\ITranslator.cs" />
     <Compile Include="Util\JSON.cs" />
     <Compile Include="Util\JsonHelper.cs" />

@@ -23,6 +23,7 @@ using ETS.Sms;
 using ETS.Transaction.Common;
 using ETS.Transaction;
 using Ets.Model.ParameterModel.User;
+using Ets.Model.ParameterModel.Order;
 namespace Ets.Service.Provider.User
 {
 
@@ -84,7 +85,7 @@ namespace Ets.Service.Provider.User
         /// <param name="t2"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        public ResultInfo<IList<BusinessCommissionModel>> GetBusinessCommission(DateTime t1, DateTime t2, string name, int groupid)
+        public ResultInfo<IList<BusinessCommissionModel>> GetBusinessCommission(DateTime t1, DateTime t2, string name, int groupid, string BusinessCity)
         {
             var result = new ResultInfo<IList<BusinessCommissionModel>> { Data = null, Result = false, Message = "" };
             try
@@ -95,7 +96,7 @@ namespace Ets.Service.Provider.User
                     result.Message = "开始时间不能大于结束时间";
                     return result;
                 }
-                var list = dao.GetBusinessCommission(t1, t2, name, groupid);
+                var list = dao.GetBusinessCommission(t1, t2, name, groupid, BusinessCity);
                 if (list != null && list.Count > 0)
                 {
                     result.Data = list;
@@ -357,6 +358,18 @@ namespace Ets.Service.Provider.User
             return pageinfo;
         }
         /// <summary>
+        /// 商户配送统计
+        /// danny-20150408
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<BusinessesDistributionModel> GetBusinessesDistributionStatisticalInfo(OrderSearchCriteria criteria)
+        {
+            PageInfo<BusinessesDistributionModel> pageinfo = dao.GetBusinessesDistributionStatisticalInfo<BusinessesDistributionModel>(criteria);
+            return pageinfo;
+        }
+        /// <summary>
         /// 更新审核状态
         /// danny-20150317
         /// </summary>
@@ -493,7 +506,9 @@ namespace Ets.Service.Provider.User
                 business.Status = ConstValues.BUSINESS_NOAUDIT;
             }
             int upResult = dao.UpdateBusinessAddressInfo(business);
-
+            ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
+            string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, businessModel.userId);
+            redis.Delete(cacheKey);
             return upResult;
         }
         /// <summary>
@@ -505,7 +520,9 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public int UpdateBusinessPicInfo(int busiId, string picName)
         {
-
+            ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
+            string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, busiId);
+            redis.Delete(cacheKey);
             int upResult = dao.UpdateBusinessPicInfo(busiId, picName);
             return upResult;
 

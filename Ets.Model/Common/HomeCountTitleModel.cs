@@ -86,6 +86,12 @@ namespace Ets.Model.Common
         /// 补贴次数
         /// </summary>
         public int DealCount { get; set; }
+
+
+        /// <summary>
+        /// 零次补贴订单量
+        /// </summary>
+        public int ZeroSubsidyOrderCount { get; set; }
         /// <summary>
         /// 一次补贴订单量
         /// </summary>
@@ -98,5 +104,26 @@ namespace Ets.Model.Common
         /// 三次补贴订单量
         /// </summary>
         public int ThreeSubsidyOrderCount { get; set; }
+
+        /// <summary>
+        /// 未完成任务量
+        /// </summary>
+        public int UnfinishedMissionCount { get; set; }
+
+        /// <summary>
+        /// 未被抢任务量
+        /// </summary>
+        public int UnGrabMissionCount { get; set; }
+
+        /// <summary>
+        /// 活跃骑士
+        /// </summary>
+        public int ActiveClienter { get; set; }
+
+        /// <summary>
+        /// 活跃商家 
+        /// </summary>
+        public int ActiveBusiness { get; set; }
+
     }
 }

@@ -47,6 +47,7 @@
     <Compile Include="Common\GroupApiConfigDao.cs" />
     <Compile Include="Common\GroupDao.cs" />
     <Compile Include="Common\ServicePhoneDao.cs" />
+    <Compile Include="Common\TestUserDao.cs" />
     <Compile Include="DaoBase.cs" />
     <Compile Include="GlobalConfig\GlobalConfigDao.cs" />
     <Compile Include="MenuSet\AuthoritySetDao.cs" />

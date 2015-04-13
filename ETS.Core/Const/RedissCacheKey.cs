@@ -41,10 +41,20 @@ namespace ETS.Const
         /// <summary>
         /// C端找回密码验证码缓存key
         /// </summary>
-        public const string PostForgetPwd_C= "PostForgetPwd_C_";
-/// <summary>
-/// 后台获取开放城市
-/// </summary>
+        public const string PostForgetPwd_C = "PostForgetPwd_C_";
+        /// <summary>
+        /// 后台获取开放城市
+        /// </summary>
         public const string Ets_Service_Provider_Common_GetOpenCityInfo = "Ets_Service_Provider_Common_GetOpenCityInfo";
+
+        /// <summary>
+        /// 后台登录验证码缓存key
+        /// </summary>
+        public const string CaptchaImage = "LoginCaptchaImage_{0}";
+
+        /// <summary>
+        /// 图片自增Key
+        /// </summary>
+        public const string ImageIdentity = "ImageIdentity";
     }
 }
