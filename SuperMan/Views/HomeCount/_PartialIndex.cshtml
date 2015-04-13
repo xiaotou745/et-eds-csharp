@@ -16,6 +16,7 @@
         <td>商户平均发布任务</td>
         <td>任务平均订单量</td>
         <td>骑士平均完成订单量</td>
+        <td>骑士平均佣金</td>
         <td>商户结算金额（应收）</td>
         <td>骑士佣金总计（应付）</td>
         <td>补贴1次任务量</td>
@@ -43,6 +44,7 @@
                 <td>@ParseHelper.ToSplitByPercentile(true, (item.MisstionCount == 0 ? "0" : (item.MisstionCount / item.BusinessCount).ToString()))</td>
                 <td>@ParseHelper.ToSplitByPercentile(true,item.MissionAverageOrderCount)</td>
                 <td>@ParseHelper.ToSplitByPercentile(true,item.ClienterAverageOrderCount)</td>
+                <td>@ParseHelper.ToDivision(ParseHelper.ToDouble(item.YfPrice), item.ActiveClienter)</td>
                 <td>@ParseHelper.ToSplitByPercentile(false,item.YsPrice)</td>
                 <td>@ParseHelper.ToSplitByPercentile(false,item.YfPrice)</td>
                 <td>@ParseHelper.ToSplitByPercentile(true,item.OneSubsidyOrderCount)</td>

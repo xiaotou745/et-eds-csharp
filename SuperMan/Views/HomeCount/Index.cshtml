@@ -62,6 +62,7 @@
                         商户平均发布订单：@ParseHelper.ToDivision(resultList.OrderCount,resultList.ActiveBusiness)  <br />
                         骑士平均完成任务：@ParseHelper.ToDivision(resultList.MisstionCount, resultList.ActiveClienter)<br />
                         骑士平均完成订单：@ParseHelper.ToDivision(resultList.OrderCount, resultList.ActiveClienter)  <br />
+                        骑士平均佣金：@ParseHelper.ToDivision(ParseHelper.ToDouble(resultList.YfPrice), resultList.ActiveClienter)  <br />
                     </td>
                     <td>
                         商户结算金额（应收）：￥@ParseHelper.ToSplitByPercentile(false, resultList.YsPrice)<br />
