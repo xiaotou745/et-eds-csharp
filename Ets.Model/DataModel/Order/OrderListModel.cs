@@ -145,8 +145,17 @@ namespace Ets.Model.DataModel.Order
         /// 送餐时间
         /// </summary>
         public string SongCanDate { get; set; }
+       
+        /// <summary>
+        /// 订单数量
+        /// </summary>
         public int OrderCount { get; set; }
+        
+        /// <summary>
+        /// 佣金比例
+        /// </summary>
         public decimal CommissionRate { get; set; }
+        
         public string OrderSign { get; set; }
 
         /// <summary>
@@ -202,6 +211,11 @@ namespace Ets.Model.DataModel.Order
         /// 商家结算比例
         /// </summary>
         public decimal BusinessCommission { get; set; }
+
+        /// <summary>
+        ///  取货码（目前只有全时再用）
+        /// </summary>
+        public string PickupCode { get; set; }
         /// <summary>
         /// 需要上传的小票图片张数
         /// </summary>
@@ -214,7 +228,6 @@ namespace Ets.Model.DataModel.Order
         /// 小票图片路径用竖线分隔（|）
         /// </summary>
         public string ReceiptPic { get; set; }
-        
         
     }
 }

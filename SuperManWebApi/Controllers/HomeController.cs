@@ -14,9 +14,7 @@ namespace SuperManWebApi.Controllers
     {
         public ActionResult Index()
         {
-            //Ets.Dao.GlobalConfig.GlobalConfigDao home = new Ets.Dao.GlobalConfig.GlobalConfigDao();
-            double str = GlobalConfigDao.GlobalConfigGet.CommissionRatio;
-            ViewBag.Title = "Home Page";
+                        ViewBag.Title = "Home Page";
             return View();
         }
     }

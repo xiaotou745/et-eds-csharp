@@ -74,10 +74,8 @@ namespace Ets.Service.Provider.Clienter
                 OrderCommission oCommission = new OrderCommission()
                 {
                     Amount = item.Amount,
-                    CommissionRate = item.CommissionRate,
                     DistribSubsidy = item.DistribSubsidy,
-                    OrderCount = item.OrderCount,
-                    WebsiteSubsidy = item.WebsiteSubsidy
+                    OrderCount = item.OrderCount
                 };
                 #endregion
 
@@ -98,23 +96,28 @@ namespace Ets.Service.Provider.Clienter
                 model.Remark = item.Remark;
                 model.Status = item.Status;
                 model.OrderCount = item.OrderCount;
+                model.GroupId = item.GroupId;
+                if (item.GroupId == SystemConst.Group3) //全时 需要做验证码验证
+                    model.NeedPickupCode = 1;
                 #region 计算经纬度     待封装  add by caoheyang 20150313
 
                 if (item.Longitude == null || item.Longitude == 0 || item.Latitude == null || item.Latitude == 0)
                 {
                     model.distance = "--";
                     model.distanceB2R = "--";
+                    model.distance_OrderBy = 9999999.0;
                 }
                 else
                 {
                     if (degree.longitude == 0 || degree.latitude == 0 || item.BusinessId <= 0)
-                        model.distance = "--";
+                    { model.distance = "--"; model.distance_OrderBy = 9999999.0; }
                     else if (item.BusinessId > 0)  //计算超人当前到商户的距离
                     {
                         Degree degree1 = new Degree(degree.longitude, degree.latitude);   //超人当前的经纬度
                         Degree degree2 = new Degree(item.Longitude.Value, item.Latitude.Value); //商户经纬度
                         var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
                         model.distance = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
+                        model.distance_OrderBy = res;
                     }
                     if (item.BusinessId > 0 && item.ReceviceLongitude != null && item.ReceviceLatitude != null
                         && item.ReceviceLongitude != 0 && item.ReceviceLatitude != 0)  //计算商户到收货人的距离
@@ -334,10 +337,8 @@ namespace Ets.Service.Provider.Clienter
                     var oCommission = new OrderCommission()
                     {
                         Amount = item.Amount,
-                        CommissionRate = item.CommissionRate,
                         DistribSubsidy = item.DistribSubsidy,
-                        OrderCount = item.OrderCount,
-                        WebsiteSubsidy = item.WebsiteSubsidy
+                        OrderCount = item.OrderCount
                     };
 
                     #endregion
@@ -486,14 +487,23 @@ namespace Ets.Service.Provider.Clienter
             }
             return null;
         }
-        public string FinishOrder(int userId, string orderNo)
+       /// <summary>
+       /// 超人完成订单  
+       /// </summary>
+       /// <param name="userId">超人id</param>
+       /// <param name="orderNo">订单号码</param>
+        /// <param name="pickupCode">取货码</param>
+       /// <returns></returns>
+        public string FinishOrder(int userId, string orderNo,string pickupCode=null)
         {
            string result = "-1";
            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
            {
                //获取该订单信息和该  骑士现在的 收入金额
-               var myOrderInfo = orderDao.GetOrderInfoByOrderNo(orderNo);
-
+               OrderListModel myOrderInfo = orderDao.GetOrderInfoByOrderNo(orderNo);
+               if (myOrderInfo.GroupId == SystemConst.Group3 && !string.IsNullOrWhiteSpace(myOrderInfo.PickupCode)
+                   && pickupCode != myOrderInfo.PickupCode) //全时订单 判断 取货码是否正确
+                   return ETS.Enums.FinishOrderStatus.PickupCodeError.ToString();
                //更新订单状态
                if (myOrderInfo != null)
                {
@@ -526,7 +536,7 @@ namespace Ets.Service.Provider.Clienter
                    result = "1";
                } 
            }
-           var order = new OrderProvider();
+           OrderProvider order = new OrderProvider();
            order.AsyncOrderStatus(orderNo);
            return result;
         }
@@ -555,6 +565,16 @@ namespace Ets.Service.Provider.Clienter
         public IList<BusinessesDistributionModel> GetClienteStorerGrabStatisticalInfo()
         {
             return clienterDao.GetClienteStorerGrabStatisticalInfo();
+        }
+        /// <summary>
+        /// 上传小票
+        /// wc
+        /// </summary>
+        /// <param name="uploadReceiptModel"></param>
+        /// <returns></returns>
+        public string UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel)
+        {
+            return clienterDao.UpdateClientReceiptPicInfo(uploadReceiptModel);
         }
     }
 

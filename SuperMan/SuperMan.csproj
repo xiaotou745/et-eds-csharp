@@ -184,10 +184,12 @@
     <Compile Include="Controllers\OrderStatisticalController.cs" />
     <Compile Include="Controllers\MenuManagerController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
+    <Compile Include="Controllers\SubsidyFormulaModeController.cs" />
     <Compile Include="Controllers\SubsidyManagerController.cs" />
     <Compile Include="Controllers\SuperManManagerController.cs" />
     <Compile Include="Controllers\SuperManStatisticalController.cs" />
     <Compile Include="Controllers\TestController.cs" />
+    <Compile Include="Controllers\TestUserManagerController.cs" />
     <Compile Include="Controllers\UploadTestController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -529,6 +531,8 @@
     <Content Include="Views\SuperManStatistical\_PartialSuperManStatistical.cshtml" />
     <Content Include="Views\HomeCount\_PartialIndex.cshtml" />
     <Content Include="Views\SubsidyManager\TimeSubsidies.cshtml" />
+    <Content Include="Views\SubsidyFormulaMode\SubsidyFormulaMode.cshtml" />
+    <Content Include="Views\TestUserManager\TestUserManager.cshtml" />
     <Content Include="Views\Order\OrderDetail.cshtml" />
     <Content Include="Views\OpenCityManager\OpenCityManager.cshtml" />
     <Content Include="Views\OpenCityManager\_OpenCityManagerList.cshtml" />

@@ -76,11 +76,10 @@ namespace Ets.Service.Provider.Common
             string key = string.Format(RedissCacheKey.Ets_Service_Provider_Common_GetOpenCityInfo, Config.ApiVersion);
             //读取缓存
             var cacheValue = redis.Get<string>(key);
-            // redis.Delete(key);
+            //redis.Delete(key);
             if (!string.IsNullOrEmpty(cacheValue))
             {
-                return ResultModel<List<AreaModel>>.Conclude(ETS.Enums.CityStatus.Newest, Letao.Util.JsonHelper.ToObject<List<AreaModel>>(cacheValue));
-
+                return ResultModel<List<AreaModel>>.Conclude(ETS.Enums.CityStatus.Newest, Letao.Util.JsonHelper.ToObject<List<AreaModel>>(cacheValue)); 
             }
 
             //取数据库

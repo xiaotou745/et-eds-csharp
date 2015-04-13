@@ -126,7 +126,8 @@ namespace Ets.Dao.Clienter
                                     b.PhoneNo AS BusinessPhone,
                                     REPLACE(b.City,'市','') AS pickUpCity,
                                     b.Longitude,
-                                    b.Latitude,o.OrderCommission";
+                                    b.Latitude,o.OrderCommission,
+                                    b.GroupId";
             return new PageHelper().GetPages<ClientOrderModel>(SuperMan_Read, criteria.PagingRequest.PageIndex, where, criteria.status == 1 ? "o.ActualDoneDate DESC " : " o.Id ", columnStr, "[order](NOLOCK) AS o LEFT JOIN business(NOLOCK) AS b ON o.businessId=b.Id", criteria.PagingRequest.PageSize, false);
         }
 
@@ -200,7 +201,7 @@ namespace Ets.Dao.Clienter
             string sql = "SELECT TrueName,PhoneNo,AccountBalance FROM dbo.clienter(NOLOCK) WHERE Id=" + UserId;
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             IList<ClienterModel> list = MapRows<ClienterModel>(dt);
-            if (list == null && list.Count <= 0)
+            if (list == null || list.Count <= 0)
             {
                 return null;
             }
@@ -582,5 +583,47 @@ namespace Ets.Dao.Clienter
             return MapRows<BusinessesDistributionModel>(dt);
         }
 
+        /// <summary>
+        /// 上传小票
+        /// </summary>
+        /// <param name="uploadReceiptModel"></param>
+        /// <returns></returns>
+        public string UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel)
+        {
+            string sql = @"
+ insert into dbo.OrderOther
+        ( OrderNo ,
+          NeedUploadCount ,
+          ReceiptPic ,
+          HadUploadCount
+        )
+ values ( @OrderNo ,
+          @NeedUploadCount , 
+          @ReceiptPic ,
+          @HadUploadCount 
+        );";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@OrderNo", SqlDbType.NVarChar);
+            parm.SetValue("@OrderNo", uploadReceiptModel.OrderNo);
+
+            parm.AddWithValue("@NeedUploadCount", uploadReceiptModel.NeedUploadCount);
+            parm.AddWithValue("@ReceiptPic", uploadReceiptModel.ReceiptPic);
+            parm.AddWithValue("@HadUploadCount", uploadReceiptModel.HadUploadCount);
+
+            try
+            {
+                object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, parm);
+                if (i != null)
+                {
+                    return ParseHelper.ToInt(i.ToString()).ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter("插入orderOther表异常：",new {ex = ex});
+                return "0";
+            }
+            return "0";
+        }
     }
 }

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Web.Mvc;
 using Ets.Model.DomainModel.GlobalConfig;
 using Ets.Service.Provider.Common;
+using ETS.Util;
 using SuperMan.App_Start;
 using SuperManCore.Common;
 using Ets.Service.IProvider.Subsidy;
@@ -73,12 +74,12 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult AddTimeSubsidies(GlobalConfigTimeSubsidies model)
+        public JsonResult AddTimeSubsidies(GlobalConfigSubsidies model)
         {
             var list = new GlobalConfigProvider().GetTimeSubsidies(); 
             list.Add(model);
             var newlist = (from globalConfigTimeSubsidiese in list
-                orderby globalConfigTimeSubsidiese.Time ascending 
+                           orderby ParseHelper.ToInt(globalConfigTimeSubsidiese.Value1) ascending 
                 select globalConfigTimeSubsidiese).ToList();
             string values = GetTimesValues(newlist);
             bool b = new GlobalConfigProvider().UpdateTimeSubsidies(UserContext.Current.Name, values, "添加时间补贴设置操作-设置之后的值:" + values);
@@ -108,7 +109,7 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult UpdateTimeSubsidies(GlobalConfigTimeSubsidies model)
+        public JsonResult UpdateTimeSubsidies(GlobalConfigSubsidies model)
         {
             //读取全部时间配置
             var list = new GlobalConfigProvider().GetTimeSubsidies();
@@ -116,11 +117,11 @@ namespace SuperMan.Controllers
             var mm = list.FirstOrDefault(subsidies => subsidies.Id == model.Id);
             if (mm != null)
             {
-                mm.Time = model.Time;
-                mm.Price = model.Price;
+                mm.Value1 = model.Value1;
+                mm.Value2 = model.Value2;
             }
             var newlist = (from globalConfigTimeSubsidiese in list
-                           orderby globalConfigTimeSubsidiese.Time ascending
+                           orderby ParseHelper.ToInt(globalConfigTimeSubsidiese.Value1) ascending
                            select globalConfigTimeSubsidiese).ToList();
             string values = GetTimesValues(newlist);
             bool b = new GlobalConfigProvider().UpdateTimeSubsidies(UserContext.Current.Name, values, "修改时间补贴设置-设置之后的值:" + values);
@@ -132,13 +133,13 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <param name="newlist"></param>
         /// <returns></returns>
-        private string GetTimesValues(IEnumerable<GlobalConfigTimeSubsidies> newlist)
+        private string GetTimesValues(IEnumerable<GlobalConfigSubsidies> newlist)
         {
             string values = "";
             int i = 1;
             foreach (var globalConfigTimeSubsidiese in newlist)
             {
-                string aa = globalConfigTimeSubsidiese.Time + "," + globalConfigTimeSubsidiese.Price + "," + i;
+                string aa = globalConfigTimeSubsidiese.Value1 + "," + globalConfigTimeSubsidiese.Value2 + "," + i;
                 values += aa + ";";
                 i++;
             }

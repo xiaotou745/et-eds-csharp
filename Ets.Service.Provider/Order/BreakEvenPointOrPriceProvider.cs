@@ -31,7 +31,7 @@ namespace Ets.Service.Provider.Order
                     + ParseHelper.ToDecimal(model.DistribSubsidy) * orderCount, 2);//计算佣金
             }
             else  //无外送费按照网站补贴计算佣金金额
-               return Decimal.Round(Convert.ToDecimal(model.Amount) * commissionRate + Convert.ToDecimal(model.WebsiteSubsidy)   * orderCount, 2);//计算佣金
+                return Decimal.Round(Convert.ToDecimal(model.Amount) * commissionRate + GetOrderWebSubsidy(model) * orderCount, 2);//计算佣金
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public override decimal GetOrderWebSubsidy(OrderCommission model)
         {
-            return ParseHelper.ToDecimal(model.WebsiteSubsidy);  
+            return ParseHelper.ToDecimal(GlobalConfigDao.GlobalConfigGet.SiteSubsidies);  
         }
 
         /// <summary>
@@ -58,7 +58,14 @@ namespace Ets.Service.Provider.Order
                 return Decimal.Round(temp / 100m, 2);
         }
 
-      
-       
+
+        /// <summary>
+        /// 获取订单的额外补贴金额 add by caoheyang 20150409
+        /// </summary>
+        /// <param name="model">订单</param>
+        /// <returns></returns>
+        public override decimal GetAdjustment(OrderCommission model) {
+            return 0m;
+        }
     }
 }
