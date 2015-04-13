@@ -522,7 +522,7 @@ namespace Ets.Dao.MenuSet
                                     ,a.[RoleId]
                                     ,g.GroupName";
             var sbSqlWhere = new StringBuilder(" 1=1 AND a.Status=1 ");
-            if (criteria.GroupId!=0)
+            if (criteria.GroupId!=null && criteria.GroupId != 0)
             {
                 sbSqlWhere.AppendFormat(" AND a.GroupId={0} ", criteria.GroupId);
             } 

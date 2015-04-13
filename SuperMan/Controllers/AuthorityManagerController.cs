@@ -43,6 +43,7 @@ namespace SuperMan.Controllers
         {
             Ets.Model.ParameterModel.Authority.AuthoritySearchCriteria criteria = new Ets.Model.ParameterModel.Authority.AuthoritySearchCriteria();
             TryUpdateModel(criteria);
+            criteria.GroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
             var authorityModel = iAuthorityMenuProvider.GetAuthorityManage(criteria);
             return PartialView("_AuthorityManagerList", authorityModel);
         }
