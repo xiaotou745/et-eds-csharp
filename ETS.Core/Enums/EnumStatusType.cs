@@ -116,7 +116,7 @@ namespace ETS.Enums
         [DisplayText("您要找回的密码正是当前密码")]
         PwdIsSave,
     }
-     
+
     public enum RushOrderStatus
     {
         Success,
@@ -149,7 +149,9 @@ namespace ETS.Enums
         [DisplayText("订单不存在")]
         OrderIsNotExist,
         [DisplayText("此订单已经是完成状态")]
-        OrderIsNotAllowRush
+        OrderIsNotAllowRush,
+        [DisplayText("取货码错误")]
+        PickupCodeError
     }
 
     public enum GetMyBalanceStatus

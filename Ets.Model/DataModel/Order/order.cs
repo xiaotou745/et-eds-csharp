@@ -83,5 +83,11 @@ namespace Ets.Model.DataModel.Order
         /// </summary>
         public decimal Adjustment { get; set; }
 
+        /// <summary>
+        /// 集团id
+        /// </summary>
+        public int GroupId { get; set; }
+
+
     }
 }

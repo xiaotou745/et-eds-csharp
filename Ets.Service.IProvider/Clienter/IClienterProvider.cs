@@ -124,8 +124,9 @@ namespace Ets.Service.IProvider.Clienter
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="orderNo"></param>
+        /// <param name="pickupCode">取货码 可空</param>
         /// <returns></returns>
-        string FinishOrder(int userId, string orderNo);
+        string FinishOrder(int userId, string orderNo,string pickupCode=null);
 
         ClienterModel GetUserInfoByUserId(int UserId);
         /// <summary>
@@ -155,5 +156,11 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="uploadReceiptModel"></param>
         /// <returns></returns>
         OrderOther DeleteReceipt(UploadReceiptModel uploadReceiptModel);
+        /// <summary>
+        /// 根据订单Id获取小票信息
+        /// </summary>
+        /// <param name="uploadReceiptModel"></param>
+        /// <returns></returns>
+        OrderOther GetReceipt(UploadReceiptModel uploadReceiptModel);
     }
 }

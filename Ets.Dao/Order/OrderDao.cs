@@ -71,7 +71,8 @@ namespace Ets.Dao.Order
         b.PhoneNo BusinessPhone,
         b.City PickUpCity,
         b.Longitude BusiLongitude,
-        b.Latitude BusiLatitude ");
+        b.Latitude BusiLatitude,
+        b.GroupId");
             //关联表
             StringBuilder tableListStr = new StringBuilder();
             tableListStr.Append(@" dbo.[order] o WITH ( NOLOCK )
@@ -132,6 +133,73 @@ namespace Ets.Dao.Order
             return ParseHelper.ToInt(executeScalar, -1);
         }
         #endregion
+
+           /// <summary>
+        /// 订单状态查询功能  add by caoheyang 20150316
+        /// </summary>
+        /// <param name="orderNo">订单号码</param>
+        /// <param name="groupId">集团id</param>
+        /// <returns>订单状态</returns>
+        public OrderListModel GetOpenOrder(string originalOrderNo, int groupId)
+        {
+            string sql = @"SELECT top 1 o.[Id]
+                                        ,o.[OrderNo]
+                                        ,o.[PickUpAddress]
+                                        ,o.[PubDate]
+                                        ,o.[ReceviceName]
+                                        ,o.[RecevicePhoneNo]
+                                        ,o.[ReceviceAddress]
+                                        ,o.[ActualDoneDate]
+                                        ,o.[IsPay]
+                                        ,o.[Amount]
+                                        ,o.[OrderCommission]
+                                        ,o.[DistribSubsidy]
+                                        ,o.[WebsiteSubsidy]
+                                        ,o.[Remark]
+                                        ,o.[Status]
+                                        ,o.[clienterId]
+                                        ,o.[businessId]
+                                        ,o.[ReceviceCity]
+                                        ,o.[ReceviceLongitude]
+                                        ,o.[ReceviceLatitude]
+                                        ,o.[OrderFrom]
+                                        ,o.[OriginalOrderId]
+                                        ,o.[OriginalOrderNo]
+                                        ,o.[Quantity]
+                                        ,o.[Weight]
+                                        ,o.[ReceiveProvince]
+                                        ,o.[ReceiveArea]
+                                        ,o.[ReceiveProvinceCode]
+                                        ,o.[ReceiveCityCode]
+                                        ,o.[ReceiveAreaCode]
+                                        ,o.[OrderType]
+                                        ,o.[KM]
+                                        ,o.[GuoJuQty]
+                                        ,o.[LuJuQty]
+                                        ,o.[SongCanDate]
+                                        ,o.[OrderCount]
+                                        ,o.[CommissionRate] 
+                                        ,b.[City] BusinessCity
+                                        ,b.Name BusinessName
+                                        ,c.PhoneNo ClienterPhoneNo
+                                        ,c.TrueName ClienterName
+                                        ,b.GroupId
+                                        ,o.OriginalOrderNo
+                                    FROM [order] o WITH ( NOLOCK )
+                                    LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
+                                     LEFT JOIN dbo.clienter c WITH (NOLOCK) ON o.clienterId=c.Id
+                                    WHERE 1=1 and o.OriginalOrderNo=@OriginalOrderNo and b.groupid=@GroupId";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@OriginalOrderNo", SqlDbType.NVarChar);
+            parm.SetValue("@OriginalOrderNo", originalOrderNo);
+            parm.Add("@GroupId", SqlDbType.Int);
+            parm.SetValue("@GroupId", groupId);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (dt == null || dt.Rows.Count <= 0)
+                return null;
+            return MapRows<OrderListModel>(dt)[0];
+        }
+        
 
         public int AddOrder(Model.DataModel.Order.order order)
         {
@@ -334,14 +402,16 @@ namespace Ets.Dao.Order
                 Remark,Weight,DistribSubsidy,OrderCount,ReceviceName,
                 RecevicePhoneNo,ReceiveProvinceCode,ReceiveCityCode,ReceiveAreaCode,ReceviceAddress,
                 ReceviceLongitude,ReceviceLatitude,businessId,PickUpAddress,Payment,OrderCommission,
-                WebsiteSubsidy,CommissionRate,CommissionFormulaMode,ReceiveProvince,ReceviceCity,ReceiveArea)
+                WebsiteSubsidy,CommissionRate,CommissionFormulaMode,ReceiveProvince,ReceviceCity,ReceiveArea,
+                PickupCode)
                 OUTPUT Inserted.OrderNo
                 Values(@OrderNo,
                 @OriginalOrderNo,@PubDate,@SongCanDate,@IsPay,@Amount,
                 @Remark,@Weight,@DistribSubsidy,@OrderCount,@ReceviceName,
                 @RecevicePhoneNo,@ReceiveProvinceCode,@ReceiveCityCode,@ReceiveAreaCode,@ReceviceAddress,
                 @ReceviceLongitude,@ReceviceLatitude,@BusinessId,@PickUpAddress,@Payment,@OrderCommission,
-                @WebsiteSubsidy,@CommissionRate,@CommissionFormulaMode,@ReceiveProvince,@ReceviceCity,@ReceiveArea)";
+                @WebsiteSubsidy,@CommissionRate,@CommissionFormulaMode,@ReceiveProvince,@ReceviceCity,@ReceiveArea,
+                @PickupCode)";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             ///基本参数信息
 
@@ -377,6 +447,7 @@ namespace Ets.Dao.Order
             dbParameters.AddWithValue("@ReceiveProvince", paramodel.address.province);    //用户省
             dbParameters.AddWithValue("@ReceviceCity", paramodel.address.city); //用户市
             dbParameters.AddWithValue("@ReceiveArea", paramodel.address.area); //用户区
+            dbParameters.AddWithValue("@PickupCode", string.IsNullOrWhiteSpace(paramodel.pickupcode)?"":paramodel.pickupcode); //用户区
             string orderNo = ParseHelper.ToString(DbHelper.ExecuteScalar(SuperMan_Read, insertOrdersql, dbParameters));
             if (string.IsNullOrWhiteSpace(orderNo))//添加失败 
                 return null;
@@ -429,8 +500,8 @@ namespace Ets.Dao.Order
             }
             string sql = @"SELECT 
                          CONVERT(CHAR(10),PubDate,120) AS PubDate, --
-                        sum(case when o.status=1 then amount else 0 end ) as OrderPrice, --订单金额
-                        --SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
+                        --sum(case when o.status=1 then amount else 0 end ) as OrderPrice, --订单金额
+                        SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
                         ISNULL(COUNT(o.Id),0) AS MisstionCount,--总任务量
                         SUM(ISNULL(OrderCount,0)) AS OrderCount,--总订单量
                          ISNULL(SUM(o.Amount*ISNULL(b.BusinessCommission,0)/100+ ISNULL( b.DistribSubsidy ,0)* o.OrderCount),0) AS YsPrice,  -- 应收金额
@@ -1031,22 +1102,23 @@ namespace Ets.Dao.Order
         /// <returns></returns>
         public OrderListModel GetOrderInfoByOrderNo(string orderNo)
         {
-            string sql = @" SELECT TOP 1 
+            string sql = @"
+select top 1
         o.[Id] ,
-        o.[OrderNo] , 
+        o.[OrderNo] ,
         o.[Status] ,
-        c.AccountBalance,
-        c.Id clienterId,
-        o.OrderCommission,
-        o.businessId
- FROM   [order] o WITH ( NOLOCK ) 
-        LEFT JOIN dbo.clienter c WITH ( NOLOCK ) ON o.clienterId = c.Id
- WHERE  1 = 1 AND o.OrderNo = @orderNo";
-
-            if (!string.IsNullOrWhiteSpace(orderNo))
-            {
-                sql += " AND OrderNo=@OrderNo";
-            }
+        c.AccountBalance ,
+        c.Id clienterId ,
+        o.OrderCommission ,
+        o.businessId ,
+        b.GroupId ,
+        o.PickupCode
+from    [order] o with ( nolock )
+        left join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
+        left join dbo.business b with ( nolock ) on o.businessId = b.Id
+where   1 = 1
+        and OrderNo = @OrderNo
+";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderNo", SqlDbType.NVarChar);
             parm.SetValue("@OrderNo", orderNo);

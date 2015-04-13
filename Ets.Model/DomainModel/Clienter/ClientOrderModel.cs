@@ -36,6 +36,10 @@ namespace Ets.Model.DomainModel.Clienter
         public double? Longitude { get; set; }
         public double? Latitude { get; set; }
         public decimal? OrderCommission { get; set; }
-
+       
+        /// <summary>
+        /// 集团id
+        /// </summary>
+        public int GroupId { get; set; }
     }
 }
