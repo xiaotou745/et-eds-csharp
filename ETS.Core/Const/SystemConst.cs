@@ -31,5 +31,16 @@ namespace ETS.Const
         /// </summary>
         public const string CityOpenInfo = "NotOpen";
 
+
+        #region //集团常量
+        /// <summary>
+        /// 万达集团
+        /// </summary>
+        public const int Group2 = 2;
+        /// <summary>
+        /// 全时
+        /// </summary>
+        public const int Group3 = 3;
+        #endregion
     }
 }
