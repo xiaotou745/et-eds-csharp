@@ -48,7 +48,12 @@ namespace Ets.Service.Provider.Order
         //和区域有关的  wc
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
 
-
+        /// <summary>
+        /// 更具订单号或者订单Id获取订单信息 ，骑士佣金
+        /// </summary>
+        /// <param name="orderNo"></param>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
         public OrderListModel GetOrderInfoByOrderNo(string orderNo, int orderId = 0)
         {
             return OrderDao.GetOrderInfoByOrderNo(orderNo, orderId);

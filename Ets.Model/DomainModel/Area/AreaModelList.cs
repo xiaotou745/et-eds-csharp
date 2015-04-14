@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ets.Model.DomainModel.Area
 {
+    [Serializable]
     public class AreaModelList
     {
         public IList<AreaModel> AreaModels { get; set; }
