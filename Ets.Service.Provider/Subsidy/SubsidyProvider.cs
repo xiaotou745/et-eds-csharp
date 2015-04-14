@@ -83,7 +83,6 @@ namespace Ets.Service.Provider.Subsidy
                 #region 写流水
                 withdraw.Platform = 1;
                 withdraw.AdminId = 0;
-                withdraw.RType= 1;
                 withdraw.UserId = item.ClienterId;
                 int businessCount = item.BusinessCount;
                 double businessPrice = 0;
@@ -104,12 +103,24 @@ namespace Ets.Service.Provider.Subsidy
                 withdraw.Amount = ParseHelper.ToDecimal(businessPrice, 0);
                 withdraw.Balance = ParseHelper.ToDecimal(cliterModel.AccountBalance, 0);
                 withdraw.Remark = string.Format("跨店抢单奖励{0}元", withdraw.Amount);
+
+                //记录跨店日志
+                CrossShopModel crossShopModel = new CrossShopModel()
+                {
+                    Amount = withdraw.Amount,
+                    BusinessCount = businessCount,
+                    ClienterId = withdraw.UserId,
+                    Platform = 2,
+                    Remark = withdraw.Remark,
+                    InsertTime = DateTime.Now
+                };
                 #endregion
 
                 using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                 {
                     withdrawRecordsDao.AddRecords(withdraw);
                     clienterDao.UpdateClienterAccountBalance(withdraw);//更改用户金额
+                    subsidyDao.InsertCrossShopLog(crossShopModel);
                     tran.Complete();
                 }
             }
