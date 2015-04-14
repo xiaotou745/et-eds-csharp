@@ -50,6 +50,7 @@
                         订单总金额：@ParseHelper.ToSplitByPercentile(false, resultList.OrderPrice)<br />
                         客单价：@(resultList.OrderCount == 0 ? "0" : (resultList.OrderPrice / resultList.OrderCount).ToString("f2")) <br />
                         任务单价：@(resultList.MisstionCount == 0 ? "0" : (resultList.OrderPrice / resultList.MisstionCount).ToString("f2"))<br />
+                        骑士平均佣金：@ParseHelper.ToDivision(ParseHelper.ToDouble(resultList.YfPrice), resultList.ActiveClienter)  <br />
                     </td>
                     <td>
                         0次补贴被抢任务：@ParseHelper.ToSplitByPercentile(true, resultList.ZeroSubsidyOrderCount)<br />

@@ -16,11 +16,17 @@
         <td>商户平均发布任务</td>
         <td>任务平均订单量</td>
         <td>骑士平均完成订单量</td>
+        <td>骑士平均佣金</td>
+        <td>任务平均佣金</td>
+        <td>订单平均佣金</td>
         <td>商户结算金额（应收）</td>
         <td>骑士佣金总计（应付）</td>
+        <td>补贴0次任务量</td>
         <td>补贴1次任务量</td>
         <td>补贴2次任务量</td>
         <td>补贴3次任务量</td>
+        <td>活跃商家数</td>
+        <td>活跃骑士数</td>
         <td>盈亏总计</td>
     </tr>
 
@@ -43,11 +49,17 @@
                 <td>@ParseHelper.ToSplitByPercentile(true, (item.MisstionCount == 0 ? "0" : (item.MisstionCount / item.BusinessCount).ToString()))</td>
                 <td>@ParseHelper.ToSplitByPercentile(true,item.MissionAverageOrderCount)</td>
                 <td>@ParseHelper.ToSplitByPercentile(true,item.ClienterAverageOrderCount)</td>
+                <td>@ParseHelper.ToDivision(ParseHelper.ToDouble(item.YfPrice), item.ActiveClienter)</td>
+                <td>@ParseHelper.ToDivision(ParseHelper.ToDouble(item.YfPrice), item.MisstionCount)</td>
+                <td>@ParseHelper.ToDivision(ParseHelper.ToDouble(item.YfPrice), item.OrderCount)</td>
                 <td>@ParseHelper.ToSplitByPercentile(false,item.YsPrice)</td>
                 <td>@ParseHelper.ToSplitByPercentile(false,item.YfPrice)</td>
-                <td>@ParseHelper.ToSplitByPercentile(true,item.OneSubsidyOrderCount)</td>
-                <td>@ParseHelper.ToSplitByPercentile(true,item.TwoSubsidyOrderCount)</td>
-                <td>@ParseHelper.ToSplitByPercentile(true,item.ThreeSubsidyOrderCount)</td>
+                <td>@ParseHelper.ToSplitByPercentile(true, item.ZeroSubsidyOrderCount)</td>
+                <td>@ParseHelper.ToSplitByPercentile(true, item.OneSubsidyOrderCount)</td>
+                <td>@ParseHelper.ToSplitByPercentile(true, item.TwoSubsidyOrderCount)</td>
+                <td>@ParseHelper.ToSplitByPercentile(true, item.ThreeSubsidyOrderCount)</td>
+                <td>@ParseHelper.ToSplitByPercentile(true, item.ActiveBusiness)</td>
+                <td>@ParseHelper.ToSplitByPercentile(true, item.ActiveClienter)</td>
                 <td>￥<span style="color:@ykStyle">@ParseHelper.ToSplitByPercentile(false,item.YkPrice)</span></td>
             </tr>
         }

@@ -495,11 +495,23 @@ namespace Ets.Dao.Clienter
         /// <returns></returns>
         public PageInfo<T> GetClienterDistributionStatisticalInfo<T>(OrderSearchCriteria criteria)
         {
-            var sbtbl = new StringBuilder(@" (select t.PubDate,t.businessCount,count(t.clienterId) as clienterCount
-                                              from (
-                                                      select convert(char(10),o.PubDate,120) PubDate,count(DISTINCT businessId)businessCount , clienterId
-                                                      from dbo.[order] o(nolock)
-                                              where Status=1 ");
+            var sbtbl = new StringBuilder(@" (SELECT PubDate ,
+                                                    ISNULL(SUM(CASE when a.BusinessCount=1 THEN ClienterCount END),0) OnceCount,
+                                                    ISNULL(SUM(CASE when a.BusinessCount=2 THEN ClienterCount END),0) TwiceCount,
+                                                    ISNULL(SUM(CASE when a.BusinessCount=3 THEN ClienterCount END),0) ThreeTimesCount,
+                                                    ISNULL(SUM(CASE when a.BusinessCount=4 THEN ClienterCount END),0) FourTimesCount,
+                                                    ISNULL(SUM(CASE when a.BusinessCount=5 THEN ClienterCount END),0) FiveTimesCount,
+                                                    ISNULL(SUM(CASE when a.BusinessCount=6 THEN ClienterCount END),0) SixTimesCount,
+                                                    ISNULL(SUM(CASE when a.BusinessCount=7 THEN ClienterCount END),0) SevenTimesCount,
+                                                    ISNULL(SUM(CASE when a.BusinessCount=8 THEN ClienterCount END),0) EightTimesCount,
+                                                    ISNULL(SUM(CASE when a.BusinessCount=9 THEN ClienterCount END),0) NineTimesCount,
+                                                    ISNULL(SUM(CASE when a.BusinessCount>=10 THEN ClienterCount END),0) ExceedNineTimesCount
+                                                FROM (
+                                                    select t.PubDate,t.businessCount BusinessCount,count(t.clienterId) as ClienterCount
+                                                    FROM (
+                                                            select convert(char(10),o.PubDate,120) PubDate,count(DISTINCT businessId)businessCount , clienterId
+                                                            from [order] o(nolock)
+                                                            where Status=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))
             {
                 sbtbl.AppendFormat(" AND  CONVERT(CHAR(10),PubDate,120)>=CONVERT(CHAR(10),'{0}',120) ", criteria.orderPubStart);
@@ -508,15 +520,24 @@ namespace Ets.Dao.Clienter
             {
                 sbtbl.AppendFormat(" AND CONVERT(CHAR(10),PubDate,120)<=CONVERT(CHAR(10),'{0}',120) ", criteria.orderPubEnd);
             }
-            sbtbl.Append(@"  group by convert(char(10),o.PubDate,120), clienterId) t
-                            group by t.PubDate, t.businessCount ) tbl ");
+            sbtbl.Append(@"     group by convert(char(10),o.PubDate,120), clienterId) t
+                            group by t.PubDate, t.businessCount )a
+                        group by PubDate ) tbl ");
             string columnList = @"   tbl.PubDate
-                                    ,tbl.clienterCount ClienterCount
-            				        ,tbl.businessCount BusinessCount ";
+                                    ,tbl.OnceCount
+            				        ,tbl.TwiceCount
+                                    ,tbl.ThreeTimesCount
+            				        ,tbl.FourTimesCount
+                                    ,tbl.FiveTimesCount
+            				        ,tbl.SixTimesCount
+                                    ,tbl.SevenTimesCount
+            				        ,tbl.EightTimesCount
+                                    ,tbl.NineTimesCount
+            				        ,tbl.ExceedNineTimesCount  ";
 
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             string tableList = sbtbl.ToString();
-            string orderByColumn = " tbl.PubDate,tbl.businessCount ";
+            string orderByColumn = " tbl.PubDate DESC ";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
         }
         /// <summary>

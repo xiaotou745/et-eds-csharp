@@ -1,5 +1,7 @@
 ﻿using Ets.Model.Common;
 using Ets.Model.DomainModel.Area;
+using Ets.Model.ParameterModel.Common;
+using ETS.Data.PageData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,5 +43,32 @@ namespace Ets.Service.IProvider.Common
         /// <param name="model">参数实体</param>
         /// <returns></returns>
         string GetOpenCode(Ets.Model.ParameterModel.Area.ParaAreaNameInfo model);
+        /// <summary>
+        /// 获取开通城市列表
+        /// danny-20150410
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        PageInfo<OpenCityModel> GetOpenCityList(OpenCitySearchCriteria criteria);
+        /// <summary>
+        ///  获取开放城市列表（非分页）
+        /// danny-20150410
+        /// </summary>
+        /// <param name="cityName"></param>
+        /// <returns></returns>
+        IList<OpenCityModel> GetOpenCityList(string cityName);
+        /// <summary>
+        /// 修改开通城市
+        /// danny-20150413
+        /// </summary>
+        /// <param name="openCityCodeList"></param>
+        /// <param name="closeCityCodeList"></param>
+        /// <returns></returns>
+        bool ModifyOpenCityByCode(string openCityCodeList, string closeCityCodeList);
+        /// <summary>
+        /// 修改开发城市后更新Redis缓存
+        /// danny-20150413
+        /// </summary>
+        void ResetOpenCityListRedis();
     }
 }

@@ -1,0 +1,81 @@
+﻿@model List<Ets.Model.Common.OpenCityModel>
+@using SuperMan.App_Start
+@using Ets.Service.Provider.User
+@using Ets.Model
+@{
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：管理员 > 开放城市管理
+    </h2>
+    <form action="/OpenCityManager/OpenCityManager" method="post">
+        <div class="SearchMd">
+            <table border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td>
+                        <span>城市名称: </span>
+                        <input id="txtCityName" type="text" name="cityName" value="@ViewBag.cityName" />
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                        @if (UserContext.Current.HasAuthority(26))
+                        {
+                            <input type="button" value="保存修改" class="searchBtn" id="btnSave" />
+                        }
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </form>
+    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <div class="bd clearfix" id="dataList">
+        @Html.Partial("_OpenCityManagerList", Model)
+    </div>
+</div>
+<script>
+    $("#btnSearch").click(function () {
+        var CityName = $("#txtCityName").val(); //城市名称
+        if (CityName.trim().length == 0) {
+            alert("请输入城市名称!");
+            return;
+        }
+    });
+    $("#btnSave").click(function () {
+        var OpenCityCodeList = "";
+        var CloseCityCodeList = "";
+        $("input[name='checkMenus']").each(function () {
+            if ($(this).is(':checked')) {
+                OpenCityCodeList = OpenCityCodeList + $(this).val() + ",";
+            }
+            else {
+                CloseCityCodeList = CloseCityCodeList + $(this).val() + ",";
+            }
+        });
+        alert(OpenCityCodeList);
+        alert(CloseCityCodeList);
+        if (OpenCityCodeList.length > 0)
+            OpenCityCodeList = OpenCityCodeList.substring(0, OpenCityCodeList.length - 1);
+        if (CloseCityCodeList.length > 0) {
+            CloseCityCodeList = CloseCityCodeList.substring(0, CloseCityCodeList.length - 1);
+        }
+        var paramaters = { "openCityCodeList": OpenCityCodeList, "closeCityCodeList": CloseCityCodeList };
+        var url = "/OpenCityManager/ModifyOpenCity";
+        $.ajax({   
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert("设置成功!");
+                    window.location.href = "/OpenCityManager/OpenCityManager";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    });
+</script>
+
+
+
+
+

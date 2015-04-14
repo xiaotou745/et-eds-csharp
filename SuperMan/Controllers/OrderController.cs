@@ -100,5 +100,11 @@ namespace SuperMan.Controllers
             bool reg = iOrderProvider.UpdateOrderInfo(model);
             return Json(new ResultModel(reg, string.Empty), JsonRequestBehavior.AllowGet);
         }
+
+        public ActionResult OrderDetail(string orderNo)
+        {
+            var orderModel = iOrderProvider.GetOrderByNo(orderNo);
+            return View(orderModel);
+        }
     }
 }
