@@ -33,8 +33,7 @@ namespace Ets.Service.Provider.Clienter
         readonly ClienterDao clienterDao = new ClienterDao();
         readonly OrderDao orderDao = new OrderDao();
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
-        readonly Ets.Service.IProvider.Order.IOrderProvider iOrderProvider = new Ets.Service.Provider.Order.OrderProvider();
-        readonly Ets.Service.IProvider.Clienter.IClienterProvider iClienterProvider = new Ets.Service.Provider.Clienter.ClienterProvider();
+        //readonly Ets.Service.IProvider.Order.IOrderProvider iOrderProvider = new Ets.Service.Provider.Order.OrderProvider(); 
         /// <summary>
         /// 骑士上下班功能 add by caoheyang 20150312
         /// </summary>
@@ -617,8 +616,8 @@ namespace Ets.Service.Provider.Clienter
                 //上传成功后， 判断
                 if (orderOther.OrderStatus == ConstValues.ORDER_FINISH && orderOther.HadUploadCount == orderOther.NeedUploadCount)
                 {
-                    var myOrderInfo = iOrderProvider.GetOrderInfoByOrderNo("", uploadReceiptModel.OrderId);
-                    iClienterProvider.UpdateClienterAccount(uploadReceiptModel.ClienterId, myOrderInfo);
+                    var myOrderInfo = orderDao.GetOrderInfoByOrderNo("", uploadReceiptModel.OrderId);
+                    UpdateClienterAccount(uploadReceiptModel.ClienterId, myOrderInfo);
                 }
                 tran.Complete();
             }
