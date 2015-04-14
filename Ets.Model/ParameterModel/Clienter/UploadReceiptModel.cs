@@ -28,5 +28,7 @@ namespace Ets.Model.ParameterModel.Clienter
         /// 已经上传的小票张数
         /// </summary>
         public int HadUploadCount { get; set; }
+
+        public int ClienterId { get; set; }
     }
 }

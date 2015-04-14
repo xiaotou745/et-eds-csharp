@@ -247,7 +247,9 @@ namespace ETS.Enums
         [DisplayText("未找到该订单请联系客服")]
         CannotFindOrder,
         [DisplayText("删除失败请联系客服")]
-        DeleteExcepiton
+        DeleteExcepiton,
+        [DisplayText("骑士编号无效")]
+        ClienterIdInvalid
 
 
     }
