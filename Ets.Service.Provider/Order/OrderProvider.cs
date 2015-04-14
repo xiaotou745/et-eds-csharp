@@ -49,16 +49,6 @@ namespace Ets.Service.Provider.Order
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
 
         /// <summary>
-        /// 更具订单号或者订单Id获取订单信息 ，骑士佣金
-        /// </summary>
-        /// <param name="orderNo"></param>
-        /// <param name="orderId"></param>
-        /// <returns></returns>
-        public OrderListModel GetOrderInfoByOrderNo(string orderNo, int orderId = 0)
-        {
-            return OrderDao.GetOrderInfoByOrderNo(orderNo, orderId);
-        }
-        /// <summary>
         /// 获取订单
         /// </summary>
         /// <param name="criteria"></param>
@@ -299,25 +289,32 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public string AddOrder(order order)
         {
-            int result = OrderDao.AddOrder(order);
-            if (result > 0)
-            {
-                if (order.Adjustment > 0)
+            string str = "0";
+            int result=0;
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            { 
+                result= OrderDao.AddOrder(order);
+                if (result > 0)
                 {
-                    OrderDao.addOrderSubsidiesLog(order.Adjustment, result, "补贴加钱,订单金额:" + order.Amount + "-佣金补贴策略id:" + order.CommissionFormulaMode);
-                } 
+                    if (order.Adjustment > 0)
+                    {
+                        bool b = OrderDao.addOrderSubsidiesLog(order.Adjustment, result, "补贴加钱,订单金额:" + order.Amount + "-佣金补贴策略id:" + order.CommissionFormulaMode);
+                        if (!b)
+                        {
+                            tran.Complete();
+                            str = "1";
+                        }
+                    }
+                }
+            } 
                 //Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity); //激光推送
                 ////推送给 VIP
                 //if (ConfigSettings.Instance.IsSendVIP == "1")
                 //{
                 //    Push.PushMessageVip(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity, ConfigSettings.Instance.VIPName); //激光推送
                 //}
-                return "1";
-            }
-            else
-            {
-                return "0";
-            }
+            return str; 
+           
         }
 
         /// <summary>

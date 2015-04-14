@@ -242,6 +242,8 @@ namespace Ets.Dao.Order
           SettleMoney,
           Adjustment
          )
+output Inserted.Id,GETDATE(),'商家','',Inserted.businessId,Inserted.[Status],0
+into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
  VALUES  (@OrderNo ,
           @PickUpAddress ,
           @PubDate ,
