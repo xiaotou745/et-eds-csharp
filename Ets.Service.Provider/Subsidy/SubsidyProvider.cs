@@ -83,6 +83,7 @@ namespace Ets.Service.Provider.Subsidy
                 #region 写流水
                 withdraw.Platform = 1;
                 withdraw.AdminId = 0;
+                withdraw.RType= 1;
                 withdraw.UserId = item.ClienterId;
                 int businessCount = item.BusinessCount;
                 double businessPrice = 0;
@@ -93,8 +94,7 @@ namespace Ets.Service.Provider.Subsidy
                 }
                 else
                 {
-                    var tmpPrice = SubsidiesList.Where(
-                        t => ParseHelper.ToInt(t.Value1) == businessCount).ToList();
+                    var tmpPrice = SubsidiesList.Where(t => ParseHelper.ToInt(t.Value1) == businessCount).ToList();
                     if (tmpPrice == null || tmpPrice.Count <= 0)
                     {
                         continue;
