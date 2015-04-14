@@ -619,7 +619,7 @@ namespace SuperManWebApi.Controllers
 
             if (fullFileDir == "0")
             {
-                SuperManCore.LogHelper.LogWriter("上传图片失败：", new { ex = "检查是否有权限创建目录" });
+               // SuperManCore.LogHelper.LogWriter("上传图片失败：", new { ex = "检查是否有权限创建目录" });
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed);
             }
             //保存原图

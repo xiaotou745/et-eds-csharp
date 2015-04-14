@@ -19,7 +19,7 @@ namespace Ets.Service.Provider.Common
 {
     public class AreaProvider : IAreaProvider
     {
-        readonly AreaDao dao = new AreaDao();
+         private AreaDao dao = new AreaDao();
         /// <summary>
         /// 获取开通城市的省市区
         /// 窦海超

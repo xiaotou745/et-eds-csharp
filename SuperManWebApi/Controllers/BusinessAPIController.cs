@@ -195,7 +195,7 @@ namespace SuperManWebApi.Controllers
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.HadCancelQualification);
             }
-            if (model.Amount < 10 || model.Amount > 5000)
+            if (model.Amount < 10m || model.Amount > 5000m)
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.AmountBeyondLimit);
             }

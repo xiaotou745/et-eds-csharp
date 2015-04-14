@@ -25,7 +25,6 @@ using Ets.Service.Provider.WtihdrawRecords;
 using Ets.Service.Provider.MyPush;
 using Ets.Model.DomainModel.Bussiness;
 using Ets.Model.ParameterModel.Order;
-using ETS.IO;
 
 namespace Ets.Service.Provider.Clienter
 {
@@ -666,7 +665,8 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         public OrderOther GetReceipt(UploadReceiptModel uploadReceiptModel)
         {
-            return clienterDao.GetReceiptInfo(uploadReceiptModel.OrderId);
+            int orderStatus = 0;
+            return clienterDao.GetReceiptInfo(uploadReceiptModel.OrderId, out orderStatus);
           
         }
 

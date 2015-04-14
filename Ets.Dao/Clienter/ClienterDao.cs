@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using ETS.Dao;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Order;
-using ETS.Data.Core;
-using ETS.Util;
+using ETS.Data.Core; 
 using ETS.Const;
 using ETS.Data.PageData;
 using Ets.Model.DomainModel.Clienter;
@@ -21,6 +20,7 @@ using Ets.Dao.Order;
 using System.Text.RegularExpressions;
 using ETS.IO;
 using System.IO;
+using ETS.Util;
 
 namespace Ets.Dao.Clienter
 {
@@ -277,9 +277,9 @@ namespace Ets.Dao.Clienter
             }
             catch (Exception ex)
             {
-                LogHelper.LogWriter(ex, "检查当前骑士是否存在");
+                //LogHelper.LogWriter(ex, "检查当前骑士是否存在");
                 return false;
-                throw;
+                throw ex;
             }
         }
         /// <summary>
@@ -300,9 +300,9 @@ namespace Ets.Dao.Clienter
             }
             catch (Exception ex)
             {
-                LogHelper.LogWriter(ex, "检查当前骑士是否存在");
+                //LogHelper.LogWriter(ex, "检查当前骑士是否存在");
                 return false;
-                throw;
+                throw ex;
             }
         }
         /// <summary>
@@ -322,9 +322,9 @@ namespace Ets.Dao.Clienter
             }
             catch (Exception ex)
             {
-                LogHelper.LogWriter(ex, "根据骑士Id判断骑士是否存在");
+                //LogHelper.LogWriter(ex, "根据骑士Id判断骑士是否存在");
                 return false;
-                throw;
+                throw ex;
             }
         }
 
@@ -355,8 +355,8 @@ namespace Ets.Dao.Clienter
             catch (Exception ex)
             {
                 reslut = false;
-                LogHelper.LogWriter(ex, "更新骑士照片信息");
-                throw;
+                //LogHelper.LogWriter(ex, "更新骑士照片信息");
+                throw ex;
             }
             return reslut;
         }
@@ -633,7 +633,8 @@ namespace Ets.Dao.Clienter
             }
             catch (Exception ex)
             {
-                LogHelper.LogWriter("插入orderOther表异常：", new { ex = ex });
+                //LogHelper.LogWriter("插入orderOther表异常：", new { ex = ex });
+                throw ex;
             }
             return oo;
         }
@@ -676,7 +677,8 @@ namespace Ets.Dao.Clienter
             }
             catch (Exception ex)
             {
-                LogHelper.LogWriter("更新orderOther表异常：", new { ex = ex });
+                //LogHelper.LogWriter("更新orderOther表异常：", new { ex = ex });
+                throw ex;
             }
             return oo;
         }
@@ -718,7 +720,8 @@ namespace Ets.Dao.Clienter
             }
             catch (Exception ex)
             {
-                LogHelper.LogWriter("删除更新orderOther表异常：", new { ex = ex });
+                //LogHelper.LogWriter("删除更新orderOther表异常：", new { ex = ex });
+                throw ex;
             }
             return oo;
         }

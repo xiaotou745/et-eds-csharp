@@ -20,7 +20,7 @@ namespace SuperManCore
        /// </summary>
        /// <param name="dec">需要捕获的参数（必须为属性类）</param>
        /// <param name="rmark">描述操作</param>
-       public new static void LogWriter(string rmark="",object dec=null)
+       public static void LogWriter(string rmark="",object dec=null)
        {
            try
            {
@@ -58,7 +58,7 @@ namespace SuperManCore
        /// </summary>
        /// <param name="ex">异常对象（必须为属性类）</param>
        /// <param name="rmark">操作简要描述</param>
-       public new static void LogWriter(Exception ex, string rmark="")
+       public static void LogWriter(Exception ex, string rmark="")
        {
            try
            {
@@ -93,7 +93,7 @@ namespace SuperManCore
        /// </summary>
        /// <param name="dec">异常参数对象（必须为属性类）</param>
        /// <param name="ex">日志异常对象</param>
-       public new static void LogWriter(object dec, Exception ex)
+       public static void LogWriter(object dec, Exception ex)
        {
            try
            {
@@ -130,7 +130,7 @@ namespace SuperManCore
        /// <param name="dec">所要捕获的参数（必须为属性类）</param>
        /// <param name="ex">异常对象</param>
        /// <param name="rmark">描述</param>
-       public new static void LogWriter(object dec, Exception ex, string rmark)
+       public static void LogWriter(object dec, Exception ex, string rmark)
        {
            try
            {
@@ -166,7 +166,7 @@ namespace SuperManCore
        /// 捕获全局异常
        /// </summary>
        /// <param name="error"></param>
-       public new static void LogWriterFromFilter(Exception error)
+       public static void LogWriterFromFilter(Exception error)
        {
            try
            {
