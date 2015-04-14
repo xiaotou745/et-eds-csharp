@@ -25,6 +25,7 @@ using Ets.Service.Provider.WtihdrawRecords;
 using Ets.Service.Provider.MyPush;
 using Ets.Model.DomainModel.Bussiness;
 using Ets.Model.ParameterModel.Order;
+using ETS.IO;
 
 namespace Ets.Service.Provider.Clienter
 {
@@ -95,6 +96,7 @@ namespace Ets.Service.Provider.Clienter
                 model.Status = item.Status;
                 model.OrderCount = item.OrderCount;
                 model.GroupId = item.GroupId;
+                model.HadUploadCount = item.HadUploadCount;
                 if (item.GroupId == SystemConst.Group3) //全时 需要做验证码验证
                     model.NeedPickupCode = 1;
                 #region 计算经纬度     待封装  add by caoheyang 20150313
@@ -583,8 +585,9 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         public OrderOther DeleteReceipt(UploadReceiptModel uploadReceiptModel)
         {
-            //clienterDao
-            throw new NotImplementedException();
+            var orderOther = clienterDao.DeleteReceipt(uploadReceiptModel);
+            
+            return orderOther;
         }
         /// <summary>
         /// 新增小票信息
@@ -616,6 +619,12 @@ namespace Ets.Service.Provider.Clienter
         {
             return clienterDao.GetReceiptInfo(uploadReceiptModel.OrderId);
           
+        }
+
+
+        public order GetOrderInfoByOrderId(int orderId)
+        {
+            return orderDao.GetOrderInfoByOrderId(orderId);
         }
     }
 

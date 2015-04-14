@@ -55,6 +55,7 @@ namespace ETS.Util
                 LogHelper.LogWriter("上传图片失败：", new { ex = ex });
                 return "0";
             }
-        }
+        } 
+        
     }
 }

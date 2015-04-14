@@ -242,6 +242,14 @@ namespace ETS.Enums
         InvalidImageSize,
         [DisplayText("上传图片失败")]
         UpFailed,
+        [DisplayText("订单状态已完成且小票已全部上传不能删除")]
+        DeleteFailed,
+        [DisplayText("未找到该订单请联系客服")]
+        CannotFindOrder,
+        [DisplayText("删除失败请联系客服")]
+        DeleteExcepiton
+
+
     }
     public enum OrderPublicshStatus : int
     {

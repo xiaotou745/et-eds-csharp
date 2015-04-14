@@ -643,7 +643,7 @@ namespace SuperManWebApi.Controllers
             }
             else
             {
-                List<string> listReceiptPic = ImageProvider.ReceiptPicConvert(orderOther.ReceiptPic);
+                List<string> listReceiptPic = ImageCommon.ReceiptPicConvert(orderOther.ReceiptPic);
                 //上传成功后返回图片全路径
                 var relativePath = System.IO.Path.Combine(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.RelativePath, fileName).ToForwardSlashPath();
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel() { OrderId = orderId, ImagePath = listReceiptPic, HadUploadCount = orderOther.HadUploadCount, NeedUploadCount = needUploadCount });
@@ -671,12 +671,32 @@ namespace SuperManWebApi.Controllers
             var needUploadCount = ParseHelper.ToInt(HttpContext.Current.Request.Form["NeedUploadCount"], 1); //该订单总共需要上传的 小票数量
             var version = HttpContext.Current.Request.Form["Version"]; //版本号  1.0
 
-            OrderOther orderOther = iClienterProvider.DeleteReceipt(new Ets.Model.ParameterModel.Clienter.UploadReceiptModel() { OrderId = orderId, ReceiptPic = receiptPic, HadUploadCount = -1 });
+            Ets.Model.ParameterModel.Clienter.UploadReceiptModel uploadReceiptModel = new Ets.Model.ParameterModel.Clienter.UploadReceiptModel() { OrderId = orderId, ReceiptPic = receiptPic, HadUploadCount = -1 };
+            //删除前先判断   订单状态已完成 和已经上传的小票数量 等于需要上传的小票数量相等 时 不允许删除小票
+            var orderInfo = iClienterProvider.GetOrderInfoByOrderId(uploadReceiptModel.OrderId);
+            if (orderInfo != null)
+            {
+                if (orderInfo.Status == ConstValues.ORDER_FINISH && orderInfo.OrderCount == orderInfo.HadUploadCount) {
+                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.DeleteFailed);
+                }
+            }
+            else
+            {
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.CannotFindOrder);
+            }
+            //删除
+            OrderOther orderOther = iClienterProvider.DeleteReceipt(uploadReceiptModel);
+            if (orderOther != null)
+            {
+                List<string> listReceiptPic = ImageCommon.ReceiptPicConvert(orderOther.ReceiptPic);
 
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel() { OrderId = orderId, ImagePath = listReceiptPic, HadUploadCount = orderOther.HadUploadCount, NeedUploadCount = orderOther.NeedUploadCount });
+            }
+            else
+            {
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.DeleteExcepiton);
+            }
 
-
-
-            return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidOrderId);
         }
 
         /// <summary>
@@ -708,7 +728,7 @@ namespace SuperManWebApi.Controllers
             }
             else
             {
-                List<string> listReceiptPic = ImageProvider.ReceiptPicConvert(orderOther.ReceiptPic);
+                List<string> listReceiptPic = ImageCommon.ReceiptPicConvert(orderOther.ReceiptPic);
                 
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel() { OrderId = orderId, ImagePath = listReceiptPic, HadUploadCount = orderOther.HadUploadCount, NeedUploadCount = orderOther.NeedUploadCount });
             } 

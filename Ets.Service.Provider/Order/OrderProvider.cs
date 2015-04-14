@@ -92,7 +92,7 @@ namespace Ets.Service.Provider.Order
                 resultModel.IsPay = from.IsPay.Value;
                 resultModel.Remark = from.Remark == null ? "" : from.Remark;
                 resultModel.Status = from.Status.Value;
-
+                resultModel.HadUploadCount = from.HadUploadCount;
                 resultModel.GroupId = from.GroupId;
                 if (from.GroupId == SystemConst.Group3) //全时 需要做验证码验证
                     resultModel.NeedPickupCode = 1;
@@ -156,7 +156,7 @@ namespace Ets.Service.Provider.Order
                 resultModel.Amount = amount; //C端 获取订单的金额 Edit bycaoheyang 20150305
                 resultModel.businessName = from.BusinessName;
                 resultModel.businessPhone = from.BusinessPhone;
-                
+                resultModel.HadUploadCount = from.HadUploadCount;
                 resultModel.GroupId = from.GroupId;
                 if (from.GroupId == SystemConst.Group3)
                     resultModel.NeedPickupCode = 1;

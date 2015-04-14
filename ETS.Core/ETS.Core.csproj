@@ -109,6 +109,7 @@
     <Compile Include="IO\Common.cs" />
     <Compile Include="IO\Excel.cs" />
     <Compile Include="IO\ExcelWriter.cs" />
+    <Compile Include="IO\FileHelper.cs" />
     <Compile Include="IO\FileIO.cs" />
     <Compile Include="IO\INIFileManager.cs" />
     <Compile Include="IO\IniParser.cs" />

@@ -41,5 +41,9 @@ namespace Ets.Model.DomainModel.Clienter
         /// 集团id
         /// </summary>
         public int GroupId { get; set; }
+        /// <summary>
+        /// 已经上传的小票数量
+        /// </summary>
+        public int HadUploadCount { get; set; }
     }
 }

@@ -104,6 +104,11 @@ namespace Ets.Model.DomainModel.Clienter
         ///  是否需要做取货码验证 0 不需要 1 需要
         /// </summary>
         public int NeedPickupCode { get; set; }
+        /// <summary>
+        /// 已经上传的小票数量
+        /// wc
+        /// </summary>
+        public int HadUploadCount { get; set; }
     }
     public class ClientOrderNoLoginResultModel
     {
@@ -208,6 +213,7 @@ namespace Ets.Model.DomainModel.Clienter
         ///  是否需要做取货码验证 0 不需要 1 需要
         /// </summary>
         public int NeedPickupCode { get; set; }
+        public int HadUploadCount { get;set; }
     }
     public class degree
     {

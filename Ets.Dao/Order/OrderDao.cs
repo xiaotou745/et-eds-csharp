@@ -72,12 +72,14 @@ namespace Ets.Dao.Order
         b.City PickUpCity,
         b.Longitude BusiLongitude,
         b.Latitude BusiLatitude,
-        b.GroupId");
+        b.GroupId,
+        ISNULL(oo.HadUploadCount,0) HadUploadCount ");
             //关联表
             StringBuilder tableListStr = new StringBuilder();
             tableListStr.Append(@" dbo.[order] o WITH ( NOLOCK )
         LEFT JOIN dbo.clienter c WITH ( NOLOCK ) ON c.Id = o.clienterId
-        LEFT JOIN dbo.business b WITH ( NOLOCK ) ON b.Id = o.businessId ");
+        LEFT JOIN dbo.business b WITH ( NOLOCK ) ON b.Id = o.businessId 
+        left join dbo.OrderOther oo (nolock) on o.Id = oo.OrderId ");
             //条件
             StringBuilder whereStr = new StringBuilder(" 1=1 ");
             if (criteria.userId != 0)
@@ -1233,6 +1235,38 @@ where   1 = 1
             parm.AddWithValue("@Remark", remark);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
 
+        }
+
+        /// <summary>
+        /// 根据订单id获取订单信息 和 小票相关
+        /// wc
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public order GetOrderInfoByOrderId(int orderId)
+        {
+            string sql = @"
+select  o.Id ,
+        o.[Status] ,
+        ISNULL(oo.HadUploadCount, 0) HadUploadCount,
+        o.OrderCount
+from    dbo.[order] o ( nolock )
+        left join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
+where   o.Id = @orderId;
+";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@orderId", SqlDbType.NVarChar);
+            parm.SetValue("@orderId", orderId);
+            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
+            var list = ConvertDataTableList<order>(dt);
+            if (list != null && list.Count > 0)
+            {
+                return list[0];
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }
