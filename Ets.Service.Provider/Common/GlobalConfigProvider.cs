@@ -254,5 +254,41 @@ namespace Ets.Service.Provider.Common
             }
             return "";
         }
+
+
+        /// <summary>
+        /// 获取全局变量表数据PriceSubsidies
+        /// </summary>
+        /// <returns></returns>
+        public List<GlobalConfigSubsidies> GetOverStoreSubsidies()
+        {
+            var list = new List<GlobalConfigSubsidies>();
+            try
+            {
+                var result = _dao.GetSubsidies("OverStoreSubsidies");
+                if (!string.IsNullOrEmpty(result))
+                {
+                    string[] times = result.Split(';');
+                    if (times.Length > 0)
+                    {
+                        list.AddRange(from time in times
+                                      where !string.IsNullOrEmpty(time)
+                                      select time.Split(',')
+                                          into tt
+                                          select new GlobalConfigSubsidies
+                                          {
+                                              Id = ParseHelper.ToInt(tt[2]),
+                                              Value1 = tt[0],
+                                              Value2 = tt[1]
+                                          });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriterFromFilter(ex);
+            }
+            return list;
+        }
     }
 }

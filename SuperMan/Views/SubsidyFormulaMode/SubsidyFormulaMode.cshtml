@@ -5,6 +5,7 @@
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
     GlobalConfigModel globalConfigModel = ViewBag.GloglConfig;
     string isStarTimeSubsidies = globalConfigModel.IsStarTimeSubsidies == "1" ? "checked=checked" : "";
+    string IsStartOverStoreSubsidies = globalConfigModel.IsStartOverStoreSubsidies == "1" ? "checked=checked" : "";
 }
 
 <div class="zpManage zpSh">
@@ -16,10 +17,21 @@
             <tr>
                 <td> 
                     <input type="checkbox" @isStarTimeSubsidies id="ckTimeStar" name="ckTimeStar"/> <label for="ckTimeStar" style="color: red">动态时间补贴</label>
-                    <input type="submit" value="设置动态时间补贴" style="width: 120px;" class="searchBtn" id="btnIsTimeBuTie" /> 
-                    <a href="/SubsidyManager/TimeSubsidies">查看</a> 动态时间补贴可以和任何佣金补贴策略同时存在
+                    <input type="submit" value="确认" class="searchBtn" id="btnIsTimeBuTie" /> 
+                    <a href="/SubsidyManager/TimeSubsidies">动态时间补贴</a> 动态时间补贴可以和任何佣金补贴策略同时存在
                 </td>
             </tr>
+            <tr>
+                <td> 
+                    <input type="checkbox" @IsStartOverStoreSubsidies id="ckOverStore" name="ckOverStore"/> <label for="ckOverStore" style="color: red">跨店抢单奖励</label>
+                    <input type="submit" value="确认"  class="searchBtn" id="btnIsOverSotreBuTie" /> 
+                    <a href="/SubsidyFormulaMode/OverStoreSubsidies">跨店抢单奖励</a> 跨店抢单奖励可以和任何佣金补贴策略同时存在
+                </td>
+            </tr> 
+        </table> 
+    </div> 
+<div class="SearchMd">
+        <table border="0" cellspacing="0" cellpadding="0"> 
             <tr>
                 <td> 
                    @{var a = globalConfigModel.CommissionFormulaMode=="0"?"checked =checked":"";}
@@ -34,7 +46,7 @@
                     @{var d = globalConfigModel.CommissionFormulaMode == "3" ? "checked =checked" : "";}
                     <input id="rCommissionFormulaMode3" @d name="rCommissionFormulaMode" onclick="changeDiv(3);" type="radio" value="3">
                     <label for="rCommissionFormulaMode3" onclick="changeDiv(3);"  style="color: red">满金额补贴</label>
-                    <input type="submit" value="设置佣金补贴策略" style="width: 120px;" class="searchBtn" id="btnCommissionFormulaMode" /> 
+                    <input type="submit" value="确认" class="searchBtn" id="btnCommissionFormulaMode" /> 
                 </td>
             </tr>
         </table> 
@@ -50,7 +62,7 @@
                         </p>
                         佣金参数 佣金比例:<input name="txtptCommonCommissionRatio" value="@ViewBag.GloglConfig.CommonCommissionRatio" id="txtptCommonCommissionRatio" type="text">
                         网站补贴:<input name="txttpCommonSiteSubsidies" value="@ViewBag.GloglConfig.CommonSiteSubsidies" id="txttpCommonSiteSubsidies" type="text">
-                        <input type="submit" value="确定" style="width: 150px;" class="searchBtn" onclick="setCommonCommissionRatio();" />
+                        <input type="submit" value="确定" class="searchBtn" onclick="setCommonCommissionRatio();" />
                     </td>
                 </tr>
             </table>
@@ -345,6 +357,31 @@
             }
         });
     }); 
+    //设置开启跨店抢单
+    $("#btnIsOverSotreBuTie").on('click', function () {
+        var b = 0;
+        if ($('#ckOverStore').is(':checked')) {
+            b = 1;
+        } else {
+            b = 0;
+        }
+        var pars = { "IsStartOverStoreSubsidies": b };
+        var url = "/SubsidyFormulaMode/SetIsStartOverStoreSubsidies";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: pars,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert("修改成功!");
+                    window.location.href = "/SubsidyFormulaMode/SubsidyFormulaMode/";
+                } else {
+                    alert("修改失败!");
+                }
+            }
+        });
+    }); 
+    
     //设置佣金方式策略
     $("#btnCommissionFormulaMode").on('click', function () { 
         if (confirm("确定修改佣金策略?")) {
