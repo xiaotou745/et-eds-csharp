@@ -211,7 +211,7 @@ namespace SuperMan.Controllers
             var list = new GlobalConfigProvider().GetOverStoreSubsidies(); 
             list.Add(model);
             var newlist = (from globalConfigTimeSubsidiese in list
-                           orderby ParseHelper.ToInt(globalConfigTimeSubsidiese.Value1) ascending 
+                           orderby ParseHelper.ToDouble(globalConfigTimeSubsidiese.Value1) ascending 
                 select globalConfigTimeSubsidiese).ToList();
             string values = GetTimesValues(newlist);
             bool b = new GlobalConfigProvider().UpdateSubsidies(UserContext.Current.Name, values, "添加跨店抢单-设置之后的值:" + values, "OverStoreSubsidies");
@@ -252,7 +252,7 @@ namespace SuperMan.Controllers
                 mm.Value2 = model.Value2;
             }
             var newlist = (from globalConfigTimeSubsidiese in list
-                           orderby ParseHelper.ToInt(globalConfigTimeSubsidiese.Value1) ascending
+                           orderby ParseHelper.ToDouble(globalConfigTimeSubsidiese.Value1) ascending
                            select globalConfigTimeSubsidiese).ToList();
             string values = GetTimesValues(newlist);
             bool b = new GlobalConfigProvider().UpdateSubsidies(UserContext.Current.Name, values, "修改跨店抢单-设置之后的值:" + values, "OverStoreSubsidies");
