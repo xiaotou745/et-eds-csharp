@@ -9,6 +9,10 @@ namespace Ets.Model.DataModel.Order
     public class OrderOther
     {
         public int Id { get; set; }
+        /// <summary>
+        /// 订单状态
+        /// </summary>
+        public int OrderStatus { get; set; }
         public int OrderId { get; set; }
         public int NeedUploadCount { get; set; }
         public string ReceiptPic { get; set; }

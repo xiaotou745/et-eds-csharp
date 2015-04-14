@@ -1108,11 +1108,13 @@ namespace Ets.Dao.Order
         }
         /// <summary>
         /// 根据订单号获取订单信息
+        /// 订单id和orderNo传一个就可以
         /// wc
         /// </summary>
         /// <param name="orderNo"></param>
+        /// <param name="orderId">订单Id</param>
         /// <returns></returns>
-        public OrderListModel GetOrderInfoByOrderNo(string orderNo)
+        public OrderListModel GetOrderInfoByOrderNo(string orderNo,int orderId=0)
         {
             string sql = @"
 select top 1
@@ -1124,16 +1126,32 @@ select top 1
         o.OrderCommission ,
         o.businessId ,
         b.GroupId ,
-        o.PickupCode
+        o.PickupCode ,
+        ISNULL(oo.HadUploadCount,0) HadUploadCount
 from    [order] o with ( nolock )
         left join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         left join dbo.business b with ( nolock ) on o.businessId = b.Id
-where   1 = 1
-        and OrderNo = @OrderNo
+        left join dbo.OrderOther oo with(nolock) on o.Id = oo.OrderId
+where   1 = 1 
 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@OrderNo", SqlDbType.NVarChar);
-            parm.SetValue("@OrderNo", orderNo);
+           
+            if (orderId != 0)
+            {
+                sql = sql + " and o.Id = @OrderId";
+                parm.Add("@OrderId", SqlDbType.Int);
+                parm.SetValue("@OrderId", orderId);
+            }
+            else
+            {
+                sql = sql + " and o.OrderNo = @OrderNo";
+                parm.Add("@OrderNo", SqlDbType.NVarChar);
+                parm.SetValue("@OrderNo", orderNo);
+            }
+
+            
+
+
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
             var list = ConvertDataTableList<OrderListModel>(dt);
             if (list != null && list.Count > 0)

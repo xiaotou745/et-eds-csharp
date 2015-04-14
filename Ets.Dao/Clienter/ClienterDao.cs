@@ -579,7 +579,8 @@ namespace Ets.Dao.Clienter
         public OrderOther UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel)
         {
             OrderOther orderOther = new OrderOther();
-            var oo = GetReceiptInfo(uploadReceiptModel.OrderId);
+            int orderStatus = 0;
+            var oo = GetReceiptInfo(uploadReceiptModel.OrderId, out orderStatus);
             if (oo == null)
             {
                 orderOther = InsertReceiptInfo(uploadReceiptModel);
@@ -588,6 +589,7 @@ namespace Ets.Dao.Clienter
             {
                 orderOther = UpdateReceiptInfo(uploadReceiptModel);
             }
+            orderOther.OrderStatus = orderStatus;
             return orderOther;
         }
 
@@ -727,24 +729,30 @@ namespace Ets.Dao.Clienter
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns>OrderOther</returns>
-        public OrderOther GetReceiptInfo(int orderId)
+        public OrderOther GetReceiptInfo(int orderId,out int OrderStatus)
         {
+            OrderStatus = 0;
             string sql = @"select oo.Id ,
         oo.OrderId ,
         oo.NeedUploadCount ,
         oo.ReceiptPic ,
         oo.HadUploadCount
 from    dbo.OrderOther oo ( nolock )
-where   oo.OrderId = @OrderId;";
+where   oo.OrderId = @OrderId;select o.[Status] FROM dbo.[order] o (nolock)
+ where o.Id = @OrderId";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderId", SqlDbType.Int);
             parm.SetValue("@OrderId", orderId);
-
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
-            var ooList = MapRows<OrderOther>(dt);
+            
+            DataSet dt = DbHelper.ExecuteDataset(SuperMan_Read, sql, parm);
+            var ooList = MapRows<OrderOther>(dt.Tables[0]);
+            if (dt.Tables[1] != null && dt.Tables[1].Rows.Count > 0)
+            {
+                OrderStatus =  ParseHelper.ToInt(dt.Tables[1].Rows[0][0],0);
+            }
             if (ooList != null && ooList.Count == 1)
             {
-                return MapRows<OrderOther>(dt)[0];
+                return ooList[0];
             }
             else
             {
@@ -760,9 +768,9 @@ where   oo.OrderId = @OrderId;";
         public OrderOther DeleteReceipt(UploadReceiptModel uploadReceiptModel)
         {
             string delPic = uploadReceiptModel.ReceiptPic;
-
+            int orderStatus = 0;
             //更新小票信息
-            OrderOther oo = GetReceiptInfo(uploadReceiptModel.OrderId);
+            OrderOther oo = GetReceiptInfo(uploadReceiptModel.OrderId,out orderStatus);
             if (oo != null)
             {
                 List<string> listReceiptPic = ImageCommon.GetListImgString(oo.ReceiptPic);

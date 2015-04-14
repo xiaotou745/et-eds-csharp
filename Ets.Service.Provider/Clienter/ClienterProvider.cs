@@ -34,8 +34,8 @@ namespace Ets.Service.Provider.Clienter
         readonly ClienterDao clienterDao = new ClienterDao();
         readonly OrderDao orderDao = new OrderDao();
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
-         
-
+        readonly Ets.Service.IProvider.Order.IOrderProvider iOrderProvider = new Ets.Service.Provider.Order.OrderProvider();
+        readonly Ets.Service.IProvider.Clienter.IClienterProvider iClienterProvider = new Ets.Service.Provider.Clienter.ClienterProvider();
         /// <summary>
         /// 骑士上下班功能 add by caoheyang 20150312
         /// </summary>
@@ -508,29 +508,33 @@ namespace Ets.Service.Provider.Clienter
                if (myOrderInfo != null)
                {
                    orderDao.FinishOrderStatus(orderNo, userId, myOrderInfo);
-                   //更新骑士 金额  
-                   bool b = clienterDao.UpdateClienterAccountBalance(new WithdrawRecordsModel() { UserId = userId, Amount = myOrderInfo.OrderCommission.Value });
-                   //增加记录 
-                   decimal? AccountBalance = 0;
-                   //更新用户相关金额数据 
-                   if (myOrderInfo.AccountBalance.HasValue)
+                   if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)  //当用户上传的小票数量 和 需要上传的小票数量一致的时候，更新用户金额
                    {
-                       AccountBalance = myOrderInfo.AccountBalance.Value + (myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission));
+                       UpdateClienterAccount(userId, myOrderInfo);
                    }
-                   else
-                   {
-                       AccountBalance = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission);
-                   }
-                   var model = new WithdrawRecordsModel
-                   {
-                       AdminId = 1,
-                       Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
-                       Balance = AccountBalance ?? 0,
-                       UserId = userId,
-                       Platform = 1
-                   };
-                   Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords = new WtihdrawRecordsProvider();
-                   iRecords.AddRecords(model); 
+                   ////更新骑士 金额  
+                   //bool b = clienterDao.UpdateClienterAccountBalance(new WithdrawRecordsModel() { UserId = userId, Amount = myOrderInfo.OrderCommission.Value });
+                   ////增加记录 
+                   //decimal? AccountBalance = 0;
+                   ////更新用户相关金额数据 
+                   //if (myOrderInfo.AccountBalance.HasValue)
+                   //{
+                   //    AccountBalance = myOrderInfo.AccountBalance.Value + (myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission));
+                   //}
+                   //else
+                   //{
+                   //    AccountBalance = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission);
+                   //}
+                   //var model = new WithdrawRecordsModel
+                   //{
+                   //    AdminId = 1,
+                   //    Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
+                   //    Balance = AccountBalance ?? 0,
+                   //    UserId = userId,
+                   //    Platform = 1
+                   //};
+                   //Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords = new WtihdrawRecordsProvider();
+                   //iRecords.AddRecords(model); 
                    tran.Complete();
                    Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", myOrderInfo.businessId.ToString(), string.Empty);
                    result = "1";
@@ -539,6 +543,39 @@ namespace Ets.Service.Provider.Clienter
            OrderProvider order = new OrderProvider();
            order.AsyncOrderStatus(orderNo);
            return result;
+        }
+
+        /// <summary>
+        /// 更新用户金额
+        /// wc
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="myOrderInfo"></param>
+        public void UpdateClienterAccount(int userId, OrderListModel myOrderInfo)
+        {
+            //更新骑士 金额  
+            bool b = clienterDao.UpdateClienterAccountBalance(new WithdrawRecordsModel() { UserId = userId, Amount = myOrderInfo.OrderCommission.Value });
+            //增加记录 
+            decimal? AccountBalance = 0;
+            //更新用户相关金额数据 
+            if (myOrderInfo.AccountBalance.HasValue)
+            {
+                AccountBalance = myOrderInfo.AccountBalance.Value + (myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission));
+            }
+            else
+            {
+                AccountBalance = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission);
+            }
+            var model = new WithdrawRecordsModel
+            {
+                AdminId = 1,
+                Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
+                Balance = AccountBalance ?? 0,
+                UserId = userId,
+                Platform = 1
+            };
+            Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords = new WtihdrawRecordsProvider();
+            iRecords.AddRecords(model); 
         }
 
         public ClienterModel GetUserInfoByUserId(int UserId)
@@ -574,7 +611,19 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         public OrderOther UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel)
         {
-            return clienterDao.UpdateClientReceiptPicInfo(uploadReceiptModel);
+            OrderOther orderOther = null;
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                orderOther = clienterDao.UpdateClientReceiptPicInfo(uploadReceiptModel);
+                //上传成功后， 判断
+                if (orderOther.OrderStatus == ConstValues.ORDER_FINISH && orderOther.HadUploadCount == orderOther.NeedUploadCount)
+                {
+                    var myOrderInfo = iOrderProvider.GetOrderInfoByOrderNo("", uploadReceiptModel.OrderId);
+                    iClienterProvider.UpdateClienterAccount(uploadReceiptModel.ClienterId, myOrderInfo);
+                }
+                tran.Complete();
+            }
+            return orderOther;
         }
 
         /// <summary>

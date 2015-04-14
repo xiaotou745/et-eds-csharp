@@ -36,7 +36,9 @@ namespace ETS.Enums
         [DisplayText("您已取消资格")]
         HadCancelQualification,
         [DisplayText("商户结算比例设置异常，请联系客服")]
-        BusiSettlementRatioError
+        BusiSettlementRatioError,
+        [DisplayText("订单金额超出限制，10-5000元")]
+        AmountBeyondLimit
     }
     public enum GetOrdersStatus
     {
@@ -247,7 +249,9 @@ namespace ETS.Enums
         [DisplayText("未找到该订单请联系客服")]
         CannotFindOrder,
         [DisplayText("删除失败请联系客服")]
-        DeleteExcepiton
+        DeleteExcepiton,
+        [DisplayText("骑士编号不能为空")]
+        ClienterIdInvalid
 
 
     }

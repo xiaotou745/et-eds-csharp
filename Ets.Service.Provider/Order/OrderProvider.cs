@@ -48,6 +48,11 @@ namespace Ets.Service.Provider.Order
         //和区域有关的  wc
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
 
+
+        public OrderListModel GetOrderInfoByOrderNo(string orderNo, int orderId = 0)
+        {
+            return OrderDao.GetOrderInfoByOrderNo(orderNo, orderId);
+        }
         /// <summary>
         /// 获取订单
         /// </summary>

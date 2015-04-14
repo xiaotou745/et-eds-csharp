@@ -195,6 +195,10 @@ namespace SuperManWebApi.Controllers
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.HadCancelQualification);
             }
+            if (model.Amount < 10 || model.Amount > 5000)
+            {
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.AmountBeyondLimit);
+            }
             lock (lockHelper)
             {  
                 #region 缓存验证
