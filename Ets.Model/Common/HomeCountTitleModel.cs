@@ -125,5 +125,10 @@ namespace Ets.Model.Common
         /// </summary>
         public int ActiveBusiness { get; set; }
 
+
+        /// <summary>
+        /// 跨店总金额
+        /// </summary>
+        public double CrossShopPrice { get; set; }
     }
 }

@@ -27,7 +27,7 @@
                     <td>@item.CityName</td>
                     <td>@item.DistrictCode</td>
                     <td>@item.DistrictName</td>
-                    <td><input type="checkbox" name="checkMenus" id="@item.DistrictCode" @(item.IsPublic == 1 ? "checked" : "") value="@item.DistrictCode" /></td>
+                    <td><input type="checkbox" name="checkMenus" id="@item.DistrictCode" @(item.IsPublic == 1 ? "checked=\"checked\"" : "") value="@item.DistrictCode" /></td>
                 </tr>
             }
         }

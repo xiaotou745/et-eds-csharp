@@ -40,39 +40,36 @@
         }
     });
     $("#btnSave").click(function () {
-        var OpenCityCodeList = "  ";
+        var OpenCityCodeList = "";
         var CloseCityCodeList = "";
-        alert($("input[name='checkMenus']:checked").length)
         $("input[name='checkMenus']").each(function () {
-            if ($(this).attr("checked")) {
+            if ($(this).is(':checked')) {
                 OpenCityCodeList = OpenCityCodeList + $(this).val() + ",";
             }
             else {
                 CloseCityCodeList = CloseCityCodeList + $(this).val() + ",";
             }
         });
-        alert(OpenCityCodeList);
-        alert(CloseCityCodeList);
         if (OpenCityCodeList.length > 0)
             OpenCityCodeList = OpenCityCodeList.substring(0, OpenCityCodeList.length - 1);
         if (CloseCityCodeList.length > 0) {
             CloseCityCodeList = CloseCityCodeList.substring(0, CloseCityCodeList.length - 1);
         }
-        //var paramaters = { "openCityCodeList": OpenCityCodeList, "closeCityCodeList": CloseCityCodeList };
-        //var url = "/OpenCityManager/ModifyOpenCity";
-        //$.ajax({   
-        //    type: 'POST',
-        //    url: url,
-        //    data: paramaters,
-        //    success: function (result) {
-        //        if (result.IsSuccess) {
-        //            alert("设置成功!");
-        //            window.location.href = "/OpenCityManager/OpenCityManager";
-        //        } else {
-        //            alert(result.Message);
-        //        }
-        //    }
-        //});
+        var paramaters = { "openCityCodeList": OpenCityCodeList, "closeCityCodeList": CloseCityCodeList };
+        var url = "/OpenCityManager/ModifyOpenCity";
+        $.ajax({   
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert("设置成功!");
+                    //window.location.href = "/OpenCityManager/OpenCityManager";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
     });
 </script>
 

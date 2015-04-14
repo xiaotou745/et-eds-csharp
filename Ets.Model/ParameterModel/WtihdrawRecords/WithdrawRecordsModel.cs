@@ -20,5 +20,9 @@ namespace Ets.Model.ParameterModel.WtihdrawRecords
         public decimal Balance { get; set; }
         public int AdminId { get; set; }
 
+        public bool IsDel { get; set; }
+
+        public string Remark { get; set; }
+
     }
 }

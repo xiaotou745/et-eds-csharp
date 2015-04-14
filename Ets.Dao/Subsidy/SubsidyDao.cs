@@ -132,5 +132,32 @@ WHERE   sub.[Status] = 1 ");
                 throw;
             }
         }
+
+        /// <summary>
+        /// 查询前一天的抢单量
+        /// xx
+        /// xx
+        /// </summary>
+        /// <returns></returns>
+        public IList<GrabOrderModel> GetBusinessCount()
+        {
+            string strSql = @"
+                            select 
+                            PubDate,
+                            ClienterId,
+                            BusinessCount 
+                            from (
+                            select convert(char(10),o.PubDate,120) PubDate,clienterId,count(distinct businessId) businessCount
+                            from 
+                            dbo.[order](nolock) o 
+                            where 
+                            convert(char(10),o.PubDate,120)=convert(char(10),dateadd(day,-1,getdate()),120) 
+                            and [Status]=1  
+                            group by convert(char(10),o.PubDate,120), clienterId ) t 
+                            where businessCount>1";
+            DataTable myTable = DbHelper.ExecuteDataTable(SuperMan_Read, strSql);
+            return MapRows<GrabOrderModel>(myTable);
+        }
+
     }
 }
