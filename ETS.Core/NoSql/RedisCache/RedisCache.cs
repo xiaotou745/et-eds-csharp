@@ -298,5 +298,19 @@ namespace ETS.NoSql.RedisCache
                 return tempNum;
             }
         }
+        /// <summary>
+        /// 获取自增数据
+        /// 窦海超
+        /// 2015年4月14日 13:55:05
+        /// </summary>
+        /// <param name="likeKey">键,查询相关的KEY，用*来代替未知数据如：*123*，则查询中间内容为123的相似键</param>
+        /// <returns>自增值</returns>
+        public List<string> Keys(string likeKey)
+        {
+            using (IRedisClient Redis = RedisManager.GetClient())
+            {
+                return Redis.SearchKeys(likeKey);
+            }
+        }
     }
 }
