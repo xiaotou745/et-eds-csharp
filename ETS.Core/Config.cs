@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ETS.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -47,6 +48,10 @@ namespace ETS
         /// </summary>
         public static string GlobalVersion { get { return ConfigKey("GlobalVersion"); } }
 
+        /// <summary>
+        /// 跨店补贴开始时间
+        /// </summary>
+        public static int StartSubsidyTime { get { return ParseHelper.ToInt(ConfigKey("StartSubsidyTime")); } }
 
 
         #region 取Web.Config值

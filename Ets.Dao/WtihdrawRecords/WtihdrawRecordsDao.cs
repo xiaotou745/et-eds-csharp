@@ -69,14 +69,18 @@ namespace Ets.Dao.WtihdrawRecords
                           Amount ,
                           Balance ,
                           CreateTime ,
-                          AdminId
+                          AdminId,
+                          IsDel,
+                          Remark
                         )
                 VALUES  ( @Platform , -- Platform - int
                           @UserId , -- UserId - int
                           @Amount , -- Amount - decimal
                           @Balance , -- Balance - decimal
                           getdate() , -- CreateTime - datetime
-                          @AdminId  -- AdminId - int
+                          @AdminId,  -- AdminId - int
+                          @IsDel,
+                          @Remark
                         )
                 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
@@ -85,6 +89,8 @@ namespace Ets.Dao.WtihdrawRecords
             parm.AddWithValue("@Amount", model.Amount);
             parm.AddWithValue("@Balance", model.Balance);
             parm.AddWithValue("@AdminId", model.AdminId);
+            parm.AddWithValue("@IsDel",model.IsDel);
+            parm.AddWithValue("@Remark",model.Remark);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
 
