@@ -12,6 +12,7 @@ using ETS;
 using ETS.Dao;
 using ETS.Data.Core;
 using ETS.Data.PageData;
+using ETS.Enums;
 using ETS.Extension;
 using ETS.Page;
 using ETS.Util;
@@ -136,7 +137,7 @@ namespace Ets.Dao.Order
         }
         #endregion
 
-           /// <summary>
+        /// <summary>
         /// 订单状态查询功能  add by caoheyang 20150316
         /// </summary>
         /// <param name="orderNo">订单号码</param>
@@ -201,13 +202,13 @@ namespace Ets.Dao.Order
                 return null;
             return MapRows<OrderListModel>(dt)[0];
         }
-        
+
 
         public int AddOrder(Model.DataModel.Order.order order)
         {
             StringBuilder insertOrder = new StringBuilder();
 
-            insertOrder.Append(@"INSERT INTO dbo.[order]
+            insertOrder.AppendFormat(@"INSERT INTO dbo.[order]
          ( OrderNo ,
            PickUpAddress ,
            PubDate ,
@@ -242,7 +243,7 @@ namespace Ets.Dao.Order
           SettleMoney,
           Adjustment
          )
-output Inserted.Id,GETDATE(),'商家','',Inserted.businessId,Inserted.[Status],0
+output Inserted.Id,GETDATE(),'{0}','',Inserted.businessId,Inserted.[Status],{1}
 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
  VALUES  (@OrderNo ,
           @PickUpAddress ,
@@ -277,7 +278,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
           @BusinessCommission,
           @SettleMoney,
           @Adjustment
-         );select @@IDENTITY");
+         );select @@IDENTITY", SuperPlatform.商家, (int)SuperPlatform.商家);
 
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderNo", SqlDbType.NVarChar);
@@ -451,7 +452,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             dbParameters.AddWithValue("@ReceiveProvince", paramodel.address.province);    //用户省
             dbParameters.AddWithValue("@ReceviceCity", paramodel.address.city); //用户市
             dbParameters.AddWithValue("@ReceiveArea", paramodel.address.area); //用户区
-            dbParameters.AddWithValue("@PickupCode", string.IsNullOrWhiteSpace(paramodel.pickupcode)?"":paramodel.pickupcode); //用户区
+            dbParameters.AddWithValue("@PickupCode", string.IsNullOrWhiteSpace(paramodel.pickupcode) ? "" : paramodel.pickupcode); //用户区
             string orderNo = ParseHelper.ToString(DbHelper.ExecuteScalar(SuperMan_Read, insertOrdersql, dbParameters));
             if (string.IsNullOrWhiteSpace(orderNo))//添加失败 
                 return null;
@@ -545,8 +546,8 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                         WHERE  
                         o.[Status]<>3 AND 
                         CONVERT(CHAR(10),PubDate,120)>='" + StartTime + "' and ";
-                sql += "CONVERT(CHAR(10),PubDate,120)<='" + EndTime + "'";
-                sql+="  GROUP BY CONVERT(CHAR(10),PubDate,120),DealCount ORDER BY DealCount ASC ";
+            sql += "CONVERT(CHAR(10),PubDate,120)<='" + EndTime + "'";
+            sql += "  GROUP BY CONVERT(CHAR(10),PubDate,120),DealCount ORDER BY DealCount ASC ";
             //IDbParameters parm = DbHelper.CreateDbParameters();
             //parm.AddWithValue("@StartTime", StartTime);
             //parm.AddWithValue("@EndTime", EndTime);
@@ -842,22 +843,26 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
         /// <summary>
         /// 根据订单号 修改订单状态 B端商家取消订单
         /// wc
+        /// 取消订单的时候增加 日志
         /// </summary>
         /// <param name="orderNo">订单号</param>
         /// <param name="orderStatus">订单状态</param>
         /// <returns></returns>
         public int CancelOrderStatus(string orderNo, int orderStatus)
         {
-            string upSql = string.Format(@" UPDATE dbo.[order]
+            StringBuilder upSql = new StringBuilder();
+            upSql.AppendFormat(@" UPDATE dbo.[order]
+ output Inserted.Id,GETDATE(),'{0}','',Inserted.businessId,Inserted.[Status],{1}
+ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
  SET    [Status] = @status
- WHERE  OrderNo = @orderNo");
+ WHERE  OrderNo = @orderNo",SuperPlatform.商家,(int)SuperPlatform.商家);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@orderNo", SqlDbType.NVarChar);
             dbParameters.SetValue("@orderNo", orderNo);  //订单号  
             dbParameters.AddWithValue("@status", orderStatus);
 
-            object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Read, upSql, dbParameters);
+            object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Read, upSql.ToString(), dbParameters);
 
             return ParseHelper.ToInt(executeScalar, -1);
         }
@@ -872,8 +877,13 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
         public int FinishOrderStatus(string orderNo, int clientId, OrderListModel myOrderInfo)
         {
             //更新订单状态
-            StringBuilder upSql = new StringBuilder(@" UPDATE dbo.[order]
- SET [Status] = @status,ActualDoneDate=getdate() WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL;");
+            StringBuilder upSql = new StringBuilder();
+
+            upSql.AppendFormat(@" UPDATE dbo.[order]
+ SET [Status] = @status,ActualDoneDate=getdate()
+output Inserted.Id,GETDATE(),'{0}','',Inserted.clienterId,Inserted.[Status],{1}
+into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform]) 
+WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL;", SuperPlatform.骑士, (int)SuperPlatform.骑士);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@orderNo", SqlDbType.NVarChar);
@@ -1116,7 +1126,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
         /// <param name="orderNo"></param>
         /// <param name="orderId">订单Id</param>
         /// <returns></returns>
-        public OrderListModel GetOrderInfoByOrderNo(string orderNo,int orderId=0)
+        public OrderListModel GetOrderInfoByOrderNo(string orderNo, int orderId = 0)
         {
             string sql = @"
 select top 1
@@ -1137,7 +1147,7 @@ from    [order] o with ( nolock )
 where   1 = 1 
 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
-           
+
             if (orderId != 0)
             {
                 sql = sql + " and o.Id = @OrderId";
@@ -1151,7 +1161,7 @@ where   1 = 1
                 parm.SetValue("@OrderNo", orderNo);
             }
 
-            
+
 
 
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
@@ -1226,7 +1236,7 @@ where   1 = 1
                                 ,@OrderId
                                 ,Getdate()
                                 ,'发布订单'
-                                ,@Remark);"; 
+                                ,@Remark);";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Price", AdjustAmount);
             parm.AddWithValue("@OrderId", OrderId);

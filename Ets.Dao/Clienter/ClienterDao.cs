@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using ETS.Dao;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Order;
-using ETS.Data.Core; 
+using ETS.Data.Core;
 using ETS.Const;
 using ETS.Data.PageData;
 using Ets.Model.DomainModel.Clienter;
@@ -403,20 +403,26 @@ namespace Ets.Dao.Clienter
 
         /// <summary>
         /// 抢单
+        /// wc添加抢单的时增加日志
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="orderNo"></param>
         /// <returns></returns>
         public bool RushOrder(int userId, string orderNo)
         {
-            string sql = @" update [order] set clienterId=@clienterId,Status=@Status where OrderNo=@OrderNo and [Status]=0 ";//未抢订单才更新
+            StringBuilder sql = new StringBuilder();
+
+            sql.AppendFormat(@"update [order] set clienterId=@clienterId,Status=@Status 
+output Inserted.Id,GETDATE(),'{0}','',Inserted.clienterId,Inserted.[Status],{1}
+into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
+where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform.骑士);//未抢订单才更新
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@clienterId", userId);
             parm.AddWithValue("@Status", ConstValues.ORDER_ACCEPT);
             parm.Add("@OrderNo", SqlDbType.NVarChar);
             parm.SetValue("@OrderNo", orderNo);
 
-            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Read, sql, parm)) > 0;
+            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Read, sql.ToString(), parm)) > 0;
 
         }
 
@@ -648,7 +654,7 @@ namespace Ets.Dao.Clienter
         public OrderOther UpdateReceiptInfo(UploadReceiptModel uploadReceiptModel)
         {
             OrderOther oo = new OrderOther();
-            
+
             string sql = @"
   update dbo.OrderOther
  set    ReceiptPic = ReceiptPic + '|' + @ReceiptPic ,
@@ -732,7 +738,7 @@ namespace Ets.Dao.Clienter
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns>OrderOther</returns>
-        public OrderOther GetReceiptInfo(int orderId,out int OrderStatus)
+        public OrderOther GetReceiptInfo(int orderId, out int OrderStatus)
         {
             OrderStatus = 0;
             string sql = @"select oo.Id ,
@@ -746,12 +752,12 @@ where   oo.OrderId = @OrderId;select o.[Status] FROM dbo.[order] o (nolock)
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderId", SqlDbType.Int);
             parm.SetValue("@OrderId", orderId);
-            
+
             DataSet dt = DbHelper.ExecuteDataset(SuperMan_Read, sql, parm);
             var ooList = MapRows<OrderOther>(dt.Tables[0]);
             if (dt.Tables[1] != null && dt.Tables[1].Rows.Count > 0)
             {
-                OrderStatus =  ParseHelper.ToInt(dt.Tables[1].Rows[0][0],0);
+                OrderStatus = ParseHelper.ToInt(dt.Tables[1].Rows[0][0], 0);
             }
             if (ooList != null && ooList.Count == 1)
             {
@@ -773,27 +779,27 @@ where   oo.OrderId = @OrderId;select o.[Status] FROM dbo.[order] o (nolock)
             string delPic = uploadReceiptModel.ReceiptPic;
             int orderStatus = 0;
             //更新小票信息
-            OrderOther oo = GetReceiptInfo(uploadReceiptModel.OrderId,out orderStatus);
+            OrderOther oo = GetReceiptInfo(uploadReceiptModel.OrderId, out orderStatus);
             if (oo != null)
             {
                 List<string> listReceiptPic = ImageCommon.GetListImgString(oo.ReceiptPic);
 
                 Regex regex = new Regex(@"(/\d{4}/\d{2}/\d{2}.*?)\.jpg", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline);
                 MatchCollection matchCollection = regex.Matches(delPic);
-                string delPicDir="1.jpg";
+                string delPicDir = "1.jpg";
                 foreach (Match match in matchCollection)
                 {
-                   delPicDir  = match.Value;
-                   listReceiptPic.Remove(delPicDir);
+                    delPicDir = match.Value;
+                    listReceiptPic.Remove(delPicDir);
                 }
                 string ppath = ConfigSettings.Instance.FileUploadPath + "\\" + ConfigSettings.Instance.FileUploadFolderNameCustomerIcon;
                 var delDir = ppath + delPicDir;
 
                 var fileName = Path.GetFileName(delDir);
-                 
+
                 int fileNameLastDot = fileName.LastIndexOf('.');
                 //原图 
-                string orginalFileName = string.Format("{0}{1}{2}", ppath +"\\" + fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
+                string orginalFileName = string.Format("{0}{1}{2}", ppath + "\\" + fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
 
                 //删除磁盘中的裁图
                 FileHelper.DeleteFile(delDir);

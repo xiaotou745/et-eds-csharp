@@ -744,10 +744,9 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <param name="orderNo"></param>
         /// <returns></returns>
-        public OrderListModel GetOrderInfoByOrderNo(string orderNo)
+        public OrderListModel GetOrderInfoByOrderNo(string orderNo,int orderId = 0)
         {
-            return OrderDao.GetOrderInfoByOrderNo(orderNo);
-        }
-
+            return OrderDao.GetOrderInfoByOrderNo(orderNo, orderId);
+        } 
     }
 }

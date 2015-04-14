@@ -19,13 +19,6 @@ namespace Ets.Service.IProvider.Order
     public interface IOrderProvider
     {
         /// <summary>
-        /// 根据订单编号 或 订单id获取该订单的信息，包括骑士的佣金等
-        /// </summary>
-        /// <param name="orderNo"></param>
-        /// <param name="orderId"></param>
-        /// <returns></returns>
-        OrderListModel GetOrderInfoByOrderNo(string orderNo, int orderId = 0);
-        /// <summary>
         /// 获取订单
         /// </summary>
         /// <param name="criteria"></param>
@@ -158,7 +151,7 @@ namespace Ets.Service.IProvider.Order
         /// </summary>
         /// <param name="orderNo"></param>
         /// <returns></returns>
-        OrderListModel GetOrderInfoByOrderNo(string orderNo);
+        OrderListModel GetOrderInfoByOrderNo(string orderNo, int orderId = 0);
 
     }
 }

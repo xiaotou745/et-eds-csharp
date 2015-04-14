@@ -37,8 +37,10 @@ namespace ETS.Enums
         HadCancelQualification,
         [DisplayText("商户结算比例设置异常，请联系客服")]
         BusiSettlementRatioError,
-        [DisplayText("订单金额超出限制，10-5000元")]
-        AmountBeyondLimit
+        [DisplayText("抱歉，订单金额不可低于10元")]
+        AmountLessThanTen,
+        [DisplayText("抱歉，订单金额不可高于5000元")]
+        AmountMoreThanFiveThousand 
     }
     public enum GetOrdersStatus
     {
