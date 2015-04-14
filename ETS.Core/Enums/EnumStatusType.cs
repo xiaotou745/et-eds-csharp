@@ -250,7 +250,7 @@ namespace ETS.Enums
         CannotFindOrder,
         [DisplayText("删除失败请联系客服")]
         DeleteExcepiton,
-        [DisplayText("骑士编号不能为空")]
+        [DisplayText("骑士编号无效")]
         ClienterIdInvalid
 
 

@@ -619,7 +619,7 @@ namespace SuperManWebApi.Controllers
 
             if (fullFileDir == "0")
             {
-               // SuperManCore.LogHelper.LogWriter("上传图片失败：", new { ex = "检查是否有权限创建目录" });
+               
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed);
             }
             //保存原图
@@ -649,7 +649,7 @@ namespace SuperManWebApi.Controllers
             }
             else
             {
-                
+
                 List<string> listReceiptPic = ImageCommon.ReceiptPicConvert(orderOther.ReceiptPic);
                 //上传成功后返回图片全路径
                 var relativePath = System.IO.Path.Combine(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.RelativePath, fileName).ToForwardSlashPath();
