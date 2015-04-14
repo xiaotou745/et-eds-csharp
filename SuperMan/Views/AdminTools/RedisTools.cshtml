@@ -1,0 +1,49 @@
+﻿@using System.Data
+@{
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+<script src="~/Scripts/jquery-2.1.1.js"></script>
+<script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：管理员工具 > Redis帮助页面
+    </h2>
+    @using (Ajax.BeginForm("PostRedisTools", new RouteValueDictionary { { "pageindex", "" } },
+        new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+        new RouteValueDictionary { { "id", "searchForm" } }))
+    {
+        <div class="SearchMd">
+            <table border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td width="60px;">
+                        <span>KEY:</span>
+                    </td>
+                    <td width="300px">
+                        <input type="text" name="RedisKey" value="" id="_RedisKey" style="width:280px;" />
+                        <input type="hidden" name="SearchType" value="" id="_SearchType"/>
+                    </td>
+                    <td>
+                        <input type="button" value="查询相似keyvalue" class="searchBtn" id="btnSearchLike" />
+                        <input type="button" value="精确查询Value" class="searchBtn" id="btnSearch" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+    <div class="bd clearfix" id="dataList">
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("#btnSearchLike").click(function () {
+            $("#_SearchType").val("0");
+            $("#searchForm").submit();
+        })
+        $("#btnSearch").click(function () {
+            $("#_SearchType").val("1");
+            $("#searchForm").submit();
+        })
+    });
+</script>
