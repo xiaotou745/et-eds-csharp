@@ -86,6 +86,11 @@ namespace Ets.Model.ParameterModel.Order
         public int? package_count { get; set; }
 
         /// <summary>
+        /// 取货码（目前只有全时再用）
+        /// </summary>
+        public string pickupcode { get; set; }
+
+        /// <summary>
         /// 骑士订单佣金 目前由业务逻辑层计算赋值所得
         /// </summary>
         public decimal ordercommission { get; set; }

@@ -96,6 +96,9 @@ namespace Ets.Service.Provider.Clienter
                 model.Remark = item.Remark;
                 model.Status = item.Status;
                 model.OrderCount = item.OrderCount;
+                model.GroupId = item.GroupId;
+                if (item.GroupId == SystemConst.Group3) //全时 需要做验证码验证
+                    model.NeedPickupCode = 1;
                 #region 计算经纬度     待封装  add by caoheyang 20150313
 
                 if (item.Longitude == null || item.Longitude == 0 || item.Latitude == null || item.Latitude == 0)
@@ -484,14 +487,23 @@ namespace Ets.Service.Provider.Clienter
             }
             return null;
         }
-        public string FinishOrder(int userId, string orderNo)
+       /// <summary>
+       /// 超人完成订单  
+       /// </summary>
+       /// <param name="userId">超人id</param>
+       /// <param name="orderNo">订单号码</param>
+        /// <param name="pickupCode">取货码</param>
+       /// <returns></returns>
+        public string FinishOrder(int userId, string orderNo,string pickupCode=null)
         {
            string result = "-1";
            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
            {
                //获取该订单信息和该  骑士现在的 收入金额
-               var myOrderInfo = orderDao.GetOrderInfoByOrderNo(orderNo);
-
+               OrderListModel myOrderInfo = orderDao.GetOrderInfoByOrderNo(orderNo);
+               if (myOrderInfo.GroupId == SystemConst.Group3 && !string.IsNullOrWhiteSpace(myOrderInfo.PickupCode)
+                   && pickupCode != myOrderInfo.PickupCode) //全时订单 判断 取货码是否正确
+                   return ETS.Enums.FinishOrderStatus.PickupCodeError.ToString();
                //更新订单状态
                if (myOrderInfo != null)
                {
@@ -524,7 +536,7 @@ namespace Ets.Service.Provider.Clienter
                    result = "1";
                } 
            }
-           var order = new OrderProvider();
+           OrderProvider order = new OrderProvider();
            order.AsyncOrderStatus(orderNo);
            return result;
         }

@@ -60,11 +60,12 @@ namespace Ets.Dao.Statistics
                 where = " and CONVERT(CHAR(10),PubDate,120)=DATEADD(DAY,-1,CONVERT(CHAR(10),GETDATE(),120)) ";//统计昨天数据
             }
             string sql = @"SELECT CONVERT(CHAR(10),PubDate,120) AS PubDate, --发布时间
+                                  sum(case when DealCount=0 then 1 else 0 end ) as ZeroSubsidyOrderCount,
                                   sum(case when DealCount=1 then 1 else 0 end ) as OneSubsidyOrderCount,
                                   sum(case when DealCount=2 then 1 else 0 end ) as TwoSubsidyOrderCount,
                                   sum(case when DealCount=3 then 1 else 0 end ) as ThreeSubsidyOrderCount
                            FROM [order](NOLOCK) AS o
-                           WHERE   o.[Status]=1 " + where;
+                           WHERE   o.[Status]<>3 " + where;
             sql += " GROUP BY CONVERT(CHAR(10),PubDate,120) ORDER BY PubDate ASC";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             return MapRows<HomeCountTitleModel>(dt);
@@ -106,9 +107,12 @@ namespace Ets.Dao.Statistics
                             ,[YsPrice]
                             ,[YfPrice]
                             ,[YkPrice]
+                            ,[ZeroSubsidyOrderCount]
                             ,[OneSubsidyOrderCount]
                             ,[TwoSubsidyOrderCount]
-                            ,[ThreeSubsidyOrderCount])
+                            ,[ThreeSubsidyOrderCount]
+                            ,[ActiveBusiness]
+                            ,[ActiveClienter])
                             VALUES
                             (@InsertTime
                             ,@BusinessCount
@@ -123,9 +127,12 @@ namespace Ets.Dao.Statistics
                             ,@YsPrice
                             ,@YfPrice
                             ,@YkPrice
+                            ,@ZeroSubsidyOrderCount
                             ,@OneSubsidyOrderCount
                             ,@TwoSubsidyOrderCount
-                            ,@ThreeSubsidyOrderCount)
+                            ,@ThreeSubsidyOrderCount
+                            ,@ActiveBusiness
+                            ,@ActiveClienter)
                             ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@InsertTime", model.PubDate);
@@ -141,9 +148,12 @@ namespace Ets.Dao.Statistics
             parm.AddWithValue("@YsPrice", model.YsPrice);
             parm.AddWithValue("@YfPrice", model.YfPrice);
             parm.AddWithValue("@YkPrice", model.YkPrice);
+            parm.AddWithValue("@ZeroSubsidyOrderCount", model.OneSubsidyOrderCount);
             parm.AddWithValue("@OneSubsidyOrderCount", model.OneSubsidyOrderCount);
             parm.AddWithValue("@TwoSubsidyOrderCount", model.TwoSubsidyOrderCount);
             parm.AddWithValue("@ThreeSubsidyOrderCount", model.ThreeSubsidyOrderCount);
+            parm.AddWithValue("@ActiveBusiness", model.ActiveBusiness);
+            parm.AddWithValue("@ActiveClienter", model.ActiveClienter);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
 
         }
