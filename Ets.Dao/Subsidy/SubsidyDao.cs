@@ -54,7 +54,7 @@ WHERE   sub.[Status] = 1 ");
                 subsidyResultModel = DataTableHelper.ConvertDataTableList<SubsidyResultModel>(dt)[0];
             }
 
-            return subsidyResultModel; 
+            return subsidyResultModel;
         }
 
 
@@ -78,7 +78,7 @@ WHERE   sub.[Status] = 1 ");
                                     ,s.[OrderType]
                                     ,g.GroupName";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
-            if (criteria.GroupId != null && criteria.GroupId !=0)
+            if (criteria.GroupId != null && criteria.GroupId != 0)
             {
                 sbSqlWhere.AppendFormat(" AND s.GroupId={0} ", criteria.GroupId);
             }
@@ -159,5 +159,6 @@ WHERE   sub.[Status] = 1 ");
             return MapRows<GrabOrderModel>(myTable);
         }
 
+       
     }
 }

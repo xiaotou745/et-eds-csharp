@@ -142,10 +142,8 @@
     <Compile Include="ParameterModel\Clienter\CustomerIconUploader.cs" />
     <Compile Include="ParameterModel\Common\OpenCitySearchCriteria.cs" />
     <Compile Include="ParameterModel\Clienter\UploadReceiptModel.cs" />
-    <Compile Include="ParameterModel\Common\OpenCitySearchCriteria.cs" />
     <Compile Include="ParameterModel\Clienter\UploadReceiptResultModel.cs" />
 
-    <Compile Include="ParameterModel\Common\OpenCitySearchCriteria.cs" />
     <Compile Include="ParameterModel\Group\GroupListModel.cs" />
     <Compile Include="ParameterModel\Group\GroupParaModel.cs" />
     <Compile Include="ParameterModel\Order\BusiOrderResultModel.cs" />

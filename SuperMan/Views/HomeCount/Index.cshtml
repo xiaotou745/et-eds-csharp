@@ -114,7 +114,7 @@
                     <td>￥@ParseHelper.ToSplitByPercentile(false,Math.Round(homeCountAllData.WithdrawPrice, 2))</td>
                     <td>@ParseHelper.ToSplitByPercentile(false,((homeCountAllData.OrderPrice / homeCountAllData.OrderCount).ToString("f2")))</td>
                     <td>@ParseHelper.ToSplitByPercentile(false,((homeCountAllData.OrderPrice / homeCountAllData.MisstionCount).ToString("f2")))</td>
-                    <td></td>
+                    <td>@ParseHelper.ToSplitByPercentile(false, Math.Round(homeCountAllData.CrossShopPrice,2))</td>
                     <td>￥<span style="color:@ykAllStyle">@ParseHelper.ToSplitByPercentile(false,ykAllPirce)</span></td>
                 </tr>
             }

@@ -145,7 +145,7 @@ namespace Ets.Dao.Order
         }
         #endregion
 
-           /// <summary>
+        /// <summary>
         /// 订单状态查询功能  add by caoheyang 20150316
         /// </summary>
         /// <param name="orderNo">订单号码</param>
@@ -210,7 +210,7 @@ namespace Ets.Dao.Order
                 return null;
             return MapRows<OrderListModel>(dt)[0];
         }
-        
+
 
         public int AddOrder(Model.DataModel.Order.order order)
         {
@@ -458,7 +458,7 @@ namespace Ets.Dao.Order
             dbParameters.AddWithValue("@ReceiveProvince", paramodel.address.province);    //用户省
             dbParameters.AddWithValue("@ReceviceCity", paramodel.address.city); //用户市
             dbParameters.AddWithValue("@ReceiveArea", paramodel.address.area); //用户区
-            dbParameters.AddWithValue("@PickupCode", string.IsNullOrWhiteSpace(paramodel.pickupcode)?"":paramodel.pickupcode); //用户区
+            dbParameters.AddWithValue("@PickupCode", string.IsNullOrWhiteSpace(paramodel.pickupcode) ? "" : paramodel.pickupcode); //用户区
             string orderNo = ParseHelper.ToString(DbHelper.ExecuteScalar(SuperMan_Read, insertOrdersql, dbParameters));
             if (string.IsNullOrWhiteSpace(orderNo))//添加失败 
                 return null;
@@ -552,8 +552,8 @@ namespace Ets.Dao.Order
                         WHERE  
                         o.[Status]<>3 AND 
                         CONVERT(CHAR(10),PubDate,120)>='" + StartTime + "' and ";
-                sql += "CONVERT(CHAR(10),PubDate,120)<='" + EndTime + "'";
-                sql+="  GROUP BY CONVERT(CHAR(10),PubDate,120),DealCount ORDER BY DealCount ASC ";
+            sql += "CONVERT(CHAR(10),PubDate,120)<='" + EndTime + "'";
+            sql += "  GROUP BY CONVERT(CHAR(10),PubDate,120),DealCount ORDER BY DealCount ASC ";
             //IDbParameters parm = DbHelper.CreateDbParameters();
             //parm.AddWithValue("@StartTime", StartTime);
             //parm.AddWithValue("@EndTime", EndTime);
@@ -907,6 +907,7 @@ namespace Ets.Dao.Order
         {
             string sql = @"SELECT 
                         (SELECT SUM (AccountBalance) FROM dbo.clienter(NOLOCK)  WHERE AccountBalance>=1000) AS  WithdrawPrice,--提现金额
+                        (select sum(Amount) from CrossShopLog(nolock)) as CrossShopPrice,--跨店奖励总金额
                         SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
                         COUNT(1) AS MisstionCount,--总任务量
                         SUM(ISNULL(OrderCount,0)) AS OrderCount,--总订单量
@@ -1215,7 +1216,7 @@ where   1 = 1
                                 ,@OrderId
                                 ,Getdate()
                                 ,'发布订单'
-                                ,@Remark);"; 
+                                ,@Remark);";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Price", AdjustAmount);
             parm.AddWithValue("@OrderId", OrderId);
