@@ -1,0 +1,102 @@
+﻿@model Ets.Model.DataModel.Order.OrderListModel
+@{
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+@{
+    var strstatus = "";
+    if (Model.Status == Ets.Model.Common.ConstValues.ORDER_FINISH)
+    {
+        strstatus = "已完成";
+    }
+    else if (Model.Status == Ets.Model.Common.ConstValues.ORDER_NEW)
+    {
+        strstatus = "未接单";
+    }
+    else if (Model.Status == Ets.Model.Common.ConstValues.ORDER_ACCEPT)
+    {
+        strstatus = "已接单";
+    }
+    else if (Model.Status == Ets.Model.Common.ConstValues.ORDER_CANCEL)
+    {
+        strstatus = "已取消";
+    }
+    var subsidy = "";
+    if (Model.Status == 1 || Model.Status == 2 || Model.Status == 3)
+    {
+        subsidy = "订单佣金:" + Model.OrderCommission + "," + "外送费:" + Model.DistribSubsidy + "," + "网站补贴:" + Model.WebsiteSubsidy;
+    }
+    var payStatus = "";
+    if (Model.IsPay.Value)
+    {
+        payStatus = "顾客已付款";
+    }
+    else
+    {
+        payStatus = "顾客未付款";
+    }
+}
+<h2 class="crumbs">
+    您所在位置：订单 > 订单管理 > 订单详情
+</h2>
+<table class="tbstyle222" border="0" style="font-size:16px;font-weight:bold;line-height:300%;width:1000px ">
+    <tr class="trclass">
+        <td>订单号：@Model.OrderNo</td>
+        <td>发布时间：@Model.PubDate</td>
+        <td>订单状态：@strstatus</td>
+    </tr>
+    <tr class="trclass">
+        <td>商户信息：@Model.BusinessName</td>
+        <td>发布人电话：@Model.BusinessPhoneNo</td>
+        <td>发布人地址：@Model.BusinessAddress</td>
+    </tr>
+    <tr class="trclass">
+        <td>订单佣金：@Model.OrderCommission</td>
+        <td>外送费：@Model.DistribSubsidy</td>
+        <td>网站补贴：@Model.WebsiteSubsidy</td>
+    </tr>
+    <tr class="trclass">
+        <td>收货人电话:@Model.RecevicePhoneNo</td>
+        <td>收货人地址：@Model.ReceviceAddress</td>
+    </tr>
+    <tr>
+        <td>订单金额：@Model.Amount</td>
+        <td>是否已付款:@payStatus</td>
+        @if (Model.Status == 1 || Model.Status == 2 || Model.Status == 3)
+        {
+            <td>超人：@Model.ClienterName</td>
+        }
+    </tr>
+</table>
+
+@if (Model.HadUploadCount > 0)
+{
+    var puth = SuperManCore.CustomerIconUploader.Instance.RelativePath;
+    var PicHost = SuperManCore.CustomerIconUploader.Instance.PicHost;
+    var picAdressArray = Model.ReceiptPic.Split('|');
+    <h4 style="color:black;font-weight:100">
+        <label>
+            骑士上传小票：@Model.HadUploadCount/@Model.NeedUploadCount @if (Model.HadUploadCount == Model.NeedUploadCount)
+            { <label>(已完成)</label>}
+        </label>
+    </h4>
+    <div style="width:1000px">
+        @foreach (var temp in picAdressArray)
+        {
+             int fileLastDot = temp.LastIndexOf('.');
+             string fileHandHouZhui = temp.Substring(fileLastDot, temp.Length - fileLastDot);
+             string bigFileName = PicHost + puth + temp.Substring(0, fileLastDot) + "_0_0" + fileHandHouZhui;
+            <div style="float:left;padding-right:3px">
+                <img src="@( PicHost + puth + temp.ToString())" style=" width:180px; height:140px" />
+                <a id="showBigBusiImage" href="@bigFileName" target="_blank">查看大图</a>
+            </div>
+
+        }
+    </div>
+}
+
+
+

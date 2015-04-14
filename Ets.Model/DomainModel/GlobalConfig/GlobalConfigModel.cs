@@ -80,8 +80,16 @@ namespace Ets.Model.DomainModel.GlobalConfig
         ///时间段之外补贴价钱 （B）	其他时间段补贴2元或者更低
         /// </summary>
         public string TimeSpanOutPrice { get; set; }
-        
-        
+          
+        /// <summary>
+        ///跨店抢单补贴
+        /// </summary>
+        public string OverStoreSubsidies { get; set; }
+
+        /// <summary>
+        /// 是否开启跨店抢单补贴(0不开启,1开启)
+        /// </summary>
+        public string IsStartOverStoreSubsidies { get; set; }
 
     }
 }
