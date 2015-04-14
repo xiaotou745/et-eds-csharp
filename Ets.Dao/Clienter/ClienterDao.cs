@@ -146,7 +146,8 @@ namespace Ets.Dao.Clienter
                         status,
                         AccountBalance AS Amount,
                         city,
-                        cityId 
+                        cityId,
+                        GroupId,
                         FROM dbo.clienter(NOLOCK) WHERE PhoneNo=@PhoneNo AND [Password]=@Password";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@PhoneNo",SqlDbType.NVarChar);

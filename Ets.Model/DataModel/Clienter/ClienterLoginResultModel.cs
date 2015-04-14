@@ -24,5 +24,9 @@ namespace Ets.Model.DataModel.Clienter
         /// 城市编码
         /// </summary>
         public string cityId { get; set; }
+        /// <summary>
+        /// 集团id
+        /// </summary>
+        public int GroupId { get; set; }
     }
 }
