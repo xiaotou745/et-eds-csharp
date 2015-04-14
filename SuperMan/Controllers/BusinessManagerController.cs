@@ -31,7 +31,7 @@ namespace SuperMan.Controllers
         public ActionResult BusinessManager()
         {
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
-            ViewBag.openCityList = iAreaProvider.GetOpenCityInfo();
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
             var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria() { Status = -1, GroupId = SuperMan.App_Start.UserContext.Current.GroupId };
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
            
@@ -44,7 +44,7 @@ namespace SuperMan.Controllers
         {
             Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria();
             TryUpdateModel(criteria);
-            ViewBag.openCityList = iAreaProvider.GetOpenCityInfo();
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
             return PartialView("_BusinessManageList", pagedList);
         }
