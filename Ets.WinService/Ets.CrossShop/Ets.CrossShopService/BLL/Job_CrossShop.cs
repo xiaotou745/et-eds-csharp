@@ -82,7 +82,7 @@ namespace Ets.CrossShopService.BLL
                         }
                         catch (Exception ex)
                         {
-                            //记录日志
+                            ETS.Util.LogHelper.LogWriter(ex.ToString());
                         }
                     }
                     else
