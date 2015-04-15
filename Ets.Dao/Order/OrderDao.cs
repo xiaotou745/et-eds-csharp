@@ -741,6 +741,7 @@ namespace Ets.Dao.Order
                                         ,c.PhoneNo ClienterPhoneNo
                                         ,c.TrueName ClienterTrueName
                                         ,c.TrueName ClienterName
+                                        ,c.AccountBalance AccountBalance
                                         ,b.GroupId
                                         ,o.OriginalOrderNo
                                         ,oo.NeedUploadCount
@@ -863,9 +864,7 @@ namespace Ets.Dao.Order
             dbParameters.Add("@orderNo", SqlDbType.NVarChar);
             dbParameters.SetValue("@orderNo", orderNo);  //订单号  
             dbParameters.AddWithValue("@status", orderStatus);
-
-            object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Read, upSql, dbParameters);
-
+            object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Write, upSql, dbParameters);
             return ParseHelper.ToInt(executeScalar, -1);
         }
 
@@ -1254,6 +1253,143 @@ where   1 = 1
             parm.AddWithValue("@Remark", remark);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
 
+        }
+        /// <summary>
+        /// 修改骑士收入
+        /// danny-20150414
+        /// </summary>
+        /// <returns></returns>
+        public bool UpdateAccountBalanceByClienterId(OrderListModel model, OrderOptionModel orderOptionModel)
+        {
+           
+            string remark = "订单【" + model.OrderNo + "】取消";
+            string sql =
+                @"UPDATE clienter 
+                    SET AccountBalance=AccountBalance-@OrderCommission
+                    OUTPUT  @Platform,
+                            INSERTED.Id,
+                            -@OrderCommission,
+                            INSERTED.AccountBalance,
+                            getdate(),
+                            @AdminId,
+                            0,
+                            @Remark
+                      INTO Records
+                          ( Platform, 
+                            UserId, 
+                            Amount, 
+                            Balance, 
+                            CreateTime, 
+                            AdminId, 
+                            IsDel, 
+                            Remark)
+                    WHERE Id=@ClienterId;";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@OrderCommission", model.OrderCommission);
+            parm.AddWithValue("@Platform", 3);
+            parm.AddWithValue("@AdminId", orderOptionModel.OptUserId);
+            parm.AddWithValue("@Remark", remark);
+            parm.AddWithValue("@ClienterId", model.clienterId);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+        }
+        /// <summary>
+        /// 取消订单
+        /// danny-20150414
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="orderOptionModel"></param>
+        /// <returns></returns>
+        public bool CancelOrder(OrderListModel model, OrderOptionModel orderOptionModel)
+        {
+            string remark =orderOptionModel.OptUserName+"通过后台管理系统取消订单";
+            string sql = string.Format(@" UPDATE dbo.[order]
+                                             SET    [Status] = @Status
+                                            OUTPUT
+                                              Inserted.Id,
+                                              GETDATE(),
+                                              @OptId,
+                                              @OptName,
+                                              Inserted.[Status],
+                                              @Platform,
+                                              @Remark
+                                            INTO dbo.OrderSubsidiesLog
+                                              (OrderId,
+                                              InsertTime,
+                                              OptId,
+                                              OptName,
+                                              OrderStatus,
+                                              Platform,
+                                              Remark)
+                                             WHERE  OrderNo = @OrderNo");
+
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@OptId", orderOptionModel.OptUserId);
+            parm.AddWithValue("@OptName",orderOptionModel.OptUserName);
+            parm.AddWithValue("@Status", 3);
+            parm.AddWithValue("@OrderNo", model.OrderNo);
+            parm.AddWithValue("@Platform", 3);
+            parm.AddWithValue("@Remark", remark+"操作描述【"+  orderOptionModel.OptLog+"】");
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+        }
+        /// <summary>
+        /// 修改骑士收入
+        /// danny-20150414
+        /// </summary>
+        /// <returns></returns>
+        public bool InsertAccountBalanceRecords(OrderListModel model)
+        {
+            string remark = "订单【" + model.OrderNo+"】取消";
+            string sql =
+                @"INSERT INTO Records 
+                          ( Platform, 
+                            UserId, 
+                            Amount, 
+                            Balance, 
+                            CreateTime, 
+                            AdminId, 
+                            IsDel, 
+                            Remark)
+                  VALUES (  @Platform, 
+                            @UserId, 
+                            @Amount, 
+                            @Balance, 
+                            DEFAULT, 
+                            @AdminId, 
+                            DEFAULT, 
+                            @Remark);";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Platform",3);
+            parm.AddWithValue("@UserId", model.clienterId);
+            parm.AddWithValue("@Amount", model.OrderCommission);
+            parm.AddWithValue("@Balance", model.AccountBalance);
+            parm.AddWithValue("@AdminId", model.clienterId);
+            parm.AddWithValue("@IsDel", model.clienterId);
+            parm.AddWithValue("@Remark", remark);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+        }
+        /// <summary>
+        /// 获取订单操作日志
+        /// danny-20150414
+        /// </summary>
+        /// <param name="IntervalMinute"></param>
+        /// <returns></returns>
+        public IList<OrderSubsidiesLog> GetOrderOptionLog(string OrderId)
+        {
+            string sql =@"  SELECT  Id,
+                                    OrderId,
+                                    OrderStatus,
+                                    OptId,
+                                    OptName,
+                                    InsertTime,
+                                    Platform,
+                                    Remark
+                            FROM superman.dbo.OrderSubsidiesLog
+                            WHERE OrderId=@OrderId
+                            ORDER BY Id;";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@OrderId", OrderId);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql,parm);
+            return MapRows<OrderSubsidiesLog>(dt);
         }
     }
 }
