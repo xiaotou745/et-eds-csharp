@@ -866,7 +866,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             dbParameters.Add("@orderNo", SqlDbType.NVarChar);
             dbParameters.SetValue("@orderNo", orderNo);  //订单号  
             dbParameters.AddWithValue("@status", orderStatus);
-            object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Write, upSql, dbParameters);
+            object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters);
             return ParseHelper.ToInt(executeScalar, -1);
         }
 

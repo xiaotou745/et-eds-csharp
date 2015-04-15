@@ -59,15 +59,17 @@ namespace Ets.Service.Provider.Order
             var orderList = OrderDao.GetOrders(criteria);
             if (orderList != null && orderList.ContentList != null)
             {
-                var resultModel = new ClientOrderResultModel();
-                var from = orderList.ContentList[i];
-                if (from.clienterId != null)
-                    resultModel.userId = from.clienterId.Value;
-                resultModel.OrderNo = from.OrderNo;
-                resultModel.OrderId = from.Id; //订单Id
-                resultModel.OrderCount = from.OrderCount;
-                var orderComm = new OrderCommission() { Amount = from.Amount, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount };
-                var amount = DefaultOrPriceProvider.GetCurrenOrderPrice(orderComm);
+                for (int i = 0; i < orderList.ContentList.Count; i++)
+                {
+                    var resultModel = new ClientOrderResultModel();
+                    var from = orderList.ContentList[i];
+                    if (from.clienterId != null)
+                        resultModel.userId = from.clienterId.Value;
+                    resultModel.OrderNo = from.OrderNo;
+                    resultModel.OrderId = from.Id; //订单Id
+                    resultModel.OrderCount = from.OrderCount;
+                    var orderComm = new OrderCommission() { Amount = from.Amount, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount };
+                    var amount = DefaultOrPriceProvider.GetCurrenOrderPrice(orderComm);
 
                     resultModel.income = from.OrderCommission;  //佣金 Edit bycaoheyang 20150327
                     resultModel.Amount = amount; //C端 获取订单的金额 Edit bycaoheyang 20150305
@@ -144,26 +146,8 @@ namespace Ets.Service.Provider.Order
             var orderList = OrderDao.GetOrders(criteria);
             if (orderList != null && orderList.ContentList != null)
             {
-                var resultModel = new ClientOrderNoLoginResultModel();
-                var from = orderList.ContentList[i];
-                if (from.clienterId != null)
-                    resultModel.userId = from.clienterId.Value;
-                resultModel.OrderNo = from.OrderNo;
-                resultModel.OrderId = from.Id;  //订单Id
-                resultModel.OrderCount = from.OrderCount;
-                var orderComm = new OrderCommission() { Amount = from.Amount, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount };
-                var amount = DefaultOrPriceProvider.GetCurrenOrderPrice(orderComm);
-                resultModel.income = from.OrderCommission;  //计算设置当前订单骑士可获取的佣金 Edit bycaoheyang 20150305
-                resultModel.Amount = amount; //C端 获取订单的金额 Edit bycaoheyang 20150305
-                resultModel.businessName = from.BusinessName;
-                resultModel.businessPhone = from.BusinessPhone;
-                resultModel.HadUploadCount = from.HadUploadCount;
-                resultModel.GroupId = from.GroupId;
-                if (from.GroupId == SystemConst.Group3)
-                    resultModel.NeedPickupCode = 1;
-
-                if (from.PickUpCity != null)
-                {
+                for (int i = 0; i < orderList.ContentList.Count; i++)
+                { 
                     var resultModel = new ClientOrderNoLoginResultModel();
                     var from = orderList.ContentList[i];
                     if (from.clienterId != null)
@@ -315,10 +299,10 @@ namespace Ets.Service.Provider.Order
         public string AddOrder(order order)
         {
             string str = "0";
-            int result=0;
+            int result = 0;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
-            { 
-                result= OrderDao.AddOrder(order);
+            {
+                result = OrderDao.AddOrder(order);
                 if (result > 0)
                 {
                     str = "1";
@@ -333,15 +317,15 @@ namespace Ets.Service.Provider.Order
                     tran.Complete();
                 }
 
-            } 
-                //Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity); //激光推送
-                ////推送给 VIP
-                //if (ConfigSettings.Instance.IsSendVIP == "1")
-                //{
-                //    Push.PushMessageVip(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity, ConfigSettings.Instance.VIPName); //激光推送
-                //}
-            return str; 
-           
+            }
+            //Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity); //激光推送
+            ////推送给 VIP
+            //if (ConfigSettings.Instance.IsSendVIP == "1")
+            //{
+            //    Push.PushMessageVip(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity, ConfigSettings.Instance.VIPName); //激光推送
+            //}
+            return str;
+
         }
 
         /// <summary>
@@ -771,7 +755,7 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <param name="orderNo"></param>
         /// <returns></returns>
-        public OrderListModel GetOrderInfoByOrderNo(string orderNo,int orderId = 0)
+        public OrderListModel GetOrderInfoByOrderNo(string orderNo, int orderId = 0)
         {
             return OrderDao.GetOrderInfoByOrderNo(orderNo);
         }
