@@ -1351,7 +1351,7 @@ where   o.Id = @orderId;
             parm.AddWithValue("@Status", 3);
             parm.AddWithValue("@OrderNo", model.OrderNo);
             parm.AddWithValue("@Platform", 3);
-            parm.AddWithValue("@Remark", remark+"操作描述【"+  orderOptionModel.OptLog+"】");
+            parm.AddWithValue("@Remark", remark+"，操作描述：【"+  orderOptionModel.OptLog+"】");
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
         /// <summary>
