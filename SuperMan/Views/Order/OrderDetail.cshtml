@@ -42,6 +42,7 @@
 <h2 class="crumbs">
     您所在位置：订单 > 订单管理 > 订单详情
 </h2>
+
 <table class="tbstyle222" border="0" style="font-size:16px;font-weight:bold;line-height:300%;width:1000px ">
     <tr class="trclass">
         <td>订单号：@Model.OrderNo</td>
@@ -71,7 +72,8 @@
         }
     </tr>
 </table>
-
+<input type="hidden" value="@Model.OrderNo" id="OrderNo" />
+<input type="hidden" value="@Model.Id" id="OrderId" />
 @if (Model.HadUploadCount > 0)
 {
     var puth = SuperManCore.CustomerIconUploader.Instance.RelativePath;
@@ -86,9 +88,9 @@
     <div style="width:1000px">
         @foreach (var temp in picAdressArray)
         {
-             int fileLastDot = temp.LastIndexOf('.');
-             string fileHandHouZhui = temp.Substring(fileLastDot, temp.Length - fileLastDot);
-             string bigFileName = PicHost + puth + temp.Substring(0, fileLastDot) + "_0_0" + fileHandHouZhui;
+            int fileLastDot = temp.LastIndexOf('.');
+            string fileHandHouZhui = temp.Substring(fileLastDot, temp.Length - fileLastDot);
+            string bigFileName = PicHost + puth + temp.Substring(0, fileLastDot) + "_0_0" + fileHandHouZhui;
             <div style="float:left;padding-right:3px">
                 <img src="@( PicHost + puth + temp.ToString())" style=" width:180px; height:140px" />
                 <a id="showBigBusiImage" href="@bigFileName" target="_blank">查看大图</a>
@@ -97,6 +99,144 @@
         }
     </div>
 }
+<table width="85%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+    <thead>
+        <tr class="tdbg">
+            <th>订单状态</th>
+            <th>操作人</th>
+            <th>操作时间</th>
+            <th>操作描述</th>
+            <th>操作平台</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var orderOptionLogList = ViewBag.orderOptionLog as List<Ets.Model.DataModel.Order.OrderSubsidiesLog>;
+            var i = 0;
+            var orderstatus = "";
+            var strplatform = "";
+            foreach (var item in orderOptionLogList)
+            {
+                if (item.OrderStatus == Ets.Model.Common.ConstValues.ORDER_FINISH)
+                {
+                    orderstatus = "已完成";
+                }
+                else if (item.OrderStatus == Ets.Model.Common.ConstValues.ORDER_NEW)
+                {
+                    orderstatus = "未接单";
+                }
+                else if (item.OrderStatus == Ets.Model.Common.ConstValues.ORDER_ACCEPT)
+                {
+                    orderstatus = "已接单";
+                }
+                else if (item.OrderStatus == Ets.Model.Common.ConstValues.ORDER_CANCEL)
+                {
+                    orderstatus = "已取消";
+                }
+
+                if (item.Platform == 0)
+                {
+                    strplatform = "商家端";
+                }
+                else if (item.Platform == 1)
+                {
+                    strplatform = "配送端";
+                }
+                else if (item.Platform == 2)
+                {
+                    strplatform = "服务平台";
+                }
+                else if (item.Platform == 3)
+                {
+                    strplatform = "管理后台";
+                }
+                i++;
+                <tr id="@item.Id">
+                    <td>@orderstatus</td>
+                    <td>@item.OptName</td>
+                    <td>@item.InsertTime</td>
+                    <td>@item.Remark</td>
+                    <td>@strplatform</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+@if (Model.Status != 3)
+{
+    <div class="SearchMd">
+        <table border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td>
+                    @if (SuperMan.App_Start.UserContext.Current.HasAuthority(26))
+                    {
+                        <input type="button" value="取消订单" class="searchBtn" id="btnCancel" />
+                    }
+                </td>
+            </tr>
+        </table>
+    </div>
+}
+<div class="selectSupplierDish">
+    <div class="add-openbox add-form" id="OrderOptionShow" style="width:500px">
+        <fieldset>
+            <div class="control-group">
+                <label class="control-label" for="input01">操作描述</label>
+                <div class="controls">
+                    <textarea cols="45" rows="5" id="orderOptionLog"></textarea>
+                    <p class="help-block"></p>
+                </div>
+            </div>
+        </fieldset>
+        <p class="btnbox">
+            <input value="确认" type="button" id="btnSave" class="yesBtn" />
+            <input value="关闭" type="button" class="J_closebox qxBtn" />
+        </p>
+    </div>
+</div>
+<script>
+    var adminjs = new adminglass(); //实例化后台类
+    $("#btnCancel").click(function () {
+        adminjs.openwinbox('#OrderOptionShow');
+
+    });
+    $('.J_closebox').click(function () {
+        adminjs.closewinbox('.add-openbox');
+        return false;
+    });
+    $('#btnSave').bind('click', function () {
+        var orderNo = $('#OrderNo').val();
+        var orderId = $('#OrderId').val();
+        var orderOptionLog = $('#orderOptionLog').val();
+        if ($("#orderOptionLog").val().trim() == "") {
+            alert("操作描述不能为空！");
+            return false;
+        }
+        if (confirm("确定要取消该订单吗？")) {
+            var paramaters = { "OrderNo": orderNo, "OrderOptionLog": orderOptionLog };
+            var url = "/Order/CancelOrder";
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: paramaters,
+                success: function (result) {
+                    if (result.IsSuccess) {
+                        alert("订单取消成功!");
+                        adminjs.closewinbox('.add-openbox');
+                        window.location.href = "/Order/OrderDetail?orderNo=" + orderNo + "&orderId=" + orderId;
+                    } else {
+                        alert(result.Message);
+                    }
+                }
+            });
+        }
+        return true;
+    });
+</script>
+
+
+
+
 
 
 

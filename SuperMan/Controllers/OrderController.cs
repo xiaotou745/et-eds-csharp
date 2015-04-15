@@ -5,6 +5,9 @@ using Ets.Service.Provider.Distribution;
 using Ets.Service.Provider.Order;
 using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
+using SuperMan.App_Start;
+using Ets.Model.ParameterModel.User;
+using Ets.Model.ParameterModel.Order;
 
 namespace SuperMan.Controllers
 {
@@ -24,7 +27,7 @@ namespace SuperMan.Controllers
             //    return null;
             //}
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
-            ViewBag.openCityList = iAreaProvider.GetOpenCityInfo();
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
             var superManModel = iDistributionProvider.GetClienterModelByGroupID(ViewBag.txtGroupId);
             if (superManModel != null)
             {
@@ -44,7 +47,7 @@ namespace SuperMan.Controllers
             //    return null;
             //}
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId; ;//集团id
-            ViewBag.openCityList = iAreaProvider.GetOpenCityInfo();
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
             Ets.Model.ParameterModel.Order.OrderSearchCriteria criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria();
             TryUpdateModel(criteria);
             //指派超人时  以下代码 有用，现在 注释掉  wc 
@@ -100,11 +103,30 @@ namespace SuperMan.Controllers
             bool reg = iOrderProvider.UpdateOrderInfo(model);
             return Json(new ResultModel(reg, string.Empty), JsonRequestBehavior.AllowGet);
         }
-
-        public ActionResult OrderDetail(string orderNo)
+        /// <summary>
+        /// 查看订单明细
+        /// danny-20150414
+        /// </summary>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        public ActionResult OrderDetail(string orderNo,string orderId)
         {
             var orderModel = iOrderProvider.GetOrderByNo(orderNo);
+            ViewBag.orderOptionLog = iOrderProvider.GetOrderOptionLog(orderId);
             return View(orderModel);
+        }
+        [HttpPost]
+        public JsonResult CancelOrder(string OrderNo, string OrderOptionLog)
+        {
+            OrderOptionModel orderOptionModel = new OrderOptionModel()
+            {
+                OptUserId = UserContext.Current.Id,
+                OptUserName = UserContext.Current.Name,
+                OptLog=OrderOptionLog,
+                OrderNo = OrderNo
+            };
+            bool reg = iOrderProvider.CancelOrderByOrderNo(orderOptionModel);
+            return Json(new ResultModel(reg, string.Empty), JsonRequestBehavior.AllowGet);
         }
     }
 }
