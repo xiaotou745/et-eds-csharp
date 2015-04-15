@@ -24,5 +24,6 @@ namespace Ets.Model.ParameterModel.WtihdrawRecords
 
         public string Remark { get; set; }
 
+
     }
 }

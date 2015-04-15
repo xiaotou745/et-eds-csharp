@@ -1,4 +1,5 @@
-﻿using Ets.Model.DomainModel.Subsidy;
+﻿using Ets.Model.DataModel.Subsidy;
+using Ets.Model.DomainModel.Subsidy;
 using Ets.Model.ParameterModel.Subsidy;
 using ETS.Dao;
 using ETS.Data.Core;
@@ -159,6 +160,36 @@ WHERE   sub.[Status] = 1 ");
             return MapRows<GrabOrderModel>(myTable);
         }
 
-       
+        /// <summary>
+        /// 写入跨店奖励日志
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool InsertCrossShopLog(CrossShopModel model)
+        {
+            string sql = @"INSERT INTO CrossShopLog
+                        (ClienterId
+                        ,Amount
+                        ,BusinessCount
+                        ,[Platform]
+                        ,Remark
+                        ,InsertTime)
+                        VALUES
+                        (@ClienterId
+                        ,@Amount
+                        ,@BusinessCount
+                        ,@Platform
+                        ,@Remark
+                        ,@InsertTime)";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@ClienterId", model.ClienterId);
+            parm.AddWithValue("@Amount", model.Amount);
+            parm.AddWithValue("@BusinessCount", model.BusinessCount);
+            parm.AddWithValue("@Platform", model.Platform);
+            parm.AddWithValue("@Remark", model.Remark);
+            parm.AddWithValue("@InsertTime", model.InsertTime);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+        }
     }
 }
