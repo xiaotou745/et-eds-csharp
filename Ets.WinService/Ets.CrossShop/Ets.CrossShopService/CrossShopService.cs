@@ -21,7 +21,7 @@ namespace Ets.CrossShopService
 
         protected override void OnStart(string[] args)
         {
-            Thread.Sleep(1000 * 10);
+            //Thread.Sleep(1000 * 10);
             Thread t = new Thread(Job_CrossShop.RunCrossShop);
             t.Start();  
         }
