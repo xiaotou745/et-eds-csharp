@@ -38,6 +38,7 @@ namespace Ets.Dao.Order
             StringBuilder columnStr = new StringBuilder(@" 
         o.Id ,
         o.OrderNo ,
+        o.OriginalOrderNo ,
         o.PickUpAddress ,
         o.PubDate ,
         o.ReceviceName ,
