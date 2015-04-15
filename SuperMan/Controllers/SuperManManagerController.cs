@@ -35,7 +35,7 @@ namespace SuperMan.Controllers
             //    return null;
             //}
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId; ;//集团id
-            ViewBag.openCityList = iAreaProvider.GetOpenCityInfo();
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
             var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria() {  Status = -1, GroupId = SuperMan.App_Start.UserContext.Current.GroupId };
             var pagedList = iDistributionProvider.GetClienteres(criteria);
             return View(pagedList);
@@ -46,7 +46,7 @@ namespace SuperMan.Controllers
         {
             Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria();
             TryUpdateModel(criteria);
-            ViewBag.openCityList = iAreaProvider.GetOpenCityInfo();
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
             var pagedList = iDistributionProvider.GetClienteres(criteria);
             return PartialView("_SuperManManagerList", pagedList);
         }

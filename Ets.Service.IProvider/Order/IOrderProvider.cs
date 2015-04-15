@@ -152,6 +152,20 @@ namespace Ets.Service.IProvider.Order
         /// <param name="orderNo"></param>
         /// <returns></returns>
         OrderListModel GetOrderInfoByOrderNo(string orderNo);
+        /// <summary>
+        /// 取消订单
+        /// danny-20150414
+        /// </summary>
+        /// <param name="orderOptionModel"></param>
+        /// <returns></returns>
+        bool CancelOrderByOrderNo(OrderOptionModel orderOptionModel);
+        /// <summary>
+        /// 获取订单操作日志
+        /// danny-20150414
+        /// </summary>
+        /// <param name="OrderId"></param>
+        /// <returns></returns>
+        IList<OrderSubsidiesLog> GetOrderOptionLog(string OrderId);
 
     }
 }
