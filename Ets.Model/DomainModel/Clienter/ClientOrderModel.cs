@@ -8,6 +8,7 @@ namespace Ets.Model.DomainModel.Clienter
 {
     public class ClientOrderModel
     {
+        public int OrderId { get; set; }
         public int UserId { get; set; }
         public string OrderNo { get; set; }
         public string OriginalOrderNo { get; set; }
@@ -40,5 +41,9 @@ namespace Ets.Model.DomainModel.Clienter
         /// 集团id
         /// </summary>
         public int GroupId { get; set; }
+        /// <summary>
+        /// 已经上传的小票数量
+        /// </summary>
+        public int HadUploadCount { get; set; }
     }
 }

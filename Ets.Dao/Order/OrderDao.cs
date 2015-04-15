@@ -72,12 +72,14 @@ namespace Ets.Dao.Order
         b.City PickUpCity,
         b.Longitude BusiLongitude,
         b.Latitude BusiLatitude,
-        b.GroupId");
+        b.GroupId,
+        ISNULL(oo.HadUploadCount,0) HadUploadCount ");
             //关联表
             StringBuilder tableListStr = new StringBuilder();
             tableListStr.Append(@" dbo.[order] o WITH ( NOLOCK )
         LEFT JOIN dbo.clienter c WITH ( NOLOCK ) ON c.Id = o.clienterId
-        LEFT JOIN dbo.business b WITH ( NOLOCK ) ON b.Id = o.businessId ");
+        LEFT JOIN dbo.business b WITH ( NOLOCK ) ON b.Id = o.businessId 
+        left join dbo.OrderOther oo (nolock) on o.Id = oo.OrderId ");
             //条件
             StringBuilder whereStr = new StringBuilder(" 1=1 ");
             if (criteria.userId != 0)
@@ -95,17 +97,6 @@ namespace Ets.Dao.Order
                     whereStr.AppendFormat(" AND b.City = '{0}'", criteria.city);
                 }
             }
-            //if (!string.IsNullOrWhiteSpace(criteria.cityId))
-            //{
-            //    if (criteria.cityId == "1")  //目前北京市 的 id 在 康珍那里是  1 ， 但是 第三方过来的是code  10201 ，需要统一，康珍那里改
-            //    {
-            //        whereStr.AppendFormat(" AND ( b.CityId = '{0}' OR b.CityId = '10201' )", criteria.cityId);
-            //    }
-            //    else
-            //    {
-            //        whereStr.AppendFormat(" AND b.CityId = '{0}'", criteria.cityId);
-            //    }
-            //}
             if (criteria.status != -1 && criteria.status != null)
             {
                 whereStr.AppendFormat(" AND o.[Status] = {0}", criteria.status);
@@ -251,29 +242,29 @@ namespace Ets.Dao.Order
           SettleMoney,
           Adjustment
          )
- VALUES  ( @OrderNo ,
-           @PickUpAddress ,
-           @PubDate ,
-           @ReceviceName ,
-           @RecevicePhoneNo ,
-           @ReceviceAddress ,
-           @IsPay ,
-           @Amount ,
-           @OrderCommission ,
-           @DistribSubsidy ,
-           @WebsiteSubsidy ,
-           @Remark ,
-           @OrderFrom ,
-           @Status ,
-           @businessId ,
-           @ReceviceCity ,
-           @ReceviceLongitude ,
-           @ReceviceLatitude ,
-           @OrderCount ,
-           @CommissionRate,
-           @CommissionFormulaMode,
-           @SongCanDate,
-           @Weight1,
+ VALUES  (@OrderNo ,
+          @PickUpAddress ,
+          @PubDate ,
+          @ReceviceName ,
+          @RecevicePhoneNo ,
+          @ReceviceAddress ,
+          @IsPay ,
+          @Amount ,
+          @OrderCommission ,
+          @DistribSubsidy ,
+          @WebsiteSubsidy ,
+          @Remark ,
+          @OrderFrom ,
+          @Status ,
+          @businessId ,
+          @ReceviceCity ,
+          @ReceviceLongitude ,
+          @ReceviceLatitude ,
+          @OrderCount ,
+          @CommissionRate,
+          @CommissionFormulaMode,
+          @SongCanDate,
+          @Weight1,
           @Quantity1,
           @ReceiveProvince ,
           @ReceiveProvinceCode , 
@@ -1254,7 +1245,39 @@ where   1 = 1
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
 
         }
+
         /// <summary>
+        /// 根据订单id获取订单信息 和 小票相关
+        /// wc
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public order GetOrderInfoByOrderId(int orderId)
+        {
+            string sql = @"
+select  o.Id ,
+        o.[Status] ,
+        ISNULL(oo.HadUploadCount, 0) HadUploadCount,
+        o.OrderCount
+from    dbo.[order] o ( nolock )
+        left join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
+where   o.Id = @orderId;
+";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@orderId", SqlDbType.NVarChar);
+            parm.SetValue("@orderId", orderId);
+            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
+            var list = ConvertDataTableList<order>(dt);
+            if (list != null && list.Count > 0)
+            {
+                return list[0];
+            }
+            else
+            {
+                return null;
+            }
+        }
+/// <summary>
         /// 修改骑士收入
         /// danny-20150414
         /// </summary>
