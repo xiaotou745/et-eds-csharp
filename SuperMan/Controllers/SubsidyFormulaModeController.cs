@@ -248,7 +248,7 @@ namespace SuperMan.Controllers
         {
             //读取全部时间配置
             var list = new GlobalConfigProvider().GetOverStoreSubsidies();
-            if (list.Exists(m => m.Value1 == model.Value1))
+            if (list.Exists(m => m.Id!=model.Id &&  m.Value1 == model.Value1))
             {
                 return Json(new ResultModel(false, "跨店不能重复"), JsonRequestBehavior.AllowGet);
             }

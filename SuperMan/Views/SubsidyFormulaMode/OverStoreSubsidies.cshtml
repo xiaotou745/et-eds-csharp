@@ -109,53 +109,65 @@
 <script>
     var adminjs = new adminglass(); //实例化后台类  
     //新增
-    $("#btnConfimAdd").on('click', function () {
-        var Value1 = $("#txtTime").val();
-        var Value2 = $("#txtPrice").val();
+    function check(Value1,Value2){
         if (Value1 == "") {
             alert("请输入跨店数量!");
-            return;
-        }
-        if (Value2 == "") {
-            alert("请输入金额!");
-            return;
-        }
+            return false;
+        } 
         if (isNaN(Value1)) {
             alert("请输入跨店数量!");
-            return;
+            return false;
         }
-        if (isNaN(Value2)) {
+        if (Value2!="" && isNaN(Value2)) {
             alert("请输入金额!");
-            return;
+            return false;
         }
         if (parseInt(Value1) != Value1) {
             alert("跨店数量必须是整数!");
-            return;
+            return false;
         }
         if (parseInt(Value1) < 1) {
             alert("跨店数量需要大于0!");
-            return;
+            return false;
+        }
+        if (parseInt(Value1) > 50) {
+            alert("跨店数量需要小于50!");
+            return false;
         }
         if (parseInt(Value2)<0) {
             alert("金额需要大于0!");
-            return;
+            return false;
         }
-        var pars = { "Id": 0, "Value1": Value1, "Value2": Value2 };
-        var url = "/SubsidyFormulaMode/AddOverStoreSubsidies";
-        $.ajax({
-            type: 'POST',
-            url: url,
-            data: pars,
-            dataType: 'json',
-            success: function (result) {
-                if (result.IsSuccess) {
-                    alert("添加成功!");
-                    window.location.href = "/SubsidyFormulaMode/OverStoreSubsidies/";
-                } else {
-                    alert(result.Message);
+        if (parseInt(Value2)> 500) {
+            alert("金额需要小于500!");
+            return false;
+        }
+        return true;
+    }
+    $("#btnConfimAdd").on('click', function () {
+        var Value1 = $("#txtTime").val();
+        var Value2 = $("#txtPrice").val();
+        if(check(Value1,Value2))
+        {
+            if(Value2==null || Value2==""){Value2=0;}
+            var pars = { "Id": 0, "Value1": Value1, "Value2": Value2 };
+            var url = "/SubsidyFormulaMode/AddOverStoreSubsidies";
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: pars,
+                dataType: 'json',
+                success: function (result) {
+                    if (result.IsSuccess) {
+                        alert("添加成功!");
+                        window.location.href = "/SubsidyFormulaMode/OverStoreSubsidies/";
+                    } else {
+                        alert(result.Message);
+                    }
                 }
-            }
-        });
+            });
+        }
+        
     });
 
     function deleteIt(id) {
@@ -182,49 +194,25 @@
         var Value1 = $("#txtTimeu").val();
         var Value2 = $("#txtPriceu").val();
         var hidid = $("#hidid").val();
-        if (Value1 == "") {
-            alert("请输入跨店数量!");
-            return;
-        }
-        if (Value2 == "") {
-            alert("请输入金额!");
-            return;
-        }
-        if (isNaN(Value1)) {
-            alert("请输入跨店数量!");
-            return;
-        }
-        if (isNaN(Value2)) {
-            alert("请输入金额!");
-            return;
-        }
-        if (parseInt(Value1) != Value1) {
-            alert("跨店数量必须是整数!");
-            return;
-        }
-        if (parseInt(Value1) < 1) {
-            alert("跨店数量需要大于0!");
-            return;
-        }
-        if (parseInt(Value2) < 0) {
-            alert("金额需要大于0!");
-            return;
-        }
-        var pars = { "Id": hidid, "Value1": Value1, "Value2": Value2 };
-        var url = "/SubsidyFormulaMode/UpdateOverStoreSubsidies";
-        $.ajax({
-            type: 'POST',
-            url: url,
-            data: pars,
-            success: function (result) {
-                if (result.IsSuccess) {
-                    alert("修改成功!");
-                    window.location.href = "/SubsidyFormulaMode/OverStoreSubsidies/";
-                } else {
-                    alert(result.Message);
+        if(check(Value1,Value2))
+        {
+            if(Value2==null || Value2==""){value2=0;}
+            var pars = { "Id": hidid, "Value1": Value1, "Value2": Value2 };
+            var url = "/SubsidyFormulaMode/UpdateOverStoreSubsidies";
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: pars,
+                success: function (result) {
+                    if (result.IsSuccess) {
+                        alert("修改成功!");
+                        window.location.href = "/SubsidyFormulaMode/OverStoreSubsidies/";
+                    } else {
+                        alert(result.Message);
+                    }
                 }
-            }
-        });
+            });
+        }
     });
     function showUpdate(id,tiem,price) {
         $("#txtTimeu").val(tiem); 
