@@ -253,17 +253,18 @@ namespace SuperMan.Controllers
                 return Json(new ResultModel(false, "跨店不能重复"), JsonRequestBehavior.AllowGet);
             }
             var mm = list.FirstOrDefault(subsidies => subsidies.Id == model.Id);
-            if (mm != null)
+            if (mm != null &&!(mm.Value1 == model.Value1 && mm.Value2 == model.Value2))
             {
                 mm.Value1 = model.Value1;
                 mm.Value2 = model.Value2;
+                var newlist = (from globalConfigTimeSubsidiese in list
+                               orderby ParseHelper.ToDouble(globalConfigTimeSubsidiese.Value1) ascending
+                               select globalConfigTimeSubsidiese).ToList();
+                string values = GetTimesValues(newlist);
+                bool b = new GlobalConfigProvider().UpdateSubsidies(UserContext.Current.Name, values, "修改跨店抢单-设置之后的值:" + values, "OverStoreSubsidies");
+                return Json(new ResultModel(b, b == true ? string.Empty : "修改失败!"), JsonRequestBehavior.AllowGet);
             }
-            var newlist = (from globalConfigTimeSubsidiese in list
-                           orderby ParseHelper.ToDouble(globalConfigTimeSubsidiese.Value1) ascending
-                           select globalConfigTimeSubsidiese).ToList();
-            string values = GetTimesValues(newlist);
-            bool b = new GlobalConfigProvider().UpdateSubsidies(UserContext.Current.Name, values, "修改跨店抢单-设置之后的值:" + values, "OverStoreSubsidies");
-            return Json(new ResultModel(b, b == true ? string.Empty : "修改失败!"), JsonRequestBehavior.AllowGet);
+            return Json(new ResultModel(true,string.Empty), JsonRequestBehavior.AllowGet); 
         }
 
         
