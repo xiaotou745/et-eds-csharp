@@ -128,6 +128,18 @@
             alert("请输入金额!");
             return;
         }
+        if (parseInt(Value1) != Value1) {
+            alert("跨店数量必须是整数!");
+            return;
+        }
+        if (parseInt(Value1) < 1) {
+            alert("跨店数量需要大于0!");
+            return;
+        }
+        if (parseInt(Value2)<0) {
+            alert("金额需要大于0!");
+            return;
+        }
         var pars = { "Id": 0, "Value1": Value1, "Value2": Value2 };
         var url = "/SubsidyFormulaMode/AddOverStoreSubsidies";
         $.ajax({
@@ -140,7 +152,7 @@
                     alert("添加成功!");
                     window.location.href = "/SubsidyFormulaMode/OverStoreSubsidies/";
                 } else {
-                    alert("添加失败!");
+                    alert(result.Message);
                 }
             }
         });
@@ -159,7 +171,7 @@
                         alert("删除成功!");
                         window.location.href = "/SubsidyFormulaMode/OverStoreSubsidies/";
                     } else {
-                        alert("删除失败!");
+                        alert(result.Message);
                     }
                 }
             });
@@ -186,6 +198,18 @@
             alert("请输入金额!");
             return;
         }
+        if (parseInt(Value1) != Value1) {
+            alert("跨店数量必须是整数!");
+            return;
+        }
+        if (parseInt(Value1) < 1) {
+            alert("跨店数量需要大于0!");
+            return;
+        }
+        if (parseInt(Value2) < 0) {
+            alert("金额需要大于0!");
+            return;
+        }
         var pars = { "Id": hidid, "Value1": Value1, "Value2": Value2 };
         var url = "/SubsidyFormulaMode/UpdateOverStoreSubsidies";
         $.ajax({
@@ -197,7 +221,7 @@
                     alert("修改成功!");
                     window.location.href = "/SubsidyFormulaMode/OverStoreSubsidies/";
                 } else {
-                    alert("修改失败!");
+                    alert(result.Message);
                 }
             }
         });

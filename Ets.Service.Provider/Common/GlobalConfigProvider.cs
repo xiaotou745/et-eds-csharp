@@ -224,9 +224,7 @@ namespace Ets.Service.Provider.Common
                 }
                 var redis = new ETS.NoSql.RedisCache.RedisCache();
                 const string cacheKey = RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet;
-                redis.Delete(cacheKey);
-                var model = new GlobalConfigDao().GlobalConfigMethod();
-                redis.Set(cacheKey, model);
+                redis.Delete(cacheKey); 
                 tran.Complete();
             }
             return result;
