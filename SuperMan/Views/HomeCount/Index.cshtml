@@ -50,7 +50,7 @@
                         订单总金额：@ParseHelper.ToSplitByPercentile(false, resultList.OrderPrice)<br />
                         客单价：@(resultList.OrderCount == 0 ? "0" : (resultList.OrderPrice / resultList.OrderCount).ToString("f2")) <br />
                         任务单价：@(resultList.MisstionCount == 0 ? "0" : (resultList.OrderPrice / resultList.MisstionCount).ToString("f2"))<br />
-                        骑士平均佣金：@ParseHelper.ToDivision(ParseHelper.ToDouble(resultList.YfPrice), resultList.ActiveClienter)  <br />
+                      
                     </td>
                     <td>
                         0次补贴被抢任务：@ParseHelper.ToSplitByPercentile(true, resultList.ZeroSubsidyOrderCount)<br />
@@ -65,6 +65,11 @@
                         骑士平均完成订单：@ParseHelper.ToDivision(resultList.OrderCount, resultList.ActiveClienter)  <br />
                     </td>
                     <td>
+                        骑士平均佣金：@ParseHelper.ToDivision(ParseHelper.ToDouble(resultList.YfPrice), resultList.ActiveClienter)  <br />
+                        任务平均佣金：@ParseHelper.ToDivision(ParseHelper.ToDouble(resultList.YfPrice), resultList.MisstionCount)<br />
+                        订单平均佣金：@ParseHelper.ToDivision(ParseHelper.ToDouble(resultList.YfPrice), resultList.OrderCount)<br />
+                    </td>
+                    <td>
                         商户结算金额（应收）：￥@ParseHelper.ToSplitByPercentile(false, resultList.YsPrice)<br />
                         骑士佣金总计（应付）：￥@ParseHelper.ToSplitByPercentile(false, resultList.YfPrice)<br />
                         @{
@@ -73,6 +78,7 @@
                         }
                         盈亏总计：￥<span style="color:@ykStyle">@ParseHelper.ToSplitByPercentile(false, resultList.YkPrice)</span><br />
                     </td>
+                   
                 </tr>
             </table>
         </p>
@@ -92,6 +98,7 @@
                 <td>可提现佣金总计</td>
                 <td>客单价</td>
                 <td>任务单价</td>
+                <td>跨店抢单奖励</td>
                 <td>总盈亏总计</td>
             </tr>
 
@@ -107,8 +114,8 @@
                     <td>￥@ParseHelper.ToSplitByPercentile(false,Math.Round(homeCountAllData.WithdrawPrice, 2))</td>
                     <td>@ParseHelper.ToSplitByPercentile(false,((homeCountAllData.OrderPrice / homeCountAllData.OrderCount).ToString("f2")))</td>
                     <td>@ParseHelper.ToSplitByPercentile(false,((homeCountAllData.OrderPrice / homeCountAllData.MisstionCount).ToString("f2")))</td>
+                    <td>@ParseHelper.ToSplitByPercentile(false, Math.Round(homeCountAllData.CrossShopPrice,2))</td>
                     <td>￥<span style="color:@ykAllStyle">@ParseHelper.ToSplitByPercentile(false,ykAllPirce)</span></td>
-
                 </tr>
             }
         </table>

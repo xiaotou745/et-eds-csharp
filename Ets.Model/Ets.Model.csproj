@@ -53,7 +53,7 @@
     <Compile Include="Common\OrderCountManageList.cs" />
     <Compile Include="Common\PagedList.cs" />
     <Compile Include="Common\TestUserModel.cs" />
-<Compile Include="DataModel\Subsidy\CrossShopModel.cs" />
+    <Compile Include="DataModel\Subsidy\CrossShopModel.cs" />
     <Compile Include="DataModel\Order\OrderOther.cs" />
     <Compile Include="DomainModel\Area\DMAreaCodeInfo.cs" />
     <Compile Include="DomainModel\Subsidy\GrabOrderModel.cs" />
@@ -143,9 +143,10 @@
     <Compile Include="ParameterModel\Clienter\RushOrderResultModel.cs" />
     <Compile Include="ParameterModel\Clienter\UploadIconModel.cs" />
     <Compile Include="ParameterModel\Clienter\CustomerIconUploader.cs" />
+    <Compile Include="ParameterModel\Common\OpenCitySearchCriteria.cs" />
     <Compile Include="ParameterModel\Clienter\UploadReceiptModel.cs" />
     <Compile Include="ParameterModel\Clienter\UploadReceiptResultModel.cs" />
-    <Compile Include="ParameterModel\Common\OpenCitySearchCriteria.cs" />
+
     <Compile Include="ParameterModel\Group\GroupListModel.cs" />
     <Compile Include="ParameterModel\Group\GroupParaModel.cs" />
     <Compile Include="ParameterModel\Order\BusiOrderResultModel.cs" />

@@ -65,9 +65,14 @@ namespace Ets.CrossShopService.BLL
                 {
                     if (GlobalConfigDao.GlobalConfigGet.IsStartOverStoreSubsidies == "1")
                     {
-                        List<GlobalConfigSubsidies> MyList = GetSubsidies(GlobalConfigDao.GlobalConfigGet.OverStoreSubsidies);
-                        if (MyList.Count!=null)
+                        try
                         {
+                            List<GlobalConfigSubsidies> MyList = GetSubsidies(GlobalConfigDao.GlobalConfigGet.OverStoreSubsidies);
+                            if (MyList == null || MyList.Count <= 0)
+                            {
+                                ETS.Util.LogHelper.LogWriter("global配置数据为空");
+                                continue;
+                            }
                             SubsidyProvider CrossShop = new SubsidyProvider();
                             //调用抢单奖励机制主要方法
                             if (CrossShop.CrossShop(MyList))
@@ -75,9 +80,9 @@ namespace Ets.CrossShopService.BLL
                                 ETS.Util.LogHelper.LogWriter("抢单奖励计算成功");
                             }
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            ETS.Util.LogHelper.LogWriter("global配置数据为空");
+                            //记录日志
                         }
                     }
                     else
