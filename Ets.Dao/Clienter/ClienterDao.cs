@@ -609,18 +609,18 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
         {
             OrderOther oo = new OrderOther();
             string sql = @"
- insert into dbo.OrderOther
-        ( OrderId ,
-          NeedUploadCount ,
-          ReceiptPic ,
-          HadUploadCount
-        )
- output Inserted.Id,Inserted.OrderId,Inserted.NeedUploadCount,Inserted.ReceiptPic,Inserted.HadUploadCount
- values ( @OrderId ,
-          @NeedUploadCount , 
-          @ReceiptPic ,
-          @HadUploadCount 
-        );";
+                            insert into dbo.OrderOther
+                                ( OrderId ,
+                                    NeedUploadCount ,
+                                    ReceiptPic ,
+                                    HadUploadCount
+                                )
+                            output Inserted.Id,Inserted.OrderId,Inserted.NeedUploadCount,Inserted.ReceiptPic,Inserted.HadUploadCount
+                            values ( @OrderId ,
+                                    @NeedUploadCount , 
+                                    @ReceiptPic ,
+                                    @HadUploadCount 
+                            );";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderId", SqlDbType.Int);
             parm.SetValue("@OrderId", uploadReceiptModel.OrderId);
@@ -747,7 +747,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
         oo.ReceiptPic ,
         oo.HadUploadCount
 from    dbo.OrderOther oo ( nolock )
-where   oo.OrderId = @OrderId;select o.[Status] FROM dbo.[order] o (nolock)
+where   oo.OrderId = @OrderId;select o.[Status],o.OrderCount FROM dbo.[order] o (nolock)
  where o.Id = @OrderId";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderId", SqlDbType.Int);
@@ -756,11 +756,12 @@ where   oo.OrderId = @OrderId;select o.[Status] FROM dbo.[order] o (nolock)
             DataSet dt = DbHelper.ExecuteDataset(SuperMan_Read, sql, parm);
             var ooList = MapRows<OrderOther>(dt.Tables[0]);
             if (dt.Tables[1] != null && dt.Tables[1].Rows.Count > 0)
-            {
+            { 
                 OrderStatus = ParseHelper.ToInt(dt.Tables[1].Rows[0][0], 0);
             }
             if (ooList != null && ooList.Count == 1)
             {
+                ooList[0].NeedUploadCount = ParseHelper.ToInt(dt.Tables[1].Rows[0][1], 0);
                 return ooList[0];
             }
             else
