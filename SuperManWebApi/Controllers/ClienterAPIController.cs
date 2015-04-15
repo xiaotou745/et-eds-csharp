@@ -173,7 +173,7 @@ namespace SuperManWebApi.Controllers
             };
 
             IList<Ets.Model.DomainModel.Clienter.ClientOrderResultModel> lists = new ClienterProvider().GetMyOrders(criteria);
-            if (model.status != 1)
+            if (model.status!=null && model.status != 1)
             {
                // lists = lists.OrderByDescending(i => i.pubDate).ToList();  //按照发布时间倒序排列
                 lists = lists.OrderBy(i => i.distance_OrderBy).ToList(); 

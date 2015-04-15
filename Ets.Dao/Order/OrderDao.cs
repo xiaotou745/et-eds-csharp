@@ -109,11 +109,14 @@ namespace Ets.Dao.Order
             }
 
             var pageInfo = new PageHelper().GetPages<Model.DataModel.Order.order>(SuperMan_Read, criteria.PagingRequest.PageIndex, whereStr.ToString(), orderByStr, columnStr.ToString(), tableListStr.ToString(), criteria.PagingRequest.PageSize, true);
-
-            orderPageList.ContentList = pageInfo.Records.ToList();
-            orderPageList.CurrentPage = pageInfo.Index;  //当前页
-            orderPageList.PageCount = pageInfo.PageCount;//总页数
-            orderPageList.PageSize = criteria.PagingRequest.PageSize;
+            if (pageInfo !=null && pageInfo.Records != null && pageInfo.Records.Count > 0)
+            {
+                orderPageList.ContentList = pageInfo.Records.ToList();
+                orderPageList.CurrentPage = pageInfo.Index;  //当前页
+                orderPageList.PageCount = pageInfo.PageCount;//总页数
+                orderPageList.PageSize = criteria.PagingRequest.PageSize;
+            }
+            
 
             return orderPageList;
         }
