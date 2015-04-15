@@ -34,6 +34,7 @@ namespace Ets.Service.Provider.Statistics
                 model.BusinessAverageOrderCount = ParseHelper.ToDivision(item.OrderCount, item.BusinessCount);//商户平均发布订单
                 model.MissionAverageOrderCount = ParseHelper.ToDivision(item.OrderCount, item.MisstionCount);//任务平均订单量
                 model.ClienterAverageOrderCount = ParseHelper.ToDivision(item.OrderCount, item.RzqsCount);//骑士平均完成订单量
+                model.ZeroSubsidyOrderCount = subsidyOrderCountList[0].ZeroSubsidyOrderCount;
                 model.OneSubsidyOrderCount = subsidyOrderCountList[0].OneSubsidyOrderCount;
                 model.TwoSubsidyOrderCount = subsidyOrderCountList[0].TwoSubsidyOrderCount;
                 model.ThreeSubsidyOrderCount = subsidyOrderCountList[0].ThreeSubsidyOrderCount;

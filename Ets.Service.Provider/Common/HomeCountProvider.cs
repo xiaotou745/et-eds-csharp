@@ -1,5 +1,6 @@
 ﻿using Ets.Dao.Clienter;
 using Ets.Dao.Order;
+using Ets.Dao.Subsidy;
 using Ets.Dao.User;
 using Ets.Model.Common;
 using Ets.Service.IProvider.Common;
@@ -28,7 +29,7 @@ namespace Ets.Service.Provider.Common
             BusinessDao businessDao = new BusinessDao();
             OrderDao orderDao = new OrderDao();
             HomeCountTitleModel temp = new HomeCountTitleModel();
-
+            SubsidyDao subsidyDao = new SubsidyDao();
             //获取当天,订单金额:任务量：订单量：
             //商户结算金额（应收）; 骑士佣金总计（应付）
             string CurrentTime = DateTime.Now.ToString("yyyy-MM-dd");
@@ -38,7 +39,7 @@ namespace Ets.Service.Provider.Common
             {
                 temp = homeCountList[0];
             }
-
+          
             model.OrderPrice = temp.OrderPrice;// 订单金额
             model.MisstionCount = temp.MisstionCount;// 任务量
             model.OrderCount = temp.OrderCount;// 订单量

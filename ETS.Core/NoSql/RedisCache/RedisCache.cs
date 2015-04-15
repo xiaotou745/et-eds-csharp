@@ -240,10 +240,17 @@ namespace ETS.NoSql.RedisCache
         /// <exception cref="System.NotImplementedException"></exception>
         public T Get<T>(string key)
         {
-            using (IRedisClient Redis = RedisManager.GetClient())
+            try
             {
-                var obj = new ObjectSerializer().Deserialize(Redis.Get<byte[]>(key));
-                return (T)obj;
+                using (IRedisClient Redis = RedisManager.GetClient())
+                {
+                    var obj = new ObjectSerializer().Deserialize(Redis.Get<byte[]>(key));
+                    return (T)obj;
+                }
+            }
+            catch (Exception ex)
+            {
+                return default(T);
             }
         }
 

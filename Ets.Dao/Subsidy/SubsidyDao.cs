@@ -1,4 +1,5 @@
-﻿using Ets.Model.DomainModel.Subsidy;
+﻿using Ets.Model.DataModel.Subsidy;
+using Ets.Model.DomainModel.Subsidy;
 using Ets.Model.ParameterModel.Subsidy;
 using ETS.Dao;
 using ETS.Data.Core;
@@ -54,7 +55,7 @@ WHERE   sub.[Status] = 1 ");
                 subsidyResultModel = DataTableHelper.ConvertDataTableList<SubsidyResultModel>(dt)[0];
             }
 
-            return subsidyResultModel; 
+            return subsidyResultModel;
         }
 
 
@@ -78,7 +79,7 @@ WHERE   sub.[Status] = 1 ");
                                     ,s.[OrderType]
                                     ,g.GroupName";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
-            if (criteria.GroupId != null && criteria.GroupId !=0)
+            if (criteria.GroupId != null && criteria.GroupId != 0)
             {
                 sbSqlWhere.AppendFormat(" AND s.GroupId={0} ", criteria.GroupId);
             }
@@ -131,6 +132,64 @@ WHERE   sub.[Status] = 1 ");
                 return false;
                 throw;
             }
+        }
+
+        /// <summary>
+        /// 查询前一天的抢单量
+        /// xx
+        /// xx
+        /// </summary>
+        /// <returns></returns>
+        public IList<GrabOrderModel> GetBusinessCount()
+        {
+            string strSql = @"
+                            select 
+                            PubDate,
+                            ClienterId,
+                            BusinessCount 
+                            from (
+                            select convert(char(10),o.PubDate,120) PubDate,clienterId,count(distinct businessId) businessCount
+                            from 
+                            dbo.[order](nolock) o 
+                            where 
+                            convert(char(10),o.PubDate,120)=convert(char(10),dateadd(day,-1,getdate()),120) 
+                            and [Status]=1  
+                            group by convert(char(10),o.PubDate,120), clienterId ) t 
+                            where businessCount>1";
+            DataTable myTable = DbHelper.ExecuteDataTable(SuperMan_Read, strSql);
+            return MapRows<GrabOrderModel>(myTable);
+        }
+
+        /// <summary>
+        /// 写入跨店奖励日志
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool InsertCrossShopLog(CrossShopModel model)
+        {
+            string sql = @"INSERT INTO CrossShopLog
+                        (ClienterId
+                        ,Amount
+                        ,BusinessCount
+                        ,[Platform]
+                        ,Remark
+                        ,InsertTime)
+                        VALUES
+                        (@ClienterId
+                        ,@Amount
+                        ,@BusinessCount
+                        ,@Platform
+                        ,@Remark
+                        ,@InsertTime)";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@ClienterId", model.ClienterId);
+            parm.AddWithValue("@Amount", model.Amount);
+            parm.AddWithValue("@BusinessCount", model.BusinessCount);
+            parm.AddWithValue("@Platform", model.Platform);
+            parm.AddWithValue("@Remark", model.Remark);
+            parm.AddWithValue("@InsertTime", model.InsertTime);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
     }
 }

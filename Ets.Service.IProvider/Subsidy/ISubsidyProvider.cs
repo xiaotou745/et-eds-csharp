@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Ets.Model.DomainModel.GlobalConfig;
 namespace Ets.Service.IProvider.Subsidy
 {
     public interface ISubsidyProvider
@@ -27,5 +27,12 @@ namespace Ets.Service.IProvider.Subsidy
         /// <param name="model"></param>
         /// <returns></returns>
         bool SaveData(SubsidyModel model);
+
+        /// <summary>
+        /// 跨店补贴
+        /// xupengcheng
+        /// 20150414
+        /// </summary>
+        bool CrossShop(List<GlobalConfigSubsidies> SubsidiesList);
     }
 }

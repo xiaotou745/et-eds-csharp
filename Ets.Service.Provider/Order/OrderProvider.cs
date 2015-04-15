@@ -59,18 +59,15 @@ namespace Ets.Service.Provider.Order
             var orderList = OrderDao.GetOrders(criteria);
             if (orderList != null && orderList.ContentList != null)
             {
-                for (int i = 0; i < orderList.ContentList.Count; i++)
-                {
-                    var resultModel = new ClientOrderResultModel();
-                    var from = orderList.ContentList[i];
-                    if (from.clienterId != null)
-                        resultModel.userId = from.clienterId.Value;
-                    resultModel.OrderNo = from.OrderNo;
-                    resultModel.OrderId = from.Id; //订单Id
-                    resultModel.OrderCount = from.OrderCount;
-                    resultModel.OriginalOrderNo = from.OriginalOrderNo;
-                    var orderComm = new OrderCommission() { Amount = from.Amount, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount };
-                    var amount = DefaultOrPriceProvider.GetCurrenOrderPrice(orderComm);
+                var resultModel = new ClientOrderResultModel();
+                var from = orderList.ContentList[i];
+                if (from.clienterId != null)
+                    resultModel.userId = from.clienterId.Value;
+                resultModel.OrderNo = from.OrderNo;
+                resultModel.OrderId = from.Id; //订单Id
+                resultModel.OrderCount = from.OrderCount;
+                var orderComm = new OrderCommission() { Amount = from.Amount, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount };
+                var amount = DefaultOrPriceProvider.GetCurrenOrderPrice(orderComm);
 
                     resultModel.income = from.OrderCommission;  //佣金 Edit bycaoheyang 20150327
                     resultModel.Amount = amount; //C端 获取订单的金额 Edit bycaoheyang 20150305
@@ -147,7 +144,25 @@ namespace Ets.Service.Provider.Order
             var orderList = OrderDao.GetOrders(criteria);
             if (orderList != null && orderList.ContentList != null)
             {
-                for (int i = 0; i < orderList.ContentList.Count; i++)
+                var resultModel = new ClientOrderNoLoginResultModel();
+                var from = orderList.ContentList[i];
+                if (from.clienterId != null)
+                    resultModel.userId = from.clienterId.Value;
+                resultModel.OrderNo = from.OrderNo;
+                resultModel.OrderId = from.Id;  //订单Id
+                resultModel.OrderCount = from.OrderCount;
+                var orderComm = new OrderCommission() { Amount = from.Amount, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount };
+                var amount = DefaultOrPriceProvider.GetCurrenOrderPrice(orderComm);
+                resultModel.income = from.OrderCommission;  //计算设置当前订单骑士可获取的佣金 Edit bycaoheyang 20150305
+                resultModel.Amount = amount; //C端 获取订单的金额 Edit bycaoheyang 20150305
+                resultModel.businessName = from.BusinessName;
+                resultModel.businessPhone = from.BusinessPhone;
+                resultModel.HadUploadCount = from.HadUploadCount;
+                resultModel.GroupId = from.GroupId;
+                if (from.GroupId == SystemConst.Group3)
+                    resultModel.NeedPickupCode = 1;
+
+                if (from.PickUpCity != null)
                 {
                     var resultModel = new ClientOrderNoLoginResultModel();
                     var from = orderList.ContentList[i];
@@ -272,17 +287,19 @@ namespace Ets.Service.Provider.Order
             if (subsidy != null)
             {
                 //必须写to.DistribSubsidy ，防止bussiness为空情况
-                OrderCommission orderComm = new OrderCommission() { Amount = busiOrderInfoModel.Amount, /*订单金额*/ 
+                OrderCommission orderComm = new OrderCommission()
+                {
+                    Amount = busiOrderInfoModel.Amount, /*订单金额*/
                     DistribSubsidy = to.DistribSubsidy,/*外送费*/
                     OrderCount = busiOrderInfoModel.OrderCount/*订单数量*/,
                     BusinessCommission = to.BusinessCommission /*商户结算比例*/
                 };
                 OrderPriceProvider commProvider = CommissionFactory.GetCommission();
-                to.CommissionRate =commProvider.GetCommissionRate(orderComm)  ; //佣金比例 
+                to.CommissionRate = commProvider.GetCommissionRate(orderComm); //佣金比例 
                 to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
                 to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
                 to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
-       
+
                 to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
                 to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额
             }
@@ -756,7 +773,50 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public OrderListModel GetOrderInfoByOrderNo(string orderNo,int orderId = 0)
         {
-            return OrderDao.GetOrderInfoByOrderNo(orderNo, orderId);
-        } 
+            return OrderDao.GetOrderInfoByOrderNo(orderNo);
+        }
+        /// <summary>
+        /// 通过订单号取消订单
+        /// danny-20150414
+        /// </summary>
+        /// <returns></returns>
+        public bool CancelOrderByOrderNo(OrderOptionModel orderOptionModel)
+        {
+            bool result = false;
+            var orderModel = OrderDao.GetOrderByNo(orderOptionModel.OrderNo);
+            if (orderModel != null)
+            {
+                if (orderModel.Status == 0 || orderModel.Status == 2)
+                {
+                    result = OrderDao.CancelOrder(orderModel, orderOptionModel);
+                }
+                else if (orderModel.Status == 1)
+                {
+                    using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+                    {
+                        if (OrderDao.CancelOrder(orderModel, orderOptionModel))
+                        {
+
+                            if (OrderDao.UpdateAccountBalanceByClienterId(orderModel, orderOptionModel))
+                            {
+                                result = true;
+                                tran.Complete();
+                            }
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+        /// <summary>
+        /// 获取订单操作日志
+        /// danny-20150414
+        /// </summary>
+        /// <param name="IntervalMinute"></param>
+        /// <returns></returns>
+        public IList<OrderSubsidiesLog> GetOrderOptionLog(string OrderId)
+        {
+            return OrderDao.GetOrderOptionLog(OrderId);
+        }
     }
 }
