@@ -25,6 +25,7 @@ using Ets.Service.Provider.WtihdrawRecords;
 using Ets.Service.Provider.MyPush;
 using Ets.Model.DomainModel.Bussiness;
 using Ets.Model.ParameterModel.Order;
+using ETS.IO;
 
 namespace Ets.Service.Provider.Clienter
 {
@@ -33,10 +34,7 @@ namespace Ets.Service.Provider.Clienter
         readonly ClienterDao clienterDao = new ClienterDao();
         readonly OrderDao orderDao = new OrderDao();
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
-        public List<order> GetOrdersNoLoginLatest(ClientOrderSearchCriteria criteria)
-        {
-            return clienterDao.GetOrdersNoLoginLatest(criteria);
-        }
+         
 
         /// <summary>
         /// 骑士上下班功能 add by caoheyang 20150312
@@ -70,6 +68,7 @@ namespace Ets.Service.Provider.Clienter
                 ClientOrderResultModel model = new ClientOrderResultModel();
                 model.userId = item.UserId;
                 model.OrderNo = item.OrderNo;
+                model.OrderId = item.OrderId;
                 #region 骑士佣金计算
                 OrderCommission oCommission = new OrderCommission()
                 {
@@ -97,6 +96,7 @@ namespace Ets.Service.Provider.Clienter
                 model.Status = item.Status;
                 model.OrderCount = item.OrderCount;
                 model.GroupId = item.GroupId;
+                model.HadUploadCount = item.HadUploadCount;
                 if (item.GroupId == SystemConst.Group3) //全时 需要做验证码验证
                     model.NeedPickupCode = 1;
                 #region 计算经纬度     待封装  add by caoheyang 20150313
@@ -572,9 +572,59 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="uploadReceiptModel"></param>
         /// <returns></returns>
-        public string UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel)
+        public OrderOther UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel)
         {
             return clienterDao.UpdateClientReceiptPicInfo(uploadReceiptModel);
+        }
+
+        /// <summary>
+        /// 删除小票
+        /// wc
+        /// </summary>
+        /// <param name="uploadReceiptModel"></param>
+        /// <returns></returns>
+        public OrderOther DeleteReceipt(UploadReceiptModel uploadReceiptModel)
+        {
+            var orderOther = clienterDao.DeleteReceipt(uploadReceiptModel);
+            
+            return orderOther;
+        }
+        /// <summary>
+        /// 新增小票信息
+        /// wc
+        /// </summary>
+        /// <param name="uploadReceiptModel"></param>
+        /// <returns></returns>
+        public OrderOther InsertReceiptInfo(UploadReceiptModel uploadReceiptModel)
+        {
+            return clienterDao.InsertReceiptInfo(uploadReceiptModel);
+        }
+        /// <summary>
+        /// 更新小票信息
+        /// </summary>
+        /// <param name="uploadReceiptModel"></param>
+        /// <returns></returns>
+        public OrderOther UpdateReceiptInfo(UploadReceiptModel uploadReceiptModel)
+        {
+            return clienterDao.UpdateReceiptInfo(uploadReceiptModel);
+        }
+
+        /// <summary>
+        /// 根据订单Id获取小票信息
+        /// wc
+        /// </summary>
+        /// <param name="uploadReceiptModel"></param>
+        /// <returns></returns>
+        public OrderOther GetReceipt(UploadReceiptModel uploadReceiptModel)
+        {
+            return clienterDao.GetReceiptInfo(uploadReceiptModel.OrderId);
+          
+        }
+
+
+        public order GetOrderInfoByOrderId(int orderId)
+        {
+            return orderDao.GetOrderInfoByOrderId(orderId);
         }
     }
 

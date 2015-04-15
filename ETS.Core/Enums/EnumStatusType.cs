@@ -230,7 +230,8 @@ namespace ETS.Enums
 
         [DisplayText("无效的用户")]
         InvalidUserId,
-
+        [DisplayText("无效的订单号")]
+        InvalidOrderId,
         [DisplayText("真实姓名不能为空")]
         TrueNameEmpty,
 
@@ -241,6 +242,16 @@ namespace ETS.Enums
         InvalidImageSize,
         [DisplayText("上传图片失败")]
         UpFailed,
+        [DisplayText("订单状态已完成且小票已全部上传不能删除")]
+        DeleteFailed,
+        [DisplayText("未找到该订单请联系客服")]
+        CannotFindOrder,
+        [DisplayText("删除失败请联系客服")]
+        DeleteExcepiton,
+        [DisplayText("骑士编号无效")]
+        ClienterIdInvalid
+
+
     }
     public enum OrderPublicshStatus : int
     {

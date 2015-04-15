@@ -70,6 +70,8 @@ namespace Ets.Service.Provider.Subsidy
             IList<GrabOrderModel> list = subsidyDao.GetBusinessCount();
             WtihdrawRecordsDao withdrawRecordsDao = new WtihdrawRecordsDao();
             ClienterDao clienterDao = new ClienterDao();
+            //test
+            var myList = SubsidiesList.OrderByDescending(t => t.Value1);
 
             int MaxSubsidiesShop = SubsidiesList.Max(t => ParseHelper.ToInt(t.Value1));//最大数量
             double MaxSubsidiesPrice = ParseHelper.ToDouble(SubsidiesList.Where(
