@@ -24,7 +24,7 @@ namespace SuperMan.Controllers
             //    return null;
             //}
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
-            ViewBag.openCityList = iAreaProvider.GetOpenCityInfo();
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
             var superManModel = iDistributionProvider.GetClienterModelByGroupID(ViewBag.txtGroupId);
             if (superManModel != null)
             {
@@ -44,7 +44,7 @@ namespace SuperMan.Controllers
             //    return null;
             //}
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId; ;//集团id
-            ViewBag.openCityList = iAreaProvider.GetOpenCityInfo();
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
             Ets.Model.ParameterModel.Order.OrderSearchCriteria criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria();
             TryUpdateModel(criteria);
             //指派超人时  以下代码 有用，现在 注释掉  wc 
