@@ -38,7 +38,6 @@ namespace Ets.Dao.Order
             StringBuilder columnStr = new StringBuilder(@" 
         o.Id ,
         o.OrderNo ,
-        o.OriginalOrderNo ,
         o.PickUpAddress ,
         o.PubDate ,
         o.ReceviceName ,
@@ -59,7 +58,7 @@ namespace Ets.Dao.Order
         o.ReceviceLatitude ,
         o.OrderFrom ,
         o.OriginalOrderId ,
-        o.OriginalOrderNo ,
+        ISNULL(o.OriginalOrderNo,'') OriginalOrderNo,
         o.Quantity ,
         o.ReceiveProvince ,
         o.ReceiveArea ,
