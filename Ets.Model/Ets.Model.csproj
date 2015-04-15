@@ -46,12 +46,14 @@
     <Compile Include="Common\ConstValues.cs" />
     <Compile Include="Common\DealResultInfo.cs" />
     <Compile Include="Common\HomeCountTitleModel.cs" />
+    <Compile Include="Common\ImageCommon.cs" />
     <Compile Include="Common\JPushModel.cs" />
     <Compile Include="Common\ListParaBase.cs" />
     <Compile Include="Common\OpenCityModel.cs" />
     <Compile Include="Common\OrderCountManageList.cs" />
     <Compile Include="Common\PagedList.cs" />
     <Compile Include="Common\TestUserModel.cs" />
+    <Compile Include="DataModel\Order\OrderOther.cs" />
     <Compile Include="DomainModel\Area\DMAreaCodeInfo.cs" />
     <Compile Include="DomainModel\Subsidy\GrabOrderModel.cs" />
     <Compile Include="ParameterModel\Area\ParaAreaNameInfo.cs" />

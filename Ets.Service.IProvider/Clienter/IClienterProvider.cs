@@ -11,9 +11,7 @@ using Ets.Model.ParameterModel.Order;
 namespace Ets.Service.IProvider.Clienter
 {
     public interface IClienterProvider
-    {
-        List<order> GetOrdersNoLoginLatest(ClientOrderSearchCriteria criteria);
-
+    { 
         /// <summary>
         /// 骑士上下班功能 add by caoheyang 20150312
         /// </summary>
@@ -150,6 +148,25 @@ namespace Ets.Service.IProvider.Clienter
         /// </summary>
         /// <param name="uploadReceiptModel"></param>
         /// <returns></returns>
-        string UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel);
+        OrderOther UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel);
+        /// <summary>
+        /// 删除小票
+        /// wc
+        /// </summary>
+        /// <param name="uploadReceiptModel"></param>
+        /// <returns></returns>
+        OrderOther DeleteReceipt(UploadReceiptModel uploadReceiptModel);
+        /// <summary>
+        /// 根据订单Id获取小票信息
+        /// </summary>
+        /// <param name="uploadReceiptModel"></param>
+        /// <returns></returns>
+        OrderOther GetReceipt(UploadReceiptModel uploadReceiptModel);
+        /// <summary>
+        /// 根据订单Id获取小票信息
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        order GetOrderInfoByOrderId(int orderId);
     }
 }

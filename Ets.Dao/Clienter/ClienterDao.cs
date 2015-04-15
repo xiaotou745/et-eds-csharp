@@ -17,6 +17,10 @@ using Ets.Model.Common;
 using Ets.Model.ParameterModel.Order;
 using System.Text;
 using Ets.Model.DomainModel.Bussiness;
+using Ets.Dao.Order;
+using System.Text.RegularExpressions;
+using ETS.IO;
+using System.IO;
 
 namespace Ets.Dao.Clienter
 {
@@ -26,25 +30,6 @@ namespace Ets.Dao.Clienter
     /// </summary>
     public class ClienterDao : DaoBase
     {
-        //using (var dbEntity = new supermanEntities())
-        //  {
-        //      var query = dbEntity.order.AsQueryable();
-        //      if (!string.IsNullOrWhiteSpace(criteria.city))
-        //          query = query.Where(i => i.business.City == criteria.city.Trim());
-        //      if (!string.IsNullOrWhiteSpace(criteria.cityId))
-        //          query = query.Where(i => i.business.CityId == criteria.cityId.Trim());
-        //      query = query.Where(i => i.Status.Value == ConstValues.ORDER_NEW);0
-        //      query = query.OrderByDescending(i => i.PubDate);
-        //      var result = query.ToList();
-        //      return result;
-        //  }
-        public List<order> GetOrdersNoLoginLatest(ClientOrderSearchCriteria criteria)
-        {
-            string sql = "";
-            return null;
-        }
-
-
         /// <summary>
         /// 骑士上下班功能   add by caoheyang 20150311
         /// </summary>
@@ -102,6 +87,7 @@ namespace Ets.Dao.Clienter
 
             string columnStr = @"   o.clienterId AS UserId,
                                     o.OrderNo,
+                                    o.Id OrderId,
                                     o.OriginalOrderNo,
                                     CONVERT(VARCHAR(5),o.PubDate,108) AS PubDate,
                                     o.PickUpAddress,
@@ -127,8 +113,10 @@ namespace Ets.Dao.Clienter
                                     REPLACE(b.City,'市','') AS pickUpCity,
                                     b.Longitude,
                                     b.Latitude,o.OrderCommission,
-                                    b.GroupId";
-            return new PageHelper().GetPages<ClientOrderModel>(SuperMan_Read, criteria.PagingRequest.PageIndex, where, criteria.status == 1 ? "o.ActualDoneDate DESC " : " o.Id ", columnStr, "[order](NOLOCK) AS o LEFT JOIN business(NOLOCK) AS b ON o.businessId=b.Id", criteria.PagingRequest.PageSize, false);
+                                    b.GroupId,ISNULL(oo.HadUploadCount,0) HadUploadCount ";
+            string sql_from = @" [order](NOLOCK) AS o LEFT JOIN business(NOLOCK) AS b ON o.businessId=b.Id  
+                                 left join dbo.OrderOther oo (nolock) on o.Id = oo.OrderId ";
+            return new PageHelper().GetPages<ClientOrderModel>(SuperMan_Read, criteria.PagingRequest.PageIndex, where, criteria.status == 1 ? "o.ActualDoneDate DESC " : " o.OrderId ", columnStr, sql_from, criteria.PagingRequest.PageSize, false);
         }
 
         /// <summary>
@@ -149,7 +137,7 @@ namespace Ets.Dao.Clienter
                         cityId 
                         FROM dbo.clienter(NOLOCK) WHERE PhoneNo=@PhoneNo AND [Password]=@Password";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@PhoneNo",SqlDbType.NVarChar);
+            parm.Add("@PhoneNo", SqlDbType.NVarChar);
             parm.SetValue("@PhoneNo", model.phoneNo);
             parm.AddWithValue("@Password", model.passWord);
             DataSet set = DbHelper.ExecuteDataset(SuperMan_Read, sql, parm);
@@ -379,7 +367,7 @@ namespace Ets.Dao.Clienter
         /// <param name="model"></param>
         /// <returns></returns>
         public int AddClienter(clienter model)
-        { 
+        {
             string sql = @"INSERT INTO clienter
                            ([PhoneNo]
                            ,[recommendPhone]
@@ -402,7 +390,7 @@ namespace Ets.Dao.Clienter
             parm.AddWithValue("@InviteCode", model.InviteCode);
             parm.AddWithValue("@City", model.City);
             parm.AddWithValue("@CityId", model.CityId);
-            parm.AddWithValue("@GroupId", model.GroupId); 
+            parm.AddWithValue("@GroupId", model.GroupId);
             object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, parm);
             if (i != null)
             {
@@ -412,7 +400,7 @@ namespace Ets.Dao.Clienter
 
         }
 
-         
+
         /// <summary>
         /// 抢单
         /// </summary>
@@ -420,14 +408,14 @@ namespace Ets.Dao.Clienter
         /// <param name="orderNo"></param>
         /// <returns></returns>
         public bool RushOrder(int userId, string orderNo)
-        {   
+        {
             string sql = @" update [order] set clienterId=@clienterId,Status=@Status where OrderNo=@OrderNo and [Status]=0 ";//未抢订单才更新
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@clienterId", userId);
-            parm.AddWithValue("@Status",ConstValues.ORDER_ACCEPT);
+            parm.AddWithValue("@Status", ConstValues.ORDER_ACCEPT);
             parm.Add("@OrderNo", SqlDbType.NVarChar);
             parm.SetValue("@OrderNo", orderNo);
-             
+
             return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Read, sql, parm)) > 0;
 
         }
@@ -438,13 +426,13 @@ namespace Ets.Dao.Clienter
         /// <param name="criteria"></param>
         /// <returns></returns>
         public PageInfo<order> GetOrdersNoLogin(ClientOrderSearchCriteria criteria)
-        {  
-            string where = " 1=1 "; 
+        {
+            string where = " 1=1 ";
             if (criteria.status != null && criteria.status.Value != -1)
             {
                 where += " and o.[Status]= " + criteria.status.Value;
             }
-            string order = " o.PubDate desc "; 
+            string order = " o.PubDate desc ";
             string columnStr = @"   o.clienterId,
                                     o.OrderNo,
                                     o.Quantity,
@@ -477,7 +465,7 @@ namespace Ets.Dao.Clienter
                                     b.Longitude as BusiLongitude,
                                     b.Latitude as BusiLatitude,o.OrderCommission";
             return new PageHelper().GetPages<order>(SuperMan_Read, criteria.PagingRequest.PageIndex, where, order, columnStr, "[order](NOLOCK) AS o LEFT JOIN business(NOLOCK) AS b ON o.businessId=b.Id", criteria.PagingRequest.PageSize, false);
-        
+
         }
 
         /// <summary>
@@ -496,7 +484,7 @@ namespace Ets.Dao.Clienter
             {
                 return null;
             }
-            return list[0]; 
+            return list[0];
         }
         /// <summary>
         /// 骑士配送统计
@@ -588,42 +576,234 @@ namespace Ets.Dao.Clienter
         /// </summary>
         /// <param name="uploadReceiptModel"></param>
         /// <returns></returns>
-        public string UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel)
+        public OrderOther UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel)
         {
+            OrderOther orderOther = new OrderOther();
+            var oo = GetReceiptInfo(uploadReceiptModel.OrderId);
+            if (oo == null)
+            {
+                orderOther = InsertReceiptInfo(uploadReceiptModel);
+            }
+            else
+            {
+                orderOther = UpdateReceiptInfo(uploadReceiptModel);
+            }
+            return orderOther;
+        }
+
+        /// <summary>
+        /// 增加一条小票信息
+        /// wc
+        /// </summary>
+        /// <param name="uploadReceiptModel"></param>
+        /// <returns></returns>
+        public OrderOther InsertReceiptInfo(UploadReceiptModel uploadReceiptModel)
+        {
+            OrderOther oo = new OrderOther();
             string sql = @"
  insert into dbo.OrderOther
-        ( OrderNo ,
+        ( OrderId ,
           NeedUploadCount ,
           ReceiptPic ,
           HadUploadCount
         )
- values ( @OrderNo ,
+ output Inserted.Id,Inserted.OrderId,Inserted.NeedUploadCount,Inserted.ReceiptPic,Inserted.HadUploadCount
+ values ( @OrderId ,
           @NeedUploadCount , 
           @ReceiptPic ,
           @HadUploadCount 
         );";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@OrderNo", SqlDbType.NVarChar);
-            parm.SetValue("@OrderNo", uploadReceiptModel.OrderNo);
-
+            parm.Add("@OrderId", SqlDbType.Int);
+            parm.SetValue("@OrderId", uploadReceiptModel.OrderId);
             parm.AddWithValue("@NeedUploadCount", uploadReceiptModel.NeedUploadCount);
             parm.AddWithValue("@ReceiptPic", uploadReceiptModel.ReceiptPic);
             parm.AddWithValue("@HadUploadCount", uploadReceiptModel.HadUploadCount);
 
             try
             {
-                object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, parm);
-                if (i != null)
+                DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql, parm);
+                var ooList = MapRows<OrderOther>(dt);
+                if (ooList != null && ooList.Count == 1)
                 {
-                    return ParseHelper.ToInt(i.ToString()).ToString();
+                    return ooList[0];
                 }
             }
             catch (Exception ex)
             {
-                LogHelper.LogWriter("插入orderOther表异常：",new {ex = ex});
-                return "0";
+                LogHelper.LogWriter("插入orderOther表异常：", new { ex = ex });
             }
-            return "0";
+            return oo;
+        }
+
+        /// <summary>
+        /// 添加小票信息
+        /// wc
+        /// </summary>
+        /// <param name="uploadReceiptModel"></param>
+        /// <returns></returns>
+        public OrderOther UpdateReceiptInfo(UploadReceiptModel uploadReceiptModel)
+        {
+            OrderOther oo = new OrderOther();
+            
+            string sql = @"
+  update dbo.OrderOther
+ set    ReceiptPic = ReceiptPic + '|' + @ReceiptPic ,
+        HadUploadCount = HadUploadCount + @HadUploadCount,
+        NeedUploadCount = @NeedUploadCount
+ output Inserted.Id ,
+        Inserted.OrderId ,
+        Inserted.NeedUploadCount ,
+        Inserted.ReceiptPic ,
+        Inserted.HadUploadCount
+ where  OrderId = @OrderId;";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@OrderId", SqlDbType.Int);
+            parm.SetValue("@OrderId", uploadReceiptModel.OrderId);
+            parm.AddWithValue("@NeedUploadCount", uploadReceiptModel.NeedUploadCount);
+            parm.AddWithValue("@HadUploadCount", uploadReceiptModel.HadUploadCount);
+            parm.AddWithValue("@ReceiptPic", uploadReceiptModel.ReceiptPic);
+            try
+            {
+                DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql, parm);
+                var ooList = MapRows<OrderOther>(dt);
+                if (ooList != null && ooList.Count == 1)
+                {
+                    return ooList[0];
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter("更新orderOther表异常：", new { ex = ex });
+            }
+            return oo;
+        }
+        /// <summary>
+        /// 删除小票信息
+        /// wc
+        /// </summary>
+        /// <param name="uploadReceiptModel"></param>
+        /// <returns></returns>
+        public OrderOther DeleteReceiptInfo(UploadReceiptModel uploadReceiptModel)
+        {
+            OrderOther oo = new OrderOther();
+
+            string sql = @"
+  update dbo.OrderOther
+ set    ReceiptPic = @ReceiptPic ,
+        HadUploadCount = HadUploadCount + @HadUploadCount,
+        NeedUploadCount = @NeedUploadCount
+ output Inserted.Id ,
+        Inserted.OrderId ,
+        Inserted.NeedUploadCount ,
+        Inserted.ReceiptPic ,
+        Inserted.HadUploadCount
+ where  OrderId = @OrderId;";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@OrderId", SqlDbType.Int);
+            parm.SetValue("@OrderId", uploadReceiptModel.OrderId);
+            parm.AddWithValue("@NeedUploadCount", uploadReceiptModel.NeedUploadCount);
+            parm.AddWithValue("@HadUploadCount", uploadReceiptModel.HadUploadCount);
+            parm.AddWithValue("@ReceiptPic", uploadReceiptModel.ReceiptPic);
+            try
+            {
+                DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql, parm);
+                var ooList = MapRows<OrderOther>(dt);
+                if (ooList != null && ooList.Count == 1)
+                {
+                    return ooList[0];
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter("删除更新orderOther表异常：", new { ex = ex });
+            }
+            return oo;
+        }
+
+        /// <summary>
+        /// 根据订单号获取该订单的小票信息
+        /// wc
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns>OrderOther</returns>
+        public OrderOther GetReceiptInfo(int orderId)
+        {
+            string sql = @"select oo.Id ,
+        oo.OrderId ,
+        oo.NeedUploadCount ,
+        oo.ReceiptPic ,
+        oo.HadUploadCount
+from    dbo.OrderOther oo ( nolock )
+where   oo.OrderId = @OrderId;";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@OrderId", SqlDbType.Int);
+            parm.SetValue("@OrderId", orderId);
+
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            var ooList = MapRows<OrderOther>(dt);
+            if (ooList != null && ooList.Count == 1)
+            {
+                return MapRows<OrderOther>(dt)[0];
+            }
+            else
+            {
+                return null;
+            }
+        }
+        /// <summary>
+        /// 删除小票信息
+        /// wc
+        /// </summary>
+        /// <param name="uploadReceiptModel"></param>
+        /// <returns></returns>
+        public OrderOther DeleteReceipt(UploadReceiptModel uploadReceiptModel)
+        {
+            string delPic = uploadReceiptModel.ReceiptPic;
+
+            //更新小票信息
+            OrderOther oo = GetReceiptInfo(uploadReceiptModel.OrderId);
+            if (oo != null)
+            {
+                List<string> listReceiptPic = ImageCommon.GetListImgString(oo.ReceiptPic);
+
+                Regex regex = new Regex(@"(/\d{4}/\d{2}/\d{2}.*?)\.jpg", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline);
+                MatchCollection matchCollection = regex.Matches(delPic);
+                string delPicDir="1.jpg";
+                foreach (Match match in matchCollection)
+                {
+                   delPicDir  = match.Value;
+                   listReceiptPic.Remove(delPicDir);
+                }
+                string ppath = ConfigSettings.Instance.FileUploadPath + "\\" + ConfigSettings.Instance.FileUploadFolderNameCustomerIcon;
+                var delDir = ppath + delPicDir;
+
+                var fileName = Path.GetFileName(delDir);
+                 
+                int fileNameLastDot = fileName.LastIndexOf('.');
+                //原图 
+                string orginalFileName = string.Format("{0}{1}{2}", ppath +"\\" + fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
+
+                //删除磁盘中的裁图
+                FileHelper.DeleteFile(delDir);
+                //删除缩略图
+                FileHelper.DeleteFile(orginalFileName);
+                uploadReceiptModel.ReceiptPic = String.Join("|", listReceiptPic.ToArray());
+
+                OrderOther ooo = DeleteReceiptInfo(uploadReceiptModel);
+                if (oo != null)
+                {
+                    return ooo;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

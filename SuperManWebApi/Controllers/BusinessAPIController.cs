@@ -19,7 +19,8 @@ using Ets.Service.Provider.Order;
 using Ets.Service.Provider.Common;
 using Ets.Service.IProvider.User;
 using ETS.Cacheing;
-using Ets.Model.ParameterModel.Clienter; 
+using Ets.Model.ParameterModel.Clienter;
+using ETS.Const; 
 namespace SuperManWebApi.Controllers
 {
     public class BusinessAPIController : ApiController
@@ -130,20 +131,18 @@ namespace SuperManWebApi.Controllers
             try
             {
                 img = System.Drawing.Image.FromStream(file.InputStream);
-               
-                string originSize = "_0_0";
- 
+                
                 //var fileName = string.Format("{0}_{1}_{2}", DateTime.Now.ToString("yyyyMMddhhmmssfff"), new Random().Next(1000), file.FileName);
 
                 var fileName = ETS.Util.ImageTools.GetFileName("B", Path.GetExtension(file.FileName));
 
                 int fileNameLastDot = fileName.LastIndexOf('.');
                 //原图
-                string rFileName = string.Format("{0}{1}{2}", fileName.Substring(0, fileNameLastDot), originSize, Path.GetExtension(fileName));
+                string rFileName = string.Format("{0}{1}{2}", fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
                 //保存到数据库的目录结构，年月日
                 string saveDbPath;
                 //fullDir 保存到 磁盘的 完整路径
-                string fullDir = ETS.Util.ImageTools.CreateDirectory(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath, out saveDbPath);
+                string fullDir = ETS.Util.ImageTools.CreateDirectory(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath,"", out saveDbPath);
                 if (fullDir == "0")
                 {
                     LogHelper.LogWriter("上传图片失败：", new { ex = "检查是否有权限创建目录" });
