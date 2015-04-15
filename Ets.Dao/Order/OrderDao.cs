@@ -1284,8 +1284,8 @@ where   o.Id = @orderId;
         /// <returns></returns>
         public bool UpdateAccountBalanceByClienterId(OrderListModel model, OrderOptionModel orderOptionModel)
         {
-           
-            string remark = "订单【" + model.OrderNo + "】取消";
+
+            string remark = "取消订单【" + model.OrderNo + "】";
             string sql =
                 @"UPDATE clienter 
                     SET AccountBalance=AccountBalance-@OrderCommission
@@ -1351,43 +1351,7 @@ where   o.Id = @orderId;
             parm.AddWithValue("@Status", 3);
             parm.AddWithValue("@OrderNo", model.OrderNo);
             parm.AddWithValue("@Platform", 3);
-            parm.AddWithValue("@Remark", remark+"，操作描述：【"+  orderOptionModel.OptLog+"】");
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
-        }
-        /// <summary>
-        /// 修改骑士收入
-        /// danny-20150414
-        /// </summary>
-        /// <returns></returns>
-        public bool InsertAccountBalanceRecords(OrderListModel model)
-        {
-            string remark = "订单【" + model.OrderNo+"】取消";
-            string sql =
-                @"INSERT INTO Records 
-                          ( Platform, 
-                            UserId, 
-                            Amount, 
-                            Balance, 
-                            CreateTime, 
-                            AdminId, 
-                            IsDel, 
-                            Remark)
-                  VALUES (  @Platform, 
-                            @UserId, 
-                            @Amount, 
-                            @Balance, 
-                            DEFAULT, 
-                            @AdminId, 
-                            DEFAULT, 
-                            @Remark);";
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@Platform",3);
-            parm.AddWithValue("@UserId", model.clienterId);
-            parm.AddWithValue("@Amount", model.OrderCommission);
-            parm.AddWithValue("@Balance", model.AccountBalance);
-            parm.AddWithValue("@AdminId", model.clienterId);
-            parm.AddWithValue("@IsDel", model.clienterId);
-            parm.AddWithValue("@Remark", remark);
+            parm.AddWithValue("@Remark", remark+"，用户操作描述：【"+  orderOptionModel.OptLog+"】");
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
         /// <summary>
