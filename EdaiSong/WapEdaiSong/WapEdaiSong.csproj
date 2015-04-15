@@ -133,7 +133,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="businessprotocol.html" />
+    <Content Include="clienterprotocol.html" />
+    <Content Include="Content\box.css" />
     <Content Include="Content\page.css" />
+    <Content Include="Content\rcg.css" />
     <Content Include="Global.asax" />
     <Content Include="Images\apk.png" />
     <Content Include="Images\gotop.png" />

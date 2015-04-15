@@ -103,6 +103,9 @@ namespace SuperMan.Controllers
             return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.AllowGet);
         }
 
+
+     
+
         #region 设置4大佣金补贴策略 
 
         /// <summary>
@@ -172,5 +175,92 @@ namespace SuperMan.Controllers
             }
             return values;
         }
+
+
+        #region 跨店抢单设置
+
+        /// <summary>
+        /// 跨店抢单
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult OverStoreSubsidies()
+        {
+            var listprice = new GlobalConfigProvider().GetOverStoreSubsidies();
+            return View(listprice);
+        }
+
+        /// <summary>
+        /// 是否开启跨店抢单补贴(0不开启,1开启)
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult SetIsStartOverStoreSubsidies(string IsStartOverStoreSubsidies)
+        {
+            bool b = new GlobalConfigProvider().UpdateSubsidies(UserContext.Current.Name, IsStartOverStoreSubsidies, "是否开启跨店抢单补贴(0不开启,1开启)-设置之后的值:" + IsStartOverStoreSubsidies, "IsStartOverStoreSubsidies");
+            return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.AllowGet);
+        }
+
+        
+        /// <summary>
+        /// 添加跨店抢单
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult AddOverStoreSubsidies(GlobalConfigSubsidies model)
+        {
+            var list = new GlobalConfigProvider().GetOverStoreSubsidies(); 
+            list.Add(model);
+            var newlist = (from globalConfigTimeSubsidiese in list
+                           orderby ParseHelper.ToDouble(globalConfigTimeSubsidiese.Value1) ascending 
+                select globalConfigTimeSubsidiese).ToList();
+            string values = GetTimesValues(newlist);
+            bool b = new GlobalConfigProvider().UpdateSubsidies(UserContext.Current.Name, values, "添加跨店抢单-设置之后的值:" + values, "OverStoreSubsidies");
+            return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.AllowGet);
+        }
+        /// <summary>
+        /// 删除跨店抢单
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public JsonResult DeleteOverStoreSubsidies(int id)
+        {
+            //读取全部配置
+            var list = new GlobalConfigProvider().GetOverStoreSubsidies();
+            //移除某一配置
+            var newlist = (from globalConfigTimeSubsidiese in list
+                           where globalConfigTimeSubsidiese.Id != id
+                           select globalConfigTimeSubsidiese).ToList();
+            string values = GetTimesValues(newlist);
+            bool b = new GlobalConfigProvider().UpdateSubsidies(UserContext.Current.Name, values, "删除跨店抢单-设置之后的值:" + values, "OverStoreSubsidies");
+            return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.AllowGet);
+        }
+
+        /// <summary>
+        /// 修改跨店抢单
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult UpdateOverStoreSubsidies(GlobalConfigSubsidies model)
+        {
+            //读取全部时间配置
+            var list = new GlobalConfigProvider().GetOverStoreSubsidies();
+
+            var mm = list.FirstOrDefault(subsidies => subsidies.Id == model.Id);
+            if (mm != null)
+            {
+                mm.Value1 = model.Value1;
+                mm.Value2 = model.Value2;
+            }
+            var newlist = (from globalConfigTimeSubsidiese in list
+                           orderby ParseHelper.ToDouble(globalConfigTimeSubsidiese.Value1) ascending
+                           select globalConfigTimeSubsidiese).ToList();
+            string values = GetTimesValues(newlist);
+            bool b = new GlobalConfigProvider().UpdateSubsidies(UserContext.Current.Name, values, "修改跨店抢单-设置之后的值:" + values, "OverStoreSubsidies");
+            return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.AllowGet);
+        }
+
+        
+        #endregion 
+       
     }
 }

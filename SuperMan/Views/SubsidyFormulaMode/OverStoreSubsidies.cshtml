@@ -1,18 +1,32 @@
 ﻿
 @{
-    ViewBag.Title = "TimeSubsidies";
+    ViewBag.Title = "OverStoreSubsidies";
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
 }
 <div class="zpManage zpSh">
     <h2 class="crumbs">
-        您所在位置：补贴设置 > 时间补贴设置
+        您所在位置：补贴设置 > 跨店抢单奖励设置
     </h2>
     <div class="SearchMd">
         <table border="0" cellspacing="0" cellpadding="0">
             <tr>
                 <td> 
+                    <p style="color: red;">  
+ 说明：骑士抢多家商铺订单，奖励金额将在每天0点开始发放。
+    <br/>
+            1.不能为负数，必须是数字。 <br/>
+
+            2.抢10家以上店铺订单并完成的骑士，奖励机制和抢10家商铺一样。<br/>
+
+            3.奖励金额暂定范围：2元—３0元<br/>
+
+</p>
+                </td>
+            </tr>
+            <tr>
+                <td> 
                     <input type="submit" value="新增" class="searchBtn" onclick="showAdd();" id="btnAdd" /> 
-                    <label style="color: red">会按补贴时间自动正序排序</label>
+                    <label style="color: red">会按跨店数量自动正序排序</label>
                     <a href="/SubsidyFormulaMode/SubsidyFormulaMode">佣金补贴策略设置</a>
                 </td>
             </tr>
@@ -22,8 +36,8 @@
         <thead> 
             <tr class="tdbg">
                 <th width="%5">编号</th>
-                <th>补贴时间(分钟)</th>
-                <th>补贴金额(元)</th>
+                <th>跨店数量(个)</th>
+                <th>奖励金额(元)</th>
                 <th>操作</th>
             </tr>
         </thead>
@@ -51,15 +65,15 @@
 <div>
     <div class="add-openbox add-form" id="addDiv" style="width:500px">
         <h2>
-            <p id="statusFin">新增时间补贴</p>
+            <p id="statusFin">新增跨店抢单补贴</p>
         </h2>
         <fieldset>
             <div class="control-group" style="width: 250px;margin: 0 auto;">
-                <label>补贴时间</label> 
+                <label>跨店数量</label> 
                 <input  name="txtTime" id="txtTime" type="text">
             </div>  
             <div class="control-group" style="width: 250px;margin: 0 auto;">
-                <label>补贴金额</label> 
+                <label>奖励金额</label> 
                 <input  name="txtPrice" id="txtPrice" type="text">
             </div> 
         </fieldset>
@@ -73,16 +87,16 @@
 <div>
     <div class="add-openbox add-form" id="updateDiv" style="width:500px">
         <h2>
-            <p id="statusFin">修改时间补贴</p>
+            <p id="statusFin">修改跨店抢单补贴</p>
         </h2>
         <fieldset>
             <input type="hidden" id="hidid"/>
             <div class="control-group" style="width: 250px;margin: 0 auto;">
-                <label >补贴时间</label> 
+                <label >跨店数量</label> 
                 <input  name="txtTimeu" id="txtTimeu" type="text">
             </div>  
             <div class="control-group" style="width: 250px;margin: 0 auto;">
-                <label >补贴金额</label> 
+                <label >奖励金额</label> 
                 <input  name="txtPriceu" id="txtPriceu" type="text">
             </div> 
         </fieldset>
@@ -96,26 +110,26 @@
     var adminjs = new adminglass(); //实例化后台类  
     //新增
     $("#btnConfimAdd").on('click', function () {
-        var txtTime = $("#txtTime").val();
-        var txtPrice = $("#txtPrice").val();
-        if (txtTime == "") {
-            alert("请输入分钟数!");
+        var Value1 = $("#txtTime").val();
+        var Value2 = $("#txtPrice").val();
+        if (Value1 == "") {
+            alert("请输入跨店数量!");
             return;
         }
-        if (txtPrice == "") {
-            alert("请输入价钱!");
+        if (Value2 == "") {
+            alert("请输入金额!");
             return;
         }
-        if (isNaN(txtTime)) {
-            alert("请输入分钟数!");
+        if (isNaN(Value1)) {
+            alert("请输入跨店数量!");
             return;
         }
-        if (isNaN(txtPrice)) {
-            alert("请输入价钱!");
+        if (isNaN(Value2)) {
+            alert("请输入金额!");
             return;
         }
-        var pars = { "Id": 0, "Value1": txtTime, "Value2": txtPrice };
-        var url = "/SubsidyManager/AddTimeSubsidies";
+        var pars = { "Id": 0, "Value1": Value1, "Value2": Value2 };
+        var url = "/SubsidyFormulaMode/AddOverStoreSubsidies";
         $.ajax({
             type: 'POST',
             url: url,
@@ -124,7 +138,7 @@
             success: function (result) {
                 if (result.IsSuccess) {
                     alert("添加成功!");
-                    window.location.href = "/SubsidyManager/TimeSubsidies/";
+                    window.location.href = "/SubsidyFormulaMode/OverStoreSubsidies/";
                 } else {
                     alert("添加失败!");
                 }
@@ -135,7 +149,7 @@
     function deleteIt(id) {
         if (confirm("确定删除?")) { 
             var pars = { "Id": id };
-            var url = "/SubsidyManager/DeleteTimeSubsidies?id=" + id;
+            var url = "/SubsidyFormulaMode/DeleteOverStoreSubsidies?id=" + id;
             $.ajax({
                 type: 'GET',
                 url: url,
@@ -143,7 +157,7 @@
                 success: function (result) {
                     if (result.IsSuccess) {
                         alert("删除成功!");
-                        window.location.href = "/SubsidyManager/TimeSubsidies/";
+                        window.location.href = "/SubsidyFormulaMode/OverStoreSubsidies/";
                     } else {
                         alert("删除失败!");
                     }
@@ -153,27 +167,27 @@
     }
     //修改
     $("#btnUpdateConfim").on('click', function () {
-        var txtTime = $("#txtTimeu").val();
-        var txtPrice = $("#txtPriceu").val();
+        var Value1 = $("#txtTimeu").val();
+        var Value2 = $("#txtPriceu").val();
         var hidid = $("#hidid").val();
-        if (txtTime == "") {
-            alert("请输入分钟数!");
+        if (Value1 == "") {
+            alert("请输入跨店数量!");
             return;
         }
-        if (txtPrice == "") {
-            alert("请输入价钱!");
+        if (Value2 == "") {
+            alert("请输入金额!");
             return;
         }
-        if (isNaN(txtTime)) {
-            alert("请输入分钟数!");
+        if (isNaN(Value1)) {
+            alert("请输入跨店数量!");
             return;
         }
-        if (isNaN(txtPrice)) {
-            alert("请输入价钱!");
+        if (isNaN(Value2)) {
+            alert("请输入金额!");
             return;
         }
-        var pars = { "Id": hidid, "Value1": txtTime, "Value2": txtPrice };
-        var url = "/SubsidyManager/UpdateTimeSubsidies";
+        var pars = { "Id": hidid, "Value1": Value1, "Value2": Value2 };
+        var url = "/SubsidyFormulaMode/UpdateOverStoreSubsidies";
         $.ajax({
             type: 'POST',
             url: url,
@@ -181,7 +195,7 @@
             success: function (result) {
                 if (result.IsSuccess) {
                     alert("修改成功!");
-                    window.location.href = "/SubsidyManager/TimeSubsidies/";
+                    window.location.href = "/SubsidyFormulaMode/OverStoreSubsidies/";
                 } else {
                     alert("修改失败!");
                 }
