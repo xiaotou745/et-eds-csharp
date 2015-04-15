@@ -34,6 +34,7 @@ using Ets.Dao.User;
 using Ets.Dao.GlobalConfig;
 using Ets.Service.Provider.Common;
 using ETS.Const;
+using Ets.Service.Provider.Clienter;
 
 namespace Ets.Service.Provider.Order
 {
@@ -41,6 +42,8 @@ namespace Ets.Service.Provider.Order
     {
         private OrderDao OrderDao = new OrderDao();
         private BusinessProvider iBusinessProvider = new BusinessProvider();
+        private ClienterProvider iClienterProvider = new ClienterProvider();
+
         private ISubsidyProvider iSubsidyProvider = new SubsidyProvider();
         //和区域有关的  wc
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
@@ -61,6 +64,7 @@ namespace Ets.Service.Provider.Order
                 if (from.clienterId != null)
                     resultModel.userId = from.clienterId.Value;
                 resultModel.OrderNo = from.OrderNo;
+                resultModel.OrderId = from.Id; //订单Id
                 resultModel.OrderCount = from.OrderCount;
                 var orderComm = new OrderCommission() { Amount = from.Amount, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount};
                 var amount = DefaultOrPriceProvider.GetCurrenOrderPrice(orderComm);
@@ -88,7 +92,7 @@ namespace Ets.Service.Provider.Order
                 resultModel.IsPay = from.IsPay.Value;
                 resultModel.Remark = from.Remark == null ? "" : from.Remark;
                 resultModel.Status = from.Status.Value;
-
+                resultModel.HadUploadCount = from.HadUploadCount;
                 resultModel.GroupId = from.GroupId;
                 if (from.GroupId == SystemConst.Group3) //全时 需要做验证码验证
                     resultModel.NeedPickupCode = 1;
@@ -144,6 +148,7 @@ namespace Ets.Service.Provider.Order
                 if (from.clienterId != null)
                     resultModel.userId = from.clienterId.Value;
                 resultModel.OrderNo = from.OrderNo;
+                resultModel.OrderId = from.Id;  //订单Id
                 resultModel.OrderCount = from.OrderCount;
                 var orderComm = new OrderCommission() { Amount = from.Amount,DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount };
                 var amount = DefaultOrPriceProvider.GetCurrenOrderPrice(orderComm);
@@ -151,7 +156,7 @@ namespace Ets.Service.Provider.Order
                 resultModel.Amount = amount; //C端 获取订单的金额 Edit bycaoheyang 20150305
                 resultModel.businessName = from.BusinessName;
                 resultModel.businessPhone = from.BusinessPhone;
-
+                resultModel.HadUploadCount = from.HadUploadCount;
                 resultModel.GroupId = from.GroupId;
                 if (from.GroupId == SystemConst.Group3)
                     resultModel.NeedPickupCode = 1;

@@ -84,6 +84,7 @@
     <Compile Include="Cacheing\AbstractCache.cs" />
     <Compile Include="Cacheing\CacheFactory.cs" />
     <Compile Include="Cacheing\LocalCache.cs" />
+    <Compile Include="Const\ImageConst.cs" />
     <Compile Include="Const\RedissCacheKey.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Const\ClienterConst.cs" />
@@ -108,6 +109,7 @@
     <Compile Include="IO\Common.cs" />
     <Compile Include="IO\Excel.cs" />
     <Compile Include="IO\ExcelWriter.cs" />
+    <Compile Include="IO\FileHelper.cs" />
     <Compile Include="IO\FileIO.cs" />
     <Compile Include="IO\INIFileManager.cs" />
     <Compile Include="IO\IniParser.cs" />
