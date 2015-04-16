@@ -312,10 +312,11 @@ namespace SuperManWebApi.Controllers
             }
             var pagedList = ClienterLogic.clienterLogic().GetOrdersForSongCanOrQuCan(criteria);
             var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
-            if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
-            {
-                lists = lists.OrderBy(i => i.distance).ToList();
-            }
+            lists = lists.OrderByDescending(i => i.pubDate).ToList();
+            //if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
+            //{
+            //    lists = lists.OrderBy(i => i.distance).ToList();
+            //}
             //LogHelper.LogWriter("送餐任务数据：", new { lists = lists });
             return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
         }
@@ -356,10 +357,11 @@ namespace SuperManWebApi.Controllers
             }
             var pagedList = ClienterLogic.clienterLogic().GetOrdersForSongCanOrQuCan(criteria);
             var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
-            if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
-            {
-                lists = lists.OrderBy(i => i.distance).ToList();
-            }
+            //if (!model.isLatest) //不是最新任务的话就按距离排序,否则按发布时间排序
+            //{
+            //    lists = lists.OrderBy(i => i.distance).ToList();
+            //}
+            lists = lists.OrderByDescending(i => i.pubDate).ToList();
             //LogHelper.LogWriter("餐盒任务数据", new { lists = lists });
             return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, lists.ToArray());
         }
