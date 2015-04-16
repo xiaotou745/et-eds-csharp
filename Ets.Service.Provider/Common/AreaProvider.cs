@@ -34,11 +34,11 @@ namespace Ets.Service.Provider.Common
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string key = RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity_New;
 
-            if (Config.ApiVersion == version)
-            {
-                //如果配置开通城市版本相同，则返回空数据
-                return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.Newest, null);
-            }
+            //if (Config.ApiVersion == version)
+            //{
+            //    //如果配置开通城市版本相同，则返回空数据
+            //    return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.Newest, null);
+            //}
             string strAreaList = redis.Get<string>(key);
             if (!string.IsNullOrEmpty(strAreaList))
             {
