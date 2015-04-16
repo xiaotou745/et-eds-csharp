@@ -576,6 +576,8 @@ namespace SuperManWebApi.Controllers
         [ApiVersionStatistic]
         public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel> UploadReceipt(string Version)
         {
+
+            //SuperManCore.LogHelper.LogWriter("上传小票：" ,new {msg = HttpContext.Current.Request});
             if (HttpContext.Current.Request.Form.Count == 0)
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.NOFormParameter);

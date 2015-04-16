@@ -587,7 +587,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
             OrderOther orderOther = new OrderOther();
             int orderStatus = 0;
             var oo = GetReceiptInfo(uploadReceiptModel.OrderId, out orderStatus);
-            if (oo == null)
+            if (oo.Id == 0)
             {
                 orderOther = InsertReceiptInfo(uploadReceiptModel);
             }
