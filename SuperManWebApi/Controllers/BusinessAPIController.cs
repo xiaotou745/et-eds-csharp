@@ -511,6 +511,7 @@ namespace SuperManWebApi.Controllers
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Area.AreaModelList> GetOpenCity(string Version)
         {
             AreaProvider area = new AreaProvider();
+
             return area.GetOpenCity(Version);
         }
     }

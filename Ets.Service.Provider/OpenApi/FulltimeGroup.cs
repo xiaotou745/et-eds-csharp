@@ -24,9 +24,9 @@ namespace Ets.Service.IProvider.OpenApi
     /// </summary>
     public class FulltimeGroup : IGroupProviderOpenApi
     {
-        public const string app_key = "fulltime";
+        public  string app_key = ConfigSettings.Instance.FulltimeAppkey;
         public const string v = "1.0";
-        public const string app_secret = "E7A1C84E8F47404FB8C1CDC1FA48A912";
+        public  string app_secret = ConfigSettings.Instance.FulltimeAppsecret;
         /// <summary>
         /// 回调万达接口同步订单状态  add by caoheyang 20150326
         /// </summary>

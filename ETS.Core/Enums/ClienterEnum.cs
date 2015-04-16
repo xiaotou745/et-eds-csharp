@@ -17,7 +17,12 @@ namespace ETS.Enums
         [DisplayText("目标工作状态不能为空！")]
         WorkStatusError = 3,
         [DisplayText("骑士不能为空")]
-        ClienterError = 4
+        ClienterError = 4,
+        [DisplayText("开心工作哦~")]
+        StartWork = 5,
+        [DisplayText("好好休息吧~")]
+        StartSleep = 6
+
     }
 
 }

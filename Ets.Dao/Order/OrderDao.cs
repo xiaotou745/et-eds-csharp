@@ -38,7 +38,6 @@ namespace Ets.Dao.Order
             StringBuilder columnStr = new StringBuilder(@" 
         o.Id ,
         o.OrderNo ,
-        o.OriginalOrderNo ,
         o.PickUpAddress ,
         o.PubDate ,
         o.ReceviceName ,
@@ -59,7 +58,7 @@ namespace Ets.Dao.Order
         o.ReceviceLatitude ,
         o.OrderFrom ,
         o.OriginalOrderId ,
-        o.OriginalOrderNo ,
+        ISNULL(o.OriginalOrderNo,'') OriginalOrderNo,
         o.Quantity ,
         o.ReceiveProvince ,
         o.ReceiveArea ,
@@ -647,7 +646,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             }
             if (criteria.GroupId != null && criteria.GroupId != 0)
             {
-                sbSqlWhere.AppendFormat(" AND o.GroupId={0} ", criteria.GroupId);
+                sbSqlWhere.AppendFormat(" AND g.Id={0} ", criteria.GroupId);
             }
             if (!string.IsNullOrWhiteSpace(criteria.businessCity))
             {
@@ -857,10 +856,10 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
         {
             StringBuilder upSql = new StringBuilder();
             upSql.AppendFormat(@" UPDATE dbo.[order]
+ SET    [Status] = @status
  output Inserted.Id,GETDATE(),'{0}','',Inserted.businessId,Inserted.[Status],{1}
  into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
- SET    [Status] = @status
- WHERE  OrderNo = @orderNo",SuperPlatform.商家,(int)SuperPlatform.商家);
+ WHERE  OrderNo = @orderNo", SuperPlatform.商家,(int)SuperPlatform.商家);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@orderNo", SqlDbType.NVarChar);

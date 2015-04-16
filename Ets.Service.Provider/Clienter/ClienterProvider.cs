@@ -47,7 +47,27 @@ namespace Ets.Service.Provider.Clienter
                 if (ordercount > 0)
                     return ETS.Enums.ChangeWorkStatusEnum.OrderError;
             }
-            return clienterDao.ChangeWorkStatusToSql(paraModel) > 0 ? ETS.Enums.ChangeWorkStatusEnum.Success : ETS.Enums.ChangeWorkStatusEnum.Error;
+            int changeResult = clienterDao.ChangeWorkStatusToSql(paraModel);
+            if (changeResult > 0)
+            {
+                if (paraModel.WorkStatus == 0)  //上班
+                {
+                    return ETS.Enums.ChangeWorkStatusEnum.StartWork;
+                }
+                else if (paraModel.WorkStatus == 1) //下班
+                {
+                    return ETS.Enums.ChangeWorkStatusEnum.StartSleep;
+                }
+                else
+                {
+                    return ETS.Enums.ChangeWorkStatusEnum.Error;
+                }
+            }
+            else
+            {
+                return ETS.Enums.ChangeWorkStatusEnum.Error;
+            }
+            //return clienterDao.ChangeWorkStatusToSql(paraModel) > 0 ? ETS.Enums.ChangeWorkStatusEnum.Success : ETS.Enums.ChangeWorkStatusEnum.Error;
         }
 
         /// <summary>
