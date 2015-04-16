@@ -147,7 +147,7 @@ namespace Ets.Service.Provider.Order
             if (orderList != null && orderList.ContentList != null)
             {
                 for (int i = 0; i < orderList.ContentList.Count; i++)
-                { 
+                {
                     var resultModel = new ClientOrderNoLoginResultModel();
                     var from = orderList.ContentList[i];
                     if (from.clienterId != null)
@@ -430,6 +430,7 @@ namespace Ets.Service.Provider.Order
                 paramodel.store_info.area_code = storeCodes[2];
             }
             #endregion
+
             #region 设置用户的省市区编码信息 add by caoheyang 20150407
             string orderCodeInfo = new AreaProvider().GetOpenCode(new Ets.Model.ParameterModel.Area.ParaAreaNameInfo()
             {
@@ -446,6 +447,26 @@ namespace Ets.Service.Provider.Order
                 paramodel.address.city_code = storeCodes[1];
                 paramodel.address.area_code = storeCodes[2];
             }
+            #endregion
+
+            #region  当第三方未传递经纬的情况下，根据地址调用百度接口获取经纬度信息  add by caoheyang 20150416
+
+            if (paramodel.store_info.longitude == 0 || paramodel.store_info.latitude == 0)  //店铺经纬度
+            {
+                Tuple<decimal, decimal> localtion = BaiDuHelper.GeoCoder(paramodel.store_info.province
+                    + paramodel.store_info.city + paramodel.store_info.area + paramodel.store_info.address);
+                paramodel.store_info.longitude = localtion.Item1;  //精度
+                paramodel.store_info.latitude = localtion.Item2; //纬度
+            }
+
+            if (paramodel.address.longitude == 0 || paramodel.address.latitude == 0)  //店铺经纬度
+            {
+                Tuple<decimal, decimal> localtion = BaiDuHelper.GeoCoder(paramodel.store_info.province
+                    + paramodel.address.city + paramodel.address.area + paramodel.address.address);
+                paramodel.address.longitude = localtion.Item1;  //精度
+                paramodel.address.latitude = localtion.Item2; //纬度
+            }
+
             #endregion
             string orderNo = null; //订单号码
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
