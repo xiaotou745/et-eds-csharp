@@ -19,7 +19,7 @@ namespace Ets.Service.Provider.Common
 {
     public class AreaProvider : IAreaProvider
     {
-         private AreaDao dao = new AreaDao();
+        private AreaDao dao = new AreaDao();
         /// <summary>
         /// 获取开通城市的省市区
         /// 窦海超
@@ -70,36 +70,11 @@ namespace Ets.Service.Provider.Common
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             IList<Model.DomainModel.Area.AreaModel> list = dao.GetOpenCitySql();
             areaList.AreaModels = list;
+            areaList.Version = Config.ApiVersion;
             if (list != null)
             {
-                redis.Set(RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity_New, Letao.Util.JsonHelper.ToJson(list));
+                redis.Set(RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity_New, Letao.Util.JsonHelper.ToJson(areaList));
             }
-        }
-
-        /// <summary>
-        /// 获取开通城市
-        /// danny-20150327
-        /// </summary>
-        /// <returns></returns>
-        public Model.Common.ResultModel<List<AreaModel>> GetOpenCityInfo()
-        {
-            var redis = new ETS.NoSql.RedisCache.RedisCache();
-            string key = RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity_New;
-            //读取缓存
-            var cacheValue = redis.Get<string>(key);
-            //redis.Delete(key);
-            if (!string.IsNullOrEmpty(cacheValue))
-            {
-                return ResultModel<List<AreaModel>>.Conclude(ETS.Enums.CityStatus.Newest, Letao.Util.JsonHelper.ToObject<List<AreaModel>>(cacheValue));
-            }
-            //取数据库
-            List<AreaModel> list = dao.GetOpenCitySql().ToList();
-            //CacheFactory.Instance.AddObject(key, list);
-            if (list != null)
-            {
-                redis.Set(key, Letao.Util.JsonHelper.ToJson(list));
-            }
-            return ResultModel<List<AreaModel>>.Conclude(ETS.Enums.CityStatus.Newest, list);
         }
         /// <summary>
         /// 获取开通城市(只有市)
@@ -108,7 +83,7 @@ namespace Ets.Service.Provider.Common
         /// <returns></returns>
         public Model.Common.ResultModel<List<AreaModel>> GetOpenCityOfSingleCity()
         {
-            var openCityList = GetOpenCityInfo().Result.Where(t => t.JiBie == 2).ToList();
+            var openCityList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 2).ToList();
             return ResultModel<List<AreaModel>>.Conclude(ETS.Enums.CityStatus.Newest, openCityList);
         }
         /// <summary>
