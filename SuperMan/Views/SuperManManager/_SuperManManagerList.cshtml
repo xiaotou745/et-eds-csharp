@@ -1,4 +1,6 @@
 ﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Clienter.ClienterListModel>
+@using Ets.Service.Provider.Clienter
+@using Ets.Service.Provider.Common
 @using SuperManBusinessLogic.Group_Logic
 @using Webdiyer.WebControls.Mvc
 
@@ -14,8 +16,9 @@
             <th>照片</th>
             <th>申请时间</th>
             <th>帐户余额</th>
-            <th>集团名称</th>
+            <th>集团名称</th> 
             <th>审核状态</th>
+            <th>推荐人</th>
             <th>操作</th>
         </tr>
     </thead>
@@ -50,7 +53,7 @@
                     <td>
                         @if (item.GroupId != null) //当前商户有集团信息
                         {
-                            @Html.Raw(GroupLogic.groupLogic().GetGroupName(Convert.ToInt32(item.GroupId)))
+                            @Html.Raw(new GroupProvider().GetGroupName(Convert.ToInt32(item.GroupId)))
                         }
                     </td>
                     @{
@@ -73,7 +76,23 @@
                             statusView = "未审核";
                         }
                     }
-                    <td>@statusView</td>
+                    <td>@statusView</td> 
+                        @{
+                            var recomname = "";
+                            if (string.IsNullOrEmpty(item.recommendPhone))
+                            {
+                                recomname = "无推荐人";
+                            }
+                            var reslut = new ClienterProvider().GetUserInfoByUserPhoneNo(item.recommendPhone);
+                            if (reslut != null)
+                            {
+                                recomname = reslut.TrueName+"/"+reslut.PhoneNo;
+                            }
+                        } 
+                    <td> 
+                        @recomname
+                    </td>
+                   
                     <td>
                         @{
                         int idCard = string.IsNullOrEmpty(item.IDCard) ? 0 : 1;

@@ -116,7 +116,7 @@ namespace Ets.Dao.Clienter
                                     b.GroupId,ISNULL(oo.HadUploadCount,0) HadUploadCount ";
             string sql_from = @" [order](NOLOCK) AS o LEFT JOIN business(NOLOCK) AS b ON o.businessId=b.Id  
                                  left join dbo.OrderOther oo (nolock) on o.Id = oo.OrderId ";
-            return new PageHelper().GetPages<ClientOrderModel>(SuperMan_Read, criteria.PagingRequest.PageIndex, where, criteria.status == 1 ? "o.ActualDoneDate DESC " : " o.OrderId ", columnStr, sql_from, criteria.PagingRequest.PageSize, false);
+            return new PageHelper().GetPages<ClientOrderModel>(SuperMan_Read, criteria.PagingRequest.PageIndex, where, criteria.status == 1 ? "o.ActualDoneDate DESC " : " o.Id ", columnStr, sql_from, criteria.PagingRequest.PageSize, false);
         }
 
         /// <summary>
@@ -587,7 +587,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
             OrderOther orderOther = new OrderOther();
             int orderStatus = 0;
             var oo = GetReceiptInfo(uploadReceiptModel.OrderId, out orderStatus);
-            if (oo == null)
+            if (oo.Id == 0)
             {
                 orderOther = InsertReceiptInfo(uploadReceiptModel);
             }
@@ -609,18 +609,18 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
         {
             OrderOther oo = new OrderOther();
             string sql = @"
- insert into dbo.OrderOther
-        ( OrderId ,
-          NeedUploadCount ,
-          ReceiptPic ,
-          HadUploadCount
-        )
- output Inserted.Id,Inserted.OrderId,Inserted.NeedUploadCount,Inserted.ReceiptPic,Inserted.HadUploadCount
- values ( @OrderId ,
-          @NeedUploadCount , 
-          @ReceiptPic ,
-          @HadUploadCount 
-        );";
+                            insert into dbo.OrderOther
+                                ( OrderId ,
+                                    NeedUploadCount ,
+                                    ReceiptPic ,
+                                    HadUploadCount
+                                )
+                            output Inserted.Id,Inserted.OrderId,Inserted.NeedUploadCount,Inserted.ReceiptPic,Inserted.HadUploadCount
+                            values ( @OrderId ,
+                                    @NeedUploadCount , 
+                                    @ReceiptPic ,
+                                    @HadUploadCount 
+                            );";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderId", SqlDbType.Int);
             parm.SetValue("@OrderId", uploadReceiptModel.OrderId);
@@ -741,13 +741,14 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
         public OrderOther GetReceiptInfo(int orderId, out int OrderStatus)
         {
             OrderStatus = 0;
+            int orderCount = 0;
             string sql = @"select oo.Id ,
         oo.OrderId ,
         oo.NeedUploadCount ,
         oo.ReceiptPic ,
         oo.HadUploadCount
 from    dbo.OrderOther oo ( nolock )
-where   oo.OrderId = @OrderId;select o.[Status] FROM dbo.[order] o (nolock)
+where   oo.OrderId = @OrderId;select o.[Status],o.OrderCount FROM dbo.[order] o (nolock)
  where o.Id = @OrderId";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderId", SqlDbType.Int);
@@ -756,16 +757,18 @@ where   oo.OrderId = @OrderId;select o.[Status] FROM dbo.[order] o (nolock)
             DataSet dt = DbHelper.ExecuteDataset(SuperMan_Read, sql, parm);
             var ooList = MapRows<OrderOther>(dt.Tables[0]);
             if (dt.Tables[1] != null && dt.Tables[1].Rows.Count > 0)
-            {
+            { 
                 OrderStatus = ParseHelper.ToInt(dt.Tables[1].Rows[0][0], 0);
+                orderCount = ParseHelper.ToInt(dt.Tables[1].Rows[0][1], 0);
             }
-            if (ooList != null && ooList.Count == 1)
+            if (ooList != null && ooList.Count> 0)
             {
+                ooList[0].NeedUploadCount = orderCount;
                 return ooList[0];
             }
             else
             {
-                return null;
+                return new OrderOther() { OrderId = orderId, OrderStatus = OrderStatus, NeedUploadCount = orderCount, HadUploadCount = 0, ReceiptPic = "" };
             }
         }
         /// <summary>

@@ -263,7 +263,35 @@ where   p.name =@ProvinceName
             }
             if (!string.IsNullOrWhiteSpace(closeCityCodeList))
             {
-                sql += string.Format( @"UPDATE PublicProvinceCity SET IsPublic=0 WHERE code IN({0});",closeCityCodeList);
+
+                int code = Convert.ToInt32(closeCityCodeList.Split(',')[0].ToString());
+                sql += string.Format(@"UPDATE PublicProvinceCity SET IsPublic=0 WHERE code IN({0});", closeCityCodeList);
+                sql += string.Format(@"UPDATE PublicProvinceCity 
+                                        SET IsPublic=0
+                                      WHERE code=(SELECT parentid 
+                                                  FROM PublicProvinceCity 
+                                                  WHERE code={0}) 
+                                        AND(
+                                            SELECT COUNT(1) 
+                                            FROM PublicProvinceCity  
+                                            WHERE parentid=(SELECT parentid FROM PublicProvinceCity WHERE code={0}) AND IsPublic=1)=0;
+                                        UPDATE PublicProvinceCity 
+                                        SET IsPublic=0
+                                        WHERE code=(SELECT parentid 
+                                                    FROM PublicProvinceCity 
+                                                    WHERE code=(SELECT parentid 
+                                                                FROM PublicProvinceCity 
+                                                                WHERE code={0})) 
+                                        AND(
+                                                SELECT COUNT(1)
+                                                FROM PublicProvinceCity 
+                                                WHERE parentid=(SELECT code
+                                                                FROM PublicProvinceCity  
+                                                                WHERE code=(SELECT parentid 
+                                                                            FROM PublicProvinceCity 
+                                                                            WHERE code=( SELECT parentid 
+                                                                                        FROM PublicProvinceCity 
+                                                                                        WHERE code={0}))) AND IsPublic=1)=0;", code);
             }
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql) > 0 ? true : false;
         }
