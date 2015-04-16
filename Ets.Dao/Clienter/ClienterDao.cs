@@ -741,6 +741,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
         public OrderOther GetReceiptInfo(int orderId, out int OrderStatus)
         {
             OrderStatus = 0;
+            int orderCount = 0;
             string sql = @"select oo.Id ,
         oo.OrderId ,
         oo.NeedUploadCount ,
@@ -758,15 +759,16 @@ where   oo.OrderId = @OrderId;select o.[Status],o.OrderCount FROM dbo.[order] o 
             if (dt.Tables[1] != null && dt.Tables[1].Rows.Count > 0)
             { 
                 OrderStatus = ParseHelper.ToInt(dt.Tables[1].Rows[0][0], 0);
+                orderCount = ParseHelper.ToInt(dt.Tables[1].Rows[0][1], 0);
             }
-            if (ooList != null && ooList.Count == 1)
+            if (ooList != null && ooList.Count> 0)
             {
-                ooList[0].NeedUploadCount = ParseHelper.ToInt(dt.Tables[1].Rows[0][1], 0);
+                ooList[0].NeedUploadCount = orderCount;
                 return ooList[0];
             }
             else
             {
-                return null;
+                return new OrderOther() { OrderId = orderId, OrderStatus = OrderStatus, NeedUploadCount = orderCount, HadUploadCount = 0, ReceiptPic = "" };
             }
         }
         /// <summary>

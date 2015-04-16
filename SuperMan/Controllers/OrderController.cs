@@ -20,12 +20,6 @@ namespace SuperMan.Controllers
         //Get: /Order  订单管理
         public ActionResult Order()
         {
-            //SuperManDataAccess.account account = HttpContext.Session["user"] as SuperManDataAccess.account;
-            //if (account == null)
-            //{
-            //    Response.Redirect("/account/login");
-            //    return null;
-            //}
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
             var superManModel = iDistributionProvider.GetClienterModelByGroupID(ViewBag.txtGroupId);
@@ -40,12 +34,6 @@ namespace SuperMan.Controllers
         [HttpPost]
         public ActionResult PostOrder(int pageindex = 1)
         {
-            //SuperManDataAccess.account account = HttpContext.Session["user"] as SuperManDataAccess.account;
-            //if (account == null)
-            //{
-            //    Response.Redirect("/account/login");
-            //    return null;
-            //}
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId; ;//集团id
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
             Ets.Model.ParameterModel.Order.OrderSearchCriteria criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria();

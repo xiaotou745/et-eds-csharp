@@ -646,7 +646,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             }
             if (criteria.GroupId != null && criteria.GroupId != 0)
             {
-                sbSqlWhere.AppendFormat(" AND o.GroupId={0} ", criteria.GroupId);
+                sbSqlWhere.AppendFormat(" AND g.Id={0} ", criteria.GroupId);
             }
             if (!string.IsNullOrWhiteSpace(criteria.businessCity))
             {
