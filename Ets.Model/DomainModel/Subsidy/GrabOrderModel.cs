@@ -15,5 +15,10 @@ namespace Ets.Model.DomainModel.Subsidy
 
         public int ClienterId { get; set; }
         public int BusinessCount { get; set; }
+
+        /// <summary>
+        /// 当前骑士的金额
+        /// </summary>
+        public decimal AccountBalance { get; set; }
     }
 }
