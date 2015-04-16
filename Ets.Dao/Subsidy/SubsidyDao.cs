@@ -136,8 +136,8 @@ WHERE   sub.[Status] = 1 ");
 
         /// <summary>
         /// 查询前一天的抢单量
-        /// xx
-        /// xx
+        /// 窦海超
+        /// 2015年4月16日 09:37:07
         /// </summary>
         /// <returns></returns>
         public IList<GrabOrderModel> GetBusinessCount()
