@@ -42,8 +42,9 @@ namespace Ets.Service.Provider.Common
             string strAreaList = redis.Get<string>(key);
             if (!string.IsNullOrEmpty(strAreaList))
             {
-                areaList = Letao.Util.JsonHelper.ToObject<AreaModelList>(strAreaList);
+                areaList = Letao.Util.JsonHelper.JsonConvertToObject<AreaModelList>(strAreaList);
             }
+         
             else
             {
                 IList<Model.DomainModel.Area.AreaModel> list = dao.GetOpenCitySql();
@@ -52,7 +53,8 @@ namespace Ets.Service.Provider.Common
                 areaList.Version = Config.ApiVersion;
                 if (list != null)
                 {
-                    redis.Set(key, Letao.Util.JsonHelper.ToJson(areaList));
+                    redis.Set(key, Letao.Util.JsonHelper.JsonConvertToString(areaList));
+                    redis.Set(key, areaList);
                 }
             }
             return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.UnNewest, areaList);
