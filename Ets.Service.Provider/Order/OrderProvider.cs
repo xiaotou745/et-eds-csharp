@@ -470,25 +470,29 @@ namespace Ets.Service.Provider.Order
             //}
 
             #endregion
+
+            #region 佣金相关  add by caoheyang 20150416
+            paramodel.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
+            //计算获得订单骑士佣金
+            OrderCommission orderComm = new OrderCommission()
+            {
+                Amount = paramodel.total_price, /*订单金额*/
+                DistribSubsidy = paramodel.delivery_fee,/*外送费*/
+                OrderCount = paramodel.package_count/*订单数量*/
+            }/*网站补贴*/;
+            OrderPriceProvider commissonPro = CommissionFactory.GetCommission();
+            paramodel.ordercommission = commissonPro.GetCurrenOrderCommission(orderComm);  //骑士佣金
+            paramodel.websitesubsidy = commissonPro.GetOrderWebSubsidy(orderComm);//网站补贴
+            paramodel.commissionrate = commissonPro.GetCommissionRate(orderComm);//订单佣金比例
+            #endregion
+
             string orderNo = null; //订单号码
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                paramodel.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
-                //计算获得订单骑士佣金
-                OrderCommission orderComm = new OrderCommission()
-                {
-                    Amount = paramodel.total_price, /*订单金额*/
-                    DistribSubsidy = paramodel.delivery_fee,/*外送费*/
-                    OrderCount = paramodel.package_count/*订单数量*/
-                }/*网站补贴*/;
-                OrderPriceProvider commissonPro = CommissionFactory.GetCommission();
-                paramodel.ordercommission = commissonPro.GetCurrenOrderCommission(orderComm);  //骑士佣金
-                paramodel.websitesubsidy = commissonPro.GetOrderWebSubsidy(orderComm);//网站补贴
-                paramodel.commissionrate = commissonPro.GetCommissionRate(orderComm);//订单佣金比例
                 orderNo = OrderDao.CreateToSql(paramodel);
-                if (!string.IsNullOrWhiteSpace(orderNo))
-                    Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！"
-                        , string.Empty, paramodel.address.city); //激光推送   
+                //if (!string.IsNullOrWhiteSpace(orderNo))
+                //    Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！"
+                //        , string.Empty, paramodel.address.city); //激光推送   
                 tran.Complete();
             }
             return string.IsNullOrWhiteSpace(orderNo) ? ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :
