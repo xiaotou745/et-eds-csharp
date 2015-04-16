@@ -30,7 +30,7 @@
                 <tr>
                     <td>
                           <span class="">筛选城市: </span>
-                        @Html.DropDownList("BusinessCity", new SelectList(ViewBag.openCityList.Result, "Name", "Name",ViewBag.BusinessCity), "所有城市", new { style = "width:155px" })
+                        @Html.DropDownList("BusinessCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name", ViewBag.BusinessCity), "所有城市", new { style = "width:155px" })
                         <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" name="GroupId" />
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                         <input type="button" onclick="DaoCHu();" value="导出" class="searchBtn" id="btnDaochu" />

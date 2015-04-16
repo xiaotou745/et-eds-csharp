@@ -81,10 +81,14 @@ namespace Ets.Service.Provider.Common
         /// danny-20150414
         /// </summary>
         /// <returns></returns>
-        public Model.Common.ResultModel<List<AreaModel>> GetOpenCityOfSingleCity()
+        public Model.Common.ResultModel<Model.DomainModel.Area.AreaModelList> GetOpenCityOfSingleCity()
         {
+            AreaModelList areaList = new AreaModelList();
             var openCityList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 2).ToList();
-            return ResultModel<List<AreaModel>>.Conclude(ETS.Enums.CityStatus.Newest, openCityList);
+            areaList.AreaModels = openCityList;
+            areaList.Version = Config.ApiVersion;
+            return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.UnNewest, areaList);
+            //return ResultModel<List<AreaModelList>>.Conclude(ETS.Enums.CityStatus.Newest, areaList);
         }
         /// <summary>
         /// 根据用户传递的  省、市、区名称、级别（省1，市2，区3）,转换为 国标码
