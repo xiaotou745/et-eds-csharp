@@ -70,13 +70,10 @@ namespace Ets.Service.Provider.Subsidy
             IList<GrabOrderModel> list = subsidyDao.GetBusinessCount();
             WtihdrawRecordsDao withdrawRecordsDao = new WtihdrawRecordsDao();
             ClienterDao clienterDao = new ClienterDao();
-            //test
-            var myList = SubsidiesList.OrderByDescending(t => t.Value1);
 
             int MaxSubsidiesShop = SubsidiesList.Max(t => ParseHelper.ToInt(t.Value1));//最大数量
-            double MaxSubsidiesPrice = ParseHelper.ToDouble(SubsidiesList.Where(
-                t => ParseHelper.ToInt(t.Value1) == MaxSubsidiesShop).ToList()[0].Value2);//最大金额
-
+            double MaxSubsidiesPrice = ParseHelper.ToDouble(SubsidiesList.Where(t => ParseHelper.ToInt(t.Value1) == MaxSubsidiesShop).ToList()[0].Value2);//最大金额
+            
             foreach (GrabOrderModel item in list)
             {
                 Ets.Model.DomainModel.Clienter.ClienterModel cliterModel = new ClienterDao().GetUserInfoByUserId(item.ClienterId);//获取当前用户余额
@@ -87,8 +84,11 @@ namespace Ets.Service.Provider.Subsidy
                 withdraw.AdminId = 0;
                 withdraw.UserId = item.ClienterId;
                 int businessCount = item.BusinessCount;
-                double businessPrice = 0;
+                //var findSubsidie = SubsidiesList.OrderByDescending(t => ParseHelper.ToInt(t.Value1)).ToList().Where(t => ParseHelper.ToInt(t.Value1) >= businessCount).First();
+                //double businessPrice = findSubsidie == null ? 0 : ParseHelper.ToDouble(findSubsidie.Value2);
+
                 //ParseHelper.ToDouble(SubsidiesList.Select(t => ParseHelper.ToInt(t.Value1) == businessCount));
+                double businessPrice = 0;
                 if (businessCount > MaxSubsidiesShop)
                 {
                     businessPrice = MaxSubsidiesPrice;
@@ -102,6 +102,7 @@ namespace Ets.Service.Provider.Subsidy
                     }
                     businessPrice = ParseHelper.ToDouble(tmpPrice[0].Value2);//当前金额
                 }
+                
                 withdraw.Amount = ParseHelper.ToDecimal(businessPrice, 0);
                 withdraw.Balance = ParseHelper.ToDecimal(cliterModel.AccountBalance, 0);
                 withdraw.Remark = string.Format("跨店抢单奖励{0}元", withdraw.Amount);
