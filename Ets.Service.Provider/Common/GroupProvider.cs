@@ -126,22 +126,23 @@ namespace Ets.Service.Provider.Common
         /// <param name="appkey">appkey</param>
         /// <param name="version">版本号码</param>
         /// <returns></returns>
-        public ResultInfo<GroupApiConfigModel> GetGroupApiConfigByAppKey(string appkey, string version)
+        public GroupApiConfigModel GetGroupApiConfigByAppKey(string appkey, string version)
         {
-            var result = new ResultInfo<GroupApiConfigModel> {Data = null, Message = "", Result = false};
-            try
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            GroupApiConfigModel model= redis.Get<GroupApiConfigModel>(appkey + version);
+            if (model == null)
             {
-                result.Data = _dao.GetGroupApiConfigByAppKey(appkey, version);
-                result.Message = "执行成功";
-                result.Result = true;
+                GroupApiConfigModel tempmodel = _dao.GetGroupApiConfigByAppKey(appkey, version);
+                if (tempmodel == null)
+                    return null;
+                else
+                {
+                    redis.Set(appkey + version, tempmodel);
+                    return redis.Get<GroupApiConfigModel>(appkey + version);
+                }
             }
-            catch (Exception ex)
-            {
-                result.Message = ex.ToString();
-                result.Result = false;
-                LogHelper.LogWriterFromFilter(ex);
-            }
-            return result;
+            else
+                return model;
         }
         
  

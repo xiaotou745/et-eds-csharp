@@ -267,26 +267,24 @@ namespace Ets.Service.Provider.Order
             to.OrderCount = busiOrderInfoModel.OrderCount;  //订单数量
             to.ReceviceLongitude = busiOrderInfoModel.longitude;
             to.ReceviceLatitude = busiOrderInfoModel.laitude;
-            SubsidyResultModel subsidy = iSubsidyProvider.GetCurrentSubsidy(groupId: business.GroupId == null ? 0 : Convert.ToInt32(business.GroupId));
-            if (subsidy != null)
-            {
-                //必须写to.DistribSubsidy ，防止bussiness为空情况
-                OrderCommission orderComm = new OrderCommission()
-                {
-                    Amount = busiOrderInfoModel.Amount, /*订单金额*/
-                    DistribSubsidy = to.DistribSubsidy,/*外送费*/
-                    OrderCount = busiOrderInfoModel.OrderCount/*订单数量*/,
-                    BusinessCommission = to.BusinessCommission /*商户结算比例*/
-                };
-                OrderPriceProvider commProvider = CommissionFactory.GetCommission();
-                to.CommissionRate = commProvider.GetCommissionRate(orderComm); //佣金比例 
-                to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
-                to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
-                to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
 
-                to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
-                to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额
-            }
+            //必须写to.DistribSubsidy ，防止bussiness为空情况
+            OrderCommission orderComm = new OrderCommission()
+            {
+                Amount = busiOrderInfoModel.Amount, /*订单金额*/
+                DistribSubsidy = to.DistribSubsidy,/*外送费*/
+                OrderCount = busiOrderInfoModel.OrderCount/*订单数量*/,
+                BusinessCommission = to.BusinessCommission /*商户结算比例*/
+            };
+            OrderPriceProvider commProvider = CommissionFactory.GetCommission();
+            to.CommissionRate = commProvider.GetCommissionRate(orderComm); //佣金比例 
+            to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
+            to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
+            to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
+
+            to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
+            to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额
+
             to.Status = ConstValues.ORDER_NEW;
             return to;
         }
@@ -450,30 +448,32 @@ namespace Ets.Service.Provider.Order
             #endregion
 
             #region  当第三方未传递经纬的情况下，根据地址调用百度接口获取经纬度信息  add by caoheyang 20150416
-
-            if (paramodel.store_info.longitude == 0 || paramodel.store_info.latitude == 0)  //店铺经纬度
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            string bussinessIdstr = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(),
+              paramodel.store_info.store_id.ToString()));  //查询缓存，看看当前店铺是否存在,缓存存储E代送的商户id
+            if (bussinessIdstr == null)  //店铺不存在
             {
-                Tuple<decimal, decimal> localtion = BaiDuHelper.GeoCoder(paramodel.store_info.province
-                    + paramodel.store_info.city + paramodel.store_info.area + paramodel.store_info.address);
-                paramodel.store_info.longitude = localtion.Item1;  //精度
-                paramodel.store_info.latitude = localtion.Item2; //纬度
+                if (paramodel.store_info.longitude == 0 || paramodel.store_info.latitude == 0)  //店铺经纬度
+                {
+                    Tuple<decimal, decimal> localtion = BaiDuHelper.GeoCoder(paramodel.store_info.province
+                        + paramodel.store_info.city + paramodel.store_info.area + paramodel.store_info.address);
+                    paramodel.store_info.longitude = localtion.Item1;  //精度
+                    paramodel.store_info.latitude = localtion.Item2; //纬度
+                }
             }
-
-            if (paramodel.address.longitude == 0 || paramodel.address.latitude == 0)  //店铺经纬度
-            {
-                Tuple<decimal, decimal> localtion = BaiDuHelper.GeoCoder(paramodel.store_info.province
-                    + paramodel.address.city + paramodel.address.area + paramodel.address.address);
-                paramodel.address.longitude = localtion.Item1;  //精度
-                paramodel.address.latitude = localtion.Item2; //纬度
-            }
+            //if (paramodel.address.longitude == 0 || paramodel.address.latitude == 0)  //用户经纬度
+            //{
+            //    Tuple<decimal, decimal> localtion = BaiDuHelper.GeoCoder(paramodel.store_info.province
+            //        + paramodel.address.city + paramodel.address.area + paramodel.address.address);
+            //    paramodel.address.longitude = localtion.Item1;  //精度
+            //    paramodel.address.latitude = localtion.Item2; //纬度
+            //}
 
             #endregion
             string orderNo = null; //订单号码
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 paramodel.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
-                ISubsidyProvider subsidyProvider = new SubsidyProvider();//补贴记录
-                SubsidyResultModel subsidy = subsidyProvider.GetCurrentSubsidy(paramodel.store_info.group);
                 //计算获得订单骑士佣金
                 OrderCommission orderComm = new OrderCommission()
                 {
