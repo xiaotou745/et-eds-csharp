@@ -208,14 +208,18 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult AddOverStoreSubsidies(GlobalConfigSubsidies model)
         {
-            var list = new GlobalConfigProvider().GetOverStoreSubsidies(); 
+            var list = new GlobalConfigProvider().GetOverStoreSubsidies();
+            if (list.Exists(m => m.Value1 == model.Value1))
+            {
+                return Json(new ResultModel(false, "跨店数量不能重复"), JsonRequestBehavior.AllowGet);
+            }
             list.Add(model);
             var newlist = (from globalConfigTimeSubsidiese in list
                            orderby ParseHelper.ToDouble(globalConfigTimeSubsidiese.Value1) ascending 
                 select globalConfigTimeSubsidiese).ToList();
             string values = GetTimesValues(newlist);
             bool b = new GlobalConfigProvider().UpdateSubsidies(UserContext.Current.Name, values, "添加跨店抢单-设置之后的值:" + values, "OverStoreSubsidies");
-            return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.AllowGet);
+            return Json(new ResultModel(b, b==true?string.Empty:"添加失败!"), JsonRequestBehavior.AllowGet);
         }
         /// <summary>
         /// 删除跨店抢单
@@ -232,7 +236,7 @@ namespace SuperMan.Controllers
                            select globalConfigTimeSubsidiese).ToList();
             string values = GetTimesValues(newlist);
             bool b = new GlobalConfigProvider().UpdateSubsidies(UserContext.Current.Name, values, "删除跨店抢单-设置之后的值:" + values, "OverStoreSubsidies");
-            return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.AllowGet);
+            return Json(new ResultModel(b, b == true ? string.Empty : "删除失败!"), JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>
@@ -244,19 +248,23 @@ namespace SuperMan.Controllers
         {
             //读取全部时间配置
             var list = new GlobalConfigProvider().GetOverStoreSubsidies();
-
+            if (list.Exists(m => m.Id!=model.Id &&  m.Value1 == model.Value1))
+            {
+                return Json(new ResultModel(false, "跨店不能重复"), JsonRequestBehavior.AllowGet);
+            }
             var mm = list.FirstOrDefault(subsidies => subsidies.Id == model.Id);
-            if (mm != null)
+            if (mm != null &&!(mm.Value1 == model.Value1 && mm.Value2 == model.Value2))
             {
                 mm.Value1 = model.Value1;
                 mm.Value2 = model.Value2;
+                var newlist = (from globalConfigTimeSubsidiese in list
+                               orderby ParseHelper.ToDouble(globalConfigTimeSubsidiese.Value1) ascending
+                               select globalConfigTimeSubsidiese).ToList();
+                string values = GetTimesValues(newlist);
+                bool b = new GlobalConfigProvider().UpdateSubsidies(UserContext.Current.Name, values, "修改跨店抢单-设置之后的值:" + values, "OverStoreSubsidies");
+                return Json(new ResultModel(b, b == true ? string.Empty : "修改失败!"), JsonRequestBehavior.AllowGet);
             }
-            var newlist = (from globalConfigTimeSubsidiese in list
-                           orderby ParseHelper.ToDouble(globalConfigTimeSubsidiese.Value1) ascending
-                           select globalConfigTimeSubsidiese).ToList();
-            string values = GetTimesValues(newlist);
-            bool b = new GlobalConfigProvider().UpdateSubsidies(UserContext.Current.Name, values, "修改跨店抢单-设置之后的值:" + values, "OverStoreSubsidies");
-            return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.AllowGet);
+            return Json(new ResultModel(true,string.Empty), JsonRequestBehavior.AllowGet); 
         }
 
         
