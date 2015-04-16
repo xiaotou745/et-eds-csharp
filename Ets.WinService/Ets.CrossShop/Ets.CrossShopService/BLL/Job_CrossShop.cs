@@ -2,6 +2,7 @@
 using Ets.Model.DomainModel.GlobalConfig;
 using Ets.Service.Provider.Common;
 using Ets.Service.Provider.Subsidy;
+using ETS;
 using ETS.Util;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,12 @@ namespace Ets.CrossShopService.BLL
 {
     public class Job_CrossShop
     {
+
+
+        public static string GetLogFilePath()
+        {
+            return AppDomain.CurrentDomain.BaseDirectory.ToString() + "\\logs\\log.txt";
+        }
         /// <summary>
         /// 转换奖励机制字符串
         /// 徐鹏程
@@ -70,24 +77,24 @@ namespace Ets.CrossShopService.BLL
                             List<GlobalConfigSubsidies> MyList = GetSubsidies(GlobalConfigDao.GlobalConfigGet.OverStoreSubsidies);
                             if (MyList == null || MyList.Count <= 0)
                             {
-                                ETS.Util.LogHelper.LogWriter("global配置数据为空");
+                                ETS.Util.Log.WriteTextToFile("global配置数据为空", GetLogFilePath(), true);
                                 continue;
                             }
                             SubsidyProvider CrossShop = new SubsidyProvider();
                             //调用抢单奖励机制主要方法
                             if (CrossShop.CrossShop(MyList))
                             {
-                                ETS.Util.LogHelper.LogWriter("抢单奖励计算成功");
+                                ETS.Util.Log.WriteTextToFile("抢单奖励计算成功", GetLogFilePath(), true);
                             }
                         }
                         catch (Exception ex)
                         {
-                            ETS.Util.LogHelper.LogWriter(ex.ToString());
+                            ETS.Util.Log.WriteTextToFile(ex.ToString(), GetLogFilePath(), true);
                         }
                     }
                     else
                     {
-                        ETS.Util.LogHelper.LogWriter("跨店补贴未开启");
+                        ETS.Util.Log.WriteTextToFile("跨店补贴未开启", GetLogFilePath(), true);
                     }
                 }
                 Thread.Sleep(1000 * 60 * 60);
