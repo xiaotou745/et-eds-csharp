@@ -285,13 +285,11 @@ where   p.name =@ProvinceName
                                         AND(
                                                 SELECT COUNT(1)
                                                 FROM PublicProvinceCity 
-                                                WHERE parentid=(SELECT code
-                                                                FROM PublicProvinceCity  
-                                                                WHERE code=(SELECT parentid 
+                                                WHERE parentid=(SELECT parentid 
                                                                             FROM PublicProvinceCity 
                                                                             WHERE code=( SELECT parentid 
                                                                                         FROM PublicProvinceCity 
-                                                                                        WHERE code={0}))) AND IsPublic=1)=0;", code);
+                                                                                        WHERE code={0})) AND IsPublic=1)=0;", code);
             }
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql) > 0 ? true : false;
         }
