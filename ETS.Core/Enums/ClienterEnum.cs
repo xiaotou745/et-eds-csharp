@@ -23,8 +23,6 @@ namespace ETS.Enums
         [DisplayText("好好休息吧~")]
         StartSleep = 6
 
-
-
     }
 
 }
