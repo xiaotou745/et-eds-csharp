@@ -24,8 +24,8 @@ namespace Ets.Service.IProvider.OpenApi
     /// </summary>
     public class WanDaGroup : IGroupProviderOpenApi
     {
-        public const string app_key = "6e61eb575d2b22223551af81b2812ec2";
-        public const string app_secret = "9ed652ad50274a24f4b648f0e7dad167";
+        public  string app_key = ConfigSettings.Instance.WanDaAppkey;
+        public  string app_secret = ConfigSettings.Instance.WanDaAppsecret;
         /// <summary>
         /// 回调万达接口同步订单状态  add by caoheyang 20150326
         /// </summary>
@@ -43,7 +43,8 @@ namespace Ets.Service.IProvider.OpenApi
                     break;
                 case OrderConst.OrderStatus2:
                     status = "agree";
-                    statusDesc = string.Format("{0}已确认可配送", paramodel.fields.ClienterTrueName);
+                    statusDesc = string.Format("{0}已确认可配送，{1}配送，{2}", paramodel.fields.ClienterTrueName,
+                        paramodel.fields.ClienterTrueName, paramodel.fields.ClienterPhoneNo);
                     break;
                 case OrderConst.OrderStatus3:
                     status = "refused";
@@ -52,12 +53,14 @@ namespace Ets.Service.IProvider.OpenApi
                 default:
                     break;
             }
+            //配送员姓名
+            string clienterName = paramodel.fields.ClienterTrueName == null ? "匿名" : paramodel.fields.ClienterTrueName;
             string ts = TimeHelper.GetTimeStamp(false);
             string url = ConfigurationManager.AppSettings["WanDaAsyncStatus"];
             if (url == null)
                 return OrderApiStatusType.SystemError;
             string  json= HTTPHelper.HttpPost(url, "app_key=" + app_key + "&sign=" + GetSign(ts) + "&method=POST&ts=" + ts + "&orderId=" + paramodel.fields.OriginalOrderNo + "&status=" + status + "&statusDesc=" + statusDesc +
-                "&syncTime=" + ts + "&operatorId=9999&operator=E代送系统&logisticsNo=" +
+                "&syncTime=" + ts + "&operatorId=9999&operator=" + clienterName + "&logisticsNo=" +
                  paramodel.fields.order_no + "&action=takeoutsync");
             if (string.IsNullOrWhiteSpace(json))
                 return OrderApiStatusType.ParaError;

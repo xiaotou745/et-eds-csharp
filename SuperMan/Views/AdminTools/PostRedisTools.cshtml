@@ -1,0 +1,62 @@
+﻿@{
+    Layout = null;
+
+}
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+    <thead>
+        <tr class="tdbg">
+            <th width="%5">Key</th>
+            @if (ViewBag.searchType != 0)
+            {
+                <th>Value</th>
+            }
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            List<string> keys = ViewBag.Keys as List<string>;
+            foreach (string key in keys)
+            {
+                try
+                {
+
+                    <tr id="_tr@(key)">
+                        <td width="10%">@key</td>
+                        @if (ViewBag.searchType != 0)
+                        {
+                            var redis = new ETS.NoSql.RedisCache.RedisCache();
+                            var val = redis.Get<object>(key);
+                            val = val == null ? "" : val;
+                            <td width="70%"> @val.ToString()</td>
+                        }
+                        <td><a href="javascript:DeleleRedis('@key');">清除</a></td>
+                    </tr>
+                }
+                catch (Exception ex)
+                {
+                    string exstr = ex.Message;
+                }
+
+            }
+        }
+
+    </tbody>
+</table>
+<script type="text/javascript">
+    function DeleleRedis(key) {
+        $.ajax({
+            type: 'POST',
+            url: "/AdminTools/DeleteRedisTools",
+            data: { "key": key },
+            success: function (result) {
+                if (result.status) {
+                    alert("清除缓存成功！");
+                    $("#_tr" + key).remove();
+                } else {
+                    alert("清除缓存失败！");
+                }
+            }
+        });
+    }
+</script>

@@ -19,7 +19,7 @@ namespace Ets.Service.Provider.Common
 {
     public class AreaProvider : IAreaProvider
     {
-        readonly AreaDao dao = new AreaDao();
+         private AreaDao dao = new AreaDao();
         /// <summary>
         /// 获取开通城市的省市区
         /// 窦海超
@@ -164,6 +164,34 @@ namespace Ets.Service.Provider.Common
             }
             return resultAreaModel;
         }
+
+
+        /// <summary>
+        /// 获取 省市区信息
+        /// </summary>
+        /// <param name="name">省市区名称</param>
+        /// <param name="jiBie">级别</param>
+        /// <param name="parentId">父级code</param>
+        /// <returns></returns>
+        public AreaModel GetAreaModelFromResis(string name, int jiBie, int parentId)
+        {
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            return
+               (
+               from p in Newtonsoft.Json.Linq.JObject.Parse(redis.Get<string>(ETS.Const.RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity_New)).GetValue("AreaModels")
+               where
+               p.Value<string>("Name") == name
+               && p.Value<int>("JiBie") == jiBie
+               && p.Value<int>("ParentId") == parentId
+               select new Ets.Model.DomainModel.Area.AreaModel()
+               {
+                   Code = p.Value<int>("Code"),
+                   Name = p.Value<string>("Name"),
+                   ParentId = p.Value<int>("ParentId"),
+                   JiBie = p.Value<int>("JiBie"),
+               }).FirstOrDefault();
+        }
+
 
         /// <summary>
         /// 根据省市区名称获取对应的省市区编码 add by caoheyang 20150407

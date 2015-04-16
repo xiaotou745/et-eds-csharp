@@ -15,7 +15,7 @@ namespace Ets.Model.ParameterModel.Clienter
         /// 订单Id 订单表主键
         /// </summary>
         public int OrderId { get; set; }
-        
+
         /// <summary>
         /// 总共需要上传的小票数量
         /// </summary>
@@ -28,7 +28,9 @@ namespace Ets.Model.ParameterModel.Clienter
         /// 已经上传的小票张数
         /// </summary>
         public int HadUploadCount { get; set; }
-
+        /// <summary>
+        /// 骑士Id
+        /// </summary>
         public int ClienterId { get; set; }
     }
 }

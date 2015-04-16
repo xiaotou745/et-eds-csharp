@@ -25,7 +25,6 @@ using Ets.Service.Provider.WtihdrawRecords;
 using Ets.Service.Provider.MyPush;
 using Ets.Model.DomainModel.Bussiness;
 using Ets.Model.ParameterModel.Order;
-using ETS.IO;
 
 namespace Ets.Service.Provider.Clienter
 {
@@ -33,9 +32,7 @@ namespace Ets.Service.Provider.Clienter
     {
         readonly ClienterDao clienterDao = new ClienterDao();
         readonly OrderDao orderDao = new OrderDao();
-        readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
-         
-
+        readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider(); 
         /// <summary>
         /// 骑士上下班功能 add by caoheyang 20150312
         /// </summary>
@@ -50,7 +47,27 @@ namespace Ets.Service.Provider.Clienter
                 if (ordercount > 0)
                     return ETS.Enums.ChangeWorkStatusEnum.OrderError;
             }
-            return clienterDao.ChangeWorkStatusToSql(paraModel) > 0 ? ETS.Enums.ChangeWorkStatusEnum.Success : ETS.Enums.ChangeWorkStatusEnum.Error;
+            int changeResult = clienterDao.ChangeWorkStatusToSql(paraModel);
+            if (changeResult > 0)
+            {
+                if (paraModel.WorkStatus == 0)  //上班
+                {
+                    return ETS.Enums.ChangeWorkStatusEnum.StartWork;
+                }
+                else if (paraModel.WorkStatus == 1) //下班
+                {
+                    return ETS.Enums.ChangeWorkStatusEnum.StartSleep;
+                }
+                else
+                {
+                    return ETS.Enums.ChangeWorkStatusEnum.Error;
+                }
+            }
+            else
+            {
+                return ETS.Enums.ChangeWorkStatusEnum.Error;
+            }
+            //return clienterDao.ChangeWorkStatusToSql(paraModel) > 0 ? ETS.Enums.ChangeWorkStatusEnum.Success : ETS.Enums.ChangeWorkStatusEnum.Error;
         }
 
         /// <summary>
@@ -60,80 +77,82 @@ namespace Ets.Service.Provider.Clienter
         public virtual IList<ClientOrderResultModel> GetMyOrders(ClientOrderSearchCriteria clientOrderModel)
         {
             //throw new System.NotImplementedException();
-            PageInfo<ClientOrderModel> pageinfo = new ClienterDao().GetMyOrders(clientOrderModel);
-            IList<ClientOrderModel> list = pageinfo.Records;
             IList<ClientOrderResultModel> listOrder = new List<ClientOrderResultModel>();//组装成新的对象
-            foreach (ClientOrderModel item in list)
+            PageInfo<ClientOrderModel> pageinfo = new ClienterDao().GetMyOrders(clientOrderModel);
+            if (pageinfo != null && pageinfo.Records != null)
             {
-                ClientOrderResultModel model = new ClientOrderResultModel();
-                model.userId = item.UserId;
-                model.OrderNo = item.OrderNo;
-                model.OrderId = item.OrderId;
-                #region 骑士佣金计算
-                OrderCommission oCommission = new OrderCommission()
+                IList<ClientOrderModel> list = pageinfo.Records; 
+                foreach (ClientOrderModel item in list)
                 {
-                    Amount = item.Amount,
-                    DistribSubsidy = item.DistribSubsidy,
-                    OrderCount = item.OrderCount
-                };
-                #endregion
-
-                model.income = item.OrderCommission;  //佣金 Edit bycaoheyang 20150327
-                model.Amount = DefaultOrPriceProvider.GetCurrenOrderPrice(oCommission); //C端 获取订单的金额 Edit bycaoheyang 20150305
-
-                model.businessName = item.BusinessName;
-                model.businessPhone = item.BusinessPhone;
-                model.pickUpCity = item.pickUpCity;
-                model.pubDate = item.PubDate;
-
-                model.pickUpAddress = item.PickUpAddress;
-                model.receviceName = item.ReceviceName;
-                model.receviceCity = item.ReceviceCity;
-                model.receviceAddress = item.ReceviceAddress;
-                model.recevicePhone = item.RecevicePhoneNo;
-                model.IsPay = item.IsPay;
-                model.Remark = item.Remark;
-                model.Status = item.Status;
-                model.OrderCount = item.OrderCount;
-                model.GroupId = item.GroupId;
-                model.HadUploadCount = item.HadUploadCount;
-                if (item.GroupId == SystemConst.Group3) //全时 需要做验证码验证
-                    model.NeedPickupCode = 1;
-                #region 计算经纬度     待封装  add by caoheyang 20150313
-
-                if (item.Longitude == null || item.Longitude == 0 || item.Latitude == null || item.Latitude == 0)
-                {
-                    model.distance = "--";
-                    model.distanceB2R = "--";
-                    model.distance_OrderBy = 9999999.0;
-                }
-                else
-                {
-                    if (degree.longitude == 0 || degree.latitude == 0 || item.BusinessId <= 0)
-                    { model.distance = "--"; model.distance_OrderBy = 9999999.0; }
-                    else if (item.BusinessId > 0)  //计算超人当前到商户的距离
+                    ClientOrderResultModel model = new ClientOrderResultModel();
+                    model.userId = item.UserId;
+                    model.OrderNo = item.OrderNo;
+                    model.OrderId = item.OrderId;
+                    #region 骑士佣金计算
+                    OrderCommission oCommission = new OrderCommission()
                     {
-                        Degree degree1 = new Degree(degree.longitude, degree.latitude);   //超人当前的经纬度
-                        Degree degree2 = new Degree(item.Longitude.Value, item.Latitude.Value); //商户经纬度
-                        var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
-                        model.distance = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
-                        model.distance_OrderBy = res;
-                    }
-                    if (item.BusinessId > 0 && item.ReceviceLongitude != null && item.ReceviceLatitude != null
-                        && item.ReceviceLongitude != 0 && item.ReceviceLatitude != 0)  //计算商户到收货人的距离
+                        Amount = item.Amount,
+                        DistribSubsidy = item.DistribSubsidy,
+                        OrderCount = item.OrderCount
+                    };
+                    #endregion
+                    model.OriginalOrderNo = item.OriginalOrderNo;
+                    model.income = item.OrderCommission;  //佣金 Edit bycaoheyang 20150327
+                    model.Amount = DefaultOrPriceProvider.GetCurrenOrderPrice(oCommission); //C端 获取订单的金额 Edit bycaoheyang 20150305
+
+                    model.businessName = item.BusinessName;
+                    model.businessPhone = item.BusinessPhone;
+                    model.pickUpCity = item.pickUpCity;
+                    model.pubDate = item.PubDate;
+
+                    model.pickUpAddress = item.PickUpAddress;
+                    model.receviceName = item.ReceviceName;
+                    model.receviceCity = item.ReceviceCity;
+                    model.receviceAddress = item.ReceviceAddress;
+                    model.recevicePhone = item.RecevicePhoneNo;
+                    model.IsPay = item.IsPay;
+                    model.Remark = item.Remark;
+                    model.Status = item.Status;
+                    model.OrderCount = item.OrderCount;
+                    model.GroupId = item.GroupId;
+                    model.HadUploadCount = item.HadUploadCount;
+                    if (item.GroupId == SystemConst.Group3) //全时 需要做验证码验证
+                        model.NeedPickupCode = 1;
+                    #region 计算经纬度     待封装  add by caoheyang 20150313
+
+                    if (item.Longitude == null || item.Longitude == 0 || item.Latitude == null || item.Latitude == 0)
                     {
-                        Degree degree1 = new Degree(item.Longitude.Value, item.Latitude.Value);  //商户经纬度
-                        Degree degree2 = new Degree(item.ReceviceLongitude.Value, item.ReceviceLatitude.Value);  //收货人经纬度
-                        var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
-                        model.distanceB2R = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
+                        model.distance = "--";
+                        model.distanceB2R = "--";
+                        model.distance_OrderBy = 9999999.0;
                     }
                     else
-                        model.distanceB2R = "--";
+                    {
+                        if (degree.longitude == 0 || degree.latitude == 0 || item.BusinessId <= 0)
+                        { model.distance = "--"; model.distance_OrderBy = 9999999.0; }
+                        else if (item.BusinessId > 0)  //计算超人当前到商户的距离
+                        {
+                            Degree degree1 = new Degree(degree.longitude, degree.latitude);   //超人当前的经纬度
+                            Degree degree2 = new Degree(item.Longitude.Value, item.Latitude.Value); //商户经纬度
+                            var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
+                            model.distance = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
+                            model.distance_OrderBy = res;
+                        }
+                        if (item.BusinessId > 0 && item.ReceviceLongitude != null && item.ReceviceLatitude != null
+                            && item.ReceviceLongitude != 0 && item.ReceviceLatitude != 0)  //计算商户到收货人的距离
+                        {
+                            Degree degree1 = new Degree(item.Longitude.Value, item.Latitude.Value);  //商户经纬度
+                            Degree degree2 = new Degree(item.ReceviceLongitude.Value, item.ReceviceLatitude.Value);  //收货人经纬度
+                            var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
+                            model.distanceB2R = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
+                        }
+                        else
+                            model.distanceB2R = "--";
+                    }
+                    #endregion
+                    listOrder.Add(model);
                 }
-                #endregion
-                listOrder.Add(model);
             }
-
             return listOrder;
         }
 
@@ -508,29 +527,33 @@ namespace Ets.Service.Provider.Clienter
                if (myOrderInfo != null)
                {
                    orderDao.FinishOrderStatus(orderNo, userId, myOrderInfo);
-                   //更新骑士 金额  
-                   bool b = clienterDao.UpdateClienterAccountBalance(new WithdrawRecordsModel() { UserId = userId, Amount = myOrderInfo.OrderCommission.Value });
-                   //增加记录 
-                   decimal? AccountBalance = 0;
-                   //更新用户相关金额数据 
-                   if (myOrderInfo.AccountBalance.HasValue)
+                   if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)  //当用户上传的小票数量 和 需要上传的小票数量一致的时候，更新用户金额
                    {
-                       AccountBalance = myOrderInfo.AccountBalance.Value + (myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission));
+                       UpdateClienterAccount(userId, myOrderInfo);
                    }
-                   else
-                   {
-                       AccountBalance = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission);
-                   }
-                   var model = new WithdrawRecordsModel
-                   {
-                       AdminId = 1,
-                       Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
-                       Balance = AccountBalance ?? 0,
-                       UserId = userId,
-                       Platform = 1
-                   };
-                   Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords = new WtihdrawRecordsProvider();
-                   iRecords.AddRecords(model); 
+                   ////更新骑士 金额  
+                   //bool b = clienterDao.UpdateClienterAccountBalance(new WithdrawRecordsModel() { UserId = userId, Amount = myOrderInfo.OrderCommission.Value });
+                   ////增加记录 
+                   //decimal? AccountBalance = 0;
+                   ////更新用户相关金额数据 
+                   //if (myOrderInfo.AccountBalance.HasValue)
+                   //{
+                   //    AccountBalance = myOrderInfo.AccountBalance.Value + (myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission));
+                   //}
+                   //else
+                   //{
+                   //    AccountBalance = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission);
+                   //}
+                   //var model = new WithdrawRecordsModel
+                   //{
+                   //    AdminId = 1,
+                   //    Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
+                   //    Balance = AccountBalance ?? 0,
+                   //    UserId = userId,
+                   //    Platform = 1
+                   //};
+                   //Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords = new WtihdrawRecordsProvider();
+                   //iRecords.AddRecords(model); 
                    tran.Complete();
                    Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", myOrderInfo.businessId.ToString(), string.Empty);
                    result = "1";
@@ -539,6 +562,39 @@ namespace Ets.Service.Provider.Clienter
            OrderProvider order = new OrderProvider();
            order.AsyncOrderStatus(orderNo);
            return result;
+        }
+
+        /// <summary>
+        /// 更新用户金额
+        /// wc
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="myOrderInfo"></param>
+        public void UpdateClienterAccount(int userId, OrderListModel myOrderInfo)
+        {
+            //更新骑士 金额  
+            bool b = clienterDao.UpdateClienterAccountBalance(new WithdrawRecordsModel() { UserId = userId, Amount = myOrderInfo.OrderCommission.Value });
+            //增加记录 
+            decimal? AccountBalance = 0;
+            //更新用户相关金额数据 
+            if (myOrderInfo.AccountBalance.HasValue)
+            {
+                AccountBalance = myOrderInfo.AccountBalance.Value + (myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission));
+            }
+            else
+            {
+                AccountBalance = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission);
+            }
+            var model = new WithdrawRecordsModel
+            {
+                AdminId = 1,
+                Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
+                Balance = AccountBalance ?? 0,
+                UserId = userId,
+                Platform = 1
+            };
+            Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords = new WtihdrawRecordsProvider();
+            iRecords.AddRecords(model); 
         }
 
         public ClienterModel GetUserInfoByUserId(int UserId)
@@ -574,7 +630,19 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         public OrderOther UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel)
         {
-            return clienterDao.UpdateClientReceiptPicInfo(uploadReceiptModel);
+            OrderOther orderOther = null;
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                orderOther = clienterDao.UpdateClientReceiptPicInfo(uploadReceiptModel);
+                //上传成功后， 判断
+                if (orderOther.OrderStatus == ConstValues.ORDER_FINISH && orderOther.HadUploadCount == orderOther.NeedUploadCount)
+                {
+                    var myOrderInfo = orderDao.GetOrderInfoByOrderNo("", uploadReceiptModel.OrderId);
+                    UpdateClienterAccount(uploadReceiptModel.ClienterId, myOrderInfo);
+                }
+                tran.Complete();
+            }
+            return orderOther;
         }
 
         /// <summary>
@@ -617,7 +685,8 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         public OrderOther GetReceipt(UploadReceiptModel uploadReceiptModel)
         {
-            return clienterDao.GetReceiptInfo(uploadReceiptModel.OrderId);
+            int orderStatus = 0;
+            return clienterDao.GetReceiptInfo(uploadReceiptModel.OrderId, out orderStatus);
           
         }
 

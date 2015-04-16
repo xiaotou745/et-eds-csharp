@@ -57,76 +57,79 @@ namespace Ets.Service.Provider.Order
         {
             IList<ClientOrderResultModel> list = new List<ClientOrderResultModel>();
             var orderList = OrderDao.GetOrders(criteria);
-            for (int i = 0; i < orderList.ContentList.Count; i++)
+            if (orderList != null && orderList.ContentList != null)
             {
-                var resultModel = new ClientOrderResultModel();
-                var from = orderList.ContentList[i];
-                if (from.clienterId != null)
-                    resultModel.userId = from.clienterId.Value;
-                resultModel.OrderNo = from.OrderNo;
-                resultModel.OrderId = from.Id; //订单Id
-                resultModel.OrderCount = from.OrderCount;
-                var orderComm = new OrderCommission() { Amount = from.Amount, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount };
-                var amount = DefaultOrPriceProvider.GetCurrenOrderPrice(orderComm);
-
-                resultModel.income = from.OrderCommission;  //佣金 Edit bycaoheyang 20150327
-                resultModel.Amount = amount; //C端 获取订单的金额 Edit bycaoheyang 20150305
-
-
-                resultModel.businessName = from.BusinessName;
-                resultModel.businessPhone = from.BusinessPhone;
-                if (from.PickUpCity != null)
+                for (int i = 0; i < orderList.ContentList.Count; i++)
                 {
-                    resultModel.pickUpCity = from.PickUpCity.Replace("市", "");
-                }
+                    var resultModel = new ClientOrderResultModel();
+                    var from = orderList.ContentList[i];
+                    if (from.clienterId != null)
+                        resultModel.userId = from.clienterId.Value;
+                    resultModel.OrderNo = from.OrderNo;
+                    resultModel.OrderId = from.Id; //订单Id
+                    resultModel.OrderCount = from.OrderCount;
+                    var orderComm = new OrderCommission() { Amount = from.Amount, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount };
+                    var amount = DefaultOrPriceProvider.GetCurrenOrderPrice(orderComm);
 
-                if (from.PubDate.HasValue)
-                {
-                    resultModel.pubDate = from.PubDate.Value.ToShortTimeString();
-                }
-                resultModel.pickUpAddress = from.PickUpAddress;
-                resultModel.receviceName = from.ReceviceName;
-                resultModel.receviceCity = from.ReceviceCity;
-                resultModel.receviceAddress = from.ReceviceAddress;
-                resultModel.recevicePhone = from.RecevicePhoneNo;
-                resultModel.IsPay = from.IsPay.Value;
-                resultModel.Remark = from.Remark == null ? "" : from.Remark;
-                resultModel.Status = from.Status.Value;
-                resultModel.HadUploadCount = from.HadUploadCount;
-                resultModel.GroupId = from.GroupId;
-                if (from.GroupId == SystemConst.Group3) //全时 需要做验证码验证
-                    resultModel.NeedPickupCode = 1;
+                    resultModel.income = from.OrderCommission;  //佣金 Edit bycaoheyang 20150327
+                    resultModel.Amount = amount; //C端 获取订单的金额 Edit bycaoheyang 20150305
 
-                if (from.BusiLatitude == null || from.BusiLatitude == 0 || from.BusiLongitude == null || from.BusiLongitude == 0)
-                {
-                    resultModel.distance = "--";
-                    resultModel.distanceB2R = "--";
-                    resultModel.distance_OrderBy = 9999999.0;
-                }
-                else
-                {
-                    if (degree.longitude == 0 || degree.latitude == 0)
-                    { resultModel.distance = "--"; resultModel.distance_OrderBy = 9999999.0; }
-                    else //计算超人当前到商户的距离
+
+                    resultModel.businessName = from.BusinessName;
+                    resultModel.businessPhone = from.BusinessPhone;
+                    if (from.PickUpCity != null)
                     {
-                        Degree degree1 = new Degree(degree.longitude, degree.latitude);   //超人当前的经纬度
-                        Degree degree2 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value); ; //商户经纬度
-                        var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
-                        resultModel.distance = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
-                        resultModel.distance_OrderBy = res;
+                        resultModel.pickUpCity = from.PickUpCity.Replace("市", "");
                     }
-                    if (from.ReceviceLongitude != null && from.ReceviceLatitude != null
-                        && from.ReceviceLongitude != 0 && from.ReceviceLatitude != 0)  //计算商户到收货人的距离
+
+                    if (from.PubDate.HasValue)
                     {
-                        Degree degree1 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);  //商户经纬度
-                        Degree degree2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);  //收货人经纬度
-                        var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
-                        resultModel.distanceB2R = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
+                        resultModel.pubDate = from.PubDate.Value.ToShortTimeString();
+                    }
+                    resultModel.pickUpAddress = from.PickUpAddress;
+                    resultModel.receviceName = from.ReceviceName;
+                    resultModel.receviceCity = from.ReceviceCity;
+                    resultModel.receviceAddress = from.ReceviceAddress;
+                    resultModel.recevicePhone = from.RecevicePhoneNo;
+                    resultModel.IsPay = from.IsPay.Value;
+                    resultModel.Remark = from.Remark == null ? "" : from.Remark;
+                    resultModel.Status = from.Status.Value;
+                    resultModel.HadUploadCount = from.HadUploadCount;
+                    resultModel.GroupId = from.GroupId;
+                    if (from.GroupId == SystemConst.Group3) //全时 需要做验证码验证
+                        resultModel.NeedPickupCode = 1;
+
+                    if (from.BusiLatitude == null || from.BusiLatitude == 0 || from.BusiLongitude == null || from.BusiLongitude == 0)
+                    {
+                        resultModel.distance = "--";
+                        resultModel.distanceB2R = "--";
+                        resultModel.distance_OrderBy = 9999999.0;
                     }
                     else
-                        resultModel.distanceB2R = "--";
+                    {
+                        if (degree.longitude == 0 || degree.latitude == 0)
+                        { resultModel.distance = "--"; resultModel.distance_OrderBy = 9999999.0; }
+                        else //计算超人当前到商户的距离
+                        {
+                            Degree degree1 = new Degree(degree.longitude, degree.latitude);   //超人当前的经纬度
+                            Degree degree2 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value); ; //商户经纬度
+                            var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
+                            resultModel.distance = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
+                            resultModel.distance_OrderBy = res;
+                        }
+                        if (from.ReceviceLongitude != null && from.ReceviceLatitude != null
+                            && from.ReceviceLongitude != 0 && from.ReceviceLatitude != 0)  //计算商户到收货人的距离
+                        {
+                            Degree degree1 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);  //商户经纬度
+                            Degree degree2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);  //收货人经纬度
+                            var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
+                            resultModel.distanceB2R = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
+                        }
+                        else
+                            resultModel.distanceB2R = "--";
+                    }
+                    list.Add(resultModel);
                 }
-                list.Add(resultModel);
             }
             return list;
         }
@@ -141,81 +144,85 @@ namespace Ets.Service.Provider.Order
         {
             IList<ClientOrderNoLoginResultModel> list = new List<ClientOrderNoLoginResultModel>();
             var orderList = OrderDao.GetOrders(criteria);
-            for (int i = 0; i < orderList.ContentList.Count; i++)
+            if (orderList != null && orderList.ContentList != null)
             {
-                var resultModel = new ClientOrderNoLoginResultModel();
-                var from = orderList.ContentList[i];
-                if (from.clienterId != null)
-                    resultModel.userId = from.clienterId.Value;
-                resultModel.OrderNo = from.OrderNo;
-                resultModel.OrderId = from.Id;  //订单Id
-                resultModel.OrderCount = from.OrderCount;
-                var orderComm = new OrderCommission() { Amount = from.Amount, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount };
-                var amount = DefaultOrPriceProvider.GetCurrenOrderPrice(orderComm);
-                resultModel.income = from.OrderCommission;  //计算设置当前订单骑士可获取的佣金 Edit bycaoheyang 20150305
-                resultModel.Amount = amount; //C端 获取订单的金额 Edit bycaoheyang 20150305
-                resultModel.businessName = from.BusinessName;
-                resultModel.businessPhone = from.BusinessPhone;
-                resultModel.HadUploadCount = from.HadUploadCount;
-                resultModel.GroupId = from.GroupId;
-                if (from.GroupId == SystemConst.Group3)
-                    resultModel.NeedPickupCode = 1;
+                for (int i = 0; i < orderList.ContentList.Count; i++)
+                { 
+                    var resultModel = new ClientOrderNoLoginResultModel();
+                    var from = orderList.ContentList[i];
+                    if (from.clienterId != null)
+                        resultModel.userId = from.clienterId.Value;
+                    resultModel.OrderNo = from.OrderNo;
+                    resultModel.OrderId = from.Id;  //订单Id
+                    resultModel.OrderCount = from.OrderCount;
+                    resultModel.OriginalOrderNo = from.OriginalOrderNo;
+                    var orderComm = new OrderCommission() { Amount = from.Amount, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount };
+                    var amount = DefaultOrPriceProvider.GetCurrenOrderPrice(orderComm);
+                    resultModel.income = from.OrderCommission;  //计算设置当前订单骑士可获取的佣金 Edit bycaoheyang 20150305
+                    resultModel.Amount = amount; //C端 获取订单的金额 Edit bycaoheyang 20150305
+                    resultModel.businessName = from.BusinessName;
+                    resultModel.businessPhone = from.BusinessPhone;
+                    resultModel.HadUploadCount = from.HadUploadCount;
+                    resultModel.GroupId = from.GroupId;
+                    if (from.GroupId == SystemConst.Group3)
+                        resultModel.NeedPickupCode = 1;
 
-                if (from.PickUpCity != null)
-                {
-                    resultModel.pickUpCity = from.PickUpCity.Replace("市", "");
-                }
+                    if (from.PickUpCity != null)
+                    {
+                        resultModel.pickUpCity = from.PickUpCity.Replace("市", "");
+                    }
 
-                if (from.PubDate.HasValue)
-                {
-                    resultModel.pubDate = from.PubDate.Value.ToShortTimeString();
-                }
-                resultModel.pickUpAddress = from.PickUpAddress;
-                resultModel.receviceName = from.ReceviceName;
-                resultModel.receviceCity = from.ReceviceCity;
-                resultModel.receviceAddress = from.ReceviceAddress;
-                resultModel.recevicePhone = from.RecevicePhoneNo;
-                resultModel.IsPay = from.IsPay.Value;
-                resultModel.Remark = from.Remark;
-                resultModel.Status = from.Status.Value;
+                    if (from.PubDate.HasValue)
+                    {
+                        resultModel.pubDate = from.PubDate.Value.ToShortTimeString();
+                    }
+                    resultModel.pickUpAddress = from.PickUpAddress;
+                    resultModel.receviceName = from.ReceviceName;
+                    resultModel.receviceCity = from.ReceviceCity;
+                    resultModel.receviceAddress = from.ReceviceAddress;
+                    resultModel.recevicePhone = from.RecevicePhoneNo;
+                    resultModel.IsPay = from.IsPay.Value;
+                    resultModel.Remark = from.Remark;
+                    resultModel.Status = from.Status.Value;
 
 
-                if (from.BusiLatitude == null || from.BusiLatitude == 0 || from.BusiLongitude == null || from.BusiLongitude == 0)
-                {
-                    resultModel.distance = "--";
-                    resultModel.distanceB2R = "--";
-
-                    resultModel.distance_OrderBy = 9999999.0; //用来排序
-                }
-                else
-                {
-                    if (degree.longitude == 0 || degree.latitude == 0)
+                    if (from.BusiLatitude == null || from.BusiLatitude == 0 || from.BusiLongitude == null || from.BusiLongitude == 0)
                     {
                         resultModel.distance = "--";
-                        resultModel.distance_OrderBy = 9999999.0;
-                    }
-                    else //计算超人当前到商户的距离
-                    {
-                        Degree degree1 = new Degree(degree.longitude, degree.latitude);   //超人当前的经纬度
-                        Degree degree2 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value); ; //商户经纬度
-                        var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
-                        resultModel.distance = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
-                        resultModel.distance_OrderBy = res;
-                    }
-                    if (from.ReceviceLongitude != null && from.ReceviceLatitude != null
-                        && from.ReceviceLongitude != 0 && from.ReceviceLatitude != 0)  //计算商户到收货人的距离
-                    {
-                        Degree degree1 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);  //商户经纬度
-                        Degree degree2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);  //收货人经纬度
-                        var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
-                        resultModel.distanceB2R = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
+                        resultModel.distanceB2R = "--";
+
+                        resultModel.distance_OrderBy = 9999999.0; //用来排序
                     }
                     else
-                        resultModel.distanceB2R = "--";
+                    {
+                        if (degree.longitude == 0 || degree.latitude == 0)
+                        {
+                            resultModel.distance = "--";
+                            resultModel.distance_OrderBy = 9999999.0;
+                        }
+                        else //计算超人当前到商户的距离
+                        {
+                            Degree degree1 = new Degree(degree.longitude, degree.latitude);   //超人当前的经纬度
+                            Degree degree2 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value); ; //商户经纬度
+                            var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
+                            resultModel.distance = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
+                            resultModel.distance_OrderBy = res;
+                        }
+                        if (from.ReceviceLongitude != null && from.ReceviceLatitude != null
+                            && from.ReceviceLongitude != 0 && from.ReceviceLatitude != 0)  //计算商户到收货人的距离
+                        {
+                            Degree degree1 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);  //商户经纬度
+                            Degree degree2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);  //收货人经纬度
+                            var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
+                            resultModel.distanceB2R = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
+                        }
+                        else
+                            resultModel.distanceB2R = "--";
+                    }
+
+
+                    list.Add(resultModel);
                 }
-
-
-                list.Add(resultModel);
             }
             return list;
         }
@@ -291,25 +298,34 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public string AddOrder(order order)
         {
-            int result = OrderDao.AddOrder(order);
-            if (result > 0)
+            string str = "0";
+            int result = 0;
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                if (order.Adjustment > 0)
+                result = OrderDao.AddOrder(order);
+                if (result > 0)
                 {
-                    OrderDao.addOrderSubsidiesLog(order.Adjustment, result, "补贴加钱,订单金额:" + order.Amount + "-佣金补贴策略id:" + order.CommissionFormulaMode);
+                    str = "1";
+                    if (order.Adjustment > 0)
+                    {
+                        bool b = OrderDao.addOrderSubsidiesLog(order.Adjustment, result, "补贴加钱,订单金额:" + order.Amount + "-佣金补贴策略id:" + order.CommissionFormulaMode);
+                        if (!b)
+                        {
+                            str = "1";
+                        }
+                    }
+                    tran.Complete();
                 }
-                //Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity); //激光推送
-                ////推送给 VIP
-                //if (ConfigSettings.Instance.IsSendVIP == "1")
-                //{
-                //    Push.PushMessageVip(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity, ConfigSettings.Instance.VIPName); //激光推送
-                //}
-                return "1";
+
             }
-            else
-            {
-                return "0";
-            }
+            //Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity); //激光推送
+            ////推送给 VIP
+            //if (ConfigSettings.Instance.IsSendVIP == "1")
+            //{
+            //    Push.PushMessageVip(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity, ConfigSettings.Instance.VIPName); //激光推送
+            //}
+            return str;
+
         }
 
         /// <summary>
@@ -739,7 +755,7 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <param name="orderNo"></param>
         /// <returns></returns>
-        public OrderListModel GetOrderInfoByOrderNo(string orderNo)
+        public OrderListModel GetOrderInfoByOrderNo(string orderNo, int orderId = 0)
         {
             return OrderDao.GetOrderInfoByOrderNo(orderNo);
         }
