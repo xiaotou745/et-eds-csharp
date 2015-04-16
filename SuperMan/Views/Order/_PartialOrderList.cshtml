@@ -26,60 +26,71 @@
     <tbody>
         @{
             var i = 0;
-            foreach (var item in Model.Records)
+            if (Model != null && Model.Records.Count > 0)
             {
-                var diffHour = (DateTime.Now - DateTime.Parse(item.PubDate != null ? item.PubDate.ToString() : DateTime.Now.ToString())).TotalHours;
-                string val = diffHour > 10 && item.Status == 0 ? "red" : diffHour > 8 && item.Status == 0 ? "blue" : diffHour > 5 && item.Status == 0 ? "yellow" : "none";
-                i++;
+
+           
+                foreach (var item in Model.Records)
+                {
+                    var diffHour = (DateTime.Now - DateTime.Parse(item.PubDate != null ? item.PubDate.ToString() : DateTime.Now.ToString())).TotalHours;
+                    string val = diffHour > 10 && item.Status == 0 ? "red" : diffHour > 8 && item.Status == 0 ? "blue" : diffHour > 5 && item.Status == 0 ? "yellow" : "none";
+                    i++;
                 @*<tr id="@item.Id" style="background-color:@Html.Raw(val)" >*@
-                <tr id="@item.Id">
-                    <td>@item.OrderNo</td>
-                    <td>@item.OriginalOrderNo</td>
-                    <td>@item.BusinessName <br> @item.BusinessPhoneNo</td>
-                    <td>@item.ClienterName <br> @item.ClienterPhoneNo</td>
-                    <td>@item.PubDate</td>
-                    <td>@item.PickUpAddress</td>
-                    <td>@item.ReceviceAddress</td>
-                    <td>@item.ActualDoneDate</td>
-                    <td>@item.OrderCount</td>
-                    <td style="color:red;font-weight:600">@item.Amount</td>
-                    <td>@item.OrderCommission</td>
-                    <td>@item.DistribSubsidy</td>
-                    <td>@item.WebsiteSubsidy</td>
-                    <td>@item.Adjustment</td>
-                    <td>@item.BusinessCommission</td>
-                    <td>@item.GroupName</td>
-                    @{
-                var strstatus = "";
-                if (@item.Status ==Ets.Model.Common.ConstValues.ORDER_FINISH)
-                {
-                    strstatus = "已完成";
+                    <tr id="@item.Id">
+                        <td>@item.OrderNo</td>
+                        <td>@item.OriginalOrderNo</td>
+                        <td>@item.BusinessName <br> @item.BusinessPhoneNo</td>
+                        <td>@item.ClienterName <br> @item.ClienterPhoneNo</td>
+                        <td>@item.PubDate</td>
+                        <td>@item.PickUpAddress</td>
+                        <td>@item.ReceviceAddress</td>
+                        <td>@item.ActualDoneDate</td>
+                        <td>@item.OrderCount</td>
+                        <td style="color:red;font-weight:600">@item.Amount</td>
+                        <td>@item.OrderCommission</td>
+                        <td>@item.DistribSubsidy</td>
+                        <td>@item.WebsiteSubsidy</td>
+                        <td>@item.Adjustment</td>
+                        <td>@item.BusinessCommission</td>
+                        <td>@item.GroupName</td>
+                        @{
+                            var strstatus = "";
+                            if (@item.Status ==Ets.Model.Common.ConstValues.ORDER_FINISH)
+                            {
+                                strstatus = "已完成";
+                            }
+                            else if (@item.Status == Ets.Model.Common.ConstValues.ORDER_NEW)
+                            {
+                                strstatus = "未接单";
+                            }
+                            else if (@item.Status == Ets.Model.Common.ConstValues.ORDER_ACCEPT)
+                            {
+                                strstatus = "已接单";
+                            }
+                            else if (@item.Status == Ets.Model.Common.ConstValues.ORDER_CANCEL)
+                            {
+                                strstatus = "已取消";
+                            }
+                            <td style="color:@Html.Raw(val)">@strstatus</td>
+                        }
+                        <td>
+                            <a href="/Order/OrderDetail?OrderNo=@item.OrderNo&OrderId=@item.Id ">查看</a>
+                            @*<a href="javascript:void(0)" orderid=@item.Id businessname=@item.BusinessName id="linkView" onclick="funcViewOrder('@item.OrderNo','@item.PubDate','@item.BusinessName','@item.BusinessPhoneNo','@item.BusinessAddress','@item.OrderCommission','@item.DistribSubsidy','@item.WebsiteSubsidy','@item.RecevicePhoneNo','@item.ReceviceName','@item.ReceviceAddress','@item.Amount','@item.IsPay','@item.clienterId','@item.Status','@item.ClienterName')">查看</a>*@
+                        </td>
+                    </tr>
                 }
-                else if (@item.Status == Ets.Model.Common.ConstValues.ORDER_NEW)
-                {
-                    strstatus = "未接单";
-                }
-                else if (@item.Status == Ets.Model.Common.ConstValues.ORDER_ACCEPT)
-                {
-                    strstatus = "已接单";
-                }
-                else if (@item.Status == Ets.Model.Common.ConstValues.ORDER_CANCEL)
-                {
-                    strstatus = "已取消";
-                }
-                <td style="color:@Html.Raw(val)">@strstatus</td>
-                    }
-                    <td>
-                        <a href="/Order/OrderDetail?OrderNo=@item.OrderNo&OrderId=@item.Id ">查看</a>
-                        @*<a href="javascript:void(0)" orderid=@item.Id businessname=@item.BusinessName id="linkView" onclick="funcViewOrder('@item.OrderNo','@item.PubDate','@item.BusinessName','@item.BusinessPhoneNo','@item.BusinessAddress','@item.OrderCommission','@item.DistribSubsidy','@item.WebsiteSubsidy','@item.RecevicePhoneNo','@item.ReceviceName','@item.ReceviceAddress','@item.Amount','@item.IsPay','@item.clienterId','@item.Status','@item.ClienterName')">查看</a>*@
-                    </td>
-                </tr>
             }
         }
     </tbody>
 </table>
-@{ViewBag.ActionName = "PostOrder";}
+@{
+    if (Model != null)
+    {
+ ViewBag.ActionName = "PostOrder";
 @Html.Partial("~/views/shared/PagerControl.cshtml", Model)
+    }
+}
+
 
 
 <!--状态为已完成的订单弹出画面 start-->

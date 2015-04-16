@@ -1,5 +1,6 @@
 ﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Order.OrderListModel>
 @using Ets.Model
+@using Ets.Service.Provider.User
 @{
     ViewBag.Title = "Order";
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
@@ -44,13 +45,15 @@
                     <input id="txtOrderPubStart" readonly="readonly" type="text" name="OrderPubStart" />
                     <span class="">到: </span>
                     <input id="txtOrderPubEnd" readonly="readonly" type="text" name="OrderPubEnd" />
-                    <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" name="GroupId" />
+                   @* <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" name="GroupId" />*@
                     <span class="">筛选城市: </span>
                     @Html.DropDownList("businessCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), "--无--", new { style = "width:155px" })
                 </td>
             </tr>
             <tr>
                 <td>
+                    <span class="">筛选集团: </span>
+                    @Html.DropDownList("GroupId", new SelectList(new BusinessProvider().GetGroups() , "Id", "GroupName"), "--无--", new { @class = "selectw", style = "width:143px" })
                     <span class="">原订单号: </span>
                     <input id="txtOriginalOrderNo" type="text" name="OriginalOrderNo" /> 
                     <span class="">订单号: </span>

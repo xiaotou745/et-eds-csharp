@@ -84,7 +84,7 @@ namespace ETS.Util
             Encoding gbEncode = Encoding.GetEncoding(encoding);
             using (StreamWriter swFromFile = new StreamWriter(FileFullPathAndName, IsAppend, gbEncode))
             {
-                swFromFile.Write(Text);
+                swFromFile.Write(Text+"\r\n");
                 swFromFile.Close();
             }
         }
