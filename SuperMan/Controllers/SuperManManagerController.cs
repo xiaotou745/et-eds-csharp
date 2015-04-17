@@ -1,4 +1,5 @@
-﻿using Ets.Model.DataModel.Clienter;
+﻿using System.Text.RegularExpressions;
+using Ets.Model.DataModel.Clienter;
 using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.Provider.Common;
@@ -40,13 +41,14 @@ namespace SuperMan.Controllers
             var pagedList = iDistributionProvider.GetClienteres(criteria);
             return View(pagedList);
         }
-
+           
+ 
         [HttpPost]
         public ActionResult PostSuperManManager(int pageindex=1)
         {
             Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria();
             TryUpdateModel(criteria);
-            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(); 
             var pagedList = iDistributionProvider.GetClienteres(criteria);
             return PartialView("_SuperManManagerList", pagedList);
         }
