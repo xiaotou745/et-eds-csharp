@@ -555,14 +555,16 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
         public IList<BusinessesDistributionModel> GetClienteStorerGrabStatisticalInfo()
         {
             string strSql = @"select 
-                                    convert(char(10),InsertTime,120) InsertTime,
-                                    BusinessCount,
-                                    convert(decimal(10,2),sum(Amount)) TotalAmount,
-                                    count(distinct ClienterId) ClienterCount,
-                                    convert(decimal(10,2),sum(Amount)/count(distinct ClienterId)) Amount
-                             from CrossShopLog(nolock)
-                             WHERE  InsertTime>getdate()-20
-                             group by convert(char(10),InsertTime,120),BusinessCount";
+                            (select count(distinct clienterId) from dbo.[order](nolock) o where convert(char(10),InsertTime,120)=convert(char(10),o.PubDate,120) ) OneCount,
+                            convert(char(10),InsertTime,120) InsertTime,
+                            BusinessCount,
+                            convert(decimal(10,2),sum(Amount)) TotalAmount,
+                            count(distinct ClienterId) ClienterCount,
+                            convert(decimal(10,2),sum(Amount)/count(distinct ClienterId)) Amount
+                            from CrossShopLog(nolock)
+                            WHERE  InsertTime>getdate()-20
+                            group by convert(char(10),InsertTime,120),BusinessCount
+                            ";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, strSql);
             return MapRows<BusinessesDistributionModel>(dt);
         }

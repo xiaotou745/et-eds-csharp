@@ -32,7 +32,11 @@ namespace Ets.Model.DomainModel.Bussiness
         /// </summary>
         public int ClienterCount { get; set; }
 
-
+        /// <summary>
+        /// 窦海超加
+        /// 临时用，一次跨店数量 
+        /// </summary>
+        public int OneCount { get; set; }
     }
 
     /// <summary>

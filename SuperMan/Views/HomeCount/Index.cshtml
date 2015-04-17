@@ -151,7 +151,8 @@
                         <tr class="trclass">
                         <td>@item.InsertTime</td>
                         <td>@item.TotalAmount</td>
-                         @for (int i = 1; i <= 10; i++)
+                         <td>@(item.OneCount)个<br />@(item.OneCount)*0=￥0</td>
+                         @for (int i = 2; i <= 10; i++)
                          {
                              if (i==item.BusinessCount)
                              {
@@ -169,16 +170,16 @@
                         <tr class="trclass">
                             <td>@item.PubDate.ToString()</td>
                             <td>0</td>
-                            <td>@(item.OnceCount)个<br />0*0=￥0</td>
-                            <td>@(@item.TwiceCount)个<br />0*0=￥0</td>
-                            <td>@(item.ThreeTimesCount)个<br />0*0=￥0</td>
-                            <td>@(item.FourTimesCount)个<br />0*0=￥0</td>
-                            <td>@(item.FiveTimesCount)个<br />0*0=￥0</td>
-                            <td>@(item.SixTimesCount)个<br />0*0=￥0</td>
-                            <td>@(item.SevenTimesCount)个<br />0*0=￥0</td>
-                            <td>@(item.EightTimesCount)个<br />0*0=￥0</td>
-                            <td>@(item.NineTimesCount)个<br />0*0=￥0</td>
-                            <td>@(item.ExceedNineTimesCount)个<br />0*0=￥0</td>
+                            <td>@(item.OnceCount)个<br />@(item.OnceCount)*0=￥0</td>
+                            <td>@(@item.TwiceCount)个<br />@(item.TwiceCount)*0=￥0</td>
+                            <td>@(item.ThreeTimesCount)个<br />@(item.ThreeTimesCount)*0=￥0</td>
+                            <td>@(item.FourTimesCount)个<br />@(item.FourTimesCount)*0=￥0</td>
+                            <td>@(item.FiveTimesCount)个<br />@(item.FiveTimesCount)*0=￥0</td>
+                            <td>@(item.SixTimesCount)个<br />@(item.SixTimesCount)*0=￥0</td>
+                            <td>@(item.SevenTimesCount)个<br />@(item.SevenTimesCount)*0=￥0</td>
+                            <td>@(item.EightTimesCount)个<br />@(item.EightTimesCount)*0=￥0</td>
+                            <td>@(item.NineTimesCount)个<br />@(item.NineTimesCount)*0=￥0</td>
+                            <td>@(item.ExceedNineTimesCount)个<br />@(item.ExceedNineTimesCount)*0=￥0</td>
                         </tr>
                     }
                 }

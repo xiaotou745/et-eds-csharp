@@ -45,8 +45,10 @@
                 <td>@ParseHelper.ToSplitByPercentile(true,item.OrderCount)</td>
                 <td>@ParseHelper.ToSplitByPercentile(false,((item.OrderPrice/item.OrderCount).ToString("f2")))</td>
                 <td>@ParseHelper.ToSplitByPercentile(false,((item.OrderPrice / item.MisstionCount).ToString("f2")))</td>
-                <td>@ParseHelper.ToSplitByPercentile(true,item.BusinessAverageOrderCount)</td>
-                <td>@ParseHelper.ToSplitByPercentile(true, (item.MisstionCount == 0 ? "0" : (item.MisstionCount / item.BusinessCount).ToString()))</td>
+                <td>@ParseHelper.ToDivision(item.OrderCount, item.ActiveBusiness)</td>
+                <td>@ParseHelper.ToDivision(item.MisstionCount,item.ActiveBusiness)</td>
+                <td>@ParseHelper.ToDivision(item.OrderCount, item.ActiveClienter)</td>
+                <td>@ParseHelper.ToDivision(item.MisstionCount, item.ActiveClienter)</td>
                 <td>@ParseHelper.ToSplitByPercentile(true,item.MissionAverageOrderCount)</td>
                 <td>@ParseHelper.ToSplitByPercentile(true,item.ClienterAverageOrderCount)</td>
                 <td>@ParseHelper.ToDivision(ParseHelper.ToDouble(item.YfPrice), item.ActiveClienter)</td>
