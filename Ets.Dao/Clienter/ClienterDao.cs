@@ -187,7 +187,7 @@ namespace Ets.Dao.Clienter
         public ClienterModel GetUserInfoByUserId(int UserId)
         {
             string sql = "SELECT TrueName,PhoneNo,AccountBalance FROM dbo.clienter(NOLOCK) WHERE Id=" + UserId;
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql);
             IList<ClienterModel> list = MapRows<ClienterModel>(dt);
             if (list == null || list.Count <= 0)
             {
