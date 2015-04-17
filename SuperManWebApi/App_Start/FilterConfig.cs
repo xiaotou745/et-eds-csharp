@@ -34,7 +34,7 @@ namespace SuperManWebApi
         /// </summary>
         /// <param name="actionContext"></param>
         public override void OnActionExecuting(HttpActionContext actionContext)
-        { 
+        {
             Task.Factory.StartNew(() =>
             {
                 var verSion = actionContext.ActionArguments["Version"] as string;
@@ -44,10 +44,42 @@ namespace SuperManWebApi
                     CreateTime = DateTime.Now,
                     Version = verSion
                 };
-                new ApiVersionProvider().AddApiRecords(model); 
+                new ApiVersionProvider().AddApiRecords(model);
             });
         }
 
+    }
+
+    /// <summary>
+    /// 用于记录接口请求总耗时 add by caoheyang 
+    /// </summary>
+    [System.AttributeUsage(System.AttributeTargets.Method)]
+    public class ExecuteTimeLogAttribute : System.Web.Http.Filters.ActionFilterAttribute
+    {
+        System.Diagnostics.Stopwatch stop = new System.Diagnostics.Stopwatch();
+        /// <summary>
+        /// 重写OnActionExecuting方法
+        /// </summary>
+        /// <param name="actionContext"></param>
+        public override void OnActionExecuting(HttpActionContext actionContext)
+        {
+            stop.Start();
+            base.OnActionExecuting(actionContext);
+        }
+        /// <summary>
+        /// 异步记录日志
+        /// </summary>
+        /// <param name="actionExecutedContext"></param>
+        public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
+        {
+            System.Threading.Tasks.Task.Factory.StartNew(() =>
+            {
+                stop.Stop();
+                LogHelper.LogWriter("接口" + actionExecutedContext.Request.RequestUri + "请求时间：" + stop.Elapsed);
+                stop.Reset();
+            });
+            base.OnActionExecuted(actionExecutedContext);
+        }
     }
 
     /// <summary>
