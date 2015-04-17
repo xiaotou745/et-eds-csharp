@@ -30,9 +30,16 @@ namespace Ets.Service.IProvider.Subsidy
 
         /// <summary>
         /// 跨店补贴
-        /// xupengcheng
+        /// 徐鹏程
         /// 20150414
         /// </summary>
         bool CrossShop(List<GlobalConfigSubsidies> SubsidiesList);
+        
+        /// <summary>
+        /// 跨店补贴短信
+        /// 徐鹏程
+        /// 20150416
+        /// </summary>
+        bool ShortMessage(string SendMessage);
     }
 }

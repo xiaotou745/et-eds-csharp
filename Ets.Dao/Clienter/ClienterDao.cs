@@ -540,6 +540,7 @@ namespace Ets.Dao.Clienter
             string orderByColumn = " tbl.PubDate DESC ";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
         }
+
         /// <summary>
         /// 骑士门店抢单统计
         /// danny-20150408
@@ -547,29 +548,19 @@ namespace Ets.Dao.Clienter
         /// <returns></returns>
         public IList<BusinessesDistributionModel> GetClienteStorerGrabStatisticalInfo()
         {
-            string sql = @" SELECT  PubDate ,
-                                    ISNULL(SUM(CASE when a.BusinessCount=1 THEN ClienterCount END),0) OnceCount,
-                                    ISNULL(SUM(CASE when a.BusinessCount=2 THEN ClienterCount END),0) TwiceCount,
-                                    ISNULL(SUM(CASE when a.BusinessCount=3 THEN ClienterCount END),0) ThreeTimesCount,
-                                    ISNULL(SUM(CASE when a.BusinessCount=4 THEN ClienterCount END),0) FourTimesCount,
-                                    ISNULL(SUM(CASE when a.BusinessCount=5 THEN ClienterCount END),0) FiveTimesCount,
-                                    ISNULL(SUM(CASE when a.BusinessCount=6 THEN ClienterCount END),0) SixTimesCount,
-                                    ISNULL(SUM(CASE when a.BusinessCount=7 THEN ClienterCount END),0) SevenTimesCount,
-                                    ISNULL(SUM(CASE when a.BusinessCount=8 THEN ClienterCount END),0) EightTimesCount,
-                                    ISNULL(SUM(CASE when a.BusinessCount=9 THEN ClienterCount END),0) NineTimesCount,
-                                    ISNULL(SUM(CASE when a.BusinessCount>=10 THEN ClienterCount END),0) ExceedTenTimesCount
-                            FROM (select PubDate,businessCount BusinessCount,count(clienterId) as ClienterCount
-                                  from (select convert(char(10),o.PubDate,120) PubDate,clienterId,count(distinct businessId) businessCount
-                                        from dbo.[order] o(nolock)
-                                        where o.PubDate> getdate()-20
-                                            and Status in (1,2)
-                                        group by convert(char(10),o.PubDate,120), clienterId)t
-                                  group by PubDate, businessCount) a
-                            group by PubDate
-                            order by PubDate desc ;";
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
+            string strSql = @"select 
+                                    convert(char(10),InsertTime,120) InsertTime,
+                                    BusinessCount,
+                                    convert(decimal(10,2),sum(Amount)) TotalAmount,
+                                    count(distinct ClienterId) ClienterCount,
+                                    convert(decimal(10,2),sum(Amount)/count(distinct ClienterId)) Amount
+                             from CrossShopLog(nolock)
+                             WHERE  InsertTime>getdate()-20
+                             group by convert(char(10),InsertTime,120),BusinessCount";
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, strSql);
             return MapRows<BusinessesDistributionModel>(dt);
         }
+
 
         /// <summary>
         /// 上传小票

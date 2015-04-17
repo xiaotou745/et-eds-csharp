@@ -53,6 +53,15 @@ namespace ETS
         /// </summary>
         public static int StartSubsidyTime { get { return ParseHelper.ToInt(ConfigKey("StartSubsidyTime")); } }
 
+        /// <summary>
+        /// 跨店补贴短信发送开始时间
+        /// </summary>
+        public static int ShortMessageTime { get { return ParseHelper.ToInt(ConfigKey("ShortMessageTime")); } }
+
+        /// <summary>
+        /// 跨店补贴发送短信内容格式
+        /// </summary>
+        public static string SendMessage { get { return ConfigKey("SendMessage"); } }
 
         #region 取Web.Config值
 
