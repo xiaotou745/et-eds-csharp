@@ -84,7 +84,7 @@ namespace Ets.CrossShopService.BLL
                             //调用抢单奖励机制主要方法
                             if (CrossShop.CrossShop(MyList))
                             {
-                                ETS.Util.Log.WriteTextToFile("抢单奖励计算成功", GetLogFilePath(), true);
+                                ETS.Util.Log.WriteTextToFile("跨店奖励计算成功" + DateTime.Now.ToString()+":", GetLogFilePath(), true);
                             }
                         }
                         catch (Exception ex)

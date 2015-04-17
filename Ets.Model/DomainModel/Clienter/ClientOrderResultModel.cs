@@ -20,6 +20,7 @@ namespace Ets.Model.DomainModel.Clienter
         /// 订单号
         /// </summary>
         public string OrderNo { get; set; }
+        public string OriginalOrderNo { get; set; }
         /// <summary>
         /// 收入
         /// </summary>

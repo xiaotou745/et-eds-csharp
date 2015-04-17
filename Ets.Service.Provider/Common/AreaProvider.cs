@@ -19,7 +19,7 @@ namespace Ets.Service.Provider.Common
 {
     public class AreaProvider : IAreaProvider
     {
-        readonly AreaDao dao = new AreaDao();
+        private AreaDao dao = new AreaDao();
         /// <summary>
         /// 获取开通城市的省市区
         /// 窦海超
@@ -34,16 +34,17 @@ namespace Ets.Service.Provider.Common
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string key = RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity_New;
 
-            if (Config.ApiVersion == version)
-            {
-                //如果配置开通城市版本相同，则返回空数据
-                return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.Newest, null);
-            }
+            //if (Config.ApiVersion == version)
+            //{
+            //    //如果配置开通城市版本相同，则返回空数据
+            //    return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.Newest, null);
+            //}
             string strAreaList = redis.Get<string>(key);
             if (!string.IsNullOrEmpty(strAreaList))
             {
-                areaList = Letao.Util.JsonHelper.ToObject<AreaModelList>(strAreaList);
+                areaList = Letao.Util.JsonHelper.JsonConvertToObject<AreaModelList>(strAreaList);
             }
+         
             else
             {
                 IList<Model.DomainModel.Area.AreaModel> list = dao.GetOpenCitySql();
@@ -52,7 +53,8 @@ namespace Ets.Service.Provider.Common
                 areaList.Version = Config.ApiVersion;
                 if (list != null)
                 {
-                    redis.Set(key, Letao.Util.JsonHelper.ToJson(areaList));
+                    redis.Set(key, Letao.Util.JsonHelper.JsonConvertToString(areaList));
+                    redis.Set(key, areaList);
                 }
             }
             return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.UnNewest, areaList);
@@ -70,46 +72,25 @@ namespace Ets.Service.Provider.Common
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             IList<Model.DomainModel.Area.AreaModel> list = dao.GetOpenCitySql();
             areaList.AreaModels = list;
+            areaList.Version = Config.ApiVersion;
             if (list != null)
             {
-                redis.Set(RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity_New, Letao.Util.JsonHelper.ToJson(list));
+                redis.Set(RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity_New, Letao.Util.JsonHelper.ToJson(areaList));
             }
-        }
-
-        /// <summary>
-        /// 获取开通城市
-        /// danny-20150327
-        /// </summary>
-        /// <returns></returns>
-        public Model.Common.ResultModel<List<AreaModel>> GetOpenCityInfo()
-        {
-            var redis = new ETS.NoSql.RedisCache.RedisCache();
-            string key = RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity_New;
-            //读取缓存
-            var cacheValue = redis.Get<string>(key);
-            //redis.Delete(key);
-            if (!string.IsNullOrEmpty(cacheValue))
-            {
-                return ResultModel<List<AreaModel>>.Conclude(ETS.Enums.CityStatus.Newest, Letao.Util.JsonHelper.ToObject<List<AreaModel>>(cacheValue));
-            }
-            //取数据库
-            List<AreaModel> list = dao.GetOpenCitySql().ToList();
-            //CacheFactory.Instance.AddObject(key, list);
-            if (list != null)
-            {
-                redis.Set(key, Letao.Util.JsonHelper.ToJson(list));
-            }
-            return ResultModel<List<AreaModel>>.Conclude(ETS.Enums.CityStatus.Newest, list);
         }
         /// <summary>
         /// 获取开通城市(只有市)
         /// danny-20150414
         /// </summary>
         /// <returns></returns>
-        public Model.Common.ResultModel<List<AreaModel>> GetOpenCityOfSingleCity()
+        public Model.Common.ResultModel<Model.DomainModel.Area.AreaModelList> GetOpenCityOfSingleCity()
         {
-            var openCityList = GetOpenCityInfo().Result.Where(t => t.JiBie == 2).ToList();
-            return ResultModel<List<AreaModel>>.Conclude(ETS.Enums.CityStatus.Newest, openCityList);
+            AreaModelList areaList = new AreaModelList();
+            var openCityList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 2).ToList();
+            areaList.AreaModels = openCityList;
+            areaList.Version = Config.ApiVersion;
+            return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.UnNewest, areaList);
+            //return ResultModel<List<AreaModelList>>.Conclude(ETS.Enums.CityStatus.Newest, areaList);
         }
         /// <summary>
         /// 根据用户传递的  省、市、区名称、级别（省1，市2，区3）,转换为 国标码
@@ -164,6 +145,34 @@ namespace Ets.Service.Provider.Common
             }
             return resultAreaModel;
         }
+
+
+        /// <summary>
+        /// 获取 省市区信息
+        /// </summary>
+        /// <param name="name">省市区名称</param>
+        /// <param name="jiBie">级别</param>
+        /// <param name="parentId">父级code</param>
+        /// <returns></returns>
+        public AreaModel GetAreaModelFromResis(string name, int jiBie, int parentId)
+        {
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            return
+               (
+               from p in Newtonsoft.Json.Linq.JObject.Parse(redis.Get<string>(ETS.Const.RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity_New)).GetValue("AreaModels")
+               where
+               p.Value<string>("Name") == name
+               && p.Value<int>("JiBie") == jiBie
+               && p.Value<int>("ParentId") == parentId
+               select new Ets.Model.DomainModel.Area.AreaModel()
+               {
+                   Code = p.Value<int>("Code"),
+                   Name = p.Value<string>("Name"),
+                   ParentId = p.Value<int>("ParentId"),
+                   JiBie = p.Value<int>("JiBie"),
+               }).FirstOrDefault();
+        }
+
 
         /// <summary>
         /// 根据省市区名称获取对应的省市区编码 add by caoheyang 20150407

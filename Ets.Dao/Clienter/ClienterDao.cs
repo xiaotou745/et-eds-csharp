@@ -4,7 +4,6 @@ using ETS.Dao;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Order;
 using ETS.Data.Core;
-using ETS.Util;
 using ETS.Const;
 using ETS.Data.PageData;
 using Ets.Model.DomainModel.Clienter;
@@ -21,6 +20,7 @@ using Ets.Dao.Order;
 using System.Text.RegularExpressions;
 using ETS.IO;
 using System.IO;
+using ETS.Util;
 
 namespace Ets.Dao.Clienter
 {
@@ -88,7 +88,7 @@ namespace Ets.Dao.Clienter
             string columnStr = @"   o.clienterId AS UserId,
                                     o.OrderNo,
                                     o.Id OrderId,
-                                    o.OriginalOrderNo,
+                                    ISNULL(o.OriginalOrderNo,'') OriginalOrderNo,
                                     CONVERT(VARCHAR(5),o.PubDate,108) AS PubDate,
                                     o.PickUpAddress,
                                     o.ReceviceName,
@@ -116,7 +116,7 @@ namespace Ets.Dao.Clienter
                                     b.GroupId,ISNULL(oo.HadUploadCount,0) HadUploadCount ";
             string sql_from = @" [order](NOLOCK) AS o LEFT JOIN business(NOLOCK) AS b ON o.businessId=b.Id  
                                  left join dbo.OrderOther oo (nolock) on o.Id = oo.OrderId ";
-            return new PageHelper().GetPages<ClientOrderModel>(SuperMan_Read, criteria.PagingRequest.PageIndex, where, criteria.status == 1 ? "o.ActualDoneDate DESC " : " o.OrderId ", columnStr, sql_from, criteria.PagingRequest.PageSize, false);
+            return new PageHelper().GetPages<ClientOrderModel>(SuperMan_Read, criteria.PagingRequest.PageIndex, where, criteria.status == 1 ? "o.ActualDoneDate DESC " : " o.Id ", columnStr, sql_from, criteria.PagingRequest.PageSize, false);
         }
 
         /// <summary>
@@ -277,9 +277,9 @@ namespace Ets.Dao.Clienter
             }
             catch (Exception ex)
             {
-                LogHelper.LogWriter(ex, "检查当前骑士是否存在");
+                //LogHelper.LogWriter(ex, "检查当前骑士是否存在");
                 return false;
-                throw;
+                throw ex;
             }
         }
         /// <summary>
@@ -300,9 +300,9 @@ namespace Ets.Dao.Clienter
             }
             catch (Exception ex)
             {
-                LogHelper.LogWriter(ex, "检查当前骑士是否存在");
+                //LogHelper.LogWriter(ex, "检查当前骑士是否存在");
                 return false;
-                throw;
+                throw ex;
             }
         }
         /// <summary>
@@ -322,9 +322,9 @@ namespace Ets.Dao.Clienter
             }
             catch (Exception ex)
             {
-                LogHelper.LogWriter(ex, "根据骑士Id判断骑士是否存在");
+                //LogHelper.LogWriter(ex, "根据骑士Id判断骑士是否存在");
                 return false;
-                throw;
+                throw ex;
             }
         }
 
@@ -355,8 +355,8 @@ namespace Ets.Dao.Clienter
             catch (Exception ex)
             {
                 reslut = false;
-                LogHelper.LogWriter(ex, "更新骑士照片信息");
-                throw;
+                //LogHelper.LogWriter(ex, "更新骑士照片信息");
+                throw ex;
             }
             return reslut;
         }
@@ -403,20 +403,26 @@ namespace Ets.Dao.Clienter
 
         /// <summary>
         /// 抢单
+        /// wc添加抢单的时增加日志
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="orderNo"></param>
         /// <returns></returns>
         public bool RushOrder(int userId, string orderNo)
         {
-            string sql = @" update [order] set clienterId=@clienterId,Status=@Status where OrderNo=@OrderNo and [Status]=0 ";//未抢订单才更新
+            StringBuilder sql = new StringBuilder();
+
+            sql.AppendFormat(@"update [order] set clienterId=@clienterId,Status=@Status 
+output Inserted.Id,GETDATE(),'{0}','',Inserted.clienterId,Inserted.[Status],{1}
+into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
+where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform.骑士);//未抢订单才更新
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@clienterId", userId);
             parm.AddWithValue("@Status", ConstValues.ORDER_ACCEPT);
             parm.Add("@OrderNo", SqlDbType.NVarChar);
             parm.SetValue("@OrderNo", orderNo);
 
-            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Read, sql, parm)) > 0;
+            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Read, sql.ToString(), parm)) > 0;
 
         }
 
@@ -570,8 +576,10 @@ namespace Ets.Dao.Clienter
         public OrderOther UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel)
         {
             OrderOther orderOther = new OrderOther();
-            var oo = GetReceiptInfo(uploadReceiptModel.OrderId);
-            if (oo == null)
+            int orderStatus = 0;
+            var oo = GetReceiptInfo(uploadReceiptModel.OrderId, out orderStatus);
+            uploadReceiptModel.NeedUploadCount = oo.NeedUploadCount;
+            if (oo.Id == 0)
             {
                 orderOther = InsertReceiptInfo(uploadReceiptModel);
             }
@@ -579,6 +587,7 @@ namespace Ets.Dao.Clienter
             {
                 orderOther = UpdateReceiptInfo(uploadReceiptModel);
             }
+            orderOther.OrderStatus = orderStatus;
             return orderOther;
         }
 
@@ -592,18 +601,18 @@ namespace Ets.Dao.Clienter
         {
             OrderOther oo = new OrderOther();
             string sql = @"
- insert into dbo.OrderOther
-        ( OrderId ,
-          NeedUploadCount ,
-          ReceiptPic ,
-          HadUploadCount
-        )
- output Inserted.Id,Inserted.OrderId,Inserted.NeedUploadCount,Inserted.ReceiptPic,Inserted.HadUploadCount
- values ( @OrderId ,
-          @NeedUploadCount , 
-          @ReceiptPic ,
-          @HadUploadCount 
-        );";
+                            insert into dbo.OrderOther
+                                ( OrderId ,
+                                    NeedUploadCount ,
+                                    ReceiptPic ,
+                                    HadUploadCount
+                                )
+                            output Inserted.Id,Inserted.OrderId,Inserted.NeedUploadCount,Inserted.ReceiptPic,Inserted.HadUploadCount
+                            values ( @OrderId ,
+                                    @NeedUploadCount , 
+                                    @ReceiptPic ,
+                                    @HadUploadCount 
+                            );";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderId", SqlDbType.Int);
             parm.SetValue("@OrderId", uploadReceiptModel.OrderId);
@@ -622,7 +631,8 @@ namespace Ets.Dao.Clienter
             }
             catch (Exception ex)
             {
-                LogHelper.LogWriter("插入orderOther表异常：", new { ex = ex });
+                //LogHelper.LogWriter("插入orderOther表异常：", new { ex = ex });
+                throw ex;
             }
             return oo;
         }
@@ -636,7 +646,7 @@ namespace Ets.Dao.Clienter
         public OrderOther UpdateReceiptInfo(UploadReceiptModel uploadReceiptModel)
         {
             OrderOther oo = new OrderOther();
-            
+
             string sql = @"
   update dbo.OrderOther
  set    ReceiptPic = ReceiptPic + '|' + @ReceiptPic ,
@@ -665,7 +675,8 @@ namespace Ets.Dao.Clienter
             }
             catch (Exception ex)
             {
-                LogHelper.LogWriter("更新orderOther表异常：", new { ex = ex });
+                //LogHelper.LogWriter("更新orderOther表异常：", new { ex = ex });
+                throw ex;
             }
             return oo;
         }
@@ -682,8 +693,7 @@ namespace Ets.Dao.Clienter
             string sql = @"
   update dbo.OrderOther
  set    ReceiptPic = @ReceiptPic ,
-        HadUploadCount = HadUploadCount + @HadUploadCount,
-        NeedUploadCount = @NeedUploadCount
+        HadUploadCount = HadUploadCount + @HadUploadCount
  output Inserted.Id ,
         Inserted.OrderId ,
         Inserted.NeedUploadCount ,
@@ -693,7 +703,6 @@ namespace Ets.Dao.Clienter
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderId", SqlDbType.Int);
             parm.SetValue("@OrderId", uploadReceiptModel.OrderId);
-            parm.AddWithValue("@NeedUploadCount", uploadReceiptModel.NeedUploadCount);
             parm.AddWithValue("@HadUploadCount", uploadReceiptModel.HadUploadCount);
             parm.AddWithValue("@ReceiptPic", uploadReceiptModel.ReceiptPic);
             try
@@ -707,7 +716,8 @@ namespace Ets.Dao.Clienter
             }
             catch (Exception ex)
             {
-                LogHelper.LogWriter("删除更新orderOther表异常：", new { ex = ex });
+                //LogHelper.LogWriter("删除更新orderOther表异常：", new { ex = ex });
+                throw ex;
             }
             return oo;
         }
@@ -718,28 +728,37 @@ namespace Ets.Dao.Clienter
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns>OrderOther</returns>
-        public OrderOther GetReceiptInfo(int orderId)
+        public OrderOther GetReceiptInfo(int orderId, out int OrderStatus)
         {
+            OrderStatus = 0;
+            int orderCount = 0;
             string sql = @"select oo.Id ,
         oo.OrderId ,
         oo.NeedUploadCount ,
         oo.ReceiptPic ,
         oo.HadUploadCount
 from    dbo.OrderOther oo ( nolock )
-where   oo.OrderId = @OrderId;";
+where   oo.OrderId = @OrderId;select o.[Status],o.OrderCount FROM dbo.[order] o (nolock)
+ where o.Id = @OrderId";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderId", SqlDbType.Int);
             parm.SetValue("@OrderId", orderId);
 
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
-            var ooList = MapRows<OrderOther>(dt);
-            if (ooList != null && ooList.Count == 1)
+            DataSet dt = DbHelper.ExecuteDataset(SuperMan_Read, sql, parm);
+            var ooList = MapRows<OrderOther>(dt.Tables[0]);
+            if (dt.Tables[1] != null && dt.Tables[1].Rows.Count > 0)
+            { 
+                OrderStatus = ParseHelper.ToInt(dt.Tables[1].Rows[0][0], 0);
+                orderCount = ParseHelper.ToInt(dt.Tables[1].Rows[0][1], 0);
+            }
+            if (ooList != null && ooList.Count> 0)
             {
-                return MapRows<OrderOther>(dt)[0];
+                ooList[0].NeedUploadCount = orderCount;
+                return ooList[0];
             }
             else
             {
-                return null;
+                return new OrderOther() { OrderId = orderId, OrderStatus = OrderStatus, NeedUploadCount = orderCount, HadUploadCount = 0, ReceiptPic = "" };
             }
         }
         /// <summary>
@@ -751,29 +770,30 @@ where   oo.OrderId = @OrderId;";
         public OrderOther DeleteReceipt(UploadReceiptModel uploadReceiptModel)
         {
             string delPic = uploadReceiptModel.ReceiptPic;
-
+            int orderStatus = 0;
             //更新小票信息
-            OrderOther oo = GetReceiptInfo(uploadReceiptModel.OrderId);
-            if (oo != null)
+            OrderOther oo = GetReceiptInfo(uploadReceiptModel.OrderId, out orderStatus);
+            if (oo.Id>0)
             {
                 List<string> listReceiptPic = ImageCommon.GetListImgString(oo.ReceiptPic);
 
                 Regex regex = new Regex(@"(/\d{4}/\d{2}/\d{2}.*?)\.jpg", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline);
                 MatchCollection matchCollection = regex.Matches(delPic);
-                string delPicDir="1.jpg";
+                string delPicDir = "1.jpg";
                 foreach (Match match in matchCollection)
                 {
-                   delPicDir  = match.Value;
-                   listReceiptPic.Remove(delPicDir);
+                    delPicDir = match.Value;
+                    listReceiptPic.Remove(delPicDir);
                 }
                 string ppath = ConfigSettings.Instance.FileUploadPath + "\\" + ConfigSettings.Instance.FileUploadFolderNameCustomerIcon;
-                var delDir = ppath + delPicDir;
-
+                var delDir = ppath + delPicDir; 
+              
                 var fileName = Path.GetFileName(delDir);
+
+                int fileNameLastDot = fileName.LastIndexOf('.'); 
                  
-                int fileNameLastDot = fileName.LastIndexOf('.');
                 //原图 
-                string orginalFileName = string.Format("{0}{1}{2}", ppath +"\\" + fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
+                string orginalFileName = string.Format("{0}{1}{2}", Path.GetDirectoryName(delDir) + "\\" + fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
 
                 //删除磁盘中的裁图
                 FileHelper.DeleteFile(delDir);

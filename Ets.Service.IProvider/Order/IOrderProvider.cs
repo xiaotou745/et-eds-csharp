@@ -151,7 +151,7 @@ namespace Ets.Service.IProvider.Order
         /// </summary>
         /// <param name="orderNo"></param>
         /// <returns></returns>
-        OrderListModel GetOrderInfoByOrderNo(string orderNo);
+        OrderListModel GetOrderInfoByOrderNo(string orderNo, int orderId = 0);
         /// <summary>
         /// 取消订单
         /// danny-20150414

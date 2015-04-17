@@ -167,6 +167,15 @@ namespace Ets.Service.Provider.Common
             }
             return result;
         }
+        /// <summary>
+        /// 获取集团名称
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public string GetGroupName(int id)
+        {
+            return _dao.GetGroupName(id);
+        }
 
         /// <summary>
         /// 创建集团

@@ -536,9 +536,9 @@
     <Content Include="Views\Order\OrderDetail.cshtml" />
     <Content Include="Views\OpenCityManager\OpenCityManager.cshtml" />
     <Content Include="Views\OpenCityManager\_OpenCityManagerList.cshtml" />
-
-
+    <Content Include="Views\AdminTools\RedisTools.cshtml" />
     <Content Include="Views\SubsidyFormulaMode\OverStoreSubsidies.cshtml" />
+    <Content Include="Views\AdminTools\PostRedisTools.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

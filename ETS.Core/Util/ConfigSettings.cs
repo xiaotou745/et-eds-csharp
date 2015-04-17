@@ -176,5 +176,36 @@ namespace ETS.Util
             get { return ConfigurationManager.AppSettings["IsSendVIP"]; }
         }
 
+        #region 第三方对接的appkey 和 app_secret
+        /// <summary>
+        /// 万达appkey
+        /// </summary>
+        public  string WanDaAppkey
+        {
+            get { return ConfigurationManager.AppSettings["WanDaAppkey"]; }
+        }
+        /// <summary>
+        ///  万达app_secret
+        /// </summary>
+        public string WanDaAppsecret
+        {
+            get { return ConfigurationManager.AppSettings["WanDaAppsecret"]; }
+        }
+
+        /// <summary>
+        /// 全时appkey
+        /// </summary>
+        public string FulltimeAppkey
+        {
+            get { return ConfigurationManager.AppSettings["FulltimeAppkey"]; }
+        }
+        /// <summary>
+        ///  全时app_secret
+        /// </summary>
+        public string FulltimeAppsecret
+        {
+            get { return ConfigurationManager.AppSettings["FulltimeAppsecret"]; }
+        }
+        #endregion
     }
 }

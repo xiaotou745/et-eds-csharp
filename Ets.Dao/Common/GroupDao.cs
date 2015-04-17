@@ -187,6 +187,26 @@ namespace Ets.Dao.Common
             return config;
         }
 
+        /// <summary>
+        /// 根据集团id查询集团信息
+        /// </summary>
+        /// <param name="gid"></param>
+        /// <returns></returns>
+        public string GetGroupName(int gid)
+        {
+            string sql = @" select GroupName from [group] with(nolock)  where Id=@id";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("id", gid);
+            var dr = DbHelper.ExecuteReader(Config.SuperMan_Read, sql, dbParameters);
+            if (dr.Read())
+            {
+                if (dr["GroupName"] != null)
+                {
+                    return dr["GroupName"].ToString();
+                }
+            }
+            return "";
+        } 
       
         public PageInfo<T> GetGroupList<T>(GroupParaModel model)
         {

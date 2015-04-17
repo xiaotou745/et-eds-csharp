@@ -136,26 +136,28 @@ WHERE   sub.[Status] = 1 ");
 
         /// <summary>
         /// 查询前一天的抢单量
-        /// xx
-        /// xx
+        /// 窦海超
+        /// 2015年4月16日 09:37:07
         /// </summary>
         /// <returns></returns>
         public IList<GrabOrderModel> GetBusinessCount()
         {
             string strSql = @"
-                            select 
-                            PubDate,
-                            ClienterId,
-                            BusinessCount 
-                            from (
-                            select convert(char(10),o.PubDate,120) PubDate,clienterId,count(distinct businessId) businessCount
-                            from 
-                            dbo.[order](nolock) o 
-                            where 
-                            convert(char(10),o.PubDate,120)=convert(char(10),dateadd(day,-1,getdate()),120) 
-                            and [Status]=1  
-                            group by convert(char(10),o.PubDate,120), clienterId ) t 
-                            where businessCount>1";
+                        select 
+                        PubDate,
+                        (select AccountBalance from dbo.clienter(nolock) where Id=t.clienterId) AccountBalance,
+                        ClienterId,
+                        BusinessCount 
+                        from (
+                        select convert(char(10),o.PubDate,120) PubDate, clienterId, count(distinct businessId) businessCount
+                        from 
+                        dbo.[order](nolock) o 
+                        where 
+                        convert(char(10),o.PubDate,120)=convert(char(10),dateadd(day,-1,getdate()),120) 
+                        and o.[Status]=1  and clienterId not in 
+                        (SELECT ClienterId FROM dbo.CrossShopLog(nolock) where convert(char(10),o.PubDate,120)=convert(char(10),dateadd(day,-1,getdate()),120) )
+                        group by convert(char(10),o.PubDate,120), clienterId ) t 
+                        where businessCount>1";
             DataTable myTable = DbHelper.ExecuteDataTable(SuperMan_Read, strSql);
             return MapRows<GrabOrderModel>(myTable);
         }

@@ -76,7 +76,7 @@ namespace Ets.Service.Provider.Subsidy
             
             foreach (GrabOrderModel item in list)
             {
-                Ets.Model.DomainModel.Clienter.ClienterModel cliterModel = new ClienterDao().GetUserInfoByUserId(item.ClienterId);//获取当前用户余额
+                //Ets.Model.DomainModel.Clienter.ClienterModel cliterModel = new ClienterDao().GetUserInfoByUserId(item.ClienterId);//获取当前用户余额
                 WithdrawRecordsModel withdraw = new WithdrawRecordsModel();
 
                 #region 写流水
@@ -104,7 +104,7 @@ namespace Ets.Service.Provider.Subsidy
                 }
                 
                 withdraw.Amount = ParseHelper.ToDecimal(businessPrice, 0);
-                withdraw.Balance = ParseHelper.ToDecimal(cliterModel.AccountBalance, 0);
+                withdraw.Balance = ParseHelper.ToDecimal(item.AccountBalance, 0);
                 withdraw.Remark = string.Format("跨店抢单奖励{0}元", withdraw.Amount);
 
                 //记录跨店日志

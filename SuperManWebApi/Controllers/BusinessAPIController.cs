@@ -195,6 +195,14 @@ namespace SuperManWebApi.Controllers
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.HadCancelQualification);
             }
+            if (model.Amount < 10m)
+            {
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.AmountLessThanTen);
+            }
+            if (model.Amount > 5000m)
+            {
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.AmountMoreThanFiveThousand);
+            }
             lock (lockHelper)
             {  
                 #region 缓存验证
@@ -397,15 +405,23 @@ namespace SuperManWebApi.Controllers
             if (string.IsNullOrWhiteSpace(OrderId))
                 return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.OrderEmpty);
             //查询该订单是否存在
-            int selResult = iOrderProvider.GetOrderByOrderNo(OrderId);
-            if (selResult > 0)
+            var selResult = iOrderProvider.GetOrderInfoByOrderNo(OrderId);
+
+            if (selResult != null)
             {
-                //存在的情况下  取消订单  3
-                int cacelResult = iOrderProvider.UpdateOrderStatus(OrderId, Ets.Model.Common.ConstValues.ORDER_CANCEL);
-                if (cacelResult > 0)
-                    return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.Success, true);
+                if (selResult.Status == ConstValues.ORDER_NEW)
+                {
+                    //存在的情况下  取消订单  3
+                    int cacelResult = iOrderProvider.UpdateOrderStatus(OrderId, Ets.Model.Common.ConstValues.ORDER_CANCEL);
+                    if (cacelResult > 0)
+                        return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.Success, true);
+                    else
+                        return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.FailedCancelOrder, true);
+                }
                 else
+                {
                     return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.FailedCancelOrder, true);
+                }
             }
             else
             {
@@ -503,6 +519,7 @@ namespace SuperManWebApi.Controllers
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Area.AreaModelList> GetOpenCity(string Version)
         {
             AreaProvider area = new AreaProvider();
+
             return area.GetOpenCity(Version);
         }
     }
