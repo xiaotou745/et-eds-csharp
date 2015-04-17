@@ -114,7 +114,7 @@
                     <td>￥@ParseHelper.ToSplitByPercentile(false,Math.Round(homeCountAllData.WithdrawPrice, 2))</td>
                     <td>@ParseHelper.ToSplitByPercentile(false,((homeCountAllData.OrderPrice / homeCountAllData.OrderCount).ToString("f2")))</td>
                     <td>@ParseHelper.ToSplitByPercentile(false,((homeCountAllData.OrderPrice / homeCountAllData.MisstionCount).ToString("f2")))</td>
-                    <td>@ParseHelper.ToSplitByPercentile(false, Math.Round(homeCountAllData.CrossShopPrice,2))</td>
+                    <td>@ParseHelper.ToSplitByPercentile(false, Math.Round(homeCountAllData.CrossShopPrice, 2))</td>
                     <td>￥<span style="color:@ykAllStyle">@ParseHelper.ToSplitByPercentile(false,ykAllPirce)</span></td>
                 </tr>
             }
@@ -127,11 +127,11 @@
     @*<h3 style="color:black;font-weight:600">最近20天数据统计</h3>*@
     <div>
         <p>
-            <table class="tbstyle" border="1">
+            <table class="tbstyle" border="1" width="1200">
                 <tr class="trclass">
                     <td>日期</td>
-                    <td>跨店抢单奖励</td>
-                    <td>抢一个店骑士数量</td>
+                    <td>跨店奖励金额</td>
+                    <td>跨1个店骑士/奖励</td>
                     <td>2个/奖励</td>
                     <td>3个/奖励</td>
                     <td>4个/奖励</td>
@@ -140,7 +140,7 @@
                     <td>7个/奖励</td>
                     <td>8个/奖励</td>
                     <td>9个/奖励</td>
-                    <td>>=10个/奖励</td>
+                    <td>>=10个</td>
                 </tr>
 
                 @{

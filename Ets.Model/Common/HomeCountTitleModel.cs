@@ -129,6 +129,6 @@ namespace Ets.Model.Common
         /// <summary>
         /// 跨店总金额
         /// </summary>
-        public double CrossShopPrice { get; set; }
+        public decimal CrossShopPrice { get; set; }
     }
 }
