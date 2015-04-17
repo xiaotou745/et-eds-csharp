@@ -481,9 +481,11 @@ namespace Ets.Service.Provider.Order
             #endregion
 
             #region 根据集团id为店铺设置外送费，结算比例等财务相关信息add by caoheyang 20150417
+
             ///此处其实应该取数据库，但是由于发布订单时关于店铺的逻辑后期要改，暂时这么处理 
             IGroupProviderOpenApi groupProvider = OpenApiGroupFactory.Create(paramodel.store_info.group);
             paramodel = groupProvider.SetCcmmissonInfo(paramodel);
+
             #endregion
 
             #region 佣金相关  add by caoheyang 20150416
