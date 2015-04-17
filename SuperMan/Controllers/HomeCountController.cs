@@ -31,7 +31,9 @@ namespace SuperMan.Controllers
             ViewBag.homeCountTitleToAllData = homeCountProvider.GetHomeCountTitleToAllData();
             //ViewBag.homeCountTitleToList = homeCountProvider.GetHomeCountTitleToList(21);
             ViewBag.homeCountTitleModel = homeCountProvider.GetHomeCountTitle();
-            ViewBag.clienteStorerGrabStatistical = iClienterProvider.GetClienteStorerGrabStatisticalInfo().ToList();
+            IList<Ets.Model.DomainModel.Bussiness.BusinessesDistributionModel> clienteStorerGrabStatistical = iClienterProvider.GetClienteStorerGrabStatisticalInfo();
+            ViewBag.clienteStorerGrabStatistical = clienteStorerGrabStatistical.ToList();
+            ViewBag.clienteStorerGrabStatisticalOld = iClienterProvider.GetClienteStorerGrabStatisticalInfoOld(clienteStorerGrabStatistical.Count).ToList();
             var pagedList = iOrderProvider.GetCurrentDateCountAndMoney(criteria);
             return View(pagedList);
         }

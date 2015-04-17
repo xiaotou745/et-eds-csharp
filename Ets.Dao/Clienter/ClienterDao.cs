@@ -569,6 +569,33 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
 
 
         /// <summary>
+        /// 骑士门店抢单统计
+        /// danny-20150408
+        /// </summary>
+        /// <returns></returns>
+        public IList<BusinessesDistributionModelOld> GetClienteStorerGrabStatisticalInfoOld(int NewCount)
+        {
+            string sql = @" SELECT  PubDate ,
+                                    ISNULL(SUM(CASE when a.BusinessCount=1 THEN ClienterCount END),0) OnceCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount=2 THEN ClienterCount END),0) TwiceCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount=3 THEN ClienterCount END),0) ThreeTimesCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount=4 THEN ClienterCount END),0) FourTimesCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount=5 THEN ClienterCount END),0) FiveTimesCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount=6 THEN ClienterCount END),0) SixTimesCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount=7 THEN ClienterCount END),0) SevenTimesCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount=8 THEN ClienterCount END),0) EightTimesCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount=9 THEN ClienterCount END),0) NineTimesCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount>=10 THEN ClienterCount END),0) ExceedTenTimesCount
+                            FROM (select PubDate,businessCount BusinessCount,count(clienterId) as ClienterCount
+                                  from (select convert(char(10),o.PubDate,120) PubDate,clienterId,count(distinct businessId) businessCount
+                                        from dbo.[order] o(nolock)
+                                            where  convert(char(10),o.PubDate,120) <'2015-04-17' and o.PubDate> getdate()-" + (20 - NewCount);
+                    sql += " and Status in (1,2) group by convert(char(10),o.PubDate,120), clienterId)t group by PubDate, businessCount) a ";
+                    sql += " group by PubDate order by PubDate desc ;";
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
+            return MapRows<BusinessesDistributionModelOld>(dt);
+        }
+        /// <summary>
         /// 上传小票
         /// </summary>
         /// <param name="uploadReceiptModel"></param>
@@ -746,7 +773,7 @@ where   o.Id = @OrderId";
             var ooList = MapRows<OrderOther>(dt);
             
             if (ooList != null && ooList.Count> 0)
-            { 
+            {
                 return ooList[0];
             }
             else
@@ -766,7 +793,7 @@ where   o.Id = @OrderId";
             string delPic = uploadReceiptModel.ReceiptPic; 
             //更新小票信息
             OrderOther oo = GetReceiptInfo(uploadReceiptModel.OrderId);
-            if (oo.Id>0)
+            if (oo.Id > 0)
             {
                 
                 List<string> listReceiptPic = ImageCommon.GetListImgString(oo.ReceiptPic);

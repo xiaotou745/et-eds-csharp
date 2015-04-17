@@ -150,6 +150,12 @@ namespace Ets.Service.IProvider.Clienter
         /// <returns></returns>
         IList<BusinessesDistributionModel> GetClienteStorerGrabStatisticalInfo();
         /// <summary>
+        /// 骑士门店抢单统计,过一个月后删除该代码
+        /// danny-20150408
+        /// </summary>
+        /// <returns></returns>
+        IList<BusinessesDistributionModelOld> GetClienteStorerGrabStatisticalInfoOld(int NewCount);
+        /// <summary>
         /// 上传小票
         /// wc
         /// </summary>

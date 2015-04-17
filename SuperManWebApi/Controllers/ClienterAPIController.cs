@@ -513,6 +513,18 @@ namespace SuperManWebApi.Controllers
             }
         }
 
+        /// <summary>
+        /// 语音请求动态验证码
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.SendCheckCodeStatus))]
+        [HttpGet]
+        public Ets.Model.Common.SimpleResultModel CheckCodeSound(Ets.Model.ParameterModel.Sms.SmsParaModel model)
+        {
+
+            return null;
+        }
 
 
         /// <summary>
