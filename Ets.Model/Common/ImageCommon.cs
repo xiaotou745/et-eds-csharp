@@ -31,5 +31,7 @@ namespace Ets.Model.Common
             }
             return listReceiptPic;
         } 
+
+        //public static List<string>  GetPicDir(string )
     }
 }

@@ -1140,6 +1140,7 @@ select top 1
         o.businessId ,
         b.GroupId ,
         o.PickupCode ,
+        o.OrderCount,
         ISNULL(oo.HadUploadCount,0) HadUploadCount
 from    [order] o with ( nolock )
         left join dbo.clienter c with ( nolock ) on o.clienterId = c.Id

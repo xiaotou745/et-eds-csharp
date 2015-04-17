@@ -631,6 +631,7 @@ namespace Ets.Service.Provider.Clienter
                 if (orderOther.OrderStatus == ConstValues.ORDER_FINISH && orderOther.HadUploadCount == orderOther.NeedUploadCount)
                 {
                     var myOrderInfo = orderDao.GetOrderInfoByOrderNo("", uploadReceiptModel.OrderId);
+                    //更新骑士金额
                     UpdateClienterAccount(uploadReceiptModel.ClienterId, myOrderInfo);
                 }
                 tran.Complete();
@@ -676,10 +677,9 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="uploadReceiptModel"></param>
         /// <returns></returns>
-        public OrderOther GetReceipt(UploadReceiptModel uploadReceiptModel)
+        public OrderOther GetReceipt(int orderId)
         {
-            int orderStatus = 0;
-            return clienterDao.GetReceiptInfo(uploadReceiptModel.OrderId, out orderStatus);
+            return clienterDao.GetReceiptInfo(orderId);
 
         }
 

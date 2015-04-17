@@ -604,9 +604,8 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
         /// <returns></returns>
         public OrderOther UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel)
         {
-            OrderOther orderOther = new OrderOther();
-            int orderStatus = 0;
-            var oo = GetReceiptInfo(uploadReceiptModel.OrderId, out orderStatus);
+            OrderOther orderOther = new OrderOther(); 
+            var oo = GetReceiptInfo(uploadReceiptModel.OrderId);
             uploadReceiptModel.NeedUploadCount = oo.NeedUploadCount;
             if (oo.Id == 0)
             {
@@ -616,7 +615,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
             {
                 orderOther = UpdateReceiptInfo(uploadReceiptModel);
             }
-            orderOther.OrderStatus = orderStatus;
+            orderOther.OrderStatus = oo.OrderStatus;
             return orderOther;
         }
 
@@ -757,37 +756,31 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns>OrderOther</returns>
-        public OrderOther GetReceiptInfo(int orderId, out int OrderStatus)
+        public OrderOther GetReceiptInfo(int orderId)
         {
-            OrderStatus = 0;
-            int orderCount = 0;
-            string sql = @"select oo.Id ,
-        oo.OrderId ,
-        oo.NeedUploadCount ,
+            string sql = @"select  o.Id OrderId ,
+        ISNULL(oo.Id,0) Id ,
+        o.[Status] OrderStatus,
+        o.OrderCount NeedUploadCount,
         oo.ReceiptPic ,
-        oo.HadUploadCount
-from    dbo.OrderOther oo ( nolock )
-where   oo.OrderId = @OrderId;select o.[Status],o.OrderCount FROM dbo.[order] o (nolock)
- where o.Id = @OrderId";
+        ISNULL(oo.HadUploadCount, 0) HadUploadCount
+from    dbo.[order] o ( nolock )
+        left join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
+where   o.Id = @OrderId";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderId", SqlDbType.Int);
             parm.SetValue("@OrderId", orderId);
 
-            DataSet dt = DbHelper.ExecuteDataset(SuperMan_Read, sql, parm);
-            var ooList = MapRows<OrderOther>(dt.Tables[0]);
-            if (dt.Tables[1] != null && dt.Tables[1].Rows.Count > 0)
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            var ooList = MapRows<OrderOther>(dt);
+            
+            if (ooList != null && ooList.Count> 0)
             {
-                OrderStatus = ParseHelper.ToInt(dt.Tables[1].Rows[0][0], 0);
-                orderCount = ParseHelper.ToInt(dt.Tables[1].Rows[0][1], 0);
-            }
-            if (ooList != null && ooList.Count > 0)
-            {
-                ooList[0].NeedUploadCount = orderCount;
                 return ooList[0];
             }
             else
             {
-                return new OrderOther() { OrderId = orderId, OrderStatus = OrderStatus, NeedUploadCount = orderCount, HadUploadCount = 0, ReceiptPic = "" };
+                return null;
             }
         }
         /// <summary>
@@ -798,14 +791,16 @@ where   oo.OrderId = @OrderId;select o.[Status],o.OrderCount FROM dbo.[order] o 
         /// <returns></returns>
         public OrderOther DeleteReceipt(UploadReceiptModel uploadReceiptModel)
         {
-            string delPic = uploadReceiptModel.ReceiptPic;
-            int orderStatus = 0;
+ 
+            string delPic = uploadReceiptModel.ReceiptPic; 
             //更新小票信息
-            OrderOther oo = GetReceiptInfo(uploadReceiptModel.OrderId, out orderStatus);
+            OrderOther oo = GetReceiptInfo(uploadReceiptModel.OrderId);
             if (oo.Id > 0)
             {
+                
                 List<string> listReceiptPic = ImageCommon.GetListImgString(oo.ReceiptPic);
-
+                int delPre = listReceiptPic.Count;
+                int delAft = 0;
                 Regex regex = new Regex(@"(/\d{4}/\d{2}/\d{2}.*?)\.jpg", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline);
                 MatchCollection matchCollection = regex.Matches(delPic);
                 string delPicDir = "1.jpg";
@@ -814,25 +809,27 @@ where   oo.OrderId = @OrderId;select o.[Status],o.OrderCount FROM dbo.[order] o 
                     delPicDir = match.Value;
                     listReceiptPic.Remove(delPicDir);
                 }
+                delAft = listReceiptPic.Count;
+                if (delPre - delAft == 0)
+                {
+                    uploadReceiptModel.HadUploadCount = 0;
+                }
                 string ppath = ConfigSettings.Instance.FileUploadPath + "\\" + ConfigSettings.Instance.FileUploadFolderNameCustomerIcon;
-                var delDir = ppath + delPicDir;
-
-                var fileName = Path.GetFileName(delDir);
-
+                var delDir = ppath + delPicDir;  
+                var fileName = Path.GetFileName(delDir); 
                 int fileNameLastDot = fileName.LastIndexOf('.');
-
                 //原图 
                 string orginalFileName = string.Format("{0}{1}{2}", Path.GetDirectoryName(delDir) + "\\" + fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
 
-                //删除磁盘中的裁图
-                FileHelper.DeleteFile(delDir);
-                //删除缩略图
-                FileHelper.DeleteFile(orginalFileName);
                 uploadReceiptModel.ReceiptPic = String.Join("|", listReceiptPic.ToArray());
 
                 OrderOther ooo = DeleteReceiptInfo(uploadReceiptModel);
                 if (oo != null)
-                {
+                { 
+                    //删除磁盘中的裁图
+                    FileHelper.DeleteFile(delDir);
+                    //删除缩略图
+                    FileHelper.DeleteFile(orginalFileName);
                     return ooo;
                 }
                 else
