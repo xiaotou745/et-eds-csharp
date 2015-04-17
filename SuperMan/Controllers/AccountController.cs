@@ -66,15 +66,15 @@ namespace SuperMan.Controllers
         {
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string cachekey = CookieHelper.ReadCookie("Cookie_Verification");
-            //if (string.IsNullOrEmpty(cachekey))
-            //{
-            //    return Json(new ResultModel(false, "验证码不正确"));
-            //}
-            //var captcha = redis.Get<string>(cachekey); 
-            //if (captcha == null || model.Captcha != captcha)
-            //{
-            //    return Json(new ResultModel(false, "验证码不正确"));
-            //} 
+            if (string.IsNullOrEmpty(cachekey))
+            {
+                return Json(new ResultModel(false, "验证码不正确"));
+            }
+            var captcha = redis.Get<string>(cachekey);
+            if (captcha == null || model.Captcha != captcha)
+            {
+                return Json(new ResultModel(false, "验证码不正确"));
+            } 
             var loginResult = iAccountProvider.ValidateUser(model.UserName, MD5Helper.MD5(model.Password));
             switch (loginResult)
             {

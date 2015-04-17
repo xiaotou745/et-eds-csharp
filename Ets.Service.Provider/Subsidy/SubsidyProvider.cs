@@ -129,5 +129,17 @@ namespace Ets.Service.Provider.Subsidy
             }
             return true;
         }
+        /// <summary>
+        /// 跨店补贴短信
+        /// 徐鹏程
+        /// 20150416
+        /// </summary>
+        /// <returns></returns>
+        public bool ShortMessage(string SendMessage)
+        {
+            IList<ShortMessageModel> list = subsidyDao.GetCrossShopInfo();
+
+            return true;
+        }
     }
 }

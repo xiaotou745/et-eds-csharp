@@ -171,12 +171,12 @@ namespace Ets.Model.ParameterModel.Order
         /// <summary>
         /// 用户收货地址所在区域经度
         /// </summary>
-        public decimal? longitude { get; set; }
+        public decimal longitude { get; set; }
 
         /// <summary>
         /// 用户收货地址所在区域纬度
         /// </summary>
-        public decimal? latitude { get; set; }
+        public decimal latitude { get; set; }
 
     }
 
@@ -260,12 +260,12 @@ namespace Ets.Model.ParameterModel.Order
         /// <summary>
         /// 门店所在区域经度
         /// </summary>
-        public decimal? longitude { get; set; }
+        public decimal longitude { get; set; }
 
         /// <summary>
         /// 门店所在区域纬度
         /// </summary>
-        public decimal? latitude { get; set; }
+        public decimal latitude { get; set; }
 
         /// <summary>
         /// 外送费,默认为0

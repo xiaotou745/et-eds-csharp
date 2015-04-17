@@ -32,7 +32,7 @@ namespace Ets.TimeSubsidies
 
         private static void ExecTimeSubsidies()
         {
-            ETS.Util.Log.WriteTextToFile("服务开始了", Config.ConfigKey("LogPath"), true);
+            ETS.Util.LogHelper.LogWriter("时间补贴服务开始了" + DateTime.Now.ToString());
             while (true)
             {
                 ///三十秒执行一次
@@ -47,8 +47,9 @@ namespace Ets.TimeSubsidies
                 }
                 catch (Exception ex)
                 {
+
                     //ETS.Util.LogHelper.LogWriter("主方法体错了:" + ex.Message);
-                    ETS.Util.Log.WriteTextToFile("当前时间:" + DateTime.Now.ToString() + "主方法体错了:" + ex.Message, Config.ConfigKey("LogPath"), true);
+                    ETS.Util.LogHelper.LogWriter("当前时间:" + DateTime.Now.ToString() + "主方法体错了:" + ex.Message);
                 }
 
                 Thread.Sleep(30 * 1000);//睡眠30秒

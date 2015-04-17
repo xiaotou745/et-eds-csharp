@@ -63,6 +63,7 @@
     <Compile Include="Common\AdminToolsProvider.cs" />
     <Compile Include="Common\ApiVersionProvider.cs" />
     <Compile Include="Common\AreaProvider.cs" />
+    <Compile Include="Common\BaiDuHelper.cs" />
     <Compile Include="Common\GlobalConfigProvider.cs" />
     <Compile Include="Common\GroupProvider.cs" />
     <Compile Include="Common\HomeCountProvider.cs" />
@@ -111,7 +112,9 @@
       <Name>Ets.Service.IProvider</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
