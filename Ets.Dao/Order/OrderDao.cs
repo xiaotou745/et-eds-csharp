@@ -910,7 +910,7 @@ WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL;", SuperPlatform.骑士, (i
         {
             string sql = @"SELECT 
                         (SELECT SUM (AccountBalance) FROM dbo.clienter(NOLOCK)  WHERE AccountBalance>=1000) AS  WithdrawPrice,--提现金额
-                        (select sum(Amount) from CrossShopLog(nolock)) as CrossShopPrice,--跨店奖励总金额
+                        (select convert(decimal(18,2),sum(Amount)) from CrossShopLog(nolock)) as CrossShopPrice,--跨店奖励总金额
                         SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
                         COUNT(1) AS MisstionCount,--总任务量
                         SUM(ISNULL(OrderCount,0)) AS OrderCount,--总订单量

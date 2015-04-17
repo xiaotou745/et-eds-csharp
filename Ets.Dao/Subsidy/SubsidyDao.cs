@@ -194,18 +194,6 @@ WHERE   sub.[Status] = 1 ");
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
 
-        /// <summary>
-        /// 跨店抢单奖励总额
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public double GetCrossShopSumAmount()
-        {
-            double restult = 0;
-            string sql = @"select convert(decimal(10,2),SUM(Amount)) Amount from  CrossShopLog(nolock)";
-            restult=ParseHelper.ToDouble(DbHelper.ExecuteScalar(SuperMan_Read,sql));    
-            return restult;
-        }
 
         /// <summary>
         /// 写入跨店奖励日志

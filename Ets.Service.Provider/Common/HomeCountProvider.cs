@@ -96,9 +96,6 @@ namespace Ets.Service.Provider.Common
 
             #endregion
 
-            #region 获取跨店抢单奖励
-            model.CrossShopPrice = subsidyDao.GetCrossShopSumAmount();
-            #endregion
             return model;
         }
 
