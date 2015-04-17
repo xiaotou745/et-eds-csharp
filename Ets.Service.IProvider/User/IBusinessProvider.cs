@@ -207,6 +207,14 @@ namespace Ets.Service.IProvider.User
         /// <returns></returns>
         Ets.Model.ParameterModel.Bussiness.BussinessStatusModel GetUserStatus(int userid, double version);
 
+        /// <summary>
+        /// 后台添加商户
+        /// 平扬
+        /// 2015年4月17日 17:19:45
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        ResultModel<BusiRegisterResultModel> AddBusiness(AddBusinessModel model);
 
     }
 }

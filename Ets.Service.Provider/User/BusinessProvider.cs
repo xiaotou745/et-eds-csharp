@@ -222,6 +222,41 @@ namespace Ets.Service.Provider.User
         }
 
         /// <summary>
+        /// 后台添加商户
+        /// 平扬
+        /// 2015年4月17日 17:19:45
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public ResultModel<BusiRegisterResultModel> AddBusiness(AddBusinessModel model)
+        {
+ 
+            Enum returnEnum = null;
+            if (string.IsNullOrEmpty(model.phoneNo))
+                returnEnum = CustomerRegisterStatusEnum.PhoneNumberEmpty; //手机号非空验证
+            else if (string.IsNullOrEmpty(model.passWord))
+                returnEnum = CustomerRegisterStatusEnum.PasswordEmpty;//密码非空验证  
+ 
+            else if (dao.CheckBusinessExistPhone(model.phoneNo))
+                returnEnum = CustomerRegisterStatusEnum.PhoneNumberRegistered;//判断该手机号是否已经注册过
+
+            else if (string.IsNullOrEmpty(model.city) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
+                returnEnum = CustomerRegisterStatusEnum.cityIdEmpty;
+            if (returnEnum != null)
+            {
+                return ResultModel<BusiRegisterResultModel>.Conclude(returnEnum);
+            }
+            model.passWord = ETS.Security.MD5.Encrypt(model.passWord);
+            BusiRegisterResultModel resultModel = new BusiRegisterResultModel()
+            {
+                userId = dao.addBusiness(model)
+            };
+            return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatusEnum.Success, resultModel);// CustomerRegisterStatusEnum.Success;//默认是成功状态
+
+        }
+
+
+        /// <summary>
         /// B端注册，供第三方使用 
         /// 平扬
         /// 2015年3月26日 17:19:45

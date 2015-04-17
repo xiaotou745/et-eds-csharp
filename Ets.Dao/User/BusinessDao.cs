@@ -1055,5 +1055,86 @@ namespace Ets.Dao.User
             string orderByColumn = " tbl.PubDate DESC ";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
         }
+
+
+        /// <summary>
+        ///  后台新增店铺
+        ///  平扬
+        ///  2015年4月17日 17:19:47
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>返回商铺ID</returns>
+        public int addBusiness(AddBusinessModel model)
+        {
+            string sql = @"
+                           INSERT INTO dbo.business
+                            ( Name ,
+                              City ,
+                              district ,
+                              PhoneNo ,
+                              PhoneNo2 ,
+                              Password ,
+                              CheckPicUrl ,
+                              IDCard ,
+                              Address ,
+                              Landline ,
+                              Longitude ,
+                              Latitude ,
+                              Status ,
+                              InsertTime ,
+                              districtId ,
+                              CityId ,
+                              GroupId ,
+                              OriginalBusiId ,
+                              ProvinceCode ,
+                              CityCode ,
+                              AreaCode ,
+                              Province ,
+                              CommissionTypeId ,
+                              DistribSubsidy ,
+                              BusinessCommission
+                            )
+                    VALUES  ( @Name, -- Name - nvarchar(100)
+                              @City , -- City - nvarchar(100)
+                              N'' , -- district - nvarchar(200)
+                              @PhoneNo , -- PhoneNo - nvarchar(20)
+                              N'' , -- PhoneNo2 - nvarchar(20)
+                              @Password , -- Password - nvarchar(255)
+                              N'' , -- CheckPicUrl - nvarchar(255)
+                              N'' , -- IDCard - nvarchar(45)
+                              @Address, -- Address - nvarchar(255)
+                              N'' , -- Landline - nvarchar(15)
+                              0.0 , -- Longitude - float
+                              0.0 , -- Latitude - float
+                              1 , -- Status - tinyint
+                              GETDATE() , -- InsertTime - datetime
+                              '0' , -- districtId - nvarchar(45)
+                              @CityId , -- CityId - nvarchar(45)
+                              @GroupId , -- GroupId - int
+                              0 , -- OriginalBusiId - int
+                              N'' , -- ProvinceCode - nvarchar(20)
+                              N'' , -- CityCode - nvarchar(20)
+                              N'' , -- AreaCode - nvarchar(20)
+                              N'' , -- Province - nvarchar(20)
+                              1 , -- CommissionTypeId - int
+                              @DistribSubsidy , -- DistribSubsidy - numeric
+                              @BusinessCommission  -- BusinessCommission - decimal
+                            )SELECT @@IDENTITY
+                        ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@City", model.city);
+            parm.AddWithValue("@Password", model.passWord);
+            parm.Add("@PhoneNo", SqlDbType.NVarChar);
+            parm.SetValue("@PhoneNo", model.phoneNo);
+            parm.AddWithValue("@CityId", model.CityId);
+            parm.AddWithValue("@GroupId", model.GroupId);
+            parm.AddWithValue("@Name", model.businessName);
+            parm.AddWithValue("@Address", model.businessaddr);
+            parm.AddWithValue("@DistribSubsidy", model.businessWaisong);
+            parm.AddWithValue("@BusinessCommission", model.businessCommission);
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm));
+        }
+
+
     }
 }

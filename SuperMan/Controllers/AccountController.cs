@@ -70,11 +70,12 @@ namespace SuperMan.Controllers
             {
                 return Json(new ResultModel(false, "验证码不正确"));
             }
-            var captcha = redis.Get<string>(cachekey); 
+            var captcha = redis.Get<string>(cachekey);
             if (captcha == null || model.Captcha != captcha)
             {
                 return Json(new ResultModel(false, "验证码不正确"));
             } 
+            redis.Delete(cachekey);
             var loginResult = iAccountProvider.ValidateUser(model.UserName, MD5Helper.MD5(model.Password));
             switch (loginResult)
             {
@@ -124,7 +125,9 @@ namespace SuperMan.Controllers
             //验证码插入Redis缓存
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string cachekey = string.Format(RedissCacheKey.CaptchaImage, ETS.Util.Helper.Uuid());
-            redis.Add(cachekey, captcha.Captcha, DateTime.Now.AddMinutes(10));  
+            redis.Add(cachekey, captcha.Captcha, DateTime.Now.AddMinutes(100));
+
+            string aaa = redis.Get<string>(cachekey);
             //缓存key放入cookie里存储 
             CookieHelper.WriteCookie("Cookie_Verification", cachekey, DateTime.Now.AddMinutes(10));
             return new FileContentResult(bytes, "image/jpeg"); ;

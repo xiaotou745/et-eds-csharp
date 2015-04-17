@@ -44,6 +44,7 @@ namespace SuperMan.Controllers
         {
             Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria();
             TryUpdateModel(criteria);
+            ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
             return PartialView("_BusinessManageList", pagedList);
@@ -105,6 +106,23 @@ namespace SuperMan.Controllers
             return Json(new ResultModel(iBus.SetCommission(id, commission, waisongfei,model), "成功!"), JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// 添加商户
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult AddBusiness(AddBusinessModel model)
+        {
+            TryUpdateModel(model);  
+
+            var result = iBusinessProvider.AddBusiness(model);
+            if (result.Status==0)
+            {
+                return Json(new ResultModel(true, "成功!"), JsonRequestBehavior.AllowGet);
+            }
+            return Json(new ResultModel(false, result.Message), JsonRequestBehavior.AllowGet);
+        }
 
     }
 }
