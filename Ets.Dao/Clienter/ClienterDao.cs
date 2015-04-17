@@ -575,8 +575,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
         /// <returns></returns>
         public OrderOther UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel)
         {
-            OrderOther orderOther = new OrderOther();
-            int orderStatus = 0;
+            OrderOther orderOther = new OrderOther(); 
             var oo = GetReceiptInfo(uploadReceiptModel.OrderId);
             uploadReceiptModel.NeedUploadCount = oo.NeedUploadCount;
             if (oo.Id == 0)
@@ -587,7 +586,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
             {
                 orderOther = UpdateReceiptInfo(uploadReceiptModel);
             }
-            orderOther.OrderStatus = orderStatus;
+            orderOther.OrderStatus = oo.OrderStatus;
             return orderOther;
         }
 
@@ -769,8 +768,10 @@ where   o.Id = @OrderId";
             OrderOther oo = GetReceiptInfo(uploadReceiptModel.OrderId);
             if (oo.Id>0)
             {
+                
                 List<string> listReceiptPic = ImageCommon.GetListImgString(oo.ReceiptPic);
-
+                int delPre = listReceiptPic.Count;
+                int delAft = 0;
                 Regex regex = new Regex(@"(/\d{4}/\d{2}/\d{2}.*?)\.jpg", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline);
                 MatchCollection matchCollection = regex.Matches(delPic);
                 string delPicDir = "1.jpg";
@@ -779,6 +780,11 @@ where   o.Id = @OrderId";
                     delPicDir = match.Value;
                     listReceiptPic.Remove(delPicDir);
                 }
+                delAft = listReceiptPic.Count;
+                if (delPre - delAft == 0)
+                {
+                    uploadReceiptModel.HadUploadCount = 0;
+                }
                 string ppath = ConfigSettings.Instance.FileUploadPath + "\\" + ConfigSettings.Instance.FileUploadFolderNameCustomerIcon;
                 var delDir = ppath + delPicDir;  
                 var fileName = Path.GetFileName(delDir); 
@@ -786,17 +792,15 @@ where   o.Id = @OrderId";
                 //原图 
                 string orginalFileName = string.Format("{0}{1}{2}", Path.GetDirectoryName(delDir) + "\\" + fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
 
-                //删除磁盘中的裁图
-                FileHelper.DeleteFile(delDir);
-                //删除缩略图
-                FileHelper.DeleteFile(orginalFileName);
                 uploadReceiptModel.ReceiptPic = String.Join("|", listReceiptPic.ToArray());
-
-                
 
                 OrderOther ooo = DeleteReceiptInfo(uploadReceiptModel);
                 if (oo != null)
-                {
+                { 
+                    //删除磁盘中的裁图
+                    FileHelper.DeleteFile(delDir);
+                    //删除缩略图
+                    FileHelper.DeleteFile(orginalFileName);
                     return ooo;
                 }
                 else

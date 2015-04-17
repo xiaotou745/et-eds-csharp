@@ -622,6 +622,7 @@ namespace Ets.Service.Provider.Clienter
                 if (orderOther.OrderStatus == ConstValues.ORDER_FINISH && orderOther.HadUploadCount == orderOther.NeedUploadCount)
                 {
                     var myOrderInfo = orderDao.GetOrderInfoByOrderNo("", uploadReceiptModel.OrderId);
+                    //更新骑士金额
                     UpdateClienterAccount(uploadReceiptModel.ClienterId, myOrderInfo);
                 }
                 tran.Complete();

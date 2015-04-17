@@ -640,23 +640,22 @@ namespace SuperManWebApi.Controllers
             transformer.Transform(fullFilePath, destFullFileName);
 
             var picUrl = saveDbFilePath + fileName;
-
-            var orderOther = iClienterProvider.UpdateClientReceiptPicInfo(new Ets.Model.ParameterModel.Clienter.UploadReceiptModel
+            var uploadReceiptModel = new Ets.Model.ParameterModel.Clienter.UploadReceiptModel
             {
                 OrderId = orderId,
                 ClienterId = clienterId,
                 NeedUploadCount = needUploadCount,
                 ReceiptPic = picUrl,
                 HadUploadCount = 1
-            });
+            };
+            var orderOther = iClienterProvider.UpdateClientReceiptPicInfo(uploadReceiptModel);
             if (orderOther == null)
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed, new Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel() { OrderId = orderId });
             }
             else
-            {
-
-                List<string> listReceiptPic = ImageCommon.ReceiptPicConvert(orderOther.ReceiptPic);
+            { 
+                List<string> listReceiptPic = ImageCommon.ReceiptPicConvert(uploadReceiptModel.ReceiptPic);
                 //上传成功后返回图片全路径
                 var relativePath = System.IO.Path.Combine(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.RelativePath, fileName).ToForwardSlashPath();
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel() { OrderId = orderId, ImagePath = listReceiptPic, HadUploadCount = orderOther.HadUploadCount, NeedUploadCount = orderOther.NeedUploadCount });
@@ -683,7 +682,7 @@ namespace SuperManWebApi.Controllers
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidOrderId);
             }
-            if (string.IsNullOrWhiteSpace(receiptPic))
+            if (!receiptPic.StartsWith("http",StringComparison.OrdinalIgnoreCase))
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.ReceiptAddressInvalid);
             }
@@ -722,7 +721,7 @@ namespace SuperManWebApi.Controllers
 
             OrderOther delOrderOther = iClienterProvider.DeleteReceipt(uploadReceiptModel);
 
-            List<string> listReceiptPic = ImageCommon.ReceiptPicConvert(orderOther.ReceiptPic);
+            List<string> listReceiptPic = ImageCommon.ReceiptPicConvert(delOrderOther.ReceiptPic);
 
             return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel() { OrderId = delOrderOther.OrderId, ImagePath = listReceiptPic, HadUploadCount = delOrderOther.HadUploadCount, NeedUploadCount = delOrderOther.NeedUploadCount });
 
