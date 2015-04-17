@@ -90,7 +90,7 @@ namespace Ets.Dao.WtihdrawRecords
             parm.AddWithValue("@Balance", model.Balance);
             parm.AddWithValue("@AdminId", model.AdminId);
             parm.AddWithValue("@IsDel",model.IsDel);
-            parm.AddWithValue("@Remark",model.Remark);
+            parm.AddWithValue("@Remark",model.Remark==null?"":model.Remark);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
 

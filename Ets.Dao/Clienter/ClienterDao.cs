@@ -178,7 +178,7 @@ namespace Ets.Dao.Clienter
         }
 
         /// <summary>
-        /// 获取当前用户的信息
+        /// 获取当前用户的信息（注意此处有事物用到必须用写串）
         /// 窦海超
         /// 2015年3月20日 16:55:11
         /// </summary>
@@ -187,7 +187,7 @@ namespace Ets.Dao.Clienter
         public ClienterModel GetUserInfoByUserId(int UserId)
         {
             string sql = "SELECT TrueName,PhoneNo,AccountBalance FROM dbo.clienter(NOLOCK) WHERE Id=" + UserId;
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql);
             IList<ClienterModel> list = MapRows<ClienterModel>(dt);
             if (list == null || list.Count <= 0)
             {

@@ -603,7 +603,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                                     ,b.Name BusinessName
                                     ,b.PhoneNo BusinessPhoneNo
                                     ,b.Address BusinessAddress
-                                    ,g.GroupName
+                                    ,case when b.GroupId=0 then '客户端' else g.GroupName end GroupName
                                     ,o.[Adjustment]
                                     ,o.BusinessCommission --商家结算比例
                                     ";
@@ -740,6 +740,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                                         ,c.TrueName ClienterName
                                         ,c.AccountBalance AccountBalance
                                         ,b.GroupId
+                                        ,case when b.GroupId=0 then '客户端' else g.GroupName end GroupName
                                         ,o.OriginalOrderNo
                                         ,oo.NeedUploadCount
                                         ,oo.HadUploadCount
@@ -748,6 +749,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     LEFT JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
                                     LEFT JOIN OrderOther oo WITH (NOLOCK) ON oo.OrderId=o.Id
+                                    LEFT JOIN [group] g WITH ( NOLOCK ) ON g.Id = b.GroupId
                                     WHERE 1=1 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderNo", SqlDbType.NVarChar);
@@ -1311,7 +1313,7 @@ where   o.Id = @orderId;
                 return null;
             }
         }
-/// <summary>
+        /// <summary>
         /// 修改骑士收入
         /// danny-20150414
         /// </summary>
