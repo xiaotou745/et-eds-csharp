@@ -411,6 +411,16 @@ namespace Ets.Service.Provider.Order
         /// <returns>订单号码</returns>
         public ResultModel<object> Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
         {
+            ///查询缓存，看看当前店铺是否存在,缓存存储E代送的商户id
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+
+            #region 第三方订单是否重复推送的验证  add by caoheyang 20150417
+            string orderExistsNo = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
+            paramodel.order_id.ToString()));  //查询缓存，看当前订单是否存在,“true”代表存在，key的形式为集团ID_第三方平台订单号
+            if (orderExistsNo != null)
+                return ResultModel<object>.Conclude(OrderApiStatusType.OrderExists, new { order_no = orderExistsNo });
+            #endregion
+
             #region 设置门店的省市区编码信息 add by caoheyang 20150407
             string storecodeInfo = new AreaProvider().GetOpenCode(new Ets.Model.ParameterModel.Area.ParaAreaNameInfo()
             {
@@ -448,9 +458,6 @@ namespace Ets.Service.Provider.Order
             #endregion
 
             #region  维护店铺相关信息 add by caoheyang 20150416
-
-            ///查询缓存，看看当前店铺是否存在,缓存存储E代送的商户id
-            var redis = new ETS.NoSql.RedisCache.RedisCache();
             string bussinessIdstr = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(),
               paramodel.store_info.store_id.ToString()));  
             if (bussinessIdstr == null) 
@@ -477,7 +484,6 @@ namespace Ets.Service.Provider.Order
             ///此处其实应该取数据库，但是由于发布订单时关于店铺的逻辑后期要改，暂时这么处理 
             IGroupProviderOpenApi groupProvider = OpenApiGroupFactory.Create(paramodel.store_info.group);
             paramodel = groupProvider.SetCcmmissonInfo(paramodel);
-
             #endregion
 
             #region 佣金相关  add by caoheyang 20150416
@@ -497,13 +503,6 @@ namespace Ets.Service.Provider.Order
             paramodel.settlemoney = commissonPro.GetSettleMoney(orderComm);//订单结算金额
             paramodel.adjustment = commissonPro.GetAdjustment(orderComm);//订单额外补贴金额
 
-            #endregion
-
-            #region 第三方订单是否重复推送的验证  add by caoheyang 20150417
-            string orderExistsNo = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
-            paramodel.order_id.ToString()));  //查询缓存，看当前订单是否存在,“true”代表存在，key的形式为集团ID_第三方平台订单号
-            if (orderExistsNo != null)
-                return ResultModel<object>.Conclude(OrderApiStatusType.OrderExists, new { order_no = orderExistsNo }); 
             #endregion
 
             string orderNo = null; //订单号码
