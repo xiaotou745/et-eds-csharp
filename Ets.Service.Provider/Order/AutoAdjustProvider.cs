@@ -90,7 +90,7 @@ namespace Ets.Service.Provider.Order
             catch (Exception ex)
             {
                 //ETS.Util.LogHelper.LogWriter(ex);
-                ETS.Util.Log.WriteTextToFile("当前时间:" + DateTime.Now.ToString() + "调整订单佣金:" + ex.Message, ETS.Config.ConfigKey("LogPath"),true);
+                ETS.Util.LogHelper.LogWriter( ex,"当前时间:" + DateTime.Now.ToString() + "调整订单佣金引发异常");
             }
         }
 

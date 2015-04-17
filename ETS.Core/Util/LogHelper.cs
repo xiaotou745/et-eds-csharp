@@ -1,4 +1,4 @@
-﻿using Common.Logging; 
+﻿using NLog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,15 +14,14 @@ namespace ETS.Util
 {
     public class LogHelper
     {
-        private static readonly ILog logger = LogManager.GetCurrentClassLogger();
- 
+        public static Logger logger = NLog.LogManager.GetLogger("");
 
         /// <summary>
         /// 备注日志
         /// </summary>
         /// <param name="dec">需要捕获的参数（必须为属性类）</param>
         /// <param name="rmark">描述操作</param>
-        public new static void LogWriter(string rmark = "", object dec = null)
+        public static void LogWriter(string rmark = "", object dec = null)
         {
             try
             {
@@ -60,7 +59,7 @@ namespace ETS.Util
         /// </summary>
         /// <param name="ex">异常对象（必须为属性类）</param>
         /// <param name="rmark">操作简要描述</param>
-        public new static void LogWriter(Exception ex, string rmark = "")
+        public static void LogWriter(Exception ex, string rmark = "")
         {
             try
             {
@@ -95,7 +94,7 @@ namespace ETS.Util
         /// </summary>
         /// <param name="dec">异常参数对象（必须为属性类）</param>
         /// <param name="ex">日志异常对象</param>
-        public new static void LogWriter(object dec, Exception ex)
+        public static void LogWriter(object dec, Exception ex)
         {
             try
             {
@@ -132,7 +131,7 @@ namespace ETS.Util
         /// <param name="dec">所要捕获的参数（必须为属性类）</param>
         /// <param name="ex">异常对象</param>
         /// <param name="rmark">描述</param>
-        public new static void LogWriter(object dec, Exception ex, string rmark)
+        public static void LogWriter(object dec, Exception ex, string rmark)
         {
             try
             {
@@ -168,7 +167,7 @@ namespace ETS.Util
         /// 捕获全局异常
         /// </summary>
         /// <param name="error"></param>
-        public new static void LogWriterFromFilter(Exception error)
+        public static void LogWriterFromFilter(Exception error)
         {
             try
             {

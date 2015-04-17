@@ -28,22 +28,23 @@ namespace OpenApi
     [System.AttributeUsage(System.AttributeTargets.Method | System.AttributeTargets.Class)]
     public class SignOpenApiAttribute : System.Web.Http.Filters.ActionFilterAttribute
     {
+        System.Diagnostics.Stopwatch stop = new System.Diagnostics.Stopwatch();
         /// <summary>
         /// 重写OnActionExecuting方法   在进入控制器之前验证 sign以及 参数合法性信息 add by caoheyang 20150318
         /// </summary>
         /// <param name="actionContext"></param>
         public override void OnActionExecuting(System.Web.Http.Controllers.HttpActionContext actionContext)
         {
-            SuperManCore.LogHelper.LogWriter("httpBeginTime", new { httpBeginTime=System.DateTime.Now.ToString() });
-            lock (actionContext)
+            stop.Start();
+            dynamic paramodel = actionContext.ActionArguments["paramodel"]; //当前请求的参数对象 
+            lock (paramodel)
             {
-                dynamic paramodel = actionContext.ActionArguments["paramodel"]; //当前请求的参数对象 
                 if (actionContext.ModelState.Count > 0 || paramodel == null) //参数错误，请求中止
                 {
                     actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
                             (actionContext.ControllerContext, ResultModel<object>.Conclude(OrderApiStatusType.ParaError, actionContext.ModelState.Keys));
                     return;
-                } 
+                }
                 IGroupProvider groupProvider = new GroupProvider();
                 GroupApiConfigModel groupCofigInfo = groupProvider.GetGroupApiConfigByAppKey(paramodel.app_key, paramodel.v);
                 if (groupCofigInfo != null && groupCofigInfo.IsValid == 1)//集团可用，且有appkey信息
@@ -61,10 +62,20 @@ namespace OpenApi
                     actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
                            (actionContext.ControllerContext, ResultModel<object>.Conclude(OrderApiStatusType.SignError));  //sign错误，请求中止
             }
+
         }
+        /// <summary>
+        /// 异步记录日志
+        /// </summary>
+        /// <param name="actionExecutedContext"></param>
         public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
         {
-            SuperManCore.LogHelper.LogWriter("httpendTime", new { httpendTime = System.DateTime.Now.ToString() });
+            System.Threading.Tasks.Task.Factory.StartNew(() =>
+                {
+                    stop.Stop();
+                    LogHelper.LogWriter("接口" + actionExecutedContext.Request.RequestUri + "请求时间：" + stop.Elapsed);
+                    stop.Reset();
+                });
             base.OnActionExecuted(actionExecutedContext);
         }
     }
@@ -84,7 +95,7 @@ namespace OpenApi
         /// <param name="filterContext">上下文对象  该类继承于ControllerContext</param>
         public override void OnException(HttpActionExecutedContext filterContext)
         {
-            SuperManCore.LogHelper.LogWriterFromFilter(filterContext.Exception);
+            LogHelper.LogWriterFromFilter(filterContext.Exception);
         }
     }
 
