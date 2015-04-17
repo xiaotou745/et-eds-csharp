@@ -50,7 +50,7 @@
                         订单总金额：@ParseHelper.ToSplitByPercentile(false, resultList.OrderPrice)<br />
                         客单价：@(resultList.OrderCount == 0 ? "0" : (resultList.OrderPrice / resultList.OrderCount).ToString("f2")) <br />
                         任务单价：@(resultList.MisstionCount == 0 ? "0" : (resultList.OrderPrice / resultList.MisstionCount).ToString("f2"))<br />
-                      
+                        跨店抢单奖励:@(resultList.CrossShopPrice == 0 ? "0" : resultList.CrossShopPrice.ToString("f2"))<br />
                     </td>
                     <td>
                         0次补贴被抢任务：@ParseHelper.ToSplitByPercentile(true, resultList.ZeroSubsidyOrderCount)<br />
@@ -130,33 +130,52 @@
             <table class="tbstyle" border="1">
                 <tr class="trclass">
                     <td>日期</td>
+                    <td>跨店抢单奖励</td>
                     <td>抢一个店骑士数量</td>
-                    <td>2个</td>
-                    <td>3个</td>
-                    <td>4个</td>
-                    <td>5个</td>
-                    <td>6个</td>
-                    <td>7个</td>
-                    <td>8个</td>
-                    <td>9个</td>
-                    <td>>=10个</td>
+                    <td>2个/奖励</td>
+                    <td>3个/奖励</td>
+                    <td>4个/奖励</td>
+                    <td>5个/奖励</td>
+                    <td>6个/奖励</td>
+                    <td>7个/奖励</td>
+                    <td>8个/奖励</td>
+                    <td>9个/奖励</td>
+                    <td>>=10个/奖励</td>
                 </tr>
 
                 @{
-                    foreach (var item in clienteStorerGrabStatisticalList)
+                    var tempList= from S in clienteStorerGrabStatisticalList 
+                                  group S by  S.InsertTime into item
+                                  select new {
+                                      PubDate = item.First().InsertTime.ToString(),
+                                      PubDateTotalAmount = item.Sum(t=>t.TotalAmount).ToString(),
+                                      OnceView = item.Where(t => t.BusinessCount == 1).Count() == 0 ? "0*0" : item.Where(t => t.BusinessCount == 1).First().ClienterCount + "*" + item.Where(t => t.BusinessCount == 1).First().Amount,
+                                      TwiceView = item.Where(t => t.BusinessCount == 2).Count() == 0 ? "0*0" : item.Where(t => t.BusinessCount == 2).First().ClienterCount + "*" + item.Where(t => t.BusinessCount == 2).First().Amount,
+                                      ThreeView = item.Where(t => t.BusinessCount == 3).Count() == 0 ? "0*0" : item.Where(t => t.BusinessCount == 3).First().ClienterCount + "*" + item.Where(t => t.BusinessCount == 3).First().Amount,
+                                      FourView = item.Where(t => t.BusinessCount == 4).Count() == 0 ? "0*0" : item.Where(t => t.BusinessCount == 4).First().ClienterCount + "*" + item.Where(t => t.BusinessCount == 4).First().Amount,
+                                      FiveView = item.Where(t => t.BusinessCount == 5).Count() == 0 ? "0*0" : item.Where(t => t.BusinessCount == 5).First().ClienterCount + "*" + item.Where(t => t.BusinessCount == 5).First().Amount,
+                                      SixView = item.Where(t => t.BusinessCount == 6).Count() == 0 ? "0*0" : item.Where(t => t.BusinessCount == 6).First().ClienterCount + "*" + item.Where(t => t.BusinessCount == 6).First().Amount,
+                                      SevenView = item.Where(t => t.BusinessCount == 7).Count() == 0 ? "0*0" : item.Where(t => t.BusinessCount == 7).First().ClienterCount + "*" + item.Where(t => t.BusinessCount == 7).First().Amount,
+                                      EightView = item.Where(t => t.BusinessCount == 8).Count() == 0 ? "0*0" : item.Where(t => t.BusinessCount == 8).First().ClienterCount + "*" + item.Where(t => t.BusinessCount == 8).First().Amount,
+                                      NineView = item.Where(t => t.BusinessCount == 9).Count() == 0 ? "0*0" : item.Where(t => t.BusinessCount == 9).First().ClienterCount + "*" + item.Where(t => t.BusinessCount == 9).First().Amount,
+                                      ExceedView = item.Where(t => t.BusinessCount >= 10).Count() == 0 ? "0*0" : item.Where(t => t.BusinessCount >= 10).First().ClienterCount + "*" + item.Where(t => t.BusinessCount >= 10).First().Amount,
+                                  };
+
+                    foreach (var item in tempList)
                     {
                         <tr class="trclass">
-                            <td>@item.PubDate.ToString()</td>
-                            <td>@item.OnceCount</td>
-                            <td>@item.TwiceCount</td>
-                            <td>@item.ThreeTimesCount</td>
-                            <td>@item.FourTimesCount</td>
-                            <td>@item.FiveTimesCount</td>
-                            <td>@item.SixTimesCount</td>
-                            <td>@item.SevenTimesCount</td>
-                            <td>@item.EightTimesCount</td>
-                            <td>@item.NineTimesCount</td>
-                            <td>@item.ExceedNineTimesCount</td>
+                            <td>@item.PubDate</td>
+                            <td>@item.PubDateTotalAmount</td>
+                            <td>@item.OnceView</td>
+                            <td>@item.TwiceView</td>
+                            <td>@item.ThreeView</td>
+                            <td>@item.FourView</td>
+                            <td>@item.FiveView</td>
+                            <td>@item.SixView</td>
+                            <td>@item.SevenView</td>
+                            <td>@item.EightView</td>
+                            <td>@item.NineView</td>
+                            <td>@item.ExceedView</td>
                         </tr>
                     }
                 }

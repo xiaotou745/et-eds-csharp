@@ -85,7 +85,7 @@ namespace Ets.Dao.GlobalConfig
         {
             string sql = "update GlobalConfig set Value=@Value,LastUpdateTime=getdate() where keyname='CommissionFormulaMode'";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.Add("@value", SqlDbType.NVarChar, 100);
+            dbParameters.Add("@value", SqlDbType.NVarChar, 500);
             dbParameters.SetValue("value", value);
             int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
             return i > 0;
@@ -118,7 +118,7 @@ namespace Ets.Dao.GlobalConfig
         {
             string sql = "update GlobalConfig set Value=@Value,LastUpdateTime=getdate() where keyname='PriceSubsidies'";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.Add("@value", SqlDbType.NVarChar, 100);
+            dbParameters.Add("@value", SqlDbType.NVarChar, 500);
             dbParameters.SetValue("value", value);
             int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
             return i > 0;
@@ -152,7 +152,7 @@ namespace Ets.Dao.GlobalConfig
         {
             string sql = "update GlobalConfig set Value=@Value,LastUpdateTime=getdate() where keyname='TimeSubsidies'";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.Add("@value", SqlDbType.NVarChar, 100);
+            dbParameters.Add("@value", SqlDbType.NVarChar, 500);
             dbParameters.SetValue("value", value);
             int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
             return i > 0;
@@ -222,7 +222,7 @@ namespace Ets.Dao.GlobalConfig
         {
             string sql = "update GlobalConfig set Value=@Value,LastUpdateTime=getdate() where keyname=@keyname";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.Add("@value", SqlDbType.NVarChar, 100);
+            dbParameters.Add("@value", SqlDbType.NVarChar, 500);
             dbParameters.SetValue("value", value);
             dbParameters.Add("@keyname", SqlDbType.NVarChar, 100);
             dbParameters.SetValue("keyname", key);
