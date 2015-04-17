@@ -23,7 +23,7 @@ namespace Ets.Model.DomainModel.Subsidy
         /// <summary>
         /// 骑士ID
         /// </summary>
-        public string ClienterId { get; set; }
+        public int ClienterId { get; set; }
 
         /// <summary>
         /// 骑士电话

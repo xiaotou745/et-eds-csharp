@@ -9,6 +9,7 @@ using Ets.Model.ParameterModel.Subsidy;
 using Ets.Model.ParameterModel.WtihdrawRecords;
 using Ets.Service.IProvider.Subsidy;
 using ETS.Data.PageData;
+using ETS.Sms;
 using ETS.Transaction;
 using ETS.Transaction.Common;
 using ETS.Util;
@@ -135,10 +136,34 @@ namespace Ets.Service.Provider.Subsidy
         /// 20150416
         /// </summary>
         /// <returns></returns>
-        public bool ShortMessage(string SendMessage)
+        public bool ShortMessage()
         {
-            IList<ShortMessageModel> list = subsidyDao.GetCrossShopInfo();
+            string logFilePath = AppDomain.CurrentDomain.BaseDirectory.ToString() + "\\logs\\log.txt";
+            try
+            {
+                IList<ShortMessageModel> list = subsidyDao.GetCrossShopInfo();
+                string Msg = ETS.Config.SendMessage; 
+                string logMsg = "{0}短信发送：骑士ID:{1};抢单奖励:{2};电话:{3};发送状态:{4} ";
+                foreach (ShortMessageModel item in list)
+                {
+                    try
+                    {
+                        Msg = string.Format(Msg, item.InsertTime.ToString(), item.SumAmount.ToString());
+                        SendSmsStatus smsStatus = SendSmsHelper.SendSendSmsSaveLog(item.PhoneNo, Msg, Ets.Model.Common.ConstValues.SMSSOURCE);
+                        logMsg = string.Format(logMsg, DateTime.Now.ToString(), item.ClienterId, item.SumAmount, item.PhoneNo, smsStatus.ToString());
+                        ETS.Util.Log.WriteTextToFile(DateTime.Now.ToString() + logMsg, logFilePath, true);
+                    }
+                    catch (Exception e)
+                    {
+                        ETS.Util.Log.WriteTextToFile(DateTime.Now.ToString() + logMsg + ":" + e.ToString(), logFilePath, true);
+                    }
 
+                }
+            }
+            catch (Exception e)
+            {
+                ETS.Util.Log.WriteTextToFile(e.ToString(), logFilePath, true);
+            }
             return true;
         }
     }

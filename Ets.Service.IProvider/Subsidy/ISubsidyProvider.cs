@@ -40,6 +40,6 @@ namespace Ets.Service.IProvider.Subsidy
         /// 徐鹏程
         /// 20150416
         /// </summary>
-        bool ShortMessage(string SendMessage);
+        bool ShortMessage();
     }
 }

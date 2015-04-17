@@ -223,7 +223,7 @@ WHERE   sub.[Status] = 1 ");
                             c.PhoneNo
                         from CrossShopLog(nolock) cs join clienter(nolock) c on cs.ClienterId=c.Id
                         where 
-                            CONVERT(char(10),cs.InsertTime,120)=CONVERT(char(10),DATEADD(DAY,-0,GETDATE()),120) 
+                            CONVERT(char(10),cs.InsertTime,120)=CONVERT(char(10),DATEADD(DAY,-1,GETDATE()),120) 
                         group by CONVERT(char(10),cs.InsertTime,120),clienterId,c.PhoneNo";
             DataTable myTable = DbHelper.ExecuteDataTable(SuperMan_Read, strSql);
             return MapRows<ShortMessageModel>(myTable);
