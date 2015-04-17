@@ -5,6 +5,7 @@ namespace Ets.Model.DomainModel.Group
     /// <summary>
     /// 集团配置业务实体类-平扬  2015.3.16
     /// </summary>
+    [Serializable]
     public class GroupApiConfigModel
     {
         /// <summary>

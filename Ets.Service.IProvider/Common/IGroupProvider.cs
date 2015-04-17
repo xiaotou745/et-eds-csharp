@@ -41,7 +41,7 @@ namespace Ets.Service.IProvider.Common
         /// <param name="appkey"></param>
         /// <param name="version"></param>
         /// <returns></returns>
-        ResultInfo<GroupApiConfigModel> GetGroupApiConfigByAppKey(string appkey, string version);
+        GroupApiConfigModel GetGroupApiConfigByAppKey(string appkey, string version);
 
         /// <summary>
         /// 更新集团状态
