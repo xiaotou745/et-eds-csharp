@@ -25,6 +25,7 @@ using Ets.Service.Provider.WtihdrawRecords;
 using Ets.Service.Provider.MyPush;
 using Ets.Model.DomainModel.Bussiness;
 using Ets.Model.ParameterModel.Order;
+using ETS.NoSql.RedisCache;
 
 namespace Ets.Service.Provider.Clienter
 {
@@ -48,7 +49,7 @@ namespace Ets.Service.Provider.Clienter
                     return ETS.Enums.ChangeWorkStatusEnum.OrderError;
             }
             int changeResult = clienterDao.ChangeWorkStatusToSql(paraModel);
- 
+
 
             return clienterDao.ChangeWorkStatusToSql(paraModel) > 0 ? ETS.Enums.ChangeWorkStatusEnum.Success : ETS.Enums.ChangeWorkStatusEnum.Error;
         }
@@ -513,7 +514,10 @@ namespace Ets.Service.Provider.Clienter
                     orderDao.FinishOrderStatus(orderNo, userId, myOrderInfo);
                     if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)  //当用户上传的小票数量 和 需要上传的小票数量一致的时候，更新用户金额
                     {
-                        UpdateClienterAccount(userId, myOrderInfo);
+                        if (CheckOrderPay(orderNo))
+                        {
+                            UpdateClienterAccount(userId, myOrderInfo);
+                        }
                     }
                     ////更新骑士 金额  
                     //bool b = clienterDao.UpdateClienterAccountBalance(new WithdrawRecordsModel() { UserId = userId, Amount = myOrderInfo.OrderCommission.Value });
@@ -624,19 +628,41 @@ namespace Ets.Service.Provider.Clienter
         public OrderOther UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel)
         {
             OrderOther orderOther = null;
+            var myOrderInfo = orderDao.GetOrderInfoByOrderNo("", uploadReceiptModel.OrderId);
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 orderOther = clienterDao.UpdateClientReceiptPicInfo(uploadReceiptModel);
                 //上传成功后， 判断
                 if (orderOther.OrderStatus == ConstValues.ORDER_FINISH && orderOther.HadUploadCount == orderOther.NeedUploadCount)
                 {
-                    var myOrderInfo = orderDao.GetOrderInfoByOrderNo("", uploadReceiptModel.OrderId);
-                    //更新骑士金额
-                    UpdateClienterAccount(uploadReceiptModel.ClienterId, myOrderInfo);
+                    if (CheckOrderPay(myOrderInfo.OrderNo))
+                    {
+                        //更新骑士金额
+
+                        UpdateClienterAccount(uploadReceiptModel.ClienterId, myOrderInfo);
+                    }
                 }
                 tran.Complete();
             }
             return orderOther;
+        }
+
+        /// <summary>
+        /// 验证该订单是否支付
+        /// </summary>
+        /// <param name="OrderId"></param>
+        /// <returns></returns>
+        private bool CheckOrderPay(string OrderNo)
+        {
+            RedisCache redisCache = new RedisCache();
+            string orderKey = string.Format(RedissCacheKey.CheckOrderPay, OrderNo);
+            string CheckOrderPay = redisCache.Get<string>(orderKey);
+            if (CheckOrderPay != "1")
+            {
+                redisCache.Set(orderKey, "1");
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
