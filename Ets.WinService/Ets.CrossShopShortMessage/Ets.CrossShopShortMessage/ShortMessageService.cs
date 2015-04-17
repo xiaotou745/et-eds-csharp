@@ -21,7 +21,7 @@ namespace Ets.CrossShopShortMessage
 
         protected override void OnStart(string[] args)
         {
-            Thread.Sleep(1000 * 10);
+            //Thread.Sleep(1000 * 10);
             ETS.Util.Log.WriteTextToFile(DateTime.Now.ToString() + "跨店奖励短信发送服务开启", Job_ShortMessage.GetLogFilePath(), true);
             Thread t = new Thread(Job_ShortMessage.ShortMessage);
             t.Start();
