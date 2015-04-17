@@ -35,11 +35,33 @@ namespace Ets.Service.Provider.Common
             string CurrentTime = DateTime.Now.ToString("yyyy-MM-dd");
             IList<HomeCountTitleModel> homeCountList = orderDao.GetCurrentDateCountAndMoney(CurrentTime, CurrentTime);
             IList<HomeCountTitleModel> subsidyOrderCountList = orderDao.GetCurrentDateSubsidyOrderCount(CurrentTime, CurrentTime);
+            Ets.Dao.Statistics.StatisticsDao statisticsDao = new Ets.Dao.Statistics.StatisticsDao();
+
+            #region   获取当天，未完成任务量，未被抢任务量
+            var unfinish = statisticsDao.GetCurrentUnFinishOrderinfo();
+            if (unfinish != null)
+            {
+                model.UnfinishedMissionCount = unfinish.UnfinishedMissionCount;//未完成任务量
+                model.UnGrabMissionCount = unfinish.UnGrabMissionCount;//未抢单任务量
+            }
+            #endregion
+
+            #region 获取活跃商家和活跃骑士
+            unfinish = statisticsDao.GetCurrentActiveBussinessAndClienter();
+            if (unfinish != null)
+            {
+                model.ActiveBusiness = unfinish.ActiveBusiness;//活跃商家
+                model.ActiveClienter = unfinish.ActiveClienter;//活跃骑士
+            }
+
+            #endregion
+
+
             if (homeCountList != null && homeCountList.Count > 0)
             {
                 temp = homeCountList[0];
             }
-          
+
             model.OrderPrice = temp.OrderPrice;// 订单金额
             model.MisstionCount = temp.MisstionCount;// 任务量
             model.OrderCount = temp.OrderCount;// 订单量
@@ -54,9 +76,9 @@ namespace Ets.Service.Provider.Common
             temp = businessDao.GetCurrentBusinessCount(model);// 商家总数：
             model.BusinessCount = temp.BusinessCount;//商家总数
 
-            model.BusinessAverageOrderCount = ParseHelper.ToDivision(model.OrderCount, model.BusinessCount);//商户平均发布订单
+            model.BusinessAverageOrderCount = ParseHelper.ToDivision(model.OrderCount, model.ActiveBusiness);//商户平均发布订单
             model.MissionAverageOrderCount = ParseHelper.ToDivision(model.OrderCount, model.MisstionCount);//任务平均订单量
-            model.ClienterAverageOrderCount = ParseHelper.ToDivision(model.OrderCount, model.RzqsCount);//骑士平均完成订单量
+            model.ClienterAverageOrderCount = ParseHelper.ToDivision(model.OrderCount, model.ActiveClienter);//骑士平均完成订单量
             if (subsidyOrderCountList != null && subsidyOrderCountList.Count > 0)
             {
                 var zeroSubsidyOrderCount = subsidyOrderCountList.Where(t => t.DealCount == 0).ToList();
@@ -75,26 +97,8 @@ namespace Ets.Service.Provider.Common
                 model.TwoSubsidyOrderCount = 0;
                 model.ThreeSubsidyOrderCount = 0;
             }
-                
-            Ets.Dao.Statistics.StatisticsDao statisticsDao = new Ets.Dao.Statistics.StatisticsDao();
-            #region   获取当天，未完成任务量，未被抢任务量
-            temp = statisticsDao.GetCurrentUnFinishOrderinfo();
-            if (temp != null)
-            {
-                model.UnfinishedMissionCount = temp.UnfinishedMissionCount;//未完成任务量
-                model.UnGrabMissionCount = temp.UnGrabMissionCount;//未抢单任务量
-            }
-            #endregion
 
-            #region 获取活跃商家和活跃骑士
-            temp = statisticsDao.GetCurrentActiveBussinessAndClienter();
-            if (temp != null)
-            {
-                model.ActiveBusiness = temp.ActiveBusiness;//活跃商家
-                model.ActiveClienter = temp.ActiveClienter;//活跃骑士
-            }
 
-            #endregion
 
             return model;
         }

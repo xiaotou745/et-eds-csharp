@@ -28,6 +28,8 @@
         var resultList = ViewBag.homeCountTitleModel as Ets.Model.Common.HomeCountTitleModel;
         var homeCountByList=ViewBag.homeCountTitleToList;
         var clienteStorerGrabStatisticalList = ViewBag.clienteStorerGrabStatistical as List<Ets.Model.DomainModel.Bussiness.BusinessesDistributionModel>;
+
+        var clienteStorerGrabStatisticalListOld = ViewBag.clienteStorerGrabStatisticalOld as List<Ets.Model.DomainModel.Bussiness.BusinessesDistributionModelOld>;
         var homeCountAllData = ViewBag.homeCountTitleToAllData as Ets.Model.Common.HomeCountTitleModel;
         <p>
             <table class="tbstyle" width="1200" border="1">
@@ -144,38 +146,39 @@
                 </tr>
 
                 @{
-                    var tempList= from S in clienteStorerGrabStatisticalList 
-                                  group S by  S.InsertTime into item
-                                  select new {
-                                      PubDate = item.First().InsertTime.ToString(),
-                                      PubDateTotalAmount = item.Sum(t=>t.TotalAmount).ToString(),
-                                      OnceView = item.Where(t => t.BusinessCount == 1).Count() == 0 ? "0*0" : item.Where(t => t.BusinessCount == 1).First().ClienterCount + "*" + item.Where(t => t.BusinessCount == 1).First().Amount,
-                                      TwiceView = item.Where(t => t.BusinessCount == 2).Count() == 0 ? "0*0" : item.Where(t => t.BusinessCount == 2).First().ClienterCount + "*" + item.Where(t => t.BusinessCount == 2).First().Amount,
-                                      ThreeView = item.Where(t => t.BusinessCount == 3).Count() == 0 ? "0*0" : item.Where(t => t.BusinessCount == 3).First().ClienterCount + "*" + item.Where(t => t.BusinessCount == 3).First().Amount,
-                                      FourView = item.Where(t => t.BusinessCount == 4).Count() == 0 ? "0*0" : item.Where(t => t.BusinessCount == 4).First().ClienterCount + "*" + item.Where(t => t.BusinessCount == 4).First().Amount,
-                                      FiveView = item.Where(t => t.BusinessCount == 5).Count() == 0 ? "0*0" : item.Where(t => t.BusinessCount == 5).First().ClienterCount + "*" + item.Where(t => t.BusinessCount == 5).First().Amount,
-                                      SixView = item.Where(t => t.BusinessCount == 6).Count() == 0 ? "0*0" : item.Where(t => t.BusinessCount == 6).First().ClienterCount + "*" + item.Where(t => t.BusinessCount == 6).First().Amount,
-                                      SevenView = item.Where(t => t.BusinessCount == 7).Count() == 0 ? "0*0" : item.Where(t => t.BusinessCount == 7).First().ClienterCount + "*" + item.Where(t => t.BusinessCount == 7).First().Amount,
-                                      EightView = item.Where(t => t.BusinessCount == 8).Count() == 0 ? "0*0" : item.Where(t => t.BusinessCount == 8).First().ClienterCount + "*" + item.Where(t => t.BusinessCount == 8).First().Amount,
-                                      NineView = item.Where(t => t.BusinessCount == 9).Count() == 0 ? "0*0" : item.Where(t => t.BusinessCount == 9).First().ClienterCount + "*" + item.Where(t => t.BusinessCount == 9).First().Amount,
-                                      ExceedView = item.Where(t => t.BusinessCount >= 10).Count() == 0 ? "0*0" : item.Where(t => t.BusinessCount >= 10).First().ClienterCount + "*" + item.Where(t => t.BusinessCount >= 10).First().Amount,
-                                  };
-
-                    foreach (var item in tempList)
+                    foreach (var item in clienteStorerGrabStatisticalList)
                     {
                         <tr class="trclass">
-                            <td>@item.PubDate</td>
-                            <td>@item.PubDateTotalAmount</td>
-                            <td>@item.OnceView</td>
-                            <td>@item.TwiceView</td>
-                            <td>@item.ThreeView</td>
-                            <td>@item.FourView</td>
-                            <td>@item.FiveView</td>
-                            <td>@item.SixView</td>
-                            <td>@item.SevenView</td>
-                            <td>@item.EightView</td>
-                            <td>@item.NineView</td>
-                            <td>@item.ExceedView</td>
+                        <td>@item.InsertTime</td>
+                        <td>@item.TotalAmount</td>
+                         @for (int i = 1; i <= 10; i++)
+                         {
+                             if (i==item.BusinessCount)
+                             {
+                              <td>@(item.ClienterCount)个<br />@(item.ClienterCount)*@(item.Amount)=@(item.ClienterCount * item.Amount)</td>   
+                             }
+                             else { 
+                              <td>0个<br />0*0=￥0</td>
+                             }
+                         }
+                        </tr>
+                    }
+                    
+                    foreach (var item in clienteStorerGrabStatisticalListOld)
+                    {
+                        <tr class="trclass">
+                            <td>@item.PubDate.ToString()</td>
+                            <td>0</td>
+                            <td>@(item.OnceCount)个<br />0*0=￥0</td>
+                            <td>@(@item.TwiceCount)个<br />0*0=￥0</td>
+                            <td>@(item.ThreeTimesCount)个<br />0*0=￥0</td>
+                            <td>@(item.FourTimesCount)个<br />0*0=￥0</td>
+                            <td>@(item.FiveTimesCount)个<br />0*0=￥0</td>
+                            <td>@(item.SixTimesCount)个<br />0*0=￥0</td>
+                            <td>@(item.SevenTimesCount)个<br />0*0=￥0</td>
+                            <td>@(item.EightTimesCount)个<br />0*0=￥0</td>
+                            <td>@(item.NineTimesCount)个<br />0*0=￥0</td>
+                            <td>@(item.ExceedNineTimesCount)个<br />0*0=￥0</td>
                         </tr>
                     }
                 }

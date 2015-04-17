@@ -124,7 +124,7 @@ namespace SuperMan.Controllers
             //验证码插入Redis缓存
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string cachekey = string.Format(RedissCacheKey.CaptchaImage, ETS.Util.Helper.Uuid());
-            redis.Add(cachekey, captcha.Captcha, DateTime.Now.AddMinutes(1000));
+            redis.Add(cachekey, captcha.Captcha, DateTime.Now.AddHours(10));  
             //缓存key放入cookie里存储 
             CookieHelper.WriteCookie("Cookie_Verification", cachekey, DateTime.Now.AddMinutes(10));
             return new FileContentResult(bytes, "image/jpeg"); ;
