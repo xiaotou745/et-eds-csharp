@@ -6,7 +6,7 @@ using System.Net.Mail;
 using System.Net.Mime;
 using System.Reflection;
 using System.Text;
-using Common.Logging;
+using NLog;
 
 namespace ETS.Util
 {
@@ -27,7 +27,7 @@ namespace ETS.Util
 		/// </summary>
 		public const string ANONYMOUS_SMTP = "smtpsrv02.vancloa.cn";
 
-		private static readonly ILog logger = LogManager.GetCurrentClassLogger();
+		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
 		#region Common MailSend Methods.
 
@@ -357,7 +357,7 @@ namespace ETS.Util
 			}
 			catch (Exception e)
 			{
-				logger.Error(m => m("SendMailToUser faild!", e));
+                LogHelper.LogWriter(e);
 				return false;
 			}
 			return true;

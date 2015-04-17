@@ -155,6 +155,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.GetOrdersStatus))]
+        [ExecuteTimeLog]
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]> GetMyJobList_C(Ets.Model.ParameterModel.Clienter.ClientOrderInfoModel model)
         {
@@ -190,6 +191,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.GetOrdersStatus))]
+        [ExecuteTimeLog]
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]> GetJobList_C(Ets.Model.ParameterModel.Clienter.ClientOrderInfoModel model)
         {
@@ -229,6 +231,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.GetOrdersNoLoginStatus))]
+        [ExecuteTimeLog]
         [HttpGet]
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderNoLoginResultModel[]> GetJobListNoLoginLatest_C()
         {

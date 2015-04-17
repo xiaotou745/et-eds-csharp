@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ETS.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,10 +14,12 @@ namespace ETS.Sms
             string result = sms.SendSmsSaveLogB2B(mobile/*手机号码*/, content/*信息内容*/, smsSource/*短信来源*/, null/*餐厅ID（可以为null）*/, 1/*餐厅所属集团ID*/, "YX"/*短信平台*/);
             if (result == "发送成功")
             {
+                LogHelper.LogWriter(DateTime.Now.ToString() + " 向手机号为： " + mobile + " 的用户发送短信，短信内容为：" + content + "。发送成功。");
                 return SendSmsStatus.Sending;
             }
             else
             {
+                LogHelper.LogWriter(DateTime.Now.ToString() + " 向手机号为： " + mobile + " 的用户发送短信，短信内容为：" + content + "。发送失败。");
                 return SendSmsStatus.SendFailure;
             }
         }
