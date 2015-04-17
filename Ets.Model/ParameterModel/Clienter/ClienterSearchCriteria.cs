@@ -38,7 +38,10 @@ namespace Ets.Model.ParameterModel.Clienter
         /// 商户城市
         /// </summary>
         public string businessCity { get; set; }
-     
-
+        /// <summary>
+        /// 推荐人电话
+        /// </summary>
+        public string recommonPhone { get; set; }
+        
     }
 }
