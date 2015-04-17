@@ -87,6 +87,9 @@ namespace Ets.Service.IProvider.OpenApi
             return ETS.Security.MD5.Encrypt(signStr);
         }
 
-
+        public ParaModel<CreatePM_OpenApi> SetCcmmissonInfo(ParaModel<CreatePM_OpenApi> paramodel)
+        {
+            return paramodel;
+        }
     }
 }

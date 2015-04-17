@@ -19,7 +19,9 @@ namespace ETS.Enums
         [DisplayText("系统错误")]
         SystemError = 10001,
         [DisplayText("参数错误")]
-        ParaError = 10002
+        ParaError = 10002,
+        [DisplayText("该订单已同步过")]
+        OrderExists = 10003
     }
 
 }

@@ -452,11 +452,9 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             dbParameters.AddWithValue("@ReceiveArea", paramodel.address.area); //用户区
             dbParameters.AddWithValue("@PickupCode", string.IsNullOrWhiteSpace(paramodel.pickupcode) ? "" : paramodel.pickupcode); //用户区
             string orderNo = ParseHelper.ToString(DbHelper.ExecuteScalar(SuperMan_Read, insertOrdersql, dbParameters));
-            if (string.IsNullOrWhiteSpace(orderNo))//添加失败 
-                return null;
             //添加成功时，将当前订单插入到缓存中，设置过期时间30天
             redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
-               paramodel.order_id.ToString()), "true", DateTime.Now.AddDays(30));  //查询缓存，看当前订单是否存在,“true”代表存在，key的形式为集团ID_第三方平台订单号
+               paramodel.order_id.ToString()),orderNo, DateTime.Now.AddDays(30));  //查询缓存，看当前订单是否存在,“true”代表存在，key的形式为集团ID_第三方平台订单号
             #endregion
 
             #region 操作插入OrderDetail表

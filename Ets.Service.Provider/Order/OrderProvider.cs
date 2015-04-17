@@ -447,11 +447,12 @@ namespace Ets.Service.Provider.Order
             }
             #endregion
 
-            #region  当第三方未传递经纬的情况下，根据地址调用百度接口获取经纬度信息  add by caoheyang 20150416
+            #region  维护店铺相关信息 add by caoheyang 20150416
+           
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string bussinessIdstr = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(),
               paramodel.store_info.store_id.ToString()));  //查询缓存，看看当前店铺是否存在,缓存存储E代送的商户id
-            if (bussinessIdstr == null)  //店铺不存在
+            if (bussinessIdstr == null)  ///当第三方未传递经纬的情况下，根据地址调用百度接口获取经纬度信息  add by caoheyang 20150416
             {
                 if (paramodel.store_info.longitude == 0 || paramodel.store_info.latitude == 0)  //店铺经纬度
                 {
@@ -460,15 +461,18 @@ namespace Ets.Service.Provider.Order
                     paramodel.store_info.longitude = localtion.Item1;  //精度
                     paramodel.store_info.latitude = localtion.Item2; //纬度
                 }
+                //if (paramodel.address.longitude == 0 || paramodel.address.latitude == 0)  //用户经纬度
+                //{
+                //    Tuple<decimal, decimal> localtion = BaiDuHelper.GeoCoder(paramodel.store_info.province
+                //        + paramodel.address.city + paramodel.address.area + paramodel.address.address);
+                //    paramodel.address.longitude = localtion.Item1;  //精度
+                //    paramodel.address.latitude = localtion.Item2; //纬度
+                //}
             }
-            //if (paramodel.address.longitude == 0 || paramodel.address.latitude == 0)  //用户经纬度
-            //{
-            //    Tuple<decimal, decimal> localtion = BaiDuHelper.GeoCoder(paramodel.store_info.province
-            //        + paramodel.address.city + paramodel.address.area + paramodel.address.address);
-            //    paramodel.address.longitude = localtion.Item1;  //精度
-            //    paramodel.address.latitude = localtion.Item2; //纬度
-            //}
-
+            else { 
+                
+            }
+          
             #endregion
 
             #region 佣金相关  add by caoheyang 20150416
@@ -484,6 +488,13 @@ namespace Ets.Service.Provider.Order
             paramodel.ordercommission = commissonPro.GetCurrenOrderCommission(orderComm);  //骑士佣金
             paramodel.websitesubsidy = commissonPro.GetOrderWebSubsidy(orderComm);//网站补贴
             paramodel.commissionrate = commissonPro.GetCommissionRate(orderComm);//订单佣金比例
+            #endregion
+
+            #region 第三方订单是否重复推送的验证  add by caoheyang 20150417
+            string orderExistsNo = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
+            paramodel.order_id.ToString()));  //查询缓存，看当前订单是否存在,“true”代表存在，key的形式为集团ID_第三方平台订单号
+            if (orderExistsNo != null)
+                return ResultModel<object>.Conclude(OrderApiStatusType.OrderExists, new { order_no = orderExistsNo }); 
             #endregion
 
             string orderNo = null; //订单号码
