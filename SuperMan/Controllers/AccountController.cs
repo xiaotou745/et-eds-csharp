@@ -75,7 +75,6 @@ namespace SuperMan.Controllers
             {
                 return Json(new ResultModel(false, "验证码不正确"));
             } 
-            redis.Delete(cachekey);
             var loginResult = iAccountProvider.ValidateUser(model.UserName, MD5Helper.MD5(model.Password));
             switch (loginResult)
             {
