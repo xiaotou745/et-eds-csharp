@@ -244,10 +244,6 @@
       <Project>{61c59e53-67c8-44fe-b0ad-1e9025d7e568}</Project>
       <Name>Ets.Service.Provider</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SuperManCore\SuperManCore.csproj">
-      <Project>{f52d02c9-103a-46b1-aee7-3d11e64777d7}</Project>
-      <Name>SuperManCore</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

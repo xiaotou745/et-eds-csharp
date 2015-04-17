@@ -34,7 +34,7 @@ namespace OpenApi
         /// <param name="actionContext"></param>
         public override void OnActionExecuting(System.Web.Http.Controllers.HttpActionContext actionContext)
         {
-            SuperManCore.LogHelper.LogWriter("httpBeginTime", new { httpBeginTime=System.DateTime.Now.ToString() });
+            LogHelper.LogWriter("接口"+actionContext.Request.RequestUri+"请求开始时间："+System.DateTime.Now.ToString() );
             lock (actionContext)
             {
                 dynamic paramodel = actionContext.ActionArguments["paramodel"]; //当前请求的参数对象 
@@ -64,7 +64,7 @@ namespace OpenApi
         }
         public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
         {
-            SuperManCore.LogHelper.LogWriter("httpendTime", new { httpendTime = System.DateTime.Now.ToString() });
+            LogHelper.LogWriter("接口" + actionExecutedContext.Request.RequestUri + "请求结束时间：" + System.DateTime.Now.ToString());
             base.OnActionExecuted(actionExecutedContext);
         }
     }
@@ -84,7 +84,7 @@ namespace OpenApi
         /// <param name="filterContext">上下文对象  该类继承于ControllerContext</param>
         public override void OnException(HttpActionExecutedContext filterContext)
         {
-            SuperManCore.LogHelper.LogWriterFromFilter(filterContext.Exception);
+            LogHelper.LogWriterFromFilter(filterContext.Exception);
         }
     }
 

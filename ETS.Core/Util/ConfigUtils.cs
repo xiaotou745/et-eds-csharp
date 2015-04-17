@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
-using Common.Logging;
+using NLog;
 
 namespace ETS.Util
 {
@@ -11,7 +11,7 @@ namespace ETS.Util
 		/// <summary>
 		/// 日志对象
 		/// </summary>
-		private static readonly ILog Logger = LogManager.GetCurrentClassLogger();
+		private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
 		public static T GetConfigValue<T>(string key, T defaule) where T : class
 		{
