@@ -81,7 +81,7 @@ namespace ETS.Enums
         [DisplayText("订单已被抢,无法取消")]
         FailedCancelOrder = 204,
         [DisplayText("取消失败")]
-        NotCancelOrder = 205
+        NotCancelOrder = 205 
 
     }
     public enum OrderStatus

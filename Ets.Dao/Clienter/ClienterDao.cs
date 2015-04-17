@@ -587,6 +587,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
             OrderOther orderOther = new OrderOther();
             int orderStatus = 0;
             var oo = GetReceiptInfo(uploadReceiptModel.OrderId, out orderStatus);
+            uploadReceiptModel.NeedUploadCount = oo.NeedUploadCount;
             if (oo.Id == 0)
             {
                 orderOther = InsertReceiptInfo(uploadReceiptModel);
@@ -701,8 +702,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
             string sql = @"
   update dbo.OrderOther
  set    ReceiptPic = @ReceiptPic ,
-        HadUploadCount = HadUploadCount + @HadUploadCount,
-        NeedUploadCount = @NeedUploadCount
+        HadUploadCount = HadUploadCount + @HadUploadCount
  output Inserted.Id ,
         Inserted.OrderId ,
         Inserted.NeedUploadCount ,
@@ -712,7 +712,6 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderId", SqlDbType.Int);
             parm.SetValue("@OrderId", uploadReceiptModel.OrderId);
-            parm.AddWithValue("@NeedUploadCount", uploadReceiptModel.NeedUploadCount);
             parm.AddWithValue("@HadUploadCount", uploadReceiptModel.HadUploadCount);
             parm.AddWithValue("@ReceiptPic", uploadReceiptModel.ReceiptPic);
             try
@@ -783,7 +782,7 @@ where   oo.OrderId = @OrderId;select o.[Status],o.OrderCount FROM dbo.[order] o 
             int orderStatus = 0;
             //更新小票信息
             OrderOther oo = GetReceiptInfo(uploadReceiptModel.OrderId, out orderStatus);
-            if (oo != null)
+            if (oo.Id>0)
             {
                 List<string> listReceiptPic = ImageCommon.GetListImgString(oo.ReceiptPic);
 
@@ -796,13 +795,14 @@ where   oo.OrderId = @OrderId;select o.[Status],o.OrderCount FROM dbo.[order] o 
                     listReceiptPic.Remove(delPicDir);
                 }
                 string ppath = ConfigSettings.Instance.FileUploadPath + "\\" + ConfigSettings.Instance.FileUploadFolderNameCustomerIcon;
-                var delDir = ppath + delPicDir;
-
+                var delDir = ppath + delPicDir; 
+              
                 var fileName = Path.GetFileName(delDir);
 
-                int fileNameLastDot = fileName.LastIndexOf('.');
+                int fileNameLastDot = fileName.LastIndexOf('.'); 
+                 
                 //原图 
-                string orginalFileName = string.Format("{0}{1}{2}", ppath + "\\" + fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
+                string orginalFileName = string.Format("{0}{1}{2}", Path.GetDirectoryName(delDir) + "\\" + fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
 
                 //删除磁盘中的裁图
                 FileHelper.DeleteFile(delDir);
