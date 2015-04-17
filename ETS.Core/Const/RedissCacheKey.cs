@@ -56,5 +56,15 @@ namespace ETS.Const
         /// 图片自增Key
         /// </summary>
         public const string ImageIdentity = "ImageIdentity";
+
+        /// <summary>
+        /// openapi新增订单 第三方店铺id缓存key
+        /// </summary>
+        public const string OtherBusinessIdInfo = "OtherBusiness_{0}_{1}";
+
+        /// <summary>
+        /// openapi新增订单 第三方订单是否已经存在key
+        /// </summary>
+        public const string OtherOrderInfo = "OtherOrder_{0}_{1}";
     }
 }

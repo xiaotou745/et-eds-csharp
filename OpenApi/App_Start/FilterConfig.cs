@@ -34,6 +34,7 @@ namespace OpenApi
         /// <param name="actionContext"></param>
         public override void OnActionExecuting(System.Web.Http.Controllers.HttpActionContext actionContext)
         {
+            SuperManCore.LogHelper.LogWriter("httpBeginTime", new { httpBeginTime=System.DateTime.Now.ToString() });
             lock (actionContext)
             {
                 dynamic paramodel = actionContext.ActionArguments["paramodel"]; //当前请求的参数对象 
@@ -44,7 +45,7 @@ namespace OpenApi
                     return;
                 } 
                 IGroupProvider groupProvider = new GroupProvider();
-                GroupApiConfigModel groupCofigInfo = groupProvider.GetGroupApiConfigByAppKey(paramodel.app_key, paramodel.v).Data;
+                GroupApiConfigModel groupCofigInfo = groupProvider.GetGroupApiConfigByAppKey(paramodel.app_key, paramodel.v);
                 if (groupCofigInfo != null && groupCofigInfo.IsValid == 1)//集团可用，且有appkey信息
                 {
                     string signStr = groupCofigInfo.AppSecret + "app_key" + paramodel.app_key + "timestamp"
@@ -60,6 +61,11 @@ namespace OpenApi
                     actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
                            (actionContext.ControllerContext, ResultModel<object>.Conclude(OrderApiStatusType.SignError));  //sign错误，请求中止
             }
+        }
+        public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
+        {
+            SuperManCore.LogHelper.LogWriter("httpendTime", new { httpendTime = System.DateTime.Now.ToString() });
+            base.OnActionExecuted(actionExecutedContext);
         }
     }
 
