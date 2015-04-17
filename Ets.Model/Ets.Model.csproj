@@ -158,6 +158,7 @@
     <Compile Include="ParameterModel\Order\CreatePM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\OrderOptionModel.cs" />
     <Compile Include="ParameterModel\Order\OrderSearchCriteria.cs" />
+    <Compile Include="ParameterModel\Sms\SmsParaModel.cs" />
     <Compile Include="ParameterModel\Subsidy\SubsidyModel.cs" />
     <Compile Include="ParameterModel\User\UserOptRecordPara.cs" />
     <Compile Include="ParameterModel\WtihdrawRecords\IncomeModel.cs" />

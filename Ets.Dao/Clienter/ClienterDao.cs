@@ -187,7 +187,7 @@ namespace Ets.Dao.Clienter
         public ClienterModel GetUserInfoByUserId(int UserId)
         {
             string sql = "SELECT TrueName,PhoneNo,AccountBalance FROM dbo.clienter(NOLOCK) WHERE Id=" + UserId;
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql);
             IList<ClienterModel> list = MapRows<ClienterModel>(dt);
             if (list == null || list.Count <= 0)
             {
@@ -569,6 +569,33 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
 
 
         /// <summary>
+        /// 骑士门店抢单统计
+        /// danny-20150408
+        /// </summary>
+        /// <returns></returns>
+        public IList<BusinessesDistributionModelOld> GetClienteStorerGrabStatisticalInfoOld(int NewCount)
+        {
+            string sql = @" SELECT  PubDate ,
+                                    ISNULL(SUM(CASE when a.BusinessCount=1 THEN ClienterCount END),0) OnceCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount=2 THEN ClienterCount END),0) TwiceCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount=3 THEN ClienterCount END),0) ThreeTimesCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount=4 THEN ClienterCount END),0) FourTimesCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount=5 THEN ClienterCount END),0) FiveTimesCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount=6 THEN ClienterCount END),0) SixTimesCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount=7 THEN ClienterCount END),0) SevenTimesCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount=8 THEN ClienterCount END),0) EightTimesCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount=9 THEN ClienterCount END),0) NineTimesCount,
+                                    ISNULL(SUM(CASE when a.BusinessCount>=10 THEN ClienterCount END),0) ExceedTenTimesCount
+                            FROM (select PubDate,businessCount BusinessCount,count(clienterId) as ClienterCount
+                                  from (select convert(char(10),o.PubDate,120) PubDate,clienterId,count(distinct businessId) businessCount
+                                        from dbo.[order] o(nolock)
+                                            where  convert(char(10),o.PubDate,120) <'2015-04-17' and o.PubDate> getdate()-" + (20 - NewCount);
+                    sql += " and Status in (1,2) group by convert(char(10),o.PubDate,120), clienterId)t group by PubDate, businessCount) a ";
+                    sql += " group by PubDate order by PubDate desc ;";
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
+            return MapRows<BusinessesDistributionModelOld>(dt);
+        }
+        /// <summary>
         /// 上传小票
         /// </summary>
         /// <param name="uploadReceiptModel"></param>
@@ -747,11 +774,11 @@ where   oo.OrderId = @OrderId;select o.[Status],o.OrderCount FROM dbo.[order] o 
             DataSet dt = DbHelper.ExecuteDataset(SuperMan_Read, sql, parm);
             var ooList = MapRows<OrderOther>(dt.Tables[0]);
             if (dt.Tables[1] != null && dt.Tables[1].Rows.Count > 0)
-            { 
+            {
                 OrderStatus = ParseHelper.ToInt(dt.Tables[1].Rows[0][0], 0);
                 orderCount = ParseHelper.ToInt(dt.Tables[1].Rows[0][1], 0);
             }
-            if (ooList != null && ooList.Count> 0)
+            if (ooList != null && ooList.Count > 0)
             {
                 ooList[0].NeedUploadCount = orderCount;
                 return ooList[0];
@@ -773,7 +800,7 @@ where   oo.OrderId = @OrderId;select o.[Status],o.OrderCount FROM dbo.[order] o 
             int orderStatus = 0;
             //更新小票信息
             OrderOther oo = GetReceiptInfo(uploadReceiptModel.OrderId, out orderStatus);
-            if (oo.Id>0)
+            if (oo.Id > 0)
             {
                 List<string> listReceiptPic = ImageCommon.GetListImgString(oo.ReceiptPic);
 
@@ -786,12 +813,12 @@ where   oo.OrderId = @OrderId;select o.[Status],o.OrderCount FROM dbo.[order] o 
                     listReceiptPic.Remove(delPicDir);
                 }
                 string ppath = ConfigSettings.Instance.FileUploadPath + "\\" + ConfigSettings.Instance.FileUploadFolderNameCustomerIcon;
-                var delDir = ppath + delPicDir; 
-              
+                var delDir = ppath + delPicDir;
+
                 var fileName = Path.GetFileName(delDir);
 
-                int fileNameLastDot = fileName.LastIndexOf('.'); 
-                 
+                int fileNameLastDot = fileName.LastIndexOf('.');
+
                 //原图 
                 string orginalFileName = string.Format("{0}{1}{2}", Path.GetDirectoryName(delDir) + "\\" + fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
 
