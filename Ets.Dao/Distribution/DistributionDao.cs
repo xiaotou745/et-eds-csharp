@@ -59,6 +59,10 @@ namespace Ets.Dao.Distribution
             {
                 sbSqlWhere.AppendFormat(" AND PhoneNo='{0}' ", criteria.clienterPhone);
             }
+            if (!string.IsNullOrEmpty(criteria.recommonPhone))
+            {
+                sbSqlWhere.AppendFormat(" AND recommendPhone='{0}' ", criteria.recommonPhone.Trim());
+            }
             if (criteria.Status != -1)
             {
                 sbSqlWhere.AppendFormat(" AND Status={0} ", criteria.Status);

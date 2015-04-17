@@ -607,6 +607,15 @@ namespace Ets.Service.Provider.Clienter
             return clienterDao.GetClienteStorerGrabStatisticalInfo();
         }
         /// <summary>
+        /// 骑士门店抢单统计
+        /// danny-20150408,一个月后删除，窦海超，2015年4月17日 19:10:30
+        /// </summary>
+        /// <returns></returns>
+        public IList<BusinessesDistributionModelOld> GetClienteStorerGrabStatisticalInfoOld(int NewCount)
+        {
+            return clienterDao.GetClienteStorerGrabStatisticalInfoOld(NewCount);
+        }
+        /// <summary>
         /// 上传小票
         /// wc
         /// </summary>

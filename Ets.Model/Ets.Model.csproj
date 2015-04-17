@@ -57,6 +57,7 @@
     <Compile Include="DataModel\Order\OrderOther.cs" />
     <Compile Include="DataModel\Order\OrderSubsidiesLog.cs" />
     <Compile Include="DomainModel\Area\DMAreaCodeInfo.cs" />
+    <Compile Include="DomainModel\Subsidy\ShortMessageModel.cs" />
     <Compile Include="DomainModel\Subsidy\GrabOrderModel.cs" />
     <Compile Include="ParameterModel\Area\ParaAreaNameInfo.cs" />
     <Compile Include="Common\ParaModel.cs" />
@@ -147,7 +148,6 @@
     <Compile Include="ParameterModel\Common\OpenCitySearchCriteria.cs" />
     <Compile Include="ParameterModel\Clienter\UploadReceiptModel.cs" />
     <Compile Include="ParameterModel\Clienter\UploadReceiptResultModel.cs" />
-
     <Compile Include="ParameterModel\Group\GroupListModel.cs" />
     <Compile Include="ParameterModel\Group\GroupParaModel.cs" />
     <Compile Include="ParameterModel\Order\BusiOrderResultModel.cs" />
@@ -158,6 +158,7 @@
     <Compile Include="ParameterModel\Order\CreatePM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\OrderOptionModel.cs" />
     <Compile Include="ParameterModel\Order\OrderSearchCriteria.cs" />
+    <Compile Include="ParameterModel\Sms\SmsParaModel.cs" />
     <Compile Include="ParameterModel\Subsidy\SubsidyModel.cs" />
     <Compile Include="ParameterModel\User\UserOptRecordPara.cs" />
     <Compile Include="ParameterModel\WtihdrawRecords\IncomeModel.cs" />

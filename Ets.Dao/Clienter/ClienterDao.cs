@@ -187,7 +187,7 @@ namespace Ets.Dao.Clienter
         public ClienterModel GetUserInfoByUserId(int UserId)
         {
             string sql = "SELECT TrueName,PhoneNo,AccountBalance FROM dbo.clienter(NOLOCK) WHERE Id=" + UserId;
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql);
             IList<ClienterModel> list = MapRows<ClienterModel>(dt);
             if (list == null || list.Count <= 0)
             {
@@ -546,12 +546,34 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
             string orderByColumn = " tbl.PubDate DESC ";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
         }
+
         /// <summary>
         /// 骑士门店抢单统计
         /// danny-20150408
         /// </summary>
         /// <returns></returns>
         public IList<BusinessesDistributionModel> GetClienteStorerGrabStatisticalInfo()
+        {
+            string strSql = @"select 
+                                    convert(char(10),InsertTime,120) InsertTime,
+                                    BusinessCount,
+                                    convert(decimal(10,2),sum(Amount)) TotalAmount,
+                                    count(distinct ClienterId) ClienterCount,
+                                    convert(decimal(10,2),sum(Amount)/count(distinct ClienterId)) Amount
+                             from CrossShopLog(nolock)
+                             WHERE  InsertTime>getdate()-20
+                             group by convert(char(10),InsertTime,120),BusinessCount";
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, strSql);
+            return MapRows<BusinessesDistributionModel>(dt);
+        }
+
+
+        /// <summary>
+        /// 骑士门店抢单统计
+        /// danny-20150408
+        /// </summary>
+        /// <returns></returns>
+        public IList<BusinessesDistributionModelOld> GetClienteStorerGrabStatisticalInfoOld(int NewCount)
         {
             string sql = @" SELECT  PubDate ,
                                     ISNULL(SUM(CASE when a.BusinessCount=1 THEN ClienterCount END),0) OnceCount,
@@ -567,16 +589,12 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
                             FROM (select PubDate,businessCount BusinessCount,count(clienterId) as ClienterCount
                                   from (select convert(char(10),o.PubDate,120) PubDate,clienterId,count(distinct businessId) businessCount
                                         from dbo.[order] o(nolock)
-                                        where o.PubDate> getdate()-20
-                                            and Status in (1,2)
-                                        group by convert(char(10),o.PubDate,120), clienterId)t
-                                  group by PubDate, businessCount) a
-                            group by PubDate
-                            order by PubDate desc ;";
+                                            where  convert(char(10),o.PubDate,120) <'2015-04-17' and o.PubDate> getdate()-" + (20 - NewCount);
+                    sql += " and Status in (1,2) group by convert(char(10),o.PubDate,120), clienterId)t group by PubDate, businessCount) a ";
+                    sql += " group by PubDate order by PubDate desc ;";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
-            return MapRows<BusinessesDistributionModel>(dt);
+            return MapRows<BusinessesDistributionModelOld>(dt);
         }
-
         /// <summary>
         /// 上传小票
         /// </summary>
@@ -756,11 +774,11 @@ where   oo.OrderId = @OrderId;select o.[Status],o.OrderCount FROM dbo.[order] o 
             DataSet dt = DbHelper.ExecuteDataset(SuperMan_Read, sql, parm);
             var ooList = MapRows<OrderOther>(dt.Tables[0]);
             if (dt.Tables[1] != null && dt.Tables[1].Rows.Count > 0)
-            { 
+            {
                 OrderStatus = ParseHelper.ToInt(dt.Tables[1].Rows[0][0], 0);
                 orderCount = ParseHelper.ToInt(dt.Tables[1].Rows[0][1], 0);
             }
-            if (ooList != null && ooList.Count> 0)
+            if (ooList != null && ooList.Count > 0)
             {
                 ooList[0].NeedUploadCount = orderCount;
                 return ooList[0];
@@ -782,7 +800,7 @@ where   oo.OrderId = @OrderId;select o.[Status],o.OrderCount FROM dbo.[order] o 
             int orderStatus = 0;
             //更新小票信息
             OrderOther oo = GetReceiptInfo(uploadReceiptModel.OrderId, out orderStatus);
-            if (oo.Id>0)
+            if (oo.Id > 0)
             {
                 List<string> listReceiptPic = ImageCommon.GetListImgString(oo.ReceiptPic);
 
@@ -795,12 +813,12 @@ where   oo.OrderId = @OrderId;select o.[Status],o.OrderCount FROM dbo.[order] o 
                     listReceiptPic.Remove(delPicDir);
                 }
                 string ppath = ConfigSettings.Instance.FileUploadPath + "\\" + ConfigSettings.Instance.FileUploadFolderNameCustomerIcon;
-                var delDir = ppath + delPicDir; 
-              
+                var delDir = ppath + delPicDir;
+
                 var fileName = Path.GetFileName(delDir);
 
-                int fileNameLastDot = fileName.LastIndexOf('.'); 
-                 
+                int fileNameLastDot = fileName.LastIndexOf('.');
+
                 //原图 
                 string orginalFileName = string.Format("{0}{1}{2}", Path.GetDirectoryName(delDir) + "\\" + fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
 

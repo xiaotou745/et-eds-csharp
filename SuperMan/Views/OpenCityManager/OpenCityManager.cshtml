@@ -17,10 +17,10 @@
                         <span>城市名称: </span>
                         <input id="txtCityName" type="text" name="cityName" value="@ViewBag.cityName" />
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
-                        @if (UserContext.Current.HasAuthority(26))
-                        {
+                        @*@if (UserContext.Current.HasAuthority(39))
+                        {*@
                             <input type="button" value="保存修改" class="searchBtn" id="btnSave" />
-                        }
+                        @*}*@
                     </td>
                 </tr>
             </table>
