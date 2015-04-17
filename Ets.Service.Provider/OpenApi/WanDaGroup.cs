@@ -51,11 +51,11 @@ namespace Ets.Service.IProvider.OpenApi
                     statusDesc = string.Format("{0}拒绝配送该订单", paramodel.fields.BusinessName);
                     break;
                 default:
-                    break;
+                    return OrderApiStatusType.SystemError;
             }
             //配送员姓名
             string clienterName = paramodel.fields.ClienterTrueName == null ? "匿名" : paramodel.fields.ClienterTrueName;
-            string ts = TimeHelper.GetTimeStamp(false);
+            string ts = TimeHelper.GetTimeStamp();
             string url = ConfigurationManager.AppSettings["WanDaAsyncStatus"];
             if (url == null)
                 return OrderApiStatusType.SystemError;

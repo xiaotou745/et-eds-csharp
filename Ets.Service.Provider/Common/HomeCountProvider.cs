@@ -28,8 +28,8 @@ namespace Ets.Service.Provider.Common
             ClienterDao clienterDao = new ClienterDao();
             BusinessDao businessDao = new BusinessDao();
             OrderDao orderDao = new OrderDao();
-            HomeCountTitleModel temp = new HomeCountTitleModel();
             SubsidyDao subsidyDao = new SubsidyDao();
+            HomeCountTitleModel temp = new HomeCountTitleModel();
             //获取当天,订单金额:任务量：订单量：
             //商户结算金额（应收）; 骑士佣金总计（应付）
             string CurrentTime = DateTime.Now.ToString("yyyy-MM-dd");
@@ -75,7 +75,7 @@ namespace Ets.Service.Provider.Common
                 model.TwoSubsidyOrderCount = 0;
                 model.ThreeSubsidyOrderCount = 0;
             }
-
+                
             Ets.Dao.Statistics.StatisticsDao statisticsDao = new Ets.Dao.Statistics.StatisticsDao();
             #region   获取当天，未完成任务量，未被抢任务量
             temp = statisticsDao.GetCurrentUnFinishOrderinfo();
@@ -95,6 +95,7 @@ namespace Ets.Service.Provider.Common
             }
 
             #endregion
+
             return model;
         }
 

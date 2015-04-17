@@ -341,18 +341,15 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
         /// <returns>订单号</returns>
         public string CreateToSql(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
         {
-
             #region 操作business表取商户id
             int bussinessId;//商户id
             ///查询该商户是否已存在
-            const string queryBussinesssql = @"
-                select top 1 id from  dbo.business
-                where GroupId=@GroupId and OriginalBusiId=@OriginalBusiId;";
-            IDbParameters queryBdbParameters = DbHelper.CreateDbParameters();
-            queryBdbParameters.AddWithValue("@GroupId", paramodel.store_info.group); //集团id
-            queryBdbParameters.AddWithValue("@OriginalBusiId", paramodel.store_info.store_id);    //对接方店铺ID第三方平台推送过来的商家Id
-            bussinessId = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, queryBussinesssql, queryBdbParameters));
-            if (bussinessId == 0)  //如果商户不存在
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            string bussinessIdstr = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo,paramodel.store_info.group.ToString(),
+                paramodel.store_info.store_id.ToString()));  //查询缓存，看看当前店铺是否存在,缓存存储E代送的商户id
+            if (bussinessIdstr!= null)  
+                bussinessId = ParseHelper.ToInt(bussinessIdstr);
+            else//如果商户不存在
             {
                 ///商户插入sql
                 const string insertBussinesssql = @"
@@ -390,20 +387,18 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                 bussinessId = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, insertBussinesssql, insertBdbParameters));
                 if (bussinessId == 0)
                     return null;//添加失败 
+
+                redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString()
+                    , paramodel.store_info.store_id.ToString()), bussinessId.ToString());//将商户id插入到缓存  key的形式为 OtherBusiness_集团id_第三方平台店铺id
             }
             #endregion
 
             #region 操作插入order表
-
-            const string queryOrderSql = @"SELECT count(a.id) FROM [order] a  WITH ( NOLOCK )  LEFT JOIN  dbo.business AS b ON a.businessId=b.Id
-                     WHERE OriginalOrderNo=@OriginalOrderNo AND b.GroupId=@GroupId";
-            IDbParameters queryOrderSqldbParameters = DbHelper.CreateDbParameters();
-            queryOrderSqldbParameters.AddWithValue("@OriginalOrderNo", paramodel.order_id);    //第三方平台订单号
-            queryOrderSqldbParameters.AddWithValue("@GroupId", paramodel.store_info.group);    //集团id
-            int orderExists = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, queryOrderSql, queryOrderSqldbParameters));
-            if (orderExists > 0)
-                return null;//添加失败 
-            ///订单插入sql
+            string orderExists = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo,paramodel.store_info.group.ToString(),
+               paramodel.order_id.ToString()));  //查询缓存，看当前订单是否存在,“true”代表存在，key的形式为集团ID_第三方平台订单号
+            if (orderExists != null)  
+               return null;//订单已经存在，添加失败 
+            ///订单插入sql 订单不存在时
             const string insertOrdersql = @" 
                 INSERT INTO dbo.[order](OrderNo,
                 OriginalOrderNo,PubDate,SongCanDate,IsPay,Amount,
@@ -459,6 +454,9 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             string orderNo = ParseHelper.ToString(DbHelper.ExecuteScalar(SuperMan_Read, insertOrdersql, dbParameters));
             if (string.IsNullOrWhiteSpace(orderNo))//添加失败 
                 return null;
+            //添加成功时，将当前订单插入到缓存中，设置过期时间30天
+            redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
+               paramodel.order_id.ToString()), "true", DateTime.Now.AddDays(30));  //查询缓存，看当前订单是否存在,“true”代表存在，key的形式为集团ID_第三方平台订单号
             #endregion
 
             #region 操作插入OrderDetail表
@@ -912,7 +910,7 @@ WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL;", SuperPlatform.骑士, (i
         {
             string sql = @"SELECT 
                         (SELECT SUM (AccountBalance) FROM dbo.clienter(NOLOCK)  WHERE AccountBalance>=1000) AS  WithdrawPrice,--提现金额
-                        (select sum(Amount) from CrossShopLog(nolock)) as CrossShopPrice,--跨店奖励总金额
+                        (select convert(decimal(18,2),sum(Amount)) from CrossShopLog(nolock)) as CrossShopPrice,--跨店奖励总金额
                         SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
                         COUNT(1) AS MisstionCount,--总任务量
                         SUM(ISNULL(OrderCount,0)) AS OrderCount,--总订单量
