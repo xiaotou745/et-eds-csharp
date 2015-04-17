@@ -87,8 +87,15 @@ namespace Ets.Service.IProvider.OpenApi
             return ETS.Security.MD5.Encrypt(signStr);
         }
 
-        public ParaModel<CreatePM_OpenApi> SetCcmmissonInfo(ParaModel<CreatePM_OpenApi> paramodel)
+        /// <summary>
+        /// 新增商铺时根据集团id为店铺设置外送费，结算比例等财务相关信息 add by caoheyang 20150417
+        /// </summary>
+        /// <param name="paramodel"></param>
+        /// <returns></returns>
+        public CreatePM_OpenApi SetCcmmissonInfo(CreatePM_OpenApi paramodel)
         {
+            paramodel.store_info.delivery_fee = 0;//万达目前外送费统一0
+            paramodel.store_info.businesscommission = 12;//万达目前结算比例统一12
             return paramodel;
         }
     }

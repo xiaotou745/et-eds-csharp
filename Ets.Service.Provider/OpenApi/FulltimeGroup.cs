@@ -76,6 +76,16 @@ namespace Ets.Service.IProvider.OpenApi
             return ETS.Security.MD5.Encrypt(signStr);
         }
 
-
+        /// <summary>
+        /// 新增商铺时根据集团id为店铺设置外送费，结算比例等财务相关信息 add by caoheyang 20150417
+        /// </summary>
+        /// <param name="paramodel"></param>
+        /// <returns></returns>
+        public CreatePM_OpenApi SetCcmmissonInfo(CreatePM_OpenApi paramodel)
+        {
+            paramodel.store_info.delivery_fee = 5;//全时目前外送费统一5
+            paramodel.store_info.businesscommission = 0;//万达目前结算比例统一0
+            return paramodel;
+        }
     }
 }

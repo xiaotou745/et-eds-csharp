@@ -20,5 +20,12 @@ namespace Ets.Service.Provider.OpenApi
         /// <param name="paramodel"></param>
         /// <returns></returns>
         OrderApiStatusType AsyncStatus(ParaModel<AsyncStatusPM_OpenApi> paramodel);
+
+        /// <summary>
+        /// 新增商铺时根据集团id为店铺设置外送费，结算比例等财务相关信息 add by caoheyang 20150417
+        /// </summary>
+        /// <param name="paramodel"></param>
+        /// <returns></returns>
+        CreatePM_OpenApi SetCcmmissonInfo(CreatePM_OpenApi paramodel);
     }
 }

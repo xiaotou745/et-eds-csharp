@@ -356,11 +356,13 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                 INSERT INTO dbo.business
                 (OriginalBusiId,Name,GroupId,IDCard,Password,
                 PhoneNo,PhoneNo2,Address,ProvinceCode,CityCode,AreaCode,
-                Longitude,Latitude,DistribSubsidy,Province,City,district,CityId,districtId)  
+                Longitude,Latitude,DistribSubsidy,Province,City,district,CityId,districtId,
+                BusinessCommission)  
                 OUTPUT Inserted.Id   
                 values(@OriginalBusiId,@Name,@GroupId,@IDCard,@Password,
                 @PhoneNo,@PhoneNo2,@Address,@ProvinceCode,@CityCode,@AreaCode,
-                @Longitude,@Latitude,@DistribSubsidy,@Province,@City,@district,@CityId,@districtId);";
+                @Longitude,@Latitude,@DistribSubsidy,@Province,@City,@district,@CityId,@districtId,
+                @BusinessCommission);";
                 IDbParameters insertBdbParameters = DbHelper.CreateDbParameters();
                 ///基本参数信息
                 insertBdbParameters.AddWithValue("@OriginalBusiId", paramodel.store_info.store_id); //对接方店铺ID第三方平台推送过来的商家Id
@@ -382,6 +384,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                 insertBdbParameters.AddWithValue("@district", paramodel.store_info.area);    //门店区编码
                 insertBdbParameters.AddWithValue("@CityId", paramodel.store_info.city_code);    //门店市编码
                 insertBdbParameters.AddWithValue("@districtId", paramodel.store_info.area_code);    //门店区编码
+                insertBdbParameters.AddWithValue("@BusinessCommission", paramodel.store_info.businesscommission);//结算比例
                 //insertBdbParameters.AddWithValue("@CommissionTypeId", paramodel.store_info.commission_type == null ?
                 //    1 : paramodel.store_info.commission_type);   //佣金类型，涉及到快递员的佣金计算方式，默认1  业务改变已经无效  
                 bussinessId = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, insertBussinesssql, insertBdbParameters));
@@ -406,7 +409,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                 RecevicePhoneNo,ReceiveProvinceCode,ReceiveCityCode,ReceiveAreaCode,ReceviceAddress,
                 ReceviceLongitude,ReceviceLatitude,businessId,PickUpAddress,Payment,OrderCommission,
                 WebsiteSubsidy,CommissionRate,CommissionFormulaMode,ReceiveProvince,ReceviceCity,ReceiveArea,
-                PickupCode)
+                PickupCode,BusinessCommission,SettleMoney,Adjustment)
                 OUTPUT Inserted.OrderNo
                 Values(@OrderNo,
                 @OriginalOrderNo,@PubDate,@SongCanDate,@IsPay,@Amount,
@@ -414,7 +417,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                 @RecevicePhoneNo,@ReceiveProvinceCode,@ReceiveCityCode,@ReceiveAreaCode,@ReceviceAddress,
                 @ReceviceLongitude,@ReceviceLatitude,@BusinessId,@PickUpAddress,@Payment,@OrderCommission,
                 @WebsiteSubsidy,@CommissionRate,@CommissionFormulaMode,@ReceiveProvince,@ReceviceCity,@ReceiveArea,
-                @PickupCode)";
+                @PickupCode,@BusinessCommission,@SettleMoney,@Adjustment)";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             ///基本参数信息
 
@@ -429,7 +432,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             dbParameters.AddWithValue("@Remark", paramodel.remark);    //备注
             dbParameters.AddWithValue("@Weight", paramodel.weight);    //重量，默认?
             //订单外送费  目前 接收了两个外送费 理论必须一致 ，若不一致，以订单上的为准，方便后续扩展
-            dbParameters.AddWithValue("@DistribSubsidy", paramodel.delivery_fee);
+            dbParameters.AddWithValue("@DistribSubsidy", paramodel.store_info.delivery_fee);
             dbParameters.AddWithValue("@OrderCount", paramodel.package_count == null ? 1 : paramodel.package_count);   //订单数量，默认为1
             ///收货地址信息
             dbParameters.AddWithValue("@ReceviceName", paramodel.address.user_name);    //用户姓名 收货人姓名
@@ -451,6 +454,10 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             dbParameters.AddWithValue("@ReceviceCity", paramodel.address.city); //用户市
             dbParameters.AddWithValue("@ReceiveArea", paramodel.address.area); //用户区
             dbParameters.AddWithValue("@PickupCode", string.IsNullOrWhiteSpace(paramodel.pickupcode) ? "" : paramodel.pickupcode); //用户区
+            dbParameters.AddWithValue("@BusinessCommission", paramodel.store_info.businesscommission);//结算比例
+            dbParameters.AddWithValue("@SettleMoney", paramodel.settlemoney);//结算比例
+            dbParameters.AddWithValue("@Adjustment", paramodel.adjustment);//结算比例
+
             string orderNo = ParseHelper.ToString(DbHelper.ExecuteScalar(SuperMan_Read, insertOrdersql, dbParameters));
             //添加成功时，将当前订单插入到缓存中，设置过期时间30天
             redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),

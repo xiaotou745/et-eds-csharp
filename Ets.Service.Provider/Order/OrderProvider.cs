@@ -448,12 +448,14 @@ namespace Ets.Service.Provider.Order
             #endregion
 
             #region  维护店铺相关信息 add by caoheyang 20150416
-           
+
+            ///查询缓存，看看当前店铺是否存在,缓存存储E代送的商户id
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string bussinessIdstr = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(),
-              paramodel.store_info.store_id.ToString()));  //查询缓存，看看当前店铺是否存在,缓存存储E代送的商户id
-            if (bussinessIdstr == null)  ///当第三方未传递经纬的情况下，根据地址调用百度接口获取经纬度信息  add by caoheyang 20150416
+              paramodel.store_info.store_id.ToString()));  
+            if (bussinessIdstr == null) 
             {
+                ///当第三方未传递经纬的情况下，根据地址调用百度接口获取经纬度信息  add by caoheyang 20150416
                 if (paramodel.store_info.longitude == 0 || paramodel.store_info.latitude == 0)  //店铺经纬度
                 {
                     Tuple<decimal, decimal> localtion = BaiDuHelper.GeoCoder(paramodel.store_info.province
@@ -468,11 +470,14 @@ namespace Ets.Service.Provider.Order
                 //    paramodel.address.longitude = localtion.Item1;  //精度
                 //    paramodel.address.latitude = localtion.Item2; //纬度
                 //}
-            }
-            else { 
-                
-            }
-          
+            }          
+            #endregion
+
+            #region 根据集团id为店铺设置外送费，结算比例等财务相关信息add by caoheyang 20150417
+            ///此处其实应该取数据库，但是由于发布订单时关于店铺的逻辑后期要改，暂时这么处理 
+            IGroupProviderOpenApi groupProvider = OpenApiGroupFactory.Create(paramodel.store_info.group);
+            paramodel = groupProvider.SetCcmmissonInfo(paramodel);
+
             #endregion
 
             #region 佣金相关  add by caoheyang 20150416
@@ -481,13 +486,17 @@ namespace Ets.Service.Provider.Order
             OrderCommission orderComm = new OrderCommission()
             {
                 Amount = paramodel.total_price, /*订单金额*/
-                DistribSubsidy = paramodel.delivery_fee,/*外送费*/
-                OrderCount = paramodel.package_count/*订单数量*/
+                DistribSubsidy = paramodel.store_info.delivery_fee,/*外送费*/
+                OrderCount = paramodel.package_count,/*订单数量*/
+                BusinessCommission = paramodel.store_info.businesscommission/*商户结算比例*/
             }/*网站补贴*/;
             OrderPriceProvider commissonPro = CommissionFactory.GetCommission();
             paramodel.ordercommission = commissonPro.GetCurrenOrderCommission(orderComm);  //骑士佣金
             paramodel.websitesubsidy = commissonPro.GetOrderWebSubsidy(orderComm);//网站补贴
             paramodel.commissionrate = commissonPro.GetCommissionRate(orderComm);//订单佣金比例
+            paramodel.settlemoney = commissonPro.GetSettleMoney(orderComm);//订单结算金额
+            paramodel.adjustment = commissonPro.GetAdjustment(orderComm);//订单额外补贴金额
+
             #endregion
 
             #region 第三方订单是否重复推送的验证  add by caoheyang 20150417

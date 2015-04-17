@@ -62,7 +62,7 @@ namespace OpenApi.Controllers
         [OpenApiActionError]  //异常过滤器 add by caoheyang  20150316 一旦发生异常，客户端返回系统内部错误提示
         public ResultModel<object> Create(ParaModel<CreatePM_OpenApi> paramodel)
         {
-            paramodel.fields.store_info.group = paramodel.group;  //设置集团信息到具体的门店上  在dao层会用到 
+            paramodel.fields.store_info.group = paramodel.group;  //设置集团信息到具体的门店上  在dao层会用到
             IOrderProvider orderProvider = new OrderProvider();
             return orderProvider.Create(paramodel.fields);
         }
