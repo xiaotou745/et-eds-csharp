@@ -12,6 +12,10 @@ namespace Ets.Model.ParameterModel.Clienter
     public class UploadReceiptModel
     {
         /// <summary>
+        /// OrderOther表主键
+        /// </summary>
+        public int Id { get; set; }
+        /// <summary>
         /// 订单Id 订单表主键
         /// </summary>
         public int OrderId { get; set; }

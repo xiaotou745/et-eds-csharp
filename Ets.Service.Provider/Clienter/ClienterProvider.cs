@@ -667,10 +667,9 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="uploadReceiptModel"></param>
         /// <returns></returns>
-        public OrderOther GetReceipt(UploadReceiptModel uploadReceiptModel)
+        public OrderOther GetReceipt(int orderId)
         {
-            int orderStatus = 0;
-            return clienterDao.GetReceiptInfo(uploadReceiptModel.OrderId, out orderStatus);
+            return clienterDao.GetReceiptInfo(orderId);
 
         }
 

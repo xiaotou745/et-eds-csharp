@@ -577,7 +577,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
         {
             OrderOther orderOther = new OrderOther();
             int orderStatus = 0;
-            var oo = GetReceiptInfo(uploadReceiptModel.OrderId, out orderStatus);
+            var oo = GetReceiptInfo(uploadReceiptModel.OrderId);
             uploadReceiptModel.NeedUploadCount = oo.NeedUploadCount;
             if (oo.Id == 0)
             {
@@ -728,37 +728,31 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns>OrderOther</returns>
-        public OrderOther GetReceiptInfo(int orderId, out int OrderStatus)
+        public OrderOther GetReceiptInfo(int orderId)
         {
-            OrderStatus = 0;
-            int orderCount = 0;
-            string sql = @"select oo.Id ,
-        oo.OrderId ,
-        oo.NeedUploadCount ,
+            string sql = @"select  o.Id OrderId ,
+        ISNULL(oo.Id,0) Id ,
+        o.[Status] OrderStatus,
+        o.OrderCount NeedUploadCount,
         oo.ReceiptPic ,
-        oo.HadUploadCount
-from    dbo.OrderOther oo ( nolock )
-where   oo.OrderId = @OrderId;select o.[Status],o.OrderCount FROM dbo.[order] o (nolock)
- where o.Id = @OrderId";
+        ISNULL(oo.HadUploadCount, 0) HadUploadCount
+from    dbo.[order] o ( nolock )
+        left join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
+where   o.Id = @OrderId";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderId", SqlDbType.Int);
             parm.SetValue("@OrderId", orderId);
 
-            DataSet dt = DbHelper.ExecuteDataset(SuperMan_Read, sql, parm);
-            var ooList = MapRows<OrderOther>(dt.Tables[0]);
-            if (dt.Tables[1] != null && dt.Tables[1].Rows.Count > 0)
-            { 
-                OrderStatus = ParseHelper.ToInt(dt.Tables[1].Rows[0][0], 0);
-                orderCount = ParseHelper.ToInt(dt.Tables[1].Rows[0][1], 0);
-            }
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            var ooList = MapRows<OrderOther>(dt);
+            
             if (ooList != null && ooList.Count> 0)
-            {
-                ooList[0].NeedUploadCount = orderCount;
+            { 
                 return ooList[0];
             }
             else
             {
-                return new OrderOther() { OrderId = orderId, OrderStatus = OrderStatus, NeedUploadCount = orderCount, HadUploadCount = 0, ReceiptPic = "" };
+                return null;
             }
         }
         /// <summary>
@@ -769,10 +763,10 @@ where   oo.OrderId = @OrderId;select o.[Status],o.OrderCount FROM dbo.[order] o 
         /// <returns></returns>
         public OrderOther DeleteReceipt(UploadReceiptModel uploadReceiptModel)
         {
-            string delPic = uploadReceiptModel.ReceiptPic;
-            int orderStatus = 0;
+ 
+            string delPic = uploadReceiptModel.ReceiptPic; 
             //更新小票信息
-            OrderOther oo = GetReceiptInfo(uploadReceiptModel.OrderId, out orderStatus);
+            OrderOther oo = GetReceiptInfo(uploadReceiptModel.OrderId);
             if (oo.Id>0)
             {
                 List<string> listReceiptPic = ImageCommon.GetListImgString(oo.ReceiptPic);
@@ -786,12 +780,9 @@ where   oo.OrderId = @OrderId;select o.[Status],o.OrderCount FROM dbo.[order] o 
                     listReceiptPic.Remove(delPicDir);
                 }
                 string ppath = ConfigSettings.Instance.FileUploadPath + "\\" + ConfigSettings.Instance.FileUploadFolderNameCustomerIcon;
-                var delDir = ppath + delPicDir; 
-              
-                var fileName = Path.GetFileName(delDir);
-
-                int fileNameLastDot = fileName.LastIndexOf('.'); 
-                 
+                var delDir = ppath + delPicDir;  
+                var fileName = Path.GetFileName(delDir); 
+                int fileNameLastDot = fileName.LastIndexOf('.');
                 //原图 
                 string orginalFileName = string.Format("{0}{1}{2}", Path.GetDirectoryName(delDir) + "\\" + fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
 
@@ -800,6 +791,8 @@ where   oo.OrderId = @OrderId;select o.[Status],o.OrderCount FROM dbo.[order] o 
                 //删除缩略图
                 FileHelper.DeleteFile(orginalFileName);
                 uploadReceiptModel.ReceiptPic = String.Join("|", listReceiptPic.ToArray());
+
+                
 
                 OrderOther ooo = DeleteReceiptInfo(uploadReceiptModel);
                 if (oo != null)

@@ -227,11 +227,10 @@ namespace ETS.Enums
     }
     public enum UploadIconStatus
     {
+        [DisplayText("成功")]
         Success,
-
         [DisplayText("未传过来任何变量")]
         NOFormParameter,
-
         [DisplayText("无效的用户")]
         InvalidUserId,
         [DisplayText("无效的订单号")]
@@ -253,9 +252,11 @@ namespace ETS.Enums
         [DisplayText("删除失败请联系客服")]
         DeleteExcepiton,
         [DisplayText("骑士编号无效")]
-        ClienterIdInvalid
-
-
+        ClienterIdInvalid,
+        [DisplayText("小票地址无效")]
+        ReceiptAddressInvalid,
+        [DisplayText("请先上传")]
+        FirstUpload
     }
     public enum OrderPublicshStatus : int
     {
