@@ -52,7 +52,6 @@
                         订单总金额：@ParseHelper.ToSplitByPercentile(false, resultList.OrderPrice)<br />
                         客单价：@(resultList.OrderCount == 0 ? "0" : (resultList.OrderPrice / resultList.OrderCount).ToString("f2")) <br />
                         任务单价：@(resultList.MisstionCount == 0 ? "0" : (resultList.OrderPrice / resultList.MisstionCount).ToString("f2"))<br />
-                        跨店抢单奖励:@(resultList.CrossShopPrice == 0 ? "0" : resultList.CrossShopPrice.ToString("f2"))<br />
                     </td>
                     <td>
                         0次补贴被抢任务：@ParseHelper.ToSplitByPercentile(true, resultList.ZeroSubsidyOrderCount)<br />
@@ -149,7 +148,7 @@
                     {
                         <tr class="trclass">
                             <td>@item.date</td>
-                            <td>@item.totalAmount</td>
+                            <td>￥@item.totalAmount</td>
                             <td>@(item.c1) / ￥@(item.a1)</td>
                             <td>@(item.c2) / ￥@(item.a2)</td>
                             <td>@(item.c3) / ￥@(item.a3)</td>

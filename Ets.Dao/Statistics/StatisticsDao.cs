@@ -40,7 +40,7 @@ namespace Ets.Dao.Statistics
                             FROM dbo.[order](NOLOCK) AS o
                             LEFT JOIN dbo.business(NOLOCK) AS b ON o.businessId=b.Id
                             WHERE  
-                            o.[Status]=1 " + where;
+                            o.[Status]=<>3 " + where;
             sql += " GROUP BY CONVERT(CHAR(10),PubDate,120) ORDER BY PubDate ASC";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             return MapRows<HomeCountTitleModel>(dt);
