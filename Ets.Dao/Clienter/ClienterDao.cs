@@ -554,16 +554,54 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
         /// <returns></returns>
         public IList<BusinessesDistributionModel> GetClienteStorerGrabStatisticalInfo()
         {
-            string strSql = @"select 
-                            (select count(distinct clienterId) from dbo.[order](nolock) o where convert(char(10),InsertTime,120)=convert(char(10),o.PubDate,120) ) OneCount,
-                            convert(char(10),InsertTime,120) InsertTime,
-                            BusinessCount,
-                            convert(decimal(10,2),sum(Amount)) TotalAmount,
-                            count(distinct ClienterId) ClienterCount,
-                            convert(decimal(10,2),sum(Amount)/count(distinct ClienterId)) Amount
-                            from CrossShopLog(nolock)
-                            WHERE  InsertTime>getdate()-20
-                            group by convert(char(10),InsertTime,120),BusinessCount
+            string strSql = @"
+                        ;with t as(
+                        select temp.[date],temp.businessCount,count(temp.clienterId) cCount
+                        from 
+                        (
+	                        select convert(char(10), PubDate, 120) 'date', o.clienterId,count(distinct o.businessId) 'businessCount'
+	                        from dbo.[order] o(nolock)
+	                        where o.PubDate>getdate()-20 and o.Status =1
+	                        group by convert(char(10), PubDate, 120), o.clienterId
+                        ) as temp
+                        group by temp.[date],temp.businessCount
+                        )
+                        ,t2 as (
+                        select convert(char(10), csl.InsertTime-1, 120) date,csl.BusinessCount 'businessCount',
+	                        count(distinct csl.ClienterId) clientorCount,sum(csl.Amount) totalAmount
+                        from dbo.CrossShopLog csl(nolock)
+                        where csl.InsertTime-1 > getdate()-20
+                        group by convert(char(10), csl.InsertTime-1, 120), csl.BusinessCount
+                        )
+
+                        select temp2.[date],sum(temp2.amount) totalAmount,max(case temp2.businessCount when 1 then temp2.cCount else 0 end) c1,
+	                        max(case temp2.businessCount when 1 then temp2.amount else 0 end) a1,
+	                        max(case temp2.businessCount when 2 then temp2.cCount else 0 end) c2,
+	                        max(case temp2.businessCount when 2 then temp2.amount else 0 end) a2,
+	                        max(case temp2.businessCount when 3 then temp2.cCount else 0 end) c3,
+	                        max(case temp2.businessCount when 3 then temp2.amount else 0 end) a3,
+	                        max(case temp2.businessCount when 4 then temp2.cCount else 0 end) c4,
+	                        max(case temp2.businessCount when 4 then temp2.amount else 0 end) a4,
+	                        max(case temp2.businessCount when 5 then temp2.cCount else 0 end) c5,
+	                        max(case temp2.businessCount when 5 then temp2.amount else 0 end) a5,
+	                        max(case temp2.businessCount when 6 then temp2.cCount else 0 end) c6,
+	                        max(case temp2.businessCount when 6 then temp2.amount else 0 end) a6,
+	                        max(case temp2.businessCount when 7 then temp2.cCount else 0 end) c7,
+	                        max(case temp2.businessCount when 7 then temp2.amount else 0 end) a7,
+	                        max(case temp2.businessCount when 8 then temp2.cCount else 0 end) c8,
+	                        max(case temp2.businessCount when 8 then temp2.amount else 0 end) a8,
+	                        max(case temp2.businessCount when 9 then temp2.cCount else 0 end) c9,
+	                        max(case temp2.businessCount when 9 then temp2.amount else 0 end) a9,
+	                        sum(case when temp2.businessCount>9 then temp2.cCount else 0 end) c10,
+	                        sum(case when temp2.businessCount>9 then temp2.amount else 0 end) a10
+                        from 
+                        (
+                        select t.[date],t.businessCount,t.cCount,isnull(t2.totalAmount,0) amount
+                        from t t
+	                        left join t2 t2 on t.[date] = t2.date and t.businessCount=t2.businessCount
+                        ) as temp2
+                        group by temp2.[date]
+                        order by temp2.[date] desc
                             ";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, strSql);
             return MapRows<BusinessesDistributionModel>(dt);
@@ -591,9 +629,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
                             FROM (select PubDate,businessCount BusinessCount,count(clienterId) as ClienterCount
                                   from (select convert(char(10),o.PubDate,120) PubDate,clienterId,count(distinct businessId) businessCount
                                         from dbo.[order] o(nolock)
-                                            where  convert(char(10),o.PubDate,120) <'2015-04-17' and o.PubDate> getdate()-" + (20 - NewCount);
-                    sql += " and Status in (1,2) group by convert(char(10),o.PubDate,120), clienterId)t group by PubDate, businessCount) a ";
-                    sql += " group by PubDate order by PubDate desc ;";
+                                            where o.PubDate> getdate()-20 and Status =1 group by convert(char(10),o.PubDate,120), clienterId)t group by PubDate, businessCount) a group by PubDate order by PubDate desc ;";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             return MapRows<BusinessesDistributionModelOld>(dt);
         }
