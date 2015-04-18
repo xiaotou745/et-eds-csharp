@@ -603,6 +603,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                                     ,b.Address BusinessAddress
                                     ,case when b.GroupId=0 then '客户端' else g.GroupName end GroupName
                                     ,o.[Adjustment]
+                                    ,ISNULL(oo.HadUploadCount,0) HadUploadCount
                                     ,o.BusinessCommission --商家结算比例
                                     ";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
@@ -653,7 +654,8 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             string tableList = @" [order] o WITH ( NOLOCK )
                                 LEFT JOIN clienter c WITH ( NOLOCK ) ON c.Id = o.clienterId
                                 LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
-                                LEFT JOIN [group] g WITH ( NOLOCK ) ON g.Id = b.GroupId ";
+                                LEFT JOIN [group] g WITH ( NOLOCK ) ON g.Id = b.GroupId
+                                LEFT JOIN dbo.OrderOther oo (nolock) ON o.Id = oo.OrderId ";
             string orderByColumn = " o.Status ASC,o.Id DESC ";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
