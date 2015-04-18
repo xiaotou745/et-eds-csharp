@@ -280,6 +280,8 @@ namespace SuperManBusinessLogic.C_Logic
             using (var dbEntity = new supermanEntities())
             {
                 var query = dbEntity.order.AsQueryable();
+
+                
                 if (criteria.userId != 0)
                 {
                     query = query.Where(i => i.clienterId == criteria.userId);
@@ -300,7 +302,7 @@ namespace SuperManBusinessLogic.C_Logic
                 {
                     query = query.Where(i => i.Status.Value == ConstValues.ORDER_NEW);
                 }
-                 
+                
                 //query = query.OrderByDescending(i => i.Id);
 
                 var result = new PagedList<order>(query.ToList(), criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
@@ -379,30 +381,33 @@ namespace SuperManBusinessLogic.C_Logic
         /// <param name="criteria"></param>
         /// <returns></returns>
         public List<order> GetOrdersForSongCanOrQuCan(ClientOrderSearchCriteria criteria)
-        {
-            //System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-            //sw.Start();
-            
+        { 
             using (var dbEntity = new supermanEntities())
             {
                 var query = dbEntity.order.AsQueryable();
-                if (!string.IsNullOrWhiteSpace(criteria.city))
-                    query = query.Where(i => i.business.City == criteria.city.Trim());
+                var curClient = dbEntity.clienter.AsQueryable();
+                if (criteria.userId > 0)
+                {
+                    var clienter = curClient.Where(i => i.Id == criteria.userId).ToList();
+                    int busi = clienter[0].BussinessID.Value;
+                    query = query.Where(i => i.businessId == busi);
+                }
+                //if (!string.IsNullOrWhiteSpace(criteria.city))
+                //    query = query.Where(i => i.business.City == criteria.city.Trim());
                 if (!string.IsNullOrWhiteSpace(criteria.cityId))
                     query = query.Where(i => i.business.CityId == criteria.cityId.Trim());
                 //1送餐订单 还是  2取餐盒订单
                 query = query.Where(i => i.OrderType == criteria.OrderType);
                 //订单状态
                 query = query.Where(i => i.Status == ConstValues.ORDER_NEW);
+       
+                
                 //排序
-                query = query.OrderByDescending(i => i.PubDate);
+                query = query.OrderByDescending(i => i.PubDate); 
                
                 try
                 {
-                    //var result = query.ToList();
                     var result = new PagedList<order>(query.ToList(), criteria.PagingRequest.PageIndex, criteria.PagingRequest.PageSize);
-                   // sw.Stop();
-                   // LogHelper.LogWriter("获取送餐任务运行时间：", new { criteria=criteria, date = sw.Elapsed });
                     return result;
                 }
                 catch (Exception ex)
