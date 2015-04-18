@@ -20,6 +20,7 @@
             <th>商家结算比例</th>
             <th>所属集团</th>
             <th>订单状态</th>
+            <th>已上传/共需上传</th>
             <th>操作</th>
         </tr>
     </thead>
@@ -73,6 +74,7 @@
                             }
                             <td style="color:@Html.Raw(val)">@strstatus</td>
                         }
+                        <td>@item.HadUploadCount.ToString()/@item.OrderCount.ToString()</td>  
                         <td>
                             <a href="/Order/OrderDetail?OrderNo=@item.OrderNo&OrderId=@item.Id ">查看</a>
                             @*<a href="javascript:void(0)" orderid=@item.Id businessname=@item.BusinessName id="linkView" onclick="funcViewOrder('@item.OrderNo','@item.PubDate','@item.BusinessName','@item.BusinessPhoneNo','@item.BusinessAddress','@item.OrderCommission','@item.DistribSubsidy','@item.WebsiteSubsidy','@item.RecevicePhoneNo','@item.ReceviceName','@item.ReceviceAddress','@item.Amount','@item.IsPay','@item.clienterId','@item.Status','@item.ClienterName')">查看</a>*@
