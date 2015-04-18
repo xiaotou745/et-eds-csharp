@@ -55,10 +55,10 @@ namespace Ets.Dao.Statistics
         public IList<HomeCountTitleModel> GetSubsidyOrderCountStatistics()
         {
             string where = string.Empty;
-            if (Config.ConfigKey("IsFirst") == null)
-            {
-                where = " and CONVERT(CHAR(10),PubDate,120)=DATEADD(DAY,-1,CONVERT(CHAR(10),GETDATE(),120)) ";//统计昨天数据
-            }
+            //if (Config.ConfigKey("IsFirst") == null)
+            //{
+            where = " and CONVERT(CHAR(10),PubDate,120)=DATEADD(DAY,-1,CONVERT(CHAR(10),GETDATE(),120)) ";//统计昨天数据
+            //}
             string sql = @"SELECT CONVERT(CHAR(10),PubDate,120) AS PubDate, --发布时间
                                   sum(case when DealCount=0 then 1 else 0 end ) as ZeroSubsidyOrderCount,
                                   sum(case when DealCount=1 then 1 else 0 end ) as OneSubsidyOrderCount,
@@ -148,7 +148,7 @@ namespace Ets.Dao.Statistics
             parm.AddWithValue("@YsPrice", model.YsPrice);
             parm.AddWithValue("@YfPrice", model.YfPrice);
             parm.AddWithValue("@YkPrice", model.YkPrice);
-            parm.AddWithValue("@ZeroSubsidyOrderCount", model.OneSubsidyOrderCount);
+            parm.AddWithValue("@ZeroSubsidyOrderCount", model.ZeroSubsidyOrderCount);
             parm.AddWithValue("@OneSubsidyOrderCount", model.OneSubsidyOrderCount);
             parm.AddWithValue("@TwoSubsidyOrderCount", model.TwoSubsidyOrderCount);
             parm.AddWithValue("@ThreeSubsidyOrderCount", model.ThreeSubsidyOrderCount);

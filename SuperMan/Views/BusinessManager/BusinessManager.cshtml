@@ -1,5 +1,6 @@
 ﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Bussiness.BusListResultModel>
 @using Ets.Model.DomainModel.Bussiness;
+@using Ets.Service.Provider.User
 @{
     ViewBag.Title = "Order";
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
@@ -99,6 +100,34 @@
         </form>
     </div>
 </div>
+@*修改商家信息弹窗*@
+<div class="BusinessInfoUpdate">
+    <div class="add-openbox add-form" id="BusinessInfoUpdateDiv" style="width:500px">
+        <h2>
+            <p id="statusFin">修改商家信息</p>
+        </h2>
+        <fieldset>
+            <input type="hidden" id="busiId" value="0" />
+            <div class="control-group">
+                <label>商家名称：</label>
+                <input name="busiName" id="busiName" type="text">
+            </div>
+            <div class="control-group">
+                <label>联系电话：</label>
+                <input name="busiPhone" id="busiPhone" type="text">
+            </div>
+            <div class="control-group">
+                <label>绑定第三方ID：</label>
+                <input name="busiSourceId" id="busiSourceId" type="text">
+                @Html.DropDownList("busGroupId", new SelectList(new BusinessProvider().GetGroups(), "Id", "GroupName"), new { @class = "selectw", style = "width:100px" })
+            </div>
+        </fieldset>
+        <p class="btnbox">
+            <input value="确认" type="button" id="btnUpdateBusinessInfo" class="yesBtn" />
+            <input value="关闭" type="button" class="J_closebox qxBtn" />
+        </p>
+    </div>
+</div>
 <script>
     var adminjs = new adminglass(); //实例化后台类
     //var DEFAULT_PAGESIZE = 15;
@@ -172,6 +201,51 @@
             }
         });
     });
+    //修改商家信息
+    $("#btnUpdateBusinessInfo").on('click', function () {
+        var busiId = $("#busiId").val(); //商户id
+        var busiName = $("#busiName").val(); //商户电话
+        var busiPhone = $("#busiPhone").val(); //商户电话
+        var busiSourceId = $("#busiSourceId").val(); //商户原平台Id
+        var busGroupId = $("#busGroupId").val(); ////商户集团Id
+        if (busiName.trim().length == 0) {
+            alert("请输入商家名称!");
+            return;
+        }
+        var reg = /^0?1\d{10}$/;
+        if (!reg.test(busiPhone)) {
+            alert("请输入正确的手机号!");
+            return;
+        } 
+        if (isNaN(busiPhone) && busiPhone.length == 11) {
+            alert("请输入正确的手机号!");
+            return;
+        }
+        if (busiSourceId.trim().length == 0) {
+            alert("请输入商家第三方ID!");
+            return;
+        }
+        if (busGroupId <= 0) {
+            alert("请选择集团!");
+            return;
+        }
+        var paramaters = { "id": busiId, "businessName": busiName, "businessPhone": busiPhone, "businessSourceId": busiSourceId, "groupId": busGroupId };
+        var url = "/BusinessManager/ModifyBusiness";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert("修改成功!");
+                    window.location.href = "/BusinessManager/BusinessManager";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    });
+
 
     //关闭弹层
     $('.J_closebox').click(function () {

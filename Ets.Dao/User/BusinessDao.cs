@@ -1055,5 +1055,48 @@ namespace Ets.Dao.User
             string orderByColumn = " tbl.PubDate DESC ";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
         }
+
+        /// <summary>
+        /// 修改商户信息
+        /// danny-20150417
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="orderOptionModel"></param>
+        /// <returns></returns>
+        public bool ModifyBusinessInfo(Business model, OrderOptionModel orderOptionModel)
+        {
+            string remark = orderOptionModel.OptUserName + "通过后台管理系统修改商户信息";
+            string sql = string.Format(@"UPDATE business 
+                                            SET Name=@Name,
+                                                GroupId=@GroupId,
+                                                OriginalBusiId=@OriginalBusiId,
+                                                PhoneNo=@PhoneNo
+                                            OUTPUT
+                                              Inserted.Id,
+                                              @OptId,
+                                              @OptName,
+                                              GETDATE(),
+                                              @Platform,
+                                              @Remark
+                                            INTO BusinessOptionLog
+                                             (BusinessId,
+                                              OptId,
+                                              OptName,
+                                              InsertTime,
+                                              Platform,
+                                              Remark)
+                                             WHERE  Id = @Id");
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Name", model.Name);
+            parm.AddWithValue("@GroupId", model.GroupId);
+            parm.AddWithValue("@OriginalBusiId", model.OriginalBusiId);
+            parm.AddWithValue("@Id", model.Id);
+            parm.AddWithValue("@PhoneNo", model.PhoneNo);
+            parm.AddWithValue("@OptId", orderOptionModel.OptUserId);
+            parm.AddWithValue("@OptName", orderOptionModel.OptUserName);
+            parm.AddWithValue("@Platform", 3);
+            parm.AddWithValue("@Remark", remark );
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+        }
     }
 }
