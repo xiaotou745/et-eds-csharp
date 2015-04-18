@@ -21,6 +21,7 @@ namespace Ets.Statistics
 
         protected override void OnStart(string[] args)
         {
+            Thread.Sleep(1000*10);
             Thread t = new Thread(ExecStatisticsProvider);
             t.Start();
         }
