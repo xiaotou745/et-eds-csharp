@@ -197,7 +197,7 @@ namespace Ets.Dao.Statistics
                             count(distinct clienterId) as ActiveClienter,
                             count(distinct businessId) as ActiveBusiness
                             from dbo.[order](nolock) as o 
-                            where convert(char(10),PubDate,120)= dateadd(day,-1, convert(char(10),getdate(),120)) and status<>3";
+                            where o.PubDate >= convert(char(10), getdate(), 120) and status<>3";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             if (dt == null || dt.Rows.Count <= 0)
             {
