@@ -23,10 +23,10 @@ namespace Ets.Dao.Statistics
         public IList<HomeCountTitleModel> GetStatistics()
         {
             string where = string.Empty;
-            if (Config.ConfigKey("IsFirst") == null)
-            {
-                where = " and CONVERT(CHAR(10),PubDate,120)=DATEADD(DAY,-1,CONVERT(CHAR(10),GETDATE(),120)) ";//统计昨天数据
-            }
+            //if (Config.ConfigKey("IsFirst") == null)
+            //{
+            where = " and CONVERT(CHAR(10),PubDate,120)=DATEADD(DAY,-1,CONVERT(CHAR(10),GETDATE(),120)) ";//统计昨天数据
+            //}
             string sql = @"SELECT 
                             (SELECT COUNT(1) FROM clienter(NOLOCK) WHERE [Status]=1) AS RzqsCount, --认证骑士数量
                             (SELECT COUNT(1) FROM clienter(NOLOCK) WHERE [Status]=0) AS DdrzqsCount, --等待认证骑士
@@ -40,7 +40,7 @@ namespace Ets.Dao.Statistics
                             FROM dbo.[order](NOLOCK) AS o
                             LEFT JOIN dbo.business(NOLOCK) AS b ON o.businessId=b.Id
                             WHERE  
-                            o.[Status]=<>3 " + where;
+                            o.[Status]<>3 " + where;
             sql += " GROUP BY CONVERT(CHAR(10),PubDate,120) ORDER BY PubDate ASC";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             return MapRows<HomeCountTitleModel>(dt);
