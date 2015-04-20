@@ -66,5 +66,10 @@ namespace ETS.Const
         /// openapi新增订单 第三方订单是否已经存在key
         /// </summary>
         public const string OtherOrderInfo = "OtherOrder_{0}_{1}";
+        /// <summary>
+        /// 订单金额是否支付
+        /// </summary>
+
+        public const string CheckOrderPay = "CheckOrderPay_{0}";
     }
 }

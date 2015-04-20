@@ -174,7 +174,7 @@ namespace Ets.Service.IProvider.Clienter
         /// </summary>
         /// <param name="uploadReceiptModel"></param>
         /// <returns></returns>
-        OrderOther GetReceipt(UploadReceiptModel uploadReceiptModel);
+        OrderOther GetReceipt(int orderId);
         /// <summary>
         /// 根据订单Id获取小票信息
         /// </summary>

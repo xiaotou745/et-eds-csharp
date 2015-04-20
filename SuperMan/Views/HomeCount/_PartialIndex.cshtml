@@ -6,6 +6,8 @@
         <td>日期</td>
         <td>商家数量</td>
         <td>认证骑士数量</td>
+        <td>活跃商家数</td>
+        <td>活跃骑士数</td>
         <td>等待认证骑士数量</td>
         <td>订单金额</td>
         <td>任务量</td>
@@ -25,8 +27,7 @@
         <td>补贴1次任务量</td>
         <td>补贴2次任务量</td>
         <td>补贴3次任务量</td>
-        <td>活跃商家数</td>
-        <td>活跃骑士数</td>
+       
         <td>盈亏总计</td>
     </tr>
 
@@ -39,17 +40,19 @@
                 <td>@item.InsertTime.ToString("yyyy-MM-dd")</td>
                 <td>@ParseHelper.ToSplitByPercentile(true,item.BusinessCount)</td>
                 <td>@ParseHelper.ToSplitByPercentile(true,item.RzqsCount)</td>
+                <td>@ParseHelper.ToSplitByPercentile(true, item.ActiveBusiness)</td>
+                <td>@ParseHelper.ToSplitByPercentile(true, item.ActiveClienter)</td>
                 <td>@ParseHelper.ToSplitByPercentile(true,item.DdrzqsCount)</td>
                 <td>@ParseHelper.ToSplitByPercentile(false,item.OrderPrice)</td>
                 <td>@ParseHelper.ToSplitByPercentile(true,item.MisstionCount)</td>
                 <td>@ParseHelper.ToSplitByPercentile(true,item.OrderCount)</td>
                 <td>@ParseHelper.ToSplitByPercentile(false,((item.OrderPrice/item.OrderCount).ToString("f2")))</td>
                 <td>@ParseHelper.ToSplitByPercentile(false,((item.OrderPrice / item.MisstionCount).ToString("f2")))</td>
-                <td>@ParseHelper.ToSplitByPercentile(true,item.BusinessAverageOrderCount)</td>
-                <td>@ParseHelper.ToSplitByPercentile(true, (item.MisstionCount == 0 ? "0" : (item.MisstionCount / item.BusinessCount).ToString()))</td>
-                <td>@ParseHelper.ToSplitByPercentile(true,item.MissionAverageOrderCount)</td>
-                <td>@ParseHelper.ToSplitByPercentile(true,item.ClienterAverageOrderCount)</td>
-                <td>@ParseHelper.ToDivision(ParseHelper.ToDouble(item.YfPrice), item.ActiveClienter)</td>
+                <td>@ParseHelper.ToDivision(item.OrderCount, item.ActiveBusiness)</td>
+                <td>@ParseHelper.ToDivision(item.MisstionCount,item.ActiveBusiness)</td>
+                <td>@ParseHelper.ToDivision(item.OrderCount, item.MisstionCount)</td><!--任务平均订单-->
+                <td>@ParseHelper.ToDivision(item.OrderCount, item.ActiveClienter)</td><!--骑士平均完成订单量-->
+                <td>@ParseHelper.ToDivision(ParseHelper.ToDouble(item.YfPrice), item.ActiveClienter)</td><!--骑士平均佣金-->
                 <td>@ParseHelper.ToDivision(ParseHelper.ToDouble(item.YfPrice), item.MisstionCount)</td>
                 <td>@ParseHelper.ToDivision(ParseHelper.ToDouble(item.YfPrice), item.OrderCount)</td>
                 <td>@ParseHelper.ToSplitByPercentile(false,item.YsPrice)</td>
@@ -58,8 +61,7 @@
                 <td>@ParseHelper.ToSplitByPercentile(true, item.OneSubsidyOrderCount)</td>
                 <td>@ParseHelper.ToSplitByPercentile(true, item.TwoSubsidyOrderCount)</td>
                 <td>@ParseHelper.ToSplitByPercentile(true, item.ThreeSubsidyOrderCount)</td>
-                <td>@ParseHelper.ToSplitByPercentile(true, item.ActiveBusiness)</td>
-                <td>@ParseHelper.ToSplitByPercentile(true, item.ActiveClienter)</td>
+              
                 <td>￥<span style="color:@ykStyle">@ParseHelper.ToSplitByPercentile(false,item.YkPrice)</span></td>
             </tr>
         }
