@@ -1,5 +1,6 @@
 ﻿using Ets.Model.Common;
 using Ets.Model.ParameterModel.Order;
+using Ets.Service.IProvider.OpenApi;
 using Ets.Service.Provider.OpenApi;
 using ETS.Const;
 using ETS.Enums;
@@ -16,7 +17,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ets.Service.IProvider.OpenApi
+namespace Ets.Service.Provider.OpenApi
 {
 
     /// <summary>

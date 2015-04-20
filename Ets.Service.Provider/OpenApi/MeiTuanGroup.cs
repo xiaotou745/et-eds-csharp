@@ -19,15 +19,11 @@ using System.Threading.Tasks;
 
 namespace Ets.Service.Provider.OpenApi
 {
-
-    /// <summary>
-    /// 全时对接回调业务 add by caoheyang 20150326
-    /// </summary>
-    public class FulltimeGroup : IGroupProviderOpenApi
+    public class MeiTuanGroup : IGroupProviderOpenApi
     {
-        public  string app_key = ConfigSettings.Instance.FulltimeAppkey;
+        public string app_key = ConfigSettings.Instance.FulltimeAppkey;
         public const string v = "1.0";
-        public  string app_secret = ConfigSettings.Instance.FulltimeAppsecret;
+        public string app_secret = ConfigSettings.Instance.FulltimeAppsecret;
         /// <summary>
         /// 回调万达接口同步订单状态  add by caoheyang 20150326
         /// </summary>
@@ -55,7 +51,7 @@ namespace Ets.Service.Provider.OpenApi
             /// status	int	Y	物流状态，1代表已发货，2代表已签收
             ///send_phone	string	Y/N	配送员电话，物流状态传参是（ststus=1）的时候，配送员电话必须写，如果为（ststus=2）的时候可以不写。
             ///send_name	string	Y/N	配送员姓名，物流状态传参是（ststus=1）的时候，配送员姓名必须写，如果为（ststus=2）的时候可以不写。
-            string json = HTTPHelper.HttpPost(url, "app_key=" + app_key + "&sign=" + GetSign(ts) + "&timestamp=" + ts + "&order_id=" + paramodel.fields.OriginalOrderNo + "&status=" + status + "&v=" + v + "&send_phone="+paramodel.fields.ClienterPhoneNo
+            string json = HTTPHelper.HttpPost(url, "app_key=" + app_key + "&sign=" + GetSign(ts) + "&timestamp=" + ts + "&order_id=" + paramodel.fields.OriginalOrderNo + "&status=" + status + "&v=" + v + "&send_phone=" + paramodel.fields.ClienterPhoneNo
                 + "&send_name=" + paramodel.fields.ClienterTrueName);
             if (string.IsNullOrWhiteSpace(json))
                 return OrderApiStatusType.ParaError;

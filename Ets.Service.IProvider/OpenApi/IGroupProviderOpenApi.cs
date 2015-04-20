@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ets.Service.Provider.OpenApi
+namespace Ets.Service.IProvider.OpenApi
 {
     /// <summary>
     /// 接口  第三方对接集团的回调业务 add by caoheyang 20150326

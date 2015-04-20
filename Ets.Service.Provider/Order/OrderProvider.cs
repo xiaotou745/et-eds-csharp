@@ -26,7 +26,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Ets.Model.DomainModel.Subsidy;
 using Newtonsoft.Json.Linq;
-using Ets.Service.IProvider.OpenApi;
 using Ets.Service.Provider.OpenApi;
 using System.Configuration;
 using System.Net.Http;
@@ -35,6 +34,7 @@ using Ets.Dao.GlobalConfig;
 using Ets.Service.Provider.Common;
 using ETS.Const;
 using Ets.Service.Provider.Clienter;
+using Ets.Service.IProvider.OpenApi;
 
 namespace Ets.Service.Provider.Order
 {

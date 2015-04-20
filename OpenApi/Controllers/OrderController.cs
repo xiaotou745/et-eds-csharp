@@ -26,8 +26,8 @@ using ETS.Util;
 using System.Configuration;
 using ETS.Const;
 using Ets.Service.Provider.OpenApi;
-using Ets.Service.IProvider.OpenApi;
 using Ets.Model.DataModel.Order;
+using Ets.Service.IProvider.OpenApi;
 
 namespace OpenApi.Controllers
 {
