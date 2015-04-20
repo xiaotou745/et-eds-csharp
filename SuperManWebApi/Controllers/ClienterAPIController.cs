@@ -198,6 +198,7 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<ClientOrderResultModel[]> GetMyJobList_C(ClientOrderInfoModel model)
         {
+            LogHelper.LogWriter("我的任务或已完成任务获取:", new { model = model });
             degree.longitude = model.longitude;
             degree.latitude = model.latitude;
             var pIndex = model.pageIndex.HasValue ? model.pageIndex.Value : 0;
@@ -465,7 +466,9 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
             bool bResult = ClienterLogic.clienterLogic().RushOrder(userId, orderNo);
             if (bResult)
+            { 
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Success);
+            }
             else
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Failed);
         }
