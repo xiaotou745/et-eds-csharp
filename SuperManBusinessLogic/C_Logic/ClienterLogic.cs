@@ -392,8 +392,8 @@ namespace SuperManBusinessLogic.C_Logic
                     int busi = clienter[0].BussinessID.Value;
                     query = query.Where(i => i.businessId == busi);
                 }
-                //if (!string.IsNullOrWhiteSpace(criteria.city))
-                //    query = query.Where(i => i.business.City == criteria.city.Trim());
+                if (!string.IsNullOrWhiteSpace(criteria.city))
+                    query = query.Where(i => i.business.City == criteria.city.Trim());
                 if (!string.IsNullOrWhiteSpace(criteria.cityId))
                     query = query.Where(i => i.business.CityId == criteria.cityId.Trim());
                 //1送餐订单 还是  2取餐盒订单

@@ -197,7 +197,7 @@ namespace SuperManWebApi.Models.Business
                 to.DistribSubsidy = subsidy.DistribSubsidy;
                 if (subsidy.OrderType > 0)
                 {
-                    subsidy.OrderCommission = Convert.ToDecimal(from.KM) * subsidy.PKMCost;  //每公里费用*公里数
+                    to.OrderCommission = Convert.ToDecimal(from.KM) * subsidy.PKMCost;  //每公里费用*公里数
                 }
                 else
                 {
