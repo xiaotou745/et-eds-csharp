@@ -632,8 +632,10 @@ namespace Ets.Service.Provider.Clienter
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 orderOther = clienterDao.UpdateClientReceiptPicInfo(uploadReceiptModel);
-                //上传成功后， 判断
-                if (orderOther.OrderStatus == ConstValues.ORDER_FINISH && orderOther.HadUploadCount == orderOther.NeedUploadCount)
+                //上传成功后， 判断 订单 创建时间在 2015-4-18 00：00 之前的订单不在增加佣金
+                string date = "2015-04-18 00:00:00";
+
+                if (orderOther.OrderCreateTime>Convert.ToDateTime(date) && orderOther.OrderStatus == ConstValues.ORDER_FINISH && orderOther.HadUploadCount == orderOther.NeedUploadCount)
                 {
                     if (CheckOrderPay(myOrderInfo.OrderNo))
                     {
