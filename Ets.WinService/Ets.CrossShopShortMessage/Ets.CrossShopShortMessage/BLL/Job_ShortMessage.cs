@@ -16,11 +16,6 @@ namespace Ets.CrossShopShortMessage.BLL
     public class Job_ShortMessage
     {
 
-        public static string GetLogFilePath()
-        {
-            return AppDomain.CurrentDomain.BaseDirectory.ToString() + "\\logs\\log.txt";
-        }
-       
         /// <summary>
         /// 跨店奖励主程序入口
         /// 徐鹏程
@@ -30,12 +25,12 @@ namespace Ets.CrossShopShortMessage.BLL
         {
             while (true)
             {
-                if (DateTime.Now.Hour == ETS.Config.StartSubsidyTime)
+                if (DateTime.Now.Hour == ETS.Config.ShortMessageTime)
                 {
                     SubsidyProvider CrossShop = new SubsidyProvider();
-                    ETS.Util.Log.WriteTextToFile("/r/n"+DateTime.Now.ToString()+"短信发送开始", GetLogFilePath(), true);
-                    CrossShop.ShortMessage(ETS.Config.SendMessage);
-                    ETS.Util.Log.WriteTextToFile("/r/n" + DateTime.Now.ToString() + "短信发送完成", GetLogFilePath(), true);
+                    ETS.Util.LogHelper.LogWriter(DateTime.Now.ToString()+"短信发送开始");
+                    CrossShop.ShortMessage();
+                    ETS.Util.LogHelper.LogWriter(DateTime.Now.ToString() + "短信发送完成");
                 }
                 Thread.Sleep(1000 * 60 * 60);
             }
