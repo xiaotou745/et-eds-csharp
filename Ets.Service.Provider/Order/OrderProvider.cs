@@ -459,8 +459,8 @@ namespace Ets.Service.Provider.Order
 
             #region  维护店铺相关信息 add by caoheyang 20150416
             string bussinessIdstr = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(),
-              paramodel.store_info.store_id.ToString()));  
-            if (bussinessIdstr == null) 
+              paramodel.store_info.store_id.ToString()));
+            if (bussinessIdstr == null)
             {
                 ///当第三方未传递经纬的情况下，根据地址调用百度接口获取经纬度信息  add by caoheyang 20150416
                 if (paramodel.store_info.longitude == 0 || paramodel.store_info.latitude == 0)  //店铺经纬度
@@ -477,7 +477,7 @@ namespace Ets.Service.Provider.Order
                 //    paramodel.address.longitude = localtion.Item1;  //精度
                 //    paramodel.address.latitude = localtion.Item2; //纬度
                 //}
-            }          
+            }
             #endregion
 
             #region 根据集团id为店铺设置外送费，结算比例等财务相关信息add by caoheyang 20150417
@@ -508,14 +508,31 @@ namespace Ets.Service.Provider.Order
             #endregion
 
             string orderNo = null; //订单号码
-            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            try
             {
-                orderNo = OrderDao.CreateToSql(paramodel);
-                //if (!string.IsNullOrWhiteSpace(orderNo))
-                //    Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！"
-                //        , string.Empty, paramodel.address.city); //激光推送   
-                tran.Complete();
+                using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+                {
+                    dynamic x="dasd";
+                    Convert.ToInt32(x);
+                    orderNo = OrderDao.CreateToSql(paramodel);
+                    //if (!string.IsNullOrWhiteSpace(orderNo))
+                    //    Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！"
+                    //        , string.Empty, paramodel.address.city); //激光推送   
+                    if (string.IsNullOrWhiteSpace(orderNo))  //同步失败，清除缓存内的信息
+                        redis.Delete(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo,
+                            paramodel.store_info.group.ToString(), paramodel.order_id.ToString()));
+                    tran.Complete();
+                }
             }
+            catch (Exception ex) 
+            {
+                redis.Delete(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, //同步失败，清除缓存内的订单信息信息
+                           paramodel.store_info.group.ToString(), paramodel.order_id.ToString()));
+                if (bussinessIdstr == null)  //同步失败，之前店铺不存在时，清空店铺缓存，因为数据已经被回滚，但是缓存加上了
+                    redis.Delete(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(), paramodel.store_info.store_id.ToString()));
+                throw ex; //异常上抛
+            }
+  
             return string.IsNullOrWhiteSpace(orderNo) ? ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :
              ResultModel<object>.Conclude(OrderApiStatusType.Success, new { order_no = orderNo });
         }
