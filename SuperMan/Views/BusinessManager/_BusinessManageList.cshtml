@@ -8,6 +8,7 @@
         <tr class="tdbg">
             <th width="%5">编号</th>
             <th>商户名称</th>
+            <th>第三方ID</th>
             <th>电话</th>
             <th>地址</th>
             <th>照片</th>
@@ -37,6 +38,7 @@
                     <td>@item.Id</td>
                     @*<td>@i</td>*@
                     <td>@item.Name</td>
+                    <td>@item.OriginalBusiId</td>
                     <td>@item.PhoneNo</td>
                     <td>@address</td>
                     <td>
@@ -104,6 +106,10 @@
                     @if (SuperMan.App_Start.UserContext.Current.HasAuthority(24))
                     {
                          <a href="javascript:void(0)" onclick="funcComView(@item.Id,'@item.Name','@distribSubsidy','@item.PhoneNo','@commission')">设置结算比例</a>
+                    }
+                    @if (SuperMan.App_Start.UserContext.Current.HasAuthority(24))
+                    {
+                        <a href="javascript:void(0)" onclick="funcUpdateBusinessInfo(@item.Id,'@item.Name','@item.PhoneNo','@item.OriginalBusiId','@item.GroupId')">修改信息</a>
                     }
                    
                     </td>
@@ -199,6 +205,15 @@
         $('#busCommissionText').val(businessCommission);
         $('#statusFin').text("设置[" + name + "]结算比例-外送费");
         adminjs.openwinbox('#BusinessCommissionDiv');
+    }
+    //修改商家信息
+    function funcUpdateBusinessInfo(id, name, phone, originalbusiId, groupid) {
+        $('#busiId').val(id);
+        $('#busiName').val(name);
+        $('#busiPhone').val(phone);
+        $('#busiSourceId').val(originalbusiId);
+        $('#busGroupId').val(groupid);
+        adminjs.openwinbox('#BusinessInfoUpdateDiv');
     }
 
 </script>

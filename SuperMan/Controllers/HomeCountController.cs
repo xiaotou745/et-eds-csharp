@@ -33,7 +33,7 @@ namespace SuperMan.Controllers
             ViewBag.homeCountTitleModel = homeCountProvider.GetHomeCountTitle();
             IList<Ets.Model.DomainModel.Bussiness.BusinessesDistributionModel> clienteStorerGrabStatistical = iClienterProvider.GetClienteStorerGrabStatisticalInfo();
             ViewBag.clienteStorerGrabStatistical = clienteStorerGrabStatistical.ToList();
-            ViewBag.clienteStorerGrabStatisticalOld = iClienterProvider.GetClienteStorerGrabStatisticalInfoOld(clienteStorerGrabStatistical.Count).ToList();
+            //ViewBag.clienteStorerGrabStatisticalOld = iClienterProvider.GetClienteStorerGrabStatisticalInfoOld(clienteStorerGrabStatistical.Count).ToList();
             var pagedList = iOrderProvider.GetCurrentDateCountAndMoney(criteria);
             return View(pagedList);
         }
