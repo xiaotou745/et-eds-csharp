@@ -529,17 +529,18 @@ namespace SuperManWebApi.Controllers
             var randomCode = new Random().Next(100000).ToString("D6");
             string msg = string.Empty;
             string key = "";
+            string tempcode = randomCode.Aggregate("", (current, c) => current + (c.ToString() + ','));
             if (model.Stype == "0")//注册
             {
                 if (iClienterProvider.CheckClienterExistPhone(model.PhoneNumber))  //判断该手机号是否已经注册过
                     return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.AlreadyExists);
                 key = RedissCacheKey.PostRegisterInfoSoundCode_C + model.PhoneNumber;
-                msg = string.Format(ETS.Util.SupermanApiConfig.Instance.SmsContentCheckCodeVoice, randomCode, ConstValues.MessageClinenter);
+                msg = string.Format(ETS.Util.SupermanApiConfig.Instance.SmsContentCheckCodeVoice, tempcode, ConstValues.MessageClinenter);
             }
             else //修改密码
             {
                 key = RedissCacheKey.PostForgetPwdSoundCode_C + model.PhoneNumber;
-                msg = string.Format(ETS.Util.SupermanApiConfig.Instance.SmsContentCheckCodeFindPwdVoice, randomCode, ConstValues.MessageClinenter);
+                msg = string.Format(ETS.Util.SupermanApiConfig.Instance.SmsContentCheckCodeFindPwdVoice, tempcode, ConstValues.MessageClinenter);
             }
             try
             {
