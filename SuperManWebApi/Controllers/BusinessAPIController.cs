@@ -534,5 +534,7 @@ namespace SuperManWebApi.Controllers
 
             return area.GetOpenCity(Version);
         }
+
+
     }
 }
