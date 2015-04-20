@@ -29,7 +29,7 @@
         var homeCountByList=ViewBag.homeCountTitleToList;
         var clienteStorerGrabStatisticalList = ViewBag.clienteStorerGrabStatistical as List<Ets.Model.DomainModel.Bussiness.BusinessesDistributionModel>;
 
-        var clienteStorerGrabStatisticalListOld = ViewBag.clienteStorerGrabStatisticalOld as List<Ets.Model.DomainModel.Bussiness.BusinessesDistributionModelOld>;
+       
         var homeCountAllData = ViewBag.homeCountTitleToAllData as Ets.Model.Common.HomeCountTitleModel;
         <p>
             <table class="tbstyle" width="1200" border="1">
@@ -52,7 +52,6 @@
                         订单总金额：@ParseHelper.ToSplitByPercentile(false, resultList.OrderPrice)<br />
                         客单价：@(resultList.OrderCount == 0 ? "0" : (resultList.OrderPrice / resultList.OrderCount).ToString("f2")) <br />
                         任务单价：@(resultList.MisstionCount == 0 ? "0" : (resultList.OrderPrice / resultList.MisstionCount).ToString("f2"))<br />
-                        跨店抢单奖励:@(resultList.CrossShopPrice == 0 ? "0" : resultList.CrossShopPrice.ToString("f2"))<br />
                     </td>
                     <td>
                         0次补贴被抢任务：@ParseHelper.ToSplitByPercentile(true, resultList.ZeroSubsidyOrderCount)<br />
@@ -144,41 +143,22 @@
                     <td>9个/奖励</td>
                     <td>>=10个</td>
                 </tr>
-
                 @{
                     foreach (var item in clienteStorerGrabStatisticalList)
                     {
                         <tr class="trclass">
-                        <td>@item.InsertTime</td>
-                        <td>@item.TotalAmount</td>
-                         @for (int i = 1; i <= 10; i++)
-                         {
-                             if (i==item.BusinessCount)
-                             {
-                              <td>@(item.ClienterCount)个<br />@(item.ClienterCount)*@(item.Amount)=@(item.ClienterCount * item.Amount)</td>   
-                             }
-                             else { 
-                              <td>0个<br />0*0=￥0</td>
-                             }
-                         }
-                        </tr>
-                    }
-                    
-                    foreach (var item in clienteStorerGrabStatisticalListOld)
-                    {
-                        <tr class="trclass">
-                            <td>@item.PubDate.ToString()</td>
-                            <td>0</td>
-                            <td>@(item.OnceCount)个<br />0*0=￥0</td>
-                            <td>@(@item.TwiceCount)个<br />0*0=￥0</td>
-                            <td>@(item.ThreeTimesCount)个<br />0*0=￥0</td>
-                            <td>@(item.FourTimesCount)个<br />0*0=￥0</td>
-                            <td>@(item.FiveTimesCount)个<br />0*0=￥0</td>
-                            <td>@(item.SixTimesCount)个<br />0*0=￥0</td>
-                            <td>@(item.SevenTimesCount)个<br />0*0=￥0</td>
-                            <td>@(item.EightTimesCount)个<br />0*0=￥0</td>
-                            <td>@(item.NineTimesCount)个<br />0*0=￥0</td>
-                            <td>@(item.ExceedNineTimesCount)个<br />0*0=￥0</td>
+                            <td>@item.date</td>
+                            <td>￥@item.totalAmount</td>
+                            <td>@(item.c1) / ￥@(item.a1)</td>
+                            <td>@(item.c2) / ￥@(item.a2)</td>
+                            <td>@(item.c3) / ￥@(item.a3)</td>
+                            <td>@(item.c4) / ￥@(item.a4)</td>
+                            <td>@(item.c5) / ￥@(item.a5)</td>
+                            <td>@(item.c6) / ￥@(item.a6)</td>
+                            <td>@(item.c7) / ￥@(item.a7)</td>
+                            <td>@(item.c8) / ￥@(item.a8)</td>
+                            <td>@(item.c9) / ￥@(item.a9)</td>
+                            <td>@(item.c10) / ￥@(item.a10)</td>
                         </tr>
                     }
                 }

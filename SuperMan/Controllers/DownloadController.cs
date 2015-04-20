@@ -20,7 +20,7 @@ namespace SuperMan.Controllers
             else
             {
                 ViewBag.IsWeixin = false;
-                Response.Redirect("/Content/app/eds_B.apk");
+                Response.Redirect("/Content/app/eds_B.apk?v=" + ETS.Util.TimeHelper.GetTimeStamp());
                 return null;
             }
             ViewBag.UserAgent = userAgent;
@@ -39,7 +39,7 @@ namespace SuperMan.Controllers
             else
             {
                 ViewBag.IsWeixin = false;
-                Response.Redirect("/Content/app/eds_C.apk");
+                Response.Redirect("/Content/app/eds_C.apk?v=" + ETS.Util.TimeHelper.GetTimeStamp());
                 return null;
             }
             ViewBag.UserAgent = userAgent;

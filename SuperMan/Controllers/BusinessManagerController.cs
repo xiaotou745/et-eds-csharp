@@ -15,6 +15,8 @@ using Ets.Service.Provider.Common;
 using Ets.Service.IProvider.Common;
 using Ets.Model.ParameterModel.User;
 using SuperMan.App_Start;
+using Ets.Model.ParameterModel.Order;
+using Ets.Model.DataModel.Bussiness;
 
 namespace SuperMan.Controllers
 {
@@ -123,6 +125,28 @@ namespace SuperMan.Controllers
             }
             return Json(new ResultModel(false, result.Message), JsonRequestBehavior.AllowGet);
         }
+
+        
+        [HttpPost]
+        public JsonResult ModifyBusiness(int id, string businessName,string businessPhone,int businessSourceId, int groupId)
+        {
+            IBusinessProvider iBus = new BusinessProvider();
+            OrderOptionModel model = new OrderOptionModel()
+            {
+                OptUserId = UserContext.Current.Id,
+                OptUserName = UserContext.Current.Name, 
+            };
+            Business businessModel = new Business()
+            {
+                Name = businessName,
+                GroupId = groupId,
+                OriginalBusiId = businessSourceId,
+                Id = id,
+                PhoneNo = businessPhone
+            };
+            return Json(new ResultModel(iBus.ModifyBusinessInfo(businessModel, model), "成功!"), JsonRequestBehavior.AllowGet);
+        }
+
 
     }
 }

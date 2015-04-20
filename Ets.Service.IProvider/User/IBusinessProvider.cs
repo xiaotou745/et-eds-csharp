@@ -206,6 +206,14 @@ namespace Ets.Service.IProvider.User
         /// <param name="criteria"></param>
         /// <returns></returns>
         Ets.Model.ParameterModel.Bussiness.BussinessStatusModel GetUserStatus(int userid, double version);
+        /// <summary>
+        /// 修改商户信息
+        /// danny-20150417
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="orderOptionModel"></param>
+        /// <returns></returns>
+        bool ModifyBusinessInfo(Business model, OrderOptionModel orderOptionModel);
 
         /// <summary>
         /// 后台添加商户

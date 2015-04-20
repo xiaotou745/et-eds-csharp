@@ -601,8 +601,9 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                                     ,b.Name BusinessName
                                     ,b.PhoneNo BusinessPhoneNo
                                     ,b.Address BusinessAddress
-                                    ,g.GroupName
+                                    ,case when b.GroupId=0 then '客户端' else g.GroupName end GroupName
                                     ,o.[Adjustment]
+                                    ,ISNULL(oo.HadUploadCount,0) HadUploadCount
                                     ,o.BusinessCommission --商家结算比例
                                     ";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
@@ -653,7 +654,8 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             string tableList = @" [order] o WITH ( NOLOCK )
                                 LEFT JOIN clienter c WITH ( NOLOCK ) ON c.Id = o.clienterId
                                 LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
-                                LEFT JOIN [group] g WITH ( NOLOCK ) ON g.Id = b.GroupId ";
+                                LEFT JOIN [group] g WITH ( NOLOCK ) ON g.Id = b.GroupId
+                                LEFT JOIN dbo.OrderOther oo (nolock) ON o.Id = oo.OrderId ";
             string orderByColumn = " o.Status ASC,o.Id DESC ";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
@@ -738,6 +740,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                                         ,c.TrueName ClienterName
                                         ,c.AccountBalance AccountBalance
                                         ,b.GroupId
+                                        ,case when b.GroupId=0 then '客户端' else g.GroupName end GroupName
                                         ,o.OriginalOrderNo
                                         ,oo.NeedUploadCount
                                         ,oo.HadUploadCount
@@ -746,6 +749,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     LEFT JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
                                     LEFT JOIN OrderOther oo WITH (NOLOCK) ON oo.OrderId=o.Id
+                                    LEFT JOIN [group] g WITH ( NOLOCK ) ON g.Id = b.GroupId
                                     WHERE 1=1 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderNo", SqlDbType.NVarChar);
@@ -1140,6 +1144,7 @@ select top 1
         o.businessId ,
         b.GroupId ,
         o.PickupCode ,
+        o.OrderCount,
         ISNULL(oo.HadUploadCount,0) HadUploadCount
 from    [order] o with ( nolock )
         left join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
@@ -1309,7 +1314,7 @@ where   o.Id = @orderId;
                 return null;
             }
         }
-/// <summary>
+        /// <summary>
         /// 修改骑士收入
         /// danny-20150414
         /// </summary>

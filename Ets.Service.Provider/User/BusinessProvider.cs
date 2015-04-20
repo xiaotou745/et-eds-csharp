@@ -744,5 +744,17 @@ namespace Ets.Service.Provider.User
             }
             return null;
         }
+
+        /// <summary>
+        /// 修改商户信息
+        /// danny-20150417
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="orderOptionModel"></param>
+        /// <returns></returns>
+        public bool ModifyBusinessInfo(Business model, OrderOptionModel orderOptionModel)
+        {
+            return dao.ModifyBusinessInfo(model,orderOptionModel);
+        }
     }
 }
