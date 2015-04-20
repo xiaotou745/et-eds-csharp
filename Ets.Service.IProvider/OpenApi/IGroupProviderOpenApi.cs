@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Ets.Service.IProvider.OpenApi
 {
     /// <summary>
-    /// 接口  第三方对接集团的回调业务 add by caoheyang 20150326
+    /// 接口  第三方对接集团的基础业务,各集团都有的业务 add by caoheyang 20150326
     /// </summary>
     public interface IGroupProviderOpenApi
     {

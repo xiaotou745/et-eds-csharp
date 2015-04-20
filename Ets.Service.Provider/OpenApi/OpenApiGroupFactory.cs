@@ -32,5 +32,22 @@ namespace Ets.Service.Provider.OpenApi
             }
 
         }
+
+        /// <summary>
+        /// 获取集团对应的 回调业务类  add by caoheyang 20150326
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
+        public static Ets.Service.IProvider.OpenApi.IPullOrderInfoOpenApi GetIPullOrderInfo(int groupId)
+        {
+            switch (groupId)
+            {
+                case SystemConst.Group4: //美团
+                    return new MeiTuanGroup();
+                default:
+                    return null;
+            }
+
+        }
     }
 }
