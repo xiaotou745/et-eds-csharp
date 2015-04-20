@@ -108,14 +108,14 @@ namespace OpenApi.Controllers
         [HttpGet]
         //[SignOpenApi]
         //[OpenApiActionError]
-        public ResultModel<object> PullOrderInfo(ParaModel<AsyncStatusPM_OpenApi> paramodel)
+        public ResultModel<object> PullOrderInfo(ParaModel<PullOrderInfoPM_OpenApi> paramodel)
         {
-            paramodel = new ParaModel<AsyncStatusPM_OpenApi>();
+            paramodel = new ParaModel<PullOrderInfoPM_OpenApi>();
             paramodel.group = 4;
             IPullOrderInfoOpenApi groupProvider = OpenApiGroupFactory.GetIPullOrderInfo(paramodel.group);
             if (groupProvider == null)
                 return ResultModel<object>.Conclude(OrderApiStatusType.Success);  //无集团信息，不需要同步返回成功，实际应该不会该情况
-            groupProvider.PullOrderInfo("");
+            groupProvider.PullOrderInfo(paramodel.fields.store_id);
             return null;
         }      
     }

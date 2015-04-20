@@ -11,6 +11,10 @@ namespace Ets.Service.IProvider.OpenApi
     /// </summary>
     public interface IPullOrderInfoOpenApi
     {
-        void PullOrderInfo(string info);
+        /// <summary>
+        ///  第三方店铺id
+        /// </summary>
+        /// <param name="info"></param>
+        void PullOrderInfo(int store_id);
     }
 }

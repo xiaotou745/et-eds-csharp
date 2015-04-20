@@ -421,24 +421,6 @@ namespace Ets.Service.Provider.Order
                 return ResultModel<object>.Conclude(OrderApiStatusType.OrderExists, new { order_no = orderExistsNo });
             #endregion
 
-            #region 设置门店的省市区编码信息 add by caoheyang 20150407
-            string storecodeInfo = new AreaProvider().GetOpenCode(new Ets.Model.ParameterModel.Area.ParaAreaNameInfo()
-            {
-                ProvinceName = paramodel.store_info.province,
-                CityName = paramodel.store_info.city,
-                AreaName = paramodel.store_info.area
-            });
-            if (storecodeInfo == ETS.Const.SystemConst.CityOpenInfo || string.IsNullOrWhiteSpace(storecodeInfo))
-                return ResultModel<object>.Conclude(OrderApiStatusType.ParaError, "门店省市区信息错误");
-            else
-            {
-                string[] storeCodes = storecodeInfo.Split('_');
-                paramodel.store_info.province_code = storeCodes[0];
-                paramodel.store_info.city_code = storeCodes[1];
-                paramodel.store_info.area_code = storeCodes[2];
-            }
-            #endregion
-
             #region 设置用户的省市区编码信息 add by caoheyang 20150407
             string orderCodeInfo = new AreaProvider().GetOpenCode(new Ets.Model.ParameterModel.Area.ParaAreaNameInfo()
             {
@@ -450,7 +432,7 @@ namespace Ets.Service.Provider.Order
                 return ResultModel<object>.Conclude(OrderApiStatusType.ParaError, "用户省市区信息错误");
             else
             {
-                string[] storeCodes = storecodeInfo.Split('_');
+                string[] storeCodes = orderCodeInfo.Split('_');
                 paramodel.address.province_code = storeCodes[0];
                 paramodel.address.city_code = storeCodes[1];
                 paramodel.address.area_code = storeCodes[2];
@@ -477,6 +459,24 @@ namespace Ets.Service.Provider.Order
                 //    paramodel.address.longitude = localtion.Item1;  //精度
                 //    paramodel.address.latitude = localtion.Item2; //纬度
                 //}
+
+                #region 设置门店的省市区编码信息 add by caoheyang 20150407 
+                string storecodeInfo = new AreaProvider().GetOpenCode(new Ets.Model.ParameterModel.Area.ParaAreaNameInfo()
+                {
+                    ProvinceName = paramodel.store_info.province,
+                    CityName = paramodel.store_info.city,
+                    AreaName = paramodel.store_info.area
+                });
+                if (storecodeInfo == ETS.Const.SystemConst.CityOpenInfo || string.IsNullOrWhiteSpace(storecodeInfo))
+                    return ResultModel<object>.Conclude(OrderApiStatusType.ParaError, "门店省市区信息错误");
+                else
+                {
+                    string[] storeCodes = storecodeInfo.Split('_');
+                    paramodel.store_info.province_code = storeCodes[0];
+                    paramodel.store_info.city_code = storeCodes[1];
+                    paramodel.store_info.area_code = storeCodes[2];
+                }
+                #endregion
             }
             #endregion
 
@@ -512,8 +512,6 @@ namespace Ets.Service.Provider.Order
             {
                 using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                 {
-                    dynamic x="dasd";
-                    Convert.ToInt32(x);
                     orderNo = OrderDao.CreateToSql(paramodel);
                     //if (!string.IsNullOrWhiteSpace(orderNo))
                     //    Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！"
