@@ -47,7 +47,7 @@
     <tr class="trclass">
         <td>订单号：@Model.OrderNo</td>
         <td>发布时间：@Model.PubDate</td>
-        <td>订单状态：@strstatus</td>
+        <td>订单状态：@strstatus &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 订单来源：@Model.GroupName</td>
     </tr>
     <tr class="trclass">
         <td>商户信息：@Model.BusinessName</td>
@@ -78,7 +78,7 @@
 {
     var puth = SuperManCore.CustomerIconUploader.Instance.RelativePath;
     var PicHost = SuperManCore.CustomerIconUploader.Instance.PicHost;
-    var picAdressArray = Model.ReceiptPic.Split('|');
+    var picAdressArray = Model.ReceiptPic.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
     <h4 style="color:black;font-weight:100">
         <label>
             骑士上传小票：@Model.HadUploadCount/@Model.NeedUploadCount @if (Model.HadUploadCount == Model.NeedUploadCount)

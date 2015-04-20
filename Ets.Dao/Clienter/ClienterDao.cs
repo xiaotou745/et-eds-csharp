@@ -178,7 +178,7 @@ namespace Ets.Dao.Clienter
         }
 
         /// <summary>
-        /// 获取当前用户的信息
+        /// 获取当前用户的信息（注意此处有事物用到必须用写串）
         /// 窦海超
         /// 2015年3月20日 16:55:11
         /// </summary>
@@ -554,15 +554,55 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
         /// <returns></returns>
         public IList<BusinessesDistributionModel> GetClienteStorerGrabStatisticalInfo()
         {
-            string strSql = @"select 
-                                    convert(char(10),InsertTime,120) InsertTime,
-                                    BusinessCount,
-                                    convert(decimal(10,2),sum(Amount)) TotalAmount,
-                                    count(distinct ClienterId) ClienterCount,
-                                    convert(decimal(10,2),sum(Amount)/count(distinct ClienterId)) Amount
-                             from CrossShopLog(nolock)
-                             WHERE  InsertTime>getdate()-20
-                             group by convert(char(10),InsertTime,120),BusinessCount";
+            string strSql = @"
+                        ;with t as(
+                        select temp.[date],temp.businessCount,count(temp.clienterId) cCount
+                        from 
+                        (
+	                        select convert(char(10), PubDate, 120) 'date', o.clienterId,count(distinct o.businessId) 'businessCount'
+	                        from dbo.[order] o(nolock)
+	                        where o.PubDate>getdate()-20 and o.Status =1
+	                        group by convert(char(10), PubDate, 120), o.clienterId
+                        ) as temp
+                        group by temp.[date],temp.businessCount
+                        )
+                        ,t2 as (
+                        select convert(char(10), csl.InsertTime-1, 120) date,csl.BusinessCount 'businessCount',
+	                        count(distinct csl.ClienterId) clientorCount,sum(csl.Amount) totalAmount
+                        from dbo.CrossShopLog csl(nolock)
+                        where csl.InsertTime-1 > getdate()-20
+                        group by convert(char(10), csl.InsertTime-1, 120), csl.BusinessCount
+                        )
+
+                        select temp2.[date],sum(temp2.amount) totalAmount,max(case temp2.businessCount when 1 then temp2.cCount else 0 end) c1,
+	                        max(case temp2.businessCount when 1 then temp2.amount else 0 end) a1,
+	                        max(case temp2.businessCount when 2 then temp2.cCount else 0 end) c2,
+	                        max(case temp2.businessCount when 2 then temp2.amount else 0 end) a2,
+	                        max(case temp2.businessCount when 3 then temp2.cCount else 0 end) c3,
+	                        max(case temp2.businessCount when 3 then temp2.amount else 0 end) a3,
+	                        max(case temp2.businessCount when 4 then temp2.cCount else 0 end) c4,
+	                        max(case temp2.businessCount when 4 then temp2.amount else 0 end) a4,
+	                        max(case temp2.businessCount when 5 then temp2.cCount else 0 end) c5,
+	                        max(case temp2.businessCount when 5 then temp2.amount else 0 end) a5,
+	                        max(case temp2.businessCount when 6 then temp2.cCount else 0 end) c6,
+	                        max(case temp2.businessCount when 6 then temp2.amount else 0 end) a6,
+	                        max(case temp2.businessCount when 7 then temp2.cCount else 0 end) c7,
+	                        max(case temp2.businessCount when 7 then temp2.amount else 0 end) a7,
+	                        max(case temp2.businessCount when 8 then temp2.cCount else 0 end) c8,
+	                        max(case temp2.businessCount when 8 then temp2.amount else 0 end) a8,
+	                        max(case temp2.businessCount when 9 then temp2.cCount else 0 end) c9,
+	                        max(case temp2.businessCount when 9 then temp2.amount else 0 end) a9,
+	                        sum(case when temp2.businessCount>9 then temp2.cCount else 0 end) c10,
+	                        sum(case when temp2.businessCount>9 then temp2.amount else 0 end) a10
+                        from 
+                        (
+                        select t.[date],t.businessCount,t.cCount,isnull(t2.totalAmount,0) amount
+                        from t t
+	                        left join t2 t2 on t.[date] = t2.date and t.businessCount=t2.businessCount
+                        ) as temp2
+                        group by temp2.[date]
+                        order by temp2.[date] desc
+                            ";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, strSql);
             return MapRows<BusinessesDistributionModel>(dt);
         }
@@ -589,9 +629,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
                             FROM (select PubDate,businessCount BusinessCount,count(clienterId) as ClienterCount
                                   from (select convert(char(10),o.PubDate,120) PubDate,clienterId,count(distinct businessId) businessCount
                                         from dbo.[order] o(nolock)
-                                            where  convert(char(10),o.PubDate,120) <'2015-04-17' and o.PubDate> getdate()-" + (20 - NewCount);
-                    sql += " and Status in (1,2) group by convert(char(10),o.PubDate,120), clienterId)t group by PubDate, businessCount) a ";
-                    sql += " group by PubDate order by PubDate desc ;";
+                                            where o.PubDate> getdate()-20 and Status =1 group by convert(char(10),o.PubDate,120), clienterId)t group by PubDate, businessCount) a group by PubDate order by PubDate desc ;";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             return MapRows<BusinessesDistributionModelOld>(dt);
         }
@@ -602,9 +640,8 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
         /// <returns></returns>
         public OrderOther UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel)
         {
-            OrderOther orderOther = new OrderOther();
-            int orderStatus = 0;
-            var oo = GetReceiptInfo(uploadReceiptModel.OrderId, out orderStatus);
+            OrderOther orderOther = new OrderOther(); 
+            var oo = GetReceiptInfo(uploadReceiptModel.OrderId);
             uploadReceiptModel.NeedUploadCount = oo.NeedUploadCount;
             if (oo.Id == 0)
             {
@@ -614,7 +651,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
             {
                 orderOther = UpdateReceiptInfo(uploadReceiptModel);
             }
-            orderOther.OrderStatus = orderStatus;
+            orderOther.OrderStatus = oo.OrderStatus;
             return orderOther;
         }
 
@@ -755,37 +792,31 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns>OrderOther</returns>
-        public OrderOther GetReceiptInfo(int orderId, out int OrderStatus)
+        public OrderOther GetReceiptInfo(int orderId)
         {
-            OrderStatus = 0;
-            int orderCount = 0;
-            string sql = @"select oo.Id ,
-        oo.OrderId ,
-        oo.NeedUploadCount ,
+            string sql = @"select  o.Id OrderId ,
+        ISNULL(oo.Id,0) Id ,
+        o.[Status] OrderStatus,
+        o.OrderCount NeedUploadCount,
         oo.ReceiptPic ,
-        oo.HadUploadCount
-from    dbo.OrderOther oo ( nolock )
-where   oo.OrderId = @OrderId;select o.[Status],o.OrderCount FROM dbo.[order] o (nolock)
- where o.Id = @OrderId";
+        ISNULL(oo.HadUploadCount, 0) HadUploadCount
+from    dbo.[order] o ( nolock )
+        left join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
+where   o.Id = @OrderId";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderId", SqlDbType.Int);
             parm.SetValue("@OrderId", orderId);
 
-            DataSet dt = DbHelper.ExecuteDataset(SuperMan_Read, sql, parm);
-            var ooList = MapRows<OrderOther>(dt.Tables[0]);
-            if (dt.Tables[1] != null && dt.Tables[1].Rows.Count > 0)
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            var ooList = MapRows<OrderOther>(dt);
+            
+            if (ooList != null && ooList.Count> 0)
             {
-                OrderStatus = ParseHelper.ToInt(dt.Tables[1].Rows[0][0], 0);
-                orderCount = ParseHelper.ToInt(dt.Tables[1].Rows[0][1], 0);
-            }
-            if (ooList != null && ooList.Count > 0)
-            {
-                ooList[0].NeedUploadCount = orderCount;
                 return ooList[0];
             }
             else
             {
-                return new OrderOther() { OrderId = orderId, OrderStatus = OrderStatus, NeedUploadCount = orderCount, HadUploadCount = 0, ReceiptPic = "" };
+                return null;
             }
         }
         /// <summary>
@@ -796,14 +827,16 @@ where   oo.OrderId = @OrderId;select o.[Status],o.OrderCount FROM dbo.[order] o 
         /// <returns></returns>
         public OrderOther DeleteReceipt(UploadReceiptModel uploadReceiptModel)
         {
-            string delPic = uploadReceiptModel.ReceiptPic;
-            int orderStatus = 0;
+ 
+            string delPic = uploadReceiptModel.ReceiptPic; 
             //更新小票信息
-            OrderOther oo = GetReceiptInfo(uploadReceiptModel.OrderId, out orderStatus);
+            OrderOther oo = GetReceiptInfo(uploadReceiptModel.OrderId);
             if (oo.Id > 0)
             {
+                
                 List<string> listReceiptPic = ImageCommon.GetListImgString(oo.ReceiptPic);
-
+                int delPre = listReceiptPic.Count;
+                int delAft = 0;
                 Regex regex = new Regex(@"(/\d{4}/\d{2}/\d{2}.*?)\.jpg", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline);
                 MatchCollection matchCollection = regex.Matches(delPic);
                 string delPicDir = "1.jpg";
@@ -812,25 +845,27 @@ where   oo.OrderId = @OrderId;select o.[Status],o.OrderCount FROM dbo.[order] o 
                     delPicDir = match.Value;
                     listReceiptPic.Remove(delPicDir);
                 }
+                delAft = listReceiptPic.Count;
+                if (delPre - delAft == 0)
+                {
+                    uploadReceiptModel.HadUploadCount = 0;
+                }
                 string ppath = ConfigSettings.Instance.FileUploadPath + "\\" + ConfigSettings.Instance.FileUploadFolderNameCustomerIcon;
-                var delDir = ppath + delPicDir;
-
-                var fileName = Path.GetFileName(delDir);
-
+                var delDir = ppath + delPicDir;  
+                var fileName = Path.GetFileName(delDir); 
                 int fileNameLastDot = fileName.LastIndexOf('.');
-
                 //原图 
                 string orginalFileName = string.Format("{0}{1}{2}", Path.GetDirectoryName(delDir) + "\\" + fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
 
-                //删除磁盘中的裁图
-                FileHelper.DeleteFile(delDir);
-                //删除缩略图
-                FileHelper.DeleteFile(orginalFileName);
                 uploadReceiptModel.ReceiptPic = String.Join("|", listReceiptPic.ToArray());
 
                 OrderOther ooo = DeleteReceiptInfo(uploadReceiptModel);
                 if (oo != null)
-                {
+                { 
+                    //删除磁盘中的裁图
+                    FileHelper.DeleteFile(delDir);
+                    //删除缩略图
+                    FileHelper.DeleteFile(orginalFileName);
                     return ooo;
                 }
                 else

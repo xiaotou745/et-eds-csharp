@@ -8,31 +8,30 @@ namespace Ets.Model.DomainModel.Bussiness
 {
     public class BusinessesDistributionModel
     {
+        public string date { get; set; }
+        public decimal totalAmount { get; set; }
 
-        /// <summary>
-        /// 创建时间日期
-        /// </summary>
-        public string InsertTime { get; set; }
-        /// <summary>
-        /// 商家数量
-        /// </summary>
-        public int BusinessCount { get; set; }
-        /// <summary>
-        /// 奖励金额
-        /// </summary>
-        public decimal TotalAmount { get; set; }
+        public int c1 { get; set; }
+        public int c2 { get; set; }
+        public int c3 { get; set; }
+        public int c4 { get; set; }
+        public int c5 { get; set; }
+        public int c6 { get; set; }
+        public int c7 { get; set; }
+        public int c8 { get; set; }
+        public int c9 { get; set; }
+        public int c10 { get; set; }
+        public decimal a1 { get; set; }
 
-        /// <summary>
-        /// 奖励金额
-        /// </summary>
-        public decimal Amount { get; set; }
-
-        /// <summary>
-        /// 骑士数量
-        /// </summary>
-        public int ClienterCount { get; set; }
-
-
+        public decimal a2 { get; set; }
+        public decimal a3 { get; set; }
+        public decimal a4 { get; set; }
+        public decimal a5 { get; set; }
+        public decimal a6 { get; set; }
+        public decimal a7 { get; set; }
+        public decimal a8 { get; set; }
+        public decimal a9 { get; set; }
+        public decimal a10 { get; set; }
     }
 
     /// <summary>

@@ -70,7 +70,7 @@ namespace SuperMan.Controllers
             {
                 return Json(new ResultModel(false, "验证码不正确"));
             }
-            var captcha = redis.Get<string>(cachekey); 
+            var captcha = redis.Get<string>(cachekey);
             if (captcha == null || model.Captcha != captcha)
             {
                 return Json(new ResultModel(false, "验证码不正确"));
