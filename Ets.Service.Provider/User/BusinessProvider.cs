@@ -756,5 +756,53 @@ namespace Ets.Service.Provider.User
         {
             return dao.ModifyBusinessInfo(model,orderOptionModel);
         }
+
+
+        /// <summary>
+        /// 请求语音验证码
+        /// 平扬
+        /// 2015年4月20日 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public SimpleResultModel VoiceCheckCode(Ets.Model.ParameterModel.Sms.SmsParaModel model)
+        {
+            if (!CommonValidator.IsValidPhoneNumber(model.PhoneNumber))
+            {
+                return SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
+            }
+            var randomCode = new Random().Next(100000).ToString("D6");
+            string msg = string.Empty;
+            string key = "";
+            if (model.Stype == "0")//注册
+            {
+                if (dao.CheckBusinessExistPhone(model.PhoneNumber))  //判断该手机号是否已经注册过  .CheckBusinessExistPhone(PhoneNumber)
+                    return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.AlreadyExists);
+                key = RedissCacheKey.PostRegisterInfoSoundCode_B + model.PhoneNumber;
+                msg = string.Format(ETS.Util.SupermanApiConfig.Instance.SmsContentCheckCodeVoice, randomCode, ConstValues.MessageClinenter);
+            }
+            else //修改密码
+            {
+                key = RedissCacheKey.PostForgetPwdSoundCode_B + model.PhoneNumber;
+                msg = string.Format(ETS.Util.SupermanApiConfig.Instance.SmsContentCheckCodeFindPwdVoice, randomCode, ConstValues.MessageClinenter);
+            }
+            try
+            {
+                var redis = new ETS.NoSql.RedisCache.RedisCache();
+                redis.Add(key, randomCode, DateTime.Now.AddHours(1));
+
+                // 更新短信通道 
+                Task.Factory.StartNew(() =>
+                {
+                    ETS.Sms.SendSmsHelper.SendSmsSaveLogNew(model.PhoneNumber, msg, ConstValues.SMSSOURCE);
+                });
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.Sending);
+
+            }
+            catch (Exception)
+            {
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.SendFailure);
+            }
+        }
     }
 }
