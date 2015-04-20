@@ -1124,7 +1124,7 @@ namespace Ets.Dao.User
                         ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@City", model.city);
-            parm.AddWithValue("@Password", model.passWord);
+            parm.AddWithValue("@Password", "A06F6A211CBEDF374FC367FA231865DE");
             parm.Add("@PhoneNo", SqlDbType.NVarChar);
             parm.SetValue("@PhoneNo", model.phoneNo);
             parm.AddWithValue("@CityId", model.CityId);

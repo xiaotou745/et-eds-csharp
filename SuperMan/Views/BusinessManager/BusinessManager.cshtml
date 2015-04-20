@@ -92,10 +92,6 @@
                 <input name="businessaddr" id="businessaddr" style="width: 200px;" type="text">
             </div>
             <div class="control-group">
-                <label>密码</label>
-                <input name="businesspassWord" id="businesspassWord"  type="text">
-            </div>
-            <div class="control-group">
                 <label>城市</label>
             @Html.DropDownList("businesscity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Code", "Name"), "--无--", new { style = "width:155px" })
             </div>
