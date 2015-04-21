@@ -28,6 +28,12 @@ namespace ETS.Const
         /// 订单已取消 
         /// </summary>
         public const int OrderStatus3 = 3;
+
+        /// <summary>
+        /// 第三方待接入订单 
+        /// </summary>
+        public const int OrderStatus30 = 30;
+
         #endregion
 
         #region 窦海超复制过来 原ConstValues.cs

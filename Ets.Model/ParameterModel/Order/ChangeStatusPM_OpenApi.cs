@@ -14,35 +14,25 @@ namespace Ets.Model.ParameterModel.Order
     public class ChangeStatusPM_OpenApi 
     {
         /// <summary>
-        /// 订单号
+        /// 第三方平台订单号
         /// </summary>
-
+        [Required]
         public string order_no { get; set; }
+
         /// <summary>
-        /// E代送内部订单状态
+        /// 目标E代送内部订单状态
         /// </summary>
         [Required]
         public int status { get; set; }
-        /// <summary>
-        /// 超人名称    TODO  后续根据第三方对接集团的增加，可能要扩展成实体对象形式
-        /// </summary>
-        public string ClienterTrueName { get; set; }
-
 
         /// <summary>
-        /// 超人电话    TODO  后续根据第三方对接集团的增加，可能要扩展成实体对象形式
+        /// 集团id
         /// </summary>
-        public string ClienterPhoneNo { get; set; }
-        /// <summary>
-        /// 商户名称
-        /// </summary>
-        public string BusinessName { get; set; }
+        public int groupid { get; set; }
 
         /// <summary>
-        /// 第三方订单号
+        /// log操作备注 业务逻辑层赋值
         /// </summary>
-                [Required]
-        public string OriginalOrderNo { get; set; }
-        
+        public string remark { get; set; }
     }
 }

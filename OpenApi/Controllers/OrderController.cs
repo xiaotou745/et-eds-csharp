@@ -129,11 +129,8 @@ namespace OpenApi.Controllers
         [OpenApiActionError]
         public ResultModel<object> ChangeStatus(ParaModel<ChangeStatusPM_OpenApi> paramodel)
         {
-            IGroupProviderOpenApi groupProvider = OpenApiGroupFactory.Create(paramodel.group);
-            if (groupProvider == null)
-                ResultModel<object>.Conclude(OrderApiStatusType.Success);  //无集团信息，不需要同步返回成功，实际应该不会该情况
-            OrderApiStatusType statusType = OrderApiStatusType.ParaError;
-            return ResultModel<object>.Conclude(statusType);
+            paramodel.fields.groupid = paramodel.group;
+            return new OrderProvider().UpdateOrderStatus_Other(paramodel.fields);
         }
     }
 }

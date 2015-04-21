@@ -167,5 +167,11 @@ namespace Ets.Service.IProvider.Order
         /// <returns></returns>
         IList<OrderSubsidiesLog> GetOrderOptionLog(string OrderId);
 
+        /// <summary>
+        /// 第三方更新E代送订单状态   add by caoheyang 20150421  
+        /// </summary>
+        /// <param name="paramodel">参数</param>
+        /// <returns></returns>
+        ResultModel<object> UpdateOrderStatus_Other(ChangeStatusPM_OpenApi paramodel);
     }
 }

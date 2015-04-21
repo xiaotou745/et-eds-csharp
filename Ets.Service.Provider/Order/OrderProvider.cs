@@ -863,5 +863,27 @@ namespace Ets.Service.Provider.Order
         {
             return OrderDao.GetOrderOptionLog(OrderId);
         }
+
+
+        /// <summary>
+        /// 第三方更新E代送订单状态   add by caoheyang 20150421    目前该方法仅美团回调取消订单时使用,固定只允许取消订单
+        /// </summary>
+        /// <param name="paramodel">参数</param>
+        /// <returns></returns>
+        public ResultModel<object> UpdateOrderStatus_Other(ChangeStatusPM_OpenApi paramodel)
+        {
+            paramodel.status = OrderConst.OrderStatus3;
+            paramodel.remark = "第三方集团取消订单，同步E代送系统订单状态";
+            int currenStatus = OrderDao.GetStatus(paramodel.order_no, paramodel.groupid);  //目前订单状态
+            if (OrderConst.OrderStatus30 != currenStatus)  //订单状态非30，,不允许取消订单
+                return ResultModel<object>.Conclude(OrderApiStatusType.OrderIsJoin);
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                int result = OrderDao.UpdateOrderStatus_Other(paramodel);
+                tran.Complete();
+                return result > 0 ? ResultModel<object>.Conclude(OrderApiStatusType.Success) : ResultModel<object>.Conclude(OrderApiStatusType.SystemError);
+
+            }
+        }
     }
 }
