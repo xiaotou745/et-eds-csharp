@@ -390,11 +390,11 @@ namespace Ets.Service.Provider.Order
         /// <param name="orderNo">订单号</param>
         /// <param name="orderStatus">订单状态</param>
         /// <returns></returns>
-        public int UpdateOrderStatus(string orderNo, int orderStatus)
+        public int UpdateOrderStatus(string orderNo, int orderStatus, string remark)
         {
             if (AsyncOrderStatus(orderNo))//更该订单状态时，同步第三方订单状态
             {
-                return OrderDao.CancelOrderStatus(orderNo, orderStatus);
+                return OrderDao.CancelOrderStatus(orderNo, orderStatus,remark);
             } 
             return 0;
         }

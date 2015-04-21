@@ -292,7 +292,7 @@ namespace SuperManWebApi.Controllers
         {
             var orderProvider = new OrderProvider();
             int i = 0;
-            var list= orderlist.Where(s => orderProvider.UpdateOrderStatus(s, OrderConst.ORDER_NEW) <= 0).ToList();
+            var list= orderlist.Where(s => orderProvider.UpdateOrderStatus(s, OrderConst.ORDER_NEW,"") <= 0).ToList();
             return Ets.Model.Common.ResultModel<List<string>>.Conclude(ETS.Enums.PubOrderStatus.Success, list);
         }
 
@@ -307,16 +307,7 @@ namespace SuperManWebApi.Controllers
         public Ets.Model.Common.ResultModel<int> OtherOrderCancel_B(string[] orderlist,string note)
         {
             var orderProvider = new OrderProvider();
-            int i = 0;
-            foreach (string s in orderlist)
-            {
-                if (orderProvider.UpdateOrderStatus(s, OrderConst.ORDER_CANCEL) > 0)
-                {
-                    i++;
-                    //插入拒绝日志,和拒绝原因
-                }
-
-            } 
+            int i = orderlist.Count(s => orderProvider.UpdateOrderStatus(s, OrderConst.ORDER_CANCEL, note) > 0);
             return Ets.Model.Common.ResultModel<int>.Conclude(ETS.Enums.PubOrderStatus.Success, i);
         }
 
@@ -487,7 +478,7 @@ namespace SuperManWebApi.Controllers
                 if (selResult.Status == ConstValues.ORDER_NEW)
                 {
                     //存在的情况下  取消订单  3
-                    int cacelResult = iOrderProvider.UpdateOrderStatus(OrderId, Ets.Model.Common.ConstValues.ORDER_CANCEL);
+                    int cacelResult = iOrderProvider.UpdateOrderStatus(OrderId, Ets.Model.Common.ConstValues.ORDER_CANCEL,"");
                     if (cacelResult > 0)
                         return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.Success, true);
                     else
