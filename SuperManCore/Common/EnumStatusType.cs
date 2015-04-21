@@ -35,6 +35,14 @@ namespace SuperManCore.Common
         [DisplayText("获取订单失败")]
         FailedGetOrders
     }
+
+    public enum GetBusinessStatus
+    {
+        [DisplayText("获取成功")]
+        Success,
+        [DisplayText("获取商户失败")]
+        FailedGetBusiness
+    }
     public enum GetOrdersNoLoginStatus
     {
         Success=0,

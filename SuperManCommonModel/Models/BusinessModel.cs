@@ -61,7 +61,17 @@ namespace SuperManCommonModel.Models
         public DateTime? InsertTime { get; set; }
         public sbyte? Status { get; set; }
     }
-
+    public class BusinessSimpleModel
+    {
+        /// <summary>
+        /// 商家编号
+        /// </summary>
+        public int Id { get; set; }
+        /// <summary>
+        /// 名称
+        /// </summary>
+        public string Name { get; set; }
+    }
     public class BusinessViewModel
     {
         /// <summary>

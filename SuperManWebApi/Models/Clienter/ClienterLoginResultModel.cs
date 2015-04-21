@@ -10,11 +10,22 @@ namespace SuperManWebApi.Models.Clienter
     /// </summary>
     public class ClienterLoginResultModel
     {
+        /// <summary>
+        /// 骑士Id
+        /// </summary>
         public int userId { get; set; }
+        /// <summary>
+        /// 骑士状态 1 审核通过 0审核未通过
+        /// </summary>
         public sbyte? status { get; set; }
+        /// <summary>
+        /// 骑士余额
+        /// </summary>
         public decimal? Amount { get; set; }
-        public string phoneNo { get; set; }
-
+        /// <summary>
+        /// 手机号
+        /// </summary>
+        public string phoneNo { get; set; } 
         /// <summary>
         /// 城市
         /// </summary>
@@ -23,6 +34,10 @@ namespace SuperManWebApi.Models.Clienter
         /// 城市编码
         /// </summary>
         public string cityId { get; set; }
+        /// <summary>
+        /// 骑士所属商户Id
+        /// </summary>
+        public List<int> BusibussId { get; set; }
     }
 
     public class ClienterModifyPwdResultModel

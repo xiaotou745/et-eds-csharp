@@ -60,13 +60,13 @@ namespace SuperManBusinessLogic.B_Logic
             using (var db = new supermanEntities())
             {
                 var items = db.business.AsQueryable();
-                if (!string.IsNullOrEmpty(criteria.businessName))
+                if (!string.IsNullOrWhiteSpace(criteria.businessName))
                 {
-                    items = items.Where(p => p.Name == criteria.businessName);
+                    items = items.Where(p => p.Name == criteria.businessName.Trim());
                 }
-                if (!string.IsNullOrEmpty(criteria.businessPhone))
+                if (!string.IsNullOrWhiteSpace(criteria.businessPhone))
                 {
-                    items = items.Where(p => p.PhoneNo == criteria.businessPhone);
+                    items = items.Where(p => p.PhoneNo == criteria.businessPhone.Trim());
                 }
                 if (criteria.Status != -1)
                 {
@@ -75,6 +75,10 @@ namespace SuperManBusinessLogic.B_Logic
                 if (criteria.GroupId != null)
                 {
                     items = items.Where(p => p.GroupId == criteria.GroupId);
+                }
+                if (criteria.BusiId > 0)  //商户Id
+                {
+                    items = items.Where(p => p.Id == criteria.BusiId);
                 }
                 items = items.OrderByDescending(i => i.InsertTime);
                 var pagedQuery = new BusinessManage();

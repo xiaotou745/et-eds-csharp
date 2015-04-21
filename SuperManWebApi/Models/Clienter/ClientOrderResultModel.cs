@@ -82,6 +82,16 @@ namespace SuperManWebApi.Models.Clienter
         /// 订单状态
         /// </summary>
         public sbyte? Status { get; set; }
+        /// <summary>
+        /// 送餐时间
+        /// </summary>
+        public string SongCanDate { get; set; }
+        /// <summary>
+        /// 第三方订单号
+        /// </summary>
+        public string OriginalOrderNo { get; set; }
+        //订单类型
+        public int OrderType { get; set; }
     }
 
     public class ClientOrderNoLoginResultModel
@@ -205,6 +215,11 @@ namespace SuperManWebApi.Models.Clienter
             {
                 resultModel.pubDate = from.PubDate.Value.ToShortTimeString();
             }
+            if (from.SongCanDate.HasValue)
+            {
+                resultModel.SongCanDate = from.SongCanDate.Value.ToString();  //送餐时间
+            }
+            resultModel.OriginalOrderNo = from.OriginalOrderNo;
             resultModel.pickUpAddress = from.PickUpAddress;
             resultModel.receviceName = from.ReceviceName;
             resultModel.receviceCity = from.ReceviceCity;
@@ -214,6 +229,16 @@ namespace SuperManWebApi.Models.Clienter
             resultModel.IsPay = from.IsPay.Value;
             resultModel.Remark = from.Remark;
             resultModel.Status = from.Status.Value;
+            //订单类型
+            if (from.OrderType.HasValue)
+            {
+                resultModel.OrderType = from.OrderType.Value;            
+            }
+            else
+            {
+                resultModel.OrderType = 0;
+            }
+            
             if (_business != null)
             {
                 var degree1 = new Degree(degree.longitude, degree.latitude);

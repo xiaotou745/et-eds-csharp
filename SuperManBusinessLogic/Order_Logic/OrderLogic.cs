@@ -135,7 +135,8 @@ namespace SuperManBusinessLogic.Order_Logic
                             result = true;
                             if (model.Status != 4)  //订单状态是 4待客审 时不触发极光推送
                             {
-                                Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, businessmodel.City); //激光推送
+                                //极光推送 推送给该商户下的骑士 
+                                Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", MD5Helper.MD5(businessmodel.Id.ToString()), businessmodel.City); //激光推送
                             }                            
                         }
                     }
