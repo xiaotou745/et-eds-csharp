@@ -7,13 +7,12 @@ namespace Ets.Model.ParameterModel.Bussiness
 {
     /// <summary>
     /// B端第三方商家注册类
-    /// </summary>
+    /// </summary> 
     public class NewRegisterInfoModel
-    {
-
+    { 
         /// <summary>
         /// 商户名称
-        /// </summary>
+        /// </summary> 
         public string B_Name { get; set; }
         /// <summary>
         /// 原平台商户Id
