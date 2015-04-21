@@ -23,6 +23,28 @@ namespace ETS.Sms
                 return SendSmsStatus.SendFailure;
             }
         }
+        /// <summary>
+        /// 发送语音短信
+        /// </summary>
+        /// <param name="mobile"></param>
+        /// <param name="content"></param>
+        /// <param name="smsSource"></param>
+        /// <returns></returns>
+        public static SendSmsStatus SendSmsSaveLogNew(string mobile, string content, string smsSource)
+        {
+            var sms = new SMSServiceReference.SmsSoapClient();
+            string result = sms.SendSmsSaveLogNew(mobile/*手机号码*/, content/*信息内容*/, smsSource/*短信来源*/, null/*餐厅ID（可以为null）*/, true, -2/*餐厅所属集团ID*/);
+            if (result == "发送成功")
+            {
+                LogHelper.LogWriter(DateTime.Now + " 向手机号为： " + mobile + " 的用户发送语音短信，短信内容为：" + content + "。发送成功。");
+                return SendSmsStatus.Sending;
+            }
+            else
+            {
+                LogHelper.LogWriter(DateTime.Now + " 向手机号为： " + mobile + " 的用户发送语音短信，短信内容为：" + content + "。发送失败。");
+                return SendSmsStatus.SendFailure;
+            }
+        }
     }
 
 

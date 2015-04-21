@@ -207,15 +207,13 @@ namespace SuperManWebApi.Controllers
             {  
                 #region 缓存验证
                 string cacheKey = "PostPublishOrder_B_" + model.userId + "_" + model.OrderSign;
-                //var cacheList = ETS.Cacheing.CacheFactory.Instance[cacheKey];
                 var redis = new ETS.NoSql.RedisCache.RedisCache(); 
                 var cacheValue = redis.Get<string>(cacheKey); 
                 if (cacheValue != null)
                 {  
                     return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.OrderHasExist);//当前时间戳内重复提交,订单已存在 
                 } 
-                redis.Add(cacheKey, "1", DateTime.Now.AddMinutes(10));//添加当前时间戳记录
-               // ETS.Cacheing.CacheFactory.Instance.AddObject(cacheKey, "1", DateTime.Now.AddMinutes(10));//添加当前时间戳记录
+                redis.Add(cacheKey, "1", DateTime.Now.AddHours(10));//添加当前时间戳记录
                 #endregion
             }
             if (model.OrderCount <= 0 || model.OrderCount > 15)   //判断录入订单数量是否符合要求
@@ -348,6 +346,20 @@ namespace SuperManWebApi.Controllers
         {  
             BusinessProvider businessProvider = new BusinessProvider();
             return businessProvider.CheckCodeFindPwd(PhoneNumber);
+        }
+
+        /// <summary>
+        /// 请求语音动态验证码
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.SendCheckCodeStatus))]
+        [HttpPost]
+        public Ets.Model.Common.SimpleResultModel VoiceCheckCode(Ets.Model.ParameterModel.Sms.SmsParaModel model)
+        {
+            BusinessProvider businessProvider = new BusinessProvider();
+            return businessProvider.VoiceCheckCode(model);
+             
         }
 
         /// <summary>
