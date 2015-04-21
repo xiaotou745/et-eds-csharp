@@ -112,19 +112,24 @@ namespace Ets.Model.ParameterModel.Order
         public int CommissionFormulaMode { get; set; }
 
         /// <summary>
-        /// 订单结算金额
+        /// 订单结算金额 由业务逻辑层计算所得
         /// </summary>
         public decimal settlemoney { get; set; }
 
         /// <summary>
-        /// 订单额外补贴金额
+        /// 订单额外补贴金额 由业务逻辑层计算所得
         /// </summary>
         public decimal adjustment { get; set; }
 
         /// <summary>
-        /// 初始订单状态 默认为 0 add by caoheyang 20150421
+        /// 初始订单状态 默认为 0  由业务逻辑层计算所得 add by caoheyang 20150421 
         /// </summary>
         public int status { get; set; }
+
+        /// <summary>
+        /// E代送商户id 由业务逻辑层所得 允许为0 为0时代表需要新增商户  add by caoheyang 20150421 
+        /// </summary>
+        public int businessId { get; set; }
     }
 
     /// <summary>

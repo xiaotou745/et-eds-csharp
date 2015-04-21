@@ -267,6 +267,8 @@ namespace Ets.Service.Provider.OpenApi
                 }
                 model.order_details = details; //订单ID
             }
+
+            model.receive_time = fromModel.ctime;//美团不传递，E代送必填 要求送餐时间
             //fromModel.extras 说明，暂时不用 
             return model;
         }

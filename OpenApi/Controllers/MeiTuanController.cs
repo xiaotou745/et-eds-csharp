@@ -41,11 +41,11 @@ namespace OpenApi.Controllers
         [HttpPost]
         public object PullOrderInfo(MeiTuanOrdeModel paramodel)
         {
-           MeiTuanGroup meituan = new MeiTuanGroup();
+            MeiTuanGroup meituan = new MeiTuanGroup();
             if (!meituan.ValiditeSig(paramodel))
             {
-               CreatePM_OpenApi model= meituan.TranslateModel(paramodel);
-               meituan.AddOrder(model);
+                CreatePM_OpenApi model = meituan.TranslateModel(paramodel);
+                return meituan.AddOrder(model) > 0 ? new { data = "ok" } : new { data = "fail" };
             }
             return new { data = "fail" };  //推送失败
         } 

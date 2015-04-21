@@ -441,7 +441,7 @@ namespace Ets.Service.Provider.Order
             #region  维护店铺相关信息 add by caoheyang 20150416
             string bussinessIdstr = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(),
               paramodel.store_info.store_id.ToString()));
-            if (bussinessIdstr == null)
+            if (bussinessIdstr == null || ParseHelper.ToInt(bussinessIdstr) == 0) //缓存中无店铺id 
             {
                 ///当第三方未传递经纬的情况下，根据地址调用百度接口获取经纬度信息  add by caoheyang 20150416
                 if (paramodel.store_info.longitude == 0 || paramodel.store_info.latitude == 0)  //店铺经纬度
@@ -459,7 +459,7 @@ namespace Ets.Service.Provider.Order
                 //    paramodel.address.latitude = localtion.Item2; //纬度
                 //}
 
-                #region 设置门店的省市区编码信息 add by caoheyang 20150407 
+                #region 设置门店的省市区编码信息 add by caoheyang 20150407
                 string storecodeInfo = new AreaProvider().GetOpenCode(new Ets.Model.ParameterModel.Area.ParaAreaNameInfo()
                 {
                     ProvinceName = paramodel.store_info.province,
@@ -477,6 +477,8 @@ namespace Ets.Service.Provider.Order
                 }
                 #endregion
             }
+            else
+                paramodel.businessId = ParseHelper.ToInt(bussinessIdstr);
             #endregion
 
             #region 根据集团id为店铺设置外送费，结算比例等财务相关信息add by caoheyang 20150417
