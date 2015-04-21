@@ -30,7 +30,7 @@ namespace Ets.Service.Provider.OpenApi
         /// <summary>
         /// Accept HTTP 标头的值
         /// </summary>
-        private string accept = "application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"; 
+        private string accept = "application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
 
         /// <summary>
         /// 回调万达接口同步订单状态  add by caoheyang 20150420
@@ -55,59 +55,107 @@ namespace Ets.Service.Provider.OpenApi
         }
 
         /// <summary>
-        ///  美团确认订单回调接口地址  add by caoheyang 20150420
+        ///  确认订单美团回调接口地址  add by caoheyang 20150420
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         protected OrderApiStatusType ConfirmAsyncStatus(AsyncStatusPM_OpenApi model)
         {
+            //参数信息
+            List<string> @params = new List<string>() { 
+            "timestamp="+TimeHelper.GetTimeStamp(false) ,
+            "order_id="+model.order_no, //订单号
+            "app_id="+app_id
+            };
+            @params.Sort();
             string url = ConfigSettings.Instance.MeiTuanConfirmAsyncStatus;
-            string postdata = "";
-            return DoAsyncStatus(url, postdata);
+            string sig = ETS.Security.MD5.Encrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
+            string paras = string.Join("&", @params) + "&sig=" + sig;
+            return GetDoAsyncStatus(url, paras);
         }
 
         /// <summary>
-        ///  美团取消订单回调接口地址  add by caoheyang 20150420
+        /// 取消订单美团回调接口地址  add by caoheyang 20150420
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         protected OrderApiStatusType CancelAsyncStatus(AsyncStatusPM_OpenApi model)
         {
+            //参数信息
+            List<string> @params = new List<string>() { 
+            "timestamp="+TimeHelper.GetTimeStamp(false) ,
+            "order_id="+model.order_no, //订单号
+            "reason=12", //取消原因
+            "reason_code=12", //规范化取消原因code
+            "app_id="+app_id
+            };
+            @params.Sort();
             string url = ConfigSettings.Instance.MeiTuanCancelAsyncStatus;
+            string sig = ETS.Security.MD5.Encrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
+            string paras = string.Join("&", @params) + "&sig=" + sig;
             string postdata = "";
-            return DoAsyncStatus(url, postdata);
+            return PostDoAsyncStatus(url, postdata);
         }
         /// <summary>
-        ///  美团订单配送中回调接口地址  add by caoheyang 20150420
+        ///  订单配送中美团回调接口地址  add by caoheyang 20150420
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         protected OrderApiStatusType DeliveringAsyncStatus(AsyncStatusPM_OpenApi model)
         {
+            //参数信息
+            List<string> @params = new List<string>() { 
+            "timestamp="+TimeHelper.GetTimeStamp(false) ,
+            "order_id="+model.order_no, //订单号
+            "courier_name="+model.ClienterTrueName, //配送员姓名
+            "courier_phone="+model.ClienterPhoneNo, //配送电话
+            "app_id="+app_id
+            };
+            @params.Sort();
             string url = ConfigSettings.Instance.MeiTuanDeliveringAsyncStatus;
-            string postdata = "";
-            return DoAsyncStatus(url, postdata);
+            string sig = ETS.Security.MD5.Encrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
+            string paras = string.Join("&", @params) + "&sig=" + sig;
+            return PostDoAsyncStatus(url, paras);
         }
         /// <summary>
-        ///  美团订单已送达（订单完成）回调接口地址  add by caoheyang 20150420
+        /// 订单已送达美团（订单完成）回调接口地址  add by caoheyang 20150420
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         protected OrderApiStatusType ArrivedAsyncStatus(AsyncStatusPM_OpenApi model)
         {
+            //参数信息
+            List<string> @params = new List<string>() { 
+            "timestamp="+TimeHelper.GetTimeStamp(false) ,
+            "order_id="+model.order_no, //订单号
+            "app_id="+app_id
+            };
+            @params.Sort();
             string url = ConfigSettings.Instance.MeiTuanArrivedAsyncStatus;
-            string  postdata="";
-            return DoAsyncStatus(url, postdata);
+            string sig = ETS.Security.MD5.Encrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
+            string paras = string.Join("&", @params) + "&sig=" + sig;
+            return PostDoAsyncStatus(url, paras);
         }
 
         /// <summary>
-        /// 调用美团第三方接口 add by caoheyang 20150420
+        /// GET调用美团第三方接口 add by caoheyang 20150420
         /// </summary>
-        /// <param name="url"></param>
+        /// <param name="url">地址</param>
+        /// <param name="postdata">参数数据</param>
         /// <returns></returns>
-        protected OrderApiStatusType DoAsyncStatus(string url,string postdata)
+        protected OrderApiStatusType GetDoAsyncStatus(string url, string postdata)
         {
-            string json = HTTPHelper.HttpPost(url, postdata, accept: accept);
+            string json = new HttpClient().GetStringAsync(url + postdata).Result;
+            return AsyncStatusInfo(json);
+        }
+
+        /// <summary>
+        /// 对同步美团订单状态的第三方接口返回值做处理 add by caoheyang 20150420
+        /// </summary>
+        /// <param name="json">请求得到的数据</param>
+        /// <returns></returns>
+        protected OrderApiStatusType AsyncStatusInfo(string json)
+        {
             if (string.IsNullOrWhiteSpace(json))
                 return OrderApiStatusType.ParaError;
             JObject jobject = JObject.Parse(json);
@@ -115,6 +163,17 @@ namespace Ets.Service.Provider.OpenApi
             return status == "ok" ? OrderApiStatusType.Success : OrderApiStatusType.OtherError;
         }
 
+        /// <summary>
+        /// POST调用美团第三方接口 add by caoheyang 20150420
+        /// </summary>
+        /// <param name="url">地址</param>
+        /// <param name="postdata">参数数据</param>
+        /// <returns></returns>
+        protected OrderApiStatusType PostDoAsyncStatus(string url, string postdata)
+        {
+            string json = HTTPHelper.HttpPost(url, postdata, accept: accept);
+            return AsyncStatusInfo(json);
+        }
 
         /// <summary>
         /// 新增商铺时根据集团id为店铺设置外送费，结算比例等财务相关信息 add by caoheyang 20150420
