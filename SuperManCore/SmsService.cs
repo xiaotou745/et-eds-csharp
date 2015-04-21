@@ -22,6 +22,23 @@ namespace SuperManCore
                 return SendSmsStatus.SendFailure;
             }
         }
+
+        public static SendSmsStatus VoiceSendSms(string mobile, string content, string smsSource)
+        {
+            var sms = new SMSServiceReference.SmsSoapClient();
+            string result = sms.VoiceSendSms(mobile/*手机号码*/, content/*信息内容*/, smsSource/*短信来源*/, null/*餐厅ID（可以为null）*/);
+            if (result == "发送成功")
+            {
+                LogHelper.LogWriter(DateTime.Now.ToString() + " 向手机号为： " + mobile + " 的用户发送短信，短信内容为：" + content + "。发送成功。");
+                return SendSmsStatus.Sending;
+            }
+            else
+            {
+                LogHelper.LogWriter(DateTime.Now.ToString() + " 向手机号为： " + mobile + " 的用户发送短信，短信内容为：" + content + "。发送失败。");
+                return SendSmsStatus.SendFailure;
+            }
+        }
+
     }
 
 

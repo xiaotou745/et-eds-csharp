@@ -1,6 +1,10 @@
 ﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Bussiness.BusListResultModel>
 @using Ets.Model.DomainModel.Bussiness;
 @using Ets.Service.Provider.User
+<<<<<<< HEAD
+@using SuperManBusinessLogic.Group_Logic
+=======
+>>>>>>> SuperManCrowdSourcing
 @{
     ViewBag.Title = "Order";
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
@@ -11,8 +15,8 @@
         您所在位置：商户 > 商户管理
     </h2>
     @using (Ajax.BeginForm("PostBusinessManager", new RouteValueDictionary { { "pageindex", "" } },
-    new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
-    new RouteValueDictionary { { "id", "searchForm" } }))
+        new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+        new RouteValueDictionary { { "id", "searchForm" } }))
     {
         <div class="SearchMd">
             <table border="0" cellspacing="0" cellpadding="0">
@@ -44,6 +48,14 @@
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                     </td>
                 </tr>
+                <tr>
+                    <td>
+                     @if (SuperMan.App_Start.UserContext.Current.HasAuthority(40))
+                    {
+                         <input type="submit" value="添加商户" onclick="showaddBusiness();" class="searchBtn" id="btnAddShop" />
+                    } 
+                    </td>
+                </tr>
             </table>
         </div>
     }
@@ -52,6 +64,58 @@
         @Html.Partial("_BusinessManageList", Model)
     </div>
 </div>
+@*添加商户*@
+<div class="BusinessAddDiv">
+    <div class="add-openbox add-form" id="BusinessAddDiv" style="width:500px">
+        <h2>
+            <p id="addstatusFin">添加商户</p>
+        </h2>
+        <fieldset>
+            <div class="control-group">
+                <label>商家名称</label>
+                <input name="businessName" id="businessName" type="text">
+            </div>
+            <div class="control-group">
+                <label>电话</label>
+                <input name="businessphoneNo" id="businessphoneNo" type="text">
+            </div>
+            <div class="control-group">
+                <label>结算比例</label>
+                <input name="businessCommission" id="businessCommission" type="text">%
+            </div>
+            <div class="control-group">
+                <label>外送费</label>
+                <input name="businessWaisong" id="businessWaisong" type="text">
+            </div> 
+            <div class="control-group">
+                <label>地址</label>
+                <input name="businessaddr" id="businessaddr" style="width: 200px;" type="text">
+            </div>
+            <div class="control-group">
+                <label>城市</label>
+            @Html.DropDownList("businesscity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Code", "Name"), "--无--", new { style = "width:155px" })
+            </div>
+            @if (ViewBag.txtGroupId > 0)
+                {
+                    <input type="hidden" id="addbusinessGroupID" value="@ViewBag.txtGroupId" />
+                }
+                else
+                {
+                    <div class="control-group">
+                        <label class="control-label" for="InternalDepart">集团信息</label>
+                        <div class="controls">
+                            @Html.DropDownList("addbusinessGroupID", new SelectList(new BusinessProvider().GetGroups() , "Id", "GroupName"), "--无--", new { @class = "selectw", style = "width:143px" })
+                        </div>
+                    </div>
+                }  
+        </fieldset>
+        <p class="btnbox">
+            <input value="确认" type="button" id="btnAddBusiness" class="yesBtn" />
+            <input value="关闭" type="button" class="J_closebox qxBtn" />
+        </p>
+    </div>
+</div>
+
 @*结算比例弹窗*@
 <div class="BusinessCommissionDish">
     <div class="add-openbox add-form" id="BusinessCommissionDiv" style="width:500px">
@@ -129,40 +193,11 @@
     </div>
 </div>
 <script>
-    var adminjs = new adminglass(); //实例化后台类
-    //var DEFAULT_PAGESIZE = 15;
-    //var criteria = { PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE } };
+    var adminjs = new adminglass(); //实例化后台类 
     $(document).ready(function () {
-        window.location.hash = '';
-        //查询
-        //$("#btnSearch").on('click', function () {
-        //    criteria = {
-        //        BusinessName: $("#txtBusinessName").val(), //商户名称
-        //        BusinessPhone: $("#txtBusinessPhone").val(),////商户电话
-        //        BusinessCommission: $("#txtBusinessCommission").val(),////商户结算比例
-        //        status: $("#businessStatus").val(),
-        //        GroupId: $("#txtGroupId").val(),
-        //        PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }
-        //    };
-        //    refresh(0);
-        //});
+        window.location.hash = ''; 
     })
-    ////分页
-    //art.ui.control.NewPager.enablePaging(document, refresh);
-    //function refresh(pageIndex) {
-    //    var url = "/BusinessManager/BusinessManager";
-    //    if (pageIndex !== undefined) {
-    //        criteria.PagingRequest.PageIndex = pageIndex;
-    //    }
-    //    criteria.status = $("#businessStatus").val();
-    //    webExpress.utility.ajax.request
-    //        (
-    //            url,
-    //            criteria,
-    //            function (data) {
-    //                $("#dataList").html(data);
-    //            });
-    //};
+   
     //设置结算比例-外送费
     $("#btnCommissionConfim").on('click', function () {
         var busCommissionHid = $("#busCommissionHid").val(); //商户id
@@ -249,6 +284,79 @@
     });
 
 
+    //添加商户
+    $("#btnAddBusiness").on('click', function () {
+        var businessName = $("#businessName").val(); //商户
+        var businessCommission = $("#businessCommission").val(); ////商户结算比例
+        var businessphoneNo = $("#businessphoneNo").val(); ////商户手机号
+        var businessaddr = $("#businessaddr").val(); ////商户地址
+        var businesspassWord = $("#businesspassWord").val(); ////商户密码
+        var businesscityid = $("#businesscity").val(); ////商户城市id 
+        var businesscity = $("#businesscity").find("option:selected").text(); ////商户城市
+        var txtGroupId = $("#addbusinessGroupID").val(); ////商户集团
+        var businessWaisong = $("#businessWaisong").val(); ////商户外送费
+ 
+        if (businessName == null || businessName=="") {
+            alert("请输入商户名!");
+            return;
+        }
+        if (businessphoneNo == null || businessphoneNo == "") {
+            alert("请输入商户手机号!");
+            return;
+        }
+        if (businessaddr == null || businessaddr == "") {
+            alert("请输入商户地址!");
+            return;
+        }
+        if (businesspassWord == null || businesspassWord == "") {
+            alert("请输入商户密码!");
+            return;
+        }
+        if (businesscityid == null || businesscityid == "") {
+            alert("请选择商户城市!");
+            return;
+        }
+        if (txtGroupId == null || txtGroupId == "") {
+            txtGroupId = 0;
+        }
+        
+        if (isNaN(businessCommission)) {
+            alert("请输入正确的数字!");
+            return;
+        }
+        if (businessCommission < 0) {
+            alert("请输入大于零的值!");
+            return;
+        }
+        if (isNaN(businessWaisong)) {
+            alert("请输入正确的数字!");
+            return;
+        }
+        if (businessWaisong < 0) {
+            alert("请输入大于零的值!");
+            return;
+        } 
+        var paramaters = { "GroupId": txtGroupId, "businessaddr": businessaddr, "businessWaisong": businessWaisong, "businessCommission": businessCommission, "passWord": businesspassWord, "city": businesscity, "CityId": businesscityid, "businessName": businessName, "phoneNo": businessphoneNo };
+        var url = "/BusinessManager/AddBusiness";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert("设置成功!");
+                    window.location.href = "/BusinessManager/BusinessManager";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    });
+    
+
+    function showaddBusiness() { 
+        adminjs.openwinbox('#BusinessAddDiv');
+    }
     //关闭弹层
     $('.J_closebox').click(function () {
         adminjs.closewinbox('.add-openbox');
