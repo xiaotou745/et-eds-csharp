@@ -21,5 +21,19 @@ namespace ETS.Enums
         [DisplayText("参数错误")]
         ParaError = 10002
     }
+    /// <summary>
+    /// 商户注册 返回枚举
+    /// </summary>
+    public enum BusiRegisterStatusType
+    {
+        [DisplayText("成功")]
+        Success = 0,
+        [DisplayText("签名错误")]
+        SignError = 10000,
+        [DisplayText("系统错误")]
+        SystemError = 10001,
+        [DisplayText("参数错误")]
+        ParaError = 10002
+    }
 
 }
