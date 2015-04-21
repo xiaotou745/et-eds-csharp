@@ -10,10 +10,10 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
+using Quartz;
 namespace Ets.CrossShopShortMessage.BLL
 {
-    public class Job_ShortMessage
+    public class Job_ShortMessage:IJob
     {
 
         /// <summary>
@@ -21,20 +21,12 @@ namespace Ets.CrossShopShortMessage.BLL
         /// 徐鹏程
         /// 20150414
         /// </summary>
-        public static void ShortMessage()
+        public void Execute(IJobExecutionContext context)
         {
-            while (true)
-            {
-                if (DateTime.Now.Hour == ETS.Config.ShortMessageTime)
-                {
-                    SubsidyProvider CrossShop = new SubsidyProvider();
-                    ETS.Util.LogHelper.LogWriter(DateTime.Now.ToString()+"短信发送开始");
-                    CrossShop.ShortMessage();
-                    ETS.Util.LogHelper.LogWriter(DateTime.Now.ToString() + "短信发送完成");
-                }
-                Thread.Sleep(1000 * 60 * 60);
-            }
-
+            SubsidyProvider CrossShop = new SubsidyProvider();
+            ETS.Util.LogHelper.LogWriter(DateTime.Now.ToString() + "短信发送开始");
+            CrossShop.ShortMessage();
+            ETS.Util.LogHelper.LogWriter(DateTime.Now.ToString() + "短信发送完成");
         }
     }
 }

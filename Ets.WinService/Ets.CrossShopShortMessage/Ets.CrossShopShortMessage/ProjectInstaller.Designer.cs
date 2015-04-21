@@ -41,7 +41,7 @@
             // 
             this.ShortMessage.Description = "Ets.CrossShopShortMessage";
             this.ShortMessage.DisplayName = "Ets.CrossShopShortMessage";
-            this.ShortMessage.ServiceName = "Service1";
+            this.ShortMessage.ServiceName = "Ets.CrossShopShortMessage";
             // 
             // ProjectInstaller
             // 
