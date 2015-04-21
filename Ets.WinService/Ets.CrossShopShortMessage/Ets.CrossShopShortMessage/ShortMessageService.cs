@@ -34,7 +34,7 @@ namespace Ets.CrossShopShortMessage
 
         protected override void OnStart(string[] args)
         {
-            Thread.Sleep(1000 * 10);
+            //Thread.Sleep(1000 * 10);
             myScheduler.Start();
             ETS.Util.LogHelper.LogWriter(DateTime.Now.ToString() + "服务开启");
         }

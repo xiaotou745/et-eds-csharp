@@ -23,7 +23,7 @@
         <description></description>
         <job-name>Job01</job-name>
         <job-group>Group01</job-group>
-        <cron-expression>1 0 0 * * ?</cron-expression>
+        <cron-expression>0 0 9 * * ?</cron-expression>
       </cron>
     </trigger>
   </schedule>

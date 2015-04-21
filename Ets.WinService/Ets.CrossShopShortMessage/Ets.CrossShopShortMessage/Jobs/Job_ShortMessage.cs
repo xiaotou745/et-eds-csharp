@@ -20,7 +20,7 @@ namespace Ets.CrossShopShortMessage.Jobs
         /// <summary>
         /// 跨店奖励主程序入口
         /// 徐鹏程
-        /// 20150414
+        /// 20150421
         /// </summary>
         public void Execute(IJobExecutionContext context)
         {
