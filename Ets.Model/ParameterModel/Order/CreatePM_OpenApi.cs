@@ -14,7 +14,7 @@ namespace Ets.Model.ParameterModel.Order
     public class CreatePM_OpenApi
     {
         /// <summary>
-        /// 订单号
+        /// 订单号 第三方订单号
         /// </summary>
         [Required]
         public string order_id { get; set; }

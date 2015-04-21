@@ -194,7 +194,22 @@ namespace Ets.Service.Provider.OpenApi
         /// <param name="info"></param>
         public void PullOrderInfo(int store_id)
         {
+            MeiTuanOrdeModel model = new MeiTuanOrdeModel();
+        }
 
+        /// <summary>
+        /// 美团的订单数据转成通用的openapi接入订单数据实体类型 20150421
+        /// </summary>
+        /// <param name="fromModel">美团数据实体</param>
+        public void TranslateModel(MeiTuanOrdeModel fromModel)
+        {
+            CreatePM_OpenApi model = new CreatePM_OpenApi();
+            model.order_id = fromModel.order_id; //订单ID
+            Address address = new Address();
+            address.address = fromModel.recipient_address;//用户收货地址
+            address.user_phone = fromModel.recipient_phone;//用户联系电话
+            address.user_name = fromModel.recipient_phone;//用户姓名
+            model.address = address; //订单ID
         }
     }
 
