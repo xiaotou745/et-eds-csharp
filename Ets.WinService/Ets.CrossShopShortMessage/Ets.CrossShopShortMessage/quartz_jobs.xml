@@ -11,7 +11,7 @@
       <name>Job01</name>
       <group>Group01</group>
       <description></description>
-      <job-type>Ets.CrossShopShortMessage.BLL.Job_ShortMessage,Ets.CrossShopShortMessage</job-type>
+      <job-type>Ets.CrossShopShortMessage.Jobs.Job_ShortMessage,Ets.CrossShopShortMessage</job-type>
       <durable>true</durable>
       <recover>false</recover>
     </job>
@@ -23,7 +23,7 @@
         <description></description>
         <job-name>Job01</job-name>
         <job-group>Group01</job-group>
-        <cron-expression>59 59 23 * * ?</cron-expression>
+        <cron-expression>1 0 0 * * ?</cron-expression>
       </cron>
     </trigger>
   </schedule>

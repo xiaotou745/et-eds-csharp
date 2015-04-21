@@ -11,9 +11,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Quartz;
-namespace Ets.CrossShopShortMessage.BLL
+
+namespace Ets.CrossShopShortMessage.Jobs
 {
-    public class Job_ShortMessage:IJob
+    public class Job_ShortMessage : IJob
     {
 
         /// <summary>

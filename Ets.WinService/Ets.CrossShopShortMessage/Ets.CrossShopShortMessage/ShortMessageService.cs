@@ -1,5 +1,4 @@
-﻿using Ets.CrossShopShortMessage.BLL;
-using ETS;
+﻿using ETS;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,15 +17,10 @@ namespace Ets.CrossShopShortMessage
 {
     public partial class ShortMessageService : ServiceBase
     {
+        IScheduler myScheduler = null;
         public ShortMessageService()
         {
             InitializeComponent();
-        }
-
-        protected override void OnStart(string[] args)
-        {
-            //Thread.Sleep(1000 * 10);
-            ETS.Util.LogHelper.LogWriter(DateTime.Now.ToString() + "跨店奖励短信发送服务开启");
             NameValueCollection properties = new NameValueCollection();
             properties["quartz.scheduler.instanceName"] = "XmlConfiguredInstance";
             properties["quartz.threadPool.type"] = "Quartz.Simpl.SimpleThreadPool, Quartz";
@@ -34,15 +28,21 @@ namespace Ets.CrossShopShortMessage
             properties["quartz.threadPool.threadPriority"] = "Normal";
             properties["quartz.plugin.xml.type"] = "Quartz.Plugin.Xml.XMLSchedulingDataProcessorPlugin, Quartz";
             properties["quartz.plugin.xml.fileNames"] = "~/quartz_jobs.xml";
-
             ISchedulerFactory myFactory = new StdSchedulerFactory(properties);
-            IScheduler myScheduler = myFactory.GetScheduler();
+            myScheduler = myFactory.GetScheduler();
+        }
+
+        protected override void OnStart(string[] args)
+        {
+            Thread.Sleep(1000 * 10);
             myScheduler.Start();
+            ETS.Util.LogHelper.LogWriter(DateTime.Now.ToString() + "服务开启");
         }
 
         protected override void OnStop()
         {
-            ETS.Util.LogHelper.LogWriter(DateTime.Now.ToString() + "跨店奖励短信发送服务结束");
+            myScheduler.Shutdown();
+            ETS.Util.LogHelper.LogWriter(DateTime.Now.ToString() + "服务结束");
         }
     }
 }

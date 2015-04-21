@@ -39,8 +39,8 @@
             // 
             // serviceInstaller1
             // 
-            this.serviceInstaller1.Description = "e代送数据统计服务";
-            this.serviceInstaller1.DisplayName = "e代送数据统计服务";
+            this.serviceInstaller1.Description = "Ets.Statistics";
+            this.serviceInstaller1.DisplayName = "Ets.Statistics";
             this.serviceInstaller1.ServiceName = "Service1";
             // 
             // ProjectInstaller
