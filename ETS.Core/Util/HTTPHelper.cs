@@ -19,13 +19,15 @@ namespace ETS.Util
         /// </summary>
         /// <param name="Url"></param>
         /// <param name="postDataStr"></param>
+        ///  <param name="accept">Accept HTTP 标头的值</param>  
         /// <returns></returns>
-        public static string HttpPost(string Url, string postDataStr)
+        public static string HttpPost(string Url, string postDataStr, 
+            string accept = "Accept:text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Url);
             request.CookieContainer = new CookieContainer();
             CookieContainer cookie = request.CookieContainer;//如果用不到Cookie，删去即可  
-            request.Accept = "Accept:text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+            request.Accept = accept;
             request.Headers["Accept-Language"] = "zh-CN,zh;q=0.";
             request.Headers["Accept-Charset"] = "GBK,utf-8;q=0.7,*;q=0.3";
             request.UserAgent = "User-Agent:Mozilla/5.0 (Windows NT 5.1) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/14.0.835.202 Safari/535.1";

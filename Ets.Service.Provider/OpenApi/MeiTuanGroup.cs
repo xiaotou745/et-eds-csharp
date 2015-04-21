@@ -24,8 +24,13 @@ namespace Ets.Service.Provider.OpenApi
     /// </summary>
     public class MeiTuanGroup : IGroupProviderOpenApi, IPullOrderInfoOpenApi
     {
-        public string app_id = ConfigSettings.Instance.MeiTuanAppkey;
-        public string consumer_secret = ConfigSettings.Instance.MeiTuanAppsecret;
+        private string app_id = ConfigSettings.Instance.MeiTuanAppkey;
+        private string consumer_secret = ConfigSettings.Instance.MeiTuanAppsecret;
+
+        /// <summary>
+        /// Accept HTTP 标头的值
+        /// </summary>
+        private string accept = "application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"; 
 
         /// <summary>
         /// 回调万达接口同步订单状态  add by caoheyang 20150420
@@ -102,7 +107,7 @@ namespace Ets.Service.Provider.OpenApi
         /// <returns></returns>
         protected OrderApiStatusType DoAsyncStatus(string url,string postdata)
         {
-            string json = HTTPHelper.HttpPost(url, postdata);
+            string json = HTTPHelper.HttpPost(url, postdata, accept: accept);
             if (string.IsNullOrWhiteSpace(json))
                 return OrderApiStatusType.ParaError;
             JObject jobject = JObject.Parse(json);

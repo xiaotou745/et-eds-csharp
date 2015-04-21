@@ -48,7 +48,7 @@ namespace OpenApi.Controllers
             string waimd5 = url + string.Join("&", @params) + "01c33711a7c2e6cf2cc27d838e83006e"; //consumer_secret
             string sig = ETS.Security.MD5.Encrypt(waimd5).ToLower();
             string paras = string.Join("&", @params) + "&sig=" + sig;
-            string json = HTTPHelper.HttpPost(url, paras);
+            string json = HTTPHelper.HttpPost(url, paras, accept: "application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
             return null;
         }
     }

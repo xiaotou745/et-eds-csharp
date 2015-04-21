@@ -88,5 +88,6 @@ namespace Ets.Service.Provider.OpenApi
             paramodel.store_info.businesscommission = 0;//万达目前结算比例统一0
             return paramodel;
         }
+
     }
 }
