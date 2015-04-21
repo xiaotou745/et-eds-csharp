@@ -29,5 +29,7 @@ namespace Ets.Model.DomainModel.Bussiness
         public string PickUpName { get; set; }
         public string SuperManName { get; set; }
         public string SuperManPhone { get; set; }
+        public int OrderFrom { get; set; }
+        public string OriginalOrderNo { get; set; } 
     }
 }
