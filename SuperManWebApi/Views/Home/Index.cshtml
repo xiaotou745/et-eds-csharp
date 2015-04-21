@@ -469,13 +469,11 @@
     
  
      $.ajax({
-         type: 'get',
+        type: 'get',
         dataType: 'json',
-        url: '/BusinessAPI/GetOtherOrderList_B',
+        url: '/BusinessAPI/OtherOrderCancel_B',
         data: {
-            "userId": "82",
-            "pagedSize": "5",
-            "pagedIndex": "1"
+            "orderlist": "82150403113006077","note":"餐厅太忙"
         },
         success: function (data) {
             console.log(data);

@@ -1,6 +1,5 @@
 ﻿using ETS.Enums;
 using SuperManCore;
-using SuperManCore.Common;
 using SuperManWebApi.Models.Business;
 using System;
 using System.Collections.Generic;
@@ -9,17 +8,12 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
-using SuperManBusinessLogic.B_Logic;
-using SuperManBusinessLogic.Order_Logic;
-using System.Threading.Tasks;
 using SuperManCommonModel;
 using Ets.Service.Provider.User;
 using Ets.Service.IProvider.Order;
 using Ets.Service.Provider.Order;
 using Ets.Service.Provider.Common;
 using Ets.Service.IProvider.User;
-using ETS.Cacheing;
-using Ets.Model.ParameterModel.Clienter;
 using ETS.Const; 
 namespace SuperManWebApi.Controllers
 {
@@ -257,28 +251,7 @@ namespace SuperManWebApi.Controllers
             return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]>.Conclude(ETS.Enums.GetOrdersStatus.Success, list.ToArray());
         }
 
-        #region 美团等第三方订单处理 
-
-        /// <summary>
-        /// 获取第三方待确认订单列表-美团订单 平扬-2015-4.20
-        /// </summary>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.GetOrdersStatus))]
-        [HttpGet]
-        public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]> GetOtherOrderList_B(int userId, int? pagedSize, int? pagedIndex)
-        {
-            var pIndex = ETS.Util.ParseHelper.ToInt(pagedIndex, 1);
-            pIndex = pIndex <= 0 ? 1 : pIndex;
-            var pSize = ETS.Util.ParseHelper.ToInt(pagedSize, 100);
-
-            Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp criteria = new Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp()
-            {
-                PagingResult = new Ets.Model.Common.PagingResult(pIndex, pSize),
-                userId = userId
-            };
-            IList<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel> list = new BusinessProvider().GetOtherOrdersApp(criteria);
-            return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]>.Conclude(ETS.Enums.GetOrdersStatus.Success, list.ToArray());
-        }
+        #region 美团等第三方订单处理  
 
        
         /// <summary>

@@ -94,8 +94,8 @@ namespace Ets.Dao.User
             string whereStr = "1=1 ";  //where查询条件实体类
             if (paraModel.userId != null)  //订单商户id
                 whereStr += " and o.businessId=" + paraModel.userId.ToString();
-
-            whereStr += " and o.Status=30";
+            if (paraModel.Status != null)  //状态id
+                whereStr += " and o.Status=" + paraModel.Status.ToString();
             #endregion
 
             string orderByColumn = " o.PubDate DESC ";  //排序条件

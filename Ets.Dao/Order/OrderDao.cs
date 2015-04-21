@@ -858,8 +858,8 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
         {
             StringBuilder upSql = new StringBuilder();
             upSql.AppendFormat(@" UPDATE dbo.[order]
- SET    [Status] = @status,OtherCancelReason=@OtherCancelReason 
- output Inserted.Id,GETDATE(),'{0}','',Inserted.businessId,Inserted.[Status],{1}
+ SET    [Status] = @status,OtherCancelReason=@OtherCancelReason,PubDate=getdate() 
+ output Inserted.Id,GETDATE(),'{0}',@OtherCancelReason,Inserted.businessId,Inserted.[Status],{1}
  into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
  WHERE  OrderNo = @orderNo", SuperPlatform.商家,(int)SuperPlatform.商家);
 
