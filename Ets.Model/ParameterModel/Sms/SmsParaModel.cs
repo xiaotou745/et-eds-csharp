@@ -18,7 +18,7 @@ namespace Ets.Model.ParameterModel.Sms
         public string Stype { get; set; }
 
         /// <summary>
-        /// 短信验证码
+        /// 版本号
         /// </summary>
         public string Version { get; set; }
     }
