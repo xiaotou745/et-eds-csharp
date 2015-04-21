@@ -227,6 +227,58 @@ namespace SuperManBusinessLogic.C_Logic
         }
 
         /// <summary>
+        /// 修改超人信息
+        /// </summary>
+        /// <param name="clienter"></param>
+        /// <returns></returns>
+        public bool Update(clienter clienter)
+        {
+            try
+            {
+                bool result = false;
+                using (var db = new supermanEntities())
+                {
+                    if (clienter != null)
+                    {
+                        var query = db.clienter.Where(p => p.Id == clienter.Id).FirstOrDefault();
+                        if (query != null)
+                        {
+                            if (!string.IsNullOrWhiteSpace(clienter.PicWithHandUrl))
+                            {
+                                query.PicWithHandUrl = clienter.PicWithHandUrl;
+                            }
+                            if (!string.IsNullOrWhiteSpace(clienter.PicUrl))
+                            {
+                                query.PicUrl = clienter.PicUrl;
+                            }
+                            if (!string.IsNullOrWhiteSpace(clienter.Password))
+                            {
+                                query.Password = clienter.Password;
+                            }
+                            query.TrueName = clienter.TrueName;
+                            query.PhoneNo = clienter.PhoneNo;
+                            query.HealthCardID = clienter.HealthCardID;
+                            query.Province = clienter.Province;
+                            query.City = clienter.City;
+                            query.BussinessID = clienter.BussinessID;
+                            query.InternalDepart = clienter.InternalDepart;
+                            query.IDCard = clienter.IDCard;
+                            int i = db.SaveChanges();
+                            if (i != 0)
+                                result = true;
+                        }
+                    }
+                }
+                return result;
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+            
+        }
+
+        /// <summary>
         /// 登录时根据电话号码和密码查找超人
         /// </summary>
         /// <param name="phoneNo"></param>

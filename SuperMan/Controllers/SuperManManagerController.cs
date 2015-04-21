@@ -105,5 +105,24 @@ namespace SuperMan.Controllers
             }
             return Json(new ResultModel(result, "添加超人失败，请重试!"));
         }
+
+        /// <summary>
+        /// 修改超人信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult ModifySuperMan(clienter clienter)
+        {
+            if (string.IsNullOrWhiteSpace(clienter.Password))
+                clienter.Password = "edaisong";
+            clienter.Password = MD5Helper.MD5(clienter.Password);
+            bool result = ClienterLogic.clienterLogic().Update(clienter);
+            if (result)
+            {
+                return Json(new ResultModel(true, "成功"));
+            }
+            return Json(new ResultModel(result, "修改超人信息失败，请重试!"));
+        }
     }
 }

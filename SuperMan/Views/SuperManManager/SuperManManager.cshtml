@@ -1,7 +1,7 @@
 ﻿@model ClienterManage
 @using SuperManCommonModel.Models;
 @using SuperManBusinessLogic.CommonLogic
- @using SuperManBusinessLogic.Group_Logic
+@using SuperManBusinessLogic.Group_Logic
 @{
     ViewBag.Title = "Order";
 }
@@ -65,21 +65,21 @@
                         <text id="labBoxPhoneNo" style="color:red" hidden="hidden">不能为空</text>
                     </div>
                 </div>
-               
+
                 <div class="control-group">
                     <label class="control-label" for="fileUploadHand"><span style="color:red;">*</span>手持照片</label>
                     <div class="controls">
                         <input type="file" id="fileUploadHand" required="required" name="fileUploadHand" multiple>
-                        <input type="hidden" id="hidHandUpload"/>
-                        <input type="text" id="labfileuploadHand" readonly="readonly" hidden="hidden" style="color:red" name="labfileuploadHand" value="不能为空"/>
+                        <input type="hidden" id="hidHandUpload" />
+                        <input type="text" id="labfileuploadHand" readonly="readonly" hidden="hidden" style="color:red" name="labfileuploadHand" value="不能为空" />
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" for="fileUpload"><span style="color:red;">*</span>照片</label>
                     <div class="controls">
-                        <input type="file" placeholder="验证照片" required="required" id="fileUpload" name="fileUpload" multiple >
-                        <input type="hidden" id="hidupload"/>
-                        <input type="text" id="labfileupload" hidden="hidden" readonly="readonly" style="color:red" name="labfileupload" value="不能为空"/>
+                        <input type="file" placeholder="验证照片" required="required" id="fileUpload" name="fileUpload" multiple>
+                        <input type="hidden" id="hidupload" />
+                        <input type="text" id="labfileupload" hidden="hidden" readonly="readonly" style="color:red" name="labfileupload" value="不能为空" />
                     </div>
                 </div>
                 <div class="control-group">
@@ -93,7 +93,8 @@
                     <label class="control-label"><span style="color:red;">*</span>所属城市</label>
                     <div class="controls">
                         @Html.DropDownList("ProvinceCode", new SelectList(RegionLogic.regionLogic().GetRegionsByFid(), "Code", "Name"), "--请选择--", new { style = "width:90px", id = "BoxProvinceCode" })
-                        <select name="CityCode" id="BoxCityCode" style="width:103px;">l
+                        <select name="CityCode" id="BoxCityCode" style="width:103px;">
+                            l
                             <option>--城市--</option>
                         </select>
                         <text id="labBoxCode" style="color:red" hidden="hidden">不能为空</text>
@@ -147,7 +148,117 @@
             <input value="关闭" type="button" class="J_closebox qxBtn" />
         </p>
     </div>
-</div> 
+</div>
+
+
+
+<!--骑士信息修改弹出窗部分-->
+<div class="selectSupplierDish">
+    <div class="add-openbox add-form" id="UpdateSuperManShow" style="width:500px">
+        <h2>
+            <p id="statusUnFin">超人信息修改</p>
+            <a class="J_closebox x_close"></a>
+        </h2>
+        <form class="form-horizontal" role="form" id="UpdateSuperManForm" method="post" action="/SuperManManager/UpdateSuperMan">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="TrueName"><span style="color:red;">*</span>姓名</label>
+                    <div class="controls">
+                        <input name="SupId" id="SupId" required="required" type="hidden">
+                        <input placeholder="姓名" name="SupName" id="SupName" required="required" type="text">
+                        <text id="labBoxSupName" style="color:red" hidden="hidden">不能为空</text>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="PhoneNo"><span style="color:red;">*</span>电话</label>
+                    <div class="controls">
+                        <input placeholder="电话" name="SupPhoneNo" id="SupPhoneNo" required="required" type="text">
+                        <text id="labBoxSupPhoneNo" style="color:red" hidden="hidden">不能为空</text>
+                    </div>
+                </div>
+
+
+                <div class="control-group">
+                    <label class="control-label" for="HealthCardID"><span style="color:red;">*</span>健康证ID</label>
+                    <div class="controls">
+                        <input placeholder="健康证ID" name="SupHealthCardID" id="SupHealthCardID" required="required" type="text">
+                        <text id="labSupHealthCardID" style="color:red" hidden="hidden">不能为空</text>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label"><span style="color:red;">*</span>所属城市</label>
+                    <div class="controls">
+                        @Html.DropDownList("SupProvinceCode", new SelectList(RegionLogic.regionLogic().GetRegionsByFid(), "Code", "Name"), "--请选择--", new { style = "width:90px", id = "SupProvinceCode" })
+                        <select name="SupCityCode" id="SupCityCode" style="width:103px;">
+                            l
+                            <option>--城市--</option>
+                        </select>
+                        <text id="labSupCityCode" style="color:red" hidden="hidden">不能为空</text>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="BussinessID"><span style="color:red;">*</span>所属门店</label>
+                    <div class="controls">
+                        <select name="SupBussinessID" id="SupBussinessID" style="width:198px;">
+                            <option value="">--所属门店--</option>
+                        </select>
+                        <text id="labSupBussinessID" style="color:red" hidden="hidden">不能为空</text>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="fileUploadHand">手持照片</label>
+                    <div class="controls">
+                        <input type="file" id="fileSupUploadHand" required="required" name="fileSupUploadHand" multiple>
+                        <input type="hidden" id="hidSupHandUpload" />
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="fileUpload">照片</label>
+                    <div class="controls">
+                        <input type="file" placeholder="验证照片" required="required" id="fileSupUpload" name="fileSupUpload" multiple>
+                        <input type="hidden" id="hidSupupload" />
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="InternalDepart">内外部门</label>
+                    <div class="controls">
+                        <input placeholder="内外部门" name="SupInternalDepart" id="SupInternalDepart" type="text">
+                    </div>
+
+                </div>
+                @if (ViewBag.txtGroupId > 0)
+                {
+                    <input type="hidden" id="HidSupGroupID" value="@ViewBag.txtGroupId" />
+                }
+                else
+                {
+                    <div class="control-group">
+                        <label class="control-label" for="InternalDepart">集团信息</label>
+                        <div class="controls">
+                            @Html.DropDownList("HidSupGroupID", new SelectList(GroupLogic.groupLogic().GetGroups(), "Id", "GroupName"), "--无--")
+                        </div>
+                    </div>
+                }
+                <div class="control-group">
+                    <label class="control-label" for="IDCard">身份证号</label>
+                    <div class="controls">
+                        <input placeholder="身份证号" name="SupIDCard" id="SupIDCard" type="text">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="Password">密码</label>
+                    <div class="controls">
+                        <input placeholder="登陆密码" name="SupPassword" id="SupPassword" type="text">
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+        <p class="btnbox">
+            <input value="确认" type="button" id="btnUpdateSuperConfim" class="yesBtn" />
+            <input value="关闭" type="button" class="J_closebox qxBtn" />
+        </p>
+    </div>
+</div>
 <script>
     var adminjs = new adminglass(); //实例化后台类
     var DEFAULT_PAGESIZE = 15;
@@ -175,7 +286,7 @@
             autoUpload: true,
             acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
             maxFileSize: 2000000, // 5 MB
-            done: function(e, results) {
+            done: function (e, results) {
                 //done方法就是上传完毕的回调函数，其他回调函数可以自行查看api
                 //注意result要和jquery的ajax的data参数区分，这个对象包含了整个请求信息
                 //返回的数据在result.result中，假设我们服务器返回了一个json对象
@@ -184,7 +295,7 @@
                 if (result.IsSuccess) {
                     $('#fileUploadHand').hide();
                     $('#hidHandUpload').val(picNames[0]);
-                    $('#labfileuploadHand').val(picNames[0]+"-上传成功").show();
+                    $('#labfileuploadHand').val(picNames[0] + "-上传成功").show();
                 } else {
                     alert(result.Message);
                     $('#fileUploadHand').show();
@@ -216,7 +327,7 @@
                 }
             }
         });
- 
+
         //新增超人保存按钮点击事件    add by caoheyang 20150302
         $("#btnSuperConfim").click(
             function () {
@@ -224,7 +335,7 @@
                 var trueName = $('#BoxTrueName').val();//姓名
                 var phoneNo = $('#BoxPhoneNo').val();//手机号
                 var hidHandUpload = $('#hidHandUpload').val(); //手持照片
-                var hidupload = $('#hidupload').val(); //照片  
+                var hidupload = $('#hidupload').val(); //照片
                 var healthCardID = $('#BoxHealthCardID').val(); //健康证ID
                 var internalDepart = $('#BoxInternalDepart').val(); //内外部门
                 var provinceCode = $('#BoxProvinceCode').val(); //省
@@ -232,7 +343,7 @@
                 var idCard = $('#BoxIDCard').val(); //身份证号
                 var password = $('#BoxPassword').val() == null || $('#BoxPassword').val() == "" ? "edaisong" : $('#BoxPassword').val(); //密码
                 var bussinessID = $('#BoxBussinessID').val(); //所属门店
-              
+
                 if (trueName == "" || trueName == null) {  //姓名非空验证
                     $('#labBoxTrueName').show();
                     result = false;
@@ -306,7 +417,7 @@
                         },
                         error: function () {
                         }
-                    }); 
+                    });
                 }
             }
          );
@@ -347,6 +458,140 @@
             }
         }
 
+        $('#SupProvinceCode').change(function () {
+            var selCityCode = $("#SupCityCode");
+            selCityCode.empty();;  //清除选择的城市信息
+            $('#SupBussinessID').empty();  //清除选择的门店信息
+            selCityCode.append('<option value="" selected="selected">--城市--</option>');
+            if ($(this).val() != null && $(this).val() != "") {
+                $.post("/Common/GetRegionsByCode", { Code: $(this).val() }, function (data) {
+                    $.each(data, function (i, item) {
+                        selCityCode.append('<option  value="' + item.Code + '">' + item.Name + '</option>');
+                    });
+                });
+            }
+        });
+
+        $('#SupCityCode').change(function () {
+            LoadSupBussinessInfo();
+        });
+        function LoadSupBussinessInfo() {
+            var selBussinessID = $('#SupBussinessID');  //清除选择的门店信息
+            selBussinessID.empty();
+            selBussinessID.append('<option value="" selected="selected">--所属门店--</option>');
+            if ($('#SupCityCode').val() != null && $('#SupCityCode').val() != "") {
+                $.post("/BusinessManager/GetBussinessByCityInfo",
+                    { ProvinceCode: $("#SupProvinceCode").val(), CityCode: $('#SupCityCode').val(), GroupId: $("#HidGroupID").val() },
+                    function (data) {
+                        $.each(data, function (i, item) {
+                            selBussinessID.append('<option  value="' + item.Id + '">' + item.Name + '</option>');
+                        });
+                    });
+            }
+        }
+
+
+        $("#btnUpdateSuperConfim").click(
+
+    function () {
+        if (confirm("确认要提交更改？")) {
+            $('#labBoxSupName').hide();
+            $('#labSupBussinessID').hide();
+            $('#labBoxSupPhoneNo').hide();
+            $('#labSupCityCode').hide();
+            $('#labSupHealthCardID').hide();
+            var result = true;//验证结果
+            var id = $('#SupId').val();//Id
+            var trueName = $('#SupName').val();//姓名
+            var phoneNo = $('#SupPhoneNo').val();//手机号
+            var hidHandUpload = $('#fileSupUploadHand').val(); //手持照片
+            var hidupload = $('#fileSupUpload').val(); //照片
+            var healthCardID = $('#SupHealthCardID').val(); //健康证ID
+            var internalDepart = $('#SupInternalDepart').val(); //内外部门
+            var provinceCode = $('#SupProvinceCode').val(); //省
+            var cityCode = $('#SupCityCode').val(); //市
+            var idCard = $('#SupIDCard').val(); //身份证号
+            var password = $('#SupPassword').val(); //密码
+            var bussinessID = $('#SupBussinessID').val(); //所属门店
+
+            if (trueName == "" || trueName == null) {  //姓名非空验证
+                $('#labBoxSupName').show();
+                result = false;
+            } else {
+                $('#labBoxSupName').hide();
+            }
+            if (bussinessID == "" || bussinessID == null) {  //所属门店非空验证
+                $('#labSupBussinessID').show();
+                result = false;
+            } else {
+                $('#labSupBussinessID').hide();
+            }
+            if (phoneNo == "" || phoneNo == null) {  //手机号非空验证
+                $('#labBoxSupPhoneNo').html("不能为空").show();
+                result = false;
+            } else {
+                var myreg = /^((\+?86)|(\(\+86\)))?(1[0-9][0-9]{9})$/;
+                if (!myreg.test(phoneNo)) {  //手机号码格式验证
+                    $('#labBoxSupPhoneNo').html("手机号格式不正确").show();
+                    result = false;
+                } else {
+                    $('#labBoxSupPhoneNo').hide();
+                }
+            }
+            //if (hidHandUpload == "" || hidHandUpload == null) {  //手持照片
+            //    $('#labfileSupuploadHand').val("不能为空").show();
+            //    result = false;
+            //} else {
+            //    $('#labfileSupuploadHand').hide();
+            //}
+            //if (hidupload == "" || hidupload == null) {  //照片
+            //    $('#labfileSupupload').val("不能为空").show();
+            //    result = false;
+            //} else {
+            //    $('#labfileSupupload').hide();
+            //}
+            if (provinceCode == "" || provinceCode == null || cityCode == "" || cityCode == null) {  //省/市非空验证
+                $('#labSupCityCode').show();
+                result = false;
+            } else {
+                $('#labSupCityCode').hide();
+            }
+            if (healthCardID == "" || healthCardID == null) {  //健康证非空验证
+                $('#labSupHealthCardID').show();
+                result = false;
+            } else {
+                $('#labSupHealthCardID').hide();
+            }
+            if (result == false) {
+                return result;
+            }
+            else {
+                $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    url: '/SuperManManager/ModifySuperMan',
+                    data: {
+                        Id: id, TrueName: trueName, PhoneNo: phoneNo, HealthCardID: healthCardID, InternalDepart: internalDepart,
+                        ProvinceCode: provinceCode, CityCode: cityCode, IDCard: idCard, Password: password, City: $("#SupProvinceCode").find("option:selected").text(),
+                        CityId: provinceCode, Province: $("#SupProvinceCode").find("option:selected").text(), GroupId: $("#HidSupGroupID").val(),
+                        BussinessID: bussinessID, PicWithHandUrl: hidHandUpload, PicUrl: hidupload
+                    },
+                    success: function (result) {
+                        if (result.IsSuccess) {
+                            alert("修改超人信息成功！");
+                            window.location.href = "/SuperManManager/SuperManManager";
+                        } else {
+                            alert(result.Message);
+                        }
+                    },
+                    error: function () {
+                    }
+                });
+            }
+        }
+    }
+         );
+
         //当集团可选（即：当前登陆人员非管理员时，为集团下拉绑定事件  add by caoheyang 20150303）
         if ($("#HidGroupID").attr("type") != "hidden") {
             //当集团选项发生改变时，重选商户。
@@ -382,4 +627,4 @@
         adminjs.closewinbox('.add-openbox');
         return false;
     });
-</script>  
+</script>
