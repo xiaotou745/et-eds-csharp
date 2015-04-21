@@ -49,8 +49,10 @@ namespace SuperManBusinessLogic.CommonLogic
                 Audience audience = null;
                 if (tagId == 0)  //C端
                 {
-                    if(ConfigSettings.Instance.IsGroupPush)   //TODO 暂时有效
-                        audience = Audience.s_tag_and(city.Trim(),"海底捞");
+                    if (ConfigSettings.Instance.IsGroupPush)   //TODO 暂时有效
+                    {
+                        audience = Audience.s_tag_and(city.Trim(),"海底捞",RegistrationId);
+                    } 
                     else
                         audience = Audience.s_tag_and(city.Trim());
                 }

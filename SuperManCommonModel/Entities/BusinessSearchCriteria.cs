@@ -39,5 +39,9 @@ namespace SuperManCommonModel.Entities
         /// 市编码
         /// </summary>
         public string CityCode { get; set; }
+        /// <summary>
+        /// 商户Id
+        /// </summary>
+        public int BusiId { get; set; }
     }
 }

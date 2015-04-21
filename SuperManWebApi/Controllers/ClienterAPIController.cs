@@ -81,6 +81,13 @@ namespace SuperManWebApi.Controllers
                     city = string.IsNullOrWhiteSpace(aClienter.City) ? null : aClienter.City.Trim(),  //城市
                     cityId = string.IsNullOrWhiteSpace(aClienter.CityId) ? null : aClienter.CityId.Trim()  //城市编码
                 };
+                List<int> busiId = new List<int>();
+                if (aClienter.BussinessID.HasValue)
+                {
+                    busiId.Add(aClienter.BussinessID.Value);  //骑士所属商户Id
+                }
+                result.BusibussId = busiId;
+ 
                 return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.Success, result);
             }
             catch (Exception ex)

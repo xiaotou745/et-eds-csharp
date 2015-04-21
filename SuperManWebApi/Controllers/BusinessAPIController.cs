@@ -8,8 +8,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Web;
-using System.Web.Http;
-//using System.Web.Mvc;
+using System.Web.Http; 
 using SuperManDataAccess;
 using SuperManBusinessLogic.B_Logic;
 using SuperManBusinessLogic.Order_Logic;
@@ -19,37 +18,11 @@ using System.Threading.Tasks;
 using SuperManCommonModel;
 using System.Text;
 using System.Net;
+using SuperManCommonModel.Entities;
 namespace SuperManWebApi.Controllers
 {
     public class BusinessAPIController : ApiController
     {
-        /// <summary>
-        ///  B端注册 
-        /// </summary>
-        /// <param name="model">注册用户基本数据信息</param>
-        /// <returns></returns>
-        [ActionStatus(typeof(CustomerRegisterStatus))]
-        [HttpPost]
-        public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(RegisterInfoModel model)
-        {
-            if (string.IsNullOrEmpty(model.phoneNo))   //手机号非空验证
-                return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
-            else if (BusiLogic.busiLogic().CheckExistPhone(model.phoneNo))  //判断该手机号是否已经注册过
-                return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberRegistered);
-            else if (string.IsNullOrEmpty(model.passWord))   //密码非空验证
-                return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PasswordEmpty);
-            else if (model.verifyCode != SupermanApiCaching.Instance.Get(model.phoneNo))  //判断验证法录入是否正确
-                return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode); //CustomerRegisterStatus用户注册信息枚举
-            else if (string.IsNullOrEmpty(model.city) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
-                return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
-            var business = RegisterInfoModelTranslator.Instance.Translate(model);
-            bool result = BusiLogic.busiLogic().Add(business);
-            var resultModel = new BusiRegisterResultModel
-            {
-                userId = business.Id
-            };            
-            return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
-        }
 
         /// <summary>
         /// B端注册，供第三方使用
@@ -68,7 +41,7 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.OriginalBusiIdEmpty);
             else if (string.IsNullOrWhiteSpace(model.B_GroupId.ToString()))  //集团Id不能为空
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.GroupIdEmpty);
-            else if(BusiLogic.busiLogic().CheckExistBusi(model.B_OriginalBusiId,model.B_GroupId))
+            else if (BusiLogic.busiLogic().CheckExistBusi(model.B_OriginalBusiId, model.B_GroupId))
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.OriginalBusiIdRepeat);
             else if (string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_CityCode.ToString())) //城市以及城市编码非空验证
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
@@ -87,7 +60,7 @@ namespace SuperManWebApi.Controllers
                 model.B_Password = MD5Helper.MD5(model.B_Password);
             }
             var business = NewRegisterInfoModelTranslator.Instance.Translate(model);
-            bool result = BusiLogic.busiLogic().Add(business,true);
+            bool result = BusiLogic.busiLogic().Add(business, true);
             var resultModel = new NewBusiRegisterResultModel
             {
                 BusiRegisterId = business.Id
@@ -96,7 +69,7 @@ namespace SuperManWebApi.Controllers
             return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
         }
 
-        
+
         /// <summary>
         /// B端取消订单，供第三方使用
         /// </summary>
@@ -106,12 +79,12 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<OrderCancelResultModel> NewOrderCancel(OrderCancelModel model)
         {
-            LogHelper.LogWriter("第三方调用取消订单：", new { model = model});
+            LogHelper.LogWriter("第三方调用取消订单：", new { model = model });
             if (string.IsNullOrEmpty(model.OriginalOrderNo))   //订单号非空验证
-                return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderEmpty); 
+                return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderEmpty);
             if (string.IsNullOrEmpty(model.OrderFrom.ToString()))   //订单来源非空验证
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderFromEmpty);
-            var order = OrderLogic.orderLogic().GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom,model.OrderType);
+            var order = OrderLogic.orderLogic().GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom, model.OrderType);
             if (order == null)
             {
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderIsNotExist);
@@ -127,8 +100,8 @@ namespace SuperManWebApi.Controllers
             }
             else
             {
-                return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.NotCancelOrder, new OrderCancelResultModel { Remark="取消失败" });
-            }     
+                return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.NotCancelOrder, new OrderCancelResultModel { Remark = "取消失败" });
+            }
         }
 
         /// <summary>
@@ -140,7 +113,7 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<NewPostPublishOrderResultModel> NewPostPublishOrder_B(NewPostPublishOrderModel model)
         {
-            LogHelper.LogWriter("订单发布请求实体", new { model = model});
+            LogHelper.LogWriter("订单发布请求实体", new { model = model });
             if (string.IsNullOrWhiteSpace(model.OriginalOrderNo))   //原始订单号非空验证
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OriginalOrderNoEmpty);
             if (model.OriginalBusinessId == 0)   //原平台商户Id非空验证
@@ -168,7 +141,7 @@ namespace SuperManWebApi.Controllers
 
             if (string.IsNullOrWhiteSpace(model.Receive_Address))   //收货地址
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude
-                    (OrderPublicshStatus.ReceiveAddressEmpty);  
+                    (OrderPublicshStatus.ReceiveAddressEmpty);
             //验证原平台商户是否已经注册
             var busi = BusiLogic.busiLogic().GetBusiByOriIdAndOrderFrom(model.OriginalBusinessId, model.OrderFrom);
             if (busi == null)
@@ -183,8 +156,9 @@ namespace SuperManWebApi.Controllers
                 }
             }
             //验证该平台 商户 订单号 是否存在
-            var order = OrderLogic.orderLogic().GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom,model.OrderType);
-            if(order != null){
+            var order = OrderLogic.orderLogic().GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom, model.OrderType);
+            if (order != null)
+            {
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OrderHadExist);
             }
 
@@ -192,18 +166,46 @@ namespace SuperManWebApi.Controllers
             bool result = OrderLogic.orderLogic().AddModel(dborder);    //添加订单记录，并且触发极光推送。          
             if (result)
             {
-                NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { OriginalOrderNo = model.OriginalOrderNo,OrderNo = dborder.OrderNo };
-                LogHelper.LogWriter("订单发布成功", new { model = model,resultModel=resultModel });
+                NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { OriginalOrderNo = model.OriginalOrderNo, OrderNo = dborder.OrderNo };
+                LogHelper.LogWriter("订单发布成功", new { model = model, resultModel = resultModel });
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Success, resultModel);
             }
             else
             {
-                NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { Remark="订单发布失败" };
-                LogHelper.LogWriter("订单发布失败", new { model = model});
+                NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { Remark = "订单发布失败" };
+                LogHelper.LogWriter("订单发布失败", new { model = model });
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Failed);
-            }    
+            }
         }
 
+        /// <summary>
+        ///  B端注册 
+        /// </summary>
+        /// <param name="model">注册用户基本数据信息</param>
+        /// <returns></returns>
+        [ActionStatus(typeof(CustomerRegisterStatus))]
+        [HttpPost]
+        public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(RegisterInfoModel model)
+        {
+            if (string.IsNullOrEmpty(model.phoneNo))   //手机号非空验证
+                return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
+            else if (BusiLogic.busiLogic().CheckExistPhone(model.phoneNo))  //判断该手机号是否已经注册过
+                return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberRegistered);
+            else if (string.IsNullOrEmpty(model.passWord))   //密码非空验证
+                return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.PasswordEmpty);
+            else if (model.verifyCode != SupermanApiCaching.Instance.Get(model.phoneNo))  //判断验证法录入是否正确
+                return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode); //CustomerRegisterStatus用户注册信息枚举
+            else if (string.IsNullOrEmpty(model.city) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
+                return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
+            var business = RegisterInfoModelTranslator.Instance.Translate(model);
+            bool result = BusiLogic.busiLogic().Add(business);
+            var resultModel = new BusiRegisterResultModel
+            {
+                userId = business.Id
+            };            
+            return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
+        }
+          
         /// <summary>
         /// B端登录
         /// </summary>
@@ -524,5 +526,36 @@ namespace SuperManWebApi.Controllers
                 return ms.ToArray();
             }
         }
+
+        /// <summary>
+        /// 获取商户信息
+        /// </summary>
+        /// <returns></returns>
+        [ActionStatus(typeof(GetBusinessStatus))]
+        [HttpGet]
+        public ResultModel<List<BusinessSimpleModel>> GetBusiness_B(int busiId=0)
+        {
+            List<BusinessSimpleModel> listBusi = new List<BusinessSimpleModel>();
+            BusinessSearchCriteria search = new BusinessSearchCriteria();
+            
+            search.PagingRequest = new PagingResult(){ PageIndex=0, PageSize = 8000 };
+            search.GroupId = 2;
+            search.Status = 1;
+            search.BusiId = busiId;
+            var busimag = BusiLogic.busiLogic().GetBusinesses(search);
+            if (busimag != null && busimag.businessManageList != null && busimag.businessManageList.businessModel != null)
+            {
+                
+                foreach (var item in busimag.businessManageList.businessModel)
+                {
+                    BusinessSimpleModel bum = new BusinessSimpleModel();
+                    bum.Id = item.Id;
+                    bum.Name = item.Name;
+
+                    listBusi.Add(bum);
+                }
+            }
+            return ResultModel<List<BusinessSimpleModel>>.Conclude(GetBusinessStatus.Success, listBusi);
+        } 
     }
 }
