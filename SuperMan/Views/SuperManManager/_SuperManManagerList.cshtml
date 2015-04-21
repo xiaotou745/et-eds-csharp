@@ -75,6 +75,7 @@
                     {
                         <a href="javascript:void(0)" amount="@item.AccountBalance" supermanid="@item.Id" class="superManClear">余额清零</a>
                     }
+                    <a href="javascript:void(0)" orderid=@item.Id businessname=@item.TrueName id="linkView" onclick="funcViewSuperManInfo('@item.Id','@item.TrueName','@item.PhoneNo','@item.PicWithHandUrl','@item.PicUrl','@item.HealthCardID','@item.ProvinceCode','@item.CityId','@item.BussinessID','@item.InternalDepart','@item.IDCard','@item.Password')">修改</a>
                 }
                 else
                 {
@@ -193,4 +194,18 @@
         adminjs.closewinbox('.add-openbox');
         return false;
     });
+    function funcViewSuperManInfo(id, trueName, phoneNo, picWithHandUrl, picUrl, healthCardID, provinceCode, cityCode, bussinessID, internalDepart, iDCard, password) {
+        $("#SupId").val(id).attr('disabled', 'disabled');
+        $("#SupName").val(trueName);
+        $("#SupPhoneNo").val(phoneNo);
+        //$("#fileSupUploadHand").val(picWithHandUrl);
+        //$("#fileSupUpload").val(picUrl);
+        $("#SupHealthCardID").val(healthCardID);
+        $("#SupProvinceCode").val(provinceCode);
+        $("#SupCityCode").val(cityCode);
+        $("#SupBussinessID").val(bussinessID);
+        $("#SupInternalDepart").val(internalDepart);
+        $("#SupIDCard").val(iDCard);
+        adminjs.openwinbox('#UpdateSuperManShow');
+    };
 </script>
