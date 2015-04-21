@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ets.Service.IProvider.OpenApi
+namespace Ets.Service.Provider.OpenApi
 {
     /// <summary>
     /// 第三方对接集团的回调业务工厂 add by caoheyang 20150326
@@ -17,7 +17,7 @@ namespace Ets.Service.IProvider.OpenApi
         /// </summary>
         /// <param name="groupId"></param>
         /// <returns></returns>
-        public static Ets.Service.Provider.OpenApi.IGroupProviderOpenApi Create(int groupId)
+        public static Ets.Service.IProvider.OpenApi.IGroupProviderOpenApi Create(int groupId)
         {
             switch (groupId)
             {
@@ -25,6 +25,25 @@ namespace Ets.Service.IProvider.OpenApi
                     return new WanDaGroup();
                 case SystemConst.Group3: //全时
                     return new FulltimeGroup();
+                case SystemConst.Group4: //美团
+                    return new MeiTuanGroup();
+                default:
+                    return null;
+            }
+
+        }
+
+        /// <summary>
+        /// 获取集团对应的 回调业务类  add by caoheyang 20150326
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
+        public static Ets.Service.IProvider.OpenApi.IPullOrderInfoOpenApi GetIPullOrderInfo(int groupId)
+        {
+            switch (groupId)
+            {
+                case SystemConst.Group4: //美团
+                    return new MeiTuanGroup();
                 default:
                     return null;
             }

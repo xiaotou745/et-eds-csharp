@@ -1,6 +1,7 @@
 ﻿using ETS.Const;
 using ETS.Enums;
 using Ets.Model.Common;
+using Ets.Service.Provider.Order;
 using Ets.Service.Provider.WtihdrawRecords;
 using Microsoft.Ajax.Utilities;
 using SuperManCore.Common;
@@ -373,7 +374,20 @@ namespace SuperManWebApi.Controllers
 
             lock (lockHelper)
             {
-                bool bResult = iClienterProvider.RushOrder(userId, orderNo);
+                bool bResult = false;
+                if (myorder.OrderFrom == 4)//美团等第三方订单
+                {
+                    if (new OrderProvider().AsyncOrderStatus(orderNo))//更新美团状态
+                    {
+                        bResult = iClienterProvider.RushOrder(userId, orderNo);
+                    }
+                }
+                else
+                {
+                    new OrderProvider().AsyncOrderStatus(orderNo);
+                    bResult = iClienterProvider.RushOrder(userId, orderNo);
+                } 
+               
                 if (bResult)
                 {
                     Ets.Service.Provider.MyPush.Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", myorder.businessId.ToString(), string.Empty);
@@ -399,7 +413,22 @@ namespace SuperManWebApi.Controllers
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.userIdEmpty);
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderEmpty);
-            string finishResult = iClienterProvider.FinishOrder(userId, orderNo, pickupCode);
+            var myorder = new Ets.Dao.Order.OrderDao().GetOrderByNo(orderNo);
+            string finishResult = "";
+
+            if (myorder.OrderFrom ==4)//美团等第三方订单
+            {
+                if (new OrderProvider().AsyncOrderStatus(orderNo))//更新美团状态,美团成功才能更改我们库数据
+                {
+                    finishResult = iClienterProvider.FinishOrder(userId, orderNo, pickupCode);
+                }
+            }
+            else
+            {
+                new OrderProvider().AsyncOrderStatus(orderNo);
+                finishResult = iClienterProvider.FinishOrder(userId, orderNo, pickupCode); 
+            }  
+ 
             if (finishResult == "1")  //完成
             {
                 var clienter = iClienterProvider.GetUserInfoByUserId(userId);

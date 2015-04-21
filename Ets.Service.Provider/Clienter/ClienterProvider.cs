@@ -294,16 +294,10 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="orderNo"></param>
         /// <returns></returns>
         public bool RushOrder(int userId, string orderNo)
-        {
+        {            
             try
             {
-                bool res = clienterDao.RushOrder(userId, orderNo);
-                if (res)
-                {
-                    var orderPro = new OrderProvider();
-                    orderPro.AsyncOrderStatus(orderNo);
-                }
-                return res;
+                return clienterDao.RushOrder(userId, orderNo);
             }
             catch (Exception ex)
             {
@@ -546,9 +540,7 @@ namespace Ets.Service.Provider.Clienter
                     Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", myOrderInfo.businessId.ToString(), string.Empty);
                     result = "1";
                 }
-            }
-            OrderProvider order = new OrderProvider();
-            order.AsyncOrderStatus(orderNo);
+            } 
             return result;
         }
 

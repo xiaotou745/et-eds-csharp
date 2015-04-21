@@ -26,8 +26,8 @@ using ETS.Util;
 using System.Configuration;
 using ETS.Const;
 using Ets.Service.Provider.OpenApi;
-using Ets.Service.IProvider.OpenApi;
 using Ets.Model.DataModel.Order;
+using Ets.Service.IProvider.OpenApi;
 
 namespace OpenApi.Controllers
 {
@@ -36,7 +36,7 @@ namespace OpenApi.Controllers
     /// </summary>
     public class OrderController : ApiController
     {
-        // POSR: Order GetStatus    paramodel 固定 必须是 paramodel
+        // POST: Order GetStatus    paramodel 固定 必须是 paramodel
         /// <summary>
         /// 订单状态查询功能  add by caoheyang 20150316
         /// </summary>
@@ -58,11 +58,11 @@ namespace OpenApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [SignOpenApi] //sign验证过滤器 设计参数验证，sign验证 add by caoheyang 20150316
-        [OpenApiActionError]  //异常过滤器 add by caoheyang  20150316 一旦发生异常，客户端返回系统内部错误提示
+        [SignOpenApi]
+        [OpenApiActionError] 
         public ResultModel<object> Create(ParaModel<CreatePM_OpenApi> paramodel)
         {
-            paramodel.fields.store_info.group = paramodel.group;  //设置集团信息到具体的门店上  在dao层会用到 
+            paramodel.fields.store_info.group = paramodel.group;  //设置集团信息到具体的门店上  在dao层会用到
             IOrderProvider orderProvider = new OrderProvider();
             return orderProvider.Create(paramodel.fields);
         }
@@ -82,9 +82,9 @@ namespace OpenApi.Controllers
             return orderProvider.OrderDetail(paramodel.fields);
         }
 
-        // POST: Order Create   paramodel 固定 必须是 paramodel  
+        // POST: Order AsyncStatus   paramodel 固定 必须是 paramodel  
         /// <summary>
-        /// 第三方订单状态同步   add by caoheyang 20150326  目前仅支持万达
+        /// 第三方订单状态同步   add by caoheyang 20150326  
         /// </summary>
         /// <returns></returns>
         [HttpPost]
@@ -97,6 +97,40 @@ namespace OpenApi.Controllers
                 ResultModel<object>.Conclude(OrderApiStatusType.Success);  //无集团信息，不需要同步返回成功，实际应该不会该情况
             OrderApiStatusType statusType = groupProvider.AsyncStatus(paramodel);
             return ResultModel<object>.Conclude(statusType);
+        }
+
+
+        // POST: Order PullOrder   paramodel 固定 必须是 paramodel  
+        /// <summary>
+        /// 接受第三方推送发布订单的通知，从第三方抓取订单详细信息接口    add by caoheyang 20150420  目前仅支持美团
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        //[SignOpenApi]
+        //[OpenApiActionError]
+        public ResultModel<object> PullOrderInfo(ParaModel<PullOrderInfoPM_OpenApi> paramodel)
+        {
+            paramodel = new ParaModel<PullOrderInfoPM_OpenApi>();
+            paramodel.group = 4;
+            IPullOrderInfoOpenApi groupProvider = OpenApiGroupFactory.GetIPullOrderInfo(paramodel.group);
+            if (groupProvider == null)
+                return ResultModel<object>.Conclude(OrderApiStatusType.Success);  //无集团信息，不需要同步返回成功，实际应该不会该情况
+            groupProvider.PullOrderInfo(paramodel.fields.store_id);
+            return null;
+        }
+
+        // POST: Order ChangeStatus   paramodel 固定 必须是 paramodel  
+        /// <summary>
+        /// 第三方更新E代送订单状态   add by caoheyang 20150421  
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [SignOpenApi]
+        [OpenApiActionError]
+        public ResultModel<object> ChangeStatus(ParaModel<ChangeStatusPM_OpenApi> paramodel)
+        {
+            paramodel.fields.groupid = paramodel.group;
+            return new OrderProvider().UpdateOrderStatus_Other(paramodel.fields);
         }
     }
 }

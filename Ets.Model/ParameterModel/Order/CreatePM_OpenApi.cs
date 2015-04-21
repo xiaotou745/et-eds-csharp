@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using Ets.Model.Common;
 
 namespace Ets.Model.ParameterModel.Order
 {
@@ -13,7 +14,7 @@ namespace Ets.Model.ParameterModel.Order
     public class CreatePM_OpenApi
     {
         /// <summary>
-        /// 订单号
+        /// 订单号 第三方订单号
         /// </summary>
         [Required]
         public string order_id { get; set; }
@@ -70,13 +71,13 @@ namespace Ets.Model.ParameterModel.Order
         /// </summary>
         public string remark { get; set; }
 
-        /// <summary>
-        /// 重量，默认为0
-        /// </summary>
-        public decimal delivery_fee { get; set; }
+        ///// <summary>
+        ///// 外送费，默认为0   无用，暂时注释
+        ///// </summary>
+        //public decimal delivery_fee { get; set; }
 
         /// <summary>
-        /// 外送费,默认为0
+        /// 重量
         /// </summary>
         public decimal weight { get; set; }
 
@@ -109,6 +110,16 @@ namespace Ets.Model.ParameterModel.Order
         /// 订单佣金计算方法 0：默认 1：根据时间段设置不同补贴
         /// </summary>
         public int CommissionFormulaMode { get; set; }
+
+        /// <summary>
+        /// 订单结算金额
+        /// </summary>
+        public decimal settlemoney { get; set; }
+
+        /// <summary>
+        /// 订单额外补贴金额
+        /// </summary>
+        public decimal adjustment { get; set; }
 
     }
 
@@ -277,6 +288,10 @@ namespace Ets.Model.ParameterModel.Order
         /// </summary>
         public int? commission_type { get; set; }
 
+        /// <summary>
+        /// 结算比例 目前由业务逻辑层计算查询所得
+        /// </summary>
+        public decimal businesscommission { get; set; }
     }
 
 

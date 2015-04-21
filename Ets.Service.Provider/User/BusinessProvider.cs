@@ -65,6 +65,8 @@ namespace Ets.Service.Provider.User
                 model.Status = from.Status;
                 model.superManName = from.SuperManName;
                 model.superManPhone = from.SuperManPhone;
+                model.OrderFrom = from.OrderFrom;
+                model.OriginalOrderNo = from.OriginalOrderNo;
                 if (from.BusinessId > 0 && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
                 {
                     var d1 = new Degree(from.Longitude.Value, from.Latitude.Value);
@@ -77,6 +79,7 @@ namespace Ets.Service.Provider.User
             }
             return listOrder;
         }
+         
 
         /// <summary>
         /// 商户结算列表--2015.3.12 平扬
@@ -364,6 +367,7 @@ namespace Ets.Service.Provider.User
                 resultMode.cityId = cityId;
                 resultMode.phoneNo = row["PhoneNo2"] == null ? row["PhoneNo"].ToString() : row["PhoneNo2"].ToString();
                 resultMode.DistribSubsidy = row["DistribSubsidy"] == null ? 0 : ParseHelper.ToDecimal(row["DistribSubsidy"]);
+                resultMode.OriginalBusiId = row["OriginalBusiId"].ToString();
                 return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.Success, resultMode);
             }
             catch (Exception ex)
