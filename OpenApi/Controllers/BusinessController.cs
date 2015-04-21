@@ -30,6 +30,7 @@ namespace OpenApi.Controllers
         [OpenApiActionError]
         public ResultModel<object> RegisterBusiness(ParaModel<BusinessRegisterModel> paramodel)
         {
+
             if (paramodel.app_key.Length > 0)
             {
                 return ResultModel<object>.Conclude(BusiRegisterStatusType.Success);

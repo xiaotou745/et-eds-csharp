@@ -283,7 +283,7 @@ namespace Ets.Service.Provider.User
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
             if (model.CommissionTypeId == 0)
             {
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
+                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.CommissionTypeIdEmpty);
             }
             model.B_Password = MD5Helper.MD5(string.IsNullOrEmpty(model.B_Password) ? "abc123" : model.B_Password);
             #region 转换省市区
