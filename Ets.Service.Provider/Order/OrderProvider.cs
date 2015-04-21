@@ -392,12 +392,11 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public int UpdateOrderStatus(string orderNo, int orderStatus)
         {
-            int result = OrderDao.CancelOrderStatus(orderNo, orderStatus);
-            if (result > 0) //更该订单状态时，同步第三方订单状态
+            if (AsyncOrderStatus(orderNo))//更该订单状态时，同步第三方订单状态
             {
-                AsyncOrderStatus(orderNo);
-            }
-            return result;
+                return OrderDao.CancelOrderStatus(orderNo, orderStatus);
+            } 
+            return 0;
         }
 
 
@@ -533,14 +532,14 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <param name="paramodel">参数实体</param>
         /// <returns>订单详情</returns>
-        public void AsyncOrderStatus(string orderNo)
+        public bool AsyncOrderStatus(string orderNo)
         {
             OrderListModel orderlistModel = OrderDao.GetOrderByNo(orderNo);
             if (orderlistModel.GroupId > 0)
             {
                 ParaModel<AsyncStatusPM_OpenApi> paramodel = new ParaModel<AsyncStatusPM_OpenApi>() { group = orderlistModel.GroupId, fields = new AsyncStatusPM_OpenApi() };
                 if (paramodel.GetSign() == null)//为当前集团参数实体生成sign签名信息
-                    return;
+                    return false;
                 paramodel.fields.status = ParseHelper.ToInt(orderlistModel.Status, -1);
                 paramodel.fields.ClienterTrueName = orderlistModel.ClienterTrueName;
                 paramodel.fields.ClienterPhoneNo = orderlistModel.ClienterPhoneNo;
@@ -550,7 +549,13 @@ namespace Ets.Service.Provider.Order
                 string url = ConfigurationManager.AppSettings["AsyncStatus"];
                 string json = new HttpClient().PostAsJsonAsync(url, paramodel).Result.Content.ReadAsStringAsync().Result;
                 JObject jobject = JObject.Parse(json);
+                int x = jobject.Value<int>("Status"); //接口调用状态 区分大小写
+                if (x==0)
+                {
+                    return true;
+                }
             }
+            return false;
         }
 
         #endregion

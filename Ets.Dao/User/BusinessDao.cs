@@ -399,7 +399,7 @@ namespace Ets.Dao.User
                         cityId,
                         phoneNo,
                         PhoneNo2,
-                        DistribSubsidy
+                        DistribSubsidy,ISNULL(OriginalBusiId,0) AS OriginalBusiId
                         FROM business(nolock) where PhoneNo=@PhoneNo AND Password=@Password order by id desc";
 
             IDbParameters parm = DbHelper.CreateDbParameters();

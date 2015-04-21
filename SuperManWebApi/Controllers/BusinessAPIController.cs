@@ -257,8 +257,10 @@ namespace SuperManWebApi.Controllers
             return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]>.Conclude(ETS.Enums.GetOrdersStatus.Success, list.ToArray());
         }
 
+        #region 美团等第三方订单处理 
+
         /// <summary>
-        /// 获取第三方订单列表
+        /// 获取第三方待确认订单列表-美团订单 平扬-2015-4.20
         /// </summary>
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.GetOrdersStatus))]
@@ -277,7 +279,48 @@ namespace SuperManWebApi.Controllers
             IList<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel> list = new BusinessProvider().GetOtherOrdersApp(criteria);
             return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]>.Conclude(ETS.Enums.GetOrdersStatus.Success, list.ToArray());
         }
-         
+
+       
+        /// <summary>
+        /// 商家确认第三方订单接口
+        /// </summary>
+        /// <param name="orderlist"></param>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
+        [HttpGet]
+        public Ets.Model.Common.ResultModel<List<string>> OtherOrderConfirm_B(string[] orderlist)
+        {
+            var orderProvider = new OrderProvider();
+            int i = 0;
+            var list= orderlist.Where(s => orderProvider.UpdateOrderStatus(s, OrderConst.ORDER_NEW) <= 0).ToList();
+            return Ets.Model.Common.ResultModel<List<string>>.Conclude(ETS.Enums.PubOrderStatus.Success, list);
+        }
+
+        /// <summary>
+        /// 商家拒绝第三方订单接口
+        /// </summary>
+        /// <param name="orderlist"></param>
+        /// <param name="note"></param>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
+        [HttpGet]
+        public Ets.Model.Common.ResultModel<int> OtherOrderCancel_B(string[] orderlist,string note)
+        {
+            var orderProvider = new OrderProvider();
+            int i = 0;
+            foreach (string s in orderlist)
+            {
+                if (orderProvider.UpdateOrderStatus(s, OrderConst.ORDER_CANCEL) > 0)
+                {
+                    i++;
+                    //插入拒绝日志,和拒绝原因
+                }
+
+            } 
+            return Ets.Model.Common.ResultModel<int>.Conclude(ETS.Enums.PubOrderStatus.Success, i);
+        }
+
+        #endregion
         /// <summary>
         /// 地址管理
         /// 改 ado.net wc

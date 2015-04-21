@@ -52,5 +52,11 @@ namespace Ets.Model.DataModel.Bussiness
         ///外送费
         /// </summary>
         public decimal? DistribSubsidy { get; set; }
+
+        /// <summary>
+        ///第三方店铺id（暂时只有美团）
+        /// </summary>
+        public string OriginalBusiId { get; set; }
+        
     }
 }

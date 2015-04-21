@@ -119,7 +119,7 @@ namespace Ets.Service.IProvider.Order
         /// </summary>
         /// <param name="paramodel">参数实体</param>
         /// <returns>订单详情</returns>
-        void AsyncOrderStatus(string orderNo);
+        bool AsyncOrderStatus(string orderNo);
 
         #endregion
         /// <summary>
