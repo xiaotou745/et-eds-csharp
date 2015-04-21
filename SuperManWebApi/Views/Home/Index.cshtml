@@ -466,5 +466,25 @@
 
     //    }
     //});
+    
+ 
+     $.ajax({
+         type: 'get',
+        dataType: 'json',
+        url: '/BusinessAPI/GetOtherOrderList_B',
+        data: {
+            "userId": "82",
+            "pagedSize": "5",
+            "pagedIndex": "1"
+        },
+        success: function (data) {
+            console.log(data);
+        },
+        error: function () {
+
+        }
+    });
+    
+    
 
 </script>

@@ -257,6 +257,26 @@ namespace SuperManWebApi.Controllers
             return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]>.Conclude(ETS.Enums.GetOrdersStatus.Success, list.ToArray());
         }
 
+        /// <summary>
+        /// 获取第三方订单列表
+        /// </summary>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.GetOrdersStatus))]
+        [HttpGet]
+        public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]> GetOtherOrderList_B(int userId, int? pagedSize, int? pagedIndex)
+        {
+            var pIndex = ETS.Util.ParseHelper.ToInt(pagedIndex, 1);
+            pIndex = pIndex <= 0 ? 1 : pIndex;
+            var pSize = ETS.Util.ParseHelper.ToInt(pagedSize, 100);
+
+            Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp criteria = new Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp()
+            {
+                PagingResult = new Ets.Model.Common.PagingResult(pIndex, pSize),
+                userId = userId
+            };
+            IList<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel> list = new BusinessProvider().GetOtherOrdersApp(criteria);
+            return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]>.Conclude(ETS.Enums.GetOrdersStatus.Success, list.ToArray());
+        }
          
         /// <summary>
         /// 地址管理

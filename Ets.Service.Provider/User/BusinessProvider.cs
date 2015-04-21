@@ -65,6 +65,8 @@ namespace Ets.Service.Provider.User
                 model.Status = from.Status;
                 model.superManName = from.SuperManName;
                 model.superManPhone = from.SuperManPhone;
+                model.OrderFrom = from.OrderFrom;
+                model.OriginalOrderNo = from.OriginalOrderNo;
                 if (from.BusinessId > 0 && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
                 {
                     var d1 = new Degree(from.Longitude.Value, from.Latitude.Value);
@@ -77,6 +79,50 @@ namespace Ets.Service.Provider.User
             }
             return listOrder;
         }
+
+        /// <summary>
+        /// app端商户获取第三方订单 
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public IList<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel> GetOtherOrdersApp(Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp paraModel)
+        {
+            PageInfo<BusiOrderSqlModel> pageinfo = dao.GetOtherOrdersAppToSql<BusiOrderSqlModel>(paraModel);
+            IList<BusiOrderSqlModel> list = pageinfo.Records;
+
+            List<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel> listOrder = new List<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel>();
+            foreach (BusiOrderSqlModel from in list)
+            {
+                Ets.Model.DomainModel.Bussiness.BusiGetOrderModel model = new Ets.Model.DomainModel.Bussiness.BusiGetOrderModel();
+                model.Amount = from.Amount;
+                model.IsPay = from.IsPay;
+                model.OrderNo = from.OrderNo;
+                model.PickUpAddress = from.PickUpAddress;
+                if (from.PubDate != null)
+                {
+                    model.PubDate = from.PubDate;
+                }
+                model.PickUpName = from.BusinessName;
+                model.ReceviceAddress = from.ReceviceAddress;
+                model.ReceviceName = from.ReceviceName == null ? "" : from.ReceviceName.Trim();
+                model.RecevicePhoneNo = from.RecevicePhoneNo;
+                model.Remark = from.Remark;
+                model.Status = from.Status;
+                model.OrderFrom = from.OrderFrom;
+                model.OriginalOrderNo = from.OriginalOrderNo;
+                if (from.BusinessId > 0 && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
+                {
+                    var d1 = new Degree(from.Longitude.Value, from.Latitude.Value);
+                    var d2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);
+                    model.distanceB2R = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(d1, d2));
+                }
+                else
+                    model.distanceB2R = 0;
+                listOrder.Add(model);
+            }
+            return listOrder;
+        }
+
 
         /// <summary>
         /// 商户结算列表--2015.3.12 平扬
