@@ -42,8 +42,6 @@ namespace Ets.Service.Provider.OpenApi
         {
             switch (groupId)
             {
-                case SystemConst.Group4: //美团
-                    return new MeiTuanGroup();
                 default:
                     return null;
             }

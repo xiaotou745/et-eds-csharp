@@ -100,25 +100,6 @@ namespace OpenApi.Controllers
         }
 
 
-        // POST: Order PullOrder   paramodel 固定 必须是 paramodel  
-        /// <summary>
-        /// 接受第三方推送发布订单的通知，从第三方抓取订单详细信息接口    add by caoheyang 20150420  目前仅支持美团
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        //[SignOpenApi]
-        //[OpenApiActionError]
-        public ResultModel<object> PullOrderInfo(ParaModel<PullOrderInfoPM_OpenApi> paramodel)
-        {
-            paramodel = new ParaModel<PullOrderInfoPM_OpenApi>();
-            paramodel.group = 4;
-            IPullOrderInfoOpenApi groupProvider = OpenApiGroupFactory.GetIPullOrderInfo(paramodel.group);
-            if (groupProvider == null)
-                return ResultModel<object>.Conclude(OrderApiStatusType.Success);  //无集团信息，不需要同步返回成功，实际应该不会该情况
-            groupProvider.PullOrderInfo(paramodel.fields.store_id);
-            return null;
-        }
-
         // POST: Order ChangeStatus   paramodel 固定 必须是 paramodel  
         /// <summary>
         /// 第三方更新E代送订单状态   add by caoheyang 20150421  

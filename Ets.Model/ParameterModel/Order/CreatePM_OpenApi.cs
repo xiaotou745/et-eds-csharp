@@ -38,7 +38,7 @@ namespace Ets.Model.ParameterModel.Order
         public bool is_pay { get; set; }
 
         /// <summary>
-        /// 支付类型 默认0  0 现金
+        /// 支付类型 默认0   0 现金   1 在线支付 
         /// </summary>
         public int payment { get; set; }
 
@@ -121,6 +121,10 @@ namespace Ets.Model.ParameterModel.Order
         /// </summary>
         public decimal adjustment { get; set; }
 
+        /// <summary>
+        /// 初始订单状态 默认为 0 add by caoheyang 20150421
+        /// </summary>
+        public int status { get; set; }
     }
 
     /// <summary>
