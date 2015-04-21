@@ -44,7 +44,8 @@ namespace OpenApi.Controllers
            MeiTuanGroup meituan = new MeiTuanGroup();
             if (!meituan.ValiditeSig(paramodel))
             {
-                meituan.TranslateModel(paramodel);
+               CreatePM_OpenApi model= meituan.TranslateModel(paramodel);
+               meituan.AddOrder(model);
             }
             return new { data = "fail" };  //推送失败
         } 

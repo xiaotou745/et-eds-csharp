@@ -252,10 +252,31 @@ namespace Ets.Service.Provider.OpenApi
             model.store_info = store; //店铺 
             model.address = address; //订单ID
 
-            //MeiTuanOrdeDetailModel[] details=JsonHelper.JsonConvertToObject<MeiTuanOrdeDetailModel[]>(fromModel.detail.ToString());
-
-            //fromModel.extras 有谁说明，暂时不用 
+            //订单明细不为空时做处理 
+            if (fromModel.detail != null && fromModel.detail.Length > 0)
+            {
+                OrderDetail[] details = new OrderDetail[fromModel.detail.Length];
+                for (int i = 0; i < fromModel.detail.Length; i++)
+                {
+                    OrderDetail tempdetail = new OrderDetail();
+                    tempdetail.product_name = fromModel.detail[i].food_name;//菜品名称
+                    tempdetail.quantity = fromModel.detail[i].quantity;//菜品数量
+                    tempdetail.unit_price = fromModel.detail[i].price;//菜品单价
+                    tempdetail.detail_id = 0;//美团不传递明细id，明细id为0
+                    details[i] = tempdetail;
+                }
+                model.order_details = details; //订单ID
+            }
+            //fromModel.extras 说明，暂时不用 
             return model;
+        }
+
+        /// <summary>
+        /// 新增美团订单 add by caoheyang 20150421 
+        /// </summary>
+        /// <param name="fromModel">paraModel</param>
+        public int AddOrder(CreatePM_OpenApi paraModel) {
+            return string.IsNullOrWhiteSpace(new Ets.Dao.Order.OrderDao().CreateToSql(paraModel)) ? 0 : 1;
         }
     }
 
