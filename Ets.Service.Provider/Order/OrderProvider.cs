@@ -866,7 +866,9 @@ namespace Ets.Service.Provider.Order
 
 
         /// <summary>
-        /// 第三方更新E代送订单状态   add by caoheyang 20150421    目前该方法仅美团回调取消订单时使用,固定只允许取消订单
+        /// 第三方更新E代送订单状态   add by caoheyang 20150421  
+        /// 目前该方法仅美团回调取消订单时使用,固定只允许取消订单，后期根据实际需求进行扩展
+        /// 可能会挪到具体的集团特有方法中。
         /// </summary>
         /// <param name="paramodel">参数</param>
         /// <returns></returns>
