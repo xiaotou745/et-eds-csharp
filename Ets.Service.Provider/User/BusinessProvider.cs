@@ -810,5 +810,37 @@ namespace Ets.Service.Provider.User
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.SendFailure);
             }
         }
+
+
+        public string AddThirdBusiness(ParaModel<BusinessRegisterModel> paramodel)
+        {
+            var to = new Business();
+            to.Province = paramodel.fields.B_Province;
+            to.ProvinceCode = paramodel.fields.B_ProvinceCode.Trim(); 
+            to.CityCode = paramodel.fields.B_CityCode;
+            to.CityId = paramodel.fields.B_CityCode.Trim();
+            to.City = paramodel.fields.B_City;
+
+            to.districtId = paramodel.fields.B_AreaCode.Trim();
+            to.district = paramodel.fields.B_Area;
+            to.AreaCode = paramodel.fields.B_AreaCode.Trim();
+
+            to.Address = paramodel.fields.Address.Trim();
+            to.Address = to.Address.Replace((char)13, (char)0);
+            to.Address = to.Address.Replace((char)10, (char)0);
+            to.GroupId = paramodel.group;
+
+            to.IDCard = paramodel.fields.B_IdCard;
+            to.Password = paramodel.fields.B_Password;
+            to.PhoneNo = paramodel.fields.PhoneNo.Trim();
+            to.PhoneNo2 = paramodel.fields.PhoneNo2;
+            to.Latitude = paramodel.fields.B_Latitude;
+            to.Longitude = paramodel.fields.B_Longitude;
+            to.Name = paramodel.fields.B_Name; 
+            to.OriginalBusiId = paramodel.fields.B_OriginalBusiId;
+            to.InsertTime = DateTime.Now;            
+
+            throw new NotImplementedException();
+        }
     }
 }
