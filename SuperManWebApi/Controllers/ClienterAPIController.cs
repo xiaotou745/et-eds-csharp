@@ -377,7 +377,7 @@ namespace SuperManWebApi.Controllers
                 bool bResult = false;
                 if (myorder.OrderFrom == 4)//美团等第三方订单
                 {
-                    if (new OrderProvider().AsyncOrderStatus(orderNo))//更新美团状态
+                    //if (new OrderProvider().AsyncOrderStatus(orderNo))//更新美团状态
                     {
                         bResult = iClienterProvider.RushOrder(userId, orderNo);
                     }
@@ -418,7 +418,7 @@ namespace SuperManWebApi.Controllers
 
             if (myorder.OrderFrom ==4)//美团等第三方订单
             {
-                if (new OrderProvider().AsyncOrderStatus(orderNo))//更新美团状态,美团成功才能更改我们库数据
+               // if (new OrderProvider().AsyncOrderStatus(orderNo))//更新美团状态,美团成功才能更改我们库数据
                 {
                     finishResult = iClienterProvider.FinishOrder(userId, orderNo, pickupCode);
                 }
@@ -838,6 +838,21 @@ namespace SuperManWebApi.Controllers
             }
         }
 
+        /// <summary>
+        /// 获取订单详细
+        /// </summary>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.GetOrdersStatus))]
+        [HttpGet]
+        public Ets.Model.Common.ResultModel<OrderListModel> GetOrderDetail(string orderno)
+        {
+            var model = new OrderProvider().GetOrderDetail(orderno);
+            if (model != null)
+            {
+                return Ets.Model.Common.ResultModel<OrderListModel>.Conclude(ETS.Enums.GetOrdersStatus.Success, model);
+            }
+            return Ets.Model.Common.ResultModel<OrderListModel>.Conclude(ETS.Enums.GetOrdersStatus.FailedGetOrders, model);
+        }
 
     }
 }
