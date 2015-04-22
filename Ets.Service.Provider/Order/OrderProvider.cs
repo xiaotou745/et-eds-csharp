@@ -895,10 +895,9 @@ namespace Ets.Service.Provider.Order
             }
         }
 
-        public int GetOrderRecords(string order_no, int group)
+        public IList<OrderRecordsLog> GetOrderRecords(string originalOrderNo, int group)
         {
-
-            throw new NotImplementedException();
+           return OrderDao.GetOrderRecords(originalOrderNo, group);
         }
     }
 }

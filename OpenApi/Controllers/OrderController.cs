@@ -119,16 +119,14 @@ namespace OpenApi.Controllers
         /// </summary>
         /// <param name="paramodel"></param>
         /// <returns></returns>
-        //[HttpPost]
-        //[SignOpenApi]
-        //[OpenApiActionError]
-        //public ResultModel<object> GetOrderRecords(ParaModel<GetStatusPM_OpenApi> paramodel)
-        //{
-        //    int orderRecords =  new OrderProvider().GetOrderRecords(paramodel.fields.order_no, paramodel.group);
+        [HttpPost]
+        [SignOpenApi]
+        [OpenApiActionError]
+        public ResultModel<object> GetOrderRecords(ParaModel<GetStatusPM_OpenApi> paramodel)
+        {
+            List<OrderRecordsLog> orderRecords =  new OrderProvider().GetOrderRecords(paramodel.fields.order_no, paramodel.group).ToList(); 
+            return ResultModel<object>.Conclude(OrderApiStatusType.Success,orderRecords);
 
-
-        //    return  
-
-        //}
+        }
     }
 }

@@ -124,7 +124,7 @@ namespace Ets.Model.Common
 
 
         public const string CancelOrder = "取消任务";
-        public const string PublishOrder = "发布任务";
+        public const string PublishOrder = "任务已发布";
         public const string OrderHadRush = "任务已被抢";
         public const string OrderFinish = "任务已完成";
     }

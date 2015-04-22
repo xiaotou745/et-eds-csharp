@@ -27,19 +27,11 @@ namespace Ets.Model.ParameterModel.Order
         /// <summary>
         /// 写入时间
         /// </summary>
-        public DateTime InsertTime { get; set; }
-        /// <summary>
-        /// 操作人Id
-        /// </summary>
-        public int OptId { get; set; }
+        public DateTime InsertTime { get; set; } 
         /// <summary>
         /// 操作人
         /// </summary>
-        public string OptName { get; set; } 
-        /// <summary>
-        /// 平台属性
-        /// </summary>
-        public int Platform { get; set; }
+        public string OptName { get; set; }  
         /// <summary>
         /// 操作描述
         /// </summary>
