@@ -155,7 +155,7 @@ WHERE   sub.[Status] = 1 ");
                         where 
                         convert(char(10),o.PubDate,120)=convert(char(10),dateadd(day,-1,getdate()),120) 
                         and o.[Status]=1  and clienterId not in 
-                        (SELECT ClienterId FROM dbo.CrossShopLog(nolock) where convert(char(10),o.PubDate,120)=convert(char(10),dateadd(day,-1,getdate()),120) )
+                        (SELECT ClienterId FROM dbo.CrossShopLog(nolock) where convert(char(10),insertTime,120)=convert(char(10),dateadd(day,0,getdate()),120) )
                         group by convert(char(10),o.PubDate,120), clienterId ) t 
                         where businessCount>1";
             DataTable myTable = DbHelper.ExecuteDataTable(SuperMan_Read, strSql);
