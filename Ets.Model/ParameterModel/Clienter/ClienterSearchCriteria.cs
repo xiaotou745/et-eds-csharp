@@ -42,6 +42,10 @@ namespace Ets.Model.ParameterModel.Clienter
         /// 推荐人电话
         /// </summary>
         public string recommonPhone { get; set; }
+        /// <summary>
+        /// 时间
+        /// </summary>
+        public string txtPubStart { get; set; }
         
     }
 }

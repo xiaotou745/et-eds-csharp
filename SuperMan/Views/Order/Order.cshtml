@@ -58,7 +58,8 @@
                     <input id="txtOriginalOrderNo" type="text" name="OriginalOrderNo" /> 
                     <span class="">订单号: </span>
                     <input id="txtOrderNo" type="text" name="orderId" />
-                    <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                    <input type="submit" value="查询"  class="searchBtn" id="btnSearch" />
+                    <input type="button" value="订单数据导出" onclick="return DaoCHu()" class="searchBtn" id="btncDaochu" />
                 </td>
             </tr>
         </table>
@@ -77,46 +78,23 @@
     $(document).ready(function () {        
         $('#txtOrderPubStart').datepicker();
         $('#txtOrderPubEnd').datepicker();
-        window.location.hash = '';
-        //查询
-        //$("#btnSearch").on('click', function () { 
-        //    var startDate = $('#txtOrderPubStart').val();
-        //    var endDate = $('#txtOrderPubEnd').val();
-        //    if (endDate < startDate) {
-        //        bootbox.alert("开始日期不能大于结束日期");
-        //        return false;
-        //    }
-        //    criteria = {
-        //        superManPhone: $("#txtSuperManPhone").val(),
-        //        businessPhone: $("#txtBusinessPhone").val(),
-        //        orderId: $("#txtOrderNo").val(),
-        //        OriginalOrderNo: $("#txtOriginalOrderNo").val(), 
-        //        superManName: $("#txtSuperManName").val(),
-        //        businessName: $("#txtBusinessName").val(),
-        //        orderStatus: $("#StatusSelect").val(),
-        //        OrderPubStart: startDate,
-        //        OrderPubEnd: endDate,
-        //        GroupId: $("#txtGroupId").val(),
-        //        PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }
-        //    };
-        //    refresh(0);
-        //});
+        window.location.hash = ''; 
     });
-    ////分页
-    //art.ui.control.NewPager.enablePaging(document, refresh);
-    //function refresh(pageIndex) {
-    //    var url = "/Order/OrderList";
-    //    if (pageIndex !== undefined) {
-    //        criteria.PagingRequest.PageIndex = pageIndex;
-    //    }
-    //    criteria.orderStatus = $("#StatusSelect").val();
-    //    webExpress.utility.ajax.request
-    //        (
-    //            url,
-    //            criteria,
-    //            function (data) {
-    //                $("#dataList").html(data);
-    //            });
-    //};
+ 
+
+    function DaoCHu() { 
+ 
+        var superManPhone = $("#txtSuperManPhone").val();
+        var txtSuperManName = $("#txtSuperManName").val();
+        var txtBusinessPhone = $("#txtBusinessPhone").val();
+        var txtBusinessName = $("#txtBusinessName").val();
+        var txtOrderPubStart = $("#txtOrderPubStart").val();
+        var txtOrderPubEnd = $("#txtOrderPubEnd").val(); 
+        var businessCity = $("#businessCity").find("option:selected").text();
+        var orderStatus = $("#StatusSelect").find("option:selected").text();
+        var url = "/Order/PostDaoChuOrder?superManPhone=" + superManPhone + "&superManName=" + txtSuperManName + "&businessPhone=" + txtBusinessPhone + "&businessName=" + txtBusinessName + "&orderStatus=" + orderStatus + "&businessCity=" + businessCity + "&OrderPubStart=" + txtOrderPubStart + "&OrderPubEnd=" + txtOrderPubEnd;
+        window.location.href = url;
+        return true;
+    }
 </script>
 <script src="~/Scripts/mvcpager.js"></script>

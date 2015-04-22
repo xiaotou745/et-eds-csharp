@@ -35,6 +35,7 @@ namespace Ets.Model.ParameterModel.Order
         /// </summary>
         public int? GroupId { get; set; }
         public string businessCity { get; set; }  //商户城市
+        public string hidDaochu { get; set; }  //是否导出数据
         
     }
 

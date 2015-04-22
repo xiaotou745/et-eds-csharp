@@ -1,6 +1,11 @@
 
+﻿using System.Collections.Generic;
+﻿using System.Text;
 ﻿using System.Web.Mvc;
-using SuperManCore.Common;
+﻿using ETS.Data.PageData;
+﻿using Ets.Model.DataModel.Order;
+﻿using Ets.Model.DomainModel.Bussiness;
+﻿using SuperManCore.Common;
 using Ets.Service.Provider.Distribution;
 using Ets.Service.Provider.Order;
 using Ets.Service.IProvider.Common;
@@ -44,9 +49,96 @@ namespace SuperMan.Controllers
             //{
             //    ViewBag.superManModel = superManModel;
             //} 
-
             var pagedList = iOrderProvider.GetOrders(criteria);
+             
             return PartialView("_PartialOrderList", pagedList);
+        }
+
+        /// <summary>
+        /// 导出订单数据
+        /// </summary>
+        /// <param name="pageindex"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult PostDaoChuOrder(int pageindex = 1)
+        {  
+            Ets.Model.ParameterModel.Order.OrderSearchCriteria criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria();
+            TryUpdateModel(criteria);
+            if (criteria.businessCity=="--无--")
+            {
+                criteria.businessCity = "";
+            }
+ 
+            var pagedList = iOrderProvider.GetOrders(criteria);
+
+            if (pagedList != null && pagedList.Records.Count > 0 && (!string.IsNullOrWhiteSpace(criteria.businessName) || !string.IsNullOrWhiteSpace(criteria.superManName)))
+            {
+                string filname = "e代送-{0}-订单数据.xls";
+                if (!string.IsNullOrWhiteSpace(criteria.businessName))
+                {
+                    filname = string.Format(filname, criteria.businessName);
+                }
+                if (!string.IsNullOrWhiteSpace(criteria.superManName))
+                {
+                    filname = string.Format(filname, criteria.superManName);
+                } 
+
+                if (pagedList.Records.Count > 3)
+                {
+                    byte[] data = Encoding.UTF8.GetBytes(CreateExcel(pagedList));
+                    return File(data, "application/ms-excel", filname);
+                }
+                else
+                {
+                    byte[] data = Encoding.Default.GetBytes(CreateExcel(pagedList));
+                    return File(data, "application/ms-excel", filname);
+                }
+
+            }
+            return PartialView("_PartialOrderList", pagedList);
+        }
+
+
+        /// <summary>
+        /// 生成商户结算excel文件
+        /// 导出字段：订单号、商户信息、发布时间、完成时间、订单数量、订单总金额、订单佣金、外送费用、每单补贴、任务补贴、商家结算比例
+        /// </summary>
+        /// <returns></returns>
+        private string CreateExcel(PageInfo<OrderListModel> paraModel)
+        {
+            StringBuilder strBuilder = new StringBuilder();
+            strBuilder.AppendLine("<table border=1 cellspacing=0 cellpadding=5 rules=all>");
+            //输出表头.
+            strBuilder.AppendLine("<tr style=\"font-weight: bold; white-space: nowrap;\">");
+            strBuilder.AppendLine("<td>订单号</td>");
+            strBuilder.AppendLine("<td>商户信息</td>");
+            strBuilder.AppendLine("<td>发布时间</td>");
+            strBuilder.AppendLine("<td>完成时间(%)</td>");
+            strBuilder.AppendLine("<td>订单数量</td>");
+            strBuilder.AppendLine("<td>订单总金额</td>");
+            strBuilder.AppendLine("<td>订单佣金</td>");
+            strBuilder.AppendLine("<td>外送费用</td>");
+            strBuilder.AppendLine("<td>每单补贴</td>");
+            strBuilder.AppendLine("<td>任务补贴</td>");
+            strBuilder.AppendLine("<td>商家结算比例</td>");
+            strBuilder.AppendLine("</tr>");
+            //输出数据.
+            foreach (var oOrderListModel in paraModel.Records)
+            {
+                strBuilder.AppendLine(string.Format("<tr><td>{0}</td>", oOrderListModel.OrderNo));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.BusinessName+":"+oOrderListModel.BusinessPhoneNo));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.PubDate));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.ActualDoneDate));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.Quantity));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.Amount));
+                strBuilder.AppendLine(string.Format("<td>{0}%</td>", oOrderListModel.OrderCommission));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.DistribSubsidy));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.WebsiteSubsidy));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.Adjustment));
+                strBuilder.AppendLine(string.Format("<td>{0}</td></tr>", oOrderListModel.BusinessCommission));
+            }
+            strBuilder.AppendLine("</table>");
+            return strBuilder.ToString();
         }
 
         //Get: /OrderCount  订单统计
