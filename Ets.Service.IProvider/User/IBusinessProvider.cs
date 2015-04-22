@@ -226,6 +226,8 @@ namespace Ets.Service.IProvider.User
 
         bool CheckExistBusiness(int originalId,int groupId);
 
+
+        string AddThirdBusiness(ParaModel<BusinessRegisterModel> paramodel);
     }
 }
 
