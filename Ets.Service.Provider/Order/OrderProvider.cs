@@ -394,8 +394,8 @@ namespace Ets.Service.Provider.Order
         {
             //if (AsyncOrderStatus(orderNo))//更该订单状态时，同步第三方订单状态
             {
-                return OrderDao.CancelOrderStatus(orderNo, orderStatus,remark);
-            } 
+                return OrderDao.CancelOrderStatus(orderNo, orderStatus, remark);
+            }
             return 0;
         }
 
@@ -523,7 +523,7 @@ namespace Ets.Service.Provider.Order
                     tran.Complete();
                 }
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 redis.Delete(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, //同步失败，清除缓存内的订单信息信息
                            paramodel.store_info.group.ToString(), paramodel.order_id.ToString()));
@@ -531,7 +531,7 @@ namespace Ets.Service.Provider.Order
                     redis.Delete(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(), paramodel.store_info.store_id.ToString()));
                 throw ex; //异常上抛
             }
-  
+
             return string.IsNullOrWhiteSpace(orderNo) ? ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :
              ResultModel<object>.Conclude(OrderApiStatusType.Success, new { order_no = orderNo });
         }
@@ -588,7 +588,7 @@ namespace Ets.Service.Provider.Order
                 string json = new HttpClient().PostAsJsonAsync(url, paramodel).Result.Content.ReadAsStringAsync().Result;
                 JObject jobject = JObject.Parse(json);
                 int x = jobject.Value<int>("Status"); //接口调用状态 区分大小写
-                if (x==0)
+                if (x == 0)
                 {
                     return true;
                 }
@@ -884,7 +884,9 @@ namespace Ets.Service.Provider.Order
             paramodel.status = OrderConst.OrderStatus3;
             paramodel.remark = "第三方集团取消订单，同步E代送系统订单状态";
             int currenStatus = OrderDao.GetStatus(paramodel.order_no, paramodel.groupid);  //目前订单状态
-            if (OrderConst.OrderStatus30 != currenStatus)  //订单状态非30，,不允许取消订单
+            if (currenStatus == -1) //订单不存在
+                return ResultModel<object>.Conclude(OrderApiStatusType.OrderNotExist);
+            else if (OrderConst.OrderStatus30 != currenStatus)  //订单状态非30，,不允许取消订单
                 return ResultModel<object>.Conclude(OrderApiStatusType.OrderIsJoin);
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
