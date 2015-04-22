@@ -42,7 +42,7 @@ namespace OpenApi.Controllers
         public object PullOrderInfo(MeiTuanOrdeModel paramodel)
         {
             MeiTuanGroup meituan = new MeiTuanGroup();
-            if (!meituan.ValiditeSig(paramodel))
+            if (meituan.ValiditeSig(paramodel))
             {
                 CreatePM_OpenApi model = meituan.TranslateModel(paramodel);
                 return meituan.AddOrder(model) > 0 ? new { data = "ok" } : new { data = "fail" };
