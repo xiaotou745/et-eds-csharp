@@ -198,14 +198,15 @@
         $("#SupId").val(id).attr('disabled', 'disabled');
         $("#SupName").val(trueName);
         $("#SupPhoneNo").val(phoneNo);
-        //$("#fileSupUploadHand").val(picWithHandUrl);
-        //$("#fileSupUpload").val(picUrl);
         $("#SupHealthCardID").val(healthCardID);
-        $("#SupProvinceCode").val(provinceCode);
-        $("#SupCityCode").val(cityCode);
-        $("#SupBussinessID").val(bussinessID);
         $("#SupInternalDepart").val(internalDepart);
         $("#SupIDCard").val(iDCard);
+        $("#SupProvinceCode").val(provinceCode);
+        $("#SupProvinceCode").change();
+        alert(cityCode);
+        $("#SupCityCode").val(cityCode);
+        //$("#SupCityCode").change();
+        $("#SupBussinessID").val(bussinessID);
         adminjs.openwinbox('#UpdateSuperManShow');
     };
 </script>
