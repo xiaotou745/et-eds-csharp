@@ -20,5 +20,11 @@ namespace Ets.Model.ParameterModel.Bussiness
         /// 订单状态
         /// </summary>
         public int? Status { get; set; }
+        
+        /// <summary>
+        /// 订单来源
+        /// </summary>
+        public int OrderFrom { get; set; }
+        
     }
 }

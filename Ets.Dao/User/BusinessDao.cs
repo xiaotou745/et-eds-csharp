@@ -50,6 +50,10 @@ namespace Ets.Dao.User
                     whereStr += " and o.Status=" + paraModel.Status.ToString();
                 }
             }
+            if (paraModel.OrderFrom > 0)
+            {
+                whereStr += " and o.OrderFrom=" + paraModel.OrderFrom;
+            }
 
             #endregion
 
