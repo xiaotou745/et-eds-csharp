@@ -564,7 +564,19 @@ namespace Ets.Service.Provider.Order
                     orderinfo = new { order_status = order.Status, clientername = order.ClienterName, clienterphoneno = order.ClienterPhoneNo }
                 });
         }
+          
+        /// <summary>
+        /// 订单详情接口
+        /// </summary>
+        /// <param name="paramodel">参数实体</param>
+        /// <returns>订单详情</returns>
+        public OrderListModel GetOrderDetail(string order_no)
+        {
+            OrderDao OrderDao = new OrderDao();
+            return OrderDao.GetOrderDetail(order_no); 
+        }
 
+        
         /// <summary>
         ///  supermanapi通过openapi同步第三方订单状态  add by caoheyang 20150327 
         /// </summary>

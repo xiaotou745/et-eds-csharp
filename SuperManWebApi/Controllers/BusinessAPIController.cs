@@ -1,4 +1,5 @@
 ﻿using ETS.Enums;
+using Ets.Model.DataModel.Order;
 using SuperManCore;
 using SuperManWebApi.Models.Business;
 using System;
@@ -235,7 +236,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.GetOrdersStatus))]
         [HttpGet]
-        public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]> GetOrderList_B(int userId, int? pagedSize, int? pagedIndex, sbyte? Status)
+        public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]> GetOrderList_B(int userId, int? pagedSize, int? pagedIndex, sbyte? Status,int orderfrom)
         { 
             var pIndex = ETS.Util.ParseHelper.ToInt(pagedIndex, 1);
             pIndex = pIndex <= 0 ? 1 : pIndex;
@@ -245,13 +246,33 @@ namespace SuperManWebApi.Controllers
             {
                 PagingResult = new Ets.Model.Common.PagingResult(pIndex, pSize),
                 userId = userId,
-                Status = Status
+                Status = Status,
+                OrderFrom = orderfrom
             }; 
             IList<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel> list = new BusinessProvider().GetOrdersApp(criteria);
             return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]>.Conclude(ETS.Enums.GetOrdersStatus.Success, list.ToArray());
         }
 
+
+      
+
         #region 美团等第三方订单处理  
+
+        /// <summary>
+        /// 获取订单详细
+        /// </summary>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.GetOrdersStatus))]
+        [HttpGet]
+        public Ets.Model.Common.ResultModel<OrderListModel> GetOrderDetail(string orderno)
+        {
+            var model = new OrderProvider().GetOrderDetail(orderno);
+            if (model != null)
+            {
+                return Ets.Model.Common.ResultModel<OrderListModel>.Conclude(ETS.Enums.GetOrdersStatus.Success, model);
+            }
+            return Ets.Model.Common.ResultModel<OrderListModel>.Conclude(ETS.Enums.GetOrdersStatus.FailedGetOrders, model);
+        }
 
        
         /// <summary>
@@ -561,7 +582,6 @@ namespace SuperManWebApi.Controllers
 
             return area.GetOpenCity(Version);
         }
-
-
+         
     }
 }
