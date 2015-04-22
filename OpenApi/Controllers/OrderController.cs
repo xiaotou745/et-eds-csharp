@@ -114,5 +114,19 @@ namespace OpenApi.Controllers
             paramodel.fields.groupid = paramodel.group;
             return new OrderProvider().UpdateOrderStatus_Other(paramodel.fields);
         }
+        /// <summary>
+        /// 获取订单的日志信息
+        /// </summary>
+        /// <param name="paramodel"></param>
+        /// <returns></returns>
+        //[HttpPost]
+        //[SignOpenApi]
+        //[OpenApiActionError]
+        //public ResultModel<object> GetOrderRecords(ParaModel<GetStatusPM_OpenApi> paramodel)
+        //{
+        //    int orderRecords =  new OrderProvider().GetStatus(paramodel.fields.order_no, paramodel.group);
+
+        //    return 
+        //}
     }
 }
