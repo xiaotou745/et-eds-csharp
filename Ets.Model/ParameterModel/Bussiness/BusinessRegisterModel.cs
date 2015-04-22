@@ -26,7 +26,7 @@ namespace Ets.Model.ParameterModel.Bussiness
         /// </summary>
         public string B_IdCard { get; set; }
         /// <summary>
-        /// 电话号码
+        /// 电话号码手机号
         /// </summary>
         [Required]
         public string PhoneNo { get; set; }
@@ -83,6 +83,14 @@ namespace Ets.Model.ParameterModel.Bussiness
         /// <summary>
         /// 商户所在区域纬度
         /// </summary>
-        public double B_Latitude { get; set; } 
+        public double B_Latitude { get; set; }
+        /// <summary>
+        /// 佣金类型Id
+        /// </summary>
+        public int CommissionTypeId { get; set; }
+        /// <summary>
+        /// 外送费
+        /// </summary>
+        public decimal DistribSubsidy { get; set; }
     }
 }

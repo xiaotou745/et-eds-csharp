@@ -9,7 +9,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web;
-using System.ComponentModel.DataAnnotations; 
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.IO;
 using System.Web.Script.Serialization;
@@ -18,7 +18,7 @@ using Ets.Model.ParameterModel.Bussiness;
 using ETS.Enums;
 using Ets.Service.Provider.User;
 using Ets.Service.IProvider.User;
-using ETS.Util; 
+using ETS.Util;
 using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
 using ETS.Security;
@@ -37,12 +37,7 @@ namespace OpenApi.Controllers
         [SignOpenApi]
         [OpenApiActionError]
         public ResultModel<object> RegisterBusiness(ParaModel<BusinessRegisterModel> paramodel)
-        {
-
-            //string signStr = "DB852E3A3B4B4B528571A2E74E40318E" + "app_key" + "appkey_juwangke" + "timestamp"
-            //           + paramodel.timestamp + "v" + "1.0" + "DB852E3A3B4B4B528571A2E74E40318E";
-            //string sign = MD5.Encrypt(signStr);
-            //是否存在该商户
+        { 
             if (iBusiProvider.CheckExistBusiness(paramodel.fields.B_OriginalBusiId, paramodel.group))
                 return ResultModel<object>.Conclude(CustomerRegisterStatus.OriginalBusiIdRepeat);
 
@@ -68,16 +63,15 @@ namespace OpenApi.Controllers
             }
             #endregion
 
-            string addResult= iBusiProvider.AddThirdBusiness(paramodel);
+            string addResult = iBusiProvider.AddThirdBusiness(paramodel);
             if (addResult == "1")
             {
-                return ResultModel<object>.Conclude(CustomerRegisterStatus.Success );
+                return ResultModel<object>.Conclude(CustomerRegisterStatus.Success, addResult);
             }
             else
             {
                 return ResultModel<object>.Conclude(CustomerRegisterStatus.Faild);
-            }
-             
+            } 
         }
     }
 }

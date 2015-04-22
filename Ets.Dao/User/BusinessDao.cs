@@ -812,7 +812,7 @@ namespace Ets.Dao.User
                               @CityId , -- CityId - nvarchar(45)
                               @GroupId , -- GroupId - int
                               @OriginalBusiId , -- OriginalBusiId - int
-                              N'' , -- ProvinceCode - nvarchar(20)
+                              @ProvinceCode , -- ProvinceCode - nvarchar(20)
                               @CityCode , -- CityCode - nvarchar(20)
                               @AreaCode , -- AreaCode - nvarchar(20)
                               @Province , -- Province - nvarchar(20)
@@ -845,6 +845,7 @@ namespace Ets.Dao.User
             parm.AddWithValue("@AreaCode", model.AreaCode);
             parm.AddWithValue("@Province", model.Province);
             parm.AddWithValue("@CommissionTypeId", model.CommissionTypeId);
+            parm.AddWithValue("@ProvinceCode", model.ProvinceCode);
             parm.AddWithValue("@DistribSubsidy", model.DistribSubsidy);
             object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, parm);
             if (i != null)

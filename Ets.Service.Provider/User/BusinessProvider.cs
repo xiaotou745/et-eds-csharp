@@ -850,10 +850,22 @@ namespace Ets.Service.Provider.User
             to.Longitude = paramodel.fields.B_Longitude;
             to.Name = paramodel.fields.B_Name; 
             to.OriginalBusiId = paramodel.fields.B_OriginalBusiId;
-            to.InsertTime = DateTime.Now;            
+            to.InsertTime = DateTime.Now;
+            to.CommissionTypeId = 0;   //商户的佣金类型 
+            to.DistribSubsidy = paramodel.fields.DistribSubsidy;  //商户外送费
+            to.Status = ConstValues.BUSINESS_NOAUDIT;  //商户默认未审核
 
+            return InsertOtherBusiness(to).ToString();
+        }
 
-            throw new NotImplementedException();
+        /// <summary>
+        /// 添加商户
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public int InsertOtherBusiness(Business model)
+        {
+            return dao.InsertOtherBusiness(model);
         }
     }
 }
