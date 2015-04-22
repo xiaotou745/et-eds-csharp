@@ -28,7 +28,7 @@ namespace Ets.Service.Provider.OpenApi
         public static ParaModel<AsyncStatusPM_OpenApi> GetSign(this ParaModel<AsyncStatusPM_OpenApi> paraModel)
         {
             GroupApiConfigDao dao = new GroupApiConfigDao();
-            GroupApiConfig model = dao.GetGroupApiConfigByGroupID(paraModel.group);
+            GroupApiConfig model = dao.GetGroupApiConfigByGroupID(paraModel.fields.orderfrom);
             if (model == null)
                 return null;
             else {

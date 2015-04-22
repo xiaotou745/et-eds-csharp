@@ -485,7 +485,7 @@ namespace Ets.Service.Provider.Order
 
             ///此处其实应该取数据库，但是由于发布订单时关于店铺的逻辑后期要改，暂时这么处理 
             IGroupProviderOpenApi groupProvider = OpenApiGroupFactory.Create(paramodel.store_info.group);
-            paramodel = groupProvider.SetCcmmissonInfo(paramodel);
+            paramodel = groupProvider.SetCommissonInfo(paramodel);
 
             #endregion
 
@@ -540,12 +540,12 @@ namespace Ets.Service.Provider.Order
         /// 订单状态查询功能  add by caoheyang 20150316
         /// </summary>
         /// <param name="orderNo">订单号码</param>
-        /// <param name="groupId">集团id</param>
+        /// <param name="orderfrom">订单来源</param>
         /// <returns>订单状态</returns>
-        public int GetStatus(string OriginalOrderNo, int groupId)
+        public int GetStatus(string OriginalOrderNo, int orderfrom)
         {
             OrderDao OrderDao = new OrderDao();
-            return OrderDao.GetStatus(OriginalOrderNo, groupId);
+            return OrderDao.GetStatus(OriginalOrderNo, orderfrom);
         }
 
 
@@ -557,7 +557,7 @@ namespace Ets.Service.Provider.Order
         public ResultModel<object> OrderDetail(OrderDetailPM_OpenApi paramodel)
         {
             OrderDao OrderDao = new OrderDao();
-            OrderListModel order = OrderDao.GetOpenOrder(paramodel.order_no, paramodel.GroupId);
+            OrderListModel order = OrderDao.GetOpenOrder(paramodel.order_no, paramodel.orderfrom);
             return order == null ? ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :
                 ResultModel<object>.Conclude(OrderApiStatusType.Success, new
                 {
@@ -573,9 +573,9 @@ namespace Ets.Service.Provider.Order
         public bool AsyncOrderStatus(string orderNo)
         {
             OrderListModel orderlistModel = OrderDao.GetOrderByNo(orderNo);
-            if (orderlistModel.GroupId > 0)
+            if (orderlistModel.OrderFrom > 0)   //一个商户对应多个集团时需要更改 
             {
-                ParaModel<AsyncStatusPM_OpenApi> paramodel = new ParaModel<AsyncStatusPM_OpenApi>() { group = orderlistModel.GroupId, fields = new AsyncStatusPM_OpenApi() };
+                ParaModel<AsyncStatusPM_OpenApi> paramodel = new ParaModel<AsyncStatusPM_OpenApi>() { fields = new AsyncStatusPM_OpenApi() { orderfrom =orderlistModel.OrderFrom} };
                 if (paramodel.GetSign() == null)//为当前集团参数实体生成sign签名信息
                     return false;
                 paramodel.fields.status = ParseHelper.ToInt(orderlistModel.Status, -1);
@@ -883,7 +883,7 @@ namespace Ets.Service.Provider.Order
         {
             paramodel.status = OrderConst.OrderStatus3;
             paramodel.remark = "第三方集团取消订单，同步E代送系统订单状态";
-            int currenStatus = OrderDao.GetStatus(paramodel.order_no, paramodel.groupid);  //目前订单状态
+            int currenStatus = OrderDao.GetStatus(paramodel.order_no, paramodel.orderfrom);  //目前订单状态
             if (currenStatus == -1) //订单不存在
                 return ResultModel<object>.Conclude(OrderApiStatusType.OrderNotExist);
             else if (OrderConst.OrderStatus30 != currenStatus)  //订单状态非30，,不允许取消订单
