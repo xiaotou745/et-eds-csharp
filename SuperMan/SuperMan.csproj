@@ -429,6 +429,7 @@
     <Content Include="Scripts\Extension\language_CN.js" />
     <Content Include="Scripts\highcharts.js" />
     <None Include="Scripts\jquery-1.7.1.intellisense.js" />
+    <Content Include="Scripts\html5shiv-printshiv.js" />
     <Content Include="Scripts\jquery-1.11.1.min.js" />
     <Content Include="Scripts\jquery-1.7.1.js" />
     <Content Include="Scripts\jquery-1.7.1.min.js" />
