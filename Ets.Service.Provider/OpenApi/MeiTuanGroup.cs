@@ -234,7 +234,6 @@ namespace Ets.Service.Provider.OpenApi
             store.store_name = fromModel.wm_poi_name;//店铺名称
             store.address = fromModel.wm_poi_address;//店铺地址
             store.phone = fromModel.wm_poi_address;//店铺电话
-
             ///订单地址信息
             Address address = new Address();
             address.address = fromModel.recipient_address;//用户收货地址
@@ -280,7 +279,7 @@ namespace Ets.Service.Provider.OpenApi
         /// <param name="fromModel">paraModel</param>
         public int AddOrder(CreatePM_OpenApi paramodel) {
            var redis = new ETS.NoSql.RedisCache.RedisCache();
-          int businessId= ParseHelper.ToInt(redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(),
+           int businessId = ParseHelper.ToInt(redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.orderfrom,
               paramodel.store_info.store_id.ToString()))); //缓存中取E代送商户id
           if (businessId == 0)
               return 0;   //商户不存在发布订单
