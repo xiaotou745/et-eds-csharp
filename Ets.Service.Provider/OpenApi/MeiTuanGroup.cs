@@ -277,8 +277,14 @@ namespace Ets.Service.Provider.OpenApi
         /// 新增美团订单 add by caoheyang 20150421 
         /// </summary>
         /// <param name="fromModel">paraModel</param>
-        public int AddOrder(CreatePM_OpenApi paraModel) {
-            return string.IsNullOrWhiteSpace(new Ets.Dao.Order.OrderDao().CreateToSql(paraModel)) ? 0 : 1;
+        public int AddOrder(CreatePM_OpenApi paramodel) {
+           var redis = new ETS.NoSql.RedisCache.RedisCache();
+          int businessId= ParseHelper.ToInt(redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(),
+              paramodel.store_info.store_id.ToString()))); //缓存中取E代送商户id
+          if (businessId == 0) {
+              return 0;   //商户不存在发布订单失败
+          }
+            return string.IsNullOrWhiteSpace(new Ets.Dao.Order.OrderDao().CreateToSql(paramodel)) ? 0 : 1;
         }
     }
 
