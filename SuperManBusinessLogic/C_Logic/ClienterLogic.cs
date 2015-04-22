@@ -255,14 +255,26 @@ namespace SuperManBusinessLogic.C_Logic
                             {
                                 query.Password = clienter.Password;
                             }
+                            if (clienter.BussinessID != null)
+                            {
+                                query.BussinessID = clienter.BussinessID;
+                            }
+                            if (!string.IsNullOrWhiteSpace(clienter.InternalDepart))
+                            {
+                                query.InternalDepart = clienter.InternalDepart;
+                            }
+                            if (!string.IsNullOrWhiteSpace(clienter.IDCard))
+                            {
+                                query.IDCard = clienter.IDCard;
+                            }
                             query.TrueName = clienter.TrueName;
                             query.PhoneNo = clienter.PhoneNo;
                             query.HealthCardID = clienter.HealthCardID;
                             query.Province = clienter.Province;
+                            query.ProvinceCode = clienter.ProvinceCode;
                             query.City = clienter.City;
-                            query.BussinessID = clienter.BussinessID;
-                            query.InternalDepart = clienter.InternalDepart;
-                            query.IDCard = clienter.IDCard;
+                            query.CityCode = clienter.CityCode;
+                            query.CityId = clienter.CityId;
                             int i = db.SaveChanges();
                             if (i != 0)
                                 result = true;
