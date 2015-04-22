@@ -26,6 +26,10 @@ namespace Ets.Model.DataModel.Bussiness
         public string districtId { get; set; }
         public string CityId { get; set; }
         public Nullable<int> GroupId { get; set; }
+        
+        /// <summary>
+        /// 第三方商户id
+        /// </summary>
         public Nullable<int> OriginalBusiId { get; set; }
         public string ProvinceCode { get; set; }
         public string CityCode { get; set; }

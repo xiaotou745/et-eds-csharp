@@ -5,84 +5,83 @@
 </div>
 <script src="~/Scripts/jquery-1.10.2.min.js"></script>
 <script>
-    $(function () {
-        $.ajax({
-            type: 'POST',
-            dataType: 'json',
-            url: '/order/create',
-            data: {
-                "app_key": "fulltime",
-                "timestamp": "2015-03-11 20:42:33",
-                "v": "1.0",
-                "sign": "8C59077F13F16FAD71A9E9D053CF215F",
-                "fields": {
-                    "order_id": "32434234vsfgfdghdgh2222ol22l",
-                    "create_time": "2015-03-12 00:21:42",
-                    "receive_time": "2015-03-12 00:21:42",
-                    "is_pay": true,
-                    "payment": 1,
-                    "total_price": 55,
+    //$(function () {
+    //    $.ajax({
+    //        type: 'POST',
+    //        dataType: 'json',
+    //        url: '/order/create',
+    //        data: {
+    //            "app_key": "fulltime",  //  appkey_wandajituan
+    //            "timestamp": "2015-03-11 20:42:33",
+    //            "v": "1.0",
+    //            "sign": "8C59077F13F16FAD71A9E9D053CF215F", //   A36FB267A47A1E412F3CDA7068261D47
+    //            "fields": {
+    //                "order_id": "100000000601",
+    //                "create_time": "2015-03-12 00:21:42",
+    //                "receive_time": "2015-03-12 00:21:42",
+    //                "is_pay": true,
+    //                "payment": 1,
+    //                "total_price": 100,
+    //                "address": {
+    //                    "user_name": "张三",
+    //                    "user_phone": "13612345678",
+    //                    //"province_code": "000000",
+    //                    //"city_code": "000000",
+    //                    //"area_code": "000000",
+    //                    "province": "北京市",
+    //                    "city": "北京市",
+    //                    "area": "朝阳区",
+    //                    "address": "建国路93号院万达广场4号楼27051",
+    //                    //"longitude": 11.11,
+    //                    //"latitude": 11.11
+    //                },
+    //                "store_info": {
+    //                    "store_id": "10003",
+    //                    "store_name": "天下第一名厨大望路店",
+    //                    "group": "3",
+    //                    "id_card": "130212201503101234",
+    //                    "phone": "010-12345678",
+    //                    "phone2": "13612345678",
+    //                    //"province_code": "000000",
+    //                    //"city_code": "000000",
+    //                    //"area_code": "000000",
+    //                    "province": "北京市",
+    //                    "city": "北京市",
+    //                    "area": "朝阳区",
+    //                    "address": "建国路93号院万达广场4号楼2705",
+    //                    "longitude": 11.11,
+    //                    "latitude": 11.11,
+    //                    "delivery_fee": 0,
+    //                    "commission_type": "1"
+    //                },
+    //                "order_details": [
+    //                    {
+    //                        "detail_id": 1,
+    //                        "product_name": "鱼香肉丝",
+    //                        "unit_price": 15,
+    //                        "quantity": 1
+    //                    },
+    //                    {
+    //                        "detail_id": 2,
+    //                        "product_name": "宫爆鸡丁",
+    //                        "unit_price": 20,
+    //                        "quantity": 2
+    //                    }
+    //                ],
+    //                "remark": "快点，饿",
+    //                "weight": 0,
+    //                "delivery_fee": 0,
+    //                "package_count": 1
+    //            }
+    //        },
+    //        success: function (data) {
+    //            console.log(data);
+    //        },
+    //        error: function () {
 
-                    "address": {
-                        "user_name": "张三",
-                        "user_phone": "13612345678",
-                        //"province_code": "000000",
-                        //"city_code": "000000",
-                        //"area_code": "000000",
-                        "province": "北京市",
-                        "city": "北京市",
-                        "area": "朝阳区",
-                        "address": "建国路93号院万达广场4号楼27051",
-                        //"longitude": 11.11,
-                        //"latitude": 11.11
-                    },
-                    "store_info": {
-                        "store_id": "4",
-                        "store_name": "天下第一名厨大望路店",
-                        "group": "3",
-                        "id_card": "130212201503101234",
-                        "phone": "010-12345678",
-                        "phone2": "13612345678",
-                        //"province_code": "000000",
-                        //"city_code": "000000",
-                        //"area_code": "000000",
-                        "province": "北京市",
-                        "city": "北京市",
-                        "area": "朝阳区",
-                        "address": "建国路93号院万达广场4号楼2705",
-                        "longitude": 11.11,
-                        "latitude": 11.11,
-                        "delivery_fee": 0,
-                        "commission_type": "1"
-                    },
-                    "order_details": [
-                        {
-                            "detail_id": 1,
-                            "product_name": "鱼香肉丝",
-                            "unit_price": 15,
-                            "quantity": 1
-                        },
-                        {
-                            "detail_id": 2,
-                            "product_name": "宫爆鸡丁",
-                            "unit_price": 20,
-                            "quantity": 2
-                        }
-                    ],
-                    "remark": "快点，饿",
-                    "weight": 0,
-                    "delivery_fee": 0,
-                    "package_count": 1
-                }
-            },
-            success: function (data) {
-                console.log(data);
-            },
-            error: function () {
-
-            }
-        });
-    });
+    //        }
+    //    });
+    //});
 
     //$(function () {
     //    $(function () {
@@ -163,6 +162,97 @@
     //    });
     //});
 
+
+    //$(function () {
+    //    $(function () {
+    //        $.ajax({
+    //            type: 'post',
+    //            datatype: 'json',
+    //            url: '/order/ChangeStatus',
+    //            data: {
+    //                "app_key": "fulltime",
+    //                "timestamp": "2015-03-11 20:42:33",
+    //                "v": "1.0",
+    //                "sign": "8C59077F13F16FAD71A9E9D053CF215F",
+    //                "fields": {
+    //                    "order_no": "129150410192033002",
+    //                    "status":1
+    //                }
+    //            },
+    //            success: function (data) {
+    //                            console.log(data);
+    //                        },
+    //                        error: function () {
+
+    //                        }
+    //        })
+    //    });
+    //});
+
+
+    //$(function () {
+    //    $(function () {
+    //        $.ajax({
+    //            type: 'post',
+    //            datatype: 'json',
+    //            url: '/meituan/PullOrderInfo',
+    //            data: {
+    //                "order_id": "126376458586190591",
+    //                "app_poi_code": "990001",
+    //                "wm_poi_name": "美团商家名称",
+    //                "wm_poi_address": "美团商家地址",
+    //                "wm_poi_phone": "15217658775",
+    //                "wm_poi_id": 11088,
+    //                "shipping_fee ": 2,
+    //                "recipient_name": "smith",
+    //                "recipient_phone": 1234567,
+    //                "recipient_address": "aaaaa",
+    //                "total": 527,
+    //                "caution": "忌口或备注",
+    //                "shipper_phone": 1234567,
+    //                "has_invoiced": 1,
+    //                "invoice_title": "大抬头",
+    //                "status": 1,
+    //                "ctime": "2015-03-11 20:42:33",//1392883362,
+    //                "utime": "2015-03-11 20:42:33",//1392883362,
+    //                "latitude": 13.923362,
+    //                "longitude": 13.928833,
+    //                "is_third_shipping": 1,
+    //                "pay_type": 1,
+    //                "detail": [
+    //                            {
+    //                                "app_food_code": 1,
+    //                                "food_name": "狗不理",
+    //                                "quantity": 6,
+    //                                "price": 100,
+    //                                "box_num": 2,
+    //                                "box_price": 1,
+    //                                "unit": "份",
+    //                                "food_discount": 0.8
+    //                            }
+    //                ],
+    //                "extras": [{
+    //                    "reduce_fee": 2.5,
+    //                    "remark": "满10元减2.5元",
+    //                    "type": 1
+    //                },
+    //                        {
+    //                            "reduce_fee": 5,
+    //                            "remark": "新用户立减5元",
+    //                            "type": 1
+    //                        }]
+
+
+    //            },
+    //            success: function (data) {
+    //                console.log(data);
+    //            },
+    //            error: function () {
+
+    //            }
+    //        })
+    //    });
+    //});
 </script>
 <div class="row">
     <div class="col-md-4">

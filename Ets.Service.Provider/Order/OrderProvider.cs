@@ -26,7 +26,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Ets.Model.DomainModel.Subsidy;
 using Newtonsoft.Json.Linq;
-using Ets.Service.IProvider.OpenApi;
 using Ets.Service.Provider.OpenApi;
 using System.Configuration;
 using System.Net.Http;
@@ -35,6 +34,7 @@ using Ets.Dao.GlobalConfig;
 using Ets.Service.Provider.Common;
 using ETS.Const;
 using Ets.Service.Provider.Clienter;
+using Ets.Service.IProvider.OpenApi;
 
 namespace Ets.Service.Provider.Order
 {
@@ -390,14 +390,13 @@ namespace Ets.Service.Provider.Order
         /// <param name="orderNo">订单号</param>
         /// <param name="orderStatus">订单状态</param>
         /// <returns></returns>
-        public int UpdateOrderStatus(string orderNo, int orderStatus)
+        public int UpdateOrderStatus(string orderNo, int orderStatus, string remark)
         {
-            int result = OrderDao.CancelOrderStatus(orderNo, orderStatus);
-            if (result > 0) //更该订单状态时，同步第三方订单状态
+            //if (AsyncOrderStatus(orderNo))//更该订单状态时，同步第三方订单状态
             {
-                AsyncOrderStatus(orderNo);
-            }
-            return result;
+                return OrderDao.CancelOrderStatus(orderNo, orderStatus,remark);
+            } 
+            return 0;
         }
 
 
@@ -411,22 +410,14 @@ namespace Ets.Service.Provider.Order
         /// <returns>订单号码</returns>
         public ResultModel<object> Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
         {
-            #region 设置门店的省市区编码信息 add by caoheyang 20150407
-            string storecodeInfo = new AreaProvider().GetOpenCode(new Ets.Model.ParameterModel.Area.ParaAreaNameInfo()
-            {
-                ProvinceName = paramodel.store_info.province,
-                CityName = paramodel.store_info.city,
-                AreaName = paramodel.store_info.area
-            });
-            if (storecodeInfo == ETS.Const.SystemConst.CityOpenInfo || string.IsNullOrWhiteSpace(storecodeInfo))
-                return ResultModel<object>.Conclude(OrderApiStatusType.ParaError, "门店省市区信息错误");
-            else
-            {
-                string[] storeCodes = storecodeInfo.Split('_');
-                paramodel.store_info.province_code = storeCodes[0];
-                paramodel.store_info.city_code = storeCodes[1];
-                paramodel.store_info.area_code = storeCodes[2];
-            }
+            ///查询缓存，看看当前店铺是否存在,缓存存储E代送的商户id
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+
+            #region 第三方订单是否重复推送的验证  add by caoheyang 20150417
+            string orderExistsNo = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
+            paramodel.order_id.ToString()));  //查询缓存，看当前订单是否存在,“true”代表存在，key的形式为集团ID_第三方平台订单号
+            if (orderExistsNo != null)
+                return ResultModel<object>.Conclude(OrderApiStatusType.OrderExists, new { order_no = orderExistsNo });
             #endregion
 
             #region 设置用户的省市区编码信息 add by caoheyang 20150407
@@ -440,19 +431,19 @@ namespace Ets.Service.Provider.Order
                 return ResultModel<object>.Conclude(OrderApiStatusType.ParaError, "用户省市区信息错误");
             else
             {
-                string[] storeCodes = storecodeInfo.Split('_');
+                string[] storeCodes = orderCodeInfo.Split('_');
                 paramodel.address.province_code = storeCodes[0];
                 paramodel.address.city_code = storeCodes[1];
                 paramodel.address.area_code = storeCodes[2];
             }
             #endregion
 
-            #region  当第三方未传递经纬的情况下，根据地址调用百度接口获取经纬度信息  add by caoheyang 20150416
-            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            #region  维护店铺相关信息 add by caoheyang 20150416
             string bussinessIdstr = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(),
-              paramodel.store_info.store_id.ToString()));  //查询缓存，看看当前店铺是否存在,缓存存储E代送的商户id
-            if (bussinessIdstr == null)  //店铺不存在
+              paramodel.store_info.store_id.ToString()));
+            if (bussinessIdstr == null || ParseHelper.ToInt(bussinessIdstr) == 0) //缓存中无店铺id 
             {
+                ///当第三方未传递经纬的情况下，根据地址调用百度接口获取经纬度信息  add by caoheyang 20150416
                 if (paramodel.store_info.longitude == 0 || paramodel.store_info.latitude == 0)  //店铺经纬度
                 {
                     Tuple<decimal, decimal> localtion = BaiDuHelper.GeoCoder(paramodel.store_info.province
@@ -460,14 +451,41 @@ namespace Ets.Service.Provider.Order
                     paramodel.store_info.longitude = localtion.Item1;  //精度
                     paramodel.store_info.latitude = localtion.Item2; //纬度
                 }
+                //if (paramodel.address.longitude == 0 || paramodel.address.latitude == 0)  //用户经纬度
+                //{
+                //    Tuple<decimal, decimal> localtion = BaiDuHelper.GeoCoder(paramodel.store_info.province
+                //        + paramodel.address.city + paramodel.address.area + paramodel.address.address);
+                //    paramodel.address.longitude = localtion.Item1;  //精度
+                //    paramodel.address.latitude = localtion.Item2; //纬度
+                //}
+
+                #region 设置门店的省市区编码信息 add by caoheyang 20150407
+                string storecodeInfo = new AreaProvider().GetOpenCode(new Ets.Model.ParameterModel.Area.ParaAreaNameInfo()
+                {
+                    ProvinceName = paramodel.store_info.province,
+                    CityName = paramodel.store_info.city,
+                    AreaName = paramodel.store_info.area
+                });
+                if (storecodeInfo == ETS.Const.SystemConst.CityOpenInfo || string.IsNullOrWhiteSpace(storecodeInfo))
+                    return ResultModel<object>.Conclude(OrderApiStatusType.ParaError, "门店省市区信息错误");
+                else
+                {
+                    string[] storeCodes = storecodeInfo.Split('_');
+                    paramodel.store_info.province_code = storeCodes[0];
+                    paramodel.store_info.city_code = storeCodes[1];
+                    paramodel.store_info.area_code = storeCodes[2];
+                }
+                #endregion
             }
-            //if (paramodel.address.longitude == 0 || paramodel.address.latitude == 0)  //用户经纬度
-            //{
-            //    Tuple<decimal, decimal> localtion = BaiDuHelper.GeoCoder(paramodel.store_info.province
-            //        + paramodel.address.city + paramodel.address.area + paramodel.address.address);
-            //    paramodel.address.longitude = localtion.Item1;  //精度
-            //    paramodel.address.latitude = localtion.Item2; //纬度
-            //}
+            else
+                paramodel.businessId = ParseHelper.ToInt(bussinessIdstr);
+            #endregion
+
+            #region 根据集团id为店铺设置外送费，结算比例等财务相关信息add by caoheyang 20150417
+
+            ///此处其实应该取数据库，但是由于发布订单时关于店铺的逻辑后期要改，暂时这么处理 
+            IGroupProviderOpenApi groupProvider = OpenApiGroupFactory.Create(paramodel.store_info.group);
+            paramodel = groupProvider.SetCcmmissonInfo(paramodel);
 
             #endregion
 
@@ -477,24 +495,43 @@ namespace Ets.Service.Provider.Order
             OrderCommission orderComm = new OrderCommission()
             {
                 Amount = paramodel.total_price, /*订单金额*/
-                DistribSubsidy = paramodel.delivery_fee,/*外送费*/
-                OrderCount = paramodel.package_count/*订单数量*/
+                DistribSubsidy = paramodel.store_info.delivery_fee,/*外送费*/
+                OrderCount = paramodel.package_count,/*订单数量*/
+                BusinessCommission = paramodel.store_info.businesscommission/*商户结算比例*/
             }/*网站补贴*/;
             OrderPriceProvider commissonPro = CommissionFactory.GetCommission();
             paramodel.ordercommission = commissonPro.GetCurrenOrderCommission(orderComm);  //骑士佣金
             paramodel.websitesubsidy = commissonPro.GetOrderWebSubsidy(orderComm);//网站补贴
             paramodel.commissionrate = commissonPro.GetCommissionRate(orderComm);//订单佣金比例
+            paramodel.settlemoney = commissonPro.GetSettleMoney(orderComm);//订单结算金额
+            paramodel.adjustment = commissonPro.GetAdjustment(orderComm);//订单额外补贴金额
+
             #endregion
 
             string orderNo = null; //订单号码
-            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            try
             {
-                orderNo = OrderDao.CreateToSql(paramodel);
-                //if (!string.IsNullOrWhiteSpace(orderNo))
-                //    Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！"
-                //        , string.Empty, paramodel.address.city); //激光推送   
-                tran.Complete();
+                using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+                {
+                    orderNo = OrderDao.CreateToSql(paramodel);
+                    //if (!string.IsNullOrWhiteSpace(orderNo))
+                    //    Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！"
+                    //        , string.Empty, paramodel.address.city); //激光推送   
+                    if (string.IsNullOrWhiteSpace(orderNo))  //同步失败，清除缓存内的信息
+                        redis.Delete(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo,
+                            paramodel.store_info.group.ToString(), paramodel.order_id.ToString()));
+                    tran.Complete();
+                }
             }
+            catch (Exception ex) 
+            {
+                redis.Delete(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, //同步失败，清除缓存内的订单信息信息
+                           paramodel.store_info.group.ToString(), paramodel.order_id.ToString()));
+                if (bussinessIdstr == null)  //同步失败，之前店铺不存在时，清空店铺缓存，因为数据已经被回滚，但是缓存加上了
+                    redis.Delete(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(), paramodel.store_info.store_id.ToString()));
+                throw ex; //异常上抛
+            }
+  
             return string.IsNullOrWhiteSpace(orderNo) ? ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :
              ResultModel<object>.Conclude(OrderApiStatusType.Success, new { order_no = orderNo });
         }
@@ -533,14 +570,14 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <param name="paramodel">参数实体</param>
         /// <returns>订单详情</returns>
-        public void AsyncOrderStatus(string orderNo)
+        public bool AsyncOrderStatus(string orderNo)
         {
             OrderListModel orderlistModel = OrderDao.GetOrderByNo(orderNo);
             if (orderlistModel.GroupId > 0)
             {
                 ParaModel<AsyncStatusPM_OpenApi> paramodel = new ParaModel<AsyncStatusPM_OpenApi>() { group = orderlistModel.GroupId, fields = new AsyncStatusPM_OpenApi() };
                 if (paramodel.GetSign() == null)//为当前集团参数实体生成sign签名信息
-                    return;
+                    return false;
                 paramodel.fields.status = ParseHelper.ToInt(orderlistModel.Status, -1);
                 paramodel.fields.ClienterTrueName = orderlistModel.ClienterTrueName;
                 paramodel.fields.ClienterPhoneNo = orderlistModel.ClienterPhoneNo;
@@ -550,7 +587,13 @@ namespace Ets.Service.Provider.Order
                 string url = ConfigurationManager.AppSettings["AsyncStatus"];
                 string json = new HttpClient().PostAsJsonAsync(url, paramodel).Result.Content.ReadAsStringAsync().Result;
                 JObject jobject = JObject.Parse(json);
+                int x = jobject.Value<int>("Status"); //接口调用状态 区分大小写
+                if (x==0)
+                {
+                    return true;
+                }
             }
+            return false;
         }
 
         #endregion
@@ -826,6 +869,30 @@ namespace Ets.Service.Provider.Order
         public IList<OrderSubsidiesLog> GetOrderOptionLog(string OrderId)
         {
             return OrderDao.GetOrderOptionLog(OrderId);
+        }
+
+
+        /// <summary>
+        /// 第三方更新E代送订单状态   add by caoheyang 20150421  
+        /// 目前该方法仅美团回调取消订单时使用,固定只允许取消订单，后期根据实际需求进行扩展
+        /// 可能会挪到具体的集团特有方法中。
+        /// </summary>
+        /// <param name="paramodel">参数</param>
+        /// <returns></returns>
+        public ResultModel<object> UpdateOrderStatus_Other(ChangeStatusPM_OpenApi paramodel)
+        {
+            paramodel.status = OrderConst.OrderStatus3;
+            paramodel.remark = "第三方集团取消订单，同步E代送系统订单状态";
+            int currenStatus = OrderDao.GetStatus(paramodel.order_no, paramodel.groupid);  //目前订单状态
+            if (OrderConst.OrderStatus30 != currenStatus)  //订单状态非30，,不允许取消订单
+                return ResultModel<object>.Conclude(OrderApiStatusType.OrderIsJoin);
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                int result = OrderDao.UpdateOrderStatus_Other(paramodel);
+                tran.Complete();
+                return result > 0 ? ResultModel<object>.Conclude(OrderApiStatusType.Success) : ResultModel<object>.Conclude(OrderApiStatusType.SystemError);
+
+            }
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using ETS.Enums;
 using SuperManCore;
-using SuperManCore.Common;
 using SuperManWebApi.Models.Business;
 using System;
 using System.Collections.Generic;
@@ -9,17 +8,12 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
-using SuperManBusinessLogic.B_Logic;
-using SuperManBusinessLogic.Order_Logic;
-using System.Threading.Tasks;
 using SuperManCommonModel;
 using Ets.Service.Provider.User;
 using Ets.Service.IProvider.Order;
 using Ets.Service.Provider.Order;
 using Ets.Service.Provider.Common;
 using Ets.Service.IProvider.User;
-using ETS.Cacheing;
-using Ets.Model.ParameterModel.Clienter;
 using ETS.Const; 
 namespace SuperManWebApi.Controllers
 {
@@ -257,7 +251,40 @@ namespace SuperManWebApi.Controllers
             return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]>.Conclude(ETS.Enums.GetOrdersStatus.Success, list.ToArray());
         }
 
-         
+        #region 美团等第三方订单处理  
+
+       
+        /// <summary>
+        /// 商家确认第三方订单接口
+        /// </summary>
+        /// <param name="orderlist"></param>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
+        [HttpGet]
+        public Ets.Model.Common.ResultModel<List<string>> OtherOrderConfirm_B(string[] orderlist)
+        {
+            var orderProvider = new OrderProvider();
+            int i = 0;
+            var list= orderlist.Where(s => orderProvider.UpdateOrderStatus(s, OrderConst.ORDER_NEW,"") <= 0).ToList();
+            return Ets.Model.Common.ResultModel<List<string>>.Conclude(ETS.Enums.PubOrderStatus.Success, list);
+        }
+
+        /// <summary>
+        /// 商家拒绝第三方订单接口
+        /// </summary>
+        /// <param name="orderlist"></param>
+        /// <param name="note"></param>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
+        [HttpGet]
+        public Ets.Model.Common.ResultModel<int> OtherOrderCancel_B(string[] orderlist,string note)
+        {
+            var orderProvider = new OrderProvider();
+            int i = orderlist.Count(s => orderProvider.UpdateOrderStatus(s, OrderConst.ORDER_CANCEL, note) > 0);
+            return Ets.Model.Common.ResultModel<int>.Conclude(ETS.Enums.PubOrderStatus.Success, i);
+        }
+
+        #endregion
         /// <summary>
         /// 地址管理
         /// 改 ado.net wc
@@ -424,7 +451,7 @@ namespace SuperManWebApi.Controllers
                 if (selResult.Status == ConstValues.ORDER_NEW)
                 {
                     //存在的情况下  取消订单  3
-                    int cacelResult = iOrderProvider.UpdateOrderStatus(OrderId, Ets.Model.Common.ConstValues.ORDER_CANCEL);
+                    int cacelResult = iOrderProvider.UpdateOrderStatus(OrderId, Ets.Model.Common.ConstValues.ORDER_CANCEL,"");
                     if (cacelResult > 0)
                         return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.Success, true);
                     else
@@ -534,5 +561,7 @@ namespace SuperManWebApi.Controllers
 
             return area.GetOpenCity(Version);
         }
+
+
     }
 }

@@ -41,6 +41,11 @@ namespace ETS.Const
         /// 全时
         /// </summary>
         public const int Group3 = 3;
+
+        /// <summary>
+        /// 美团
+        /// </summary>
+        public const int Group4 = 4;
         #endregion
     }
 }
