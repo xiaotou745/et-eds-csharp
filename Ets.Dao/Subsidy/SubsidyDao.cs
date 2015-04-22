@@ -196,7 +196,7 @@ WHERE   sub.[Status] = 1 ");
 
 
         /// <summary>
-        /// 写入跨店奖励日志
+        /// 获取跨店奖励日志
         /// 
         /// </summary>
         /// <param name="model"></param>
