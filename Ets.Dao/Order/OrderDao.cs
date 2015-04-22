@@ -862,11 +862,14 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
         public int CancelOrderStatus(string orderNo, int orderStatus,string remark)
         {
             StringBuilder upSql = new StringBuilder();
+            string strWhere = "";
+            if (remark == "ORDERCANCEL")
+            { strWhere = " and [Status]=0 "; }
             upSql.AppendFormat(@" UPDATE dbo.[order]
  SET    [Status] = @status,OtherCancelReason=@OtherCancelReason,PubDate=getdate() 
  output Inserted.Id,GETDATE(),'{0}',@OtherCancelReason,Inserted.businessId,Inserted.[Status],{1}
  into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
- WHERE  OrderNo = @orderNo", SuperPlatform.商家, (int)SuperPlatform.商家);
+ WHERE  OrderNo = @orderNo {2}", SuperPlatform.商家, (int)SuperPlatform.商家,strWhere);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@orderNo", SqlDbType.NVarChar);
@@ -934,7 +937,7 @@ where   a.OriginalOrderNo = @OriginalOrderNo
  SET [Status] = @status,ActualDoneDate=getdate()
 output Inserted.Id,GETDATE(),'{0}','',Inserted.clienterId,Inserted.[Status],{1}
 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform]) 
-WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL;", SuperPlatform.骑士, (int)SuperPlatform.骑士);
+WHERE  OrderNo = @orderNo AND [Status]!=3  AND clienterId IS NOT NULL;", SuperPlatform.骑士, (int)SuperPlatform.骑士);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@orderNo", SqlDbType.NVarChar);

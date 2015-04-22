@@ -505,40 +505,43 @@ namespace Ets.Service.Provider.Clienter
                 //更新订单状态
                 if (myOrderInfo != null)
                 {
-                    orderDao.FinishOrderStatus(orderNo, userId, myOrderInfo);
-                    if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)  //当用户上传的小票数量 和 需要上传的小票数量一致的时候，更新用户金额
+                    if (orderDao.FinishOrderStatus(orderNo, userId, myOrderInfo) > 0)
                     {
-                        if (CheckOrderPay(orderNo))
+                        if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)  //当用户上传的小票数量 和 需要上传的小票数量一致的时候，更新用户金额
                         {
-                            UpdateClienterAccount(userId, myOrderInfo);
+                            if (CheckOrderPay(orderNo))
+                            {
+                                UpdateClienterAccount(userId, myOrderInfo);
+                            }
                         }
+                        ////更新骑士 金额  
+                        //bool b = clienterDao.UpdateClienterAccountBalance(new WithdrawRecordsModel() { UserId = userId, Amount = myOrderInfo.OrderCommission.Value });
+                        ////增加记录 
+                        //decimal? AccountBalance = 0;
+                        ////更新用户相关金额数据 
+                        //if (myOrderInfo.AccountBalance.HasValue)
+                        //{
+                        //    AccountBalance = myOrderInfo.AccountBalance.Value + (myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission));
+                        //}
+                        //else
+                        //{
+                        //    AccountBalance = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission);
+                        //}
+                        //var model = new WithdrawRecordsModel
+                        //{
+                        //    AdminId = 1,
+                        //    Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
+                        //    Balance = AccountBalance ?? 0,
+                        //    UserId = userId,
+                        //    Platform = 1
+                        //};
+                        //Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords = new WtihdrawRecordsProvider();
+                        //iRecords.AddRecords(model); 
+                        tran.Complete();
+                        Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", myOrderInfo.businessId.ToString(), string.Empty);
+                        result = "1";
                     }
-                    ////更新骑士 金额  
-                    //bool b = clienterDao.UpdateClienterAccountBalance(new WithdrawRecordsModel() { UserId = userId, Amount = myOrderInfo.OrderCommission.Value });
-                    ////增加记录 
-                    //decimal? AccountBalance = 0;
-                    ////更新用户相关金额数据 
-                    //if (myOrderInfo.AccountBalance.HasValue)
-                    //{
-                    //    AccountBalance = myOrderInfo.AccountBalance.Value + (myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission));
-                    //}
-                    //else
-                    //{
-                    //    AccountBalance = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission);
-                    //}
-                    //var model = new WithdrawRecordsModel
-                    //{
-                    //    AdminId = 1,
-                    //    Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
-                    //    Balance = AccountBalance ?? 0,
-                    //    UserId = userId,
-                    //    Platform = 1
-                    //};
-                    //Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords = new WtihdrawRecordsProvider();
-                    //iRecords.AddRecords(model); 
-                    tran.Complete();
-                    Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", myOrderInfo.businessId.ToString(), string.Empty);
-                    result = "1";
+                  
                 }
             } 
             return result;

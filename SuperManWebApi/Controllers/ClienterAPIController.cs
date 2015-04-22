@@ -413,6 +413,18 @@ namespace SuperManWebApi.Controllers
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.userIdEmpty);
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderEmpty);
+            //避免订单多次完成请求，添加缓存验证机制 
+            lock (lockHelper)
+            {
+                string key = "FinishOrder_C" + userId + orderNo;
+                var redis = new ETS.NoSql.RedisCache.RedisCache();
+                if (redis.Get<string>(key)!=null)
+                {
+                    return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderIsNotAllowRush);
+                }
+                redis.Add(key, "1", DateTime.Now.AddHours(10)); //添加当前时间戳记录
+            }
+
             var myorder = new Ets.Dao.Order.OrderDao().GetOrderByNo(orderNo);
             string finishResult = "";
 

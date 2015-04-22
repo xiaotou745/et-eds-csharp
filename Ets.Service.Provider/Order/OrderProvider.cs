@@ -393,10 +393,10 @@ namespace Ets.Service.Provider.Order
         public int UpdateOrderStatus(string orderNo, int orderStatus, string remark)
         {
             //if (AsyncOrderStatus(orderNo))//更该订单状态时，同步第三方订单状态
-            {
+            //{
                 return OrderDao.CancelOrderStatus(orderNo, orderStatus,remark);
-            } 
-            return 0;
+            //} 
+            //return 0;
         }
 
 
