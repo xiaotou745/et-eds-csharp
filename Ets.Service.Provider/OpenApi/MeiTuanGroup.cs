@@ -268,6 +268,7 @@ namespace Ets.Service.Provider.OpenApi
                 model.order_details = details; //订单ID
             }
 
+            model.orderfrom = OrderConst.OrderFrom4;// 订单来源  美团订单的订单来源是 4
             model.receive_time = fromModel.ctime;//美团不传递，E代送必填 要求送餐时间
             //fromModel.extras 说明，暂时不用 
             return model;

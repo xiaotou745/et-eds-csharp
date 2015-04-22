@@ -52,15 +52,25 @@ namespace OpenApi
                     string signStr = groupCofigInfo.AppSecret + "app_key" + paramodel.app_key + "timestamp"
                         + paramodel.timestamp + "v" + paramodel.v + groupCofigInfo.AppSecret;
                     string sign = MD5.Encrypt(signStr);
-                    paramodel.group = ParseHelper.ToInt(groupCofigInfo.GroupId, 0);
-                    actionContext.ActionArguments["paramodel"] = paramodel; ;
                     if (sign != paramodel.sign)   //sign错误，请求中止
+                    {
                         actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
-                            (actionContext.ControllerContext, ResultModel<object>.Conclude(OrderApiStatusType.SignError));
+                               (actionContext.ControllerContext, ResultModel<object>.Conclude(OrderApiStatusType.SignError));
+                        return;
+                    }
+                    else {
+                        paramodel.group = ParseHelper.ToInt(groupCofigInfo.GroupId, 0); //设置集团
+                        actionContext.ActionArguments["paramodel"] = paramodel;  //更新参数实体
+                    }
+                        
                 }
-                else
-                    actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
+                else{
+                           actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
                            (actionContext.ControllerContext, ResultModel<object>.Conclude(OrderApiStatusType.SignError));  //sign错误，请求中止
+                               return;
+                }
+         
+         
             }
 
         }
