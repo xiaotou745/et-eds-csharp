@@ -50,35 +50,54 @@ namespace SuperMan.Controllers
             //    ViewBag.superManModel = superManModel;
             //} 
             var pagedList = iOrderProvider.GetOrders(criteria);
-            if (criteria.hidDaochu=="1")
-            {
-                if (pagedList!=null)
-                {
-                    string filname = "e代送-{0}-订单数据.xls";
-                    if (!string.IsNullOrWhiteSpace(criteria.businessName))
-                    {
-                        filname = string.Format(filname, criteria.businessName);
-                    }
-                    if (!string.IsNullOrWhiteSpace(criteria.superManName))
-                    {
-                        filname = string.Format(filname, criteria.superManName);
-                    }
-                    if (pagedList.All > 3)
-                    {
-                        byte[] data = Encoding.UTF8.GetBytes(CreateExcel(pagedList));
-                        return File(data, "application/ms-excel", filname);
-                    }
-                    else
-                    {
-                        byte[] data = Encoding.Default.GetBytes(CreateExcel(pagedList));
-                        return File(data, "application/ms-excel", filname);
-                    }
-
-                }
-            }
              
             return PartialView("_PartialOrderList", pagedList);
         }
+
+        /// <summary>
+        /// 导出订单数据
+        /// </summary>
+        /// <param name="pageindex"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult PostDaoChuOrder(int pageindex = 1)
+        {  
+            Ets.Model.ParameterModel.Order.OrderSearchCriteria criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria();
+            TryUpdateModel(criteria);
+            if (criteria.businessCity=="--无--")
+            {
+                criteria.businessCity = "";
+            }
+ 
+            var pagedList = iOrderProvider.GetOrders(criteria);
+
+            if (pagedList != null && pagedList.Records.Count > 0 && (!string.IsNullOrWhiteSpace(criteria.businessName) || !string.IsNullOrWhiteSpace(criteria.superManName)))
+            {
+                string filname = "e代送-{0}-订单数据.xls";
+                if (!string.IsNullOrWhiteSpace(criteria.businessName))
+                {
+                    filname = string.Format(filname, criteria.businessName);
+                }
+                if (!string.IsNullOrWhiteSpace(criteria.superManName))
+                {
+                    filname = string.Format(filname, criteria.superManName);
+                } 
+
+                if (pagedList.Records.Count > 3)
+                {
+                    byte[] data = Encoding.UTF8.GetBytes(CreateExcel(pagedList));
+                    return File(data, "application/ms-excel", filname);
+                }
+                else
+                {
+                    byte[] data = Encoding.Default.GetBytes(CreateExcel(pagedList));
+                    return File(data, "application/ms-excel", filname);
+                }
+
+            }
+            return PartialView("_PartialOrderList", pagedList);
+        }
+
 
         /// <summary>
         /// 生成商户结算excel文件
@@ -107,12 +126,12 @@ namespace SuperMan.Controllers
             foreach (var oOrderListModel in paraModel.Records)
             {
                 strBuilder.AppendLine(string.Format("<tr><td>{0}</td>", oOrderListModel.OrderNo));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.BusinessName));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.BusinessName+":"+oOrderListModel.BusinessPhoneNo));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.PubDate));
-                strBuilder.AppendLine(string.Format("<td>{0}%</td>", oOrderListModel.ActualDoneDate));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.ActualDoneDate));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.Quantity));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.Amount));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.OrderCommission));
+                strBuilder.AppendLine(string.Format("<td>{0}%</td>", oOrderListModel.OrderCommission));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.DistribSubsidy));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.WebsiteSubsidy));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.Adjustment));
