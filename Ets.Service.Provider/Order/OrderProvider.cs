@@ -535,7 +535,7 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <param name="paramodel">参数实体</param>
         /// <returns>订单详情</returns>
-        public OrderListModel GetOrderDetail(string order_no)
+        public IList<OrderDetailModel> GetOrderDetail(string order_no)
         {
             OrderDao OrderDao = new OrderDao();
             return OrderDao.GetOrderDetail(order_no); 

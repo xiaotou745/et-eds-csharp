@@ -1424,57 +1424,21 @@ where   o.Id = @orderId;
         /// </summary>
         /// <param name="orderNo">订单号码</param>
         /// <returns>订单</returns>
-        public OrderListModel GetOrderDetail(string order_no)
+        public IList<OrderDetailModel> GetOrderDetail(string order_no)
         {
-            string sql = @"SELECT top 1 o.[Id]
-                                        ,o.[OrderNo]
-                                        ,o.[PickUpAddress]
-                                        ,o.[PubDate]
-                                        ,o.[ReceviceName]
-                                        ,o.[RecevicePhoneNo]
-                                        ,o.[ReceviceAddress]
-                                        ,o.[ActualDoneDate]
-                                        ,o.[IsPay]
-                                        ,o.[Amount]
-                                        ,o.[OrderCommission]
-                                        ,o.[DistribSubsidy]
-                                        ,o.[WebsiteSubsidy]
-                                        ,o.[Remark]
-                                        ,o.[Status]
-                                        ,o.[clienterId]
-                                        ,o.[businessId]
-                                        ,o.[ReceviceCity]
-                                        ,o.[ReceviceLongitude]
-                                        ,o.[ReceviceLatitude]
-                                        ,o.[OrderFrom]
-                                        ,o.[OriginalOrderId]
-                                        ,o.[OriginalOrderNo]
-                                        ,o.[Quantity]
-                                        ,o.[Weight]
-                                        ,o.[ReceiveProvince]
-                                        ,o.[ReceiveArea]
-                                        ,o.[ReceiveProvinceCode]
-                                        ,o.[ReceiveCityCode]
-                                        ,o.[ReceiveAreaCode]
-                                        ,o.[OrderType]
-                                        ,o.[KM]
-                                        ,o.[GuoJuQty]
-                                        ,o.[LuJuQty]
-                                        ,o.[SongCanDate]
-                                        ,o.[OrderCount]
-                                        ,o.[CommissionRate] 
-                                        ,b.[City] BusinessCity
-                                        ,b.Name BusinessName
-                                    FROM [order] o WITH ( NOLOCK )
-                                    LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
-                                    WHERE 1=1 and o.OrderNo=@OriginalOrderNo";
+            string sql = @"SELECT  o.[OrderNo]
+                                        ,o.[ProductName]
+                                        ,o.[UnitPrice]
+                                        ,o.[Quantity] 
+                                    FROM [OrderDetail] o WITH ( NOLOCK )
+                                    WHERE o.OrderNo=@OriginalOrderNo";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OriginalOrderNo", SqlDbType.NVarChar);
             parm.SetValue("@OriginalOrderNo", order_no);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             if (dt == null || dt.Rows.Count <= 0)
                 return null;
-            return MapRows<OrderListModel>(dt)[0];
+            return MapRows<OrderDetailModel>(dt);
         }
     }
 }
