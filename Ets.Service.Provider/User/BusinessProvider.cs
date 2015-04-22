@@ -322,6 +322,10 @@ namespace Ets.Service.Provider.User
 
         }
 
+        public bool CheckExistBusiness(int originalId, int groupId)
+        {
+            return dao.CheckExistBusiness(originalId, groupId);
+        }
 
         /// <summary>
         /// B端登录

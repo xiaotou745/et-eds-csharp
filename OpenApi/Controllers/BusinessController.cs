@@ -16,11 +16,14 @@ using System.Web.Script.Serialization;
 using Ets.Model.Common;
 using Ets.Model.ParameterModel.Bussiness;
 using ETS.Enums;
+using Ets.Service.Provider.User;
+using Ets.Service.IProvider.User; 
 
 namespace OpenApi.Controllers
 {
     public class BusinessController : ApiController
-    { 
+    {
+        IBusinessProvider iBusiProvider = new BusinessProvider();
         /// <summary>
         /// 商户注册
         /// </summary>
@@ -29,7 +32,10 @@ namespace OpenApi.Controllers
         [SignOpenApi]
         [OpenApiActionError]
         public ResultModel<object> RegisterBusiness(ParaModel<BusinessRegisterModel> paramodel)
-        {
+        { 
+            //是否存在该商户
+            if (iBusiProvider.CheckExistBusiness(paramodel.fields.B_OriginalBusiId, paramodel.group))
+                return ResultModel<object>.Conclude(CustomerRegisterStatus.OriginalBusiIdRepeat); 
 
             if (paramodel.app_key.Length > 0)
             {

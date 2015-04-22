@@ -224,6 +224,8 @@ namespace Ets.Service.IProvider.User
         /// <returns></returns>
         ResultModel<BusiRegisterResultModel> AddBusiness(AddBusinessModel model);
 
+        bool CheckExistBusiness(int originalId,int groupId);
+
     }
 }
 
