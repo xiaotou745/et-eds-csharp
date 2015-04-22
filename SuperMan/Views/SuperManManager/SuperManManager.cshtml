@@ -512,7 +512,6 @@
         }
 
         $('#SupProvinceCode').change(function () {
-            alert("p");
             var selCityCode = $("#SupCityCode");
             selCityCode.empty();;  //清除选择的城市信息
             $('#SupBussinessID').empty();  //清除选择的门店信息
@@ -527,7 +526,6 @@
         });
 
         $('#SupCityCode').change(function () {
-            alert("c");
             LoadSupBussinessInfo();
         });
         function LoadSupBussinessInfo() {
@@ -545,7 +543,7 @@
             }
         }
 
-
+        
         $("#btnUpdateSuperConfim").click(
 
     function () {
@@ -564,6 +562,7 @@
             var healthCardID = $('#SupHealthCardID').val(); //健康证ID
             var internalDepart = $('#SupInternalDepart').val(); //内外部门
             var provinceCode = $('#SupProvinceCode').val(); //省
+            alert(provinceCode);
             var cityCode = $('#SupCityCode').val(); //市
             var idCard = $('#SupIDCard').val(); //身份证号
             var password = $('#SupPassword').val(); //密码
@@ -575,12 +574,12 @@
             } else {
                 $('#labBoxSupName').hide();
             }
-            if (bussinessID == "" || bussinessID == null) {  //所属门店非空验证
-                $('#labSupBussinessID').show();
-                result = false;
-            } else {
-                $('#labSupBussinessID').hide();
-            }
+            //if (bussinessID == "" || bussinessID == null) {  //所属门店非空验证
+            //    $('#labSupBussinessID').show();
+            //    result = false;
+            //} else {
+            //    $('#labSupBussinessID').hide();
+            //}
             if (phoneNo == "" || phoneNo == null) {  //手机号非空验证
                 $('#labBoxSupPhoneNo').html("不能为空").show();
                 result = false;
@@ -615,8 +614,8 @@
                     url: '/SuperManManager/ModifySuperMan',
                     data: {
                         Id: id, TrueName: trueName, PhoneNo: phoneNo, HealthCardID: healthCardID, InternalDepart: internalDepart,
-                        ProvinceCode: provinceCode, CityCode: cityCode, IDCard: idCard, Password: password, City: $("#SupProvinceCode").find("option:selected").text(),
-                        CityId: provinceCode, Province: $("#SupProvinceCode").find("option:selected").text(), GroupId: $("#HidSupGroupID").val(),
+                        ProvinceCode: provinceCode, CityCode: cityCode, IDCard: idCard, Password: password, City: $("#SupCityCode").find("option:selected").text(),
+                        CityId: cityCode, Province: $("#SupProvinceCode").find("option:selected").text(), GroupId: $("#HidSupGroupID").val(),
                         BussinessID: bussinessID, PicWithHandUrl: hidHandUpload, PicUrl: hidupload
                     },
                     success: function (result) {
