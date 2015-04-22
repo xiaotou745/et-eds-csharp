@@ -471,6 +471,14 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotExist);
             if (!ClienterLogic.clienterLogic().CheckOrderIsAllowRush(orderNo))  //查询订单是否被抢
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
+
+            //判断该用户是否有资格抢单
+            var curClienter = ClienterLogic.clienterLogic().GetClienterById(userId);
+            if (curClienter.Status != ConstValues.CLIENTER_AUDITPASS)
+            {
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.AuditNotPass);
+            }
+
             bool bResult = ClienterLogic.clienterLogic().RushOrder(userId, orderNo);
             if (bResult)
             { 
@@ -500,6 +508,12 @@ namespace SuperManWebApi.Controllers
             if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null) //订单是否存在验证
             {
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderIsNotExist);
+            }
+            //判断该用户是否有资格完成
+            var curClienter = ClienterLogic.clienterLogic().GetClienterById(userId);
+            if (curClienter.Status != ConstValues.CLIENTER_AUDITPASS)
+            {
+                return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.AuditNotPass);
             }
             int bResult = ClienterLogic.clienterLogic().FinishOrder(userId, orderNo);
 

@@ -19,9 +19,9 @@ namespace SuperManCore.Common
     }
     public enum LoginModelStatus
     {
-        Success=0,
+        Success = 0,
         [DisplayText("用户名或密码错误")]
-        InvalidCredential=1
+        InvalidCredential = 1
     }
     public enum PubOrderStatus
     {
@@ -45,9 +45,9 @@ namespace SuperManCore.Common
     }
     public enum GetOrdersNoLoginStatus
     {
-        Success=0,
+        Success = 0,
         [DisplayText("获取订单失败")]
-        FailedGetOrders=1
+        FailedGetOrders = 1
     }
     public enum SendCheckCodeStatus
     {
@@ -68,11 +68,11 @@ namespace SuperManCore.Common
         [DisplayText("订单来源不能为空")]
         OrderFromEmpty = 201,
         [DisplayText("订单号不能为空")]
-        OrderEmpty =202,
+        OrderEmpty = 202,
         [DisplayText("订单不存在")]
-        OrderIsNotExist =203,
+        OrderIsNotExist = 203,
         [DisplayText("订单已被抢,无法取消")]
-        FailedCancelOrder=204,
+        FailedCancelOrder = 204,
         [DisplayText("取消失败")]
         NotCancelOrder = 205
 
@@ -82,7 +82,7 @@ namespace SuperManCore.Common
         订单待抢单 = 0,
         订单完成 = 1,
         订单已接单 = 2,
-        订单已取消=3
+        订单已取消 = 3
     }
 
     public enum ModifyPwdStatus
@@ -125,7 +125,11 @@ namespace SuperManCore.Common
         [DisplayText("订单不存在或订单已取消")]
         OrderIsNotExist,
         [DisplayText("订单已被抢或者已完成")]
-        OrderIsNotAllowRush
+        OrderIsNotAllowRush,
+        [DisplayText("未通过审核无法抢单")]
+        AuditNotPass
+
+
     }
     public enum FinishOrderStatus
     {
@@ -139,7 +143,9 @@ namespace SuperManCore.Common
         [DisplayText("订单不存在")]
         OrderIsNotExist,
         [DisplayText("此订单已经是完成状态")]
-        OrderIsNotAllowRush
+        OrderIsNotAllowRush,
+        [DisplayText("未通过审核无法完成")]
+        AuditNotPass
     }
 
     public enum GetMyBalanceStatus
@@ -156,7 +162,7 @@ namespace SuperManCore.Common
     /// </summary>
     public enum GroupIsValidStatus
     {
-       正常= 1,
-       不可用 = 0
+        正常 = 1,
+        不可用 = 0
     }
 }
