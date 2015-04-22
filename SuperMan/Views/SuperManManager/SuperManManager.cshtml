@@ -513,9 +513,9 @@
 
         $('#SupProvinceCode').change(function () {
             var selCityCode = $("#SupCityCode");
-            selCityCode.empty();;  //清除选择的城市信息
+            selCityCode.empty();  //清除选择的城市信息
             $('#SupBussinessID').empty();  //清除选择的门店信息
-            selCityCode.append('<option value="" selected="selected">--城市--</option>');
+            selCityCode.append('<option value="" >--城市--</option>');
             if ($(this).val() != null && $(this).val() != "") {
                 $.post("/Common/GetRegionsByCode", { Code: $(this).val() }, function (data) {
                     $.each(data, function (i, item) {
