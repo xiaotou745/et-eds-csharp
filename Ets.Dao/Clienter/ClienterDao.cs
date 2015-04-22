@@ -413,9 +413,9 @@ namespace Ets.Dao.Clienter
             StringBuilder sql = new StringBuilder();
 
             sql.AppendFormat(@"update [order] set clienterId=@clienterId,Status=@Status 
-output Inserted.Id,GETDATE(),'{0}','',Inserted.clienterId,Inserted.[Status],{1}
+output Inserted.Id,GETDATE(),'{0}','{1}',Inserted.clienterId,Inserted.[Status],{2}
 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
-where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform.骑士);//未抢订单才更新
+where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, ConstValues.OrderHadRush, (int)SuperPlatform.骑士);//未抢订单才更新
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@clienterId", userId);
             parm.AddWithValue("@Status", ConstValues.ORDER_ACCEPT);

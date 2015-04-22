@@ -246,7 +246,7 @@ namespace Ets.Dao.Order
           SettleMoney,
           Adjustment
          )
-output Inserted.Id,GETDATE(),'{0}','',Inserted.businessId,Inserted.[Status],{1}
+output Inserted.Id,GETDATE(),'{0}','{1}',Inserted.businessId,Inserted.[Status],{2}
 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
  VALUES  (@OrderNo ,
           @PickUpAddress ,
@@ -281,7 +281,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
           @BusinessCommission,
           @SettleMoney,
           @Adjustment
-         );select @@IDENTITY", SuperPlatform.商家, (int)SuperPlatform.商家);
+         );select @@IDENTITY", SuperPlatform.商家, ConstValues.PublishOrder, (int)SuperPlatform.商家);
 
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderNo", SqlDbType.NVarChar);
@@ -871,7 +871,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
         {
             StringBuilder upSql = new StringBuilder();
             upSql.AppendFormat(@" UPDATE dbo.[order]
- SET    [Status] = @status,OtherCancelReason=@OtherCancelReason,PubDate=getdate() 
+ SET    [Status] = @status,OtherCancelReason=@OtherCancelReason
  output Inserted.Id,GETDATE(),'{0}',@OtherCancelReason,Inserted.businessId,Inserted.[Status],{1}
  into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
  WHERE  OrderNo = @orderNo", SuperPlatform.商家, (int)SuperPlatform.商家);

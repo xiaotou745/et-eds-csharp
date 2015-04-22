@@ -37,7 +37,20 @@ namespace OpenApi.Controllers
         [SignOpenApi]
         [OpenApiActionError]
         public ResultModel<object> RegisterBusiness(ParaModel<BusinessRegisterModel> paramodel)
-        { 
+        {
+            if (string.IsNullOrWhiteSpace(paramodel.fields.PhoneNo))   //手机号非空验证
+                return ResultModel<object>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
+
+            if (string.IsNullOrWhiteSpace(paramodel.fields.B_OriginalBusiId.ToString()))  //判断原平台商户Id不能为空
+                return ResultModel<object>.Conclude(CustomerRegisterStatus.OriginalBusiIdEmpty);
+             
+            if (string.IsNullOrWhiteSpace(paramodel.fields.B_City) || string.IsNullOrWhiteSpace(paramodel.fields.B_CityCode.ToString())) //城市以及城市编码非空验证
+                return ResultModel<object>.Conclude(CustomerRegisterStatus.cityIdEmpty);
+            if (string.IsNullOrEmpty(paramodel.fields.B_Name.Trim())) //商户名称
+                return ResultModel<object>.Conclude(CustomerRegisterStatus.BusiNameEmpty);
+            if (string.IsNullOrWhiteSpace(paramodel.fields.Address) || string.IsNullOrWhiteSpace(paramodel.fields.B_Province) || string.IsNullOrWhiteSpace(paramodel.fields.B_City) || string.IsNullOrWhiteSpace(paramodel.fields.B_Area) || string.IsNullOrWhiteSpace(paramodel.fields.B_AreaCode) || string.IsNullOrWhiteSpace(paramodel.fields.B_CityCode) || string.IsNullOrWhiteSpace(paramodel.fields.B_ProvinceCode))  //商户地址 省市区 不能为空
+                return ResultModel<object>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
+           
             if (iBusiProvider.CheckExistBusiness(paramodel.fields.B_OriginalBusiId, paramodel.group))
                 return ResultModel<object>.Conclude(CustomerRegisterStatus.OriginalBusiIdRepeat);
 
@@ -63,8 +76,8 @@ namespace OpenApi.Controllers
             }
             #endregion
 
-            string addResult = iBusiProvider.AddThirdBusiness(paramodel);
-            if (addResult == "1")
+            int addResult = iBusiProvider.AddThirdBusiness(paramodel);
+            if (addResult > 0)
             {
                 return ResultModel<object>.Conclude(CustomerRegisterStatus.Success, addResult);
             }

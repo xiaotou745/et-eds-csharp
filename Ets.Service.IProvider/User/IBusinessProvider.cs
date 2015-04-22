@@ -227,13 +227,13 @@ namespace Ets.Service.IProvider.User
         bool CheckExistBusiness(int originalId,int groupId);
 
 
-        string AddThirdBusiness(ParaModel<BusinessRegisterModel> paramodel);
+        int AddThirdBusiness(ParaModel<BusinessRegisterModel> paramodel);
         /// <summary>
         /// 添加商户
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        int InsertBusiness(Business model);
+        int InsertOtherBusiness(Business model);
     }
 }
 

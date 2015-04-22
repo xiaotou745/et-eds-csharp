@@ -748,7 +748,10 @@ namespace Ets.Dao.User
         /// <param name="orderStatus"></param>
         public bool UpdateOrder(string oriOrderNo, int orderFrom, OrderStatus orderStatus)
         {
-            string sql = "UPDATE dbo.[order] SET [Status]=@Status WHERE OriginalOrderNo=@OriginalOrderNo and OrderFrom=@OrderFrom ";
+            string sql = string.Format(@"UPDATE dbo.[order] SET [Status]=@Status 
+                            output Inserted.Id,GETDATE(),'{0}','{1}',Inserted.businessId,Inserted.[Status],{2}
+                            into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
+                            WHERE OriginalOrderNo=@OriginalOrderNo and OrderFrom=@OrderFrom ", SuperPlatform.商家,ConstValues.CancelOrder, (int)SuperPlatform.商家);
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OriginalOrderNo", oriOrderNo);
             parm.AddWithValue("@OrderFrom", orderFrom);

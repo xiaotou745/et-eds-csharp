@@ -824,7 +824,7 @@ namespace Ets.Service.Provider.User
         }
 
 
-        public string AddThirdBusiness(ParaModel<BusinessRegisterModel> paramodel)
+        public int AddThirdBusiness(ParaModel<BusinessRegisterModel> paramodel)
         {
             var to = new Business();
             to.Province = paramodel.fields.B_Province;
@@ -855,7 +855,7 @@ namespace Ets.Service.Provider.User
             to.DistribSubsidy = paramodel.fields.DistribSubsidy;  //商户外送费
             to.Status = ConstValues.BUSINESS_NOAUDIT;  //商户默认未审核
 
-            return InsertOtherBusiness(to).ToString();
+            return InsertOtherBusiness(to);
         }
 
         /// <summary>

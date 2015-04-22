@@ -77,7 +77,6 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model">订单基本数据信息</param>
         /// <returns></returns>
-
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Order.NewPostPublishOrderResultModel> NewPostPublishOrder_B(Ets.Model.ParameterModel.Order.NewPostPublishOrderModel model)
         { 
@@ -451,7 +450,7 @@ namespace SuperManWebApi.Controllers
                 if (selResult.Status == ConstValues.ORDER_NEW)
                 {
                     //存在的情况下  取消订单  3
-                    int cacelResult = iOrderProvider.UpdateOrderStatus(OrderId, Ets.Model.Common.ConstValues.ORDER_CANCEL,"");
+                    int cacelResult = iOrderProvider.UpdateOrderStatus(OrderId, Ets.Model.Common.ConstValues.ORDER_CANCEL,Ets.Model.Common.ConstValues.CancelOrder);
                     if (cacelResult > 0)
                         return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.Success, true);
                     else
