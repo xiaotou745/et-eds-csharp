@@ -58,7 +58,9 @@
                     <input id="txtOriginalOrderNo" type="text" name="OriginalOrderNo" /> 
                     <span class="">订单号: </span>
                     <input id="txtOrderNo" type="text" name="orderId" />
-                    <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                    <input type="hidden" value="0" name="hidDaochu" id="hidDaochu" /> 
+                    <input type="submit" value="查询" onclick="return DaoCHu('0')"  class="searchBtn" id="btnSearch" />
+                    <input type="submit" value="订单数据导出" onclick="return DaoCHu('1')" class="searchBtn" id="btncDaochu" />
                 </td>
             </tr>
         </table>
@@ -118,5 +120,10 @@
     //                $("#dataList").html(data);
     //            });
     //};
+
+    function DaoCHu(isDaochu) {
+        $("#hidDaochu").val(isDaochu);
+        return true;
+    }
 </script>
 <script src="~/Scripts/mvcpager.js"></script>
