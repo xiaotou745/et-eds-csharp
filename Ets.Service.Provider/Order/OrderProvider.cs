@@ -894,5 +894,11 @@ namespace Ets.Service.Provider.Order
 
             }
         }
+
+        public int GetOrderRecords(string order_no, int group)
+        {
+
+            throw new NotImplementedException();
+        }
     }
 }

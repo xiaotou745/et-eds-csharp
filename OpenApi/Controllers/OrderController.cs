@@ -124,9 +124,11 @@ namespace OpenApi.Controllers
         //[OpenApiActionError]
         //public ResultModel<object> GetOrderRecords(ParaModel<GetStatusPM_OpenApi> paramodel)
         //{
-        //    int orderRecords =  new OrderProvider().GetStatus(paramodel.fields.order_no, paramodel.group);
+        //    int orderRecords =  new OrderProvider().GetOrderRecords(paramodel.fields.order_no, paramodel.group);
 
-        //    return 
+
+        //    return  
+
         //}
     }
 }
