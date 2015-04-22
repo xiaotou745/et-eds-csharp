@@ -67,7 +67,7 @@ namespace Ets.Service.Provider.OpenApi
             //参数信息
             List<string> @params = new List<string>() { 
             "timestamp="+TimeHelper.GetTimeStamp(false) ,
-            "order_id="+model.order_no, //订单号
+            "order_id="+model.OriginalOrderNo, //订单号
             "app_id="+app_id
             };
             @params.Sort();
@@ -87,7 +87,7 @@ namespace Ets.Service.Provider.OpenApi
             //参数信息
             List<string> @params = new List<string>() { 
             "timestamp="+TimeHelper.GetTimeStamp(false) ,
-            "order_id="+model.order_no, //订单号
+            "order_id="+model.OriginalOrderNo, //订单号
             "reason=12", //取消原因
             "reason_code=12", //规范化取消原因code
             "app_id="+app_id
@@ -109,7 +109,7 @@ namespace Ets.Service.Provider.OpenApi
             //参数信息
             List<string> @params = new List<string>() { 
             "timestamp="+TimeHelper.GetTimeStamp(false) ,
-            "order_id="+model.order_no, //订单号
+            "order_id="+model.OriginalOrderNo, //订单号
             "courier_name="+model.ClienterTrueName, //配送员姓名
             "courier_phone="+model.ClienterPhoneNo, //配送电话
             "app_id="+app_id
@@ -130,7 +130,7 @@ namespace Ets.Service.Provider.OpenApi
             //参数信息
             List<string> @params = new List<string>() { 
             "timestamp="+TimeHelper.GetTimeStamp(false) ,
-            "order_id="+model.order_no, //订单号
+            "order_id="+model.OriginalOrderNo, //订单号
             "app_id="+app_id
             };
             @params.Sort();
