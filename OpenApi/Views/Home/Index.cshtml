@@ -163,31 +163,31 @@
     //});
 
 
-    $(function () {
-        $(function () {
-            $.ajax({
-                type: 'post',
-                datatype: 'json',
-                url: '/order/ChangeStatus',
-                data: {
-                    "app_key": "appkey_meituan",//fulltime
-                    "timestamp": "2015-03-11 20:42:33",
-                    "v": "1.0",
-                    "sign": "0E4E2C676DA6A750D3AF07A9B5261A12", // 8C59077F13F16FAD71A9E9D053CF215F
-                    "fields": {
-                        "order_no": "126376458586190591",
-                        "status":1
-                    }
-                },
-                success: function (data) {
-                                console.log(data);
-                            },
-                            error: function () {
+    //$(function () {
+    //    $(function () {
+    //        $.ajax({
+    //            type: 'post',
+    //            datatype: 'json',
+    //            url: '/order/ChangeStatus',
+    //            data: {
+    //                "app_key": "appkey_meituan",//fulltime
+    //                "timestamp": "2015-03-11 20:42:33",
+    //                "v": "1.0",
+    //                "sign": "0E4E2C676DA6A750D3AF07A9B5261A12", // 8C59077F13F16FAD71A9E9D053CF215F
+    //                "fields": {
+    //                    "order_no": "126376458586190591",
+    //                    "status":1
+    //                }
+    //            },
+    //            success: function (data) {
+    //                            console.log(data);
+    //                        },
+    //                        error: function () {
 
-                            }
-            })
-        });
-    });
+    //                        }
+    //        })
+    //    });
+    //});
 
 
     //$(function () {
@@ -195,7 +195,7 @@
     //        $.ajax({
     //            type: 'post',
     //            datatype: 'json',
-    //            url: '/meituan/PullOrderInfo',
+    //            url: '/meituan/PullOrderInfo?dsddasd=121',
     //            data: {
     //                "order_id": "126376458586190591",
     //                "app_poi_code": "990001",

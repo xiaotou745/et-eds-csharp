@@ -214,7 +214,7 @@ namespace Ets.Service.Provider.OpenApi
                 else
                     paras = paras + props[i].Name + "=" + props[i].GetValue(fromModel) + "&";
             }
-            string url = "http://test.waimaiopen.meituan.com/api/v1/third_shipping/save?";  //TODO
+            string url = ConfigSettings.Instance.MeiTuanPullOrderInfo;
             string waimd5 = url + paras + consumer_secret; //consumer_secret
             string sig = ETS.Security.MD5.Encrypt(waimd5).ToLower();
             return sig == fromModel.sig;
