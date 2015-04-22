@@ -39,6 +39,7 @@ namespace OpenApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
+        [ExecuteTimeApi]
         public object PullOrderInfo(MeiTuanOrdeModel paramodel)
         {
             MeiTuanGroup meituan = new MeiTuanGroup();
@@ -48,6 +49,6 @@ namespace OpenApi.Controllers
                 return meituan.AddOrder(model) > 0 ? new { data = "ok" } : new { data = "fail" };
             }
             return new { data = "fail" };  //推送失败
-        } 
+        }
     }
 }
