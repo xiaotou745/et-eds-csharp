@@ -5,6 +5,7 @@ using Ets.Service.Provider.OpenApi;
 using ETS.Const;
 using ETS.Enums;
 using ETS.Util;
+using Letao.Util;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,7 +24,7 @@ namespace Ets.Service.Provider.OpenApi
     /// <summary>
     /// 美团相关业务类 add by caoheyang 20150420
     /// </summary>
-    public class MeiTuanGroup : IGroupProviderOpenApi, IPullOrderInfoOpenApi
+    public class MeiTuanGroup : IGroupProviderOpenApi
     {
         private string app_id = ConfigSettings.Instance.MeiTuanAppkey;
         private string consumer_secret = ConfigSettings.Instance.MeiTuanAppsecret;
@@ -32,8 +34,9 @@ namespace Ets.Service.Provider.OpenApi
         /// </summary>
         private string accept = "application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
 
+        #region 回调美团接口同步订单状态
         /// <summary>
-        /// 回调万达接口同步订单状态  add by caoheyang 20150420
+        /// 回调美团接口同步订单状态  add by caoheyang 20150420
         /// </summary>
         /// <param name="paramodel">参数实体</param>
         /// <returns></returns>
@@ -64,7 +67,7 @@ namespace Ets.Service.Provider.OpenApi
             //参数信息
             List<string> @params = new List<string>() { 
             "timestamp="+TimeHelper.GetTimeStamp(false) ,
-            "order_id="+model.order_no, //订单号
+            "order_id="+model.OriginalOrderNo, //订单号
             "app_id="+app_id
             };
             @params.Sort();
@@ -84,7 +87,7 @@ namespace Ets.Service.Provider.OpenApi
             //参数信息
             List<string> @params = new List<string>() { 
             "timestamp="+TimeHelper.GetTimeStamp(false) ,
-            "order_id="+model.order_no, //订单号
+            "order_id="+model.OriginalOrderNo, //订单号
             "reason=12", //取消原因
             "reason_code=12", //规范化取消原因code
             "app_id="+app_id
@@ -106,7 +109,7 @@ namespace Ets.Service.Provider.OpenApi
             //参数信息
             List<string> @params = new List<string>() { 
             "timestamp="+TimeHelper.GetTimeStamp(false) ,
-            "order_id="+model.order_no, //订单号
+            "order_id="+model.OriginalOrderNo, //订单号
             "courier_name="+model.ClienterTrueName, //配送员姓名
             "courier_phone="+model.ClienterPhoneNo, //配送电话
             "app_id="+app_id
@@ -127,7 +130,7 @@ namespace Ets.Service.Provider.OpenApi
             //参数信息
             List<string> @params = new List<string>() { 
             "timestamp="+TimeHelper.GetTimeStamp(false) ,
-            "order_id="+model.order_no, //订单号
+            "order_id="+model.OriginalOrderNo, //订单号
             "app_id="+app_id
             };
             @params.Sort();
@@ -174,13 +177,14 @@ namespace Ets.Service.Provider.OpenApi
             string json = HTTPHelper.HttpPost(url, postdata, accept: accept);
             return AsyncStatusInfo(json);
         }
+        #endregion
 
         /// <summary>
         /// 新增商铺时根据集团id为店铺设置外送费，结算比例等财务相关信息 add by caoheyang 20150420
         /// </summary>
         /// <param name="paramodel"></param>
         /// <returns></returns>
-        public CreatePM_OpenApi SetCcmmissonInfo(CreatePM_OpenApi paramodel)
+        public CreatePM_OpenApi SetCommissonInfo(CreatePM_OpenApi paramodel)
         {
             paramodel.store_info.delivery_fee = 5;//全时目前外送费统一5
             paramodel.store_info.businesscommission = 0;//万达目前结算比例统一0
@@ -189,27 +193,109 @@ namespace Ets.Service.Provider.OpenApi
 
 
         /// <summary>
-        ///  第三方店铺id add by caoheyang 20150420
+        /// 验证美团推送订单的签名是否正确  add by caoheyang 20150421
         /// </summary>
-        /// <param name="info"></param>
-        public void PullOrderInfo(int store_id)
+        /// <param nCame="fromModel">美团数据实体</param>
+        public bool ValiditeSig(MeiTuanOrdeModel fromModel)
         {
-            MeiTuanOrdeModel model = new MeiTuanOrdeModel();
+            LogHelper.LogWriter("fromModel11111111111111111111111111111", fromModel);
+            IList<string> infos = new List<string>();
+            PropertyInfo[] props = fromModel.GetType().GetProperties();
+            props = props.Where(item => item.Name != "sig").OrderBy(item => item.Name).ToArray();
+            string paras = "";
+            for (int i = 0; i < props.Length; i++)
+            {
+                if (i != props.Length - 1)
+                {
+                    if ((props[i].Name == "detail" || props[i].Name == "extras") && props[i].GetValue(fromModel) != null)
+                        paras = paras + props[i].Name + "=" + JsonHelper.JsonConvertToString(props[i].GetValue(fromModel)) + "&";
+                    else
+                        paras = paras + props[i].Name + "=" + props[i].GetValue(fromModel) + "&";
+                }
+                else
+                    paras = paras + props[i].Name + "=" + props[i].GetValue(fromModel);
+            }
+            string url = ConfigSettings.Instance.MeiTuanPullOrderInfo;
+            string waimd5 = url + paras + consumer_secret; //consumer_secret
+            string sig = ETS.Security.MD5.Encrypt(waimd5).ToLower();
+            LogHelper.LogWriter("waimd5", waimd5);
+            LogHelper.LogWriter("sig", sig);
+
+            return sig == fromModel.sig;
         }
 
         /// <summary>
         /// 美团的订单数据转成通用的openapi接入订单数据实体类型 20150421
         /// </summary>
         /// <param name="fromModel">美团数据实体</param>
-        public void TranslateModel(MeiTuanOrdeModel fromModel)
+        public CreatePM_OpenApi TranslateModel(MeiTuanOrdeModel fromModel)
         {
             CreatePM_OpenApi model = new CreatePM_OpenApi();
             model.order_id = fromModel.order_id; //订单ID
+            ///店铺信息
+            Store store = new Store();
+            store.store_id = fromModel.app_poi_code;//对接方店铺id
+            store.store_name = fromModel.wm_poi_name;//店铺名称
+            store.address = fromModel.wm_poi_address;//店铺地址
+            store.phone = fromModel.wm_poi_address;//店铺电话
+            ///订单地址信息
             Address address = new Address();
             address.address = fromModel.recipient_address;//用户收货地址
             address.user_phone = fromModel.recipient_phone;//用户联系电话
             address.user_name = fromModel.recipient_phone;//用户姓名
+            //TODO 佣金待确认
+            model.remark = fromModel.caution;//备注
+            model.status = OrderConst.OrderStatus30;//初始化订单状态 第三方代接入
+            model.create_time = TimeHelper.TimeStampToDateTime(fromModel.ctime);//订单发单时间 创建时间
+            model.payment = fromModel.pay_type;//支付类型
+            model.is_pay = fromModel.pay_type == 1 ? false : true;//目前货到付款时取未支付，在线支付取已支付
+
+            address.longitude = fromModel.longitude; //经度
+            address.latitude = fromModel.latitude; //纬度
+            model.store_info = store; //店铺 
             model.address = address; //订单ID
+
+            //订单明细不为空时做处理 
+            if (fromModel.detail != null && fromModel.detail.Length > 0)
+            {
+                OrderDetail[] details = new OrderDetail[fromModel.detail.Length];
+                for (int i = 0; i < fromModel.detail.Length; i++)
+                {
+                    OrderDetail tempdetail = new OrderDetail();
+                    tempdetail.product_name = fromModel.detail[i].food_name;//菜品名称
+                    tempdetail.quantity = fromModel.detail[i].quantity;//菜品数量
+                    tempdetail.unit_price = fromModel.detail[i].price;//菜品单价
+                    tempdetail.detail_id = 0;//美团不传递明细id，明细id为0
+                    details[i] = tempdetail;
+                }
+                model.order_details = details; //订单ID
+            }
+
+            model.orderfrom = OrderConst.OrderFrom4;// 订单来源  美团订单的订单来源是 4
+            model.receive_time = TimeHelper.TimeStampToDateTime(fromModel.ctime);//美团不传递，E代送必填 要求送餐时间
+            LogHelper.LogWriter("CreatePM_OpenApi", model);
+
+            //fromModel.extras 说明，暂时不用 
+            return model;
+        }
+
+        /// <summary>
+        /// 新增美团订单 add by caoheyang 20150421 
+        /// </summary>
+        /// <param name="fromModel">paraModel</param>
+        public int AddOrder(CreatePM_OpenApi paramodel) {
+           var redis = new ETS.NoSql.RedisCache.RedisCache();
+           int businessId = ParseHelper.ToInt(redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.orderfrom,
+              paramodel.store_info.store_id.ToString()))); //缓存中取E代送商户id
+           LogHelper.LogWriter("businessId", businessId);
+
+
+          if (businessId == 0)
+              return 0;   //商户不存在发布订单
+          else {
+              paramodel.businessId = businessId;
+              return string.IsNullOrWhiteSpace(new Ets.Dao.Order.OrderDao().CreateToSql(paramodel)) ? 0 : 1;
+          }
         }
     }
 
@@ -222,9 +308,46 @@ namespace Ets.Service.Provider.OpenApi
     public class MeiTuanOrdeModel
     {
         /// <summary>
+        /// app_id
+        /// </summary>
+        public string app_id { get; set; }
+
+        /// <summary>
+        /// 时间戳
+        /// </summary>
+        public string timestamp { get; set; }
+
+        /// <summary>
+        /// 签名
+        /// </summary>
+        public string sig { get; set; }
+
+        /// <summary>
         /// 美团订单ID
         /// </summary>
         public string order_id { get; set; }
+
+        /// <summary>
+        /// APP方商家ID
+        /// </summary>
+        public int app_poi_code { get; set; }
+
+        /// <summary>
+        /// 美团商家名称
+        /// </summary>
+        public string wm_poi_name { get; set; }
+
+        /// <summary>
+        ///美团商家地址
+        /// </summary>
+        public string wm_poi_address { get; set; }
+
+
+        /// <summary>
+        /// 美团商家电话
+        /// </summary>
+        public string wm_poi_phone { get; set; }
+
 
         /// <summary>
         /// 收件人地址
@@ -270,11 +393,11 @@ namespace Ets.Service.Provider.OpenApi
         /// <summary>
         /// 创建时间
         /// </summary>
-        public DateTime ctime { get; set; }
+        public string ctime { get; set; }
         /// <summary>
         /// 更新时间
         /// </summary>
-        public DateTime utime { get; set; }
+        public string utime { get; set; }
         /// <summary>
         /// 订单详细类目列表
         /// </summary>
@@ -283,22 +406,7 @@ namespace Ets.Service.Provider.OpenApi
         /// 订单活动类目列表
         /// </summary>
         public MeiTuanOrderExtrasModel[] extras { get; set; }
-        /// <summary>
-        /// 美团商家ID
-        /// </summary>
-        public int wm_poi_id { get; set; }
-        /// <summary>
-        /// 美团商家名称
-        /// </summary>
-        public string wm_poi_name { get; set; }
-        /// <summary>
-        /// 美团商家地址
-        /// </summary>
-        public string wm_poi_address { get; set; }
-        /// <summary>
-        /// 美团商家电话
-        /// </summary>
-        public string wm_poi_phone { get; set; }
+
         /// <summary>
         /// 是否为美团商家APP方配送
         /// </summary>
@@ -307,6 +415,15 @@ namespace Ets.Service.Provider.OpenApi
         /// 支付类型。1：货到付款，2：在线支付
         /// </summary>
         public int pay_type { get; set; }
+
+        /// <summary>
+        /// 实际送餐地址纬度
+        /// </summary>
+        public decimal latitude { get; set; }
+        /// <summary>
+        /// 实际送餐地址经度
+        /// </summary>
+        public decimal longitude { get; set; }
     }
     /// <summary>
     /// 美团订单详细类目列表 add by caoheyang 20150420
@@ -344,7 +461,6 @@ namespace Ets.Service.Provider.OpenApi
         public decimal food_discount { get; set; }
 
     }
-
 
     /// <summary>
     /// 美团订单详细类目列表 add by caoheyang 20150420

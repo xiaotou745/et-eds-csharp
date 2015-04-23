@@ -46,7 +46,8 @@ namespace OpenApi.Controllers
         [OpenApiActionError] //异常过滤器 add by caoheyang 一旦发生异常，客户端返回系统内部错误提示
         public ResultModel<object> GetStatus(ParaModel<GetStatusPM_OpenApi> paramodel)
         {
-            int status = new OrderProvider().GetStatus(paramodel.fields.order_no, paramodel.group);
+            paramodel.fields.orderfrom = paramodel.group; //设置订单来源,其实就是订单对应的集团是什么
+            int status = new OrderProvider().GetStatus(paramodel.fields.order_no, paramodel.fields.orderfrom);
             return status < 0 ?
             ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :    //订单不存在返回参数错误提示
             ResultModel<object>.Conclude(OrderApiStatusType.Success, new { order_status = status });
@@ -63,8 +64,8 @@ namespace OpenApi.Controllers
         public ResultModel<object> Create(ParaModel<CreatePM_OpenApi> paramodel)
         {
             paramodel.fields.store_info.group = paramodel.group;  //设置集团信息到具体的门店上  在dao层会用到
-            IOrderProvider orderProvider = new OrderProvider();
-            return orderProvider.Create(paramodel.fields);
+            paramodel.fields.orderfrom = paramodel.group; ///设置订单来源,其实就是订单对应的集团是什么
+            return  new OrderProvider().Create(paramodel.fields);
         }
 
         // POST: Order OrderDetail   paramodel 固定 必须是 paramodel  
@@ -77,9 +78,8 @@ namespace OpenApi.Controllers
         [OpenApiActionError]
         public ResultModel<object> OrderDetail(ParaModel<OrderDetailPM_OpenApi> paramodel)
         {
-            paramodel.fields.GroupId = paramodel.group;  //设置集团信息到具体的门店上  在dao层会用到
-            IOrderProvider orderProvider = new OrderProvider();
-            return orderProvider.OrderDetail(paramodel.fields);
+            paramodel.fields.orderfrom = paramodel.group; //设置订单来源,其实就是订单对应的集团是什么
+            return new OrderProvider().OrderDetail(paramodel.fields);
         }
 
         // POST: Order AsyncStatus   paramodel 固定 必须是 paramodel  
@@ -92,6 +92,7 @@ namespace OpenApi.Controllers
         [OpenApiActionError]
         public ResultModel<object> AsyncStatus(ParaModel<AsyncStatusPM_OpenApi> paramodel)
         {
+            //paramodel.group 签名信息中取到  即 那个集团调用的该接口
             IGroupProviderOpenApi groupProvider = OpenApiGroupFactory.Create(paramodel.group);
             if (groupProvider == null)
                 ResultModel<object>.Conclude(OrderApiStatusType.Success);  //无集团信息，不需要同步返回成功，实际应该不会该情况
@@ -100,28 +101,9 @@ namespace OpenApi.Controllers
         }
 
 
-        // POST: Order PullOrder   paramodel 固定 必须是 paramodel  
-        /// <summary>
-        /// 接受第三方推送发布订单的通知，从第三方抓取订单详细信息接口    add by caoheyang 20150420  目前仅支持美团
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        //[SignOpenApi]
-        //[OpenApiActionError]
-        public ResultModel<object> PullOrderInfo(ParaModel<PullOrderInfoPM_OpenApi> paramodel)
-        {
-            paramodel = new ParaModel<PullOrderInfoPM_OpenApi>();
-            paramodel.group = 4;
-            IPullOrderInfoOpenApi groupProvider = OpenApiGroupFactory.GetIPullOrderInfo(paramodel.group);
-            if (groupProvider == null)
-                return ResultModel<object>.Conclude(OrderApiStatusType.Success);  //无集团信息，不需要同步返回成功，实际应该不会该情况
-            groupProvider.PullOrderInfo(paramodel.fields.store_id);
-            return null;
-        }
-
         // POST: Order ChangeStatus   paramodel 固定 必须是 paramodel  
         /// <summary>
-        /// 第三方更新E代送订单状态   add by caoheyang 20150421  
+        /// 第三方更新E代送订单状态   add by caoheyang 20150421  目前美团专用  
         /// </summary>
         /// <returns></returns>
         [HttpPost]
@@ -129,7 +111,7 @@ namespace OpenApi.Controllers
         [OpenApiActionError]
         public ResultModel<object> ChangeStatus(ParaModel<ChangeStatusPM_OpenApi> paramodel)
         {
-            paramodel.fields.groupid = paramodel.group;
+            paramodel.fields.orderfrom = paramodel.group; //设置订单来源,其实就是订单对应的集团是什么
             return new OrderProvider().UpdateOrderStatus_Other(paramodel.fields);
         }
     }

@@ -38,7 +38,7 @@ namespace Ets.Model.ParameterModel.Order
         public bool is_pay { get; set; }
 
         /// <summary>
-        /// 支付类型 默认0  0 现金
+        /// 支付类型 默认0   0 现金   1 在线支付 
         /// </summary>
         public int payment { get; set; }
 
@@ -112,15 +112,31 @@ namespace Ets.Model.ParameterModel.Order
         public int CommissionFormulaMode { get; set; }
 
         /// <summary>
-        /// 订单结算金额
+        /// 订单结算金额 由业务逻辑层计算所得
         /// </summary>
         public decimal settlemoney { get; set; }
 
         /// <summary>
-        /// 订单额外补贴金额
+        /// 订单额外补贴金额 由业务逻辑层计算所得
         /// </summary>
         public decimal adjustment { get; set; }
 
+        /// <summary>
+        /// 初始订单状态 默认为 0  由业务逻辑层计算所得 add by caoheyang 20150421 
+        /// </summary>
+        public int status { get; set; }
+
+        /// <summary>
+        /// E代送商户id 由业务逻辑层所得 允许为0 为0时代表需要新增商户  add by caoheyang 20150421 
+        /// </summary>
+        public int businessId { get; set; }
+
+        /// <summary>
+        ///订单来源   由业务逻辑层所得 add by caoheyang 20150422 
+        /// 默认0表示E代送B端订单，1易淘食,2万达，3全时，4美团 
+        /// </summary>
+        public int orderfrom { get; set; }
+        
     }
 
     /// <summary>

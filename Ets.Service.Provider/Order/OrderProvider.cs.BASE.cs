@@ -393,10 +393,10 @@ namespace Ets.Service.Provider.Order
         public int UpdateOrderStatus(string orderNo, int orderStatus, string remark)
         {
             //if (AsyncOrderStatus(orderNo))//更该订单状态时，同步第三方订单状态
-            //{
+            {
                 return OrderDao.CancelOrderStatus(orderNo, orderStatus,remark);
-            //} 
-            //return 0;
+            } 
+            return 0;
         }
 
 
@@ -441,7 +441,7 @@ namespace Ets.Service.Provider.Order
             #region  维护店铺相关信息 add by caoheyang 20150416
             string bussinessIdstr = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(),
               paramodel.store_info.store_id.ToString()));
-            if (bussinessIdstr == null || ParseHelper.ToInt(bussinessIdstr) == 0) //缓存中无店铺id 
+            if (bussinessIdstr == null)
             {
                 ///当第三方未传递经纬的情况下，根据地址调用百度接口获取经纬度信息  add by caoheyang 20150416
                 if (paramodel.store_info.longitude == 0 || paramodel.store_info.latitude == 0)  //店铺经纬度
@@ -459,7 +459,7 @@ namespace Ets.Service.Provider.Order
                 //    paramodel.address.latitude = localtion.Item2; //纬度
                 //}
 
-                #region 设置门店的省市区编码信息 add by caoheyang 20150407
+                #region 设置门店的省市区编码信息 add by caoheyang 20150407 
                 string storecodeInfo = new AreaProvider().GetOpenCode(new Ets.Model.ParameterModel.Area.ParaAreaNameInfo()
                 {
                     ProvinceName = paramodel.store_info.province,
@@ -477,15 +477,13 @@ namespace Ets.Service.Provider.Order
                 }
                 #endregion
             }
-            else
-                paramodel.businessId = ParseHelper.ToInt(bussinessIdstr);
             #endregion
 
             #region 根据集团id为店铺设置外送费，结算比例等财务相关信息add by caoheyang 20150417
 
             ///此处其实应该取数据库，但是由于发布订单时关于店铺的逻辑后期要改，暂时这么处理 
             IGroupProviderOpenApi groupProvider = OpenApiGroupFactory.Create(paramodel.store_info.group);
-            paramodel = groupProvider.SetCommissonInfo(paramodel);
+            paramodel = groupProvider.SetCcmmissonInfo(paramodel);
 
             #endregion
 
@@ -523,7 +521,7 @@ namespace Ets.Service.Provider.Order
                     tran.Complete();
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) 
             {
                 redis.Delete(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, //同步失败，清除缓存内的订单信息信息
                            paramodel.store_info.group.ToString(), paramodel.order_id.ToString()));
@@ -531,7 +529,7 @@ namespace Ets.Service.Provider.Order
                     redis.Delete(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(), paramodel.store_info.store_id.ToString()));
                 throw ex; //异常上抛
             }
-
+  
             return string.IsNullOrWhiteSpace(orderNo) ? ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :
              ResultModel<object>.Conclude(OrderApiStatusType.Success, new { order_no = orderNo });
         }
@@ -540,12 +538,12 @@ namespace Ets.Service.Provider.Order
         /// 订单状态查询功能  add by caoheyang 20150316
         /// </summary>
         /// <param name="orderNo">订单号码</param>
-        /// <param name="orderfrom">订单来源</param>
+        /// <param name="groupId">集团id</param>
         /// <returns>订单状态</returns>
-        public int GetStatus(string OriginalOrderNo, int orderfrom)
+        public int GetStatus(string OriginalOrderNo, int groupId)
         {
             OrderDao OrderDao = new OrderDao();
-            return OrderDao.GetStatus(OriginalOrderNo, orderfrom);
+            return OrderDao.GetStatus(OriginalOrderNo, groupId);
         }
 
 
@@ -557,26 +555,14 @@ namespace Ets.Service.Provider.Order
         public ResultModel<object> OrderDetail(OrderDetailPM_OpenApi paramodel)
         {
             OrderDao OrderDao = new OrderDao();
-            OrderListModel order = OrderDao.GetOpenOrder(paramodel.order_no, paramodel.orderfrom);
+            OrderListModel order = OrderDao.GetOpenOrder(paramodel.order_no, paramodel.GroupId);
             return order == null ? ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :
                 ResultModel<object>.Conclude(OrderApiStatusType.Success, new
                 {
                     orderinfo = new { order_status = order.Status, clientername = order.ClienterName, clienterphoneno = order.ClienterPhoneNo }
                 });
         }
-          
-        /// <summary>
-        /// 订单详情接口
-        /// </summary>
-        /// <param name="paramodel">参数实体</param>
-        /// <returns>订单详情</returns>
-        public OrderListModel GetOrderDetail(string order_no)
-        {
-            OrderDao OrderDao = new OrderDao();
-            return OrderDao.GetOrderDetail(order_no); 
-        }
 
-        
         /// <summary>
         ///  supermanapi通过openapi同步第三方订单状态  add by caoheyang 20150327 
         /// </summary>
@@ -585,9 +571,9 @@ namespace Ets.Service.Provider.Order
         public bool AsyncOrderStatus(string orderNo)
         {
             OrderListModel orderlistModel = OrderDao.GetOrderByNo(orderNo);
-            if (orderlistModel.OrderFrom > 0)   //一个商户对应多个集团时需要更改 
+            if (orderlistModel.GroupId > 0)
             {
-                ParaModel<AsyncStatusPM_OpenApi> paramodel = new ParaModel<AsyncStatusPM_OpenApi>() { fields = new AsyncStatusPM_OpenApi() { orderfrom =orderlistModel.OrderFrom} };
+                ParaModel<AsyncStatusPM_OpenApi> paramodel = new ParaModel<AsyncStatusPM_OpenApi>() { group = orderlistModel.GroupId, fields = new AsyncStatusPM_OpenApi() };
                 if (paramodel.GetSign() == null)//为当前集团参数实体生成sign签名信息
                     return false;
                 paramodel.fields.status = ParseHelper.ToInt(orderlistModel.Status, -1);
@@ -600,7 +586,7 @@ namespace Ets.Service.Provider.Order
                 string json = new HttpClient().PostAsJsonAsync(url, paramodel).Result.Content.ReadAsStringAsync().Result;
                 JObject jobject = JObject.Parse(json);
                 int x = jobject.Value<int>("Status"); //接口调用状态 区分大小写
-                if (x == 0)
+                if (x==0)
                 {
                     return true;
                 }
@@ -895,10 +881,8 @@ namespace Ets.Service.Provider.Order
         {
             paramodel.status = OrderConst.OrderStatus3;
             paramodel.remark = "第三方集团取消订单，同步E代送系统订单状态";
-            int currenStatus = OrderDao.GetStatus(paramodel.order_no, paramodel.orderfrom);  //目前订单状态
-            if (currenStatus == -1) //订单不存在
-                return ResultModel<object>.Conclude(OrderApiStatusType.OrderNotExist);
-            else if (OrderConst.OrderStatus30 != currenStatus)  //订单状态非30，,不允许取消订单
+            int currenStatus = OrderDao.GetStatus(paramodel.order_no, paramodel.groupid);  //目前订单状态
+            if (OrderConst.OrderStatus30 != currenStatus)  //订单状态非30，,不允许取消订单
                 return ResultModel<object>.Conclude(OrderApiStatusType.OrderIsJoin);
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {

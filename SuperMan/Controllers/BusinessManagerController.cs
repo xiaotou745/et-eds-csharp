@@ -127,15 +127,26 @@ namespace SuperMan.Controllers
         }
 
         
+        /// <summary>
+        /// 修改商户信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="businessName"></param>
+        /// <param name="businessPhone"></param>
+        /// <param name="businessSourceId">第三方商户id</param>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
         [HttpPost]
         public JsonResult ModifyBusiness(int id, string businessName,string businessPhone,int businessSourceId, int groupId)
         {
             IBusinessProvider iBus = new BusinessProvider();
+            //操作日志
             OrderOptionModel model = new OrderOptionModel()
             {
                 OptUserId = UserContext.Current.Id,
                 OptUserName = UserContext.Current.Name, 
             };
+            //商户操作实体
             Business businessModel = new Business()
             {
                 Name = businessName,

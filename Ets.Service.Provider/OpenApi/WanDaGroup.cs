@@ -93,7 +93,7 @@ namespace Ets.Service.Provider.OpenApi
         /// </summary>
         /// <param name="paramodel"></param>
         /// <returns></returns>
-        public CreatePM_OpenApi SetCcmmissonInfo(CreatePM_OpenApi paramodel)
+        public CreatePM_OpenApi SetCommissonInfo(CreatePM_OpenApi paramodel)
         {
             paramodel.store_info.delivery_fee = 0;//万达目前外送费统一0
             paramodel.store_info.businesscommission = 12;//万达目前结算比例统一12
