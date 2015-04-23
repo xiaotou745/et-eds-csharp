@@ -40,8 +40,10 @@ namespace OpenApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [ExecuteTimeApi]
-        public object PullOrderInfo(MeiTuanOrdeModel paramodel)
+        public object PullOrderInfo([FromBody]MeiTuanOrdeModel paramodel)
         {
+            string val = Letao.Util.JsonHelper.JsonConvertToString(paramodel);
+            paramodel = Letao.Util.JsonHelper.JsonConvertToObject<MeiTuanOrdeModel>(HttpUtility.UrlDecode(val));
             MeiTuanGroup meituan = new MeiTuanGroup();
             if (meituan.ValiditeSig(paramodel))
             {

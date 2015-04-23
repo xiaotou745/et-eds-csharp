@@ -207,16 +207,22 @@ namespace Ets.Service.Provider.OpenApi
                 if (i != props.Length - 1)
                 {
                     if ((props[i].Name == "detail" || props[i].Name == "extras") && props[i].GetValue(fromModel) != null)
-                        paras = paras + props[i].Name + "=" + JsonHelper.JsonConvertToString(props[i].GetValue(fromModel));
+                        paras = paras + props[i].Name + "=" + JsonHelper.JsonConvertToString(props[i].GetValue(fromModel)) + "&";
                     else
                         paras = paras + props[i].Name + "=" + props[i].GetValue(fromModel) + "&";
                 }
                 else
-                    paras = paras + props[i].Name + "=" + props[i].GetValue(fromModel) + "&";
+                    paras = paras + props[i].Name + "=" + props[i].GetValue(fromModel);
             }
             string url = ConfigSettings.Instance.MeiTuanPullOrderInfo;
             string waimd5 = url + paras + consumer_secret; //consumer_secret
             string sig = ETS.Security.MD5.Encrypt(waimd5).ToLower();
+
+
+            LogHelper.LogWriter("waimd5", waimd5);
+
+            LogHelper.LogWriter("sig", sig);
+
             return sig == fromModel.sig;
         }
 
@@ -242,7 +248,7 @@ namespace Ets.Service.Provider.OpenApi
             //TODO 佣金待确认
             model.remark = fromModel.caution;//备注
             model.status = OrderConst.OrderStatus30;//初始化订单状态 第三方代接入
-            model.create_time = fromModel.ctime;//订单发单时间 创建时间
+            model.create_time = TimeHelper.TimeStampToDateTime(fromModel.ctime);//订单发单时间 创建时间
             model.payment = fromModel.pay_type;//支付类型
             model.is_pay = fromModel.pay_type == 1 ? false : true;//目前货到付款时取未支付，在线支付取已支付
 
@@ -268,7 +274,9 @@ namespace Ets.Service.Provider.OpenApi
             }
 
             model.orderfrom = OrderConst.OrderFrom4;// 订单来源  美团订单的订单来源是 4
-            model.receive_time = fromModel.ctime;//美团不传递，E代送必填 要求送餐时间
+            model.receive_time = TimeHelper.TimeStampToDateTime(fromModel.ctime);//美团不传递，E代送必填 要求送餐时间
+            LogHelper.LogWriter("CreatePM_OpenApi", model);
+
             //fromModel.extras 说明，暂时不用 
             return model;
         }
@@ -281,6 +289,9 @@ namespace Ets.Service.Provider.OpenApi
            var redis = new ETS.NoSql.RedisCache.RedisCache();
            int businessId = ParseHelper.ToInt(redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.orderfrom,
               paramodel.store_info.store_id.ToString()))); //缓存中取E代送商户id
+           LogHelper.LogWriter("businessId", businessId);
+
+
           if (businessId == 0)
               return 0;   //商户不存在发布订单
           else {
@@ -384,11 +395,11 @@ namespace Ets.Service.Provider.OpenApi
         /// <summary>
         /// 创建时间
         /// </summary>
-        public DateTime ctime { get; set; }
+        public string ctime { get; set; }
         /// <summary>
         /// 更新时间
         /// </summary>
-        public DateTime utime { get; set; }
+        public string utime { get; set; }
         /// <summary>
         /// 订单详细类目列表
         /// </summary>
