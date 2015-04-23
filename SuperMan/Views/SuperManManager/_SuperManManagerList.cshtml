@@ -194,6 +194,8 @@
         adminjs.closewinbox('.add-openbox');
         return false;
     });
+    var cityID ;
+    var bID;
     function funcViewSuperManInfo(id, trueName, phoneNo, picWithHandUrl, picUrl, healthCardID, provinceCode, cityCode, bussinessID, internalDepart, iDCard, password) {
         $("#SupId").val(id).attr('disabled', 'disabled');
         $("#SupName").val(trueName);
@@ -203,9 +205,8 @@
         $("#SupIDCard").val(iDCard);
         $("#SupProvinceCode").val(provinceCode);
         $("#SupProvinceCode").change();
-        $("#SupCityCode").val(cityCode);
-        $("#SupCityCode").change();
-        $("#SupBussinessID").val(bussinessID);
+        cityID = cityCode;
+        bID = bussinessID;
         adminjs.openwinbox('#UpdateSuperManShow');
     };
 </script>

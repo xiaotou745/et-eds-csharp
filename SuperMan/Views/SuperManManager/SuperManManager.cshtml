@@ -511,6 +511,7 @@
             }
         }
 
+
         $('#SupProvinceCode').change(function () {
             var selCityCode = $("#SupCityCode");
             selCityCode.empty();  //清除选择的城市信息
@@ -521,9 +522,13 @@
                     $.each(data, function (i, item) {
                         selCityCode.append('<option  value="' + item.Code + '">' + item.Name + '</option>');
                     });
+                    selCityCode.val(cityID);
+                    selCityCode.change();
                 });
             }
         });
+
+
 
         $('#SupCityCode').change(function () {
             LoadSupBussinessInfo();
@@ -539,6 +544,7 @@
                         $.each(data, function (i, item) {
                             selBussinessID.append('<option  value="' + item.Id + '">' + item.Name + '</option>');
                         });
+                        selBussinessID.val(bID);
                     });
             }
         }
