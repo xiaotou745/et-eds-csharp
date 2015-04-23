@@ -284,6 +284,10 @@ namespace SuperManWebApi.Controllers
         [HttpGet]
         public Ets.Model.Common.ResultModel<List<string>> OtherOrderConfirm_B(string[] orderlist)
         {
+            if (orderlist == null || orderlist.Length > 0)
+            {
+                return Ets.Model.Common.ResultModel<List<string>>.Conclude(ETS.Enums.PubOrderStatus.OrderCountError,null);
+            }
             var orderProvider = new OrderProvider();
             int i = 0;
             var list= orderlist.Where(s => orderProvider.UpdateOrderStatus(s, OrderConst.ORDER_NEW,"") <= 0).ToList();
@@ -300,6 +304,10 @@ namespace SuperManWebApi.Controllers
         [HttpGet]
         public Ets.Model.Common.ResultModel<int> OtherOrderCancel_B(string[] orderlist,string note)
         {
+            if (orderlist == null || orderlist.Length > 0)
+            {
+                return Ets.Model.Common.ResultModel<int>.Conclude(ETS.Enums.PubOrderStatus.OrderCountError, 0);
+            }
             var orderProvider = new OrderProvider();
             int i = orderlist.Count(s => orderProvider.UpdateOrderStatus(s, OrderConst.ORDER_CANCEL, note) > 0);
             return Ets.Model.Common.ResultModel<int>.Conclude(ETS.Enums.PubOrderStatus.Success, i);
