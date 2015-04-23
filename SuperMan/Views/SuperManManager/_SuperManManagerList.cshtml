@@ -93,7 +93,7 @@
                         @recomname
                     </td>
                    
-                    <td>
+                    <td align="left">
                         @{
                         int idCard = string.IsNullOrEmpty(item.IDCard) ? 0 : 1;
                         int picUrl = string.IsNullOrEmpty(item.PicUrl) ? 0 : 1;
@@ -124,8 +124,11 @@
                                 <a href="javascript:void(0)" amount="@item.AccountBalance" supermanid="@item.Id" class="superManClear">提现</a>
                             }
                         }
+                        if (item.CSID>0)
+                        {
+                                <a href="/SuperManManager/CrossShopLog?UserId=@item.Id" id="kuadian" >跨店奖励</a>
                         }
-                        <a href="/SuperManManager/CrossShopLog?UserId=@item.Id" id="kuadian" >跨店奖励</a>
+                        }
                     </td>
                 </tr>
             }

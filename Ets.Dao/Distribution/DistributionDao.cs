@@ -49,7 +49,9 @@ namespace Ets.Dao.Distribution
                                     ,C.[CityCode]
                                     ,C.[Province]
                                     ,C.[BussinessID]
-                                    ,C.[WorkStatus] ";
+                                    ,C.[WorkStatus] 
+                                    ,isnull(cs.Id,0) as CSID  --如果非0就存在跨店
+                                    ";
             
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrEmpty(criteria.clienterName))
@@ -81,7 +83,10 @@ namespace Ets.Dao.Distribution
                 sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),WtihdrawRecords.CreateTime,120)=CONVERT(CHAR(10),'{0}',120) and WtihdrawRecords.Amount < 0", criteria.txtPubStart.Trim());
             }
 
-            string tableList = @" clienter C WITH (NOLOCK)  left JOIN  dbo.WtihdrawRecords ON WtihdrawRecords.UserId = C.Id ";
+            string tableList = @" clienter C WITH (NOLOCK)  
+                                  left JOIN  dbo.WtihdrawRecords ON WtihdrawRecords.UserId = C.Id 
+                                  left join dbo.CrossShopLog cs on c.Id=cs.ClienterId
+                                ";
             string orderByColumn = " C.Id DESC";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
