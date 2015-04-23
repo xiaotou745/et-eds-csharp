@@ -115,6 +115,7 @@ namespace SuperMan.Controllers
             strBuilder.AppendLine("<tr style=\"font-weight: bold; white-space: nowrap;\">");
             strBuilder.AppendLine("<td>订单号</td>");
             strBuilder.AppendLine("<td>商户信息</td>");
+            strBuilder.AppendLine("<td>骑士信息</td>");
             strBuilder.AppendLine("<td>发布时间</td>");
             strBuilder.AppendLine("<td>完成时间(%)</td>");
             strBuilder.AppendLine("<td>订单数量</td>");
@@ -130,6 +131,7 @@ namespace SuperMan.Controllers
             {
                 strBuilder.AppendLine(string.Format("<tr><td>{0}</td>", oOrderListModel.OrderNo));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.BusinessName+":"+oOrderListModel.BusinessPhoneNo));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.ClienterName + ":" + oOrderListModel.ClienterPhoneNo));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.PubDate));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.ActualDoneDate));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.Quantity));
