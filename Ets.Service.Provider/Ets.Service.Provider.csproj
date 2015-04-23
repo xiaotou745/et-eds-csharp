@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Account\AccountProvider.cs" />
+    <Compile Include="OpenApi\HomeForDinnerGroup.cs" />
     <Compile Include="Authority\AuthorityMenuProvider.cs" />
     <Compile Include="Clienter\ClienterProvider.cs" />
     <Compile Include="Common\AdminToolsProvider.cs" />

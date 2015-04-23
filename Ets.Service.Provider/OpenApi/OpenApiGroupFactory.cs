@@ -27,6 +27,8 @@ namespace Ets.Service.Provider.OpenApi
                     return new FulltimeGroup();
                 case SystemConst.Group4: //美团
                     return new MeiTuanGroup();
+                case SystemConst.Group6: //美团
+                    return new HomeForDinnerGroup();
                 default:
                     return null;
             }
