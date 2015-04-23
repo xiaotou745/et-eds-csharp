@@ -462,6 +462,15 @@ namespace SuperManBusinessLogic.C_Logic
                     query = query.Where(i => i.business.CityId == criteria.cityId.Trim());
                 //1送餐订单 还是  2取餐盒订单
                 query = query.Where(i => i.OrderType == criteria.OrderType);
+
+                DateTime dt = Convert.ToDateTime(DateTime.Now.ToShortDateString());
+
+                //送餐任务只获取当天的
+                if (criteria.OrderType == 1)
+                {
+                    query = query.Where(i => i.PubDate.Value >= dt);
+                }
+
                 //订单状态
                 query = query.Where(i => i.Status == ConstValues.ORDER_NEW);
        
