@@ -64,6 +64,8 @@ namespace SuperMan.Controllers
         {  
             Ets.Model.ParameterModel.Order.OrderSearchCriteria criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria();
             TryUpdateModel(criteria);
+            criteria.PageIndex = 1;
+            criteria.PageSize = 65534;
             if (criteria.businessCity=="--无--")
             {
                 criteria.businessCity = "";
