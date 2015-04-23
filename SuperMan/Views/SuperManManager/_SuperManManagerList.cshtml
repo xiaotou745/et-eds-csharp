@@ -88,6 +88,7 @@
                     {
                         <a href="javascript:void(0)" amount="@item.AccountBalance" supermanid="@item.Id" class="superManClear">余额清零</a>
                     } 
+                    <a href="javascript:void(0)" orderid=@item.Id businessname=@item.TrueName id="linkView" onclick="funcViewSuperManInfo('@item.Id','@item.TrueName','@item.PhoneNo','@item.PicWithHandUrl','@item.PicUrl','@item.HealthCardID','@item.ProvinceCode','@item.CityId','@item.BussinessID','@item.InternalDepart','@item.IDCard','@item.Password')">修改</a>
                 }
                         }
                     </td>
