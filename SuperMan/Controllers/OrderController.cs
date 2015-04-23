@@ -119,6 +119,7 @@ namespace SuperMan.Controllers
             strBuilder.AppendLine("<td>发布时间</td>");
             strBuilder.AppendLine("<td>完成时间</td>");
             strBuilder.AppendLine("<td>订单数量</td>");
+            strBuilder.AppendLine("<td>订单金额</td>"); 
             strBuilder.AppendLine("<td>订单总金额</td>");
             strBuilder.AppendLine("<td>订单佣金</td>");
             strBuilder.AppendLine("<td>外送费用</td>");
@@ -129,7 +130,7 @@ namespace SuperMan.Controllers
             //输出数据.
             foreach (var oOrderListModel in paraModel.Records)
             {
-                strBuilder.AppendLine(string.Format("<tr><td>{0}-</td>", oOrderListModel.OrderNo));
+                strBuilder.AppendLine(string.Format("<tr><td>'{0}'</td>", oOrderListModel.OrderNo));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.BusinessName+":"+oOrderListModel.BusinessPhoneNo));
                 string clineter = "";
                 if (!string.IsNullOrEmpty(oOrderListModel.ClienterName))
@@ -145,6 +146,7 @@ namespace SuperMan.Controllers
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.ActualDoneDate));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.OrderCount));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.Amount));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.Amount + oOrderListModel.OrderCount * oOrderListModel.DistribSubsidy));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.OrderCommission));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.DistribSubsidy));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.WebsiteSubsidy));
