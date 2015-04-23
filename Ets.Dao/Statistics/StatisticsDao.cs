@@ -235,7 +235,7 @@ namespace Ets.Dao.Statistics
                                       count(distinct clienterId) as ActiveClienter,
                                       count(distinct businessId) as ActiveBusiness
                                     from dbo.[order](nolock) as o 
-                                    where o.PubDate = convert(char(10), getdate(), 120) and status<>3
+                                    where o.PubDate >= convert(char(10), getdate(), 120) and status<>3
                           )
                         ,t4 AS(
                                     select 
