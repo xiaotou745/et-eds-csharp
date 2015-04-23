@@ -198,6 +198,7 @@ namespace Ets.Service.Provider.OpenApi
         /// <param nCame="fromModel">美团数据实体</param>
         public bool ValiditeSig(MeiTuanOrdeModel fromModel)
         {
+            LogHelper.LogWriter("fromModel11111111111111111111111111111", fromModel);
             IList<string> infos = new List<string>();
             PropertyInfo[] props = fromModel.GetType().GetProperties();
             props = props.Where(item => item.Name != "sig").OrderBy(item => item.Name).ToArray();
@@ -217,10 +218,7 @@ namespace Ets.Service.Provider.OpenApi
             string url = ConfigSettings.Instance.MeiTuanPullOrderInfo;
             string waimd5 = url + paras + consumer_secret; //consumer_secret
             string sig = ETS.Security.MD5.Encrypt(waimd5).ToLower();
-
-
             LogHelper.LogWriter("waimd5", waimd5);
-
             LogHelper.LogWriter("sig", sig);
 
             return sig == fromModel.sig;

@@ -44,6 +44,9 @@ namespace OpenApi.Controllers
         {
             string val = Letao.Util.JsonHelper.JsonConvertToString(paramodel);
             paramodel = Letao.Util.JsonHelper.JsonConvertToObject<MeiTuanOrdeModel>(HttpUtility.UrlDecode(val));
+
+            LogHelper.LogWriter("fromModel1312321313213123dada", paramodel);
+
             MeiTuanGroup meituan = new MeiTuanGroup();
             if (meituan.ValiditeSig(paramodel))
             {
