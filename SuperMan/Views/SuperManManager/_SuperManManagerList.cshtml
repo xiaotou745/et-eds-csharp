@@ -125,6 +125,7 @@
                             }
                         }
                         }
+                        <a href="/SuperManManager/CrossShopLog?UserId=@item.Id" id="kuadian" >跨店奖励</a>
                     </td>
                 </tr>
             }
@@ -207,7 +208,7 @@
             //adminjs.openwinbox('#Close_Clearbox');
             window.location.href = "/SuperManManager/WtihdrawRecords?UserId=" + currentId;
         });
-
+ 
         $("#btnClear").click(function () {
             var paramaters = { "id": currentId };
             var url = "/SuperManManager/AmountClear";

@@ -1,0 +1,65 @@
+﻿@using Ets.Model.ParameterModel.Subsidy
+ 
+@{
+    ViewBag.Title = "跨店奖励";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+    var reslut = @ViewBag.pagedList as CrossShopListModel;
+    var clienter = reslut.ClienterModel;
+}
+
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：骑士管理 > 跨店奖励
+    </h2>
+    <div class="SearchMd">  
+        <table border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                <td>
+                    <a href="/SuperManManager/SuperManManager">返回</a>
+                </td>
+                 
+            </tr>
+            <tr>
+                <td>
+                    姓名：@clienter.TrueName
+                </td>
+                <td>电话：@clienter.PhoneNo</td>
+            </tr>
+        </table>
+    </div>
+    <div class="bd clearfix" id="dataList">
+    </div>
+
+    <div class="SearchMd">
+
+        <table border="1" cellspacing="0" cellpadding="0">
+            <tr>
+                <td>跨店数量</td>
+                <td>奖励金额</td>
+                <td>操作日期</td>
+                <td>备注</td>
+            </tr>
+            @{
+                var resultList =reslut.list;
+                if (resultList != null && resultList.Count > 0)
+                { 
+                
+                foreach (var item in resultList)
+                {
+                    <tr>
+                        <td>@item.BusinessCount</td>
+                        <td>@item.Amount</td>
+                        <td>@item.InsertTime</td>
+                        <td>@item.Remark</td>
+                    </tr>
+
+                } 
+                }   
+             }
+        </table>
+    </div>
+    <div class="bd clearfix" id="dataList">
+    </div>
+
+</div>
+ 

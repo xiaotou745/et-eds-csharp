@@ -71,7 +71,7 @@ namespace SuperMan.Controllers
  
             var pagedList = iOrderProvider.GetOrders(criteria);
 
-            if (pagedList != null && pagedList.Records.Count > 0 && (!string.IsNullOrWhiteSpace(criteria.businessName) || !string.IsNullOrWhiteSpace(criteria.superManName)))
+            if (pagedList != null && pagedList.Records.Count > 0)
             {
                 string filname = "e代送-{0}-订单数据.xls";
                 if (!string.IsNullOrWhiteSpace(criteria.businessName))
@@ -81,8 +81,11 @@ namespace SuperMan.Controllers
                 if (!string.IsNullOrWhiteSpace(criteria.superManName))
                 {
                     filname = string.Format(filname, criteria.superManName);
+                }
+                if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))
+                {
+                    filname = string.Format(filname, criteria.orderPubStart+":"+criteria.orderPubEnd);
                 } 
-
                 if (pagedList.Records.Count > 3)
                 {
                     byte[] data = Encoding.UTF8.GetBytes(CreateExcel(pagedList));
@@ -100,7 +103,7 @@ namespace SuperMan.Controllers
 
 
         /// <summary>
-        /// 生成商户结算excel文件
+        /// 生成excel文件
         /// 导出字段：订单号、商户信息、发布时间、完成时间、订单数量、订单总金额、订单佣金、外送费用、每单补贴、任务补贴、商家结算比例
         /// </summary>
         /// <returns></returns>

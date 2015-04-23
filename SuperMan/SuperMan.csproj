@@ -541,6 +541,7 @@
     <Content Include="Views\AdminTools\RedisTools.cshtml" />
     <Content Include="Views\SubsidyFormulaMode\OverStoreSubsidies.cshtml" />
     <Content Include="Views\AdminTools\PostRedisTools.cshtml" />
+    <Content Include="Views\SuperManManager\CrossShopLog.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

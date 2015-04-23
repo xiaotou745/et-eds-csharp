@@ -79,11 +79,8 @@
         $('#txtOrderPubStart').datepicker();
         $('#txtOrderPubEnd').datepicker();
         window.location.hash = ''; 
-    });
- 
-
+    }); 
     function DaoCHu() { 
- 
         var superManPhone = $("#txtSuperManPhone").val();
         var txtSuperManName = $("#txtSuperManName").val();
         var txtBusinessPhone = $("#txtBusinessPhone").val();
@@ -92,6 +89,12 @@
         var txtOrderPubEnd = $("#txtOrderPubEnd").val(); 
         var businessCity = $("#businessCity").find("option:selected").text();
         var orderStatus = $("#StatusSelect").find("option:selected").text();
+        alert(txtOrderPubStart == null);
+        alert(txtOrderPubStart == "");
+        if (txtOrderPubStart == "" || txtOrderPubEnd == "") {
+            alert("请输入时间范围!");
+            return;
+        }
         var url = "/Order/PostDaoChuOrder?superManPhone=" + superManPhone + "&superManName=" + txtSuperManName + "&businessPhone=" + txtBusinessPhone + "&businessName=" + txtBusinessName + "&orderStatus=" + orderStatus + "&businessCity=" + businessCity + "&OrderPubStart=" + txtOrderPubStart + "&OrderPubEnd=" + txtOrderPubEnd;
         window.location.href = url;
         return true;
