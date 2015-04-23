@@ -235,7 +235,7 @@ namespace Ets.Dao.Statistics
                                       count(distinct clienterId) as ActiveClienter,
                                       count(distinct businessId) as ActiveBusiness
                                     from dbo.[order](nolock) as o 
-                                    where o.PubDate >= convert(char(10), getdate(), 120) and status<>3
+                                    where o.PubDate = convert(char(10), getdate(), 120) and status<>3
                           )
                         ,t4 AS(
                                     select 
@@ -244,7 +244,7 @@ namespace Ets.Dao.Statistics
                                       sum(case when Status=0 then 1 else 0 end) UnGrabMissionCount--未被抢任务量
                                     from dbo.[order](nolock) as o
                                     where convert(char(10),PubDate,120)=convert(char(10),getdate(),120) 
-                                    and Status<>4
+                                    and Status<>3
                                     group by convert(char(10),PubDate,120)
                           )
                         ,t5 AS(
