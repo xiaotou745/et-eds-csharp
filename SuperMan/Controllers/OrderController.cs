@@ -117,26 +117,35 @@ namespace SuperMan.Controllers
             strBuilder.AppendLine("<td>商户信息</td>");
             strBuilder.AppendLine("<td>骑士信息</td>");
             strBuilder.AppendLine("<td>发布时间</td>");
-            strBuilder.AppendLine("<td>完成时间(%)</td>");
+            strBuilder.AppendLine("<td>完成时间</td>");
             strBuilder.AppendLine("<td>订单数量</td>");
             strBuilder.AppendLine("<td>订单总金额</td>");
             strBuilder.AppendLine("<td>订单佣金</td>");
             strBuilder.AppendLine("<td>外送费用</td>");
             strBuilder.AppendLine("<td>每单补贴</td>");
             strBuilder.AppendLine("<td>任务补贴</td>");
-            strBuilder.AppendLine("<td>商家结算比例</td>");
+            strBuilder.AppendLine("<td>商家结算比例(%)</td>");
             strBuilder.AppendLine("</tr>");
             //输出数据.
             foreach (var oOrderListModel in paraModel.Records)
             {
-                strBuilder.AppendLine(string.Format("<tr><td>{0}</td>", oOrderListModel.OrderNo));
+                strBuilder.AppendLine(string.Format("<tr><td>{0}-</td>", oOrderListModel.OrderNo));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.BusinessName+":"+oOrderListModel.BusinessPhoneNo));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.ClienterName + ":" + oOrderListModel.ClienterPhoneNo));
+                string clineter = "";
+                if (!string.IsNullOrEmpty(oOrderListModel.ClienterName))
+                {
+                    clineter = oOrderListModel.ClienterName;
+                }
+                if (!string.IsNullOrEmpty(oOrderListModel.ClienterPhoneNo))
+                {
+                    clineter +="  "+ oOrderListModel.ClienterPhoneNo;
+                }
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", clineter));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.PubDate));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.ActualDoneDate));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.Quantity));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.OrderCount));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.Amount));
-                strBuilder.AppendLine(string.Format("<td>{0}%</td>", oOrderListModel.OrderCommission));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.OrderCommission));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.DistribSubsidy));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.WebsiteSubsidy));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.Adjustment));
