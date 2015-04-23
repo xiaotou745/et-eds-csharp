@@ -844,14 +844,14 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.GetOrdersStatus))]
         [HttpGet]
-        public Ets.Model.Common.ResultModel<IList<OrderDetailModel>> GetOrderDetail(string orderno)
+        public Ets.Model.Common.ResultModel<ListOrderDetailModel> GetOrderDetail(string orderno)
         {
             var model = new OrderProvider().GetOrderDetail(orderno);
             if (model != null)
             {
-                return Ets.Model.Common.ResultModel<IList<OrderDetailModel>>.Conclude(ETS.Enums.GetOrdersStatus.Success, model);
+                return Ets.Model.Common.ResultModel<ListOrderDetailModel>.Conclude(ETS.Enums.GetOrdersStatus.Success, model);
             }
-            return Ets.Model.Common.ResultModel<IList<OrderDetailModel>>.Conclude(ETS.Enums.GetOrdersStatus.FailedGetOrders, model);
+            return Ets.Model.Common.ResultModel<ListOrderDetailModel>.Conclude(ETS.Enums.GetOrdersStatus.FailedGetOrders, model);
         }
 
     }

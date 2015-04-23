@@ -530,16 +530,7 @@ namespace Ets.Service.Provider.Order
                 });
         }
           
-        /// <summary>
-        /// 订单详情接口
-        /// </summary>
-        /// <param name="paramodel">参数实体</param>
-        /// <returns>订单详情</returns>
-        public IList<OrderDetailModel> GetOrderDetail(string order_no)
-        {
-            OrderDao OrderDao = new OrderDao();
-            return OrderDao.GetOrderDetail(order_no); 
-        }
+     
 
         
         /// <summary>
@@ -699,6 +690,21 @@ namespace Ets.Service.Provider.Order
                 LogHelper.LogWriter("订单发布失败", new { model = model });
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Failed);
             }
+        }
+
+        /// <summary>
+        /// 订单详情接口
+        /// </summary>
+        /// <param name="paramodel">参数实体</param>
+        /// <returns>订单详情</returns>
+        public ListOrderDetailModel GetOrderDetail(string order_no)
+        { 
+            var order =OrderDao.GetOrderByNo(order_no);
+            var list = OrderDao.GetOrderDetail(order_no);
+            ListOrderDetailModel mo=new ListOrderDetailModel();
+            mo.order = order;
+            mo.orderDetails = list;
+            return mo;
         }
 
         /// <summary>
