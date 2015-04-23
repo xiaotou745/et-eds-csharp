@@ -471,9 +471,10 @@
      $.ajax({
         type: 'get',
         dataType: 'json',
-        url: 'http://10.8.7.40:7178/ClienterAPI/GetOrderDetail',
+        url: 'ClienterAPI/CheckCode',
         data: {
-            "orderno": "82150403113006077"
+            "PhoneNumber": "15097444307",
+            "type":"1"
         },
         success: function (data) {
             console.log(data);
