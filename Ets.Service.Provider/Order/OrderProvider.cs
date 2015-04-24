@@ -905,7 +905,6 @@ namespace Ets.Service.Provider.Order
                 int result = OrderDao.UpdateOrderStatus_Other(paramodel);
                 tran.Complete();
                 return result > 0 ? ResultModel<object>.Conclude(OrderApiStatusType.Success) : ResultModel<object>.Conclude(OrderApiStatusType.SystemError);
-
             }
         }
     }
