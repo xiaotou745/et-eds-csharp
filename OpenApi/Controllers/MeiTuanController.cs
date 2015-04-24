@@ -57,7 +57,7 @@ namespace OpenApi.Controllers
                 return new { data = "fail" };  //推送失败
             }
             catch (Exception ex) {
-                LogHelper.LogWriter(ex);  //记录日志
+                LogHelper.LogWriterFromFilter(ex);  //记录日志
                 return new { data = "fail" };  //推送失败
             }
           

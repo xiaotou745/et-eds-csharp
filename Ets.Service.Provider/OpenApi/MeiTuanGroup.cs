@@ -198,7 +198,6 @@ namespace Ets.Service.Provider.OpenApi
         /// <param nCame="fromModel">美团数据实体</param>
         public bool ValiditeSig(MeiTuanOrdeModel fromModel)
         {
-            LogHelper.LogWriter("fromModel11111111111111111111111111111", fromModel);
             IList<string> infos = new List<string>();
             PropertyInfo[] props = fromModel.GetType().GetProperties();
             props = props.Where(item => item.Name != "sig").OrderBy(item => item.Name).ToArray();
@@ -206,19 +205,16 @@ namespace Ets.Service.Provider.OpenApi
             for (int i = 0; i < props.Length; i++)
             {
                 object val = props[i].GetValue(fromModel);
-                if (val == null) 
+                if (val == null)
                     val = "";
                 if (i != props.Length - 1)
-                        paras = paras + props[i].Name + "=" + val + "&";
+                    paras = paras + props[i].Name + "=" + val + "&";
                 else
                     paras = paras + props[i].Name + "=" + val;
             }
             string url = ConfigSettings.Instance.MeiTuanPullOrderInfo;
             string waimd5 = url + paras + consumer_secret; //consumer_secret
             string sig = ETS.Security.MD5.Encrypt(waimd5).ToLower();
-            LogHelper.LogWriter("waimd5", waimd5);
-            LogHelper.LogWriter("sig", sig);
-
             return sig == fromModel.sig;
         }
 
@@ -254,7 +250,7 @@ namespace Ets.Service.Provider.OpenApi
             model.address = address; //订单ID
 
             //订单明细不为空时做处理 
-            if (!string.IsNullOrWhiteSpace(fromModel.detail)&& fromModel.detail!="")
+            if (!string.IsNullOrWhiteSpace(fromModel.detail) && fromModel.detail != "")
             {
                 MeiTuanOrdeDetailModel[] meituandetails = Letao.Util.JsonHelper.JsonConvertToObject<MeiTuanOrdeDetailModel[]>(fromModel.detail);
                 OrderDetail[] details = new OrderDetail[fromModel.detail.Length];
@@ -282,17 +278,18 @@ namespace Ets.Service.Provider.OpenApi
         /// 新增美团订单 add by caoheyang 20150421 
         /// </summary>
         /// <param name="fromModel">paraModel</param>
-        public int AddOrder(CreatePM_OpenApi paramodel) {
-           var redis = new ETS.NoSql.RedisCache.RedisCache();
-           int businessId = ParseHelper.ToInt(redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.orderfrom,
-              paramodel.store_info.store_id.ToString()))); //缓存中取E代送商户id
-           LogHelper.LogWriter("businessId", businessId);
-          if (businessId == 0)
-              return 0;   //商户不存在发布订单
-          else {
-              paramodel.businessId = businessId;
-              return string.IsNullOrWhiteSpace(new Ets.Dao.Order.OrderDao().CreateToSql(paramodel)) ? 0 : 1;
-          }
+        public int AddOrder(CreatePM_OpenApi paramodel)
+        {
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            int businessId = ParseHelper.ToInt(redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.orderfrom,
+               paramodel.store_info.store_id.ToString()))); //缓存中取E代送商户id
+            if (businessId == 0)
+                return 0;   //商户不存在发布订单
+            else
+            {
+                paramodel.businessId = businessId;
+                return string.IsNullOrWhiteSpace(new Ets.Dao.Order.OrderDao().CreateToSql(paramodel)) ? 0 : 1;
+            }
         }
     }
 
@@ -455,7 +452,7 @@ namespace Ets.Service.Provider.OpenApi
         /// 菜品单价
         /// </summary>
         public decimal price { get; set; }
-      
+
         /// <summary>
         /// 菜品数量
         /// </summary>
