@@ -540,8 +540,8 @@ namespace Ets.Service.Provider.Clienter
                     //iRecords.AddRecords(model); 
                     if (new OrderProvider().AsyncOrderStatus(orderNo))
                     {
-                        tran.Complete();
                         result = "1";
+                        tran.Complete();
                     }
                     Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", myOrderInfo.businessId.ToString(), string.Empty);
                     result = "1";

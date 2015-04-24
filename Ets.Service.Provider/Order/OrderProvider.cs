@@ -397,14 +397,14 @@ namespace Ets.Service.Provider.Order
         {
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-               
+
                 OrderDao.CancelOrderStatus(orderNo, orderStatus, remark);
                 if (AsyncOrderStatus(orderNo))
                 {
                     tran.Complete();
                     return 1;
                 }
-            } 
+            }
             return 0;
         }
 
@@ -573,10 +573,10 @@ namespace Ets.Service.Provider.Order
                     orderinfo = new { order_status = order.Status, clientername = order.ClienterName, clienterphoneno = order.ClienterPhoneNo }
                 });
         }
-          
-     
 
-        
+
+
+
         /// <summary>
         ///  supermanapi通过openapi同步第三方订单状态  add by caoheyang 20150327 
         /// </summary>
@@ -587,7 +587,7 @@ namespace Ets.Service.Provider.Order
             OrderListModel orderlistModel = OrderDao.GetOrderByNo(orderNo);
             if (orderlistModel.OrderFrom > 0)   //一个商户对应多个集团时需要更改 
             {
-                ParaModel<AsyncStatusPM_OpenApi> paramodel = new ParaModel<AsyncStatusPM_OpenApi>() { fields = new AsyncStatusPM_OpenApi() { orderfrom =orderlistModel.OrderFrom} };
+                ParaModel<AsyncStatusPM_OpenApi> paramodel = new ParaModel<AsyncStatusPM_OpenApi>() { fields = new AsyncStatusPM_OpenApi() { orderfrom = orderlistModel.OrderFrom } };
                 if (paramodel.GetSign() == null)//为当前集团参数实体生成sign签名信息
                     return false;
                 paramodel.fields.status = ParseHelper.ToInt(orderlistModel.Status, -1);
@@ -601,7 +601,7 @@ namespace Ets.Service.Provider.Order
                 string url = ConfigurationManager.AppSettings["AsyncStatus"];
                 string json = new HttpClient().PostAsJsonAsync(url, paramodel).Result.Content.ReadAsStringAsync().Result;
                 JObject jobject = JObject.Parse(json);
-                return jobject.Value<int>("Status")==0; //接口调用状态 区分大小写  
+                return jobject.Value<int>("Status") == 0; //接口调用状态 区分大小写  
             }
             return true;
         }
@@ -740,10 +740,10 @@ namespace Ets.Service.Provider.Order
         /// <param name="paramodel">参数实体</param>
         /// <returns>订单详情</returns>
         public ListOrderDetailModel GetOrderDetail(string order_no)
-        { 
-            var order =OrderDao.GetOrderByNo(order_no);
+        {
+            var order = OrderDao.GetOrderByNo(order_no);
             var list = OrderDao.GetOrderDetail(order_no);
-            ListOrderDetailModel mo=new ListOrderDetailModel();
+            ListOrderDetailModel mo = new ListOrderDetailModel();
             mo.order = order;
             mo.orderDetails = list;
             return mo;
@@ -863,26 +863,25 @@ namespace Ets.Service.Provider.Order
             var orderModel = OrderDao.GetOrderByNo(orderOptionModel.OrderNo);
             if (orderModel != null)
             {
+                //如果是已取消
+                if (orderModel.Status == 3)
+                {
+                    return true;
+                }
                 //如果订单状态是待接单|已接单|已完成+未上传完小票。则直接取消订单
-                if (orderModel.Status == 0 || orderModel.Status == 2 || (orderModel.Status == 1 && orderModel.OrderCount > orderModel.NeedUploadCount))
+                using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                 {
                     result = OrderDao.CancelOrder(orderModel, orderOptionModel);
-                }
-                else if (orderModel.Status == 1 && orderModel.OrderCount <= orderModel.NeedUploadCount)
-                {
-                    //需要上传的小票大于等于总数量+订单已完成则要扣钱
-                    //(因为订单小票有可能不传。所以用的是订单数量和需要上传小票数量对比判断)
-                    using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+                    if (result && orderModel.Status == 1 && orderModel.OrderCount <= orderModel.NeedUploadCount)
                     {
-                        if (OrderDao.CancelOrder(orderModel, orderOptionModel))
-                        {
-
-                            if (OrderDao.UpdateAccountBalanceByClienterId(orderModel, orderOptionModel))
-                            {
-                                result = true;
-                                tran.Complete();
-                            }
-                        }
+                        //需要上传的小票大于等于总数量+订单已完成则要扣钱
+                        //(因为订单小票有可能不传。所以用的是订单数量和需要上传小票数量对比判断)
+                        result = OrderDao.UpdateAccountBalanceByClienterId(orderModel, orderOptionModel);
+                    }
+                    if (result && AsyncOrderStatus(orderModel.OrderNo))
+                    {
+                        result = true;
+                        tran.Complete();
                     }
                 }
             }
@@ -924,7 +923,7 @@ namespace Ets.Service.Provider.Order
             }
         }
 
- 		/// <summary>
+        /// <summary>
         /// 获取订单拒绝原因
         /// 平扬-20150424
         /// </summary>
