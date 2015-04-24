@@ -174,7 +174,7 @@ namespace Ets.Dao.Statistics
                         sum(case when Status=0 then 1 else 0 end) UnGrabMissionCount--未被抢任务量
                         from dbo.[order](nolock) as o
                         where convert(char(10),PubDate,120)=convert(char(10),getdate(),120) 
-                        and Status<>4
+                        and Status<>3
                         group by convert(char(10),PubDate,120)
                             ";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
