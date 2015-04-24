@@ -17,7 +17,7 @@ namespace SuperManCommonModel.Entities
         public PagingResult PagingRequest { get; set; }
         public IList<OrderByItem<order>> OrderByItems { get; set; }
 
-
+        public string LoginName { get; set; }
         public string superManPhone { get; set; } //超人电话
         public string businessPhone { get; set; } //商家电话
         public string orderId { get; set; }          //订单号
