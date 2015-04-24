@@ -97,7 +97,7 @@ namespace SuperManBusinessLogic.Order_Logic
                 {
                     items = items.Where(p => p.business.GroupId == criteria.GroupId);
                 }
-                if (criteria.LoginName == "bj10wdm")
+                if (criteria.LoginName == "bj10dwm")
                 {
                     items = items.Where(p => p.businessId.Value == 1001);
                 }
