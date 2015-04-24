@@ -88,8 +88,8 @@ namespace Ets.Service.Provider.OpenApi
             List<string> @params = new List<string>() { 
             "app_id="+app_id,
             "order_id="+model.OriginalOrderNo, //订单号
-            "reason=12", //取消原因
-            "reason_code=12", //规范化取消原因code
+            "reason=APP方用户要求取消", //取消原因
+            "reason_code=2006", //规范化取消原因code
             "timestamp="+TimeHelper.GetTimeStamp(false)    
             };
             string url = ConfigSettings.Instance.MeiTuanCancelAsyncStatus + "?";
