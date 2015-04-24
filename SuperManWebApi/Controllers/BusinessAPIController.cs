@@ -1,5 +1,7 @@
-﻿using ETS.Enums;
+﻿using ETS;
+using ETS.Enums;
 using Ets.Model.DataModel.Order;
+using Ets.Model.ParameterModel.Order;
 using SuperManCore;
 using SuperManWebApi.Models.Business;
 using System;
@@ -314,6 +316,27 @@ namespace SuperManWebApi.Controllers
             int i = aa.Count(s => orderProvider.UpdateOrderStatus(s, OrderConst.ORDER_CANCEL, note) > 0);
             return Ets.Model.Common.ResultModel<int>.Conclude(ETS.Enums.PubOrderStatus.Success, i);
         }
+
+        /// <summary>
+        /// 商家拒绝原因接口
+        /// </summary>
+        /// <param name="orderlist"></param>
+        /// <param name="note"></param>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
+        [HttpGet]
+        public Ets.Model.Common.ResultModel<OrderCancelReasonsModel> OtherOrderCancelReasons(string Version)
+        {
+            var orderProvider = new OrderProvider();
+            string Ressons = orderProvider.OtherOrderCancelReasons();
+            var model=new OrderCancelReasonsModel
+            {
+                Reasons = Ressons.Split(';'),
+                GlobalVersion = Config.GlobalVersion
+            };
+            return Ets.Model.Common.ResultModel<OrderCancelReasonsModel>.Conclude(ETS.Enums.PubOrderStatus.Success, model);
+        }
+
 
         #endregion
         /// <summary>

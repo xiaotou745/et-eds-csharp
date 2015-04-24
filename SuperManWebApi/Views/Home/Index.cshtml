@@ -468,9 +468,20 @@
     //});
     
  
+     $.ajax({
+        type: 'get',
+        dataType: 'json',
+        url: 'BusinessAPI/OtherOrderCancelReasons',
+        data: {
+            
+        },
+        success: function (data) {
+            console.log(data);
+        },
+        error: function () {
 
-    //    }
-    //});
+        }
+    });
     
     
 

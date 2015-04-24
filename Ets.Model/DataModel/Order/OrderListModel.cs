@@ -228,5 +228,9 @@ namespace Ets.Model.DataModel.Order
         /// 小票图片路径用竖线分隔（|）
         /// </summary>
         public string ReceiptPic { get; set; }
+        /// <summary>
+        /// 取消原应
+        /// </summary>
+        public string OtherCancelReason { get; set; }
     }
 }

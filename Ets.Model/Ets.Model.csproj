@@ -156,6 +156,7 @@
     <Compile Include="ParameterModel\Order\BusiOrderResultModel.cs" />
     <Compile Include="ParameterModel\Order\AsyncStatusPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\NewPostPublishOrderModel.cs" />
+    <Compile Include="ParameterModel\Order\OrderCancelReasonsModel.cs" />
     <Compile Include="ParameterModel\Order\OrderDetailPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\GetStatusPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\CreatePM_OpenApi.cs" />

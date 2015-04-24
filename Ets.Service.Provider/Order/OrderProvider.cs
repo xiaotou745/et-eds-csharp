@@ -395,10 +395,16 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public int UpdateOrderStatus(string orderNo, int orderStatus, string remark)
         {
-            //if (AsyncOrderStatus(orderNo))//更该订单状态时，同步第三方订单状态
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                return OrderDao.CancelOrderStatus(orderNo, orderStatus, remark);
-            }
+               
+                OrderDao.CancelOrderStatus(orderNo, orderStatus, remark);
+                if (AsyncOrderStatus(orderNo))
+                {
+                    tran.Complete();
+                    return 1;
+                }
+            } 
             return 0;
         }
 
@@ -590,16 +596,14 @@ namespace Ets.Service.Provider.Order
                 paramodel.fields.BusinessName = orderlistModel.BusinessName;
                 paramodel.fields.OriginalOrderNo = orderlistModel.OriginalOrderNo;
                 paramodel.fields.order_no = orderlistModel.OrderNo;
+                paramodel.fields.orderfrom = orderlistModel.OrderFrom;
+                paramodel.fields.OtherCancelReason = orderlistModel.OtherCancelReason;
                 string url = ConfigurationManager.AppSettings["AsyncStatus"];
                 string json = new HttpClient().PostAsJsonAsync(url, paramodel).Result.Content.ReadAsStringAsync().Result;
                 JObject jobject = JObject.Parse(json);
-                int x = jobject.Value<int>("Status"); //接口调用状态 区分大小写
-                if (x == 0)
-                {
-                    return true;
-                }
+                return jobject.Value<int>("Status")==0; //接口调用状态 区分大小写
             }
-            return false;
+            return true;
         }
 
         #endregion
@@ -915,6 +919,16 @@ namespace Ets.Service.Provider.Order
                 tran.Complete();
                 return result > 0 ? ResultModel<object>.Conclude(OrderApiStatusType.Success) : ResultModel<object>.Conclude(OrderApiStatusType.SystemError);
             }
+        }
+
+ 		/// <summary>
+        /// 获取订单拒绝原因
+        /// 平扬-20150424
+        /// </summary>
+        /// <returns></returns>
+        public string OtherOrderCancelReasons()
+        {
+            return ETS.Config.OrderCancelReasons;
         }
     }
 }
