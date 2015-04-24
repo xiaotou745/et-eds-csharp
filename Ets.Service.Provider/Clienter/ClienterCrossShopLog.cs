@@ -1,6 +1,7 @@
 ﻿using Ets.Dao.Clienter;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Clienter;
+using Ets.Model.DomainModel.Bussiness;
 using Ets.Service.IProvider.Statistics;
 using Ets.Service.Provider.Clienter;
 using ETS.Transaction;
@@ -17,40 +18,20 @@ namespace Ets.Service.IProvider.Clienter
 {
     public class ClienterCrossShopLog : IClienterCrossShopLog
     {
-        readonly ClienterCrossShopLogDao _dao = new ClienterCrossShopLogDao();
-
-        /// <summary>
-        /// 增加跨店抢单骑士统计信息
-        /// </summary>
-        /// <param name="model">统计信息实体</param>
-        /// <returns></returns>
-        public bool InsertDataClienterCrossShopLog(ClienterCrossShopLogModel model)
-        {
-            bool reslut;
-            try
-            {
-                reslut = _dao.InsertDataClienterCrossShopLog(model);
-
-            }
-            catch (Exception ex)
-            {
-                reslut = false;
-                LogHelper.LogWriterFromFilter(ex);
-            }
-            return reslut;
-        }
+        readonly ClienterDao clienterDao = new ClienterDao();
+        readonly ClienterCrossShopLogDao _dao = new ClienterCrossShopLogDao();       
 
         /// <summary>
         /// 获取跨店抢单骑士统计信息
+        /// 胡灵波-20150124
         /// </summary>
         /// <param name="daysAgo">几天前</param>
         /// <returns></returns>
         public bool InsertDataClienterCrossShopLog(int daysAgo)
-        {
-            IClienterProvider iClienterProvider = new ClienterProvider();
-            IList<Ets.Model.DomainModel.Bussiness.BusinessesDistributionModel> clienteStorerGrabStatistical = iClienterProvider.GetClienteStorerGrabStatisticalInfo(daysAgo);
-                       
+        {          
+            IList<Ets.Model.DomainModel.Bussiness.BusinessesDistributionModel> clienteStorerGrabStatistical = clienterDao.GetClienteStorerGrabStatisticalInfo(daysAgo);
             ClienterCrossShopLogModel model = new ClienterCrossShopLogModel();
+
             foreach (var item in clienteStorerGrabStatistical)
             {               
                 bool isExist = IsExistClienterCrossShopLog(item.date);
@@ -92,7 +73,42 @@ namespace Ets.Service.IProvider.Clienter
         }
 
         /// <summary>
+        /// 获取几天前跨店抢单骑士统计
+        /// 胡灵波-20150124
+        /// </summary>
+        /// <param name="daysAgo">几天前</param>
+        /// <returns></returns>
+        public IList<BusinessesDistributionModel> GetClienterCrossShopLogInfo(int daysAgo)
+        {
+            return _dao.GetClienterCrossShopLogInfo(daysAgo);
+        }
+        
+
+        /// <summary>
+        /// 增加跨店抢单骑士统计信息
+        /// 胡灵波-20150124
+        /// </summary>
+        /// <param name="model">统计信息实体</param>
+        /// <returns></returns>
+        bool InsertDataClienterCrossShopLog(ClienterCrossShopLogModel model)
+        {
+            bool reslut;
+            try
+            {
+                reslut = _dao.InsertDataClienterCrossShopLog(model);
+
+            }
+            catch (Exception ex)
+            {
+                reslut = false;
+                LogHelper.LogWriterFromFilter(ex);
+            }
+            return reslut;
+        }
+
+        /// <summary>
         /// 判断是否存在指定日期的统计信息
+        /// 胡灵波-20150124
         /// </summary>
         /// <param name="statisticalTime">指定日期</param>
         /// <returns></returns>
@@ -103,8 +119,6 @@ namespace Ets.Service.IProvider.Clienter
             isExist = _dao.IsExistClienterCrossShopLog(statisticalTime);
 
             return isExist;
-        }
-        
-       
+        }       
     }
 }

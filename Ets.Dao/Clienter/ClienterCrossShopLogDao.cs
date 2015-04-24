@@ -9,6 +9,7 @@ using Ets.Model.DataModel.Clienter;
 using ETS.Data.Core;
 using System.Data;
 using ETS.Util;
+using Ets.Model.DomainModel.Bussiness;
 
 
 namespace Ets.Dao.Clienter
@@ -16,11 +17,11 @@ namespace Ets.Dao.Clienter
     public class ClienterCrossShopLogDao : DaoBase
     {
         /// <summary>
-        /// 新增统计数据
+        /// 新增跨店抢单骑士统计
         /// 胡灵波
-        /// 2015年1月24日 15:30:11
+        /// 2015年4月24日 15:30:11
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="model">跨店抢单骑士实体</param>
         /// <returns></returns>
         public bool InsertDataClienterCrossShopLog(ClienterCrossShopLogModel model)
         {
@@ -101,6 +102,13 @@ namespace Ets.Dao.Clienter
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
 
+        /// <summary>
+        /// 判断是否存在指定日期的统计信息
+        /// 胡灵波
+        /// 2015年4月24日 17:31:17
+        /// </summary>
+        /// <param name="statisticalTime">指定日期</param>
+        /// <returns></returns>
         public bool IsExistClienterCrossShopLog(string statisticalTime)
         {        
             string selSql = string.Format(@" SELECT COUNT(1) FROM   dbo.[ClienterCrossShopLog] WITH ( NOLOCK )  WHERE  StatisticalTime = @statisticalTime");
@@ -112,6 +120,22 @@ namespace Ets.Dao.Clienter
             return ParseHelper.ToInt(executeScalar, 0) > 0;
     
         }
+
+        /// <summary>
+        /// 获取几天前跨店抢单骑士统计
+        /// </summary>
+        /// <param name="daysAgo">几天前</param>
+        /// <returns></returns>
+        public IList<BusinessesDistributionModel> GetClienterCrossShopLogInfo(int daysAgo)
+        {
+            int currdaysAgo = daysAgo + 1;
+            StringBuilder sb = new StringBuilder();
+            sb.Append("select top " + daysAgo.ToString());
+            sb.Append(" * from dbo.ClienterCrossShopLog " );       
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sb.ToString());
+            return MapRows<BusinessesDistributionModel>(dt);
+        }
+
 
     }
 }

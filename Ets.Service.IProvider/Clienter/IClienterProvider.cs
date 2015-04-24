@@ -149,6 +149,12 @@ namespace Ets.Service.IProvider.Clienter
         /// </summary>
         /// <returns></returns>
         IList<BusinessesDistributionModel> GetClienteStorerGrabStatisticalInfo();
+        /// <summary>
+        /// 骑士门店抢单统计
+        /// 胡灵波-20150424
+        /// </summary>
+        /// <param name="daysAgo">几天前</param>
+        /// <returns></returns>
         IList<BusinessesDistributionModel> GetClienteStorerGrabStatisticalInfo(int daysAgo);
         /// <summary>
         /// 骑士门店抢单统计,过一个月后删除该代码
