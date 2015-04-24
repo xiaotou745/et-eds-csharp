@@ -26,57 +26,68 @@ namespace Ets.Dao.Distribution
         /// <returns></returns>
         public PageInfo<T> GetClienteres<T>(ClienterSearchCriteria criteria)
         {
-            string columnList = @"   [Id]
-                                    ,[PhoneNo]
-                                    ,[LoginName]
-                                    ,[recommendPhone]
-                                    ,[Password]
-                                    ,[TrueName]
-                                    ,[IDCard]
-                                    ,[PicWithHandUrl]
-                                    ,[PicUrl]
-                                    ,[Status]
-                                    ,[AccountBalance]
-                                    ,[InsertTime]
-                                    ,[InviteCode]
-                                    ,[City]
-                                    ,[CityId]
-                                    ,[GroupId]
-                                    ,[HealthCardID]
-                                    ,[InternalDepart]
-                                    ,[ProvinceCode]
-                                    ,[AreaCode]
-                                    ,[CityCode]
-                                    ,[Province]
-                                    ,[BussinessID]
-                                    ,[WorkStatus] ";
+            string columnList = @"   C.[Id]
+                                    ,C.[PhoneNo]
+                                    ,C.[LoginName]
+                                    ,C.[recommendPhone]
+                                    ,C.[Password]
+                                    ,C.[TrueName]
+                                    ,C.[IDCard]
+                                    ,C.[PicWithHandUrl]
+                                    ,C.[PicUrl]
+                                    ,C.[Status]
+                                    ,C.[AccountBalance]
+                                    ,C.[InsertTime]
+                                    ,C.[InviteCode]
+                                    ,C.[City]
+                                    ,C.[CityId]
+                                    ,C.[GroupId]
+                                    ,C.[HealthCardID]
+                                    ,C.[InternalDepart]
+                                    ,C.[ProvinceCode]
+                                    ,C.[AreaCode]
+                                    ,C.[CityCode]
+                                    ,C.[Province]
+                                    ,C.[BussinessID]
+                                    ,C.[WorkStatus] 
+                                    ,isnull(cs.Id,0) as CSID  --如果非0就存在跨店
+                                    ";
+            
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrEmpty(criteria.clienterName))
             {
-                sbSqlWhere.AppendFormat(" AND TrueName='{0}' ", criteria.clienterName);
+                sbSqlWhere.AppendFormat(" AND C.TrueName='{0}' ", criteria.clienterName);
             }
             if (!string.IsNullOrEmpty(criteria.clienterPhone))
             {
-                sbSqlWhere.AppendFormat(" AND PhoneNo='{0}' ", criteria.clienterPhone);
+                sbSqlWhere.AppendFormat(" AND C.PhoneNo='{0}' ", criteria.clienterPhone);
             }
             if (!string.IsNullOrEmpty(criteria.recommonPhone))
             {
-                sbSqlWhere.AppendFormat(" AND recommendPhone='{0}' ", criteria.recommonPhone.Trim());
+                sbSqlWhere.AppendFormat(" AND C.recommendPhone='{0}' ", criteria.recommonPhone.Trim());
             }
             if (criteria.Status != -1)
             {
-                sbSqlWhere.AppendFormat(" AND Status={0} ", criteria.Status);
+                sbSqlWhere.AppendFormat(" AND C.Status={0} ", criteria.Status);
             }
             if (criteria.GroupId != null && criteria.GroupId > 0)
             {
-                sbSqlWhere.AppendFormat(" AND GroupId={0} ", criteria.GroupId);
+                sbSqlWhere.AppendFormat(" AND C.GroupId={0} ", criteria.GroupId);
             }
             if (!string.IsNullOrEmpty(criteria.businessCity))
             {
-                sbSqlWhere.AppendFormat(" AND City='{0}' ", criteria.businessCity.Trim());
+                sbSqlWhere.AppendFormat(" AND C.City='{0}' ", criteria.businessCity.Trim());
             }
-            string tableList = @" clienter  WITH (NOLOCK)   ";
-            string orderByColumn = " Id DESC";
+            if (!string.IsNullOrEmpty(criteria.txtPubStart))
+            {
+                sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),WtihdrawRecords.CreateTime,120)=CONVERT(CHAR(10),'{0}',120) and WtihdrawRecords.Amount < 0", criteria.txtPubStart.Trim());
+            }
+
+            string tableList = @" clienter C WITH (NOLOCK)  
+                                  left JOIN  dbo.WtihdrawRecords ON WtihdrawRecords.UserId = C.Id 
+                                  left join dbo.CrossShopLog cs on c.Id=cs.ClienterId
+                                ";
+            string orderByColumn = " C.Id DESC";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
         /// <summary>

@@ -649,11 +649,11 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             }
             if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))
             {
-                sbSqlWhere.AppendFormat(" AND o.PubDate>='{0}' ", criteria.orderPubStart);
+                sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),o.PubDate,120)>=CONVERT(CHAR(10),'{0}',120) ", criteria.orderPubStart.Trim());
             }
             if (!string.IsNullOrWhiteSpace(criteria.orderPubEnd))
             {
-                sbSqlWhere.AppendFormat(" AND o.PubDate<='{0}' ", criteria.orderPubEnd);
+                sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),o.PubDate,120)<=CONVERT(CHAR(10),'{0}',120) ", criteria.orderPubEnd.Trim());
             }
             if (criteria.GroupId != null && criteria.GroupId != 0)
             {
