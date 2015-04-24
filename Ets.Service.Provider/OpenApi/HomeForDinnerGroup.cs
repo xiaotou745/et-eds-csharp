@@ -39,13 +39,14 @@ namespace Ets.Service.Provider.OpenApi
         {
 
             int status = 0; //第三方订单状态物流状态，1代表已发货，2代表已签收
+            LogHelper.LogWriter(System.DateTime.Now.ToString() + "回调-第三方订单状态:" + paramodel.fields.status);
             switch (paramodel.fields.status)
             {
                 case OrderConst.OrderStatus1:
-                    status = 2; //订单已完成
+                    status = 2; //订单已完成(已送达)
                     break;
                 case OrderConst.OrderStatus2:
-                    status = 1; //订单已接单
+                    status = 1; //订单已接单(已抢单)
                     break;
                 case OrderConst.OrderStatus3:
                     status = 3; //订单已取消
@@ -55,21 +56,31 @@ namespace Ets.Service.Provider.OpenApi
             }
             string ts = DateTime.Now.ToString();
             string url = ConfigurationManager.AppSettings["HomeForDinnerAsyncStatus"];
+            url = ""; //test
             if (url == null)
                 return OrderApiStatusType.SystemError;
             ///order_id	string	Y	订单ID ，根据订单ID改变对应的订单物流状态，一个订单只能修改一次，修改过再修改会报错。
             ///status	int	Y	物流状态，1代表已发货，2代表已签收
             ///send_phone	string	Y/N	配送员电话，物流状态传参是（ststus=1）的时候，配送员电话必须写，如果为（ststus=2）的时候可以不写。
             ///send_name	string	Y/N	配送员姓名，物流状态传参是（ststus=1）的时候，配送员姓名必须写，如果为（ststus=2）的时候可以不写。
-            string json = HTTPHelper.HttpPost(url, "app_key=" + app_key + "&sign=" + GetSign(ts) + "&updatetime=" + ts + "&order_id=" + paramodel.fields.OriginalOrderNo + "&status=" + status + "&dm_name=" + paramodel.fields.ClienterTrueName
-                + "&dm_mobile=" + paramodel.fields.ClienterPhoneNo);
-            
+            string strPostData = "app_key=" + app_key + "&sign=" + GetSign(ts) + "&updatetime=" + ts + "&order_id=" + paramodel.fields.OriginalOrderNo + "&status=" + status + "&dm_name=" + paramodel.fields.ClienterTrueName
+                + "&dm_mobile=" + paramodel.fields.ClienterPhoneNo;
+            string json = HTTPHelper.HttpPost(url, strPostData);
+            LogHelper.LogWriter(System.DateTime.Now.ToString() + "回调-第三方url:" + url);
+            LogHelper.LogWriter(System.DateTime.Now.ToString() + "回调-第三方strPostData:" + strPostData);
             if (string.IsNullOrWhiteSpace(json))
+            {
+                LogHelper.LogWriter(System.DateTime.Now.ToString() + "回调-结果:ParaError");
                 return OrderApiStatusType.ParaError;
+            }
             else if (json == "null")
+            {
+                LogHelper.LogWriter(System.DateTime.Now.ToString() + "回调-结果:SystemError");
                 return OrderApiStatusType.SystemError;
+            }
             JObject jobject = JObject.Parse(json);
             int result = jobject.Value<int>("status"); //接口调用状态 区分大小写
+            LogHelper.LogWriter(System.DateTime.Now.ToString() + "回调-结果:status=" + result);
             return result == 1 ? OrderApiStatusType.Success : OrderApiStatusType.SystemError;
         }
 
