@@ -15,7 +15,6 @@ namespace Ets.Model.DataModel.Order
         public IList<OrderDetailModel> orderDetails { get; set; }
     }
 
-
     public class OrderDetailModel
     {
         public string OrderNo { get; set; }

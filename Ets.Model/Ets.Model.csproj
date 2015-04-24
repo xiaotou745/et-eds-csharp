@@ -152,6 +152,7 @@
     <Compile Include="ParameterModel\Clienter\UploadReceiptResultModel.cs" />
     <Compile Include="ParameterModel\Group\GroupListModel.cs" />
     <Compile Include="ParameterModel\Group\GroupParaModel.cs" />
+    <Compile Include="ParameterModel\Order\ChangeStatusPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\BusiOrderResultModel.cs" />
     <Compile Include="ParameterModel\Order\AsyncStatusPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\NewPostPublishOrderModel.cs" />
@@ -161,6 +162,7 @@
     <Compile Include="ParameterModel\Order\CreatePM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\OrderOptionModel.cs" />
     <Compile Include="ParameterModel\Order\OrderSearchCriteria.cs" />
+    <Compile Include="ParameterModel\Order\PullOrderInfoPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Sms\SmsParaModel.cs" />
     <Compile Include="ParameterModel\Subsidy\CrossShopListModel.cs" />
     <Compile Include="ParameterModel\Subsidy\SubsidyModel.cs" />
