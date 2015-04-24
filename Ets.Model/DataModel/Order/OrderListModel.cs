@@ -93,6 +93,10 @@ namespace Ets.Model.DataModel.Order
         /// </summary>
         public int OrderFrom { get; set; }
         /// <summary>
+        /// 订单来源
+        /// </summary>
+        public string OrderFromName { get; set; }
+        /// <summary>
         /// 原始订单Id
         /// </summary>
         public long OriginalOrderId { get; set; }

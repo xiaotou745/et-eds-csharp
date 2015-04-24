@@ -742,6 +742,26 @@ namespace Ets.Service.Provider.Order
         public ListOrderDetailModel GetOrderDetail(string order_no)
         {
             var order = OrderDao.GetOrderByNo(order_no);
+            if (order.OrderFrom == 0)
+            {
+                order.OrderFromName = "B端";
+            }
+            if (order.OrderFrom == 1)
+            {
+                order.OrderFromName = "易淘食";
+            }
+            if (order.OrderFrom == 2)
+            {
+                order.OrderFromName = "万达";
+            }
+            if (order.OrderFrom == 3)
+            {
+                order.OrderFromName = "全时";
+            }
+            if (order.OrderFrom == 4)
+            {
+                order.OrderFromName = "美团";
+            } 
             var list = OrderDao.GetOrderDetail(order_no);
             ListOrderDetailModel mo = new ListOrderDetailModel();
             mo.order = order;
