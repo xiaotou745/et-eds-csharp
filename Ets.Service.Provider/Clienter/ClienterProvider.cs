@@ -295,15 +295,16 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="orderNo"></param>
         /// <returns></returns>
         public bool RushOrder(int userId, string orderNo)
-        {            
-            try
+        {
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                return clienterDao.RushOrder(userId, orderNo);
-            }
-            catch (Exception ex)
-            {
-                LogHelper.LogWriterFromFilter(ex);
-            }
+                clienterDao.RushOrder(userId, orderNo);
+                if (new OrderProvider().AsyncOrderStatus(orderNo))
+                {
+                    tran.Complete();
+                    return true;
+                }
+            }  
             return false;
         }
 

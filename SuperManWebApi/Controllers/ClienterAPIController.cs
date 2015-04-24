@@ -374,19 +374,9 @@ namespace SuperManWebApi.Controllers
 
             lock (lockHelper)
             {
-                bool bResult = false;
-                if (myorder.OrderFrom == 4)//美团等第三方订单
-                {
-                    //if (new OrderProvider().AsyncOrderStatus(orderNo))//更新美团状态
-                    {
-                        bResult = iClienterProvider.RushOrder(userId, orderNo);
-                    }
-                }
-                else
-                {
-                    new OrderProvider().AsyncOrderStatus(orderNo);
-                    bResult = iClienterProvider.RushOrder(userId, orderNo);
-                } 
+                bool bResult = false;  
+                    
+                bResult = iClienterProvider.RushOrder(userId, orderNo);
                
                 if (bResult)
                 {
@@ -414,21 +404,7 @@ namespace SuperManWebApi.Controllers
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderEmpty);
             var myorder = new Ets.Dao.Order.OrderDao().GetOrderByNo(orderNo);
-            string finishResult = "";
-
-            if (myorder.OrderFrom ==4)//美团等第三方订单
-            {
-               // if (new OrderProvider().AsyncOrderStatus(orderNo))//更新美团状态,美团成功才能更改我们库数据
-                {
-                    finishResult = iClienterProvider.FinishOrder(userId, orderNo, pickupCode);
-                }
-            }
-            else
-            {
-                new OrderProvider().AsyncOrderStatus(orderNo);
-                finishResult = iClienterProvider.FinishOrder(userId, orderNo, pickupCode); 
-            }  
- 
+            string finishResult = iClienterProvider.FinishOrder(userId, orderNo, pickupCode);  
             if (finishResult == "1")  //完成
             {
                 var clienter = iClienterProvider.GetUserInfoByUserId(userId);
