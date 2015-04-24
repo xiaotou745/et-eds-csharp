@@ -471,9 +471,9 @@
      $.ajax({
         type: 'get',
         dataType: 'json',
-        url: 'BusinessAPI/OtherOrderCancelReasons',
+        url: 'BusinessAPI/OtherOrderConfirm_B',
         data: {
-            
+            "orderlist":"11111,222222"
         },
         success: function (data) {
             console.log(data);

@@ -213,6 +213,15 @@ namespace SuperMan.Controllers
             ViewBag.orderOptionLog = iOrderProvider.GetOrderOptionLog(orderId);
             return View(orderModel);
         }
+
+        /// <summary>
+        /// 王旭丹
+        /// 2015年4月24日 11:32:55
+        /// 取消订单
+        /// </summary>
+        /// <param name="OrderNo"></param>
+        /// <param name="OrderOptionLog"></param>
+        /// <returns></returns>
         [HttpPost]
         public JsonResult CancelOrder(string OrderNo, string OrderOptionLog)
         {
