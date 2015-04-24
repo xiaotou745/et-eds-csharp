@@ -19,26 +19,26 @@ namespace Ets.Service.IProvider.Clienter
     {
         readonly ClienterCrossShopLogDao _dao = new ClienterCrossShopLogDao();
 
-        ///// <summary>
-        ///// 增加跨店抢单骑士统计信息
-        ///// </summary>
-        ///// <param name="model">统计信息实体</param>
-        ///// <returns></returns>
-        //public bool InsertDataClienterCrossShopLog(ClienterCrossShopLogModel model)
-        //{
-        //    bool reslut;
-        //    try
-        //    {
-        //        reslut = _dao.InsertDataClienterCrossShopLog(model);
+        /// <summary>
+        /// 增加跨店抢单骑士统计信息
+        /// </summary>
+        /// <param name="model">统计信息实体</param>
+        /// <returns></returns>
+        public bool InsertDataClienterCrossShopLog(ClienterCrossShopLogModel model)
+        {
+            bool reslut;
+            try
+            {
+                reslut = _dao.InsertDataClienterCrossShopLog(model);
 
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        reslut = false;
-        //        LogHelper.LogWriterFromFilter(ex);
-        //    }
-        //    return reslut;
-        //}
+            }
+            catch (Exception ex)
+            {
+                reslut = false;
+                LogHelper.LogWriterFromFilter(ex);
+            }
+            return reslut;
+        }
 
         /// <summary>
         /// 获取跨店抢单骑士统计信息
