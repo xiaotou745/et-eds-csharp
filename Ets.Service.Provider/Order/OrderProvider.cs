@@ -605,8 +605,12 @@ namespace Ets.Service.Provider.Order
                 {
                     return true;
                 }
+                else
+                {
+                    return false;
+                }
             }
-            return false;
+            return true;
         }
 
         #endregion
