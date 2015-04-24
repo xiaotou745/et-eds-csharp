@@ -24,6 +24,7 @@ using ETS.Transaction.Common;
 using ETS.Transaction;
 using Ets.Model.ParameterModel.User;
 using Ets.Model.ParameterModel.Order;
+using Ets.Service.Provider.Order;
 namespace Ets.Service.Provider.User
 {
 
@@ -726,12 +727,20 @@ namespace Ets.Service.Provider.User
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderEmpty);
             if (string.IsNullOrEmpty(model.OrderFrom.ToString()))   //订单来源非空验证
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderFromEmpty);
-            bool isorder = dao.GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom, model.OrderType);
-            if (!isorder)//订单不存在
+            string orderNo = dao.GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom, model.OrderType);
+            if (string.IsNullOrWhiteSpace(orderNo))//订单不存在
             {
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderIsNotExist);
             }
+
             bool b = dao.UpdateOrder(model.OriginalOrderNo, model.OrderFrom, OrderStatus.订单已取消);
+            OrderOptionModel oom = new OrderOptionModel();
+            //oom.OrderNo =
+            oom.OptUserName = "第三方";
+            oom.OrderNo = orderNo;
+            oom.OptLog = string.Format("第三方调用取消订单,订单来源{0}",model.OrderFrom);
+            //bool reg = new OrderProvider().CancelOrderByOrderNo();
+
             if (b)
             {
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.Success);
