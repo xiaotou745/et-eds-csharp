@@ -71,7 +71,7 @@ namespace Ets.Service.Provider.OpenApi
             "app_id="+app_id
             };
             @params.Sort();
-            string url = ConfigSettings.Instance.MeiTuanConfirmAsyncStatus;
+            string url = ConfigSettings.Instance.MeiTuanConfirmAsyncStatus + "?";
             string sig = ETS.Security.MD5.Encrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
             string paras = string.Join("&", @params) + "&sig=" + sig;
             return GetDoAsyncStatus(url, paras);
@@ -84,20 +84,18 @@ namespace Ets.Service.Provider.OpenApi
         /// <returns></returns>
         protected OrderApiStatusType CancelAsyncStatus(AsyncStatusPM_OpenApi model)
         {
-            //参数信息
+            //参数信息  已经排序好
             List<string> @params = new List<string>() { 
-            "timestamp="+TimeHelper.GetTimeStamp(false) ,
+            "app_id="+app_id,
             "order_id="+model.OriginalOrderNo, //订单号
             "reason=12", //取消原因
             "reason_code=12", //规范化取消原因code
-            "app_id="+app_id
+            "timestamp="+TimeHelper.GetTimeStamp(false)    
             };
-            @params.Sort();
-            string url = ConfigSettings.Instance.MeiTuanCancelAsyncStatus;
+            string url = ConfigSettings.Instance.MeiTuanCancelAsyncStatus + "?";
             string sig = ETS.Security.MD5.Encrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
             string paras = string.Join("&", @params) + "&sig=" + sig;
-            string postdata = "";
-            return PostDoAsyncStatus(url, postdata);
+            return GetDoAsyncStatus(url, paras);
         }
         /// <summary>
         ///  订单配送中美团回调接口地址  add by caoheyang 20150420
@@ -115,10 +113,10 @@ namespace Ets.Service.Provider.OpenApi
             "app_id="+app_id
             };
             @params.Sort();
-            string url = ConfigSettings.Instance.MeiTuanDeliveringAsyncStatus;
+            string url = ConfigSettings.Instance.MeiTuanDeliveringAsyncStatus + "?";
             string sig = ETS.Security.MD5.Encrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
             string paras = string.Join("&", @params) + "&sig=" + sig;
-            return PostDoAsyncStatus(url, paras);
+            return GetDoAsyncStatus(url, paras);
         }
         /// <summary>
         /// 订单已送达美团（订单完成）回调接口地址  add by caoheyang 20150420
@@ -134,10 +132,10 @@ namespace Ets.Service.Provider.OpenApi
             "app_id="+app_id
             };
             @params.Sort();
-            string url = ConfigSettings.Instance.MeiTuanArrivedAsyncStatus;
+            string url = ConfigSettings.Instance.MeiTuanArrivedAsyncStatus + "?";
             string sig = ETS.Security.MD5.Encrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
             string paras = string.Join("&", @params) + "&sig=" + sig;
-            return PostDoAsyncStatus(url, paras);
+            return GetDoAsyncStatus(url, paras);
         }
 
         /// <summary>
@@ -253,7 +251,7 @@ namespace Ets.Service.Provider.OpenApi
             if (!string.IsNullOrWhiteSpace(fromModel.detail) && fromModel.detail != "")
             {
                 MeiTuanOrdeDetailModel[] meituandetails = Letao.Util.JsonHelper.JsonConvertToObject<MeiTuanOrdeDetailModel[]>(fromModel.detail);
-                OrderDetail[] details = new OrderDetail[fromModel.detail.Length];
+                OrderDetail[] details = new OrderDetail[meituandetails.Length];
                 for (int i = 0; i < meituandetails.Length; i++)
                 {
                     OrderDetail tempdetail = new OrderDetail();
@@ -268,8 +266,6 @@ namespace Ets.Service.Provider.OpenApi
 
             model.orderfrom = OrderConst.OrderFrom4;// 订单来源  美团订单的订单来源是 4
             model.receive_time = TimeHelper.TimeStampToDateTime(fromModel.ctime);//美团不传递，E代送必填 要求送餐时间
-            LogHelper.LogWriter("CreatePM_OpenApi", model);
-
             //fromModel.extras 说明，暂时不用 
             return model;
         }
