@@ -133,34 +133,34 @@
     //    });
     //});
 
-    $(function () {
-        $(function () {
-            $.ajax({
-                type: 'post',
-                datatype: 'json',
-                url: '/order/AsyncStatus',
-                data: {
-                    "app_key": "appkey_meituan",
-                    "timestamp": "2015-03-11 20:42:33",
-                    "v": "1.0",
-                    "sign": "0E4E2C676DA6A750D3AF07A9B5261A12",
-                    "fields": {
-                        "order_no": "3312571",
-                        "status": 3,
-                        "ClienterTrueName": "wangchao",
-                        "ClienterPhoneNo": "18553501000",
-                        "OriginalOrderNo": "3312571",
-                    }
-                },
-                success: function (data) {
-                                console.log(data);
-                            },
-                            error: function () {
+    //$(function () {
+    //    $(function () {
+    //        $.ajax({
+    //            type: 'post',
+    //            datatype: 'json',
+    //            url: '/order/AsyncStatus',
+    //            data: {
+    //                "app_key": "appkey_meituan",
+    //                "timestamp": "2015-03-11 20:42:33",
+    //                "v": "1.0",
+    //                "sign": "0E4E2C676DA6A750D3AF07A9B5261A12",
+    //                "fields": {
+    //                    "order_no": "3312571",
+    //                    "status": 3,
+    //                    "ClienterTrueName": "wangchao",
+    //                    "ClienterPhoneNo": "18553501000",
+    //                    "OriginalOrderNo": "3312571",
+    //                }
+    //            },
+    //            success: function (data) {
+    //                            console.log(data);
+    //                        },
+    //                        error: function () {
 
-                            }
-            })
-        });
-    });
+    //                        }
+    //        })
+    //    });
+    //});
 
 
     //$(function () {
@@ -190,37 +190,38 @@
     //});
 
 
-    //$(function () {
-    //    $(function () {
-    //        $.ajax({
-    //            type: 'post',
-    //            datatype: 'json',
-    //            url: '/meituan/PullOrderInfo',
-    //            data: {
-    //                "app_id": "33", "timestamp": "1429756947",
-    //                "sig": "dd3312accededab8703c8ab9f344924c", "order_id": "33122511212",
-    //                "app_poi_code": 24, "wm_poi_name": "e代送测试",
-    //                "wm_poi_address": "北京市朝阳区北苑路42号",
-    //                "wm_poi_phone": "4008823823", "recipient_address": "文化大厦",
-    //                "recipient_phone": "13718057035", "recipient_name": "陈凯",
-    //                "shipping_fee": 8.0, "total": 39.0, "caution": "w l ege q ",
-    //                "shipper_phone": null, "status": 2, "has_invoiced": 0,
-    //                "invoice_title": null, "ctime": "1429756693",
-    //                "detail[0]": "1429756693",
-    //                "detail": '[{ "app_food_code": "100007162", "food_name": "香辣鸡腿堡", "quantity": 2, "price": 15.5, "box_num": 0, "box_price": 0, "food_discount": 1, "unit": "份" }]',
-    //                "extras": []
-    //                , "is_third_shipping": 1, "pay_type": 1, 
-    //                "wm_poi_id":24
-    //            },
-    //            success: function (data) {
-    //                console.log(data);
-    //            },
-    //            error: function () {
+    $(function () {
+        $(function () {
+            $.ajax({
+                type: 'post',
+                datatype: 'json',
+                url: '/meituan/PullOrderInfo',
+                data: {
+                    "app_id": "33", "timestamp": "1429756947",
+                    "sig": "dd3312accededab8703c8ab9f344924c", "order_id": "33122511212",
+                    "app_poi_code": 24, "wm_poi_name": "e代送测试",
+                    "wm_poi_address": "北京市朝阳区北苑路42号",
+                    "wm_poi_phone": "4008823823", "recipient_address": "文化大厦",
+                    "recipient_phone": "13718057035", "recipient_name": "陈凯",
+                    "shipping_fee": 8.0, "total": 39.0, "caution": "w l ege q ",
+                    "shipper_phone": null, "status": 2, "has_invoiced": 0,
+                    "invoice_title": null, "ctime": "1429756693",
+                    "utime": "1429756693",
+                    "detail": '[{"app_food_code": "100007162", "food_name": "香辣鸡腿堡", "quantity": 2, "price": 15.5, "box_num": 0, "box_price": 0, "food_discount": 1, "unit": "份" }]',
+                    "extras": "[]"
+                    , "is_third_shipping": 1, "pay_type": 1, 
+                    "wm_poi_id": 24,
+                    "wm_poi":122
+                },
+                success: function (data) {
+                    console.log(data);
+                },
+                error: function () {
 
-    //            }
-    //        })
-    //    });
-    //});
+                }
+            })
+        });
+    });
 </script>
 <div class="row">
     <div class="col-md-4">

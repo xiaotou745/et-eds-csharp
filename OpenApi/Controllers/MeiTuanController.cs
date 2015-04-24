@@ -46,10 +46,10 @@ namespace OpenApi.Controllers
         {
             try
             {
-                ////实体类赋值
+                //实体类赋值
                 MeiTuanOrdeModel paramodel = HTTPHelper.BindeModel<MeiTuanOrdeModel>(HttpContext.Current.Request);
                 MeiTuanGroup meituan = new MeiTuanGroup();
-                if (!meituan.ValiditeSig(paramodel))
+                if (meituan.ValiditeSig(HttpContext.Current.Request))
                 {
                     CreatePM_OpenApi model = meituan.TranslateModel(paramodel);
                     return meituan.AddOrder(model) > 0 ? new { data = "ok" } : new { data = "fail" };

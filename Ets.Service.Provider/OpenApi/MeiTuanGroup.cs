@@ -190,30 +190,54 @@ namespace Ets.Service.Provider.OpenApi
         }
 
 
+        ///// <summary>
+        ///// 验证美团推送订单的签名是否正确  add by caoheyang 20150421
+        ///// </summary>
+        ///// <param nCame="fromModel">美团数据实体</param>
+        //public bool ValiditeSig(MeiTuanOrdeModel fromModel)
+        //{
+        //    IList<string> infos = new List<string>();
+        //    PropertyInfo[] props = fromModel.GetType().GetProperties();
+        //    props = props.Where(item => item.Name != "sig").OrderBy(item => item.Name).ToArray();
+        //    string paras = "";
+        //    for (int i = 0; i < props.Length; i++)
+        //    {
+        //        object val = props[i].GetValue(fromModel);
+        //        if (val == null)
+        //            val = "";
+        //        if (i != props.Length - 1)
+        //            paras = paras + props[i].Name + "=" + val + "&";
+        //        else
+        //            paras = paras + props[i].Name + "=" + val;
+        //    }
+        //    string url = ConfigSettings.Instance.MeiTuanPullOrderInfo;
+        //    string waimd5 = url + paras + consumer_secret; //consumer_secret
+        //    string sig = ETS.Security.MD5.Encrypt(waimd5).ToLower();
+        //    return sig == fromModel.sig;
+        //}
+
         /// <summary>
         /// 验证美团推送订单的签名是否正确  add by caoheyang 20150421
         /// </summary>
         /// <param nCame="fromModel">美团数据实体</param>
-        public bool ValiditeSig(MeiTuanOrdeModel fromModel)
+        public bool ValiditeSig(System.Web.HttpRequest httpRequest)
         {
-            IList<string> infos = new List<string>();
-            PropertyInfo[] props = fromModel.GetType().GetProperties();
-            props = props.Where(item => item.Name != "sig").OrderBy(item => item.Name).ToArray();
-            string paras = "";
-            for (int i = 0; i < props.Length; i++)
+            List<string> paras = new List<string>();
+            string sig="";
+            foreach (string key in httpRequest.Form.Keys) 
             {
-                object val = props[i].GetValue(fromModel);
-                if (val == null)
-                    val = "";
-                if (i != props.Length - 1)
-                    paras = paras + props[i].Name + "=" + val + "&";
-                else
-                    paras = paras + props[i].Name + "=" + val;
+                if (key == "sig")
+                    sig = System.Web.HttpUtility.UrlDecode(key);
+                else {
+                    string valtemp = System.Web.HttpUtility.UrlDecode(System.Web.HttpUtility.UrlDecode(httpRequest.Form[key]));
+                    paras.Add(key + "=" + (valtemp == null ? "" : valtemp));
+                }
             }
-            string url = ConfigSettings.Instance.MeiTuanPullOrderInfo;
-            string waimd5 = url + paras + consumer_secret; //consumer_secret
-            string sig = ETS.Security.MD5.Encrypt(waimd5).ToLower();
-            return sig == fromModel.sig;
+            paras = paras.OrderBy(item => item).ToList();
+            string url = ConfigSettings.Instance.MeiTuanPullOrderInfo+"?";
+            string waimd5 = url + string.Join("&",paras) + consumer_secret; //consumer_secret
+            string sigtemp = ETS.Security.MD5.Encrypt(waimd5).ToLower();
+            return sig == sigtemp;
         }
 
         /// <summary>
