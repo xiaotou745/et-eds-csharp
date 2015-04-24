@@ -70,7 +70,7 @@ namespace Ets.Model.DomainModel.Bussiness
         /// <summary>
         /// OrderFrom 0B端商家1易淘食4美团
         /// </summary>
-        public int OrderFrom { get; set; }
+        public string OrderFrom { get; set; }
         /// <summary>
         /// OriginalOrderNo原平台订单号
         /// </summary>

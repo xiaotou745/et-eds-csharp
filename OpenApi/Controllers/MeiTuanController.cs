@@ -28,6 +28,8 @@ using ETS.Const;
 using Ets.Service.Provider.OpenApi;
 using Ets.Model.DataModel.Order;
 using Ets.Service.IProvider.OpenApi;
+using System.Reflection;
+using Letao.Util;
 
 namespace OpenApi.Controllers
 {
@@ -39,15 +41,26 @@ namespace OpenApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public object PullOrderInfo(MeiTuanOrdeModel paramodel)
+        [ExecuteTimeApi]
+        public object PullOrderInfo()
         {
-            MeiTuanGroup meituan = new MeiTuanGroup();
-            if (!meituan.ValiditeSig(paramodel))
+            try
             {
-                CreatePM_OpenApi model = meituan.TranslateModel(paramodel);
-                return meituan.AddOrder(model) > 0 ? new { data = "ok" } : new { data = "fail" };
+                ////实体类赋值
+                MeiTuanOrdeModel paramodel = HTTPHelper.BindeModel<MeiTuanOrdeModel>(HttpContext.Current.Request);
+                MeiTuanGroup meituan = new MeiTuanGroup();
+                if (!meituan.ValiditeSig(paramodel))
+                {
+                    CreatePM_OpenApi model = meituan.TranslateModel(paramodel);
+                    return meituan.AddOrder(model) > 0 ? new { data = "ok" } : new { data = "fail" };
+                }
+                return new { data = "fail" };  //推送失败
             }
-            return new { data = "fail" };  //推送失败
-        } 
+            catch (Exception ex) {
+                LogHelper.LogWriterFromFilter(ex);  //记录日志
+                return new { data = "fail" };  //推送失败
+            }
+          
+        }
     }
 }

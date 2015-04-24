@@ -26,7 +26,7 @@ namespace Ets.Service.IProvider.OpenApi
         /// </summary>
         /// <param name="paramodel"></param>
         /// <returns></returns>
-        CreatePM_OpenApi SetCcmmissonInfo(CreatePM_OpenApi paramodel);
+        CreatePM_OpenApi SetCommissonInfo(CreatePM_OpenApi paramodel);
 
     }
 }

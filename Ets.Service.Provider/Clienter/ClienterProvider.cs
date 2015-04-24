@@ -80,7 +80,8 @@ namespace Ets.Service.Provider.Clienter
                         OrderCount = item.OrderCount
                     };
                     #endregion
-                    model.OriginalOrderNo = item.OriginalOrderNo;
+                    model.OriginalOrderNo = item.OriginalOrderNo; 
+                    model.OrderFrom = item.OrderFrom;
                     model.income = item.OrderCommission;  //佣金 Edit bycaoheyang 20150327
                     model.Amount = DefaultOrPriceProvider.GetCurrenOrderPrice(oCommission); //C端 获取订单的金额 Edit bycaoheyang 20150305
 
@@ -708,6 +709,7 @@ namespace Ets.Service.Provider.Clienter
         {
             return orderDao.GetOrderInfoByOrderId(orderId);
         }
+
     }
 
 }

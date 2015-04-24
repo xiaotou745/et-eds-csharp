@@ -32,6 +32,10 @@ namespace Ets.Model.DataModel.Clienter
         public string Province { get; set; }
         public Nullable<int> BussinessID { get; set; }
         public int WorkStatus { get; set; }
+        /// <summary>
+        /// 跨店ID
+        /// </summary>
+        public int CSID { get; set; }
 
     }
 }

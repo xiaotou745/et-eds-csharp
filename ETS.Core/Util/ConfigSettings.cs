@@ -275,6 +275,15 @@ namespace ETS.Util
         {
             get { return ConfigurationManager.AppSettings["JuWangKeOrderAsyncStatus"]; }
         }
+                /// <summary>
+        ///  美团回调同步订单到E代送地址 
+        /// </summary>
+        public string MeiTuanPullOrderInfo
+        {
+            get { return ConfigurationManager.AppSettings["MeiTuanPullOrderInfo"]; }
+        }
+  
+        
         #endregion
     }
 }

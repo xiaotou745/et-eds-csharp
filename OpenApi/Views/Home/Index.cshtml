@@ -16,9 +16,9 @@
     //            "v": "1.0",
     //            "sign": "8C59077F13F16FAD71A9E9D053CF215F", //   A36FB267A47A1E412F3CDA7068261D47
     //            "fields": {
-    //                "order_id": "100000000601",
-    //                "create_time": "2015-03-12 00:21:42",
-    //                "receive_time": "2015-03-12 00:21:42",
+    //                "order_id": "1000000006012",
+    //                "create_time": "2015-04-22 17:20:33",
+    //                "receive_time": "2015-04-22 17:20:33",
     //                "is_pay": true,
     //                "payment": 1,
     //                "total_price": 100,
@@ -95,7 +95,7 @@
     //                "v": "1.0",
     //                "sign": "8C59077F13F16FAD71A9E9D053CF215F",
     //                "fields": {
-    //                    "order_no": "434313111"
+    //                    "order_no": "100000000601"
     //                }
     //            },
     //            success: function (data) {
@@ -134,35 +134,12 @@
     //            datatype: 'json',
     //            url: '/Order/GetOrderRecords',
     //            data: {
-    //                "app_key": "appkey_juwangke", "timestamp": "2015-04-23 15:00:23", "v": "1.0", "sign": "0D64770E206EF51D75A6ACF526575D30", "fields": { "order_no": "15263212363" }, "group": 5 
-    //            },
-    //            success: function (data) {
-    //                            console.log(data);
-    //                        },
-    //                        error: function () {
-
-    //                        }
-    //        })
-    //    });
-    //});
-
-    //$(function () {
-    //    $(function () {
-    //        $.ajax({
-    //            type: 'post',
-    //            datatype: 'json',
-    //            url: '/order/AsyncStatus',
-    //            data: {
     //                "app_key": "fulltime",
-    //                "timestamp": "2015-03-11 20:42:33",
+    //                "timestamp": "1428647650",
     //                "v": "1.0",
-    //                "sign": "8C59077F13F16FAD71A9E9D053CF215F",
+    //                "sign": "0C1C892C56FCA6BF14C426AC27EEF294",
     //                "fields": {
-    //                    "order_no": "3",
-    //                    "status": 2,
-    //                    "ClienterTrueName": "wangchao",
-    //                    "ClienterPhoneNo": "18553501000",
-    //                    "OriginalOrderNo": "103",
+    //                    "order_no": "100000000601"
     //                }
     //            },
     //            success: function (data) {
@@ -175,6 +152,35 @@
     //    });
     //});
 
+    $(function () {
+        $(function () {
+            $.ajax({
+                type: 'post',
+                datatype: 'json',
+                url: '/order/AsyncStatus',
+                data: {
+                    "app_key": "appkey_meituan",
+                    "timestamp": "2015-03-11 20:42:33",
+                    "v": "1.0",
+                    "sign": "0E4E2C676DA6A750D3AF07A9B5261A12",
+                    "fields": {
+                        "order_no": "3312571",
+                        "status": 3,
+                        "ClienterTrueName": "wangchao",
+                        "ClienterPhoneNo": "18553501000",
+                        "OriginalOrderNo": "3312571",
+                    }
+                },
+                success: function (data) {
+                                console.log(data);
+                            },
+                            error: function () {
+
+                            }
+            })
+        });
+    });
+
 
     //$(function () {
     //    $(function () {
@@ -183,12 +189,12 @@
     //            datatype: 'json',
     //            url: '/order/ChangeStatus',
     //            data: {
-    //                "app_key": "fulltime",
+    //                "app_key": "appkey_meituan",//fulltime
     //                "timestamp": "2015-03-11 20:42:33",
     //                "v": "1.0",
-    //                "sign": "8C59077F13F16FAD71A9E9D053CF215F",
+    //                "sign": "0E4E2C676DA6A750D3AF07A9B5261A12", // 8C59077F13F16FAD71A9E9D053CF215F
     //                "fields": {
-    //                    "order_no": "129150410192033002",
+    //                    "order_no": "126376458586190591",
     //                    "status":1
     //                }
     //            },
@@ -210,52 +216,20 @@
     //            datatype: 'json',
     //            url: '/meituan/PullOrderInfo',
     //            data: {
-    //                "order_id": "126376458586190591",
-    //                "app_poi_code": "990001",
-    //                "wm_poi_name": "美团商家名称",
-    //                "wm_poi_address": "美团商家地址",
-    //                "wm_poi_phone": "15217658775",
-    //                "wm_poi_id": 11088,
-    //                "shipping_fee ": 2,
-    //                "recipient_name": "smith",
-    //                "recipient_phone": 1234567,
-    //                "recipient_address": "aaaaa",
-    //                "total": 527,
-    //                "caution": "忌口或备注",
-    //                "shipper_phone": 1234567,
-    //                "has_invoiced": 1,
-    //                "invoice_title": "大抬头",
-    //                "status": 1,
-    //                "ctime": "2015-03-11 20:42:33",//1392883362,
-    //                "utime": "2015-03-11 20:42:33",//1392883362,
-    //                "latitude": 13.923362,
-    //                "longitude": 13.928833,
-    //                "is_third_shipping": 1,
-    //                "pay_type": 1,
-    //                "detail": [
-    //                            {
-    //                                "app_food_code": 1,
-    //                                "food_name": "狗不理",
-    //                                "quantity": 6,
-    //                                "price": 100,
-    //                                "box_num": 2,
-    //                                "box_price": 1,
-    //                                "unit": "份",
-    //                                "food_discount": 0.8
-    //                            }
-    //                ],
-    //                "extras": [{
-    //                    "reduce_fee": 2.5,
-    //                    "remark": "满10元减2.5元",
-    //                    "type": 1
-    //                },
-    //                        {
-    //                            "reduce_fee": 5,
-    //                            "remark": "新用户立减5元",
-    //                            "type": 1
-    //                        }]
-
-
+    //                "app_id": "33", "timestamp": "1429756947",
+    //                "sig": "dd3312accededab8703c8ab9f344924c", "order_id": "33122511212",
+    //                "app_poi_code": 24, "wm_poi_name": "e代送测试",
+    //                "wm_poi_address": "北京市朝阳区北苑路42号",
+    //                "wm_poi_phone": "4008823823", "recipient_address": "文化大厦",
+    //                "recipient_phone": "13718057035", "recipient_name": "陈凯",
+    //                "shipping_fee": 8.0, "total": 39.0, "caution": "w l ege q ",
+    //                "shipper_phone": null, "status": 2, "has_invoiced": 0,
+    //                "invoice_title": null, "ctime": "1429756693",
+    //                "detail[0]": "1429756693",
+    //                "detail": '[{ "app_food_code": "100007162", "food_name": "香辣鸡腿堡", "quantity": 2, "price": 15.5, "box_num": 0, "box_price": 0, "food_discount": 1, "unit": "份" }]',
+    //                "extras": []
+    //                , "is_third_shipping": 1, "pay_type": 1, 
+    //                "wm_poi_id":24
     //            },
     //            success: function (data) {
     //                console.log(data);

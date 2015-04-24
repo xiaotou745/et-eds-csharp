@@ -125,16 +125,15 @@ namespace Ets.Dao.Order
         /// 订单状态查询功能  add by caoheyang 20150316
         /// </summary>
         /// <param name="orderNo">订单号码</param>
-        /// <param name="groupId">集团id</param>
+        /// <param name="orderfrom">订单来源</param>
         /// <returns>订单状态</returns>
-        public int GetStatus(string OriginalOrderNo, int groupId)
+        public int GetStatus(string OriginalOrderNo, int orderfrom)
         {
             const string querySql = @"SELECT top 1  a.Status FROM [order] a  WITH ( NOLOCK )  
-            LEFT JOIN  dbo.business AS b ON a.businessId=b.Id
-            WHERE OriginalOrderNo=@OriginalOrderNo AND b.GroupId=@GroupId";
+            WHERE OriginalOrderNo=@OriginalOrderNo AND a.OrderFrom=@OrderFrom";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@OriginalOrderNo", OriginalOrderNo);    //第三方平台订单号
-            dbParameters.AddWithValue("@GroupId", groupId);    //集团id
+            dbParameters.AddWithValue("@OrderFrom", orderfrom);    //订单来源
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
             return ParseHelper.ToInt(executeScalar, -1);
         }
@@ -144,9 +143,9 @@ namespace Ets.Dao.Order
         /// 订单状态查询功能  add by caoheyang 20150316
         /// </summary>
         /// <param name="orderNo">订单号码</param>
-        /// <param name="groupId">集团id</param>
+        /// <param name="groupId">订单来源</param>
         /// <returns>订单状态</returns>
-        public OrderListModel GetOpenOrder(string originalOrderNo, int groupId)
+        public OrderListModel GetOpenOrder(string originalOrderNo, int orderfrom)
         {
             string sql = @"SELECT top 1 o.[Id]
                                         ,o.[OrderNo]
@@ -194,12 +193,12 @@ namespace Ets.Dao.Order
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                      LEFT JOIN dbo.clienter c WITH (NOLOCK) ON o.clienterId=c.Id
-                                    WHERE 1=1 and o.OriginalOrderNo=@OriginalOrderNo and b.groupid=@GroupId";
+                                    WHERE 1=1 and o.OriginalOrderNo=@OriginalOrderNo and o.OrderFrom=@OrderFrom";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OriginalOrderNo", SqlDbType.NVarChar);
             parm.SetValue("@OriginalOrderNo", originalOrderNo);
-            parm.Add("@GroupId", SqlDbType.Int);
-            parm.SetValue("@GroupId", groupId);
+            parm.Add("@OrderFrom", SqlDbType.Int);
+            parm.SetValue("@OrderFrom", orderfrom);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             if (dt == null || dt.Rows.Count <= 0)
                 return null;
@@ -650,11 +649,11 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             }
             if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))
             {
-                sbSqlWhere.AppendFormat(" AND o.PubDate>='{0}' ", criteria.orderPubStart);
+                sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),o.PubDate,120)>=CONVERT(CHAR(10),'{0}',120) ", criteria.orderPubStart.Trim());
             }
             if (!string.IsNullOrWhiteSpace(criteria.orderPubEnd))
             {
-                sbSqlWhere.AppendFormat(" AND o.PubDate<='{0}' ", criteria.orderPubEnd);
+                sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),o.PubDate,120)<=CONVERT(CHAR(10),'{0}',120) ", criteria.orderPubEnd.Trim());
             }
             if (criteria.GroupId != null && criteria.GroupId != 0)
             {
@@ -758,6 +757,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                                         ,oo.NeedUploadCount
                                         ,oo.HadUploadCount
                                         ,oo.ReceiptPic
+,o.OrderFrom
                                         ,o.OriginalOrderNo
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
@@ -909,9 +909,8 @@ output  Inserted.Id ,
         into dbo.OrderSubsidiesLog ( OrderId, InsertTime, OptName, Remark,
                                      OptId, OrderStatus, [Platform] )
 from    dbo.[order] as a
-        left join dbo.business b on a.businessId = b.Id
 where   a.OriginalOrderNo = @OriginalOrderNo
-        and b.GroupId = @GroupId    
+        and a.OrderFrom=@OrderFrom
 ", SuperPlatform.第三方对接平台, (int)SuperPlatform.第三方对接平台);
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@Status", SqlDbType.Int);
@@ -920,8 +919,8 @@ where   a.OriginalOrderNo = @OriginalOrderNo
             dbParameters.SetValue("@Remark", paramodel.remark);
             dbParameters.Add("@OriginalOrderNo", SqlDbType.NVarChar);
             dbParameters.SetValue("@OriginalOrderNo", paramodel.order_no);  //第三方平台订单号 
-            dbParameters.Add("@GroupId", SqlDbType.Int);
-            dbParameters.SetValue("@GroupId", paramodel.groupid);  //集团ID
+            dbParameters.Add("@OrderFrom", SqlDbType.Int);
+            dbParameters.SetValue("@OrderFrom", paramodel.orderfrom);  //集团ID
             object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
             return ParseHelper.ToInt(executeScalar, -1);
         }
@@ -1513,6 +1512,28 @@ order by sol.Id;";
 
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             return MapRows<OrderRecordsLog>(dt);
+        }
+
+/// <summary>
+        /// 订单详细
+        /// </summary>
+        /// <param name="orderNo">订单号码</param>
+        /// <returns>订单</returns>
+        public IList<OrderDetailModel> GetOrderDetail(string order_no)
+        {
+            string sql = @"SELECT  o.[OrderNo]
+                                        ,o.[ProductName]
+                                        ,o.[UnitPrice]
+                                        ,o.[Quantity] 
+                                    FROM [OrderDetail] o WITH ( NOLOCK )
+                                    WHERE o.OrderNo=@OriginalOrderNo";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@OriginalOrderNo", SqlDbType.NVarChar);
+            parm.SetValue("@OriginalOrderNo", order_no);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (dt == null || dt.Rows.Count <= 0)
+                return null;
+            return MapRows<OrderDetailModel>(dt);
         }
     }
 }

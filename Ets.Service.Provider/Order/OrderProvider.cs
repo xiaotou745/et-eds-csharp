@@ -67,6 +67,8 @@ namespace Ets.Service.Provider.Order
                         resultModel.userId = from.clienterId.Value;
                     resultModel.OrderNo = from.OrderNo;
                     resultModel.OrderId = from.Id; //订单Id
+                    resultModel.OriginalOrderNo = from.OriginalOrderNo;
+                    resultModel.OrderFrom = from.OrderFrom; //订单来源
                     resultModel.OrderCount = from.OrderCount;
                     var orderComm = new OrderCommission() { Amount = from.Amount, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount };
                     var amount = DefaultOrPriceProvider.GetCurrenOrderPrice(orderComm);
@@ -156,6 +158,7 @@ namespace Ets.Service.Provider.Order
                     resultModel.OrderId = from.Id;  //订单Id
                     resultModel.OrderCount = from.OrderCount;
                     resultModel.OriginalOrderNo = from.OriginalOrderNo;
+                    resultModel.OrderFrom = from.OrderFrom;
                     var orderComm = new OrderCommission() { Amount = from.Amount, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount };
                     var amount = DefaultOrPriceProvider.GetCurrenOrderPrice(orderComm);
                     resultModel.income = from.OrderCommission;  //计算设置当前订单骑士可获取的佣金 Edit bycaoheyang 20150305
@@ -394,8 +397,8 @@ namespace Ets.Service.Provider.Order
         {
             //if (AsyncOrderStatus(orderNo))//更该订单状态时，同步第三方订单状态
             {
-                return OrderDao.CancelOrderStatus(orderNo, orderStatus,remark);
-            } 
+                return OrderDao.CancelOrderStatus(orderNo, orderStatus, remark);
+            }
             return 0;
         }
 
@@ -427,7 +430,7 @@ namespace Ets.Service.Provider.Order
                 CityName = paramodel.address.city,
                 AreaName = paramodel.address.area
             });
-            if (orderCodeInfo == ETS.Const.SystemConst.CityOpenInfo)
+            if (orderCodeInfo == ETS.Const.SystemConst.CityOpenInfo||string.IsNullOrWhiteSpace(orderCodeInfo))
                 return ResultModel<object>.Conclude(OrderApiStatusType.ParaError, "用户省市区信息错误");
             else
             {
@@ -485,7 +488,7 @@ namespace Ets.Service.Provider.Order
 
             ///此处其实应该取数据库，但是由于发布订单时关于店铺的逻辑后期要改，暂时这么处理 
             IGroupProviderOpenApi groupProvider = OpenApiGroupFactory.Create(paramodel.store_info.group);
-            paramodel = groupProvider.SetCcmmissonInfo(paramodel);
+            paramodel = groupProvider.SetCommissonInfo(paramodel);
 
             #endregion
 
@@ -523,7 +526,7 @@ namespace Ets.Service.Provider.Order
                     tran.Complete();
                 }
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 redis.Delete(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, //同步失败，清除缓存内的订单信息信息
                            paramodel.store_info.group.ToString(), paramodel.order_id.ToString()));
@@ -531,7 +534,7 @@ namespace Ets.Service.Provider.Order
                     redis.Delete(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(), paramodel.store_info.store_id.ToString()));
                 throw ex; //异常上抛
             }
-  
+
             return string.IsNullOrWhiteSpace(orderNo) ? ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :
              ResultModel<object>.Conclude(OrderApiStatusType.Success, new { order_no = orderNo });
         }
@@ -540,12 +543,12 @@ namespace Ets.Service.Provider.Order
         /// 订单状态查询功能  add by caoheyang 20150316
         /// </summary>
         /// <param name="orderNo">订单号码</param>
-        /// <param name="groupId">集团id</param>
+        /// <param name="orderfrom">订单来源</param>
         /// <returns>订单状态</returns>
-        public int GetStatus(string OriginalOrderNo, int groupId)
+        public int GetStatus(string OriginalOrderNo, int orderfrom)
         {
             OrderDao OrderDao = new OrderDao();
-            return OrderDao.GetStatus(OriginalOrderNo, groupId);
+            return OrderDao.GetStatus(OriginalOrderNo, orderfrom);
         }
 
 
@@ -557,14 +560,17 @@ namespace Ets.Service.Provider.Order
         public ResultModel<object> OrderDetail(OrderDetailPM_OpenApi paramodel)
         {
             OrderDao OrderDao = new OrderDao();
-            OrderListModel order = OrderDao.GetOpenOrder(paramodel.order_no, paramodel.GroupId);
+            OrderListModel order = OrderDao.GetOpenOrder(paramodel.order_no, paramodel.orderfrom);
             return order == null ? ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :
                 ResultModel<object>.Conclude(OrderApiStatusType.Success, new
                 {
                     orderinfo = new { order_status = order.Status, clientername = order.ClienterName, clienterphoneno = order.ClienterPhoneNo }
                 });
         }
+          
+     
 
+        
         /// <summary>
         ///  supermanapi通过openapi同步第三方订单状态  add by caoheyang 20150327 
         /// </summary>
@@ -573,9 +579,9 @@ namespace Ets.Service.Provider.Order
         public bool AsyncOrderStatus(string orderNo)
         {
             OrderListModel orderlistModel = OrderDao.GetOrderByNo(orderNo);
-            if (orderlistModel.GroupId > 0)
+            if (orderlistModel.OrderFrom > 0)   //一个商户对应多个集团时需要更改 
             {
-                ParaModel<AsyncStatusPM_OpenApi> paramodel = new ParaModel<AsyncStatusPM_OpenApi>() { group = orderlistModel.GroupId, fields = new AsyncStatusPM_OpenApi() };
+                ParaModel<AsyncStatusPM_OpenApi> paramodel = new ParaModel<AsyncStatusPM_OpenApi>() { fields = new AsyncStatusPM_OpenApi() { orderfrom =orderlistModel.OrderFrom} };
                 if (paramodel.GetSign() == null)//为当前集团参数实体生成sign签名信息
                     return false;
                 paramodel.fields.status = ParseHelper.ToInt(orderlistModel.Status, -1);
@@ -588,7 +594,7 @@ namespace Ets.Service.Provider.Order
                 string json = new HttpClient().PostAsJsonAsync(url, paramodel).Result.Content.ReadAsStringAsync().Result;
                 JObject jobject = JObject.Parse(json);
                 int x = jobject.Value<int>("Status"); //接口调用状态 区分大小写
-                if (x==0)
+                if (x == 0)
                 {
                     return true;
                 }
@@ -724,6 +730,21 @@ namespace Ets.Service.Provider.Order
                 LogHelper.LogWriter("订单发布失败", new { model = model });
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Failed);
             }
+        }
+
+        /// <summary>
+        /// 订单详情接口
+        /// </summary>
+        /// <param name="paramodel">参数实体</param>
+        /// <returns>订单详情</returns>
+        public ListOrderDetailModel GetOrderDetail(string order_no)
+        { 
+            var order =OrderDao.GetOrderByNo(order_no);
+            var list = OrderDao.GetOrderDetail(order_no);
+            ListOrderDetailModel mo=new ListOrderDetailModel();
+            mo.order = order;
+            mo.orderDetails = list;
+            return mo;
         }
 
         /// <summary>
@@ -885,15 +906,16 @@ namespace Ets.Service.Provider.Order
         {
             paramodel.status = OrderConst.OrderStatus3;
             paramodel.remark = "第三方集团取消订单，同步E代送系统订单状态";
-            int currenStatus = OrderDao.GetStatus(paramodel.order_no, paramodel.groupid);  //目前订单状态
-            if (OrderConst.OrderStatus30 != currenStatus)  //订单状态非30，,不允许取消订单
+            int currenStatus = OrderDao.GetStatus(paramodel.order_no, paramodel.orderfrom);  //目前订单状态
+            if (currenStatus == -1) //订单不存在
+                return ResultModel<object>.Conclude(OrderApiStatusType.OrderNotExist);
+            else if (OrderConst.OrderStatus30 != currenStatus)  //订单状态非30，,不允许取消订单
                 return ResultModel<object>.Conclude(OrderApiStatusType.OrderIsJoin);
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 int result = OrderDao.UpdateOrderStatus_Other(paramodel);
                 tran.Complete();
                 return result > 0 ? ResultModel<object>.Conclude(OrderApiStatusType.Success) : ResultModel<object>.Conclude(OrderApiStatusType.SystemError);
-
             }
         }
 

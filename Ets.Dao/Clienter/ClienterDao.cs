@@ -87,7 +87,7 @@ namespace Ets.Dao.Clienter
 
             string columnStr = @"   o.clienterId AS UserId,
                                     o.OrderNo,
-                                    o.Id OrderId,
+                                    o.Id OrderId,o.OrderFrom,
                                     ISNULL(o.OriginalOrderNo,'') OriginalOrderNo,
                                     CONVERT(VARCHAR(5),o.PubDate,108) AS PubDate,
                                     o.PickUpAddress,
