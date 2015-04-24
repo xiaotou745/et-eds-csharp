@@ -93,8 +93,8 @@ namespace Ets.Dao.WtihdrawRecords
             parm.AddWithValue("@Amount", model.Amount);
             parm.AddWithValue("@Balance", model.Balance);
             parm.AddWithValue("@AdminId", model.AdminId);
-            parm.AddWithValue("@IsDel",model.IsDel);
-            parm.AddWithValue("@Remark",model.Remark==null?"":model.Remark);
+            parm.AddWithValue("@IsDel", model.IsDel);
+            parm.AddWithValue("@Remark", model.Remark == null ? "" : model.Remark);
             parm.AddWithValue("@OrderId", model.OrderId);
             parm.AddWithValue("@RecordType", model.RecordType);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
