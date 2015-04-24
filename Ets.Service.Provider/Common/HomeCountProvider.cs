@@ -1,5 +1,6 @@
 ﻿using Ets.Dao.Clienter;
 using Ets.Dao.Order;
+using Ets.Dao.Statistics;
 using Ets.Dao.Subsidy;
 using Ets.Dao.User;
 using Ets.Model.Common;
@@ -100,6 +101,40 @@ namespace Ets.Service.Provider.Common
 
 
 
+            return model;
+        }
+
+        /// <summary>
+        /// 获取当日数据统计
+        /// danny-20150422
+        /// </summary>
+        /// <returns></returns>
+        public HomeCountTitleModel GetCurrentDateModel()
+        {
+            var model = new HomeCountTitleModel();
+            var statisticsDao = new StatisticsDao();
+            var currentDateModel = statisticsDao.GetCurrentDateModel();
+            model.UnfinishedMissionCount = currentDateModel.UnfinishedMissionCount;
+            model.UnGrabMissionCount = currentDateModel.UnGrabMissionCount;
+            model.ActiveBusiness = currentDateModel.ActiveBusiness;//活跃商家
+            model.ActiveClienter = currentDateModel.ActiveClienter;//活跃骑士
+            model.OrderPrice = currentDateModel.OrderPrice;// 订单金额
+            model.MisstionCount = currentDateModel.MisstionCount;// 任务量
+            model.OrderCount = currentDateModel.OrderCount;// 订单量
+            model.YsPrice = Math.Round(currentDateModel.YsPrice, 2);// 商户结算金额（应收）
+            model.YfPrice = Math.Round(currentDateModel.YfPrice, 2);// 骑士佣金总计（应付）
+            model.YkPrice = Math.Round(model.YsPrice - model.YfPrice, 2); //盈亏总计：+
+            model.PubDate = currentDateModel.PubDate;//发布时间
+            model.RzqsCount = currentDateModel.RzqsCount; // 认证骑士数量
+            model.DdrzqsCount = currentDateModel.DdrzqsCount;//等待认证骑士
+            model.BusinessCount = currentDateModel.BusinessCount;//商家总数
+            model.BusinessAverageOrderCount = ParseHelper.ToDivision(model.OrderCount, model.ActiveBusiness);//商户平均发布订单
+            model.MissionAverageOrderCount = ParseHelper.ToDivision(model.OrderCount, model.MisstionCount);//任务平均订单量
+            model.ClienterAverageOrderCount = ParseHelper.ToDivision(model.OrderCount, model.ActiveClienter);//骑士平均完成订单量
+            model.ZeroSubsidyOrderCount = currentDateModel.ZeroSubsidyOrderCount;
+            model.OneSubsidyOrderCount = currentDateModel.OneSubsidyOrderCount;
+            model.TwoSubsidyOrderCount = currentDateModel.TwoSubsidyOrderCount;
+            model.ThreeSubsidyOrderCount = currentDateModel.ThreeSubsidyOrderCount;
             return model;
         }
 

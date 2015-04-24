@@ -108,14 +108,14 @@ namespace Ets.Dao.Order
             }
 
             var pageInfo = new PageHelper().GetPages<Model.DataModel.Order.order>(SuperMan_Read, criteria.PagingRequest.PageIndex, whereStr.ToString(), orderByStr, columnStr.ToString(), tableListStr.ToString(), criteria.PagingRequest.PageSize, true);
-            if (pageInfo !=null && pageInfo.Records != null && pageInfo.Records.Count > 0)
+            if (pageInfo != null && pageInfo.Records != null && pageInfo.Records.Count > 0)
             {
                 orderPageList.ContentList = pageInfo.Records.ToList();
                 orderPageList.CurrentPage = pageInfo.Index;  //当前页
                 orderPageList.PageCount = pageInfo.PageCount;//总页数
                 orderPageList.PageSize = criteria.PagingRequest.PageSize;
             }
-            
+
 
             return orderPageList;
         }
@@ -345,9 +345,9 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             int bussinessId;//商户id
             ///查询该商户是否已存在
             var redis = new ETS.NoSql.RedisCache.RedisCache();
-            string bussinessIdstr = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo,paramodel.store_info.group.ToString(),
+            string bussinessIdstr = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(),
                 paramodel.store_info.store_id.ToString()));  //查询缓存，看看当前店铺是否存在,缓存存储E代送的商户id
-            if (bussinessIdstr!= null)  
+            if (bussinessIdstr != null)
                 bussinessId = ParseHelper.ToInt(bussinessIdstr);
             else//如果商户不存在
             {
@@ -394,10 +394,10 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             #endregion
 
             #region 操作插入order表
-            string orderExists = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo,paramodel.store_info.group.ToString(),
+            string orderExists = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
                paramodel.order_id.ToString()));  //查询缓存，看当前订单是否存在,“true”代表存在，key的形式为集团ID_第三方平台订单号
-            if (orderExists != null)  
-               return null;//订单已经存在，添加失败 
+            if (orderExists != null)
+                return null;//订单已经存在，添加失败 
             ///订单插入sql 订单不存在时
             const string insertOrdersql = @" 
                 INSERT INTO dbo.[order](OrderNo,
@@ -637,11 +637,11 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             }
             if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))
             {
-                sbSqlWhere.AppendFormat(" AND o.PubDate>='{0}' ", criteria.orderPubStart);
+                sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),o.PubDate,120)>=CONVERT(CHAR(10),'{0}',120) ", criteria.orderPubStart.Trim());
             }
             if (!string.IsNullOrWhiteSpace(criteria.orderPubEnd))
             {
-                sbSqlWhere.AppendFormat(" AND o.PubDate<='{0}' ", criteria.orderPubEnd);
+                sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),o.PubDate,120)<=CONVERT(CHAR(10),'{0}',120) ", criteria.orderPubEnd.Trim());
             }
             if (criteria.GroupId != null && criteria.GroupId != 0)
             {
@@ -861,7 +861,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
  SET    [Status] = @status
  output Inserted.Id,GETDATE(),'{0}','',Inserted.businessId,Inserted.[Status],{1}
  into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
- WHERE  OrderNo = @orderNo", SuperPlatform.商家,(int)SuperPlatform.商家);
+ WHERE  OrderNo = @orderNo", SuperPlatform.商家, (int)SuperPlatform.商家);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@orderNo", SqlDbType.NVarChar);
@@ -1333,7 +1333,9 @@ where   o.Id = @orderId;
                             getdate(),
                             @AdminId,
                             0,
-                            @Remark
+                            @Remark,
+                            @OrderId,
+                            1
                       INTO Records
                           ( Platform, 
                             UserId, 
@@ -1341,8 +1343,11 @@ where   o.Id = @orderId;
                             Balance, 
                             CreateTime, 
                             AdminId, 
-                            IsDel, 
-                            Remark)
+                            IsDel,
+                            Remark,
+                            OrderId,
+                            RecordType
+                            )
                     WHERE Id=@ClienterId;";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OrderCommission", model.OrderCommission);
@@ -1350,6 +1355,7 @@ where   o.Id = @orderId;
             parm.AddWithValue("@AdminId", orderOptionModel.OptUserId);
             parm.AddWithValue("@Remark", remark);
             parm.AddWithValue("@ClienterId", model.clienterId);
+            parm.AddWithValue("@OrderId", model.Id);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
         /// <summary>
@@ -1361,11 +1367,12 @@ where   o.Id = @orderId;
         /// <returns></returns>
         public bool CancelOrder(OrderListModel model, OrderOptionModel orderOptionModel)
         {
-            string remark =orderOptionModel.OptUserName+"通过后台管理系统取消订单";
+            string remark = orderOptionModel.OptUserName + "通过后台管理系统取消订单";
             string sql = string.Format(@" UPDATE dbo.[order]
                                              SET    [Status] = @Status
                                             OUTPUT
                                               Inserted.Id,
+                                              @Price,
                                               GETDATE(),
                                               @OptId,
                                               @OptName,
@@ -1374,6 +1381,7 @@ where   o.Id = @orderId;
                                               @Remark
                                             INTO dbo.OrderSubsidiesLog
                                               (OrderId,
+                                              Price,
                                               InsertTime,
                                               OptId,
                                               OptName,
@@ -1383,12 +1391,13 @@ where   o.Id = @orderId;
                                              WHERE  OrderNo = @OrderNo");
 
             IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Price", model.OrderCommission);
             parm.AddWithValue("@OptId", orderOptionModel.OptUserId);
-            parm.AddWithValue("@OptName",orderOptionModel.OptUserName);
+            parm.AddWithValue("@OptName", orderOptionModel.OptUserName);
             parm.AddWithValue("@Status", 3);
             parm.AddWithValue("@OrderNo", model.OrderNo);
             parm.AddWithValue("@Platform", 3);
-            parm.AddWithValue("@Remark", remark+"，用户操作描述：【"+  orderOptionModel.OptLog+"】");
+            parm.AddWithValue("@Remark", remark + "，用户操作描述：【" + orderOptionModel.OptLog + "】");
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
         /// <summary>
@@ -1399,7 +1408,7 @@ where   o.Id = @orderId;
         /// <returns></returns>
         public IList<OrderSubsidiesLog> GetOrderOptionLog(string OrderId)
         {
-            string sql =@"  SELECT  Id,
+            string sql = @"  SELECT  Id,
                                     OrderId,
                                     OrderStatus,
                                     OptId,
@@ -1412,7 +1421,7 @@ where   o.Id = @orderId;
                             ORDER BY Id;";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OrderId", OrderId);
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql,parm);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             return MapRows<OrderSubsidiesLog>(dt);
         }
     }
