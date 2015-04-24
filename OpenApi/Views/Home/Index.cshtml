@@ -145,8 +145,8 @@
     //                "v": "1.0",
     //                "sign": "0E4E2C676DA6A750D3AF07A9B5261A12",
     //                "fields": {
-    //                    "order_no": "3312571",
-    //                    "status": 3,
+    //                    "order_no": "3312717",
+    //                    "status": 0,
     //                    "ClienterTrueName": "wangchao",
     //                    "ClienterPhoneNo": "18553501000",
     //                    "OriginalOrderNo": "3312571",
@@ -225,28 +225,28 @@
 
 
 
-    $(function () {
-            $(function () {
-                $.ajax({
-                    type: 'post',
-                    datatype: 'json',
-                    url: '/meituan/ChangeStatus',
-                    data: {
-                        "app_id": 33,
-                        "order_id":"33122511212",
-                        "timestamp": 133333333,
-                        "sig": "b453317128b4932308cacd369abb3b1f"
-                    },
-                    success: function (data) {
-                        console.log(data);
-                    },
-                    error: function () {
+    //$(function () {
+    //        $(function () {
+    //            $.ajax({
+    //                type: 'post',
+    //                datatype: 'json',
+    //                url: '/meituan/ChangeStatus',
+    //                data: {
+    //                    "app_id": 33,
+    //                    "order_id":"33122511212",
+    //                    "timestamp": 133333333,
+    //                    "sig": "b453317128b4932308cacd369abb3b1f"
+    //                },
+    //                success: function (data) {
+    //                    console.log(data);
+    //                },
+    //                error: function () {
 
-                    }
-                })
-            });
+    //                }
+    //            })
+    //        });
       
-    });
+    //});
 
 </script>
 <div class="row">
