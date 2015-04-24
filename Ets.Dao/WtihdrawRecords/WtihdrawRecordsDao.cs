@@ -71,7 +71,9 @@ namespace Ets.Dao.WtihdrawRecords
                           CreateTime ,
                           AdminId,
                           IsDel,
-                          Remark
+                          Remark,
+                          OrderId,
+                          RecordType
                         )
                 VALUES  ( @Platform , -- Platform - int
                           @UserId , -- UserId - int
@@ -80,7 +82,9 @@ namespace Ets.Dao.WtihdrawRecords
                           getdate() , -- CreateTime - datetime
                           @AdminId,  -- AdminId - int
                           @IsDel,
-                          @Remark
+                          @Remark,
+                          @OrderId,
+                          @RecordType
                         )
                 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
@@ -91,6 +95,8 @@ namespace Ets.Dao.WtihdrawRecords
             parm.AddWithValue("@AdminId", model.AdminId);
             parm.AddWithValue("@IsDel",model.IsDel);
             parm.AddWithValue("@Remark",model.Remark==null?"":model.Remark);
+            parm.AddWithValue("@OrderId", model.OrderId);
+            parm.AddWithValue("@RecordType", model.RecordType);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
 

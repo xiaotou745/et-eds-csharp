@@ -495,66 +495,66 @@ namespace SuperManBusinessLogic.C_Logic
         /// <param name="userId">C端用户id</param>
         /// <param name="orderNo">订单号码</param>
         /// <returns></returns>
-        public int FinishOrder(int userId, string orderNo)
-        {
+        //public int FinishOrder(int userId, string orderNo)
+        //{
             
-            var result = -1;
-            using (var db = new supermanEntities())
-            {
-                var query = db.order.FirstOrDefault(p => p.OrderNo == orderNo);
-                if (query != null)
-                {
-                    if(query.Status==ConstValues.ORDER_FINISH) //已完成状态不做处理
-                    {
-                        result = 1;
-                        return result;
-                    }
-                    query.clienterId = userId;
-                    query.Status = ConstValues.ORDER_FINISH;
-                    query.ActualDoneDate = DateTime.Now;
-                }
-                var client = db.clienter.FirstOrDefault(p => p.Id == userId);//查询用户
-                decimal? AccountBalance = 0;
-                if (client != null)  //更新用户相关金额数据
-                {
-                    if (client.AccountBalance.HasValue)
-                        AccountBalance = client.AccountBalance.Value + (query.OrderCommission == null ? 0 : Convert.ToDecimal(query.OrderCommission));
-                    else
-                        AccountBalance = query.OrderCommission == null ? 0 : Convert.ToDecimal(query.OrderCommission);
-                }
-                client.AccountBalance = AccountBalance;
-                #region 2015.3.23 平扬 修改 插入到新增的 Records表，原先的MyIncome表作废 
-                // add 完成订单时添加收入
-                //var model = new myincome();
-                //model.PhoneNo = client.PhoneNo;
-                //model.MyIncome1 = "收入";
-                //model.MyInComeAmount = query.OrderCommission == null ? 0 : Convert.ToDecimal(query.OrderCommission);// query.DistribSubsidy + query.OrderCommission + query.WebsiteSubsidy;
-                //model.InsertTime = DateTime.Now;
-                //db.myincome.Add(model); 
-                //end add 
+        //    var result = -1;
+        //    using (var db = new supermanEntities())
+        //    {
+        //        var query = db.order.FirstOrDefault(p => p.OrderNo == orderNo);
+        //        if (query != null)
+        //        {
+        //            if(query.Status==ConstValues.ORDER_FINISH) //已完成状态不做处理
+        //            {
+        //                result = 1;
+        //                return result;
+        //            }
+        //            query.clienterId = userId;
+        //            query.Status = ConstValues.ORDER_FINISH;
+        //            query.ActualDoneDate = DateTime.Now;
+        //        }
+        //        var client = db.clienter.FirstOrDefault(p => p.Id == userId);//查询用户
+        //        decimal? AccountBalance = 0;
+        //        if (client != null)  //更新用户相关金额数据
+        //        {
+        //            if (client.AccountBalance.HasValue)
+        //                AccountBalance = client.AccountBalance.Value + (query.OrderCommission == null ? 0 : Convert.ToDecimal(query.OrderCommission));
+        //            else
+        //                AccountBalance = query.OrderCommission == null ? 0 : Convert.ToDecimal(query.OrderCommission);
+        //        }
+        //        client.AccountBalance = AccountBalance;
+        //        #region 2015.3.23 平扬 修改 插入到新增的 Records表，原先的MyIncome表作废 
+        //        // add 完成订单时添加收入
+        //        //var model = new myincome();
+        //        //model.PhoneNo = client.PhoneNo;
+        //        //model.MyIncome1 = "收入";
+        //        //model.MyInComeAmount = query.OrderCommission == null ? 0 : Convert.ToDecimal(query.OrderCommission);// query.DistribSubsidy + query.OrderCommission + query.WebsiteSubsidy;
+        //        //model.InsertTime = DateTime.Now;
+        //        //db.myincome.Add(model); 
+        //        //end add 
 
-                //2015.3.23 平扬 修改
-                //插入到新增的 Records表，原先的MyIncome表作废
-                var model=new WithdrawRecordsModel
-                {
-                    AdminId = 1,
-                    Amount = query.OrderCommission == null ? 0 : Convert.ToDecimal(query.OrderCommission),
-                    Balance = AccountBalance ?? 0,
-                    UserId = userId,
-                    Platform = 1
-                };
-                Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords=new WtihdrawRecordsProvider();
-                iRecords.AddRecords(model);
-                #endregion
-                int i = db.SaveChanges(); 
-                if (i != 0)
-                {
-                    Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", query.businessId.Value.ToString(),string.Empty);
-                    result = 2;
-                } 
-            }
-            return result;
-        }
+        //        //2015.3.23 平扬 修改
+        //        //插入到新增的 Records表，原先的MyIncome表作废
+        //        var model=new WithdrawRecordsModel
+        //        {
+        //            AdminId = 1,
+        //            Amount = query.OrderCommission == null ? 0 : Convert.ToDecimal(query.OrderCommission),
+        //            Balance = AccountBalance ?? 0,
+        //            UserId = userId,
+        //            Platform = 1
+        //        };
+        //        Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords=new WtihdrawRecordsProvider();
+        //        iRecords.AddRecords(model);
+        //        #endregion
+        //        int i = db.SaveChanges(); 
+        //        if (i != 0)
+        //        {
+        //            Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", query.businessId.Value.ToString(),string.Empty);
+        //            result = 2;
+        //        } 
+        //    }
+        //    return result;
+        //}
 
         /// <summary>
         /// 更新审核状态

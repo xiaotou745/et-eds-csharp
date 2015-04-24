@@ -24,6 +24,9 @@ namespace Ets.Model.ParameterModel.WtihdrawRecords
 
         public string Remark { get; set; }
 
+        public int OrderId { get; set; }
+
+        public int RecordType { get; set; } 
 
     }
 }
