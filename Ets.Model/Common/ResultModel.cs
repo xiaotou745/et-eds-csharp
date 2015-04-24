@@ -59,7 +59,7 @@ namespace Ets.Model.Common
         }
 
         public static ResultModel<TResult> Conclude(Enum status)
-        {
+        {   
             return Conclude(status, default(TResult));
         }
 
