@@ -344,7 +344,11 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             int bussinessId;//商户id
             ///查询该商户是否已存在
             var redis = new ETS.NoSql.RedisCache.RedisCache();
-            if (paramodel.businessId == 0) //未传递商户id时
+            string bussinessIdstr = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(),
+                paramodel.store_info.store_id.ToString()));  //查询缓存，看看当前店铺是否存在,缓存存储E代送的商户id
+            if (bussinessIdstr != null)
+                bussinessId = ParseHelper.ToInt(bussinessIdstr);
+            else//如果商户不存在
             {
                 //防止并发情况下数据错误，此处在验证一次商户是否存在 
                 string bussinessIdstr = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(),
@@ -1388,7 +1392,9 @@ where   o.Id = @orderId;
                             getdate(),
                             @AdminId,
                             0,
-                            @Remark
+                            @Remark,
+                            @OrderId,
+                            1
                       INTO Records
                           ( Platform, 
                             UserId, 
@@ -1396,8 +1402,11 @@ where   o.Id = @orderId;
                             Balance, 
                             CreateTime, 
                             AdminId, 
-                            IsDel, 
-                            Remark)
+                            IsDel,
+                            Remark,
+                            OrderId,
+                            RecordType
+                            )
                     WHERE Id=@ClienterId;";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OrderCommission", model.OrderCommission);
@@ -1405,6 +1414,7 @@ where   o.Id = @orderId;
             parm.AddWithValue("@AdminId", orderOptionModel.OptUserId);
             parm.AddWithValue("@Remark", remark);
             parm.AddWithValue("@ClienterId", model.clienterId);
+            parm.AddWithValue("@OrderId", model.Id);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
         /// <summary>
@@ -1421,6 +1431,7 @@ where   o.Id = @orderId;
                                              SET    [Status] = @Status
                                             OUTPUT
                                               Inserted.Id,
+                                              @Price,
                                               GETDATE(),
                                               @OptId,
                                               @OptName,
@@ -1429,6 +1440,7 @@ where   o.Id = @orderId;
                                               @Remark
                                             INTO dbo.OrderSubsidiesLog
                                               (OrderId,
+                                              Price,
                                               InsertTime,
                                               OptId,
                                               OptName,
@@ -1438,6 +1450,7 @@ where   o.Id = @orderId;
                                              WHERE  OrderNo = @OrderNo");
 
             IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Price", model.OrderCommission);
             parm.AddWithValue("@OptId", orderOptionModel.OptUserId);
             parm.AddWithValue("@OptName", orderOptionModel.OptUserName);
             parm.AddWithValue("@Status", 3);
