@@ -3,6 +3,7 @@ using Ets.Dao.Subsidy;
 using Ets.Dao.WtihdrawRecords;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Subsidy;
+using Ets.Model.DomainModel.Clienter;
 using Ets.Model.DomainModel.GlobalConfig;
 using Ets.Model.DomainModel.Subsidy;
 using Ets.Model.ParameterModel.Subsidy;
@@ -129,5 +130,34 @@ namespace Ets.Service.Provider.Subsidy
             }
             return true;
         }
+        /// <summary>
+        /// 跨店补贴短信
+        /// 徐鹏程
+        /// 20150416
+        /// </summary>
+        /// <returns></returns>
+        public bool ShortMessage(string SendMessage)
+        {
+            IList<ShortMessageModel> list = subsidyDao.GetCrossShopInfo();
+
+            return true;
+        }
+
+        /// <summary>
+        /// 获取骑士跨店流水
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <returns></returns>
+        public CrossShopListModel GetCrossShopListByCid(int uid)
+        {
+            IList<CrossShopModel> List = subsidyDao.GetCrossShopListByCid(uid);
+            CrossShopListModel mo=new CrossShopListModel
+            {
+                list = List,
+                ClienterModel = new ClienterDao().GetUserInfoByUserId(uid)
+            };
+            return mo;
+        }
+        
     }
 }

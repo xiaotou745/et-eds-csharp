@@ -30,8 +30,11 @@ namespace SuperMan.Controllers
             var criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria();
             ViewBag.homeCountTitleToAllData = homeCountProvider.GetHomeCountTitleToAllData();
             //ViewBag.homeCountTitleToList = homeCountProvider.GetHomeCountTitleToList(21);
-            ViewBag.homeCountTitleModel = homeCountProvider.GetHomeCountTitle();
-            ViewBag.clienteStorerGrabStatistical = iClienterProvider.GetClienteStorerGrabStatisticalInfo().ToList();
+            //ViewBag.homeCountTitleModel = homeCountProvider.GetHomeCountTitle();
+            ViewBag.homeCountTitleModel = homeCountProvider.GetCurrentDateModel();
+            IList<Ets.Model.DomainModel.Bussiness.BusinessesDistributionModel> clienteStorerGrabStatistical = iClienterProvider.GetClienteStorerGrabStatisticalInfo();
+            ViewBag.clienteStorerGrabStatistical = clienteStorerGrabStatistical.ToList();
+            //ViewBag.clienteStorerGrabStatisticalOld = iClienterProvider.GetClienteStorerGrabStatisticalInfoOld(clienteStorerGrabStatistical.Count).ToList();
             var pagedList = iOrderProvider.GetCurrentDateCountAndMoney(criteria);
             return View(pagedList);
         }
@@ -41,8 +44,8 @@ namespace SuperMan.Controllers
             var criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria();
             TryUpdateModel(criteria);
             Ets.Service.Provider.Common.HomeCountProvider homeCountProvider = new Ets.Service.Provider.Common.HomeCountProvider();
-            ViewBag.homeCountTitleToAllData = homeCountProvider.GetHomeCountTitleToAllData();
-            ViewBag.homeCountTitleModel = homeCountProvider.GetHomeCountTitle();
+            ViewBag.homeCountTitleToAllData = homeCountProvider.GetHomeCountTitleToAllData();//获取总统计数据
+            ViewBag.homeCountTitleModel = homeCountProvider.GetHomeCountTitle();//当前统计
             ViewBag.clienteStorerGrabStatistical = iClienterProvider.GetClienteStorerGrabStatisticalInfo();
             var pagedList = iOrderProvider.GetCurrentDateCountAndMoney(criteria);
             return PartialView("_PartialIndex", pagedList);

@@ -50,6 +50,10 @@ namespace Ets.Dao.User
                     whereStr += " and o.Status=" + paraModel.Status.ToString();
                 }
             }
+            if (paraModel.OrderFrom > 0)
+            {
+                whereStr += " and o.OrderFrom=" + paraModel.OrderFrom;
+            }
 
             #endregion
 
@@ -74,10 +78,51 @@ namespace Ets.Dao.User
                                     b.Latitude,
                                     b.Name as PickUpName,
                                     c.TrueName as SuperManName,
-                                    c.PhoneNo as SuperManPhone ";
+                                    c.PhoneNo as SuperManPhone,
+                                    o.OrderFrom,
+                                    isnull(o.OriginalOrderNo,'') as OriginalOrderNo";
             string tableList = @" [order](nolock) as o 
                                    LEFT join business(nolock) as b on o.businessId=b.Id
                                    LEFT join clienter(nolock) as c on o.clienterId=c.Id ";  //表名
+
+            return new PageHelper().GetPages<T>(SuperMan_Read, paraModel.PagingResult.PageIndex, whereStr, orderByColumn, columnList, tableList, paraModel.PagingResult.PageSize, true);
+        }
+
+        /// <summary>
+        /// 商户获取第三方订单   add by 平扬 20150420
+        /// </summary>
+        /// <param name="paraModel">查询条件实体</param>
+        public virtual PageInfo<T> GetOtherOrdersAppToSql<T>(BussOrderParaModelApp paraModel)
+        {
+            #region where
+            string whereStr = "1=1 ";  //where查询条件实体类
+            if (paraModel.userId != null)  //订单商户id
+                whereStr += " and o.businessId=" + paraModel.userId.ToString();
+            if (paraModel.Status != null)  //状态id
+                whereStr += " and o.Status=" + paraModel.Status.ToString();
+            #endregion
+
+            string orderByColumn = " o.PubDate DESC ";  //排序条件
+            string columnList = @"  o.Amount,
+                                    o.OrderNo,
+                                    o.PickUpAddress,
+                                    CONVERT(VARCHAR(5),o.PubDate,108) AS PubDate,
+                                    o.ReceviceAddress,
+                                    o.ReceviceName,
+                                    o.RecevicePhoneNo,
+                                    o.Remark,
+                                    o.Status,
+                                    o.ReceviceLongitude,
+                                    o.ReceviceLatitude,
+                                    b.Id as BusinessId,
+                                    b.Name as BusinessName,
+                                    b.Longitude,
+                                    b.Latitude,
+                                    b.Name as PickUpName,
+                                    o.OrderFrom,
+                                    isnull(o.OriginalOrderNo,'') as OriginalOrderNo";
+            string tableList = @" [order](nolock) as o 
+                                   LEFT join business(nolock) as b on o.businessId=b.Id ";  //表名
 
             return new PageHelper().GetPages<T>(SuperMan_Read, paraModel.PagingResult.PageIndex, whereStr, orderByColumn, columnList, tableList, paraModel.PagingResult.PageSize, true);
         }
@@ -358,7 +403,7 @@ namespace Ets.Dao.User
                         cityId,
                         phoneNo,
                         PhoneNo2,
-                        DistribSubsidy
+                        DistribSubsidy,ISNULL(OriginalBusiId,0) AS OriginalBusiId
                         FROM business(nolock) where PhoneNo=@PhoneNo AND Password=@Password order by id desc";
 
             IDbParameters parm = DbHelper.CreateDbParameters();
@@ -1055,5 +1100,131 @@ namespace Ets.Dao.User
             string orderByColumn = " tbl.PubDate DESC ";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PagingRequest.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PagingRequest.PageSize, true);
         }
+
+
+
+        /// <summary>
+        ///  后台新增店铺
+        ///  平扬
+        ///  2015年4月17日 17:19:47
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>返回商铺ID</returns>
+        public int addBusiness(AddBusinessModel model)
+        {
+            string sql = @"
+                           INSERT INTO dbo.business
+                            ( Name ,
+                              City ,
+                              district ,
+                              PhoneNo ,
+                              PhoneNo2 ,
+                              Password ,
+                              CheckPicUrl ,
+                              IDCard ,
+                              Address ,
+                              Landline ,
+                              Longitude ,
+                              Latitude ,
+                              Status ,
+                              InsertTime ,
+                              districtId ,
+                              CityId ,
+                              GroupId ,
+                              OriginalBusiId ,
+                              ProvinceCode ,
+                              CityCode ,
+                              AreaCode ,
+                              Province ,
+                              CommissionTypeId ,
+                              DistribSubsidy ,
+                              BusinessCommission
+                            )
+                    VALUES  ( @Name, -- Name - nvarchar(100)
+                              @City , -- City - nvarchar(100)
+                              N'' , -- district - nvarchar(200)
+                              @PhoneNo , -- PhoneNo - nvarchar(20)
+                              N'' , -- PhoneNo2 - nvarchar(20)
+                              @Password , -- Password - nvarchar(255)
+                              N'' , -- CheckPicUrl - nvarchar(255)
+                              N'' , -- IDCard - nvarchar(45)
+                              @Address, -- Address - nvarchar(255)
+                              N'' , -- Landline - nvarchar(15)
+                              0.0 , -- Longitude - float
+                              0.0 , -- Latitude - float
+                              1 , -- Status - tinyint
+                              GETDATE() , -- InsertTime - datetime
+                              '0' , -- districtId - nvarchar(45)
+                              @CityId , -- CityId - nvarchar(45)
+                              @GroupId , -- GroupId - int
+                              0 , -- OriginalBusiId - int
+                              N'' , -- ProvinceCode - nvarchar(20)
+                              N'' , -- CityCode - nvarchar(20)
+                              N'' , -- AreaCode - nvarchar(20)
+                              N'' , -- Province - nvarchar(20)
+                              1 , -- CommissionTypeId - int
+                              @DistribSubsidy , -- DistribSubsidy - numeric
+                              @BusinessCommission  -- BusinessCommission - decimal
+                            )SELECT @@IDENTITY
+                        ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@City", model.city);
+            parm.AddWithValue("@Password", "A06F6A211CBEDF374FC367FA231865DE");
+            parm.Add("@PhoneNo", SqlDbType.NVarChar);
+            parm.SetValue("@PhoneNo", model.phoneNo);
+            parm.AddWithValue("@CityId", model.CityId);
+            parm.AddWithValue("@GroupId", model.GroupId);
+            parm.AddWithValue("@Name", model.businessName);
+            parm.AddWithValue("@Address", model.businessaddr);
+            parm.AddWithValue("@DistribSubsidy", model.businessWaisong);
+            parm.AddWithValue("@BusinessCommission", model.businessCommission);
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm));
+        }
+
+
+
+        /// <summary>
+        /// 修改商户信息
+        /// danny-20150417
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="orderOptionModel"></param>
+        /// <returns></returns>
+        public bool ModifyBusinessInfo(Business model, OrderOptionModel orderOptionModel)
+        {
+            string remark = orderOptionModel.OptUserName + "通过后台管理系统修改商户信息";
+            string sql = string.Format(@"UPDATE business 
+                                            SET Name=@Name,
+                                                GroupId=@GroupId,
+                                                OriginalBusiId=@OriginalBusiId,
+                                                PhoneNo=@PhoneNo
+                                            OUTPUT
+                                              Inserted.Id,
+                                              @OptId,
+                                              @OptName,
+                                              GETDATE(),
+                                              @Platform,
+                                              @Remark
+                                            INTO BusinessOptionLog
+                                             (BusinessId,
+                                              OptId,
+                                              OptName,
+                                              InsertTime,
+                                              Platform,
+                                              Remark)
+                                             WHERE  Id = @Id");
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Name", model.Name);
+            parm.AddWithValue("@GroupId", model.GroupId);
+            parm.AddWithValue("@OriginalBusiId", model.OriginalBusiId);
+            parm.AddWithValue("@Id", model.Id);
+            parm.AddWithValue("@PhoneNo", model.PhoneNo);
+            parm.AddWithValue("@OptId", orderOptionModel.OptUserId);
+            parm.AddWithValue("@OptName", orderOptionModel.OptUserName);
+            parm.AddWithValue("@Platform", 3);
+            parm.AddWithValue("@Remark", remark );
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+        }
+
     }
 }

@@ -7,8 +7,12 @@
     ViewBag.Title = "Order";
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
 }
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
 <link href="~/Content/jQuery-File-Upload/css/jquery.fileupload-ui.css" rel="stylesheet" />
 <script src="~/Scripts/jquery-2.1.1.js"></script>
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
 <script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.ui.widget.js"></script>
 <script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.iframe-transport.js"></script>
 <script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.fileupload.js"></script>
@@ -36,12 +40,19 @@
                         </select>
                         <span class="">骑士电话: </span>
                         <input id="txtSuperManPhone" type="text" name="clienterPhone" value="" />
+                        <span class="">推荐人手机: </span>
+                        <input id="recommonPhone" type="text" name="recommonPhone" value="" />
                         @*<span class="">筛选城市: </span>
     @Html.DropDownList("clienterCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Code", "Name"), "--无--", new { style = "width:155px" })*@
                         <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" name="GroupId" />
-                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
-                        @*<input id="btnAdd" class="searchBtn" type="button" value="新增骑士">*@
+                       
+                        @*<input id="btnAdd" class="searchBtn" type="button" value="新增骑士">*@ 
                     </td>
+                </tr>
+                <tr>
+                    <td> <span>提现时间: </span>
+                        <input id="txtPubStart" readonly="readonly" type="text" name="txtPubStart" />  
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" /></td>
                 </tr>
             </table>
         </div>
@@ -163,21 +174,13 @@
 <script>
     var adminjs = new adminglass(); //实例化后台类
     $(function () {
+        $('#txtPubStart').datepicker();
+        
         $('#hidupload').val(''); //页面加载时清空隐藏域的值。
         $('#hidHandUpload').val(''); //页面加载时清空隐藏域的值。
         $("#fileUpload").val("");
         $("#fileUploadHand").val('');
-        //查询
-        //$("#btnSearch").on('click', function () {
-        //    criteria = {
-        //        clienterName: $("#txtSuperManName").val(),
-        //        clienterPhone: $("#txtSuperManPhone").val(),
-        //        status: $("#superManStatus").val(),
-        //        GroupId: $("#txtGroupId").val(),
-        //        PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }
-        //    };
-        //    refresh(0);
-        //});
+  
         //手持身份证图片上传
         $("#fileUploadHand").fileupload({
             url: "/UploadTest/Upload",//文件上传地址，当然也可以直接写在input的data-url属性内
@@ -366,23 +369,7 @@
             }
          );
         window.location.hash = '';
-    })
-    //////分页
-    //art.ui.control.NewPager.enablePaging(document, refresh);
-    //function refresh(pageIndex) {
-    //    var url = "/SuperManManager/SuperManManager";
-    //    if (pageIndex !== undefined) {
-    //        criteria.PagingRequest.PageIndex = pageIndex;
-    //    }
-    //    criteria.status = $("#superManStatus").val();
-    //    webExpress.utility.ajax.request
-    //        (
-    //            url,
-    //            criteria,
-    //            function (data) {
-    //                $("#dataList").html(data);
-    //            });
-    //};
+    }) 
     $('.J_closebox').click(function () {
         adminjs.closewinbox('.add-openbox');
         return false;

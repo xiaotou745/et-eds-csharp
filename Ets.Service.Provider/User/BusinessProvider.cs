@@ -65,6 +65,27 @@ namespace Ets.Service.Provider.User
                 model.Status = from.Status;
                 model.superManName = from.SuperManName;
                 model.superManPhone = from.SuperManPhone;
+                if (from.OrderFrom==0)
+                {
+                    model.OrderFrom = "B端";
+                }
+                if (from.OrderFrom == 1)
+                {
+                    model.OrderFrom = "易淘食";
+                }
+                if (from.OrderFrom == 2)
+                {
+                    model.OrderFrom = "万达";
+                }
+                if (from.OrderFrom == 3)
+                {
+                    model.OrderFrom = "全时";
+                }
+                if (from.OrderFrom == 4)
+                {
+                    model.OrderFrom = "美团";
+                } 
+                model.OriginalOrderNo = from.OriginalOrderNo;
                 if (from.BusinessId > 0 && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
                 {
                     var d1 = new Degree(from.Longitude.Value, from.Latitude.Value);
@@ -77,6 +98,7 @@ namespace Ets.Service.Provider.User
             }
             return listOrder;
         }
+         
 
         /// <summary>
         /// 商户结算列表--2015.3.12 平扬
@@ -222,6 +244,41 @@ namespace Ets.Service.Provider.User
         }
 
         /// <summary>
+        /// 后台添加商户
+        /// 平扬
+        /// 2015年4月17日 17:19:45
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public ResultModel<BusiRegisterResultModel> AddBusiness(AddBusinessModel model)
+        {
+ 
+            Enum returnEnum = null;
+            if (string.IsNullOrEmpty(model.phoneNo))
+                returnEnum = CustomerRegisterStatusEnum.PhoneNumberEmpty; //手机号非空验证
+            else if (string.IsNullOrEmpty(model.passWord))
+                returnEnum = CustomerRegisterStatusEnum.PasswordEmpty;//密码非空验证  
+ 
+            else if (dao.CheckBusinessExistPhone(model.phoneNo))
+                returnEnum = CustomerRegisterStatusEnum.PhoneNumberRegistered;//判断该手机号是否已经注册过
+
+            else if (string.IsNullOrEmpty(model.city) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
+                returnEnum = CustomerRegisterStatusEnum.cityIdEmpty;
+            if (returnEnum != null)
+            {
+                return ResultModel<BusiRegisterResultModel>.Conclude(returnEnum);
+            }
+            model.passWord = ETS.Security.MD5.Encrypt(model.passWord);
+            BusiRegisterResultModel resultModel = new BusiRegisterResultModel()
+            {
+                userId = dao.addBusiness(model)
+            };
+            return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatusEnum.Success, resultModel);// CustomerRegisterStatusEnum.Success;//默认是成功状态
+
+        }
+
+
+        /// <summary>
         /// B端注册，供第三方使用 
         /// 平扬
         /// 2015年3月26日 17:19:45
@@ -329,6 +386,7 @@ namespace Ets.Service.Provider.User
                 resultMode.cityId = cityId;
                 resultMode.phoneNo = row["PhoneNo2"] == null ? row["PhoneNo"].ToString() : row["PhoneNo2"].ToString();
                 resultMode.DistribSubsidy = row["DistribSubsidy"] == null ? 0 : ParseHelper.ToDecimal(row["DistribSubsidy"]);
+                resultMode.OriginalBusiId = row["OriginalBusiId"].ToString();
                 return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.Success, resultMode);
             }
             catch (Exception ex)
@@ -708,6 +766,76 @@ namespace Ets.Service.Provider.User
                 LogHelper.LogWriterFromFilter(ex);
             }
             return null;
+        }
+
+        /// <summary>
+        /// 修改商户信息
+        /// danny-20150417
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="orderOptionModel"></param>
+        /// <returns></returns>
+        public bool ModifyBusinessInfo(Business model, OrderOptionModel orderOptionModel)
+        {
+            bool result = dao.ModifyBusinessInfo(model, orderOptionModel);
+            if (result == true && ParseHelper.ToInt(model.GroupId)!=0)
+            { //添加到缓存
+                var redis = new ETS.NoSql.RedisCache.RedisCache();
+                redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo,
+                    ParseHelper.ToInt(model.GroupId),ParseHelper.ToInt(model.OriginalBusiId)),model.Id.ToString());
+            }
+               
+            return result;
+        }
+
+
+        /// <summary>
+        /// 请求语音验证码
+        /// 平扬
+        /// 2015年4月20日 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public SimpleResultModel VoiceCheckCode(Ets.Model.ParameterModel.Sms.SmsParaModel model)
+        {
+            if (!CommonValidator.IsValidPhoneNumber(model.PhoneNumber))
+            {
+                return SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
+            }
+            var randomCode = new Random().Next(100000).ToString("D6");
+            string msg = string.Empty;
+            string key = "";
+            string tempcode = randomCode.Aggregate("", (current, c) => current + (c.ToString() + ','));
+
+            if (model.Stype == "0")//注册
+            {
+                if (dao.CheckBusinessExistPhone(model.PhoneNumber))  //判断该手机号是否已经注册过  .CheckBusinessExistPhone(PhoneNumber)
+                    return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.AlreadyExists);
+                key = RedissCacheKey.PostRegisterInfoSoundCode_B + model.PhoneNumber;
+                msg = string.Format(ETS.Util.SupermanApiConfig.Instance.SmsContentCheckCodeVoice, tempcode, ConstValues.MessageClinenter);
+            }
+            else //修改密码
+            {
+                key = RedissCacheKey.PostForgetPwdSoundCode_B + model.PhoneNumber;
+                msg = string.Format(ETS.Util.SupermanApiConfig.Instance.SmsContentCheckCodeFindPwdVoice, tempcode, ConstValues.MessageClinenter);
+            }
+            try
+            {
+                var redis = new ETS.NoSql.RedisCache.RedisCache();
+                redis.Add(key, randomCode, DateTime.Now.AddHours(1));
+
+                // 更新短信通道 
+                Task.Factory.StartNew(() =>
+                {
+                    ETS.Sms.SendSmsHelper.SendSmsSaveLogNew(model.PhoneNumber, msg, ConstValues.SMSSOURCE);
+                });
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.Sending);
+
+            }
+            catch (Exception)
+            {
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.SendFailure);
+            }
         }
     }
 }

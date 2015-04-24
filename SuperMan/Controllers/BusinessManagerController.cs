@@ -15,6 +15,8 @@ using Ets.Service.Provider.Common;
 using Ets.Service.IProvider.Common;
 using Ets.Model.ParameterModel.User;
 using SuperMan.App_Start;
+using Ets.Model.ParameterModel.Order;
+using Ets.Model.DataModel.Bussiness;
 
 namespace SuperMan.Controllers
 {
@@ -44,6 +46,7 @@ namespace SuperMan.Controllers
         {
             Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria();
             TryUpdateModel(criteria);
+            ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
             return PartialView("_BusinessManageList", pagedList);
@@ -103,6 +106,56 @@ namespace SuperMan.Controllers
                 Remark = string.Format(string.Format("将商户id为{0}的商户外送费设置为{1},结算比例设置为{2}", id, waisongfei, commission))
             };
             return Json(new ResultModel(iBus.SetCommission(id, commission, waisongfei,model), "成功!"), JsonRequestBehavior.AllowGet);
+        }
+
+        /// <summary>
+        /// 添加商户
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult AddBusiness(AddBusinessModel model)
+        {
+            TryUpdateModel(model);  
+
+            var result = iBusinessProvider.AddBusiness(model);
+            if (result.Status==0)
+            {
+                return Json(new ResultModel(true, "成功!"), JsonRequestBehavior.AllowGet);
+            }
+            return Json(new ResultModel(false, result.Message), JsonRequestBehavior.AllowGet);
+        }
+
+        
+        /// <summary>
+        /// 修改商户信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="businessName"></param>
+        /// <param name="businessPhone"></param>
+        /// <param name="businessSourceId">第三方商户id</param>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult ModifyBusiness(int id, string businessName,string businessPhone,int businessSourceId, int groupId)
+        {
+            IBusinessProvider iBus = new BusinessProvider();
+            //操作日志
+            OrderOptionModel model = new OrderOptionModel()
+            {
+                OptUserId = UserContext.Current.Id,
+                OptUserName = UserContext.Current.Name, 
+            };
+            //商户操作实体
+            Business businessModel = new Business()
+            {
+                Name = businessName,
+                GroupId = groupId,
+                OriginalBusiId = businessSourceId,
+                Id = id,
+                PhoneNo = businessPhone
+            };
+            return Json(new ResultModel(iBus.ModifyBusinessInfo(businessModel, model), "成功!"), JsonRequestBehavior.AllowGet);
         }
 
 

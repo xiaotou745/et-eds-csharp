@@ -70,10 +70,11 @@ namespace Ets.CrossShopService.BLL
             {
                 if (DateTime.Now.Hour == ETS.Config.StartSubsidyTime)
                 {
-                    if (GlobalConfigDao.GlobalConfigGet.IsStartOverStoreSubsidies == "1")
+                    try
                     {
-                        try
+                        if (GlobalConfigDao.GlobalConfigGet.IsStartOverStoreSubsidies == "1")
                         {
+
                             List<GlobalConfigSubsidies> MyList = GetSubsidies(GlobalConfigDao.GlobalConfigGet.OverStoreSubsidies);
                             if (MyList == null || MyList.Count <= 0)
                             {
@@ -84,17 +85,17 @@ namespace Ets.CrossShopService.BLL
                             //调用抢单奖励机制主要方法
                             if (CrossShop.CrossShop(MyList))
                             {
-                                ETS.Util.Log.WriteTextToFile("跨店奖励计算成功" + DateTime.Now.ToString()+":", GetLogFilePath(), true);
+                                ETS.Util.Log.WriteTextToFile("跨店奖励计算成功" + DateTime.Now.ToString() + ":", GetLogFilePath(), true);
                             }
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            ETS.Util.Log.WriteTextToFile(ex.ToString(), GetLogFilePath(), true);
+                            ETS.Util.Log.WriteTextToFile("跨店补贴未开启", GetLogFilePath(), true);
                         }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        ETS.Util.Log.WriteTextToFile("跨店补贴未开启", GetLogFilePath(), true);
+                        ETS.Util.Log.WriteTextToFile(ex.ToString(), GetLogFilePath(), true);
                     }
                 }
                 Thread.Sleep(1000 * 60 * 60);

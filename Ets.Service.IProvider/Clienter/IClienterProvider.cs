@@ -150,6 +150,12 @@ namespace Ets.Service.IProvider.Clienter
         /// <returns></returns>
         IList<BusinessesDistributionModel> GetClienteStorerGrabStatisticalInfo();
         /// <summary>
+        /// 骑士门店抢单统计,过一个月后删除该代码
+        /// danny-20150408
+        /// </summary>
+        /// <returns></returns>
+        IList<BusinessesDistributionModelOld> GetClienteStorerGrabStatisticalInfoOld(int NewCount);
+        /// <summary>
         /// 上传小票
         /// wc
         /// </summary>
@@ -168,7 +174,7 @@ namespace Ets.Service.IProvider.Clienter
         /// </summary>
         /// <param name="uploadReceiptModel"></param>
         /// <returns></returns>
-        OrderOther GetReceipt(UploadReceiptModel uploadReceiptModel);
+        OrderOther GetReceipt(int orderId);
         /// <summary>
         /// 根据订单Id获取小票信息
         /// </summary>

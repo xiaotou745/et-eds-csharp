@@ -1,6 +1,7 @@
 ﻿using ETS.Const;
 using ETS.Enums;
 using Ets.Model.Common;
+using Ets.Service.Provider.Order;
 using Ets.Service.Provider.WtihdrawRecords;
 using Microsoft.Ajax.Utilities;
 using SuperManCore.Common;
@@ -26,6 +27,8 @@ using Ets.Service.Provider.Common;
 using SuperManDataAccess;
 using SuperManWebApi.Providers;
 using Ets.Model.DataModel.Order;
+using System.Text.RegularExpressions;
+using ETS.IO;
 namespace SuperManWebApi.Controllers
 {
 
@@ -174,10 +177,10 @@ namespace SuperManWebApi.Controllers
             };
 
             IList<Ets.Model.DomainModel.Clienter.ClientOrderResultModel> lists = new ClienterProvider().GetMyOrders(criteria);
-            if (model.status!=null && model.status != 1)
+            if (model.status != null && model.status != 1)
             {
-               // lists = lists.OrderByDescending(i => i.pubDate).ToList();  //按照发布时间倒序排列
-                lists = lists.OrderBy(i => i.distance_OrderBy).ToList(); 
+                // lists = lists.OrderByDescending(i => i.pubDate).ToList();  //按照发布时间倒序排列
+                lists = lists.OrderBy(i => i.distance_OrderBy).ToList();
             }
             return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]>.Conclude(ETS.Enums.GetOrdersStatus.Success, lists.ToArray());
         }
@@ -220,7 +223,7 @@ namespace SuperManWebApi.Controllers
             //}
             var pagedList = new Ets.Service.Provider.Order.OrderProvider().GetOrders(criteria);
 
-           // pagedList = pagedList.OrderByDescending(i => i.pubDate).ToList();  //按照发布时间倒序排列
+            // pagedList = pagedList.OrderByDescending(i => i.pubDate).ToList();  //按照发布时间倒序排列
             pagedList = pagedList.OrderBy(i => i.distance_OrderBy).ToList();
             return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]>.Conclude(ETS.Enums.GetOrdersStatus.Success, pagedList.ToArray());
         }
@@ -371,7 +374,20 @@ namespace SuperManWebApi.Controllers
 
             lock (lockHelper)
             {
-                bool bResult = iClienterProvider.RushOrder(userId, orderNo);
+                bool bResult = false;
+                if (myorder.OrderFrom == 4)//美团等第三方订单
+                {
+                    //if (new OrderProvider().AsyncOrderStatus(orderNo))//更新美团状态
+                    {
+                        bResult = iClienterProvider.RushOrder(userId, orderNo);
+                    }
+                }
+                else
+                {
+                    new OrderProvider().AsyncOrderStatus(orderNo);
+                    bResult = iClienterProvider.RushOrder(userId, orderNo);
+                } 
+               
                 if (bResult)
                 {
                     Ets.Service.Provider.MyPush.Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", myorder.businessId.ToString(), string.Empty);
@@ -387,17 +403,32 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="userId">C端用户id</param>
         /// <param name="orderNo">订单号码</param>
-       /// <param name="pickupCode">取货码</param>
+        /// <param name="pickupCode">取货码</param>
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.FinishOrderStatus))]
         [HttpGet]
-        public Ets.Model.Common.ResultModel<FinishOrderResultModel> FinishOrder_C(int userId, string orderNo, string pickupCode=null)
+        public Ets.Model.Common.ResultModel<FinishOrderResultModel> FinishOrder_C(int userId, string orderNo, string pickupCode = null)
         {
             if (userId == 0)  //用户id非空验证
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.userIdEmpty);
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderEmpty);
-            string finishResult = iClienterProvider.FinishOrder(userId, orderNo, pickupCode);
+            var myorder = new Ets.Dao.Order.OrderDao().GetOrderByNo(orderNo);
+            string finishResult = "";
+
+            if (myorder.OrderFrom ==4)//美团等第三方订单
+            {
+               // if (new OrderProvider().AsyncOrderStatus(orderNo))//更新美团状态,美团成功才能更改我们库数据
+                {
+                    finishResult = iClienterProvider.FinishOrder(userId, orderNo, pickupCode);
+                }
+            }
+            else
+            {
+                new OrderProvider().AsyncOrderStatus(orderNo);
+                finishResult = iClienterProvider.FinishOrder(userId, orderNo, pickupCode); 
+            }  
+ 
             if (finishResult == "1")  //完成
             {
                 var clienter = iClienterProvider.GetUserInfoByUserId(userId);
@@ -500,7 +531,7 @@ namespace SuperManWebApi.Controllers
                 // 更新短信通道 
                 Task.Factory.StartNew(() =>
                 {
-                    SendSmsHelper.SendSendSmsSaveLog(PhoneNumber, msg, ConstValues.SMSSOURCE);
+                    ETS.Sms.SendSmsHelper.SendSendSmsSaveLog(PhoneNumber, msg, ConstValues.SMSSOURCE);
                 });
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.Sending);
 
@@ -511,6 +542,53 @@ namespace SuperManWebApi.Controllers
             }
         }
 
+        /// <summary>
+        /// 语音请求动态验证码
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.SendCheckCodeStatus))]
+        [HttpPost]
+        public Ets.Model.Common.SimpleResultModel VoiceCheckCode(Ets.Model.ParameterModel.Sms.SmsParaModel model)
+        {
+            if (!CommonValidator.IsValidPhoneNumber(model.PhoneNumber))
+            {
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
+            }
+            var randomCode = new Random().Next(100000).ToString("D6");
+            string msg = string.Empty;
+            string key = "";
+            string tempcode = randomCode.Aggregate("", (current, c) => current + (c.ToString() + ','));
+            if (model.Stype == "0")//注册
+            {
+                if (iClienterProvider.CheckClienterExistPhone(model.PhoneNumber))  //判断该手机号是否已经注册过
+                    return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.AlreadyExists);
+                key = RedissCacheKey.PostRegisterInfoSoundCode_C + model.PhoneNumber;
+                msg = string.Format(ETS.Util.SupermanApiConfig.Instance.SmsContentCheckCodeVoice, tempcode, ConstValues.MessageClinenter);
+            }
+            else //修改密码
+            {
+                key = RedissCacheKey.PostForgetPwdSoundCode_C + model.PhoneNumber;
+                msg = string.Format(ETS.Util.SupermanApiConfig.Instance.SmsContentCheckCodeFindPwdVoice, tempcode, ConstValues.MessageClinenter);
+            }
+            try
+            {
+                var redis = new ETS.NoSql.RedisCache.RedisCache();
+                redis.Add(key, randomCode, DateTime.Now.AddHours(1));
+
+                // 更新短信通道 
+                Task.Factory.StartNew(() =>
+                {
+                    ETS.Sms.SendSmsHelper.SendSmsSaveLogNew(model.PhoneNumber, msg, ConstValues.SMSSOURCE);
+                });
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.Sending);
+
+            }
+            catch (Exception)
+            {
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.SendFailure);
+            }
+        }
 
 
         /// <summary>
@@ -579,8 +657,7 @@ namespace SuperManWebApi.Controllers
         [ApiVersionStatistic]
         public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel> UploadReceipt(string Version)
         {
-
-            //SuperManCore.LogHelper.LogWriter("上传小票：" ,new {msg = HttpContext.Current.Request});
+            //上传的图片流 大小 判断？
             if (HttpContext.Current.Request.Form.Count == 0)
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.NOFormParameter);
@@ -624,7 +701,7 @@ namespace SuperManWebApi.Controllers
 
             if (fullFileDir == "0")
             {
-               
+
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed);
             }
             //保存原图
@@ -639,23 +716,22 @@ namespace SuperManWebApi.Controllers
             transformer.Transform(fullFilePath, destFullFileName);
 
             var picUrl = saveDbFilePath + fileName;
-              
-            var orderOther = iClienterProvider.UpdateClientReceiptPicInfo(new Ets.Model.ParameterModel.Clienter.UploadReceiptModel
+            var uploadReceiptModel = new Ets.Model.ParameterModel.Clienter.UploadReceiptModel
             {
                 OrderId = orderId,
                 ClienterId = clienterId,
                 NeedUploadCount = needUploadCount,
                 ReceiptPic = picUrl,
                 HadUploadCount = 1
-            });
+            };
+            var orderOther = iClienterProvider.UpdateClientReceiptPicInfo(uploadReceiptModel);
             if (orderOther == null)
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed, new Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel() { OrderId = orderId });
             }
             else
-            {
-
-                List<string> listReceiptPic = ImageCommon.ReceiptPicConvert(orderOther.ReceiptPic);
+            { 
+                List<string> listReceiptPic = ImageCommon.ReceiptPicConvert(uploadReceiptModel.ReceiptPic);
                 //上传成功后返回图片全路径
                 var relativePath = System.IO.Path.Combine(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.RelativePath, fileName).ToForwardSlashPath();
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel() { OrderId = orderId, ImagePath = listReceiptPic, HadUploadCount = orderOther.HadUploadCount, NeedUploadCount = orderOther.NeedUploadCount });
@@ -670,6 +746,8 @@ namespace SuperManWebApi.Controllers
         [ApiVersionStatistic]
         public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel> DeleteReceipt(string Version)
         {
+
+            
             if (HttpContext.Current.Request.Form.Count == 0)
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.NOFormParameter);
@@ -680,15 +758,22 @@ namespace SuperManWebApi.Controllers
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidOrderId);
             }
-            var needUploadCount = ParseHelper.ToInt(HttpContext.Current.Request.Form["NeedUploadCount"], 1); //该订单总共需要上传的 小票数量
-            var version = HttpContext.Current.Request.Form["Version"]; //版本号  1.0
-
-            Ets.Model.ParameterModel.Clienter.UploadReceiptModel uploadReceiptModel = new Ets.Model.ParameterModel.Clienter.UploadReceiptModel() { OrderId = orderId, ReceiptPic = receiptPic, HadUploadCount = -1 };
-            //删除前先判断   订单状态已完成 和已经上传的小票数量 等于需要上传的小票数量相等 时 不允许删除小票
-            var orderInfo = iClienterProvider.GetOrderInfoByOrderId(uploadReceiptModel.OrderId);
-            if (orderInfo != null)
+            if (!receiptPic.StartsWith("http",StringComparison.OrdinalIgnoreCase))
             {
-                if (orderInfo.Status == ConstValues.ORDER_FINISH && orderInfo.OrderCount == orderInfo.HadUploadCount) {
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.ReceiptAddressInvalid);
+            }
+            var version = HttpContext.Current.Request.Form["Version"]; //版本号  1.0
+            Ets.Model.ParameterModel.Clienter.UploadReceiptModel uploadReceiptModel = new Ets.Model.ParameterModel.Clienter.UploadReceiptModel() { OrderId = orderId, ReceiptPic = receiptPic, HadUploadCount = -1 };
+
+
+            SuperManCore.LogHelper.LogWriter("删除小票参数", new { version = version, receiptPic = receiptPic, orderId = orderId });
+            //删除前先判断   订单状态已完成 和已经上传的小票数量 等于需要上传的小票数量相等 时 不允许删除小票
+            OrderOther orderOther = iClienterProvider.GetReceipt(orderId);
+            //判断订单信息，状态是否为已完成， 已经上传的小票数量是否和 需要上传的一样， 若一样则无法删除
+            if (orderOther != null)
+            {
+                if (orderOther.OrderStatus == ConstValues.ORDER_FINISH && orderOther.NeedUploadCount == orderOther.HadUploadCount)
+                {
                     return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.DeleteFailed);
                 }
             }
@@ -696,18 +781,25 @@ namespace SuperManWebApi.Controllers
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.CannotFindOrder);
             }
-            //删除
-            OrderOther orderOther = iClienterProvider.DeleteReceipt(uploadReceiptModel);
-            if (orderOther != null)
+            //判断是否存在小票
+            if (orderOther.Id == 0)
             {
-                List<string> listReceiptPic = ImageCommon.ReceiptPicConvert(orderOther.ReceiptPic);
-
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel() { OrderId = orderId, ImagePath = listReceiptPic, HadUploadCount = orderOther.HadUploadCount, NeedUploadCount = orderOther.NeedUploadCount });
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.FirstUpload);
             }
             else
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.DeleteExcepiton);
+                //判断小票数量是否为 0
+                if (orderOther.HadUploadCount == 0)
+                {
+                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.FirstUpload);
+                } 
             }
+
+            OrderOther delOrderOther = iClienterProvider.DeleteReceipt(uploadReceiptModel);
+
+            List<string> listReceiptPic = ImageCommon.ReceiptPicConvert(delOrderOther.ReceiptPic);
+
+            return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel() { OrderId = delOrderOther.OrderId, ImagePath = listReceiptPic, HadUploadCount = delOrderOther.HadUploadCount, NeedUploadCount = delOrderOther.NeedUploadCount });
 
         }
 
@@ -725,7 +817,7 @@ namespace SuperManWebApi.Controllers
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.NOFormParameter);
             }
             var orderId = ParseHelper.ToInt(HttpContext.Current.Request.Form["OrderId"], 0); //订单号
-             
+
             if (orderId == 0)
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidOrderId);
@@ -733,7 +825,7 @@ namespace SuperManWebApi.Controllers
 
             var version = HttpContext.Current.Request.Form["Version"]; //版本号  1.0
 
-            OrderOther orderOther = iClienterProvider.GetReceipt(new Ets.Model.ParameterModel.Clienter.UploadReceiptModel() { OrderId = orderId });
+            OrderOther orderOther = iClienterProvider.GetReceipt(orderId);
             if (orderOther == null)
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed, new Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel() { OrderId = orderId });
@@ -741,11 +833,26 @@ namespace SuperManWebApi.Controllers
             else
             {
                 List<string> listReceiptPic = ImageCommon.ReceiptPicConvert(orderOther.ReceiptPic);
-                
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel() { OrderId = orderId, ImagePath = listReceiptPic, HadUploadCount = orderOther.HadUploadCount, NeedUploadCount = orderOther.NeedUploadCount });
-            } 
-        } 
 
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel() { OrderId = orderId, ImagePath = listReceiptPic, HadUploadCount = orderOther.HadUploadCount, NeedUploadCount = orderOther.NeedUploadCount });
+            }
+        }
+
+        /// <summary>
+        /// 获取订单详细
+        /// </summary>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.GetOrdersStatus))]
+        [HttpGet]
+        public Ets.Model.Common.ResultModel<ListOrderDetailModel> GetOrderDetail(string orderno)
+        {
+            var model = new OrderProvider().GetOrderDetail(orderno);
+            if (model != null)
+            {
+                return Ets.Model.Common.ResultModel<ListOrderDetailModel>.Conclude(ETS.Enums.GetOrdersStatus.Success, model);
+            }
+            return Ets.Model.Common.ResultModel<ListOrderDetailModel>.Conclude(ETS.Enums.GetOrdersStatus.FailedGetOrders, model);
+        }
 
     }
 }

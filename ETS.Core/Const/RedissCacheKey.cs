@@ -66,5 +66,30 @@ namespace ETS.Const
         /// openapi新增订单 第三方订单是否已经存在key
         /// </summary>
         public const string OtherOrderInfo = "OtherOrder_{0}_{1}";
+        /// <summary>
+        /// 订单金额是否支付
+        /// </summary>
+
+        public const string CheckOrderPay = "CheckOrderPay_{0}";
+
+        /// <summary>
+        /// C端注册语音验证码缓存key
+        /// </summary>
+        public const string PostRegisterInfoSoundCode_C = "PostRegisterInfoSoundCode_C_";
+
+        /// <summary>
+        /// C端找回密码语音验证码缓存key
+        /// </summary>
+        public const string PostForgetPwdSoundCode_C = "PostForgetPwdSoundCode_C_";
+
+        /// <summary>
+        /// b端注册语音验证码缓存key
+        /// </summary>
+        public const string PostRegisterInfoSoundCode_B = "PostRegisterInfoSoundCode_b_";
+
+        /// <summary>
+        /// b端找回密码语音验证码缓存key
+        /// </summary>
+        public const string PostForgetPwdSoundCode_B = "PostForgetPwdSoundCode_b_";
     }
 }

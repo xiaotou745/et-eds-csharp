@@ -28,6 +28,8 @@
         var resultList = ViewBag.homeCountTitleModel as Ets.Model.Common.HomeCountTitleModel;
         var homeCountByList=ViewBag.homeCountTitleToList;
         var clienteStorerGrabStatisticalList = ViewBag.clienteStorerGrabStatistical as List<Ets.Model.DomainModel.Bussiness.BusinessesDistributionModel>;
+
+       
         var homeCountAllData = ViewBag.homeCountTitleToAllData as Ets.Model.Common.HomeCountTitleModel;
         <p>
             <table class="tbstyle" width="1200" border="1">
@@ -50,7 +52,6 @@
                         订单总金额：@ParseHelper.ToSplitByPercentile(false, resultList.OrderPrice)<br />
                         客单价：@(resultList.OrderCount == 0 ? "0" : (resultList.OrderPrice / resultList.OrderCount).ToString("f2")) <br />
                         任务单价：@(resultList.MisstionCount == 0 ? "0" : (resultList.OrderPrice / resultList.MisstionCount).ToString("f2"))<br />
-                      
                     </td>
                     <td>
                         0次补贴被抢任务：@ParseHelper.ToSplitByPercentile(true, resultList.ZeroSubsidyOrderCount)<br />
@@ -114,7 +115,7 @@
                     <td>￥@ParseHelper.ToSplitByPercentile(false,Math.Round(homeCountAllData.WithdrawPrice, 2))</td>
                     <td>@ParseHelper.ToSplitByPercentile(false,((homeCountAllData.OrderPrice / homeCountAllData.OrderCount).ToString("f2")))</td>
                     <td>@ParseHelper.ToSplitByPercentile(false,((homeCountAllData.OrderPrice / homeCountAllData.MisstionCount).ToString("f2")))</td>
-                    <td>@ParseHelper.ToSplitByPercentile(false, Math.Round(homeCountAllData.CrossShopPrice,2))</td>
+                    <td>@ParseHelper.ToSplitByPercentile(false, Math.Round(homeCountAllData.CrossShopPrice, 2))</td>
                     <td>￥<span style="color:@ykAllStyle">@ParseHelper.ToSplitByPercentile(false,ykAllPirce)</span></td>
                 </tr>
             }
@@ -127,36 +128,37 @@
     @*<h3 style="color:black;font-weight:600">最近20天数据统计</h3>*@
     <div>
         <p>
-            <table class="tbstyle" border="1">
+            <table class="tbstyle" border="1" width="1200">
                 <tr class="trclass">
                     <td>日期</td>
-                    <td>抢一个店骑士数量</td>
-                    <td>2个</td>
-                    <td>3个</td>
-                    <td>4个</td>
-                    <td>5个</td>
-                    <td>6个</td>
-                    <td>7个</td>
-                    <td>8个</td>
-                    <td>9个</td>
+                    <td>跨店奖励金额</td>
+                    <td>跨1个店骑士/奖励</td>
+                    <td>2个/奖励</td>
+                    <td>3个/奖励</td>
+                    <td>4个/奖励</td>
+                    <td>5个/奖励</td>
+                    <td>6个/奖励</td>
+                    <td>7个/奖励</td>
+                    <td>8个/奖励</td>
+                    <td>9个/奖励</td>
                     <td>>=10个</td>
                 </tr>
-
                 @{
                     foreach (var item in clienteStorerGrabStatisticalList)
                     {
                         <tr class="trclass">
-                            <td>@item.PubDate.ToString()</td>
-                            <td>@item.OnceCount</td>
-                            <td>@item.TwiceCount</td>
-                            <td>@item.ThreeTimesCount</td>
-                            <td>@item.FourTimesCount</td>
-                            <td>@item.FiveTimesCount</td>
-                            <td>@item.SixTimesCount</td>
-                            <td>@item.SevenTimesCount</td>
-                            <td>@item.EightTimesCount</td>
-                            <td>@item.NineTimesCount</td>
-                            <td>@item.ExceedNineTimesCount</td>
+                            <td>@item.date</td>
+                            <td>￥@item.totalAmount</td>
+                            <td>@(item.c1) / ￥@(item.a1)</td>
+                            <td>@(item.c2) / ￥@(item.a2)</td>
+                            <td>@(item.c3) / ￥@(item.a3)</td>
+                            <td>@(item.c4) / ￥@(item.a4)</td>
+                            <td>@(item.c5) / ￥@(item.a5)</td>
+                            <td>@(item.c6) / ￥@(item.a6)</td>
+                            <td>@(item.c7) / ￥@(item.a7)</td>
+                            <td>@(item.c8) / ￥@(item.a8)</td>
+                            <td>@(item.c9) / ￥@(item.a9)</td>
+                            <td>@(item.c10) / ￥@(item.a10)</td>
                         </tr>
                     }
                 }

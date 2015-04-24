@@ -1,6 +1,6 @@
 ﻿using ETS.Enums;
+using Ets.Model.DataModel.Order;
 using SuperManCore;
-using SuperManCore.Common;
 using SuperManWebApi.Models.Business;
 using System;
 using System.Collections.Generic;
@@ -9,17 +9,12 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
-using SuperManBusinessLogic.B_Logic;
-using SuperManBusinessLogic.Order_Logic;
-using System.Threading.Tasks;
 using SuperManCommonModel;
 using Ets.Service.Provider.User;
 using Ets.Service.IProvider.Order;
 using Ets.Service.Provider.Order;
 using Ets.Service.Provider.Common;
 using Ets.Service.IProvider.User;
-using ETS.Cacheing;
-using Ets.Model.ParameterModel.Clienter;
 using ETS.Const; 
 namespace SuperManWebApi.Controllers
 {
@@ -207,15 +202,13 @@ namespace SuperManWebApi.Controllers
             {  
                 #region 缓存验证
                 string cacheKey = "PostPublishOrder_B_" + model.userId + "_" + model.OrderSign;
-                //var cacheList = ETS.Cacheing.CacheFactory.Instance[cacheKey];
                 var redis = new ETS.NoSql.RedisCache.RedisCache(); 
                 var cacheValue = redis.Get<string>(cacheKey); 
                 if (cacheValue != null)
                 {  
                     return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.OrderHasExist);//当前时间戳内重复提交,订单已存在 
                 } 
-                redis.Add(cacheKey, "1", DateTime.Now.AddMinutes(10));//添加当前时间戳记录
-               // ETS.Cacheing.CacheFactory.Instance.AddObject(cacheKey, "1", DateTime.Now.AddMinutes(10));//添加当前时间戳记录
+                redis.Add(cacheKey, "1", DateTime.Now.AddHours(10));//添加当前时间戳记录
                 #endregion
             }
             if (model.OrderCount <= 0 || model.OrderCount > 15)   //判断录入订单数量是否符合要求
@@ -243,7 +236,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.GetOrdersStatus))]
         [HttpGet]
-        public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]> GetOrderList_B(int userId, int? pagedSize, int? pagedIndex, sbyte? Status)
+        public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]> GetOrderList_B(int userId, int? pagedSize, int? pagedIndex, sbyte? Status,int orderfrom)
         { 
             var pIndex = ETS.Util.ParseHelper.ToInt(pagedIndex, 1);
             pIndex = pIndex <= 0 ? 1 : pIndex;
@@ -253,13 +246,76 @@ namespace SuperManWebApi.Controllers
             {
                 PagingResult = new Ets.Model.Common.PagingResult(pIndex, pSize),
                 userId = userId,
-                Status = Status
+                Status = Status,
+                OrderFrom = orderfrom
             }; 
             IList<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel> list = new BusinessProvider().GetOrdersApp(criteria);
             return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]>.Conclude(ETS.Enums.GetOrdersStatus.Success, list.ToArray());
         }
 
-         
+
+      
+
+        #region 美团等第三方订单处理  
+
+        /// <summary>
+        /// 获取订单详细
+        /// </summary>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.GetOrdersStatus))]
+        [HttpGet]
+        public Ets.Model.Common.ResultModel<ListOrderDetailModel> GetOrderDetail(string orderno)
+        {
+            var model = new OrderProvider().GetOrderDetail(orderno);
+            if (model != null)
+            {
+                return Ets.Model.Common.ResultModel<ListOrderDetailModel>.Conclude(ETS.Enums.GetOrdersStatus.Success, model);
+            }
+            return Ets.Model.Common.ResultModel<ListOrderDetailModel>.Conclude(ETS.Enums.GetOrdersStatus.FailedGetOrders, model);
+        }
+
+       
+        /// <summary>
+        /// 商家确认第三方订单接口
+        /// </summary>
+        /// <param name="orderlist"></param>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
+        [HttpGet]
+        public Ets.Model.Common.ResultModel<List<string>> OtherOrderConfirm_B(string orderlist)
+        {
+            if (string.IsNullOrEmpty(orderlist))
+            {
+                return Ets.Model.Common.ResultModel<List<string>>.Conclude(ETS.Enums.PubOrderStatus.OrderCountError, null);
+            }
+            var orderProvider = new OrderProvider();
+            int i = 0;
+            string[] aa = orderlist.Split(',');
+            var list = aa.Where(s => orderProvider.UpdateOrderStatus(s, OrderConst.ORDER_NEW, "") <= 0).ToList();
+            return Ets.Model.Common.ResultModel<List<string>>.Conclude(ETS.Enums.PubOrderStatus.Success, list);
+        }
+
+        /// <summary>
+        /// 商家拒绝第三方订单接口
+        /// </summary>
+        /// <param name="orderlist"></param>
+        /// <param name="note"></param>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
+        [HttpGet]
+        public Ets.Model.Common.ResultModel<int> OtherOrderCancel_B(string orderlist,string note)
+        {
+            if (string.IsNullOrEmpty(orderlist))
+            {
+                return Ets.Model.Common.ResultModel<int>.Conclude(ETS.Enums.PubOrderStatus.OrderCountError, 0);
+            }
+            var orderProvider = new OrderProvider();
+            string [] aa = orderlist.Split(',');
+            int i = aa.Count(s => orderProvider.UpdateOrderStatus(s, OrderConst.ORDER_CANCEL, note) > 0);
+            return Ets.Model.Common.ResultModel<int>.Conclude(ETS.Enums.PubOrderStatus.Success, i);
+        }
+
+        #endregion
         /// <summary>
         /// 地址管理
         /// 改 ado.net wc
@@ -351,6 +407,20 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary>
+        /// 请求语音动态验证码
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.SendCheckCodeStatus))]
+        [HttpPost]
+        public Ets.Model.Common.SimpleResultModel VoiceCheckCode(Ets.Model.ParameterModel.Sms.SmsParaModel model)
+        {
+            BusinessProvider businessProvider = new BusinessProvider();
+            return businessProvider.VoiceCheckCode(model);
+             
+        }
+
+        /// <summary>
         /// b端修改密码 edit by caoheyang 20150203 
         /// </summary>
         /// <param name="model"></param>
@@ -412,7 +482,7 @@ namespace SuperManWebApi.Controllers
                 if (selResult.Status == ConstValues.ORDER_NEW)
                 {
                     //存在的情况下  取消订单  3
-                    int cacelResult = iOrderProvider.UpdateOrderStatus(OrderId, Ets.Model.Common.ConstValues.ORDER_CANCEL);
+                    int cacelResult = iOrderProvider.UpdateOrderStatus(OrderId, Ets.Model.Common.ConstValues.ORDER_CANCEL,"");
                     if (cacelResult > 0)
                         return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.Success, true);
                     else
@@ -522,5 +592,6 @@ namespace SuperManWebApi.Controllers
 
             return area.GetOpenCity(Version);
         }
+         
     }
 }

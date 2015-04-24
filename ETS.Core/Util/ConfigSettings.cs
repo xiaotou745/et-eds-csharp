@@ -206,6 +206,61 @@ namespace ETS.Util
         {
             get { return ConfigurationManager.AppSettings["FulltimeAppsecret"]; }
         }
+
+        /// <summary>
+        /// 美团appkey
+        /// </summary>
+        public string MeiTuanAppkey
+        {
+            get { return ConfigurationManager.AppSettings["MeiTuanAppkey"]; }
+        }
+        /// <summary>
+        ///  美团app_secret
+        /// </summary>
+        public string MeiTuanAppsecret
+        {
+            get { return ConfigurationManager.AppSettings["MeiTuanAppsecret"]; }
+        }
+
+        /// <summary>
+        ///  美团确认订单回调接口地址
+        /// </summary>
+        public string MeiTuanConfirmAsyncStatus
+        {
+            get { return ConfigurationManager.AppSettings["MeiTuanConfirmAsyncStatus"]; }
+        }
+
+             /// <summary>
+        ///  美团取消订单回调接口地址
+        /// </summary>
+        public string MeiTuanCancelAsyncStatus
+        {
+            get { return ConfigurationManager.AppSettings["MeiTuanCancelAsyncStatus"]; }
+        }
+             /// <summary>
+        ///  美团订单配送中回调接口地址
+        /// </summary>
+        public string MeiTuanDeliveringAsyncStatus
+        {
+            get { return ConfigurationManager.AppSettings["MeiTuanDeliveringAsyncStatus"]; }
+        }
+              /// <summary>
+        ///  美团订单已送达（订单完成）回调接口地址
+        /// </summary>
+        public string MeiTuanArrivedAsyncStatus
+        {
+            get { return ConfigurationManager.AppSettings["MeiTuanArrivedAsyncStatus"]; }
+        }
+  
+                /// <summary>
+        ///  美团回调同步订单到E代送地址 
+        /// </summary>
+        public string MeiTuanPullOrderInfo
+        {
+            get { return ConfigurationManager.AppSettings["MeiTuanPullOrderInfo"]; }
+        }
+  
+        
         #endregion
     }
 }

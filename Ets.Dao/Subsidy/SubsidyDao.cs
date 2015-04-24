@@ -193,5 +193,48 @@ WHERE   sub.[Status] = 1 ");
             parm.AddWithValue("@InsertTime", model.InsertTime);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
+
+
+        /// <summary>
+        /// 写入跨店奖励日志
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public IList<ShortMessageModel> GetCrossShopInfo()
+        {
+            string strSql = @"
+                         select CONVERT(char(10),
+                            cs.InsertTime,120) InsertTime,
+                            SUM(cs.Amount) SumAmount,
+                            cs.ClienterId,
+                            c.PhoneNo
+                        from CrossShopLog(nolock) cs join clienter(nolock) c on cs.ClienterId=c.Id
+                        where 
+                            CONVERT(char(10),cs.InsertTime,120)=CONVERT(char(10),DATEADD(DAY,-0,GETDATE()),120) 
+                        group by CONVERT(char(10),cs.InsertTime,120),clienterId,c.PhoneNo";
+            DataTable myTable = DbHelper.ExecuteDataTable(SuperMan_Read, strSql);
+            return MapRows<ShortMessageModel>(myTable);
+        }
+
+         
+        /// <summary>
+        /// 跨店奖励日志
+        /// </summary>
+        /// <param name="cid"></param>
+        /// <returns></returns>
+        public IList<CrossShopModel> GetCrossShopListByCid(int cid)
+        {
+            string strSql = @"
+                            select cs.Amount,cs.BusinessCount,cs.InsertTime,cs.Remark
+                            from CrossShopLog(nolock) cs join clienter(nolock) c on cs.ClienterId=c.Id
+                            where c.Id=@ClienterId";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@ClienterId", cid);
+            DataTable myTable = DbHelper.ExecuteDataTable(SuperMan_Read, strSql,parm);
+            return MapRows<CrossShopModel>(myTable);
+        }
+
+        
     }
 }

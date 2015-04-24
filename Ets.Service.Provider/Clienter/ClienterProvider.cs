@@ -25,6 +25,7 @@ using Ets.Service.Provider.WtihdrawRecords;
 using Ets.Service.Provider.MyPush;
 using Ets.Model.DomainModel.Bussiness;
 using Ets.Model.ParameterModel.Order;
+using ETS.NoSql.RedisCache;
 
 namespace Ets.Service.Provider.Clienter
 {
@@ -48,7 +49,7 @@ namespace Ets.Service.Provider.Clienter
                     return ETS.Enums.ChangeWorkStatusEnum.OrderError;
             }
             int changeResult = clienterDao.ChangeWorkStatusToSql(paraModel);
- 
+
 
             return clienterDao.ChangeWorkStatusToSql(paraModel) > 0 ? ETS.Enums.ChangeWorkStatusEnum.Success : ETS.Enums.ChangeWorkStatusEnum.Error;
         }
@@ -79,7 +80,8 @@ namespace Ets.Service.Provider.Clienter
                         OrderCount = item.OrderCount
                     };
                     #endregion
-                    model.OriginalOrderNo = item.OriginalOrderNo;
+                    model.OriginalOrderNo = item.OriginalOrderNo; 
+                    model.OrderFrom = item.OrderFrom;
                     model.income = item.OrderCommission;  //佣金 Edit bycaoheyang 20150327
                     model.Amount = DefaultOrPriceProvider.GetCurrenOrderPrice(oCommission); //C端 获取订单的金额 Edit bycaoheyang 20150305
 
@@ -293,16 +295,10 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="orderNo"></param>
         /// <returns></returns>
         public bool RushOrder(int userId, string orderNo)
-        {
+        {            
             try
             {
-                bool res = clienterDao.RushOrder(userId, orderNo);
-                if (res)
-                {
-                    var orderPro = new OrderProvider();
-                    orderPro.AsyncOrderStatus(orderNo);
-                }
-                return res;
+                return clienterDao.RushOrder(userId, orderNo);
             }
             catch (Exception ex)
             {
@@ -513,7 +509,10 @@ namespace Ets.Service.Provider.Clienter
                     orderDao.FinishOrderStatus(orderNo, userId, myOrderInfo);
                     if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)  //当用户上传的小票数量 和 需要上传的小票数量一致的时候，更新用户金额
                     {
-                        UpdateClienterAccount(userId, myOrderInfo);
+                        if (CheckOrderPay(orderNo))
+                        {
+                            UpdateClienterAccount(userId, myOrderInfo);
+                        }
                     }
                     ////更新骑士 金额  
                     //bool b = clienterDao.UpdateClienterAccountBalance(new WithdrawRecordsModel() { UserId = userId, Amount = myOrderInfo.OrderCommission.Value });
@@ -542,9 +541,7 @@ namespace Ets.Service.Provider.Clienter
                     Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", myOrderInfo.businessId.ToString(), string.Empty);
                     result = "1";
                 }
-            }
-            OrderProvider order = new OrderProvider();
-            order.AsyncOrderStatus(orderNo);
+            } 
             return result;
         }
 
@@ -607,6 +604,15 @@ namespace Ets.Service.Provider.Clienter
             return clienterDao.GetClienteStorerGrabStatisticalInfo();
         }
         /// <summary>
+        /// 骑士门店抢单统计
+        /// danny-20150408,一个月后删除，窦海超，2015年4月17日 19:10:30
+        /// </summary>
+        /// <returns></returns>
+        public IList<BusinessesDistributionModelOld> GetClienteStorerGrabStatisticalInfoOld(int NewCount)
+        {
+            return clienterDao.GetClienteStorerGrabStatisticalInfoOld(NewCount);
+        }
+        /// <summary>
         /// 上传小票
         /// wc
         /// </summary>
@@ -615,18 +621,41 @@ namespace Ets.Service.Provider.Clienter
         public OrderOther UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel)
         {
             OrderOther orderOther = null;
+            var myOrderInfo = orderDao.GetOrderInfoByOrderNo("", uploadReceiptModel.OrderId);
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 orderOther = clienterDao.UpdateClientReceiptPicInfo(uploadReceiptModel);
                 //上传成功后， 判断
                 if (orderOther.OrderStatus == ConstValues.ORDER_FINISH && orderOther.HadUploadCount == orderOther.NeedUploadCount)
                 {
-                    var myOrderInfo = orderDao.GetOrderInfoByOrderNo("", uploadReceiptModel.OrderId);
-                    UpdateClienterAccount(uploadReceiptModel.ClienterId, myOrderInfo);
+                    if (CheckOrderPay(myOrderInfo.OrderNo))
+                    {
+                        //更新骑士金额
+
+                        UpdateClienterAccount(uploadReceiptModel.ClienterId, myOrderInfo);
+                    }
                 }
                 tran.Complete();
             }
             return orderOther;
+        }
+
+        /// <summary>
+        /// 验证该订单是否支付
+        /// </summary>
+        /// <param name="OrderId"></param>
+        /// <returns></returns>
+        private bool CheckOrderPay(string OrderNo)
+        {
+            RedisCache redisCache = new RedisCache();
+            string orderKey = string.Format(RedissCacheKey.CheckOrderPay, OrderNo);
+            string CheckOrderPay = redisCache.Get<string>(orderKey);
+            if (CheckOrderPay != "1")
+            {
+                redisCache.Set(orderKey, "1");
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -667,10 +696,9 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="uploadReceiptModel"></param>
         /// <returns></returns>
-        public OrderOther GetReceipt(UploadReceiptModel uploadReceiptModel)
+        public OrderOther GetReceipt(int orderId)
         {
-            int orderStatus = 0;
-            return clienterDao.GetReceiptInfo(uploadReceiptModel.OrderId, out orderStatus);
+            return clienterDao.GetReceiptInfo(orderId);
 
         }
 
@@ -679,6 +707,7 @@ namespace Ets.Service.Provider.Clienter
         {
             return orderDao.GetOrderInfoByOrderId(orderId);
         }
+
     }
 
 }
