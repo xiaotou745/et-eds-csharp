@@ -934,7 +934,8 @@ namespace Ets.Service.Provider.Order
             int currenStatus = OrderDao.GetStatus(paramodel.order_no, paramodel.orderfrom);  //目前订单状态
             if (currenStatus == -1) //订单不存在
                 return ResultModel<object>.Conclude(OrderApiStatusType.OrderNotExist);
-            else if (OrderConst.OrderStatus30 != currenStatus)  //订单状态非30，,不允许取消订单
+            else if (OrderConst.OrderStatus30 != currenStatus 
+                && OrderConst.OrderStatus0!= currenStatus)  //订单状态非30，,不允许取消订单
                 return ResultModel<object>.Conclude(OrderApiStatusType.OrderIsJoin);
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
