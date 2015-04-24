@@ -32,5 +32,11 @@ namespace Ets.Service.IProvider.Common
         /// </summary>
         /// <returns></returns>
         HomeCountTitleModel GetHomeCountTitleToAllData();
+        /// <summary>
+        /// 获取当日数据统计
+        /// danny-20150422
+        /// </summary>
+        /// <returns></returns>
+        HomeCountTitleModel GetCurrentDateModel();
     }
 }

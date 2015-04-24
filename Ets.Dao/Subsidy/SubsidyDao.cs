@@ -217,5 +217,24 @@ WHERE   sub.[Status] = 1 ");
             return MapRows<ShortMessageModel>(myTable);
         }
 
+         
+        /// <summary>
+        /// 跨店奖励日志
+        /// </summary>
+        /// <param name="cid"></param>
+        /// <returns></returns>
+        public IList<CrossShopModel> GetCrossShopListByCid(int cid)
+        {
+            string strSql = @"
+                            select cs.Amount,cs.BusinessCount,cs.InsertTime,cs.Remark
+                            from CrossShopLog(nolock) cs join clienter(nolock) c on cs.ClienterId=c.Id
+                            where c.Id=@ClienterId";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@ClienterId", cid);
+            DataTable myTable = DbHelper.ExecuteDataTable(SuperMan_Read, strSql,parm);
+            return MapRows<CrossShopModel>(myTable);
+        }
+
+        
     }
 }

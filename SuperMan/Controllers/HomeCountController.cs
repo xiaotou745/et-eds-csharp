@@ -30,7 +30,8 @@ namespace SuperMan.Controllers
             var criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria();
             ViewBag.homeCountTitleToAllData = homeCountProvider.GetHomeCountTitleToAllData();
             //ViewBag.homeCountTitleToList = homeCountProvider.GetHomeCountTitleToList(21);
-            ViewBag.homeCountTitleModel = homeCountProvider.GetHomeCountTitle();
+            //ViewBag.homeCountTitleModel = homeCountProvider.GetHomeCountTitle();
+            ViewBag.homeCountTitleModel = homeCountProvider.GetCurrentDateModel();
             IList<Ets.Model.DomainModel.Bussiness.BusinessesDistributionModel> clienteStorerGrabStatistical = iClienterProvider.GetClienteStorerGrabStatisticalInfo();
             ViewBag.clienteStorerGrabStatistical = clienteStorerGrabStatistical.ToList();
             //ViewBag.clienteStorerGrabStatisticalOld = iClienterProvider.GetClienteStorerGrabStatisticalInfoOld(clienteStorerGrabStatistical.Count).ToList();
