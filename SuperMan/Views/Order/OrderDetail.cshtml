@@ -6,192 +6,195 @@
 <script src="~/Scripts/jquery-1.8.2.js"></script>
 <script src="~/Scripts/jquery-ui-1.8.20.js"></script>
 <script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
-@{
-    var strstatus = "";
-    if (Model.Status == Ets.Model.Common.ConstValues.ORDER_FINISH)
-    {
-        strstatus = "已完成";
-    }
-    else if (Model.Status == Ets.Model.Common.ConstValues.ORDER_NEW)
-    {
-        strstatus = "未接单";
-    }
-    else if (Model.Status == Ets.Model.Common.ConstValues.ORDER_ACCEPT)
-    {
-        strstatus = "已接单";
-    }
-    else if (Model.Status == Ets.Model.Common.ConstValues.ORDER_CANCEL)
-    {
-        strstatus = "已取消";
-    }
-    var subsidy = "";
-    if (Model.Status == 1 || Model.Status == 2 || Model.Status == 3)
-    {
-        subsidy = "订单佣金:" + Model.OrderCommission + "," + "外送费:" + Model.DistribSubsidy + "," + "网站补贴:" + Model.WebsiteSubsidy;
-    }
-    var payStatus = "";
-    if (Model.IsPay.Value)
-    {
-        payStatus = "顾客已付款";
-    }
-    else
-    {
-        payStatus = "顾客未付款";
-    }
-}
-<h2 class="crumbs">
-    您所在位置：订单 > 订单管理 > 订单详情
-</h2>
-
-<table class="tbstyle222" border="0" style="font-size:16px;font-weight:bold;line-height:300%;width:1000px ">
-    <tr class="trclass">
-        <td>订单号：@Model.OrderNo</td>
-        <td>发布时间：@Model.PubDate</td>
-        <td>订单状态：@strstatus &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 订单来源：@Model.GroupName</td>
-    </tr>
-    <tr class="trclass">
-        <td>商户信息：@Model.BusinessName</td>
-        <td>发布人电话：@Model.BusinessPhoneNo</td>
-        <td>发布人地址：@Model.BusinessAddress</td>
-    </tr>
-    <tr class="trclass">
-        <td>订单佣金：@Model.OrderCommission</td>
-        <td>外送费：@Model.DistribSubsidy</td>
-        <td>网站补贴：@Model.WebsiteSubsidy</td>
-    </tr>
-    <tr class="trclass">
-        <td>收货人电话:@Model.RecevicePhoneNo</td>
-        <td>收货人地址：@Model.ReceviceAddress</td>
-    </tr>
-    <tr>
-        <td>订单金额：@Model.Amount</td>
-        <td>是否已付款:@payStatus</td>
-        @if (Model.Status == 1 || Model.Status == 2 || Model.Status == 3)
+<div style="width:1000px">
+    @{
+        var strstatus = "";
+        if (Model.Status == Ets.Model.Common.ConstValues.ORDER_FINISH)
         {
-            <td>超人：@Model.ClienterName</td>
+            strstatus = "已完成";
         }
-    </tr>
-</table>
-<input type="hidden" value="@Model.OrderNo" id="OrderNo" />
-<input type="hidden" value="@Model.Id" id="OrderId" />
-@if (Model.HadUploadCount > 0)
-{
-    var puth = SuperManCore.CustomerIconUploader.Instance.RelativePath;
-    var PicHost = SuperManCore.CustomerIconUploader.Instance.PicHost;
-    var picAdressArray = Model.ReceiptPic.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
-    <h4 style="color:black;font-weight:100">
-        <label>
-            骑士上传小票：@Model.HadUploadCount/@Model.NeedUploadCount @if (Model.HadUploadCount == Model.NeedUploadCount)
-            { <label>(已完成)</label>}
-        </label>
-    </h4>
-    <div style="width:1000px">
-        @foreach (var temp in picAdressArray)
+        else if (Model.Status == Ets.Model.Common.ConstValues.ORDER_NEW)
         {
-            int fileLastDot = temp.LastIndexOf('.');
-            string fileHandHouZhui = temp.Substring(fileLastDot, temp.Length - fileLastDot);
-            string bigFileName = PicHost + puth + temp.Substring(0, fileLastDot) + "_0_0" + fileHandHouZhui;
-            <div style="float:left;padding-right:3px">
-                <img src="@( PicHost + puth + temp.ToString())" style=" width:180px; height:140px" />
-                <a id="showBigBusiImage" href="@bigFileName" target="_blank">查看大图</a>
-            </div>
-
+            strstatus = "未接单";
         }
-    </div>
-}
-<table width="85%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
-    <thead>
-        <tr class="tdbg">
-            <th>订单状态</th>
-            <th>操作人</th>
-            <th>操作时间</th>
-            <th>操作描述</th>
-            <th>操作平台</th>
+        else if (Model.Status == Ets.Model.Common.ConstValues.ORDER_ACCEPT)
+        {
+            strstatus = "已接单";
+        }
+        else if (Model.Status == Ets.Model.Common.ConstValues.ORDER_CANCEL)
+        {
+            strstatus = "已取消";
+        }
+        var subsidy = "";
+        if (Model.Status == 1 || Model.Status == 2 || Model.Status == 3)
+        {
+            subsidy = "订单佣金:" + Model.OrderCommission + "," + "外送费:" + Model.DistribSubsidy + "," + "网站补贴:" + Model.WebsiteSubsidy;
+        }
+        var payStatus = "";
+        if (Model.IsPay.Value)
+        {
+            payStatus = "顾客已付款";
+        }
+        else
+        {
+            payStatus = "顾客未付款";
+        }
+    }
+    <h2 class="crumbs">
+        您所在位置：订单 > 订单管理 > 订单详情
+    </h2>
+    <table class="tbstyle222" border="0" style="font-size:16px;font-weight:bold;line-height:300%;width:1000px ">
+        <tr class="trclass">
+            <td>订单号：@Model.OrderNo</td>
+            <td>发布时间：@Model.PubDate</td>
+            <td>订单状态：@strstatus &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 订单来源：@Model.GroupName</td>
         </tr>
-    </thead>
-    <tbody>
-        @{
-            var orderOptionLogList = ViewBag.orderOptionLog as List<Ets.Model.DataModel.Order.OrderSubsidiesLog>;
-            var i = 0;
-            var orderstatus = "";
-            var strplatform = "";
-            foreach (var item in orderOptionLogList)
+        <tr class="trclass">
+            <td>商户信息：@Model.BusinessName</td>
+            <td>发布人电话：@Model.BusinessPhoneNo</td>
+            <td>发布人地址：@Model.BusinessAddress</td>
+        </tr>
+        <tr class="trclass">
+            <td>订单佣金：@Model.OrderCommission</td>
+            <td>外送费：@Model.DistribSubsidy</td>
+            <td>网站补贴：@Model.WebsiteSubsidy</td>
+        </tr>
+        <tr class="trclass">
+            <td>收货人电话:@Model.RecevicePhoneNo</td>
+            <td>收货人地址：@Model.ReceviceAddress</td>
+        </tr>
+        <tr>
+            <td>订单金额：@Model.Amount</td>
+            <td>是否已付款:@payStatus</td>
+            @if (Model.Status == 1 || Model.Status == 2 || Model.Status == 3)
             {
-                if (item.OrderStatus == Ets.Model.Common.ConstValues.ORDER_FINISH)
-                {
-                    orderstatus = "已完成";
-                }
-                else if (item.OrderStatus == Ets.Model.Common.ConstValues.ORDER_NEW)
-                {
-                    orderstatus = "未接单";
-                }
-                else if (item.OrderStatus == Ets.Model.Common.ConstValues.ORDER_ACCEPT)
-                {
-                    orderstatus = "已接单";
-                }
-                else if (item.OrderStatus == Ets.Model.Common.ConstValues.ORDER_CANCEL)
-                {
-                    orderstatus = "已取消";
-                }
-
-                if (item.Platform == 0)
-                {
-                    strplatform = "商家端";
-                }
-                else if (item.Platform == 1)
-                {
-                    strplatform = "配送端";
-                }
-                else if (item.Platform == 2)
-                {
-                    strplatform = "服务平台";
-                }
-                else if (item.Platform == 3)
-                {
-                    strplatform = "管理后台";
-                }
-                i++;
-                <tr id="@item.Id">
-                    <td>@orderstatus</td>
-                    <td>@item.OptName</td>
-                    <td>@item.InsertTime</td>
-                    <td>@item.Remark</td>
-                    <td>@strplatform</td>
-                </tr>
+                <td>超人：@Model.ClienterName</td>
             }
-        }
-    </tbody>
-</table>
-@if (Model.Status != 3)
-{
-    <div class="SearchMd">
-        <table border="0" cellspacing="0" cellpadding="0">
-            <tr>
-                <td>
-                    @if (SuperMan.App_Start.UserContext.Current.HasAuthority(39))
+        </tr>
+    </table>
+    <input type="hidden" value="@Model.OrderNo" id="OrderNo" />
+    <input type="hidden" value="@Model.Id" id="OrderId" />
+    @if (Model.HadUploadCount > 0)
+    {
+        var puth = SuperManCore.CustomerIconUploader.Instance.RelativePath;
+        var PicHost = SuperManCore.CustomerIconUploader.Instance.PicHost;
+        var picAdressArray = Model.ReceiptPic.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+        <h4 style="color:black;font-weight:100">
+            <label>
+                骑士上传小票：@Model.HadUploadCount/@Model.NeedUploadCount @if (Model.HadUploadCount == Model.NeedUploadCount)
+                { <label>(已完成)</label>}
+            </label>
+        </h4>
+        <div style="width:1000px;float:left">
+            @foreach (var temp in picAdressArray)
+            {
+                int fileLastDot = temp.LastIndexOf('.');
+                string fileHandHouZhui = temp.Substring(fileLastDot, temp.Length - fileLastDot);
+                string bigFileName = PicHost + puth + temp.Substring(0, fileLastDot) + "_0_0" + fileHandHouZhui;
+                <div style="float:left;padding-right:3px">
+                    <img src="@( PicHost + puth + temp.ToString())" style=" width:180px; height:140px" />
+                    <a id="showBigBusiImage" href="@bigFileName" target="_blank">查看大图</a>
+                </div>
+
+            }
+        </div>
+    }
+    <div style="float:left;width:1000px;padding-top:30px">
+        <table border="0" cellspacing="0" cellpadding="0" class="tbstyle" width="1000">
+            <thead> 
+                <tr class="tdbg">
+                    <th>订单状态</th>
+                    <th>操作人</th>
+                    <th width="150">操作时间</th>
+                    <th width="500">操作描述</th>
+                    <th>操作平台</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var orderOptionLogList = ViewBag.orderOptionLog as List<Ets.Model.DataModel.Order.OrderSubsidiesLog>;
+                    var i = 0;
+                    var orderstatus = "";
+                    var strplatform = "";
+                    foreach (var item in orderOptionLogList)
                     {
-                        <input type="button" value="取消订单" class="searchBtn" id="btnCancel" />
+                        if (item.OrderStatus == Ets.Model.Common.ConstValues.ORDER_FINISH)
+                        {
+                            orderstatus = "已完成";
+                        }
+                        else if (item.OrderStatus == Ets.Model.Common.ConstValues.ORDER_NEW)
+                        {
+                            orderstatus = "未接单";
+                        }
+                        else if (item.OrderStatus == Ets.Model.Common.ConstValues.ORDER_ACCEPT)
+                        {
+                            orderstatus = "已接单";
+                        }
+                        else if (item.OrderStatus == Ets.Model.Common.ConstValues.ORDER_CANCEL)
+                        {
+                            orderstatus = "已取消";
+                        }
+
+                        if (item.Platform == 0)
+                        {
+                            strplatform = "商家端";
+                        }
+                        else if (item.Platform == 1)
+                        {
+                            strplatform = "配送端";
+                        }
+                        else if (item.Platform == 2)
+                        {
+                            strplatform = "服务平台";
+                        }
+                        else if (item.Platform == 3)
+                        {
+                            strplatform = "管理后台";
+                        }
+                        i++;
+                        <tr id="@item.Id">
+                            <td>@orderstatus</td>
+                            <td>@item.OptName</td>
+                            <td>@item.InsertTime</td>
+                            <td>@item.Remark</td>
+                            <td>@strplatform</td>
+                        </tr>
                     }
-                </td>
-            </tr>
+                }
+            </tbody>
         </table>
     </div>
-}
-<div class="selectSupplierDish">
-    <div class="add-openbox add-form" id="OrderOptionShow" style="width:500px">
-        <fieldset>
-            <div class="control-group">
-                <label class="control-label" for="input01">操作描述</label>
-                <div class="controls">
-                    <textarea cols="45" rows="5" id="orderOptionLog"></textarea>
-                    <p class="help-block"></p>
+    @if (Model.Status != 3)
+    {
+        <div class="SearchMd" style="float:left">
+            <table border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td>
+                        @if (SuperMan.App_Start.UserContext.Current.HasAuthority(39))
+                        {
+                            <input type="button" value="取消订单" class="searchBtn" id="btnCancel" />
+                        }
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+    <div class="selectSupplierDish">
+        <div class="add-openbox add-form" id="OrderOptionShow" style="width:500px">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="input01">操作描述</label>
+                    <div class="controls">
+                        <textarea cols="45" rows="5" id="orderOptionLog"></textarea>
+                        <p class="help-block"></p>
+                    </div>
                 </div>
-            </div>
-        </fieldset>
-        <p class="btnbox">
-            <input value="确认" type="button" id="btnSave" class="yesBtn" />
-            <input value="关闭" type="button" class="J_closebox qxBtn" />
-        </p>
+            </fieldset>
+            <p class="btnbox">
+                <input value="确认" type="button" id="btnSave" class="yesBtn" />
+                <input value="关闭" type="button" class="J_closebox qxBtn" />
+            </p>
+        </div>
     </div>
 </div>
 <script>

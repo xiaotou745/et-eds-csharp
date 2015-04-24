@@ -1388,7 +1388,9 @@ where   o.Id = @orderId;
                             getdate(),
                             @AdminId,
                             0,
-                            @Remark
+                            @Remark,
+                            @OrderId,
+                            1
                       INTO Records
                           ( Platform, 
                             UserId, 
@@ -1396,8 +1398,11 @@ where   o.Id = @orderId;
                             Balance, 
                             CreateTime, 
                             AdminId, 
-                            IsDel, 
-                            Remark)
+                            IsDel,
+                            Remark,
+                            OrderId,
+                            RecordType
+                            )
                     WHERE Id=@ClienterId;";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OrderCommission", model.OrderCommission);
@@ -1405,6 +1410,7 @@ where   o.Id = @orderId;
             parm.AddWithValue("@AdminId", orderOptionModel.OptUserId);
             parm.AddWithValue("@Remark", remark);
             parm.AddWithValue("@ClienterId", model.clienterId);
+            parm.AddWithValue("@OrderId", model.Id);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
         /// <summary>
@@ -1421,6 +1427,7 @@ where   o.Id = @orderId;
                                              SET    [Status] = @Status
                                             OUTPUT
                                               Inserted.Id,
+                                              @Price,
                                               GETDATE(),
                                               @OptId,
                                               @OptName,
@@ -1429,6 +1436,7 @@ where   o.Id = @orderId;
                                               @Remark
                                             INTO dbo.OrderSubsidiesLog
                                               (OrderId,
+                                              Price,
                                               InsertTime,
                                               OptId,
                                               OptName,
@@ -1438,6 +1446,7 @@ where   o.Id = @orderId;
                                              WHERE  OrderNo = @OrderNo");
 
             IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Price", model.OrderCommission);
             parm.AddWithValue("@OptId", orderOptionModel.OptUserId);
             parm.AddWithValue("@OptName", orderOptionModel.OptUserName);
             parm.AddWithValue("@Status", 3);

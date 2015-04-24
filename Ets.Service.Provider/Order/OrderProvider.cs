@@ -863,12 +863,15 @@ namespace Ets.Service.Provider.Order
             var orderModel = OrderDao.GetOrderByNo(orderOptionModel.OrderNo);
             if (orderModel != null)
             {
-                if (orderModel.Status == 0 || orderModel.Status == 2)
+                //如果订单状态是待接单|已接单|已完成+未上传完小票。则直接取消订单
+                if (orderModel.Status == 0 || orderModel.Status == 2 || (orderModel.Status == 1 && orderModel.OrderCount > orderModel.NeedUploadCount))
                 {
                     result = OrderDao.CancelOrder(orderModel, orderOptionModel);
                 }
-                else if (orderModel.Status == 1)
+                else if (orderModel.Status == 1 && orderModel.OrderCount <= orderModel.NeedUploadCount)
                 {
+                    //需要上传的小票大于等于总数量+订单已完成则要扣钱
+                    //(因为订单小票有可能不传。所以用的是订单数量和需要上传小票数量对比判断)
                     using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                     {
                         if (OrderDao.CancelOrder(orderModel, orderOptionModel))
