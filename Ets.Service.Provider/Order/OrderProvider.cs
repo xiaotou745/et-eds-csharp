@@ -601,7 +601,7 @@ namespace Ets.Service.Provider.Order
                 string url = ConfigurationManager.AppSettings["AsyncStatus"];
                 string json = new HttpClient().PostAsJsonAsync(url, paramodel).Result.Content.ReadAsStringAsync().Result;
                 JObject jobject = JObject.Parse(json);
-                return jobject.Value<int>("Status")==0; //接口调用状态 区分大小写
+                return jobject.Value<int>("Status")==0; //接口调用状态 区分大小写  
             }
             return true;
         }
