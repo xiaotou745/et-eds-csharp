@@ -585,6 +585,7 @@ namespace Ets.Service.Provider.Order
         public bool AsyncOrderStatus(string orderNo)
         {
             OrderListModel orderlistModel = OrderDao.GetOrderByNo(orderNo);
+            if (orderlistModel == null) return false;
             if (orderlistModel.OrderFrom > 0)   //一个商户对应多个集团时需要更改 
             {
                 ParaModel<AsyncStatusPM_OpenApi> paramodel = new ParaModel<AsyncStatusPM_OpenApi>() { fields = new AsyncStatusPM_OpenApi() { orderfrom = orderlistModel.OrderFrom } };
