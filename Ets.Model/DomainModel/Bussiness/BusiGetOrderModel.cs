@@ -68,6 +68,10 @@ namespace Ets.Model.DomainModel.Bussiness
         /// </summary>
         public double distanceB2R { get; set; }
         /// <summary>
+        /// OrderFromName 0B端商家1易淘食4美团
+        /// </summary>
+        public string OrderFromName { get; set; }
+        /// <summary>
         /// OrderFrom 0B端商家1易淘食4美团
         /// </summary>
         public string OrderFrom { get; set; }
