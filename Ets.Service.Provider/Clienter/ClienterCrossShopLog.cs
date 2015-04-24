@@ -19,36 +19,43 @@ namespace Ets.Service.IProvider.Clienter
     {
         readonly ClienterCrossShopLogDao _dao = new ClienterCrossShopLogDao();
 
+        ///// <summary>
+        ///// 增加跨店抢单骑士统计信息
+        ///// </summary>
+        ///// <param name="model">统计信息实体</param>
+        ///// <returns></returns>
+        //public bool InsertDataClienterCrossShopLog(ClienterCrossShopLogModel model)
+        //{
+        //    bool reslut;
+        //    try
+        //    {
+        //        reslut = _dao.InsertDataClienterCrossShopLog(model);
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        reslut = false;
+        //        LogHelper.LogWriterFromFilter(ex);
+        //    }
+        //    return reslut;
+        //}
+
         /// <summary>
-        /// 增加跨店抢单骑士统计信息
+        /// 获取跨店抢单骑士统计信息
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="daysAgo">几天前</param>
         /// <returns></returns>
-        public bool InsertDataClienterCrossShopLog(ClienterCrossShopLogModel model)
-        {
-            bool reslut;
-            try
-            {
-                reslut = _dao.InsertDataClienterCrossShopLog(model);
-
-            }
-            catch (Exception ex)
-            {
-                reslut = false;
-                LogHelper.LogWriterFromFilter(ex);
-            }
-            return reslut;
-        }
-
-        public bool InsertDataClienterCrossShopLogS()
+        public bool InsertDataClienterCrossShopLog(int daysAgo)
         {
             IClienterProvider iClienterProvider = new ClienterProvider();
-            IList<Ets.Model.DomainModel.Bussiness.BusinessesDistributionModel> clienteStorerGrabStatistical = iClienterProvider.GetClienteStorerGrabStatisticalInfo();
-
-            ClienterCrossShopLog dal = new ClienterCrossShopLog();
+            IList<Ets.Model.DomainModel.Bussiness.BusinessesDistributionModel> clienteStorerGrabStatistical = iClienterProvider.GetClienteStorerGrabStatisticalInfo(daysAgo);
+                       
             ClienterCrossShopLogModel model = new ClienterCrossShopLogModel();
             foreach (var item in clienteStorerGrabStatistical)
-            {
+            {               
+                bool isExist = IsExistClienterCrossShopLog(item.date);
+                if (isExist) continue;
+
                 model.TotalAmount = item.totalAmount;
                 model.OnceCount = item.c1;
                 model.TwiceCount = item.c2;
@@ -74,16 +81,30 @@ namespace Ets.Service.IProvider.Clienter
                 model.CreateTime = DateTime.Now;
                 model.StatisticalTime = Convert.ToDateTime(item.date);
 
-
                 //using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                 //{
-                 dal.InsertDataClienterCrossShopLog(model);
-                //    tran.Complete();
+                _dao.InsertDataClienterCrossShopLog(model);
+                //  tran.Complete();
                 //}
             }
 
             return true;
         }
 
+        /// <summary>
+        /// 判断是否存在指定日期的统计信息
+        /// </summary>
+        /// <param name="statisticalTime">指定日期</param>
+        /// <returns></returns>
+        bool IsExistClienterCrossShopLog(string statisticalTime)
+        {
+            bool isExist = false;
+
+            isExist = _dao.IsExistClienterCrossShopLog(statisticalTime);
+
+            return isExist;
+        }
+        
+       
     }
 }

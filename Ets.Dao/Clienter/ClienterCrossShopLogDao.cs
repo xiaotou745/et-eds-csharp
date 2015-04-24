@@ -7,6 +7,8 @@ using Ets.Model.Common;
 using ETS.Dao;
 using Ets.Model.DataModel.Clienter;
 using ETS.Data.Core;
+using System.Data;
+using ETS.Util;
 
 
 namespace Ets.Dao.Clienter
@@ -97,10 +99,19 @@ namespace Ets.Dao.Clienter
             parm.AddWithValue("@CreateTime", model.CreateTime);
             parm.AddWithValue("@StatisticalTime", model.StatisticalTime);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
-
         }
 
+        public bool IsExistClienterCrossShopLog(string statisticalTime)
+        {        
+            string selSql = string.Format(@" SELECT COUNT(1) FROM   dbo.[ClienterCrossShopLog] WITH ( NOLOCK )  WHERE  StatisticalTime = @statisticalTime");
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();     
+            dbParameters.Add("@statisticalTime", SqlDbType.NVarChar);
+            dbParameters.SetValue("@statisticalTime", statisticalTime);
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, selSql, dbParameters);
 
+            return ParseHelper.ToInt(executeScalar, 0) > 0;
+    
+        }
 
     }
 }

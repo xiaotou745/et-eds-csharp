@@ -14,6 +14,6 @@ namespace Ets.Service.IProvider.Clienter
     public interface IClienterCrossShopLog
     {
         bool InsertDataClienterCrossShopLog(ClienterCrossShopLogModel model);
-        bool InsertDataClienterCrossShopLogS();
+        bool InsertDataClienterCrossShopLog(int daysAgo);
     }
 }
