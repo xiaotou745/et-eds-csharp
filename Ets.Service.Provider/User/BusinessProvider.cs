@@ -65,7 +65,26 @@ namespace Ets.Service.Provider.User
                 model.Status = from.Status;
                 model.superManName = from.SuperManName;
                 model.superManPhone = from.SuperManPhone;
-                model.OrderFrom = from.OrderFrom;
+                if (from.OrderFrom==0)
+                {
+                    model.OrderFrom = "B端";
+                }
+                if (from.OrderFrom == 1)
+                {
+                    model.OrderFrom = "易淘食";
+                }
+                if (from.OrderFrom == 2)
+                {
+                    model.OrderFrom = "万达";
+                }
+                if (from.OrderFrom == 3)
+                {
+                    model.OrderFrom = "全时";
+                }
+                if (from.OrderFrom == 4)
+                {
+                    model.OrderFrom = "美团";
+                } 
                 model.OriginalOrderNo = from.OriginalOrderNo;
                 if (from.BusinessId > 0 && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
                 {

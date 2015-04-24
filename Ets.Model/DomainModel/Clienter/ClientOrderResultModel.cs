@@ -100,7 +100,7 @@ namespace Ets.Model.DomainModel.Clienter
         /// </summary>
         public int GroupId { get; set; }
 
-
+        public int OrderFrom { get; set; }
         /// <summary>
         ///  是否需要做取货码验证 0 不需要 1 需要
         /// </summary>
@@ -129,6 +129,7 @@ namespace Ets.Model.DomainModel.Clienter
         /// 源订单号
         /// </summary>
         public string OriginalOrderNo { get; set; }
+        public int OrderFrom { get; set; }
         /// <summary>
         /// 收入
         /// </summary>

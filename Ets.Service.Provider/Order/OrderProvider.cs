@@ -67,6 +67,8 @@ namespace Ets.Service.Provider.Order
                         resultModel.userId = from.clienterId.Value;
                     resultModel.OrderNo = from.OrderNo;
                     resultModel.OrderId = from.Id; //订单Id
+                    resultModel.OriginalOrderNo = from.OriginalOrderNo;
+                    resultModel.OrderFrom = from.OrderFrom; //订单来源
                     resultModel.OrderCount = from.OrderCount;
                     var orderComm = new OrderCommission() { Amount = from.Amount, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount };
                     var amount = DefaultOrPriceProvider.GetCurrenOrderPrice(orderComm);
@@ -156,6 +158,7 @@ namespace Ets.Service.Provider.Order
                     resultModel.OrderId = from.Id;  //订单Id
                     resultModel.OrderCount = from.OrderCount;
                     resultModel.OriginalOrderNo = from.OriginalOrderNo;
+                    resultModel.OrderFrom = from.OrderFrom;
                     var orderComm = new OrderCommission() { Amount = from.Amount, DistribSubsidy = from.DistribSubsidy, OrderCount = from.OrderCount };
                     var amount = DefaultOrPriceProvider.GetCurrenOrderPrice(orderComm);
                     resultModel.income = from.OrderCommission;  //计算设置当前订单骑士可获取的佣金 Edit bycaoheyang 20150305
@@ -565,16 +568,7 @@ namespace Ets.Service.Provider.Order
                 });
         }
           
-        /// <summary>
-        /// 订单详情接口
-        /// </summary>
-        /// <param name="paramodel">参数实体</param>
-        /// <returns>订单详情</returns>
-        public OrderListModel GetOrderDetail(string order_no)
-        {
-            OrderDao OrderDao = new OrderDao();
-            return OrderDao.GetOrderDetail(order_no); 
-        }
+     
 
         
         /// <summary>
@@ -734,6 +728,21 @@ namespace Ets.Service.Provider.Order
                 LogHelper.LogWriter("订单发布失败", new { model = model });
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Failed);
             }
+        }
+
+        /// <summary>
+        /// 订单详情接口
+        /// </summary>
+        /// <param name="paramodel">参数实体</param>
+        /// <returns>订单详情</returns>
+        public ListOrderDetailModel GetOrderDetail(string order_no)
+        { 
+            var order =OrderDao.GetOrderByNo(order_no);
+            var list = OrderDao.GetOrderDetail(order_no);
+            ListOrderDetailModel mo=new ListOrderDetailModel();
+            mo.order = order;
+            mo.orderDetails = list;
+            return mo;
         }
 
         /// <summary>
