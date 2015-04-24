@@ -31,21 +31,21 @@
                         }
                     </td>
                     <td>
-                        @if ((SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.AccountEdit) || UserContext.Current.Name == "admin")&&
-                            item.UserName != UserContext.Current.Name)
+                        @if ((SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.AccountEdit) || UserContext.Current.Name == "haidilao") &&
+                            item.UserName != UserContext.Current.Name && item.UserName != "haidilao")
                         {
                             <a href="javascript:void(0)" businessid="@item.Id" class="setAuthority">设置权限</a>
                         }
-                      @if (SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.AccountEditPassword) || UserContext.Current.Name == "admin")
-                            {
-                            <a href="javascript:void(0)" businessid="@item.Id" class="modifyPwd">修改密码</a>
-                      }
-                        @*<a href="javascript:void(0)" businessid="@item.Id" class="accountView">查看</a>*@
-                       @if ((SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.AccountDelete) || UserContext.Current.Name == "admin")&&
-                        item.UserName != UserContext.Current.Name)    
+                        @if ((SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.AccountEditPassword) && item.UserName != "haidilao") || UserContext.Current.Name == "haidilao")
                         {
-                         <a href="javascript:void(0)" businessid="@item.Id" class="accountDel">删除</a>
-                       }
+                            <a href="javascript:void(0)" businessid="@item.Id" class="modifyPwd">修改密码</a>
+                        }
+                        @*<a href="javascript:void(0)" businessid="@item.Id" class="accountView">查看</a>*@
+                        @if ((SuperMan.App_Start.UserContext.Current.HasAuthority(AuthorityNames.AccountDelete) || UserContext.Current.Name == "haidilao") &&
+                        item.UserName != UserContext.Current.Name && item.UserName != "haidilao")
+                        {
+                            <a href="javascript:void(0)" businessid="@item.Id" class="accountDel">删除</a>
+                        }
                     </td>
                 </tr>
             }
