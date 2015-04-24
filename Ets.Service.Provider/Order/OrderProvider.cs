@@ -430,7 +430,7 @@ namespace Ets.Service.Provider.Order
                 CityName = paramodel.address.city,
                 AreaName = paramodel.address.area
             });
-            if (orderCodeInfo == ETS.Const.SystemConst.CityOpenInfo)
+            if (orderCodeInfo == ETS.Const.SystemConst.CityOpenInfo||string.IsNullOrWhiteSpace(orderCodeInfo))
                 return ResultModel<object>.Conclude(OrderApiStatusType.ParaError, "用户省市区信息错误");
             else
             {
