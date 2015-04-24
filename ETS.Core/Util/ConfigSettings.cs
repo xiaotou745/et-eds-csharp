@@ -251,7 +251,30 @@ namespace ETS.Util
         {
             get { return ConfigurationManager.AppSettings["MeiTuanArrivedAsyncStatus"]; }
         }
-  
+
+
+        /// <summary>
+        /// 聚网客appkey
+        /// </summary>
+        public string JuWangKeAppkey
+        {
+            get { return ConfigurationManager.AppSettings["JuWangKeAppkey"]; }
+        }
+        /// <summary>
+        /// 聚网客app_secret
+        /// </summary>
+        public string JuWangKeAppsecret
+        {
+            get { return ConfigurationManager.AppSettings["JuWangKeAppsecret"]; }
+        }
+
+        /// <summary>
+        /// 聚网客确认 订单状态 回调接口地址
+        /// </summary>
+        public string JuWangKeOrderAsyncStatus
+        {
+            get { return ConfigurationManager.AppSettings["JuWangKeOrderAsyncStatus"]; }
+        }
         #endregion
     }
 }

@@ -674,10 +674,12 @@ namespace Ets.Service.Provider.Order
             }
             else
             {
+                //商户必须是审核通过的， 商户审核通过 意味着 已经设置结算比例， 因为在后台管理系统中 商户审核通过时会验证商户结算比例是否设置
                 if (busi.Status != ConstValues.BUSINESS_AUDITPASS)
                 {
                     return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.BusinessNotAudit);
                 }
+                
             }
             //验证该平台 商户 订单号 是否存在
             Ets.Dao.Order.OrderDao orderDao = new Dao.Order.OrderDao();
