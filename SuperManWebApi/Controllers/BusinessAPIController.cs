@@ -318,7 +318,7 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary>
-        /// 商家拒绝第三方订单接口
+        /// 商家拒绝原因接口
         /// </summary>
         /// <param name="orderlist"></param>
         /// <param name="note"></param>
