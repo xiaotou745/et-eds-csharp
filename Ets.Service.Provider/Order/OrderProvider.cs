@@ -762,7 +762,7 @@ namespace Ets.Service.Provider.Order
             if (order.OrderFrom == 4)
             {
                 order.OrderFromName = "美团";
-            } 
+            }
             var list = OrderDao.GetOrderDetail(order_no);
             ListOrderDetailModel mo = new ListOrderDetailModel();
             mo.order = order;
