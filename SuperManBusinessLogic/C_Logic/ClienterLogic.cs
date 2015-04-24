@@ -63,7 +63,7 @@ namespace SuperManBusinessLogic.C_Logic
         {
             using (var db = new supermanEntities())
             {
-                var items = db.clienter.AsQueryable();
+                var items = db.clienter.AsQueryable(); 
                 if (!string.IsNullOrEmpty(criteria.clienterName))
                     items = items.Where(p => p.TrueName == criteria.clienterName);
                 if (!string.IsNullOrEmpty(criteria.clienterPhone))
@@ -71,7 +71,7 @@ namespace SuperManBusinessLogic.C_Logic
                 if (criteria.Status != -1)
                     items = items.Where(p => p.Status == criteria.Status);
                 if (criteria.GroupId != null)  //集团查询
-                    items = items.Where(p => p.GroupId == criteria.GroupId);
+                    items = items.Where(p => p.GroupId == criteria.GroupId); 
 
                 items = items.OrderByDescending(i => i.InsertTime);  //查询超人 按照时间 倒序
                 var pagedQuery = new ClienterManage();

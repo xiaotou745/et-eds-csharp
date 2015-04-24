@@ -13,6 +13,7 @@
             <th>申请时间</th>
             <th>帐户余额</th>
             <th>集团名称</th>
+            <th>门店</th>
             <th>审核状态</th>
             <th>操作</th>
         </tr>
@@ -22,6 +23,8 @@
             var i = 0;
             var puth = SuperManCore.CustomerIconUploader.Instance.RelativePath;
             var PicHost = SuperManCore.CustomerIconUploader.Instance.PicHost;
+
+            SuperManCommonModel.Models.BusinessManage bum = ViewBag.AllBusiness;
             foreach (var item in Model.clienterModel)
             {
                 i++;
@@ -41,6 +44,7 @@
                  @Html.Raw(  GroupLogic.groupLogic().GetGroupName(Convert.ToInt32(item.GroupId)))
                 }
                     </td>
+                    <td>@bum.businessManageList.businessModel.Where(k=>k.Id == item.BussinessID).First().Name </td>
                     @{
                 var statusView = "";
                 if (@item.Status == SuperManCommonModel.ConstValues.CLIENTER_AUDITPASS)

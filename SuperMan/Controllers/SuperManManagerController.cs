@@ -1,4 +1,5 @@
-﻿using SuperManBusinessLogic.C_Logic;
+﻿using SuperManBusinessLogic.B_Logic;
+using SuperManBusinessLogic.C_Logic;
 using SuperManCommonModel;
 using SuperManCommonModel.Entities;
 using SuperManCore;
@@ -30,12 +31,18 @@ namespace SuperMan.Controllers
             ViewBag.txtGroupId = account.GroupId;//集团id
             var criteria = new ClienterSearchCriteria() { PagingRequest = new PagingResult(0, 15), Status = -1,GroupId=account.GroupId};
             var pagedList = ClienterLogic.clienterLogic().GetClienteres(criteria);
+            PagingResult pr = new PagingResult() { PageIndex = 0, PageSize = 1000 };
+            var business = BusiLogic.busiLogic().GetBusinesses(new BusinessSearchCriteria() { PagingRequest = pr , Status=-1});
+            ViewBag.AllBusiness = business;
             return View(pagedList);
         }
         [HttpPost]
         public ActionResult SuperManManager(ClienterSearchCriteria criteria)
         {
             var pagedList = ClienterLogic.clienterLogic().GetClienteres(criteria);
+            PagingResult pr = new PagingResult() { PageIndex = 0, PageSize = 1000 };
+            var business = BusiLogic.busiLogic().GetBusinesses(new BusinessSearchCriteria() { PagingRequest = pr, Status = -1 });
+            ViewBag.AllBusiness = business;
             var item = pagedList.clienterManageList;
             return PartialView("_SuperManManagerList", item);
         }
