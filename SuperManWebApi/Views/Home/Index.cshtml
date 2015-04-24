@@ -471,10 +471,9 @@
      $.ajax({
         type: 'get',
         dataType: 'json',
-        url: 'ClienterAPI/CheckCode',
+        url: 'BusinessAPI/OtherOrderCancelReasons',
         data: {
-            "PhoneNumber": "15097444307",
-            "type":"1"
+            
         },
         success: function (data) {
             console.log(data);

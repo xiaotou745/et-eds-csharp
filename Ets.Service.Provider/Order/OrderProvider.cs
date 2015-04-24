@@ -853,5 +853,15 @@ namespace Ets.Service.Provider.Order
         {
             return OrderDao.GetOrderOptionLog(OrderId);
         }
+
+        /// <summary>
+        /// 获取订单拒绝原因
+        /// 平扬-20150424
+        /// </summary>
+        /// <returns></returns>
+        public string OtherOrderCancelReasons()
+        {
+            return ETS.Config.OrderCancelReasons;
+        }
     }
 }

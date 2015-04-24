@@ -315,6 +315,23 @@ namespace SuperManWebApi.Controllers
             return Ets.Model.Common.ResultModel<int>.Conclude(ETS.Enums.PubOrderStatus.Success, i);
         }
 
+        /// <summary>
+        /// 商家拒绝第三方订单接口
+        /// </summary>
+        /// <param name="orderlist"></param>
+        /// <param name="note"></param>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
+        [HttpGet]
+        public Ets.Model.Common.ResultModel<string []> OtherOrderCancelReasons()
+        {
+            var orderProvider = new OrderProvider();
+            string Ressons = orderProvider.OtherOrderCancelReasons();
+            string [] reasons = Ressons.Split(';');
+            return Ets.Model.Common.ResultModel<string []>.Conclude(ETS.Enums.PubOrderStatus.Success, reasons);
+        }
+
+
         #endregion
         /// <summary>
         /// 地址管理
