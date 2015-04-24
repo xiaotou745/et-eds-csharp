@@ -48,7 +48,7 @@ namespace OpenApi.Controllers
                 //实体类赋值
                 MeiTuanOrdeModel paramodel = HTTPHelper.BindeModel<MeiTuanOrdeModel>(HttpContext.Current.Request);
                 MeiTuanGroup meituan = new MeiTuanGroup();
-                if (meituan.GetSig(HttpContext.Current.Request) == paramodel.sig)
+                if (meituan.PostGetSig(HttpContext.Current.Request) == paramodel.sig)
                 {
                     CreatePM_OpenApi model = meituan.TranslateModel(paramodel);
                     return meituan.AddOrder(model) > 0 ? new { data = "ok" } : new { data = "fail" };
@@ -66,7 +66,7 @@ namespace OpenApi.Controllers
         /// 美团更新E代送订单状态   add by caoheyang 20150421  目前美团专用  
         /// </summary>
         /// <returns></returns>
-        [HttpPost]
+        [HttpGet]
         [ExecuteTimeApi]
         public object ChangeStatus()
         {
@@ -76,8 +76,8 @@ namespace OpenApi.Controllers
                 ChangeStatusPM_OpenApi model = new ChangeStatusPM_OpenApi();
                 model.orderfrom = OrderConst.OrderFrom4;// 订单来源  美团订单的订单来源是 4
                 model.status = OrderConst.OrderStatus3;// 取消订单
-                model.order_no = HttpContext.Current.Request.Form["order_id"];// 订单号
-                if (HttpContext.Current.Request.Form["sig"] == mgroup.GetSig(HttpContext.Current.Request))
+                model.order_no = HttpContext.Current.Request["order_id"];// 订单号
+                if (HttpContext.Current.Request["sig"] == mgroup.GetSig(HttpContext.Current.Request))
                 {
                     ResultModel<object> res = new OrderProvider().UpdateOrderStatus_Other(model);
                     return res.Status == 0 ? new { data = "ok" } : new { data = "fail" };

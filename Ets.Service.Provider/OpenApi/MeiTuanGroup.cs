@@ -72,7 +72,7 @@ namespace Ets.Service.Provider.OpenApi
             };
             @params.Sort();
             string url = ConfigSettings.Instance.MeiTuanConfirmAsyncStatus + "?";
-            string sig = ETS.Security.MD5.Encrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
+            string sig = ETS.Security.MD5.DefaultEncrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
             string paras = string.Join("&", @params) + "&sig=" + sig;
             return GetDoAsyncStatus(url, paras);
         }
@@ -93,7 +93,7 @@ namespace Ets.Service.Provider.OpenApi
             "timestamp="+TimeHelper.GetTimeStamp(false)    
             };
             string url = ConfigSettings.Instance.MeiTuanCancelAsyncStatus + "?";
-            string sig = ETS.Security.MD5.Encrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
+            string sig = ETS.Security.MD5.DefaultEncrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
             string paras = string.Join("&", @params) + "&sig=" + sig;
             return GetDoAsyncStatus(url, paras);
         }
@@ -114,7 +114,7 @@ namespace Ets.Service.Provider.OpenApi
             };
             @params.Sort();
             string url = ConfigSettings.Instance.MeiTuanDeliveringAsyncStatus + "?";
-            string sig = ETS.Security.MD5.Encrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
+            string sig = ETS.Security.MD5.DefaultEncrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
             string paras = string.Join("&", @params) + "&sig=" + sig;
             return GetDoAsyncStatus(url, paras);
         }
@@ -133,7 +133,7 @@ namespace Ets.Service.Provider.OpenApi
             };
             @params.Sort();
             string url = ConfigSettings.Instance.MeiTuanArrivedAsyncStatus + "?";
-            string sig = ETS.Security.MD5.Encrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
+            string sig = ETS.Security.MD5.DefaultEncrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
             string paras = string.Join("&", @params) + "&sig=" + sig;
             return GetDoAsyncStatus(url, paras);
         }
@@ -194,7 +194,7 @@ namespace Ets.Service.Provider.OpenApi
         /// </summary>
         /// <param name="fromModel">美团数据实体</param>
         /// <returns></returns>
-        public string GetSig(System.Web.HttpRequest httpRequest)
+        public string PostGetSig(System.Web.HttpRequest httpRequest)
         {
             List<string> paras = new List<string>();
             foreach (string key in httpRequest.Form.Keys)
@@ -206,10 +206,37 @@ namespace Ets.Service.Provider.OpenApi
                 }
             }
             paras.Sort();
-            string waimd5 = httpRequest.Url.ToString() + string.Join("&", paras) + consumer_secret; //consumer_secret
-            string sigtemp = ETS.Security.MD5.Encrypt(waimd5).ToLower();
+            int index = httpRequest.Url.ToString().IndexOf('?');
+            string url = index < 0 ? httpRequest.Url.ToString() + "?" : httpRequest.Url.ToString().Substring(0, index);
+            string waimd5 = url + string.Join("&", paras) + consumer_secret; //consumer_secret
+            string sigtemp = ETS.Security.MD5.DefaultEncrypt(waimd5).ToLower();
             return sigtemp;
         }
+
+        /// <summary>
+        /// 返回美团当前请求对应的签名  add by caoheyang 20150421
+        /// </summary>
+        /// <param name="fromModel">美团数据实体</param>
+        /// <returns></returns>
+        public string GetSig(System.Web.HttpRequest httpRequest)
+        {
+            List<string> paras = new List<string>();
+            foreach (string key in httpRequest.QueryString.Keys)
+            {
+                if (key != "sig")
+                {
+                    string valtemp = System.Web.HttpUtility.UrlDecode(System.Web.HttpUtility.UrlDecode(httpRequest.QueryString[key]));
+                    paras.Add(key + "=" + (valtemp == null ? "" : valtemp));
+                }
+            }
+            paras.Sort();
+            int index = httpRequest.Url.ToString().IndexOf('?');
+            string url = index < 0 ? httpRequest.Url.ToString() + "?" : httpRequest.Url.ToString().Substring(0, index);
+            string waimd5 = url + string.Join("&", paras) + consumer_secret; //consumer_secret
+            string sigtemp = ETS.Security.MD5.DefaultEncrypt(waimd5).ToLower();
+            return sigtemp;
+        }
+
 
         /// <summary>
         /// 美团的订单数据转成通用的openapi接入订单数据实体类型 20150421
