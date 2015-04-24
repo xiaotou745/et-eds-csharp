@@ -709,7 +709,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             string sql = @"SELECT top 1 o.[Id]
                                         ,o.[OrderNo]
                                         ,o.[PickUpAddress]
-                                        ,o.[PubDate]
+                                        ,CONVERT(VARCHAR(20),o.PubDate,120) as PubDate
                                         ,o.[ReceviceName]
                                         ,o.[RecevicePhoneNo]
                                         ,o.[ReceviceAddress]
