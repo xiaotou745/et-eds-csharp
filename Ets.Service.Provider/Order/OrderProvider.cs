@@ -395,9 +395,14 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public int UpdateOrderStatus(string orderNo, int orderStatus, string remark)
         {
-            //if (AsyncOrderStatus(orderNo))//更该订单状态时，同步第三方订单状态
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                return OrderDao.CancelOrderStatus(orderNo, orderStatus,remark);
+                OrderDao.CancelOrderStatus(orderNo, orderStatus, remark);
+                if (AsyncOrderStatus(orderNo))
+                {
+                    tran.Complete();
+                    return 1;
+                }
             } 
             return 0;
         }
@@ -552,6 +557,7 @@ namespace Ets.Service.Provider.Order
                 paramodel.fields.BusinessName = orderlistModel.BusinessName;
                 paramodel.fields.OriginalOrderNo = orderlistModel.OriginalOrderNo;
                 paramodel.fields.order_no = orderlistModel.OrderNo;
+                paramodel.fields.OtherCancelReason = orderlistModel.OtherCancelReason;
                 string url = ConfigurationManager.AppSettings["AsyncStatus"];
                 string json = new HttpClient().PostAsJsonAsync(url, paramodel).Result.Content.ReadAsStringAsync().Result;
                 JObject jobject = JObject.Parse(json);

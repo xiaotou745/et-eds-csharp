@@ -11,7 +11,7 @@ namespace Ets.Model.ParameterModel.Order
     /// <summary>
     /// 同步订单状态  参数实体 add by caoheyang 20150326
     /// </summary>
-    public class AsyncStatusPM_OpenApi 
+    public class AsyncStatusPM_OpenApi
     {
         /// <summary>
         /// 订单号
@@ -41,8 +41,12 @@ namespace Ets.Model.ParameterModel.Order
         /// <summary>
         /// 第三方订单号
         /// </summary>
-                [Required]
+        [Required]
         public string OriginalOrderNo { get; set; }
-        
+
+        /// <summary>
+        /// 取消原因
+        /// </summary>
+        public string OtherCancelReason { get; set; }
     }
 }
