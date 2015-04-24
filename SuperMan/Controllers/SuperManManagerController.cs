@@ -4,6 +4,7 @@ using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.Provider.Common;
 using Ets.Service.Provider.Distribution;
+using Ets.Service.Provider.Subsidy;
 using Ets.Service.Provider.WtihdrawRecords;
 using SuperMan.App_Start;
 using SuperManBusinessLogic.C_Logic;
@@ -123,13 +124,7 @@ namespace SuperMan.Controllers
         /// <param name="UserId">用户ID</param>
         /// <returns></returns>
         public ActionResult WtihdrawRecords(int UserId)
-        {
-            //account maccount = HttpContext.Session["user"] as account;
-            //if (maccount == null)
-            //{
-            //    Response.Redirect("/account/login");
-            //    return null;
-            //}
+        { 
             var pagedList = cliterProvider.WtihdrawRecords(UserId);
             ViewBag.pagedList = pagedList;
             ViewBag.UserId = UserId;
@@ -166,5 +161,20 @@ namespace SuperMan.Controllers
             bool checkWithdraw = new WtihdrawRecordsProvider().AddWtihdrawRecords(model);
             return Json(checkWithdraw ? new ResultModel(true, "提现成功") : new ResultModel(false, "提现失败"), JsonRequestBehavior.AllowGet);
         }
+
+        /// <summary>
+        /// 获取当前配送员的跨店奖励信息
+        /// 平扬
+        /// 2015年4月23日
+        /// </summary>
+        /// <param name="UserId">用户ID</param>
+        /// <returns></returns>
+        public ActionResult CrossShopLog(int UserId)
+        {
+            var pagedList = new SubsidyProvider().GetCrossShopListByCid(UserId); 
+            ViewBag.pagedList = pagedList;
+            return View();
+        }
+
     }
 }

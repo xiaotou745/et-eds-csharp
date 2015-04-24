@@ -16,7 +16,7 @@
             <th>照片</th>
             <th>申请时间</th>
             <th>帐户余额</th>
-            <th>集团名称</th> 
+            <th>集团名称</th>
             <th>审核状态</th>
             <th>推荐人</th>
             <th>操作</th>
@@ -76,23 +76,23 @@
                             statusView = "未审核";
                         }
                     }
-                    <td>@statusView</td> 
-                        @{
-                            var recomname = "";
-                            if (string.IsNullOrEmpty(item.recommendPhone))
-                            {
-                                recomname = "无推荐人";
-                            }
-                            var reslut = new ClienterProvider().GetUserInfoByUserPhoneNo(item.recommendPhone);
-                            if (reslut != null)
-                            {
-                                recomname = reslut.TrueName+"/"+reslut.PhoneNo;
-                            }
-                        } 
-                    <td> 
+                    <td>@statusView</td>
+                    @{
+                        var recomname = "";
+                        if (string.IsNullOrEmpty(item.recommendPhone))
+                        {
+                            recomname = "无推荐人";
+                        }
+                        var reslut = new ClienterProvider().GetUserInfoByUserPhoneNo(item.recommendPhone);
+                        if (reslut != null)
+                        {
+                            recomname = reslut.TrueName + "/" + reslut.PhoneNo;
+                        }
+                    }
+                    <td>
                         @recomname
                     </td>
-                   
+
                     <td>
                         @{
                         int idCard = string.IsNullOrEmpty(item.IDCard) ? 0 : 1;
@@ -228,11 +228,11 @@
     function clientOk(clientId,idCard, trueName, picUrl, picWithHandUrl) {
         if (!window.confirm("是否审核通过？")) {
             return;
-        }  
+        }
         if (idCard == 0 || trueName == 0 || picUrl == 0 || picWithHandUrl == 0) {
             alert("该骑士未上传个人资料，不能通过审核。")
             return;
-        } 
+        }
         var paramaters = { "id": clientId };
         var url = "/SuperManManager/AuditOK";
         $.ajax({

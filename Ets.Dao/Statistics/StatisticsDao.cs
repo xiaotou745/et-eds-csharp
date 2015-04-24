@@ -215,93 +215,94 @@ namespace Ets.Dao.Statistics
         public HomeCountTitleModel GetCurrentDateModel()
         {
             string sql = @"
-                        with t as(
-                                    SELECT 
-                                      CONVERT(CHAR(10),GETDATE(),120) PubDate,
-                                      ISNULL(SUM(CASE WHEN [Status]=1 THEN 1 ELSE 0 END),0) AS RzqsCount, --认证骑士数量
-                                      ISNULL(SUM(CASE WHEN [Status]=0 THEN 1 ELSE 0 END),0) AS DdrzqsCount --等待认证骑士
-                                    FROM dbo.clienter(NOLOCK)
-                        )
-                        ,t2 as (
-                                    SELECT 
-                                      CONVERT(CHAR(10),GETDATE(),120) PubDate,
-                                      COUNT(Id) AS BusinessCount 
-                                    FROM dbo.business(NOLOCK) 
-                                    WHERE [status]=1
-                        )
-                        ,t3 AS(
-                                    select 
-                                      CONVERT(CHAR(10),GETDATE(),120) PubDate,
-                                      count(distinct clienterId) as ActiveClienter,
-                                      count(distinct businessId) as ActiveBusiness
-                                    from dbo.[order](nolock) as o 
-                                    where o.PubDate >= convert(char(10), getdate(), 120) and status<>3
-                          )
-                        ,t4 AS(
-                                    select 
-                                      CONVERT(CHAR(10),GETDATE(),120) PubDate,
-                                      sum(case when Status=2 then 1 else 0 end) UnfinishedMissionCount,--未完成任务量
-                                      sum(case when Status=0 then 1 else 0 end) UnGrabMissionCount--未被抢任务量
-                                    from dbo.[order](nolock) as o
-                                    where convert(char(10),PubDate,120)=convert(char(10),getdate(),120) 
-                                    and Status<>3
-                                    group by convert(char(10),PubDate,120)
-                          )
-                        ,t5 AS(
-                                    SELECT  PubDate ,
-                                            ISNULL(SUM(CASE when a.DealCount=0 THEN OrderCount END),0) ZeroSubsidyOrderCount,
-                                            ISNULL(SUM(CASE when a.DealCount=1 THEN OrderCount END),0) OneSubsidyOrderCount,
-                                            ISNULL(SUM(CASE when a.DealCount=2 THEN OrderCount END),0) TwoSubsidyOrderCount,
-                                            ISNULL(SUM(CASE when a.DealCount=3 THEN OrderCount END),0) ThreeSubsidyOrderCount
-                                    FROM (
-                                          SELECT 
-                                            CONVERT(CHAR(10),PubDate,120) AS PubDate, --发布时间
-                                            COUNT(1) AS OrderCount,--订单量
-                                            DealCount
-                                          FROM dbo.[order](NOLOCK) AS o
-                                          WHERE  o.[Status]<>3 
-                                            AND convert(char(10),PubDate,120)=convert(char(10),getdate(),120) 
-                                          GROUP BY CONVERT(CHAR(10),PubDate,120),DealCount 
-                                          ) a
-                                    group by PubDate
-                         )
-                        ,t6 AS(
-                                    SELECT 
-                                      CONVERT(CHAR(10),PubDate,120) AS PubDate, 
-                                      SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
-                                      ISNULL(COUNT(o.Id),0) AS MisstionCount,--总任务量
-                                      SUM(ISNULL(OrderCount,0)) AS OrderCount,--总订单量
-                                      ISNULL(SUM(o.Amount*ISNULL(b.BusinessCommission,0)/100+ ISNULL( b.DistribSubsidy ,0)* o.OrderCount),0) AS YsPrice,  -- 应收金额
-                                      ISNULL( SUM( OrderCommission),0) AS YfPrice  --应付金额
-                                    FROM dbo.[order](NOLOCK) AS o
-                                      LEFT JOIN dbo.business(NOLOCK) AS b ON o.businessId=b.Id
-                                     WHERE  o.[Status]<>3 
-                                      AND convert(char(10),PubDate,120)=convert(char(10),getdate(),120) 
-                                    GROUP BY CONVERT(CHAR(10),PubDate,120)
-                          )
-                        select t.PubDate,
-                          isnull(t.RzqsCount,0)RzqsCount,
-                          isnull(t.DdrzqsCount,0) DdrzqsCount,
-                          isnull(t2.BusinessCount,0) BusinessCount,
-                          isnull(t3.ActiveClienter,0) ActiveClienter,
-                          isnull(t3.ActiveBusiness,0) ActiveBusiness,
-                          isnull(t4.UnfinishedMissionCount,0) UnfinishedMissionCount,
-                          isnull(t4.UnGrabMissionCount,0) UnGrabMissionCount,
-                          isnull(t5.ZeroSubsidyOrderCount,0) ZeroSubsidyOrderCount,
-                          isnull(t5.OneSubsidyOrderCount,0) OneSubsidyOrderCount,
-                          isnull(t5.TwoSubsidyOrderCount,0) TwoSubsidyOrderCount,
-                          isnull(t5.ThreeSubsidyOrderCount,0) ThreeSubsidyOrderCount,
-                          isnull(t6.OrderPrice,0) OrderPrice,
-                          isnull(t6.MisstionCount,0) MisstionCount,
-                          isnull(t6.OrderCount,0) OrderCount,
-                          isnull(t6.YsPrice,0) YsPrice,
-                          isnull(t6.YfPrice,0) YfPrice
-                        from t t
-	                        left join t2 t2 on t.PubDate = t2.PubDate 
-                            left join t3 t3 on t.PubDate = t3.PubDate
-                            left join t4 t4 on t.PubDate = t4.PubDate
-                            left join t5 t5 on t.PubDate = t5.PubDate
-                            left join t6 t6 on t.PubDate = t6.PubDate";
+                            with t as(
+                                        SELECT 
+                                          CONVERT(CHAR(10),GETDATE(),120) PubDate,
+                                          ISNULL(SUM(CASE WHEN [Status]=1 THEN 1 ELSE 0 END),0) AS RzqsCount, --认证骑士数量
+                                          ISNULL(SUM(CASE WHEN [Status]=0 THEN 1 ELSE 0 END),0) AS DdrzqsCount --等待认证骑士
+                                        FROM dbo.clienter(NOLOCK)
+                            )
+                            ,t2 as (
+                                        SELECT 
+                                          CONVERT(CHAR(10),GETDATE(),120) PubDate,
+                                          COUNT(Id) AS BusinessCount 
+                                        FROM dbo.business(NOLOCK) 
+                                        WHERE [status]=1
+                            )
+                            ,t3 AS(
+                                        select 
+                                          CONVERT(CHAR(10),GETDATE(),120) PubDate,
+                                          count(distinct clienterId) as ActiveClienter,
+                                          count(distinct businessId) as ActiveBusiness
+                                        from dbo.[order](nolock) as o 
+                                        where convert(char(10),o.PubDate ,120) = convert(char(10), getdate(), 120) and status<>3
+                              )
+                            ,t4 AS(
+                                        select 
+                                          CONVERT(CHAR(10),GETDATE(),120) PubDate,
+                                          sum(case when Status=2 then 1 else 0 end) UnfinishedMissionCount,--未完成任务量
+                                          sum(case when Status=0 then 1 else 0 end) UnGrabMissionCount--未被抢任务量
+                                        from dbo.[order](nolock) as o
+                                        where convert(char(10),PubDate,120)=convert(char(10),getdate(),120) 
+                                        and Status<>3
+                                        group by convert(char(10),PubDate,120)
+                              )
+                            ,t5 AS(
+                                        SELECT  PubDate ,
+                                                ISNULL(SUM(CASE when a.DealCount=0 THEN OrderCount END),0) ZeroSubsidyOrderCount,
+                                                ISNULL(SUM(CASE when a.DealCount=1 THEN OrderCount END),0) OneSubsidyOrderCount,
+                                                ISNULL(SUM(CASE when a.DealCount=2 THEN OrderCount END),0) TwoSubsidyOrderCount,
+                                                ISNULL(SUM(CASE when a.DealCount=3 THEN OrderCount END),0) ThreeSubsidyOrderCount
+                                        FROM (
+                                              SELECT 
+                                                CONVERT(CHAR(10),PubDate,120) AS PubDate, --发布时间
+                                                COUNT(1) AS OrderCount,--订单量
+                                                DealCount
+                                              FROM dbo.[order](NOLOCK) AS o
+                                              WHERE  o.[Status]<>3 
+                                                AND convert(char(10),PubDate,120)=convert(char(10),getdate(),120) 
+                                              GROUP BY CONVERT(CHAR(10),PubDate,120),DealCount 
+                                              ) a
+                                        group by PubDate
+                             )
+                            ,t6 AS(
+                                        SELECT 
+                                          CONVERT(CHAR(10),PubDate,120) AS PubDate, 
+                                          SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
+                                          ISNULL(COUNT(o.Id),0) AS MisstionCount,--总任务量
+                                          SUM(ISNULL(OrderCount,0)) AS OrderCount,--总订单量
+                                          ISNULL(SUM(o.Amount*ISNULL(b.BusinessCommission,0)/100+ ISNULL( b.DistribSubsidy ,0)* o.OrderCount),0) AS YsPrice,  -- 应收金额
+                                          ISNULL( SUM( OrderCommission),0) AS YfPrice  --应付金额
+                                        FROM dbo.[order](NOLOCK) AS o
+                                          LEFT JOIN dbo.business(NOLOCK) AS b ON o.businessId=b.Id
+                                         WHERE  o.[Status]<>3 
+                                          AND convert(char(10),PubDate,120)=convert(char(10),getdate(),120) 
+                                        GROUP BY CONVERT(CHAR(10),PubDate,120)
+                              )
+                            select t.PubDate,
+                              isnull(t.RzqsCount,0)RzqsCount,
+                              isnull(t.DdrzqsCount,0) DdrzqsCount,
+                              isnull(t2.BusinessCount,0) BusinessCount,
+                              isnull(t3.ActiveClienter,0) ActiveClienter,
+                              isnull(t3.ActiveBusiness,0) ActiveBusiness,
+                              isnull(t4.UnfinishedMissionCount,0) UnfinishedMissionCount,
+                              isnull(t4.UnGrabMissionCount,0) UnGrabMissionCount,
+                              isnull(t5.ZeroSubsidyOrderCount,0) ZeroSubsidyOrderCount,
+                              isnull(t5.OneSubsidyOrderCount,0) OneSubsidyOrderCount,
+                              isnull(t5.TwoSubsidyOrderCount,0) TwoSubsidyOrderCount,
+                              isnull(t5.ThreeSubsidyOrderCount,0) ThreeSubsidyOrderCount,
+                              isnull(t6.OrderPrice,0) OrderPrice,
+                              isnull(t6.MisstionCount,0) MisstionCount,
+                              isnull(t6.OrderCount,0) OrderCount,
+                              isnull(t6.YsPrice,0) YsPrice,
+                              isnull(t6.YfPrice,0) YfPrice
+                            from t 
+	                            left join t2 on t.PubDate = t2.PubDate 
+                                left join t3 on t.PubDate = t3.PubDate
+                                left join t4 on t.PubDate = t4.PubDate
+                                left join t5 on t.PubDate = t5.PubDate
+                                left join t6 on t.PubDate = t6.PubDate
+                                ";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             if (dt == null || dt.Rows.Count == 0)
             {
