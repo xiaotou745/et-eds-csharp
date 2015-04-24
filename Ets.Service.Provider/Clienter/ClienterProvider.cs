@@ -538,7 +538,11 @@ namespace Ets.Service.Provider.Clienter
                     //};
                     //Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords = new WtihdrawRecordsProvider();
                     //iRecords.AddRecords(model); 
-                    tran.Complete();
+                    if (new OrderProvider().AsyncOrderStatus(orderNo))
+                    {
+                        tran.Complete();
+                        result = "1";
+                    }
                     Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", myOrderInfo.businessId.ToString(), string.Empty);
                     result = "1";
                 }
