@@ -38,8 +38,17 @@ namespace SuperMan.Controllers
             if (superManModel != null)
             {
                 ViewBag.superManModel = superManModel;
-            } 
+            }
+           
             var criteria = new OrderSearchCriteria() { orderStatus = -1, PagingRequest = new PagingResult(0, 15), GroupId = account.GroupId };
+            if (string.IsNullOrWhiteSpace(criteria.orderPubStart))
+            {
+                criteria.orderPubStart = DateTime.Now.ToString("yyyy-MM-dd 00:00:00.000");
+            }
+            if (string.IsNullOrWhiteSpace(criteria.orderPubEnd))
+            {
+                criteria.orderPubEnd = DateTime.Now.ToString("yyyy-MM-dd 23:59:59.999");
+            }
             var pagedList = OrderLogic.orderLogic().GetOrders(criteria);
             return View(pagedList);
         }
@@ -58,7 +67,15 @@ namespace SuperMan.Controllers
             if (superManModel != null)
             {
                 ViewBag.superManModel = superManModel;
-            } 
+            }
+            if (string.IsNullOrWhiteSpace(criteria.orderPubStart))
+            {
+                criteria.orderPubStart = DateTime.Now.ToString("yyyy-MM-dd 00:00:00.000");
+            }
+            if (string.IsNullOrWhiteSpace(criteria.orderPubEnd))
+            {
+                criteria.orderPubEnd = DateTime.Now.ToString("yyyy-MM-dd 23:59:59.999");
+            }
 
             var pagedList = OrderLogic.orderLogic().GetOrders(criteria);
             var item = pagedList.orderManageList; 

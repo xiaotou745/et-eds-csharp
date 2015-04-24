@@ -20,10 +20,10 @@
                     <input id="txtSuperManPhone" type="tel" />
                     <span class="">超人姓名: </span>
                     <input id="txtSuperManName" type="text" width="90px" />
-                    <span class="">商户电话: </span>
+                    @*<span class="">商户电话: </span>
                     <input id="txtBusinessPhone" type="tel" />
                     <span class="">商户名称: </span>
-                    <input id="txtBusinessName" type="text" />
+                    <input id="txtBusinessName" type="text" />*@
                 </td>
             </tr>
             <tr>
@@ -67,12 +67,11 @@
     $(document).ready(function () {        
         $('#txtOrderPubStart').datepicker();
         $('#txtOrderPubEnd').datepicker();
+        
         //查询
         $("#btnSearch").on('click', function () { 
-            var startDate = $('#txtOrderPubStart').val();
-            alert(startDate);
-            var endDate = $('#txtOrderPubEnd').val();
-            alert(endDate);
+            var startDate = $('#txtOrderPubStart').val(); 
+            var endDate = $('#txtOrderPubEnd').val(); 
             if (endDate < startDate) {
                 bootbox.alert("开始日期不能大于结束日期");
                 return false;
