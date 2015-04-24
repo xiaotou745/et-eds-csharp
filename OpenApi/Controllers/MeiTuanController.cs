@@ -28,6 +28,8 @@ using ETS.Const;
 using Ets.Service.Provider.OpenApi;
 using Ets.Model.DataModel.Order;
 using Ets.Service.IProvider.OpenApi;
+using System.Reflection;
+using Letao.Util;
 
 namespace OpenApi.Controllers
 {
@@ -40,20 +42,25 @@ namespace OpenApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [ExecuteTimeApi]
-        public object PullOrderInfo([FromBody]MeiTuanOrdeModel paramodel)
+        public object PullOrderInfo()
         {
-            string val = Letao.Util.JsonHelper.JsonConvertToString(paramodel);
-            paramodel = Letao.Util.JsonHelper.JsonConvertToObject<MeiTuanOrdeModel>(HttpUtility.UrlDecode(val));
-
-            LogHelper.LogWriter("fromModel1312321313213123dada", paramodel);
-
-            MeiTuanGroup meituan = new MeiTuanGroup();
-            if (meituan.ValiditeSig(paramodel))
+            try
             {
-                CreatePM_OpenApi model = meituan.TranslateModel(paramodel);
-                return meituan.AddOrder(model) > 0 ? new { data = "ok" } : new { data = "fail" };
+                ////实体类赋值
+                MeiTuanOrdeModel paramodel = HTTPHelper.BindeModel<MeiTuanOrdeModel>(HttpContext.Current.Request);
+                MeiTuanGroup meituan = new MeiTuanGroup();
+                if (!meituan.ValiditeSig(paramodel))
+                {
+                    CreatePM_OpenApi model = meituan.TranslateModel(paramodel);
+                    return meituan.AddOrder(model) > 0 ? new { data = "ok" } : new { data = "fail" };
+                }
+                return new { data = "fail" };  //推送失败
             }
-            return new { data = "fail" };  //推送失败
+            catch (Exception ex) {
+                LogHelper.LogWriter(ex);  //记录日志
+                return new { data = "fail" };  //推送失败
+            }
+          
         }
     }
 }

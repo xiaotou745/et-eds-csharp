@@ -205,15 +205,13 @@ namespace Ets.Service.Provider.OpenApi
             string paras = "";
             for (int i = 0; i < props.Length; i++)
             {
+                object val = props[i].GetValue(fromModel);
+                if (val == null) 
+                    val = "";
                 if (i != props.Length - 1)
-                {
-                    if ((props[i].Name == "detail" || props[i].Name == "extras") && props[i].GetValue(fromModel) != null)
-                        paras = paras + props[i].Name + "=" + JsonHelper.JsonConvertToString(props[i].GetValue(fromModel)) + "&";
-                    else
-                        paras = paras + props[i].Name + "=" + props[i].GetValue(fromModel) + "&";
-                }
+                        paras = paras + props[i].Name + "=" + val + "&";
                 else
-                    paras = paras + props[i].Name + "=" + props[i].GetValue(fromModel);
+                    paras = paras + props[i].Name + "=" + val;
             }
             string url = ConfigSettings.Instance.MeiTuanPullOrderInfo;
             string waimd5 = url + paras + consumer_secret; //consumer_secret
@@ -256,15 +254,16 @@ namespace Ets.Service.Provider.OpenApi
             model.address = address; //订单ID
 
             //订单明细不为空时做处理 
-            if (fromModel.detail != null && fromModel.detail.Length > 0)
+            if (!string.IsNullOrWhiteSpace(fromModel.detail)&& fromModel.detail!="")
             {
+                MeiTuanOrdeDetailModel[] meituandetails = Letao.Util.JsonHelper.JsonConvertToObject<MeiTuanOrdeDetailModel[]>(fromModel.detail);
                 OrderDetail[] details = new OrderDetail[fromModel.detail.Length];
-                for (int i = 0; i < fromModel.detail.Length; i++)
+                for (int i = 0; i < meituandetails.Length; i++)
                 {
                     OrderDetail tempdetail = new OrderDetail();
-                    tempdetail.product_name = fromModel.detail[i].food_name;//菜品名称
-                    tempdetail.quantity = fromModel.detail[i].quantity;//菜品数量
-                    tempdetail.unit_price = fromModel.detail[i].price;//菜品单价
+                    tempdetail.product_name = meituandetails[i].food_name;//菜品名称
+                    tempdetail.quantity = meituandetails[i].quantity;//菜品数量
+                    tempdetail.unit_price = meituandetails[i].price;//菜品单价
                     tempdetail.detail_id = 0;//美团不传递明细id，明细id为0
                     details[i] = tempdetail;
                 }
@@ -288,8 +287,6 @@ namespace Ets.Service.Provider.OpenApi
            int businessId = ParseHelper.ToInt(redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.orderfrom,
               paramodel.store_info.store_id.ToString()))); //缓存中取E代送商户id
            LogHelper.LogWriter("businessId", businessId);
-
-
           if (businessId == 0)
               return 0;   //商户不存在发布订单
           else {
@@ -310,7 +307,7 @@ namespace Ets.Service.Provider.OpenApi
         /// <summary>
         /// app_id
         /// </summary>
-        public string app_id { get; set; }
+        public int app_id { get; set; }
 
         /// <summary>
         /// 时间戳
@@ -401,11 +398,11 @@ namespace Ets.Service.Provider.OpenApi
         /// <summary>
         /// 订单详细类目列表
         /// </summary>
-        public MeiTuanOrdeDetailModel[] detail { get; set; }
+        public string detail { get; set; }
         /// <summary>
         /// 订单活动类目列表
         /// </summary>
-        public MeiTuanOrderExtrasModel[] extras { get; set; }
+        public string extras { get; set; }
 
         /// <summary>
         /// 是否为美团商家APP方配送
@@ -433,19 +430,8 @@ namespace Ets.Service.Provider.OpenApi
         /// <summary>
         /// APP方菜品id
         /// </summary>
-        public int app_food_code { get; set; }
-        /// <summary>
-        /// APP方菜品名称
-        /// </summary>
-        public string food_name { get; set; }
-        /// <summary>
-        /// 菜品数量
-        /// </summary>
-        public int quantity { get; set; }
-        /// <summary>
-        /// 菜品单价
-        /// </summary>
-        public decimal price { get; set; }
+        public string app_food_code { get; set; }
+
         /// <summary>
         /// 打包餐盒数量
         /// </summary>
@@ -453,12 +439,33 @@ namespace Ets.Service.Provider.OpenApi
         /// <summary>
         /// 打包餐盒单价
         /// </summary>
+        public int box_price { get; set; }
 
-        public decimal box_price { get; set; }
         /// <summary>
         /// 菜品折扣，只是美团商家，APP方配送的门店才会设置，默认为1。折扣值不参与总价计算。
         /// </summary>
-        public decimal food_discount { get; set; }
+        public int food_discount { get; set; }
+
+        /// <summary>
+        /// APP方菜品名称
+        /// </summary>
+        public string food_name { get; set; }
+
+        /// <summary>
+        /// 菜品单价
+        /// </summary>
+        public decimal price { get; set; }
+      
+        /// <summary>
+        /// 菜品数量
+        /// </summary>
+        public int quantity { get; set; }
+
+        /// <summary>
+        /// 单位
+        /// </summary>
+        public string unit { get; set; }
+
 
     }
 
