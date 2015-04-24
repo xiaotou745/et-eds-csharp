@@ -206,7 +206,6 @@ namespace Ets.Service.Provider.OpenApi
                 }
             }
             paras.Sort();
-            string url = ConfigSettings.Instance.MeiTuanPullOrderInfo + "?";
             string waimd5 = httpRequest.Url.ToString() + string.Join("&", paras) + consumer_secret; //consumer_secret
             string sigtemp = ETS.Security.MD5.Encrypt(waimd5).ToLower();
             return sigtemp;
