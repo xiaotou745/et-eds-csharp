@@ -287,17 +287,18 @@ namespace SuperManWebApi.Controllers
         public Ets.Model.Common.ResultModel<List<string>> OtherOrderConfirm_B(string orderlist)
         {
             ETS.Util.LogHelper.LogWriterString("参数 ", orderlist);
-
-
             if (string.IsNullOrEmpty(orderlist))
-            {
                 return Ets.Model.Common.ResultModel<List<string>>.Conclude(ETS.Enums.PubOrderStatus.OrderCountError, null);
-            }
             var orderProvider = new OrderProvider();
-            int i = 0;
             string[] aa = orderlist.Split(',');
-            var list = aa.Where(s => orderProvider.UpdateOrderStatus(s, OrderConst.ORDER_NEW, "") <= 0).ToList();
-            return Ets.Model.Common.ResultModel<List<string>>.Conclude(ETS.Enums.PubOrderStatus.Success, list);
+            List<string> errors = new List<string>();
+            for (int i = 0; i < aa.Length; i++)
+            {
+                int res = orderProvider.UpdateOrderStatus(aa[i], OrderConst.ORDER_NEW, "");
+                if (res < 0)
+                    errors.Add(aa[i]);
+            }
+            return Ets.Model.Common.ResultModel<List<string>>.Conclude(ETS.Enums.PubOrderStatus.Success, errors);
         }
 
         /// <summary>

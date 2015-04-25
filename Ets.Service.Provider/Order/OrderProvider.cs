@@ -397,13 +397,12 @@ namespace Ets.Service.Provider.Order
         {
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-
-                OrderDao.CancelOrderStatus(orderNo, orderStatus, remark);
-                if (AsyncOrderStatus(orderNo))
-                {
-                    tran.Complete();
-                    return 1;
-                }
+               int result= OrderDao.CancelOrderStatus(orderNo, orderStatus, remark);
+               if (result > 0 & AsyncOrderStatus(orderNo))
+               {
+                   tran.Complete();
+                   return 1;
+               }
             }
             return 0;
         }
