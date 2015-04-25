@@ -286,6 +286,9 @@ namespace SuperManWebApi.Controllers
         [HttpGet]
         public Ets.Model.Common.ResultModel<List<string>> OtherOrderConfirm_B(string orderlist)
         {
+           
+
+
             if (string.IsNullOrEmpty(orderlist))
             {
                 return Ets.Model.Common.ResultModel<List<string>>.Conclude(ETS.Enums.PubOrderStatus.OrderCountError, null);

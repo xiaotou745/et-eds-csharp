@@ -436,7 +436,7 @@ namespace Ets.Service.Provider.Order
                 CityName = paramodel.address.city,
                 AreaName = paramodel.address.area
             });
-            if (orderCodeInfo == ETS.Const.SystemConst.CityOpenInfo||string.IsNullOrWhiteSpace(orderCodeInfo))
+            if (orderCodeInfo == ETS.Const.SystemConst.CityOpenInfo || string.IsNullOrWhiteSpace(orderCodeInfo))
                 return ResultModel<object>.Conclude(OrderApiStatusType.ParaError, "用户省市区信息错误");
             else
             {
@@ -742,31 +742,24 @@ namespace Ets.Service.Provider.Order
         /// <returns>订单详情</returns>
         public ListOrderDetailModel GetOrderDetail(string order_no)
         {
-            var order = OrderDao.GetOrderByNo(order_no);
-            if (order.OrderFrom == 0)
-            {
-                order.OrderFromName = "B端";
-            }
-            if (order.OrderFrom == 1)
-            {
-                order.OrderFromName = "易淘食";
-            }
-            if (order.OrderFrom == 2)
-            {
-                order.OrderFromName = "万达";
-            }
-            if (order.OrderFrom == 3)
-            {
-                order.OrderFromName = "全时";
-            }
-            if (order.OrderFrom == 4)
-            {
-                order.OrderFromName = "美团";
-            }
-            var list = OrderDao.GetOrderDetail(order_no);
             ListOrderDetailModel mo = new ListOrderDetailModel();
-            mo.order = order;
-            mo.orderDetails = list;
+            var order = OrderDao.GetOrderByNo(order_no);
+            if (order != null) 
+            {
+                if (order.OrderFrom == 0)
+                    order.OrderFromName = "B端";
+                else if (order.OrderFrom == 1)
+                    order.OrderFromName = "易淘食";
+                else if (order.OrderFrom == 2)
+                    order.OrderFromName = "万达";
+                else if (order.OrderFrom == 3)
+                    order.OrderFromName = "全时";
+                else if (order.OrderFrom == 4)
+                    order.OrderFromName = "美团";
+                var list = OrderDao.GetOrderDetail(order_no);
+                mo.order = order;
+                mo.orderDetails = list;
+            }
             return mo;
         }
 
@@ -934,8 +927,8 @@ namespace Ets.Service.Provider.Order
             int currenStatus = OrderDao.GetStatus(paramodel.order_no, paramodel.orderfrom);  //目前订单状态
             if (currenStatus == -1) //订单不存在
                 return ResultModel<object>.Conclude(OrderApiStatusType.OrderNotExist);
-            else if (OrderConst.OrderStatus30 != currenStatus 
-                && OrderConst.OrderStatus0!= currenStatus)  //订单状态非30，,不允许取消订单
+            else if (OrderConst.OrderStatus30 != currenStatus
+                && OrderConst.OrderStatus0 != currenStatus)  //订单状态非30，,不允许取消订单
                 return ResultModel<object>.Conclude(OrderApiStatusType.OrderIsJoin);
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {

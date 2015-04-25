@@ -415,7 +415,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                 RecevicePhoneNo,ReceiveProvinceCode,ReceiveCityCode,ReceiveAreaCode,ReceviceAddress,
                 ReceviceLongitude,ReceviceLatitude,businessId,PickUpAddress,Payment,OrderCommission,
                 WebsiteSubsidy,CommissionRate,CommissionFormulaMode,ReceiveProvince,ReceviceCity,ReceiveArea,
-                PickupCode,BusinessCommission,SettleMoney,Adjustment,OrderFrom)
+                PickupCode,BusinessCommission,SettleMoney,Adjustment,OrderFrom,Status)
                 OUTPUT Inserted.OrderNo
                 Values(@OrderNo,
                 @OriginalOrderNo,@PubDate,@SongCanDate,@IsPay,@Amount,
@@ -423,7 +423,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                 @RecevicePhoneNo,@ReceiveProvinceCode,@ReceiveCityCode,@ReceiveAreaCode,@ReceviceAddress,
                 @ReceviceLongitude,@ReceviceLatitude,@BusinessId,@PickUpAddress,@Payment,@OrderCommission,
                 @WebsiteSubsidy,@CommissionRate,@CommissionFormulaMode,@ReceiveProvince,@ReceviceCity,@ReceiveArea,
-                @PickupCode,@BusinessCommission,@SettleMoney,@Adjustment,@OrderFrom)";
+                @PickupCode,@BusinessCommission,@SettleMoney,@Adjustment,@OrderFrom,@Status)";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             ///基本参数信息
 
@@ -464,7 +464,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             dbParameters.AddWithValue("@SettleMoney", paramodel.settlemoney);//结算比例
             dbParameters.AddWithValue("@Adjustment", paramodel.adjustment);//结算比例
             dbParameters.AddWithValue("@OrderFrom", paramodel.orderfrom);//订单来源
-            
+            dbParameters.AddWithValue("@Status", paramodel.status);//订单状态
             string orderNo = ParseHelper.ToString(DbHelper.ExecuteScalar(SuperMan_Read, insertOrdersql, dbParameters));
             //添加成功时，将当前订单插入到缓存中，设置过期时间30天
             redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
@@ -766,11 +766,11 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                                     LEFT JOIN [group] g WITH ( NOLOCK ) ON g.Id = b.GroupId
                                     WHERE 1=1 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@OrderNo", SqlDbType.NVarChar);
-            parm.SetValue("@OrderNo", orderNo);
             if (!string.IsNullOrWhiteSpace(orderNo))
             {
                 sql += " AND o.OrderNo=@OrderNo";
+                parm.Add("@OrderNo", SqlDbType.NVarChar);
+                parm.SetValue("@OrderNo", orderNo);
             }
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
             var list = ConvertDataTableList<OrderListModel>(dt);
