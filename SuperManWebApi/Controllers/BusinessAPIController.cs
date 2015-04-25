@@ -286,7 +286,7 @@ namespace SuperManWebApi.Controllers
         [HttpGet]
         public Ets.Model.Common.ResultModel<List<string>> OtherOrderConfirm_B(string orderlist)
         {
-           
+            ETS.Util.LogHelper.LogWriterString("参数 ", orderlist);
 
 
             if (string.IsNullOrEmpty(orderlist))
