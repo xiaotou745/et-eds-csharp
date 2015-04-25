@@ -42,6 +42,8 @@ namespace Ets.Service.Provider.OpenApi
         /// <returns></returns>
         public OrderApiStatusType AsyncStatus(ParaModel<AsyncStatusPM_OpenApi> paramodel)
         {
+            return OrderApiStatusType.Success;
+
             switch (paramodel.fields.status)
             {
                 case OrderConst.OrderStatus1: //已完成
