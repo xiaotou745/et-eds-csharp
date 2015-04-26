@@ -42,8 +42,6 @@ namespace Ets.Service.Provider.OpenApi
         /// <returns></returns>
         public OrderApiStatusType AsyncStatus(ParaModel<AsyncStatusPM_OpenApi> paramodel)
         {
-            return OrderApiStatusType.Success;
-
             switch (paramodel.fields.status)
             {
                 case OrderConst.OrderStatus1: //已完成
@@ -186,8 +184,6 @@ namespace Ets.Service.Provider.OpenApi
         /// <returns></returns>
         public CreatePM_OpenApi SetCommissonInfo(CreatePM_OpenApi paramodel)
         {
-            paramodel.store_info.delivery_fee = 5;//全时目前外送费统一5
-            paramodel.store_info.businesscommission = 0;//万达目前结算比例统一0
             return paramodel;
         }
 
@@ -265,7 +261,7 @@ namespace Ets.Service.Provider.OpenApi
             model.create_time = TimeHelper.TimeStampToDateTime(fromModel.ctime);//订单发单时间 创建时间
             model.payment = fromModel.pay_type;//支付类型
             model.is_pay = fromModel.pay_type == 1 ? false : true;//目前货到付款时取未支付，在线支付取已支付
-
+            model.total_price = fromModel.total;//订单金额
             address.longitude = fromModel.longitude; //经度
             address.latitude = fromModel.latitude; //纬度
             model.store_info = store; //店铺 

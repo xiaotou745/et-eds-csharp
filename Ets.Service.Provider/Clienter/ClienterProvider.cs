@@ -577,7 +577,9 @@ namespace Ets.Service.Provider.Clienter
                 Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
                 Balance = AccountBalance ?? 0,
                 UserId = userId,
-                Platform = 1
+                Platform = 1,
+                RecordType = 1,
+                OrderId = myOrderInfo.Id
             };
             Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords = new WtihdrawRecordsProvider();
             iRecords.AddRecords(model);
