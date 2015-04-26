@@ -41,7 +41,7 @@
   <ItemGroup>
     <Compile Include="Account\IAccountProvider..cs" />
     <Compile Include="AuthorityMenu\IAuhorityMenu.cs" />
-    <Compile Include="Clienter\IClienterCrossShopLog.cs" />
+    <Compile Include="Clienter\IClienterCrossShopLogProvider.cs" />
     <Compile Include="Common\IAdminToolsProvider.cs" />
     <Compile Include="Common\IAreaProvider.cs" />
     <Compile Include="Common\IGroupProvider.cs" />

@@ -106,6 +106,7 @@ namespace Ets.Dao.Clienter
         /// 判断是否存在指定日期的统计信息
         /// 胡灵波
         /// 2015年4月24日 17:31:17
+        /// SuperMan_Write 临时
         /// </summary>
         /// <param name="statisticalTime">指定日期</param>
         /// <returns></returns>
@@ -115,10 +116,9 @@ namespace Ets.Dao.Clienter
             IDbParameters dbParameters = DbHelper.CreateDbParameters();     
             dbParameters.Add("@statisticalTime", SqlDbType.NVarChar);
             dbParameters.SetValue("@statisticalTime", statisticalTime);
-            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, selSql, dbParameters);
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Write, selSql, dbParameters);
 
-            return ParseHelper.ToInt(executeScalar, 0) > 0;
-    
+            return ParseHelper.ToInt(executeScalar, 0) > 0;    
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace Ets.Dao.Clienter
             int currdaysAgo = daysAgo + 1;
             StringBuilder sb = new StringBuilder();
             sb.Append("select top " + daysAgo.ToString());
-            sb.Append(" * from dbo.ClienterCrossShopLog " );       
+            sb.Append(" * from dbo.ClienterCrossShopLog (nolock) ");       
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sb.ToString());
             return MapRows<BusinessesDistributionModel>(dt);
         }
