@@ -393,11 +393,11 @@ namespace Ets.Service.Provider.Order
         /// <param name="orderNo">订单号</param>
         /// <param name="orderStatus">订单状态</param>
         /// <returns></returns>
-        public int UpdateOrderStatus(string orderNo, int orderStatus, string remark)
+        public int UpdateOrderStatus(string orderNo, int orderStatus, string remark, int? status)
         {
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-               int result= OrderDao.CancelOrderStatus(orderNo, orderStatus, remark);
+                int result = OrderDao.CancelOrderStatus(orderNo, orderStatus, remark, status);
                if (result > 0 & AsyncOrderStatus(orderNo))
                {
                    tran.Complete();
