@@ -69,5 +69,16 @@ namespace ETS.Security
 			}
 			return s.ToUpper();
 		}
+
+
+        /// <summary>
+        /// ƒ¨»œmd5º”√‹
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static string DefaultEncrypt(string str)
+        {
+            return System.Web.Security.FormsAuthentication.HashPasswordForStoringInConfigFile(str, "MD5");
+        }
 	}
 }

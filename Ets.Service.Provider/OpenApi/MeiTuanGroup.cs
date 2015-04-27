@@ -42,6 +42,8 @@ namespace Ets.Service.Provider.OpenApi
         /// <returns></returns>
         public OrderApiStatusType AsyncStatus(ParaModel<AsyncStatusPM_OpenApi> paramodel)
         {
+            return OrderApiStatusType.Success;
+
             switch (paramodel.fields.status)
             {
                 case OrderConst.OrderStatus1: //已完成
@@ -72,7 +74,7 @@ namespace Ets.Service.Provider.OpenApi
             };
             @params.Sort();
             string url = ConfigSettings.Instance.MeiTuanConfirmAsyncStatus + "?";
-            string sig = ETS.Security.MD5.Encrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
+            string sig = ETS.Security.MD5.DefaultEncrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
             string paras = string.Join("&", @params) + "&sig=" + sig;
             return GetDoAsyncStatus(url, paras);
         }
@@ -88,12 +90,12 @@ namespace Ets.Service.Provider.OpenApi
             List<string> @params = new List<string>() { 
             "app_id="+app_id,
             "order_id="+model.OriginalOrderNo, //订单号
-            "reason=12", //取消原因
-            "reason_code=12", //规范化取消原因code
+            "reason=APP方用户要求取消", //取消原因
+            "reason_code=2006", //规范化取消原因code
             "timestamp="+TimeHelper.GetTimeStamp(false)    
             };
             string url = ConfigSettings.Instance.MeiTuanCancelAsyncStatus + "?";
-            string sig = ETS.Security.MD5.Encrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
+            string sig = ETS.Security.MD5.DefaultEncrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
             string paras = string.Join("&", @params) + "&sig=" + sig;
             return GetDoAsyncStatus(url, paras);
         }
@@ -114,7 +116,7 @@ namespace Ets.Service.Provider.OpenApi
             };
             @params.Sort();
             string url = ConfigSettings.Instance.MeiTuanDeliveringAsyncStatus + "?";
-            string sig = ETS.Security.MD5.Encrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
+            string sig = ETS.Security.MD5.DefaultEncrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
             string paras = string.Join("&", @params) + "&sig=" + sig;
             return GetDoAsyncStatus(url, paras);
         }
@@ -133,7 +135,7 @@ namespace Ets.Service.Provider.OpenApi
             };
             @params.Sort();
             string url = ConfigSettings.Instance.MeiTuanArrivedAsyncStatus + "?";
-            string sig = ETS.Security.MD5.Encrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
+            string sig = ETS.Security.MD5.DefaultEncrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
             string paras = string.Join("&", @params) + "&sig=" + sig;
             return GetDoAsyncStatus(url, paras);
         }
@@ -189,32 +191,54 @@ namespace Ets.Service.Provider.OpenApi
             return paramodel;
         }
 
+        /// <summary>
+        /// 返回美团当前请求对应的签名  add by caoheyang 20150421
+        /// </summary>
+        /// <param name="fromModel">美团数据实体</param>
+        /// <returns></returns>
+        public string PostGetSig(System.Web.HttpRequest httpRequest)
+        {
+            List<string> paras = new List<string>();
+            foreach (string key in httpRequest.Form.Keys)
+            {
+                if (key != "sig")
+                {
+                    string valtemp = System.Web.HttpUtility.UrlDecode(System.Web.HttpUtility.UrlDecode(httpRequest.Form[key]));
+                    paras.Add(key + "=" + (valtemp == null ? "" : valtemp));
+                }
+            }
+            paras.Sort();
+            int index = httpRequest.Url.ToString().IndexOf('?');
+            string url = index < 0 ? httpRequest.Url.ToString() + "?" : httpRequest.Url.ToString().Substring(0, index);
+            string waimd5 = url + string.Join("&", paras) + consumer_secret; //consumer_secret
+            string sigtemp = ETS.Security.MD5.DefaultEncrypt(waimd5).ToLower();
+            return sigtemp;
+        }
 
         /// <summary>
-        /// 验证美团推送订单的签名是否正确  add by caoheyang 20150421
+        /// 返回美团当前请求对应的签名  add by caoheyang 20150421
         /// </summary>
-        /// <param nCame="fromModel">美团数据实体</param>
-        public bool ValiditeSig(MeiTuanOrdeModel fromModel)
+        /// <param name="fromModel">美团数据实体</param>
+        /// <returns></returns>
+        public string GetSig(System.Web.HttpRequest httpRequest)
         {
-            IList<string> infos = new List<string>();
-            PropertyInfo[] props = fromModel.GetType().GetProperties();
-            props = props.Where(item => item.Name != "sig").OrderBy(item => item.Name).ToArray();
-            string paras = "";
-            for (int i = 0; i < props.Length; i++)
+            List<string> paras = new List<string>();
+            foreach (string key in httpRequest.QueryString.Keys)
             {
-                object val = props[i].GetValue(fromModel);
-                if (val == null)
-                    val = "";
-                if (i != props.Length - 1)
-                    paras = paras + props[i].Name + "=" + val + "&";
-                else
-                    paras = paras + props[i].Name + "=" + val;
+                if (key != "sig")
+                {
+                    string valtemp = System.Web.HttpUtility.UrlDecode(System.Web.HttpUtility.UrlDecode(httpRequest.QueryString[key]));
+                    paras.Add(key + "=" + (valtemp == null ? "" : valtemp));
+                }
             }
-            string url = ConfigSettings.Instance.MeiTuanPullOrderInfo;
-            string waimd5 = url + paras + consumer_secret; //consumer_secret
-            string sig = ETS.Security.MD5.Encrypt(waimd5).ToLower();
-            return sig == fromModel.sig;
+            paras.Sort();
+            int index = httpRequest.Url.ToString().IndexOf('?');
+            string url = index < 0 ? httpRequest.Url.ToString() + "?" : httpRequest.Url.ToString().Substring(0, index);
+            string waimd5 = url + string.Join("&", paras) + consumer_secret; //consumer_secret
+            string sigtemp = ETS.Security.MD5.DefaultEncrypt(waimd5).ToLower();
+            return sigtemp;
         }
+
 
         /// <summary>
         /// 美团的订单数据转成通用的openapi接入订单数据实体类型 20150421

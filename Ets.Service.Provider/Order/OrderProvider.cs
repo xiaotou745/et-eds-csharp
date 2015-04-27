@@ -395,9 +395,14 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public int UpdateOrderStatus(string orderNo, int orderStatus, string remark)
         {
-            //if (AsyncOrderStatus(orderNo))//更该订单状态时，同步第三方订单状态
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                return OrderDao.CancelOrderStatus(orderNo, orderStatus, remark);
+               int result= OrderDao.CancelOrderStatus(orderNo, orderStatus, remark);
+               if (result > 0 & AsyncOrderStatus(orderNo))
+               {
+                   tran.Complete();
+                   return 1;
+               }
             }
             return 0;
         }
@@ -430,7 +435,7 @@ namespace Ets.Service.Provider.Order
                 CityName = paramodel.address.city,
                 AreaName = paramodel.address.area
             });
-            if (orderCodeInfo == ETS.Const.SystemConst.CityOpenInfo||string.IsNullOrWhiteSpace(orderCodeInfo))
+            if (orderCodeInfo == ETS.Const.SystemConst.CityOpenInfo || string.IsNullOrWhiteSpace(orderCodeInfo))
                 return ResultModel<object>.Conclude(OrderApiStatusType.ParaError, "用户省市区信息错误");
             else
             {
@@ -567,10 +572,10 @@ namespace Ets.Service.Provider.Order
                     orderinfo = new { order_status = order.Status, clientername = order.ClienterName, clienterphoneno = order.ClienterPhoneNo }
                 });
         }
-          
-     
 
-        
+
+
+
         /// <summary>
         ///  supermanapi通过openapi同步第三方订单状态  add by caoheyang 20150327 
         /// </summary>
@@ -579,9 +584,10 @@ namespace Ets.Service.Provider.Order
         public bool AsyncOrderStatus(string orderNo)
         {
             OrderListModel orderlistModel = OrderDao.GetOrderByNo(orderNo);
+            if (orderlistModel == null) return false;
             if (orderlistModel.OrderFrom > 0)   //一个商户对应多个集团时需要更改 
             {
-                ParaModel<AsyncStatusPM_OpenApi> paramodel = new ParaModel<AsyncStatusPM_OpenApi>() { fields = new AsyncStatusPM_OpenApi() { orderfrom =orderlistModel.OrderFrom} };
+                ParaModel<AsyncStatusPM_OpenApi> paramodel = new ParaModel<AsyncStatusPM_OpenApi>() { fields = new AsyncStatusPM_OpenApi() { orderfrom = orderlistModel.OrderFrom } };
                 if (paramodel.GetSign() == null)//为当前集团参数实体生成sign签名信息
                     return false;
                 paramodel.fields.status = ParseHelper.ToInt(orderlistModel.Status, -1);
@@ -590,16 +596,14 @@ namespace Ets.Service.Provider.Order
                 paramodel.fields.BusinessName = orderlistModel.BusinessName;
                 paramodel.fields.OriginalOrderNo = orderlistModel.OriginalOrderNo;
                 paramodel.fields.order_no = orderlistModel.OrderNo;
+                paramodel.fields.orderfrom = orderlistModel.OrderFrom;
+                paramodel.fields.OtherCancelReason = orderlistModel.OtherCancelReason;
                 string url = ConfigurationManager.AppSettings["AsyncStatus"];
                 string json = new HttpClient().PostAsJsonAsync(url, paramodel).Result.Content.ReadAsStringAsync().Result;
                 JObject jobject = JObject.Parse(json);
-                int x = jobject.Value<int>("Status"); //接口调用状态 区分大小写
-                if (x == 0)
-                {
-                    return true;
-                }
+                return jobject.Value<int>("Status") == 0; //接口调用状态 区分大小写  
             }
-            return false;
+            return true;
         }
 
         #endregion
@@ -738,12 +742,25 @@ namespace Ets.Service.Provider.Order
         /// <param name="paramodel">参数实体</param>
         /// <returns>订单详情</returns>
         public ListOrderDetailModel GetOrderDetail(string order_no)
-        { 
-            var order =OrderDao.GetOrderByNo(order_no);
-            var list = OrderDao.GetOrderDetail(order_no);
-            ListOrderDetailModel mo=new ListOrderDetailModel();
-            mo.order = order;
-            mo.orderDetails = list;
+        {
+            ListOrderDetailModel mo = new ListOrderDetailModel();
+            var order = OrderDao.GetOrderByNo(order_no);
+            if (order != null) 
+            {
+                if (order.OrderFrom == 0)
+                    order.OrderFromName = "B端";
+                else if (order.OrderFrom == 1)
+                    order.OrderFromName = "易淘食";
+                else if (order.OrderFrom == 2)
+                    order.OrderFromName = "万达";
+                else if (order.OrderFrom == 3)
+                    order.OrderFromName = "全时";
+                else if (order.OrderFrom == 4)
+                    order.OrderFromName = "美团";
+                var list = OrderDao.GetOrderDetail(order_no);
+                mo.order = order;
+                mo.orderDetails = list;
+            }
             return mo;
         }
 
@@ -861,26 +878,25 @@ namespace Ets.Service.Provider.Order
             var orderModel = OrderDao.GetOrderByNo(orderOptionModel.OrderNo);
             if (orderModel != null)
             {
+                //如果是已取消
+                if (orderModel.Status == 3)
+                {
+                    return true;
+                }
                 //如果订单状态是待接单|已接单|已完成+未上传完小票。则直接取消订单
-                if (orderModel.Status == 0 || orderModel.Status == 2 || (orderModel.Status == 1 && orderModel.OrderCount > orderModel.NeedUploadCount))
+                using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                 {
                     result = OrderDao.CancelOrder(orderModel, orderOptionModel);
-                }
-                else if (orderModel.Status == 1 && orderModel.OrderCount <= orderModel.NeedUploadCount)
-                {
-                    //需要上传的小票大于等于总数量+订单已完成则要扣钱
-                    //(因为订单小票有可能不传。所以用的是订单数量和需要上传小票数量对比判断)
-                    using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+                    if (result && orderModel.Status == 1 && orderModel.OrderCount <= orderModel.NeedUploadCount)
                     {
-                        if (OrderDao.CancelOrder(orderModel, orderOptionModel))
-                        {
-
-                            if (OrderDao.UpdateAccountBalanceByClienterId(orderModel, orderOptionModel))
-                            {
-                                result = true;
-                                tran.Complete();
-                            }
-                        }
+                        //需要上传的小票大于等于总数量+订单已完成则要扣钱
+                        //(因为订单小票有可能不传。所以用的是订单数量和需要上传小票数量对比判断)
+                        result = OrderDao.UpdateAccountBalanceByClienterId(orderModel, orderOptionModel);
+                    }
+                    if (result && AsyncOrderStatus(orderModel.OrderNo))
+                    {
+                        result = true;
+                        tran.Complete();
                     }
                 }
             }
@@ -912,7 +928,8 @@ namespace Ets.Service.Provider.Order
             int currenStatus = OrderDao.GetStatus(paramodel.order_no, paramodel.orderfrom);  //目前订单状态
             if (currenStatus == -1) //订单不存在
                 return ResultModel<object>.Conclude(OrderApiStatusType.OrderNotExist);
-            else if (OrderConst.OrderStatus30 != currenStatus)  //订单状态非30，,不允许取消订单
+            else if (OrderConst.OrderStatus30 != currenStatus
+                && OrderConst.OrderStatus0 != currenStatus)  //订单状态非30，,不允许取消订单
                 return ResultModel<object>.Conclude(OrderApiStatusType.OrderIsJoin);
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
@@ -925,6 +942,15 @@ namespace Ets.Service.Provider.Order
         public IList<OrderRecordsLog> GetOrderRecords(string originalOrderNo, int group)
         {
            return OrderDao.GetOrderRecords(originalOrderNo, group);
+        }
+        /// <summary>
+        /// 获取订单拒绝原因
+        /// 平扬-20150424
+        /// </summary>
+        /// <returns></returns>
+        public string OtherOrderCancelReasons()
+        {
+            return ETS.Config.OrderCancelReasons;
         }
     }
 }

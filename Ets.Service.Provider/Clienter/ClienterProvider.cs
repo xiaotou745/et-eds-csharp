@@ -295,15 +295,16 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="orderNo"></param>
         /// <returns></returns>
         public bool RushOrder(int userId, string orderNo)
-        {            
-            try
+        {
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                return clienterDao.RushOrder(userId, orderNo);
-            }
-            catch (Exception ex)
-            {
-                LogHelper.LogWriterFromFilter(ex);
-            }
+                clienterDao.RushOrder(userId, orderNo);
+                if (new OrderProvider().AsyncOrderStatus(orderNo))
+                {
+                    tran.Complete();
+                    return true;
+                }
+            }  
             return false;
         }
 
@@ -537,7 +538,11 @@ namespace Ets.Service.Provider.Clienter
                     //};
                     //Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords = new WtihdrawRecordsProvider();
                     //iRecords.AddRecords(model); 
-                    tran.Complete();
+                    if (new OrderProvider().AsyncOrderStatus(orderNo))
+                    {
+                        result = "1";
+                        tran.Complete();
+                    }
                     Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", myOrderInfo.businessId.ToString(), string.Empty);
                     result = "1";
                 }
