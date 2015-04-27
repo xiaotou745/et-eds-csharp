@@ -425,20 +425,22 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                 RecevicePhoneNo,ReceiveProvinceCode,ReceiveCityCode,ReceiveAreaCode,ReceviceAddress,
                 ReceviceLongitude,ReceviceLatitude,businessId,PickUpAddress,Payment,OrderCommission,
                 WebsiteSubsidy,CommissionRate,CommissionFormulaMode,ReceiveProvince,ReceviceCity,ReceiveArea,
-                PickupCode,BusinessCommission,SettleMoney,Adjustment,OrderFrom)
-                OUTPUT Inserted.OrderNo
+                PickupCode,BusinessCommission,SettleMoney,Adjustment,OrderFrom,Status)
+                output Inserted.Id,GETDATE(),@OptName,'新增订单',Inserted.businessId,Inserted.[Status],@Platform
+                into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
                 Values(@OrderNo,
                 @OriginalOrderNo,@PubDate,@SongCanDate,@IsPay,@Amount,
                 @Remark,@Weight,@DistribSubsidy,@OrderCount,@ReceviceName,
                 @RecevicePhoneNo,@ReceiveProvinceCode,@ReceiveCityCode,@ReceiveAreaCode,@ReceviceAddress,
                 @ReceviceLongitude,@ReceviceLatitude,@BusinessId,@PickUpAddress,@Payment,@OrderCommission,
                 @WebsiteSubsidy,@CommissionRate,@CommissionFormulaMode,@ReceiveProvince,@ReceviceCity,@ReceiveArea,
-                @PickupCode,@BusinessCommission,@SettleMoney,@Adjustment,@OrderFrom)";
+                @PickupCode,@BusinessCommission,@SettleMoney,@Adjustment,@OrderFrom,@Status)";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             ///基本参数信息
-
             dbParameters.Add("@OrderNo", SqlDbType.NVarChar);
-            dbParameters.SetValue("@OrderNo", Helper.generateOrderCode(bussinessId)); //根据商户id生成订单号(15位));
+
+            string orderNo = Helper.generateOrderCode(bussinessId);
+            dbParameters.SetValue("@OrderNo", orderNo); //根据商户id生成订单号(15位));
 
             dbParameters.AddWithValue("@OriginalOrderNo", paramodel.order_id);    //其它平台的来源订单号
             dbParameters.AddWithValue("@PubDate", paramodel.create_time);    //订单下单时间
@@ -474,12 +476,21 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             dbParameters.AddWithValue("@SettleMoney", paramodel.settlemoney);//结算比例
             dbParameters.AddWithValue("@Adjustment", paramodel.adjustment);//结算比例
             dbParameters.AddWithValue("@OrderFrom", paramodel.orderfrom);//订单来源
+            dbParameters.AddWithValue("@Status", paramodel.status);//订单状态
+            //订单操作记录表
+            dbParameters.AddWithValue("@OptName", (SuperPlatform.第三方对接平台.ToString()));//操作人
+            dbParameters.AddWithValue("@Platform", (int)SuperPlatform.第三方对接平台);//操作平台
             LogHelper.LogWriter(System.DateTime.Now.ToString() + "订单插入sql开始");
-            string orderNo = ParseHelper.ToString(DbHelper.ExecuteScalar(SuperMan_Read, insertOrdersql, dbParameters));
+            int count=ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrdersql, dbParameters));
             LogHelper.LogWriter(System.DateTime.Now.ToString() + "订单插入sql结束");
-            //添加成功时，将当前订单插入到缓存中，设置过期时间30天
-            redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
-               paramodel.order_id.ToString()), orderNo, DateTime.Now.AddDays(30));  //查询缓存，看当前订单是否存在,“true”代表存在，key的形式为集团ID_第三方平台订单号
+            if (count > 0)
+            {
+                //添加成功时，将当前订单插入到缓存中，设置过期时间30天
+                redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
+                   paramodel.order_id.ToString()), orderNo, DateTime.Now.AddDays(30));  //查询缓存，看当前订单是否存在,“true”代表存在，key的形式为集团ID_第三方平台订单号
+            }
+            else
+                return null;
             #endregion
 
             #region 操作插入OrderDetail表
@@ -665,11 +676,11 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             }
             if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))
             {
-                sbSqlWhere.AppendFormat(" AND o.PubDate>='{0}' ", criteria.orderPubStart);
+                sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),o.PubDate,120)>=CONVERT(CHAR(10),'{0}',120) ", criteria.orderPubStart.Trim());
             }
             if (!string.IsNullOrWhiteSpace(criteria.orderPubEnd))
             {
-                sbSqlWhere.AppendFormat(" AND o.PubDate<='{0}' ", criteria.orderPubEnd);
+                sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),o.PubDate,120)<=CONVERT(CHAR(10),'{0}',120) ", criteria.orderPubEnd.Trim());
             }
             if (criteria.GroupId != null && criteria.GroupId != 0)
             {
@@ -725,7 +736,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             string sql = @"SELECT top 1 o.[Id]
                                         ,o.[OrderNo]
                                         ,o.[PickUpAddress]
-                                        ,o.[PubDate]
+                                        ,CONVERT(VARCHAR(20),o.PubDate,120) as PubDate
                                         ,o.[ReceviceName]
                                         ,o.[RecevicePhoneNo]
                                         ,o.[ReceviceAddress]
@@ -773,6 +784,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                                         ,oo.NeedUploadCount
                                         ,oo.HadUploadCount
                                         ,oo.ReceiptPic
+ 										,o.OtherCancelReason
                                         ,o.OrderFrom
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
@@ -781,11 +793,11 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                                     LEFT JOIN [group] g WITH ( NOLOCK ) ON g.Id = b.GroupId
                                     WHERE 1=1 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@OrderNo", SqlDbType.NVarChar);
-            parm.SetValue("@OrderNo", orderNo);
             if (!string.IsNullOrWhiteSpace(orderNo))
             {
                 sql += " AND o.OrderNo=@OrderNo";
+                parm.Add("@OrderNo", SqlDbType.NVarChar);
+                parm.SetValue("@OrderNo", orderNo);
             }
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
             var list = ConvertDataTableList<OrderListModel>(dt);
@@ -1436,7 +1448,9 @@ where   o.Id = @orderId;
                             getdate(),
                             @AdminId,
                             0,
-                            @Remark
+                            @Remark,
+                            @OrderId,
+                            1
                       INTO Records
                           ( Platform, 
                             UserId, 
@@ -1444,8 +1458,11 @@ where   o.Id = @orderId;
                             Balance, 
                             CreateTime, 
                             AdminId, 
-                            IsDel, 
-                            Remark)
+                            IsDel,
+                            Remark,
+                            OrderId,
+                            RecordType
+                            )
                     WHERE Id=@ClienterId;";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OrderCommission", model.OrderCommission);
@@ -1453,6 +1470,7 @@ where   o.Id = @orderId;
             parm.AddWithValue("@AdminId", orderOptionModel.OptUserId);
             parm.AddWithValue("@Remark", remark);
             parm.AddWithValue("@ClienterId", model.clienterId);
+            parm.AddWithValue("@OrderId", model.Id);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
         /// <summary>
@@ -1469,6 +1487,7 @@ where   o.Id = @orderId;
                                              SET    [Status] = @Status
                                             OUTPUT
                                               Inserted.Id,
+                                              @Price,
                                               GETDATE(),
                                               @OptId,
                                               @OptName,
@@ -1477,6 +1496,7 @@ where   o.Id = @orderId;
                                               @Remark
                                             INTO dbo.OrderSubsidiesLog
                                               (OrderId,
+                                              Price,
                                               InsertTime,
                                               OptId,
                                               OptName,
@@ -1486,6 +1506,7 @@ where   o.Id = @orderId;
                                              WHERE  OrderNo = @OrderNo");
 
             IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Price", model.OrderCommission);
             parm.AddWithValue("@OptId", orderOptionModel.OptUserId);
             parm.AddWithValue("@OptName", orderOptionModel.OptUserName);
             parm.AddWithValue("@Status", 3);
@@ -1524,57 +1545,21 @@ where   o.Id = @orderId;
         /// </summary>
         /// <param name="orderNo">订单号码</param>
         /// <returns>订单</returns>
-        public OrderListModel GetOrderDetail(string order_no)
+        public IList<OrderDetailModel> GetOrderDetail(string order_no)
         {
-            string sql = @"SELECT top 1 o.[Id]
-                                        ,o.[OrderNo]
-                                        ,o.[PickUpAddress]
-                                        ,o.[PubDate]
-                                        ,o.[ReceviceName]
-                                        ,o.[RecevicePhoneNo]
-                                        ,o.[ReceviceAddress]
-                                        ,o.[ActualDoneDate]
-                                        ,o.[IsPay]
-                                        ,o.[Amount]
-                                        ,o.[OrderCommission]
-                                        ,o.[DistribSubsidy]
-                                        ,o.[WebsiteSubsidy]
-                                        ,o.[Remark]
-                                        ,o.[Status]
-                                        ,o.[clienterId]
-                                        ,o.[businessId]
-                                        ,o.[ReceviceCity]
-                                        ,o.[ReceviceLongitude]
-                                        ,o.[ReceviceLatitude]
-                                        ,o.[OrderFrom]
-                                        ,o.[OriginalOrderId]
-                                        ,o.[OriginalOrderNo]
-                                        ,o.[Quantity]
-                                        ,o.[Weight]
-                                        ,o.[ReceiveProvince]
-                                        ,o.[ReceiveArea]
-                                        ,o.[ReceiveProvinceCode]
-                                        ,o.[ReceiveCityCode]
-                                        ,o.[ReceiveAreaCode]
-                                        ,o.[OrderType]
-                                        ,o.[KM]
-                                        ,o.[GuoJuQty]
-                                        ,o.[LuJuQty]
-                                        ,o.[SongCanDate]
-                                        ,o.[OrderCount]
-                                        ,o.[CommissionRate] 
-                                        ,b.[City] BusinessCity
-                                        ,b.Name BusinessName
-                                    FROM [order] o WITH ( NOLOCK )
-                                    LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
-                                    WHERE 1=1 and o.OrderNo=@OriginalOrderNo";
+            string sql = @"SELECT  o.[OrderNo]
+                                        ,o.[ProductName]
+                                        ,o.[UnitPrice]
+                                        ,o.[Quantity] 
+                                    FROM [OrderDetail] o WITH ( NOLOCK )
+                                    WHERE o.OrderNo=@OriginalOrderNo";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OriginalOrderNo", SqlDbType.NVarChar);
             parm.SetValue("@OriginalOrderNo", order_no);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             if (dt == null || dt.Rows.Count <= 0)
                 return null;
-            return MapRows<OrderListModel>(dt)[0];
+            return MapRows<OrderDetailModel>(dt);
         }
     }
 }

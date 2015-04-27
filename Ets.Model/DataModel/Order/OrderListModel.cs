@@ -23,7 +23,7 @@ namespace Ets.Model.DataModel.Order
         /// <summary>
         /// 发布时间
         /// </summary>
-        public DateTime? PubDate { get; set; }
+        public string PubDate { get; set; }
         /// <summary>
         /// 收货人
         /// </summary>
@@ -92,6 +92,10 @@ namespace Ets.Model.DataModel.Order
         /// 订单来源
         /// </summary>
         public int OrderFrom { get; set; }
+        /// <summary>
+        /// 订单来源
+        /// </summary>
+        public string OrderFromName { get; set; }
         /// <summary>
         /// 原始订单Id
         /// </summary>
@@ -228,5 +232,9 @@ namespace Ets.Model.DataModel.Order
         /// 小票图片路径用竖线分隔（|）
         /// </summary>
         public string ReceiptPic { get; set; }
+        /// <summary>
+        /// 取消原应
+        /// </summary>
+        public string OtherCancelReason { get; set; }
     }
 }

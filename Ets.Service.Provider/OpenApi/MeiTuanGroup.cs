@@ -42,6 +42,8 @@ namespace Ets.Service.Provider.OpenApi
         /// <returns></returns>
         public OrderApiStatusType AsyncStatus(ParaModel<AsyncStatusPM_OpenApi> paramodel)
         {
+            return OrderApiStatusType.Success;
+
             switch (paramodel.fields.status)
             {
                 case OrderConst.OrderStatus1: //已完成
@@ -71,8 +73,8 @@ namespace Ets.Service.Provider.OpenApi
             "app_id="+app_id
             };
             @params.Sort();
-            string url = ConfigSettings.Instance.MeiTuanConfirmAsyncStatus;
-            string sig = ETS.Security.MD5.Encrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
+            string url = ConfigSettings.Instance.MeiTuanConfirmAsyncStatus + "?";
+            string sig = ETS.Security.MD5.DefaultEncrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
             string paras = string.Join("&", @params) + "&sig=" + sig;
             return GetDoAsyncStatus(url, paras);
         }
@@ -84,20 +86,18 @@ namespace Ets.Service.Provider.OpenApi
         /// <returns></returns>
         protected OrderApiStatusType CancelAsyncStatus(AsyncStatusPM_OpenApi model)
         {
-            //参数信息
+            //参数信息  已经排序好
             List<string> @params = new List<string>() { 
-            "timestamp="+TimeHelper.GetTimeStamp(false) ,
+            "app_id="+app_id,
             "order_id="+model.OriginalOrderNo, //订单号
-            "reason=12", //取消原因
-            "reason_code=12", //规范化取消原因code
-            "app_id="+app_id
+            "reason=APP方用户要求取消", //取消原因
+            "reason_code=2006", //规范化取消原因code
+            "timestamp="+TimeHelper.GetTimeStamp(false)    
             };
-            @params.Sort();
-            string url = ConfigSettings.Instance.MeiTuanCancelAsyncStatus;
-            string sig = ETS.Security.MD5.Encrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
+            string url = ConfigSettings.Instance.MeiTuanCancelAsyncStatus + "?";
+            string sig = ETS.Security.MD5.DefaultEncrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
             string paras = string.Join("&", @params) + "&sig=" + sig;
-            string postdata = "";
-            return PostDoAsyncStatus(url, postdata);
+            return GetDoAsyncStatus(url, paras);
         }
         /// <summary>
         ///  订单配送中美团回调接口地址  add by caoheyang 20150420
@@ -115,10 +115,10 @@ namespace Ets.Service.Provider.OpenApi
             "app_id="+app_id
             };
             @params.Sort();
-            string url = ConfigSettings.Instance.MeiTuanDeliveringAsyncStatus;
-            string sig = ETS.Security.MD5.Encrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
+            string url = ConfigSettings.Instance.MeiTuanDeliveringAsyncStatus + "?";
+            string sig = ETS.Security.MD5.DefaultEncrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
             string paras = string.Join("&", @params) + "&sig=" + sig;
-            return PostDoAsyncStatus(url, paras);
+            return GetDoAsyncStatus(url, paras);
         }
         /// <summary>
         /// 订单已送达美团（订单完成）回调接口地址  add by caoheyang 20150420
@@ -134,10 +134,10 @@ namespace Ets.Service.Provider.OpenApi
             "app_id="+app_id
             };
             @params.Sort();
-            string url = ConfigSettings.Instance.MeiTuanArrivedAsyncStatus;
-            string sig = ETS.Security.MD5.Encrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
+            string url = ConfigSettings.Instance.MeiTuanArrivedAsyncStatus + "?";
+            string sig = ETS.Security.MD5.DefaultEncrypt(url + string.Join("&", @params) + consumer_secret).ToLower();
             string paras = string.Join("&", @params) + "&sig=" + sig;
-            return PostDoAsyncStatus(url, paras);
+            return GetDoAsyncStatus(url, paras);
         }
 
         /// <summary>
@@ -191,38 +191,54 @@ namespace Ets.Service.Provider.OpenApi
             return paramodel;
         }
 
+        /// <summary>
+        /// 返回美团当前请求对应的签名  add by caoheyang 20150421
+        /// </summary>
+        /// <param name="fromModel">美团数据实体</param>
+        /// <returns></returns>
+        public string PostGetSig(System.Web.HttpRequest httpRequest)
+        {
+            List<string> paras = new List<string>();
+            foreach (string key in httpRequest.Form.Keys)
+            {
+                if (key != "sig")
+                {
+                    string valtemp = System.Web.HttpUtility.UrlDecode(System.Web.HttpUtility.UrlDecode(httpRequest.Form[key]));
+                    paras.Add(key + "=" + (valtemp == null ? "" : valtemp));
+                }
+            }
+            paras.Sort();
+            int index = httpRequest.Url.ToString().IndexOf('?');
+            string url = index < 0 ? httpRequest.Url.ToString() + "?" : httpRequest.Url.ToString().Substring(0, index);
+            string waimd5 = url + string.Join("&", paras) + consumer_secret; //consumer_secret
+            string sigtemp = ETS.Security.MD5.DefaultEncrypt(waimd5).ToLower();
+            return sigtemp;
+        }
 
         /// <summary>
-        /// 验证美团推送订单的签名是否正确  add by caoheyang 20150421
+        /// 返回美团当前请求对应的签名  add by caoheyang 20150421
         /// </summary>
-        /// <param nCame="fromModel">美团数据实体</param>
-        public bool ValiditeSig(MeiTuanOrdeModel fromModel)
+        /// <param name="fromModel">美团数据实体</param>
+        /// <returns></returns>
+        public string GetSig(System.Web.HttpRequest httpRequest)
         {
-            LogHelper.LogWriter("fromModel11111111111111111111111111111", fromModel);
-            IList<string> infos = new List<string>();
-            PropertyInfo[] props = fromModel.GetType().GetProperties();
-            props = props.Where(item => item.Name != "sig").OrderBy(item => item.Name).ToArray();
-            string paras = "";
-            for (int i = 0; i < props.Length; i++)
+            List<string> paras = new List<string>();
+            foreach (string key in httpRequest.QueryString.Keys)
             {
-                if (i != props.Length - 1)
+                if (key != "sig")
                 {
-                    if ((props[i].Name == "detail" || props[i].Name == "extras") && props[i].GetValue(fromModel) != null)
-                        paras = paras + props[i].Name + "=" + JsonHelper.JsonConvertToString(props[i].GetValue(fromModel)) + "&";
-                    else
-                        paras = paras + props[i].Name + "=" + props[i].GetValue(fromModel) + "&";
+                    string valtemp = System.Web.HttpUtility.UrlDecode(System.Web.HttpUtility.UrlDecode(httpRequest.QueryString[key]));
+                    paras.Add(key + "=" + (valtemp == null ? "" : valtemp));
                 }
-                else
-                    paras = paras + props[i].Name + "=" + props[i].GetValue(fromModel);
             }
-            string url = ConfigSettings.Instance.MeiTuanPullOrderInfo;
-            string waimd5 = url + paras + consumer_secret; //consumer_secret
-            string sig = ETS.Security.MD5.Encrypt(waimd5).ToLower();
-            LogHelper.LogWriter("waimd5", waimd5);
-            LogHelper.LogWriter("sig", sig);
-
-            return sig == fromModel.sig;
+            paras.Sort();
+            int index = httpRequest.Url.ToString().IndexOf('?');
+            string url = index < 0 ? httpRequest.Url.ToString() + "?" : httpRequest.Url.ToString().Substring(0, index);
+            string waimd5 = url + string.Join("&", paras) + consumer_secret; //consumer_secret
+            string sigtemp = ETS.Security.MD5.DefaultEncrypt(waimd5).ToLower();
+            return sigtemp;
         }
+
 
         /// <summary>
         /// 美团的订单数据转成通用的openapi接入订单数据实体类型 20150421
@@ -256,15 +272,16 @@ namespace Ets.Service.Provider.OpenApi
             model.address = address; //订单ID
 
             //订单明细不为空时做处理 
-            if (fromModel.detail != null && fromModel.detail.Length > 0)
+            if (!string.IsNullOrWhiteSpace(fromModel.detail) && fromModel.detail != "")
             {
-                OrderDetail[] details = new OrderDetail[fromModel.detail.Length];
-                for (int i = 0; i < fromModel.detail.Length; i++)
+                MeiTuanOrdeDetailModel[] meituandetails = Letao.Util.JsonHelper.JsonConvertToObject<MeiTuanOrdeDetailModel[]>(fromModel.detail);
+                OrderDetail[] details = new OrderDetail[meituandetails.Length];
+                for (int i = 0; i < meituandetails.Length; i++)
                 {
                     OrderDetail tempdetail = new OrderDetail();
-                    tempdetail.product_name = fromModel.detail[i].food_name;//菜品名称
-                    tempdetail.quantity = fromModel.detail[i].quantity;//菜品数量
-                    tempdetail.unit_price = fromModel.detail[i].price;//菜品单价
+                    tempdetail.product_name = meituandetails[i].food_name;//菜品名称
+                    tempdetail.quantity = meituandetails[i].quantity;//菜品数量
+                    tempdetail.unit_price = meituandetails[i].price;//菜品单价
                     tempdetail.detail_id = 0;//美团不传递明细id，明细id为0
                     details[i] = tempdetail;
                 }
@@ -273,8 +290,6 @@ namespace Ets.Service.Provider.OpenApi
 
             model.orderfrom = OrderConst.OrderFrom4;// 订单来源  美团订单的订单来源是 4
             model.receive_time = TimeHelper.TimeStampToDateTime(fromModel.ctime);//美团不传递，E代送必填 要求送餐时间
-            LogHelper.LogWriter("CreatePM_OpenApi", model);
-
             //fromModel.extras 说明，暂时不用 
             return model;
         }
@@ -283,19 +298,18 @@ namespace Ets.Service.Provider.OpenApi
         /// 新增美团订单 add by caoheyang 20150421 
         /// </summary>
         /// <param name="fromModel">paraModel</param>
-        public int AddOrder(CreatePM_OpenApi paramodel) {
-           var redis = new ETS.NoSql.RedisCache.RedisCache();
-           int businessId = ParseHelper.ToInt(redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.orderfrom,
-              paramodel.store_info.store_id.ToString()))); //缓存中取E代送商户id
-           LogHelper.LogWriter("businessId", businessId);
-
-
-          if (businessId == 0)
-              return 0;   //商户不存在发布订单
-          else {
-              paramodel.businessId = businessId;
-              return string.IsNullOrWhiteSpace(new Ets.Dao.Order.OrderDao().CreateToSql(paramodel)) ? 0 : 1;
-          }
+        public int AddOrder(CreatePM_OpenApi paramodel)
+        {
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            int businessId = ParseHelper.ToInt(redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.orderfrom,
+               paramodel.store_info.store_id.ToString()))); //缓存中取E代送商户id
+            if (businessId == 0)
+                return 0;   //商户不存在发布订单
+            else
+            {
+                paramodel.businessId = businessId;
+                return string.IsNullOrWhiteSpace(new Ets.Dao.Order.OrderDao().CreateToSql(paramodel)) ? 0 : 1;
+            }
         }
     }
 
@@ -310,7 +324,7 @@ namespace Ets.Service.Provider.OpenApi
         /// <summary>
         /// app_id
         /// </summary>
-        public string app_id { get; set; }
+        public int app_id { get; set; }
 
         /// <summary>
         /// 时间戳
@@ -401,11 +415,11 @@ namespace Ets.Service.Provider.OpenApi
         /// <summary>
         /// 订单详细类目列表
         /// </summary>
-        public MeiTuanOrdeDetailModel[] detail { get; set; }
+        public string detail { get; set; }
         /// <summary>
         /// 订单活动类目列表
         /// </summary>
-        public MeiTuanOrderExtrasModel[] extras { get; set; }
+        public string extras { get; set; }
 
         /// <summary>
         /// 是否为美团商家APP方配送
@@ -433,19 +447,8 @@ namespace Ets.Service.Provider.OpenApi
         /// <summary>
         /// APP方菜品id
         /// </summary>
-        public int app_food_code { get; set; }
-        /// <summary>
-        /// APP方菜品名称
-        /// </summary>
-        public string food_name { get; set; }
-        /// <summary>
-        /// 菜品数量
-        /// </summary>
-        public int quantity { get; set; }
-        /// <summary>
-        /// 菜品单价
-        /// </summary>
-        public decimal price { get; set; }
+        public string app_food_code { get; set; }
+
         /// <summary>
         /// 打包餐盒数量
         /// </summary>
@@ -453,12 +456,33 @@ namespace Ets.Service.Provider.OpenApi
         /// <summary>
         /// 打包餐盒单价
         /// </summary>
+        public int box_price { get; set; }
 
-        public decimal box_price { get; set; }
         /// <summary>
         /// 菜品折扣，只是美团商家，APP方配送的门店才会设置，默认为1。折扣值不参与总价计算。
         /// </summary>
-        public decimal food_discount { get; set; }
+        public int food_discount { get; set; }
+
+        /// <summary>
+        /// APP方菜品名称
+        /// </summary>
+        public string food_name { get; set; }
+
+        /// <summary>
+        /// 菜品单价
+        /// </summary>
+        public decimal price { get; set; }
+
+        /// <summary>
+        /// 菜品数量
+        /// </summary>
+        public int quantity { get; set; }
+
+        /// <summary>
+        /// 单位
+        /// </summary>
+        public string unit { get; set; }
+
 
     }
 

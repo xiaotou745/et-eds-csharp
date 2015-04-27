@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 
+
 namespace ETS.Util
 {
 
@@ -57,6 +58,27 @@ namespace ETS.Util
             responseStream.Close();
 
             return retString;
+        }
+
+           /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fromModel">paraModel</param>
+        public static T BindeModel<T>(System.Web.HttpRequest httpRequest)
+        {
+            ////实体类赋值
+            T paramodel =Activator.CreateInstance<T>();
+            System.Reflection.PropertyInfo[] props = paramodel.GetType().GetProperties();
+            for (int i = 0; i < props.Length; i++)
+            {
+                if (httpRequest.Form[props[i].Name] != null)
+                {
+                    object valtemp = System.Web.HttpUtility.UrlDecode(httpRequest.Form[props[i].Name]);
+                    valtemp = ParseHelper.ToType(valtemp, props[i].PropertyType);
+                    props[i].SetValue(paramodel, valtemp);
+                }
+            }
+            return paramodel;
         }
     }
 }

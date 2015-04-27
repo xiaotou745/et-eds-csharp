@@ -374,19 +374,9 @@ namespace SuperManWebApi.Controllers
 
             lock (lockHelper)
             {
-                bool bResult = false;
-                if (myorder.OrderFrom == 4)//美团等第三方订单
-                {
-                    if (new OrderProvider().AsyncOrderStatus(orderNo))//更新美团状态
-                    {
-                        bResult = iClienterProvider.RushOrder(userId, orderNo);
-                    }
-                }
-                else
-                {
-                    new OrderProvider().AsyncOrderStatus(orderNo);
-                    bResult = iClienterProvider.RushOrder(userId, orderNo);
-                } 
+                bool bResult = false;  
+                    
+                bResult = iClienterProvider.RushOrder(userId, orderNo);
                
                 if (bResult)
                 {
@@ -426,21 +416,7 @@ namespace SuperManWebApi.Controllers
             }
 
             var myorder = new Ets.Dao.Order.OrderDao().GetOrderByNo(orderNo);
-            string finishResult = "";
-
-            if (myorder.OrderFrom ==4)//美团等第三方订单
-            {
-                if (new OrderProvider().AsyncOrderStatus(orderNo))//更新美团状态,美团成功才能更改我们库数据
-                {
-                    finishResult = iClienterProvider.FinishOrder(userId, orderNo, pickupCode);
-                }
-            }
-            else
-            {
-                new OrderProvider().AsyncOrderStatus(orderNo);
-                finishResult = iClienterProvider.FinishOrder(userId, orderNo, pickupCode); 
-            }  
- 
+            string finishResult = iClienterProvider.FinishOrder(userId, orderNo, pickupCode);  
             if (finishResult == "1")  //完成
             {
                 var clienter = iClienterProvider.GetUserInfoByUserId(userId);
@@ -850,6 +826,21 @@ namespace SuperManWebApi.Controllers
             }
         }
 
+        /// <summary>
+        /// 获取订单详细
+        /// </summary>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.GetOrdersStatus))]
+        [HttpGet]
+        public Ets.Model.Common.ResultModel<ListOrderDetailModel> GetOrderDetail(string orderno)
+        {
+            var model = new OrderProvider().GetOrderDetail(orderno);
+            if (model != null)
+            {
+                return Ets.Model.Common.ResultModel<ListOrderDetailModel>.Conclude(ETS.Enums.GetOrdersStatus.Success, model);
+            }
+            return Ets.Model.Common.ResultModel<ListOrderDetailModel>.Conclude(ETS.Enums.GetOrdersStatus.FailedGetOrders, model);
+        }
 
     }
 }

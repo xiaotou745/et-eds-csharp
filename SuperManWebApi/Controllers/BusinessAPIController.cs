@@ -1,5 +1,7 @@
-﻿using ETS.Enums;
+﻿using ETS;
+using ETS.Enums;
 using Ets.Model.DataModel.Order;
+using Ets.Model.ParameterModel.Order;
 using SuperManCore;
 using SuperManWebApi.Models.Business;
 using System;
@@ -236,7 +238,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.GetOrdersStatus))]
         [HttpGet]
-        public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]> GetOrderList_B(int userId, int? pagedSize, int? pagedIndex, sbyte? Status,int orderfrom)
+        public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]> GetOrderList_B(int userId, int? pagedSize, int? pagedIndex, sbyte? Status,int? orderfrom)
         { 
             var pIndex = ETS.Util.ParseHelper.ToInt(pagedIndex, 1);
             pIndex = pIndex <= 0 ? 1 : pIndex;
@@ -247,7 +249,7 @@ namespace SuperManWebApi.Controllers
                 PagingResult = new Ets.Model.Common.PagingResult(pIndex, pSize),
                 userId = userId,
                 Status = Status,
-                OrderFrom = orderfrom
+                OrderFrom = orderfrom??0
             }; 
             IList<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel> list = new BusinessProvider().GetOrdersApp(criteria);
             return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]>.Conclude(ETS.Enums.GetOrdersStatus.Success, list.ToArray());
@@ -264,14 +266,14 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.GetOrdersStatus))]
         [HttpGet]
-        public Ets.Model.Common.ResultModel<OrderListModel> GetOrderDetail(string orderno)
+        public Ets.Model.Common.ResultModel<ListOrderDetailModel> GetOrderDetail(string orderno)
         {
             var model = new OrderProvider().GetOrderDetail(orderno);
             if (model != null)
             {
-                return Ets.Model.Common.ResultModel<OrderListModel>.Conclude(ETS.Enums.GetOrdersStatus.Success, model);
+                return Ets.Model.Common.ResultModel<ListOrderDetailModel>.Conclude(ETS.Enums.GetOrdersStatus.Success, model);
             }
-            return Ets.Model.Common.ResultModel<OrderListModel>.Conclude(ETS.Enums.GetOrdersStatus.FailedGetOrders, model);
+            return Ets.Model.Common.ResultModel<ListOrderDetailModel>.Conclude(ETS.Enums.GetOrdersStatus.FailedGetOrders, model);
         }
 
        
@@ -282,12 +284,21 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
         [HttpGet]
-        public Ets.Model.Common.ResultModel<List<string>> OtherOrderConfirm_B(string[] orderlist)
+        public Ets.Model.Common.ResultModel<List<string>> OtherOrderConfirm_B(string orderlist)
         {
+            ETS.Util.LogHelper.LogWriterString("参数 ", orderlist);
+            if (string.IsNullOrEmpty(orderlist))
+                return Ets.Model.Common.ResultModel<List<string>>.Conclude(ETS.Enums.PubOrderStatus.OrderCountError, null);
             var orderProvider = new OrderProvider();
-            int i = 0;
-            var list= orderlist.Where(s => orderProvider.UpdateOrderStatus(s, OrderConst.ORDER_NEW,"") <= 0).ToList();
-            return Ets.Model.Common.ResultModel<List<string>>.Conclude(ETS.Enums.PubOrderStatus.Success, list);
+            string[] aa = orderlist.Split(',');
+            List<string> errors = new List<string>();
+            for (int i = 0; i < aa.Length; i++)
+            {
+                int res = orderProvider.UpdateOrderStatus(aa[i], OrderConst.ORDER_NEW, "");
+                if (res < 0)
+                    errors.Add(aa[i]);
+            }
+            return Ets.Model.Common.ResultModel<List<string>>.Conclude(ETS.Enums.PubOrderStatus.Success, errors);
         }
 
         /// <summary>
@@ -298,12 +309,38 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
         [HttpGet]
-        public Ets.Model.Common.ResultModel<int> OtherOrderCancel_B(string[] orderlist,string note)
+        public Ets.Model.Common.ResultModel<int> OtherOrderCancel_B(string orderlist,string note)
         {
+            if (string.IsNullOrEmpty(orderlist))
+            {
+                return Ets.Model.Common.ResultModel<int>.Conclude(ETS.Enums.PubOrderStatus.OrderCountError, 0);
+            }
             var orderProvider = new OrderProvider();
-            int i = orderlist.Count(s => orderProvider.UpdateOrderStatus(s, OrderConst.ORDER_CANCEL, note) > 0);
+            string [] aa = orderlist.Split(',');
+            int i = aa.Count(s => orderProvider.UpdateOrderStatus(s, OrderConst.ORDER_CANCEL, note) > 0);
             return Ets.Model.Common.ResultModel<int>.Conclude(ETS.Enums.PubOrderStatus.Success, i);
         }
+
+        /// <summary>
+        /// 商家拒绝原因接口
+        /// </summary>
+        /// <param name="orderlist"></param>
+        /// <param name="note"></param>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
+        [HttpGet]
+        public Ets.Model.Common.ResultModel<OrderCancelReasonsModel> OtherOrderCancelReasons(string Version)
+        {
+            var orderProvider = new OrderProvider();
+            string Ressons = orderProvider.OtherOrderCancelReasons();
+            var model=new OrderCancelReasonsModel
+            {
+                Reasons = Ressons.Split(';'),
+                GlobalVersion = Config.GlobalVersion
+            };
+            return Ets.Model.Common.ResultModel<OrderCancelReasonsModel>.Conclude(ETS.Enums.PubOrderStatus.Success, model);
+        }
+
 
         #endregion
         /// <summary>
