@@ -56,21 +56,25 @@
                         <td>@item.GroupName</td>
                         @{
                             var strstatus = "";
-                            if (@item.Status ==Ets.Model.Common.ConstValues.ORDER_FINISH)
+                            if (@item.Status == ETS.Const.OrderConst.OrderStatus1)
                             {
                                 strstatus = "已完成";
                             }
-                            else if (@item.Status == Ets.Model.Common.ConstValues.ORDER_NEW)
+                            else if (@item.Status == ETS.Const.OrderConst.OrderStatus0)
                             {
                                 strstatus = "未接单";
                             }
-                            else if (@item.Status == Ets.Model.Common.ConstValues.ORDER_ACCEPT)
+                            else if (@item.Status == ETS.Const.OrderConst.OrderStatus2)
                             {
                                 strstatus = "已接单";
                             }
-                            else if (@item.Status == Ets.Model.Common.ConstValues.ORDER_CANCEL)
+                            else if (@item.Status == ETS.Const.OrderConst.OrderStatus3)
                             {
                                 strstatus = "已取消";
+                            }
+                            else if (@item.Status == ETS.Const.OrderConst.OrderStatus30)
+                            {
+                                strstatus = "待确认";
                             }
                             <td style="color:@Html.Raw(val)">@strstatus</td>
                         }
