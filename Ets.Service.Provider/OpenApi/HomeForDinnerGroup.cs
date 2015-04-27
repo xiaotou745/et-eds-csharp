@@ -56,7 +56,6 @@ namespace Ets.Service.Provider.OpenApi
             }
             string ts = DateTime.Now.ToString();
             string url = ConfigurationManager.AppSettings["HomeForDinnerAsyncStatus"];
-            url = ""; //test
             if (url == null)
                 return OrderApiStatusType.SystemError;
             ///order_id	string	Y	订单ID ，根据订单ID改变对应的订单物流状态，一个订单只能修改一次，修改过再修改会报错。
