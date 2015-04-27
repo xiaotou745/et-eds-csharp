@@ -416,7 +416,8 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                 ReceviceLongitude,ReceviceLatitude,businessId,PickUpAddress,Payment,OrderCommission,
                 WebsiteSubsidy,CommissionRate,CommissionFormulaMode,ReceiveProvince,ReceviceCity,ReceiveArea,
                 PickupCode,BusinessCommission,SettleMoney,Adjustment,OrderFrom,Status)
-                OUTPUT Inserted.OrderNo
+                output Inserted.Id,GETDATE(),@OptName,'新增订单',Inserted.businessId,Inserted.[Status],@Platform
+                into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
                 Values(@OrderNo,
                 @OriginalOrderNo,@PubDate,@SongCanDate,@IsPay,@Amount,
                 @Remark,@Weight,@DistribSubsidy,@OrderCount,@ReceviceName,
@@ -426,9 +427,10 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                 @PickupCode,@BusinessCommission,@SettleMoney,@Adjustment,@OrderFrom,@Status)";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             ///基本参数信息
-
             dbParameters.Add("@OrderNo", SqlDbType.NVarChar);
-            dbParameters.SetValue("@OrderNo", Helper.generateOrderCode(bussinessId)); //根据商户id生成订单号(15位));
+
+            string orderNo = Helper.generateOrderCode(bussinessId);
+            dbParameters.SetValue("@OrderNo", orderNo); //根据商户id生成订单号(15位));
 
             dbParameters.AddWithValue("@OriginalOrderNo", paramodel.order_id);    //其它平台的来源订单号
             dbParameters.AddWithValue("@PubDate", paramodel.create_time);    //订单下单时间
@@ -465,10 +467,20 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             dbParameters.AddWithValue("@Adjustment", paramodel.adjustment);//结算比例
             dbParameters.AddWithValue("@OrderFrom", paramodel.orderfrom);//订单来源
             dbParameters.AddWithValue("@Status", paramodel.status);//订单状态
-            string orderNo = ParseHelper.ToString(DbHelper.ExecuteScalar(SuperMan_Read, insertOrdersql, dbParameters));
-            //添加成功时，将当前订单插入到缓存中，设置过期时间30天
-            redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
-               paramodel.order_id.ToString()), orderNo, DateTime.Now.AddDays(30));  //查询缓存，看当前订单是否存在,“true”代表存在，key的形式为集团ID_第三方平台订单号
+            //订单操作记录表
+            dbParameters.AddWithValue("@OptName", (SuperPlatform.第三方对接平台.ToString()));//操作人
+            dbParameters.AddWithValue("@Platform", (int)SuperPlatform.第三方对接平台);//操作平台
+
+            int count=ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrdersql, dbParameters));
+            if (count > 0)
+            {
+                //添加成功时，将当前订单插入到缓存中，设置过期时间30天
+                redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
+                   paramodel.order_id.ToString()), orderNo, DateTime.Now.AddDays(30));  //查询缓存，看当前订单是否存在,“true”代表存在，key的形式为集团ID_第三方平台订单号
+            }
+            else
+                return null;
+
             #endregion
 
             #region 操作插入OrderDetail表
