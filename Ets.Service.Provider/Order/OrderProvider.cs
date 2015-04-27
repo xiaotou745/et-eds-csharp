@@ -913,14 +913,9 @@ namespace Ets.Service.Provider.Order
              LogHelper.LogWriter(System.DateTime.Now.ToString() + "订单不存在");
              return ResultModel<object>.Conclude(OrderApiStatusType.OrderNotExist);
             }
-            //else if (OrderConst.OrderStatus30 != currenStatus)  //订单状态非30，,不允许取消订单
-            //{
-            //  LogHelper.LogWriter(System.DateTime.Now.ToString() + "订单状态非30，,不允许取消订单");
-            //  return ResultModel<object>.Conclude(OrderApiStatusType.OrderIsJoin);
-            //}
             else if (CheckOrderState(paramodel.orderfrom, currenStatus, ref StatusType)) 
             {
-                LogHelper.LogWriter(System.DateTime.Now.ToString() + "订单状态非30，,不允许取消订单");
+                LogHelper.LogWriter(System.DateTime.Now.ToString() + "订单状态不允许取消订单");
                 return ResultModel<object>.Conclude(StatusType);
             }
             
@@ -955,7 +950,7 @@ namespace Ets.Service.Provider.Order
                     return OrderConst.OrderStatus30 != currenStatus;
                 case SystemConst.Group6: //回家吃饭
                     StatusType = OrderApiStatusType.OrderIsFinish;
-                    return OrderConst.OrderStatus1 != currenStatus;
+                    return OrderConst.OrderStatus1 == currenStatus;
                 default:
                     return false;
             }

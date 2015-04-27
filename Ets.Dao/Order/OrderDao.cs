@@ -9,6 +9,7 @@ using Ets.Model.DomainModel.Subsidy;
 using Ets.Model.ParameterModel.Order;
 using Ets.Model.ParameterModel.WtihdrawRecords;
 using ETS;
+using ETS.Const;
 using ETS.Dao;
 using ETS.Data.Core;
 using ETS.Data.PageData;
@@ -913,7 +914,47 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
         /// <returns></returns>
         public int UpdateOrderStatus_Other(ChangeStatusPM_OpenApi paramodel)
         {
-           string sql=string.Format(@"
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("@Status", SqlDbType.Int);
+            dbParameters.SetValue("@Status", paramodel.status);
+            dbParameters.Add("@Remark", SqlDbType.NVarChar);
+            dbParameters.SetValue("@Remark", paramodel.remark);
+            dbParameters.Add("@OriginalOrderNo", SqlDbType.NVarChar);
+            dbParameters.SetValue("@OriginalOrderNo", paramodel.order_no);  //第三方平台订单号 
+            dbParameters.Add("@OrderFrom", SqlDbType.Int);
+            dbParameters.SetValue("@OrderFrom", paramodel.orderfrom);  //集团ID
+            object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Write, GetUpStateSql(paramodel.orderfrom), dbParameters);
+            return ParseHelper.ToInt(executeScalar, -1);
+        }
+        /// <summary>
+        /// 生成各集团更新订单状态的sql语句
+        /// 徐鹏程
+        /// 20150427
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
+        private string GetUpStateSql(int groupId)
+        {
+            string strWhere = "";
+            switch (groupId)
+            {
+                case SystemConst.Group2:  //万达
+                    strWhere="";
+                    break;
+                case SystemConst.Group3: //全时
+                     strWhere="";
+                    break;
+                case SystemConst.Group4: //美团
+                     strWhere="";
+                    break;
+                case SystemConst.Group6: //回家吃饭
+                    strWhere = " and a.[Status] !=1 ";
+                    break;
+                default:
+                   strWhere="";
+                    break;
+            }
+            string sql = string.Format(@"
             update  a
             set     a.[Status] =@Status 
             output  Inserted.Id ,
@@ -927,19 +968,9 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                                                  OptId, OrderStatus, [Platform] )
             from    dbo.[order] as a
             where   a.OriginalOrderNo = @OriginalOrderNo
-                    and a.OrderFrom=@OrderFrom
-            ", SuperPlatform.第三方对接平台, (int)SuperPlatform.第三方对接平台);
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.Add("@Status", SqlDbType.Int);
-            dbParameters.SetValue("@Status", paramodel.status);
-            dbParameters.Add("@Remark", SqlDbType.NVarChar);
-            dbParameters.SetValue("@Remark", paramodel.remark);
-            dbParameters.Add("@OriginalOrderNo", SqlDbType.NVarChar);
-            dbParameters.SetValue("@OriginalOrderNo", paramodel.order_no);  //第三方平台订单号 
-            dbParameters.Add("@OrderFrom", SqlDbType.Int);
-            dbParameters.SetValue("@OrderFrom", paramodel.orderfrom);  //集团ID
-            object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
-            return ParseHelper.ToInt(executeScalar, -1);
+                    and a.OrderFrom=@OrderFrom {2}
+            ", SuperPlatform.第三方对接平台, (int)SuperPlatform.第三方对接平台, strWhere);
+            return sql;
         }
 
 

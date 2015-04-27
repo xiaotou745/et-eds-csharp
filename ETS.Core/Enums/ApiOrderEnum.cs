@@ -51,7 +51,7 @@ namespace ETS.Enums
         /// 订单已经完成，无法取消订单
         /// </summary>
         [DisplayText("订单已经完成，无法取消订单")]
-        OrderIsJoin = 20001,
+        OrderIsFinish = 20001,
         /// <summary>
         /// 第三方接口调用异常
         /// </summary>
