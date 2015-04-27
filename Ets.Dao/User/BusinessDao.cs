@@ -726,9 +726,9 @@ namespace Ets.Dao.User
         /// <param name="orderFrom">订单来源</param>
         /// <param name="orderType">orderType</param>
         /// <returns>商家信息</returns 
-        public string GetOrderByOrderNoAndOrderFrom(string orderNO, int orderFrom, int orderType)
+        public order GetOrderByOrderNoAndOrderFrom(string orderNO, int orderFrom, int orderType)
         {
-            string sql = @" select OrderNo from dbo.[order] with(nolock) where OriginalOrderNo=@OriginalOrderNo and OrderFrom=@OrderFrom ";
+            string sql = @" select Id OrderId,OrderNo,OriginalOrderNo,businessId from dbo.[order] with(nolock) where OriginalOrderNo=@OriginalOrderNo and OrderFrom=@OrderFrom ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OriginalOrderNo", orderNO);
             parm.AddWithValue("@OrderFrom", orderFrom);
@@ -737,12 +737,15 @@ namespace Ets.Dao.User
                 sql += " and OrderType=@OrderType ";
                 parm.AddWithValue("@OrderType", orderType);
             }
-            object i = DbHelper.ExecuteScalar(SuperMan_Read, sql, parm);
-            if (i != null)
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (dt != null)
             {
-                return i.ToString();
+               return  MapRows<order>(dt)[0];
             }
-            return "";
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>
