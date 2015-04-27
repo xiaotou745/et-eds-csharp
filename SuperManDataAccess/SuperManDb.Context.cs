@@ -43,5 +43,7 @@ namespace SuperManDataAccess
         public virtual DbSet<pushmessagestatus> pushmessagestatus { get; set; }
         public virtual DbSet<region> region { get; set; }
         public virtual DbSet<subsidy> subsidy { get; set; }
+        public virtual DbSet<accountbussinessrelation> accountbussinessrelation { get; set; }
+        public virtual DbSet<clienterbussinessrelation> clienterbussinessrelation { get; set; }
     }
 }

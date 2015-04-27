@@ -64,6 +64,9 @@
     <Compile Include="accountauthority.cs">
       <DependentUpon>SuperManDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="accountbussinessrelation.cs">
+      <DependentUpon>SuperManDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="areacity.cs">
       <DependentUpon>SuperManDb.tt</DependentUpon>
     </Compile>
@@ -83,6 +86,9 @@
       <DependentUpon>SuperManDb.tt</DependentUpon>
     </Compile>
     <Compile Include="clienter.cs">
+      <DependentUpon>SuperManDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="clienterbussinessrelation.cs">
       <DependentUpon>SuperManDb.tt</DependentUpon>
     </Compile>
     <Compile Include="commissiontype.cs">

@@ -20,6 +20,7 @@
           <Property Name="LCDateTime" Type="datetime" Precision="0" />
           <Property Name="LCUser" Type="varchar" MaxLength="45" />
           <Property Name="GroupId" Type="int" />
+          <Property Name="BusiId" Type="int" />
         </EntityType>
         <EntityType Name="accountauthority">
           <Key>
@@ -28,6 +29,14 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="AccountId" Type="int" />
           <Property Name="AuthorityId" Type="int" />
+        </EntityType>
+        <EntityType Name="accountbussinessrelation">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AccountId" Type="int" Nullable="false" />
+          <Property Name="BussinessID" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="areacity">
           <Key>
@@ -130,6 +139,14 @@
           <Property Name="Province" Type="varchar" MaxLength="20" />
           <Property Name="BussinessID" Type="int" />
         </EntityType>
+        <EntityType Name="clienterbussinessrelation">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ClienterId" Type="int" Nullable="false" />
+          <Property Name="BussinessID" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="commissiontype">
           <Key>
             <PropertyRef Name="Id" />
@@ -178,7 +195,7 @@
           <Property Name="OrderCommission" Type="decimal" Precision="5" Scale="2" />
           <Property Name="DistribSubsidy" Type="decimal" Precision="5" Scale="2" />
           <Property Name="WebsiteSubsidy" Type="decimal" Precision="5" Scale="2" />
-          <Property Name="Remark" Type="varchar" MaxLength="200" />
+          <Property Name="Remark" Type="varchar" MaxLength="4000" />
           <Property Name="Status" Type="tinyint" />
           <Property Name="clienterId" Type="int" />
           <Property Name="businessId" Type="int" />
@@ -316,6 +333,7 @@
         <EntityContainer Name="supermanModelStoreContainer">
           <EntitySet Name="account" EntityType="Self.account" Schema="supermanhdl" store:Type="Tables" />
           <EntitySet Name="accountauthority" EntityType="Self.accountauthority" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="accountbussinessrelation" EntityType="Self.accountbussinessrelation" Schema="supermanhdl" store:Type="Tables" />
           <EntitySet Name="areacity" EntityType="Self.areacity" Schema="supermanhdl" store:Type="Tables" />
           <EntitySet Name="areacounty" EntityType="Self.areacounty" Schema="supermanhdl" store:Type="Tables" />
           <EntitySet Name="areaprovice" EntityType="Self.areaprovice" Schema="supermanhdl" store:Type="Tables" />
@@ -323,6 +341,7 @@
           <EntitySet Name="business" EntityType="Self.business" Schema="supermanhdl" store:Type="Tables" />
           <EntitySet Name="channel" EntityType="Self.channel" Schema="supermanhdl" store:Type="Tables" />
           <EntitySet Name="clienter" EntityType="Self.clienter" Schema="supermanhdl" store:Type="Tables" />
+          <EntitySet Name="clienterbussinessrelation" EntityType="Self.clienterbussinessrelation" Schema="supermanhdl" store:Type="Tables" />
           <EntitySet Name="commissiontype" EntityType="Self.commissiontype" Schema="supermanhdl" store:Type="Tables" />
           <EntitySet Name="group" EntityType="Self.group" Schema="supermanhdl" store:Type="Tables" />
           <EntitySet Name="myincome" EntityType="Self.myincome" Schema="supermanhdl" store:Type="Tables" />
@@ -380,6 +399,8 @@
             <End Role="business" EntitySet="business" />
             <End Role="order" EntitySet="order" />
           </AssociationSet>
+          <EntitySet Name="accountbussinessrelation" EntityType="supermanModel.accountbussinessrelation" />
+          <EntitySet Name="clienterbussinessrelation" EntityType="supermanModel.clienterbussinessrelation" />
         </EntityContainer>
         <EntityType Name="account">
           <Key>
@@ -397,6 +418,7 @@
           <Property Name="LCUser" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
           <Property Name="GroupId" Type="Int32" />
           <NavigationProperty Name="accountauthority" Relationship="supermanModel.accountId" FromRole="account" ToRole="accountauthority" />
+          <Property Name="BusiId" Type="Int32" />
         </EntityType>
         <EntityType Name="accountauthority">
           <Key>
@@ -695,6 +717,22 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="accountbussinessrelation">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AccountId" Type="Int32" Nullable="false" />
+          <Property Name="BussinessID" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="clienterbussinessrelation">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ClienterId" Type="Int32" Nullable="false" />
+          <Property Name="BussinessID" Type="Int32" Nullable="false" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -704,6 +742,7 @@
           <EntitySetMapping Name="account">
             <EntityTypeMapping TypeName="supermanModel.account">
               <MappingFragment StoreEntitySet="account">
+                <ScalarProperty Name="BusiId" ColumnName="BusiId" />
                 <ScalarProperty Name="GroupId" ColumnName="GroupId" />
                 <ScalarProperty Name="LCUser" ColumnName="LCUser" />
                 <ScalarProperty Name="LCDateTime" ColumnName="LCDateTime" />
@@ -987,6 +1026,24 @@
                 <ScalarProperty Name="WebsiteSubsidy" ColumnName="WebsiteSubsidy" />
                 <ScalarProperty Name="DistribSubsidy" ColumnName="DistribSubsidy" />
                 <ScalarProperty Name="OrderCommission" ColumnName="OrderCommission" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="accountbussinessrelation">
+            <EntityTypeMapping TypeName="supermanModel.accountbussinessrelation">
+              <MappingFragment StoreEntitySet="accountbussinessrelation">
+                <ScalarProperty Name="BussinessID" ColumnName="BussinessID" />
+                <ScalarProperty Name="AccountId" ColumnName="AccountId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="clienterbussinessrelation">
+            <EntityTypeMapping TypeName="supermanModel.clienterbussinessrelation">
+              <MappingFragment StoreEntitySet="clienterbussinessrelation">
+                <ScalarProperty Name="BussinessID" ColumnName="BussinessID" />
+                <ScalarProperty Name="ClienterId" ColumnName="ClienterId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

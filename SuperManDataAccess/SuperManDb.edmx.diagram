@@ -26,6 +26,8 @@
         <AssociationConnector Association="supermanModel.accountId" />
         <AssociationConnector Association="supermanModel.authorityId" />
         <AssociationConnector Association="supermanModel.businessId" />
+        <EntityTypeShape EntityType="supermanModel.accountbussinessrelation" Width="1.5" PointX="0.75" PointY="13.75" />
+        <EntityTypeShape EntityType="supermanModel.clienterbussinessrelation" Width="1.5" PointX="2.75" PointY="14.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
