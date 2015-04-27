@@ -50,7 +50,14 @@ namespace SuperManBusinessLogic.Order_Logic
         {
             using (var db = new supermanEntities())
             {
-                var items = db.order.AsQueryable();
+                
+                //var items = db.order.AsQueryable();
+
+                var items = from m in db.order
+                        join n in db.accountbussinessrelation
+                        on m.businessId.Value equals n.BussinessID
+                        where n.AccountId==criteria.LoginId
+                        select m;
                 if (!string.IsNullOrWhiteSpace(criteria.businessName))
                 {
                     items = items.Where(p => p.business.Name == criteria.businessName);
