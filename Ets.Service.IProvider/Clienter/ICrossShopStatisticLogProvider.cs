@@ -13,7 +13,7 @@ namespace Ets.Service.IProvider.Clienter
 {
     public interface ICrossShopStatisticLogProvider
     {
-        bool InsertDataClienterCrossShopLog(int daysAgo);
-        IList<BusinessesDistributionModel> GetClienterCrossShopLogInfo(int daysAgo);
+        bool InsertDataCrossShopStatisticLog(int daysAgo);
+        IList<BusinessesDistributionModel> GetCrossShopLogInfo(int daysAgo);
     }
 }

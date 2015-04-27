@@ -28,7 +28,7 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="daysAgo">几天前</param>
         /// <returns></returns>
-        public bool InsertDataClienterCrossShopLog(int daysAgo)
+        public bool InsertDataCrossShopStatisticLog(int daysAgo)
         {          
             IList<Ets.Model.DomainModel.Bussiness.BusinessesDistributionModel> clienteStorerGrabStatistical = clienterDao.GetClienteStorerGrabStatisticalInfo(daysAgo);
             CrossShopStatisticLogModel model = new CrossShopStatisticLogModel();
@@ -79,7 +79,7 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="daysAgo">几天前</param>
         /// <returns></returns>
-        public IList<BusinessesDistributionModel> GetClienterCrossShopLogInfo(int daysAgo)
+        public IList<BusinessesDistributionModel> GetCrossShopLogInfo(int daysAgo)
         {
             return _dao.GetClienterCrossShopLogInfo(daysAgo);
         }
