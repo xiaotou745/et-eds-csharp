@@ -10,6 +10,7 @@ using System.Web.Http.Filters;
 using System.Web.Mvc;
 using System.Web.Http.Controllers;
 using System.Text;
+using ETS.Const;
 
 namespace OpenApi
 {
@@ -36,7 +37,7 @@ namespace OpenApi
         /// <param name="actionContext"></param>
         public override void OnActionExecuting(System.Web.Http.Controllers.HttpActionContext actionContext)
         {
-            LogHelper.LogWriter(System.DateTime.Now.ToString()+"开始");
+            //LogHelper.LogWriter(System.DateTime.Now.ToString()+"开始");
             stop.Start();
             dynamic paramodel = actionContext.ActionArguments["paramodel"]; //当前请求的参数对象 
             lock (paramodel)
@@ -50,7 +51,7 @@ namespace OpenApi
                 }
                 
                 IGroupProvider groupProvider = new GroupProvider();
-                LogHelper.LogWriter(System.DateTime.Now.ToString() + "集团ID：" + paramodel.app_key + "V:" + paramodel.v);
+                //LogHelper.LogWriter(System.DateTime.Now.ToString() + "集团ID：" + paramodel.app_key + "V:" + paramodel.v);
                 GroupApiConfigModel groupCofigInfo = groupProvider.GetGroupApiConfigByAppKey(paramodel.app_key, paramodel.v);
                 if (groupCofigInfo != null && groupCofigInfo.IsValid == 1)//集团可用，且有appkey信息
                 {
@@ -68,8 +69,15 @@ namespace OpenApi
                     }
                     else
                     {
-
-                        paramodel.group = ParseHelper.ToInt(groupCofigInfo.GroupId, 0); //设置集团
+                        int goupid = ParseHelper.ToInt(groupCofigInfo.GroupId, 0);//设置集团
+                        paramodel.group = goupid; //设置集团
+                        //if (goupid != SystemConst.Group6)
+                        //{
+                        //    actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
+                        //     (actionContext.ControllerContext, ResultModel<object>.Conclude(OrderApiStatusType.SystemError));
+                        //    return;
+                        //}
+                        LogHelper.LogWriter("集团" + paramodel.group + "开始");
                         actionContext.ActionArguments["paramodel"] = paramodel;  //更新参数实体
                         
                     }
@@ -77,6 +85,7 @@ namespace OpenApi
                 }
                 else
                 {
+                    LogHelper.LogWriter("sign错误，请求中止");
                     actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
                     (actionContext.ControllerContext, ResultModel<object>.Conclude(OrderApiStatusType.SignError));  //sign错误，请求中止
                     return;

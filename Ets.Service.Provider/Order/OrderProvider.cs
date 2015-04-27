@@ -906,16 +906,22 @@ namespace Ets.Service.Provider.Order
         {
             paramodel.status = OrderConst.OrderStatus3;
             paramodel.remark = "第三方集团取消订单，同步E代送系统订单状态";
+            OrderApiStatusType StatusType = new OrderApiStatusType();
             int currenStatus = OrderDao.GetStatus(paramodel.order_no, paramodel.orderfrom);  //目前订单状态
             if (currenStatus == -1) //订单不存在
             {
              LogHelper.LogWriter(System.DateTime.Now.ToString() + "订单不存在");
              return ResultModel<object>.Conclude(OrderApiStatusType.OrderNotExist);
             }
-            else if (OrderConst.OrderStatus30 != currenStatus)  //订单状态非30，,不允许取消订单
+            //else if (OrderConst.OrderStatus30 != currenStatus)  //订单状态非30，,不允许取消订单
+            //{
+            //  LogHelper.LogWriter(System.DateTime.Now.ToString() + "订单状态非30，,不允许取消订单");
+            //  return ResultModel<object>.Conclude(OrderApiStatusType.OrderIsJoin);
+            //}
+            else if (CheckOrderState(paramodel.orderfrom, currenStatus, ref StatusType)) 
             {
-              LogHelper.LogWriter(System.DateTime.Now.ToString() + "订单状态非30，,不允许取消订单");
-              return ResultModel<object>.Conclude(OrderApiStatusType.OrderIsJoin);
+                LogHelper.LogWriter(System.DateTime.Now.ToString() + "订单状态非30，,不允许取消订单");
+                return ResultModel<object>.Conclude(StatusType);
             }
             
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
@@ -926,6 +932,32 @@ namespace Ets.Service.Provider.Order
                 tran.Complete();
                 return result > 0 ? ResultModel<object>.Conclude(OrderApiStatusType.Success) : ResultModel<object>.Conclude(OrderApiStatusType.SystemError);
 
+            }
+        }
+        /// <summary>
+        /// 不同集团取消订单的条件判断
+        /// 徐鹏程
+        /// 20150427
+        /// </summary>
+        /// <param name="groupId">集团编号</param>
+        /// <param name="currenStatus">当前订单状态</param>
+        /// <returns></returns>
+        private bool CheckOrderState(int groupId, int currenStatus, ref OrderApiStatusType StatusType)
+        {
+            switch (groupId)
+            {
+                case SystemConst.Group2:  //万达
+                    return true;
+                case SystemConst.Group3: //全时
+                    return true;
+                case SystemConst.Group4: //美团
+                    StatusType = OrderApiStatusType.OrderIsJoin;
+                    return OrderConst.OrderStatus30 != currenStatus;
+                case SystemConst.Group6: //回家吃饭
+                    StatusType = OrderApiStatusType.OrderIsFinish;
+                    return OrderConst.OrderStatus1 != currenStatus;
+                default:
+                    return false;
             }
         }
     }

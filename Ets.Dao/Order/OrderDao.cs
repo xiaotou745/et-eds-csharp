@@ -393,8 +393,11 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                     bussinessId = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, insertBussinesssql, insertBdbParameters));
                     LogHelper.LogWriter(System.DateTime.Now.ToString() + "商户插入sql结束");
                     if (bussinessId == 0)
+                    {
+                        LogHelper.LogWriter(System.DateTime.Now.ToString() + "商户插入失败");
                         return null;//添加失败 
-
+                    }
+                       
                     redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString()
                         , paramodel.store_info.store_id.ToString()), bussinessId.ToString());//将商户id插入到缓存  key的形式为 OtherBusiness_集团id_第三方平台店铺id
                 }
@@ -409,7 +412,10 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             string orderExists = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
                paramodel.order_id.ToString()));  //查询缓存，看当前订单是否存在,“true”代表存在，key的形式为集团ID_第三方平台订单号
             if (orderExists != null)
+            {
+                LogHelper.LogWriter(System.DateTime.Now.ToString() + "订单已经存在，添加失败");
                 return null;//订单已经存在，添加失败 
+            }
             ///订单插入sql 订单不存在时
             const string insertOrdersql = @" 
                 INSERT INTO dbo.[order](OrderNo,
@@ -499,7 +505,10 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                 LogHelper.LogWriter(System.DateTime.Now.ToString() + "订单详情插入sql开始");
             }
             if (!addBool)
+            {
+                LogHelper.LogWriter(System.DateTime.Now.ToString() + "订单详情添加失败!");
                 return null;  //添加失败
+            }
             #endregion
             return orderNo;
         }
