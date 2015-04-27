@@ -13,7 +13,7 @@ namespace ETS.Const
     {
         #region 订单状态 add by caoheyang 20150311
         /// <summary>
-        /// 订单新增
+        /// 待接单
         /// </summary>
         public const int OrderStatus0 = 0;
         /// <summary>
