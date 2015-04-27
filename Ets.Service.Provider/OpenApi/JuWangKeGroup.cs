@@ -69,13 +69,7 @@ namespace Ets.Service.Provider.OpenApi
             JObject jobject = JObject.Parse(json);
             int x = jobject.Value<int>("code"); //接口调用状态 区分大小写
             return x == 1 ? OrderApiStatusType.Success : OrderApiStatusType.SystemError;
-        }
-         
-        public Model.ParameterModel.Order.CreatePM_OpenApi SetCcmmissonInfo(Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
-        {
-            throw new NotImplementedException();
-        }
-
+        } 
         /// <summary>
         /// 回调聚网客接口Model
         /// </summary>
@@ -85,6 +79,12 @@ namespace Ets.Service.Provider.OpenApi
             public int OrderStatus { get; set; }
             public string Phone { get; set; }
             public string KnightName { get; set; }
+        }
+
+
+        public Model.ParameterModel.Order.CreatePM_OpenApi SetCommissonInfo(Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
+        {
+            return paramodel;
         }
     }
 }
