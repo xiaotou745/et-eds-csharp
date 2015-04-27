@@ -47,7 +47,7 @@ namespace Ets.CrossShopService.BLL
                 {
                         ETS.Util.LogHelper.LogWriter(ex.ToString());
                 }
-                Thread.Sleep(1000 * 10);           
+                Thread.Sleep(1000 * 60 * 20);           
               
             }
         }
