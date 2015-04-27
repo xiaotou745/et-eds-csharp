@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{61C59E53-67C8-44FE-B0AD-1E9025D7E568}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Ets.Service.Provider</RootNamespace>
+    <AssemblyName>Ets.Service.Provider</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CalculateCommon">
+      <HintPath>..\lib\CalculateCommon.dll</HintPath>
+      <HintPath>..\packages\CalculateCommon.dll</HintPath>
+    </Reference>
+    <Reference Include="jpush-api, Version=1.0.0.27500, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\JPush.NET.1.2.3.27974\lib\jpush-api.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.2\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Account\AccountProvider.cs" />
+    <Compile Include="Authority\AuthorityMenuProvider.cs" />
+    <Compile Include="Clienter\ClienterProvider.cs" />
+    <Compile Include="Common\AdminToolsProvider.cs" />
+    <Compile Include="Common\ApiVersionProvider.cs" />
+    <Compile Include="Common\AreaProvider.cs" />
+    <Compile Include="Common\BaiDuHelper.cs" />
+    <Compile Include="Common\GlobalConfigProvider.cs" />
+    <Compile Include="Common\GroupProvider.cs" />
+    <Compile Include="Common\HomeCountProvider.cs" />
+    <Compile Include="Common\ServicePhone.cs" />
+    <Compile Include="Common\TestUserProvider.cs" />
+    <Compile Include="OpenApi\JuWangKeGroup.cs" />
+    <Compile Include="OpenApi\MeiTuanGroup.cs" />
+    <Compile Include="OpenApi\SignProvider.cs" />
+    <Compile Include="Distribution\DistributionProvider.cs" />
+    <Compile Include="MyPush\Push.cs" />
+    <Compile Include="OpenApi\OpenApiGroupFactory.cs" />
+    <Compile Include="OpenApi\FulltimeGroup.cs" />
+    <Compile Include="OpenApi\WanDaGroup.cs" />
+    <Compile Include="Order\AmountOrPriceProvider.cs" />
+    <Compile Include="Order\AutoAdjustProvider.cs" />
+    <Compile Include="Order\BreakEvenPointOrPriceProvider.cs" />
+    <Compile Include="Order\CommissionFactory.cs" />
+    <Compile Include="Order\OrderPriceProvider.cs" />
+    <Compile Include="Order\DefaultOrPriceProvider.cs" />
+    <Compile Include="Order\OrderProvider.cs" />
+    <Compile Include="Order\TimeOrPriceProvider.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Statistics\StatisticsProvider.cs" />
+    <Compile Include="Subsidy\SubsidyProvider.cs" />
+    <Compile Include="User\BusinessProvider.cs" />
+    <Compile Include="User\UserProvider.cs" />
+    <Compile Include="WtihdrawRecords\WtihdrawRecordsProvider.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ETS.Core\ETS.Core.csproj">
+      <Project>{bba67a86-afd6-46f2-bbd9-5dfb5bfdafe2}</Project>
+      <Name>ETS.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Ets.Dao\Ets.Dao.csproj">
+      <Project>{dd95fa95-b979-4802-8f79-b08d35939f4e}</Project>
+      <Name>Ets.Dao</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ETS.Data\ETS.Data.csproj">
+      <Project>{be8b43e2-df1e-4bfd-b4ef-63e3e0f53ea2}</Project>
+      <Name>ETS.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Ets.Model\Ets.Model.csproj">
+      <Project>{b9d2361d-7e2c-45ba-89ec-4eca1bf7c456}</Project>
+      <Name>Ets.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Ets.Service.IProvider\Ets.Service.IProvider.csproj">
+      <Project>{73ff8127-9703-4d8c-bd1c-4190a926a5ba}</Project>
+      <Name>Ets.Service.IProvider</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
