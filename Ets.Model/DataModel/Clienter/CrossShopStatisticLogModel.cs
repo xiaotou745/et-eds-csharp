@@ -8,7 +8,7 @@ using Ets.Model.Common;
 
 namespace Ets.Model.DataModel.Clienter
 {
-    public class ClienterCrossShopLogModel
+    public class CrossShopStatisticLogModel
     {
         public int Id { get; set; }
         public decimal TotalAmount { get; set; }

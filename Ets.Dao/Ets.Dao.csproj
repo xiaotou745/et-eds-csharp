@@ -40,7 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Account\AccountDao.cs" />
-    <Compile Include="Clienter\ClienterCrossShopLogDao.cs" />
+    <Compile Include="Clienter\CrossShopStatisticLogDao.cs" />
     <Compile Include="Clienter\ClienterDao.cs" />
     <Compile Include="Common\AdminToolsDao.cs" />
     <Compile Include="Common\ApiVersionDao.cs" />

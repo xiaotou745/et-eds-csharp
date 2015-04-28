@@ -17,10 +17,10 @@ using System.Threading.Tasks;
 
 namespace Ets.Service.Provider.Clienter
 {
-    public class ClienterCrossShopLogProvider : IClienterCrossShopLogProvider
+    public class CrossShopStatisticLogProvider : ICrossShopStatisticLogProvider
     {
         readonly ClienterDao clienterDao = new ClienterDao();
-        readonly ClienterCrossShopLogDao _dao = new ClienterCrossShopLogDao();       
+        readonly CrossShopStatisticLogDao _dao = new CrossShopStatisticLogDao();       
 
         /// <summary>
         /// 获取跨店抢单骑士统计信息
@@ -31,11 +31,11 @@ namespace Ets.Service.Provider.Clienter
         public bool InsertDataClienterCrossShopLog(int daysAgo)
         {          
             IList<Ets.Model.DomainModel.Bussiness.BusinessesDistributionModel> clienteStorerGrabStatistical = clienterDao.GetClienteStorerGrabStatisticalInfo(daysAgo);
-            ClienterCrossShopLogModel model = new ClienterCrossShopLogModel();
+            CrossShopStatisticLogModel model = new CrossShopStatisticLogModel();
 
             foreach (var item in clienteStorerGrabStatistical)
             {
-                bool isExist = _dao.IsExistClienterCrossShopLog(item.date);
+                bool isExist = _dao.IsExistCrossShopStatisticLog(item.date);
                 if (isExist) continue;
 
                 model.TotalAmount = item.totalAmount;
@@ -65,7 +65,7 @@ namespace Ets.Service.Provider.Clienter
 
                 //using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                 //{
-                _dao.InsertDataClienterCrossShopLog(model);
+                _dao.InsertDataCrossShopStatisticLogLog(model);
                 //  tran.Complete();
                 //}
             }
@@ -94,7 +94,7 @@ namespace Ets.Service.Provider.Clienter
         {
             bool isExist = false;
 
-            isExist = _dao.IsExistClienterCrossShopLog(statisticalTime);
+            isExist = _dao.IsExistCrossShopStatisticLog(statisticalTime);
 
             return isExist;
         }

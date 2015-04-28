@@ -11,7 +11,7 @@ using Ets.Model.DataModel.Authority;
 
 namespace Ets.Service.IProvider.Clienter
 {
-    public interface IClienterCrossShopLogProvider
+    public interface ICrossShopStatisticLogProvider
     {
         bool InsertDataClienterCrossShopLog(int daysAgo);
         IList<BusinessesDistributionModel> GetClienterCrossShopLogInfo(int daysAgo);

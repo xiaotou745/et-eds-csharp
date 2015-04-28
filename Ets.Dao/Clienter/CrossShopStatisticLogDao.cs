@@ -14,7 +14,7 @@ using Ets.Model.DomainModel.Bussiness;
 
 namespace Ets.Dao.Clienter
 {
-    public class ClienterCrossShopLogDao : DaoBase
+    public class CrossShopStatisticLogDao : DaoBase
     {
         /// <summary>
         /// 新增跨店抢单骑士统计
@@ -23,9 +23,9 @@ namespace Ets.Dao.Clienter
         /// </summary>
         /// <param name="model">跨店抢单骑士实体</param>
         /// <returns></returns>
-        public bool InsertDataClienterCrossShopLog(ClienterCrossShopLogModel model)
+        public bool InsertDataCrossShopStatisticLogLog(CrossShopStatisticLogModel model)
         {
-            string sql = @"INSERT INTO [dbo].[ClienterCrossShopLog]
+            string sql = @"INSERT INTO [dbo].[CrossShopStatisticLog]
                             ([TotalAmount]
                             ,[OnceCount]
                             ,[TwiceCount]
@@ -110,9 +110,9 @@ namespace Ets.Dao.Clienter
         /// </summary>
         /// <param name="statisticalTime">指定日期</param>
         /// <returns></returns>
-        public bool IsExistClienterCrossShopLog(string statisticalTime)
-        {        
-            string selSql = string.Format(@" SELECT COUNT(1) FROM   dbo.[ClienterCrossShopLog] WITH ( NOLOCK )  WHERE  StatisticalTime = @statisticalTime");
+        public bool IsExistCrossShopStatisticLog(string statisticalTime)
+        {
+            string selSql = string.Format(@" SELECT COUNT(1) FROM   dbo.[CrossShopStatisticLog] WITH ( NOLOCK )  WHERE  StatisticalTime = @statisticalTime");
             IDbParameters dbParameters = DbHelper.CreateDbParameters();     
             dbParameters.Add("@statisticalTime", SqlDbType.NVarChar);
             dbParameters.SetValue("@statisticalTime", statisticalTime);
@@ -131,7 +131,7 @@ namespace Ets.Dao.Clienter
             int currdaysAgo = daysAgo + 1;
             StringBuilder sb = new StringBuilder();
             sb.Append("select top " + daysAgo.ToString());
-            sb.Append(" * from dbo.ClienterCrossShopLog (nolock) ");       
+            sb.Append(" * from dbo.CrossShopStatisticLog (nolock) ");       
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sb.ToString());
             return MapRows<BusinessesDistributionModel>(dt);
         }
