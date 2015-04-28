@@ -133,10 +133,12 @@
             <div class="control-group">
                 <label>结算比例</label>
                 <input name="busCommissionText" id="busCommissionText" style="width: 45px;" type="text">%
+                <input name="oldBusCommissionText" id="oldBusCommissionText"  type="hidden">
             </div>
             <div class="control-group">
                 <label>外送费</label>
                 <input name="busCommissionWaiSong" id="busCommissionWaiSong" style="width: 200px;" type="text">
+                <input name="oldBusCommissionWaiSong" id="oldBusCommissionWaiSong"  type="hidden">
             </div>
         </fieldset>
         <p class="btnbox">
@@ -202,6 +204,8 @@
 
         var busCommissionText = $("#busCommissionText").val(); ////商户结算比例
         var busCommissionWaiSong = $("#busCommissionWaiSong").val(); ////商户外送费
+        var oldBusCommissionText = $("#oldBusCommissionText").val(); ////原来商户结算比例
+        var oldBusCommissionWaiSong = $("#oldBusCommissionWaiSong").val(); ////原来商户外送费
         if (isNaN(busCommissionText)) {
             alert("请输入正确的数字!");
             return;
@@ -210,6 +214,7 @@
             alert("请输入大于零的值!");
             return;
         }
+        
         if (isNaN(busCommissionWaiSong)) {
             alert("请输入正确的数字!");
             return;
@@ -218,7 +223,15 @@
             alert("请输入大于零的值!");
             return;
         }
-        var paramaters = { "id": busCommissionHid, "commission": busCommissionText, "waisongfei": busCommissionWaiSong };
+        if (busCommissionText == oldBusCommissionText && busCommissionWaiSong == oldBusCommissionWaiSong) {
+            alert("外送费和结算比例都没有修改!");
+            return;
+        }
+        if (busCommissionWaiSong.length == 0)
+        {
+            busCommissionWaiSong = 0;
+        }
+        var paramaters = { "id": busCommissionHid, "commission": busCommissionText, "waisongfei": busCommissionWaiSong, "oldcommission": oldBusCommissionText, "oldwaisongfei": oldBusCommissionWaiSong };
         var url = "/BusinessManager/SetCommission";
         $.ajax({
             type: 'POST',
