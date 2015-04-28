@@ -255,6 +255,16 @@
                         <input placeholder="登陆密码" name="SupPassword" id="SupPassword" type="text">
                     </div>
                 </div>
+                @{ 
+                    var BusiList=SuperManBusinessLogic.B_Logic.BusiLogic.busiLogic().GetBusinessList();
+                    if(BusiList.Count>0)
+                    {
+                        foreach(var item in BusiList)
+                        {
+                            <input type="checkbox" id="@item.Id" />
+                        }
+                    }
+                  }
             </fieldset>
         </form>
         <p class="btnbox">
