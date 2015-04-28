@@ -51,17 +51,17 @@ namespace SuperManBusinessLogic.Order_Logic
             using (var db = new supermanEntities())
             {
                 IQueryable<order> items;
-                if(criteria.LoginId==1)
+                if (criteria.LoginId == 1)
                 {
                     items = db.order.AsQueryable();
                 }
                 else
                 {
                     items = from m in db.order
-                        join n in db.accountbussinessrelation
-                        on m.businessId.Value equals n.BussinessID
-                        where n.AccountId==criteria.LoginId
-                        select m;
+                            join n in db.accountbussinessrelation
+                            on m.businessId.Value equals n.BussinessID
+                            where n.AccountId == criteria.LoginId
+                            select m;
                 }
                 if (!string.IsNullOrWhiteSpace(criteria.businessName))
                 {
