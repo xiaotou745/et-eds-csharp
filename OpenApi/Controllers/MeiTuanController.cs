@@ -94,6 +94,48 @@ namespace OpenApi.Controllers
             }
         }
 
+        /// <summary>
+        /// 设置配送范围 暂时不用 add by caoheyang 20150421
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public ResultModel<object> SetRound()
+        {  //签名信息
+            List<string> @params = new List<string>() { 
+            "timestamp="+TimeHelper.GetTimeStamp(false) ,
+            "app_area_code=99999",
+            "min_price=9",
+            "area=[{\"x\":39941199,\"y\":116385384}, {\"x\":39926983,\"y\":116361694},{\"x\":39921586,\"y\":116398430}]",
+            "app_id=33"
+            };
+            @params.Sort();
+            string url = "http://test.waimaiopen.meituan.com/api/v1/third_shipping/save?";
+            string waimd5 = url + string.Join("&", @params) + "01c33711a7c2e6cf2cc27d838e83006e"; //consumer_secret
+            string sig = ETS.Security.MD5.Encrypt(waimd5).ToLower();
+            string paras = string.Join("&", @params) + "&sig=" + sig;
+            string json = HTTPHelper.HttpPost(url, paras, accept: "application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+            return null;
+        }
 
+        /// <summary>
+        /// 设置店铺状态
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public ResultModel<object> SetStoreState()
+        {  //签名信息
+            List<string> @params = new List<string>() { 
+            "timestamp="+TimeHelper.GetTimeStamp(false) ,
+            "app_poi_code=24",
+            "app_id=33"
+            };
+            @params.Sort();
+            string url = "http://test.waimaiopen.meituan.com/api/v1/poi/open?";
+            string waimd5 = url + string.Join("&", @params) + "01c33711a7c2e6cf2cc27d838e83006e"; //consumer_secret
+            string sig = ETS.Security.MD5.Encrypt(waimd5).ToLower();
+            string paras = string.Join("&", @params) + "&sig=" + sig;
+            string json = HTTPHelper.HttpPost(url, paras, accept: "application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+            return null;
+        }
     }
 }
