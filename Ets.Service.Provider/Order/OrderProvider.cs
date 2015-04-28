@@ -504,7 +504,7 @@ namespace Ets.Service.Provider.Order
             {
                 Amount = paramodel.total_price, /*订单金额*/
                 DistribSubsidy = paramodel.store_info.delivery_fee,/*外送费*/
-                OrderCount = paramodel.package_count,/*订单数量*/
+                OrderCount = paramodel.package_count == null ? 1 : paramodel.package_count,/*订单数量，默认为1*/
                 BusinessCommission = paramodel.store_info.businesscommission/*商户结算比例*/
             }/*网站补贴*/;
             OrderPriceProvider commissonPro = CommissionFactory.GetCommission();

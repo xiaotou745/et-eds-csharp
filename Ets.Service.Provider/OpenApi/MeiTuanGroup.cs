@@ -314,6 +314,7 @@ namespace Ets.Service.Provider.OpenApi
             #endregion
 
             #region 佣金相关  
+            model.package_count = 1; //订单份数
             //佣金计算规则
             model.CommissionFormulaMode = ParseHelper.ToInt(Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
             //计算获得订单骑士佣金
@@ -342,7 +343,7 @@ namespace Ets.Service.Provider.OpenApi
         /// <param name="fromModel">paraModel</param>
         public int AddOrder(CreatePM_OpenApi paramodel)
         {
-                return string.IsNullOrWhiteSpace(new Ets.Dao.Order.OrderDao().CreateToSql(paramodel)) ? 0 : 1;
+            return string.IsNullOrWhiteSpace(new Ets.Dao.Order.OrderDao().CreateToSql(paramodel)) ? 0 : 1;
         }
     }
 
