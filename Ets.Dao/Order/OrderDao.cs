@@ -9,6 +9,7 @@ using Ets.Model.DomainModel.Subsidy;
 using Ets.Model.ParameterModel.Order;
 using Ets.Model.ParameterModel.WtihdrawRecords;
 using ETS;
+using ETS.Const;
 using ETS.Dao;
 using ETS.Data.Core;
 using ETS.Data.PageData;
@@ -880,14 +881,15 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
         /// <param name="orderNo">订单号</param>
         /// <param name="orderStatus">订单状态</param>
         /// <returns></returns>
-        public int CancelOrderStatus(string orderNo, int orderStatus,string remark)
+        public int CancelOrderStatus(string orderNo, int orderStatus, string remark, int? status)
         {
             StringBuilder upSql = new StringBuilder();
+
             upSql.AppendFormat(@" UPDATE dbo.[order]
  SET    [Status] = @status,OtherCancelReason=@OtherCancelReason,PubDate=getdate() 
  output Inserted.Id,GETDATE(),'{0}',@OtherCancelReason,Inserted.businessId,Inserted.[Status],{1}
  into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
- WHERE  OrderNo = @orderNo", SuperPlatform.商家, (int)SuperPlatform.商家);
+ WHERE  OrderNo = @orderNo", SuperPlatform.商家, (int)SuperPlatform.商家);           
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@orderNo", SqlDbType.NVarChar);
@@ -895,6 +897,11 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             dbParameters.AddWithValue("@status", orderStatus);
             dbParameters.Add("@OtherCancelReason", SqlDbType.NVarChar);
             dbParameters.SetValue("@OtherCancelReason", remark);  //订单号  
+
+            if (status!=null)
+            {
+                upSql.Append(" and Status=" + status);        
+            }
  
             object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters);
             return ParseHelper.ToInt(executeScalar, -1);

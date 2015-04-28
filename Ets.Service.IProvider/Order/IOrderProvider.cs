@@ -87,7 +87,7 @@ namespace Ets.Service.IProvider.Order
         /// <param name="orderNo">订单号</param>
         /// <param name="orderStatus">订单状态</param>
         /// <returns></returns>
-        int UpdateOrderStatus(string orderNo, int orderStatus,string remakr);
+        int UpdateOrderStatus(string orderNo, int orderStatus, string remakr, int? status);
 
 
         #region openapi 接口使用 add by caoheyang  20150325
