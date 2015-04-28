@@ -530,5 +530,18 @@ namespace SuperManBusinessLogic.B_Logic
             }
             return result;
         }
+
+        /// <summary>
+        /// 获取店铺列表
+        /// danny-20150428
+        /// </summary>
+        /// <returns></returns>
+        public List<business> GetBusinessList()
+        {
+            using (var db = new supermanEntities())
+            {
+                return db.business.ToList();
+            }
+        }
     }
 }
