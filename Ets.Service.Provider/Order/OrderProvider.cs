@@ -968,9 +968,9 @@ namespace Ets.Service.Provider.Order
             switch (groupId)
             {
                 case SystemConst.Group2:  //万达
-                    return true;
+                    return false;
                 case SystemConst.Group3: //全时
-                    return true;
+                    return false;
                 case SystemConst.Group4: //美团
                     StatusType = OrderApiStatusType.OrderIsJoin;
                     return OrderConst.OrderStatus30 != currenStatus;
@@ -978,7 +978,8 @@ namespace Ets.Service.Provider.Order
                     StatusType = OrderApiStatusType.OrderIsFinish;
                     return OrderConst.OrderStatus1 == currenStatus;
                 default:
-                    return false;
+                    StatusType = OrderApiStatusType.SystemError;
+                    return true;
             }
         }
         /// <summary>
