@@ -50,14 +50,19 @@ namespace SuperManBusinessLogic.Order_Logic
         {
             using (var db = new supermanEntities())
             {
-                
-                //var items = db.order.AsQueryable();
-
-                var items = from m in db.order
+                IQueryable<order> items;
+                if(criteria.LoginId==1)
+                {
+                    items = db.order.AsQueryable();
+                }
+                else
+                {
+                    items = from m in db.order
                         join n in db.accountbussinessrelation
                         on m.businessId.Value equals n.BussinessID
                         where n.AccountId==criteria.LoginId
                         select m;
+                }
                 if (!string.IsNullOrWhiteSpace(criteria.businessName))
                 {
                     items = items.Where(p => p.business.Name == criteria.businessName);
@@ -104,46 +109,48 @@ namespace SuperManBusinessLogic.Order_Logic
                 {
                     items = items.Where(p => p.business.GroupId == criteria.GroupId);
                 }
-                if (criteria.LoginName == "bj10dwm")
-                {
-                    items = items.Where(p => p.businessId.Value == 1001);
-                }
-                if (criteria.LoginName == "bj7dwm")
-                {
-                    items = items.Where(p => p.businessId.Value == 1014);
-                }
-                if (criteria.LoginName == "bj16dwm")
-                {
-                    items = items.Where(p => p.businessId.Value == 1013);
-                }
-                if (criteria.LoginName == "bj12dwm")
-                {
-                    items = items.Where(p => p.businessId.Value == 1012);
-                }
-                if (criteria.LoginName == "bj11dwm")
-                {
-                    items = items.Where(p => p.businessId.Value == 1011);
-                }
-                if (criteria.LoginName == "bj2dwm")
-                {
-                    items = items.Where(p => p.businessId.Value == 1010);
-                }
-                if (criteria.LoginName == "bj1dwm")
-                {
-                    items = items.Where(p => p.businessId.Value == 1009);
-                }
-                if (criteria.LoginName == "bj21dwm")
-                {
-                    items = items.Where(p => p.businessId.Value == 1008);
-                }
-                if (criteria.LoginName == "bj15dwm")
-                {
-                    items = items.Where(p => p.businessId.Value == 1007);
-                }
-                if (criteria.LoginName == "bj3dwm")
-                {
-                    items = items.Where(p => p.businessId.Value == 1006);
-                }
+                #region 已弃用
+                //if (criteria.LoginName == "bj10dwm")
+                //{
+                //    items = items.Where(p => p.businessId.Value == 1001);
+                //}
+                //if (criteria.LoginName == "bj7dwm")
+                //{
+                //    items = items.Where(p => p.businessId.Value == 1014);
+                //}
+                //if (criteria.LoginName == "bj16dwm")
+                //{
+                //    items = items.Where(p => p.businessId.Value == 1013);
+                //}
+                //if (criteria.LoginName == "bj12dwm")
+                //{
+                //    items = items.Where(p => p.businessId.Value == 1012);
+                //}
+                //if (criteria.LoginName == "bj11dwm")
+                //{
+                //    items = items.Where(p => p.businessId.Value == 1011);
+                //}
+                //if (criteria.LoginName == "bj2dwm")
+                //{
+                //    items = items.Where(p => p.businessId.Value == 1010);
+                //}
+                //if (criteria.LoginName == "bj1dwm")
+                //{
+                //    items = items.Where(p => p.businessId.Value == 1009);
+                //}
+                //if (criteria.LoginName == "bj21dwm")
+                //{
+                //    items = items.Where(p => p.businessId.Value == 1008);
+                //}
+                //if (criteria.LoginName == "bj15dwm")
+                //{
+                //    items = items.Where(p => p.businessId.Value == 1007);
+                //}
+                //if (criteria.LoginName == "bj3dwm")
+                //{
+                //    items = items.Where(p => p.businessId.Value == 1006);
+                //}
+                #endregion
                 //按照发布时间降序排列
                 items = items.OrderBy(i => i.Status); //先按照订单的状态 未接单的在前 ，然后按照订单发布时间逆序
                 items = items.OrderByDescending(i => i.Id);
