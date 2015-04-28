@@ -257,7 +257,7 @@ namespace Ets.Service.Provider.OpenApi
          
             model.remark = fromModel.caution;//备注
             model.status = OrderConst.OrderStatus30;//初始化订单状态 第三方代接入
-            model.create_time = TimeHelper.TimeStampToDateTime(fromModel.ctime);//订单发单时间 创建时间
+            model.create_time = DateTime.Now;//订单发单时间 创建时间
             model.payment = fromModel.pay_type;//支付类型
             model.is_pay = fromModel.pay_type == 1 ? false : true;//目前货到付款时取未支付，在线支付取已支付
             model.total_price = fromModel.total;//订单金额

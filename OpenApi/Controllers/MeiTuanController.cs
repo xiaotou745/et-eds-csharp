@@ -117,8 +117,8 @@ namespace OpenApi.Controllers
             return null;
         }
 
-        /// <summary>
-        /// 设置店铺状态
+        /// <summary> 
+        /// 设置店铺状态  暂时不用 
         /// </summary>
         /// <returns></returns>
         [HttpGet]

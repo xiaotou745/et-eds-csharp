@@ -133,34 +133,34 @@
     //    });
     //});
 
-    $(function () {
-        $(function () {
-            $.ajax({
-                type: 'post',
-                datatype: 'json',
-                url: '/order/AsyncStatus',
-                data: {
-                    "app_key": "appkey_meituan",
-                    "timestamp": "2015-03-11 20:42:33",
-                    "v": "1.0",
-                    "sign": "0E4E2C676DA6A750D3AF07A9B5261A12",
-                    "fields": {
-                        "order_no": "3313117",
-                        "status": 1,
-                        "ClienterTrueName": "wangchao",
-                        "ClienterPhoneNo": "18553501000",
-                        "OriginalOrderNo": "105150428194317002",
-                    }
-                },
-                success: function (data) {
-                                console.log(data);
-                            },
-                            error: function () {
+    //$(function () {
+    //    $(function () {
+    //        $.ajax({
+    //            type: 'post',
+    //            datatype: 'json',
+    //            url: '/order/AsyncStatus',
+    //            data: {
+    //                "app_key": "appkey_meituan",
+    //                "timestamp": "2015-03-11 20:42:33",
+    //                "v": "1.0",
+    //                "sign": "0E4E2C676DA6A750D3AF07A9B5261A12",
+    //                "fields": {
+    //                    "order_no": "3313117",
+    //                    "status": 1,
+    //                    "ClienterTrueName": "wangchao",
+    //                    "ClienterPhoneNo": "18553501000",
+    //                    "OriginalOrderNo": "105150428194317002",
+    //                }
+    //            },
+    //            success: function (data) {
+    //                            console.log(data);
+    //                        },
+    //                        error: function () {
 
-                            }
-            })
-        });
-    });
+    //                        }
+    //        })
+    //    });
+    //});
 
 
     //$(function () {
