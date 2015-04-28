@@ -96,6 +96,7 @@ namespace SuperMan.Controllers
                 return Json(new ResultModel(false, "结算比例不能小于零!"), JsonRequestBehavior.AllowGet);
             if (waisongfei < 0)
                 return Json(new ResultModel(false, "外送费不能小于零!"), JsonRequestBehavior.AllowGet);
+            string remark = "";
             IBusinessProvider iBus = new BusinessProvider();
             UserOptRecordPara model = new UserOptRecordPara()
             {
