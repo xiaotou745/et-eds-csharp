@@ -608,15 +608,14 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
         }
 
         public IList<BusinessesDistributionModel> GetClienteStorerGrabStatisticalInfo(int daysAgo)
-        {
-            //int currdaysAgo = daysAgo + 1;
+        {            
             StringBuilder sb = new StringBuilder();
             sb.Append("with t as(");
             sb.Append(" select temp.[date],temp.businessCount,count(temp.clienterId) cCount");
             sb.Append(" from (");
             sb.Append(" select convert(char(10), PubDate, 120) 'date', o.clienterId,count(distinct o.businessId) 'businessCount'  from dbo.[order] o(nolock)");
             sb.Append(" where o.PubDate>getdate()-" + daysAgo);
-            sb.Append("  and o.Status =1 group by convert(char(10), PubDate, 120), o.clienterId");
+            sb.Append("  and o.Status =1 and  convert(char(10), PubDate, 120)!=convert(char(10), getdate(), 120)  group by convert(char(10), PubDate, 120), o.clienterId");
             sb.Append(" ) as temp   group by temp.[date],temp.businessCount  )");
             sb.Append(" ,t2 as (");
             sb.Append("  select convert(char(10), csl.InsertTime-1, 120) date,csl.BusinessCount 'businessCount',    count(distinct csl.ClienterId) clientorCount,sum(csl.Amount) totalAmount  from dbo.CrossShopLog csl(nolock)");
