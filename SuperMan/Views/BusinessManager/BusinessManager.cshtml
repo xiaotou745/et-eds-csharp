@@ -181,7 +181,10 @@
             <div class="control-group">
                 <label>绑定第三方ID：</label>
                 <input name="busiSourceId" id="busiSourceId" type="text">
-                @Html.DropDownList("busGroupId", new SelectList(new BusinessProvider().GetGroups(), "Id", "GroupName"), new { @class = "selectw", style = "width:100px" })
+                <input type="hidden" name="oldBusiSourceId" id="oldBusiSourceId">
+                <input type="hidden" name="oldBusGroupId" id="oldBusGroupId">
+                @Html.DropDownList("busGroupId",
+                                           new SelectList(new BusinessProvider().GetGroups(), "Id", "GroupName"), "--请选择--", new { @class = "selectw", style = "width:100px" })
             </div>
         </fieldset>
         <p class="btnbox">
@@ -241,6 +244,8 @@
         var busiPhone = $("#busiPhone").val(); //商户电话
         var busiSourceId = $("#busiSourceId").val(); //商户原平台Id
         var busGroupId = $("#busGroupId").val(); ////商户集团Id
+        var oldBusiSourceId = $("#oldBusiSourceId").val(); //商户原平台Id
+        var oldBusGroupId = $("#oldBusGroupId").val(); ////商户集团Id
         if (busiName.trim().length == 0) {
             alert("请输入商家名称!");
             return;
@@ -264,7 +269,11 @@
             //return;
             busGroupId = 0;
         }
-        var paramaters = { "id": busiId, "businessName": busiName, "businessPhone": busiPhone, "businessSourceId": busiSourceId, "groupId": busGroupId };
+        var paramaters = {
+            "id": busiId, "businessName": busiName, "businessPhone": busiPhone,
+            "businessSourceId": busiSourceId, "groupId": busGroupId,
+            "oldBusiSourceId": oldBusiSourceId, "oldBusGroupId": oldBusGroupId,
+        };
         var url = "/BusinessManager/ModifyBusiness";
         $.ajax({
             type: 'POST',

@@ -137,7 +137,7 @@ namespace SuperMan.Controllers
         /// <param name="groupId"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult ModifyBusiness(int id, string businessName,string businessPhone,int businessSourceId, int groupId)
+        public JsonResult ModifyBusiness(int id, string businessName,string businessPhone,int businessSourceId, int groupId,int oldBusiSourceId, int oldBusGroupId)
         {
             IBusinessProvider iBus = new BusinessProvider();
             //操作日志
@@ -153,7 +153,9 @@ namespace SuperMan.Controllers
                 GroupId = groupId,
                 OriginalBusiId = businessSourceId,
                 Id = id,
-                PhoneNo = businessPhone
+                PhoneNo = businessPhone,
+                oldGroupId = oldBusGroupId,
+                oldOriginalBusiId = oldBusiSourceId
             };
             return Json(new ResultModel(iBus.ModifyBusinessInfo(businessModel, model), "成功!"), JsonRequestBehavior.AllowGet);
         }
