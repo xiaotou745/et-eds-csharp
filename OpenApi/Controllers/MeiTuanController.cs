@@ -51,6 +51,8 @@ namespace OpenApi.Controllers
                 if (meituan.PostGetSig(HttpContext.Current.Request) == paramodel.sig)
                 {
                     CreatePM_OpenApi model = meituan.TranslateModel(paramodel);
+                    if (model == null)  //商户在E代送不存在等情况下导致实体translate失败
+                       return  new { data = "fail" };
                     return meituan.AddOrder(model) > 0 ? new { data = "ok" } : new { data = "fail" };
                 }
                 return new { data = "fail" };  //推送失败
