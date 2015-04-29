@@ -23,6 +23,7 @@ using System.Threading.Tasks;
 
 namespace Ets.Service.Provider.OpenApi
 {
+
     /// <summary>
     /// 美团相关业务类 add by caoheyang 20150420
     /// </summary>
@@ -228,7 +229,8 @@ namespace Ets.Service.Provider.OpenApi
                     string valtemp = System.Web.HttpUtility.UrlDecode(System.Web.HttpUtility.UrlDecode(httpRequest.QueryString[key]));
                     paras.Add(key + "=" + (valtemp == null ? "" : valtemp));
                 }
-            }          
+            }
+            paras.Sort(new NewStringComparer());
             int index = httpRequest.Url.ToString().IndexOf('?');
             string url = (index < 0 ? httpRequest.Url.ToString() : httpRequest.Url.ToString().Substring(0, index)) + "?";
             string waimd5 = url + string.Join("&", paras) + consumer_secret; //consumer_secret
