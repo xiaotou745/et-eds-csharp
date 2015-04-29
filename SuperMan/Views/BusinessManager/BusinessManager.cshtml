@@ -186,7 +186,7 @@
                 <input type="hidden" name="oldBusiSourceId" id="oldBusiSourceId">
                 <input type="hidden" name="oldBusGroupId" id="oldBusGroupId">
                 @Html.DropDownList("busGroupId",
-                                           new SelectList(new BusinessProvider().GetGroups(), "Id", "GroupName"), "--请选择--", new { @class = "selectw", style = "width:100px" })
+                                           new SelectList(new BusinessProvider().GetGroups(), "Id", "GroupName"), "--请选择--", new { @class = "selectw", style = "width:100px"  })
             </div>
         </fieldset>
         <p class="btnbox">
