@@ -283,6 +283,7 @@ namespace SuperManWebApi.Models.Business
         BusinessNotAudit = 313
 
 
-    }
+    } 
+
 }
 

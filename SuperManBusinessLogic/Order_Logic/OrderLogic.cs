@@ -12,6 +12,7 @@ using SuperManCore.Common;
 using SuperManCommonModel;
 //using ifunction.JPush;
 using SuperManBusinessLogic.CommonLogic;
+using SuperManWebApi.Models;
 namespace SuperManBusinessLogic.Order_Logic
 {
     public class OrderLogic
@@ -478,6 +479,66 @@ namespace SuperManBusinessLogic.Order_Logic
                 }
                 
             }
+        }
+        /// <summary>
+        /// 获取已抢单的订单信息
+        /// </summary>
+        /// <param name="startTime"></param>
+        /// <param name="endTime"></param>
+        /// <returns></returns>
+        public List<OrderInfoPrint> GetRushOrderInfo(DateTime startTime, DateTime endTime)
+        {
+
+            using (var db = new supermanEntities())
+            {
+                var myOrder = from o in db.order
+                              join c in db.clienter on o.clienterId equals c.Id
+                              join b in db.business on o.businessId equals b.Id
+                              where o.RushOrderDate >= startTime && o.RushOrderDate < endTime
+                              select new OrderInfoPrint()
+                              {
+                                  OrderId = o.Id,
+                                  OriginalOrderNo = o.OriginalOrderNo,
+                                  ClienterName = c.TrueName,
+                                  ClienterPhone = c.PhoneNo,
+                                  ReceiveName = o.ReceviceName,
+                                  ReceivePhone = o.RecevicePhoneNo,
+                                  ReceiveAddress = o.ReceviceAddress,
+                                  //RushOrderTime = o.RushOrderDate.Value.ToString("yyyy-MM-dd HH:mm:ss"),
+                                  BussinessName = b.Name
+                              };
+                if (myOrder != null)
+                {
+                    return myOrder.ToList();
+                }
+                else
+                {
+                    return null;
+                }
+            }            
+        }
+        /// <summary>
+        /// 更新订单为已打印
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public bool UpdateOrderIsPrint(int orderId)
+        {
+            bool result = false;
+            using (var db = new supermanEntities())
+            {
+                var query = db.order.Where(p => p.Id == orderId).FirstOrDefault();
+                if (query != null)
+                {                 
+                    query.IsPrint = 1; 
+                }
+                int i = db.SaveChanges();
+                if (i != 0)
+                {
+                    result = true;
+                }
+            }
+            return result;
         }
     }
 }

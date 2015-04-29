@@ -571,6 +571,8 @@ namespace SuperManBusinessLogic.C_Logic
                 {
                     query.clienterId = userId;
                     query.Status = ConstValues.ORDER_ACCEPT;
+                    query.RushOrderDate = DateTime.Now;  //抢单时间
+                    query.IsPrint = 0;  //未打印
                 }
                 int i = db.SaveChanges();
                 if (i != 0)

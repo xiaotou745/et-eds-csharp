@@ -66,6 +66,7 @@
     <Compile Include="Models\MyIncomeModel.cs" />
     <Compile Include="Models\HomeCountManage.cs" />
     <Compile Include="Models\OrderCountModel.cs" />
+    <Compile Include="Models\OrderInfoPrint.cs" />
     <Compile Include="Models\OrderModel.cs" />
     <Compile Include="Models\OrderManage.cs" />
     <Compile Include="Models\SubsidyManage.cs" />

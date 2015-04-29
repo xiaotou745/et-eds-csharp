@@ -43,6 +43,18 @@ namespace SuperManCore.Common
         [DisplayText("获取商户失败")]
         FailedGetBusiness
     }
+
+    public enum GetRushOrderInfoStatus
+    {
+        [DisplayText("获取成功")]
+        Success = 1,
+        [DisplayText("入口参数错误")]
+        ParamError = 101
+    }
+
+
+
+
     public enum GetOrdersNoLoginStatus
     {
         Success = 0,
