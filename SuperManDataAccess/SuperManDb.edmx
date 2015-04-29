@@ -217,6 +217,8 @@
           <Property Name="GuoJuQty" Type="int" />
           <Property Name="LuJuQty" Type="int" />
           <Property Name="SongCanDate" Type="datetime" Precision="0" />
+          <Property Name="RushOrderDate" Type="datetime" Precision="0" />
+          <Property Name="IsPrint" Type="tinyint" />
         </EntityType>
         <EntityType Name="orderlog">
           <Key>
@@ -604,6 +606,8 @@
           <Property Name="LuJuQty" Type="Int32" />
           <Property Name="SongCanDate" Type="DateTime" />
           <NavigationProperty Name="business" Relationship="supermanModel.businessId" FromRole="order" ToRole="business" />
+          <Property Name="RushOrderDate" Type="DateTime" />
+          <Property Name="IsPrint" Type="SByte" />
         </EntityType>
         <EntityType Name="orderlog">
           <Key>
@@ -911,6 +915,8 @@
           <EntitySetMapping Name="order">
             <EntityTypeMapping TypeName="supermanModel.order">
               <MappingFragment StoreEntitySet="order">
+                <ScalarProperty Name="IsPrint" ColumnName="IsPrint" />
+                <ScalarProperty Name="RushOrderDate" ColumnName="RushOrderDate" />
                 <ScalarProperty Name="SongCanDate" ColumnName="SongCanDate" />
                 <ScalarProperty Name="LuJuQty" ColumnName="LuJuQty" />
                 <ScalarProperty Name="GuoJuQty" ColumnName="GuoJuQty" />
