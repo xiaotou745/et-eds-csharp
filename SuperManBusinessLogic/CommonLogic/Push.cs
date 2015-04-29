@@ -60,11 +60,14 @@ namespace SuperManBusinessLogic.CommonLogic
                     audience = Audience.s_tag_and(RegistrationId);
 
                 PushPayload pushPayload = new PushPayload();
+                Options opt = new Options();
+                opt.apns_production = true;
+                pushPayload.options = opt;
                 pushPayload.platform = Platform.android_ios();
                 pushPayload.audience = audience;
                 Notification notification = new Notification().setAlert(alert);
                 notification.AndroidNotification = new AndroidNotification().setTitle(title);
-                notification.IosNotification = new IosNotification().setAlert(alert).setBadge(1).setSound("YourSound");
+                notification.IosNotification = new IosNotification().setAlert(alert).setBadge(1).setSound("default");
                 pushPayload.notification = notification.Check();
                 var response = client.SendPush(pushPayload);
             }

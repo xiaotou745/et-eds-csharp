@@ -12,6 +12,8 @@ namespace SuperManCommonModel.Models
 
         public int[] auths { get; set; }
 
+        public string checkBusiList { get; set; }
+
 
     }
 }

@@ -57,6 +57,28 @@
                     <p class="help-block"></p>
                 </div>
             </div>
+            <hgroup style="border:1px solid gray;margin-top:5px">
+                <center><h5><b>门店列表(<input type="checkbox" name="checkMenusAll" id="selectAll" onclick="checkAll()" />全选/取消）</b></h5></center>
+                <div style="width:480px;">
+                    @{
+                        var BusiList = SuperManBusinessLogic.B_Logic.BusiLogic.busiLogic().GetBusinessList();
+                        var busiRel = ViewBag.ClienterBusiRel as List<SuperManDataAccess.clienterbussinessrelation>;
+                        if (BusiList.Count > 0)
+                        {
+                            foreach (var item in BusiList)
+                            {
+                                bool isPublic = false;
+                                if (busiRel != null && busiRel.Count > 0)
+                                {
+                                    isPublic = busiRel.Select(i => i.BussinessID == item.Id).ToList().Count > 0 ? true : false;
+                                }
+                                <input type="checkbox" id="@item.Id" name="checkMenus" @(isPublic == true ? "checked" : "") style="margin-left:3px;" value="@item.Id" /><label style="width:140px">@item.Name</label>
+                            }
+                        }
+                    }
+                </div>
+            </hgroup>
+
         </fieldset>
  
     <p class="btnbox">
@@ -75,5 +97,8 @@
             @Html.Raw("$(\"input[authorityfuncid='"+@item+"']\").attr('checked','true');");                
         }        
     }
-
+    function checkAll() {
+        var checkedOfAll = $("#selectAll").prop("checked");
+        $("input[name='checkMenus']").prop("checked", checkedOfAll);
+    }
 </script>

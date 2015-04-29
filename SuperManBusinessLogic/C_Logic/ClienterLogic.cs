@@ -747,5 +747,158 @@ namespace SuperManBusinessLogic.C_Logic
                 }
             }
         }
+        /// <summary>
+        /// 添加骑士和商户的对应关系
+        /// danny-20150428
+        /// </summary>
+        /// <param name="clienter"></param>
+        /// <returns></returns>
+        public bool AddClienterBusiRel(clienterbussinessrelation model)
+        {
+            bool result = false;
+            try
+            {
+                using (var db = new supermanEntities())
+                {
+                    if (model != null)
+                    {
+                        db.Configuration.ValidateOnSaveEnabled = false;
+                        db.clienterbussinessrelation.Add(model);
+                        int i = db.SaveChanges();
+                        db.Configuration.ValidateOnSaveEnabled = true;
+                        if (i != 0)
+                            result = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(model, ex);
+                result = false;
+            }
+            return result;
+        }
+        /// <summary>
+        /// 添加用户和商户的对应关系
+        /// danny-20150428
+        /// </summary>
+        /// <param name="clienter"></param>
+        /// <returns></returns>
+        public bool AddAccountBusiRel(accountbussinessrelation model)
+        {
+            bool result = false;
+            try
+            {
+                using (var db = new supermanEntities())
+                {
+                    if (model != null)
+                    {
+                        db.Configuration.ValidateOnSaveEnabled = false;
+                        db.accountbussinessrelation.Add(model);
+                        int i = db.SaveChanges();
+                        db.Configuration.ValidateOnSaveEnabled = true;
+                        if (i != 0)
+                            result = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(model, ex);
+                result = false;
+            }
+            return result;
+        }
+        public bool DeleteClienterBusiRel(clienterbussinessrelation model)
+        {
+            bool result = false;
+            try
+            {
+                using (var db = new supermanEntities())
+                {
+                    if (model != null)
+                    {
+
+
+                        var query = db.clienterbussinessrelation.Where(t => t.ClienterId == model.ClienterId);
+                        //var entity =db.Set<clienterbussinessrelation>().Find(model.ClienterId);
+                        //var reg=db.Set<clienterbussinessrelation>().Remove(entity);
+                        foreach (var item in query)
+                        {
+                            db.clienterbussinessrelation.Remove(item);
+                        }
+                        int i = db.SaveChanges();
+                        if (i != 0)
+                            result = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(model, ex);
+                result = false;
+            }
+            return result;
+        }
+
+        public bool DeleteAccountBusiRel(accountbussinessrelation model)
+        {
+            bool result = false;
+            try
+            {
+                using (var db = new supermanEntities())
+                {
+                    if (model != null)
+                    {
+                        var query = db.accountbussinessrelation.Where(t => t.AccountId == model.AccountId);
+                        foreach (var item in query)
+                        {
+                            db.accountbussinessrelation.Remove(item);
+                        }
+                        int i = db.SaveChanges();
+                        if (i != 0)
+                            result = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(model, ex);
+                result = false;
+            }
+            return result;
+        }
+        /// <summary>
+        /// 添加一个超人
+        /// </summary>
+        /// <param name="clienter"></param>
+        /// <returns></returns>
+        public int AddClienter(clienter clienter)
+        {
+            try
+            {
+                using (var db = new supermanEntities())
+                {
+                    if (clienter != null)
+                    {
+                        db.Configuration.ValidateOnSaveEnabled = false;
+                        db.clienter.Add(clienter);
+                        int i = db.SaveChanges();
+                        db.Configuration.ValidateOnSaveEnabled = true;
+                        if (i != 0)
+                            return clienter.Id;
+                    }
+                    return 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(clienter, ex);
+                return 0;
+            }
+        }
+
+       
+
     }
 }
