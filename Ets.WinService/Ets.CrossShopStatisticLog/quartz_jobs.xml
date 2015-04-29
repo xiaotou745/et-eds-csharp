@@ -26,7 +26,7 @@
         <group>DeomJobTriggerGroup</group>
         <job-name>CrossShopStatisticLogService</job-name>
         <job-group>DeomJobGroup</job-group>
-        <cron-expression>0 0 2 * * ?</cron-expression>
+        <cron-expression>0 0 02 * * ?</cron-expression>
       </cron>
     </trigger>
   
