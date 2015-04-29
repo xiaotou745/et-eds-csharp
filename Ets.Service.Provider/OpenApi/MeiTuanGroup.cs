@@ -230,7 +230,7 @@ namespace Ets.Service.Provider.OpenApi
                     paras.Add(key + "=" + (valtemp == null ? "" : valtemp));
                 }
             }
-            paras.Sort(new NewStringComparer());
+            paras.Sort(new NewStringComparer());  //TODO待长时间验证  目前慎用
             int index = httpRequest.Url.ToString().IndexOf('?');
             string url = (index < 0 ? httpRequest.Url.ToString() : httpRequest.Url.ToString().Substring(0, index)) + "?";
             string waimd5 = url + string.Join("&", paras) + consumer_secret; //consumer_secret
