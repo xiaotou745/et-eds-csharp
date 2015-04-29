@@ -544,6 +544,8 @@ namespace Ets.Service.Provider.Clienter
                         result = "1";
                         tran.Complete();
                     }
+                    else 
+                        result = "0"; //同步第三方状态失败 导致订单失败
                     Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", myOrderInfo.businessId.ToString(), string.Empty);
                     result = "1";
                     }
@@ -579,7 +581,9 @@ namespace Ets.Service.Provider.Clienter
                 Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
                 Balance = AccountBalance ?? 0,
                 UserId = userId,
-                Platform = 1
+                Platform = 1,
+                RecordType = 1,
+                OrderId = myOrderInfo.Id
             };
             Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords = new WtihdrawRecordsProvider();
             iRecords.AddRecords(model);

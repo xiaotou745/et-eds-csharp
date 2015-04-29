@@ -663,7 +663,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                                     ,b.Name BusinessName
                                     ,b.PhoneNo BusinessPhoneNo
                                     ,b.Address BusinessAddress
-                                    ,case when b.GroupId=0 then '客户端' else g.GroupName end GroupName
+                                    ,case when o.OrderFrom=0 then '客户端' else g.GroupName end GroupName
                                     ,o.[Adjustment]
                                     ,ISNULL(oo.HadUploadCount,0) HadUploadCount
                                     ,o.BusinessCommission --商家结算比例
@@ -707,7 +707,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             }
             if (criteria.GroupId != null && criteria.GroupId != 0)
             {
-                sbSqlWhere.AppendFormat(" AND g.Id={0} ", criteria.GroupId);
+                sbSqlWhere.AppendFormat(" AND o.OrderFrom={0} ", criteria.GroupId);
             }
             if (!string.IsNullOrWhiteSpace(criteria.businessCity))
             {
@@ -716,7 +716,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             string tableList = @" [order] o WITH ( NOLOCK )
                                 LEFT JOIN clienter c WITH ( NOLOCK ) ON c.Id = o.clienterId
                                 LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
-                                LEFT JOIN [group] g WITH ( NOLOCK ) ON g.Id = b.GroupId
+                                LEFT JOIN [group] g WITH ( NOLOCK ) ON g.id = o.OrderFrom
                                 LEFT JOIN dbo.OrderOther oo (nolock) ON o.Id = oo.OrderId ";
             string orderByColumn = " o.Status ASC,o.Id DESC ";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
@@ -802,7 +802,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                                         ,c.TrueName ClienterName
                                         ,c.AccountBalance AccountBalance
                                         ,b.GroupId
-                                        ,case when b.GroupId=0 then '客户端' else g.GroupName end GroupName
+                                        ,case when o.orderfrom=0 then '客户端' else g.GroupName end GroupName
                                         ,o.OriginalOrderNo
                                         ,oo.NeedUploadCount
                                         ,oo.HadUploadCount
@@ -813,7 +813,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     LEFT JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
                                     LEFT JOIN OrderOther oo WITH (NOLOCK) ON oo.OrderId=o.Id
-                                    LEFT JOIN [group] g WITH ( NOLOCK ) ON g.Id = b.GroupId
+                                    LEFT JOIN [group] g WITH ( NOLOCK ) ON g.Id = o.orderfrom
                                     WHERE 1=1 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             if (!string.IsNullOrWhiteSpace(orderNo))
@@ -918,17 +918,14 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
         /// <param name="orderNo">订单号</param>
         /// <param name="orderStatus">订单状态</param>
         /// <returns></returns>
-        public int CancelOrderStatus(string orderNo, int orderStatus,string remark)
+        public int CancelOrderStatus(string orderNo, int orderStatus, string remark, int? status)
         {
             StringBuilder upSql = new StringBuilder();
-            string strWhere = "";
-            if (remark == "ORDERCANCEL")
-            { strWhere = " and [Status]=0 "; }
             upSql.AppendFormat(@" UPDATE dbo.[order]
- SET    [Status] = @status,OtherCancelReason=@OtherCancelReason,PubDate=getdate() 
- output Inserted.Id,GETDATE(),'{0}',@OtherCancelReason,Inserted.businessId,Inserted.[Status],{1}
- into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
- WHERE  OrderNo = @orderNo {2}", SuperPlatform.商家, (int)SuperPlatform.商家,strWhere);
+             SET    [Status] = @status,OtherCancelReason=@OtherCancelReason,PubDate=getdate() 
+             output Inserted.Id,GETDATE(),'{0}',@OtherCancelReason,Inserted.businessId,Inserted.[Status],{1}
+             into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
+             WHERE  OrderNo = @orderNo", SuperPlatform.商家, (int)SuperPlatform.商家);           
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@orderNo", SqlDbType.NVarChar);
@@ -936,6 +933,11 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             dbParameters.AddWithValue("@status", orderStatus);
             dbParameters.Add("@OtherCancelReason", SqlDbType.NVarChar);
             dbParameters.SetValue("@OtherCancelReason", remark);  //订单号  
+
+            if (status!=null)
+            {
+                upSql.Append(" and Status=" + status);        
+            }
  
             object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters);
             return ParseHelper.ToInt(executeScalar, -1);

@@ -84,25 +84,26 @@
     //    }
     //});
 
-    //$.ajax({
-    //    type: 'POST',
-    //    dataType: 'json',
-    //    url: '/BusinessAPI/PostPublishOrder_B',
-    //    data: {
-    //        "userId": 106,
-    //        "ReceiveName": "窦海超",
-    //        "ReceivePhoneNo": "13426401627",
-    //        "Amount": 78.0000,
-    //        "IsPay": false,
-    //        "Remark": null,
-    //        "OrderCount": 10,
-    //        "OrderSign": "21313d"
-    //    },
-    //    success: function (data) {
-    //        console.log(data);
-    //    },
-    //    error: function () { }
-    //});
+    $.ajax({
+        type: 'POST',
+        dataType: 'json',
+        url: '/BusinessAPI/PostPublishOrder_B',
+        data: {
+            "userId": 135,
+            "ReceiveName": "xxxx",
+            "receviceAddress":"测试数据，请勿操作",
+            "ReceivePhoneNo": "13693094632",
+            "Amount": 10,
+            "IsPay": false,
+            "Remark": null,
+            "OrderCount": 1,
+            "OrderSign": "143112221125"
+        },
+        success: function (data) {
+            console.log(data);
+        },
+        error: function () { }
+    });
 
     //    }
     //});

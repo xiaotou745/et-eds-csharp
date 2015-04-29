@@ -294,7 +294,7 @@ namespace SuperManWebApi.Controllers
             List<string> errors = new List<string>();
             for (int i = 0; i < aa.Length; i++)
             {
-                int res = orderProvider.UpdateOrderStatus(aa[i], OrderConst.ORDER_NEW, "");
+                int res = orderProvider.UpdateOrderStatus(aa[i], OrderConst.ORDER_NEW, "", OrderConst.OrderStatus30);
                 if (res < 0)
                     errors.Add(aa[i]);
             }
@@ -317,7 +317,7 @@ namespace SuperManWebApi.Controllers
             }
             var orderProvider = new OrderProvider();
             string [] aa = orderlist.Split(',');
-            int i = aa.Count(s => orderProvider.UpdateOrderStatus(s, OrderConst.ORDER_CANCEL, note) > 0);
+            int i = aa.Count(s => orderProvider.UpdateOrderStatus(s, OrderConst.ORDER_CANCEL, note, OrderConst.OrderStatus30) > 0);
             return Ets.Model.Common.ResultModel<int>.Conclude(ETS.Enums.PubOrderStatus.Success, i);
         }
 
@@ -509,7 +509,7 @@ namespace SuperManWebApi.Controllers
                 if (selResult.Status == ConstValues.ORDER_NEW)
                 {
                     //存在的情况下  取消订单  3
-                    int cacelResult = iOrderProvider.UpdateOrderStatus(OrderId, Ets.Model.Common.ConstValues.ORDER_CANCEL, "ORDERCANCEL");
+                    int cacelResult = iOrderProvider.UpdateOrderStatus(OrderId, Ets.Model.Common.ConstValues.ORDER_CANCEL,"",null);
                     if (cacelResult > 0)
                         return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.Success, true);
                     else

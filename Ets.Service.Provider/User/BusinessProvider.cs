@@ -784,10 +784,13 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public bool ModifyBusinessInfo(Business model, OrderOptionModel orderOptionModel)
         {
+            var redis = new ETS.NoSql.RedisCache.RedisCache(); 
+            redis.Delete(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo,  //清空之前的关系缓存
+                ParseHelper.ToInt(model.oldGroupId), ParseHelper.ToInt(model.oldOriginalBusiId)));
             bool result = dao.ModifyBusinessInfo(model, orderOptionModel);
             if (result == true && ParseHelper.ToInt(model.GroupId)!=0)
             { //添加到缓存
-                var redis = new ETS.NoSql.RedisCache.RedisCache();
+ 
                 redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo,
                     ParseHelper.ToInt(model.GroupId),ParseHelper.ToInt(model.OriginalBusiId)),model.Id.ToString());
             }
