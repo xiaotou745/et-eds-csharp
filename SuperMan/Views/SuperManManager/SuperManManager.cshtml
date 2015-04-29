@@ -145,6 +145,22 @@
                         <input placeholder="默认edaisong" name="IDCard" id="BoxPassword" type="text" value="edaisong">
                     </div>
                 </div>
+                <hgroup style="border:1px solid gray;margin-top:5px">
+                    <center><h5><b>门店列表(<input type="checkbox" name="addCheckMenusAll" id="addSelectAll" onclick="addCheckAll()" />全选/取消）</b></h5></center>
+                    <div style="width:480px;">
+                        @{
+                            var addBusiList = SuperManBusinessLogic.B_Logic.BusiLogic.busiLogic().GetBusinessList();
+                            if (addBusiList.Count > 0)
+                            {
+                                foreach (var item in addBusiList)
+                                {
+                                    <input type="checkbox" id="@item.Id" name="addCheckMenus" style="margin-left:3px;" value="@item.Id" /><label style="width:140px">@item.Name</label>
+                                }
+                            }
+                        }
+                    </div>
+                </hgroup>
+
             </fieldset>
         </form>
         <p class="btnbox">
@@ -254,17 +270,27 @@
                     <div class="controls">
                         <input placeholder="登陆密码" name="SupPassword" id="SupPassword" type="text">
                     </div>
-                </div>
-                @{ 
-                    var BusiList=SuperManBusinessLogic.B_Logic.BusiLogic.busiLogic().GetBusinessList();
-                    if(BusiList.Count>0)
-                    {
-                        foreach(var item in BusiList)
-                        {
-                            <input type="checkbox" id="@item.Id" name="checkMenus" /><label>@item.Name</label>
-                        }
-                    }
-                  }
+                    <hgroup style="border:1px solid gray;margin-top:5px">
+                        <center><h5><b>门店列表(<input type="checkbox" name="checkMenusAll" id="selectAll" onclick="checkAll()" />全选/取消）</b></h5></center>
+                        <div style="width:480px;">
+                            @{
+                                var BusiList = SuperManBusinessLogic.B_Logic.BusiLogic.busiLogic().GetBusinessList();
+                                var busiRel = ViewBag.ClienterBusiRel as List<SuperManDataAccess.clienterbussinessrelation>;
+                                if (BusiList.Count > 0)
+                                {
+                                    foreach (var item in BusiList)
+                                    {
+                                        bool isPublic = false;
+                                        if (busiRel != null && busiRel.Count > 0)
+                                        {
+                                            isPublic = busiRel.Select(i => i.BussinessID == item.Id).ToList().Count > 0 ? true : false;
+                                        }
+                                        <input type="checkbox" id="@item.Id" name="checkMenus" @(isPublic == true ? "checked" : "") style="margin-left:3px;" value="@item.Id" /><label style="width:140px">@item.Name</label>
+                                    }
+                                }
+                            }
+                        </div>
+                    </hgroup>
             </fieldset>
         </form>
         <p class="btnbox">
@@ -397,6 +423,14 @@
         //新增超人保存按钮点击事件    add by caoheyang 20150302
         $("#btnSuperConfim").click(
             function () {
+                var checkBusiList = "";
+                $("input[name='addCheckMenus']").each(function () {
+                    if ($(this).is(':checked')) {
+                        checkBusiList = checkBusiList + $(this).val() + ",";
+                    }
+                });
+                if (checkBusiList.length > 0)
+                    checkBusiList = checkBusiList.substring(0, checkBusiList.length - 1);
                 var result = true;//验证结果
                 var trueName = $('#BoxTrueName').val();//姓名
                 var phoneNo = $('#BoxPhoneNo').val();//手机号
@@ -426,7 +460,7 @@
                     $('#labBoxPhoneNo').html("不能为空").show();
                     result = false;
                 } else {
-                    var myreg = /^((\+?86)|(\(\+86\)))?(1[0-9]{10)$/;
+                    var myreg = /^((\+?86)|(\(\+86\)))?(1[0-9]{10})$/;
                     if (!myreg.test(phoneNo)) {  //手机号码格式验证
                         $('#labBoxPhoneNo').html("手机号格式不正确").show();
                         result = false;
@@ -471,7 +505,7 @@
                             TrueName: trueName, PhoneNo: phoneNo, HealthCardID: healthCardID, InternalDepart: internalDepart,
                             ProvinceCode: provinceCode, CityCode: cityCode, IDCard: idCard, Password: password, City: $("#BoxProvinceCode").find("option:selected").text(),
                             CityId: provinceCode, Province: $("#BoxProvinceCode").find("option:selected").text(), GroupId: $("#HidGroupID").val(),
-                            BussinessID: bussinessID, PicWithHandUrl: hidHandUpload, PicUrl: hidupload
+                            BussinessID: bussinessID, PicWithHandUrl: hidHandUpload, PicUrl: hidupload, CheckBusiList: checkBusiList
                         },
                         success: function (result) {
                             if (result.IsSuccess) {
@@ -572,6 +606,14 @@
             $('#labBoxSupPhoneNo').hide();
             $('#labSupCityCode').hide();
             $('#labSupHealthCardID').hide();
+            var checkBusiList = "";
+            $("input[name='checkMenus']").each(function () {
+                if ($(this).is(':checked')) {
+                    checkBusiList = checkBusiList + $(this).val() + ",";
+                }
+            });
+            if (checkBusiList.length > 0)
+                checkBusiList = checkBusiList.substring(0, checkBusiList.length - 1);
             var result = true;//验证结果
             var id = $('#SupId').val();//Id
             var trueName = $('#SupName').val();//姓名
@@ -581,7 +623,6 @@
             var healthCardID = $('#SupHealthCardID').val(); //健康证ID
             var internalDepart = $('#SupInternalDepart').val(); //内外部门
             var provinceCode = $('#SupProvinceCode').val(); //省
-            alert(provinceCode);
             var cityCode = $('#SupCityCode').val(); //市
             var idCard = $('#SupIDCard').val(); //身份证号
             var password = $('#SupPassword').val(); //密码
@@ -635,7 +676,7 @@
                         Id: id, TrueName: trueName, PhoneNo: phoneNo, HealthCardID: healthCardID, InternalDepart: internalDepart,
                         ProvinceCode: provinceCode, CityCode: cityCode, IDCard: idCard, Password: password, City: $("#SupCityCode").find("option:selected").text(),
                         CityId: cityCode, Province: $("#SupProvinceCode").find("option:selected").text(), GroupId: $("#HidSupGroupID").val(),
-                        BussinessID: bussinessID, PicWithHandUrl: hidHandUpload, PicUrl: hidupload
+                        BussinessID: bussinessID, PicWithHandUrl: hidHandUpload, PicUrl: hidupload, CheckBusiList: checkBusiList
                     },
                     success: function (result) {
                         if (result.IsSuccess) {
@@ -695,4 +736,12 @@
         adminjs.closewinbox('.add-openbox');
         return false;
     });
+    function checkAll() {
+        var checkedOfAll = $("#selectAll").prop("checked");
+        $("input[name='checkMenus']").prop("checked", checkedOfAll);
+    }
+    function addCheckAll() {
+        var addCheckedOfAll = $("#addSelectAll").prop("checked");
+        $("input[name='addCheckMenus']").prop("checked", addCheckedOfAll);
+    }
 </script>

@@ -9,6 +9,26 @@
     var _businessView = false;
     var _businessCheck = false;
     var _subsidySet = false;
+
+    function funcCheckBusi(id) {
+        var busiClienterRef;
+        var paramaters = { "id": id };
+        var url = "/AuthorityManager/GetAccountBussinessRel";
+        $.ajax({
+            type: 'POST',
+            async: false,
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                busiClienterRef = result;
+            }
+        });
+        if (busiClienterRef.length > 0) {
+            for (var i = 0; i < busiClienterRef.length; i++) {
+                $(":checkbox[id='" + busiClienterRef[i].BussinessID + "']").prop("checked", true);
+            }
+        }
+    };
     //设置权限弹出框
     $(".setAuthority").bind("click", function () {
         currentId = $(this).closest("tr").attr("id");
@@ -17,6 +37,7 @@
         $.get("/AuthorityManager/AuthorityEdit", accountId, function (data) {
             $("#_AuthorityDiv").html(data);
             adminjs.openwinbox('#AuthorityManagerShow');
+            funcCheckBusi(currentId);
         });
 
     });
@@ -88,15 +109,23 @@
         var businessView = $('#businessView').is(':checked');
         var businessCheck = $('#businessCheck').is(':checked');
         var subsidySet = $('#subsidySet').is(':checked');
-
+        var checkBusiList = "";
+        $("input[name='checkMenus']").each(function () {
+            if ($(this).is(':checked')) {
+                checkBusiList = checkBusiList + $(this).val() + ",";
+            }
+        });
+        if (checkBusiList.length > 0)
+            checkBusiList = checkBusiList.substring(0, checkBusiList.length - 1);
         var auids = new Array();
         $('#AuthorityManagerShow input[type="checkbox"]:checked').each(function () {
             // alert($(this).attr("authorityfuncid"));
             auids.push($(this).attr("authorityfuncid"));
         });
-        var AuthorityListModel = { "id": id, "auths": auids };
+        var AuthorityListModel = { "id": id, "auths": auids, "checkBusiList": checkBusiList };
         $.post("/AuthorityManager/saveAuthority", AuthorityListModel, function (data) {
             if (data) {
+                alert("修改用户权限成功！");
                 window.location.href = window.location.href;
             }
             else {

@@ -128,7 +128,8 @@
 <script type="text/javascript">
     var currentId;
     var amount;
-    $(document).ready(function () {
+    $(document).ready(function () { 
+        $("#1005").attr("checked", true);
         $(".superManOk").bind("click", function () {
             currentId = $(this).attr("supermanid");
             var paramaters = { "id": currentId };
@@ -201,7 +202,19 @@
     });
     var cityID ;
     var bID;
+    var busiClienterRef;
     function funcViewSuperManInfo(id, trueName, phoneNo, picWithHandUrl, picUrl, healthCardID, provinceCode, cityCode, bussinessID, internalDepart, iDCard, password) {
+        var paramaters = { "id": id };
+        var url = "/SuperManManager/GetClienterBussinessRel";
+        $.ajax({
+            type: 'POST',
+            async:false,
+            url: url,
+            data: paramaters,
+            success: function (result) { 
+                busiClienterRef = result;
+            }
+        });
         $("#SupId").val(id).attr('disabled', 'disabled');
         $("#SupName").val(trueName);
         $("#SupPhoneNo").val(phoneNo);
@@ -212,6 +225,13 @@
         $("#SupProvinceCode").change();
         cityID = cityCode;
         bID = bussinessID;
-        adminjs.openwinbox('#UpdateSuperManShow');
+        if(busiClienterRef.length>0)
+        {
+            for(var i = 0; i<busiClienterRef.length;i++)
+            {
+                $(":checkbox[id='"+busiClienterRef[i].BussinessID+"']").prop("checked",true);
+            }
+        }
+        adminjs.openwinbox('#UpdateSuperManShow'); 
     };
 </script>
