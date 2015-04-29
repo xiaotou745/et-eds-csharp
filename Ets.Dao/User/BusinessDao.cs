@@ -50,6 +50,10 @@ namespace Ets.Dao.User
                     whereStr += " and o.Status=" + paraModel.Status.ToString();
                 }
             }
+            if (paraModel.OrderFrom > 0)
+            {
+                whereStr += " and o.OrderFrom=" + paraModel.OrderFrom;
+            }
 
             #endregion
 
@@ -74,10 +78,51 @@ namespace Ets.Dao.User
                                     b.Latitude,
                                     b.Name as PickUpName,
                                     c.TrueName as SuperManName,
-                                    c.PhoneNo as SuperManPhone ";
+                                    c.PhoneNo as SuperManPhone,
+                                    o.OrderFrom,
+                                    isnull(o.OriginalOrderNo,'') as OriginalOrderNo";
             string tableList = @" [order](nolock) as o 
                                    LEFT join business(nolock) as b on o.businessId=b.Id
                                    LEFT join clienter(nolock) as c on o.clienterId=c.Id ";  //表名
+
+            return new PageHelper().GetPages<T>(SuperMan_Read, paraModel.PagingResult.PageIndex, whereStr, orderByColumn, columnList, tableList, paraModel.PagingResult.PageSize, true);
+        }
+
+        /// <summary>
+        /// 商户获取第三方订单   add by 平扬 20150420
+        /// </summary>
+        /// <param name="paraModel">查询条件实体</param>
+        public virtual PageInfo<T> GetOtherOrdersAppToSql<T>(BussOrderParaModelApp paraModel)
+        {
+            #region where
+            string whereStr = "1=1 ";  //where查询条件实体类
+            if (paraModel.userId != null)  //订单商户id
+                whereStr += " and o.businessId=" + paraModel.userId.ToString();
+            if (paraModel.Status != null)  //状态id
+                whereStr += " and o.Status=" + paraModel.Status.ToString();
+            #endregion
+
+            string orderByColumn = " o.PubDate DESC ";  //排序条件
+            string columnList = @"  o.Amount,
+                                    o.OrderNo,
+                                    o.PickUpAddress,
+                                    CONVERT(VARCHAR(5),o.PubDate,108) AS PubDate,
+                                    o.ReceviceAddress,
+                                    o.ReceviceName,
+                                    o.RecevicePhoneNo,
+                                    o.Remark,
+                                    o.Status,
+                                    o.ReceviceLongitude,
+                                    o.ReceviceLatitude,
+                                    b.Id as BusinessId,
+                                    b.Name as BusinessName,
+                                    b.Longitude,
+                                    b.Latitude,
+                                    b.Name as PickUpName,
+                                    o.OrderFrom,
+                                    isnull(o.OriginalOrderNo,'') as OriginalOrderNo";
+            string tableList = @" [order](nolock) as o 
+                                   LEFT join business(nolock) as b on o.businessId=b.Id ";  //表名
 
             return new PageHelper().GetPages<T>(SuperMan_Read, paraModel.PagingResult.PageIndex, whereStr, orderByColumn, columnList, tableList, paraModel.PagingResult.PageSize, true);
         }
@@ -358,7 +403,7 @@ namespace Ets.Dao.User
                         cityId,
                         phoneNo,
                         PhoneNo2,
-                        DistribSubsidy
+                        DistribSubsidy,ISNULL(OriginalBusiId,0) AS OriginalBusiId
                         FROM business(nolock) where PhoneNo=@PhoneNo AND Password=@Password order by id desc";
 
             IDbParameters parm = DbHelper.CreateDbParameters();

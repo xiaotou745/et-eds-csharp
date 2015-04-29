@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperMan", "SuperMan\SuperMan.csproj", "{FC62F0EE-873C-437E-B845-78F9ABC16145}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperManDataAccess", "SuperManDataAccess\SuperManDataAccess.csproj", "{F54D4C48-F635-42CA-9940-19873A691693}"

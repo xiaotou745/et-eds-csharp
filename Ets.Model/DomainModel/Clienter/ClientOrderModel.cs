@@ -11,6 +11,7 @@ namespace Ets.Model.DomainModel.Clienter
         public int OrderId { get; set; }
         public int UserId { get; set; }
         public string OrderNo { get; set; }
+        public int OrderFrom { get; set; }
         public string OriginalOrderNo { get; set; }
         public string PubDate { get; set; }
         public string PickUpAddress { get; set; }

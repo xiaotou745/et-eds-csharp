@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Http.Filters;
 using System.Web.Mvc;
 using System.Web.Http.Controllers;
+using System.Text;
 
 namespace OpenApi
 {
@@ -52,15 +53,27 @@ namespace OpenApi
                     string signStr = groupCofigInfo.AppSecret + "app_key" + paramodel.app_key + "timestamp"
                         + paramodel.timestamp + "v" + paramodel.v + groupCofigInfo.AppSecret;
                     string sign = MD5.Encrypt(signStr);
-                    paramodel.group = ParseHelper.ToInt(groupCofigInfo.GroupId, 0);
-                    actionContext.ActionArguments["paramodel"] = paramodel; ;
                     if (sign != paramodel.sign)   //sign错误，请求中止
+                    {
                         actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
-                            (actionContext.ControllerContext, ResultModel<object>.Conclude(OrderApiStatusType.SignError));
+                               (actionContext.ControllerContext, ResultModel<object>.Conclude(OrderApiStatusType.SignError));
+                        return;
+                    }
+                    else
+                    {
+                        paramodel.group = ParseHelper.ToInt(groupCofigInfo.GroupId, 0); //设置集团
+                        actionContext.ActionArguments["paramodel"] = paramodel;  //更新参数实体
+                    }
+
                 }
                 else
+                {
                     actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
-                           (actionContext.ControllerContext, ResultModel<object>.Conclude(OrderApiStatusType.SignError));  //sign错误，请求中止
+                    (actionContext.ControllerContext, ResultModel<object>.Conclude(OrderApiStatusType.SignError));  //sign错误，请求中止
+                    return;
+                }
+
+
             }
 
         }
@@ -81,6 +94,38 @@ namespace OpenApi
     }
 
     #endregion
+
+    /// <summary>
+    /// 记录执行时间的 Filter 
+    /// </summary>
+    [System.AttributeUsage(System.AttributeTargets.Method | System.AttributeTargets.Class)]
+    public class ExecuteTimeApiAttribute : System.Web.Http.Filters.ActionFilterAttribute
+    {
+        System.Diagnostics.Stopwatch stop = new System.Diagnostics.Stopwatch();
+        /// <summary>
+        /// 重写OnActionExecuting方法   在进入控制器之前验证 sign以及 参数合法性信息 add by caoheyang 20150318
+        /// </summary>
+        /// <param name="actionContext"></param>
+        public override void OnActionExecuting(System.Web.Http.Controllers.HttpActionContext actionContext)
+        {
+            stop.Start();
+        }
+        /// <summary>
+        /// 异步记录日志
+        /// </summary>
+        /// <param name="actionExecutedContext"></param>
+        public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
+        {
+            System.Threading.Tasks.Task.Factory.StartNew(() =>
+            {
+                stop.Stop();
+                LogHelper.LogWriter("接口" + actionExecutedContext.Request.RequestUri + "请求时间：" + stop.Elapsed);
+                stop.Reset();
+            });
+            base.OnActionExecuted(actionExecutedContext);
+        }
+    }
+
 
     #region  ExceptionFilter add by caoheyang 20150319
 

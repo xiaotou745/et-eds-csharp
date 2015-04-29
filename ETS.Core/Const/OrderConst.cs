@@ -13,7 +13,7 @@ namespace ETS.Const
     {
         #region 订单状态 add by caoheyang 20150311
         /// <summary>
-        /// 订单新增
+        /// 待接单
         /// </summary>
         public const int OrderStatus0 = 0;
         /// <summary>
@@ -28,7 +28,40 @@ namespace ETS.Const
         /// 订单已取消 
         /// </summary>
         public const int OrderStatus3 = 3;
+
+        /// <summary>
+        /// 第三方待接入订单 
+        /// </summary>
+        public const int OrderStatus30 = 30;
+
         #endregion
+
+        #region 订单来源 add by caoheyang 20150311
+        /// <summary>
+        /// E代送B端
+        /// </summary>
+        public const int OrderFrom0 = 0;
+
+        /// <summary> 
+        ///易淘食 
+        /// </summary> 
+        public const int OrderFrom1 = 1;
+        /// <summary>
+        /// 万达
+        /// </summary>
+        public const int OrderFrom2 = 2;
+        /// <summary>
+        /// 全时 
+        /// </summary>
+        public const int OrderFrom3 = 3;
+        /// <summary>
+        /// 美团 
+        /// </summary>
+        public const int OrderFrom4 = 4;
+
+
+        #endregion
+
 
         #region 窦海超复制过来 原ConstValues.cs
 

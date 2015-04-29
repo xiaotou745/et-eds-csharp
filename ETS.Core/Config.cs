@@ -63,6 +63,11 @@ namespace ETS
         /// </summary>
         public static string SendMessage { get { return ConfigKey("SendMessage"); } }
 
+        /// <summary>
+        /// 订单取消原因
+        /// </summary>
+        public static string OrderCancelReasons { get { return ConfigKey("OrderCancelReasons"); } }
+
         #region 取Web.Config值
 
         /// <summary>

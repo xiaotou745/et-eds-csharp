@@ -58,8 +58,6 @@ namespace Ets.Service.Provider.Order
                 return Decimal.Round(temp / 100m, 2);  
         }
 
-
-        /// <summary>
         /// <summary>
         /// 获取订单的额外补贴金额 add by caoheyang 20150409
         /// </summary>
