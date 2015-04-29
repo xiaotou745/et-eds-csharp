@@ -969,7 +969,7 @@ WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL;", SuperPlatform.骑士, (i
             dbParameters.AddWithValue("@status", ConstValues.ORDER_FINISH);
 
 
-            object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Read, upSql.ToString(), dbParameters);
+            object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters);
 
 
             return ParseHelper.ToInt(executeScalar, -1);

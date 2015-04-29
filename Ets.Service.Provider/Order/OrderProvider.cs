@@ -398,11 +398,11 @@ namespace Ets.Service.Provider.Order
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 int result = OrderDao.CancelOrderStatus(orderNo, orderStatus, remark, status);
-               if (result > 0 & AsyncOrderStatus(orderNo))
-               {
-                   tran.Complete();
-                   return 1;
-               }
+                if (result > 0 & AsyncOrderStatus(orderNo))
+                {
+                    tran.Complete();
+                    return 1;
+                }
             }
             return 0;
         }
@@ -743,7 +743,7 @@ namespace Ets.Service.Provider.Order
         {
             ListOrderDetailModel mo = new ListOrderDetailModel();
             var order = OrderDao.GetOrderByNo(order_no);
-            if (order != null) 
+            if (order != null)
             {
                 if (order.OrderFrom == 0)
                     order.OrderFromName = "B端";
@@ -932,8 +932,13 @@ namespace Ets.Service.Provider.Order
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 int result = OrderDao.UpdateOrderStatus_Other(paramodel);
-                tran.Complete();
-                return result > 0 ? ResultModel<object>.Conclude(OrderApiStatusType.Success) : ResultModel<object>.Conclude(OrderApiStatusType.SystemError);
+                if (result > 0)
+                {
+                    tran.Complete();
+                    return ResultModel<object>.Conclude(OrderApiStatusType.Success);
+                }
+                else
+                    return ResultModel<object>.Conclude(OrderApiStatusType.SystemError);
             }
         }
 
