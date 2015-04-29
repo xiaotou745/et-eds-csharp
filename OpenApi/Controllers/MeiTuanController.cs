@@ -41,7 +41,7 @@ namespace OpenApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [ExecuteTimeApi]
-        public object PullOrderInfo()
+        public ResultModelToString PullOrderInfo()
         {
             try
             {
@@ -52,15 +52,15 @@ namespace OpenApi.Controllers
                 {
                     CreatePM_OpenApi model = meituan.TranslateModel(paramodel);
                     if (model == null)  //商户在E代送不存在等情况下导致实体translate失败
-                       return  new { data = "fail" };
-                    return meituan.AddOrder(model) > 0 ? new { data = "ok" } : new { data = "fail" };
+                        return  new ResultModelToString(data : "fail" );
+                    return meituan.AddOrder(model) > 0 ? new ResultModelToString(data: "ok") : new ResultModelToString(data: "fail");
                 }
-                return new { data = "fail" };  //推送失败
+                return new ResultModelToString(data: "fail");  //推送失败
             }
             catch (Exception ex)
             {
                 LogHelper.LogWriterFromFilter(ex);  //记录日志
-                return new { data = "fail" };  //推送失败
+                return new ResultModelToString(data: "fail");  //推送失败
             }
         }
 
@@ -70,7 +70,7 @@ namespace OpenApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [ExecuteTimeApi]
-        public object ChangeStatus()
+        public ResultModelToString ChangeStatus()
         {
             try
             {
@@ -82,15 +82,15 @@ namespace OpenApi.Controllers
                 if (HttpContext.Current.Request["sig"] == mgroup.GetSig(HttpContext.Current.Request))
                 {
                     ResultModel<object> res = new OrderProvider().UpdateOrderStatus_Other(model);
-                    return res.Status == 0 ? new { data = "ok" } : new { data = "fail" };
+                    return res.Status == 0 ? new ResultModelToString(data: "ok") : new ResultModelToString(data: "fail");
                 }
                 else
-                    return new { data = "fail" };
+                    return new ResultModelToString(data: "fail");
             }
             catch (Exception ex)
             {
                 LogHelper.LogWriterFromFilter(ex);  //记录日志
-                return new { data = "fail" };  //推送失败
+                return new ResultModelToString(data: "fail");  //推送失败
             }
         }
 
