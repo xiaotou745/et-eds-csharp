@@ -207,7 +207,7 @@ namespace Ets.Service.Provider.OpenApi
             }
             paras.Sort();
             int index = httpRequest.Url.ToString().IndexOf('?');
-            string url = index < 0 ? httpRequest.Url.ToString() + "?" : httpRequest.Url.ToString().Substring(0, index);
+            string url = (index < 0 ? httpRequest.Url.ToString() : httpRequest.Url.ToString().Substring(0, index)) + "?";
             string waimd5 = url + string.Join("&", paras) + consumer_secret; //consumer_secret
             string sigtemp = ETS.Security.MD5.DefaultEncrypt(waimd5).ToLower();
             return sigtemp;
@@ -228,10 +228,9 @@ namespace Ets.Service.Provider.OpenApi
                     string valtemp = System.Web.HttpUtility.UrlDecode(System.Web.HttpUtility.UrlDecode(httpRequest.QueryString[key]));
                     paras.Add(key + "=" + (valtemp == null ? "" : valtemp));
                 }
-            }
-            paras.Sort();
+            }          
             int index = httpRequest.Url.ToString().IndexOf('?');
-            string url = index < 0 ? httpRequest.Url.ToString() + "?" : httpRequest.Url.ToString().Substring(0, index);
+            string url = (index < 0 ? httpRequest.Url.ToString() : httpRequest.Url.ToString().Substring(0, index)) + "?";
             string waimd5 = url + string.Join("&", paras) + consumer_secret; //consumer_secret
             string sigtemp = ETS.Security.MD5.DefaultEncrypt(waimd5).ToLower();
             return sigtemp;
