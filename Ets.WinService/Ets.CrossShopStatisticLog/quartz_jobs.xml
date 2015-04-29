@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- This file contains job definitions in schema version 2.0 format -->
+
+<job-scheduling-data xmlns="http://quartznet.sourceforge.net/JobSchedulingData" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0">
+
+  <processing-directives>
+    <overwrite-existing-data>true</overwrite-existing-data>
+  </processing-directives>
+
+  <schedule>
+    <!--跨店奖励统计-->
+    <job>
+      <name>CrossShopStatisticLogService</name>
+      <group>DeomJobGroup</group>
+      <description>跨店奖励统计任务</description>
+      <job-type>Ets.CrossShopStatisticLog.CrossShopStatisticLogService,Ets.CrossShopStatisticLog</job-type>
+      <durable>true</durable>
+      <recover>false</recover>
+    </job>
+
+    <!--跨店奖励统计 触发器 每天凌晨02:00执行一次跨店奖励统计任务-->
+    <trigger>
+      <cron>
+        <name>CrossShopStatisticLogServiceTrigger</name>
+        <group>DeomJobTriggerGroup</group>
+        <job-name>CrossShopStatisticLogService</job-name>
+        <job-group>DeomJobGroup</job-group>
+        <cron-expression>0 0 2 * * ?</cron-expression>
+      </cron>
+    </trigger>
+  
+  </schedule>
+</job-scheduling-data>

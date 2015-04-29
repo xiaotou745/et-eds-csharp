@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ets.CrossShopStatisticLog", "Ets.CrossShopStatisticLog.csproj", "{9664D80E-C42D-4768-A0D9-3F0C3A294BC0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ets.CrossShopStatisticLogService", "..\Ets.CrossShopStatisticLogService\Ets.CrossShopStatisticLogService.csproj", "{51ADAC19-ECBD-47B6-9F0D-9074D7920E20}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9664D80E-C42D-4768-A0D9-3F0C3A294BC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9664D80E-C42D-4768-A0D9-3F0C3A294BC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9664D80E-C42D-4768-A0D9-3F0C3A294BC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9664D80E-C42D-4768-A0D9-3F0C3A294BC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51ADAC19-ECBD-47B6-9F0D-9074D7920E20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51ADAC19-ECBD-47B6-9F0D-9074D7920E20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51ADAC19-ECBD-47B6-9F0D-9074D7920E20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51ADAC19-ECBD-47B6-9F0D-9074D7920E20}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
