@@ -155,7 +155,7 @@ WHERE   sub.[Status] = 1 ");
                         where 
                         convert(char(10),o.PubDate,120)=convert(char(10),dateadd(day,-1,getdate()),120) 
                         and o.[Status]=1  and clienterId not in 
-                        (SELECT ClienterId FROM dbo.CrossShopLog(nolock) where convert(char(10),o.PubDate,120)=convert(char(10),dateadd(day,-1,getdate()),120) )
+                        (SELECT ClienterId FROM dbo.CrossShopLog(nolock) where convert(char(10),insertTime,120)=convert(char(10),dateadd(day,0,getdate()),120) )
                         group by convert(char(10),o.PubDate,120), clienterId ) t 
                         where businessCount>1";
             DataTable myTable = DbHelper.ExecuteDataTable(SuperMan_Read, strSql);
@@ -196,7 +196,7 @@ WHERE   sub.[Status] = 1 ");
 
 
         /// <summary>
-        /// 写入跨店奖励日志
+        /// 获取跨店奖励日志
         /// 
         /// </summary>
         /// <param name="model"></param>
@@ -211,7 +211,7 @@ WHERE   sub.[Status] = 1 ");
                             c.PhoneNo
                         from CrossShopLog(nolock) cs join clienter(nolock) c on cs.ClienterId=c.Id
                         where 
-                            CONVERT(char(10),cs.InsertTime,120)=CONVERT(char(10),DATEADD(DAY,-0,GETDATE()),120) 
+                            CONVERT(char(10),cs.InsertTime,120)=CONVERT(char(10),DATEADD(DAY,-1,GETDATE()),120) 
                         group by CONVERT(char(10),cs.InsertTime,120),clienterId,c.PhoneNo";
             DataTable myTable = DbHelper.ExecuteDataTable(SuperMan_Read, strSql);
             return MapRows<ShortMessageModel>(myTable);

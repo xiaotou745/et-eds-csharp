@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Account\AccountProvider.cs" />
+    <Compile Include="OpenApi\HomeForDinnerGroup.cs" />
     <Compile Include="Authority\AuthorityMenuProvider.cs" />
     <Compile Include="Clienter\ClienterProvider.cs" />
     <Compile Include="Common\AdminToolsProvider.cs" />
@@ -84,7 +85,9 @@
     <Compile Include="Order\OrderPriceProvider.cs" />
     <Compile Include="Order\DefaultOrPriceProvider.cs" />
     <Compile Include="Order\OrderProvider.cs" />
-    <Compile Include="Order\TimeOrPriceProvider.cs" />
+    <Compile Include="Order\TimeOrPriceProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Statistics\StatisticsProvider.cs" />
     <Compile Include="Subsidy\SubsidyProvider.cs" />

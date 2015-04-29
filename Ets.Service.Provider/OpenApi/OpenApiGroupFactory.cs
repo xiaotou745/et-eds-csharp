@@ -1,4 +1,5 @@
 ﻿using ETS.Const;
+using ETS.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,8 @@ namespace Ets.Service.Provider.OpenApi
                     return new FulltimeGroup();
                 case SystemConst.Group4: //美团
                     return new MeiTuanGroup();
+                case SystemConst.Group6: //回家吃饭
+                    return new HomeForDinnerGroup();
                 default:
                     return null;
             }

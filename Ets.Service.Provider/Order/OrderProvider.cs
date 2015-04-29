@@ -420,14 +420,15 @@ namespace Ets.Service.Provider.Order
         {
             ///查询缓存，看看当前店铺是否存在,缓存存储E代送的商户id
             var redis = new ETS.NoSql.RedisCache.RedisCache();
-
+            LogHelper.LogWriter(System.DateTime.Now.ToString() + "重复验证开始");
             #region 第三方订单是否重复推送的验证  add by caoheyang 20150417
             string orderExistsNo = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
             paramodel.order_id.ToString()));  //查询缓存，看当前订单是否存在,“true”代表存在，key的形式为集团ID_第三方平台订单号
             if (orderExistsNo != null)
                 return ResultModel<object>.Conclude(OrderApiStatusType.OrderExists, new { order_no = orderExistsNo });
             #endregion
-
+            LogHelper.LogWriter(System.DateTime.Now.ToString() + "重复验证结束");
+            LogHelper.LogWriter(System.DateTime.Now.ToString() + "省市区编码信息证开始：" + paramodel.address.province + "," + paramodel.address.city + "," + paramodel.address.area);
             #region 设置用户的省市区编码信息 add by caoheyang 20150407
             string orderCodeInfo = new AreaProvider().GetOpenCode(new Ets.Model.ParameterModel.Area.ParaAreaNameInfo()
             {
@@ -435,6 +436,7 @@ namespace Ets.Service.Provider.Order
                 CityName = paramodel.address.city,
                 AreaName = paramodel.address.area
             });
+            LogHelper.LogWriter(System.DateTime.Now.ToString() + "省市区编码信息=" + orderCodeInfo);
             if (orderCodeInfo == ETS.Const.SystemConst.CityOpenInfo || string.IsNullOrWhiteSpace(orderCodeInfo))
                 return ResultModel<object>.Conclude(OrderApiStatusType.ParaError, "用户省市区信息错误");
             else
@@ -445,13 +447,20 @@ namespace Ets.Service.Provider.Order
                 paramodel.address.area_code = storeCodes[2];
             }
             #endregion
+            LogHelper.LogWriter(System.DateTime.Now.ToString() + "省市区编码信息证结束");
 
+            LogHelper.LogWriter(System.DateTime.Now.ToString() + "维护店铺相关信息开始");
             #region  维护店铺相关信息 add by caoheyang 20150416
             string bussinessIdstr = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(),
               paramodel.store_info.store_id.ToString()));
             if (bussinessIdstr == null || ParseHelper.ToInt(bussinessIdstr) == 0) //缓存中无店铺id 
             {
-                ///当第三方未传递经纬的情况下，根据地址调用百度接口获取经纬度信息  add by caoheyang 20150416
+                //验证当地址、电话、姓名任何一个为空就视为该订单不合法,订单退回
+                if (string.IsNullOrWhiteSpace(paramodel.store_info.phone) || string.IsNullOrWhiteSpace(paramodel.store_info.address) || string.IsNullOrWhiteSpace(paramodel.store_info.store_name))
+                {
+                    return ResultModel<object>.Conclude(OrderApiStatusType.ParaError, "地址、电话、店铺名称任何一个为空,视为该订单不合法");
+                }
+                //当第三方未传递经纬的情况下，根据地址调用百度接口获取经纬度信息  add by caoheyang 20150416
                 if (paramodel.store_info.longitude == 0 || paramodel.store_info.latitude == 0)  //店铺经纬度
                 {
                     Tuple<decimal, decimal> localtion = BaiDuHelper.GeoCoder(paramodel.store_info.province
@@ -459,21 +468,15 @@ namespace Ets.Service.Provider.Order
                     paramodel.store_info.longitude = localtion.Item1;  //精度
                     paramodel.store_info.latitude = localtion.Item2; //纬度
                 }
-                //if (paramodel.address.longitude == 0 || paramodel.address.latitude == 0)  //用户经纬度
-                //{
-                //    Tuple<decimal, decimal> localtion = BaiDuHelper.GeoCoder(paramodel.store_info.province
-                //        + paramodel.address.city + paramodel.address.area + paramodel.address.address);
-                //    paramodel.address.longitude = localtion.Item1;  //精度
-                //    paramodel.address.latitude = localtion.Item2; //纬度
-                //}
-
                 #region 设置门店的省市区编码信息 add by caoheyang 20150407
+                LogHelper.LogWriter(System.DateTime.Now.ToString() + "维护店铺相关信息:" + paramodel.store_info.province + "," + paramodel.store_info.city + "," + paramodel.store_info.area);
                 string storecodeInfo = new AreaProvider().GetOpenCode(new Ets.Model.ParameterModel.Area.ParaAreaNameInfo()
                 {
                     ProvinceName = paramodel.store_info.province,
                     CityName = paramodel.store_info.city,
                     AreaName = paramodel.store_info.area
                 });
+                LogHelper.LogWriter(System.DateTime.Now.ToString() + "维护店铺相关信息:" + storecodeInfo);
                 if (storecodeInfo == ETS.Const.SystemConst.CityOpenInfo || string.IsNullOrWhiteSpace(storecodeInfo))
                     return ResultModel<object>.Conclude(OrderApiStatusType.ParaError, "门店省市区信息错误");
                 else
@@ -488,7 +491,9 @@ namespace Ets.Service.Provider.Order
             else
                 paramodel.businessId = ParseHelper.ToInt(bussinessIdstr);
             #endregion
+            LogHelper.LogWriter(System.DateTime.Now.ToString() + "维护店铺相关信息结束");
 
+            LogHelper.LogWriter(System.DateTime.Now.ToString() + "根据集团id为店铺设置外送费开始");
             #region 根据集团id为店铺设置外送费，结算比例等财务相关信息add by caoheyang 20150417
 
             ///此处其实应该取数据库，但是由于发布订单时关于店铺的逻辑后期要改，暂时这么处理 
@@ -496,7 +501,9 @@ namespace Ets.Service.Provider.Order
             paramodel = groupProvider.SetCommissonInfo(paramodel);
 
             #endregion
+            LogHelper.LogWriter(System.DateTime.Now.ToString() + "根据集团id为店铺设置外送费结束");
 
+            LogHelper.LogWriter(System.DateTime.Now.ToString() + "佣金相关开始");
             #region 佣金相关  add by caoheyang 20150416
             paramodel.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
             //计算获得订单骑士佣金
@@ -515,7 +522,8 @@ namespace Ets.Service.Provider.Order
             paramodel.adjustment = commissonPro.GetAdjustment(orderComm);//订单额外补贴金额
 
             #endregion
-
+            LogHelper.LogWriter(System.DateTime.Now.ToString() + "佣金相关结束");
+            LogHelper.LogWriter(System.DateTime.Now.ToString() + "订单插入开始");
             string orderNo = null; //订单号码
             try
             {
@@ -539,7 +547,7 @@ namespace Ets.Service.Provider.Order
                     redis.Delete(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(), paramodel.store_info.store_id.ToString()));
                 throw ex; //异常上抛
             }
-
+            LogHelper.LogWriter(System.DateTime.Now.ToString() + "订单插入结束");
             return string.IsNullOrWhiteSpace(orderNo) ? ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :
              ResultModel<object>.Conclude(OrderApiStatusType.Success, new { order_no = orderNo });
         }
@@ -923,20 +931,54 @@ namespace Ets.Service.Provider.Order
         {
             paramodel.status = OrderConst.OrderStatus3;
             paramodel.remark = "第三方集团取消订单，同步E代送系统订单状态";
+            OrderApiStatusType StatusType = new OrderApiStatusType();
             int currenStatus = OrderDao.GetStatus(paramodel.order_no, paramodel.orderfrom);  //目前订单状态
             if (currenStatus == -1) //订单不存在
-                return ResultModel<object>.Conclude(OrderApiStatusType.OrderNotExist);
-            else if (OrderConst.OrderStatus30 != currenStatus
-                && OrderConst.OrderStatus0 != currenStatus)  //订单状态非30，,不允许取消订单
-                return ResultModel<object>.Conclude(OrderApiStatusType.OrderIsJoin);
+            {
+             LogHelper.LogWriter(System.DateTime.Now.ToString() + "订单不存在");
+             return ResultModel<object>.Conclude(OrderApiStatusType.OrderNotExist);
+            }
+            else if (CheckOrderState(paramodel.orderfrom, currenStatus, ref StatusType)) 
+            {
+                LogHelper.LogWriter(System.DateTime.Now.ToString() + "订单状态不允许取消订单");
+                return ResultModel<object>.Conclude(StatusType);
+            }
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
+                LogHelper.LogWriter(System.DateTime.Now.ToString() + "订单状态更新开始order_no:" + paramodel.order_no + ",State:" + paramodel.status);
                 int result = OrderDao.UpdateOrderStatus_Other(paramodel);
+                LogHelper.LogWriter(System.DateTime.Now.ToString() + "订单状态更新结束");
                 tran.Complete();
                 return result > 0 ? ResultModel<object>.Conclude(OrderApiStatusType.Success) : ResultModel<object>.Conclude(OrderApiStatusType.SystemError);
             }
         }
-
+        /// <summary>
+        /// 不同集团取消订单的条件判断
+        /// 徐鹏程
+        /// 20150427
+        /// </summary>
+        /// <param name="groupId">集团编号</param>
+        /// <param name="currenStatus">当前订单状态</param>
+        /// <returns></returns>
+        private bool CheckOrderState(int groupId, int currenStatus, ref OrderApiStatusType StatusType)
+        {
+            switch (groupId)
+            {
+                case SystemConst.Group2:  //万达
+                    return false;
+                case SystemConst.Group3: //全时
+                    return false;
+                case SystemConst.Group4: //美团
+                    StatusType = OrderApiStatusType.OrderIsJoin;
+                    return OrderConst.OrderStatus30 != currenStatus;
+                case SystemConst.Group6: //回家吃饭
+                    StatusType = OrderApiStatusType.OrderIsFinish;
+                    return OrderConst.OrderStatus1 == currenStatus;
+                default:
+                    StatusType = OrderApiStatusType.SystemError;
+                    return true;
+            }
+        }
         /// <summary>
         /// 获取订单拒绝原因
         /// 平扬-20150424
