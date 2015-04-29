@@ -23,14 +23,14 @@ namespace Ets.CrossShopService
         protected override void OnStart(string[] args)
         {
             //Thread.Sleep(1000 * 10);
-            ETS.Util.LogHelper.LogWriter(DateTime.Now.ToString() + "跨店奖励服务开启");
+            ETS.Util.Log.WriteTextToFile(DateTime.Now.ToString() + "跨店奖励服务开启", Job_CrossShop.GetLogFilePath(), true);
             Thread t = new Thread(Job_CrossShop.RunCrossShop);
             t.Start();  
         }
 
         protected override void OnStop()
         {
-            ETS.Util.LogHelper.LogWriter(DateTime.Now.ToString() + "跨店奖励服务结束");
+            ETS.Util.Log.WriteTextToFile(DateTime.Now.ToString() + "跨店奖励服务结束", Job_CrossShop.GetLogFilePath(), true);
         }
     }
 }

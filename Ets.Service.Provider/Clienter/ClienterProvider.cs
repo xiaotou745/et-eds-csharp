@@ -507,15 +507,14 @@ namespace Ets.Service.Provider.Clienter
                 //更新订单状态
                 if (myOrderInfo != null)
                 {
-                    if (orderDao.FinishOrderStatus(orderNo, userId, myOrderInfo) > 0)
+                    orderDao.FinishOrderStatus(orderNo, userId, myOrderInfo);
+                    if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)  //当用户上传的小票数量 和 需要上传的小票数量一致的时候，更新用户金额
                     {
-                        if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)  //当用户上传的小票数量 和 需要上传的小票数量一致的时候，更新用户金额
+                        if (CheckOrderPay(orderNo))
                         {
-                            if (CheckOrderPay(orderNo))
-                            {
-                                UpdateClienterAccount(userId, myOrderInfo);
-                            }
+                            UpdateClienterAccount(userId, myOrderInfo);
                         }
+                    }
                     ////更新骑士 金额  
                     //bool b = clienterDao.UpdateClienterAccountBalance(new WithdrawRecordsModel() { UserId = userId, Amount = myOrderInfo.OrderCommission.Value });
                     ////增加记录 
@@ -548,7 +547,6 @@ namespace Ets.Service.Provider.Clienter
                         result = "0"; //同步第三方状态失败 导致订单失败
                     Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", myOrderInfo.businessId.ToString(), string.Empty);
                     result = "1";
-                    }
                 }
             } 
             return result;

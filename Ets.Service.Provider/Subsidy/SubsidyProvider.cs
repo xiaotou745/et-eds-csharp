@@ -10,7 +10,6 @@ using Ets.Model.ParameterModel.Subsidy;
 using Ets.Model.ParameterModel.WtihdrawRecords;
 using Ets.Service.IProvider.Subsidy;
 using ETS.Data.PageData;
-using ETS.Sms;
 using ETS.Transaction;
 using ETS.Transaction.Common;
 using ETS.Util;
@@ -137,16 +136,10 @@ namespace Ets.Service.Provider.Subsidy
         /// 20150416
         /// </summary>
         /// <returns></returns>
-        public bool ShortMessage()
+        public bool ShortMessage(string SendMessage)
         {
-            string strSendMsg = ETS.Config.SendMessage;
             IList<ShortMessageModel> list = subsidyDao.GetCrossShopInfo();
-            foreach (ShortMessageModel item in list)
-            {
-                string msg = string.Format(strSendMsg, item.InsertTime, item.SumAmount);
-                SendSmsStatus result=SendSmsHelper.SendSendSmsSaveLog(item.PhoneNo, msg, Ets.Model.Common.ConstValues.SMSSOURCE);
-                ETS.Util.LogHelper.LogWriter(DateTime.Now.ToString() + "短信发送: 骑士ID=" + item.ClienterId + ";金额=" + item.SumAmount + ";电话号码=" + item.PhoneNo + ";发送状态=" + result.ToString());
-            }
+
             return true;
         }
 

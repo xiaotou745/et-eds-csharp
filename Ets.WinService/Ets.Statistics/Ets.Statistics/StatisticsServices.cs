@@ -22,7 +22,6 @@ namespace Ets.Statistics
         protected override void OnStart(string[] args)
         {
             //Thread.Sleep(1000*10);
-            ETS.Util.LogHelper.LogWriter(DateTime.Now.ToString() + "服务开启");
             Thread t = new Thread(ExecStatisticsProvider);
             t.Start();
         }
@@ -43,7 +42,6 @@ namespace Ets.Statistics
 
         protected override void OnStop()
         {
-            ETS.Util.LogHelper.LogWriter(DateTime.Now.ToString() + "服务结束");
         }
     }
 }

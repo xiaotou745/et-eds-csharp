@@ -85,13 +85,7 @@ namespace Ets.Service.Provider.User
                 if (from.OrderFrom == 4)
                 {
                     model.OrderFromName = "美团";
-                }
-
-                if (from.OrderFrom == 6)
-                {
-                    model.OrderFromName = "回家吃饭";
                 } 
-
                 model.OriginalOrderNo = from.OriginalOrderNo;
                 if (from.BusinessId > 0 && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
                 {

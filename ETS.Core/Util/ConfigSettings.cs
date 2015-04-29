@@ -178,21 +178,6 @@ namespace ETS.Util
 
         #region 第三方对接的appkey 和 app_secret
         /// <summary>
-        /// 回家吃饭appkey
-        /// </summary>
-        public string HomeForDinnerAppkey
-        {
-            get { return ConfigurationManager.AppSettings["HomeForDinnerAppkey"]; }
-        }
-        /// <summary>
-        ///  回家吃饭app_secret
-        /// </summary>
-        public string HomeForDinnerAppsecret
-        {
-            get { return ConfigurationManager.AppSettings["HomeForDinnerAppsecret"]; }
-        }
-
-        /// <summary>
         /// 万达appkey
         /// </summary>
         public  string WanDaAppkey

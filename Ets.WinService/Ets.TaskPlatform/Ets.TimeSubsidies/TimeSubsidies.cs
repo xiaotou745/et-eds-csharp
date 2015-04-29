@@ -20,7 +20,7 @@ namespace Ets.TimeSubsidies
 
         protected override void OnStart(string[] args)
         {
-            //Thread.Sleep(1000 * 10);
+            Thread.Sleep(1000 * 10);
             Thread t = new Thread(ExecTimeSubsidies);
             t.Start();
         }
@@ -48,6 +48,7 @@ namespace Ets.TimeSubsidies
                 catch (Exception ex)
                 {
 
+                    //ETS.Util.LogHelper.LogWriter("主方法体错了:" + ex.Message);
                     ETS.Util.LogHelper.LogWriter("当前时间:" + DateTime.Now.ToString() + "主方法体错了:" + ex.Message);
                 }
 

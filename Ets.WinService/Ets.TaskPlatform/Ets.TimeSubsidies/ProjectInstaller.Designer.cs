@@ -39,8 +39,8 @@
             // 
             // serviceInstaller1
             // 
-            this.serviceInstaller1.Description = "Ets.TimeSubsidies";
-            this.serviceInstaller1.DisplayName = "Ets.TimeSubsidies";
+            this.serviceInstaller1.Description = "e代送按时间补贴";
+            this.serviceInstaller1.DisplayName = "e代送按时间补贴";
             this.serviceInstaller1.ServiceName = "TimeSubsidies";
             // 
             // ProjectInstaller

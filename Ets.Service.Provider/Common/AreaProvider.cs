@@ -14,7 +14,6 @@ using System.Threading.Tasks;
 using ETS.Security;
 using ETS.Data.PageData;
 using Ets.Model.ParameterModel.Common;
-using ETS.Util;
 
 namespace Ets.Service.Provider.Common
 {
@@ -184,24 +183,18 @@ namespace Ets.Service.Provider.Common
         {
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string key = MD5.Encrypt(string.Format("{0}_{1}_{2}", model.ProvinceName, model.CityName, model.AreaName).Replace(" ", ""));
-            LogHelper.LogWriter(System.DateTime.Now.ToString() + "省市区MD5编码" + key);
             string cacheValue = redis.Get<string>(key);
             if (string.IsNullOrWhiteSpace(cacheValue))
             {
-                LogHelper.LogWriter(System.DateTime.Now.ToString() + "省市区GetOpenCodeSql");
                 DMAreaCodeInfo tempModel = new AreaDao().GetOpenCodeSql(model);
-                LogHelper.LogWriter(System.DateTime.Now.ToString() + "省市区GetOpenCodeSql_end");
                 if (tempModel == null)
-                {
                     return null;
-                }
                 else if (tempModel.AreaIsOpen == 0 || tempModel.ProvinceIsOpen == 0 || tempModel.CityIsOpen == 0)
                     redis.Set(key, SystemConst.CityOpenInfo, DateTime.Now.AddDays(30));
                 else
                     redis.Set(key, string.Format("{0}_{1}_{2}", tempModel.ProvinceCode, tempModel.CityCode, tempModel.AreaCode)
                         , DateTime.Now.AddDays(30));
             }
-            LogHelper.LogWriter(System.DateTime.Now.ToString() + "省市区Getfromredis");
             return redis.Get<string>(key);
         }
         /// <summary>
