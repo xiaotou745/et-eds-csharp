@@ -530,5 +530,32 @@ namespace SuperManBusinessLogic.B_Logic
             }
             return result;
         }
+
+        /// <summary>
+        /// 获取店铺列表
+        /// danny-20150428
+        /// </summary>
+        /// <returns></returns>
+        public List<business> GetBusinessList()
+        {
+            using (var db = new supermanEntities())
+            {
+                return db.business.ToList();
+            }
+        }
+        /// <summary>
+        /// 获取骑士所属商户列表
+        /// danny-20150428
+        /// </summary>
+        /// <returns></returns>
+        public List<clienterbussinessrelation> GetClienterBusinessRelList(int clienterId)
+        {
+            using (var db = new supermanEntities())
+            {
+                var query = db.clienterbussinessrelation.Where(i => i.ClienterId == clienterId);
+
+                return query.ToList();
+            }
+        }
     }
 }

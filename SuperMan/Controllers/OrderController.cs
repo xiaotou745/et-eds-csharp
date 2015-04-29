@@ -16,6 +16,7 @@ using SuperManCore.Paging;
 using SuperManDataAccess;
 using SuperManBusinessLogic.CommonLogic;
 using SuperManBusinessLogic.B_Logic;
+using SuperMan.App_Start;
 
 namespace SuperMan.Controllers
 {
@@ -49,6 +50,7 @@ namespace SuperMan.Controllers
             {
                 criteria.orderPubEnd = DateTime.Now.ToString("yyyy-MM-dd 23:59:59.999");
             }
+            criteria.LoginId = UserContext.Current.Id;
             var pagedList = OrderLogic.orderLogic().GetOrders(criteria);
             return View(pagedList);
         }
@@ -77,6 +79,7 @@ namespace SuperMan.Controllers
                 criteria.orderPubEnd = DateTime.Now.ToString("yyyy-MM-dd 23:59:59.999");
             }
             criteria.LoginName = account.LoginName;
+            criteria.LoginId = UserContext.Current.Id;
             var pagedList = OrderLogic.orderLogic().GetOrders(criteria);
             var item = pagedList.orderManageList; 
             return PartialView("_PartialOrderList",item);

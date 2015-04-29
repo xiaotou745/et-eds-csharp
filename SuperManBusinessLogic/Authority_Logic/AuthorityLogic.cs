@@ -223,5 +223,19 @@ namespace SuperManBusinessLogic.Authority_Logic
             }
             return result;
         }
+
+        /// <summary>
+        /// 获取用户所属商户列表
+        /// danny-20150429
+        /// </summary>
+        /// <returns></returns>
+        public List<accountbussinessrelation> GetAccountBusinessRelList(int accountId)
+        {
+            using (var db = new supermanEntities())
+            {
+                var query = db.accountbussinessrelation.Where(i => i.AccountId == accountId);
+                return query.ToList();
+            }
+        }
     }
 }

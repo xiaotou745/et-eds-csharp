@@ -31,6 +31,7 @@ namespace SuperManCommonModel.Entities
         /// 集团id
         /// </summary>
         public int? GroupId { get; set; }
+        public int LoginId { get; set; } //登录用户Id
     }
 
     public class OrderByItem<Tentity>

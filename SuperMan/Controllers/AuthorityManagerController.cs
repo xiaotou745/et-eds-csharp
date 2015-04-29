@@ -1,4 +1,5 @@
 ﻿using SuperManBusinessLogic.Authority_Logic;
+using SuperManBusinessLogic.C_Logic;
 using SuperManCommonModel;
 using SuperManCommonModel.Entities;
 using SuperManCommonModel.Models;
@@ -102,6 +103,21 @@ namespace SuperMan.Controllers
             {
                 AuthorityLogic.authorityLogic().UpdateAuthority(model);
             }
+            var delabr = new accountbussinessrelation { AccountId = model.id };
+            ClienterLogic.clienterLogic().DeleteAccountBusiRel(delabr);
+            if (!string.IsNullOrWhiteSpace(model.checkBusiList))
+            {
+                var list = model.checkBusiList.Split(',');
+                foreach (var item in list)
+                {
+                    var abr = new accountbussinessrelation
+                    {
+                        AccountId = model.id,
+                        BussinessID = Convert.ToInt32(item)
+                    };
+                    ClienterLogic.clienterLogic().AddAccountBusiRel(abr);
+                }
+            }
             return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
         }
 
@@ -157,6 +173,17 @@ namespace SuperMan.Controllers
             ViewBag.auth = authorities.ToArray();
 
             return PartialView("_AuthorityManagerShow");
+        }
+        /// <summary>
+        /// 获取用户和商家的对应关系 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult GetAccountBussinessRel(int id)
+        {
+             var accountBussinessRelList=AuthorityLogic.authorityLogic().GetAccountBusinessRelList(id);
+             return Json(accountBussinessRelList, JsonRequestBehavior.DenyGet);
         }
 
          
