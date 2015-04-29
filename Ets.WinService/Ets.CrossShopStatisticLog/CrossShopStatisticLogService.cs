@@ -35,7 +35,7 @@ namespace Ets.CrossShopStatisticLog
             }           
             catch (Exception ex)
             {
-                ETS.Util.LogHelper.LogWriter("5:"+ex.Message+ DateTime.Now.ToString());
+                ETS.Util.LogHelper.LogWriter(ex.Message+ DateTime.Now.ToString());
             }
 
         }
