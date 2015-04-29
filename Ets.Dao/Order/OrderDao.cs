@@ -333,6 +333,28 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
 
         }
 
+        /// <summary>
+        /// 根据集团ID获取创建商家时状体的默认值
+        /// </summary>
+        /// <returns></returns>
+        private int GetDefaultBusinessStateByGroupId(int groupId)
+        {
+
+            switch (groupId)
+            {
+                case SystemConst.Group2:  //万达
+                    return ConstValues.BUSINESS_NOAUDIT;
+                case SystemConst.Group3: //全时
+                    return ConstValues.BUSINESS_NOAUDIT;
+                case SystemConst.Group4: //美团
+                    return ConstValues.BUSINESS_NOAUDIT;
+                case SystemConst.Group6: //回家吃饭
+                    return ConstValues.BUSINESS_AUDITPASS; //默认审核通过
+                default:
+                    return ConstValues.BUSINESS_NOAUDIT;
+            }
+        }
+
         #region  第三方对接 物流订单接收接口  add by caoheyang 201503167
         /// <summary>
         /// 第三方对接 物流订单接收接口  add by caoheyang 201503167
@@ -360,12 +382,12 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                 (OriginalBusiId,Name,GroupId,IDCard,Password,
                 PhoneNo,PhoneNo2,Address,ProvinceCode,CityCode,AreaCode,
                 Longitude,Latitude,DistribSubsidy,Province,City,district,CityId,districtId,
-                BusinessCommission)  
+                BusinessCommission,Status)  
                 OUTPUT Inserted.Id   
                 values(@OriginalBusiId,@Name,@GroupId,@IDCard,@Password,
                 @PhoneNo,@PhoneNo2,@Address,@ProvinceCode,@CityCode,@AreaCode,
                 @Longitude,@Latitude,@DistribSubsidy,@Province,@City,@district,@CityId,@districtId,
-                @BusinessCommission);";
+                @BusinessCommission,@Status);";
                     IDbParameters insertBdbParameters = DbHelper.CreateDbParameters();
                     ///基本参数信息
                     insertBdbParameters.AddWithValue("@OriginalBusiId", paramodel.store_info.store_id); //对接方店铺ID第三方平台推送过来的商家Id
@@ -388,6 +410,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                     insertBdbParameters.AddWithValue("@CityId", paramodel.store_info.city_code);    //门店市编码
                     insertBdbParameters.AddWithValue("@districtId", paramodel.store_info.area_code);    //门店区编码
                     insertBdbParameters.AddWithValue("@BusinessCommission", paramodel.store_info.businesscommission);//结算比例
+                    insertBdbParameters.AddWithValue("@Status", GetDefaultBusinessStateByGroupId(paramodel.orderfrom));//商家状态
                     //insertBdbParameters.AddWithValue("@CommissionTypeId", paramodel.store_info.commission_type == null ?
                     //    1 : paramodel.store_info.commission_type);   //佣金类型，涉及到快递员的佣金计算方式，默认1  业务改变已经无效 
                     LogHelper.LogWriter(System.DateTime.Now.ToString() + "商户插入sql开始");

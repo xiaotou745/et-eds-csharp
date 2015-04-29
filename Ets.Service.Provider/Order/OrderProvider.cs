@@ -455,7 +455,12 @@ namespace Ets.Service.Provider.Order
               paramodel.store_info.store_id.ToString()));
             if (bussinessIdstr == null || ParseHelper.ToInt(bussinessIdstr) == 0) //缓存中无店铺id 
             {
-                ///当第三方未传递经纬的情况下，根据地址调用百度接口获取经纬度信息  add by caoheyang 20150416
+                //验证当地址、电话、姓名任何一个为空就视为该订单不合法,订单退回
+                if (string.IsNullOrWhiteSpace(paramodel.store_info.phone) || string.IsNullOrWhiteSpace(paramodel.store_info.address) || string.IsNullOrWhiteSpace(paramodel.store_info.store_name))
+                {
+                    return ResultModel<object>.Conclude(OrderApiStatusType.ParaError, "地址、电话、店铺名称任何一个为空,视为该订单不合法");
+                }
+                //当第三方未传递经纬的情况下，根据地址调用百度接口获取经纬度信息  add by caoheyang 20150416
                 if (paramodel.store_info.longitude == 0 || paramodel.store_info.latitude == 0)  //店铺经纬度
                 {
                     Tuple<decimal, decimal> localtion = BaiDuHelper.GeoCoder(paramodel.store_info.province
@@ -463,14 +468,6 @@ namespace Ets.Service.Provider.Order
                     paramodel.store_info.longitude = localtion.Item1;  //精度
                     paramodel.store_info.latitude = localtion.Item2; //纬度
                 }
-                //if (paramodel.address.longitude == 0 || paramodel.address.latitude == 0)  //用户经纬度
-                //{
-                //    Tuple<decimal, decimal> localtion = BaiDuHelper.GeoCoder(paramodel.store_info.province
-                //        + paramodel.address.city + paramodel.address.area + paramodel.address.address);
-                //    paramodel.address.longitude = localtion.Item1;  //精度
-                //    paramodel.address.latitude = localtion.Item2; //纬度
-                //}
-
                 #region 设置门店的省市区编码信息 add by caoheyang 20150407
                 LogHelper.LogWriter(System.DateTime.Now.ToString() + "维护店铺相关信息:" + paramodel.store_info.province + "," + paramodel.store_info.city + "," + paramodel.store_info.area);
                 string storecodeInfo = new AreaProvider().GetOpenCode(new Ets.Model.ParameterModel.Area.ParaAreaNameInfo()
