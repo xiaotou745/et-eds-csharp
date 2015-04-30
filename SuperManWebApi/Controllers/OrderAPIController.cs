@@ -31,7 +31,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="endTime"></param>
         /// <param name="isPrint"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpGet]
         [ActionStatus(typeof(GetRushOrderInfoStatus))]        
         public ResultModel<OrderInfoPrint[]> GetRushOrderInfo(DateTime startTime,DateTime endTime,int isPrint=0)
         {
@@ -55,7 +55,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpGet]
         [ActionStatus(typeof(GetRushOrderInfoStatus))]
         public ResultModel<bool> UpdateOrderIsPrint(int orderId)
         {
