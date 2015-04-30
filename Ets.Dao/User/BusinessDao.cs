@@ -471,16 +471,21 @@ namespace Ets.Dao.User
                 if (enumStatusType == EnumStatusType.审核通过)
                 {
 
-                    sql = string.Format(" update business set Status={0} where id=@id ", ConstValues.BUSINESS_AUDITPASS);
+                    sql = string.Format(" update business set Status={0} where id=@id;", ConstValues.BUSINESS_AUDITPASS);
                 }
                 else if (enumStatusType == EnumStatusType.审核取消)
                 {
-                    sql = string.Format(" update business set Status={0} where id=@id ", ConstValues.BUSINESS_AUDITCANCEL);
+                    sql = string.Format(" update business set Status={0} where id=@id;", ConstValues.BUSINESS_AUDITCANCEL);
                 }
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
                 dbParameters.AddWithValue("id", id);
                 int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Write, sql, dbParameters);
-                if (i > 0) reslut = true;
+
+                if (i > 0)
+                {
+                    //调用第三方接口
+                    reslut = true;
+                }
             }
             catch (Exception ex)
             {
