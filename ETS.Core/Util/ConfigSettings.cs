@@ -28,7 +28,7 @@ namespace ETS.Util
             {
                 return ConfigurationManager.AppSettings["FileUploadFolderNameTemp"];
             }
-        }
+        } 
 
         public string FileUploadFolderNameCustomerIcon
         {
@@ -174,6 +174,13 @@ namespace ETS.Util
         public string IsSendVIP
         {
             get { return ConfigurationManager.AppSettings["IsSendVIP"]; }
+        }
+        /// <summary>
+        /// 商户审核通过后调用第三方接口通知
+        /// </summary>
+        public string JuWangKeBusiAuditCallBack
+        {
+            get { return ConfigurationManager.AppSettings["JuWangKeBusiAuditCallBack"]; }
         }
 
         #region 第三方对接的appkey 和 app_secret

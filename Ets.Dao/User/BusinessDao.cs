@@ -444,7 +444,8 @@ namespace Ets.Dao.User
          AreaCode ,
          Province ,
          DistribSubsidy,
-         BusinessCommission 
+         BusinessCommission ,
+         OriginalBusiId
          FROM dbo.business WITH(NOLOCK) WHERE Id = @busiId";
 
             IDbParameters parm = DbHelper.CreateDbParameters();
@@ -464,6 +465,7 @@ namespace Ets.Dao.User
         /// <returns></returns>
         public bool UpdateAuditStatus(int id, EnumStatusType enumStatusType)
         {
+            var juWangKeBusiAuditUrl = ConfigSettings.Instance.JuWangKeBusiAuditCallBack;
             bool reslut = false;
             try
             {
@@ -483,7 +485,14 @@ namespace Ets.Dao.User
 
                 if (i > 0)
                 {
-                    //调用第三方接口
+                    //调用第三方接口 ，聚网客商户审核通过后调用接口
+                    var busi = GetBusiness(id);
+                    if (busi.GroupId == 5 && busi.OriginalBusiId > 0 && enumStatusType == EnumStatusType.审核通过)
+                    {
+                      string str =  HTTPHelper.HttpPost(juWangKeBusiAuditUrl, "supplier_id=" + busi.OriginalBusiId);
+                    }
+                    
+                    //HTTPHelper.HttpPost()
                     reslut = true;
                 }
             }
