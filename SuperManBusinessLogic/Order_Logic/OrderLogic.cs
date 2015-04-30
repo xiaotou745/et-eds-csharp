@@ -486,7 +486,7 @@ namespace SuperManBusinessLogic.Order_Logic
         /// <param name="startTime"></param>
         /// <param name="endTime"></param>
         /// <returns></returns>
-        public List<OrderInfoPrint> GetRushOrderInfo(DateTime startTime, DateTime endTime)
+        public List<OrderInfoPrint> GetRushOrderInfo(DateTime startTime, DateTime endTime, int isPrint)
         {
 
             using (var db = new supermanEntities())
@@ -494,7 +494,7 @@ namespace SuperManBusinessLogic.Order_Logic
                 var myOrder = from o in db.order
                               join c in db.clienter on o.clienterId equals c.Id
                               join b in db.business on o.businessId equals b.Id
-                              where o.RushOrderDate >= startTime && o.RushOrderDate < endTime
+                              where o.RushOrderDate >= startTime && o.RushOrderDate < endTime && o.IsPrint == 0
                               select new OrderInfoPrint()
                               {
                                   OrderId = o.Id,
