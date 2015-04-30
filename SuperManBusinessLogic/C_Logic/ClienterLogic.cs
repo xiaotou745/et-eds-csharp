@@ -448,13 +448,24 @@ namespace SuperManBusinessLogic.C_Logic
         { 
             using (var dbEntity = new supermanEntities())
             {
-                var query = dbEntity.order.AsQueryable();
-                var curClient = dbEntity.clienter.AsQueryable();
+                IQueryable<order> query;
+                //var query = dbEntity.order.AsQueryable();
+                //var curClient = dbEntity.clienter.AsQueryable();
                 if (criteria.userId > 0)
                 {
-                    var clienter = curClient.Where(i => i.Id == criteria.userId).ToList();
-                    int busi = clienter[0].BussinessID.Value;
-                    query = query.Where(i => i.businessId == busi);
+                    query = from m in dbEntity.order
+                            join n in dbEntity.clienterbussinessrelation
+                            on m.businessId.Value equals n.BussinessID
+                            where n.ClienterId == criteria.userId
+                            select m;
+                    //var clienter = curClient.Where(i => i.Id == criteria.userId).ToList();
+                    //int busi = clienter[0].BussinessID.Value;
+                    //query = query.Where(i => i.businessId == busi);
+                }
+                else
+                {
+                    LogHelper.LogWriter("获取送餐任务异常：骑士Id为空！");
+                    return null;
                 }
                 if (!string.IsNullOrWhiteSpace(criteria.city))
                     query = query.Where(i => i.business.City == criteria.city.Trim());
