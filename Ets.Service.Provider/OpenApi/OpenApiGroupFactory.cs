@@ -1,4 +1,5 @@
 ﻿using ETS.Const;
+using ETS.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,7 @@ namespace Ets.Service.Provider.OpenApi
         /// <returns></returns>
         public static Ets.Service.IProvider.OpenApi.IGroupProviderOpenApi Create(int groupId)
         {
+            LogHelper.LogWriter("创建订单同步：", "groupId:" + groupId);
             switch (groupId)
             {
                 case SystemConst.Group2:  //万达
