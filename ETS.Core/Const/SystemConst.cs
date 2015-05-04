@@ -50,7 +50,7 @@ namespace ETS.Const
         /// <summary>
         /// 聚网客
         /// </summary>
-        public const int Group5 = 5;
+        public const int Group1 = 1;
 
 
         #endregion

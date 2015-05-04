@@ -486,8 +486,9 @@ namespace Ets.Dao.User
                 if (i > 0)
                 {
                     //调用第三方接口 ，聚网客商户审核通过后调用接口
+                    //这里不建议使用 1 数字，而是根据 配置文件中的 appkey来获取 groupid
                     var busi = GetBusiness(id);
-                    if (busi.GroupId == 5 && busi.OriginalBusiId > 0 && enumStatusType == EnumStatusType.审核通过)
+                    if (busi.GroupId == 1 && busi.OriginalBusiId > 0 && enumStatusType == EnumStatusType.审核通过)
                     {
                       string str =  HTTPHelper.HttpPost(juWangKeBusiAuditUrl, "supplier_id=" + busi.OriginalBusiId);
                     }
