@@ -543,6 +543,8 @@ namespace Ets.Service.Provider.Clienter
                         result = "1";
                         tran.Complete();
                     }
+                    else 
+                        result = "0"; //同步第三方状态失败 导致订单失败
                     Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", myOrderInfo.businessId.ToString(), string.Empty);
                     result = "1";
                 }
@@ -609,6 +611,17 @@ namespace Ets.Service.Provider.Clienter
         public IList<BusinessesDistributionModel> GetClienteStorerGrabStatisticalInfo()
         {
             return clienterDao.GetClienteStorerGrabStatisticalInfo();
+        }
+
+        /// <summary>
+        /// 骑士门店抢单统计
+        /// 胡灵波-20150424
+        /// </summary>
+        /// <param name="daysAgo">几天前</param>
+        /// <returns></returns>
+        public IList<BusinessesDistributionModel> GetClienteStorerGrabStatisticalInfo(int daysAgo)
+        {
+            return clienterDao.GetClienteStorerGrabStatisticalInfo(daysAgo);
         }
         /// <summary>
         /// 骑士门店抢单统计

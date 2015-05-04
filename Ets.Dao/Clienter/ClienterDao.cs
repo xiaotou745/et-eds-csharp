@@ -607,6 +607,50 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, ConstValues.OrderH
             return MapRows<BusinessesDistributionModel>(dt);
         }
 
+        public IList<BusinessesDistributionModel> GetClienteStorerGrabStatisticalInfo(int daysAgo)
+        {
+            //int currdaysAgo = daysAgo + 1;
+            StringBuilder sb = new StringBuilder();
+            sb.Append("with t as(");
+            sb.Append(" select temp.[date],temp.businessCount,count(temp.clienterId) cCount");
+            sb.Append(" from (");
+            sb.Append(" select convert(char(10), PubDate, 120) 'date', o.clienterId,count(distinct o.businessId) 'businessCount'  from dbo.[order] o(nolock)");
+            sb.Append(" where o.PubDate>getdate()-" + daysAgo);
+            sb.Append("  and o.Status =1 group by convert(char(10), PubDate, 120), o.clienterId");
+            sb.Append(" ) as temp   group by temp.[date],temp.businessCount  )");
+            sb.Append(" ,t2 as (");
+            sb.Append("  select convert(char(10), csl.InsertTime-1, 120) date,csl.BusinessCount 'businessCount',    count(distinct csl.ClienterId) clientorCount,sum(csl.Amount) totalAmount  from dbo.CrossShopLog csl(nolock)");
+            sb.Append(" where csl.InsertTime-1 > getdate()-" + daysAgo); 
+            sb.Append("  group by convert(char(10), csl.InsertTime-1, 120), csl.BusinessCount   )");
+            sb.Append(" select temp2.[date],sum(temp2.amount) totalAmount,max(case temp2.businessCount when 1 then temp2.cCount else 0 end) c1,");
+            sb.Append(" max(case temp2.businessCount when 1 then temp2.amount else 0 end) a1,");
+            sb.Append(" max(case temp2.businessCount when 2 then temp2.cCount else 0 end) c2,");
+            sb.Append(" max(case temp2.businessCount when 2 then temp2.amount else 0 end) a2,");
+            sb.Append(" max(case temp2.businessCount when 3 then temp2.cCount else 0 end) c3,");
+            sb.Append(" max(case temp2.businessCount when 3 then temp2.amount else 0 end) a3,");
+            sb.Append(" max(case temp2.businessCount when 4 then temp2.cCount else 0 end) c4,");
+            sb.Append(" max(case temp2.businessCount when 4 then temp2.amount else 0 end) a4,");
+            sb.Append(" max(case temp2.businessCount when 5 then temp2.cCount else 0 end) c5,");
+            sb.Append(" max(case temp2.businessCount when 5 then temp2.amount else 0 end) a5,");
+            sb.Append(" max(case temp2.businessCount when 6 then temp2.cCount else 0 end) c6,");
+            sb.Append(" max(case temp2.businessCount when 6 then temp2.amount else 0 end) a6,");
+            sb.Append(" max(case temp2.businessCount when 7 then temp2.cCount else 0 end) c7,");
+            sb.Append(" max(case temp2.businessCount when 7 then temp2.amount else 0 end) a7,");
+            sb.Append(" max(case temp2.businessCount when 8 then temp2.cCount else 0 end) c8,");
+            sb.Append(" max(case temp2.businessCount when 8 then temp2.amount else 0 end) a8,");
+            sb.Append(" max(case temp2.businessCount when 9 then temp2.cCount else 0 end) c9,");
+            sb.Append(" max(case temp2.businessCount when 9 then temp2.amount else 0 end) a9,");
+            sb.Append(" sum(case when temp2.businessCount>9 then temp2.cCount else 0 end) c10,");
+            sb.Append(" sum(case when temp2.businessCount>9 then temp2.amount else 0 end) a10");
+            sb.Append(" from (");
+            sb.Append(" select t.[date],t.businessCount,t.cCount,isnull(t2.totalAmount,0) amount   from t t left join t2 t2 on t.[date] = t2.date and t.businessCount=t2.businessCount");
+            sb.Append("  ) as temp2");
+            sb.Append(" group by temp2.[date]   order by temp2.[date] ");           
+
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sb.ToString());
+            return MapRows<BusinessesDistributionModel>(dt);
+        }
+
 
         /// <summary>
         /// 骑士门店抢单统计

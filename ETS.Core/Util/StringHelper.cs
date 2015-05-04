@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Letao.Util
@@ -296,5 +297,23 @@ namespace Letao.Util
             return lastDateStr;// +dtTime + ":::" + tsDiff.Days;
         }
 
+    }
+
+
+    /// <summary>
+    /// string 比较器重写 实现类似 reason排在 reason_code之前功能 add by caoheyang  20150249 
+    /// </summary>
+    public class NewStringComparer : IComparer<string>
+    {
+        public int Compare(string a, string b)
+        {
+            string akey = a.Substring(0, a.IndexOf('='));
+            string bkey = b.Substring(0, b.IndexOf('='));
+            if (akey.IndexOf(bkey) == 0)
+                return 1;
+            else if (bkey.IndexOf(akey) == 0)
+                return -1;
+            return a.CompareTo(b);
+        }
     }
 }

@@ -393,16 +393,16 @@ namespace Ets.Service.Provider.Order
         /// <param name="orderNo">订单号</param>
         /// <param name="orderStatus">订单状态</param>
         /// <returns></returns>
-        public int UpdateOrderStatus(string orderNo, int orderStatus, string remark)
+        public int UpdateOrderStatus(string orderNo, int orderStatus, string remark, int? status)
         {
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-               int result= OrderDao.CancelOrderStatus(orderNo, orderStatus, remark);
-               if (result > 0 & AsyncOrderStatus(orderNo))
-               {
-                   tran.Complete();
-                   return 1;
-               }
+                int result = OrderDao.CancelOrderStatus(orderNo, orderStatus, remark, status);
+                if (result > 0 & AsyncOrderStatus(orderNo))
+                {
+                    tran.Complete();
+                    return 1;
+                }
             }
             return 0;
         }
@@ -504,7 +504,7 @@ namespace Ets.Service.Provider.Order
             {
                 Amount = paramodel.total_price, /*订单金额*/
                 DistribSubsidy = paramodel.store_info.delivery_fee,/*外送费*/
-                OrderCount = paramodel.package_count,/*订单数量*/
+                OrderCount = paramodel.package_count == null ? 1 : paramodel.package_count,/*订单数量，默认为1*/
                 BusinessCommission = paramodel.store_info.businesscommission/*商户结算比例*/
             }/*网站补贴*/;
             OrderPriceProvider commissonPro = CommissionFactory.GetCommission();
@@ -745,7 +745,7 @@ namespace Ets.Service.Provider.Order
         {
             ListOrderDetailModel mo = new ListOrderDetailModel();
             var order = OrderDao.GetOrderByNo(order_no);
-            if (order != null) 
+            if (order != null)
             {
                 if (order.OrderFrom == 0)
                     order.OrderFromName = "B端";
@@ -887,7 +887,7 @@ namespace Ets.Service.Provider.Order
                 using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                 {
                     result = OrderDao.CancelOrder(orderModel, orderOptionModel);
-                    if (result && orderModel.Status == 1 && orderModel.OrderCount <= orderModel.NeedUploadCount)
+                    if (result && orderModel.Status == 1 && orderModel.HadUploadCount == orderModel.NeedUploadCount)
                     {
                         //需要上传的小票大于等于总数量+订单已完成则要扣钱
                         //(因为订单小票有可能不传。所以用的是订单数量和需要上传小票数量对比判断)
@@ -934,8 +934,13 @@ namespace Ets.Service.Provider.Order
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 int result = OrderDao.UpdateOrderStatus_Other(paramodel);
-                tran.Complete();
-                return result > 0 ? ResultModel<object>.Conclude(OrderApiStatusType.Success) : ResultModel<object>.Conclude(OrderApiStatusType.SystemError);
+                if (result > 0)
+                {
+                    tran.Complete();
+                    return ResultModel<object>.Conclude(OrderApiStatusType.Success);
+                }
+                else
+                    return ResultModel<object>.Conclude(OrderApiStatusType.SystemError);
             }
         }
 

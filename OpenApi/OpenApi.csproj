@@ -123,8 +123,9 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
-    <Folder Include="Views\Business\" />
+    <Folder Include="Views\Bussiness\" />
     <Folder Include="Views\MeiTuan\" />
+
     <Folder Include="Views\Order\" />
     <Folder Include="Views\Test\" />
   </ItemGroup>
@@ -165,7 +166,6 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MeiTuanController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
-    <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

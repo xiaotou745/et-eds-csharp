@@ -38,6 +38,10 @@ namespace Ets.Model.DataModel.Bussiness
         public Nullable<int> CommissionTypeId { get; set; }
         public Nullable<decimal> DistribSubsidy { get; set; }
         public Nullable<decimal> BusinessCommission { get; set; }
+
+        
+        public int oldOriginalBusiId { get; set; }
+        public int oldGroupId { get; set; }
     }
 
 }
