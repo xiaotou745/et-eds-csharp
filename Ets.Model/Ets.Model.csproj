@@ -54,6 +54,8 @@
     <Compile Include="Common\PagedList.cs" />
     <Compile Include="Common\TestUserModel.cs" />
     <Compile Include="DataModel\Bussiness\BusinessOptionLog.cs" />
+<Compile Include="DataModel\Clienter\ClienterCrossShopLogModel.cs" />
+    <Compile Include="DataModel\Order\OrderDetailModel.cs" />
     <Compile Include="DataModel\Subsidy\CrossShopModel.cs" />
     <Compile Include="DataModel\Order\OrderOther.cs" />
     <Compile Include="DataModel\Order\OrderSubsidiesLog.cs" />
@@ -151,14 +153,17 @@
     <Compile Include="ParameterModel\Clienter\UploadReceiptResultModel.cs" />
     <Compile Include="ParameterModel\Group\GroupListModel.cs" />
     <Compile Include="ParameterModel\Group\GroupParaModel.cs" />
+    <Compile Include="ParameterModel\Order\ChangeStatusPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\BusiOrderResultModel.cs" />
     <Compile Include="ParameterModel\Order\AsyncStatusPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\NewPostPublishOrderModel.cs" />
+    <Compile Include="ParameterModel\Order\OrderCancelReasonsModel.cs" />
     <Compile Include="ParameterModel\Order\OrderDetailPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\GetStatusPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\CreatePM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\OrderOptionModel.cs" />
     <Compile Include="ParameterModel\Order\OrderSearchCriteria.cs" />
+    <Compile Include="ParameterModel\Order\PullOrderInfoPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Sms\SmsParaModel.cs" />
     <Compile Include="ParameterModel\Subsidy\CrossShopListModel.cs" />
     <Compile Include="ParameterModel\Subsidy\SubsidyModel.cs" />

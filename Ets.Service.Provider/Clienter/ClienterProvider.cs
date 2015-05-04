@@ -80,7 +80,8 @@ namespace Ets.Service.Provider.Clienter
                         OrderCount = item.OrderCount
                     };
                     #endregion
-                    model.OriginalOrderNo = item.OriginalOrderNo;
+                    model.OriginalOrderNo = item.OriginalOrderNo; 
+                    model.OrderFrom = item.OrderFrom;
                     model.income = item.OrderCommission;  //佣金 Edit bycaoheyang 20150327
                     model.Amount = DefaultOrPriceProvider.GetCurrenOrderPrice(oCommission); //C端 获取订单的金额 Edit bycaoheyang 20150305
 
@@ -295,20 +296,15 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         public bool RushOrder(int userId, string orderNo)
         {
-            try
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                bool res = clienterDao.RushOrder(userId, orderNo);
-                if (res)
+                clienterDao.RushOrder(userId, orderNo);
+                if (new OrderProvider().AsyncOrderStatus(orderNo))
                 {
-                    var orderPro = new OrderProvider();
-                    orderPro.AsyncOrderStatus(orderNo);
+                    tran.Complete();
+                    return true;
                 }
-                return res;
-            }
-            catch (Exception ex)
-            {
-                LogHelper.LogWriterFromFilter(ex);
-            }
+            }  
             return false;
         }
 
@@ -542,13 +538,17 @@ namespace Ets.Service.Provider.Clienter
                     //};
                     //Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords = new WtihdrawRecordsProvider();
                     //iRecords.AddRecords(model); 
-                    tran.Complete();
+                    if (new OrderProvider().AsyncOrderStatus(orderNo))
+                    {
+                        result = "1";
+                        tran.Complete();
+                    }
+                    else 
+                        result = "0"; //同步第三方状态失败 导致订单失败
                     Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", myOrderInfo.businessId.ToString(), string.Empty);
                     result = "1";
                 }
-            }
-            OrderProvider order = new OrderProvider();
-            order.AsyncOrderStatus(orderNo);
+            } 
             return result;
         }
 
@@ -579,7 +579,9 @@ namespace Ets.Service.Provider.Clienter
                 Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
                 Balance = AccountBalance ?? 0,
                 UserId = userId,
-                Platform = 1
+                Platform = 1,
+                RecordType = 1,
+                OrderId = myOrderInfo.Id
             };
             Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords = new WtihdrawRecordsProvider();
             iRecords.AddRecords(model);
@@ -609,6 +611,17 @@ namespace Ets.Service.Provider.Clienter
         public IList<BusinessesDistributionModel> GetClienteStorerGrabStatisticalInfo()
         {
             return clienterDao.GetClienteStorerGrabStatisticalInfo();
+        }
+
+        /// <summary>
+        /// 骑士门店抢单统计
+        /// 胡灵波-20150424
+        /// </summary>
+        /// <param name="daysAgo">几天前</param>
+        /// <returns></returns>
+        public IList<BusinessesDistributionModel> GetClienteStorerGrabStatisticalInfo(int daysAgo)
+        {
+            return clienterDao.GetClienteStorerGrabStatisticalInfo(daysAgo);
         }
         /// <summary>
         /// 骑士门店抢单统计

@@ -65,6 +65,28 @@ namespace Ets.Service.Provider.User
                 model.Status = from.Status;
                 model.superManName = from.SuperManName;
                 model.superManPhone = from.SuperManPhone;
+                model.OrderFrom = from.OrderFrom.ToString();
+                if (from.OrderFrom==0)
+                {
+                    model.OrderFromName = "B端";
+                }
+                if (from.OrderFrom == 1)
+                {
+                    model.OrderFromName = "易淘食";
+                }
+                if (from.OrderFrom == 2)
+                {
+                    model.OrderFromName = "万达";
+                }
+                if (from.OrderFrom == 3)
+                {
+                    model.OrderFromName = "全时";
+                }
+                if (from.OrderFrom == 4)
+                {
+                    model.OrderFromName = "美团";
+                } 
+                model.OriginalOrderNo = from.OriginalOrderNo;
                 if (from.BusinessId > 0 && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
                 {
                     var d1 = new Degree(from.Longitude.Value, from.Latitude.Value);
@@ -77,6 +99,7 @@ namespace Ets.Service.Provider.User
             }
             return listOrder;
         }
+         
 
         /// <summary>
         /// 商户结算列表--2015.3.12 平扬
@@ -364,6 +387,7 @@ namespace Ets.Service.Provider.User
                 resultMode.cityId = cityId;
                 resultMode.phoneNo = row["PhoneNo2"] == null ? row["PhoneNo"].ToString() : row["PhoneNo2"].ToString();
                 resultMode.DistribSubsidy = row["DistribSubsidy"] == null ? 0 : ParseHelper.ToDecimal(row["DistribSubsidy"]);
+                resultMode.OriginalBusiId = row["OriginalBusiId"].ToString();
                 return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.Success, resultMode);
             }
             catch (Exception ex)
@@ -754,7 +778,18 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public bool ModifyBusinessInfo(Business model, OrderOptionModel orderOptionModel)
         {
-            return dao.ModifyBusinessInfo(model,orderOptionModel);
+            var redis = new ETS.NoSql.RedisCache.RedisCache(); 
+            redis.Delete(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo,  //清空之前的关系缓存
+                ParseHelper.ToInt(model.oldGroupId), ParseHelper.ToInt(model.oldOriginalBusiId)));
+            bool result = dao.ModifyBusinessInfo(model, orderOptionModel);
+            if (result == true && ParseHelper.ToInt(model.GroupId)!=0)
+            { //添加到缓存
+ 
+                redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo,
+                    ParseHelper.ToInt(model.GroupId),ParseHelper.ToInt(model.OriginalBusiId)),model.Id.ToString());
+            }
+               
+            return result;
         }
 
 

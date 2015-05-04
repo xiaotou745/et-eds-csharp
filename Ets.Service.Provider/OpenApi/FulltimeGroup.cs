@@ -1,5 +1,6 @@
 ﻿using Ets.Model.Common;
 using Ets.Model.ParameterModel.Order;
+using Ets.Service.IProvider.OpenApi;
 using Ets.Service.Provider.OpenApi;
 using ETS.Const;
 using ETS.Enums;
@@ -16,7 +17,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ets.Service.IProvider.OpenApi
+namespace Ets.Service.Provider.OpenApi
 {
 
     /// <summary>
@@ -76,6 +77,17 @@ namespace Ets.Service.IProvider.OpenApi
             return ETS.Security.MD5.Encrypt(signStr);
         }
 
+        /// <summary>
+        /// 新增商铺时根据集团id为店铺设置外送费，结算比例等财务相关信息 add by caoheyang 20150417
+        /// </summary>
+        /// <param name="paramodel"></param>
+        /// <returns></returns>
+        public CreatePM_OpenApi SetCommissonInfo(CreatePM_OpenApi paramodel)
+        {
+            paramodel.store_info.delivery_fee = 0;//全时目前外送费统一0
+            paramodel.store_info.businesscommission = 9;//全时目前结算比例统一9
+            return paramodel;
+        }
 
     }
 }

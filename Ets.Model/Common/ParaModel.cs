@@ -43,8 +43,6 @@ namespace Ets.Model.Common
         /// 集团：3:万达    查询得到。赋值
         /// </summary>
         public int group { get; set; }
-
-
     }
 
      /// <summary>

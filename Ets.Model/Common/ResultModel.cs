@@ -59,7 +59,7 @@ namespace Ets.Model.Common
         }
 
         public static ResultModel<TResult> Conclude(Enum status)
-        {
+        {   
             return Conclude(status, default(TResult));
         }
 
@@ -72,5 +72,17 @@ namespace Ets.Model.Common
         public int Status { get; protected set; }
         public string Message { get; protected set; }
         public TResult Result { get; protected set; }
+    }
+    /// <summary>
+    ///  美团结果自定义类
+    /// </summary>
+    public class ResultModelToString
+    {
+        public ResultModelToString(string data)
+        {
+            this.data = data;
+        }
+
+        public string data { get; protected set; }
     }
 }

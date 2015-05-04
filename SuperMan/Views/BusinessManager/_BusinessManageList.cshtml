@@ -201,8 +201,10 @@
         $('#busCommissionHid').val(id);
         $('#busCommissionName').val(name);
         $('#busCommissionWaiSong').val(distribSubsidy);
+        $('#oldBusCommissionWaiSong').val(distribSubsidy);
         $('#busCommissionPhone').val(phone);
         $('#busCommissionText').val(businessCommission);
+        $('#oldBusCommissionText').val(businessCommission);
         $('#statusFin').text("设置[" + name + "]结算比例-外送费");
         adminjs.openwinbox('#BusinessCommissionDiv');
     }
@@ -212,7 +214,16 @@
         $('#busiName').val(name);
         $('#busiPhone').val(phone);
         $('#busiSourceId').val(originalbusiId);
-        $('#busGroupId').val(groupid);
+        if(groupid>0)
+        {
+            $('#busGroupId').val(groupid);
+        }
+        else
+        {
+            $('select#busGroupId option:first').attr('selected','true');
+        }
+        $('#oldBusiSourceId').val(originalbusiId);
+        $('#oldBusGroupId').val(groupid);
         adminjs.openwinbox('#BusinessInfoUpdateDiv');
     }
 
