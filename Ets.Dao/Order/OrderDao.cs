@@ -1099,7 +1099,7 @@ WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL;", SuperPlatform.骑士, (i
             string where = string.Empty;
             if (orderType > 0)
             {
-                where = " and OrderType =@OrderType";
+                where = " and OrderType =@OrderType AND Status <> 3";  //取消的订单还可以推送，加入订单状态判断 王超
             }
             string sql = @"SELECT * FROM [order] WHERE OriginalOrderNo = @OriginalOrderNo AND  OrderFrom = @OrderFrom " + where;
             IDbParameters parm = DbHelper.CreateDbParameters();
