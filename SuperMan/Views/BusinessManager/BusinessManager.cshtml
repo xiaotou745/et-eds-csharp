@@ -113,7 +113,7 @@
 </div>
 
 @*结算比例弹窗*@
-<div class="BusinessCommissionDish">
+@*<div class="BusinessCommissionDish">
     <div class="add-openbox add-form" id="BusinessCommissionDiv" style="width:500px">
         <h2>
             <p id="statusFin">设置结算比例</p>
@@ -137,6 +137,52 @@
                 <input name="busCommissionWaiSong" id="busCommissionWaiSong" style="width: 200px;" type="text">
             </div>
         </fieldset>
+        <p class="btnbox">
+            <input value="确认" type="button" id="btnCommissionConfim" class="yesBtn" />
+            <input value="关闭" type="button" class="J_closebox qxBtn" />
+        </p>
+    </div>
+</div>*@
+<div class="BusinessCommissionDish">
+    <div class="add-openbox add-form" id="BusinessCommissionDiv" style="width:500px">
+        <h2>
+            <p id="statusFin">商家结算-补贴策略</p>
+        </h2>
+        <fieldset>
+            <input type="hidden" id="busCommissionHid" value="0" />
+            <div class="control-group">
+                <label>商家</label>
+                <input name="busCommissionName" id="busCommissionName" readonly="readonly" type="text">
+            </div>
+            <div class="control-group">
+                <label>电话</label>
+                <input name="busCommissionPhone" id="busCommissionPhone" readonly="readonly" type="text">
+            </div>         
+            <div class="control-group">
+                <label>配送费</label>
+                <input name="busCommissionWaiSong" id="busCommissionWaiSong" style="width: 200px;" type="text">
+            </div>
+            <div class="control-group">
+                <label>结算比例设置(应收)</label>
+            </div>
+            <div class="control-group">
+                @*@{var a = globalConfigModel.CommissionFormulaMode == "0" ? "checked =checked" : "";}*@
+                <input id="rCommissionFormulaMode0" name="rCommissionFormulaMode" type="radio" value="0">
+                <label for="rCommissionFormulaMode0" style="color: red">结算比例</label>
+                @*@{var b = globalConfigModel.CommissionFormulaMode == "1" ? "checked =checked" : "";}*@
+                <input id="rCommissionFormulaMode1" name="rCommissionFormulaMode" type="radio" value="1">
+                <label for="rCommissionFormulaMode1" style="color: red">固定金额</label>
+            </div>
+            <div class="control-group">
+                <input name="busCommissionText" id="busCommissionText" style="width: 45px;" type="text">%
+                <input name="CommissionFixValue" id="CommissionFixValue" style="width: 45px;" type="text">
+            </div>
+                
+                @*<div class="control-group">
+                <label>结算比例</label>
+                <input name="busCommissionText" id="busCommissionText" style="width: 45px;" type="text">%
+            </div>*@
+</fieldset>
         <p class="btnbox">
             <input value="确认" type="button" id="btnCommissionConfim" class="yesBtn" />
             <input value="关闭" type="button" class="J_closebox qxBtn" />

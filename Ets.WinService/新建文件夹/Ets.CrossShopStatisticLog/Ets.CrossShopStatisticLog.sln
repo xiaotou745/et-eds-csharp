@@ -5,7 +5,7 @@ VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ets.CrossShopStatisticLog", "Ets.CrossShopStatisticLog.csproj", "{9664D80E-C42D-4768-A0D9-3F0C3A294BC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ets.CrossShopStatisticLogService", "..\Ets.CrossShopStatisticLogService\Ets.CrossShopStatisticLogService.csproj", "{51ADAC19-ECBD-47B6-9F0D-9074D7920E20}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ets.QuartzService", "..\Ets.QuartzService\Ets.QuartzService.csproj", "{51ADAC19-ECBD-47B6-9F0D-9074D7920E20}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
