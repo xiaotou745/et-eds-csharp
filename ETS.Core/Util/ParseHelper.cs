@@ -218,17 +218,50 @@ namespace ETS.Util
         //}
         #endregion
 
+        #region 将 object 转成制定的type 返回object
+
+        /// <summary>
+        /// 将 object 转成制定的type 返回object
+        /// </summary>
+        /// <param name="o">要转换的值</param>
+        /// <param name="type">目标类型</param>
+        /// <returns></returns>
+        public static object ToType(object o, Type type)
+        {
+            if (type == typeof(int))
+                return ToInt(o);
+            else if (type == typeof(long))
+                return ToLong(o);
+            else if (type == typeof(decimal))
+                return ToDecimal(o);
+            else if (type == typeof(double))
+                return ToDouble(o);
+            else if (type == typeof(bool))
+                return ToBool(o);
+            else if (type == typeof(DateTime))
+                return ToDatetime(o);
+            else if (type == typeof(string))
+                return ToString(o);
+            else
+                return o;
+        }
+        #endregion
+
+
         public static string ToSplitByPercentile(bool IsInt, object obj)
         {
             if (IsInt)
             {
                 string temp = String.Format("{0:N}", obj).ToString();
-                if (temp.Contains(".")) {
-                    return String.Format("{0:N}", obj).ToString().Substring(0,temp.IndexOf('.'));
-                } 
-              
+                if (temp.Contains("."))
+                {
+                    return String.Format("{0:N}", obj).ToString().Substring(0, temp.IndexOf('.'));
+                }
+
             }
             return String.Format("{0:N}", obj);
         }
+
+
     }
 }

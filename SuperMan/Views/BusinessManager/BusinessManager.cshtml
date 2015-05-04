@@ -1,6 +1,8 @@
 ﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Bussiness.BusListResultModel>
 @using Ets.Model.DomainModel.Bussiness;
-@using Ets.Service.Provider.User
+@using Ets.Service.Provider.User;
+
+
 @{
     ViewBag.Title = "Order";
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
@@ -131,10 +133,12 @@
             <div class="control-group">
                 <label>结算比例</label>
                 <input name="busCommissionText" id="busCommissionText" style="width: 45px;" type="text">%
+                <input name="oldBusCommissionText" id="oldBusCommissionText"  type="hidden">
             </div>
             <div class="control-group">
                 <label>外送费</label>
                 <input name="busCommissionWaiSong" id="busCommissionWaiSong" style="width: 200px;" type="text">
+                <input name="oldBusCommissionWaiSong" id="oldBusCommissionWaiSong"  type="hidden">
             </div>
         </fieldset>
         <p class="btnbox">
@@ -227,7 +231,10 @@
             <div class="control-group">
                 <label>绑定第三方ID：</label>
                 <input name="busiSourceId" id="busiSourceId" type="text">
-                @Html.DropDownList("busGroupId", new SelectList(new BusinessProvider().GetGroups(), "Id", "GroupName"), new { @class = "selectw", style = "width:100px" })
+                <input type="hidden" name="oldBusiSourceId" id="oldBusiSourceId">
+                <input type="hidden" name="oldBusGroupId" id="oldBusGroupId">
+                @Html.DropDownList("busGroupId",
+                                           new SelectList(new BusinessProvider().GetGroups(), "Id", "GroupName"), "--请选择--", new { @class = "selectw", style = "width:100px"  })
             </div>
         </fieldset>
         <p class="btnbox">
@@ -248,6 +255,8 @@
 
         var busCommissionText = $("#busCommissionText").val(); ////商户结算比例
         var busCommissionWaiSong = $("#busCommissionWaiSong").val(); ////商户外送费
+        var oldBusCommissionText = $("#oldBusCommissionText").val(); ////原来商户结算比例
+        var oldBusCommissionWaiSong = $("#oldBusCommissionWaiSong").val(); ////原来商户外送费
         if (isNaN(busCommissionText)) {
             alert("请输入正确的数字!");
             return;
@@ -256,6 +265,7 @@
             alert("请输入大于零的值!");
             return;
         }
+        
         if (isNaN(busCommissionWaiSong)) {
             alert("请输入正确的数字!");
             return;
@@ -264,7 +274,15 @@
             alert("请输入大于零的值!");
             return;
         }
-        var paramaters = { "id": busCommissionHid, "commission": busCommissionText, "waisongfei": busCommissionWaiSong };
+        if (busCommissionText == oldBusCommissionText && busCommissionWaiSong == oldBusCommissionWaiSong) {
+            alert("外送费和结算比例都没有修改!");
+            return;
+        }
+        if (busCommissionWaiSong.length == 0)
+        {
+            busCommissionWaiSong = 0;
+        }
+        var paramaters = { "id": busCommissionHid, "commission": busCommissionText, "waisongfei": busCommissionWaiSong, "oldcommission": oldBusCommissionText, "oldwaisongfei": oldBusCommissionWaiSong };
         var url = "/BusinessManager/SetCommission";
         $.ajax({
             type: 'POST',
@@ -287,6 +305,8 @@
         var busiPhone = $("#busiPhone").val(); //商户电话
         var busiSourceId = $("#busiSourceId").val(); //商户原平台Id
         var busGroupId = $("#busGroupId").val(); ////商户集团Id
+        var oldBusiSourceId = $("#oldBusiSourceId").val(); //商户原平台Id
+        var oldBusGroupId = $("#oldBusGroupId").val(); ////商户集团Id
         if (busiName.trim().length == 0) {
             alert("请输入商家名称!");
             return;
@@ -310,7 +330,11 @@
             //return;
             busGroupId = 0;
         }
-        var paramaters = { "id": busiId, "businessName": busiName, "businessPhone": busiPhone, "businessSourceId": busiSourceId, "groupId": busGroupId };
+        var paramaters = {
+            "id": busiId, "businessName": busiName, "businessPhone": busiPhone,
+            "businessSourceId": busiSourceId, "groupId": busGroupId,
+            "oldBusiSourceId": oldBusiSourceId, "oldBusGroupId": oldBusGroupId,
+        };
         var url = "/BusinessManager/ModifyBusiness";
         $.ajax({
             type: 'POST',

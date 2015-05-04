@@ -73,4 +73,16 @@ namespace Ets.Model.Common
         public string Message { get; protected set; }
         public TResult Result { get; protected set; }
     }
+    /// <summary>
+    ///  美团结果自定义类
+    /// </summary>
+    public class ResultModelToString
+    {
+        public ResultModelToString(string data)
+        {
+            this.data = data;
+        }
+
+        public string data { get; protected set; }
+    }
 }

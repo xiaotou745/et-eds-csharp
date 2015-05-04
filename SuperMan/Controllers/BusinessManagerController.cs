@@ -96,6 +96,7 @@ namespace SuperMan.Controllers
                 return Json(new ResultModel(false, "结算比例不能小于零!"), JsonRequestBehavior.AllowGet);
             if (waisongfei < 0)
                 return Json(new ResultModel(false, "外送费不能小于零!"), JsonRequestBehavior.AllowGet);
+            string remark = "";
             IBusinessProvider iBus = new BusinessProvider();
             UserOptRecordPara model = new UserOptRecordPara()
             {
@@ -127,22 +128,35 @@ namespace SuperMan.Controllers
         }
 
         
+        /// <summary>
+        /// 修改商户信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="businessName"></param>
+        /// <param name="businessPhone"></param>
+        /// <param name="businessSourceId">第三方商户id</param>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
         [HttpPost]
-        public JsonResult ModifyBusiness(int id, string businessName,string businessPhone,int businessSourceId, int groupId)
+        public JsonResult ModifyBusiness(int id, string businessName,string businessPhone,int businessSourceId, int groupId,int oldBusiSourceId, int oldBusGroupId)
         {
             IBusinessProvider iBus = new BusinessProvider();
+            //操作日志
             OrderOptionModel model = new OrderOptionModel()
             {
                 OptUserId = UserContext.Current.Id,
                 OptUserName = UserContext.Current.Name, 
             };
+            //商户操作实体
             Business businessModel = new Business()
             {
                 Name = businessName,
                 GroupId = groupId,
                 OriginalBusiId = businessSourceId,
                 Id = id,
-                PhoneNo = businessPhone
+                PhoneNo = businessPhone,
+                oldGroupId = oldBusGroupId,
+                oldOriginalBusiId = oldBusiSourceId
             };
             return Json(new ResultModel(iBus.ModifyBusinessInfo(businessModel, model), "成功!"), JsonRequestBehavior.AllowGet);
         }

@@ -1,6 +1,7 @@
 ﻿using ETS.Const;
 using ETS.Enums;
 using Ets.Model.Common;
+using Ets.Service.Provider.Order;
 using Ets.Service.Provider.WtihdrawRecords;
 using Microsoft.Ajax.Utilities;
 using SuperManCore.Common;
@@ -373,7 +374,10 @@ namespace SuperManWebApi.Controllers
 
             lock (lockHelper)
             {
-                bool bResult = iClienterProvider.RushOrder(userId, orderNo);
+                bool bResult = false;  
+                    
+                bResult = iClienterProvider.RushOrder(userId, orderNo);
+               
                 if (bResult)
                 {
                     Ets.Service.Provider.MyPush.Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", myorder.businessId.ToString(), string.Empty);
@@ -399,7 +403,8 @@ namespace SuperManWebApi.Controllers
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.userIdEmpty);
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderEmpty);
-            string finishResult = iClienterProvider.FinishOrder(userId, orderNo, pickupCode);
+            var myorder = new Ets.Dao.Order.OrderDao().GetOrderByNo(orderNo);
+            string finishResult = iClienterProvider.FinishOrder(userId, orderNo, pickupCode);  
             if (finishResult == "1")  //完成
             {
                 var clienter = iClienterProvider.GetUserInfoByUserId(userId);
@@ -809,6 +814,21 @@ namespace SuperManWebApi.Controllers
             }
         }
 
+        /// <summary>
+        /// 获取订单详细
+        /// </summary>
+        /// <returns></returns>
+        [ActionStatus(typeof(ETS.Enums.GetOrdersStatus))]
+        [HttpGet]
+        public Ets.Model.Common.ResultModel<ListOrderDetailModel> GetOrderDetail(string orderno)
+        {
+            var model = new OrderProvider().GetOrderDetail(orderno);
+            if (model != null)
+            {
+                return Ets.Model.Common.ResultModel<ListOrderDetailModel>.Conclude(ETS.Enums.GetOrdersStatus.Success, model);
+            }
+            return Ets.Model.Common.ResultModel<ListOrderDetailModel>.Conclude(ETS.Enums.GetOrdersStatus.FailedGetOrders, model);
+        }
 
     }
 }
