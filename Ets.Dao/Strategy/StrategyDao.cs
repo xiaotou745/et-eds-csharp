@@ -19,14 +19,15 @@ namespace Ets.Dao.Strategy
         public bool InsertDataStrategy(StrategyModel model)
         {
             string sql = @"INSERT INTO [dbo].[Strategy]
-                            ([Name]                         
+                            ([Name],KeyValue                        
                             )
                             VALUES
-                            (@Name
+                            (@Name,@KeyValue
                           )
                             ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Name", model.Name);
+            parm.AddWithValue("@KeyValue", model.KeyValue);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
 
@@ -46,6 +47,26 @@ namespace Ets.Dao.Strategy
             string sql = string.Format(@" SELECT * FROM   dbo.[Strategy] WITH ( NOLOCK )");
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             return MapRows<StrategyModel>(dt);
+        }
+
+
+        public StrategyModel GetCurrenStrategy(int businessId)
+        {
+            string sql = @"
+                        select Strategy.* from Business WITH ( NOLOCK )
+                        left join BusinessGroup on BusinessGroupId=BusinessGroup.Id
+                        left join Strategy on BusinessGroup.StrategyId=Strategy.Id
+                        WHERE  Business.Id=@businessId ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("@businessId", SqlDbType.Int);
+            dbParameters.SetValue("@businessId", businessId);            
+
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, dbParameters);
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                return null;
+            }
+            return MapRows<StrategyModel>(dt)[0];
         }
     }
 }

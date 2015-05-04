@@ -12,10 +12,16 @@ namespace Ets.Service.Provider.Order
     /// 网站补贴，佣金等工厂类 add by caoheyang 20150330         
     /// </summary>
     public class CommissionFactory
-    {
-        public static OrderPriceProvider GetCommission()
+    {      
+        public static OrderPriceProvider GetCommission(int ?i=null)
         {
-            switch (ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode))
+            int CommissionFormulaMode;
+            if (i == null)
+                CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
+            else
+                CommissionFormulaMode =Convert.ToInt32(i);
+
+            switch (CommissionFormulaMode)
             {
                 case 0:
                     return new DefaultOrPriceProvider();
@@ -29,6 +35,6 @@ namespace Ets.Service.Provider.Order
                     return new DefaultOrPriceProvider();
             }
 
-        }
+        }     
     }
 }

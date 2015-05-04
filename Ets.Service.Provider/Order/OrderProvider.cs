@@ -35,6 +35,9 @@ using Ets.Service.Provider.Common;
 using ETS.Const;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.IProvider.OpenApi;
+using Ets.Service.IProvider.Statistics;
+using Ets.Service.IProvider.Strategy;
+using Ets.Model.DataModel.Strategy;
 
 namespace Ets.Service.Provider.Order
 {
@@ -45,6 +48,7 @@ namespace Ets.Service.Provider.Order
         private ClienterProvider iClienterProvider = new ClienterProvider();
 
         private ISubsidyProvider iSubsidyProvider = new SubsidyProvider();
+        private IStrategyProvider iStrategyProvider = new StrategyProvider();
         //和区域有关的  wc
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
 
@@ -282,15 +286,25 @@ namespace Ets.Service.Provider.Order
                 BusinessCommission = to.BusinessCommission, /*商户结算比例*/
                 CommissionType = to.CommissionType,/*结算类型：1：固定比例 2：固定金额*/
                 CommissionFixValue = to.CommissionFixValue/*固定金额*/
-
             };
-            OrderPriceProvider commProvider = CommissionFactory.GetCommission();
+            
+            OrderPriceProvider commProvider =null;
+            StrategyModel strategyModel = iStrategyProvider.GetCurrenStrategy(business.Id);
+            if (strategyModel != null && strategyModel.KeyValue != null)
+            {
+                commProvider = CommissionFactory.GetCommission(strategyModel.KeyValue);
+                to.CommissionFormulaMode = strategyModel.KeyValue;
+            }
+            else
+            {
+                commProvider = CommissionFactory.GetCommission();
+                to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
+            }
+
             to.CommissionRate = commProvider.GetCommissionRate(orderComm); //佣金比例 
             to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
             to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
-            to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
-
-            to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
+            to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额            
             to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额
 
             to.Status = ConstValues.ORDER_NEW;
