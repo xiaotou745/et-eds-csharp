@@ -885,12 +885,7 @@ namespace Ets.Service.Provider.Order
                 using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                 {
                     result = OrderDao.CancelOrder(orderModel, orderOptionModel);
-                }
-                else if (orderModel.Status == 1 && orderModel.NeedUploadCount <= orderModel.HadUploadCount)
-                {
-                    //需要上传的小票大于等于总数量+订单已完成则要扣钱
-                    //(因为订单小票有可能不传。所以用的是订单数量和需要上传小票数量对比判断)
-                    using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+                    if (result && orderModel.Status == 1 && orderModel.HadUploadCount == orderModel.NeedUploadCount)
                     {
                         //需要上传的小票大于等于总数量+订单已完成则要扣钱
                         //(因为订单小票有可能不传。所以用的是订单数量和需要上传小票数量对比判断)
