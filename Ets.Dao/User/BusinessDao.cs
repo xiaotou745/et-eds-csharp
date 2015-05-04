@@ -444,7 +444,9 @@ namespace Ets.Dao.User
          AreaCode ,
          Province ,
          DistribSubsidy,
-         BusinessCommission 
+         BusinessCommission,
+         CommissionType,
+         CommissionFixValue
          FROM dbo.business WITH(NOLOCK) WHERE Id = @busiId";
 
             IDbParameters parm = DbHelper.CreateDbParameters();

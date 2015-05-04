@@ -250,6 +250,8 @@ namespace Ets.Service.Provider.Order
                 to.ReceviceCity = business.City; //城市
                 to.DistribSubsidy = business.DistribSubsidy;//设置外送费,从商户中找。
                 to.BusinessCommission = ParseHelper.ToDecimal(business.BusinessCommission);//商户结算比例
+                to.CommissionType = business.CommissionType;//结算类型：1：固定比例 2：固定金额
+                to.CommissionFixValue = ParseHelper.ToDecimal(business.CommissionFixValue);//固定金额
             }
             if (ConfigSettings.Instance.IsGroupPush)
             {
@@ -277,7 +279,10 @@ namespace Ets.Service.Provider.Order
                 Amount = busiOrderInfoModel.Amount, /*订单金额*/
                 DistribSubsidy = to.DistribSubsidy,/*外送费*/
                 OrderCount = busiOrderInfoModel.OrderCount/*订单数量*/,
-                BusinessCommission = to.BusinessCommission /*商户结算比例*/
+                BusinessCommission = to.BusinessCommission, /*商户结算比例*/
+                CommissionType = to.CommissionType,/*结算类型：1：固定比例 2：固定金额*/
+                CommissionFixValue = to.CommissionFixValue/*固定金额*/
+
             };
             OrderPriceProvider commProvider = CommissionFactory.GetCommission();
             to.CommissionRate = commProvider.GetCommissionRate(orderComm); //佣金比例 

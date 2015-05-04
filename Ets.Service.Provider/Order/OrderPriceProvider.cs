@@ -48,11 +48,30 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public  decimal GetSettleMoney(OrderCommission model)
         {
-            decimal settleMoney = 
-                model.BusinessCommission == 0 ? 
-                0 : Decimal.Round(ParseHelper.ToDecimal(model.BusinessCommission / 100m) * ParseHelper.ToDecimal(model.Amount), 2);
-            return Decimal.Round(ParseHelper.ToDecimal(model.DistribSubsidy)
+            decimal sumsettleMoney = 0;
+
+            decimal settleMoney = 0;
+            if (model.CommissionType == 2)//固定金额
+            {
+                settleMoney =Convert.ToDecimal(model.CommissionFixValue);                       
+                sumsettleMoney = Decimal.Round(ParseHelper.ToDecimal(model.DistribSubsidy)
                 * ParseHelper.ToInt(model.OrderCount) + settleMoney, 2);
+            }
+            else
+            {
+                settleMoney = model.BusinessCommission == 0 ?
+                    0 : Decimal.Round(ParseHelper.ToDecimal(model.BusinessCommission / 100m) * ParseHelper.ToDecimal(model.Amount), 2);
+                sumsettleMoney=Decimal.Round(ParseHelper.ToDecimal(model.DistribSubsidy)
+                * ParseHelper.ToInt(model.OrderCount) + settleMoney, 2);
+            }
+
+            return sumsettleMoney;
+
+            //decimal settleMoney = 
+            //    model.BusinessCommission == 0 ? 
+            //    0 : Decimal.Round(ParseHelper.ToDecimal(model.BusinessCommission / 100m) * ParseHelper.ToDecimal(model.Amount), 2);
+            //return Decimal.Round(ParseHelper.ToDecimal(model.DistribSubsidy)
+            //    * ParseHelper.ToInt(model.OrderCount) + settleMoney, 2);
         }
 
 
