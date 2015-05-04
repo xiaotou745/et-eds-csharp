@@ -89,6 +89,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Statistics\StatisticsProvider.cs" />
     <Compile Include="Subsidy\SubsidyProvider.cs" />
+    <Compile Include="User\BusinessGroupProvider.cs" />
     <Compile Include="User\BusinessProvider.cs" />
     <Compile Include="User\UserProvider.cs" />
     <Compile Include="WtihdrawRecords\WtihdrawRecordsProvider.cs" />
