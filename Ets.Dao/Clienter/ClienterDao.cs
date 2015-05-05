@@ -686,6 +686,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
         {
             OrderOther orderOther = new OrderOther(); 
             var oo = GetReceiptInfo(uploadReceiptModel.OrderId);
+            
             uploadReceiptModel.NeedUploadCount = oo.NeedUploadCount;
             if (oo.Id == 0)
             {
@@ -696,6 +697,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
                 orderOther = UpdateReceiptInfo(uploadReceiptModel);
             }
             orderOther.OrderStatus = oo.OrderStatus;
+            orderOther.OrderCreateTime = oo.OrderCreateTime;
             return orderOther;
         }
 
@@ -843,6 +845,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
         o.[Status] OrderStatus,
         o.OrderCount NeedUploadCount,
         oo.ReceiptPic ,
+        o.PubDate OrderCreateTime,
         ISNULL(oo.HadUploadCount, 0) HadUploadCount
 from    dbo.[order] o ( nolock )
         left join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
