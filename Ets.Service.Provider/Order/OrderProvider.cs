@@ -36,19 +36,20 @@ using ETS.Const;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.IProvider.OpenApi;
 using Ets.Service.IProvider.Statistics;
-using Ets.Service.IProvider.Strategy;
+//using Ets.Service.IProvider.Strategy;
+using Ets.Service.Provider.User;
 using Ets.Model.DataModel.Strategy;
 
 namespace Ets.Service.Provider.Order
 {
     public class OrderProvider : IOrderProvider
-    {
+    {       
         private OrderDao OrderDao = new OrderDao();
         private BusinessProvider iBusinessProvider = new BusinessProvider();
         private ClienterProvider iClienterProvider = new ClienterProvider();
 
-        private ISubsidyProvider iSubsidyProvider = new SubsidyProvider();
-        private IStrategyProvider iStrategyProvider = new StrategyProvider();
+        private ISubsidyProvider iSubsidyProvider = new SubsidyProvider();      
+        private IBusinessGroupProvider iBusinessGroupProvider = new BusinessGroupProvider();
         //和区域有关的  wc
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
 
@@ -288,12 +289,12 @@ namespace Ets.Service.Provider.Order
                 CommissionFixValue = to.CommissionFixValue/*固定金额*/
             };
             
-            OrderPriceProvider commProvider =null;
-            StrategyModel strategyModel = iStrategyProvider.GetCurrenStrategy(business.Id);
-            if (strategyModel != null && strategyModel.KeyValue != null)
+            OrderPriceProvider commProvider =null;        
+            BusinessGroupModel  businessGroupModel= iBusinessGroupProvider.GetCurrenBusinessGroup(business.Id);
+            if (businessGroupModel != null && businessGroupModel.StrategyId != null)
             {
-                commProvider = CommissionFactory.GetCommission(strategyModel.KeyValue);
-                to.CommissionFormulaMode = strategyModel.KeyValue;
+                commProvider = CommissionFactory.GetCommission(businessGroupModel.StrategyId);
+                to.CommissionFormulaMode = businessGroupModel.StrategyId;
             }
             else
             {

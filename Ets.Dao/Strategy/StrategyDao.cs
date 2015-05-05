@@ -16,19 +16,44 @@ namespace Ets.Dao.Strategy
 {
     public class StrategyDao : DaoBase
     {
-        public bool InsertDataStrategy(StrategyModel model)
+        public int InsertDataStrategy(StrategyModel model)
         {
             string sql = @"INSERT INTO [dbo].[Strategy]
-                            ([Name],KeyValue                        
+                            ([Name],StrategyId                        
                             )
                             VALUES
-                            (@Name,@KeyValue
+                            (@Name,@StrategyId
                           )
                             ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Name", model.Name);
-            parm.AddWithValue("@KeyValue", model.KeyValue);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+            parm.AddWithValue("@StrategyId", model.StrategyId);
+            object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, parm);
+            if (i != null)
+            {
+                return int.Parse(i.ToString());
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// 修改策略名称信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool UpdateStrategyName(StrategyModel model)
+        {
+            string sql = " update [Strategy] set Name=@Name where id=@id";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@id", model.Id);
+            dbParameters.AddWithValue("@Name", model.Name);
+            int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
+            if (i > 0)
+            {
+                return true;
+            }
+            return false;
+
         }
 
         public bool IsExistStrategy(string name)
@@ -41,6 +66,18 @@ namespace Ets.Dao.Strategy
 
             return ParseHelper.ToInt(executeScalar, 0) > 0;    
         }
+        public bool HasExistsStrategy(StrategyModel model)
+        {
+            string sql = @" select 1 from [Strategy] with(nolock) where  Name=@Name";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("Name", model.Name);
+            object i = DbHelper.ExecuteScalar(SuperMan_Read, sql, dbParameters);
+            if (i != null)
+            {
+                return int.Parse(i.ToString()) > 0;
+            }
+            return false;
+        }
 
         public IList<StrategyModel> GetStrategyList()
         {
@@ -48,25 +85,6 @@ namespace Ets.Dao.Strategy
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             return MapRows<StrategyModel>(dt);
         }
-
-
-        public StrategyModel GetCurrenStrategy(int businessId)
-        {
-            string sql = @"
-                        select Strategy.* from Business WITH ( NOLOCK )
-                        left join BusinessGroup on BusinessGroupId=BusinessGroup.Id
-                        left join Strategy on BusinessGroup.StrategyId=Strategy.Id
-                        WHERE  Business.Id=@businessId ";
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.Add("@businessId", SqlDbType.Int);
-            dbParameters.SetValue("@businessId", businessId);            
-
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, dbParameters);
-            if (dt == null || dt.Rows.Count == 0)
-            {
-                return null;
-            }
-            return MapRows<StrategyModel>(dt)[0];
-        }
+       
     }
 }

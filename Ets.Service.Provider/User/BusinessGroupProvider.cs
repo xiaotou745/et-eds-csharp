@@ -29,7 +29,7 @@ namespace Ets.Service.Provider.User
     /// <summary>
     /// 商家分组业务逻辑接口实现类 
     /// </summary>
-    public class BusinessGroupProvide : IBusinessGroupProvider
+    public class BusinessGroupProvider : IBusinessGroupProvider
     {        
         BusinessGroupDao dao = new BusinessGroupDao();
 
@@ -38,9 +38,14 @@ namespace Ets.Service.Provider.User
         /// 胡灵波-20150504
         /// </summary>
         /// <returns></returns>
-        public IList<BusinessGroupModel> GetStrategyList()
-        {           
-            return dao.GetStrategyList();
-        }       
+        public IList<BusinessGroupModel> GetBusinessGroupList()
+        {
+            return dao.GetBusinessGroupList();
+        }
+
+        public BusinessGroupModel GetCurrenBusinessGroup(int businessId)
+        {
+            return dao.GetCurrenBusinessGroup(businessId);
+        }
     }
 }

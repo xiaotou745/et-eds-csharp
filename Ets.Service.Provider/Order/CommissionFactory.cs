@@ -12,14 +12,14 @@ namespace Ets.Service.Provider.Order
     /// 网站补贴，佣金等工厂类 add by caoheyang 20150330         
     /// </summary>
     public class CommissionFactory
-    {      
-        public static OrderPriceProvider GetCommission(int ?i=null)
+    {
+        public static OrderPriceProvider GetCommission(int? strategyId = null)
         {
             int CommissionFormulaMode;
-            if (i == null)
+            if (strategyId == null)
                 CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
             else
-                CommissionFormulaMode =Convert.ToInt32(i);
+                CommissionFormulaMode = Convert.ToInt32(strategyId);
 
             switch (CommissionFormulaMode)
             {

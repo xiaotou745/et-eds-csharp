@@ -1,4 +1,5 @@
-﻿using Ets.Model.DataModel.Strategy;
+﻿using Ets.Model.Common;
+using Ets.Model.DataModel.Strategy;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,18 @@ namespace Ets.Service.IProvider.Strategy
 {
     public interface IStrategyProvider
     {
-        StrategyModel GetCurrenStrategy(int businessId);
-      
+
+        ResultInfo<int> AddStrategy(StrategyModel config);
+
+        /// <summary>
+        /// 更新策略名称
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        ResultInfo<bool> UpdateStrategyName(StrategyModel model);
+
+        IList<StrategyModel> GetStrategyList();
+
+        ResultInfo<bool> HasExistsStrategy(StrategyModel model);        
     }
 }
