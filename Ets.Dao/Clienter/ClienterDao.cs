@@ -412,17 +412,49 @@ namespace Ets.Dao.Clienter
         {
             StringBuilder sql = new StringBuilder();
 
-            sql.AppendFormat(@"update [order] set clienterId=@clienterId,Status=@Status 
-output Inserted.Id,GETDATE(),'{0}','',Inserted.clienterId,Inserted.[Status],{1}
-into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
-where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform.骑士);//未抢订单才更新
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@clienterId", userId);
-            parm.AddWithValue("@Status", ConstValues.ORDER_ACCEPT);
-            parm.Add("@OrderNo", SqlDbType.NVarChar);
-            parm.SetValue("@OrderNo", orderNo);
+            string sqlText = @"
+            update dbo.[order]
+            set clienterId=@clienterId,Status=@Status
+            where OrderNo=@OrderNo and Status=0
+            if(@@error<>0 or @@ROWCOUNT==0)
+            begin
+	            select 1 --更改状态失败
+	            return
+            end
 
-            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Read, sql.ToString(), parm)) > 0;
+            insert  into dbo.OrderSubsidiesLog ( OrderId, Price, InsertTime, OptName,
+                                                 Remark, OptId, OrderStatus, Platform )
+            select  o.Id, o.OrderCommission, getdate(), '骑士', '', @clienterId, @Platform
+            from    dbo.[order] o ( nolock )
+            where   o.OrderNo = @OrderNo
+
+            select 0";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("clienterId", DbType.Int32, 4).Value = userId;
+            dbParameters.Add("Status", DbType.Int32, 4).Value = ConstValues.ORDER_ACCEPT;
+            dbParameters.Add("OrderNo", DbType.String, 50).Value = orderNo;
+            dbParameters.Add("Platform", DbType.Int32, 4).Value = SuperPlatform.骑士.GetHashCode();
+
+            object obj = DbHelper.ExecuteScalar(SuperMan_Write, sqlText, dbParameters);
+            return ParseHelper.ToInt(obj, 1) == 0 ? true : false;
+            //DbHelper.ExecuteScalar(SuperMan_Read)
+            //            sql.AppendFormat(@"update [order] set clienterId=@clienterId,Status=@Status 
+            //output 
+            //Inserted.Id,GETDATE(),'{0}','',Inserted.clienterId,Inserted.[Status],{1}
+            //into dbo.OrderSubsidiesLog(
+            //OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
+            //where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform.骑士);//未抢订单才更新
+
+
+
+            //            IDbParameters parm = DbHelper.CreateDbParameters();
+            //            parm.AddWithValue("@clienterId", userId);
+            //            parm.AddWithValue("@Status", ConstValues.ORDER_ACCEPT);
+            //            parm.Add("@OrderNo", SqlDbType.NVarChar);
+            //            parm.SetValue("@OrderNo", orderNo);
+
+            //            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Read, sql.ToString(), parm)) > 0;
 
         }
 
@@ -620,7 +652,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
             sb.Append(" ) as temp   group by temp.[date],temp.businessCount  )");
             sb.Append(" ,t2 as (");
             sb.Append("  select convert(char(10), csl.InsertTime-1, 120) date,csl.BusinessCount 'businessCount',    count(distinct csl.ClienterId) clientorCount,sum(csl.Amount) totalAmount  from dbo.CrossShopLog csl(nolock)");
-            sb.Append(" where csl.InsertTime-1 > getdate()-" + daysAgo); 
+            sb.Append(" where csl.InsertTime-1 > getdate()-" + daysAgo);
             sb.Append("  group by convert(char(10), csl.InsertTime-1, 120), csl.BusinessCount   )");
             sb.Append(" select temp2.[date],sum(temp2.amount) totalAmount,max(case temp2.businessCount when 1 then temp2.cCount else 0 end) c1,");
             sb.Append(" max(case temp2.businessCount when 1 then temp2.amount else 0 end) a1,");
@@ -645,7 +677,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
             sb.Append(" from (");
             sb.Append(" select t.[date],t.businessCount,t.cCount,isnull(t2.totalAmount,0) amount   from t t left join t2 t2 on t.[date] = t2.date and t.businessCount=t2.businessCount");
             sb.Append("  ) as temp2");
-            sb.Append(" group by temp2.[date]   order by temp2.[date] ");           
+            sb.Append(" group by temp2.[date]   order by temp2.[date] ");
 
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sb.ToString());
             return MapRows<BusinessesDistributionModel>(dt);
@@ -684,9 +716,9 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
         /// <returns></returns>
         public OrderOther UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel)
         {
-            OrderOther orderOther = new OrderOther(); 
+            OrderOther orderOther = new OrderOther();
             var oo = GetReceiptInfo(uploadReceiptModel.OrderId);
-            
+
             uploadReceiptModel.NeedUploadCount = oo.NeedUploadCount;
             if (oo.Id == 0)
             {
@@ -856,8 +888,8 @@ where   o.Id = @OrderId";
 
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             var ooList = MapRows<OrderOther>(dt);
-            
-            if (ooList != null && ooList.Count> 0)
+
+            if (ooList != null && ooList.Count > 0)
             {
                 return ooList[0];
             }
@@ -874,13 +906,13 @@ where   o.Id = @OrderId";
         /// <returns></returns>
         public OrderOther DeleteReceipt(UploadReceiptModel uploadReceiptModel)
         {
- 
-            string delPic = uploadReceiptModel.ReceiptPic; 
+
+            string delPic = uploadReceiptModel.ReceiptPic;
             //更新小票信息
             OrderOther oo = GetReceiptInfo(uploadReceiptModel.OrderId);
             if (oo.Id > 0)
             {
-                
+
                 List<string> listReceiptPic = ImageCommon.GetListImgString(oo.ReceiptPic);
                 int delPre = listReceiptPic.Count;
                 int delAft = 0;
@@ -898,8 +930,8 @@ where   o.Id = @OrderId";
                     uploadReceiptModel.HadUploadCount = 0;
                 }
                 string ppath = ConfigSettings.Instance.FileUploadPath + "\\" + ConfigSettings.Instance.FileUploadFolderNameCustomerIcon;
-                var delDir = ppath + delPicDir;  
-                var fileName = Path.GetFileName(delDir); 
+                var delDir = ppath + delPicDir;
+                var fileName = Path.GetFileName(delDir);
                 int fileNameLastDot = fileName.LastIndexOf('.');
                 //原图 
                 string orginalFileName = string.Format("{0}{1}{2}", Path.GetDirectoryName(delDir) + "\\" + fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
@@ -908,7 +940,7 @@ where   o.Id = @OrderId";
 
                 OrderOther ooo = DeleteReceiptInfo(uploadReceiptModel);
                 if (oo != null)
-                { 
+                {
                     //删除磁盘中的裁图
                     FileHelper.DeleteFile(delDir);
                     //删除缩略图
