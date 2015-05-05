@@ -17,7 +17,7 @@ namespace Ets.Service.Provider.Order
         {
             int CommissionFormulaMode;
             if (strategyId == null)
-                CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
+                CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(1).CommissionFormulaMode);
             else
                 CommissionFormulaMode = Convert.ToInt32(strategyId);
 
@@ -35,6 +35,6 @@ namespace Ets.Service.Provider.Order
                     return new DefaultOrPriceProvider();
             }
 
-        }     
+        }
     }
 }

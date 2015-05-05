@@ -24,7 +24,7 @@ namespace Ets.Service.Provider.Order
         public void AdjustOrderService()
         {
             //ETS.Util.Log.WriteTextToFile("执行补贴任务", ETS.Config.ConfigKey("LogPath"));
-            string globalConfigModel = Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet.TimeSubsidies;
+            string globalConfigModel = Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet(0).TimeSubsidies;
             if (string.IsNullOrEmpty(globalConfigModel))
             {
                 return;

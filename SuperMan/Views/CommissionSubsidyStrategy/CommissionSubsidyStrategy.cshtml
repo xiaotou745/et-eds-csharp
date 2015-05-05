@@ -4,8 +4,8 @@
     ViewBag.Title = "SubsidyFormulaMode";
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
     var strategyList = ViewBag.StrategyList as List<Ets.Model.DataModel.Bussiness.BusinessGroupModel>;
-    string isStarTimeSubsidies = Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet.IsStarTimeSubsidies == "1" ? "checked=checked" : "";
-    string IsStartOverStoreSubsidies = Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet.IsStartOverStoreSubsidies == "1" ? "checked=checked" : "";
+    string isStarTimeSubsidies = Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet(0).IsStarTimeSubsidies == "1" ? "checked=checked" : "";
+    string IsStartOverStoreSubsidies = Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet(0).IsStartOverStoreSubsidies == "1" ? "checked=checked" : "";
 }
 
 <div class="zpManage zpSh">
