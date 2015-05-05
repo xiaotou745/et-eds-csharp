@@ -231,6 +231,18 @@ namespace ETS.Data
         {
             return DataTableHelper.GetTable(ExecuteDataset(connString, CommandType.StoredProcedure, commandText, TIMEOUT_DEFAULT, null));
         }
+     
+        /// <summary>
+        ///  执行SQL, 返回DataTable
+        /// </summary>
+        /// <param name="connString">the ConnectionString</param>
+        /// <param name="commandText">the execute sql</param>
+        /// <param name="parameterValues">参数</param>
+        /// <returns></returns>
+        public DataTable StoredExecuteDataTable(string connString, string commandText, IDbParameters parameterValues)
+        {
+            return DataTableHelper.GetTable(ExecuteDataset(connString, CommandType.StoredProcedure, commandText, TIMEOUT_DEFAULT, parameterValues));
+        }
 
 		/// <summary>
 		/// 执行SQL, 返回Dataset

@@ -245,7 +245,7 @@ namespace Ets.Service.Provider.OpenApi
         /// <param name="fromModel">美团数据实体</param>
         public CreatePM_OpenApi TranslateModel(MeiTuanOrdeModel fromModel)
         {
-
+            
             #region 订单基础数据 
             CreatePM_OpenApi model = new CreatePM_OpenApi();
             model.order_id = fromModel.order_id; //订单ID
@@ -316,7 +316,7 @@ namespace Ets.Service.Provider.OpenApi
             #region 佣金相关  
             model.package_count = 1; //订单份数
             //佣金计算规则
-            model.CommissionFormulaMode = ParseHelper.ToInt(Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
+            model.CommissionFormulaMode = ParseHelper.ToInt(Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet(0).CommissionFormulaMode);
             //计算获得订单骑士佣金
             Ets.Model.DataModel.Order.OrderCommission orderComm = new Ets.Model.DataModel.Order.OrderCommission()
             {

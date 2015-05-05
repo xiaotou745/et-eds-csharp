@@ -205,14 +205,14 @@
             <div class="control-group">
                 <label style="font-size:15px">补贴策略设置(应付)</label>
             </div>
-            @if (Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet.IsStarTimeSubsidies == "1" || Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet.IsStartOverStoreSubsidies == "1")
+            @if (Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet(0).IsStarTimeSubsidies == "1" || Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet(0).IsStartOverStoreSubsidies == "1")
             {
                 string subsidyConfig = "";
-                if (Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet.IsStartOverStoreSubsidies == "1")
+                if (Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet(0).IsStartOverStoreSubsidies == "1")
                 {
                     subsidyConfig += "跨店抢单奖励";
                 }
-                if (Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet.IsStarTimeSubsidies == "1")
+                if (Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet(0).IsStarTimeSubsidies == "1")
                 {
                     if (string.IsNullOrWhiteSpace(subsidyConfig))
                     {

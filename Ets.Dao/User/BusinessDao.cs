@@ -493,33 +493,36 @@ namespace Ets.Dao.User
         public BusListResultModel GetBusiness(int busiId)
         {
             BusListResultModel busi = new BusListResultModel();
-            string selSql = @" SELECT  
-         Id ,
-         Name ,
-         City ,
-         district ,
-         PhoneNo ,
-         PhoneNo2 ,
-         IDCard ,
-         [Address] ,
-         Landline ,
-         Longitude ,
-         Latitude ,
-         [Status] ,
-         InsertTime ,
-         districtId ,
-         CityId ,
-         GroupId , 
-         ProvinceCode ,
-         CityCode ,
-         AreaCode ,
-         Province ,
-         DistribSubsidy,
-         BusinessCommission,
-         CommissionType,
-         CommissionFixValue
-         FROM dbo.business WITH(NOLOCK) WHERE Id = @busiId";
-
+            string selSql = @" select 
+                                b.Id ,
+                                b.Name ,
+                                b.City ,
+                                b.district ,
+                                b.PhoneNo ,
+                                b.PhoneNo2 ,
+                                b.IDCard ,
+                                b.[Address] ,
+                                b.Landline ,
+                                b.Longitude ,
+                                b.Latitude ,
+                                b.[Status] ,
+                                b.InsertTime ,
+                                b.districtId ,
+                                b.CityId ,
+                                b.GroupId , 
+                                b.ProvinceCode ,
+                                b.CityCode ,
+                                b.AreaCode ,
+                                b.Province ,
+                                b.DistribSubsidy,
+                                b.BusinessCommission,
+                                b.CommissionType,
+                                b.CommissionFixValue,
+                                b.BusinessGroupId,
+                                BusinessGroup.StrategyId
+                                FROM dbo.business as b WITH(NOLOCK)
+                                left join BusinessGroup on b.BusinessGroupId=BusinessGroup.Id
+                                WHERE b.Id = @busiId";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@busiId", busiId);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
