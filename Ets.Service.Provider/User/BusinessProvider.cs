@@ -159,6 +159,24 @@ namespace Ets.Service.Provider.User
         }
 
         /// <summary>
+        /// 设置结算比例
+        /// danny-20150504
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ModifyCommission(BusListResultModel busListResultModel, UserOptRecordPara model)
+        {
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                bool res = dao.ModifyCommission(busListResultModel);
+                int result = new UserOptRecordDao().InsertUserOptRecord(model);
+                tran.Complete();
+                return res;
+            }
+
+        }
+
+        /// <summary>
         /// 生成商户结算excel文件2015.3.12 平扬
         /// </summary>
         /// <returns></returns>

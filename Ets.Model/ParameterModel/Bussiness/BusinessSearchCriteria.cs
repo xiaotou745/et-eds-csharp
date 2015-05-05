@@ -52,6 +52,14 @@ namespace Ets.Model.ParameterModel.Bussiness
         /// 商户城市
         /// </summary>
         public string businessCity { get; set; }
+        /// <summary>
+        /// 结算类型：1：固定比例 2：固定金额
+        /// </summary>
+        public int CommissionType { get; set; }
+        /// <summary>
+        /// 分组ID
+        /// </summary>
+        public int BusinessGroupId { get; set; }
         
     }
     public class OrderByItem<Tentity>
