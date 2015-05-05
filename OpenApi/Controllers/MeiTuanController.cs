@@ -30,6 +30,8 @@ using Ets.Model.DataModel.Order;
 using Ets.Service.IProvider.OpenApi;
 using System.Reflection;
 using Letao.Util;
+using ETS.IO;
+using System.Text.RegularExpressions;
 
 namespace OpenApi.Controllers
 {
@@ -52,7 +54,7 @@ namespace OpenApi.Controllers
                 {
                     CreatePM_OpenApi model = meituan.TranslateModel(paramodel);
                     if (model == null)  //商户在E代送不存在等情况下导致实体translate失败
-                        return  new ResultModelToString(data : "fail" );
+                        return new ResultModelToString(data: "fail");
                     return meituan.AddOrder(model) > 0 ? new ResultModelToString(data: "ok") : new ResultModelToString(data: "fail");
                 }
                 return new ResultModelToString(data: "fail");  //推送失败
@@ -101,20 +103,30 @@ namespace OpenApi.Controllers
         [HttpGet]
         public ResultModel<object> SetRound()
         {  //签名信息
-            List<string> @params = new List<string>() { 
-            "timestamp="+TimeHelper.GetTimeStamp(false) ,
-            "app_area_code=99999",
-            "min_price=9",
-            "area=[{\"x\":39941199,\"y\":116385384}, {\"x\":39926983,\"y\":116361694},{\"x\":39921586,\"y\":116398430}]",
-            "app_id=33"
-            };
-            @params.Sort();
-            string url = "http://test.waimaiopen.meituan.com/api/v1/third_shipping/save?";
-            string waimd5 = url + string.Join("&", @params) + "01c33711a7c2e6cf2cc27d838e83006e"; //consumer_secret
-            string sig = ETS.Security.MD5.Encrypt(waimd5).ToLower();
-            string paras = string.Join("&", @params) + "&sig=" + sig;
-            string json = HTTPHelper.HttpPost(url, paras, accept: "application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+            string filePath = System.AppDomain.CurrentDomain.BaseDirectory + "Content\\OpenRange.txt";
+            string fileContent = FileIO.GetFileContent(filePath, Encoding.Default).Replace("\r\n", "");
+            MatchCollection contenRegex = Regex.Matches(fileContent, "!(.*?)--");
+            for (int i = 0; i < contenRegex.Count; i++)
+            {
+                string content = contenRegex[i].Groups[1].Value;
+                List<string> @params = new List<string>() { 
+                "timestamp="+TimeHelper.GetTimeStamp(false) ,
+                "app_area_code="+i,
+                "min_price=10",
+                "area=["+content+"]",
+               
+                 //"area=[{\"x\":39941199,\"y\":116385384}, {\"x\":39926983,\"y\":116361694},{\"x\":39921586,\"y\":116398430}]",
+                "app_id=33"
+                };
+                @params.Sort();
+                string url = "http://test.waimaiopen.meituan.com/api/v1/third_shipping/save?";
+                string waimd5 = url + string.Join("&", @params) + "01c33711a7c2e6cf2cc27d838e83006e"; //consumer_secret
+                string sig = ETS.Security.MD5.Encrypt(waimd5).ToLower();
+                string paras = string.Join("&", @params) + "&sig=" + sig;
+                string json = HTTPHelper.HttpPost(url, paras, accept: "application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+            }
             return null;
+
         }
 
         /// <summary> 

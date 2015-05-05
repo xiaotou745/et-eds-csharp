@@ -55,5 +55,28 @@ namespace ETS.IO
 				sw.Write(txt);
 			}
 		}
+
+        /// <summary>
+        /// 获取一个文件里文本内容
+        /// </summary>
+        /// <param name="FileFullPath">文件完整路径</param>
+        /// <returns></returns>
+        public static string GetFileContent(string FileFullPath, Encoding en)
+        {
+            string Content = "";
+            Encoding enCode = Encoding.UTF8;
+            if (en != null)
+            {
+                enCode = en;
+            }
+            if (System.IO.File.Exists(FileFullPath))
+            {
+                StreamReader sr = new StreamReader(FileFullPath, enCode);
+                Content = sr.ReadToEnd();
+                sr.Close();
+            }
+            return Content;
+        }
+
 	}
 }
