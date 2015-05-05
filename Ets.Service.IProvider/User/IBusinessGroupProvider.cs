@@ -23,7 +23,9 @@ namespace Ets.Service.IProvider.User
         /// 胡灵波-20150504
         /// </summary>
         /// <returns></returns>
-        IList<BusinessGroupModel> GetStrategyList(); 
+        IList<BusinessGroupModel> GetBusinessGroupList();
+
+        BusinessGroupModel GetCurrenBusinessGroup(int businessId);        
    }
 }
 

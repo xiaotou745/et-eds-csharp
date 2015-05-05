@@ -35,7 +35,6 @@ namespace Ets.Model.DataModel.Bussiness
         public Nullable<int> CommissionTypeId { get; set; }
         public Nullable<decimal> DistribSubsidy { get; set; }
         public Nullable<decimal> BusinessCommission { get; set; }
-    
         public string GroupName {get;set;}
         //public virtual ICollection<order> order { get; set; }
         /// <summary>

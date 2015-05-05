@@ -35,16 +35,21 @@ using Ets.Service.Provider.Common;
 using ETS.Const;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.IProvider.OpenApi;
+using Ets.Service.IProvider.Statistics;
+//using Ets.Service.IProvider.Strategy;
+using Ets.Service.Provider.User;
+using Ets.Model.DataModel.Strategy;
 
 namespace Ets.Service.Provider.Order
 {
     public class OrderProvider : IOrderProvider
-    {
+    {       
         private OrderDao OrderDao = new OrderDao();
         private BusinessProvider iBusinessProvider = new BusinessProvider();
         private ClienterProvider iClienterProvider = new ClienterProvider();
 
-        private ISubsidyProvider iSubsidyProvider = new SubsidyProvider();
+        private ISubsidyProvider iSubsidyProvider = new SubsidyProvider();      
+        private IBusinessGroupProvider iBusinessGroupProvider = new BusinessGroupProvider();
         //和区域有关的  wc
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
 
@@ -250,6 +255,8 @@ namespace Ets.Service.Provider.Order
                 to.ReceviceCity = business.City; //城市
                 to.DistribSubsidy = business.DistribSubsidy;//设置外送费,从商户中找。
                 to.BusinessCommission = ParseHelper.ToDecimal(business.BusinessCommission);//商户结算比例
+                to.CommissionType = business.CommissionType;//结算类型：1：固定比例 2：固定金额
+                to.CommissionFixValue = ParseHelper.ToDecimal(business.CommissionFixValue);//固定金额
             }
             if (ConfigSettings.Instance.IsGroupPush)
             {
@@ -277,15 +284,28 @@ namespace Ets.Service.Provider.Order
                 Amount = busiOrderInfoModel.Amount, /*订单金额*/
                 DistribSubsidy = to.DistribSubsidy,/*外送费*/
                 OrderCount = busiOrderInfoModel.OrderCount/*订单数量*/,
-                BusinessCommission = to.BusinessCommission /*商户结算比例*/
+                BusinessCommission = to.BusinessCommission, /*商户结算比例*/
+                CommissionType = to.CommissionType,/*结算类型：1：固定比例 2：固定金额*/
+                CommissionFixValue = to.CommissionFixValue/*固定金额*/
             };
-            OrderPriceProvider commProvider = CommissionFactory.GetCommission();
+            
+            OrderPriceProvider commProvider =null;        
+            BusinessGroupModel  businessGroupModel= iBusinessGroupProvider.GetCurrenBusinessGroup(business.Id);
+            if (businessGroupModel != null && businessGroupModel.StrategyId != null)
+            {
+                commProvider = CommissionFactory.GetCommission(businessGroupModel.StrategyId);
+                to.CommissionFormulaMode = businessGroupModel.StrategyId;
+            }
+            else
+            {
+                commProvider = CommissionFactory.GetCommission();
+                to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
+            }
+
             to.CommissionRate = commProvider.GetCommissionRate(orderComm); //佣金比例 
             to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
             to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
-            to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
-
-            to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
+            to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额            
             to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额
 
             to.Status = ConstValues.ORDER_NEW;

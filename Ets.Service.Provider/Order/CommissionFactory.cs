@@ -13,9 +13,15 @@ namespace Ets.Service.Provider.Order
     /// </summary>
     public class CommissionFactory
     {
-        public static OrderPriceProvider GetCommission()
+        public static OrderPriceProvider GetCommission(int? strategyId = null)
         {
-            switch (ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode))
+            int CommissionFormulaMode;
+            if (strategyId == null)
+                CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
+            else
+                CommissionFormulaMode = Convert.ToInt32(strategyId);
+
+            switch (CommissionFormulaMode)
             {
                 case 0:
                     return new DefaultOrPriceProvider();
@@ -29,6 +35,6 @@ namespace Ets.Service.Provider.Order
                     return new DefaultOrPriceProvider();
             }
 
-        }
+        }     
     }
 }

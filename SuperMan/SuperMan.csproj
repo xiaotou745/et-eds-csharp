@@ -178,6 +178,7 @@
     <Compile Include="Controllers\BusinessController.cs" />
     <Compile Include="Controllers\BusinessManagerController.cs" />
     <Compile Include="Controllers\DownloadController.cs" />
+    <Compile Include="Controllers\StrategyManagerController.cs" />
     <Compile Include="Controllers\GroupManagerController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HomeCountController.cs" />
@@ -543,6 +544,8 @@
     <Content Include="Views\SubsidyFormulaMode\OverStoreSubsidies.cshtml" />
     <Content Include="Views\AdminTools\PostRedisTools.cshtml" />
     <Content Include="Views\SuperManManager\CrossShopLog.cshtml" />
+    <Content Include="Views\StrategyManager\StrategyManager.cshtml" />
+    <Content Include="Views\StrategyManager\_StrategyManageList.cshtml" />
     <Content Include="Views\CommissionSubsidyStrategy\CommissionSubsidyStrategy.cshtml" />
   </ItemGroup>
   <ItemGroup>

@@ -15,6 +15,9 @@ namespace Ets.Model.DataModel.Bussiness
         public DateTime CreateTime { get; set; }
         public string UpdateBy { get; set; }
         public DateTime UpdateTime { get; set; }
+
+        public string StrategyName { get; set; }
+        
     }
 
 }

@@ -55,12 +55,33 @@ namespace Ets.Dao.User
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
 
-        public IList<BusinessGroupModel> GetStrategyList()
+        public IList<BusinessGroupModel> GetBusinessGroupList()
         {
-            string sql = string.Format(@" SELECT * FROM   dbo.[BusinessGroup] WITH ( NOLOCK )");
+            string sql = string.Format(@" Select Bus.ID,Bus.Name,Bus.StrategyId,Bus.CreateBy,Bus.CreateTime,Bus.UpdateBy,Bus.UpdateTime,
+                                          St.Name as StrategyName FROM  
+                                          dbo.[BusinessGroup] as Bus WITH ( NOLOCK )
+                                          left join Strategy as St on Bus.StrategyId=St.StrategyId");
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             return MapRows<BusinessGroupModel>(dt);
-        }
+        }     
 
+        public BusinessGroupModel GetCurrenBusinessGroup(int businessId)
+        {
+            string sql = @"select BusinessGroup.ID,BusinessGroup.Name,BusinessGroup.StrategyId,BusinessGroup.CreateBy,
+                           BusinessGroup.CreateTime,BusinessGroup.UpdateBy,BusinessGroup.UpdateTime 
+                           from Business WITH ( NOLOCK )
+                           left join BusinessGroup on BusinessGroupId=BusinessGroup.Id                        
+                           WHERE  Business.Id=@businessId ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("@businessId", SqlDbType.Int);
+            dbParameters.SetValue("@businessId", businessId);
+
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, dbParameters);
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                return null;
+            }
+            return MapRows<BusinessGroupModel>(dt)[0];
+        }
     }
 }

@@ -47,7 +47,7 @@ namespace Ets.Dao.GlobalConfig
         /// 2015年4月2日 13:10:49
         /// </summary>
         /// <returns></returns>
-        public GlobalConfigModel GlobalConfigMethod()
+        public GlobalConfigModel GlobalConfigMethod( )
         {
             //这里允许用*是因为配置是需要全部加载
             DataTable dtGlobal = DbHelper.StoredExecuteDataTable(SuperMan_Read, "SP_get_GlobalConfig");

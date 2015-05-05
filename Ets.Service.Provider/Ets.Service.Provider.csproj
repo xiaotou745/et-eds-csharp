@@ -88,6 +88,7 @@
     <Compile Include="Order\TimeOrPriceProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Statistics\StatisticsProvider.cs" />
+    <Compile Include="Strategy\StrategyProvider.cs" />
     <Compile Include="Subsidy\SubsidyProvider.cs" />
     <Compile Include="User\BusinessGroupProvider.cs" />
     <Compile Include="User\BusinessProvider.cs" />
