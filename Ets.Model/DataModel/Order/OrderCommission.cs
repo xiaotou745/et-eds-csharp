@@ -32,7 +32,7 @@ namespace Ets.Model.DataModel.Order
         public int CommissionType { get; set; }
 
         /// <summary>
-        /// 商户结算比例
+        /// 固定金额
         /// </summary>
         public Nullable<decimal> CommissionFixValue { get; set; }
 

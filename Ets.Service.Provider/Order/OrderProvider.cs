@@ -294,16 +294,9 @@ namespace Ets.Service.Provider.Order
 
             OrderPriceProvider commProvider = null;
             BusinessGroupModel businessGroupModel = iBusinessGroupProvider.GetCurrenBusinessGroup(business.Id);
-            //if (businessGroupModel != null && businessGroupModel.StrategyId != null)
-            //{
+           
             commProvider = CommissionFactory.GetCommission(businessGroupModel.StrategyId);
-            to.CommissionFormulaMode = businessGroupModel.StrategyId;
-            //}
-            //else
-            //{
-            //    commProvider = CommissionFactory.GetCommission();
-            //    to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
-            //}
+            to.CommissionFormulaMode = businessGroupModel.StrategyId;           
 
             to.CommissionRate = commProvider.GetCommissionRate(orderComm); //佣金比例 
             to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金

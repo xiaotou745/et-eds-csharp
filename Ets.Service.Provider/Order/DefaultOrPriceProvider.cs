@@ -50,8 +50,7 @@ namespace Ets.Service.Provider.Order
         /// <param name="model">订单</param>
         /// <returns></returns>
         public override decimal GetCommissionRate(OrderCommission model)
-        {
-           // return ParseHelper.ToDecimal(GlobalConfigDao.GlobalConfigGet.CommonCommissionRatio);
+        {          
             return ParseHelper.ToDecimal(GlobalConfigDao.GlobalConfigGet(model.BusinessGroupId).CommonCommissionRatio);
         }
 
