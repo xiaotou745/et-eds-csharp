@@ -26,7 +26,7 @@ namespace Ets.Service.Provider.Common
         {
             try
             {
-                return _dao.GlobalConfigMethod(); 
+                return _dao.GlobalConfigMethod();
             }
             catch (Exception ex)
             {

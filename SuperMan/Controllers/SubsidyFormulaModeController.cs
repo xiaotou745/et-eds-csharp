@@ -17,7 +17,16 @@ namespace SuperMan.Controllers
         // GET: SubsidyFormulaMode
         public ActionResult SubsidyFormulaMode()
         {
+            ViewBag.GroupId = 0;
+            return View();
+        }
+        [HttpGet]
+        public ActionResult SubsidyFormulaMode(int GroupId = 0, int StrategyId = 0, string GroupName = "")
+        {
             var listprice = new GlobalConfigProvider().GetPriceSubsidies();
+            ViewBag.GroupId = GroupId;
+            ViewBag.StrategyId = StrategyId;
+            ViewBag.GroupName = GroupName;
             ViewBag.GloglConfig = new GlobalConfigProvider().GlobalConfigMethod();
             return View(listprice);
         }

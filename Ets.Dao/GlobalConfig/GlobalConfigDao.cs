@@ -47,7 +47,7 @@ namespace Ets.Dao.GlobalConfig
         /// 2015年4月2日 13:10:49
         /// </summary>
         /// <returns></returns>
-        public GlobalConfigModel GlobalConfigMethod( )
+        public GlobalConfigModel GlobalConfigMethod()
         {
             //这里允许用*是因为配置是需要全部加载
             DataTable dtGlobal = DbHelper.StoredExecuteDataTable(SuperMan_Read, "SP_get_GlobalConfig");
@@ -228,6 +228,25 @@ namespace Ets.Dao.GlobalConfig
             dbParameters.SetValue("keyname", key);
             int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
             return i > 0;
+        }
+        /// <summary>
+        /// 根据分组Id获取公共配置信息
+        /// danny-20150505
+        /// </summary>
+        /// <param name="groupid">分组Id</param>
+        /// <returns></returns>
+        public string GetGlobalConfigByGroupId(int groupid)
+        {
+            string sql = "select Id,KeyName,Value,LastUpdateTime,Remark,GroupId,StrategyId from GlobalConfig(nolock) where keyname=@keyname";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("@keyname", SqlDbType.NVarChar, 100);
+            //dbParameters.SetValue("keyname", key);
+            object dt = DbHelper.ExecuteScalar(SuperMan_Read, sql, dbParameters);
+            if (dt != null)
+            {
+                return dt.ToString();
+            }
+            return "";
         }
 
     }
