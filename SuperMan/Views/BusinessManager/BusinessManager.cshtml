@@ -186,12 +186,14 @@
                 <label for="rCommissionFormulaMode1">固定金额</label>
             </div>
             <div class="control-group">
-                &nbsp;
-                <input name="busCommissionText" id="busCommissionText" style="width: 45px;" type="text">%
-                <input name="oldBusCommissionText" id="oldBusCommissionText" type="hidden">
-                &nbsp;&nbsp;
-                <input name="CommissionFixValue" id="CommissionFixValue" style="width: 60px;margin-left:30px" type="text">元/单
-                <input name="oldCommissionFixValue" id="oldCommissionFixValue" type="hidden">
+                <div id="divbusCommissionText">
+                    <input name="busCommissionText" id="busCommissionText" style="width: 120px;" type="text">%
+                    <input name="oldBusCommissionText" id="oldBusCommissionText" type="hidden">
+                </div>
+                <div id="divCommissionFixValue">
+                    <input name="CommissionFixValue" id="CommissionFixValue" style="width: 120px;" type="text">元/单
+                    <input name="oldCommissionFixValue" id="oldCommissionFixValue" type="hidden">
+                </div>
             </div>
         </fieldset>
         <fieldset style="border-top:none">
@@ -290,6 +292,7 @@
 
     //设置结算比例-外送费
     $("#btnCommissionConfim").on('click', function () {
+        
         var busCommissionHid = $("#busCommissionHid").val(); //商户id
 
         var busCommissionText = $("#busCommissionText").val(); ////商户结算比例
@@ -351,6 +354,7 @@
     });
     //修改商家信息
     $("#btnUpdateBusinessInfo").on('click', function () {
+        
         var busiId = $("#busiId").val(); //商户id
         var busiName = $("#busiName").val(); //商户电话
         var busiPhone = $("#busiPhone").val(); //商户电话
@@ -480,6 +484,17 @@
     $('.J_closebox').click(function () {
         adminjs.closewinbox('.add-openbox');
         return false;
+    });
+    $('input[name="rCommissionFormulaMode"]').click(function () {
+        var a = $('input[name="rCommissionFormulaMode"]:checked').val();
+        if (a == 1) {
+            $("#divCommissionFixValue").hide();
+            $("#divbusCommissionText").show();
+        }
+        else {
+            $("#divbusCommissionText").hide();
+            $("#divCommissionFixValue").show();
+        }
     });
 </script>
 <script src="~/Scripts/mvcpager.js"></script>
