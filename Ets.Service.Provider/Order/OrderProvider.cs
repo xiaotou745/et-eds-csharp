@@ -907,11 +907,14 @@ namespace Ets.Service.Provider.Order
                         //(因为订单小票有可能不传。所以用的是订单数量和需要上传小票数量对比判断)
                         result = OrderDao.UpdateAccountBalanceByClienterId(orderModel, orderOptionModel);
                     }
-                    if (result && AsyncOrderStatus(orderModel.OrderNo))
+                    if (result)
                     {
-                        result = true;
                         tran.Complete();
                     }
+                }
+                if (result)
+                {
+                    AsyncOrderStatus(orderModel.OrderNo);
                 }
             }
             return result;

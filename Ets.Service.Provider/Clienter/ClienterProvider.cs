@@ -509,7 +509,7 @@ namespace Ets.Service.Provider.Clienter
                 if (myOrderInfo != null)
                 {
                     var upresult = orderDao.FinishOrderStatus(orderNo, userId, myOrderInfo);
-                    if (upresult == -1)
+                    if (upresult <= 0)
                     {
                         return "3";
                     }
