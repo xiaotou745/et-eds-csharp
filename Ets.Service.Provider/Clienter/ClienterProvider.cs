@@ -652,6 +652,10 @@ namespace Ets.Service.Provider.Clienter
         {
             OrderOther orderOther = null;
             var myOrderInfo = orderDao.GetOrderInfoByOrderNo("", uploadReceiptModel.OrderId);
+            if (myOrderInfo.Status == ConstValues.ORDER_CANCEL)
+            {
+                return orderOther;
+            }
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 orderOther = clienterDao.UpdateClientReceiptPicInfo(uploadReceiptModel);
