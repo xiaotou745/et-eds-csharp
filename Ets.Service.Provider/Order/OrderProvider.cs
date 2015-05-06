@@ -880,15 +880,19 @@ namespace Ets.Service.Provider.Order
                 Amount = from.Amount - from.DistribSubsidy, /*订单金额*/
                 DistribSubsidy = from.DistribSubsidy,/*外送费*/
                 OrderCount = to.OrderCount/*订单数量*/,
-                BusinessCommission = to.BusinessCommission /*商户结算比例*/
+                BusinessCommission = to.BusinessCommission, /*商户结算比例*/
+                BusinessGroupId = business.BusinessGroupId,
+                StrategyId = business.StrategyId
             };
-            OrderPriceProvider commProvider = CommissionFactory.GetCommission();
+            OrderPriceProvider commProvider = CommissionFactory.GetCommission(business.StrategyId);
+            to.CommissionFormulaMode = business.StrategyId;             
             to.CommissionRate = commProvider.GetCommissionRate(orderComm); //佣金比例 
             to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
             to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
             to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
 
-            to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
+
+            to.CommissionFormulaMode = business.StrategyId;
             to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额
 
             to.Status = ConstValues.ORDER_NEW;
