@@ -498,10 +498,11 @@ namespace Ets.Service.Provider.Clienter
         {
             string result = "-1";
             int businessId = 0;
+            OrderListModel myOrderInfo = orderDao.GetOrderInfoByOrderNo(orderNo);
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 //获取该订单信息和该  骑士现在的 收入金额
-                OrderListModel myOrderInfo = orderDao.GetOrderInfoByOrderNo(orderNo);
+               
                 if (myOrderInfo.GroupId == SystemConst.Group3 && !string.IsNullOrWhiteSpace(myOrderInfo.PickupCode)
                     && pickupCode != myOrderInfo.PickupCode) //全时订单 判断 取货码是否正确
                     return ETS.Enums.FinishOrderStatus.PickupCodeError.ToString();
@@ -544,17 +545,18 @@ namespace Ets.Service.Provider.Clienter
                     //Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords = new WtihdrawRecordsProvider();
                     //iRecords.AddRecords(model); 
                     businessId = myOrderInfo.businessId;
-                    if (new OrderProvider().AsyncOrderStatus(orderNo))
-                    {
-                        result = "1";
-                        tran.Complete();
-                    }
-                    else
-                        result = "0"; //同步第三方状态失败 导致订单失败
-
+                    //if (businessId>0)
+                    //{
                     result = "1";
+                    tran.Complete();
+                    //}
+                    //else
+                    //    result = "0"; //同步第三方状态失败 导致订单失败
+
+                    //result = "1";
                 }
             }
+            new OrderProvider().AsyncOrderStatus(orderNo);
             if (businessId != 0 && result == "1")
             {
                 Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", businessId.ToString(), string.Empty);
@@ -791,8 +793,8 @@ namespace Ets.Service.Provider.Clienter
             bool bResult = orderDao.RushOrder(model);
             if (bResult)
             {
-                Ets.Service.Provider.MyPush.Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", myorder.businessId.ToString(), string.Empty);
                 new OrderProvider().AsyncOrderStatus(orderNo);//同步第三方订单
+                Ets.Service.Provider.MyPush.Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", myorder.businessId.ToString(), string.Empty);
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.Success);
             }
 
