@@ -700,15 +700,15 @@ namespace Ets.Service.Provider.Order
             {
                 if (order.Status == ConstValues.ORDER_CANCEL)    // 在存在订单的情况下如果是去掉订单的状态，直接修改为订单待接单状态
                 {
-                   int upResult= orderDao.UpdateOrderStatus_Other(new ChangeStatusPM_OpenApi() { groupid = model.OrderFrom, order_no = order.OriginalOrderNo, orderfrom = model.OrderFrom, remark = "第三方再次推送", status = 0 });
-                   if (upResult > 0)
-                   {
-                       return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Success);
-                   }
-                   else
-                   {
-                       return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Failed);
-                   }
+                    int upResult = orderDao.UpdateOrderStatus_Other(new ChangeStatusPM_OpenApi() { groupid = model.OrderFrom, order_no = order.OriginalOrderNo, orderfrom = model.OrderFrom, remark = "第三方再次推送", status = 0 });
+                    if (upResult > 0)
+                    {
+                        return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Success);
+                    }
+                    else
+                    {
+                        return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Failed);
+                    }
                 }
                 else
                 {
@@ -837,7 +837,7 @@ namespace Ets.Service.Provider.Order
             to.Weight = from.Weight;
 
             to.IsPay = from.IsPay;
-            to.Amount = from.Amount;
+            to.Amount = from.Amount - to.DistribSubsidy;//订单金额=聚网客总金额-外送费
 
             to.OrderType = from.OrderType; //订单类型 1送餐订单 2取餐盒订单 
             to.KM = from.KM; //送餐距离
@@ -848,11 +848,11 @@ namespace Ets.Service.Provider.Order
             to.DistribSubsidy = from.DistribSubsidy; //外送费
             to.OrderCount = from.OrderCount == 0 ? 1 : from.OrderCount; //订单数量
             //计算订单佣金
-            
+
             //必须写to.DistribSubsidy ，防止bussiness为空情况
             OrderCommission orderComm = new OrderCommission()
             {
-                Amount = from.Amount, /*订单金额*/
+                Amount = to.Amount, /*订单金额*/
                 DistribSubsidy = to.DistribSubsidy,/*外送费*/
                 OrderCount = to.OrderCount/*订单数量*/,
                 BusinessCommission = to.BusinessCommission /*商户结算比例*/
@@ -865,7 +865,7 @@ namespace Ets.Service.Provider.Order
 
             to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
             to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额
-             
+
             to.Status = ConstValues.ORDER_NEW;
 
             return to;

@@ -745,7 +745,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                                         ,oo.NeedUploadCount
                                         ,oo.HadUploadCount
                                         ,oo.ReceiptPic
-,o.OtherCancelReason
+                                        ,o.OtherCancelReason
                                         ,o.OriginalOrderNo
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
@@ -774,6 +774,25 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
         }
 
         /// <summary>
+        /// 通过订单号获取该订单的详情数据
+        /// 窦海超
+        /// 2015年5月6日 20:55:54
+        /// </summary>
+        /// <param name="orderNo">订单号</param>
+        /// <returns></returns>
+        public OrderListModel GetOrderDetailByOrderNo(string orderNo)
+        {
+            string sql = "SELECT businessId,Status FROM dbo.[order](nolock) o where OrderNo=@OrderNo ";
+            IDbParameters parm = DbHelper.CreateDbParameters("OrderNo", DbType.String, 45, orderNo);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (!dt.HasData())
+            {
+                return null;
+            }
+            return MapRows<OrderListModel>(dt)[0];
+        }
+
+        /// <summary>
         /// 订单指派超人
         /// danny-20150320
         /// </summary>
@@ -784,7 +803,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             bool reslut = false;
             try
             {
-                string sql = @" update [order] set clienterId=@clienterId,Status=@Status where OrderNo=@OrderNo ";
+                string sql = @" update [order] set clienterId=@clienterId,Status=@Status where OrderNo=@OrderNo and Status=0 ";
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
                 dbParameters.AddWithValue("@clienterId", order.clienterId);
                 dbParameters.AddWithValue("@Status", ConstValues.ORDER_ACCEPT);
@@ -864,7 +883,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
  SET    [Status] = @status,OtherCancelReason=@OtherCancelReason
  output Inserted.Id,GETDATE(),'{0}',@OtherCancelReason,Inserted.businessId,Inserted.[Status],{1}
  into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
- WHERE  OrderNo = @orderNo", SuperPlatform.商家, (int)SuperPlatform.商家);           
+ WHERE  OrderNo = @orderNo", SuperPlatform.商家, (int)SuperPlatform.商家);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@orderNo", SqlDbType.NVarChar);
@@ -873,11 +892,11 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             dbParameters.Add("@OtherCancelReason", SqlDbType.NVarChar);
             dbParameters.SetValue("@OtherCancelReason", remark);  //订单号  
 
-            if (status!=null)
+            if (status != null)
             {
-                upSql.Append(" and Status=" + status);        
+                upSql.Append(" and Status=" + status);
             }
- 
+
             object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters);
             return ParseHelper.ToInt(executeScalar, -1);
         }
@@ -890,7 +909,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
         /// <returns></returns>
         public int UpdateOrderStatus_Other(ChangeStatusPM_OpenApi paramodel)
         {
-           string sql=string.Format(@"
+            string sql = string.Format(@"
 update  a
 set     a.[Status] =@Status 
 output  Inserted.Id ,
@@ -1481,7 +1500,7 @@ where   o.Id = @orderId;
         /// </summary>
         /// <param name="IntervalMinute"></param>
         /// <returns></returns>
-        public IList<OrderRecordsLog> GetOrderRecords(string originalOrderNo,int group)
+        public IList<OrderRecordsLog> GetOrderRecords(string originalOrderNo, int group)
         {
             string sql = @"
 select  *
@@ -1533,7 +1552,6 @@ from    ( select    sol.Id ,
           )
         ) bb
 order by bb.Id desc;";
-            #endregion
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OriginalOrderNo", SqlDbType.NVarChar);
             parm.SetValue("@OriginalOrderNo", originalOrderNo);
@@ -1544,7 +1562,7 @@ order by bb.Id desc;";
             return MapRows<OrderRecordsLog>(dt);
         }
 
-/// <summary>
+        /// <summary>
         /// 订单详细
         /// </summary>
         /// <param name="orderNo">订单号码</param>
@@ -1566,6 +1584,6 @@ order by bb.Id desc;";
             return MapRows<OrderDetailModel>(dt);
         }
 
-         
+
     }
 }
