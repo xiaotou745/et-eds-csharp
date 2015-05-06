@@ -837,7 +837,7 @@ namespace Ets.Service.Provider.Order
             to.Weight = from.Weight;
 
             to.IsPay = from.IsPay;
-            to.Amount = from.Amount - to.DistribSubsidy;//订单金额=聚网客总金额-外送费
+            to.Amount = from.Amount - from.DistribSubsidy;//订单金额=聚网客总金额-外送费
 
             to.OrderType = from.OrderType; //订单类型 1送餐订单 2取餐盒订单 
             to.KM = from.KM; //送餐距离
@@ -852,8 +852,8 @@ namespace Ets.Service.Provider.Order
             //必须写to.DistribSubsidy ，防止bussiness为空情况
             OrderCommission orderComm = new OrderCommission()
             {
-                Amount = to.Amount, /*订单金额*/
-                DistribSubsidy = to.DistribSubsidy,/*外送费*/
+                Amount = from.Amount - from.DistribSubsidy, /*订单金额*/
+                DistribSubsidy = from.DistribSubsidy,/*外送费*/
                 OrderCount = to.OrderCount/*订单数量*/,
                 BusinessCommission = to.BusinessCommission /*商户结算比例*/
             };

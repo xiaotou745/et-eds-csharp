@@ -98,7 +98,7 @@ namespace OpenApi.Controllers
         [OpenApiActionError]
         public ResultModel<object> GetBusinessStatus(ParaModel<BusinessModel> paramodel)
         {
-            LogHelper.LogWriter("商户注册：", new { Busi = paramodel });
+            LogHelper.LogWriter("获取商户状态：", new { Busi = paramodel });
             var busi = iBusiProvider.GetBusiness(paramodel.fields.B_OriginalBusiId, paramodel.group);
 
             if (busi == null)
