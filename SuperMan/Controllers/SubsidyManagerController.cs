@@ -82,7 +82,7 @@ namespace SuperMan.Controllers
                            orderby ParseHelper.ToInt(globalConfigTimeSubsidiese.Value1) ascending 
                 select globalConfigTimeSubsidiese).ToList();
             string values = GetTimesValues(newlist);
-            bool b = new GlobalConfigProvider().UpdateTimeSubsidies(UserContext.Current.Name, values, "添加时间补贴设置操作-设置之后的值:" + values,0);
+            bool b = new GlobalConfigProvider().UpdateTimeSubsidies(UserContext.Current.Name, values, "添加时间补贴设置操作-设置之后的值:" + values, 0, -1);
             return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.AllowGet);
         }
 
@@ -100,7 +100,7 @@ namespace SuperMan.Controllers
                            where globalConfigTimeSubsidiese.Id!=id
                            select globalConfigTimeSubsidiese).ToList();
             string values = GetTimesValues(newlist);
-            bool b = new GlobalConfigProvider().UpdateTimeSubsidies(UserContext.Current.Name, values, "删除时间补贴设置-设置之后的值:" + values,0);
+            bool b = new GlobalConfigProvider().UpdateTimeSubsidies(UserContext.Current.Name, values, "删除时间补贴设置-设置之后的值:" + values, 0, -1);
             return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.AllowGet);
         }
           
@@ -124,7 +124,7 @@ namespace SuperMan.Controllers
                            orderby ParseHelper.ToInt(globalConfigTimeSubsidiese.Value1) ascending
                            select globalConfigTimeSubsidiese).ToList();
             string values = GetTimesValues(newlist);
-            bool b = new GlobalConfigProvider().UpdateTimeSubsidies(UserContext.Current.Name, values, "修改时间补贴设置-设置之后的值:" + values,0);
+            bool b = new GlobalConfigProvider().UpdateTimeSubsidies(UserContext.Current.Name, values, "修改时间补贴设置-设置之后的值:" + values, 0, -1);
             return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.AllowGet);
         }
 

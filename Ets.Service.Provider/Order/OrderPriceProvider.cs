@@ -43,6 +43,7 @@ namespace Ets.Service.Provider.Order
 
         /// <summary>
         /// 获取当前订单结算金额 add by caoheyang 20140402
+        /// 胡灵波-20150504
         /// </summary>
         /// <param name="model">参数实体</param>
         /// <returns></returns>
@@ -53,7 +54,7 @@ namespace Ets.Service.Provider.Order
             decimal settleMoney = 0;
             if (model.CommissionType == 2)//固定金额
             {
-                settleMoney =Convert.ToDecimal(model.CommissionFixValue);                       
+                settleMoney = Decimal.Round(ParseHelper.ToDecimal(model.CommissionFixValue) * ParseHelper.ToDecimal(model.Amount),2);     
                 sumsettleMoney = Decimal.Round(ParseHelper.ToDecimal(model.DistribSubsidy)
                 * ParseHelper.ToInt(model.OrderCount) + settleMoney, 2);
             }
@@ -66,12 +67,6 @@ namespace Ets.Service.Provider.Order
             }
 
             return sumsettleMoney;
-
-            //decimal settleMoney = 
-            //    model.BusinessCommission == 0 ? 
-            //    0 : Decimal.Round(ParseHelper.ToDecimal(model.BusinessCommission / 100m) * ParseHelper.ToDecimal(model.Amount), 2);
-            //return Decimal.Round(ParseHelper.ToDecimal(model.DistribSubsidy)
-            //    * ParseHelper.ToInt(model.OrderCount) + settleMoney, 2);
         }
 
 

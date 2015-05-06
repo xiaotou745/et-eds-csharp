@@ -62,9 +62,9 @@ namespace Ets.Dao.GlobalConfig
         /// 2015年4月9日 11:10:49
         /// </summary>
         /// <returns></returns>
-        public string GetCommissionFormulaMode()
+        public string GetCommissionFormulaMode(int GroupId)
         {
-            string sql = "select Value from GlobalConfig(nolock) where keyname='CommissionFormulaMode'";
+            string sql = "select Value from GlobalConfig(nolock) where keyname='CommissionFormulaMode'and GroupId="+GroupId;
             object dt = DbHelper.ExecuteScalar(SuperMan_Read, sql);
             if (dt != null)
             {
@@ -163,7 +163,7 @@ namespace Ets.Dao.GlobalConfig
         /// <param name="keyname"></param>
         /// <param name="opName"></param>
         /// <returns></returns>
-        public bool AddSubsidiesLog(string keyname, string opName, string Remark, int GroupId)
+        public bool AddSubsidiesLog(string keyname, string opName, string Remark, int GroupId, int StrategyId)
         {
             string sql = @"INSERT INTO GlobalConfigLog
                                (KeyName
@@ -172,6 +172,7 @@ namespace Ets.Dao.GlobalConfig
                                ,OptName
                                ,Remark
                                ,GroupId
+                               ,StrategyId
                             )
                          SELECT KeyName
                               ,Value
@@ -179,6 +180,7 @@ namespace Ets.Dao.GlobalConfig
                               ,@OptName
                               ,@Remark
                               ,@GroupId
+                              ,@StrategyId
                          FROM GlobalConfig where keyname=@keyname;SELECT @@IDENTITY";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@keyname", SqlDbType.NVarChar, 100);
@@ -189,6 +191,8 @@ namespace Ets.Dao.GlobalConfig
             dbParameters.SetValue("Remark", Remark);
             dbParameters.Add("@GroupId", SqlDbType.Int);
             dbParameters.SetValue("GroupId", GroupId);
+            dbParameters.Add("@StrategyId", SqlDbType.Int);
+            dbParameters.SetValue("StrategyId", GroupId);
             object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, dbParameters);
             return ParseHelper.ToInt(i) > 0;
         }

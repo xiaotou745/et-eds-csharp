@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ets.Model.DataModel.Bussiness
 {
-    public partial class BusinessGroupModel
+    public partial class BusinessGroupLogModel
     {
         /// <summary>
         /// 自增ID（PK）
@@ -21,32 +21,22 @@ namespace Ets.Model.DataModel.Bussiness
         /// <summary>
         /// 策略ID
         /// </summary>
-        public int StrategyId { get; set; }
+        public int StrategyId { get; set; }      
+ 
+        /// <summary>
+        /// 写入时间
+        /// </summary>
+        public DateTime InsertTime { get; set; }
 
         /// <summary>
-        /// 创建人
+        /// 操作人
         /// </summary>
-        public string CreateBy { get; set; }
+        public string OptName { get; set; }
 
         /// <summary>
-        /// 创建时间
+        /// 备注
         /// </summary>
-        public DateTime CreateTime { get; set; }
-
-        /// <summary>
-        /// 最后更改人
-        /// </summary>
-        public string UpdateBy { get; set; }
-
-        /// <summary>
-        /// 最后更改时间
-        /// </summary>
-        public DateTime UpdateTime { get; set; }
-
-        /// <summary>
-        /// 策略名称
-        /// </summary>
-        public string StrategyName { get; set; }
+        public string Remark { get; set; }
         
     }
 

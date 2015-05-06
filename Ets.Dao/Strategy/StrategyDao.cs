@@ -16,6 +16,11 @@ namespace Ets.Dao.Strategy
 {
     public class StrategyDao : DaoBase
     {
+        /// <summary>
+        /// 创建策略
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public int InsertDataStrategy(StrategyModel model)
         {
             string sql = @"INSERT INTO [dbo].[Strategy]
@@ -56,6 +61,11 @@ namespace Ets.Dao.Strategy
 
         }
 
+        /// <summary>
+        /// 判断策略是否存在
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public bool IsExistStrategy(string name)
         {
             string sql = string.Format(@" SELECT COUNT(1) FROM   dbo.[Strategy] WITH ( NOLOCK )  WHERE  Name=@Name");
@@ -66,6 +76,11 @@ namespace Ets.Dao.Strategy
 
             return ParseHelper.ToInt(executeScalar, 0) > 0;    
         }
+        /// <summary>
+        /// 判断策略是否已经创建过
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public bool HasExistsStrategy(StrategyModel model)
         {
             string sql = @" select 1 from [Strategy] with(nolock) where  Name=@Name";
@@ -79,9 +94,13 @@ namespace Ets.Dao.Strategy
             return false;
         }
 
+        /// <summary>
+        /// 获取策略集合列表
+        /// </summary>
+        /// <returns></returns>
         public IList<StrategyModel> GetStrategyList()
         {
-            string sql = string.Format(@" SELECT * FROM   dbo.[Strategy] WITH ( NOLOCK )");
+            string sql = string.Format(@" SELECT Id,StrategyId,Name,CreateBy,CreateTime,UpdateBy,UpdateTime FROM   dbo.[Strategy] WITH ( NOLOCK )");
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             return MapRows<StrategyModel>(dt);
         }

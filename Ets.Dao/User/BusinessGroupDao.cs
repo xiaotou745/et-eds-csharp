@@ -26,6 +26,11 @@ namespace Ets.Dao.User
 {
     public class BusinessGroupDao : DaoBase
     {
+        /// <summary>
+        /// 创建商家分组
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public bool InsertDataBusinessGroup(BusinessGroupModel model)
         {
             string sql = @"INSERT INTO [dbo].[BusinessGroup]
@@ -55,6 +60,10 @@ namespace Ets.Dao.User
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
 
+        /// <summary>
+        /// 获取商家分组集合列表
+        /// </summary>
+        /// <returns></returns>
         public IList<BusinessGroupModel> GetBusinessGroupList()
         {
             string sql = string.Format(@" Select Bus.ID,Bus.Name,Bus.StrategyId,Bus.CreateBy,Bus.CreateTime,Bus.UpdateBy,Bus.UpdateTime,
@@ -65,6 +74,11 @@ namespace Ets.Dao.User
             return MapRows<BusinessGroupModel>(dt);
         }     
 
+        /// <summary>
+        /// 获取商家分组实体
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <returns></returns>
         public BusinessGroupModel GetCurrenBusinessGroup(int businessId)
         {
             string sql = @"select BusinessGroup.ID,BusinessGroup.Name,BusinessGroup.StrategyId,BusinessGroup.CreateBy,

@@ -43,12 +43,12 @@ namespace Ets.Service.Provider.Common
         /// <param name="value"></param>
         /// <param name="Remark"></param>
         /// <returns></returns>
-        public bool UpdateTimeSubsidies(string opName, string value, string Remark, int GroupId)
+        public bool UpdateTimeSubsidies(string opName, string value, string Remark, int GroupId, int StrategyId)
         {
             bool result = false; 
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                if (_dao.AddSubsidiesLog("TimeSubsidies", opName, Remark, GroupId))
+                if (_dao.AddSubsidiesLog("TimeSubsidies", opName, Remark, GroupId, StrategyId))
                 {
                     result = _dao.UpdateTimeSubsidies(value, GroupId);
                 }
@@ -102,12 +102,12 @@ namespace Ets.Service.Provider.Common
         /// <param name="value"></param>
         /// <param name="Remark"></param>
         /// <returns></returns>
-        public bool UpdatePriceSubsidies(string opName, string value, string Remark, int GroupId)
+        public bool UpdatePriceSubsidies(string opName, string value, string Remark, int GroupId,int StrategyId)
         {
             bool result = false;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                if (_dao.AddSubsidiesLog("PriceSubsidies", opName, Remark, GroupId))
+                if (_dao.AddSubsidiesLog("PriceSubsidies", opName, Remark, GroupId,StrategyId))
                 {
                     result = _dao.UpdatePriceSubsidies(value, GroupId);
                 }
@@ -165,7 +165,7 @@ namespace Ets.Service.Provider.Common
         {
             try
             {
-                var result = _dao.GetCommissionFormulaMode();
+                var result = _dao.GetCommissionFormulaMode(0);
                 if (!string.IsNullOrEmpty(result))
                 {
                     return ParseHelper.ToInt(result);
@@ -186,12 +186,12 @@ namespace Ets.Service.Provider.Common
         /// <param name="value"></param>
         /// <param name="Remark"></param>
         /// <returns></returns>
-        public bool UpdateCommissionFormulaMode(string opName, string value, string Remark, int GroupId)
+        public bool UpdateCommissionFormulaMode(string opName, string value, string Remark, int GroupId,int StrategyId)
         {
             bool result = false;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                if (_dao.AddSubsidiesLog("CommissionFormulaMode", opName, Remark, GroupId))
+                if (_dao.AddSubsidiesLog("CommissionFormulaMode", opName, Remark, GroupId,StrategyId))
                 {
                     result = _dao.UpdateCommissionFormulaMode(value, GroupId);
                 }
@@ -213,12 +213,12 @@ namespace Ets.Service.Provider.Common
         /// <param name="value"></param>
         /// <param name="Remark"></param>
         /// <returns></returns>
-        public bool UpdateSubsidies(string opName, string value, string Remark, string keyName, int GroupId)
+        public bool UpdateSubsidies(string opName, string value, string Remark, string keyName, int GroupId, int StrategyId)
         {
             bool result = false;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                if (_dao.AddSubsidiesLog(keyName, opName, Remark, GroupId))
+                if (_dao.AddSubsidiesLog(keyName, opName, Remark, GroupId,StrategyId))
                 {
                     result = _dao.UpdateSubsidies(value, keyName, GroupId);
                 }
