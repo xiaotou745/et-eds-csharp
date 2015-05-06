@@ -31,6 +31,21 @@ namespace SuperMan.Controllers
             ViewBag.GloglConfig = new GlobalConfigProvider().GlobalConfigMethod(GroupId);
             return View(listprice);
         }
+        public ActionResult ModifySubsidyFormulaMode(GlobalConfigModel globalConfigModel)
+        {
+            if(globalConfigModel.GroupId==0)
+            {
+                //ToDo 新增分组 添加分组信息、添加分组操作日志、添加公共配置信息和添加公共配置操作日志
+            }
+            else
+            {
+                //ToDo 修改分组 修改分组信息、添加分组操作日志、修改公共配置信息和添加公共配制操作日志
+
+            }
+            var listprice = new GlobalConfigProvider().GetPriceSubsidies(0);
+            ViewBag.GloglConfig = new GlobalConfigProvider().GlobalConfigMethod(0);
+            return View(listprice);
+        }
 
         #region 金额补贴设置
 
