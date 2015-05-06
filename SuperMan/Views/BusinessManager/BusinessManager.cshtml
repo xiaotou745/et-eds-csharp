@@ -180,10 +180,8 @@
                 <label style="font-size:15px">结算比例设置(应收)</label>
             </div>
             <div class="control-group">
-                @*@{var a = globalConfigModel.CommissionFormulaMode == "0" ? "checked =checked" : "";}*@
                 <input id="rCommissionFormulaMode0" name="rCommissionFormulaMode" type="radio" value="1">
                 <label for="rCommissionFormulaMode0">结算比例</label>
-                @*@{var b = globalConfigModel.CommissionFormulaMode == "1" ? "checked =checked" : "";}*@
                 <input id="rCommissionFormulaMode1" name="rCommissionFormulaMode" type="radio" value="2" style="margin-left:30px">
                 <label for="rCommissionFormulaMode1">固定金额</label>
             </div>
@@ -192,14 +190,9 @@
                 <input name="busCommissionText" id="busCommissionText" style="width: 45px;" type="text">%
                 <input name="oldBusCommissionText" id="oldBusCommissionText" type="hidden">
                 &nbsp;&nbsp;
-                <input name="CommissionFixValue" id="CommissionFixValue" style="width: 60px;margin-left:30px" type="text">
+                <input name="CommissionFixValue" id="CommissionFixValue" style="width: 60px;margin-left:30px" type="text">元/单
                 <input name="oldCommissionFixValue" id="oldCommissionFixValue" type="hidden">
             </div>
-
-            @*<div class="control-group">
-                    <label>结算比例</label>
-                    <input name="busCommissionText" id="busCommissionText" style="width: 45px;" type="text">%
-                </div>*@
         </fieldset>
         <fieldset style="border-top:none">
             <div class="control-group">

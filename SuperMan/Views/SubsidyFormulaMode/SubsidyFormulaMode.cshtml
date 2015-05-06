@@ -7,6 +7,8 @@
     string IsStartOverStoreSubsidies = "";
     bool IsAdd=ViewBag.GroupId >0?false:true;
     string StrategyId = ViewBag.StrategyId.ToString();
+    int GroupId = ViewBag.GroupId;
+    string GroupName = ViewBag.GroupName;
     if (!IsAdd)
     {
         isStarTimeSubsidies = globalConfigModel.IsStarTimeSubsidies == "1" ? "checked=checked" : "";
@@ -294,7 +296,7 @@
             alert("请输入价钱!");
             return;
         }
-        var pars = { "Id": 0, "Value1": txtPrice, "Value2": txtPrice1 };
+        var pars = { "Id": 0, "Value1": txtPrice, "Value2": txtPrice1,"GroupId":@GroupId,"StrategyId":@StrategyId };
         var url = "/SubsidyFormulaMode/AddPriceSubsidies";
         $.ajax({
             type: 'POST',
@@ -304,7 +306,7 @@
             success: function (result) {
                 if (result.IsSuccess) {
                     alert("添加成功!");
-                    window.location.href = "/SubsidyFormulaMode/SubsidyFormulaMode/";
+                    window.location.href = "/SubsidyFormulaMode/SubsidyFormulaMode/?GroupId=@GroupId&StrategyId=@StrategyId&GroupName=@GroupName";
                 } else {
                     alert("添加失败!");
                 }
@@ -314,16 +316,16 @@
 
     function deletePrice(id) {
         if (confirm("确定删除?")) {
-            var pars = { "Id": id };
-            var url = "/SubsidyFormulaMode/DeletePriceSubsidies?id=" + id;
+            var pars = { "Id": id ,"GroupId":@GroupId,"StrategyId":@StrategyId};
+            var url = "/SubsidyFormulaMode/DeletePriceSubsidies";
             $.ajax({
-                type: 'GET',
+                type: 'POST',
                 url: url,
                 data: pars,
                 success: function (result) {
                     if (result.IsSuccess) {
                         alert("删除成功!");
-                        window.location.href = "/SubsidyFormulaMode/SubsidyFormulaMode/";
+                        window.location.href = "/SubsidyFormulaMode/SubsidyFormulaMode/?GroupId=@GroupId&StrategyId=@StrategyId&GroupName=@GroupName";
                     } else {
                         alert("删除失败!");
                     }
@@ -352,7 +354,7 @@
             alert("请输入价钱!");
             return;
         }
-        var pars = { "Id": hidid, "Value1": txtupdaterice1, "Value2": txtupdatePrice2 };
+        var pars = { "Id": hidid, "Value1": txtupdaterice1, "Value2": txtupdatePrice2,"GroupId":@GroupId,"StrategyId":@StrategyId };
         var url = "/SubsidyFormulaMode/UpdatePriceSubsidies";
         $.ajax({
             type: 'POST',
@@ -361,7 +363,7 @@
             success: function (result) {
                 if (result.IsSuccess) {
                     alert("修改成功!");
-                    window.location.href = "/SubsidyFormulaMode/SubsidyFormulaMode/";
+                    window.location.href = "/SubsidyFormulaMode/SubsidyFormulaMode/?GroupId=@GroupId&StrategyId=@StrategyId&GroupName=@GroupName";
                 } else {
                     alert("修改失败!");
                 }
@@ -590,10 +592,10 @@
             data: pars,
             success: function (result) {
                 if (result.IsSuccess) {
-                    alert("修改成功!");
+                    alert("保存成功!");
                     window.location.href = "/CommissionSubsidyStrategy/CommissionSubsidyStrategy/";
                 } else {
-                    alert("修改失败!");
+                    alert("保存失败!");
                 }
             }
         });
