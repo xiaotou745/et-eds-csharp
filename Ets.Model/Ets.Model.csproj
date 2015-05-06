@@ -53,6 +53,7 @@
     <Compile Include="Common\OrderCountManageList.cs" />
     <Compile Include="Common\PagedList.cs" />
     <Compile Include="Common\TestUserModel.cs" />
+    <Compile Include="DataModel\Bussiness\BusinessGroupLogModel.cs" />
     <Compile Include="DataModel\Bussiness\BusinessGroupModel.cs" />
     <Compile Include="DataModel\Bussiness\BusinessOptionLog.cs" />
     <Compile Include="DataModel\Clienter\CrossShopStatisticLogModel.cs" />
