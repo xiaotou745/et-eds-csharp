@@ -1,14 +1,13 @@
 ﻿@using Ets.Model.DomainModel.GlobalConfig
 
 @{
-    ViewBag.Title = "SubsidyFormulaMode";
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
     GlobalConfigModel globalConfigModel = ViewBag.GloglConfig;
     string isStarTimeSubsidies = "";
     string IsStartOverStoreSubsidies = "";
     bool IsAdd=ViewBag.GroupId >0?false:true;
     string StrategyId = ViewBag.StrategyId.ToString();
-    if(ViewBag.GroupId >0)
+    if (!IsAdd)
     {
         isStarTimeSubsidies = globalConfigModel.IsStarTimeSubsidies == "1" ? "checked=checked" : "";
         IsStartOverStoreSubsidies = globalConfigModel.IsStartOverStoreSubsidies == "1" ? "checked=checked" : "";
@@ -24,7 +23,7 @@
             <tr>
                 <td>
                     分组名称：<input type="text" id="groupName" name="groupName" value="@ViewBag.GroupName" /> <input type="submit" value="确认" class="searchBtn" id="btnSubmit" /> 
-                </td>
+                    <input type="hidden" id="groupId" name="groupId" value="@ViewBag.GroupId"></td>
             </tr>
             <tr>
                 <td> 
@@ -243,7 +242,7 @@
     </div>
 </div>
 <script>
-    var adminjs = new adminglass(); //实例化后台类   
+    var adminjs = new adminglass(); //实例化后台类
     $(document).ready(function () {
         changeDiv(@(IsAdd == true ? "0" : StrategyId));
     });
@@ -274,7 +273,7 @@
     }
     function showAddPrice() {
         adminjs.openwinbox('#addDivPrice');
-    } 
+    }
     //新增
     $("#btnConfimAddPrice").on('click', function () {
         var txtPrice = $("#txtaddPrice1").val();
@@ -398,9 +397,9 @@
             }
         });
     });
-    
 
-    
+
+
 
     //设置开启跨店抢单
     $("#btnIsOverSotreBuTie").on('click', function () {
@@ -425,12 +424,12 @@
                 }
             }
         });
-    }); 
-    
+    });
+
     //设置佣金方式策略
-    $("#btnCommissionFormulaMode").on('click', function () { 
+    $("#btnCommissionFormulaMode").on('click', function () {
         if (confirm("确定修改佣金策略?")) {
-        
+
             var rCommissionFormulaMode = $('input[name="rCommissionFormulaMode"]:checked').val()
             var pars = { "value": rCommissionFormulaMode };
             var url = "/SubsidyFormulaMode/SetCommissionFormulaMode";
@@ -449,7 +448,7 @@
             });
         }
     });
-    
+
     //设置普通补贴佣金比例和网站补贴
     function setCommonCommissionRatio() {
         if (confirm("确定保本补贴参数?")) {
@@ -541,6 +540,7 @@
     }
     //提交修改
     $("#btnSubmit").on('click', function () {
+        var groupid = $("#groupId").val();
         var groupname = $("#groupName").val();//分组名称
         var IsStarTimeSubsidies = 0;//是否开启动态时间补贴
         var IsStartOverStoreSubsidies = 0;//是否开启跨店抢单奖励
@@ -582,8 +582,8 @@
             PriceCommissionRatio = $("#txtPriceCommissionRatio").val();
             PriceSiteSubsidies = $("#txtPriceSiteSubsidies").val();
         }
-        var pars = { "IsStartOverStoreSubsidies": b };
-        var url = "/SubsidyFormulaMode/SetIsStartOverStoreSubsidies";
+        var pars = { "IsStarTimeSubsidies": IsStarTimeSubsidies, "IsStartOverStoreSubsidies": IsStartOverStoreSubsidies, "CommonCommissionRatio": CommonCommissionRatio, "CommonSiteSubsidies": CommonSiteSubsidies, "TimeSpanCommissionRatio": TimeSpanCommissionRatio, "TimeSpanInPrice": TimeSpanInPrice, "TimeSpanOutPrice": TimeSpanOutPrice, "CommissionRatio": CommissionRatio, "SiteSubsidies": SiteSubsidies, "PriceCommissionRatio": PriceCommissionRatio, "PriceSiteSubsidies": PriceSiteSubsidies, "StrategyId": StrategyId, "GroupId": groupid, "GroupName": groupname };
+        var url = "/SubsidyFormulaMode/ModifySubsidyFormulaMode";
         $.ajax({
             type: 'POST',
             url: url,
@@ -591,12 +591,12 @@
             success: function (result) {
                 if (result.IsSuccess) {
                     alert("修改成功!");
-                    window.location.href = "/SubsidyFormulaMode/SubsidyFormulaMode/";
+                    window.location.href = "/CommissionSubsidyStrategy/CommissionSubsidyStrategy/";
                 } else {
                     alert("修改失败!");
                 }
             }
         });
     });
-    
+
 </script>

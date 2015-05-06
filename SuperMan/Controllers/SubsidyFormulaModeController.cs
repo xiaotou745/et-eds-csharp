@@ -10,10 +10,13 @@ using ETS.Util;
 using SuperMan.App_Start;
 using Ets.Service.IProvider.Subsidy;
 using Ets.Service.Provider.Subsidy;
+using Ets.Service.IProvider.User;
+using Ets.Service.Provider.User;
 namespace SuperMan.Controllers
 {
     public class SubsidyFormulaModeController : BaseController
     {
+        IBusinessGroupProvider iBusinessGroupProvider = new BusinessGroupProvider();
         // GET: SubsidyFormulaMode
         public ActionResult SubsidyFormulaMode()
         {
@@ -30,6 +33,20 @@ namespace SuperMan.Controllers
             ViewBag.GroupName = GroupName;
             ViewBag.GloglConfig = new GlobalConfigProvider().GlobalConfigMethod(GroupId);
             return View(listprice);
+        }
+        /// <summary>
+        /// 修改佣金策略
+        /// danny-20150506
+        /// </summary>
+        /// <param name="globalConfigModel"></param>
+        /// <returns></returns>
+        public ActionResult ModifySubsidyFormulaMode(GlobalConfigModel globalConfigModel)
+        {
+            globalConfigModel.OptName = UserContext.Current.Name;
+            bool reg = iBusinessGroupProvider.ModifySubsidyFormulaMode(globalConfigModel);
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+
+            return Json(new ResultModel(reg, string.Empty), JsonRequestBehavior.AllowGet);
         }
 
         #region 金额补贴设置
