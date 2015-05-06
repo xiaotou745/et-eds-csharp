@@ -244,7 +244,10 @@ namespace Ets.Dao.Order
           OriginalOrderNo,
           BusinessCommission,
           SettleMoney,
-          Adjustment
+          Adjustment,
+          CommissionType,
+          CommissionFixValue,
+          BusinessGroupId
          )
 output Inserted.Id,GETDATE(),'{0}','',Inserted.businessId,Inserted.[Status],{1}
 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
@@ -280,7 +283,10 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
           @OriginalOrderNo,
           @BusinessCommission,
           @SettleMoney,
-          @Adjustment
+          @Adjustment,
+          @CommissionType,
+          @CommissionFixValue,
+          @BusinessGroupId
          );select @@IDENTITY", SuperPlatform.商家, (int)SuperPlatform.商家);
 
             IDbParameters parm = DbHelper.CreateDbParameters();
@@ -323,6 +329,10 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             parm.AddWithValue("@BusinessCommission", order.BusinessCommission);
             parm.AddWithValue("@SettleMoney", order.SettleMoney);
             parm.AddWithValue("@Adjustment", order.Adjustment);
+            parm.AddWithValue("@CommissionType", order.CommissionType);
+            parm.AddWithValue("@CommissionFixValue", order.CommissionFixValue);
+            parm.AddWithValue("@BusinessGroupId", order.BusinessGroupId);
+              
             object i = DbHelper.ExecuteScalar(Config.SuperMan_Write, insertOrder.ToString(), parm);
             if (i != null)
             {
@@ -360,12 +370,12 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                 (OriginalBusiId,Name,GroupId,IDCard,Password,
                 PhoneNo,PhoneNo2,Address,ProvinceCode,CityCode,AreaCode,
                 Longitude,Latitude,DistribSubsidy,Province,City,district,CityId,districtId,
-                BusinessCommission)  
+                BusinessCommission,CommissionType,CommissionFixValue,BusinessGroupId)  
                 OUTPUT Inserted.Id   
                 values(@OriginalBusiId,@Name,@GroupId,@IDCard,@Password,
                 @PhoneNo,@PhoneNo2,@Address,@ProvinceCode,@CityCode,@AreaCode,
                 @Longitude,@Latitude,@DistribSubsidy,@Province,@City,@district,@CityId,@districtId,
-                @BusinessCommission);";
+                @BusinessCommission,@CommissionType,@CommissionFixValue,@BusinessGroupId);";
                     IDbParameters insertBdbParameters = DbHelper.CreateDbParameters();
                     ///基本参数信息
                     insertBdbParameters.AddWithValue("@OriginalBusiId", paramodel.store_info.store_id); //对接方店铺ID第三方平台推送过来的商家Id
@@ -388,6 +398,9 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                     insertBdbParameters.AddWithValue("@CityId", paramodel.store_info.city_code);    //门店市编码
                     insertBdbParameters.AddWithValue("@districtId", paramodel.store_info.area_code);    //门店区编码
                     insertBdbParameters.AddWithValue("@BusinessCommission", paramodel.store_info.businesscommission);//结算比例
+                    insertBdbParameters.AddWithValue("@CommissionType", paramodel.CommissionType);//结算类型
+                    insertBdbParameters.AddWithValue("@CommissionFixValue", paramodel.CommissionFixValue);//固定金额
+                    insertBdbParameters.AddWithValue("@BusinessGroupId", paramodel.BusinessGroupId);//分组ID
                     //insertBdbParameters.AddWithValue("@CommissionTypeId", paramodel.store_info.commission_type == null ?
                     //    1 : paramodel.store_info.commission_type);   //佣金类型，涉及到快递员的佣金计算方式，默认1  业务改变已经无效  
                     bussinessId = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, insertBussinesssql, insertBdbParameters));
@@ -416,7 +429,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                 RecevicePhoneNo,ReceiveProvinceCode,ReceiveCityCode,ReceiveAreaCode,ReceviceAddress,
                 ReceviceLongitude,ReceviceLatitude,businessId,PickUpAddress,Payment,OrderCommission,
                 WebsiteSubsidy,CommissionRate,CommissionFormulaMode,ReceiveProvince,ReceviceCity,ReceiveArea,
-                PickupCode,BusinessCommission,SettleMoney,Adjustment,OrderFrom,Status)
+                PickupCode,BusinessCommission,SettleMoney,Adjustment,OrderFrom,Status,CommissionType,CommissionFixValue,BusinessGroupId)
                 output Inserted.Id,GETDATE(),@OptName,'新增订单',Inserted.businessId,Inserted.[Status],@Platform
                 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
                 Values(@OrderNo,
@@ -425,7 +438,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                 @RecevicePhoneNo,@ReceiveProvinceCode,@ReceiveCityCode,@ReceiveAreaCode,@ReceviceAddress,
                 @ReceviceLongitude,@ReceviceLatitude,@BusinessId,@PickUpAddress,@Payment,@OrderCommission,
                 @WebsiteSubsidy,@CommissionRate,@CommissionFormulaMode,@ReceiveProvince,@ReceviceCity,@ReceiveArea,
-                @PickupCode,@BusinessCommission,@SettleMoney,@Adjustment,@OrderFrom,@Status)";
+                @PickupCode,@BusinessCommission,@SettleMoney,@Adjustment,@OrderFrom,@Status,@CommissionType,@CommissionFixValue,@BusinessGroupId)";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             ///基本参数信息
             dbParameters.Add("@OrderNo", SqlDbType.NVarChar);
@@ -471,6 +484,9 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             //订单操作记录表
             dbParameters.AddWithValue("@OptName", (SuperPlatform.第三方对接平台.ToString()));//操作人
             dbParameters.AddWithValue("@Platform", (int)SuperPlatform.第三方对接平台);//操作平台
+            dbParameters.AddWithValue("@CommissionType", paramodel.CommissionType);//结算类型
+            dbParameters.AddWithValue("@CommissionFixValue", paramodel.CommissionFixValue);//固定金额
+            dbParameters.AddWithValue("@BusinessGroupId", paramodel.BusinessGroupId);//分组ID
 
             int count=ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrdersql, dbParameters));
             if (count > 0)
