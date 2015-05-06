@@ -419,6 +419,10 @@ namespace SuperManWebApi.Controllers
                     model.balanceAmount = 0.0m;
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Success, model);
             }
+            else if (finishResult == "3")
+            {
+                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderHadCancel);
+            }
             else if (finishResult == ETS.Enums.FinishOrderStatus.PickupCodeError.ToString())
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.PickupCodeError);
             else

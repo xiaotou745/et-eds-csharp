@@ -508,7 +508,11 @@ namespace Ets.Service.Provider.Clienter
                 //更新订单状态
                 if (myOrderInfo != null)
                 {
-                    orderDao.FinishOrderStatus(orderNo, userId, myOrderInfo);
+                    var upresult = orderDao.FinishOrderStatus(orderNo, userId, myOrderInfo);
+                    if (upresult == -1)
+                    {
+                        return "3";
+                    }
                     if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)  //当用户上传的小票数量 和 需要上传的小票数量一致的时候，更新用户金额
                     {
                         if (CheckOrderPay(orderNo))
@@ -785,7 +789,6 @@ namespace Ets.Service.Provider.Clienter
                 OrderNo = orderNo
             };
             bool bResult = orderDao.RushOrder(model);
-
             if (bResult)
             {
                 Ets.Service.Provider.MyPush.Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", myorder.businessId.ToString(), string.Empty);
