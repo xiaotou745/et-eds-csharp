@@ -1550,7 +1550,7 @@ from    ( select    sol.Id ,
                     sol.Remark ,
                     '' PhoneNo
           from      dbo.OrderSubsidiesLog sol ( nolock )
-                    left join dbo.business c ( nolock ) on c.Id = sol.OptId
+                    join dbo.business c ( nolock ) on c.Id = sol.OptId
           where     sol.OrderId = ( select top 1
                                             o.Id
                                     from    dbo.[order] o ( nolock )
@@ -1558,7 +1558,7 @@ from    ( select    sol.Id ,
                                             and o.OrderFrom = @GroupId
                                     order by o.Id desc
                                   )
-                    and sol.[Platform] in ( 0 )
+                    and sol.[Platform] in ( 0 ) and c.[Status] = 1
           union
           select    sol.Id ,
                     sol.OrderId ,
@@ -1575,7 +1575,7 @@ from    ( select    sol.Id ,
                     sol.Remark ,
                     ISNULL(c.PhoneNo, '') PhoneNo
           from      dbo.OrderSubsidiesLog sol ( nolock )
-                    left join dbo.clienter c ( nolock ) on c.Id = sol.OptId
+                    join dbo.clienter c ( nolock ) on c.Id = sol.OptId
           where     sol.OrderId = ( select top 1
                                             o.Id
                                     from    dbo.[order] o ( nolock )
@@ -1583,7 +1583,7 @@ from    ( select    sol.Id ,
                                             and o.OrderFrom = @GroupId
                                     order by o.Id desc
                                   )
-                    and sol.[Platform] in ( 1 )
+                    and sol.[Platform] in ( 1 ) and c.[Status] = 1
           union
           ( select  sol.Id ,
                     sol.OrderId ,
@@ -1600,7 +1600,7 @@ from    ( select    sol.Id ,
                     sol.Remark ,
                     '' PhoneNo
             from    dbo.OrderSubsidiesLog sol ( nolock )
-                    left join dbo.account c ( nolock ) on c.Id = sol.OptId
+                    join dbo.account c ( nolock ) on c.Id = sol.OptId
             where   sol.OrderId = ( select top 1
                                             o.Id
                                     from    dbo.[order] o ( nolock )
@@ -1608,7 +1608,7 @@ from    ( select    sol.Id ,
                                             and o.OrderFrom = @GroupId
                                     order by o.Id desc
                                   )
-                    and sol.[Platform] = 3
+                    and sol.[Platform] = 3 and c.[Status] = 1
           )
         ) bb
 order by bb.Id desc;";
