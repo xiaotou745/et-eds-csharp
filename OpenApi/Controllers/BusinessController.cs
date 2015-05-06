@@ -98,17 +98,23 @@ namespace OpenApi.Controllers
         [OpenApiActionError]
         public ResultModel<object> GetBusinessStatus(ParaModel<BusinessModel> paramodel)
         {
-            var busi = iBusiProvider.GetBusiness(paramodel.fields.B_OriginalBusiId,paramodel.group);
+            var busi = iBusiProvider.GetBusiness(paramodel.fields.B_OriginalBusiId, paramodel.group);
             if (busi == null)
             {
-                return null;
+                return ResultModel<object>.Conclude(BusiStatus.NotRegiste);
+            }else
+            if (busi.Status == 1)
+            {
+                return ResultModel<object>.Conclude(BusiStatus.AuditPass);
+            }else
+            if (busi.Status == 0)
+            {
+                return ResultModel<object>.Conclude(BusiStatus.Auditing);
             }
             else
             {
-
+                return ResultModel<object>.Conclude(BusiStatus.AuditError);
             }
-
-            return ResultModel<object>.Conclude(CustomerRegisterStatus.Faild); 
         }
     }
 }
