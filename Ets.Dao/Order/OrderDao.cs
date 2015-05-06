@@ -1533,8 +1533,34 @@ where   o.Id = @orderId;
         public IList<OrderRecordsLog> GetOrderRecords(string originalOrderNo, int group)
         {
             string sql = @"
+
 select  *
 from    ( select    sol.Id ,
+                    sol.OrderId ,
+                    sol.OrderStatus ,
+                    case sol.OrderStatus
+                      when 0 then '待抢单'
+                      when 1 then '已完成'
+                      when 2 then '已接单'
+                      when 3 then '已取消'
+                      else '未知请联系e代送客服'
+                    end OrderStatusStr ,
+                    sol.InsertTime ,
+                    '' OptName ,
+                    sol.Remark ,
+                    '' PhoneNo
+          from      dbo.OrderSubsidiesLog sol ( nolock )
+                    left join dbo.business c ( nolock ) on c.Id = sol.OptId
+          where     sol.OrderId = ( select top 1
+                                            o.Id
+                                    from    dbo.[order] o ( nolock )
+                                    where   o.OriginalOrderNo = @OriginalOrderNo
+                                            and o.OrderFrom = @GroupId
+                                    order by o.Id desc
+                                  )
+                    and sol.[Platform] in ( 0 )
+          union
+          select    sol.Id ,
                     sol.OrderId ,
                     sol.OrderStatus ,
                     case sol.OrderStatus
@@ -1550,12 +1576,14 @@ from    ( select    sol.Id ,
                     ISNULL(c.PhoneNo, '') PhoneNo
           from      dbo.OrderSubsidiesLog sol ( nolock )
                     left join dbo.clienter c ( nolock ) on c.Id = sol.OptId
-          where     sol.OrderId = ( select top 1 o.Id
+          where     sol.OrderId = ( select top 1
+                                            o.Id
                                     from    dbo.[order] o ( nolock )
                                     where   o.OriginalOrderNo = @OriginalOrderNo
-                                            and o.OrderFrom = @GroupId order by o.Id desc
+                                            and o.OrderFrom = @GroupId
+                                    order by o.Id desc
                                   )
-                    and sol.[Platform] in ( 0, 1,4 )
+                    and sol.[Platform] in ( 1 )
           union
           ( select  sol.Id ,
                     sol.OrderId ,
@@ -1573,10 +1601,12 @@ from    ( select    sol.Id ,
                     '' PhoneNo
             from    dbo.OrderSubsidiesLog sol ( nolock )
                     left join dbo.account c ( nolock ) on c.Id = sol.OptId
-            where   sol.OrderId = ( select top 1  o.Id
+            where   sol.OrderId = ( select top 1
+                                            o.Id
                                     from    dbo.[order] o ( nolock )
-                                    where   o.OriginalOrderNo = @OriginalOrderNo
-                                            and o.OrderFrom = @GroupId order by o.Id desc
+                                    where   o.OriginalOrderNo = 
+                                            and o.OrderFrom = @GroupId
+                                    order by o.Id desc
                                   )
                     and sol.[Platform] = 3
           )

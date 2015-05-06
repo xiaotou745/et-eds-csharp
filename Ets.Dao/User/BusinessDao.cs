@@ -770,18 +770,18 @@ namespace Ets.Dao.User
         /// <param name="bid">原平台商户Id</param>
         /// <param name="groupid">集团id</param>
         /// <returns>商家信息</returns>
-        public bool CheckExistBusiness(int bid, int groupid)
+        public Business CheckExistBusiness(int bid, int groupid)
         {
-            string sql = @"select Id from dbo.business where OriginalBusiId=@OriginalBusiId and GroupId=@GroupId";
+            string sql = @"select Id,Status from dbo.business where OriginalBusiId=@OriginalBusiId and GroupId=@GroupId";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OriginalBusiId", bid);
             parm.AddWithValue("@GroupId", groupid);
-            object i = DbHelper.ExecuteScalar(SuperMan_Read, sql, parm);
-            if (i != null)
+            DataTable  dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm); 
+            if (dt == null || dt.Rows.Count <= 0)
             {
-                return int.Parse(i.ToString()) > 0;
+                return null;
             }
-            return false;
+            return MapRows<Business>(dt)[0]; 
         }
 
         /// <summary>
