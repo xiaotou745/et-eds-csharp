@@ -406,7 +406,7 @@ namespace SuperManWebApi.Controllers
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.userIdEmpty);
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderEmpty);
-            var myorder = new Ets.Dao.Order.OrderDao().GetOrderByNo(orderNo);
+            //var myorder = new Ets.Dao.Order.OrderDao().GetOrderByNo(orderNo);
             string finishResult = iClienterProvider.FinishOrder(userId, orderNo, pickupCode);
             if (finishResult == "1")  //完成
             {
