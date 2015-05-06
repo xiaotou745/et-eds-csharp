@@ -837,7 +837,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
 
             insert  into dbo.OrderSubsidiesLog ( OrderId, Price, InsertTime, OptName,
                                                  Remark, OptId, OrderStatus, Platform )
-            select  o.Id, o.OrderCommission, getdate(), '骑士', '', @clienterId, @Status, @Platform
+            select  o.Id, o.OrderCommission, getdate(), '骑士', '任务已被抢', @clienterId, @Status, @Platform
             from    dbo.[order] o ( nolock )
             where   o.OrderNo = @OrderNo
 
