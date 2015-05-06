@@ -800,29 +800,59 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
         /// <returns></returns>
         public bool RushOrder(OrderListModel order)
         {
-            bool reslut = false;
-            try
-            {
-                string sql = @" update [order] set clienterId=@clienterId,Status=@Status where OrderNo=@OrderNo and Status=0 and Status!=3 ";
-                IDbParameters dbParameters = DbHelper.CreateDbParameters();
-                dbParameters.AddWithValue("@clienterId", order.clienterId);
-                dbParameters.AddWithValue("@Status", ConstValues.ORDER_ACCEPT);
-                dbParameters.Add("@OrderNo", SqlDbType.NVarChar);
-                dbParameters.SetValue("@OrderNo", order.OrderNo);
+            //bool reslut = false;
+            //try
+            //{
+            //    string sql = @" update [order] set clienterId=@clienterId,Status=@Status where OrderNo=@OrderNo and Status=0 and Status!=3 ";
+            //    IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            //    dbParameters.AddWithValue("@clienterId", order.clienterId);
+            //    dbParameters.AddWithValue("@Status", ConstValues.ORDER_ACCEPT);
+            //    dbParameters.Add("@OrderNo", SqlDbType.NVarChar);
+            //    dbParameters.SetValue("@OrderNo", order.OrderNo);
 
-                int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
-                if (i > 0)
-                {
-                    reslut = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                reslut = false;
-                LogHelper.LogWriter(ex, "订单指派超人");
-                throw;
-            }
-            return reslut;
+            //    int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
+            //    if (i > 0)
+            //    {
+            //        reslut = true;
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    reslut = false;
+            //    LogHelper.LogWriter(ex, "订单指派超人");
+            //    throw;
+            //}
+            //return reslut;
+            StringBuilder sql = new StringBuilder();
+
+            string sqlText = @"
+            update dbo.[order]
+            set clienterId=@clienterId,Status=@Status
+            where OrderNo=@OrderNo and Status=0
+            if(@@error<>0 or @@ROWCOUNT=0)
+            begin
+	            select 1 --更改状态失败
+	            return
+            end
+
+            insert  into dbo.OrderSubsidiesLog ( OrderId, Price, InsertTime, OptName,
+                                                 Remark, OptId, OrderStatus, Platform )
+            select  o.Id, o.OrderCommission, getdate(), '骑士', '', @clienterId, @Status, @Platform
+            from    dbo.[order] o ( nolock )
+            where   o.OrderNo = @OrderNo
+
+            select 0";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("clienterId", DbType.Int32, 4).Value = order.clienterId;// userId;
+            dbParameters.Add("Status", DbType.Int32, 4).Value = ConstValues.ORDER_ACCEPT;
+            dbParameters.Add("OrderNo", DbType.String, 50).Value = order.OrderNo;
+            dbParameters.Add("Platform", DbType.Int32, 4).Value = SuperPlatform.骑士.GetHashCode();
+
+            object obj = DbHelper.ExecuteScalar(SuperMan_Write, sqlText, dbParameters);
+            return ParseHelper.ToInt(obj, 1) == 0 ? true : false;
+
+
         }
 
         /// <summary>
@@ -955,7 +985,7 @@ where   a.OriginalOrderNo = @OriginalOrderNo
  SET [Status] = @status,ActualDoneDate=getdate()
 output Inserted.Id,GETDATE(),'{0}','任务已完成',Inserted.clienterId,Inserted.[Status],{1}
 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform]) 
-WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL and Status!=3;", SuperPlatform.骑士, (int)SuperPlatform.骑士);
+WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL and Status=2;", SuperPlatform.骑士, (int)SuperPlatform.骑士);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@orderNo", SqlDbType.NVarChar);
