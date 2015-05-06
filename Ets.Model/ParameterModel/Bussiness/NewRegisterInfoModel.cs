@@ -168,4 +168,6 @@ namespace Ets.Model.ParameterModel.Bussiness
         [DisplayText("注册失败")]
         ClientRegisterFaild=115
     }
+
+
 }

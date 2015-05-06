@@ -128,6 +128,30 @@ namespace OpenApi.Controllers
             return null;
 
         }
+        [HttpGet]
+        public ResultModel<object> DelRound()
+        {  //签名信息
+            //string filePath = System.AppDomain.CurrentDomain.BaseDirectory + "Content\\OpenRange.txt";
+            //string fileContent = FileIO.GetFileContent(filePath, Encoding.Default).Replace("\r", "").Replace("\n", "");
+            //MatchCollection contenRegex = Regex.Matches(fileContent, "!(.*?)--");
+            for (int i = 0; i < 44; i++)
+            {
+             
+                List<string> @params = new List<string>() { 
+                "timestamp="+TimeHelper.GetTimeStamp(false) ,
+                "app_area_code="+i,
+                "app_id=33"
+                };
+                @params.Sort();
+                string url = "http://waimaiopen.meituan.com/api/v1/third_shipping/delete?";
+                string waimd5 = url + string.Join("&", @params) + "96DD2B96BB9A7C49DC545DD17463CDFA"; //consumer_secret//96DD2B96BB9A7C49DC545DD17463CDFA
+                string sig = ETS.Security.MD5.Encrypt(waimd5).ToLower();
+                string paras = string.Join("&", @params) + "&sig=" + sig;
+                string json = HTTPHelper.HttpPost(url, paras, accept: "application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+            }
+            return null;
+
+        }
 
         /// <summary> 
         /// 设置店铺状态  暂时不用 

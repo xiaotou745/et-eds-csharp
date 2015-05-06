@@ -186,7 +186,7 @@ namespace Ets.Dao.Clienter
         /// <returns></returns>
         public ClienterModel GetUserInfoByUserId(int UserId)
         {
-            string sql = "SELECT TrueName,PhoneNo,AccountBalance FROM dbo.clienter(NOLOCK) WHERE Id=" + UserId;
+            string sql = "SELECT TrueName,PhoneNo,AccountBalance,Status FROM dbo.clienter(NOLOCK) WHERE Id=" + UserId;
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql);
             IList<ClienterModel> list = MapRows<ClienterModel>(dt);
             if (list == null || list.Count <= 0)
@@ -288,23 +288,23 @@ namespace Ets.Dao.Clienter
         /// </summary>
         /// <param name="clienterId"></param>
         /// <returns></returns>
-        public bool HaveQualification(int clienterId)
-        {
-            try
-            {
-                //状态为1 表示该骑士 已通过审核
-                string sql = "SELECT COUNT(1) FROM dbo.clienter(NOLOCK) WHERE [Status] = 1 AND Id = @clienterId ";
-                IDbParameters parm = DbHelper.CreateDbParameters();
-                parm.AddWithValue("@clienterId", clienterId);
-                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm)) > 0 ? true : false;
-            }
-            catch (Exception ex)
-            {
-                //LogHelper.LogWriter(ex, "检查当前骑士是否存在");
-                return false;
-                throw ex;
-            }
-        }
+        //public bool HaveQualification(int clienterId)
+        //{
+        //    try
+        //    {
+        //        //状态为1 表示该骑士 已通过审核
+        //        string sql = "SELECT COUNT(1) FROM dbo.clienter(NOLOCK) WHERE [Status] = 1 AND Id = @clienterId ";
+        //        IDbParameters parm = DbHelper.CreateDbParameters();
+        //        parm.AddWithValue("@clienterId", clienterId);
+        //        return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm)) > 0 ? true : false;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        //LogHelper.LogWriter(ex, "检查当前骑士是否存在");
+        //        return false;
+        //        throw ex;
+        //    }
+        //}
         /// <summary>
         /// 根据骑士Id判断骑士是否存在
         /// danny-20150530
@@ -401,63 +401,7 @@ namespace Ets.Dao.Clienter
         }
 
 
-        /// <summary>
-        /// 抢单
-        /// wc添加抢单的时增加日志
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="orderNo"></param>
-        /// <returns></returns>
-        public bool RushOrder(int userId, string orderNo)
-        {
-            StringBuilder sql = new StringBuilder();
 
-            string sqlText = @"
-            update dbo.[order]
-            set clienterId=@clienterId,Status=@Status
-            where OrderNo=@OrderNo and Status=0
-            if(@@error<>0 or @@ROWCOUNT=0)
-            begin
-	            select 1 --更改状态失败
-	            return
-            end
-
-            insert  into dbo.OrderSubsidiesLog ( OrderId, Price, InsertTime, OptName,
-                                                 Remark, OptId, OrderStatus, Platform )
-            select  o.Id, o.OrderCommission, getdate(), '骑士', @Remark, @clienterId, @Status, @Platform
-            from    dbo.[order] o ( nolock )
-            where   o.OrderNo = @OrderNo
-
-            select 0";
-
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.Add("clienterId", DbType.Int32, 4).Value = userId;
-            dbParameters.Add("Status", DbType.Int32, 4).Value = ConstValues.ORDER_ACCEPT;
-            dbParameters.Add("OrderNo", DbType.String, 50).Value = orderNo;
-            dbParameters.Add("Platform", DbType.Int32, 4).Value = SuperPlatform.骑士.GetHashCode();
-            dbParameters.Add("Remark", DbType.String, 200).Value = ConstValues.OrderHadRush;
-             
-            object obj = DbHelper.ExecuteScalar(SuperMan_Write, sqlText, dbParameters);
-            return ParseHelper.ToInt(obj, 1) == 0 ? true : false;
-            //DbHelper.ExecuteScalar(SuperMan_Read)
-            //            sql.AppendFormat(@"update [order] set clienterId=@clienterId,Status=@Status 
-            //output 
-            //Inserted.Id,GETDATE(),'{0}','',Inserted.clienterId,Inserted.[Status],{1}
-            //into dbo.OrderSubsidiesLog(
-            //OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
-            //where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform.骑士);//未抢订单才更新
-
-
-
-            //            IDbParameters parm = DbHelper.CreateDbParameters();
-            //            parm.AddWithValue("@clienterId", userId);
-            //            parm.AddWithValue("@Status", ConstValues.ORDER_ACCEPT);
-            //            parm.Add("@OrderNo", SqlDbType.NVarChar);
-            //            parm.SetValue("@OrderNo", orderNo);
-
-            //            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Read, sql.ToString(), parm)) > 0;
-
-        }
 
         /// <summary>
         /// 获取附近任务 / 最新
@@ -884,7 +828,7 @@ from    dbo.[order] o ( nolock )
         left join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
 where   o.Id = @OrderId";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("OrderId", SqlDbType.Int,4,orderId.ToString());
+            parm.Add("OrderId", SqlDbType.Int, 4).Value = orderId;
 
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             var ooList = MapRows<OrderOther>(dt);
