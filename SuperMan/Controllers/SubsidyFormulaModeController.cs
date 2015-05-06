@@ -21,6 +21,16 @@ namespace SuperMan.Controllers
             ViewBag.GloglConfig = new GlobalConfigProvider().GlobalConfigMethod(0);
             return View(listprice);
         }
+		[HttpGet]
+        public ActionResult SubsidyFormulaMode(int GroupId = 0, int StrategyId = 0, string GroupName = "")
+        {
+            var listprice = new GlobalConfigProvider().GetPriceSubsidies(GroupId);
+            ViewBag.GroupId = GroupId;
+            ViewBag.StrategyId = StrategyId;
+            ViewBag.GroupName = GroupName;
+            ViewBag.GloglConfig = new GlobalConfigProvider().GlobalConfigMethod(GroupId);
+            return View(listprice);
+        }
 
         #region 金额补贴设置
 
