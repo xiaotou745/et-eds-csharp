@@ -1484,29 +1484,56 @@ where   o.Id = @orderId;
         public IList<OrderRecordsLog> GetOrderRecords(string originalOrderNo,int group)
         {
             string sql = @"
-select  sol.Id ,
-        sol.OrderId ,
-        sol.OrderStatus ,
-        case sol.OrderStatus
-          when 0 then '待抢单'
-          when 1 then '已完成'
-          when 2 then '已接单'
-          when 3 then '已取消'
-          else '未知请联系e代送客服'
-        end OrderStatusStr ,
-        sol.InsertTime ,
-        c.TrueName OptName ,
-        sol.Remark ,
-        c.PhoneNo
-from    dbo.OrderSubsidiesLog sol ( nolock )
-        left join dbo.clienter c ( nolock ) on c.Id = sol.OptId
-where   sol.OrderId = ( select  o.Id
-                        from    dbo.[order] o ( nolock )
-                        where   o.OriginalOrderNo = @OriginalOrderNo
-                                and o.OrderFrom = @GroupId
-                      )
-        and sol.[Platform] in ( 0, 1 )
-order by sol.Id DESC;";
+select  *
+from    ( select    sol.Id ,
+                    sol.OrderId ,
+                    sol.OrderStatus ,
+                    case sol.OrderStatus
+                      when 0 then '待抢单'
+                      when 1 then '已完成'
+                      when 2 then '已接单'
+                      when 3 then '已取消'
+                      else '未知请联系e代送客服'
+                    end OrderStatusStr ,
+                    sol.InsertTime ,
+                    c.TrueName OptName ,
+                    sol.Remark ,
+                    ISNULL(c.PhoneNo, '') PhoneNo
+          from      dbo.OrderSubsidiesLog sol ( nolock )
+                    left join dbo.clienter c ( nolock ) on c.Id = sol.OptId
+          where     sol.OrderId = ( select top 1 o.Id
+                                    from    dbo.[order] o ( nolock )
+                                    where   o.OriginalOrderNo = @OriginalOrderNo
+                                            and o.OrderFrom = @GroupId order by o.Id desc
+                                  )
+                    and sol.[Platform] in ( 0, 1,4 )
+          union
+          ( select  sol.Id ,
+                    sol.OrderId ,
+                    sol.OrderStatus ,
+                    case sol.OrderStatus
+                      when 0 then '代抢单'
+                      when 1 then '已完成'
+                      when 2 then '已接单'
+                      when 3 then '已取消'
+                      else '未知请联系e代送客服'
+                    end OrderStatusStr ,
+                    sol.InsertTime ,
+                    c.LoginName OptName ,
+                    sol.Remark ,
+                    '' PhoneNo
+            from    dbo.OrderSubsidiesLog sol ( nolock )
+                    left join dbo.account c ( nolock ) on c.Id = sol.OptId
+            where   sol.OrderId = ( select top 1  o.Id
+                                    from    dbo.[order] o ( nolock )
+                                    where   o.OriginalOrderNo = @OriginalOrderNo
+                                            and o.OrderFrom = @GroupId order by o.Id desc
+                                  )
+                    and sol.[Platform] = 3
+          )
+        ) bb
+order by bb.Id desc;";
+            #endregion
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OriginalOrderNo", SqlDbType.NVarChar);
             parm.SetValue("@OriginalOrderNo", originalOrderNo);

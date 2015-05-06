@@ -698,9 +698,17 @@ namespace Ets.Service.Provider.Order
             //var order = OrderLogic.orderLogic().GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom, model.OrderType);
             if (order != null)
             {
-                if (order.Status == ConstValues.ORDER_CANCEL)
+                if (order.Status == ConstValues.ORDER_CANCEL)    // 在存在订单的情况下如果是去掉订单的状态，直接修改为订单待接单状态
                 {
-                    orderDao.UpdateOrderStatus_Other(new ChangeStatusPM_OpenApi() { groupid=1 });
+                   int upResult= orderDao.UpdateOrderStatus_Other(new ChangeStatusPM_OpenApi() { groupid = model.OrderFrom, order_no = order.OriginalOrderNo, orderfrom = model.OrderFrom, remark = "第三方再次推送", status = 0 });
+                   if (upResult > 0)
+                   {
+                       return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Success);
+                   }
+                   else
+                   {
+                       return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Failed);
+                   }
                 }
                 else
                 {
