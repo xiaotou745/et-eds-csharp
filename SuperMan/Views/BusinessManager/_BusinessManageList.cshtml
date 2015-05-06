@@ -263,7 +263,17 @@
         else {
             $('select#strategyID option:first').attr('selected', 'true');
         }
-
+        var a = $('input[name="rCommissionFormulaMode"]:checked').val();
+        if (a == 1) {
+            alert(a);
+            $("#divCommissionFixValue").hide();
+            $("#divbusCommissionText").show();
+        }
+        else {
+            alert(a);
+            $("#divbusCommissionText").hide();
+            $("#divCommissionFixValue").show();
+        }
         adminjs.openwinbox('#BusinessCommissionDiv');
     }
     //修改商家信息

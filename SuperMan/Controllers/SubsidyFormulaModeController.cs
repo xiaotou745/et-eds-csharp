@@ -59,13 +59,13 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult AddPriceSubsidies(GlobalConfigSubsidies model)
         {
-            var list = new GlobalConfigProvider().GetPriceSubsidies(0);
+            var list = new GlobalConfigProvider().GetPriceSubsidies(model.GroupId);
             list.Add(model);
             var newlist = (from globalConfigTimeSubsidiese in list
                            orderby ParseHelper.ToInt(globalConfigTimeSubsidiese.Value1) ascending
                            select globalConfigTimeSubsidiese).ToList();
             string values = GetTimesValues(newlist);
-            bool b = new GlobalConfigProvider().UpdatePriceSubsidies(UserContext.Current.Name, values, "添加金额补贴设置操作-设置之后的值:" + values,0,-1);
+            bool b = new GlobalConfigProvider().UpdatePriceSubsidies(UserContext.Current.Name, values, "添加金额补贴设置操作-设置之后的值:" + values, model.GroupId, model.StrategyId);
             return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.AllowGet);
         }
 
@@ -73,15 +73,15 @@ namespace SuperMan.Controllers
         /// 删除金额补贴设置
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
-        public JsonResult DeletePriceSubsidies(int id)
+        [HttpPost]
+        public JsonResult DeletePriceSubsidies(GlobalConfigSubsidies model)
         {
-            var list = new GlobalConfigProvider().GetPriceSubsidies(0);
+            var list = new GlobalConfigProvider().GetPriceSubsidies(model.GroupId);
             var newlist = (from globalConfigTimeSubsidiese in list
-                           where globalConfigTimeSubsidiese.Id != id
+                           where globalConfigTimeSubsidiese.Id != model.Id
                            select globalConfigTimeSubsidiese).ToList();
             string values = GetTimesValues(newlist);
-            bool b = new GlobalConfigProvider().UpdatePriceSubsidies(UserContext.Current.Name, values, "删除金额补贴设置-设置之后的值:" + values,0,-1);
+            bool b = new GlobalConfigProvider().UpdatePriceSubsidies(UserContext.Current.Name, values, "删除金额补贴设置-设置之后的值:" + values, model.GroupId, model.StrategyId);
             return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.AllowGet);
         }
 
@@ -104,7 +104,7 @@ namespace SuperMan.Controllers
                            orderby ParseHelper.ToInt(globalConfigTimeSubsidiese.Value1) ascending
                            select globalConfigTimeSubsidiese).ToList();
             string values = GetTimesValues(newlist);
-            bool b = new GlobalConfigProvider().UpdatePriceSubsidies(UserContext.Current.Name, values, "修改金额补贴设置-设置之后的值:" + values,0,-1);
+            bool b = new GlobalConfigProvider().UpdatePriceSubsidies(UserContext.Current.Name, values, "修改金额补贴设置-设置之后的值:" + values, model.GroupId, -1);
             return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.AllowGet);
         } 
         #endregion
