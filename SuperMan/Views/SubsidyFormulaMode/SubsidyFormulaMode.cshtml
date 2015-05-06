@@ -584,7 +584,7 @@
             PriceSiteSubsidies = $("#txtPriceSiteSubsidies").val();
         }
         var pars = { "IsStarTimeSubsidies": IsStarTimeSubsidies, "IsStartOverStoreSubsidies": IsStartOverStoreSubsidies, "CommonCommissionRatio": CommonCommissionRatio, "CommonSiteSubsidies": CommonSiteSubsidies, "TimeSpanCommissionRatio": TimeSpanCommissionRatio, "TimeSpanInPrice": TimeSpanInPrice, "TimeSpanOutPrice": TimeSpanOutPrice, "CommissionRatio": CommissionRatio, "SiteSubsidies": SiteSubsidies, "PriceCommissionRatio": PriceCommissionRatio, "PriceSiteSubsidies": PriceSiteSubsidies, "StrategyId": StrategyId,"GroupId":groupid, "GroupName": groupname };
-        var url = "/SubsidyFormulaMode/SetIsStartOverStoreSubsidies";
+        var url = "/SubsidyFormulaMode/ModifySubsidyFormulaMode";
         $.ajax({
             type: 'POST',
             url: url,
@@ -592,7 +592,7 @@
             success: function (result) {
                 if (result.IsSuccess) {
                     alert("修改成功!");
-                    window.location.href = "/SubsidyFormulaMode/SubsidyFormulaMode/";
+                    window.location.href = "/CommissionSubsidyStrategy/CommissionSubsidyStrategy/";
                 } else {
                     alert("修改失败!");
                 }
