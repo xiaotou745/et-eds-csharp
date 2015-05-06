@@ -766,7 +766,7 @@ namespace Ets.Dao.User
         /// <returns>商家信息</returns>
         public bool CheckExistBusiness(int bid, int groupid)
         {
-            string sql = @"select 1 from dbo.business where OriginalBusiId=@OriginalBusiId and GroupId=@GroupId";
+            string sql = @"select Id from dbo.business where OriginalBusiId=@OriginalBusiId and GroupId=@GroupId";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OriginalBusiId", bid);
             parm.AddWithValue("@GroupId", groupid);
