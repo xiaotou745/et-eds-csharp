@@ -583,8 +583,6 @@
             PriceSiteSubsidies = $("#txtPriceSiteSubsidies").val();
         }
         var pars = { "IsStarTimeSubsidies": IsStarTimeSubsidies, "IsStartOverStoreSubsidies": IsStartOverStoreSubsidies, "CommonCommissionRatio": CommonCommissionRatio, "CommonSiteSubsidies": CommonSiteSubsidies, "TimeSpanCommissionRatio": TimeSpanCommissionRatio, "TimeSpanInPrice": TimeSpanInPrice, "TimeSpanOutPrice": TimeSpanOutPrice, "CommissionRatio": CommissionRatio, "SiteSubsidies": SiteSubsidies, "PriceCommissionRatio": PriceCommissionRatio, "PriceSiteSubsidies": PriceSiteSubsidies, "StrategyId": StrategyId, "GroupId": groupid, "GroupName": groupname };
-        alert("1");
-
         var url = "/SubsidyFormulaMode/ModifySubsidyFormulaMode";
         $.ajax({
             type: 'POST',
