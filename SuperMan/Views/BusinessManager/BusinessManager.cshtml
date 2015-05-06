@@ -303,13 +303,7 @@
         var oldCommissionFixValue = $("#oldCommissionFixValue").val(); ////原来商户外送费
         var strategyID = $("#strategyID").val();
         var oldStrategyID = $("#oldStrategyID").val();
-        var commissionType;
-        if ($('rCommissionFormulaMode0').is(':checked')) {
-            commissionType = 1;
-        }
-        else {
-            commissionType = 2;
-        }
+        var commissionType = $('input[name="rCommissionFormulaMode"]:checked').val();;
         var oldBusCommissionWaiSong = $("#oldBusCommissionWaiSong").val();
         if (isNaN(busCommissionText)) {
             alert("请输入正确的数字!");
