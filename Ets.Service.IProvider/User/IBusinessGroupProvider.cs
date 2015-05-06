@@ -10,6 +10,7 @@ using System.Data;
 using Ets.Model.DataModel.Group;
 using Ets.Model.ParameterModel.User;
 using Ets.Model.ParameterModel.Order;
+using Ets.Model.DomainModel.GlobalConfig;
 
 namespace Ets.Service.IProvider.User
 {
@@ -25,7 +26,14 @@ namespace Ets.Service.IProvider.User
         /// <returns></returns>
         IList<BusinessGroupModel> GetBusinessGroupList();
 
-        BusinessGroupModel GetCurrenBusinessGroup(int businessId);        
+        BusinessGroupModel GetCurrenBusinessGroup(int businessId);   
+        /// <summary>
+        /// 修改补贴策略
+        /// danny-20150506
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        bool ModifySubsidyFormulaMode(GlobalConfigModel globalConfigModel);
    }
 }
 

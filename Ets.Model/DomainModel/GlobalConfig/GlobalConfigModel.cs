@@ -102,7 +102,11 @@ namespace Ets.Model.DomainModel.GlobalConfig
         /// <summary>
         /// 分组名称
         /// </summary>
-        public int GroupName { get; set; }
+        public string GroupName { get; set; }
+        /// <summary>
+        /// 操作人
+        /// </summary>
+        public string OptName { get; set; }
         
 
     }
