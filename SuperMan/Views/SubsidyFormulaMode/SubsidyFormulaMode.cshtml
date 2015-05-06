@@ -296,6 +296,11 @@
             alert("请输入价钱!");
             return;
         }
+        if(@GroupId==0)
+        {
+            alert("请先添加分组!");
+            return;
+        }
         var pars = { "Id": 0, "Value1": txtPrice, "Value2": txtPrice1,"GroupId":@GroupId,"StrategyId":@StrategyId };
         var url = "/SubsidyFormulaMode/AddPriceSubsidies";
         $.ajax({
