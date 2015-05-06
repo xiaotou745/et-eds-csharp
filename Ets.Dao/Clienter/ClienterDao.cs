@@ -424,7 +424,7 @@ namespace Ets.Dao.Clienter
 
             insert  into dbo.OrderSubsidiesLog ( OrderId, Price, InsertTime, OptName,
                                                  Remark, OptId, OrderStatus, Platform )
-            select  o.Id, o.OrderCommission, getdate(), '骑士', '', @clienterId, @Status, @Platform
+            select  o.Id, o.OrderCommission, getdate(), '骑士', @Remark, @clienterId, @Status, @Platform
             from    dbo.[order] o ( nolock )
             where   o.OrderNo = @OrderNo
 
@@ -435,7 +435,8 @@ namespace Ets.Dao.Clienter
             dbParameters.Add("Status", DbType.Int32, 4).Value = ConstValues.ORDER_ACCEPT;
             dbParameters.Add("OrderNo", DbType.String, 50).Value = orderNo;
             dbParameters.Add("Platform", DbType.Int32, 4).Value = SuperPlatform.骑士.GetHashCode();
-
+            dbParameters.Add("Remark", DbType.String, 200).Value = ConstValues.OrderHadRush;
+             
             object obj = DbHelper.ExecuteScalar(SuperMan_Write, sqlText, dbParameters);
             return ParseHelper.ToInt(obj, 1) == 0 ? true : false;
             //DbHelper.ExecuteScalar(SuperMan_Read)

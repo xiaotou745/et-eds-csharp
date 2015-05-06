@@ -411,6 +411,10 @@ namespace Ets.Service.Provider.User
         {
             return dao.GetBusiness(busiId);
         }
+        public BusListResultModel GetBusiness(int originalBusiId, int groupId)
+        {
+            return dao.GetBusiness(originalBusiId, groupId);
+        }
         /// <summary>
         /// 获取商户信息
         /// danny-20150316

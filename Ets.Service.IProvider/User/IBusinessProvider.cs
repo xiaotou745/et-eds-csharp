@@ -75,6 +75,8 @@ namespace Ets.Service.IProvider.User
         /// <param name="busiId"></param>
         /// <returns></returns>
         BusListResultModel GetBusiness(int busiId);
+
+        BusListResultModel GetBusiness(int busiId,int groupId);
         /// <summary>
         /// 获取商户信息
         /// danny-20150316

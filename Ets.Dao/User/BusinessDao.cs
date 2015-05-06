@@ -456,6 +456,52 @@ namespace Ets.Dao.User
             return busi;
         }
 
+
+
+        public BusListResultModel GetBusiness(int originalBusiId, int groupId)
+        {
+            BusListResultModel busi = new BusListResultModel();
+            string selSql = @" SELECT  
+         Id ,
+         Name ,
+         City ,
+         district ,
+         PhoneNo ,
+         PhoneNo2 ,
+         IDCard ,
+         [Address] ,
+         Landline ,
+         Longitude ,
+         Latitude ,
+         [Status] ,
+         InsertTime ,
+         districtId ,
+         CityId ,
+         GroupId , 
+         ProvinceCode ,
+         CityCode ,
+         AreaCode ,
+         Province ,
+         DistribSubsidy,
+         BusinessCommission ,
+         OriginalBusiId
+         FROM dbo.business WITH(NOLOCK) WHERE OriginalBusiId = @originalBusiId AND GroupId=@groupId";
+
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@OriginalBusiId", originalBusiId);
+            parm.AddWithValue("@groupId", groupId);
+
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
+            if (dt != null)
+            {
+                busi = DataTableHelper.ConvertDataTableList<BusListResultModel>(dt)[0];
+                return busi;
+            }
+            else
+            {
+                return null;
+            }
+        }
         /// <summary>
         /// 更新审核状态
         /// danny-20150317
