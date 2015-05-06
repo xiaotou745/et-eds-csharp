@@ -294,7 +294,10 @@ namespace Ets.Service.Provider.OpenApi
             BusListResultModel business = new Ets.Dao.User.BusinessDao().GetBusiness(businessId);
             model.store_info.delivery_fee = ParseHelper.ToDecimal(business.DistribSubsidy);//外送费
             model.store_info.businesscommission = ParseHelper.ToDecimal(business.BusinessCommission);//结算比例
-            model.businessId = businessId; 
+            model.businessId = businessId;
+            model.CommissionType = business.CommissionType;
+            model.CommissionFixValue = business.CommissionFixValue;
+            model.BusinessGroupId = business.BusinessGroupId;
             #endregion
 
             #region 订单地址信息
@@ -325,8 +328,8 @@ namespace Ets.Service.Provider.OpenApi
                 DistribSubsidy = model.store_info.delivery_fee,/*外送费*/
                 OrderCount = model.package_count,/*订单数量*/
                 BusinessCommission = model.store_info.businesscommission,/*商户结算比例*/
-                BusinessGroupId = business.BusinessGroupId,
-                StrategyId = business.StrategyId
+                BusinessGroupId = model.BusinessGroupId,
+                StrategyId = model.CommissionFormulaMode
             }/*网站补贴*/;
             //OrderPriceProvider commissonPro = CommissionFactory.GetCommission();
             OrderPriceProvider commissonPro = CommissionFactory.GetCommission(business.StrategyId);

@@ -73,15 +73,6 @@ namespace Ets.Model.DataModel.Order
         /// </summary>
         public decimal BusinessCommission { get; set; }
 
-        /// <summary>
-        /// 结算类型：1：固定比例 2：固定金额
-        /// </summary>
-        public int CommissionType { get; set; }
-
-        /// <summary>
-        /// 固定金额
-        /// </summary>
-        public decimal CommissionFixValue { get; set; }
 
         /// <summary>
         /// 应收 结算金额
@@ -101,5 +92,18 @@ namespace Ets.Model.DataModel.Order
         /// 已经上传的小票数量
         /// </summary>
         public int HadUploadCount { get; set; }
+
+        /// <summary>
+        /// 结算类型：1：固定比例 2：固定金额
+        /// </summary>
+        public int CommissionType { get; set; }
+        /// <summary>
+        /// 固定金额
+        /// </summary>
+        public decimal CommissionFixValue { get; set; }
+        /// <summary>
+        /// 分组ID
+        /// </summary>
+        public int BusinessGroupId { get; set; }   
     }
 }

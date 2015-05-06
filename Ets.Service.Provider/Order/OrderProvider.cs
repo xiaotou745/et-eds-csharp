@@ -256,7 +256,8 @@ namespace Ets.Service.Provider.Order
                 to.DistribSubsidy = business.DistribSubsidy;//设置外送费,从商户中找。
                 to.BusinessCommission = ParseHelper.ToDecimal(business.BusinessCommission);//商户结算比例
                 to.CommissionType = business.CommissionType;//结算类型：1：固定比例 2：固定金额
-                to.CommissionFixValue = ParseHelper.ToDecimal(business.CommissionFixValue);//固定金额             
+                to.CommissionFixValue = ParseHelper.ToDecimal(business.CommissionFixValue);//固定金额     
+                to.BusinessGroupId = business.BusinessGroupId;
             }
             if (ConfigSettings.Instance.IsGroupPush)
             {
@@ -515,6 +516,10 @@ namespace Ets.Service.Provider.Order
 
             #region 佣金相关  add by caoheyang 20150416
             paramodel.CommissionFormulaMode = 0;//默认第三方策略，是普通策略 //ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
+            paramodel.CommissionType = 1;//结算类型：1：固定比例 2：固定金额
+            paramodel.CommissionFixValue = 0;//固定金额
+            paramodel.BusinessGroupId = 1;//分组ID
+          
             //计算获得订单骑士佣金
             OrderCommission orderComm = new OrderCommission()
             {
@@ -522,7 +527,7 @@ namespace Ets.Service.Provider.Order
                 DistribSubsidy = paramodel.store_info.delivery_fee,/*外送费*/
                 OrderCount = paramodel.package_count == null ? 1 : paramodel.package_count,/*订单数量，默认为1*/
                 BusinessCommission = paramodel.store_info.businesscommission,/*商户结算比例*/
-                BusinessGroupId =1,
+                BusinessGroupId = paramodel.BusinessGroupId,
                 StrategyId =0
 
             }/*网站补贴*/;
