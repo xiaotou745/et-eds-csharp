@@ -954,7 +954,7 @@ output  Inserted.Id ,
 from    dbo.[order] as a
 where   a.OriginalOrderNo = @OriginalOrderNo
         and a.OrderFrom=@OrderFrom
-", SuperPlatform.第三方对接平台, (int)SuperPlatform.第三方对接平台);
+", SuperPlatform.商家, (int)SuperPlatform.商家);
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@Status", SqlDbType.Int);
             dbParameters.SetValue("@Status", paramodel.status);
