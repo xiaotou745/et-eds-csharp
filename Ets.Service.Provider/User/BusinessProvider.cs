@@ -297,7 +297,7 @@ namespace Ets.Service.Provider.User
             if (string.IsNullOrWhiteSpace(model.B_GroupId.ToString()))  //集团Id不能为空
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.GroupIdEmpty);
             //是否存在该商户
-            if (dao.CheckExistBusiness(model.B_OriginalBusiId, model.B_GroupId))
+            Business busi = dao.CheckExistBusiness(model.B_OriginalBusiId, model.B_GroupId);
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.OriginalBusiIdRepeat);
 
             if (string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_CityCode.ToString())) //城市以及城市编码非空验证
@@ -347,7 +347,7 @@ namespace Ets.Service.Provider.User
 
         }
 
-        public bool CheckExistBusiness(int originalId, int groupId)
+        public Business CheckExistBusiness(int originalId, int groupId)
         {
             return dao.CheckExistBusiness(originalId, groupId);
         }

@@ -22,6 +22,7 @@ using ETS.Util;
 using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
 using ETS.Security;
+using Ets.Model.DataModel.Bussiness;
 
 namespace OpenApi.Controllers
 {
@@ -52,8 +53,28 @@ namespace OpenApi.Controllers
             if (string.IsNullOrWhiteSpace(paramodel.fields.Address) || string.IsNullOrWhiteSpace(paramodel.fields.B_Province) || string.IsNullOrWhiteSpace(paramodel.fields.B_City) || string.IsNullOrWhiteSpace(paramodel.fields.B_Area) || string.IsNullOrWhiteSpace(paramodel.fields.B_AreaCode) || string.IsNullOrWhiteSpace(paramodel.fields.B_CityCode) || string.IsNullOrWhiteSpace(paramodel.fields.B_ProvinceCode))  //商户地址 省市区 不能为空
                 return ResultModel<object>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
 
-            if (iBusiProvider.CheckExistBusiness(paramodel.fields.B_OriginalBusiId, paramodel.group))
-                return ResultModel<object>.Conclude(CustomerRegisterStatus.OriginalBusiIdRepeat);
+            Business busi = iBusiProvider.CheckExistBusiness(paramodel.fields.B_OriginalBusiId, paramodel.group);
+            if (busi != null)
+            {
+                if(busi.Status == ConstValues.BUSINESS_NOADDRESS || busi.Status == ConstValues.BUSINESS_AUDITCANCEL )
+                {
+                    bool upresult = iBusiProvider.UpdateAuditStatus(busi.Id, ConstValues.BUSINESS_NOAUDIT);
+                    if (upresult)
+                    {
+                        return ResultModel<object>.Conclude(CustomerRegisterStatus.Success, busi.Id);
+                    }
+                    else
+                    {
+                        return ResultModel<object>.Conclude(CustomerRegisterStatus.Faild);
+                    }
+                }
+                else
+                {
+                    return ResultModel<object>.Conclude(CustomerRegisterStatus.Success, busi.Id);
+                }
+            }
+            //if (iBusiProvider.CheckExistBusiness(paramodel.fields.B_OriginalBusiId, paramodel.group))
+            //    return ResultModel<object>.Conclude(CustomerRegisterStatus.OriginalBusiIdRepeat);
 
             paramodel.fields.B_Password = MD5Helper.MD5(string.IsNullOrEmpty(paramodel.fields.B_Password) ? "abc123" : paramodel.fields.B_Password);
             #region 转换省市区
@@ -109,22 +130,26 @@ namespace OpenApi.Controllers
             {
                 return ResultModel<object>.Conclude(BusiStatus.BusiPass);
             }
-            else if (busi.Status == ConstValues.BUSINESS_AUDITPASSING)
+            else
             {
                 return ResultModel<object>.Conclude(BusiStatus.BusiPassing);
             }
-            else if (busi.Status == ConstValues.BUSINESS_NOADDRESS)
-            {
-                return ResultModel<object>.Conclude(BusiStatus.BusiNoAddress);
-            }
-            else if (busi.Status == ConstValues.BUSINESS_NOAUDIT)
-            {
-                return ResultModel<object>.Conclude(BusiStatus.BusiReject);
-            }
-            else
-            {
-                return ResultModel<object>.Conclude(BusiStatus.BusiError);
-            }
+            //else if (busi.Status == ConstValues.BUSINESS_AUDITPASSING)
+            //{
+            //    return ResultModel<object>.Conclude(BusiStatus.BusiPassing);
+            //}
+            //else if (busi.Status == ConstValues.BUSINESS_NOADDRESS)
+            //{
+            //    return ResultModel<object>.Conclude(BusiStatus.BusiNoAddress);
+            //}
+            //else if (busi.Status == ConstValues.BUSINESS_NOAUDIT)
+            //{
+            //    return ResultModel<object>.Conclude(BusiStatus.BusiReject);
+            //}
+            //else
+            //{
+            //    return ResultModel<object>.Conclude(BusiStatus.BusiError);
+            //}
 
         }
     }
