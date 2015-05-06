@@ -8,7 +8,7 @@
     string IsStartOverStoreSubsidies = "";
     bool IsAdd=ViewBag.GroupId >0?false:true;
     string StrategyId = ViewBag.StrategyId.ToString();
-    if (GroupId > 0)
+    if (!IsAdd)
     {
         isStarTimeSubsidies = globalConfigModel.IsStarTimeSubsidies == "1" ? "checked=checked" : "";
         IsStartOverStoreSubsidies = globalConfigModel.IsStartOverStoreSubsidies == "1" ? "checked=checked" : "";
