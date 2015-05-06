@@ -44,6 +44,8 @@ namespace SuperMan.Controllers
         {
             globalConfigModel.OptName = UserContext.Current.Name;
             bool reg = iBusinessGroupProvider.ModifySubsidyFormulaMode(globalConfigModel);
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+
             return Json(new ResultModel(reg, string.Empty), JsonRequestBehavior.AllowGet);
         }
 

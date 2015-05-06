@@ -90,7 +90,9 @@ namespace Ets.Service.Provider.User
                 {
                     KeyName = "IsStarTimeSubsidies",
                     Value=globalConfigModel.IsStarTimeSubsidies,
-                    StrategyId=globalConfigModel.StrategyId
+                    GroupId=globalConfigModel.GroupId,
+                    StrategyId=globalConfigModel.StrategyId,
+                    OptName = globalConfigModel.OptName
                 };
                 dao.UpdateGlobalConfig(globalConfig);
                 #endregion
@@ -139,11 +141,23 @@ namespace Ets.Service.Provider.User
                         break;
                 }
                 #endregion
+                DeleteGlobalConfigRedisByGroupId(globalConfigModel.GroupId);
                 tran.Complete();
 
             }
             return true;
 
+        }
+        /// <summary>
+        /// 根据分组Id删除公共配置缓存
+        /// danny-20150506
+        /// </summary>
+        /// <param name="GroupId"></param>
+        private void DeleteGlobalConfigRedisByGroupId(int GroupId)
+        {
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            string cacheKey = string.Format(RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet, GroupId);//缓存的KEY
+            redis.Delete(cacheKey); 
         }
     }
 }

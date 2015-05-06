@@ -111,7 +111,8 @@ namespace Ets.Dao.User
                              [Name]
                             ,[StrategyId]
                             ,[CreateBy]
-                            ,[CreateTime]                           
+                            ,[CreateTime]
+                            ,[UpdateBy]                           
                             )
                                 OUTPUT  Inserted.Name,
                                         Inserted.StrategyId,
@@ -129,13 +130,14 @@ namespace Ets.Dao.User
                             ,@StrategyId
                             ,@CreateBy
                             ,getdate()
-                            ); SELECT @@IDENTITY ";
+                            ,@CreateBy
+                            ); SELECT IDENT_CURRENT('BusinessGroup') --SELECT @@IDENTITY ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Name", model.Name);
             parm.AddWithValue("@StrategyId", model.StrategyId);
             parm.AddWithValue("@CreateBy", model.CreateBy);
             parm.AddWithValue("@Remark", "添加商家分组信息");
-            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm));
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm));
         }
         /// <summary>
         /// 修改商家分组
@@ -161,8 +163,9 @@ namespace Ets.Dao.User
                                         InsertTime,
                                         OptName,
                                         Remark)
-                           WHERE Id=@); ";
+                           WHERE Id=@Id; ";
             IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Id", model.Id);
             parm.AddWithValue("@Name", model.Name);
             parm.AddWithValue("@StrategyId", model.StrategyId);
             parm.AddWithValue("@UpdateBy", model.UpdateBy);
@@ -278,8 +281,10 @@ namespace Ets.Dao.User
                                         INSERTED.GroupId ,
 			                            INSERTED.StrategyId 
 			                    INTO GlobalConfigLog(KeyName, Value,InsertTime,OptName,Remark,GroupId,StrategyId)
-                              WHERE keyname=@keyname  and GroupId=@GroupId";
+                              WHERE KeyName=@KeyName  and GroupId=@GroupId";
             IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@KeyName", model.KeyName);
+            parm.AddWithValue("@GroupId", model.GroupId);
             parm.AddWithValue("@Value", model.Value);
             parm.AddWithValue("@StrategyId", model.StrategyId);
             parm.AddWithValue("@OptName", model.OptName);
