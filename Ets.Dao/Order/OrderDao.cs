@@ -400,7 +400,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             }
             else
                 bussinessId = paramodel.businessId;
-          
+
             #endregion
 
             #region 操作插入order表
@@ -472,7 +472,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             dbParameters.AddWithValue("@OptName", (SuperPlatform.第三方对接平台.ToString()));//操作人
             dbParameters.AddWithValue("@Platform", (int)SuperPlatform.第三方对接平台);//操作平台
 
-            int count=ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrdersql, dbParameters));
+            int count = ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrdersql, dbParameters));
             if (count > 0)
             {
                 //添加成功时，将当前订单插入到缓存中，设置过期时间30天
@@ -798,37 +798,76 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
 
         }
 
+        ///// <summary>
+        ///// 订单指派超人
+        ///// danny-20150320
+        ///// </summary>
+        ///// <param name="order"></param>
+        ///// <returns></returns>
+        //public bool RushOrder(OrderListModel order)
+        //{
+        //    bool reslut = false;
+        //    try
+        //    {
+        //        string sql = @" update [order] set clienterId=@clienterId,Status=@Status where OrderNo=@OrderNo ";
+        //        IDbParameters dbParameters = DbHelper.CreateDbParameters();
+        //        dbParameters.AddWithValue("@clienterId", order.clienterId);
+        //        dbParameters.AddWithValue("@Status", ConstValues.ORDER_ACCEPT);
+        //        dbParameters.Add("@OrderNo", SqlDbType.NVarChar);
+        //        dbParameters.SetValue("@OrderNo", order.OrderNo);
+
+        //        int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
+        //        if (i > 0)
+        //        {
+        //            reslut = true;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        reslut = false;
+        //        LogHelper.LogWriter(ex, "订单指派超人");
+        //        throw;
+        //    }
+        //    return reslut;
+        //}
+
         /// <summary>
-        /// 订单指派超人
-        /// danny-20150320
+        /// 抢单
+        /// wc添加抢单的时增加日志
         /// </summary>
-        /// <param name="order"></param>
+        /// <param name="userId"></param>
+        /// <param name="orderNo"></param>
         /// <returns></returns>
         public bool RushOrder(OrderListModel order)
         {
-            bool reslut = false;
-            try
-            {
-                string sql = @" update [order] set clienterId=@clienterId,Status=@Status where OrderNo=@OrderNo ";
-                IDbParameters dbParameters = DbHelper.CreateDbParameters();
-                dbParameters.AddWithValue("@clienterId", order.clienterId);
-                dbParameters.AddWithValue("@Status", ConstValues.ORDER_ACCEPT);
-                dbParameters.Add("@OrderNo", SqlDbType.NVarChar);
-                dbParameters.SetValue("@OrderNo", order.OrderNo);
+            StringBuilder sql = new StringBuilder();
 
-                int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
-                if (i > 0)
-                {
-                    reslut = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                reslut = false;
-                LogHelper.LogWriter(ex, "订单指派超人");
-                throw;
-            }
-            return reslut;
+            string sqlText = @"
+            update dbo.[order]
+            set clienterId=@clienterId,Status=@Status
+            where OrderNo=@OrderNo and Status=0
+            if(@@error<>0 or @@ROWCOUNT=0)
+            begin
+	            select 1 --更改状态失败
+	            return
+            end
+
+            insert  into dbo.OrderSubsidiesLog ( OrderId, Price, InsertTime, OptName,
+                                                 Remark, OptId, OrderStatus, Platform )
+            select  o.Id, o.OrderCommission, getdate(), '骑士', '', @clienterId, @Status, @Platform
+            from    dbo.[order] o ( nolock )
+            where   o.OrderNo = @OrderNo
+
+            select 0";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("clienterId", DbType.Int32, 4).Value = order.clienterId;// userId;
+            dbParameters.Add("Status", DbType.Int32, 4).Value = ConstValues.ORDER_ACCEPT;
+            dbParameters.Add("OrderNo", DbType.String, 50).Value = order.OrderNo;
+            dbParameters.Add("Platform", DbType.Int32, 4).Value = SuperPlatform.骑士.GetHashCode();
+
+            object obj = DbHelper.ExecuteScalar(SuperMan_Write, sqlText, dbParameters);
+            return ParseHelper.ToInt(obj, 1) == 0 ? true : false;
         }
 
         /// <summary>
@@ -889,7 +928,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
  SET    [Status] = @status,OtherCancelReason=@OtherCancelReason,PubDate=getdate() 
  output Inserted.Id,GETDATE(),'{0}',@OtherCancelReason,Inserted.businessId,Inserted.[Status],{1}
  into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
- WHERE  OrderNo = @orderNo", SuperPlatform.商家, (int)SuperPlatform.商家);           
+ WHERE  OrderNo = @orderNo", SuperPlatform.商家, (int)SuperPlatform.商家);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@orderNo", SqlDbType.NVarChar);
@@ -898,11 +937,11 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             dbParameters.Add("@OtherCancelReason", SqlDbType.NVarChar);
             dbParameters.SetValue("@OtherCancelReason", remark);  //订单号  
 
-            if (status!=null)
+            if (status != null)
             {
-                upSql.Append(" and Status=" + status);        
+                upSql.Append(" and Status=" + status);
             }
- 
+
             object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters);
             return ParseHelper.ToInt(executeScalar, -1);
         }
@@ -915,7 +954,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
         /// <returns></returns>
         public int UpdateOrderStatus_Other(ChangeStatusPM_OpenApi paramodel)
         {
-           string sql=string.Format(@"
+            string sql = string.Format(@"
 update  a
 set     a.[Status] =@Status 
 output  Inserted.Id ,
@@ -958,10 +997,10 @@ where   a.OriginalOrderNo = @OriginalOrderNo
             StringBuilder upSql = new StringBuilder();
 
             upSql.AppendFormat(@" UPDATE dbo.[order]
- SET [Status] = @status,ActualDoneDate=getdate()
-output Inserted.Id,GETDATE(),'{0}','',Inserted.clienterId,Inserted.[Status],{1}
-into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform]) 
-WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL;", SuperPlatform.骑士, (int)SuperPlatform.骑士);
+             SET [Status] = @status,ActualDoneDate=getdate()
+            output Inserted.Id,Inserted.OrderCommission,GETDATE(),'{0}','',Inserted.clienterId,Inserted.[Status],{1}
+            into dbo.OrderSubsidiesLog(OrderId,Price,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform]) 
+            WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL;", SuperPlatform.骑士, (int)SuperPlatform.骑士);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@orderNo", SqlDbType.NVarChar);
@@ -1208,24 +1247,24 @@ WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL;", SuperPlatform.骑士, (i
         public OrderListModel GetOrderInfoByOrderNo(string orderNo, int orderId = 0)
         {
             string sql = @"
-select top 1
-        o.[Id] ,
-        o.[OrderNo] ,
-        o.[Status] ,
-        c.AccountBalance ,
-        c.Id clienterId ,
-        o.OrderCommission ,
-        o.businessId ,
-        b.GroupId ,
-        o.PickupCode ,
-        o.OrderCount,
-        ISNULL(oo.HadUploadCount,0) HadUploadCount
-from    [order] o with ( nolock )
-        left join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
-        left join dbo.business b with ( nolock ) on o.businessId = b.Id
-        left join dbo.OrderOther oo with(nolock) on o.Id = oo.OrderId
-where   1 = 1 
-";
+            select top 1
+                    o.[Id] ,
+                    o.[OrderNo] ,
+                    o.[Status] ,
+                    c.AccountBalance ,
+                    c.Id clienterId ,
+                    o.OrderCommission ,
+                    o.businessId ,
+                    b.GroupId ,
+                    o.PickupCode ,
+                    o.OrderCount,
+                    ISNULL(oo.HadUploadCount,0) HadUploadCount
+            from    [order] o with ( nolock )
+                    left join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
+                    left join dbo.business b with ( nolock ) on o.businessId = b.Id
+                    left join dbo.OrderOther oo with(nolock) on o.Id = oo.OrderId
+            where   1 = 1 
+            ";
             IDbParameters parm = DbHelper.CreateDbParameters();
 
             if (orderId != 0)
