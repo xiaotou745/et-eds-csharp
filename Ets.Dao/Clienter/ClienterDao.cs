@@ -186,7 +186,7 @@ namespace Ets.Dao.Clienter
         /// <returns></returns>
         public ClienterModel GetUserInfoByUserId(int UserId)
         {
-            string sql = "SELECT TrueName,PhoneNo,AccountBalance FROM dbo.clienter(NOLOCK) WHERE Id=" + UserId;
+            string sql = "SELECT TrueName,PhoneNo,AccountBalance,Status FROM dbo.clienter(NOLOCK) WHERE Id=" + UserId;
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql);
             IList<ClienterModel> list = MapRows<ClienterModel>(dt);
             if (list == null || list.Count <= 0)
@@ -413,9 +413,9 @@ namespace Ets.Dao.Clienter
             StringBuilder sql = new StringBuilder();
 
             sql.AppendFormat(@"update [order] set clienterId=@clienterId,Status=@Status 
-output Inserted.Id,GETDATE(),'{0}','',Inserted.clienterId,Inserted.[Status],{1}
+output Inserted.Id,GETDATE(),'{0}','{1}',Inserted.clienterId,Inserted.[Status],{2}
 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
-where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform.骑士);//未抢订单才更新
+where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, ConstValues.OrderHadRush, (int)SuperPlatform.骑士);//未抢订单才更新
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@clienterId", userId);
             parm.AddWithValue("@Status", ConstValues.ORDER_ACCEPT);
@@ -685,6 +685,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
         {
             OrderOther orderOther = new OrderOther(); 
             var oo = GetReceiptInfo(uploadReceiptModel.OrderId);
+            
             uploadReceiptModel.NeedUploadCount = oo.NeedUploadCount;
             if (oo.Id == 0)
             {
@@ -695,6 +696,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
                 orderOther = UpdateReceiptInfo(uploadReceiptModel);
             }
             orderOther.OrderStatus = oo.OrderStatus;
+            orderOther.OrderCreateTime = oo.OrderCreateTime;
             return orderOther;
         }
 
@@ -842,6 +844,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, (int)SuperPlatform
         o.[Status] OrderStatus,
         o.OrderCount NeedUploadCount,
         oo.ReceiptPic ,
+        o.PubDate OrderCreateTime,
         ISNULL(oo.HadUploadCount, 0) HadUploadCount
 from    dbo.[order] o ( nolock )
         left join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId

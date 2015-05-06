@@ -249,7 +249,7 @@ namespace Ets.Dao.Order
           CommissionFixValue,
           BusinessGroupId
          )
-output Inserted.Id,GETDATE(),'{0}','',Inserted.businessId,Inserted.[Status],{1}
+output Inserted.Id,GETDATE(),'{0}','{1}',Inserted.businessId,Inserted.[Status],{2}
 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
  VALUES  (@OrderNo ,
           @PickUpAddress ,
@@ -287,7 +287,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
           @CommissionType,
           @CommissionFixValue,
           @BusinessGroupId
-         );select @@IDENTITY", SuperPlatform.商家, (int)SuperPlatform.商家);
+         );select @@IDENTITY", SuperPlatform.商家, ConstValues.PublishOrder, (int)SuperPlatform.商家);
 
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderNo", SqlDbType.NVarChar);
@@ -355,17 +355,14 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             int bussinessId;//商户id
             ///查询该商户是否已存在
             var redis = new ETS.NoSql.RedisCache.RedisCache();
-            if (paramodel.businessId == 0) //未传递商户id时
+            string bussinessIdstr = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(),
+                paramodel.store_info.store_id.ToString()));  //查询缓存，看看当前店铺是否存在,缓存存储E代送的商户id
+            if (bussinessIdstr != null)
+                bussinessId = ParseHelper.ToInt(bussinessIdstr);
+            else//如果商户不存在
             {
-                //防止并发情况下数据错误，此处在验证一次商户是否存在 
-                string bussinessIdstr = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(),
-              paramodel.store_info.store_id.ToString()));  //查询缓存，看看当前店铺是否存在,缓存存储E代送的商户id
-                if (bussinessIdstr != null)
-                    bussinessId = ParseHelper.ToInt(bussinessIdstr);
-                else//如果商户不存在
-                {
-                    ///商户插入sql
-                    const string insertBussinesssql = @"
+                ///商户插入sql
+                const string insertBussinesssql = @"
                 INSERT INTO dbo.business
                 (OriginalBusiId,Name,GroupId,IDCard,Password,
                 PhoneNo,PhoneNo2,Address,ProvinceCode,CityCode,AreaCode,
@@ -407,13 +404,9 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                     if (bussinessId == 0)
                         return null;//添加失败 
 
-                    redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString()
-                        , paramodel.store_info.store_id.ToString()), bussinessId.ToString());//将商户id插入到缓存  key的形式为 OtherBusiness_集团id_第三方平台店铺id
-                }
+                redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString()
+                    , paramodel.store_info.store_id.ToString()), bussinessId.ToString());//将商户id插入到缓存  key的形式为 OtherBusiness_集团id_第三方平台店铺id
             }
-            else
-                bussinessId = paramodel.businessId;
-          
             #endregion
 
             #region 操作插入order表
@@ -441,10 +434,9 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                 @PickupCode,@BusinessCommission,@SettleMoney,@Adjustment,@OrderFrom,@Status,@CommissionType,@CommissionFixValue,@BusinessGroupId)";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             ///基本参数信息
-            dbParameters.Add("@OrderNo", SqlDbType.NVarChar);
 
-            string orderNo = Helper.generateOrderCode(bussinessId);
-            dbParameters.SetValue("@OrderNo", orderNo); //根据商户id生成订单号(15位));
+            dbParameters.Add("@OrderNo", SqlDbType.NVarChar);
+            dbParameters.SetValue("@OrderNo", Helper.generateOrderCode(bussinessId)); //根据商户id生成订单号(15位));
 
             dbParameters.AddWithValue("@OriginalOrderNo", paramodel.order_id);    //其它平台的来源订单号
             dbParameters.AddWithValue("@PubDate", paramodel.create_time);    //订单下单时间
@@ -454,7 +446,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             dbParameters.AddWithValue("@Remark", paramodel.remark);    //备注
             dbParameters.AddWithValue("@Weight", paramodel.weight);    //重量，默认?
             //订单外送费  目前 接收了两个外送费 理论必须一致 ，若不一致，以订单上的为准，方便后续扩展
-            dbParameters.AddWithValue("@DistribSubsidy", paramodel.store_info.delivery_fee);
+            dbParameters.AddWithValue("@DistribSubsidy", paramodel.delivery_fee);
             dbParameters.AddWithValue("@OrderCount", paramodel.package_count == null ? 1 : paramodel.package_count);   //订单数量，默认为1
             ///收货地址信息
             dbParameters.AddWithValue("@ReceviceName", paramodel.address.user_name);    //用户姓名 收货人姓名
@@ -497,7 +489,9 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             }
             else
                 return null;
-
+            //添加成功时，将当前订单插入到缓存中，设置过期时间30天
+            redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
+               paramodel.order_id.ToString()), "true", DateTime.Now.AddDays(30));  //查询缓存，看当前订单是否存在,“true”代表存在，key的形式为集团ID_第三方平台订单号
             #endregion
 
             #region 操作插入OrderDetail表
@@ -786,8 +780,8 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                                         ,oo.NeedUploadCount
                                         ,oo.HadUploadCount
                                         ,oo.ReceiptPic
- 										,o.OtherCancelReason
-                                        ,o.OrderFrom
+                                        ,o.OtherCancelReason
+                                        ,o.OriginalOrderNo
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     LEFT JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
@@ -815,6 +809,25 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
         }
 
         /// <summary>
+        /// 通过订单号获取该订单的详情数据
+        /// 窦海超
+        /// 2015年5月6日 20:55:54
+        /// </summary>
+        /// <param name="orderNo">订单号</param>
+        /// <returns></returns>
+        public OrderListModel GetOrderDetailByOrderNo(string orderNo)
+        {
+            string sql = "SELECT businessId,Status FROM dbo.[order](nolock) o where OrderNo=@OrderNo ";
+            IDbParameters parm = DbHelper.CreateDbParameters("OrderNo", DbType.String, 45, orderNo);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (!dt.HasData())
+            {
+                return null;
+            }
+            return MapRows<OrderListModel>(dt)[0];
+        }
+
+        /// <summary>
         /// 订单指派超人
         /// danny-20150320
         /// </summary>
@@ -822,29 +835,59 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
         /// <returns></returns>
         public bool RushOrder(OrderListModel order)
         {
-            bool reslut = false;
-            try
-            {
-                string sql = @" update [order] set clienterId=@clienterId,Status=@Status where OrderNo=@OrderNo ";
-                IDbParameters dbParameters = DbHelper.CreateDbParameters();
-                dbParameters.AddWithValue("@clienterId", order.clienterId);
-                dbParameters.AddWithValue("@Status", ConstValues.ORDER_ACCEPT);
-                dbParameters.Add("@OrderNo", SqlDbType.NVarChar);
-                dbParameters.SetValue("@OrderNo", order.OrderNo);
+            //bool reslut = false;
+            //try
+            //{
+            //    string sql = @" update [order] set clienterId=@clienterId,Status=@Status where OrderNo=@OrderNo and Status=0 and Status!=3 ";
+            //    IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            //    dbParameters.AddWithValue("@clienterId", order.clienterId);
+            //    dbParameters.AddWithValue("@Status", ConstValues.ORDER_ACCEPT);
+            //    dbParameters.Add("@OrderNo", SqlDbType.NVarChar);
+            //    dbParameters.SetValue("@OrderNo", order.OrderNo);
 
-                int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
-                if (i > 0)
-                {
-                    reslut = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                reslut = false;
-                LogHelper.LogWriter(ex, "订单指派超人");
-                throw;
-            }
-            return reslut;
+            //    int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
+            //    if (i > 0)
+            //    {
+            //        reslut = true;
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    reslut = false;
+            //    LogHelper.LogWriter(ex, "订单指派超人");
+            //    throw;
+            //}
+            //return reslut;
+            StringBuilder sql = new StringBuilder();
+
+            string sqlText = @"
+            update dbo.[order]
+            set clienterId=@clienterId,Status=@Status
+            where OrderNo=@OrderNo and Status=0
+            if(@@error<>0 or @@ROWCOUNT=0)
+            begin
+	            select 1 --更改状态失败
+	            return
+            end
+
+            insert  into dbo.OrderSubsidiesLog ( OrderId, Price, InsertTime, OptName,
+                                                 Remark, OptId, OrderStatus, Platform )
+            select  o.Id, o.OrderCommission, getdate(), '骑士', '', @clienterId, @Status, @Platform
+            from    dbo.[order] o ( nolock )
+            where   o.OrderNo = @OrderNo
+
+            select 0";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("clienterId", DbType.Int32, 4).Value = order.clienterId;// userId;
+            dbParameters.Add("Status", DbType.Int32, 4).Value = ConstValues.ORDER_ACCEPT;
+            dbParameters.Add("OrderNo", DbType.String, 50).Value = order.OrderNo;
+            dbParameters.Add("Platform", DbType.Int32, 4).Value = SuperPlatform.骑士.GetHashCode();
+
+            object obj = DbHelper.ExecuteScalar(SuperMan_Write, sqlText, dbParameters);
+            return ParseHelper.ToInt(obj, 1) == 0 ? true : false;
+
+
         }
 
         /// <summary>
@@ -902,10 +945,10 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             StringBuilder upSql = new StringBuilder();
 
             upSql.AppendFormat(@" UPDATE dbo.[order]
- SET    [Status] = @status,OtherCancelReason=@OtherCancelReason,PubDate=getdate() 
+ SET    [Status] = @status,OtherCancelReason=@OtherCancelReason
  output Inserted.Id,GETDATE(),'{0}',@OtherCancelReason,Inserted.businessId,Inserted.[Status],{1}
  into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
- WHERE  OrderNo = @orderNo", SuperPlatform.商家, (int)SuperPlatform.商家);           
+ WHERE  OrderNo = @orderNo", SuperPlatform.商家, (int)SuperPlatform.商家);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@orderNo", SqlDbType.NVarChar);
@@ -914,11 +957,11 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             dbParameters.Add("@OtherCancelReason", SqlDbType.NVarChar);
             dbParameters.SetValue("@OtherCancelReason", remark);  //订单号  
 
-            if (status!=null)
+            if (status != null)
             {
-                upSql.Append(" and Status=" + status);        
+                upSql.Append(" and Status=" + status);
             }
- 
+
             object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters);
             return ParseHelper.ToInt(executeScalar, -1);
         }
@@ -931,7 +974,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
         /// <returns></returns>
         public int UpdateOrderStatus_Other(ChangeStatusPM_OpenApi paramodel)
         {
-           string sql=string.Format(@"
+            string sql = string.Format(@"
 update  a
 set     a.[Status] =@Status 
 output  Inserted.Id ,
@@ -946,7 +989,7 @@ output  Inserted.Id ,
 from    dbo.[order] as a
 where   a.OriginalOrderNo = @OriginalOrderNo
         and a.OrderFrom=@OrderFrom
-", SuperPlatform.第三方对接平台, (int)SuperPlatform.第三方对接平台);
+", SuperPlatform.商家, (int)SuperPlatform.商家);
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@Status", SqlDbType.Int);
             dbParameters.SetValue("@Status", paramodel.status);
@@ -975,9 +1018,9 @@ where   a.OriginalOrderNo = @OriginalOrderNo
 
             upSql.AppendFormat(@" UPDATE dbo.[order]
  SET [Status] = @status,ActualDoneDate=getdate()
-output Inserted.Id,GETDATE(),'{0}','',Inserted.clienterId,Inserted.[Status],{1}
+output Inserted.Id,GETDATE(),'{0}','任务已完成',Inserted.clienterId,Inserted.[Status],{1}
 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform]) 
-WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL;", SuperPlatform.骑士, (int)SuperPlatform.骑士);
+WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL and Status=2;", SuperPlatform.骑士, (int)SuperPlatform.骑士);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@orderNo", SqlDbType.NVarChar);
@@ -1147,7 +1190,7 @@ WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL;", SuperPlatform.骑士, (i
             string where = string.Empty;
             if (orderType > 0)
             {
-                where = " and OrderType =@OrderType";
+                where = " and OrderType =@OrderType AND Status <> 3";  //取消的订单还可以推送，加入订单状态判断 王超
             }
             string sql = @"SELECT * FROM [order] WHERE OriginalOrderNo = @OriginalOrderNo AND  OrderFrom = @OrderFrom " + where;
             IDbParameters parm = DbHelper.CreateDbParameters();
@@ -1515,6 +1558,105 @@ where   o.Id = @orderId;
             return MapRows<OrderSubsidiesLog>(dt);
         }
 
+
+        /// <summary>
+        /// 获取订单操作日志
+        /// danny-20150414
+        /// </summary>
+        /// <param name="IntervalMinute"></param>
+        /// <returns></returns>
+        public IList<OrderRecordsLog> GetOrderRecords(string originalOrderNo, int group)
+        {
+            string sql = @"
+
+select  *
+from    ( select    sol.Id ,
+                    sol.OrderId ,
+                    sol.OrderStatus ,
+                    case sol.OrderStatus
+                      when 0 then '待抢单'
+                      when 1 then '已完成'
+                      when 2 then '已接单'
+                      when 3 then '已取消'
+                      else '未知请联系e代送客服'
+                    end OrderStatusStr ,
+                    sol.InsertTime ,
+                    '' OptName ,
+                    sol.Remark ,
+                    '' PhoneNo
+          from      dbo.OrderSubsidiesLog sol ( nolock )
+                    join dbo.business c ( nolock ) on c.Id = sol.OptId
+          where     sol.OrderId = ( select top 1
+                                            o.Id
+                                    from    dbo.[order] o ( nolock )
+                                    where   o.OriginalOrderNo = @OriginalOrderNo
+                                            and o.OrderFrom = @GroupId
+                                    order by o.Id desc
+                                  )
+                    and sol.[Platform] in ( 0 ) and c.[Status] = 1
+          union
+          select    sol.Id ,
+                    sol.OrderId ,
+                    sol.OrderStatus ,
+                    case sol.OrderStatus
+                      when 0 then '待抢单'
+                      when 1 then '已完成'
+                      when 2 then '已接单'
+                      when 3 then '已取消'
+                      else '未知请联系e代送客服'
+                    end OrderStatusStr ,
+                    sol.InsertTime ,
+                    c.TrueName OptName ,
+                    sol.Remark ,
+                    ISNULL(c.PhoneNo, '') PhoneNo
+          from      dbo.OrderSubsidiesLog sol ( nolock )
+                    join dbo.clienter c ( nolock ) on c.Id = sol.OptId
+          where     sol.OrderId = ( select top 1
+                                            o.Id
+                                    from    dbo.[order] o ( nolock )
+                                    where   o.OriginalOrderNo = @OriginalOrderNo
+                                            and o.OrderFrom = @GroupId
+                                    order by o.Id desc
+                                  )
+                    and sol.[Platform] in ( 1 ) and c.[Status] = 1
+          union
+          ( select  sol.Id ,
+                    sol.OrderId ,
+                    sol.OrderStatus ,
+                    case sol.OrderStatus
+                      when 0 then '代抢单'
+                      when 1 then '已完成'
+                      when 2 then '已接单'
+                      when 3 then '已取消'
+                      else '未知请联系e代送客服'
+                    end OrderStatusStr ,
+                    sol.InsertTime ,
+                    c.LoginName OptName ,
+                    sol.Remark ,
+                    '' PhoneNo
+            from    dbo.OrderSubsidiesLog sol ( nolock )
+                    join dbo.account c ( nolock ) on c.Id = sol.OptId
+            where   sol.OrderId = ( select top 1
+                                            o.Id
+                                    from    dbo.[order] o ( nolock )
+                                    where   o.OriginalOrderNo = @OriginalOrderNo
+                                            and o.OrderFrom = @GroupId
+                                    order by o.Id desc
+                                  )
+                    and sol.[Platform] = 3 and c.[Status] = 1
+          )
+        ) bb
+order by bb.Id desc;";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@OriginalOrderNo", SqlDbType.NVarChar);
+            parm.SetValue("@OriginalOrderNo", originalOrderNo);
+
+            parm.AddWithValue("@GroupId", group);
+
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            return MapRows<OrderRecordsLog>(dt);
+        }
+
         /// <summary>
         /// 订单详细
         /// </summary>
@@ -1536,5 +1678,7 @@ where   o.Id = @orderId;
                 return null;
             return MapRows<OrderDetailModel>(dt);
         }
+
+
     }
 }

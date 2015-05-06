@@ -80,7 +80,6 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model">订单基本数据信息</param>
         /// <returns></returns>
-
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Order.NewPostPublishOrderResultModel> NewPostPublishOrder_B(Ets.Model.ParameterModel.Order.NewPostPublishOrderModel model)
         { 

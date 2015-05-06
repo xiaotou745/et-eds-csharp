@@ -28,7 +28,7 @@ namespace ETS.Util
             {
                 return ConfigurationManager.AppSettings["FileUploadFolderNameTemp"];
             }
-        }
+        } 
 
         public string FileUploadFolderNameCustomerIcon
         {
@@ -175,6 +175,13 @@ namespace ETS.Util
         {
             get { return ConfigurationManager.AppSettings["IsSendVIP"]; }
         }
+        /// <summary>
+        /// 商户审核通过后调用第三方接口通知
+        /// </summary>
+        public string JuWangKeBusiAuditCallBack
+        {
+            get { return ConfigurationManager.AppSettings["JuWangKeBusiAuditCallBack"]; }
+        }
 
         #region 第三方对接的appkey 和 app_secret
         /// <summary>
@@ -251,7 +258,30 @@ namespace ETS.Util
         {
             get { return ConfigurationManager.AppSettings["MeiTuanArrivedAsyncStatus"]; }
         }
-  
+
+
+        /// <summary>
+        /// 聚网客appkey
+        /// </summary>
+        public string JuWangKeAppkey
+        {
+            get { return ConfigurationManager.AppSettings["JuWangKeAppkey"]; }
+        }
+        /// <summary>
+        /// 聚网客app_secret
+        /// </summary>
+        public string JuWangKeAppsecret
+        {
+            get { return ConfigurationManager.AppSettings["JuWangKeAppsecret"]; }
+        }
+
+        /// <summary>
+        /// 聚网客确认 订单状态 回调接口地址
+        /// </summary>
+        public string JuWangKeOrderAsyncStatus
+        {
+            get { return ConfigurationManager.AppSettings["JuWangKeOrderAsyncStatus"]; }
+        }
                 /// <summary>
         ///  美团回调同步订单到E代送地址 
         /// </summary>

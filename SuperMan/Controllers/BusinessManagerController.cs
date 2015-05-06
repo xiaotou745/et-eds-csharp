@@ -55,7 +55,7 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult AuditOK(int id)
         {
-            iBusinessProvider.UpdateAuditStatus(id, ETS.Enums.EnumStatusType.审核通过);
+            bool b = iBusinessProvider.UpdateAuditStatus(id, ETS.Enums.EnumStatusType.审核通过);
             return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
         }
         [HttpPost]

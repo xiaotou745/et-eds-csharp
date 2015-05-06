@@ -24,6 +24,8 @@ using ETS.Transaction.Common;
 using ETS.Transaction;
 using Ets.Model.ParameterModel.User;
 using Ets.Model.ParameterModel.Order;
+using Ets.Service.Provider.Order;
+using Ets.Model.DataModel.Order;
 namespace Ets.Service.Provider.User
 {
 
@@ -313,7 +315,7 @@ namespace Ets.Service.Provider.User
             if (string.IsNullOrWhiteSpace(model.B_GroupId.ToString()))  //集团Id不能为空
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.GroupIdEmpty);
             //是否存在该商户
-            if (dao.CheckExistBusiness(model.B_OriginalBusiId, model.B_GroupId))
+            Business busi = dao.CheckExistBusiness(model.B_OriginalBusiId, model.B_GroupId);
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.OriginalBusiIdRepeat);
 
             if (string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_CityCode.ToString())) //城市以及城市编码非空验证
@@ -324,7 +326,7 @@ namespace Ets.Service.Provider.User
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
             if (model.CommissionTypeId == 0)
             {
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
+                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.CommissionTypeIdEmpty);
             }
             model.B_Password = MD5Helper.MD5(string.IsNullOrEmpty(model.B_Password) ? "abc123" : model.B_Password);
             #region 转换省市区
@@ -363,6 +365,10 @@ namespace Ets.Service.Provider.User
 
         }
 
+        public Business CheckExistBusiness(int originalId, int groupId)
+        {
+            return dao.CheckExistBusiness(originalId, groupId);
+        }
 
         /// <summary>
         /// B端登录
@@ -423,6 +429,16 @@ namespace Ets.Service.Provider.User
         {
             return dao.GetBusiness(busiId);
         }
+
+        /// <summary>
+        /// 根据商户Id获取商户信息
+        /// </summary>
+        /// <param name="busiId"></param>
+        /// <returns></returns>
+        public BusListResultModel GetBusiness(int originalBusiId,int groupId)
+        {
+            return dao.GetBusiness(originalBusiId,groupId);
+        } 
         /// <summary>
         /// 获取商户信息
         /// danny-20150316
@@ -741,12 +757,19 @@ namespace Ets.Service.Provider.User
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderEmpty);
             if (string.IsNullOrEmpty(model.OrderFrom.ToString()))   //订单来源非空验证
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderFromEmpty);
-            bool isorder = dao.GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom, model.OrderType);
-            if (!isorder)//订单不存在
+            order myOrder = dao.GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom, model.OrderType);
+            if (myOrder==null)//订单不存在
             {
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderIsNotExist);
             }
+
             bool b = dao.UpdateOrder(model.OriginalOrderNo, model.OrderFrom, OrderStatus.订单已取消);
+            OrderOptionModel oom = new OrderOptionModel();
+            oom.OptUserId = myOrder.businessId.Value;
+            oom.OptUserName = "第三方";
+            oom.OrderNo = myOrder.OrderNo;
+            oom.OptLog = string.Format("第三方调用取消订单,订单来源{0}",model.OrderFrom);
+            bool reg = new OrderProvider().CancelOrderByOrderNo(oom); 
             if (b)
             {
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.Success);
@@ -858,6 +881,52 @@ namespace Ets.Service.Provider.User
             {
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.SendFailure);
             }
+        }
+
+
+        public int AddThirdBusiness(ParaModel<BusinessRegisterModel> paramodel)
+        {
+            var to = new Business();
+            to.Province = paramodel.fields.B_Province;
+            to.ProvinceCode = paramodel.fields.B_ProvinceCode.Trim(); 
+            to.CityCode = paramodel.fields.B_CityCode;
+            to.CityId = paramodel.fields.B_CityCode.Trim();
+            to.City = paramodel.fields.B_City;
+
+            to.districtId = paramodel.fields.B_AreaCode.Trim();
+            to.district = paramodel.fields.B_Area;
+            to.AreaCode = paramodel.fields.B_AreaCode.Trim();
+
+            to.Address = paramodel.fields.Address.Trim();
+            to.Address = to.Address.Replace((char)13, (char)0);
+            to.Address = to.Address.Replace((char)10, (char)0);
+            to.GroupId = paramodel.group;
+
+            to.IDCard = paramodel.fields.B_IdCard;
+            to.Password = paramodel.fields.B_Password;
+            to.PhoneNo = paramodel.fields.PhoneNo.Trim();
+            to.PhoneNo2 = paramodel.fields.PhoneNo2;
+            to.Latitude = paramodel.fields.B_Latitude;
+            to.Longitude = paramodel.fields.B_Longitude;
+            to.Name = paramodel.fields.B_Name; 
+            to.OriginalBusiId = paramodel.fields.B_OriginalBusiId;
+            to.CheckPicUrl = "/2015/05/01/01/201505011200_juwangke.jpg";  //图片给个默认的
+            to.InsertTime = DateTime.Now;
+            to.CommissionTypeId = 0;   //商户的佣金类型 
+            to.DistribSubsidy = paramodel.fields.DistribSubsidy;  //商户外送费
+            to.Status = ConstValues.BUSINESS_NOAUDIT;  //商户默认未审核
+
+            return InsertOtherBusiness(to);
+        }
+
+        /// <summary>
+        /// 添加商户
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public int InsertOtherBusiness(Business model)
+        {
+            return dao.InsertOtherBusiness(model);
         }
     }
 }

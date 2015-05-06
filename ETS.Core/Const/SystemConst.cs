@@ -46,6 +46,13 @@ namespace ETS.Const
         /// 美团
         /// </summary>
         public const int Group4 = 4;
+
+        /// <summary>
+        /// 聚网客
+        /// </summary>
+        public const int Group1 = 1;
+
+
         #endregion
     }
 }

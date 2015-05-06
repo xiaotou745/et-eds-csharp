@@ -82,6 +82,7 @@ namespace Ets.Service.IProvider.User
         /// <param name="busiId"></param>
         /// <returns></returns>
         BusListResultModel GetBusiness(int busiId);
+        BusListResultModel GetBusiness(int originalBusiId,int groupId);
         /// <summary>
         /// 获取商户信息
         /// danny-20150316
@@ -231,6 +232,16 @@ namespace Ets.Service.IProvider.User
         /// <returns></returns>
         ResultModel<BusiRegisterResultModel> AddBusiness(AddBusinessModel model);
 
+        Business CheckExistBusiness(int originalId,int groupId);
+
+
+        int AddThirdBusiness(ParaModel<BusinessRegisterModel> paramodel);
+        /// <summary>
+        /// 添加商户
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        int InsertOtherBusiness(Business model);
     }
 }
 

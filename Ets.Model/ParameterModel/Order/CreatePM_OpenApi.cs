@@ -74,7 +74,7 @@ namespace Ets.Model.ParameterModel.Order
         ///// <summary>
         ///// 外送费，默认为0   无用，暂时注释
         ///// </summary>
-        //public decimal delivery_fee { get; set; }
+        public decimal delivery_fee { get; set; }
 
         /// <summary>
         /// 重量

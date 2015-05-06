@@ -155,7 +155,10 @@ namespace ETS.Enums
         [DisplayText("此订单已经是完成状态")]
         OrderIsNotAllowRush,
         [DisplayText("取货码错误")]
-        PickupCodeError
+        PickupCodeError,
+        [DisplayText("订单已取消")]
+        OrderHadCancel
+        
     }
 
     public enum GetMyBalanceStatus
