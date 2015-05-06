@@ -803,7 +803,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             bool reslut = false;
             try
             {
-                string sql = @" update [order] set clienterId=@clienterId,Status=@Status where OrderNo=@OrderNo and Status=0 ";
+                string sql = @" update [order] set clienterId=@clienterId,Status=@Status where OrderNo=@OrderNo and Status=0 and Status!=3 ";
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
                 dbParameters.AddWithValue("@clienterId", order.clienterId);
                 dbParameters.AddWithValue("@Status", ConstValues.ORDER_ACCEPT);
@@ -955,7 +955,7 @@ where   a.OriginalOrderNo = @OriginalOrderNo
  SET [Status] = @status,ActualDoneDate=getdate()
 output Inserted.Id,GETDATE(),'{0}','任务已完成',Inserted.clienterId,Inserted.[Status],{1}
 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform]) 
-WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL;", SuperPlatform.骑士, (int)SuperPlatform.骑士);
+WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL and Status!=3;", SuperPlatform.骑士, (int)SuperPlatform.骑士);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@orderNo", SqlDbType.NVarChar);
