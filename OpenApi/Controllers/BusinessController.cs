@@ -38,6 +38,7 @@ namespace OpenApi.Controllers
         [OpenApiActionError]
         public ResultModel<object> RegisterBusiness(ParaModel<BusinessRegisterModel> paramodel)
         {
+            LogHelper.LogWriter("商户注册：", new { Busi = paramodel });
             if (string.IsNullOrWhiteSpace(paramodel.fields.PhoneNo))   //手机号非空验证
                 return ResultModel<object>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
 

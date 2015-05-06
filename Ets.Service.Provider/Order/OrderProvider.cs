@@ -690,7 +690,7 @@ namespace Ets.Service.Provider.Order
                 {
                     return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.BusinessNotAudit);
                 }
-                
+
             }
             //验证该平台 商户 订单号 是否存在
             Ets.Dao.Order.OrderDao orderDao = new Dao.Order.OrderDao();
@@ -947,7 +947,7 @@ namespace Ets.Service.Provider.Order
 
         public IList<OrderRecordsLog> GetOrderRecords(string originalOrderNo, int group)
         {
-           return OrderDao.GetOrderRecords(originalOrderNo, group);
+            return OrderDao.GetOrderRecords(originalOrderNo, group);
         }
         /// <summary>
         /// 获取订单拒绝原因
@@ -957,6 +957,32 @@ namespace Ets.Service.Provider.Order
         public string OtherOrderCancelReasons()
         {
             return ETS.Config.OrderCancelReasons;
+        }
+
+        public string CanOrder(string originalOrderNo, int group)
+        {
+            var order = OrderDao.GetOrderByOrderNoAndOrderFrom(originalOrderNo, group, 0);
+            //if (order.Status == OrderConst.ORDER_CANCEL)
+            //{
+            //    return "订单已经取消";
+            //}
+            if (order.Status == OrderConst.ORDER_NEW)
+            {
+                var k = OrderDao.CancelOrderStatus(order.OrderNo, ConstValues.ORDER_CANCEL, "第三方取消订单", null);
+                if (k > 0)
+                {
+                    return "1"; //取消成功
+                }
+                else
+                {
+                    return "取消失败";  //取消失败
+                }
+            }
+            else
+            {
+                return "订单已被抢无法取消";
+            }
+
         }
     }
 }

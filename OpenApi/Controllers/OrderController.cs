@@ -124,8 +124,31 @@ namespace OpenApi.Controllers
         [OpenApiActionError]
         public ResultModel<object> GetOrderRecords(ParaModel<GetStatusPM_OpenApi> paramodel)
         {
+            LogHelper.LogWriter("获取订单信息：", new { paramodel = paramodel });
             List<OrderRecordsLog> orderRecords =  new OrderProvider().GetOrderRecords(paramodel.fields.order_no, paramodel.group).ToList(); 
             return ResultModel<object>.Conclude(OrderApiStatusType.Success,orderRecords);
+
+        }
+        /// <summary>
+        /// 取消订单
+        /// </summary>
+        /// <param name="paramodel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [SignOpenApi]
+        [OpenApiActionError]
+        public ResultModel<object> CanOrder(ParaModel<GetStatusPM_OpenApi> paramodel)
+        {
+            LogHelper.LogWriter("取消订单信息：", new { paramodel = paramodel });
+            string kk = new OrderProvider().CanOrder(paramodel.fields.order_no, paramodel.group);
+            if (kk == "1")
+            {
+                return ResultModel<object>.Conclude(OrderApiStatusType.Success);
+            }
+            else
+            {
+                return ResultModel<object>.Conclude(OrderApiStatusType.OrderIsJoin, new { Remark = kk });
+            }
 
         }
     }

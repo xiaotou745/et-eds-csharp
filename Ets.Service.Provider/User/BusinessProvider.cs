@@ -882,6 +882,7 @@ namespace Ets.Service.Provider.User
             to.Longitude = paramodel.fields.B_Longitude;
             to.Name = paramodel.fields.B_Name; 
             to.OriginalBusiId = paramodel.fields.B_OriginalBusiId;
+            to.CheckPicUrl = "/2015/05/01/01/201505011200_juwangke.jpg";  //图片给个默认的
             to.InsertTime = DateTime.Now;
             to.CommissionTypeId = 0;   //商户的佣金类型 
             to.DistribSubsidy = paramodel.fields.DistribSubsidy;  //商户外送费

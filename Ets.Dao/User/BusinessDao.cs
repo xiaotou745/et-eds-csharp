@@ -825,7 +825,7 @@ namespace Ets.Dao.User
                               @PhoneNo , -- PhoneNo - nvarchar(20)
                               @PhoneNo2 , -- PhoneNo2 - nvarchar(20)
                               @Password , -- Password - nvarchar(255)
-                              N'' , -- CheckPicUrl - nvarchar(255)
+                              @CheckPicUrl , -- CheckPicUrl - nvarchar(255)
                               @IDCard , -- IDCard - nvarchar(45)
                               @Address , -- Address - nvarchar(255)
                               N'' , -- Landline - nvarchar(15)
@@ -857,6 +857,9 @@ namespace Ets.Dao.User
             parm.SetValue("@PhoneNo2", model.PhoneNo2);
 
             parm.AddWithValue("@Password", model.Password);
+            parm.AddWithValue("@CheckPicUrl", model.CheckPicUrl);
+
+            
             parm.AddWithValue("@IDCard", model.IDCard);
             parm.AddWithValue("@Address", model.Address);
             parm.AddWithValue("@Longitude", model.Longitude);

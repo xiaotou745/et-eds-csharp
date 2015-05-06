@@ -934,7 +934,7 @@ where   a.OriginalOrderNo = @OriginalOrderNo
 
             upSql.AppendFormat(@" UPDATE dbo.[order]
  SET [Status] = @status,ActualDoneDate=getdate()
-output Inserted.Id,GETDATE(),'{0}','',Inserted.clienterId,Inserted.[Status],{1}
+output Inserted.Id,GETDATE(),'{0}','任务已完成',Inserted.clienterId,Inserted.[Status],{1}
 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform]) 
 WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL;", SuperPlatform.骑士, (int)SuperPlatform.骑士);
 
@@ -1488,7 +1488,7 @@ select  sol.Id ,
         sol.OrderId ,
         sol.OrderStatus ,
         case sol.OrderStatus
-          when 0 then '代抢单'
+          when 0 then '待抢单'
           when 1 then '已完成'
           when 2 then '已接单'
           when 3 then '已取消'
@@ -1506,7 +1506,7 @@ where   sol.OrderId = ( select  o.Id
                                 and o.OrderFrom = @GroupId
                       )
         and sol.[Platform] in ( 0, 1 )
-order by sol.Id;";
+order by sol.Id DESC;";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OriginalOrderNo", SqlDbType.NVarChar);
             parm.SetValue("@OriginalOrderNo", originalOrderNo);
@@ -1538,5 +1538,7 @@ order by sol.Id;";
                 return null;
             return MapRows<OrderDetailModel>(dt);
         }
+
+         
     }
 }
