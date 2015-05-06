@@ -16,9 +16,9 @@ namespace Ets.Service.Provider.Order
         public static OrderPriceProvider GetCommission(int? strategyId = null)
         {
             int CommissionFormulaMode;
-            if (strategyId == null)
+            if (strategyId == null)//默认组对应的策略模式
                 CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(1).CommissionFormulaMode);
-            else
+            else//当前商家对应的策略模式
                 CommissionFormulaMode = Convert.ToInt32(strategyId);
 
             switch (CommissionFormulaMode)

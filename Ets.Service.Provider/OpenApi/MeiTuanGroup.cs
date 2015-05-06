@@ -316,16 +316,20 @@ namespace Ets.Service.Provider.OpenApi
             #region 佣金相关  
             model.package_count = 1; //订单份数
             //佣金计算规则
-            model.CommissionFormulaMode = ParseHelper.ToInt(Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet(0).CommissionFormulaMode);
+            //model.CommissionFormulaMode = ParseHelper.ToInt(Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet(1).CommissionFormulaMode);
+            model.CommissionFormulaMode = business.StrategyId;
             //计算获得订单骑士佣金
             Ets.Model.DataModel.Order.OrderCommission orderComm = new Ets.Model.DataModel.Order.OrderCommission()
             {
                 Amount = model.total_price, /*订单金额*/
                 DistribSubsidy = model.store_info.delivery_fee,/*外送费*/
                 OrderCount = model.package_count,/*订单数量*/
-                BusinessCommission = model.store_info.businesscommission/*商户结算比例*/
+                BusinessCommission = model.store_info.businesscommission,/*商户结算比例*/
+                BusinessGroupId = business.BusinessGroupId,
+                StrategyId = business.StrategyId
             }/*网站补贴*/;
-            OrderPriceProvider commissonPro = CommissionFactory.GetCommission();
+            //OrderPriceProvider commissonPro = CommissionFactory.GetCommission();
+            OrderPriceProvider commissonPro = CommissionFactory.GetCommission(business.StrategyId);
             model.ordercommission = commissonPro.GetCurrenOrderCommission(orderComm);  //骑士佣金
             model.websitesubsidy = commissonPro.GetOrderWebSubsidy(orderComm);//网站补贴
             model.commissionrate = commissonPro.GetCommissionRate(orderComm);//订单佣金比例
