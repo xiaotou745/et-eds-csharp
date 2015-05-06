@@ -92,7 +92,7 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult UpdatePriceSubsidies(GlobalConfigSubsidies model)
         {
-            var list = new GlobalConfigProvider().GetPriceSubsidies(0);
+            var list = new GlobalConfigProvider().GetPriceSubsidies(model.GroupId);
 
             var mm = list.FirstOrDefault(subsidies => subsidies.Id == model.Id);
             if (mm != null)
@@ -104,7 +104,7 @@ namespace SuperMan.Controllers
                            orderby ParseHelper.ToInt(globalConfigTimeSubsidiese.Value1) ascending
                            select globalConfigTimeSubsidiese).ToList();
             string values = GetTimesValues(newlist);
-            bool b = new GlobalConfigProvider().UpdatePriceSubsidies(UserContext.Current.Name, values, "修改金额补贴设置-设置之后的值:" + values, model.GroupId, -1);
+            bool b = new GlobalConfigProvider().UpdatePriceSubsidies(UserContext.Current.Name, values, "修改金额补贴设置-设置之后的值:" + values, model.GroupId, model.StrategyId);
             return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.AllowGet);
         } 
         #endregion
