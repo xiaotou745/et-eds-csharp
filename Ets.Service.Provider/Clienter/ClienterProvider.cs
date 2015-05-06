@@ -497,6 +497,7 @@ namespace Ets.Service.Provider.Clienter
         public string FinishOrder(int userId, string orderNo, string pickupCode = null)
         {
             string result = "-1";
+            int businessId = 0;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 //获取该订单信息和该  骑士现在的 收入金额
@@ -538,6 +539,7 @@ namespace Ets.Service.Provider.Clienter
                     //};
                     //Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords = new WtihdrawRecordsProvider();
                     //iRecords.AddRecords(model); 
+                    businessId = myOrderInfo.businessId;
                     if (new OrderProvider().AsyncOrderStatus(orderNo))
                     {
                         result = "1";
@@ -545,9 +547,13 @@ namespace Ets.Service.Provider.Clienter
                     }
                     else
                         result = "0"; //同步第三方状态失败 导致订单失败
-                    Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", myOrderInfo.businessId.ToString(), string.Empty);
+
                     result = "1";
                 }
+            }
+            if (businessId != 0 && result == "1")
+            {
+                Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", businessId.ToString(), string.Empty);
             }
             return result;
         }
