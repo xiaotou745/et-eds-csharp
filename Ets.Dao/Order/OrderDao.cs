@@ -1550,7 +1550,7 @@ where   o.Id = @orderId;
         {
             #region
             string sql = @"
- select  *
+select  *
 from    ( select    sol.Id ,
                     sol.OrderId ,
                     sol.OrderStatus ,
@@ -1572,7 +1572,7 @@ from    ( select    sol.Id ,
                                     where   o.OriginalOrderNo = @OriginalOrderNo
                                             and o.OrderFrom = @GroupId order by o.Id desc
                                   )
-                    and sol.[Platform] in ( 0, 1 )
+                    and sol.[Platform] in ( 0, 1,4 )
           union
           ( select  sol.Id ,
                     sol.OrderId ,
