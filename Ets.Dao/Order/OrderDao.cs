@@ -1574,7 +1574,7 @@ from    ( select    sol.Id ,
             where   sol.OrderId = ( select top 1
                                             o.Id
                                     from    dbo.[order] o ( nolock )
-                                    where   o.OriginalOrderNo = 
+                                    where   o.OriginalOrderNo = @OriginalOrderNo
                                             and o.OrderFrom = @GroupId
                                     order by o.Id desc
                                   )
