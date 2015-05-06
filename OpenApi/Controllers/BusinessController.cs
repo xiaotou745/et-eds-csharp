@@ -87,5 +87,44 @@ namespace OpenApi.Controllers
                 return ResultModel<object>.Conclude(CustomerRegisterStatus.Faild);
             } 
         }
+
+
+        /// <summary>
+        /// 商户注册
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [SignOpenApi]
+        [OpenApiActionError]
+        public ResultModel<object> GetBusinessStatus(ParaModel<BusinessModel> paramodel)
+        {
+            LogHelper.LogWriter("商户注册：", new { Busi = paramodel });
+            var busi = iBusiProvider.GetBusiness(paramodel.fields.B_OriginalBusiId, paramodel.group);
+
+            if (busi == null)
+            {
+                return ResultModel<object>.Conclude(BusiStatus.BusiNoRegiste);
+            }else if(busi.Status == ConstValues.BUSINESS_AUDITPASS) //1
+            {
+                return ResultModel<object>.Conclude(BusiStatus.BusiPass);
+            }
+            else if (busi.Status == ConstValues.BUSINESS_AUDITPASSING)
+            {
+                return ResultModel<object>.Conclude(BusiStatus.BusiPassing);
+            }
+            else if (busi.Status == ConstValues.BUSINESS_NOADDRESS)
+            {
+                return ResultModel<object>.Conclude(BusiStatus.BusiNoAddress);
+            }
+            else if (busi.Status == ConstValues.BUSINESS_NOAUDIT)
+            {
+                return ResultModel<object>.Conclude(BusiStatus.BusiReject);
+            }
+            else
+            {
+                return ResultModel<object>.Conclude(BusiStatus.BusiError);
+            }
+
+        }
     }
 }

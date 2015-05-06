@@ -20,7 +20,7 @@ namespace Ets.Model.ParameterModel.Bussiness
         /// </summary>
         //[Required]
         public int B_OriginalBusiId { get; set; }
-        public string B_Password { get; set; } 
+        public string B_Password { get; set; }
         /// <summary>
         /// 身份证号
         /// </summary>
@@ -91,5 +91,10 @@ namespace Ets.Model.ParameterModel.Bussiness
         /// 外送费
         /// </summary>
         public decimal DistribSubsidy { get; set; }
+    }
+
+    public class BusinessModel
+    {
+        public int B_OriginalBusiId { get; set; }
     }
 }
