@@ -416,7 +416,7 @@ namespace Ets.Dao.Clienter
             update dbo.[order]
             set clienterId=@clienterId,Status=@Status
             where OrderNo=@OrderNo and Status=0
-            if(@@error<>0 or @@ROWCOUNT==0)
+            if(@@error<>0 or @@ROWCOUNT=0)
             begin
 	            select 1 --更改状态失败
 	            return
@@ -424,7 +424,7 @@ namespace Ets.Dao.Clienter
 
             insert  into dbo.OrderSubsidiesLog ( OrderId, Price, InsertTime, OptName,
                                                  Remark, OptId, OrderStatus, Platform )
-            select  o.Id, o.OrderCommission, getdate(), '骑士', '', @clienterId, @Platform
+            select  o.Id, o.OrderCommission, getdate(), '骑士', '', @clienterId, @Status, @Platform
             from    dbo.[order] o ( nolock )
             where   o.OrderNo = @OrderNo
 
@@ -883,8 +883,7 @@ from    dbo.[order] o ( nolock )
         left join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
 where   o.Id = @OrderId";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@OrderId", SqlDbType.Int);
-            parm.SetValue("@OrderId", orderId);
+            parm.Add("OrderId", SqlDbType.Int,4,orderId.ToString());
 
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             var ooList = MapRows<OrderOther>(dt);
