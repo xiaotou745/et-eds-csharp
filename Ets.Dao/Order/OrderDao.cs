@@ -332,7 +332,7 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             parm.AddWithValue("@CommissionType", order.CommissionType);
             parm.AddWithValue("@CommissionFixValue", order.CommissionFixValue);
             parm.AddWithValue("@BusinessGroupId", order.BusinessGroupId);
-              
+
             object i = DbHelper.ExecuteScalar(Config.SuperMan_Write, insertOrder.ToString(), parm);
             if (i != null)
             {
@@ -373,36 +373,36 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
                 @PhoneNo,@PhoneNo2,@Address,@ProvinceCode,@CityCode,@AreaCode,
                 @Longitude,@Latitude,@DistribSubsidy,@Province,@City,@district,@CityId,@districtId,
                 @BusinessCommission,@CommissionType,@CommissionFixValue,@BusinessGroupId);";
-                    IDbParameters insertBdbParameters = DbHelper.CreateDbParameters();
-                    ///基本参数信息
-                    insertBdbParameters.AddWithValue("@OriginalBusiId", paramodel.store_info.store_id); //对接方店铺ID第三方平台推送过来的商家Id
-                    insertBdbParameters.AddWithValue("@Name", paramodel.store_info.store_name);    //店铺名称
-                    insertBdbParameters.AddWithValue("@GroupId", paramodel.store_info.group);    //集团：3:万达
-                    insertBdbParameters.AddWithValue("@IDCard", paramodel.store_info.id_card);    //店铺身份证号
-                    insertBdbParameters.AddWithValue("@Password", MD5Helper.MD5("123456"));    //初始化密码  后期个改为常量
-                    insertBdbParameters.AddWithValue("@PhoneNo", paramodel.store_info.phone);    //门店联系电话
-                    insertBdbParameters.AddWithValue("@PhoneNo2", paramodel.store_info.phone2);    //门店第二联系电话
-                    insertBdbParameters.AddWithValue("@Address", paramodel.store_info.address);    //门店地址
-                    insertBdbParameters.AddWithValue("@ProvinceCode", paramodel.store_info.city_code);    //门店所在省份code
-                    insertBdbParameters.AddWithValue("@CityCode", paramodel.store_info.city_code);    //门店所在城市code
-                    insertBdbParameters.AddWithValue("@AreaCode", paramodel.store_info.area_code);    //门店所在区域code
-                    insertBdbParameters.AddWithValue("@Longitude", paramodel.store_info.longitude);    //门店所在区域经度
-                    insertBdbParameters.AddWithValue("@Latitude", paramodel.store_info.latitude);    //门店所在区域纬度
-                    insertBdbParameters.AddWithValue("@DistribSubsidy", paramodel.store_info.delivery_fee);    //外送费,默认为0
-                    insertBdbParameters.AddWithValue("@Province", paramodel.store_info.province);    //门店省
-                    insertBdbParameters.AddWithValue("@City", paramodel.store_info.city);    //门店市编码
-                    insertBdbParameters.AddWithValue("@district", paramodel.store_info.area);    //门店区编码
-                    insertBdbParameters.AddWithValue("@CityId", paramodel.store_info.city_code);    //门店市编码
-                    insertBdbParameters.AddWithValue("@districtId", paramodel.store_info.area_code);    //门店区编码
-                    insertBdbParameters.AddWithValue("@BusinessCommission", paramodel.store_info.businesscommission);//结算比例
-                    insertBdbParameters.AddWithValue("@CommissionType", paramodel.CommissionType);//结算类型
-                    insertBdbParameters.AddWithValue("@CommissionFixValue", paramodel.CommissionFixValue);//固定金额
-                    insertBdbParameters.AddWithValue("@BusinessGroupId", paramodel.BusinessGroupId);//分组ID
-                    //insertBdbParameters.AddWithValue("@CommissionTypeId", paramodel.store_info.commission_type == null ?
-                    //    1 : paramodel.store_info.commission_type);   //佣金类型，涉及到快递员的佣金计算方式，默认1  业务改变已经无效  
-                    bussinessId = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, insertBussinesssql, insertBdbParameters));
-                    if (bussinessId == 0)
-                        return null;//添加失败 
+                IDbParameters insertBdbParameters = DbHelper.CreateDbParameters();
+                ///基本参数信息
+                insertBdbParameters.AddWithValue("@OriginalBusiId", paramodel.store_info.store_id); //对接方店铺ID第三方平台推送过来的商家Id
+                insertBdbParameters.AddWithValue("@Name", paramodel.store_info.store_name);    //店铺名称
+                insertBdbParameters.AddWithValue("@GroupId", paramodel.store_info.group);    //集团：3:万达
+                insertBdbParameters.AddWithValue("@IDCard", paramodel.store_info.id_card);    //店铺身份证号
+                insertBdbParameters.AddWithValue("@Password", MD5Helper.MD5("123456"));    //初始化密码  后期个改为常量
+                insertBdbParameters.AddWithValue("@PhoneNo", paramodel.store_info.phone);    //门店联系电话
+                insertBdbParameters.AddWithValue("@PhoneNo2", paramodel.store_info.phone2);    //门店第二联系电话
+                insertBdbParameters.AddWithValue("@Address", paramodel.store_info.address);    //门店地址
+                insertBdbParameters.AddWithValue("@ProvinceCode", paramodel.store_info.city_code);    //门店所在省份code
+                insertBdbParameters.AddWithValue("@CityCode", paramodel.store_info.city_code);    //门店所在城市code
+                insertBdbParameters.AddWithValue("@AreaCode", paramodel.store_info.area_code);    //门店所在区域code
+                insertBdbParameters.AddWithValue("@Longitude", paramodel.store_info.longitude);    //门店所在区域经度
+                insertBdbParameters.AddWithValue("@Latitude", paramodel.store_info.latitude);    //门店所在区域纬度
+                insertBdbParameters.AddWithValue("@DistribSubsidy", paramodel.store_info.delivery_fee);    //外送费,默认为0
+                insertBdbParameters.AddWithValue("@Province", paramodel.store_info.province);    //门店省
+                insertBdbParameters.AddWithValue("@City", paramodel.store_info.city);    //门店市编码
+                insertBdbParameters.AddWithValue("@district", paramodel.store_info.area);    //门店区编码
+                insertBdbParameters.AddWithValue("@CityId", paramodel.store_info.city_code);    //门店市编码
+                insertBdbParameters.AddWithValue("@districtId", paramodel.store_info.area_code);    //门店区编码
+                insertBdbParameters.AddWithValue("@BusinessCommission", paramodel.store_info.businesscommission);//结算比例
+                insertBdbParameters.AddWithValue("@CommissionType", paramodel.CommissionType);//结算类型
+                insertBdbParameters.AddWithValue("@CommissionFixValue", paramodel.CommissionFixValue);//固定金额
+                insertBdbParameters.AddWithValue("@BusinessGroupId", paramodel.BusinessGroupId);//分组ID
+                //insertBdbParameters.AddWithValue("@CommissionTypeId", paramodel.store_info.commission_type == null ?
+                //    1 : paramodel.store_info.commission_type);   //佣金类型，涉及到快递员的佣金计算方式，默认1  业务改变已经无效  
+                bussinessId = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, insertBussinesssql, insertBdbParameters));
+                if (bussinessId == 0)
+                    return null;//添加失败 
 
                 redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString()
                     , paramodel.store_info.store_id.ToString()), bussinessId.ToString());//将商户id插入到缓存  key的形式为 OtherBusiness_集团id_第三方平台店铺id
@@ -480,14 +480,8 @@ into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[
             dbParameters.AddWithValue("@CommissionFixValue", paramodel.CommissionFixValue);//固定金额
             dbParameters.AddWithValue("@BusinessGroupId", paramodel.BusinessGroupId);//分组ID
 
-            int count=ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrdersql, dbParameters));
-            if (count > 0)
-            {
-                //添加成功时，将当前订单插入到缓存中，设置过期时间30天
-                redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
-                   paramodel.order_id.ToString()), orderNo, DateTime.Now.AddDays(30));  //查询缓存，看当前订单是否存在,“true”代表存在，key的形式为集团ID_第三方平台订单号
-            }
-            else
+            string orderNo = ParseHelper.ToString(DbHelper.ExecuteScalar(SuperMan_Read, insertOrdersql, dbParameters));
+            if (string.IsNullOrWhiteSpace(orderNo))//添加失败 
                 return null;
             //添加成功时，将当前订单插入到缓存中，设置过期时间30天
             redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
