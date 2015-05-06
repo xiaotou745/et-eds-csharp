@@ -789,6 +789,7 @@ namespace Ets.Service.Provider.Clienter
             if (bResult)
             {
                 Ets.Service.Provider.MyPush.Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", myorder.businessId.ToString(), string.Empty);
+                new OrderProvider().AsyncOrderStatus(orderNo);//同步第三方订单
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.Success);
             }
 
