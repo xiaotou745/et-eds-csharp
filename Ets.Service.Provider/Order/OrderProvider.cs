@@ -698,7 +698,14 @@ namespace Ets.Service.Provider.Order
             //var order = OrderLogic.orderLogic().GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom, model.OrderType);
             if (order != null)
             {
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OrderHadExist);
+                if (order.Status == ConstValues.ORDER_CANCEL)
+                {
+                    orderDao.UpdateOrderStatus_Other(new ChangeStatusPM_OpenApi() { groupid=1 });
+                }
+                else
+                {
+                    return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OrderHadExist);
+                }
             }
             #region 转换省市区
             //转换省
@@ -833,27 +840,24 @@ namespace Ets.Service.Provider.Order
             to.DistribSubsidy = from.DistribSubsidy; //外送费
             to.OrderCount = from.OrderCount == 0 ? 1 : from.OrderCount; //订单数量
             //计算订单佣金
-            //var subsidy = GetCurrentSubsidy(business.GroupId);
-
-            var subsidy = new OrderDao().GetCurrentSubsidy(business.GroupId.Value);//设置结算比例
-            if (subsidy != null)
+            
+            //必须写to.DistribSubsidy ，防止bussiness为空情况
+            OrderCommission orderComm = new OrderCommission()
             {
-                to.WebsiteSubsidy = subsidy.WebsiteSubsidy == null ? 0 : subsidy.WebsiteSubsidy; //网站补贴 
-                to.CommissionRate = subsidy.OrderCommission == null ? 0 : subsidy.OrderCommission; //佣金比例 
-            }
-            else
-            {
-                to.WebsiteSubsidy = 0m;
-                to.CommissionRate = 0m;
-            }
-            decimal distribe = 0;  //默认外送费，网站补贴都为0
-            if (to.DistribSubsidy != null)//如果外送费有数据，按照外送费计算骑士佣金
-                distribe = Convert.ToDecimal(to.DistribSubsidy);
-            else if (to.WebsiteSubsidy != null)//如果外送费没数据，按照网站补贴计算骑士佣金
-                distribe = Convert.ToDecimal(to.WebsiteSubsidy);
+                Amount = from.Amount, /*订单金额*/
+                DistribSubsidy = to.DistribSubsidy,/*外送费*/
+                OrderCount = to.OrderCount/*订单数量*/,
+                BusinessCommission = to.BusinessCommission /*商户结算比例*/
+            };
+            OrderPriceProvider commProvider = CommissionFactory.GetCommission();
+            to.CommissionRate = commProvider.GetCommissionRate(orderComm); //佣金比例 
+            to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
+            to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
+            to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
 
-            to.OrderCommission = from.Amount * to.CommissionRate + distribe * to.OrderCount;//计算佣金
-
+            to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
+            to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额
+             
             to.Status = ConstValues.ORDER_NEW;
 
             return to;
