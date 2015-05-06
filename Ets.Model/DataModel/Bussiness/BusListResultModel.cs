@@ -53,5 +53,10 @@ namespace Ets.Model.DataModel.Bussiness
         /// 策略ID
         /// </summary>
         public int StrategyId { get; set; }
+        /// <summary>
+        /// 分组名称
+        /// </summary>
+        public string BusinessGroupName { get; set; }
+        
     }
 }

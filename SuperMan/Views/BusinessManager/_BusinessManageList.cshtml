@@ -97,18 +97,7 @@
                 }
 
                     }
-                    @{
-                var groupView = "";
-                if (item.BusinessGroupId == 1)
-                {
-                    groupView = "默认";
-                }
-
-                else if (item.BusinessGroupId == 3)
-                {
-                    groupView = "校园";
-                }
-                    }
+                   
                     @{
                 var commissionTypeView = "";
                 if (item.CommissionType == 1)
@@ -122,7 +111,7 @@
                 }
                     }
                     <td>@statusView</td>
-                    <td>@groupView</td>
+                    <td>@item.BusinessGroupName</td>
                     <td>@commissionTypeView</td>
                     <td>
                         @{
@@ -249,7 +238,7 @@
         $('#CommissionFixValue').val(commissionFixValue);
         $('#oldCommissionFixValue').val(commissionFixValue);
         $('#oldStrategyID').val(businessGroupId);
-
+        
         if (commissionType == 2) {
             $("#rCommissionFormulaMode1").attr("checked", "checked");
         }
@@ -258,10 +247,11 @@
         }
 
         if (businessGroupId > 0) {
-            $('#strategyID').val(businessGroupId);
+           
+            $('#businessGroupID').val(businessGroupId);
         }
         else {
-            $('select#strategyID option:first').attr('selected', 'true');
+            $('select#businessGroupID option:first').attr('selected', 'true');
         }
         var a = $('input[name="rCommissionFormulaMode"]:checked').val();
         if (a == 1) {

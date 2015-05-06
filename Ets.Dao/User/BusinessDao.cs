@@ -342,7 +342,8 @@ namespace Ets.Dao.User
                                     ,g.GroupName
                                     ,b.CommissionType
                                     ,b.CommissionFixValue
-                                    ,b.BusinessGroupId";
+                                    ,b.BusinessGroupId
+                                    ,bg.Name BusinessGroupName";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrEmpty(criteria.businessName))
             {
@@ -376,7 +377,9 @@ namespace Ets.Dao.User
             {
                 sbSqlWhere.AppendFormat(" AND b.City='{0}' ", criteria.businessCity.Trim());
             }
-            string tableList = @" business  b WITH (NOLOCK)  LEFT JOIN dbo.[group] g WITH(NOLOCK) ON g.Id = b.GroupId ";
+            string tableList = @" business  b WITH (NOLOCK)  
+                                LEFT JOIN dbo.[group] g WITH(NOLOCK) ON g.Id = b.GroupId 
+                                JOIN dbo.[BusinessGroup]  bg WITH ( NOLOCK ) ON  b.BusinessGroupId=bg.Id";
             string orderByColumn = " b.Id DESC";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }

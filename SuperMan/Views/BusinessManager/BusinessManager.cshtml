@@ -226,7 +226,7 @@
 
             <div class="control-group" style="margin-left:30px">
                 <label>补贴策略：</label>
-                @Html.DropDownList("strategyID", new SelectList(new BusinessGroupProvider().GetBusinessGroupList(), "StrategyId", "Name"), new { @class = "selectw", style = "width:143px" })
+                @Html.DropDownList("businessGroupID", new SelectList(new BusinessGroupProvider().GetBusinessGroupList(), "Id", "Name"), new { @class = "selectw", style = "width:143px" })
                 <input name="oldStrategyID" id="oldStrategyID" type="hidden">
             </div>
         </fieldset>
@@ -292,7 +292,6 @@
 
     //设置结算比例-外送费
     $("#btnCommissionConfim").on('click', function () {
-        
         var busCommissionHid = $("#busCommissionHid").val(); //商户id
 
         var busCommissionText = $("#busCommissionText").val(); ////商户结算比例
@@ -301,7 +300,7 @@
         var oldBusCommissionWaiSong = $("#oldBusCommissionWaiSong").val(); ////原来商户外送费
         var commissionFixValue = $("#CommissionFixValue").val();
         var oldCommissionFixValue = $("#oldCommissionFixValue").val(); ////原来商户外送费
-        var strategyID = $("#strategyID").val();
+        var strategyID = $("#businessGroupID").val();
         var oldStrategyID = $("#oldStrategyID").val();
         var commissionType = $('input[name="rCommissionFormulaMode"]:checked').val();;
         var oldBusCommissionWaiSong = $("#oldBusCommissionWaiSong").val();
