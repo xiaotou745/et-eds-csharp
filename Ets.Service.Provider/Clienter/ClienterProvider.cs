@@ -298,7 +298,11 @@ namespace Ets.Service.Provider.Clienter
         {
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                clienterDao.RushOrder(userId, orderNo);
+                bool result = clienterDao.RushOrder(userId, orderNo);
+                if (!result)
+                {
+                    return false;
+                }
                 if (new OrderProvider().AsyncOrderStatus(orderNo))
                 {
                     tran.Complete();

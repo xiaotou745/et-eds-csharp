@@ -348,6 +348,8 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public bool UpdateOrderInfo(order order)
         {
+            AssertUtils.ArgumentNotNull(order, "order");
+
             return OrderDao.UpdateOrderInfo(order);
         }
         /// <summary>
@@ -358,6 +360,8 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public OrderListModel GetOrderByNo(string orderNo)
         {
+            AssertUtils.ArgumentNotNull(orderNo,"orderNo");
+
             return OrderDao.GetOrderByNo(orderNo);
         }
         /// <summary>
