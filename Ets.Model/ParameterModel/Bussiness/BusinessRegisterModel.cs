@@ -92,9 +92,4 @@ namespace Ets.Model.ParameterModel.Bussiness
         /// </summary>
         public decimal DistribSubsidy { get; set; }
     }
-
-    public class BusinessModel
-    {
-        public int B_OriginalBusiId { get; set; }
-    }
 }

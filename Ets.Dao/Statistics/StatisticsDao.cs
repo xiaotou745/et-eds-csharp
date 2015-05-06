@@ -215,11 +215,11 @@ namespace Ets.Dao.Statistics
         public HomeCountTitleModel GetCurrentDateModel()
         {
             string sql = @"
-                           with t as(
+                            with t as(
                                         SELECT 
                                           CONVERT(CHAR(10),GETDATE(),120) PubDate,
-                                          SUM(CASE WHEN [Status]=1 THEN 1 ELSE 0 END) AS RzqsCount, --认证骑士数量
-                                          SUM(CASE WHEN [Status]=0 THEN 1 ELSE 0 END) AS DdrzqsCount --等待认证骑士
+                                          ISNULL(SUM(CASE WHEN [Status]=1 THEN 1 ELSE 0 END),0) AS RzqsCount, --认证骑士数量
+                                          ISNULL(SUM(CASE WHEN [Status]=0 THEN 1 ELSE 0 END),0) AS DdrzqsCount --等待认证骑士
                                         FROM dbo.clienter(NOLOCK)
                             )
                             ,t2 as (
@@ -249,10 +249,10 @@ namespace Ets.Dao.Statistics
                               )
                             ,t5 AS(
                                         SELECT  PubDate ,
-                                                SUM(CASE when a.DealCount=0 THEN OrderCount END) ZeroSubsidyOrderCount,
-                                                SUM(CASE when a.DealCount=1 THEN OrderCount END) OneSubsidyOrderCount,
-                                                SUM(CASE when a.DealCount=2 THEN OrderCount END) TwoSubsidyOrderCount,
-                                                SUM(CASE when a.DealCount=3 THEN OrderCount END) ThreeSubsidyOrderCount
+                                                ISNULL(SUM(CASE when a.DealCount=0 THEN OrderCount END),0) ZeroSubsidyOrderCount,
+                                                ISNULL(SUM(CASE when a.DealCount=1 THEN OrderCount END),0) OneSubsidyOrderCount,
+                                                ISNULL(SUM(CASE when a.DealCount=2 THEN OrderCount END),0) TwoSubsidyOrderCount,
+                                                ISNULL(SUM(CASE when a.DealCount=3 THEN OrderCount END),0) ThreeSubsidyOrderCount
                                         FROM (
                                               SELECT 
                                                 CONVERT(CHAR(10),PubDate,120) AS PubDate, --发布时间
@@ -268,11 +268,11 @@ namespace Ets.Dao.Statistics
                             ,t6 AS(
                                         SELECT 
                                           CONVERT(CHAR(10),PubDate,120) AS PubDate, 
-                                          SUM(Amount) AS OrderPrice, --订单金额
+                                          SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
                                           ISNULL(COUNT(o.Id),0) AS MisstionCount,--总任务量
                                           SUM(ISNULL(OrderCount,0)) AS OrderCount,--总订单量
-                                          SUM(o.Amount*ISNULL(o.BusinessCommission,0)/100+ ISNULL( o.DistribSubsidy ,0)* o.OrderCount) AS YsPrice,  -- 应收金额
-                                          SUM( ISNULL(OrderCommission,0)) AS YfPrice  --应付金额
+                                          ISNULL(SUM(o.Amount*ISNULL(b.BusinessCommission,0)/100+ ISNULL( b.DistribSubsidy ,0)* o.OrderCount),0) AS YsPrice,  -- 应收金额
+                                          ISNULL( SUM( OrderCommission),0) AS YfPrice  --应付金额
                                         FROM dbo.[order](NOLOCK) AS o
                                           LEFT JOIN dbo.business(NOLOCK) AS b ON o.businessId=b.Id
                                          WHERE  o.[Status]<>3 
@@ -280,7 +280,7 @@ namespace Ets.Dao.Statistics
                                         GROUP BY CONVERT(CHAR(10),PubDate,120)
                               )
                             select t.PubDate,
-                              isnull(t.RzqsCount,0) RzqsCount,
+                              isnull(t.RzqsCount,0)RzqsCount,
                               isnull(t.DdrzqsCount,0) DdrzqsCount,
                               isnull(t2.BusinessCount,0) BusinessCount,
                               isnull(t3.ActiveClienter,0) ActiveClienter,

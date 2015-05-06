@@ -168,18 +168,4 @@ namespace Ets.Model.ParameterModel.Bussiness
         [DisplayText("注册失败")]
         ClientRegisterFaild=115
     }
-
-    public enum BusiStatus : int
-    {
-        [DisplayText("未注册")]
-        NotRegiste = -1,
-        [DisplayText("审核中")]
-        Auditing = 0,
-        [DisplayText("审核通过")]
-        AuditPass = 1,
-        [DisplayText("未知状态")]
-        AuditError = 3
-    }
-
-
 }

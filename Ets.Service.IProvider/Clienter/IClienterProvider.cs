@@ -66,17 +66,13 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="PhoneNo"></param>
         /// <returns></returns>
         bool CheckClienterExistPhone(string PhoneNo);
-
-
         /// <summary>
-        /// C端抢单
-        /// 窦海超
-        /// 2015年5月6日 10:12:16
+        /// 根据骑士Id 验证该骑士是否有资格
+        /// wc
         /// </summary>
-        /// <param name="userId">C端ID</param>
-        /// <param name="orderNo">订单号</param>
+        /// <param name="clienterId"></param>
         /// <returns></returns>
-        ResultModel<RushOrderResultModel> RushOrder_C(int userId, string orderNo);
+        bool HaveQualification(int clienterId);
 
         /// <summary>
         /// 骑士注册
@@ -192,5 +188,15 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="orderId"></param>
         /// <returns></returns>
         order GetOrderInfoByOrderId(int orderId);
+
+        /// <summary>
+        ///  C端抢单
+        ///  窦海超
+        ///  2015年5月6日 20:40:56
+        /// </summary>
+        /// <param name="userId">骑士ID</param>
+        /// <param name="orderNo">订单号</param>
+        /// <returns></returns>
+        ResultModel<RushOrderResultModel> RushOrder_C(int userId, string orderNo);
     }
 }
