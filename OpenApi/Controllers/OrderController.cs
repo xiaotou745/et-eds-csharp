@@ -115,7 +115,7 @@ namespace OpenApi.Controllers
             return new OrderProvider().UpdateOrderStatus_Other(paramodel.fields);
         }
         /// <summary>
-        /// 获取订单的日志信息
+        /// 获取订单的日志信息 wc
         /// </summary>
         /// <param name="paramodel"></param>
         /// <returns></returns>
@@ -130,7 +130,7 @@ namespace OpenApi.Controllers
 
         }
         /// <summary>
-        /// 取消订单
+        /// 取消订单  wc
         /// </summary>
         /// <param name="paramodel"></param>
         /// <returns></returns>

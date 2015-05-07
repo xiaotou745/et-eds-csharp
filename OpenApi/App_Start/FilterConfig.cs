@@ -38,6 +38,7 @@ namespace OpenApi
         {
             stop.Start();
             dynamic paramodel = actionContext.ActionArguments["paramodel"]; //当前请求的参数对象 
+            LogHelper.LogWriter("地址"+ actionContext.Request.RequestUri+",请求基础实体:", new { model = paramodel });  //记录当前请求的参数日志
             lock (paramodel)
             {
                 if (actionContext.ModelState.Count > 0 || paramodel == null) //参数错误，请求中止
@@ -54,9 +55,9 @@ namespace OpenApi
                     string signStr = groupCofigInfo.AppSecret + "app_key" + paramodel.app_key + "timestamp"
                         + paramodel.timestamp + "v" + paramodel.v + groupCofigInfo.AppSecret;
                     string sign = MD5.Encrypt(signStr);
-                    LogHelper.LogWriter("签名是否一致：", new { sign = sign, sign1 = paramodel.sign });
                     if (sign != paramodel.sign)   //sign错误，请求中止
                     {
+                        LogHelper.LogWriter("签名错误终止：", new { sign = sign, sign1 = paramodel.sign });
                         actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
                                (actionContext.ControllerContext, ResultModel<object>.Conclude(OrderApiStatusType.SignError));
                         return;

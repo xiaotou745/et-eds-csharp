@@ -423,7 +423,7 @@ namespace Ets.Service.Provider.Order
 
             #region 第三方订单是否重复推送的验证  add by caoheyang 20150417
             string orderExistsNo = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
-            paramodel.order_id.ToString()));  //查询缓存，看当前订单是否存在,“true”代表存在，key的形式为集团ID_第三方平台订单号
+            paramodel.order_id.ToString()));  //查询缓存，看当前订单是否存在，key的形式为集团ID_第三方平台订单号
             if (orderExistsNo != null)
                 return ResultModel<object>.Conclude(OrderApiStatusType.OrderExists, new { order_no = orderExistsNo });
             #endregion
@@ -526,9 +526,15 @@ namespace Ets.Service.Provider.Order
                     //    Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！"
                     //        , string.Empty, paramodel.address.city); //激光推送   
                     if (string.IsNullOrWhiteSpace(orderNo))  //同步失败，清除缓存内的信息
+                    {
                         redis.Delete(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo,
-                            paramodel.store_info.group.ToString(), paramodel.order_id.ToString()));
-                    tran.Complete();
+                                paramodel.store_info.group.ToString(), paramodel.order_id.ToString()));
+                        throw new Exception(message: "第三方订单号:" + paramodel.order_id+",orderfrom:"+paramodel.orderfrom+ ",数据库操作过程中某一步返回了null");
+                    }
+                    else
+                    {
+                        tran.Complete();
+                    }
                 }
             }
             catch (Exception ex)
