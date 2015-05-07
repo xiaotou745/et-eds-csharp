@@ -925,11 +925,20 @@ namespace Ets.Service.Provider.Order
                 {
                     return true;
                 }
+
+                #region 判断到底扣不扣钱
+
+                ETS.NoSql.RedisCache.RedisCache redisCache = new ETS.NoSql.RedisCache.RedisCache();
+                string orderKey = string.Format(RedissCacheKey.CheckOrderPay, orderOptionModel.OrderNo);
+                string CheckOrderPay = redisCache.Get<string>(orderKey);
+
+                #endregion
+
                 //如果订单状态是待接单|已接单|已完成+未上传完小票。则直接取消订单
                 using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                 {
                     result = OrderDao.CancelOrder(orderModel, orderOptionModel);
-                    if (result && orderModel.Status == 1 && orderModel.HadUploadCount == orderModel.NeedUploadCount)
+                    if (result && orderModel.Status == 1 && orderModel.HadUploadCount == orderModel.NeedUploadCount && CheckOrderPay == "1")
                     {
                         //需要上传的小票大于等于总数量+订单已完成则要扣钱
                         //(因为订单小票有可能不传。所以用的是订单数量和需要上传小票数量对比判断)
