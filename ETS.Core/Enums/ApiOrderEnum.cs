@@ -45,13 +45,27 @@ namespace ETS.Enums
         /// <summary>
         /// 订单已经接入到E代送系统，无法取消订单
         /// </summary>
-        [DisplayText("订单已经接入到E代送系统，无法取消订单")]
+        [DisplayText("订单已经接入到e代送系统，无法取消订单")]
         OrderIsJoin = 20000,
         /// <summary>
         /// 第三方接口调用异常
         /// </summary>
         [DisplayText("第三方接口调用异常")]
         OtherError = 90000
+    }
+    /// <summary>
+    /// 商户注册 返回枚举
+    /// </summary>
+    public enum BusiRegisterStatusType
+    {
+        [DisplayText("成功")]
+        Success = 0,
+        [DisplayText("签名错误")]
+        SignError = 10000,
+        [DisplayText("系统错误")]
+        SystemError = 10001,
+        [DisplayText("参数错误")]
+        ParaError = 10002
     }
 
 }

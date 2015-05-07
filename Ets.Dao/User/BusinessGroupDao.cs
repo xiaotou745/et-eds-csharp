@@ -69,7 +69,7 @@ namespace Ets.Dao.User
             string sql = string.Format(@" Select Bus.ID,Bus.Name,Bus.StrategyId,Bus.CreateBy,Bus.CreateTime,Bus.UpdateBy,Bus.UpdateTime,
                                           St.Name as StrategyName FROM  
                                           dbo.[BusinessGroup] as Bus WITH ( NOLOCK )
-                                          left join Strategy as St on Bus.StrategyId=St.StrategyId");
+                                          left join Strategy as St WITH ( NOLOCK ) on Bus.StrategyId=St.StrategyId");
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             return MapRows<BusinessGroupModel>(dt);
         }     
@@ -84,7 +84,7 @@ namespace Ets.Dao.User
             string sql = @"select BusinessGroup.ID,BusinessGroup.Name,BusinessGroup.StrategyId,BusinessGroup.CreateBy,
                            BusinessGroup.CreateTime,BusinessGroup.UpdateBy,BusinessGroup.UpdateTime 
                            from Business WITH ( NOLOCK )
-                           left join BusinessGroup on BusinessGroupId=BusinessGroup.Id                        
+                           left join BusinessGroup WITH ( NOLOCK ) on BusinessGroupId=BusinessGroup.Id                        
                            WHERE  Business.Id=@businessId ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@businessId", SqlDbType.Int);

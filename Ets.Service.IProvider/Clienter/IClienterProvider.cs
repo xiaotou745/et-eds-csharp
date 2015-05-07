@@ -11,7 +11,7 @@ using Ets.Model.ParameterModel.Order;
 namespace Ets.Service.IProvider.Clienter
 {
     public interface IClienterProvider
-    { 
+    {
         /// <summary>
         /// 更新添加骑士佣金金额
         /// wc
@@ -41,7 +41,7 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="model">用户名称，用户密码</param>
         /// <returns>用户信息</returns>
         ResultModel<ClienterLoginResultModel> PostLogin_C(LoginModel model);
-        
+
         /// <summary>
         /// 获取当前配送员的流水信息
         /// 窦海超
@@ -133,7 +133,7 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="orderNo"></param>
         /// <param name="pickupCode">取货码 可空</param>
         /// <returns></returns>
-        string FinishOrder(int userId, string orderNo,string pickupCode=null);
+        string FinishOrder(int userId, string orderNo, string pickupCode = null);
 
         ClienterModel GetUserInfoByUserId(int UserId);
         /// <summary>
@@ -188,5 +188,15 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="orderId"></param>
         /// <returns></returns>
         order GetOrderInfoByOrderId(int orderId);
+
+        /// <summary>
+        ///  C端抢单
+        ///  窦海超
+        ///  2015年5月6日 20:40:56
+        /// </summary>
+        /// <param name="userId">骑士ID</param>
+        /// <param name="orderNo">订单号</param>
+        /// <returns></returns>
+        ResultModel<RushOrderResultModel> RushOrder_C(int userId, string orderNo);
     }
 }

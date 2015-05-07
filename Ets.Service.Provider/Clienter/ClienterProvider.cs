@@ -80,7 +80,7 @@ namespace Ets.Service.Provider.Clienter
                         OrderCount = item.OrderCount
                     };
                     #endregion
-                    model.OriginalOrderNo = item.OriginalOrderNo; 
+                    model.OriginalOrderNo = item.OriginalOrderNo;
                     model.OrderFrom = item.OrderFrom;
                     model.income = item.OrderCommission;  //佣金 Edit bycaoheyang 20150327
                     model.Amount = DefaultOrPriceProvider.GetCurrenOrderPrice(oCommission); //C端 获取订单的金额 Edit bycaoheyang 20150305
@@ -304,7 +304,7 @@ namespace Ets.Service.Provider.Clienter
                     tran.Complete();
                     return true;
                 }
-            }  
+            }
             return false;
         }
 
@@ -497,17 +497,23 @@ namespace Ets.Service.Provider.Clienter
         public string FinishOrder(int userId, string orderNo, string pickupCode = null)
         {
             string result = "-1";
+            int businessId = 0;
+            OrderListModel myOrderInfo = orderDao.GetOrderInfoByOrderNo(orderNo);
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 //获取该订单信息和该  骑士现在的 收入金额
-                OrderListModel myOrderInfo = orderDao.GetOrderInfoByOrderNo(orderNo);
+               
                 if (myOrderInfo.GroupId == SystemConst.Group3 && !string.IsNullOrWhiteSpace(myOrderInfo.PickupCode)
                     && pickupCode != myOrderInfo.PickupCode) //全时订单 判断 取货码是否正确
                     return ETS.Enums.FinishOrderStatus.PickupCodeError.ToString();
                 //更新订单状态
                 if (myOrderInfo != null)
                 {
-                    orderDao.FinishOrderStatus(orderNo, userId, myOrderInfo);
+                    var upresult = orderDao.FinishOrderStatus(orderNo, userId, myOrderInfo);
+                    if (upresult <= 0)
+                    {
+                        return "3";
+                    }
                     if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)  //当用户上传的小票数量 和 需要上传的小票数量一致的时候，更新用户金额
                     {
                         if (CheckOrderPay(orderNo))
@@ -538,17 +544,23 @@ namespace Ets.Service.Provider.Clienter
                     //};
                     //Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords = new WtihdrawRecordsProvider();
                     //iRecords.AddRecords(model); 
-                    if (new OrderProvider().AsyncOrderStatus(orderNo))
-                    {
-                        result = "1";
-                        tran.Complete();
-                    }
-                    else 
-                        result = "0"; //同步第三方状态失败 导致订单失败
-                    Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", myOrderInfo.businessId.ToString(), string.Empty);
+                    businessId = myOrderInfo.businessId;
+                    //if (businessId>0)
+                    //{
                     result = "1";
+                    tran.Complete();
+                    //}
+                    //else
+                    //    result = "0"; //同步第三方状态失败 导致订单失败
+
+                    //result = "1";
                 }
-            } 
+            }
+            new OrderProvider().AsyncOrderStatus(orderNo);
+            if (businessId != 0 && result == "1")
+            {
+                Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", businessId.ToString(), string.Empty);
+            }
             return result;
         }
 
@@ -642,11 +654,17 @@ namespace Ets.Service.Provider.Clienter
         {
             OrderOther orderOther = null;
             var myOrderInfo = orderDao.GetOrderInfoByOrderNo("", uploadReceiptModel.OrderId);
+            //if (myOrderInfo.Status == ConstValues.ORDER_CANCEL)
+            //{
+            //    return orderOther;
+            //}
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 orderOther = clienterDao.UpdateClientReceiptPicInfo(uploadReceiptModel);
-                //上传成功后， 判断
-                if (orderOther.OrderStatus == ConstValues.ORDER_FINISH && orderOther.HadUploadCount == orderOther.NeedUploadCount)
+                //上传成功后， 判断 订单 创建时间在 2015-4-18 00：00 之前的订单不在增加佣金
+                string date = "2015-04-18 00:00:00";
+
+                if (orderOther.OrderCreateTime > Convert.ToDateTime(date) && orderOther.OrderStatus == ConstValues.ORDER_FINISH && orderOther.HadUploadCount == orderOther.NeedUploadCount)
                 {
                     if (CheckOrderPay(myOrderInfo.OrderNo))
                     {
@@ -723,9 +741,68 @@ namespace Ets.Service.Provider.Clienter
         }
 
 
+        /// <summary>
+        /// 根据订单id获取订单信息 和 小票相关
+        /// 王超
+        /// 2015年5月6日 20:40:05
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
         public order GetOrderInfoByOrderId(int orderId)
         {
             return orderDao.GetOrderInfoByOrderId(orderId);
+        }
+
+        /// <summary>
+        ///  C端抢单
+        ///  窦海超
+        ///  2015年5月6日 20:40:56
+        /// </summary>
+        /// <param name="userId">骑士ID</param>
+        /// <param name="orderNo">订单号</param>
+        /// <returns></returns>
+        [ETS.Expand.ActionStatus(typeof(ETS.Enums.RushOrderStatus))]
+        public ResultModel<RushOrderResultModel> RushOrder_C(int userId, string orderNo)
+        {
+            if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
+
+            ClienterModel clienterModel = new Ets.Dao.Clienter.ClienterDao().GetUserInfoByUserId(userId);
+            if (userId == 0 || clienterModel == null) //用户id验证
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
+            if (clienterModel.Status != 1)  //判断 该骑士 是否 有资格 抢单 wc
+            {
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.HadCancelQualification);
+            }
+
+            var myorder = new Ets.Dao.Order.OrderDao().GetOrderDetailByOrderNo(orderNo);
+            if (myorder == null)
+            {
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.OrderIsNotExist);  //订单不存在
+
+            }
+            if (myorder.Status == ConstValues.ORDER_CANCEL)   //判断订单状态是否为 已取消
+            {
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.OrderHadCancel);  //订单已被取消
+            }
+            if (myorder.Status == ConstValues.ORDER_ACCEPT || myorder.Status == ConstValues.ORDER_FINISH)  //订单已接单，被抢  或 已完成
+            {
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.OrderIsNotAllowRush);
+            }
+            OrderListModel model = new OrderListModel()
+            {
+                clienterId = userId,
+                OrderNo = orderNo
+            };
+            bool bResult = orderDao.RushOrder(model);
+            if (bResult)
+            {
+                new OrderProvider().AsyncOrderStatus(orderNo);//同步第三方订单
+                Ets.Service.Provider.MyPush.Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", myorder.businessId.ToString(), string.Empty);
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.Success);
+            }
+
+            return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.Failed);
         }
 
     }

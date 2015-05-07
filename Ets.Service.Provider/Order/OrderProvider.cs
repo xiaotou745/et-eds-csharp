@@ -622,8 +622,10 @@ namespace Ets.Service.Provider.Order
                 paramodel.fields.order_no = orderlistModel.OrderNo;
                 paramodel.fields.orderfrom = orderlistModel.OrderFrom;
                 paramodel.fields.OtherCancelReason = orderlistModel.OtherCancelReason;
+
                 string url = ConfigurationManager.AppSettings["AsyncStatus"];
                 string json = new HttpClient().PostAsJsonAsync(url, paramodel).Result.Content.ReadAsStringAsync().Result;
+                LogHelper.LogWriter("调用第三方接口同步状态:", new { url = url, paramodel = paramodel, result = json });
                 JObject jobject = JObject.Parse(json);
                 return jobject.Value<int>("Status") == 0; //接口调用状态 区分大小写  
             }
@@ -708,10 +710,12 @@ namespace Ets.Service.Provider.Order
             }
             else
             {
+                //商户必须是审核通过的， 商户审核通过 意味着 已经设置结算比例， 因为在后台管理系统中 商户审核通过时会验证商户结算比例是否设置
                 if (busi.Status != ConstValues.BUSINESS_AUDITPASS)
                 {
                     return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.BusinessNotAudit);
                 }
+
             }
             //验证该平台 商户 订单号 是否存在
             Ets.Dao.Order.OrderDao orderDao = new Dao.Order.OrderDao();
@@ -719,7 +723,22 @@ namespace Ets.Service.Provider.Order
             //var order = OrderLogic.orderLogic().GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom, model.OrderType);
             if (order != null)
             {
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OrderHadExist);
+                if (order.Status == ConstValues.ORDER_CANCEL)    // 在存在订单的情况下如果是去掉订单的状态，直接修改为订单待接单状态
+                {
+                    int upResult = orderDao.UpdateOrderStatus_Other(new ChangeStatusPM_OpenApi() { groupid = model.OrderFrom, order_no = order.OriginalOrderNo, orderfrom = model.OrderFrom, remark = "第三方再次推送", status = 0 });
+                    if (upResult > 0)
+                    {
+                        return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Success);
+                    }
+                    else
+                    {
+                        return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Failed);
+                    }
+                }
+                else
+                {
+                    return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OrderHadExist);
+                }
             }
             #region 转换省市区
             //转换省
@@ -843,7 +862,7 @@ namespace Ets.Service.Provider.Order
             to.Weight = from.Weight;
 
             to.IsPay = from.IsPay;
-            to.Amount = from.Amount;
+            to.Amount = from.Amount - from.DistribSubsidy;//订单金额=聚网客总金额-外送费
 
             to.OrderType = from.OrderType; //订单类型 1送餐订单 2取餐盒订单 
             to.KM = from.KM; //送餐距离
@@ -854,26 +873,27 @@ namespace Ets.Service.Provider.Order
             to.DistribSubsidy = from.DistribSubsidy; //外送费
             to.OrderCount = from.OrderCount == 0 ? 1 : from.OrderCount; //订单数量
             //计算订单佣金
-            //var subsidy = GetCurrentSubsidy(business.GroupId);
 
-            var subsidy = new OrderDao().GetCurrentSubsidy(business.GroupId.Value);//设置结算比例
-            if (subsidy != null)
+            //必须写to.DistribSubsidy ，防止bussiness为空情况
+            OrderCommission orderComm = new OrderCommission()
             {
-                to.WebsiteSubsidy = subsidy.WebsiteSubsidy == null ? 0 : subsidy.WebsiteSubsidy; //网站补贴 
-                to.CommissionRate = subsidy.OrderCommission == null ? 0 : subsidy.OrderCommission; //佣金比例 
-            }
-            else
-            {
-                to.WebsiteSubsidy = 0m;
-                to.CommissionRate = 0m;
-            }
-            decimal distribe = 0;  //默认外送费，网站补贴都为0
-            if (to.DistribSubsidy != null)//如果外送费有数据，按照外送费计算骑士佣金
-                distribe = Convert.ToDecimal(to.DistribSubsidy);
-            else if (to.WebsiteSubsidy != null)//如果外送费没数据，按照网站补贴计算骑士佣金
-                distribe = Convert.ToDecimal(to.WebsiteSubsidy);
+                Amount = from.Amount - from.DistribSubsidy, /*订单金额*/
+                DistribSubsidy = from.DistribSubsidy,/*外送费*/
+                OrderCount = to.OrderCount/*订单数量*/,
+                BusinessCommission = to.BusinessCommission, /*商户结算比例*/
+                BusinessGroupId = business.BusinessGroupId,
+                StrategyId = business.StrategyId
+            };
+            OrderPriceProvider commProvider = CommissionFactory.GetCommission(business.StrategyId);
+            to.CommissionFormulaMode = business.StrategyId;             
+            to.CommissionRate = commProvider.GetCommissionRate(orderComm); //佣金比例 
+            to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
+            to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
+            to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
 
-            to.OrderCommission = from.Amount * to.CommissionRate + distribe * to.OrderCount;//计算佣金
+
+            to.CommissionFormulaMode = business.StrategyId;
+            to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额
 
             to.Status = ConstValues.ORDER_NEW;
 
@@ -905,21 +925,33 @@ namespace Ets.Service.Provider.Order
                 {
                     return true;
                 }
+
+                #region 判断到底扣不扣钱
+
+                ETS.NoSql.RedisCache.RedisCache redisCache = new ETS.NoSql.RedisCache.RedisCache();
+                string orderKey = string.Format(RedissCacheKey.CheckOrderPay, orderOptionModel.OrderNo);
+                string CheckOrderPay = redisCache.Get<string>(orderKey);
+
+                #endregion
+
                 //如果订单状态是待接单|已接单|已完成+未上传完小票。则直接取消订单
                 using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                 {
                     result = OrderDao.CancelOrder(orderModel, orderOptionModel);
-                    if (result && orderModel.Status == 1 && orderModel.HadUploadCount == orderModel.NeedUploadCount)
+                    if (result && orderModel.Status == 1 && orderModel.HadUploadCount == orderModel.NeedUploadCount && CheckOrderPay == "1")
                     {
                         //需要上传的小票大于等于总数量+订单已完成则要扣钱
                         //(因为订单小票有可能不传。所以用的是订单数量和需要上传小票数量对比判断)
                         result = OrderDao.UpdateAccountBalanceByClienterId(orderModel, orderOptionModel);
                     }
-                    if (result && AsyncOrderStatus(orderModel.OrderNo))
+                    if (result)
                     {
-                        result = true;
                         tran.Complete();
                     }
+                }
+                if (result)
+                {
+                    AsyncOrderStatus(orderModel.OrderNo);
                 }
             }
             return result;
@@ -966,6 +998,10 @@ namespace Ets.Service.Provider.Order
             }
         }
 
+        public IList<OrderRecordsLog> GetOrderRecords(string originalOrderNo, int group)
+        {
+            return OrderDao.GetOrderRecords(originalOrderNo, group);
+        }
         /// <summary>
         /// 获取订单拒绝原因
         /// 平扬-20150424
@@ -974,6 +1010,32 @@ namespace Ets.Service.Provider.Order
         public string OtherOrderCancelReasons()
         {
             return ETS.Config.OrderCancelReasons;
+        }
+
+        public string CanOrder(string originalOrderNo, int group)
+        {
+            var order = OrderDao.GetOrderByOrderNoAndOrderFrom(originalOrderNo, group, 0);
+            //if (order.Status == OrderConst.ORDER_CANCEL)
+            //{
+            //    return "订单已经取消";
+            //}
+            if (order.Status == OrderConst.ORDER_NEW)
+            {
+                var k = OrderDao.CancelOrderStatus(order.OrderNo, ConstValues.ORDER_CANCEL, "第三方取消订单", null);
+                if (k > 0)
+                {
+                    return "1"; //取消成功
+                }
+                else
+                {
+                    return "取消失败";  //取消失败
+                }
+            }
+            else
+            {
+                return "订单已被抢无法取消";
+            }
+
         }
     }
 }

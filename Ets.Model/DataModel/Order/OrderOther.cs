@@ -17,5 +17,9 @@ namespace Ets.Model.DataModel.Order
         public int NeedUploadCount { get; set; }
         public string ReceiptPic { get; set; }
         public int HadUploadCount { get; set; }
+        /// <summary>
+        /// 订单创建时间
+        /// </summary>
+        public DateTime OrderCreateTime { get; set; }
     }
 }

@@ -534,6 +534,58 @@ namespace Ets.Dao.User
             return busi;
         }
 
+
+        /// <summary>
+        /// 根据商户id获取商户
+        /// </summary>
+        /// <param name="busiId"></param>
+        /// <returns></returns>
+        public BusListResultModel GetBusiness(int originalBusiId,int groupId)
+        {
+            BusListResultModel busi = new BusListResultModel();
+            string selSql = @" SELECT  
+         Id ,
+         Name ,
+         City ,
+         district ,
+         PhoneNo ,
+         PhoneNo2 ,
+         IDCard ,
+         [Address] ,
+         Landline ,
+         Longitude ,
+         Latitude ,
+         [Status] ,
+         InsertTime ,
+         districtId ,
+         CityId ,
+         GroupId , 
+         ProvinceCode ,
+         CityCode ,
+         AreaCode ,
+         Province ,
+         DistribSubsidy,
+         BusinessCommission ,
+         OriginalBusiId
+         FROM dbo.business WITH(NOLOCK) WHERE OriginalBusiId = @busiId AND GroupId=@groupId";
+
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@busiId", originalBusiId);
+
+            parm.AddWithValue("@GroupId", groupId);
+
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                busi = DataTableHelper.ConvertDataTableList<BusListResultModel>(dt)[0];
+                return busi;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         /// <summary>
         /// 更新审核状态
         /// danny-20150317
@@ -543,6 +595,7 @@ namespace Ets.Dao.User
         /// <returns></returns>
         public bool UpdateAuditStatus(int id, EnumStatusType enumStatusType)
         {
+            var juWangKeBusiAuditUrl = ConfigSettings.Instance.JuWangKeBusiAuditCallBack;
             bool reslut = false;
             try
             {
@@ -550,16 +603,29 @@ namespace Ets.Dao.User
                 if (enumStatusType == EnumStatusType.审核通过)
                 {
 
-                    sql = string.Format(" update business set Status={0} where id=@id ", ConstValues.BUSINESS_AUDITPASS);
+                    sql = string.Format(" update business set Status={0} where id=@id;", ConstValues.BUSINESS_AUDITPASS);
                 }
                 else if (enumStatusType == EnumStatusType.审核取消)
                 {
-                    sql = string.Format(" update business set Status={0} where id=@id ", ConstValues.BUSINESS_AUDITCANCEL);
+                    sql = string.Format(" update business set Status={0} where id=@id;", ConstValues.BUSINESS_AUDITCANCEL);
                 }
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
                 dbParameters.AddWithValue("id", id);
                 int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Write, sql, dbParameters);
-                if (i > 0) reslut = true;
+
+                if (i > 0)
+                {
+                    //调用第三方接口 ，聚网客商户审核通过后调用接口
+                    //这里不建议使用 1 数字，而是根据 配置文件中的 appkey来获取 groupid
+                    var busi = GetBusiness(id);
+                    if (busi.GroupId == 1 && busi.OriginalBusiId > 0 && enumStatusType == EnumStatusType.审核通过)
+                    {
+                      string str =  HTTPHelper.HttpPost(juWangKeBusiAuditUrl, "supplier_id=" + busi.OriginalBusiId);
+                    }
+                    
+                    //HTTPHelper.HttpPost()
+                    reslut = true;
+                }
             }
             catch (Exception ex)
             {
@@ -782,18 +848,18 @@ namespace Ets.Dao.User
         /// <param name="bid">原平台商户Id</param>
         /// <param name="groupid">集团id</param>
         /// <returns>商家信息</returns>
-        public bool CheckExistBusiness(int bid, int groupid)
+        public Business CheckExistBusiness(int bid, int groupid)
         {
-            string sql = @"select 1 from dbo.business where OriginalBusiId=@OriginalBusiId and GroupId=@GroupId";
+            string sql = @"select Id,Status from dbo.business where OriginalBusiId=@OriginalBusiId and GroupId=@GroupId";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OriginalBusiId", bid);
             parm.AddWithValue("@GroupId", groupid);
-            object i = DbHelper.ExecuteScalar(SuperMan_Read, sql, parm);
-            if (i != null)
+            DataTable  dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm); 
+            if (dt == null || dt.Rows.Count <= 0)
             {
-                return int.Parse(i.ToString()) > 0;
+                return null;
             }
-            return false;
+            return MapRows<Business>(dt)[0]; 
         }
 
         /// <summary>
@@ -805,9 +871,9 @@ namespace Ets.Dao.User
         /// <param name="orderFrom">订单来源</param>
         /// <param name="orderType">orderType</param>
         /// <returns>商家信息</returns 
-        public bool GetOrderByOrderNoAndOrderFrom(string orderNO, int orderFrom, int orderType)
+        public order GetOrderByOrderNoAndOrderFrom(string orderNO, int orderFrom, int orderType)
         {
-            string sql = @" select 1 from dbo.[order] with(nolock) where OriginalOrderNo=@OriginalOrderNo and OrderFrom=@OrderFrom ";
+            string sql = @" select Id OrderId,OrderNo,OriginalOrderNo,businessId from dbo.[order] with(nolock) where OriginalOrderNo=@OriginalOrderNo and OrderFrom=@OrderFrom ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OriginalOrderNo", orderNO);
             parm.AddWithValue("@OrderFrom", orderFrom);
@@ -816,12 +882,15 @@ namespace Ets.Dao.User
                 sql += " and OrderType=@OrderType ";
                 parm.AddWithValue("@OrderType", orderType);
             }
-            object i = DbHelper.ExecuteScalar(SuperMan_Read, sql, parm);
-            if (i != null)
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (dt != null)
             {
-                return int.Parse(i.ToString()) > 0;
+               return  MapRows<order>(dt)[0];
             }
-            return false;
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -831,7 +900,10 @@ namespace Ets.Dao.User
         /// <param name="orderStatus"></param>
         public bool UpdateOrder(string oriOrderNo, int orderFrom, OrderStatus orderStatus)
         {
-            string sql = "UPDATE dbo.[order] SET [Status]=@Status WHERE OriginalOrderNo=@OriginalOrderNo and OrderFrom=@OrderFrom ";
+            string sql = string.Format(@"UPDATE dbo.[order] SET [Status]=@Status 
+                            output Inserted.Id,GETDATE(),'{0}','{1}',Inserted.businessId,Inserted.[Status],{2}
+                            into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
+                            WHERE OriginalOrderNo=@OriginalOrderNo and OrderFrom=@OrderFrom ", SuperPlatform.商家,ConstValues.CancelOrder, (int)SuperPlatform.商家);
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OriginalOrderNo", oriOrderNo);
             parm.AddWithValue("@OrderFrom", orderFrom);
@@ -883,7 +955,7 @@ namespace Ets.Dao.User
                               @PhoneNo , -- PhoneNo - nvarchar(20)
                               @PhoneNo2 , -- PhoneNo2 - nvarchar(20)
                               @Password , -- Password - nvarchar(255)
-                              N'' , -- CheckPicUrl - nvarchar(255)
+                              @CheckPicUrl , -- CheckPicUrl - nvarchar(255)
                               @IDCard , -- IDCard - nvarchar(45)
                               @Address , -- Address - nvarchar(255)
                               N'' , -- Landline - nvarchar(15)
@@ -895,7 +967,7 @@ namespace Ets.Dao.User
                               @CityId , -- CityId - nvarchar(45)
                               @GroupId , -- GroupId - int
                               @OriginalBusiId , -- OriginalBusiId - int
-                              N'' , -- ProvinceCode - nvarchar(20)
+                              @ProvinceCode , -- ProvinceCode - nvarchar(20)
                               @CityCode , -- CityCode - nvarchar(20)
                               @AreaCode , -- AreaCode - nvarchar(20)
                               @Province , -- Province - nvarchar(20)
@@ -915,6 +987,9 @@ namespace Ets.Dao.User
             parm.SetValue("@PhoneNo2", model.PhoneNo2);
 
             parm.AddWithValue("@Password", model.Password);
+            parm.AddWithValue("@CheckPicUrl", model.CheckPicUrl);
+
+            
             parm.AddWithValue("@IDCard", model.IDCard);
             parm.AddWithValue("@Address", model.Address);
             parm.AddWithValue("@Longitude", model.Longitude);
@@ -928,6 +1003,7 @@ namespace Ets.Dao.User
             parm.AddWithValue("@AreaCode", model.AreaCode);
             parm.AddWithValue("@Province", model.Province);
             parm.AddWithValue("@CommissionTypeId", model.CommissionTypeId);
+            parm.AddWithValue("@ProvinceCode", model.ProvinceCode);
             parm.AddWithValue("@DistribSubsidy", model.DistribSubsidy);
             object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, parm);
             if (i != null)

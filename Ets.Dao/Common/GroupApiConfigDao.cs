@@ -27,7 +27,9 @@ namespace Ets.Dao.Common
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql));
             if (dt == null || dt.Rows.Count <= 0)
                 return null;
-            return MapRows<GroupApiConfig>(dt)[0];
+            var kk = MapRows<GroupApiConfig>(dt)[0];
+            kk.GroupId = groupId;
+            return kk;
         }
     }
 }
