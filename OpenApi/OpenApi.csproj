@@ -125,7 +125,6 @@
     <Folder Include="Models\" />
     <Folder Include="Views\Bussiness\" />
     <Folder Include="Views\MeiTuan\" />
-
     <Folder Include="Views\Order\" />
     <Folder Include="Views\Test\" />
   </ItemGroup>
@@ -176,6 +175,7 @@
     <Content Include="Areas\HelpPage\HelpPage.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\OpenRange.txt" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
