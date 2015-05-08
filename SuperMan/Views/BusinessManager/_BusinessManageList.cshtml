@@ -97,7 +97,7 @@
                 }
 
                     }
-                   
+
                     @{
                 var commissionTypeView = "";
                 if (item.CommissionType == 1)
@@ -134,7 +134,7 @@
                         }
                         @if (SuperMan.App_Start.UserContext.Current.HasAuthority(24))
                         {
-                            <a href="javascript:void(0)" onclick="funcComView(@item.Id,'@item.Name','@distribSubsidy','@item.PhoneNo','@commission',@item.CommissionType,@item.CommissionFixValue,@item.BusinessGroupId)">设置结算</a>
+                            <a  href="javascript:void(0)" onclick="funcComView(@item.Id,'@item.Name','@distribSubsidy','@item.PhoneNo','@commission',@item.CommissionType,@item.CommissionFixValue,@item.BusinessGroupId)">设置结算</a>
                         }
                         @if (SuperMan.App_Start.UserContext.Current.HasAuthority(24))
                         {
@@ -227,6 +227,36 @@
         if (businessCommission == null || businessCommission == "") {
             businessCommission = 0;
         }
+        var strreg="";
+        var paramaters = { "GroupId": businessGroupId };
+        var url = "/SubsidyFormulaMode/GlobalConfigInfo";
+        $.ajax({
+            type: 'POST',
+            async:false,
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                    strreg=result;
+            }
+        });
+
+        var isStarTimeSubsidies = strreg.split(",")[0];
+        var isStartOverStoreSubsidies = strreg.split(",")[1];
+        var subsidyConfig;
+        if (isStarTimeSubsidies == "1" || isStartOverStoreSubsidies == "1") {
+            if (isStartOverStoreSubsidies == "1") {
+                subsidyConfig = "全局补贴：跨店抢单奖励";
+            }
+            if (isStarTimeSubsidies == "1") {
+                if (subsidyConfig.length==0) {
+                    subsidyConfig = "全局补贴：动态时间奖励";
+                }
+                else {
+                    subsidyConfig = "全局补贴：跨店抢单奖励和动态时间奖励";
+                }
+            }
+            $('#labGlobalConfig').text(subsidyConfig);
+        }
         $('#busCommissionHid').val(id);
         $('#busCommissionName').val(name);
         $('#busCommissionWaiSong').val(distribSubsidy);
@@ -238,7 +268,7 @@
         $('#CommissionFixValue').val(commissionFixValue);
         $('#oldCommissionFixValue').val(commissionFixValue);
         $('#oldStrategyID').val(businessGroupId);
-        
+
         if (commissionType == 2) {
             $("#rCommissionFormulaMode1").attr("checked", "checked");
         }
@@ -247,7 +277,7 @@
         }
 
         if (businessGroupId > 0) {
-           
+
             $('#businessGroupID').val(businessGroupId);
         }
         else {
