@@ -55,17 +55,19 @@ namespace Ets.Dao.Statistics
         public IList<HomeCountTitleModel> GetSubsidyOrderCountStatistics()
         {
             string where = string.Empty;
-            //if (Config.ConfigKey("IsFirst") == null)
-            //{
-            where = " and CONVERT(CHAR(10),PubDate,120)=DATEADD(DAY,-1,CONVERT(CHAR(10),GETDATE(),120)) ";//统计昨天数据
-            //}
+            ////if (Config.ConfigKey("IsFirst") == null)
+            ////{
+            //where = "  ";//统计昨天数据
+            ////}
             string sql = @"SELECT CONVERT(CHAR(10),PubDate,120) AS PubDate, --发布时间
                                   sum(case when DealCount=0 then 1 else 0 end ) as ZeroSubsidyOrderCount,
                                   sum(case when DealCount=1 then 1 else 0 end ) as OneSubsidyOrderCount,
                                   sum(case when DealCount=2 then 1 else 0 end ) as TwoSubsidyOrderCount,
                                   sum(case when DealCount=3 then 1 else 0 end ) as ThreeSubsidyOrderCount
                            FROM [order](NOLOCK) AS o
-                           WHERE   o.[Status]<>3 " + where;
+                           WHERE   o.[Status]<>3 
+                            and CONVERT(CHAR(10),PubDate,120)=DATEADD(DAY,-1,CONVERT(CHAR(10),GETDATE(),120))
+                           ";
             sql += " GROUP BY CONVERT(CHAR(10),PubDate,120) ORDER BY PubDate ASC";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             return MapRows<HomeCountTitleModel>(dt);
@@ -80,7 +82,7 @@ namespace Ets.Dao.Statistics
         /// <returns></returns>
         public bool CheckDateStatistics(string Time)
         {
-            string sql = @"SELECT COUNT(1) FROM STATISTIC(nolock) WHERE CONVERT(CHAR(10),InsertTime,120)='" + Time + "'";
+            string sql = @"SELECT COUNT(1) FROM [STATISTIC](nolock) WHERE CONVERT(CHAR(10),InsertTime,120)='" + Time + "'";
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql), 0) > 0 ? true : false;
         }
 

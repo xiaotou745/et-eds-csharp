@@ -143,21 +143,31 @@ WHERE   sub.[Status] = 1 ");
         public IList<GrabOrderModel> GetBusinessCount()
         {
             string strSql = @"
-                        select 
-                        PubDate,
-                        (select AccountBalance from dbo.clienter(nolock) where Id=t.clienterId) AccountBalance,
-                        ClienterId,
-                        BusinessCount 
-                        from (
-                        select convert(char(10),o.PubDate,120) PubDate, clienterId, count(distinct businessId) businessCount
-                        from 
-                        dbo.[order](nolock) o 
-                        where 
-                        convert(char(10),o.PubDate,120)=convert(char(10),dateadd(day,-1,getdate()),120) 
-                        and o.[Status]=1  and clienterId not in 
-                        (SELECT ClienterId FROM dbo.CrossShopLog(nolock) where convert(char(10),o.PubDate,120)=convert(char(10),dateadd(day,-1,getdate()),120) )
-                        group by convert(char(10),o.PubDate,120), clienterId ) t 
-                        where businessCount>1";
+SELECT  PubDate ,
+        ( SELECT    AccountBalance
+          FROM      dbo.clienter(NOLOCK)
+          WHERE     Id = t.clienterId
+        ) AccountBalance ,
+        ClienterId ,
+        BusinessCount
+FROM    ( 
+
+		  SELECT    CONVERT(CHAR(10), o.PubDate, 120) PubDate ,clienterId ,COUNT(DISTINCT businessId) businessCount
+          FROM      dbo.[order] (NOLOCK) o
+          WHERE     o.PubDate between  CONVERT(CHAR(10), DATEADD(day,-1,GETDATE()),120)  and CONVERT(CHAR(10), GETDATE(),120)
+                    AND o.[Status] = 1
+                    AND not exists (
+                    
+                    SELECT  ClienterId
+                    FROM    dbo.CrossShopLog(NOLOCK) cs
+                    WHERE   RewardTime between CONVERT(CHAR(10),DATEADD(day,-1, GETDATE()), 120)  and CONVERT(CHAR(10),GETDATE(), 120)
+							and o.clienterId=cs.ClienterId
+                                                              
+                                                              )
+          GROUP BY  CONVERT(CHAR(10), o.PubDate, 120),clienterId
+        ) t
+WHERE   businessCount > 1
+";
             DataTable myTable = DbHelper.ExecuteDataTable(SuperMan_Read, strSql);
             return MapRows<GrabOrderModel>(myTable);
         }

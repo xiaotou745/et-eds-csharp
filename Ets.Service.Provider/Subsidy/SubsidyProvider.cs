@@ -74,7 +74,7 @@ namespace Ets.Service.Provider.Subsidy
 
             int MaxSubsidiesShop = SubsidiesList.Max(t => ParseHelper.ToInt(t.Value1));//最大数量
             double MaxSubsidiesPrice = ParseHelper.ToDouble(SubsidiesList.Where(t => ParseHelper.ToInt(t.Value1) == MaxSubsidiesShop).ToList()[0].Value2);//最大金额
-            
+
             foreach (GrabOrderModel item in list)
             {
                 //Ets.Model.DomainModel.Clienter.ClienterModel cliterModel = new ClienterDao().GetUserInfoByUserId(item.ClienterId);//获取当前用户余额
@@ -103,7 +103,7 @@ namespace Ets.Service.Provider.Subsidy
                     }
                     businessPrice = ParseHelper.ToDouble(tmpPrice[0].Value2);//当前金额
                 }
-                
+
                 withdraw.Amount = ParseHelper.ToDecimal(businessPrice, 0);
                 withdraw.Balance = ParseHelper.ToDecimal(item.AccountBalance, 0);
                 withdraw.Remark = string.Format("跨店抢单奖励{0}元", withdraw.Amount);
@@ -119,14 +119,18 @@ namespace Ets.Service.Provider.Subsidy
                     InsertTime = DateTime.Now
                 };
                 #endregion
-
+                ETS.Util.LogHelper.LogWriter("组装完成");
                 using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                 {
                     withdrawRecordsDao.AddRecords(withdraw);
+                    ETS.Util.LogHelper.LogWriter("新增提现记录完成");
                     clienterDao.UpdateClienterAccountBalance(withdraw);//更改用户金额
+                    ETS.Util.LogHelper.LogWriter("更改用户金额完成");
                     subsidyDao.InsertCrossShopLog(crossShopModel);
+                    ETS.Util.LogHelper.LogWriter("写跨店金额完成");
                     tran.Complete();
                 }
+                ETS.Util.LogHelper.LogWriter("事务完成");
             }
             return true;
         }
@@ -151,13 +155,13 @@ namespace Ets.Service.Provider.Subsidy
         public CrossShopListModel GetCrossShopListByCid(int uid)
         {
             IList<CrossShopModel> List = subsidyDao.GetCrossShopListByCid(uid);
-            CrossShopListModel mo=new CrossShopListModel
+            CrossShopListModel mo = new CrossShopListModel
             {
                 list = List,
                 ClienterModel = new ClienterDao().GetUserInfoByUserId(uid)
             };
             return mo;
         }
-        
+
     }
 }
