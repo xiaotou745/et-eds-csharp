@@ -1318,12 +1318,24 @@ where   1 = 1
         /// <returns></returns>
         public IList<OrderAutoAdjustModel> GetOverTimeOrder(string IntervalMinute)
         {
-            string sql = string.Format(@"select 
-                            Id,
-                            DealCount,
-                            DateDiff(MINUTE,PubDate, GetDate()) IntervalMinute
-                            from [order] with(nolock)
-                            where Status=0 AND DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
+            //            string sql = string.Format(@"select 
+            //                            Id,
+            //                            DealCount,
+            //                            DateDiff(MINUTE,PubDate, GetDate()) IntervalMinute
+            //                            from [order] with(nolock)
+            //                            where Status=0 AND DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
+            string sql = string.Format(@"
+SELECT 
+o.Id,
+DealCount,
+DateDiff(MINUTE,PubDate, GetDate()) IntervalMinute
+ from dbo.[order] o (nolock)
+join GlobalConfig gc (nolock) on o.BusinessGroupId = gc.GroupId
+where 
+gc.KeyName='IsStarTimeSubsidies' and 
+Value=1 and 
+Status=0 and 
+DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             return MapRows<OrderAutoAdjustModel>(dt);
         }
