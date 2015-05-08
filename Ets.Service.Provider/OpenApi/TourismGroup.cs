@@ -20,15 +20,15 @@ using System.Threading.Tasks;
 namespace Ets.Service.Provider.OpenApi
 {
     /// <summary>
-    /// 回家吃饭对接回调业务
+    /// 首旅对接回调业务
     /// 徐鹏程
-    /// 2015-04-23
+    /// 2015-05-04
     /// </summary>
-    public class HomeForDinnerGroup:IGroupProviderOpenApi
+    public class TourismGroup : IGroupProviderOpenApi
     {
-        public string app_key = ConfigSettings.Instance.HomeForDinnerAppkey;
-        public string app_secret = ConfigSettings.Instance.HomeForDinnerAppsecret;
-        public string asyncurl = ConfigSettings.Instance.HomeForDinnerAsyncStatus;
+        public string app_key = ConfigSettings.Instance.TourismAppkey;
+        public string app_secret = ConfigSettings.Instance.TourismAppsecret;
+        public string asyncurl = ConfigSettings.Instance.TourismAsyncStatus;
         /// <summary>
         /// 回调回家吃饭同步订单状态
         /// 徐鹏程
@@ -40,6 +40,7 @@ namespace Ets.Service.Provider.OpenApi
         {
 
             int status = 0; //第三方订单状态物流状态，1代表已发货，2代表已签收
+            LogHelper.LogWriter(System.DateTime.Now.ToString() + "回调-第三方订单状态:" + paramodel.fields.status);
             switch (paramodel.fields.status)
             {
                 case OrderConst.OrderStatus1:
@@ -65,17 +66,22 @@ namespace Ets.Service.Provider.OpenApi
             string strPostData = "app_key=" + app_key + "&sign=" + GetSign(ts) + "&updatetime=" + ts + "&order_id=" + paramodel.fields.OriginalOrderNo + "&status=" + status + "&dm_name=" + paramodel.fields.ClienterTrueName
                 + "&dm_mobile=" + paramodel.fields.ClienterPhoneNo;
             string json = HTTPHelper.HttpPost(url, strPostData);
+            LogHelper.LogWriter(System.DateTime.Now.ToString() + "回调-第三方url:" + url);
+            LogHelper.LogWriter(System.DateTime.Now.ToString() + "回调-第三方strPostData:" + strPostData);
             if (string.IsNullOrWhiteSpace(json))
-            {
+            {   
+                LogHelper.LogWriter(System.DateTime.Now.ToString() + "回调-结果:ParaError");
                 return OrderApiStatusType.ParaError;
             }
             else if (json == "null")
             {
+                LogHelper.LogWriter(System.DateTime.Now.ToString() + "回调-结果:SystemError");
                 return OrderApiStatusType.SystemError;
             }
             JObject jobject = JObject.Parse(json);
-            bool result = jobject.Value<bool>("state"); //接口调用状态 区分大小写
-            return result? OrderApiStatusType.Success : OrderApiStatusType.SystemError;
+            int result = jobject.Value<int>("status"); //接口调用状态 区分大小写
+            LogHelper.LogWriter(System.DateTime.Now.ToString() + "回调-结果:status=" + result);
+            return result == 1 ? OrderApiStatusType.Success : OrderApiStatusType.SystemError;
         }
 
         /// <summary>
@@ -88,7 +94,7 @@ namespace Ets.Service.Provider.OpenApi
         private string GetSign(string time)
         {
             string signStr = app_secret + "app_key" + app_key + "updatetime" + time + app_secret;
-            return ETS.Security.MD5.Encrypt(signStr);
+            return ETS.Security.MD5.DefaultEncrypt(signStr);
         }
         /// <summary>
         /// 新增商铺时根据集团id为店铺设置外送费，结算比例等财务相关信息

@@ -33,6 +33,11 @@ namespace ETS.Const
 
 
         #region //集团常量
+
+        /// <summary>
+        /// 聚网客
+        /// </summary>
+        public const int Group1 = 1;
         /// <summary>
         /// 万达集团
         /// </summary>
@@ -48,10 +53,13 @@ namespace ETS.Const
         public const int Group4 = 4;
 
         /// <summary>
-        /// 聚网客
+        /// 回家吃饭
         /// </summary>
-        public const int Group1 = 1;
-
+        public const int Group5 = 5;
+        /// <summary>
+        /// 首旅
+        /// </summary>
+        public const int Group6 = 6;
 
         #endregion
     }

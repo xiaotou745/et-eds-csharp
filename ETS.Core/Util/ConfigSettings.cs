@@ -289,8 +289,51 @@ namespace ETS.Util
         {
             get { return ConfigurationManager.AppSettings["MeiTuanPullOrderInfo"]; }
         }
-  
-        
+
+        /// <summary>
+        /// 回家吃饭appkey   徐鹏程
+        /// </summary>
+        public string HomeForDinnerAppkey
+        {
+            get { return ConfigurationManager.AppSettings["HomeForDinnerAppkey"]; }
+        }
+        /// <summary>
+        ///  回家吃饭app_secret 徐鹏程
+        /// </summary>
+        public string HomeForDinnerAppsecret
+        {
+            get { return ConfigurationManager.AppSettings["HomeForDinnerAppsecret"]; }
+        }
+
+        /// <summary>
+        ///  回家吃饭回调地址 徐鹏程
+        /// </summary>
+        public string HomeForDinnerAsyncStatus
+        {
+            get { return ConfigurationManager.AppSettings["HomeForDinnerAsyncStatus"]; }
+        }
+        /// <summary>
+        /// 首旅appkey 徐鹏程
+        /// </summary>
+        public string TourismAppkey
+        {
+            get { return ConfigurationManager.AppSettings["TourismAppkey"]; }
+        }
+        /// <summary>
+        ///  首旅app_secret 徐鹏程
+        /// </summary>
+        public string TourismAppsecret
+        {
+            get { return ConfigurationManager.AppSettings["TourismAppsecret"]; }
+        }
+
+        /// <summary>
+        ///  首旅回调地址 徐鹏程
+        /// </summary>
+        public string TourismAsyncStatus
+        {
+            get { return ConfigurationManager.AppSettings["TourismAsyncStatus"]; }
+        }
         #endregion
     }
 }
