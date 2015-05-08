@@ -72,30 +72,34 @@ namespace Ets.CrossShopService.BLL
                 {
                     try
                     {
-                        if (GlobalConfigDao.GlobalConfigGet.IsStartOverStoreSubsidies == "1")
-                        {
+                        //if (GlobalConfigDao.GlobalConfigGet.IsStartOverStoreSubsidies == "1")
+                        //{
 
-                            List<GlobalConfigSubsidies> MyList = GetSubsidies(GlobalConfigDao.GlobalConfigGet.OverStoreSubsidies);
+                            List<GlobalConfigSubsidies> MyList = GetSubsidies(GlobalConfigDao.GlobalConfigGet(0).OverStoreSubsidies);
                             if (MyList == null || MyList.Count <= 0)
                             {
-                                ETS.Util.Log.WriteTextToFile("global配置数据为空", GetLogFilePath(), true);
+                                //ETS.Util.Log.WriteTextToFile("global配置数据为空", GetLogFilePath(), true);
+                                ETS.Util.LogHelper.LogWriter("global配置数据为空" + DateTime.Now.ToString() + ":");
                                 continue;
                             }
                             SubsidyProvider CrossShop = new SubsidyProvider();
                             //调用抢单奖励机制主要方法
                             if (CrossShop.CrossShop(MyList))
                             {
-                                ETS.Util.Log.WriteTextToFile("跨店奖励计算成功" + DateTime.Now.ToString() + ":", GetLogFilePath(), true);
+                                ETS.Util.LogHelper.LogWriter("跨店奖励计算成功" + DateTime.Now.ToString() + ":");
+                                //ETS.Util.Log.WriteTextToFile("跨店奖励计算成功" + DateTime.Now.ToString() + ":", GetLogFilePath(), true);
                             }
-                        }
-                        else
-                        {
-                            ETS.Util.Log.WriteTextToFile("跨店补贴未开启", GetLogFilePath(), true);
-                        }
+                        //}
+                        //else
+                        //{
+                            //ETS.Util.LogHelper.LogWriter("跨店补贴未开启" + DateTime.Now.ToString() + ":");
+                            //ETS.Util.Log.WriteTextToFile("跨店补贴未开启", GetLogFilePath(), true);
+                        //}
                     }
                     catch (Exception ex)
                     {
-                        ETS.Util.Log.WriteTextToFile(ex.ToString(), GetLogFilePath(), true);
+                        ETS.Util.LogHelper.LogWriter(ex.ToString() + DateTime.Now.ToString() + ":");
+                        //ETS.Util.Log.WriteTextToFile(ex.ToString(), GetLogFilePath(), true);
                     }
                 }
                 Thread.Sleep(1000 * 60 * 60);
