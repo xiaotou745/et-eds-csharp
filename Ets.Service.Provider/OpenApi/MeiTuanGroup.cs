@@ -249,7 +249,7 @@ namespace Ets.Service.Provider.OpenApi
             #region 订单基础数据 
             CreatePM_OpenApi model = new CreatePM_OpenApi();
             model.order_id = fromModel.order_id; //订单ID
-            ///店铺信息
+            ///店铺信息  店铺是已经在E代送存在的，这里没有任何实际意义，数据用不到
             Store store = new Store();
             store.store_id = fromModel.app_poi_code;//对接方店铺id
             store.store_name = fromModel.wm_poi_name;//店铺名称
