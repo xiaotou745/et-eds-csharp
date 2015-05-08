@@ -34,6 +34,13 @@ namespace SuperMan.Controllers
             ViewBag.GloglConfig = new GlobalConfigProvider().GlobalConfigMethod(GroupId);
             return View(listprice);
         }
+        public ContentResult GlobalConfigInfo(int GroupId)
+        {
+            var IsStarTimeSubsidies = new GlobalConfigProvider().GlobalConfigMethod(GroupId).IsStarTimeSubsidies;
+            var IsStartOverStoreSubsidies = new GlobalConfigProvider().GlobalConfigMethod(GroupId).IsStartOverStoreSubsidies;
+            string strreg = IsStarTimeSubsidies + "," + IsStartOverStoreSubsidies;
+            return new ContentResult() { Content = strreg };
+        }
         /// <summary>
         /// 修改佣金策略
         /// danny-20150506
@@ -43,10 +50,15 @@ namespace SuperMan.Controllers
         public ActionResult ModifySubsidyFormulaMode(GlobalConfigModel globalConfigModel)
         {
             globalConfigModel.OptName = UserContext.Current.Name;
+            var businessGroupList = iBusinessGroupProvider.GetBusinessGroupList().ToList();
+            if(businessGroupList.Where(t => t.Name == globalConfigModel.GroupName).ToList().Count>0&&globalConfigModel.GroupId==0)
+            {
+                return Json(new ResultModel(false, "此分组名称已存在！"), JsonRequestBehavior.AllowGet);
+            }
             bool reg = iBusinessGroupProvider.ModifySubsidyFormulaMode(globalConfigModel);
             var redis = new ETS.NoSql.RedisCache.RedisCache();
 
-            return Json(new ResultModel(reg, string.Empty), JsonRequestBehavior.AllowGet);
+            return Json(new ResultModel(reg, reg?"保存成功！":"保存失败！"), JsonRequestBehavior.AllowGet);
         }
 
         #region 金额补贴设置
