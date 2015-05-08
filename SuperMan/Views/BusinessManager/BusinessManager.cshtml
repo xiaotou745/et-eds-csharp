@@ -184,6 +184,7 @@
                 <label for="rCommissionFormulaMode0">结算比例</label>
                 <input id="rCommissionFormulaMode1" name="rCommissionFormulaMode" type="radio" value="2" style="margin-left:30px">
                 <label for="rCommissionFormulaMode1">固定金额</label>
+                <input type="hidden" id="oldCommissionType" name="oldCommissionType">
             </div>
             <div class="control-group">
                 <div id="divbusCommissionText">
@@ -200,25 +201,6 @@
             <div class="control-group">
                 <label style="font-size:15px">补贴策略设置(应付)</label>
             </div>
-            @*@if (Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet(0).IsStarTimeSubsidies == "1" || Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet(0).IsStartOverStoreSubsidies == "1")
-            {
-                string subsidyConfig = "";
-                if (Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet(0).IsStartOverStoreSubsidies == "1")
-                {
-                    subsidyConfig += "跨店抢单奖励";
-                }
-                if (Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet(0).IsStarTimeSubsidies == "1")
-                {
-                    if (string.IsNullOrWhiteSpace(subsidyConfig))
-                    {
-                        subsidyConfig += "动态时间奖励";
-                    }
-                    else
-                    {
-                        subsidyConfig += "和动态时间奖励";
-                    }
-
-                }*@
                 <div class="control-group" style="margin-left:30px">
                     <label id="labGlobalConfig"></label>
                 </div>
@@ -304,6 +286,7 @@
         var oldStrategyID = $("#oldStrategyID").val();
         var commissionType = $('input[name="rCommissionFormulaMode"]:checked').val();;
         var oldBusCommissionWaiSong = $("#oldBusCommissionWaiSong").val();
+        var oldCommissionType = $('#oldCommissionType').val();
         if (isNaN(busCommissionText)) {
             alert("请输入正确的数字!");
             return;
@@ -322,7 +305,7 @@
             return;
         }
 
-        if (busCommissionText == oldBusCommissionText && busCommissionWaiSong == oldBusCommissionWaiSong && commissionFixValue == oldCommissionFixValue && strategyID == oldStrategyID) {
+        if (busCommissionText == oldBusCommissionText && busCommissionWaiSong == oldBusCommissionWaiSong && commissionFixValue == oldCommissionFixValue && strategyID == oldStrategyID && oldCommissionType ==commissionType) {
             alert("没有需要修改的信息!");
             return;
         }
