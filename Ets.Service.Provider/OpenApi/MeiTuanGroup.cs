@@ -254,7 +254,7 @@ namespace Ets.Service.Provider.OpenApi
             store.store_id = fromModel.app_poi_code;//对接方店铺id
             store.store_name = fromModel.wm_poi_name;//店铺名称
             store.address = fromModel.wm_poi_address;//店铺地址
-            store.phone = fromModel.wm_poi_address;//店铺电话
+            store.phone = fromModel.wm_poi_phone;//店铺电话
          
             model.remark = fromModel.caution;//备注
             model.status = OrderConst.OrderStatus30;//初始化订单状态 第三方代接入
@@ -301,7 +301,7 @@ namespace Ets.Service.Provider.OpenApi
             Address address = new Address();
             address.address = fromModel.recipient_address;//用户收货地址
             address.user_phone = fromModel.recipient_phone;//用户联系电话
-            address.user_name = fromModel.recipient_phone;//用户姓名
+            address.user_name = fromModel.recipient_name;//用户姓名
             address.longitude = fromModel.longitude; //经度
             address.latitude = fromModel.latitude; //纬度
             address.city_code = business.CityId; //市
