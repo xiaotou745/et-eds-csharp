@@ -53,6 +53,10 @@ namespace Ets.Service.Provider.Order
             #region 有需要调整佣金的订单
             foreach (string item in globalConfigList)
             {
+                if (string.IsNullOrEmpty(item))
+                {
+                    continue;
+                }
                 int tempIntervalMinute = Convert.ToInt32(item.Split(',')[0]);
                 decimal adjustAmount = Convert.ToDecimal(item.Split(',')[1]);
                 int dealCount = ETS.Util.ParseHelper.ToInt(item.Split(',')[2], 1);//执行次数
