@@ -559,10 +559,11 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, ConstValues.OrderH
                         select temp.[date],temp.businessCount,count(temp.clienterId) cCount
                         from 
                         (
-	                        select convert(char(10), PubDate, 120) 'date', o.clienterId,count(distinct o.businessId) 'businessCount'
-	                        from dbo.[order] o(nolock)
-	                        where o.PubDate>getdate()-20 and o.Status =1
-	                        group by convert(char(10), PubDate, 120), o.clienterId
+	                       select convert(char(10), PubDate, 120) 'date', o.clienterId,count(distinct o.businessId) 'businessCount'
+                            from dbo.[order] o(nolock)
+                            join dbo.GlobalConfig gc(nolock) on o.BusinessGroupId=gc.GroupId
+                            where o.PubDate>getdate()-20 and o.Status =1 and gc.KeyName='IsStartOverStoreSubsidies' and gc.Value=1
+                            group by convert(char(10), PubDate, 120), o.clienterId
                         ) as temp
                         group by temp.[date],temp.businessCount
                         )

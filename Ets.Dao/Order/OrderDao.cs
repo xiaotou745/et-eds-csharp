@@ -1326,15 +1326,15 @@ where   1 = 1
             //                            where Status=0 AND DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
             string sql = string.Format(@"
 SELECT 
-o.Id,
+distinct(o.Id), --因为本地会有多条数据，所以加了一个distinct，线上应该不会存在这个问题
 DealCount,
 DateDiff(MINUTE,PubDate, GetDate()) IntervalMinute
  from dbo.[order] o (nolock)
 join GlobalConfig gc (nolock) on o.BusinessGroupId = gc.GroupId
 where 
 gc.KeyName='IsStarTimeSubsidies' and 
-Value=1 and 
-Status=0 and 
+gc.Value=1 and 
+o.Status=0 and 
 DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             return MapRows<OrderAutoAdjustModel>(dt);
