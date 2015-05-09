@@ -12,22 +12,14 @@ namespace SuperMan.Controllers
 {
     public class BusinessWithdrawController : Controller
     {
-        Ets.Service.IProvider.Distribution.IDistributionProvider iDistributionProvider = new DistributionProvider();
-        Ets.Service.IProvider.Order.IOrderProvider iOrderProvider = new OrderProvider();
         IAreaProvider iAreaProvider = new AreaProvider();
         // GET: BusinessWithdraw
         public ActionResult BusinessWithdraw()
         {
-            ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
-            var superManModel = iDistributionProvider.GetClienterModelByGroupID(ViewBag.txtGroupId);
-            if (superManModel != null)
-            {
-                ViewBag.superManModel = superManModel;
-            }
-            var criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria() { orderStatus = -1, GroupId = SuperMan.App_Start.UserContext.Current.GroupId };
-            var pagedList = iOrderProvider.GetOrders(criteria);
-            return View(pagedList);
+            var criteria = new Ets.Model.ParameterModel.Finance.BusinessWithdrawSearchCriteria() {WithdrawStatus=0};
+            //var pagedList = iOrderProvider.GetOrders(criteria);
+            return View();
         }
     }
 }

@@ -55,12 +55,15 @@
     <Compile Include="Common\TestUserModel.cs" />
     <Compile Include="DataModel\Bussiness\BusinessOptionLog.cs" />
     <Compile Include="DataModel\Clienter\ClienterCrossShopLogModel.cs" />
+    <Compile Include="DataModel\Finance\BusinessFinanceAccount.cs" />
+    <Compile Include="DataModel\Finance\BusinessWithdrawForm.cs" />
     <Compile Include="DataModel\Finance\ClienterBalanceRecord.cs" />
     <Compile Include="DataModel\Order\OrderDetailModel.cs" />
     <Compile Include="DataModel\Subsidy\CrossShopModel.cs" />
     <Compile Include="DataModel\Order\OrderOther.cs" />
     <Compile Include="DataModel\Order\OrderSubsidiesLog.cs" />
     <Compile Include="DomainModel\Area\DMAreaCodeInfo.cs" />
+    <Compile Include="DomainModel\Finance\BusinessWithdrawFormModel.cs" />
     <Compile Include="DomainModel\Subsidy\ShortMessageModel.cs" />
     <Compile Include="DomainModel\Subsidy\GrabOrderModel.cs" />
     <Compile Include="ParameterModel\Area\ParaAreaNameInfo.cs" />
@@ -153,6 +156,7 @@
     <Compile Include="ParameterModel\Common\OpenCitySearchCriteria.cs" />
     <Compile Include="ParameterModel\Clienter\UploadReceiptModel.cs" />
     <Compile Include="ParameterModel\Clienter\UploadReceiptResultModel.cs" />
+    <Compile Include="ParameterModel\Finance\BusinessWithdrawSearchCriteria.cs" />
     <Compile Include="ParameterModel\Group\GroupListModel.cs" />
     <Compile Include="ParameterModel\Group\GroupParaModel.cs" />
     <Compile Include="ParameterModel\Order\ChangeStatusPM_OpenApi.cs" />
@@ -177,10 +181,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserModel.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DomainModel\Finance\" />
-    <Folder Include="ParameterModel\Finance\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\ETS.Core\ETS.Core.csproj">
       <Project>{bba67a86-afd6-46f2-bbd9-5dfb5bfdafe2}</Project>
