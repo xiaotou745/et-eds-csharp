@@ -71,6 +71,7 @@
     <Compile Include="Common\HomeCountProvider.cs" />
     <Compile Include="Common\ServicePhone.cs" />
     <Compile Include="Common\TestUserProvider.cs" />
+    <Compile Include="Finance\ClienterBalanceRecordProvider.cs" />
     <Compile Include="OpenApi\HomeForDinnerGroup.cs" />
     <Compile Include="OpenApi\JuWangKeGroup.cs" />
     <Compile Include="OpenApi\MeiTuanGroup.cs" />
@@ -121,9 +122,7 @@
   <ItemGroup>
     <None Include="app.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Finance\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
