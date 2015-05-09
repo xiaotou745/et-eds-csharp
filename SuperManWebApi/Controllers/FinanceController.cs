@@ -19,9 +19,10 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="withdrawCpm">参数实体</param>
         /// <returns></returns>
+        [HttpPost]
         public SimpleResultModel WithdrawC(WithdrawCPM withdrawCpm)
         {
-            return null;
+            return _clienterFinanceProvider.WithdrawC(withdrawCpm);
         }
 
     }

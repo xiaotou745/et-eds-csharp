@@ -9,6 +9,7 @@ using ETS.Data.Core;
 using ETS.Extension;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.ParameterModel.Finance;
+using ETS.Util;
 
 namespace Ets.Dao.Finance
 {
@@ -34,21 +35,16 @@ namespace Ets.Dao.Finance
         public long Insert(ClienterWithdrawLog clienterWithdrawLog)
         {
             const string insertSql = @"
-insert into ClienterWithdrawLog(WithwardId,Status,Remark,Operator,OperatTime)
-values(@WithwardId,@Status,@Remark,@Operator,@OperatTime)
+insert into ClienterWithdrawLog(WithwardId,Status,Remark,Operator)
+values(@WithwardId,@Status,@Remark,@Operator)
 select @@IDENTITY";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("WithwardId", clienterWithdrawLog.WithwardId); //提现单ID
             dbParameters.AddWithValue("Status", clienterWithdrawLog.Status);  //操作后状态
             dbParameters.AddWithValue("Remark", clienterWithdrawLog.Remark); //备注
             dbParameters.AddWithValue("Operator", clienterWithdrawLog.Operator);  //操作人
-            dbParameters.AddWithValue("OperatTime", clienterWithdrawLog.OperatTime);  //操作时间
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);
-            if (result == null)
-            {
-                return 0;
-            }
-            return long.Parse(result.ToString());
+            return ParseHelper.ToLong(result);
         }
 
         /// <summary>
