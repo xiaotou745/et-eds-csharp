@@ -57,6 +57,7 @@
     <Compile Include="OpenApi\IGroupProviderOpenApi.cs" />
     <Compile Include="OpenApi\IPullOrderInfoOpenApi.cs" />
     <Compile Include="Order\IAutoAdjustProvider.cs" />
+    <Compile Include="Order\IOrderChildProvider.cs" />
     <Compile Include="Order\IOrderProvider.cs" />
     <Compile Include="Clienter\IClienterProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

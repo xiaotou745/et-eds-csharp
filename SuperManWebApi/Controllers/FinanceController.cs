@@ -6,14 +6,11 @@ using System.Net.Http;
 using System.Web.Http;
 using Ets.Model.Common;
 using Ets.Model.ParameterModel.Finance;
-using Ets.Service.IProvider.Finance;
-using Ets.Service.Provider.Finance;
 
 namespace SuperManWebApi.Controllers
 {
     public class FinanceController : ApiController
     {
-        private readonly IClienterFinanceProvider _clienterFinanceProvider = new ClienterFinanceProvider();
         /// <summary>
         /// 骑士提现功能 add by caoheyang 20150509
         /// </summary>
