@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Ets.Model.DataModel.Finance
 {
     /// <summary>
-    /// 实体类ClienterBalanceRecordDTO 。(属性说明自动提取数据库字段的描述信息)
+    ///  骑士余额流水表 实体类ClienterBalanceRecordDTO 。(属性说明自动提取数据库字段的描述信息)
     /// Generate By: tools.etaoshi.com
     /// Generate Time: 2015-05-09 14:59:36
     /// </summary>

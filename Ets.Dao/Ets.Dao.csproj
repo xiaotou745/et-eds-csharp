@@ -50,6 +50,8 @@
     <Compile Include="Common\ServicePhoneDao.cs" />
     <Compile Include="Common\TestUserDao.cs" />
     <Compile Include="DaoBase.cs" />
+    <Compile Include="Finance\BusinessFinanceDao.cs" />
+    <Compile Include="Finance\ClienterBalanceRecordDao.cs" />
     <Compile Include="GlobalConfig\GlobalConfigDao.cs" />
     <Compile Include="MenuSet\AuthoritySetDao.cs" />
     <Compile Include="Distribution\DistributionDao.cs" />
@@ -76,9 +78,7 @@
       <Name>Ets.Model</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Finance\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

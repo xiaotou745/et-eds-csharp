@@ -58,6 +58,9 @@
     <Compile Include="DataModel\Finance\BusinessFinanceAccount.cs" />
     <Compile Include="DataModel\Finance\BusinessWithdrawForm.cs" />
     <Compile Include="DataModel\Finance\ClienterBalanceRecord.cs" />
+    <Compile Include="DataModel\Finance\ClienterFinanceAccount.cs" />
+    <Compile Include="DataModel\Finance\ClienterWithdrawForm.cs" />
+    <Compile Include="DataModel\Finance\ClienterWithdrawLog.cs" />
     <Compile Include="DataModel\Order\OrderDetailModel.cs" />
     <Compile Include="DataModel\Subsidy\CrossShopModel.cs" />
     <Compile Include="DataModel\Order\OrderOther.cs" />
@@ -156,6 +159,7 @@
     <Compile Include="ParameterModel\Common\OpenCitySearchCriteria.cs" />
     <Compile Include="ParameterModel\Clienter\UploadReceiptModel.cs" />
     <Compile Include="ParameterModel\Clienter\UploadReceiptResultModel.cs" />
+    <Compile Include="ParameterModel\Finance\ClienterBalanceRecordPM.cs" />
     <Compile Include="ParameterModel\Finance\BusinessWithdrawSearchCriteria.cs" />
     <Compile Include="ParameterModel\Group\GroupListModel.cs" />
     <Compile Include="ParameterModel\Group\GroupParaModel.cs" />
@@ -182,6 +186,9 @@
     <Compile Include="UserModel.cs" />
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="DomainModel\Finance\" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ETS.Core\ETS.Core.csproj">
       <Project>{bba67a86-afd6-46f2-bbd9-5dfb5bfdafe2}</Project>

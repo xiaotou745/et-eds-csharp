@@ -48,6 +48,8 @@
     <Compile Include="Common\IHomeCountProvider.cs" />
     <Compile Include="Common\IServicePhone.cs" />
     <Compile Include="Distribution\IDistributionProvider.cs" />
+    <Compile Include="Finance\IBusinessFinanceProvider.cs" />
+    <Compile Include="Finance\IClienterBalanceRecordProvider.cs" />
     <Compile Include="OpenApi\IGroupProviderOpenApi.cs" />
     <Compile Include="OpenApi\IPullOrderInfoOpenApi.cs" />
     <Compile Include="Order\IAutoAdjustProvider.cs" />
@@ -76,7 +78,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Bussiness\" />
-    <Folder Include="Finance\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

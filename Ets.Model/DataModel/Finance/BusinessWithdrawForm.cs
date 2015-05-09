@@ -34,7 +34,7 @@ namespace Ets.Model.DataModel.Finance
 		/// <summary>
 		/// 提现状态(1待审核 2 审核通过 3打款完成 -1审核拒绝 -2 打款失败)
 		/// </summary>
-		public int? Status { get; set; }
+		public int Status { get; set; }
 		/// <summary>
 		/// 提现金额
 		/// </summary>

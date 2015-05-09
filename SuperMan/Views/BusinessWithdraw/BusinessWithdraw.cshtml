@@ -1,6 +1,4 @@
-﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Order.OrderListModel>
-@using Ets.Model
-@using Ets.Service.Provider.User
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Finance.BusinessWithdrawFormModel>
 @{
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
 }
@@ -40,7 +38,7 @@
                 <tr>
                     <td>
                         <span class="">提款单号: </span>
-                        <input id="businessWithwardNo" type="text" name="businessWithwardNo" />
+                        <input id="withwardNo" type="text" name="withwardNo" />
                         <span class="">申请提款日期: </span>
                         <input id="withdrawDateStart" readonly="readonly" type="text" name="withdrawDateStart" />
                         <span class="">到: </span>
