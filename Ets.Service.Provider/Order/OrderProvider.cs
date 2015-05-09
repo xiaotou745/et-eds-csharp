@@ -35,6 +35,7 @@ using Ets.Service.Provider.Common;
 using ETS.Const;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.IProvider.OpenApi;
+using Ets.Model.ParameterModel.Bussiness;
 
 namespace Ets.Service.Provider.Order
 {
@@ -284,12 +285,12 @@ namespace Ets.Service.Provider.Order
             to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
             to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
             to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
-
             to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
             to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额
-
             to.Status = ConstValues.ORDER_NEW;
-            return to;
+
+            to.listOrderChild = busiOrderInfoModel.listOrderChlid;           
+           return to;
         }
 
         /// <summary>

@@ -63,5 +63,13 @@ namespace Ets.Model.ParameterModel.Bussiness
         /// </summary>
         public string OrderSign { get; set; }
 
+        public List<OrderChlidModel> listOrderChlid { get; set; }
+
+    }
+
+    public class OrderChlidModel
+    {
+        public int ChildId { get; set; }
+        public decimal GoodPrice { get; set; }  
     }
 }

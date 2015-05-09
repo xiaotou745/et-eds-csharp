@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ets.Model.ParameterModel.Bussiness;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -91,5 +92,8 @@ namespace Ets.Model.DataModel.Order
         /// 已经上传的小票数量
         /// </summary>
         public int HadUploadCount { get; set; }
+
+        public string TimeSpan { get; set; }
+        public List<OrderChlidModel> listOrderChild { get; set; }
     }
 }

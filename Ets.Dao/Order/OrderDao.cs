@@ -209,6 +209,9 @@ namespace Ets.Dao.Order
 
         public int AddOrder(Model.DataModel.Order.order order)
         {
+            //判断TimeSpan
+            //string strSql = "select COUNT(1) from dbo.[order] where TimeSpan="+order.TimeSpan;
+
             StringBuilder insertOrder = new StringBuilder();
 
             insertOrder.AppendFormat(@"INSERT INTO dbo.[order]
