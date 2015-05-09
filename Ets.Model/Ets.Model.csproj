@@ -56,6 +56,9 @@
     <Compile Include="DataModel\Bussiness\BusinessOptionLog.cs" />
     <Compile Include="DataModel\Clienter\ClienterCrossShopLogModel.cs" />
     <Compile Include="DataModel\Finance\ClienterBalanceRecord.cs" />
+    <Compile Include="DataModel\Finance\ClienterFinanceAccount.cs" />
+    <Compile Include="DataModel\Finance\ClienterWithdrawForm.cs" />
+    <Compile Include="DataModel\Finance\ClienterWithdrawLog.cs" />
     <Compile Include="DataModel\Order\OrderDetailModel.cs" />
     <Compile Include="DataModel\Subsidy\CrossShopModel.cs" />
     <Compile Include="DataModel\Order\OrderOther.cs" />
