@@ -171,6 +171,7 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\BusinessCommissionController.cs" />
     <Compile Include="Controllers\BusinessStatisticalController.cs" />
+    <Compile Include="Controllers\BusinessWithdrawController.cs" />
     <Compile Include="Controllers\CommonController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AuthorityManagerController.cs" />
@@ -542,6 +543,9 @@
     <Content Include="Views\SubsidyFormulaMode\OverStoreSubsidies.cshtml" />
     <Content Include="Views\AdminTools\PostRedisTools.cshtml" />
     <Content Include="Views\SuperManManager\CrossShopLog.cshtml" />
+    <Content Include="Views\BusinessWithdraw\BusinessWithdraw.cshtml" />
+    <Content Include="Views\BusinessWithdraw\_BusinessWithdrawList.cshtml" />
+    <Content Include="Views\BusinessManager\BusinessWithdrawDetail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
