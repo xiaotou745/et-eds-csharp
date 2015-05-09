@@ -10,11 +10,11 @@ using Ets.Service.IProvider.Finance;
 
 namespace Ets.Service.Provider.Finance
 {
-   /// <summary>
-	///骑士余额流水表 Service类ClienterBalanceRecordService 的摘要说明。
-	/// Generate By: tools.etaoshi.com
-	/// Generate Time: 2015-05-09 14:59:36
-	/// </summary>
+    /// <summary>
+    ///  骑士余额流水表 业务逻辑类ClienterBalanceRecordProvider 的摘要说明。
+    /// Generate By: tools.etaoshi.com
+    /// Generate Time: 2015-05-09 14:59:36
+    /// </summary>
 
     public class ClienterBalanceRecordProvider:IClienterBalanceRecordProvider
     {

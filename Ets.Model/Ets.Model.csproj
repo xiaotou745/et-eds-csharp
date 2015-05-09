@@ -160,6 +160,9 @@
     <Compile Include="ParameterModel\Clienter\UploadReceiptModel.cs" />
     <Compile Include="ParameterModel\Clienter\UploadReceiptResultModel.cs" />
     <Compile Include="ParameterModel\Finance\ClienterBalanceRecordPM.cs" />
+    <Compile Include="ParameterModel\Finance\ClienterFinanceAccountPM.cs" />
+    <Compile Include="ParameterModel\Finance\ClienterWithdrawFormPM.cs" />
+    <Compile Include="ParameterModel\Finance\ClienterWithdrawLogPM.cs" />
     <Compile Include="ParameterModel\Finance\BusinessWithdrawSearchCriteria.cs" />
     <Compile Include="ParameterModel\Group\GroupListModel.cs" />
     <Compile Include="ParameterModel\Group\GroupParaModel.cs" />

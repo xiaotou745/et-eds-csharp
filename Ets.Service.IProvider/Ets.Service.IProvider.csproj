@@ -50,6 +50,9 @@
     <Compile Include="Distribution\IDistributionProvider.cs" />
     <Compile Include="Finance\IBusinessFinanceProvider.cs" />
     <Compile Include="Finance\IClienterBalanceRecordProvider.cs" />
+    <Compile Include="Finance\IClienterFinanceAccountProvider.cs" />
+    <Compile Include="Finance\IClienterWithdrawFormProvider.cs" />
+    <Compile Include="Finance\IClienterWithdrawLogProvider.cs" />
     <Compile Include="OpenApi\IGroupProviderOpenApi.cs" />
     <Compile Include="OpenApi\IPullOrderInfoOpenApi.cs" />
     <Compile Include="Order\IAutoAdjustProvider.cs" />

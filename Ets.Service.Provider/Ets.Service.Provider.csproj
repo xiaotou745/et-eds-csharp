@@ -73,6 +73,9 @@
     <Compile Include="Common\TestUserProvider.cs" />
     <Compile Include="Finance\BusinessFinanceProvider.cs" />
     <Compile Include="Finance\ClienterBalanceRecordProvider.cs" />
+    <Compile Include="Finance\ClienterWithdrawFormProvider.cs" />
+    <Compile Include="Finance\ClienterWithdrawLogProvider.cs" />
+    <Compile Include="Finance\ClienterFinanceAccountProvider.cs" />
     <Compile Include="OpenApi\HomeForDinnerGroup.cs" />
     <Compile Include="OpenApi\JuWangKeGroup.cs" />
     <Compile Include="OpenApi\MeiTuanGroup.cs" />
