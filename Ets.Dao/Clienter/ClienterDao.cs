@@ -925,5 +925,28 @@ where   o.Id = @OrderId";
                 return null;
             }
         }
+
+       /// <summary>
+        /// 根据ID获取对象
+       /// </summary>
+       /// <param name="id">id</param>
+       /// <returns></returns>
+        public clienter GetById(int id)
+        {
+            clienter model=null;
+            const string querysql = @"
+select  Id,PhoneNo,LoginName,recommendPhone,Password,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode,AreaCode,CityCode,Province,BussinessID,WorkStatus,AllowWithdrawPrice,HasWithdrawPrice
+from  clienter (nolock)
+where  Id=@Id ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("Id", id);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                model = DataTableHelper.ConvertDataTableList<clienter>(dt)[0];
+            }
+           return model;
+        }
+
     }
 }
