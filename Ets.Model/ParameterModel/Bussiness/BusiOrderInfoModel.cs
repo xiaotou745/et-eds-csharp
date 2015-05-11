@@ -9,7 +9,7 @@ namespace Ets.Model.ParameterModel.Bussiness
     /// <summary>
     /// B端发布订单所需数据
     /// </summary>
-    public class BusiOrderInfoModel
+    public class BussinessOrderInfoModel
     {
         /// <summary>
         /// 当前发布者

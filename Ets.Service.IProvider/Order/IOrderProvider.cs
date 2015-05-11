@@ -38,7 +38,7 @@ namespace Ets.Service.IProvider.Order
         /// </summary>
         /// <param name="busiOrderInfoModel"></param>
         /// <returns></returns>
-        order TranslateOrder(BusiOrderInfoModel busiOrderInfoModel);
+        order TranslateOrder(BussinessOrderInfoModel busiOrderInfoModel);
 
         /// <summary>
         /// 添加一条订单记录

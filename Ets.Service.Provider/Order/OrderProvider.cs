@@ -237,7 +237,7 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <param name="busiOrderInfoModel"></param>
         /// <returns></returns>
-        public order TranslateOrder(Model.ParameterModel.Bussiness.BusiOrderInfoModel busiOrderInfoModel)
+        public order TranslateOrder(Model.ParameterModel.Bussiness.BussinessOrderInfoModel busiOrderInfoModel)
         {
             order to = new order();
             to.OrderNo = Helper.generateOrderCode(busiOrderInfoModel.userId);  //根据userId生成订单号(15位)
@@ -251,6 +251,8 @@ namespace Ets.Service.Provider.Order
                 to.ReceviceCity = business.City; //城市
                 to.DistribSubsidy = business.DistribSubsidy;//设置外送费,从商户中找。
                 to.BusinessCommission = ParseHelper.ToDecimal(business.BusinessCommission);//商户结算比例
+                to.BusinessName = business.Name;
+               
             }
             if (ConfigSettings.Instance.IsGroupPush)
             {
