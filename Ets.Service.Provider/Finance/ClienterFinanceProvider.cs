@@ -124,12 +124,17 @@ namespace Ets.Service.Provider.Finance
 
         #region 骑士金融账号绑定/修改
         /// <summary>
-        /// 骑士绑定银行卡功能 add by caoheyang 20150511
+        /// 骑士绑定银行卡功能 add by caoheyang 20150511 
+        /// TODO 统一加密算法 目前只支付网银
         /// </summary>
         /// <param name="cardBindCpm">参数实体</param>
         /// <returns></returns>
         public SimpleResultModel CardBindC(CardBindCPM cardBindCpm)
         {
+            if (cardBindCpm.AccountNo != cardBindCpm.AccountNo2) //两次录入的金融账号不一致
+            {
+                return SimpleResultModel.Conclude(FinanceCardBindC.InputValid);
+            }
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 int count = _clienterFinanceAccountDao.GetCountByClienterId(cardBindCpm.ClienterId);
@@ -141,10 +146,10 @@ namespace Ets.Service.Provider.Finance
                 {
                     ClienterId = cardBindCpm.ClienterId,//骑士ID
                     TrueName = cardBindCpm.TrueName, //户名
-                    AccountNo = DES.Encrypt(cardBindCpm.AccountNo), //卡号(DES加密)  TODO 统一加密算法
+                    AccountNo = DES.Encrypt(cardBindCpm.AccountNo), //卡号(DES加密)  
                     IsEnable = true,// 是否有效(true：有效 0：无效）  新增时true 
                     AccountType = cardBindCpm.AccountType == 0
-                        ? (int)ClienterFinanceAccountType.WangYin : cardBindCpm.AccountType,  //账号类型 TODO 目前只支付网银
+                        ? (int)ClienterFinanceAccountType.WangYin : cardBindCpm.AccountType,  //账号类型 
                     OpenBank = cardBindCpm.OpenBank, //开户行
                     OpenSubBank = cardBindCpm.OpenSubBank, //开户支行
                     CreateBy = cardBindCpm.CreateBy,//创建人  当前登录人
@@ -157,12 +162,31 @@ namespace Ets.Service.Provider.Finance
 
 
         /// <summary>
-        /// 骑士修改绑定银行卡功能 add by caoheyang 20150511
+        /// 骑士修改绑定银行卡功能 add by caoheyang 20150511  TODO 统一加密算法
         /// </summary>
         /// <param name="cardModifyCpm">参数实体</param>
         /// <returns></returns>
         public SimpleResultModel CardModifyC(CardModifyCPM cardModifyCpm)
         {
+            if (cardModifyCpm.AccountNo != cardModifyCpm.AccountNo2) //两次录入的金融账号不一致
+            {
+                return SimpleResultModel.Conclude(FinanceCardBindC.InputValid);
+            }
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                _clienterFinanceAccountDao.Update(new ClienterFinanceAccount()
+                {
+                    Id=cardModifyCpm.Id,
+                    ClienterId = cardModifyCpm.ClienterId,//骑士ID
+                    TrueName = cardModifyCpm.TrueName, //户名
+                    AccountNo = DES.Encrypt(cardModifyCpm.AccountNo), //卡号(DES加密) 
+                    OpenBank = cardModifyCpm.OpenBank, //开户行
+                    OpenSubBank = cardModifyCpm.OpenSubBank, //开户支行
+                    UpdateBy = cardModifyCpm.UpdateBy//新增时最后修改人与新增人一致  当前登录人
+                });
+                tran.Complete();
+                return SimpleResultModel.Conclude(SystemEnum.Success);
+            }
             return null;
         } 
         #endregion

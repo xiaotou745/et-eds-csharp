@@ -12,8 +12,45 @@ namespace Ets.Model.ParameterModel.Finance
     public class CardModifyCPM
     {
         /// <summary>
-        /// 骑士id
+        /// Id
+        /// </summary>
+        public int Id { get; set; }
+
+        /// <summary>
+        /// 骑士ID
         /// </summary>
         public int ClienterId { get; set; }
+
+        /// <summary>
+        /// 户名
+        /// </summary>
+        public string TrueName { get; set; }
+         
+        /// <summary>
+        /// 卡号(需要DES加密)
+        /// </summary>
+        public string AccountNo { get; set; } 
+
+        /// <summary>
+        /// 第二次录入卡号(需要DES加密)
+        /// </summary>
+        public string AccountNo2 { get; set; }
+
+
+        /// <summary>
+        /// 开户行
+        /// </summary>
+        public string OpenBank { get; set; }
+
+        /// <summary>
+        /// 开户支行
+        /// </summary>
+        public string OpenSubBank { get; set; }
+
+        /// <summary>
+        /// 最后更新人
+        /// </summary>
+        public string UpdateBy { get; set; }
+
     }
 }

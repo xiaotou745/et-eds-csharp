@@ -59,19 +59,16 @@ select @@IDENTITY";
         {
             const string updateSql = @"
 update  ClienterFinanceAccount
-set  TrueName=@TrueName,AccountNo=@AccountNo,IsEnable=@IsEnable,AccountType=@AccountType,OpenBank=@OpenBank,
-OpenSubBank=@OpenSubBank,UpdateBy=@UpdateBy,UpdateTime=@UpdateTime
+set  TrueName=@TrueName,AccountNo=@AccountNo,OpenBank=@OpenBank,
+OpenSubBank=@OpenSubBank,UpdateBy=@UpdateBy
 where  Id=@Id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Id", clienterFinanceAccount.Id);
             dbParameters.AddWithValue("TrueName", clienterFinanceAccount.TrueName);
             dbParameters.AddWithValue("AccountNo", clienterFinanceAccount.AccountNo);
-            dbParameters.AddWithValue("IsEnable", clienterFinanceAccount.IsEnable);
-            dbParameters.AddWithValue("AccountType", clienterFinanceAccount.AccountType);
             dbParameters.AddWithValue("OpenBank", clienterFinanceAccount.OpenBank);
             dbParameters.AddWithValue("OpenSubBank", clienterFinanceAccount.OpenSubBank);
             dbParameters.AddWithValue("UpdateBy", clienterFinanceAccount.UpdateBy);
-            dbParameters.AddWithValue("UpdateTime", clienterFinanceAccount.UpdateTime);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 

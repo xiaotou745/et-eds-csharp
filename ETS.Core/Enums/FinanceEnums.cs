@@ -29,6 +29,8 @@ namespace ETS.Enums
     {
         [DisplayText("该骑士已绑定过金融账号")]
         Exists = 1,
+        [DisplayText("两次录入的金融账号不一致")]
+        InputValid= 2,
     }
 
     /// <summary>
