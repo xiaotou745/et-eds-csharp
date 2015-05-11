@@ -38,9 +38,9 @@ namespace Ets.Dao.Finance
         {
             const string insertSql = @"
 insert into BusinessBalanceRecord
-(BusinessId,Amount,Status,Balance,RecordType,Operator,RelationNo,Remark)
+(BusinessId,Amount,Status,Balance,RecordType,Operator,WithwardId,RelationNo,Remark)
 values
-(@BusinessId,@Amount,@Status,@Balance,@RecordType,@Operator,@RelationNo,@Remark)
+(@BusinessId,@Amount,@Status,@Balance,@RecordType,@Operator,@WithwardId,@RelationNo,@Remark)
 select @@IDENTITY";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("BusinessId", businessBalanceRecord.BusinessId);//商户id
@@ -49,6 +49,7 @@ select @@IDENTITY";
             dbParameters.AddWithValue("Balance", businessBalanceRecord.Balance); //交易后余额
             dbParameters.AddWithValue("RecordType", businessBalanceRecord.RecordType); //交易类型(1佣金 2奖励 3提现 4取消订单赔偿 5无效订单扣款)
             dbParameters.AddWithValue("Operator", businessBalanceRecord.Operator); //操作人 
+            dbParameters.AddWithValue("WithwardId", businessBalanceRecord.WithwardId); //关联ID
             dbParameters.AddWithValue("RelationNo", businessBalanceRecord.RelationNo); //关联单号
             dbParameters.AddWithValue("Remark", businessBalanceRecord.Remark); //描述
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);

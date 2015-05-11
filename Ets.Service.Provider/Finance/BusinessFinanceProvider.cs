@@ -2,6 +2,8 @@
 using Ets.Dao.User;
 using ETS.Enums;
 using Ets.Model.Common;
+using Ets.Model.DataModel.Bussiness;
+using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;
@@ -58,6 +60,7 @@ namespace Ets.Service.Provider.Finance
         }
 
         #region  商户提现功能  add by caoheyang 20150511
+
         /// <summary>
         /// 商户提现功能 add by caoheyang 20150511
         /// </summary>
@@ -65,8 +68,105 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public SimpleResultModel WithdrawB(WithdrawBPM withdrawBpm)
         {
-            return null;
-        } 
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                Business business = new Business();
+                var businessFinanceAccount = new BusinessFinanceAccount();//商户金融账号信息
+                Tuple<bool, FinanceWithdrawB> checkbool = CheckWithdrawB(withdrawBpm, ref business, ref businessFinanceAccount);
+                if (checkbool.Item1 != true)  //验证失败 此次提款操作无效 直接返回相关错误信息
+                {
+                    return SimpleResultModel.Conclude(checkbool.Item2);
+                }
+                else
+                {
+                    _businessDao.UpdateForWithdrawC(withdrawBpm); //更新商户表的余额，可提现余额
+                    string withwardNo = "1";
+                    #region 商户提现
+                    long withwardId = _businessWithdrawFormDao.Insert(new BusinessWithdrawForm()
+                    {
+                        WithwardNo = withwardNo,//单号 规则待定
+                        BusinessId = withdrawBpm.BusinessId,//商户Id
+                        BalancePrice = business.BalancePrice,//提现前商户余额
+                        AllowWithdrawPrice = business.AllowWithdrawPrice,//提现前商户可提现金额
+                        Status = (int)BusinessWithdrawFormStatus.WaitAllow,//待审核
+                        Amount = withdrawBpm.WithdrawPrice,//提现金额
+                        Balance = business.BalancePrice - withdrawBpm.WithdrawPrice, //提现后余额
+                        TrueName = businessFinanceAccount.TrueName,//商户收款户名
+                        AccountNo = businessFinanceAccount.AccountNo, //卡号(DES加密)
+                        AccountType = businessFinanceAccount.AccountType, //账号类型：
+                        OpenBank = businessFinanceAccount.OpenBank,//开户行
+                        OpenSubBank = businessFinanceAccount.OpenSubBank //开户支行
+                    });
+                    #endregion
+
+                    #region 商户余额流水操作 更新骑士表的余额，可提现余额
+                    _businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
+                    {
+                        BusinessId = withdrawBpm.BusinessId,//商户Id
+                        Amount = -withdrawBpm.WithdrawPrice,//流水金额
+                        Status = (int)BusinessBalanceRecordStatus.Tradeing, //流水状态(1、交易成功 2、交易中）
+                        Balance = business.BalancePrice - withdrawBpm.WithdrawPrice, //交易后余额
+                        RecordType = (int)BusinessBalanceRecordRecordType.Withdraw,
+                        Operator = business.Name,
+                        WithwardId = withwardId,
+                        RelationNo = withwardNo,
+                        Remark = "商户提现"
+                    });
+                    #endregion
+
+                    #region 商户提现记录
+
+                    _businessWithdrawLogDao.Insert(new BusinessWithdrawLog()
+                    {
+                        WithwardId = withwardId,
+                        Status = (int)BusinessWithdrawFormStatus.WaitAllow,//待审核
+                        Remark = "商户发起提现操作",
+                        Operator = business.Name,
+                    }); //更新商户表的余额，可提现余额 
+                    #endregion
+                    tran.Complete();
+                }
+                return SimpleResultModel.Conclude(FinanceWithdrawB.Success); ;
+            }
+        }
+
+        /// <summary>
+        /// 商户提现功能检查数据合法性，判断是否满足提现要求 add by caoheyang 20150511
+        /// </summary>
+        /// <param name="withdrawBpm">参数实体</param>
+        /// <param name="business">商户</param>
+        /// <param name="businessFinanceAccount">骑士金融账号信息</param>
+        /// <returns></returns>
+        private Tuple<bool, FinanceWithdrawB> CheckWithdrawB(WithdrawBPM withdrawBpm, ref Business business,
+            ref  BusinessFinanceAccount businessFinanceAccount)
+        {
+            if (withdrawBpm.WithdrawPrice <= 0)   //提现金额小于等于0 提现有误
+            {
+                return new Tuple<bool, FinanceWithdrawB>(false, FinanceWithdrawB.WithdrawMoneyError);
+            }
+            business = _businessDao.GetById(withdrawBpm.BusinessId);//获取商户信息
+            if (business == null || business.Status == null
+                || business.Status != ConstValues.BUSINESS_AUDITPASS)  //商户状态为非 审核通过不允许 提现
+            {
+                return new Tuple<bool, FinanceWithdrawB>(false, FinanceWithdrawB.BusinessError);
+            }
+            else if (business.AllowWithdrawPrice < withdrawBpm.WithdrawPrice)//可提现金额小于提现金额，提现失败
+            {
+                return new Tuple<bool, FinanceWithdrawB>(false, FinanceWithdrawB.MoneyError);
+            }
+            var businessFinanceAccounts = _businessFinanceAccountDao.GetByBusinessId(withdrawBpm.BusinessId);//获取商户金融账号信息
+            if (businessFinanceAccounts.Count <= 0)
+            {
+                return new Tuple<bool, FinanceWithdrawB>(false, FinanceWithdrawB.FinanceAccountError);
+            }
+            else
+            {
+                businessFinanceAccount = businessFinanceAccounts[0];
+            }
+
+            return new Tuple<bool, FinanceWithdrawB>(true, FinanceWithdrawB.Success);
+        }
+
         #endregion
 
         #region  商户金融账号绑定/修改

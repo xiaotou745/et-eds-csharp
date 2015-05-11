@@ -20,7 +20,9 @@ namespace ETS.Enums
         [DisplayText("骑士不存在,或当前骑士状态不允许提现")]
         ClienterError = 2,
         [DisplayText("骑士金融账号出现问题")]
-        FinanceAccountError = 3
+        FinanceAccountError = 3,
+        [DisplayText("提现金额大于可提现金额")]
+        MoneyError = 4
     }
     /// <summary>
     /// 骑士绑定金融账号涉及到的各种返回状态枚举 add by caoheyang 20150509
@@ -114,10 +116,12 @@ namespace ETS.Enums
         Success = 0,
         [DisplayText("商户金额录入有误")]
         WithdrawMoneyError = 1,
-        [DisplayText("商户不存在,或当前骑士状态不允许提现")]
-        ClienterError = 2,
+        [DisplayText("商户不存在,或当前商户状态不允许提现")]
+        BusinessError = 2,
         [DisplayText("商户金融账号出现问题")]
-        FinanceAccountError = 3
+        FinanceAccountError = 3,
+        [DisplayText("提现金额大于可提现金额")]
+        MoneyError = 4
     }
     /// <summary>
     /// 商户绑定金融账号涉及到的各种返回状态枚举 add by caoheyang 20150509

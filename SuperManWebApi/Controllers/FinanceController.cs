@@ -70,7 +70,7 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public SimpleResultModel WithdrawB(WithdrawBPM withdrawBpm)
         {
-            return null;
+            return _iBusinessFinanceProvider.WithdrawB(withdrawBpm);
         }
 
         /// <summary>

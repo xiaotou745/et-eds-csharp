@@ -88,6 +88,7 @@ namespace Ets.Service.Provider.Finance
                                 Balance = clienter.AccountBalance - withdrawCpm.WithdrawPrice, //交易后余额
                                 RecordType = (int)ClienterBalanceRecordRecordType.Withdraw,
                                 Operator = clienter.TrueName,
+                                WithwardId = withwardId,
                                 RelationNo = withwardNo,
                                 Remark = "骑士提现"
                             });
@@ -125,11 +126,14 @@ namespace Ets.Service.Provider.Finance
             }
             clienter = _clienterDao.GetById(withdrawCpm.ClienterId);//获取超人信息
             if (clienter == null || clienter.Status == null
-                || clienter.Status != ConstValues.CLIENTER_AUDITPASS  //骑士状态为非 审核通过不允许 提现
-                || clienter.AllowWithdrawPrice < withdrawCpm.WithdrawPrice //可提现金额小于提现金额，提现失败
-                )
+                || clienter.Status != ConstValues.CLIENTER_AUDITPASS)  //骑士状态为非 审核通过不允许 提现
+             
             {
                 return new Tuple<bool, FinanceWithdrawC>(false, FinanceWithdrawC.ClienterError);
+            }
+            else if (clienter.AllowWithdrawPrice < withdrawCpm.WithdrawPrice) //可提现金额小于提现金额，提现失败
+            {
+                return new Tuple<bool, FinanceWithdrawC>(false, FinanceWithdrawC.MoneyError);
             }
             var clienterFinanceAccounts = _clienterFinanceAccountDao.GetByClienterId(withdrawCpm.ClienterId);//获取超人金融账号信息
             if (clienterFinanceAccounts.Count <= 0)
