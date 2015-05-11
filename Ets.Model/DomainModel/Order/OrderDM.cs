@@ -209,8 +209,14 @@ namespace Ets.Model.DomainModel.Order
         /// </summary>
         public string TimeSpan { get; set; }
 
-
+        /// <summary>
+        /// 子订单集合
+        /// </summary>
         public List<OrderChild> listOrderChild { get; set; }
+
+        /// <summary>
+        /// 订单明细集合
+        /// </summary>
         public List<OrderDetail> listOrderDetail { get; set; }        
     }
 
