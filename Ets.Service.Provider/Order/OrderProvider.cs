@@ -1019,5 +1019,10 @@ namespace Ets.Service.Provider.Order
             }
 
         }
+
+        public OrderDM GetDetails(int id)
+        {
+            return OrderDao.GetDetails(id);
+        }
     }
 }

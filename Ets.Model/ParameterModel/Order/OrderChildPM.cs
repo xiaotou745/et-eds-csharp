@@ -7,9 +7,17 @@ using System.Threading.Tasks;
 namespace Ets.Model.ParameterModel.Order
 {
     /// <summary>
-    /// 订单明细表 查询实体类 
+    /// 订单 查询实体类 
     /// </summary>
-    public class OrderChildPM
+    public class OrderPM
     {
+        /// <summary>
+        /// 订单ID
+        /// </summary>
+        public int OrderId { get; set; }
+        /// <summary>
+        /// 订单号
+        /// </summary>
+        public string Version { get; set; }
     }
 }

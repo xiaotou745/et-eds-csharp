@@ -22,6 +22,7 @@ using Ets.Model.Common;
 using ETS.Enums;
 using Ets.Model.ParameterModel.Bussiness;
 using Ets.Model.ParameterModel.Order;
+using Ets.Model.DomainModel.Order;
 namespace SuperManWebApi.Controllers
 {
     public class OrderController : ApiController
@@ -29,9 +30,9 @@ namespace SuperManWebApi.Controllers
         IOrderProvider iOrderProvider = new OrderProvider();
         IBusinessProvider iBusinessProvider = new BusinessProvider();
         /// <summary>
-        /// 商户发布订单接口        
+        /// 商户发布订单        
         /// </summary>
-        /// <param name="model">订单数据</param>
+        /// <param name="model">订单实体</param>
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
         [HttpPost]
@@ -66,9 +67,21 @@ namespace SuperManWebApi.Controllers
             }
             Ets.Model.ParameterModel.Order.BusiOrderResultModel resultModel = new Ets.Model.ParameterModel.Order.BusiOrderResultModel { userId = model.userId };
             return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
-
         }
 
+        /// <summary>
+        /// 订单详情        
+        /// </summary>
+        /// <param name="model">订单参数</param>
+        /// <returns></returns>        
+        [HttpGet]
+        public ResultModel<OrderDM> GetDetails(OrderPM model)
+        {
+            //加验证
+
+            OrderDM orderDM= iOrderProvider.GetDetails(model.OrderId);
+            return Ets.Model.Common.ResultModel<OrderDM>.Conclude(GetOrdersStatus.Success, orderDM);          
+        }
 
     }
 }

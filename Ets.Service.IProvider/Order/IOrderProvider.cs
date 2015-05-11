@@ -173,5 +173,7 @@ namespace Ets.Service.IProvider.Order
         /// <param name="paramodel">参数</param>
         /// <returns></returns>
         ResultModel<object> UpdateOrderStatus_Other(ChangeStatusPM_OpenApi paramodel);
+
+        OrderDM GetDetails(int id);
     }
 }
