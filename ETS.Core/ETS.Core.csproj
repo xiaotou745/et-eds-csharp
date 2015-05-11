@@ -102,6 +102,7 @@
     <Compile Include="Enums\CustomerRegisterStatusEnum.cs" />
     <Compile Include="Enums\FinanceEnums.cs" />
     <Compile Include="Enums\SuperPlatform.cs" />
+    <Compile Include="Enums\SystemEnum.cs" />
     <Compile Include="Enums\UserLoginResults.cs" />
     <Compile Include="Expand\ActionStatusAttribute.cs" />
     <Compile Include="Const\OrderConst.cs" />
@@ -175,6 +176,7 @@
     <Compile Include="Util\TranslatorBase.cs" />
     <Compile Include="Util\ValidationHelper.cs" />
     <Compile Include="Util\XmlHelper.cs" />
+    <Compile Include="Util\XmlParser.cs" />
     <Compile Include="Validator\CommonValidator.cs" />
   </ItemGroup>
   <ItemGroup>

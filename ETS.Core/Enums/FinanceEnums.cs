@@ -17,10 +17,32 @@ namespace ETS.Enums
         [DisplayText("提现金额录入有误")]
         WithdrawMoneyError = 1,
         [DisplayText("骑士不存在,或当前骑士状态不允许提现")]
-        ClienterError = 2
+        ClienterError = 2,
+        [DisplayText("骑士金融账号出现问题")]
+        FinanceAccountError = 3
     }
 
 
+
+    /// <summary>
+    /// 骑士绑定金融账号涉及到的各种返回状态枚举 add by caoheyang 20150509
+    /// </summary>
+    public enum FinanceCardBindC
+    {
+        [DisplayText("该骑士已绑定过金融账号")]
+        Exists = 1,
+        [DisplayText("两次录入的金融账号不一致")]
+        InputValid= 2,
+    }
+
+    /// <summary>
+    /// 骑士编辑绑定金融账号涉及到的各种返回状态枚举 add by caoheyang 20150509
+    /// </summary>
+    public enum FinanceCardCardModifyC
+    {
+        [DisplayText("两次录入的金融账号不一致")]
+        InputValid = 2,
+    }
     /// <summary>
     ///骑士余额流水   流水状态(1、交易成功 2、交易中）枚举 add by caoheyang 20150509
     /// </summary>
@@ -65,4 +87,23 @@ namespace ETS.Enums
         [DisplayText("打款失败")]
         Error = -2
     }
+
+    /// <summary>
+    ///骑士金融账号 账号类型：(1网银 2支付宝 3微信 4财付通 5百度钱包）枚举 add by caoheyang 20150511
+    /// </summary>
+    public enum ClienterFinanceAccountType
+    {
+        [DisplayText("网银")]
+        WangYin = 1,
+        [DisplayText("支付宝")]
+        ZhiFuBao = 2,
+        [DisplayText("微信")]
+        WeiXin = 3,
+        [DisplayText("财付通")]
+        CaiFuTong = 4,
+        [DisplayText("百度钱包")]
+        BaiDuQinBao = 5
+    }
+
+
 }

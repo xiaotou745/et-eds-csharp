@@ -1,4 +1,5 @@
-﻿using Ets.Model.DataModel.Finance;
+﻿using Ets.Model.Common;
+using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 using ETS.Data.PageData;
@@ -19,6 +20,28 @@ namespace Ets.Service.IProvider.Finance
         /// <param name="criteria"></param>
         /// <returns></returns>
         PageInfo<BusinessWithdrawFormModel> GetBusinessWithdrawList(BusinessWithdrawSearchCriteria criteria);
+
+        /// <summary>
+        /// 商户提现功能 add by caoheyang 20150509
+        /// </summary>
+        /// <param name="withdrawBpm">参数实体</param>
+        /// <returns></returns>
+        SimpleResultModel WithdrawB(WithdrawBPM withdrawBpm);
+
+        /// <summary>
+        /// 商户绑定银行卡功能 add by caoheyang 20150511
+        /// </summary>
+        /// <param name="cardBindBpm">参数实体</param>
+        /// <returns></returns>
+        SimpleResultModel CardBindB(CardBindBPM cardBindBpm);
+
+
+        /// <summary>
+        /// 商户修改绑定银行卡功能 add by caoheyang 20150511
+        /// </summary>
+        /// <param name="cardModifyBpm">参数实体</param>
+        /// <returns></returns>
+        SimpleResultModel CardModifyB(CardModifyBPM cardModifyBpm);
         /// <summary>
         /// 根据申请单Id获取商家提现申请单
         /// danny-20150511
