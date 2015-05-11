@@ -310,4 +310,12 @@ namespace ETS.Enums
         [DisplayText("获取用户状态失败")]
         Error
     }
+
+    public enum AliPayStatus
+    {
+        [DisplayText("成功")]
+        success = 0,
+        [DisplayText("失败")]
+        fail = 1
+    }
 }
