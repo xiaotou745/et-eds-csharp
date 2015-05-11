@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\AliPay\NotifyResultModel.cs" />
+    <Compile Include="Common\AliPay\PayResultModel.cs" />
     <Compile Include="Common\ApiVersionStatisticModel.cs" />
     <Compile Include="Common\BusinessCountManageList.cs" />
     <Compile Include="Common\ClienterCountManageList.cs" />
@@ -74,6 +76,8 @@
     <Compile Include="DomainModel\Finance\BusinessWithdrawLogModel.cs" />
     <Compile Include="DomainModel\Subsidy\ShortMessageModel.cs" />
     <Compile Include="DomainModel\Subsidy\GrabOrderModel.cs" />
+    <Compile Include="ParameterModel\AliPay\NotifyModel.cs" />
+    <Compile Include="ParameterModel\AliPay\PayModel.cs" />
     <Compile Include="ParameterModel\Area\ParaAreaNameInfo.cs" />
     <Compile Include="Common\ParaModel.cs" />
     <Compile Include="Common\ResultModelServicePhone.cs" />

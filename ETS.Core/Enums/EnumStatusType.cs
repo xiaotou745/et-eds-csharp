@@ -325,4 +325,12 @@ namespace ETS.Enums
         [DisplayText("失败")]
         Failed = 102 
     }
+
+   public enum AliPayStatus
+    {
+        [DisplayText("成功")]
+        success = 0,
+        [DisplayText("失败")]
+        fail = 1
+    }
 }
