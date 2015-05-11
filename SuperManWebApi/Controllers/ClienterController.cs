@@ -3,8 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 using Ets.Model.Common;
+using Ets.Model.DataModel.Finance;
+using Ets.Service.IProvider.Finance;
+using Ets.Service.Provider.Finance;
+using ETS.Util;
 
 namespace SuperManWebApi.Controllers
 {
@@ -13,13 +18,16 @@ namespace SuperManWebApi.Controllers
     /// </summary>
     public class ClienterController : ApiController
     {
+        IClienterFinanceProvider _iClienterFinanceProvider=new ClienterFinanceProvider();
         /// <summary>
         /// 骑士交易流水API
         /// </summary>
         /// <returns></returns>
-        public ResultModel Records()
+       [HttpPost]
+        public IList<ClienterBalanceRecord> Records()
         {
-            return null;
+            int clineterId = ParseHelper.ToInt(HttpContext.Current.Request.Form["clineterId"]);
+            return _iClienterFinanceProvider.GetRecords(clineterId);
         }
     }
 }

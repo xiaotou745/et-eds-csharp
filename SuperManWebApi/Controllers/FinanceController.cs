@@ -70,7 +70,7 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public SimpleResultModel WithdrawB(WithdrawBPM withdrawBpm)
         {
-            return null;
+            return _iBusinessFinanceProvider.WithdrawB(withdrawBpm);
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public SimpleResultModel CardBindB(CardBindBPM cardBindBpm)
         {
-            return null;
+            return _iBusinessFinanceProvider.CardBindB(cardBindBpm);
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public SimpleResultModel CardModifyB(CardModifyBPM cardModifyBpm)
         {
-            return null;
+            return _iBusinessFinanceProvider.CardModifyB(cardModifyBpm);
         }
 
         #endregion
