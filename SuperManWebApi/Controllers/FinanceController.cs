@@ -17,9 +17,14 @@ namespace SuperManWebApi.Controllers
     [ExecuteTimeLog]
     public class FinanceController : ApiController
     {
+        #region 声明对象
+        private readonly IClienterFinanceProvider _clienterFinanceProvider = new ClienterFinanceProvider();
+        private readonly IBusinessFinanceProvider _iBusinessFinanceProvider = new BusinessFinanceProvider();
+        
+        #endregion
 
         #region C端
-        private readonly IClienterFinanceProvider _clienterFinanceProvider = new ClienterFinanceProvider();
+
         /// <summary>
         /// 骑士提现功能 add by caoheyang 20150509
         /// </summary>
@@ -55,5 +60,41 @@ namespace SuperManWebApi.Controllers
 
         #endregion
 
+        #region B端
+
+        /// <summary>
+        /// 商户提现功能 add by caoheyang 20150509
+        /// </summary>
+        /// <param name="withdrawBpm">参数实体</param>
+        /// <returns></returns>
+        [HttpPost]
+        public SimpleResultModel WithdrawB(WithdrawBPM withdrawBpm)
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// 商户绑定银行卡功能 add by caoheyang 20150511
+        /// </summary>
+        /// <param name="cardBindBpm">参数实体</param>
+        /// <returns></returns>
+        [HttpPost]
+        public SimpleResultModel CardBindB(CardBindBPM cardBindBpm)
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// 商户修改绑定银行卡功能 add by caoheyang 20150511
+        /// </summary>
+        /// <param name="cardModifyBpm">参数实体</param>
+        /// <returns></returns>
+        [HttpPost]
+        public SimpleResultModel CardModifyB(CardModifyBPM cardModifyBpm)
+        {
+            return null;
+        }
+
+        #endregion
     }
 }

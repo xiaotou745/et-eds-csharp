@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 namespace Ets.Model.ParameterModel.Finance
 {
     /// <summary>
-    /// 骑士绑定银行卡功能 参数实体 add by caoheyang 20150511
+    /// 商户绑定银行卡功能 参数实体 add by caoheyang 20150511
     /// </summary>
-    public class CardBindCPM
+    public class CardBindBPM
     {
         /// <summary>
-        /// 骑士ID
+        /// 商家ID
         /// </summary>
-        public int ClienterId { get; set; }
+        public int BusinessId { get; set; }
         /// <summary>
         /// 户名
         /// </summary>

@@ -220,7 +220,9 @@
     <Compile Include="Controllers\BankController.cs" />
     <Compile Include="Controllers\BusinessAPIController.cs" />
     <Compile Include="Controllers\ClienterAPIController.cs" />
+    <Compile Include="Controllers\ClienterController.cs" />
     <Compile Include="Controllers\CommonController.cs" />
+    <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\FinanceController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
@@ -402,7 +404,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>False</AutoAssignPort>
           <DevelopmentServerPort>9263</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

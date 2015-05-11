@@ -59,19 +59,16 @@ select @@IDENTITY";
         {
             const string updateSql = @"
 update  ClienterFinanceAccount
-set  TrueName=@TrueName,AccountNo=@AccountNo,IsEnable=@IsEnable,AccountType=@AccountType,OpenBank=@OpenBank,
-OpenSubBank=@OpenSubBank,UpdateBy=@UpdateBy,UpdateTime=@UpdateTime
+set  TrueName=@TrueName,AccountNo=@AccountNo,OpenBank=@OpenBank,
+OpenSubBank=@OpenSubBank,UpdateBy=@UpdateBy
 where  Id=@Id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Id", clienterFinanceAccount.Id);
             dbParameters.AddWithValue("TrueName", clienterFinanceAccount.TrueName);
             dbParameters.AddWithValue("AccountNo", clienterFinanceAccount.AccountNo);
-            dbParameters.AddWithValue("IsEnable", clienterFinanceAccount.IsEnable);
-            dbParameters.AddWithValue("AccountType", clienterFinanceAccount.AccountType);
             dbParameters.AddWithValue("OpenBank", clienterFinanceAccount.OpenBank);
             dbParameters.AddWithValue("OpenSubBank", clienterFinanceAccount.OpenSubBank);
             dbParameters.AddWithValue("UpdateBy", clienterFinanceAccount.UpdateBy);
-            dbParameters.AddWithValue("UpdateTime", clienterFinanceAccount.UpdateTime);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
@@ -135,7 +132,7 @@ where  Id=@Id ";
             const string querysql = @"
 select  Id,ClienterId,TrueName,AccountNo,IsEnable,AccountType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
 from  ClienterFinanceAccount  
-where  ClienterId=@ClienterId and IsEnable=0";  //事物内不加锁
+where  ClienterId=@ClienterId and IsEnable=1";  //事物内不加锁
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("ClienterId", clienterId);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
