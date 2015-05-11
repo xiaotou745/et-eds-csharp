@@ -234,7 +234,7 @@ values(@OrderNo,@PickUpAddress,@PubDate,@ReceviceName,@RecevicePhoneNo,@Recevice
 @ReceviceLatitude,@OrderCount,@CommissionRate,@CommissionFormulaMode,@SongCanDate,@Weight1,@Quantity1,@ReceiveProvince,
 @ReceiveProvinceCode,@ReceiveCityCode,@ReceiveArea,@ReceiveAreaCode,@OriginalOrderNo,@BusinessCommission,@SettleMoney,@Adjustment,@TimeSpan);
 
-select @@IDENTITY", SuperPlatform.商家, ConstValues.PublishOrder, (int)SuperPlatform.商家);
+select IDENT_CURRENT('order')", SuperPlatform.商家, ConstValues.PublishOrder, (int)SuperPlatform.商家);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();          
             dbParameters.AddWithValue("@OrderNo", order.OrderNo);
@@ -1643,7 +1643,7 @@ ReceviceLongitude,ReceviceLatitude,OrderFrom,OriginalOrderId,OriginalOrderNo,Qua
 ReceiveArea,ReceiveProvinceCode,ReceiveCityCode,ReceiveAreaCode,OrderType,KM,GuoJuQty,LuJuQty,SongCanDate,
 OrderCount,CommissionRate,Payment,CommissionFormulaMode,Adjustment,BusinessCommission,SettleMoney,
 DealCount,PickupCode,OtherCancelReason,CommissionType,CommissionFixValue,BusinessGroupId,TimeSpan
-from  Order (nolock) where Id=@Id";
+from  [Order] (nolock) where Id=@Id";
             IDbParameters dbOrderParameters = DbHelper.CreateDbParameters();
             dbOrderParameters.AddWithValue("Id", id);
             orderDM=DbHelper.QueryForObject(SuperMan_Read, queryOrderSql, dbOrderParameters, new OrderRowMapper());
@@ -1666,7 +1666,6 @@ where  OrderId=@OrderId ";
             const string queryOrderDetailSql = @"
 select  Id,OrderNo,ProductName,UnitPrice,Quantity,InsertTime,FormDetailID,GroupID
 from  orderdetail (nolock) where OrderNo=@OrderNo ";
-
 
             IDbParameters dbOrderDetailParameters = DbHelper.CreateDbParameters();
             dbOrderDetailParameters.AddWithValue("OrderNo", orderDM.OrderNo);

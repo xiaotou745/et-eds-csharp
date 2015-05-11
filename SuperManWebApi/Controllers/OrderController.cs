@@ -74,7 +74,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model">订单参数</param>
         /// <returns></returns>        
-        [HttpGet]
+        [HttpPost]
         public ResultModel<OrderDM> GetDetails(OrderPM model)
         {
             //加验证
