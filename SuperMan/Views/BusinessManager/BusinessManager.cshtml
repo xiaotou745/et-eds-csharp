@@ -35,7 +35,7 @@
                         <input id="txtBusinessPhone" type="text" name="BusinessPhone" />
                         <span class="">结算比例: </span>
                         <input id="txtBusinessCommission" type="text" name="BusinessCommission" />
-                        
+
                     </td>
                 </tr>
                 <tr>
@@ -43,15 +43,23 @@
                         <span class="">筛选城市: </span>
                         @Html.DropDownList("businessCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), "--无--", new { style = "width:155px" })
                         <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" name="GroupId" />
+                        <span class="">商家分组:</span>
+                        @Html.DropDownList("BusinessGroupId", new SelectList(new BusinessGroupProvider().GetBusinessGroupList(), "Id", "Name"), "全部", new { @class = "selectw", style = "width:143px" })
+                        <span class="">结算类型: </span>
+                        <select name="commissionType" class="selectw" id="CommissionMold" style="width:143px">
+                            <option value="-1" selected="selected">全部</option>
+                            <option value="1">固定比例</option>
+                            <option value="2">固定金额</option>
+                        </select>
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                     </td>
                 </tr>
                 <tr>
                     <td>
-                     @if (SuperMan.App_Start.UserContext.Current.HasAuthority(40))
-                    {
-                         <input type="submit" value="添加商户" onclick="showaddBusiness();" class="searchBtn" id="btnAddShop" />
-                    } 
+                        @if (SuperMan.App_Start.UserContext.Current.HasAuthority(40))
+                        {
+                            <input type="submit" value="添加商户" onclick="showaddBusiness();" class="searchBtn" id="btnAddShop" />
+                        }
                     </td>
                 </tr>
             </table>
@@ -84,28 +92,28 @@
             <div class="control-group">
                 <label>外送费</label>
                 <input name="businessWaisong" id="businessWaisong" type="text">
-            </div> 
+            </div>
             <div class="control-group">
                 <label>地址</label>
                 <input name="businessaddr" id="businessaddr" style="width: 200px;" type="text">
             </div>
             <div class="control-group">
                 <label>城市</label>
-            @Html.DropDownList("businesscity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Code", "Name"), "--无--", new { style = "width:155px" })
+                @Html.DropDownList("businesscity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Code", "Name"), "--无--", new { style = "width:155px" })
             </div>
             @if (ViewBag.txtGroupId > 0)
-                {
-                    <input type="hidden" id="addbusinessGroupID" value="@ViewBag.txtGroupId" />
-                }
-                else
-                {
-                    <div class="control-group">
-                        <label class="control-label" for="InternalDepart">集团信息</label>
-                        <div class="controls">
-                            @Html.DropDownList("addbusinessGroupID", new SelectList(new BusinessProvider().GetGroups() , "Id", "GroupName"), "--无--", new { @class = "selectw", style = "width:143px" })
-                        </div>
+            {
+                <input type="hidden" id="addbusinessGroupID" value="@ViewBag.txtGroupId" />
+            }
+            else
+            {
+                <div class="control-group">
+                    <label class="control-label" for="InternalDepart">集团信息</label>
+                    <div class="controls">
+                        @Html.DropDownList("addbusinessGroupID", new SelectList(new BusinessProvider().GetGroups(), "Id", "GroupName"), "--无--", new { @class = "selectw", style = "width:143px" })
                     </div>
-                }  
+                </div>
+            }
         </fieldset>
         <p class="btnbox">
             <input value="确认" type="button" id="btnAddBusiness" class="yesBtn" />
@@ -115,30 +123,93 @@
 </div>
 
 @*结算比例弹窗*@
+@*<div class="BusinessCommissionDish">
+        <div class="add-openbox add-form" id="BusinessCommissionDiv" style="width:500px">
+            <h2>
+                <p id="statusFin">设置结算比例</p>
+            </h2>
+            <fieldset>
+                <input type="hidden" id="busCommissionHid" value="0" />
+                <div class="control-group">
+                    <label>商家</label>
+                    <input name="busCommissionName" id="busCommissionName" readonly="readonly" type="text">
+                </div>
+                <div class="control-group">
+                    <label>电话</label>
+                    <input name="busCommissionPhone" id="busCommissionPhone" readonly="readonly" type="text">
+                </div>
+                <div class="control-group">
+                    <label>结算比例</label>
+                    <input name="busCommissionText" id="busCommissionText" style="width: 45px;" type="text">%
+                    <input name="oldBusCommissionText" id="oldBusCommissionText"  type="hidden">
+                </div>
+                <div class="control-group">
+                    <label>外送费</label>
+                    <input name="busCommissionWaiSong" id="busCommissionWaiSong" style="width: 200px;" type="text">
+                    <input name="oldBusCommissionWaiSong" id="oldBusCommissionWaiSong"  type="hidden">
+                </div>
+            </fieldset>
+            <p class="btnbox">
+                <input value="确认" type="button" id="btnCommissionConfim" class="yesBtn" />
+                <input value="关闭" type="button" class="J_closebox qxBtn" />
+            </p>
+        </div>
+    </div>*@
 <div class="BusinessCommissionDish">
     <div class="add-openbox add-form" id="BusinessCommissionDiv" style="width:500px">
-        <h2>
-            <p id="statusFin">设置结算比例</p>
+        <h2 style="border:none">
+            <p id="statusFin">商家结算-补贴策略</p>
         </h2>
+
         <fieldset>
             <input type="hidden" id="busCommissionHid" value="0" />
             <div class="control-group">
-                <label>商家</label>
+                <label>商家名称：</label>
                 <input name="busCommissionName" id="busCommissionName" readonly="readonly" type="text">
             </div>
             <div class="control-group">
-                <label>电话</label>
+                <label>商家电话：</label>
                 <input name="busCommissionPhone" id="busCommissionPhone" readonly="readonly" type="text">
             </div>
             <div class="control-group">
-                <label>结算比例</label>
-                <input name="busCommissionText" id="busCommissionText" style="width: 45px;" type="text">%
-                <input name="oldBusCommissionText" id="oldBusCommissionText"  type="hidden">
+                <label>配 送 费：</label>
+                <input name="busCommissionWaiSong" id="busCommissionWaiSong" style="width: 200px;" type="text">
+                <input name="oldBusCommissionWaiSong" id="oldBusCommissionWaiSong" type="hidden">
             </div>
             <div class="control-group">
-                <label>外送费</label>
-                <input name="busCommissionWaiSong" id="busCommissionWaiSong" style="width: 200px;" type="text">
-                <input name="oldBusCommissionWaiSong" id="oldBusCommissionWaiSong"  type="hidden">
+                <label style="font-size:15px">结算比例设置(应收)</label>
+            </div>
+            <div class="control-group">
+                <input id="rCommissionFormulaMode0" name="rCommissionFormulaMode" type="radio" value="1">
+                <label for="rCommissionFormulaMode0">结算比例</label>
+                <input id="rCommissionFormulaMode1" name="rCommissionFormulaMode" type="radio" value="2" style="margin-left:30px">
+                <label for="rCommissionFormulaMode1">固定金额</label>
+                <input type="hidden" id="oldCommissionType" name="oldCommissionType">
+            </div>
+            <div class="control-group">
+                <div id="divbusCommissionText">
+                    <input name="busCommissionText" id="busCommissionText" style="width: 120px;" type="text">%
+                    <input name="oldBusCommissionText" id="oldBusCommissionText" type="hidden">
+                </div>
+                <div id="divCommissionFixValue">
+                    <input name="CommissionFixValue" id="CommissionFixValue" style="width: 120px;" type="text">元/单
+                    <input name="oldCommissionFixValue" id="oldCommissionFixValue" type="hidden">
+                </div>
+            </div>
+        </fieldset>
+        <fieldset style="border-top:none">
+            <div class="control-group">
+                <label style="font-size:15px">补贴策略设置(应付)</label>
+            </div>
+                <div class="control-group" style="margin-left:30px">
+                    <label id="labGlobalConfig"></label>
+                </div>
+            
+
+            <div class="control-group" style="margin-left:30px">
+                <label>补贴策略：</label>
+                @Html.DropDownList("businessGroupID", new SelectList(new BusinessGroupProvider().GetBusinessGroupList(), "Id", "Name"), new { @class = "selectw", style = "width:143px" })
+                <input name="oldStrategyID" id="oldStrategyID" type="hidden">
             </div>
         </fieldset>
         <p class="btnbox">
@@ -186,7 +257,7 @@
                 <input type="hidden" name="oldBusiSourceId" id="oldBusiSourceId">
                 <input type="hidden" name="oldBusGroupId" id="oldBusGroupId">
                 @Html.DropDownList("busGroupId",
-                                           new SelectList(new BusinessProvider().GetGroups(), "Id", "GroupName"), "--请选择--", new { @class = "selectw", style = "width:100px"  })
+                                           new SelectList(new BusinessProvider().GetGroups(), "Id", "GroupName"), "--请选择--", new { @class = "selectw", style = "width:100px" })
             </div>
         </fieldset>
         <p class="btnbox">
@@ -196,11 +267,11 @@
     </div>
 </div>
 <script>
-    var adminjs = new adminglass(); //实例化后台类 
+    var adminjs = new adminglass(); //实例化后台类
     $(document).ready(function () {
-        window.location.hash = ''; 
+        window.location.hash = '';
     })
-   
+
     //设置结算比例-外送费
     $("#btnCommissionConfim").on('click', function () {
         var busCommissionHid = $("#busCommissionHid").val(); //商户id
@@ -209,6 +280,13 @@
         var busCommissionWaiSong = $("#busCommissionWaiSong").val(); ////商户外送费
         var oldBusCommissionText = $("#oldBusCommissionText").val(); ////原来商户结算比例
         var oldBusCommissionWaiSong = $("#oldBusCommissionWaiSong").val(); ////原来商户外送费
+        var commissionFixValue = $("#CommissionFixValue").val();
+        var oldCommissionFixValue = $("#oldCommissionFixValue").val(); ////原来商户外送费
+        var strategyID = $("#businessGroupID").val();
+        var oldStrategyID = $("#oldStrategyID").val();
+        var commissionType = $('input[name="rCommissionFormulaMode"]:checked').val();;
+        var oldBusCommissionWaiSong = $("#oldBusCommissionWaiSong").val();
+        var oldCommissionType = $('#oldCommissionType').val();
         if (isNaN(busCommissionText)) {
             alert("请输入正确的数字!");
             return;
@@ -217,7 +295,7 @@
             alert("请输入大于零的值!");
             return;
         }
-        
+
         if (isNaN(busCommissionWaiSong)) {
             alert("请输入正确的数字!");
             return;
@@ -226,15 +304,15 @@
             alert("请输入大于零的值!");
             return;
         }
-        if (busCommissionText == oldBusCommissionText && busCommissionWaiSong == oldBusCommissionWaiSong) {
-            alert("外送费和结算比例都没有修改!");
+
+        if (busCommissionText == oldBusCommissionText && busCommissionWaiSong == oldBusCommissionWaiSong && commissionFixValue == oldCommissionFixValue && strategyID == oldStrategyID && oldCommissionType ==commissionType) {
+            alert("没有需要修改的信息!");
             return;
         }
-        if (busCommissionWaiSong.length == 0)
-        {
+        if (busCommissionWaiSong.length == 0) {
             busCommissionWaiSong = 0;
         }
-        var paramaters = { "id": busCommissionHid, "commission": busCommissionText, "waisongfei": busCommissionWaiSong, "oldcommission": oldBusCommissionText, "oldwaisongfei": oldBusCommissionWaiSong };
+        var paramaters = { "id": busCommissionHid, "commission": busCommissionText, "waisongfei": busCommissionWaiSong, "commissionType": commissionType, "commissionFixValue": commissionFixValue, "strategyID": strategyID };
         var url = "/BusinessManager/SetCommission";
         $.ajax({
             type: 'POST',
@@ -252,6 +330,7 @@
     });
     //修改商家信息
     $("#btnUpdateBusinessInfo").on('click', function () {
+        
         var busiId = $("#busiId").val(); //商户id
         var busiName = $("#busiName").val(); //商户电话
         var busiPhone = $("#busiPhone").val(); //商户电话
@@ -267,7 +346,7 @@
         if (!reg.test(busiPhone)) {
             alert("请输入正确的手机号!");
             return;
-        } 
+        }
         if (isNaN(busiPhone) && busiPhone.length == 11) {
             alert("请输入正确的手机号!");
             return;
@@ -311,12 +390,12 @@
         var businessphoneNo = $("#businessphoneNo").val(); ////商户手机号
         var businessaddr = $("#businessaddr").val(); ////商户地址
         var businesspassWord = $("#businesspassWord").val(); ////商户密码
-        var businesscityid = $("#businesscity").val(); ////商户城市id 
+        var businesscityid = $("#businesscity").val(); ////商户城市id
         var businesscity = $("#businesscity").find("option:selected").text(); ////商户城市
         var txtGroupId = $("#addbusinessGroupID").val(); ////商户集团
         var businessWaisong = $("#businessWaisong").val(); ////商户外送费
- 
-        if (businessName == null || businessName=="") {
+
+        if (businessName == null || businessName == "") {
             alert("请输入商户名!");
             return;
         }
@@ -339,7 +418,7 @@
         if (txtGroupId == null || txtGroupId == "") {
             txtGroupId = 0;
         }
-        
+
         if (isNaN(businessCommission)) {
             alert("请输入正确的数字!");
             return;
@@ -355,7 +434,7 @@
         if (businessWaisong < 0) {
             alert("请输入大于零的值!");
             return;
-        } 
+        }
         var paramaters = { "GroupId": txtGroupId, "businessaddr": businessaddr, "businessWaisong": businessWaisong, "businessCommission": businessCommission, "passWord": businesspassWord, "city": businesscity, "CityId": businesscityid, "businessName": businessName, "phoneNo": businessphoneNo };
         var url = "/BusinessManager/AddBusiness";
         $.ajax({
@@ -372,15 +451,26 @@
             }
         });
     });
-    
 
-    function showaddBusiness() { 
+
+    function showaddBusiness() {
         adminjs.openwinbox('#BusinessAddDiv');
     }
     //关闭弹层
     $('.J_closebox').click(function () {
         adminjs.closewinbox('.add-openbox');
         return false;
+    });
+    $('input[name="rCommissionFormulaMode"]').click(function () {
+        var a = $('input[name="rCommissionFormulaMode"]:checked').val();
+        if (a == 1) {
+            $("#divCommissionFixValue").hide();
+            $("#divbusCommissionText").show();
+        }
+        else {
+            $("#divbusCommissionText").hide();
+            $("#divCommissionFixValue").show();
+        }
     });
 </script>
 <script src="~/Scripts/mvcpager.js"></script>

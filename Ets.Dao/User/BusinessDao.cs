@@ -221,6 +221,66 @@ namespace Ets.Dao.User
             return reslut;
 
         }
+
+        /// <summary>
+        /// 设置结算比例
+        /// danny-20150504
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ModifyCommission(BusListResultModel model)
+        {
+            bool reslut = false;
+            try
+            {
+                string sql = @"update business set  ";
+                if(model.DistribSubsidy>0)
+                {
+                    sql += "DistribSubsidy=@DistribSubsidy,";
+                }
+                if (model.CommissionType > 0)
+                {
+                    if (model.CommissionType==1)
+                    {
+                        if (model.BusinessCommission > 0)
+                        {
+                            sql += "BusinessCommission=@BusinessCommission,";
+                        }
+                    }
+                    else
+                    {
+                        if (model.CommissionFixValue > 0)
+                        {
+                            sql += "CommissionFixValue=@CommissionFixValue,";
+                        }
+                    }
+                    sql += "CommissionType=@CommissionType,";
+                }
+                if (model.BusinessGroupId> 0)
+                {
+                    sql += "BusinessGroupId=@BusinessGroupId,";
+                }
+                sql = sql.TrimEnd(',');
+                sql += " where id=@id"; 
+                IDbParameters dbParameters = DbHelper.CreateDbParameters();
+                dbParameters.AddWithValue("BusinessCommission", model.BusinessCommission);
+                dbParameters.AddWithValue("DistribSubsidy", model.DistribSubsidy);
+                dbParameters.AddWithValue("id", model.Id);
+                dbParameters.AddWithValue("CommissionType", model.CommissionType);
+                dbParameters.AddWithValue("CommissionFixValue", model.CommissionFixValue);
+                dbParameters.AddWithValue("BusinessGroupId",model.BusinessGroupId);
+                int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Write, sql, dbParameters);
+                if (i > 0) reslut = true;
+            }
+            catch (Exception ex)
+            {
+                reslut = false;
+                LogHelper.LogWriter(ex, "设置结算比例-外送费");
+                throw;
+            }
+            return reslut;
+        }
+
         /// <summary>
         /// 检查当前商户是否存在 
         /// 窦海超
@@ -279,7 +339,11 @@ namespace Ets.Dao.User
                                     ,b.CommissionTypeId
                                     ,b.DistribSubsidy
                                     ,b.BusinessCommission
-                                    ,g.GroupName";
+                                    ,g.GroupName
+                                    ,b.CommissionType
+                                    ,b.CommissionFixValue
+                                    ,b.BusinessGroupId
+                                    ,bg.Name BusinessGroupName";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrEmpty(criteria.businessName))
             {
@@ -301,11 +365,21 @@ namespace Ets.Dao.User
             {
                 sbSqlWhere.AppendFormat(" AND b.GroupId={0} ", criteria.GroupId);
             }
+            if (criteria.BusinessGroupId != null && criteria.BusinessGroupId > 0)
+            {
+                sbSqlWhere.AppendFormat(" AND b.BusinessGroupId={0} ", criteria.BusinessGroupId);
+            }
+            if (criteria.CommissionType != null && criteria.CommissionType > 0)
+            {
+                sbSqlWhere.AppendFormat(" AND b.CommissionType={0} ", criteria.CommissionType);
+            }
             if (!string.IsNullOrEmpty(criteria.businessCity))
             {
                 sbSqlWhere.AppendFormat(" AND b.City='{0}' ", criteria.businessCity.Trim());
             }
-            string tableList = @" business  b WITH (NOLOCK)  LEFT JOIN dbo.[group] g WITH(NOLOCK) ON g.Id = b.GroupId ";
+            string tableList = @" business  b WITH (NOLOCK)  
+                                LEFT JOIN dbo.[group] g WITH(NOLOCK) ON g.Id = b.GroupId 
+                                JOIN dbo.[BusinessGroup]  bg WITH ( NOLOCK ) ON  b.BusinessGroupId=bg.Id";
             string orderByColumn = " b.Id DESC";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
@@ -422,32 +496,36 @@ namespace Ets.Dao.User
         public BusListResultModel GetBusiness(int busiId)
         {
             BusListResultModel busi = new BusListResultModel();
-            string selSql = @" SELECT  
-         Id ,
-         Name ,
-         City ,
-         district ,
-         PhoneNo ,
-         PhoneNo2 ,
-         IDCard ,
-         [Address] ,
-         Landline ,
-         Longitude ,
-         Latitude ,
-         [Status] ,
-         InsertTime ,
-         districtId ,
-         CityId ,
-         GroupId , 
-         ProvinceCode ,
-         CityCode ,
-         AreaCode ,
-         Province ,
-         DistribSubsidy,
-         BusinessCommission ,
-         OriginalBusiId
-         FROM dbo.business WITH(NOLOCK) WHERE Id = @busiId";
-
+            string selSql = @" select 
+                                b.Id ,
+                                b.Name ,
+                                b.City ,
+                                b.district ,
+                                b.PhoneNo ,
+                                b.PhoneNo2 ,
+                                b.IDCard ,
+                                b.[Address] ,
+                                b.Landline ,
+                                b.Longitude ,
+                                b.Latitude ,
+                                b.[Status] ,
+                                b.InsertTime ,
+                                b.districtId ,
+                                b.CityId ,
+                                b.GroupId , 
+                                b.ProvinceCode ,
+                                b.CityCode ,
+                                b.AreaCode ,
+                                b.Province ,
+                                b.DistribSubsidy,
+                                b.BusinessCommission,
+                                b.CommissionType,
+                                b.CommissionFixValue,
+                                b.BusinessGroupId,
+                                BusinessGroup.StrategyId
+                                FROM dbo.business as b WITH(NOLOCK)
+                                left join BusinessGroup on b.BusinessGroupId=BusinessGroup.Id
+                                WHERE b.Id = @busiId";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@busiId", busiId);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));

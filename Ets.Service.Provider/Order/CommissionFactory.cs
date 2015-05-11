@@ -13,9 +13,15 @@ namespace Ets.Service.Provider.Order
     /// </summary>
     public class CommissionFactory
     {
-        public static OrderPriceProvider GetCommission()
+        public static OrderPriceProvider GetCommission(int? strategyId = null)
         {
-            switch (ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode))
+            int CommissionFormulaMode;
+            if (strategyId == null)//默认组对应的策略模式
+                CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(1).CommissionFormulaMode);
+            else//当前商家对应的策略模式
+                CommissionFormulaMode = Convert.ToInt32(strategyId);
+
+            switch (CommissionFormulaMode)
             {
                 case 0:
                     return new DefaultOrPriceProvider();

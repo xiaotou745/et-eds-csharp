@@ -35,8 +35,8 @@ namespace Ets.Dao.Statistics
                             SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
                             ISNULL(COUNT(o.Id),0) AS MisstionCount,--任务量
                             SUM(ISNULL(OrderCount,0)) AS OrderCount,--订单量
-                            ISNULL(SUM(o.Amount*ISNULL(b.BusinessCommission,0)/100+ ISNULL( b.DistribSubsidy ,0)* o.OrderCount),0) AS YsPrice,  -- 应收金额
-                            ISNULL( SUM( OrderCommission),0) AS YfPrice  --应付金额
+                            SUM(isnull(o.SettleMoney,0)) AS YsPrice,  -- 应收金额
+                            SUM(ISNULL(OrderCommission,0)) AS YfPrice  --应付金额
                             FROM dbo.[order](NOLOCK) AS o
                             LEFT JOIN dbo.business(NOLOCK) AS b ON o.businessId=b.Id
                             WHERE  
@@ -55,19 +55,17 @@ namespace Ets.Dao.Statistics
         public IList<HomeCountTitleModel> GetSubsidyOrderCountStatistics()
         {
             string where = string.Empty;
-            ////if (Config.ConfigKey("IsFirst") == null)
-            ////{
-            //where = "  ";//统计昨天数据
-            ////}
+            //if (Config.ConfigKey("IsFirst") == null)
+            //{
+            where = " and CONVERT(CHAR(10),PubDate,120)=DATEADD(DAY,-1,CONVERT(CHAR(10),GETDATE(),120)) ";//统计昨天数据
+            //}
             string sql = @"SELECT CONVERT(CHAR(10),PubDate,120) AS PubDate, --发布时间
                                   sum(case when DealCount=0 then 1 else 0 end ) as ZeroSubsidyOrderCount,
                                   sum(case when DealCount=1 then 1 else 0 end ) as OneSubsidyOrderCount,
                                   sum(case when DealCount=2 then 1 else 0 end ) as TwoSubsidyOrderCount,
                                   sum(case when DealCount=3 then 1 else 0 end ) as ThreeSubsidyOrderCount
                            FROM [order](NOLOCK) AS o
-                           WHERE   o.[Status]<>3 
-                            and CONVERT(CHAR(10),PubDate,120)=DATEADD(DAY,-1,CONVERT(CHAR(10),GETDATE(),120))
-                           ";
+                           WHERE   o.[Status]<>3 " + where;
             sql += " GROUP BY CONVERT(CHAR(10),PubDate,120) ORDER BY PubDate ASC";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             return MapRows<HomeCountTitleModel>(dt);
@@ -82,7 +80,7 @@ namespace Ets.Dao.Statistics
         /// <returns></returns>
         public bool CheckDateStatistics(string Time)
         {
-            string sql = @"SELECT COUNT(1) FROM [STATISTIC](nolock) WHERE CONVERT(CHAR(10),InsertTime,120)='" + Time + "'";
+            string sql = @"SELECT COUNT(1) FROM STATISTIC(nolock) WHERE CONVERT(CHAR(10),InsertTime,120)='" + Time + "'";
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql), 0) > 0 ? true : false;
         }
 
@@ -273,8 +271,8 @@ namespace Ets.Dao.Statistics
                                           SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
                                           ISNULL(COUNT(o.Id),0) AS MisstionCount,--总任务量
                                           SUM(ISNULL(OrderCount,0)) AS OrderCount,--总订单量
-                                          ISNULL(SUM(o.Amount*ISNULL(b.BusinessCommission,0)/100+ ISNULL( b.DistribSubsidy ,0)* o.OrderCount),0) AS YsPrice,  -- 应收金额
-                                          ISNULL( SUM( OrderCommission),0) AS YfPrice  --应付金额
+                                          SUM(ISNULL(o.SettleMoney,0)) AS YsPrice,  -- 应收金额
+                                          SUM( ISNULL(OrderCommission,0)) AS YfPrice  --应付金额  --应付金额
                                         FROM dbo.[order](NOLOCK) AS o
                                           LEFT JOIN dbo.business(NOLOCK) AS b ON o.businessId=b.Id
                                          WHERE  o.[Status]<>3 

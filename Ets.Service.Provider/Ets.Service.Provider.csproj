@@ -60,7 +60,7 @@
   <ItemGroup>
     <Compile Include="Account\AccountProvider.cs" />
     <Compile Include="Authority\AuthorityMenuProvider.cs" />
-    <Compile Include="Clienter\ClienterCrossShopLogProvider.cs" />
+    <Compile Include="Clienter\CrossShopStatisticLogProvider.cs" />
     <Compile Include="Clienter\ClienterProvider.cs" />
     <Compile Include="Common\AdminToolsProvider.cs" />
     <Compile Include="Common\ApiVersionProvider.cs" />
@@ -71,7 +71,6 @@
     <Compile Include="Common\HomeCountProvider.cs" />
     <Compile Include="Common\ServicePhone.cs" />
     <Compile Include="Common\TestUserProvider.cs" />
-    <Compile Include="OpenApi\HomeForDinnerGroup.cs" />
     <Compile Include="OpenApi\JuWangKeGroup.cs" />
     <Compile Include="OpenApi\MeiTuanGroup.cs" />
     <Compile Include="OpenApi\SignProvider.cs" />
@@ -79,7 +78,6 @@
     <Compile Include="MyPush\Push.cs" />
     <Compile Include="OpenApi\OpenApiGroupFactory.cs" />
     <Compile Include="OpenApi\FulltimeGroup.cs" />
-    <Compile Include="OpenApi\TourismGroup.cs" />
     <Compile Include="OpenApi\WanDaGroup.cs" />
     <Compile Include="Order\AmountOrPriceProvider.cs" />
     <Compile Include="Order\AutoAdjustProvider.cs" />
@@ -91,7 +89,9 @@
     <Compile Include="Order\TimeOrPriceProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Statistics\StatisticsProvider.cs" />
+    <Compile Include="Strategy\StrategyProvider.cs" />
     <Compile Include="Subsidy\SubsidyProvider.cs" />
+    <Compile Include="User\BusinessGroupProvider.cs" />
     <Compile Include="User\BusinessProvider.cs" />
     <Compile Include="User\UserProvider.cs" />
     <Compile Include="WtihdrawRecords\WtihdrawRecordsProvider.cs" />

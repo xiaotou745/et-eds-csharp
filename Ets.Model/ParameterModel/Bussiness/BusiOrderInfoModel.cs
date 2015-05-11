@@ -63,5 +63,15 @@ namespace Ets.Model.ParameterModel.Bussiness
         /// </summary>
         public string OrderSign { get; set; }
 
+        /// <summary>
+        /// 商家分组ID
+        /// </summary>
+        public int BusinessGroupId { get; set; }
+
+        /// <summary>
+        /// 策略ID
+        /// </summary>
+        public int StrategyId { get; set; }
+
     }
 }

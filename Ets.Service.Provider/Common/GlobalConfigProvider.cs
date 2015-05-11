@@ -22,11 +22,11 @@ namespace Ets.Service.Provider.Common
         /// 获取全局变量表数据
         /// </summary>
         /// <returns></returns>
-        public GlobalConfigModel GlobalConfigMethod()
+        public GlobalConfigModel GlobalConfigMethod(int GroupId)
         {
             try
             {
-                return _dao.GlobalConfigMethod(); 
+                return GlobalConfigDao.GlobalConfigGet(GroupId); 
             }
             catch (Exception ex)
             {
@@ -43,19 +43,19 @@ namespace Ets.Service.Provider.Common
         /// <param name="value"></param>
         /// <param name="Remark"></param>
         /// <returns></returns>
-        public bool UpdateTimeSubsidies(string opName, string value, string Remark)
+        public bool UpdateTimeSubsidies(string opName, string value, string Remark, int GroupId, int StrategyId)
         {
             bool result = false; 
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                if (_dao.AddSubsidiesLog("TimeSubsidies", opName, Remark))
+                if (_dao.AddSubsidiesLog("TimeSubsidies", opName, Remark, GroupId, StrategyId))
                 {
-                    result=_dao.UpdateTimeSubsidies(value);
+                    result = _dao.UpdateTimeSubsidies(value, GroupId);
                 }
                 var redis = new ETS.NoSql.RedisCache.RedisCache();
                 const string cacheKey = RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet;
                 redis.Delete(cacheKey);
-                var model = new GlobalConfigDao().GlobalConfigMethod();
+                var model = new GlobalConfigDao().GlobalConfigMethod(GroupId);
                 redis.Set(cacheKey, model);
                 tran.Complete(); 
             }
@@ -66,12 +66,12 @@ namespace Ets.Service.Provider.Common
         /// 获取全局变量表数据TimeSubsidies
         /// </summary>
         /// <returns></returns>
-        public List<GlobalConfigSubsidies> GetTimeSubsidies()
+        public List<GlobalConfigSubsidies> GetTimeSubsidies(int GroupId)
         {
             var list = new List<GlobalConfigSubsidies>();
             try
             {
-                var result = _dao.GetTimeSubsidies();
+                var result = _dao.GetTimeSubsidies(GroupId);
                 if (!string.IsNullOrEmpty(result))
                 {
                     string[] times = result.Split(';');
@@ -102,19 +102,19 @@ namespace Ets.Service.Provider.Common
         /// <param name="value"></param>
         /// <param name="Remark"></param>
         /// <returns></returns>
-        public bool UpdatePriceSubsidies(string opName, string value, string Remark)
+        public bool UpdatePriceSubsidies(string opName, string value, string Remark, int GroupId,int StrategyId)
         {
             bool result = false;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                if (_dao.AddSubsidiesLog("PriceSubsidies", opName, Remark))
+                if (_dao.AddSubsidiesLog("PriceSubsidies", opName, Remark, GroupId,StrategyId))
                 {
-                    result = _dao.UpdatePriceSubsidies(value);
+                    result = _dao.UpdatePriceSubsidies(value, GroupId);
                 }
                 var redis = new ETS.NoSql.RedisCache.RedisCache();
                 const string cacheKey = RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet;
                 redis.Delete(cacheKey);
-                var model = new GlobalConfigDao().GlobalConfigMethod();
+                var model = new GlobalConfigDao().GlobalConfigMethod(GroupId);
                 redis.Set(cacheKey, model);
                 tran.Complete();
             }
@@ -126,12 +126,12 @@ namespace Ets.Service.Provider.Common
         /// 获取全局变量表数据PriceSubsidies
         /// </summary>
         /// <returns></returns>
-        public List<GlobalConfigSubsidies> GetPriceSubsidies()
+        public List<GlobalConfigSubsidies> GetPriceSubsidies(int GroupId)
         {
             var list = new List<GlobalConfigSubsidies>();
             try
             {
-                var result = _dao.GetPriceSubsidies();
+                var result = _dao.GetPriceSubsidies(GroupId);
                 if (!string.IsNullOrEmpty(result))
                 {
                     string[] times = result.Split(';');
@@ -165,7 +165,7 @@ namespace Ets.Service.Provider.Common
         {
             try
             {
-                var result = _dao.GetCommissionFormulaMode();
+                var result = _dao.GetCommissionFormulaMode(0);
                 if (!string.IsNullOrEmpty(result))
                 {
                     return ParseHelper.ToInt(result);
@@ -186,19 +186,19 @@ namespace Ets.Service.Provider.Common
         /// <param name="value"></param>
         /// <param name="Remark"></param>
         /// <returns></returns>
-        public bool UpdateCommissionFormulaMode(string opName, string value, string Remark)
+        public bool UpdateCommissionFormulaMode(string opName, string value, string Remark, int GroupId,int StrategyId)
         {
             bool result = false;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                if (_dao.AddSubsidiesLog("CommissionFormulaMode", opName, Remark))
+                if (_dao.AddSubsidiesLog("CommissionFormulaMode", opName, Remark, GroupId,StrategyId))
                 {
-                    result = _dao.UpdateCommissionFormulaMode(value);
+                    result = _dao.UpdateCommissionFormulaMode(value, GroupId);
                 }
                 var redis = new ETS.NoSql.RedisCache.RedisCache();
                 const string cacheKey = RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet;
                 redis.Delete(cacheKey);
-                var model = new GlobalConfigDao().GlobalConfigMethod();
+                var model = new GlobalConfigDao().GlobalConfigMethod(GroupId);
                 redis.Set(cacheKey, model);
                 tran.Complete();
             }
@@ -213,14 +213,14 @@ namespace Ets.Service.Provider.Common
         /// <param name="value"></param>
         /// <param name="Remark"></param>
         /// <returns></returns>
-        public bool UpdateSubsidies(string opName, string value, string Remark,string keyName)
+        public bool UpdateSubsidies(string opName, string value, string Remark, string keyName, int GroupId, int StrategyId)
         {
             bool result = false;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                if (_dao.AddSubsidiesLog(keyName, opName, Remark))
+                if (_dao.AddSubsidiesLog(keyName, opName, Remark, GroupId,StrategyId))
                 {
-                    result = _dao.UpdateSubsidies(value,keyName);
+                    result = _dao.UpdateSubsidies(value, keyName, GroupId);
                 }
                 var redis = new ETS.NoSql.RedisCache.RedisCache();
                 const string cacheKey = RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet;
@@ -235,11 +235,11 @@ namespace Ets.Service.Provider.Common
         /// 获取全局变量表数据
         /// </summary>
         /// <returns></returns>
-        public string GetSubsidies(string key)
+        public string GetSubsidies(string key,int GroupId)
         {
             try
             {
-                var result = _dao.GetSubsidies(key);
+                var result = _dao.GetSubsidies(key, GroupId);
                 if (!string.IsNullOrEmpty(result))
                 {
                     return result;
@@ -263,7 +263,7 @@ namespace Ets.Service.Provider.Common
             var list = new List<GlobalConfigSubsidies>();
             try
             {
-                var result = _dao.GetSubsidies("OverStoreSubsidies");
+                var result = _dao.GetSubsidies("OverStoreSubsidies",0);
                 if (!string.IsNullOrEmpty(result))
                 {
                     string[] times = result.Split(';');
