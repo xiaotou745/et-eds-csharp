@@ -121,7 +121,8 @@ namespace SuperMan.Controllers
                 GroupId = clienterModel.GroupId,
                 BussinessID = clienterModel.BussinessID,
                 PicWithHandUrl = clienterModel.PicWithHandUrl,
-                PicUrl = clienterModel.PicUrl
+                PicUrl = clienterModel.PicUrl,
+                Status = ConstValues.CLIENTER_NOAUDIT
             };
             bool result = true;
             int clienterId = ClienterLogic.clienterLogic().AddClienter(model);

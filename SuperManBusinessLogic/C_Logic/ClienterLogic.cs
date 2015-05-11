@@ -668,9 +668,18 @@ namespace SuperManBusinessLogic.C_Logic
                     {
                         item.Status = ConstValues.CLIENTER_AUDITCANCEL;
                     }
-                    int i = db.SaveChanges();
-                    if (i == 1)
-                        bResult = true;
+                    try
+                    {
+                        db.Configuration.ValidateOnSaveEnabled = false;
+                        int i = db.SaveChanges();
+                        db.Configuration.ValidateOnSaveEnabled = true;
+                        if (i == 1)
+                            bResult = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        LogHelper.LogWriter("骑士审核异常:", new { obj = ex });
+                    }
                 }
             }
             return bResult;
