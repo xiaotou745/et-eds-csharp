@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <bank>
+    <Id>1</Id>
+    <Name>交通银行</Name>
+  </bank>
+  <bank>
+    <Id>2</Id>
+    <Name>建设银行</Name>
+  </bank>
+</root>
+

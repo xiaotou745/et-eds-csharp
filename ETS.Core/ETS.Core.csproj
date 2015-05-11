@@ -176,6 +176,7 @@
     <Compile Include="Util\TranslatorBase.cs" />
     <Compile Include="Util\ValidationHelper.cs" />
     <Compile Include="Util\XmlHelper.cs" />
+    <Compile Include="Util\XmlParser.cs" />
     <Compile Include="Validator\CommonValidator.cs" />
   </ItemGroup>
   <ItemGroup>

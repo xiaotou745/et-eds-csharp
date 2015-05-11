@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,33 +7,33 @@ using System.Threading.Tasks;
 namespace Ets.Model.DataModel.Finance
 {
     /// <summary>
-    /// å•†æˆ·æç°æ—¥å¿—è¡¨å®ä½“ç±»BusinessBalanceRecordDTO ã€‚(å±æ€§è¯´æ˜è‡ªåŠ¨æå–æ•°æ®åº“å­—æ®µçš„æè¿°ä¿¡æ¯)
+    /// ÉÌ»§ÌáÏÖÈÕÖ¾±íÊµÌåÀàBusinessBalanceRecordDTO ¡£(ÊôĞÔËµÃ÷×Ô¶¯ÌáÈ¡Êı¾İ¿â×Ö¶ÎµÄÃèÊöĞÅÏ¢)
     /// Generate By: tools.etaoshi.com  caoheyang
     /// Generate Time: 2015-05-11 16:37:45
     /// </summary>
     public class BusinessWithdrawLog
     {/// <summary>
-        /// è‡ªå¢ID(PK)
+        /// ×ÔÔöID(PK)
         /// </summary>
         public long Id { get; set; }
         /// <summary>
-        /// æç°å•ID
+        /// ÌáÏÖµ¥ID
         /// </summary>
         public long WithwardId { get; set; }
         /// <summary>
-        /// æ“ä½œåçŠ¶æ€
+        /// ²Ù×÷ºó×´Ì¬
         /// </summary>
         public int Status { get; set; }
         /// <summary>
-        /// å¤‡æ³¨
+        /// ±¸×¢
         /// </summary>
         public string Remark { get; set; }
         /// <summary>
-        /// æ“ä½œäºº
+        /// ²Ù×÷ÈË
         /// </summary>
         public string Operator { get; set; }
         /// <summary>
-        /// æ“ä½œæ—¶é—´
+        /// ²Ù×÷Ê±¼ä
         /// </summary>
         public DateTime OperatTime { get; set; }
 

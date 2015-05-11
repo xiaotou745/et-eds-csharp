@@ -11,15 +11,15 @@
             <th>提现前余额</th>
             <th>提现前可提现余额</th>
             <th>提现金额</th>
-            <th>提现后余额</th>
+            @*<th>提现后余额</th>*@
             <th>状态</th>
             <th>申请时间</th>
-            <th>审核人</th>
-            <th>审核时间</th>
-            <th>打款人</th>
-            <th>打款时间</th>
-            <th>审核拒绝原因</th>
-            <th>打款失败原因</th>
+            @*<th>审核人</th>
+                <th>审核时间</th>
+                <th>打款人</th>
+                <th>打款时间</th>
+                <th>审核拒绝原因</th>
+                <th>打款失败原因</th>*@
             <th>操作</th>
         </tr>
     </thead>
@@ -33,47 +33,53 @@
                     i++;
                     <tr id="@item.Id">
                         <td>@i</td>
-                        <td>@item.WithwardNo</td>
+                        <td><a href="/BusinessWithdraw/BusinessWithdrawDetail?withwardId=@item.Id" style=" text-decoration-line: underline">@item.WithwardNo</a></td>
                         <td>@item.BusinessName</td>
                         <td>@item.BusinessPhoneNo</td>
-                        <td>@ParseHelper.ToSplitByPercentile(false,item.BalancePrice)</td>
+                        <td>@ParseHelper.ToSplitByPercentile(false, item.BalancePrice)</td>
                         <td>@ParseHelper.ToSplitByPercentile(false, item.AllowWithdrawPrice)</td>
                         <td style="color:green;font-weight:600">@ParseHelper.ToSplitByPercentile(false, item.Amount)</td>
-                        <td>@ParseHelper.ToSplitByPercentile(false, item.Balance)</td>
+                        @*<td>@ParseHelper.ToSplitByPercentile(false, item.Balance)</td>*@
                         @{
-                            var strstatus = "";
-                            if (item.Status == 1)
-                            {
-                                strstatus = "待审核";
-                            }
-                            else if (item.Status == 2)
-                            {
-                                strstatus = "审核通过";
-                            }
-                            else if (item.Status == 3)
-                            {
-                                strstatus = "打款完成";
-                            }
-                            else if (item.Status == -1)
-                            {
-                                strstatus = "审核拒绝";
-                            }
-                            else if (item.Status == -2)
-                            {
-                                strstatus = "打款失败";
-                            }
+                    var strstatus = "";
+                    if (item.Status == 1)
+                    {
+                        strstatus = "待审核";
+                    }
+                    else if (item.Status == 2)
+                    {
+                        strstatus = "审核通过";
+                    }
+                    else if (item.Status == 3)
+                    {
+                        strstatus = "打款完成";
+                    }
+                    else if (item.Status == -1)
+                    {
+                        strstatus = "审核拒绝";
+                    }
+                    else if (item.Status == -2)
+                    {
+                        strstatus = "打款失败";
+                    }
                         }
                         <td>@strstatus</td>
                         <td>@item.WithdrawTime</td>
-                        <td>@item.Auditor</td>
-                        <td>@item.AuditTime</td>
-                        <td>@item.Payer</td>
-                        <td>@item.PayTime</td>
-                        <td>@item.AuditFailedReason</td>
-                        <td>@item.PayFailedReason</td>
+                        @*<td>@item.Auditor</td>
+                            <td>@item.AuditTime</td>
+                            <td>@item.Payer</td>
+                            <td>@item.PayTime</td>
+                            <td>@item.AuditFailedReason</td>
+                            <td>@item.PayFailedReason</td>*@
                         <td>
-                            查看
-                            @*<a href="/BusinessWithdraw/OrderDetail?OrderNo=@item.OrderNo&OrderId=@item.Id ">查看</a>*@
+                            @*@if (item.Status == 1)
+                                {
+
+                                }*@
+                            <a href="javascript:void(0)" onclick="funWithdrawAuditOk(@item.Id)">审核通过</a>
+                            <a href="javascript:void(0)" onclick="funWithdrawAuditRefuse(@item.Id)">拒绝</a>
+                            <a href="javascript:void(0)" onclick="funPayOk(@item.Id)">确认打款</a>
+                            <a href="/BusinessWithdraw/BusinessWithdrawDetail?withwardId=@item.Id">打款失败</a>
                         </td>
                     </tr>
                 }
@@ -81,6 +87,26 @@
         }
     </tbody>
 </table>
+<div class="selectSupplierDish">
+    <div class="add-openbox add-form" id="WithdrawAuditRefuseShow" style="width:480px">
+        <fieldset>
+            <div class="control-group">
+                <div style="width:480px;font-size:16px"><center>是否拒绝打款1000.00元？</center></div>
+                <div class="controls" style="width:480px">
+                    <div style="width:75px">拒绝原因:</div>
+                    <div style="width:480px">
+                        <textarea cols="60" rows="5" id="txtWithdrawAuditRefuse"></textarea>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <p class="btnbox">
+            <input value="确认" type="button" id="btnWithdrawAuditRefuse" class="yesBtn" />
+            <input value="关闭" type="button" class="J_closebox qxBtn" />
+        </p>
+    </div>
+</div>
 @{
     if (Model != null)
     {
@@ -90,43 +116,94 @@
 }
 <script type="text/javascript">
     var adminjs = new adminglass(); //实例化后台类
-    $(function () {
-    });
-    $('#btnSuperConfim').bind('click', function () {
-        var orderCommission = $('#OrderCommissionUnFin').val();
-        var orderNo = $('#orderNoUnFin').val();
-        var superID = $("#superSelect").val().trim();
-        if ($("#OrderCommissionUnFin").val().trim() == "") {
-            alert("订单佣金不能为空！");
-            return false;
+
+    ///审核通过
+    function funWithdrawAuditOk(withwardId) {
+        if (!window.confirm("确认要提交审核？")) {
+            return;
         }
-        var paramaters = { "OrderCommission": orderCommission, "SuperName": "", "OrderNo": orderNo };
-        var url = "/Order/SaveOrderInfo";
+        var paramaters = { "withwardId": withwardId };
+        var url = "/BusinessWithdraw/WithdrawAuditOk";
         $.ajax({
             type: 'POST',
             url: url,
             data: paramaters,
             success: function (result) {
-                $.post("/Order/RushOrder", { SuperID: superID, OrderNo: orderNo }, function (data) {
-                    if (data.IsSuccess) {
-                        alert("更新订单成功!");
-                        window.location.href = location.href;
-                        adminjs.closewinbox('.add-openbox');
-                    } else {
-                        alert("分配失败，请重新选择超人!");
-                        window.location.href = location.href;
-                        adminjs.closewinbox('.add-openbox');
-                    }
-                });
+                if (result.IsSuccess) {
+                    alert(result.Message);
+                    window.location.href = "/BusinessWithdraw/BusinessWithdraw";
+                } else {
+                    alert(result.Message);
+                }
             }
         });
-        return true;
+    }
+    function funPayOk(withwardId) {
+        if (!window.confirm("确认要提交打款？")) {
+            return;
+        }
+        var paramaters = { "withwardId": withwardId };
+        var url = "/BusinessWithdraw/PayOk";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert(result.Message);
+                    window.location.href = "/BusinessWithdraw/BusinessWithdraw";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    }
+    function funWithdrawAuditRefuse(withwardId) {
+        if (!window.confirm("确认要审核拒绝？")) {
+            return;
+        }
+        adminjs.openwinbox('#WithdrawAuditRefuseShow');
+        var AuditFailedReason=$('#txtWithdrawAuditRefuse').val();
+        var paramaters = { "withwardId": withwardId };
+        var url = "/BusinessWithdraw/PayOk";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert(result.Message);
+                    window.location.href = "/BusinessWithdraw/BusinessWithdraw";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    }
+    function funWithdrawAuditRefuse(withwardId) {
+        adminjs.openwinbox('#WithdrawAuditRefuseShow');
+    }
+    $("#btnWithdrawAuditRefuse").click(function () {
+        if (!window.confirm("确认要审核拒绝？")) {
+            return;
+        }
+        var auditFailedReason=$('#txtWithdrawAuditRefuse').val();
+        var paramaters = { "withwardId": withwardId,"auditFailedReason":auditFailedReason };
+        var url = "/BusinessWithdraw/WithdrawAuditRefuse";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert(result.Message);
+                    window.location.href = "/BusinessWithdraw/BusinessWithdraw";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
     });
-    function funcViewOrder(id, pubDate, businessName, busiPhone, busiAddress, yongjin, disBuTie, WebBuTie, revPhone, revName, revAddress, Amount, isPay, superId, status, superManName) {
-        var paramaters = { "OrderNo": id, "PubDate": pubDate, "BusinessName": businessName, "BusinessPhoneNo": busiPhone, "BusinessAddress": busiAddress, "OrderCommission": yongjin, "DistribSubsidy": disBuTie, "WebsiteSubsidy": WebBuTie, "RecevicePhoneNo": revPhone, "ReceviceName": revName, "ReceviceAddress": revAddress, "Amount": Amount, "IsPay": isPay, "clienterId": superId, "Status": status, "ClienterName": superManName };
-        window.location.href = "/Order/OrderDetail";
-
-    };
     //关闭弹层
     $('.J_closebox').click(function () {
         adminjs.closewinbox('.add-openbox');

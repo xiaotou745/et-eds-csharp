@@ -46,11 +46,11 @@ select @@IDENTITY";
             dbParameters.AddWithValue("Status", businessWithdrawForm.Status);  //提现状态(1待审核 2 审核通过 3打款完成 -1审核拒绝 -2 打款失败)
             dbParameters.AddWithValue("Amount", businessWithdrawForm.Amount);  //提现金额
             dbParameters.AddWithValue("Balance", businessWithdrawForm.Balance);  //提现后余额 
-            //dbParameters.AddWithValue("TrueName", businessWithdrawForm.TrueName); //商户收款户名
-            //dbParameters.AddWithValue("AccountNo", businessWithdrawForm.AccountNo); //卡号(DES加密)
-            //dbParameters.AddWithValue("AccountType", businessWithdrawForm.AccountType);//账号类型：(1网银 2支付宝 3微信 4财付通 5百度钱包）
-            //dbParameters.AddWithValue("OpenBank", businessWithdrawForm.OpenBank); //开户行
-            //dbParameters.AddWithValue("OpenSubBank", businessWithdrawForm.OpenSubBank);//开户支行
+            dbParameters.AddWithValue("TrueName", businessWithdrawForm.TrueName); //商户收款户名
+            dbParameters.AddWithValue("AccountNo", businessWithdrawForm.AccountNo); //卡号(DES加密)
+            dbParameters.AddWithValue("AccountType", businessWithdrawForm.AccountType);//账号类型：(1网银 2支付宝 3微信 4财付通 5百度钱包）
+            dbParameters.AddWithValue("OpenBank", businessWithdrawForm.OpenBank); //开户行
+            dbParameters.AddWithValue("OpenSubBank", businessWithdrawForm.OpenSubBank);//开户支行
 
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters); //提现单号
             return ParseHelper.ToLong(result);
