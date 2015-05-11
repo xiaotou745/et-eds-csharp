@@ -1632,6 +1632,11 @@ order by bb.Id desc;";
             return MapRows<OrderDetailModel>(dt);
         }
 
+        /// <summary>
+        /// 获取订单详情
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public OrderDM GetDetails(int id)
         {
             OrderDM orderDM = new OrderDM();
@@ -1676,7 +1681,6 @@ from  orderdetail (nolock) where OrderNo=@OrderNo ";
 
             return orderDM;
         }
-
 
         #region
         /// <summary>
@@ -1882,6 +1886,5 @@ from  orderdetail (nolock) where OrderNo=@OrderNo ";
 		}
 
 		#endregion
-
     }
 }

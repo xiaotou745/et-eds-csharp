@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Ets.Model.DataModel.Finance;
 namespace Ets.Model.DomainModel.Bussiness
 {
     public class BusinessDM
@@ -138,9 +138,10 @@ namespace Ets.Model.DomainModel.Bussiness
 		/// </summary>
 		public decimal HasWithdrawPrice { get; set; }
 
-
-
-        //public List<BusinessFinanceAccount> listOrderChild { get; set; }
+        /// <summary>
+        /// 金融信息集合
+        /// </summary>
+        public List<BusinessFinanceAccount> listBFAcount { get; set; }
 
     }
 }
