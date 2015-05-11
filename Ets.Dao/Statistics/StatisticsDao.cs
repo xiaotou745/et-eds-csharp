@@ -193,11 +193,13 @@ namespace Ets.Dao.Statistics
         /// <returns></returns>
         public HomeCountTitleModel GetCurrentActiveBussinessAndClienter()
         {
-            string sql = @"select 
-                            count(distinct clienterId) as ActiveClienter,
-                            count(distinct businessId) as ActiveBusiness
-                            from dbo.[order](nolock) as o 
-                            where o.PubDate >= convert(char(10), getdate(), 120) and status<>3";
+            string sql = @"
+select 
+count(distinct clienterId) as ActiveClienter,
+count(distinct businessId) as ActiveBusiness
+from dbo.[order](nolock) as o 
+where convert(char(10),o.PubDate,120) = convert(char(10), dateadd(day,-1,getdate()) , 120) and status<>3
+";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             if (dt == null || dt.Rows.Count <= 0)
             {
