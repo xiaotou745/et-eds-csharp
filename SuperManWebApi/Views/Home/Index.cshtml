@@ -84,26 +84,26 @@
     //    }
     //});
 
-    $.ajax({
-        type: 'POST',
-        dataType: 'json',
-        url: '/BusinessAPI/PostPublishOrder_B',
-        data: {
-            "userId": 135,
-            "ReceiveName": "xxxx",
-            "receviceAddress":"测试数据，请勿操作",
-            "ReceivePhoneNo": "13693094632",
-            "Amount": 10,
-            "IsPay": false,
-            "Remark": null,
-            "OrderCount": 1,
-            "OrderSign": "143112221125"
-        },
-        success: function (data) {
-            console.log(data);
-        },
-        error: function () { }
-    });
+    //$.ajax({
+    //    type: 'POST',
+    //    dataType: 'json',
+    //    url: '/BusinessAPI/PostPublishOrder_B',
+    //    data: {
+    //        "userId": 135,
+    //        "ReceiveName": "xxxx",
+    //        "receviceAddress": "测试数据，请勿操作",
+    //        "ReceivePhoneNo": "13693094632",
+    //        "Amount": 10,
+    //        "IsPay": false,
+    //        "Remark": null,
+    //        "OrderCount": 1,
+    //        "OrderSign": "143112221125"
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
 
     //    }
     //});
@@ -450,7 +450,7 @@
 
 
     //});
-    
+
     // $.ajax({
     //     type: 'POST',
     //    dataType: 'json',
@@ -467,8 +467,8 @@
 
     //    }
     //});
-    
- 
+
+
     // $.ajax({
     //    type: 'get',
     //    dataType: 'json',
@@ -484,7 +484,23 @@
 
     //    }
     //});
+    $(function() {
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: '/finance/WithdrawC',
+            data: {
+                "ClienterId": "114",
+                "WithdrawPrice": "1",
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () { }
+        });
+    });
+
     
-    
+
 
 </script>

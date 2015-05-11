@@ -11,6 +11,7 @@ using Ets.Model.ParameterModel.Clienter;
 using System.Data;
 using ETS.Extension;
 using ETS.Enums;
+using Ets.Model.ParameterModel.Finance;
 using Ets.Model.ParameterModel.WtihdrawRecords;
 using Ets.Model.Common;
 using Ets.Model.ParameterModel.Order;
@@ -925,5 +926,45 @@ where   o.Id = @OrderId";
                 return null;
             }
         }
+
+       /// <summary>
+        /// 根据ID获取对象
+       /// </summary>
+       /// <param name="id">id</param>
+       /// <returns></returns>
+        public clienter GetById(int id)
+        {
+            clienter model=null;
+            const string querysql = @"
+select  Id,PhoneNo,LoginName,recommendPhone,Password,TrueName,IDCard,PicWithHandUrl,PicUrl,[Status],AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode,AreaCode,CityCode,Province,BussinessID,WorkStatus,AllowWithdrawPrice,HasWithdrawPrice
+from  clienter (nolock)
+where  Id=@Id ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("Id", id);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                model = MapRows<clienter>(dt)[0];
+            }
+           return model;
+        }
+
+        /// <summary>
+        ///  超人提现功能 add by caoheyang 20150509
+        /// </summary>
+        /// <param name="withdrawCpm">超人信息</param>
+        /// <returns></returns>
+        public void UpdateForWithdrawC(WithdrawCPM withdrawCpm)
+        {
+            const string updateSql = @"
+update  clienter
+set  AccountBalance=AccountBalance-@WithdrawPrice,AllowWithdrawPrice=AllowWithdrawPrice-@WithdrawPrice
+where  Id=@Id ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("Id", withdrawCpm.ClienterId);
+            dbParameters.AddWithValue("WithdrawPrice", withdrawCpm.WithdrawPrice);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }
+
     }
 }

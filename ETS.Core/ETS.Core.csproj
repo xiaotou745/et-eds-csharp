@@ -100,6 +100,7 @@
     <Compile Include="Enums\ClienterEnum.cs" />
     <Compile Include="Enums\EnumStatusType.cs" />
     <Compile Include="Enums\CustomerRegisterStatusEnum.cs" />
+    <Compile Include="Enums\FinanceEnums.cs" />
     <Compile Include="Enums\SuperPlatform.cs" />
     <Compile Include="Enums\UserLoginResults.cs" />
     <Compile Include="Expand\ActionStatusAttribute.cs" />
