@@ -10,6 +10,7 @@ using Ets.Model.Common;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.ParameterModel.Finance;
+using ETS.Security;
 using Ets.Service.IProvider.Finance;
 using ETS.Transaction;
 using ETS.Transaction.Common;
@@ -18,13 +19,25 @@ namespace Ets.Service.Provider.Finance
 {
     public class ClienterFinanceProvider : IClienterFinanceProvider
     {
-        private  readonly ClienterDao _clienterDao = new ClienterDao();
-        //骑士余额流水表
+        #region 声明对象
+        private readonly ClienterDao _clienterDao = new ClienterDao();
+        /// <summary>
+        /// 骑士余额流水表
+        /// </summary>
         private readonly ClienterBalanceRecordDao _clienterBalanceRecordDao = new ClienterBalanceRecordDao();
-        //骑士提现表
+        /// <summary>
+        /// 骑士提现表
+        /// </summary>
         private readonly ClienterWithdrawFormDao _clienterWithdrawFormDao = new ClienterWithdrawFormDao();
-        //骑士提现日志
+        /// <summary>
+        /// 骑士提现日志
+        /// </summary>
         private readonly ClienterWithdrawLogDao _clienterWithdrawLogDao = new ClienterWithdrawLogDao();
+        /// <summary>
+        /// 骑士金融账号表
+        /// </summary>
+        private readonly ClienterFinanceAccountDao _clienterFinanceAccountDao = new ClienterFinanceAccountDao();
+        #endregion
 
         #region 骑士提现功能  add by caoheyang 20150509
 
@@ -37,7 +50,7 @@ namespace Ets.Service.Provider.Finance
         {
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                clienter clienter=new clienter();
+                clienter clienter = new clienter();
                 Tuple<bool, FinanceWithdrawC> checkbool = CheckWithdrawC(withdrawCpm, ref clienter);
                 if (checkbool.Item1 != true)  //验证失败 此次提款操作无效 直接返回相关错误信息
                 {
@@ -48,7 +61,7 @@ namespace Ets.Service.Provider.Finance
                     _clienterDao.UpdateForWithdrawC(withdrawCpm); //更新骑士表的余额，可提现余额
                     string withwardNo = "1";
                     //骑士提现
-                    long withwardId= _clienterWithdrawFormDao.Insert(new ClienterWithdrawForm()
+                    long withwardId = _clienterWithdrawFormDao.Insert(new ClienterWithdrawForm()
                     {
                         WithwardNo = withwardNo,//单号 规则待定
                         ClienterId = withdrawCpm.ClienterId,//骑士Id(Clienter表）
@@ -69,13 +82,13 @@ namespace Ets.Service.Provider.Finance
                         Operator = clienter.TrueName,
                         RelationNo = withwardNo,
                         Remark = "骑士提现"
-                    });  
+                    });
                     //骑士提现记录
                     _clienterWithdrawLogDao.Insert(new ClienterWithdrawLog()
                     {
                         WithwardId = withwardId,
                         Status = (int)ClienterWithdrawFormStatus.WaitAllow,//待审核
-                        Remark="骑士发起提现操作",
+                        Remark = "骑士发起提现操作",
                         Operator = clienter.TrueName
                     }); //更新骑士表的余额，可提现余额
                     tran.Complete();
@@ -89,7 +102,7 @@ namespace Ets.Service.Provider.Finance
         /// <param name="withdrawCpm">参数实体</param>
         /// <param name="clienter">超人</param>
         /// <returns></returns>
-        private Tuple<bool, FinanceWithdrawC> CheckWithdrawC(WithdrawCPM withdrawCpm,ref clienter clienter)
+        private Tuple<bool, FinanceWithdrawC> CheckWithdrawC(WithdrawCPM withdrawCpm, ref clienter clienter)
         {
             if (withdrawCpm.WithdrawPrice <= 0)   //提现金额小于等于0 提现有误
             {
@@ -105,7 +118,53 @@ namespace Ets.Service.Provider.Finance
             }
             return new Tuple<bool, FinanceWithdrawC>(true, FinanceWithdrawC.Success);
         }
- 
+
+        #endregion
+
+
+        #region 骑士金融账号绑定/修改
+        /// <summary>
+        /// 骑士绑定银行卡功能 add by caoheyang 20150511
+        /// </summary>
+        /// <param name="cardBindCpm">参数实体</param>
+        /// <returns></returns>
+        public SimpleResultModel CardBindC(CardBindCPM cardBindCpm)
+        {
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                int count = _clienterFinanceAccountDao.GetCountByClienterId(cardBindCpm.ClienterId);
+                if (count>0)
+                {
+                    return SimpleResultModel.Conclude(FinanceCardBindC.Exists);//该骑士已绑定过金融账号
+                }
+                int result=  _clienterFinanceAccountDao.Insert(new ClienterFinanceAccount()
+                {
+                    ClienterId = cardBindCpm.ClienterId,//骑士ID
+                    TrueName = cardBindCpm.TrueName, //户名
+                    AccountNo = DES.Encrypt(cardBindCpm.AccountNo), //卡号(DES加密)  TODO 统一加密算法
+                    IsEnable = true,// 是否有效(true：有效 0：无效）  新增时true 
+                    AccountType = cardBindCpm.AccountType == 0
+                        ? (int)ClienterFinanceAccountType.WangYin : cardBindCpm.AccountType,  //账号类型 TODO 目前只支付网银
+                    OpenBank = cardBindCpm.OpenBank, //开户行
+                    OpenSubBank = cardBindCpm.OpenSubBank, //开户支行
+                    CreateBy = cardBindCpm.CreateBy,//创建人  当前登录人
+                    UpdateBy = cardBindCpm.CreateBy//新增时最后修改人与新增人一致  当前登录人
+                });
+                tran.Complete();
+                return SimpleResultModel.Conclude(SystemEnum.Success);
+            }
+        }
+
+
+        /// <summary>
+        /// 骑士修改绑定银行卡功能 add by caoheyang 20150511
+        /// </summary>
+        /// <param name="cardModifyCpm">参数实体</param>
+        /// <returns></returns>
+        public SimpleResultModel CardModifyC(CardModifyCPM cardModifyCpm)
+        {
+            return null;
+        } 
         #endregion
     }
 }

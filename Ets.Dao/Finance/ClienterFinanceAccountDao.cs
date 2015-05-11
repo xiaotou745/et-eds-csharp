@@ -45,8 +45,8 @@ select @@IDENTITY";
             dbParameters.AddWithValue("AccountType", clienterFinanceAccount.AccountType); //账号类型：(1网银 2支付宝 3微信 4财付通 5百度钱包）
             dbParameters.AddWithValue("OpenBank", clienterFinanceAccount.OpenBank); //开户行
             dbParameters.AddWithValue("OpenSubBank", clienterFinanceAccount.OpenSubBank); //开户支行
-            dbParameters.AddWithValue("CreateBy", clienterFinanceAccount.CreateBy); //最后更新人
-            dbParameters.AddWithValue("UpdateBy", clienterFinanceAccount.UpdateBy); //骑士ID
+            dbParameters.AddWithValue("CreateBy", clienterFinanceAccount.CreateBy); //添加人
+            dbParameters.AddWithValue("UpdateBy", clienterFinanceAccount.UpdateBy); //最后更新人
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);
             return ParseHelper.ToInt(result);
         }
@@ -113,7 +113,6 @@ from  ClienterFinanceAccount (nolock)" + condition;
 select  Id,ClienterId,TrueName,AccountNo,IsEnable,AccountType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
 from  ClienterFinanceAccount (nolock)
 where  Id=@Id ";
-
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Id", id);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
@@ -122,6 +121,46 @@ where  Id=@Id ";
                 model = DataTableHelper.ConvertDataTableList<ClienterFinanceAccount>(dt)[0];
             }
             return model;
+        }
+
+
+        /// <summary>
+        /// 根据骑士ID获取当前骑士的所有有效金融账户 add by caoheyang 20150511
+        /// </summary>
+        /// <param name="clienterId">骑士ID</param>
+        /// <returns></returns>
+        public IList<ClienterFinanceAccount> GetByClienterId(int clienterId)
+        {
+            IList<ClienterFinanceAccount> models = new List<ClienterFinanceAccount>();
+            const string querysql = @"
+select  Id,ClienterId,TrueName,AccountNo,IsEnable,AccountType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
+from  ClienterFinanceAccount  
+where  ClienterId=@ClienterId and IsEnable=0";  //事物内不加锁
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("ClienterId", clienterId);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                models = DataTableHelper.ConvertDataTableList<ClienterFinanceAccount>(dt);
+            }
+            return models;
+        }
+
+        /// <summary>
+        /// 根据骑士ID获取当前骑士的所有有效金融账户数量 add by caoheyang 20150511
+        /// </summary>
+        /// <param name="clienterId">骑士ID</param>
+        /// <returns></returns>
+        public int GetCountByClienterId(int clienterId)
+        {
+            IList<ClienterFinanceAccount> models = new List<ClienterFinanceAccount>();
+            const string querysql = @"
+select  Count(Id)
+from  ClienterFinanceAccount  
+where  ClienterId=@ClienterId and IsEnable=1";  //事物内不加锁
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("ClienterId", clienterId);
+           return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, querysql, dbParameters));     
         }
 
         #endregion
