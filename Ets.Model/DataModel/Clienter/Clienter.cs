@@ -49,7 +49,7 @@ namespace Ets.Model.DataModel.Clienter
         /// <summary>
         /// 状态:0被拒绝，1已通过，2未审核，3审核中
         /// </summary>
-        public int? Status { get; set; }
+        public byte? Status { get; set; }
         /// <summary>
         /// 帐户余额
         /// </summary>

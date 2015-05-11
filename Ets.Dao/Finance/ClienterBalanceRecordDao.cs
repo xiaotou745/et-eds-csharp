@@ -37,10 +37,13 @@ namespace Ets.Dao.Finance
         public long Insert(ClienterBalanceRecord clienterBalanceRecord)
         {
             const string insertSql = @"
-insert into ClienterBalanceRecord(ClienterId,Amount,Status,Balance,RecordType,Operator,RelationNo,Remark)
-values(@Amount,@Status,@Balance,@RecordType,@Operator,@RelationNo,@Remark)
+insert into ClienterBalanceRecord
+(ClienterId,Amount,Status,Balance,RecordType,Operator,RelationNo,Remark)
+values
+(@ClienterId,@Amount,@Status,@Balance,@RecordType,@Operator,@RelationNo,@Remark)
 select @@IDENTITY";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("ClienterId", clienterBalanceRecord.ClienterId);//骑士id
             dbParameters.AddWithValue("Amount", clienterBalanceRecord.Amount);//流水金额
             dbParameters.AddWithValue("Status", clienterBalanceRecord.Status); //流水状态(1、交易成功 2、交易中）
             dbParameters.AddWithValue("Balance", clienterBalanceRecord.Balance); //交易后余额
