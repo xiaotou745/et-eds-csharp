@@ -32,8 +32,10 @@ namespace Ets.Dao.Finance
         public long Insert(ClienterWithdrawForm clienterWithdrawForm)
         {
             const string insertSql = @"
-insert into ClienterWithdrawForm(WithwardNo,ClienterId,BalancePrice,AllowWithdrawPrice,Status,Amount,Balance)
-values(@WithwardNo,@ClienterId,@BalancePrice,@AllowWithdrawPrice,@Status,@Amount,@Balance)
+insert into ClienterWithdrawForm(WithwardNo,ClienterId,BalancePrice,AllowWithdrawPrice,Status,Amount,Balance,
+TrueName,AccountNo,AccountType,OpenBank,OpenSubBank)
+values(@WithwardNo,@ClienterId,@BalancePrice,@AllowWithdrawPrice,@Status,@Amount,@Balance,
+@TrueName,@AccountNo,@AccountType,@OpenBank,@OpenSubBank)
 
 select @@IDENTITY";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -44,6 +46,12 @@ select @@IDENTITY";
             dbParameters.AddWithValue("Status", clienterWithdrawForm.Status);  //提现状态(1待审核 2 审核通过 3打款完成 -1审核拒绝 -2 打款失败)
             dbParameters.AddWithValue("Amount", clienterWithdrawForm.Amount);  //提现金额
             dbParameters.AddWithValue("Balance", clienterWithdrawForm.Balance);  //提现后余额 
+            dbParameters.AddWithValue("TrueName", clienterWithdrawForm.TrueName); //骑士收款户名
+            dbParameters.AddWithValue("AccountNo", clienterWithdrawForm.AccountNo); //卡号(DES加密)
+            dbParameters.AddWithValue("AccountType", clienterWithdrawForm.AccountType);//账号类型：(1网银 2支付宝 3微信 4财付通 5百度钱包）
+            dbParameters.AddWithValue("OpenBank", clienterWithdrawForm.OpenBank); //开户行
+            dbParameters.AddWithValue("OpenSubBank", clienterWithdrawForm.OpenSubBank);//开户支行
+
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters); //提现单号
             return ParseHelper.ToLong(result);
         }

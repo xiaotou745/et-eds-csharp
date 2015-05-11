@@ -51,7 +51,7 @@ namespace Ets.Service.Provider.Finance
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 clienter clienter = new clienter();
-                var clienterFinanceAccount=new ClienterFinanceAccount();//骑士金融账号信息
+                var clienterFinanceAccount = new ClienterFinanceAccount();//骑士金融账号信息
                 Tuple<bool, FinanceWithdrawC> checkbool = CheckWithdrawC(withdrawCpm, ref clienter, ref clienterFinanceAccount);
                 if (checkbool.Item1 != true)  //验证失败 此次提款操作无效 直接返回相关错误信息
                 {
@@ -71,7 +71,12 @@ namespace Ets.Service.Provider.Finance
                                   Status = (int)ClienterWithdrawFormStatus.WaitAllow,//待审核
                                   Amount = withdrawCpm.WithdrawPrice,//提现金额
                                   Balance = clienter.AccountBalance - withdrawCpm.WithdrawPrice, //提现后余额
-                              }); 
+                                  TrueName = clienterFinanceAccount.TrueName,//骑士收款户名
+                                  AccountNo = clienterFinanceAccount.AccountNo, //卡号(DES加密)
+                                  AccountType = clienterFinanceAccount.AccountType, //账号类型：
+                                  OpenBank = clienterFinanceAccount.OpenBank,//开户行
+                                  OpenSubBank = clienterFinanceAccount.OpenSubBank //开户支行
+                              });
                     #endregion
 
                     #region 骑士余额流水操作 更新骑士表的余额，可提现余额
@@ -85,7 +90,7 @@ namespace Ets.Service.Provider.Finance
                                 Operator = clienter.TrueName,
                                 RelationNo = withwardNo,
                                 Remark = "骑士提现"
-                            }); 
+                            });
                     #endregion
 
                     #region 骑士提现记录
@@ -158,11 +163,11 @@ namespace Ets.Service.Provider.Finance
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 int count = _clienterFinanceAccountDao.GetCountByClienterId(cardBindCpm.ClienterId);
-                if (count>0)
+                if (count > 0)
                 {
                     return SimpleResultModel.Conclude(FinanceCardBindC.Exists);//该骑士已绑定过金融账号
                 }
-                int result=  _clienterFinanceAccountDao.Insert(new ClienterFinanceAccount()
+                int result = _clienterFinanceAccountDao.Insert(new ClienterFinanceAccount()
                 {
                     ClienterId = cardBindCpm.ClienterId,//骑士ID
                     TrueName = cardBindCpm.TrueName, //户名
@@ -196,7 +201,7 @@ namespace Ets.Service.Provider.Finance
             {
                 _clienterFinanceAccountDao.Update(new ClienterFinanceAccount()
                 {
-                    Id=cardModifyCpm.Id,
+                    Id = cardModifyCpm.Id,
                     ClienterId = cardModifyCpm.ClienterId,//骑士ID
                     TrueName = cardModifyCpm.TrueName, //户名
                     AccountNo = DES.Encrypt(cardModifyCpm.AccountNo), //卡号(DES加密) 
@@ -208,7 +213,7 @@ namespace Ets.Service.Provider.Finance
                 return SimpleResultModel.Conclude(SystemEnum.Success);
             }
             return null;
-        } 
+        }
         #endregion
     }
 }
