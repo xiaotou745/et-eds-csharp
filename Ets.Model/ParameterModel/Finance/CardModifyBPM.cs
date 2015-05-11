@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace Ets.Model.ParameterModel.Finance
 {
     /// <summary>
-    /// 商户修改绑定银行卡功能 参数实体 add by caoheyang 20150511
+    /// 骑士修改绑定银行卡功能 参数实体 add by caoheyang 20150511
     /// </summary>
-    public class CardModifyCPM
+    public class CardModifyBPM
     {
         /// <summary>
         /// Id
