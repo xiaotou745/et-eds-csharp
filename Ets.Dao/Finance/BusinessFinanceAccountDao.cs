@@ -120,7 +120,7 @@ where  ClienterId=@ClienterId and IsEnable=1";  //事物内不加锁
         /// </summary>
         /// <param name="businessId">商户ID</param>
         /// <returns></returns>
-        public int GetCountByClienterId(int businessId)
+        public int GetCountByBusinessId(int businessId)
         {
             IList<BusinessFinanceAccount> models = new List<BusinessFinanceAccount>();
             const string querysql = @"

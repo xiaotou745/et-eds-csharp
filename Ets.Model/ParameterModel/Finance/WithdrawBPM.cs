@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Ets.Model.ParameterModel.Finance
 {
     /// <summary>
-    /// 骑士提现功能API实体 add by caoheyang 20150509
+    /// 商户提现功能API实体 add by caoheyang 20150509
     /// </summary>
     public class WithdrawBPM
     {

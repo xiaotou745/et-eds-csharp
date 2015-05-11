@@ -26,19 +26,19 @@ namespace Ets.Service.Provider.Finance
         /// <summary>
         /// 商户余额流水表
         /// </summary>
-        private readonly ClienterBalanceRecordDao _clienterBalanceRecordDao = new ClienterBalanceRecordDao();
+        private readonly BusinessBalanceRecordDao _businessBalanceRecordDao = new BusinessBalanceRecordDao();
         /// <summary>
         /// 商户提现表
         /// </summary>
-        private readonly ClienterWithdrawFormDao _clienterWithdrawFormDao = new ClienterWithdrawFormDao();
+        private readonly BusinessWithdrawFormDao _businessWithdrawFormDao = new BusinessWithdrawFormDao();
         /// <summary>
         /// 商户提现日志
         /// </summary>
-        private readonly ClienterWithdrawLogDao _clienterWithdrawLogDao = new ClienterWithdrawLogDao();
+        private readonly BusinessWithdrawLogDao _businessWithdrawLogDao = new BusinessWithdrawLogDao();
         /// <summary>
         /// 商户金融账号表
         /// </summary>
-        private readonly ClienterFinanceAccountDao _clienterFinanceAccountDao = new ClienterFinanceAccountDao();
+        private readonly BusinessFinanceAccountDao _businessFinanceAccountDao = new BusinessFinanceAccountDao();
 
         /// <summary>
         /// 财务dao
@@ -57,15 +57,19 @@ namespace Ets.Service.Provider.Finance
             return businessFinanceDao.GetBusinessWithdrawList<BusinessWithdrawFormModel>(criteria);
         }
 
+        #region  商户提现功能  add by caoheyang 20150511
         /// <summary>
-        /// 商户提现功能 add by caoheyang 20150509
+        /// 商户提现功能 add by caoheyang 20150511
         /// </summary>
         /// <param name="withdrawBpm">参数实体</param>
         /// <returns></returns>
         public SimpleResultModel WithdrawB(WithdrawBPM withdrawBpm)
         {
-        return null;
-        }
+            return null;
+        } 
+        #endregion
+
+        #region  商户金融账号绑定/修改
 
         /// <summary>
         /// 商户绑定银行卡功能 add by caoheyang 20150511
@@ -76,23 +80,23 @@ namespace Ets.Service.Provider.Finance
         {
             if (cardBindBpm.AccountNo != cardBindBpm.AccountNo2) //两次录入的金融账号不一致
             {
-                return SimpleResultModel.Conclude(FinanceCardBindC.InputValid);
+                return SimpleResultModel.Conclude(FinanceCardBindB.InputValid);
             }
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                int count = _clienterFinanceAccountDao.GetCountByClienterId(cardBindBpm.BusinessId);
+                int count = _businessFinanceAccountDao.GetCountByBusinessId(cardBindBpm.BusinessId);
                 if (count > 0)
                 {
-                    return SimpleResultModel.Conclude(FinanceCardBindC.Exists);//该骑士已绑定过金融账号
+                    return SimpleResultModel.Conclude(FinanceCardBindB.Exists);//该商户已绑定过金融账号
                 }
-                int result = _clienterFinanceAccountDao.Insert(new ClienterFinanceAccount()
+                int result = _businessFinanceAccountDao.Insert(new BusinessFinanceAccount()
                 {
-                    ClienterId = cardBindBpm.BusinessId,//商户ID
+                    BusinessId = cardBindBpm.BusinessId,//商户ID
                     TrueName = cardBindBpm.TrueName, //户名
                     AccountNo = DES.Encrypt(cardBindBpm.AccountNo), //卡号(DES加密)  
                     IsEnable = true,// 是否有效(true：有效 0：无效）  新增时true 
                     AccountType = cardBindBpm.AccountType == 0
-                        ? (int)ClienterFinanceAccountType.WangYin : cardBindBpm.AccountType,  //账号类型 
+                        ? (int)BusinessFinanceAccountType.WangYin : cardBindBpm.AccountType,  //账号类型 
                     OpenBank = cardBindBpm.OpenBank, //开户行
                     OpenSubBank = cardBindBpm.OpenSubBank, //开户支行
                     CreateBy = cardBindBpm.CreateBy,//创建人  当前登录人
@@ -113,14 +117,14 @@ namespace Ets.Service.Provider.Finance
         {
             if (cardModifyBpm.AccountNo != cardModifyBpm.AccountNo2) //两次录入的金融账号不一致
             {
-                return SimpleResultModel.Conclude(FinanceCardCardModifyC.InputValid);
+                return SimpleResultModel.Conclude(FinanceCardCardModifyB.InputValid);
             }
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                _clienterFinanceAccountDao.Update(new ClienterFinanceAccount()
+                _businessFinanceAccountDao.Update(new BusinessFinanceAccount()
                 {
                     Id = cardModifyBpm.Id,
-                    ClienterId = cardModifyBpm.ClienterId,//骑士ID
+                    BusinessId = cardModifyBpm.BusinessId,//商户ID
                     TrueName = cardModifyBpm.TrueName, //户名
                     AccountNo = DES.Encrypt(cardModifyBpm.AccountNo), //卡号(DES加密) 
                     OpenBank = cardModifyBpm.OpenBank, //开户行
@@ -130,8 +134,10 @@ namespace Ets.Service.Provider.Finance
                 tran.Complete();
                 return SimpleResultModel.Conclude(SystemEnum.Success);
             }
-        }
-/// <summary>
+        } 
+        #endregion
+
+        /// <summary>
         /// 根据申请单Id获取商家提现申请单
         /// danny-20150511
         /// </summary>
