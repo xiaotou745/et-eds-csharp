@@ -51,9 +51,13 @@
     <Compile Include="Common\TestUserDao.cs" />
     <Compile Include="DaoBase.cs" />
     <Compile Include="Finance\BusinessFinanceDao.cs" />
+    <Compile Include="Finance\BusinessBalanceRecordDao.cs" />
     <Compile Include="Finance\ClienterBalanceRecordDao.cs" />
+    <Compile Include="Finance\BusinessFinanceAccountDao.cs" />
     <Compile Include="Finance\ClienterFinanceAccountDao.cs" />
+    <Compile Include="Finance\BusinessWithdrawFormDao.cs" />
     <Compile Include="Finance\ClienterWithdrawFormDao.cs" />
+    <Compile Include="Finance\BusinessWithdrawLogDao.cs" />
     <Compile Include="Finance\ClienterWithdrawLogDao.cs" />
     <Compile Include="GlobalConfig\GlobalConfigDao.cs" />
     <Compile Include="MenuSet\AuthoritySetDao.cs" />

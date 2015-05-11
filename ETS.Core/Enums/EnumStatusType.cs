@@ -40,7 +40,7 @@ namespace ETS.Enums
         [DisplayText("抱歉，订单金额不可低于10元")]
         AmountLessThanTen,
         [DisplayText("抱歉，订单金额不可高于5000元")]
-        AmountMoreThanFiveThousand 
+        AmountMoreThanFiveThousand
     }
     public enum GetOrdersStatus
     {
@@ -81,7 +81,7 @@ namespace ETS.Enums
         [DisplayText("订单已被抢,无法取消")]
         FailedCancelOrder = 204,
         [DisplayText("取消失败")]
-        NotCancelOrder = 205 
+        NotCancelOrder = 205
 
     }
     public enum OrderStatus
@@ -158,7 +158,7 @@ namespace ETS.Enums
         PickupCodeError,
         [DisplayText("订单已取消")]
         OrderHadCancel
-        
+
     }
 
     public enum GetMyBalanceStatus
@@ -310,8 +310,23 @@ namespace ETS.Enums
         [DisplayText("获取用户状态失败")]
         Error
     }
+    /// <summary>
+    /// 获取银行列表
+    /// wc
+    /// </summary>
+    public enum BankStatus
+    {
+        [DisplayText("成功")]
+        Success = 1,
+        [DisplayText("请传递版本号")]
+        NoVersion = 100,
+        [DisplayText("无配置文件")]
+        NoXmlConfig = 101,
+        [DisplayText("失败")]
+        Failed = 102 
+    }
 
-    public enum AliPayStatus
+   public enum AliPayStatus
     {
         [DisplayText("成功")]
         success = 0,
