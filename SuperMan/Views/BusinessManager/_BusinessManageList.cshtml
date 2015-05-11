@@ -248,7 +248,7 @@
                 subsidyConfig = "全局补贴：跨店抢单奖励";
             }
             if (isStarTimeSubsidies == "1") {
-                if (subsidyConfig.length==0) {
+                if (subsidyConfig==null||subsidyConfig.length==0) {
                     subsidyConfig = "全局补贴：动态时间奖励";
                 }
                 else {
