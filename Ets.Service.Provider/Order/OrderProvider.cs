@@ -435,14 +435,19 @@ namespace Ets.Service.Provider.Order
         /// <returns>订单号码</returns>
         public ResultModel<object> Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
         {
-            ///查询缓存，看看当前店铺是否存在,缓存存储E代送的商户id
+            //查询缓存，看看当前店铺是否存在,缓存存储E代送的商户id
             var redis = new ETS.NoSql.RedisCache.RedisCache();
 
             #region 第三方订单是否重复推送的验证  add by caoheyang 20150417
+
             string orderExistsNo = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
             paramodel.order_id.ToString()));  //查询缓存，看当前订单是否存在,“true”代表存在，key的形式为集团ID_第三方平台订单号
             if (orderExistsNo != null)
                 return ResultModel<object>.Conclude(OrderApiStatusType.OrderExists, new { order_no = orderExistsNo });
+            if (paramodel.total_price<=0)  //金额小于等于0，数据不合法，返回信息 待用数据特性优化
+            {
+                return ResultModel<object>.Conclude(OrderApiStatusType.ParaError);
+            }
             #endregion
 
             #region 设置用户的省市区编码信息 add by caoheyang 20150407

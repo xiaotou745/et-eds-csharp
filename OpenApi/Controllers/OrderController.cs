@@ -64,7 +64,7 @@ namespace OpenApi.Controllers
         public ResultModel<object> Create(ParaModel<CreatePM_OpenApi> paramodel)
         {
             paramodel.fields.store_info.group = paramodel.group;  //设置集团信息到具体的门店上  在dao层会用到
-            paramodel.fields.orderfrom = paramodel.group; ///设置订单来源,其实就是订单对应的集团是什么
+            paramodel.fields.orderfrom = paramodel.group; //设置订单来源,其实就是订单对应的集团是什么
             return  new OrderProvider().Create(paramodel.fields);
         }
 
