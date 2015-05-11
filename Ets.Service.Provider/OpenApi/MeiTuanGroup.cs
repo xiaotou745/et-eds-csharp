@@ -292,6 +292,10 @@ namespace Ets.Service.Provider.OpenApi
             if (businessId == 0)
                 return null;
             BusListResultModel business = new Ets.Dao.User.BusinessDao().GetBusiness(businessId);
+            if (business.Status != ConstValues.BUSINESS_AUDITPASS)//商户非审核通过不允许接单
+            {
+                return null;
+            }
             model.store_info.delivery_fee = ParseHelper.ToDecimal(business.DistribSubsidy);//外送费
             model.store_info.businesscommission = ParseHelper.ToDecimal(business.BusinessCommission);//结算比例
             model.businessId = businessId;
