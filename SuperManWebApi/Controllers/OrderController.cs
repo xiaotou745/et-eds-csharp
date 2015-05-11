@@ -18,7 +18,10 @@ using ETS.Const;
 using Ets.Model.Common;
 using ETS.Util;
 using Ets.Model.ParameterModel.Clienter;
-using ETS.Expand;
+using ETS.Expand;using ETS.Enums;
+using Ets.Model.ParameterModel.Bussiness;
+using Ets.Model.ParameterModel.Order;
+using Ets.Model.DomainModel.Order;
 namespace SuperManWebApi.Controllers
 {
     public class OrderController : ApiController
@@ -27,44 +30,57 @@ namespace SuperManWebApi.Controllers
         IBusinessProvider iBusinessProvider = new BusinessProvider();
         readonly Ets.Service.IProvider.Clienter.IClienterProvider iClienterProvider = new Ets.Service.Provider.Clienter.ClienterProvider();
         /// <summary>
-        /// 商户发布订单接口        
+        /// 商户发布订单        
         /// </summary>
-        /// <param name="model">订单数据</param>
+        /// <param name="model">订单实体</param>
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
         [HttpPost]
-        public ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel> Push(Ets.Model.ParameterModel.Bussiness.BusiOrderInfoModel model)
+        public ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel> Push(BussinessOrderInfoModel model)
         {          
             //验证该商户有无发布订单资格 
             if (!iBusinessProvider.HaveQualification(model.userId))
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.HadCancelQualification);
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(PubOrderStatus.HadCancelQualification);
             }
             if (model.Amount < 10m)
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.AmountLessThanTen);
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(PubOrderStatus.AmountLessThanTen);
             }
             if (model.Amount > 5000m)
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.AmountMoreThanFiveThousand);
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(PubOrderStatus.AmountMoreThanFiveThousand);
             }           
             if (model.OrderCount <= 0 || model.OrderCount > 15) //判断录入订单数量是否符合要求
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.OrderCountError);
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
 
             Ets.Model.DataModel.Order.order order = iOrderProvider.TranslateOrder(model);
             if (order.BusinessCommission < 10m) //商户结算比例不能小于10
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.BusiSettlementRatioError);
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(PubOrderStatus.BusiSettlementRatioError);
             }
             string result = iOrderProvider.AddOrder(order);
 
             if (result == "0")//当前订单执行失败
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.InvalidPubOrder);
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(PubOrderStatus.InvalidPubOrder);
             }
             Ets.Model.ParameterModel.Order.BusiOrderResultModel resultModel = new Ets.Model.ParameterModel.Order.BusiOrderResultModel { userId = model.userId };
-            return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.Success, resultModel);
+            return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
+        }
 
+        /// <summary>
+        /// 订单详情        
+        /// </summary>
+        /// <param name="model">订单参数</param>
+        /// <returns></returns>        
+        [HttpPost]
+        public ResultModel<OrderDM> GetDetails(OrderPM model)
+        {
+            //加验证
+
+            OrderDM orderDM= iOrderProvider.GetDetails(model.OrderId);
+            return Ets.Model.Common.ResultModel<OrderDM>.Conclude(GetOrdersStatus.Success, orderDM);          
         }
 
         /// <summary>

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ets.Model.DomainModel.Bussiness;
 
 namespace Ets.Service.IProvider.Finance
 {
@@ -77,5 +78,7 @@ namespace Ets.Service.IProvider.Finance
         /// <param name="model"></param>
         /// <returns></returns>
         bool BusinessWithdrawPayOk(BusinessWithdrawLog model);
+
+        BusinessDM GetDetails(int id);
     }
 }

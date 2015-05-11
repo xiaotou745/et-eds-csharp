@@ -9,7 +9,7 @@ namespace Ets.Model.ParameterModel.Bussiness
     /// <summary>
     /// B端发布订单所需数据
     /// </summary>
-    public class BusiOrderInfoModel
+    public class BussinessOrderInfoModel
     {
         /// <summary>
         /// 当前发布者
@@ -71,11 +71,11 @@ namespace Ets.Model.ParameterModel.Bussiness
         /// <summary>
         /// 订单小票列表
         /// </summary>
-        public List<OrderChlidModel> listOrderChlid { get; set; }
+        public List<OrderChlidParamModel> listOrderChlid { get; set; }
 
     }
 
-    public class OrderChlidModel
+    public class OrderChlidParamModel
     {
         public int ChildId { get; set; }
         public decimal GoodPrice { get; set; }  

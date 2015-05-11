@@ -22,7 +22,8 @@ using System.Text.RegularExpressions;
 using ETS.IO;
 using System.IO;
 using ETS.Util;
-
+using ETS.Data.Generic;
+using Ets.Model.DataModel.Finance;
 namespace Ets.Dao.Clienter
 {
 
@@ -987,6 +988,120 @@ where  Id=@Id ";
             dbParameters.AddWithValue("WithdrawPrice", withdrawCpm.WithdrawPrice);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
+
+        /// <summary>
+        /// 获取商家详情
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ClienterDM GetDetails(int id)
+        {
+            ClienterDM clienterDM = new ClienterDM();
+            #region 商家表
+            string queryClienterSql = @"
+select  Id,PhoneNo,LoginName,recommendPhone,Password,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
+AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode
+,AreaCode,CityCode,Province,BussinessID,WorkStatus,AllowWithdrawPrice,HasWithdrawPrice
+from  clienter (nolock) where Id=@Id" ;
+            IDbParameters dbClienterParameters = DbHelper.CreateDbParameters();
+            dbClienterParameters.AddWithValue("Id", id);
+            clienterDM = DbHelper.QueryForObject(SuperMan_Read, queryClienterSql, dbClienterParameters, new ClienterRowMapper());
+            #endregion
+
+            #region 商家金融账号表
+            const string queryCFAccountSql = @"
+select  Id,ClienterId,TrueName,AccountNo,IsEnable,AccountType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
+from  ClienterFinanceAccount (nolock) where ClienterId=@ClienterId";
+            IDbParameters dbCFAccountParameters = DbHelper.CreateDbParameters();
+            dbCFAccountParameters.AddWithValue("ClienterId", id);
+            DataTable dtBFAccount = DbHelper.ExecuteDataTable(SuperMan_Read, queryCFAccountSql, dbCFAccountParameters);
+            List<ClienterFinanceAccount> listCFAccount = (List<ClienterFinanceAccount>)MapRows<ClienterFinanceAccount>(dtBFAccount);
+            clienterDM.listcFAcount = listCFAccount;
+            #endregion
+
+            return clienterDM;
+        }
+
+        #region  Nested type: ClienterRowMapper
+
+        /// <summary>
+        /// 绑定对象
+        /// </summary>
+        private class ClienterRowMapper : IDataTableRowMapper<ClienterDM>
+        {
+            public ClienterDM MapRow(DataRow dataReader)
+            {
+                var result = new ClienterDM();
+                object obj;
+                obj = dataReader["Id"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.Id = int.Parse(obj.ToString());
+                }
+                result.PhoneNo = dataReader["PhoneNo"].ToString();
+                result.LoginName = dataReader["LoginName"].ToString();
+                result.recommendPhone = dataReader["recommendPhone"].ToString();
+                result.Password = dataReader["Password"].ToString();
+                result.TrueName = dataReader["TrueName"].ToString();
+                result.IDCard = dataReader["IDCard"].ToString();
+                result.PicWithHandUrl = dataReader["PicWithHandUrl"].ToString();
+                result.PicUrl = dataReader["PicUrl"].ToString();
+                obj = dataReader["Status"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.Status = int.Parse(obj.ToString());
+                }
+                obj = dataReader["AccountBalance"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.AccountBalance = decimal.Parse(obj.ToString());
+                }
+                obj = dataReader["InsertTime"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.InsertTime = DateTime.Parse(obj.ToString());
+                }
+                result.InviteCode = dataReader["InviteCode"].ToString();
+                result.City = dataReader["City"].ToString();
+                result.CityId = dataReader["CityId"].ToString();
+                obj = dataReader["GroupId"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.GroupId = int.Parse(obj.ToString());
+                }
+                result.HealthCardID = dataReader["HealthCardID"].ToString();
+                result.InternalDepart = dataReader["InternalDepart"].ToString();
+                result.ProvinceCode = dataReader["ProvinceCode"].ToString();
+                result.AreaCode = dataReader["AreaCode"].ToString();
+                result.CityCode = dataReader["CityCode"].ToString();
+                result.Province = dataReader["Province"].ToString();
+                obj = dataReader["BussinessID"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.BussinessID = int.Parse(obj.ToString());
+                }
+                obj = dataReader["WorkStatus"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.WorkStatus = int.Parse(obj.ToString());
+                }
+                obj = dataReader["AllowWithdrawPrice"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.AllowWithdrawPrice = decimal.Parse(obj.ToString());
+                }
+                obj = dataReader["HasWithdrawPrice"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.HasWithdrawPrice = decimal.Parse(obj.ToString());
+                }
+
+                return result;
+            }
+        }
+
+        #endregion
+
 
     }
 }

@@ -18,7 +18,8 @@ using System.Text;
 using System.Threading.Tasks;
 using ETS.Transaction;
 using ETS.Transaction.Common;
-
+using Ets.Model.DomainModel.Bussiness;
+using Ets.Dao.User;
 namespace Ets.Service.Provider.Finance
 {
     public class BusinessFinanceProvider : IBusinessFinanceProvider
@@ -317,5 +318,11 @@ namespace Ets.Service.Provider.Finance
         {
             return businessFinanceDao.BusinessWithdrawPayOk(model);
         }
+
+        public BusinessDM GetDetails(int id)
+        {
+            return (new BusinessDao()).GetDetails(id);
+        }
+
     }
 }
