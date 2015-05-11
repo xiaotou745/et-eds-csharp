@@ -40,8 +40,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\AliPay\NotifyResultModel.cs" />
-    <Compile Include="Common\AliPay\PayResultModel.cs" />
     <Compile Include="Common\ApiVersionStatisticModel.cs" />
     <Compile Include="Common\BusinessCountManageList.cs" />
     <Compile Include="Common\ClienterCountManageList.cs" />
@@ -58,10 +56,8 @@
     <Compile Include="DataModel\Bussiness\BusinessOptionLog.cs" />
     <Compile Include="DataModel\Clienter\ClienterCrossShopLogModel.cs" />
     <Compile Include="DataModel\Finance\Bank.cs" />
-    <Compile Include="DataModel\Finance\BusinessBalanceRecord.cs" />
     <Compile Include="DataModel\Finance\BusinessFinanceAccount.cs" />
     <Compile Include="DataModel\Finance\BusinessWithdrawForm.cs" />
-    <Compile Include="DataModel\Finance\BusinessWithdrawLog.cs" />
     <Compile Include="DataModel\Finance\ClienterBalanceRecord.cs" />
     <Compile Include="DataModel\Finance\ClienterFinanceAccount.cs" />
     <Compile Include="DataModel\Finance\ClienterWithdrawForm.cs" />
@@ -73,11 +69,8 @@
     <Compile Include="DataModel\Order\OrderSubsidiesLog.cs" />
     <Compile Include="DomainModel\Area\DMAreaCodeInfo.cs" />
     <Compile Include="DomainModel\Finance\BusinessWithdrawFormModel.cs" />
-    <Compile Include="DomainModel\Finance\BusinessWithdrawLogModel.cs" />
     <Compile Include="DomainModel\Subsidy\ShortMessageModel.cs" />
     <Compile Include="DomainModel\Subsidy\GrabOrderModel.cs" />
-    <Compile Include="ParameterModel\AliPay\NotifyModel.cs" />
-    <Compile Include="ParameterModel\AliPay\PayModel.cs" />
     <Compile Include="ParameterModel\Area\ParaAreaNameInfo.cs" />
     <Compile Include="Common\ParaModel.cs" />
     <Compile Include="Common\ResultModelServicePhone.cs" />
@@ -195,7 +188,6 @@
     <Compile Include="ParameterModel\Order\OrderRecordsLog.cs" />
     <Compile Include="ParameterModel\Order\OrderSearchCriteria.cs" />
     <Compile Include="ParameterModel\Order\PullOrderInfoPM_OpenApi.cs" />
-    <Compile Include="ParameterModel\Order\UploadReceiptModel.cs" />
     <Compile Include="ParameterModel\Sms\SmsParaModel.cs" />
     <Compile Include="ParameterModel\Subsidy\CrossShopListModel.cs" />
     <Compile Include="ParameterModel\Subsidy\SubsidyModel.cs" />
