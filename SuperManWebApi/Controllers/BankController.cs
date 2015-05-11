@@ -35,7 +35,7 @@ namespace SuperManWebApi.Controllers
         public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Finance.BankModel[]> Get(BankCriteria bankCriteria)
         {
             List<Ets.Model.DataModel.Finance.BankModel> listBank = new List<Ets.Model.DataModel.Finance.BankModel>(); 
-            if (string.IsNullOrWhiteSpace(bankCriteria.version))
+            if (string.IsNullOrWhiteSpace(bankCriteria.Version))
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Finance.BankModel[]>.Conclude(BankStatus.NoVersion, listBank.ToArray());
             } 
