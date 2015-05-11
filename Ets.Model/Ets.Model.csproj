@@ -55,8 +55,10 @@
     <Compile Include="Common\TestUserModel.cs" />
     <Compile Include="DataModel\Bussiness\BusinessOptionLog.cs" />
     <Compile Include="DataModel\Clienter\ClienterCrossShopLogModel.cs" />
+    <Compile Include="DataModel\Finance\BusinessBalanceRecord.cs" />
     <Compile Include="DataModel\Finance\BusinessFinanceAccount.cs" />
     <Compile Include="DataModel\Finance\BusinessWithdrawForm.cs" />
+    <Compile Include="DataModel\Finance\BusinessWithdrawLog.cs" />
     <Compile Include="DataModel\Finance\ClienterBalanceRecord.cs" />
     <Compile Include="DataModel\Finance\ClienterFinanceAccount.cs" />
     <Compile Include="DataModel\Finance\ClienterWithdrawForm.cs" />
