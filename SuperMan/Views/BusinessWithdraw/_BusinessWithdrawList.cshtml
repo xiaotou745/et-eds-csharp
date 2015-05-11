@@ -1,4 +1,5 @@
 ﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Finance.BusinessWithdrawFormModel>
+@using ETS.Util;
 <script src="~/Scripts/view/orderList.js"></script>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
     <thead>
@@ -35,10 +36,10 @@
                         <td>@item.WithwardNo</td>
                         <td>@item.BusinessName</td>
                         <td>@item.BusinessPhoneNo</td>
-                        <td>@item.BalancePrice</td>
-                        <td>@item.AllowWithdrawPrice</td>
-                        <td style="color:green;font-weight:600">@item.Amount</td>
-                        <td>@item.Balance</td>
+                        <td>@ParseHelper.ToSplitByPercentile(false,item.BalancePrice)</td>
+                        <td>@ParseHelper.ToSplitByPercentile(false, item.AllowWithdrawPrice)</td>
+                        <td style="color:green;font-weight:600">@ParseHelper.ToSplitByPercentile(false, item.Amount)</td>
+                        <td>@ParseHelper.ToSplitByPercentile(false, item.Balance)</td>
                         @{
                             var strstatus = "";
                             if (item.Status == 1)
@@ -72,7 +73,7 @@
                         <td>@item.PayFailedReason</td>
                         <td>
                             查看
-                            @*<a href="/Order/OrderDetail?OrderNo=@item.OrderNo&OrderId=@item.Id ">查看</a>*@
+                            <a href="/BusinessWithdraw/OrderDetail?OrderNo=@item.OrderNo&OrderId=@item.Id ">查看</a>
                         </td>
                     </tr>
                 }
@@ -83,7 +84,7 @@
 @{
     if (Model != null)
     {
-        ViewBag.ActionName = "PostOrder";
+        ViewBag.ActionName = "PostBusinessWithdraw";
         @Html.Partial("~/views/shared/PagerControl.cshtml", Model)
     }
 }

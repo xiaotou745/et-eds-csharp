@@ -164,6 +164,7 @@
     <Compile Include="ParameterModel\Finance\ClienterWithdrawFormPM.cs" />
     <Compile Include="ParameterModel\Finance\ClienterWithdrawLogPM.cs" />
     <Compile Include="ParameterModel\Finance\BusinessWithdrawSearchCriteria.cs" />
+    <Compile Include="ParameterModel\Finance\WithdrawCPM.cs" />
     <Compile Include="ParameterModel\Group\GroupListModel.cs" />
     <Compile Include="ParameterModel\Group\GroupParaModel.cs" />
     <Compile Include="ParameterModel\Order\ChangeStatusPM_OpenApi.cs" />
@@ -189,9 +190,7 @@
     <Compile Include="UserModel.cs" />
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <Folder Include="DomainModel\Finance\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\ETS.Core\ETS.Core.csproj">
       <Project>{bba67a86-afd6-46f2-bbd9-5dfb5bfdafe2}</Project>
