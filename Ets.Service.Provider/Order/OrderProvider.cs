@@ -289,6 +289,7 @@ namespace Ets.Service.Provider.Order
             to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额
             to.Status = ConstValues.ORDER_NEW;
 
+            to.TimeSpan = busiOrderInfoModel.TimeSpan;
             to.listOrderChild = busiOrderInfoModel.listOrderChlid;           
            return to;
         }

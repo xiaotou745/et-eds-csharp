@@ -93,7 +93,14 @@ namespace Ets.Model.DataModel.Order
         /// </summary>
         public int HadUploadCount { get; set; }
 
+        /// <summary>
+        /// 时间戳
+        /// </summary>
         public string TimeSpan { get; set; }
+
+        /// <summary>
+        /// 订单小票列表
+        /// </summary>
         public List<OrderChlidModel> listOrderChild { get; set; }
     }
 }

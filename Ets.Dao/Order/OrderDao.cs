@@ -209,131 +209,93 @@ namespace Ets.Dao.Order
 
         public int AddOrder(Model.DataModel.Order.order order)
         {
-            //判断TimeSpan
-            //string strSql = "select COUNT(1) from dbo.[order] where TimeSpan="+order.TimeSpan;
+            //判断TimeSpan            
+            //const string querysql = @"select  count(1) from  OrderChild  where  TimeSpan=@TimeSpan";
+            //IDbParameters dbSelectParameters = DbHelper.CreateDbParameters();
+            //dbSelectParameters.AddWithValue("TimeSpan", order.TimeSpan);
+            //object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querysql, dbSelectParameters);
+            //bool isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
+            //if (isExist)
+            //{
+            //    return -1;
+            //}
 
-            StringBuilder insertOrder = new StringBuilder();
-
-            insertOrder.AppendFormat(@"INSERT INTO dbo.[order]
-         ( OrderNo ,
-           PickUpAddress ,
-           PubDate ,
-           ReceviceName ,
-           RecevicePhoneNo ,
-           ReceviceAddress ,
-           IsPay ,
-           Amount ,
-           OrderCommission ,
-           DistribSubsidy ,
-           WebsiteSubsidy ,
-           Remark ,
-           OrderFrom ,
-           Status ,
-           businessId ,
-           ReceviceCity ,
-           ReceviceLongitude ,
-           ReceviceLatitude ,
-           OrderCount ,
-           CommissionRate,
-           CommissionFormulaMode,
-           SongCanDate,
-           [Weight],
-          Quantity,
-          ReceiveProvince ,
-          ReceiveProvinceCode , 
-          ReceiveCityCode ,
-          ReceiveArea ,
-          ReceiveAreaCode,  
-          OriginalOrderNo,
-          BusinessCommission,
-          SettleMoney,
-          Adjustment
-         )
+            StringBuilder insertSql = new StringBuilder();
+            insertSql.AppendFormat(@"
+insert into dbo.[order](OrderNo,PickUpAddress, PubDate,ReceviceName,RecevicePhoneNo,ReceviceAddress,IsPay,Amount,
+OrderCommission,DistribSubsidy,WebsiteSubsidy,Remark,OrderFrom,Status,businessId ,ReceviceCity,ReceviceLongitude,
+ReceviceLatitude,OrderCount,CommissionRate,CommissionFormulaMode,SongCanDate,[Weight],Quantity,ReceiveProvince,
+ReceiveProvinceCode,ReceiveCityCode,ReceiveArea,ReceiveAreaCode,OriginalOrderNo,BusinessCommission,SettleMoney,Adjustment)
 output Inserted.Id,GETDATE(),'{0}','{1}',Inserted.businessId,Inserted.[Status],{2}
 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
- VALUES  (@OrderNo ,
-          @PickUpAddress ,
-          @PubDate ,
-          @ReceviceName ,
-          @RecevicePhoneNo ,
-          @ReceviceAddress ,
-          @IsPay ,
-          @Amount ,
-          @OrderCommission ,
-          @DistribSubsidy ,
-          @WebsiteSubsidy ,
-          @Remark ,
-          @OrderFrom ,
-          @Status ,
-          @businessId ,
-          @ReceviceCity ,
-          @ReceviceLongitude ,
-          @ReceviceLatitude ,
-          @OrderCount ,
-          @CommissionRate,
-          @CommissionFormulaMode,
-          @SongCanDate,
-          @Weight1,
-          @Quantity1,
-          @ReceiveProvince ,
-          @ReceiveProvinceCode , 
-          @ReceiveCityCode ,
-          @ReceiveArea ,
-          @ReceiveAreaCode,  
-          @OriginalOrderNo,
-          @BusinessCommission,
-          @SettleMoney,
-          @Adjustment
-         );select @@IDENTITY", SuperPlatform.商家, ConstValues.PublishOrder, (int)SuperPlatform.商家);
+values(@OrderNo,@PickUpAddress,@PubDate,@ReceviceName,@RecevicePhoneNo,@ReceviceAddress,@IsPay,@Amount ,     
+@OrderCommission,@DistribSubsidy,@WebsiteSubsidy,@Remark,@OrderFrom,@Status,@businessId,@ReceviceCity,@ReceviceLongitude ,
+@ReceviceLatitude,@OrderCount,@CommissionRate,@CommissionFormulaMode,@SongCanDate,@Weight1,@Quantity1,@ReceiveProvince,
+@ReceiveProvinceCode,@ReceiveCityCode,@ReceiveArea,@ReceiveAreaCode,@OriginalOrderNo,@BusinessCommission,@SettleMoney,@Adjustment);
 
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@OrderNo", SqlDbType.NVarChar);
-            parm.SetValue("@OrderNo", order.OrderNo);
-            parm.AddWithValue("@PickUpAddress", order.PickUpAddress);
-            parm.AddWithValue("@PubDate", order.PubDate);
-            parm.AddWithValue("@ReceviceName", order.ReceviceName);
-            parm.AddWithValue("@RecevicePhoneNo", order.RecevicePhoneNo);
+select @@IDENTITY", SuperPlatform.商家, ConstValues.PublishOrder, (int)SuperPlatform.商家);
 
-            parm.AddWithValue("@ReceviceAddress", order.ReceviceAddress);
-            parm.AddWithValue("@IsPay", order.IsPay);
-            parm.AddWithValue("@Amount", order.Amount);
-            parm.AddWithValue("@OrderCommission", order.OrderCommission);
-            parm.AddWithValue("@DistribSubsidy", order.DistribSubsidy);
-
-            parm.AddWithValue("@WebsiteSubsidy", order.WebsiteSubsidy);
-            parm.AddWithValue("@Remark", order.Remark);
-            parm.AddWithValue("@OrderFrom", order.OrderFrom);
-            parm.AddWithValue("@Status", order.Status);
-            parm.AddWithValue("@businessId", order.businessId);
-
-            parm.AddWithValue("@ReceviceCity", order.ReceviceCity);
-            parm.AddWithValue("@ReceviceLongitude", order.ReceviceLongitude);
-            parm.AddWithValue("@ReceviceLatitude", order.ReceviceLatitude);
-            parm.AddWithValue("@OrderCount", order.OrderCount);
-            parm.AddWithValue("@CommissionRate", order.CommissionRate);
-            parm.AddWithValue("@CommissionFormulaMode", order.CommissionFormulaMode);
-
-            parm.AddWithValue("@SongCanDate", order.SongCanDate);
-            parm.AddWithValue("@Weight1", order.Weight);
-
-            parm.AddWithValue("@Quantity1", order.Quantity);
-            parm.AddWithValue("@ReceiveProvince", order.ReceiveProvince);
-            parm.AddWithValue("@ReceiveProvinceCode", order.ReceiveProvinceCode);
-            parm.AddWithValue("@ReceiveCityCode", order.ReceiveCityCode);
-            parm.AddWithValue("@ReceiveArea", order.ReceiveArea);
-            parm.AddWithValue("@ReceiveAreaCode", order.ReceiveAreaCode);
-            parm.AddWithValue("@OriginalOrderNo", order.OriginalOrderNo);
-            parm.AddWithValue("@BusinessCommission", order.BusinessCommission);
-            parm.AddWithValue("@SettleMoney", order.SettleMoney);
-            parm.AddWithValue("@Adjustment", order.Adjustment);
-            object i = DbHelper.ExecuteScalar(Config.SuperMan_Write, insertOrder.ToString(), parm);
-            if (i != null)
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("@OrderNo", SqlDbType.NVarChar);
+            dbParameters.SetValue("@OrderNo", order.OrderNo);
+            dbParameters.AddWithValue("@PickUpAddress", order.PickUpAddress);
+            dbParameters.AddWithValue("@PubDate", order.PubDate);
+            dbParameters.AddWithValue("@ReceviceName", order.ReceviceName);
+            dbParameters.AddWithValue("@RecevicePhoneNo", order.RecevicePhoneNo);
+            dbParameters.AddWithValue("@ReceviceAddress", order.ReceviceAddress);
+            dbParameters.AddWithValue("@IsPay", order.IsPay);
+            dbParameters.AddWithValue("@Amount", order.Amount);
+            dbParameters.AddWithValue("@OrderCommission", order.OrderCommission);
+            dbParameters.AddWithValue("@DistribSubsidy", order.DistribSubsidy);
+            dbParameters.AddWithValue("@WebsiteSubsidy", order.WebsiteSubsidy);
+            dbParameters.AddWithValue("@Remark", order.Remark);
+            dbParameters.AddWithValue("@OrderFrom", order.OrderFrom);
+            dbParameters.AddWithValue("@Status", order.Status);
+            dbParameters.AddWithValue("@businessId", order.businessId);
+            dbParameters.AddWithValue("@ReceviceCity", order.ReceviceCity);
+            dbParameters.AddWithValue("@ReceviceLongitude", order.ReceviceLongitude);
+            dbParameters.AddWithValue("@ReceviceLatitude", order.ReceviceLatitude);
+            dbParameters.AddWithValue("@OrderCount", order.OrderCount);
+            dbParameters.AddWithValue("@CommissionRate", order.CommissionRate);
+            dbParameters.AddWithValue("@CommissionFormulaMode", order.CommissionFormulaMode);
+            dbParameters.AddWithValue("@SongCanDate", order.SongCanDate);
+            dbParameters.AddWithValue("@Weight1", order.Weight);
+            dbParameters.AddWithValue("@Quantity1", order.Quantity);
+            dbParameters.AddWithValue("@ReceiveProvince", order.ReceiveProvince);
+            dbParameters.AddWithValue("@ReceiveProvinceCode", order.ReceiveProvinceCode);
+            dbParameters.AddWithValue("@ReceiveCityCode", order.ReceiveCityCode);
+            dbParameters.AddWithValue("@ReceiveArea", order.ReceiveArea);
+            dbParameters.AddWithValue("@ReceiveAreaCode", order.ReceiveAreaCode);
+            dbParameters.AddWithValue("@OriginalOrderNo", order.OriginalOrderNo);
+            dbParameters.AddWithValue("@BusinessCommission", order.BusinessCommission);
+            dbParameters.AddWithValue("@SettleMoney", order.SettleMoney);
+            dbParameters.AddWithValue("@Adjustment", order.Adjustment);
+            
+            object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql.ToString(), dbParameters);
+            int orderId = ParseHelper.ToInt(result);
+            if (orderId > 0)//写入订单成功
             {
-                return int.Parse(i.ToString());
+                for(int i=0;i<order.listOrderChild.Count;i++)
+                {
+                     const string insertOrderChildSql = @"
+insert into OrderChild(OrderId,ChildId,TotalPrice,GoodPrice,DeliveryPrice,CreateBy,UpdateBy)
+values(@OrderId,@ChildId,@TotalPrice,@GoodPrice,@DeliveryPrice,@CreateBy,@UpdateBy)";
+                    IDbParameters dbOrderChildParameters = DbHelper.CreateDbParameters();
+                    dbParameters.AddWithValue("@OrderId", orderId);
+                    dbParameters.AddWithValue("@ChildId", order.listOrderChild[i].ChildId);
+                    decimal totalPrice=order.listOrderChild[i].GoodPrice+ Convert.ToDecimal(order.DistribSubsidy);
+                    dbParameters.AddWithValue("@TotalPrice", totalPrice);
+                    dbParameters.AddWithValue("@GoodPrice", order.listOrderChild[i].GoodPrice);
+                    dbParameters.AddWithValue("@DeliveryPrice", order.DistribSubsidy);
+                    dbParameters.AddWithValue("@CreateBy", "1");
+                    dbParameters.AddWithValue("@UpdateBy", "1");             
+                }               
             }
-            return 0;
-            //return DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrder.ToString(), parm);
-
+            else
+            {
+               //写入订单失败
+            }
+            return orderId;         
         }
 
         #region  第三方对接 物流订单接收接口  add by caoheyang 201503167
