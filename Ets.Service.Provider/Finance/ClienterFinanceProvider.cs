@@ -195,7 +195,7 @@ namespace Ets.Service.Provider.Finance
         {
             if (cardModifyCpm.AccountNo != cardModifyCpm.AccountNo2) //两次录入的金融账号不一致
             {
-                return SimpleResultModel.Conclude(FinanceCardBindC.InputValid);
+                return SimpleResultModel.Conclude(FinanceCardCardModifyC.InputValid);
             }
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
@@ -207,12 +207,11 @@ namespace Ets.Service.Provider.Finance
                     AccountNo = DES.Encrypt(cardModifyCpm.AccountNo), //卡号(DES加密) 
                     OpenBank = cardModifyCpm.OpenBank, //开户行
                     OpenSubBank = cardModifyCpm.OpenSubBank, //开户支行
-                    UpdateBy = cardModifyCpm.UpdateBy//新增时最后修改人与新增人一致  当前登录人
+                    UpdateBy = cardModifyCpm.UpdateBy//修改人  当前登录人
                 });
                 tran.Complete();
                 return SimpleResultModel.Conclude(SystemEnum.Success);
             }
-            return null;
         }
         #endregion
     }

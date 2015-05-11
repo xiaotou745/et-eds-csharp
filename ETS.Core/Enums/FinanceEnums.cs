@@ -36,6 +36,14 @@ namespace ETS.Enums
     }
 
     /// <summary>
+    /// 骑士编辑绑定金融账号涉及到的各种返回状态枚举 add by caoheyang 20150509
+    /// </summary>
+    public enum FinanceCardCardModifyC
+    {
+        [DisplayText("两次录入的金融账号不一致")]
+        InputValid = 2,
+    }
+    /// <summary>
     ///骑士余额流水   流水状态(1、交易成功 2、交易中）枚举 add by caoheyang 20150509
     /// </summary>
     public enum ClienterBalanceRecordStatus
