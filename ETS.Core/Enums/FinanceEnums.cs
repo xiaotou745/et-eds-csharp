@@ -17,7 +17,9 @@ namespace ETS.Enums
         [DisplayText("提现金额录入有误")]
         WithdrawMoneyError = 1,
         [DisplayText("骑士不存在,或当前骑士状态不允许提现")]
-        ClienterError = 2
+        ClienterError = 2,
+        [DisplayText("骑士金融账号出现问题")]
+        FinanceAccountError = 3
     }
 
 
