@@ -274,6 +274,7 @@ namespace Ets.Service.Provider.Finance
                     Remark = temp.Remark
                 });
             }
+            return null;
         }
 
         /// <summary>
