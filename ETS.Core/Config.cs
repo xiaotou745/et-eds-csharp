@@ -78,6 +78,7 @@ namespace ETS
         /// </summary>
         public static string OrderCancelReasons { get { return ConfigKey("OrderCancelReasons"); } }
 
+
         #region 取Web.Config值
 
         /// <summary>

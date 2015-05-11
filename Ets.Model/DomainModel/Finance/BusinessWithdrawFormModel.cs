@@ -18,5 +18,10 @@ namespace Ets.Model.DomainModel.Finance
 		/// </summary>
 		public string BusinessPhoneNo { get; set; }
 
+        /// <summary>
+        /// 商家累计提现金额
+        /// </summary>
+        public decimal HasWithdrawPrice { get; set; }
+
     }
 }

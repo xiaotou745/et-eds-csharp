@@ -87,6 +87,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AliPay\AlipayIntegrate.cs" />
+    <Compile Include="AliPay\AlipayMD5.cs" />
+    <Compile Include="AliPay\Config.cs" />
+    <Compile Include="AliPay\Core.cs" />
+    <Compile Include="AliPay\Submit.cs" />
     <Compile Include="Cacheing\AbstractCache.cs" />
     <Compile Include="Cacheing\CacheFactory.cs" />
     <Compile Include="Cacheing\LocalCache.cs" />
@@ -176,6 +181,7 @@
     <Compile Include="Util\TranslatorBase.cs" />
     <Compile Include="Util\ValidationHelper.cs" />
     <Compile Include="Util\XmlHelper.cs" />
+    <Compile Include="Util\XmlParser.cs" />
     <Compile Include="Validator\CommonValidator.cs" />
   </ItemGroup>
   <ItemGroup>

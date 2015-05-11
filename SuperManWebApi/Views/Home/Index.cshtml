@@ -5,51 +5,6 @@
 </div>
 <script src="~/Scripts/jquery-1.10.2.min.js"></script>
 <script>
-    //$.ajax({
-    //    type: 'POST',
-    //    dataType: 'json',
-    //    url: '/Order/Push',
-    //    data: {
-    //        "OrderId": 222,
-    //        "Version": "1.0.1"
-    //    },
-    //    success: function (data) {
-    //        console.log(data);
-    //    },
-    //    error: function () { }
-    //});
-
-    $.ajax({
-        type: 'POST',
-        dataType: 'json',
-        url: '/Order/Push',
-        data: {
-            "userId": 222,
-            "ReceiveName": "胡一",
-            "receviceAddress": "测试数据，请勿操作2",
-            "ReceivePhoneNo": "13520145815",
-            "Amount": 100,
-            "IsPay": false,
-            "Remark": null,
-            "OrderCount": 1,
-            "OrderSign": "14311222129",
-            "TimeSpan":19251,
-            "listOrderChlid": [
-                       {
-                           "ChildId": 1,
-                           "GoodPrice": 15                          
-                       },
-                       {
-                           "ChildId": 2,
-                           "GoodPrice": 10                          
-                       }
-                   ]
-        },
-        success: function (data) {
-            console.log(data);
-        },
-        error: function () { }
-    });
 
     //$(function () {
     //    //alert(1);
@@ -134,7 +89,7 @@
     //    dataType: 'json',
     //    url: '/BusinessAPI/PostPublishOrder_B',
     //    data: {
-    //        "userId": 222,
+    //        "userId": 135,
     //        "ReceiveName": "xxxx",
     //        "receviceAddress": "测试数据，请勿操作",
     //        "ReceivePhoneNo": "13693094632",
@@ -142,7 +97,7 @@
     //        "IsPay": false,
     //        "Remark": null,
     //        "OrderCount": 1,
-    //        "OrderSign": "143112221128"
+    //        "OrderSign": "143112221125"
     //    },
     //    success: function (data) {
     //        console.log(data);
@@ -531,21 +486,21 @@
     //});
     
 
-    //$(function() {
-    //    $.ajax({
-    //        type: 'POST',
-    //        dataType: 'json',
-    //        url: '/finance/WithdrawC',
-    //        data: {
-    //            "ClienterId": "114",
-    //            "WithdrawPrice": "1",
-    //        },
-    //        success: function (data) {
-    //            console.log(data);
-    //        },
-    //        error: function () { }
-    //    });
-    //});
+    $(function() {
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: '/finance/WithdrawC',
+            data: {
+                "ClienterId": "114",
+                "WithdrawPrice": "1",
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () { }
+        });
+    });
 
     //$(function () {
     //    $.ajax({
@@ -591,4 +546,62 @@
     //});
     
 
+
+    //$(function () {
+    //    $.ajax({
+    //        type: 'POST',
+    //        dataType: 'json',
+    //        url: '/finance/CardBindB',
+    //        data: {
+    //            "BusinessId": "172",
+    //            "TrueName": "张三商户",
+    //            "AccountNo": "dasdasd",
+    //            "AccountNo2": "dasdasd",
+    //            "OpenBank": "工商",
+    //            "OpenSubBank": "北京支行",
+    //            "CreateBy": "新增人"
+    //        },
+    //        success: function (data) {
+    //            console.log(data);
+    //        },
+    //        error: function () { }
+    //    });
+    //});
+    
+    //$(function () {
+    //    $.ajax({
+    //        type: 'POST',
+    //        dataType: 'json',
+    //        url: '/finance/CardModifyB',
+    //        data: {
+    //            "id": "18",
+    //            "BusinessId": "231",
+    //            "TrueName": "张三111",
+    //            "AccountNo": "dasdasd111",
+    //            "AccountNo2": "dasdasd111",
+    //            "OpenBank": "工商11",
+    //            "OpenSubBank": "北京支行11",
+    //            "UpdateBy": "修改人"
+    //        },
+    //        success: function (data) {
+    //            console.log(data);
+    //        },
+    //        error: function () { }
+    //    });
+    //});
+    //$(function() {
+    //    $.ajax({
+    //        type: 'POST',
+    //        dataType: 'json',
+    //        url: '/finance/Withdrawb',
+    //        data: {
+    //            "BusinessId": "172",
+    //            "WithdrawPrice": "1",
+    //        },
+    //        success: function (data) {
+    //            console.log(data);
+    //        },
+    //        error: function () { }
+    //    });
+    //});
 </script>

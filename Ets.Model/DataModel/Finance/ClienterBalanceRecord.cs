@@ -46,6 +46,10 @@ namespace Ets.Model.DataModel.Finance
         /// </summary>
         public DateTime OperateTime { get; set; }
         /// <summary>
+        /// 提现单ID
+        /// </summary>
+        public long WithwardId { get; set; }
+        /// <summary>
         /// 关联单号
         /// </summary>
         public string RelationNo { get; set; }

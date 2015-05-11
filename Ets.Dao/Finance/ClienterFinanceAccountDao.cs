@@ -132,7 +132,7 @@ where  Id=@Id ";
             const string querysql = @"
 select  Id,ClienterId,TrueName,AccountNo,IsEnable,AccountType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
 from  ClienterFinanceAccount  
-where  ClienterId=@ClienterId and IsEnable=0";  //事物内不加锁
+where  ClienterId=@ClienterId and IsEnable=1";  //事物内不加锁
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("ClienterId", clienterId);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));

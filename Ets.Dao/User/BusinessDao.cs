@@ -4,6 +4,7 @@ using ETS.Dao;
 using ETS.Data;
 using ETS.Data.Core;
 using ETS.Data.PageData;
+using Ets.Model.ParameterModel.Finance;
 using ETS.Util;
 using System;
 using System.Collections.Generic;
@@ -1303,5 +1304,42 @@ namespace Ets.Dao.User
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
 
+
+        /// <summary>
+        /// 根据ID获取对象
+        /// </summary>
+        public Business GetById(int id)
+        {
+            Business model = null;
+            const string getbyidSql = @"
+select  Id,Name,City,district,PhoneNo,PhoneNo2,Password,CheckPicUrl,IDCard,Address,Landline,Longitude,Latitude,Status,InsertTime,districtId,CityId,GroupId,OriginalBusiId,ProvinceCode,CityCode,AreaCode,Province,CommissionTypeId,DistribSubsidy,BusinessCommission,CommissionType,CommissionFixValue,BusinessGroupId,BalancePrice,AllowWithdrawPrice,HasWithdrawPrice
+from  business (nolock)
+where  Id=@Id ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("Id", id);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, getbyidSql, dbParameters));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                model = MapRows<Business>(dt)[0];
+            }
+            return model;
+        }
+
+        /// <summary>
+        ///  超人提现功能 add by caoheyang 20150509
+        /// </summary>
+        /// <param name="withdrawBpm">超人信息</param>
+        /// <returns></returns>
+        public void UpdateForWithdrawC(WithdrawBPM withdrawBpm)
+        {
+            const string updateSql = @"
+update  business
+set  BalancePrice=BalancePrice-@WithdrawPrice,AllowWithdrawPrice=AllowWithdrawPrice-@WithdrawPrice
+where  Id=@Id ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("Id", withdrawBpm.BusinessId);
+            dbParameters.AddWithValue("WithdrawPrice", withdrawBpm.WithdrawPrice);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }
     }
 }
