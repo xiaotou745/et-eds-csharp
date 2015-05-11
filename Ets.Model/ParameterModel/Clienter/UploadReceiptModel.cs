@@ -19,7 +19,10 @@ namespace Ets.Model.ParameterModel.Clienter
         /// 订单Id 订单表主键
         /// </summary>
         public int OrderId { get; set; }
-
+        /// <summary>
+        /// 子订单Id
+        /// </summary>
+        public int OrderChildId { get; set; } 
         /// <summary>
         /// 总共需要上传的小票数量
         /// </summary>

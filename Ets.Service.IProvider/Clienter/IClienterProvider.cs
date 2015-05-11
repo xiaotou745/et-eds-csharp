@@ -198,5 +198,12 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="orderNo">订单号</param>
         /// <returns></returns>
         ResultModel<RushOrderResultModel> RushOrder_C(int userId, string orderNo);
+        /// <summary>
+        /// 根据订单Id和子订单Id获取信息
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="orderChildId"></param>
+        /// <returns></returns>
+        OrderChild GetOrderChildInfo(int orderId, int orderChildId);
     }
 }

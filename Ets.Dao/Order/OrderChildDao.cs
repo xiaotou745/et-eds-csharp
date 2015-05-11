@@ -161,6 +161,46 @@ where  Id=@Id ";
         }
 
         #endregion
+        /// <summary>
+        /// 根据订单Id和子订单Id获取子订单信息
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="orderChildId"></param>
+        /// <returns></returns>
+        public OrderChild GetOrderChildInfo(int orderId, int orderChildId)
+        {
+            OrderChild oc = new OrderChild();
+            StringBuilder sql = new StringBuilder();
+            sql.Append(@"
+  select top 1 Id ,
+        OrderId ,
+        ChildId ,
+        TotalPrice ,
+        GoodPrice ,
+        DeliveryPrice ,
+        PayStyle ,
+        PayType ,
+        PayStatus ,
+        PayBy ,
+        PayTime ,
+        PayPrice ,
+        HasUploadTicket ,
+        TicketUrl ,
+        CreateBy ,
+        CreateTime ,
+        UpdateBy ,
+        UpdateTime
+ from   dbo.OrderChild(nolock)  where 1=1 and OrderId = @OrderId and ChildId = @ChildId;
+");
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@OrderId", SqlDbType.Int).Value = orderId; 
+            parm.Add("@ChildId", SqlDbType.Int).Value = orderChildId;
+            
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql.ToString(), parm);
+            if (dt.HasData())
+                return oc;
+            return MapRows<OrderChild>(dt)[0]; 
+        }
     }
 
 }
