@@ -53,7 +53,7 @@ namespace SuperManWebApi
     /// <summary>
     /// 用于记录接口请求总耗时 add by caoheyang 
     /// </summary>
-    [System.AttributeUsage(System.AttributeTargets.Method)]
+    [System.AttributeUsage(System.AttributeTargets.Method|AttributeTargets.Class)]
     public class ExecuteTimeLogAttribute : System.Web.Http.Filters.ActionFilterAttribute
     {
         System.Diagnostics.Stopwatch stop = new System.Diagnostics.Stopwatch();
