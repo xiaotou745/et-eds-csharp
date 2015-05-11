@@ -1,6 +1,7 @@
 ﻿using Ets.Dao.Finance;
 using Ets.Dao.User;
 using ETS.Enums;
+using ETS.Extension;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Bussiness;
 using Ets.Model.DataModel.Clienter;
@@ -234,7 +235,7 @@ namespace Ets.Service.Provider.Finance
                 tran.Complete();
                 return SimpleResultModel.Conclude(SystemEnum.Success);
             }
-        } 
+        }
         #endregion
 
         /// <summary>
@@ -244,6 +245,35 @@ namespace Ets.Service.Provider.Finance
         public IList<BusinessBalanceRecord> GetRecords(int businessId)
         {
             return _businessBalanceRecordDao.GetByBusinessId(businessId);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="records"></param>
+        /// <returns></returns>
+        private IList<BusinessBalanceRecord> TranslateRecords(IList<BusinessBalanceRecord> records)
+        {
+            IList<BusinessRecordsDM> results = new List<BusinessRecordsDM>();
+            foreach (var temp in records)
+            {
+                results.Add(
+                new BusinessRecordsDM()
+                {
+                    Id = temp.Id,
+                    BusinessId = temp.BusinessId,
+                    Amount = temp.Amount,
+                    Status = temp.Status,
+                    //StatusStr = EnumExtenstion.GetEnumItem(status.GetType(), temp.Status),
+                    Balance = temp.Balance,
+                    RecordType = temp.RecordType,
+                    Operator = temp.Operator,
+                    OperateTime = temp.OperateTime,
+                    WithwardId = temp.WithwardId,
+                    RelationNo = temp.RelationNo,
+                    Remark = temp.Remark
+                });
+            }
         }
 
         /// <summary>

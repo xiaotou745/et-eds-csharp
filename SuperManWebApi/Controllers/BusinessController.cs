@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 using Ets.Model.DataModel.Finance;
 using Ets.Service.IProvider.Finance;
 using Ets.Service.Provider.Finance;
+using ETS.Util;
 
 namespace SuperManWebApi.Controllers
 { 
@@ -24,7 +26,8 @@ namespace SuperManWebApi.Controllers
         [HttpGet]
         public IList<BusinessBalanceRecord> Records()
         {
-            return _businessFinanceProvider.GetRecords(172);
+            int businessId = ParseHelper.ToInt(HttpContext.Current.Request.Form["businessId"]);
+            return _businessFinanceProvider.GetRecords(businessId);
         }
     }
 }
