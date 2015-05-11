@@ -42,6 +42,13 @@ namespace Ets.Service.IProvider.Finance
         /// <param name="cardModifyBpm">参数实体</param>
         /// <returns></returns>
         SimpleResultModel CardModifyB(CardModifyBPM cardModifyBpm);
+
+        /// <summary>
+        ///  商户交易流水API
+        /// </summary>
+        /// <returns></returns>
+        IList<BusinessBalanceRecord> GetRecords(int businessId);
+       
         /// <summary>
         /// 根据申请单Id获取商家提现申请单
         /// danny-20150511

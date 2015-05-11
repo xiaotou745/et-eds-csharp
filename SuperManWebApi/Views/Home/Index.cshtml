@@ -486,21 +486,21 @@
     //});
     
 
-    //$(function() {
-    //    $.ajax({
-    //        type: 'POST',
-    //        dataType: 'json',
-    //        url: '/finance/WithdrawC',
-    //        data: {
-    //            "ClienterId": "114",
-    //            "WithdrawPrice": "1",
-    //        },
-    //        success: function (data) {
-    //            console.log(data);
-    //        },
-    //        error: function () { }
-    //    });
-    //});
+    $(function() {
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: '/finance/WithdrawC',
+            data: {
+                "ClienterId": "114",
+                "WithdrawPrice": "1",
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () { }
+        });
+    });
 
     //$(function () {
     //    $.ajax({

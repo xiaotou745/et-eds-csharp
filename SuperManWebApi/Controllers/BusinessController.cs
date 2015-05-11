@@ -4,27 +4,27 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using Ets.Model.Common;
 using Ets.Model.DataModel.Finance;
 using Ets.Service.IProvider.Finance;
 using Ets.Service.Provider.Finance;
 
 namespace SuperManWebApi.Controllers
-{
+{ 
     /// <summary>
-    /// 骑士相关接口 add by caoheyang
+    /// 商户相关接口 add by caoheyang
     /// </summary>
-    public class ClienterController : ApiController
+    public class BusinessController : ApiController
     {
-        IClienterFinanceProvider _iClienterFinanceProvider=new ClienterFinanceProvider();
+        private  readonly  IBusinessFinanceProvider _businessFinanceProvider=new BusinessFinanceProvider();
+
         /// <summary>
-        /// 骑士交易流水API
+        /// 商户交易流水API
         /// </summary>
         /// <returns></returns>
-       [HttpGet]
-        public IList<ClienterBalanceRecord> Records()
+        [HttpGet]
+        public IList<BusinessBalanceRecord> Records()
         {
-            return _iClienterFinanceProvider.GetRecords(114);
+            return _businessFinanceProvider.GetRecords(172);
         }
     }
 }

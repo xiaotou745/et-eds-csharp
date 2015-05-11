@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ets.Model.Common;
+using Ets.Model.DataModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 
 namespace Ets.Service.IProvider.Finance
@@ -34,5 +35,13 @@ namespace Ets.Service.IProvider.Finance
         /// <param name="cardModifyCpm">参数实体</param>
         /// <returns></returns>
         SimpleResultModel CardModifyC(CardModifyCPM cardModifyCpm);
+
+
+        /// <summary>
+        /// 骑士交易流水API add by caoheyang 20150511
+        /// </summary> 
+        /// <param name="clienterId">骑士id</param>
+        /// <returns></returns>
+        IList<ClienterBalanceRecord> GetRecords(int clienterId);
     }
 }

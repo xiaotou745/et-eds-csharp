@@ -238,6 +238,15 @@ namespace Ets.Service.Provider.Finance
         #endregion
 
         /// <summary>
+        ///  商户交易流水API add by caoheyang 20150511
+        /// </summary>
+        /// <returns></returns>
+        public IList<BusinessBalanceRecord> GetRecords(int businessId)
+        {
+            return _businessBalanceRecordDao.GetByBusinessId(businessId);
+        }
+
+        /// <summary>
         /// 根据申请单Id获取商家提现申请单
         /// danny-20150511
         /// </summary>

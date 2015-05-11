@@ -218,5 +218,15 @@ namespace Ets.Service.Provider.Finance
             }
         }
         #endregion
+
+        /// <summary>
+        /// 骑士交易流水API add by caoheyang 20150511
+        /// </summary> 
+        /// <param name="businessId">骑士id</param>
+        /// <returns></returns>
+         public IList<ClienterBalanceRecord> GetRecords(int businessId)
+         {
+             return _clienterBalanceRecordDao.GetByClienterId(businessId);
+         }
     }
 }

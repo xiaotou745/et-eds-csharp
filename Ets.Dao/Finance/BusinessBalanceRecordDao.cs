@@ -77,6 +77,28 @@ where  Id=@Id ";
             dbParameters.AddWithValue("Remark", businessBalanceRecord.Remark);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
+
+        /// <summary>
+        /// 根据ID获取对象
+        /// <param name="businessId">商户id</param>
+        /// </summary>
+        public IList<BusinessBalanceRecord> GetByBusinessId(long businessId)
+        {
+            IList<BusinessBalanceRecord> models = new List<BusinessBalanceRecord>();
+            const string querysql = @"
+select  Id,BusinessId,Amount,Status,Balance,RecordType,Operator,OperateTime,WithwardId,RelationNo,Remark
+from  BusinessBalanceRecord (nolock)
+where  BusinessId=@BusinessId 
+order by Id desc";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("BusinessId", businessId);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                models = DataTableHelper.ConvertDataTableList<BusinessBalanceRecord>(dt);
+            }
+            return models;
+        }
         #endregion
     }
 }

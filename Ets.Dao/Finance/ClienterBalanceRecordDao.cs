@@ -105,7 +105,28 @@ from  ClienterBalanceRecord (nolock)" + condition;
             }
             return models;
         }
-
+        /// <summary>
+        /// 骑士交易流水API add by caoheyang 20150511
+        /// </summary> 
+        /// <param name="clienterId">骑士id</param>
+        /// <returns></returns>
+        public IList<ClienterBalanceRecord> GetByClienterId(int clienterId)
+        {
+            IList<ClienterBalanceRecord> models = new List<ClienterBalanceRecord>();
+            const string querysql = @"
+select  Id,ClienterId,Amount,Status,Balance,RecordType,Operator,OperateTime,WithwardId,RelationNo,Remark
+from  ClienterBalanceRecord (nolock)
+where  ClienterId=@ClienterId 
+order by Id desc";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("ClienterId", clienterId);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                models = DataTableHelper.ConvertDataTableList<ClienterBalanceRecord>(dt);
+            }
+            return models;
+        }
 
         /// <summary>
         /// 根据ID获取对象
