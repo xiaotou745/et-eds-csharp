@@ -45,7 +45,7 @@ namespace Ets.Service.IProvider.Finance
         SimpleResultModel CardModifyB(CardModifyBPM cardModifyBpm);
 
         /// <summary>
-        ///  商户交易流水API
+        ///  商户交易流水API add by caoheyang 20150512
         /// </summary>
         /// <returns></returns>
         ResultModel<IList<FinanceRecordsDM>> GetRecords(int businessId);

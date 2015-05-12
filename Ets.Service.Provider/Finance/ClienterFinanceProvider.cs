@@ -228,8 +228,9 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public ResultModel<IList<FinanceRecordsDM>> GetRecords(int clienterId)
          {
+             IList<FinanceRecordsDM> records = _clienterBalanceRecordDao.GetByClienterId(clienterId);
              return ResultModel<IList<FinanceRecordsDM>>.Conclude(SystemEnum.Success,
-               TranslateRecords(_clienterBalanceRecordDao.GetByClienterId(clienterId)));
+               TranslateRecords(records));
          }
 
         /// <summary>
@@ -237,26 +238,17 @@ namespace Ets.Service.Provider.Finance
         /// </summary>
         /// <param name="records">原始流水记录</param>
         /// <returns></returns>
-        private IList<FinanceRecordsDM> TranslateRecords(IList<ClienterBalanceRecord> records)
+        private IList<FinanceRecordsDM> TranslateRecords(IList<FinanceRecordsDM> records)
         {
-            return records.Select(temp => new FinanceRecordsDM()
+            foreach (var temp in records)
             {
-                Id = temp.Id,  //自增ID（PK）
-                UserId = temp.ClienterId,//骑士Id
-                Amount = temp.Amount, //流水金额
-                Status = temp.Status, //流水状态(1、交易成功 2、交易中）
-                StatusStr = ((ClienterBalanceRecordStatus)Enum.Parse(typeof(ClienterBalanceRecordStatus),
-                        temp.Status.ToString(), false)).GetDisplayText(), //流水状态文本
-                Balance = temp.Balance, //交易后余额
-                RecordType = temp.RecordType,  //交易类型(1佣金 2奖励 3提现 4取消订单赔偿 5无效订单扣款)
-                RecordTypeStr = ((ClienterBalanceRecordRecordType)Enum.Parse(typeof(ClienterBalanceRecordRecordType),
-                        temp.RecordType.ToString(), false)).GetDisplayText(), //交易类型文本
-                Operator = temp.Operator, //操作人
-                OperateTime = temp.OperateTime, //操作时间
-                WithwardId = temp.WithwardId, //关联单Id
-                RelationNo = temp.RelationNo,//关联单号
-                Remark = temp.Remark//描述
-            }).ToList();
+                temp.StatusStr = ((ClienterBalanceRecordStatus) Enum.Parse(typeof (ClienterBalanceRecordStatus),
+                    temp.Status.ToString(), false)).GetDisplayText(); //流水状态文本
+                temp.RecordTypeStr =
+                    ((ClienterBalanceRecordRecordType) Enum.Parse(typeof (ClienterBalanceRecordRecordType),
+                        temp.RecordType.ToString(), false)).GetDisplayText(); //交易类型文本
+            }
+            return records;
         }
     }
 }

@@ -75,5 +75,10 @@ namespace Ets.Model.DomainModel.Finance
         /// 描述
         /// </summary>
         public string Remark { get; set; }
+        /// <summary>
+        /// 年月信息
+        /// </summary>
+        public string YearInfo { get; set; }
+
     }
 }
