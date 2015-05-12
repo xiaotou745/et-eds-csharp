@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ets.Model.DomainModel.Bussiness;
 
 namespace Ets.Service.IProvider.Finance
 {
@@ -42,6 +43,13 @@ namespace Ets.Service.IProvider.Finance
         /// <param name="cardModifyBpm">参数实体</param>
         /// <returns></returns>
         SimpleResultModel CardModifyB(CardModifyBPM cardModifyBpm);
+
+        /// <summary>
+        ///  商户交易流水API
+        /// </summary>
+        /// <returns></returns>
+        IList<BusinessBalanceRecord> GetRecords(int businessId);
+       
         /// <summary>
         /// 根据申请单Id获取商家提现申请单
         /// danny-20150511
@@ -70,7 +78,7 @@ namespace Ets.Service.IProvider.Finance
         /// <param name="model"></param>
         /// <returns></returns>
         bool BusinessWithdrawPayOk(BusinessWithdrawLog model);
-        /// <summary>
+/// <summary>
         /// 商户提现申请单审核拒绝
         /// danny-20150511
         /// </summary>
@@ -84,5 +92,7 @@ namespace Ets.Service.IProvider.Finance
         /// <param name="model"></param>
         /// <returns></returns>
         bool BusinessWithdrawPayFailed(BusinessWithdrawLogModel model);
+
+        BusinessDM GetDetails(int id);
     }
 }

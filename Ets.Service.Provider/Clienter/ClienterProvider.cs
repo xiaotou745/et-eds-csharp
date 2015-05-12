@@ -26,13 +26,15 @@ using Ets.Service.Provider.MyPush;
 using Ets.Model.DomainModel.Bussiness;
 using Ets.Model.ParameterModel.Order;
 using ETS.NoSql.RedisCache;
-
+using Ets.Dao.Clienter;
 namespace Ets.Service.Provider.Clienter
 {
     public class ClienterProvider : IClienterProvider
     {
         readonly ClienterDao clienterDao = new ClienterDao();
         readonly OrderDao orderDao = new OrderDao();
+        readonly OrderChildDao orderChildDao = new OrderChildDao();
+
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
         /// <summary>
         /// 骑士上下班功能 add by caoheyang 20150312
@@ -805,6 +807,21 @@ namespace Ets.Service.Provider.Clienter
             return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.Failed);
         }
 
+public ClienterDM GetDetails(int id)
+        {
+            return (new ClienterDao()).GetDetails(id);
+        }
+
+        /// <summary>
+        /// 根据订单Id和子订单Id获取子订单信息
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="orderChildId"></param>
+        /// <returns></returns>
+        public OrderChild GetOrderChildInfo(int orderId, int orderChildId)
+        {
+            return orderChildDao.GetOrderChildInfo(orderId, orderChildId);
+        }
     }
 
 }

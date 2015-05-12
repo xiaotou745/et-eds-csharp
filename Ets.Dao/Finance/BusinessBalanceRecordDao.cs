@@ -38,9 +38,9 @@ namespace Ets.Dao.Finance
         {
             const string insertSql = @"
 insert into BusinessBalanceRecord
-(BusinessId,Amount,Status,Balance,RecordType,Operator,RelationNo,Remark)
+(BusinessId,Amount,Status,Balance,RecordType,Operator,WithwardId,RelationNo,Remark)
 values
-(@BusinessId,@Amount,@Status,@Balance,@RecordType,@Operator,@RelationNo,@Remark)
+(@BusinessId,@Amount,@Status,@Balance,@RecordType,@Operator,@WithwardId,@RelationNo,@Remark)
 select @@IDENTITY";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("BusinessId", businessBalanceRecord.BusinessId);//商户id
@@ -49,6 +49,7 @@ select @@IDENTITY";
             dbParameters.AddWithValue("Balance", businessBalanceRecord.Balance); //交易后余额
             dbParameters.AddWithValue("RecordType", businessBalanceRecord.RecordType); //交易类型(1佣金 2奖励 3提现 4取消订单赔偿 5无效订单扣款)
             dbParameters.AddWithValue("Operator", businessBalanceRecord.Operator); //操作人 
+            dbParameters.AddWithValue("WithwardId", businessBalanceRecord.WithwardId); //关联ID
             dbParameters.AddWithValue("RelationNo", businessBalanceRecord.RelationNo); //关联单号
             dbParameters.AddWithValue("Remark", businessBalanceRecord.Remark); //描述
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);
@@ -75,6 +76,28 @@ where  Id=@Id ";
             dbParameters.AddWithValue("RelationNo", businessBalanceRecord.RelationNo);
             dbParameters.AddWithValue("Remark", businessBalanceRecord.Remark);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }
+
+        /// <summary>
+        /// 根据ID获取对象
+        /// <param name="businessId">商户id</param>
+        /// </summary>
+        public IList<BusinessBalanceRecord> GetByBusinessId(long businessId)
+        {
+            IList<BusinessBalanceRecord> models = new List<BusinessBalanceRecord>();
+            const string querysql = @"
+select  Id,BusinessId,Amount,Status,Balance,RecordType,Operator,OperateTime,WithwardId,RelationNo,Remark
+from  BusinessBalanceRecord (nolock)
+where  BusinessId=@BusinessId 
+order by Id desc";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("BusinessId", businessId);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                models = DataTableHelper.ConvertDataTableList<BusinessBalanceRecord>(dt);
+            }
+            return models;
         }
         #endregion
     }

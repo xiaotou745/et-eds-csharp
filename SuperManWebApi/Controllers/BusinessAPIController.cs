@@ -184,7 +184,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
         [HttpPost]
-        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel> PostPublishOrder_B(Ets.Model.ParameterModel.Bussiness.BusiOrderInfoModel model)
+        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel> PostPublishOrder_B(Ets.Model.ParameterModel.Bussiness.BussinessOrderInfoModel model)
         {
             //首先验证该 商户有无 资格 发布订单 wc
             if (!iBusinessProvider.HaveQualification(model.userId))

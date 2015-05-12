@@ -38,7 +38,7 @@ namespace Ets.Service.IProvider.Order
         /// </summary>
         /// <param name="busiOrderInfoModel"></param>
         /// <returns></returns>
-        order TranslateOrder(BusiOrderInfoModel busiOrderInfoModel);
+        order TranslateOrder(BussinessOrderInfoModel busiOrderInfoModel);
 
         /// <summary>
         /// 添加一条订单记录
@@ -173,5 +173,7 @@ namespace Ets.Service.IProvider.Order
         /// <param name="paramodel">参数</param>
         /// <returns></returns>
         ResultModel<object> UpdateOrderStatus_Other(ChangeStatusPM_OpenApi paramodel);
+
+        OrderDM GetDetails(int id);
     }
 }
