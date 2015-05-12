@@ -13,10 +13,10 @@ namespace Ets.Model.Common.AliPay
         /// </summary>
         public string outTradeNo { get; set; }
 
-        /// <summary>
-        /// 支付宝交易号
-        /// </summary>
-        public string tradNo { get; set; }
+        ///// <summary>
+        ///// 支付宝交易号
+        ///// </summary>
+        //public string tradNo { get; set; }
 
         /// <summary>
         ///生成二维码的http地址
