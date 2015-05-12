@@ -160,7 +160,18 @@ namespace SuperMan.Controllers
             };
             return Json(new ResultModel(iBus.ModifyBusinessInfo(businessModel, model), "成功!"), JsonRequestBehavior.AllowGet);
         }
-
+        ///// <summary>
+        ///// 查看商户详细信息
+        ///// danny-20150512
+        ///// </summary>
+        ///// <param name="orderId"></param>
+        ///// <returns></returns>
+        //public ActionResult BusinessDetail(string businessId)
+        //{
+        //    var businessWithdrawFormModel = iBusinessFinanceProvider.GetBusinessWithdrawListById(withwardId);
+        //    ViewBag.businessBalanceRecord = iBusinessFinanceProvider.GetBusinessWithdrawOptionLog(withwardId);
+        //    return View(businessWithdrawFormModel);
+        //}
 
     }
 }
