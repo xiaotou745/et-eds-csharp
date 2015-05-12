@@ -240,13 +240,14 @@ namespace Ets.Service.Provider.Finance
         #endregion
 
         /// <summary>
-        ///  商户交易流水API add by caoheyang 20150511
+        ///  商户交易流水API add by caoheyang 20150512
         /// </summary>
         /// <returns></returns>
         public ResultModel<IList<FinanceRecordsDM>> GetRecords(int businessId)
         {
+            IList<FinanceRecordsDM> records = _businessBalanceRecordDao.GetByBusinessId(businessId);
             return ResultModel<IList<FinanceRecordsDM>>.Conclude(SystemEnum.Success,
-                TranslateRecords(_businessBalanceRecordDao.GetByBusinessId(businessId)));
+              TranslateRecords(records));
         }
 
         /// <summary>
@@ -254,26 +255,17 @@ namespace Ets.Service.Provider.Finance
         /// </summary>
         /// <param name="records">原始流水记录</param>
         /// <returns></returns>
-        private IList<FinanceRecordsDM> TranslateRecords(IList<BusinessBalanceRecord> records)
+        private IList<FinanceRecordsDM> TranslateRecords(IList<FinanceRecordsDM> records)
         {
-            return records.Select(temp => new FinanceRecordsDM()
+            foreach (var temp in records)
             {
-                Id = temp.Id,  //自增ID（PK）
-                UserId = temp.BusinessId,//商家Id(business表）
-                Amount = temp.Amount, //流水金额
-                Status = temp.Status, //流水状态(1、交易成功 2、交易中）
-                StatusStr = ((BusinessBalanceRecordStatus) Enum.Parse(typeof (BusinessBalanceRecordStatus),
-                        temp.Status.ToString(), false)).GetDisplayText(), //流水状态文本
-                Balance = temp.Balance, //交易后余额
-                RecordType = temp.RecordType,  //交易类型(1订单餐费 2配送费 3提现 4充值 5提现失败返现)
-                RecordTypeStr = ((BusinessBalanceRecordRecordType) Enum.Parse(typeof (BusinessBalanceRecordRecordType), 
-                        temp.RecordType.ToString(), false)).GetDisplayText(), //交易类型文本
-                Operator = temp.Operator, //操作人
-                OperateTime = temp.OperateTime, //操作时间
-                WithwardId = temp.WithwardId, //关联单Id
-                RelationNo = temp.RelationNo,//关联单号
-                Remark = temp.Remark//描述
-            }).ToList();
+                temp.StatusStr = ((BusinessBalanceRecordStatus)Enum.Parse(typeof(BusinessBalanceRecordStatus),
+                    temp.Status.ToString(), false)).GetDisplayText(); //流水状态文本
+                temp.RecordTypeStr =
+                    ((BusinessBalanceRecordRecordType)Enum.Parse(typeof(BusinessBalanceRecordRecordType),
+                        temp.RecordType.ToString(), false)).GetDisplayText(); //交易类型文本
+            }
+            return records; 
         }
 
         /// <summary>
