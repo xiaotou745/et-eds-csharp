@@ -34,23 +34,23 @@
                         <td style="color:green;font-weight:600">@ParseHelper.ToSplitByPercentile(false, item.Amount)</td>
                         @{
                             var strstatus = "";
-                            if (item.Status == 1)
+                            if (item.Status == ETS.Enums.BusinessWithdrawFormStatus.WaitAllow.GetHashCode())
                             {
                                 strstatus = "待审核";
                             }
-                            else if (item.Status == 2)
+                            else if (item.Status == ETS.Enums.BusinessWithdrawFormStatus.Allow.GetHashCode())
                             {
                                 strstatus = "审核通过";
                             }
-                            else if (item.Status == 3)
+                            else if (item.Status == ETS.Enums.BusinessWithdrawFormStatus.Success.GetHashCode())
                             {
                                 strstatus = "打款完成";
                             }
-                            else if (item.Status == -1)
+                            else if (item.Status == ETS.Enums.BusinessWithdrawFormStatus.TurnDown.GetHashCode())
                             {
                                 strstatus = "审核拒绝";
                             }
-                            else if (item.Status == -2)
+                            else if (item.Status == ETS.Enums.BusinessWithdrawFormStatus.Error.GetHashCode())
                             {
                                 strstatus = "打款失败";
                             }

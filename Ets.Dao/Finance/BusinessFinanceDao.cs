@@ -407,7 +407,7 @@ WHERE BusinessId=@BusinessId ";
             }
             if (!string.IsNullOrWhiteSpace(criteria.OperateTimeEnd))
             {
-                sql+=@" AND CONVERT(CHAR(10),bbr.OperateTime,120)>=CONVERT(CHAR(10),@OperateTimeEnd,120)";
+                sql+=@" AND CONVERT(CHAR(10),bbr.OperateTime,120)<=CONVERT(CHAR(10),@OperateTimeEnd,120)";
             }
             sql+=" ORDER BY bbr.Id DESC";
             IDbParameters parm = DbHelper.CreateDbParameters();
@@ -419,6 +419,117 @@ WHERE BusinessId=@BusinessId ";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             return MapRows<BusinessBalanceRecord>(dt);
         }
+
+        /// <summary>
+        /// 获取要导出的商户提现申请单
+        /// danny-20150512
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public IList<BusinessWithdrawFormModel> GetBusinessWithdrawForExport(BusinessWithdrawSearchCriteria criteria)
+        {
+            string sql = @"  
+select b.[Name] BusinessName,
+       b.PhoneNo BusinessPhoneNo,
+       bwf.OpenBank ,
+       bwf.TrueName ,
+       bwf.AccountNo ,
+       bwf.Amount 
+from BusinessWithdrawForm bwf with(nolock)
+  join business b with(nolock) on bwf.BusinessId=b.Id 
+where 1=1";
+            if (!string.IsNullOrWhiteSpace(criteria.BusinessName))
+            {
+                sql+=" AND b.[Name]=@BusinessName";
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.BusinessPhoneNo))
+            {
+                sql+=" AND b.PhoneNo=@BusinessPhoneNo";
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.BusinessCity))
+            {
+                sql+=" AND b.City=@BusinessCity";
+            }
+            if (criteria.WithdrawStatus != 0)
+            {
+                sql+=" AND bwf.Status=@WithdrawStatus";
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.WithwardNo))
+            {
+                sql+=" AND bwf.WithwardNo=@WithwardNo";
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.WithdrawDateStart))
+            {
+                sql+=" AND CONVERT(CHAR(10),bwf.WithdrawTime,120)>=CONVERT(CHAR(10),@WithdrawDateStart,120)";
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.WithdrawDateEnd))
+            {
+                sql+=" AND CONVERT(CHAR(10),bwf.WithdrawTime,120)<=CONVERT(CHAR(10),@WithdrawDateEnd,120)";
+            }
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@BusinessName", criteria.BusinessName);
+            parm.AddWithValue("@BusinessPhoneNo", criteria.BusinessPhoneNo);
+            parm.AddWithValue("@WithwardNo", criteria.WithwardNo);
+            parm.AddWithValue("@WithdrawDateStart", criteria.WithdrawDateStart);
+            parm.AddWithValue("@WithdrawDateEnd", criteria.WithdrawDateEnd);
+            parm.AddWithValue("@WithdrawStatus", criteria.WithdrawStatus);
+            parm.AddWithValue("@BusinessCity", criteria.BusinessCity);
+            DataTable dt =DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            return MapRows<BusinessWithdrawFormModel>(dt);
+        }
+        /// <summary>
+        /// 获取要导出的商户提款收支记录列表
+        /// danny-20150512
+        /// </summary>
+        /// <param name="withwardId"></param>
+        /// <returns></returns>
+        public IList<BusinessBalanceRecordModel> GetBusinessBalanceRecordListForExport(BusinessBalanceRecordSerchCriteria criteria)
+        {
+            string sql = @"  
+SELECT bbr.[Id]
+      ,bbr.[BusinessId]
+      ,bbr.[Amount]
+      ,bbr.[Status]
+      ,bbr.[Balance]
+      ,bbr.[RecordType]
+      ,bbr.[Operator]
+      ,bbr.[OperateTime]
+      ,bbr.[WithwardId]
+      ,bbr.[RelationNo]
+      ,bbr.[Remark]
+      ,bfa.AccountNo
+      ,bfa.OpenBank
+FROM [BusinessBalanceRecord] bbr WITH(NOLOCK)
+LEFT JOIN BusinessFinanceAccount bfa WITH(NOLOCK) ON bbr.BusinessId=bfa.BusinessId
+WHERE bbr.BusinessId=@BusinessId ";
+            if (criteria.RecordType != 0)
+            {
+                sql += @" AND bbr.[RecordType]=@RecordType";
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.RelationNo))
+            {
+                sql += @" AND bbr.[RelationNo]=@RelationNo";
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.OperateTimeStart))
+            {
+                sql += @" AND CONVERT(CHAR(10),bbr.OperateTime,120)>=CONVERT(CHAR(10),@OperateTimeStart,120)";
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.OperateTimeEnd))
+            {
+                sql += @" AND CONVERT(CHAR(10),bbr.OperateTime,120)<=CONVERT(CHAR(10),@OperateTimeEnd,120)";
+            }
+            sql += " ORDER BY bbr.Id DESC";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@BusinessId", criteria.BusinessId);
+            parm.AddWithValue("@RecordType", criteria.RecordType);
+            parm.AddWithValue("@RelationNo", criteria.RelationNo);
+            parm.AddWithValue("@OperateTimeStart", criteria.OperateTimeStart);
+            parm.AddWithValue("@OperateTimeEnd", criteria.OperateTimeEnd);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            return MapRows<BusinessBalanceRecordModel>(dt);
+        }
+
+       
     }
        
 }
