@@ -20,6 +20,8 @@ using ETS.Transaction;
 using ETS.Transaction.Common;
 using Ets.Model.DomainModel.Bussiness;
 using Ets.Dao.User;
+using ETS.Util;
+
 namespace Ets.Service.Provider.Finance
 {
     public class BusinessFinanceProvider : IBusinessFinanceProvider
@@ -82,7 +84,7 @@ namespace Ets.Service.Provider.Finance
                 else
                 {
                     _businessDao.UpdateForWithdrawC(withdrawBpm); //更新商户表的余额，可提现余额
-                    string withwardNo = "1";
+                    string withwardNo = Helper.generateOrderCode(withdrawBpm.BusinessId);
                     #region 商户提现
                     long withwardId = _businessWithdrawFormDao.Insert(new BusinessWithdrawForm()
                     {

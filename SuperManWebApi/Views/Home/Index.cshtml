@@ -486,22 +486,22 @@
     //});
     
 
-    //$(function() {
-    //    $.ajax({
-    //        type: 'POST',
-    //        dataType: 'json',
-    //        url: '/finance/WithdrawC',
-    //        data: {
-    //            "ClienterId": "114",
-    //            "WithdrawPrice": "1",
-    //            "FinanceAccountId":"0"
-    //        },
-    //        success: function (data) {
-    //            console.log(data);
-    //        },
-    //        error: function () { }
-    //    });
-    //});
+    $(function() {
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: '/finance/WithdrawC',
+            data: {
+                "ClienterId": "114",
+                "WithdrawPrice": "1",
+                "FinanceAccountId":"1"
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () { }
+        });
+    });
 
     //$(function () {
     //    $.ajax({
@@ -590,20 +590,20 @@
     //        error: function () { }
     //    });
     //});
-    $(function() {
-        $.ajax({
-            type: 'POST',
-            dataType: 'json',
-            url: '/finance/Withdrawb',
-            data: {
-                "BusinessId": "172",
-                "WithdrawPrice": "1",
-                "FinanceAccountId": "19"
-            },
-            success: function (data) {
-                console.log(data);
-            },
-            error: function () { }
-        });
-    });
+    //$(function() {
+    //    $.ajax({
+    //        type: 'POST',
+    //        dataType: 'json',
+    //        url: '/finance/Withdrawb',
+    //        data: {
+    //            "BusinessId": "172",
+    //            "WithdrawPrice": "1",
+    //            "FinanceAccountId": "19"
+    //        },
+    //        success: function (data) {
+    //            console.log(data);
+    //        },
+    //        error: function () { }
+    //    });
+    //});
 </script>
