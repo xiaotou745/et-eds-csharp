@@ -200,12 +200,23 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="orderNo">订单号</param>
         /// <returns></returns>
         ResultModel<RushOrderResultModel> RushOrder_C(int userId, string orderNo);
+
         /// <summary>
-        /// 获取订单详情
+        /// 获取骑士详情
+        /// hulingbo 20150511
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">骑士Id</param>
         /// <returns></returns>
         ClienterDM GetDetails(int id);
+
+        /// <summary>
+        /// 判断骑士是否存在
+        /// hulingbo 20150511
+        /// </summary>
+        /// <param name="id">骑士Id</param>
+        /// <returns></returns>
+        bool IsExist(int id);
+
         /// <summary>
         /// 根据订单Id和子订单Id获取信息
         /// </summary>
@@ -213,5 +224,6 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="orderChildId"></param>
         /// <returns></returns>
         List<OrderChildForTicket> GetOrderChildInfo(int orderId, int orderChildId); 
+    
     }
 }

@@ -16,6 +16,7 @@ using ETS.Security;
 using Ets.Service.IProvider.Finance;
 using ETS.Transaction;
 using ETS.Transaction.Common;
+using ETS.Util;
 
 namespace Ets.Service.Provider.Finance
 {
@@ -62,7 +63,7 @@ namespace Ets.Service.Provider.Finance
                 else
                 {
                     _clienterDao.UpdateForWithdrawC(withdrawCpm); //更新骑士表的余额，可提现余额
-                    string withwardNo = "1";
+                    string withwardNo = Helper.generateOrderCode(withdrawCpm.ClienterId);
                     #region 骑士提现
                     long withwardId = _clienterWithdrawFormDao.Insert(new ClienterWithdrawForm()
                               {
@@ -129,7 +130,6 @@ namespace Ets.Service.Provider.Finance
             clienter = _clienterDao.GetById(withdrawCpm.ClienterId);//获取超人信息
             if (clienter == null || clienter.Status == null
                 || clienter.Status != ConstValues.CLIENTER_AUDITPASS)  //骑士状态为非 审核通过不允许 提现
-             
             {
                 return new Tuple<bool, FinanceWithdrawC>(false, FinanceWithdrawC.ClienterError);
             }
@@ -137,16 +137,11 @@ namespace Ets.Service.Provider.Finance
             {
                 return new Tuple<bool, FinanceWithdrawC>(false, FinanceWithdrawC.MoneyError);
             }
-            var clienterFinanceAccounts = _clienterFinanceAccountDao.GetByClienterId(withdrawCpm.ClienterId);//获取超人金融账号信息
-            if (clienterFinanceAccounts.Count <= 0)
+            clienterFinanceAccount = _clienterFinanceAccountDao.GetById(withdrawCpm.FinanceAccountId);//获取超人金融账号信息
+            if (clienterFinanceAccount == null)
             {
                 return new Tuple<bool, FinanceWithdrawC>(false, FinanceWithdrawC.FinanceAccountError);
             }
-            else
-            {
-                clienterFinanceAccount = clienterFinanceAccounts[0];
-            }
-
             return new Tuple<bool, FinanceWithdrawC>(true, FinanceWithdrawC.Success);
         }
 

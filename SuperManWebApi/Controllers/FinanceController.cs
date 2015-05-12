@@ -4,6 +4,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Controllers;
+using ETS.Enums;
 using Ets.Model.Common;
 using Ets.Model.ParameterModel.Finance;
 using Ets.Service.IProvider.Finance;
@@ -30,8 +32,9 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="withdrawCpm">参数实体</param>
         /// <returns></returns>
+       
         [HttpPost]
-        public SimpleResultModel WithdrawC(WithdrawCPM withdrawCpm)
+        public SimpleResultModel WithdrawC([FromBody]WithdrawCPM withdrawCpm)
         {
             return _clienterFinanceProvider.WithdrawC(withdrawCpm);
         }
@@ -42,7 +45,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="cardBindCpm">参数实体</param>
         /// <returns></returns>
         [HttpPost]
-        public SimpleResultModel CardBindC(CardBindCPM cardBindCpm)
+        public SimpleResultModel CardBindC([FromBody]CardBindCPM cardBindCpm)
         {
             return _clienterFinanceProvider.CardBindC(cardBindCpm);
         }
@@ -53,7 +56,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="cardModifyCpm">参数实体</param>
         /// <returns></returns>
         [HttpPost]
-        public SimpleResultModel CardModifyC(CardModifyCPM cardModifyCpm)
+        public SimpleResultModel CardModifyC([FromBody]CardModifyCPM cardModifyCpm)
         {
             return _clienterFinanceProvider.CardModifyC(cardModifyCpm);
         }
@@ -68,7 +71,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="withdrawBpm">参数实体</param>
         /// <returns></returns>
         [HttpPost]
-        public SimpleResultModel WithdrawB(WithdrawBPM withdrawBpm)
+        public SimpleResultModel WithdrawB([FromBody]WithdrawBPM withdrawBpm)
         {
             return _iBusinessFinanceProvider.WithdrawB(withdrawBpm);
         }
@@ -79,7 +82,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="cardBindBpm">参数实体</param>
         /// <returns></returns>
         [HttpPost]
-        public SimpleResultModel CardBindB(CardBindBPM cardBindBpm)
+        public SimpleResultModel CardBindB([FromBody]CardBindBPM cardBindBpm)
         {
             return _iBusinessFinanceProvider.CardBindB(cardBindBpm);
         }
@@ -90,11 +93,37 @@ namespace SuperManWebApi.Controllers
         /// <param name="cardModifyBpm">参数实体</param>
         /// <returns></returns>
         [HttpPost]
-        public SimpleResultModel CardModifyB(CardModifyBPM cardModifyBpm)
+        public SimpleResultModel CardModifyB([FromBody]CardModifyBPM cardModifyBpm)
         {
             return _iBusinessFinanceProvider.CardModifyB(cardModifyBpm);
         }
 
         #endregion
+    }
+
+
+    public class ValidateAttribute : System.Web.Http.Filters.ActionFilterAttribute
+    {
+        /// <summary>
+        /// 重写OnActionExecuting方法
+        /// </summary>
+        /// <param name="actionContext"></param>
+        public override void OnActionExecuting(HttpActionContext actionContext)
+        {
+            if (!actionContext.ModelState.IsValid)
+            {
+                IList<string> errors = new List<string>();
+                foreach (string key in actionContext.ModelState.Keys)
+                {
+                    for (int i = 0; i < actionContext.ModelState[key].Errors.Count;i++)
+                    {
+                        errors.Add(actionContext.ModelState[key].Errors[i].ErrorMessage);
+                    }
+                }
+                actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
+                    (actionContext.ControllerContext, ResultModel<object>.Conclude(FinanceWithdrawC.WithdrawMoneyError,errors));  
+            }
+        }
+
     }
 }

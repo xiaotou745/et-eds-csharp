@@ -38,7 +38,7 @@ namespace Ets.Service.IProvider.Order
         /// </summary>
         /// <param name="busiOrderInfoModel"></param>
         /// <returns></returns>
-        order TranslateOrder(BussinessOrderInfoModel busiOrderInfoModel);
+        order TranslateOrder(BussinessOrderInfoPM busiOrderInfoModel);
 
         /// <summary>
         /// 添加一条订单记录
@@ -174,6 +174,21 @@ namespace Ets.Service.IProvider.Order
         /// <returns></returns>
         ResultModel<object> UpdateOrderStatus_Other(ChangeStatusPM_OpenApi paramodel);
 
+        /// <summary>
+        /// 获取订单详情
+        /// hulingbo 20150511
+        /// </summary>
+        /// <param name="id">订单Id</param>
+        /// <returns></returns>
         OrderDM GetDetails(int id);
+
+        /// <summary>
+        /// 判断订单是否存在
+        /// hulingbo 20150511
+        /// </summary>
+        /// <param name="id">订单Id</param>
+        /// <returns></returns>
+        bool IsExist(int id);
+
     }
 }

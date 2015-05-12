@@ -20,6 +20,8 @@ using ETS.Transaction;
 using ETS.Transaction.Common;
 using Ets.Model.DomainModel.Bussiness;
 using Ets.Dao.User;
+using ETS.Util;
+
 namespace Ets.Service.Provider.Finance
 {
     public class BusinessFinanceProvider : IBusinessFinanceProvider
@@ -82,7 +84,7 @@ namespace Ets.Service.Provider.Finance
                 else
                 {
                     _businessDao.UpdateForWithdrawC(withdrawBpm); //更新商户表的余额，可提现余额
-                    string withwardNo = "1";
+                    string withwardNo = Helper.generateOrderCode(withdrawBpm.BusinessId);
                     #region 商户提现
                     long withwardId = _businessWithdrawFormDao.Insert(new BusinessWithdrawForm()
                     {
@@ -156,16 +158,11 @@ namespace Ets.Service.Provider.Finance
             {
                 return new Tuple<bool, FinanceWithdrawB>(false, FinanceWithdrawB.MoneyError);
             }
-            var businessFinanceAccounts = _businessFinanceAccountDao.GetByBusinessId(withdrawBpm.BusinessId);//获取商户金融账号信息
-            if (businessFinanceAccounts.Count <= 0)
+            businessFinanceAccount = _businessFinanceAccountDao.GetById(withdrawBpm.FinanceAccountId);//获取商户金融账号信息
+            if (businessFinanceAccount==null)
             {
                 return new Tuple<bool, FinanceWithdrawB>(false, FinanceWithdrawB.FinanceAccountError);
             }
-            else
-            {
-                businessFinanceAccount = businessFinanceAccounts[0];
-            }
-
             return new Tuple<bool, FinanceWithdrawB>(true, FinanceWithdrawB.Success);
         }
 
@@ -334,10 +331,6 @@ namespace Ets.Service.Provider.Finance
             return reg;
         }
 
-        public BusinessDM GetDetails(int id)
-        {
-            return (new BusinessDao()).GetDetails(id);
-        }
         /// <summary>
         /// 商户提现申请单审核拒绝
         /// danny-20150511

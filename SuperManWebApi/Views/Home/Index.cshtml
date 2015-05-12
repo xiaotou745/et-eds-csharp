@@ -5,7 +5,46 @@
 </div>
 <script src="~/Scripts/jquery-1.10.2.min.js"></script>
 <script>
-
+    //$.ajax({
+    //    type: 'POST',
+    //    dataType: 'json',
+    //    url: '/Business/Get',
+    //    data: {
+    //        "BussinessId": 172,
+    //        "Version": "1.0.1"
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
+    $.ajax({
+        type: 'POST',
+        dataType: 'json',
+        url: '/Clienter/Get',
+        data: {
+            "ClienterId": 114,
+            "Version": "1.0.1"
+        },
+        success: function (data) {
+            console.log(data);
+        },
+        error: function () { }
+    });
+    
+    //$.ajax({
+    //    type: 'POST',
+    //    dataType: 'json',
+    //    url: '/Order/GetDetails',
+    //    data: {
+    //        "OrderId": 1263,
+    //        "Version": "1.0.1"
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
     //$(function () {
     //    //alert(1);
     //    $.ajax({
@@ -486,21 +525,22 @@
     //});
     
 
-    //$(function() {
-    //    $.ajax({
-    //        type: 'POST',
-    //        dataType: 'json',
-    //        url: '/finance/WithdrawC',
-    //        data: {
-    //            "ClienterId": "114",
-    //            "WithdrawPrice": "1",
-    //        },
-    //        success: function (data) {
-    //            console.log(data);
-    //        },
-    //        error: function () { }
-    //    });
-    //});
+    $(function() {
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: '/finance/WithdrawC',
+            data: {
+                "ClienterId": "114",
+                "WithdrawPrice": "1",
+                "FinanceAccountId":"1"
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () { }
+        });
+    });
 
     //$(function () {
     //    $.ajax({
@@ -597,6 +637,7 @@
     //        data: {
     //            "BusinessId": "172",
     //            "WithdrawPrice": "1",
+    //            "FinanceAccountId": "19"
     //        },
     //        success: function (data) {
     //            console.log(data);

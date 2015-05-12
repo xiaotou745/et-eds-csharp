@@ -13,12 +13,16 @@ namespace Ets.Service.IProvider.Pay
     {
         /// <summary>
         /// 生成支付宝订单
+        /// 窦海超
+        /// 2015年5月12日 14:35:05
         /// </summary>
         /// <param name="model"></param>
         ResultModel<PayResultModel> CreatePay(PayModel model);
 
         /// <summary>
         /// 订单回调
+        /// 窦海超
+        /// 2015年5月12日 14:35:05
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -26,6 +30,8 @@ namespace Ets.Service.IProvider.Pay
 
         /// <summary>
         /// 订单回调
+        /// 窦海超
+        /// 2015年5月12日 14:35:05
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -33,6 +39,8 @@ namespace Ets.Service.IProvider.Pay
 
         /// <summary>
         /// 查询支付状态
+        /// 窦海超
+        /// 2015年5月12日 14:35:05
         /// </summary>
         /// <returns></returns>
         dynamic GetOrderPayStatus(OrderPayModel model);

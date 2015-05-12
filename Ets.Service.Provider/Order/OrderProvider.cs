@@ -37,7 +37,6 @@ using Ets.Service.Provider.Clienter;
 using Ets.Service.IProvider.OpenApi;
 using Ets.Model.ParameterModel.Bussiness;
 using Ets.Service.IProvider.Statistics;
-//using Ets.Service.IProvider.Strategy;
 using Ets.Service.Provider.User;
 using Ets.Model.DataModel.Strategy;
 
@@ -242,7 +241,7 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <param name="busiOrderInfoModel"></param>
         /// <returns></returns>
-        public order TranslateOrder(Model.ParameterModel.Bussiness.BussinessOrderInfoModel busiOrderInfoModel)
+        public order TranslateOrder(Model.ParameterModel.Bussiness.BussinessOrderInfoPM busiOrderInfoModel)
         {
             order to = new order();
             to.OrderNo = Helper.generateOrderCode(busiOrderInfoModel.userId);  //根据userId生成订单号(15位)
@@ -1047,9 +1046,25 @@ to.BusinessName = business.Name;
 
         }
 
+        /// <summary>
+        /// 获取订单详情
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public OrderDM GetDetails(int id)
         {
             return OrderDao.GetDetails(id);
+        }
+
+        /// <summary>
+        /// 判断订单是否存在
+        /// hulingbo 20150511
+        /// </summary>
+        /// <param name="id">订单Id</param>
+        /// <returns></returns>
+        public bool IsExist(int id)
+        {
+            return OrderDao.IsExist(id);
         }
     }
 }

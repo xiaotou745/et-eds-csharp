@@ -26,7 +26,6 @@ using Ets.Service.Provider.MyPush;
 using Ets.Model.DomainModel.Bussiness;
 using Ets.Model.ParameterModel.Order;
 using ETS.NoSql.RedisCache;
-using Ets.Dao.Clienter;
 using Ets.Model.DomainModel.Order;
 namespace Ets.Service.Provider.Clienter
 {
@@ -808,10 +807,28 @@ namespace Ets.Service.Provider.Clienter
             return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.Failed);
         }
 
+        /// <summary>
+        /// 获取骑士详情
+        /// hulingbo 20150511
+        /// </summary>
+        /// <param name="id">商户id</param>
+        /// <returns></returns>
         public ClienterDM GetDetails(int id)
         {
-            return (new ClienterDao()).GetDetails(id);
+            return clienterDao.GetDetails(id);
         } 
+
+        /// <summary>
+        /// 判断骑士是否存在
+        /// hulingbo 20150511
+        /// </summary>
+        /// <param name="id">骑士Id</param>
+        /// <returns></returns>
+        public bool IsExist(int id)
+        {
+            return clienterDao.IsExist(id);
+        }
+
         /// <summary>
         /// 根据订单Id和子订单Id获取子订单信息
         /// </summary>

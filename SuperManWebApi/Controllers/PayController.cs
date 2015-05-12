@@ -20,23 +20,29 @@ namespace SuperManWebApi.Controllers
 
         /// <summary>
         /// 生成支付宝订单
+        /// 窦海超
+        /// 2015年5月12日 14:35:05
         /// </summary>
         /// <param name="model"></param>
-        [HttpPost]
-        public ResultModel<PayResultModel> CreatePay(PayModel model)
+        [HttpGet]
+        //[HttpPost]
+        public ResultModel<PayResultModel> CreatePay()//PayModel model
         {
-            //PayModel model = new PayModel() { 
-            //    orderNo="123",
-            //    payAmount=10,
-            //    payType=1,
-            //    version = "1.0"
-            //};
+            PayModel model = new PayModel()
+            {
+                orderId = 2114,
+                childId = 1,
+                payType = 1,
+                version = "1.0"
+            };
             //return ResultModel<PayResultModel>.Conclude(AliPayStatus, );
             return payProvider.CreatePay(model);
         }
 
         /// <summary>
         /// 订单回调
+        /// 窦海超
+        /// 2015年5月12日 14:35:10
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -48,17 +54,21 @@ namespace SuperManWebApi.Controllers
 
         /// <summary>
         /// Alipay自动返回
+        /// 窦海超
+        /// 2015年5月12日 14:35:15
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
         [HttpPost]
         public dynamic AlipayResult()
         {
-           return payProvider.AlipayResult();
+            return payProvider.AlipayResult();
         }
 
         /// <summary>
         /// 查询支付状态
+        /// 窦海超
+        /// 2015年5月12日 14:35:19
         /// </summary>
         /// <returns></returns>
         [HttpPost]
