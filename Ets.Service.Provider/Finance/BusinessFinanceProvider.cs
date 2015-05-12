@@ -243,39 +243,37 @@ namespace Ets.Service.Provider.Finance
         ///  商户交易流水API add by caoheyang 20150511
         /// </summary>
         /// <returns></returns>
-        public IList<BusinessBalanceRecord> GetRecords(int businessId)
+        public ResultModel<IList<FinanceRecordsDM>> GetRecords(int businessId)
         {
-            return _businessBalanceRecordDao.GetByBusinessId(businessId);
+            return ResultModel<IList<FinanceRecordsDM>>.Conclude(SystemEnum.Success,
+                TranslateRecords(_businessBalanceRecordDao.GetByBusinessId(businessId)));
         }
 
         /// <summary>
-        /// 
+        /// 商户交易流水API 信息处理转换 add by caoheyang 20150512
         /// </summary>
-        /// <param name="records"></param>
+        /// <param name="records">原始流水记录</param>
         /// <returns></returns>
-        private IList<BusinessBalanceRecord> TranslateRecords(IList<BusinessBalanceRecord> records)
+        private IList<FinanceRecordsDM> TranslateRecords(IList<BusinessBalanceRecord> records)
         {
-            IList<BusinessRecordsDM> results = new List<BusinessRecordsDM>();
-            foreach (var temp in records)
+            return records.Select(temp => new FinanceRecordsDM()
             {
-                results.Add(
-                new BusinessRecordsDM()
-                {
-                    Id = temp.Id,
-                    BusinessId = temp.BusinessId,
-                    Amount = temp.Amount,
-                    Status = temp.Status,
-                    //StatusStr = EnumExtenstion.GetEnumItem(status.GetType(), temp.Status),
-                    Balance = temp.Balance,
-                    RecordType = temp.RecordType,
-                    Operator = temp.Operator,
-                    OperateTime = temp.OperateTime,
-                    WithwardId = temp.WithwardId,
-                    RelationNo = temp.RelationNo,
-                    Remark = temp.Remark
-                });
-            }
-            return null;
+                Id = temp.Id,  //自增ID（PK）
+                UserId = temp.BusinessId,//商家Id(business表）
+                Amount = temp.Amount, //流水金额
+                Status = temp.Status, //流水状态(1、交易成功 2、交易中）
+                StatusStr = ((BusinessBalanceRecordStatus) Enum.Parse(typeof (BusinessBalanceRecordStatus),
+                        temp.Status.ToString(), false)).GetDisplayText(), //流水状态文本
+                Balance = temp.Balance, //交易后余额
+                RecordType = temp.RecordType,  //交易类型(1订单餐费 2配送费 3提现 4充值 5提现失败返现)
+                RecordTypeStr = ((BusinessBalanceRecordRecordType) Enum.Parse(typeof (BusinessBalanceRecordRecordType), 
+                        temp.RecordType.ToString(), false)).GetDisplayText(), //交易类型文本
+                Operator = temp.Operator, //操作人
+                OperateTime = temp.OperateTime, //操作时间
+                WithwardId = temp.WithwardId, //关联单Id
+                RelationNo = temp.RelationNo,//关联单号
+                Remark = temp.Remark//描述
+            }).ToList();
         }
 
         /// <summary>
@@ -316,12 +314,83 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public bool BusinessWithdrawPayOk(BusinessWithdrawLog model)
         {
-            return businessFinanceDao.BusinessWithdrawPayOk(model);
+            bool reg = false;
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (businessFinanceDao.BusinessWithdrawPayOk(model))
+                {
+                    if (businessFinanceDao.ModifyBusinessBalanceRecordStatus(model.WithwardId.ToString()))
+                    {
+                        if (businessFinanceDao.ModifyBusinessTotalAmount(model.WithwardId.ToString()))
+                        {
+                            reg = true;
+                            tran.Complete();
+                        }
+                    }
+                }
+            }
+            return reg;
         }
 
         public BusinessDM GetDetails(int id)
         {
             return (new BusinessDao()).GetDetails(id);
+        }
+/// <summary>
+        /// 商户提现申请单审核拒绝
+        /// danny-20150511
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool BusinessWithdrawAuditRefuse(BusinessWithdrawLogModel model)
+        {
+            bool reg = false;
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (businessFinanceDao.BusinessWithdrawReturn(model))
+                {
+                    if (businessFinanceDao.BusinessWithdrawAuditRefuse(model))
+                    {
+                        if (businessFinanceDao.ModifyBusinessBalanceRecordStatus(model.WithwardId.ToString()))
+                        {
+                            if (businessFinanceDao.ModifyBusinessAmountInfo(model.WithwardId.ToString()))
+                            {
+                                reg = true;
+                                tran.Complete();
+                            }
+                        }
+                    }
+                }
+            }
+            return reg;
+        }
+        /// <summary>
+        /// 商户提现申请单打款失败
+        /// danny-20150511
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool BusinessWithdrawPayFailed(BusinessWithdrawLogModel model)
+        {
+            bool reg = false;
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (businessFinanceDao.BusinessWithdrawReturn(model))
+                {
+                    if (businessFinanceDao.BusinessWithdrawPayFailed(model))
+                    {
+                        if (businessFinanceDao.ModifyBusinessBalanceRecordStatus(model.WithwardId.ToString()))
+                        {
+                            if (businessFinanceDao.ModifyBusinessAmountInfo(model.WithwardId.ToString()))
+                            {
+                                reg = true;
+                                tran.Complete();
+                            }
+                        }
+                    }
+                }
+            }
+            return reg;
         }
 
     }

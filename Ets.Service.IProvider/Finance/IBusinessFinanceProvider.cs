@@ -48,7 +48,7 @@ namespace Ets.Service.IProvider.Finance
         ///  商户交易流水API
         /// </summary>
         /// <returns></returns>
-        IList<BusinessBalanceRecord> GetRecords(int businessId);
+        ResultModel<IList<FinanceRecordsDM>> GetRecords(int businessId);
        
         /// <summary>
         /// 根据申请单Id获取商家提现申请单
@@ -78,6 +78,20 @@ namespace Ets.Service.IProvider.Finance
         /// <param name="model"></param>
         /// <returns></returns>
         bool BusinessWithdrawPayOk(BusinessWithdrawLog model);
+/// <summary>
+        /// 商户提现申请单审核拒绝
+        /// danny-20150511
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        bool BusinessWithdrawAuditRefuse(BusinessWithdrawLogModel model);
+        /// <summary>
+        /// 商户提现申请单打款失败
+        /// danny-20150511
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        bool BusinessWithdrawPayFailed(BusinessWithdrawLogModel model);
 
         BusinessDM GetDetails(int id);
     }

@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using Ets.Dao.Clienter;
 using Ets.Dao.Finance;
 using ETS.Enums;
+using ETS.Extension;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Finance;
+using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 using ETS.Security;
 using Ets.Service.IProvider.Finance;
@@ -222,11 +224,39 @@ namespace Ets.Service.Provider.Finance
         /// <summary>
         /// 骑士交易流水API add by caoheyang 20150511
         /// </summary> 
-        /// <param name="businessId">骑士id</param>
+        /// <param name="clienterId">骑士id</param>
         /// <returns></returns>
-         public IList<ClienterBalanceRecord> GetRecords(int businessId)
+        public ResultModel<IList<FinanceRecordsDM>> GetRecords(int clienterId)
          {
-             return _clienterBalanceRecordDao.GetByClienterId(businessId);
+             return ResultModel<IList<FinanceRecordsDM>>.Conclude(SystemEnum.Success,
+               TranslateRecords(_clienterBalanceRecordDao.GetByClienterId(clienterId)));
          }
+
+        /// <summary>
+        /// 骑士交易流水API 信息处理转换 add by caoheyang 20150512
+        /// </summary>
+        /// <param name="records">原始流水记录</param>
+        /// <returns></returns>
+        private IList<FinanceRecordsDM> TranslateRecords(IList<ClienterBalanceRecord> records)
+        {
+            return records.Select(temp => new FinanceRecordsDM()
+            {
+                Id = temp.Id,  //自增ID（PK）
+                UserId = temp.ClienterId,//骑士Id
+                Amount = temp.Amount, //流水金额
+                Status = temp.Status, //流水状态(1、交易成功 2、交易中）
+                StatusStr = ((ClienterBalanceRecordStatus)Enum.Parse(typeof(ClienterBalanceRecordStatus),
+                        temp.Status.ToString(), false)).GetDisplayText(), //流水状态文本
+                Balance = temp.Balance, //交易后余额
+                RecordType = temp.RecordType,  //交易类型(1佣金 2奖励 3提现 4取消订单赔偿 5无效订单扣款)
+                RecordTypeStr = ((ClienterBalanceRecordRecordType)Enum.Parse(typeof(ClienterBalanceRecordRecordType),
+                        temp.RecordType.ToString(), false)).GetDisplayText(), //交易类型文本
+                Operator = temp.Operator, //操作人
+                OperateTime = temp.OperateTime, //操作时间
+                WithwardId = temp.WithwardId, //关联单Id
+                RelationNo = temp.RelationNo,//关联单号
+                Remark = temp.Remark//描述
+            }).ToList();
+        }
     }
 }

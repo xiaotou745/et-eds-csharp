@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Finance;
+using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 
 namespace Ets.Service.IProvider.Finance
@@ -42,6 +43,6 @@ namespace Ets.Service.IProvider.Finance
         /// </summary> 
         /// <param name="clienterId">骑士id</param>
         /// <returns></returns>
-        IList<ClienterBalanceRecord> GetRecords(int clienterId);
+        ResultModel<IList<FinanceRecordsDM>> GetRecords(int clienterId);
     }
 }
