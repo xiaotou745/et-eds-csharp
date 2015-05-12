@@ -250,7 +250,7 @@ namespace Ets.Service.Provider.Finance
         }
 
         /// <summary>
-        /// 
+        /// 商户交易流水API 信息处理转换 add by caoheyang 20150512
         /// </summary>
         /// <param name="records"></param>
         /// <returns></returns>
