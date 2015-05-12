@@ -242,9 +242,10 @@ namespace Ets.Service.Provider.Finance
         ///  商户交易流水API add by caoheyang 20150511
         /// </summary>
         /// <returns></returns>
-        public IList<BusinessBalanceRecord> GetRecords(int businessId)
+        public ResultModel<IList<BusinessRecordsDM>> GetRecords(int businessId)
         {
-            return _businessBalanceRecordDao.GetByBusinessId(businessId);
+            return ResultModel<IList<BusinessRecordsDM>>.Conclude(SystemEnum.Success,
+                TranslateRecords(_businessBalanceRecordDao.GetByBusinessId(businessId)));
         }
 
         /// <summary>
@@ -252,29 +253,26 @@ namespace Ets.Service.Provider.Finance
         /// </summary>
         /// <param name="records"></param>
         /// <returns></returns>
-        private IList<BusinessBalanceRecord> TranslateRecords(IList<BusinessBalanceRecord> records)
+        private IList<BusinessRecordsDM> TranslateRecords(IList<BusinessBalanceRecord> records)
         {
-            IList<BusinessRecordsDM> results = new List<BusinessRecordsDM>();
-            foreach (var temp in records)
+            return records.Select(temp => new BusinessRecordsDM()
             {
-                results.Add(
-                new BusinessRecordsDM()
-                {
-                    Id = temp.Id,
-                    BusinessId = temp.BusinessId,
-                    Amount = temp.Amount,
-                    Status = temp.Status,
-                    //StatusStr = EnumExtenstion.GetEnumItem(status.GetType(), temp.Status),
-                    Balance = temp.Balance,
-                    RecordType = temp.RecordType,
-                    Operator = temp.Operator,
-                    OperateTime = temp.OperateTime,
-                    WithwardId = temp.WithwardId,
-                    RelationNo = temp.RelationNo,
-                    Remark = temp.Remark
-                });
-            }
-            return null;
+                Id = temp.Id,  //自增ID（PK）
+                BusinessId = temp.BusinessId,//商家Id(business表）
+                Amount = temp.Amount, //流水金额
+                Status = temp.Status, //流水状态(1、交易成功 2、交易中）
+                StatusStr = ((BusinessBalanceRecordStatus) Enum.Parse(typeof (BusinessBalanceRecordStatus),
+                        temp.Status.ToString(), false)).GetDisplayText(), //流水状态文本
+                Balance = temp.Balance, //交易后余额
+                RecordType = temp.RecordType,  //交易类型(1订单餐费 2配送费 3提现 4充值 5提现失败返现)
+                RecordTypeStr = ((BusinessBalanceRecordRecordType) Enum.Parse(typeof (BusinessBalanceRecordRecordType), 
+                        temp.RecordType.ToString(), false)).GetDisplayText(), //交易类型文本
+                Operator = temp.Operator, //操作人
+                OperateTime = temp.OperateTime, //操作时间
+                WithwardId = temp.WithwardId, //关联单Id
+                RelationNo = temp.RelationNo,//关联单号
+                Remark = temp.Remark//描述
+            }).ToList();
         }
 
         /// <summary>
