@@ -10,6 +10,7 @@ using ETS.Extension;
 using Ets.Model.DataModel.Order;
 using Ets.Model.ParameterModel.Order;
 using ETS.Util;
+using Ets.Model.DomainModel.Order;
 
 namespace Ets.Dao.Order
 {
@@ -167,31 +168,27 @@ where  Id=@Id ";
         /// <param name="orderId"></param>
         /// <param name="orderChildId"></param>
         /// <returns></returns>
-        public OrderChild GetOrderChildInfo(int orderId, int orderChildId)
+        public List<OrderChildForTicket> GetOrderChildInfo(int orderId, int orderChildId)
         {
-            OrderChild oc = new OrderChild();
+            List<OrderChildForTicket> oc = new List<OrderChildForTicket>();
             StringBuilder sql = new StringBuilder();
             sql.Append(@"
-  select top 1 Id ,
-        OrderId ,
-        ChildId ,
-        TotalPrice ,
-        GoodPrice ,
-        DeliveryPrice ,
-        PayStyle ,
-        PayType ,
-        PayStatus ,
-        PayBy ,
-        PayTime ,
-        PayPrice ,
-        HasUploadTicket ,
-        TicketUrl ,
-        CreateBy ,
-        CreateTime ,
-        UpdateBy ,
-        UpdateTime
- from   dbo.OrderChild(nolock)  where 1=1 and OrderId = @OrderId and ChildId = @ChildId;
+select  o.Id OrderId ,
+        oc.ChildId ,
+        o.[Status] OrderStatus ,
+        o.OrderCount NeedUploadCount ,
+        isnull(oo.HadUploadCount, 0) HadUploadCount ,
+        oc.HasUploadTicket ,
+        oc.TicketUrl
+from    dbo.[order] o ( nolock )
+        join dbo.OrderChild oc ( nolock ) on o.Id = oc.OrderId
+        left join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
+where   1=1 and o.Id = @OrderId 
 ");
+            if (orderChildId > 0)
+            {
+                sql.Append(" and ChildId = @ChildId ;");
+            }
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderId", SqlDbType.Int).Value = orderId; 
             parm.Add("@ChildId", SqlDbType.Int).Value = orderChildId;
@@ -199,7 +196,7 @@ where  Id=@Id ";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql.ToString(), parm);
             if (dt.HasData())
                 return oc;
-            return MapRows<OrderChild>(dt)[0]; 
+            return MapRows<List<OrderChildForTicket>>(dt)[0]; 
         }
     }
 
