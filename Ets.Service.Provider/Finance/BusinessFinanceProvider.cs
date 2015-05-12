@@ -70,7 +70,7 @@ namespace Ets.Service.Provider.Finance
         /// </summary>
         /// <param name="withdrawBpm">参数实体</param>
         /// <returns></returns>
-        public SimpleResultModel WithdrawB(WithdrawBPM withdrawBpm)
+        public ResultModel<object> WithdrawB(WithdrawBPM withdrawBpm)
         {
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
@@ -79,7 +79,7 @@ namespace Ets.Service.Provider.Finance
                 Tuple<bool, FinanceWithdrawB> checkbool = CheckWithdrawB(withdrawBpm, ref business, ref businessFinanceAccount);
                 if (checkbool.Item1 != true)  //验证失败 此次提款操作无效 直接返回相关错误信息
                 {
-                    return SimpleResultModel.Conclude(checkbool.Item2);
+                    return ResultModel<object>.Conclude(checkbool.Item2);
                 }
                 else
                 {
@@ -130,7 +130,7 @@ namespace Ets.Service.Provider.Finance
                     #endregion
                     tran.Complete();
                 }
-                return SimpleResultModel.Conclude(FinanceWithdrawB.Success); ;
+                return ResultModel<object>.Conclude(FinanceWithdrawB.Success); ;
             }
         }
 
@@ -175,18 +175,18 @@ namespace Ets.Service.Provider.Finance
         /// </summary>
         /// <param name="cardBindBpm">参数实体</param>
         /// <returns></returns>
-        public SimpleResultModel CardBindB(CardBindBPM cardBindBpm)
+        public ResultModel<object> CardBindB(CardBindBPM cardBindBpm)
         {
             if (cardBindBpm.AccountNo != cardBindBpm.AccountNo2) //两次录入的金融账号不一致
             {
-                return SimpleResultModel.Conclude(FinanceCardBindB.InputValid);
+                return ResultModel<object>.Conclude(FinanceCardBindB.InputValid);
             }
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 int count = _businessFinanceAccountDao.GetCountByBusinessId(cardBindBpm.BusinessId);
                 if (count > 0)
                 {
-                    return SimpleResultModel.Conclude(FinanceCardBindB.Exists);//该商户已绑定过金融账号
+                    return ResultModel<object>.Conclude(FinanceCardBindB.Exists);//该商户已绑定过金融账号
                 }
                 int result = _businessFinanceAccountDao.Insert(new BusinessFinanceAccount()
                 {
@@ -202,7 +202,7 @@ namespace Ets.Service.Provider.Finance
                     UpdateBy = cardBindBpm.CreateBy//新增时最后修改人与新增人一致  当前登录人
                 });
                 tran.Complete();
-                return SimpleResultModel.Conclude(SystemEnum.Success);
+                return ResultModel<object>.Conclude(SystemEnum.Success);
             }
         }
 
@@ -212,11 +212,11 @@ namespace Ets.Service.Provider.Finance
         /// </summary>
         /// <param name="cardModifyBpm">参数实体</param>
         /// <returns></returns>
-        public SimpleResultModel CardModifyB(CardModifyBPM cardModifyBpm)
+        public ResultModel<object> CardModifyB(CardModifyBPM cardModifyBpm)
         {
             if (cardModifyBpm.AccountNo != cardModifyBpm.AccountNo2) //两次录入的金融账号不一致
             {
-                return SimpleResultModel.Conclude(FinanceCardCardModifyB.InputValid);
+                return ResultModel<object>.Conclude(FinanceCardCardModifyB.InputValid);
             }
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
@@ -231,7 +231,7 @@ namespace Ets.Service.Provider.Finance
                     UpdateBy = cardModifyBpm.UpdateBy//修改人  当前登录人
                 });
                 tran.Complete();
-                return SimpleResultModel.Conclude(SystemEnum.Success);
+                return ResultModel<object>.Conclude(SystemEnum.Success);
             }
         }
         #endregion
