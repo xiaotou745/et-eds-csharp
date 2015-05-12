@@ -27,14 +27,14 @@ namespace Ets.Service.IProvider.Finance
         /// </summary>
         /// <param name="withdrawBpm">参数实体</param>
         /// <returns></returns>
-        SimpleResultModel WithdrawB(WithdrawBPM withdrawBpm);
+        ResultModel<object> WithdrawB(WithdrawBPM withdrawBpm);
 
         /// <summary>
         /// 商户绑定银行卡功能 add by caoheyang 20150511
         /// </summary>
         /// <param name="cardBindBpm">参数实体</param>
         /// <returns></returns>
-        SimpleResultModel CardBindB(CardBindBPM cardBindBpm);
+        ResultModel<object> CardBindB(CardBindBPM cardBindBpm);
 
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace Ets.Service.IProvider.Finance
         /// </summary>
         /// <param name="cardModifyBpm">参数实体</param>
         /// <returns></returns>
-        SimpleResultModel CardModifyB(CardModifyBPM cardModifyBpm);
+        ResultModel<object> CardModifyB(CardModifyBPM cardModifyBpm);
 
         /// <summary>
         ///  商户交易流水API add by caoheyang 20150512
@@ -92,7 +92,6 @@ namespace Ets.Service.IProvider.Finance
         /// <param name="model"></param>
         /// <returns></returns>
         bool BusinessWithdrawPayFailed(BusinessWithdrawLogModel model);
-
-        BusinessDM GetDetails(int id);
+      
     }
 }

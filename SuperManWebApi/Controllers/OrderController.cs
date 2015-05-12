@@ -17,62 +17,83 @@ using Ets.Model.ParameterModel.Clienter;
 using ETS.Expand;
 using Ets.Model.ParameterModel.Bussiness;
 using Ets.Model.DomainModel.Order;
+using Ets.Service.IProvider.Clienter;
+using Ets.Service.Provider.Clienter;
 namespace SuperManWebApi.Controllers
 {
     public class OrderController : ApiController
     {
         IOrderProvider iOrderProvider = new OrderProvider();
         IBusinessProvider iBusinessProvider = new BusinessProvider();
-        readonly Ets.Service.IProvider.Clienter.IClienterProvider iClienterProvider = new Ets.Service.Provider.Clienter.ClienterProvider();
+        readonly IClienterProvider iClienterProvider = new ClienterProvider();
         /// <summary>
-        /// 商户发布订单        
+        /// 商户发布订单      
+        /// hulingbo 20150511
         /// </summary>
-        /// <param name="model">订单实体</param>
+        /// <param name="model">订单参数实体</param>
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
         [HttpPost]
-        public ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel> Push(BussinessOrderInfoModel model)
-        {          
-            //验证该商户有无发布订单资格 
-            if (!iBusinessProvider.HaveQualification(model.userId))
+        public ResultModel<BusiOrderResultModel> Push(BussinessOrderInfoPM model)
+        {
+            #region 验证
+            if (!iBusinessProvider.HaveQualification(model.userId))//验证该商户有无发布订单资格 
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(PubOrderStatus.HadCancelQualification);
+                return Ets.Model.Common.ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.HadCancelQualification);
             }
             if (model.Amount < 10m)
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(PubOrderStatus.AmountLessThanTen);
+                return Ets.Model.Common.ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountLessThanTen);
             }
             if (model.Amount > 5000m)
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(PubOrderStatus.AmountMoreThanFiveThousand);
+                return Ets.Model.Common.ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountMoreThanFiveThousand);
             }           
             if (model.OrderCount <= 0 || model.OrderCount > 15) //判断录入订单数量是否符合要求
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
+                return Ets.Model.Common.ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
 
             Ets.Model.DataModel.Order.order order = iOrderProvider.TranslateOrder(model);
             if (order.BusinessCommission < 10m) //商户结算比例不能小于10
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(PubOrderStatus.BusiSettlementRatioError);
+                return Ets.Model.Common.ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusiSettlementRatioError);
             }
             string result = iOrderProvider.AddOrder(order);
 
             if (result == "0")//当前订单执行失败
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(PubOrderStatus.InvalidPubOrder);
+                return Ets.Model.Common.ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.InvalidPubOrder);
             }
-            Ets.Model.ParameterModel.Order.BusiOrderResultModel resultModel = new Ets.Model.ParameterModel.Order.BusiOrderResultModel { userId = model.userId };
-            return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
+            #endregion
+
+            BusiOrderResultModel resultModel = new BusiOrderResultModel { userId = model.userId };
+            return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
         }
 
         /// <summary>
-        /// 订单详情        
+        /// 获取订单详情        
+        /// hulingbo 20150511
         /// </summary>
-        /// <param name="model">订单参数</param>
+        /// <param name="model">订单参数实体</param>
         /// <returns></returns>        
         [HttpPost]
         public ResultModel<OrderDM> GetDetails(OrderPM model)
         {
-            //加验证
+            #region 验证
+            var version = HttpContext.Current.Request.Form["Version"];
+            if (string.IsNullOrWhiteSpace(version)) //版本号 
+            {
+                return ResultModel<OrderDM>.Conclude(GetOrdersStatus.NoVersion);
+            }
+            if (model.OrderId < 0)//订单Id不合法
+            {
+                return ResultModel<OrderDM>.Conclude(GetOrdersStatus.ErrOderNo);
+            }
+            if (!iOrderProvider.IsExist(model.OrderId)) //订单不存在
+            {
+                return ResultModel<OrderDM>.Conclude(GetOrdersStatus.ErrOderNo); 
+            }
+
+            #endregion
 
             OrderDM orderDM= iOrderProvider.GetDetails(model.OrderId);
             return Ets.Model.Common.ResultModel<OrderDM>.Conclude(GetOrdersStatus.Success, orderDM);          

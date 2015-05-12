@@ -16,6 +16,7 @@ using ETS.Security;
 using Ets.Service.IProvider.Finance;
 using ETS.Transaction;
 using ETS.Transaction.Common;
+using ETS.Util;
 
 namespace Ets.Service.Provider.Finance
 {
@@ -48,7 +49,7 @@ namespace Ets.Service.Provider.Finance
         /// </summary>
         /// <param name="withdrawCpm">参数实体</param>
         /// <returns></returns>
-        public SimpleResultModel WithdrawC(WithdrawCPM withdrawCpm)
+        public ResultModel<object> WithdrawC(WithdrawCPM withdrawCpm)
         {
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
@@ -57,12 +58,12 @@ namespace Ets.Service.Provider.Finance
                 Tuple<bool, FinanceWithdrawC> checkbool = CheckWithdrawC(withdrawCpm, ref clienter, ref clienterFinanceAccount);
                 if (checkbool.Item1 != true)  //验证失败 此次提款操作无效 直接返回相关错误信息
                 {
-                    return SimpleResultModel.Conclude(checkbool.Item2);
+                    return ResultModel<object>.Conclude(checkbool.Item2);
                 }
                 else
                 {
                     _clienterDao.UpdateForWithdrawC(withdrawCpm); //更新骑士表的余额，可提现余额
-                    string withwardNo = "1";
+                    string withwardNo = Helper.generateOrderCode(withdrawCpm.ClienterId);
                     #region 骑士提现
                     long withwardId = _clienterWithdrawFormDao.Insert(new ClienterWithdrawForm()
                               {
@@ -108,7 +109,7 @@ namespace Ets.Service.Provider.Finance
                     #endregion
                     tran.Complete();
                 }
-                return SimpleResultModel.Conclude(FinanceWithdrawC.Success); ;
+                return ResultModel<object>.Conclude(FinanceWithdrawC.Success); ;
             }
         }
 
@@ -122,6 +123,10 @@ namespace Ets.Service.Provider.Finance
         private Tuple<bool, FinanceWithdrawC> CheckWithdrawC(WithdrawCPM withdrawCpm, ref clienter clienter,
             ref  ClienterFinanceAccount clienterFinanceAccount)
         {
+            if (withdrawCpm == null)
+            {
+                return new Tuple<bool, FinanceWithdrawC>(false, FinanceWithdrawC.NoPara);
+            }
             if (withdrawCpm.WithdrawPrice <= 0)   //提现金额小于等于0 提现有误
             {
                 return new Tuple<bool, FinanceWithdrawC>(false, FinanceWithdrawC.WithdrawMoneyError);
@@ -129,7 +134,6 @@ namespace Ets.Service.Provider.Finance
             clienter = _clienterDao.GetById(withdrawCpm.ClienterId);//获取超人信息
             if (clienter == null || clienter.Status == null
                 || clienter.Status != ConstValues.CLIENTER_AUDITPASS)  //骑士状态为非 审核通过不允许 提现
-             
             {
                 return new Tuple<bool, FinanceWithdrawC>(false, FinanceWithdrawC.ClienterError);
             }
@@ -155,18 +159,18 @@ namespace Ets.Service.Provider.Finance
         /// </summary>
         /// <param name="cardBindCpm">参数实体</param>
         /// <returns></returns>
-        public SimpleResultModel CardBindC(CardBindCPM cardBindCpm)
+        public ResultModel<object> CardBindC(CardBindCPM cardBindCpm)
         {
             if (cardBindCpm.AccountNo != cardBindCpm.AccountNo2) //两次录入的金融账号不一致
             {
-                return SimpleResultModel.Conclude(FinanceCardBindC.InputValid);
+                return ResultModel<object>.Conclude(FinanceCardBindC.InputValid);
             }
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 int count = _clienterFinanceAccountDao.GetCountByClienterId(cardBindCpm.ClienterId);
                 if (count > 0)
                 {
-                    return SimpleResultModel.Conclude(FinanceCardBindC.Exists);//该骑士已绑定过金融账号
+                    return ResultModel<object>.Conclude(FinanceCardBindC.Exists);//该骑士已绑定过金融账号
                 }
                 int result = _clienterFinanceAccountDao.Insert(new ClienterFinanceAccount()
                 {
@@ -182,7 +186,7 @@ namespace Ets.Service.Provider.Finance
                     UpdateBy = cardBindCpm.CreateBy//新增时最后修改人与新增人一致  当前登录人
                 });
                 tran.Complete();
-                return SimpleResultModel.Conclude(SystemEnum.Success);
+                return ResultModel<object>.Conclude(SystemEnum.Success);
             }
         }
 
@@ -192,11 +196,11 @@ namespace Ets.Service.Provider.Finance
         /// </summary>
         /// <param name="cardModifyCpm">参数实体</param>
         /// <returns></returns>
-        public SimpleResultModel CardModifyC(CardModifyCPM cardModifyCpm)
+        public ResultModel<object> CardModifyC(CardModifyCPM cardModifyCpm)
         {
             if (cardModifyCpm.AccountNo != cardModifyCpm.AccountNo2) //两次录入的金融账号不一致
             {
-                return SimpleResultModel.Conclude(FinanceCardCardModifyC.InputValid);
+                return ResultModel<object>.Conclude(FinanceCardCardModifyC.InputValid);
             }
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
@@ -211,7 +215,7 @@ namespace Ets.Service.Provider.Finance
                     UpdateBy = cardModifyCpm.UpdateBy//修改人  当前登录人
                 });
                 tran.Complete();
-                return SimpleResultModel.Conclude(SystemEnum.Success);
+                return ResultModel<object>.Conclude(SystemEnum.Success);
             }
         }
         #endregion

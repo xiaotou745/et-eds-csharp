@@ -167,6 +167,7 @@
     <Compile Include="ParameterModel\Bussiness\OrderCancelModel.cs" />
     <Compile Include="ParameterModel\Bussiness\OrderCancelResultModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BussinessPM.cs" />
+    <Compile Include="ParameterModel\Bussiness\OrderChlidPM.cs" />
     <Compile Include="ParameterModel\Bussiness\RegisterInfoModel.cs" />
     <Compile Include="ParameterModel\Clienter\ClienterPM.cs" />
     <Compile Include="ParameterModel\Clienter\ChangeWorkStatusPM.cs" />

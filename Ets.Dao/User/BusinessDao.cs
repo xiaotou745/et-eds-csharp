@@ -1431,35 +1431,79 @@ where  Id=@Id ";
             BusinessDM businessDM = new BusinessDM();
             #region 商家表
             string queryBusinessSql = @"
-select  Id,PhoneNo,LoginName,recommendPhone,Password,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
-AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode,
-AreaCode,CityCode,Province,BussinessID,WorkStatus,AllowWithdrawPrice,HasWithdrawPrice
-from  clienter (nolock) where Id=@Id" ;
+select  Id,Name,City,district,PhoneNo,PhoneNo2,Password,CheckPicUrl,IDCard,
+Address,Landline,Longitude,Latitude,Status,InsertTime,districtId,CityId,GroupId,
+OriginalBusiId,ProvinceCode,CityCode,AreaCode,Province,CommissionTypeId,DistribSubsidy,
+BusinessCommission,CommissionType,CommissionFixValue,BusinessGroupId,BalancePrice,
+AllowWithdrawPrice,HasWithdrawPrice
+from  Business (nolock) where Id=@Id";
+
             IDbParameters dbBusinessParameters = DbHelper.CreateDbParameters();
             dbBusinessParameters.AddWithValue("Id", id);
-            businessDM = DbHelper.QueryForObject(SuperMan_Read, queryBusinessSql, dbBusinessParameters, new businessRowMapper());
+            businessDM = DbHelper.QueryForObject(SuperMan_Read, queryBusinessSql, dbBusinessParameters, new BusinessRowMapper());
             #endregion
 
             #region 商家金融账号表
             const string queryBFAccountSql = @"
 select  Id,BusinessId,TrueName,AccountNo,IsEnable,AccountType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
-from  BusinessFinanceAccount (nolock) where BusinessId=@BusinessId";
+from  BusinessFinanceAccount (nolock) where BusinessId=@BusinessId and IsEnable=1";
             IDbParameters dbBFAccountParameters = DbHelper.CreateDbParameters();
             dbBFAccountParameters.AddWithValue("BusinessId", id);
             DataTable dtBFAccount = DbHelper.ExecuteDataTable(SuperMan_Read, queryBFAccountSql, dbBFAccountParameters);
-            List<BusinessFinanceAccount> listBFAccount = (List<BusinessFinanceAccount>)MapRows<BusinessFinanceAccount>(dtBFAccount);
+            List<BusinessFinanceAccount> listBFAccount = new List<BusinessFinanceAccount>();            
+            foreach (DataRow dataRow in dtBFAccount.Rows)
+            {
+                BusinessFinanceAccount bf = new BusinessFinanceAccount();
+                bf.Id = Convert.ToInt32(dataRow["Id"]);
+                bf.BusinessId = Convert.ToInt32(dataRow["BusinessId"]);
+                bf.TrueName = dataRow["TrueName"].ToString();
+                bf.AccountNo = ETS.Security.DES.Decrypt(dataRow["AccountNo"].ToString()); 
+                bf.IsEnable = Convert.ToBoolean(dataRow["IsEnable"]);                
+                bf.AccountType = Convert.ToInt32(dataRow["AccountType"]);
+                if (dataRow["OpenBank"] != null && dataRow["OpenBank"]!=DBNull.Value)
+                    bf.OpenBank = dataRow["OpenBank"].ToString();
+                if (dataRow["OpenSubBank"] != null && dataRow["OpenSubBank"] != DBNull.Value)
+                    bf.OpenSubBank = dataRow["OpenSubBank"].ToString();
+                bf.CreateBy = dataRow["CreateBy"].ToString();
+                bf.CreateTime =Convert.ToDateTime(dataRow["CreateTime"]);
+                bf.UpdateBy = dataRow["UpdateBy"].ToString();
+                bf.UpdateTime = Convert.ToDateTime(dataRow["UpdateTime"]);
+                listBFAccount.Add(bf);
+            }            
             businessDM.listBFAcount = listBFAccount;            
-            #endregion
-
+            #endregion          
+             
             return businessDM;
         }
 
-        #region  Nested type: businessRowMapper
+
+        /// <summary>
+        /// 判断商户是否存在        
+        /// hulingbo 20150511
+        /// </summary>
+        /// <param name="id">商户Id</param>
+        /// <returns></returns>
+        public bool IsExist(int id)
+        {
+            bool isExist;
+            string querySql = @" SELECT COUNT(1)
+ FROM   dbo.[business] WITH ( NOLOCK ) 
+ WHERE  id = @id";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("id", id);
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
+            isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
+
+            return isExist;
+        }
+
+        #region  Nested type: BusinessRowMapper
 
         /// <summary>
         /// 绑定对象
         /// </summary>
-        private class businessRowMapper : IDataTableRowMapper<BusinessDM>
+        private class BusinessRowMapper : IDataTableRowMapper<BusinessDM>
         {
             public BusinessDM MapRow(DataRow dataReader)
             {
@@ -1566,6 +1610,120 @@ from  BusinessFinanceAccount (nolock) where BusinessId=@BusinessId";
             }
         }
 
-        #endregion 
+        #endregion
+
+        //#region 用户自定义方法 Nested type: businessRowMapper
+
+        ///// <summary>
+        ///// 绑定对象
+        ///// </summary>
+        //private class businessRowMapper : IDataTableRowMapper<BusinessDM>
+        //{
+        //    public BusinessDM MapRow(DataRow dataReader)
+        //    {
+        //        var result = new BusinessDM();
+        //        object obj;
+        //        obj = dataReader["Id"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.Id = int.Parse(obj.ToString());
+        //        }
+        //        result.Name = dataReader["Name"].ToString();
+        //        result.City = dataReader["City"].ToString();
+        //        result.district = dataReader["district"].ToString();
+        //        result.PhoneNo = dataReader["PhoneNo"].ToString();
+        //        result.PhoneNo2 = dataReader["PhoneNo2"].ToString();
+        //        result.Password = dataReader["Password"].ToString();
+        //        result.CheckPicUrl = dataReader["CheckPicUrl"].ToString();
+        //        result.IDCard = dataReader["IDCard"].ToString();
+        //        result.Address = dataReader["Address"].ToString();
+        //        result.Landline = dataReader["Landline"].ToString();
+        //        obj = dataReader["Longitude"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.Longitude = decimal.Parse(obj.ToString());
+        //        }
+        //        obj = dataReader["Latitude"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.Latitude = decimal.Parse(obj.ToString());
+        //        }
+        //        obj = dataReader["Status"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.Status = int.Parse(obj.ToString());
+        //        }
+        //        obj = dataReader["InsertTime"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.InsertTime = DateTime.Parse(obj.ToString());
+        //        }
+        //        result.districtId = dataReader["districtId"].ToString();
+        //        result.CityId = dataReader["CityId"].ToString();
+        //        obj = dataReader["GroupId"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.GroupId = int.Parse(obj.ToString());
+        //        }
+        //        obj = dataReader["OriginalBusiId"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.OriginalBusiId = int.Parse(obj.ToString());
+        //        }
+        //        result.ProvinceCode = dataReader["ProvinceCode"].ToString();
+        //        result.CityCode = dataReader["CityCode"].ToString();
+        //        result.AreaCode = dataReader["AreaCode"].ToString();
+        //        result.Province = dataReader["Province"].ToString();
+        //        obj = dataReader["CommissionTypeId"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.CommissionTypeId = int.Parse(obj.ToString());
+        //        }
+        //        obj = dataReader["DistribSubsidy"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.DistribSubsidy = decimal.Parse(obj.ToString());
+        //        }
+        //        obj = dataReader["BusinessCommission"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.BusinessCommission = decimal.Parse(obj.ToString());
+        //        }
+        //        obj = dataReader["CommissionType"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.CommissionType = int.Parse(obj.ToString());
+        //        }
+        //        obj = dataReader["CommissionFixValue"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.CommissionFixValue = decimal.Parse(obj.ToString());
+        //        }
+        //        obj = dataReader["BusinessGroupId"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.BusinessGroupId = int.Parse(obj.ToString());
+        //        }
+        //        obj = dataReader["BalancePrice"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.BalancePrice = decimal.Parse(obj.ToString());
+        //        }
+        //        obj = dataReader["AllowWithdrawPrice"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.AllowWithdrawPrice = decimal.Parse(obj.ToString());
+        //        }
+        //        obj = dataReader["HasWithdrawPrice"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.HasWithdrawPrice = decimal.Parse(obj.ToString());
+        //        }
+
+        //        return result;
+        //    }
+        //}
+
+        //#endregion 
     }
 }
