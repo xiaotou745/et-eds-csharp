@@ -22,13 +22,13 @@ namespace SuperManWebApi.Controllers
     /// </summary>
     public class ClienterController : ApiController
     {
-        IClienterFinanceProvider _iClienterFinanceProvider=new ClienterFinanceProvider();
+        IClienterFinanceProvider _iClienterFinanceProvider = new ClienterFinanceProvider();
         IClienterProvider _iClienterProvider = new ClienterProvider();
         /// <summary>
-        /// 骑士交易流水API
+        /// 骑士交易流水API caoheyang 20150512
         /// </summary>
         /// <returns></returns>
-       [HttpPost]
+        [HttpPost]
         public IList<ClienterBalanceRecord> Records()
         {
             int clineterId = ParseHelper.ToInt(HttpContext.Current.Request.Form["clineterId"]);

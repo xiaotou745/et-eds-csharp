@@ -48,7 +48,7 @@ namespace Ets.Service.IProvider.Finance
         ///  商户交易流水API
         /// </summary>
         /// <returns></returns>
-        IList<BusinessBalanceRecord> GetRecords(int businessId);
+        ResultModel<IList<BusinessRecordsDM>> GetRecords(int businessId);
        
         /// <summary>
         /// 根据申请单Id获取商家提现申请单
