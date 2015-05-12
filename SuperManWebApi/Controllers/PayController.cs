@@ -25,7 +25,6 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model"></param>
         [HttpGet]
-        //[HttpPost]
         public ResultModel<PayResultModel> CreatePay()//PayModel model
         {
             PayModel model = new PayModel()
@@ -46,13 +45,11 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [HttpGet]
-        public dynamic ReturnAlipay()
+        //[HttpGet]
+        [HttpPost]
+        public HttpResponseMessage ReturnAlipay()
         {
             return payProvider.ReturnAlipay();
-            ////return new { is_success = "T", out_trade_no = "2114_1" };
-
-            //return "{\"is_success\":\"T\",\"out_trade_no\":\"2114_1\"}";
         }
 
         /// <summary>
@@ -63,9 +60,9 @@ namespace SuperManWebApi.Controllers
         /// <param name="result"></param>
         /// <returns></returns>
         [HttpPost]
-        public dynamic AlipayResult()
+        public dynamic Notify()
         {
-            return payProvider.AlipayResult();
+            return payProvider.Notify();
         }
 
         /// <summary>

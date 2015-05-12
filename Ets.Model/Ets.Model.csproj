@@ -44,6 +44,7 @@
     <Compile Include="Common\AliPay\NotifyResultModel.cs" />
     <Compile Include="Common\AliPay\OrderPayModel.cs" />
     <Compile Include="Common\AliPay\PayResultModel.cs" />
+    <Compile Include="Common\AliPay\ReturnApliPayModel.cs" />
     <Compile Include="Common\ApiVersionStatisticModel.cs" />
     <Compile Include="Common\BusinessCountManageList.cs" />
     <Compile Include="Common\ClienterCountManageList.cs" />

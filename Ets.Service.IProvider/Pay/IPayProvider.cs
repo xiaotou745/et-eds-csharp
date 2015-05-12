@@ -20,13 +20,13 @@ namespace Ets.Service.IProvider.Pay
         ResultModel<PayResultModel> CreatePay(PayModel model);
 
         /// <summary>
-        /// 订单回调
+        /// 确认订单
         /// 窦海超
         /// 2015年5月12日 14:35:05
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        dynamic ReturnAlipay();
+        System.Net.Http.HttpResponseMessage ReturnAlipay();
 
         /// <summary>
         /// 订单回调
@@ -35,7 +35,7 @@ namespace Ets.Service.IProvider.Pay
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        dynamic AlipayResult();
+        dynamic Notify();
 
         /// <summary>
         /// 查询支付状态

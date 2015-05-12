@@ -106,7 +106,7 @@ namespace ETS.AliPay
                     ////price = customerTotal.ToString()
                 },
                 notify_url = NotifyUrl,
-                return_url = ReturnUrl,
+                //return_url = ReturnUrl,
                 memo = "e代送收款"
             };
             return JsonConvert.SerializeObject(bizdata);
