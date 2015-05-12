@@ -62,7 +62,7 @@ namespace SuperManWebApi.Controllers
            #endregion
 
            ClienterDM clienterDM = _iClienterProvider.GetDetails(model.ClienterId);
-           return Ets.Model.Common.ResultModel<ClienterDM>.Conclude(GetOrdersStatus.Success, clienterDM);
+           return Ets.Model.Common.ResultModel<ClienterDM>.Conclude(GetClienterStatus.Success, clienterDM);
        }     
     }
 }

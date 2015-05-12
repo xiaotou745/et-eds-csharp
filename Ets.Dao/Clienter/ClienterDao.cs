@@ -999,7 +999,7 @@ where  Id=@Id ";
         {
             ClienterDM clienterDM = new ClienterDM();
 
-            #region 商家表
+            #region 骑士表
             string queryClienterSql = @"
 select  Id,PhoneNo,LoginName,recommendPhone,Password,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
 AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode
@@ -1010,14 +1010,33 @@ from  clienter (nolock) where Id=@Id" ;
             clienterDM = DbHelper.QueryForObject(SuperMan_Read, queryClienterSql, dbClienterParameters, new ClienterRowMapper());
             #endregion
 
-            #region 商家金融账号表
+            #region 骑士金融账号表
             const string queryCFAccountSql = @"
 select  Id,ClienterId,TrueName,AccountNo,IsEnable,AccountType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
-from  ClienterFinanceAccount (nolock) where ClienterId=@ClienterId";
+from  ClienterFinanceAccount (nolock) where ClienterId=@ClienterId  and IsEnable=1";
             IDbParameters dbCFAccountParameters = DbHelper.CreateDbParameters();
             dbCFAccountParameters.AddWithValue("ClienterId", id);
-            DataTable dtBFAccount = DbHelper.ExecuteDataTable(SuperMan_Read, queryCFAccountSql, dbCFAccountParameters);
-            List<ClienterFinanceAccount> listCFAccount = (List<ClienterFinanceAccount>)MapRows<ClienterFinanceAccount>(dtBFAccount);
+            DataTable dtBFAccount = DbHelper.ExecuteDataTable(SuperMan_Read, queryCFAccountSql, dbCFAccountParameters);            
+            List<ClienterFinanceAccount> listCFAccount = new List<ClienterFinanceAccount>();    
+            foreach (DataRow dataRow in dtBFAccount.Rows)
+            {
+                ClienterFinanceAccount bf = new ClienterFinanceAccount();
+                bf.Id = Convert.ToInt32(dataRow["Id"]);
+                bf.ClienterId = Convert.ToInt32(dataRow["ClienterId"]);
+                bf.TrueName = dataRow["TrueName"].ToString();
+                bf.AccountNo = ETS.Security.DES.Decrypt(dataRow["AccountNo"].ToString());
+                bf.IsEnable = Convert.ToBoolean(dataRow["IsEnable"]);
+                bf.AccountType = Convert.ToInt32(dataRow["AccountType"]);
+                if (dataRow["OpenBank"] != null && dataRow["OpenBank"] != DBNull.Value)
+                    bf.OpenBank = dataRow["OpenBank"].ToString();
+                if (dataRow["OpenSubBank"] != null && dataRow["OpenSubBank"] != DBNull.Value)
+                    bf.OpenSubBank = dataRow["OpenSubBank"].ToString();
+                bf.CreateBy = dataRow["CreateBy"].ToString();
+                bf.CreateTime = Convert.ToDateTime(dataRow["CreateTime"]);
+                bf.UpdateBy = dataRow["UpdateBy"].ToString();
+                bf.UpdateTime = Convert.ToDateTime(dataRow["UpdateTime"]);
+                listCFAccount.Add(bf);
+            }            
             clienterDM.listcFAcount = listCFAccount;
             #endregion
 
