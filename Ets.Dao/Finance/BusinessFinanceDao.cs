@@ -369,6 +369,34 @@ where bwf.Id=@WithwardId;");
             parm.AddWithValue("@WithwardId", withwardId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
+//        /// <summary>
+//        /// 获取商户提款收支记录列表
+//        /// danny-20150512
+//        /// </summary>
+//        /// <param name="withwardId"></param>
+//        /// <returns></returns>
+//        public IList<BusinessBalanceRecord> GetBusinessBalanceRecordList(BusinessBalanceRecord model)
+//        {
+//            string sql = @"  
+//SELECT [Id]
+//      ,[BusinessId]
+//      ,[Amount]
+//      ,[Status]
+//      ,[Balance]
+//      ,[RecordType]
+//      ,[Operator]
+//      ,[OperateTime]
+//      ,[WithwardId]
+//      ,[RelationNo]
+//      ,[Remark]
+//  FROM [BusinessBalanceRecord] bbr WITH(NOLOCK)
+//WHERE WithwardId=@Id
+//ORDER BY Id;";
+//            IDbParameters parm = DbHelper.CreateDbParameters();
+//            parm.AddWithValue("@Id", withwardId);
+//            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+//            return MapRows<BusinessWithdrawLog>(dt);
+//        }
     }
        
 }
