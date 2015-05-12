@@ -22,7 +22,9 @@ namespace ETS.Enums
         [DisplayText("骑士金融账号出现问题")]
         FinanceAccountError = 3,
         [DisplayText("提现金额大于可提现金额")]
-        MoneyError = 4
+        MoneyError = 4,
+        [DisplayText("未传参")]
+        NoPara = -2
     }
     /// <summary>
     /// 骑士绑定金融账号涉及到的各种返回状态枚举 add by caoheyang 20150509

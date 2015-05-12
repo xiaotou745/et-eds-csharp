@@ -18,19 +18,19 @@
     //    },
     //    error: function () { }
     //});
-    $.ajax({
-        type: 'POST',
-        dataType: 'json',
-        url: '/Clienter/Get',
-        data: {
-            "ClienterId": 114,
-            "Version": "1.0.1"
-        },
-        success: function (data) {
-            console.log(data);
-        },
-        error: function () { }
-    });
+    //$.ajax({
+    //    type: 'POST',
+    //    dataType: 'json',
+    //    url: '/Clienter/Get',
+    //    data: {
+    //        "ClienterId": 114,
+    //        "Version": "1.0.1"
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
     
     //$.ajax({
     //    type: 'POST',
@@ -531,9 +531,9 @@
             dataType: 'json',
             url: '/finance/WithdrawC',
             data: {
-                "ClienterId": "114",
-                "WithdrawPrice": "1",
-                "FinanceAccountId":"1"
+                            "ClienterId": "172",
+                            "WithdrawPrice": "1",
+                            "FinanceAccountId": "1"
             },
             success: function (data) {
                 console.log(data);
