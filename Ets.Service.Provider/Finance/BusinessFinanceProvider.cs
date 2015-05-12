@@ -243,23 +243,23 @@ namespace Ets.Service.Provider.Finance
         ///  商户交易流水API add by caoheyang 20150511
         /// </summary>
         /// <returns></returns>
-        public ResultModel<IList<BusinessRecordsDM>> GetRecords(int businessId)
+        public ResultModel<IList<FinanceRecordsDM>> GetRecords(int businessId)
         {
-            return ResultModel<IList<BusinessRecordsDM>>.Conclude(SystemEnum.Success,
+            return ResultModel<IList<FinanceRecordsDM>>.Conclude(SystemEnum.Success,
                 TranslateRecords(_businessBalanceRecordDao.GetByBusinessId(businessId)));
         }
 
         /// <summary>
         /// 商户交易流水API 信息处理转换 add by caoheyang 20150512
         /// </summary>
-        /// <param name="records"></param>
+        /// <param name="records">原始流水记录</param>
         /// <returns></returns>
-        private IList<BusinessRecordsDM> TranslateRecords(IList<BusinessBalanceRecord> records)
+        private IList<FinanceRecordsDM> TranslateRecords(IList<BusinessBalanceRecord> records)
         {
-            return records.Select(temp => new BusinessRecordsDM()
+            return records.Select(temp => new FinanceRecordsDM()
             {
                 Id = temp.Id,  //自增ID（PK）
-                BusinessId = temp.BusinessId,//商家Id(business表）
+                UserId = temp.BusinessId,//商家Id(business表）
                 Amount = temp.Amount, //流水金额
                 Status = temp.Status, //流水状态(1、交易成功 2、交易中）
                 StatusStr = ((BusinessBalanceRecordStatus) Enum.Parse(typeof (BusinessBalanceRecordStatus),

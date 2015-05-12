@@ -30,7 +30,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public ResultModel<IList<BusinessRecordsDM>> Records()
+        public ResultModel<IList<FinanceRecordsDM>> Records()
         {
             int businessId = ParseHelper.ToInt(HttpContext.Current.Request.Form["businessId"]);
             return _businessFinanceProvider.GetRecords(businessId);

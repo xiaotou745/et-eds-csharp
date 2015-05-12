@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Http;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Finance;
+using Ets.Model.DomainModel.Finance;
 using Ets.Service.IProvider.Finance;
 using Ets.Service.Provider.Finance;
 using ETS.Util;
@@ -29,7 +30,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public IList<ClienterBalanceRecord> Records()
+        public ResultModel<IList<FinanceRecordsDM>> Records()
         {
             int clineterId = ParseHelper.ToInt(HttpContext.Current.Request.Form["clineterId"]);
             return _iClienterFinanceProvider.GetRecords(clineterId);

@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace Ets.Model.DomainModel.Finance
 {
     /// <summary>
-    /// 商户交易流水API接口返回实体
+    ///骑士/商户交易流水API接口返回实体 add by caoheyang 20150512
     /// </summary>
-    public class BusinessRecordsDM
+    public class FinanceRecordsDM
     {
         /// <summary>
         /// 自增ID（PK）
@@ -17,9 +17,9 @@ namespace Ets.Model.DomainModel.Finance
         public long Id { get; set; }
 
         /// <summary>
-        /// 商家Id(business表）
+        /// 骑士/商户Id
         /// </summary>
-        public int BusinessId { get; set; }
+        public int UserId { get; set; }
 
         /// <summary>
         /// 流水金额
