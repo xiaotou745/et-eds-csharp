@@ -144,6 +144,10 @@ namespace Ets.Service.Provider.Finance
         private Tuple<bool, FinanceWithdrawB> CheckWithdrawB(WithdrawBPM withdrawBpm, ref Business business,
             ref  BusinessFinanceAccount businessFinanceAccount)
         {
+            if (withdrawBpm == null)
+            {
+                return new Tuple<bool, FinanceWithdrawB>(false, FinanceWithdrawB.NoPara);
+            }
             if (withdrawBpm.WithdrawPrice <= 0)   //提现金额小于等于0 提现有误
             {
                 return new Tuple<bool, FinanceWithdrawB>(false, FinanceWithdrawB.WithdrawMoneyError);
@@ -177,6 +181,10 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public ResultModel<object> CardBindB(CardBindBPM cardBindBpm)
         {
+            if (cardBindBpm == null)
+            {
+                return ResultModel<object>.Conclude(FinanceCardBindB.NoPara);
+            }
             if (cardBindBpm.AccountNo != cardBindBpm.AccountNo2) //两次录入的金融账号不一致
             {
                 return ResultModel<object>.Conclude(FinanceCardBindB.InputValid);
@@ -214,6 +222,10 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public ResultModel<object> CardModifyB(CardModifyBPM cardModifyBpm)
         {
+            if (cardModifyBpm == null)
+            {
+                return ResultModel<object>.Conclude(FinanceCardCardModifyB.NoPara);
+            }
             if (cardModifyBpm.AccountNo != cardModifyBpm.AccountNo2) //两次录入的金融账号不一致
             {
                 return ResultModel<object>.Conclude(FinanceCardCardModifyB.InputValid);
@@ -386,6 +398,17 @@ namespace Ets.Service.Provider.Finance
                 }
             }
             return reg;
+        }
+
+        /// <summary>
+        /// 获取商户提款收支记录列表
+        /// danny-20150512
+        /// </summary>
+        /// <param name="withwardId"></param>
+        /// <returns></returns>
+        public IList<BusinessBalanceRecord> GetBusinessBalanceRecordList(BusinessBalanceRecordSerchCriteria criteria)
+        {
+            return businessFinanceDao.GetBusinessBalanceRecordList(criteria);
         }
 
     }

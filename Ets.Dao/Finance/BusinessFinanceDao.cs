@@ -85,6 +85,7 @@ namespace Ets.Dao.Finance
             string sql = @"  
 select bwf.Id,
        bwf.WithwardNo,
+       bwf.BusinessId,
        b.[Name] BusinessName,
        b.PhoneNo BusinessPhoneNo,
        b.HasWithdrawPrice,
@@ -93,6 +94,7 @@ select bwf.Id,
        bwf.Amount,
        bwf.Balance,
        bwf.Status,
+       bwf.WithdrawTime,
        bwf.Auditor,
        bwf.AuditTime,
        bwf.Payer,
@@ -235,7 +237,7 @@ INTO BusinessWithdrawLog
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Status", model.Status);
             parm.AddWithValue("@Operator", model.Operator);
-            parm.AddWithValue("@Remark", model.Remark+"-"+model.AuditFailedReason);
+            parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@AuditFailedReason", model.AuditFailedReason);
             parm.AddWithValue("@Id", model.WithwardId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
@@ -271,7 +273,7 @@ INTO BusinessWithdrawLog
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Status", model.Status);
             parm.AddWithValue("@Operator", model.Operator);
-            parm.AddWithValue("@Remark", model.Remark + "-" + model.AuditFailedReason);
+            parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@PayFailedReason", model.PayFailedReason);
             parm.AddWithValue("@Id", model.WithwardId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
@@ -327,7 +329,7 @@ select      [BusinessId]
  where WithwardId=@WithwardId and Status=2 and RecordType=3;");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Operator", model.Operator);
-            parm.AddWithValue("@Remark", model.Remark + "-" + model.AuditFailedReason);
+            parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@WithwardId", model.WithwardId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
@@ -369,34 +371,54 @@ where bwf.Id=@WithwardId;");
             parm.AddWithValue("@WithwardId", withwardId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
-//        /// <summary>
-//        /// 获取商户提款收支记录列表
-//        /// danny-20150512
-//        /// </summary>
-//        /// <param name="withwardId"></param>
-//        /// <returns></returns>
-//        public IList<BusinessBalanceRecord> GetBusinessBalanceRecordList(BusinessBalanceRecord model)
-//        {
-//            string sql = @"  
-//SELECT [Id]
-//      ,[BusinessId]
-//      ,[Amount]
-//      ,[Status]
-//      ,[Balance]
-//      ,[RecordType]
-//      ,[Operator]
-//      ,[OperateTime]
-//      ,[WithwardId]
-//      ,[RelationNo]
-//      ,[Remark]
-//  FROM [BusinessBalanceRecord] bbr WITH(NOLOCK)
-//WHERE WithwardId=@Id
-//ORDER BY Id;";
-//            IDbParameters parm = DbHelper.CreateDbParameters();
-//            parm.AddWithValue("@Id", withwardId);
-//            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
-//            return MapRows<BusinessWithdrawLog>(dt);
-//        }
+        /// <summary>
+        /// 获取商户提款收支记录列表
+        /// danny-20150512
+        /// </summary>
+        /// <param name="withwardId"></param>
+        /// <returns></returns>
+        public IList<BusinessBalanceRecord> GetBusinessBalanceRecordList(BusinessBalanceRecordSerchCriteria criteria)
+        {
+            string sql = @"  
+SELECT bbr.[Id]
+      ,bbr.[BusinessId]
+      ,bbr.[Amount]
+      ,bbr.[Status]
+      ,bbr.[Balance]
+      ,bbr.[RecordType]
+      ,bbr.[Operator]
+      ,bbr.[OperateTime]
+      ,bbr.[WithwardId]
+      ,bbr.[RelationNo]
+      ,bbr.[Remark]
+  FROM [BusinessBalanceRecord] bbr WITH(NOLOCK)
+WHERE BusinessId=@BusinessId ";
+            if (criteria.RecordType!=0)
+            {
+                sql+=@" AND bbr.[RecordType]=@RecordType";
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.RelationNo))
+            {
+                sql+=@" AND bbr.[RelationNo]=@RelationNo";
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.OperateTimeStart))
+            {
+                sql+=@" AND CONVERT(CHAR(10),bbr.OperateTime,120)>=CONVERT(CHAR(10),@OperateTimeStart,120)";
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.OperateTimeEnd))
+            {
+                sql+=@" AND CONVERT(CHAR(10),bbr.OperateTime,120)>=CONVERT(CHAR(10),@OperateTimeEnd,120)";
+            }
+            sql+=" ORDER BY bbr.Id DESC";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@BusinessId", criteria.BusinessId);
+            parm.AddWithValue("@RecordType", criteria.RecordType);
+            parm.AddWithValue("@RelationNo", criteria.RelationNo);
+            parm.AddWithValue("@OperateTimeStart", criteria.OperateTimeStart);
+            parm.AddWithValue("@OperateTimeEnd", criteria.OperateTimeEnd);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            return MapRows<BusinessBalanceRecord>(dt);
+        }
     }
        
 }

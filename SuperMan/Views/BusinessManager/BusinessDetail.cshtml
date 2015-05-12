@@ -1,0 +1,121 @@
+﻿@model Ets.Model.DomainModel.Bussiness.BusinessDetailModel
+@{
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+@using ETS.Util;
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+<div style="width:1000px">
+    @{
+        var strstatus = "";
+        if (Model.Status == 1)
+        {
+            strstatus = "待审核";
+        }
+        else if (Model.Status == 2)
+        {
+            strstatus = "审核通过";
+        }
+        else if (Model.Status == 3)
+        {
+            strstatus = "打款完成";
+        }
+        else if (Model.Status == -1)
+        {
+            strstatus = "审核拒绝";
+        }
+        else if (Model.Status == -2)
+        {
+            strstatus = "打款失败";
+        }
+    }
+    <h2 class="crumbs">
+        您所在位置：商户 > 商户管理 > 收支记录
+    </h2>
+    <table class="tbstyle222" border="0" style="font-size:14px;font-weight:bold;line-height:300%;width:900px ">
+        <tr class="trclass">
+            <td>商户名称：@Model.Name</td>
+            <td>电话：@Model.PhoneNo</td>
+            <td><input type="hidden" value="@Model.Id" id="hidBusinessId"></td>
+            <td></td>
+        </tr>
+        <tr class="trclass">
+            <td>当前余额：￥@ParseHelper.ToSplitByPercentile(false, Model.BalancePrice)</td>
+            <td>累计提款：￥@ParseHelper.ToSplitByPercentile(false, Model.HasWithdrawPrice)</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr class="trclass">
+            <td>开户行:@Model.OpenBank</td>
+            <td>开户支行：@Model.OpenSubBank</td>
+            <td>账户名:@Model.TrueName</td>
+            <td>银行账号:@ParseHelper.ToDecrypt(Model.AccountNo)</td>
+        </tr>
+    </table>
+    <div class="SearchMd">
+        <span class="">交易类型: </span>
+        <select name="withdrawStatus" class="selectw" id="recordType" style="width:157px">
+            <option value="0">全部</option>
+            <option value="1">订单餐费</option>
+            <option value="2">配送费</option>
+            <option value="3">提现</option>
+            <option value="4">充值</option>
+            <option value="5">提现失败返现</option>
+        </select>
+        <span class="">提款单号: </span>
+        <input id="withwardNo" type="text" name="withwardNo" />
+        <br />
+        <span class="">提款日期: </span>
+        <input id="operateTimeStart" readonly="readonly" type="text" name="operateTimeStart" style="width:191px" />
+        <span class="">到: </span>
+        <input id="operateTimeEnd" readonly="readonly" type="text" name="operateTimeEnd" style="width:191px" />
+        <input type="button" value="查 询" class="searchBtn" id="btnQueryBalanceRecord" />
+        <input type="button" value="导 出" class="searchBtn" id="btnExportBalanceRecord" />
+    </div>
+    <div style="float:left;width:900px;padding-top:30px" class="control-group" id="detaiDiv">
+        @Html.Partial("_BusinessBalanceRecordList", Model)
+    </div>
+</div>
+<script type="text/javascript">
+    var adminjs = new adminglass(); //实例化后台类
+    $(document).ready(function () {
+        $('#operateTimeStart').datepicker();
+        $('#operateTimeEnd').datepicker();
+        window.location.hash = '';
+    });
+    //查询流水记录
+    $("#btnQueryBalanceRecord").click(function () {
+        var operateTimeStart = $('#operateTimeStart').val();
+        var operateTimeEnd = $('#operateTimeEnd').val();
+        var businessId = $('#hidBusinessId').val();
+        var recordType = $('#recordType').val();
+        var relationNo = $('#withwardNo').val();
+        var paramaters = { "businessId": businessId, "relationNo": relationNo, "recordType": recordType, "operateTimeStart": operateTimeStart, "operateTimeEnd": operateTimeEnd };
+        var url = "/BusinessManager/BusinessBalanceRecord";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                $("#detaiDiv").html(result);
+            }
+        });
+
+    });
+    //关闭弹层
+    $('.J_closebox').click(function () {
+        adminjs.closewinbox('.add-openbox');
+        return false;
+    });
+</script>
+
+
+
+
+
+
+
+
+

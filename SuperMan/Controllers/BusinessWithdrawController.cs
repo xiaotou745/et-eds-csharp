@@ -7,6 +7,7 @@ using Ets.Service.Provider.Common;
 using Ets.Service.Provider.Distribution;
 using Ets.Service.Provider.Finance;
 using Ets.Service.Provider.Order;
+using ETS.Util;
 using SuperMan.App_Start;
 using System;
 using System.Collections.Generic;
@@ -77,7 +78,7 @@ namespace SuperMan.Controllers
                 WithwardId =Convert.ToInt64(withwardId)
             };
             bool reg = iBusinessFinanceProvider.BusinessWithdrawAudit(businessWithdrawLog);
-            return Json(new ResultModel(reg, reg?"审核通过！":"审核失败！"), JsonRequestBehavior.AllowGet);
+            return Json(new ResultModel(reg, reg?"审核通过！":"审核失败！"), JsonRequestBehavior.DenyGet);
         }
         /// <summary>
         /// 商户提款申请单确认打款
@@ -96,7 +97,7 @@ namespace SuperMan.Controllers
                 WithwardId = Convert.ToInt64(withwardId)
             };
             bool reg = iBusinessFinanceProvider.BusinessWithdrawPayOk(businessWithdrawLog);
-            return Json(new ResultModel(reg, reg ? "确认打款成功！" : "确认打款失败！"), JsonRequestBehavior.AllowGet);
+            return Json(new ResultModel(reg, reg ? "确认打款成功！" : "确认打款失败！"), JsonRequestBehavior.DenyGet);
         }
         /// <summary>
         /// 商户提款申请单审核拒绝
@@ -111,13 +112,13 @@ namespace SuperMan.Controllers
             var businessWithdrawLog = new BusinessWithdrawLogModel()
             {
                 Operator = UserContext.Current.Name,
-                Remark = "商户提款申请单审核拒绝",
+                Remark = "商户提款申请单审核拒绝-" + auditFailedReason,
                 Status = -1,
                 WithwardId = Convert.ToInt64(withwardId),
                 AuditFailedReason = auditFailedReason
             };
             bool reg = iBusinessFinanceProvider.BusinessWithdrawAuditRefuse(businessWithdrawLog);
-            return Json(new ResultModel(reg, reg ? "审核拒绝成功！" : "审核拒绝失败！"), JsonRequestBehavior.AllowGet);
+            return Json(new ResultModel(reg, reg ? "审核拒绝成功！" : "审核拒绝失败！"), JsonRequestBehavior.DenyGet);
         }
         /// <summary>
         /// 商户提款申请单打款失败
@@ -132,13 +133,26 @@ namespace SuperMan.Controllers
             var businessWithdrawLog = new BusinessWithdrawLogModel()
             {
                 Operator = UserContext.Current.Name,
-                Remark = "商户提款申请单打款失败",
+                Remark = "商户提款申请单打款失败-" + payFailedReason,
                 Status = -2,
                 WithwardId = Convert.ToInt64(withwardId),
                 PayFailedReason = payFailedReason
+                
             };
             bool reg = iBusinessFinanceProvider.BusinessWithdrawPayFailed(businessWithdrawLog);
-            return Json(new ResultModel(reg, reg ? "打款失败操作提交成功！" : "打款失败操作提交失败！"), JsonRequestBehavior.AllowGet);
+            return Json(new ResultModel(reg, reg ? "打款失败操作提交成功！" : "打款失败操作提交失败！"), JsonRequestBehavior.DenyGet);
+        }
+        /// <summary>
+        /// 查看商户提款单详情
+        /// danny-20150511
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public JsonResult GetBusinessWithdrawForm(string withwardId)
+        {
+            var businessWithdrawFormModel = iBusinessFinanceProvider.GetBusinessWithdrawListById(withwardId);
+            businessWithdrawFormModel.AccountNo = ParseHelper.ToDecrypt(businessWithdrawFormModel.AccountNo);
+            return new JsonResult() { Data = businessWithdrawFormModel };
         }
     }
 }

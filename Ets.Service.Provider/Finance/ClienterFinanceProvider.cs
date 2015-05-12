@@ -161,6 +161,10 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public ResultModel<object> CardBindC(CardBindCPM cardBindCpm)
         {
+            if (cardBindCpm == null)
+            {
+                return ResultModel<object>.Conclude(FinanceCardBindC.NoPara);
+            }
             if (cardBindCpm.AccountNo != cardBindCpm.AccountNo2) //两次录入的金融账号不一致
             {
                 return ResultModel<object>.Conclude(FinanceCardBindC.InputValid);
@@ -198,6 +202,10 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public ResultModel<object> CardModifyC(CardModifyCPM cardModifyCpm)
         {
+            if (cardModifyCpm == null)
+            {
+                return ResultModel<object>.Conclude(FinanceCardCardModifyC.NoPara);
+            }
             if (cardModifyCpm.AccountNo != cardModifyCpm.AccountNo2) //两次录入的金融账号不一致
             {
                 return ResultModel<object>.Conclude(FinanceCardCardModifyC.InputValid);

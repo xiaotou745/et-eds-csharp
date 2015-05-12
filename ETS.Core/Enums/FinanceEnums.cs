@@ -35,6 +35,8 @@ namespace ETS.Enums
         Exists = 1,
         [DisplayText("两次录入的金融账号不一致")]
         InputValid = 2,
+        [DisplayText("未传参")]
+        NoPara = -2
     }
 
     /// <summary>
@@ -44,6 +46,8 @@ namespace ETS.Enums
     {
         [DisplayText("两次录入的金融账号不一致")]
         InputValid = 2,
+        [DisplayText("未传参")]
+        NoPara = -2
     }
     /// <summary>
     ///骑士余额流水   流水状态(1、交易成功 2、交易中）枚举 add by caoheyang 20150509
@@ -123,7 +127,9 @@ namespace ETS.Enums
         [DisplayText("商户金融账号出现问题")]
         FinanceAccountError = 3,
         [DisplayText("提现金额大于可提现金额")]
-        MoneyError = 4
+        MoneyError = 4,
+        [DisplayText("未传参")]
+        NoPara = -2
     }
     /// <summary>
     /// 商户绑定金融账号涉及到的各种返回状态枚举 add by caoheyang 20150509
@@ -134,6 +140,8 @@ namespace ETS.Enums
         Exists = 1,
         [DisplayText("两次录入的金融账号不一致")]
         InputValid = 2,
+        [DisplayText("未传参")]
+        NoPara = -2
     }
 
     /// <summary>
@@ -143,6 +151,8 @@ namespace ETS.Enums
     {
         [DisplayText("两次录入的金融账号不一致")]
         InputValid = 2,
+        [DisplayText("未传参")]
+        NoPara = -2
     }
     /// <summary>
     ///商户余额流水   流水状态(1、交易成功 2、交易中）枚举 add by caoheyang 20150511
