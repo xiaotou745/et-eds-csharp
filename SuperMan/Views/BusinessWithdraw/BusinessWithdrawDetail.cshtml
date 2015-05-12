@@ -34,27 +34,30 @@
     <h2 class="crumbs">
         您所在位置：财务管理 > 商户提款管理 > 商户提款详情
     </h2>
-    <table class="tbstyle222" border="0" style="font-size:14px;font-weight:bold;line-height:300%;width:1000px ">
+    <table class="tbstyle222" border="0" style="font-size:14px;font-weight:bold;line-height:300%;width:900px ">
         <tr class="trclass">
-            <td style="font-size:16px;">本次提款：@ParseHelper.ToSplitByPercentile(false,Model.Amount)</td>
+            <td style="font-size:16px;">本次提款：<font color="red">@ParseHelper.ToSplitByPercentile(false, Model.Amount)</font></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr class="trclass">
             <td>提款单号：@Model.WithwardNo</td>
-            <td>状态：@strstatus</td>
-            <td>
-                <input type="button" value="审核通过" class="searchBtn" id="btnCancel" />
-                <input type="button" value="拒绝" class="searchBtn" id="btnCancel" />
-            </td>
+            <td><a>查看商户收支记录</a></td>
+            <td><input type="hidden" value="@Model.Id" id="hidWithwardId"></td>
+            <td></td>
+        </tr>
+        <tr class="trclass">
+            <td>提款状态：@strstatus</td>
+            <td>申请时间：@Model.WithdrawTime</td>
+            <td></td>
+            <td></td>
         </tr>
         <tr class="trclass">
             <td>商户名称：@Model.BusinessName</td>
             <td>电话：@Model.BusinessPhoneNo</td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr class="trclass">
-            <td>提款前余额:￥@ParseHelper.ToSplitByPercentile(false,Model.BalancePrice)</td>
-            <td>累计提款：￥@ParseHelper.ToSplitByPercentile(false,Model.HasWithdrawPrice)</td>
-            <td></td>
-            <td></td>
+            <td>提款前余额：￥@ParseHelper.ToSplitByPercentile(false, Model.BalancePrice)</td>
+            <td>累计提款：￥@ParseHelper.ToSplitByPercentile(false, Model.HasWithdrawPrice)</td>
         </tr>
         <tr class="trclass">
             <td>开户行:@Model.OpenBank</td>
@@ -63,15 +66,17 @@
             <td>银行账号:@Model.WithwardNo</td>
         </tr>
     </table>
-
-
-    <div style="float:left;width:1000px;padding-top:30px">
-        <table border="0" cellspacing="0" cellpadding="0" class="tbstyle" width="1000">
+    <div class="SearchMd">
+        <input type="button" value="审核通过" class="searchBtn" id="btnAuditOk" />
+        <input type="button" value="拒    绝" class="searchBtn" id="btnAuditRefuse" />
+    </div>
+    <div style="float:left;width:900px;padding-top:30px" class="control-group">
+        <table border="0" cellspacing="0" cellpadding="0" class="tbstyle" width="900">
             <thead>
                 <tr class="tdbg">
-                    <th>提款单状态</th>
-                    <th>操作人</th>
                     <th>操作时间</th>
+                    <th>操作类型</th>
+                    <th>操作人</th>
                     <th>操作描述</th>
             </thead>
             <tbody>
@@ -103,9 +108,9 @@
                         }
                         i++;
                         <tr id="@item.Id">
+                            <td>@item.OperatTime</td>
                             <td>@statusDes</td>
                             <td>@item.Operator</td>
-                            <td>@item.OperatTime</td>
                             <td>@item.Remark</td>
                         </tr>
                     }
@@ -113,6 +118,89 @@
             </tbody>
         </table>
     </div>
+</div>
+@*审核拒绝弹框*@
+<div class="selectSupplierDish">
+    <div class="add-openbox add-form" id="WithdrawAuditRefuseShow" style="width:480px">
+        <fieldset>
+            <div class="control-group">
+                <div style="width:480px;font-size:16px"><center>是否拒绝打款1000.00元？</center></div>
+                <div class="controls" style="width:480px">
+                    <div style="width:75px">拒绝原因:</div>
+                    <div style="width:480px">
+                        <textarea cols="60" rows="5" id="txtWithdrawAuditRefuse"></textarea>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <p class="btnbox">
+            <input value="确认" type="button" id="btnWithdrawAuditRefuse" class="yesBtn" />
+            <input value="关闭" type="button" class="J_closebox qxBtn" />
+        </p>
+    </div>
+</div>
+<script type="text/javascript">
+    var adminjs = new adminglass(); //实例化后台类
+    ///审核通过
+    $("#btnAuditOk").click(function () {
+        if (!window.confirm("确认要提交审核？")) {
+            return;
+        }
+        var withwardId = $('#hidWithwardId').val();
+        var paramaters = { "withwardId": withwardId };
+        var url = "/BusinessWithdraw/WithdrawAuditOk";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert(result.Message);
+                    window.location.href = "/BusinessWithdraw/BusinessWithdraw";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+
+    });
+    //审核拒绝弹框
+    $("#btnAuditRefuse").click(function () {
+        adminjs.openwinbox('#WithdrawAuditRefuseShow');
+
+    });
+    
+    //审核拒绝提交
+    $("#btnWithdrawAuditRefuse").click(function () {
+        if (!window.confirm("确认要审核拒绝？")) {
+            return;
+        }
+        var auditFailedReason = $('#txtWithdrawAuditRefuse').val();
+        var withwardId = $('#hidWithwardId').val();
+        var paramaters = { "withwardId": withwardId, "auditFailedReason": auditFailedReason };
+        var url = "/BusinessWithdraw/WithdrawAuditRefuse";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert(result.Message);
+                    window.location.href = "/BusinessWithdraw/BusinessWithdraw";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    });
+    //关闭弹层
+    $('.J_closebox').click(function () {
+        adminjs.closewinbox('.add-openbox');
+        return false;
+    });
+</script>
+
 
 
 
