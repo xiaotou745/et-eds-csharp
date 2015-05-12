@@ -17,6 +17,9 @@ using Ets.Model.ParameterModel.User;
 using SuperMan.App_Start;
 using Ets.Model.ParameterModel.Order;
 using Ets.Model.DataModel.Bussiness;
+using Ets.Service.Provider.Finance;
+using Ets.Service.IProvider.Finance;
+using Ets.Model.ParameterModel.Finance;
 
 namespace SuperMan.Controllers
 {
@@ -28,6 +31,7 @@ namespace SuperMan.Controllers
         /// </summary>
         Ets.Service.IProvider.User.IBusinessProvider iBusinessProvider = new BusinessProvider();
         IAreaProvider iAreaProvider = new AreaProvider();
+        IBusinessFinanceProvider iBusinessFinanceProvider = new BusinessFinanceProvider();
         // GET: BusinessManager
         [HttpGet]
         public ActionResult BusinessManager()
@@ -56,13 +60,13 @@ namespace SuperMan.Controllers
         public JsonResult AuditOK(int id)
         {
             bool b = iBusinessProvider.UpdateAuditStatus(id, ETS.Enums.EnumStatusType.审核通过);
-            return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
+            return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.DenyGet);
         }
         [HttpPost]
         public JsonResult AuditCel(int id)
         {
             iBusinessProvider.UpdateAuditStatus(id, ETS.Enums.EnumStatusType.审核取消);
-            return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
+            return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.DenyGet);
         }
 
 
@@ -93,9 +97,9 @@ namespace SuperMan.Controllers
         public JsonResult SetCommission(int id, decimal commission, decimal waisongfei)
         {
             if (commission < 0)
-                return Json(new ResultModel(false, "结算比例不能小于零!"), JsonRequestBehavior.AllowGet);
+                return Json(new ResultModel(false, "结算比例不能小于零!"), JsonRequestBehavior.DenyGet);
             if (waisongfei < 0)
-                return Json(new ResultModel(false, "外送费不能小于零!"), JsonRequestBehavior.AllowGet);
+                return Json(new ResultModel(false, "外送费不能小于零!"), JsonRequestBehavior.DenyGet);
             string remark = "";
             IBusinessProvider iBus = new BusinessProvider();
             UserOptRecordPara model = new UserOptRecordPara()
@@ -106,7 +110,7 @@ namespace SuperMan.Controllers
                 UserType = 1, //被操作人类型
                 Remark = string.Format(string.Format("将商户id为{0}的商户外送费设置为{1},结算比例设置为{2}", id, waisongfei, commission))
             };
-            return Json(new ResultModel(iBus.SetCommission(id, commission, waisongfei,model), "成功!"), JsonRequestBehavior.AllowGet);
+            return Json(new ResultModel(iBus.SetCommission(id, commission, waisongfei,model), "成功!"), JsonRequestBehavior.DenyGet);
         }
 
         /// <summary>
@@ -122,9 +126,9 @@ namespace SuperMan.Controllers
             var result = iBusinessProvider.AddBusiness(model);
             if (result.Status==0)
             {
-                return Json(new ResultModel(true, "成功!"), JsonRequestBehavior.AllowGet);
+                return Json(new ResultModel(true, "成功!"), JsonRequestBehavior.DenyGet);
             }
-            return Json(new ResultModel(false, result.Message), JsonRequestBehavior.AllowGet);
+            return Json(new ResultModel(false, result.Message), JsonRequestBehavior.DenyGet);
         }
 
         
@@ -158,20 +162,36 @@ namespace SuperMan.Controllers
                 oldGroupId = oldBusGroupId,
                 oldOriginalBusiId = oldBusiSourceId
             };
-            return Json(new ResultModel(iBus.ModifyBusinessInfo(businessModel, model), "成功!"), JsonRequestBehavior.AllowGet);
+            return Json(new ResultModel(iBus.ModifyBusinessInfo(businessModel, model), "成功!"), JsonRequestBehavior.DenyGet);
         }
-        ///// <summary>
-        ///// 查看商户详细信息
-        ///// danny-20150512
-        ///// </summary>
-        ///// <param name="orderId"></param>
-        ///// <returns></returns>
-        //public ActionResult BusinessDetail(string businessId)
-        //{
-        //    var businessWithdrawFormModel = iBusinessFinanceProvider.GetBusinessWithdrawListById(withwardId);
-        //    ViewBag.businessBalanceRecord = iBusinessFinanceProvider.GetBusinessWithdrawOptionLog(withwardId);
-        //    return View(businessWithdrawFormModel);
-        //}
+        /// <summary>
+        /// 查看商户详细信息
+        /// danny-20150512
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public ActionResult BusinessDetail(string businessId)
+        {
+            var businessWithdrawFormModel = iBusinessProvider.GetBusinessDetailById(businessId);
+            var criteria = new BusinessBalanceRecordSerchCriteria()
+            {
+                BusinessId =Convert.ToInt32(businessId)
+            };
+            ViewBag.businessBalanceRecord = iBusinessFinanceProvider.GetBusinessBalanceRecordList(criteria);
+            return View(businessWithdrawFormModel);
+        }
+
+        /// <summary>
+        /// 查看商户余额流水记录
+        /// danny-20150512
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public ActionResult BusinessBalanceRecord(BusinessBalanceRecordSerchCriteria criteria)
+        {
+            ViewBag.businessBalanceRecord = iBusinessFinanceProvider.GetBusinessBalanceRecordList(criteria);
+            return PartialView("_BusinessBalanceRecordList");
+        }
 
     }
 }

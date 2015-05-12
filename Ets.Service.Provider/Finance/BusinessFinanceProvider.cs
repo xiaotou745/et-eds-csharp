@@ -393,5 +393,16 @@ namespace Ets.Service.Provider.Finance
             return reg;
         }
 
+        /// <summary>
+        /// 获取商户提款收支记录列表
+        /// danny-20150512
+        /// </summary>
+        /// <param name="withwardId"></param>
+        /// <returns></returns>
+        public IList<BusinessBalanceRecord> GetBusinessBalanceRecordList(BusinessBalanceRecordSerchCriteria criteria)
+        {
+            return businessFinanceDao.GetBusinessBalanceRecordList(criteria);
+        }
+
     }
 }

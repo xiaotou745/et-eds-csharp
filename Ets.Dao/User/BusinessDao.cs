@@ -1376,6 +1376,60 @@ from  BusinessFinanceAccount (nolock) where BusinessId=@BusinessId";
             return businessDM;
         }
 
+        
+        /// <summary>
+        /// 获取商户详细信息
+        /// </summary>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        public BusinessDetailModel GetBusinessDetailById(string businessId)
+        {
+            string selSql = @" 
+SELECT   b.Id ,
+         b.Name ,
+         b.City ,
+         b.district ,
+         b.PhoneNo ,
+         b.PhoneNo2 ,
+         b.IDCard ,
+         b.[Address] ,
+         b.Landline ,
+         b.Longitude ,
+         b.Latitude ,
+         b.[Status] ,
+         b.InsertTime ,
+         b.districtId ,
+         b.CityId ,
+         b.GroupId , 
+         b.ProvinceCode ,
+         b.CityCode ,
+         b.AreaCode ,
+         b.Province ,
+         b.DistribSubsidy,
+         b.BusinessCommission ,
+         b.OriginalBusiId,
+         b.CommissionType,
+         b.CommissionFixValue,
+         b.BusinessGroupId,
+         b.BalancePrice,
+         b.AllowWithdrawPrice,
+         b.HasWithdrawPrice,
+         bfa.TrueName,
+         bfa.AccountNo,
+         bfa.AccountType,
+         bfa.OpenBank,
+         bfa.OpenSubBank
+FROM business b WITH(NOLOCK) 
+	Left join BusinessFinanceAccount bfa WITH(NOLOCK) ON b.Id=bfa.BusinessId AND bfa.IsEnable=1
+WHERE b.Id = @BusinessId  ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@BusinessId", businessId);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
+            if (dt != null&&dt.Rows.Count>0)
+                return  DataTableHelper.ConvertDataTableList<BusinessDetailModel>(dt)[0];
+            return null;
+        }
+
         #region  Nested type: businessRowMapper
 
         /// <summary>

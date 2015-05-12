@@ -235,6 +235,12 @@ namespace Ets.Service.IProvider.User
         /// <param name="model"></param>
         /// <returns></returns>
         int InsertOtherBusiness(Business model);
+        /// <summary>
+        /// 获取商户详细信息
+        /// </summary>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        BusinessDetailModel GetBusinessDetailById(string businessId);
     }
 }
 

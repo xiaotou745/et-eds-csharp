@@ -910,5 +910,14 @@ namespace Ets.Service.Provider.User
         {
             return dao.InsertOtherBusiness(model);
         }
+        /// <summary>
+        /// 获取商户详细信息
+        /// </summary>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        public BusinessDetailModel GetBusinessDetailById(string businessId)
+        {
+            return dao.GetBusinessDetailById(businessId);
+        }
     }
 }
