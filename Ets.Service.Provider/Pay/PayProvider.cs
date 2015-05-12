@@ -82,26 +82,41 @@ namespace Ets.Service.Provider.Pay
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
+        
         public dynamic ReturnAlipay()
         {
             var request = System.Web.HttpContext.Current.Request;
             try
             {
-                int orderId = ParseHelper.ToInt(request["orderId"], 0);
-                int orderChildId = ParseHelper.ToInt(request["orderChildId"], 0);
-                if (orderId <= 0 || orderChildId <= 0)
-                {
-                    return new { is_success = "F", error_code = "PARAM_ILLEGAL" };
-                }
+                //int orderId = ParseHelper.ToInt(request["orderId"], 0);
+                //int orderChildId = ParseHelper.ToInt(request["orderChildId"], 0);
+                string goods_id = request["goods_id"];
+                //if (string.IsNullOrEmpty(goods_id) || !goods_id.Contains("_"))
+                //{
+                //    LogHelper.LogWriter("订单编号为null");
+                //    return new { is_success = "F", error_code = "PARAM_ILLEGAL" };
+                //}
+                //int orderId = ParseHelper.ToInt(goods_id.Split('_')[0], 0);
+                //int orderChildId = ParseHelper.ToInt(goods_id.Split('_')[1], 0);
+                //if (orderId <= 0 || orderChildId <= 0)
+                //{
+                //    LogHelper.LogWriter("订单编号为null");
+                //    return new { is_success = "F", error_code = "PARAM_ILLEGAL" };
+                //}
                 //更新订单状态
-                if (orderChildDao.FinishStatus(orderId, orderChildId))
-                {
-                    return new { is_success = "T", out_trade_no = orderId + "_" + orderChildId };
-                }
-                else
-                {
-                    return new { is_success = "F", error_code = "PARAM_ILLEGAL" };
-                }
+                //if (orderChildDao.FinishStatus(orderId, orderChildId))
+                //{
+                //    return new { is_success = "T", out_trade_no = orderId + "_" + orderChildId };
+                //}
+                //else
+                //{
+                //return new { is_success = "F", error_code = "PARAM_ILLEGAL" };
+
+                //return new { is_success = "T", out_trade_no = orderId + "_" + orderChildId };
+
+                //return new { is_success = "T", out_trade_no = goods_id };
+                return new { is_success = "T", out_trade_no = goods_id };
+                //}
 
             }
             catch (Exception ex)

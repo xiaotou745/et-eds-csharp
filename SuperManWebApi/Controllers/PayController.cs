@@ -40,20 +40,23 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary>
-        /// 订单回调
+        /// 订单回调,同步调用
         /// 窦海超
         /// 2015年5月12日 14:35:10
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpGet]
         public dynamic ReturnAlipay()
         {
             return payProvider.ReturnAlipay();
+            ////return new { is_success = "T", out_trade_no = "2114_1" };
+
+            //return "{\"is_success\":\"T\",\"out_trade_no\":\"2114_1\"}";
         }
 
         /// <summary>
-        /// Alipay自动返回
+        /// Alipay自动返回,异步处理
         /// 窦海超
         /// 2015年5月12日 14:35:15
         /// </summary>
