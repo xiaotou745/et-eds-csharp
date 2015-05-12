@@ -92,7 +92,6 @@ namespace Ets.Service.IProvider.Finance
         /// <param name="model"></param>
         /// <returns></returns>
         bool BusinessWithdrawPayFailed(BusinessWithdrawLogModel model);
-
-        BusinessDM GetDetails(int id);
+      
     }
 }

@@ -1454,7 +1454,29 @@ from  BusinessFinanceAccount (nolock) where BusinessId=@BusinessId";
             return businessDM;
         }
 
-        #region  Nested type: businessRowMapper
+
+        /// <summary>
+        /// 判断商户是否存在        
+        /// hulingbo 20150511
+        /// </summary>
+        /// <param name="id">商户Id</param>
+        /// <returns></returns>
+        public bool IsExist(int id)
+        {
+            bool isExist;
+            string querySql = @" SELECT COUNT(1)
+ FROM   dbo.[business] WITH ( NOLOCK ) 
+ WHERE  id = @id";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("id", id);
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
+            isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
+
+            return isExist;
+        }
+
+        #region 用户自定义方法 Nested type: businessRowMapper
 
         /// <summary>
         /// 绑定对象

@@ -990,13 +990,15 @@ where  Id=@Id ";
         }
 
         /// <summary>
-        /// 获取商家详情
+        /// 获取骑士详情
+        /// hulingbo 20150512
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">骑士Id</param>
         /// <returns></returns>
         public ClienterDM GetDetails(int id)
         {
             ClienterDM clienterDM = new ClienterDM();
+
             #region 商家表
             string queryClienterSql = @"
 select  Id,PhoneNo,LoginName,recommendPhone,Password,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
@@ -1020,6 +1022,27 @@ from  ClienterFinanceAccount (nolock) where ClienterId=@ClienterId";
             #endregion
 
             return clienterDM;
+        }
+
+        /// <summary>
+        /// 判断骑士是否存在        
+        /// hulingbo 20150512
+        /// </summary>
+        /// <param name="id">骑士Id</param>
+        /// <returns></returns>
+        public bool IsExist(int id)
+        {
+            bool isExist;
+            string querySql = @" SELECT COUNT(1)
+ FROM   dbo.[clienter] WITH ( NOLOCK ) 
+ WHERE  id = @id";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("id", id);
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
+            isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
+
+            return isExist;
         }
 
         #region  Nested type: ClienterRowMapper

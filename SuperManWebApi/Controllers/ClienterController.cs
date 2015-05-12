@@ -37,17 +37,32 @@ namespace SuperManWebApi.Controllers
         }
 
        /// <summary>
-       /// 骑士详情        
+       /// 获取骑士详情       
+       /// hulingbo 20150512
        /// </summary>
        /// <param name="model">骑士参数</param>
        /// <returns></returns>        
        [HttpPost]
-       public ResultModel<ClienterDM> GetDetails(ClienterPM model)
+       public ResultModel<ClienterDM> Get(ClienterPM model)
        {
-           //加验证
+           #region 验证
+           var version = HttpContext.Current.Request.Form["Version"];
+           if (string.IsNullOrWhiteSpace(version)) //版本号 
+           {
+               return ResultModel<ClienterDM>.Conclude(GetClienterStatus.NoVersion);
+           }
+           if (model.ClienterId < 0)//骑士Id不合法
+           {
+               return ResultModel<ClienterDM>.Conclude(GetClienterStatus.ErrOderNo);
+           }
+           if (!_iClienterProvider.IsExist(model.ClienterId)) //骑士不存在
+           {
+               return ResultModel<ClienterDM>.Conclude(GetClienterStatus.ErrOderNo);
+           }
+           #endregion
 
            ClienterDM clienterDM = _iClienterProvider.GetDetails(model.ClienterId);
            return Ets.Model.Common.ResultModel<ClienterDM>.Conclude(GetOrdersStatus.Success, clienterDM);
-       }
+       }     
     }
 }

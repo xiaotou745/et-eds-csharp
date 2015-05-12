@@ -208,9 +208,16 @@ namespace Ets.Dao.Order
         }
 
 
+        /// <summary>
+        /// 新增订单
+        /// 胡灵波 20150509
+        /// </summary>
+        /// <param name="order">订单实体</param>
+        /// <returns></returns>
         public int AddOrder(Model.DataModel.Order.order order)
         {
-            //判断TimeSpan            
+            //判断TimeSpan     
+            #region 根据时间戳判断订单是否存在
             const string querysql = @"select  count(1) from  dbo.[order]  where  TimeSpan=@TimeSpan";
             IDbParameters dbSelectParameters = DbHelper.CreateDbParameters();
             dbSelectParameters.AddWithValue("TimeSpan", order.TimeSpan);
@@ -220,7 +227,10 @@ namespace Ets.Dao.Order
             {
                 return 0;
             }
-              StringBuilder insertSql = new StringBuilder();
+            #endregion
+
+            #region 写入订单表、订单日志表
+            StringBuilder insertSql = new StringBuilder();
             insertSql.AppendFormat(@"
  insert  into dbo.[order]
         ( OrderNo ,
@@ -302,8 +312,8 @@ values  ( @OrderNo ,
           @Adjustment ,
           @TimeSpan
         );select IDENT_CURRENT('order')", SuperPlatform.商家, ConstValues.PublishOrder, (int)SuperPlatform.商家);
-
-           IDbParameters dbParameters = DbHelper.CreateDbParameters();          
+            
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();          
             dbParameters.AddWithValue("@OrderNo", order.OrderNo);
             dbParameters.AddWithValue("@PickUpAddress", order.PickUpAddress);
             dbParameters.AddWithValue("@PubDate", order.PubDate);
@@ -340,14 +350,30 @@ values  ( @OrderNo ,
             dbParameters.AddWithValue("@TimeSpan", order.TimeSpan);
 
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql.ToString(), dbParameters);
+            #endregion
+
+            #region 定入订单子表
             int orderId = ParseHelper.ToInt(result);
             if (orderId > 0)//写入订单成功
             {
                 for (int i = 0; i < order.listOrderChild.Count; i++)
                 {
                     const string insertOrderChildSql = @"
-insert into OrderChild(OrderId,ChildId,TotalPrice,GoodPrice,DeliveryPrice,CreateBy,UpdateBy)
-values(@OrderId,@ChildId,@TotalPrice,@GoodPrice,@DeliveryPrice,@CreateBy,@UpdateBy)";
+insert into OrderChild
+        (OrderId,
+        ChildId,
+        TotalPrice,
+        GoodPrice,
+        DeliveryPrice,
+        CreateBy,
+        UpdateBy)
+values( @OrderId,
+        @ChildId,
+        @TotalPrice,
+        @GoodPrice,
+        @DeliveryPrice,
+        @CreateBy,
+        @UpdateBy)";
                     IDbParameters dbOrderChildParameters = DbHelper.CreateDbParameters();
                     dbOrderChildParameters.AddWithValue("@OrderId", orderId);
                     dbOrderChildParameters.AddWithValue("@ChildId", order.listOrderChild[i].ChildId);
@@ -364,8 +390,10 @@ values(@OrderId,@ChildId,@TotalPrice,@GoodPrice,@DeliveryPrice,@CreateBy,@Update
             else
             {
                 //写入订单失败
+                return 0;
             }
-                
+            #endregion
+
             return orderId;         
         }
 
@@ -1761,7 +1789,27 @@ from  orderdetail (nolock) where OrderNo=@OrderNo ";
             return orderDM;
         }
 
-        #region
+        /// <summary>
+        /// 判断订单是否存在
+        /// </summary>
+        /// <param name="id">订单Id</param>
+        /// <returns></returns>
+        public bool IsExist(int id)
+        {
+            bool isExist; 
+            string querySql = @" SELECT COUNT(1)
+ FROM   dbo.[order] WITH ( NOLOCK ) 
+ WHERE  id = @id";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();               
+            dbParameters.AddWithValue("id", id);
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
+            isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
+
+            return isExist;
+        }
+
+        #region 自定义方法
         /// <summary>
 		/// 绑定对象
 		/// </summary>
