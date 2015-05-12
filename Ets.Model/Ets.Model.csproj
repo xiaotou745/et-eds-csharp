@@ -59,8 +59,9 @@
     <Compile Include="DataModel\Bussiness\BusinessGroupLogModel.cs" />
     <Compile Include="DataModel\Bussiness\BusinessGroupModel.cs" />
     <Compile Include="DataModel\Bussiness\BusinessOptionLog.cs" />
-    <Compile Include="DataModel\Strategy\StrategyModel.cs" />
     <Compile Include="DataModel\Clienter\ClienterCrossShopLogModel.cs" />
+    <Compile Include="DataModel\Clienter\CrossShopStatisticLogModel.cs" />
+    <Compile Include="DataModel\Strategy\StrategyModel.cs" />
     <Compile Include="DataModel\Finance\Bank.cs" />
     <Compile Include="DataModel\Finance\BusinessBalanceRecord.cs" />
     <Compile Include="DataModel\Finance\BusinessFinanceAccount.cs" />
