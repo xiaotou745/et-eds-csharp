@@ -11,11 +11,16 @@ namespace Ets.Model.Common.AliPay
         /// <summary>
         /// 订单ID ,看好，不是订单号
         /// </summary>
-        public string orderId { get; set; }
+        public int orderId { get; set; }
+
+        /// <summary>
+        /// 子订单号
+        /// </summary>
+        public int childId { get; set; }
 
         /// <summary>
         /// 支付类型 1支付宝 2微信
         /// </summary>
-        public string payType { get; set; } 
+        public int payType { get; set; } 
     }
 }
