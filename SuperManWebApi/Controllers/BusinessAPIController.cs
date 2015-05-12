@@ -185,7 +185,7 @@ namespace SuperManWebApi.Controllers
         [ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel> PostPublishOrder_B(Ets.Model.ParameterModel.Bussiness.BussinessOrderInfoModel model)
-        {
+        {      
             //首先验证该 商户有无 资格 发布订单 wc
             if (!iBusinessProvider.HaveQualification(model.userId))
             {
@@ -214,9 +214,9 @@ namespace SuperManWebApi.Controllers
             }
             if (model.OrderCount <= 0 || model.OrderCount > 15)   //判断录入订单数量是否符合要求
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.OrderCountError);
- 
-            Ets.Model.DataModel.Order.order order = iOrderProvider.TranslateOrder(model);
-            if (order.BusinessCommission < 10m)  //商户结算比例不能小于10
+
+            Ets.Model.DataModel.Order.order order = iOrderProvider.TranslateOrder(model);            
+            if (order.CommissionType==1 && order.BusinessCommission < 10m)  //商户结算比例不能小于10
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.BusiSettlementRatioError);
             }

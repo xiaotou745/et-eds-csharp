@@ -64,6 +64,15 @@ namespace Ets.Model.ParameterModel.Bussiness
         public string OrderSign { get; set; }
 
         /// <summary>
+        /// 商家分组ID
+        /// </summary>
+        public int BusinessGroupId { get; set; }
+
+        /// <summary>
+        /// 策略ID
+        /// </summary>
+        public int StrategyId { get; set; }
+/// <summary>
         /// 时间戳
         /// </summary>
         public string TimeSpan { get; set; }
@@ -72,7 +81,6 @@ namespace Ets.Model.ParameterModel.Bussiness
         /// 订单小票列表
         /// </summary>
         public List<OrderChlidParamModel> listOrderChlid { get; set; }
-
     }
 
     public class OrderChlidParamModel

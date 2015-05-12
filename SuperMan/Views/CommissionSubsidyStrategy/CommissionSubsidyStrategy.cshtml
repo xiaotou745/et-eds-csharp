@@ -1,0 +1,58 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+    var strategyList = ViewBag.StrategyList as List<Ets.Model.DataModel.Bussiness.BusinessGroupModel>;
+}
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：补贴设置 > 设置佣金补贴策略
+    </h2>
+    <div id="PriceDiv">
+        <div class="SearchMd">
+            <table border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td>
+                        <input type="submit" value="添加分组" style="width: 120px;" class="searchBtn" onclick="addGroup();" id="btnAddPrice" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+            <thead>
+                <tr class="tdbg">
+                    <th width="%5">编号</th>
+                    <th>分组</th>
+                    <th>策略</th>
+                    <th>修改时间</th>
+                    <th>操作人</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    if (strategyList != null)
+                    {
+                        foreach (var item in strategyList)
+                        {
+
+                            <tr>
+                                <td>@item.Id</td>
+                                <td>@item.Name</td>
+                                <td>@item.StrategyName</td>
+                                <td>@item.UpdateTime</td>
+                                <td>@item.UpdateBy</td>
+                                <td>
+                                    <a href="/SubsidyFormulaMode/SubsidyFormulaMode?GroupId=@(item.Id == null ? 0 : item.Id)&StrategyId=@(item.StrategyId == null ? 0 : item.StrategyId)&GroupName=@(item.Name == null ? "" : item.Name)">修改</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    function addGroup() {
+        window.location.href = "/SubsidyFormulaMode/SubsidyFormulaMode";
+}
+</script>

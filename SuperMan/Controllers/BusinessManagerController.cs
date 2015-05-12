@@ -90,7 +90,7 @@ namespace SuperMan.Controllers
         /// <param name="waisongfei">外送费</param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult SetCommission(int id, decimal commission, decimal waisongfei)
+        public JsonResult SetCommission(int id, decimal commission, decimal waisongfei, int commissionType, decimal commissionFixValue, int strategyID)
         {
             if (commission < 0)
                 return Json(new ResultModel(false, "结算比例不能小于零!"), JsonRequestBehavior.AllowGet);
@@ -106,7 +106,17 @@ namespace SuperMan.Controllers
                 UserType = 1, //被操作人类型
                 Remark = string.Format(string.Format("将商户id为{0}的商户外送费设置为{1},结算比例设置为{2}", id, waisongfei, commission))
             };
-            return Json(new ResultModel(iBus.SetCommission(id, commission, waisongfei,model), "成功!"), JsonRequestBehavior.AllowGet);
+            BusListResultModel busListResultModel = new BusListResultModel() 
+            {
+                Id=id,
+                BusinessCommission = commission,
+                DistribSubsidy = waisongfei,
+                CommissionType = commissionType,
+                CommissionFixValue = commissionFixValue,
+                BusinessGroupId = strategyID
+
+            };
+            return Json(new ResultModel(iBus.ModifyCommission(busListResultModel, model), "成功!"), JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>

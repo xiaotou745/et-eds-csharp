@@ -42,6 +42,13 @@ namespace Ets.Service.IProvider.User
         /// <param name="model">log实体</param>
         /// <returns></returns>
         bool SetCommission(int id, decimal price, decimal waisongfei, UserOptRecordPara model);
+        /// <summary>
+        /// 设置结算比例
+        /// danny-20150504
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        bool ModifyCommission(BusListResultModel busListResultModel, UserOptRecordPara model);
 
         /// <summary>
         /// 商户结算列表--2015.3.12 平扬

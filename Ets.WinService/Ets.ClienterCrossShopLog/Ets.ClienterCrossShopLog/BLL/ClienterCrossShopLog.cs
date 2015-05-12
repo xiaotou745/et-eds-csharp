@@ -23,16 +23,17 @@ namespace Ets.CrossShopService.BLL
         /// 20150427
         /// </summary>
         public static void  GetClienterCrossShopLog()
-        {          
+        {
+            int daysAgo = ETS.Config.ClienterCrossShopLogDaysAgo;
+            CrossShopStatisticLogProvider CrossShopLog = new CrossShopStatisticLogProvider();
             while (true)
             {                           
                 try
                 {
                     if (DateTime.Now.Hour == ETS.Config.StartClienterCrossShopLogTime)
-                    {
-                        int daysAgo= ETS.Config.ClienterCrossShopLogDaysAgo;
-                        ClienterCrossShopLogProvider CrossShopLog = new ClienterCrossShopLogProvider();
-                        if (CrossShopLog.InsertDataClienterCrossShopLog(daysAgo))
+                    {                        
+                        
+                        if (CrossShopLog.InsertDataCrossShopStatisticLog(daysAgo))
                         {
                             ETS.Util.LogHelper.LogWriter("获取跨店奖励统计计算成功" + DateTime.Now.ToString() + ":");
                         }
@@ -47,7 +48,7 @@ namespace Ets.CrossShopService.BLL
                 {
                         ETS.Util.LogHelper.LogWriter(ex.ToString());
                 }
-                Thread.Sleep(1000 * 10);           
+                Thread.Sleep(1000 * 60 * 20);           
               
             }
         }

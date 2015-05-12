@@ -47,6 +47,7 @@
     <Compile Include="Common\ClienterCountManageList.cs" />
     <Compile Include="Common\ConstValues.cs" />
     <Compile Include="Common\DealResultInfo.cs" />
+    <Compile Include="Common\GlobalConfig.cs" />
     <Compile Include="Common\HomeCountTitleModel.cs" />
     <Compile Include="Common\ImageCommon.cs" />
     <Compile Include="Common\JPushModel.cs" />
@@ -55,7 +56,10 @@
     <Compile Include="Common\OrderCountManageList.cs" />
     <Compile Include="Common\PagedList.cs" />
     <Compile Include="Common\TestUserModel.cs" />
+    <Compile Include="DataModel\Bussiness\BusinessGroupLogModel.cs" />
+    <Compile Include="DataModel\Bussiness\BusinessGroupModel.cs" />
     <Compile Include="DataModel\Bussiness\BusinessOptionLog.cs" />
+    <Compile Include="DataModel\Strategy\StrategyModel.cs" />
     <Compile Include="DataModel\Clienter\ClienterCrossShopLogModel.cs" />
     <Compile Include="DataModel\Finance\Bank.cs" />
     <Compile Include="DataModel\Finance\BusinessBalanceRecord.cs" />

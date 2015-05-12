@@ -11,5 +11,7 @@ namespace Ets.Model.DomainModel.GlobalConfig
         public int Id { get; set; }
         public string Value1 { get; set; }
         public string Value2 { get; set; }
+        public int GroupId { get; set; }
+        public int StrategyId { get; set; }
     }
 }

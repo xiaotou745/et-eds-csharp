@@ -1,0 +1,43 @@
+﻿@model List<Ets.Model.DataModel.Strategy.StrategyModel>
+@*@using Ets.Model.ParameterModel.Group;*@
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+    <thead>
+
+        <tr class="tdbg">
+            <th width="%5">序号</th>
+            <th>策略名称</th>
+            <th>key值</th>  
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            if (Model != null)
+            {
+                foreach (var item in Model)
+               {
+                <tr id="@item.Id">
+                    <td>@item.Id</td>
+                    <td>@item.Name</td>                   
+                    <td>@item.StrategyId</td>                       
+                    <td width="15%"> 
+                        <a href="javascript:void(0)" onclick="funcGShowView(@item.Id,'@item.Name')">修改</a>         
+                        @*<a href="javascript:void(0)" >修改</a>*@                     
+                    </td>
+                </tr>
+            }
+           }
+        }
+    </tbody>
+
+</table>
+@{ViewBag.ActionName = "PostGroupManager";}
+@*@Html.Partial("~/views/shared/PagerControl.cshtml", Model)*@
+<script type="text/javascript">
+    //显示修改集团弹出层
+    function funcGShowView(gid, gname) {
+        $("#hiduID").val(gid);
+        $('#txtuStrategyName').val(gname);     
+        adminjs.openwinbox('#StrategyUpdateDivShow');
+    }
+</script>

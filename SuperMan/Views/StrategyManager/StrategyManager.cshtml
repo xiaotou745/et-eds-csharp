@@ -1,0 +1,150 @@
+﻿@model  List<Ets.Model.DataModel.Strategy.StrategyModel>
+@using Ets.Model.ParameterModel.Group;
+@{
+    ViewBag.Title = "Strategy";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：补贴设置 > 补贴策略
+    </h2>
+    @using (Ajax.BeginForm("PostGroupManager", new RouteValueDictionary { { "pageindex", "" } },
+    new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+    new RouteValueDictionary { { "id", "searchForm" } }))
+    {
+      <div class="SearchMd">
+        <table border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td>
+                    <span class="">策略名称: </span>
+                    <input id="txtGroupName" type="text" name="GroupName" />
+                    <span class="">策略KeyValue: </span> 
+                    <input id="txtAppkey" type="text" name="Appkey" />
+                    <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                    <input type="button" value="新增策略" class="searchBtn" id="btnAdd" /> 
+                </td>
+            </tr>
+        </table>
+    </div>
+    }
+    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <div class="bd clearfix" id="dataList">
+        @Html.Partial("_StrategyManageList", Model)
+    </div>
+</div>
+
+@*新增集团窗口*@
+<div class="GroupAddDish">
+    <div class="add-openbox add-form" id="StrategyAddDivShow" style="width:500px">
+        <h2>
+            <p id="statusFin">新增补贴策略</p>
+        </h2>
+        <fieldset>
+            <div class="control-group">
+                <label>策略名称</label>
+                <input name="txtaddName" id="txtaddName" type="text">
+            </div>
+            <div class="control-group">
+                <label>策略Id</label>
+                <input name="txtaddStrategyId" id="txtaddStrategyId" type="text">
+            </div>
+        </fieldset>
+        <p class="btnbox">
+            <input value="确认" type="button" id="btnAddStrategy" class="yesBtn" />
+            <input value="关闭" type="button" class="J_closebox qxBtn" />
+        </p>
+    </div>
+</div>
+@*修改集团窗口*@
+<div class="GroupUpdateDish">
+    <div class="add-openbox add-form" id="StrategyUpdateDivShow" style="width:500px">
+        <h2>
+            <p id="statusFin">修改策略</p>
+        </h2>
+        <fieldset>
+            <input type="hidden" id="hiduID" value="0" />
+            <div class="control-group">
+                <label>策略名称</label>
+                <input name="txtuStrategyName" id="txtuStrategyName" type="text">
+            </div>
+        </fieldset>
+        <p class="btnbox">
+            <input value="确认" type="button" id="btnuGroup" class="yesBtn" />
+            <input value="关闭" type="button" class="J_closebox qxBtn" />
+        </p>
+    </div>
+</div>
+<script>
+    var adminjs = new adminglass(); //实例化后台类
+
+    $(document).ready(function() {
+        $("#btnAdd").on('click', function () {
+            adminjs.openwinbox('#StrategyAddDivShow');
+        });
+        window.location.hash = '';
+    });
+ 
+    
+    //修改策略
+    $("#btnuGroup").on('click', function () {
+        var txtStrategyName = $("#txtuStrategyName").val(); //策略名称
+        var hiduId = $("#hiduID").val(); //自增ID 
+        if (txtStrategyName == "") {
+            alert("策略名称不能为空!");
+            return;
+        }
+        var pars = { "id": hiduId, "name": txtStrategyName };
+        var url = "/StrategyManager/UpdateStrategy";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: pars,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert("修改成功!");
+                    window.location.href = "/StrategyManager/StrategyManager";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    });
+    //添加策略
+    $("#btnAddStrategy").on('click', function () {
+        var txtName = $("#txtaddName").val(); //策略名称
+        if (txtName == "") {
+            alert("策略名称不能为空!");
+            return;
+        }
+        var txtStrategyId = $("#txtaddStrategyId").val(); //StrategyId
+        if (txtStrategyId == "") {
+            alert("策略Id不能为空!");
+            return;
+        }
+
+        var pars = { "name": txtName, "strategyid": txtStrategyId };
+        var url = "/StrategyManager/AddStrategy";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: pars,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert("添加成功!");
+                    window.location.href = "/StrategyManager/StrategyManager";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    });
+   
+
+    //关闭弹层
+    $('.J_closebox').click(function () {
+        adminjs.closewinbox('.add-openbox');
+        return false;
+    });
+</script>
+<script src="~/Scripts/mvcpager.js"></script>
