@@ -61,7 +61,7 @@
                             @if (item.Status == 1)
                             {
                                 <a href="javascript:funWithdrawAuditOk(@item.Id)">审核通过</a>
-                                <a href="javascript:funWithdrawAuditRefuse(@item.Id)">拒绝</a>
+                                <a href="javascript:funWithdrawAuditRefuse(@item.Id,@item.Amount)">拒绝</a>
                                 <a href="javascript:void(0)" style="color:gray">确认打款</a>
                                 <a href="javascript:void(0)" style="color:gray">打款失败</a>
                             }
@@ -92,7 +92,7 @@
     <div class="add-openbox add-form" id="WithdrawAuditRefuseShow" style="width:480px">
         <fieldset>
             <div class="control-group">
-                <div style="width:480px;font-size:16px"><center>是否拒绝打款1000.00元？</center></div>
+                <div style="width:480px;font-size:16px" ><center><label id="refusedes"></label></center></div>
                 <div class="controls" style="width:480px">
                     <div style="width:75px">拒绝原因:</div>
                     <div style="width:480px">
@@ -182,8 +182,9 @@
         });
     }
     //审核拒绝弹框
-    function funWithdrawAuditRefuse(withwardId) {
+    function funWithdrawAuditRefuse(withwardId, amount) {
         $('#hidWithwardIdAuditRefuse').val(withwardId);
+        $('#refusedes').text("是否拒绝打款" + amount + "元？");
         adminjs.openwinbox('#WithdrawAuditRefuseShow');
     }
     //审核拒绝提交

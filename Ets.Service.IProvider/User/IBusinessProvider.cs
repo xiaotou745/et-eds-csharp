@@ -258,6 +258,12 @@ namespace Ets.Service.IProvider.User
         /// <param name="id">商户Id</param>
         /// <returns></returns>
         bool IsExist(int id);
+		/// <summary>
+        /// 获取商户详细信息
+        /// </summary>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        BusinessDetailModel GetBusinessDetailById(string businessId);
     }
 }
 
