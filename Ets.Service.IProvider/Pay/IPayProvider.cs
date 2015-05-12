@@ -22,6 +22,19 @@ namespace Ets.Service.IProvider.Pay
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        ResultModel<NotifyResultModel> Notify(NotifyModel model);
+        dynamic ReturnAlipay();
+
+        /// <summary>
+        /// 订单回调
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        dynamic AlipayResult();
+
+        /// <summary>
+        /// 查询支付状态
+        /// </summary>
+        /// <returns></returns>
+        dynamic GetOrderPayStatus(OrderPayModel model);
     }
 }
