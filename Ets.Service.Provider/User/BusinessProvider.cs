@@ -928,5 +928,27 @@ namespace Ets.Service.Provider.User
         {
             return dao.InsertOtherBusiness(model);
         }
+
+        /// <summary>
+        /// 获取商户详情
+        /// hulingbo 20150511
+        /// </summary>
+        /// <param name="id">商户id</param>
+        /// <returns></returns>
+        public BusinessDM GetDetails(int id)
+        {
+            return dao.GetDetails(id);
+        }
+
+        /// <summary>
+        /// 判断商户是否存在
+        /// hulingbo 20150511
+        /// </summary>
+        /// <param name="id">商户Id</param>
+        /// <returns></returns>
+        public bool IsExist(int id)
+        {
+            return dao.IsExist(id);
+        }
     }
 }

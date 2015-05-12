@@ -18,7 +18,7 @@ namespace Ets.Dao.Order
     /// Generate By: tools.etaoshi.com
     /// Generate Time: 2015-05-09 18:48:39
     /// </summary>
-    public class OrderChildDao :DaoBase
+    public class OrderChildDao : DaoBase
     {
         public OrderChildDao()
         { }
@@ -54,7 +54,7 @@ select @@IDENTITY";
             dbParameters.AddWithValue("UpdateBy", orderChild.UpdateBy);
             dbParameters.AddWithValue("UpdateTime", orderChild.UpdateTime);
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters); //提现单号
-            return ParseHelper.ToLong(result);         
+            return ParseHelper.ToLong(result);
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ where  Id=@Id ";
         /// 删除一条记录
         /// </summary>
         public void Delete(long id)
-        {  
+        {
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ from  OrderChild (nolock)" + condition;
                 models = DataTableHelper.ConvertDataTableList<OrderChild>(dt);
             }
             return models;
-          }
+        }
 
 
         /// <summary>
@@ -193,13 +193,30 @@ where  Id=@Id ";
  from   dbo.OrderChild(nolock)  where 1=1 and OrderId = @OrderId and ChildId = @ChildId;
 ");
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@OrderId", SqlDbType.Int).Value = orderId; 
+            parm.Add("@OrderId", SqlDbType.Int).Value = orderId;
             parm.Add("@ChildId", SqlDbType.Int).Value = orderChildId;
-            
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql.ToString(), parm);
-            if (dt.HasData())
+            //此表是要同步支付状态，请读写表
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql.ToString(), parm);
+            if (!dt.HasData())
                 return oc;
-            return MapRows<OrderChild>(dt)[0]; 
+            return MapRows<OrderChild>(dt)[0];
+        }
+
+        /// <summary>
+        /// 支付子订单完成
+        /// 窦海超
+        /// 2015年5月12日 15:36:34
+        /// </summary>
+        /// <param name="orderId">订单ID</param>
+        /// <param name="orderChildId">子订单ID</param>
+        /// <returns></returns>
+        public bool FinishStatus(int orderId, int orderChildId)
+        {
+            string sql = "update OrderChild set PayStatus=2 where OrderId=@OrderId and ChildId=@ChildId and PayStatus=1";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("OrderId", SqlDbType.Int, 4).Value = orderId;
+            parm.Add("ChildId", SqlDbType.Int, 4).Value = orderChildId;
+            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm), 0) > 0 ? true : false;
         }
     }
 

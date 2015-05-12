@@ -44,9 +44,34 @@ namespace ETS.Enums
     }
     public enum GetOrdersStatus
     {
-        Success,
+        Success,     
+        [DisplayText("订单号错误")]
+        ErrOderNo,
         [DisplayText("获取订单失败")]
-        FailedGetOrders
+        FailedGetOrders,
+        [DisplayText("请传递版本号")]
+        NoVersion
+    }
+
+    public enum GetBussinessStatus
+    {
+        Success,
+        [DisplayText("商户Id错误")]
+        ErrOderNo,
+        [DisplayText("获取商户失败")]
+        FailedGetOrders,
+        [DisplayText("请传递版本号")]
+        NoVersion
+    }
+    public enum GetClienterStatus
+    {
+        Success,
+        [DisplayText("骑士Id错误")]
+        ErrOderNo,
+        [DisplayText("获取骑士失败")]
+        FailedGetOrders,
+        [DisplayText("请传递版本号")]
+        NoVersion
     }
     public enum GetOrdersNoLoginStatus
     {

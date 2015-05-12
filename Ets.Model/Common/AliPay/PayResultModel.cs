@@ -8,10 +8,10 @@ namespace Ets.Model.Common.AliPay
 {
     public class PayResultModel
     {
-        /// <summary>
-        /// 商户订单号
-        /// </summary>
-        public string outTradeNo { get; set; }
+        ///// <summary>
+        ///// 商户订单号
+        ///// </summary>
+        //public string outTradeNo { get; set; }
 
         ///// <summary>
         ///// 支付宝交易号
@@ -32,6 +32,15 @@ namespace Ets.Model.Common.AliPay
         /// 支付金额
         /// </summary>
         public decimal payAmount { get; set; }
-      
+
+        /// <summary>
+        /// 订单id
+        /// </summary>
+        public int orderId { get; set; }
+
+        /// <summary>
+        /// 子订单Id
+        /// </summary>
+        public int childId { get; set; }
     }
 }

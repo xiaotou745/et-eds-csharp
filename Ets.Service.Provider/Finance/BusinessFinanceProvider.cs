@@ -331,10 +331,6 @@ namespace Ets.Service.Provider.Finance
             return reg;
         }
 
-        public BusinessDM GetDetails(int id)
-        {
-            return (new BusinessDao()).GetDetails(id);
-        }
         /// <summary>
         /// 商户提现申请单审核拒绝
         /// danny-20150511

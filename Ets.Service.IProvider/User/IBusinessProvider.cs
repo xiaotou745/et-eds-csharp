@@ -242,6 +242,22 @@ namespace Ets.Service.IProvider.User
         /// <param name="model"></param>
         /// <returns></returns>
         int InsertOtherBusiness(Business model);
+
+        /// <summary>
+        /// 获取商户详情
+        /// hulingbo 20150511
+        /// </summary>
+        /// <param name="id">商户id</param>
+        /// <returns></returns>
+        BusinessDM GetDetails(int id);
+
+        /// <summary>
+        /// 判断商户是否存在
+        /// hulingbo 20150511
+        /// </summary>
+        /// <param name="id">商户Id</param>
+        /// <returns></returns>
+        bool IsExist(int id);
     }
 }
 
