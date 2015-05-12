@@ -137,16 +137,11 @@ namespace Ets.Service.Provider.Finance
             {
                 return new Tuple<bool, FinanceWithdrawC>(false, FinanceWithdrawC.MoneyError);
             }
-            var clienterFinanceAccounts = _clienterFinanceAccountDao.GetByClienterId(withdrawCpm.ClienterId);//获取超人金融账号信息
-            if (clienterFinanceAccounts.Count <= 0)
+            ClienterFinanceAccount clienterFinanceAccounts = _clienterFinanceAccountDao.GetById(withdrawCpm.FinanceAccountId);//获取超人金融账号信息
+            if (clienterFinanceAccounts==null)
             {
                 return new Tuple<bool, FinanceWithdrawC>(false, FinanceWithdrawC.FinanceAccountError);
             }
-            else
-            {
-                clienterFinanceAccount = clienterFinanceAccounts[0];
-            }
-
             return new Tuple<bool, FinanceWithdrawC>(true, FinanceWithdrawC.Success);
         }
 

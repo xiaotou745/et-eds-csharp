@@ -20,5 +20,9 @@ namespace Ets.Model.ParameterModel.Finance
         /// 提现金额
         /// </summary>
         public decimal WithdrawPrice { get; set; }
+        /// <summary>
+        /// 用于提现的金融帐号id
+        /// </summary>
+        public int FinanceAccountId { get; set; }
     }
 }

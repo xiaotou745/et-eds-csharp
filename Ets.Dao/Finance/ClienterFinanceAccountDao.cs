@@ -105,11 +105,11 @@ from  ClienterFinanceAccount (nolock)" + condition;
         /// </summary>
         public ClienterFinanceAccount GetById(int id)
         {
-            ClienterFinanceAccount model = new ClienterFinanceAccount();
+            ClienterFinanceAccount model = null;
             const string querysql = @"
-select  Id,ClienterId,TrueName,AccountNo,IsEnable,AccountType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
-from  ClienterFinanceAccount (nolock)
-where  Id=@Id ";
+elect  Id,ClienterId,TrueName,AccountNo,IsEnable,AccountType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
+from  ClienterFinanceAccount(nolock)  
+where  Id=@Id  and IsEnable=1";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Id", id);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
