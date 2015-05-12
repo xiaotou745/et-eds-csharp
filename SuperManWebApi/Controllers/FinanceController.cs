@@ -49,6 +49,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="cardBindCpm">参数实体</param>
         /// <returns></returns>
         [HttpPost]
+        [Validate]
         public ResultModel<object> CardBindC([FromBody]CardBindCPM cardBindCpm)
         {
             return _clienterFinanceProvider.CardBindC(cardBindCpm);
@@ -60,6 +61,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="cardModifyCpm">参数实体</param>
         /// <returns></returns>
         [HttpPost]
+        [Validate]
         public ResultModel<object> CardModifyC([FromBody]CardModifyCPM cardModifyCpm)
         {
             return _clienterFinanceProvider.CardModifyC(cardModifyCpm);
@@ -75,6 +77,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="withdrawBpm">参数实体</param>
         /// <returns></returns>
         [HttpPost]
+        [Validate]
         public ResultModel<object> WithdrawB([FromBody]WithdrawBPM withdrawBpm)
         {
             return _iBusinessFinanceProvider.WithdrawB(withdrawBpm);
@@ -86,6 +89,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="cardBindBpm">参数实体</param>
         /// <returns></returns>
         [HttpPost]
+        [Validate]
         public ResultModel<object> CardBindB([FromBody]CardBindBPM cardBindBpm)
         {
             return _iBusinessFinanceProvider.CardBindB(cardBindBpm);
@@ -97,6 +101,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="cardModifyBpm">参数实体</param>
         /// <returns></returns>
         [HttpPost]
+        [Validate]
         public ResultModel<object> CardModifyB([FromBody]CardModifyBPM cardModifyBpm)
         {
             return _iBusinessFinanceProvider.CardModifyB(cardModifyBpm);
