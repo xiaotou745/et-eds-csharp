@@ -83,7 +83,6 @@
     <Compile Include="DomainModel\Bussiness\BusinessDetailModel.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessDM.cs" />
     <Compile Include="DomainModel\Clienter\ClienterDM.cs" />
-    <Compile Include="DomainModel\Finance\BusinessRecordsDM.cs" />
     <Compile Include="DomainModel\Finance\BusinessWithdrawFormModel.cs" />
     <Compile Include="DomainModel\Finance\BusinessWithdrawLogModel.cs" />
     <Compile Include="DomainModel\Finance\FinanceRecordsDM.cs" />

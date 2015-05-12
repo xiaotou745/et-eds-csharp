@@ -7,6 +7,7 @@ using Ets.Service.Provider.Common;
 using Ets.Service.Provider.Distribution;
 using Ets.Service.Provider.Finance;
 using Ets.Service.Provider.Order;
+using ETS.Util;
 using SuperMan.App_Start;
 using System;
 using System.Collections.Generic;
@@ -150,6 +151,7 @@ namespace SuperMan.Controllers
         public JsonResult GetBusinessWithdrawForm(string withwardId)
         {
             var businessWithdrawFormModel = iBusinessFinanceProvider.GetBusinessWithdrawListById(withwardId);
+            businessWithdrawFormModel.AccountNo = ParseHelper.ToDecrypt(businessWithdrawFormModel.AccountNo);
             return new JsonResult() { Data = businessWithdrawFormModel };
         }
     }
