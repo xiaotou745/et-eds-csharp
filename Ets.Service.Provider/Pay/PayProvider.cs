@@ -11,14 +11,22 @@ using Ets.Model.Common;
 using ETS.Expand;
 using ETS.Util;
 using ETS.AliPay;
+using System.Xml;
+using Ets.Dao.Order;
+using Ets.Model.DataModel.Order;
 
 namespace Ets.Service.Provider.Pay
 {
     public class PayProvider : IPayProvider
     {
         AlipayIntegrate alipayIntegrate = new AlipayIntegrate();
+        OrderChildDao orderChildDao = new OrderChildDao();
+        #region 生成支付宝订单
+
         /// <summary>
         /// 生成支付宝订单
+        /// 窦海超
+        /// 2015年5月12日 14:35:05
         /// </summary>
         /// <param name="model"></param>
         [ActionStatus(typeof(AliPayStatus))]
@@ -29,92 +37,174 @@ namespace Ets.Service.Provider.Pay
             {
                 LogHelper.LogWriter("=============支付支付宝支付：");
                 ////支付宝支付
-                return QRCodeAdd(model.orderNo,model.payAmount);
+                //数据库里查询订单信息
+                OrderChild orderChildModel = orderChildDao.GetOrderChildInfo(model.orderId, model.childId);
+                return QRCodeAdd(model.orderId, model.childId, orderChildModel.TotalPrice);
             }
             if (model.payType == 2)
-            { 
+            {
                 //微信支付
             }
-                return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
+            return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
         }
 
-        private ResultModel<PayResultModel> QRCodeAdd(string orderNumber, decimal payAmount)
+        /// <summary>
+        /// 生成支付宝二维码
+        /// 窦海超
+        /// 2015年5月12日 14:36:37
+        /// </summary>
+        /// <param name="orderNumber">订单号</param>
+        /// <param name="payAmount">支付金额</param>
+        /// <returns></returns>
+        private ResultModel<PayResultModel> QRCodeAdd(int orderId, int childId, decimal payAmount)
         {
-            ////var orderNumber = FacePaymentAdd(equipmentCode, clientid, supplierId, customerTotal, 12);
-            ////if (string.IsNullOrEmpty(orderNumber))
-            ////{
-            ////    return new
-            ////    {
-            ////        status_code = 0,
-            ////        status_message = ""
-            ////    };
-            ////}
+
             PayResultModel resultModel = new PayResultModel();
-            var qrcodeUrl = alipayIntegrate.GetQRCodeUrl(orderNumber, payAmount);
+            var qrcodeUrl = alipayIntegrate.GetQRCodeUrl(orderId, childId, payAmount);
             if (string.IsNullOrEmpty(qrcodeUrl))
             {
-                //return new
-                //{
-                //    status_code = 0,
-                //    status_message = ""
-                //};
                 return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
             }
-            //return new
-            //{
-            //    status_code = 1,
-            //    status_message = "成功",
-            //    data = new
-            //    {
-            //        type = 1,
-            //        amount = customerTotal,
-            //        order_id = orderNumber,
-            //        pay_url = qrcodeUrl
-            //    }
-            //};
             resultModel.aliQRCode = qrcodeUrl;
-            resultModel.outTradeNo = orderNumber;
+            resultModel.orderId = orderId;
+            resultModel.childId = childId;
             resultModel.payAmount = payAmount;
             resultModel.payType = 1;
-            resultModel.tradNo = "";
-            //alipayIntegrate.QRCodeAdd(model.orderNo, model.payAmount)
-            //
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.success, resultModel);
         }
 
+        #endregion
 
         /// <summary>
         /// 订单回调
+        /// 窦海超
+        /// 2015年5月12日 14:36:42
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public ResultModel<NotifyResultModel> Notify(Model.ParameterModel.AliPay.NotifyModel model)
+        public dynamic ReturnAlipay()
         {
-            return null;
+            var request = System.Web.HttpContext.Current.Request;
+            try
+            {
+                int orderId = ParseHelper.ToInt(request["orderId"], 0);
+                int orderChildId = ParseHelper.ToInt(request["orderChildId"], 0);
+                if (orderId <= 0 || orderChildId <= 0)
+                {
+                    return new { is_success = "F", error_code = "PARAM_ILLEGAL" };
+                }
+                //更新订单状态
+                if (orderChildDao.FinishStatus(orderId, orderChildId))
+                {
+                    return new { is_success = "T", out_trade_no = orderId + "_" + orderChildId };
+                }
+                else
+                {
+                    return new { is_success = "F", error_code = "PARAM_ILLEGAL" };
+                }
+
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex, "alipay自动回调异常");
+                return new { is_success = "F" };
+            }
         }
 
+        /// <summary>
+        /// 订单回调
+        /// 窦海超
+        /// 2015年5月12日 14:36:48
+        /// </summary>
+        /// <returns></returns>
+        public dynamic AlipayResult()
+        {
+            try
+            {
+                var request = System.Web.HttpContext.Current.Request;
+                string sign = request["sign"];
+                string sign_type = request["sign_type"];
+                string notify_data = request["notify_data"];
+                XmlDocument xmlDoc = new XmlDocument();
+                AlipayNotifyData notify = new AlipayNotifyData();
+                xmlDoc.LoadXml(notify_data);
+                notify.buyer_email = xmlDoc.SelectSingleNode("notify/buyer_email").InnerText;
+                notify.trade_status = xmlDoc.SelectSingleNode("notify/trade_status").InnerText;
+                notify.out_trade_no = xmlDoc.SelectSingleNode("notify/out_trade_no").InnerText;
+                notify.trade_no = xmlDoc.SelectSingleNode("notify/trade_no").InnerText;
+                if (string.IsNullOrEmpty(notify.trade_status) || notify.trade_status != "TRADE_SUCCESS")
+                {
+                    string fail = string.Concat("错误啦trade_status：", notify.trade_status, "。sign:", sign, "。notify_data:", notify_data);
+                    LogHelper.LogWriter(fail);
+                    return "fail";
+                }
+                string orderNo = notify.out_trade_no;
+                if (string.IsNullOrEmpty(orderNo) || !orderNo.Contains("_"))
+                {
+                    string fail = string.Concat("错误啦orderNo：", orderNo);
+                    LogHelper.LogWriter(fail);
+                    return "fail";
+                }
+                int orderId = ParseHelper.ToInt(orderNo.Split('_')[0]);
+                int orderChildId = ParseHelper.ToInt(orderNo.Split('_')[1]);
+                if (orderId <= 0 || orderChildId <= 0)
+                {
+                    string fail = string.Concat("错误啦orderId：", orderId, ",orderChildId:", orderChildId);
+                    LogHelper.LogWriter(fail);
+                    return "fail";
+                }
+                if (orderChildDao.FinishStatus(orderId, orderChildId))
+                {
+                    //jpush
+                    string success = string.Concat("成功，当前订单OrderId:", orderId, ",OrderChild:", orderChildId);
+                    LogHelper.LogWriter(success);
+                    return "success";
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex, "Alipay自动返回异常");
+                return "fail";
+            }
+            return "fail";
+        }
 
         /// <summary>
-        /// 获取支付宝POST过来通知消息，并以“参数名=参数值”的形式组成数组
+        /// 查询支付状态
+        /// 窦海超
+        /// 2015年5月12日 14:36:55
         /// </summary>
-        /// <returns>request回来的信息组成的数组</returns>
-        public SortedDictionary<string, string> GetRequestPost()
+        /// <returns></returns>
+        public dynamic GetOrderPayStatus(OrderPayModel model)
         {
-            int i = 0;
-            SortedDictionary<string, string> sArray = new SortedDictionary<string, string>();
-            NameValueCollection coll;
-            //Load Form variables into NameValueCollection variable.
-            coll = System.Web.HttpContext.Current.Request.Form;
-
-            // Get names of all forms into a string array.
-            String[] requestItem = coll.AllKeys;
-
-            for (i = 0; i < requestItem.Length; i++)
+            try
             {
-                sArray.Add(requestItem[i], coll[requestItem[i]]);
+                OrderChild orderChildModel = orderChildDao.GetOrderChildInfo(model.orderId, model.childId);
+                if (orderChildModel == null)
+                {
+                    return new { status_code = -1, status_message = "order_id:" + model.orderId + "_" + model.childId + "错误" };
+                }
+                if (orderChildModel != null || orderChildModel.PayStatus == 2)
+                {
+                    return new { status_code = 1, status_message = string.Empty, data = new { pay_status = 1 } };
+                }
+                //支付宝
+                if (model.payType == 1)
+                {
+                    string orderNo = model.orderId + "_" + model.childId;
+                    return alipayIntegrate.GetOrder(orderNo);
+                }
+                //微信
+                if (model.payType == 2)
+                {
+                }
             }
-
-            return sArray;
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex, "查询支付状态异常");
+                return new { status_code = -1, status_message = string.Empty };
+            }
+            return null;
         }
     }
 }

@@ -517,7 +517,7 @@ to.BusinessName = business.Name;
 
             #region 根据集团id为店铺设置外送费，结算比例等财务相关信息add by caoheyang 20150417
 
-            ///此处其实应该取数据库，但是由于发布订单时关于店铺的逻辑后期要改，暂时这么处理 
+            //此处其实应该取数据库，但是由于发布订单时关于店铺的逻辑后期要改，暂时这么处理 
             IGroupProviderOpenApi groupProvider = OpenApiGroupFactory.Create(paramodel.store_info.group);
             paramodel = groupProvider.SetCommissonInfo(paramodel);
 
@@ -534,7 +534,7 @@ to.BusinessName = business.Name;
             {
                 Amount = paramodel.total_price, /*订单金额*/
                 DistribSubsidy = paramodel.store_info.delivery_fee,/*外送费*/
-                OrderCount = paramodel.package_count == null ? 1 : paramodel.package_count,/*订单数量，默认为1*/
+                OrderCount = paramodel.package_count ?? 1,/*订单数量，默认为1*/
                 BusinessCommission = paramodel.store_info.businesscommission,/*商户结算比例*/
                 BusinessGroupId = paramodel.BusinessGroupId,
                 StrategyId =0
@@ -553,23 +553,22 @@ to.BusinessName = business.Name;
             try
             {
                 using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
-                {
+                {  
+                    //将当前订单插入到缓存中，设置过期时间30天
+                    redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
+                        paramodel.order_id.ToString()), "True", DateTime.Now.AddDays(30));  //先加入缓存，相当于加锁
                     orderNo = OrderDao.CreateToSql(paramodel);
-                    //if (!string.IsNullOrWhiteSpace(orderNo))
-                    //    Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！"
-                    //        , string.Empty, paramodel.address.city); //激光推送   
-                    if (string.IsNullOrWhiteSpace(orderNo))  //同步失败，清除缓存内的信息
-                        redis.Delete(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo,
-                            paramodel.store_info.group.ToString(), paramodel.order_id.ToString()));
+                    redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
+                      paramodel.order_id.ToString()), orderNo, DateTime.Now.AddDays(30));  //更新缓存
                     tran.Complete();
                 }
             }
             catch (Exception ex)
             {
-                redis.Delete(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, //同步失败，清除缓存内的订单信息信息
+                redis.Delete(string.Format(RedissCacheKey.OtherOrderInfo, //同步失败，清除缓存内的订单信息信息
                            paramodel.store_info.group.ToString(), paramodel.order_id.ToString()));
                 if (bussinessIdstr == null)  //同步失败，之前店铺不存在时，清空店铺缓存，因为数据已经被回滚，但是缓存加上了
-                    redis.Delete(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(), paramodel.store_info.store_id.ToString()));
+                    redis.Delete(string.Format(RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(), paramodel.store_info.store_id.ToString()));
                 throw ex; //异常上抛
             }
 

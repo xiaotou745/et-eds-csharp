@@ -137,16 +137,11 @@ namespace Ets.Service.Provider.Finance
             {
                 return new Tuple<bool, FinanceWithdrawC>(false, FinanceWithdrawC.MoneyError);
             }
-            var clienterFinanceAccounts = _clienterFinanceAccountDao.GetByClienterId(withdrawCpm.ClienterId);//获取超人金融账号信息
-            if (clienterFinanceAccounts.Count <= 0)
+            clienterFinanceAccount = _clienterFinanceAccountDao.GetById(withdrawCpm.FinanceAccountId);//获取超人金融账号信息
+            if (clienterFinanceAccount == null)
             {
                 return new Tuple<bool, FinanceWithdrawC>(false, FinanceWithdrawC.FinanceAccountError);
             }
-            else
-            {
-                clienterFinanceAccount = clienterFinanceAccounts[0];
-            }
-
             return new Tuple<bool, FinanceWithdrawC>(true, FinanceWithdrawC.Success);
         }
 
@@ -228,8 +223,9 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public ResultModel<IList<FinanceRecordsDM>> GetRecords(int clienterId)
          {
+             IList<FinanceRecordsDM> records = _clienterBalanceRecordDao.GetByClienterId(clienterId);
              return ResultModel<IList<FinanceRecordsDM>>.Conclude(SystemEnum.Success,
-               TranslateRecords(_clienterBalanceRecordDao.GetByClienterId(clienterId)));
+               TranslateRecords(records));
          }
 
         /// <summary>
@@ -237,26 +233,27 @@ namespace Ets.Service.Provider.Finance
         /// </summary>
         /// <param name="records">原始流水记录</param>
         /// <returns></returns>
-        private IList<FinanceRecordsDM> TranslateRecords(IList<ClienterBalanceRecord> records)
+        private IList<FinanceRecordsDM> TranslateRecords(IList<FinanceRecordsDM> records)
         {
-            return records.Select(temp => new FinanceRecordsDM()
+            foreach (var temp in records)
             {
-                Id = temp.Id,  //自增ID（PK）
-                UserId = temp.ClienterId,//骑士Id
-                Amount = temp.Amount, //流水金额
-                Status = temp.Status, //流水状态(1、交易成功 2、交易中）
-                StatusStr = ((ClienterBalanceRecordStatus)Enum.Parse(typeof(ClienterBalanceRecordStatus),
-                        temp.Status.ToString(), false)).GetDisplayText(), //流水状态文本
-                Balance = temp.Balance, //交易后余额
-                RecordType = temp.RecordType,  //交易类型(1佣金 2奖励 3提现 4取消订单赔偿 5无效订单扣款)
-                RecordTypeStr = ((ClienterBalanceRecordRecordType)Enum.Parse(typeof(ClienterBalanceRecordRecordType),
-                        temp.RecordType.ToString(), false)).GetDisplayText(), //交易类型文本
-                Operator = temp.Operator, //操作人
-                OperateTime = temp.OperateTime, //操作时间
-                WithwardId = temp.WithwardId, //关联单Id
-                RelationNo = temp.RelationNo,//关联单号
-                Remark = temp.Remark//描述
-            }).ToList();
+                temp.StatusStr = ((ClienterBalanceRecordStatus) Enum.Parse(typeof (ClienterBalanceRecordStatus),
+                    temp.Status.ToString(), false)).GetDisplayText(); //流水状态文本
+                temp.RecordTypeStr =
+                    ((ClienterBalanceRecordRecordType) Enum.Parse(typeof (ClienterBalanceRecordRecordType),
+                        temp.RecordType.ToString(), false)).GetDisplayText(); //交易类型文本
+                if (temp.YearInfo == DateTime.Now.Year + "年" + DateTime.Now.Month + "月")
+                {
+                    temp.YearInfo = "本月";
+                }
+                temp.OperateTimeStr = (
+                   temp.OperateTime.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd")
+                       ? "今天" //今日流水显示 "今日"
+                       : temp.OperateTime.ToString("MM-dd"))
+                       + " " +
+                       temp.OperateTime.ToString("HH:mm"); //分
+            }
+            return records;
         }
     }
 }

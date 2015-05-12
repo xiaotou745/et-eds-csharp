@@ -60,6 +60,10 @@ namespace Ets.Model.DomainModel.Finance
         /// 操作时间
         /// </summary>
         public DateTime OperateTime { get; set; }
+        /// <summary>
+        /// 操作时间简写
+        /// </summary>
+        public string OperateTimeStr { get; set; }
 
         /// <summary>
         /// 提现单ID
@@ -75,5 +79,10 @@ namespace Ets.Model.DomainModel.Finance
         /// 描述
         /// </summary>
         public string Remark { get; set; }
+        /// <summary>
+        /// 年月信息
+        /// </summary>
+        public string YearInfo { get; set; }
+
     }
 }
