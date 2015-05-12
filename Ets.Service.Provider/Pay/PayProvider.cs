@@ -181,6 +181,7 @@ namespace Ets.Service.Provider.Pay
         /// <returns></returns>
         public dynamic GetOrderPayStatus(OrderPayModel model)
         {
+            /*
             try
             {
                 //FacePayment facePayment = Helpers<FacePayment>.Instance.GetFacePayment(new FacePayment() { OrderNumber = model.order_id });
@@ -242,7 +243,8 @@ namespace Ets.Service.Provider.Pay
             {
                 MessageHelper.SaveMassage(MessageHelper.LogType.Error, ex, ExcFunName: "查询支付状态", FormValue: model);
                 return new { status_code = -1, status_message = string.Empty };
-            }
+            }*/
+            return null;
         }
     }
 }
