@@ -264,8 +264,18 @@ namespace Ets.Service.Provider.Finance
                 temp.RecordTypeStr =
                     ((BusinessBalanceRecordRecordType)Enum.Parse(typeof(BusinessBalanceRecordRecordType),
                         temp.RecordType.ToString(), false)).GetDisplayText(); //交易类型文本
+                if (temp.YearInfo == DateTime.Now.Year + "年" + DateTime.Now.Month + "月")
+                {
+                    temp.YearInfo = "本月";
+                }
+                temp.OperateTimeStr = (
+                    temp.OperateTime.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd")
+                        ? "今天" //今日流水显示 "今日"
+                        : temp.OperateTime.ToString("MM-dd"))
+                        + " " +
+                        temp.OperateTime.ToString("HH:mm"); //分
             }
-            return records; 
+            return records;
         }
 
         /// <summary>
@@ -328,7 +338,7 @@ namespace Ets.Service.Provider.Finance
         {
             return (new BusinessDao()).GetDetails(id);
         }
-/// <summary>
+        /// <summary>
         /// 商户提现申请单审核拒绝
         /// danny-20150511
         /// </summary>
