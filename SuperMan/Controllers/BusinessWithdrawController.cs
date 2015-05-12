@@ -1,5 +1,6 @@
 ﻿using Ets.Model.Common;
 using Ets.Model.DataModel.Finance;
+using Ets.Model.DomainModel.Finance;
 using Ets.Service.IProvider.Common;
 using Ets.Service.IProvider.Finance;
 using Ets.Service.Provider.Common;
@@ -59,22 +60,33 @@ namespace SuperMan.Controllers
             ViewBag.businessWithdrawOptionLog = iBusinessFinanceProvider.GetBusinessWithdrawOptionLog(withwardId);
             return View(businessWithdrawFormModel);
         }
-
+        /// <summary>
+        /// 审核商户提款申请单通过
+        /// danny-20150511
+        /// </summary>
+        /// <param name="withwardId"></param>
+        /// <returns></returns>
         [HttpPost]
         public JsonResult WithdrawAuditOk(string withwardId)
         {
             var businessWithdrawLog = new BusinessWithdrawLog()
             {
                 Operator = UserContext.Current.Name,
-                Remark = "审核商户提款申请单通过",
+                Remark = "商户提款申请单审核通过",
                 Status = 2,
                 WithwardId =Convert.ToInt64(withwardId)
             };
             bool reg = iBusinessFinanceProvider.BusinessWithdrawAudit(businessWithdrawLog);
             return Json(new ResultModel(reg, reg?"审核通过！":"审核失败！"), JsonRequestBehavior.AllowGet);
         }
+        /// <summary>
+        /// 商户提款申请单确认打款
+        /// danny-20150511
+        /// </summary>
+        /// <param name="withwardId"></param>
+        /// <returns></returns>
         [HttpPost]
-        public JsonResult PayOk(string withwardId)
+        public JsonResult WithdrawPayOk(string withwardId)
         {
             var businessWithdrawLog = new BusinessWithdrawLog()
             {
@@ -84,20 +96,49 @@ namespace SuperMan.Controllers
                 WithwardId = Convert.ToInt64(withwardId)
             };
             bool reg = iBusinessFinanceProvider.BusinessWithdrawPayOk(businessWithdrawLog);
-            return Json(new ResultModel(reg, reg ? "确认打款通过！" : "确认打款失败！"), JsonRequestBehavior.AllowGet);
+            return Json(new ResultModel(reg, reg ? "确认打款成功！" : "确认打款失败！"), JsonRequestBehavior.AllowGet);
         }
+        /// <summary>
+        /// 商户提款申请单审核拒绝
+        /// danny-20150511
+        /// </summary>
+        /// <param name="withwardId"></param>
+        /// <param name="auditFailedReason"></param>
+        /// <returns></returns>
         [HttpPost]
         public JsonResult WithdrawAuditRefuse(string withwardId, string auditFailedReason)
         {
-            var businessWithdrawLog = new BusinessWithdrawLog()
+            var businessWithdrawLog = new BusinessWithdrawLogModel()
             {
                 Operator = UserContext.Current.Name,
                 Remark = "商户提款申请单审核拒绝",
                 Status = -1,
-                WithwardId = Convert.ToInt64(withwardId)
+                WithwardId = Convert.ToInt64(withwardId),
+                AuditFailedReason = auditFailedReason
             };
-            bool reg = iBusinessFinanceProvider.BusinessWithdrawAudit(businessWithdrawLog);
-            return Json(new ResultModel(reg, reg ? "审核通过！" : "审核失败！"), JsonRequestBehavior.AllowGet);
+            bool reg = iBusinessFinanceProvider.BusinessWithdrawAuditRefuse(businessWithdrawLog);
+            return Json(new ResultModel(reg, reg ? "审核拒绝成功！" : "审核拒绝失败！"), JsonRequestBehavior.AllowGet);
+        }
+        /// <summary>
+        /// 商户提款申请单打款失败
+        /// danny-20150511
+        /// </summary>
+        /// <param name="withwardId"></param>
+        /// <param name="auditFailedReason"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult WithdrawPayFailed(string withwardId, string payFailedReason)
+        {
+            var businessWithdrawLog = new BusinessWithdrawLogModel()
+            {
+                Operator = UserContext.Current.Name,
+                Remark = "商户提款申请单打款失败",
+                Status = -2,
+                WithwardId = Convert.ToInt64(withwardId),
+                PayFailedReason = payFailedReason
+            };
+            bool reg = iBusinessFinanceProvider.BusinessWithdrawPayFailed(businessWithdrawLog);
+            return Json(new ResultModel(reg, reg ? "打款失败操作提交成功！" : "打款失败操作提交失败！"), JsonRequestBehavior.AllowGet);
         }
     }
 }

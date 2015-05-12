@@ -11,6 +11,6 @@ namespace Ets.Model.ParameterModel.Finance
         /// <summary>
         /// 版本号
         /// </summary>
-        public string version { get; set; }
+        public string Version { get; set; }
     }
 }

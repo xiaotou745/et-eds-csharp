@@ -21,7 +21,7 @@
                         <span class="">商户名称: </span>
                         <input id="businessName" type="text" name="businessName" />
                         <span class="">商户电话: </span>
-                        <input id="businessPhone" type="tel" name="businessPhone" />
+                        <input id="BusinessPhoneNo" type="tel" name="BusinessPhoneNo" />
                         <span class="">筛选城市: </span>
                         @Html.DropDownList("businessCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), "--无--", new { style = "width:155px" })
                         <span class="">提款状态: </span>

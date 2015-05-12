@@ -239,11 +239,9 @@ namespace ETS.Enums
         [DisplayText("无效的订单号")]
         InvalidOrderId,
         [DisplayText("真实姓名不能为空")]
-        TrueNameEmpty,
-
+        TrueNameEmpty, 
         [DisplayText("无效的文件格式")]
-        InvalidFileFormat,
-
+        InvalidFileFormat, 
         [DisplayText("图片的尺寸最小为150px*150px")]
         InvalidImageSize,
         [DisplayText("上传图片失败")]
@@ -259,7 +257,11 @@ namespace ETS.Enums
         [DisplayText("小票地址无效")]
         ReceiptAddressInvalid,
         [DisplayText("请先上传")]
-        FirstUpload
+        FirstUpload,
+        [DisplayText("请传递版本号")]
+        NoVersion = 100,
+        [DisplayText("子订单ID无效")]
+        NoOrderChildId = 101
     }
     public enum OrderPublicshStatus : int
     {

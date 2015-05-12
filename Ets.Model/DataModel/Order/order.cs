@@ -101,6 +101,6 @@ namespace Ets.Model.DataModel.Order
         /// <summary>
         /// 订单小票列表
         /// </summary>
-        public List<OrderChlidModel> listOrderChild { get; set; }
+        public List<OrderChlidParamModel> listOrderChild { get; set; }
     }
 }

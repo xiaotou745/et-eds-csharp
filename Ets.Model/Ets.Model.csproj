@@ -66,12 +66,15 @@
     <Compile Include="DataModel\Finance\ClienterFinanceAccount.cs" />
     <Compile Include="DataModel\Finance\ClienterWithdrawForm.cs" />
     <Compile Include="DataModel\Finance\ClienterWithdrawLog.cs" />
+    <Compile Include="DataModel\Order\OrderDetail.cs" />
     <Compile Include="DataModel\Order\OrderChild.cs" />
     <Compile Include="DataModel\Order\OrderDetailModel.cs" />
     <Compile Include="DataModel\Subsidy\CrossShopModel.cs" />
     <Compile Include="DataModel\Order\OrderOther.cs" />
     <Compile Include="DataModel\Order\OrderSubsidiesLog.cs" />
     <Compile Include="DomainModel\Area\DMAreaCodeInfo.cs" />
+    <Compile Include="DomainModel\Bussiness\BusinessDM.cs" />
+    <Compile Include="DomainModel\Clienter\ClienterDM.cs" />
     <Compile Include="DomainModel\Finance\BusinessRecordsDM.cs" />
     <Compile Include="DomainModel\Finance\BusinessWithdrawFormModel.cs" />
     <Compile Include="DomainModel\Finance\BusinessWithdrawLogModel.cs" />
@@ -137,7 +140,7 @@
     <Compile Include="DomainModel\Order\OrderAutoAdjustModel.cs" />
     <Compile Include="DomainModel\Order\OrderDetailDM_OpenApi.cs" />
     <Compile Include="DomainModel\Order\OrderManage.cs" />
-    <Compile Include="DomainModel\Order\OrderModel.cs" />
+    <Compile Include="DomainModel\Order\OrderDM.cs" />
     <Compile Include="DomainModel\Subsidy\HomeCountCriteria.cs" />
     <Compile Include="DomainModel\Subsidy\SubsidyManage.cs" />
     <Compile Include="DomainModel\Subsidy\SubsidyResultModel.cs" />
@@ -156,7 +159,9 @@
     <Compile Include="ParameterModel\Bussiness\NewRegisterInfoModel.cs" />
     <Compile Include="ParameterModel\Bussiness\OrderCancelModel.cs" />
     <Compile Include="ParameterModel\Bussiness\OrderCancelResultModel.cs" />
+    <Compile Include="ParameterModel\Bussiness\BussinessPM.cs" />
     <Compile Include="ParameterModel\Bussiness\RegisterInfoModel.cs" />
+    <Compile Include="ParameterModel\Clienter\ClienterPM.cs" />
     <Compile Include="ParameterModel\Clienter\ChangeWorkStatusPM.cs" />
     <Compile Include="ParameterModel\Clienter\ClienterSearchCriteria.cs" />
     <Compile Include="ParameterModel\Clienter\ClienterStatusModel.cs" />
@@ -186,6 +191,7 @@
     <Compile Include="ParameterModel\Order\ChangeStatusPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\BusiOrderResultModel.cs" />
     <Compile Include="ParameterModel\Order\AsyncStatusPM_OpenApi.cs" />
+    <Compile Include="ParameterModel\Order\OrderPM.cs" />
     <Compile Include="ParameterModel\Order\OrderChildPM.cs" />
     <Compile Include="ParameterModel\Order\NewPostPublishOrderModel.cs" />
     <Compile Include="ParameterModel\Order\OrderCancelReasonsModel.cs" />

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ets.Model.DomainModel.Bussiness;
 
 namespace Ets.Service.IProvider.Finance
 {
@@ -77,5 +78,21 @@ namespace Ets.Service.IProvider.Finance
         /// <param name="model"></param>
         /// <returns></returns>
         bool BusinessWithdrawPayOk(BusinessWithdrawLog model);
+/// <summary>
+        /// 商户提现申请单审核拒绝
+        /// danny-20150511
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        bool BusinessWithdrawAuditRefuse(BusinessWithdrawLogModel model);
+        /// <summary>
+        /// 商户提现申请单打款失败
+        /// danny-20150511
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        bool BusinessWithdrawPayFailed(BusinessWithdrawLogModel model);
+
+        BusinessDM GetDetails(int id);
     }
 }

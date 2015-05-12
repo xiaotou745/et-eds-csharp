@@ -18,7 +18,8 @@ using System.Text;
 using System.Threading.Tasks;
 using ETS.Transaction;
 using ETS.Transaction.Common;
-
+using Ets.Model.DomainModel.Bussiness;
+using Ets.Dao.User;
 namespace Ets.Service.Provider.Finance
 {
     public class BusinessFinanceProvider : IBusinessFinanceProvider
@@ -313,7 +314,84 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public bool BusinessWithdrawPayOk(BusinessWithdrawLog model)
         {
-            return businessFinanceDao.BusinessWithdrawPayOk(model);
+            bool reg = false;
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (businessFinanceDao.BusinessWithdrawPayOk(model))
+                {
+                    if (businessFinanceDao.ModifyBusinessBalanceRecordStatus(model.WithwardId.ToString()))
+                    {
+                        if (businessFinanceDao.ModifyBusinessTotalAmount(model.WithwardId.ToString()))
+                        {
+                            reg = true;
+                            tran.Complete();
+                        }
+                    }
+                }
+            }
+            return reg;
         }
+
+        public BusinessDM GetDetails(int id)
+        {
+            return (new BusinessDao()).GetDetails(id);
+        }
+/// <summary>
+        /// 商户提现申请单审核拒绝
+        /// danny-20150511
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool BusinessWithdrawAuditRefuse(BusinessWithdrawLogModel model)
+        {
+            bool reg = false;
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (businessFinanceDao.BusinessWithdrawReturn(model))
+                {
+                    if (businessFinanceDao.BusinessWithdrawAuditRefuse(model))
+                    {
+                        if (businessFinanceDao.ModifyBusinessBalanceRecordStatus(model.WithwardId.ToString()))
+                        {
+                            if (businessFinanceDao.ModifyBusinessAmountInfo(model.WithwardId.ToString()))
+                            {
+                                reg = true;
+                                tran.Complete();
+                            }
+                        }
+                    }
+                }
+            }
+            return reg;
+        }
+        /// <summary>
+        /// 商户提现申请单打款失败
+        /// danny-20150511
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool BusinessWithdrawPayFailed(BusinessWithdrawLogModel model)
+        {
+            bool reg = false;
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (businessFinanceDao.BusinessWithdrawReturn(model))
+                {
+                    if (businessFinanceDao.BusinessWithdrawPayFailed(model))
+                    {
+                        if (businessFinanceDao.ModifyBusinessBalanceRecordStatus(model.WithwardId.ToString()))
+                        {
+                            if (businessFinanceDao.ModifyBusinessAmountInfo(model.WithwardId.ToString()))
+                            {
+                                reg = true;
+                                tran.Complete();
+                            }
+                        }
+                    }
+                }
+            }
+            return reg;
+        }
+
     }
 }
