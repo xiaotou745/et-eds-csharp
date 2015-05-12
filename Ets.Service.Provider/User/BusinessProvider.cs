@@ -161,6 +161,24 @@ namespace Ets.Service.Provider.User
         }
 
         /// <summary>
+        /// 设置结算比例
+        /// danny-20150504
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ModifyCommission(BusListResultModel busListResultModel, UserOptRecordPara model)
+        {
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                bool res = dao.ModifyCommission(busListResultModel);
+                int result = new UserOptRecordDao().InsertUserOptRecord(model);
+                tran.Complete();
+                return res;
+            }
+
+        }
+
+        /// <summary>
         /// 生成商户结算excel文件2015.3.12 平扬
         /// </summary>
         /// <returns></returns>
@@ -910,7 +928,29 @@ namespace Ets.Service.Provider.User
         {
             return dao.InsertOtherBusiness(model);
         }
+
         /// <summary>
+        /// 获取商户详情
+        /// hulingbo 20150511
+        /// </summary>
+        /// <param name="id">商户id</param>
+        /// <returns></returns>
+        public BusinessDM GetDetails(int id)
+        {
+            return dao.GetDetails(id);
+        }
+
+        /// <summary>
+        /// 判断商户是否存在
+        /// hulingbo 20150511
+        /// </summary>
+        /// <param name="id">商户Id</param>
+        /// <returns></returns>
+        public bool IsExist(int id)
+        {
+            return dao.IsExist(id);
+        }
+		/// <summary>
         /// 获取商户详细信息
         /// </summary>
         /// <param name="businessId">商户Id</param>

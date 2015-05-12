@@ -45,10 +45,10 @@ namespace Ets.Service.IProvider.Finance
         SimpleResultModel CardModifyB(CardModifyBPM cardModifyBpm);
 
         /// <summary>
-        ///  商户交易流水API
+        ///  商户交易流水API add by caoheyang 20150512
         /// </summary>
         /// <returns></returns>
-        ResultModel<IList<BusinessRecordsDM>> GetRecords(int businessId);
+        ResultModel<IList<FinanceRecordsDM>> GetRecords(int businessId);
        
         /// <summary>
         /// 根据申请单Id获取商家提现申请单
@@ -78,7 +78,7 @@ namespace Ets.Service.IProvider.Finance
         /// <param name="model"></param>
         /// <returns></returns>
         bool BusinessWithdrawPayOk(BusinessWithdrawLog model);
-        /// <summary>
+/// <summary>
         /// 商户提现申请单审核拒绝
         /// danny-20150511
         /// </summary>
@@ -92,8 +92,7 @@ namespace Ets.Service.IProvider.Finance
         /// <param name="model"></param>
         /// <returns></returns>
         bool BusinessWithdrawPayFailed(BusinessWithdrawLogModel model);
-
-        /// <summary>
+ 		/// <summary>
         /// 获取商户提款收支记录列表
         /// danny-20150512
         /// </summary>
@@ -101,6 +100,6 @@ namespace Ets.Service.IProvider.Finance
         /// <returns></returns>
         IList<BusinessBalanceRecord> GetBusinessBalanceRecordList(BusinessBalanceRecordSerchCriteria criteria);
 
-        BusinessDM GetDetails(int id);
+      
     }
 }

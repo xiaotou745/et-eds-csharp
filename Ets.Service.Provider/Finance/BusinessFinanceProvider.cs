@@ -20,6 +20,8 @@ using ETS.Transaction;
 using ETS.Transaction.Common;
 using Ets.Model.DomainModel.Bussiness;
 using Ets.Dao.User;
+using ETS.Util;
+
 namespace Ets.Service.Provider.Finance
 {
     public class BusinessFinanceProvider : IBusinessFinanceProvider
@@ -82,7 +84,7 @@ namespace Ets.Service.Provider.Finance
                 else
                 {
                     _businessDao.UpdateForWithdrawC(withdrawBpm); //更新商户表的余额，可提现余额
-                    string withwardNo = "1";
+                    string withwardNo = Helper.generateOrderCode(withdrawBpm.BusinessId);
                     #region 商户提现
                     long withwardId = _businessWithdrawFormDao.Insert(new BusinessWithdrawForm()
                     {
@@ -156,16 +158,11 @@ namespace Ets.Service.Provider.Finance
             {
                 return new Tuple<bool, FinanceWithdrawB>(false, FinanceWithdrawB.MoneyError);
             }
-            var businessFinanceAccounts = _businessFinanceAccountDao.GetByBusinessId(withdrawBpm.BusinessId);//获取商户金融账号信息
-            if (businessFinanceAccounts.Count <= 0)
+            businessFinanceAccount = _businessFinanceAccountDao.GetById(withdrawBpm.FinanceAccountId);//获取商户金融账号信息
+            if (businessFinanceAccount==null)
             {
                 return new Tuple<bool, FinanceWithdrawB>(false, FinanceWithdrawB.FinanceAccountError);
             }
-            else
-            {
-                businessFinanceAccount = businessFinanceAccounts[0];
-            }
-
             return new Tuple<bool, FinanceWithdrawB>(true, FinanceWithdrawB.Success);
         }
 
@@ -240,40 +237,42 @@ namespace Ets.Service.Provider.Finance
         #endregion
 
         /// <summary>
-        ///  商户交易流水API add by caoheyang 20150511
+        ///  商户交易流水API add by caoheyang 20150512
         /// </summary>
         /// <returns></returns>
-        public ResultModel<IList<BusinessRecordsDM>> GetRecords(int businessId)
+        public ResultModel<IList<FinanceRecordsDM>> GetRecords(int businessId)
         {
-            return ResultModel<IList<BusinessRecordsDM>>.Conclude(SystemEnum.Success,
-                TranslateRecords(_businessBalanceRecordDao.GetByBusinessId(businessId)));
+            IList<FinanceRecordsDM> records = _businessBalanceRecordDao.GetByBusinessId(businessId);
+            return ResultModel<IList<FinanceRecordsDM>>.Conclude(SystemEnum.Success,
+              TranslateRecords(records));
         }
 
         /// <summary>
         /// 商户交易流水API 信息处理转换 add by caoheyang 20150512
         /// </summary>
-        /// <param name="records"></param>
+        /// <param name="records">原始流水记录</param>
         /// <returns></returns>
-        private IList<BusinessRecordsDM> TranslateRecords(IList<BusinessBalanceRecord> records)
+        private IList<FinanceRecordsDM> TranslateRecords(IList<FinanceRecordsDM> records)
         {
-            return records.Select(temp => new BusinessRecordsDM()
+            foreach (var temp in records)
             {
-                Id = temp.Id,  //自增ID（PK）
-                BusinessId = temp.BusinessId,//商家Id(business表）
-                Amount = temp.Amount, //流水金额
-                Status = temp.Status, //流水状态(1、交易成功 2、交易中）
-                StatusStr = ((BusinessBalanceRecordStatus) Enum.Parse(typeof (BusinessBalanceRecordStatus),
-                        temp.Status.ToString(), false)).GetDisplayText(), //流水状态文本
-                Balance = temp.Balance, //交易后余额
-                RecordType = temp.RecordType,  //交易类型(1订单餐费 2配送费 3提现 4充值 5提现失败返现)
-                RecordTypeStr = ((BusinessBalanceRecordRecordType) Enum.Parse(typeof (BusinessBalanceRecordRecordType), 
-                        temp.RecordType.ToString(), false)).GetDisplayText(), //交易类型文本
-                Operator = temp.Operator, //操作人
-                OperateTime = temp.OperateTime, //操作时间
-                WithwardId = temp.WithwardId, //关联单Id
-                RelationNo = temp.RelationNo,//关联单号
-                Remark = temp.Remark//描述
-            }).ToList();
+                temp.StatusStr = ((BusinessBalanceRecordStatus)Enum.Parse(typeof(BusinessBalanceRecordStatus),
+                    temp.Status.ToString(), false)).GetDisplayText(); //流水状态文本
+                temp.RecordTypeStr =
+                    ((BusinessBalanceRecordRecordType)Enum.Parse(typeof(BusinessBalanceRecordRecordType),
+                        temp.RecordType.ToString(), false)).GetDisplayText(); //交易类型文本
+                if (temp.YearInfo == DateTime.Now.Year + "年" + DateTime.Now.Month + "月")
+                {
+                    temp.YearInfo = "本月";
+                }
+                temp.OperateTimeStr = (
+                    temp.OperateTime.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd")
+                        ? "今天" //今日流水显示 "今日"
+                        : temp.OperateTime.ToString("MM-dd"))
+                        + " " +
+                        temp.OperateTime.ToString("HH:mm"); //分
+            }
+            return records;
         }
 
         /// <summary>
@@ -332,11 +331,7 @@ namespace Ets.Service.Provider.Finance
             return reg;
         }
 
-        public BusinessDM GetDetails(int id)
-        {
-            return (new BusinessDao()).GetDetails(id);
-        }
-/// <summary>
+        /// <summary>
         /// 商户提现申请单审核拒绝
         /// danny-20150511
         /// </summary>

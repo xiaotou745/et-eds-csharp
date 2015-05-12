@@ -10,6 +10,7 @@ using Ets.Model.DataModel.Finance;
 using ETS.Dao;
 using ETS.Data.Core;
 using ETS.Extension;
+using Ets.Model.DomainModel.Finance;
 using ETS.Util;
 using Ets.Model.ParameterModel.Finance;
 #endregion
@@ -82,11 +83,12 @@ where  Id=@Id ";
         /// 根据ID获取对象
         /// <param name="businessId">商户id</param>
         /// </summary>
-        public IList<BusinessBalanceRecord> GetByBusinessId(long businessId)
+        public IList<FinanceRecordsDM> GetByBusinessId(long businessId)
         {
-            IList<BusinessBalanceRecord> models = new List<BusinessBalanceRecord>();
+            IList<FinanceRecordsDM> models = new List<FinanceRecordsDM>();
             const string querysql = @"
-select  Id,BusinessId,Amount,Status,Balance,RecordType,Operator,OperateTime,WithwardId,RelationNo,Remark
+select  Id,BusinessId as UserId,Amount,Status,Balance,RecordType,Operator,OperateTime,WithwardId,RelationNo,Remark
+,convert(varchar(4),DATEPART(Year,OperateTime))+'年'+convert(varchar(4),DATEPART(month,OperateTime)) +'月' as YearInfo
 from  BusinessBalanceRecord (nolock)
 where  BusinessId=@BusinessId 
 order by Id desc";
@@ -95,7 +97,7 @@ order by Id desc";
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
             if (DataTableHelper.CheckDt(dt))
             {
-                models = DataTableHelper.ConvertDataTableList<BusinessBalanceRecord>(dt);
+                models = DataTableHelper.ConvertDataTableList<FinanceRecordsDM>(dt);
             }
             return models;
         }

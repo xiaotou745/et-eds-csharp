@@ -176,60 +176,60 @@ namespace SuperManWebApi.Controllers
 
 
 
-        /// <summary>
-        /// 商户发布订单接口  2015.3.11 平扬 增加订单重复性验证
-        /// achao 修改为ado.net
-        /// </summary>
-        /// <param name="model">订单数据</param>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
-        [HttpPost]
-        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel> PostPublishOrder_B(Ets.Model.ParameterModel.Bussiness.BussinessOrderInfoModel model)
-        {
-            //首先验证该 商户有无 资格 发布订单 wc
-            if (!iBusinessProvider.HaveQualification(model.userId))
-            {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.HadCancelQualification);
-            }
-            if (model.Amount < 10m)
-            {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.AmountLessThanTen);
-            }
-            if (model.Amount > 5000m)
-            {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.AmountMoreThanFiveThousand);
-            }
-            lock (lockHelper)
-            {  
-                #region 缓存验证
-                string cacheKey = "PostPublishOrder_B_" + model.userId + "_" + model.OrderSign;
-                var redis = new ETS.NoSql.RedisCache.RedisCache(); 
-                var cacheValue = redis.Get<string>(cacheKey); 
-                if (cacheValue != null)
-                {  
-                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.OrderHasExist);//当前时间戳内重复提交,订单已存在 
-                } 
-                redis.Add(cacheKey, "1", DateTime.Now.AddHours(10));//添加当前时间戳记录
-                #endregion
-            }
-            if (model.OrderCount <= 0 || model.OrderCount > 15)   //判断录入订单数量是否符合要求
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.OrderCountError);
- 
-            Ets.Model.DataModel.Order.order order = iOrderProvider.TranslateOrder(model);
-            if (order.BusinessCommission < 10m)  //商户结算比例不能小于10
-            {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.BusiSettlementRatioError);
-            }
-            string result = iOrderProvider.AddOrder(order);
+        ///// <summary>
+        ///// 商户发布订单接口  2015.3.11 平扬 增加订单重复性验证
+        ///// achao 修改为ado.net
+        ///// </summary>
+        ///// <param name="model">订单数据</param>
+        ///// <returns></returns>
+        //[ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
+        //[HttpPost]
+        //public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel> PostPublishOrder_B(Ets.Model.ParameterModel.Bussiness.BussinessOrderInfoPM model)
+        //{      
+        //    //首先验证该 商户有无 资格 发布订单 wc
+        //    if (!iBusinessProvider.HaveQualification(model.userId))
+        //    {
+        //        return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.HadCancelQualification);
+        //    }
+        //    if (model.Amount < 10m)
+        //    {
+        //        return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.AmountLessThanTen);
+        //    }
+        //    if (model.Amount > 5000m)
+        //    {
+        //        return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.AmountMoreThanFiveThousand);
+        //    }
+        //    lock (lockHelper)
+        //    {  
+        //        #region 缓存验证
+        //        string cacheKey = "PostPublishOrder_B_" + model.userId + "_" + model.OrderSign;
+        //        var redis = new ETS.NoSql.RedisCache.RedisCache(); 
+        //        var cacheValue = redis.Get<string>(cacheKey); 
+        //        if (cacheValue != null)
+        //        {  
+        //            return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.OrderHasExist);//当前时间戳内重复提交,订单已存在 
+        //        } 
+        //        redis.Add(cacheKey, "1", DateTime.Now.AddHours(10));//添加当前时间戳记录
+        //        #endregion
+        //    }
+        //    if (model.OrderCount <= 0 || model.OrderCount > 15)   //判断录入订单数量是否符合要求
+        //        return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.OrderCountError);
 
-            if (result == "0")
-            {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.InvalidPubOrder);//当前订单执行失败
-            }
-            Ets.Model.ParameterModel.Order.BusiOrderResultModel resultModel = new Ets.Model.ParameterModel.Order.BusiOrderResultModel { userId = model.userId };
-            return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.Success, resultModel);
+        //    Ets.Model.DataModel.Order.order order = iOrderProvider.TranslateOrder(model);            
+        //    if (order.CommissionType==1 && order.BusinessCommission < 10m)  //商户结算比例不能小于10
+        //    {
+        //        return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.BusiSettlementRatioError);
+        //    }
+        //    string result = iOrderProvider.AddOrder(order);
 
-        }
+        //    if (result == "0")
+        //    {
+        //        return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.InvalidPubOrder);//当前订单执行失败
+        //    }
+        //    Ets.Model.ParameterModel.Order.BusiOrderResultModel resultModel = new Ets.Model.ParameterModel.Order.BusiOrderResultModel { userId = model.userId };
+        //    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.Success, resultModel);
+
+        //}
 
         /// <summary>
         /// 获取订单列表

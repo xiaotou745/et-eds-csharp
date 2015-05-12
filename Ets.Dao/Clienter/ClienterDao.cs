@@ -561,10 +561,11 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, ConstValues.OrderH
                         select temp.[date],temp.businessCount,count(temp.clienterId) cCount
                         from 
                         (
-	                        select convert(char(10), PubDate, 120) 'date', o.clienterId,count(distinct o.businessId) 'businessCount'
-	                        from dbo.[order] o(nolock)
-	                        where o.PubDate>getdate()-20 and o.Status =1
-	                        group by convert(char(10), PubDate, 120), o.clienterId
+	                       select convert(char(10), PubDate, 120) 'date', o.clienterId,count(distinct o.businessId) 'businessCount'
+                            from dbo.[order] o(nolock)
+                            join dbo.GlobalConfig gc(nolock) on o.BusinessGroupId=gc.GroupId
+                            where o.PubDate>getdate()-20 and o.Status =1 and gc.KeyName='IsStartOverStoreSubsidies' and gc.Value=1
+                            group by convert(char(10), PubDate, 120), o.clienterId
                         ) as temp
                         group by temp.[date],temp.businessCount
                         )
@@ -610,20 +611,19 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, ConstValues.OrderH
         }
 
         public IList<BusinessesDistributionModel> GetClienteStorerGrabStatisticalInfo(int daysAgo)
-        {
-            //int currdaysAgo = daysAgo + 1;
+        {            
             StringBuilder sb = new StringBuilder();
             sb.Append("with t as(");
             sb.Append(" select temp.[date],temp.businessCount,count(temp.clienterId) cCount");
             sb.Append(" from (");
             sb.Append(" select convert(char(10), PubDate, 120) 'date', o.clienterId,count(distinct o.businessId) 'businessCount'  from dbo.[order] o(nolock)");
             sb.Append(" where o.PubDate>getdate()-" + daysAgo);
-            sb.Append("  and o.Status =1 group by convert(char(10), PubDate, 120), o.clienterId");
+            sb.Append("  and o.Status =1 and  convert(char(10), PubDate, 120)!=convert(char(10), getdate(), 120)  group by convert(char(10), PubDate, 120), o.clienterId");
             sb.Append(" ) as temp   group by temp.[date],temp.businessCount  )");
             sb.Append(" ,t2 as (");
-            sb.Append("  select convert(char(10), csl.InsertTime-1, 120) date,csl.BusinessCount 'businessCount',    count(distinct csl.ClienterId) clientorCount,sum(csl.Amount) totalAmount  from dbo.CrossShopLog csl(nolock)");
-            sb.Append(" where csl.InsertTime-1 > getdate()-" + daysAgo);
-            sb.Append("  group by convert(char(10), csl.InsertTime-1, 120), csl.BusinessCount   )");
+            sb.Append("  select convert(char(10), csl.Rewardtime, 120) date,csl.BusinessCount 'businessCount',    count(distinct csl.ClienterId) clientorCount,sum(csl.Amount) totalAmount  from dbo.CrossShopLog csl(nolock)");
+            sb.Append(" where csl.Rewardtime > getdate()-" + daysAgo);
+            sb.Append("  group by convert(char(10), csl.Rewardtime, 120), csl.BusinessCount   )");
             sb.Append(" select temp2.[date],sum(temp2.amount) totalAmount,max(case temp2.businessCount when 1 then temp2.cCount else 0 end) c1,");
             sb.Append(" max(case temp2.businessCount when 1 then temp2.amount else 0 end) a1,");
             sb.Append(" max(case temp2.businessCount when 2 then temp2.cCount else 0 end) c2,");
@@ -990,14 +990,16 @@ where  Id=@Id ";
         }
 
         /// <summary>
-        /// 获取商家详情
+        /// 获取骑士详情
+        /// hulingbo 20150512
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">骑士Id</param>
         /// <returns></returns>
         public ClienterDM GetDetails(int id)
         {
             ClienterDM clienterDM = new ClienterDM();
-            #region 商家表
+
+            #region 骑士表
             string queryClienterSql = @"
 select  Id,PhoneNo,LoginName,recommendPhone,Password,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
 AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode
@@ -1008,18 +1010,58 @@ from  clienter (nolock) where Id=@Id" ;
             clienterDM = DbHelper.QueryForObject(SuperMan_Read, queryClienterSql, dbClienterParameters, new ClienterRowMapper());
             #endregion
 
-            #region 商家金融账号表
+            #region 骑士金融账号表
             const string queryCFAccountSql = @"
 select  Id,ClienterId,TrueName,AccountNo,IsEnable,AccountType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
-from  ClienterFinanceAccount (nolock) where ClienterId=@ClienterId";
+from  ClienterFinanceAccount (nolock) where ClienterId=@ClienterId  and IsEnable=1";
             IDbParameters dbCFAccountParameters = DbHelper.CreateDbParameters();
             dbCFAccountParameters.AddWithValue("ClienterId", id);
-            DataTable dtBFAccount = DbHelper.ExecuteDataTable(SuperMan_Read, queryCFAccountSql, dbCFAccountParameters);
-            List<ClienterFinanceAccount> listCFAccount = (List<ClienterFinanceAccount>)MapRows<ClienterFinanceAccount>(dtBFAccount);
+            DataTable dtBFAccount = DbHelper.ExecuteDataTable(SuperMan_Read, queryCFAccountSql, dbCFAccountParameters);            
+            List<ClienterFinanceAccount> listCFAccount = new List<ClienterFinanceAccount>();    
+            foreach (DataRow dataRow in dtBFAccount.Rows)
+            {
+                ClienterFinanceAccount bf = new ClienterFinanceAccount();
+                bf.Id = Convert.ToInt32(dataRow["Id"]);
+                bf.ClienterId = Convert.ToInt32(dataRow["ClienterId"]);
+                bf.TrueName = dataRow["TrueName"].ToString();
+                bf.AccountNo = ETS.Security.DES.Decrypt(dataRow["AccountNo"].ToString());
+                bf.IsEnable = Convert.ToBoolean(dataRow["IsEnable"]);
+                bf.AccountType = Convert.ToInt32(dataRow["AccountType"]);
+                if (dataRow["OpenBank"] != null && dataRow["OpenBank"] != DBNull.Value)
+                    bf.OpenBank = dataRow["OpenBank"].ToString();
+                if (dataRow["OpenSubBank"] != null && dataRow["OpenSubBank"] != DBNull.Value)
+                    bf.OpenSubBank = dataRow["OpenSubBank"].ToString();
+                bf.CreateBy = dataRow["CreateBy"].ToString();
+                bf.CreateTime = Convert.ToDateTime(dataRow["CreateTime"]);
+                bf.UpdateBy = dataRow["UpdateBy"].ToString();
+                bf.UpdateTime = Convert.ToDateTime(dataRow["UpdateTime"]);
+                listCFAccount.Add(bf);
+            }            
             clienterDM.listcFAcount = listCFAccount;
             #endregion
 
             return clienterDM;
+        }
+
+        /// <summary>
+        /// 判断骑士是否存在        
+        /// hulingbo 20150512
+        /// </summary>
+        /// <param name="id">骑士Id</param>
+        /// <returns></returns>
+        public bool IsExist(int id)
+        {
+            bool isExist;
+            string querySql = @" SELECT COUNT(1)
+ FROM   dbo.[clienter] WITH ( NOLOCK ) 
+ WHERE  id = @id";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("id", id);
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
+            isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
+
+            return isExist;
         }
 
         #region  Nested type: ClienterRowMapper

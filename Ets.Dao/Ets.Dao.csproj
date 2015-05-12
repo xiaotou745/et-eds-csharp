@@ -40,7 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Account\AccountDao.cs" />
-    <Compile Include="Clienter\ClienterCrossShopLogDao.cs" />
+    <Compile Include="Clienter\CrossShopStatisticLogDao.cs" />
     <Compile Include="Clienter\ClienterDao.cs" />
     <Compile Include="Common\AdminToolsDao.cs" />
     <Compile Include="Common\ApiVersionDao.cs" />
@@ -66,7 +66,9 @@
     <Compile Include="Order\OrderDao.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Statistics\StatisticsDao.cs" />
+    <Compile Include="Strategy\StrategyDao.cs" />
     <Compile Include="Subsidy\SubsidyDao.cs" />
+    <Compile Include="User\BusinessGroupDao.cs" />
     <Compile Include="User\BusinessDao.cs" />
     <Compile Include="User\UserDao.cs" />
     <Compile Include="User\UserOptRecordDao.cs" />

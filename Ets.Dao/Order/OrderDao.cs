@@ -16,6 +16,7 @@ using ETS.Data.Generic;
 using ETS.Data.PageData;
 using ETS.Enums;
 using ETS.Extension;
+using ETS.NoSql.RedisCache;
 using ETS.Page;
 using ETS.Util;
 using System;
@@ -208,9 +209,16 @@ namespace Ets.Dao.Order
         }
 
 
+        /// <summary>
+        /// 新增订单
+        /// 胡灵波 20150509
+        /// </summary>
+        /// <param name="order">订单实体</param>
+        /// <returns></returns>
         public int AddOrder(Model.DataModel.Order.order order)
         {
-            //判断TimeSpan            
+            //判断TimeSpan     
+            #region 根据时间戳判断订单是否存在
             const string querysql = @"select  count(1) from  dbo.[order]  where  TimeSpan=@TimeSpan";
             IDbParameters dbSelectParameters = DbHelper.CreateDbParameters();
             dbSelectParameters.AddWithValue("TimeSpan", order.TimeSpan);
@@ -220,22 +228,92 @@ namespace Ets.Dao.Order
             {
                 return 0;
             }
+            #endregion
 
+            #region 写入订单表、订单日志表
             StringBuilder insertSql = new StringBuilder();
             insertSql.AppendFormat(@"
-insert into dbo.[order](OrderNo,PickUpAddress, PubDate,ReceviceName,RecevicePhoneNo,ReceviceAddress,IsPay,Amount,
-OrderCommission,DistribSubsidy,WebsiteSubsidy,Remark,OrderFrom,Status,businessId ,ReceviceCity,ReceviceLongitude,
-ReceviceLatitude,OrderCount,CommissionRate,CommissionFormulaMode,SongCanDate,[Weight],Quantity,ReceiveProvince,
-ReceiveProvinceCode,ReceiveCityCode,ReceiveArea,ReceiveAreaCode,OriginalOrderNo,BusinessCommission,SettleMoney,Adjustment,TimeSpan)
-output Inserted.Id,GETDATE(),'{0}','{1}',Inserted.businessId,Inserted.[Status],{2}
-into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
-values(@OrderNo,@PickUpAddress,@PubDate,@ReceviceName,@RecevicePhoneNo,@ReceviceAddress,@IsPay,@Amount ,     
-@OrderCommission,@DistribSubsidy,@WebsiteSubsidy,@Remark,@OrderFrom,@Status,@businessId,@ReceviceCity,@ReceviceLongitude ,
-@ReceviceLatitude,@OrderCount,@CommissionRate,@CommissionFormulaMode,@SongCanDate,@Weight1,@Quantity1,@ReceiveProvince,
-@ReceiveProvinceCode,@ReceiveCityCode,@ReceiveArea,@ReceiveAreaCode,@OriginalOrderNo,@BusinessCommission,@SettleMoney,@Adjustment,@TimeSpan);
-
-select IDENT_CURRENT('order')", SuperPlatform.商家, ConstValues.PublishOrder, (int)SuperPlatform.商家);
-
+ insert  into dbo.[order]
+        ( OrderNo ,
+          PickUpAddress ,
+          PubDate ,
+          ReceviceName ,
+          RecevicePhoneNo ,
+          ReceviceAddress ,
+          IsPay ,
+          Amount ,
+          OrderCommission ,
+          DistribSubsidy ,
+          WebsiteSubsidy ,
+          Remark ,
+          OrderFrom ,
+          Status ,
+          businessId ,
+          ReceviceCity ,
+          ReceviceLongitude ,
+          ReceviceLatitude ,
+          OrderCount ,
+          CommissionRate ,
+          CommissionFormulaMode ,
+          SongCanDate ,
+          [Weight] ,
+          Quantity ,
+          ReceiveProvince ,
+          ReceiveProvinceCode ,
+          ReceiveCityCode ,
+          ReceiveArea ,
+          ReceiveAreaCode ,
+          OriginalOrderNo ,
+          BusinessCommission ,
+          SettleMoney ,
+          Adjustment ,
+          TimeSpan
+        )
+output  Inserted.Id ,
+        getdate() ,
+        '{0}' ,
+        '{1}' ,
+        Inserted.businessId ,
+        Inserted.[Status] ,
+        {2}
+        into dbo.OrderSubsidiesLog ( OrderId, InsertTime, OptName, Remark,
+                                     OptId, OrderStatus, [Platform] )
+values  ( @OrderNo ,
+          @PickUpAddress ,
+          @PubDate ,
+          @ReceviceName ,
+          @RecevicePhoneNo ,
+          @ReceviceAddress ,
+          @IsPay ,
+          @Amount ,
+          @OrderCommission ,
+          @DistribSubsidy ,
+          @WebsiteSubsidy ,
+          @Remark ,
+          @OrderFrom ,
+          @Status ,
+          @businessId ,
+          @ReceviceCity ,
+          @ReceviceLongitude ,
+          @ReceviceLatitude ,
+          @OrderCount ,
+          @CommissionRate ,
+          @CommissionFormulaMode ,
+          @SongCanDate ,
+          @Weight1 ,
+          @Quantity1 ,
+          @ReceiveProvince ,
+          @ReceiveProvinceCode ,
+          @ReceiveCityCode ,
+          @ReceiveArea ,
+          @ReceiveAreaCode ,
+          @OriginalOrderNo ,
+          @BusinessCommission ,
+          @SettleMoney ,
+          @Adjustment ,
+          @TimeSpan
+        );select IDENT_CURRENT('order')", SuperPlatform.商家, ConstValues.PublishOrder, (int)SuperPlatform.商家);
+            
             IDbParameters dbParameters = DbHelper.CreateDbParameters();          
             dbParameters.AddWithValue("@OrderNo", order.OrderNo);
             dbParameters.AddWithValue("@PickUpAddress", order.PickUpAddress);
@@ -271,20 +349,36 @@ select IDENT_CURRENT('order')", SuperPlatform.商家, ConstValues.PublishOrder, 
             dbParameters.AddWithValue("@SettleMoney", order.SettleMoney);
             dbParameters.AddWithValue("@Adjustment", order.Adjustment);
             dbParameters.AddWithValue("@TimeSpan", order.TimeSpan);
-            
+
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql.ToString(), dbParameters);
+            #endregion
+
+            #region 定入订单子表
             int orderId = ParseHelper.ToInt(result);
             if (orderId > 0)//写入订单成功
             {
-                for(int i=0;i<order.listOrderChild.Count;i++)
+                for (int i = 0; i < order.listOrderChild.Count; i++)
                 {
-                     const string insertOrderChildSql = @"
-insert into OrderChild(OrderId,ChildId,TotalPrice,GoodPrice,DeliveryPrice,CreateBy,UpdateBy)
-values(@OrderId,@ChildId,@TotalPrice,@GoodPrice,@DeliveryPrice,@CreateBy,@UpdateBy)";
+                    const string insertOrderChildSql = @"
+insert into OrderChild
+        (OrderId,
+        ChildId,
+        TotalPrice,
+        GoodPrice,
+        DeliveryPrice,
+        CreateBy,
+        UpdateBy)
+values( @OrderId,
+        @ChildId,
+        @TotalPrice,
+        @GoodPrice,
+        @DeliveryPrice,
+        @CreateBy,
+        @UpdateBy)";
                     IDbParameters dbOrderChildParameters = DbHelper.CreateDbParameters();
                     dbOrderChildParameters.AddWithValue("@OrderId", orderId);
                     dbOrderChildParameters.AddWithValue("@ChildId", order.listOrderChild[i].ChildId);
-                    decimal totalPrice=order.listOrderChild[i].GoodPrice+ Convert.ToDecimal(order.DistribSubsidy);
+                    decimal totalPrice = order.listOrderChild[i].GoodPrice + Convert.ToDecimal(order.DistribSubsidy);
                     dbOrderChildParameters.AddWithValue("@TotalPrice", totalPrice);
                     dbOrderChildParameters.AddWithValue("@GoodPrice", order.listOrderChild[i].GoodPrice);
                     dbOrderChildParameters.AddWithValue("@DeliveryPrice", order.DistribSubsidy);
@@ -292,12 +386,15 @@ values(@OrderId,@ChildId,@TotalPrice,@GoodPrice,@DeliveryPrice,@CreateBy,@Update
                     dbOrderChildParameters.AddWithValue("@UpdateBy", order.BusinessName);
 
                     DbHelper.ExecuteScalar(SuperMan_Write, insertOrderChildSql, dbOrderChildParameters);
-                }               
+                }
             }
             else
             {
-               //写入订单失败
+                //写入订单失败
+                return 0;
             }
+            #endregion
+
             return orderId;         
         }
 
@@ -307,73 +404,13 @@ values(@OrderId,@ChildId,@TotalPrice,@GoodPrice,@DeliveryPrice,@CreateBy,@Update
         /// </summary>
         /// <param name="paramodel">订单号码</param>
         /// <returns>订单号</returns>
-        public string CreateToSql(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
+        public string CreateToSql(CreatePM_OpenApi paramodel)
         {
-            #region 操作business表取商户id
-            int bussinessId;//商户id
-            ///查询该商户是否已存在
-            var redis = new ETS.NoSql.RedisCache.RedisCache();
-            string bussinessIdstr = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(),
-                paramodel.store_info.store_id.ToString()));  //查询缓存，看看当前店铺是否存在,缓存存储E代送的商户id
-            if (bussinessIdstr != null)
-                bussinessId = ParseHelper.ToInt(bussinessIdstr);
-            else//如果商户不存在
-            {
-                ///商户插入sql
-                const string insertBussinesssql = @"
-                INSERT INTO dbo.business
-                (OriginalBusiId,Name,GroupId,IDCard,Password,
-                PhoneNo,PhoneNo2,Address,ProvinceCode,CityCode,AreaCode,
-                Longitude,Latitude,DistribSubsidy,Province,City,district,CityId,districtId,
-                BusinessCommission)  
-                OUTPUT Inserted.Id   
-                values(@OriginalBusiId,@Name,@GroupId,@IDCard,@Password,
-                @PhoneNo,@PhoneNo2,@Address,@ProvinceCode,@CityCode,@AreaCode,
-                @Longitude,@Latitude,@DistribSubsidy,@Province,@City,@district,@CityId,@districtId,
-                @BusinessCommission);";
-                IDbParameters insertBdbParameters = DbHelper.CreateDbParameters();
-                ///基本参数信息
-                insertBdbParameters.AddWithValue("@OriginalBusiId", paramodel.store_info.store_id); //对接方店铺ID第三方平台推送过来的商家Id
-                insertBdbParameters.AddWithValue("@Name", paramodel.store_info.store_name);    //店铺名称
-                insertBdbParameters.AddWithValue("@GroupId", paramodel.store_info.group);    //集团：3:万达
-                insertBdbParameters.AddWithValue("@IDCard", paramodel.store_info.id_card);    //店铺身份证号
-                insertBdbParameters.AddWithValue("@Password", MD5Helper.MD5("123456"));    //初始化密码  后期个改为常量
-                insertBdbParameters.AddWithValue("@PhoneNo", paramodel.store_info.phone);    //门店联系电话
-                insertBdbParameters.AddWithValue("@PhoneNo2", paramodel.store_info.phone2);    //门店第二联系电话
-                insertBdbParameters.AddWithValue("@Address", paramodel.store_info.address);    //门店地址
-                insertBdbParameters.AddWithValue("@ProvinceCode", paramodel.store_info.city_code);    //门店所在省份code
-                insertBdbParameters.AddWithValue("@CityCode", paramodel.store_info.city_code);    //门店所在城市code
-                insertBdbParameters.AddWithValue("@AreaCode", paramodel.store_info.area_code);    //门店所在区域code
-                insertBdbParameters.AddWithValue("@Longitude", paramodel.store_info.longitude);    //门店所在区域经度
-                insertBdbParameters.AddWithValue("@Latitude", paramodel.store_info.latitude);    //门店所在区域纬度
-                insertBdbParameters.AddWithValue("@DistribSubsidy", paramodel.store_info.delivery_fee);    //外送费,默认为0
-                insertBdbParameters.AddWithValue("@Province", paramodel.store_info.province);    //门店省
-                insertBdbParameters.AddWithValue("@City", paramodel.store_info.city);    //门店市编码
-                insertBdbParameters.AddWithValue("@district", paramodel.store_info.area);    //门店区编码
-                insertBdbParameters.AddWithValue("@CityId", paramodel.store_info.city_code);    //门店市编码
-                insertBdbParameters.AddWithValue("@districtId", paramodel.store_info.area_code);    //门店区编码
-                insertBdbParameters.AddWithValue("@BusinessCommission", paramodel.store_info.businesscommission);//结算比例
-                //insertBdbParameters.AddWithValue("@CommissionTypeId", paramodel.store_info.commission_type == null ?
-                //    1 : paramodel.store_info.commission_type);   //佣金类型，涉及到快递员的佣金计算方式，默认1  业务改变已经无效  
-                bussinessId = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertBussinesssql, insertBdbParameters));
-                if (bussinessId == 0)
-                {
-                    return null;//添加失败 
-                }
-                else 
-                {
-                    redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString()
-                        , paramodel.store_info.store_id.ToString()), bussinessId.ToString());//将商户id插入到缓存  key的形式为 OtherBusiness_集团id_第三方平台店铺id
-                }
-            }
-            #endregion
+            var redis = new RedisCache();
+            int  bussinessId = CreateToSqlAddBusiness(paramodel);;//商户id
 
             #region 操作插入order表
-            string orderExists = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
-               paramodel.order_id.ToString()));  //查询缓存，看当前订单是否存在,“true”代表存在，key的形式为集团ID_第三方平台订单号
-            if (orderExists != null)
-                return null;//订单已经存在，添加失败 
-            ///订单插入sql 订单不存在时
+            //订单插入sql 订单不存在时
             const string insertOrdersql = @" 
                 INSERT INTO dbo.[order](OrderNo,
                 OriginalOrderNo,PubDate,SongCanDate,IsPay,Amount,
@@ -381,7 +418,7 @@ values(@OrderId,@ChildId,@TotalPrice,@GoodPrice,@DeliveryPrice,@CreateBy,@Update
                 RecevicePhoneNo,ReceiveProvinceCode,ReceiveCityCode,ReceiveAreaCode,ReceviceAddress,
                 ReceviceLongitude,ReceviceLatitude,businessId,PickUpAddress,Payment,OrderCommission,
                 WebsiteSubsidy,CommissionRate,CommissionFormulaMode,ReceiveProvince,ReceviceCity,ReceiveArea,
-                PickupCode,BusinessCommission,SettleMoney,Adjustment,OrderFrom,Status)
+                PickupCode,BusinessCommission,SettleMoney,Adjustment,OrderFrom,Status,CommissionType,CommissionFixValue,BusinessGroupId)
                 output Inserted.Id,GETDATE(),@OptName,'新增订单',Inserted.businessId,Inserted.[Status],@Platform
                 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
                 Values(@OrderNo,
@@ -390,24 +427,25 @@ values(@OrderId,@ChildId,@TotalPrice,@GoodPrice,@DeliveryPrice,@CreateBy,@Update
                 @RecevicePhoneNo,@ReceiveProvinceCode,@ReceiveCityCode,@ReceiveAreaCode,@ReceviceAddress,
                 @ReceviceLongitude,@ReceviceLatitude,@BusinessId,@PickUpAddress,@Payment,@OrderCommission,
                 @WebsiteSubsidy,@CommissionRate,@CommissionFormulaMode,@ReceiveProvince,@ReceviceCity,@ReceiveArea,
-                @PickupCode,@BusinessCommission,@SettleMoney,@Adjustment,@OrderFrom,@Status)";
+                @PickupCode,@BusinessCommission,@SettleMoney,@Adjustment,@OrderFrom,@Status,@CommissionType,@CommissionFixValue,@BusinessGroupId)";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            ///基本参数信息
-            string orderNo = Helper.generateOrderCode(bussinessId);
+            //基本参数信息
+
             dbParameters.Add("@OrderNo", SqlDbType.NVarChar);
+            string orderNo = Helper.generateOrderCode(bussinessId);
             dbParameters.SetValue("@OrderNo", orderNo); //根据商户id生成订单号(15位));
 
             dbParameters.AddWithValue("@OriginalOrderNo", paramodel.order_id);    //其它平台的来源订单号
             dbParameters.AddWithValue("@PubDate", paramodel.create_time);    //订单下单时间
-            dbParameters.AddWithValue("@SongCanDate", paramodel.receive_time);  ///要求送餐时间
+            dbParameters.AddWithValue("@SongCanDate", paramodel.receive_time);  //要求送餐时间
             dbParameters.AddWithValue("@IsPay", paramodel.is_pay);    //是否已付款
             dbParameters.AddWithValue("@Amount", paramodel.total_price);    //订单金额
             dbParameters.AddWithValue("@Remark", paramodel.remark);    //备注
             dbParameters.AddWithValue("@Weight", paramodel.weight);    //重量，默认?
             //订单外送费  目前 接收了两个外送费 理论必须一致 ，若不一致，以订单上的为准，方便后续扩展
             dbParameters.AddWithValue("@DistribSubsidy", paramodel.delivery_fee);
-            dbParameters.AddWithValue("@OrderCount", paramodel.package_count == null ? 1 : paramodel.package_count);   //订单数量，默认为1
-            ///收货地址信息
+            dbParameters.AddWithValue("@OrderCount", paramodel.package_count ?? 1);   //订单数量，默认为1
+            //收货地址信息
             dbParameters.AddWithValue("@ReceviceName", paramodel.address.user_name);    //用户姓名 收货人姓名
             dbParameters.AddWithValue("@RecevicePhoneNo", paramodel.address.user_phone);    //用户联系电话  收货人电话
             dbParameters.AddWithValue("@ReceiveProvinceCode", paramodel.address.province_code);    //用户所在省份code
@@ -428,36 +466,97 @@ values(@OrderId,@ChildId,@TotalPrice,@GoodPrice,@DeliveryPrice,@CreateBy,@Update
             dbParameters.AddWithValue("@ReceiveArea", paramodel.address.area); //用户区
             dbParameters.AddWithValue("@PickupCode", string.IsNullOrWhiteSpace(paramodel.pickupcode) ? "" : paramodel.pickupcode); //用户区
             dbParameters.AddWithValue("@BusinessCommission", paramodel.store_info.businesscommission);//结算比例
-            dbParameters.AddWithValue("@SettleMoney", paramodel.settlemoney);//结算金额
+            dbParameters.AddWithValue("@SettleMoney", paramodel.settlemoney);//结算比例
             dbParameters.AddWithValue("@Adjustment", paramodel.adjustment);//结算比例
             dbParameters.AddWithValue("@OrderFrom", paramodel.orderfrom);//订单来源
             dbParameters.AddWithValue("@Status", paramodel.status);//订单状态
             //订单操作记录表
             dbParameters.AddWithValue("@OptName", (SuperPlatform.第三方对接平台.ToString()));//操作人
             dbParameters.AddWithValue("@Platform", (int)SuperPlatform.第三方对接平台);//操作平台
+            dbParameters.AddWithValue("@CommissionType", paramodel.CommissionType);//结算类型
+            dbParameters.AddWithValue("@CommissionFixValue", paramodel.CommissionFixValue);//固定金额
+            dbParameters.AddWithValue("@BusinessGroupId", paramodel.BusinessGroupId);//分组ID
 
-            int count = ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, insertOrdersql, dbParameters));
-            if (count > 0)
-            {
-                //添加成功时，将当前订单插入到缓存中，设置过期时间30天
-                redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
-                   paramodel.order_id.ToString()), orderNo, DateTime.Now.AddDays(30));  //查询缓存，看当前订单是否存在,“true”代表存在，key的形式为集团ID_第三方平台订单号
-            }
-            else
-                return null;
+            DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrdersql, dbParameters);
             #endregion
+            AddOrderDetail(paramodel, orderNo); //操作插入OrderDetail表
+            return orderNo;
+        }
 
-            #region 操作插入OrderDetail表
-            bool addBool = true;  //添加是否成功
+        /// <summary>
+        /// CreateToSql 获取商户id 商户不存在则新增商户  caoheyang 20150512  拆方法
+        /// </summary>
+        /// <param name="paramodel"></param>
+        /// <returns></returns>
+        private int CreateToSqlAddBusiness(CreatePM_OpenApi paramodel)
+        {
+            var redis = new RedisCache();
+            string bussinessIdstr = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(),
+               paramodel.store_info.store_id.ToString()));  //查询缓存，看看当前店铺是否存在,缓存存储E代送的商户id
+            if (bussinessIdstr != null)
+            {
+                return ParseHelper.ToInt(bussinessIdstr);
+            }
+            int bussinessId = 0;
+            //商户插入sql
+            const string insertBussinesssql = @"
+                INSERT INTO dbo.business
+                (OriginalBusiId,Name,GroupId,IDCard,Password,
+                PhoneNo,PhoneNo2,Address,ProvinceCode,CityCode,AreaCode,
+                Longitude,Latitude,DistribSubsidy,Province,City,district,CityId,districtId,
+                BusinessCommission,CommissionType,CommissionFixValue,BusinessGroupId)  
+                OUTPUT Inserted.Id   
+                values(@OriginalBusiId,@Name,@GroupId,@IDCard,@Password,
+                @PhoneNo,@PhoneNo2,@Address,@ProvinceCode,@CityCode,@AreaCode,
+                @Longitude,@Latitude,@DistribSubsidy,@Province,@City,@district,@CityId,@districtId,
+                @BusinessCommission,@CommissionType,@CommissionFixValue,@BusinessGroupId);";
+            IDbParameters insertBdbParameters = DbHelper.CreateDbParameters();
+            //基本参数信息
+            insertBdbParameters.AddWithValue("@OriginalBusiId", paramodel.store_info.store_id); //对接方店铺ID第三方平台推送过来的商家Id
+            insertBdbParameters.AddWithValue("@Name", paramodel.store_info.store_name);    //店铺名称
+            insertBdbParameters.AddWithValue("@GroupId", paramodel.store_info.group);    //集团：3:万达
+            insertBdbParameters.AddWithValue("@IDCard", paramodel.store_info.id_card);    //店铺身份证号
+            insertBdbParameters.AddWithValue("@Password", MD5Helper.MD5("123456"));    //初始化密码  后期个改为常量
+            insertBdbParameters.AddWithValue("@PhoneNo", paramodel.store_info.phone);    //门店联系电话
+            insertBdbParameters.AddWithValue("@PhoneNo2", paramodel.store_info.phone2);    //门店第二联系电话
+            insertBdbParameters.AddWithValue("@Address", paramodel.store_info.address);    //门店地址
+            insertBdbParameters.AddWithValue("@ProvinceCode", paramodel.store_info.city_code);    //门店所在省份code
+            insertBdbParameters.AddWithValue("@CityCode", paramodel.store_info.city_code);    //门店所在城市code
+            insertBdbParameters.AddWithValue("@AreaCode", paramodel.store_info.area_code);    //门店所在区域code
+            insertBdbParameters.AddWithValue("@Longitude", paramodel.store_info.longitude);    //门店所在区域经度
+            insertBdbParameters.AddWithValue("@Latitude", paramodel.store_info.latitude);    //门店所在区域纬度
+            insertBdbParameters.AddWithValue("@DistribSubsidy", paramodel.store_info.delivery_fee);    //外送费,默认为0
+            insertBdbParameters.AddWithValue("@Province", paramodel.store_info.province);    //门店省
+            insertBdbParameters.AddWithValue("@City", paramodel.store_info.city);    //门店市编码
+            insertBdbParameters.AddWithValue("@district", paramodel.store_info.area);    //门店区编码
+            insertBdbParameters.AddWithValue("@CityId", paramodel.store_info.city_code);    //门店市编码
+            insertBdbParameters.AddWithValue("@districtId", paramodel.store_info.area_code);    //门店区编码
+            insertBdbParameters.AddWithValue("@BusinessCommission", paramodel.store_info.businesscommission);//结算比例
+            insertBdbParameters.AddWithValue("@CommissionType", paramodel.CommissionType);//结算类型
+            insertBdbParameters.AddWithValue("@CommissionFixValue", paramodel.CommissionFixValue);//固定金额
+            insertBdbParameters.AddWithValue("@BusinessGroupId", paramodel.BusinessGroupId);//分组ID
+            bussinessId = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, insertBussinesssql, insertBdbParameters));
+            redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString()
+                , paramodel.store_info.store_id.ToString()), bussinessId.ToString());//将商户id插入到缓存  key的形式为 OtherBusiness_集团id_第三方平台店铺id
+            return bussinessId;
+        }
+
+        /// <summary>
+        /// CreateToSql  操作插入OrderDetail表  caoheyang 20150512  拆方法
+        /// </summary>
+        /// <param name="paramodel"></param>
+        /// <param name="orderNo"></param>
+        private void AddOrderDetail(CreatePM_OpenApi paramodel, string orderNo)
+        {
             for (int i = 0; i < paramodel.order_details.Length; i++)
             {
-                ///订单详情插入sql
+                //订单详情插入sql
                 const string insertOrderDetailsql = @" 
                  INSERT INTO dbo.OrderDetail
                  (OrderNo ,ProductName , UnitPrice ,Quantity,FormDetailID,GroupID)
                  VALUES  (@OrderNo ,@ProductName ,@UnitPrice ,@Quantity,@FormDetailID,@GroupID)";
                 IDbParameters insertOrderDetaiParas = DbHelper.CreateDbParameters();
-                ///基本参数信息
+                //基本参数信息
                 //订单号
                 insertOrderDetaiParas.Add("@OrderNo", SqlDbType.NVarChar);
                 insertOrderDetaiParas.SetValue("@OrderNo", orderNo);
@@ -466,15 +565,12 @@ values(@OrderId,@ChildId,@TotalPrice,@GoodPrice,@DeliveryPrice,@CreateBy,@Update
                 insertOrderDetaiParas.AddWithValue("@Quantity", paramodel.order_details[i].quantity);    //商品数量
                 insertOrderDetaiParas.AddWithValue("@FormDetailID", paramodel.order_details[i].detail_id);    //第三方平台明细id,与GroupID组成联合唯一约束
                 insertOrderDetaiParas.AddWithValue("@GroupID", paramodel.store_info.group);    //集团id,与第三方平台明细id组成联合唯一约束
-                int orderdetailId = ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, insertOrderDetailsql, insertOrderDetaiParas));
+                DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrderDetailsql, insertOrderDetaiParas);
             }
-            if (!addBool)
-                return null;  //添加失败
-            #endregion
-            return orderNo;
         }
         #endregion
 
+     
 
         /// <summary>
         ///获取当天
@@ -1004,7 +1100,7 @@ WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL and Status=2;", SuperPlatfo
                         SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
                         COUNT(1) AS MisstionCount,--总任务量
                         SUM(ISNULL(OrderCount,0)) AS OrderCount,--总订单量
-                        SUM(o.Amount*ISNULL(b.BusinessCommission,0)/100+ ISNULL(b.DistribSubsidy ,0) * o.OrderCount) AS YsPrice,  -- 应收金额
+                        sum(isnull(SettleMoney,0)) as YsPrice, --应收金额
                         SUM(ISNULL( OrderCommission,0)) AS YfPrice  --应付金额
                         FROM dbo.[order](NOLOCK) AS o
                         JOIN dbo.business(NOLOCK) AS b ON o.businessId=b.Id
@@ -1277,12 +1373,24 @@ where   1 = 1
         /// <returns></returns>
         public IList<OrderAutoAdjustModel> GetOverTimeOrder(string IntervalMinute)
         {
-            string sql = string.Format(@"select 
-                            Id,
-                            DealCount,
-                            DateDiff(MINUTE,PubDate, GetDate()) IntervalMinute
-                            from [order] with(nolock)
-                            where Status=0 AND DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
+            //            string sql = string.Format(@"select 
+            //                            Id,
+            //                            DealCount,
+            //                            DateDiff(MINUTE,PubDate, GetDate()) IntervalMinute
+            //                            from [order] with(nolock)
+            //                            where Status=0 AND DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
+            string sql = string.Format(@"
+SELECT 
+distinct(o.Id), --因为本地会有多条数据，所以加了一个distinct，线上应该不会存在这个问题
+DealCount,
+DateDiff(MINUTE,PubDate, GetDate()) IntervalMinute
+ from dbo.[order] o (nolock)
+join GlobalConfig gc (nolock) on o.BusinessGroupId = gc.GroupId
+where 
+gc.KeyName='IsStarTimeSubsidies' and 
+gc.Value=1 and 
+o.Status=0 and 
+DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             return MapRows<OrderAutoAdjustModel>(dt);
         }
@@ -1682,7 +1790,27 @@ from  orderdetail (nolock) where OrderNo=@OrderNo ";
             return orderDM;
         }
 
-        #region
+        /// <summary>
+        /// 判断订单是否存在
+        /// </summary>
+        /// <param name="id">订单Id</param>
+        /// <returns></returns>
+        public bool IsExist(int id)
+        {
+            bool isExist; 
+            string querySql = @" SELECT COUNT(1)
+ FROM   dbo.[order] WITH ( NOLOCK ) 
+ WHERE  id = @id";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();               
+            dbParameters.AddWithValue("id", id);
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
+            isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
+
+            return isExist;
+        }
+
+        #region 自定义方法
         /// <summary>
 		/// 绑定对象
 		/// </summary>

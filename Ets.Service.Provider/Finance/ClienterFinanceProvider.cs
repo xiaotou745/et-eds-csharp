@@ -6,14 +6,17 @@ using System.Threading.Tasks;
 using Ets.Dao.Clienter;
 using Ets.Dao.Finance;
 using ETS.Enums;
+using ETS.Extension;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Finance;
+using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 using ETS.Security;
 using Ets.Service.IProvider.Finance;
 using ETS.Transaction;
 using ETS.Transaction.Common;
+using ETS.Util;
 
 namespace Ets.Service.Provider.Finance
 {
@@ -60,7 +63,7 @@ namespace Ets.Service.Provider.Finance
                 else
                 {
                     _clienterDao.UpdateForWithdrawC(withdrawCpm); //更新骑士表的余额，可提现余额
-                    string withwardNo = "1";
+                    string withwardNo = Helper.generateOrderCode(withdrawCpm.ClienterId);
                     #region 骑士提现
                     long withwardId = _clienterWithdrawFormDao.Insert(new ClienterWithdrawForm()
                               {
@@ -127,7 +130,6 @@ namespace Ets.Service.Provider.Finance
             clienter = _clienterDao.GetById(withdrawCpm.ClienterId);//获取超人信息
             if (clienter == null || clienter.Status == null
                 || clienter.Status != ConstValues.CLIENTER_AUDITPASS)  //骑士状态为非 审核通过不允许 提现
-             
             {
                 return new Tuple<bool, FinanceWithdrawC>(false, FinanceWithdrawC.ClienterError);
             }
@@ -135,16 +137,11 @@ namespace Ets.Service.Provider.Finance
             {
                 return new Tuple<bool, FinanceWithdrawC>(false, FinanceWithdrawC.MoneyError);
             }
-            var clienterFinanceAccounts = _clienterFinanceAccountDao.GetByClienterId(withdrawCpm.ClienterId);//获取超人金融账号信息
-            if (clienterFinanceAccounts.Count <= 0)
+            clienterFinanceAccount = _clienterFinanceAccountDao.GetById(withdrawCpm.FinanceAccountId);//获取超人金融账号信息
+            if (clienterFinanceAccount == null)
             {
                 return new Tuple<bool, FinanceWithdrawC>(false, FinanceWithdrawC.FinanceAccountError);
             }
-            else
-            {
-                clienterFinanceAccount = clienterFinanceAccounts[0];
-            }
-
             return new Tuple<bool, FinanceWithdrawC>(true, FinanceWithdrawC.Success);
         }
 
@@ -222,11 +219,41 @@ namespace Ets.Service.Provider.Finance
         /// <summary>
         /// 骑士交易流水API add by caoheyang 20150511
         /// </summary> 
-        /// <param name="businessId">骑士id</param>
+        /// <param name="clienterId">骑士id</param>
         /// <returns></returns>
-         public IList<ClienterBalanceRecord> GetRecords(int businessId)
+        public ResultModel<IList<FinanceRecordsDM>> GetRecords(int clienterId)
          {
-             return _clienterBalanceRecordDao.GetByClienterId(businessId);
+             IList<FinanceRecordsDM> records = _clienterBalanceRecordDao.GetByClienterId(clienterId);
+             return ResultModel<IList<FinanceRecordsDM>>.Conclude(SystemEnum.Success,
+               TranslateRecords(records));
          }
+
+        /// <summary>
+        /// 骑士交易流水API 信息处理转换 add by caoheyang 20150512
+        /// </summary>
+        /// <param name="records">原始流水记录</param>
+        /// <returns></returns>
+        private IList<FinanceRecordsDM> TranslateRecords(IList<FinanceRecordsDM> records)
+        {
+            foreach (var temp in records)
+            {
+                temp.StatusStr = ((ClienterBalanceRecordStatus) Enum.Parse(typeof (ClienterBalanceRecordStatus),
+                    temp.Status.ToString(), false)).GetDisplayText(); //流水状态文本
+                temp.RecordTypeStr =
+                    ((ClienterBalanceRecordRecordType) Enum.Parse(typeof (ClienterBalanceRecordRecordType),
+                        temp.RecordType.ToString(), false)).GetDisplayText(); //交易类型文本
+                if (temp.YearInfo == DateTime.Now.Year + "年" + DateTime.Now.Month + "月")
+                {
+                    temp.YearInfo = "本月";
+                }
+                temp.OperateTimeStr = (
+                   temp.OperateTime.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd")
+                       ? "今天" //今日流水显示 "今日"
+                       : temp.OperateTime.ToString("MM-dd"))
+                       + " " +
+                       temp.OperateTime.ToString("HH:mm"); //分
+            }
+            return records;
+        }
     }
 }

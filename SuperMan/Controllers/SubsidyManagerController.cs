@@ -66,7 +66,7 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult TimeSubsidies()
         {
-            var list = new GlobalConfigProvider().GetTimeSubsidies(); 
+            var list = new GlobalConfigProvider().GetTimeSubsidies(0); 
             return View(list);
         }
         /// <summary>
@@ -76,13 +76,13 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult AddTimeSubsidies(GlobalConfigSubsidies model)
         {
-            var list = new GlobalConfigProvider().GetTimeSubsidies(); 
+            var list = new GlobalConfigProvider().GetTimeSubsidies(0); 
             list.Add(model);
             var newlist = (from globalConfigTimeSubsidiese in list
                            orderby ParseHelper.ToInt(globalConfigTimeSubsidiese.Value1) ascending 
                 select globalConfigTimeSubsidiese).ToList();
             string values = GetTimesValues(newlist);
-            bool b = new GlobalConfigProvider().UpdateTimeSubsidies(UserContext.Current.Name, values, "添加时间补贴设置操作-设置之后的值:" + values);
+            bool b = new GlobalConfigProvider().UpdateTimeSubsidies(UserContext.Current.Name, values, "添加时间补贴设置操作-设置之后的值:" + values, 0, -1);
             return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.AllowGet);
         }
 
@@ -94,13 +94,13 @@ namespace SuperMan.Controllers
         public JsonResult DeleteTimeSubsidies(int id)
         {
             //读取全部时间配置
-            var list = new GlobalConfigProvider().GetTimeSubsidies(); 
+            var list = new GlobalConfigProvider().GetTimeSubsidies(0); 
             //移除某一时间配置
             var newlist = (from globalConfigTimeSubsidiese in list
                            where globalConfigTimeSubsidiese.Id!=id
                            select globalConfigTimeSubsidiese).ToList();
             string values = GetTimesValues(newlist);
-            bool b = new GlobalConfigProvider().UpdateTimeSubsidies(UserContext.Current.Name, values, "删除时间补贴设置-设置之后的值:" + values);
+            bool b = new GlobalConfigProvider().UpdateTimeSubsidies(UserContext.Current.Name, values, "删除时间补贴设置-设置之后的值:" + values, 0, -1);
             return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.AllowGet);
         }
           
@@ -112,7 +112,7 @@ namespace SuperMan.Controllers
         public JsonResult UpdateTimeSubsidies(GlobalConfigSubsidies model)
         {
             //读取全部时间配置
-            var list = new GlobalConfigProvider().GetTimeSubsidies();
+            var list = new GlobalConfigProvider().GetTimeSubsidies(0);
 
             var mm = list.FirstOrDefault(subsidies => subsidies.Id == model.Id);
             if (mm != null)
@@ -124,7 +124,7 @@ namespace SuperMan.Controllers
                            orderby ParseHelper.ToInt(globalConfigTimeSubsidiese.Value1) ascending
                            select globalConfigTimeSubsidiese).ToList();
             string values = GetTimesValues(newlist);
-            bool b = new GlobalConfigProvider().UpdateTimeSubsidies(UserContext.Current.Name, values, "修改时间补贴设置-设置之后的值:" + values);
+            bool b = new GlobalConfigProvider().UpdateTimeSubsidies(UserContext.Current.Name, values, "修改时间补贴设置-设置之后的值:" + values, 0, -1);
             return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.AllowGet);
         }
 

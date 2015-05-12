@@ -10,10 +10,10 @@ namespace ETS.AliPay
 {
     public class AlipayIntegrate
     {
-        public static string NotifyUrl =System.Configuration.ConfigurationManager.AppSettings["NotifyUrl"];
+        public static string NotifyUrl = System.Configuration.ConfigurationManager.AppSettings["NotifyUrl"];
         public static string ReturnUrl = System.Configuration.ConfigurationManager.AppSettings["ReturnUrl"];
 
-   
+
         /// <summary>
         /// 获取二维码url.
         /// </summary>
@@ -26,7 +26,7 @@ namespace ETS.AliPay
         /// 修改者：
         /// 修改时间：
         /// ----------------------------------------------------------------------------------------
-        public dynamic GetQRCodeUrl(string orderNumber, decimal customerTotal)
+        public dynamic GetQRCodeUrl(int orderId, int childId, decimal customerTotal)
         {
             //接口调用时间
             string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
@@ -39,7 +39,7 @@ namespace ETS.AliPay
             string biz_type = "10";
             //目前只支持1
             //业务数据
-            string biz_data = GetBizData(orderNumber, customerTotal.ToString());
+            string biz_data = GetBizData(orderId, childId, customerTotal.ToString());
             //格式：JSON 大字符串，详见技术文档4.2.1章节
 
 
@@ -90,7 +90,7 @@ namespace ETS.AliPay
         /// 修改者：
         /// 修改时间：
         /// ----------------------------------------------------------------------------------------
-        private string GetBizData(string orderNumber, string customerTotal)
+        private string GetBizData(int orderId, int childId, string customerTotal)
         {
             var bizdata = new
             {
@@ -98,14 +98,16 @@ namespace ETS.AliPay
                 need_address = "F",
                 goods_info = new
                 {
-                    id = orderNumber,
+                    //orderId = orderId,
+                    //childId = childId,
+                    id = orderId + "_" + childId,
                     name = "e代送收款",
                     price = customerTotal
                     ////price = customerTotal.ToString()
                 },
                 notify_url = NotifyUrl,
                 return_url = ReturnUrl,
-                memo = "代送收款"
+                memo = "e代送收款"
             };
             return JsonConvert.SerializeObject(bizdata);
         }
@@ -176,8 +178,8 @@ namespace ETS.AliPay
                     string trade_no = xmlDoc.SelectSingleNode("/alipay/response/trade/trade_no").InnerText;
                     //if (facePayment != null)
                     //{
-                        //facePayment.UpdateOneForIsPay(facePayment, buyer_email, trade_no);
-                        return new { status_code = 1, status_message = string.Empty, data = new { pay_status = 1 } };
+                    //facePayment.UpdateOneForIsPay(facePayment, buyer_email, trade_no);
+                    return new { status_code = 1, status_message = string.Empty, data = new { pay_status = 1 } };
                     //}
                     //else
                     //{

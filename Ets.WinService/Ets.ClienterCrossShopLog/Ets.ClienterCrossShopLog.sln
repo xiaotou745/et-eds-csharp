@@ -17,8 +17,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ets.Service.IProvider", "..
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ets.Service.Provider", "..\..\Ets.Service.Provider\Ets.Service.Provider.csproj", "{61C59E53-67C8-44FE-B0AD-1E9025D7E568}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsFormsApplication1", "WindowsFormsApplication1\WindowsFormsApplication1.csproj", "{3D24C5A8-5704-4781-B8BC-8FAEE851B158}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,10 +51,6 @@ Global
 		{61C59E53-67C8-44FE-B0AD-1E9025D7E568}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{61C59E53-67C8-44FE-B0AD-1E9025D7E568}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{61C59E53-67C8-44FE-B0AD-1E9025D7E568}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3D24C5A8-5704-4781-B8BC-8FAEE851B158}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3D24C5A8-5704-4781-B8BC-8FAEE851B158}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3D24C5A8-5704-4781-B8BC-8FAEE851B158}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3D24C5A8-5704-4781-B8BC-8FAEE851B158}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

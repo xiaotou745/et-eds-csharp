@@ -41,7 +41,7 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public override decimal GetOrderWebSubsidy(OrderCommission model)
         {
-            return ParseHelper.ToDecimal(GlobalConfigDao.GlobalConfigGet.PriceSiteSubsidies);   
+            return ParseHelper.ToDecimal(GlobalConfigDao.GlobalConfigGet(model.BusinessGroupId).PriceSiteSubsidies);   
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public override decimal GetCommissionRate(OrderCommission model)
         {
-            decimal temp = model.BusinessCommission - ParseHelper.ToDecimal(GlobalConfigDao.GlobalConfigGet.PriceCommissionRatio);
+            decimal temp = model.BusinessCommission - ParseHelper.ToDecimal(GlobalConfigDao.GlobalConfigGet(model.BusinessGroupId).PriceCommissionRatio);
             if (temp == 0)
                 return 0;
             else
@@ -65,7 +65,7 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public override decimal GetAdjustment(OrderCommission model)
         {
-            string globalConfigModel = Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet.PriceSubsidies.TrimEnd(';');
+            string globalConfigModel = Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet(model.BusinessGroupId).PriceSubsidies.TrimEnd(';');
             var globalConfigList = globalConfigModel.Split(';');
             decimal adjustment = 0m; //额外补贴金额
             for (int i = globalConfigList.Length - 1; i >= 0; i--)

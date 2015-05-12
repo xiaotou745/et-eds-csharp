@@ -36,6 +36,9 @@ using ETS.Const;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.IProvider.OpenApi;
 using Ets.Model.ParameterModel.Bussiness;
+using Ets.Service.IProvider.Statistics;
+using Ets.Service.Provider.User;
+using Ets.Model.DataModel.Strategy;
 
 namespace Ets.Service.Provider.Order
 {
@@ -46,6 +49,7 @@ namespace Ets.Service.Provider.Order
         private ClienterProvider iClienterProvider = new ClienterProvider();
 
         private ISubsidyProvider iSubsidyProvider = new SubsidyProvider();
+        private IBusinessGroupProvider iBusinessGroupProvider = new BusinessGroupProvider();
         //和区域有关的  wc
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
 
@@ -237,7 +241,7 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <param name="busiOrderInfoModel"></param>
         /// <returns></returns>
-        public order TranslateOrder(Model.ParameterModel.Bussiness.BussinessOrderInfoModel busiOrderInfoModel)
+        public order TranslateOrder(Model.ParameterModel.Bussiness.BussinessOrderInfoPM busiOrderInfoModel)
         {
             order to = new order();
             to.OrderNo = Helper.generateOrderCode(busiOrderInfoModel.userId);  //根据userId生成订单号(15位)
@@ -251,8 +255,10 @@ namespace Ets.Service.Provider.Order
                 to.ReceviceCity = business.City; //城市
                 to.DistribSubsidy = business.DistribSubsidy;//设置外送费,从商户中找。
                 to.BusinessCommission = ParseHelper.ToDecimal(business.BusinessCommission);//商户结算比例
-                to.BusinessName = business.Name;
-               
+to.BusinessName = business.Name;
+                to.CommissionType = business.CommissionType;//结算类型：1：固定比例 2：固定金额
+                to.CommissionFixValue = ParseHelper.ToDecimal(business.CommissionFixValue);//固定金额     
+                to.BusinessGroupId = business.BusinessGroupId;
             }
             if (ConfigSettings.Instance.IsGroupPush)
             {
@@ -280,14 +286,25 @@ namespace Ets.Service.Provider.Order
                 Amount = busiOrderInfoModel.Amount, /*订单金额*/
                 DistribSubsidy = to.DistribSubsidy,/*外送费*/
                 OrderCount = busiOrderInfoModel.OrderCount/*订单数量*/,
-                BusinessCommission = to.BusinessCommission /*商户结算比例*/
+                BusinessCommission = to.BusinessCommission, /*商户结算比例*/
+                CommissionType = to.CommissionType,/*结算类型：1：固定比例 2：固定金额*/
+                CommissionFixValue = to.CommissionFixValue,/*固定金额*/
+                BusinessGroupId = business.BusinessGroupId,
+                StrategyId = business.StrategyId
+
             };
-            OrderPriceProvider commProvider = CommissionFactory.GetCommission();
+
+            //BusinessGroupModel businessGroupModel = iBusinessGroupProvider.GetCurrenBusinessGroup(business.Id);
+            //commProvider = CommissionFactory.GetCommission(businessGroupModel.StrategyId);
+
+            OrderPriceProvider commProvider = CommissionFactory.GetCommission(business.StrategyId);
+            to.CommissionFormulaMode = business.StrategyId;           
+
             to.CommissionRate = commProvider.GetCommissionRate(orderComm); //佣金比例 
             to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
             to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
             to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
-            to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
+            to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(business.BusinessGroupId).CommissionFormulaMode);
             to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额
             to.Status = ConstValues.ORDER_NEW;
 
@@ -422,14 +439,19 @@ namespace Ets.Service.Provider.Order
         /// <returns>订单号码</returns>
         public ResultModel<object> Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
         {
-            ///查询缓存，看看当前店铺是否存在,缓存存储E代送的商户id
+            //查询缓存，看看当前店铺是否存在,缓存存储E代送的商户id
             var redis = new ETS.NoSql.RedisCache.RedisCache();
 
             #region 第三方订单是否重复推送的验证  add by caoheyang 20150417
+
             string orderExistsNo = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
-            paramodel.order_id.ToString()));  //查询缓存，看当前订单是否存在，key的形式为集团ID_第三方平台订单号
+            paramodel.order_id.ToString()));  //查询缓存，看当前订单是否存在,“true”代表存在，key的形式为集团ID_第三方平台订单号
             if (orderExistsNo != null)
                 return ResultModel<object>.Conclude(OrderApiStatusType.OrderExists, new { order_no = orderExistsNo });
+            if (paramodel.total_price<=0)  //金额小于等于0，数据不合法，返回信息 待用数据特性优化
+            {
+                return ResultModel<object>.Conclude(OrderApiStatusType.ParaError);
+            }
             #endregion
 
             #region 设置用户的省市区编码信息 add by caoheyang 20150407
@@ -495,23 +517,30 @@ namespace Ets.Service.Provider.Order
 
             #region 根据集团id为店铺设置外送费，结算比例等财务相关信息add by caoheyang 20150417
 
-            ///此处其实应该取数据库，但是由于发布订单时关于店铺的逻辑后期要改，暂时这么处理 
+            //此处其实应该取数据库，但是由于发布订单时关于店铺的逻辑后期要改，暂时这么处理 
             IGroupProviderOpenApi groupProvider = OpenApiGroupFactory.Create(paramodel.store_info.group);
             paramodel = groupProvider.SetCommissonInfo(paramodel);
 
             #endregion
 
             #region 佣金相关  add by caoheyang 20150416
-            paramodel.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
+            paramodel.CommissionFormulaMode = 0;//默认第三方策略，是普通策略 //ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
+            paramodel.CommissionType = 1;//结算类型：1：固定比例 2：固定金额
+            paramodel.CommissionFixValue = 0;//固定金额
+            paramodel.BusinessGroupId = 1;//分组ID
+          
             //计算获得订单骑士佣金
             OrderCommission orderComm = new OrderCommission()
             {
                 Amount = paramodel.total_price, /*订单金额*/
                 DistribSubsidy = paramodel.store_info.delivery_fee,/*外送费*/
-                OrderCount = paramodel.package_count == null ? 1 : paramodel.package_count,/*订单数量，默认为1*/
-                BusinessCommission = paramodel.store_info.businesscommission/*商户结算比例*/
+                OrderCount = paramodel.package_count ?? 1,/*订单数量，默认为1*/
+                BusinessCommission = paramodel.store_info.businesscommission,/*商户结算比例*/
+                BusinessGroupId = paramodel.BusinessGroupId,
+                StrategyId =0
+
             }/*网站补贴*/;
-            OrderPriceProvider commissonPro = CommissionFactory.GetCommission();
+            OrderPriceProvider commissonPro = CommissionFactory.GetCommission(0);//万达、全时采用默认分组下策略
             paramodel.ordercommission = commissonPro.GetCurrenOrderCommission(orderComm);  //骑士佣金
             paramodel.websitesubsidy = commissonPro.GetOrderWebSubsidy(orderComm);//网站补贴
             paramodel.commissionrate = commissonPro.GetCommissionRate(orderComm);//订单佣金比例
@@ -524,29 +553,22 @@ namespace Ets.Service.Provider.Order
             try
             {
                 using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
-                {
+                {  
+                    //将当前订单插入到缓存中，设置过期时间30天
+                    redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
+                        paramodel.order_id.ToString()), "True", DateTime.Now.AddDays(30));  //先加入缓存，相当于加锁
                     orderNo = OrderDao.CreateToSql(paramodel);
-                    //if (!string.IsNullOrWhiteSpace(orderNo))
-                    //    Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！"
-                    //        , string.Empty, paramodel.address.city); //激光推送   
-                    if (string.IsNullOrWhiteSpace(orderNo))  //同步失败，清除缓存内的信息
-                    {
-                        redis.Delete(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo,
-                                paramodel.store_info.group.ToString(), paramodel.order_id.ToString()));
-                        throw new Exception(message: "第三方订单号:" + paramodel.order_id+",orderfrom:"+paramodel.orderfrom+ ",数据库操作过程中某一步返回了null");
-                    }
-                    else
-                    {
-                        tran.Complete();
-                    }
+                    redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
+                      paramodel.order_id.ToString()), orderNo, DateTime.Now.AddDays(30));  //更新缓存
+                    tran.Complete();
                 }
             }
             catch (Exception ex)
             {
-                redis.Delete(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, //同步失败，清除缓存内的订单信息信息
+                redis.Delete(string.Format(RedissCacheKey.OtherOrderInfo, //同步失败，清除缓存内的订单信息信息
                            paramodel.store_info.group.ToString(), paramodel.order_id.ToString()));
                 if (bussinessIdstr == null)  //同步失败，之前店铺不存在时，清空店铺缓存，因为数据已经被回滚，但是缓存加上了
-                    redis.Delete(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(), paramodel.store_info.store_id.ToString()));
+                    redis.Delete(string.Format(RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(), paramodel.store_info.store_id.ToString()));
                 throw ex; //异常上抛
             }
 
@@ -866,15 +888,19 @@ namespace Ets.Service.Provider.Order
                 Amount = from.Amount - from.DistribSubsidy, /*订单金额*/
                 DistribSubsidy = from.DistribSubsidy,/*外送费*/
                 OrderCount = to.OrderCount/*订单数量*/,
-                BusinessCommission = to.BusinessCommission /*商户结算比例*/
+                BusinessCommission = to.BusinessCommission, /*商户结算比例*/
+                BusinessGroupId = business.BusinessGroupId,
+                StrategyId = business.StrategyId
             };
-            OrderPriceProvider commProvider = CommissionFactory.GetCommission();
+            OrderPriceProvider commProvider = CommissionFactory.GetCommission(business.StrategyId);
+            to.CommissionFormulaMode = business.StrategyId;             
             to.CommissionRate = commProvider.GetCommissionRate(orderComm); //佣金比例 
             to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
             to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
             to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
 
-            to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
+
+            to.CommissionFormulaMode = business.StrategyId;
             to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额
 
             to.Status = ConstValues.ORDER_NEW;
@@ -1020,9 +1046,25 @@ namespace Ets.Service.Provider.Order
 
         }
 
+        /// <summary>
+        /// 获取订单详情
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public OrderDM GetDetails(int id)
         {
             return OrderDao.GetDetails(id);
+        }
+
+        /// <summary>
+        /// 判断订单是否存在
+        /// hulingbo 20150511
+        /// </summary>
+        /// <param name="id">订单Id</param>
+        /// <returns></returns>
+        public bool IsExist(int id)
+        {
+            return OrderDao.IsExist(id);
         }
     }
 }

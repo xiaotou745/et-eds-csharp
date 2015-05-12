@@ -42,6 +42,13 @@ namespace Ets.Service.IProvider.User
         /// <param name="model">log实体</param>
         /// <returns></returns>
         bool SetCommission(int id, decimal price, decimal waisongfei, UserOptRecordPara model);
+        /// <summary>
+        /// 设置结算比例
+        /// danny-20150504
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        bool ModifyCommission(BusListResultModel busListResultModel, UserOptRecordPara model);
 
         /// <summary>
         /// 商户结算列表--2015.3.12 平扬
@@ -235,7 +242,23 @@ namespace Ets.Service.IProvider.User
         /// <param name="model"></param>
         /// <returns></returns>
         int InsertOtherBusiness(Business model);
+
         /// <summary>
+        /// 获取商户详情
+        /// hulingbo 20150511
+        /// </summary>
+        /// <param name="id">商户id</param>
+        /// <returns></returns>
+        BusinessDM GetDetails(int id);
+
+        /// <summary>
+        /// 判断商户是否存在
+        /// hulingbo 20150511
+        /// </summary>
+        /// <param name="id">商户Id</param>
+        /// <returns></returns>
+        bool IsExist(int id);
+		/// <summary>
         /// 获取商户详细信息
         /// </summary>
         /// <param name="businessId">商户Id</param>

@@ -8,8 +8,9 @@ namespace Ets.Model.ParameterModel.Bussiness
 {
     /// <summary>
     /// B端发布订单所需数据
+    /// hulingbo 20150511
     /// </summary>
-    public class BussinessOrderInfoModel
+    public class BussinessOrderInfoPM
     {
         /// <summary>
         /// 当前发布者
@@ -64,6 +65,15 @@ namespace Ets.Model.ParameterModel.Bussiness
         public string OrderSign { get; set; }
 
         /// <summary>
+        /// 商家分组ID
+        /// </summary>
+        public int BusinessGroupId { get; set; }
+
+        /// <summary>
+        /// 策略ID
+        /// </summary>
+        public int StrategyId { get; set; }
+/// <summary>
         /// 时间戳
         /// </summary>
         public string TimeSpan { get; set; }
@@ -71,13 +81,6 @@ namespace Ets.Model.ParameterModel.Bussiness
         /// <summary>
         /// 订单小票列表
         /// </summary>
-        public List<OrderChlidParamModel> listOrderChlid { get; set; }
-
-    }
-
-    public class OrderChlidParamModel
-    {
-        public int ChildId { get; set; }
-        public decimal GoodPrice { get; set; }  
+        public List<OrderChlidPM> listOrderChlid { get; set; }
     }
 }

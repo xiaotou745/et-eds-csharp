@@ -14,14 +14,19 @@ namespace Ets.Model.ParameterModel.AliPay
         public int payType { get; set; }
 
         /// <summary>
-        /// 订单号
+        /// 订单ID,看好。不是OrderNo
         /// </summary>
-        public string orderNo { get; set; }
+        public int orderId { get; set; }
+
+        /// <summary>
+        /// 子订单ID
+        /// </summary>
+        public int childId { get; set; }
 
         /// <summary>
         /// 支付金额
         /// </summary>
-        public decimal payAmount { get; set; }
+        //public decimal payAmount { get; set; }
 
         /// <summary>
         /// 接口版本号

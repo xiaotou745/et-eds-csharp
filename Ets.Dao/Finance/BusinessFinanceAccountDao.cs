@@ -77,11 +77,11 @@ where  Id=@Id ";
         /// </summary>
         public BusinessFinanceAccount GetById(int id)
         {
-            BusinessFinanceAccount model = new BusinessFinanceAccount();
+            BusinessFinanceAccount model = null;
             const string querysql = @"
 select  Id,BusinessId,TrueName,AccountNo,IsEnable,AccountType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
 from  BusinessFinanceAccount (nolock)
-where  Id=@Id ";
+where  Id=@Id and IsEnable=1";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Id", id);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));

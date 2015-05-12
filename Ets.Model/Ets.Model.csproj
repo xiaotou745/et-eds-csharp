@@ -40,13 +40,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\AliPay\AlipayNotifyData.cs" />
     <Compile Include="Common\AliPay\NotifyResultModel.cs" />
+    <Compile Include="Common\AliPay\OrderPayModel.cs" />
     <Compile Include="Common\AliPay\PayResultModel.cs" />
     <Compile Include="Common\ApiVersionStatisticModel.cs" />
     <Compile Include="Common\BusinessCountManageList.cs" />
     <Compile Include="Common\ClienterCountManageList.cs" />
     <Compile Include="Common\ConstValues.cs" />
     <Compile Include="Common\DealResultInfo.cs" />
+    <Compile Include="Common\GlobalConfig.cs" />
     <Compile Include="Common\HomeCountTitleModel.cs" />
     <Compile Include="Common\ImageCommon.cs" />
     <Compile Include="Common\JPushModel.cs" />
@@ -55,8 +58,12 @@
     <Compile Include="Common\OrderCountManageList.cs" />
     <Compile Include="Common\PagedList.cs" />
     <Compile Include="Common\TestUserModel.cs" />
+    <Compile Include="DataModel\Bussiness\BusinessGroupLogModel.cs" />
+    <Compile Include="DataModel\Bussiness\BusinessGroupModel.cs" />
     <Compile Include="DataModel\Bussiness\BusinessOptionLog.cs" />
     <Compile Include="DataModel\Clienter\ClienterCrossShopLogModel.cs" />
+    <Compile Include="DataModel\Clienter\CrossShopStatisticLogModel.cs" />
+    <Compile Include="DataModel\Strategy\StrategyModel.cs" />
     <Compile Include="DataModel\Finance\Bank.cs" />
     <Compile Include="DataModel\Finance\BusinessBalanceRecord.cs" />
     <Compile Include="DataModel\Finance\BusinessFinanceAccount.cs" />
@@ -79,6 +86,7 @@
     <Compile Include="DomainModel\Finance\BusinessRecordsDM.cs" />
     <Compile Include="DomainModel\Finance\BusinessWithdrawFormModel.cs" />
     <Compile Include="DomainModel\Finance\BusinessWithdrawLogModel.cs" />
+    <Compile Include="DomainModel\Finance\FinanceRecordsDM.cs" />
     <Compile Include="DomainModel\Subsidy\ShortMessageModel.cs" />
     <Compile Include="DomainModel\Subsidy\GrabOrderModel.cs" />
     <Compile Include="ParameterModel\AliPay\NotifyModel.cs" />
@@ -161,6 +169,7 @@
     <Compile Include="ParameterModel\Bussiness\OrderCancelModel.cs" />
     <Compile Include="ParameterModel\Bussiness\OrderCancelResultModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BussinessPM.cs" />
+    <Compile Include="ParameterModel\Bussiness\OrderChlidPM.cs" />
     <Compile Include="ParameterModel\Bussiness\RegisterInfoModel.cs" />
     <Compile Include="ParameterModel\Clienter\ClienterPM.cs" />
     <Compile Include="ParameterModel\Clienter\ChangeWorkStatusPM.cs" />

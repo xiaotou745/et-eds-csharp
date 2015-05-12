@@ -10,6 +10,7 @@ using Ets.Model.DataModel.Finance;
 using ETS.Dao;
 using ETS.Data.Core;
 using ETS.Extension;
+using Ets.Model.DomainModel.Finance;
 using ETS.Util;
 using Ets.Model.ParameterModel.Finance;
 #endregion
@@ -110,11 +111,12 @@ from  ClienterBalanceRecord (nolock)" + condition;
         /// </summary> 
         /// <param name="clienterId">骑士id</param>
         /// <returns></returns>
-        public IList<ClienterBalanceRecord> GetByClienterId(int clienterId)
+        public IList<FinanceRecordsDM> GetByClienterId(int clienterId)
         {
-            IList<ClienterBalanceRecord> models = new List<ClienterBalanceRecord>();
+            IList<FinanceRecordsDM> models = new List<FinanceRecordsDM>();
             const string querysql = @"
-select  Id,ClienterId,Amount,Status,Balance,RecordType,Operator,OperateTime,WithwardId,RelationNo,Remark
+select  Id,ClienterId as UserId,Amount,Status,Balance,RecordType,Operator,OperateTime,WithwardId,RelationNo,Remark,
+ convert(varchar(4),DATEPART(Year,OperateTime))+'年'+convert(varchar(4),DATEPART(month,OperateTime)) +'月' as YearInfo
 from  ClienterBalanceRecord (nolock)
 where  ClienterId=@ClienterId 
 order by Id desc";
@@ -123,7 +125,7 @@ order by Id desc";
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
             if (DataTableHelper.CheckDt(dt))
             {
-                models = DataTableHelper.ConvertDataTableList<ClienterBalanceRecord>(dt);
+                models = DataTableHelper.ConvertDataTableList<FinanceRecordsDM>(dt);
             }
             return models;
         }
