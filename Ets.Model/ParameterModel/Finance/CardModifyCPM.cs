@@ -15,7 +15,6 @@ namespace Ets.Model.ParameterModel.Finance
         /// <summary>
         /// Id
         /// </summary>
-
         public int Id { get; set; }
 
         /// <summary>
