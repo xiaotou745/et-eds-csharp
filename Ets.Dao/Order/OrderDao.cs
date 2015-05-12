@@ -1771,8 +1771,48 @@ where  OrderId=@OrderId ";
             IDbParameters dbOrderChildParameters = DbHelper.CreateDbParameters();
             dbOrderChildParameters.AddWithValue("OrderId", id);
             DataTable dtOrderChild = DbHelper.ExecuteDataTable(SuperMan_Read, queryOrderChildSql, dbOrderChildParameters);      
-            List<OrderChild> listOrderChild=(List<OrderChild>)MapRows<OrderChild>(dtOrderChild);
-            orderDM.listOrderChild=listOrderChild;         
+            //List<OrderChild> listOrderChild=(List<OrderChild>)MapRows<OrderChild>(dtOrderChild);
+            //orderDM.listOrderChild=listOrderChild;         
+            List<OrderChild> listOrderChild = new List<OrderChild>();
+            foreach (DataRow dataRow in dtOrderChild.Rows)
+            {
+                OrderChild orChild = new OrderChild();
+                orChild.Id = Convert.ToInt32(dataRow["Id"]);
+                orChild.OrderId = Convert.ToInt32(dataRow["OrderId"]);
+                orChild.ChildId = Convert.ToInt32(dataRow["ChildId"]);
+                orChild.TotalPrice = Convert.ToDecimal(dataRow["TotalPrice"]);
+                orChild.GoodPrice = Convert.ToDecimal(dataRow["GoodPrice"]);
+                orChild.DeliveryPrice = Convert.ToDecimal(dataRow["DeliveryPrice"]);
+                if (dataRow["PayStyle"] != null && dataRow["PayStyle"]!=DBNull.Value)
+                {
+                    orChild.PayStyle = Convert.ToInt32(dataRow["PayStyle"]);
+                }
+                if (dataRow["PayType"] != null && dataRow["PayType"] != DBNull.Value)
+                {
+                    orChild.PayType = Convert.ToInt32(dataRow["PayType"]);
+                }
+                orChild.PayStatus = Convert.ToInt32(dataRow["PayStatus"]);
+                if (dataRow["PayBy"] != null && dataRow["PayBy"] != DBNull.Value)
+                {
+                    orChild.PayBy = dataRow["PayBy"].ToString();
+                }
+                if (dataRow["PayTime"] != null && dataRow["PayTime"] != DBNull.Value)
+                {
+                    orChild.PayTime = Convert.ToDateTime(dataRow["PayTime"]);
+                }
+                orChild.PayPrice = Convert.ToDecimal(dataRow["PayPrice"]);
+                orChild.HasUploadTicket = Convert.ToBoolean(dataRow["HasUploadTicket"]);
+                if (dataRow["TicketUrl"] != null && dataRow["TicketUrl"] != DBNull.Value)
+                {
+                    orChild.TicketUrl = ImageCommon.ReceiptPicConvert(dataRow["TicketUrl"].ToString())[0];
+                }
+                orChild.CreateBy = dataRow["CreateBy"].ToString();
+                orChild.CreateTime = Convert.ToDateTime(dataRow["CreateTime"]);
+                orChild.UpdateBy = dataRow["UpdateBy"].ToString();
+                orChild.UpdateTime = Convert.ToDateTime(dataRow["UpdateTime"]);
+                listOrderChild.Add(orChild);
+            }
+            orderDM.listOrderChild = listOrderChild;         
             #endregion
 
             #region 订单明细

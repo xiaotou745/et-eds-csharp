@@ -1461,9 +1461,13 @@ from  BusinessFinanceAccount (nolock) where BusinessId=@BusinessId and IsEnable=
                 bf.IsEnable = Convert.ToBoolean(dataRow["IsEnable"]);                
                 bf.AccountType = Convert.ToInt32(dataRow["AccountType"]);
                 if (dataRow["OpenBank"] != null && dataRow["OpenBank"]!=DBNull.Value)
+                { 
                     bf.OpenBank = dataRow["OpenBank"].ToString();
+                }
                 if (dataRow["OpenSubBank"] != null && dataRow["OpenSubBank"] != DBNull.Value)
+                {
                     bf.OpenSubBank = dataRow["OpenSubBank"].ToString();
+                }
                 bf.CreateBy = dataRow["CreateBy"].ToString();
                 bf.CreateTime =Convert.ToDateTime(dataRow["CreateTime"]);
                 bf.UpdateBy = dataRow["UpdateBy"].ToString();
