@@ -137,8 +137,8 @@ namespace Ets.Service.Provider.Finance
             {
                 return new Tuple<bool, FinanceWithdrawC>(false, FinanceWithdrawC.MoneyError);
             }
-            ClienterFinanceAccount clienterFinanceAccounts = _clienterFinanceAccountDao.GetById(withdrawCpm.FinanceAccountId);//获取超人金融账号信息
-            if (clienterFinanceAccounts==null)
+            clienterFinanceAccount = _clienterFinanceAccountDao.GetById(withdrawCpm.FinanceAccountId);//获取超人金融账号信息
+            if (clienterFinanceAccount == null)
             {
                 return new Tuple<bool, FinanceWithdrawC>(false, FinanceWithdrawC.FinanceAccountError);
             }
