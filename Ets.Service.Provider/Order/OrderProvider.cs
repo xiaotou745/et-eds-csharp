@@ -37,9 +37,9 @@ using Ets.Service.Provider.Clienter;
 using Ets.Service.IProvider.OpenApi;
 using Ets.Model.ParameterModel.Bussiness;
 using Ets.Service.IProvider.Statistics;
-using Ets.Service.Provider.User;
 using Ets.Model.DataModel.Strategy;
-
+using Ets.Service.Provider.Order;
+using Ets.Model.DomainModel.Order;
 namespace Ets.Service.Provider.Order
 {
     public class OrderProvider : IOrderProvider
@@ -1046,16 +1046,20 @@ to.BusinessName = business.Name;
 
         }
 
-        /// <summary>
-        /// 获取订单详情
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public OrderDM GetDetails(int id)
-        {
-            return OrderDao.GetDetails(id);
-        }
+        ///// <summary>
+        ///// 获取订单详情
+        ///// </summary>
+        ///// <param name="id"></param>
+        ///// <returns></returns>
+        //public OrderDM GetDetails(int id)
+        //{
+        //    return OrderDao.GetDetails(id);
+        //}
 
+        public order GetById(int id)
+        {
+            return OrderDao.GetById(id);
+        }    
         /// <summary>
         /// 判断订单是否存在
         /// hulingbo 20150511
@@ -1065,6 +1069,76 @@ to.BusinessName = business.Name;
         public bool IsExist(int id)
         {
             return OrderDao.IsExist(id);
+        }
+        public OrderDM GetDetails(int id)
+        {
+            OrderDM orderDM = new OrderDM();
+
+            order order = GetById(id);
+            orderDM.Id = order.Id;
+            orderDM.OrderNo = order.OrderNo;
+            orderDM.OriginalOrderNo = order.OriginalOrderNo;
+            orderDM.OrderFrom = order.OrderFrom;
+            orderDM.OrderCommission = order.OrderCommission;          
+            orderDM.PubDate = order.PubDate;
+            orderDM.businessName = order.BusinessName;
+            orderDM.pickUpCity = order.PickUpCity;
+            orderDM.PickUpAddress = order.PickUpAddress;
+            orderDM.businessPhone = order.BusinessPhone;
+            orderDM.ReceviceName = order.ReceviceName;
+            orderDM.receviceCity = order.ReceviceCity;
+            orderDM.RecevicePhoneNo = order.RecevicePhoneNo;
+            orderDM.ReceviceAddress = order.ReceviceAddress;
+            orderDM.Amount = order.Amount;
+            orderDM.IsPay = Convert.ToBoolean(order.IsPay);
+            orderDM.Remark = order.Remark;
+            orderDM.Status = order.Status;
+            orderDM.OrderCount = order.OrderCount;
+            orderDM.GroupId = order.GroupId;
+            orderDM.PickupCode = order.PickupCode;
+            orderDM.Payment = order.Payment;        
+          
+            Ets.Service.Provider.Order.OrderChildProvider orderChildPr=new OrderChildProvider();
+            orderDM.listOrderChild = orderChildPr.GetByOrderId(id);
+          
+            Ets.Service.Provider.Order.OrderDetailProvider orderDetailPr = new OrderDetailProvider();
+            orderDM.listOrderDetail = orderDetailPr.GetByOrderNo(order.OrderNo);
+
+
+            #region 计算经纬度     
+
+            if (order.Longitude == null || order.Longitude == 0 || order.Latitude == null || order.Latitude == 0)
+            {
+                orderDM.distance = "--";
+                orderDM.distanceB2R = "--";
+                orderDM.distance_OrderBy = 9999999.0;
+            }
+            else
+            {
+                if (degree.longitude == 0 || degree.latitude == 0 || order.businessId <= 0)
+                { orderDM.distance = "--"; orderDM.distance_OrderBy = 9999999.0; }
+                else if (order.businessId > 0)  //计算超人当前到商户的距离
+                {
+                    Degree degree1 = new Degree(degree.longitude, degree.latitude);   //超人当前的经纬度
+                    Degree degree2 = new Degree(order.Longitude.Value, order.Latitude.Value); //商户经纬度
+                    var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
+                    orderDM.distance = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
+                    orderDM.distance_OrderBy = res;
+                }
+                if (order.businessId > 0 && order.ReceviceLongitude != null && order.ReceviceLatitude != null
+                    && order.ReceviceLongitude != 0 && order.ReceviceLatitude != 0)  //计算商户到收货人的距离
+                {
+                    Degree degree1 = new Degree(order.Longitude.Value, order.Latitude.Value);  //商户经纬度
+                    Degree degree2 = new Degree(order.ReceviceLongitude.Value, order.ReceviceLatitude.Value);  //收货人经纬度
+                    var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
+                    orderDM.distanceB2R = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
+                }
+                else
+                    orderDM.distanceB2R = "--";
+            }
+            #endregion
+
+            return orderDM;
         }
     }
 }

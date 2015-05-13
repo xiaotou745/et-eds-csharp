@@ -111,10 +111,51 @@ namespace Ets.Model.DataModel.Order
         /// </summary>
         public string TimeSpan { get; set; }
 
+
         /// <summary>
         /// 订单小票列表
         /// </summary>
         public List<OrderChlidPM> listOrderChild { get; set; }
+
+
+        /// <summary>
+        /// 支付类型 0 现金
+        /// </summary>
+        public int? Payment { get; set; }
+        /// <summary>
+        /// 额外补贴次数
+        /// </summary>
+        public int DealCount { get; set; }
+
+        /// <summary>
+        /// 取货码（目前只有全时再用）
+        /// </summary>
+        public string PickupCode { get; set; }
+        /// <summary>
+        /// 美团订单（商户取消接单原因）
+        /// </summary>
+        public string OtherCancelReason { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal? RushOrderLongitude { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal? RushOrderLandline { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal? FinishOrderLongitude { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal? FinishOrderLandline { get; set; }
+
+
+        public double? Longitude { get; set; }
+        public double? Latitude { get; set; }
+
 
     }
 }

@@ -10,7 +10,8 @@ using ETS.Extension;
 using Ets.Model.DataModel.Order;
 using Ets.Model.ParameterModel.Order;
 using ETS.Util;
-
+using ETS.Data.Generic;
+using Ets.Model.DomainModel.Order;
 namespace Ets.Dao.Order
 {
     /// <summary>
@@ -218,6 +219,31 @@ where  Id=@Id ";
             parm.Add("ChildId", SqlDbType.Int, 4).Value = orderChildId;
             return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm), 0) > 0 ? true : false;
         }
+
+        /// <summary>
+        /// 获取子订单列表
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public List<OrderChildInfo> GetByOrderId(long orderId)
+        {
+            List<OrderChildInfo> list = new List<OrderChildInfo>();
+
+            const string querySql = @"
+select  Id,OrderId,ChildId,TotalPrice,GoodPrice,DeliveryPrice,PayStyle,PayType,PayStatus,PayBy,
+PayTime,PayPrice,HasUploadTicket,TicketUrl,CreateBy,CreateTime,UpdateBy,UpdateTime
+from  OrderChild (nolock)
+where  OrderId=@OrderId ";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("OrderId", orderId);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, querySql, dbParameters);
+            list = (List<OrderChildInfo>)MapRows<OrderChildInfo>(dt);
+
+            return list;
+        }
+
+
     }
 
 }

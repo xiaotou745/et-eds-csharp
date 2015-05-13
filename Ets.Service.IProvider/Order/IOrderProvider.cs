@@ -174,6 +174,7 @@ namespace Ets.Service.IProvider.Order
         /// <returns></returns>
         ResultModel<object> UpdateOrderStatus_Other(ChangeStatusPM_OpenApi paramodel);
 
+        order GetById(int id);
         /// <summary>
         /// 获取订单详情
         /// hulingbo 20150511

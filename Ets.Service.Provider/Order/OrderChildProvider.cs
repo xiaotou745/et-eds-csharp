@@ -7,7 +7,7 @@ using Ets.Model.DataModel.Order;
 using Ets.Model.ParameterModel.Order;
 using Ets.Service.IProvider.Order;
 using Ets.Dao.Order;
-
+using Ets.Model.DomainModel.Order;
 namespace Ets.Service.Provider.Order
 {
     /// <summary>
@@ -67,5 +67,9 @@ namespace Ets.Service.Provider.Order
             return _orderChildDao.Query(orderChildPM);
         }
 
+        public List<OrderChildInfo> GetByOrderId(int orderId)
+        {
+            return _orderChildDao.GetByOrderId(orderId);
+        }
     }
 }

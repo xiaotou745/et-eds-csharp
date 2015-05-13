@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Ets.Model.DataModel.Order;
 using Ets.Model.ParameterModel.Order;
-
+using Ets.Model.DomainModel.Order;
 namespace Ets.Service.IProvider.Order
 {
     /// <summary>
@@ -39,6 +39,13 @@ namespace Ets.Service.IProvider.Order
         /// <param name="id">id</param>
         /// </summary>
         OrderChild GetById(int id);
+
+        /// <summary>
+        /// 根据订单ID得到一个子订单集合
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>    
+        List<OrderChildInfo> GetByOrderId(int orderId);        
 
         /// <summary>
         /// 查询方法

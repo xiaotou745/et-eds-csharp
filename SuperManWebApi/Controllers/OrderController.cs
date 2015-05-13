@@ -36,6 +36,7 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<BusiOrderResultModel> Push(BussinessOrderInfoPM model)
         {
+
             #region 验证
             if (!iBusinessProvider.HaveQualification(model.userId))//验证该商户有无发布订单资格 
             {
@@ -78,6 +79,8 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<OrderDM> GetDetails(OrderPM model)
         {
+            Ets.Model.DomainModel.Clienter.degree.longitude = model.longitude;
+            Ets.Model.DomainModel.Clienter.degree.latitude = model.latitude;
             #region 验证
             var version = HttpContext.Current.Request.Form["Version"];
             if (string.IsNullOrWhiteSpace(version)) //版本号 

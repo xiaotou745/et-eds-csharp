@@ -58,6 +58,7 @@
     <Compile Include="OpenApi\IPullOrderInfoOpenApi.cs" />
     <Compile Include="Order\IAutoAdjustProvider.cs" />
     <Compile Include="Order\IOrderChildProvider.cs" />
+    <Compile Include="Order\IOrderDetailProvider.cs" />
     <Compile Include="Order\IOrderProvider.cs" />
     <Compile Include="Clienter\IClienterProvider.cs" />
     <Compile Include="Pay\IPayProvider.cs" />
