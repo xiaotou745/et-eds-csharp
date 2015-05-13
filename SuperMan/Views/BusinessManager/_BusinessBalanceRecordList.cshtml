@@ -18,35 +18,35 @@
                 var recordTypeDes = "";
                 foreach (var item in businessBalanceRecordList)
                 {
-                    if (item.RecordType == 1)
+                    if (item.RecordType == ETS.Enums.BusinessBalanceRecordRecordType.OrderMeals.GetHashCode())
                     {
                         recordTypeDes = "订单餐费";
                     }
-                    else if (item.RecordType == 2)
+                    else if (item.RecordType == ETS.Enums.BusinessBalanceRecordRecordType.PostMoney.GetHashCode())
                     {
                         recordTypeDes = "配送费";
                     }
-                    else if (item.RecordType == 3)
+                    else if (item.RecordType == ETS.Enums.BusinessBalanceRecordRecordType.Withdraw.GetHashCode())
                     {
                         recordTypeDes = "提现";
                     }
-                    else if (item.RecordType == 4)
+                    else if (item.RecordType == ETS.Enums.BusinessBalanceRecordRecordType.Recharge.GetHashCode())
                     {
                         recordTypeDes = "充值";
                     }
-                    else if (item.RecordType == 5)
+                    else if (item.RecordType == ETS.Enums.BusinessBalanceRecordRecordType.Return.GetHashCode())
                     {
-                        recordTypeDes = "打款失败返现";
+                        recordTypeDes = "提现失败返现";
                     }
                     i++;
-        <tr id="@item.Id">
-            <td>@recordTypeDes</td>
-            <td><a href="javascript:funLookDetail(@item.WithwardId)">@item.RelationNo</a></td>
-            <td>@item.Balance</td>
-            <td>@(item.Status==1?"交易成功":"交易中")</td>
-            <td>@item.OperateTime</td>
-            <td>@item.Operator</td>
-        </tr>
+                    <tr id="@item.Id">
+                        <td>@recordTypeDes</td>
+                        <td><a href="javascript:funLookDetail(@item.WithwardId)">@item.RelationNo</a></td>
+                        <td>@item.Balance</td>
+                        <td>@(item.Status == 1 ? "交易成功" : "交易中")</td>
+                        <td>@item.OperateTime</td>
+                        <td>@item.Operator</td>
+                    </tr>
                 }
             }
         }
@@ -60,9 +60,6 @@
         </fieldset>
         <fieldset style="border-top:hidden">
             <table border="0" cellspacing="0" cellpadding="0" style="font-size:16px;width:450px">
-                @*<tr style="background-color:gray;font-size:18px;">
-                        <td><center>商户提款详情</center></td>
-                    </tr>*@
                 <tr>
                     <td><span class="">提现日期: <label id="labWithdrawTime"></label></span></td>
                 </tr>
@@ -134,7 +131,6 @@
                     else if (result.Status == -2) {
                         strstatus = "打款失败";
                     }
-                    alert(result.WithdrawTime);
                     $('#labWithdrawTime').text(result.WithdrawTime);
                     $('#labWithdrawStatus').text(strstatus);
                     $('#labWithdrawNo').text(result.WithwardNo);
