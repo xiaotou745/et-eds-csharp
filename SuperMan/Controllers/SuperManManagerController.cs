@@ -18,6 +18,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Ets.Service.Provider.Finance;
+using Ets.Service.IProvider.Finance;
+using Ets.Model.ParameterModel.Finance;
+using System.Text;
 
 namespace SuperMan.Controllers
 {
@@ -26,6 +30,7 @@ namespace SuperMan.Controllers
     {
         Ets.Service.IProvider.Distribution.IDistributionProvider iDistributionProvider = new DistributionProvider();
         ClienterProvider cliterProvider = new ClienterProvider();
+        IClienterFinanceProvider iClienterFinanceProvider = new ClienterFinanceProvider();
         IAreaProvider iAreaProvider = new AreaProvider();
         // GET: BusinessManager
         public ActionResult SuperManManager()
@@ -174,6 +179,70 @@ namespace SuperMan.Controllers
             var pagedList = new SubsidyProvider().GetCrossShopListByCid(UserId); 
             ViewBag.pagedList = pagedList;
             return View();
+        }
+
+        /// <summary>
+        /// 查看骑士详细信息
+        /// danny-20150513
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public ActionResult ClienterDetail(string clienterId)
+        {
+
+            var clienterWithdrawFormModel = cliterProvider.GetClienterDetailById(clienterId);
+            var criteria = new ClienterBalanceRecordSerchCriteria()
+            {
+                ClienterId = Convert.ToInt32(clienterId)
+            };
+            ViewBag.clienterBalanceRecord = iClienterFinanceProvider.GetClienterBalanceRecordList(criteria);
+            return View(clienterWithdrawFormModel);
+        }
+
+        /// <summary>
+        /// 查看骑士余额流水记录
+        /// danny-20150513
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public ActionResult ClienterBalanceRecord(ClienterBalanceRecordSerchCriteria criteria)
+        {
+            ViewBag.clienterBalanceRecord = iClienterFinanceProvider.GetClienterBalanceRecordList(criteria);
+            return PartialView("_ClienterBalanceRecordList");
+        }
+        /// <summary>
+        /// 导出骑士余额流水记录
+        /// danny-20150513
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public ActionResult ExportClienterBalanceRecord()
+        {
+            var criteria = new Ets.Model.ParameterModel.Finance.ClienterBalanceRecordSerchCriteria();
+            TryUpdateModel(criteria);
+            var dtClienterBalanceRecord = iClienterFinanceProvider.GetClienterBalanceRecordListForExport(criteria);
+            if (dtClienterBalanceRecord != null && dtClienterBalanceRecord.Count > 0)
+            {
+
+                string filname = "骑士提款流水记录{0}.xls";
+                if (!string.IsNullOrWhiteSpace(criteria.OperateTimeStart))
+                {
+                    filname = string.Format(filname, criteria.OperateTimeStart + "~" + criteria.OperateTimeEnd);
+                }
+                byte[] data = Encoding.UTF8.GetBytes(iClienterFinanceProvider.CreateClienterBalanceRecordExcel(dtClienterBalanceRecord.ToList()));
+                return File(data, "application/ms-excel", filname);
+            }
+            else
+            {
+
+                var clienterWithdrawFormModel = cliterProvider.GetClienterDetailById(criteria.ClienterId.ToString());
+                var criteriaNew = new ClienterBalanceRecordSerchCriteria()
+                {
+                    ClienterId = Convert.ToInt32(criteria.ClienterId)
+                };
+                ViewBag.clienterBalanceRecord = iClienterFinanceProvider.GetClienterBalanceRecordList(criteriaNew);
+                return View("ClienterDetail", clienterWithdrawFormModel);
+            }
         }
 
     }

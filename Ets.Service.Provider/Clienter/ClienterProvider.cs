@@ -839,6 +839,16 @@ namespace Ets.Service.Provider.Clienter
         {
             return orderChildDao.GetOrderChildInfo(orderId, orderChildId);
         }
+        /// <summary>
+        /// 获取骑士详细信息
+        /// danny-20150513
+        /// </summary>
+        /// <param name="businessId">骑士Id</param>
+        /// <returns></returns>
+        public ClienterDetailModel GetClienterDetailById(string clienterId)
+        {
+            return clienterDao.GetClienterDetailById(clienterId);
+        }
     }
 
 }

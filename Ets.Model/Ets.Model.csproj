@@ -85,10 +85,14 @@
     <Compile Include="DomainModel\Area\DMAreaCodeInfo.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessDetailModel.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessDM.cs" />
+    <Compile Include="DomainModel\Clienter\ClienterDetailModel.cs" />
     <Compile Include="DomainModel\Clienter\ClienterDM.cs" />
     <Compile Include="DomainModel\Finance\BusinessBalanceRecordModel.cs" />
     <Compile Include="DomainModel\Finance\BusinessWithdrawFormModel.cs" />
     <Compile Include="DomainModel\Finance\BusinessWithdrawLogModel.cs" />
+    <Compile Include="DomainModel\Finance\ClienterBalanceRecordModel.cs" />
+    <Compile Include="DomainModel\Finance\ClienterWithdrawFormModel.cs" />
+    <Compile Include="DomainModel\Finance\ClienterWithdrawLogModel.cs" />
     <Compile Include="DomainModel\Finance\FinanceRecordsDM.cs" />
     <Compile Include="DomainModel\Order\OrderChildForTicket.cs" />
     <Compile Include="DomainModel\Order\RushOrderModel.cs" />
@@ -199,9 +203,11 @@
     <Compile Include="ParameterModel\Finance\CardModifyBPM.cs" />
     <Compile Include="ParameterModel\Finance\CardModifyCPM.cs" />
     <Compile Include="ParameterModel\Finance\ClienterBalanceRecordPM.cs" />
+    <Compile Include="ParameterModel\Finance\ClienterBalanceRecordSerchCriteria.cs" />
     <Compile Include="ParameterModel\Finance\ClienterFinanceAccountPM.cs" />
     <Compile Include="ParameterModel\Finance\ClienterWithdrawFormPM.cs" />
     <Compile Include="ParameterModel\Finance\ClienterWithdrawLogPM.cs" />
+    <Compile Include="ParameterModel\Finance\ClienterWithdrawSearchCriteria.cs" />
     <Compile Include="ParameterModel\Finance\WithdrawBPM.cs" />
     <Compile Include="ParameterModel\Finance\WithdrawPM.cs" />
     <Compile Include="ParameterModel\Finance\WithdrawCPM.cs" />
