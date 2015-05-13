@@ -192,11 +192,29 @@ where   1=1 and o.Id = @OrderId
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderId", SqlDbType.Int).Value = orderId;
             parm.Add("@ChildId", SqlDbType.Int).Value = orderChildId;
-            //此表是要同步支付状态，请读写表
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql.ToString(), parm);
+
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql.ToString(), parm);
             if (!dt.HasData())
                 return oc;
-            return MapRows<List<OrderChildForTicket>>(dt)[0]; 
+            return MapRows<List<OrderChildForTicket>>(dt)[0];
+        }
+
+        /// <summary>
+        /// 获取订单状态
+        /// 窦海超
+        /// 2015年5月13日 11:04:41
+        /// </summary>
+        /// <param name="orderId">主订单号</param>
+        /// <param name="orderChildId">子订单号</param>
+        /// <returns>不存在返回-1</returns>
+        public int GetPayStatus(int orderId, int orderChildId)
+        {
+            string sql = "SELECT * from dbo.OrderChild oc(nolock) where OrderId = @OrderId and ChildId = @ChildId ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("OrderId", DbType.Int32, 4).Value = orderId;
+            parm.Add("ChildId", DbType.Int32, 4).Value = orderChildId;
+            //此表是要同步支付状态，请读写表
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm), -1);
         }
 
         /// <summary>
