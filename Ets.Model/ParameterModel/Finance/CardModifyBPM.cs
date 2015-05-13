@@ -20,7 +20,7 @@ namespace Ets.Model.ParameterModel.Finance
         /// <summary>
         /// 商家ID(business表)
         /// </summary>
-        [Range(1, int.MaxValue, ErrorMessage = "骑士不能为空")]
+        [Range(1, int.MaxValue, ErrorMessage = "商家不能为空")]
         public int BusinessId { get; set; }
 
         /// <summary>
