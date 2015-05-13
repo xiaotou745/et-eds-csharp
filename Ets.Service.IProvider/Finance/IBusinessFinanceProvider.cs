@@ -99,6 +99,35 @@ namespace Ets.Service.IProvider.Finance
         /// <param name="withwardId"></param>
         /// <returns></returns>
         IList<BusinessBalanceRecord> GetBusinessBalanceRecordList(BusinessBalanceRecordSerchCriteria criteria);
+         /// <summary>
+        /// 获取要导出的商户提现申请单
+        /// danny-20150512
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        IList<BusinessWithdrawFormModel> GetBusinessWithdrawForExport(BusinessWithdrawSearchCriteria criteria);
+        /// <summary>
+        /// 获取要导出的商户提款收支记录列表
+        /// danny-20150512
+        /// </summary>
+        /// <param name="withwardId"></param>
+        /// <returns></returns>
+        IList<BusinessBalanceRecordModel> GetBusinessBalanceRecordListForExport(BusinessBalanceRecordSerchCriteria criteria);
+        /// <summary>
+        /// 生成excel文件
+        /// 导出字段：商户名称、电话、开户行、账户名、卡号、提款金额
+        /// danny-20150512
+        /// </summary>
+        /// <returns></returns>
+        string CreateBusinessWithdrawFormExcel(List<BusinessWithdrawFormModel> list);
+        /// <summary>
+        /// 生成excel文件
+        /// 导出字段：商户名称、电话、开户行、账户名、卡号、提款金额
+        /// danny-20150512
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        string CreateBusinessBalanceRecordExcel(List<BusinessBalanceRecordModel> list);
 
       
     }

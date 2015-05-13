@@ -177,7 +177,9 @@ namespace ETS.Enums
         [DisplayText("提现")]
         Withdraw = 3,
         [DisplayText("充值")]
-        Recharge = 4
+        Recharge = 4,
+        [DisplayText("提现失败返现")]
+        Return = 5
     }
 
     /// <summary>

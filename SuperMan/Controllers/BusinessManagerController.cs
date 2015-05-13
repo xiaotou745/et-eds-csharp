@@ -20,6 +20,7 @@ using Ets.Model.DataModel.Bussiness;
 using Ets.Service.Provider.Finance;
 using Ets.Service.IProvider.Finance;
 using Ets.Model.ParameterModel.Finance;
+using System.Text;
 
 namespace SuperMan.Controllers
 {
@@ -201,6 +202,40 @@ namespace SuperMan.Controllers
         {
             ViewBag.businessBalanceRecord = iBusinessFinanceProvider.GetBusinessBalanceRecordList(criteria);
             return PartialView("_BusinessBalanceRecordList");
+        }
+        /// <summary>
+        /// 导出商户余额流水记录
+        /// danny-20150512
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public ActionResult ExportBusinessBalanceRecord()
+        {
+            var criteria = new Ets.Model.ParameterModel.Finance.BusinessBalanceRecordSerchCriteria();
+            TryUpdateModel(criteria);
+            var dtBusinessBalanceRecord = iBusinessFinanceProvider.GetBusinessBalanceRecordListForExport(criteria);
+            if (dtBusinessBalanceRecord != null && dtBusinessBalanceRecord.Count > 0)
+            {
+                
+                string filname = "商户提款流水记录{0}.xls";
+                if (!string.IsNullOrWhiteSpace(criteria.OperateTimeStart))
+                {
+                    filname = string.Format(filname, criteria.OperateTimeStart + "~" + criteria.OperateTimeEnd);
+                }
+                byte[] data = Encoding.UTF8.GetBytes(iBusinessFinanceProvider.CreateBusinessBalanceRecordExcel(dtBusinessBalanceRecord.ToList()));
+                return File(data, "application/ms-excel", filname);
+            }
+            else
+            {
+                
+                var businessWithdrawFormModel = iBusinessProvider.GetBusinessDetailById(criteria.BusinessId.ToString());
+                var criteriaNew = new BusinessBalanceRecordSerchCriteria()
+                {
+                    BusinessId = Convert.ToInt32(criteria.BusinessId)
+                };
+                ViewBag.businessBalanceRecord = iBusinessFinanceProvider.GetBusinessBalanceRecordList(criteriaNew);
+                return View("BusinessDetail", businessWithdrawFormModel);
+            }
         }
 
     }

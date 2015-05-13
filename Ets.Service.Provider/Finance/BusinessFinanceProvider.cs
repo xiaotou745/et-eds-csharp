@@ -21,6 +21,7 @@ using ETS.Transaction.Common;
 using Ets.Model.DomainModel.Bussiness;
 using Ets.Dao.User;
 using ETS.Util;
+using System.Data;
 
 namespace Ets.Service.Provider.Finance
 {
@@ -409,6 +410,92 @@ namespace Ets.Service.Provider.Finance
         public IList<BusinessBalanceRecord> GetBusinessBalanceRecordList(BusinessBalanceRecordSerchCriteria criteria)
         {
             return businessFinanceDao.GetBusinessBalanceRecordList(criteria);
+        }
+        /// <summary>
+        /// 获取要导出的商户提现申请单
+        /// danny-20150512
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public IList<BusinessWithdrawFormModel> GetBusinessWithdrawForExport(BusinessWithdrawSearchCriteria criteria)
+        {
+            return businessFinanceDao.GetBusinessWithdrawForExport(criteria);
+        }
+        /// <summary>
+        /// 获取要导出的商户提款收支记录列表
+        /// danny-20150512
+        /// </summary>
+        /// <param name="withwardId"></param>
+        /// <returns></returns>
+        public IList<BusinessBalanceRecordModel> GetBusinessBalanceRecordListForExport(BusinessBalanceRecordSerchCriteria criteria)
+        {
+            return businessFinanceDao.GetBusinessBalanceRecordListForExport(criteria);
+        }
+        /// <summary>
+        /// 生成excel文件
+        /// 导出字段：商户名称、电话、开户行、账户名、卡号、提款金额
+        /// danny-20150512
+        /// </summary>
+        /// <returns></returns>
+        public string CreateBusinessWithdrawFormExcel(List<BusinessWithdrawFormModel> list)
+        {
+            StringBuilder strBuilder = new StringBuilder();
+            strBuilder.AppendLine("<table border=1 cellspacing=0 cellpadding=5 rules=all>");
+            //输出表头.
+            strBuilder.AppendLine("<tr style=\"font-weight: bold; white-space: nowrap;\">");
+            strBuilder.AppendLine("<td>商户名称</td>");
+            strBuilder.AppendLine("<td>电话</td>");
+            strBuilder.AppendLine("<td>开户行</td>");
+            strBuilder.AppendLine("<td>账户名</td>");
+            strBuilder.AppendLine("<td>卡号</td>");
+            strBuilder.AppendLine("<td>提款金额</td>");
+            strBuilder.AppendLine("</tr>");
+            //输出数据.
+            foreach (var item in list)
+            {
+                strBuilder.AppendLine(string.Format("<tr><td>'{0}'</td>", item.BusinessName));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>",item.BusinessPhoneNo));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OpenBank));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.TrueName));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", ParseHelper.ToDecrypt(item.AccountNo)));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Amount));
+            }
+            strBuilder.AppendLine("</table>");
+            return strBuilder.ToString();
+        }
+        /// <summary>
+        /// 生成excel文件
+        /// 导出字段：任务单号/交易流水号、所属银行、卡号、收支金额、余额、完成时间、操作人
+        /// danny-20150512
+        /// </summary>
+        /// <returns></returns>
+        public string CreateBusinessBalanceRecordExcel(List<BusinessBalanceRecordModel> list)
+        {
+            StringBuilder strBuilder = new StringBuilder();
+            strBuilder.AppendLine("<table border=1 cellspacing=0 cellpadding=5 rules=all>");
+            //输出表头.
+            strBuilder.AppendLine("<tr style=\"font-weight: bold; white-space: nowrap;\">");
+            strBuilder.AppendLine("<td>任务单号/交易流水号</td>");
+            strBuilder.AppendLine("<td>所属银行</td>");
+            strBuilder.AppendLine("<td>卡号</td>");
+            strBuilder.AppendLine("<td>收支金额</td>");
+            strBuilder.AppendLine("<td>余额</td>");
+            strBuilder.AppendLine("<td>完成时间</td>");
+            strBuilder.AppendLine("<td>操作人</td>");
+            strBuilder.AppendLine("</tr>");
+            //输出数据.
+            foreach (var item in list)
+            {
+                strBuilder.AppendLine(string.Format("<tr><td>'{0}'</td>", item.RelationNo));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OpenBank));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", ParseHelper.ToDecrypt(item.AccountNo)));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Amount));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Balance));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OperateTime));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Operator));
+            }
+            strBuilder.AppendLine("</table>");
+            return strBuilder.ToString();
         }
 
     }
