@@ -46,8 +46,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         //[HttpGet]
-        [HttpPost]
-        public HttpResponseMessage ReturnAlipay()
+        public dynamic ReturnAlipay()
         {
             return payProvider.ReturnAlipay();
         }

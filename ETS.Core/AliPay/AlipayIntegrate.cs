@@ -98,15 +98,12 @@ namespace ETS.AliPay
                 need_address = "F",
                 goods_info = new
                 {
-                    //orderId = orderId,
-                    //childId = childId,
                     id = orderId + "_" + childId,
                     name = "e代送收款",
                     price = customerTotal
-                    ////price = customerTotal.ToString()
                 },
                 notify_url = NotifyUrl,
-                //return_url = ReturnUrl,
+                return_url = ReturnUrl,
                 memo = "e代送收款"
             };
             return JsonConvert.SerializeObject(bizdata);

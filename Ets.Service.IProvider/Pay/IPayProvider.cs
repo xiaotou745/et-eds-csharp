@@ -26,7 +26,7 @@ namespace Ets.Service.IProvider.Pay
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        System.Net.Http.HttpResponseMessage ReturnAlipay();
+        dynamic ReturnAlipay();
 
         /// <summary>
         /// 订单回调

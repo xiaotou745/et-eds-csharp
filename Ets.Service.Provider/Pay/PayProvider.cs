@@ -82,44 +82,32 @@ namespace Ets.Service.Provider.Pay
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public System.Net.Http.HttpResponseMessage ReturnAlipay()
+        public dynamic ReturnAlipay()
         {
             var request = System.Web.HttpContext.Current.Request;
             try
             {
 
                 string goods_id = request["goods_id"];
-                ReturnApliPayModel model = new ReturnApliPayModel()
-                {
-                    is_success = "T",
-                    out_trade_no = "2114_1"
-                };
-                //return model;
-                //String userName = user.userName;
-                System.Net.Http.HttpResponseMessage result = new System.Net.Http.HttpResponseMessage { Content = new System.Net.Http.StringContent(Letao.Util.JsonHelper.JsonConvertToString(model), Encoding.GetEncoding("UTF-8"), "application/json") };
-                return result;
-
-                /*
-                return new { is_success = "T", out_trade_no = goods_id };
+                //return new { is_success = "T", out_trade_no = goods_id };
                 if (string.IsNullOrEmpty(goods_id) || !goods_id.Contains("_"))
                 {
                     LogHelper.LogWriter("订单编号为null");
-                    model.is_success = "F";
-                    //model.error_code="PARAM_ILLEGAL";
-                    return model;
+                    return new { is_success = "F", error_code = "PARAM_ILLEGAL" };
                 }
                 int orderId = ParseHelper.ToInt(goods_id.Split('_')[0], 0);
                 int orderChildId = ParseHelper.ToInt(goods_id.Split('_')[1], 0);
                 if (orderId <= 0 || orderChildId <= 0)
                 {
-                    LogHelper.LogWriter("订单编号为null");
-                    return model;
+                    LogHelper.LogWriter("订单号或子订单号为零");
+                    return new { is_success = "F", error_code = "PARAM_ILLEGAL" };
                 }
-
-                model.is_success = "T";
-                //model.error_code = "";
-                model.out_trade_no = (orderId + orderChildId).ToString();
-                return model;*/
+                OrderChild orderChildModel = orderChildDao.GetOrderChildInfo(orderId, orderChildId);
+                if (orderChildModel == null || orderChildModel.PayStatus != 0)//判断当前订单号是否存在，是否为待支付
+                {
+                    return new { is_success = "F", error_code = "PARAM_ILLEGAL" };
+                }
+                return new { is_success = "T", out_trade_no = goods_id };
             }
             catch (Exception ex)
             {
