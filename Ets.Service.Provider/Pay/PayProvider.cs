@@ -33,13 +33,21 @@ namespace Ets.Service.Provider.Pay
         public ResultModel<PayResultModel> CreatePay(Model.ParameterModel.AliPay.PayModel model)
         {
             LogHelper.LogWriter("=============支付请求数据：", model);
+            int payStatus = orderChildDao.GetPayStatus(model.orderId, model.childId);
+            if (payStatus == -1)
+            {
+                string err = string.Concat("订单不存在,主订单号：", model.orderId, ",子订单号:", model.childId);
+                LogHelper.LogWriter(err);
+            }
             if (model.payType == 1)
             {
                 LogHelper.LogWriter("=============支付支付宝支付：");
                 ////支付宝支付
                 //数据库里查询订单信息
-                OrderChild orderChildModel = orderChildDao.GetOrderChildInfo(model.orderId, model.childId);
-                return QRCodeAdd(model.orderId, model.childId, orderChildModel.TotalPrice);
+                if (payStatus==0)//待支付
+                {
+                    return QRCodeAdd(model.orderId, model.childId, 1);
+                }
             }
             if (model.payType == 2)
             {
@@ -82,48 +90,38 @@ namespace Ets.Service.Provider.Pay
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        
         public dynamic ReturnAlipay()
         {
             var request = System.Web.HttpContext.Current.Request;
             try
             {
-                //int orderId = ParseHelper.ToInt(request["orderId"], 0);
-                //int orderChildId = ParseHelper.ToInt(request["orderChildId"], 0);
+
                 string goods_id = request["goods_id"];
-                //if (string.IsNullOrEmpty(goods_id) || !goods_id.Contains("_"))
-                //{
-                //    LogHelper.LogWriter("订单编号为null");
-                //    return new { is_success = "F", error_code = "PARAM_ILLEGAL" };
-                //}
-                //int orderId = ParseHelper.ToInt(goods_id.Split('_')[0], 0);
-                //int orderChildId = ParseHelper.ToInt(goods_id.Split('_')[1], 0);
-                //if (orderId <= 0 || orderChildId <= 0)
-                //{
-                //    LogHelper.LogWriter("订单编号为null");
-                //    return new { is_success = "F", error_code = "PARAM_ILLEGAL" };
-                //}
-                //更新订单状态
-                //if (orderChildDao.FinishStatus(orderId, orderChildId))
-                //{
-                //    return new { is_success = "T", out_trade_no = orderId + "_" + orderChildId };
-                //}
-                //else
-                //{
-                //return new { is_success = "F", error_code = "PARAM_ILLEGAL" };
-
-                //return new { is_success = "T", out_trade_no = orderId + "_" + orderChildId };
-
                 //return new { is_success = "T", out_trade_no = goods_id };
-                return new { is_success = "T", out_trade_no = goods_id };
+                if (string.IsNullOrEmpty(goods_id) || !goods_id.Contains("_"))
+                {
+                    LogHelper.LogWriter("订单编号为null");
+                    return new { is_success = "F", error_code = "PARAM_ILLEGAL" };
+                }
+                int orderId = ParseHelper.ToInt(goods_id.Split('_')[0], 0);
+                int orderChildId = ParseHelper.ToInt(goods_id.Split('_')[1], 0);
+                if (orderId <= 0 || orderChildId <= 0)
+                {
+                    LogHelper.LogWriter("订单号或子订单号为零");
+                    return new { is_success = "F", error_code = "PARAM_ILLEGAL" };
+                }
+                //OrderChild orderChildModel = orderChildDao.GetOrderChildInfo(orderId, orderChildId);
+                //if (orderChildModel == null || orderChildModel.PayStatus != 0)//判断当前订单号是否存在，是否为待支付
+                //{
+                //    return new { is_success = "F", error_code = "PARAM_ILLEGAL" };
                 //}
-
+                return new { is_success = "T", out_trade_no = goods_id };
             }
             catch (Exception ex)
             {
                 LogHelper.LogWriter(ex, "alipay自动回调异常");
-                return new { is_success = "F" };
             }
+            return null;
         }
 
         /// <summary>
@@ -132,7 +130,7 @@ namespace Ets.Service.Provider.Pay
         /// 2015年5月12日 14:36:48
         /// </summary>
         /// <returns></returns>
-        public dynamic AlipayResult()
+        public dynamic Notify()
         {
             try
             {
@@ -194,7 +192,7 @@ namespace Ets.Service.Provider.Pay
         {
             try
             {
-                OrderChild orderChildModel = orderChildDao.GetOrderChildInfo(model.orderId, model.childId);
+                OrderChild orderChildModel = new OrderChild();// orderChildDao.GetOrderChildInfo(model.orderId, model.childId);
                 if (orderChildModel == null)
                 {
                     return new { status_code = -1, status_message = "order_id:" + model.orderId + "_" + model.childId + "错误" };

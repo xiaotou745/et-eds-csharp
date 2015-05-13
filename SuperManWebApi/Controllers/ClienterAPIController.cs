@@ -631,6 +631,8 @@ namespace SuperManWebApi.Controllers
                 null
                 );
         }
+
+        #region 暂时注释
         /// <summary>
         /// 小票上传
         /// wc
@@ -820,6 +822,7 @@ namespace SuperManWebApi.Controllers
         //        return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel() { OrderId = orderId, ImagePath = listReceiptPic, HadUploadCount = orderOther.HadUploadCount, NeedUploadCount = orderOther.NeedUploadCount });
         //    }
         //}
+        #endregion
 
         /// <summary>
         /// 获取订单详细

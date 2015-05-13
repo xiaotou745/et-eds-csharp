@@ -10,6 +10,7 @@ using ETS.Extension;
 using Ets.Model.DataModel.Order;
 using Ets.Model.ParameterModel.Order;
 using ETS.Util;
+using Ets.Model.DomainModel.Order;
 
 namespace Ets.Dao.Order
 {
@@ -167,39 +168,53 @@ where  Id=@Id ";
         /// <param name="orderId"></param>
         /// <param name="orderChildId"></param>
         /// <returns></returns>
-        public OrderChild GetOrderChildInfo(int orderId, int orderChildId)
+        public List<OrderChildForTicket> GetOrderChildInfo(int orderId, int orderChildId)
         {
-            OrderChild oc = new OrderChild();
+            List<OrderChildForTicket> oc = new List<OrderChildForTicket>();
             StringBuilder sql = new StringBuilder();
             sql.Append(@"
-  select top 1 Id ,
-        OrderId ,
-        ChildId ,
-        TotalPrice ,
-        GoodPrice ,
-        DeliveryPrice ,
-        PayStyle ,
-        PayType ,
-        PayStatus ,
-        PayBy ,
-        PayTime ,
-        PayPrice ,
-        HasUploadTicket ,
-        TicketUrl ,
-        CreateBy ,
-        CreateTime ,
-        UpdateBy ,
-        UpdateTime
- from   dbo.OrderChild(nolock)  where 1=1 and OrderId = @OrderId and ChildId = @ChildId;
+select  o.Id OrderId ,
+        oc.ChildId ,
+        o.[Status] OrderStatus ,
+        o.OrderCount NeedUploadCount ,
+        isnull(oo.HadUploadCount, 0) HadUploadCount ,
+        oc.HasUploadTicket ,
+        oc.TicketUrl
+from    dbo.[order] o ( nolock )
+        join dbo.OrderChild oc ( nolock ) on o.Id = oc.OrderId
+        left join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
+where   1=1 and o.Id = @OrderId 
 ");
+            if (orderChildId > 0)
+            {
+                sql.Append(" and ChildId = @ChildId ;");
+            }
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderId", SqlDbType.Int).Value = orderId;
             parm.Add("@ChildId", SqlDbType.Int).Value = orderChildId;
-            //此表是要同步支付状态，请读写表
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql.ToString(), parm);
+
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql.ToString(), parm);
             if (!dt.HasData())
                 return oc;
-            return MapRows<OrderChild>(dt)[0];
+            return MapRows<List<OrderChildForTicket>>(dt)[0];
+        }
+
+        /// <summary>
+        /// 获取订单状态
+        /// 窦海超
+        /// 2015年5月13日 11:04:41
+        /// </summary>
+        /// <param name="orderId">主订单号</param>
+        /// <param name="orderChildId">子订单号</param>
+        /// <returns>不存在返回-1</returns>
+        public int GetPayStatus(int orderId, int orderChildId)
+        {
+            string sql = "SELECT * from dbo.OrderChild oc(nolock) where OrderId = @OrderId and ChildId = @ChildId ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("OrderId", DbType.Int32, 4).Value = orderId;
+            parm.Add("ChildId", DbType.Int32, 4).Value = orderChildId;
+            //此表是要同步支付状态，请读写表
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm), -1);
         }
 
         /// <summary>

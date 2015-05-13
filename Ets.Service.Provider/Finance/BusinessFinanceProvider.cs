@@ -164,7 +164,7 @@ namespace Ets.Service.Provider.Finance
                 return new Tuple<bool, FinanceWithdrawB>(false, FinanceWithdrawB.MoneyError);
             }
             businessFinanceAccount = _businessFinanceAccountDao.GetById(withdrawBpm.FinanceAccountId);//获取商户金融账号信息
-            if (businessFinanceAccount==null)
+            if (businessFinanceAccount == null || businessFinanceAccount.BusinessId != withdrawBpm.BusinessId)
             {
                 return new Tuple<bool, FinanceWithdrawB>(false, FinanceWithdrawB.FinanceAccountError);
             }
@@ -182,20 +182,12 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public ResultModel<object> CardBindB(CardBindBPM cardBindBpm)
         {
-            if (cardBindBpm == null)
-            {
-                return ResultModel<object>.Conclude(FinanceCardBindB.NoPara);
-            }
-            if (cardBindBpm.AccountNo != cardBindBpm.AccountNo2) //两次录入的金融账号不一致
-            {
-                return ResultModel<object>.Conclude(FinanceCardBindB.InputValid);
-            }
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                int count = _businessFinanceAccountDao.GetCountByBusinessId(cardBindBpm.BusinessId);
-                if (count > 0)
+                Tuple<bool, FinanceCardBindB> checkbool = CheckCardBindB(cardBindBpm);  //验证数据合法性
+                if (checkbool.Item1 == false)
                 {
-                    return ResultModel<object>.Conclude(FinanceCardBindB.Exists);//该商户已绑定过金融账号
+                    return ResultModel<object>.Conclude(checkbool.Item2);
                 }
                 int result = _businessFinanceAccountDao.Insert(new BusinessFinanceAccount()
                 {
@@ -215,6 +207,25 @@ namespace Ets.Service.Provider.Finance
             }
         }
 
+        /// <summary>
+        ///  商户绑定银行卡功能有效性验证 add by caoheyang 20150511 
+        /// </summary>
+        /// <param name="cardBindBpm">参数实体</param>
+        /// <returns></returns>
+        private Tuple<bool, FinanceCardBindB> CheckCardBindB(CardBindBPM cardBindBpm)
+        {
+            if (cardBindBpm == null)
+            {
+                return new Tuple<bool, FinanceCardBindB>(false, FinanceCardBindB.NoPara);
+            }
+            int count = _businessFinanceAccountDao.GetCountByBusinessId(cardBindBpm.BusinessId);
+            if (count > 0) //该商户已绑定过金融账号
+            {
+                return new Tuple<bool, FinanceCardBindB>(false, FinanceCardBindB.Exists);
+            }
+            return new Tuple<bool, FinanceCardBindB>(true, FinanceCardBindB.Success);
+        }
+
 
         /// <summary>
         /// 商户修改绑定银行卡功能 add by caoheyang 20150511
@@ -223,13 +234,10 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public ResultModel<object> CardModifyB(CardModifyBPM cardModifyBpm)
         {
-            if (cardModifyBpm == null)
+            Tuple<bool, FinanceCardCardModifyB> checkbool = CheckCardModifyB(cardModifyBpm);  //验证数据合法性
+            if (checkbool.Item1 == false)
             {
-                return ResultModel<object>.Conclude(FinanceCardCardModifyB.NoPara);
-            }
-            if (cardModifyBpm.AccountNo != cardModifyBpm.AccountNo2) //两次录入的金融账号不一致
-            {
-                return ResultModel<object>.Conclude(FinanceCardCardModifyB.InputValid);
+                return ResultModel<object>.Conclude(checkbool.Item2);
             }
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
@@ -246,6 +254,21 @@ namespace Ets.Service.Provider.Finance
                 tran.Complete();
                 return ResultModel<object>.Conclude(SystemEnum.Success);
             }
+        }
+
+
+        /// <summary>
+        /// 商户修改绑定银行卡功能有效性验证  add by caoheyang 20150511 
+        /// </summary>
+        /// <param name="cardModifyBpm"></param>
+        /// <returns></returns>
+        private Tuple<bool, FinanceCardCardModifyB> CheckCardModifyB(CardModifyBPM cardModifyBpm)
+        {
+            if (cardModifyBpm == null)
+            {
+                return new Tuple<bool, FinanceCardCardModifyB>(false, FinanceCardCardModifyB.NoPara);
+            }
+            return new Tuple<bool, FinanceCardCardModifyB>(true, FinanceCardCardModifyB.Success);
         }
         #endregion
 

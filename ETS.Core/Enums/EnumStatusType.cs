@@ -360,4 +360,14 @@ namespace ETS.Enums
         [DisplayText("失败")]
         fail = 1
     }
+
+   public enum OrderDetails
+   {
+       [DisplayText("成功")]
+       Success = 1,
+       [DisplayText("失败")]
+       Failed = 0,
+       [DisplayText("请传递版本号")]
+       NoVersion
+   }
 }
