@@ -13,6 +13,7 @@ using Ets.Service.Provider.Common;
 using SuperMan.App_Start;
 using Ets.Model.ParameterModel.User;
 using Ets.Model.ParameterModel.Order;
+using ETS.Util;
 
 namespace SuperMan.Controllers
 {
@@ -207,9 +208,10 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <param name="orderNo"></param>
         /// <returns></returns>
-        public ActionResult OrderDetail(string orderNo,string orderId)
+        public ActionResult OrderDetail(string orderNo,int orderId)
         {
-            var orderModel = iOrderProvider.GetOrderByNo(orderNo);
+            var orderModel = iOrderProvider.GetOrderByNo(orderNo,orderId);
+
             ViewBag.orderOptionLog = iOrderProvider.GetOrderOptionLog(orderId);
             return View(orderModel);
         }

@@ -66,6 +66,7 @@ namespace Ets.Service.IProvider.Order
         /// <param name="orderNo"></param>
         /// <returns></returns>
         OrderListModel GetOrderByNo(string orderNo);
+        OrderListModel GetOrderByNo(string orderNo, int orderId);
         /// <summary>
         /// 订单指派超人
         /// danny-20150320
@@ -165,7 +166,7 @@ namespace Ets.Service.IProvider.Order
         /// </summary>
         /// <param name="OrderId"></param>
         /// <returns></returns>
-        IList<OrderSubsidiesLog> GetOrderOptionLog(string OrderId);
+        IList<OrderSubsidiesLog> GetOrderOptionLog(int OrderId);
 
         /// <summary>
         /// 第三方更新E代送订单状态   add by caoheyang 20150421  

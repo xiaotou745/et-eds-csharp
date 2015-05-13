@@ -43,18 +43,21 @@
     <h2 class="crumbs">
         您所在位置：订单 > 订单管理 > 订单详情
     </h2>
-    <table class="tbstyle222" border="0" style="font-size:16px;font-weight:bold;line-height:300%;width:1000px ">
+    <table class="tbstyle222" border="0" style="font-size:13px;font-weight:bold;line-height:300%;width:1000px;">
         <tr class="trclass">
-            <td>订单号：@Model.OrderNo</td>
-            <td>发布时间：@Model.PubDate</td>
-            <td>订单状态：@strstatus &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 订单来源：@Model.GroupName</td>
+            <td>任务单号：@Model.OrderNo</td>
+            <td>是否已付款:@payStatus</td>
+            <td>订单状态：@strstatus</td>
+            <td>订单来源：@Model.GroupName</td>
         </tr>
         <tr class="trclass">
+            <td>发布时间：@Model.PubDate</td>
             <td>商户信息：@Model.BusinessName</td>
             <td>发布人电话：@Model.BusinessPhoneNo</td>
             <td>发布人地址：@Model.BusinessAddress</td>
         </tr>
         <tr class="trclass">
+            <td>订单金额：@Model.Amount</td>
             <td>订单佣金：@Model.OrderCommission</td>
             <td>外送费：@Model.DistribSubsidy</td>
             <td>网站补贴：@Model.WebsiteSubsidy</td>
@@ -62,46 +65,92 @@
         <tr class="trclass">
             <td>收货人电话:@Model.RecevicePhoneNo</td>
             <td>收货人地址：@Model.ReceviceAddress</td>
-        </tr>
-        <tr>
-            <td>订单金额：@Model.Amount</td>
-            <td>是否已付款:@payStatus</td>
             @if (Model.Status == 1 || Model.Status == 2 || Model.Status == 3)
             {
-                <td>超人：@Model.ClienterName</td>
+                <td>骑士姓名：@Model.ClienterTrueName</td>
+                <td>骑士手机：@Model.ClienterPhoneNo</td>
             }
         </tr>
+        <tr>
+            <td>备注：@Model.Remark</td>
+            <td>订单数：@Model.OrderCount</td>
+        </tr>
     </table>
+    <hr />
+    <div style="float:left;width:1000px;">
+        @{
+            System.Text.StringBuilder caiPin = new System.Text.StringBuilder("");
+            if (@Model.OrderDetailList != null && @Model.OrderDetailList.Count > 0)
+            {
+                for (int i = 0; i < @Model.OrderDetailList.Count; i++)
+                {
+                    caiPin.Append(@Model.OrderDetailList[i].ProductName + "*" + @Model.OrderDetailList[i].Quantity);
+                    if (i > 0 && i != @Model.OrderDetailList.Count)
+                    {
+                        caiPin.Append(",");
+                    }
+                }
+            }
+        }
+        <lable style="font-size:13px;font-weight:bold;">菜品明细：@caiPin.ToString()</lable>
+        <table border="0" cellspacing="0" cellpadding="0" class="tbstyle" width="1000">
+            <thead>
+                <tr class="tdbg">
+                    <th>订单号</th>
+                    <th>订单金额</th>
+                    <th>配送费</th>
+                    <th>支付状态</th>
+                    <th>支付方式</th>
+                    <th>支付来源</th>
+                    <th>交易流水号</th>
+                    <th>发票</th>
+                    <th>小票</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var orderChildList = @Model.OrderChildList;
+                    var curPuth = SuperManCore.CustomerIconUploader.Instance.RelativePath;
+                    var curPhost = SuperManCore.CustomerIconUploader.Instance.PicHost; 
+                }
+                @foreach (var curOrderChild in orderChildList)
+                {
+                    string bigFileName = "";
+                    if (!string.IsNullOrWhiteSpace(curOrderChild.TicketUrl))
+                    {
+                        int fileLastDot = curOrderChild.TicketUrl.LastIndexOf('.');
+                        string fileHandHouZhui = curOrderChild.TicketUrl.Substring(fileLastDot, curOrderChild.TicketUrl.Length - fileLastDot);
+                        bigFileName = curPhost + curPuth + curOrderChild.TicketUrl.Substring(0, fileLastDot) + "_0_0" + fileHandHouZhui;
+                    }
+                    <tr>
+                        <td>@curOrderChild.ChildId</td>
+                        <td>@curOrderChild.GoodPrice</td>
+                        <td>@curOrderChild.DeliveryPrice</td>
+                        <td>@curOrderChild.PayStatus</td>
+                        <td>@curOrderChild.PayType</td>
+                        <td>@curOrderChild.PayStyle</td>
+                        <td></td>
+                        <td></td>
+                        @if (!string.IsNullOrWhiteSpace(bigFileName)) { 
+                        <td><a href="@bigFileName">查看</a></td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
     <input type="hidden" value="@Model.OrderNo" id="OrderNo" />
     <input type="hidden" value="@Model.Id" id="OrderId" />
-    @if (Model.HadUploadCount > 0)
-    {
-        var puth = SuperManCore.CustomerIconUploader.Instance.RelativePath;
-        var PicHost = SuperManCore.CustomerIconUploader.Instance.PicHost;
-        var picAdressArray = Model.ReceiptPic.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
-        <h4 style="color:black;font-weight:100">
-            <label>
-                骑士上传小票：@Model.HadUploadCount/@Model.NeedUploadCount @if (Model.HadUploadCount == Model.NeedUploadCount)
-                { <label>(已完成)</label>}
-            </label>
-        </h4>
-        <div style="width:1000px;float:left">
-            @foreach (var temp in picAdressArray)
-            {
-                int fileLastDot = temp.LastIndexOf('.');
-                string fileHandHouZhui = temp.Substring(fileLastDot, temp.Length - fileLastDot);
-                string bigFileName = PicHost + puth + temp.Substring(0, fileLastDot) + "_0_0" + fileHandHouZhui;
-                <div style="float:left;padding-right:3px">
-                    <img src="@( PicHost + puth + temp.ToString())" style=" width:180px; height:140px" />
-                    <a id="showBigBusiImage" href="@bigFileName" target="_blank">查看大图</a>
-                </div>
-
-            }
-        </div>
-    }
+    <hr />
     <div style="float:left;width:1000px;padding-top:30px">
+        <lable style="font-size:13px;font-weight:bold;">订单流转记录：</lable>
         <table border="0" cellspacing="0" cellpadding="0" class="tbstyle" width="1000">
-            <thead> 
+            <thead>
                 <tr class="tdbg">
                     <th>订单状态</th>
                     <th>操作人</th>
@@ -113,7 +162,7 @@
             <tbody>
                 @{
                     var orderOptionLogList = ViewBag.orderOptionLog as List<Ets.Model.DataModel.Order.OrderSubsidiesLog>;
-                    var i = 0;
+                    var k = 0;
                     var orderstatus = "";
                     var strplatform = "";
                     foreach (var item in orderOptionLogList)
@@ -151,7 +200,7 @@
                         {
                             strplatform = "管理后台";
                         }
-                        i++;
+                        k++;
                         <tr id="@item.Id">
                             <td>@orderstatus</td>
                             <td>@item.OptName</td>
@@ -234,7 +283,7 @@
             });
         }
         return true;
-    });
+    }); 
 </script>
 
 

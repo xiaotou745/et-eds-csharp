@@ -313,8 +313,8 @@ values  ( @OrderNo ,
           @Adjustment ,
           @TimeSpan
         );select IDENT_CURRENT('order')", SuperPlatform.商家, ConstValues.PublishOrder, (int)SuperPlatform.商家);
-            
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();          
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@OrderNo", order.OrderNo);
             dbParameters.AddWithValue("@PickUpAddress", order.PickUpAddress);
             dbParameters.AddWithValue("@PubDate", order.PubDate);
@@ -395,7 +395,7 @@ values( @OrderId,
             }
             #endregion
 
-            return orderId;         
+            return orderId;
         }
 
         #region  第三方对接 物流订单接收接口  add by caoheyang 201503167
@@ -407,7 +407,7 @@ values( @OrderId,
         public string CreateToSql(CreatePM_OpenApi paramodel)
         {
             var redis = new RedisCache();
-            int  bussinessId = CreateToSqlAddBusiness(paramodel);;//商户id
+            int bussinessId = CreateToSqlAddBusiness(paramodel); ;//商户id
 
             #region 操作插入order表
             //订单插入sql 订单不存在时
@@ -570,7 +570,7 @@ values( @OrderId,
         }
         #endregion
 
-     
+
 
         /// <summary>
         ///获取当天
@@ -778,6 +778,7 @@ values( @OrderId,
         /// <returns></returns>
         public OrderListModel GetOrderByNo(string orderNo)
         {
+            #region 查询脚本
             string sql = @"SELECT top 1 o.[Id]
                                         ,o.[OrderNo]
                                         ,o.[PickUpAddress]
@@ -837,6 +838,7 @@ values( @OrderId,
                                     LEFT JOIN OrderOther oo WITH (NOLOCK) ON oo.OrderId=o.Id
                                     LEFT JOIN [group] g WITH ( NOLOCK ) ON g.Id = o.orderfrom
                                     WHERE 1=1 ";
+            #endregion 
             IDbParameters parm = DbHelper.CreateDbParameters();
             if (!string.IsNullOrWhiteSpace(orderNo))
             {
@@ -856,7 +858,136 @@ values( @OrderId,
             }
 
         }
+        /// <summary>
+        /// 根据订单号查订单信息
+        /// danny-20150320
+        /// </summary>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        public OrderListModel GetOrderByNo(string orderNo, int orderId)
+        {
+            if (string.IsNullOrWhiteSpace(orderNo))
+            {
+                return new OrderListModel();
+            }
+            #region 查询脚本
+            //获取订单主单信息以及附带的商户信息、骑士信息、小票信息
+            StringBuilder sql = new StringBuilder(@"SELECT top 1 o.[Id]
+                                        ,o.[OrderNo]
+                                        ,o.[PickUpAddress]
+                                        ,o.PubDate
+                                        ,o.[ReceviceName]
+                                        ,o.[RecevicePhoneNo]
+                                        ,o.[ReceviceAddress]
+                                        ,o.[ActualDoneDate]
+                                        ,o.[IsPay]
+                                        ,o.[Amount]
+                                        ,o.[OrderCommission]
+                                        ,o.[DistribSubsidy]
+                                        ,o.[WebsiteSubsidy]
+                                        ,o.[Remark]
+                                        ,o.[Status]
+                                        ,o.[clienterId]
+                                        ,o.[businessId]
+                                        ,o.[ReceviceCity]
+                                        ,o.[ReceviceLongitude]
+                                        ,o.[ReceviceLatitude]
+                                        ,o.[OrderFrom]
+                                        ,o.[OriginalOrderId]
+                                        ,o.[OriginalOrderNo]
+                                        ,o.[Quantity]
+                                        ,o.[Weight]
+                                        ,o.[ReceiveProvince]
+                                        ,o.[ReceiveArea]
+                                        ,o.[ReceiveProvinceCode]
+                                        ,o.[ReceiveCityCode]
+                                        ,o.[ReceiveAreaCode]
+                                        ,o.[OrderType]
+                                        ,o.[KM]
+                                        ,o.[GuoJuQty]
+                                        ,o.[LuJuQty]
+                                        ,o.[SongCanDate]
+                                        ,o.[OrderCount]
+                                        ,o.[CommissionRate] 
+                                        ,b.[City] BusinessCity
+                                        ,b.Name BusinessName
+                                        ,b.PhoneNo BusinessPhoneNo
+                                        ,b.Address BusinessAddress
+                                        ,c.PhoneNo ClienterPhoneNo
+                                        ,c.TrueName ClienterTrueName
+                                        ,c.TrueName ClienterName
+                                        ,c.AccountBalance AccountBalance
+                                        ,b.GroupId
+                                        ,case when o.orderfrom=0 then '客户端' else g.GroupName end GroupName
+                                        ,o.OriginalOrderNo
+                                        ,oo.NeedUploadCount
+                                        ,oo.HadUploadCount
+                                        ,oo.ReceiptPic
+                                        ,o.OtherCancelReason
+                                        ,o.OriginalOrderNo
+                                    FROM [order] o WITH ( NOLOCK )
+                                    LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
+                                    LEFT JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
+                                    LEFT JOIN OrderOther oo WITH (NOLOCK) ON oo.OrderId=o.Id
+                                    LEFT JOIN [group] g WITH ( NOLOCK ) ON g.Id = o.orderfrom
+                                    WHERE 1=1 AND o.OrderNo=@OrderNo;");
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@OrderNo", SqlDbType.NVarChar).Value = orderNo;
+            parm.Add("@OrderId", SqlDbType.Int).Value = orderId;
+            //获取订单详情信息
+            sql.Append(@"
+select  od.Id ,
+        od.OrderNo ,
+        od.ProductName ,
+        od.UnitPrice ,
+        od.Quantity ,
+        od.InsertTime ,
+        od.FormDetailID ,
+        od.GroupID
+from    dbo.OrderDetail od ( nolock )
+where   od.OrderNo = @OrderNo;");
+            //获取子订单信息
+            sql.Append(@"
+select  oc.Id ,
+        oc.OrderId ,
+        oc.ChildId ,
+        oc.TotalPrice ,
+        oc.GoodPrice ,
+        oc.DeliveryPrice ,
+        oc.PayStyle ,
+        oc.PayType ,
+        oc.PayStatus ,
+        oc.PayBy ,
+        oc.PayTime ,
+        oc.PayPrice ,
+        oc.HasUploadTicket ,
+        oc.TicketUrl ,
+        oc.CreateBy ,
+        oc.CreateTime ,
+        oc.UpdateBy ,
+        oc.UpdateTime
+from    dbo.OrderChild oc ( nolock )
+where   oc.OrderId = @OrderId;
+");
+            #endregion
+            var ds = DbHelper.ExecuteDataset(SuperMan_Read, sql.ToString(), parm);
 
+            var order = ConvertDataTableList<OrderListModel>(ds.Tables[0]);
+
+            var orderDetailList = ConvertDataTableList<Ets.Model.DataModel.Order.OrderDetail>(ds.Tables[1]);
+            var orderChildList = ConvertDataTableList<OrderChild>(ds.Tables[2]);
+
+            order[0].OrderDetailList = orderDetailList.ToList();
+            order[0].OrderChildList = orderChildList.ToList();
+            if (order != null && order.Count > 0)
+            {
+                return order[0];
+            }
+            else
+            {
+                return new OrderListModel();
+            } 
+        }
         /// <summary>
         /// 通过订单号获取该订单的详情数据
         /// 窦海超
@@ -1600,7 +1731,7 @@ where   o.Id = @orderId;
         /// </summary>
         /// <param name="IntervalMinute"></param>
         /// <returns></returns>
-        public IList<OrderSubsidiesLog> GetOrderOptionLog(string OrderId)
+        public IList<OrderSubsidiesLog> GetOrderOptionLog(int OrderId)
         {
             string sql = @"  SELECT  Id,
                                     OrderId,
@@ -1749,7 +1880,7 @@ order by bb.Id desc;";
         {
             OrderDM orderDM = new OrderDM();
             #region 订单
-            string  queryOrderSql = @"
+            string queryOrderSql = @"
 select  Id,OrderNo,PickUpAddress,PubDate,ReceviceName,RecevicePhoneNo,ReceviceAddress,ActualDoneDate,
 IsPay,Amount,OrderCommission,DistribSubsidy,WebsiteSubsidy,Remark,Status,clienterId,businessId,ReceviceCity,
 ReceviceLongitude,ReceviceLatitude,OrderFrom,OriginalOrderId,OriginalOrderNo,Quantity,Weight,ReceiveProvince,
@@ -1759,7 +1890,7 @@ DealCount,PickupCode,OtherCancelReason,CommissionType,CommissionFixValue,Busines
 from  [Order] (nolock) where Id=@Id";
             IDbParameters dbOrderParameters = DbHelper.CreateDbParameters();
             dbOrderParameters.AddWithValue("Id", id);
-            orderDM=DbHelper.QueryForObject(SuperMan_Read, queryOrderSql, dbOrderParameters, new OrderRowMapper());
+            orderDM = DbHelper.QueryForObject(SuperMan_Read, queryOrderSql, dbOrderParameters, new OrderRowMapper());
             #endregion
 
             #region 子订单
@@ -1770,9 +1901,9 @@ from  orderchild (nolock)
 where  OrderId=@OrderId ";
             IDbParameters dbOrderChildParameters = DbHelper.CreateDbParameters();
             dbOrderChildParameters.AddWithValue("OrderId", id);
-            DataTable dtOrderChild = DbHelper.ExecuteDataTable(SuperMan_Read, queryOrderChildSql, dbOrderChildParameters);      
-            List<OrderChild> listOrderChild=(List<OrderChild>)MapRows<OrderChild>(dtOrderChild);
-            orderDM.listOrderChild=listOrderChild;         
+            DataTable dtOrderChild = DbHelper.ExecuteDataTable(SuperMan_Read, queryOrderChildSql, dbOrderChildParameters);
+            List<OrderChild> listOrderChild = (List<OrderChild>)MapRows<OrderChild>(dtOrderChild);
+            orderDM.listOrderChild = listOrderChild;
             #endregion
 
             #region 订单明细
@@ -1782,9 +1913,9 @@ from  orderdetail (nolock) where OrderNo=@OrderNo ";
 
             IDbParameters dbOrderDetailParameters = DbHelper.CreateDbParameters();
             dbOrderDetailParameters.AddWithValue("OrderNo", orderDM.OrderNo);
-            DataTable dtOrderDetail = DbHelper.ExecuteDataTable(SuperMan_Read, queryOrderDetailSql, dbOrderDetailParameters);      
-            List<Ets.Model.DataModel.Order.OrderDetail> listOrderDetail=(List<Ets.Model.DataModel.Order.OrderDetail>)MapRows<Ets.Model.DataModel.Order.OrderDetail>(dtOrderDetail);
-            orderDM.listOrderDetail = listOrderDetail;    
+            DataTable dtOrderDetail = DbHelper.ExecuteDataTable(SuperMan_Read, queryOrderDetailSql, dbOrderDetailParameters);
+            List<Ets.Model.DataModel.Order.OrderDetail> listOrderDetail = (List<Ets.Model.DataModel.Order.OrderDetail>)MapRows<Ets.Model.DataModel.Order.OrderDetail>(dtOrderDetail);
+            orderDM.listOrderDetail = listOrderDetail;
             #endregion
 
             return orderDM;
@@ -1797,12 +1928,12 @@ from  orderdetail (nolock) where OrderNo=@OrderNo ";
         /// <returns></returns>
         public bool IsExist(int id)
         {
-            bool isExist; 
+            bool isExist;
             string querySql = @" SELECT COUNT(1)
  FROM   dbo.[order] WITH ( NOLOCK ) 
  WHERE  id = @id";
 
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();               
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("id", id);
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
             isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
@@ -1812,207 +1943,207 @@ from  orderdetail (nolock) where OrderNo=@OrderNo ";
 
         #region 自定义方法
         /// <summary>
-		/// 绑定对象
-		/// </summary>
-		private class OrderRowMapper : IDataTableRowMapper<OrderDM>
-		{
-			public OrderDM MapRow(DataRow dataReader)
-			{
-				var result = new OrderDM();
-				object obj;
-				obj = dataReader["Id"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.Id = int.Parse(obj.ToString());
-				}
-				result.OrderNo = dataReader["OrderNo"].ToString();
-				result.PickUpAddress = dataReader["PickUpAddress"].ToString();
-				obj = dataReader["PubDate"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.PubDate = DateTime.Parse(obj.ToString());
-				}
-				result.ReceviceName = dataReader["ReceviceName"].ToString();
-				result.RecevicePhoneNo = dataReader["RecevicePhoneNo"].ToString();
-				result.ReceviceAddress = dataReader["ReceviceAddress"].ToString();
-				obj = dataReader["ActualDoneDate"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.ActualDoneDate = DateTime.Parse(obj.ToString());
-				}
-				obj = dataReader["IsPay"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					if(obj.ToString()==1.ToString() || obj.ToString().ToLower()=="true")
-					{
-						result.IsPay=true;
-					}
-					else
-					{
-						result.IsPay=false;
-					}
-				}
-				obj = dataReader["Amount"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.Amount = decimal.Parse(obj.ToString());
-				}
-				obj = dataReader["OrderCommission"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.OrderCommission = decimal.Parse(obj.ToString());
-				}
-				obj = dataReader["DistribSubsidy"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.DistribSubsidy = decimal.Parse(obj.ToString());
-				}
-				obj = dataReader["WebsiteSubsidy"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.WebsiteSubsidy = decimal.Parse(obj.ToString());
-				}
-				result.Remark = dataReader["Remark"].ToString();
-				obj = dataReader["Status"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.Status = int.Parse(obj.ToString());
-				}
-				obj = dataReader["clienterId"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.clienterId = int.Parse(obj.ToString());
-				}
-				obj = dataReader["businessId"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.businessId = int.Parse(obj.ToString());
-				}
-				result.ReceviceCity = dataReader["ReceviceCity"].ToString();
-				obj = dataReader["ReceviceLongitude"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.ReceviceLongitude = decimal.Parse(obj.ToString());
-				}
-				obj = dataReader["ReceviceLatitude"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.ReceviceLatitude = decimal.Parse(obj.ToString());
-				}
-				obj = dataReader["OrderFrom"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.OrderFrom = int.Parse(obj.ToString());
-				}
-				obj = dataReader["OriginalOrderId"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.OriginalOrderId = long.Parse(obj.ToString());
-				}
-				result.OriginalOrderNo = dataReader["OriginalOrderNo"].ToString();
-				obj = dataReader["Quantity"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.Quantity = int.Parse(obj.ToString());
-				}
-				obj = dataReader["Weight"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.Weight = decimal.Parse(obj.ToString());
-				}
-				result.ReceiveProvince = dataReader["ReceiveProvince"].ToString();
-				result.ReceiveArea = dataReader["ReceiveArea"].ToString();
-				result.ReceiveProvinceCode = dataReader["ReceiveProvinceCode"].ToString();
-				result.ReceiveCityCode = dataReader["ReceiveCityCode"].ToString();
-				result.ReceiveAreaCode = dataReader["ReceiveAreaCode"].ToString();
-				obj = dataReader["OrderType"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.OrderType = int.Parse(obj.ToString());
-				}
-				obj = dataReader["KM"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.KM = decimal.Parse(obj.ToString());
-				}
-				obj = dataReader["GuoJuQty"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.GuoJuQty = int.Parse(obj.ToString());
-				}
-				obj = dataReader["LuJuQty"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.LuJuQty = int.Parse(obj.ToString());
-				}
-				obj = dataReader["SongCanDate"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.SongCanDate = DateTime.Parse(obj.ToString());
-				}
-				obj = dataReader["OrderCount"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.OrderCount = int.Parse(obj.ToString());
-				}
-				obj = dataReader["CommissionRate"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.CommissionRate = decimal.Parse(obj.ToString());
-				}
-				obj = dataReader["Payment"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.Payment = int.Parse(obj.ToString());
-				}
-				obj = dataReader["CommissionFormulaMode"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.CommissionFormulaMode = int.Parse(obj.ToString());
-				}
-				obj = dataReader["Adjustment"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.Adjustment = decimal.Parse(obj.ToString());
-				}
-				obj = dataReader["BusinessCommission"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.BusinessCommission = decimal.Parse(obj.ToString());
-				}
-				obj = dataReader["SettleMoney"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.SettleMoney = decimal.Parse(obj.ToString());
-				}
-				obj = dataReader["DealCount"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.DealCount = int.Parse(obj.ToString());
-				}
-				result.PickupCode = dataReader["PickupCode"].ToString();
-				result.OtherCancelReason = dataReader["OtherCancelReason"].ToString();
-				obj = dataReader["CommissionType"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.CommissionType = int.Parse(obj.ToString());
-				}
-				obj = dataReader["CommissionFixValue"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.CommissionFixValue = decimal.Parse(obj.ToString());
-				}
-				obj = dataReader["BusinessGroupId"];
-				if (obj != null && obj != DBNull.Value)
-				{
-					result.BusinessGroupId = int.Parse(obj.ToString());
-				}
-				result.TimeSpan = dataReader["TimeSpan"].ToString();
+        /// 绑定对象
+        /// </summary>
+        private class OrderRowMapper : IDataTableRowMapper<OrderDM>
+        {
+            public OrderDM MapRow(DataRow dataReader)
+            {
+                var result = new OrderDM();
+                object obj;
+                obj = dataReader["Id"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.Id = int.Parse(obj.ToString());
+                }
+                result.OrderNo = dataReader["OrderNo"].ToString();
+                result.PickUpAddress = dataReader["PickUpAddress"].ToString();
+                obj = dataReader["PubDate"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.PubDate = DateTime.Parse(obj.ToString());
+                }
+                result.ReceviceName = dataReader["ReceviceName"].ToString();
+                result.RecevicePhoneNo = dataReader["RecevicePhoneNo"].ToString();
+                result.ReceviceAddress = dataReader["ReceviceAddress"].ToString();
+                obj = dataReader["ActualDoneDate"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.ActualDoneDate = DateTime.Parse(obj.ToString());
+                }
+                obj = dataReader["IsPay"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    if (obj.ToString() == 1.ToString() || obj.ToString().ToLower() == "true")
+                    {
+                        result.IsPay = true;
+                    }
+                    else
+                    {
+                        result.IsPay = false;
+                    }
+                }
+                obj = dataReader["Amount"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.Amount = decimal.Parse(obj.ToString());
+                }
+                obj = dataReader["OrderCommission"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.OrderCommission = decimal.Parse(obj.ToString());
+                }
+                obj = dataReader["DistribSubsidy"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.DistribSubsidy = decimal.Parse(obj.ToString());
+                }
+                obj = dataReader["WebsiteSubsidy"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.WebsiteSubsidy = decimal.Parse(obj.ToString());
+                }
+                result.Remark = dataReader["Remark"].ToString();
+                obj = dataReader["Status"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.Status = int.Parse(obj.ToString());
+                }
+                obj = dataReader["clienterId"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.clienterId = int.Parse(obj.ToString());
+                }
+                obj = dataReader["businessId"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.businessId = int.Parse(obj.ToString());
+                }
+                result.ReceviceCity = dataReader["ReceviceCity"].ToString();
+                obj = dataReader["ReceviceLongitude"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.ReceviceLongitude = decimal.Parse(obj.ToString());
+                }
+                obj = dataReader["ReceviceLatitude"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.ReceviceLatitude = decimal.Parse(obj.ToString());
+                }
+                obj = dataReader["OrderFrom"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.OrderFrom = int.Parse(obj.ToString());
+                }
+                obj = dataReader["OriginalOrderId"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.OriginalOrderId = long.Parse(obj.ToString());
+                }
+                result.OriginalOrderNo = dataReader["OriginalOrderNo"].ToString();
+                obj = dataReader["Quantity"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.Quantity = int.Parse(obj.ToString());
+                }
+                obj = dataReader["Weight"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.Weight = decimal.Parse(obj.ToString());
+                }
+                result.ReceiveProvince = dataReader["ReceiveProvince"].ToString();
+                result.ReceiveArea = dataReader["ReceiveArea"].ToString();
+                result.ReceiveProvinceCode = dataReader["ReceiveProvinceCode"].ToString();
+                result.ReceiveCityCode = dataReader["ReceiveCityCode"].ToString();
+                result.ReceiveAreaCode = dataReader["ReceiveAreaCode"].ToString();
+                obj = dataReader["OrderType"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.OrderType = int.Parse(obj.ToString());
+                }
+                obj = dataReader["KM"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.KM = decimal.Parse(obj.ToString());
+                }
+                obj = dataReader["GuoJuQty"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.GuoJuQty = int.Parse(obj.ToString());
+                }
+                obj = dataReader["LuJuQty"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.LuJuQty = int.Parse(obj.ToString());
+                }
+                obj = dataReader["SongCanDate"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.SongCanDate = DateTime.Parse(obj.ToString());
+                }
+                obj = dataReader["OrderCount"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.OrderCount = int.Parse(obj.ToString());
+                }
+                obj = dataReader["CommissionRate"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.CommissionRate = decimal.Parse(obj.ToString());
+                }
+                obj = dataReader["Payment"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.Payment = int.Parse(obj.ToString());
+                }
+                obj = dataReader["CommissionFormulaMode"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.CommissionFormulaMode = int.Parse(obj.ToString());
+                }
+                obj = dataReader["Adjustment"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.Adjustment = decimal.Parse(obj.ToString());
+                }
+                obj = dataReader["BusinessCommission"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.BusinessCommission = decimal.Parse(obj.ToString());
+                }
+                obj = dataReader["SettleMoney"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.SettleMoney = decimal.Parse(obj.ToString());
+                }
+                obj = dataReader["DealCount"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.DealCount = int.Parse(obj.ToString());
+                }
+                result.PickupCode = dataReader["PickupCode"].ToString();
+                result.OtherCancelReason = dataReader["OtherCancelReason"].ToString();
+                obj = dataReader["CommissionType"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.CommissionType = int.Parse(obj.ToString());
+                }
+                obj = dataReader["CommissionFixValue"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.CommissionFixValue = decimal.Parse(obj.ToString());
+                }
+                obj = dataReader["BusinessGroupId"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.BusinessGroupId = int.Parse(obj.ToString());
+                }
+                result.TimeSpan = dataReader["TimeSpan"].ToString();
 
-				return result;
-			}
-		}
+                return result;
+            }
+        }
 
-		#endregion
+        #endregion
     }
 }
