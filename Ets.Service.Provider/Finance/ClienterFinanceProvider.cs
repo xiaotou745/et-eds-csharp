@@ -198,10 +198,6 @@ namespace Ets.Service.Provider.Finance
             {
                 return new Tuple<bool,FinanceCardBindC>(false,FinanceCardBindC.NoPara);
             }
-            if (cardBindCpm.AccountNo != cardBindCpm.AccountNo2) //两次录入的金融账号不一致
-            {
-                return new Tuple<bool, FinanceCardBindC>(false, FinanceCardBindC.InputValid);
-            }
             int count = _clienterFinanceAccountDao.GetCountByClienterId(cardBindCpm.ClienterId);
             if (count > 0) //该骑士已绑定过金融账号
             {
@@ -249,10 +245,6 @@ namespace Ets.Service.Provider.Finance
             if (cardModifyCpm == null)
             {
                 return new Tuple<bool, FinanceCardCardModifyC>(false, FinanceCardCardModifyC.NoPara);
-            }
-            if (cardModifyCpm.AccountNo != cardModifyCpm.AccountNo2) //两次录入的金融账号不一致
-            {
-                return new Tuple<bool, FinanceCardCardModifyC>(false, FinanceCardCardModifyC.InputValid);
             }
             return new Tuple<bool, FinanceCardCardModifyC>(true, FinanceCardCardModifyC.Success);
         }

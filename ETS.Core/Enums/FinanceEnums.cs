@@ -34,8 +34,6 @@ namespace ETS.Enums
         Success = 0,
         [DisplayText("该骑士已绑定过金融账号")]
         Exists = 1,
-        [DisplayText("两次录入的金融账号不一致")]
-        InputValid = 2,
         [DisplayText("系统错误")]
         SystemError = -1,
         [DisplayText("未传参")]
@@ -48,8 +46,6 @@ namespace ETS.Enums
     public enum FinanceCardCardModifyC
     {
         Success = 0,
-        [DisplayText("两次录入的金融账号不一致")]
-        InputValid = 2,
         [DisplayText("系统错误")]
         SystemError = -1,
         [DisplayText("未传参")]
@@ -145,8 +141,6 @@ namespace ETS.Enums
         Success = 0,
         [DisplayText("该商户已绑定过金融账号")]
         Exists = 1,
-        [DisplayText("两次录入的金融账号不一致")]
-        InputValid = 2,
         [DisplayText("系统错误")]
         SystemError = -1,
         [DisplayText("未传参")]
@@ -159,8 +153,6 @@ namespace ETS.Enums
     public enum FinanceCardCardModifyB
     {
         Success = 0,
-        [DisplayText("两次录入的金融账号不一致")]
-        InputValid = 2,
         [DisplayText("系统错误")]
         SystemError = -1,
         [DisplayText("未传参")]

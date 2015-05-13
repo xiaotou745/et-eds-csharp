@@ -218,10 +218,6 @@ namespace Ets.Service.Provider.Finance
             {
                 return new Tuple<bool, FinanceCardBindB>(false, FinanceCardBindB.NoPara);
             }
-            if (cardBindBpm.AccountNo != cardBindBpm.AccountNo2) //两次录入的金融账号不一致
-            {
-                return new Tuple<bool, FinanceCardBindB>(false, FinanceCardBindB.InputValid);
-            }
             int count = _businessFinanceAccountDao.GetCountByBusinessId(cardBindBpm.BusinessId);
             if (count > 0) //该商户已绑定过金融账号
             {
@@ -271,10 +267,6 @@ namespace Ets.Service.Provider.Finance
             if (cardModifyBpm == null)
             {
                 return new Tuple<bool, FinanceCardCardModifyB>(false, FinanceCardCardModifyB.NoPara);
-            }
-            if (cardModifyBpm.AccountNo != cardModifyBpm.AccountNo2) //两次录入的金融账号不一致
-            {
-                return new Tuple<bool, FinanceCardCardModifyB>(false, FinanceCardCardModifyB.InputValid);
             }
             return new Tuple<bool, FinanceCardCardModifyB>(true, FinanceCardCardModifyB.Success);
         }
