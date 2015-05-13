@@ -193,7 +193,7 @@ namespace Ets.Dao.User
             return list;
         }
 
- 
+
         /// <summary>
         /// 设置结算比例-平扬 2015.3.12
         /// </summary>
@@ -236,13 +236,13 @@ namespace Ets.Dao.User
             try
             {
                 string sql = @"update business set  ";
-                if(model.DistribSubsidy>0)
-                {
-                    sql += "DistribSubsidy=@DistribSubsidy,";
-                }
+                //if(model.DistribSubsidy>0)
+                //{
+                sql += "DistribSubsidy=@DistribSubsidy,";
+                //}
                 if (model.CommissionType > 0)
                 {
-                    if (model.CommissionType==1)
+                    if (model.CommissionType == 1)
                     {
                         if (model.BusinessCommission > 0)
                         {
@@ -258,19 +258,19 @@ namespace Ets.Dao.User
                     }
                     sql += "CommissionType=@CommissionType,";
                 }
-                if (model.BusinessGroupId> 0)
+                if (model.BusinessGroupId > 0)
                 {
                     sql += "BusinessGroupId=@BusinessGroupId,";
                 }
                 sql = sql.TrimEnd(',');
-                sql += " where id=@id"; 
+                sql += " where id=@id";
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
                 dbParameters.AddWithValue("BusinessCommission", model.BusinessCommission);
                 dbParameters.AddWithValue("DistribSubsidy", model.DistribSubsidy);
                 dbParameters.AddWithValue("id", model.Id);
                 dbParameters.AddWithValue("CommissionType", model.CommissionType);
                 dbParameters.AddWithValue("CommissionFixValue", model.CommissionFixValue);
-                dbParameters.AddWithValue("BusinessGroupId",model.BusinessGroupId);
+                dbParameters.AddWithValue("BusinessGroupId", model.BusinessGroupId);
                 int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Write, sql, dbParameters);
                 if (i > 0) reslut = true;
             }
@@ -542,7 +542,7 @@ namespace Ets.Dao.User
         /// </summary>
         /// <param name="busiId"></param>
         /// <returns></returns>
-        public BusListResultModel GetBusiness(int originalBusiId,int groupId)
+        public BusListResultModel GetBusiness(int originalBusiId, int groupId)
         {
             BusListResultModel busi = new BusListResultModel();
             string selSql = @" SELECT  
@@ -622,9 +622,9 @@ namespace Ets.Dao.User
                     var busi = GetBusiness(id);
                     if (busi.GroupId == 1 && busi.OriginalBusiId > 0 && enumStatusType == EnumStatusType.审核通过)
                     {
-                      string str =  HTTPHelper.HttpPost(juWangKeBusiAuditUrl, "supplier_id=" + busi.OriginalBusiId);
+                        string str = HTTPHelper.HttpPost(juWangKeBusiAuditUrl, "supplier_id=" + busi.OriginalBusiId);
                     }
-                    
+
                     //HTTPHelper.HttpPost()
                     reslut = true;
                 }
@@ -856,12 +856,12 @@ namespace Ets.Dao.User
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OriginalBusiId", bid);
             parm.AddWithValue("@GroupId", groupid);
-            DataTable  dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm); 
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             if (dt == null || dt.Rows.Count <= 0)
             {
                 return null;
             }
-            return MapRows<Business>(dt)[0]; 
+            return MapRows<Business>(dt)[0];
         }
 
         /// <summary>
@@ -887,7 +887,7 @@ namespace Ets.Dao.User
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             if (dt != null)
             {
-               return  MapRows<order>(dt)[0];
+                return MapRows<order>(dt)[0];
             }
             else
             {
@@ -905,7 +905,7 @@ namespace Ets.Dao.User
             string sql = string.Format(@"UPDATE dbo.[order] SET [Status]=@Status 
                             output Inserted.Id,GETDATE(),'{0}','{1}',Inserted.businessId,Inserted.[Status],{2}
                             into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
-                            WHERE OriginalOrderNo=@OriginalOrderNo and OrderFrom=@OrderFrom ", SuperPlatform.商家,ConstValues.CancelOrder, (int)SuperPlatform.商家);
+                            WHERE OriginalOrderNo=@OriginalOrderNo and OrderFrom=@OrderFrom ", SuperPlatform.商家, ConstValues.CancelOrder, (int)SuperPlatform.商家);
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OriginalOrderNo", oriOrderNo);
             parm.AddWithValue("@OrderFrom", orderFrom);
@@ -982,7 +982,7 @@ namespace Ets.Dao.User
             parm.AddWithValue("@Name", model.Name);
             parm.AddWithValue("@City", model.City);
             parm.AddWithValue("@district", model.district);
-            parm.Add("@PhoneNo",SqlDbType.NVarChar);
+            parm.Add("@PhoneNo", SqlDbType.NVarChar);
             parm.SetValue("@PhoneNo", model.PhoneNo);
 
             parm.Add("@PhoneNo2", SqlDbType.NVarChar);
@@ -991,7 +991,7 @@ namespace Ets.Dao.User
             parm.AddWithValue("@Password", model.Password);
             parm.AddWithValue("@CheckPicUrl", model.CheckPicUrl);
 
-            
+
             parm.AddWithValue("@IDCard", model.IDCard);
             parm.AddWithValue("@Address", model.Address);
             parm.AddWithValue("@Longitude", model.Longitude);
@@ -1086,7 +1086,7 @@ namespace Ets.Dao.User
             IDbParameters parm = DbHelper.CreateDbParameters();
 
             parm.AddWithValue("@Address", business.Address);
-            parm.Add("@PhoneNo2",SqlDbType.NVarChar);
+            parm.Add("@PhoneNo2", SqlDbType.NVarChar);
             parm.SetValue("@PhoneNo2", business.PhoneNo2);
             parm.AddWithValue("@Name", business.Name);
             parm.AddWithValue("@Landline", business.Landline);
@@ -1379,7 +1379,7 @@ namespace Ets.Dao.User
             parm.AddWithValue("@OptId", orderOptionModel.OptUserId);
             parm.AddWithValue("@OptName", orderOptionModel.OptUserName);
             parm.AddWithValue("@Platform", 3);
-            parm.AddWithValue("@Remark", remark );
+            parm.AddWithValue("@Remark", remark);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
 
