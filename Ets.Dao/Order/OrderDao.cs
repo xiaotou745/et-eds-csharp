@@ -427,7 +427,7 @@ values( @OrderId,
                 @RecevicePhoneNo,@ReceiveProvinceCode,@ReceiveCityCode,@ReceiveAreaCode,@ReceviceAddress,
                 @ReceviceLongitude,@ReceviceLatitude,@BusinessId,@PickUpAddress,@Payment,@OrderCommission,
                 @WebsiteSubsidy,@CommissionRate,@CommissionFormulaMode,@ReceiveProvince,@ReceviceCity,@ReceiveArea,
-                @PickupCode,@BusinessCommission,@SettleMoney,@Adjustment,@OrderFrom,@Status,@CommissionType,@CommissionFixValue,@BusinessGroupId)";
+                @PickupCode,@BusinessCommission,@SettleMoney,@Adjustment,@OrderFrom,@Status,@CommissionType,@CommissionFixValue,@BusinessGroupId);select  IDENT_CURRENT('order') ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             //基本参数信息
 
@@ -477,9 +477,19 @@ values( @OrderId,
             dbParameters.AddWithValue("@CommissionFixValue", paramodel.CommissionFixValue);//固定金额
             dbParameters.AddWithValue("@BusinessGroupId", paramodel.BusinessGroupId);//分组ID
 
-            DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrdersql, dbParameters);
+            object result = DbHelper.ExecuteScalar(SuperMan_Write, insertOrdersql, dbParameters);                
             #endregion
+         
             AddOrderDetail(paramodel, orderNo); //操作插入OrderDetail表
+
+            #region 定入订单子表
+            int orderId = ParseHelper.ToInt(result);
+            if (orderId > 0)
+            {
+                AddOrderChild(paramodel, orderId);
+            }
+            #endregion
+            
             return orderNo;
         }
 
@@ -568,6 +578,38 @@ values( @OrderId,
                 DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrderDetailsql, insertOrderDetaiParas);
             }
         }
+
+        private void AddOrderChild(CreatePM_OpenApi paramodel,  int orderId)
+        {
+            const string insertOrderChildSql = @"
+insert into OrderChild
+        (OrderId,
+        ChildId,
+        TotalPrice,
+        GoodPrice,
+        DeliveryPrice,
+        CreateBy,
+        UpdateBy)
+values( @OrderId,
+        @ChildId,
+        @TotalPrice,
+        @GoodPrice,
+        @DeliveryPrice,
+        @CreateBy,
+        @UpdateBy)";
+            IDbParameters dbOrderChildParameters = DbHelper.CreateDbParameters();
+            dbOrderChildParameters.AddWithValue("@OrderId", orderId);
+            dbOrderChildParameters.AddWithValue("@ChildId", 1);
+            decimal totalPrice = paramodel.total_price + Convert.ToDecimal(paramodel.delivery_fee);
+            dbOrderChildParameters.AddWithValue("@TotalPrice", totalPrice);
+            dbOrderChildParameters.AddWithValue("@GoodPrice", paramodel.total_price);//订单金额
+            dbOrderChildParameters.AddWithValue("@DeliveryPrice", paramodel.delivery_fee);//外送费
+            dbOrderChildParameters.AddWithValue("@CreateBy", SuperPlatform.第三方对接平台.ToString());
+            dbOrderChildParameters.AddWithValue("@UpdateBy", SuperPlatform.第三方对接平台.ToString());
+
+            DbHelper.ExecuteScalar(SuperMan_Write, insertOrderChildSql, dbOrderChildParameters);
+        }
+
         #endregion
 
      
