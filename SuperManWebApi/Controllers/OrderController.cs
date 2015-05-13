@@ -274,6 +274,13 @@ namespace SuperManWebApi.Controllers
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.DeleteFailed);
             }
         }
-         
+
+        //[HttpPost]
+        //[ExecuteTimeLog]
+        //public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel> Receive(int userId, string orderNo,string Version)
+        //{
+
+        //    return null;
+        //}
     }
 }
