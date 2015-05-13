@@ -26,6 +26,7 @@ using Ets.Service.Provider.MyPush;
 using Ets.Model.DomainModel.Bussiness;
 using Ets.Model.ParameterModel.Order;
 using ETS.NoSql.RedisCache;
+using Ets.Model.DomainModel.Order;
 namespace Ets.Service.Provider.Clienter
 {
     public class ClienterProvider : IClienterProvider
@@ -503,7 +504,7 @@ namespace Ets.Service.Provider.Clienter
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 //获取该订单信息和该  骑士现在的 收入金额
-               
+
                 if (myOrderInfo.GroupId == SystemConst.Group3 && !string.IsNullOrWhiteSpace(myOrderInfo.PickupCode)
                     && pickupCode != myOrderInfo.PickupCode) //全时订单 判断 取货码是否正确
                     return ETS.Enums.FinishOrderStatus.PickupCodeError.ToString();
@@ -815,8 +816,7 @@ namespace Ets.Service.Provider.Clienter
         public ClienterDM GetDetails(int id)
         {
             return clienterDao.GetDetails(id);
-        }
-
+        } 
 
         /// <summary>
         /// 判断骑士是否存在
@@ -835,7 +835,7 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="orderId"></param>
         /// <param name="orderChildId"></param>
         /// <returns></returns>
-        public OrderChild GetOrderChildInfo(int orderId, int orderChildId)
+        public List<OrderChildForTicket> GetOrderChildInfo(int orderId, int orderChildId)
         {
             return orderChildDao.GetOrderChildInfo(orderId, orderChildId);
         }
