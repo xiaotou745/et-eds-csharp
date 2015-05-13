@@ -201,6 +201,25 @@ where   1=1 and o.Id = @OrderId
         }
 
         /// <summary>
+        /// 更新微信的二维码地址，因为微信支付的时候生成二维码只能是一次
+        /// 窦海超
+        /// 2015年5月13日 16:09:50
+        /// </summary>
+        /// <param name="orderId">主订单号</param>
+        /// <param name="orderChildId">子订单号</param>
+        /// <param name="wxCodeUrl">微信二维码地址</param>
+        /// <returns></returns>
+        public bool UpdateWxCodeUrl(int orderId, int orderChildId, string wxCodeUrl)
+        {
+            string sql = "update dbo.OrderChild set WxCodeUrl = @WxCodeUrl where OrderId=@OrderId and ChildId=@ChildId";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("WxCodeUrl", DbType.String, 256).Value = wxCodeUrl;
+            parm.Add("OrderId", DbType.Int32, 4).Value = orderId;
+            parm.Add("ChildId", DbType.Int32, 4).Value = orderChildId;
+            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm)) > 0 ? true : false;
+        }
+
+        /// <summary>
         /// 获取订单状态
         /// 窦海超
         /// 2015年5月13日 11:04:41
@@ -210,7 +229,7 @@ where   1=1 and o.Id = @OrderId
         /// <returns>不存在返回-1</returns>
         public PayStatusModel GetPayStatus(int orderId, int orderChildId)
         {
-            string sql = "SELECT PayStatus,TotalPrice from dbo.OrderChild oc(nolock) where OrderId = @OrderId and ChildId = @ChildId ";
+            string sql = "SELECT PayStatus,TotalPrice,WxCodeUrl from dbo.OrderChild oc(nolock) where OrderId = @OrderId and ChildId = @ChildId ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("OrderId", DbType.Int32, 4).Value = orderId;
             parm.Add("ChildId", DbType.Int32, 4).Value = orderChildId;
@@ -238,7 +257,7 @@ where   1=1 and o.Id = @OrderId
             string sql = @"
 update OrderChild set PayStatus=@PayStatus,PayStyle=@PayStyle,PayBy=@PayBy,PayTime=getdate(),
 PayType=@PayType , OriginalOrderNo=@OriginalOrderNo
-where OrderId=@OrderId and ChildId=@ChildId and PayStatus!=FinishStatus";
+where OrderId=@OrderId and ChildId=@ChildId and PayStatus!=@FinishStatus";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("PayStatus", DbType.Int32, 4).Value = EnumOrderChildStatus.YiWanCheng.GetHashCode();//变为已完成
             parm.Add("PayStyle", DbType.Int32, 4).Value = model.payStyle;
