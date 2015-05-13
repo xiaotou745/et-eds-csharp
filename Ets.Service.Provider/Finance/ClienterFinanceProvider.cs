@@ -17,6 +17,7 @@ using Ets.Service.IProvider.Finance;
 using ETS.Transaction;
 using ETS.Transaction.Common;
 using ETS.Util;
+using ETS.Data.PageData;
 
 namespace Ets.Service.Provider.Finance
 {
@@ -40,6 +41,7 @@ namespace Ets.Service.Provider.Finance
         /// 骑士金融账号表
         /// </summary>
         private readonly ClienterFinanceAccountDao _clienterFinanceAccountDao = new ClienterFinanceAccountDao();
+        ClienterFinanceDao clienterFinanceDao = new ClienterFinanceDao();
         #endregion
 
         #region 骑士提现功能  add by caoheyang 20150509
@@ -266,6 +268,225 @@ namespace Ets.Service.Provider.Finance
                        temp.OperateTime.ToString("HH:mm"); //分
             }
             return records;
+        }
+        /// <summary>
+        /// 根据参数获取骑士提现申请单列表
+        /// danny-20150513
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<ClienterWithdrawFormModel> GetClienterWithdrawList(ClienterWithdrawSearchCriteria criteria)
+        {
+            return clienterFinanceDao.GetClienterWithdrawList<ClienterWithdrawFormModel>(criteria);
+        }
+        /// <summary>
+        /// 根据申请单Id获取骑士提现申请单
+        /// danny-20150513
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        public ClienterWithdrawFormModel GetClienterWithdrawListById(string withwardId)
+        {
+            return clienterFinanceDao.GetClienterWithdrawListById(withwardId);
+        }
+        /// <summary>
+        /// 获取骑士提款单操作日志
+        /// danny-20150513
+        /// </summary>
+        /// <param name="withwardId"></param>
+        /// <returns></returns>
+        public IList<ClienterWithdrawLog> GetClienterWithdrawOptionLog(string withwardId)
+        {
+            return clienterFinanceDao.GetClienterWithdrawOptionLog(withwardId);
+        }
+        /// <summary>
+        /// 审核骑士提现申请单
+        /// danny-20150513
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ClienterWithdrawAudit(ClienterWithdrawLog model)
+        {
+            return clienterFinanceDao.ClienterWithdrawAudit(model);
+        }
+        /// <summary>
+        /// 骑士提现申请单确认打款
+        /// danny-20150513
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ClienterWithdrawPayOk(ClienterWithdrawLog model)
+        {
+            bool reg = false;
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (clienterFinanceDao.ClienterWithdrawPayOk(model))
+                {
+                    if (clienterFinanceDao.ModifyClienterBalanceRecordStatus(model.WithwardId.ToString()))
+                    {
+                        if (clienterFinanceDao.ModifyClienterTotalAmount(model.WithwardId.ToString()))
+                        {
+                            reg = true;
+                            tran.Complete();
+                        }
+                    }
+                }
+            }
+            return reg;
+        }
+
+        /// <summary>
+        /// 骑士提现申请单审核拒绝
+        /// danny-20150513
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ClienterWithdrawAuditRefuse(ClienterWithdrawLogModel model)
+        {
+            bool reg = false;
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (clienterFinanceDao.ClienterWithdrawReturn(model))
+                {
+                    if (clienterFinanceDao.ClienterWithdrawAuditRefuse(model))
+                    {
+                        if (clienterFinanceDao.ModifyClienterBalanceRecordStatus(model.WithwardId.ToString()))
+                        {
+                            if (clienterFinanceDao.ModifyClienterAmountInfo(model.WithwardId.ToString()))
+                            {
+                                reg = true;
+                                tran.Complete();
+                            }
+                        }
+                    }
+                }
+            }
+            return reg;
+        }
+        /// <summary>
+        /// 骑士提现申请单打款失败
+        /// danny-20150513
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ClienterWithdrawPayFailed(ClienterWithdrawLogModel model)
+        {
+            bool reg = false;
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (clienterFinanceDao.ClienterWithdrawReturn(model))
+                {
+                    if (clienterFinanceDao.ClienterWithdrawPayFailed(model))
+                    {
+                        if (clienterFinanceDao.ModifyClienterBalanceRecordStatus(model.WithwardId.ToString()))
+                        {
+                            if (clienterFinanceDao.ModifyClienterAmountInfo(model.WithwardId.ToString()))
+                            {
+                                reg = true;
+                                tran.Complete();
+                            }
+                        }
+                    }
+                }
+            }
+            return reg;
+        }
+
+        /// <summary>
+        /// 获取骑士提款收支记录列表
+        /// danny-20150513
+        /// </summary>
+        /// <param name="withwardId"></param>
+        /// <returns></returns>
+        public IList<ClienterBalanceRecord> GetClienterBalanceRecordList(ClienterBalanceRecordSerchCriteria criteria)
+        {
+            return clienterFinanceDao.GetClienterBalanceRecordList(criteria);
+        }
+        /// <summary>
+        /// 获取要导出的骑士提现申请单
+        /// danny-20150513
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public IList<ClienterWithdrawFormModel> GetClienterWithdrawForExport(ClienterWithdrawSearchCriteria criteria)
+        {
+            return clienterFinanceDao.GetClienterWithdrawForExport(criteria);
+        }
+        /// <summary>
+        /// 获取要导出的骑士提款收支记录列表
+        /// danny-20150513
+        /// </summary>
+        /// <param name="withwardId"></param>
+        /// <returns></returns>
+        public IList<ClienterBalanceRecordModel> GetClienterBalanceRecordListForExport(ClienterBalanceRecordSerchCriteria criteria)
+        {
+            return clienterFinanceDao.GetClienterBalanceRecordListForExport(criteria);
+        }
+        /// <summary>
+        /// 生成excel文件
+        /// 导出字段：骑士姓名、电话、开户行、账户名、卡号、提款金额
+        /// danny-20150513
+        /// </summary>
+        /// <returns></returns>
+        public string CreateClienterWithdrawFormExcel(List<ClienterWithdrawFormModel> list)
+        {
+            StringBuilder strBuilder = new StringBuilder();
+            strBuilder.AppendLine("<table border=1 cellspacing=0 cellpadding=5 rules=all>");
+            //输出表头.
+            strBuilder.AppendLine("<tr style=\"font-weight: bold; white-space: nowrap;\">");
+            strBuilder.AppendLine("<td>骑士姓名</td>");
+            strBuilder.AppendLine("<td>电话</td>");
+            strBuilder.AppendLine("<td>开户行</td>");
+            strBuilder.AppendLine("<td>账户名</td>");
+            strBuilder.AppendLine("<td>卡号</td>");
+            strBuilder.AppendLine("<td>提款金额</td>");
+            strBuilder.AppendLine("</tr>");
+            //输出数据.
+            foreach (var item in list)
+            {
+                strBuilder.AppendLine(string.Format("<tr><td>'{0}'</td>", item.ClienterName));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.ClienterPhoneNo));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OpenBank));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.TrueName));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", ParseHelper.ToDecrypt(item.AccountNo)));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Amount));
+            }
+            strBuilder.AppendLine("</table>");
+            return strBuilder.ToString();
+        }
+        /// <summary>
+        /// 生成excel文件
+        /// 导出字段：任务单号/交易流水号、所属银行、卡号、收支金额、余额、完成时间、操作人
+        /// danny-20150513
+        /// </summary>
+        /// <returns></returns>
+        public string CreateClienterBalanceRecordExcel(List<ClienterBalanceRecordModel> list)
+        {
+            StringBuilder strBuilder = new StringBuilder();
+            strBuilder.AppendLine("<table border=1 cellspacing=0 cellpadding=5 rules=all>");
+            //输出表头.
+            strBuilder.AppendLine("<tr style=\"font-weight: bold; white-space: nowrap;\">");
+            strBuilder.AppendLine("<td>任务单号/交易流水号</td>");
+            strBuilder.AppendLine("<td>所属银行</td>");
+            strBuilder.AppendLine("<td>卡号</td>");
+            strBuilder.AppendLine("<td>收支金额</td>");
+            strBuilder.AppendLine("<td>余额</td>");
+            strBuilder.AppendLine("<td>完成时间</td>");
+            strBuilder.AppendLine("<td>操作人</td>");
+            strBuilder.AppendLine("</tr>");
+            //输出数据.
+            foreach (var item in list)
+            {
+                strBuilder.AppendLine(string.Format("<tr><td>'{0}'</td>", item.RelationNo));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OpenBank));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", ParseHelper.ToDecrypt(item.AccountNo)));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Amount));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Balance));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OperateTime));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Operator));
+            }
+            strBuilder.AppendLine("</table>");
+            return strBuilder.ToString();
         }
     }
 }

@@ -61,7 +61,7 @@ namespace ETS.Enums
     }
 
     /// <summary>
-    ///骑士余额流水   交易类型(1佣金 2奖励 3提现 4取消订单赔偿 5无效订单扣款) 枚举 add by caoheyang 20150509
+    ///骑士余额流水   交易类型(1佣金 2奖励 3提现 4取消订单赔偿 5无效订单扣款 6提现失败返现) 枚举 add by caoheyang 20150509
     /// </summary>
     public enum ClienterBalanceRecordRecordType
     {
@@ -74,7 +74,9 @@ namespace ETS.Enums
         [DisplayText("取消订单赔偿")]
         QuXiaoOrder = 4,
         [DisplayText("无效订单扣款")]
-        WuXiaoOrder = 5
+        WuXiaoOrder = 5,
+        [DisplayText("提现失败返现")]
+        Return = 6
     }
 
     /// <summary>
@@ -166,7 +168,7 @@ namespace ETS.Enums
     }
 
     /// <summary>
-    ///商户余额流水   交易类型(1订单餐费 2配送费 3提现 4充值) 枚举 add by caoheyang 20150511
+    ///商户余额流水   交易类型(1订单餐费 2配送费 3提现 4充值 5提现失败返现) 枚举 add by caoheyang 20150511
     /// </summary>
     public enum BusinessBalanceRecordRecordType
     {

@@ -56,6 +56,7 @@
     <Compile Include="Finance\BusinessFinanceAccountDao.cs" />
     <Compile Include="Finance\ClienterFinanceAccountDao.cs" />
     <Compile Include="Finance\BusinessWithdrawFormDao.cs" />
+    <Compile Include="Finance\ClienterFinanceDao.cs" />
     <Compile Include="Finance\ClienterWithdrawFormDao.cs" />
     <Compile Include="Finance\BusinessWithdrawLogDao.cs" />
     <Compile Include="Finance\ClienterWithdrawLogDao.cs" />

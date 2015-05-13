@@ -222,6 +222,13 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="orderChildId"></param>
         /// <returns></returns>
         OrderChild GetOrderChildInfo(int orderId, int orderChildId);
+        /// <summary>
+        /// 获取骑士详细信息
+        /// danny-20150513
+        /// </summary>
+        /// <param name="businessId">骑士Id</param>
+        /// <returns></returns>
+        ClienterDetailModel GetClienterDetailById(string clienterId);
     
     }
 }
