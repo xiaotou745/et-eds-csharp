@@ -21,6 +21,11 @@ namespace Ets.Model.Common.AliPay
         /// <summary>
         /// 支付类型 1支付宝 2微信
         /// </summary>
-        public int payType { get; set; } 
+        public int payType { get; set; }
+
+        /// <summary>
+        /// 支付方式(1 用户支付 2 骑士代付)
+        /// </summary>
+        public int payStyle { get; set; }
     }
 }

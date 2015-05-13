@@ -23,29 +23,27 @@ namespace SuperManWebApi.Controllers
         /// 窦海超
         /// 2015年5月12日 14:35:05
         /// </summary>
-        /// <param name="model"></param>
         [HttpGet]
         public ResultModel<PayResultModel> CreatePay()//PayModel model
         {
             PayModel model = new PayModel()
             {
-                orderId = 2114,
-                childId = 1,
-                payType = 1,
+                orderId = 2118,
+                childId = 3,
+                payType = 2,
                 version = "1.0"
             };
-            //return ResultModel<PayResultModel>.Conclude(AliPayStatus, );
             return payProvider.CreatePay(model);
         }
 
+        #region 支付宝
+
         /// <summary>
-        /// 订单回调,同步调用
+        /// 支付宝创建订单
         /// 窦海超
         /// 2015年5月12日 14:35:10
         /// </summary>
-        /// <param name="model"></param>
         /// <returns></returns>
-        //[HttpGet]
         public dynamic ReturnAlipay()
         {
             return payProvider.ReturnAlipay();
@@ -56,9 +54,7 @@ namespace SuperManWebApi.Controllers
         /// 窦海超
         /// 2015年5月12日 14:35:15
         /// </summary>
-        /// <param name="result"></param>
         /// <returns></returns>
-        [HttpPost]
         public dynamic Notify()
         {
             return payProvider.Notify();
@@ -70,10 +66,33 @@ namespace SuperManWebApi.Controllers
         /// 2015年5月12日 14:35:19
         /// </summary>
         /// <returns></returns>
-        [HttpPost]
         public dynamic GetOrderPayStatus(OrderPayModel model)
         {
+            //OrderPayModel model = new OrderPayModel()
+            //{
+            //    childId = 1,
+            //    orderId = 2114,
+            //    payType = 1,
+            //    payStyle = 1
+            //};
             return payProvider.GetOrderPayStatus(model);
         }
+
+        #endregion
+
+        #region 微信
+
+        /// <summary>
+        /// 微信支付
+        /// 窦海超
+        /// 2015年5月13日 15:02:42
+        /// </summary>
+        /// <returns></returns>
+        public dynamic ReturnWxpay()
+        {
+            return payProvider.ReturnWxpay();
+        }
+        #endregion
+
     }
 }
