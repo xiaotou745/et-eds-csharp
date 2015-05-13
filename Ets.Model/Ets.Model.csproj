@@ -80,8 +80,10 @@
     <Compile Include="DataModel\Order\OrderOther.cs" />
     <Compile Include="DataModel\Order\OrderSubsidiesLog.cs" />
     <Compile Include="DomainModel\Area\DMAreaCodeInfo.cs" />
+    <Compile Include="DomainModel\Bussiness\BusinessDetailModel.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessDM.cs" />
     <Compile Include="DomainModel\Clienter\ClienterDM.cs" />
+    <Compile Include="DomainModel\Finance\BusinessBalanceRecordModel.cs" />
     <Compile Include="DomainModel\Finance\BusinessWithdrawFormModel.cs" />
     <Compile Include="DomainModel\Finance\BusinessWithdrawLogModel.cs" />
     <Compile Include="DomainModel\Finance\FinanceRecordsDM.cs" />
@@ -184,6 +186,7 @@
     <Compile Include="ParameterModel\Clienter\UploadReceiptModel.cs" />
     <Compile Include="ParameterModel\Clienter\UploadReceiptResultModel.cs" />
     <Compile Include="ParameterModel\Finance\BankCriteria.cs" />
+    <Compile Include="ParameterModel\Finance\BusinessBalanceRecordSerchCriteria.cs" />
     <Compile Include="ParameterModel\Finance\BusinessWithdrawSearchCriteria.cs" />
     <Compile Include="ParameterModel\Finance\CardBindBPM.cs" />
     <Compile Include="ParameterModel\Finance\CardBindCPM.cs" />

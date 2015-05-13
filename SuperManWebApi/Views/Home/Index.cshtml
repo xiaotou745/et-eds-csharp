@@ -18,19 +18,19 @@
     //    },
     //    error: function () { }
     //});
-    $.ajax({
-        type: 'POST',
-        dataType: 'json',
-        url: '/Clienter/Get',
-        data: {
-            "ClienterId": 114,
-            "Version": "1.0.1"
-        },
-        success: function (data) {
-            console.log(data);
-        },
-        error: function () { }
-    });
+    //$.ajax({
+    //    type: 'POST',
+    //    dataType: 'json',
+    //    url: '/Clienter/Get',
+    //    data: {
+    //        "ClienterId": 114,
+    //        "Version": "1.0.1"
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
     
     //$.ajax({
     //    type: 'POST',
@@ -525,22 +525,22 @@
     //});
     
 
-    $(function() {
-        $.ajax({
-            type: 'POST',
-            dataType: 'json',
-            url: '/finance/WithdrawC',
-            data: {
-                "ClienterId": "114",
-                "WithdrawPrice": "1",
-                "FinanceAccountId":"1"
-            },
-            success: function (data) {
-                console.log(data);
-            },
-            error: function () { }
-        });
-    });
+    //$(function() {
+    //    $.ajax({
+    //        type: 'POST',
+    //        dataType: 'json',
+    //        url: '/finance/WithdrawC',
+    //        data: {
+    //                        "ClienterId": "172",
+    //                        "WithdrawPrice": "1",
+    //                        "FinanceAccountId": "1"
+    //        },
+    //        success: function (data) {
+    //            console.log(data);
+    //        },
+    //        error: function () { }
+    //    });
+    //});
 
     //$(function () {
     //    $.ajax({
@@ -548,9 +548,10 @@
     //        dataType: 'json',
     //        url: '/finance/CardBindC',
     //        data: {
-    //            "ClienterId": "114",
+    //            "ClienterId": "117",
     //            "TrueName": "张三",
-    //            "AccountNo":"dasdasd",
+    //            "AccountNo": "dasdasd",
+    //            "AccountNo2": "dasdasd",
     //            "OpenBank":"工商",
     //            "OpenSubBank":"北京支行",
     //            "CreateBy":"新增人"
@@ -593,7 +594,7 @@
     //        dataType: 'json',
     //        url: '/finance/CardBindB',
     //        data: {
-    //            "BusinessId": "172",
+    //            "BusinessId": "173",
     //            "TrueName": "张三商户",
     //            "AccountNo": "dasdasd",
     //            "AccountNo2": "dasdasd",

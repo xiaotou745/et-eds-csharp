@@ -27,14 +27,14 @@ namespace Ets.Service.IProvider.Finance
         /// </summary>
         /// <param name="withdrawBpm">参数实体</param>
         /// <returns></returns>
-        SimpleResultModel WithdrawB(WithdrawBPM withdrawBpm);
+        ResultModel<object> WithdrawB(WithdrawBPM withdrawBpm);
 
         /// <summary>
         /// 商户绑定银行卡功能 add by caoheyang 20150511
         /// </summary>
         /// <param name="cardBindBpm">参数实体</param>
         /// <returns></returns>
-        SimpleResultModel CardBindB(CardBindBPM cardBindBpm);
+        ResultModel<object> CardBindB(CardBindBPM cardBindBpm);
 
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace Ets.Service.IProvider.Finance
         /// </summary>
         /// <param name="cardModifyBpm">参数实体</param>
         /// <returns></returns>
-        SimpleResultModel CardModifyB(CardModifyBPM cardModifyBpm);
+        ResultModel<object> CardModifyB(CardModifyBPM cardModifyBpm);
 
         /// <summary>
         ///  商户交易流水API add by caoheyang 20150512
@@ -92,6 +92,43 @@ namespace Ets.Service.IProvider.Finance
         /// <param name="model"></param>
         /// <returns></returns>
         bool BusinessWithdrawPayFailed(BusinessWithdrawLogModel model);
+ 		/// <summary>
+        /// 获取商户提款收支记录列表
+        /// danny-20150512
+        /// </summary>
+        /// <param name="withwardId"></param>
+        /// <returns></returns>
+        IList<BusinessBalanceRecord> GetBusinessBalanceRecordList(BusinessBalanceRecordSerchCriteria criteria);
+         /// <summary>
+        /// 获取要导出的商户提现申请单
+        /// danny-20150512
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        IList<BusinessWithdrawFormModel> GetBusinessWithdrawForExport(BusinessWithdrawSearchCriteria criteria);
+        /// <summary>
+        /// 获取要导出的商户提款收支记录列表
+        /// danny-20150512
+        /// </summary>
+        /// <param name="withwardId"></param>
+        /// <returns></returns>
+        IList<BusinessBalanceRecordModel> GetBusinessBalanceRecordListForExport(BusinessBalanceRecordSerchCriteria criteria);
+        /// <summary>
+        /// 生成excel文件
+        /// 导出字段：商户名称、电话、开户行、账户名、卡号、提款金额
+        /// danny-20150512
+        /// </summary>
+        /// <returns></returns>
+        string CreateBusinessWithdrawFormExcel(List<BusinessWithdrawFormModel> list);
+        /// <summary>
+        /// 生成excel文件
+        /// 导出字段：商户名称、电话、开户行、账户名、卡号、提款金额
+        /// danny-20150512
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        string CreateBusinessBalanceRecordExcel(List<BusinessBalanceRecordModel> list);
+
       
     }
 }

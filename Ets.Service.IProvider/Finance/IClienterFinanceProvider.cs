@@ -20,14 +20,14 @@ namespace Ets.Service.IProvider.Finance
         /// </summary>
         /// <param name="withdrawCpm">参数实体</param>
         /// <returns></returns>
-        SimpleResultModel WithdrawC(WithdrawCPM withdrawCpm);
+        ResultModel<object> WithdrawC(WithdrawCPM withdrawCpm);
 
         /// <summary>
         /// 骑士绑定银行卡功能 add by caoheyang 20150511
         /// </summary>
         /// <param name="cardBindCpm">参数实体</param>
         /// <returns></returns>
-        SimpleResultModel CardBindC(CardBindCPM cardBindCpm);
+        ResultModel<object> CardBindC(CardBindCPM cardBindCpm);
 
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace Ets.Service.IProvider.Finance
         /// </summary>
         /// <param name="cardModifyCpm">参数实体</param>
         /// <returns></returns>
-        SimpleResultModel CardModifyC(CardModifyCPM cardModifyCpm);
+        ResultModel<object> CardModifyC(CardModifyCPM cardModifyCpm);
 
 
         /// <summary>

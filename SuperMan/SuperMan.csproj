@@ -550,7 +550,8 @@
     <Content Include="Views\CommissionSubsidyStrategy\CommissionSubsidyStrategy.cshtml" />    <Content Include="Views\BusinessWithdraw\BusinessWithdraw.cshtml" />
     <Content Include="Views\BusinessWithdraw\_BusinessWithdrawList.cshtml" />
     <Content Include="Views\BusinessWithdraw\BusinessWithdrawDetail.cshtml" />
-    <Content Include="Views\BusinessManager\BusinessBalanceRecord.cshtml" />
+    <Content Include="Views\BusinessManager\BusinessDetail.cshtml" />
+    <Content Include="Views\BusinessManager\_BusinessBalanceRecordList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

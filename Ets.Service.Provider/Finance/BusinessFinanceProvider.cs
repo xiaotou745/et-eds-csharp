@@ -21,6 +21,7 @@ using ETS.Transaction.Common;
 using Ets.Model.DomainModel.Bussiness;
 using Ets.Dao.User;
 using ETS.Util;
+using System.Data;
 
 namespace Ets.Service.Provider.Finance
 {
@@ -70,7 +71,7 @@ namespace Ets.Service.Provider.Finance
         /// </summary>
         /// <param name="withdrawBpm">参数实体</param>
         /// <returns></returns>
-        public SimpleResultModel WithdrawB(WithdrawBPM withdrawBpm)
+        public ResultModel<object> WithdrawB(WithdrawBPM withdrawBpm)
         {
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
@@ -79,7 +80,7 @@ namespace Ets.Service.Provider.Finance
                 Tuple<bool, FinanceWithdrawB> checkbool = CheckWithdrawB(withdrawBpm, ref business, ref businessFinanceAccount);
                 if (checkbool.Item1 != true)  //验证失败 此次提款操作无效 直接返回相关错误信息
                 {
-                    return SimpleResultModel.Conclude(checkbool.Item2);
+                    return ResultModel<object>.Conclude(checkbool.Item2);
                 }
                 else
                 {
@@ -130,7 +131,7 @@ namespace Ets.Service.Provider.Finance
                     #endregion
                     tran.Complete();
                 }
-                return SimpleResultModel.Conclude(FinanceWithdrawB.Success); ;
+                return ResultModel<object>.Conclude(FinanceWithdrawB.Success); ;
             }
         }
 
@@ -144,6 +145,10 @@ namespace Ets.Service.Provider.Finance
         private Tuple<bool, FinanceWithdrawB> CheckWithdrawB(WithdrawBPM withdrawBpm, ref Business business,
             ref  BusinessFinanceAccount businessFinanceAccount)
         {
+            if (withdrawBpm == null)
+            {
+                return new Tuple<bool, FinanceWithdrawB>(false, FinanceWithdrawB.NoPara);
+            }
             if (withdrawBpm.WithdrawPrice <= 0)   //提现金额小于等于0 提现有误
             {
                 return new Tuple<bool, FinanceWithdrawB>(false, FinanceWithdrawB.WithdrawMoneyError);
@@ -175,18 +180,22 @@ namespace Ets.Service.Provider.Finance
         /// </summary>
         /// <param name="cardBindBpm">参数实体</param>
         /// <returns></returns>
-        public SimpleResultModel CardBindB(CardBindBPM cardBindBpm)
+        public ResultModel<object> CardBindB(CardBindBPM cardBindBpm)
         {
+            if (cardBindBpm == null)
+            {
+                return ResultModel<object>.Conclude(FinanceCardBindB.NoPara);
+            }
             if (cardBindBpm.AccountNo != cardBindBpm.AccountNo2) //两次录入的金融账号不一致
             {
-                return SimpleResultModel.Conclude(FinanceCardBindB.InputValid);
+                return ResultModel<object>.Conclude(FinanceCardBindB.InputValid);
             }
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 int count = _businessFinanceAccountDao.GetCountByBusinessId(cardBindBpm.BusinessId);
                 if (count > 0)
                 {
-                    return SimpleResultModel.Conclude(FinanceCardBindB.Exists);//该商户已绑定过金融账号
+                    return ResultModel<object>.Conclude(FinanceCardBindB.Exists);//该商户已绑定过金融账号
                 }
                 int result = _businessFinanceAccountDao.Insert(new BusinessFinanceAccount()
                 {
@@ -202,7 +211,7 @@ namespace Ets.Service.Provider.Finance
                     UpdateBy = cardBindBpm.CreateBy//新增时最后修改人与新增人一致  当前登录人
                 });
                 tran.Complete();
-                return SimpleResultModel.Conclude(SystemEnum.Success);
+                return ResultModel<object>.Conclude(SystemEnum.Success);
             }
         }
 
@@ -212,11 +221,15 @@ namespace Ets.Service.Provider.Finance
         /// </summary>
         /// <param name="cardModifyBpm">参数实体</param>
         /// <returns></returns>
-        public SimpleResultModel CardModifyB(CardModifyBPM cardModifyBpm)
+        public ResultModel<object> CardModifyB(CardModifyBPM cardModifyBpm)
         {
+            if (cardModifyBpm == null)
+            {
+                return ResultModel<object>.Conclude(FinanceCardCardModifyB.NoPara);
+            }
             if (cardModifyBpm.AccountNo != cardModifyBpm.AccountNo2) //两次录入的金融账号不一致
             {
-                return SimpleResultModel.Conclude(FinanceCardCardModifyB.InputValid);
+                return ResultModel<object>.Conclude(FinanceCardCardModifyB.InputValid);
             }
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
@@ -231,7 +244,7 @@ namespace Ets.Service.Provider.Finance
                     UpdateBy = cardModifyBpm.UpdateBy//修改人  当前登录人
                 });
                 tran.Complete();
-                return SimpleResultModel.Conclude(SystemEnum.Success);
+                return ResultModel<object>.Conclude(SystemEnum.Success);
             }
         }
         #endregion
@@ -386,6 +399,103 @@ namespace Ets.Service.Provider.Finance
                 }
             }
             return reg;
+        }
+
+        /// <summary>
+        /// 获取商户提款收支记录列表
+        /// danny-20150512
+        /// </summary>
+        /// <param name="withwardId"></param>
+        /// <returns></returns>
+        public IList<BusinessBalanceRecord> GetBusinessBalanceRecordList(BusinessBalanceRecordSerchCriteria criteria)
+        {
+            return businessFinanceDao.GetBusinessBalanceRecordList(criteria);
+        }
+        /// <summary>
+        /// 获取要导出的商户提现申请单
+        /// danny-20150512
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public IList<BusinessWithdrawFormModel> GetBusinessWithdrawForExport(BusinessWithdrawSearchCriteria criteria)
+        {
+            return businessFinanceDao.GetBusinessWithdrawForExport(criteria);
+        }
+        /// <summary>
+        /// 获取要导出的商户提款收支记录列表
+        /// danny-20150512
+        /// </summary>
+        /// <param name="withwardId"></param>
+        /// <returns></returns>
+        public IList<BusinessBalanceRecordModel> GetBusinessBalanceRecordListForExport(BusinessBalanceRecordSerchCriteria criteria)
+        {
+            return businessFinanceDao.GetBusinessBalanceRecordListForExport(criteria);
+        }
+        /// <summary>
+        /// 生成excel文件
+        /// 导出字段：商户名称、电话、开户行、账户名、卡号、提款金额
+        /// danny-20150512
+        /// </summary>
+        /// <returns></returns>
+        public string CreateBusinessWithdrawFormExcel(List<BusinessWithdrawFormModel> list)
+        {
+            StringBuilder strBuilder = new StringBuilder();
+            strBuilder.AppendLine("<table border=1 cellspacing=0 cellpadding=5 rules=all>");
+            //输出表头.
+            strBuilder.AppendLine("<tr style=\"font-weight: bold; white-space: nowrap;\">");
+            strBuilder.AppendLine("<td>商户名称</td>");
+            strBuilder.AppendLine("<td>电话</td>");
+            strBuilder.AppendLine("<td>开户行</td>");
+            strBuilder.AppendLine("<td>账户名</td>");
+            strBuilder.AppendLine("<td>卡号</td>");
+            strBuilder.AppendLine("<td>提款金额</td>");
+            strBuilder.AppendLine("</tr>");
+            //输出数据.
+            foreach (var item in list)
+            {
+                strBuilder.AppendLine(string.Format("<tr><td>'{0}'</td>", item.BusinessName));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>",item.BusinessPhoneNo));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OpenBank));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.TrueName));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", ParseHelper.ToDecrypt(item.AccountNo)));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Amount));
+            }
+            strBuilder.AppendLine("</table>");
+            return strBuilder.ToString();
+        }
+        /// <summary>
+        /// 生成excel文件
+        /// 导出字段：任务单号/交易流水号、所属银行、卡号、收支金额、余额、完成时间、操作人
+        /// danny-20150512
+        /// </summary>
+        /// <returns></returns>
+        public string CreateBusinessBalanceRecordExcel(List<BusinessBalanceRecordModel> list)
+        {
+            StringBuilder strBuilder = new StringBuilder();
+            strBuilder.AppendLine("<table border=1 cellspacing=0 cellpadding=5 rules=all>");
+            //输出表头.
+            strBuilder.AppendLine("<tr style=\"font-weight: bold; white-space: nowrap;\">");
+            strBuilder.AppendLine("<td>任务单号/交易流水号</td>");
+            strBuilder.AppendLine("<td>所属银行</td>");
+            strBuilder.AppendLine("<td>卡号</td>");
+            strBuilder.AppendLine("<td>收支金额</td>");
+            strBuilder.AppendLine("<td>余额</td>");
+            strBuilder.AppendLine("<td>完成时间</td>");
+            strBuilder.AppendLine("<td>操作人</td>");
+            strBuilder.AppendLine("</tr>");
+            //输出数据.
+            foreach (var item in list)
+            {
+                strBuilder.AppendLine(string.Format("<tr><td>'{0}'</td>", item.RelationNo));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OpenBank));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", ParseHelper.ToDecrypt(item.AccountNo)));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Amount));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Balance));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OperateTime));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Operator));
+            }
+            strBuilder.AppendLine("</table>");
+            return strBuilder.ToString();
         }
 
     }
