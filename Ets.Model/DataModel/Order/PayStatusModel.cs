@@ -20,5 +20,10 @@ namespace Ets.Model.DataModel.Order
         /// 订单总金额
         /// </summary>
         public decimal TotalPrice { get; set; }
+
+        /// <summary>
+        /// 微信二维码支付地址
+        /// </summary>
+        public string WxCodeUrl { get; set; }
     }
 }

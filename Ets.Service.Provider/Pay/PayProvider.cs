@@ -55,7 +55,7 @@ namespace Ets.Service.Provider.Pay
             {
                 //微信支付
                 LogHelper.LogWriter("=============微信支付：");
-                return CreateWxPayOrder(model.orderId, model.childId, payStatusModel.TotalPrice);
+                return CreateWxPayOrder(model.orderId, model.childId, payStatusModel.TotalPrice, payStatusModel.WxCodeUrl);
             }
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
         }
@@ -265,25 +265,31 @@ namespace Ets.Service.Provider.Pay
         /// </summary>
         /// <param name="orderId">主订单ID</param>
         /// <param name="childId">子订单ID</param>
+        /// <param name="WxCodeUrl">微信地址</param>
         /// <param name="TotalPrice">总金额，注意:微信要乘以100=最后支付的金额，这里传值前不要乘以100</param>
         /// <returns></returns>
-        public ResultModel<PayResultModel> CreateWxPayOrder(int orderId, int childId, decimal TotalPrice)
+        public ResultModel<PayResultModel> CreateWxPayOrder(int orderId, int childId, decimal totalPrice, string wxCodeUrl)
         {
             //支付方式(1用户支付 2 骑士代付)-主订单ID-子订单ID
             string orderNo = string.Concat("1_", orderId, "_", childId);
             PayResultModel resultModel = new PayResultModel();
-            string wx_nonceStr = RequestHandler.getNoncestr();
-            WXpayService wxpay = new WXpayService("127.0.0.1", orderNo, "e代送", wx_nonceStr, (Convert.ToInt32(TotalPrice * 100)).ToString());//传给微信的金额
-            string code_url = wxpay.CreateNativeApi();
-
-            if (string.IsNullOrEmpty(code_url))
+            string code_url = wxCodeUrl;
+            if (string.IsNullOrEmpty(code_url))//先查一下库是否存在二维码地址，不存在去微信生成
             {
-                return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
+                string wx_nonceStr = RequestHandler.getNoncestr();
+                WXpayService wxpay = new WXpayService("127.0.0.1", orderNo, "e代送", wx_nonceStr, (Convert.ToInt32(totalPrice * 100)).ToString());//传给微信的金额
+                code_url = wxpay.CreateNativeApi();
+                if (string.IsNullOrEmpty(code_url))
+                {
+                    return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
+                }
+                orderChildDao.UpdateWxCodeUrl(orderId, childId, code_url);//把获取到的支付宝地址更新到子订单下
             }
+
             resultModel.aliQRCode = code_url;//微信地址
             resultModel.orderId = orderId;//主订单
             resultModel.childId = childId;//子订单
-            resultModel.payAmount = TotalPrice;//总金额，没乘以100的值
+            resultModel.payAmount = totalPrice;//总金额，没乘以100的值
             resultModel.payType = 2;//支付宝
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.success, resultModel);
         }
