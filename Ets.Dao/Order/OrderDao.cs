@@ -1091,32 +1091,30 @@ WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL and Status=2;", SuperPlatfo
             //                                  join [order] o with(nolock) on b.Id=o.businessId ";
             //            string orderByColumn = " COUNT(*) DESC ";
             //            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
-            var sbtbl = new StringBuilder(@" (select   b.district
-				                    ,COUNT(*) orderCount
-				                    ,SUM(o.DistribSubsidy)distribSubsidy
-				                    ,SUM(o.WebsiteSubsidy)websiteSubsidy
-				                    ,SUM(o.OrderCommission)orderCommission
-				                    ,SUM(o.DistribSubsidy+o.WebsiteSubsidy+o.OrderCommission)deliverAmount
-				                    ,SUM(Amount)orderAmount
+            var sbtbl = new StringBuilder(@" (select    b.district
+                                    ,sum(OrderCount) orderCount --订单数 
+                                    ,SUM(o.WebsiteSubsidy)websiteSubsidy  --网站补贴
+                                    ,SUM(o.OrderCommission)orderCommission  --订单佣金 
+                                    ,SUM(o.DistribSubsidy)deliverAmount  --配送费
+                                    ,SUM(Amount)orderAmount  --订单金额
                                     from business b with(nolock)
                                     join [order] o with(nolock) on b.Id=o.businessId
-                                    where 1=1 and o.Status!=3");  //只统计非取消订单
+                                    where o.Status!=3");  //只统计非取消订单
             if (criteria.searchType == 1)//当天
             {
-                sbtbl.Append(" AND DateDiff(DAY, GetDate(),o.PubDate)=0 ");
+                sbtbl.Append(" AND   o.PubDate between dateadd(day,-1,getdate()) and getdate() ");
             }
             else if (criteria.searchType == 2)//本周
             {
-                sbtbl.Append(" AND DateDiff(WEEK, GetDate(),DATEADD (DAY, -1,o.PubDate))=0 ");
+                sbtbl.Append(" AND   o.PubDate between dateadd(day,-7,getdate()) and getdate() ");
             }
             else if (criteria.searchType == 3)//本月
             {
-                sbtbl.Append(" AND DateDiff(MONTH, GetDate(),o.PubDate)=0 ");
+                sbtbl.Append("   o.PubDate between dateadd(day,-30,getdate()) and getdate() ");
             }
             sbtbl.Append(" group by b.district ) tbl ");
             string columnList = @"  tbl.district
 				                    ,tbl.orderCount
-				                    ,tbl.distribSubsidy
 				                    ,tbl.websiteSubsidy
 				                    ,tbl.orderCommission
 				                    ,tbl.deliverAmount
