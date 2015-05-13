@@ -153,9 +153,10 @@ namespace Ets.Service.Provider.Finance
 
 
         #region 骑士金融账号绑定/修改
+
         /// <summary>
         /// 骑士绑定银行卡功能 add by caoheyang 20150511 
-        /// TODO 统一加密算法 目前只支付网银
+        /// TODO  目前只支付网银
         /// </summary>
         /// <param name="cardBindCpm">参数实体</param>
         /// <returns></returns>

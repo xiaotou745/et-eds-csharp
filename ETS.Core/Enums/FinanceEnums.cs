@@ -31,7 +31,7 @@ namespace ETS.Enums
     /// </summary>
     public enum FinanceCardBindC
     {
-        Success=0,
+        Success = 0,
         [DisplayText("该骑士已绑定过金融账号")]
         Exists = 1,
         [DisplayText("两次录入的金融账号不一致")]
@@ -116,7 +116,7 @@ namespace ETS.Enums
         [DisplayText("百度钱包")]
         BaiDuQinBao = 5
     }
-    
+
     #endregion
 
     #region 商户
@@ -142,10 +142,13 @@ namespace ETS.Enums
     /// </summary>
     public enum FinanceCardBindB
     {
+        Success = 0,
         [DisplayText("该商户已绑定过金融账号")]
         Exists = 1,
         [DisplayText("两次录入的金融账号不一致")]
         InputValid = 2,
+        [DisplayText("系统错误")]
+        SystemError = -1,
         [DisplayText("未传参")]
         NoPara = -2
     }
@@ -155,8 +158,11 @@ namespace ETS.Enums
     /// </summary>
     public enum FinanceCardCardModifyB
     {
+        Success = 0,
         [DisplayText("两次录入的金融账号不一致")]
         InputValid = 2,
+        [DisplayText("系统错误")]
+        SystemError = -1,
         [DisplayText("未传参")]
         NoPara = -2
     }
@@ -221,6 +227,6 @@ namespace ETS.Enums
         [DisplayText("百度钱包")]
         BaiDuQinBao = 5
     }
-    
+
     #endregion
 }
