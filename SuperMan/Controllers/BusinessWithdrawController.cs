@@ -151,11 +151,12 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns></returns>
-        public JsonResult GetBusinessWithdrawForm(string withwardId)
+        public ContentResult GetBusinessWithdrawForm(string withwardId)
         {
             var businessWithdrawFormModel = iBusinessFinanceProvider.GetBusinessWithdrawListById(withwardId);
             businessWithdrawFormModel.AccountNo = ParseHelper.ToDecrypt(businessWithdrawFormModel.AccountNo);
-            return new JsonResult() { Data = businessWithdrawFormModel };
+            businessWithdrawFormModel.WithdrawTime = Convert.ToDateTime(businessWithdrawFormModel.WithdrawTime.ToString());
+            return new ContentResult() { Content = Newtonsoft.Json.JsonConvert.SerializeObject(businessWithdrawFormModel) };
         }
         /// <summary>
         /// 导出商户提款申请单列表

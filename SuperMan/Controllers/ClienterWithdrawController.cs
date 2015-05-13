@@ -143,11 +143,12 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns></returns>
-        public JsonResult GetClienterWithdrawForm(string withwardId)
+        public ContentResult GetClienterWithdrawForm(string withwardId)
         {
             var clienterWithdrawFormModel = iClienterFinanceProvider.GetClienterWithdrawListById(withwardId);
             clienterWithdrawFormModel.AccountNo = ParseHelper.ToDecrypt(clienterWithdrawFormModel.AccountNo);
-            return new JsonResult() { Data = clienterWithdrawFormModel };
+            clienterWithdrawFormModel.WithdrawTime = Convert.ToDateTime(clienterWithdrawFormModel.WithdrawTime.ToString());
+            return new ContentResult () { Content= Newtonsoft.Json.JsonConvert.SerializeObject( clienterWithdrawFormModel) };
         }
         /// <summary>
         /// 导出骑士提款申请单列表
