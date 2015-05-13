@@ -142,7 +142,7 @@ namespace Ets.Service.Provider.Finance
                 return new Tuple<bool, FinanceWithdrawC>(false, FinanceWithdrawC.MoneyError);
             }
             clienterFinanceAccount = _clienterFinanceAccountDao.GetById(withdrawCpm.FinanceAccountId);//获取超人金融账号信息
-            if (clienterFinanceAccount == null)
+            if (clienterFinanceAccount == null || clienterFinanceAccount.ClienterId != withdrawCpm.ClienterId)
             {
                 return new Tuple<bool, FinanceWithdrawC>(false, FinanceWithdrawC.FinanceAccountError);
             }
@@ -161,20 +161,12 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public ResultModel<object> CardBindC(CardBindCPM cardBindCpm)
         {
-            if (cardBindCpm == null)
-            {
-                return ResultModel<object>.Conclude(FinanceCardBindC.NoPara);
-            }
-            if (cardBindCpm.AccountNo != cardBindCpm.AccountNo2) //两次录入的金融账号不一致
-            {
-                return ResultModel<object>.Conclude(FinanceCardBindC.InputValid);
-            }
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                int count = _clienterFinanceAccountDao.GetCountByClienterId(cardBindCpm.ClienterId);
-                if (count > 0)
+                Tuple<bool, FinanceCardBindC> checkbool = CheckCardBindC(cardBindCpm);  //验证数据合法性
+                if (checkbool.Item1 == false) 
                 {
-                    return ResultModel<object>.Conclude(FinanceCardBindC.Exists);//该骑士已绑定过金融账号
+                    return ResultModel<object>.Conclude(checkbool.Item2); 
                 }
                 int result = _clienterFinanceAccountDao.Insert(new ClienterFinanceAccount()
                 {
@@ -190,10 +182,32 @@ namespace Ets.Service.Provider.Finance
                     UpdateBy = cardBindCpm.CreateBy//新增时最后修改人与新增人一致  当前登录人
                 });
                 tran.Complete();
-                return ResultModel<object>.Conclude(SystemEnum.Success);
+                return ResultModel<object>.Conclude(FinanceCardBindC.Success);
             }
         }
 
+        /// <summary>
+        ///  骑士绑定银行卡功能有效性验证 add by caoheyang 20150511 
+        /// </summary>
+        /// <param name="cardBindCpm">参数实体</param>
+        /// <returns></returns>
+        private Tuple<bool, FinanceCardBindC> CheckCardBindC(CardBindCPM cardBindCpm)
+        {
+            if (cardBindCpm == null)
+            {
+                return new Tuple<bool,FinanceCardBindC>(false,FinanceCardBindC.NoPara);
+            }
+            if (cardBindCpm.AccountNo != cardBindCpm.AccountNo2) //两次录入的金融账号不一致
+            {
+                return new Tuple<bool, FinanceCardBindC>(false, FinanceCardBindC.InputValid);
+            }
+            int count = _clienterFinanceAccountDao.GetCountByClienterId(cardBindCpm.ClienterId);
+            if (count > 0) //该骑士已绑定过金融账号
+            {
+                return new Tuple<bool, FinanceCardBindC>(false, FinanceCardBindC.Exists);
+            }
+            return new Tuple<bool, FinanceCardBindC>(true, FinanceCardBindC.Success);
+        }
 
         /// <summary>
         /// 骑士修改绑定银行卡功能 add by caoheyang 20150511  TODO 统一加密算法
@@ -202,13 +216,10 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public ResultModel<object> CardModifyC(CardModifyCPM cardModifyCpm)
         {
-            if (cardModifyCpm == null)
+            Tuple<bool, FinanceCardCardModifyC> checkbool = CheckCardModifyC(cardModifyCpm);  //验证数据合法性
+            if (checkbool.Item1 == false)
             {
-                return ResultModel<object>.Conclude(FinanceCardCardModifyC.NoPara);
-            }
-            if (cardModifyCpm.AccountNo != cardModifyCpm.AccountNo2) //两次录入的金融账号不一致
-            {
-                return ResultModel<object>.Conclude(FinanceCardCardModifyC.InputValid);
+                return ResultModel<object>.Conclude(checkbool.Item2);
             }
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
@@ -226,6 +237,25 @@ namespace Ets.Service.Provider.Finance
                 return ResultModel<object>.Conclude(SystemEnum.Success);
             }
         }
+
+        /// <summary>
+        /// 骑士修改绑定银行卡功能有效性验证  add by caoheyang 20150511 
+        /// </summary>
+        /// <param name="cardModifyCpm"></param>
+        /// <returns></returns>
+        private Tuple<bool, FinanceCardCardModifyC> CheckCardModifyC(CardModifyCPM cardModifyCpm)
+        {
+            if (cardModifyCpm == null)
+            {
+                return new Tuple<bool, FinanceCardCardModifyC>(false, FinanceCardCardModifyC.NoPara);
+            }
+            if (cardModifyCpm.AccountNo != cardModifyCpm.AccountNo2) //两次录入的金融账号不一致
+            {
+                return new Tuple<bool, FinanceCardCardModifyC>(false, FinanceCardCardModifyC.InputValid);
+            }
+            return new Tuple<bool, FinanceCardCardModifyC>(true, FinanceCardCardModifyC.Success);
+        }
+
         #endregion
 
         /// <summary>

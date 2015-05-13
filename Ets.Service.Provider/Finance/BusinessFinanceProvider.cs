@@ -164,7 +164,7 @@ namespace Ets.Service.Provider.Finance
                 return new Tuple<bool, FinanceWithdrawB>(false, FinanceWithdrawB.MoneyError);
             }
             businessFinanceAccount = _businessFinanceAccountDao.GetById(withdrawBpm.FinanceAccountId);//获取商户金融账号信息
-            if (businessFinanceAccount==null)
+            if (businessFinanceAccount == null || businessFinanceAccount.BusinessId != withdrawBpm.BusinessId)
             {
                 return new Tuple<bool, FinanceWithdrawB>(false, FinanceWithdrawB.FinanceAccountError);
             }
