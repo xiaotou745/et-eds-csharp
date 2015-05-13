@@ -98,7 +98,7 @@ namespace ETS.AliPay
                 need_address = "F",
                 goods_info = new
                 {
-                    id = orderId + "_" + childId,
+                    id = "1_" + orderId + "_" + childId,//用户支付_主订单号_子订单号
                     name = "e代送收款",
                     price = customerTotal
                 },
