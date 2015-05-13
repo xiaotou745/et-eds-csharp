@@ -1104,7 +1104,6 @@ to.BusinessName = business.Name;
             Ets.Service.Provider.Order.OrderDetailProvider orderDetailPr = new OrderDetailProvider();
             orderDM.listOrderDetail = orderDetailPr.GetByOrderNo(order.OrderNo);
 
-
             #region 计算经纬度     
 
             if (order.Longitude == null || order.Longitude == 0 || order.Latitude == null || order.Latitude == 0)

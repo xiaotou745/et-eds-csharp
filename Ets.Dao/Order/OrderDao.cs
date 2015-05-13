@@ -1747,7 +1747,7 @@ values  ( @OrderNo ,
 
             if (order.listOrderChild != null && order.listOrderChild.Count > 0)
             {
-                AddOrderChild(orderId, order);
+                 AddOrderChild(orderId, order);               
             }
 
             return orderId;
@@ -1759,100 +1759,53 @@ values  ( @OrderNo ,
         /// <returns>订单实体</returns>
         void AddOrderChild(int orderId, Model.DataModel.Order.order order)
         {
-            #region 连多次数据库
-            //             for (int i = 0; i < order.listOrderChild.Count; i++)
-            //             {
-            //                 const string insertOrderChildSql = @"
-            //insert into OrderChild
-            //        (OrderId,
-            //        ChildId,
-            //        TotalPrice,
-            //        GoodPrice,
-            //        DeliveryPrice,
-            //        CreateBy,
-            //        UpdateBy)
-            //values( @OrderId,
-            //        @ChildId,
-            //        @TotalPrice,
-            //        @GoodPrice,
-            //        @DeliveryPrice,
-            //        @CreateBy,
-            //        @UpdateBy)";
-            //                 IDbParameters dbOrderChildParameters = DbHelper.CreateDbParameters();
-            //                 dbOrderChildParameters.AddWithValue("@OrderId", orderId);
-            //                 dbOrderChildParameters.AddWithValue("@ChildId", order.listOrderChild[i].ChildId);
-            //                 decimal totalPrice = order.listOrderChild[i].GoodPrice + Convert.ToDecimal(order.DistribSubsidy);
-            //                 dbOrderChildParameters.AddWithValue("@TotalPrice", totalPrice);
-            //                 dbOrderChildParameters.AddWithValue("@GoodPrice", order.listOrderChild[i].GoodPrice);
-            //                 dbOrderChildParameters.AddWithValue("@DeliveryPrice", order.DistribSubsidy);
-            //                 dbOrderChildParameters.AddWithValue("@CreateBy", order.BusinessName);
-            //                 dbOrderChildParameters.AddWithValue("@UpdateBy", order.BusinessName);
-
-            //                 DbHelper.ExecuteScalar(SuperMan_Write, insertOrderChildSql, dbOrderChildParameters);
-            //             }    
-            #endregion
-
             #region 性能优化 
             using (SqlBulkCopy bulk = new SqlBulkCopy(SuperMan_Write))
             {
-                bulk.BatchSize = 1000;
-                bulk.DestinationTableName = "OrderChildTest";
-                bulk.NotifyAfter = order.listOrderChild.Count;
-
-                DataTable dt = new DataTable();        
-                dt.Columns.Add(new DataColumn("OrderId", typeof(int)));
-                dt.Columns.Add(new DataColumn("ChildId", typeof(int)));
-                dt.Columns.Add(new DataColumn("TotalPrice", typeof(decimal)));
-                dt.Columns.Add(new DataColumn("GoodPrice", typeof(decimal)));
-                dt.Columns.Add(new DataColumn("DeliveryPrice", typeof(decimal)));
-                dt.Columns.Add(new DataColumn("PayStyle", typeof(int)));
-                dt.Columns.Add(new DataColumn("PayType", typeof(int)));
-                dt.Columns.Add(new DataColumn("PayStatus", typeof(int)));
-                dt.Columns.Add(new DataColumn("PayBy", typeof(string)));
-                dt.Columns.Add(new DataColumn("PayTime", typeof(DateTime)));
-                dt.Columns.Add(new DataColumn("PayPrice", typeof(decimal)));
-                dt.Columns.Add(new DataColumn("HasUploadTicket", typeof(bool)));
-                dt.Columns.Add(new DataColumn("TicketUrl", typeof(string)));
-                dt.Columns.Add(new DataColumn("CreateBy", typeof(string)));
-                dt.Columns.Add(new DataColumn("CreateTime", typeof(DateTime)));
-                dt.Columns.Add(new DataColumn("UpdateBy", typeof(string)));
-                dt.Columns.Add(new DataColumn("UpdateTime", typeof(DateTime)));               
-
-                for (int i = 0; i < order.listOrderChild.Count; i++)
-                {
-                    DataRow dr = dt.NewRow();
-                    dr["OrderId"] = orderId;
-                    dr["ChildId"] = order.listOrderChild[i].ChildId;
-                    decimal totalPrice = order.listOrderChild[i].GoodPrice + Convert.ToDecimal(order.DistribSubsidy);
-                    dr["TotalPrice"] = totalPrice;
-                    dr["GoodPrice"] = order.listOrderChild[i].GoodPrice;
-                    dr["DeliveryPrice"] = order.DistribSubsidy;
-                    dr["PayStyle"] = 2;
-                    dr["PayType"] = 1;
-                    dr["PayStatus"] = 1;
-                    dr["PayBy"] = "";
-                    dr["PayTime"] = System.DateTime.Now;
-                    dr["PayPrice"] = 0;
-                    dr["HasUploadTicket"] = 0;
-                    dr["TicketUrl"] = "";
-                    dr["CreateBy"] = order.BusinessName;
-                    dr["CreateTime"] = System.DateTime.Now;
-                    dr["UpdateBy"] = order.BusinessName;
-                    dr["UpdateTime"] = System.DateTime.Now;                   
-                    dt.Rows.Add(dr);
-                }
-
                 try
                 {
+                    bulk.BatchSize = 1000;
+                    bulk.DestinationTableName = "OrderChild";
+                    bulk.NotifyAfter = order.listOrderChild.Count;
+                    bulk.ColumnMappings.Add("OrderId", "OrderId");
+                    bulk.ColumnMappings.Add("ChildId", "ChildId");
+                    bulk.ColumnMappings.Add("TotalPrice", "TotalPrice");
+                    bulk.ColumnMappings.Add("GoodPrice", "GoodPrice");
+                    bulk.ColumnMappings.Add("DeliveryPrice", "DeliveryPrice");
+                    bulk.ColumnMappings.Add("CreateBy", "CreateBy");
+                    bulk.ColumnMappings.Add("UpdateBy", "UpdateBy");              
+
+                    DataTable dt = new DataTable();            
+                    dt.Columns.Add(new DataColumn("OrderId", typeof(int)));
+                    dt.Columns.Add(new DataColumn("ChildId", typeof(int)));
+                    dt.Columns.Add(new DataColumn("TotalPrice", typeof(decimal)));
+                    dt.Columns.Add(new DataColumn("GoodPrice", typeof(decimal)));
+                    dt.Columns.Add(new DataColumn("DeliveryPrice", typeof(decimal)));              
+                    dt.Columns.Add(new DataColumn("CreateBy", typeof(string)));                
+                    dt.Columns.Add(new DataColumn("UpdateBy", typeof(string)));                              
+
+                    for (int i = 0; i < order.listOrderChild.Count; i++)
+                    {
+                        DataRow dr = dt.NewRow();                  
+                        dr["OrderId"] = orderId;
+                        dr["ChildId"] = order.listOrderChild[i].ChildId;
+                        decimal totalPrice = order.listOrderChild[i].GoodPrice + Convert.ToDecimal(order.DistribSubsidy);
+                        dr["TotalPrice"] = totalPrice;
+                        dr["GoodPrice"] = order.listOrderChild[i].GoodPrice;
+                        dr["DeliveryPrice"] = order.DistribSubsidy;                   
+                        dr["CreateBy"] = order.BusinessName;                   
+                        dr["UpdateBy"] = order.BusinessName;                                    
+                        dt.Rows.Add(dr);
+                    }                
                     bulk.WriteToServer(dt);
                 }
                 catch (Exception err)
                 {
-                    string a = err.Message;
-                }
-            #endregion
-
+                    //写日志
+                    //return 0;
+                }            
             }
+            #endregion
         }
         /// <summary>
         /// 获取订单实体
