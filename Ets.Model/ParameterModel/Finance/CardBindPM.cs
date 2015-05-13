@@ -22,13 +22,14 @@ namespace Ets.Model.ParameterModel.Finance
         /// <summary>
         /// 卡号(需要DES加密)
         /// </summary>
-        [Required(ErrorMessage = "卡号不能为空")]
+        [Required(ErrorMessage = "金融账号不能为空")]
+        [Compare("AccountNo2", ErrorMessage = "两次录入的金融账号不一致")]
         public string AccountNo { get; set; }
 
         /// <summary>
         /// 第二次录入卡号(需要DES加密)
         /// </summary>
-        [Required(ErrorMessage = "第二次录入卡号不能为空")]
+        [Required(ErrorMessage = "第二次录入金融账号不能为空")]
         public string AccountNo2 { get; set; }
 
         /// <summary>

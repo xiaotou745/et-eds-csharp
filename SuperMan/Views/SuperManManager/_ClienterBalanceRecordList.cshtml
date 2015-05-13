@@ -11,30 +11,34 @@
     </thead>
     <tbody>
         @{
-            var businessBalanceRecordList = ViewBag.businessBalanceRecord as List<Ets.Model.DataModel.Finance.BusinessBalanceRecord>;
-            if (businessBalanceRecordList != null && businessBalanceRecordList.Count > 0)
+            var clienterBalanceRecordList = ViewBag.clienterBalanceRecord as List<Ets.Model.DataModel.Finance.ClienterBalanceRecord>;
+            if (clienterBalanceRecordList != null && clienterBalanceRecordList.Count > 0)
             {
                 var i = 0;
                 var recordTypeDes = "";
-                foreach (var item in businessBalanceRecordList)
+                foreach (var item in clienterBalanceRecordList)
                 {
-                    if (item.RecordType == ETS.Enums.BusinessBalanceRecordRecordType.OrderMeals.GetHashCode())
+                    if (item.RecordType == ETS.Enums.ClienterBalanceRecordRecordType.Commission.GetHashCode())
                     {
-                        recordTypeDes = "订单餐费";
+                        recordTypeDes = "佣金";
                     }
-                    else if (item.RecordType == ETS.Enums.BusinessBalanceRecordRecordType.PostMoney.GetHashCode())
+                    else if (item.RecordType == ETS.Enums.ClienterBalanceRecordRecordType.Award.GetHashCode())
                     {
-                        recordTypeDes = "配送费";
+                        recordTypeDes = "奖励";
                     }
-                    else if (item.RecordType == ETS.Enums.BusinessBalanceRecordRecordType.Withdraw.GetHashCode())
+                    else if (item.RecordType == ETS.Enums.ClienterBalanceRecordRecordType.Withdraw.GetHashCode())
                     {
                         recordTypeDes = "提现";
                     }
-                    else if (item.RecordType == ETS.Enums.BusinessBalanceRecordRecordType.Recharge.GetHashCode())
+                    else if (item.RecordType == ETS.Enums.ClienterBalanceRecordRecordType.QuXiaoOrder.GetHashCode())
                     {
-                        recordTypeDes = "充值";
+                        recordTypeDes = "取消订单赔偿";
                     }
-                    else if (item.RecordType == ETS.Enums.BusinessBalanceRecordRecordType.Return.GetHashCode())
+                    else if (item.RecordType == ETS.Enums.ClienterBalanceRecordRecordType.WuXiaoOrder.GetHashCode())
+                    {
+                        recordTypeDes = "无效订单扣款";
+                    }
+                    else if (item.RecordType == ETS.Enums.ClienterBalanceRecordRecordType.Return.GetHashCode())
                     {
                         recordTypeDes = "提现失败返现";
                     }
@@ -43,7 +47,7 @@
                         <td>@recordTypeDes</td>
                         <td><a href="javascript:funLookDetail(@item.WithwardId)">@item.RelationNo</a></td>
                         <td>@item.Balance</td>
-                        <td>@(item.Status == ETS.Enums.BusinessBalanceRecordStatus.Success.GetHashCode() ? "交易成功" : "交易中")</td>
+                        <td>@(item.Status == ETS.Enums.ClienterBalanceRecordStatus.Success.GetHashCode() ? "交易成功" : "交易中")</td>
                         <td>@item.OperateTime</td>
                         <td>@item.Operator</td>
                     </tr>
@@ -56,7 +60,7 @@
 <div class="selectSupplierDish">
     <div class="add-openbox add-form" id="WithdrawDetailShow" style="width:480px">
         <fieldset>
-            <div style="font-size:18px;"><center><b>商户提款详情</b></center></div>
+            <div style="font-size:18px;"><center><b>骑士提款详情</b></center></div>
         </fieldset>
         <fieldset style="border-top:hidden">
             <table border="0" cellspacing="0" cellpadding="0" style="font-size:16px;width:450px">
@@ -73,19 +77,19 @@
                     <td><span class="">提现金额: <label id="labAmount"></label></span></td>
                 </tr>
                 <tr>
-                    <td><span class="">提款商铺: <label id="labBusinessName"></label></span></td>
+                    <td><span class="">提款骑士: <label id="labClienterName"></label></span></td>
                 </tr>
                 <tr>
-                    <td><span class="">商铺电话: <label id="labBusinessPhoneNo"></label></span></td>
+                    <td><span class="">骑士电话: <label id="labClienterPhoneNo"></label></span></td>
                 </tr>
                 <tr>
-                    <td><span class="">开户银行: <label id="labBusinessOpenBank"></label></span></td>
+                    <td><span class="">开户银行: <label id="labClienterOpenBank"></label></span></td>
                 </tr>
                 <tr>
-                    <td><span class="">开户支行: <label id="labBusinessOpenSubBank"></label></span></td>
+                    <td><span class="">开户支行: <label id="labClienterOpenSubBank"></label></span></td>
                 </tr>
                 <tr>
-                    <td><span class="">账户名: <label id="labTrueName"></label></span></td>
+                    <td><span class="">账户名: <label id="labAccountName"></label></span></td>
                 </tr>
                 <tr>
                     <td><span class="">银行卡号: <label id="labAccountNo"></label></span></td>
@@ -101,14 +105,14 @@
     var adminjs = new adminglass(); //实例化后台类
     //查看提款单详情弹框
     function funLookDetail(withwardId) {
-        funGetBusinessWithdrawForm(withwardId);
+        funGetClienterWithdrawForm(withwardId);
         adminjs.openwinbox('#WithdrawDetailShow');
     }
     //查看提款单详情
-    function funGetBusinessWithdrawForm(withwardId) {
+    function funGetClienterWithdrawForm(withwardId) {
 
         var paramaters = { "withwardId": withwardId };
-        var url = "/BusinessWithdraw/GetBusinessWithdrawForm";
+        var url = "/ClienterWithdraw/GetClienterWithdrawForm";
         $.ajax({
             type: 'POST',
             url: url,
@@ -137,11 +141,11 @@
                     $('#labWithdrawStatus').text(strstatus);
                     $('#labWithdrawNo').text(jsonstr.WithwardNo);
                     $('#labAmount').text(jsonstr.Amount);
-                    $('#labBusinessName').text(jsonstr.BusinessName);
-                    $('#labBusinessPhoneNo').text(jsonstr.BusinessPhoneNo);
-                    $('#labBusinessOpenBank').text(jsonstr.OpenBank);
-                    $('#labBusinessOpenSubBank').text(jsonstr.OpenSubBank);
-                    $('#labTrueName').text(jsonstr.TrueName);
+                    $('#labClienterName').text(jsonstr.ClienterName);
+                    $('#labClienterPhoneNo').text(jsonstr.ClienterPhoneNo);
+                    $('#labClienterOpenBank').text(jsonstr.OpenBank);
+                    $('#labClienterOpenSubBank').text(jsonstr.OpenSubBank);
+                    $('#labAccountName').text(jsonstr.TrueName);
                     $('#labAccountNo').text(jsonstr.AccountNo);
                 }
             }

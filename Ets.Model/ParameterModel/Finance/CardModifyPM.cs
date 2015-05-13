@@ -28,6 +28,7 @@ namespace Ets.Model.ParameterModel.Finance
         /// 卡号(需要DES加密)
         /// </summary>
         [Required(ErrorMessage = "卡号不能为空")]
+        [Compare("AccountNo2", ErrorMessage = "两次录入卡号必须一致")]
         public string AccountNo { get; set; }
 
         /// <summary>

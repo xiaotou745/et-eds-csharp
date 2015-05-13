@@ -103,6 +103,7 @@
     <Compile Include="Enums\AccountType.cs" />
     <Compile Include="Enums\ApiOrderEnum.cs" />
     <Compile Include="Enums\ClienterEnum.cs" />
+    <Compile Include="Enums\EnumOrderChildStatus.cs" />
     <Compile Include="Enums\EnumStatusType.cs" />
     <Compile Include="Enums\CustomerRegisterStatusEnum.cs" />
     <Compile Include="Enums\FinanceEnums.cs" />
@@ -184,6 +185,12 @@
     <Compile Include="Util\XmlHelper.cs" />
     <Compile Include="Util\XmlParser.cs" />
     <Compile Include="Validator\CommonValidator.cs" />
+    <Compile Include="WxPay\Config.cs" />
+    <Compile Include="WxPay\RequestHandler.cs" />
+    <Compile Include="WxPay\ResponseHandler.cs" />
+    <Compile Include="WxPay\ReturnValue.cs" />
+    <Compile Include="WxPay\StreamReaderUtils.cs" />
+    <Compile Include="WxPay\WXpayService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="MyPush\" />

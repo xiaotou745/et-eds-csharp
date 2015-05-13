@@ -78,7 +78,7 @@ namespace Ets.Service.IProvider.Finance
         /// <param name="model"></param>
         /// <returns></returns>
         bool BusinessWithdrawPayOk(BusinessWithdrawLog model);
-/// <summary>
+        /// <summary>
         /// 商户提现申请单审核拒绝
         /// danny-20150511
         /// </summary>

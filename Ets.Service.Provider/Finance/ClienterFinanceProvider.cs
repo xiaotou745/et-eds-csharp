@@ -17,6 +17,7 @@ using Ets.Service.IProvider.Finance;
 using ETS.Transaction;
 using ETS.Transaction.Common;
 using ETS.Util;
+using ETS.Data.PageData;
 
 namespace Ets.Service.Provider.Finance
 {
@@ -40,6 +41,7 @@ namespace Ets.Service.Provider.Finance
         /// 骑士金融账号表
         /// </summary>
         private readonly ClienterFinanceAccountDao _clienterFinanceAccountDao = new ClienterFinanceAccountDao();
+        ClienterFinanceDao clienterFinanceDao = new ClienterFinanceDao();
         #endregion
 
         #region 骑士提现功能  add by caoheyang 20150509
@@ -142,7 +144,7 @@ namespace Ets.Service.Provider.Finance
                 return new Tuple<bool, FinanceWithdrawC>(false, FinanceWithdrawC.MoneyError);
             }
             clienterFinanceAccount = _clienterFinanceAccountDao.GetById(withdrawCpm.FinanceAccountId);//获取超人金融账号信息
-            if (clienterFinanceAccount == null)
+            if (clienterFinanceAccount == null || clienterFinanceAccount.ClienterId != withdrawCpm.ClienterId)
             {
                 return new Tuple<bool, FinanceWithdrawC>(false, FinanceWithdrawC.FinanceAccountError);
             }
@@ -153,28 +155,21 @@ namespace Ets.Service.Provider.Finance
 
 
         #region 骑士金融账号绑定/修改
+
         /// <summary>
         /// 骑士绑定银行卡功能 add by caoheyang 20150511 
-        /// TODO 统一加密算法 目前只支付网银
+        /// TODO  目前只支付网银
         /// </summary>
         /// <param name="cardBindCpm">参数实体</param>
         /// <returns></returns>
         public ResultModel<object> CardBindC(CardBindCPM cardBindCpm)
         {
-            if (cardBindCpm == null)
-            {
-                return ResultModel<object>.Conclude(FinanceCardBindC.NoPara);
-            }
-            if (cardBindCpm.AccountNo != cardBindCpm.AccountNo2) //两次录入的金融账号不一致
-            {
-                return ResultModel<object>.Conclude(FinanceCardBindC.InputValid);
-            }
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                int count = _clienterFinanceAccountDao.GetCountByClienterId(cardBindCpm.ClienterId);
-                if (count > 0)
+                Tuple<bool, FinanceCardBindC> checkbool = CheckCardBindC(cardBindCpm);  //验证数据合法性
+                if (checkbool.Item1 == false) 
                 {
-                    return ResultModel<object>.Conclude(FinanceCardBindC.Exists);//该骑士已绑定过金融账号
+                    return ResultModel<object>.Conclude(checkbool.Item2); 
                 }
                 int result = _clienterFinanceAccountDao.Insert(new ClienterFinanceAccount()
                 {
@@ -190,10 +185,28 @@ namespace Ets.Service.Provider.Finance
                     UpdateBy = cardBindCpm.CreateBy//新增时最后修改人与新增人一致  当前登录人
                 });
                 tran.Complete();
-                return ResultModel<object>.Conclude(SystemEnum.Success);
+                return ResultModel<object>.Conclude(FinanceCardBindC.Success);
             }
         }
 
+        /// <summary>
+        ///  骑士绑定银行卡功能有效性验证 add by caoheyang 20150511 
+        /// </summary>
+        /// <param name="cardBindCpm">参数实体</param>
+        /// <returns></returns>
+        private Tuple<bool, FinanceCardBindC> CheckCardBindC(CardBindCPM cardBindCpm)
+        {
+            if (cardBindCpm == null)
+            {
+                return new Tuple<bool,FinanceCardBindC>(false,FinanceCardBindC.NoPara);
+            }
+            int count = _clienterFinanceAccountDao.GetCountByClienterId(cardBindCpm.ClienterId);
+            if (count > 0) //该骑士已绑定过金融账号
+            {
+                return new Tuple<bool, FinanceCardBindC>(false, FinanceCardBindC.Exists);
+            }
+            return new Tuple<bool, FinanceCardBindC>(true, FinanceCardBindC.Success);
+        }
 
         /// <summary>
         /// 骑士修改绑定银行卡功能 add by caoheyang 20150511  TODO 统一加密算法
@@ -202,13 +215,10 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public ResultModel<object> CardModifyC(CardModifyCPM cardModifyCpm)
         {
-            if (cardModifyCpm == null)
+            Tuple<bool, FinanceCardCardModifyC> checkbool = CheckCardModifyC(cardModifyCpm);  //验证数据合法性
+            if (checkbool.Item1 == false)
             {
-                return ResultModel<object>.Conclude(FinanceCardCardModifyC.NoPara);
-            }
-            if (cardModifyCpm.AccountNo != cardModifyCpm.AccountNo2) //两次录入的金融账号不一致
-            {
-                return ResultModel<object>.Conclude(FinanceCardCardModifyC.InputValid);
+                return ResultModel<object>.Conclude(checkbool.Item2);
             }
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
@@ -226,6 +236,21 @@ namespace Ets.Service.Provider.Finance
                 return ResultModel<object>.Conclude(SystemEnum.Success);
             }
         }
+
+        /// <summary>
+        /// 骑士修改绑定银行卡功能有效性验证  add by caoheyang 20150511 
+        /// </summary>
+        /// <param name="cardModifyCpm"></param>
+        /// <returns></returns>
+        private Tuple<bool, FinanceCardCardModifyC> CheckCardModifyC(CardModifyCPM cardModifyCpm)
+        {
+            if (cardModifyCpm == null)
+            {
+                return new Tuple<bool, FinanceCardCardModifyC>(false, FinanceCardCardModifyC.NoPara);
+            }
+            return new Tuple<bool, FinanceCardCardModifyC>(true, FinanceCardCardModifyC.Success);
+        }
+
         #endregion
 
         /// <summary>
@@ -266,6 +291,225 @@ namespace Ets.Service.Provider.Finance
                        temp.OperateTime.ToString("HH:mm"); //分
             }
             return records;
+        }
+        /// <summary>
+        /// 根据参数获取骑士提现申请单列表
+        /// danny-20150513
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<ClienterWithdrawFormModel> GetClienterWithdrawList(ClienterWithdrawSearchCriteria criteria)
+        {
+            return clienterFinanceDao.GetClienterWithdrawList<ClienterWithdrawFormModel>(criteria);
+        }
+        /// <summary>
+        /// 根据申请单Id获取骑士提现申请单
+        /// danny-20150513
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        public ClienterWithdrawFormModel GetClienterWithdrawListById(string withwardId)
+        {
+            return clienterFinanceDao.GetClienterWithdrawListById(withwardId);
+        }
+        /// <summary>
+        /// 获取骑士提款单操作日志
+        /// danny-20150513
+        /// </summary>
+        /// <param name="withwardId"></param>
+        /// <returns></returns>
+        public IList<ClienterWithdrawLog> GetClienterWithdrawOptionLog(string withwardId)
+        {
+            return clienterFinanceDao.GetClienterWithdrawOptionLog(withwardId);
+        }
+        /// <summary>
+        /// 审核骑士提现申请单
+        /// danny-20150513
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ClienterWithdrawAudit(ClienterWithdrawLog model)
+        {
+            return clienterFinanceDao.ClienterWithdrawAudit(model);
+        }
+        /// <summary>
+        /// 骑士提现申请单确认打款
+        /// danny-20150513
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ClienterWithdrawPayOk(ClienterWithdrawLog model)
+        {
+            bool reg = false;
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (clienterFinanceDao.ClienterWithdrawPayOk(model))
+                {
+                    if (clienterFinanceDao.ModifyClienterBalanceRecordStatus(model.WithwardId.ToString()))
+                    {
+                        if (clienterFinanceDao.ModifyClienterTotalAmount(model.WithwardId.ToString()))
+                        {
+                            reg = true;
+                            tran.Complete();
+                        }
+                    }
+                }
+            }
+            return reg;
+        }
+
+        /// <summary>
+        /// 骑士提现申请单审核拒绝
+        /// danny-20150513
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ClienterWithdrawAuditRefuse(ClienterWithdrawLogModel model)
+        {
+            bool reg = false;
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (clienterFinanceDao.ClienterWithdrawReturn(model))
+                {
+                    if (clienterFinanceDao.ClienterWithdrawAuditRefuse(model))
+                    {
+                        if (clienterFinanceDao.ModifyClienterBalanceRecordStatus(model.WithwardId.ToString()))
+                        {
+                            if (clienterFinanceDao.ModifyClienterAmountInfo(model.WithwardId.ToString()))
+                            {
+                                reg = true;
+                                tran.Complete();
+                            }
+                        }
+                    }
+                }
+            }
+            return reg;
+        }
+        /// <summary>
+        /// 骑士提现申请单打款失败
+        /// danny-20150513
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ClienterWithdrawPayFailed(ClienterWithdrawLogModel model)
+        {
+            bool reg = false;
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (clienterFinanceDao.ClienterWithdrawReturn(model))
+                {
+                    if (clienterFinanceDao.ClienterWithdrawPayFailed(model))
+                    {
+                        if (clienterFinanceDao.ModifyClienterBalanceRecordStatus(model.WithwardId.ToString()))
+                        {
+                            if (clienterFinanceDao.ModifyClienterAmountInfo(model.WithwardId.ToString()))
+                            {
+                                reg = true;
+                                tran.Complete();
+                            }
+                        }
+                    }
+                }
+            }
+            return reg;
+        }
+
+        /// <summary>
+        /// 获取骑士提款收支记录列表
+        /// danny-20150513
+        /// </summary>
+        /// <param name="withwardId"></param>
+        /// <returns></returns>
+        public IList<ClienterBalanceRecord> GetClienterBalanceRecordList(ClienterBalanceRecordSerchCriteria criteria)
+        {
+            return clienterFinanceDao.GetClienterBalanceRecordList(criteria);
+        }
+        /// <summary>
+        /// 获取要导出的骑士提现申请单
+        /// danny-20150513
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public IList<ClienterWithdrawFormModel> GetClienterWithdrawForExport(ClienterWithdrawSearchCriteria criteria)
+        {
+            return clienterFinanceDao.GetClienterWithdrawForExport(criteria);
+        }
+        /// <summary>
+        /// 获取要导出的骑士提款收支记录列表
+        /// danny-20150513
+        /// </summary>
+        /// <param name="withwardId"></param>
+        /// <returns></returns>
+        public IList<ClienterBalanceRecordModel> GetClienterBalanceRecordListForExport(ClienterBalanceRecordSerchCriteria criteria)
+        {
+            return clienterFinanceDao.GetClienterBalanceRecordListForExport(criteria);
+        }
+        /// <summary>
+        /// 生成excel文件
+        /// 导出字段：骑士姓名、电话、开户行、账户名、卡号、提款金额
+        /// danny-20150513
+        /// </summary>
+        /// <returns></returns>
+        public string CreateClienterWithdrawFormExcel(List<ClienterWithdrawFormModel> list)
+        {
+            StringBuilder strBuilder = new StringBuilder();
+            strBuilder.AppendLine("<table border=1 cellspacing=0 cellpadding=5 rules=all>");
+            //输出表头.
+            strBuilder.AppendLine("<tr style=\"font-weight: bold; white-space: nowrap;\">");
+            strBuilder.AppendLine("<td>骑士姓名</td>");
+            strBuilder.AppendLine("<td>电话</td>");
+            strBuilder.AppendLine("<td>开户行</td>");
+            strBuilder.AppendLine("<td>账户名</td>");
+            strBuilder.AppendLine("<td>卡号</td>");
+            strBuilder.AppendLine("<td>提款金额</td>");
+            strBuilder.AppendLine("</tr>");
+            //输出数据.
+            foreach (var item in list)
+            {
+                strBuilder.AppendLine(string.Format("<tr><td>'{0}'</td>", item.ClienterName));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.ClienterPhoneNo));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OpenBank));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.TrueName));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", ParseHelper.ToDecrypt(item.AccountNo)));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Amount));
+            }
+            strBuilder.AppendLine("</table>");
+            return strBuilder.ToString();
+        }
+        /// <summary>
+        /// 生成excel文件
+        /// 导出字段：任务单号/交易流水号、所属银行、卡号、收支金额、余额、完成时间、操作人
+        /// danny-20150513
+        /// </summary>
+        /// <returns></returns>
+        public string CreateClienterBalanceRecordExcel(List<ClienterBalanceRecordModel> list)
+        {
+            StringBuilder strBuilder = new StringBuilder();
+            strBuilder.AppendLine("<table border=1 cellspacing=0 cellpadding=5 rules=all>");
+            //输出表头.
+            strBuilder.AppendLine("<tr style=\"font-weight: bold; white-space: nowrap;\">");
+            strBuilder.AppendLine("<td>任务单号/交易流水号</td>");
+            strBuilder.AppendLine("<td>所属银行</td>");
+            strBuilder.AppendLine("<td>卡号</td>");
+            strBuilder.AppendLine("<td>收支金额</td>");
+            strBuilder.AppendLine("<td>余额</td>");
+            strBuilder.AppendLine("<td>完成时间</td>");
+            strBuilder.AppendLine("<td>操作人</td>");
+            strBuilder.AppendLine("</tr>");
+            //输出数据.
+            foreach (var item in list)
+            {
+                strBuilder.AppendLine(string.Format("<tr><td>'{0}'</td>", item.RelationNo));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OpenBank));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", ParseHelper.ToDecrypt(item.AccountNo)));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Amount));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Balance));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OperateTime));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Operator));
+            }
+            strBuilder.AppendLine("</table>");
+            return strBuilder.ToString();
         }
     }
 }

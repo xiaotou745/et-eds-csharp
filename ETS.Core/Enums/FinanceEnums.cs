@@ -31,10 +31,11 @@ namespace ETS.Enums
     /// </summary>
     public enum FinanceCardBindC
     {
+        Success = 0,
         [DisplayText("该骑士已绑定过金融账号")]
         Exists = 1,
-        [DisplayText("两次录入的金融账号不一致")]
-        InputValid = 2,
+        [DisplayText("系统错误")]
+        SystemError = -1,
         [DisplayText("未传参")]
         NoPara = -2
     }
@@ -44,8 +45,9 @@ namespace ETS.Enums
     /// </summary>
     public enum FinanceCardCardModifyC
     {
-        [DisplayText("两次录入的金融账号不一致")]
-        InputValid = 2,
+        Success = 0,
+        [DisplayText("系统错误")]
+        SystemError = -1,
         [DisplayText("未传参")]
         NoPara = -2
     }
@@ -61,7 +63,7 @@ namespace ETS.Enums
     }
 
     /// <summary>
-    ///骑士余额流水   交易类型(1佣金 2奖励 3提现 4取消订单赔偿 5无效订单扣款) 枚举 add by caoheyang 20150509
+    ///骑士余额流水   交易类型(1佣金 2奖励 3提现 4取消订单赔偿 5无效订单扣款 6提现失败返现) 枚举 add by caoheyang 20150509
     /// </summary>
     public enum ClienterBalanceRecordRecordType
     {
@@ -74,7 +76,9 @@ namespace ETS.Enums
         [DisplayText("取消订单赔偿")]
         QuXiaoOrder = 4,
         [DisplayText("无效订单扣款")]
-        WuXiaoOrder = 5
+        WuXiaoOrder = 5,
+        [DisplayText("提现失败返现")]
+        Return = 6
     }
 
     /// <summary>
@@ -110,7 +114,7 @@ namespace ETS.Enums
         [DisplayText("百度钱包")]
         BaiDuQinBao = 5
     }
-    
+
     #endregion
 
     #region 商户
@@ -136,10 +140,11 @@ namespace ETS.Enums
     /// </summary>
     public enum FinanceCardBindB
     {
+        Success = 0,
         [DisplayText("该商户已绑定过金融账号")]
         Exists = 1,
-        [DisplayText("两次录入的金融账号不一致")]
-        InputValid = 2,
+        [DisplayText("系统错误")]
+        SystemError = -1,
         [DisplayText("未传参")]
         NoPara = -2
     }
@@ -149,8 +154,9 @@ namespace ETS.Enums
     /// </summary>
     public enum FinanceCardCardModifyB
     {
-        [DisplayText("两次录入的金融账号不一致")]
-        InputValid = 2,
+        Success = 0,
+        [DisplayText("系统错误")]
+        SystemError = -1,
         [DisplayText("未传参")]
         NoPara = -2
     }
@@ -166,7 +172,7 @@ namespace ETS.Enums
     }
 
     /// <summary>
-    ///商户余额流水   交易类型(1订单餐费 2配送费 3提现 4充值) 枚举 add by caoheyang 20150511
+    ///商户余额流水   交易类型(1订单餐费 2配送费 3提现 4充值 5提现失败返现) 枚举 add by caoheyang 20150511
     /// </summary>
     public enum BusinessBalanceRecordRecordType
     {
@@ -215,6 +221,6 @@ namespace ETS.Enums
         [DisplayText("百度钱包")]
         BaiDuQinBao = 5
     }
-    
+
     #endregion
 }
