@@ -111,7 +111,7 @@
                 @{
                     var orderChildList = @Model.OrderChildList;
                     var curPuth = SuperManCore.CustomerIconUploader.Instance.RelativePath;
-                    var curPhost = SuperManCore.CustomerIconUploader.Instance.PicHost; 
+                    var curPhost = SuperManCore.CustomerIconUploader.Instance.PicHost;
                 }
                 @foreach (var curOrderChild in orderChildList)
                 {
@@ -126,19 +126,32 @@
                         <td>@curOrderChild.ChildId</td>
                         <td>@curOrderChild.GoodPrice</td>
                         <td>@curOrderChild.DeliveryPrice</td>
-                        <td>@curOrderChild.PayStatus</td>
-                        <td>@curOrderChild.PayType</td>
-                        <td>@curOrderChild.PayStyle</td>
-                        <td></td>
-                        <td></td>
-                        @if (!string.IsNullOrWhiteSpace(bigFileName)) { 
-                        <td><a href="@bigFileName">查看</a></td>
-                        }
-                        else
+                        <td>
+                            @if (curOrderChild.PayStatus > 0)
+                            {
+                                @ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.PayStatusEnum)curOrderChild.PayStatus).GetType(), (ETS.Enums.PayStatusEnum)curOrderChild.PayStatus).Text}
+                    </td>
+                    <td>
+                        @if (curOrderChild.PayType!=null && curOrderChild.PayType.Value > 0)
                         {
-                            <td></td>
-                        }
-                    </tr>
+                            @ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.PayTypeEnum)curOrderChild.PayType).GetType(), (ETS.Enums.PayTypeEnum)curOrderChild.PayType)}
+                </td>
+                <td>
+                    @if (curOrderChild.PayStyle!=null && curOrderChild.PayStyle.Value > 0)
+                    {
+                        @ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.PayStyleEnum)curOrderChild.PayStyle).GetType(), (ETS.Enums.PayStyleEnum)curOrderChild.PayStyle)}
+            </td>
+            <td></td>
+            <td></td>
+            @if (!string.IsNullOrWhiteSpace(bigFileName))
+            {
+                <td><a href="@bigFileName">查看</a></td>
+            }
+            else
+            {
+                <td></td>
+            }
+        </tr>
                 }
 
             </tbody>
@@ -283,7 +296,7 @@
             });
         }
         return true;
-    }); 
+    });
 </script>
 
 

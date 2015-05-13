@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ETS.Expand;
+using System.ComponentModel;
 
 namespace ETS.Enums
 {
@@ -222,5 +223,48 @@ namespace ETS.Enums
         BaiDuQinBao = 5
     }
 
+    #endregion
+
+
+    #region 支付相关
+    /// <summary>
+    /// 支付方式
+    /// </summary>
+    public enum PayStyleEnum
+    {
+        [DisplayText("用户支付")]
+        BuyerPay = 1,
+        [DisplayText("骑士支付")]
+        ClienterPay = 2
+    }
+    /// <summary>
+    /// 支付类型
+    /// </summary>
+    public enum PayTypeEnum
+    {
+        [DisplayText("网银")]
+        WangYin = 1,
+        [DisplayText("支付宝")]
+        ZhiFuBao = 2,
+        [DisplayText("微信")]
+        WeiXin = 3,
+        [DisplayText("财付通")]
+        CaiFuTong = 4,
+        [DisplayText("百度钱包")]
+        BaiDuQinBao = 5
+    }
+    /// <summary>
+    /// 支付状态
+    /// </summary>
+    public enum PayStatusEnum
+    {
+        //支付状态(0待支付 ,1 已支付,2支付中)
+        [DisplayText("待支付")]
+        WaitPay = 0,
+        [DisplayText("已支付")]
+        HadPay = 1,
+        [DisplayText("支付中")]
+        WaitingPay = 2
+    }
     #endregion
 }
