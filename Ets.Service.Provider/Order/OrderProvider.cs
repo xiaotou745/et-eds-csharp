@@ -382,6 +382,16 @@ to.BusinessName = business.Name;
             return OrderDao.GetOrderByNo(orderNo);
         }
         /// <summary>
+        /// 根据订单号查订单信息
+        /// danny-20150320
+        /// </summary>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        public OrderListModel GetOrderByNo(string orderNo,int orderId)
+        {
+            return OrderDao.GetOrderByNo(orderNo,orderId);
+        }
+        /// <summary>
         /// 订单指派超人
         /// danny-20150320
         /// </summary>
@@ -970,7 +980,7 @@ to.BusinessName = business.Name;
         /// </summary>
         /// <param name="IntervalMinute"></param>
         /// <returns></returns>
-        public IList<OrderSubsidiesLog> GetOrderOptionLog(string OrderId)
+        public IList<OrderSubsidiesLog> GetOrderOptionLog(int OrderId)
         {
             return OrderDao.GetOrderOptionLog(OrderId);
         }

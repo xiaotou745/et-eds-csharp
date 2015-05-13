@@ -236,5 +236,13 @@ namespace Ets.Model.DataModel.Order
         /// 取消原应
         /// </summary>
         public string OtherCancelReason { get; set; }
+        /// <summary>
+        /// 订单明细
+        /// </summary>
+        public List<OrderChild> OrderChildList { get; set; }
+        /// <summary>
+        /// 子订单
+        /// </summary>
+        public List<OrderDetail> OrderDetailList { get; set; }
     }
 }
