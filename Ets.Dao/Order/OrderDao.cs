@@ -1100,7 +1100,7 @@ WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL and Status=2;", SuperPlatfo
 				                    ,SUM(Amount)orderAmount
                                     from business b with(nolock)
                                     join [order] o with(nolock) on b.Id=o.businessId
-                                    where 1=1");
+                                    where 1=1 and o.Status!=3");  //只统计非取消订单
             if (criteria.searchType == 1)//当天
             {
                 sbtbl.Append(" AND DateDiff(DAY, GetDate(),o.PubDate)=0 ");
