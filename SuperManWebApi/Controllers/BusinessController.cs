@@ -40,9 +40,10 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary>
-        /// 获取商户详情        
-        /// hulingbo 20150511
+        /// 获取商户详情       
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
         /// <param name="model">商户参数</param>
         /// <returns></returns>        
         [HttpPost]

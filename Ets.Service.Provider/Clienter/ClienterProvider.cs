@@ -810,7 +810,9 @@ namespace Ets.Service.Provider.Clienter
         /// 获取骑士详情
         /// hulingbo 20150511
         /// </summary>
-        /// <param name="id">商户id</param>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
+        /// <param name="id">骑士id</param>
         /// <returns></returns>
         public ClienterDM GetDetails(int id)
         {
@@ -819,9 +821,10 @@ namespace Ets.Service.Provider.Clienter
 
 
         /// <summary>
-        /// 判断骑士是否存在
-        /// hulingbo 20150511
+        /// 判断骑士是否存在        
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
         /// <param name="id">骑士Id</param>
         /// <returns></returns>
         public bool IsExist(int id)

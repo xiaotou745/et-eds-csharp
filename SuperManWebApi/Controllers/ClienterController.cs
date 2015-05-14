@@ -36,12 +36,13 @@ namespace SuperManWebApi.Controllers
             return _iClienterFinanceProvider.GetRecords(clineterId);
         }
 
-       /// <summary>
-       /// 获取骑士详情       
-       /// hulingbo 20150512
-       /// </summary>
-       /// <param name="model">骑士参数</param>
-       /// <returns></returns>        
+        /// <summary>
+        /// 获取骑士详情              
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
+        /// <param name="model">骑士参数</param>
+        /// <returns></returns>        
        [HttpPost]
        public ResultModel<ClienterDM> Get(ClienterPM model)
        {

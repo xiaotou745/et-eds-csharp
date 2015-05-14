@@ -86,6 +86,14 @@ namespace Ets.Model.DataModel.Order
         /// 最后更新人
         /// </summary>
         public DateTime UpdateTime { get; set; }
+        /// <summary>
+        /// 第三方平台订单号
+        /// </summary>
+        public string OriginalOrderNo { get; set; }
+        /// <summary>
+        /// 微信二维码地址
+        /// </summary>
+        public string WxCodeUrl { get; set; }
 
     }   
 

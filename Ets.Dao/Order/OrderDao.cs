@@ -1597,9 +1597,10 @@ order by bb.Id desc;";
 
 
         /// <summary>
-        /// 新增订单
-        /// 胡灵波 20150509
+        /// 新增订单       
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150509</UpdateTime>
         /// <param name="order">订单实体</param>
         /// <returns></returns>
         public int AddOrder(Model.DataModel.Order.order order)
@@ -1756,6 +1757,8 @@ values  ( @OrderNo ,
         /// <summary>
         /// 写入订单子表
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150512</UpdateTime>
         /// <returns>订单实体</returns>
         void AddOrderChild(int orderId, Model.DataModel.Order.order order)
         {
@@ -1800,17 +1803,18 @@ values  ( @OrderNo ,
                     bulk.WriteToServer(dt);
                 }
                 catch (Exception err)
-                {
-                    //写日志
-                    //return 0;
+                {                   
+                    throw err;
                 }            
             }
             #endregion
         }
+
         /// <summary>
-        /// 获取订单实体
-        /// hulingbo 20150512
+        /// 获取订单实体   
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150512</UpdateTime>
         /// <param name="id">订单Id</param>
         /// <returns></returns>
         public order GetById(int id)
@@ -1840,6 +1844,8 @@ where  o.Id=@Id ";
         /// <summary>
         /// 判断订单是否存在
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150512</UpdateTime>
         /// <param name="id">订单Id</param>
         /// <returns></returns>
         public bool IsExist(int id)

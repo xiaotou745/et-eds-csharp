@@ -1046,30 +1046,37 @@ to.BusinessName = business.Name;
 
         }
 
-        ///// <summary>
-        ///// 获取订单详情
-        ///// </summary>
-        ///// <param name="id"></param>
-        ///// <returns></returns>
-        //public OrderDM GetDetails(int id)
-        //{
-        //    return OrderDao.GetDetails(id);
-        //}
-
-        public order GetById(int id)
-        {
-            return OrderDao.GetById(id);
-        }    
         /// <summary>
-        /// 判断订单是否存在
-        /// hulingbo 20150511
+        /// 判断订单是否存在      
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
         /// <param name="id">订单Id</param>
         /// <returns></returns>
         public bool IsExist(int id)
         {
             return OrderDao.IsExist(id);
         }
+
+        /// <summary>
+        /// 获取主订单信息
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150512</UpdateTime>
+        /// <param name="id">订单Id</param>
+        /// <returns></returns>
+        public order GetById(int id)
+        {
+            return OrderDao.GetById(id);
+        }    
+       
+        /// <summary>
+        /// 获取订单详情
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150512</UpdateTime>
+        /// <param name="id">订单Id</param>
+        /// <returns></returns>
         public OrderDM GetDetails(int id)
         {
             OrderDM orderDM = new OrderDM();

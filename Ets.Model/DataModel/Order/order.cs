@@ -117,7 +117,6 @@ namespace Ets.Model.DataModel.Order
         /// </summary>
         public List<OrderChlidPM> listOrderChild { get; set; }
 
-
         /// <summary>
         /// 支付类型 0 现金
         /// </summary>
@@ -152,8 +151,13 @@ namespace Ets.Model.DataModel.Order
         /// </summary>
         public decimal? FinishOrderLandline { get; set; }
 
-
+        /// <summary>
+        /// 经度
+        /// </summary>
         public double? Longitude { get; set; }
+        /// <summary>
+        ///  纬度
+        /// </summary>
         public double? Latitude { get; set; }
 
 
