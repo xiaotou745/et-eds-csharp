@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace ETS.WxPay
+namespace ETS.Pay.WxPay
 {
     public class WXpayService
     {
@@ -202,6 +202,35 @@ namespace ETS.WxPay
             var retValue = StreamReaderUtils.StreamReader("https://api.mch.weixin.qq.com/pay/orderquery", Encoding.UTF8.GetBytes(data), System.Text.Encoding.UTF8, true);
             return retValue;
 
+        }
+
+        /// <summary>
+        /// 获取微信状态
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public dynamic GetOrder(string orderId)
+        {
+            WXpayService wxpay = new WXpayService();
+            string wx_nonceStr = RequestHandler.getNoncestr();
+            var retValue = wxpay.GetNativeApi(orderId, wx_nonceStr);
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(retValue.Message);
+            if (xmlDoc.SelectSingleNode("/xml/return_code").InnerText == "SUCCESS" && xmlDoc.SelectSingleNode("/xml/result_code").InnerText == "SUCCESS")
+            {
+                if (xmlDoc.SelectSingleNode("/xml/trade_state").InnerText == "SUCCESS")
+                {
+                    ////用户支付成功
+                    string openid = xmlDoc.SelectSingleNode("/xml/openid").InnerText;
+                    string transaction_id = xmlDoc.SelectSingleNode("/xml/transaction_id").InnerText;
+                    return new { status_code = 1, status_message = string.Empty, data = new { pay_status = 1 } };
+                }
+                else
+                {
+                    //失败
+                }
+            }
+            return new { status_code = 1, status_message = string.Empty, data = new { pay_status = 3 } };
         }
     }
 }

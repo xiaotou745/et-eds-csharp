@@ -257,16 +257,15 @@ where   1=1 and o.Id = @OrderId
             string sql = @"
 update OrderChild set PayStatus=@PayStatus,PayStyle=@PayStyle,PayBy=@PayBy,PayTime=getdate(),
 PayType=@PayType , OriginalOrderNo=@OriginalOrderNo
-where OrderId=@OrderId and ChildId=@ChildId and PayStatus!=@FinishStatus";
+where OrderId=@OrderId and ChildId=@ChildId and PayStatus!=@PayStatus";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("PayStatus", DbType.Int32, 4).Value = EnumOrderChildStatus.YiWanCheng.GetHashCode();//变为已完成
+            parm.Add("PayStatus", DbType.Int32, 4).Value = PayStatusEnum.HadPay.GetHashCode();//变为已完成
             parm.Add("PayStyle", DbType.Int32, 4).Value = model.payStyle;
             parm.Add("PayBy", DbType.String, 100).Value = model.payBy;
             parm.Add("PayType", DbType.Int32, 4).Value = model.payType;
             parm.Add("OriginalOrderNo", DbType.String, 265).Value = model.originalOrderNo;
             parm.Add("OrderId", SqlDbType.Int, 4).Value = model.orderId;
             parm.Add("ChildId", SqlDbType.Int, 4).Value = model.orderChildId;
-            parm.Add("FinishStatus", DbType.Int32, 4).Value = EnumOrderChildStatus.YiWanCheng.GetHashCode();//条件为已完成
             return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm), 0) > 0 ? true : false;
         }
 
@@ -282,8 +281,8 @@ where OrderId=@OrderId and ChildId=@ChildId and PayStatus!=@FinishStatus";
         {
             string sql = "update OrderChild set PayStatus=@PayStatus where OrderId=@OrderId and ChildId=@ChildId and PayStatus=@BeForeStatus";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("PayStatus", DbType.Int32, 4).Value = EnumOrderChildStatus.ZhiFuZhong.GetHashCode();//变为支付中
-            parm.Add("BeForeStatus", DbType.Int32, 4).Value = EnumOrderChildStatus.DaiZhiFu.GetHashCode();//条件为待支付
+            parm.Add("PayStatus", DbType.Int32, 4).Value = PayStatusEnum.WaitingPay.GetHashCode();//变为支付中
+            parm.Add("BeForeStatus", DbType.Int32, 4).Value = PayStatusEnum.WaitPay.GetHashCode();//条件为待支付
             parm.Add("OrderId", SqlDbType.Int, 4).Value = orderId;
             parm.Add("ChildId", SqlDbType.Int, 4).Value = orderChildId;
             return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm), 0) > 0 ? true : false;
