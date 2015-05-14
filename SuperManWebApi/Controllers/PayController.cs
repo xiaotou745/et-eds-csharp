@@ -28,8 +28,8 @@ namespace SuperManWebApi.Controllers
         {
             PayModel model = new PayModel()
             {
-                orderId = 2120,
-                childId = 4,
+                orderId = 1344,
+                childId = 1,
                 payType = 2,
                 version = "1.0"
             };
@@ -88,6 +88,7 @@ namespace SuperManWebApi.Controllers
         /// 2015年5月13日 15:02:42
         /// </summary>
         /// <returns></returns>
+        //[HttpGet]
         public dynamic ReturnWxpay()
         {
             return payProvider.ReturnWxpay();
