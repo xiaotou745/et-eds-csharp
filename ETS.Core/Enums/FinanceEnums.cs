@@ -242,12 +242,13 @@ namespace ETS.Enums
     /// </summary>
     public enum PayTypeEnum
     {
-        [DisplayText("网银")]
-        WangYin = 1,
+
         [DisplayText("支付宝")]
-        ZhiFuBao = 2,
+        ZhiFuBao = 1,
         [DisplayText("微信")]
-        WeiXin = 3,
+        WeiXin = 2,
+        [DisplayText("网银")]
+        WangYin = 3,
         [DisplayText("财付通")]
         CaiFuTong = 4,
         [DisplayText("百度钱包")]
