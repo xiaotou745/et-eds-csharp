@@ -193,7 +193,7 @@ namespace Ets.Dao.User
             return list;
         }
 
- 
+
         /// <summary>
         /// 设置结算比例-平扬 2015.3.12
         /// </summary>
@@ -236,13 +236,13 @@ namespace Ets.Dao.User
             try
             {
                 string sql = @"update business set  ";
-                if(model.DistribSubsidy>0)
-                {
-                    sql += "DistribSubsidy=@DistribSubsidy,";
-                }
+                //if(model.DistribSubsidy>0)
+                //{
+                sql += "DistribSubsidy=@DistribSubsidy,";
+                //}
                 if (model.CommissionType > 0)
                 {
-                    if (model.CommissionType==1)
+                    if (model.CommissionType == 1)
                     {
                         if (model.BusinessCommission > 0)
                         {
@@ -258,19 +258,19 @@ namespace Ets.Dao.User
                     }
                     sql += "CommissionType=@CommissionType,";
                 }
-                if (model.BusinessGroupId> 0)
+                if (model.BusinessGroupId > 0)
                 {
                     sql += "BusinessGroupId=@BusinessGroupId,";
                 }
                 sql = sql.TrimEnd(',');
-                sql += " where id=@id"; 
+                sql += " where id=@id";
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
                 dbParameters.AddWithValue("BusinessCommission", model.BusinessCommission);
                 dbParameters.AddWithValue("DistribSubsidy", model.DistribSubsidy);
                 dbParameters.AddWithValue("id", model.Id);
                 dbParameters.AddWithValue("CommissionType", model.CommissionType);
                 dbParameters.AddWithValue("CommissionFixValue", model.CommissionFixValue);
-                dbParameters.AddWithValue("BusinessGroupId",model.BusinessGroupId);
+                dbParameters.AddWithValue("BusinessGroupId", model.BusinessGroupId);
                 int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Write, sql, dbParameters);
                 if (i > 0) reslut = true;
             }
@@ -542,7 +542,7 @@ namespace Ets.Dao.User
         /// </summary>
         /// <param name="busiId"></param>
         /// <returns></returns>
-        public BusListResultModel GetBusiness(int originalBusiId,int groupId)
+        public BusListResultModel GetBusiness(int originalBusiId, int groupId)
         {
             BusListResultModel busi = new BusListResultModel();
             string selSql = @" SELECT  
@@ -622,9 +622,9 @@ namespace Ets.Dao.User
                     var busi = GetBusiness(id);
                     if (busi.GroupId == 1 && busi.OriginalBusiId > 0 && enumStatusType == EnumStatusType.审核通过)
                     {
-                      string str =  HTTPHelper.HttpPost(juWangKeBusiAuditUrl, "supplier_id=" + busi.OriginalBusiId);
+                        string str = HTTPHelper.HttpPost(juWangKeBusiAuditUrl, "supplier_id=" + busi.OriginalBusiId);
                     }
-                    
+
                     //HTTPHelper.HttpPost()
                     reslut = true;
                 }
@@ -856,12 +856,12 @@ namespace Ets.Dao.User
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OriginalBusiId", bid);
             parm.AddWithValue("@GroupId", groupid);
-            DataTable  dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm); 
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             if (dt == null || dt.Rows.Count <= 0)
             {
                 return null;
             }
-            return MapRows<Business>(dt)[0]; 
+            return MapRows<Business>(dt)[0];
         }
 
         /// <summary>
@@ -887,7 +887,7 @@ namespace Ets.Dao.User
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             if (dt != null)
             {
-               return  MapRows<order>(dt)[0];
+                return MapRows<order>(dt)[0];
             }
             else
             {
@@ -905,7 +905,7 @@ namespace Ets.Dao.User
             string sql = string.Format(@"UPDATE dbo.[order] SET [Status]=@Status 
                             output Inserted.Id,GETDATE(),'{0}','{1}',Inserted.businessId,Inserted.[Status],{2}
                             into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
-                            WHERE OriginalOrderNo=@OriginalOrderNo and OrderFrom=@OrderFrom ", SuperPlatform.商家,ConstValues.CancelOrder, (int)SuperPlatform.商家);
+                            WHERE OriginalOrderNo=@OriginalOrderNo and OrderFrom=@OrderFrom ", SuperPlatform.商家, ConstValues.CancelOrder, (int)SuperPlatform.商家);
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OriginalOrderNo", oriOrderNo);
             parm.AddWithValue("@OrderFrom", orderFrom);
@@ -982,7 +982,7 @@ namespace Ets.Dao.User
             parm.AddWithValue("@Name", model.Name);
             parm.AddWithValue("@City", model.City);
             parm.AddWithValue("@district", model.district);
-            parm.Add("@PhoneNo",SqlDbType.NVarChar);
+            parm.Add("@PhoneNo", SqlDbType.NVarChar);
             parm.SetValue("@PhoneNo", model.PhoneNo);
 
             parm.Add("@PhoneNo2", SqlDbType.NVarChar);
@@ -991,7 +991,7 @@ namespace Ets.Dao.User
             parm.AddWithValue("@Password", model.Password);
             parm.AddWithValue("@CheckPicUrl", model.CheckPicUrl);
 
-            
+
             parm.AddWithValue("@IDCard", model.IDCard);
             parm.AddWithValue("@Address", model.Address);
             parm.AddWithValue("@Longitude", model.Longitude);
@@ -1086,7 +1086,7 @@ namespace Ets.Dao.User
             IDbParameters parm = DbHelper.CreateDbParameters();
 
             parm.AddWithValue("@Address", business.Address);
-            parm.Add("@PhoneNo2",SqlDbType.NVarChar);
+            parm.Add("@PhoneNo2", SqlDbType.NVarChar);
             parm.SetValue("@PhoneNo2", business.PhoneNo2);
             parm.AddWithValue("@Name", business.Name);
             parm.AddWithValue("@Landline", business.Landline);
@@ -1379,7 +1379,7 @@ namespace Ets.Dao.User
             parm.AddWithValue("@OptId", orderOptionModel.OptUserId);
             parm.AddWithValue("@OptName", orderOptionModel.OptUserName);
             parm.AddWithValue("@Platform", 3);
-            parm.AddWithValue("@Remark", remark );
+            parm.AddWithValue("@Remark", remark);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
 
@@ -1617,6 +1617,171 @@ from  BusinessFinanceAccount (nolock) where BusinessId=@BusinessId and IsEnable=
             }
         }
 
-        #endregion        
+        #endregion
+        /// <summary>
+        /// 获取商户详细信息
+        /// </summary>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        public BusinessDetailModel GetBusinessDetailById(string businessId)
+        {
+            string selSql = @" 
+SELECT   b.Id ,
+         b.Name ,
+         b.City ,
+         b.district ,
+         b.PhoneNo ,
+         b.PhoneNo2 ,
+         b.IDCard ,
+         b.[Address] ,
+         b.Landline ,
+         b.Longitude ,
+         b.Latitude ,
+         b.[Status] ,
+         b.InsertTime ,
+         b.districtId ,
+         b.CityId ,
+         b.GroupId , 
+         b.ProvinceCode ,
+         b.CityCode ,
+         b.AreaCode ,
+         b.Province ,
+         b.DistribSubsidy,
+         b.BusinessCommission ,
+         b.OriginalBusiId,
+         b.CommissionType,
+         b.CommissionFixValue,
+         b.BusinessGroupId,
+         b.BalancePrice,
+         b.AllowWithdrawPrice,
+         b.HasWithdrawPrice,
+         bfa.TrueName,
+         bfa.AccountNo,
+         bfa.AccountType,
+         bfa.OpenBank,
+         bfa.OpenSubBank
+FROM business b WITH(NOLOCK) 
+	Left join BusinessFinanceAccount bfa WITH(NOLOCK) ON b.Id=bfa.BusinessId AND bfa.IsEnable=1
+WHERE b.Id = @BusinessId  ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@BusinessId", businessId);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
+            if (dt != null&&dt.Rows.Count>0)
+                return  DataTableHelper.ConvertDataTableList<BusinessDetailModel>(dt)[0];
+            return null;
+        }
+        //#region 用户自定义方法 Nested type: businessRowMapper
+
+        ///// <summary>
+        ///// 绑定对象
+        ///// </summary>
+        //private class businessRowMapper : IDataTableRowMapper<BusinessDM>
+        //{
+        //    public BusinessDM MapRow(DataRow dataReader)
+        //    {
+        //        var result = new BusinessDM();
+        //        object obj;
+        //        obj = dataReader["Id"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.Id = int.Parse(obj.ToString());
+        //        }
+        //        result.Name = dataReader["Name"].ToString();
+        //        result.City = dataReader["City"].ToString();
+        //        result.district = dataReader["district"].ToString();
+        //        result.PhoneNo = dataReader["PhoneNo"].ToString();
+        //        result.PhoneNo2 = dataReader["PhoneNo2"].ToString();
+        //        result.Password = dataReader["Password"].ToString();
+        //        result.CheckPicUrl = dataReader["CheckPicUrl"].ToString();
+        //        result.IDCard = dataReader["IDCard"].ToString();
+        //        result.Address = dataReader["Address"].ToString();
+        //        result.Landline = dataReader["Landline"].ToString();
+        //        obj = dataReader["Longitude"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.Longitude = decimal.Parse(obj.ToString());
+        //        }
+        //        obj = dataReader["Latitude"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.Latitude = decimal.Parse(obj.ToString());
+        //        }
+        //        obj = dataReader["Status"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.Status = int.Parse(obj.ToString());
+        //        }
+        //        obj = dataReader["InsertTime"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.InsertTime = DateTime.Parse(obj.ToString());
+        //        }
+        //        result.districtId = dataReader["districtId"].ToString();
+        //        result.CityId = dataReader["CityId"].ToString();
+        //        obj = dataReader["GroupId"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.GroupId = int.Parse(obj.ToString());
+        //        }
+        //        obj = dataReader["OriginalBusiId"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.OriginalBusiId = int.Parse(obj.ToString());
+        //        }
+        //        result.ProvinceCode = dataReader["ProvinceCode"].ToString();
+        //        result.CityCode = dataReader["CityCode"].ToString();
+        //        result.AreaCode = dataReader["AreaCode"].ToString();
+        //        result.Province = dataReader["Province"].ToString();
+        //        obj = dataReader["CommissionTypeId"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.CommissionTypeId = int.Parse(obj.ToString());
+        //        }
+        //        obj = dataReader["DistribSubsidy"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.DistribSubsidy = decimal.Parse(obj.ToString());
+        //        }
+        //        obj = dataReader["BusinessCommission"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.BusinessCommission = decimal.Parse(obj.ToString());
+        //        }
+        //        obj = dataReader["CommissionType"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.CommissionType = int.Parse(obj.ToString());
+        //        }
+        //        obj = dataReader["CommissionFixValue"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.CommissionFixValue = decimal.Parse(obj.ToString());
+        //        }
+        //        obj = dataReader["BusinessGroupId"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.BusinessGroupId = int.Parse(obj.ToString());
+        //        }
+        //        obj = dataReader["BalancePrice"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.BalancePrice = decimal.Parse(obj.ToString());
+        //        }
+        //        obj = dataReader["AllowWithdrawPrice"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.AllowWithdrawPrice = decimal.Parse(obj.ToString());
+        //        }
+        //        obj = dataReader["HasWithdrawPrice"];
+        //        if (obj != null && obj != DBNull.Value)
+        //        {
+        //            result.HasWithdrawPrice = decimal.Parse(obj.ToString());
+        //        }
+
+        //        return result;
+        //    }
+        //}
+
+        //#endregion 
     }
 }

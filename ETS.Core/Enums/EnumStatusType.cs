@@ -166,8 +166,11 @@ namespace ETS.Enums
         [DisplayText("订单已取消")]
         OrderHadCancel,
         [DisplayText("您已取消资格")]
-        HadCancelQualification
-
+        HadCancelQualification,
+        [DisplayText("商户ID不能为空")]
+        BussinessEmpty,
+        [DisplayText("请传递版本号")]
+        NoVersion 
 
     }
     public enum FinishOrderStatus
@@ -268,9 +271,9 @@ namespace ETS.Enums
         [DisplayText("无效的订单号")]
         InvalidOrderId,
         [DisplayText("真实姓名不能为空")]
-        TrueNameEmpty, 
+        TrueNameEmpty,
         [DisplayText("无效的文件格式")]
-        InvalidFileFormat, 
+        InvalidFileFormat,
         [DisplayText("图片的尺寸最小为150px*150px")]
         InvalidImageSize,
         [DisplayText("上传图片失败")]
@@ -354,14 +357,24 @@ namespace ETS.Enums
         [DisplayText("无配置文件")]
         NoXmlConfig = 101,
         [DisplayText("失败")]
-        Failed = 102 
+        Failed = 102
     }
 
-   public enum AliPayStatus
+    public enum AliPayStatus
     {
         [DisplayText("成功")]
-        success = 0,
+        success = 1,
         [DisplayText("失败")]
-        fail = 1
+        fail = 0
+    }
+
+    public enum OrderDetails
+    {
+        [DisplayText("成功")]
+        Success = 1,
+        [DisplayText("失败")]
+        Failed = 0,
+        [DisplayText("请传递版本号")]
+        NoVersion
     }
 }

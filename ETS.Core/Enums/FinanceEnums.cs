@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ETS.Expand;
+using System.ComponentModel;
 
 namespace ETS.Enums
 {
@@ -22,17 +23,22 @@ namespace ETS.Enums
         [DisplayText("骑士金融账号出现问题")]
         FinanceAccountError = 3,
         [DisplayText("提现金额大于可提现金额")]
-        MoneyError = 4
+        MoneyError = 4,
+        [DisplayText("未传参")]
+        NoPara = -2
     }
     /// <summary>
     /// 骑士绑定金融账号涉及到的各种返回状态枚举 add by caoheyang 20150509
     /// </summary>
     public enum FinanceCardBindC
     {
+        Success = 0,
         [DisplayText("该骑士已绑定过金融账号")]
         Exists = 1,
-        [DisplayText("两次录入的金融账号不一致")]
-        InputValid = 2,
+        [DisplayText("系统错误")]
+        SystemError = -1,
+        [DisplayText("未传参")]
+        NoPara = -2
     }
 
     /// <summary>
@@ -40,8 +46,11 @@ namespace ETS.Enums
     /// </summary>
     public enum FinanceCardCardModifyC
     {
-        [DisplayText("两次录入的金融账号不一致")]
-        InputValid = 2,
+        Success = 0,
+        [DisplayText("系统错误")]
+        SystemError = -1,
+        [DisplayText("未传参")]
+        NoPara = -2
     }
     /// <summary>
     ///骑士余额流水   流水状态(1、交易成功 2、交易中）枚举 add by caoheyang 20150509
@@ -55,7 +64,7 @@ namespace ETS.Enums
     }
 
     /// <summary>
-    ///骑士余额流水   交易类型(1佣金 2奖励 3提现 4取消订单赔偿 5无效订单扣款) 枚举 add by caoheyang 20150509
+    ///骑士余额流水   交易类型(1佣金 2奖励 3提现 4取消订单赔偿 5无效订单扣款 6提现失败返现) 枚举 add by caoheyang 20150509
     /// </summary>
     public enum ClienterBalanceRecordRecordType
     {
@@ -68,7 +77,9 @@ namespace ETS.Enums
         [DisplayText("取消订单赔偿")]
         QuXiaoOrder = 4,
         [DisplayText("无效订单扣款")]
-        WuXiaoOrder = 5
+        WuXiaoOrder = 5,
+        [DisplayText("提现失败返现")]
+        Return = 6
     }
 
     /// <summary>
@@ -104,7 +115,7 @@ namespace ETS.Enums
         [DisplayText("百度钱包")]
         BaiDuQinBao = 5
     }
-    
+
     #endregion
 
     #region 商户
@@ -121,17 +132,22 @@ namespace ETS.Enums
         [DisplayText("商户金融账号出现问题")]
         FinanceAccountError = 3,
         [DisplayText("提现金额大于可提现金额")]
-        MoneyError = 4
+        MoneyError = 4,
+        [DisplayText("未传参")]
+        NoPara = -2
     }
     /// <summary>
     /// 商户绑定金融账号涉及到的各种返回状态枚举 add by caoheyang 20150509
     /// </summary>
     public enum FinanceCardBindB
     {
+        Success = 0,
         [DisplayText("该商户已绑定过金融账号")]
         Exists = 1,
-        [DisplayText("两次录入的金融账号不一致")]
-        InputValid = 2,
+        [DisplayText("系统错误")]
+        SystemError = -1,
+        [DisplayText("未传参")]
+        NoPara = -2
     }
 
     /// <summary>
@@ -139,8 +155,11 @@ namespace ETS.Enums
     /// </summary>
     public enum FinanceCardCardModifyB
     {
-        [DisplayText("两次录入的金融账号不一致")]
-        InputValid = 2,
+        Success = 0,
+        [DisplayText("系统错误")]
+        SystemError = -1,
+        [DisplayText("未传参")]
+        NoPara = -2
     }
     /// <summary>
     ///商户余额流水   流水状态(1、交易成功 2、交易中）枚举 add by caoheyang 20150511
@@ -154,7 +173,7 @@ namespace ETS.Enums
     }
 
     /// <summary>
-    ///商户余额流水   交易类型(1订单餐费 2配送费 3提现 4充值) 枚举 add by caoheyang 20150511
+    ///商户余额流水   交易类型(1订单餐费 2配送费 3提现 4充值 5提现失败返现) 枚举 add by caoheyang 20150511
     /// </summary>
     public enum BusinessBalanceRecordRecordType
     {
@@ -165,7 +184,9 @@ namespace ETS.Enums
         [DisplayText("提现")]
         Withdraw = 3,
         [DisplayText("充值")]
-        Recharge = 4
+        Recharge = 4,
+        [DisplayText("提现失败返现")]
+        Return = 5
     }
 
     /// <summary>
@@ -201,6 +222,50 @@ namespace ETS.Enums
         [DisplayText("百度钱包")]
         BaiDuQinBao = 5
     }
-    
+
+    #endregion
+
+
+    #region 支付相关
+    /// <summary>
+    /// 支付方式
+    /// </summary>
+    public enum PayStyleEnum
+    {
+        [DisplayText("用户支付")]
+        BuyerPay = 1,
+        [DisplayText("骑士支付")]
+        ClienterPay = 2
+    }
+    /// <summary>
+    /// 支付类型
+    /// </summary>
+    public enum PayTypeEnum
+    {
+
+        [DisplayText("支付宝")]
+        ZhiFuBao = 1,
+        [DisplayText("微信")]
+        WeiXin = 2,
+        [DisplayText("网银")]
+        WangYin = 3,
+        [DisplayText("财付通")]
+        CaiFuTong = 4,
+        [DisplayText("百度钱包")]
+        BaiDuQinBao = 5
+    }
+    /// <summary>
+    /// 支付状态
+    /// </summary>
+    public enum PayStatusEnum
+    {
+        //支付状态(0待支付 ,1 已支付,2支付中)
+        [DisplayText("待支付")]
+        WaitPay = 0,
+        [DisplayText("已支付")]
+        HadPay = 1,
+        [DisplayText("支付中")]
+        WaitingPay = 2
+    }
     #endregion
 }

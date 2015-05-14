@@ -14,6 +14,8 @@ namespace ETS.Enums
     {
         Success=0,
         [DisplayText("系统错误")]
-        SystemError=-1
+        SystemError=-1,
+        [DisplayText("参数错误")]
+        ParaError = -2
     }
 }

@@ -1,0 +1,94 @@
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Finance.ClienterWithdrawFormModel>
+@{
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：财务管理 > 骑士提现管理
+    </h2>
+    @using (Ajax.BeginForm("PostClienterWithdraw", new RouteValueDictionary { { "pageindex", "" } },
+    new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+    new RouteValueDictionary { { "id", "searchForm" } }))
+    {
+        <div class="SearchMd">
+            <table border="0" cellspacing="0" cellpadding="0" style="width:1080px">
+                <tr>
+                    <td>
+                        <span class="">骑士姓名: </span>
+                        <input id="clienterName" type="text" name="clienterName" />
+                        <span class="">骑士电话: </span>
+                        <input id="clienterPhoneNo" type="tel" name="clienterPhoneNo" />
+                        <span class="">审核状态: </span>
+                        <select name="withdrawStatus" class="selectw" id="withdrawStatus" style="width:157px">
+                            <option value="0">全部</option>
+                            <option value="1">待审核</option>
+                            <option value="2">审核通过</option>
+                            <option value="3">打款完成</option>
+                            <option value="-1">审核拒绝</option>
+                            <option value="-2">打款失败</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="">提款单号: </span>
+                        <input id="withwardNo" type="text" name="withwardNo" />
+                        <span class="">申请提款日期: </span>
+                        <input id="withdrawDateStart" readonly="readonly" type="text" name="withdrawDateStart" style="width:164px"/>
+                        <span class="">到: </span>
+                        <input id="withdrawDateEnd" readonly="readonly" type="text" name="withdrawDateEnd" style="width:164px" />
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                        <input type="button" value="导出" onclick="return funExport()" class="searchBtn" id="btnExport" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <div class="bd clearfix" id="dataList">
+        @Html.Partial("_ClienterWithdrawList", Model)
+    </div>
+</div>
+
+<script type="text/javascript">
+    var adminjs = new adminglass();
+    $(document).ready(function () {
+        $('#withdrawDateStart').datepicker();
+        $('#withdrawDateEnd').datepicker();
+        window.location.hash = '';
+    });
+    function funExport() {
+        var clienterName = $("#clienterName").val();
+        var clienterPhoneNo = $("#clienterPhoneNo").val();
+        var withdrawStatus = $("#withdrawStatus").val();
+        var withwardNo = $("#withwardNo").val();
+        var withdrawDateStart = $("#withdrawDateStart").val();
+        var withdrawDateEnd = $("#withdrawDateEnd").val();
+        if (withdrawDateStart == "" || withdrawDateEnd == "") {
+            alert("请输入时间范围!");
+            return;
+        }
+        //var url = "/ClienterWithdraw/ExportBusinessWithdrawForm";
+        //var paramaters = { "businessName": businessName, "BusinessPhoneNo": BusinessPhoneNo, "businessCity": businessCity, "withdrawStatus": withdrawStatus, "withwardNo": withwardNo, "withdrawDateStart": withdrawDateStart, "withdrawDateEnd": withdrawDateEnd };
+        //$.ajax({
+        //    type: 'POST',
+        //    url: url,
+        //    data: paramaters,
+        //    success: function (result) {
+        //        if (result.IsSuccess) {
+        //            alert(result.Message);
+        //        } else {
+        //            alert(result.Message);
+        //        }
+        //    }
+        //});
+        var url = "/ClienterWithdraw/ExportClienterWithdrawForm?clienterName=" + clienterName + "&clienterPhoneNo=" + clienterPhoneNo + "&withdrawStatus=" + withdrawStatus + "&withwardNo=" + withwardNo + "&withdrawDateStart=" + withdrawDateStart + "&withdrawDateEnd=" + withdrawDateEnd;
+        window.location.href = url;
+        return true;
+    }
+</script>
+<script src="~/Scripts/mvcpager.js"></script>

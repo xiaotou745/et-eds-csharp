@@ -40,11 +40,11 @@
                         <span class="">提款单号: </span>
                         <input id="withwardNo" type="text" name="withwardNo" />
                         <span class="">申请提款日期: </span>
-                        <input id="withdrawDateStart" readonly="readonly" type="text" name="withdrawDateStart" />
+                        <input id="withdrawDateStart" readonly="readonly" type="text" name="withdrawDateStart" style="width:164px" />
                         <span class="">到: </span>
-                        <input id="withdrawDateEnd" readonly="readonly" type="text" name="withdrawDateEnd" />
+                        <input id="withdrawDateEnd" readonly="readonly" type="text" name="withdrawDateEnd" style="width:164px" />
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
-                        @*<input type="button" value="导出" onclick="return funExport()" class="searchBtn" id="btnExport" />*@
+                        <input type="button" value="导出" onclick="return funExport()" class="searchBtn" id="btnExport" />
                     </td>
                 </tr>
             </table>
@@ -63,22 +63,35 @@
         $('#withdrawDateEnd').datepicker();
         window.location.hash = '';
     });
-    //function funExport() {
-    //    var superManPhone = $("#txtSuperManPhone").val();
-    //    var txtSuperManName = $("#txtSuperManName").val();
-    //    var txtBusinessPhone = $("#txtBusinessPhone").val();
-    //    var txtBusinessName = $("#txtBusinessName").val();
-    //    var txtOrderPubStart = $("#txtOrderPubStart").val();
-    //    var txtOrderPubEnd = $("#txtOrderPubEnd").val();
-    //    var businessCity = $("#businessCity").find("option:selected").text();
-    //    var orderStatus = $("#StatusSelect").find("option:selected").text();
-    //    if (txtOrderPubStart == "" || txtOrderPubEnd == "") {
-    //        alert("请输入时间范围!");
-    //        return;
-    //    }
-    //    var url = "/Order/PostDaoChuOrder?superManPhone=" + superManPhone + "&superManName=" + txtSuperManName + "&businessPhone=" + txtBusinessPhone + "&businessName=" + txtBusinessName + "&orderStatus=" + orderStatus + "&businessCity=" + businessCity + "&OrderPubStart=" + txtOrderPubStart + "&OrderPubEnd=" + txtOrderPubEnd;
-    //    window.location.href = url;
-    //    return true;
-    //}
+    function funExport() {
+        var businessName = $("#businessName").val();
+        var BusinessPhoneNo = $("#BusinessPhoneNo").val();
+        var businessCity = $("#businessCity").val();
+        var withdrawStatus = $("#withdrawStatus").val();
+        var withwardNo = $("#withwardNo").val();
+        var withdrawDateStart = $("#withdrawDateStart").val();
+        var withdrawDateEnd = $("#withdrawDateEnd").val();
+        if (withdrawDateStart == "" || withdrawDateEnd == "") {
+            alert("请输入时间范围!");
+            return;
+        }
+        //var url = "/BusinessWithdraw/ExportBusinessWithdrawForm";
+        //var paramaters = { "businessName": businessName, "BusinessPhoneNo": BusinessPhoneNo, "businessCity": businessCity, "withdrawStatus": withdrawStatus, "withwardNo": withwardNo, "withdrawDateStart": withdrawDateStart, "withdrawDateEnd": withdrawDateEnd };
+        //$.ajax({
+        //    type: 'POST',
+        //    url: url,
+        //    data: paramaters,
+        //    success: function (result) {
+        //        if (result.IsSuccess) {
+        //            alert(result.Message);
+        //        } else {
+        //            alert(result.Message);
+        //        }
+        //    }
+        //});
+        var url = "/BusinessWithdraw/ExportBusinessWithdrawForm?businessName=" + businessName + "&BusinessPhoneNo=" + BusinessPhoneNo + "&businessCity=" + businessCity + "&withdrawStatus=" + withdrawStatus + "&withwardNo=" + withwardNo + "&withdrawDateStart=" + withdrawDateStart + "&withdrawDateEnd=" + withdrawDateEnd;
+        window.location.href = url;
+        return true;
+    }
 </script>
 <script src="~/Scripts/mvcpager.js"></script>

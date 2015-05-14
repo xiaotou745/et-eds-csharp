@@ -7,8 +7,15 @@ using System.Threading.Tasks;
 
 namespace Ets.Model.DomainModel.Finance
 {
-    public class BusinessBalanceRecordModel:BusinessBalanceRecord
+    public class BusinessBalanceRecordModel : BusinessBalanceRecord
     {
-
+        /// <summary>
+        /// 卡号(DES加密)
+        /// </summary>
+        public string AccountNo { get; set; }
+        /// <summary>
+        /// 开户行
+        /// </summary>
+        public string OpenBank { get; set; }
     }
 }

@@ -9,13 +9,13 @@ namespace Ets.Model.Common
 {
     public class SimpleResultModel
     {
-        private SimpleResultModel(int status)
+        public SimpleResultModel(int status)
             : this(status, string.Empty)
         {
 
         }
 
-        private SimpleResultModel(int status, string message)
+        public SimpleResultModel(int status, string message)
         {
             this.Status = status;
             this.Message = message;

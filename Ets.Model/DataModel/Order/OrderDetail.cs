@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Ets.Model.DataModel.Order
 {
     /// <summary>
-    /// 订单明细 实体类OrderChild 。(属性说明自动提取数据库字段的描述信息)
+    /// 订单明细 实体类OrderDetail 。(属性说明自动提取数据库字段的描述信息)
     /// Generate By: tools.etaoshi.com
     /// Generate Time: 2015-05-09 18:32:53
     /// </summary>

@@ -261,6 +261,27 @@ namespace ETS.Util
             }
             return String.Format("{0:N}", obj);
         }
+        /// <summary>
+        /// DES解密
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static string ToDecrypt(string text)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(text))
+                    return "";
+                return ETS.Security.DES.Decrypt(text);
+            }
+            catch(Exception ex)
+            {
+                return text;
+            }
+           
+        }
+
+        
 
 
     }

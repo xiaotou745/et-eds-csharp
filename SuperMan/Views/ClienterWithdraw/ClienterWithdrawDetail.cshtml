@@ -1,4 +1,4 @@
-﻿@model Ets.Model.DomainModel.Finance.BusinessWithdrawFormModel
+﻿@model Ets.Model.DomainModel.Finance.ClienterWithdrawFormModel
 @{
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
 }
@@ -10,105 +10,102 @@
 <div style="width:1000px">
     @{
         var strstatus = "";
-        if (Model.Status == 1)
+        if (Model.Status == ETS.Enums.ClienterWithdrawFormStatus.WaitAllow.GetHashCode())
         {
             strstatus = "待审核";
         }
-        else if (Model.Status == 2)
+        else if (Model.Status == ETS.Enums.ClienterWithdrawFormStatus.Allow.GetHashCode())
         {
             strstatus = "审核通过";
         }
-        else if (Model.Status == 3)
+        else if (Model.Status == ETS.Enums.ClienterWithdrawFormStatus.Success.GetHashCode())
         {
             strstatus = "打款完成";
         }
-        else if (Model.Status == -1)
+        else if (Model.Status == ETS.Enums.ClienterWithdrawFormStatus.TurnDown.GetHashCode())
         {
             strstatus = "审核拒绝";
         }
-        else if (Model.Status == -2)
+        else if (Model.Status == ETS.Enums.ClienterWithdrawFormStatus.Error.GetHashCode())
         {
             strstatus = "打款失败";
         }
     }
     <h2 class="crumbs">
-        您所在位置：商户 > 商户管理 > 收支记录
+        您所在位置：财务管理 > 骑士提现管理 > 骑士提现详情
     </h2>
     <table class="tbstyle222" border="0" style="font-size:14px;font-weight:bold;line-height:300%;width:900px ">
         <tr class="trclass">
-            <td>商户名称：@Model.BusinessName</td>
-            <td>电话：@Model.BusinessPhoneNo</td>
+            <td style="font-size:16px;">本次提款：<font color="red">@ParseHelper.ToSplitByPercentile(false, Model.Amount)</font></td>
+            <td></td>
             <td></td>
             <td></td>
         </tr>
         <tr class="trclass">
-            <td>当前余额：￥@ParseHelper.ToSplitByPercentile(false, Model.BalancePrice)</td>
+            <td>提款单号：@Model.WithwardNo</td>
+            <td><a href="/SuperManManager/ClienterDetail?clienterId=@Model.ClienterId">查看商户收支记录</a></td>
+            <td><input type="hidden" value="@Model.Id" id="hidWithwardId"></td>
+            <td></td>
+        </tr>
+        <tr class="trclass">
+            <td>提款状态：@strstatus</td>
+            <td>申请时间：@Model.WithdrawTime</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr class="trclass">
+            <td>骑士姓名：@Model.ClienterName</td>
+            <td>电话：@Model.ClienterPhoneNo</td>
+            <td>提款前余额：￥@ParseHelper.ToSplitByPercentile(false, Model.BalancePrice)</td>
             <td>累计提款：￥@ParseHelper.ToSplitByPercentile(false, Model.HasWithdrawPrice)</td>
-            <td></td>
-            <td></td>
         </tr>
         <tr class="trclass">
             <td>开户行:@Model.OpenBank</td>
             <td>开户支行：@Model.OpenSubBank</td>
             <td>账户名:@Model.TrueName</td>
-            <td>银行账号:@Model.WithwardNo</td>
+            <td>银行账号:@ParseHelper.ToDecrypt(Model.WithwardNo)</td>
         </tr>
     </table>
-    <div class="SearchMd">
-        <span class="">交易类型: </span>
-        <select name="withdrawStatus" class="selectw" id="withdrawStatus" style="width:157px">
-            <option value="0">全部</option>
-            <option value="1">订单餐费</option>
-            <option value="2">配送费</option>
-            <option value="3">提现</option>
-            <option value="4">充值</option>
-            <option value="5">提现失败返现</option>
-        </select>
-        <span class="">提款单号: </span>
-        <br />
-        <input id="withwardNo" type="text" name="withwardNo" />
-        <span class="">申请提款日期: </span>
-        <input id="withdrawDateStart" readonly="readonly" type="text" name="withdrawDateStart" />
-        <span class="">到: </span>
-        <input id="withdrawDateEnd" readonly="readonly" type="text" name="withdrawDateEnd" />
-        <input type="button" value="查 询" class="searchBtn" id="btnAuditOk" />
-        <input type="button" value="导 出" class="searchBtn" id="btnAuditRefuse" />
-    </div>
+    @if (Model.Status == 1)
+    {
+        <div class="SearchMd">
+            <input type="button" value="审核通过" class="searchBtn" id="btnAuditOk" />
+            <input type="button" value="拒    绝" class="searchBtn" id="btnAuditRefuse" />
+        </div>
+    }
     <div style="float:left;width:900px;padding-top:30px" class="control-group">
         <table border="0" cellspacing="0" cellpadding="0" class="tbstyle" width="900">
             <thead>
                 <tr class="tdbg">
-                    <th>交易类型</th>
-                    <th>任务单号/交易流水号</th>
-                    <th>余额</th>
-                    <th>状态</th>
-                    <th>时间</th>
+                    <th>操作时间</th>
+                    <th>操作类型</th>
                     <th>操作人</th>
+                    <th>操作描述</th>
             </thead>
             <tbody>
                 @{
-                    var businessBalanceRecordList = ViewBag.businessBalanceRecord as List<Ets.Model.DataModel.Finance.BusinessBalanceRecord>;
+                    var clienterWithdrawOptionLog = ViewBag.clienterWithdrawOptionLog as List<Ets.Model.DataModel.Finance.ClienterWithdrawLog>;
                     var i = 0;
                     var statusDes = "";
-                    foreach (var item in businessBalanceRecordList)
+                    foreach (var item in clienterWithdrawOptionLog)
                     {
-                        if (item.Status == 1)
+                        if (item.Status == ETS.Enums.ClienterWithdrawFormStatus.WaitAllow.GetHashCode())
                         {
                             statusDes = "待审核";
                         }
-                        else if (item.Status == 2)
+                        else if (item.Status == ETS.Enums.ClienterWithdrawFormStatus.Allow.GetHashCode())
                         {
                             statusDes = "审核通过";
                         }
-                        else if (item.Status == 3)
+                        else if (item.Status == ETS.Enums.ClienterWithdrawFormStatus.Success.GetHashCode())
                         {
                             statusDes = "打款完成";
                         }
-                        else if (item.Status == -1)
+                        else if (item.Status == ETS.Enums.ClienterWithdrawFormStatus.TurnDown.GetHashCode())
                         {
                             statusDes = "审核拒绝";
                         }
-                        else if (item.Status == -2)
+                        else if (item.Status == ETS.Enums.ClienterWithdrawFormStatus.Error.GetHashCode())
                         {
                             statusDes = "打款失败";
                         }
@@ -130,7 +127,7 @@
     <div class="add-openbox add-form" id="WithdrawAuditRefuseShow" style="width:480px">
         <fieldset>
             <div class="control-group">
-                <div style="width:480px;font-size:16px"><center>是否拒绝打款1000.00元？</center></div>
+                <div style="width:480px;font-size:16px"><center><label id="refusedes"></label></center></div>
                 <div class="controls" style="width:480px">
                     <div style="width:75px">拒绝原因:</div>
                     <div style="width:480px">
@@ -155,7 +152,7 @@
         }
         var withwardId = $('#hidWithwardId').val();
         var paramaters = { "withwardId": withwardId };
-        var url = "/BusinessWithdraw/WithdrawAuditOk";
+        var url = "/ClienterWithdraw/WithdrawAuditOk";
         $.ajax({
             type: 'POST',
             url: url,
@@ -163,7 +160,7 @@
             success: function (result) {
                 if (result.IsSuccess) {
                     alert(result.Message);
-                    window.location.href = "/BusinessWithdraw/BusinessWithdraw";
+                    window.location.href = "/ClienterWithdraw/ClienterWithdraw";
                 } else {
                     alert(result.Message);
                 }
@@ -173,8 +170,8 @@
     });
     //审核拒绝弹框
     $("#btnAuditRefuse").click(function () {
+        $('#refusedes').text("是否拒绝打款" + @Model.Amount + "元？");
         adminjs.openwinbox('#WithdrawAuditRefuseShow');
-
     });
 
     //审核拒绝提交
@@ -185,7 +182,7 @@
         var auditFailedReason = $('#txtWithdrawAuditRefuse').val();
         var withwardId = $('#hidWithwardId').val();
         var paramaters = { "withwardId": withwardId, "auditFailedReason": auditFailedReason };
-        var url = "/BusinessWithdraw/WithdrawAuditRefuse";
+        var url = "/ClienterWithdraw/WithdrawAuditRefuse";
         $.ajax({
             type: 'POST',
             url: url,
@@ -193,7 +190,7 @@
             success: function (result) {
                 if (result.IsSuccess) {
                     alert(result.Message);
-                    window.location.href = "/BusinessWithdraw/BusinessWithdraw";
+                    window.location.href = "/ClienterWithdraw/ClienterWithdraw";
                 } else {
                     alert(result.Message);
                 }

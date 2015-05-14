@@ -1069,6 +1069,54 @@ from  ClienterFinanceAccount (nolock) where ClienterId=@ClienterId  and IsEnable
 
             return isExist;
         }
+        /// <summary>
+        /// 获取骑士详细信息
+        /// danny-20150513
+        /// </summary>
+        /// <param name="businessId">骑士Id</param>
+        /// <returns></returns>
+        public ClienterDetailModel GetClienterDetailById(string clienterId)
+        {
+            string selSql = @" 
+SELECT   c.[Id],
+         c.[PhoneNo],
+         c.[LoginName],
+         c.[recommendPhone],
+         c.[Password],
+         c.[TrueName],
+         c.[IDCard],
+         c.[PicWithHandUrl],
+         c.[PicUrl],
+         c.[Status],
+         c.[AccountBalance],
+         c.[InsertTime],
+         c.[InviteCode],
+         c.[City],
+         c.[CityId],
+         c.[GroupId],
+         c.[HealthCardID],
+         c.[InternalDepart],
+         c.[ProvinceCode],
+         c.[AreaCode],
+         c.[CityCode],
+         c.[Province],
+         c.[BussinessID],
+         c.[WorkStatus], 
+         cfa.TrueName AccountName,
+         cfa.AccountNo,
+         cfa.AccountType,
+         cfa.OpenBank,
+         cfa.OpenSubBank
+FROM clienter c WITH(NOLOCK) 
+	Left join ClienterFinanceAccount cfa WITH(NOLOCK) ON c.Id=cfa.ClienterId AND cfa.IsEnable=1
+WHERE c.Id = @ClienterId  ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@ClienterId", clienterId);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
+            if (dt != null && dt.Rows.Count > 0)
+                return DataTableHelper.ConvertDataTableList<ClienterDetailModel>(dt)[0];
+            return null;
+        }
 
         #region  Nested type: ClienterRowMapper
 

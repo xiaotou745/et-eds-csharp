@@ -12,6 +12,7 @@ using Ets.Model.ParameterModel.Order;
 using ETS.Util;
 using ETS.Data.Generic;
 using Ets.Model.DomainModel.Order;
+using ETS.Enums;
 namespace Ets.Dao.Order
 {
     /// <summary>
@@ -175,39 +176,77 @@ where  Id=@Id ";
         /// <param name="orderId"></param>
         /// <param name="orderChildId"></param>
         /// <returns></returns>
-        public OrderChild GetOrderChildInfo(int orderId, int orderChildId)
+        public List<OrderChildForTicket> GetOrderChildInfo(int orderId, int orderChildId)
         {
-            OrderChild oc = new OrderChild();
+            List<OrderChildForTicket> oc = new List<OrderChildForTicket>();
             StringBuilder sql = new StringBuilder();
             sql.Append(@"
-  select top 1 Id ,
-        OrderId ,
-        ChildId ,
-        TotalPrice ,
-        GoodPrice ,
-        DeliveryPrice ,
-        PayStyle ,
-        PayType ,
-        PayStatus ,
-        PayBy ,
-        PayTime ,
-        PayPrice ,
-        HasUploadTicket ,
-        TicketUrl ,
-        CreateBy ,
-        CreateTime ,
-        UpdateBy ,
-        UpdateTime
- from   dbo.OrderChild(nolock)  where 1=1 and OrderId = @OrderId and ChildId = @ChildId;
+select  o.Id OrderId ,
+        oc.ChildId ,
+        o.[Status] OrderStatus ,
+        o.OrderCount NeedUploadCount ,
+        isnull(oo.HadUploadCount, 0) HadUploadCount ,
+        oc.HasUploadTicket ,
+        oc.TicketUrl
+from    dbo.[order] o ( nolock )
+        join dbo.OrderChild oc ( nolock ) on o.Id = oc.OrderId
+        left join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
+where   1=1 and o.Id = @OrderId 
 ");
+            if (orderChildId > 0)
+            {
+                sql.Append(" and ChildId = @ChildId ;");
+            }
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderId", SqlDbType.Int).Value = orderId;
             parm.Add("@ChildId", SqlDbType.Int).Value = orderChildId;
-            //此表是要同步支付状态，请读写表
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql.ToString(), parm);
+
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql.ToString(), parm);
             if (!dt.HasData())
                 return oc;
-            return MapRows<OrderChild>(dt)[0];
+            return MapRows<List<OrderChildForTicket>>(dt)[0];
+        }
+
+        /// <summary>
+        /// 更新微信的二维码地址，因为微信支付的时候生成二维码只能是一次
+        /// 窦海超
+        /// 2015年5月13日 16:09:50
+        /// </summary>
+        /// <param name="orderId">主订单号</param>
+        /// <param name="orderChildId">子订单号</param>
+        /// <param name="wxCodeUrl">微信二维码地址</param>
+        /// <returns></returns>
+        public bool UpdateWxCodeUrl(int orderId, int orderChildId, string wxCodeUrl)
+        {
+            string sql = "update dbo.OrderChild set WxCodeUrl = @WxCodeUrl where OrderId=@OrderId and ChildId=@ChildId";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("WxCodeUrl", DbType.String, 256).Value = wxCodeUrl;
+            parm.Add("OrderId", DbType.Int32, 4).Value = orderId;
+            parm.Add("ChildId", DbType.Int32, 4).Value = orderChildId;
+            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm)) > 0 ? true : false;
+        }
+
+        /// <summary>
+        /// 获取订单状态
+        /// 窦海超
+        /// 2015年5月13日 11:04:41
+        /// </summary>
+        /// <param name="orderId">主订单号</param>
+        /// <param name="orderChildId">子订单号</param>
+        /// <returns>不存在返回-1</returns>
+        public PayStatusModel GetPayStatus(int orderId, int orderChildId)
+        {
+            string sql = "SELECT PayStatus,TotalPrice,WxCodeUrl from dbo.OrderChild oc(nolock) where OrderId = @OrderId and ChildId = @ChildId ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("OrderId", DbType.Int32, 4).Value = orderId;
+            parm.Add("ChildId", DbType.Int32, 4).Value = orderChildId;
+            //此表是要同步支付状态，请读写表
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql, parm);
+            if (!dt.HasData())
+            {
+                return null;
+            }
+            return MapRows<PayStatusModel>(dt)[0];
         }
 
         /// <summary>
@@ -217,11 +256,40 @@ where  Id=@Id ";
         /// </summary>
         /// <param name="orderId">订单ID</param>
         /// <param name="orderChildId">子订单ID</param>
+        /// <param name="payStyle">支付方式(1 用户支付 2 骑士代付)</param>
         /// <returns></returns>
-        public bool FinishStatus(int orderId, int orderChildId)
+        public bool FinishPayStatus(OrderChildFinishModel model)
         {
-            string sql = "update OrderChild set PayStatus=2 where OrderId=@OrderId and ChildId=@ChildId and PayStatus=1";
+            //return ChangePayStatus(EnumOrderChildStatus.YiWanCheng.GetHashCode(), EnumOrderChildStatus.ZhiFuZhong.GetHashCode(), payStyle, orderId, orderChildId);
+            string sql = @"
+update OrderChild set PayStatus=@PayStatus,PayStyle=@PayStyle,PayBy=@PayBy,PayTime=getdate(),
+PayType=@PayType , OriginalOrderNo=@OriginalOrderNo
+where OrderId=@OrderId and ChildId=@ChildId and PayStatus!=@PayStatus";
             IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("PayStatus", DbType.Int32, 4).Value = PayStatusEnum.HadPay.GetHashCode();//变为已完成
+            parm.Add("PayStyle", DbType.Int32, 4).Value = model.payStyle;
+            parm.Add("PayBy", DbType.String, 100).Value = model.payBy;
+            parm.Add("PayType", DbType.Int32, 4).Value = model.payType;
+            parm.Add("OriginalOrderNo", DbType.String, 265).Value = model.originalOrderNo;
+            parm.Add("OrderId", SqlDbType.Int, 4).Value = model.orderId;
+            parm.Add("ChildId", SqlDbType.Int, 4).Value = model.orderChildId;
+            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm), 0) > 0 ? true : false;
+        }
+
+        /// <summary>
+        /// 子订单支付中
+        /// 窦海超
+        /// 2015年5月12日 15:36:34
+        /// </summary>
+        /// <param name="orderId">订单ID</param>
+        /// <param name="orderChildId">子订单ID</param>
+        /// <returns></returns>
+        public bool ZhuFuZhongPayStatus(int orderId, int orderChildId)
+        {
+            string sql = "update OrderChild set PayStatus=@PayStatus where OrderId=@OrderId and ChildId=@ChildId and PayStatus=@BeForeStatus";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("PayStatus", DbType.Int32, 4).Value = PayStatusEnum.WaitingPay.GetHashCode();//变为支付中
+            parm.Add("BeForeStatus", DbType.Int32, 4).Value = PayStatusEnum.WaitPay.GetHashCode();//条件为待支付
             parm.Add("OrderId", SqlDbType.Int, 4).Value = orderId;
             parm.Add("ChildId", SqlDbType.Int, 4).Value = orderChildId;
             return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm), 0) > 0 ? true : false;

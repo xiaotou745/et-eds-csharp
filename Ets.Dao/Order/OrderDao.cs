@@ -219,7 +219,7 @@ namespace Ets.Dao.Order
         public string CreateToSql(CreatePM_OpenApi paramodel)
         {
             var redis = new RedisCache();
-            int  bussinessId = CreateToSqlAddBusiness(paramodel);;//商户id
+            int bussinessId = CreateToSqlAddBusiness(paramodel); ;//商户id
 
             #region 操作插入order表
             //订单插入sql 订单不存在时
@@ -424,7 +424,7 @@ values( @OrderId,
 
         #endregion
 
-     
+
 
         /// <summary>
         ///获取当天
@@ -632,6 +632,7 @@ values( @OrderId,
         /// <returns></returns>
         public OrderListModel GetOrderByNo(string orderNo)
         {
+            #region 查询脚本
             string sql = @"SELECT top 1 o.[Id]
                                         ,o.[OrderNo]
                                         ,o.[PickUpAddress]
@@ -691,6 +692,7 @@ values( @OrderId,
                                     LEFT JOIN OrderOther oo WITH (NOLOCK) ON oo.OrderId=o.Id
                                     LEFT JOIN [group] g WITH ( NOLOCK ) ON g.Id = o.orderfrom
                                     WHERE 1=1 ";
+            #endregion 
             IDbParameters parm = DbHelper.CreateDbParameters();
             if (!string.IsNullOrWhiteSpace(orderNo))
             {
@@ -710,7 +712,136 @@ values( @OrderId,
             }
 
         }
+        /// <summary>
+        /// 根据订单号查订单信息
+        /// danny-20150320
+        /// </summary>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        public OrderListModel GetOrderByNo(string orderNo, int orderId)
+        {
+            if (string.IsNullOrWhiteSpace(orderNo))
+            {
+                return new OrderListModel();
+            }
+            #region 查询脚本
+            //获取订单主单信息以及附带的商户信息、骑士信息、小票信息
+            StringBuilder sql = new StringBuilder(@"SELECT top 1 o.[Id]
+                                        ,o.[OrderNo]
+                                        ,o.[PickUpAddress]
+                                        ,o.PubDate
+                                        ,o.[ReceviceName]
+                                        ,o.[RecevicePhoneNo]
+                                        ,o.[ReceviceAddress]
+                                        ,o.[ActualDoneDate]
+                                        ,o.[IsPay]
+                                        ,o.[Amount]
+                                        ,o.[OrderCommission]
+                                        ,o.[DistribSubsidy]
+                                        ,o.[WebsiteSubsidy]
+                                        ,o.[Remark]
+                                        ,o.[Status]
+                                        ,o.[clienterId]
+                                        ,o.[businessId]
+                                        ,o.[ReceviceCity]
+                                        ,o.[ReceviceLongitude]
+                                        ,o.[ReceviceLatitude]
+                                        ,o.[OrderFrom]
+                                        ,o.[OriginalOrderId]
+                                        ,o.[OriginalOrderNo]
+                                        ,o.[Quantity]
+                                        ,o.[Weight]
+                                        ,o.[ReceiveProvince]
+                                        ,o.[ReceiveArea]
+                                        ,o.[ReceiveProvinceCode]
+                                        ,o.[ReceiveCityCode]
+                                        ,o.[ReceiveAreaCode]
+                                        ,o.[OrderType]
+                                        ,o.[KM]
+                                        ,o.[GuoJuQty]
+                                        ,o.[LuJuQty]
+                                        ,o.[SongCanDate]
+                                        ,o.[OrderCount]
+                                        ,o.[CommissionRate] 
+                                        ,b.[City] BusinessCity
+                                        ,b.Name BusinessName
+                                        ,b.PhoneNo BusinessPhoneNo
+                                        ,b.Address BusinessAddress
+                                        ,c.PhoneNo ClienterPhoneNo
+                                        ,c.TrueName ClienterTrueName
+                                        ,c.TrueName ClienterName
+                                        ,c.AccountBalance AccountBalance
+                                        ,b.GroupId
+                                        ,case when o.orderfrom=0 then '客户端' else g.GroupName end GroupName
+                                        ,o.OriginalOrderNo
+                                        ,oo.NeedUploadCount
+                                        ,oo.HadUploadCount
+                                        ,oo.ReceiptPic
+                                        ,o.OtherCancelReason
+                                        ,o.OriginalOrderNo
+                                    FROM [order] o WITH ( NOLOCK )
+                                    LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
+                                    LEFT JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
+                                    LEFT JOIN OrderOther oo WITH (NOLOCK) ON oo.OrderId=o.Id
+                                    LEFT JOIN [group] g WITH ( NOLOCK ) ON g.Id = o.orderfrom
+                                    WHERE 1=1 AND o.OrderNo=@OrderNo;");
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@OrderNo", SqlDbType.NVarChar).Value = orderNo;
+            parm.Add("@OrderId", SqlDbType.Int).Value = orderId;
+            //获取订单详情信息
+            sql.Append(@"
+select  od.Id ,
+        od.OrderNo ,
+        od.ProductName ,
+        od.UnitPrice ,
+        od.Quantity ,
+        od.InsertTime ,
+        od.FormDetailID ,
+        od.GroupID
+from    dbo.OrderDetail od ( nolock )
+where   od.OrderNo = @OrderNo;");
+            //获取子订单信息
+            sql.Append(@"
+select  oc.Id ,
+        oc.OrderId ,
+        oc.ChildId ,
+        oc.TotalPrice ,
+        oc.GoodPrice ,
+        oc.DeliveryPrice ,
+        oc.PayStyle ,
+        oc.PayType ,
+        oc.PayStatus ,
+        oc.PayBy ,
+        oc.PayTime ,
+        oc.PayPrice ,
+        oc.HasUploadTicket ,
+        oc.TicketUrl ,
+        oc.CreateBy ,
+        oc.CreateTime ,
+        oc.UpdateBy ,
+        oc.UpdateTime
+from    dbo.OrderChild oc ( nolock )
+where   oc.OrderId = @OrderId;
+");
+            #endregion
+            var ds = DbHelper.ExecuteDataset(SuperMan_Read, sql.ToString(), parm);
 
+            var order = ConvertDataTableList<OrderListModel>(ds.Tables[0]);
+
+            var orderDetailList = ConvertDataTableList<Ets.Model.DataModel.Order.OrderDetail>(ds.Tables[1]);
+            var orderChildList = ConvertDataTableList<OrderChild>(ds.Tables[2]);
+
+            order[0].OrderDetailList = orderDetailList.ToList();
+            order[0].OrderChildList = orderChildList.ToList();
+            if (order != null && order.Count > 0)
+            {
+                return order[0];
+            }
+            else
+            {
+                return new OrderListModel();
+            } 
+        }
         /// <summary>
         /// 通过订单号获取该订单的详情数据
         /// 窦海超
@@ -772,21 +903,17 @@ values( @OrderId,
 	            select 1 --更改状态失败
 	            return
             end
-
             insert  into dbo.OrderSubsidiesLog ( OrderId, Price, InsertTime, OptName,
                                                  Remark, OptId, OrderStatus, Platform )
             select  o.Id, o.OrderCommission, getdate(), '骑士', '任务已被抢', @clienterId, @Status, @Platform
             from    dbo.[order] o ( nolock )
             where   o.OrderNo = @OrderNo
-
             select 0";
-
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("clienterId", DbType.Int32, 4).Value = order.clienterId;// userId;
             dbParameters.Add("Status", DbType.Int32, 4).Value = ConstValues.ORDER_ACCEPT;
             dbParameters.Add("OrderNo", DbType.String, 50).Value = order.OrderNo;
-            dbParameters.Add("Platform", DbType.Int32, 4).Value = SuperPlatform.骑士.GetHashCode();
-
+            dbParameters.Add("Platform", DbType.Int32, 4).Value = SuperPlatform.骑士.GetHashCode(); 
             object obj = DbHelper.ExecuteScalar(SuperMan_Write, sqlText, dbParameters);
             return ParseHelper.ToInt(obj, 1) == 0 ? true : false;
 
@@ -999,32 +1126,30 @@ WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL and Status=2;", SuperPlatfo
             //                                  join [order] o with(nolock) on b.Id=o.businessId ";
             //            string orderByColumn = " COUNT(*) DESC ";
             //            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
-            var sbtbl = new StringBuilder(@" (select   b.district
-				                    ,COUNT(*) orderCount
-				                    ,SUM(o.DistribSubsidy)distribSubsidy
-				                    ,SUM(o.WebsiteSubsidy)websiteSubsidy
-				                    ,SUM(o.OrderCommission)orderCommission
-				                    ,SUM(o.DistribSubsidy+o.WebsiteSubsidy+o.OrderCommission)deliverAmount
-				                    ,SUM(Amount)orderAmount
+            var sbtbl = new StringBuilder(@" (select    b.district
+                                    ,sum(OrderCount) orderCount --订单数 
+                                    ,SUM(o.WebsiteSubsidy)websiteSubsidy  --网站补贴
+                                    ,SUM(o.OrderCommission)orderCommission  --订单佣金 
+                                    ,SUM(o.DistribSubsidy)deliverAmount  --配送费
+                                    ,SUM(Amount)orderAmount  --订单金额
                                     from business b with(nolock)
                                     join [order] o with(nolock) on b.Id=o.businessId
-                                    where 1=1");
+                                    where o.Status!=3");  //只统计非取消订单
             if (criteria.searchType == 1)//当天
             {
-                sbtbl.Append(" AND DateDiff(DAY, GetDate(),o.PubDate)=0 ");
+                sbtbl.Append(" AND   o.PubDate between dateadd(day,-1,getdate()) and getdate() ");
             }
             else if (criteria.searchType == 2)//本周
             {
-                sbtbl.Append(" AND DateDiff(WEEK, GetDate(),DATEADD (DAY, -1,o.PubDate))=0 ");
+                sbtbl.Append(" AND   o.PubDate between dateadd(day,-7,getdate()) and getdate() ");
             }
             else if (criteria.searchType == 3)//本月
             {
-                sbtbl.Append(" AND DateDiff(MONTH, GetDate(),o.PubDate)=0 ");
+                sbtbl.Append("   o.PubDate between dateadd(day,-30,getdate()) and getdate() ");
             }
             sbtbl.Append(" group by b.district ) tbl ");
             string columnList = @"  tbl.district
 				                    ,tbl.orderCount
-				                    ,tbl.distribSubsidy
 				                    ,tbl.websiteSubsidy
 				                    ,tbl.orderCommission
 				                    ,tbl.deliverAmount
@@ -1454,7 +1579,7 @@ where   o.Id = @orderId;
         /// </summary>
         /// <param name="IntervalMinute"></param>
         /// <returns></returns>
-        public IList<OrderSubsidiesLog> GetOrderOptionLog(string OrderId)
+        public IList<OrderSubsidiesLog> GetOrderOptionLog(int OrderId)
         {
             string sql = @"  SELECT  Id,
                                     OrderId,
@@ -1850,12 +1975,12 @@ where  o.Id=@Id ";
         /// <returns></returns>
         public bool IsExist(int id)
         {
-            bool isExist; 
+            bool isExist;
             string querySql = @" SELECT COUNT(1)
  FROM   dbo.[order] WITH ( NOLOCK ) 
  WHERE  id = @id";
 
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();               
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("id", id);
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
             isExist = ParseHelper.ToInt(executeScalar, 0) > 0;

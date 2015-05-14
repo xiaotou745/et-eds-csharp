@@ -20,7 +20,7 @@ namespace Ets.Service.IProvider.Pay
         ResultModel<PayResultModel> CreatePay(PayModel model);
 
         /// <summary>
-        /// 订单回调
+        /// 确认订单
         /// 窦海超
         /// 2015年5月12日 14:35:05
         /// </summary>
@@ -35,7 +35,7 @@ namespace Ets.Service.IProvider.Pay
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        dynamic AlipayResult();
+        dynamic Notify();
 
         /// <summary>
         /// 查询支付状态
@@ -44,5 +44,13 @@ namespace Ets.Service.IProvider.Pay
         /// </summary>
         /// <returns></returns>
         dynamic GetOrderPayStatus(OrderPayModel model);
+
+        /// <summary>
+        /// 微信支付回调方法 
+        /// 窦海超
+        /// 2015年5月13日 15:03:45
+        /// </summary>
+        /// <returns></returns>
+        dynamic ReturnWxpay();
     }
 }

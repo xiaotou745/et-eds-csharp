@@ -23,8 +23,8 @@ namespace SuperManWebApi.Controllers
     /// </summary>
     public class ClienterController : ApiController
     {
-        IClienterFinanceProvider _iClienterFinanceProvider = new ClienterFinanceProvider();
-        IClienterProvider _iClienterProvider = new ClienterProvider();
+       private readonly IClienterFinanceProvider _iClienterFinanceProvider = new ClienterFinanceProvider();
+       private readonly IClienterProvider _iClienterProvider = new ClienterProvider();
         /// <summary>
         /// 骑士交易流水API caoheyang 20150512
         /// </summary>

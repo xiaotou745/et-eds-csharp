@@ -7,6 +7,7 @@ using Ets.Model.ParameterModel.Clienter;
 using ETS.Data.PageData;
 using Ets.Model.DomainModel.Bussiness;
 using Ets.Model.ParameterModel.Order;
+using Ets.Model.DomainModel.Order;
 
 namespace Ets.Service.IProvider.Clienter
 {
@@ -182,6 +183,7 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="uploadReceiptModel"></param>
         /// <returns></returns>
         OrderOther GetReceipt(int orderId);
+
         /// <summary>
         /// 根据订单Id获取小票信息
         /// </summary>
@@ -223,7 +225,14 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="orderId"></param>
         /// <param name="orderChildId"></param>
         /// <returns></returns>
-        OrderChild GetOrderChildInfo(int orderId, int orderChildId);
+        List<OrderChildForTicket> GetOrderChildInfo(int orderId, int orderChildId); 
+        /// <summary>
+        /// 获取骑士详细信息
+        /// danny-20150513
+        /// </summary>
+        /// <param name="businessId">骑士Id</param>
+        /// <returns></returns>
+        ClienterDetailModel GetClienterDetailById(string clienterId);
     
     }
 }

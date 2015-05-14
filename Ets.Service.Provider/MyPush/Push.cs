@@ -23,7 +23,7 @@ namespace Ets.Service.Provider.MyPush
         /// <summary>
         /// 极光消息推送
         /// </summary>
-        /// <param name="tagId">来源标识（B端/C端）</param>
+        /// <param name="tagId">来源标识（1=B端/0=C端）</param>
         /// <param name="title">提示title</param>
         /// <param name="alert"></param>
         /// <param name="content"></param>

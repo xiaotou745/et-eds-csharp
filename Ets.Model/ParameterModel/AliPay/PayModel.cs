@@ -9,7 +9,7 @@ namespace Ets.Model.ParameterModel.AliPay
     public class PayModel
     {
         /// <summary>
-        /// 支付方式 1:支付宝;2微信
+        /// 支付方式 1:支付宝;2微信,3网银
         /// </summary>
         public int payType { get; set; }
 
@@ -22,11 +22,6 @@ namespace Ets.Model.ParameterModel.AliPay
         /// 子订单ID
         /// </summary>
         public int childId { get; set; }
-
-        /// <summary>
-        /// 支付金额
-        /// </summary>
-        //public decimal payAmount { get; set; }
 
         /// <summary>
         /// 接口版本号
