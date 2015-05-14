@@ -44,7 +44,7 @@ namespace Ets.Service.IProvider.Finance
         /// </summary> 
         /// <param name="clienterId">骑士id</param>
         /// <returns></returns>
-        ResultModel<IList<FinanceRecordsDM>> GetRecords(int clienterId);
+        ResultModel<object> GetRecords(int clienterId);
 
         /// <summary>
         /// 根据参数获取骑士提现申请单列表

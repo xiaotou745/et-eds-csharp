@@ -56,5 +56,10 @@ namespace Ets.Model.ParameterModel.Finance
         [Required(ErrorMessage = "最后更新人不能为空")]
         public string UpdateBy { get; set; }
 
+        /// <summary>
+        /// 版本
+        /// </summary>
+        [Required(ErrorMessage = "版本号不能为空")]
+        public string Version { get; set; }
     }
 }

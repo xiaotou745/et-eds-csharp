@@ -48,7 +48,7 @@ namespace Ets.Service.IProvider.Finance
         ///  商户交易流水API add by caoheyang 20150512
         /// </summary>
         /// <returns></returns>
-        ResultModel<IList<FinanceRecordsDM>> GetRecords(int businessId);
+        ResultModel<object> GetRecords(int businessId);
        
         /// <summary>
         /// 根据申请单Id获取商家提现申请单

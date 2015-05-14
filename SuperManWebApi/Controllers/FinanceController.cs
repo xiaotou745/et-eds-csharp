@@ -21,6 +21,8 @@ namespace SuperManWebApi.Controllers
     /// 财务相关功能点   涉及 B、C端
     /// </summary>
     [ExecuteTimeLog]
+    [Validate]
+    [ApiVersion]
     public class FinanceController : ApiController
     {
         #region 声明对象
@@ -30,14 +32,12 @@ namespace SuperManWebApi.Controllers
         #endregion
 
         #region C端
-
         /// <summary>
         /// 骑士提现功能 add by caoheyang 20150509
         /// </summary>
         /// <param name="withdrawCpm">参数实体</param>
         /// <returns></returns>
         [HttpPost]
-        [Validate]
         public ResultModel<object> WithdrawC([FromBody]WithdrawCPM withdrawCpm)
         {
             return _clienterFinanceProvider.WithdrawC(withdrawCpm);
@@ -49,7 +49,6 @@ namespace SuperManWebApi.Controllers
         /// <param name="cardBindCpm">参数实体</param>
         /// <returns></returns>
         [HttpPost]
-        [Validate]
         public ResultModel<object> CardBindC([FromBody]CardBindCPM cardBindCpm)
         {
             return _clienterFinanceProvider.CardBindC(cardBindCpm);
@@ -61,7 +60,6 @@ namespace SuperManWebApi.Controllers
         /// <param name="cardModifyCpm">参数实体</param>
         /// <returns></returns>
         [HttpPost]
-        [Validate]
         public ResultModel<object> CardModifyC([FromBody]CardModifyCPM cardModifyCpm)
         {
             return _clienterFinanceProvider.CardModifyC(cardModifyCpm);
@@ -77,7 +75,6 @@ namespace SuperManWebApi.Controllers
         /// <param name="withdrawBpm">参数实体</param>
         /// <returns></returns>
         [HttpPost]
-        [Validate]
         public ResultModel<object> WithdrawB([FromBody]WithdrawBPM withdrawBpm)
         {
             return _iBusinessFinanceProvider.WithdrawB(withdrawBpm);
@@ -89,7 +86,6 @@ namespace SuperManWebApi.Controllers
         /// <param name="cardBindBpm">参数实体</param>
         /// <returns></returns>
         [HttpPost]
-        [Validate]
         public ResultModel<object> CardBindB([FromBody]CardBindBPM cardBindBpm)
         {
             return _iBusinessFinanceProvider.CardBindB(cardBindBpm);
@@ -101,7 +97,6 @@ namespace SuperManWebApi.Controllers
         /// <param name="cardModifyBpm">参数实体</param>
         /// <returns></returns>
         [HttpPost]
-        [Validate]
         public ResultModel<object> CardModifyB([FromBody]CardModifyBPM cardModifyBpm)
         {
             return _iBusinessFinanceProvider.CardModifyB(cardModifyBpm);

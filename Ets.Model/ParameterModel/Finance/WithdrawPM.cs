@@ -23,5 +23,11 @@ namespace Ets.Model.ParameterModel.Finance
         /// </summary>
         [Range(1, int.MaxValue, ErrorMessage = "提现金融帐号不能为空")]
         public int FinanceAccountId { get; set; }
+
+        /// <summary>
+        /// 版本
+        /// </summary>
+        [Required(ErrorMessage = "版本号不能为空")]
+        public string Version { get; set; }
     }
 }

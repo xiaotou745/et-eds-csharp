@@ -276,10 +276,10 @@ namespace Ets.Service.Provider.Finance
         ///  商户交易流水API add by caoheyang 20150512
         /// </summary>
         /// <returns></returns>
-        public ResultModel<IList<FinanceRecordsDM>> GetRecords(int businessId)
+        public ResultModel<object> GetRecords(int businessId)
         {
             IList<FinanceRecordsDM> records = _businessBalanceRecordDao.GetByBusinessId(businessId);
-            return ResultModel<IList<FinanceRecordsDM>>.Conclude(SystemEnum.Success,
+            return ResultModel<object>.Conclude(SystemEnum.Success,
               TranslateRecords(records));
         }
 

@@ -258,10 +258,10 @@ namespace Ets.Service.Provider.Finance
         /// </summary> 
         /// <param name="clienterId">骑士id</param>
         /// <returns></returns>
-        public ResultModel<IList<FinanceRecordsDM>> GetRecords(int clienterId)
+        public ResultModel<object> GetRecords(int clienterId)
          {
              IList<FinanceRecordsDM> records = _clienterBalanceRecordDao.GetByClienterId(clienterId);
-             return ResultModel<IList<FinanceRecordsDM>>.Conclude(SystemEnum.Success,
+             return ResultModel<object>.Conclude(SystemEnum.Success,
                TranslateRecords(records));
          }
 
