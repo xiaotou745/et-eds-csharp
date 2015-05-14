@@ -162,8 +162,11 @@ namespace ETS.Enums
         [DisplayText("订单已取消")]
         OrderHadCancel,
         [DisplayText("您已取消资格")]
-        HadCancelQualification
-
+        HadCancelQualification,
+        [DisplayText("商户ID不能为空")]
+        BussinessEmpty,
+        [DisplayText("请传递版本号")]
+        NoVersion 
 
     }
     public enum FinishOrderStatus

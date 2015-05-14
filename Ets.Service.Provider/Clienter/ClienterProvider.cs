@@ -849,6 +849,58 @@ namespace Ets.Service.Provider.Clienter
         {
             return clienterDao.GetClienterDetailById(clienterId);
         }
+
+
+        /// <summary>
+        ///  C端抢单
+        ///  wc
+        ///  2015年5月6日 20:40:56
+        /// </summary>
+        /// <param name="userId">骑士ID</param>
+        /// <param name="orderNo">订单号</param>
+        /// <returns></returns>
+        [ETS.Expand.ActionStatus(typeof(ETS.Enums.RushOrderStatus))]
+        public ResultModel<RushOrderResultModel> Receive_C(int userId, string orderNo,int bussinessId)
+        {
+           
+            //这里可以优化，去掉提前验证用户信息，当失败的时候在去验证 
+            OrderListModel model = new OrderListModel()
+            {
+                clienterId = userId,
+                OrderNo = orderNo
+            };
+            bool bResult = orderDao.RushOrder(model);
+            if (bResult)
+            {
+                new OrderProvider().AsyncOrderStatus(orderNo);//同步第三方订单
+                Ets.Service.Provider.MyPush.Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", bussinessId.ToString(), string.Empty);
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.Success);
+            }
+            else  //失败的时候再去找原因
+            {
+                ClienterModel clienterModel = new Ets.Dao.Clienter.ClienterDao().GetUserInfoByUserId(userId);
+                
+                if (clienterModel.Status != 1)  //判断 该骑士 是否 有资格 抢单 wc
+                {
+                    return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.HadCancelQualification);
+                }
+                var myorder = new Ets.Dao.Order.OrderDao().GetOrderDetailByOrderNo(orderNo);
+                if (myorder == null)
+                {
+                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.OrderIsNotExist);  //订单不存在
+
+                }
+                if (myorder.Status == ConstValues.ORDER_CANCEL)   //判断订单状态是否为 已取消
+                {
+                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.OrderHadCancel);  //订单已被取消
+                }
+                if (myorder.Status == ConstValues.ORDER_ACCEPT || myorder.Status == ConstValues.ORDER_FINISH)  //订单已接单，被抢  或 已完成
+                {
+                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.OrderIsNotAllowRush);
+                }
+            } 
+            return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.Failed);
+        }
     }
 
 }

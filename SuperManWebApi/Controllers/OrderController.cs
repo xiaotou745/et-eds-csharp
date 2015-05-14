@@ -275,12 +275,23 @@ namespace SuperManWebApi.Controllers
             }
         }
 
-        //[HttpPost]
-        //[ExecuteTimeLog]
-        //public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel> Receive(int userId, string orderNo,string Version)
-        //{
-
-        //    return null;
-        //}
+        [HttpPost]
+        [ExecuteTimeLog]
+        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel> Receive(int userId, string orderNo,int bussinessId, string Version)
+        {
+            if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
+            if (userId <= 0) //用户id验证
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
+            if (bussinessId <= 0)
+            {
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
+            }
+            if (string.IsNullOrWhiteSpace(Version))
+            {
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.NoVersion);
+            } 
+            return new ClienterProvider().Receive_C(userId, orderNo, bussinessId); 
+        }
     }
 }
