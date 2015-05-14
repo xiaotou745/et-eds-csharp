@@ -99,7 +99,8 @@ namespace Ets.Service.Provider.Pay
                 //微信
                 if (model.payType == PayTypeEnum.WeiXin.GetHashCode())
                 {
-
+                    WXpayService wxpay = new WXpayService();
+                    return wxpay.GetOrder(orderNo);
                 }
             }
             catch (Exception ex)
@@ -255,7 +256,7 @@ namespace Ets.Service.Provider.Pay
             return "fail";
         }
 
-        
+
 
         #endregion
 

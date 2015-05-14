@@ -193,6 +193,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="MyPush\" />
+    <Folder Include="Pay\" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
