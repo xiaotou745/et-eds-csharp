@@ -22,6 +22,9 @@ using Ets.Service.Provider.Clienter;
 using Ets.Model.DomainModel.Clienter;
 namespace SuperManWebApi.Controllers
 {
+    /// <summary>
+    /// TODO:每个API的日志、异常之类
+    /// </summary>
     public class OrderController : ApiController
     {
         IOrderProvider iOrderProvider = new OrderProvider();
@@ -44,6 +47,10 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.HadCancelQualification);
             }
+
+            ///TODO 之前的任务金额10-5000
+            /// 主订单金额！=子订单金额之和？
+            /// 数量=子订单数量？
             if (model.Amount < 10m)
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountLessThanTen);
@@ -56,7 +63,9 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
 
             order order = iOrderProvider.TranslateOrder(model);
-            if (order.BusinessCommission < 10m) //商户结算比例不能小于10
+
+            ///TODO 商户结算比例不能小于10？固定金额类型的呢？
+            if (order.CommissionType == 1 && order.BusinessCommission < 10m) //商户结算比例不能小于10
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusiSettlementRatioError);
             }
@@ -82,6 +91,7 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<OrderDM> GetDetails(OrderPM model)
         {
+            ///TODO static?
             degree.longitude = model.longitude;
             degree.latitude = model.latitude;
 
@@ -283,9 +293,17 @@ namespace SuperManWebApi.Controllers
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="orderNo"></param>
+        /// <param name="bussinessId"></param>
+        /// <param name="Version"></param>
+        /// <returns></returns>
         [HttpPost]
         [ExecuteTimeLog]
-        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel> Receive(int userId, string orderNo,int bussinessId, string Version)
+        public ResultModel<RushOrderResultModel> Receive(int userId, string orderNo,int bussinessId, string Version)
         {
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);

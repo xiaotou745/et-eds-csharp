@@ -244,6 +244,7 @@ namespace Ets.Service.Provider.Order
         public order TranslateOrder(Model.ParameterModel.Bussiness.BussinessOrderInfoPM busiOrderInfoModel)
         {
             order to = new order();
+            ///TODO 订单号生成规则，定了以后要改；
             to.OrderNo = Helper.generateOrderCode(busiOrderInfoModel.userId);  //根据userId生成订单号(15位)
             to.businessId = busiOrderInfoModel.userId; //当前发布者
             BusListResultModel business = iBusinessProvider.GetBusiness(busiOrderInfoModel.userId);
@@ -306,6 +307,7 @@ to.BusinessName = business.Name;
             to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
             to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(business.BusinessGroupId).CommissionFormulaMode);
             to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额
+            ///TODO 使用枚举.getHashCode();
             to.Status = ConstValues.ORDER_NEW;
 
             to.TimeSpan = busiOrderInfoModel.TimeSpan;
@@ -330,6 +332,7 @@ to.BusinessName = business.Name;
                     str = "1";
                     if (order.Adjustment > 0)
                     {
+                        ///TODO if(b)吧？
                         bool b = OrderDao.addOrderSubsidiesLog(order.Adjustment, result, "补贴加钱,订单金额:" + order.Amount + "-佣金补贴策略id:" + order.CommissionFormulaMode);
                         if (!b)
                         {

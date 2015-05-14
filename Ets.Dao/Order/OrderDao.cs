@@ -853,12 +853,19 @@ where   oc.OrderId = @OrderId;
         {
             string sql = "SELECT businessId,Status FROM dbo.[order](nolock) o where OrderNo=@OrderNo ";
             IDbParameters parm = DbHelper.CreateDbParameters("OrderNo", DbType.String, 45, orderNo);
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
-            if (!dt.HasData())
-            {
-                return null;
-            }
-            return MapRows<OrderListModel>(dt)[0];
+
+            return DbHelper.QueryForObjectDelegate<OrderListModel>(SuperMan_Read, sql, parm,
+                dataRow => new OrderListModel
+                {
+                    businessId = ParseHelper.ToInt(dataRow["businessId"], 0),
+                    Status = (byte) ParseHelper.ToInt(dataRow["Status"], 0)
+                });
+            //DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            //if (!dt.HasData())
+            //{
+            //    return null;
+            //}
+            //return MapRows<OrderListModel>(dt)[0];
         }
 
         /// <summary>
@@ -1308,8 +1315,8 @@ select top 1
         o.OrderCount,
         ISNULL(oo.HadUploadCount,0) HadUploadCount
 from    [order] o with ( nolock )
-        left join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
-        left join dbo.business b with ( nolock ) on o.businessId = b.Id
+        join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
+        join dbo.business b with ( nolock ) on o.businessId = b.Id
         left join dbo.OrderOther oo with(nolock) on o.Id = oo.OrderId
 where   1 = 1 
 ";
@@ -1732,6 +1739,7 @@ order by bb.Id desc;";
         {
             //判断TimeSpan     
             #region 根据时间戳判断订单是否存在
+            ///TODO 条件加商家ID、用写库，单独封一个方法
             const string querysql = @"select  count(1) from  dbo.[order]  where  TimeSpan=@TimeSpan";
             IDbParameters dbSelectParameters = DbHelper.CreateDbParameters();
             dbSelectParameters.AddWithValue("TimeSpan", order.TimeSpan);
@@ -1888,6 +1896,12 @@ values  ( @OrderNo ,
         void AddOrderChild(int orderId, Model.DataModel.Order.order order)
         {
             #region 性能优化 
+            ///TODO 事务问题
+            //var sqlConnection = DbHelper.GetConnectionTxPair(SuperMan_Write).Connection as SqlConnection;
+            //SqlBulkCopy bulk1 = new SqlBulkCopy(sqlConnection)
+            //{
+                
+            //}
             using (SqlBulkCopy bulk = new SqlBulkCopy(SuperMan_Write))
             {
                 try
@@ -1916,6 +1930,7 @@ values  ( @OrderNo ,
                     {
                         DataRow dr = dt.NewRow();                  
                         dr["OrderId"] = orderId;
+                        ///TODO app传过来ID？
                         dr["ChildId"] = order.listOrderChild[i].ChildId;
                         decimal totalPrice = order.listOrderChild[i].GoodPrice + Convert.ToDecimal(order.DistribSubsidy);
                         dr["TotalPrice"] = totalPrice;
@@ -1947,19 +1962,18 @@ values  ( @OrderNo ,
             order modle = new order();
             const string queryOrderSql = @"
 select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneNo,o.ReceviceAddress,o.ActualDoneDate,o.IsPay,
-o.Amount,o.OrderCommission,o.DistribSubsidy,o.WebsiteSubsidy,o.Remark,o.Status,o.clienterId,o.businessId,o.ReceviceCity,o.ReceviceLongitude,
-o.ReceviceLatitude,o.OrderFrom,o.OriginalOrderId,o.OriginalOrderNo,o.Quantity,o.Weight,o.ReceiveProvince,o.ReceiveArea,o.ReceiveProvinceCode,
-o.ReceiveCityCode,o.ReceiveAreaCode,o.OrderType,o.KM,o.GuoJuQty,o.LuJuQty,o.SongCanDate,o.OrderCount,o.CommissionRate,o.Payment,
-o.CommissionFormulaMode,o.Adjustment,o.BusinessCommission,o.SettleMoney,o.DealCount,o.PickupCode,o.OtherCancelReason,o.CommissionType,
-o.CommissionFixValue,o.BusinessGroupId,o.TimeSpan,o.RushOrderLongitude,o.RushOrderLandline,o.FinishOrderLongitude,o.FinishOrderLandline,
-b.[City] BusinessCity,b.Name BusinessName,b.PhoneNo BusinessPhoneNo ,b.Address BusinessAddress ,b.GroupId, b.Longitude, b.Latitude,
-REPLACE(b.City,'市','') AS pickUpCity
+    o.Amount,o.OrderCommission,o.DistribSubsidy,o.WebsiteSubsidy,o.Remark,o.Status,o.clienterId,o.businessId,o.ReceviceCity,o.ReceviceLongitude,
+    o.ReceviceLatitude,o.OrderFrom,o.OriginalOrderId,o.OriginalOrderNo,o.Quantity,o.Weight,o.ReceiveProvince,o.ReceiveArea,o.ReceiveProvinceCode,
+    o.ReceiveCityCode,o.ReceiveAreaCode,o.OrderType,o.KM,o.GuoJuQty,o.LuJuQty,o.SongCanDate,o.OrderCount,o.CommissionRate,o.Payment,
+    o.CommissionFormulaMode,o.Adjustment,o.BusinessCommission,o.SettleMoney,o.DealCount,o.PickupCode,o.OtherCancelReason,o.CommissionType,
+    o.CommissionFixValue,o.BusinessGroupId,o.TimeSpan,o.RushOrderLongitude,o.RushOrderLandline,o.FinishOrderLongitude,o.FinishOrderLandline,
+    b.[City] BusinessCity,b.Name BusinessName,b.PhoneNo BusinessPhoneNo ,b.Address BusinessAddress ,b.GroupId, b.Longitude, b.Latitude,
+    REPLACE(b.City,'市','') AS pickUpCity
 from  dbo.[order] o (nolock)
-left join business b  with(nolock) on b.Id=o.businessId
+    join business b (nolock) on b.Id=o.businessId
 where  o.Id=@Id ";
 
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("Id", id);
+            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, queryOrderSql, dbParameters);
             if (dt == null || dt.Rows.Count <= 0)
                 return null;
@@ -1980,6 +1994,7 @@ where  o.Id=@Id ";
  FROM   dbo.[order] WITH ( NOLOCK ) 
  WHERE  id = @id";
 
+            ///TODO type
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("id", id);
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);

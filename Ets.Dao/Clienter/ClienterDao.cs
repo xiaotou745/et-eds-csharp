@@ -712,6 +712,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, ConstValues.OrderH
         public OrderOther InsertReceiptInfo(UploadReceiptModel uploadReceiptModel)
         {
             OrderOther oo = new OrderOther();
+            ///TODO output?
             StringBuilder sql = new StringBuilder(@"
 insert into dbo.OrderOther
     ( OrderId ,

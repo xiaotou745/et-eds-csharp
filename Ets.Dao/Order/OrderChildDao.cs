@@ -308,12 +308,11 @@ where OrderId=@OrderId and ChildId=@ChildId and PayStatus!=@PayStatus";
 
             const string querySql = @"
 select  ChildId,TotalPrice,GoodPrice,DeliveryPrice,PayStyle,PayType,PayStatus,PayBy,
-PayTime,PayPrice,HasUploadTicket,TicketUrl
+    PayTime,PayPrice,HasUploadTicket,TicketUrl
 from  OrderChild (nolock)
 where  OrderId=@OrderId ";
 
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("OrderId", orderId);
+            IDbParameters dbParameters = DbHelper.CreateDbParameters("OrderId", DbType.Int64, 8, orderId);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, querySql, dbParameters);            
 
             foreach (DataRow dataRow in dt.Rows)

@@ -528,6 +528,7 @@ namespace Ets.Dao.User
                                 FROM dbo.business as b WITH(NOLOCK)
                                 left join BusinessGroup on b.BusinessGroupId=BusinessGroup.Id
                                 WHERE b.Id = @busiId";
+            ///TODO 类型？
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@busiId", busiId);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
@@ -763,6 +764,8 @@ namespace Ets.Dao.User
             {
                 //状态为1 表示该骑士 已通过审核
                 string sql = "SELECT COUNT(1) FROM dbo.business(NOLOCK) WHERE [Status] = 1 AND Id = @businessId ";
+                ///TODO 参数更改，加上类型
+                //var dbParameters = DbHelper.CreateDbParameters("businessid", DbType.Int32, 4, businessId);
                 IDbParameters parm = DbHelper.CreateDbParameters();
                 parm.AddWithValue("@businessId", businessId);
                 return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm)) > 0 ? true : false;
