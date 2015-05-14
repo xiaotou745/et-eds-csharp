@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace ETS.AliPay
+namespace ETS.Pay.AliPay
 {
     public class AlipayIntegrate
     {
@@ -98,7 +98,7 @@ namespace ETS.AliPay
                 need_address = "F",
                 goods_info = new
                 {
-                    id = "1_" + orderId + "_" + childId,//用户支付_主订单号_子订单号
+                    id = ETS.Enums.PayStyleEnum.BuyerPay.GetHashCode() + "_" + orderId + "_" + childId,//支付方式_主订单号_子订单号
                     name = "e代送收款",
                     price = customerTotal
                 },

@@ -1424,7 +1424,9 @@ where  Id=@Id ";
         /// <summary>
         /// 获取商家详情
         /// </summary>
-        /// <param name="id"></param>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
+        /// <param name="id">商家Id</param>
         /// <returns></returns>
         public BusinessDM  GetDetails(int id)
         {
@@ -1461,9 +1463,13 @@ from  BusinessFinanceAccount (nolock) where BusinessId=@BusinessId and IsEnable=
                 bf.IsEnable = Convert.ToBoolean(dataRow["IsEnable"]);                
                 bf.AccountType = Convert.ToInt32(dataRow["AccountType"]);
                 if (dataRow["OpenBank"] != null && dataRow["OpenBank"]!=DBNull.Value)
+                { 
                     bf.OpenBank = dataRow["OpenBank"].ToString();
+                }
                 if (dataRow["OpenSubBank"] != null && dataRow["OpenSubBank"] != DBNull.Value)
+                {
                     bf.OpenSubBank = dataRow["OpenSubBank"].ToString();
+                }
                 bf.CreateBy = dataRow["CreateBy"].ToString();
                 bf.CreateTime =Convert.ToDateTime(dataRow["CreateTime"]);
                 bf.UpdateBy = dataRow["UpdateBy"].ToString();
@@ -1479,7 +1485,8 @@ from  BusinessFinanceAccount (nolock) where BusinessId=@BusinessId and IsEnable=
 
         /// <summary>
         /// 判断商户是否存在        
-        /// hulingbo 20150511
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
         /// </summary>
         /// <param name="id">商户Id</param>
         /// <returns></returns>

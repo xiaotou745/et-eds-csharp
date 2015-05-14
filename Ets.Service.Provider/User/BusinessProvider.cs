@@ -930,9 +930,10 @@ namespace Ets.Service.Provider.User
         }
 
         /// <summary>
-        /// 获取商户详情
-        /// hulingbo 20150511
+        /// 获取商户详情        
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
         /// <param name="id">商户id</param>
         /// <returns></returns>
         public BusinessDM GetDetails(int id)
@@ -942,7 +943,8 @@ namespace Ets.Service.Provider.User
 
         /// <summary>
         /// 判断商户是否存在
-        /// hulingbo 20150511
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
         /// </summary>
         /// <param name="id">商户Id</param>
         /// <returns></returns>

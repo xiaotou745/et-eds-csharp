@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ETS.AliPay
+namespace ETS.Pay.AliPay
 {
     /// <summary>
     /// 类名：MD5

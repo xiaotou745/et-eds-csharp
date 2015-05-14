@@ -43,32 +43,34 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary>
-        /// 获取骑士详情       
-        /// hulingbo 20150512
+        /// 获取骑士详情              
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
         /// <param name="model">骑士参数</param>
         /// <returns></returns>        
-        [HttpPost]
-        public ResultModel<ClienterDM> Get(ClienterPM model)
-        {
-            #region 验证
-            var version = HttpContext.Current.Request.Form["Version"];
-            if (string.IsNullOrWhiteSpace(version)) //版本号 
-            {
-                return ResultModel<ClienterDM>.Conclude(GetClienterStatus.NoVersion);
-            }
-            if (model.ClienterId < 0)//骑士Id不合法
-            {
-                return ResultModel<ClienterDM>.Conclude(GetClienterStatus.ErrOderNo);
-            }
-            if (!_iClienterProvider.IsExist(model.ClienterId)) //骑士不存在
-            {
-                return ResultModel<ClienterDM>.Conclude(GetClienterStatus.ErrOderNo);
-            }
-            #endregion
+       [HttpPost]
+       public ResultModel<ClienterDM> Get(ClienterPM model)
+       {
+           #region 验证
+           var version = HttpContext.Current.Request.Form["Version"];
+           if (string.IsNullOrWhiteSpace(version)) //版本号 
+           {
+               return ResultModel<ClienterDM>.Conclude(GetClienterStatus.NoVersion);
+           }
+           if (model.ClienterId < 0)//骑士Id不合法
+           {
+               return ResultModel<ClienterDM>.Conclude(GetClienterStatus.ErrOderNo);
+           }
+           if (!_iClienterProvider.IsExist(model.ClienterId)) //骑士不存在
+           {
+               return ResultModel<ClienterDM>.Conclude(GetClienterStatus.ErrOderNo);
+           }
+           #endregion
 
-            ClienterDM clienterDM = _iClienterProvider.GetDetails(model.ClienterId);
-            return Ets.Model.Common.ResultModel<ClienterDM>.Conclude(GetClienterStatus.Success, clienterDM);
-        }
+           ClienterDM clienterDM = _iClienterProvider.GetDetails(model.ClienterId);
+           return Ets.Model.Common.ResultModel<ClienterDM>.Conclude(GetClienterStatus.Success, clienterDM);
+       }     
+        
     }
 }

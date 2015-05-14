@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
 
-namespace ETS.WxPay
+namespace ETS.Pay.WxPay
 {
     public class ResponseHandler
     {

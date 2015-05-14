@@ -7,11 +7,11 @@ using Ets.Model.DataModel.Order;
 using Ets.Model.ParameterModel.Order;
 using Ets.Service.IProvider.Order;
 using Ets.Dao.Order;
-
+using Ets.Model.DomainModel.Order;
 namespace Ets.Service.Provider.Order
 {
     /// <summary>
-    /// 订单明细表 业务逻辑类IOrderChildService 的摘要说明。
+    /// 订单子表 业务逻辑类IOrderChildService 的摘要说明。
     /// Generate By: tools.etaoshi.com
     /// Generate Time: 2015-05-09 18:48:39
     /// </summary>
@@ -57,15 +57,18 @@ namespace Ets.Service.Provider.Order
         {
             return _orderChildDao.GetById(id);
         }
+   
 
         /// <summary>
-        /// 查询方法
-        /// <param name="clienterFinanceAccountPm">参数实体</param>
+        /// 获取子订单列表
         /// </summary>
-        public IList<OrderChild> Query(OrderChildPM orderChildPM)
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150512</UpdateTime>
+        /// <param name="orderId">订单Id</param>
+        /// <returns></returns>
+        public List<OrderChildInfo> GetByOrderId(int orderId)
         {
-            return _orderChildDao.Query(orderChildPM);
+            return _orderChildDao.GetByOrderId(orderId);
         }
-
     }
 }

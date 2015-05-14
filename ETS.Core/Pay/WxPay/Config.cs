@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ETS.WxPay
+namespace ETS.Pay.WxPay
 {
     public class Config
     {

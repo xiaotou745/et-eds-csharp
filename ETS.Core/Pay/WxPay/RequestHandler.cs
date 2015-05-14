@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ETS.WxPay
+namespace ETS.Pay.WxPay
 {
     public class RequestHandler
     {

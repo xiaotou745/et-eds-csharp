@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace ETS.AliPay
+namespace ETS.Pay.AliPay
 {
     /// <summary>
     /// 类名：Submit

@@ -44,34 +44,38 @@ namespace ETS.Enums
     }
     public enum GetOrdersStatus
     {
-        Success,
-        [DisplayText("订单号错误")]
-        ErrOderNo,
-        [DisplayText("获取订单失败")]
-        FailedGetOrders,
+        [DisplayText("成功")]
+        Success=1,     
         [DisplayText("请传递版本号")]
-        NoVersion
+        NoVersion=0,
+        [DisplayText("订单号错误")]
+        ErrOderNo=-1,
+        [DisplayText("获取订单失败")]
+        FailedGetOrders=-2  
     }
 
     public enum GetBussinessStatus
     {
-        Success,
-        [DisplayText("商户Id错误")]
-        ErrOderNo,
-        [DisplayText("获取商户失败")]
-        FailedGetOrders,
+        [DisplayText("成功")]
+        Success=1,
         [DisplayText("请传递版本号")]
-        NoVersion
+        NoVersion=0,
+        [DisplayText("商户Id错误")]
+        ErrOderNo=-1,
+        [DisplayText("获取商户失败")]
+        FailedGetOrders=-2     
     }
     public enum GetClienterStatus
     {
-        Success,
-        [DisplayText("骑士Id错误")]
-        ErrOderNo,
-        [DisplayText("获取骑士失败")]
-        FailedGetOrders,
+        [DisplayText("成功")]
+        Success=1,
         [DisplayText("请传递版本号")]
-        NoVersion
+        NoVersion=0,
+        [DisplayText("骑士Id错误")]
+        ErrOderNo=-1,
+        [DisplayText("获取骑士失败")]
+        FailedGetOrders=-2
+      
     }
     public enum GetOrdersNoLoginStatus
     {
@@ -162,8 +166,11 @@ namespace ETS.Enums
         [DisplayText("订单已取消")]
         OrderHadCancel,
         [DisplayText("您已取消资格")]
-        HadCancelQualification
-
+        HadCancelQualification,
+        [DisplayText("商户ID不能为空")]
+        BussinessEmpty,
+        [DisplayText("请传递版本号")]
+        NoVersion 
 
     }
     public enum FinishOrderStatus

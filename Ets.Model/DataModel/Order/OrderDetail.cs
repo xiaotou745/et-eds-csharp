@@ -48,8 +48,4 @@ namespace Ets.Model.DataModel.Order
 		public int GroupID { get; set; }
 
         }   
-
-
-
-
 }

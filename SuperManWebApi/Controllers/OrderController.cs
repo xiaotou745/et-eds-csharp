@@ -19,6 +19,7 @@ using Ets.Model.ParameterModel.Bussiness;
 using Ets.Model.DomainModel.Order;
 using Ets.Service.IProvider.Clienter;
 using Ets.Service.Provider.Clienter;
+using Ets.Model.DomainModel.Clienter;
 namespace SuperManWebApi.Controllers
 {
     public class OrderController : ApiController
@@ -27,41 +28,43 @@ namespace SuperManWebApi.Controllers
         IBusinessProvider iBusinessProvider = new BusinessProvider();
         readonly IClienterProvider iClienterProvider = new ClienterProvider();
         /// <summary>
-        /// 商户发布订单      
-        /// hulingbo 20150511
+        /// 商户发布订单   
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
         /// <param name="model">订单参数实体</param>
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
         [HttpPost]
         public ResultModel<BusiOrderResultModel> Push(BussinessOrderInfoPM model)
         {
+
             #region 验证
             if (!iBusinessProvider.HaveQualification(model.userId))//验证该商户有无发布订单资格 
             {
-                return Ets.Model.Common.ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.HadCancelQualification);
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.HadCancelQualification);
             }
             if (model.Amount < 10m)
             {
-                return Ets.Model.Common.ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountLessThanTen);
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountLessThanTen);
             }
             if (model.Amount > 5000m)
             {
-                return Ets.Model.Common.ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountMoreThanFiveThousand);
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountMoreThanFiveThousand);
             }           
             if (model.OrderCount <= 0 || model.OrderCount > 15) //判断录入订单数量是否符合要求
-                return Ets.Model.Common.ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
 
-            Ets.Model.DataModel.Order.order order = iOrderProvider.TranslateOrder(model);
+            order order = iOrderProvider.TranslateOrder(model);
             if (order.BusinessCommission < 10m) //商户结算比例不能小于10
             {
-                return Ets.Model.Common.ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusiSettlementRatioError);
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusiSettlementRatioError);
             }
             string result = iOrderProvider.AddOrder(order);
 
             if (result == "0")//当前订单执行失败
             {
-                return Ets.Model.Common.ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.InvalidPubOrder);
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.InvalidPubOrder);
             }
             #endregion
 
@@ -70,15 +73,20 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary>
-        /// 获取订单详情        
-        /// hulingbo 20150511
+        /// 获取订单详情                
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
         /// <param name="model">订单参数实体</param>
         /// <returns></returns>        
         [HttpPost]
         public ResultModel<OrderDM> GetDetails(OrderPM model)
         {
+            degree.longitude = model.longitude;
+            degree.latitude = model.latitude;
+
             #region 验证
+
             var version = HttpContext.Current.Request.Form["Version"];
             if (string.IsNullOrWhiteSpace(version)) //版本号 
             {
@@ -96,7 +104,7 @@ namespace SuperManWebApi.Controllers
             #endregion
 
             OrderDM orderDM= iOrderProvider.GetDetails(model.OrderId);
-            return Ets.Model.Common.ResultModel<OrderDM>.Conclude(GetOrdersStatus.Success, orderDM);          
+            return ResultModel<OrderDM>.Conclude(GetOrdersStatus.Success, orderDM);          
         }
 
         /// <summary>
@@ -275,12 +283,23 @@ namespace SuperManWebApi.Controllers
             }
         }
 
-        //[HttpPost]
-        //[ExecuteTimeLog]
-        //public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel> Receive(int userId, string orderNo,string Version)
-        //{
-
-        //    return null;
-        //}
+        [HttpPost]
+        [ExecuteTimeLog]
+        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel> Receive(int userId, string orderNo,int bussinessId, string Version)
+        {
+            if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
+            if (userId <= 0) //用户id验证
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
+            if (bussinessId <= 0)
+            {
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
+            }
+            if (string.IsNullOrWhiteSpace(Version))
+            {
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.NoVersion);
+            } 
+            return new ClienterProvider().Receive_C(userId, orderNo, bussinessId); 
+        }
     }
 }
