@@ -10,12 +10,11 @@ using ETS.Enums;
 using Ets.Model.Common;
 using ETS.Expand;
 using ETS.Util;
-using ETS.AliPay;
+using ETS.Pay.AliPay;
 using System.Xml;
 using Ets.Dao.Order;
 using Ets.Model.DataModel.Order;
-using ETS.WxPay;
-//using ETS.WxPay;
+using ETS.Pay.WxPay;
 
 namespace Ets.Service.Provider.Pay
 {

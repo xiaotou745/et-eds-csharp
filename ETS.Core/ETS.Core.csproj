@@ -87,11 +87,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AliPay\AlipayIntegrate.cs" />
-    <Compile Include="AliPay\AlipayMD5.cs" />
-    <Compile Include="AliPay\Config.cs" />
-    <Compile Include="AliPay\Core.cs" />
-    <Compile Include="AliPay\Submit.cs" />
+    <Compile Include="Pay\AliPay\AlipayIntegrate.cs" />
+    <Compile Include="Pay\AliPay\AlipayMD5.cs" />
+    <Compile Include="Pay\AliPay\Config.cs" />
+    <Compile Include="Pay\AliPay\Core.cs" />
+    <Compile Include="Pay\AliPay\Submit.cs" />
     <Compile Include="Cacheing\AbstractCache.cs" />
     <Compile Include="Cacheing\CacheFactory.cs" />
     <Compile Include="Cacheing\LocalCache.cs" />
@@ -184,16 +184,15 @@
     <Compile Include="Util\XmlHelper.cs" />
     <Compile Include="Util\XmlParser.cs" />
     <Compile Include="Validator\CommonValidator.cs" />
-    <Compile Include="WxPay\Config.cs" />
-    <Compile Include="WxPay\RequestHandler.cs" />
-    <Compile Include="WxPay\ResponseHandler.cs" />
-    <Compile Include="WxPay\ReturnValue.cs" />
-    <Compile Include="WxPay\StreamReaderUtils.cs" />
-    <Compile Include="WxPay\WXpayService.cs" />
+    <Compile Include="Pay\WxPay\Config.cs" />
+    <Compile Include="Pay\WxPay\RequestHandler.cs" />
+    <Compile Include="Pay\WxPay\ResponseHandler.cs" />
+    <Compile Include="Pay\WxPay\ReturnValue.cs" />
+    <Compile Include="Pay\WxPay\StreamReaderUtils.cs" />
+    <Compile Include="Pay\WxPay\WXpayService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="MyPush\" />
-    <Folder Include="Pay\" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

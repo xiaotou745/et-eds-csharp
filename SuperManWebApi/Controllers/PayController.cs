@@ -23,16 +23,16 @@ namespace SuperManWebApi.Controllers
         /// 窦海超
         /// 2015年5月12日 14:35:05
         /// </summary>
-        [HttpGet]
-        public ResultModel<PayResultModel> CreatePay()//PayModel model
+        //[HttpGet]
+        public ResultModel<PayResultModel> CreatePay(PayModel model)//
         {
-            PayModel model = new PayModel()
-            {
-                orderId = 1344,
-                childId = 1,
-                payType = 2,
-                version = "1.0"
-            };
+            //PayModel model = new PayModel()
+            //{
+            //    orderId = 1344,
+            //    childId = 1,
+            //    payType = 2,
+            //    version = "1.0"
+            //};
             return payProvider.CreatePay(model);
         }
 
