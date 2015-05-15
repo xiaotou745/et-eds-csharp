@@ -24,6 +24,11 @@ namespace Ets.Model.ParameterModel.AliPay
         public int childId { get; set; }
 
         /// <summary>
+        /// 产品ID
+        /// </summary>
+        public int productId { get; set; }
+
+        /// <summary>
         /// 接口版本号
         /// </summary>
         public string version { get; set; }
