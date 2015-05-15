@@ -34,8 +34,8 @@ namespace Ets.Dao.Finance
         public int Insert(ClienterFinanceAccount clienterFinanceAccount)
         {
             const string insertSql = @"
-insert into ClienterFinanceAccount(ClienterId,TrueName,AccountNo,IsEnable,AccountType,OpenBank,OpenSubBank,CreateBy,UpdateBy)
-values(@ClienterId,@TrueName,@AccountNo,@IsEnable,@AccountType,@OpenBank,@OpenSubBank,@CreateBy,@UpdateBy)
+insert into ClienterFinanceAccount(ClienterId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,UpdateBy)
+values(@ClienterId,@TrueName,@AccountNo,@IsEnable,@AccountType,@BelongType,@OpenBank,@OpenSubBank,@CreateBy,@UpdateBy)
 select @@IDENTITY";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("ClienterId", clienterFinanceAccount.ClienterId); //骑士ID
@@ -43,6 +43,7 @@ select @@IDENTITY";
             dbParameters.AddWithValue("AccountNo", clienterFinanceAccount.AccountNo); //卡号(DES加密)
             dbParameters.AddWithValue("IsEnable", clienterFinanceAccount.IsEnable);  //是否有效(1：有效 0：无效）
             dbParameters.AddWithValue("AccountType", clienterFinanceAccount.AccountType); //账号类型：(1网银 2支付宝 3微信 4财付通 5百度钱包）
+            dbParameters.AddWithValue("BelongType", clienterFinanceAccount.BelongType); //账号类别  0 个人账户 1 公司账户  
             dbParameters.AddWithValue("OpenBank", clienterFinanceAccount.OpenBank); //开户行
             dbParameters.AddWithValue("OpenSubBank", clienterFinanceAccount.OpenSubBank); //开户支行
             dbParameters.AddWithValue("CreateBy", clienterFinanceAccount.CreateBy); //添加人
@@ -59,13 +60,14 @@ select @@IDENTITY";
         {
             const string updateSql = @"
 update  ClienterFinanceAccount
-set  TrueName=@TrueName,AccountNo=@AccountNo,OpenBank=@OpenBank,
+set  TrueName=@TrueName,AccountNo=@AccountNo,BelongType=@BelongType,OpenBank=@OpenBank,
 OpenSubBank=@OpenSubBank,UpdateBy=@UpdateBy
 where  Id=@Id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Id", clienterFinanceAccount.Id);
             dbParameters.AddWithValue("TrueName", clienterFinanceAccount.TrueName);
             dbParameters.AddWithValue("AccountNo", clienterFinanceAccount.AccountNo);
+            dbParameters.AddWithValue("BelongType", clienterFinanceAccount.BelongType); //账号类别  0 个人账户 1 公司账户  
             dbParameters.AddWithValue("OpenBank", clienterFinanceAccount.OpenBank);
             dbParameters.AddWithValue("OpenSubBank", clienterFinanceAccount.OpenSubBank);
             dbParameters.AddWithValue("UpdateBy", clienterFinanceAccount.UpdateBy);

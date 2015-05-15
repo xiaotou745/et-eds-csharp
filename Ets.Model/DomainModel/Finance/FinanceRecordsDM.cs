@@ -79,13 +79,20 @@ namespace Ets.Model.DomainModel.Finance
         /// 描述
         /// </summary>
         public string Remark { get; set; }
+
         /// <summary>
-        /// 年月信息
+        /// 时间信息小时分  eg 15:32
         /// </summary>
-        public string YearInfo { get; set; }
+        public string TimeInfo { get; set; }
+
         /// <summary>
-        /// 年月信息简写 eg 2015.3
+        /// 日期信息简写 eg 05-13
         /// </summary>
-        public string YearInfoAbb { get; set; }
+        public string DateInfo { get; set; }
+
+        /// <summary>
+        /// 月份信息 eg 2015-03
+        /// </summary>
+        public string MonthInfo { get; set; }
     }
 }

@@ -174,6 +174,7 @@ namespace Ets.Service.Provider.Finance
                     IsEnable = true,// 是否有效(true：有效 0：无效）  新增时true 
                     AccountType = cardBindCpm.AccountType == 0
                         ? (int)ClienterFinanceAccountType.WangYin : cardBindCpm.AccountType,  //账号类型 
+                    BelongType = cardBindCpm.BelongType,//账号类别  0 个人账户 1 公司账户  
                     OpenBank = cardBindCpm.OpenBank, //开户行
                     OpenSubBank = cardBindCpm.OpenSubBank, //开户支行
                     CreateBy = cardBindCpm.CreateBy,//创建人  当前登录人
@@ -222,7 +223,8 @@ namespace Ets.Service.Provider.Finance
                     Id = cardModifyCpm.Id,
                     ClienterId = cardModifyCpm.ClienterId,//骑士ID
                     TrueName = cardModifyCpm.TrueName, //户名
-                    AccountNo = DES.Encrypt(cardModifyCpm.AccountNo), //卡号(DES加密) 
+                    AccountNo = DES.Encrypt(cardModifyCpm.AccountNo), //卡号(DES加密)
+                    BelongType = cardModifyCpm.BelongType,//账号类别  0 个人账户 1 公司账户  
                     OpenBank = cardModifyCpm.OpenBank, //开户行
                     OpenSubBank = cardModifyCpm.OpenSubBank, //开户支行
                     UpdateBy = cardModifyCpm.UpdateBy//修改人  当前登录人
@@ -265,8 +267,11 @@ namespace Ets.Service.Provider.Finance
         /// </summary>
         /// <param name="records">原始流水记录</param>
         /// <returns></returns>
-        private IList<FinanceRecordsDM> TranslateRecords(IList<FinanceRecordsDM> records)
+        private IList<FinanceRecordsDMList> TranslateRecords(IList<FinanceRecordsDM> records)
         {
+            IList<FinanceRecordsDMList> datas = new List<FinanceRecordsDMList>();
+            datas.Add(new FinanceRecordsDMList() {MonthIfo = "本月", Datas = new List<FinanceRecordsDM>()});
+            int index = 0; 
             foreach (var temp in records)
             {
                 temp.StatusStr = ((ClienterBalanceRecordStatus) Enum.Parse(typeof (ClienterBalanceRecordStatus),
@@ -274,19 +279,18 @@ namespace Ets.Service.Provider.Finance
                 temp.RecordTypeStr =
                     ((ClienterBalanceRecordRecordType) Enum.Parse(typeof (ClienterBalanceRecordRecordType),
                         temp.RecordType.ToString(), false)).GetDisplayText(); //交易类型文本
-                temp.YearInfoAbb = temp.YearInfo.Replace("年", ".").Replace("月", "");
-                if (temp.YearInfo == DateTime.Now.Year + "年" + DateTime.Now.Month + "月")
+                if (datas[index].MonthIfo == temp.MonthInfo)
                 {
-                    temp.YearInfo = "本月";
+                    datas[index].Datas.Add(temp);
                 }
-                temp.OperateTimeStr = (
-                   temp.OperateTime.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd")
-                       ? "今天" //今日流水显示 "今日"
-                       : temp.OperateTime.ToString("MM-dd"))
-                       + " " +
-                       temp.OperateTime.ToString("HH:mm"); //分
+                else
+                {
+                    datas.Add(new FinanceRecordsDMList() { MonthIfo = temp.MonthInfo, Datas = new List<FinanceRecordsDM>() });
+                    index = index + 1;
+                    datas[index].Datas.Add(temp);
+                }
             }
-            return records;
+            return datas;
         }
         /// <summary>
         /// 根据参数获取骑士提现申请单列表

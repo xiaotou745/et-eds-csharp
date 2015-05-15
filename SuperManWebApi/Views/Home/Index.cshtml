@@ -584,10 +584,12 @@
     //            "ClienterId": "118",
     //            "TrueName": "张三",
     //            "AccountNo": "dasdasd11",
-    //            "AccountNo2": "dasdasd",
+    //            "AccountNo2": "dasdasd11",
     //            "OpenBank":"工商",
     //            "OpenSubBank":"北京支行",
-    //            "CreateBy":"新增人"
+    //            "CreateBy": "新增人",
+    //            "BelongType": "1",
+    //            "version":"dasd"
     //        },
     //        success: function (data) {
     //            console.log(data);
@@ -610,7 +612,9 @@
     //            "AccountNo2": "dasdasd111",
     //            "OpenBank": "工商11",
     //            "OpenSubBank": "北京支行11",
-    //            "UpdateBy": "修改人"
+    //            "UpdateBy": "修改人",
+    //                        "BelongType": "1",
+    //                        "version":"dasd"
     //        },
     //        success: function (data) {
     //            console.log(data);
@@ -632,6 +636,8 @@
     //            "AccountNo": "dasdasd",
     //            "AccountNo2": "dasdasd",
     //            "OpenBank": "工商",
+    //                        "BelongType": "0",
+    //                        "version":"dasd",
     //            "OpenSubBank": "北京支行",
     //            "CreateBy": "新增人"
     //        },
@@ -653,6 +659,8 @@
     //            "TrueName": "张三111",
     //            "AccountNo": "dasdasd111",
     //            "AccountNo2": "dasdasd111",
+    //            "BelongType": "1",
+    //            "version": "dasd",
     //            "OpenBank": "工商11",
     //            "OpenSubBank": "北京支行11",
     //            "UpdateBy": "修改人"
@@ -663,6 +671,7 @@
     //        error: function () { }
     //    });
     //});
+    
     //$(function() {
     //    $.ajax({
     //        type: 'POST',
@@ -695,20 +704,20 @@
     //        error: function () { }
     //    });
     //});
-    $(function () {
-        $.ajax({
-            type: 'POST',
-            dataType: 'json',
-            url: '/Clienter/records',
-            data: {
-                "ClienterId": "114",
-                "version": "123"
-            },
-            success: function (data) {
-                console.log(data);
-            },
-            error: function () { }
-        });
-    });
+    //$(function () {
+    //    $.ajax({
+    //        type: 'POST',
+    //        dataType: 'json',
+    //        url: '/Clienter/records',
+    //        data: {
+    //            "ClienterId": "114",
+    //            "version": "123"
+    //        },
+    //        success: function (data) {
+    //            console.log(data);
+    //        },
+    //        error: function () { }
+    //    });
+    //});
     
 </script>

@@ -1,4 +1,5 @@
-﻿using Ets.Dao.Finance;
+﻿using System.Collections;
+using Ets.Dao.Finance;
 using Ets.Dao.User;
 using ETS.Enums;
 using ETS.Extension;
@@ -192,6 +193,7 @@ namespace Ets.Service.Provider.Finance
                     IsEnable = true,// 是否有效(true：有效 0：无效）  新增时true 
                     AccountType = cardBindBpm.AccountType == 0
                         ? (int)BusinessFinanceAccountType.WangYin : cardBindBpm.AccountType,  //账号类型 
+                    BelongType = cardBindBpm.BelongType,//账号类别  0 个人账户 1 公司账户  
                     OpenBank = cardBindBpm.OpenBank, //开户行
                     OpenSubBank = cardBindBpm.OpenSubBank, //开户支行
                     CreateBy = cardBindBpm.CreateBy,//创建人  当前登录人
@@ -242,6 +244,7 @@ namespace Ets.Service.Provider.Finance
                     BusinessId = cardModifyBpm.BusinessId,//商户ID
                     TrueName = cardModifyBpm.TrueName, //户名
                     AccountNo = DES.Encrypt(cardModifyBpm.AccountNo), //卡号(DES加密) 
+                    BelongType = cardModifyBpm.BelongType,//账号类别  0 个人账户 1 公司账户  
                     OpenBank = cardModifyBpm.OpenBank, //开户行
                     OpenSubBank = cardModifyBpm.OpenSubBank, //开户支行
                     UpdateBy = cardModifyBpm.UpdateBy//修改人  当前登录人
@@ -283,8 +286,11 @@ namespace Ets.Service.Provider.Finance
         /// </summary>
         /// <param name="records">原始流水记录</param>
         /// <returns></returns>
-        private IList<FinanceRecordsDM> TranslateRecords(IList<FinanceRecordsDM> records)
+        private IList<FinanceRecordsDMList> TranslateRecords(IList<FinanceRecordsDM> records)
         {
+            IList<FinanceRecordsDMList> datas = new List<FinanceRecordsDMList>();
+            datas.Add(new FinanceRecordsDMList() { MonthIfo = "本月", Datas = new List<FinanceRecordsDM>() });
+            int index = 0; 
             foreach (var temp in records)
             {
                 temp.StatusStr = ((BusinessBalanceRecordStatus)Enum.Parse(typeof(BusinessBalanceRecordStatus),
@@ -292,19 +298,18 @@ namespace Ets.Service.Provider.Finance
                 temp.RecordTypeStr =
                     ((BusinessBalanceRecordRecordType)Enum.Parse(typeof(BusinessBalanceRecordRecordType),
                         temp.RecordType.ToString(), false)).GetDisplayText(); //交易类型文本
-                temp.YearInfoAbb = temp.YearInfo.Replace("年", ".").Replace("月", "");
-                if (temp.YearInfo == DateTime.Now.Year + "年" + DateTime.Now.Month + "月")
+                if (datas[index].MonthIfo == temp.MonthInfo)
                 {
-                    temp.YearInfo = "本月";
+                    datas[index].Datas.Add(temp);
                 }
-                temp.OperateTimeStr = (
-                    temp.OperateTime.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd")
-                        ? "今天" //今日流水显示 "今日"
-                        : temp.OperateTime.ToString("MM-dd"))
-                        + " " +
-                        temp.OperateTime.ToString("HH:mm"); //分
+                else
+                {
+                    datas.Add(new FinanceRecordsDMList() { MonthIfo = temp.MonthInfo, Datas = new List<FinanceRecordsDM>() });
+                    index = index + 1;
+                    datas[index].Datas.Add(temp);
+                }
             }
-            return records;
+            return datas;
         }
 
         /// <summary>
