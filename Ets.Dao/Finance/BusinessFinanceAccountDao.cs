@@ -103,7 +103,7 @@ where  Id=@Id and IsEnable=1";
             IList<BusinessFinanceAccount> models = new List<BusinessFinanceAccount>();
             const string querysql = @"
 select  Id,BusinessId,TrueName,AccountNo,IsEnable,AccountType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
-from  BusinessFinanceAccount  
+from  BusinessFinanceAccount  (nolock)
 where  BusinessId=@BusinessId and IsEnable=1";  //事物内不加锁
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("BusinessId", businessId);

@@ -128,7 +128,7 @@ namespace Ets.Service.IProvider.Clienter
         ClienterStatusModel GetUserStatus(int UserId, double version);
         /// <summary>
         /// 超人 完成订单
-        /// wc
+        /// wc 
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="orderNo"></param>

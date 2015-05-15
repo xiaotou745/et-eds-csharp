@@ -40,14 +40,13 @@ namespace Ets.Dao.Finance
             const string insertSql = @"
 insert into ClienterBalanceRecord
 (ClienterId,Amount,Status,Balance,RecordType,Operator,WithwardId,RelationNo,Remark)
-values
-(@ClienterId,@Amount,@Status,@Balance,@RecordType,@Operator,@WithwardId,@RelationNo,@Remark)
+select @ClienterId,@Amount,@Status,c.AccountBalance,@RecordType,@Operator,@WithwardId,@RelationNo,@Remark 
+from dbo.clienter as c where Id=@ClienterId
 select @@IDENTITY";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("ClienterId", clienterBalanceRecord.ClienterId);//骑士id
             dbParameters.AddWithValue("Amount", clienterBalanceRecord.Amount);//流水金额
             dbParameters.AddWithValue("Status", clienterBalanceRecord.Status); //流水状态(1、交易成功 2、交易中）
-            dbParameters.AddWithValue("Balance", clienterBalanceRecord.Balance); //交易后余额
             dbParameters.AddWithValue("RecordType", clienterBalanceRecord.RecordType); //交易类型(1佣金 2奖励 3提现 4取消订单赔偿 5无效订单扣款)
             dbParameters.AddWithValue("Operator", clienterBalanceRecord.Operator); //操作人 
             dbParameters.AddWithValue("WithwardId", clienterBalanceRecord.WithwardId); //关联ID

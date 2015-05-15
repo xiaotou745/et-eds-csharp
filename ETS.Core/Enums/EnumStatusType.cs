@@ -45,37 +45,37 @@ namespace ETS.Enums
     public enum GetOrdersStatus
     {
         [DisplayText("成功")]
-        Success=1,     
+        Success = 1,
         [DisplayText("请传递版本号")]
-        NoVersion=0,
+        NoVersion = 0,
         [DisplayText("订单号错误")]
-        ErrOderNo=-1,
+        ErrOderNo = -1,
         [DisplayText("获取订单失败")]
-        FailedGetOrders=-2  
+        FailedGetOrders = -2
     }
 
     public enum GetBussinessStatus
     {
         [DisplayText("成功")]
-        Success=1,
+        Success = 1,
         [DisplayText("请传递版本号")]
-        NoVersion=0,
+        NoVersion = 0,
         [DisplayText("商户Id错误")]
-        ErrOderNo=-1,
+        ErrOderNo = -1,
         [DisplayText("获取商户失败")]
-        FailedGetOrders=-2     
+        FailedGetOrders = -2
     }
     public enum GetClienterStatus
     {
         [DisplayText("成功")]
-        Success=1,
+        Success = 1,
         [DisplayText("请传递版本号")]
-        NoVersion=0,
+        NoVersion = 0,
         [DisplayText("骑士Id错误")]
-        ErrOderNo=-1,
+        ErrOderNo = -1,
         [DisplayText("获取骑士失败")]
-        FailedGetOrders=-2
-      
+        FailedGetOrders = -2
+
     }
     public enum GetOrdersNoLoginStatus
     {
@@ -152,44 +152,45 @@ namespace ETS.Enums
 
     public enum RushOrderStatus
     {
-        Success,
+        [DisplayText("抢单成功")]
+        Success = 1,
         [DisplayText("抢单失败")]
-        Failed,
+        Failed = 0,
         [DisplayText("超人不能为空")]
-        userIdEmpty,
+        userIdEmpty = 100,
         [DisplayText("订单不能为空")]
-        OrderEmpty,
+        OrderEmpty = 101,
         [DisplayText("订单不存在")]
-        OrderIsNotExist,
+        OrderIsNotExist = 102,
         [DisplayText("订单已被抢或者已完成")]
-        OrderIsNotAllowRush,
+        OrderIsNotAllowRush = 103,
         [DisplayText("订单已取消")]
-        OrderHadCancel,
+        OrderHadCancel = 104,
         [DisplayText("您已取消资格")]
-        HadCancelQualification,
+        HadCancelQualification = 105,
         [DisplayText("商户ID不能为空")]
-        BussinessEmpty,
+        BussinessEmpty = 106,
         [DisplayText("请传递版本号")]
-        NoVersion 
+        NoVersion = 107
 
     }
     public enum FinishOrderStatus
     {
-        Success,
+        Success=1,
         [DisplayText("完成订单失败")]
-        Failed,
+        Failed = 0,
         [DisplayText("超人不能为空")]
-        userIdEmpty,
+        userIdEmpty = 101,
         [DisplayText("订单不能为空")]
-        OrderEmpty,
+        OrderEmpty =102,
         [DisplayText("订单不存在")]
-        OrderIsNotExist,
+        OrderIsNotExist=103,
         [DisplayText("此订单已经是完成状态")]
-        OrderIsNotAllowRush,
+        OrderIsNotAllowRush=104,
         [DisplayText("取货码错误")]
-        PickupCodeError,
+        PickupCodeError=105,
         [DisplayText("订单已取消")]
-        OrderHadCancel
+        OrderHadCancel=106
 
     }
 
@@ -263,7 +264,7 @@ namespace ETS.Enums
     public enum UploadIconStatus
     {
         [DisplayText("成功")]
-        Success,
+        Success = 1,
         [DisplayText("未传过来任何变量")]
         NOFormParameter,
         [DisplayText("无效的用户")]
