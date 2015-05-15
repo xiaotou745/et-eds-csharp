@@ -316,18 +316,19 @@ insert into BusinessBalanceRecord
            ,[WithwardId]
            ,[RelationNo]
            ,[Remark])
-select      [BusinessId]
-           ,-ISNULL([Amount],0) Amount
+select      bbr.[BusinessId]
+           ,-ISNULL(bbr.[Amount],0) Amount
            ,@NewStatus [Status]
-           ,-ISNULL([Amount],0)+ISNULL([Balance],0) Balance
+           ,-ISNULL(bbr.[Amount],0)+ISNULL(b.BalancePrice,0) Balance
            ,@NewRecordType [RecordType]
            ,@Operator
            ,getdate() OperateTime
-           ,[WithwardId]
-           ,[RelationNo]
+           ,bbr.[WithwardId]
+           ,bbr.[RelationNo]
            ,@Remark
- from BusinessBalanceRecord (nolock)
- where WithwardId=@WithwardId and Status=@Status and RecordType=@RecordType;");
+ from BusinessBalanceRecord bbr (nolock)
+    join business b (nolock) on b.Id=bbr.BusinessId
+ where bbr.WithwardId=@WithwardId and bbr.Status=@Status and bbr.RecordType=@RecordType;");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);

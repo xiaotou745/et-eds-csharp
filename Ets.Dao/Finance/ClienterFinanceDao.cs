@@ -312,18 +312,19 @@ insert into ClienterBalanceRecord
            ,[WithwardId]
            ,[RelationNo]
            ,[Remark])
-select      [ClienterId]
-           ,-ISNULL([Amount],0) Amount
+select      cbr.[ClienterId]
+           ,-ISNULL(cbr.[Amount],0) Amount
            ,@NewStatus [Status]
-           ,-ISNULL([Amount],0)+ISNULL([Balance],0) Balance
+           ,-ISNULL(cbr.[Amount],0)+ISNULL(c.AccountBalance,0) Balance
            ,@NewRecordType [RecordType]
            ,@Operator
            ,getdate() OperateTime
-           ,[WithwardId]
-           ,[RelationNo]
+           ,cbr.[WithwardId]
+           ,cbr.[RelationNo]
            ,@Remark
- from ClienterBalanceRecord (nolock)
- where WithwardId=@WithwardId and Status=@Status and RecordType=@RecordType;");
+ from ClienterBalanceRecord cbr (nolock)
+    join clienter c (nolock) on c.Id=cbr.ClienterId
+ where cbr.WithwardId=@WithwardId and cbr.Status=@Status and cbr.RecordType=@RecordType;");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);

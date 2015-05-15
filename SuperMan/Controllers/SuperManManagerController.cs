@@ -223,7 +223,6 @@ namespace SuperMan.Controllers
             var dtClienterBalanceRecord = iClienterFinanceProvider.GetClienterBalanceRecordListForExport(criteria);
             if (dtClienterBalanceRecord != null && dtClienterBalanceRecord.Count > 0)
             {
-
                 string filname = "骑士提款流水记录{0}.xls";
                 if (!string.IsNullOrWhiteSpace(criteria.OperateTimeStart))
                 {
@@ -234,7 +233,6 @@ namespace SuperMan.Controllers
             }
             else
             {
-
                 var clienterWithdrawFormModel = cliterProvider.GetClienterDetailById(criteria.ClienterId.ToString());
                 var criteriaNew = new ClienterBalanceRecordSerchCriteria()
                 {
