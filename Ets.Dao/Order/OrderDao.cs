@@ -1055,21 +1055,13 @@ where   a.OriginalOrderNo = @OriginalOrderNo
  SET [Status] = @status,ActualDoneDate=getdate()
 output Inserted.Id,GETDATE(),'{0}','任务已完成',Inserted.clienterId,Inserted.[Status],{1}
 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform]) 
-WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL and Status=2;", SuperPlatform.骑士, (int)SuperPlatform.骑士);
+WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL and Status = 2;", SuperPlatform.骑士, (int)SuperPlatform.骑士);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.Add("@orderNo", SqlDbType.NVarChar);
-            dbParameters.SetValue("@orderNo", orderNo);  //订单号  
-            dbParameters.AddWithValue("@status", ConstValues.ORDER_FINISH);
-
-
+            dbParameters.Add("@orderNo", SqlDbType.NVarChar).Value = orderNo;
+            dbParameters.AddWithValue("@status", ConstValues.ORDER_FINISH); 
             object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters);
-
-
             return ParseHelper.ToInt(executeScalar, -1);
-
-
-
         }
 
         /// <summary>
@@ -1332,11 +1324,50 @@ where   1 = 1
                 parm.Add("@OrderNo", SqlDbType.NVarChar);
                 parm.SetValue("@OrderNo", orderNo);
             }
-
-
-
-
+             
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
+            var list = ConvertDataTableList<OrderListModel>(dt);
+            if (list != null && list.Count > 0)
+            {
+                return list[0];
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// 根据订单号获取订单信息
+        /// 订单id和orderNo传一个就可以
+        /// wc
+        /// </summary>
+        /// <returns></returns>
+        public OrderListModel GetByOrderNo(string orderNo)
+        {
+            string sql = @"
+select top 1
+        o.[Id] ,
+        o.[OrderNo] ,
+        o.[Status] ,
+        c.AccountBalance ,
+        c.Id clienterId ,
+        o.OrderCommission ,
+        o.businessId ,
+        b.GroupId ,
+        o.PickupCode ,
+        o.OrderCount,
+        ISNULL(oo.HadUploadCount,0) HadUploadCount
+from    [order] o with ( nolock )
+        join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
+        join dbo.business b with ( nolock ) on o.businessId = b.Id
+        left join dbo.OrderOther oo with(nolock) on o.Id = oo.OrderId
+where   1 = 1 and o.OrderNo = @OrderNo
+";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@OrderNo", SqlDbType.NVarChar).Value = orderNo;
+
+            var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm); 
             var list = ConvertDataTableList<OrderListModel>(dt);
             if (list != null && list.Count > 0)
             {

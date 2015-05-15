@@ -339,8 +339,7 @@ namespace SuperManWebApi.Controllers
             if (finishResult == "1")  //完成
             {
                 var clienter = iClienterProvider.GetUserInfoByUserId(userId);
-                var model = new FinishOrderResultModel();
-                model.userId = userId;
+                var model = new FinishOrderResultModel {userId = userId};
                 if (clienter.AccountBalance != null)
                     model.balanceAmount = clienter.AccountBalance.Value;
                 else
