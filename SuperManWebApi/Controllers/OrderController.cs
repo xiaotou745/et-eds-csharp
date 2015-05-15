@@ -325,10 +325,11 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="orderNo"></param>
+        /// <param name="version"></param>
         /// <param name="pickupCode"></param>
         /// <returns></returns>
         [HttpPost]
-        public ResultModel<FinishOrderResultModel> Complete(int userId, string orderNo, string pickupCode = null)
+        public ResultModel<FinishOrderResultModel> Complete(int userId, string orderNo,string version, string pickupCode = null)
         {
             if (userId == 0)  //用户id非空验证
                 return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.userIdEmpty);
