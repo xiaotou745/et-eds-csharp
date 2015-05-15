@@ -64,11 +64,11 @@ namespace SuperManWebApi.Controllers
             }
             if (model.BussinessId < 0)//商户Id不合法
             {
-                return ResultModel<BusinessDM>.Conclude(GetBussinessStatus.ErrOderNo);
+                return ResultModel<BusinessDM>.Conclude(GetBussinessStatus.ErrNo);
             }
             if (!_iBusinessProvider.IsExist(model.BussinessId)) //商户不存在
             {
-                return ResultModel<BusinessDM>.Conclude(GetBussinessStatus.ErrOderNo);
+                return ResultModel<BusinessDM>.Conclude(GetBussinessStatus.FailedGet);
             }
 
             #endregion

@@ -72,9 +72,9 @@ namespace ETS.Enums
         [DisplayText("请传递版本号")]
         NoVersion = 0,
         [DisplayText("商户Id错误")]
-        ErrOderNo = -1,
+        ErrNo = -1,
         [DisplayText("获取商户失败")]
-        FailedGetOrders = -2,
+        FailedGet = -2,
         [DisplayText("失败")]
         Failed = 101
     }
@@ -85,9 +85,9 @@ namespace ETS.Enums
         [DisplayText("请传递版本号")]
         NoVersion = 0,
         [DisplayText("骑士Id错误")]
-        ErrOderNo = -1,
+        ErrNo = -1,
         [DisplayText("获取骑士失败")]
-        FailedGetOrders = -2,
+        FailedGet = -2,
         [DisplayText("失败")]
         Failed = 101
 

@@ -1960,7 +1960,7 @@ select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneN
     REPLACE(b.City,'市','') AS pickUpCity,oo.NeedUploadCount,oo.HadUploadCount
 from  dbo.[order] o (nolock)
     join business b (nolock) on b.Id=o.businessId
-    join dbo.OrderOther oo (nolock) on o.Id=oo.orderId
+    left join dbo.OrderOther oo (nolock) on o.Id=oo.orderId
 where  o.Id=@Id ";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);

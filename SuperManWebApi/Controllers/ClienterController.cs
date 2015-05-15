@@ -60,11 +60,11 @@ namespace SuperManWebApi.Controllers
            }
            if (model.ClienterId < 0)//骑士Id不合法
            {
-               return ResultModel<ClienterDM>.Conclude(GetClienterStatus.ErrOderNo);
+               return ResultModel<ClienterDM>.Conclude(GetClienterStatus.ErrNo);
            }
            if (!_iClienterProvider.IsExist(model.ClienterId)) //骑士不存在
            {
-               return ResultModel<ClienterDM>.Conclude(GetClienterStatus.ErrOderNo);
+               return ResultModel<ClienterDM>.Conclude(GetClienterStatus.FailedGet);
            }
            #endregion
 

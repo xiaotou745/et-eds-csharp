@@ -141,7 +141,7 @@ namespace SuperManWebApi.Controllers
             }
             if (!iOrderProvider.IsExist(modelPM.OrderId)) //订单不存在
             {
-                return ResultModel<OrderDM>.Conclude(GetOrdersStatus.ErrOderNo); 
+                return ResultModel<OrderDM>.Conclude(GetOrdersStatus.FailedGetOrders); 
             }
 
             #endregion
