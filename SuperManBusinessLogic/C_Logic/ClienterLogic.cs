@@ -253,7 +253,7 @@ namespace SuperManBusinessLogic.C_Logic
                             }
                             if (!string.IsNullOrWhiteSpace(clienter.Password))
                             {
-                                query.Password = clienter.Password;
+                                query.Password = MD5Helper.MD5(clienter.Password);
                             }
                             if (clienter.BussinessID != null)
                             {
@@ -275,7 +275,9 @@ namespace SuperManBusinessLogic.C_Logic
                             query.City = clienter.City;
                             query.CityCode = clienter.CityCode;
                             query.CityId = clienter.CityId;
+                            db.Configuration.ValidateOnSaveEnabled = false;
                             int i = db.SaveChanges();
+                            db.Configuration.ValidateOnSaveEnabled = true;
                             if (i != 0)
                                 result = true;
                         }
