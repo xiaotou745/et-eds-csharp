@@ -274,6 +274,7 @@ namespace Ets.Service.Provider.Finance
                 temp.RecordTypeStr =
                     ((ClienterBalanceRecordRecordType) Enum.Parse(typeof (ClienterBalanceRecordRecordType),
                         temp.RecordType.ToString(), false)).GetDisplayText(); //交易类型文本
+                temp.YearInfoAbb = temp.YearInfo.Replace("年", ".").Replace("月", "");
                 if (temp.YearInfo == DateTime.Now.Year + "年" + DateTime.Now.Month + "月")
                 {
                     temp.YearInfo = "本月";

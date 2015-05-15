@@ -670,7 +670,7 @@
     //        url: '/finance/Withdrawb',
     //        data: {
     //            "BusinessId": "172",
-    //            "WithdrawPrice": "12",
+    //            "WithdrawPrice": "0",
     //            "FinanceAccountId": "19",
     //            "version": "17882"
     //        },
@@ -695,20 +695,20 @@
     //        error: function () { }
     //    });
     //});
-    //$(function () {
-    //    $.ajax({
-    //        type: 'POST',
-    //        dataType: 'json',
-    //        url: '/Clienter/records',
-    //        data: {
-    //            "ClienterId": "114",
-    //            "version": "123"
-    //        },
-    //        success: function (data) {
-    //            console.log(data);
-    //        },
-    //        error: function () { }
-    //    });
-    //});
+    $(function () {
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: '/Clienter/records',
+            data: {
+                "ClienterId": "114",
+                "version": "123"
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () { }
+        });
+    });
     
 </script>
