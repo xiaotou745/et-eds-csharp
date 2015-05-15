@@ -8,3 +8,5 @@
 	Ets.Statistics
 5、时间补贴服务（3、5、8分钟增加一元）
 	Ets.TaskPlatform
+6、骑士、商家可提现金额
+	Ets.BandCWithdraw
