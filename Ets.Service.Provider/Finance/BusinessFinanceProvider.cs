@@ -94,6 +94,7 @@ namespace Ets.Service.Provider.Finance
                         TrueName = businessFinanceAccount.TrueName,//商户收款户名
                         AccountNo = businessFinanceAccount.AccountNo, //卡号(DES加密)
                         AccountType = businessFinanceAccount.AccountType, //账号类型：
+                        BelongType = businessFinanceAccount.BelongType,//账号类别  0 个人账户 1 公司账户  
                         OpenBank = businessFinanceAccount.OpenBank,//开户行
                         OpenSubBank = businessFinanceAccount.OpenSubBank //开户支行
                     });

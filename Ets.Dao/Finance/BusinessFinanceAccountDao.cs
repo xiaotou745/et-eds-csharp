@@ -81,7 +81,7 @@ where  Id=@Id ";
         {
             BusinessFinanceAccount model = null;
             const string querysql = @"
-select  Id,BusinessId,TrueName,AccountNo,IsEnable,AccountType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
+select  Id,BusinessId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
 from  BusinessFinanceAccount (nolock)
 where  Id=@Id and IsEnable=1";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -104,7 +104,7 @@ where  Id=@Id and IsEnable=1";
         {
             IList<BusinessFinanceAccount> models = new List<BusinessFinanceAccount>();
             const string querysql = @"
-select  Id,BusinessId,TrueName,AccountNo,IsEnable,AccountType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
+select  Id,BusinessId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
 from  BusinessFinanceAccount  (nolock)
 where  BusinessId=@BusinessId and IsEnable=1";  //事物内不加锁
             IDbParameters dbParameters = DbHelper.CreateDbParameters();

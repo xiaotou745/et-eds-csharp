@@ -109,7 +109,7 @@ from  ClienterFinanceAccount (nolock)" + condition;
         {
             ClienterFinanceAccount model = null;
             const string querysql = @"
-select  Id,ClienterId,TrueName,AccountNo,IsEnable,AccountType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
+select  Id,ClienterId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
 from  ClienterFinanceAccount(nolock)  
 where  Id=@Id  and IsEnable=1";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -132,7 +132,7 @@ where  Id=@Id  and IsEnable=1";
         {
             IList<ClienterFinanceAccount> models = new List<ClienterFinanceAccount>();
             const string querysql = @"
-select  Id,ClienterId,TrueName,AccountNo,IsEnable,AccountType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
+select  Id,ClienterId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
 from  ClienterFinanceAccount  
 where  ClienterId=@ClienterId and IsEnable=1";  //事物内不加锁
             IDbParameters dbParameters = DbHelper.CreateDbParameters();

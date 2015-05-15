@@ -77,6 +77,7 @@ namespace Ets.Service.Provider.Finance
                                   TrueName = clienterFinanceAccount.TrueName,//骑士收款户名
                                   AccountNo = clienterFinanceAccount.AccountNo, //卡号(DES加密)
                                   AccountType = clienterFinanceAccount.AccountType, //账号类型：
+                                  BelongType = clienterFinanceAccount.BelongType,//账号类别  0 个人账户 1 公司账户  
                                   OpenBank = clienterFinanceAccount.OpenBank,//开户行
                                   OpenSubBank = clienterFinanceAccount.OpenSubBank //开户支行
                               });
