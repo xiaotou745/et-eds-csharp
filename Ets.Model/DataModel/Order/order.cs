@@ -165,6 +165,12 @@ namespace Ets.Model.DataModel.Order
         /// </summary>
         public double? Latitude { get; set; }
 
+        /// <summary>
+        /// 须上传小票数量
+        /// </summary>
+        public int NeedUploadCount { get; set; }
+
+
 
     }
 }

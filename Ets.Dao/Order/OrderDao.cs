@@ -1917,8 +1917,7 @@ values  ( @OrderNo ,
                     for (int i = 0; i < order.listOrderChild.Count; i++)
                     {
                         DataRow dr = dt.NewRow();                  
-                        dr["OrderId"] = orderId;
-                        ///TODO app传过来ID？
+                        dr["OrderId"] = orderId;                        
                         dr["ChildId"] = order.listOrderChild[i].ChildId;
                         decimal totalPrice = order.listOrderChild[i].GoodPrice + Convert.ToDecimal(order.DistribSubsidy);
                         dr["TotalPrice"] = totalPrice;
@@ -1948,7 +1947,8 @@ values  ( @OrderNo ,
         public order GetById(int id)
         {
             order modle = new order();
-            const string queryOrderSql = @"
+
+            const string querySql = @"
 select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneNo,o.ReceviceAddress,o.ActualDoneDate,o.IsPay,
     o.Amount,o.OrderCommission,o.DistribSubsidy,o.WebsiteSubsidy,o.Remark,o.Status,o.clienterId,o.businessId,o.ReceviceCity,o.ReceviceLongitude,
     o.ReceviceLatitude,o.OrderFrom,o.OriginalOrderId,o.OriginalOrderNo,o.Quantity,o.Weight,o.ReceiveProvince,o.ReceiveArea,o.ReceiveProvinceCode,
@@ -1956,15 +1956,17 @@ select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneN
     o.CommissionFormulaMode,o.Adjustment,o.BusinessCommission,o.SettleMoney,o.DealCount,o.PickupCode,o.OtherCancelReason,o.CommissionType,
     o.CommissionFixValue,o.BusinessGroupId,o.TimeSpan,o.RushOrderLongitude,o.RushOrderLandline,o.FinishOrderLongitude,o.FinishOrderLandline,o.Invoice,
     b.[City] BusinessCity,b.Name BusinessName,b.PhoneNo BusinessPhoneNo ,b.Address BusinessAddress ,b.GroupId, b.Longitude, b.Latitude,
-    REPLACE(b.City,'市','') AS pickUpCity
+    REPLACE(b.City,'市','') AS pickUpCity,oo.NeedUploadCount,oo.HadUploadCount
 from  dbo.[order] o (nolock)
     join business b (nolock) on b.Id=o.businessId
+    join dbo.OrderOther oo (nolock) on o.Id=oo.orderId
 where  o.Id=@Id ";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, queryOrderSql, dbParameters);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, querySql, dbParameters);
             if (dt == null || dt.Rows.Count <= 0)
                 return null;
+
             return MapRows<order>(dt)[0]; 
         }
 
@@ -1978,13 +1980,12 @@ where  o.Id=@Id ";
         public bool IsExist(int id)
         {
             bool isExist;
-            string querySql = @" SELECT COUNT(1)
- FROM   dbo.[order] WITH ( NOLOCK ) 
- WHERE  id = @id";
 
-            ///TODO type
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("id", id);
+            string querySql = @" select COUNT(1)
+ from   dbo.[order] WITH ( NOLOCK ) 
+ where  Id = @id";
+          
+            IDbParameters dbParameters=DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
             isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
 
@@ -2002,7 +2003,10 @@ where  o.Id=@Id ";
         {
             bool isExist;
 
-            const string querysql = @"select  count(1) from  dbo.[order]  where businessId=@businessId and TimeSpan=@TimeSpan ";
+            const string querysql = @"
+select  count(1) 
+from  dbo.[order]  
+where businessId=@businessId and TimeSpan=@TimeSpan ";
             IDbParameters dbSelectParameters = DbHelper.CreateDbParameters();
             dbSelectParameters.AddWithValue("businessId", order.businessId);
             dbSelectParameters.AddWithValue("TimeSpan", order.TimeSpan);

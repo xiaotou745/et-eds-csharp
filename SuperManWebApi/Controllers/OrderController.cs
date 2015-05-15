@@ -41,13 +41,37 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<BusiOrderResultModel> Push(BussinessOrderInfoPM model)
         {
+            order order;            
+            ResultModel<BusiOrderResultModel> currResModel=Verification(model, out order);
+            if(currResModel.Status==PubOrderStatus.VerificationSuccess.GetHashCode())
+            {
+                PubOrderStatus cuStatus = iOrderProvider.AddOrder(order);
+                if (cuStatus == PubOrderStatus.Success)//当前订单执行失败
+                {
+                    BusiOrderResultModel resultModel = new BusiOrderResultModel { userId = model.userId };
+                    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
+                }            
+           }
 
-            #region 验证
+            return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.InvalidPubOrder);
+          
+        }
+
+        /// <summary>
+        /// 订单合法性验证
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150515</UpdateTime>
+        /// <param name="model"></param>
+        /// <param name="order"></param>
+        /// <returns></returns>
+        ResultModel<BusiOrderResultModel> Verification(BussinessOrderInfoPM model, out  order order)
+        {
+            order = null;
             if (!iBusinessProvider.HaveQualification(model.userId))//验证该商户有无发布订单资格 
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.HadCancelQualification);
-            }
-            ///TODO 之前的任务金额10-5000        
+            }                 
             if (model.Amount < 10m)
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountLessThanTen);
@@ -59,16 +83,16 @@ namespace SuperManWebApi.Controllers
             if (model.OrderCount <= 0 || model.OrderCount > 15) //判断录入订单数量是否符合要求
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
-            }           
-            decimal amount=0;
-            for(int i=0;i<model.listOrderChlid.Count;i++)
-            {
-                if(model.listOrderChlid[i].GoodPrice!=null)
-                {
-                    amount+=model.listOrderChlid[i].GoodPrice;
-                }                
             }
-            if(model.Amount!=amount)
+            decimal amount = 0;
+            for (int i = 0; i < model.listOrderChlid.Count; i++)
+            {
+                if (model.listOrderChlid[i].GoodPrice != null)
+                {
+                    amount += model.listOrderChlid[i].GoodPrice;
+                }
+            }
+            if (model.Amount != amount)
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountIsNotEqual);
             }
@@ -77,21 +101,13 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.CountIsNotEqual);
             }
 
-            order order = iOrderProvider.TranslateOrder(model);
-            if (order.CommissionType ==(int)OrderCommissionType.FixedRatio && order.BusinessCommission < 10m) //商户结算比例不能小于10
+            order = iOrderProvider.TranslateOrder(model);
+            if (order.CommissionType == (int)OrderCommissionType.FixedRatio && order.BusinessCommission < 10m) //商户结算比例不能小于10
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusiSettlementRatioError);
             }
-            PubOrderStatus cuStatus = iOrderProvider.AddOrder(order);
 
-            if (cuStatus == PubOrderStatus.Success)//当前订单执行失败
-            {
-                BusiOrderResultModel resultModel = new BusiOrderResultModel { userId = model.userId };
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
-            }            
-
-            return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.InvalidPubOrder);
-            #endregion       
+            return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.VerificationSuccess);
         }
 
         /// <summary>
@@ -102,11 +118,8 @@ namespace SuperManWebApi.Controllers
         /// <param name="model">订单参数实体</param>
         /// <returns></returns>        
         [HttpPost]
-        public ResultModel<OrderDM> GetDetails(OrderPM model)
-        {
-            ///TODO static?
-            degree.longitude = model.longitude;
-            degree.latitude = model.latitude;
+        public ResultModel<OrderDM> GetDetails(OrderPM modelPM)
+        {     
 
             #region 验证
 
@@ -115,18 +128,18 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<OrderDM>.Conclude(GetOrdersStatus.NoVersion);
             }
-            if (model.OrderId < 0)//订单Id不合法
+            if (modelPM.OrderId < 0)//订单Id不合法
             {
                 return ResultModel<OrderDM>.Conclude(GetOrdersStatus.ErrOderNo);
             }
-            if (!iOrderProvider.IsExist(model.OrderId)) //订单不存在
+            if (!iOrderProvider.IsExist(modelPM.OrderId)) //订单不存在
             {
                 return ResultModel<OrderDM>.Conclude(GetOrdersStatus.ErrOderNo); 
             }
 
             #endregion
 
-            OrderDM orderDM= iOrderProvider.GetDetails(model.OrderId);
+            OrderDM orderDM = iOrderProvider.GetDetails(modelPM);
             return ResultModel<OrderDM>.Conclude(GetOrdersStatus.Success, orderDM);          
         }
 

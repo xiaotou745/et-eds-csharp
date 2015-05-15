@@ -44,7 +44,9 @@ namespace ETS.Enums
         [DisplayText("订单金额与子订单总金额不一致")]
         AmountIsNotEqual,
         [DisplayText("订单数量与子订单数量不一致")]
-        CountIsNotEqual
+        CountIsNotEqual,
+        [DisplayText("合法性验证成功")]
+        VerificationSuccess
 
     }
     public enum GetOrdersStatus

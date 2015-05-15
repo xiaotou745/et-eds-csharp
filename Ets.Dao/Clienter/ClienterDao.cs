@@ -1006,16 +1006,19 @@ where  Id=@Id ";
 select  Id,PhoneNo,LoginName,recommendPhone,Password,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
 AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode
 ,AreaCode,CityCode,Province,BussinessID,WorkStatus,AllowWithdrawPrice,HasWithdrawPrice
-from  clienter (nolock) where Id=@Id" ;
-            IDbParameters dbClienterParameters = DbHelper.CreateDbParameters();
-            dbClienterParameters.AddWithValue("Id", id);
+from  clienter (nolock) 
+where Id=@Id" ;
+
+            IDbParameters dbClienterParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);              
             clienterDM = DbHelper.QueryForObject(SuperMan_Read, queryClienterSql, dbClienterParameters, new ClienterRowMapper());
             #endregion
 
             #region 骑士金融账号表
             const string queryCFAccountSql = @"
 select  Id,ClienterId,TrueName,AccountNo,IsEnable,AccountType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
-from  ClienterFinanceAccount (nolock) where ClienterId=@ClienterId  and IsEnable=1";
+from  ClienterFinanceAccount (nolock) 
+where ClienterId=@ClienterId  and IsEnable=1";
+
             IDbParameters dbCFAccountParameters = DbHelper.CreateDbParameters();
             dbCFAccountParameters.AddWithValue("ClienterId", id);
             DataTable dtBFAccount = DbHelper.ExecuteDataTable(SuperMan_Read, queryCFAccountSql, dbCFAccountParameters);            
@@ -1023,12 +1026,12 @@ from  ClienterFinanceAccount (nolock) where ClienterId=@ClienterId  and IsEnable
             foreach (DataRow dataRow in dtBFAccount.Rows)
             {
                 ClienterFinanceAccount bf = new ClienterFinanceAccount();
-                bf.Id = Convert.ToInt32(dataRow["Id"]);
-                bf.ClienterId = Convert.ToInt32(dataRow["ClienterId"]);
+                bf.Id = ParseHelper.ToInt(dataRow["Id"]);
+                bf.ClienterId = ParseHelper.ToInt(dataRow["ClienterId"]);
                 bf.TrueName = dataRow["TrueName"].ToString();
                 bf.AccountNo = ETS.Security.DES.Decrypt(dataRow["AccountNo"].ToString());
-                bf.IsEnable = Convert.ToBoolean(dataRow["IsEnable"]);
-                bf.AccountType = Convert.ToInt32(dataRow["AccountType"]);
+                bf.IsEnable = ParseHelper.ToBool(dataRow["IsEnable"]);
+                bf.AccountType = ParseHelper.ToInt(dataRow["AccountType"]);
                 if (dataRow["OpenBank"] != null && dataRow["OpenBank"] != DBNull.Value)
                 {
                     bf.OpenBank = dataRow["OpenBank"].ToString();
@@ -1038,9 +1041,9 @@ from  ClienterFinanceAccount (nolock) where ClienterId=@ClienterId  and IsEnable
                     bf.OpenSubBank = dataRow["OpenSubBank"].ToString();
                 }
                 bf.CreateBy = dataRow["CreateBy"].ToString();
-                bf.CreateTime = Convert.ToDateTime(dataRow["CreateTime"]);
+                bf.CreateTime = ParseHelper.ToDatetime(dataRow["CreateTime"]);
                 bf.UpdateBy = dataRow["UpdateBy"].ToString();
-                bf.UpdateTime = Convert.ToDateTime(dataRow["UpdateTime"]);
+                bf.UpdateTime = ParseHelper.ToDatetime(dataRow["UpdateTime"]);
                 listCFAccount.Add(bf);
             }            
             clienterDM.listcFAcount = listCFAccount;
@@ -1059,12 +1062,12 @@ from  ClienterFinanceAccount (nolock) where ClienterId=@ClienterId  and IsEnable
         public bool IsExist(int id)
         {
             bool isExist;
-            string querySql = @" SELECT COUNT(1)
- FROM   dbo.[clienter] WITH ( NOLOCK ) 
- WHERE  id = @id";
+            string querySql = @"
+select count(1)
+from   dbo.[clienter] (nolock) 
+where  id = @id";
 
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("id", id);
+            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);              
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
             isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
 

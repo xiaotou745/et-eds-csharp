@@ -131,6 +131,16 @@ namespace Ets.Model.DomainModel.Order
         public string Invoice { get; set; }
         
         /// <summary>
+        /// 须上传小票数量
+        /// </summary>
+        public int NeedUploadCount { get; set; }  
+
+        /// <summary>
+        /// 已上传小票数量
+        /// </summary>
+        public int HadUploadCount { get; set; }  
+   
+        /// <summary>
         /// 子订单集合
         /// </summary>
         public List<OrderChildInfo> listOrderChild { get; set; }
