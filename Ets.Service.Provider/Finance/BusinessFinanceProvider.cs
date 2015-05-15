@@ -210,6 +210,11 @@ namespace Ets.Service.Provider.Finance
             {
                 return  FinanceCardBindB.NoPara;
             }
+            if (cardBindBpm.BelongType == (int)BusinessFinanceAccountBelongType.Conpany
+               && string.IsNullOrWhiteSpace(cardBindBpm.OpenSubBank)) //公司帐户开户支行不能为空
+            {
+                return FinanceCardBindB.BelongTypeError;
+            }
             int count = _businessFinanceAccountDao.GetCountByBusinessId(cardBindBpm.BusinessId);
             if (count > 0) //该商户已绑定过金融账号
             {
@@ -226,8 +231,8 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public ResultModel<object> CardModifyB(CardModifyBPM cardModifyBpm)
         {
-            FinanceCardCardModifyB boolRes = CheckCardModifyB(cardModifyBpm);
-            if (boolRes != FinanceCardCardModifyB.Success)
+            FinanceCardModifyB boolRes = CheckCardModifyB(cardModifyBpm);
+            if (boolRes != FinanceCardModifyB.Success)
             {
                 return ResultModel<object>.Conclude(boolRes);
             }
@@ -255,13 +260,18 @@ namespace Ets.Service.Provider.Finance
         /// </summary>
         /// <param name="cardModifyBpm"></param>
         /// <returns></returns>
-        private  FinanceCardCardModifyB CheckCardModifyB(CardModifyBPM cardModifyBpm)
+        private FinanceCardModifyB CheckCardModifyB(CardModifyBPM cardModifyBpm)
         {
             if (cardModifyBpm == null)
             {
-                return FinanceCardCardModifyB.NoPara;
+                return FinanceCardModifyB.NoPara;
             }
-            return FinanceCardCardModifyB.Success;
+            if (cardModifyBpm.BelongType == (int)BusinessFinanceAccountBelongType.Conpany
+               && string.IsNullOrWhiteSpace(cardModifyBpm.OpenSubBank)) //公司帐户开户支行不能为空
+            {
+                return FinanceCardModifyB.BelongTypeError;
+            }
+            return FinanceCardModifyB.Success;
         }
         #endregion
 
