@@ -9,6 +9,9 @@ namespace SuperMan.Controllers.api
 {
     /// <summary>
     /// 监控服务
+    /// 给运维使用，
+    /// 监控地址：http://myadmin.edaisong.com/api/monitoring
+    /// 返回结果："success"
     /// </summary>
     public class MonitoringController : ApiController
     {

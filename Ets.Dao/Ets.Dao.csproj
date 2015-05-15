@@ -55,6 +55,7 @@
     <Compile Include="Distribution\DistributionDao.cs" />
     <Compile Include="Order\OrderDao.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Statistics\OrderStatisticsDao.cs" />
     <Compile Include="Statistics\StatisticsDao.cs" />
     <Compile Include="Strategy\StrategyDao.cs" />
     <Compile Include="Subsidy\SubsidyDao.cs" />
