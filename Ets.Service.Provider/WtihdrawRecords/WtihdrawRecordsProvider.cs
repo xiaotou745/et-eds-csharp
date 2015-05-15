@@ -11,12 +11,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ets.Dao.Finance;
+using Ets.Model.DataModel.Finance;
+using ETS.Enums;
 using ETS.Util;
 
 namespace Ets.Service.Provider.WtihdrawRecords
 {
     public class WtihdrawRecordsProvider : IWtihdrawRecordsProvider
     {
+        readonly  ClienterBalanceRecordDao clienterBalanceRecordDao = new ClienterBalanceRecordDao();
         /// <summary>
         /// 提现
         /// 窦海超
@@ -39,9 +43,8 @@ namespace Ets.Service.Provider.WtihdrawRecords
                 var  cliterModel = clienterDao.GetUserInfoByUserId(model.UserId);//获取当前用户余额
                 decimal balance = ParseHelper.ToDecimal(cliterModel.AccountBalance, 0);
                 model.Balance = balance;//最新余额
-                bool checkAddwith = withDao.AddWtihdrawRecords(model);//新增提现记录
-
-                bool checkAddrecords = withDao.AddRecords(model);//新增提现流水记录
+                bool checkAddwith = withDao.AddWtihdrawRecords(model);//新增提现记录 
+                bool checkAddrecords = withDao.AddRecords(model);//新增提现流水记录 
                 if (!checkAddwith || !checkAddrecords)
                 {
                     return false;
@@ -80,13 +83,13 @@ namespace Ets.Service.Provider.WtihdrawRecords
 
         }
 
-        /// <summary>
-        /// 增加一条流水记录
-        /// 平扬
-        /// 2015年3月23日
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
+         //<summary>
+         //增加一条流水记录
+         //平扬
+         //2015年3月23日
+         //</summary>
+         //<param name="model"></param>
+         //<returns></returns>
         public bool AddRecords(WithdrawRecordsModel model)
         {
             try

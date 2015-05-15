@@ -506,6 +506,6 @@ namespace Ets.Service.Provider.Finance
             }
             strBuilder.AppendLine("</table>");
             return strBuilder.ToString();
-        }
+        } 
     }
 }
