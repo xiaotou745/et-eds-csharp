@@ -76,7 +76,7 @@ namespace SuperManWebApi.Controllers
         ResultModel<BusiOrderResultModel> Verification(BussinessOrderInfoPM model, out  order order)
         {
             order = null;
-            var version = HttpContext.Current.Request.Form["Version"];
+            var version = model.Version;
             if (string.IsNullOrWhiteSpace(version)) //版本号 
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.NoVersion);
@@ -133,7 +133,7 @@ namespace SuperManWebApi.Controllers
 
             #region 验证
 
-            var version = HttpContext.Current.Request.Form["Version"];
+            var version = modelPM.Version;
             if (string.IsNullOrWhiteSpace(version)) //版本号 
             {
                 return ResultModel<OrderDM>.Conclude(GetOrdersStatus.NoVersion);

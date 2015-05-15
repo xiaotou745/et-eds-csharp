@@ -51,7 +51,7 @@ namespace SuperManWebApi.Controllers
        public ResultModel<ClienterDM> Get(ClienterPM model)
        {
            #region 验证
-           var version = HttpContext.Current.Request.Form["Version"];
+           var version = model.Version;
            if (string.IsNullOrWhiteSpace(version)) //版本号 
            {
                return ResultModel<ClienterDM>.Conclude(GetClienterStatus.NoVersion);
