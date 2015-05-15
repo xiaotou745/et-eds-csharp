@@ -923,8 +923,6 @@ where   oc.OrderId = @OrderId;
             dbParameters.Add("Platform", DbType.Int32, 4).Value = SuperPlatform.骑士.GetHashCode(); 
             object obj = DbHelper.ExecuteScalar(SuperMan_Write, sqlText, dbParameters);
             return ParseHelper.ToInt(obj, 1) == 0 ? true : false;
-
-
         }
 
         /// <summary>

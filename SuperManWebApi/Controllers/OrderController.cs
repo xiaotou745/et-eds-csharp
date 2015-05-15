@@ -294,7 +294,7 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary>
-        /// 
+        /// 骑士抢单
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="orderNo"></param>
@@ -303,7 +303,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [ExecuteTimeLog]
-        public ResultModel<RushOrderResultModel> Receive(int userId, string orderNo,int bussinessId, string Version)
+        public ResultModel<RushOrderResultModel> Receive(int userId, string orderNo,int bussinessId, string version)
         {
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
@@ -313,11 +313,50 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
             }
-            if (string.IsNullOrWhiteSpace(Version))
+            if (string.IsNullOrWhiteSpace(version))
             {
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.NoVersion);
             } 
             return new ClienterProvider().Receive_C(userId, orderNo, bussinessId); 
+        }
+
+        /// <summary>
+        /// 骑士完成订单
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="orderNo"></param>
+        /// <param name="pickupCode"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ResultModel<FinishOrderResultModel> Complete(int userId, string orderNo, string pickupCode = null)
+        {
+            if (userId == 0)  //用户id非空验证
+                return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.userIdEmpty);
+            if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
+                return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderEmpty);
+            //var myorder = new Ets.Dao.Order.OrderDao().GetOrderByNo(orderNo);
+            string finishResult = iClienterProvider.FinishOrder(userId, orderNo, pickupCode);
+            if (finishResult == "1")  //完成
+            {
+                var clienter = iClienterProvider.GetUserInfoByUserId(userId);
+                var model = new FinishOrderResultModel();
+                model.userId = userId;
+                if (clienter.AccountBalance != null)
+                    model.balanceAmount = clienter.AccountBalance.Value;
+                else
+                    model.balanceAmount = 0.0m;
+                return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Success, model);
+            }
+            else if (finishResult == "3")
+            {
+                return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderHadCancel);
+            }
+            else if (finishResult == ETS.Enums.FinishOrderStatus.PickupCodeError.ToString())
+                return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.PickupCodeError);
+            else
+            {
+                return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Failed);
+            }
         }
     }
 }

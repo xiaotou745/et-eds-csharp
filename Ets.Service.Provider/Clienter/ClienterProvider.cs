@@ -872,7 +872,6 @@ namespace Ets.Service.Provider.Clienter
         [ETS.Expand.ActionStatus(typeof(ETS.Enums.RushOrderStatus))]
         public ResultModel<RushOrderResultModel> Receive_C(int userId, string orderNo,int bussinessId)
         {
-           
             //这里可以优化，去掉提前验证用户信息，当失败的时候在去验证 
             OrderListModel model = new OrderListModel()
             {
@@ -895,13 +894,11 @@ namespace Ets.Service.Provider.Clienter
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.Success);
             }
             //else  //失败的时候再去找原因
-            //{
-                
+            //{ 
                 //var myorder = new Ets.Dao.Order.OrderDao().GetOrderDetailByOrderNo(orderNo);
                 //if (myorder == null)
                 //{
-                //    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.OrderIsNotExist);  //订单不存在
-
+                //    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.OrderIsNotExist);  //订单不存在 
                 //}
                 //if (myorder.Status == ConstValues.ORDER_CANCEL)   //判断订单状态是否为 已取消
                 //{
