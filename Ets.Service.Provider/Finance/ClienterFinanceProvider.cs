@@ -128,10 +128,6 @@ namespace Ets.Service.Provider.Finance
             {
                 return  FinanceWithdrawC.NoPara;
             }
-            if (withdrawCpm.WithdrawPrice <= 0)   //提现金额小于等于0 提现有误
-            {
-                return FinanceWithdrawC.WithdrawMoneyError;
-            }
             clienter = _clienterDao.GetById(withdrawCpm.ClienterId);//获取超人信息
             if (clienter == null || clienter.Status == null
                 || clienter.Status != ConstValues.CLIENTER_AUDITPASS)  //骑士状态为非 审核通过不允许 提现

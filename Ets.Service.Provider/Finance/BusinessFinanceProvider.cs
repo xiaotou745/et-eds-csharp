@@ -148,10 +148,6 @@ namespace Ets.Service.Provider.Finance
             {
                 return  FinanceWithdrawB.NoPara;
             }
-            if (withdrawBpm.WithdrawPrice <= 0)   //提现金额小于等于0 提现有误
-            {
-                return  FinanceWithdrawB.WithdrawMoneyError;
-            }
             business = _businessDao.GetById(withdrawBpm.BusinessId);//获取商户信息
             if (business == null || business.Status == null
                 || business.Status != ConstValues.BUSINESS_AUDITPASS)  //商户状态为非 审核通过不允许 提现
