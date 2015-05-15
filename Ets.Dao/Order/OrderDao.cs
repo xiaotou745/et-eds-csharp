@@ -1851,7 +1851,7 @@ values  ( @OrderNo ,
           @SettleMoney ,
           @Adjustment ,
           @TimeSpan
-        );select IDENT_CURRENT('order')", SuperPlatform.商家, ConstValues.PublishOrder, (int)SuperPlatform.商家);
+        );select IDENT_CURRENT('order')", SuperPlatform.商家, ConstValues.PublishOrder, (int)SuperPlatform.商家,0);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@OrderNo", order.OrderNo);
@@ -1897,6 +1897,16 @@ values  ( @OrderNo ,
             }
             #endregion
 
+            #region 写子OrderOther表
+            const string insertOtherSql = @"
+insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount)
+values(@OrderId,@NeedUploadCount,0)";
+            IDbParameters dbOtherParameters = DbHelper.CreateDbParameters();
+            dbOtherParameters.AddWithValue("@OrderId", orderId); //商户ID
+            dbOtherParameters.AddWithValue("@NeedUploadCount", order.OrderCount); //户名
+            DbHelper.ExecuteScalar(SuperMan_Write, insertOtherSql, dbOtherParameters);
+            #endregion
+
             if (order.listOrderChild != null && order.listOrderChild.Count > 0)
             {
                  AddOrderChild(orderId, order);               
@@ -1914,13 +1924,7 @@ values  ( @OrderNo ,
         /// <returns>订单实体</returns>
         void AddOrderChild(int orderId, order order)
         {
-            #region 性能优化 
-            ///TODO 事务问题
-            //var sqlConnection = DbHelper.GetConnectionTxPair(SuperMan_Write).Connection as SqlConnection;
-            //SqlBulkCopy bulk1 = new SqlBulkCopy(sqlConnection)
-            //{
-                
-            //}
+            #region 性能优化          
             using (SqlBulkCopy bulk = new SqlBulkCopy(SuperMan_Write))
             {
                 try
