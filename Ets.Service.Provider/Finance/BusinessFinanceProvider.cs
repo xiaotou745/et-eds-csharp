@@ -77,10 +77,10 @@ namespace Ets.Service.Provider.Finance
             {
                 Business business = new Business();
                 var businessFinanceAccount = new BusinessFinanceAccount();//商户金融账号信息
-                Tuple<bool, FinanceWithdrawB> checkbool = CheckWithdrawB(withdrawBpm, ref business, ref businessFinanceAccount);
-                if (checkbool.Item1 != true)  //验证失败 此次提款操作无效 直接返回相关错误信息
+                FinanceWithdrawB checkbool = CheckWithdrawB(withdrawBpm, ref business, ref businessFinanceAccount);
+                if (checkbool!=FinanceWithdrawB.Success)  //验证失败 此次提款操作无效 直接返回相关错误信息
                 {
-                    return ResultModel<object>.Conclude(checkbool.Item2);
+                    return ResultModel<object>.Conclude(checkbool);
                 }
                 else
                 {
@@ -110,7 +110,6 @@ namespace Ets.Service.Provider.Finance
                         BusinessId = withdrawBpm.BusinessId,//商户Id
                         Amount = -withdrawBpm.WithdrawPrice,//流水金额
                         Status = (int)BusinessBalanceRecordStatus.Tradeing, //流水状态(1、交易成功 2、交易中）
-                        Balance = business.BalancePrice - withdrawBpm.WithdrawPrice, //交易后余额
                         RecordType = (int)BusinessBalanceRecordRecordType.Withdraw,
                         Operator = business.Name,
                         WithwardId = withwardId,
@@ -142,33 +141,29 @@ namespace Ets.Service.Provider.Finance
         /// <param name="business">商户</param>
         /// <param name="businessFinanceAccount">骑士金融账号信息</param>
         /// <returns></returns>
-        private Tuple<bool, FinanceWithdrawB> CheckWithdrawB(WithdrawBPM withdrawBpm, ref Business business,
+        private FinanceWithdrawB CheckWithdrawB(WithdrawBPM withdrawBpm, ref Business business,
             ref  BusinessFinanceAccount businessFinanceAccount)
         {
             if (withdrawBpm == null)
             {
-                return new Tuple<bool, FinanceWithdrawB>(false, FinanceWithdrawB.NoPara);
-            }
-            if (withdrawBpm.WithdrawPrice <= 0)   //提现金额小于等于0 提现有误
-            {
-                return new Tuple<bool, FinanceWithdrawB>(false, FinanceWithdrawB.WithdrawMoneyError);
+                return  FinanceWithdrawB.NoPara;
             }
             business = _businessDao.GetById(withdrawBpm.BusinessId);//获取商户信息
             if (business == null || business.Status == null
                 || business.Status != ConstValues.BUSINESS_AUDITPASS)  //商户状态为非 审核通过不允许 提现
             {
-                return new Tuple<bool, FinanceWithdrawB>(false, FinanceWithdrawB.BusinessError);
+                return FinanceWithdrawB.BusinessError;
             }
             else if (business.AllowWithdrawPrice < withdrawBpm.WithdrawPrice)//可提现金额小于提现金额，提现失败
             {
-                return new Tuple<bool, FinanceWithdrawB>(false, FinanceWithdrawB.MoneyError);
+                return FinanceWithdrawB.MoneyError;
             }
             businessFinanceAccount = _businessFinanceAccountDao.GetById(withdrawBpm.FinanceAccountId);//获取商户金融账号信息
             if (businessFinanceAccount == null || businessFinanceAccount.BusinessId != withdrawBpm.BusinessId)
             {
-                return new Tuple<bool, FinanceWithdrawB>(false, FinanceWithdrawB.FinanceAccountError);
+                return  FinanceWithdrawB.FinanceAccountError;
             }
-            return new Tuple<bool, FinanceWithdrawB>(true, FinanceWithdrawB.Success);
+            return FinanceWithdrawB.Success;
         }
 
         #endregion
@@ -184,10 +179,10 @@ namespace Ets.Service.Provider.Finance
         {
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                Tuple<bool, FinanceCardBindB> checkbool = CheckCardBindB(cardBindBpm);  //验证数据合法性
-                if (checkbool.Item1 == false)
+                FinanceCardBindB checkbool = CheckCardBindB(cardBindBpm);  //验证数据合法性
+                if (checkbool != FinanceCardBindB.Success)
                 {
-                    return ResultModel<object>.Conclude(checkbool.Item2);
+                    return ResultModel<object>.Conclude(checkbool);
                 }
                 int result = _businessFinanceAccountDao.Insert(new BusinessFinanceAccount()
                 {
@@ -212,18 +207,18 @@ namespace Ets.Service.Provider.Finance
         /// </summary>
         /// <param name="cardBindBpm">参数实体</param>
         /// <returns></returns>
-        private Tuple<bool, FinanceCardBindB> CheckCardBindB(CardBindBPM cardBindBpm)
+        private  FinanceCardBindB CheckCardBindB(CardBindBPM cardBindBpm)
         {
             if (cardBindBpm == null)
             {
-                return new Tuple<bool, FinanceCardBindB>(false, FinanceCardBindB.NoPara);
+                return  FinanceCardBindB.NoPara;
             }
             int count = _businessFinanceAccountDao.GetCountByBusinessId(cardBindBpm.BusinessId);
             if (count > 0) //该商户已绑定过金融账号
             {
-                return new Tuple<bool, FinanceCardBindB>(false, FinanceCardBindB.Exists);
+                return  FinanceCardBindB.Exists;
             }
-            return new Tuple<bool, FinanceCardBindB>(true, FinanceCardBindB.Success);
+            return FinanceCardBindB.Success;
         }
 
 
@@ -234,10 +229,10 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public ResultModel<object> CardModifyB(CardModifyBPM cardModifyBpm)
         {
-            Tuple<bool, FinanceCardCardModifyB> checkbool = CheckCardModifyB(cardModifyBpm);  //验证数据合法性
-            if (checkbool.Item1 == false)
+            FinanceCardCardModifyB boolRes = CheckCardModifyB(cardModifyBpm);
+            if (boolRes != FinanceCardCardModifyB.Success)
             {
-                return ResultModel<object>.Conclude(checkbool.Item2);
+                return ResultModel<object>.Conclude(boolRes);
             }
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
@@ -262,13 +257,13 @@ namespace Ets.Service.Provider.Finance
         /// </summary>
         /// <param name="cardModifyBpm"></param>
         /// <returns></returns>
-        private Tuple<bool, FinanceCardCardModifyB> CheckCardModifyB(CardModifyBPM cardModifyBpm)
+        private  FinanceCardCardModifyB CheckCardModifyB(CardModifyBPM cardModifyBpm)
         {
             if (cardModifyBpm == null)
             {
-                return new Tuple<bool, FinanceCardCardModifyB>(false, FinanceCardCardModifyB.NoPara);
+                return FinanceCardCardModifyB.NoPara;
             }
-            return new Tuple<bool, FinanceCardCardModifyB>(true, FinanceCardCardModifyB.Success);
+            return FinanceCardCardModifyB.Success;
         }
         #endregion
 
@@ -297,6 +292,7 @@ namespace Ets.Service.Provider.Finance
                 temp.RecordTypeStr =
                     ((BusinessBalanceRecordRecordType)Enum.Parse(typeof(BusinessBalanceRecordRecordType),
                         temp.RecordType.ToString(), false)).GetDisplayText(); //交易类型文本
+                temp.YearInfoAbb = temp.YearInfo.Replace("年", ".").Replace("月", "");
                 if (temp.YearInfo == DateTime.Now.Year + "年" + DateTime.Now.Month + "月")
                 {
                     temp.YearInfo = "本月";

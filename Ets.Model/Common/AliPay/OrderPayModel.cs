@@ -9,6 +9,10 @@ namespace Ets.Model.Common.AliPay
     public class OrderPayModel
     {
         /// <summary>
+        /// 产品ID
+        /// </summary>
+        public int productId { get; set; }
+        /// <summary>
         /// 订单ID ,看好，不是订单号
         /// </summary>
         public int orderId { get; set; }
