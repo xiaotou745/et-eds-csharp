@@ -463,7 +463,7 @@ namespace Ets.Service.Provider.Finance
             //输出数据.
             foreach (var item in list)
             {
-                strBuilder.AppendLine(string.Format("<tr><td>'{0}'</td>", item.ClienterName));
+                strBuilder.AppendLine(string.Format("<tr><td>{0}</td>", item.ClienterName));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.ClienterPhoneNo));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OpenBank));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.TrueName));
