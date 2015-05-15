@@ -114,6 +114,10 @@ namespace SuperManWebApi.Models.Business
         /// 送餐时间
         /// </summary>
         public DateTime SongCanDate { get; set; }
+        /// <summary>
+        /// 取餐具备注
+        /// </summary>
+        public string QuCanJuRemark { get; set; }
 
 
     }
@@ -169,7 +173,7 @@ namespace SuperManWebApi.Models.Business
 
             to.ReceviceAddress = from.Receive_Address;
 
-
+            to.QuCanJuRemark = from.QuCanJuRemark;
             to.OrderFrom = from.OrderFrom;
             to.Quantity = from.Quantity;
             to.OriginalOrderNo = from.OriginalOrderNo;

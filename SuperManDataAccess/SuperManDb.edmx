@@ -219,6 +219,7 @@
           <Property Name="SongCanDate" Type="datetime" Precision="0" />
           <Property Name="RushOrderDate" Type="datetime" Precision="0" />
           <Property Name="IsPrint" Type="tinyint" />
+          <Property Name="QuCanJuRemark" Type="varchar" MaxLength="4000" />
         </EntityType>
         <EntityType Name="orderlog">
           <Key>
@@ -608,6 +609,7 @@
           <NavigationProperty Name="business" Relationship="supermanModel.businessId" FromRole="order" ToRole="business" />
           <Property Name="RushOrderDate" Type="DateTime" />
           <Property Name="IsPrint" Type="SByte" />
+          <Property Name="QuCanJuRemark" Type="String" MaxLength="1000" Unicode="false" FixedLength="false" />
         </EntityType>
         <EntityType Name="orderlog">
           <Key>
@@ -915,6 +917,7 @@
           <EntitySetMapping Name="order">
             <EntityTypeMapping TypeName="supermanModel.order">
               <MappingFragment StoreEntitySet="order">
+                <ScalarProperty Name="QuCanJuRemark" ColumnName="QuCanJuRemark" />
                 <ScalarProperty Name="IsPrint" ColumnName="IsPrint" />
                 <ScalarProperty Name="RushOrderDate" ColumnName="RushOrderDate" />
                 <ScalarProperty Name="SongCanDate" ColumnName="SongCanDate" />

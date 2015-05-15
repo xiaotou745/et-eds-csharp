@@ -54,5 +54,9 @@ namespace SuperManCommonModel.Models
         /// 商户ID
         /// </summary>
         public int BusiId { get; set; }
+        /// <summary>
+        /// 取餐具备注
+        /// </summary>
+        public string QuCanJuRemark { get; set; }
     }
 }

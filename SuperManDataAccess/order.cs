@@ -51,6 +51,7 @@ namespace SuperManDataAccess
         public Nullable<System.DateTime> SongCanDate { get; set; }
         public Nullable<System.DateTime> RushOrderDate { get; set; }
         public Nullable<sbyte> IsPrint { get; set; }
+        public string QuCanJuRemark { get; set; }
     
         public virtual business business { get; set; }
     }
