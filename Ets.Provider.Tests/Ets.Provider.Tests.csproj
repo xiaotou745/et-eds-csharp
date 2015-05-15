@@ -31,16 +31,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Common.Logging">
-      <HintPath>..\..\..\..\..\工作\sb\sj.biyao.com\trunk\externals\Libs\Common.Logging.dll</HintPath>
+      <HintPath>..\packages\Common.Logging.2.0.0\lib\2.0\Common.Logging.dll</HintPath>
     </Reference>
     <Reference Include="Common.Logging.Log4Net">
-      <HintPath>..\..\..\..\..\工作\sb\sj.biyao.com\trunk\externals\Libs\Common.Logging.Log4Net.dll</HintPath>
+      <HintPath>..\packages\Common.Logging.Log4Net.2.0.2\lib\net20\Common.Logging.Log4Net.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
-      <HintPath>..\..\..\..\..\工作\sb\sj.biyao.com\trunk\externals\Libs\log4net.dll</HintPath>
+      <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>..\..\..\..\..\工作\sb\sj.biyao.com\trunk\externals\Libs\nunit.framework.dll</HintPath>
+      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -66,7 +66,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="log4net.config" />
+    <None Include="log4net.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
