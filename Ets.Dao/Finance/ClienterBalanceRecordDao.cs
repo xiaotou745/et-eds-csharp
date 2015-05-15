@@ -115,7 +115,15 @@ from  ClienterBalanceRecord (nolock)" + condition;
             IList<FinanceRecordsDM> models = new List<FinanceRecordsDM>();
             const string querysql = @"
 select  Id,ClienterId as UserId,Amount,Status,Balance,RecordType,Operator,OperateTime,WithwardId,RelationNo,Remark,
- convert(varchar(4),DATEPART(Year,OperateTime))+'年'+convert(varchar(4),DATEPART(month,OperateTime)) +'月' as YearInfo
+substring(convert(varchar(100),OperateTime,24),1,5) as TimeInfo,
+case convert(varchar(100), OperateTime, 23) 
+	when convert(varchar(100), getdate(), 23) then '今日'
+    else substring(convert(varchar(100), OperateTime, 23),6,5) end
+as DateInfo,
+case substring(convert(varchar(100), OperateTime, 23),1,7) 
+	when substring(convert(varchar(100), getdate(), 23),1,7)  then '本月'
+    else convert(varchar(4),datepart(Year,OperateTime))+'年'+convert(varchar(4),datepart(month,OperateTime)) +'月' end
+as MonthInfo
 from  ClienterBalanceRecord (nolock)
 where  ClienterId=@ClienterId 
 order by Id desc";

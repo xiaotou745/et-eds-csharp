@@ -34,8 +34,8 @@ namespace Ets.Dao.Finance
         public int Insert(BusinessFinanceAccount businessFinanceAccount)
         {
             const string insertSql = @"
-insert into BusinessFinanceAccount(BusinessId,TrueName,AccountNo,IsEnable,AccountType,OpenBank,OpenSubBank,CreateBy,UpdateBy)
-values(@BusinessId,@TrueName,@AccountNo,@IsEnable,@AccountType,@OpenBank,@OpenSubBank,@CreateBy,@UpdateBy)
+insert into BusinessFinanceAccount(BusinessId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,UpdateBy)
+values(@BusinessId,@TrueName,@AccountNo,@IsEnable,@AccountType,@BelongType,@OpenBank,@OpenSubBank,@CreateBy,@UpdateBy)
 select @@IDENTITY";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("BusinessId", businessFinanceAccount.BusinessId); //商户ID
@@ -43,6 +43,7 @@ select @@IDENTITY";
             dbParameters.AddWithValue("AccountNo", businessFinanceAccount.AccountNo); //卡号(DES加密)
             dbParameters.AddWithValue("IsEnable", businessFinanceAccount.IsEnable);  //是否有效(1：有效 0：无效）
             dbParameters.AddWithValue("AccountType", businessFinanceAccount.AccountType); //账号类型：(1网银 2支付宝 3微信 4财付通 5百度钱包）
+            dbParameters.AddWithValue("BelongType", businessFinanceAccount.BelongType); //账号类别  0 个人账户 1 公司账户
             dbParameters.AddWithValue("OpenBank", businessFinanceAccount.OpenBank); //开户行
             dbParameters.AddWithValue("OpenSubBank", businessFinanceAccount.OpenSubBank); //开户支行
             dbParameters.AddWithValue("CreateBy", businessFinanceAccount.CreateBy); //添加人
@@ -59,13 +60,14 @@ select @@IDENTITY";
         {
             const string updateSql = @"
 update  BusinessFinanceAccount
-set  TrueName=@TrueName,AccountNo=@AccountNo,OpenBank=@OpenBank,
+set  TrueName=@TrueName,AccountNo=@AccountNo,BelongType=@BelongType,OpenBank=@OpenBank,
 OpenSubBank=@OpenSubBank,UpdateBy=@UpdateBy
 where  Id=@Id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Id", businessFinanceAccount.Id);
             dbParameters.AddWithValue("TrueName", businessFinanceAccount.TrueName);
             dbParameters.AddWithValue("AccountNo", businessFinanceAccount.AccountNo);
+            dbParameters.AddWithValue("BelongType", businessFinanceAccount.BelongType); //账号类别  0 个人账户 1 公司账户
             dbParameters.AddWithValue("OpenBank", businessFinanceAccount.OpenBank);
             dbParameters.AddWithValue("OpenSubBank", businessFinanceAccount.OpenSubBank);
             dbParameters.AddWithValue("UpdateBy", businessFinanceAccount.UpdateBy);
@@ -79,7 +81,7 @@ where  Id=@Id ";
         {
             BusinessFinanceAccount model = null;
             const string querysql = @"
-select  Id,BusinessId,TrueName,AccountNo,IsEnable,AccountType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
+select  Id,BusinessId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
 from  BusinessFinanceAccount (nolock)
 where  Id=@Id and IsEnable=1";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -102,7 +104,7 @@ where  Id=@Id and IsEnable=1";
         {
             IList<BusinessFinanceAccount> models = new List<BusinessFinanceAccount>();
             const string querysql = @"
-select  Id,BusinessId,TrueName,AccountNo,IsEnable,AccountType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
+select  Id,BusinessId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
 from  BusinessFinanceAccount  (nolock)
 where  BusinessId=@BusinessId and IsEnable=1";  //事物内不加锁
             IDbParameters dbParameters = DbHelper.CreateDbParameters();

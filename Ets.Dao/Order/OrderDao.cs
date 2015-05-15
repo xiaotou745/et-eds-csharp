@@ -208,7 +208,7 @@ namespace Ets.Dao.Order
             if (dt == null || dt.Rows.Count <= 0)
                 return null;
             return MapRows<OrderListModel>(dt)[0];
-        }   
+        }
 
         #region  第三方对接 物流订单接收接口  add by caoheyang 201503167
         /// <summary>
@@ -289,9 +289,9 @@ namespace Ets.Dao.Order
             dbParameters.AddWithValue("@CommissionFixValue", paramodel.CommissionFixValue);//固定金额
             dbParameters.AddWithValue("@BusinessGroupId", paramodel.BusinessGroupId);//分组ID
 
-            object result = DbHelper.ExecuteScalar(SuperMan_Write, insertOrdersql, dbParameters);                
+            object result = DbHelper.ExecuteScalar(SuperMan_Write, insertOrdersql, dbParameters);
             #endregion
-         
+
             AddOrderDetail(paramodel, orderNo); //操作插入OrderDetail表
 
             #region 定入订单子表
@@ -301,7 +301,7 @@ namespace Ets.Dao.Order
                 AddOrderChild(paramodel, orderId);
             }
             #endregion
-            
+
             return orderNo;
         }
 
@@ -391,7 +391,7 @@ namespace Ets.Dao.Order
             }
         }
 
-        private void AddOrderChild(CreatePM_OpenApi paramodel,  int orderId)
+        private void AddOrderChild(CreatePM_OpenApi paramodel, int orderId)
         {
             const string insertOrderChildSql = @"
 insert into OrderChild
@@ -692,7 +692,7 @@ values( @OrderId,
                                     LEFT JOIN OrderOther oo WITH (NOLOCK) ON oo.OrderId=o.Id
                                     LEFT JOIN [group] g WITH ( NOLOCK ) ON g.Id = o.orderfrom
                                     WHERE 1=1 ";
-            #endregion 
+            #endregion
             IDbParameters parm = DbHelper.CreateDbParameters();
             if (!string.IsNullOrWhiteSpace(orderNo))
             {
@@ -840,7 +840,7 @@ where   oc.OrderId = @OrderId;
             else
             {
                 return new OrderListModel();
-            } 
+            }
         }
         /// <summary>
         /// 通过订单号获取该订单的详情数据
@@ -858,7 +858,7 @@ where   oc.OrderId = @OrderId;
                 dataRow => new OrderListModel
                 {
                     businessId = ParseHelper.ToInt(dataRow["businessId"], 0),
-                    Status = (byte) ParseHelper.ToInt(dataRow["Status"], 0)
+                    Status = (byte)ParseHelper.ToInt(dataRow["Status"], 0)
                 });
             //DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             //if (!dt.HasData())
@@ -920,7 +920,7 @@ where   oc.OrderId = @OrderId;
             dbParameters.Add("clienterId", DbType.Int32, 4).Value = order.clienterId;// userId;
             dbParameters.Add("Status", DbType.Int32, 4).Value = ConstValues.ORDER_ACCEPT;
             dbParameters.Add("OrderNo", DbType.String, 50).Value = order.OrderNo;
-            dbParameters.Add("Platform", DbType.Int32, 4).Value = SuperPlatform.骑士.GetHashCode(); 
+            dbParameters.Add("Platform", DbType.Int32, 4).Value = SuperPlatform.骑士.GetHashCode();
             object obj = DbHelper.ExecuteScalar(SuperMan_Write, sqlText, dbParameters);
             return ParseHelper.ToInt(obj, 1) == 0 ? true : false;
         }
@@ -1059,7 +1059,7 @@ WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL and Status = 2;", SuperPlat
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@orderNo", SqlDbType.NVarChar).Value = orderNo;
-            dbParameters.AddWithValue("@status", ConstValues.ORDER_FINISH); 
+            dbParameters.AddWithValue("@status", ConstValues.ORDER_FINISH);
             object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters);
             return ParseHelper.ToInt(executeScalar, -1);
         }
@@ -1324,7 +1324,7 @@ where   1 = 1
                 parm.Add("@OrderNo", SqlDbType.NVarChar);
                 parm.SetValue("@OrderNo", orderNo);
             }
-             
+
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
             var list = ConvertDataTableList<OrderListModel>(dt);
             if (list != null && list.Count > 0)
@@ -1368,7 +1368,7 @@ where   1 = 1 and o.OrderNo = @OrderNo
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderNo", SqlDbType.NVarChar).Value = orderNo;
 
-            var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm); 
+            var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             var list = ConvertDataTableList<OrderListModel>(dt);
             if (list != null && list.Count > 0)
             {
@@ -1911,7 +1911,7 @@ values  ( @OrderNo ,
 
             if (order.listOrderChild != null && order.listOrderChild.Count > 0)
             {
-                 AddOrderChild(orderId, order);               
+                AddOrderChild(orderId, order);
             }
 
             return orderId;
@@ -1925,12 +1925,12 @@ values  ( @OrderNo ,
         /// <returns>订单实体</returns>
         void AddOrderChild(int orderId, Model.DataModel.Order.order order)
         {
-            #region 性能优化 
+            #region 性能优化
             ///TODO 事务问题
             //var sqlConnection = DbHelper.GetConnectionTxPair(SuperMan_Write).Connection as SqlConnection;
             //SqlBulkCopy bulk1 = new SqlBulkCopy(sqlConnection)
             //{
-                
+
             //}
             using (SqlBulkCopy bulk = new SqlBulkCopy(SuperMan_Write))
             {
@@ -1945,37 +1945,37 @@ values  ( @OrderNo ,
                     bulk.ColumnMappings.Add("GoodPrice", "GoodPrice");
                     bulk.ColumnMappings.Add("DeliveryPrice", "DeliveryPrice");
                     bulk.ColumnMappings.Add("CreateBy", "CreateBy");
-                    bulk.ColumnMappings.Add("UpdateBy", "UpdateBy");              
+                    bulk.ColumnMappings.Add("UpdateBy", "UpdateBy");
 
-                    DataTable dt = new DataTable();            
+                    DataTable dt = new DataTable();
                     dt.Columns.Add(new DataColumn("OrderId", typeof(int)));
                     dt.Columns.Add(new DataColumn("ChildId", typeof(int)));
                     dt.Columns.Add(new DataColumn("TotalPrice", typeof(decimal)));
                     dt.Columns.Add(new DataColumn("GoodPrice", typeof(decimal)));
-                    dt.Columns.Add(new DataColumn("DeliveryPrice", typeof(decimal)));              
-                    dt.Columns.Add(new DataColumn("CreateBy", typeof(string)));                
-                    dt.Columns.Add(new DataColumn("UpdateBy", typeof(string)));                              
+                    dt.Columns.Add(new DataColumn("DeliveryPrice", typeof(decimal)));
+                    dt.Columns.Add(new DataColumn("CreateBy", typeof(string)));
+                    dt.Columns.Add(new DataColumn("UpdateBy", typeof(string)));
 
                     for (int i = 0; i < order.listOrderChild.Count; i++)
                     {
-                        DataRow dr = dt.NewRow();                  
+                        DataRow dr = dt.NewRow();
                         dr["OrderId"] = orderId;
                         ///TODO app传过来ID？
                         dr["ChildId"] = order.listOrderChild[i].ChildId;
                         decimal totalPrice = order.listOrderChild[i].GoodPrice + Convert.ToDecimal(order.DistribSubsidy);
                         dr["TotalPrice"] = totalPrice;
                         dr["GoodPrice"] = order.listOrderChild[i].GoodPrice;
-                        dr["DeliveryPrice"] = order.DistribSubsidy;                   
-                        dr["CreateBy"] = order.BusinessName;                   
-                        dr["UpdateBy"] = order.BusinessName;                                    
+                        dr["DeliveryPrice"] = order.DistribSubsidy;
+                        dr["CreateBy"] = order.BusinessName;
+                        dr["UpdateBy"] = order.BusinessName;
                         dt.Rows.Add(dr);
-                    }                
+                    }
                     bulk.WriteToServer(dt);
                 }
                 catch (Exception err)
-                {                   
+                {
                     throw err;
-                }            
+                }
             }
             #endregion
         }
@@ -2007,7 +2007,7 @@ where  o.Id=@Id ";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, queryOrderSql, dbParameters);
             if (dt == null || dt.Rows.Count <= 0)
                 return null;
-            return MapRows<order>(dt)[0]; 
+            return MapRows<order>(dt)[0];
         }
 
         /// <summary>
@@ -2032,6 +2032,47 @@ where  o.Id=@Id ";
 
             return isExist;
         }
-        
+
+        /// <summary>
+        /// 查询X小时内没有加入可提现金额的订单
+        /// 窦海超
+        /// 2015年5月15日 16:40:05
+        /// </summary>
+        /// <param name="hour">多少小时内的数据</param>
+        public IList<NonJoinWithdrawModel> GetNonJoinWithdraw(int hour)
+        {
+            string sql = @"
+select 
+o.id,o.amount, 
+o.orderCommission clienterPrice, --给骑士
+o.Amount-o.SettleMoney businessPrice,--给商家
+o.clienterId, o.businessId
+from    dbo.[order] o ( nolock )
+        join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
+where   oo.IsJoinWithdraw = 0
+        and oo.HadUploadCount = o.OrderCount --订单量=已上传
+        and o.Status = 1 --已完成订单
+        and datediff(hour, o.ActualDoneDate, getdate()) >= @hour";
+            IDbParameters parm = DbHelper.CreateDbParameters("@hour", DbType.Int32, 4, hour);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (!dt.HasData())
+            {
+                return new List<NonJoinWithdrawModel>();
+            }
+            return MapRows<NonJoinWithdrawModel>(dt);
+        }
+
+        /// <summary>
+        /// 更新订单是否加入已提现
+        /// 窦海超
+        /// 2015年5月15日 17:08:27
+        /// </summary>
+        /// <param name="orderId"></param>
+        public void UpdateJoinWithdraw(int orderId)
+        {
+            string sql = @"update dbo.OrderOther set IsJoinWithdraw = 1 where OrderId=@orderId";
+            IDbParameters parm = DbHelper.CreateDbParameters("orderId", DbType.Int32, 4,orderId);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
+        }
     }
 }

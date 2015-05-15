@@ -1786,5 +1786,21 @@ WHERE b.Id = @BusinessId  ";
         //}
 
         //#endregion 
+
+        /// <summary>
+        /// 更改可提现金额
+        /// 窦海超
+        /// 2015年5月15日 16:56:37
+        /// </summary>
+        /// <param name="price">金额</param>
+        /// <param name="clienterId">可提现金额的骑士ID</param>
+        public void UpdateAllowWithdrawPrice(decimal price, int businessId)
+        {
+            string sql = "update dbo.business set AllowWithdrawPrice=AllowWithdrawPrice+@price where Id=@businessId";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("businessId", DbType.Int32, 4).Value = businessId;
+            parm.Add("price", DbType.Decimal, 18).Value = price;
+            DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
+        }
     }
 }
