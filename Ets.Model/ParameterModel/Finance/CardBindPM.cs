@@ -38,6 +38,11 @@ namespace Ets.Model.ParameterModel.Finance
         public int AccountType { get; set; }
 
         /// <summary>
+        /// 账号类别  0 个人账户 1 公司账户  
+        /// </summary>
+        public int BelongType { get; set; }
+
+        /// <summary>
         /// 开户行
         /// </summary>
         [Required(ErrorMessage = "开户行不能为空")]

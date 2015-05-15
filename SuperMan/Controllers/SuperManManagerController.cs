@@ -185,7 +185,7 @@ namespace SuperMan.Controllers
         /// 查看骑士详细信息
         /// danny-20150513
         /// </summary>
-        /// <param name="orderId"></param>
+        /// <param name="clienterId">骑士Id</param>
         /// <returns></returns>
         public ActionResult ClienterDetail(string clienterId)
         {
@@ -203,7 +203,7 @@ namespace SuperMan.Controllers
         /// 查看骑士余额流水记录
         /// danny-20150513
         /// </summary>
-        /// <param name="orderId"></param>
+        /// <param name="criteria"></param>
         /// <returns></returns>
         public ActionResult ClienterBalanceRecord(ClienterBalanceRecordSerchCriteria criteria)
         {
@@ -214,16 +214,14 @@ namespace SuperMan.Controllers
         /// 导出骑士余额流水记录
         /// danny-20150513
         /// </summary>
-        /// <param name="orderId"></param>
         /// <returns></returns>
         public ActionResult ExportClienterBalanceRecord()
         {
-            var criteria = new Ets.Model.ParameterModel.Finance.ClienterBalanceRecordSerchCriteria();
+            var criteria = new ClienterBalanceRecordSerchCriteria();
             TryUpdateModel(criteria);
             var dtClienterBalanceRecord = iClienterFinanceProvider.GetClienterBalanceRecordListForExport(criteria);
             if (dtClienterBalanceRecord != null && dtClienterBalanceRecord.Count > 0)
             {
-
                 string filname = "骑士提款流水记录{0}.xls";
                 if (!string.IsNullOrWhiteSpace(criteria.OperateTimeStart))
                 {
@@ -234,7 +232,6 @@ namespace SuperMan.Controllers
             }
             else
             {
-
                 var clienterWithdrawFormModel = cliterProvider.GetClienterDetailById(criteria.ClienterId.ToString());
                 var criteriaNew = new ClienterBalanceRecordSerchCriteria()
                 {
