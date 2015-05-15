@@ -58,5 +58,6 @@ namespace SuperManCommonModel.Models
         /// 取餐具备注
         /// </summary>
         public string QuCanJuRemark { get; set; }
+        public string Remark { get; set; }
     }
 }

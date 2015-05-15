@@ -507,6 +507,7 @@ namespace SuperManBusinessLogic.Order_Logic
                                   OrderType = o.OrderType.Value,
                                   BusiId = o.businessId.Value,
                                   QuCanJuRemark = o.QuCanJuRemark,
+                                  Remark = o.Remark,
                                   //RushOrderTime = o.RushOrderDate.Value.ToString("yyyy-MM-dd HH:mm:ss"),
                                   BussinessName = b.Name
                               };
