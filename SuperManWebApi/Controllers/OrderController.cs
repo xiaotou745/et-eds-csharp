@@ -20,8 +20,12 @@ using Ets.Model.DomainModel.Order;
 using Ets.Service.IProvider.Clienter;
 using Ets.Service.Provider.Clienter;
 using Ets.Model.DomainModel.Clienter;
+using SuperManWebApi.App_Start.Filters;
 namespace SuperManWebApi.Controllers
 {
+    [ExecuteTimeLog]
+    [Validate]
+    [ApiVersion]
     /// <summary>
     /// TODO:每个API的日志、异常之类
     /// </summary>
@@ -41,20 +45,26 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<BusiOrderResultModel> Push(BussinessOrderInfoPM model)
         {
-            order order;            
-            ResultModel<BusiOrderResultModel> currResModel=Verification(model, out order);
-            if(currResModel.Status==PubOrderStatus.VerificationSuccess.GetHashCode())
+            try
             {
-                PubOrderStatus cuStatus = iOrderProvider.AddOrder(order);
-                if (cuStatus == PubOrderStatus.Success)//当前订单执行失败
+                order order;
+                ResultModel<BusiOrderResultModel> currResModel = Verification(model, out order);
+                if (currResModel.Status == PubOrderStatus.VerificationSuccess.GetHashCode())
                 {
-                    BusiOrderResultModel resultModel = new BusiOrderResultModel { userId = model.userId };
-                    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
-                }            
-           }
-
-            return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.InvalidPubOrder);
-          
+                    PubOrderStatus cuStatus = iOrderProvider.AddOrder(order);
+                    if (cuStatus == PubOrderStatus.Success)//当前订单执行失败
+                    {
+                        BusiOrderResultModel resultModel = new BusiOrderResultModel { userId = model.userId };
+                        return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
+                    }
+                }
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.InvalidPubOrder);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter("ResultModel<BusiOrderResultModel> Push()方法出错", new { obj = "时间："+DateTime.Now.ToString()  + ex.Message });
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.InvalidPubOrder);
+            }           
         }
 
         /// <summary>
@@ -86,11 +96,8 @@ namespace SuperManWebApi.Controllers
             }
             decimal amount = 0;
             for (int i = 0; i < model.listOrderChlid.Count; i++)
-            {
-                if (model.listOrderChlid[i].GoodPrice != null)
-                {
-                    amount += model.listOrderChlid[i].GoodPrice;
-                }
+            {               
+               amount += model.listOrderChlid[i].GoodPrice;              
             }
             if (model.Amount != amount)
             {
@@ -139,8 +146,16 @@ namespace SuperManWebApi.Controllers
 
             #endregion
 
-            OrderDM orderDM = iOrderProvider.GetDetails(modelPM);
-            return ResultModel<OrderDM>.Conclude(GetOrdersStatus.Success, orderDM);          
+            try
+            {
+                OrderDM orderDM = iOrderProvider.GetDetails(modelPM);
+                return ResultModel<OrderDM>.Conclude(GetOrdersStatus.Success, orderDM);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(" ResultModel<OrderDM> GetDetails", new { obj = "时间：" + DateTime.Now.ToString() + ex.Message });
+                return ResultModel<OrderDM>.Conclude(GetOrdersStatus.Failed);
+            }     
         }
 
         /// <summary>

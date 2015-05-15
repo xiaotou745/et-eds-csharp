@@ -24,6 +24,8 @@ namespace SuperManWebApi.Controllers
     /// 骑士相关接口 add by caoheyang
     /// </summary>
     [ExecuteTimeLog]
+    [Validate]
+    [ApiVersion]
     public class ClienterController : ApiController
     {
         private readonly IClienterFinanceProvider _iClienterFinanceProvider = new ClienterFinanceProvider();
@@ -34,9 +36,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model">查询参数实体</param>
         /// <returns></returns>
-        [HttpPost]
-        [Validate]
-        [ApiVersion]
+        [HttpPost]   
         public ResultModel<object> Records(ClienterRecordsPM model)
         {
             return _iClienterFinanceProvider.GetRecords(model.ClienterId);
@@ -68,8 +68,16 @@ namespace SuperManWebApi.Controllers
            }
            #endregion
 
-           ClienterDM clienterDM = _iClienterProvider.GetDetails(model.ClienterId);
-           return Ets.Model.Common.ResultModel<ClienterDM>.Conclude(GetClienterStatus.Success, clienterDM);
+           try
+           {
+               ClienterDM clienterDM = _iClienterProvider.GetDetails(model.ClienterId);
+               return Ets.Model.Common.ResultModel<ClienterDM>.Conclude(GetClienterStatus.Success, clienterDM);          
+           }
+           catch (Exception ex)
+           {
+                LogHelper.LogWriter("ResultModel<BusinessDM> Get", new { obj = "时间：" + DateTime.Now.ToString() + ex.Message });
+                return ResultModel<ClienterDM>.Conclude(GetClienterStatus.Failed);
+           }    
        }     
         
     }

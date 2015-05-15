@@ -230,7 +230,7 @@ namespace Ets.Dao.Order
                 RecevicePhoneNo,ReceiveProvinceCode,ReceiveCityCode,ReceiveAreaCode,ReceviceAddress,
                 ReceviceLongitude,ReceviceLatitude,businessId,PickUpAddress,Payment,OrderCommission,
                 WebsiteSubsidy,CommissionRate,CommissionFormulaMode,ReceiveProvince,ReceviceCity,ReceiveArea,
-                PickupCode,BusinessCommission,SettleMoney,Adjustment,OrderFrom,Status,CommissionType,CommissionFixValue,BusinessGroupId)
+                PickupCode,BusinessCommission,SettleMoney,Adjustment,OrderFrom,Status,CommissionType,CommissionFixValue,BusinessGroupId,Invoice)
                 output Inserted.Id,GETDATE(),@OptName,'新增订单',Inserted.businessId,Inserted.[Status],@Platform
                 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
                 Values(@OrderNo,
@@ -239,7 +239,7 @@ namespace Ets.Dao.Order
                 @RecevicePhoneNo,@ReceiveProvinceCode,@ReceiveCityCode,@ReceiveAreaCode,@ReceviceAddress,
                 @ReceviceLongitude,@ReceviceLatitude,@BusinessId,@PickUpAddress,@Payment,@OrderCommission,
                 @WebsiteSubsidy,@CommissionRate,@CommissionFormulaMode,@ReceiveProvince,@ReceviceCity,@ReceiveArea,
-                @PickupCode,@BusinessCommission,@SettleMoney,@Adjustment,@OrderFrom,@Status,@CommissionType,@CommissionFixValue,@BusinessGroupId);select  IDENT_CURRENT('order') ";
+                @PickupCode,@BusinessCommission,@SettleMoney,@Adjustment,@OrderFrom,@Status,@CommissionType,@CommissionFixValue,@BusinessGroupId,@Invoice);select  IDENT_CURRENT('order') ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             //基本参数信息
 
@@ -288,6 +288,7 @@ namespace Ets.Dao.Order
             dbParameters.AddWithValue("@CommissionType", paramodel.CommissionType);//结算类型
             dbParameters.AddWithValue("@CommissionFixValue", paramodel.CommissionFixValue);//固定金额
             dbParameters.AddWithValue("@BusinessGroupId", paramodel.BusinessGroupId);//分组ID
+            //dbParameters.AddWithValue("@Invoice", paramodel.);//分组ID
 
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertOrdersql, dbParameters);                
             #endregion

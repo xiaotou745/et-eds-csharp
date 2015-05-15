@@ -46,7 +46,9 @@ namespace ETS.Enums
         [DisplayText("订单数量与子订单数量不一致")]
         CountIsNotEqual,
         [DisplayText("合法性验证成功")]
-        VerificationSuccess
+        VerificationSuccess,
+        [DisplayText("失败")]
+        Failed = 101
 
     }
     public enum GetOrdersStatus
@@ -58,7 +60,9 @@ namespace ETS.Enums
         [DisplayText("订单号错误")]
         ErrOderNo = -1,
         [DisplayText("获取订单失败")]
-        FailedGetOrders = -2
+        FailedGetOrders = -2,
+        [DisplayText("失败")]
+        Failed = 101
     }
 
     public enum GetBussinessStatus
@@ -70,7 +74,9 @@ namespace ETS.Enums
         [DisplayText("商户Id错误")]
         ErrOderNo = -1,
         [DisplayText("获取商户失败")]
-        FailedGetOrders = -2
+        FailedGetOrders = -2,
+        [DisplayText("失败")]
+        Failed = 101
     }
     public enum GetClienterStatus
     {
@@ -81,7 +87,9 @@ namespace ETS.Enums
         [DisplayText("骑士Id错误")]
         ErrOderNo = -1,
         [DisplayText("获取骑士失败")]
-        FailedGetOrders = -2
+        FailedGetOrders = -2,
+        [DisplayText("失败")]
+        Failed = 101
 
     }
     public enum GetOrdersNoLoginStatus

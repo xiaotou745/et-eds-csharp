@@ -26,6 +26,8 @@ namespace SuperManWebApi.Controllers
     /// 商户相关接口 add by caoheyang
     /// </summary>
     [ExecuteTimeLog]
+    [Validate]
+    [ApiVersion]
     public class BusinessController : ApiController
     {
         private readonly IBusinessFinanceProvider _businessFinanceProvider = new BusinessFinanceProvider();
@@ -71,8 +73,16 @@ namespace SuperManWebApi.Controllers
 
             #endregion
 
-            BusinessDM businessDM = _iBusinessProvider.GetDetails(model.BussinessId);
-            return Ets.Model.Common.ResultModel<BusinessDM>.Conclude(GetBussinessStatus.Success, businessDM);
+            try
+            {
+                BusinessDM businessDM = _iBusinessProvider.GetDetails(model.BussinessId);
+                return Ets.Model.Common.ResultModel<BusinessDM>.Conclude(GetBussinessStatus.Success, businessDM);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter("ResultModel<BusinessDM> Get", new { obj = "时间：" + DateTime.Now.ToString() + ex.Message });
+                return ResultModel<BusinessDM>.Conclude(GetBussinessStatus.Failed);
+            }    
         }
     }
 }
