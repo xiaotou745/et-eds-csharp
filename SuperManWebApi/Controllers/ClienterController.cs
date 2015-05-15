@@ -24,8 +24,6 @@ namespace SuperManWebApi.Controllers
     /// 骑士相关接口 add by caoheyang
     /// </summary>
     [ExecuteTimeLog]
-    [Validate]
-    [ApiVersion]
     public class ClienterController : ApiController
     {
         private readonly IClienterFinanceProvider _iClienterFinanceProvider = new ClienterFinanceProvider();

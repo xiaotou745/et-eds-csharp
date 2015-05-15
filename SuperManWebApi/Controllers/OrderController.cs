@@ -23,9 +23,7 @@ using Ets.Model.DomainModel.Clienter;
 using SuperManWebApi.App_Start.Filters;
 namespace SuperManWebApi.Controllers
 {
-    [ExecuteTimeLog]
-    [Validate]
-    [ApiVersion]
+    [ExecuteTimeLog] 
     /// <summary>
     /// TODO:每个API的日志、异常之类
     /// </summary>
@@ -78,6 +76,11 @@ namespace SuperManWebApi.Controllers
         ResultModel<BusiOrderResultModel> Verification(BussinessOrderInfoPM model, out  order order)
         {
             order = null;
+            var version = HttpContext.Current.Request.Form["Version"];
+            if (string.IsNullOrWhiteSpace(version)) //版本号 
+            {
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.NoVersion);
+            }
             if (!iBusinessProvider.HaveQualification(model.userId))//验证该商户有无发布订单资格 
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.HadCancelQualification);

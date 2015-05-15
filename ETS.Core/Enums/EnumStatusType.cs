@@ -48,7 +48,9 @@ namespace ETS.Enums
         [DisplayText("合法性验证成功")]
         VerificationSuccess,
         [DisplayText("失败")]
-        Failed = 101
+        Failed = 101,
+        [DisplayText("请传递版本号")]
+        NoVersion = -10
 
     }
     public enum GetOrdersStatus

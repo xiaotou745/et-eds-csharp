@@ -25,9 +25,7 @@ namespace SuperManWebApi.Controllers
     /// <summary>
     /// 商户相关接口 add by caoheyang
     /// </summary>
-    [ExecuteTimeLog]
-    [Validate]
-    [ApiVersion]
+    [ExecuteTimeLog]  
     public class BusinessController : ApiController
     {
         private readonly IBusinessFinanceProvider _businessFinanceProvider = new BusinessFinanceProvider();

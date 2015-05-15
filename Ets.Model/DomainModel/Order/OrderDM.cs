@@ -128,6 +128,9 @@ namespace Ets.Model.DomainModel.Order
         /// </summary>
         public int? Payment { get; set; }
 
+        /// <summary>
+        /// 发票
+        /// </summary>
         public string Invoice { get; set; }
         
         /// <summary>
