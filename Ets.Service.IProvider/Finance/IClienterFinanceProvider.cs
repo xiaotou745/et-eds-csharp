@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
@@ -57,14 +53,14 @@ namespace Ets.Service.IProvider.Finance
         /// 根据申请单Id获取骑士提现申请单
         /// danny-20150513
         /// </summary>
-        /// <param name="Id"></param>
+        /// <param name="withwardId">提款单Id</param>
         /// <returns></returns>
         ClienterWithdrawFormModel GetClienterWithdrawListById(string withwardId);
         /// <summary>
         /// 获取骑士提款单操作日志
         /// danny-20150513
         /// </summary>
-        /// <param name="withwardId"></param>
+        /// <param name="withwardId">提款单Id</param>
         /// <returns></returns>
         IList<ClienterWithdrawLog> GetClienterWithdrawOptionLog(string withwardId);
         /// <summary>
@@ -99,7 +95,7 @@ namespace Ets.Service.IProvider.Finance
         /// 获取骑士提款收支记录列表
         /// danny-20150513
         /// </summary>
-        /// <param name="withwardId"></param>
+        /// <param name="criteria"></param>
         /// <returns></returns>
         IList<ClienterBalanceRecord> GetClienterBalanceRecordList(ClienterBalanceRecordSerchCriteria criteria);
         /// <summary>
@@ -113,7 +109,7 @@ namespace Ets.Service.IProvider.Finance
         /// 获取要导出的骑士提款收支记录列表
         /// danny-20150513
         /// </summary>
-        /// <param name="withwardId"></param>
+        /// <param name="criteria"></param>
         /// <returns></returns>
         IList<ClienterBalanceRecordModel> GetClienterBalanceRecordListForExport(ClienterBalanceRecordSerchCriteria criteria);
         /// <summary>

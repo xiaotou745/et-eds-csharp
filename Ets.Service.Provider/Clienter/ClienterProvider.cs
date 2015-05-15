@@ -829,7 +829,7 @@ namespace Ets.Service.Provider.Clienter
         /// 获取骑士详细信息
         /// danny-20150513
         /// </summary>
-        /// <param name="businessId">骑士Id</param>
+        /// <param name="clienterId">骑士Id</param>
         /// <returns></returns>
         public ClienterDetailModel GetClienterDetailById(string clienterId)
         {

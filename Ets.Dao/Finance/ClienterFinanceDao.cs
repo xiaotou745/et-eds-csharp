@@ -4,12 +4,9 @@ using Ets.Model.ParameterModel.Finance;
 using ETS.Dao;
 using ETS.Data.Core;
 using ETS.Data.PageData;
-using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Ets.Dao.Finance
 {
@@ -74,7 +71,7 @@ namespace Ets.Dao.Finance
         /// 根据申请单Id获取骑士提现申请单
         /// danny-20150513
         /// </summary>
-        /// <param name="Id"></param>
+        /// <param name="withwardId">提款单Id</param>
         /// <returns></returns>
         public ClienterWithdrawFormModel GetClienterWithdrawListById(string withwardId)
         {
@@ -116,7 +113,7 @@ from ClienterWithdrawForm cwf with(nolock)
         /// 获取骑士提款单操作日志
         /// danny-20150513
         /// </summary>
-        /// <param name="withwardId"></param>
+        /// <param name="withwardId">提款单Id</param>
         /// <returns></returns>
         public IList<ClienterWithdrawLog> GetClienterWithdrawOptionLog(string withwardId)
         {
@@ -167,7 +164,7 @@ INTO ClienterWithdrawLog
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@Id", model.WithwardId);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>
         /// 骑士提现申请单确认打款
@@ -201,7 +198,7 @@ INTO ClienterWithdrawLog
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@Id", model.WithwardId);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>
         /// 骑士提现申请单审核拒绝
@@ -236,7 +233,7 @@ INTO ClienterWithdrawLog
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@AuditFailedReason", model.AuditFailedReason);
             parm.AddWithValue("@Id", model.WithwardId);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
 
         /// <summary>
@@ -272,13 +269,13 @@ INTO ClienterWithdrawLog
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@PayFailedReason", model.PayFailedReason);
             parm.AddWithValue("@Id", model.WithwardId);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>
         /// 修改骑士提款流水状态
         /// danny-20150513
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="withwardId">提款单Id</param>
         /// <returns></returns>
         public bool ModifyClienterBalanceRecordStatus(string withwardId)
         {
@@ -289,7 +286,7 @@ UPDATE ClienterBalanceRecord
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@WithwardId", withwardId);
             parm.AddWithValue("@Status", ETS.Enums.ClienterBalanceRecordStatus.Success.GetHashCode());
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
 
         /// <summary>
@@ -333,14 +330,14 @@ select      cbr.[ClienterId]
             parm.AddWithValue("@RecordType", ETS.Enums.ClienterBalanceRecordRecordType.Withdraw.GetHashCode());
             parm.AddWithValue("@NewStatus", ETS.Enums.ClienterBalanceRecordStatus.Success.GetHashCode());
             parm.AddWithValue("@NewRecordType", ETS.Enums.ClienterBalanceRecordRecordType.Return.GetHashCode());
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
 
         /// <summary>
         /// 骑士提现失败后修改骑士表金额
         /// danny-20150513
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="withwardId">提款单Id</param>
         /// <returns></returns>
         public bool ModifyClienterAmountInfo(string withwardId)
         {
@@ -353,13 +350,13 @@ join [ClienterWithdrawForm] cwf on c.Id=cwf.ClienterId
 where cwf.Id=@WithwardId;");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@WithwardId", withwardId);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>
         /// 骑士提现打款确认后修改骑士表累计提款金额
         /// danny-20150513
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="withwardId">提款单Id</param>
         /// <returns></returns>
         public bool ModifyClienterTotalAmount(string withwardId)
         {
@@ -371,13 +368,13 @@ join [ClienterWithdrawForm] cwf on c.Id=cwf.ClienterId
 where cwf.Id=@WithwardId;");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@WithwardId", withwardId);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>
         /// 获取骑士提款收支记录列表
         /// danny-20150513
         /// </summary>
-        /// <param name="withwardId"></param>
+        /// <param name="criteria"></param>
         /// <returns></returns>
         public IList<ClienterBalanceRecord> GetClienterBalanceRecordList(ClienterBalanceRecordSerchCriteria criteria)
         {
@@ -478,7 +475,7 @@ where 1=1";
         /// 获取要导出的骑士提款收支记录列表
         /// danny-20150513
         /// </summary>
-        /// <param name="withwardId"></param>
+        /// <param name="criteria"></param>
         /// <returns></returns>
         public IList<ClienterBalanceRecordModel> GetClienterBalanceRecordListForExport(ClienterBalanceRecordSerchCriteria criteria)
         {
@@ -565,7 +562,7 @@ values(    @ClienterId
             parm.AddWithValue("@RecordType", ETS.Enums.ClienterBalanceRecordRecordType.Withdraw.GetHashCode());
             parm.AddWithValue("@NewStatus", ETS.Enums.ClienterBalanceRecordStatus.Success.GetHashCode());
             parm.AddWithValue("@NewRecordType", ETS.Enums.ClienterBalanceRecordRecordType.Return.GetHashCode());
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
     }
 }

@@ -4,7 +4,6 @@ using ETS.Enums;
 using ETS.Extension;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Bussiness;
-using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;
@@ -13,15 +12,10 @@ using Ets.Service.IProvider.Finance;
 using ETS.Data.PageData;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using ETS.Transaction;
 using ETS.Transaction.Common;
-using Ets.Model.DomainModel.Bussiness;
-using Ets.Dao.User;
 using ETS.Util;
-using System.Data;
 
 namespace Ets.Service.Provider.Finance
 {
@@ -311,7 +305,7 @@ namespace Ets.Service.Provider.Finance
         /// 根据申请单Id获取商家提现申请单
         /// danny-20150511
         /// </summary>
-        /// <param name="Id"></param>
+        /// <param name="withwardId">提款单Id</param>
         /// <returns></returns>
         public BusinessWithdrawFormModel GetBusinessWithdrawListById(string withwardId)
         {
@@ -321,7 +315,7 @@ namespace Ets.Service.Provider.Finance
         /// 获取商户提款单操作日志
         /// danny-20150511
         /// </summary>
-        /// <param name="withwardId"></param>
+        /// <param name="withwardId">提款单Id</param>
         /// <returns></returns>
         public IList<BusinessWithdrawLog> GetBusinessWithdrawOptionLog(string withwardId)
         {
@@ -424,7 +418,7 @@ namespace Ets.Service.Provider.Finance
         /// 获取商户提款收支记录列表
         /// danny-20150512
         /// </summary>
-        /// <param name="withwardId"></param>
+        /// <param name="criteria"></param>
         /// <returns></returns>
         public IList<BusinessBalanceRecord> GetBusinessBalanceRecordList(BusinessBalanceRecordSerchCriteria criteria)
         {
@@ -444,7 +438,7 @@ namespace Ets.Service.Provider.Finance
         /// 获取要导出的商户提款收支记录列表
         /// danny-20150512
         /// </summary>
-        /// <param name="withwardId"></param>
+        /// <param name="criteria"></param>
         /// <returns></returns>
         public IList<BusinessBalanceRecordModel> GetBusinessBalanceRecordListForExport(BusinessBalanceRecordSerchCriteria criteria)
         {
