@@ -12,6 +12,7 @@ using Ets.Model.DomainModel.Clienter;
 using ETS.Data.PageData;
 using System;
 using CalculateCommon;
+using Ets.Dao.Finance;
 using Ets.Service.Provider.Order;
 using ETS.Enums;
 using Ets.Model.Common;
@@ -20,10 +21,12 @@ using ETS.Util;
 using ETS.Transaction.Common;
 using ETS.Transaction;
 using Ets.Dao.Order;
+using Ets.Model.DataModel.Finance;
 using Ets.Model.ParameterModel.WtihdrawRecords;
 using Ets.Service.Provider.WtihdrawRecords;
 using Ets.Service.Provider.MyPush;
 using Ets.Model.DomainModel.Bussiness;
+using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Order;
 using ETS.NoSql.RedisCache;
 using Ets.Model.DomainModel.Order;
@@ -34,7 +37,7 @@ namespace Ets.Service.Provider.Clienter
         readonly ClienterDao clienterDao = new ClienterDao();
         readonly OrderDao orderDao = new OrderDao();
         readonly OrderChildDao orderChildDao = new OrderChildDao();
-
+        private readonly ClienterBalanceRecordDao clienterBalanceRecordDao = new ClienterBalanceRecordDao();
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
         /// <summary>
         /// 骑士上下班功能 add by caoheyang 20150312
@@ -500,14 +503,13 @@ namespace Ets.Service.Provider.Clienter
         {
             string result = "-1";
             int businessId = 0;
-            OrderListModel myOrderInfo = orderDao.GetOrderInfoByOrderNo(orderNo);
+            OrderListModel myOrderInfo = orderDao.GetByOrderNo(orderNo);
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 //获取该订单信息和该  骑士现在的 收入金额
-
                 if (myOrderInfo.GroupId == SystemConst.Group3 && !string.IsNullOrWhiteSpace(myOrderInfo.PickupCode)
                     && pickupCode != myOrderInfo.PickupCode) //全时订单 判断 取货码是否正确
-                    return ETS.Enums.FinishOrderStatus.PickupCodeError.ToString();
+                    return FinishOrderStatus.PickupCodeError.ToString();
                 //更新订单状态
                 if (myOrderInfo != null)
                 {
@@ -522,40 +524,10 @@ namespace Ets.Service.Provider.Clienter
                         {
                             UpdateClienterAccount(userId, myOrderInfo);
                         }
-                    }
-                    ////更新骑士 金额  
-                    //bool b = clienterDao.UpdateClienterAccountBalance(new WithdrawRecordsModel() { UserId = userId, Amount = myOrderInfo.OrderCommission.Value });
-                    ////增加记录 
-                    //decimal? AccountBalance = 0;
-                    ////更新用户相关金额数据 
-                    //if (myOrderInfo.AccountBalance.HasValue)
-                    //{
-                    //    AccountBalance = myOrderInfo.AccountBalance.Value + (myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission));
-                    //}
-                    //else
-                    //{
-                    //    AccountBalance = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission);
-                    //}
-                    //var model = new WithdrawRecordsModel
-                    //{
-                    //    AdminId = 1,
-                    //    Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
-                    //    Balance = AccountBalance ?? 0,
-                    //    UserId = userId,
-                    //    Platform = 1
-                    //};
-                    //Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords = new WtihdrawRecordsProvider();
-                    //iRecords.AddRecords(model); 
-                    businessId = myOrderInfo.businessId;
-                    //if (businessId>0)
-                    //{
-                    result = "1";
+                    } 
+                    businessId = myOrderInfo.businessId; 
                     tran.Complete();
-                    //}
-                    //else
-                    //    result = "0"; //同步第三方状态失败 导致订单失败
-
-                    //result = "1";
+                    result = "1";
                 }
             }
             new OrderProvider().AsyncOrderStatus(orderNo);
@@ -577,30 +549,41 @@ namespace Ets.Service.Provider.Clienter
             //更新骑士 金额  
             bool b = clienterDao.UpdateClienterAccountBalance(new WithdrawRecordsModel() { UserId = userId, Amount = myOrderInfo.OrderCommission.Value });
             //增加记录 
-            decimal? AccountBalance = 0;
+            decimal? accountBalance = 0;
             //更新用户相关金额数据 
             if (myOrderInfo.AccountBalance.HasValue)
             {
-                AccountBalance = myOrderInfo.AccountBalance.Value + (myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission));
+                accountBalance = myOrderInfo.AccountBalance.Value + (myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission));
             }
             else
             {
-                AccountBalance = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission);
+                accountBalance = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission);
             }
-            var model = new WithdrawRecordsModel
-            {
-                AdminId = 1,
-                Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
-                Balance = AccountBalance ?? 0,
-                UserId = userId,
-                Platform = 1,
-                RecordType = 1,
-                OrderId = myOrderInfo.Id
-            };
-
+            //var model = new WithdrawRecordsModel
+            //{
+            //    AdminId = 1,
+            //    Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
+            //    Balance = accountBalance ?? 0,
+            //    UserId = userId,
+            //    Platform = 1,
+            //    RecordType = 1,
+            //    OrderId = myOrderInfo.Id
+            //}; 
+            //Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords = new WtihdrawRecordsProvider();
+            //iRecords.AddRecords(model);
             ///TODO 骑士余额流水表，不是这个吧？
-            Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords = new WtihdrawRecordsProvider();
-            iRecords.AddRecords(model);
+            ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
+            {
+                ClienterId = userId,
+                Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
+                Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
+                Balance = accountBalance ?? 0,
+                RecordType = ClienterBalanceRecordRecordType.Commission.GetHashCode(),
+                Operator = myOrderInfo.ClienterName, 
+                RelationNo = myOrderInfo.OrderNo, 
+                Remark = "骑士完成订单"
+            };
+            clienterBalanceRecordDao.Insert(cbrm);
         }
 
         public ClienterModel GetUserInfoByUserId(int UserId)
@@ -852,7 +835,7 @@ namespace Ets.Service.Provider.Clienter
         /// 获取骑士详细信息
         /// danny-20150513
         /// </summary>
-        /// <param name="businessId">骑士Id</param>
+        /// <param name="clienterId">骑士Id</param>
         /// <returns></returns>
         public ClienterDetailModel GetClienterDetailById(string clienterId)
         {
@@ -869,10 +852,9 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="orderNo">订单号</param>
         /// <param name="bussinessId"></param>
         /// <returns></returns>
-        [ETS.Expand.ActionStatus(typeof(ETS.Enums.RushOrderStatus))]
+        [ETS.Expand.ActionStatus(typeof(RushOrderStatus))]
         public ResultModel<RushOrderResultModel> Receive_C(int userId, string orderNo,int bussinessId)
         {
-           
             //这里可以优化，去掉提前验证用户信息，当失败的时候在去验证 
             OrderListModel model = new OrderListModel()
             {
@@ -892,16 +874,14 @@ namespace Ets.Service.Provider.Clienter
             {
                 new OrderProvider().AsyncOrderStatus(orderNo);//同步第三方订单
                 Ets.Service.Provider.MyPush.Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", bussinessId.ToString(), string.Empty);
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.Success);
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Success);
             }
             //else  //失败的时候再去找原因
-            //{
-                
+            //{ 
                 //var myorder = new Ets.Dao.Order.OrderDao().GetOrderDetailByOrderNo(orderNo);
                 //if (myorder == null)
                 //{
-                //    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.OrderIsNotExist);  //订单不存在
-
+                //    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.OrderIsNotExist);  //订单不存在 
                 //}
                 //if (myorder.Status == ConstValues.ORDER_CANCEL)   //判断订单状态是否为 已取消
                 //{
@@ -909,7 +889,7 @@ namespace Ets.Service.Provider.Clienter
                 //}
                 //if (myorder.Status == ConstValues.ORDER_ACCEPT || myorder.Status == ConstValues.ORDER_FINISH)  //订单已接单，被抢  或 已完成
                 //{
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.OrderIsNotAllowRush);
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
                 //}
             //} 
             //return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.Failed);
