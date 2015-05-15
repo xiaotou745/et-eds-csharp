@@ -126,6 +126,6 @@ namespace Ets.Service.IProvider.Finance
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
-        string CreateClienterBalanceRecordExcel(List<ClienterBalanceRecordModel> list);
+        string CreateClienterBalanceRecordExcel(List<ClienterBalanceRecordModel> list); 
     }
 }
