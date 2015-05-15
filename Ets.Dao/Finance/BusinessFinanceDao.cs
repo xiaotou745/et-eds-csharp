@@ -4,12 +4,9 @@ using Ets.Model.ParameterModel.Finance;
 using ETS.Dao;
 using ETS.Data.Core;
 using ETS.Data.PageData;
-using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Ets.Dao.Finance
 {
@@ -78,7 +75,7 @@ namespace Ets.Dao.Finance
         /// 根据申请单Id获取商家提现申请单
         /// danny-20150511
         /// </summary>
-        /// <param name="Id"></param>
+        /// <param name="withwardId">提款单Id</param>
         /// <returns></returns>
         public BusinessWithdrawFormModel GetBusinessWithdrawListById(string withwardId)
         {
@@ -120,7 +117,7 @@ from BusinessWithdrawForm bwf with(nolock)
         /// 获取商户提款单操作日志
         /// danny-20150511
         /// </summary>
-        /// <param name="withwardId"></param>
+        /// <param name="withwardId">提款单Id</param>
         /// <returns></returns>
         public IList<BusinessWithdrawLog> GetBusinessWithdrawOptionLog(string withwardId)
         {
@@ -171,7 +168,7 @@ INTO BusinessWithdrawLog
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@Id", model.WithwardId);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>
         /// 商户提现申请单确认打款
@@ -205,7 +202,7 @@ INTO BusinessWithdrawLog
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@Id", model.WithwardId);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>
         /// 商户提现申请单审核拒绝
@@ -240,7 +237,7 @@ INTO BusinessWithdrawLog
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@AuditFailedReason", model.AuditFailedReason);
             parm.AddWithValue("@Id", model.WithwardId);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
 
         /// <summary>
@@ -276,13 +273,13 @@ INTO BusinessWithdrawLog
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@PayFailedReason", model.PayFailedReason);
             parm.AddWithValue("@Id", model.WithwardId);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>
         /// 修改商家提款流水状态
         /// danny-20150511
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="withwardId">提款单Id</param>
         /// <returns></returns>
         public bool ModifyBusinessBalanceRecordStatus(string withwardId)
         {
@@ -293,7 +290,7 @@ UPDATE BusinessBalanceRecord
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@WithwardId", withwardId);
             parm.AddWithValue("@Status", ETS.Enums.BusinessBalanceRecordStatus.Success.GetHashCode());
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
 
         /// <summary>
@@ -316,18 +313,19 @@ insert into BusinessBalanceRecord
            ,[WithwardId]
            ,[RelationNo]
            ,[Remark])
-select      [BusinessId]
-           ,-ISNULL([Amount],0) Amount
+select      bbr.[BusinessId]
+           ,-ISNULL(bbr.[Amount],0) Amount
            ,@NewStatus [Status]
-           ,-ISNULL([Amount],0)+ISNULL([Balance],0) Balance
+           ,-ISNULL(bbr.[Amount],0)+ISNULL(b.BalancePrice,0) Balance
            ,@NewRecordType [RecordType]
            ,@Operator
            ,getdate() OperateTime
-           ,[WithwardId]
-           ,[RelationNo]
+           ,bbr.[WithwardId]
+           ,bbr.[RelationNo]
            ,@Remark
- from BusinessBalanceRecord (nolock)
- where WithwardId=@WithwardId and Status=@Status and RecordType=@RecordType;");
+ from BusinessBalanceRecord bbr (nolock)
+    join business b (nolock) on b.Id=bbr.BusinessId
+ where bbr.WithwardId=@WithwardId and bbr.Status=@Status and bbr.RecordType=@RecordType;");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
@@ -336,14 +334,14 @@ select      [BusinessId]
             parm.AddWithValue("@RecordType", ETS.Enums.BusinessBalanceRecordRecordType.Withdraw);
             parm.AddWithValue("@NewStatus", ETS.Enums.BusinessBalanceRecordStatus.Success);
             parm.AddWithValue("@NewRecordType", ETS.Enums.BusinessBalanceRecordRecordType.Return);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         
         /// <summary>
         /// 商户提现失败后修改商户表金额
         /// danny-20150511
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="withwardId">提款单Id</param>
         /// <returns></returns>
         public bool ModifyBusinessAmountInfo(string withwardId)
         {
@@ -356,13 +354,13 @@ join [BusinessWithdrawForm] bwf on b.Id=bwf.BusinessId
 where bwf.Id=@WithwardId;");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@WithwardId", withwardId);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>
         /// 商户提现打款确认后修改商户表累计提款金额
         /// danny-20150511
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="withwardId"></param>
         /// <returns></returns>
         public bool ModifyBusinessTotalAmount(string withwardId)
         {
@@ -374,13 +372,13 @@ join [BusinessWithdrawForm] bwf on b.Id=bwf.BusinessId
 where bwf.Id=@WithwardId;");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@WithwardId", withwardId);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>
         /// 获取商户提款收支记录列表
         /// danny-20150512
         /// </summary>
-        /// <param name="withwardId"></param>
+        /// <param name="criteria"></param>
         /// <returns></returns>
         public IList<BusinessBalanceRecord> GetBusinessBalanceRecordList(BusinessBalanceRecordSerchCriteria criteria)
         {
@@ -486,7 +484,7 @@ where 1=1";
         /// 获取要导出的商户提款收支记录列表
         /// danny-20150512
         /// </summary>
-        /// <param name="withwardId"></param>
+        /// <param name="criteria"></param>
         /// <returns></returns>
         public IList<BusinessBalanceRecordModel> GetBusinessBalanceRecordListForExport(BusinessBalanceRecordSerchCriteria criteria)
         {

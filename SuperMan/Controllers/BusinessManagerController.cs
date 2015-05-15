@@ -146,11 +146,13 @@ namespace SuperMan.Controllers
         /// <summary>
         /// 修改商户信息
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="businessName"></param>
-        /// <param name="businessPhone"></param>
+        /// <param name="id">商户Id</param>
+        /// <param name="businessName">商户名称</param>
+        /// <param name="businessPhone">商户电话</param>
         /// <param name="businessSourceId">第三方商户id</param>
-        /// <param name="groupId"></param>
+        /// <param name="groupId">集团Id</param>
+        /// <param name="oldBusiSourceId">之前的第三方商户Id</param>
+        /// <param name="oldBusGroupId">之前的集团Id</param>
         /// <returns></returns>
         [HttpPost]
         public JsonResult ModifyBusiness(int id, string businessName,string businessPhone,int businessSourceId, int groupId,int oldBusiSourceId, int oldBusGroupId)
@@ -179,7 +181,7 @@ namespace SuperMan.Controllers
         /// 查看商户详细信息
         /// danny-20150512
         /// </summary>
-        /// <param name="orderId"></param>
+        /// <param name="businessId">商户Id</param>
         /// <returns></returns>
         public ActionResult BusinessDetail(string businessId)
         {
@@ -196,7 +198,7 @@ namespace SuperMan.Controllers
         /// 查看商户余额流水记录
         /// danny-20150512
         /// </summary>
-        /// <param name="orderId"></param>
+        /// <param name="criteria"></param>
         /// <returns></returns>
         public ActionResult BusinessBalanceRecord(BusinessBalanceRecordSerchCriteria criteria)
         {
@@ -207,11 +209,10 @@ namespace SuperMan.Controllers
         /// 导出商户余额流水记录
         /// danny-20150512
         /// </summary>
-        /// <param name="orderId"></param>
         /// <returns></returns>
         public ActionResult ExportBusinessBalanceRecord()
         {
-            var criteria = new Ets.Model.ParameterModel.Finance.BusinessBalanceRecordSerchCriteria();
+            var criteria = new BusinessBalanceRecordSerchCriteria();
             TryUpdateModel(criteria);
             var dtBusinessBalanceRecord = iBusinessFinanceProvider.GetBusinessBalanceRecordListForExport(criteria);
             if (dtBusinessBalanceRecord != null && dtBusinessBalanceRecord.Count > 0)
@@ -225,17 +226,13 @@ namespace SuperMan.Controllers
                 byte[] data = Encoding.UTF8.GetBytes(iBusinessFinanceProvider.CreateBusinessBalanceRecordExcel(dtBusinessBalanceRecord.ToList()));
                 return File(data, "application/ms-excel", filname);
             }
-            else
+            var businessWithdrawFormModel = iBusinessProvider.GetBusinessDetailById(criteria.BusinessId.ToString());
+            var criteriaNew = new BusinessBalanceRecordSerchCriteria()
             {
-                
-                var businessWithdrawFormModel = iBusinessProvider.GetBusinessDetailById(criteria.BusinessId.ToString());
-                var criteriaNew = new BusinessBalanceRecordSerchCriteria()
-                {
-                    BusinessId = Convert.ToInt32(criteria.BusinessId)
-                };
-                ViewBag.businessBalanceRecord = iBusinessFinanceProvider.GetBusinessBalanceRecordList(criteriaNew);
-                return View("BusinessDetail", businessWithdrawFormModel);
-            }
+                BusinessId = Convert.ToInt32(criteria.BusinessId)
+            };
+            ViewBag.businessBalanceRecord = iBusinessFinanceProvider.GetBusinessBalanceRecordList(criteriaNew);
+            return View("BusinessDetail", businessWithdrawFormModel);
         }
 
     }
