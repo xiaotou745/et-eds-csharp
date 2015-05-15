@@ -12,7 +12,7 @@ namespace SuperManWebApi.App_Start.Filters
     /// <summary>
     /// 对内接口的参数合法性验证 add by caoheyang 20150512
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method)]
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
     public class ValidateAttribute : System.Web.Http.Filters.ActionFilterAttribute
     {
         /// <summary>

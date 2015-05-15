@@ -10,9 +10,9 @@ using ETS.Extension;
 using Ets.Model.DataModel.Order;
 using Ets.Model.ParameterModel.Order;
 using ETS.Util;
+using ETS.Data.Generic;
 using Ets.Model.DomainModel.Order;
 using ETS.Enums;
-
 namespace Ets.Dao.Order
 {
     /// <summary>
@@ -32,8 +32,10 @@ namespace Ets.Dao.Order
         public long Insert(OrderChild orderChild)
         {
             const string insertSql = @"
-insert into OrderChild(OrderId,ChildId,TotalPrice,GoodPrice,DeliveryPrice,PayStyle,PayType,PayStatus,PayBy,PayTime,PayPrice,HasUploadTicket,TicketUrl,CreateBy,CreateTime,UpdateBy,UpdateTime)
-values(@OrderId,@ChildId,@TotalPrice,@GoodPrice,@DeliveryPrice,@PayStyle,@PayType,@PayStatus,@PayBy,@PayTime,@PayPrice,@HasUploadTicket,@TicketUrl,@CreateBy,@CreateTime,@UpdateBy,@UpdateTime)
+insert into OrderChild(OrderId,ChildId,TotalPrice,GoodPrice,DeliveryPrice,PayStyle,PayType,
+PayStatus,PayBy,PayTime,PayPrice,HasUploadTicket,TicketUrl,CreateBy,CreateTime,UpdateBy,UpdateTime)
+values(@OrderId,@ChildId,@TotalPrice,@GoodPrice,@DeliveryPrice,@PayStyle,@PayType,
+@PayStatus,@PayBy,@PayTime,@PayPrice,@HasUploadTicket,@TicketUrl,@CreateBy,@CreateTime,@UpdateBy,@UpdateTime)
 
 select @@IDENTITY";
 
@@ -66,7 +68,10 @@ select @@IDENTITY";
         {
             const string updateSql = @"
 update  OrderChild
-set  OrderId=@OrderId,ChildId=@ChildId,TotalPrice=@TotalPrice,GoodPrice=@GoodPrice,DeliveryPrice=@DeliveryPrice,PayStyle=@PayStyle,PayType=@PayType,PayStatus=@PayStatus,PayBy=@PayBy,PayTime=@PayTime,PayPrice=@PayPrice,HasUploadTicket=@HasUploadTicket,TicketUrl=@TicketUrl,CreateBy=@CreateBy,CreateTime=@CreateTime,UpdateBy=@UpdateBy,UpdateTime=@UpdateTime
+set  OrderId=@OrderId,ChildId=@ChildId,TotalPrice=@TotalPrice,GoodPrice=@GoodPrice,
+DeliveryPrice=@DeliveryPrice,PayStyle=@PayStyle,PayType=@PayType,PayStatus=@PayStatus,
+PayBy=@PayBy,PayTime=@PayTime,PayPrice=@PayPrice,HasUploadTicket=@HasUploadTicket,
+TicketUrl=@TicketUrl,CreateBy=@CreateBy,CreateTime=@CreateTime,UpdateBy=@UpdateBy,UpdateTime=@UpdateTime
 where  Id=@Id ";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -106,7 +111,8 @@ where  Id=@Id ";
             IList<OrderChild> models = new List<OrderChild>();
             string condition = BindQueryCriteria(orderChildPM);
             string querysql = @"
-select  Id,OrderId,ChildId,TotalPrice,GoodPrice,DeliveryPrice,PayStyle,PayType,PayStatus,PayBy,PayTime,PayPrice,HasUploadTicket,TicketUrl,CreateBy,CreateTime,UpdateBy,UpdateTime
+select  Id,OrderId,ChildId,TotalPrice,GoodPrice,DeliveryPrice,PayStyle,PayType,PayStatus,
+PayBy,PayTime,PayPrice,HasUploadTicket,TicketUrl,CreateBy,CreateTime,UpdateBy,UpdateTime
 from  OrderChild (nolock)" + condition;
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql));
             if (DataTableHelper.CheckDt(dt))
@@ -125,7 +131,8 @@ from  OrderChild (nolock)" + condition;
             OrderChild model = new OrderChild();
 
             const string querysql = @"
-select  Id,OrderId,ChildId,TotalPrice,GoodPrice,DeliveryPrice,PayStyle,PayType,PayStatus,PayBy,PayTime,PayPrice,HasUploadTicket,TicketUrl,CreateBy,CreateTime,UpdateBy,UpdateTime
+select  Id,OrderId,ChildId,TotalPrice,GoodPrice,DeliveryPrice,PayStyle,PayType,PayStatus,
+PayBy,PayTime,PayPrice,HasUploadTicket,TicketUrl,CreateBy,CreateTime,UpdateBy,UpdateTime
 from  OrderChild (nolock)
 where  Id=@Id ";
 
@@ -288,7 +295,51 @@ where OrderId=@OrderId and ChildId=@ChildId and PayStatus!=@PayStatus";
             return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm), 0) > 0 ? true : false;
         }
 
+        /// <summary>
+        /// 获取子订单列表
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150512</UpdateTime>
+        /// <param name="id">订单Id</param>
+        /// <returns></returns>
+        public List<OrderChildInfo> GetByOrderId(long orderId)
+        {
+            List<OrderChildInfo> list = new List<OrderChildInfo>();
 
+            const string querySql = @"
+select  ChildId,TotalPrice,GoodPrice,DeliveryPrice,PayStyle,PayType,PayStatus,PayBy,
+    PayTime,PayPrice,HasUploadTicket,TicketUrl
+from  OrderChild (nolock)
+where  OrderId=@OrderId ";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters("OrderId", DbType.Int64, 8, orderId);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, querySql, dbParameters);            
+
+            foreach (DataRow dataRow in dt.Rows)
+            {
+                OrderChildInfo ochildInfo = new OrderChildInfo();
+                ochildInfo.ChildId = Convert.ToInt32(dataRow["ChildId"]);
+                ochildInfo.TotalPrice = Convert.ToDecimal(dataRow["TotalPrice"]);
+                ochildInfo.GoodPrice = Convert.ToDecimal(dataRow["GoodPrice"]);
+                ochildInfo.DeliveryPrice = Convert.ToDecimal(dataRow["DeliveryPrice"]);
+                if (dataRow["PayStyle"] != null && dataRow["PayStyle"]!=DBNull.Value)
+                    ochildInfo.PayStyle = Convert.ToInt32(dataRow["PayStyle"]);
+                if (dataRow["PayType"] != null && dataRow["PayType"] != DBNull.Value)
+                    ochildInfo.PayType = Convert.ToInt32(dataRow["PayType"]);
+                ochildInfo.PayStatus = Convert.ToInt32(dataRow["PayStatus"]);
+                if (dataRow["PayBy"] != null && dataRow["PayBy"] != DBNull.Value)
+                    ochildInfo.PayBy =dataRow["PayBy"].ToString();
+                if (dataRow["PayTime"] != null && dataRow["PayTime"] != DBNull.Value)
+                    ochildInfo.PayTime = Convert.ToDateTime(dataRow["PayTime"]);
+                ochildInfo.PayPrice = Convert.ToDecimal(dataRow["PayPrice"]);
+                ochildInfo.HasUploadTicket = Convert.ToBoolean(dataRow["HasUploadTicket"]);
+                if (dataRow["TicketUrl"] != null && dataRow["TicketUrl"] != DBNull.Value && dataRow["TicketUrl"].ToString()!="")
+                    ochildInfo.TicketUrl = Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataRow["TicketUrl"].ToString())[0];          
+                list.Add(ochildInfo);
+            }          
+
+            return list;
+        }
     }
 
 }

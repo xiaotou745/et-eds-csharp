@@ -169,6 +169,7 @@
     <Compile Include="ParameterModel\Bussiness\BusiAddAddressResultModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BusinessRegisterModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BusiOrderInfoModel.cs" />
+    <Compile Include="ParameterModel\Bussiness\BussinessRecordsPM.cs" />
     <Compile Include="ParameterModel\Bussiness\BussinessStatusModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BussOrderParaModelApp.cs" />
     <Compile Include="ParameterModel\Bussiness\BusinessSearchCriteria.cs" />
@@ -180,6 +181,7 @@
     <Compile Include="ParameterModel\Bussiness\BussinessPM.cs" />
     <Compile Include="ParameterModel\Bussiness\OrderChlidPM.cs" />
     <Compile Include="ParameterModel\Bussiness\RegisterInfoModel.cs" />
+    <Compile Include="ParameterModel\Clienter\ClienterRecordsPM.cs" />
     <Compile Include="ParameterModel\Clienter\ClienterPM.cs" />
     <Compile Include="ParameterModel\Clienter\ChangeWorkStatusPM.cs" />
     <Compile Include="ParameterModel\Clienter\ClienterSearchCriteria.cs" />

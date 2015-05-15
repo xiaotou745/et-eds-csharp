@@ -128,7 +128,7 @@ namespace Ets.Service.IProvider.Clienter
         ClienterStatusModel GetUserStatus(int UserId, double version);
         /// <summary>
         /// 超人 完成订单
-        /// wc
+        /// wc 
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="orderNo"></param>
@@ -202,17 +202,19 @@ namespace Ets.Service.IProvider.Clienter
         ResultModel<RushOrderResultModel> RushOrder_C(int userId, string orderNo);
 
         /// <summary>
-        /// 获取骑士详情
-        /// hulingbo 20150511
+        /// 获取骑士详情  
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
         /// <param name="id">骑士Id</param>
         /// <returns></returns>
         ClienterDM GetDetails(int id);
 
         /// <summary>
-        /// 判断骑士是否存在
-        /// hulingbo 20150511
+        /// 判断骑士是否存在 
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
         /// <param name="id">骑士Id</param>
         /// <returns></returns>
         bool IsExist(int id);

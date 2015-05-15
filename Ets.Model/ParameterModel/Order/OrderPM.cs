@@ -19,5 +19,14 @@ namespace Ets.Model.ParameterModel.Order
         /// 版本
         /// </summary>
         public string Version { get; set; }
+
+        /// <summary>
+        /// 经度
+        /// </summary>
+        public double longitude { get; set; }
+        /// <summary>
+        /// 纬度
+        /// </summary>
+        public double latitude { get; set; }
     }
 }

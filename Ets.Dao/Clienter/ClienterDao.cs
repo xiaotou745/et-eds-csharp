@@ -712,6 +712,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, ConstValues.OrderH
         public OrderOther InsertReceiptInfo(UploadReceiptModel uploadReceiptModel)
         {
             OrderOther oo = new OrderOther();
+            ///TODO output?
             StringBuilder sql = new StringBuilder(@"
 insert into dbo.OrderOther
     ( OrderId ,
@@ -990,9 +991,10 @@ where  Id=@Id ";
         }
 
         /// <summary>
-        /// 获取骑士详情
-        /// hulingbo 20150512
+        /// 获取骑士详情        
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150512</UpdateTime>
         /// <param name="id">骑士Id</param>
         /// <returns></returns>
         public ClienterDM GetDetails(int id)
@@ -1028,9 +1030,13 @@ from  ClienterFinanceAccount (nolock) where ClienterId=@ClienterId  and IsEnable
                 bf.IsEnable = Convert.ToBoolean(dataRow["IsEnable"]);
                 bf.AccountType = Convert.ToInt32(dataRow["AccountType"]);
                 if (dataRow["OpenBank"] != null && dataRow["OpenBank"] != DBNull.Value)
+                {
                     bf.OpenBank = dataRow["OpenBank"].ToString();
+                }
                 if (dataRow["OpenSubBank"] != null && dataRow["OpenSubBank"] != DBNull.Value)
+                {
                     bf.OpenSubBank = dataRow["OpenSubBank"].ToString();
+                }
                 bf.CreateBy = dataRow["CreateBy"].ToString();
                 bf.CreateTime = Convert.ToDateTime(dataRow["CreateTime"]);
                 bf.UpdateBy = dataRow["UpdateBy"].ToString();
@@ -1044,9 +1050,10 @@ from  ClienterFinanceAccount (nolock) where ClienterId=@ClienterId  and IsEnable
         }
 
         /// <summary>
-        /// 判断骑士是否存在        
-        /// hulingbo 20150512
+        /// 判断骑士是否存在       
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
         /// <param name="id">骑士Id</param>
         /// <returns></returns>
         public bool IsExist(int id)

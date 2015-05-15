@@ -26,7 +26,7 @@ namespace ETS.Pay.AliPay
         /// 修改者：
         /// 修改时间：
         /// ----------------------------------------------------------------------------------------
-        public dynamic GetQRCodeUrl(int orderId, int childId, decimal customerTotal)
+        public dynamic GetQRCodeUrl(string orderNo, decimal customerTotal)
         {
             //接口调用时间
             string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
@@ -39,7 +39,7 @@ namespace ETS.Pay.AliPay
             string biz_type = "10";
             //目前只支持1
             //业务数据
-            string biz_data = GetBizData(orderId, childId, customerTotal.ToString());
+            string biz_data = GetBizData(orderNo, customerTotal.ToString());
             //格式：JSON 大字符串，详见技术文档4.2.1章节
 
 
@@ -90,7 +90,7 @@ namespace ETS.Pay.AliPay
         /// 修改者：
         /// 修改时间：
         /// ----------------------------------------------------------------------------------------
-        private string GetBizData(int orderId, int childId, string customerTotal)
+        private string GetBizData(string orderNo, string customerTotal)
         {
             var bizdata = new
             {
@@ -98,7 +98,7 @@ namespace ETS.Pay.AliPay
                 need_address = "F",
                 goods_info = new
                 {
-                    id = ETS.Enums.PayStyleEnum.BuyerPay.GetHashCode() + "_" + orderId + "_" + childId,//支付方式_主订单号_子订单号
+                    id = orderNo,
                     name = "e代送收款",
                     price = customerTotal
                 },

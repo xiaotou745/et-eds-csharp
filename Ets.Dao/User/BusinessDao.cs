@@ -528,6 +528,7 @@ namespace Ets.Dao.User
                                 FROM dbo.business as b WITH(NOLOCK)
                                 left join BusinessGroup on b.BusinessGroupId=BusinessGroup.Id
                                 WHERE b.Id = @busiId";
+            ///TODO 类型？
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@busiId", busiId);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
@@ -763,6 +764,8 @@ namespace Ets.Dao.User
             {
                 //状态为1 表示该骑士 已通过审核
                 string sql = "SELECT COUNT(1) FROM dbo.business(NOLOCK) WHERE [Status] = 1 AND Id = @businessId ";
+                ///TODO 参数更改，加上类型
+                //var dbParameters = DbHelper.CreateDbParameters("businessid", DbType.Int32, 4, businessId);
                 IDbParameters parm = DbHelper.CreateDbParameters();
                 parm.AddWithValue("@businessId", businessId);
                 return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm)) > 0 ? true : false;
@@ -1424,7 +1427,9 @@ where  Id=@Id ";
         /// <summary>
         /// 获取商家详情
         /// </summary>
-        /// <param name="id"></param>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
+        /// <param name="id">商家Id</param>
         /// <returns></returns>
         public BusinessDM  GetDetails(int id)
         {
@@ -1461,9 +1466,13 @@ from  BusinessFinanceAccount (nolock) where BusinessId=@BusinessId and IsEnable=
                 bf.IsEnable = Convert.ToBoolean(dataRow["IsEnable"]);                
                 bf.AccountType = Convert.ToInt32(dataRow["AccountType"]);
                 if (dataRow["OpenBank"] != null && dataRow["OpenBank"]!=DBNull.Value)
+                { 
                     bf.OpenBank = dataRow["OpenBank"].ToString();
+                }
                 if (dataRow["OpenSubBank"] != null && dataRow["OpenSubBank"] != DBNull.Value)
+                {
                     bf.OpenSubBank = dataRow["OpenSubBank"].ToString();
+                }
                 bf.CreateBy = dataRow["CreateBy"].ToString();
                 bf.CreateTime =Convert.ToDateTime(dataRow["CreateTime"]);
                 bf.UpdateBy = dataRow["UpdateBy"].ToString();
@@ -1479,7 +1488,8 @@ from  BusinessFinanceAccount (nolock) where BusinessId=@BusinessId and IsEnable=
 
         /// <summary>
         /// 判断商户是否存在        
-        /// hulingbo 20150511
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
         /// </summary>
         /// <param name="id">商户Id</param>
         /// <returns></returns>

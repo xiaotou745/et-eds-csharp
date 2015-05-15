@@ -16,32 +16,39 @@ using Ets.Model.ParameterModel.Order;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.IProvider.Clienter;
 using ETS.Enums;
+using SuperManWebApi.App_Start.Filters;
+
 namespace SuperManWebApi.Controllers
 {
     /// <summary>
     /// 骑士相关接口 add by caoheyang
     /// </summary>
+    [ExecuteTimeLog]
     public class ClienterController : ApiController
     {
-       private readonly IClienterFinanceProvider _iClienterFinanceProvider = new ClienterFinanceProvider();
-       private readonly IClienterProvider _iClienterProvider = new ClienterProvider();
+        private readonly IClienterFinanceProvider _iClienterFinanceProvider = new ClienterFinanceProvider();
+        private readonly IClienterProvider _iClienterProvider = new ClienterProvider();
+
         /// <summary>
         /// 骑士交易流水API caoheyang 20150512
         /// </summary>
+        /// <param name="model">查询参数实体</param>
         /// <returns></returns>
         [HttpPost]
-        public ResultModel<IList<FinanceRecordsDM>> Records()
+        [Validate]
+        [ApiVersion]
+        public ResultModel<object> Records(ClienterRecordsPM model)
         {
-            int clineterId = ParseHelper.ToInt(HttpContext.Current.Request.Form["clineterId"]);
-            return _iClienterFinanceProvider.GetRecords(clineterId);
+            return _iClienterFinanceProvider.GetRecords(model.ClienterId);
         }
 
-       /// <summary>
-       /// 获取骑士详情       
-       /// hulingbo 20150512
-       /// </summary>
-       /// <param name="model">骑士参数</param>
-       /// <returns></returns>        
+        /// <summary>
+        /// 获取骑士详情              
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
+        /// <param name="model">骑士参数</param>
+        /// <returns></returns>        
        [HttpPost]
        public ResultModel<ClienterDM> Get(ClienterPM model)
        {
@@ -64,5 +71,6 @@ namespace SuperManWebApi.Controllers
            ClienterDM clienterDM = _iClienterProvider.GetDetails(model.ClienterId);
            return Ets.Model.Common.ResultModel<ClienterDM>.Conclude(GetClienterStatus.Success, clienterDM);
        }     
+        
     }
 }

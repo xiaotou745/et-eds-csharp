@@ -525,5 +525,47 @@ WHERE cbr.ClienterId=@ClienterId ";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             return MapRows<ClienterBalanceRecordModel>(dt);
         }
+
+
+        /// <summary>
+        /// 骑士提现失败后返现
+        /// danny-20150513
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool InsertClienterWithdraw(ClienterWithdrawLogModel model)
+        {
+            string sql = string.Format(@" 
+insert into ClienterBalanceRecord
+            ([ClienterId]
+           ,[Amount]
+           ,[Status]
+           ,[Balance]
+           ,[RecordType]
+           ,[Operator]
+           ,[OperateTime]
+           ,[WithwardId]
+           ,[RelationNo]
+           ,[Remark])
+values(    @ClienterId
+           ,@Amount
+           ,@NewStatus
+           ,@Balance
+           ,@NewRecordType
+           ,@Operator
+           ,getdate()
+           ,@WithwardId
+           ,@RelationNo
+           ,@Remark");
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Operator", model.Operator);
+            parm.AddWithValue("@Remark", model.Remark);
+            parm.AddWithValue("@WithwardId", model.WithwardId);
+            parm.AddWithValue("@Status", ETS.Enums.ClienterBalanceRecordStatus.Tradeing.GetHashCode());
+            parm.AddWithValue("@RecordType", ETS.Enums.ClienterBalanceRecordRecordType.Withdraw.GetHashCode());
+            parm.AddWithValue("@NewStatus", ETS.Enums.ClienterBalanceRecordStatus.Success.GetHashCode());
+            parm.AddWithValue("@NewRecordType", ETS.Enums.ClienterBalanceRecordRecordType.Return.GetHashCode());
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+        }
     }
 }

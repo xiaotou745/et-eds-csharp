@@ -39,22 +39,25 @@ namespace Ets.Service.Provider.Pay
             {
                 string err = string.Concat("订单不存在,主订单号：", model.orderId, ",子订单号:", model.childId);
                 LogHelper.LogWriter(err);
+                return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
             }
-            else if (model.payType == PayTypeEnum.ZhiFuBao.GetHashCode())
+            //所属产品_主订单号_子订单号_支付方式
+            string orderNo = string.Concat(model.productId, "_", model.orderId, "_", model.childId, "_", PayStyleEnum.BuyerPay.GetHashCode());
+            if (model.payType == PayTypeEnum.ZhiFuBao.GetHashCode())
             {
                 LogHelper.LogWriter("=============支付宝支付：");
                 ////支付宝支付
                 //数据库里查询订单信息
                 if (payStatusModel.PayStatus == PayStatusEnum.WaitPay.GetHashCode())//待支付
                 {
-                    return CreateAliPayOrder(model.orderId, model.childId, payStatusModel.TotalPrice);
+                    return CreateAliPayOrder(orderNo, payStatusModel.TotalPrice);
                 }
             }
-            else if (model.payType == PayTypeEnum.WeiXin.GetHashCode())
+            if (model.payType == PayTypeEnum.WeiXin.GetHashCode())
             {
                 //微信支付
                 LogHelper.LogWriter("=============微信支付：");
-                return CreateWxPayOrder(model.orderId, model.childId, payStatusModel.TotalPrice, payStatusModel.WxCodeUrl);
+                return CreateWxPayOrder(orderNo, payStatusModel.TotalPrice, payStatusModel.WxCodeUrl);
             }
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
         }
@@ -80,7 +83,7 @@ namespace Ets.Service.Provider.Pay
         {
             try
             {
-                OrderChild orderChildModel = new OrderChild();// orderChildDao.GetOrderChildInfo(model.orderId, model.childId);
+                PayStatusModel orderChildModel = orderChildDao.GetPayStatus(model.orderId, model.childId);
                 if (orderChildModel == null)
                 {
                     return new { status_code = -1, status_message = "order_id:" + model.orderId + "_" + model.childId + "错误" };
@@ -89,7 +92,7 @@ namespace Ets.Service.Provider.Pay
                 {
                     return new { status_code = 1, status_message = string.Empty, data = new { pay_status = 1 } };
                 }
-                string orderNo = string.Concat(model.payStyle, "_", model.orderId, "_", model.childId);
+                string orderNo = string.Concat(model.productId, "_", model.orderId, "_", model.childId + "_", model.payStyle);
                 //支付宝
                 if (model.payType == PayTypeEnum.ZhiFuBao.GetHashCode())
                 {
@@ -119,20 +122,19 @@ namespace Ets.Service.Provider.Pay
         /// 窦海超
         /// 2015年5月12日 14:36:37
         /// </summary>
-        /// <param name="orderNumber">订单号</param>
+        /// <param name="orderNo">订单号</param>
         /// <param name="payAmount">支付金额</param>
         /// <returns></returns>
-        private ResultModel<PayResultModel> CreateAliPayOrder(int orderId, int childId, decimal payAmount)
+        private ResultModel<PayResultModel> CreateAliPayOrder(string orderNo, decimal payAmount)
         {
             PayResultModel resultModel = new PayResultModel();
-            var qrcodeUrl = alipayIntegrate.GetQRCodeUrl(orderId, childId, payAmount);
+            var qrcodeUrl = alipayIntegrate.GetQRCodeUrl(orderNo, payAmount);
             if (string.IsNullOrEmpty(qrcodeUrl))
             {
                 return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
             }
             resultModel.aliQRCode = qrcodeUrl;
-            resultModel.orderId = orderId;
-            resultModel.childId = childId;
+            resultModel.orderNo = orderNo;
             resultModel.payAmount = payAmount;
             resultModel.payType = PayTypeEnum.ZhiFuBao.GetHashCode();
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.success, resultModel);
@@ -158,8 +160,9 @@ namespace Ets.Service.Provider.Pay
                     LogHelper.LogWriter("订单编号为null");
                     return error;
                 }
-                int orderId = ParseHelper.ToInt(goods_id.Split('_')[1], 0);
-                int orderChildId = ParseHelper.ToInt(goods_id.Split('_')[2], 0);
+                int productId = ParseHelper.ToInt(goods_id.Split('_')[0], 0);//产品ID
+                int orderId = ParseHelper.ToInt(goods_id.Split('_')[1], 0);//主订单号
+                int orderChildId = ParseHelper.ToInt(goods_id.Split('_')[2], 0);//子订单号
                 if (orderId <= 0 || orderChildId <= 0)
                 {
                     LogHelper.LogWriter("订单号或子订单号为零");
@@ -217,9 +220,10 @@ namespace Ets.Service.Provider.Pay
                     LogHelper.LogWriter(fail);
                     return "fail";
                 }
-                int payStyle = ParseHelper.ToInt(orderNo.Split('_')[0]);//支付方式(1 用户支付 2 骑士代付)
+                int productId = ParseHelper.ToInt(orderNo.Split('_')[0]);//产品编号
                 int orderId = ParseHelper.ToInt(orderNo.Split('_')[1]);//主订单号
                 int orderChildId = ParseHelper.ToInt(orderNo.Split('_')[2]);//子订单号
+                int payStyle = ParseHelper.ToInt(orderNo.Split('_')[3]);//支付方式(1 用户支付 2 骑士代付)
                 if (orderId <= 0 || orderChildId <= 0)
                 {
                     string fail = string.Concat("错误啦orderId：", orderId, ",orderChildId:", orderChildId);
@@ -266,15 +270,13 @@ namespace Ets.Service.Provider.Pay
         /// 窦海超
         /// 2015年5月13日 14:57:38
         /// </summary>
-        /// <param name="orderId">主订单ID</param>
-        /// <param name="childId">子订单ID</param>
+        /// <param name="orderNo">订单号</param>
         /// <param name="WxCodeUrl">微信地址</param>
         /// <param name="TotalPrice">总金额，注意:微信要乘以100=最后支付的金额，这里传值前不要乘以100</param>
         /// <returns></returns>
-        public ResultModel<PayResultModel> CreateWxPayOrder(int orderId, int childId, decimal totalPrice, string wxCodeUrl)
+        public ResultModel<PayResultModel> CreateWxPayOrder(string orderNo, decimal totalPrice, string wxCodeUrl)
         {
             //支付方式-主订单ID-子订单ID
-            string orderNo = string.Concat(PayStyleEnum.BuyerPay.GetHashCode() + "_", orderId, "_", childId);
             PayResultModel resultModel = new PayResultModel();
             string code_url = wxCodeUrl;
             if (string.IsNullOrEmpty(code_url))//先查一下库是否存在二维码地址，不存在去微信生成
@@ -286,12 +288,18 @@ namespace Ets.Service.Provider.Pay
                 {
                     return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
                 }
-                orderChildDao.UpdateWxCodeUrl(orderId, childId, code_url);//把获取到的支付宝地址更新到子订单下
+                int productId = ParseHelper.ToInt(orderNo.Split('_')[0]);
+                int orderId = ParseHelper.ToInt(orderNo.Split('_')[1]);
+                int childId = ParseHelper.ToInt(orderNo.Split('_')[2]);
+                if (productId == ProductEnum.OrderChildPay.GetHashCode())
+                {
+                    //如果是子订单支付 
+                    orderChildDao.UpdateWxCodeUrl(orderId, childId, code_url);//把获取到的支付宝地址更新到子订单下
+                }
             }
 
             resultModel.aliQRCode = code_url;//微信地址
-            resultModel.orderId = orderId;//主订单
-            resultModel.childId = childId;//子订单
+            resultModel.orderNo = orderNo;//订单号
             resultModel.payAmount = totalPrice;//总金额，没乘以100的值
             resultModel.payType = PayTypeEnum.ZhiFuBao.GetHashCode();//支付宝
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.success, resultModel);
@@ -322,11 +330,10 @@ namespace Ets.Service.Provider.Pay
                 }
                 if (!string.IsNullOrEmpty(return_code) && return_code == "SUCCESS")
                 {
-
-                    int payStyle = ParseHelper.ToInt(out_trade_no.Split('_')[0], 0);
+                    int productId = ParseHelper.ToInt(out_trade_no.Split('_')[0], 0);
                     int orderId = ParseHelper.ToInt(out_trade_no.Split('_')[1], 0);
                     int orderChildId = ParseHelper.ToInt(out_trade_no.Split('_')[2], 0);
-
+                    int payStyle = ParseHelper.ToInt(out_trade_no.Split('_')[3], 0);
                     OrderChildFinishModel model = new OrderChildFinishModel()
                       {
                           orderChildId = orderChildId,

@@ -28,8 +28,9 @@ namespace SuperManWebApi.Controllers
         {
             //PayModel model = new PayModel()
             //{
-            //    orderId = 1344,
-            //    childId = 1,
+            //    productId = 1,
+            //    orderId = 1346,
+            //    childId = 0,
             //    payType = 2,
             //    version = "1.0"
             //};

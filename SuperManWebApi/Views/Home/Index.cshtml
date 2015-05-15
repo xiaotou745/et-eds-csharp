@@ -8,6 +8,38 @@
     //$.ajax({
     //    type: 'POST',
     //    dataType: 'json',
+    //    url: '/Order/Push',
+    //    data: {
+    //        "userId": 222,
+    //        "ReceiveName": "胡一",
+    //        "receviceAddress": "测试数据，请勿操作3",
+    //        "ReceivePhoneNo": "13520145815",
+    //        "Amount": 100,
+    //        "IsPay": false,
+    //        "Remark": null,
+    //        "OrderCount": 1,
+    //        "OrderSign": "14311222131",
+    //        "TimeSpan":1927,
+    //        "listOrderChlid": [
+    //                   {
+    //                       "ChildId": 1,
+    //                       "GoodPrice": 25                          
+    //                   },
+    //                   {
+    //                       "ChildId": 2,
+    //                       "GoodPrice": 23                          
+    //                   }
+    //               ]
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
+
+    //$.ajax({
+    //    type: 'POST',
+    //    dataType: 'json',
     //    url: '/Business/Get',
     //    data: {
     //        "BussinessId": 172,
@@ -532,8 +564,9 @@
     //        url: '/finance/WithdrawC',
     //        data: {
     //            "ClienterId": "114",
-    //                        "WithdrawPrice": "1",
-    //                        "FinanceAccountId": "2"
+    //                        "WithdrawPrice": "12",
+    //                        "FinanceAccountId": "2",
+    //            "version":"17882"
     //        },
     //        success: function (data) {
     //            console.log(data);
@@ -637,8 +670,9 @@
     //        url: '/finance/Withdrawb',
     //        data: {
     //            "BusinessId": "172",
-    //            "WithdrawPrice": "1",
-    //            "FinanceAccountId": "19"
+    //            "WithdrawPrice": "0",
+    //            "FinanceAccountId": "19",
+    //            "version": "17882"
     //        },
     //        success: function (data) {
     //            console.log(data);
@@ -646,4 +680,35 @@
     //        error: function () { }
     //    });
     //});
+    //$(function() {
+    //    $.ajax({
+    //        type: 'POST',
+    //        dataType: 'json',
+    //        url: '/business/records',
+    //        data: {
+    //            "BusinessId": "172",
+    //            "version":"123"
+    //        },
+    //        success: function (data) {
+    //            console.log(data);
+    //        },
+    //        error: function () { }
+    //    });
+    //});
+    $(function () {
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: '/Clienter/records',
+            data: {
+                "ClienterId": "114",
+                "version": "123"
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () { }
+        });
+    });
+    
 </script>

@@ -18,31 +18,37 @@ using Ets.Model.ParameterModel.Order;
 using Ets.Service.Provider.Finance;
 using Ets.Service.IProvider.User;
 using Ets.Service.Provider.User;
+using SuperManWebApi.App_Start.Filters;
+
 namespace SuperManWebApi.Controllers
-{ 
+{
     /// <summary>
     /// 商户相关接口 add by caoheyang
     /// </summary>
+    [ExecuteTimeLog]
     public class BusinessController : ApiController
     {
-        private  readonly  IBusinessFinanceProvider _businessFinanceProvider=new BusinessFinanceProvider();
-        private readonly IBusinessProvider _iBusinessProvider = new BusinessProvider();    
+        private readonly IBusinessFinanceProvider _businessFinanceProvider = new BusinessFinanceProvider();
+        private readonly IBusinessProvider _iBusinessProvider = new BusinessProvider();
 
         /// <summary>
         /// 商户交易流水API caoheyang 20150512
         /// </summary>
+        /// <param name="model">查询参数实体</param>
         /// <returns></returns>
         [HttpPost]
-        public ResultModel<IList<FinanceRecordsDM>> Records()
+        [Validate]
+        [ApiVersion]
+        public ResultModel<object> Records(BussinessRecordsPM model)
         {
-            int businessId = ParseHelper.ToInt(HttpContext.Current.Request.Form["businessId"]);
-            return _businessFinanceProvider.GetRecords(businessId);
+            return _businessFinanceProvider.GetRecords(model.BusinessId);
         }
 
         /// <summary>
-        /// 获取商户详情        
-        /// hulingbo 20150511
+        /// 获取商户详情       
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
         /// <param name="model">商户参数</param>
         /// <returns></returns>        
         [HttpPost]

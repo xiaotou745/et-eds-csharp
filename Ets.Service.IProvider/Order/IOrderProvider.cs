@@ -30,10 +30,7 @@ namespace Ets.Service.IProvider.Order
         /// <param name="criteria"></param>
         /// <returns></returns>
         IList<ClientOrderNoLoginResultModel> GetOrdersNoLoginLatest(ClientOrderSearchCriteria criteria);
-
-
-
-
+        
         /// </summary>        /// 商户发布订单信息转换为数据库对应实体
         /// </summary>
         /// <param name="busiOrderInfoModel"></param>
@@ -44,7 +41,6 @@ namespace Ets.Service.IProvider.Order
         /// 添加一条订单记录
         /// </summary>
         string AddOrder(order order);
-
         /// <summary>
         /// 根据参数获取订单
         /// danny-20150319
@@ -176,20 +172,28 @@ namespace Ets.Service.IProvider.Order
         ResultModel<object> UpdateOrderStatus_Other(ChangeStatusPM_OpenApi paramodel);
 
         /// <summary>
-        /// 获取订单详情
-        /// hulingbo 20150511
+        /// 判断订单是否存在      
         /// </summary>
-        /// <param name="id">订单Id</param>
-        /// <returns></returns>
-        OrderDM GetDetails(int id);
-
-        /// <summary>
-        /// 判断订单是否存在
-        /// hulingbo 20150511
-        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
         /// <param name="id">订单Id</param>
         /// <returns></returns>
         bool IsExist(int id);
-
+        /// <summary>
+        /// 获取主订单信息
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150512</UpdateTime>
+        /// <param name="id">订单Id</param>
+        /// <returns></returns>
+        order GetById(int id);
+        /// <summary>
+        /// 获取订单详情
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150512</UpdateTime>
+        /// <param name="id">订单Id</param>
+        /// <returns></returns>
+        OrderDM GetDetails(int id);    
     }
 }

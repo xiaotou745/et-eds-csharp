@@ -37,7 +37,7 @@ namespace Ets.Model.ParameterModel.Bussiness
         /// </summary>
         public bool IsPay { get; set; }
         /// <summary>
-        /// 经度
+        /// 经度(gps获取的？还是商家的，还是收货人的？）
         /// </summary>
         public double longitude { get; set; }
         /// <summary>
@@ -79,7 +79,7 @@ namespace Ets.Model.ParameterModel.Bussiness
         public string TimeSpan { get; set; }
 
         /// <summary>
-        /// 订单小票列表
+        /// 订单小票列表(?)
         /// </summary>
         public List<OrderChlidPM> listOrderChlid { get; set; }
     }
