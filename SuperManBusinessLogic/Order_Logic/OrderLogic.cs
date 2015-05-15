@@ -486,7 +486,7 @@ namespace SuperManBusinessLogic.Order_Logic
         /// <param name="startTime"></param>
         /// <param name="endTime"></param>
         /// <returns></returns>
-        public List<OrderInfoPrint> GetRushOrderInfo(DateTime startTime, DateTime endTime, int isPrint)
+        public List<OrderInfoPrint> GetRushOrderInfo(DateTime startTime, DateTime endTime,int busiId, int isPrint)
         {
 
             using (var db = new supermanEntities())
@@ -504,9 +504,15 @@ namespace SuperManBusinessLogic.Order_Logic
                                   ReceiveName = o.ReceviceName,
                                   ReceivePhone = o.RecevicePhoneNo,
                                   ReceiveAddress = o.ReceviceAddress,
+                                  OrderType = o.OrderType.Value,
+                                  BusiId = o.businessId.Value,
                                   //RushOrderTime = o.RushOrderDate.Value.ToString("yyyy-MM-dd HH:mm:ss"),
                                   BussinessName = b.Name
                               };
+                if (busiId > 0)
+                {
+                    myOrder = myOrder.Where(s => s.BusiId == busiId);
+                }
                 if (myOrder != null)
                 {
                     return myOrder.ToList();

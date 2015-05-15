@@ -30,15 +30,16 @@ namespace SuperManWebApi.Controllers
         /// <param name="startTime"></param>
         /// <param name="endTime"></param>
         /// <param name="isPrint"></param>
+        /// <param name="busiId">商户ID</param>
         /// <returns></returns>
         [HttpGet]
         [ActionStatus(typeof(GetRushOrderInfoStatus))]        
-        public ResultModel<OrderInfoPrint[]> GetRushOrderInfo(DateTime startTime,DateTime endTime,int isPrint=0)
+        public ResultModel<OrderInfoPrint[]> GetRushOrderInfo(DateTime startTime,DateTime endTime,int busiId,int isPrint=0)
         {
             //单号、人名、电话、门店信息以便打印订单
             if (startTime != null && endTime != null && DateTime.Compare(endTime, startTime) > 0)  
             {
-                List<OrderInfoPrint> orderPrintInfo = OrderLogic.orderLogic().GetRushOrderInfo(startTime, endTime, isPrint);
+                List<OrderInfoPrint> orderPrintInfo = OrderLogic.orderLogic().GetRushOrderInfo(startTime, endTime,busiId, isPrint);
 
                 return ResultModel<OrderInfoPrint[]>.Conclude
                     (GetRushOrderInfoStatus.Success, orderPrintInfo.ToArray());

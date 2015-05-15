@@ -46,5 +46,13 @@ namespace SuperManCommonModel.Models
         /// 店铺名称
         /// </summary>
         public string BussinessName { get; set; }
+        /// <summary>
+        /// 订单类型1送餐，2取餐盒
+        /// </summary>
+        public int OrderType { get; set; }
+        /// <summary>
+        /// 商户ID
+        /// </summary>
+        public int BusiId { get; set; }
     }
 }
