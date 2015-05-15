@@ -263,5 +263,11 @@ namespace ETS.Enums
         [DisplayText("支付中")]
         WaitingPay = 2
     }
+
+    public enum ProductEnum
+    {
+        [DisplayText("子订单支付")]
+        OrderChildPay = 1
+    }
     #endregion
 }
