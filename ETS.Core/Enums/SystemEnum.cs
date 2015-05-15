@@ -12,9 +12,9 @@ namespace ETS.Enums
    /// </summary>
     public enum SystemEnum
     {
-        Success=0,
+        Success=1,
         [DisplayText("系统错误")]
-        SystemError=-1,
+        SystemError=0,
         [DisplayText("参数错误")]
         ParaError = -2
     }
