@@ -47,10 +47,7 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.HadCancelQualification);
             }
-
-            ///TODO 之前的任务金额10-5000
-            /// 主订单金额！=子订单金额之和？
-            /// 数量=子订单数量？
+            ///TODO 之前的任务金额10-5000        
             if (model.Amount < 10m)
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountLessThanTen);
@@ -58,27 +55,43 @@ namespace SuperManWebApi.Controllers
             if (model.Amount > 5000m)
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountMoreThanFiveThousand);
-            }           
+            }
             if (model.OrderCount <= 0 || model.OrderCount > 15) //判断录入订单数量是否符合要求
+            {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
+            }           
+            decimal amount=0;
+            for(int i=0;i<model.listOrderChlid.Count;i++)
+            {
+                if(model.listOrderChlid[i].GoodPrice!=null)
+                {
+                    amount+=model.listOrderChlid[i].GoodPrice;
+                }                
+            }
+            if(model.Amount!=amount)
+            {
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountIsNotEqual);
+            }
+            if (model.OrderCount != model.listOrderChlid.Count)//主订单与子订单数量
+            {
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.CountIsNotEqual);
+            }
 
             order order = iOrderProvider.TranslateOrder(model);
-
-            ///TODO 商户结算比例不能小于10？固定金额类型的呢？
-            if (order.CommissionType == 1 && order.BusinessCommission < 10m) //商户结算比例不能小于10
+            if (order.CommissionType ==(int)OrderCommissionType.FixedRatio && order.BusinessCommission < 10m) //商户结算比例不能小于10
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusiSettlementRatioError);
             }
-            string result = iOrderProvider.AddOrder(order);
+            PubOrderStatus cuStatus = iOrderProvider.AddOrder(order);
 
-            if (result == "0")//当前订单执行失败
+            if (cuStatus == PubOrderStatus.Success)//当前订单执行失败
             {
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.InvalidPubOrder);
-            }
-            #endregion
+                BusiOrderResultModel resultModel = new BusiOrderResultModel { userId = model.userId };
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
+            }            
 
-            BusiOrderResultModel resultModel = new BusiOrderResultModel { userId = model.userId };
-            return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
+            return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.InvalidPubOrder);
+            #endregion       
         }
 
         /// <summary>

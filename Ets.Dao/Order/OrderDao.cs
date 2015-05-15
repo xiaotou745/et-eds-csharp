@@ -1735,21 +1735,8 @@ order by bb.Id desc;";
         /// <UpdateTime>20150509</UpdateTime>
         /// <param name="order">订单实体</param>
         /// <returns></returns>
-        public int AddOrder(Model.DataModel.Order.order order)
-        {
-            //判断TimeSpan     
-            #region 根据时间戳判断订单是否存在
-            ///TODO 条件加商家ID、用写库，单独封一个方法
-            const string querysql = @"select  count(1) from  dbo.[order]  where  TimeSpan=@TimeSpan";
-            IDbParameters dbSelectParameters = DbHelper.CreateDbParameters();
-            dbSelectParameters.AddWithValue("TimeSpan", order.TimeSpan);
-            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querysql, dbSelectParameters);
-            bool isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
-            if (isExist)
-            {
-                return 0;
-            }
-            #endregion
+        public int AddOrder(order order)
+        {           
 
             #region 写入订单表、订单日志表
             StringBuilder insertSql = new StringBuilder();
@@ -1887,13 +1874,14 @@ values  ( @OrderNo ,
             return orderId;
         }
 
+
         /// <summary>
         /// 写入订单子表
         /// </summary>
         /// <UpdateBy>hulingbo</UpdateBy>
         /// <UpdateTime>20150512</UpdateTime>
         /// <returns>订单实体</returns>
-        void AddOrderChild(int orderId, Model.DataModel.Order.order order)
+        void AddOrderChild(int orderId, order order)
         {
             #region 性能优化 
             ///TODO 事务问题
@@ -1966,7 +1954,7 @@ select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneN
     o.ReceviceLatitude,o.OrderFrom,o.OriginalOrderId,o.OriginalOrderNo,o.Quantity,o.Weight,o.ReceiveProvince,o.ReceiveArea,o.ReceiveProvinceCode,
     o.ReceiveCityCode,o.ReceiveAreaCode,o.OrderType,o.KM,o.GuoJuQty,o.LuJuQty,o.SongCanDate,o.OrderCount,o.CommissionRate,o.Payment,
     o.CommissionFormulaMode,o.Adjustment,o.BusinessCommission,o.SettleMoney,o.DealCount,o.PickupCode,o.OtherCancelReason,o.CommissionType,
-    o.CommissionFixValue,o.BusinessGroupId,o.TimeSpan,o.RushOrderLongitude,o.RushOrderLandline,o.FinishOrderLongitude,o.FinishOrderLandline,
+    o.CommissionFixValue,o.BusinessGroupId,o.TimeSpan,o.RushOrderLongitude,o.RushOrderLandline,o.FinishOrderLongitude,o.FinishOrderLandline,o.Invoice,
     b.[City] BusinessCity,b.Name BusinessName,b.PhoneNo BusinessPhoneNo ,b.Address BusinessAddress ,b.GroupId, b.Longitude, b.Latitude,
     REPLACE(b.City,'市','') AS pickUpCity
 from  dbo.[order] o (nolock)
@@ -2001,6 +1989,27 @@ where  o.Id=@Id ";
             isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
 
             return isExist;
+        }
+
+        /// <summary>
+        /// 判断订单是否存在
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150512</UpdateTime>
+        /// <param name="order">商户Id,时间戳</param>
+        /// <returns></returns>
+        public bool IsExist(order order)
+        {
+            bool isExist;
+
+            const string querysql = @"select  count(1) from  dbo.[order]  where businessId=@businessId and TimeSpan=@TimeSpan ";
+            IDbParameters dbSelectParameters = DbHelper.CreateDbParameters();
+            dbSelectParameters.AddWithValue("businessId", order.businessId);
+            dbSelectParameters.AddWithValue("TimeSpan", order.TimeSpan);
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Write, querysql, dbSelectParameters);
+            isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
+
+            return isExist;          
         }
         
     }

@@ -320,37 +320,46 @@ to.BusinessName = business.Name;
         /// </summary>
         /// <param name="order"></param>
         /// <returns></returns>
-        public string AddOrder(order order)
-        {
-            string str = "0";
+        public PubOrderStatus AddOrder(order order)
+        {            
             int result = 0;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
-            {
-                result = OrderDao.AddOrder(order);
-                if (result > 0)
+            {                
+                bool isExist=OrderDao.IsExist(order);
+                if (isExist)
                 {
-                    str = "1";
-                    if (order.Adjustment > 0)
-                    {
-                        ///TODO if(b)吧？
-                        bool b = OrderDao.addOrderSubsidiesLog(order.Adjustment, result, "补贴加钱,订单金额:" + order.Amount + "-佣金补贴策略id:" + order.CommissionFormulaMode);
-                        if (!b)
-                        {
-                            str = "1";
-                        }
-                    }
-                    tran.Complete();
+                    return PubOrderStatus.OrderHasExist;
+                }
+                else
+                {
+                    result = OrderDao.AddOrder(order);
                 }
 
-            }
-            //Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity); //激光推送
-            ////推送给 VIP
-            //if (ConfigSettings.Instance.IsSendVIP == "1")
-            //{
-            //    Push.PushMessageVip(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity, ConfigSettings.Instance.VIPName); //激光推送
-            //}
-            return str;
+                if(result<=0)//订单发布失败
+                {
+                    return PubOrderStatus.InvalidPubOrder;
+                }
 
+
+                if (order.Adjustment > 0)
+                {
+                    bool b = OrderDao.addOrderSubsidiesLog(order.Adjustment, result, "补贴加钱,订单金额:" + order.Amount + "-佣金补贴策略id:" + order.CommissionFormulaMode);
+                    if (!b)//写入日志失败
+                    {
+                        return PubOrderStatus.InvalidPubOrder;
+                    }
+
+                    tran.Complete();
+                    return PubOrderStatus.Success;
+                }
+                else
+                {
+                    tran.Complete();
+                    return PubOrderStatus.Success;
+                }                          
+            }
+         
+            return PubOrderStatus.Success;
         }
 
         /// <summary>
@@ -783,8 +792,8 @@ to.BusinessName = business.Name;
             }
             #endregion
             order dborder = OrderInstance(model);  //整合订单信息
-            string addResult = AddOrder(dborder);    //添加订单记录，并且触发极光推送。          
-            if (addResult == "1")
+            PubOrderStatus addResult = AddOrder(dborder);    //添加订单记录，并且触发极光推送。          
+            if (addResult == PubOrderStatus.Success)
             {
                 NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { OriginalOrderNo = model.OriginalOrderNo, OrderNo = dborder.OrderNo };
                 LogHelper.LogWriter("订单发布成功", new { model = model, resultModel = resultModel });
@@ -1116,7 +1125,8 @@ to.BusinessName = business.Name;
             orderDM.OrderCount = order.OrderCount;
             orderDM.GroupId = order.GroupId;
             orderDM.PickupCode = order.PickupCode;
-            orderDM.Payment = order.Payment;        
+            orderDM.Payment = order.Payment;
+            orderDM.Invoice = order.Invoice;
           
             Ets.Service.Provider.Order.OrderChildProvider orderChildPr=new OrderChildProvider();
             orderDM.listOrderChild = orderChildPr.GetByOrderId(id);

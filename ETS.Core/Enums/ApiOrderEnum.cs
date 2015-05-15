@@ -68,4 +68,24 @@ namespace ETS.Enums
         ParaError = 10002
     }
 
+
+    /// <summary>
+    /// 订单结算类型
+    /// </summary>
+    /// <UpdateBy>hulingbo</UpdateBy>
+    /// <UpdateTime>20150515</UpdateTime>
+    public enum OrderCommissionType
+    {
+        /// <summary>
+        /// 固定比例
+        /// </summary>
+        [DisplayText("固定比例")]
+        FixedRatio = 1,
+        /// <summary>
+        /// 固定金额
+        /// </summary>
+        [DisplayText("固定金额")]
+        FixedAmount = 2
+    }
+
 }

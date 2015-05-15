@@ -40,7 +40,12 @@ namespace ETS.Enums
         [DisplayText("抱歉，订单金额不可低于10元")]
         AmountLessThanTen,
         [DisplayText("抱歉，订单金额不可高于5000元")]
-        AmountMoreThanFiveThousand
+        AmountMoreThanFiveThousand,
+        [DisplayText("订单金额与子订单总金额不一致")]
+        AmountIsNotEqual,
+        [DisplayText("订单数量与子订单数量不一致")]
+        CountIsNotEqual
+
     }
     public enum GetOrdersStatus
     {

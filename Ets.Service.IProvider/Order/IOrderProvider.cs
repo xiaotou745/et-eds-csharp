@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using ETS.Enums;
 namespace Ets.Service.IProvider.Order
 {
     public interface IOrderProvider
@@ -40,7 +40,7 @@ namespace Ets.Service.IProvider.Order
         /// <summary>
         /// 添加一条订单记录
         /// </summary>
-        string AddOrder(order order);
+        PubOrderStatus AddOrder(order order);
         /// <summary>
         /// 根据参数获取订单
         /// danny-20150319

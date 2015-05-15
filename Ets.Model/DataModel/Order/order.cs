@@ -152,6 +152,11 @@ namespace Ets.Model.DataModel.Order
         public decimal? FinishOrderLandline { get; set; }
 
         /// <summary>
+        /// 发票
+        /// </summary>
+        public string Invoice { get; set; }
+        
+        /// <summary>
         /// 经度
         /// </summary>
         public double? Longitude { get; set; }
