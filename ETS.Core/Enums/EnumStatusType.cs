@@ -180,7 +180,7 @@ namespace ETS.Enums
         [DisplayText("完成订单失败")]
         Failed = 0,
         [DisplayText("超人不能为空")]
-        userIdEmpty = 101,
+        UserIdEmpty = 101,
         [DisplayText("订单不能为空")]
         OrderEmpty =102,
         [DisplayText("订单不存在")]
@@ -190,8 +190,9 @@ namespace ETS.Enums
         [DisplayText("取货码错误")]
         PickupCodeError=105,
         [DisplayText("订单已取消")]
-        OrderHadCancel=106
-
+        OrderHadCancel=106,
+        [DisplayText("请传递版本号")]
+        NoVersion = 107
     }
 
     public enum GetMyBalanceStatus

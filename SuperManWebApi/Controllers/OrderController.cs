@@ -124,7 +124,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [ApiVersionStatistic]
-        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel> TicketUpload(string Version)
+        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel> TicketUpload()
         { 
             if (HttpContext.Current.Request.Form.Count == 0)
             {
@@ -175,8 +175,7 @@ namespace SuperManWebApi.Controllers
             string fullFileDir = ETS.Util.ImageTools.CreateDirectory(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath, orderId.ToString(), out saveDbFilePath);
 
             if (fullFileDir == "0")
-            {
-
+            { 
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed);
             }
             //保存原图
@@ -223,7 +222,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [ApiVersionStatistic]
-        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel> TicketRemove(string Version)
+        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel> TicketRemove()
         { 
             if (HttpContext.Current.Request.Form.Count == 0)
             {
@@ -295,16 +294,17 @@ namespace SuperManWebApi.Controllers
 
         /// <summary>
         /// 骑士抢单
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="orderNo"></param>
-        /// <param name="bussinessId"></param>
-        /// <param name="Version"></param>
+        /// </summary> 
         /// <returns></returns>
         [HttpPost]
         [ExecuteTimeLog]
-        public ResultModel<RushOrderResultModel> Receive(int userId, string orderNo,int bussinessId, string version)
+        public ResultModel<RushOrderResultModel> Receive()
         {
+            var userId = ParseHelper.ToInt(HttpContext.Current.Request.Form["userId"], 0);   //骑士ID
+            var orderNo = HttpContext.Current.Request.Form["orderNo"];  
+            var bussinessId = ParseHelper.ToInt(HttpContext.Current.Request.Form["bussinessId"], 0); 
+            var version = HttpContext.Current.Request.Form["version"];  
+
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
             if (userId <= 0) //用户id验证
@@ -322,19 +322,23 @@ namespace SuperManWebApi.Controllers
 
         /// <summary>
         /// 骑士完成订单
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="orderNo"></param>
-        /// <param name="version"></param>
-        /// <param name="pickupCode"></param>
+        /// </summary> 
         /// <returns></returns>
         [HttpPost]
-        public ResultModel<FinishOrderResultModel> Complete(int userId, string orderNo,string version, string pickupCode = null)
+        public ResultModel<FinishOrderResultModel> Complete()
         {
+            var userId = ParseHelper.ToInt(HttpContext.Current.Request.Form["userId"], 0);   //骑士ID
+            var orderNo = HttpContext.Current.Request.Form["orderNo"];
+            var pickupCode = HttpContext.Current.Request.Form["pickupCode"];
+            var version = HttpContext.Current.Request.Form["version"];  
             if (userId == 0)  //用户id非空验证
-                return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.userIdEmpty);
+                return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.UserIdEmpty);
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
                 return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderEmpty);
+            if (string.IsNullOrWhiteSpace(version))
+            {
+                return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.NoVersion);
+            } 
             //var myorder = new Ets.Dao.Order.OrderDao().GetOrderByNo(orderNo);
             string finishResult = iClienterProvider.FinishOrder(userId, orderNo, pickupCode);
             if (finishResult == "1")  //完成
