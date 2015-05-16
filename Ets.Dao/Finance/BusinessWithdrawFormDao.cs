@@ -33,9 +33,9 @@ namespace Ets.Dao.Finance
         {
             const string insertSql = @"
 insert into BusinessWithdrawForm(WithwardNo,BusinessId,BalancePrice,AllowWithdrawPrice,Status,Amount,Balance,
-TrueName,AccountNo,AccountType,OpenBank,OpenSubBank)
+TrueName,AccountNo,AccountType,BelongType,OpenBank,OpenSubBank)
 values(@WithwardNo,@BusinessId,@BalancePrice,@AllowWithdrawPrice,@Status,@Amount,@Balance,
-@TrueName,@AccountNo,@AccountType,@OpenBank,@OpenSubBank)
+@TrueName,@AccountNo,@AccountType,@BelongType,@OpenBank,@OpenSubBank)
 
 select @@IDENTITY";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -49,6 +49,7 @@ select @@IDENTITY";
             dbParameters.AddWithValue("TrueName", businessWithdrawForm.TrueName); //商户收款户名
             dbParameters.AddWithValue("AccountNo", businessWithdrawForm.AccountNo); //卡号(DES加密)
             dbParameters.AddWithValue("AccountType", businessWithdrawForm.AccountType);//账号类型：(1网银 2支付宝 3微信 4财付通 5百度钱包）
+            dbParameters.AddWithValue("BelongType", businessWithdrawForm.BelongType);//账号类别  0 个人账户 1 公司账户  
             dbParameters.AddWithValue("OpenBank", businessWithdrawForm.OpenBank); //开户行
             dbParameters.AddWithValue("OpenSubBank", businessWithdrawForm.OpenSubBank);//开户支行
 
