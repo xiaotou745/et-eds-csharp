@@ -540,7 +540,7 @@ namespace Ets.Service.Provider.Clienter
 
         /// <summary>
         /// 更新用户金额
-        /// wc
+        /// wc 完成订单时候调用
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="myOrderInfo"></param>
@@ -559,6 +559,9 @@ namespace Ets.Service.Provider.Clienter
             {
                 accountBalance = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission);
             }
+
+            #region 不往这个表里插数据了
+
             //var model = new WithdrawRecordsModel
             //{
             //    AdminId = 1,
@@ -571,6 +574,9 @@ namespace Ets.Service.Provider.Clienter
             //}; 
             //Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords = new WtihdrawRecordsProvider();
             //iRecords.AddRecords(model);
+
+            #endregion
+
             ///TODO 骑士余额流水表，不是这个吧？
             ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
             {
@@ -641,7 +647,7 @@ namespace Ets.Service.Provider.Clienter
         {
             OrderOther orderOther = null;
             ///TODO 单一职责，GetById GetByNo
-            var myOrderInfo = orderDao.GetOrderInfoByOrderNo("", uploadReceiptModel.OrderId);
+            var myOrderInfo = orderDao.GetByOrderId(uploadReceiptModel.OrderId);
             //if (myOrderInfo.Status == ConstValues.ORDER_CANCEL)
             //{
             //    return orderOther;
@@ -651,16 +657,14 @@ namespace Ets.Service.Provider.Clienter
             {
                 orderOther = clienterDao.UpdateClientReceiptPicInfo(uploadReceiptModel);
                 //上传成功后， 判断 订单 创建时间在 2015-4-18 00：00 之前的订单不在增加佣金
-                string date = "2015-04-18 00:00:00";
-
+                string date = "2015-04-18 00:00:00"; 
                 if (orderOther.OrderCreateTime > Convert.ToDateTime(date) 
                     && orderOther.OrderStatus == ConstValues.ORDER_FINISH 
                     && orderOther.HadUploadCount == orderOther.NeedUploadCount)
                 {
                     if (CheckOrderPay(myOrderInfo.OrderNo))
                     {
-                        //更新骑士金额
-
+                        //更新骑士金额 
                         UpdateClienterAccount(uploadReceiptModel.ClienterId, myOrderInfo);
                     }
                 }

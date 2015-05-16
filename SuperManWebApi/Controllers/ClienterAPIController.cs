@@ -37,8 +37,8 @@ namespace SuperManWebApi.Controllers
 
         private static object lockHelper = new object();
         readonly Ets.Service.IProvider.Clienter.IClienterProvider iClienterProvider = new Ets.Service.Provider.Clienter.ClienterProvider();
-        //readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
-        //readonly Ets.Service.IProvider.Order.IOrderProvider iOrderProvider = new Ets.Service.Provider.Order.OrderProvider();
+        readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
+        readonly Ets.Service.IProvider.Order.IOrderProvider iOrderProvider = new Ets.Service.Provider.Order.OrderProvider();
 
         /// <summary>
         /// C端注册 -平扬 2015.3.30
@@ -92,9 +92,11 @@ namespace SuperManWebApi.Controllers
             }
             var fileHand = HttpContext.Current.Request.Files[0]; //手持照片
             var file = HttpContext.Current.Request.Files[1]; //照片
-            //手持照片
+            
             ImageHelper ih = new ImageHelper();
+            //手持照片
             ImgInfo handImg=ih.UploadImg(fileHand, 0);
+            //身份证照片
             ImgInfo sfhImg = ih.UploadImg(file, 0); 
             #region 暂时注释
 

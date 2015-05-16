@@ -878,7 +878,7 @@ from    dbo.[order] o ( nolock )
 where   o.Id = @OrderId";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderId", SqlDbType.Int).Value = orderId;
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql, parm);
             var ooList = MapRows<OrderOther>(dt);
 
             if (ooList != null && ooList.Count > 0)
