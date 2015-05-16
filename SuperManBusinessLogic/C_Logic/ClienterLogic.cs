@@ -471,8 +471,8 @@ namespace SuperManBusinessLogic.C_Logic
                 }
                 if (!string.IsNullOrWhiteSpace(criteria.city))
                     query = query.Where(i => i.business.City == criteria.city.Trim());
-                if (!string.IsNullOrWhiteSpace(criteria.cityId))
-                    query = query.Where(i => i.business.CityId == criteria.cityId.Trim());
+                //if (!string.IsNullOrWhiteSpace(criteria.cityId))
+                //    query = query.Where(i => i.business.CityId == criteria.cityId.Trim());
                 //1送餐订单 还是  2取餐盒订单
                 query = query.Where(i => i.OrderType == criteria.OrderType);
 

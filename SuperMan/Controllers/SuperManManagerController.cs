@@ -164,9 +164,9 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult ModifySuperMan(ClienterModel clienterModel)
         {
-            if (!string.IsNullOrWhiteSpace(clienterModel.Password.Trim()))
+            if (!string.IsNullOrWhiteSpace(clienterModel.Password))
             {
-                clienterModel.Password = MD5Helper.MD5(clienterModel.Password);
+                clienterModel.Password = MD5Helper.MD5(clienterModel.Password.Trim());
             }
 
             clienter model = new SuperManDataAccess.clienter
@@ -179,8 +179,7 @@ namespace SuperMan.Controllers
                 ProvinceCode = clienterModel.ProvinceCode,
                 CityCode = clienterModel.CityCode,
                 IDCard = clienterModel.IDCard,
-                Password = clienterModel.Password,
-                City = clienterModel.City,
+                Password = clienterModel.Password, 
                 CityId = clienterModel.CityId,
                 Province = clienterModel.Province,
                 GroupId = clienterModel.GroupId,
@@ -188,6 +187,19 @@ namespace SuperMan.Controllers
                 PicWithHandUrl = clienterModel.PicWithHandUrl,
                 PicUrl = clienterModel.PicUrl
             };
+            //City = clienterModel.City,
+            if (clienterModel.City.Contains("北京"))
+            {
+                model.City = "北京市";
+            }
+            if (clienterModel.City.Contains("上海"))
+            {
+                model.City = "上海市";
+            } 
+            if (clienterModel.City.Contains("天津"))
+            {
+                model.City = "天津市";
+            }
             ClienterLogic.clienterLogic().Update(model);
             var delcbr = new clienterbussinessrelation {ClienterId = clienterModel.Id};
             ClienterLogic.clienterLogic().DeleteClienterBusiRel(delcbr);

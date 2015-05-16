@@ -316,7 +316,7 @@ namespace SuperManWebApi.Controllers
                 if (model.city.Contains("上海"))
                 {
                     criteria.cityId = "11101";
-                }
+                } 
             }
             var pagedList = ClienterLogic.clienterLogic().GetOrdersForSongCanOrQuCan(criteria);
             var lists = ClientOrderNoLoginResultModelTranslator.Instance.Translate(pagedList);
