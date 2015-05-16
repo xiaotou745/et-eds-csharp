@@ -39,8 +39,7 @@ namespace ETS.Util
             else
             {
                 virtualPath = DateTime.Now.ToString("/yyyy/MM/dd/HH/") + saveDir + "/";
-            }
-            
+            } 
             string fileUploadDir = string.Format("{0}{1}", uploadPath, virtualPath);
             try
             {
@@ -52,7 +51,7 @@ namespace ETS.Util
             }
             catch (Exception ex)
             {
-                LogHelper.LogWriter("上传图片失败：", new { ex = ex });
+                LogHelper.LogWriter("创建图片目录失败：", new { ex = ex });
                 return "0";
             }
         } 
