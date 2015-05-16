@@ -164,9 +164,11 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult ModifySuperMan(ClienterModel clienterModel)
         {
-            if (string.IsNullOrWhiteSpace(clienterModel.Password))
-                clienterModel.Password = "edaisong";
-            clienterModel.Password = MD5Helper.MD5(clienterModel.Password);
+            if (!string.IsNullOrWhiteSpace(clienterModel.Password.Trim()))
+            {
+                clienterModel.Password = MD5Helper.MD5(clienterModel.Password);
+            }
+
             clienter model = new SuperManDataAccess.clienter
             {
                 Id=clienterModel.Id,

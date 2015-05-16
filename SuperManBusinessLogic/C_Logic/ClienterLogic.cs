@@ -253,7 +253,7 @@ namespace SuperManBusinessLogic.C_Logic
                             }
                             if (!string.IsNullOrWhiteSpace(clienter.Password))
                             {
-                                query.Password = MD5Helper.MD5(clienter.Password);
+                                query.Password = clienter.Password;
                             }
                             if (clienter.BussinessID != null)
                             {
