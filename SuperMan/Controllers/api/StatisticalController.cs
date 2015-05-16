@@ -14,12 +14,14 @@ namespace SuperMan.Controllers.API
         /// </summary>
         private readonly IOrderStatisticsProvider orderProvider = new OrderStatisticsProvider();
 
+        private readonly IStatisticsProvider statisticsProvider = new StatisticsProvider();
+
         /// <summary>
         /// 订单时间间隔统计
         /// </summary>
         /// <param name="queryInfo"></param>
         /// <returns></returns>
-        [System.Web.Http.HttpPost]
+        [HttpPost]
         public object QueryCompleteTimeSpan([FromBody]ParamOrderCompleteTimeSpan queryInfo)
         {
             if (queryInfo == null || !queryInfo.StartDate.HasValue || !queryInfo.EndDate.HasValue)
@@ -35,6 +37,23 @@ namespace SuperMan.Controllers.API
             IList<OrderCompleteTimeSpanInfo> lstOrderTimeSpans = orderProvider.QueryOrderCompleteTimeSpan(queryInfo);
 
             return new ResultModel(true, string.Empty, lstOrderTimeSpans);
+        }
+
+        [HttpPost]
+        public object QueryActive([FromBody] ParamActiveInfo queryInfo)
+        {
+            if (queryInfo == null || !queryInfo.StartDate.HasValue || !queryInfo.EndDate.HasValue)
+            {
+                return Json(new ResultModel(false, "时间条件不允许为null", null));
+            }
+
+            if ((queryInfo.EndDate.Value.AddDays(1) - queryInfo.StartDate.Value).Days > 7)
+            {
+                return Json(new ResultModel(false, "最多查询7天数据，请更改查询条件", null));
+            }
+
+            var lstActives = statisticsProvider.QueryActiveBusinessClienter(queryInfo);
+            return new ResultModel(true, string.Empty, lstActives);
         }
     }
 }

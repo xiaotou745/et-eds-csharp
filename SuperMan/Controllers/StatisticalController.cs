@@ -18,6 +18,8 @@ namespace SuperMan.Controllers
         /// </summary>
         private readonly IOrderStatisticsProvider orderProvider = new OrderStatisticsProvider();
 
+        private readonly IStatisticsProvider statisticsProvider = new StatisticsProvider();
+
         #region 订单完成时间间隔统计
         /// <summary>
         /// 订单完成时间间隔统计
@@ -40,6 +42,30 @@ namespace SuperMan.Controllers
 
             IList<OrderCompleteTimeSpanInfo> lstOrderTimeSpans = orderProvider.QueryOrderCompleteTimeSpan(defaultParams);
             ViewBag.LstOrderTimeSpans = lstOrderTimeSpans;
+
+            return View();
+        }
+        #endregion
+
+        #region 活跃商家、骑士数量
+
+        public ActionResult Active()
+        {
+            DateTime startDate = DateTime.Now.AddDays(-7).Date;
+            DateTime endDate = DateTime.Now.AddDays(-1).Date;
+
+            ViewBag.StartDate = startDate;
+            ViewBag.EndDate = endDate;
+
+            ParamActiveInfo defaultParams = new ParamActiveInfo()
+            {
+                StartDate = startDate,
+                EndDate = endDate,
+                AsCityQuery = false,
+            };
+
+            var lstActiveInfo = statisticsProvider.QueryActiveBusinessClienter(defaultParams);
+            ViewBag.LstActiveInfo = lstActiveInfo;
 
             return View();
         }

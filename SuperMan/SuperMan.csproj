@@ -565,6 +565,7 @@
     <Content Include="Views\StrategyManager\_StrategyManageList.cshtml" />
     <Content Include="Views\CommissionSubsidyStrategy\CommissionSubsidyStrategy.cshtml" />
     <Content Include="Views\Statistical\OrderCompleteTimeSpan.cshtml" />
+    <Content Include="Views\Statistical\Active.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
