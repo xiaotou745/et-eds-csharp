@@ -505,8 +505,8 @@ namespace SuperManBusinessLogic.Order_Logic
                                   ReceivePhone = o.RecevicePhoneNo,
                                   ReceiveAddress = o.ReceviceAddress,
                                   OrderType = o.OrderType.Value,
-                                  BusiId = o.businessId.Value,
-                                  QuCanJuRemark = o.QuCanJuRemark,
+                                  BusiId = b.OriginalBusiId.Value,
+                                  QuCanJuRemark = o.QuCanJuRemark ?? "",
                                   Remark = o.Remark,
                                   //RushOrderTime = o.RushOrderDate.Value.ToString("yyyy-MM-dd HH:mm:ss"),
                                   BussinessName = b.Name

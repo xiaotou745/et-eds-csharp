@@ -191,7 +191,7 @@ namespace SuperManWebApi.Models.Business
             to.LuJuQty = from.LuJuQty;  //炉具数量
 
             to.SongCanDate = from.SongCanDate;  //送餐时间
-
+            to.IsPrint = 0;
             //计算订单佣金
             var subsidy = SubsidyLogic.subsidyLogic().GetCurrentSubsidy(business.GroupId.Value,from.OrderType);
             if (subsidy != null)
