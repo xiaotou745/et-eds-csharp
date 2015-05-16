@@ -63,23 +63,18 @@ namespace Ets.Model.ParameterModel.Bussiness
         /// 订单签名（保证唯一性）
         /// </summary>
         public string OrderSign { get; set; }
-
-        /// <summary>
-        /// 商家分组ID
-        /// </summary>
-        public int BusinessGroupId { get; set; }
-
-        /// <summary>
-        /// 策略ID
-        /// </summary>
-        public int StrategyId { get; set; }
-/// <summary>
+ 
+         /// <summary>
         /// 时间戳
         /// </summary>
         public string TimeSpan { get; set; }
-
+   
         /// <summary>
-        /// 订单小票列表(?)
+        /// 版本
+        /// </summary>
+        public string Version { get; set; }
+        /// <summary>
+        /// 子订单列表
         /// </summary>
         public List<OrderChlidPM> listOrderChlid { get; set; }
     }

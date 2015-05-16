@@ -152,6 +152,11 @@ namespace Ets.Model.DataModel.Order
         public decimal? FinishOrderLandline { get; set; }
 
         /// <summary>
+        /// 发票
+        /// </summary>
+        public string Invoice { get; set; }
+        
+        /// <summary>
         /// 经度
         /// </summary>
         public double? Longitude { get; set; }
@@ -159,6 +164,12 @@ namespace Ets.Model.DataModel.Order
         ///  纬度
         /// </summary>
         public double? Latitude { get; set; }
+
+        /// <summary>
+        /// 须上传小票数量
+        /// </summary>
+        public int NeedUploadCount { get; set; }
+
 
 
     }

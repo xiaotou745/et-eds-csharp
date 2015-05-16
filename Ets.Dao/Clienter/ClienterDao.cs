@@ -611,7 +611,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, ConstValues.OrderH
         }
 
         public IList<BusinessesDistributionModel> GetClienteStorerGrabStatisticalInfo(int daysAgo)
-        {            
+        {
             StringBuilder sb = new StringBuilder();
             sb.Append("with t as(");
             sb.Append(" select temp.[date],temp.businessCount,count(temp.clienterId) cCount");
@@ -732,13 +732,13 @@ set     HasUploadTicket = 1,
         TicketUrl = @ReceiptPic
 where   OrderId = @OrderId
         and ChildId = @OrderChildId;
-"); 
+");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderId", SqlDbType.Int).Value = uploadReceiptModel.OrderId;
             parm.Add("@NeedUploadCount", SqlDbType.Int).Value = uploadReceiptModel.NeedUploadCount;
             parm.Add("@HadUploadCount", SqlDbType.Int).Value = uploadReceiptModel.HadUploadCount;
             parm.Add("@ReceiptPic", SqlDbType.VarChar).Value = uploadReceiptModel.ReceiptPic;
-            parm.Add("@OrderChildId", SqlDbType.Int).Value = uploadReceiptModel.OrderChildId; 
+            parm.Add("@OrderChildId", SqlDbType.Int).Value = uploadReceiptModel.OrderChildId;
             try
             {
                 DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql.ToString(), parm);
@@ -783,7 +783,7 @@ set     HasUploadTicket = 1,
         TicketUrl = @ReceiptPic
 where   OrderId = @OrderId
         and ChildId = @OrderChildId;
-"); 
+");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderId", SqlDbType.Int).Value = uploadReceiptModel.OrderId;
             parm.Add("@NeedUploadCount", SqlDbType.Int).Value = uploadReceiptModel.NeedUploadCount;
@@ -833,7 +833,7 @@ where   OrderId = @OrderId
  where  OrderId = @OrderId;
 ");
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@OrderId", SqlDbType.Int).Value = uploadReceiptModel.OrderId; 
+            parm.Add("@OrderId", SqlDbType.Int).Value = uploadReceiptModel.OrderId;
             parm.Add("@HadUploadCount", SqlDbType.Int).Value = uploadReceiptModel.HadUploadCount;
             parm.Add("@ReceiptPic", SqlDbType.VarChar).Value = uploadReceiptModel.ReceiptPic;
             parm.Add("@OrderChildId", SqlDbType.Int).Value = uploadReceiptModel.OrderChildId;
@@ -878,7 +878,7 @@ from    dbo.[order] o ( nolock )
         left join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
 where   o.Id = @OrderId";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@OrderId", SqlDbType.Int).Value =orderId;
+            parm.Add("@OrderId", SqlDbType.Int).Value = orderId;
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             var ooList = MapRows<OrderOther>(dt);
 
@@ -1006,29 +1006,33 @@ where  Id=@Id ";
 select  Id,PhoneNo,LoginName,recommendPhone,Password,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
 AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode
 ,AreaCode,CityCode,Province,BussinessID,WorkStatus,AllowWithdrawPrice,HasWithdrawPrice
-from  clienter (nolock) where Id=@Id" ;
-            IDbParameters dbClienterParameters = DbHelper.CreateDbParameters();
-            dbClienterParameters.AddWithValue("Id", id);
+from  clienter (nolock) 
+where Id=@Id" ;
+
+            IDbParameters dbClienterParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);              
             clienterDM = DbHelper.QueryForObject(SuperMan_Read, queryClienterSql, dbClienterParameters, new ClienterRowMapper());
             #endregion
 
             #region 骑士金融账号表
             const string queryCFAccountSql = @"
-select  Id,ClienterId,TrueName,AccountNo,IsEnable,AccountType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
-from  ClienterFinanceAccount (nolock) where ClienterId=@ClienterId  and IsEnable=1";
+select  Id,ClienterId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
+from  ClienterFinanceAccount (nolock) 
+where ClienterId=@ClienterId  and IsEnable=1";
+
             IDbParameters dbCFAccountParameters = DbHelper.CreateDbParameters();
             dbCFAccountParameters.AddWithValue("ClienterId", id);
-            DataTable dtBFAccount = DbHelper.ExecuteDataTable(SuperMan_Read, queryCFAccountSql, dbCFAccountParameters);            
-            List<ClienterFinanceAccount> listCFAccount = new List<ClienterFinanceAccount>();    
+            DataTable dtBFAccount = DbHelper.ExecuteDataTable(SuperMan_Read, queryCFAccountSql, dbCFAccountParameters);
+            List<ClienterFinanceAccount> listCFAccount = new List<ClienterFinanceAccount>();
             foreach (DataRow dataRow in dtBFAccount.Rows)
             {
                 ClienterFinanceAccount bf = new ClienterFinanceAccount();
-                bf.Id = Convert.ToInt32(dataRow["Id"]);
-                bf.ClienterId = Convert.ToInt32(dataRow["ClienterId"]);
+                bf.Id = ParseHelper.ToInt(dataRow["Id"]);
+                bf.ClienterId = ParseHelper.ToInt(dataRow["ClienterId"]);
                 bf.TrueName = dataRow["TrueName"].ToString();
                 bf.AccountNo = ETS.Security.DES.Decrypt(dataRow["AccountNo"].ToString());
-                bf.IsEnable = Convert.ToBoolean(dataRow["IsEnable"]);
-                bf.AccountType = Convert.ToInt32(dataRow["AccountType"]);
+                bf.IsEnable = ParseHelper.ToBool(dataRow["IsEnable"]);
+                bf.AccountType = ParseHelper.ToInt(dataRow["AccountType"]);
+                bf.BelongType = ParseHelper.ToInt(dataRow["BelongType"]);
                 if (dataRow["OpenBank"] != null && dataRow["OpenBank"] != DBNull.Value)
                 {
                     bf.OpenBank = dataRow["OpenBank"].ToString();
@@ -1038,11 +1042,11 @@ from  ClienterFinanceAccount (nolock) where ClienterId=@ClienterId  and IsEnable
                     bf.OpenSubBank = dataRow["OpenSubBank"].ToString();
                 }
                 bf.CreateBy = dataRow["CreateBy"].ToString();
-                bf.CreateTime = Convert.ToDateTime(dataRow["CreateTime"]);
+                bf.CreateTime = ParseHelper.ToDatetime(dataRow["CreateTime"]);
                 bf.UpdateBy = dataRow["UpdateBy"].ToString();
-                bf.UpdateTime = Convert.ToDateTime(dataRow["UpdateTime"]);
+                bf.UpdateTime = ParseHelper.ToDatetime(dataRow["UpdateTime"]);
                 listCFAccount.Add(bf);
-            }            
+            }
             clienterDM.listcFAcount = listCFAccount;
             #endregion
 
@@ -1059,12 +1063,12 @@ from  ClienterFinanceAccount (nolock) where ClienterId=@ClienterId  and IsEnable
         public bool IsExist(int id)
         {
             bool isExist;
-            string querySql = @" SELECT COUNT(1)
- FROM   dbo.[clienter] WITH ( NOLOCK ) 
- WHERE  id = @id";
+            string querySql = @"
+select count(1)
+from   dbo.[clienter] (nolock) 
+where  id = @id";
 
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("id", id);
+            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);              
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
             isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
 
@@ -1074,7 +1078,7 @@ from  ClienterFinanceAccount (nolock) where ClienterId=@ClienterId  and IsEnable
         /// 获取骑士详细信息
         /// danny-20150513
         /// </summary>
-        /// <param name="businessId">骑士Id</param>
+        /// <param name="clienterId">骑士Id</param>
         /// <returns></returns>
         public ClienterDetailModel GetClienterDetailById(string clienterId)
         {
@@ -1141,7 +1145,7 @@ WHERE c.Id = @ClienterId  ";
                 result.Password = dataReader["Password"].ToString();
                 result.TrueName = dataReader["TrueName"].ToString();
                 result.IDCard = dataReader["IDCard"].ToString();
-                result.PicWithHandUrl = dataReader["PicWithHandUrl"].ToString();
+                result.PicWithHandUrl =Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataReader["PicWithHandUrl"].ToString())[0];
                 result.PicUrl = dataReader["PicUrl"].ToString();
                 obj = dataReader["Status"];
                 if (obj != null && obj != DBNull.Value)
@@ -1200,5 +1204,20 @@ WHERE c.Id = @ClienterId  ";
         #endregion
 
 
+        /// <summary>
+        /// 更改可提现金额
+        /// 窦海超
+        /// 2015年5月15日 16:56:37
+        /// </summary>
+        /// <param name="price">金额</param>
+        /// <param name="clienterId">可提现金额的骑士ID</param>
+        public void UpdateAllowWithdrawPrice(decimal price, int clienterid)
+        {
+            string sql = "update dbo.clienter set AllowWithdrawPrice=AllowWithdrawPrice+@price where Id=@clienterid";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("clienterid", DbType.Int32, 4).Value = clienterid;
+            parm.Add("price", DbType.Decimal, 18).Value = price;
+            DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
+        }
     }
 }

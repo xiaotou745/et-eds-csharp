@@ -294,22 +294,17 @@ to.BusinessName = business.Name;
                 StrategyId = business.StrategyId
 
             };
-
-            //BusinessGroupModel businessGroupModel = iBusinessGroupProvider.GetCurrenBusinessGroup(business.Id);
-            //commProvider = CommissionFactory.GetCommission(businessGroupModel.StrategyId);
+          
 
             OrderPriceProvider commProvider = CommissionFactory.GetCommission(business.StrategyId);
             to.CommissionFormulaMode = business.StrategyId;           
-
             to.CommissionRate = commProvider.GetCommissionRate(orderComm); //佣金比例 
             to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
             to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
             to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
             to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(business.BusinessGroupId).CommissionFormulaMode);
-            to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额
-            ///TODO 使用枚举.getHashCode();
-            to.Status = ConstValues.ORDER_NEW;
-
+            to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额           
+            to.Status =Convert.ToByte(OrderStatus.订单待抢单.GetHashCode());
             to.TimeSpan = busiOrderInfoModel.TimeSpan;
             to.listOrderChild = busiOrderInfoModel.listOrderChlid;           
            return to;
@@ -317,40 +312,51 @@ to.BusinessName = business.Name;
 
         /// <summary>
         /// 添加一条 订单信息
-        /// </summary>
-        /// <param name="order"></param>
+        /// </summary>   
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150514</UpdateTime>
+        /// <param name="order">订单实体</param>
         /// <returns></returns>
-        public string AddOrder(order order)
-        {
-            string str = "0";
+        public PubOrderStatus AddOrder(order order)
+        {            
             int result = 0;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
-            {
-                result = OrderDao.AddOrder(order);
-                if (result > 0)
+            {                
+                bool isExist=OrderDao.IsExist(order);
+                if (isExist)
                 {
-                    str = "1";
-                    if (order.Adjustment > 0)
-                    {
-                        ///TODO if(b)吧？
-                        bool b = OrderDao.addOrderSubsidiesLog(order.Adjustment, result, "补贴加钱,订单金额:" + order.Amount + "-佣金补贴策略id:" + order.CommissionFormulaMode);
-                        if (!b)
-                        {
-                            str = "1";
-                        }
-                    }
-                    tran.Complete();
+                    return PubOrderStatus.OrderHasExist;
+                }
+                else
+                {
+                    result = OrderDao.AddOrder(order);
                 }
 
-            }
-            //Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity); //激光推送
-            ////推送给 VIP
-            //if (ConfigSettings.Instance.IsSendVIP == "1")
-            //{
-            //    Push.PushMessageVip(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.PickUpCity, ConfigSettings.Instance.VIPName); //激光推送
-            //}
-            return str;
+                if(result<=0)//订单发布失败
+                {
+                    return PubOrderStatus.InvalidPubOrder;
+                }
 
+
+                if (order.Adjustment > 0)
+                {
+                    bool b = OrderDao.addOrderSubsidiesLog(order.Adjustment, result, "补贴加钱,订单金额:" + order.Amount + "-佣金补贴策略id:" + order.CommissionFormulaMode);
+                    if (!b)//写入日志失败
+                    {
+                        return PubOrderStatus.InvalidPubOrder;
+                    }
+
+                    tran.Complete();
+                    return PubOrderStatus.Success;
+                }
+                else
+                {
+                    tran.Complete();
+                    return PubOrderStatus.Success;
+                }                          
+            }
+         
+            return PubOrderStatus.Success;
         }
 
         /// <summary>
@@ -783,8 +789,8 @@ to.BusinessName = business.Name;
             }
             #endregion
             order dborder = OrderInstance(model);  //整合订单信息
-            string addResult = AddOrder(dborder);    //添加订单记录，并且触发极光推送。          
-            if (addResult == "1")
+            PubOrderStatus addResult = AddOrder(dborder);    //添加订单记录，并且触发极光推送。          
+            if (addResult == PubOrderStatus.Success)
             {
                 NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { OriginalOrderNo = model.OriginalOrderNo, OrderNo = dborder.OrderNo };
                 LogHelper.LogWriter("订单发布成功", new { model = model, resultModel = resultModel });
@@ -1088,12 +1094,13 @@ to.BusinessName = business.Name;
         /// </summary>
         /// <UpdateBy>hulingbo</UpdateBy>
         /// <UpdateTime>20150512</UpdateTime>
-        /// <param name="id">订单Id</param>
+        /// <param name="id">订单查询实体</param>
         /// <returns></returns>
-        public OrderDM GetDetails(int id)
+        public OrderDM GetDetails(OrderPM modelPM)
         {
             OrderDM orderDM = new OrderDM();
 
+            int id = modelPM.OrderId;
             order order = GetById(id);
             orderDM.Id = order.Id;
             orderDM.OrderNo = order.OrderNo;
@@ -1116,16 +1123,32 @@ to.BusinessName = business.Name;
             orderDM.OrderCount = order.OrderCount;
             orderDM.GroupId = order.GroupId;
             orderDM.PickupCode = order.PickupCode;
-            orderDM.Payment = order.Payment;        
-          
+            orderDM.Payment = order.Payment;
+            orderDM.Invoice = order.Invoice;
+            orderDM.NeedUploadCount = order.NeedUploadCount;
+            orderDM.HadUploadCount = order.HadUploadCount;
+            CalculationLgAndLa(orderDM, modelPM, order);//计算经纬度
+
             Ets.Service.Provider.Order.OrderChildProvider orderChildPr=new OrderChildProvider();
             orderDM.listOrderChild = orderChildPr.GetByOrderId(id);
           
             Ets.Service.Provider.Order.OrderDetailProvider orderDetailPr = new OrderDetailProvider();
             orderDM.listOrderDetail = orderDetailPr.GetByOrderNo(order.OrderNo);
 
-            #region 计算经纬度     
+           
 
+            return orderDM;
+        }
+
+        /// <summary>
+        /// 计算经纬度
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150515</UpdateTime>
+        /// <param name="id">订单动态实体、查询实体、订单实体</param>
+        /// <returns></returns>
+        void CalculationLgAndLa(OrderDM orderDM,OrderPM modelPM,  order order)
+        {
             if (order.Longitude == null || order.Longitude == 0 || order.Latitude == null || order.Latitude == 0)
             {
                 orderDM.distance = "--";
@@ -1134,11 +1157,11 @@ to.BusinessName = business.Name;
             }
             else
             {
-                if (degree.longitude == 0 || degree.latitude == 0 || order.businessId <= 0)
+                if (modelPM.longitude == 0 || modelPM.latitude == 0 || order.businessId <= 0)
                 { orderDM.distance = "--"; orderDM.distance_OrderBy = 9999999.0; }
                 else if (order.businessId > 0)  //计算超人当前到商户的距离
                 {
-                    Degree degree1 = new Degree(degree.longitude, degree.latitude);   //超人当前的经纬度
+                    Degree degree1 = new Degree(modelPM.longitude, modelPM.latitude);   //超人当前的经纬度
                     Degree degree2 = new Degree(order.Longitude.Value, order.Latitude.Value); //商户经纬度
                     var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
                     orderDM.distance = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
@@ -1155,9 +1178,7 @@ to.BusinessName = business.Name;
                 else
                     orderDM.distanceB2R = "--";
             }
-            #endregion
-
-            return orderDM;
         }
+
     }
 }

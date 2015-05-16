@@ -37,6 +37,10 @@ namespace Ets.Model.ParameterModel.Finance
         [Required(ErrorMessage = "第二次录入卡号不能为空")]
         public string AccountNo2 { get; set; }
 
+        /// <summary>
+        /// 账号类别  0 个人账户 1 公司账户  
+        /// </summary>
+        public int BelongType { get; set; }
 
         /// <summary>
         /// 开户行
@@ -47,7 +51,6 @@ namespace Ets.Model.ParameterModel.Finance
         /// <summary>
         /// 开户支行
         /// </summary>
-        [Required(ErrorMessage = "开户支行不能为空")]
         public string OpenSubBank { get; set; }
 
         /// <summary>

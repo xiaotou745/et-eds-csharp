@@ -54,14 +54,14 @@ namespace Ets.Service.IProvider.Finance
         /// 根据申请单Id获取商家提现申请单
         /// danny-20150511
         /// </summary>
-        /// <param name="Id"></param>
+        /// <param name="withwardId">提款单Id</param>
         /// <returns></returns>
         BusinessWithdrawFormModel GetBusinessWithdrawListById(string withwardId);
         /// <summary>
         /// 获取商户提款单操作日志
         /// danny-20150511
         /// </summary>
-        /// <param name="withwardId"></param>
+        /// <param name="withwardId">提款单Id</param>
         /// <returns></returns>
         IList<BusinessWithdrawLog> GetBusinessWithdrawOptionLog(string withwardId);
         /// <summary>
@@ -96,7 +96,7 @@ namespace Ets.Service.IProvider.Finance
         /// 获取商户提款收支记录列表
         /// danny-20150512
         /// </summary>
-        /// <param name="withwardId"></param>
+        /// <param name="criteria"></param>
         /// <returns></returns>
         IList<BusinessBalanceRecord> GetBusinessBalanceRecordList(BusinessBalanceRecordSerchCriteria criteria);
          /// <summary>
@@ -110,7 +110,7 @@ namespace Ets.Service.IProvider.Finance
         /// 获取要导出的商户提款收支记录列表
         /// danny-20150512
         /// </summary>
-        /// <param name="withwardId"></param>
+        /// <param name="criteria"></param>
         /// <returns></returns>
         IList<BusinessBalanceRecordModel> GetBusinessBalanceRecordListForExport(BusinessBalanceRecordSerchCriteria criteria);
         /// <summary>

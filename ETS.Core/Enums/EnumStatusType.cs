@@ -40,7 +40,20 @@ namespace ETS.Enums
         [DisplayText("抱歉，订单金额不可低于10元")]
         AmountLessThanTen,
         [DisplayText("抱歉，订单金额不可高于5000元")]
-        AmountMoreThanFiveThousand
+        AmountMoreThanFiveThousand,
+        [DisplayText("订单金额与子订单总金额不一致")]
+        AmountIsNotEqual,
+        [DisplayText("订单数量与子订单数量不一致")]
+        CountIsNotEqual,
+        [DisplayText("合法性验证成功")]
+        VerificationSuccess,
+        [DisplayText("收货人手机号错误")]
+        RecevicePhoneErr,
+        [DisplayText("失败")]
+        Failed = 101,
+        [DisplayText("请传递版本号")]
+        NoVersion = -10
+
     }
     public enum GetOrdersStatus
     {
@@ -51,7 +64,9 @@ namespace ETS.Enums
         [DisplayText("订单号错误")]
         ErrOderNo = -1,
         [DisplayText("获取订单失败")]
-        FailedGetOrders = -2
+        FailedGetOrders = -2,
+        [DisplayText("失败")]
+        Failed = 101
     }
 
     public enum GetBussinessStatus
@@ -61,9 +76,11 @@ namespace ETS.Enums
         [DisplayText("请传递版本号")]
         NoVersion = 0,
         [DisplayText("商户Id错误")]
-        ErrOderNo = -1,
+        ErrNo = -1,
         [DisplayText("获取商户失败")]
-        FailedGetOrders = -2
+        FailedGet = -2,
+        [DisplayText("失败")]
+        Failed = 101
     }
     public enum GetClienterStatus
     {
@@ -72,9 +89,11 @@ namespace ETS.Enums
         [DisplayText("请传递版本号")]
         NoVersion = 0,
         [DisplayText("骑士Id错误")]
-        ErrOderNo = -1,
+        ErrNo = -1,
         [DisplayText("获取骑士失败")]
-        FailedGetOrders = -2
+        FailedGet = -2,
+        [DisplayText("失败")]
+        Failed = 101
 
     }
     public enum GetOrdersNoLoginStatus

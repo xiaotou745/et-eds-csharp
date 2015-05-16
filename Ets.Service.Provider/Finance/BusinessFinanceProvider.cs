@@ -1,10 +1,10 @@
-﻿using Ets.Dao.Finance;
+﻿using System.Collections;
+using Ets.Dao.Finance;
 using Ets.Dao.User;
 using ETS.Enums;
 using ETS.Extension;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Bussiness;
-using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;
@@ -13,15 +13,10 @@ using Ets.Service.IProvider.Finance;
 using ETS.Data.PageData;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using ETS.Transaction;
 using ETS.Transaction.Common;
-using Ets.Model.DomainModel.Bussiness;
-using Ets.Dao.User;
 using ETS.Util;
-using System.Data;
 
 namespace Ets.Service.Provider.Finance
 {
@@ -99,6 +94,7 @@ namespace Ets.Service.Provider.Finance
                         TrueName = businessFinanceAccount.TrueName,//商户收款户名
                         AccountNo = businessFinanceAccount.AccountNo, //卡号(DES加密)
                         AccountType = businessFinanceAccount.AccountType, //账号类型：
+                        BelongType = businessFinanceAccount.BelongType,//账号类别  0 个人账户 1 公司账户  
                         OpenBank = businessFinanceAccount.OpenBank,//开户行
                         OpenSubBank = businessFinanceAccount.OpenSubBank //开户支行
                     });
@@ -192,6 +188,7 @@ namespace Ets.Service.Provider.Finance
                     IsEnable = true,// 是否有效(true：有效 0：无效）  新增时true 
                     AccountType = cardBindBpm.AccountType == 0
                         ? (int)BusinessFinanceAccountType.WangYin : cardBindBpm.AccountType,  //账号类型 
+                    BelongType = cardBindBpm.BelongType,//账号类别  0 个人账户 1 公司账户  
                     OpenBank = cardBindBpm.OpenBank, //开户行
                     OpenSubBank = cardBindBpm.OpenSubBank, //开户支行
                     CreateBy = cardBindBpm.CreateBy,//创建人  当前登录人
@@ -213,6 +210,11 @@ namespace Ets.Service.Provider.Finance
             {
                 return  FinanceCardBindB.NoPara;
             }
+            if (cardBindBpm.BelongType == (int)BusinessFinanceAccountBelongType.Conpany
+               && string.IsNullOrWhiteSpace(cardBindBpm.OpenSubBank)) //公司帐户开户支行不能为空
+            {
+                return FinanceCardBindB.BelongTypeError;
+            }
             int count = _businessFinanceAccountDao.GetCountByBusinessId(cardBindBpm.BusinessId);
             if (count > 0) //该商户已绑定过金融账号
             {
@@ -229,8 +231,8 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public ResultModel<object> CardModifyB(CardModifyBPM cardModifyBpm)
         {
-            FinanceCardCardModifyB boolRes = CheckCardModifyB(cardModifyBpm);
-            if (boolRes != FinanceCardCardModifyB.Success)
+            FinanceCardModifyB boolRes = CheckCardModifyB(cardModifyBpm);
+            if (boolRes != FinanceCardModifyB.Success)
             {
                 return ResultModel<object>.Conclude(boolRes);
             }
@@ -242,6 +244,7 @@ namespace Ets.Service.Provider.Finance
                     BusinessId = cardModifyBpm.BusinessId,//商户ID
                     TrueName = cardModifyBpm.TrueName, //户名
                     AccountNo = DES.Encrypt(cardModifyBpm.AccountNo), //卡号(DES加密) 
+                    BelongType = cardModifyBpm.BelongType,//账号类别  0 个人账户 1 公司账户  
                     OpenBank = cardModifyBpm.OpenBank, //开户行
                     OpenSubBank = cardModifyBpm.OpenSubBank, //开户支行
                     UpdateBy = cardModifyBpm.UpdateBy//修改人  当前登录人
@@ -257,13 +260,18 @@ namespace Ets.Service.Provider.Finance
         /// </summary>
         /// <param name="cardModifyBpm"></param>
         /// <returns></returns>
-        private  FinanceCardCardModifyB CheckCardModifyB(CardModifyBPM cardModifyBpm)
+        private FinanceCardModifyB CheckCardModifyB(CardModifyBPM cardModifyBpm)
         {
             if (cardModifyBpm == null)
             {
-                return FinanceCardCardModifyB.NoPara;
+                return FinanceCardModifyB.NoPara;
             }
-            return FinanceCardCardModifyB.Success;
+            if (cardModifyBpm.BelongType == (int)BusinessFinanceAccountBelongType.Conpany
+               && string.IsNullOrWhiteSpace(cardModifyBpm.OpenSubBank)) //公司帐户开户支行不能为空
+            {
+                return FinanceCardModifyB.BelongTypeError;
+            }
+            return FinanceCardModifyB.Success;
         }
         #endregion
 
@@ -283,8 +291,11 @@ namespace Ets.Service.Provider.Finance
         /// </summary>
         /// <param name="records">原始流水记录</param>
         /// <returns></returns>
-        private IList<FinanceRecordsDM> TranslateRecords(IList<FinanceRecordsDM> records)
+        private IList<FinanceRecordsDMList> TranslateRecords(IList<FinanceRecordsDM> records)
         {
+            IList<FinanceRecordsDMList> datas = new List<FinanceRecordsDMList>();
+            datas.Add(new FinanceRecordsDMList() { MonthIfo = "本月", Datas = new List<FinanceRecordsDM>() });
+            int index = 0; 
             foreach (var temp in records)
             {
                 temp.StatusStr = ((BusinessBalanceRecordStatus)Enum.Parse(typeof(BusinessBalanceRecordStatus),
@@ -292,26 +303,25 @@ namespace Ets.Service.Provider.Finance
                 temp.RecordTypeStr =
                     ((BusinessBalanceRecordRecordType)Enum.Parse(typeof(BusinessBalanceRecordRecordType),
                         temp.RecordType.ToString(), false)).GetDisplayText(); //交易类型文本
-                temp.YearInfoAbb = temp.YearInfo.Replace("年", ".").Replace("月", "");
-                if (temp.YearInfo == DateTime.Now.Year + "年" + DateTime.Now.Month + "月")
+                if (datas[index].MonthIfo == temp.MonthInfo)
                 {
-                    temp.YearInfo = "本月";
+                    datas[index].Datas.Add(temp);
                 }
-                temp.OperateTimeStr = (
-                    temp.OperateTime.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd")
-                        ? "今天" //今日流水显示 "今日"
-                        : temp.OperateTime.ToString("MM-dd"))
-                        + " " +
-                        temp.OperateTime.ToString("HH:mm"); //分
+                else
+                {
+                    datas.Add(new FinanceRecordsDMList() { MonthIfo = temp.MonthInfo, Datas = new List<FinanceRecordsDM>() });
+                    index = index + 1;
+                    datas[index].Datas.Add(temp);
+                }
             }
-            return records;
+            return datas;
         }
 
         /// <summary>
         /// 根据申请单Id获取商家提现申请单
         /// danny-20150511
         /// </summary>
-        /// <param name="Id"></param>
+        /// <param name="withwardId">提款单Id</param>
         /// <returns></returns>
         public BusinessWithdrawFormModel GetBusinessWithdrawListById(string withwardId)
         {
@@ -321,7 +331,7 @@ namespace Ets.Service.Provider.Finance
         /// 获取商户提款单操作日志
         /// danny-20150511
         /// </summary>
-        /// <param name="withwardId"></param>
+        /// <param name="withwardId">提款单Id</param>
         /// <returns></returns>
         public IList<BusinessWithdrawLog> GetBusinessWithdrawOptionLog(string withwardId)
         {
@@ -424,7 +434,7 @@ namespace Ets.Service.Provider.Finance
         /// 获取商户提款收支记录列表
         /// danny-20150512
         /// </summary>
-        /// <param name="withwardId"></param>
+        /// <param name="criteria"></param>
         /// <returns></returns>
         public IList<BusinessBalanceRecord> GetBusinessBalanceRecordList(BusinessBalanceRecordSerchCriteria criteria)
         {
@@ -444,7 +454,7 @@ namespace Ets.Service.Provider.Finance
         /// 获取要导出的商户提款收支记录列表
         /// danny-20150512
         /// </summary>
-        /// <param name="withwardId"></param>
+        /// <param name="criteria"></param>
         /// <returns></returns>
         public IList<BusinessBalanceRecordModel> GetBusinessBalanceRecordListForExport(BusinessBalanceRecordSerchCriteria criteria)
         {
@@ -477,7 +487,7 @@ namespace Ets.Service.Provider.Finance
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OpenBank));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.TrueName));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", ParseHelper.ToDecrypt(item.AccountNo)));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Amount));
+                strBuilder.AppendLine(string.Format("<td>{0}</td></tr>", item.Amount));
             }
             strBuilder.AppendLine("</table>");
             return strBuilder.ToString();
@@ -511,7 +521,7 @@ namespace Ets.Service.Provider.Finance
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Amount));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Balance));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OperateTime));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Operator));
+                strBuilder.AppendLine(string.Format("<td>{0}</td></tr>", item.Operator));
             }
             strBuilder.AppendLine("</table>");
             return strBuilder.ToString();

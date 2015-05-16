@@ -35,6 +35,12 @@ namespace Ets.Model.DataModel.Finance
         /// 账号类型：(1网银 2支付宝 3微信 4财付通 5百度钱包）
         /// </summary>
         public int AccountType { get; set; }
+
+        /// <summary>
+        /// 账号类别  0 个人账户 1 公司账户  
+        /// </summary>
+        public int BelongType { get; set; }
+
         /// <summary>
         /// 开户行
         /// </summary>

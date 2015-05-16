@@ -22,8 +22,8 @@ namespace SuperMan.Controllers
 {
     public class BusinessWithdrawController : Controller
     {
-        IAreaProvider iAreaProvider = new AreaProvider();
-        IBusinessFinanceProvider iBusinessFinanceProvider=new BusinessFinanceProvider();
+        readonly IAreaProvider iAreaProvider = new AreaProvider();
+        readonly IBusinessFinanceProvider iBusinessFinanceProvider=new BusinessFinanceProvider();
         /// <summary>
         /// 加载默认商户提款单列表
         /// danny-20150511
@@ -32,7 +32,7 @@ namespace SuperMan.Controllers
         public ActionResult BusinessWithdraw()
         {
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
-            var criteria = new Ets.Model.ParameterModel.Finance.BusinessWithdrawSearchCriteria() {WithdrawStatus=0};
+            var criteria = new BusinessWithdrawSearchCriteria() {WithdrawStatus=0};
             var pagedList = iBusinessFinanceProvider.GetBusinessWithdrawList(criteria);
             return View(pagedList);
         }
@@ -40,13 +40,13 @@ namespace SuperMan.Controllers
         /// 按条件查询商户提款单列表
         /// danny-20150511
         /// </summary>
-        /// <param name="pageindex"></param>
+        /// <param name="pageindex">页码</param>
         /// <returns></returns>
         [HttpPost]
         public ActionResult PostBusinessWithdraw(int pageindex = 1)
         {
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
-            var criteria = new Ets.Model.ParameterModel.Finance.BusinessWithdrawSearchCriteria();
+            var criteria = new BusinessWithdrawSearchCriteria();
             TryUpdateModel(criteria);
             var pagedList = iBusinessFinanceProvider.GetBusinessWithdrawList(criteria);
 
@@ -56,7 +56,7 @@ namespace SuperMan.Controllers
         /// 查看商户提款单明细
         /// danny-20150511
         /// </summary>
-        /// <param name="orderId"></param>
+        /// <param name="withwardId">提款单Id</param>
         /// <returns></returns>
         public ActionResult BusinessWithdrawDetail(string withwardId)
         {
@@ -68,7 +68,7 @@ namespace SuperMan.Controllers
         /// 审核商户提款申请单通过
         /// danny-20150511
         /// </summary>
-        /// <param name="withwardId"></param>
+        /// <param name="withwardId">提款单Id</param>
         /// <returns></returns>
         [HttpPost]
         public JsonResult WithdrawAuditOk(string withwardId)
@@ -87,7 +87,7 @@ namespace SuperMan.Controllers
         /// 商户提款申请单确认打款
         /// danny-20150511
         /// </summary>
-        /// <param name="withwardId"></param>
+        /// <param name="withwardId">提款单Id</param>
         /// <returns></returns>
         [HttpPost]
         public JsonResult WithdrawPayOk(string withwardId)
@@ -106,8 +106,8 @@ namespace SuperMan.Controllers
         /// 商户提款申请单审核拒绝
         /// danny-20150511
         /// </summary>
-        /// <param name="withwardId"></param>
-        /// <param name="auditFailedReason"></param>
+        /// <param name="withwardId">提款单Id</param>
+        /// <param name="auditFailedReason">审核拒绝原因</param>
         /// <returns></returns>
         [HttpPost]
         public JsonResult WithdrawAuditRefuse(string withwardId, string auditFailedReason)
@@ -127,8 +127,8 @@ namespace SuperMan.Controllers
         /// 商户提款申请单打款失败
         /// danny-20150511
         /// </summary>
-        /// <param name="withwardId"></param>
-        /// <param name="auditFailedReason"></param>
+        /// <param name="withwardId">提款单Id</param>
+        /// <param name="payFailedReason">打款失败原因</param>
         /// <returns></returns>
         [HttpPost]
         public JsonResult WithdrawPayFailed(string withwardId, string payFailedReason)
@@ -149,24 +149,24 @@ namespace SuperMan.Controllers
         /// 查看商户提款单详情
         /// danny-20150511
         /// </summary>
-        /// <param name="orderId"></param>
+        /// <param name="withwardId">提款单Id</param>
         /// <returns></returns>
         public ContentResult GetBusinessWithdrawForm(string withwardId)
         {
             var businessWithdrawFormModel = iBusinessFinanceProvider.GetBusinessWithdrawListById(withwardId);
             businessWithdrawFormModel.AccountNo = ParseHelper.ToDecrypt(businessWithdrawFormModel.AccountNo);
             businessWithdrawFormModel.WithdrawTime = Convert.ToDateTime(businessWithdrawFormModel.WithdrawTime.ToString());
-            return new ContentResult() { Content = Newtonsoft.Json.JsonConvert.SerializeObject(businessWithdrawFormModel) };
+            return new ContentResult { Content = Newtonsoft.Json.JsonConvert.SerializeObject(businessWithdrawFormModel) };
         }
         /// <summary>
         /// 导出商户提款申请单列表
         /// danny-20150512
         /// </summary>
-        /// <param name="orderId"></param>
+        /// <param name="pageindex">页码</param>
         /// <returns></returns>
         public ActionResult ExportBusinessWithdrawForm(int pageindex = 1)
         {
-            var criteria = new Ets.Model.ParameterModel.Finance.BusinessWithdrawSearchCriteria();
+            var criteria = new BusinessWithdrawSearchCriteria();
             TryUpdateModel(criteria);
             var dtBusinessWithdraw = iBusinessFinanceProvider.GetBusinessWithdrawForExport(criteria);
             if (dtBusinessWithdraw != null && dtBusinessWithdraw.Count > 0)
@@ -179,12 +179,9 @@ namespace SuperMan.Controllers
                 byte[] data = Encoding.UTF8.GetBytes(iBusinessFinanceProvider.CreateBusinessWithdrawFormExcel(dtBusinessWithdraw.ToList()));
                 return File(data, "application/ms-excel", filname);
             }
-            else
-            {
-                ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
-                var pagedList = iBusinessFinanceProvider.GetBusinessWithdrawList(criteria);
-                return View("BusinessWithdraw", pagedList);
-            }
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
+            var pagedList = iBusinessFinanceProvider.GetBusinessWithdrawList(criteria);
+            return View("BusinessWithdraw", pagedList);
         }
     }
 }

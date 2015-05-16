@@ -127,8 +127,22 @@ namespace Ets.Model.DomainModel.Order
         /// 支付类型 0 现金
         /// </summary>
         public int? Payment { get; set; }
-            
 
+        /// <summary>
+        /// 发票
+        /// </summary>
+        public string Invoice { get; set; }
+        
+        /// <summary>
+        /// 须上传小票数量
+        /// </summary>
+        public int NeedUploadCount { get; set; }  
+
+        /// <summary>
+        /// 已上传小票数量
+        /// </summary>
+        public int HadUploadCount { get; set; }  
+   
         /// <summary>
         /// 子订单集合
         /// </summary>

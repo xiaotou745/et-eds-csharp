@@ -208,7 +208,7 @@ namespace Ets.Dao.Order
             if (dt == null || dt.Rows.Count <= 0)
                 return null;
             return MapRows<OrderListModel>(dt)[0];
-        }   
+        }
 
         #region  第三方对接 物流订单接收接口  add by caoheyang 201503167
         /// <summary>
@@ -230,7 +230,7 @@ namespace Ets.Dao.Order
                 RecevicePhoneNo,ReceiveProvinceCode,ReceiveCityCode,ReceiveAreaCode,ReceviceAddress,
                 ReceviceLongitude,ReceviceLatitude,businessId,PickUpAddress,Payment,OrderCommission,
                 WebsiteSubsidy,CommissionRate,CommissionFormulaMode,ReceiveProvince,ReceviceCity,ReceiveArea,
-                PickupCode,BusinessCommission,SettleMoney,Adjustment,OrderFrom,Status,CommissionType,CommissionFixValue,BusinessGroupId)
+                PickupCode,BusinessCommission,SettleMoney,Adjustment,OrderFrom,Status,CommissionType,CommissionFixValue,BusinessGroupId,Invoice)
                 output Inserted.Id,GETDATE(),@OptName,'新增订单',Inserted.businessId,Inserted.[Status],@Platform
                 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
                 Values(@OrderNo,
@@ -239,7 +239,7 @@ namespace Ets.Dao.Order
                 @RecevicePhoneNo,@ReceiveProvinceCode,@ReceiveCityCode,@ReceiveAreaCode,@ReceviceAddress,
                 @ReceviceLongitude,@ReceviceLatitude,@BusinessId,@PickUpAddress,@Payment,@OrderCommission,
                 @WebsiteSubsidy,@CommissionRate,@CommissionFormulaMode,@ReceiveProvince,@ReceviceCity,@ReceiveArea,
-                @PickupCode,@BusinessCommission,@SettleMoney,@Adjustment,@OrderFrom,@Status,@CommissionType,@CommissionFixValue,@BusinessGroupId);select  IDENT_CURRENT('order') ";
+                @PickupCode,@BusinessCommission,@SettleMoney,@Adjustment,@OrderFrom,@Status,@CommissionType,@CommissionFixValue,@BusinessGroupId,@Invoice);select  IDENT_CURRENT('order') ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             //基本参数信息
 
@@ -288,10 +288,11 @@ namespace Ets.Dao.Order
             dbParameters.AddWithValue("@CommissionType", paramodel.CommissionType);//结算类型
             dbParameters.AddWithValue("@CommissionFixValue", paramodel.CommissionFixValue);//固定金额
             dbParameters.AddWithValue("@BusinessGroupId", paramodel.BusinessGroupId);//分组ID
+            dbParameters.AddWithValue("@Invoice", paramodel.invoice_title);//发票标题
 
-            object result = DbHelper.ExecuteScalar(SuperMan_Write, insertOrdersql, dbParameters);                
+            object result = DbHelper.ExecuteScalar(SuperMan_Write, insertOrdersql, dbParameters);
             #endregion
-         
+
             AddOrderDetail(paramodel, orderNo); //操作插入OrderDetail表
 
             #region 定入订单子表
@@ -301,7 +302,7 @@ namespace Ets.Dao.Order
                 AddOrderChild(paramodel, orderId);
             }
             #endregion
-            
+
             return orderNo;
         }
 
@@ -391,7 +392,7 @@ namespace Ets.Dao.Order
             }
         }
 
-        private void AddOrderChild(CreatePM_OpenApi paramodel,  int orderId)
+        private void AddOrderChild(CreatePM_OpenApi paramodel, int orderId)
         {
             const string insertOrderChildSql = @"
 insert into OrderChild
@@ -692,7 +693,7 @@ values( @OrderId,
                                     LEFT JOIN OrderOther oo WITH (NOLOCK) ON oo.OrderId=o.Id
                                     LEFT JOIN [group] g WITH ( NOLOCK ) ON g.Id = o.orderfrom
                                     WHERE 1=1 ";
-            #endregion 
+            #endregion
             IDbParameters parm = DbHelper.CreateDbParameters();
             if (!string.IsNullOrWhiteSpace(orderNo))
             {
@@ -840,7 +841,7 @@ where   oc.OrderId = @OrderId;
             else
             {
                 return new OrderListModel();
-            } 
+            }
         }
         /// <summary>
         /// 通过订单号获取该订单的详情数据
@@ -858,7 +859,7 @@ where   oc.OrderId = @OrderId;
                 dataRow => new OrderListModel
                 {
                     businessId = ParseHelper.ToInt(dataRow["businessId"], 0),
-                    Status = (byte) ParseHelper.ToInt(dataRow["Status"], 0)
+                    Status = (byte)ParseHelper.ToInt(dataRow["Status"], 0)
                 });
             //DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             //if (!dt.HasData())
@@ -920,7 +921,7 @@ where   oc.OrderId = @OrderId;
             dbParameters.Add("clienterId", DbType.Int32, 4).Value = order.clienterId;// userId;
             dbParameters.Add("Status", DbType.Int32, 4).Value = ConstValues.ORDER_ACCEPT;
             dbParameters.Add("OrderNo", DbType.String, 50).Value = order.OrderNo;
-            dbParameters.Add("Platform", DbType.Int32, 4).Value = SuperPlatform.骑士.GetHashCode(); 
+            dbParameters.Add("Platform", DbType.Int32, 4).Value = SuperPlatform.骑士.GetHashCode();
             object obj = DbHelper.ExecuteScalar(SuperMan_Write, sqlText, dbParameters);
             return ParseHelper.ToInt(obj, 1) == 0 ? true : false;
         }
@@ -1059,7 +1060,7 @@ WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL and Status = 2;", SuperPlat
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@orderNo", SqlDbType.NVarChar).Value = orderNo;
-            dbParameters.AddWithValue("@status", ConstValues.ORDER_FINISH); 
+            dbParameters.AddWithValue("@status", ConstValues.ORDER_FINISH);
             object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters);
             return ParseHelper.ToInt(executeScalar, -1);
         }
@@ -1324,7 +1325,7 @@ where   1 = 1
                 parm.Add("@OrderNo", SqlDbType.NVarChar);
                 parm.SetValue("@OrderNo", orderNo);
             }
-             
+
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
             var list = ConvertDataTableList<OrderListModel>(dt);
             if (list != null && list.Count > 0)
@@ -1368,7 +1369,7 @@ where   1 = 1 and o.OrderNo = @OrderNo
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderNo", SqlDbType.NVarChar).Value = orderNo;
 
-            var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm); 
+            var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             var list = ConvertDataTableList<OrderListModel>(dt);
             if (list != null && list.Count > 0)
             {
@@ -1765,21 +1766,8 @@ order by bb.Id desc;";
         /// <UpdateTime>20150509</UpdateTime>
         /// <param name="order">订单实体</param>
         /// <returns></returns>
-        public int AddOrder(Model.DataModel.Order.order order)
-        {
-            //判断TimeSpan     
-            #region 根据时间戳判断订单是否存在
-            ///TODO 条件加商家ID、用写库，单独封一个方法
-            const string querysql = @"select  count(1) from  dbo.[order]  where  TimeSpan=@TimeSpan";
-            IDbParameters dbSelectParameters = DbHelper.CreateDbParameters();
-            dbSelectParameters.AddWithValue("TimeSpan", order.TimeSpan);
-            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querysql, dbSelectParameters);
-            bool isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
-            if (isExist)
-            {
-                return 0;
-            }
-            #endregion
+        public int AddOrder(order order)
+        {           
 
             #region 写入订单表、订单日志表
             StringBuilder insertSql = new StringBuilder();
@@ -1863,7 +1851,7 @@ values  ( @OrderNo ,
           @SettleMoney ,
           @Adjustment ,
           @TimeSpan
-        );select IDENT_CURRENT('order')", SuperPlatform.商家, ConstValues.PublishOrder, (int)SuperPlatform.商家);
+        );select IDENT_CURRENT('order')", SuperPlatform.商家, ConstValues.PublishOrder, (int)SuperPlatform.商家,0);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@OrderNo", order.OrderNo);
@@ -1909,13 +1897,24 @@ values  ( @OrderNo ,
             }
             #endregion
 
+            #region 写子OrderOther表
+            const string insertOtherSql = @"
+insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount)
+values(@OrderId,@NeedUploadCount,0)";
+            IDbParameters dbOtherParameters = DbHelper.CreateDbParameters();
+            dbOtherParameters.AddWithValue("@OrderId", orderId); //商户ID
+            dbOtherParameters.AddWithValue("@NeedUploadCount", order.OrderCount); //户名
+            DbHelper.ExecuteScalar(SuperMan_Write, insertOtherSql, dbOtherParameters);
+            #endregion
+
             if (order.listOrderChild != null && order.listOrderChild.Count > 0)
             {
-                 AddOrderChild(orderId, order);               
+                AddOrderChild(orderId, order);
             }
 
             return orderId;
         }
+
 
         /// <summary>
         /// 写入订单子表
@@ -1923,15 +1922,9 @@ values  ( @OrderNo ,
         /// <UpdateBy>hulingbo</UpdateBy>
         /// <UpdateTime>20150512</UpdateTime>
         /// <returns>订单实体</returns>
-        void AddOrderChild(int orderId, Model.DataModel.Order.order order)
+        void AddOrderChild(int orderId, order order)
         {
-            #region 性能优化 
-            ///TODO 事务问题
-            //var sqlConnection = DbHelper.GetConnectionTxPair(SuperMan_Write).Connection as SqlConnection;
-            //SqlBulkCopy bulk1 = new SqlBulkCopy(sqlConnection)
-            //{
-                
-            //}
+            #region 性能优化          
             using (SqlBulkCopy bulk = new SqlBulkCopy(SuperMan_Write))
             {
                 try
@@ -1945,37 +1938,36 @@ values  ( @OrderNo ,
                     bulk.ColumnMappings.Add("GoodPrice", "GoodPrice");
                     bulk.ColumnMappings.Add("DeliveryPrice", "DeliveryPrice");
                     bulk.ColumnMappings.Add("CreateBy", "CreateBy");
-                    bulk.ColumnMappings.Add("UpdateBy", "UpdateBy");              
+                    bulk.ColumnMappings.Add("UpdateBy", "UpdateBy");
 
-                    DataTable dt = new DataTable();            
+                    DataTable dt = new DataTable();
                     dt.Columns.Add(new DataColumn("OrderId", typeof(int)));
                     dt.Columns.Add(new DataColumn("ChildId", typeof(int)));
                     dt.Columns.Add(new DataColumn("TotalPrice", typeof(decimal)));
                     dt.Columns.Add(new DataColumn("GoodPrice", typeof(decimal)));
-                    dt.Columns.Add(new DataColumn("DeliveryPrice", typeof(decimal)));              
-                    dt.Columns.Add(new DataColumn("CreateBy", typeof(string)));                
-                    dt.Columns.Add(new DataColumn("UpdateBy", typeof(string)));                              
+                    dt.Columns.Add(new DataColumn("DeliveryPrice", typeof(decimal)));
+                    dt.Columns.Add(new DataColumn("CreateBy", typeof(string)));
+                    dt.Columns.Add(new DataColumn("UpdateBy", typeof(string)));
 
                     for (int i = 0; i < order.listOrderChild.Count; i++)
                     {
-                        DataRow dr = dt.NewRow();                  
-                        dr["OrderId"] = orderId;
-                        ///TODO app传过来ID？
+                        DataRow dr = dt.NewRow();
+                        dr["OrderId"] = orderId;                        
                         dr["ChildId"] = order.listOrderChild[i].ChildId;
                         decimal totalPrice = order.listOrderChild[i].GoodPrice + Convert.ToDecimal(order.DistribSubsidy);
                         dr["TotalPrice"] = totalPrice;
                         dr["GoodPrice"] = order.listOrderChild[i].GoodPrice;
-                        dr["DeliveryPrice"] = order.DistribSubsidy;                   
-                        dr["CreateBy"] = order.BusinessName;                   
-                        dr["UpdateBy"] = order.BusinessName;                                    
+                        dr["DeliveryPrice"] = order.DistribSubsidy;
+                        dr["CreateBy"] = order.BusinessName;
+                        dr["UpdateBy"] = order.BusinessName;
                         dt.Rows.Add(dr);
-                    }                
+                    }
                     bulk.WriteToServer(dt);
                 }
                 catch (Exception err)
-                {                   
+                {
                     throw err;
-                }            
+                }
             }
             #endregion
         }
@@ -1990,23 +1982,26 @@ values  ( @OrderNo ,
         public order GetById(int id)
         {
             order modle = new order();
-            const string queryOrderSql = @"
+
+            const string querySql = @"
 select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneNo,o.ReceviceAddress,o.ActualDoneDate,o.IsPay,
     o.Amount,o.OrderCommission,o.DistribSubsidy,o.WebsiteSubsidy,o.Remark,o.Status,o.clienterId,o.businessId,o.ReceviceCity,o.ReceviceLongitude,
     o.ReceviceLatitude,o.OrderFrom,o.OriginalOrderId,o.OriginalOrderNo,o.Quantity,o.Weight,o.ReceiveProvince,o.ReceiveArea,o.ReceiveProvinceCode,
     o.ReceiveCityCode,o.ReceiveAreaCode,o.OrderType,o.KM,o.GuoJuQty,o.LuJuQty,o.SongCanDate,o.OrderCount,o.CommissionRate,o.Payment,
     o.CommissionFormulaMode,o.Adjustment,o.BusinessCommission,o.SettleMoney,o.DealCount,o.PickupCode,o.OtherCancelReason,o.CommissionType,
-    o.CommissionFixValue,o.BusinessGroupId,o.TimeSpan,o.RushOrderLongitude,o.RushOrderLandline,o.FinishOrderLongitude,o.FinishOrderLandline,
+    o.CommissionFixValue,o.BusinessGroupId,o.TimeSpan,o.RushOrderLongitude,o.RushOrderLandline,o.FinishOrderLongitude,o.FinishOrderLandline,o.Invoice,
     b.[City] BusinessCity,b.Name BusinessName,b.PhoneNo BusinessPhoneNo ,b.Address BusinessAddress ,b.GroupId, b.Longitude, b.Latitude,
-    REPLACE(b.City,'市','') AS pickUpCity
+    REPLACE(b.City,'市','') AS pickUpCity,oo.NeedUploadCount,oo.HadUploadCount
 from  dbo.[order] o (nolock)
     join business b (nolock) on b.Id=o.businessId
+    left join dbo.OrderOther oo (nolock) on o.Id=oo.orderId
 where  o.Id=@Id ";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, queryOrderSql, dbParameters);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, querySql, dbParameters);
             if (dt == null || dt.Rows.Count <= 0)
                 return null;
+
             return MapRows<order>(dt)[0]; 
         }
 
@@ -2020,18 +2015,83 @@ where  o.Id=@Id ";
         public bool IsExist(int id)
         {
             bool isExist;
-            string querySql = @" SELECT COUNT(1)
- FROM   dbo.[order] WITH ( NOLOCK ) 
- WHERE  id = @id";
 
-            ///TODO type
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("id", id);
+            string querySql = @" select COUNT(1)
+ from   dbo.[order] WITH ( NOLOCK ) 
+ where  Id = @id";
+          
+            IDbParameters dbParameters=DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
             isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
 
             return isExist;
         }
+
+        /// <summary>
+        /// 判断订单是否存在
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150512</UpdateTime>
+        /// <param name="order">商户Id,时间戳</param>
+        /// <returns></returns>
+        public bool IsExist(order order)
+        {
+            bool isExist;
+
+            const string querysql = @"
+select  count(1) 
+from  dbo.[order]  
+where businessId=@businessId and TimeSpan=@TimeSpan ";
+            IDbParameters dbSelectParameters = DbHelper.CreateDbParameters();
+            dbSelectParameters.AddWithValue("businessId", order.businessId);
+            dbSelectParameters.AddWithValue("TimeSpan", order.TimeSpan);
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Write, querysql, dbSelectParameters);
+            isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
+
+            return isExist;          
+        }
+  /// <summary>
+        /// 查询X小时内没有加入可提现金额的订单
+        /// 窦海超
+        /// 2015年5月15日 16:40:05
+        /// </summary>
+        /// <param name="hour">多少小时内的数据</param>
+        public IList<NonJoinWithdrawModel> GetNonJoinWithdraw(int hour)
+        {
+            string sql = @"
+select 
+o.id,o.amount, 
+o.orderCommission clienterPrice, --给骑士
+o.Amount-o.SettleMoney businessPrice,--给商家
+o.clienterId, o.businessId
+from    dbo.[order] o ( nolock )
+        join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
+where   oo.IsJoinWithdraw = 0
+        and oo.HadUploadCount = o.OrderCount --订单量=已上传
+        and o.Status = 1 --已完成订单
+        and datediff(hour, o.ActualDoneDate, getdate()) >= @hour";
+            IDbParameters parm = DbHelper.CreateDbParameters("@hour", DbType.Int32, 4, hour);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (!dt.HasData())
+            {
+                return new List<NonJoinWithdrawModel>();
+            }
+            return MapRows<NonJoinWithdrawModel>(dt);
+        }
+
+        /// <summary>
+        /// 更新订单是否加入已提现
+        /// 窦海超
+        /// 2015年5月15日 17:08:27
+        /// </summary>
+        /// <param name="orderId"></param>
+        public void UpdateJoinWithdraw(int orderId)
+        {
+            string sql = @"update dbo.OrderOther set IsJoinWithdraw = 1 where OrderId=@orderId";
+            IDbParameters parm = DbHelper.CreateDbParameters("orderId", DbType.Int32, 4,orderId);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
+        }
+
         
     }
 }

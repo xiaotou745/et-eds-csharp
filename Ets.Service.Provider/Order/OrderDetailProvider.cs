@@ -44,6 +44,12 @@ namespace Ets.Service.Provider.Order
     {
         private OrderDetailDao orderDetailDao = new OrderDetailDao();
 
+        /// <summary>
+        /// 获取子订单列表
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>orderNo</UpdateTime>
+        /// <param name="orderId">订单编号</param>
         public List<OrderDetailInfo> GetByOrderNo(string orderNo)
         {
             return orderDetailDao.GetByOrderNo(orderNo);
