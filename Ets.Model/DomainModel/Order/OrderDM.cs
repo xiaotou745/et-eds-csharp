@@ -73,6 +73,11 @@ namespace Ets.Model.DomainModel.Order
         public string businessPhone { get; set; }
 
         /// <summary>
+        /// 发货人地址
+        /// </summary>
+        public string BusinessAddress { get; set; }        
+
+        /// <summary>
         /// 收货人
         /// </summary>
         public string ReceviceName { get; set; }
@@ -147,6 +152,22 @@ namespace Ets.Model.DomainModel.Order
         /// 总配送费
         /// </summary>
         public decimal TotalDistribSubsidy { get; set; }
+
+
+        /// <summary>
+        /// 配送员姓名
+        /// </summary>
+        public string ClienterName { get; set; }
+  
+        /// <summary>
+        /// 配送员电话
+        /// </summary>
+        public string ClienterPhoneNo { get; set; }
+        ///// <summary>
+        ///// 配送员地址
+        ///// </summary>
+        //public string ClienterAddress { get; set; }
+
        
         /// <summary>
         /// 子订单集合

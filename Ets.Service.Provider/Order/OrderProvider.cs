@@ -1112,6 +1112,7 @@ to.BusinessName = business.Name;
             orderDM.pickUpCity = order.PickUpCity;
             orderDM.PickUpAddress = order.PickUpAddress;
             orderDM.businessPhone = order.BusinessPhone;
+            orderDM.BusinessAddress = order.BusinessAddress;
             orderDM.ReceviceName = order.ReceviceName;
             orderDM.receviceCity = order.ReceviceCity;
             orderDM.RecevicePhoneNo = order.RecevicePhoneNo;
@@ -1128,6 +1129,8 @@ to.BusinessName = business.Name;
             orderDM.NeedUploadCount = order.NeedUploadCount;
             orderDM.HadUploadCount = order.HadUploadCount;
             orderDM.TotalDistribSubsidy = order.TotalDistribSubsidy;
+            orderDM.ClienterName = order.ClienterName;
+            orderDM.ClienterPhoneNo = order.ClienterPhoneNo;
             CalculationLgAndLa(orderDM, modelPM, order);//计算经纬度
 
             Ets.Service.Provider.Order.OrderChildProvider orderChildPr=new OrderChildProvider();
