@@ -1451,7 +1451,7 @@ where Id=@Id";
 
             #region 商家金融账号表
             const string queryBFAccountSql = @"
-select  Id,BusinessId,TrueName,AccountNo,IsEnable,AccountType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
+select  Id,BusinessId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
 from  BusinessFinanceAccount (nolock) 
 where BusinessId=@BusinessId and IsEnable=1";
             IDbParameters dbBFAccountParameters = DbHelper.CreateDbParameters();
@@ -1467,6 +1467,7 @@ where BusinessId=@BusinessId and IsEnable=1";
                 bf.AccountNo = ETS.Security.DES.Decrypt(dataRow["AccountNo"].ToString()); 
                 bf.IsEnable = ParseHelper.ToBool(dataRow["IsEnable"]);
                 bf.AccountType = ParseHelper.ToInt(dataRow["AccountType"]);
+                bf.BelongType = ParseHelper.ToInt(dataRow["BelongType"]);
                 if (dataRow["OpenBank"] != null && dataRow["OpenBank"]!=DBNull.Value)
                 { 
                     bf.OpenBank = dataRow["OpenBank"].ToString();
@@ -1531,7 +1532,7 @@ where BusinessId=@BusinessId and IsEnable=1";
                 result.PhoneNo = dataReader["PhoneNo"].ToString();
                 result.PhoneNo2 = dataReader["PhoneNo2"].ToString();
                 result.Password = dataReader["Password"].ToString();
-                result.CheckPicUrl = dataReader["CheckPicUrl"].ToString();
+                result.CheckPicUrl = Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataReader["CheckPicUrl"].ToString())[0];
                 result.IDCard = dataReader["IDCard"].ToString();
                 result.Address = dataReader["Address"].ToString();
                 result.Landline = dataReader["Landline"].ToString();

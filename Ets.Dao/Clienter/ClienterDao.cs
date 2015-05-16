@@ -1015,7 +1015,7 @@ where Id=@Id" ;
 
             #region 骑士金融账号表
             const string queryCFAccountSql = @"
-select  Id,ClienterId,TrueName,AccountNo,IsEnable,AccountType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
+select  Id,ClienterId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
 from  ClienterFinanceAccount (nolock) 
 where ClienterId=@ClienterId  and IsEnable=1";
 
@@ -1032,6 +1032,7 @@ where ClienterId=@ClienterId  and IsEnable=1";
                 bf.AccountNo = ETS.Security.DES.Decrypt(dataRow["AccountNo"].ToString());
                 bf.IsEnable = ParseHelper.ToBool(dataRow["IsEnable"]);
                 bf.AccountType = ParseHelper.ToInt(dataRow["AccountType"]);
+                bf.BelongType = ParseHelper.ToInt(dataRow["BelongType"]);
                 if (dataRow["OpenBank"] != null && dataRow["OpenBank"] != DBNull.Value)
                 {
                     bf.OpenBank = dataRow["OpenBank"].ToString();
@@ -1144,7 +1145,7 @@ WHERE c.Id = @ClienterId  ";
                 result.Password = dataReader["Password"].ToString();
                 result.TrueName = dataReader["TrueName"].ToString();
                 result.IDCard = dataReader["IDCard"].ToString();
-                result.PicWithHandUrl = dataReader["PicWithHandUrl"].ToString();
+                result.PicWithHandUrl =Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataReader["PicWithHandUrl"].ToString())[0];
                 result.PicUrl = dataReader["PicUrl"].ToString();
                 obj = dataReader["Status"];
                 if (obj != null && obj != DBNull.Value)

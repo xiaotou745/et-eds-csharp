@@ -136,9 +136,7 @@ PayBy,PayTime,PayPrice,HasUploadTicket,TicketUrl,CreateBy,CreateTime,UpdateBy,Up
 from  OrderChild (nolock)
 where  Id=@Id ";
 
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("Id", id);
-
+            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int64, 8, id);           
 
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
             if (DataTableHelper.CheckDt(dt))

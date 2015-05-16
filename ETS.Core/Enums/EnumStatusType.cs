@@ -47,6 +47,8 @@ namespace ETS.Enums
         CountIsNotEqual,
         [DisplayText("合法性验证成功")]
         VerificationSuccess,
+        [DisplayText("收货人手机号错误")]
+        RecevicePhoneErr,
         [DisplayText("失败")]
         Failed = 101,
         [DisplayText("请传递版本号")]

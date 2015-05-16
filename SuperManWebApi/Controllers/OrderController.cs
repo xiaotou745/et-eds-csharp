@@ -21,6 +21,7 @@ using Ets.Service.IProvider.Clienter;
 using Ets.Service.Provider.Clienter;
 using Ets.Model.DomainModel.Clienter;
 using SuperManWebApi.App_Start.Filters;
+using System.Text.RegularExpressions;
 namespace SuperManWebApi.Controllers
 {
     [ExecuteTimeLog] 
@@ -93,6 +94,11 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountMoreThanFiveThousand);
             }
+            Regex dReg = new Regex("^1\\d{10}$");
+            if (!dReg.IsMatch(model.recevicePhone))//验证收货人手机号
+            {
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneErr);                
+            }
             if (model.OrderCount <= 0 || model.OrderCount > 15) //判断录入订单数量是否符合要求
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
@@ -112,7 +118,7 @@ namespace SuperManWebApi.Controllers
             }
 
             order = iOrderProvider.TranslateOrder(model);
-            if (order.CommissionType == (int)OrderCommissionType.FixedRatio && order.BusinessCommission < 10m) //商户结算比例不能小于10
+            if (order.CommissionType == OrderCommissionType.FixedRatio.GetHashCode() && order.BusinessCommission < 10m) //商户结算比例不能小于10
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusiSettlementRatioError);
             }
