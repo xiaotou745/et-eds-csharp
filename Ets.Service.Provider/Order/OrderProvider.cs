@@ -1127,6 +1127,7 @@ to.BusinessName = business.Name;
             orderDM.Invoice = order.Invoice;
             orderDM.NeedUploadCount = order.NeedUploadCount;
             orderDM.HadUploadCount = order.HadUploadCount;
+            orderDM.TotalDistribSubsidy = order.TotalDistribSubsidy;
             CalculationLgAndLa(orderDM, modelPM, order);//计算经纬度
 
             Ets.Service.Provider.Order.OrderChildProvider orderChildPr=new OrderChildProvider();

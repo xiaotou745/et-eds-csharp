@@ -170,7 +170,10 @@ namespace Ets.Model.DataModel.Order
         /// </summary>
         public int NeedUploadCount { get; set; }
 
-
+        /// <summary>
+        /// 总配送费
+        /// </summary>
+        public decimal TotalDistribSubsidy { get; set; }
 
     }
 }

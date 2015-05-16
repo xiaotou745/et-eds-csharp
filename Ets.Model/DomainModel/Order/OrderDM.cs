@@ -141,8 +141,13 @@ namespace Ets.Model.DomainModel.Order
         /// <summary>
         /// 已上传小票数量
         /// </summary>
-        public int HadUploadCount { get; set; }  
-   
+        public int HadUploadCount { get; set; }
+
+        /// <summary>
+        /// 总配送费
+        /// </summary>
+        public decimal TotalDistribSubsidy { get; set; }
+       
         /// <summary>
         /// 子订单集合
         /// </summary>
