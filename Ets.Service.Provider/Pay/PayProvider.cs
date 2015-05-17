@@ -137,6 +137,7 @@ namespace Ets.Service.Provider.Pay
             resultModel.orderNo = orderNo;
             resultModel.payAmount = payAmount;
             resultModel.payType = PayTypeEnum.ZhiFuBao.GetHashCode();
+            resultModel.notifyUrl =ETS.Config.NotifyUrl;
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.success, resultModel);
         }
 
@@ -301,7 +302,8 @@ namespace Ets.Service.Provider.Pay
             resultModel.aliQRCode = code_url;//微信地址
             resultModel.orderNo = orderNo;//订单号
             resultModel.payAmount = totalPrice;//总金额，没乘以100的值
-            resultModel.payType = PayTypeEnum.ZhiFuBao.GetHashCode();//支付宝
+            resultModel.payType = PayTypeEnum.WeiXin.GetHashCode();//微信
+            resultModel.notifyUrl = ETS.Config.WXNotifyUrl;//回调地址
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.success, resultModel);
         }
 

@@ -94,7 +94,7 @@
     <Compile Include="DomainModel\Finance\ClienterWithdrawFormModel.cs" />
     <Compile Include="DomainModel\Finance\ClienterWithdrawLogModel.cs" />
     <Compile Include="DomainModel\Finance\FinanceRecordsDM.cs" />
-<Compile Include="DomainModel\Order\NonJoinWithdrawModel.cs" />
+    <Compile Include="DomainModel\Order\NonJoinWithdrawModel.cs" />
     <Compile Include="DomainModel\Finance\FinanceRecordsDMList.cs" />
     <Compile Include="DomainModel\Order\OrderChildForTicket.cs" />
     <Compile Include="DomainModel\Order\RushOrderModel.cs" />
@@ -220,6 +220,7 @@
     <Compile Include="ParameterModel\Order\ChangeStatusPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\BusiOrderResultModel.cs" />
     <Compile Include="ParameterModel\Order\AsyncStatusPM_OpenApi.cs" />
+    <Compile Include="ParameterModel\Order\OrderChildModel.cs" />
     <Compile Include="ParameterModel\Order\OrderPM.cs" />
     <Compile Include="ParameterModel\Order\OrderChildPM.cs" />
     <Compile Include="ParameterModel\Order\NewPostPublishOrderModel.cs" />
