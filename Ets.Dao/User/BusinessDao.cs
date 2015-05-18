@@ -25,6 +25,7 @@ using Ets.Model.ParameterModel.Order;
 using Ets.Model.DomainModel.Bussiness;
 using Ets.Model.DataModel.Finance;
 using ETS.Data.Generic;
+using Ets.Model.ParameterModel.WtihdrawRecords;
 namespace Ets.Dao.User
 {
     public class BusinessDao : DaoBase
@@ -1495,6 +1496,28 @@ where BusinessId=@BusinessId and IsEnable=1";
             return businessDM;
         }
 
+        /// <summary>
+        /// 获取商家外送费
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
+        /// <param name="id">商家Id</param>
+        /// <returns></returns>
+        public decimal GetDistribSubsidy(int id)
+        {           
+           decimal distribSubsidy;
+
+            string querSql = @"
+select  isnull(DistribSubsidy,0) from  Business (nolock) 
+where Id=@Id";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querSql, dbParameters);
+            distribSubsidy=ParseHelper.ToDecimal(executeScalar, 0);
+
+            return distribSubsidy;
+       }
+
 
         /// <summary>
         /// 判断商户是否存在        
@@ -1698,5 +1721,7 @@ WHERE b.Id = @BusinessId  ";
             parm.Add("price", DbType.Decimal, 18).Value = price;
             DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
         }
+
+
     }
 }
