@@ -37,8 +37,8 @@ namespace SuperMan.Controllers
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;
             ViewBag.openCityList = new AreaProvider().GetOpenCityOfSingleCity();
             DateTime t1 = new DateTime(2014, 1, 1, 0, 0, 0);
-            DateTime t2 =new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 59); 
-            var result = iBusinessProvider.GetBusinessCommission(t1, t2, "", SuperMan.App_Start.UserContext.Current.GroupId,"");
+            DateTime t2 =new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 59);
+            var result = iBusinessProvider.GetBusinessCommission(t1, t2, "", "", SuperMan.App_Start.UserContext.Current.GroupId, "");
             return View(result);
         }
         /// <summary>
@@ -59,12 +59,13 @@ namespace SuperMan.Controllers
             ViewBag.startDate = criteria.txtDateStart;
             ViewBag.endDate = criteria.txtDateEnd;
             ViewBag.name = criteria.txtBusinessName;
+            ViewBag.phoneno = criteria.txtBusinessPhoneNo;
             ViewBag.BusinessCity = criteria.BusinessCity;
             if (criteria.BusinessCity == "所有城市")
             {
                 criteria.BusinessCity = "";
             }
-            var result = iBusinessProvider.GetBusinessCommission(date1, date2, criteria.txtBusinessName, criteria.txtGroupId, criteria.BusinessCity);
+            var result = iBusinessProvider.GetBusinessCommission(date1, date2, criteria.txtBusinessName, criteria.txtBusinessPhoneNo, criteria.txtGroupId, criteria.BusinessCity);
             return View("BusinessCommission", result);
         }
 
@@ -91,7 +92,7 @@ namespace SuperMan.Controllers
             {
                 criteria.BusinessCity = "";
             }
-            var result = iBusinessProvider.GetBusinessCommission(date1, date2, criteria.txtBusinessName, criteria.txtGroupId, criteria.BusinessCity);
+            var result = iBusinessProvider.GetBusinessCommission(date1, date2, criteria.txtBusinessName, criteria.txtBusinessPhoneNo, criteria.txtGroupId, criteria.BusinessCity);
             if (result.Result && result.Data.Count > 0)
             {
                 string filname = "e代送商户订单结算_" + date1.ToShortDateString() + "-" + date2.ToShortDateString() + ".xls";

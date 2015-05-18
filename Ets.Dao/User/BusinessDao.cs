@@ -136,8 +136,9 @@ namespace Ets.Dao.User
         /// <param name="t1">开始计算日期</param>
         /// <param name="t2">结束日期</param>
         /// <param name="name">商户姓名</param>
+        /// <param name="phoneno">商户电话</param>
         /// <returns></returns>
-        public IList<BusinessCommissionModel> GetBusinessCommission(DateTime t1, DateTime t2, string name, int groupid, string businessCity)
+        public IList<BusinessCommissionModel> GetBusinessCommission(DateTime t1, DateTime t2, string name, string phoneno, int groupid, string businessCity)
         {
             IList<BusinessCommissionModel> list = new List<BusinessCommissionModel>();
             try
@@ -145,6 +146,7 @@ namespace Ets.Dao.User
                 string sql = @"  SELECT 
                                         BB.id ,
                                         BB.Name ,
+                                        BB.PhoneNo,
                                         T.Amount ,
                                         T.OrderCount ,
                                         ISNULL(BB.BusinessCommission, 0) BusinessCommission ,
@@ -171,6 +173,11 @@ namespace Ets.Dao.User
                 {
                     where += " and Name=@name ";
                     dbParameters.AddWithValue("name", name);
+                }
+                if (!string.IsNullOrEmpty(phoneno))
+                {
+                    where += " and PhoneNo=@PhoneNo ";
+                    dbParameters.AddWithValue("PhoneNo", phoneno);
                 }
                 if (groupid != 0)
                 {
