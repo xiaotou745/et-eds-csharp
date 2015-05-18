@@ -29,9 +29,9 @@ namespace ETS.Enums
     }
     public enum PubOrderStatus
     {
-        Success,
+        Success=1,
         [DisplayText("订单发布失败")]
-        InvalidPubOrder,
+        InvalidPubOrder=0,
         [DisplayText("订单数量不符合规则")]
         OrderCountError,
         [DisplayText("订单已经存在")]
@@ -51,9 +51,7 @@ namespace ETS.Enums
         [DisplayText("合法性验证成功")]
         VerificationSuccess,
         [DisplayText("收货人手机号错误")]
-        RecevicePhoneErr,
-        [DisplayText("失败")]
-        Failed = 101,
+        RecevicePhoneErr,       
         [DisplayText("请传递版本号")]
         NoVersion = -10
 
@@ -62,28 +60,29 @@ namespace ETS.Enums
     {
         [DisplayText("成功")]
         Success = 1,
-        [DisplayText("请传递版本号")]
-        NoVersion = 0,
-        [DisplayText("订单号错误")]
-        ErrOderNo = -1,
-        [DisplayText("获取订单失败")]
-        FailedGetOrders = -2,
         [DisplayText("失败")]
-        Failed = 101
+        Failed = 0,
+        [DisplayText("请传递版本号")]
+        NoVersion = 2,
+        [DisplayText("订单号错误")]
+        ErrOderNo = 3,
+        [DisplayText("获取订单失败")]
+        FailedGetOrders = 4       
     }
 
     public enum GetBussinessStatus
     {
         [DisplayText("成功")]
         Success = 1,
-        [DisplayText("请传递版本号")]
-        NoVersion = 0,
-        [DisplayText("商户Id错误")]
-        ErrNo = -1,
-        [DisplayText("获取商户失败")]
-        FailedGet = -2,
         [DisplayText("失败")]
-        Failed = 101
+        Failed = 0,
+        [DisplayText("请传递版本号")]
+        NoVersion = 2,
+        [DisplayText("商户Id错误")]
+        ErrNo = 3,
+        [DisplayText("获取商户失败")]
+        FailedGet =4
+     
     }
     public enum GetClienterStatus
     {
