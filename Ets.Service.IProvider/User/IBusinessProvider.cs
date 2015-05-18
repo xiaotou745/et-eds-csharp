@@ -260,7 +260,7 @@ namespace Ets.Service.IProvider.User
         /// <UpdateTime>20150511</UpdateTime>
         /// <param name="id">商户id</param>
         /// <returns></returns>
-        decimal GetDistribSubsidy(int id);
+        BusinessInfo GetDistribSubsidy(int id);
         /// <summary>
         /// 判断商户是否存在      
         /// </summary>

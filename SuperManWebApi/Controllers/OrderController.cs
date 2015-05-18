@@ -61,7 +61,8 @@ namespace SuperManWebApi.Controllers
                         return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
                     }
                 }
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.InvalidPubOrder);
+
+                return currResModel;
             }
             catch (Exception ex)
             {
