@@ -109,8 +109,9 @@ namespace Ets.Service.Provider.User
         /// <param name="t1"></param>
         /// <param name="t2"></param>
         /// <param name="name"></param>
+        /// <param name="phoneno"></param>
         /// <returns></returns>
-        public ResultInfo<IList<BusinessCommissionModel>> GetBusinessCommission(DateTime t1, DateTime t2, string name, int groupid, string BusinessCity)
+        public ResultInfo<IList<BusinessCommissionModel>> GetBusinessCommission(DateTime t1, DateTime t2, string name, string phoneno, int groupid, string BusinessCity)
         {
             var result = new ResultInfo<IList<BusinessCommissionModel>> { Data = null, Result = false, Message = "" };
             try
@@ -121,7 +122,7 @@ namespace Ets.Service.Provider.User
                     result.Message = "开始时间不能大于结束时间";
                     return result;
                 }
-                var list = dao.GetBusinessCommission(t1, t2, name, groupid, BusinessCity);
+                var list = dao.GetBusinessCommission(t1, t2, name,phoneno, groupid, BusinessCity);
                 if (list != null && list.Count > 0)
                 {
                     result.Data = list;
