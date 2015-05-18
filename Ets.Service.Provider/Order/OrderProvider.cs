@@ -1112,6 +1112,7 @@ namespace Ets.Service.Provider.Order
             orderDM.pickUpCity = order.PickUpCity;
             orderDM.PickUpAddress = order.PickUpAddress;
             orderDM.businessPhone = order.BusinessPhone;
+            orderDM.BusinessAddress = order.BusinessAddress;
             orderDM.ReceviceName = order.ReceviceName;
             orderDM.receviceCity = order.ReceviceCity;
             orderDM.RecevicePhoneNo = order.RecevicePhoneNo;
@@ -1127,13 +1128,13 @@ namespace Ets.Service.Provider.Order
             orderDM.Invoice = order.Invoice;
             orderDM.NeedUploadCount = order.NeedUploadCount;
             orderDM.HadUploadCount = order.HadUploadCount;
-
-            if (order.NeedUploadCount >= order.OrderCount && order.Status == OrderStatus.订单完成.GetHashCode())
+            orderDM.TotalDistribSubsidy = order.TotalDistribSubsidy;
+            orderDM.ClienterName = order.ClienterName;
+            orderDM.ClienterPhoneNo = order.ClienterPhoneNo;
+   if (order.NeedUploadCount >= order.OrderCount && order.Status == OrderStatus.订单完成.GetHashCode())
             {
                 orderDM.IsModifyTicket = false;
-            }
-
-            CalculationLgAndLa(orderDM, modelPM, order);//计算经纬度
+            }            CalculationLgAndLa(orderDM, modelPM, order);//计算经纬度
 
             Ets.Service.Provider.Order.OrderChildProvider orderChildPr = new OrderChildProvider();
             List<OrderChildInfo> listOrderChildInfo = orderChildPr.GetByOrderId(id);
