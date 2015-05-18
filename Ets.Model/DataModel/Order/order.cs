@@ -189,5 +189,11 @@ namespace Ets.Model.DataModel.Order
         /// </summary>
         public decimal TotalDistribSubsidy { get; set; }
 
+        /// <summary>
+        /// 抢单时间
+        /// </summary>
+        public DateTime GrabDate { get; set; }
+        
+
     }
 }

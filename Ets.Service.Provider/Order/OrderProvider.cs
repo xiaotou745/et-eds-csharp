@@ -1131,6 +1131,7 @@ namespace Ets.Service.Provider.Order
             orderDM.TotalDistribSubsidy = order.TotalDistribSubsidy;
             orderDM.ClienterName = order.ClienterName;
             orderDM.ClienterPhoneNo = order.ClienterPhoneNo;
+            orderDM.GrabDate = order.GrabDate;
    if (order.NeedUploadCount >= order.OrderCount && order.Status == OrderStatus.订单完成.GetHashCode())
             {
                 orderDM.IsModifyTicket = false;

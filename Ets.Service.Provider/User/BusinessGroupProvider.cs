@@ -32,7 +32,7 @@ namespace Ets.Service.Provider.User
     /// </summary>
     public class BusinessGroupProvider : IBusinessGroupProvider
     {
-        BusinessGroupDao dao = new BusinessGroupDao();
+        private BusinessGroupDao dao = new BusinessGroupDao();
 
         /// <summary>
         /// 获取商家分组列表
@@ -48,6 +48,7 @@ namespace Ets.Service.Provider.User
         {
             return dao.GetCurrenBusinessGroup(businessId);
         }
+
         /// <summary>
         /// 添加商家分组
         /// danny-20150506
@@ -59,7 +60,7 @@ namespace Ets.Service.Provider.User
 
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                if (globalConfigModel.GroupId == 0)//新增
+                if (globalConfigModel.GroupId == 0) //新增
                 {
                     BusinessGroupModel businessGroupModel = new BusinessGroupModel()
                     {
@@ -68,51 +69,59 @@ namespace Ets.Service.Provider.User
                         CreateBy = globalConfigModel.OptName
                     };
                     globalConfigModel.GroupId = dao.AddBusinessGroup(businessGroupModel);
-                    if (globalConfigModel.GroupId>0)
+                    if (globalConfigModel.GroupId > 0)
                     {
                         var r = dao.CopyGlobalConfigMode(globalConfigModel.GroupId, globalConfigModel.OptName);
                     }
                 }
-                else//修改
+                else //修改
                 {
                     BusinessGroupModel businessGroupModel = new BusinessGroupModel()
                     {
-                        Id=globalConfigModel.GroupId,
+                        Id = globalConfigModel.GroupId,
                         Name = globalConfigModel.GroupName,
                         StrategyId = globalConfigModel.StrategyId,
                         UpdateBy = globalConfigModel.OptName
-                        
+
                     };
                     dao.UpdateBusinessGroup(businessGroupModel);
                 }
+
                 #region 动态时间补贴
+
                 GlobalConfig globalConfig = new GlobalConfig()
                 {
                     KeyName = "IsStarTimeSubsidies",
-                    Value=globalConfigModel.IsStarTimeSubsidies,
-                    GroupId=globalConfigModel.GroupId,
-                    StrategyId=globalConfigModel.StrategyId,
+                    Value = globalConfigModel.IsStarTimeSubsidies,
+                    GroupId = globalConfigModel.GroupId,
+                    StrategyId = globalConfigModel.StrategyId,
                     OptName = globalConfigModel.OptName
                 };
                 dao.UpdateGlobalConfig(globalConfig);
+
                 #endregion
+
                 #region 跨店时间奖励
+
                 globalConfig.KeyName = "IsStartOverStoreSubsidies";
                 globalConfig.Value = globalConfigModel.IsStartOverStoreSubsidies;
                 dao.UpdateGlobalConfig(globalConfig);
+
                 #endregion
+
                 #region 补贴策略
-                switch (globalConfigModel.StrategyId)    //使用switch-case开关语句，根据按键次数执行相应分支
+
+                switch (globalConfigModel.StrategyId) //使用switch-case开关语句，根据按键次数执行相应分支
                 {
-                    case 0://普通补贴
+                    case 0: //普通补贴
                         globalConfig.KeyName = "CommonCommissionRatio";
                         globalConfig.Value = globalConfigModel.CommonCommissionRatio;
                         dao.UpdateGlobalConfig(globalConfig);
                         globalConfig.KeyName = "CommonSiteSubsidies";
                         globalConfig.Value = globalConfigModel.CommonSiteSubsidies;
                         dao.UpdateGlobalConfig(globalConfig);
-                        break; 
-                    case 1://时间段补贴
+                        break;
+                    case 1: //时间段补贴
                         globalConfig.KeyName = "TimeSpanCommissionRatio";
                         globalConfig.Value = globalConfigModel.TimeSpanCommissionRatio;
                         dao.UpdateGlobalConfig(globalConfig);
@@ -122,8 +131,8 @@ namespace Ets.Service.Provider.User
                         globalConfig.KeyName = "TimeSpanOutPrice";
                         globalConfig.Value = globalConfigModel.TimeSpanOutPrice;
                         dao.UpdateGlobalConfig(globalConfig);
-                        break; 
-                    case 2://保本补贴
+                        break;
+                    case 2: //保本补贴
                         globalConfig.KeyName = "CommissionRatio";
                         globalConfig.Value = globalConfigModel.CommissionRatio;
                         dao.UpdateGlobalConfig(globalConfig);
@@ -131,7 +140,7 @@ namespace Ets.Service.Provider.User
                         globalConfig.Value = globalConfigModel.SiteSubsidies;
                         dao.UpdateGlobalConfig(globalConfig);
                         break;
-                    case 3://满金额补贴
+                    case 3: //满金额补贴
                         globalConfig.KeyName = "PriceCommissionRatio";
                         globalConfig.Value = globalConfigModel.PriceCommissionRatio;
                         dao.UpdateGlobalConfig(globalConfig);
@@ -140,7 +149,9 @@ namespace Ets.Service.Provider.User
                         dao.UpdateGlobalConfig(globalConfig);
                         break;
                 }
+
                 #endregion
+
                 DeleteGlobalConfigRedisByGroupId(globalConfigModel.GroupId);
                 tran.Complete();
 
@@ -148,6 +159,7 @@ namespace Ets.Service.Provider.User
             return true;
 
         }
+
         /// <summary>
         /// 根据分组Id删除公共配置缓存
         /// danny-20150506
@@ -156,8 +168,45 @@ namespace Ets.Service.Provider.User
         private void DeleteGlobalConfigRedisByGroupId(int GroupId)
         {
             var redis = new ETS.NoSql.RedisCache.RedisCache();
-            string cacheKey = string.Format(RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet, GroupId);//缓存的KEY
-            redis.Delete(cacheKey); 
+            string cacheKey = string.Format(RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet, GroupId); //缓存的KEY
+            redis.Delete(cacheKey);
+        }
+
+        /// <summary>
+        /// 修改公共配置信息
+        /// danny-20150518
+        /// </summary>
+        /// <param name="globalConfigModel"></param>
+        /// <returns></returns>
+        public bool ModifyGlobalConfig(GlobalConfigModel globalConfigModel)
+        {
+            bool reg = true;
+            var globalConfig = new GlobalConfig()
+            {
+                OptName = globalConfigModel.OptName,
+                GroupId = 0,
+                StrategyId = -1
+            };
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (globalConfigModel.PushRadius != "0")
+                {
+                    globalConfig.KeyName = "PushRadius";
+                    globalConfig.Value = globalConfigModel.PushRadius;
+                    reg = dao.UpdateGlobalConfig(globalConfig);
+
+                    if (globalConfigModel.UploadTimeInterval != "0")
+                    {
+                        globalConfig.KeyName = "UploadTimeInterval";
+                        globalConfig.Value = globalConfigModel.UploadTimeInterval;
+                        reg = dao.UpdateGlobalConfig(globalConfig);
+                    }
+                    tran.Complete();
+                }
+                DeleteGlobalConfigRedisByGroupId(globalConfigModel.GroupId);
+                return reg;
+
+            }
         }
     }
 }

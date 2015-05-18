@@ -167,7 +167,10 @@ namespace Ets.Model.DomainModel.Order
         ///// 配送员地址
         ///// </summary>
         //public string ClienterAddress { get; set; }
-
+        /// <summary>
+        /// 抢单时间
+        /// </summary>
+        public DateTime GrabDate { get; set; }
        
         /// <summary>
         /// 子订单集合
