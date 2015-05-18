@@ -50,16 +50,8 @@ namespace SuperManWebApi.Controllers
         {
             try
             {
-                order order;
-
-                decimal amount = 0;
-                for (int i = 0; i < model.listOrderChlid.Count; i++)
-                {
-                    amount += model.listOrderChlid[i].GoodPrice;
-                }
-                model.Amount = amount;
-                model.OrderCount = model.listOrderChlid.Count;
-
+                order order;      
+       
                 ResultModel<BusiOrderResultModel> currResModel = Verification(model, out order);
                 if (currResModel.Status == PubOrderStatus.VerificationSuccess.GetHashCode())
                 {
@@ -117,19 +109,19 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
             }
-            //decimal amount = 0;
-            //for (int i = 0; i < model.listOrderChlid.Count; i++)
-            //{
-            //    amount += model.listOrderChlid[i].GoodPrice;
-            //}
-            //if (model.Amount != amount)
-            //{
-            //    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountIsNotEqual);
-            //}
-            //if (model.OrderCount != model.listOrderChlid.Count)//主订单与子订单数量
-            //{
-            //    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.CountIsNotEqual);
-            //}
+            decimal amount = 0;
+            for (int i = 0; i < model.listOrderChlid.Count; i++)
+            {
+                amount += model.listOrderChlid[i].GoodPrice;
+            }
+            if (model.Amount != amount)
+            {
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountIsNotEqual);
+            }
+            if (model.OrderCount != model.listOrderChlid.Count)//主订单与子订单数量
+            {
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.CountIsNotEqual);
+            }
 
             order = iOrderProvider.TranslateOrder(model);
             if (order.CommissionType == OrderCommissionType.FixedRatio.GetHashCode() && order.BusinessCommission < 10m) //商户结算比例不能小于10
