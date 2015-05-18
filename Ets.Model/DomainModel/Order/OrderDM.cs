@@ -177,7 +177,17 @@ namespace Ets.Model.DomainModel.Order
         /// <summary>
         /// 订单明细集合
         /// </summary>
-        public List<OrderDetailInfo> listOrderDetail { get; set; }        
+        public List<OrderDetailInfo> listOrderDetail { get; set; }
+
+        /// <summary>
+        /// 是否允许修改
+        /// </summary>
+        public bool IsModifyTicket { get; set; }
+
+        /// <summary>
+        /// 是否有未完成子订单
+        /// </summary>
+        public bool IsExistsUnFinish{ get; set; }
     }
 
     public class OrderChildInfo

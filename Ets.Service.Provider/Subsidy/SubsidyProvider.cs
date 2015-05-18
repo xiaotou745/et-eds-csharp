@@ -18,6 +18,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ets.Dao.Finance;
+using Ets.Model.DataModel.Finance;
+using ETS.Enums;
 
 namespace Ets.Service.Provider.Subsidy
 {
@@ -25,6 +28,7 @@ namespace Ets.Service.Provider.Subsidy
     public class SubsidyProvider : ISubsidyProvider
     {
         private SubsidyDao subsidyDao = new SubsidyDao();
+        private readonly ClienterBalanceRecordDao clienterBalanceRecordDao = new ClienterBalanceRecordDao();
         /// <summary>
         /// 获取补贴设置  集团可选。
         /// </summary>
@@ -120,9 +124,23 @@ namespace Ets.Service.Provider.Subsidy
                 };
                 #endregion
 
+                //ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
+                //{
+                //    ClienterId = userId,
+                //    Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
+                //    Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
+                //    Balance = accountBalance ?? 0,
+                //    RecordType = ClienterBalanceRecordRecordType.Commission.GetHashCode(),
+                //    Operator = myOrderInfo.ClienterName,
+                //    RelationNo = myOrderInfo.OrderNo,
+                //    Remark = "骑士完成订单"
+                //};
+                
                 using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                 {
                     withdrawRecordsDao.AddRecords(withdraw);
+                    //clienterBalanceRecordDao.Insert(cbrm);
+
                     clienterDao.UpdateClienterAccountBalance(withdraw);//更改用户金额
                     subsidyDao.InsertCrossShopLog(crossShopModel);
                     tran.Complete();

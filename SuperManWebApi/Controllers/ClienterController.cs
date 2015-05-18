@@ -65,10 +65,21 @@ namespace SuperManWebApi.Controllers
                return ResultModel<ClienterDM>.Conclude(GetClienterStatus.FailedGet);
            }
            #endregion
-
            try
            {
                ClienterDM clienterDM = _iClienterProvider.GetDetails(model.ClienterId);
+               if (clienterDM.Status == GetClienterStatus.Refuse.GetHashCode())
+               {
+                   return Ets.Model.Common.ResultModel<ClienterDM>.Conclude(GetClienterStatus.Refuse);  
+               }
+               if (clienterDM.Status == GetClienterStatus.Audit.GetHashCode())
+               {
+                    return Ets.Model.Common.ResultModel<ClienterDM>.Conclude(GetClienterStatus.Audit);  
+               }
+               if (clienterDM.Status == GetClienterStatus.Auditing.GetHashCode())
+               {
+                   return Ets.Model.Common.ResultModel<ClienterDM>.Conclude(GetClienterStatus.Auditing);
+               }
                return Ets.Model.Common.ResultModel<ClienterDM>.Conclude(GetClienterStatus.Success, clienterDM);          
            }
            catch (Exception ex)

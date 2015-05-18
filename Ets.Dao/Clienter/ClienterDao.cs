@@ -687,17 +687,16 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, ConstValues.OrderH
         public OrderOther UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel)
         {
             OrderOther orderOther = new OrderOther();
-            var oo = GetReceiptInfo(uploadReceiptModel.OrderId);
-
-            uploadReceiptModel.NeedUploadCount = oo.NeedUploadCount;
-            if (oo.Id == 0)
-            {
-                orderOther = InsertReceiptInfo(uploadReceiptModel);
-            }
-            else
-            {
+            var oo = GetReceiptInfo(uploadReceiptModel.OrderId); 
+            //uploadReceiptModel.NeedUploadCount = oo.NeedUploadCount;
+            //if (oo.Id == 0)
+            //{
+            //    orderOther = InsertReceiptInfo(uploadReceiptModel);
+            //}
+            //else
+            //{
                 orderOther = UpdateReceiptInfo(uploadReceiptModel);
-            }
+            //}
             orderOther.OrderStatus = oo.OrderStatus;
             orderOther.OrderCreateTime = oo.OrderCreateTime;
             return orderOther;
@@ -765,10 +764,10 @@ where   OrderId = @OrderId
         public OrderOther UpdateReceiptInfo(UploadReceiptModel uploadReceiptModel)
         {
             OrderOther oo = new OrderOther();
-
+            //ReceiptPic + '|' + @ReceiptPic
             StringBuilder sql = new StringBuilder(@"
  update dbo.OrderOther
- set    ReceiptPic = ReceiptPic + '|' + @ReceiptPic ,
+ set    ReceiptPic = '' ,
         HadUploadCount = HadUploadCount + @HadUploadCount,
         NeedUploadCount = @NeedUploadCount
  output Inserted.Id ,
@@ -807,7 +806,7 @@ where   OrderId = @OrderId
             return oo;
         }
         /// <summary>
-        /// 删除小票信息
+        /// 删除小票信息OrderChild表
         /// wc
         /// </summary>
         /// <param name="uploadReceiptModel"></param>
@@ -879,7 +878,7 @@ from    dbo.[order] o ( nolock )
 where   o.Id = @OrderId";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderId", SqlDbType.Int).Value = orderId;
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql, parm);
             var ooList = MapRows<OrderOther>(dt);
 
             if (ooList != null && ooList.Count > 0)
@@ -898,14 +897,12 @@ where   o.Id = @OrderId";
         /// <param name="uploadReceiptModel"></param>
         /// <returns></returns>
         public OrderOther DeleteReceipt(UploadReceiptModel uploadReceiptModel)
-        {
-
+        { 
             string delPic = uploadReceiptModel.ReceiptPic;
             //更新小票信息
             OrderOther oo = GetReceiptInfo(uploadReceiptModel.OrderId);
             if (oo.Id > 0)
-            {
-
+            { 
                 List<string> listReceiptPic = ImageCommon.GetListImgString(oo.ReceiptPic);
                 int delPre = listReceiptPic.Count;
                 int delAft = 0;

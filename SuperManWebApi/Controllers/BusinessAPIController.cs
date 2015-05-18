@@ -17,7 +17,9 @@ using Ets.Service.IProvider.Order;
 using Ets.Service.Provider.Order;
 using Ets.Service.Provider.Common;
 using Ets.Service.IProvider.User;
-using ETS.Const; 
+using ETS.Const;
+using SuperManWebApi.Providers;
+
 namespace SuperManWebApi.Controllers
 {
     public class BusinessAPIController : ApiController
@@ -126,45 +128,55 @@ namespace SuperManWebApi.Controllers
             System.Drawing.Image img;
             try
             {
-                img = System.Drawing.Image.FromStream(file.InputStream);
-                
-                //var fileName = string.Format("{0}_{1}_{2}", DateTime.Now.ToString("yyyyMMddhhmmssfff"), new Random().Next(1000), file.FileName);
+                #region 暂时注释
 
-                var fileName = ETS.Util.ImageTools.GetFileName("B", Path.GetExtension(file.FileName));
+                //img = System.Drawing.Image.FromStream(file.InputStream);
 
-                int fileNameLastDot = fileName.LastIndexOf('.');
-                //原图
-                string rFileName = string.Format("{0}{1}{2}", fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
-                //保存到数据库的目录结构，年月日
-                string saveDbPath;
-                //fullDir 保存到 磁盘的 完整路径
-                string fullDir = ETS.Util.ImageTools.CreateDirectory(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath,"", out saveDbPath);
-                if (fullDir == "0")
+                ////var fileName = string.Format("{0}_{1}_{2}", DateTime.Now.ToString("yyyyMMddhhmmssfff"), new Random().Next(1000), file.FileName);
+
+                //var fileName = ETS.Util.ImageTools.GetFileName("B", Path.GetExtension(file.FileName));
+
+                //int fileNameLastDot = fileName.LastIndexOf('.');
+                ////原图
+                //string rFileName = string.Format("{0}{1}{2}", fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
+                ////保存到数据库的目录结构，年月日
+                //string saveDbPath;
+                ////fullDir 保存到 磁盘的 完整路径
+                //string fullDir = ETS.Util.ImageTools.CreateDirectory(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath,"", out saveDbPath);
+                //if (fullDir == "0")
+                //{
+                //    LogHelper.LogWriter("上传图片失败：", new { ex = "检查是否有权限创建目录" });
+                //    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed);
+                //}
+                ////保存原图到 磁盘中
+                //var fullFilePath = System.IO.Path.Combine(fullDir, rFileName);
+                //file.SaveAs(fullFilePath);
+                ////裁图
+                //var transformer = new FixedDimensionTransformerAttribute(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.Width, Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.Height, Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.MaxBytesLength / 1024);
+
+                //var destFullFileName = System.IO.Path.Combine(fullDir, fileName);
+                ////裁图，并保存到磁盘
+                //transformer.Transform(fullFilePath, destFullFileName);
+                ////保存到数据库的图片路径，包含年月日
+                //var picUrl = saveDbPath + fileName;
+
+                #endregion
+
+                ImageHelper ih = new ImageHelper();
+                ImgInfo imgInfo = ih.UploadImg(file, 0);
+                if (!string.IsNullOrWhiteSpace(imgInfo.FailRemark))
                 {
-                    LogHelper.LogWriter("上传图片失败：", new { ex = "检查是否有权限创建目录" });
                     return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed);
                 }
-                //保存原图到 磁盘中
-                var fullFilePath = System.IO.Path.Combine(fullDir, rFileName);
-                file.SaveAs(fullFilePath);
-                //裁图
-                var transformer = new FixedDimensionTransformerAttribute(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.Width, Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.Height, Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.MaxBytesLength / 1024);
-
-                var destFullFileName = System.IO.Path.Combine(fullDir, fileName);
-                //裁图，并保存到磁盘
-                transformer.Transform(fullFilePath, destFullFileName);
-                //保存到数据库的图片路径，包含年月日
-                var picUrl = saveDbPath + fileName;
                 //保存图片目录信息到数据库
-                var upResult = iBusinessProvider.UpdateBusinessPicInfo(userId, picUrl);
-                var relativePath = System.IO.Path.Combine(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.RelativePath, fileName).ToForwardSlashPath();
+                var upResult = iBusinessProvider.UpdateBusinessPicInfo(userId, imgInfo.PicUrl);
                 if (upResult == -1)
                 {
-                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id = userId, ImagePath = picUrl, status = upResult.ToString() });
+                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id = userId, ImagePath = imgInfo.PicUrl, status = upResult.ToString() });
                 }
                 else
                 {
-                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id = userId, ImagePath = picUrl, status = upResult.ToString() });
+                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id = userId, ImagePath = imgInfo.PicUrl, status = upResult.ToString() });
                 }
             }
             catch (Exception ex)

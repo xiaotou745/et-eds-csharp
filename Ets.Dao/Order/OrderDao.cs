@@ -1340,7 +1340,7 @@ where   1 = 1
 
         /// <summary>
         /// 根据订单号获取订单信息
-        /// 订单id和orderNo传一个就可以
+        /// 订单OrderNO
         /// wc
         /// </summary>
         /// <returns></returns>
@@ -1368,6 +1368,48 @@ where   1 = 1 and o.OrderNo = @OrderNo
 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderNo", SqlDbType.NVarChar).Value = orderNo;
+
+            var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            var list = ConvertDataTableList<OrderListModel>(dt);
+            if (list != null && list.Count > 0)
+            {
+                return list[0];
+            }
+            else
+            {
+                return null;
+            }
+        }
+        /// <summary>
+        /// 根据订单号获取订单信息
+        /// 订单OrderNO
+        /// wc
+        /// </summary>
+        /// <returns></returns>
+        public OrderListModel GetByOrderId(int orderId)
+        {
+            string sql = @"
+select top 1
+        o.[Id] ,
+        o.[OrderNo] ,
+        o.[Status] ,
+        c.AccountBalance ,
+        c.Id clienterId ,
+        o.OrderCommission ,
+        o.businessId ,
+        b.GroupId ,
+        o.PickupCode ,
+        o.OrderCount,
+        c.TrueName ClienterName,
+        ISNULL(oo.HadUploadCount,0) HadUploadCount
+from    [order] o with ( nolock )
+        join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
+        join dbo.business b with ( nolock ) on o.businessId = b.Id
+        left join dbo.OrderOther oo with(nolock) on o.Id = oo.OrderId
+where   1 = 1 and o.Id = @Id
+";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@Id", SqlDbType.Int).Value = orderId;
 
             var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             var list = ConvertDataTableList<OrderListModel>(dt);

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Ets.Model.DataModel.Order;
 using Ets.Model.ParameterModel.Order;
 using Ets.Model.DomainModel.Order;
+using Ets.Model.Common;
+using Ets.Model.Common.AliPay;
 namespace Ets.Service.IProvider.Order
 {
     /// <summary>
@@ -47,6 +49,16 @@ namespace Ets.Service.IProvider.Order
         /// <UpdateTime>20150512</UpdateTime>
         /// <param name="orderId">订单Id</param>
         /// <returns></returns>    
-        List<OrderChildInfo> GetByOrderId(int orderId);       
+        List<OrderChildInfo> GetByOrderId(int orderId);
+
+        /// <summary>
+        /// 查询子订单是否支付
+        /// 窦海超
+        /// 2015年5月17日 15:51:21
+        /// </summary>
+        /// <param name="orderId">主订单ID</param>
+        /// <param name="childId">子订单ID</param>
+        /// <returns>成功返回1，支付中未支付返回0</returns>
+        ResultModel<PayResultModel> GetPayStatus(int orderId, int childId);
     }
 }

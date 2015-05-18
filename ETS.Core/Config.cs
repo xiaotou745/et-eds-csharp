@@ -78,7 +78,15 @@ namespace ETS
         /// </summary>
         public static string OrderCancelReasons { get { return ConfigKey("OrderCancelReasons"); } }
 
+        /// <summary>
+        /// 支付宝回调地址
+        /// </summary>
+        public static string NotifyUrl { get { return ConfigKey("NotifyUrl"); } }
 
+        /// <summary>
+        /// 微信回调地址
+        /// </summary>
+        public static string WXNotifyUrl { get { return ConfigKey("WXNotifyUrl"); } }
         #region 取Web.Config值
 
         /// <summary>
