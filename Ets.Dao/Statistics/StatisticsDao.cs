@@ -1,7 +1,10 @@
-﻿using Ets.Model.Common;
+﻿using ETS.Data.Generic;
+using ETS.Extension;
+using Ets.Model.Common;
 using ETS;
 using ETS.Dao;
 using ETS.Data.Core;
+using Ets.Model.DomainModel.Statistics;
 using ETS.Util;
 using System;
 using System.Collections.Generic;
@@ -312,5 +315,140 @@ where convert(char(10),o.PubDate,120) = convert(char(10), dateadd(day,-1,getdate
             }
             return MapRows<HomeCountTitleModel>(dt)[0];
         }
+
+        #region 活跃商家、骑士数量统计
+
+        /// <summary>
+        /// 活跃数量统计
+        /// </summary>
+        /// <param name="queryInfo"></param>
+        /// <returns></returns>
+        public IList<ActiveBusinessClienterInfo> QueryActiveBusinessClienter(ParamActiveInfo queryInfo)
+        {
+            #region sql text.
+            const string SQL_TEXT = @"
+declare @BusinessCount int 
+declare @ClienterCount int
+
+--昨天通过审核商家数量
+select @BusinessCount=count(1)
+from dbo.business b(nolock)
+where b.InsertTime<@enddate
+	and b.Status=1
+
+--昨天通过审核骑士数量
+select @ClienterCount=count(1)
+from dbo.clienter c(nolock)
+where c.InsertTime<@enddate
+	and c.Status=1
+	and c.City is not null
+
+--订单相关统计
+select convert(char(10),o.PubDate,120) 'Date',
+	count(distinct o.businessId) 'ActiveBusinessCount',
+	count(distinct o.clienterId) 'ActiveClienterCount' into #tempOrder
+from dbo.[order] o(nolock)
+where o.Status=1
+	and o.PubDate between @startdate and @enddate
+group by convert(char(10),o.PubDate,120)
+
+--	商户结算金额	订单骑士佣金	
+select o.Date,
+	@BusinessCount 'BusinessCount',
+	o.ActiveBusinessCount,o.ActiveBusinessCount*1.0/@BusinessCount 'ActiveBusinessRate',
+	@ClienterCount 'ClienterCount',
+	o.ActiveClienterCount,
+	o.ActiveClienterCount*1.0/@ClienterCount 'ActiveClienterRate'
+from #tempOrder o
+order by o.Date desc, o.ActiveClienterCount desc";
+            #endregion
+
+            var dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("startdate", DbType.DateTime).Value = queryInfo.StartDate.Value;
+            dbParameters.Add("enddate", DbType.DateTime).Value = queryInfo.EndDate.Value;
+
+            return DbHelper.QueryWithRowMapper(SuperMan_Read, SQL_TEXT, dbParameters,
+                new ActiveBusinessClienterInfoRowMapper());
+        }
+
+        public IList<ActiveBusinessClienterInfo> QueryCityActiveBusinessClienter(ParamActiveInfo queryInfo)
+        {
+            #region SQL text
+
+            const string SQL_TEXT = @"
+--昨天通过审核商家数量
+select b.City, count(1) 'BusinessCount' into #tempBusiness
+from dbo.business b(nolock)
+where b.InsertTime<@enddate
+	and b.Status=1
+group by b.City
+
+--昨天通过审核骑士数量
+select c.City,count(1) 'ClienterCount' into #tempClienter
+from dbo.clienter c(nolock)
+where c.InsertTime<@enddate
+	and c.Status=1
+	and c.City is not null
+group by c.City
+
+--订单相关统计
+select convert(char(10),o.PubDate,120) 'Date',
+	o.ReceviceCity,
+	count(distinct o.businessId) 'ActiveBusinessCount',
+	count(distinct o.clienterId) 'ActiveClienterCount' into #tempOrder
+from dbo.[order] o(nolock)
+where o.Status=1
+	and o.PubDate between @startdate and @enddate
+group by convert(char(10),o.PubDate,120),o.ReceviceCity
+
+--	商户结算金额	订单骑士佣金	
+select o.Date,
+	o.ReceviceCity 'City',
+	tb.BusinessCount,o.ActiveBusinessCount,
+    o.ActiveBusinessCount*1.0/tb.BusinessCount 'ActiveBusinessRate',
+	tc.ClienterCount,o.ActiveClienterCount,
+    o.ActiveClienterCount*1.0/tc.ClienterCount 'ActiveClienterRate'
+from #tempOrder o
+	left join #tempBusiness tb on o.ReceviceCity=tb.City
+	left join #tempClienter tc on o.ReceviceCity=tc.City
+order by o.Date desc, o.ActiveClienterCount desc";
+            #endregion
+
+            var dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("startdate", DbType.DateTime).Value = queryInfo.StartDate.Value;
+            dbParameters.Add("enddate", DbType.DateTime).Value = queryInfo.EndDate.Value;
+
+            return DbHelper.QueryWithRowMapper(SuperMan_Read, SQL_TEXT, dbParameters,
+                new ActiveBusinessClienterInfoRowMapper());
+        }
+
+        /// <summary>
+        /// 绑定对象
+        /// </summary>
+        private class ActiveBusinessClienterInfoRowMapper : IDataTableRowMapper<ActiveBusinessClienterInfo>
+        {
+            public ActiveBusinessClienterInfo MapRow(DataRow dataReader)
+            {
+                var result = new CityActiveBusinessClienterInfo();
+
+                result.Date = dataReader["Date"].ToString();
+                result.BusinessCount = ParseHelper.ToInt(dataReader["BusinessCount"], 0);
+                result.ActiveBusinessCount = ParseHelper.ToInt(dataReader["ActiveBusinessCount"], 0);
+                result.ActiveBusinessRate = ParseHelper.ToDecimal(dataReader["ActiveBusinessRate"], 0);
+
+                result.ClienterCount = ParseHelper.ToInt(dataReader["ClienterCount"], 0);
+                result.ActiveClienterCount = ParseHelper.ToInt(dataReader["ActiveClienterCount"], 0);
+                result.ActiveClienterRate = ParseHelper.ToDecimal(dataReader["ActiveClienterRate"], 0);
+
+                if (dataReader.HasColumn("City"))
+                {
+                    result.City = dataReader["City"].ToString();
+                }
+
+                return result;
+            }
+        }
+        
+        #endregion
     }
 }

@@ -8,9 +8,9 @@ namespace ETS.Extension
         {
             if (dataset == null || dataset.Tables.Count == 0 || dataset.Tables[0].Rows.Count == 0)
             {
-                return true;
+                return false;
             }
-            return false;
+            return true;
         }
     }
 }

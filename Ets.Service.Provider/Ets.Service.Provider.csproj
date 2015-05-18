@@ -97,6 +97,7 @@
     <Compile Include="Order\TimeOrPriceProvider.cs" />
     <Compile Include="Pay\PayProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Statistics\OrderStatisticsProvider.cs" />
     <Compile Include="Statistics\StatisticsProvider.cs" />
     <Compile Include="Strategy\StrategyProvider.cs" />
     <Compile Include="Subsidy\SubsidyProvider.cs" />

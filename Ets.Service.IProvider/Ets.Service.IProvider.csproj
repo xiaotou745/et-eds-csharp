@@ -64,6 +64,7 @@
     <Compile Include="Clienter\IClienterProvider.cs" />
     <Compile Include="Pay\IPayProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Statistics\IOrderStatisticsProvider.cs" />
     <Compile Include="Statistics\IStatisticsProvider.cs" />
     <Compile Include="Strategy\IStrategyProvider.cs" />
     <Compile Include="Subsidy\ISubsidyProvider.cs" />
