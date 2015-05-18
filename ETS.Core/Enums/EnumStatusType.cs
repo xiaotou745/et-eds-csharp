@@ -86,15 +86,20 @@ namespace ETS.Enums
     {
         [DisplayText("成功")]
         Success = 1,
-        [DisplayText("请传递版本号")]
-        NoVersion = 0,
+        [DisplayText("被拒绝")]
+        Refuse=0,
+        [DisplayText("未审核")]
+        Audit=2,
+        [DisplayText("审核中")]
+        Auditing=3,
         [DisplayText("骑士Id错误")]
         ErrNo = -1,
         [DisplayText("获取骑士失败")]
         FailedGet = -2,
+        [DisplayText("请传递版本号")]
+        NoVersion = -3,
         [DisplayText("失败")]
         Failed = 101
-
     }
     public enum GetOrdersNoLoginStatus
     {

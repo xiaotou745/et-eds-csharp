@@ -256,7 +256,7 @@ namespace Ets.Service.Provider.Order
                 to.ReceviceCity = business.City; //城市
                 to.DistribSubsidy = business.DistribSubsidy;//设置外送费,从商户中找。
                 to.BusinessCommission = ParseHelper.ToDecimal(business.BusinessCommission);//商户结算比例
-to.BusinessName = business.Name;
+                to.BusinessName = business.Name;
                 to.CommissionType = business.CommissionType;//结算类型：1：固定比例 2：固定金额
                 to.CommissionFixValue = ParseHelper.ToDecimal(business.CommissionFixValue);//固定金额     
                 to.BusinessGroupId = business.BusinessGroupId;
@@ -294,20 +294,20 @@ to.BusinessName = business.Name;
                 StrategyId = business.StrategyId
 
             };
-          
+
 
             OrderPriceProvider commProvider = CommissionFactory.GetCommission(business.StrategyId);
-            to.CommissionFormulaMode = business.StrategyId;           
+            to.CommissionFormulaMode = business.StrategyId;
             to.CommissionRate = commProvider.GetCommissionRate(orderComm); //佣金比例 
             to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
             to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
             to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
             to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(business.BusinessGroupId).CommissionFormulaMode);
             to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额           
-            to.Status =Convert.ToByte(OrderStatus.订单待抢单.GetHashCode());
+            to.Status = Convert.ToByte(OrderStatus.订单待抢单.GetHashCode());
             to.TimeSpan = busiOrderInfoModel.TimeSpan;
-            to.listOrderChild = busiOrderInfoModel.listOrderChlid;           
-           return to;
+            to.listOrderChild = busiOrderInfoModel.listOrderChlid;
+            return to;
         }
 
         /// <summary>
@@ -318,11 +318,11 @@ to.BusinessName = business.Name;
         /// <param name="order">订单实体</param>
         /// <returns></returns>
         public PubOrderStatus AddOrder(order order)
-        {            
+        {
             int result = 0;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
-            {                
-                bool isExist=OrderDao.IsExist(order);
+            {
+                bool isExist = OrderDao.IsExist(order);
                 if (isExist)
                 {
                     return PubOrderStatus.OrderHasExist;
@@ -332,7 +332,7 @@ to.BusinessName = business.Name;
                     result = OrderDao.AddOrder(order);
                 }
 
-                if(result<=0)//订单发布失败
+                if (result <= 0)//订单发布失败
                 {
                     return PubOrderStatus.InvalidPubOrder;
                 }
@@ -353,9 +353,9 @@ to.BusinessName = business.Name;
                 {
                     tran.Complete();
                     return PubOrderStatus.Success;
-                }                          
+                }
             }
-         
+
             return PubOrderStatus.Success;
         }
 
@@ -396,9 +396,9 @@ to.BusinessName = business.Name;
         /// </summary>
         /// <param name="orderNo"></param>
         /// <returns></returns>
-        public OrderListModel GetOrderByNo(string orderNo,int orderId)
+        public OrderListModel GetOrderByNo(string orderNo, int orderId)
         {
-            return OrderDao.GetOrderByNo(orderNo,orderId);
+            return OrderDao.GetOrderByNo(orderNo, orderId);
         }
         /// <summary>
         /// 订单指派超人
@@ -467,7 +467,7 @@ to.BusinessName = business.Name;
             paramodel.order_id.ToString()));  //查询缓存，看当前订单是否存在,“true”代表存在，key的形式为集团ID_第三方平台订单号
             if (orderExistsNo != null)
                 return ResultModel<object>.Conclude(OrderApiStatusType.OrderExists, new { order_no = orderExistsNo });
-            if (paramodel.total_price<=0)  //金额小于等于0，数据不合法，返回信息 待用数据特性优化
+            if (paramodel.total_price <= 0)  //金额小于等于0，数据不合法，返回信息 待用数据特性优化
             {
                 return ResultModel<object>.Conclude(OrderApiStatusType.ParaError);
             }
@@ -547,7 +547,7 @@ to.BusinessName = business.Name;
             paramodel.CommissionType = 1;//结算类型：1：固定比例 2：固定金额
             paramodel.CommissionFixValue = 0;//固定金额
             paramodel.BusinessGroupId = 1;//分组ID
-          
+
             //计算获得订单骑士佣金
             OrderCommission orderComm = new OrderCommission()
             {
@@ -556,7 +556,7 @@ to.BusinessName = business.Name;
                 OrderCount = paramodel.package_count ?? 1,/*订单数量，默认为1*/
                 BusinessCommission = paramodel.store_info.businesscommission,/*商户结算比例*/
                 BusinessGroupId = paramodel.BusinessGroupId,
-                StrategyId =0
+                StrategyId = 0
 
             }/*网站补贴*/;
             OrderPriceProvider commissonPro = CommissionFactory.GetCommission(0);//万达、全时采用默认分组下策略
@@ -572,7 +572,7 @@ to.BusinessName = business.Name;
             try
             {
                 using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
-                {  
+                {
                     //将当前订单插入到缓存中，设置过期时间30天
                     redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
                         paramodel.order_id.ToString()), "True", DateTime.Now.AddDays(30));  //先加入缓存，相当于加锁
@@ -912,7 +912,7 @@ to.BusinessName = business.Name;
                 StrategyId = business.StrategyId
             };
             OrderPriceProvider commProvider = CommissionFactory.GetCommission(business.StrategyId);
-            to.CommissionFormulaMode = business.StrategyId;             
+            to.CommissionFormulaMode = business.StrategyId;
             to.CommissionRate = commProvider.GetCommissionRate(orderComm); //佣金比例 
             to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
             to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
@@ -1087,8 +1087,8 @@ to.BusinessName = business.Name;
         public order GetById(int id)
         {
             return OrderDao.GetById(id);
-        }    
-       
+        }
+
         /// <summary>
         /// 获取订单详情
         /// </summary>
@@ -1106,12 +1106,13 @@ to.BusinessName = business.Name;
             orderDM.OrderNo = order.OrderNo;
             orderDM.OriginalOrderNo = order.OriginalOrderNo;
             orderDM.OrderFrom = order.OrderFrom;
-            orderDM.OrderCommission = order.OrderCommission;          
+            orderDM.OrderCommission = order.OrderCommission;
             orderDM.PubDate = order.PubDate;
             orderDM.businessName = order.BusinessName;
             orderDM.pickUpCity = order.PickUpCity;
             orderDM.PickUpAddress = order.PickUpAddress;
             orderDM.businessPhone = order.BusinessPhone;
+            orderDM.BusinessAddress = order.BusinessAddress;
             orderDM.ReceviceName = order.ReceviceName;
             orderDM.receviceCity = order.ReceviceCity;
             orderDM.RecevicePhoneNo = order.RecevicePhoneNo;
@@ -1127,15 +1128,23 @@ to.BusinessName = business.Name;
             orderDM.Invoice = order.Invoice;
             orderDM.NeedUploadCount = order.NeedUploadCount;
             orderDM.HadUploadCount = order.HadUploadCount;
-            CalculationLgAndLa(orderDM, modelPM, order);//计算经纬度
+            orderDM.TotalDistribSubsidy = order.TotalDistribSubsidy;
+            orderDM.ClienterName = order.ClienterName;
+            orderDM.ClienterPhoneNo = order.ClienterPhoneNo;
+   if (order.NeedUploadCount >= order.OrderCount && order.Status == OrderStatus.订单完成.GetHashCode())
+            {
+                orderDM.IsModifyTicket = false;
+            }            CalculationLgAndLa(orderDM, modelPM, order);//计算经纬度
 
-            Ets.Service.Provider.Order.OrderChildProvider orderChildPr=new OrderChildProvider();
-            orderDM.listOrderChild = orderChildPr.GetByOrderId(id);
-          
+            Ets.Service.Provider.Order.OrderChildProvider orderChildPr = new OrderChildProvider();
+            List<OrderChildInfo> listOrderChildInfo = orderChildPr.GetByOrderId(id);
+            orderDM.listOrderChild = listOrderChildInfo;
+
             Ets.Service.Provider.Order.OrderDetailProvider orderDetailPr = new OrderDetailProvider();
             orderDM.listOrderDetail = orderDetailPr.GetByOrderNo(order.OrderNo);
+            orderDM.IsModifyTicket = true;
+            orderDM.IsExistsUnFinish = listOrderChildInfo.Exists(t => t.PayStatus == PayStatusEnum.WaitingPay.GetHashCode() || t.PayStatus == PayStatusEnum.WaitPay.GetHashCode());
 
-           
 
             return orderDM;
         }
@@ -1147,7 +1156,7 @@ to.BusinessName = business.Name;
         /// <UpdateTime>20150515</UpdateTime>
         /// <param name="id">订单动态实体、查询实体、订单实体</param>
         /// <returns></returns>
-        void CalculationLgAndLa(OrderDM orderDM,OrderPM modelPM,  order order)
+        void CalculationLgAndLa(OrderDM orderDM, OrderPM modelPM, order order)
         {
             if (order.Longitude == null || order.Longitude == 0 || order.Latitude == null || order.Latitude == 0)
             {
