@@ -1495,6 +1495,28 @@ where BusinessId=@BusinessId and IsEnable=1";
             return businessDM;
         }
 
+        /// <summary>
+        /// 获取商家外送费
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
+        /// <param name="id">商家Id</param>
+        /// <returns></returns>
+        public decimal GetDistribSubsidy(int id)
+        {           
+           decimal distribSubsidy;
+
+            string querSql = @"
+select  isnull(DistribSubsidy,0) from  Business (nolock) 
+where Id=@Id";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querSql, dbParameters);
+            distribSubsidy=ParseHelper.ToDecimal(executeScalar, 0);
+
+            return distribSubsidy;
+       }
+
 
         /// <summary>
         /// 判断商户是否存在        

@@ -82,5 +82,44 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<BusinessDM>.Conclude(GetBussinessStatus.Failed);
             }    
         }
+
+        /// <summary>
+        /// 获取商户详外送费      
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
+        /// <param name="model">商户参数</param>
+        /// <returns></returns>        
+        [HttpPost]
+        public ResultModel<decimal> GetDistribSubsidy(BussinessPM model)
+        {
+            #region 验证
+            var version = model.Version;
+            if (string.IsNullOrWhiteSpace(version)) //版本号 
+            {
+                return ResultModel<decimal>.Conclude(GetBussinessStatus.NoVersion);
+            }
+            if (model.BussinessId < 0)//商户Id不合法
+            {
+                return ResultModel<decimal>.Conclude(GetBussinessStatus.ErrNo);
+            }
+            if (!_iBusinessProvider.IsExist(model.BussinessId)) //商户不存在
+            {
+                return ResultModel<decimal>.Conclude(GetBussinessStatus.FailedGet);
+            }
+
+            #endregion
+
+            try
+            {
+                decimal distribSubsidy = _iBusinessProvider.GetDistribSubsidy(model.BussinessId);
+                return Ets.Model.Common.ResultModel<decimal>.Conclude(GetBussinessStatus.Success, distribSubsidy);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter("ResultModel<decimal> GetDistribSubsidy", new { obj = "时间：" + DateTime.Now.ToString() + ex.Message });
+                return ResultModel<decimal>.Conclude(GetBussinessStatus.Failed);
+            }
+        }
     }
 }
