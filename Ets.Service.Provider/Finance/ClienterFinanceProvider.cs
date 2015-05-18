@@ -195,6 +195,11 @@ namespace Ets.Service.Provider.Finance
             {
                 return FinanceCardBindC.NoPara;
             }
+            if (cardBindCpm.BelongType == (int)ClienterFinanceAccountBelongType.Conpany 
+                && string.IsNullOrWhiteSpace(cardBindCpm.OpenSubBank)) //公司帐户开户支行不能为空
+            {
+                return FinanceCardBindC.BelongTypeError;
+            }
             int count = _clienterFinanceAccountDao.GetCountByClienterId(cardBindCpm.ClienterId);
             if (count > 0) //该骑士已绑定过金融账号
             {
@@ -210,8 +215,8 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public ResultModel<object> CardModifyC(CardModifyCPM cardModifyCpm)
         {
-            FinanceCardCardModifyC checkbool = CheckCardModifyC(cardModifyCpm);  //验证数据合法性
-            if (checkbool != FinanceCardCardModifyC.Success)
+            FinanceCardModifyC checkbool = CheckCardModifyC(cardModifyCpm);  //验证数据合法性
+            if (checkbool != FinanceCardModifyC.Success)
             {
                 return ResultModel<object>.Conclude(checkbool);
             }
@@ -238,13 +243,18 @@ namespace Ets.Service.Provider.Finance
         /// </summary>
         /// <param name="cardModifyCpm"></param>
         /// <returns></returns>
-        private  FinanceCardCardModifyC CheckCardModifyC(CardModifyCPM cardModifyCpm)
+        private FinanceCardModifyC CheckCardModifyC(CardModifyCPM cardModifyCpm)
         {
             if (cardModifyCpm == null)
             {
-                return FinanceCardCardModifyC.NoPara;
+                return FinanceCardModifyC.NoPara;
             }
-            return FinanceCardCardModifyC.Success;
+            if (cardModifyCpm.BelongType == (int)ClienterFinanceAccountBelongType.Conpany
+                && string.IsNullOrWhiteSpace(cardModifyCpm.OpenSubBank)) //公司帐户开户支行不能为空
+            {
+                return FinanceCardModifyC.BelongTypeError;
+            }
+            return FinanceCardModifyC.Success;
         }
 
         #endregion

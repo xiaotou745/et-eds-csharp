@@ -34,9 +34,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model">查询参数实体</param>
         /// <returns></returns>
-        [HttpPost]
-        [Validate]
-        [ApiVersion]
+        [HttpPost]   
         public ResultModel<object> Records(ClienterRecordsPM model)
         {
             return _iClienterFinanceProvider.GetRecords(model.ClienterId);
@@ -53,23 +51,42 @@ namespace SuperManWebApi.Controllers
        public ResultModel<ClienterDM> Get(ClienterPM model)
        {
            #region 验证
-           var version = HttpContext.Current.Request.Form["Version"];
+           var version = model.Version;
            if (string.IsNullOrWhiteSpace(version)) //版本号 
            {
                return ResultModel<ClienterDM>.Conclude(GetClienterStatus.NoVersion);
            }
            if (model.ClienterId < 0)//骑士Id不合法
            {
-               return ResultModel<ClienterDM>.Conclude(GetClienterStatus.ErrOderNo);
+               return ResultModel<ClienterDM>.Conclude(GetClienterStatus.ErrNo);
            }
            if (!_iClienterProvider.IsExist(model.ClienterId)) //骑士不存在
            {
-               return ResultModel<ClienterDM>.Conclude(GetClienterStatus.ErrOderNo);
+               return ResultModel<ClienterDM>.Conclude(GetClienterStatus.FailedGet);
            }
            #endregion
-
-           ClienterDM clienterDM = _iClienterProvider.GetDetails(model.ClienterId);
-           return Ets.Model.Common.ResultModel<ClienterDM>.Conclude(GetClienterStatus.Success, clienterDM);
+           try
+           {
+               ClienterDM clienterDM = _iClienterProvider.GetDetails(model.ClienterId);
+               if (clienterDM.Status == GetClienterStatus.Refuse.GetHashCode())
+               {
+                   return Ets.Model.Common.ResultModel<ClienterDM>.Conclude(GetClienterStatus.Refuse);  
+               }
+               if (clienterDM.Status == GetClienterStatus.Audit.GetHashCode())
+               {
+                    return Ets.Model.Common.ResultModel<ClienterDM>.Conclude(GetClienterStatus.Audit);  
+               }
+               if (clienterDM.Status == GetClienterStatus.Auditing.GetHashCode())
+               {
+                   return Ets.Model.Common.ResultModel<ClienterDM>.Conclude(GetClienterStatus.Auditing);
+               }
+               return Ets.Model.Common.ResultModel<ClienterDM>.Conclude(GetClienterStatus.Success, clienterDM);          
+           }
+           catch (Exception ex)
+           {
+                LogHelper.LogWriter("ResultModel<BusinessDM> Get", new { obj = "时间：" + DateTime.Now.ToString() + ex.Message });
+                return ResultModel<ClienterDM>.Conclude(GetClienterStatus.Failed);
+           }    
        }     
         
     }

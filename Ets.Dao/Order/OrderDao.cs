@@ -230,7 +230,7 @@ namespace Ets.Dao.Order
                 RecevicePhoneNo,ReceiveProvinceCode,ReceiveCityCode,ReceiveAreaCode,ReceviceAddress,
                 ReceviceLongitude,ReceviceLatitude,businessId,PickUpAddress,Payment,OrderCommission,
                 WebsiteSubsidy,CommissionRate,CommissionFormulaMode,ReceiveProvince,ReceviceCity,ReceiveArea,
-                PickupCode,BusinessCommission,SettleMoney,Adjustment,OrderFrom,Status,CommissionType,CommissionFixValue,BusinessGroupId)
+                PickupCode,BusinessCommission,SettleMoney,Adjustment,OrderFrom,Status,CommissionType,CommissionFixValue,BusinessGroupId,Invoice)
                 output Inserted.Id,GETDATE(),@OptName,'新增订单',Inserted.businessId,Inserted.[Status],@Platform
                 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
                 Values(@OrderNo,
@@ -239,7 +239,7 @@ namespace Ets.Dao.Order
                 @RecevicePhoneNo,@ReceiveProvinceCode,@ReceiveCityCode,@ReceiveAreaCode,@ReceviceAddress,
                 @ReceviceLongitude,@ReceviceLatitude,@BusinessId,@PickUpAddress,@Payment,@OrderCommission,
                 @WebsiteSubsidy,@CommissionRate,@CommissionFormulaMode,@ReceiveProvince,@ReceviceCity,@ReceiveArea,
-                @PickupCode,@BusinessCommission,@SettleMoney,@Adjustment,@OrderFrom,@Status,@CommissionType,@CommissionFixValue,@BusinessGroupId);select  IDENT_CURRENT('order') ";
+                @PickupCode,@BusinessCommission,@SettleMoney,@Adjustment,@OrderFrom,@Status,@CommissionType,@CommissionFixValue,@BusinessGroupId,@Invoice);select  IDENT_CURRENT('order') ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             //基本参数信息
 
@@ -288,6 +288,7 @@ namespace Ets.Dao.Order
             dbParameters.AddWithValue("@CommissionType", paramodel.CommissionType);//结算类型
             dbParameters.AddWithValue("@CommissionFixValue", paramodel.CommissionFixValue);//固定金额
             dbParameters.AddWithValue("@BusinessGroupId", paramodel.BusinessGroupId);//分组ID
+            dbParameters.AddWithValue("@Invoice", paramodel.invoice_title);//发票标题
 
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertOrdersql, dbParameters);
             #endregion
@@ -1339,7 +1340,7 @@ where   1 = 1
 
         /// <summary>
         /// 根据订单号获取订单信息
-        /// 订单id和orderNo传一个就可以
+        /// 订单OrderNO
         /// wc
         /// </summary>
         /// <returns></returns>
@@ -1367,6 +1368,48 @@ where   1 = 1 and o.OrderNo = @OrderNo
 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderNo", SqlDbType.NVarChar).Value = orderNo;
+
+            var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            var list = ConvertDataTableList<OrderListModel>(dt);
+            if (list != null && list.Count > 0)
+            {
+                return list[0];
+            }
+            else
+            {
+                return null;
+            }
+        }
+        /// <summary>
+        /// 根据订单号获取订单信息
+        /// 订单OrderNO
+        /// wc
+        /// </summary>
+        /// <returns></returns>
+        public OrderListModel GetByOrderId(int orderId)
+        {
+            string sql = @"
+select top 1
+        o.[Id] ,
+        o.[OrderNo] ,
+        o.[Status] ,
+        c.AccountBalance ,
+        c.Id clienterId ,
+        o.OrderCommission ,
+        o.businessId ,
+        b.GroupId ,
+        o.PickupCode ,
+        o.OrderCount,
+        c.TrueName ClienterName,
+        ISNULL(oo.HadUploadCount,0) HadUploadCount
+from    [order] o with ( nolock )
+        join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
+        join dbo.business b with ( nolock ) on o.businessId = b.Id
+        left join dbo.OrderOther oo with(nolock) on o.Id = oo.OrderId
+where   1 = 1 and o.Id = @Id
+";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@Id", SqlDbType.Int).Value = orderId;
 
             var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             var list = ConvertDataTableList<OrderListModel>(dt);
@@ -1765,21 +1808,8 @@ order by bb.Id desc;";
         /// <UpdateTime>20150509</UpdateTime>
         /// <param name="order">订单实体</param>
         /// <returns></returns>
-        public int AddOrder(Model.DataModel.Order.order order)
-        {
-            //判断TimeSpan     
-            #region 根据时间戳判断订单是否存在
-            ///TODO 条件加商家ID、用写库，单独封一个方法
-            const string querysql = @"select  count(1) from  dbo.[order]  where  TimeSpan=@TimeSpan";
-            IDbParameters dbSelectParameters = DbHelper.CreateDbParameters();
-            dbSelectParameters.AddWithValue("TimeSpan", order.TimeSpan);
-            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querysql, dbSelectParameters);
-            bool isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
-            if (isExist)
-            {
-                return 0;
-            }
-            #endregion
+        public int AddOrder(order order)
+        {           
 
             #region 写入订单表、订单日志表
             StringBuilder insertSql = new StringBuilder();
@@ -1863,7 +1893,7 @@ values  ( @OrderNo ,
           @SettleMoney ,
           @Adjustment ,
           @TimeSpan
-        );select IDENT_CURRENT('order')", SuperPlatform.商家, ConstValues.PublishOrder, (int)SuperPlatform.商家);
+        );select IDENT_CURRENT('order')", SuperPlatform.商家, ConstValues.PublishOrder, (int)SuperPlatform.商家,0);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@OrderNo", order.OrderNo);
@@ -1909,6 +1939,16 @@ values  ( @OrderNo ,
             }
             #endregion
 
+            #region 写子OrderOther表
+            const string insertOtherSql = @"
+insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount)
+values(@OrderId,@NeedUploadCount,0)";
+            IDbParameters dbOtherParameters = DbHelper.CreateDbParameters();
+            dbOtherParameters.AddWithValue("@OrderId", orderId); //商户ID
+            dbOtherParameters.AddWithValue("@NeedUploadCount", order.OrderCount); //户名
+            DbHelper.ExecuteScalar(SuperMan_Write, insertOtherSql, dbOtherParameters);
+            #endregion
+
             if (order.listOrderChild != null && order.listOrderChild.Count > 0)
             {
                 AddOrderChild(orderId, order);
@@ -1917,21 +1957,16 @@ values  ( @OrderNo ,
             return orderId;
         }
 
+
         /// <summary>
         /// 写入订单子表
         /// </summary>
         /// <UpdateBy>hulingbo</UpdateBy>
         /// <UpdateTime>20150512</UpdateTime>
         /// <returns>订单实体</returns>
-        void AddOrderChild(int orderId, Model.DataModel.Order.order order)
+        void AddOrderChild(int orderId, order order)
         {
-            #region 性能优化
-            ///TODO 事务问题
-            //var sqlConnection = DbHelper.GetConnectionTxPair(SuperMan_Write).Connection as SqlConnection;
-            //SqlBulkCopy bulk1 = new SqlBulkCopy(sqlConnection)
-            //{
-
-            //}
+            #region 性能优化          
             using (SqlBulkCopy bulk = new SqlBulkCopy(SuperMan_Write))
             {
                 try
@@ -1959,8 +1994,7 @@ values  ( @OrderNo ,
                     for (int i = 0; i < order.listOrderChild.Count; i++)
                     {
                         DataRow dr = dt.NewRow();
-                        dr["OrderId"] = orderId;
-                        ///TODO app传过来ID？
+                        dr["OrderId"] = orderId;                        
                         dr["ChildId"] = order.listOrderChild[i].ChildId;
                         decimal totalPrice = order.listOrderChild[i].GoodPrice + Convert.ToDecimal(order.DistribSubsidy);
                         dr["TotalPrice"] = totalPrice;
@@ -1990,24 +2024,31 @@ values  ( @OrderNo ,
         public order GetById(int id)
         {
             order modle = new order();
-            const string queryOrderSql = @"
+
+            const string querySql = @"
 select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneNo,o.ReceviceAddress,o.ActualDoneDate,o.IsPay,
     o.Amount,o.OrderCommission,o.DistribSubsidy,o.WebsiteSubsidy,o.Remark,o.Status,o.clienterId,o.businessId,o.ReceviceCity,o.ReceviceLongitude,
     o.ReceviceLatitude,o.OrderFrom,o.OriginalOrderId,o.OriginalOrderNo,o.Quantity,o.Weight,o.ReceiveProvince,o.ReceiveArea,o.ReceiveProvinceCode,
     o.ReceiveCityCode,o.ReceiveAreaCode,o.OrderType,o.KM,o.GuoJuQty,o.LuJuQty,o.SongCanDate,o.OrderCount,o.CommissionRate,o.Payment,
     o.CommissionFormulaMode,o.Adjustment,o.BusinessCommission,o.SettleMoney,o.DealCount,o.PickupCode,o.OtherCancelReason,o.CommissionType,
-    o.CommissionFixValue,o.BusinessGroupId,o.TimeSpan,o.RushOrderLongitude,o.RushOrderLandline,o.FinishOrderLongitude,o.FinishOrderLandline,
-    b.[City] BusinessCity,b.Name BusinessName,b.PhoneNo BusinessPhoneNo ,b.Address BusinessAddress ,b.GroupId, b.Longitude, b.Latitude,
-    REPLACE(b.City,'市','') AS pickUpCity
+    o.CommissionFixValue,o.BusinessGroupId,o.TimeSpan,o.RushOrderLongitude,o.RushOrderLandline,o.FinishOrderLongitude,o.FinishOrderLandline,o.Invoice,
+    isnull(o.DistribSubsidy,0)*isnull(o.OrderCount,0) as TotalDistribSubsidy,
+    b.[City] BusinessCity,b.Name BusinessName,b.PhoneNo BusinessPhoneNo ,b.Address BusinessAddress ,b.GroupId, 
+    b.Longitude, b.Latitude,REPLACE(b.City,'市','') AS pickUpCity,
+    oo.NeedUploadCount,oo.HadUploadCount,
+    c.TrueName ClienterName,c.PhoneNo ClienterPhoneNo
 from  dbo.[order] o (nolock)
     join business b (nolock) on b.Id=o.businessId
+    left join dbo.OrderOther oo (nolock) on o.Id=oo.orderId
+    left join clienter c on  o.clienterId=c.id
 where  o.Id=@Id ";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, queryOrderSql, dbParameters);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, querySql, dbParameters);
             if (dt == null || dt.Rows.Count <= 0)
                 return null;
-            return MapRows<order>(dt)[0];
+
+            return MapRows<order>(dt)[0]; 
         }
 
         /// <summary>
@@ -2020,13 +2061,12 @@ where  o.Id=@Id ";
         public bool IsExist(int id)
         {
             bool isExist;
-            string querySql = @" SELECT COUNT(1)
- FROM   dbo.[order] WITH ( NOLOCK ) 
- WHERE  id = @id";
 
-            ///TODO type
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("id", id);
+            string querySql = @" select COUNT(1)
+ from   dbo.[order] WITH ( NOLOCK ) 
+ where  Id = @id";
+          
+            IDbParameters dbParameters=DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
             isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
 
@@ -2034,6 +2074,29 @@ where  o.Id=@Id ";
         }
 
         /// <summary>
+        /// 判断订单是否存在
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150512</UpdateTime>
+        /// <param name="order">商户Id,时间戳</param>
+        /// <returns></returns>
+        public bool IsExist(order order)
+        {
+            bool isExist;
+
+            const string querysql = @"
+select  count(1) 
+from  dbo.[order]  
+where businessId=@businessId and TimeSpan=@TimeSpan ";
+            IDbParameters dbSelectParameters = DbHelper.CreateDbParameters();
+            dbSelectParameters.AddWithValue("businessId", order.businessId);
+            dbSelectParameters.AddWithValue("TimeSpan", order.TimeSpan);
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Write, querysql, dbSelectParameters);
+            isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
+
+            return isExist;          
+        }
+  /// <summary>
         /// 查询X小时内没有加入可提现金额的订单
         /// 窦海超
         /// 2015年5月15日 16:40:05
@@ -2074,5 +2137,7 @@ where   oo.IsJoinWithdraw = 0
             IDbParameters parm = DbHelper.CreateDbParameters("orderId", DbType.Int32, 4,orderId);
             DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
         }
+
+        
     }
 }

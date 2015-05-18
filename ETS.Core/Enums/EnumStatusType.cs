@@ -40,7 +40,20 @@ namespace ETS.Enums
         [DisplayText("抱歉，订单金额不可低于10元")]
         AmountLessThanTen,
         [DisplayText("抱歉，订单金额不可高于5000元")]
-        AmountMoreThanFiveThousand
+        AmountMoreThanFiveThousand,
+        [DisplayText("订单金额与子订单总金额不一致")]
+        AmountIsNotEqual,
+        [DisplayText("订单数量与子订单数量不一致")]
+        CountIsNotEqual,
+        [DisplayText("合法性验证成功")]
+        VerificationSuccess,
+        [DisplayText("收货人手机号错误")]
+        RecevicePhoneErr,
+        [DisplayText("失败")]
+        Failed = 101,
+        [DisplayText("请传递版本号")]
+        NoVersion = -10
+
     }
     public enum GetOrdersStatus
     {
@@ -51,7 +64,9 @@ namespace ETS.Enums
         [DisplayText("订单号错误")]
         ErrOderNo = -1,
         [DisplayText("获取订单失败")]
-        FailedGetOrders = -2
+        FailedGetOrders = -2,
+        [DisplayText("失败")]
+        Failed = 101
     }
 
     public enum GetBussinessStatus
@@ -61,21 +76,30 @@ namespace ETS.Enums
         [DisplayText("请传递版本号")]
         NoVersion = 0,
         [DisplayText("商户Id错误")]
-        ErrOderNo = -1,
+        ErrNo = -1,
         [DisplayText("获取商户失败")]
-        FailedGetOrders = -2
+        FailedGet = -2,
+        [DisplayText("失败")]
+        Failed = 101
     }
     public enum GetClienterStatus
     {
         [DisplayText("成功")]
         Success = 1,
-        [DisplayText("请传递版本号")]
-        NoVersion = 0,
+        [DisplayText("被拒绝")]
+        Refuse=0,
+        [DisplayText("未审核")]
+        Audit=2,
+        [DisplayText("审核中")]
+        Auditing=3,
         [DisplayText("骑士Id错误")]
-        ErrOderNo = -1,
+        ErrNo = -1,
         [DisplayText("获取骑士失败")]
-        FailedGetOrders = -2
-
+        FailedGet = -2,
+        [DisplayText("请传递版本号")]
+        NoVersion = -3,
+        [DisplayText("失败")]
+        Failed = 101
     }
     public enum GetOrdersNoLoginStatus
     {
@@ -180,7 +204,7 @@ namespace ETS.Enums
         [DisplayText("完成订单失败")]
         Failed = 0,
         [DisplayText("超人不能为空")]
-        userIdEmpty = 101,
+        UserIdEmpty = 101,
         [DisplayText("订单不能为空")]
         OrderEmpty =102,
         [DisplayText("订单不存在")]
@@ -190,8 +214,9 @@ namespace ETS.Enums
         [DisplayText("取货码错误")]
         PickupCodeError=105,
         [DisplayText("订单已取消")]
-        OrderHadCancel=106
-
+        OrderHadCancel=106,
+        [DisplayText("请传递版本号")]
+        NoVersion = 107
     }
 
     public enum GetMyBalanceStatus

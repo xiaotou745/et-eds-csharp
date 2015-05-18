@@ -76,7 +76,7 @@ namespace SuperManWebApi.Controllers
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.NOFormParameter);
             }
             var strUserId = HttpContext.Current.Request.Form["userId"]; //用户Id
-            var strIDCard = HttpContext.Current.Request.Form["IDCard"]; //身份证号
+            var strIdCard = HttpContext.Current.Request.Form["IDCard"]; //身份证号
             var trueName = HttpContext.Current.Request.Form["trueName"]; //真实姓名
             if (!iClienterProvider.CheckClienterExistById(int.Parse(strUserId)))
             {
@@ -92,64 +92,69 @@ namespace SuperManWebApi.Controllers
             }
             var fileHand = HttpContext.Current.Request.Files[0]; //手持照片
             var file = HttpContext.Current.Request.Files[1]; //照片
-            System.Drawing.Image imgHand;
-            System.Drawing.Image img;
-            try
-            {
-                imgHand = System.Drawing.Image.FromStream(fileHand.InputStream);
-                img = System.Drawing.Image.FromStream(file.InputStream);
-            }
-            catch (Exception)
-            {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidFileFormat);
-            }
+            
+            ImageHelper ih = new ImageHelper();
+            //手持照片
+            ImgInfo handImg=ih.UploadImg(fileHand, 0);
+            //身份证照片
+            ImgInfo sfhImg = ih.UploadImg(file, 0); 
+            #region 暂时注释
 
-            var fileHandName = ETS.Util.ImageTools.GetFileName("C", Path.GetExtension(fileHand.FileName));
+            //System.Drawing.Image imgHand;
+            //System.Drawing.Image img;
+            //try
+            //{
+            //    imgHand = System.Drawing.Image.FromStream(fileHand.InputStream);
+            //    img = System.Drawing.Image.FromStream(file.InputStream);
+            //}
+            //catch (Exception)
+            //{
+            //    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidFileFormat);
+            //}
 
-            var fileName = ETS.Util.ImageTools.GetFileName("C", Path.GetExtension(file.FileName));
+            //var fileHandName = ETS.Util.ImageTools.GetFileName("C", Path.GetExtension(fileHand.FileName));
 
-            int fileHandNameLastDot = fileHandName.LastIndexOf('.');
-            int fileNameLastDot = fileName.LastIndexOf('.');
-            //原图
-            string rFileHandName = string.Format("{0}{1}{2}", fileHandName.Substring(0, fileHandNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileHandName));
-            string rFileName = string.Format("{0}{1}{2}", fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
+            //var fileName = ETS.Util.ImageTools.GetFileName("C", Path.GetExtension(file.FileName));
 
-            string saveDbFileHandPath;
-            string saveDbFilePath;
+            //int fileHandNameLastDot = fileHandName.LastIndexOf('.');
+            //int fileNameLastDot = fileName.LastIndexOf('.');
+            ////原图
+            //string rFileHandName = string.Format("{0}{1}{2}", fileHandName.Substring(0, fileHandNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileHandName));
+            //string rFileName = string.Format("{0}{1}{2}", fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
 
-            string fullFileHandDir = ETS.Util.ImageTools.CreateDirectory(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath, "", out saveDbFileHandPath);
+            //string saveDbFileHandPath;
+            //string saveDbFilePath;
 
-            string fullFileDir = ETS.Util.ImageTools.CreateDirectory(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath, "", out saveDbFilePath);
+            //string fullFileHandDir = ETS.Util.ImageTools.CreateDirectory(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath, "", out saveDbFileHandPath);
 
-            if (fullFileHandDir == "0" || fullFileDir == "0")
-            {
-                SuperManCore.LogHelper.LogWriter("上传图片失败：", new { ex = "检查是否有权限创建目录" });
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed);
-            }
-            //保存原图
-            var fullFilePath = Path.Combine(fullFileDir, rFileName);
-            var fullFileHandPath = Path.Combine(fullFileHandDir, rFileHandName);
-            file.SaveAs(fullFilePath);
-            fileHand.SaveAs(fullFileHandPath);
-            //裁图
-            var transformer = new FixedDimensionTransformerAttribute(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.Width, Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.Height, CustomerIconUploader.Instance.MaxBytesLength / 1024);
-            //保存到数据库的图片路径
-            var destFullFileName = System.IO.Path.Combine(fullFileDir, fileName);
-            transformer.Transform(fullFilePath, destFullFileName);
+            //string fullFileDir = ETS.Util.ImageTools.CreateDirectory(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath, "", out saveDbFilePath);
 
-            var destFullFileHandName = System.IO.Path.Combine(fullFileHandDir, fileHandName);
-            transformer.Transform(fullFileHandPath, destFullFileHandName);
-
-            var picUrl = saveDbFilePath + fileName;
-
-            var picUrlWithHand = saveDbFileHandPath + fileHandName;
-
-            var upResult = iClienterProvider.UpdateClientPicInfo(new Ets.Model.DomainModel.Clienter.ClienterModel { Id = int.Parse(strUserId), PicUrl = picUrl, PicWithHandUrl = picUrlWithHand, TrueName = trueName, IDCard = strIDCard });
+            //if (fullFileHandDir == "0" || fullFileDir == "0")
+            //{
+            //    SuperManCore.LogHelper.LogWriter("上传图片失败：", new { ex = "检查是否有权限创建目录" });
+            //    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed);
+            //}
+            ////保存原图
+            //var fullFilePath = Path.Combine(fullFileDir, rFileName);
+            //var fullFileHandPath = Path.Combine(fullFileHandDir, rFileHandName);
+            //file.SaveAs(fullFilePath);
+            //fileHand.SaveAs(fullFileHandPath);
+            ////裁图
+            //var transformer = new FixedDimensionTransformerAttribute(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.Width, Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.Height, CustomerIconUploader.Instance.MaxBytesLength / 1024);
+            ////保存到数据库的图片路径
+            //var destFullFileName = System.IO.Path.Combine(fullFileDir, fileName);
+            //transformer.Transform(fullFilePath, destFullFileName); 
+            //var destFullFileHandName = System.IO.Path.Combine(fullFileHandDir, fileHandName);
+            //transformer.Transform(fullFileHandPath, destFullFileHandName); 
+            //var picUrl = saveDbFilePath + fileName; 
+            //var picUrlWithHand = saveDbFileHandPath + fileHandName; 
+            #endregion 
+            var upResult = iClienterProvider.UpdateClientPicInfo(new Ets.Model.DomainModel.Clienter.ClienterModel { Id = int.Parse(strUserId), PicUrl = sfhImg.PicUrl, PicWithHandUrl = handImg.PicUrl, TrueName = trueName, IDCard = strIdCard });
             if (!upResult)
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id = ParseHelper.ToInt(strUserId), ImagePath = picUrl });
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id = ParseHelper.ToInt(strUserId), ImagePath = "" });
             }
-            var relativePath = System.IO.Path.Combine(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.RelativePath, fileName).ToForwardSlashPath();
+            var relativePath = System.IO.Path.Combine(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.RelativePath, sfhImg.FileName).ToForwardSlashPath();
             return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id = ParseHelper.ToInt(strUserId), ImagePath = relativePath });
         }
         /// <summary>
@@ -174,8 +179,7 @@ namespace SuperManWebApi.Controllers
                 userId = model.userId,
                 status = model.status,
                 isLatest = model.isLatest
-            };
-
+            }; 
             IList<Ets.Model.DomainModel.Clienter.ClientOrderResultModel> lists = new ClienterProvider().GetMyOrders(criteria);
             if (model.status != null && model.status != 1)
             {
@@ -403,7 +407,7 @@ namespace SuperManWebApi.Controllers
         public Ets.Model.Common.ResultModel<FinishOrderResultModel> FinishOrder_C(int userId, string orderNo, string pickupCode = null)
         {
             if (userId == 0)  //用户id非空验证
-                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.userIdEmpty);
+                return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.UserIdEmpty);
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderEmpty);
             //var myorder = new Ets.Dao.Order.OrderDao().GetOrderByNo(orderNo);

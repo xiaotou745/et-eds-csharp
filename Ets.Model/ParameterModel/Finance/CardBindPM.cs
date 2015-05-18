@@ -47,10 +47,10 @@ namespace Ets.Model.ParameterModel.Finance
         /// </summary>
         [Required(ErrorMessage = "开户行不能为空")]
         public string OpenBank { get; set; }
+
         /// <summary>
         /// 开户支行
         /// </summary>
-        [Required(ErrorMessage = "开户支行不能为空")]
         public string OpenSubBank { get; set; }
         /// <summary>
         /// 创建人

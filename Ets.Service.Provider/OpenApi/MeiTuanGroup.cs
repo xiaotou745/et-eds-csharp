@@ -263,6 +263,7 @@ namespace Ets.Service.Provider.OpenApi
             model.is_pay = fromModel.pay_type == 1 ? false : true;//目前货到付款时取未支付，在线支付取已支付
             model.total_price = fromModel.total;//订单金额
             model.store_info = store; //店铺 
+            model.invoice_title = fromModel.invoice_title;//发票标题
 
             //订单明细不为空时做处理 
             if (!string.IsNullOrWhiteSpace(fromModel.detail) && fromModel.detail != "")

@@ -73,6 +73,11 @@ namespace Ets.Model.DomainModel.Order
         public string businessPhone { get; set; }
 
         /// <summary>
+        /// 发货人地址
+        /// </summary>
+        public string BusinessAddress { get; set; }        
+
+        /// <summary>
         /// 收货人
         /// </summary>
         public string ReceviceName { get; set; }
@@ -127,8 +132,43 @@ namespace Ets.Model.DomainModel.Order
         /// 支付类型 0 现金
         /// </summary>
         public int? Payment { get; set; }
-            
 
+        /// <summary>
+        /// 发票
+        /// </summary>
+        public string Invoice { get; set; }
+        
+        /// <summary>
+        /// 须上传小票数量
+        /// </summary>
+        public int NeedUploadCount { get; set; }  
+
+        /// <summary>
+        /// 已上传小票数量
+        /// </summary>
+        public int HadUploadCount { get; set; }
+
+        /// <summary>
+        /// 总配送费
+        /// </summary>
+        public decimal TotalDistribSubsidy { get; set; }
+
+
+        /// <summary>
+        /// 配送员姓名
+        /// </summary>
+        public string ClienterName { get; set; }
+  
+        /// <summary>
+        /// 配送员电话
+        /// </summary>
+        public string ClienterPhoneNo { get; set; }
+        ///// <summary>
+        ///// 配送员地址
+        ///// </summary>
+        //public string ClienterAddress { get; set; }
+
+       
         /// <summary>
         /// 子订单集合
         /// </summary>
@@ -137,7 +177,17 @@ namespace Ets.Model.DomainModel.Order
         /// <summary>
         /// 订单明细集合
         /// </summary>
-        public List<OrderDetailInfo> listOrderDetail { get; set; }        
+        public List<OrderDetailInfo> listOrderDetail { get; set; }
+
+        /// <summary>
+        /// 是否允许修改
+        /// </summary>
+        public bool IsModifyTicket { get; set; }
+
+        /// <summary>
+        /// 是否有未完成子订单
+        /// </summary>
+        public bool IsExistsUnFinish{ get; set; }
     }
 
     public class OrderChildInfo

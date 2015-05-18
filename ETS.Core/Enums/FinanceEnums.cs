@@ -30,11 +30,28 @@ namespace ETS.Enums
     /// </summary>
     public enum FinanceCardBindC
     {
+        /// <summary>
+        /// 成功
+        /// </summary>
         Success = 1,
+        /// <summary>
+        /// 该骑士已绑定过金融账号
+        /// </summary>
         [DisplayText("该骑士已绑定过金融账号")]
         Exists = 2,
+        /// <summary>
+        /// 选择公司账户时开户行不能为空
+        /// </summary>
+        [DisplayText("选择公司账户时开户行不能为空")]
+        BelongTypeError = 3,
+        /// <summary>
+        /// 系统错误
+        /// </summary>
         [DisplayText("系统错误")]
         SystemError = 0,
+        /// <summary>
+        /// 未传参
+        /// </summary>
         [DisplayText("未传参")]
         NoPara = -2
     }
@@ -42,9 +59,14 @@ namespace ETS.Enums
     /// <summary>
     /// 骑士编辑绑定金融账号涉及到的各种返回状态枚举 add by caoheyang 20150509
     /// </summary>
-    public enum FinanceCardCardModifyC
+    public enum FinanceCardModifyC
     {
         Success = 1,
+        /// <summary>
+        /// 选择公司账户时开户行不能为空
+        /// </summary>
+        [DisplayText("选择公司账户时开户行不能为空")]
+        BelongTypeError = 3,
         [DisplayText("系统错误")]
         SystemError = 0,
         [DisplayText("未传参")]
@@ -114,6 +136,16 @@ namespace ETS.Enums
         BaiDuQinBao = 5
     }
 
+    /// <summary>
+    ///骑士金融账号 账号类别  0 个人账户 1 公司账户  
+    /// </summary>
+    public enum ClienterFinanceAccountBelongType
+    {
+        [DisplayText("个人账户")]
+        Self = 0,
+        [DisplayText("公司账户")]
+        Conpany = 1
+    }
     #endregion
 
     #region 商户
@@ -140,6 +172,11 @@ namespace ETS.Enums
         Success = 1,
         [DisplayText("该商户已绑定过金融账号")]
         Exists = 2,
+        /// <summary>
+        /// 选择公司账户时开户行不能为空
+        /// </summary>
+        [DisplayText("选择公司账户时开户行不能为空")]
+        BelongTypeError = 3,
         [DisplayText("系统错误")]
         SystemError = 0,
         [DisplayText("未传参")]
@@ -149,9 +186,14 @@ namespace ETS.Enums
     /// <summary>
     /// 商户编辑绑定金融账号涉及到的各种返回状态枚举 add by caoheyang 20150511
     /// </summary>
-    public enum FinanceCardCardModifyB
+    public enum FinanceCardModifyB
     {
         Success = 1,
+        /// <summary>
+        /// 选择公司账户时开户行不能为空
+        /// </summary>
+        [DisplayText("选择公司账户时开户行不能为空")]
+        BelongTypeError = 3,
         [DisplayText("系统错误")]
         SystemError = 0,
         [DisplayText("未传参")]
@@ -217,6 +259,17 @@ namespace ETS.Enums
         CaiFuTong = 4,
         [DisplayText("百度钱包")]
         BaiDuQinBao = 5
+    }
+
+    /// <summary>
+    ///商户金融账号 账号类别  0 个人账户 1 公司账户  
+    /// </summary>
+    public enum BusinessFinanceAccountBelongType
+    {
+        [DisplayText("个人账户")]
+        Self = 0,
+        [DisplayText("公司账户")]
+        Conpany = 1
     }
 
     #endregion

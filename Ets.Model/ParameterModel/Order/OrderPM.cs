@@ -21,11 +21,11 @@ namespace Ets.Model.ParameterModel.Order
         public string Version { get; set; }
 
         /// <summary>
-        /// 经度
+        /// 骑士经度
         /// </summary>
         public double longitude { get; set; }
         /// <summary>
-        /// 纬度
+        /// 骑士纬度
         /// </summary>
         public double latitude { get; set; }
     }

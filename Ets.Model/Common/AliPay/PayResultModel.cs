@@ -27,5 +27,10 @@ namespace Ets.Model.Common.AliPay
         /// 订单号
         /// </summary>
         public string orderNo { get; set; }
+
+        /// <summary>
+        /// 回调地址
+        /// </summary>
+        public string notifyUrl { get; set; }
     }
 }

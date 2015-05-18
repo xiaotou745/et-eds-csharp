@@ -148,7 +148,11 @@ namespace Ets.Model.ParameterModel.Order
         /// <summary>
         /// 分组ID
         /// </summary>
-        public int BusinessGroupId { get; set; }  
+        public int BusinessGroupId { get; set; }
+        /// <summary>
+        /// 发票抬头
+        /// </summary>
+        public string invoice_title { get; set; }
         
     }
 

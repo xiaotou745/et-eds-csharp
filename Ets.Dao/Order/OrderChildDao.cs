@@ -136,9 +136,7 @@ PayBy,PayTime,PayPrice,HasUploadTicket,TicketUrl,CreateBy,CreateTime,UpdateBy,Up
 from  OrderChild (nolock)
 where  Id=@Id ";
 
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("Id", id);
-
+            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int64, 8, id);
 
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
             if (DataTableHelper.CheckDt(dt))
@@ -313,33 +311,34 @@ from  OrderChild (nolock)
 where  OrderId=@OrderId ";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters("OrderId", DbType.Int64, 8, orderId);
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, querySql, dbParameters);            
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, querySql, dbParameters);
 
             foreach (DataRow dataRow in dt.Rows)
             {
                 OrderChildInfo ochildInfo = new OrderChildInfo();
-                ochildInfo.ChildId = Convert.ToInt32(dataRow["ChildId"]);
-                ochildInfo.TotalPrice = Convert.ToDecimal(dataRow["TotalPrice"]);
-                ochildInfo.GoodPrice = Convert.ToDecimal(dataRow["GoodPrice"]);
-                ochildInfo.DeliveryPrice = Convert.ToDecimal(dataRow["DeliveryPrice"]);
-                if (dataRow["PayStyle"] != null && dataRow["PayStyle"]!=DBNull.Value)
-                    ochildInfo.PayStyle = Convert.ToInt32(dataRow["PayStyle"]);
+                ochildInfo.ChildId = ParseHelper.ToInt(dataRow["ChildId"]);
+                ochildInfo.TotalPrice = ParseHelper.ToDecimal(dataRow["TotalPrice"]);
+                ochildInfo.GoodPrice = ParseHelper.ToDecimal(dataRow["GoodPrice"]);
+                ochildInfo.DeliveryPrice = ParseHelper.ToDecimal(dataRow["DeliveryPrice"]);
+                if (dataRow["PayStyle"] != null && dataRow["PayStyle"] != DBNull.Value)
+                    ochildInfo.PayStyle = ParseHelper.ToInt(dataRow["PayStyle"]);
                 if (dataRow["PayType"] != null && dataRow["PayType"] != DBNull.Value)
-                    ochildInfo.PayType = Convert.ToInt32(dataRow["PayType"]);
-                ochildInfo.PayStatus = Convert.ToInt32(dataRow["PayStatus"]);
+                    ochildInfo.PayType = ParseHelper.ToInt(dataRow["PayType"]);
+                ochildInfo.PayStatus = ParseHelper.ToInt(dataRow["PayStatus"]);
                 if (dataRow["PayBy"] != null && dataRow["PayBy"] != DBNull.Value)
-                    ochildInfo.PayBy =dataRow["PayBy"].ToString();
+                    ochildInfo.PayBy = dataRow["PayBy"].ToString();
                 if (dataRow["PayTime"] != null && dataRow["PayTime"] != DBNull.Value)
-                    ochildInfo.PayTime = Convert.ToDateTime(dataRow["PayTime"]);
-                ochildInfo.PayPrice = Convert.ToDecimal(dataRow["PayPrice"]);
-                ochildInfo.HasUploadTicket = Convert.ToBoolean(dataRow["HasUploadTicket"]);
-                if (dataRow["TicketUrl"] != null && dataRow["TicketUrl"] != DBNull.Value && dataRow["TicketUrl"].ToString()!="")
-                    ochildInfo.TicketUrl = Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataRow["TicketUrl"].ToString())[0];          
+                    ochildInfo.PayTime = ParseHelper.ToDatetime(dataRow["PayTime"]);
+                ochildInfo.PayPrice = ParseHelper.ToDecimal(dataRow["PayPrice"]);
+                ochildInfo.HasUploadTicket = ParseHelper.ToBool(dataRow["HasUploadTicket"]);
+                if (dataRow["TicketUrl"] != null && dataRow["TicketUrl"] != DBNull.Value && dataRow["TicketUrl"].ToString() != "")
+                    ochildInfo.TicketUrl = Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataRow["TicketUrl"].ToString())[0];
                 list.Add(ochildInfo);
-            }          
+            }
 
             return list;
         }
+
     }
 
 }

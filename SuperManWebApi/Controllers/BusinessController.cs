@@ -25,7 +25,7 @@ namespace SuperManWebApi.Controllers
     /// <summary>
     /// 商户相关接口 add by caoheyang
     /// </summary>
-    [ExecuteTimeLog]
+    [ExecuteTimeLog]  
     public class BusinessController : ApiController
     {
         private readonly IBusinessFinanceProvider _businessFinanceProvider = new BusinessFinanceProvider();
@@ -55,24 +55,32 @@ namespace SuperManWebApi.Controllers
         public ResultModel<BusinessDM> Get(BussinessPM model)
         {
             #region 验证
-            var version = HttpContext.Current.Request.Form["Version"];
+            var version = model.Version;
             if (string.IsNullOrWhiteSpace(version)) //版本号 
             {
                 return ResultModel<BusinessDM>.Conclude(GetBussinessStatus.NoVersion);
             }
             if (model.BussinessId < 0)//商户Id不合法
             {
-                return ResultModel<BusinessDM>.Conclude(GetBussinessStatus.ErrOderNo);
+                return ResultModel<BusinessDM>.Conclude(GetBussinessStatus.ErrNo);
             }
             if (!_iBusinessProvider.IsExist(model.BussinessId)) //商户不存在
             {
-                return ResultModel<BusinessDM>.Conclude(GetBussinessStatus.ErrOderNo);
+                return ResultModel<BusinessDM>.Conclude(GetBussinessStatus.FailedGet);
             }
 
             #endregion
 
-            BusinessDM businessDM = _iBusinessProvider.GetDetails(model.BussinessId);
-            return Ets.Model.Common.ResultModel<BusinessDM>.Conclude(GetBussinessStatus.Success, businessDM);
+            try
+            {
+                BusinessDM businessDM = _iBusinessProvider.GetDetails(model.BussinessId);
+                return Ets.Model.Common.ResultModel<BusinessDM>.Conclude(GetBussinessStatus.Success, businessDM);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter("ResultModel<BusinessDM> Get", new { obj = "时间：" + DateTime.Now.ToString() + ex.Message });
+                return ResultModel<BusinessDM>.Conclude(GetBussinessStatus.Failed);
+            }    
         }
     }
 }

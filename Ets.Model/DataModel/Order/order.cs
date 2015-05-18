@@ -58,11 +58,25 @@ namespace Ets.Model.DataModel.Order
 
         public string BusinessPhone { get; set; }
 
+        /// <summary>
+        /// 发货人地址
+        /// </summary>
+        public string BusinessAddress { get; set; }     
+
         public string PickUpCity { get; set; }
 
         public Nullable<double> BusiLongitude { get; set; }
         public Nullable<double> BusiLatitude { get; set; }
 
+        /// <summary>
+        /// 配送员姓名
+        /// </summary>
+        public string ClienterName { get; set; }
+
+        /// <summary>
+        /// 配送员电话
+        /// </summary>
+        public string ClienterPhoneNo { get; set; }
 
         /// <summary>
         /// 订单佣金计算方法 0：默认 1：根据时间段设置不同补贴
@@ -152,6 +166,11 @@ namespace Ets.Model.DataModel.Order
         public decimal? FinishOrderLandline { get; set; }
 
         /// <summary>
+        /// 发票
+        /// </summary>
+        public string Invoice { get; set; }
+        
+        /// <summary>
         /// 经度
         /// </summary>
         public double? Longitude { get; set; }
@@ -160,6 +179,15 @@ namespace Ets.Model.DataModel.Order
         /// </summary>
         public double? Latitude { get; set; }
 
+        /// <summary>
+        /// 须上传小票数量
+        /// </summary>
+        public int NeedUploadCount { get; set; }
+
+        /// <summary>
+        /// 总配送费
+        /// </summary>
+        public decimal TotalDistribSubsidy { get; set; }
 
     }
 }
