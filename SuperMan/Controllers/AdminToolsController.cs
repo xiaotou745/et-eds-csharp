@@ -1,4 +1,5 @@
-﻿using Ets.Service.IProvider.Common;
+﻿using Ets.Model.Common;
+using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
 using System;
 using System.Collections.Generic;
@@ -7,11 +8,15 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using SuperMan.App_Start;
+using Ets.Model.DomainModel.GlobalConfig;
+using Ets.Service.IProvider.User;
+using Ets.Service.Provider.User;
 
 namespace SuperMan.Controllers
 {
     public class AdminToolsController : Controller
     {
+        readonly IBusinessGroupProvider iBusinessGroupProvider = new BusinessGroupProvider();
         private static IAdminToolsProvider adminToolsProvider
         {
             get { return new AdminToolsProvider(); }
@@ -87,6 +92,29 @@ namespace SuperMan.Controllers
             catch {
                 return new JsonResult() { Data = new { status = "error" } };
             }
+        }
+        /// <summary>
+        /// 公共配置管理
+        /// danny-20150518
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult GlobalConfigManager()
+        {
+            ViewBag.GloglConfig = new GlobalConfigProvider().GlobalConfigMethod(0);
+            return View();
+        }
+        /// <summary>
+        /// 修改公共配置信息
+        /// danny-20150518
+        /// </summary>
+        /// <param name="globalConfigModel"></param>
+        /// <returns></returns>
+        public ActionResult ModifyGlobalConfig(GlobalConfigModel globalConfigModel)
+        {
+            globalConfigModel.OptName = UserContext.Current.Name;
+            var reg = iBusinessGroupProvider.ModifyGlobalConfig(globalConfigModel);
+            return Json(new ResultModel(reg, reg ? "保存成功！" : "保存失败！"), JsonRequestBehavior.AllowGet);
         }
     }
 }

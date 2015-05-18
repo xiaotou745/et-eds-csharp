@@ -34,6 +34,13 @@ namespace Ets.Service.IProvider.User
         /// <param name="model"></param>
         /// <returns></returns>
         bool ModifySubsidyFormulaMode(GlobalConfigModel globalConfigModel);
-   }
+        /// <summary>
+        /// 修改公共配置信息
+        /// danny-20150518
+        /// </summary>
+        /// <param name="globalConfigModel"></param>
+        /// <returns></returns>
+        bool ModifyGlobalConfig(GlobalConfigModel globalConfigModel);
+    }
 }
 
