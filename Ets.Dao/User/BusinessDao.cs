@@ -25,6 +25,7 @@ using Ets.Model.ParameterModel.Order;
 using Ets.Model.DomainModel.Bussiness;
 using Ets.Model.DataModel.Finance;
 using ETS.Data.Generic;
+using Ets.Model.ParameterModel.WtihdrawRecords;
 namespace Ets.Dao.User
 {
     public class BusinessDao : DaoBase
@@ -1698,5 +1699,7 @@ WHERE b.Id = @BusinessId  ";
             parm.Add("price", DbType.Decimal, 18).Value = price;
             DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
         }
+
+
     }
 }
