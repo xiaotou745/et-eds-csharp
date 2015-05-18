@@ -102,6 +102,11 @@ namespace Ets.Model.DomainModel.GlobalConfig
         public string PushRadius { get; set; }
 
         /// <summary>
+        ///骑士订单列表每页显示条数
+        /// </summary>
+        public string ClienterOrderPageSize { get; set; }
+
+        /// <summary>
         /// 策略Id
         /// </summary>
         public int StrategyId { get; set; }

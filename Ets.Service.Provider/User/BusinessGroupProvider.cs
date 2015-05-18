@@ -180,7 +180,6 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public bool ModifyGlobalConfig(GlobalConfigModel globalConfigModel)
         {
-            bool reg = true;
             var globalConfig = new GlobalConfig()
             {
                 OptName = globalConfigModel.OptName,
@@ -189,23 +188,40 @@ namespace Ets.Service.Provider.User
             };
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
+                bool reg;
                 if (globalConfigModel.PushRadius != "0")
                 {
                     globalConfig.KeyName = "PushRadius";
                     globalConfig.Value = globalConfigModel.PushRadius;
                     reg = dao.UpdateGlobalConfig(globalConfig);
-
-                    if (globalConfigModel.UploadTimeInterval != "0")
+                    if (!reg)
                     {
-                        globalConfig.KeyName = "UploadTimeInterval";
-                        globalConfig.Value = globalConfigModel.UploadTimeInterval;
-                        reg = dao.UpdateGlobalConfig(globalConfig);
+                        return false;
                     }
-                    tran.Complete();
                 }
+                if (globalConfigModel.UploadTimeInterval != "0")
+                {
+                    globalConfig.KeyName = "UploadTimeInterval";
+                    globalConfig.Value = globalConfigModel.UploadTimeInterval;
+                    reg = dao.UpdateGlobalConfig(globalConfig);
+                    if (!reg)
+                    {
+                        return false;
+                    }
+                }
+                if (globalConfigModel.ClienterOrderPageSize != "0")
+                {
+                    globalConfig.KeyName = "ClienterOrderPageSize";
+                    globalConfig.Value = globalConfigModel.ClienterOrderPageSize;
+                    reg = dao.UpdateGlobalConfig(globalConfig);
+                    if (!reg)
+                    {
+                        return false;
+                    }
+                }
+                tran.Complete();
                 DeleteGlobalConfigRedisByGroupId(globalConfigModel.GroupId);
-                return reg;
-
+                return true;
             }
         }
     }
