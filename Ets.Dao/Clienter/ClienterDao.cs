@@ -688,15 +688,15 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, ConstValues.OrderH
         {
             OrderOther orderOther = new OrderOther();
             var oo = GetReceiptInfo(uploadReceiptModel.OrderId); 
-            //uploadReceiptModel.NeedUploadCount = oo.NeedUploadCount;
-            //if (oo.Id == 0)
-            //{
-            //    orderOther = InsertReceiptInfo(uploadReceiptModel);
-            //}
-            //else
-            //{
+            uploadReceiptModel.NeedUploadCount = oo.NeedUploadCount;
+            if (oo.Id == 0)
+            {
+                orderOther = InsertReceiptInfo(uploadReceiptModel);
+            }
+            else
+            {
                 orderOther = UpdateReceiptInfo(uploadReceiptModel);
-            //}
+            }
             orderOther.OrderStatus = oo.OrderStatus;
             orderOther.OrderCreateTime = oo.OrderCreateTime;
             return orderOther;
