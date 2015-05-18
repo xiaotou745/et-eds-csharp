@@ -18,11 +18,14 @@ namespace ETS.Enums
         B端 = 1,
         C端 = 0
     }
+    /// <summary>
+    /// 登陆状态接口
+    /// </summary>
     public enum LoginModelStatus
     {
-        Success,
+        Success=1,
         [DisplayText("用户名或密码错误")]
-        InvalidCredential
+        InvalidCredential=0
     }
     public enum PubOrderStatus
     {
