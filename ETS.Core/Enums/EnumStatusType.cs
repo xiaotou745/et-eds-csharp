@@ -40,9 +40,9 @@ namespace ETS.Enums
         HadCancelQualification,
         [DisplayText("商户结算比例设置异常，请联系客服")]
         BusiSettlementRatioError,
-        [DisplayText("抱歉，订单金额不可低于10元")]
+        [DisplayText("抱歉，子订单金额不可低于5元")]
         AmountLessThanTen,
-        [DisplayText("抱歉，订单金额不可高于5000元")]
+        [DisplayText("抱歉，子订单金额不可高于1000元")]
         AmountMoreThanFiveThousand,
         [DisplayText("订单金额与子订单总金额不一致")]
         AmountIsNotEqual,

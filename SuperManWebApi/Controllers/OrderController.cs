@@ -51,19 +51,14 @@ namespace SuperManWebApi.Controllers
         public ResultModel<BusiOrderResultModel> Push(BussinessOrderInfoPM model)
         {
             try
-            {
-                LogHelper.LogWriter(" Push()方法出错1", new { obj = "时间：" + DateTime.Now.ToString() + model.OrderChlidJson });
+            {           
                 //通过传过来的字符串序列化对象                
-                //model.listOrderChlid = Deserialize<List<OrderChlidPM>>(model.OrderChlidJson);
-                LogHelper.LogWriter(" Push()方法出错2", new { obj = "时间：" + DateTime.Now.ToString() + model.listOrderChlid.Count });
-
+                model.listOrderChlid = Deserialize<List<OrderChlidPM>>(model.OrderChlidJson);             
                 order order;             
                 ResultModel<BusiOrderResultModel> currResModel = Verification(model, out order);
                 if (currResModel.Status == PubOrderStatus.VerificationSuccess.GetHashCode())
-                {
-                    LogHelper.LogWriter(" Push()方法出错3", new { obj = "时间：" + DateTime.Now.ToString() + currResModel.Status });
-                    PubOrderStatus cuStatus = iOrderProvider.AddOrder(order);
-                    LogHelper.LogWriter(" Push()方法出错4", new { obj = "时间：" + DateTime.Now.ToString() + cuStatus });
+                {                    
+                    PubOrderStatus cuStatus = iOrderProvider.AddOrder(order);              
                     if (cuStatus == PubOrderStatus.Success)//当前订单执行失败
                     {
                         BusiOrderResultModel resultModel = new BusiOrderResultModel { userId = model.userId };
@@ -109,36 +104,29 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.HadCancelQualification);
             }
-            if (model.Amount < 10m)
-            {
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountLessThanTen);
-            }
-            if (model.Amount > 5000m)
-            {
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountMoreThanFiveThousand);
-            }
 
-            //if (model.recevicePhone == null || model.recevicePhone == "")
-            //{
-            //    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneErr);
-            //}
-            //Regex dReg = new Regex("^1\\d{10}$");
-            //if (!dReg.IsMatch(model.recevicePhone))//验证收货人手机号
-            //{
-            //    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneErr);
-            //}
-            if (model.OrderCount <= 0 || model.OrderCount > 15) //判断录入订单数量是否符合要求
-            {
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
-            }
             decimal amount = 0;
-            for (int i = 0; i < model.listOrderChlid.Count; i++)
+            for (int i = 0; i < model.listOrderChlid.Count; i++)//子订单价格
             {
+                if (model.listOrderChlid[i].GoodPrice < 5m)
+                {
+                     return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountLessThanTen);
+                }
+                if (model.listOrderChlid[i].GoodPrice > 1000m)
+                {
+                    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountMoreThanFiveThousand);
+                }
                 amount += model.listOrderChlid[i].GoodPrice;
-            }
+
+            }           
             if (model.Amount != amount)
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountIsNotEqual);
+            }
+
+            if (model.OrderCount <= 0 || model.OrderCount > 15) //判断录入订单数量是否符合要求
+            {
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
             }
             if (model.OrderCount != model.listOrderChlid.Count)//主订单与子订单数量
             {
