@@ -46,7 +46,7 @@ namespace Ets.Service.Provider.Order
 {
     public class OrderProvider : IOrderProvider
     {
-        private OrderDao OrderDao = new OrderDao();
+        private OrderDao orderDao = new OrderDao();
         private BusinessProvider iBusinessProvider = new BusinessProvider();
         private ClienterProvider iClienterProvider = new ClienterProvider();
 
@@ -63,7 +63,7 @@ namespace Ets.Service.Provider.Order
         public IList<ClientOrderResultModel> GetOrders(ClientOrderSearchCriteria criteria)
         {
             IList<ClientOrderResultModel> list = new List<ClientOrderResultModel>();
-            var orderList = OrderDao.GetOrders(criteria);
+            var orderList = orderDao.GetOrders(criteria);
             if (orderList != null && orderList.ContentList != null)
             {
                 for (int i = 0; i < orderList.ContentList.Count; i++)
@@ -152,7 +152,7 @@ namespace Ets.Service.Provider.Order
         public IList<ClientOrderNoLoginResultModel> GetOrdersNoLoginLatest(ClientOrderSearchCriteria criteria)
         {
             IList<ClientOrderNoLoginResultModel> list = new List<ClientOrderNoLoginResultModel>();
-            var orderList = OrderDao.GetOrders(criteria);
+            var orderList = orderDao.GetOrders(criteria);
             if (orderList != null && orderList.ContentList != null)
             {
                 for (int i = 0; i < orderList.ContentList.Count; i++)
@@ -324,14 +324,14 @@ namespace Ets.Service.Provider.Order
             int result = 0;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                bool isExist = OrderDao.IsExist(order);
+                bool isExist = orderDao.IsExist(order);
                 if (isExist)
                 {
                     return PubOrderStatus.OrderHasExist;
                 }
                 else
                 {
-                    result = OrderDao.AddOrder(order);
+                    result = orderDao.AddOrder(order);
                 }
 
                 if (result <= 0)//订单发布失败
@@ -342,7 +342,7 @@ namespace Ets.Service.Provider.Order
 
                 if (order.Adjustment > 0)
                 {
-                    bool b = OrderDao.addOrderSubsidiesLog(order.Adjustment, result, "补贴加钱,订单金额:" + order.Amount + "-佣金补贴策略id:" + order.CommissionFormulaMode);
+                    bool b = orderDao.addOrderSubsidiesLog(order.Adjustment, result, "补贴加钱,订单金额:" + order.Amount + "-佣金补贴策略id:" + order.CommissionFormulaMode);
                     if (!b)//写入日志失败
                     {
                         return PubOrderStatus.InvalidPubOrder;
@@ -369,7 +369,7 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public PageInfo<OrderListModel> GetOrders(OrderSearchCriteria criteria)
         {
-            PageInfo<OrderListModel> pageinfo = OrderDao.GetOrders<OrderListModel>(criteria);
+            PageInfo<OrderListModel> pageinfo = orderDao.GetOrders<OrderListModel>(criteria);
             return pageinfo;
         }
         /// <summary>
@@ -380,7 +380,7 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public bool UpdateOrderInfo(order order)
         {
-            return OrderDao.UpdateOrderInfo(order);
+            return orderDao.UpdateOrderInfo(order);
         }
         /// <summary>
         /// 根据订单号查订单信息
@@ -390,7 +390,7 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public OrderListModel GetOrderByNo(string orderNo)
         {
-            return OrderDao.GetOrderByNo(orderNo);
+            return orderDao.GetOrderByNo(orderNo);
         }
         /// <summary>
         /// 根据订单号查订单信息
@@ -400,7 +400,7 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public OrderListModel GetOrderByNo(string orderNo, int orderId)
         {
-            return OrderDao.GetOrderByNo(orderNo, orderId);
+            return orderDao.GetOrderByNo(orderNo, orderId);
         }
         /// <summary>
         /// 订单指派超人
@@ -410,7 +410,7 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public bool RushOrder(OrderListModel order)
         {
-            if (OrderDao.RushOrder(order))
+            if (orderDao.RushOrder(order))
             {
                 Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", order.businessId.ToString(), string.Empty);
                 return true;
@@ -426,7 +426,7 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public int GetOrderByOrderNo(string orderNo)
         {
-            return OrderDao.GetOrderByOrderNo(orderNo);
+            return orderDao.GetOrderByOrderNo(orderNo);
         }
         /// <summary>
         /// 根据订单号 修改订单状态
@@ -439,7 +439,7 @@ namespace Ets.Service.Provider.Order
         {
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                int result = OrderDao.CancelOrderStatus(orderNo, orderStatus, remark, status);
+                int result = orderDao.CancelOrderStatus(orderNo, orderStatus, remark, status);
                 if (result > 0 & AsyncOrderStatus(orderNo))
                 {
                     tran.Complete();
@@ -578,7 +578,7 @@ namespace Ets.Service.Provider.Order
                     //将当前订单插入到缓存中，设置过期时间30天
                     redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
                         paramodel.order_id.ToString()), "True", DateTime.Now.AddDays(30));  //先加入缓存，相当于加锁
-                    orderNo = OrderDao.CreateToSql(paramodel);
+                    orderNo = orderDao.CreateToSql(paramodel);
                     redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
                       paramodel.order_id.ToString()), orderNo, DateTime.Now.AddDays(30));  //更新缓存
                     tran.Complete();
@@ -636,7 +636,7 @@ namespace Ets.Service.Provider.Order
         /// <returns>订单详情</returns>
         public bool AsyncOrderStatus(string orderNo)
         {
-            OrderListModel orderlistModel = OrderDao.GetOrderByNo(orderNo);
+            OrderListModel orderlistModel = orderDao.GetOrderByNo(orderNo);
             if (orderlistModel == null) return false;
             if (orderlistModel.OrderFrom > 0)   //一个商户对应多个集团时需要更改 
             {
@@ -671,7 +671,7 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public OrderCountManageList GetOrderCount(HomeCountCriteria criteria)
         {
-            PageInfo<OrderCountModel> pageinfo = OrderDao.GetOrderCount<OrderCountModel>(criteria);
+            PageInfo<OrderCountModel> pageinfo = orderDao.GetOrderCount<OrderCountModel>(criteria);
             NewPagingResult pr = new NewPagingResult() { PageIndex = criteria.PagingRequest.PageIndex, PageSize = criteria.PagingRequest.PageSize, RecordCount = pageinfo.All, TotalCount = pageinfo.All };
             List<OrderCountModel> list = pageinfo.Records.ToList();
             var orderCountManageList = new OrderCountManageList(list, pr);
@@ -686,7 +686,7 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public PageInfo<HomeCountTitleModel> GetCurrentDateCountAndMoney(OrderSearchCriteria criteria)
         {
-            PageInfo<HomeCountTitleModel> pageinfo = OrderDao.GetCurrentDateCountAndMoney<HomeCountTitleModel>(criteria);
+            PageInfo<HomeCountTitleModel> pageinfo = orderDao.GetCurrentDateCountAndMoney<HomeCountTitleModel>(criteria);
             return pageinfo;
         }
 
@@ -814,7 +814,7 @@ namespace Ets.Service.Provider.Order
         public ListOrderDetailModel GetOrderDetail(string order_no)
         {
             ListOrderDetailModel mo = new ListOrderDetailModel();
-            var order = OrderDao.GetOrderByNo(order_no);
+            var order = orderDao.GetOrderByNo(order_no);
             if (order != null)
             {
                 if (order.OrderFrom == 0)
@@ -827,7 +827,7 @@ namespace Ets.Service.Provider.Order
                     order.OrderFromName = "全时";
                 else if (order.OrderFrom == 4)
                     order.OrderFromName = "美团";
-                var list = OrderDao.GetOrderDetail(order_no);
+                var list = orderDao.GetOrderDetail(order_no);
                 mo.order = order;
                 mo.orderDetails = list;
             }
@@ -936,7 +936,7 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public OrderListModel GetOrderInfoByOrderNo(string orderNo, int orderId = 0)
         {
-            return OrderDao.GetOrderInfoByOrderNo(orderNo);
+            return orderDao.GetOrderInfoByOrderNo(orderNo);
         }
         /// <summary>
         /// 通过订单号取消订单
@@ -946,7 +946,7 @@ namespace Ets.Service.Provider.Order
         public bool CancelOrderByOrderNo(OrderOptionModel orderOptionModel)
         {
             bool result = false;
-            var orderModel = OrderDao.GetOrderByNo(orderOptionModel.OrderNo);
+            var orderModel = orderDao.GetOrderByNo(orderOptionModel.OrderNo);
             if (orderModel != null)
             {
                 //如果是已取消
@@ -966,12 +966,12 @@ namespace Ets.Service.Provider.Order
                 //如果订单状态是待接单|已接单|已完成+未上传完小票。则直接取消订单
                 using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                 {
-                    result = OrderDao.CancelOrder(orderModel, orderOptionModel);
+                    result = orderDao.CancelOrder(orderModel, orderOptionModel);
                     if (result && orderModel.Status == 1 && orderModel.HadUploadCount == orderModel.NeedUploadCount && CheckOrderPay == "1")
                     {
                         //需要上传的小票大于等于总数量+订单已完成则要扣钱
                         //(因为订单小票有可能不传。所以用的是订单数量和需要上传小票数量对比判断)
-                        result = OrderDao.UpdateAccountBalanceByClienterId(orderModel, orderOptionModel);
+                        result = orderDao.UpdateAccountBalanceByClienterId(orderModel, orderOptionModel);
                     }
                     if (result)
                     {
@@ -993,7 +993,7 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public IList<OrderSubsidiesLog> GetOrderOptionLog(int OrderId)
         {
-            return OrderDao.GetOrderOptionLog(OrderId);
+            return orderDao.GetOrderOptionLog(OrderId);
         }
 
 
@@ -1008,7 +1008,7 @@ namespace Ets.Service.Provider.Order
         {
             paramodel.status = OrderConst.OrderStatus3;
             paramodel.remark = "第三方集团取消订单，同步E代送系统订单状态";
-            int currenStatus = OrderDao.GetStatus(paramodel.order_no, paramodel.orderfrom);  //目前订单状态
+            int currenStatus = orderDao.GetStatus(paramodel.order_no, paramodel.orderfrom);  //目前订单状态
             if (currenStatus == -1) //订单不存在
                 return ResultModel<object>.Conclude(OrderApiStatusType.OrderNotExist);
             else if (OrderConst.OrderStatus30 != currenStatus
@@ -1016,7 +1016,7 @@ namespace Ets.Service.Provider.Order
                 return ResultModel<object>.Conclude(OrderApiStatusType.OrderIsJoin);
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                int result = OrderDao.UpdateOrderStatus_Other(paramodel);
+                int result = orderDao.UpdateOrderStatus_Other(paramodel);
                 if (result > 0)
                 {
                     tran.Complete();
@@ -1029,7 +1029,7 @@ namespace Ets.Service.Provider.Order
 
         public IList<OrderRecordsLog> GetOrderRecords(string originalOrderNo, int group)
         {
-            return OrderDao.GetOrderRecords(originalOrderNo, group);
+            return orderDao.GetOrderRecords(originalOrderNo, group);
         }
         /// <summary>
         /// 获取订单拒绝原因
@@ -1043,14 +1043,14 @@ namespace Ets.Service.Provider.Order
 
         public string CanOrder(string originalOrderNo, int group)
         {
-            var order = OrderDao.GetOrderByOrderNoAndOrderFrom(originalOrderNo, group, 0);
+            var order = orderDao.GetOrderByOrderNoAndOrderFrom(originalOrderNo, group, 0);
             //if (order.Status == OrderConst.ORDER_CANCEL)
             //{
             //    return "订单已经取消";
             //}
             if (order.Status == OrderConst.ORDER_NEW)
             {
-                var k = OrderDao.CancelOrderStatus(order.OrderNo, ConstValues.ORDER_CANCEL, "第三方取消订单", null);
+                var k = orderDao.CancelOrderStatus(order.OrderNo, ConstValues.ORDER_CANCEL, "第三方取消订单", null);
                 if (k > 0)
                 {
                     return "1"; //取消成功
@@ -1076,7 +1076,7 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public bool IsExist(int id)
         {
-            return OrderDao.IsExist(id);
+            return orderDao.IsExist(id);
         }
 
         /// <summary>
@@ -1088,7 +1088,7 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public order GetById(int id)
         {
-            return OrderDao.GetById(id);
+            return orderDao.GetById(id);
         }
 
         /// <summary>
@@ -1192,5 +1192,15 @@ namespace Ets.Service.Provider.Order
             }
         }
 
+
+        /// <summary>
+        /// 骑士端获取任务列表（最新/最近）任务   add by caoheyang 20150519
+        /// </summary>
+        /// <param name="getJobCDm">订单查询实体</param>
+        /// <returns></returns>
+        public ResultModel<object> GetJobC(GetJobCDM getJobCDm)
+        {
+            return ResultModel<object>.Conclude(SystemEnum.Success, orderDao.GetJobC(getJobCDm));
+        }
     }
 }

@@ -2139,6 +2139,37 @@ where   oo.IsJoinWithdraw = 0
             DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
         }
 
+
+        /// <summary>
+        /// 骑士端获取任务列表（最新/最近）任务   add by caoheyang 20150519
+        /// </summary>
+        /// <param name="getJobCDm">订单查询实体</param>
+        /// <returns></returns>
+        public IList<GetJobCDM> GetJobC(GetJobCDM getJobCDm)
+        {
+            IList<GetJobCDM> models = new List<GetJobCDM>();
+            string sql = @"
+select a.Id,a.OrderCommission,a.OrderCount,   
+(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
+b.Name as BusinessName,b.Address as BusinessAddress,
+ISNULL(a.ReceviceAddress,'') as UserAddress,
+case convert(varchar(100), PubDate, 23) 
+	when convert(varchar(100), getdate(), 23) then '今日 '
+    else substring(convert(varchar(100), PubDate, 23),6,5) 
+end
++'  '+substring(convert(varchar(100),PubDate,24),1,5)
+as PubDate 
+from dbo.[order] a
+join dbo.business b on a.businessId=b.Id
+";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                models = DataTableHelper.ConvertDataTableList<GetJobCDM>(dt);
+            }
+            return models;
+        }
         
     }
 }
