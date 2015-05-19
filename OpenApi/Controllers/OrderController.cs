@@ -64,7 +64,7 @@ namespace OpenApi.Controllers
         public ResultModel<object> Create(ParaModel<CreatePM_OpenApi> paramodel)
         {
             paramodel.fields.store_info.group = paramodel.group;  //设置集团信息到具体的门店上  在dao层会用到
-            paramodel.fields.orderfrom = paramodel.group; ///设置订单来源,其实就是订单对应的集团是什么
+            paramodel.fields.orderfrom = paramodel.group; //设置订单来源,其实就是订单对应的集团是什么
             return  new OrderProvider().Create(paramodel.fields);
         }
 
@@ -113,6 +113,43 @@ namespace OpenApi.Controllers
         {
             paramodel.fields.orderfrom = paramodel.group; //设置订单来源,其实就是订单对应的集团是什么
             return new OrderProvider().UpdateOrderStatus_Other(paramodel.fields);
+        }
+        /// <summary>
+        /// 获取订单的日志信息
+        /// </summary>
+        /// <param name="paramodel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [SignOpenApi]
+        [OpenApiActionError]
+        public ResultModel<object> GetOrderRecords(ParaModel<GetStatusPM_OpenApi> paramodel)
+        {
+            LogHelper.LogWriter("获取订单信息：", new { paramodel = paramodel });
+            List<OrderRecordsLog> orderRecords =  new OrderProvider().GetOrderRecords(paramodel.fields.order_no, paramodel.group).ToList(); 
+            return ResultModel<object>.Conclude(OrderApiStatusType.Success,orderRecords);
+
+        }
+        /// <summary>
+        /// 取消订单
+        /// </summary>
+        /// <param name="paramodel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [SignOpenApi]
+        [OpenApiActionError]
+        public ResultModel<object> CanOrder(ParaModel<GetStatusPM_OpenApi> paramodel)
+        {
+            LogHelper.LogWriter("取消订单信息：", new { paramodel = paramodel });
+            string kk = new OrderProvider().CanOrder(paramodel.fields.order_no, paramodel.group);
+            if (kk == "1")
+            {
+                return ResultModel<object>.Conclude(OrderApiStatusType.Success);
+            }
+            else
+            {
+                return ResultModel<object>.Conclude(OrderApiStatusType.OrderIsJoin, new { Remark = kk });
+            }
+
         }
     }
 }

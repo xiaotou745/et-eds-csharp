@@ -91,5 +91,38 @@ namespace Ets.Model.DomainModel.GlobalConfig
         /// </summary>
         public string IsStartOverStoreSubsidies { get; set; }
 
+        /// <summary>
+        ///骑士端上传一次经纬度给到服务端的时间间隔(单位为秒)
+        /// </summary>
+        public string UploadTimeInterval { get; set; }
+
+        /// <summary>
+        /// 订单推送给骑士的区域半径(单位为公里)
+        /// </summary>
+        public string PushRadius { get; set; }
+
+        /// <summary>
+        ///骑士订单列表每页显示条数
+        /// </summary>
+        public string ClienterOrderPageSize { get; set; }
+
+        /// <summary>
+        /// 策略Id
+        /// </summary>
+        public int StrategyId { get; set; }
+        /// <summary>
+        /// 分组Id
+        /// </summary>
+        public int GroupId { get; set; }
+        /// <summary>
+        /// 分组名称
+        /// </summary>
+        public string GroupName { get; set; }
+        /// <summary>
+        /// 操作人
+        /// </summary>
+        public string OptName { get; set; }
+        
+
     }
 }

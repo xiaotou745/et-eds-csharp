@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="Account\AccountProvider.cs" />
     <Compile Include="Authority\AuthorityMenuProvider.cs" />
+    <Compile Include="Clienter\CrossShopStatisticLogProvider.cs" />
     <Compile Include="Clienter\ClienterProvider.cs" />
     <Compile Include="Common\AdminToolsProvider.cs" />
     <Compile Include="Common\ApiVersionProvider.cs" />
@@ -70,6 +71,13 @@
     <Compile Include="Common\HomeCountProvider.cs" />
     <Compile Include="Common\ServicePhone.cs" />
     <Compile Include="Common\TestUserProvider.cs" />
+    <Compile Include="Finance\BusinessFinanceProvider.cs" />
+    <Compile Include="Finance\ClienterBalanceRecordProvider.cs" />
+    <Compile Include="Finance\ClienterFinanceProvider.cs" />
+    <Compile Include="Finance\ClienterWithdrawFormProvider.cs" />
+    <Compile Include="Finance\ClienterWithdrawLogProvider.cs" />
+    <Compile Include="Finance\ClienterFinanceAccountProvider.cs" />
+    <Compile Include="OpenApi\JuWangKeGroup.cs" />
     <Compile Include="OpenApi\MeiTuanGroup.cs" />
     <Compile Include="OpenApi\SignProvider.cs" />
     <Compile Include="Distribution\DistributionProvider.cs" />
@@ -81,13 +89,18 @@
     <Compile Include="Order\AutoAdjustProvider.cs" />
     <Compile Include="Order\BreakEvenPointOrPriceProvider.cs" />
     <Compile Include="Order\CommissionFactory.cs" />
+    <Compile Include="Order\OrderChildProvider.cs" />
     <Compile Include="Order\OrderPriceProvider.cs" />
     <Compile Include="Order\DefaultOrPriceProvider.cs" />
+    <Compile Include="Order\OrderDetailProvider.cs" />
     <Compile Include="Order\OrderProvider.cs" />
     <Compile Include="Order\TimeOrPriceProvider.cs" />
+    <Compile Include="Pay\PayProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Statistics\StatisticsProvider.cs" />
+    <Compile Include="Strategy\StrategyProvider.cs" />
     <Compile Include="Subsidy\SubsidyProvider.cs" />
+    <Compile Include="User\BusinessGroupProvider.cs" />
     <Compile Include="User\BusinessProvider.cs" />
     <Compile Include="User\UserProvider.cs" />
     <Compile Include="WtihdrawRecords\WtihdrawRecordsProvider.cs" />
@@ -117,6 +130,7 @@
   <ItemGroup>
     <None Include="app.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

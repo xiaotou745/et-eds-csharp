@@ -14,7 +14,7 @@ namespace Ets.Service.Provider.Order
     /// 默认佣金计算规则
     /// </summary>
     public class DefaultOrPriceProvider : OrderPriceProvider
-    {
+    {     
         /// <summary>
         /// 获取订单的骑士佣金 add by caoheyang 20150305
         /// </summary>
@@ -30,7 +30,7 @@ namespace Ets.Service.Provider.Order
             if (model.DistribSubsidy != null && model.DistribSubsidy > 0)//如果外送费有数据，按照外送费计算骑士佣金
                 distribe = Convert.ToDecimal(model.DistribSubsidy);
             else //如果外送费没数据，按照网站补贴计算骑士佣金
-                distribe = ParseHelper.ToDecimal(GlobalConfigDao.GlobalConfigGet.CommonSiteSubsidies);
+                distribe = ParseHelper.ToDecimal(GlobalConfigDao.GlobalConfigGet(model.BusinessGroupId).CommonSiteSubsidies);
             return Decimal.Round(Convert.ToDecimal(model.Amount) * commissionRate + distribe * orderCount, 2);//计算佣金
         }
 
@@ -41,7 +41,7 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public override decimal GetOrderWebSubsidy(OrderCommission model)
         {
-            return ParseHelper.ToDecimal(GlobalConfigDao.GlobalConfigGet.CommonSiteSubsidies);
+            return ParseHelper.ToDecimal(GlobalConfigDao.GlobalConfigGet(model.BusinessGroupId).CommonSiteSubsidies);
         }
 
         /// <summary>
@@ -50,8 +50,8 @@ namespace Ets.Service.Provider.Order
         /// <param name="model">订单</param>
         /// <returns></returns>
         public override decimal GetCommissionRate(OrderCommission model)
-        {
-            return ParseHelper.ToDecimal(GlobalConfigDao.GlobalConfigGet.CommonCommissionRatio);
+        {          
+            return ParseHelper.ToDecimal(GlobalConfigDao.GlobalConfigGet(model.BusinessGroupId).CommonCommissionRatio);
         }
 
         /// <summary>

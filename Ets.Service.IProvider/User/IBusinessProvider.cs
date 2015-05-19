@@ -42,6 +42,13 @@ namespace Ets.Service.IProvider.User
         /// <param name="model">log实体</param>
         /// <returns></returns>
         bool SetCommission(int id, decimal price, decimal waisongfei, UserOptRecordPara model);
+        /// <summary>
+        /// 设置结算比例
+        /// danny-20150504
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        bool ModifyCommission(BusListResultModel busListResultModel, UserOptRecordPara model);
 
         /// <summary>
         /// 商户结算列表--2015.3.12 平扬
@@ -49,8 +56,9 @@ namespace Ets.Service.IProvider.User
         /// <param name="t1">开始计算日期</param>
         /// <param name="t2">结束日期</param>
         /// <param name="name">商户姓名</param>
+        /// <param name="phoneno">商户电话</param>
         /// <returns></returns>
-        ResultInfo<IList<BusinessCommissionModel>> GetBusinessCommission(DateTime t1, DateTime t2, string name, int groupid, string BusinessCity);
+        ResultInfo<IList<BusinessCommissionModel>> GetBusinessCommission(DateTime t1, DateTime t2, string name, string phoneno, int groupid, string BusinessCity);
 
         /// <summary>
         /// B端注册 
@@ -75,6 +83,7 @@ namespace Ets.Service.IProvider.User
         /// <param name="busiId"></param>
         /// <returns></returns>
         BusListResultModel GetBusiness(int busiId);
+        BusListResultModel GetBusiness(int originalBusiId,int groupId);
         /// <summary>
         /// 获取商户信息
         /// danny-20150316
@@ -224,6 +233,48 @@ namespace Ets.Service.IProvider.User
         /// <returns></returns>
         ResultModel<BusiRegisterResultModel> AddBusiness(AddBusinessModel model);
 
+        Business CheckExistBusiness(int originalId,int groupId);
+
+
+        int AddThirdBusiness(ParaModel<BusinessRegisterModel> paramodel);
+        /// <summary>
+        /// 添加商户
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        int InsertOtherBusiness(Business model);
+
+        /// <summary>
+        /// 获取商户详情        
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
+        /// <param name="id">商户id</param>
+        /// <returns></returns>
+        BusinessDM GetDetails(int id);
+
+        /// <summary>
+        /// 获取商户外送费        
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
+        /// <param name="id">商户id</param>
+        /// <returns></returns>
+        decimal GetDistribSubsidy(int id);
+        /// <summary>
+        /// 判断商户是否存在      
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
+        /// <param name="id">商户Id</param>
+        /// <returns></returns>
+        bool IsExist(int id);
+		/// <summary>
+        /// 获取商户详细信息
+        /// </summary>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        BusinessDetailModel GetBusinessDetailById(string businessId);
     }
 }
 

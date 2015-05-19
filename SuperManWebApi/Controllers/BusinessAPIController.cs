@@ -17,7 +17,9 @@ using Ets.Service.IProvider.Order;
 using Ets.Service.Provider.Order;
 using Ets.Service.Provider.Common;
 using Ets.Service.IProvider.User;
-using ETS.Const; 
+using ETS.Const;
+using SuperManWebApi.Providers;
+
 namespace SuperManWebApi.Controllers
 {
     public class BusinessAPIController : ApiController
@@ -80,7 +82,6 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model">订单基本数据信息</param>
         /// <returns></returns>
-
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Order.NewPostPublishOrderResultModel> NewPostPublishOrder_B(Ets.Model.ParameterModel.Order.NewPostPublishOrderModel model)
         { 
@@ -127,45 +128,55 @@ namespace SuperManWebApi.Controllers
             System.Drawing.Image img;
             try
             {
-                img = System.Drawing.Image.FromStream(file.InputStream);
-                
-                //var fileName = string.Format("{0}_{1}_{2}", DateTime.Now.ToString("yyyyMMddhhmmssfff"), new Random().Next(1000), file.FileName);
+                #region 暂时注释
 
-                var fileName = ETS.Util.ImageTools.GetFileName("B", Path.GetExtension(file.FileName));
+                //img = System.Drawing.Image.FromStream(file.InputStream);
 
-                int fileNameLastDot = fileName.LastIndexOf('.');
-                //原图
-                string rFileName = string.Format("{0}{1}{2}", fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
-                //保存到数据库的目录结构，年月日
-                string saveDbPath;
-                //fullDir 保存到 磁盘的 完整路径
-                string fullDir = ETS.Util.ImageTools.CreateDirectory(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath,"", out saveDbPath);
-                if (fullDir == "0")
+                ////var fileName = string.Format("{0}_{1}_{2}", DateTime.Now.ToString("yyyyMMddhhmmssfff"), new Random().Next(1000), file.FileName);
+
+                //var fileName = ETS.Util.ImageTools.GetFileName("B", Path.GetExtension(file.FileName));
+
+                //int fileNameLastDot = fileName.LastIndexOf('.');
+                ////原图
+                //string rFileName = string.Format("{0}{1}{2}", fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
+                ////保存到数据库的目录结构，年月日
+                //string saveDbPath;
+                ////fullDir 保存到 磁盘的 完整路径
+                //string fullDir = ETS.Util.ImageTools.CreateDirectory(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath,"", out saveDbPath);
+                //if (fullDir == "0")
+                //{
+                //    LogHelper.LogWriter("上传图片失败：", new { ex = "检查是否有权限创建目录" });
+                //    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed);
+                //}
+                ////保存原图到 磁盘中
+                //var fullFilePath = System.IO.Path.Combine(fullDir, rFileName);
+                //file.SaveAs(fullFilePath);
+                ////裁图
+                //var transformer = new FixedDimensionTransformerAttribute(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.Width, Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.Height, Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.MaxBytesLength / 1024);
+
+                //var destFullFileName = System.IO.Path.Combine(fullDir, fileName);
+                ////裁图，并保存到磁盘
+                //transformer.Transform(fullFilePath, destFullFileName);
+                ////保存到数据库的图片路径，包含年月日
+                //var picUrl = saveDbPath + fileName;
+
+                #endregion
+
+                ImageHelper ih = new ImageHelper();
+                ImgInfo imgInfo = ih.UploadImg(file, 0);
+                if (!string.IsNullOrWhiteSpace(imgInfo.FailRemark))
                 {
-                    LogHelper.LogWriter("上传图片失败：", new { ex = "检查是否有权限创建目录" });
                     return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed);
                 }
-                //保存原图到 磁盘中
-                var fullFilePath = System.IO.Path.Combine(fullDir, rFileName);
-                file.SaveAs(fullFilePath);
-                //裁图
-                var transformer = new FixedDimensionTransformerAttribute(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.Width, Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.Height, Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.MaxBytesLength / 1024);
-
-                var destFullFileName = System.IO.Path.Combine(fullDir, fileName);
-                //裁图，并保存到磁盘
-                transformer.Transform(fullFilePath, destFullFileName);
-                //保存到数据库的图片路径，包含年月日
-                var picUrl = saveDbPath + fileName;
                 //保存图片目录信息到数据库
-                var upResult = iBusinessProvider.UpdateBusinessPicInfo(userId, picUrl);
-                var relativePath = System.IO.Path.Combine(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.RelativePath, fileName).ToForwardSlashPath();
+                var upResult = iBusinessProvider.UpdateBusinessPicInfo(userId, imgInfo.PicUrl);
                 if (upResult == -1)
                 {
-                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id = userId, ImagePath = picUrl, status = upResult.ToString() });
+                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id = userId, ImagePath = imgInfo.PicUrl, status = upResult.ToString() });
                 }
                 else
                 {
-                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id = userId, ImagePath = picUrl, status = upResult.ToString() });
+                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.Success, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id = userId, ImagePath = imgInfo.PicUrl, status = upResult.ToString() });
                 }
             }
             catch (Exception ex)
@@ -177,60 +188,60 @@ namespace SuperManWebApi.Controllers
 
 
 
-        /// <summary>
-        /// 商户发布订单接口  2015.3.11 平扬 增加订单重复性验证
-        /// achao 修改为ado.net
-        /// </summary>
-        /// <param name="model">订单数据</param>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
-        [HttpPost]
-        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel> PostPublishOrder_B(Ets.Model.ParameterModel.Bussiness.BusiOrderInfoModel model)
-        {
-            //首先验证该 商户有无 资格 发布订单 wc
-            if (!iBusinessProvider.HaveQualification(model.userId))
-            {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.HadCancelQualification);
-            }
-            if (model.Amount < 10m)
-            {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.AmountLessThanTen);
-            }
-            if (model.Amount > 5000m)
-            {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.AmountMoreThanFiveThousand);
-            }
-            lock (lockHelper)
-            {  
-                #region 缓存验证
-                string cacheKey = "PostPublishOrder_B_" + model.userId + "_" + model.OrderSign;
-                var redis = new ETS.NoSql.RedisCache.RedisCache(); 
-                var cacheValue = redis.Get<string>(cacheKey); 
-                if (cacheValue != null)
-                {  
-                    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.OrderHasExist);//当前时间戳内重复提交,订单已存在 
-                } 
-                redis.Add(cacheKey, "1", DateTime.Now.AddHours(10));//添加当前时间戳记录
-                #endregion
-            }
-            if (model.OrderCount <= 0 || model.OrderCount > 15)   //判断录入订单数量是否符合要求
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.OrderCountError);
- 
-            Ets.Model.DataModel.Order.order order = iOrderProvider.TranslateOrder(model);
-            if (order.BusinessCommission < 10m)  //商户结算比例不能小于10
-            {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.BusiSettlementRatioError);
-            }
-            string result = iOrderProvider.AddOrder(order);
+        ///// <summary>
+        ///// 商户发布订单接口  2015.3.11 平扬 增加订单重复性验证
+        ///// achao 修改为ado.net
+        ///// </summary>
+        ///// <param name="model">订单数据</param>
+        ///// <returns></returns>
+        //[ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
+        //[HttpPost]
+        //public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel> PostPublishOrder_B(Ets.Model.ParameterModel.Bussiness.BussinessOrderInfoPM model)
+        //{      
+        //    //首先验证该 商户有无 资格 发布订单 wc
+        //    if (!iBusinessProvider.HaveQualification(model.userId))
+        //    {
+        //        return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.HadCancelQualification);
+        //    }
+        //    if (model.Amount < 10m)
+        //    {
+        //        return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.AmountLessThanTen);
+        //    }
+        //    if (model.Amount > 5000m)
+        //    {
+        //        return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.AmountMoreThanFiveThousand);
+        //    }
+        //    lock (lockHelper)
+        //    {  
+        //        #region 缓存验证
+        //        string cacheKey = "PostPublishOrder_B_" + model.userId + "_" + model.OrderSign;
+        //        var redis = new ETS.NoSql.RedisCache.RedisCache(); 
+        //        var cacheValue = redis.Get<string>(cacheKey); 
+        //        if (cacheValue != null)
+        //        {  
+        //            return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.OrderHasExist);//当前时间戳内重复提交,订单已存在 
+        //        } 
+        //        redis.Add(cacheKey, "1", DateTime.Now.AddHours(10));//添加当前时间戳记录
+        //        #endregion
+        //    }
+        //    if (model.OrderCount <= 0 || model.OrderCount > 15)   //判断录入订单数量是否符合要求
+        //        return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.OrderCountError);
 
-            if (result == "0")
-            {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.InvalidPubOrder);//当前订单执行失败
-            }
-            Ets.Model.ParameterModel.Order.BusiOrderResultModel resultModel = new Ets.Model.ParameterModel.Order.BusiOrderResultModel { userId = model.userId };
-            return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.Success, resultModel);
+        //    Ets.Model.DataModel.Order.order order = iOrderProvider.TranslateOrder(model);            
+        //    if (order.CommissionType==1 && order.BusinessCommission < 10m)  //商户结算比例不能小于10
+        //    {
+        //        return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.BusiSettlementRatioError);
+        //    }
+        //    string result = iOrderProvider.AddOrder(order);
 
-        }
+        //    if (result == "0")
+        //    {
+        //        return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.InvalidPubOrder);//当前订单执行失败
+        //    }
+        //    Ets.Model.ParameterModel.Order.BusiOrderResultModel resultModel = new Ets.Model.ParameterModel.Order.BusiOrderResultModel { userId = model.userId };
+        //    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel>.Conclude(ETS.Enums.PubOrderStatus.Success, resultModel);
+
+        //}
 
         /// <summary>
         /// 获取订单列表

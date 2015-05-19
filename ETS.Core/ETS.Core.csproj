@@ -87,6 +87,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Pay\AliPay\AlipayIntegrate.cs" />
+    <Compile Include="Pay\AliPay\AlipayMD5.cs" />
+    <Compile Include="Pay\AliPay\Config.cs" />
+    <Compile Include="Pay\AliPay\Core.cs" />
+    <Compile Include="Pay\AliPay\Submit.cs" />
     <Compile Include="Cacheing\AbstractCache.cs" />
     <Compile Include="Cacheing\CacheFactory.cs" />
     <Compile Include="Cacheing\LocalCache.cs" />
@@ -100,7 +105,9 @@
     <Compile Include="Enums\ClienterEnum.cs" />
     <Compile Include="Enums\EnumStatusType.cs" />
     <Compile Include="Enums\CustomerRegisterStatusEnum.cs" />
+    <Compile Include="Enums\FinanceEnums.cs" />
     <Compile Include="Enums\SuperPlatform.cs" />
+    <Compile Include="Enums\SystemEnum.cs" />
     <Compile Include="Enums\UserLoginResults.cs" />
     <Compile Include="Expand\ActionStatusAttribute.cs" />
     <Compile Include="Const\OrderConst.cs" />
@@ -155,6 +162,7 @@
     <Compile Include="Util\EnumItem.cs" />
     <Compile Include="Util\EnumUtils.cs" />
     <Compile Include="Util\Excel.cs" />
+    <Compile Include="Util\DataTableRenderToExcel.cs" />
     <Compile Include="Util\FileHelper.cs" />
     <Compile Include="Util\Helper.cs" />
     <Compile Include="Util\HTTPHelper.cs" />
@@ -174,7 +182,14 @@
     <Compile Include="Util\TranslatorBase.cs" />
     <Compile Include="Util\ValidationHelper.cs" />
     <Compile Include="Util\XmlHelper.cs" />
+    <Compile Include="Util\XmlParser.cs" />
     <Compile Include="Validator\CommonValidator.cs" />
+    <Compile Include="Pay\WxPay\Config.cs" />
+    <Compile Include="Pay\WxPay\RequestHandler.cs" />
+    <Compile Include="Pay\WxPay\ResponseHandler.cs" />
+    <Compile Include="Pay\WxPay\ReturnValue.cs" />
+    <Compile Include="Pay\WxPay\StreamReaderUtils.cs" />
+    <Compile Include="Pay\WxPay\WXpayService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="MyPush\" />

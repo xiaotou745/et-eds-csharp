@@ -4,6 +4,7 @@ using ETS.Dao;
 using ETS.Data;
 using ETS.Data.Core;
 using ETS.Data.PageData;
+using Ets.Model.ParameterModel.Finance;
 using ETS.Util;
 using System;
 using System.Collections.Generic;
@@ -21,8 +22,10 @@ using ETS.Enums;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Group;
 using Ets.Model.ParameterModel.Order;
-
-
+using Ets.Model.DomainModel.Bussiness;
+using Ets.Model.DataModel.Finance;
+using ETS.Data.Generic;
+using Ets.Model.ParameterModel.WtihdrawRecords;
 namespace Ets.Dao.User
 {
     public class BusinessDao : DaoBase
@@ -134,8 +137,9 @@ namespace Ets.Dao.User
         /// <param name="t1">开始计算日期</param>
         /// <param name="t2">结束日期</param>
         /// <param name="name">商户姓名</param>
+        /// <param name="phoneno">商户电话</param>
         /// <returns></returns>
-        public IList<BusinessCommissionModel> GetBusinessCommission(DateTime t1, DateTime t2, string name, int groupid, string businessCity)
+        public IList<BusinessCommissionModel> GetBusinessCommission(DateTime t1, DateTime t2, string name, string phoneno, int groupid, string businessCity)
         {
             IList<BusinessCommissionModel> list = new List<BusinessCommissionModel>();
             try
@@ -143,6 +147,7 @@ namespace Ets.Dao.User
                 string sql = @"  SELECT 
                                         BB.id ,
                                         BB.Name ,
+                                        BB.PhoneNo,
                                         T.Amount ,
                                         T.OrderCount ,
                                         ISNULL(BB.BusinessCommission, 0) BusinessCommission ,
@@ -170,6 +175,11 @@ namespace Ets.Dao.User
                     where += " and Name=@name ";
                     dbParameters.AddWithValue("name", name);
                 }
+                if (!string.IsNullOrEmpty(phoneno))
+                {
+                    where += " and PhoneNo=@PhoneNo ";
+                    dbParameters.AddWithValue("PhoneNo", phoneno);
+                }
                 if (groupid != 0)
                 {
                     where += " and groupid=@groupid";
@@ -191,7 +201,7 @@ namespace Ets.Dao.User
             return list;
         }
 
- 
+
         /// <summary>
         /// 设置结算比例-平扬 2015.3.12
         /// </summary>
@@ -221,6 +231,66 @@ namespace Ets.Dao.User
             return reslut;
 
         }
+
+        /// <summary>
+        /// 设置结算比例
+        /// danny-20150504
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ModifyCommission(BusListResultModel model)
+        {
+            bool reslut = false;
+            try
+            {
+                string sql = @"update business set  ";
+                //if(model.DistribSubsidy>0)
+                //{
+                sql += "DistribSubsidy=@DistribSubsidy,";
+                //}
+                if (model.CommissionType > 0)
+                {
+                    if (model.CommissionType == 1)
+                    {
+                        if (model.BusinessCommission > 0)
+                        {
+                            sql += "BusinessCommission=@BusinessCommission,";
+                        }
+                    }
+                    else
+                    {
+                        if (model.CommissionFixValue > 0)
+                        {
+                            sql += "CommissionFixValue=@CommissionFixValue,";
+                        }
+                    }
+                    sql += "CommissionType=@CommissionType,";
+                }
+                if (model.BusinessGroupId > 0)
+                {
+                    sql += "BusinessGroupId=@BusinessGroupId,";
+                }
+                sql = sql.TrimEnd(',');
+                sql += " where id=@id";
+                IDbParameters dbParameters = DbHelper.CreateDbParameters();
+                dbParameters.AddWithValue("BusinessCommission", model.BusinessCommission);
+                dbParameters.AddWithValue("DistribSubsidy", model.DistribSubsidy);
+                dbParameters.AddWithValue("id", model.Id);
+                dbParameters.AddWithValue("CommissionType", model.CommissionType);
+                dbParameters.AddWithValue("CommissionFixValue", model.CommissionFixValue);
+                dbParameters.AddWithValue("BusinessGroupId", model.BusinessGroupId);
+                int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Write, sql, dbParameters);
+                if (i > 0) reslut = true;
+            }
+            catch (Exception ex)
+            {
+                reslut = false;
+                LogHelper.LogWriter(ex, "设置结算比例-外送费");
+                throw;
+            }
+            return reslut;
+        }
+
         /// <summary>
         /// 检查当前商户是否存在 
         /// 窦海超
@@ -279,7 +349,11 @@ namespace Ets.Dao.User
                                     ,b.CommissionTypeId
                                     ,b.DistribSubsidy
                                     ,b.BusinessCommission
-                                    ,g.GroupName";
+                                    ,g.GroupName
+                                    ,b.CommissionType
+                                    ,b.CommissionFixValue
+                                    ,b.BusinessGroupId
+                                    ,bg.Name BusinessGroupName";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrEmpty(criteria.businessName))
             {
@@ -301,11 +375,21 @@ namespace Ets.Dao.User
             {
                 sbSqlWhere.AppendFormat(" AND b.GroupId={0} ", criteria.GroupId);
             }
+            if (criteria.BusinessGroupId != null && criteria.BusinessGroupId > 0)
+            {
+                sbSqlWhere.AppendFormat(" AND b.BusinessGroupId={0} ", criteria.BusinessGroupId);
+            }
+            if (criteria.CommissionType != null && criteria.CommissionType > 0)
+            {
+                sbSqlWhere.AppendFormat(" AND b.CommissionType={0} ", criteria.CommissionType);
+            }
             if (!string.IsNullOrEmpty(criteria.businessCity))
             {
                 sbSqlWhere.AppendFormat(" AND b.City='{0}' ", criteria.businessCity.Trim());
             }
-            string tableList = @" business  b WITH (NOLOCK)  LEFT JOIN dbo.[group] g WITH(NOLOCK) ON g.Id = b.GroupId ";
+            string tableList = @" business  b WITH (NOLOCK)  
+                                LEFT JOIN dbo.[group] g WITH(NOLOCK) ON g.Id = b.GroupId 
+                                JOIN dbo.[BusinessGroup]  bg WITH ( NOLOCK ) ON  b.BusinessGroupId=bg.Id";
             string orderByColumn = " b.Id DESC";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
@@ -422,6 +506,54 @@ namespace Ets.Dao.User
         public BusListResultModel GetBusiness(int busiId)
         {
             BusListResultModel busi = new BusListResultModel();
+            string selSql = @" select 
+                                b.Id ,
+                                b.Name ,
+                                b.City ,
+                                b.district ,
+                                b.PhoneNo ,
+                                b.PhoneNo2 ,
+                                b.IDCard ,
+                                b.[Address] ,
+                                b.Landline ,
+                                b.Longitude ,
+                                b.Latitude ,
+                                b.[Status] ,
+                                b.InsertTime ,
+                                b.districtId ,
+                                b.CityId ,
+                                b.GroupId , 
+                                b.ProvinceCode ,
+                                b.CityCode ,
+                                b.AreaCode ,
+                                b.Province ,
+                                b.DistribSubsidy,
+                                b.BusinessCommission,
+                                b.CommissionType,
+                                b.CommissionFixValue,
+                                b.BusinessGroupId,
+                                BusinessGroup.StrategyId
+                                FROM dbo.business as b WITH(NOLOCK)
+                                left join BusinessGroup on b.BusinessGroupId=BusinessGroup.Id
+                                WHERE b.Id = @busiId";
+            ///TODO 类型？
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@busiId", busiId);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
+            if (dt != null)
+                busi = DataTableHelper.ConvertDataTableList<BusListResultModel>(dt)[0];
+            return busi;
+        }
+
+
+        /// <summary>
+        /// 根据商户id获取商户
+        /// </summary>
+        /// <param name="busiId"></param>
+        /// <returns></returns>
+        public BusListResultModel GetBusiness(int originalBusiId, int groupId)
+        {
+            BusListResultModel busi = new BusListResultModel();
             string selSql = @" SELECT  
          Id ,
          Name ,
@@ -444,15 +576,25 @@ namespace Ets.Dao.User
          AreaCode ,
          Province ,
          DistribSubsidy,
-         BusinessCommission 
-         FROM dbo.business WITH(NOLOCK) WHERE Id = @busiId";
+         BusinessCommission ,
+         OriginalBusiId
+         FROM dbo.business WITH(NOLOCK) WHERE OriginalBusiId = @busiId AND GroupId=@groupId";
 
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@busiId", busiId);
+            parm.AddWithValue("@busiId", originalBusiId);
+
+            parm.AddWithValue("@GroupId", groupId);
+
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
-            if (dt != null)
+            if (dt != null && dt.Rows.Count > 0)
+            {
                 busi = DataTableHelper.ConvertDataTableList<BusListResultModel>(dt)[0];
-            return busi;
+                return busi;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -464,6 +606,7 @@ namespace Ets.Dao.User
         /// <returns></returns>
         public bool UpdateAuditStatus(int id, EnumStatusType enumStatusType)
         {
+            var juWangKeBusiAuditUrl = ConfigSettings.Instance.JuWangKeBusiAuditCallBack;
             bool reslut = false;
             try
             {
@@ -471,16 +614,29 @@ namespace Ets.Dao.User
                 if (enumStatusType == EnumStatusType.审核通过)
                 {
 
-                    sql = string.Format(" update business set Status={0} where id=@id ", ConstValues.BUSINESS_AUDITPASS);
+                    sql = string.Format(" update business set Status={0} where id=@id;", ConstValues.BUSINESS_AUDITPASS);
                 }
                 else if (enumStatusType == EnumStatusType.审核取消)
                 {
-                    sql = string.Format(" update business set Status={0} where id=@id ", ConstValues.BUSINESS_AUDITCANCEL);
+                    sql = string.Format(" update business set Status={0} where id=@id;", ConstValues.BUSINESS_AUDITCANCEL);
                 }
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
                 dbParameters.AddWithValue("id", id);
                 int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Write, sql, dbParameters);
-                if (i > 0) reslut = true;
+
+                if (i > 0)
+                {
+                    //调用第三方接口 ，聚网客商户审核通过后调用接口
+                    //这里不建议使用 1 数字，而是根据 配置文件中的 appkey来获取 groupid
+                    var busi = GetBusiness(id);
+                    if (busi.GroupId == 1 && busi.OriginalBusiId > 0 && enumStatusType == EnumStatusType.审核通过)
+                    {
+                        string str = HTTPHelper.HttpPost(juWangKeBusiAuditUrl, "supplier_id=" + busi.OriginalBusiId);
+                    }
+
+                    //HTTPHelper.HttpPost()
+                    reslut = true;
+                }
             }
             catch (Exception ex)
             {
@@ -616,6 +772,8 @@ namespace Ets.Dao.User
             {
                 //状态为1 表示该骑士 已通过审核
                 string sql = "SELECT COUNT(1) FROM dbo.business(NOLOCK) WHERE [Status] = 1 AND Id = @businessId ";
+                ///TODO 参数更改，加上类型
+                //var dbParameters = DbHelper.CreateDbParameters("businessid", DbType.Int32, 4, businessId);
                 IDbParameters parm = DbHelper.CreateDbParameters();
                 parm.AddWithValue("@businessId", businessId);
                 return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm)) > 0 ? true : false;
@@ -703,18 +861,18 @@ namespace Ets.Dao.User
         /// <param name="bid">原平台商户Id</param>
         /// <param name="groupid">集团id</param>
         /// <returns>商家信息</returns>
-        public bool CheckExistBusiness(int bid, int groupid)
+        public Business CheckExistBusiness(int bid, int groupid)
         {
-            string sql = @"select 1 from dbo.business where OriginalBusiId=@OriginalBusiId and GroupId=@GroupId";
+            string sql = @"select Id,Status from dbo.business where OriginalBusiId=@OriginalBusiId and GroupId=@GroupId";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OriginalBusiId", bid);
             parm.AddWithValue("@GroupId", groupid);
-            object i = DbHelper.ExecuteScalar(SuperMan_Read, sql, parm);
-            if (i != null)
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (dt == null || dt.Rows.Count <= 0)
             {
-                return int.Parse(i.ToString()) > 0;
+                return null;
             }
-            return false;
+            return MapRows<Business>(dt)[0];
         }
 
         /// <summary>
@@ -726,9 +884,9 @@ namespace Ets.Dao.User
         /// <param name="orderFrom">订单来源</param>
         /// <param name="orderType">orderType</param>
         /// <returns>商家信息</returns 
-        public bool GetOrderByOrderNoAndOrderFrom(string orderNO, int orderFrom, int orderType)
+        public order GetOrderByOrderNoAndOrderFrom(string orderNO, int orderFrom, int orderType)
         {
-            string sql = @" select 1 from dbo.[order] with(nolock) where OriginalOrderNo=@OriginalOrderNo and OrderFrom=@OrderFrom ";
+            string sql = @" select Id OrderId,OrderNo,OriginalOrderNo,businessId from dbo.[order] with(nolock) where OriginalOrderNo=@OriginalOrderNo and OrderFrom=@OrderFrom ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OriginalOrderNo", orderNO);
             parm.AddWithValue("@OrderFrom", orderFrom);
@@ -737,12 +895,15 @@ namespace Ets.Dao.User
                 sql += " and OrderType=@OrderType ";
                 parm.AddWithValue("@OrderType", orderType);
             }
-            object i = DbHelper.ExecuteScalar(SuperMan_Read, sql, parm);
-            if (i != null)
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (dt != null)
             {
-                return int.Parse(i.ToString()) > 0;
+                return MapRows<order>(dt)[0];
             }
-            return false;
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -752,7 +913,10 @@ namespace Ets.Dao.User
         /// <param name="orderStatus"></param>
         public bool UpdateOrder(string oriOrderNo, int orderFrom, OrderStatus orderStatus)
         {
-            string sql = "UPDATE dbo.[order] SET [Status]=@Status WHERE OriginalOrderNo=@OriginalOrderNo and OrderFrom=@OrderFrom ";
+            string sql = string.Format(@"UPDATE dbo.[order] SET [Status]=@Status 
+                            output Inserted.Id,GETDATE(),'{0}','{1}',Inserted.businessId,Inserted.[Status],{2}
+                            into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
+                            WHERE OriginalOrderNo=@OriginalOrderNo and OrderFrom=@OrderFrom ", SuperPlatform.商家, ConstValues.CancelOrder, (int)SuperPlatform.商家);
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OriginalOrderNo", oriOrderNo);
             parm.AddWithValue("@OrderFrom", orderFrom);
@@ -804,7 +968,7 @@ namespace Ets.Dao.User
                               @PhoneNo , -- PhoneNo - nvarchar(20)
                               @PhoneNo2 , -- PhoneNo2 - nvarchar(20)
                               @Password , -- Password - nvarchar(255)
-                              N'' , -- CheckPicUrl - nvarchar(255)
+                              @CheckPicUrl , -- CheckPicUrl - nvarchar(255)
                               @IDCard , -- IDCard - nvarchar(45)
                               @Address , -- Address - nvarchar(255)
                               N'' , -- Landline - nvarchar(15)
@@ -816,7 +980,7 @@ namespace Ets.Dao.User
                               @CityId , -- CityId - nvarchar(45)
                               @GroupId , -- GroupId - int
                               @OriginalBusiId , -- OriginalBusiId - int
-                              N'' , -- ProvinceCode - nvarchar(20)
+                              @ProvinceCode , -- ProvinceCode - nvarchar(20)
                               @CityCode , -- CityCode - nvarchar(20)
                               @AreaCode , -- AreaCode - nvarchar(20)
                               @Province , -- Province - nvarchar(20)
@@ -829,13 +993,16 @@ namespace Ets.Dao.User
             parm.AddWithValue("@Name", model.Name);
             parm.AddWithValue("@City", model.City);
             parm.AddWithValue("@district", model.district);
-            parm.Add("@PhoneNo",SqlDbType.NVarChar);
+            parm.Add("@PhoneNo", SqlDbType.NVarChar);
             parm.SetValue("@PhoneNo", model.PhoneNo);
 
             parm.Add("@PhoneNo2", SqlDbType.NVarChar);
             parm.SetValue("@PhoneNo2", model.PhoneNo2);
 
             parm.AddWithValue("@Password", model.Password);
+            parm.AddWithValue("@CheckPicUrl", model.CheckPicUrl);
+
+
             parm.AddWithValue("@IDCard", model.IDCard);
             parm.AddWithValue("@Address", model.Address);
             parm.AddWithValue("@Longitude", model.Longitude);
@@ -849,6 +1016,7 @@ namespace Ets.Dao.User
             parm.AddWithValue("@AreaCode", model.AreaCode);
             parm.AddWithValue("@Province", model.Province);
             parm.AddWithValue("@CommissionTypeId", model.CommissionTypeId);
+            parm.AddWithValue("@ProvinceCode", model.ProvinceCode);
             parm.AddWithValue("@DistribSubsidy", model.DistribSubsidy);
             object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, parm);
             if (i != null)
@@ -929,7 +1097,7 @@ namespace Ets.Dao.User
             IDbParameters parm = DbHelper.CreateDbParameters();
 
             parm.AddWithValue("@Address", business.Address);
-            parm.Add("@PhoneNo2",SqlDbType.NVarChar);
+            parm.Add("@PhoneNo2", SqlDbType.NVarChar);
             parm.SetValue("@PhoneNo2", business.PhoneNo2);
             parm.AddWithValue("@Name", business.Name);
             parm.AddWithValue("@Landline", business.Landline);
@@ -1222,9 +1390,338 @@ namespace Ets.Dao.User
             parm.AddWithValue("@OptId", orderOptionModel.OptUserId);
             parm.AddWithValue("@OptName", orderOptionModel.OptUserName);
             parm.AddWithValue("@Platform", 3);
-            parm.AddWithValue("@Remark", remark );
+            parm.AddWithValue("@Remark", remark);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
+
+
+        /// <summary>
+        /// 根据ID获取对象
+        /// </summary>
+        public Business GetById(int id)
+        {
+            Business model = null;
+            const string getbyidSql = @"
+select  Id,Name,City,district,PhoneNo,PhoneNo2,Password,CheckPicUrl,IDCard,Address,Landline,Longitude,Latitude,Status,InsertTime,districtId,CityId,GroupId,OriginalBusiId,ProvinceCode,CityCode,AreaCode,Province,CommissionTypeId,DistribSubsidy,BusinessCommission,CommissionType,CommissionFixValue,BusinessGroupId,BalancePrice,AllowWithdrawPrice,HasWithdrawPrice
+from  business (nolock)
+where  Id=@Id ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("Id", id);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, getbyidSql, dbParameters));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                model = MapRows<Business>(dt)[0];
+            }
+            return model;
+        }
+
+        /// <summary>
+        ///  超人提现功能 add by caoheyang 20150509
+        /// </summary>
+        /// <param name="withdrawBpm">超人信息</param>
+        /// <returns></returns>
+        public void UpdateForWithdrawC(WithdrawBPM withdrawBpm)
+        {
+            const string updateSql = @"
+update  business
+set  BalancePrice=BalancePrice-@WithdrawPrice,AllowWithdrawPrice=AllowWithdrawPrice-@WithdrawPrice
+where  Id=@Id ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("Id", withdrawBpm.BusinessId);
+            dbParameters.AddWithValue("WithdrawPrice", withdrawBpm.WithdrawPrice);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }
+
+        /// <summary>
+        /// 获取商家详情
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
+        /// <param name="id">商家Id</param>
+        /// <returns></returns>
+        public BusinessDM  GetDetails(int id)
+        {
+            BusinessDM businessDM = new BusinessDM();
+
+            #region 商家表
+            string queryBusinessSql = @"
+select  Id,Name,City,district,PhoneNo,PhoneNo2,Password,CheckPicUrl,IDCard,
+        Address,Landline,Longitude,Latitude,Status,InsertTime,districtId,CityId,GroupId,
+        OriginalBusiId,ProvinceCode,CityCode,AreaCode,Province,CommissionTypeId,DistribSubsidy,
+        BusinessCommission,CommissionType,CommissionFixValue,BusinessGroupId,BalancePrice,
+        AllowWithdrawPrice,HasWithdrawPrice
+from  Business (nolock) 
+where Id=@Id";
+
+            IDbParameters dbBusinessParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);  
+            businessDM = DbHelper.QueryForObject(SuperMan_Read, queryBusinessSql, dbBusinessParameters, new BusinessRowMapper());
+            #endregion
+
+            #region 商家金融账号表
+            const string queryBFAccountSql = @"
+select  Id,BusinessId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
+from  BusinessFinanceAccount (nolock) 
+where BusinessId=@BusinessId and IsEnable=1";
+            IDbParameters dbBFAccountParameters = DbHelper.CreateDbParameters();
+            dbBFAccountParameters.AddWithValue("BusinessId", id);
+            DataTable dtBFAccount = DbHelper.ExecuteDataTable(SuperMan_Read, queryBFAccountSql, dbBFAccountParameters);
+            List<BusinessFinanceAccount> listBFAccount = new List<BusinessFinanceAccount>();            
+            foreach (DataRow dataRow in dtBFAccount.Rows)
+            {
+                BusinessFinanceAccount bf = new BusinessFinanceAccount();
+                bf.Id = ParseHelper.ToInt(dataRow["Id"]);
+                bf.BusinessId =ParseHelper.ToInt(dataRow["BusinessId"]);
+                bf.TrueName = dataRow["TrueName"].ToString();
+                bf.AccountNo = ETS.Security.DES.Decrypt(dataRow["AccountNo"].ToString()); 
+                bf.IsEnable = ParseHelper.ToBool(dataRow["IsEnable"]);
+                bf.AccountType = ParseHelper.ToInt(dataRow["AccountType"]);
+                bf.BelongType = ParseHelper.ToInt(dataRow["BelongType"]);
+                if (dataRow["OpenBank"] != null && dataRow["OpenBank"]!=DBNull.Value)
+                { 
+                    bf.OpenBank = dataRow["OpenBank"].ToString();
+                }
+                if (dataRow["OpenSubBank"] != null && dataRow["OpenSubBank"] != DBNull.Value)
+                {
+                    bf.OpenSubBank = dataRow["OpenSubBank"].ToString();
+                }
+                bf.CreateBy = dataRow["CreateBy"].ToString();
+                bf.CreateTime = ParseHelper.ToDatetime(dataRow["CreateTime"]);
+                bf.UpdateBy = dataRow["UpdateBy"].ToString();
+                bf.UpdateTime = ParseHelper.ToDatetime(dataRow["UpdateTime"]);
+                listBFAccount.Add(bf);
+            }            
+            businessDM.listBFAcount = listBFAccount;            
+            #endregion          
+             
+            return businessDM;
+        }
+
+        /// <summary>
+        /// 获取商家外送费
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
+        /// <param name="id">商家Id</param>
+        /// <returns></returns>
+        public decimal GetDistribSubsidy(int id)
+        {           
+           decimal distribSubsidy;
+
+            string querSql = @"
+select  isnull(DistribSubsidy,0) from  Business (nolock) 
+where Id=@Id";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querSql, dbParameters);
+            distribSubsidy=ParseHelper.ToDecimal(executeScalar, 0);
+
+            return distribSubsidy;
+       }
+
+
+        /// <summary>
+        /// 判断商户是否存在        
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
+        /// </summary>
+        /// <param name="id">商户Id</param>
+        /// <returns></returns>
+        public bool IsExist(int id)
+        {
+            bool isExist;
+            string querySql = @" SELECT COUNT(1)
+ FROM   dbo.[business] WITH ( NOLOCK ) 
+ WHERE  id = @id";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);              
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
+            isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
+
+            return isExist;
+        }
+
+        #region  Nested type: BusinessRowMapper
+
+        /// <summary>
+        /// 绑定对象
+        /// </summary>
+        private class BusinessRowMapper : IDataTableRowMapper<BusinessDM>
+        {
+            public BusinessDM MapRow(DataRow dataReader)
+            {
+                var result = new BusinessDM();
+                object obj;
+                obj = dataReader["Id"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.Id = int.Parse(obj.ToString());
+                }
+                result.Name = dataReader["Name"].ToString();
+                result.City = dataReader["City"].ToString();
+                result.district = dataReader["district"].ToString();
+                result.PhoneNo = dataReader["PhoneNo"].ToString();
+                result.PhoneNo2 = dataReader["PhoneNo2"].ToString();
+                result.Password = dataReader["Password"].ToString();
+                result.CheckPicUrl = Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataReader["CheckPicUrl"].ToString())[0];
+                result.IDCard = dataReader["IDCard"].ToString();
+                result.Address = dataReader["Address"].ToString();
+                result.Landline = dataReader["Landline"].ToString();
+                obj = dataReader["Longitude"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.Longitude = decimal.Parse(obj.ToString());
+                }
+                obj = dataReader["Latitude"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.Latitude = decimal.Parse(obj.ToString());
+                }
+                obj = dataReader["Status"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.Status = int.Parse(obj.ToString());
+                }
+                obj = dataReader["InsertTime"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.InsertTime = DateTime.Parse(obj.ToString());
+                }
+                result.districtId = dataReader["districtId"].ToString();
+                result.CityId = dataReader["CityId"].ToString();
+                obj = dataReader["GroupId"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.GroupId = int.Parse(obj.ToString());
+                }
+                obj = dataReader["OriginalBusiId"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.OriginalBusiId = int.Parse(obj.ToString());
+                }
+                result.ProvinceCode = dataReader["ProvinceCode"].ToString();
+                result.CityCode = dataReader["CityCode"].ToString();
+                result.AreaCode = dataReader["AreaCode"].ToString();
+                result.Province = dataReader["Province"].ToString();
+                obj = dataReader["CommissionTypeId"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.CommissionTypeId = int.Parse(obj.ToString());
+                }
+                obj = dataReader["DistribSubsidy"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.DistribSubsidy = decimal.Parse(obj.ToString());
+                }
+                obj = dataReader["BusinessCommission"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.BusinessCommission = decimal.Parse(obj.ToString());
+                }
+                obj = dataReader["CommissionType"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.CommissionType = int.Parse(obj.ToString());
+                }
+                obj = dataReader["CommissionFixValue"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.CommissionFixValue = decimal.Parse(obj.ToString());
+                }
+                obj = dataReader["BusinessGroupId"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.BusinessGroupId = int.Parse(obj.ToString());
+                }
+                obj = dataReader["BalancePrice"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.BalancePrice = decimal.Parse(obj.ToString());
+                }
+                obj = dataReader["AllowWithdrawPrice"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.AllowWithdrawPrice = decimal.Parse(obj.ToString());
+                }
+                obj = dataReader["HasWithdrawPrice"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.HasWithdrawPrice = decimal.Parse(obj.ToString());
+                }
+
+                return result;
+            }
+        }
+
+        #endregion
+        /// <summary>
+        /// 获取商户详细信息
+        /// </summary>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        public BusinessDetailModel GetBusinessDetailById(string businessId)
+        {
+            string selSql = @" 
+SELECT   b.Id ,
+         b.Name ,
+         b.City ,
+         b.district ,
+         b.PhoneNo ,
+         b.PhoneNo2 ,
+         b.IDCard ,
+         b.[Address] ,
+         b.Landline ,
+         b.Longitude ,
+         b.Latitude ,
+         b.[Status] ,
+         b.InsertTime ,
+         b.districtId ,
+         b.CityId ,
+         b.GroupId , 
+         b.ProvinceCode ,
+         b.CityCode ,
+         b.AreaCode ,
+         b.Province ,
+         b.DistribSubsidy,
+         b.BusinessCommission ,
+         b.OriginalBusiId,
+         b.CommissionType,
+         b.CommissionFixValue,
+         b.BusinessGroupId,
+         b.BalancePrice,
+         b.AllowWithdrawPrice,
+         b.HasWithdrawPrice,
+         bfa.TrueName,
+         bfa.AccountNo,
+         bfa.AccountType,
+         bfa.OpenBank,
+         bfa.OpenSubBank
+FROM business b WITH(NOLOCK) 
+	Left join BusinessFinanceAccount bfa WITH(NOLOCK) ON b.Id=bfa.BusinessId AND bfa.IsEnable=1
+WHERE b.Id = @BusinessId  ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@BusinessId", businessId);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
+            if (dt != null&&dt.Rows.Count>0)
+                return  DataTableHelper.ConvertDataTableList<BusinessDetailModel>(dt)[0];
+            return null;
+        }        
+
+        /// <summary>
+        /// 更改可提现金额
+        /// 窦海超
+        /// 2015年5月15日 16:56:37
+        /// </summary>
+        /// <param name="price">金额</param>
+        /// <param name="clienterId">可提现金额的骑士ID</param>
+        public void UpdateAllowWithdrawPrice(decimal price, int businessId)
+        {
+            string sql = "update dbo.business set AllowWithdrawPrice=AllowWithdrawPrice+@price where Id=@businessId";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("businessId", DbType.Int32, 4).Value = businessId;
+            parm.Add("price", DbType.Decimal, 18).Value = price;
+            DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
+        }
+
 
     }
 }

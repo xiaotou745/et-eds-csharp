@@ -25,5 +25,25 @@ namespace Ets.Model.DataModel.Order
         /// 商户结算比例
         /// </summary>
         public decimal BusinessCommission { get; set; }
+
+        /// <summary>
+        /// 结算类型
+        /// </summary>
+        public int CommissionType { get; set; }
+
+        /// <summary>
+        /// 固定金额
+        /// </summary>
+        public Nullable<decimal> CommissionFixValue { get; set; }
+
+        /// <summary>
+        /// 商家分组ID
+        /// </summary>
+        public int BusinessGroupId { get; set; }
+        /// <summary>
+        /// 策略ID
+        /// </summary>
+        public int StrategyId { get; set; }
+
     }
 }

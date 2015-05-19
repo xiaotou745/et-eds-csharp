@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using ETS.Enums;
 namespace Ets.Service.IProvider.Order
 {
     public interface IOrderProvider
@@ -30,21 +30,17 @@ namespace Ets.Service.IProvider.Order
         /// <param name="criteria"></param>
         /// <returns></returns>
         IList<ClientOrderNoLoginResultModel> GetOrdersNoLoginLatest(ClientOrderSearchCriteria criteria);
-
-
-
-
+        
         /// </summary>        /// 商户发布订单信息转换为数据库对应实体
         /// </summary>
         /// <param name="busiOrderInfoModel"></param>
         /// <returns></returns>
-        order TranslateOrder(BusiOrderInfoModel busiOrderInfoModel);
+        order TranslateOrder(BussinessOrderInfoPM busiOrderInfoModel);
 
         /// <summary>
         /// 添加一条订单记录
         /// </summary>
-        string AddOrder(order order);
-
+        PubOrderStatus AddOrder(order order);
         /// <summary>
         /// 根据参数获取订单
         /// danny-20150319
@@ -66,6 +62,7 @@ namespace Ets.Service.IProvider.Order
         /// <param name="orderNo"></param>
         /// <returns></returns>
         OrderListModel GetOrderByNo(string orderNo);
+        OrderListModel GetOrderByNo(string orderNo, int orderId);
         /// <summary>
         /// 订单指派超人
         /// danny-20150320
@@ -165,7 +162,7 @@ namespace Ets.Service.IProvider.Order
         /// </summary>
         /// <param name="OrderId"></param>
         /// <returns></returns>
-        IList<OrderSubsidiesLog> GetOrderOptionLog(string OrderId);
+        IList<OrderSubsidiesLog> GetOrderOptionLog(int OrderId);
 
         /// <summary>
         /// 第三方更新E代送订单状态   add by caoheyang 20150421  
@@ -173,5 +170,30 @@ namespace Ets.Service.IProvider.Order
         /// <param name="paramodel">参数</param>
         /// <returns></returns>
         ResultModel<object> UpdateOrderStatus_Other(ChangeStatusPM_OpenApi paramodel);
+
+        /// <summary>
+        /// 判断订单是否存在      
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
+        /// <param name="id">订单Id</param>
+        /// <returns></returns>
+        bool IsExist(int id);
+        /// <summary>
+        /// 获取主订单信息
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150512</UpdateTime>
+        /// <param name="id">订单Id</param>
+        /// <returns></returns>
+        order GetById(int id);
+        /// <summary>
+        /// 获取订单详情
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150512</UpdateTime>
+        /// <param name="id">订单查询实体</param>
+        /// <returns></returns>
+        OrderDM GetDetails(OrderPM modelPM);    
     }
 }

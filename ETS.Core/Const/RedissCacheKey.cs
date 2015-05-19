@@ -24,7 +24,7 @@ namespace ETS.Const
         /// </summary>
         public const string Common_GetNationalAreaInfo = "Ets.Service.Provider.Common_GetNationalAreaInfo";
 
-        public const string Ets_Dao_GlobalConfig_GlobalConfigGet = "Ets_Dao_GlobalConfig_GlobalConfigGet";
+        public const string Ets_Dao_GlobalConfig_GlobalConfigGet = "Ets_Dao_GlobalConfig_GlobalConfigGet_{0}";
         /// <summary>
         /// 获取开通城市的省市区缓存key
         /// </summary>

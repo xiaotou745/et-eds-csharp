@@ -1,0 +1,12 @@
+1、首页跨店统计
+	Ets.ClienterCrossShopLog
+2、跨店奖励金额发放到用户
+	Ets.CrossShop
+3、跨店奖励每天发送短信（暂未使用）
+	Ets.CrossShopShortMessage
+4、每日统计的数据服务
+	Ets.Statistics
+5、时间补贴服务（3、5、8分钟增加一元）
+	Ets.TaskPlatform
+6、骑士、商家可提现金额
+	Ets.BandCWithdraw

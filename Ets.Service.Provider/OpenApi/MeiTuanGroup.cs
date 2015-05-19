@@ -23,6 +23,7 @@ using System.Threading.Tasks;
 
 namespace Ets.Service.Provider.OpenApi
 {
+
     /// <summary>
     /// 美团相关业务类 add by caoheyang 20150420
     /// </summary>
@@ -207,7 +208,7 @@ namespace Ets.Service.Provider.OpenApi
             }
             paras.Sort();
             int index = httpRequest.Url.ToString().IndexOf('?');
-            string url = index < 0 ? httpRequest.Url.ToString() + "?" : httpRequest.Url.ToString().Substring(0, index);
+            string url = (index < 0 ? httpRequest.Url.ToString() : httpRequest.Url.ToString().Substring(0, index)) + "?";
             string waimd5 = url + string.Join("&", paras) + consumer_secret; //consumer_secret
             string sigtemp = ETS.Security.MD5.DefaultEncrypt(waimd5).ToLower();
             return sigtemp;
@@ -229,9 +230,9 @@ namespace Ets.Service.Provider.OpenApi
                     paras.Add(key + "=" + (valtemp == null ? "" : valtemp));
                 }
             }
-            paras.Sort();
+            paras.Sort(new NewStringComparer());  //TODO待长时间验证  目前慎用
             int index = httpRequest.Url.ToString().IndexOf('?');
-            string url = index < 0 ? httpRequest.Url.ToString() + "?" : httpRequest.Url.ToString().Substring(0, index);
+            string url = (index < 0 ? httpRequest.Url.ToString() : httpRequest.Url.ToString().Substring(0, index)) + "?";
             string waimd5 = url + string.Join("&", paras) + consumer_secret; //consumer_secret
             string sigtemp = ETS.Security.MD5.DefaultEncrypt(waimd5).ToLower();
             return sigtemp;
@@ -244,16 +245,16 @@ namespace Ets.Service.Provider.OpenApi
         /// <param name="fromModel">美团数据实体</param>
         public CreatePM_OpenApi TranslateModel(MeiTuanOrdeModel fromModel)
         {
-
+            
             #region 订单基础数据 
             CreatePM_OpenApi model = new CreatePM_OpenApi();
             model.order_id = fromModel.order_id; //订单ID
-            ///店铺信息
+            ///店铺信息  店铺是已经在E代送存在的，这里没有任何实际意义，数据用不到
             Store store = new Store();
             store.store_id = fromModel.app_poi_code;//对接方店铺id
             store.store_name = fromModel.wm_poi_name;//店铺名称
             store.address = fromModel.wm_poi_address;//店铺地址
-            store.phone = fromModel.wm_poi_address;//店铺电话
+            store.phone = fromModel.wm_poi_phone;//店铺电话
          
             model.remark = fromModel.caution;//备注
             model.status = OrderConst.OrderStatus30;//初始化订单状态 第三方代接入
@@ -262,6 +263,7 @@ namespace Ets.Service.Provider.OpenApi
             model.is_pay = fromModel.pay_type == 1 ? false : true;//目前货到付款时取未支付，在线支付取已支付
             model.total_price = fromModel.total;//订单金额
             model.store_info = store; //店铺 
+            model.invoice_title = fromModel.invoice_title;//发票标题
 
             //订单明细不为空时做处理 
             if (!string.IsNullOrWhiteSpace(fromModel.detail) && fromModel.detail != "")
@@ -291,16 +293,23 @@ namespace Ets.Service.Provider.OpenApi
             if (businessId == 0)
                 return null;
             BusListResultModel business = new Ets.Dao.User.BusinessDao().GetBusiness(businessId);
+            if (business.Status != ConstValues.BUSINESS_AUDITPASS)//商户非审核通过不允许接单
+            {
+                return null;
+            }
             model.store_info.delivery_fee = ParseHelper.ToDecimal(business.DistribSubsidy);//外送费
             model.store_info.businesscommission = ParseHelper.ToDecimal(business.BusinessCommission);//结算比例
-            model.businessId = businessId; 
+            model.businessId = businessId;
+            model.CommissionType = business.CommissionType;
+            model.CommissionFixValue = business.CommissionFixValue;
+            model.BusinessGroupId = business.BusinessGroupId;
             #endregion
 
             #region 订单地址信息
             Address address = new Address();
             address.address = fromModel.recipient_address;//用户收货地址
             address.user_phone = fromModel.recipient_phone;//用户联系电话
-            address.user_name = fromModel.recipient_phone;//用户姓名
+            address.user_name = fromModel.recipient_name;//用户姓名
             address.longitude = fromModel.longitude; //经度
             address.latitude = fromModel.latitude; //纬度
             address.city_code = business.CityId; //市
@@ -315,16 +324,20 @@ namespace Ets.Service.Provider.OpenApi
             #region 佣金相关  
             model.package_count = 1; //订单份数
             //佣金计算规则
-            model.CommissionFormulaMode = ParseHelper.ToInt(Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
+            //model.CommissionFormulaMode = ParseHelper.ToInt(Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet(1).CommissionFormulaMode);
+            model.CommissionFormulaMode = business.StrategyId;
             //计算获得订单骑士佣金
             Ets.Model.DataModel.Order.OrderCommission orderComm = new Ets.Model.DataModel.Order.OrderCommission()
             {
                 Amount = model.total_price, /*订单金额*/
                 DistribSubsidy = model.store_info.delivery_fee,/*外送费*/
                 OrderCount = model.package_count,/*订单数量*/
-                BusinessCommission = model.store_info.businesscommission/*商户结算比例*/
+                BusinessCommission = model.store_info.businesscommission,/*商户结算比例*/
+                BusinessGroupId = model.BusinessGroupId,
+                StrategyId = model.CommissionFormulaMode
             }/*网站补贴*/;
-            OrderPriceProvider commissonPro = CommissionFactory.GetCommission();
+            //OrderPriceProvider commissonPro = CommissionFactory.GetCommission();
+            OrderPriceProvider commissonPro = CommissionFactory.GetCommission(business.StrategyId);
             model.ordercommission = commissonPro.GetCurrenOrderCommission(orderComm);  //骑士佣金
             model.websitesubsidy = commissonPro.GetOrderWebSubsidy(orderComm);//网站补贴
             model.commissionrate = commissonPro.GetCommissionRate(orderComm);//订单佣金比例

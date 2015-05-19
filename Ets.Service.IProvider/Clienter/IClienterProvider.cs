@@ -7,11 +7,12 @@ using Ets.Model.ParameterModel.Clienter;
 using ETS.Data.PageData;
 using Ets.Model.DomainModel.Bussiness;
 using Ets.Model.ParameterModel.Order;
+using Ets.Model.DomainModel.Order;
 
 namespace Ets.Service.IProvider.Clienter
 {
     public interface IClienterProvider
-    { 
+    {
         /// <summary>
         /// 更新添加骑士佣金金额
         /// wc
@@ -41,7 +42,7 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="model">用户名称，用户密码</param>
         /// <returns>用户信息</returns>
         ResultModel<ClienterLoginResultModel> PostLogin_C(LoginModel model);
-        
+
         /// <summary>
         /// 获取当前配送员的流水信息
         /// 窦海超
@@ -127,13 +128,13 @@ namespace Ets.Service.IProvider.Clienter
         ClienterStatusModel GetUserStatus(int UserId, double version);
         /// <summary>
         /// 超人 完成订单
-        /// wc
+        /// wc 
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="orderNo"></param>
         /// <param name="pickupCode">取货码 可空</param>
         /// <returns></returns>
-        string FinishOrder(int userId, string orderNo,string pickupCode=null);
+        string FinishOrder(int userId, string orderNo, string pickupCode = null);
 
         ClienterModel GetUserInfoByUserId(int UserId);
         /// <summary>
@@ -149,6 +150,13 @@ namespace Ets.Service.IProvider.Clienter
         /// </summary>
         /// <returns></returns>
         IList<BusinessesDistributionModel> GetClienteStorerGrabStatisticalInfo();
+        /// <summary>
+        /// 骑士门店抢单统计
+        /// 胡灵波-20150424
+        /// </summary>
+        /// <param name="daysAgo">几天前</param>
+        /// <returns></returns>
+        IList<BusinessesDistributionModel> GetClienteStorerGrabStatisticalInfo(int daysAgo);
         /// <summary>
         /// 骑士门店抢单统计,过一个月后删除该代码
         /// danny-20150408
@@ -175,11 +183,56 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="uploadReceiptModel"></param>
         /// <returns></returns>
         OrderOther GetReceipt(int orderId);
+
         /// <summary>
         /// 根据订单Id获取小票信息
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns></returns>
         order GetOrderInfoByOrderId(int orderId);
+
+        /// <summary>
+        ///  C端抢单
+        ///  窦海超
+        ///  2015年5月6日 20:40:56
+        /// </summary>
+        /// <param name="userId">骑士ID</param>
+        /// <param name="orderNo">订单号</param>
+        /// <returns></returns>
+        ResultModel<RushOrderResultModel> RushOrder_C(int userId, string orderNo);
+
+        /// <summary>
+        /// 获取骑士详情  
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
+        /// <param name="id">骑士Id</param>
+        /// <returns></returns>
+        ClienterDM GetDetails(int id);
+
+        /// <summary>
+        /// 判断骑士是否存在 
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
+        /// <param name="id">骑士Id</param>
+        /// <returns></returns>
+        bool IsExist(int id);
+
+        /// <summary>
+        /// 根据订单Id和子订单Id获取信息
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="orderChildId"></param>
+        /// <returns></returns>
+        List<OrderChildForTicket> GetOrderChildInfo(int orderId, int orderChildId); 
+        /// <summary>
+        /// 获取骑士详细信息
+        /// danny-20150513
+        /// </summary>
+        /// <param name="businessId">骑士Id</param>
+        /// <returns></returns>
+        ClienterDetailModel GetClienterDetailById(string clienterId);
+    
     }
 }

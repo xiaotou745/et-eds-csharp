@@ -9,6 +9,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ets.Model.ParameterModel.Finance;
 
 namespace Ets.Dao.WtihdrawRecords
 {
@@ -137,7 +138,7 @@ namespace Ets.Dao.WtihdrawRecords
                             CreateTime as InsertTime";
             return new PageHelper().GetPages<IncomeModel>(SuperMan_Read, model.PagingRequest.PageIndex, where.ToString(), "  r.id desc ", column, " Records R (nolock) join clienter C (nolock) on R.UserId=C.Id ", model.PagingRequest.PageSize, true);
         }
-
+        
 
     }
 }

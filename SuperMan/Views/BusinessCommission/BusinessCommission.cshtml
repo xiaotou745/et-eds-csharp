@@ -19,7 +19,9 @@
                 <tr>
                     <td>
                         <span class="">商户名称: </span>
-                        <input id="txtBusinessName" name="txtBusinessName" type="tel" value="@ViewBag.name" /> 
+                        <input id="txtBusinessName" name="txtBusinessName" type="text" value="@ViewBag.name" />
+                        <span class="">商户电话: </span>
+                        <input id="txtBusinessPhoneNo" name="txtBusinessPhoneNo" type="tel" value="@ViewBag.phoneno" />  
                         <span class="">开始时间: </span>
                         <input id="txtDateStart" name="txtDateStart" readonly="readonly" type="text" value="@ViewBag.startDate" />
                         <span class="">到: </span>
@@ -45,6 +47,7 @@
         <tr class="tdbg">
             <th width="%5">序号</th>
             <th>商户名称</th>
+            <th>商户电话</th>
             <th>订单金额</th>
             <th>订单数量</th>
             <th>结算比例</th>
@@ -65,6 +68,7 @@
                     <tr id="@item.id">
                         <td>@i</td>
                         <td>@item.Name</td>
+                        <td>@item.PhoneNo</td>
                         <td>@item.Amount</td>
                         <td>@item.OrderCount</td>
                         <td>@item.BusinessCommission</td>

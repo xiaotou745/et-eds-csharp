@@ -48,11 +48,13 @@ namespace OpenApi
                 }
                 IGroupProvider groupProvider = new GroupProvider();
                 GroupApiConfigModel groupCofigInfo = groupProvider.GetGroupApiConfigByAppKey(paramodel.app_key, paramodel.v);
+                LogHelper.LogWriter("groupCofigInfo", new { groupCofigInfo = groupCofigInfo });
                 if (groupCofigInfo != null && groupCofigInfo.IsValid == 1)//集团可用，且有appkey信息
                 {
                     string signStr = groupCofigInfo.AppSecret + "app_key" + paramodel.app_key + "timestamp"
                         + paramodel.timestamp + "v" + paramodel.v + groupCofigInfo.AppSecret;
                     string sign = MD5.Encrypt(signStr);
+                    LogHelper.LogWriter("签名是否一致：", new { sign = sign, sign1 = paramodel.sign });
                     if (sign != paramodel.sign)   //sign错误，请求中止
                     {
                         actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
@@ -156,6 +158,7 @@ namespace OpenApi
         /// <param name="filterContext">上下文对象  该类继承于ControllerContext</param>
         public override void OnException(HttpActionExecutedContext filterContext)
         {
+            LogHelper.LogWriter("异常：", new { remark = filterContext });
             filterContext.Response = filterContext.ActionContext.ActionDescriptor.ResultConverter.
               Convert(filterContext.ActionContext.ControllerContext, ResultModel<object>.Conclude(OrderApiStatusType.SystemError));
         }

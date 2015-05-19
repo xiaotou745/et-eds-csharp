@@ -7,13 +7,12 @@ namespace Ets.Model.ParameterModel.Bussiness
 {
     /// <summary>
     /// B端第三方商家注册类
-    /// </summary>
+    /// </summary> 
     public class NewRegisterInfoModel
-    {
-
+    { 
         /// <summary>
         /// 商户名称
-        /// </summary>
+        /// </summary> 
         public string B_Name { get; set; }
         /// <summary>
         /// 原平台商户Id
@@ -168,5 +167,25 @@ namespace Ets.Model.ParameterModel.Bussiness
         Faild = 114,
         [DisplayText("注册失败")]
         ClientRegisterFaild=115
+    }
+    //状态:0未审核，1已通过，2未审核且未添加地址，3审核中，4审核被拒绝
+    public enum BusiStatus : int
+    {
+        [DisplayText("商户未注册")]
+        BusiNoRegiste = -1,
+        [DisplayText("商户未审核")]
+        BusiNoPass = 0,
+        [DisplayText("审核通过")]
+        BusiPass = 1,
+        [DisplayText("商户审核中")]
+        BusiPassing = 3,
+        [DisplayText("审核被拒绝")]
+        BusiReject = 4,
+        [DisplayText("商户无地址")]
+        BusiNoAddress = 2,
+        [DisplayText("未知状态")]
+        BusiError= 100
+
+
     }
 }

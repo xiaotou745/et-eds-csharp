@@ -21,6 +21,11 @@ namespace Ets.Model.DomainModel.Bussiness
         /// </summary>
         public string Name { get; set; }
         /// <summary>
+        /// 商户电话
+        /// </summary>
+        public string PhoneNo { get; set; }
+        
+        /// <summary>
         /// 订单金额
         /// </summary>
         public Decimal Amount { get; set; }
@@ -66,6 +71,10 @@ namespace Ets.Model.DomainModel.Bussiness
         /// 商户名称
         /// </summary>
         public string txtBusinessName { get; set; }
+        /// <summary>
+        /// 商户名称
+        /// </summary>
+        public string txtBusinessPhoneNo { get; set; }
         /// <summary>
         /// 集团id
         /// </summary>

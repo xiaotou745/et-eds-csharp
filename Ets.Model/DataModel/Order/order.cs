@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ets.Model.ParameterModel.Bussiness;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -57,11 +58,25 @@ namespace Ets.Model.DataModel.Order
 
         public string BusinessPhone { get; set; }
 
+        /// <summary>
+        /// 发货人地址
+        /// </summary>
+        public string BusinessAddress { get; set; }     
+
         public string PickUpCity { get; set; }
 
         public Nullable<double> BusiLongitude { get; set; }
         public Nullable<double> BusiLatitude { get; set; }
 
+        /// <summary>
+        /// 配送员姓名
+        /// </summary>
+        public string ClienterName { get; set; }
+
+        /// <summary>
+        /// 配送员电话
+        /// </summary>
+        public string ClienterPhoneNo { get; set; }
 
         /// <summary>
         /// 订单佣金计算方法 0：默认 1：根据时间段设置不同补贴
@@ -72,6 +87,7 @@ namespace Ets.Model.DataModel.Order
         /// 商户结算比例
         /// </summary>
         public decimal BusinessCommission { get; set; }
+
 
         /// <summary>
         /// 应收 结算金额
@@ -91,5 +107,93 @@ namespace Ets.Model.DataModel.Order
         /// 已经上传的小票数量
         /// </summary>
         public int HadUploadCount { get; set; }
+
+        /// <summary>
+        /// 结算类型：1：固定比例 2：固定金额
+        /// </summary>
+        public int CommissionType { get; set; }
+        /// <summary>
+        /// 固定金额
+        /// </summary>
+        public decimal CommissionFixValue { get; set; }
+        /// <summary>
+        /// 分组ID
+        /// </summary>
+        public int BusinessGroupId { get; set; }   
+        /// <summary>
+        /// 时间戳
+        /// </summary>
+        public string TimeSpan { get; set; }
+
+
+        /// <summary>
+        /// 订单小票列表
+        /// </summary>
+        public List<OrderChlidPM> listOrderChild { get; set; }
+
+        /// <summary>
+        /// 支付类型 0 现金
+        /// </summary>
+        public int? Payment { get; set; }
+        /// <summary>
+        /// 额外补贴次数
+        /// </summary>
+        public int DealCount { get; set; }
+
+        /// <summary>
+        /// 取货码（目前只有全时再用）
+        /// </summary>
+        public string PickupCode { get; set; }
+        /// <summary>
+        /// 美团订单（商户取消接单原因）
+        /// </summary>
+        public string OtherCancelReason { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal? RushOrderLongitude { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal? RushOrderLandline { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal? FinishOrderLongitude { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal? FinishOrderLandline { get; set; }
+
+        /// <summary>
+        /// 发票
+        /// </summary>
+        public string Invoice { get; set; }
+        
+        /// <summary>
+        /// 经度
+        /// </summary>
+        public double? Longitude { get; set; }
+        /// <summary>
+        ///  纬度
+        /// </summary>
+        public double? Latitude { get; set; }
+
+        /// <summary>
+        /// 须上传小票数量
+        /// </summary>
+        public int NeedUploadCount { get; set; }
+
+        /// <summary>
+        /// 总配送费
+        /// </summary>
+        public decimal TotalDistribSubsidy { get; set; }
+
+        /// <summary>
+        /// 抢单时间
+        /// </summary>
+        public DateTime GrabDate { get; set; }
+        
+
     }
 }

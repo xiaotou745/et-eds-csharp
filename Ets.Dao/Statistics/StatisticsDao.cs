@@ -35,8 +35,8 @@ namespace Ets.Dao.Statistics
                             SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
                             ISNULL(COUNT(o.Id),0) AS MisstionCount,--任务量
                             SUM(ISNULL(OrderCount,0)) AS OrderCount,--订单量
-                            ISNULL(SUM(o.Amount*ISNULL(b.BusinessCommission,0)/100+ ISNULL( b.DistribSubsidy ,0)* o.OrderCount),0) AS YsPrice,  -- 应收金额
-                            ISNULL( SUM( OrderCommission),0) AS YfPrice  --应付金额
+                            SUM(isnull(o.SettleMoney,0)) AS YsPrice,  -- 应收金额
+                            SUM(ISNULL(OrderCommission,0)) AS YfPrice  --应付金额
                             FROM dbo.[order](NOLOCK) AS o
                             LEFT JOIN dbo.business(NOLOCK) AS b ON o.businessId=b.Id
                             WHERE  
@@ -193,11 +193,13 @@ namespace Ets.Dao.Statistics
         /// <returns></returns>
         public HomeCountTitleModel GetCurrentActiveBussinessAndClienter()
         {
-            string sql = @"select 
-                            count(distinct clienterId) as ActiveClienter,
-                            count(distinct businessId) as ActiveBusiness
-                            from dbo.[order](nolock) as o 
-                            where o.PubDate >= convert(char(10), getdate(), 120) and status<>3";
+            string sql = @"
+select 
+count(distinct clienterId) as ActiveClienter,
+count(distinct businessId) as ActiveBusiness
+from dbo.[order](nolock) as o 
+where convert(char(10),o.PubDate,120) = convert(char(10), dateadd(day,-1,getdate()) , 120) and status<>3
+";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             if (dt == null || dt.Rows.Count <= 0)
             {
@@ -271,8 +273,8 @@ namespace Ets.Dao.Statistics
                                           SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
                                           ISNULL(COUNT(o.Id),0) AS MisstionCount,--总任务量
                                           SUM(ISNULL(OrderCount,0)) AS OrderCount,--总订单量
-                                          ISNULL(SUM(o.Amount*ISNULL(b.BusinessCommission,0)/100+ ISNULL( b.DistribSubsidy ,0)* o.OrderCount),0) AS YsPrice,  -- 应收金额
-                                          ISNULL( SUM( OrderCommission),0) AS YfPrice  --应付金额
+                                          SUM(ISNULL(o.SettleMoney,0)) AS YsPrice,  -- 应收金额
+                                          SUM( ISNULL(OrderCommission,0)) AS YfPrice  --应付金额  --应付金额
                                         FROM dbo.[order](NOLOCK) AS o
                                           LEFT JOIN dbo.business(NOLOCK) AS b ON o.businessId=b.Id
                                          WHERE  o.[Status]<>3 

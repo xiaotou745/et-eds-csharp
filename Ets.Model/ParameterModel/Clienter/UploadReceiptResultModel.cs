@@ -15,7 +15,7 @@ namespace Ets.Model.ParameterModel.Clienter
         /// <summary>
         /// 小票的图片地址
         /// </summary>
-        public List<string> ImagePath { get; set; }
+        public List<OrderChildImg> OrderChildList { get; set; }
         /// <summary>
         /// 该订单总共需要上传的小票张数
         /// </summary>
@@ -26,4 +26,14 @@ namespace Ets.Model.ParameterModel.Clienter
         /// </summary>
         public int HadUploadCount { get; set; }
     }
+    /// <summary>
+    /// 子单号图片信息
+    /// </summary>
+    public class OrderChildImg
+    {
+        public int OrderChildId { get; set; }
+        public string TicketUrl { get; set; }
+
+    }
+        
 }

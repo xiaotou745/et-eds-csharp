@@ -54,6 +54,16 @@ namespace ETS
         public static int StartSubsidyTime { get { return ParseHelper.ToInt(ConfigKey("StartSubsidyTime")); } }
 
         /// <summary>
+        /// 跨店补贴统计开始时间
+        /// </summary>
+        public static int StartClienterCrossShopLogTime { get { return ParseHelper.ToInt(ConfigKey("StartClienterCrossShopLogTime")); } }
+
+        /// <summary>
+        /// 跨店补贴统计几天前数据
+        /// </summary>
+        public static int ClienterCrossShopLogDaysAgo { get { return ParseHelper.ToInt(ConfigKey("ClienterCrossShopLogDaysAgo")); } }
+
+        /// <summary>
         /// 跨店补贴短信发送开始时间
         /// </summary>
         public static int ShortMessageTime { get { return ParseHelper.ToInt(ConfigKey("ShortMessageTime")); } }
@@ -68,6 +78,15 @@ namespace ETS
         /// </summary>
         public static string OrderCancelReasons { get { return ConfigKey("OrderCancelReasons"); } }
 
+        /// <summary>
+        /// 支付宝回调地址
+        /// </summary>
+        public static string NotifyUrl { get { return ConfigKey("NotifyUrl"); } }
+
+        /// <summary>
+        /// 微信回调地址
+        /// </summary>
+        public static string WXNotifyUrl { get { return ConfigKey("WXNotifyUrl"); } }
         #region 取Web.Config值
 
         /// <summary>

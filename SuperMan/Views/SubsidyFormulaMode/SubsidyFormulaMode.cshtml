@@ -1,11 +1,19 @@
 ﻿@using Ets.Model.DomainModel.GlobalConfig
 
 @{
-    ViewBag.Title = "SubsidyFormulaMode";
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
     GlobalConfigModel globalConfigModel = ViewBag.GloglConfig;
-    string isStarTimeSubsidies = globalConfigModel.IsStarTimeSubsidies == "1" ? "checked=checked" : "";
-    string IsStartOverStoreSubsidies = globalConfigModel.IsStartOverStoreSubsidies == "1" ? "checked=checked" : "";
+    string isStarTimeSubsidies = "";
+    string IsStartOverStoreSubsidies = "";
+    bool IsAdd=ViewBag.GroupId >0?false:true;
+    string StrategyId = ViewBag.StrategyId.ToString();
+    int GroupId = ViewBag.GroupId;
+    string GroupName = ViewBag.GroupName;
+    if (!IsAdd)
+    {
+        isStarTimeSubsidies = globalConfigModel.IsStarTimeSubsidies == "1" ? "checked=checked" : "";
+        IsStartOverStoreSubsidies = globalConfigModel.IsStartOverStoreSubsidies == "1" ? "checked=checked" : "";
+    }
 }
 
 <div class="zpManage zpSh">
@@ -15,38 +23,71 @@
     <div class="SearchMd" style="border-bottom:1px solid #b22222;padding:20px;">
         <table border="0" cellspacing="0" cellpadding="0">
             <tr>
+                <td>
+                    分组名称：<input type="text" id="groupName" name="groupName" value="@ViewBag.GroupName" @(GroupId==1? "readonly":"")/> <input type="submit" value="确认" class="searchBtn" id="btnSubmit" /> 
+                    <input type="hidden" id="groupId" name="groupId" value="@ViewBag.GroupId"></td>
+            </tr>
+            <tr>
                 <td> 
                     <input type="checkbox" @isStarTimeSubsidies id="ckTimeStar" name="ckTimeStar"/> <label for="ckTimeStar" style="color: red">动态时间补贴</label>
-                    <input type="submit" value="确认" class="searchBtn" id="btnIsTimeBuTie" /> 
-                    <a href="/SubsidyManager/TimeSubsidies">动态时间补贴</a> 动态时间补贴可以和任何佣金补贴策略同时存在
+                     （动态时间补贴可以和任何佣金补贴策略同时存在）<a href="/SubsidyManager/TimeSubsidies" >查看</a>
+                    @*<input type="submit" value="确认" class="searchBtn" id="btnIsTimeBuTie" />*@ 
                 </td>
             </tr>
             <tr>
                 <td> 
                     <input type="checkbox" @IsStartOverStoreSubsidies id="ckOverStore" name="ckOverStore"/> <label for="ckOverStore" style="color: red">跨店抢单奖励</label>
-                    <input type="submit" value="确认"  class="searchBtn" id="btnIsOverSotreBuTie" /> 
-                    <a href="/SubsidyFormulaMode/OverStoreSubsidies">跨店抢单奖励</a> 跨店抢单奖励可以和任何佣金补贴策略同时存在
+                     （跨店抢单奖励可以和任何佣金补贴策略同时存在）<a href="/SubsidyFormulaMode/OverStoreSubsidies" >查看</a>
+                    @*<input type="submit" value="确认" class="searchBtn" id="btnIsOverSotreBuTie" />*@ 
                 </td>
             </tr> 
         </table> 
     </div> 
-<div class="SearchMd">
+    <div class="SearchMd">
         <table border="0" cellspacing="0" cellpadding="0"> 
             <tr>
                 <td> 
-                   @{var a = globalConfigModel.CommissionFormulaMode=="0"?"checked =checked":"";}
+                   @{
+                       var a = ""; 
+                       if(!IsAdd)
+                       {
+                           a = StrategyId == "0" ? "checked =checked" : "";
+                       }
+                       else
+                       {
+                           a = "checked =checked";
+                       }
+                     }
                     <input id="rCommissionFormulaMode0" @a name="rCommissionFormulaMode" onclick="changeDiv(0);" type="radio" value="0"> 
                     <label for="rCommissionFormulaMode0" onclick="changeDiv(0);"  style="color: red">普通补贴</label>
-                    @{var b = globalConfigModel.CommissionFormulaMode=="1"?"checked =checked":"";}
+                    @{
+                        var b = "";
+                        if (!IsAdd)
+                        {
+                            b = StrategyId == "1" ? "checked =checked" : "";
+                        }
+                      }
                     <input id="rCommissionFormulaMode1" @b name="rCommissionFormulaMode" onclick="changeDiv(1);" type="radio" value="1">
                     <label for="rCommissionFormulaMode1" onclick="changeDiv(1);"  style="color: red">时间段补贴</label>
-                    @{var c = globalConfigModel.CommissionFormulaMode=="2"?"checked =checked":"";}
+                    @{
+                        var c = "";
+                        if (!IsAdd)
+                        {
+                            c = StrategyId == "2" ? "checked =checked" : "";
+                        }
+                      }
                     <input id="rCommissionFormulaMode2" @c name="rCommissionFormulaMode" onclick="changeDiv(2);" type="radio" value="2">
                     <label for="rCommissionFormulaMode2" onclick="changeDiv(2);" style="color: red">保本补贴</label>
-                    @{var d = globalConfigModel.CommissionFormulaMode == "3" ? "checked =checked" : "";}
+                    @{
+                        var d = "";
+                        if (!IsAdd)
+                        {
+                            d = StrategyId == "3" ? "checked =checked" : "";
+                        }
+                      }
                     <input id="rCommissionFormulaMode3" @d name="rCommissionFormulaMode" onclick="changeDiv(3);" type="radio" value="3">
                     <label for="rCommissionFormulaMode3" onclick="changeDiv(3);"  style="color: red">满金额补贴</label>
-                    <input type="submit" value="确认" class="searchBtn" id="btnCommissionFormulaMode" /> 
+                    @*<input type="submit" value="确认" class="searchBtn" id="btnCommissionFormulaMode" />*@ 
                 </td>
             </tr>
         </table> 
@@ -58,11 +99,11 @@
                     <td>
                         <label style="color: red">普通补贴设置</label>
                         <br /><p>
-                            佣金公式：订单总金额 * @ViewBag.GloglConfig.CommonCommissionRatio %(佣金比例可配置) +配送费或( @ViewBag.GloglConfig.CommonSiteSubsidies 网站补贴)*订单数量
+                            佣金公式：订单总金额 * @(IsAdd==true?0:ViewBag.GloglConfig.CommonCommissionRatio) (佣金比例可配置) +配送费或(@(IsAdd==true?0:ViewBag.GloglConfig.CommonSiteSubsidies) 网站补贴)*订单数量
                         </p>
-                        佣金参数 佣金比例:<input name="txtptCommonCommissionRatio" value="@ViewBag.GloglConfig.CommonCommissionRatio" id="txtptCommonCommissionRatio" type="text">
-                        网站补贴:<input name="txttpCommonSiteSubsidies" value="@ViewBag.GloglConfig.CommonSiteSubsidies" id="txttpCommonSiteSubsidies" type="text">
-                        <input type="submit" value="确定" class="searchBtn" onclick="setCommonCommissionRatio();" />
+                        佣金参数 佣金比例:<input name="txtptCommonCommissionRatio" value="@(IsAdd==true?0:ViewBag.GloglConfig.CommonCommissionRatio)" id="txtptCommonCommissionRatio" type="text">
+                        网站补贴:<input name="txttpCommonSiteSubsidies" value="@(IsAdd==true?0:ViewBag.GloglConfig.CommonSiteSubsidies)" id="txttpCommonSiteSubsidies" type="text">
+                        @*<input type="submit" value="确定" class="searchBtn" onclick="setCommonCommissionRatio();" />*@
                     </td>
                 </tr>
             </table>
@@ -75,14 +116,14 @@
                     <td>
                         <label style="color: red">时间段补贴设置</label>
                         <br /><p>
-                            佣金公式：订单总金额 * @ViewBag.GloglConfig.TimeSpanCommissionRatio %(可配置)+配送费或网站补贴（A、B）*订单数量                        
-                                <br/>（A）上午10：00-13:00 下午16：00-19:00补贴 @ViewBag.GloglConfig.TimeSpanInPrice 元
-                                <br/>（B）其他时间段补贴 @ViewBag.GloglConfig.TimeSpanOutPrice 元或者更低  
+                            佣金公式：订单总金额 * @(IsAdd==true?0:ViewBag.GloglConfig.TimeSpanCommissionRatio) (可配置)+配送费或网站补贴（A、B）*订单数量                        
+                                <br/>（A）上午10：00-13:00 下午16：00-19:00补贴 @(IsAdd==true?0:ViewBag.GloglConfig.TimeSpanInPrice) 元
+                                <br/>（B）其他时间段补贴 @(IsAdd==true?0:ViewBag.GloglConfig.TimeSpanOutPrice) 元或者更低  
                         </p>
-                        佣金参数 佣金比例:<input name="txtTimeSpanCommissionRatio" value="@ViewBag.GloglConfig.TimeSpanCommissionRatio" id="txtTimeSpanCommissionRatio" type="text">
-                        <br/>10：00-13:00 16：00-19:00:<input name="txttpTimeSpanInPrice" value="@ViewBag.GloglConfig.TimeSpanInPrice" id="txttpTimeSpanInPrice" type="text">
-                        <br/>其他时间段补贴:<input name="txttpTimeSpanOutPrice" value="@ViewBag.GloglConfig.TimeSpanOutPrice" id="txttpTimeSpanOutPrice" type="text">
-                        <input type="submit" value="确定" style="width: 150px;" class="searchBtn" onclick="setTimeSpanCommissionRatio();" />
+                        佣金参数 佣金比例:<input name="txtTimeSpanCommissionRatio" value="@(IsAdd==true?0:ViewBag.GloglConfig.TimeSpanCommissionRatio)" id="txtTimeSpanCommissionRatio" type="text">
+                        <br/>10：00-13:00 16：00-19:00:<input name="txttpTimeSpanInPrice" value="@(IsAdd==true?0:ViewBag.GloglConfig.TimeSpanInPrice)" id="txttpTimeSpanInPrice" type="text">
+                        <br/>其他时间段补贴:<input name="txttpTimeSpanOutPrice" value="@(IsAdd==true?0:ViewBag.GloglConfig.TimeSpanOutPrice)" id="txttpTimeSpanOutPrice" type="text">
+                        @*<input type="submit" value="确定" style="width: 150px;" class="searchBtn" onclick="setTimeSpanCommissionRatio();" />*@
                     </td>
                 </tr>
             </table>
@@ -96,11 +137,11 @@
                         <label style="color: red">满金额补贴设置</label>
 
                         <br /><p>
-                            佣金公式: (商家结算比例 - @ViewBag.GloglConfig.PriceCommissionRatio %(满足金额补贴利润比例,可配置)）* 订单总金额 +配送费( @ViewBag.GloglConfig.PriceSiteSubsidies  网站补贴,可配置)*订单数量 +动态金额补贴
+                            佣金公式: (商家结算比例 - @(IsAdd==true?0:ViewBag.GloglConfig.PriceCommissionRatio) %(满足金额补贴利润比例,可配置)）* 订单总金额 +配送费( @(IsAdd==true?0:ViewBag.GloglConfig.PriceSiteSubsidies)  网站补贴,可配置)*订单数量 +动态金额补贴
                         </p>
-                        佣金参数 利润比例:<input name="txtPriceCommissionRatio" value="@ViewBag.GloglConfig.PriceCommissionRatio" id="txtPriceCommissionRatio" type="text">
-                        网站补贴:<input name="txtPriceSiteSubsidies" value="@ViewBag.GloglConfig.PriceSiteSubsidies" id="txtPriceSiteSubsidies" type="text">
-                        <input type="submit" value="确定" style="width: 150px;" class="searchBtn" onclick="setPriceCommissionRatio();" />
+                        佣金参数 利润比例:<input name="txtPriceCommissionRatio" value="@(IsAdd==true?0:ViewBag.GloglConfig.PriceCommissionRatio)" id="txtPriceCommissionRatio" type="text">%
+                        网站补贴:<input name="txtPriceSiteSubsidies" value="@(IsAdd==true?0:ViewBag.GloglConfig.PriceSiteSubsidies)" id="txtPriceSiteSubsidies" type="text">
+                        @*<input type="submit" value="确定" style="width: 150px;" class="searchBtn" onclick="setPriceCommissionRatio();" />*@
                     </td>
                 </tr>
                 <tr>
@@ -121,24 +162,25 @@
             </thead>
             <tbody>
                 @{
-                    if (Model != null)
+                    if (Model != null&&IsAdd==false)
                     {
                         foreach (var item in Model)
                         {
-                <tr>
-                    <td>@item.Id</td>
-                    <td>@item.Value1</td>
-                    <td>@item.Value2</td>
-                    <td>
-                        <a href="javascript:void(0)" onclick="showUpdatePrice(@item.Id,@item.Value1,@item.Value2)">修改</a>
-                        <a href="javascript:void(0)" onclick="deletePrice(@item.Id);">删除</a>
-                    </td>
-                </tr>
+                            <tr>
+                                <td>@item.Id</td>
+                                <td>@item.Value1</td>
+                                <td>@item.Value2</td>
+                                <td>
+                                    <a href="javascript:void(0)" onclick="showUpdatePrice(@item.Id,@item.Value1,@item.Value2)">修改</a>
+                                    <a href="javascript:void(0)" onclick="deletePrice(@item.Id);">删除</a>
+                                </td>
+                            </tr>
                         }
                     }
                 }
             </tbody>
         </table>
+
     </div>  
     <div id="baoBenDiv">
         <div class="SearchMd">
@@ -147,11 +189,11 @@
                     <td>
                         <label style="color: red">保本补贴设置</label>
                         <br /><p>
-                            佣金公式：（商家结算比例– @ViewBag.GloglConfig.CommissionRatio%(可配置)）* 订单总金额 +配送费或( @ViewBag.GloglConfig.SiteSubsidies 网站补贴,可配置)*订单数量
+                            佣金公式：（商家结算比例– @(IsAdd==true?0:ViewBag.GloglConfig.CommissionRatio)(可配置)）* 订单总金额 +配送费或( @(IsAdd==true?0:ViewBag.GloglConfig.SiteSubsidies) 网站补贴,可配置)*订单数量
                         </p>
-                        佣金参数 利润比例:<input name="txtCommissionRatio" value="@ViewBag.GloglConfig.CommissionRatio" id="txtCommissionRatio" type="text">
-                        网站补贴:<input name="txtSiteSubsidies" value="@ViewBag.GloglConfig.SiteSubsidies" id="txtSiteSubsidies" type="text">
-                        <input type="submit" value="确定" style="width: 150px;" class="searchBtn" onclick="setBaoBenCommissionRatio();" />
+                        佣金参数 利润比例:<input name="txtCommissionRatio" value="@(IsAdd==true?0:ViewBag.GloglConfig.CommissionRatio)" id="txtCommissionRatio" type="text">
+                        网站补贴:<input name="txtSiteSubsidies" value="@(IsAdd==true?0:ViewBag.GloglConfig.SiteSubsidies)" id="txtSiteSubsidies" type="text">
+                        @*<input type="submit" value="确定" style="width: 150px;" class="searchBtn" onclick="setBaoBenCommissionRatio();" />*@
                     </td>
                 </tr>
             </table>
@@ -202,9 +244,9 @@
     </div>
 </div>
 <script>
-    var adminjs = new adminglass(); //实例化后台类   
+    var adminjs = new adminglass(); //实例化后台类
     $(document).ready(function () {
-        changeDiv(@globalConfigModel.CommissionFormulaMode);
+        changeDiv(@(IsAdd == true ? "0" : StrategyId));
     });
     function changeDiv(div) {
         $("#putongDiv").hide();
@@ -233,7 +275,7 @@
     }
     function showAddPrice() {
         adminjs.openwinbox('#addDivPrice');
-    } 
+    }
     //新增
     $("#btnConfimAddPrice").on('click', function () {
         var txtPrice = $("#txtaddPrice1").val();
@@ -254,7 +296,12 @@
             alert("请输入价钱!");
             return;
         }
-        var pars = { "Id": 0, "Value1": txtPrice, "Value2": txtPrice1 };
+        if(@GroupId==0)
+        {
+            alert("请先添加分组!");
+            return;
+        }
+        var pars = { "Id": 0, "Value1": txtPrice, "Value2": txtPrice1,"GroupId":@GroupId,"StrategyId":@StrategyId };
         var url = "/SubsidyFormulaMode/AddPriceSubsidies";
         $.ajax({
             type: 'POST',
@@ -264,7 +311,7 @@
             success: function (result) {
                 if (result.IsSuccess) {
                     alert("添加成功!");
-                    window.location.href = "/SubsidyFormulaMode/SubsidyFormulaMode/";
+                    window.location.href = "/SubsidyFormulaMode/SubsidyFormulaMode/?GroupId=@GroupId&StrategyId=@StrategyId&GroupName=@GroupName";
                 } else {
                     alert("添加失败!");
                 }
@@ -274,16 +321,16 @@
 
     function deletePrice(id) {
         if (confirm("确定删除?")) {
-            var pars = { "Id": id };
-            var url = "/SubsidyFormulaMode/DeletePriceSubsidies?id=" + id;
+            var pars = { "Id": id ,"GroupId":@GroupId,"StrategyId":@StrategyId};
+            var url = "/SubsidyFormulaMode/DeletePriceSubsidies";
             $.ajax({
-                type: 'GET',
+                type: 'POST',
                 url: url,
                 data: pars,
                 success: function (result) {
                     if (result.IsSuccess) {
                         alert("删除成功!");
-                        window.location.href = "/SubsidyFormulaMode/SubsidyFormulaMode/";
+                        window.location.href = "/SubsidyFormulaMode/SubsidyFormulaMode/?GroupId=@GroupId&StrategyId=@StrategyId&GroupName=@GroupName";
                     } else {
                         alert("删除失败!");
                     }
@@ -312,7 +359,7 @@
             alert("请输入价钱!");
             return;
         }
-        var pars = { "Id": hidid, "Value1": txtupdaterice1, "Value2": txtupdatePrice2 };
+        var pars = { "Id": hidid, "Value1": txtupdaterice1, "Value2": txtupdatePrice2,"GroupId":@GroupId,"StrategyId":@StrategyId };
         var url = "/SubsidyFormulaMode/UpdatePriceSubsidies";
         $.ajax({
             type: 'POST',
@@ -321,7 +368,7 @@
             success: function (result) {
                 if (result.IsSuccess) {
                     alert("修改成功!");
-                    window.location.href = "/SubsidyFormulaMode/SubsidyFormulaMode/";
+                    window.location.href = "/SubsidyFormulaMode/SubsidyFormulaMode/?GroupId=@GroupId&StrategyId=@StrategyId&GroupName=@GroupName";
                 } else {
                     alert("修改失败!");
                 }
@@ -356,7 +403,8 @@
                 }
             }
         });
-    }); 
+    });
+
     //设置开启跨店抢单
     $("#btnIsOverSotreBuTie").on('click', function () {
         var b = 0;
@@ -380,12 +428,12 @@
                 }
             }
         });
-    }); 
-    
+    });
+
     //设置佣金方式策略
-    $("#btnCommissionFormulaMode").on('click', function () { 
+    $("#btnCommissionFormulaMode").on('click', function () {
         if (confirm("确定修改佣金策略?")) {
-        
+
             var rCommissionFormulaMode = $('input[name="rCommissionFormulaMode"]:checked').val()
             var pars = { "value": rCommissionFormulaMode };
             var url = "/SubsidyFormulaMode/SetCommissionFormulaMode";
@@ -404,7 +452,7 @@
             });
         }
     });
-    
+
     //设置普通补贴佣金比例和网站补贴
     function setCommonCommissionRatio() {
         if (confirm("确定保本补贴参数?")) {
@@ -494,5 +542,65 @@
             });
         }
     }
-    
+    //提交修改
+    $("#btnSubmit").on('click', function () {
+        var groupid = $("#groupId").val();
+        var groupname = $("#groupName").val();//分组名称
+        var IsStarTimeSubsidies = 0;//是否开启动态时间补贴
+        var IsStartOverStoreSubsidies = 0;//是否开启跨店抢单奖励
+        if ($('#ckOverStore').is(':checked')) {
+            IsStartOverStoreSubsidies = 1;
+        }
+        if ($('#ckTimeStar').is(':checked')) {
+            IsStarTimeSubsidies = 1;
+        }
+        var StrategyId = $('input[name="rCommissionFormulaMode"]:checked').val();//策略Id
+        var CommonCommissionRatio = 0;//普通补贴
+        var CommonSiteSubsidies = 0;
+
+        var TimeSpanCommissionRatio = 0;//时间段补贴
+        var TimeSpanInPrice = 0;
+        var TimeSpanOutPrice = 0;
+
+        var CommissionRatio = 0;//保本补贴
+        var SiteSubsidies = 0;
+
+        var PriceCommissionRatio = 0;//满金额补贴
+        var PriceSiteSubsidies = 0;
+
+        if (StrategyId == 0)
+        {
+            CommonCommissionRatio = $("#txtptCommonCommissionRatio").val();
+            CommonSiteSubsidies = $("#txttpCommonSiteSubsidies").val();
+        }
+        if (StrategyId == 1) {
+            TimeSpanCommissionRatio = $("#txtTimeSpanCommissionRatio").val();
+            TimeSpanInPrice = $("#txttpTimeSpanInPrice").val();
+            TimeSpanOutPrice = $("#txttpTimeSpanOutPrice").val();
+        }
+        if (StrategyId == 2) {
+            CommissionRatio = $("#txtCommissionRatio").val();
+            SiteSubsidies = $("#txtSiteSubsidies").val();
+        }
+        if (StrategyId == 3) {
+            PriceCommissionRatio = $("#txtPriceCommissionRatio").val();
+            PriceSiteSubsidies = $("#txtPriceSiteSubsidies").val();
+        }
+        var pars = { "IsStarTimeSubsidies": IsStarTimeSubsidies, "IsStartOverStoreSubsidies": IsStartOverStoreSubsidies, "CommonCommissionRatio": CommonCommissionRatio, "CommonSiteSubsidies": CommonSiteSubsidies, "TimeSpanCommissionRatio": TimeSpanCommissionRatio, "TimeSpanInPrice": TimeSpanInPrice, "TimeSpanOutPrice": TimeSpanOutPrice, "CommissionRatio": CommissionRatio, "SiteSubsidies": SiteSubsidies, "PriceCommissionRatio": PriceCommissionRatio, "PriceSiteSubsidies": PriceSiteSubsidies, "StrategyId": StrategyId, "GroupId": groupid, "GroupName": groupname };
+        var url = "/SubsidyFormulaMode/ModifySubsidyFormulaMode";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: pars,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert(result.Message);
+                    window.location.href = "/CommissionSubsidyStrategy/CommissionSubsidyStrategy/";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    });
+
 </script>
