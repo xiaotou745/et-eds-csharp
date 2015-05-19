@@ -1142,7 +1142,8 @@ WHERE c.Id = @ClienterId  ";
                 result.Password = dataReader["Password"].ToString();
                 result.TrueName = dataReader["TrueName"].ToString();
                 result.IDCard = dataReader["IDCard"].ToString();
-                result.PicWithHandUrl =Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataReader["PicWithHandUrl"].ToString())[0];
+                if (dataReader["PicWithHandUrl"] != null && dataReader["PicWithHandUrl"].ToString()!="")
+                    result.PicWithHandUrl =Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataReader["PicWithHandUrl"].ToString())[0];
                 result.PicUrl = dataReader["PicUrl"].ToString();
                 obj = dataReader["Status"];
                 if (obj != null && obj != DBNull.Value)
