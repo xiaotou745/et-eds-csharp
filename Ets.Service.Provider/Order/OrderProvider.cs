@@ -1,4 +1,5 @@
-﻿using CalculateCommon;
+﻿#region 
+using CalculateCommon;
 using Ets.Dao.Order;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Bussiness;
@@ -39,7 +40,8 @@ using Ets.Model.ParameterModel.Bussiness;
 using Ets.Service.IProvider.Statistics;
 using Ets.Model.DataModel.Strategy;
 using Ets.Service.Provider.Order;
-using Ets.Model.DomainModel.Order;
+using Ets.Model.DomainModel.Order; 
+#endregion
 namespace Ets.Service.Provider.Order
 {
     public class OrderProvider : IOrderProvider

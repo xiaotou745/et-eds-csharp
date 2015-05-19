@@ -56,8 +56,6 @@ namespace SuperMan.Controllers
                 return Json(new ResultModel(false, "此分组名称已存在！"), JsonRequestBehavior.AllowGet);
             }
             bool reg = iBusinessGroupProvider.ModifySubsidyFormulaMode(globalConfigModel);
-            var redis = new ETS.NoSql.RedisCache.RedisCache();
-
             return Json(new ResultModel(reg, reg?"保存成功！":"保存失败！"), JsonRequestBehavior.AllowGet);
         }
 

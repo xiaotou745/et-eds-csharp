@@ -24,16 +24,19 @@ namespace SuperManWebApi.App_Start.Filters
         public override void OnActionExecuting(HttpActionContext actionContext)
         {
             var verSion = HttpContext.Current.Request.Form["version"];
-            Task.Factory.StartNew(() =>
+            if (!string.IsNullOrWhiteSpace(verSion))
             {
-                var model = new ApiVersionStatisticModel
+                Task.Factory.StartNew(() =>
                 {
-                    APIName = actionContext.Request.RequestUri.AbsolutePath,
-                    CreateTime = DateTime.Now,
-                    Version = verSion
-                };
-                new ApiVersionProvider().AddApiRecords(model);
-            });
+                    var model = new ApiVersionStatisticModel
+                    {
+                        APIName = actionContext.Request.RequestUri.AbsolutePath,
+                        CreateTime = DateTime.Now,
+                        Version = verSion
+                    };
+                    new ApiVersionProvider().AddApiRecords(model);
+                });
+            }
         }
 
 

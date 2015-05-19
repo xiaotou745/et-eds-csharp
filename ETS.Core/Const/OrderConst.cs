@@ -175,5 +175,10 @@ namespace ETS.Const
 
         #endregion
         #endregion
+
+        /// <summary>
+        /// 该时间之后的订单才处理金额
+        /// </summary>
+        public const string ConstDateTime ="2015-05-24 00:00:00";
     }
 }

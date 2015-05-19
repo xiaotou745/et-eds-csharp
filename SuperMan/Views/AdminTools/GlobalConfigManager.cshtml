@@ -1,0 +1,96 @@
+﻿@using Ets.Model.DomainModel.GlobalConfig
+@{
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+    GlobalConfigModel globalConfigModel = ViewBag.GloglConfig;
+}
+<script src="~/Scripts/jquery-2.1.1.js"></script>
+<script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：管理员工具 > 公共配置管理
+    </h2>
+    <div class="SearchMd">
+        <table border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td>
+                    <span>骑士经纬度上传时间间隔:</span>
+                    <input type="text" name="uploadTimeInterval" value="@globalConfigModel.UploadTimeInterval" id="uploadTimeInterval" style="width: 100px" />秒
+                    <input type="hidden" name="oldUploadTimeInterval" value="@globalConfigModel.UploadTimeInterval" id="oldUploadTimeInterval" />
+                </td>
+                <td>
+                    <span>订单推动区域半径:</span>
+                    <input type="text" name="pushRadius" value="@globalConfigModel.PushRadius" id="pushRadius" style="width: 100px" />千米
+                    <input type="hidden" name="oldPushRadius" value="@globalConfigModel.PushRadius" id="oldPushRadius" />
+                </td>
+                <td>
+                    <span>骑士订单列表每页显示条数:</span>
+                    <input type="text" name="clienterOrderPageSize" value="@globalConfigModel.ClienterOrderPageSize" id="clienterOrderPageSize" style="width: 100px" />条
+                    <input type="hidden" name="oldClienterOrderPageSize" value="@globalConfigModel.ClienterOrderPageSize" id="oldClienterOrderPageSize" />
+                </td>
+                <td>
+                    <input  type="button" value="提交修改" class="searchBtn" id="btnCommit" />
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("#btnCommit").click(function () {
+            var uploadTimeInterval = $("#uploadTimeInterval").val(); //上传时间间隔
+            var pushRadius = $("#pushRadius").val(); //推送半径
+            var clienterOrderPageSize = $("#clienterOrderPageSize").val(); //骑士订单列表每页显示条数
+            var oldUploadTimeInterval = $("#oldUploadTimeInterval").val(); //上传时间间隔（之前）
+            var oldPushRadius = $("#oldPushRadius").val(); //推送半径（之前）
+            var oldClienterOrderPageSize = $("#oldClienterOrderPageSize").val(); //骑士订单列表每页显示条数（之前）
+            if (isNaN(uploadTimeInterval)) {
+                alert("请输入正确的数字!");
+                return;
+            }
+            if (uploadTimeInterval < 0) {
+                alert("请输入大于零的值!");
+                return;
+            }
+
+            if (isNaN(pushRadius)) {
+                alert("请输入正确的数字!");
+                return;
+            }
+            if (pushRadius < 0) {
+                alert("请输入大于零的值!");
+                return;
+            }
+            if (isNaN(clienterOrderPageSize)) {
+                alert("请输入正确的数字!");
+                return;
+            }
+            if (clienterOrderPageSize < 0) {
+                alert("请输入大于零的值!");
+                return;
+            }
+            if (uploadTimeInterval == oldUploadTimeInterval && pushRadius == oldPushRadius && clienterOrderPageSize == oldClienterOrderPageSize) {
+                alert("没有需要修改的信息!");
+                return;
+            }
+            if (confirm("确定提交修改?")) {
+                var pars = { "uploadTimeInterval": uploadTimeInterval, "pushRadius": pushRadius, "clienterOrderPageSize": clienterOrderPageSize };
+                var url = "/AdminTools/ModifyGlobalConfig";
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: pars,
+                    success: function (result) {
+                        if (result.IsSuccess) {
+                            alert(result.Message);
+                            window.location.href = "/AdminTools/GlobalConfigManager/";
+                        } else {
+                            alert(result.Message);
+                        }
+                    }
+                });
+            }
+
+        });
+    })
+</script>

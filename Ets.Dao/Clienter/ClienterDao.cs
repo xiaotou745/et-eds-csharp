@@ -245,6 +245,29 @@ namespace Ets.Dao.Clienter
         }
 
         /// <summary>
+        /// 更新用户余额以及可提现金额
+        /// 窦海超
+        /// 2015年3月23日 12:47:54
+        /// </summary>
+        /// <returns></returns>
+        public bool UpdateAccountBalanceAndWithdraw(WithdrawRecordsModel model)
+        {
+            ClienterModel cliterModel = GetUserInfoByUserId(model.UserId);//获取当前用户余额
+            decimal balance = ParseHelper.ToDecimal(cliterModel.AccountBalance, 0);
+            decimal Money = balance + model.Amount;
+            if (Money < 0)//如果提现金额大于当前余额则不能提现
+            {
+                return false;
+            }
+            model.Balance = balance;
+            string sql = @"update dbo.clienter set AccountBalance = @Money , AllowWithdrawPrice=AllowWithdrawPrice+@AllowWithdrawPrice WHERE id=" + model.UserId;
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Money", Money);
+            parm.Add("AllowWithdrawPrice", DbType.Decimal, 18).Value = model.Amount;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+        }
+
+        /// <summary>
         /// 根据用户ID更新密码
         /// </summary>
         /// <param name="UserId">用户ID</param>
@@ -687,18 +710,20 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, ConstValues.OrderH
         public OrderOther UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel)
         {
             OrderOther orderOther = new OrderOther();
-            var oo = GetReceiptInfo(uploadReceiptModel.OrderId); 
-            //uploadReceiptModel.NeedUploadCount = oo.NeedUploadCount;
-            //if (oo.Id == 0)
-            //{
-            //    orderOther = InsertReceiptInfo(uploadReceiptModel);
-            //}
-            //else
-            //{
-                orderOther = UpdateReceiptInfo(uploadReceiptModel);
-            //}
+            var oo = GetReceiptInfo(uploadReceiptModel.OrderId);
+            uploadReceiptModel.NeedUploadCount = oo.NeedUploadCount;
+            if (oo.Id == 0)
+            {
+                orderOther = InsertReceiptInfo(uploadReceiptModel);
+            }
+            else
+            {
+            orderOther = UpdateReceiptInfo(uploadReceiptModel);
+            }
             orderOther.OrderStatus = oo.OrderStatus;
             orderOther.OrderCreateTime = oo.OrderCreateTime;
+            //orderOther.IsPay = oo.IsPay;
+            //orderOther.SettleMoney = oo.SettleMoney;
             return orderOther;
         }
 
@@ -866,8 +891,8 @@ where   OrderId = @OrderId
         /// <returns>OrderOther</returns>
         public OrderOther GetReceiptInfo(int orderId)
         {
-            string sql = @"select  o.Id OrderId ,
-        ISNULL(oo.Id,0) Id ,
+            string sql = @"select  o.Id OrderId ,o.IsPay,
+        ISNULL(oo.Id,0) Id ,o.SettleMoney,
         o.[Status] OrderStatus,
         o.OrderCount NeedUploadCount,
         oo.ReceiptPic ,
@@ -897,12 +922,12 @@ where   o.Id = @OrderId";
         /// <param name="uploadReceiptModel"></param>
         /// <returns></returns>
         public OrderOther DeleteReceipt(UploadReceiptModel uploadReceiptModel)
-        { 
+        {
             string delPic = uploadReceiptModel.ReceiptPic;
             //更新小票信息
             OrderOther oo = GetReceiptInfo(uploadReceiptModel.OrderId);
             if (oo.Id > 0)
-            { 
+            {
                 List<string> listReceiptPic = ImageCommon.GetListImgString(oo.ReceiptPic);
                 int delPre = listReceiptPic.Count;
                 int delAft = 0;
@@ -1004,9 +1029,9 @@ select  Id,PhoneNo,LoginName,recommendPhone,Password,TrueName,IDCard,PicWithHand
 AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode
 ,AreaCode,CityCode,Province,BussinessID,WorkStatus,AllowWithdrawPrice,HasWithdrawPrice
 from  clienter (nolock) 
-where Id=@Id" ;
+where Id=@Id";
 
-            IDbParameters dbClienterParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);              
+            IDbParameters dbClienterParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);
             clienterDM = DbHelper.QueryForObject(SuperMan_Read, queryClienterSql, dbClienterParameters, new ClienterRowMapper());
             #endregion
 
@@ -1065,7 +1090,7 @@ select count(1)
 from   dbo.[clienter] (nolock) 
 where  id = @id";
 
-            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);              
+            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
             isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
 

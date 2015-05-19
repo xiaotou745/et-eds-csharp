@@ -1401,7 +1401,8 @@ select top 1
         o.PickupCode ,
         o.OrderCount,
         c.TrueName ClienterName,
-        ISNULL(oo.HadUploadCount,0) HadUploadCount
+        ISNULL(oo.HadUploadCount,0) HadUploadCount,
+        o.SettleMoney,b.Id businessId
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id

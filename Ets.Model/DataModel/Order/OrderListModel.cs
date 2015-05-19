@@ -244,5 +244,9 @@ namespace Ets.Model.DataModel.Order
         /// 子订单
         /// </summary>
         public List<OrderDetail> OrderDetailList { get; set; }
+        /// <summary>
+        /// 商户结算金额
+        /// </summary>
+        public decimal SettleMoney { get; set; }
     }
 }

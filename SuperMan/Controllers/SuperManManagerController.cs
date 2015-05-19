@@ -158,7 +158,7 @@ namespace SuperMan.Controllers
             var model = new Ets.Model.ParameterModel.WtihdrawRecords.WithdrawRecordsModel()
             {
                 AdminId = UserContext.Current.Id,
-                Amount = Price,
+                Amount = Price, //提现金额
                 Balance = 0,
                 Platform = 1,
                 UserId = UserId
