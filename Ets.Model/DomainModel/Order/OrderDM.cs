@@ -50,7 +50,7 @@ namespace Ets.Model.DomainModel.Order
         /// <summary>
         /// 发布时间
         /// </summary>
-        public DateTime? PubDate { get; set; }
+        public string PubDate { get; set; }
 
         /// <summary>
         /// 发货人
@@ -170,7 +170,7 @@ namespace Ets.Model.DomainModel.Order
         /// <summary>
         /// 抢单时间
         /// </summary>
-        public DateTime GrabDate { get; set; }
+        public DateTime GrabTime { get; set; }
        
         /// <summary>
         /// 子订单集合

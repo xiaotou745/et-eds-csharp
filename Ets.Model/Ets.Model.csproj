@@ -63,6 +63,7 @@
     <Compile Include="DataModel\Bussiness\BusinessGroupModel.cs" />
     <Compile Include="DataModel\Bussiness\BusinessOptionLog.cs" />
     <Compile Include="DataModel\Clienter\ClienterCrossShopLogModel.cs" />
+    <Compile Include="DataModel\Clienter\ClienterLocation.cs" />
     <Compile Include="DataModel\Clienter\CrossShopStatisticLogModel.cs" />
     <Compile Include="DataModel\Order\OrderChildFinishModel.cs" />
     <Compile Include="DataModel\Order\PayStatusModel.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="DomainModel\Finance\ClienterWithdrawFormModel.cs" />
     <Compile Include="DomainModel\Finance\ClienterWithdrawLogModel.cs" />
     <Compile Include="DomainModel\Finance\FinanceRecordsDM.cs" />
+    <Compile Include="DomainModel\Order\GetJobCDM.cs" />
     <Compile Include="DomainModel\Order\NonJoinWithdrawModel.cs" />
     <Compile Include="DomainModel\Finance\FinanceRecordsDMList.cs" />
     <Compile Include="DomainModel\Order\OrderChildForTicket.cs" />
@@ -175,6 +177,7 @@
     <Compile Include="ParameterModel\Bussiness\BussinessStatusModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BussOrderParaModelApp.cs" />
     <Compile Include="ParameterModel\Bussiness\BusinessSearchCriteria.cs" />
+    <Compile Include="ParameterModel\Bussiness\ClienterPushLocaltionPM.cs" />
     <Compile Include="ParameterModel\Bussiness\LoginModel.cs" />
     <Compile Include="ParameterModel\Bussiness\NewBusiRegisterResultModel.cs" />
     <Compile Include="ParameterModel\Bussiness\NewRegisterInfoModel.cs" />

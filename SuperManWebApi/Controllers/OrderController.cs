@@ -24,6 +24,8 @@ using SuperManWebApi.App_Start.Filters;
 using System.Text.RegularExpressions;
 using SuperManWebApi.Providers;
 using Ets.Model.Common.AliPay;
+using System.Text;
+using System.Runtime.Serialization.Json;
 
 namespace SuperManWebApi.Controllers
 {
@@ -50,18 +52,26 @@ namespace SuperManWebApi.Controllers
         {
             try
             {
-                order order;
+                LogHelper.LogWriter(" Push()方法出错1", new { obj = "时间：" + DateTime.Now.ToString() + model.OrderChlidJson });
+                //通过传过来的字符串序列化对象                
+                //model.listOrderChlid = Deserialize<List<OrderChlidPM>>(model.OrderChlidJson);
+                LogHelper.LogWriter(" Push()方法出错2", new { obj = "时间：" + DateTime.Now.ToString() + model.listOrderChlid.Count });
+
+                order order;             
                 ResultModel<BusiOrderResultModel> currResModel = Verification(model, out order);
                 if (currResModel.Status == PubOrderStatus.VerificationSuccess.GetHashCode())
                 {
+                    LogHelper.LogWriter(" Push()方法出错3", new { obj = "时间：" + DateTime.Now.ToString() + currResModel.Status });
                     PubOrderStatus cuStatus = iOrderProvider.AddOrder(order);
+                    LogHelper.LogWriter(" Push()方法出错4", new { obj = "时间：" + DateTime.Now.ToString() + cuStatus });
                     if (cuStatus == PubOrderStatus.Success)//当前订单执行失败
                     {
                         BusiOrderResultModel resultModel = new BusiOrderResultModel { userId = model.userId };
                         return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
                     }
                 }
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.InvalidPubOrder);
+
+                return currResModel;
             }
             catch (Exception ex)
             {
@@ -70,6 +80,15 @@ namespace SuperManWebApi.Controllers
             }
         }
 
+        private T Deserialize<T>(string json)
+        {
+            T obj = Activator.CreateInstance<T>();
+            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(json)))
+            {
+                DataContractJsonSerializer serializer = new DataContractJsonSerializer(obj.GetType());
+                return (T)serializer.ReadObject(ms);
+            }
+        }
         /// <summary>
         /// 订单合法性验证
         /// </summary>
@@ -98,11 +117,16 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountMoreThanFiveThousand);
             }
-            Regex dReg = new Regex("^1\\d{10}$");
-            if (!dReg.IsMatch(model.recevicePhone))//验证收货人手机号
-            {
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneErr);
-            }
+
+            //if (model.recevicePhone == null || model.recevicePhone == "")
+            //{
+            //    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneErr);
+            //}
+            //Regex dReg = new Regex("^1\\d{10}$");
+            //if (!dReg.IsMatch(model.recevicePhone))//验证收货人手机号
+            //{
+            //    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneErr);
+            //}
             if (model.OrderCount <= 0 || model.OrderCount > 15) //判断录入订单数量是否符合要求
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
@@ -441,6 +465,18 @@ namespace SuperManWebApi.Controllers
         public ResultModel<PayResultModel> GetChildPayStatus(OrderChildModel model)
         {
             return iOrderChildProvider.GetPayStatus(model.orderId, model.childId);
+        }
+
+
+        /// <summary>
+        /// 骑士端获取任务列表（最新/最近）任务   add by caoheyang 20150519
+        /// </summary>
+        /// <param name="getJobCDm">参数实体</param>
+        /// <returns></returns>
+        [HttpPost]
+        public ResultModel<object> GetJobC(GetJobCDM getJobCDm)
+        {
+            return iOrderProvider.GetJobC(getJobCDm);
         }
     }
 }

@@ -4,7 +4,37 @@
     <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
 </div>
 <script src="~/Scripts/jquery-1.10.2.min.js"></script>
-<script>
+<script>     
+   
+    $.ajax({
+        type: 'POST',
+        dataType: 'json',
+        url: '/Order/Push',
+        data: {
+            "userId": 1765,
+            "ReceiveName": "健康快乐",
+            "receviceAddress": "铁路局",
+            "recevicePhone": "13595555877",            
+            "Amount": 0,
+            "IsPay": false,
+            "Remark":null ,
+            "OrderCount": 0,
+            "OrderSign": "1431935133274",
+            "TimeSpan": 1431935133275,
+            "Version":"1.1.0",
+            "listOrderChlid": [
+                       {
+                           "ChildId": 1,
+                           "GoodPrice": 121
+                       }
+            ]
+        },
+        success: function (data) {
+            console.log(data);
+        },
+        error: function () { }
+    });
+
     //$.ajax({
     //    type: 'POST',
     //    dataType: 'json',
@@ -30,6 +60,21 @@
     //                       "GoodPrice": 23                          
     //                   }
     //               ]
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
+
+
+    //$.ajax({
+    //    type: 'POST',
+    //    dataType: 'json',
+    //    url: '/Business/GetDistribSubsidy',
+    //    data: {
+    //        "BussinessId": 172,
+    //        "Version": "1.0.1"
     //    },
     //    success: function (data) {
     //        console.log(data);

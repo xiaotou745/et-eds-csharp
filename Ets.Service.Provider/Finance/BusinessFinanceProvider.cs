@@ -468,7 +468,7 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public string CreateBusinessWithdrawFormExcel(List<BusinessWithdrawFormModel> list)
         {
-            StringBuilder strBuilder = new StringBuilder();
+            var strBuilder = new StringBuilder();
             strBuilder.AppendLine("<table border=1 cellspacing=0 cellpadding=5 rules=all>");
             //输出表头.
             strBuilder.AppendLine("<tr style=\"font-weight: bold; white-space: nowrap;\">");
@@ -500,7 +500,7 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public string CreateBusinessBalanceRecordExcel(List<BusinessBalanceRecordModel> list)
         {
-            StringBuilder strBuilder = new StringBuilder();
+            var strBuilder = new StringBuilder();
             strBuilder.AppendLine("<table border=1 cellspacing=0 cellpadding=5 rules=all>");
             //输出表头.
             strBuilder.AppendLine("<tr style=\"font-weight: bold; white-space: nowrap;\">");

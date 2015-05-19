@@ -1970,11 +1970,13 @@ values  ( @OrderNo ,
 
             #region 写子OrderOther表
             const string insertOtherSql = @"
-insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount)
-values(@OrderId,@NeedUploadCount,0)";
+insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount,PubLongitude,PubLatitude)
+values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude)";
             IDbParameters dbOtherParameters = DbHelper.CreateDbParameters();
             dbOtherParameters.AddWithValue("@OrderId", orderId); //商户ID
-            dbOtherParameters.AddWithValue("@NeedUploadCount", order.OrderCount); //户名
+            dbOtherParameters.AddWithValue("@NeedUploadCount", order.OrderCount); //需上传数量
+            dbOtherParameters.AddWithValue("@PubLongitude", order.PubLongitude);
+            dbOtherParameters.AddWithValue("@PubLatitude", order.PubLatitude); 
             DbHelper.ExecuteScalar(SuperMan_Write, insertOtherSql, dbOtherParameters);
             #endregion
 
@@ -2008,6 +2010,7 @@ values(@OrderId,@NeedUploadCount,0)";
                     bulk.ColumnMappings.Add("TotalPrice", "TotalPrice");
                     bulk.ColumnMappings.Add("GoodPrice", "GoodPrice");
                     bulk.ColumnMappings.Add("DeliveryPrice", "DeliveryPrice");
+                    bulk.ColumnMappings.Add("PayStatus", "PayStatus");
                     bulk.ColumnMappings.Add("CreateBy", "CreateBy");
                     bulk.ColumnMappings.Add("UpdateBy", "UpdateBy");
 
@@ -2017,6 +2020,7 @@ values(@OrderId,@NeedUploadCount,0)";
                     dt.Columns.Add(new DataColumn("TotalPrice", typeof(decimal)));
                     dt.Columns.Add(new DataColumn("GoodPrice", typeof(decimal)));
                     dt.Columns.Add(new DataColumn("DeliveryPrice", typeof(decimal)));
+                    dt.Columns.Add(new DataColumn("PayStatus", typeof(int)));
                     dt.Columns.Add(new DataColumn("CreateBy", typeof(string)));
                     dt.Columns.Add(new DataColumn("UpdateBy", typeof(string)));
 
@@ -2029,6 +2033,10 @@ values(@OrderId,@NeedUploadCount,0)";
                         dr["TotalPrice"] = totalPrice;
                         dr["GoodPrice"] = order.listOrderChild[i].GoodPrice;
                         dr["DeliveryPrice"] = order.DistribSubsidy;
+                        if ((bool)order.IsPay)
+                            dr["PayStatus"] = 1;
+                        else
+                            dr["PayStatus"] = 0;
                         dr["CreateBy"] = order.BusinessName;
                         dr["UpdateBy"] = order.BusinessName;
                         dt.Rows.Add(dr);
@@ -2167,6 +2175,37 @@ where   oo.IsJoinWithdraw = 0
             DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
         }
 
+
+        /// <summary>
+        /// 骑士端获取任务列表（最新/最近）任务   add by caoheyang 20150519
+        /// </summary>
+        /// <param name="getJobCDm">订单查询实体</param>
+        /// <returns></returns>
+        public IList<GetJobCDM> GetJobC(GetJobCDM getJobCDm)
+        {
+            IList<GetJobCDM> models = new List<GetJobCDM>();
+            string sql = @"
+select a.Id,a.OrderCommission,a.OrderCount,   
+(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
+b.Name as BusinessName,b.Address as BusinessAddress,
+ISNULL(a.ReceviceAddress,'') as UserAddress,
+case convert(varchar(100), PubDate, 23) 
+	when convert(varchar(100), getdate(), 23) then '今日 '
+    else substring(convert(varchar(100), PubDate, 23),6,5) 
+end
++'  '+substring(convert(varchar(100),PubDate,24),1,5)
+as PubDate 
+from dbo.[order] a
+join dbo.business b on a.businessId=b.Id
+";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                models = DataTableHelper.ConvertDataTableList<GetJobCDM>(dt);
+            }
+            return models;
+        }
         
     }
 }
