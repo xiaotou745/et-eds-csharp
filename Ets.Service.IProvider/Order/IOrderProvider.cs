@@ -194,6 +194,13 @@ namespace Ets.Service.IProvider.Order
         /// <UpdateTime>20150512</UpdateTime>
         /// <param name="id">订单查询实体</param>
         /// <returns></returns>
-        OrderDM GetDetails(OrderPM modelPM);    
+        OrderDM GetDetails(OrderPM modelPM);
+
+        /// <summary>
+        /// 骑士端获取任务列表（最新/最近）任务   add by caoheyang 20150519
+        /// </summary>
+        /// <param name="getJobCDm">订单查询实体</param>
+        /// <returns></returns>
+        ResultModel<object> GetJobC(GetJobCDM getJobCDm);
     }
 }

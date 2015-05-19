@@ -449,5 +449,17 @@ namespace SuperManWebApi.Controllers
         {
             return iOrderChildProvider.GetPayStatus(model.orderId, model.childId);
         }
+
+
+        /// <summary>
+        /// 骑士端获取任务列表（最新/最近）任务   add by caoheyang 20150519
+        /// </summary>
+        /// <param name="getJobCDm">参数实体</param>
+        /// <returns></returns>
+        [HttpPost]
+        public ResultModel<object> GetJobC(GetJobCDM getJobCDm)
+        {
+            return iOrderProvider.GetJobC(getJobCDm);
+        }
     }
 }
