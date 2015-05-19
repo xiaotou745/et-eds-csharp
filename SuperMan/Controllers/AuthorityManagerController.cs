@@ -1,5 +1,7 @@
 ﻿using Ets.Service.IProvider.AuthorityMenu;
+using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Authority;
+using Ets.Service.Provider.Common;
 using SuperMan.App_Start;
 using SuperManBusinessLogic.Authority_Logic;
 using SuperManCommonModel;
@@ -21,6 +23,7 @@ namespace SuperMan.Controllers
     public class AuthorityManagerController : BaseController
     {
         IAuthorityMenuProvider iAuthorityMenuProvider = new AuthorityMenuProvider();
+        IAreaProvider iAreaProvider = new AreaProvider();
         // GET: AuthorityManager
        /// <summary>
        /// 后台用户管理列表页面
@@ -36,6 +39,7 @@ namespace SuperMan.Controllers
            //}
 
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
             var criteria = new Ets.Model.ParameterModel.Authority.AuthoritySearchCriteria() { GroupId = SuperMan.App_Start.UserContext.Current.GroupId };
             var authorityModel = iAuthorityMenuProvider.GetAuthorityManage(criteria);
             return View(authorityModel);
@@ -50,6 +54,7 @@ namespace SuperMan.Controllers
         {
             Ets.Model.ParameterModel.Authority.AuthoritySearchCriteria criteria = new Ets.Model.ParameterModel.Authority.AuthoritySearchCriteria();
             TryUpdateModel(criteria);
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
             var authorityModel = iAuthorityMenuProvider.GetAuthorityManage(criteria);
             return PartialView("_AuthorityManagerList", authorityModel);
         }

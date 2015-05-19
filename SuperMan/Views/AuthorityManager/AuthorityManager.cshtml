@@ -1,21 +1,22 @@
 ﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Authority.account>
+@using System.Diagnostics
+@using Ets.Model;
+@using Ets.Model.DomainModel.Area
 @using SuperMan.App_Start
 @using Ets.Service.Provider.User
-@using Ets.Model
 @{
-    ViewBag.Title = "Authority";
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
 }
 @*<script src="~/Scripts/view/authoritylist.js"></script>*@
-    <div class="zpManage zpSh">
-        <h2 class="crumbs">
-            您所在位置：账号管理 > 账号管理
-        </h2>
-        @using (Ajax.BeginForm("PostAuthorityManager", new RouteValueDictionary { { "pageindex", "" } },
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：账号管理 > 账号管理
+    </h2>
+    @using (Ajax.BeginForm("PostAuthorityManager", new RouteValueDictionary { { "pageindex", "" } },
         new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
         new RouteValueDictionary { { "id", "searchForm" } }))
-        {
-              <div class="SearchMd">
+    {
+        <div class="SearchMd">
             <table border="0" cellspacing="0" cellpadding="0">
                 <tr>
                     <td>
@@ -24,19 +25,19 @@
                         <input name="GroupId" id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" />
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                         @if (UserContext.Current.HasAuthority(26))
-                        { 
-                             <input type="button" value="添加用户" class="searchBtn" id="btnAdd" />
+                        {
+                            <input type="button" value="添加用户" class="searchBtn" id="btnAdd" />
                         }
                     </td>
                 </tr>
             </table>
         </div>
-        }
-        <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
-        <div class="bd clearfix" id="dataList">
-            @Html.Partial("_AuthorityManagerList", Model)
-        </div>
+    }
+    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <div class="bd clearfix" id="dataList">
+        @Html.Partial("_AuthorityManagerList", Model)
     </div>
+</div>
 @*添加帐号*@
 <div class="selectSupplierDish">
     <div class="add-openbox add-form" id="AddAccountShow" style="width:500px">
@@ -67,9 +68,17 @@
                 </div>
                 <div class="control-group">
                     <!-- Text input-->
-                    <label class="control-label" for="input01">密码</label>
+                    <label class="control-label" for="input01">密  码</label>
                     <div class="controls">
                         <input placeholder="密码" name="password" id="password" class="input-xlarge" required="required" type="password"><i style="color:red">*</i>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <!-- Text input-->
+                    <label class="control-label" for="input01">确认密码</label>
+                    <div class="controls">
+                        <input placeholder="确认密码" name="confirmpassword" id="confirmpassword" class="input-xlarge" required="required" type="password"><i style="color:red">*</i>
                         <p class="help-block"></p>
                     </div>
                 </div>
@@ -79,7 +88,7 @@
                         <!-- Text input-->
                         <label class="control-label" for="input01">集团</label>
                         <div class="controls">
-                            @Html.DropDownList("AddGroupId", new SelectList(new BusinessProvider().GetGroups() , "Id", "GroupName"), "--无--", new { @class = "selectw", style = "width:143px" })
+                            @Html.DropDownList("AddGroupId", new SelectList(new BusinessProvider().GetGroups(), "Id", "GroupName"), "--无--", new { @class = "selectw", style = "width:143px" })
                         </div>
                     </div>
                 }
@@ -87,14 +96,36 @@
                 {
                     <input name="AddGroupId" id="AddGroupId" type="hidden" value="@ViewBag.txtGroupId" />
                 }
-             
+                <div class="control-group" style="width:500px">
+                    <!-- Text input-->
+                    <label class="control-label" for="input01">城市管理:<a>请选择</a></label>
+                </div>
+                <div style="width:500px">
+                    @{
+                        var openCityList = ViewBag.openCityList.Result.AreaModels as List<AreaModel>;
+                        if (openCityList != null && openCityList.Count > 0)
+                        {
+                            <div style="width: 100px;float: left">
+                                <input type="checkbox" name="checkMenus" id="selectAll" onclick="checkAll()" />全选/取消
+                            </div>
+                            foreach (var item in openCityList)
+                            {
+                                <div style="width: 100px;float: left">
+                                    <input type="checkbox" name="checkMenus" id="@item.Code" />
+                                    <label>@item.Name</label>
+                                </div>
+                            }
+                        }
+
+                    }
+                </div>
             </fieldset>
             <p class="btnbox">
                 <input value="确定" type="submit" id="btnAddAccount" class="yesBtn" />
                 <input value="关闭" type="button" class="J_closebox qxBtn" />
             </p>
         </form>
-        
+
     </div>
 </div>
 @*修改密码*@
@@ -107,7 +138,7 @@
 
         <form class="form-horizontal" role="form" id="ModifyPwdForm" method="post">
             <fieldset>
-                <input type="hidden" name="Id" id="hddsupplierdishid" class="form-control">                
+                <input type="hidden" name="Id" id="hddsupplierdishid" class="form-control">
                 <div class="control-group">
                     <!-- Text input-->
                     <label class="control-label" for="input01">密码</label>
@@ -129,7 +160,7 @@
                 <input value="确定" type="submit" id="btnModifyPwd" class="yesBtn" />
                 <input value="关闭" type="button" class="J_closebox qxBtn" />
             </p>
-        </form>        
+        </form>
     </div>
 </div>
 @*设置权限*@
@@ -138,10 +169,10 @@
 </div>
 <script>
     var adminjs = new adminglass(); //实例化后台类
+    
     //var DEFAULT_PAGESIZE = 15;
     //var criteria = { PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }, GroupId: $("#txtGroupId").val() };
     $(document).ready(function () {
-        
         ////查询
         //$("#btnSearch").on('click', function () {
         //    criteria = {
@@ -155,8 +186,11 @@
             adminjs.openwinbox('#AddAccountShow');
         });
         window.location.hash = '';
- 
     })
+    function checkAll() {
+        var checkedOfAll = $("#selectAll").prop("checked");
+        $("input[name='checkMenus']").prop("checked", checkedOfAll);
+    }
     //////分页
     //art.ui.control.NewPager.enablePaging(document, refresh);
     //function refresh(pageIndex) {
@@ -172,5 +206,6 @@
     //                $("#dataList").html(data);
     //            });
     //};
+    
 </script>
 <script src="~/Scripts/mvcpager.js"></script>
