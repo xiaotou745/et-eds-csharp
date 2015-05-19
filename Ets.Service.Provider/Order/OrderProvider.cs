@@ -282,6 +282,9 @@ namespace Ets.Service.Provider.Order
             to.OrderCount = busiOrderInfoModel.OrderCount;  //订单数量
             to.ReceviceLongitude = busiOrderInfoModel.longitude;
             to.ReceviceLatitude = busiOrderInfoModel.laitude;
+            to.PubLongitude = busiOrderInfoModel.PubLongitude;//商户发单经度
+            to.PubLatitude = busiOrderInfoModel.PubLatitude;
+
 
             //必须写to.DistribSubsidy ，防止bussiness为空情况
             OrderCommission orderComm = new OrderCommission()
@@ -1133,8 +1136,8 @@ namespace Ets.Service.Provider.Order
             orderDM.TotalDistribSubsidy = order.TotalDistribSubsidy;
             orderDM.ClienterName = order.ClienterName;
             orderDM.ClienterPhoneNo = order.ClienterPhoneNo;
-            orderDM.GrabDate = order.GrabDate;
-   if (order.NeedUploadCount >= order.OrderCount && order.Status == OrderStatus.订单完成.GetHashCode())
+            orderDM.GrabTime = order.GrabTime;
+            if (order.NeedUploadCount >= order.OrderCount && order.Status == OrderStatus.订单完成.GetHashCode())
             {
                 orderDM.IsModifyTicket = false;
             }            CalculationLgAndLa(orderDM, modelPM, order);//计算经纬度

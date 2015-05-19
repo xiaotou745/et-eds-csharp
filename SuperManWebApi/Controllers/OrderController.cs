@@ -51,15 +51,19 @@ namespace SuperManWebApi.Controllers
         public ResultModel<BusiOrderResultModel> Push(BussinessOrderInfoPM model)
         {
             try
-            {             
+            {
+                LogHelper.LogWriter(" Push()方法出错1", new { obj = "时间：" + DateTime.Now.ToString() + model.OrderChlidJson });
                 //通过传过来的字符串序列化对象                
-                model.listOrderChlid = Deserialize<List<OrderChlidPM>>(model.OrderChlidJson);              
+                //model.listOrderChlid = Deserialize<List<OrderChlidPM>>(model.OrderChlidJson);
+                LogHelper.LogWriter(" Push()方法出错2", new { obj = "时间：" + DateTime.Now.ToString() + model.listOrderChlid.Count });
 
                 order order;             
                 ResultModel<BusiOrderResultModel> currResModel = Verification(model, out order);
                 if (currResModel.Status == PubOrderStatus.VerificationSuccess.GetHashCode())
                 {
+                    LogHelper.LogWriter(" Push()方法出错3", new { obj = "时间：" + DateTime.Now.ToString() + currResModel.Status });
                     PubOrderStatus cuStatus = iOrderProvider.AddOrder(order);
+                    LogHelper.LogWriter(" Push()方法出错4", new { obj = "时间：" + DateTime.Now.ToString() + cuStatus });
                     if (cuStatus == PubOrderStatus.Success)//当前订单执行失败
                     {
                         BusiOrderResultModel resultModel = new BusiOrderResultModel { userId = model.userId };
