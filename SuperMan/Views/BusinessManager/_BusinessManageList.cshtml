@@ -115,33 +115,33 @@
                     <td>@commissionTypeView</td>
                     <td>
                         @{
-                if (SuperMan.App_Start.UserContext.Current.HasAuthority(22))
-                {
-                    int checkAddress = string.IsNullOrEmpty(item.Address) ? 0 : 1;
-                    int checkImage = string.IsNullOrEmpty(item.CheckPicUrl) ? 0 : 1;
+                            if (SuperMan.App_Start.UserContext.Current.HasAuthority(22))
+                            {
+                                int checkAddress = string.IsNullOrEmpty(item.Address) ? 0 : 1;
+                                int checkImage = string.IsNullOrEmpty(item.CheckPicUrl) ? 0 : 1;
 
-                    if (@item.Status == 1)
-                    {
-                        <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage)" style="color:gray" businessid="@item.Id" class="businessOk">审核通过</a>
-                            <a href="javascript:void(0)" businessid="@item.Id" class="businessCel">取消资格</a>
-                    }
-                    else
-                    {
-                        <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage)" businessid="@item.Id" class="businessOk">审核通过</a>
-                            <a href="javascript:void(0)" style="color:gray" businessid="@item.Id" class="businessCel">取消资格</a>
-                    }
-                    <a href="/BusinessManager/BusinessDetail?businessId=@item.Id ">收支记录</a>
-                }
+                                if (@item.Status == 1)
+                                {
+                                    <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage)" style="color:gray" businessid="@item.Id" class="businessOk">审核通过</a>
+                                        <a href="javascript:void(0)" businessid="@item.Id" class="businessCel">取消资格</a>
+                                }
+                                else
+                                {
+                                    <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage)" businessid="@item.Id" class="businessOk">审核通过</a>
+                                        <a href="javascript:void(0)" style="color:gray" businessid="@item.Id" class="businessCel">取消资格</a>
+                                }
+                    
+                            }
                         }
                         @if (SuperMan.App_Start.UserContext.Current.HasAuthority(24))
                         {
-                            <a  href="javascript:void(0)" onclick="funcComView(@item.Id,'@item.Name','@distribSubsidy','@item.PhoneNo','@commission',@item.CommissionType,@item.CommissionFixValue,@item.BusinessGroupId)">设置结算</a>
+                            <a href="javascript:void(0)" onclick="funcComView(@item.Id,'@item.Name','@distribSubsidy','@item.PhoneNo','@commission',@item.CommissionType,@item.CommissionFixValue,@item.BusinessGroupId)">设置结算</a>
                         }
                         @if (SuperMan.App_Start.UserContext.Current.HasAuthority(24))
                         {
                             <a href="javascript:void(0)" onclick="funcUpdateBusinessInfo(@item.Id,'@item.Name','@item.PhoneNo','@item.OriginalBusiId','@item.GroupId')">修改信息</a>
                         }
-
+                        <a href="/BusinessManager/BusinessDetail?businessId=@item.Id ">收支记录</a>
                     </td>
                 </tr>
             }
@@ -237,7 +237,7 @@
             url: url,
             data: paramaters,
             success: function (result) {
-                    strreg=result;
+                strreg=result;
             }
         });
 
