@@ -73,6 +73,11 @@ namespace Ets.Model.ParameterModel.Bussiness
         /// 版本
         /// </summary>
         public string Version { get; set; }
+
+        /// <summary>
+        /// OrderChlidJson临时
+        /// </summary>
+        public string OrderChlidJson { get; set; }
         /// <summary>
         /// 子订单列表
         /// </summary>
