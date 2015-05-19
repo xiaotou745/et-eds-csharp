@@ -128,7 +128,10 @@ namespace ETS.Enums
         [DisplayText("发送失败")]
         SendFailure,
         [DisplayText("该用户已注册")]
-        AlreadyExists
+        AlreadyExists,
+
+        [DisplayText("该用户不存在")]
+        NotExists
     }
 
     public enum CancelOrderStatus

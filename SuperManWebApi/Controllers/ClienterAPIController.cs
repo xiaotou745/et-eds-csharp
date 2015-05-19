@@ -92,12 +92,12 @@ namespace SuperManWebApi.Controllers
             }
             var fileHand = HttpContext.Current.Request.Files[0]; //手持照片
             var file = HttpContext.Current.Request.Files[1]; //照片
-            
+
             ImageHelper ih = new ImageHelper();
             //手持照片
-            ImgInfo handImg=ih.UploadImg(fileHand, 0);
+            ImgInfo handImg = ih.UploadImg(fileHand, 0);
             //身份证照片
-            ImgInfo sfhImg = ih.UploadImg(file, 0); 
+            ImgInfo sfhImg = ih.UploadImg(file, 0);
             #region 暂时注释
 
             //System.Drawing.Image imgHand;
@@ -148,7 +148,7 @@ namespace SuperManWebApi.Controllers
             //transformer.Transform(fullFileHandPath, destFullFileHandName); 
             //var picUrl = saveDbFilePath + fileName; 
             //var picUrlWithHand = saveDbFileHandPath + fileHandName; 
-            #endregion 
+            #endregion
             var upResult = iClienterProvider.UpdateClientPicInfo(new Ets.Model.DomainModel.Clienter.ClienterModel { Id = int.Parse(strUserId), PicUrl = sfhImg.PicUrl, PicWithHandUrl = handImg.PicUrl, TrueName = trueName, IDCard = strIdCard });
             if (!upResult)
             {
@@ -179,7 +179,7 @@ namespace SuperManWebApi.Controllers
                 userId = model.userId,
                 status = model.status,
                 isLatest = model.isLatest
-            }; 
+            };
             IList<Ets.Model.DomainModel.Clienter.ClientOrderResultModel> lists = new ClienterProvider().GetMyOrders(criteria);
             if (model.status != null && model.status != 1)
             {
@@ -498,15 +498,24 @@ namespace SuperManWebApi.Controllers
             var randomCode = new Random().Next(100000).ToString("D6");
             string msg = string.Empty;
             string key = "";
+            bool checkUser = iClienterProvider.CheckClienterExistPhone(PhoneNumber);
+
             if (type == "0")//注册
             {
-                if (iClienterProvider.CheckClienterExistPhone(PhoneNumber))  //判断该手机号是否已经注册过
+                if (checkUser)  //判断该手机号是否已经注册过
+                {
                     return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.AlreadyExists);
+                }
                 key = RedissCacheKey.PostRegisterInfo_C + PhoneNumber;
                 msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode, ConstValues.MessageClinenter);
             }
             else //修改密码
             {
+                if (!checkUser)
+                {
+                    //如果骑士不存在 
+                    return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.NotExists);
+                }
                 key = RedissCacheKey.PostForgetPwd_C + PhoneNumber;
                 msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode, ConstValues.MessageClinenter);
             }
