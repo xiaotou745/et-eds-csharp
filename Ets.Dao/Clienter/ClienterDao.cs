@@ -722,6 +722,8 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, ConstValues.OrderH
             }
             orderOther.OrderStatus = oo.OrderStatus;
             orderOther.OrderCreateTime = oo.OrderCreateTime;
+            //orderOther.IsPay = oo.IsPay;
+            //orderOther.SettleMoney = oo.SettleMoney;
             return orderOther;
         }
 
@@ -889,8 +891,8 @@ where   OrderId = @OrderId
         /// <returns>OrderOther</returns>
         public OrderOther GetReceiptInfo(int orderId)
         {
-            string sql = @"select  o.Id OrderId ,
-        ISNULL(oo.Id,0) Id ,
+            string sql = @"select  o.Id OrderId ,o.IsPay,
+        ISNULL(oo.Id,0) Id ,o.SettleMoney,
         o.[Status] OrderStatus,
         o.OrderCount NeedUploadCount,
         oo.ReceiptPic ,
