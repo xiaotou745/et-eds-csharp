@@ -54,7 +54,7 @@ namespace Ets.Service.Provider.Order
             decimal settleMoney = 0;
             if (model.CommissionType == 2)//固定金额
             {
-                settleMoney = Decimal.Round(ParseHelper.ToDecimal(model.CommissionFixValue) * ParseHelper.ToDecimal(model.Amount),2);     
+                settleMoney = Decimal.Round(ParseHelper.ToDecimal(model.CommissionFixValue) * ParseHelper.ToDecimal(model.OrderCount),2);     
                 sumsettleMoney = Decimal.Round(ParseHelper.ToDecimal(model.DistribSubsidy)
                 * ParseHelper.ToInt(model.OrderCount) + settleMoney, 2);
             }
