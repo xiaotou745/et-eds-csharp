@@ -722,8 +722,8 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, ConstValues.OrderH
             }
             orderOther.OrderStatus = oo.OrderStatus;
             orderOther.OrderCreateTime = oo.OrderCreateTime;
-            orderOther.IsPay = oo.IsPay;
-            orderOther.SettleMoney = oo.SettleMoney;
+            //orderOther.IsPay = oo.IsPay;
+            //orderOther.SettleMoney = oo.SettleMoney;
             return orderOther;
         }
 

@@ -529,11 +529,11 @@ namespace Ets.Service.Provider.Clienter
                     }
                     businessId = myOrderInfo.businessId;
                     //完成订单的时候，当任务为未付款时，更新商户金额
-                    if (myOrderInfo.IsPay.HasValue && !myOrderInfo.IsPay.Value)
-                    {
-                        BusinessBalanceRecord businessBalanceRecord = new BusinessBalanceRecord();
-                        businessBalanceRecordDao.InsertSingle(businessBalanceRecord);
-                    }
+                    //if (myOrderInfo.IsPay.HasValue && !myOrderInfo.IsPay.Value)
+                    //{
+                    //    BusinessBalanceRecord businessBalanceRecord = new BusinessBalanceRecord();
+                    //    businessBalanceRecordDao.InsertSingle(businessBalanceRecord);
+                    //}
                     tran.Complete();
                     result = "1";
                 }
