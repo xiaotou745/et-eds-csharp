@@ -50,7 +50,7 @@ namespace Ets.Model.DomainModel.Order
         /// <summary>
         /// 发布时间
         /// </summary>
-        public DateTime? PubDate { get; set; }
+        public string PubDate { get; set; }
 
         /// <summary>
         /// 发货人

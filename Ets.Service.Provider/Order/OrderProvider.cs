@@ -1,4 +1,4 @@
-﻿#region 
+﻿#region
 using CalculateCommon;
 using Ets.Dao.Order;
 using Ets.Model.Common;
@@ -40,7 +40,7 @@ using Ets.Model.ParameterModel.Bussiness;
 using Ets.Service.IProvider.Statistics;
 using Ets.Model.DataModel.Strategy;
 using Ets.Service.Provider.Order;
-using Ets.Model.DomainModel.Order; 
+using Ets.Model.DomainModel.Order;
 #endregion
 namespace Ets.Service.Provider.Order
 {
@@ -1112,7 +1112,7 @@ namespace Ets.Service.Provider.Order
             orderDM.OriginalOrderNo = order.OriginalOrderNo;
             orderDM.OrderFrom = order.OrderFrom;
             orderDM.OrderCommission = order.OrderCommission;
-            orderDM.PubDate = order.PubDate;
+            orderDM.PubDate = ParseHelper.ToDatetime(order.PubDate, DateTime.Now).ToString("yyyy-MM-dd HH:mm");
             orderDM.businessName = order.BusinessName;
             orderDM.pickUpCity = order.PickUpCity;
             orderDM.PickUpAddress = order.PickUpAddress;
@@ -1140,7 +1140,7 @@ namespace Ets.Service.Provider.Order
             if (order.NeedUploadCount >= order.OrderCount && order.Status == OrderStatus.订单完成.GetHashCode())
             {
                 orderDM.IsModifyTicket = false;
-            }            CalculationLgAndLa(orderDM, modelPM, order);//计算经纬度
+            } CalculationLgAndLa(orderDM, modelPM, order);//计算经纬度
 
             Ets.Service.Provider.Order.OrderChildProvider orderChildPr = new OrderChildProvider();
             List<OrderChildInfo> listOrderChildInfo = orderChildPr.GetByOrderId(id);
