@@ -38,7 +38,9 @@ namespace Ets.Service.Provider.Clienter
         readonly OrderDao orderDao = new OrderDao();
         readonly OrderChildDao orderChildDao = new OrderChildDao();
         private readonly ClienterBalanceRecordDao clienterBalanceRecordDao = new ClienterBalanceRecordDao();
+        private readonly BusinessDao businessDao = new BusinessDao();
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
+        private readonly BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
         /// <summary>
         /// 骑士上下班功能 add by caoheyang 20150312
         /// </summary>
@@ -524,8 +526,8 @@ namespace Ets.Service.Provider.Clienter
                         {
                             UpdateClienterAccount(userId, myOrderInfo);
                         }
-                    } 
-                    businessId = myOrderInfo.businessId; 
+                    }
+                    businessId = myOrderInfo.businessId;
                     tran.Complete();
                     result = "1";
                 }
@@ -585,8 +587,8 @@ namespace Ets.Service.Provider.Clienter
                 Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
                 Balance = accountBalance ?? 0,
                 RecordType = ClienterBalanceRecordRecordType.Commission.GetHashCode(),
-                Operator = myOrderInfo.ClienterName, 
-                RelationNo = myOrderInfo.OrderNo, 
+                Operator = myOrderInfo.ClienterName,
+                RelationNo = myOrderInfo.OrderNo,
                 Remark = "骑士完成订单"
             };
             clienterBalanceRecordDao.Insert(cbrm);
@@ -648,10 +650,6 @@ namespace Ets.Service.Provider.Clienter
             OrderOther orderOther = null;
             ///TODO 单一职责，GetById GetByNo
             var myOrderInfo = orderDao.GetByOrderId(uploadReceiptModel.OrderId);
-            //if (myOrderInfo.Status == ConstValues.ORDER_CANCEL)
-            //{
-            //    return orderOther;
-            //}
             ///TODO 事务里有多个库的连接串
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
@@ -666,6 +664,12 @@ namespace Ets.Service.Provider.Clienter
                     {
                         //更新骑士金额 
                         UpdateClienterAccount(uploadReceiptModel.ClienterId, myOrderInfo);
+                        //更新商家金额
+                        //if (myOrderInfo.IsPay.HasValue && !myOrderInfo.IsPay.Value)  //订单未支付的时候，更新商家所得金额
+                        //{
+                        //   bool bResult= businessDao.UpdateBusinessBalancePrice(myOrderInfo.businessId, myOrderInfo.SettleMoney);
+                        //   businessBalanceRecordDao.InsertSingle(new BusinessBalanceRecord() { Amount = myOrderInfo.SettleMoney, BusinessId = myOrderInfo.businessId, Remark = "骑士完成订单且未支付", RelationNo = myOrderInfo.OrderNo, Operator = myOrderInfo.ClienterName, RecordType = BusinessBalanceRecordRecordType.OrderMeals.GetHashCode() });
+                        //}
                     }
                 }
                 tran.Complete();
@@ -811,7 +815,7 @@ namespace Ets.Service.Provider.Clienter
         public ClienterDM GetDetails(int id)
         {
             return clienterDao.GetDetails(id);
-        } 
+        }
 
         /// <summary>
         /// 判断骑士是否存在        
@@ -857,7 +861,7 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="bussinessId"></param>
         /// <returns></returns>
         [ETS.Expand.ActionStatus(typeof(RushOrderStatus))]
-        public ResultModel<RushOrderResultModel> Receive_C(int userId, string orderNo,int bussinessId)
+        public ResultModel<RushOrderResultModel> Receive_C(int userId, string orderNo, int bussinessId)
         {
             //这里可以优化，去掉提前验证用户信息，当失败的时候在去验证 
             OrderListModel model = new OrderListModel()
@@ -882,19 +886,19 @@ namespace Ets.Service.Provider.Clienter
             }
             //else  //失败的时候再去找原因
             //{ 
-                //var myorder = new Ets.Dao.Order.OrderDao().GetOrderDetailByOrderNo(orderNo);
-                //if (myorder == null)
-                //{
-                //    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.OrderIsNotExist);  //订单不存在 
-                //}
-                //if (myorder.Status == ConstValues.ORDER_CANCEL)   //判断订单状态是否为 已取消
-                //{
-                    //return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.OrderHadCancel);  //订单已被取消
-                //}
-                //if (myorder.Status == ConstValues.ORDER_ACCEPT || myorder.Status == ConstValues.ORDER_FINISH)  //订单已接单，被抢  或 已完成
-                //{
-                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
-                //}
+            //var myorder = new Ets.Dao.Order.OrderDao().GetOrderDetailByOrderNo(orderNo);
+            //if (myorder == null)
+            //{
+            //    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.OrderIsNotExist);  //订单不存在 
+            //}
+            //if (myorder.Status == ConstValues.ORDER_CANCEL)   //判断订单状态是否为 已取消
+            //{
+            //return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.OrderHadCancel);  //订单已被取消
+            //}
+            //if (myorder.Status == ConstValues.ORDER_ACCEPT || myorder.Status == ConstValues.ORDER_FINISH)  //订单已接单，被抢  或 已完成
+            //{
+            return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
+            //}
             //} 
             //return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.Failed);
         }
