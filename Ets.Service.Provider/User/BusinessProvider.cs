@@ -949,7 +949,7 @@ namespace Ets.Service.Provider.User
         /// <UpdateTime>20150511</UpdateTime>
         /// <param name="id">商户id</param>
         /// <returns></returns>
-        public decimal GetDistribSubsidy(int id)
+        public BusinessInfo GetDistribSubsidy(int id)
         {
             return dao.GetDistribSubsidy(id);
         }

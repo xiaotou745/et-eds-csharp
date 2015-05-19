@@ -192,8 +192,17 @@ namespace Ets.Model.DataModel.Order
         /// <summary>
         /// 抢单时间
         /// </summary>
-        public DateTime GrabDate { get; set; }
-        
+        public DateTime GrabTime { get; set; }
+
+        /// <summary>
+        /// 商户发单经度
+        /// </summary>
+        public double PubLongitude { get; set; }
+
+        /// <summary>
+        /// 商户发单纬度
+        /// </summary>
+        public double PubLatitude { get; set; }  
 
     }
 }

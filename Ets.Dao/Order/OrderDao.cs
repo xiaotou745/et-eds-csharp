@@ -1942,11 +1942,13 @@ values  ( @OrderNo ,
 
             #region 写子OrderOther表
             const string insertOtherSql = @"
-insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount)
-values(@OrderId,@NeedUploadCount,0)";
+insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount,PubLongitude,PubLatitude)
+values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude)";
             IDbParameters dbOtherParameters = DbHelper.CreateDbParameters();
             dbOtherParameters.AddWithValue("@OrderId", orderId); //商户ID
-            dbOtherParameters.AddWithValue("@NeedUploadCount", order.OrderCount); //户名
+            dbOtherParameters.AddWithValue("@NeedUploadCount", order.OrderCount); //需上传数量
+            dbOtherParameters.AddWithValue("@PubLongitude", order.PubLongitude);
+            dbOtherParameters.AddWithValue("@PubLatitude", order.PubLatitude); 
             DbHelper.ExecuteScalar(SuperMan_Write, insertOtherSql, dbOtherParameters);
             #endregion
 
@@ -1980,6 +1982,7 @@ values(@OrderId,@NeedUploadCount,0)";
                     bulk.ColumnMappings.Add("TotalPrice", "TotalPrice");
                     bulk.ColumnMappings.Add("GoodPrice", "GoodPrice");
                     bulk.ColumnMappings.Add("DeliveryPrice", "DeliveryPrice");
+                    bulk.ColumnMappings.Add("PayStatus", "PayStatus");
                     bulk.ColumnMappings.Add("CreateBy", "CreateBy");
                     bulk.ColumnMappings.Add("UpdateBy", "UpdateBy");
 
@@ -1989,6 +1992,7 @@ values(@OrderId,@NeedUploadCount,0)";
                     dt.Columns.Add(new DataColumn("TotalPrice", typeof(decimal)));
                     dt.Columns.Add(new DataColumn("GoodPrice", typeof(decimal)));
                     dt.Columns.Add(new DataColumn("DeliveryPrice", typeof(decimal)));
+                    dt.Columns.Add(new DataColumn("PayStatus", typeof(int)));
                     dt.Columns.Add(new DataColumn("CreateBy", typeof(string)));
                     dt.Columns.Add(new DataColumn("UpdateBy", typeof(string)));
 
@@ -2001,6 +2005,10 @@ values(@OrderId,@NeedUploadCount,0)";
                         dr["TotalPrice"] = totalPrice;
                         dr["GoodPrice"] = order.listOrderChild[i].GoodPrice;
                         dr["DeliveryPrice"] = order.DistribSubsidy;
+                        if ((bool)order.IsPay)
+                            dr["PayStatus"] = 1;
+                        else
+                            dr["PayStatus"] = 0;
                         dr["CreateBy"] = order.BusinessName;
                         dr["UpdateBy"] = order.BusinessName;
                         dt.Rows.Add(dr);

@@ -144,4 +144,14 @@ namespace Ets.Model.DomainModel.Bussiness
         public List<BusinessFinanceAccount> listBFAcount { get; set; }
 
     }
+
+    public class BusinessInfo
+    {
+        public BusinessInfo() { }
+
+        /// <summary>
+        /// 单次配送的外送费
+        /// </summary>
+        public decimal? DistribSubsidy { get; set; }
+    }
 }

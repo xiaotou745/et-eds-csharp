@@ -74,14 +74,22 @@ namespace ETS.Enums
     {
         [DisplayText("成功")]
         Success = 1,
-        [DisplayText("失败")]
-        Failed = 0,
-        [DisplayText("请传递版本号")]
-        NoVersion = 2,
-        [DisplayText("商户Id错误")]
-        ErrNo = 3,
+        [DisplayText("未审核")]
+        Audit=0,
+        [DisplayText("未审核且未添加地址")]
+        AuditAddress=2,
+        [DisplayText("审核中")]
+        Auditing=3,
+        [DisplayText("被拒绝")]
+        Refuse=4,     
+       [DisplayText("商户Id错误")]
+        ErrNo = -1,
         [DisplayText("获取商户失败")]
-        FailedGet =4
+        FailedGet =-2,
+        [DisplayText("请传递版本号")]
+        NoVersion = -3,
+        [DisplayText("失败")]
+        Failed = 101
      
     }
     public enum GetClienterStatus
