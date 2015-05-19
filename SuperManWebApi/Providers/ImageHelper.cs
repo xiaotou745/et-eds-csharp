@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
+using Ets.Model.Common;
 using ETS.Const;
+using ETS.IO;
+using ETS.Util;
 
 namespace SuperManWebApi.Providers
 {
@@ -54,7 +58,38 @@ namespace SuperManWebApi.Providers
             imgInfo.PicUrl = picUrl;
             return imgInfo;
         }
+
+        /// <summary>
+        /// 删除磁盘中的图片
+        /// wc
+        /// </summary>
+        /// <param name="ticketUrl"></param>
+        /// <returns></returns>
+        public void DeleteTicket(string ticketUrl)
+        { 
+            Regex regex = new Regex(@"(/\d{4}/\d{2}/\d{2}.*?)\.jpg", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline);
+            MatchCollection matchCollection = regex.Matches(ticketUrl);
+            string delPicDir = "1.jpg";
+            foreach (Match match in matchCollection)
+            {
+                delPicDir = match.Value; 
+            }
+            string ppath = ConfigSettings.Instance.FileUploadPath + "\\" + ConfigSettings.Instance.FileUploadFolderNameCustomerIcon;
+            var delDir = ppath + delPicDir;
+            var fileName = Path.GetFileName(delDir);
+            int fileNameLastDot = fileName.LastIndexOf('.');
+            //原图 
+            string orginalFileName = string.Format("{0}{1}{2}", Path.GetDirectoryName(delDir) + "\\" + fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
+
+            //删除磁盘中的裁图
+            FileHelper.DeleteFile(delDir);
+            //删除缩略图
+            FileHelper.DeleteFile(orginalFileName); 
+        }
     }
+
+
+
 
 
 
