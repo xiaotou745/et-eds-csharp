@@ -83,6 +83,7 @@ namespace Ets.Dao.User
                                     c.TrueName as SuperManName,
                                     c.PhoneNo as SuperManPhone,
                                     o.OrderFrom,
+                                    o.id as OrderId,
                                     isnull(o.OriginalOrderNo,'') as OriginalOrderNo";
             string tableList = @" [order](nolock) as o 
                                    LEFT join business(nolock) as b on o.businessId=b.Id

@@ -69,7 +69,6 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<BusinessDM>.Conclude(GetBussinessStatus.FailedGet);
             }
 
-
             #endregion
 
             try
