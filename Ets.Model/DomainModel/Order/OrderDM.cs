@@ -295,5 +295,6 @@ namespace Ets.Model.DomainModel.Order
         public int businessId { get; set; }
         public int orderId { get; set; }
         public string orderNo { get; set; }
+        public string version { get; set; }
     }
 }
