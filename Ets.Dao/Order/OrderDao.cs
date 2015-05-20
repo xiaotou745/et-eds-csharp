@@ -1411,16 +1411,16 @@ where   1 = 1 and o.OrderNo = @OrderNo
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns></returns>
-        public int GetOrderStatus(string orderNo)
+        public int GetOrderStatus(int orderId,int businessId)
         {
             string sql = @"
 select top 1 o.[Status]
 from    [order] o with ( nolock ) 
-where   o.OrderNo = @orderNo
+where   o.Id = @Id and businessId=@businessId
 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@orderNo", SqlDbType.NVarChar).Value = orderNo;
-
+            parm.Add("Id", DbType.Int32).Value = orderId;
+            parm.Add("businessId", DbType.Int32).Value = businessId;
             var oStatus = DbHelper.ExecuteScalar(SuperMan_Read, sql, parm);
             return ParseHelper.ToInt(oStatus, -1);
         }
@@ -2301,6 +2301,31 @@ where orderid=@orderid
             dbParameters.AddWithValue("@TakeLatitude", takeLatitude);
             dbParameters.AddWithValue("@orderId", orderId);
             DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
-        }        
+        }  
+        /// <summary>
+        /// 获取任务支付状态（0：未支付 1：部分支付 2：已支付）
+        /// danny-20150519
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public int GetOrderTaskPayStatus(int orderId)
+        {
+            string sql = @"  
+SELECT CASE SUM(oc.PayStatus) 
+			WHEN 0 
+			THEN 0 
+		ELSE 
+			CASE 
+				WHEN  SUM(oc.PayStatus)=COUNT(oc.PayStatus) 
+				THEN 2 
+				ELSE 1 
+			END 
+		END PayStatus
+  FROM OrderChild oc WITH(NOLOCK)
+  WHERE OrderId=@OrderId ;";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@OrderId", orderId);
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm));
+        }      
     }
 }

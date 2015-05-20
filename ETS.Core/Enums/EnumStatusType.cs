@@ -180,12 +180,25 @@ namespace ETS.Enums
         NotCancelOrder = 205
 
     }
+    /// <summary>
+    /// 订单查询类型 1：已完成订单 2：进行中订单（已接单和已取货）
+    /// danny-20150520
+    /// </summary>
+    public enum OrderQueryType
+    {
+        [DisplayText("已完成订单")]
+        Success = 1,
+        [DisplayText("进行中订单")]
+        Working = 2
+
+    }
     public enum OrderStatus
     {
         订单待抢单 = 0,
         订单完成 = 1,
         订单已接单 = 2,
-        订单已取消 = 3
+        订单已取消 = 3,
+        订单已取货=4
     }
 
     public enum ModifyPwdStatus
