@@ -161,12 +161,11 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <UpdateBy>hulingbo</UpdateBy>
         /// <UpdateTime>20150511</UpdateTime>
-        /// <param name="model">订单参数实体</param>
+        /// <param name="modelPM">订单参数实体</param>
         /// <returns></returns>        
         [HttpPost]
         public ResultModel<OrderDM> GetDetails(OrderPM modelPM)
         {
-
             #region 验证
             if (string.IsNullOrWhiteSpace(modelPM.Version)) //版本号 
             {
