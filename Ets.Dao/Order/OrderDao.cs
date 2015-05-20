@@ -2187,8 +2187,8 @@ where   oo.IsJoinWithdraw = 0
             string sql =string.Format(@"
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
-b.Name as BusinessName,b.Address as BusinessAddress,
-ISNULL(a.ReceviceAddress,'') as UserAddress,
+b.Name as BusinessName,b.City+' '+b.Address as BusinessAddress,
+ISNULL(a.ReceviceCity,'')+' '+ISNULL(a.ReceviceAddress,'') as UserAddress,
 case convert(varchar(100), PubDate, 23) 
 	when convert(varchar(100), getdate(), 23) then '今日 '
     else substring(convert(varchar(100), PubDate, 23),6,5) 
