@@ -38,7 +38,15 @@ namespace Ets.Model.DomainModel.Order
         /// <summary>
         /// 取货地址（商户地址）
         /// </summary>
+        public string BusinessCity { get; set; }
+        /// <summary>
+        /// 取货地址（商户城市）
+        /// </summary>
         public string BusinessAddress { get; set; }
+        /// <summary>
+        /// 送货地址(城市)
+        /// </summary>
+        public string UserCity { get; set; }
         /// <summary>
         ///送货地址
         /// </summary>
