@@ -204,8 +204,8 @@ namespace Ets.Service.IProvider.Order
         /// <summary>
         /// 骑士端获取任务列表（最新/最近）任务   add by caoheyang 20150519
         /// </summary>
-        /// <param name="getJobCDm">订单查询实体</param>
+        /// <param name="model">订单查询实体</param>
         /// <returns></returns>
-        ResultModel<object> GetJobC(GetJobCDM getJobCDm);
+        ResultModel<object> GetJobC(GetJobCPM model);
     }
 }

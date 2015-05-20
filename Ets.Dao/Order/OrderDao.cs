@@ -2197,13 +2197,13 @@ where   oo.IsJoinWithdraw = 0
         /// <summary>
         /// 骑士端获取任务列表（最新/最近）任务   add by caoheyang 20150519
         /// </summary>
-        /// <param name="getJobCDm">订单查询实体</param>
+        /// <param name="model">订单查询实体</param>
         /// <returns></returns>
-        public IList<GetJobCDM> GetJobC(GetJobCDM getJobCDm)
+        public IList<GetJobCDM> GetJobC(GetJobCPM model)
         {
             IList<GetJobCDM> models = new List<GetJobCDM>();
-            string sql = @"
-select a.Id,a.OrderCommission,a.OrderCount,   
+            string sql =string.Format(@"
+select top {0} a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
 b.Name as BusinessName,b.Address as BusinessAddress,
 ISNULL(a.ReceviceAddress,'') as UserAddress,
@@ -2213,9 +2213,10 @@ case convert(varchar(100), PubDate, 23)
 end
 +'  '+substring(convert(varchar(100),PubDate,24),1,5)
 as PubDate 
-from dbo.[order] a
-join dbo.business b on a.businessId=b.Id
-";
+from dbo.[order] a (nolock)
+join dbo.business b (nolock) on a.businessId=b.Id
+order by {1}
+", model.TopNum,"a.PubDate desc");
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters));
             if (DataTableHelper.CheckDt(dt))

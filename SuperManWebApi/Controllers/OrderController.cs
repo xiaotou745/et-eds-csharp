@@ -471,12 +471,12 @@ namespace SuperManWebApi.Controllers
         /// <summary>
         /// 骑士端获取任务列表（最新/最近）任务   add by caoheyang 20150519
         /// </summary>
-        /// <param name="getJobCDm">参数实体</param>
+        /// <param name="model">参数实体</param>
         /// <returns></returns>
         [HttpPost]
-        public ResultModel<object> GetJobC(GetJobCDM getJobCDm)
+        public ResultModel<object> GetJobC(GetJobCPM model)
         {
-            return iOrderProvider.GetJobC(getJobCDm);
+            return iOrderProvider.GetJobC(model);
         }
     }
 }
