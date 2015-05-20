@@ -74,6 +74,30 @@ namespace ETS.Enums
         FailedGetOrders = 4       
     }
 
+     public enum OrdersStatus
+    {
+        [DisplayText("待接单")]
+        Status0 = 0,
+        [DisplayText("已完成")]
+        Status1 = 1,
+        [DisplayText("取货中")]
+        Status2 = 2,
+        [DisplayText("已取消")]
+        Status3 = 3,
+        [DisplayText("送货中")]
+        Status4 = 4,
+        [DisplayText("订单Id错误")]
+        ErrId = -1,
+        [DisplayText("获取订单失败")]
+        FailedGet = -2,
+        [DisplayText("请传递版本号")]
+        NoVersion = -3,
+        [DisplayText("失败")]
+        Failed = 101     
+    }
+  
+
+
     public enum GetBussinessStatus
     {
         [DisplayText("成功")]
@@ -86,7 +110,7 @@ namespace ETS.Enums
         Auditing=3,
         [DisplayText("被拒绝")]
         Refuse=4,     
-       [DisplayText("商户Id错误")]
+        [DisplayText("商户Id错误")]
         ErrNo = -1,
         [DisplayText("获取商户失败")]
         FailedGet =-2,

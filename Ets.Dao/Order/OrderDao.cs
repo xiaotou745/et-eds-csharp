@@ -2129,6 +2129,28 @@ where  o.Id=@Id ";
         }
 
         /// <summary>
+        /// 获取订单状态
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150520</UpdateTime>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public int GetStatus(int id)
+        {
+            int status;
+
+            string querySql = @" select Status
+ from   dbo.[order] WITH ( NOLOCK ) 
+ where  Id = @id";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
+            status = ParseHelper.ToInt(executeScalar, 0) ;
+
+            return status;
+        }
+
+        /// <summary>
         /// 判断订单是否存在
         /// </summary>
         /// <UpdateBy>hulingbo</UpdateBy>
@@ -2229,17 +2251,17 @@ order by {1}
         /// <summary>
         /// 更新一条记录
         /// </summary>
-        public void UpdateGrab(string orderNo, float grabLongitude, float grabLatitude)
+        public void UpdateTake(string orderId, float takeLongitude, float takeLatitude)
         {
             const string UPDATE_SQL = @"
 update OrderOther 
-set GrabLongitude=@GrabLongitude,GrabLatitude=@GrabLatitude where orderid=(
-select id from dbo.[order] where OrderNo=@OrderNo
-)";
+    set TakeTime=GETDATE(),TakeLongitude=@TakeLongitude,TakeLatitude=@TakeLatitude 
+where orderid=@orderid
+";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@GrabLongitude", grabLongitude);
-            dbParameters.AddWithValue("@grabLatitude", grabLatitude);
-            dbParameters.AddWithValue("@orderNo", orderNo);
+            dbParameters.AddWithValue("@TakeLongitude", takeLongitude);
+            dbParameters.AddWithValue("@TakeLatitude", takeLatitude);
+            dbParameters.AddWithValue("@orderId", orderId);
             DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
         }
         
