@@ -464,7 +464,11 @@ namespace SuperManWebApi.Controllers
         public ResultModel<RushOrderResultModel> RushOrder_C(int userId, string orderNo)
         {
             if (userId==0) //用户id验证
-                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);  
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
+            if (userId == ConfigSettings.Instance.ForbidClienterId)
+            {
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.ForbidRushOrder);
+            }
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
             if (ClienterLogic.clienterLogic().GetOrderByNo(orderNo) == null) //查询订单是否存在
@@ -500,6 +504,10 @@ namespace SuperManWebApi.Controllers
             if (userId == 0)  //用户id非空验证
             {
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.userIdEmpty);
+            }
+            if (userId == ConfigSettings.Instance.ForbidClienterId) //禁止完成
+            {
+                return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.ForbidFinishOrder);
             }
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
             {

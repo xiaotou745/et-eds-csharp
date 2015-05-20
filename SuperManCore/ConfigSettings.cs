@@ -119,8 +119,13 @@ namespace SuperManCore
         {
             get { return ConfigurationManager.AppSettings["IsSendMail"]; }
         }
-
-
+        /// <summary>
+        /// 禁止抢单的用户
+        /// </summary>
+        public int ForbidClienterId
+        {
+            get { return ConfigurationManager.AppSettings["ForbidClienterId"].AsInt(); }
+        }
          /// <summary>
         /// 是否根据集团推送订单
         /// </summary>

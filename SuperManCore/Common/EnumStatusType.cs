@@ -139,8 +139,9 @@ namespace SuperManCore.Common
         [DisplayText("订单已被抢或者已完成")]
         OrderIsNotAllowRush,
         [DisplayText("未通过审核无法抢单")]
-        AuditNotPass
-
+        AuditNotPass,
+        [DisplayText("演示账户禁止抢单")]
+        ForbidRushOrder
 
     }
     public enum FinishOrderStatus
@@ -157,7 +158,9 @@ namespace SuperManCore.Common
         [DisplayText("此订单已经是完成状态")]
         OrderIsNotAllowRush,
         [DisplayText("未通过审核无法完成")]
-        AuditNotPass
+        AuditNotPass,
+        [DisplayText("演示账户禁止完成")]
+        ForbidFinishOrder
     }
 
     public enum GetMyBalanceStatus

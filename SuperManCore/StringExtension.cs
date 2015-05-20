@@ -12,7 +12,7 @@ namespace SuperManCore
         {
             return path.Replace('\\', '/');
         }
-        public static int? AsInt(this string str)
+        public static int AsInt(this string str)
         {
             int k;
             bool b = int.TryParse(str, out k);
@@ -22,7 +22,7 @@ namespace SuperManCore
             }
             else
             {
-                return null;
+                return -1;
             } 
         }
     }
