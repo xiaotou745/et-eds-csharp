@@ -59,7 +59,7 @@ namespace SuperManWebApi.Controllers
                 if (currResModel.Status == PubOrderStatus.VerificationSuccess.GetHashCode())
                 {                    
                     PubOrderStatus cuStatus = iOrderProvider.AddOrder(order);              
-                    if (cuStatus == PubOrderStatus.Success)//当前订单执行失败
+                    if (cuStatus == PubOrderStatus.Success)//当前订单执行成功
                     {
                         BusiOrderResultModel resultModel = new BusiOrderResultModel { userId = model.userId };
                         return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
@@ -161,12 +161,11 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <UpdateBy>hulingbo</UpdateBy>
         /// <UpdateTime>20150511</UpdateTime>
-        /// <param name="model">订单参数实体</param>
+        /// <param name="modelPM">订单参数实体</param>
         /// <returns></returns>        
         [HttpPost]
         public ResultModel<OrderDM> GetDetails(OrderPM modelPM)
         {
-
             #region 验证
             if (string.IsNullOrWhiteSpace(modelPM.Version)) //版本号 
             {

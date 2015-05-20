@@ -507,6 +507,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="OrderId"></param>
         /// <returns></returns>
         //[HttpGet]
+        //[HttpGet]
         [ActionStatus(typeof(ETS.Enums.CancelOrderStatus))]
         public Ets.Model.Common.ResultModel<bool> CancelOrder_B(OrderCancelParam orderCancelParam)
         {
