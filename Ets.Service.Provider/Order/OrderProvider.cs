@@ -1137,7 +1137,7 @@ namespace Ets.Service.Provider.Order
             orderDM.ClienterName = order.ClienterName;
             orderDM.ClienterPhoneNo = order.ClienterPhoneNo;
             orderDM.GrabTime = order.GrabTime;
-            orderDM.businessId = ParseHelper.ToInt(order.businessId,0);
+            orderDM.businessId = ParseHelper.ToInt(order.businessId, 0);
             //if (order.businessId != null) orderDM.businessId = order.businessId.Value;
             if (order.NeedUploadCount >= order.OrderCount && order.Status == OrderStatus.订单完成.GetHashCode())
             {
@@ -1211,16 +1211,16 @@ namespace Ets.Service.Provider.Order
         }
 
 
-        public int GetOrderStatus(int orderId,int businessId)
+        public int GetOrderStatus(int orderId, int businessId)
         {
-            return orderDao.GetOrderStatus(orderId,businessId);
+            return orderDao.GetOrderStatus(orderId, businessId);
         }
 
         public void UpdateTake(OrderPM modelPM)
-        {        
-             float takeLongitude =(float) modelPM.longitude;
-             float takeLatitude=(float)modelPM.latitude;
-             orderDao.UpdateTake(modelPM.OrderId.ToString(), takeLongitude, takeLatitude);
+        {
+            float takeLongitude = (float)modelPM.longitude;
+            float takeLatitude = (float)modelPM.latitude;
+            orderDao.UpdateTake(modelPM.OrderId, modelPM.ClienterId, takeLongitude, takeLatitude);
         }
 
         /// <summary>

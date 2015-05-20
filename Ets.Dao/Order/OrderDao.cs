@@ -1414,7 +1414,7 @@ where   1 = 1 and o.OrderNo = @OrderNo
         public int GetOrderStatus(int orderId,int businessId)
         {
             string sql = @"
-select top 1 o.[Status]
+select o.[Status]
 from    [order] o with ( nolock ) 
 where   o.Id = @Id and businessId=@businessId
 ";
@@ -2286,7 +2286,7 @@ order by {1}
         /// <summary>
         /// 更新一条记录
         /// </summary>
-        public void UpdateTake(string orderId, float takeLongitude, float takeLatitude)
+        public void UpdateTake(int orderId,int clienterId, float takeLongitude, float takeLatitude)
         {
             const string UPDATE_SQL = @"
 update dbo.[Order] 
@@ -2294,12 +2294,13 @@ update dbo.[Order]
 where id=@orderid and Status=2;
 update OrderOther 
     set TakeTime=GETDATE(),TakeLongitude=@TakeLongitude,TakeLatitude=@TakeLatitude 
-where orderid=@orderid  
+where orderid=@orderid  and clienterId=@clienterId
 ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@TakeLongitude", takeLongitude);
-            dbParameters.AddWithValue("@TakeLatitude", takeLatitude);
-            dbParameters.AddWithValue("@orderId", orderId);
+            dbParameters.Add("TakeLongitude",DbType.Int64,4).Value= takeLongitude;
+            dbParameters.Add("TakeLatitude", DbType.Int64, 4).Value = takeLatitude;
+            dbParameters.Add("orderId", DbType.Int32, 4).Value = orderId;
+            dbParameters.Add("clienterId", DbType.Int32, 4).Value = clienterId;
             DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
         }        
     }
