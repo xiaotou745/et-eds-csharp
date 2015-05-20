@@ -1082,7 +1082,7 @@ where   a.OriginalOrderNo = @OriginalOrderNo
  SET [Status] = @status,ActualDoneDate=getdate()
 output Inserted.Id,GETDATE(),'{0}','任务已完成',Inserted.clienterId,Inserted.[Status],{1}
 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform]) 
-WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL and Status = 2;", SuperPlatform.骑士, (int)SuperPlatform.骑士);
+WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL and Status = 4;", SuperPlatform.骑士, (int)SuperPlatform.骑士);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@orderNo", SqlDbType.NVarChar).Value = orderNo;
@@ -2223,7 +2223,6 @@ where   oo.IsJoinWithdraw = 0
         /// <returns></returns>
         public IList<GetJobCDM> GetJobC(GetJobCPM model)
         {
-            IList<GetJobCDM> models = new List<GetJobCDM>();
             string sql = string.Format(@"
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
@@ -2238,6 +2237,7 @@ as PubDate,
 round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(geography::Point(@Latitude,@Longitude,4326)),0) as DistanceToBusiness 
 from dbo.[order] a (nolock)
 join dbo.business b (nolock) on a.businessId=b.Id
+where a.status=0
 order by {1}
 ", model.TopNum, "a.Id desc");
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -2246,28 +2246,39 @@ order by {1}
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters));
             if (DataTableHelper.CheckDt(dt))
             {
-                foreach (DataRow dataRow in dt.Rows)
-                {
-                    GetJobCDM temp = new GetJobCDM();
-                    temp.Id = ParseHelper.ToInt(dataRow["Id"]);
-                    temp.PubDate = dataRow["PubDate"].ToString();
-                    temp.OrderCommission = ParseHelper.ToDecimal(dataRow["OrderCommission"]);
-                    temp.OrderCount = ParseHelper.ToInt(dataRow["OrderCount"]);
-                    temp.Amount = ParseHelper.ToDecimal(dataRow["Amount"]);
-                    temp.BusinessName = dataRow["BusinessName"].ToString();
-                    temp.BusinessCity = dataRow["BusinessCity"].ToString();
-                    temp.BusinessAddress = dataRow["BusinessAddress"] == null
-                        ? ""
-                        : dataRow["BusinessAddress"].ToString();
-                    temp.UserCity = dataRow["UserCity"] == null ? "" : dataRow["UserCity"].ToString();
-                    temp.UserAddress = dataRow["UserAddress"] == null ? "" : dataRow["UserAddress"].ToString();
-                    int distanceToBusiness = ParseHelper.ToInt(dataRow["DistanceToBusiness"],0);
-                    temp.DistanceToBusiness = distanceToBusiness < 1000
-                        ? distanceToBusiness + "m"
-                        :Math.Round(distanceToBusiness*0.001,2) + "Km";
-                    models.Add(temp);
-                }
+                return TranslateGetJobC(dt);
+            }
+            return new List<GetJobCDM>();
+        }
 
+        /// <summary>
+        ///  骑士端获取任务列表（最新/最近）任务   add by caoheyang 20150519
+        /// </summary>
+        /// <param name="dt">datatable</param>
+        /// <returns></returns>
+        private IList<GetJobCDM> TranslateGetJobC(DataTable dt)
+        {
+            IList<GetJobCDM> models = new List<GetJobCDM> ();
+            foreach (DataRow dataRow in dt.Rows)
+            {
+                GetJobCDM temp = new GetJobCDM();
+                temp.Id = ParseHelper.ToInt(dataRow["Id"]);
+                temp.PubDate = dataRow["PubDate"].ToString();
+                temp.OrderCommission = ParseHelper.ToDecimal(dataRow["OrderCommission"]);
+                temp.OrderCount = ParseHelper.ToInt(dataRow["OrderCount"]);
+                temp.Amount = ParseHelper.ToDecimal(dataRow["Amount"]);
+                temp.BusinessName = dataRow["BusinessName"].ToString();
+                temp.BusinessCity = dataRow["BusinessCity"].ToString();
+                temp.BusinessAddress = dataRow["BusinessAddress"] == null
+                    ? ""
+                    : dataRow["BusinessAddress"].ToString();
+                temp.UserCity = dataRow["UserCity"] == null ? "" : dataRow["UserCity"].ToString();
+                temp.UserAddress = dataRow["UserAddress"] == null ? "" : dataRow["UserAddress"].ToString();
+                int distanceToBusiness = ParseHelper.ToInt(dataRow["DistanceToBusiness"], 0);
+                temp.DistanceToBusiness = distanceToBusiness < 1000
+                    ? distanceToBusiness + "m"
+                    : Math.Round(distanceToBusiness * 0.001, 2) + "Km";
+                models.Add(temp);
             }
             return models;
         }
@@ -2278,16 +2289,18 @@ order by {1}
         public void UpdateTake(string orderId, float takeLongitude, float takeLatitude)
         {
             const string UPDATE_SQL = @"
+update dbo.[Order] 
+    set Status=4
+where id=@orderid and Status=2;
 update OrderOther 
     set TakeTime=GETDATE(),TakeLongitude=@TakeLongitude,TakeLatitude=@TakeLatitude 
-where orderid=@orderid
+where orderid=@orderid  
 ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@TakeLongitude", takeLongitude);
             dbParameters.AddWithValue("@TakeLatitude", takeLatitude);
             dbParameters.AddWithValue("@orderId", orderId);
             DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
-        }
-        
+        }        
     }
 }
