@@ -2235,7 +2235,7 @@ case convert(varchar(100), PubDate, 23)
 end
 +'  '+substring(convert(varchar(100),PubDate,24),1,5)
 as PubDate,
-round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(geography::Point(@Latitude,@Longitude,4326)),2) as DistanceToBusiness 
+round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(geography::Point(@Latitude,@Longitude,4326)),0) as DistanceToBusiness 
 from dbo.[order] a (nolock)
 join dbo.business b (nolock) on a.businessId=b.Id
 order by {1}
@@ -2248,20 +2248,24 @@ order by {1}
             {
                 foreach (DataRow dataRow in dt.Rows)
                 {
-                    models.Add(new GetJobCDM()
-                    {
-                        Id = ParseHelper.ToInt(dataRow["Id"]),
-                        PubDate = dataRow["PubDate"].ToString(),
-                        OrderCommission = ParseHelper.ToDecimal(dataRow["OrderCommission"]),
-                        OrderCount = ParseHelper.ToInt(dataRow["OrderCount"]),
-                        Amount = ParseHelper.ToDecimal(dataRow["Amount"]),
-                        BusinessName = dataRow["BusinessName"].ToString(),
-                        BusinessCity = dataRow["BusinessCity"].ToString(),
-                        BusinessAddress = dataRow["BusinessAddress"] == null ? "" : dataRow["BusinessAddress"].ToString(),
-                        UserCity = dataRow["UserCity"] == null ? "" : dataRow["UserCity"].ToString(),
-                        UserAddress = dataRow["UserAddress"] == null ? "" : dataRow["UserAddress"].ToString(),
-                        DistanceToBusiness = dataRow["DistanceToBusiness"].ToString()
-                    });
+                    GetJobCDM temp = new GetJobCDM();
+                    temp.Id = ParseHelper.ToInt(dataRow["Id"]);
+                    temp.PubDate = dataRow["PubDate"].ToString();
+                    temp.OrderCommission = ParseHelper.ToDecimal(dataRow["OrderCommission"]);
+                    temp.OrderCount = ParseHelper.ToInt(dataRow["OrderCount"]);
+                    temp.Amount = ParseHelper.ToDecimal(dataRow["Amount"]);
+                    temp.BusinessName = dataRow["BusinessName"].ToString();
+                    temp.BusinessCity = dataRow["BusinessCity"].ToString();
+                    temp.BusinessAddress = dataRow["BusinessAddress"] == null
+                        ? ""
+                        : dataRow["BusinessAddress"].ToString();
+                    temp.UserCity = dataRow["UserCity"] == null ? "" : dataRow["UserCity"].ToString();
+                    temp.UserAddress = dataRow["UserAddress"] == null ? "" : dataRow["UserAddress"].ToString();
+                    int distanceToBusiness = ParseHelper.ToInt(dataRow["DistanceToBusiness"],0);
+                    temp.DistanceToBusiness = distanceToBusiness < 1000
+                        ? distanceToBusiness + "m"
+                        :Math.Round(distanceToBusiness*0.001,2) + "Km";
+                    models.Add(temp);
                 }
 
             }
