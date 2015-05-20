@@ -2207,6 +2207,23 @@ order by {1}
             }
             return models;
         }
+
+        /// <summary>
+        /// 更新一条记录
+        /// </summary>
+        public void UpdateGrab(string orderNo, float grabLongitude, float grabLatitude)
+        {
+            const string UPDATE_SQL = @"
+update OrderOther 
+set GrabLongitude=@GrabLongitude,GrabLatitude=@GrabLatitude where orderid=(
+select id from dbo.[order] where OrderNo=@OrderNo
+)";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@GrabLongitude", grabLongitude);
+            dbParameters.AddWithValue("@grabLatitude", grabLatitude);
+            dbParameters.AddWithValue("@orderNo", orderNo);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
+        }
         
     }
 }

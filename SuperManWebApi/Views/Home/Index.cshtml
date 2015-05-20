@@ -6,18 +6,49 @@
 <script src="~/Scripts/jquery-1.10.2.min.js"></script>
 <script>     
    
+    //$.ajax({
+    //    type: 'get',
+    //    dataType: 'json',
+    //    url: '/ClienterAPI/RushOrder_C?userId=3080&orderNo=1767150520111055077&longitude=0.142&latitude=0.143',
+    //    data: {        
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
 
     $.ajax({
-        type: 'Get',
+        type: 'POST',
         dataType: 'json',
-        url: '/BusinessAPI/GetOrderList_B?userId=1767&pagedSize=10&pagedIndex=1&Status=1&orderfrom=1',
-        data: {          
+        url: '/Order/Complete',
+        data: {
+            "userId": 3080,
+            "orderNo": "1767150520111055077",
+            "pickupCode": "",
+            "version": "1.0",
+            "longitude":0.201,
+            "latitude":0.202            
         },
         success: function (data) {
             console.log(data);
         },
         error: function () { }
     });
+
+
+
+    //$.ajax({
+    //    type: 'Get',
+    //    dataType: 'json',
+    //    url: '/BusinessAPI/GetOrderList_B?userId=1767&pagedSize=10&pagedIndex=1&Status=1&orderfrom=1',
+    //    data: {          
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
     //&pagedSize=10&pageIndex=1&Status=1&orderfrom=1
     //$.ajax({
     //    type: 'POST',

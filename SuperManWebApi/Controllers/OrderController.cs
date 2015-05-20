@@ -168,9 +168,7 @@ namespace SuperManWebApi.Controllers
         {
 
             #region 验证
-
-            var version = modelPM.Version;
-            if (string.IsNullOrWhiteSpace(version)) //版本号 
+            if (string.IsNullOrWhiteSpace(modelPM.Version)) //版本号 
             {
                 return ResultModel<OrderDM>.Conclude(GetOrdersStatus.NoVersion);
             }
@@ -491,5 +489,44 @@ namespace SuperManWebApi.Controllers
         {
             return iOrderProvider.GetJobC(model);
         }
+
+        /// <summary>
+        /// 确认取货
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150520</UpdateTime>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public ResultModel<string> ConfirmTake(OrderPM modelPM)
+        {
+
+            #region 验证
+            if (string.IsNullOrWhiteSpace(modelPM.Version)) //版本号 
+            {
+                return ResultModel<string>.Conclude(GetOrdersStatus.NoVersion);
+            }
+            if (modelPM.OrderId < 0)//订单Id不合法
+            {
+                return ResultModel<string>.Conclude(GetOrdersStatus.ErrOderNo);
+            }
+            if (!iOrderProvider.IsExist(modelPM.OrderId)) //订单不存在
+            {
+                return ResultModel<string>.Conclude(GetOrdersStatus.FailedGetOrders);
+            }
+
+            #endregion
+
+            try
+            {
+                //OrderDM orderDM = iOrderProvider.GetDetails(modelPM);
+                return ResultModel<string>.Conclude(GetOrdersStatus.Success, "");
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(" ResultModel<OrderDM> GetDetails", new { obj = "时间：" + DateTime.Now.ToString() + ex.Message });
+                return ResultModel<string>.Conclude(GetOrdersStatus.Failed);
+            }     
+        }
+        
     }
 }
