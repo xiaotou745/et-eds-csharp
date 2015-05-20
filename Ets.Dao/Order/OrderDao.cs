@@ -1407,6 +1407,24 @@ where   1 = 1 and o.OrderNo = @OrderNo
             }
         }
         /// <summary>
+        /// 获取订单状态根据
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public int GetOrderStatus(string orderNo)
+        {
+            string sql = @"
+select top 1 o.[Status]
+from    [order] o with ( nolock ) 
+where   o.OrderNo = @orderNo
+";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@orderNo", SqlDbType.NVarChar).Value = orderNo;
+
+            var oStatus = DbHelper.ExecuteScalar(SuperMan_Read, sql, parm);
+            return ParseHelper.ToInt(oStatus, -1);
+        }
+        /// <summary>
         /// 根据订单号获取订单信息
         /// 订单OrderNO
         /// wc

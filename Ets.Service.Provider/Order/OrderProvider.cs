@@ -1137,6 +1137,7 @@ namespace Ets.Service.Provider.Order
             orderDM.ClienterName = order.ClienterName;
             orderDM.ClienterPhoneNo = order.ClienterPhoneNo;
             orderDM.GrabTime = order.GrabTime;
+            if (order.businessId != null) orderDM.businessId = order.businessId.Value;
             if (order.NeedUploadCount >= order.OrderCount && order.Status == OrderStatus.订单完成.GetHashCode())
             {
                 orderDM.IsModifyTicket = false;
@@ -1204,6 +1205,12 @@ namespace Ets.Service.Provider.Order
         public ResultModel<object> GetJobC(GetJobCDM getJobCDm)
         {
             return ResultModel<object>.Conclude(SystemEnum.Success, orderDao.GetJobC(getJobCDm));
+        }
+
+
+        public int GetOrderStatus(string orderNo)
+        {
+            return orderDao.GetOrderStatus(orderNo);
         }
     }
 }
