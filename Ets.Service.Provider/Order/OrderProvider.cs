@@ -1137,6 +1137,7 @@ namespace Ets.Service.Provider.Order
             orderDM.ClienterName = order.ClienterName;
             orderDM.ClienterPhoneNo = order.ClienterPhoneNo;
             orderDM.GrabTime = order.GrabTime;
+            if (order.businessId != null) orderDM.businessId = order.businessId.Value;
             if (order.NeedUploadCount >= order.OrderCount && order.Status == OrderStatus.订单完成.GetHashCode())
             {
                 orderDM.IsModifyTicket = false;
@@ -1206,6 +1207,12 @@ namespace Ets.Service.Provider.Order
             model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;// top 值
             model.PushRadius = GlobalConfigDao.GlobalConfigGet(0).PushRadius; //距离
             return ResultModel<object>.Conclude(SystemEnum.Success, orderDao.GetJobC(model));
+        }
+
+
+        public int GetOrderStatus(string orderNo)
+        {
+            return orderDao.GetOrderStatus(orderNo);
         }
     }
 }
