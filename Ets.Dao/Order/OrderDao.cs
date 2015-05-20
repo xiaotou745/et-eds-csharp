@@ -2178,6 +2178,31 @@ join dbo.business b on a.businessId=b.Id
             }
             return models;
         }
+        /// <summary>
+        /// 获取任务支付状态（0：未支付 1：部分支付 2：已支付）
+        /// danny-20150519
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public int GetOrderTaskPayStatus(int orderId)
+        {
+            string sql = @"  
+SELECT CASE SUM(oc.PayStatus) 
+			WHEN 0 
+			THEN 0 
+		ELSE 
+			CASE 
+				WHEN  SUM(oc.PayStatus)=COUNT(oc.PayStatus) 
+				THEN 2 
+				ELSE 1 
+			END 
+		END PayStatus
+  FROM OrderChild oc WITH(NOLOCK)
+  WHERE OrderId=@OrderId ;";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@OrderId", orderId);
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm));
+        }
         
     }
 }
