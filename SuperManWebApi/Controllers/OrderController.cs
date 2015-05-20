@@ -100,6 +100,20 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.NoVersion);
             }
+            if (string.IsNullOrEmpty(model.recevicePhone))//手机号
+            {
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneIsNULL);
+            }           
+            Regex dReg = new Regex("^1\\d{10}$");
+            if (!dReg.IsMatch(model.recevicePhone))//验证收货人手机号
+            {
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneErr);
+            }
+            if (string.IsNullOrEmpty(model.receviceAddress))
+            {
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.ReceviceAddressIsNULL);
+            }     
+
             if (!iBusinessProvider.HaveQualification(model.userId))//验证该商户有无发布订单资格 
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.HadCancelQualification);
@@ -366,6 +380,9 @@ namespace SuperManWebApi.Controllers
             var orderNo = HttpContext.Current.Request.Form["orderNo"];
             var bussinessId = ParseHelper.ToInt(HttpContext.Current.Request.Form["bussinessId"], 0);
             var version = HttpContext.Current.Request.Form["version"];
+            var grabLongitude = HttpContext.Current.Request.Form["GrabLongitude"];
+            var grabLatitude = HttpContext.Current.Request.Form["GrabLatitude"];
+
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
             if (userId <= 0) //用户id验证

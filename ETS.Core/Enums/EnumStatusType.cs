@@ -51,7 +51,11 @@ namespace ETS.Enums
         [DisplayText("合法性验证成功")]
         VerificationSuccess,
         [DisplayText("收货人手机号错误")]
-        RecevicePhoneErr,       
+        RecevicePhoneErr,
+        [DisplayText("收货人手机号不能为空")]
+        RecevicePhoneIsNULL,
+        [DisplayText("收货人地址不能为空")]
+        ReceviceAddressIsNULL,  
         [DisplayText("请传递版本号")]
         NoVersion = -10
 

@@ -886,6 +886,9 @@ namespace Ets.Service.Provider.Clienter
             ///TODO 同步第三方状态和jpush 以后放到后台服务或mq进行。
             if (bResult)
             {
+                //写骑士抢单坐标
+
+
                 new OrderProvider().AsyncOrderStatus(orderNo);//同步第三方订单
                 Ets.Service.Provider.MyPush.Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", bussinessId.ToString(), string.Empty);
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Success);
