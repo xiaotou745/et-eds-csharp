@@ -1214,5 +1214,24 @@ namespace Ets.Service.Provider.Order
         {
             return orderDao.GetOrderStatus(orderNo);
         }
+
+        public void UpdateTake(OrderPM modelPM)
+        {        
+             float takeLongitude =(float) modelPM.longitude;
+             float takeLatitude=(float)modelPM.latitude;
+             orderDao.UpdateTake(modelPM.OrderId.ToString(), takeLongitude, takeLatitude);
+        }
+
+        /// <summary>
+        /// 获取订单状态
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150520</UpdateTime>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public int GetStatus(int id)
+        {
+            return orderDao.GetStatus(id);
+        }
     }
 }

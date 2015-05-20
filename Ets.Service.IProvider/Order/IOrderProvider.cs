@@ -207,5 +207,16 @@ namespace Ets.Service.IProvider.Order
         /// <param name="model">订单查询实体</param>
         /// <returns></returns>
         ResultModel<object> GetJobC(GetJobCPM model);
+
+        void UpdateTake(OrderPM modelPM);
+
+        /// <summary>
+        /// 获取订单状态
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150520</UpdateTime>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        int GetStatus(int id);
     }
 }

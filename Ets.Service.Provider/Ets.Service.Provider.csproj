@@ -94,6 +94,7 @@
     <Compile Include="Order\OrderPriceProvider.cs" />
     <Compile Include="Order\DefaultOrPriceProvider.cs" />
     <Compile Include="Order\OrderDetailProvider.cs" />
+    <Compile Include="Order\OrderOtherProvider.cs" />
     <Compile Include="Order\OrderProvider.cs" />
     <Compile Include="Order\TimeOrPriceProvider.cs" />
     <Compile Include="Pay\PayProvider.cs" />

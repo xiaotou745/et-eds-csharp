@@ -11,6 +11,10 @@ namespace Ets.Model.DomainModel.Bussiness
     public class BusiGetOrderModel
     {
         /// <summary>
+        /// 订单Id
+        /// </summary>
+        public int OrderId { get; set; }
+        /// <summary>
         /// 订单号
         /// </summary>
         public string OrderNo { get; set; }

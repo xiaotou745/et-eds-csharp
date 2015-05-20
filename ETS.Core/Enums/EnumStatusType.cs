@@ -40,9 +40,9 @@ namespace ETS.Enums
         HadCancelQualification,
         [DisplayText("商户结算比例设置异常，请联系客服")]
         BusiSettlementRatioError,
-        [DisplayText("抱歉，订单金额不可低于10元")]
+        [DisplayText("抱歉，子订单金额不可低于5元")]
         AmountLessThanTen,
-        [DisplayText("抱歉，订单金额不可高于5000元")]
+        [DisplayText("抱歉，子订单金额不可高于1000元")]
         AmountMoreThanFiveThousand,
         [DisplayText("订单金额与子订单总金额不一致")]
         AmountIsNotEqual,
@@ -51,7 +51,11 @@ namespace ETS.Enums
         [DisplayText("合法性验证成功")]
         VerificationSuccess,
         [DisplayText("收货人手机号错误")]
-        RecevicePhoneErr,       
+        RecevicePhoneErr,
+        [DisplayText("收货人手机号不能为空")]
+        RecevicePhoneIsNULL,
+        [DisplayText("收货人地址不能为空")]
+        ReceviceAddressIsNULL,  
         [DisplayText("请传递版本号")]
         NoVersion = -10
 
@@ -70,6 +74,30 @@ namespace ETS.Enums
         FailedGetOrders = 4       
     }
 
+     public enum OrdersStatus
+    {
+        [DisplayText("待接单")]
+        Status0 = 0,
+        [DisplayText("已完成")]
+        Status1 = 1,
+        [DisplayText("取货中")]
+        Status2 = 2,
+        [DisplayText("已取消")]
+        Status3 = 3,
+        [DisplayText("送货中")]
+        Status4 = 4,
+        [DisplayText("订单Id错误")]
+        ErrId = -1,
+        [DisplayText("获取订单失败")]
+        FailedGet = -2,
+        [DisplayText("请传递版本号")]
+        NoVersion = -3,
+        [DisplayText("失败")]
+        Failed = 101     
+    }
+  
+
+
     public enum GetBussinessStatus
     {
         [DisplayText("成功")]
@@ -82,7 +110,7 @@ namespace ETS.Enums
         Auditing=3,
         [DisplayText("被拒绝")]
         Refuse=4,     
-       [DisplayText("商户Id错误")]
+        [DisplayText("商户Id错误")]
         ErrNo = -1,
         [DisplayText("获取商户失败")]
         FailedGet =-2,
