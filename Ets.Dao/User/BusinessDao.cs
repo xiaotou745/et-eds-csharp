@@ -260,10 +260,10 @@ namespace Ets.Dao.User
                     }
                     else
                     {
-                        if (model.CommissionFixValue > 0)
-                        {
-                            sql += "CommissionFixValue=@CommissionFixValue,";
-                        }
+                        //if (model.CommissionFixValue > 0)
+                        //{
+                        sql += "CommissionFixValue=@CommissionFixValue,";
+                        //}
                     }
                     sql += "CommissionType=@CommissionType,";
                 }

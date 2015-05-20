@@ -5,7 +5,22 @@
 </div>
 <script src="~/Scripts/jquery-1.10.2.min.js"></script>
 <script>     
-   
+    $.ajax({
+        type: 'POST',
+        dataType: 'json',
+        url: '/Order/ConfirmTake',
+        data: {
+            "OrderId": 142148,
+            "version": "1.0",
+            "longitude":0.301,
+            "latitude":0.302            
+        },
+        success: function (data) {
+            console.log(data);
+        },
+        error: function () { }
+    });
+
     //$.ajax({
     //    type: 'get',
     //    dataType: 'json',
@@ -18,23 +33,23 @@
     //    error: function () { }
     //});
 
-    $.ajax({
-        type: 'POST',
-        dataType: 'json',
-        url: '/Order/Complete',
-        data: {
-            "userId": 3080,
-            "orderNo": "1767150520111055077",
-            "pickupCode": "",
-            "version": "1.0",
-            "longitude":0.201,
-            "latitude":0.202            
-        },
-        success: function (data) {
-            console.log(data);
-        },
-        error: function () { }
-    });
+    //$.ajax({
+    //    type: 'POST',
+    //    dataType: 'json',
+    //    url: '/Order/Complete',
+    //    data: {
+    //        "userId": 3080,
+    //        "orderNo": "1767150520111055077",
+    //        "pickupCode": "",
+    //        "version": "1.0",
+    //        "longitude":0.201,
+    //        "latitude":0.202            
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
 
 
 
