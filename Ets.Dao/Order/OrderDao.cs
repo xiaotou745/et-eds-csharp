@@ -2216,7 +2216,7 @@ as PubDate
 from dbo.[order] a (nolock)
 join dbo.business b (nolock) on a.businessId=b.Id
 order by {1}
-", model.TopNum,"a.PubDate desc");
+", model.TopNum,"a.Id desc");
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters));
             if (DataTableHelper.CheckDt(dt))
