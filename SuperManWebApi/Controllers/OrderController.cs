@@ -384,31 +384,31 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [ExecuteTimeLog]
-        public ResultModel<RushOrderResultModel> Receive()
+        public ResultModel<RushOrderResultModel> Receive(OrderReceiveModel model)
         {
-            var userId = ParseHelper.ToInt(HttpContext.Current.Request.Form["userId"], 0);   //骑士ID
-            var orderNo = HttpContext.Current.Request.Form["orderNo"];
-            var bussinessId = ParseHelper.ToInt(HttpContext.Current.Request.Form["bussinessId"], 0);
-            var version = HttpContext.Current.Request.Form["version"];
-            float grabLongitude = 0, grabLatitude = 0;
-            if(!string.IsNullOrEmpty(HttpContext.Current.Request.Form["Longitude"]))
-                grabLongitude =float.Parse( HttpContext.Current.Request.Form["Longitude"]);
-            if (!string.IsNullOrEmpty(HttpContext.Current.Request.Form["Latitude"]))
-                grabLatitude = float.Parse( HttpContext.Current.Request.Form["Latitude"]);
+            //var userId = ParseHelper.ToInt(HttpContext.Current.Request.Form["userId"], 0);   //骑士ID
+            //var orderNo = HttpContext.Current.Request.Form["orderNo"];
+            //var bussinessId = ParseHelper.ToInt(HttpContext.Current.Request.Form["bussinessId"], 0);
+            //var version = HttpContext.Current.Request.Form["version"];
+            //float grabLongitude = 0, grabLatitude = 0;
+            //if(!string.IsNullOrEmpty(HttpContext.Current.Request.Form["Longitude"]))
+            //    grabLongitude =float.Parse( HttpContext.Current.Request.Form["Longitude"]);
+            //if (!string.IsNullOrEmpty(HttpContext.Current.Request.Form["Latitude"]))
+            //    grabLatitude = float.Parse( HttpContext.Current.Request.Form["Latitude"]);
 
-            if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
+            if (model.orderId<=0) //订单号码非空验证
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
-            if (userId <= 0) //用户id验证
+            if (model.userId<= 0) //用户id验证
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
-            if (bussinessId <= 0)
+            if (model.userId <= 0)
             {
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
             }
-            if (string.IsNullOrWhiteSpace(version))
+            if (string.IsNullOrWhiteSpace(model.version))
             {
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.NoVersion);
             }
-            return new ClienterProvider().Receive_C(userId, orderNo, bussinessId,grabLongitude, grabLatitude);
+            return new ClienterProvider().Receive_C(model.userId, model.orderNo, model.bussinessId, model.Longitude, model.Latitude);
         }
 
         /// <summary>
