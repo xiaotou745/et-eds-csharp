@@ -28,6 +28,10 @@ namespace ETS.Const
         /// 订单已取消 
         /// </summary>
         public const int OrderStatus3 = 3;
+        /// <summary>
+        /// 订单已取货 
+        /// </summary>
+        public const int OrderStatus4 = 4;
 
         /// <summary>
         /// 第三方待接入订单 

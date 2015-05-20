@@ -5,21 +5,71 @@
 </div>
 <script src="~/Scripts/jquery-1.10.2.min.js"></script>
 <script>     
+    //$.ajax({
+    //    type: 'POST',
+    //    dataType: 'json',
+    //    url: '/Order/Push',
+    //    data: {
+    //        "userId": 1765,
+    //        "ReceiveName": "健康快乐",
+    //        "receviceAddress": "铁路局",
+    //        "recevicePhone": "13595555877",            
+    //        "Amount": 30,
+    //        "IsPay": false,
+    //        "Remark":null ,
+    //        "OrderCount": 1,
+    //        "OrderSign": "1431935133274",
+    //        "TimeSpan": 30002,
+    //        "Version": "1.1.0",
+    //        "PubLongitude": 0.011,
+    //        "PubLatitude": 0.021,
+    //        "listOrderChlid": [
+    //                   {
+    //                       "ChildId": 1,
+    //                       "GoodPrice": 30
+    //                   }
+    //        ]
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
+
     $.ajax({
         type: 'POST',
         dataType: 'json',
-        url: '/Order/ConfirmTake',
+        url: '/Order/Receive',
         data: {
-            "OrderId": 142148,
-            "version": "1.0",
-            "longitude":0.301,
-            "latitude":0.302            
+            "userId": 142148,
+            "orderNo": "1765150520170419025",
+            "bussinessId": 1765,
+            "Version": "1.1.0",
+            "longitude":0.311,
+            "latitude":0.312            
         },
         success: function (data) {
             console.log(data);
         },
         error: function () { }
     });
+
+
+    //$.ajax({
+    //    type: 'POST',
+    //    dataType: 'json',
+    //    url: '/Order/ConfirmTake',
+    //    data: {
+    //        "OrderId": 142148,
+    //        "version": "1.0",
+    //        "longitude":0.301,
+    //        "latitude":0.302            
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
 
     //$.ajax({
     //    type: 'get',
@@ -63,36 +113,10 @@
     //        console.log(data);
     //    },
     //    error: function () { }
-    //});
-    //&pagedSize=10&pageIndex=1&Status=1&orderfrom=1
-    //$.ajax({
-    //    type: 'POST',
-    //    dataType: 'json',
-    //    url: '/Order/Push',
-    //    data: {
-    //        "userId": 1765,
-    //        "ReceiveName": "健康快乐",
-    //        "receviceAddress": "铁路局",
-    //        "recevicePhone": "13595555877",            
-    //        "Amount": 0,
-    //        "IsPay": false,
-    //        "Remark":null ,
-    //        "OrderCount": 0,
-    //        "OrderSign": "1431935133274",
-    //        "TimeSpan": 1431935133275,
-    //        "Version":"1.1.0",
-    //        "listOrderChlid": [
-    //                   {
-    //                       "ChildId": 1,
-    //                       "GoodPrice": 121
-    //                   }
-    //        ]
-    //    },
-    //    success: function (data) {
-    //        console.log(data);
-    //    },
-    //    error: function () { }
-    //});
+    //}); 
+
+
+   
 
     //$.ajax({
     //    type: 'POST',
