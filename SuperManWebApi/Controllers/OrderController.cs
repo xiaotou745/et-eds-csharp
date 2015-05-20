@@ -393,8 +393,11 @@ namespace SuperManWebApi.Controllers
             var orderNo = HttpContext.Current.Request.Form["orderNo"];
             var bussinessId = ParseHelper.ToInt(HttpContext.Current.Request.Form["bussinessId"], 0);
             var version = HttpContext.Current.Request.Form["version"];
-            var grabLongitude = HttpContext.Current.Request.Form["GrabLongitude"];
-            var grabLatitude = HttpContext.Current.Request.Form["GrabLatitude"];
+            float grabLongitude = 0, grabLatitude = 0;
+            if(!string.IsNullOrEmpty(HttpContext.Current.Request.Form["Longitude"]))
+                grabLongitude =float.Parse( HttpContext.Current.Request.Form["Longitude"]);
+            if (!string.IsNullOrEmpty(HttpContext.Current.Request.Form["Latitude"]))
+                grabLatitude = float.Parse( HttpContext.Current.Request.Form["Latitude"]);
 
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
@@ -408,7 +411,7 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.NoVersion);
             }
-            return new ClienterProvider().Receive_C(userId, orderNo, bussinessId);
+            return new ClienterProvider().Receive_C(userId, orderNo, bussinessId,grabLongitude, grabLatitude);
         }
 
         /// <summary>
@@ -422,6 +425,11 @@ namespace SuperManWebApi.Controllers
             var orderNo = HttpContext.Current.Request.Form["orderNo"];
             var pickupCode = HttpContext.Current.Request.Form["pickupCode"];
             var version = HttpContext.Current.Request.Form["version"];
+            float completeLongitude = 0, completeLatitude = 0;
+            if(!string.IsNullOrEmpty(HttpContext.Current.Request.Form["Longitude"]))
+                completeLongitude = float.Parse(HttpContext.Current.Request.Form["Longitude"]);
+            if (!string.IsNullOrEmpty(HttpContext.Current.Request.Form["Latitude"]))
+                completeLatitude = float.Parse(HttpContext.Current.Request.Form["Latitude"]);
             if (userId == 0)  //用户id非空验证
                 return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.UserIdEmpty);
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
@@ -435,7 +443,7 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.ExistNotPayChildOrder);
             }
-            string finishResult = iClienterProvider.FinishOrder(userId, orderNo, pickupCode);
+            string finishResult = iClienterProvider.FinishOrder(userId, orderNo, completeLongitude, completeLatitude, pickupCode);
             if (finishResult == "1")  //完成
             {
                 var clienter = iClienterProvider.GetUserInfoByUserId(userId);
