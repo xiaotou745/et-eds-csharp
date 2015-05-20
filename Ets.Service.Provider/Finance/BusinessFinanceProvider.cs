@@ -527,5 +527,9 @@ namespace Ets.Service.Provider.Finance
             return strBuilder.ToString();
         }
 
+        public decimal GetBusiBalance(string orderNo)
+        {
+            return businessFinanceDao.GetBusiBalance(orderNo);
+        }
     }
 }

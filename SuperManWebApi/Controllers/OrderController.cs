@@ -213,6 +213,7 @@ namespace SuperManWebApi.Controllers
             var orderId = ParseHelper.ToInt(HttpContext.Current.Request.Form["OrderId"], 0); //订单号
             var clienterId = ParseHelper.ToInt(HttpContext.Current.Request.Form["ClienterId"], 0); //骑士的id
             var needUploadCount = ParseHelper.ToInt(HttpContext.Current.Request.Form["NeedUploadCount"], 1); //该订单总共需要上传的 小票数量
+            var receiptPic = HttpContext.Current.Request.Form["ReceiptPicAddress"];  //小票地址更新时
             var version = HttpContext.Current.Request.Form["Version"]; //版本号  1.0 
             var orderChildId = ParseHelper.ToInt(HttpContext.Current.Request.Form["OrderChildId"], 0); //子单号
             if (clienterId == 0) // 骑士Id
@@ -282,9 +283,16 @@ namespace SuperManWebApi.Controllers
                 ClienterId = clienterId,
                 OrderChildId = orderChildId,
                 NeedUploadCount = needUploadCount,
-                ReceiptPic = imgInfo.PicUrl,
-                HadUploadCount = 1
+                ReceiptPic = imgInfo.PicUrl
             };
+            if (string.IsNullOrWhiteSpace(receiptPic))  
+            {
+                uploadReceiptModel.HadUploadCount = 1;
+            }
+            else
+            {
+                uploadReceiptModel.HadUploadCount = 0;  //有地址说明是更新换的小票，数量不变
+            }
             var orderOther = iClienterProvider.UpdateClientReceiptPicInfo(uploadReceiptModel);
             if (orderOther == null)
             {
@@ -295,6 +303,11 @@ namespace SuperManWebApi.Controllers
                 List<string> listReceiptPic = ImageCommon.ReceiptPicConvert(uploadReceiptModel.ReceiptPic);
                 List<OrderChildImg> listOrderChild = new List<OrderChildImg>();
                 listOrderChild.Add(new OrderChildImg() { OrderChildId = orderChildId, TicketUrl = listReceiptPic[0] });
+                if (!string.IsNullOrWhiteSpace(uploadReceiptModel.ReceiptPic))  //当有地址的时候删除
+                {
+                    ImageHelper imgHelper = new ImageHelper();
+                    imgHelper.DeleteTicket(uploadReceiptModel.ReceiptPic);
+                }
                 //上传成功后返回图片全路径
                 return ResultModel<UploadReceiptResultModel>.Conclude(UploadIconStatus.Success, new UploadReceiptResultModel() { OrderId = orderId, OrderChildList = listOrderChild, HadUploadCount = orderOther.HadUploadCount, NeedUploadCount = orderOther.NeedUploadCount });
             }
@@ -417,7 +430,11 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.NoVersion);
             }
-            //var myorder = new Ets.Dao.Order.OrderDao().GetOrderByNo(orderNo);
+            var myorder = new Ets.Dao.Order.OrderDao().IsOrNotFinish(orderNo);
+            if (myorder)
+            {
+                return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.ExistNotPayChildOrder);
+            }
             string finishResult = iClienterProvider.FinishOrder(userId, orderNo, pickupCode);
             if (finishResult == "1")  //完成
             {
@@ -459,12 +476,12 @@ namespace SuperManWebApi.Controllers
         /// <summary>
         /// 骑士端获取任务列表（最新/最近）任务   add by caoheyang 20150519
         /// </summary>
-        /// <param name="getJobCDm">参数实体</param>
+        /// <param name="model">参数实体</param>
         /// <returns></returns>
         [HttpPost]
-        public ResultModel<object> GetJobC(GetJobCDM getJobCDm)
+        public ResultModel<object> GetJobC(GetJobCPM model)
         {
-            return iOrderProvider.GetJobC(getJobCDm);
+            return iOrderProvider.GetJobC(model);
         }
     }
 }

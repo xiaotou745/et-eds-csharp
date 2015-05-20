@@ -843,6 +843,32 @@ where   oc.OrderId = @OrderId;
                 return new OrderListModel();
             }
         }
+
+        /// <summary>
+        /// 根据任务号判断该任务是否可以完成
+        /// wc 获取该任务下的子订单是否全部付款
+        /// </summary>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        public bool IsOrNotFinish(string orderNo)
+        {
+            StringBuilder sql = new StringBuilder(@" 
+select min(convert(int, oc.PayStatus)) IsPay
+from   dbo.[order] o ( nolock )
+join dbo.OrderChild oc ( nolock ) on o.Id = oc.OrderId
+where  o.OrderNo = @OrderNo");
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("OrderNo", DbType.String).Value = orderNo;
+            int isPay = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql.ToString(), dbParameters),0);
+            if (isPay == 0)  //最小是0 说明还有未付款的子订单
+            {
+                return false;  //表示不能完成任务
+            }
+            else
+            {
+                return true;
+            }
+        }
         /// <summary>
         /// 通过订单号获取该订单的详情数据
         /// 窦海超
@@ -1402,11 +1428,13 @@ select top 1
         o.OrderCount,
         c.TrueName ClienterName,
         ISNULL(oo.HadUploadCount,0) HadUploadCount,
-        o.SettleMoney,b.Id businessId
+        o.SettleMoney,
+        b.Id businessId,
+        o.Amount - o.SettleMoney + o.DistribSubsidy * o.OrderCount as ShouldPayBusiMoney 
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
-        left join dbo.OrderOther oo with(nolock) on o.Id = oo.OrderId
+        left join dbo.OrderOther oo with(nolock) on o.Id = oo.OrderId 
 where   1 = 1 and o.Id = @Id
 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
@@ -2151,13 +2179,13 @@ where   oo.IsJoinWithdraw = 0
         /// <summary>
         /// 骑士端获取任务列表（最新/最近）任务   add by caoheyang 20150519
         /// </summary>
-        /// <param name="getJobCDm">订单查询实体</param>
+        /// <param name="model">订单查询实体</param>
         /// <returns></returns>
-        public IList<GetJobCDM> GetJobC(GetJobCDM getJobCDm)
+        public IList<GetJobCDM> GetJobC(GetJobCPM model)
         {
             IList<GetJobCDM> models = new List<GetJobCDM>();
-            string sql = @"
-select a.Id,a.OrderCommission,a.OrderCount,   
+            string sql =string.Format(@"
+select top {0} a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
 b.Name as BusinessName,b.Address as BusinessAddress,
 ISNULL(a.ReceviceAddress,'') as UserAddress,
@@ -2167,9 +2195,10 @@ case convert(varchar(100), PubDate, 23)
 end
 +'  '+substring(convert(varchar(100),PubDate,24),1,5)
 as PubDate 
-from dbo.[order] a
-join dbo.business b on a.businessId=b.Id
-";
+from dbo.[order] a (nolock)
+join dbo.business b (nolock) on a.businessId=b.Id
+order by {1}
+", model.TopNum,"a.PubDate desc");
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters));
             if (DataTableHelper.CheckDt(dt))

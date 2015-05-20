@@ -528,12 +528,12 @@ namespace Ets.Service.Provider.Clienter
                         }
                     }
                     businessId = myOrderInfo.businessId;
-                    //完成订单的时候，当任务为未付款时，更新商户金额
-                    //if (myOrderInfo.IsPay.HasValue && !myOrderInfo.IsPay.Value)
-                    //{
-                    //    BusinessBalanceRecord businessBalanceRecord = new BusinessBalanceRecord();
-                    //    businessBalanceRecordDao.InsertSingle(businessBalanceRecord);
-                    //}
+                    ////完成任务的时候，当任务为未付款时，更新商户金额
+                    if (myOrderInfo.IsPay.HasValue && !myOrderInfo.IsPay.Value)
+                    {
+                        BusinessBalanceRecord businessBalanceRecord = new BusinessBalanceRecord();
+                        businessBalanceRecordDao.InsertSingle(businessBalanceRecord);
+                    }
                     tran.Complete();
                     result = "1";
                 }
@@ -669,17 +669,28 @@ namespace Ets.Service.Provider.Clienter
                     if (CheckOrderPay(myOrderInfo.OrderNo))
                     {
                         //更新骑士金额 
-                        UpdateClienterAccount(uploadReceiptModel.ClienterId, myOrderInfo);
-                        //更新商家金额
-                        //if (myOrderInfo.IsPay.HasValue && !myOrderInfo.IsPay.Value)  //订单未支付的时候，更新商家所得金额
-                        //{
-                        //   bool bResult= businessDao.UpdateBusinessBalancePrice(myOrderInfo.businessId, myOrderInfo.SettleMoney);
-                        //   businessBalanceRecordDao.InsertSingle(new BusinessBalanceRecord() { Amount = myOrderInfo.SettleMoney, BusinessId = myOrderInfo.businessId, Remark = "骑士完成订单且未支付", RelationNo = myOrderInfo.OrderNo, Operator = myOrderInfo.ClienterName, RecordType = BusinessBalanceRecordRecordType.OrderMeals.GetHashCode() });
-                        //}
+                        UpdateClienterAccount(uploadReceiptModel.ClienterId, myOrderInfo); 
+                    }
+                }
+                //更新商家金额 注意：和是否上传小票无关
+                if (myOrderInfo.IsPay.HasValue && !myOrderInfo.IsPay.Value)  //订单未支付的时候，更新商家所得金额
+                {
+                    bool bResult = businessDao.UpdateBusinessBalancePrice(myOrderInfo.businessId, myOrderInfo.ShouldPayBusiMoney);
+                    if (bResult)
+                    {
+                        businessBalanceRecordDao.InsertSingle(new BusinessBalanceRecord()
+                        {
+                            Amount = myOrderInfo.ShouldPayBusiMoney,
+                            BusinessId = myOrderInfo.businessId,
+                            Remark = "骑士完成订单且未支付",
+                            RelationNo = myOrderInfo.OrderNo,
+                            Operator = myOrderInfo.ClienterName,
+                            RecordType = BusinessBalanceRecordRecordType.OrderMeals.GetHashCode()
+                        });
                     }
                 }
                 tran.Complete();
-            }
+            } 
             return orderOther;
         }
 

@@ -248,5 +248,9 @@ namespace Ets.Model.DataModel.Order
         /// 商户结算金额
         /// </summary>
         public decimal SettleMoney { get; set; }
+        /// <summary>
+        /// 应付商户金额
+        /// </summary>
+        public decimal ShouldPayBusiMoney { get; set; }
     }
 }

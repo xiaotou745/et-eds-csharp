@@ -223,6 +223,7 @@
     <Compile Include="ParameterModel\Order\ChangeStatusPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\BusiOrderResultModel.cs" />
     <Compile Include="ParameterModel\Order\AsyncStatusPM_OpenApi.cs" />
+    <Compile Include="ParameterModel\Order\GetJobCPM.cs" />
     <Compile Include="ParameterModel\Order\OrderChildModel.cs" />
     <Compile Include="ParameterModel\Order\OrderPM.cs" />
     <Compile Include="ParameterModel\Order\OrderChildPM.cs" />

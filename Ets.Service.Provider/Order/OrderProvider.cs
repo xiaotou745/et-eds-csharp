@@ -1199,11 +1199,13 @@ namespace Ets.Service.Provider.Order
         /// <summary>
         /// 骑士端获取任务列表（最新/最近）任务   add by caoheyang 20150519
         /// </summary>
-        /// <param name="getJobCDm">订单查询实体</param>
+        /// <param name="model">订单查询实体</param>
         /// <returns></returns>
-        public ResultModel<object> GetJobC(GetJobCDM getJobCDm)
+        public ResultModel<object> GetJobC(GetJobCPM model)
         {
-            return ResultModel<object>.Conclude(SystemEnum.Success, orderDao.GetJobC(getJobCDm));
+            model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;// top 值
+            model.PushRadius = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize; //距离
+            return ResultModel<object>.Conclude(SystemEnum.Success, orderDao.GetJobC(model));
         }
     }
 }
