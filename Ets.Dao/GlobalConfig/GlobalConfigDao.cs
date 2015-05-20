@@ -24,15 +24,15 @@ namespace Ets.Dao.GlobalConfig
         {
             GlobalConfigModel model = null;
             #region redis判断，如果没有加到redis中
-            //var redis = new ETS.NoSql.RedisCache.RedisCache();
-            //string cacheKey = string.Format(RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet, GroupId);//缓存的KEY
-            //model = redis.Get<GlobalConfigModel>(cacheKey);
-            //if (CurrentGlobalVersion != ETS.Config.GlobalVersion || model == null)
-            //{
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            string cacheKey = string.Format(RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet, GroupId);//缓存的KEY
+            model = redis.Get<GlobalConfigModel>(cacheKey);
+            if (CurrentGlobalVersion != ETS.Config.GlobalVersion || model == null)
+            {
                 CurrentGlobalVersion = ETS.Config.GlobalVersion;
                 model = new GlobalConfigDao().GlobalConfigMethod(GroupId);
-            //    redis.Set(cacheKey, model);
-            //}
+                redis.Set(cacheKey, model);
+            }
             #endregion
             return model;
         }
