@@ -292,7 +292,8 @@ namespace Ets.Model.DomainModel.Order
     /// </summary>
     public class OrderCancelParam
     {
-        public int UserId { get; set; }
-        public string OrderNo { get; set; }
+        public int businessId { get; set; }
+        public int orderId { get; set; }
+        public string orderNo { get; set; }
     }
 }

@@ -1411,16 +1411,16 @@ where   1 = 1 and o.OrderNo = @OrderNo
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns></returns>
-        public int GetOrderStatus(string orderNo)
+        public int GetOrderStatus(int orderId,int businessId)
         {
             string sql = @"
 select top 1 o.[Status]
 from    [order] o with ( nolock ) 
-where   o.OrderNo = @orderNo
+where   o.Id = @Id and businessId=@businessId
 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@orderNo", SqlDbType.NVarChar).Value = orderNo;
-
+            parm.Add("Id", DbType.Int32).Value = orderId;
+            parm.Add("businessId", DbType.Int32).Value = businessId;
             var oStatus = DbHelper.ExecuteScalar(SuperMan_Read, sql, parm);
             return ParseHelper.ToInt(oStatus, -1);
         }

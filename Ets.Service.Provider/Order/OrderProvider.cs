@@ -1137,7 +1137,8 @@ namespace Ets.Service.Provider.Order
             orderDM.ClienterName = order.ClienterName;
             orderDM.ClienterPhoneNo = order.ClienterPhoneNo;
             orderDM.GrabTime = order.GrabTime;
-            if (order.businessId != null) orderDM.businessId = order.businessId.Value;
+            orderDM.GrabTime = order.businessId;
+            //if (order.businessId != null) orderDM.businessId = order.businessId.Value;
             if (order.NeedUploadCount >= order.OrderCount && order.Status == OrderStatus.订单完成.GetHashCode())
             {
                 orderDM.IsModifyTicket = false;
@@ -1210,9 +1211,9 @@ namespace Ets.Service.Provider.Order
         }
 
 
-        public int GetOrderStatus(string orderNo)
+        public int GetOrderStatus(int orderId,int businessId)
         {
-            return orderDao.GetOrderStatus(orderNo);
+            return orderDao.GetOrderStatus(orderId,businessId);
         }
 
         public void UpdateTake(OrderPM modelPM)

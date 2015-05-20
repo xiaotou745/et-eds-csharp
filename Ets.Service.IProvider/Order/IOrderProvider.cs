@@ -90,7 +90,7 @@ namespace Ets.Service.IProvider.Order
         /// </summary>
         /// <param name="orderNo"></param>
         /// <returns></returns>
-        int GetOrderStatus(string orderNo);
+        int GetOrderStatus(int orderId,int businessId);
 
         #region openapi 接口使用 add by caoheyang  20150325
 
