@@ -59,7 +59,7 @@ namespace SuperManWebApi.Controllers
                 if (currResModel.Status == PubOrderStatus.VerificationSuccess.GetHashCode())
                 {                    
                     PubOrderStatus cuStatus = iOrderProvider.AddOrder(order);              
-                    if (cuStatus == PubOrderStatus.Success)//当前订单执行失败
+                    if (cuStatus == PubOrderStatus.Success)//当前订单执行成功
                     {
                         BusiOrderResultModel resultModel = new BusiOrderResultModel { userId = model.userId };
                         return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
