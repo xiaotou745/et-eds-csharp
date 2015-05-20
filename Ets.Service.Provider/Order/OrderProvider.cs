@@ -1204,7 +1204,7 @@ namespace Ets.Service.Provider.Order
         public ResultModel<object> GetJobC(GetJobCPM model)
         {
             model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;// top 值
-            model.PushRadius = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize; //距离
+            model.PushRadius = GlobalConfigDao.GlobalConfigGet(0).PushRadius; //距离
             return ResultModel<object>.Conclude(SystemEnum.Success, orderDao.GetJobC(model));
         }
     }
