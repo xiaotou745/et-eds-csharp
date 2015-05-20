@@ -1407,6 +1407,24 @@ where   1 = 1 and o.OrderNo = @OrderNo
             }
         }
         /// <summary>
+        /// 获取订单状态根据
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public int GetOrderStatus(string orderNo)
+        {
+            string sql = @"
+select top 1 o.[Status]
+from    [order] o with ( nolock ) 
+where   o.OrderNo = @orderNo
+";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@orderNo", SqlDbType.NVarChar).Value = orderNo;
+
+            var oStatus = DbHelper.ExecuteScalar(SuperMan_Read, sql, parm);
+            return ParseHelper.ToInt(oStatus, -1);
+        }
+        /// <summary>
         /// 根据订单号获取订单信息
         /// 订单OrderNO
         /// wc
@@ -2187,8 +2205,8 @@ where   oo.IsJoinWithdraw = 0
             string sql =string.Format(@"
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
-b.Name as BusinessName,b.Address as BusinessAddress,
-ISNULL(a.ReceviceAddress,'') as UserAddress,
+b.Name as BusinessName,b.City+' '+b.Address as BusinessAddress,
+ISNULL(a.ReceviceCity,'')+' '+ISNULL(a.ReceviceAddress,'') as UserAddress,
 case convert(varchar(100), PubDate, 23) 
 	when convert(varchar(100), getdate(), 23) then '今日 '
     else substring(convert(varchar(100), PubDate, 23),6,5) 
@@ -2198,7 +2216,7 @@ as PubDate
 from dbo.[order] a (nolock)
 join dbo.business b (nolock) on a.businessId=b.Id
 order by {1}
-", model.TopNum,"a.PubDate desc");
+", model.TopNum,"a.Id desc");
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters));
             if (DataTableHelper.CheckDt(dt))

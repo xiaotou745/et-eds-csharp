@@ -50,12 +50,15 @@ namespace Ets.Model.DomainModel.Order
         /// <summary>
         /// 发布时间
         /// </summary>
-        public string PubDate { get; set; }
-
+        public string PubDate { get; set; } 
         /// <summary>
         /// 发货人
         /// </summary>
         public string businessName { get; set; }
+        /// <summary>
+        /// 商户Id
+        /// </summary>
+        public int businessId { get; set; }
 
         /// <summary>
         /// 取货城市
@@ -283,5 +286,13 @@ namespace Ets.Model.DomainModel.Order
         /// </summary>
         public int GroupID { get; set; }
 
-    }      
+    }
+    /// <summary>
+    /// 取消订单入口参数Model
+    /// </summary>
+    public class OrderCancelParam
+    {
+        public int UserId { get; set; }
+        public string OrderNo { get; set; }
+    }
 }
