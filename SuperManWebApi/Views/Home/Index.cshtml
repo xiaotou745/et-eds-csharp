@@ -5,35 +5,94 @@
 </div>
 <script src="~/Scripts/jquery-1.10.2.min.js"></script>
 <script>     
-   
     $.ajax({
         type: 'POST',
         dataType: 'json',
-        url: '/Order/Push',
+        url: '/Order/ConfirmTake',
         data: {
-            "userId": 1765,
-            "ReceiveName": "健康快乐",
-            "receviceAddress": "铁路局",
-            "recevicePhone": "13595555877",            
-            "Amount": 0,
-            "IsPay": false,
-            "Remark":null ,
-            "OrderCount": 0,
-            "OrderSign": "1431935133274",
-            "TimeSpan": 1431935133275,
-            "Version":"1.1.0",
-            "listOrderChlid": [
-                       {
-                           "ChildId": 1,
-                           "GoodPrice": 121
-                       }
-            ]
+            "OrderId": 142148,
+            "version": "1.0",
+            "longitude":0.301,
+            "latitude":0.302            
         },
         success: function (data) {
             console.log(data);
         },
         error: function () { }
     });
+
+    //$.ajax({
+    //    type: 'get',
+    //    dataType: 'json',
+    //    url: '/ClienterAPI/RushOrder_C?userId=3080&orderNo=1767150520111055077&longitude=0.142&latitude=0.143',
+    //    data: {        
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
+
+    //$.ajax({
+    //    type: 'POST',
+    //    dataType: 'json',
+    //    url: '/Order/Complete',
+    //    data: {
+    //        "userId": 3080,
+    //        "orderNo": "1767150520111055077",
+    //        "pickupCode": "",
+    //        "version": "1.0",
+    //        "longitude":0.201,
+    //        "latitude":0.202            
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
+
+
+
+    //$.ajax({
+    //    type: 'Get',
+    //    dataType: 'json',
+    //    url: '/BusinessAPI/GetOrderList_B?userId=1767&pagedSize=10&pagedIndex=1&Status=1&orderfrom=1',
+    //    data: {          
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
+    //&pagedSize=10&pageIndex=1&Status=1&orderfrom=1
+    //$.ajax({
+    //    type: 'POST',
+    //    dataType: 'json',
+    //    url: '/Order/Push',
+    //    data: {
+    //        "userId": 1765,
+    //        "ReceiveName": "健康快乐",
+    //        "receviceAddress": "铁路局",
+    //        "recevicePhone": "13595555877",            
+    //        "Amount": 0,
+    //        "IsPay": false,
+    //        "Remark":null ,
+    //        "OrderCount": 0,
+    //        "OrderSign": "1431935133274",
+    //        "TimeSpan": 1431935133275,
+    //        "Version":"1.1.0",
+    //        "listOrderChlid": [
+    //                   {
+    //                       "ChildId": 1,
+    //                       "GoodPrice": 121
+    //                   }
+    //        ]
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
 
     //$.ajax({
     //    type: 'POST',

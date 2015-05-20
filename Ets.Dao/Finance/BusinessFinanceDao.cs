@@ -7,6 +7,7 @@ using ETS.Data.PageData;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using Ets.Dao.Order;
 
 namespace Ets.Dao.Finance
 {
@@ -532,7 +533,14 @@ WHERE bbr.BusinessId=@BusinessId ";
             return MapRows<BusinessBalanceRecordModel>(dt);
         }
 
-        /// <summary>
+
+        public decimal GetBusiBalance(string orderNo)
+        {
+            OrderDao orderDao = new OrderDao();
+             
+            return 0m;
+        }
+		/// <summary>
         /// 添加商户余额流水记录
         /// danny-20150519
         /// </summary>
@@ -575,8 +583,6 @@ values(     @BusinessId
             parm.AddWithValue("@Remark", model.Remark);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
-
-       
     }
        
 }

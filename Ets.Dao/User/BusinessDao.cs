@@ -83,6 +83,7 @@ namespace Ets.Dao.User
                                     c.TrueName as SuperManName,
                                     c.PhoneNo as SuperManPhone,
                                     o.OrderFrom,
+                                    o.id as OrderId,
                                     isnull(o.OriginalOrderNo,'') as OriginalOrderNo";
             string tableList = @" [order](nolock) as o 
                                    LEFT join business(nolock) as b on o.businessId=b.Id
@@ -259,10 +260,10 @@ namespace Ets.Dao.User
                     }
                     else
                     {
-                        if (model.CommissionFixValue > 0)
-                        {
-                            sql += "CommissionFixValue=@CommissionFixValue,";
-                        }
+                        //if (model.CommissionFixValue > 0)
+                        //{
+                        sql += "CommissionFixValue=@CommissionFixValue,";
+                        //}
                     }
                     sql += "CommissionType=@CommissionType,";
                 }
@@ -1725,22 +1726,20 @@ WHERE b.Id = @BusinessId  ";
         }
 
 
-        public bool UpdateBusinessBalancePrice(int businessId, decimal settleMoney)
+        public bool UpdateBusinessBalancePrice(int businessId, decimal shouldPayBusiMoney)
         {
             bool b = false;
             //更新商户表中的 BalancePrice 余额字段
             StringBuilder upStringBuilder = new StringBuilder(@"
 update  dbo.business
-set     BalancePrice = @BalancePrice
+set     BalancePrice = BalancePrice + @BalancePrice
 where   Id = @Id;");
-
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@BalancePrice", DbType.Decimal).Value = settleMoney;
+            parm.Add("@BalancePrice", DbType.Decimal).Value = shouldPayBusiMoney;
             parm.Add("@Id", DbType.Int32, 4).Value = businessId;
             int iResult = DbHelper.ExecuteNonQuery(SuperMan_Write, upStringBuilder.ToString(), parm);
             //更新商户流水表
             return iResult > 0 ? true : false;
-
         }
     }
 }

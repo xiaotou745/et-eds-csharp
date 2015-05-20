@@ -223,6 +223,7 @@
     <Compile Include="ParameterModel\Order\ChangeStatusPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\BusiOrderResultModel.cs" />
     <Compile Include="ParameterModel\Order\AsyncStatusPM_OpenApi.cs" />
+    <Compile Include="ParameterModel\Order\GetJobCPM.cs" />
     <Compile Include="ParameterModel\Order\OrderChildModel.cs" />
     <Compile Include="ParameterModel\Order\OrderPM.cs" />
     <Compile Include="ParameterModel\Order\OrderChildPM.cs" />
@@ -232,6 +233,7 @@
     <Compile Include="ParameterModel\Order\GetStatusPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\CreatePM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\OrderOptionModel.cs" />
+    <Compile Include="ParameterModel\Order\OrderReceiveModel.cs" />
     <Compile Include="ParameterModel\Order\OrderRecordsLog.cs" />
     <Compile Include="ParameterModel\Order\OrderSearchCriteria.cs" />
     <Compile Include="ParameterModel\Order\PullOrderInfoPM_OpenApi.cs" />

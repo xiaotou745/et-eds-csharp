@@ -1197,7 +1197,7 @@ namespace Ets.Service.Provider.Order
             orderDM.OriginalOrderNo = order.OriginalOrderNo;
             orderDM.OrderFrom = order.OrderFrom;
             orderDM.OrderCommission = order.OrderCommission;
-            orderDM.PubDate = order.PubDate;
+            orderDM.PubDate = ParseHelper.ToDatetime(order.PubDate, DateTime.Now).ToString("yyyy-MM-dd HH:mm");
             orderDM.businessName = order.BusinessName;
             orderDM.pickUpCity = order.PickUpCity;
             orderDM.PickUpAddress = order.PickUpAddress;
@@ -1222,6 +1222,8 @@ namespace Ets.Service.Provider.Order
             orderDM.ClienterName = order.ClienterName;
             orderDM.ClienterPhoneNo = order.ClienterPhoneNo;
             orderDM.GrabTime = order.GrabTime;
+            orderDM.businessId = ParseHelper.ToInt(order.businessId,0);
+            //if (order.businessId != null) orderDM.businessId = order.businessId.Value;
             if (order.NeedUploadCount >= order.OrderCount && order.Status == OrderStatus.订单完成.GetHashCode())
             {
                 orderDM.IsModifyTicket = false;
@@ -1284,11 +1286,38 @@ namespace Ets.Service.Provider.Order
         /// <summary>
         /// 骑士端获取任务列表（最新/最近）任务   add by caoheyang 20150519
         /// </summary>
-        /// <param name="getJobCDm">订单查询实体</param>
+        /// <param name="model">订单查询实体</param>
         /// <returns></returns>
-        public ResultModel<object> GetJobC(GetJobCDM getJobCDm)
+        public ResultModel<object> GetJobC(GetJobCPM model)
         {
-            return ResultModel<object>.Conclude(SystemEnum.Success, orderDao.GetJobC(getJobCDm));
+            model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;// top 值
+            model.PushRadius = GlobalConfigDao.GlobalConfigGet(0).PushRadius; //距离
+            return ResultModel<object>.Conclude(SystemEnum.Success, orderDao.GetJobC(model));
+        }
+
+
+        public int GetOrderStatus(int orderId,int businessId)
+        {
+            return orderDao.GetOrderStatus(orderId,businessId);
+        }
+
+        public void UpdateTake(OrderPM modelPM)
+        {        
+             float takeLongitude =(float) modelPM.longitude;
+             float takeLatitude=(float)modelPM.latitude;
+             orderDao.UpdateTake(modelPM.OrderId.ToString(), takeLongitude, takeLatitude);
+        }
+
+        /// <summary>
+        /// 获取订单状态
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150520</UpdateTime>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public int GetStatus(int id)
+        {
+            return orderDao.GetStatus(id);
         }
     }
 }

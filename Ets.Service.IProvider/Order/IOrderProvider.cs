@@ -85,7 +85,12 @@ namespace Ets.Service.IProvider.Order
         /// <param name="orderStatus">订单状态</param>
         /// <returns></returns>
         int UpdateOrderStatus(string orderNo, int orderStatus, string remakr, int? status);
-
+        /// <summary>
+        /// 获取订单状态
+        /// </summary>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        int GetOrderStatus(int orderId,int businessId);
 
         #region openapi 接口使用 add by caoheyang  20150325
 
@@ -199,8 +204,19 @@ namespace Ets.Service.IProvider.Order
         /// <summary>
         /// 骑士端获取任务列表（最新/最近）任务   add by caoheyang 20150519
         /// </summary>
-        /// <param name="getJobCDm">订单查询实体</param>
+        /// <param name="model">订单查询实体</param>
         /// <returns></returns>
-        ResultModel<object> GetJobC(GetJobCDM getJobCDm);
+        ResultModel<object> GetJobC(GetJobCPM model);
+
+        void UpdateTake(OrderPM modelPM);
+
+        /// <summary>
+        /// 获取订单状态
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150520</UpdateTime>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        int GetStatus(int id);
     }
 }

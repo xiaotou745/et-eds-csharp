@@ -33,7 +33,7 @@ namespace Ets.Service.Provider.User
     /// 商户业务逻辑接口实现类  add by caoheyang 20150311
     /// </summary>
     public class BusinessProvider : IBusinessProvider
-    { 
+    {
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
         BusinessDao dao = new BusinessDao();
         /// <summary>
@@ -68,7 +68,8 @@ namespace Ets.Service.Provider.User
                 model.superManName = from.SuperManName;
                 model.superManPhone = from.SuperManPhone;
                 model.OrderFrom = from.OrderFrom.ToString();
-                if (from.OrderFrom==0)
+                model.OrderId = from.OrderId;
+                if (from.OrderFrom == 0)
                 {
                     model.OrderFromName = "B端";
                 }
@@ -87,7 +88,7 @@ namespace Ets.Service.Provider.User
                 if (from.OrderFrom == 4)
                 {
                     model.OrderFromName = "美团";
-                } 
+                }
                 model.OriginalOrderNo = from.OriginalOrderNo;
                 if (from.BusinessId > 0 && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
                 {
@@ -101,7 +102,7 @@ namespace Ets.Service.Provider.User
             }
             return listOrder;
         }
-         
+
 
         /// <summary>
         /// 商户结算列表--2015.3.12 平扬
@@ -122,7 +123,7 @@ namespace Ets.Service.Provider.User
                     result.Message = "开始时间不能大于结束时间";
                     return result;
                 }
-                var list = dao.GetBusinessCommission(t1, t2, name,phoneno, groupid, BusinessCity);
+                var list = dao.GetBusinessCommission(t1, t2, name, phoneno, groupid, BusinessCity);
                 if (list != null && list.Count > 0)
                 {
                     result.Data = list;
@@ -139,7 +140,7 @@ namespace Ets.Service.Provider.User
             return result;
         }
 
-     
+
 
         /// <summary>
         /// 设置商家结算比例-外送费    设置结算比例2015.3.12 平扬
@@ -249,7 +250,7 @@ namespace Ets.Service.Provider.User
                     if (areaModel != null)
                     {
                         model.CityId = areaModel.NationalCode.ToString();
-                    } 
+                    }
                 }
             }
             catch (Exception ex)
@@ -274,13 +275,13 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public ResultModel<BusiRegisterResultModel> AddBusiness(AddBusinessModel model)
         {
- 
+
             Enum returnEnum = null;
             if (string.IsNullOrEmpty(model.phoneNo))
                 returnEnum = CustomerRegisterStatusEnum.PhoneNumberEmpty; //手机号非空验证
             else if (string.IsNullOrEmpty(model.passWord))
                 returnEnum = CustomerRegisterStatusEnum.PasswordEmpty;//密码非空验证  
- 
+
             else if (dao.CheckBusinessExistPhone(model.phoneNo))
                 returnEnum = CustomerRegisterStatusEnum.PhoneNumberRegistered;//判断该手机号是否已经注册过
 
@@ -317,7 +318,7 @@ namespace Ets.Service.Provider.User
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.GroupIdEmpty);
             //是否存在该商户
             Business busi = dao.CheckExistBusiness(model.B_OriginalBusiId, model.B_GroupId);
-                return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.OriginalBusiIdRepeat);
+            return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.OriginalBusiIdRepeat);
 
             if (string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_CityCode.ToString())) //城市以及城市编码非空验证
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
@@ -436,10 +437,10 @@ namespace Ets.Service.Provider.User
         /// </summary>
         /// <param name="busiId"></param>
         /// <returns></returns>
-        public BusListResultModel GetBusiness(int originalBusiId,int groupId)
+        public BusListResultModel GetBusiness(int originalBusiId, int groupId)
         {
-            return dao.GetBusiness(originalBusiId,groupId);
-        } 
+            return dao.GetBusiness(originalBusiId, groupId);
+        }
         /// <summary>
         /// 获取商户信息
         /// danny-20150316
@@ -505,7 +506,7 @@ namespace Ets.Service.Provider.User
             {
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeIsEmpty);
             }
-           // var code = CacheFactory.Instance[model.phoneNumber];
+            // var code = CacheFactory.Instance[model.phoneNumber];
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             var code = redis.Get<string>("CheckCodeFindPwd_" + model.phoneNumber);
             if (string.IsNullOrEmpty(code) || code != model.checkCode) //验证码正确性验证
@@ -648,7 +649,7 @@ namespace Ets.Service.Provider.User
                     to.districtId = businessModel.districtId;
                 }
             }
-             
+
             to.district = businessModel.districtName;
             to.Longitude = businessModel.longitude;
             to.Latitude = businessModel.latitude;
@@ -669,13 +670,18 @@ namespace Ets.Service.Provider.User
             {
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
             }
+            if (!dao.CheckBusinessExistPhone(PhoneNumber))
+            {
+                //账号不存在 
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.NotExists);
+            }
             string randomCode = new Random().Next(100000).ToString("D6");
             var msg = string.Format(Config.SmsContentFindPassword, randomCode, Ets.Model.Common.ConstValues.MessageBusiness);
             try
             {
                 var redis = new ETS.NoSql.RedisCache.RedisCache();
-                redis.Add("CheckCodeFindPwd_" + PhoneNumber, randomCode, DateTime.Now.AddHours(1)); 
-               // CacheFactory.Instance.AddObject(PhoneNumber, randomCode);
+                redis.Add("CheckCodeFindPwd_" + PhoneNumber, randomCode, DateTime.Now.AddHours(1));
+                // CacheFactory.Instance.AddObject(PhoneNumber, randomCode);
                 // 更新短信通道 
                 Task.Factory.StartNew(() =>
                 {
@@ -713,7 +719,7 @@ namespace Ets.Service.Provider.User
                 else
                 {
                     var redis = new ETS.NoSql.RedisCache.RedisCache();
-                    redis.Add("PostRegisterInfo_B_" + PhoneNumber, randomCode, DateTime.Now.AddHours(1)); 
+                    redis.Add("PostRegisterInfo_B_" + PhoneNumber, randomCode, DateTime.Now.AddHours(1));
                     //CacheFactory.Instance.AddObject(PhoneNumber, randomCode);
                     //更新短信通道 
                     Task.Factory.StartNew(() =>
@@ -759,7 +765,7 @@ namespace Ets.Service.Provider.User
             if (string.IsNullOrEmpty(model.OrderFrom.ToString()))   //订单来源非空验证
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderFromEmpty);
             order myOrder = dao.GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom, model.OrderType);
-            if (myOrder==null)//订单不存在
+            if (myOrder == null)//订单不存在
             {
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderIsNotExist);
             }
@@ -769,8 +775,8 @@ namespace Ets.Service.Provider.User
             oom.OptUserId = myOrder.businessId.Value;
             oom.OptUserName = "第三方";
             oom.OrderNo = myOrder.OrderNo;
-            oom.OptLog = string.Format("第三方调用取消订单,订单来源{0}",model.OrderFrom);
-            bool reg = new OrderProvider().CancelOrderByOrderNo(oom); 
+            oom.OptLog = string.Format("第三方调用取消订单,订单来源{0}", model.OrderFrom);
+            bool reg = new OrderProvider().CancelOrderByOrderNo(oom);
             if (b)
             {
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.Success);
@@ -820,17 +826,17 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public bool ModifyBusinessInfo(Business model, OrderOptionModel orderOptionModel)
         {
-            var redis = new ETS.NoSql.RedisCache.RedisCache(); 
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
             redis.Delete(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo,  //清空之前的关系缓存
                 ParseHelper.ToInt(model.oldGroupId), ParseHelper.ToInt(model.oldOriginalBusiId)));
             bool result = dao.ModifyBusinessInfo(model, orderOptionModel);
-            if (result == true && ParseHelper.ToInt(model.GroupId)!=0)
+            if (result == true && ParseHelper.ToInt(model.GroupId) != 0)
             { //添加到缓存
- 
+
                 redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo,
-                    ParseHelper.ToInt(model.GroupId),ParseHelper.ToInt(model.OriginalBusiId)),model.Id.ToString());
+                    ParseHelper.ToInt(model.GroupId), ParseHelper.ToInt(model.OriginalBusiId)), model.Id.ToString());
             }
-               
+
             return result;
         }
 
@@ -889,7 +895,7 @@ namespace Ets.Service.Provider.User
         {
             var to = new Business();
             to.Province = paramodel.fields.B_Province;
-            to.ProvinceCode = paramodel.fields.B_ProvinceCode.Trim(); 
+            to.ProvinceCode = paramodel.fields.B_ProvinceCode.Trim();
             to.CityCode = paramodel.fields.B_CityCode;
             to.CityId = paramodel.fields.B_CityCode.Trim();
             to.City = paramodel.fields.B_City;
@@ -909,7 +915,7 @@ namespace Ets.Service.Provider.User
             to.PhoneNo2 = paramodel.fields.PhoneNo2;
             to.Latitude = paramodel.fields.B_Latitude;
             to.Longitude = paramodel.fields.B_Longitude;
-            to.Name = paramodel.fields.B_Name; 
+            to.Name = paramodel.fields.B_Name;
             to.OriginalBusiId = paramodel.fields.B_OriginalBusiId;
             to.CheckPicUrl = "/2015/05/01/01/201505011200_juwangke.jpg";  //图片给个默认的
             to.InsertTime = DateTime.Now;
@@ -964,7 +970,7 @@ namespace Ets.Service.Provider.User
         {
             return dao.IsExist(id);
         }
-		/// <summary>
+        /// <summary>
         /// 获取商户详细信息
         /// </summary>
         /// <param name="businessId">商户Id</param>

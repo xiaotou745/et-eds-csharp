@@ -36,6 +36,7 @@ namespace Ets.Service.Provider.Clienter
     {
         readonly ClienterDao clienterDao = new ClienterDao();
         readonly OrderDao orderDao = new OrderDao();
+        readonly OrderOtherDao orderOtherDao = new OrderOtherDao();
         readonly OrderChildDao orderChildDao = new OrderChildDao();
         private readonly ClienterBalanceRecordDao clienterBalanceRecordDao = new ClienterBalanceRecordDao();
         private readonly BusinessDao businessDao = new BusinessDao();
@@ -501,7 +502,7 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="orderNo">订单号码</param>
         /// <param name="pickupCode">取货码</param>
         /// <returns></returns>
-        public string FinishOrder(int userId, string orderNo, string pickupCode = null)
+        public string FinishOrder(int userId, string orderNo,  float completeLongitude, float CompleteLatitude,string pickupCode = null)
         {
             string result = "-1";
             int businessId = 0;
@@ -520,6 +521,9 @@ namespace Ets.Service.Provider.Clienter
                     {
                         return "3";
                     }
+                    //写入骑士完成坐标                 
+                    orderOtherDao.UpdateComplete(orderNo, completeLongitude, CompleteLatitude);
+
                     if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)  //当用户上传的小票数量 和 需要上传的小票数量一致的时候，更新用户金额
                     {
                         if (CheckOrderPay(orderNo))
@@ -528,12 +532,12 @@ namespace Ets.Service.Provider.Clienter
                         }
                     }
                     businessId = myOrderInfo.businessId;
-                    //完成订单的时候，当任务为未付款时，更新商户金额
-                    //if (myOrderInfo.IsPay.HasValue && !myOrderInfo.IsPay.Value)
-                    //{
-                    //    BusinessBalanceRecord businessBalanceRecord = new BusinessBalanceRecord();
-                    //    businessBalanceRecordDao.InsertSingle(businessBalanceRecord);
-                    //}
+                    ////完成任务的时候，当任务为未付款时，更新商户金额
+                    if (myOrderInfo.IsPay.HasValue && !myOrderInfo.IsPay.Value)
+                    {
+                        BusinessBalanceRecord businessBalanceRecord = new BusinessBalanceRecord();
+                        businessBalanceRecordDao.InsertSingle(businessBalanceRecord);
+                    }
                     tran.Complete();
                     result = "1";
                 }
@@ -669,17 +673,28 @@ namespace Ets.Service.Provider.Clienter
                     if (CheckOrderPay(myOrderInfo.OrderNo))
                     {
                         //更新骑士金额 
-                        UpdateClienterAccount(uploadReceiptModel.ClienterId, myOrderInfo);
-                        //更新商家金额
-                        //if (myOrderInfo.IsPay.HasValue && !myOrderInfo.IsPay.Value)  //订单未支付的时候，更新商家所得金额
-                        //{
-                        //   bool bResult= businessDao.UpdateBusinessBalancePrice(myOrderInfo.businessId, myOrderInfo.SettleMoney);
-                        //   businessBalanceRecordDao.InsertSingle(new BusinessBalanceRecord() { Amount = myOrderInfo.SettleMoney, BusinessId = myOrderInfo.businessId, Remark = "骑士完成订单且未支付", RelationNo = myOrderInfo.OrderNo, Operator = myOrderInfo.ClienterName, RecordType = BusinessBalanceRecordRecordType.OrderMeals.GetHashCode() });
-                        //}
+                        UpdateClienterAccount(uploadReceiptModel.ClienterId, myOrderInfo); 
+                    }
+                }
+                //更新商家金额 注意：和是否上传小票无关
+                if (myOrderInfo.IsPay.HasValue && !myOrderInfo.IsPay.Value)  //订单未支付的时候，更新商家所得金额
+                {
+                    bool bResult = businessDao.UpdateBusinessBalancePrice(myOrderInfo.businessId, myOrderInfo.ShouldPayBusiMoney);
+                    if (bResult)
+                    {
+                        businessBalanceRecordDao.InsertSingle(new BusinessBalanceRecord()
+                        {
+                            Amount = myOrderInfo.ShouldPayBusiMoney,
+                            BusinessId = myOrderInfo.businessId,
+                            Remark = "骑士完成订单且未支付",
+                            RelationNo = myOrderInfo.OrderNo,
+                            Operator = myOrderInfo.ClienterName,
+                            RecordType = BusinessBalanceRecordRecordType.OrderMeals.GetHashCode()
+                        });
                     }
                 }
                 tran.Complete();
-            }
+            } 
             return orderOther;
         }
 
@@ -767,7 +782,7 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="orderNo">订单号</param>
         /// <returns></returns>
         [ETS.Expand.ActionStatus(typeof(ETS.Enums.RushOrderStatus))]
-        public ResultModel<RushOrderResultModel> RushOrder_C(int userId, string orderNo)
+        public ResultModel<RushOrderResultModel> RushOrder_C(int userId, string orderNo )
         {
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
@@ -802,6 +817,7 @@ namespace Ets.Service.Provider.Clienter
             bool bResult = orderDao.RushOrder(model);
             if (bResult)
             {
+
                 new OrderProvider().AsyncOrderStatus(orderNo);//同步第三方订单
                 Ets.Service.Provider.MyPush.Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", myorder.businessId.ToString(), string.Empty);
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.Success);
@@ -867,7 +883,7 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="bussinessId"></param>
         /// <returns></returns>
         [ETS.Expand.ActionStatus(typeof(RushOrderStatus))]
-        public ResultModel<RushOrderResultModel> Receive_C(int userId, string orderNo, int bussinessId)
+        public ResultModel<RushOrderResultModel> Receive_C(int userId, string orderNo, int bussinessId, float grabLongitude, float grabLatitude)
         {
             //这里可以优化，去掉提前验证用户信息，当失败的时候在去验证 
             OrderListModel model = new OrderListModel()
@@ -885,7 +901,10 @@ namespace Ets.Service.Provider.Clienter
             bool bResult = orderDao.RushOrder(model);
             ///TODO 同步第三方状态和jpush 以后放到后台服务或mq进行。
             if (bResult)
-            {
+            {             
+                //写入骑士抢单坐标
+                orderOtherDao.UpdateGrab(orderNo, grabLongitude, grabLatitude);
+
                 new OrderProvider().AsyncOrderStatus(orderNo);//同步第三方订单
                 Ets.Service.Provider.MyPush.Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", bussinessId.ToString(), string.Empty);
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Success);

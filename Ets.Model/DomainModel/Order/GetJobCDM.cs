@@ -11,20 +11,50 @@ namespace Ets.Model.DomainModel.Order
     /// </summary>
     public class GetJobCDM
     {
-      
         /// <summary>
-        /// 经度
+        /// 订单id
         /// </summary>
-        public decimal Longitude { get; set; }
+        public int Id { get; set; }
+        /// <summary>
+        /// 下单时间   格式  今日 11:38
+        /// </summary>
+        public string PubDate { get; set; }
+        /// <summary>
+        /// 配送费，骑士收入
+        /// </summary>
+        public decimal OrderCommission { get; set; }
+        /// <summary>
+        /// 订单数
+        /// </summary>
+        public int OrderCount { get; set; }
+        /// <summary>
+        /// 任务总金额（订单金额总和）  会加上外送费显示
+        /// </summary>
+        public decimal Amount { get; set; }
+        /// <summary>
+        ///取货地址（商户名称）
+        /// </summary>
+        public string BusinessName { get; set; }
+        /// <summary>
+        /// 取货地址（商户地址）
+        /// </summary>
+        public string BusinessCity { get; set; }
+        /// <summary>
+        /// 取货地址（商户城市）
+        /// </summary>
+        public string BusinessAddress { get; set; }
+        /// <summary>
+        /// 送货地址(城市)
+        /// </summary>
+        public string UserCity { get; set; }
+        /// <summary>
+        ///送货地址
+        /// </summary>
+        public string UserAddress { get; set; }
+        /// <summary>
+        /// 骑士距离商户地址的距离
+        /// </summary>
+        public string DistanceToBusiness { get; set; }
 
-        /// <summary>
-        /// 纬度
-        /// </summary>
-        public decimal Latitude { get; set; }
-
-        /// <summary>
-        /// 查询类型 0 最新订单 1最近订单
-        /// </summary>
-        public int SearchType { get; set; }
     }
 }
