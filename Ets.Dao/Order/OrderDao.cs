@@ -1082,7 +1082,7 @@ where   a.OriginalOrderNo = @OriginalOrderNo
  SET [Status] = @status,ActualDoneDate=getdate()
 output Inserted.Id,GETDATE(),'{0}','任务已完成',Inserted.clienterId,Inserted.[Status],{1}
 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform]) 
-WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL and Status = 2;", SuperPlatform.骑士, (int)SuperPlatform.骑士);
+WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL and Status = 4;", SuperPlatform.骑士, (int)SuperPlatform.骑士);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@orderNo", SqlDbType.NVarChar).Value = orderNo;
@@ -2274,16 +2274,18 @@ order by {1}
         public void UpdateTake(string orderId, float takeLongitude, float takeLatitude)
         {
             const string UPDATE_SQL = @"
+update dbo.[Order] 
+    set Status=4
+where id=@orderid and Status=2;
 update OrderOther 
     set TakeTime=GETDATE(),TakeLongitude=@TakeLongitude,TakeLatitude=@TakeLatitude 
-where orderid=@orderid
+where orderid=@orderid  
 ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@TakeLongitude", takeLongitude);
             dbParameters.AddWithValue("@TakeLatitude", takeLatitude);
             dbParameters.AddWithValue("@orderId", orderId);
             DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
-        }
-        
+        }        
     }
 }

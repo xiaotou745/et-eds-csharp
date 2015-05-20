@@ -92,6 +92,8 @@ namespace ETS.Enums
         FailedGet = -2,
         [DisplayText("请传递版本号")]
         NoVersion = -3,
+        [DisplayText("成功")]
+        Success = 100,  
         [DisplayText("失败")]
         Failed = 101     
     }
