@@ -843,6 +843,32 @@ where   oc.OrderId = @OrderId;
                 return new OrderListModel();
             }
         }
+
+        /// <summary>
+        /// 根据任务号判断该任务是否可以完成
+        /// wc 获取该任务下的子订单是否全部付款
+        /// </summary>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        public bool IsOrNotFinish(string orderNo)
+        {
+            StringBuilder sql = new StringBuilder(@" 
+select min(convert(int, oc.PayStatus)) IsPay
+from   dbo.[order] o ( nolock )
+join dbo.OrderChild oc ( nolock ) on o.Id = oc.OrderId
+where  o.OrderNo = @OrderNo");
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("OrderNo", DbType.String).Value = orderNo;
+            int isPay = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql.ToString(), dbParameters),0);
+            if (isPay == 0)  //最小是0 说明还有未付款的子订单
+            {
+                return false;  //表示不能完成任务
+            }
+            else
+            {
+                return true;
+            }
+        }
         /// <summary>
         /// 通过订单号获取该订单的详情数据
         /// 窦海超
@@ -1402,11 +1428,13 @@ select top 1
         o.OrderCount,
         c.TrueName ClienterName,
         ISNULL(oo.HadUploadCount,0) HadUploadCount,
-        o.SettleMoney,b.Id businessId
+        o.SettleMoney,
+        b.Id businessId,
+        o.Amount - o.SettleMoney + o.DistribSubsidy * o.OrderCount as ShouldPayBusiMoney 
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
-        left join dbo.OrderOther oo with(nolock) on o.Id = oo.OrderId
+        left join dbo.OrderOther oo with(nolock) on o.Id = oo.OrderId 
 where   1 = 1 and o.Id = @Id
 ";
             IDbParameters parm = DbHelper.CreateDbParameters();

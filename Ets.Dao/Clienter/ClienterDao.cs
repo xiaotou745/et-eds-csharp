@@ -718,12 +718,10 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, ConstValues.OrderH
             }
             else
             {
-            orderOther = UpdateReceiptInfo(uploadReceiptModel);
+                orderOther = UpdateReceiptInfo(uploadReceiptModel);
             }
             orderOther.OrderStatus = oo.OrderStatus;
             orderOther.OrderCreateTime = oo.OrderCreateTime;
-            //orderOther.IsPay = oo.IsPay;
-            //orderOther.SettleMoney = oo.SettleMoney;
             return orderOther;
         }
 

@@ -128,7 +128,10 @@ namespace ETS.Enums
         [DisplayText("发送失败")]
         SendFailure,
         [DisplayText("该用户已注册")]
-        AlreadyExists
+        AlreadyExists,
+
+        [DisplayText("该用户不存在")]
+        NotExists
     }
 
     public enum CancelOrderStatus
@@ -226,7 +229,10 @@ namespace ETS.Enums
         [DisplayText("订单已取消")]
         OrderHadCancel=106,
         [DisplayText("请传递版本号")]
-        NoVersion = 107
+        NoVersion = 107,
+        [DisplayText("存在未付款的子订单")]
+        ExistNotPayChildOrder = 108
+
     }
 
     public enum GetMyBalanceStatus
