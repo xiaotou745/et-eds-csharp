@@ -2087,7 +2087,7 @@ select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneN
     o.ReceiveCityCode,o.ReceiveAreaCode,o.OrderType,o.KM,o.GuoJuQty,o.LuJuQty,o.SongCanDate,o.OrderCount,o.CommissionRate,o.Payment,
     o.CommissionFormulaMode,o.Adjustment,o.BusinessCommission,o.SettleMoney,o.DealCount,o.PickupCode,o.OtherCancelReason,o.CommissionType,
     o.CommissionFixValue,o.BusinessGroupId,o.TimeSpan,o.RushOrderLongitude,o.RushOrderLandline,o.FinishOrderLongitude,o.FinishOrderLandline,o.Invoice,
-    isnull(o.DistribSubsidy,0)*isnull(o.OrderCount,0) as TotalDistribSubsidy,o.GrabDate,
+    isnull(o.DistribSubsidy,0)*isnull(o.OrderCount,0) as TotalDistribSubsidy,oo.GrabTime,
     b.[City] BusinessCity,b.Name BusinessName,b.PhoneNo BusinessPhoneNo ,b.Address BusinessAddress ,b.GroupId, 
     b.Longitude, b.Latitude,REPLACE(b.City,'市','') AS pickUpCity,
     oo.NeedUploadCount,oo.HadUploadCount,

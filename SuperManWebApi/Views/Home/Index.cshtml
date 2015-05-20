@@ -36,34 +36,53 @@
     //    error: function () { }
     //});
 
-    $.ajax({
-        type: 'POST',
-        dataType: 'json',
-        url: '/Order/Receive',
-        data: {
-            "userId": 142148,
-            "orderNo": "1765150520170419025",
-            "bussinessId": 1765,
-            "Version": "1.1.0",
-            "longitude":0.311,
-            "latitude":0.312            
-        },
-        success: function (data) {
-            console.log(data);
-        },
-        error: function () { }
-    });
-
+    //$.ajax({
+    //    type: 'POST',
+    //    dataType: 'json',
+    //    url: '/Order/Receive',
+    //    data: {
+    //        "userId": 3080,
+    //        "orderId":142168,
+    //        "orderNo": "1765150520170419025",
+    //        "bussinessId": 1765,
+    //        "Version": "1.1.0",
+    //        "longitude":0.311,
+    //        "latitude":0.312            
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
+  
 
     //$.ajax({
     //    type: 'POST',
     //    dataType: 'json',
     //    url: '/Order/ConfirmTake',
     //    data: {
-    //        "OrderId": 142148,
+    //        "OrderId": 142168,
     //        "version": "1.0",
     //        "longitude":0.301,
     //        "latitude":0.302            
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
+
+    //$.ajax({
+    //    type: 'POST',
+    //    dataType: 'json',
+    //    url: '/Order/Complete',
+    //    data: {
+    //        "userId": 3080,
+    //        "orderNo": "1765150520170419025",
+    //        "pickupCode": "",
+    //        "version": "1.0",
+    //        "longitude":0.201,
+    //        "latitude":0.202            
     //    },
     //    success: function (data) {
     //        console.log(data);
@@ -83,24 +102,7 @@
     //    error: function () { }
     //});
 
-    //$.ajax({
-    //    type: 'POST',
-    //    dataType: 'json',
-    //    url: '/Order/Complete',
-    //    data: {
-    //        "userId": 3080,
-    //        "orderNo": "1767150520111055077",
-    //        "pickupCode": "",
-    //        "version": "1.0",
-    //        "longitude":0.201,
-    //        "latitude":0.202            
-    //    },
-    //    success: function (data) {
-    //        console.log(data);
-    //    },
-    //    error: function () { }
-    //});
-
+   
 
 
     //$.ajax({

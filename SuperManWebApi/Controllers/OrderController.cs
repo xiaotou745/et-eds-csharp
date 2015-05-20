@@ -422,11 +422,8 @@ namespace SuperManWebApi.Controllers
             var orderNo = HttpContext.Current.Request.Form["orderNo"];
             var pickupCode = HttpContext.Current.Request.Form["pickupCode"];
             var version = HttpContext.Current.Request.Form["version"];
-            float completeLongitude = 0, completeLatitude = 0;
-            if(!string.IsNullOrEmpty(HttpContext.Current.Request.Form["Longitude"]))
-                completeLongitude = float.Parse(HttpContext.Current.Request.Form["Longitude"]);
-            if (!string.IsNullOrEmpty(HttpContext.Current.Request.Form["Latitude"]))
-                completeLatitude = float.Parse(HttpContext.Current.Request.Form["Latitude"]);
+            float completeLongitude = float.Parse(HttpContext.Current.Request.Form["Longitude"]);
+            float completeLatitude = float.Parse(HttpContext.Current.Request.Form["Latitude"]);
             if (userId == 0)  //用户id非空验证
                 return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.UserIdEmpty);
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
