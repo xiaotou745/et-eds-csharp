@@ -1236,8 +1236,17 @@ namespace Ets.Service.Provider.Order
             Ets.Service.Provider.Order.OrderDetailProvider orderDetailPr = new OrderDetailProvider();
             orderDM.listOrderDetail = orderDetailPr.GetByOrderNo(order.OrderNo);
             orderDM.IsModifyTicket = true;
-            orderDM.IsExistsUnFinish = listOrderChildInfo.Exists(t => t.PayStatus == PayStatusEnum.WaitingPay.GetHashCode() || t.PayStatus == PayStatusEnum.WaitPay.GetHashCode());
-
+            bool IsExistsUnFinish = true;//默认是存在有未支付订单
+            if (ParseHelper.ToBool(order.IsPay, false))
+            {
+                IsExistsUnFinish = false;//如果主任务是顾客已支付，就视认为没有未支付的订单
+            }
+            else
+            {
+                IsExistsUnFinish = listOrderChildInfo.Exists(t => t.PayStatus == PayStatusEnum.WaitingPay.GetHashCode() ||
+                         t.PayStatus == PayStatusEnum.WaitPay.GetHashCode());//如果顾客没支付，查询子订单是否有未支付子订单
+            }
+            orderDM.IsExistsUnFinish = IsExistsUnFinish;
 
             return orderDM;
         }

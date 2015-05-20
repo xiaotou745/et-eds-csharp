@@ -416,32 +416,32 @@ namespace SuperManWebApi.Controllers
         /// </summary> 
         /// <returns></returns>
         [HttpPost]
-        public ResultModel<FinishOrderResultModel> Complete()
+        public ResultModel<FinishOrderResultModel> Complete(OrderCompleteModel parModel)
         {
-            var userId = ParseHelper.ToInt(HttpContext.Current.Request.Form["userId"], 0);   //骑士ID
-            var orderNo = HttpContext.Current.Request.Form["orderNo"];
-            var pickupCode = HttpContext.Current.Request.Form["pickupCode"];
-            var version = HttpContext.Current.Request.Form["version"];
-            float completeLongitude = float.Parse(HttpContext.Current.Request.Form["Longitude"]);
-            float completeLatitude = float.Parse(HttpContext.Current.Request.Form["Latitude"]);
-            if (userId == 0)  //用户id非空验证
+            //var userId = ParseHelper.ToInt(HttpContext.Current.Request.Form["userId"], 0);   //骑士ID
+            //var orderNo = HttpContext.Current.Request.Form["orderNo"];
+            //var pickupCode = HttpContext.Current.Request.Form["pickupCode"];
+            //var version = HttpContext.Current.Request.Form["version"];
+            //float completeLongitude = float.Parse(HttpContext.Current.Request.Form["Longitude"]);
+            //float completeLatitude = float.Parse(HttpContext.Current.Request.Form["Latitude"]);
+            if (parModel.userId == 0)  //用户id非空验证
                 return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.UserIdEmpty);
-            if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
+            if (string.IsNullOrEmpty(parModel.orderNo)) //订单号码非空验证
                 return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderEmpty);
-            if (string.IsNullOrWhiteSpace(version))
+            if (string.IsNullOrWhiteSpace(parModel.version))
             {
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.NoVersion);
             }
-            var myorder = new Ets.Dao.Order.OrderDao().IsOrNotFinish(orderNo);
-            if (myorder)
+            var myorder = new Ets.Dao.Order.OrderDao().IsOrNotFinish(parModel.orderNo);
+            if (!myorder)
             {
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.ExistNotPayChildOrder);
             }
-            string finishResult = iClienterProvider.FinishOrder(userId, orderNo, completeLongitude, completeLatitude, pickupCode);
+            string finishResult = iClienterProvider.FinishOrder(parModel.userId, parModel.orderNo, parModel.Longitude, parModel.Latitude, parModel.pickupCode);
             if (finishResult == "1")  //完成
             {
-                var clienter = iClienterProvider.GetUserInfoByUserId(userId);
-                var model = new FinishOrderResultModel { userId = userId };
+                var clienter = iClienterProvider.GetUserInfoByUserId(parModel.userId);
+                var model = new FinishOrderResultModel { userId = parModel.userId };
                 if (clienter.AccountBalance != null)
                     model.balanceAmount = clienter.AccountBalance.Value;
                 else
