@@ -1,12 +1,15 @@
 ﻿#region
 using CalculateCommon;
+using Ets.Dao.Finance;
 using Ets.Dao.Order;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Bussiness;
 using Ets.Model.DataModel.Clienter;
+using Ets.Model.DataModel.Finance;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DomainModel.Clienter;
 using Ets.Model.DomainModel.Order;
+using Ets.Model.ParameterModel.Finance;
 using Ets.Model.ParameterModel.Order;
 using Ets.Service.IProvider.Order;
 using Ets.Service.IProvider.Subsidy;
@@ -40,7 +43,8 @@ using Ets.Model.ParameterModel.Bussiness;
 using Ets.Service.IProvider.Statistics;
 using Ets.Model.DataModel.Strategy;
 using Ets.Service.Provider.Order;
-using Ets.Model.DomainModel.Order;
+using Ets.Dao.Finance;
+using Ets.Model.DataModel.Finance;
 #endregion
 namespace Ets.Service.Provider.Order
 {
@@ -52,6 +56,8 @@ namespace Ets.Service.Provider.Order
 
         private ISubsidyProvider iSubsidyProvider = new SubsidyProvider();
         private IBusinessGroupProvider iBusinessGroupProvider = new BusinessGroupProvider();
+        private readonly BusinessDao _businessDao = new BusinessDao();
+        private readonly BusinessBalanceRecordDao _businessBalanceRecordDao = new BusinessBalanceRecordDao();
         //和区域有关的  wc
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
 
@@ -262,6 +268,7 @@ namespace Ets.Service.Provider.Order
                 to.CommissionType = business.CommissionType;//结算类型：1：固定比例 2：固定金额
                 to.CommissionFixValue = ParseHelper.ToDecimal(business.CommissionFixValue);//固定金额     
                 to.BusinessGroupId = business.BusinessGroupId;
+                to.MealsSettleMode = business.MealsSettleMode;
             }
             if (ConfigSettings.Instance.IsGroupPush)
             {
@@ -332,16 +339,29 @@ namespace Ets.Service.Provider.Order
                 {
                     return PubOrderStatus.OrderHasExist;
                 }
-                else
-                {
-                    result = orderDao.AddOrder(order);
-                }
-
+                
+                result = orderDao.AddOrder(order);              
                 if (result <= 0)//订单发布失败
                 {
                     return PubOrderStatus.InvalidPubOrder;
                 }
 
+                //写金额流水
+                //_businessDao.UpdateForWithdrawC(withdrawBpm); //更新商户表的余额，可提现余额
+
+                //#region 商户余额流水操作 更新骑士表的余额，可提现余额
+                //_businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
+                //{
+                //    BusinessId = withdrawBpm.BusinessId,//商户Id
+                //    Amount = -withdrawBpm.WithdrawPrice,//流水金额
+                //    Status = (int)BusinessBalanceRecordStatus.Tradeing, //流水状态(1、交易成功 2、交易中）
+                //    RecordType = (int)BusinessBalanceRecordRecordType.Withdraw,
+                //    Operator = business.Name,
+                //    WithwardId = withwardId,
+                //    RelationNo = withwardNo,
+                //    Remark = "商户提现"
+                //});
+                //#endregion
 
                 if (order.Adjustment > 0)
                 {
@@ -349,18 +369,11 @@ namespace Ets.Service.Provider.Order
                     if (!b)//写入日志失败
                     {
                         return PubOrderStatus.InvalidPubOrder;
-                    }
-
-                    tran.Complete();
-                    return PubOrderStatus.Success;
+                    }                                 
                 }
-                else
-                {
-                    tran.Complete();
-                    return PubOrderStatus.Success;
-                }
-            }
 
+                tran.Complete(); 
+            }         
             return PubOrderStatus.Success;
         }
 
@@ -603,13 +616,13 @@ namespace Ets.Service.Provider.Order
         /// <summary>
         /// 订单状态查询功能  add by caoheyang 20150316
         /// </summary>
-        /// <param name="orderNo">订单号码</param>
+        /// <param name="originalOrderNo">第三方平台订单号码</param>
         /// <param name="orderfrom">订单来源</param>
         /// <returns>订单状态</returns>
-        public int GetStatus(string OriginalOrderNo, int orderfrom)
+        public int GetStatus(string originalOrderNo, int orderfrom)
         {
             OrderDao OrderDao = new OrderDao();
-            return OrderDao.GetStatus(OriginalOrderNo, orderfrom);
+            return OrderDao.GetStatus(originalOrderNo, orderfrom);
         }
 
 
@@ -1202,11 +1215,12 @@ namespace Ets.Service.Provider.Order
             orderDM.ClienterPhoneNo = order.ClienterPhoneNo;
             orderDM.GrabTime = order.GrabTime;
             orderDM.businessId = ParseHelper.ToInt(order.businessId, 0);
-            //if (order.businessId != null) orderDM.businessId = order.businessId.Value;
+            orderDM.TotalAmount = order.TotalAmount;
             if (order.NeedUploadCount >= order.OrderCount && order.Status == OrderStatus.订单完成.GetHashCode())
             {
                 orderDM.IsModifyTicket = false;
-            } CalculationLgAndLa(orderDM, modelPM, order);//计算经纬度
+            } 
+            CalculationLgAndLa(orderDM, modelPM, order);//计算经纬度
 
             Ets.Service.Provider.Order.OrderChildProvider orderChildPr = new OrderChildProvider();
             List<OrderChildInfo> listOrderChildInfo = orderChildPr.GetByOrderId(id);
@@ -1214,6 +1228,8 @@ namespace Ets.Service.Provider.Order
 
             Ets.Service.Provider.Order.OrderDetailProvider orderDetailPr = new OrderDetailProvider();
             orderDM.listOrderDetail = orderDetailPr.GetByOrderNo(order.OrderNo);
+
+
             orderDM.IsModifyTicket = true;
             bool IsExistsUnFinish = true;//默认是存在有未支付订单
             if (ParseHelper.ToBool(order.IsPay, false))
@@ -1306,6 +1322,78 @@ namespace Ets.Service.Provider.Order
         public int GetStatus(int id)
         {
             return orderDao.GetStatus(id);
+        }
+
+
+        /// <summary>
+        /// 商户端 取消订单  商户端只能取消 待接单的订单  add by caoehyang  20150521 
+        /// </summary>
+        /// <param name="paramodel">参数实体</param>
+        /// <returns></returns>
+        public ResultModel<bool> CancelOrderB(CancelOrderBPM paramodel)
+        {
+           
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                order order = new order();
+                CancelOrderStatus tempresult = CheckCancelOrderB(paramodel, ref order);
+                if (tempresult != CancelOrderStatus.Success)
+                {
+                    return ResultModel<bool>.Conclude(tempresult, true); 
+                }
+                int result = orderDao.CancelOrderStatus(paramodel.OrderNo, OrderConst.OrderStatus3, "商家取消订单", OrderConst.OrderStatus0, order.SettleMoney);
+                if (result > 0 & AsyncOrderStatus(paramodel.OrderNo))
+                {
+                    BusinessDao businessDao = new BusinessDao();
+                    businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
+                    {
+                        Id = paramodel.BusinessId,
+                        Money = order.SettleMoney
+                    });
+                    BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
+                    businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
+                    {
+                        BusinessId = paramodel.BusinessId,//商户Id
+                        Amount = order.SettleMoney,//流水金额  结算金额
+                        Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
+                        RecordType = (int)BusinessBalanceRecordRecordType.CancelOrderReturn,
+                        Operator = "E代送系统",
+                        WithwardId = paramodel.OrderId,
+                        RelationNo = paramodel.OrderNo,
+                        Remark = "商户取消订单返回配送费"
+                    });
+                    tran.Complete();
+                    return ResultModel<bool>.Conclude(CancelOrderStatus.Success, true);
+                }
+                else
+                {
+                    return ResultModel<bool>.Conclude(CancelOrderStatus.CancelOrderError, true);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 商户端 取消订单数据验证  add by caoehyang  20150521 
+        /// </summary>
+        /// <param name="paramodel">参数</param>
+        /// <param name="order">订单实体 ref</param>
+        /// <returns></returns>
+        private CancelOrderStatus CheckCancelOrderB(CancelOrderBPM paramodel,ref order order)
+        {
+            if (paramodel.OrderId <= 0 || string.IsNullOrWhiteSpace(paramodel.OrderNo))
+            {
+                return CancelOrderStatus.OrderEmpty;
+            }
+            else if (string.IsNullOrWhiteSpace(paramodel.Version))
+            {
+                return CancelOrderStatus.VersionError;
+            }
+            order = orderDao.GetOrderById(paramodel.OrderId,paramodel.BusinessId,OrderConst.OrderStatus0);
+            if (order == null)
+            {
+                return CancelOrderStatus.CancelOrderError;
+            }
+            return CancelOrderStatus.Success;
         }
     }
 }

@@ -62,7 +62,11 @@ namespace Ets.Service.Provider.Finance
                 }
                 else
                 {
-                    _clienterDao.UpdateForWithdrawC(withdrawCpm); //更新骑士表的余额，可提现余额
+                    _clienterDao.UpdateForWithdrawC(new UpdateForWithdrawPM
+                    {
+                        Id=withdrawCpm.ClienterId,
+                        Money = -withdrawCpm.WithdrawPrice
+                    }); //更新骑士表的余额，可提现余额
                     string withwardNo = Helper.generateOrderCode(withdrawCpm.ClienterId);
                     #region 骑士提现
                     long withwardId = _clienterWithdrawFormDao.Insert(new ClienterWithdrawForm()
@@ -136,6 +140,10 @@ namespace Ets.Service.Provider.Finance
             else if (clienter.AllowWithdrawPrice < withdrawCpm.WithdrawPrice) //可提现金额小于提现金额，提现失败
             {
                 return  FinanceWithdrawC.MoneyError;
+            }
+            else if (clienter.AccountBalance < clienter.AllowWithdrawPrice) //账户余额小于 可提现金额，提现失败 账号异常
+            {
+                return FinanceWithdrawC.FinanceAccountError;
             }
             clienterFinanceAccount = _clienterFinanceAccountDao.GetById(withdrawCpm.FinanceAccountId);//获取超人金融账号信息
             if (clienterFinanceAccount == null || clienterFinanceAccount.ClienterId != withdrawCpm.ClienterId)
