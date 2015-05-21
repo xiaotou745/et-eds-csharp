@@ -694,7 +694,7 @@ values( @OrderId,
                                     JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     left JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
                                     JOIN OrderOther oo WITH (NOLOCK) ON oo.OrderId=o.Id
-                                    JOIN [group] g WITH ( NOLOCK ) ON g.Id = o.orderfrom
+                                    LEFT JOIN [group] g WITH ( NOLOCK ) ON g.Id = o.orderfrom
                                     WHERE 1=1 ";
             #endregion
             IDbParameters parm = DbHelper.CreateDbParameters();
@@ -2450,7 +2450,7 @@ OUTPUT
   @WithwardId,
   @RelationNo,
   @Remark
-INTO BusinessBalanceRecord
+INTO ClienterBalanceRecord
   (  [ClienterId]
     ,[Amount]
     ,[Status]
