@@ -20,6 +20,7 @@
             <th>审核状态</th>
             <th>分组</th>
             <th>结算类型</th>
+            <th>餐费结算方式</th>
             <th>操作</th>
         </tr>
     </thead>
@@ -113,35 +114,36 @@
                     <td>@statusView</td>
                     <td>@item.BusinessGroupName</td>
                     <td>@commissionTypeView</td>
+                    <td>@(item.MealsSettleMode==0?"线下结算":"线上结算")</td>
                     <td>
                         @{
-                if (SuperMan.App_Start.UserContext.Current.HasAuthority(22))
-                {
-                    int checkAddress = string.IsNullOrEmpty(item.Address) ? 0 : 1;
-                    int checkImage = string.IsNullOrEmpty(item.CheckPicUrl) ? 0 : 1;
+                            if (SuperMan.App_Start.UserContext.Current.HasAuthority(22))
+                            {
+                                int checkAddress = string.IsNullOrEmpty(item.Address) ? 0 : 1;
+                                int checkImage = string.IsNullOrEmpty(item.CheckPicUrl) ? 0 : 1;
 
-                    if (@item.Status == 1)
-                    {
-                        <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage)" style="color:gray" businessid="@item.Id" class="businessOk">审核通过</a>
-                            <a href="javascript:void(0)" businessid="@item.Id" class="businessCel">取消资格</a>
-                    }
-                    else
-                    {
-                        <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage)" businessid="@item.Id" class="businessOk">审核通过</a>
-                            <a href="javascript:void(0)" style="color:gray" businessid="@item.Id" class="businessCel">取消资格</a>
-                    }
-                    <a href="/BusinessManager/BusinessDetail?businessId=@item.Id ">收支记录</a>
-                }
+                                if (@item.Status == 1)
+                                {
+                                    <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage)" style="color:gray" businessid="@item.Id" class="businessOk">审核通过</a>
+                                        <a href="javascript:void(0)" businessid="@item.Id" class="businessCel">取消资格</a>
+                                }
+                                else
+                                {
+                                    <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage)" businessid="@item.Id" class="businessOk">审核通过</a>
+                                        <a href="javascript:void(0)" style="color:gray" businessid="@item.Id" class="businessCel">取消资格</a>
+                                }
+                    
+                            }
                         }
                         @if (SuperMan.App_Start.UserContext.Current.HasAuthority(24))
                         {
-                            <a  href="javascript:void(0)" onclick="funcComView(@item.Id,'@item.Name','@distribSubsidy','@item.PhoneNo','@commission',@item.CommissionType,@item.CommissionFixValue,@item.BusinessGroupId)">设置结算</a>
+                            <a href="javascript:void(0)" onclick="funcComView(@item.Id,'@item.Name','@distribSubsidy','@item.PhoneNo','@commission',@item.CommissionType,@item.CommissionFixValue,@item.BusinessGroupId)">设置结算</a>
                         }
                         @if (SuperMan.App_Start.UserContext.Current.HasAuthority(24))
                         {
-                            <a href="javascript:void(0)" onclick="funcUpdateBusinessInfo(@item.Id,'@item.Name','@item.PhoneNo','@item.OriginalBusiId','@item.GroupId')">修改信息</a>
+                            <a href="javascript:void(0)" onclick="funcUpdateBusinessInfo(@item.Id,'@item.Name','@item.PhoneNo','@item.OriginalBusiId','@item.GroupId','@item.MealsSettleMode')">修改信息</a>
                         }
-
+                        <a href="/BusinessManager/BusinessDetail?businessId=@item.Id ">收支记录</a>
                     </td>
                 </tr>
             }
@@ -237,7 +239,7 @@
             url: url,
             data: paramaters,
             success: function (result) {
-                    strreg=result;
+                strreg=result;
             }
         });
 
@@ -296,11 +298,12 @@
         adminjs.openwinbox('#BusinessCommissionDiv');
     }
     //修改商家信息
-    function funcUpdateBusinessInfo(id, name, phone, originalbusiId, groupid) {
+    function funcUpdateBusinessInfo(id, name, phone, originalbusiId, groupid,mealsSettleMode) {
         $('#busiId').val(id);
         $('#busiName').val(name);
         $('#busiPhone').val(phone);
         $('#busiSourceId').val(originalbusiId);
+        $('#busiMealsSettleMode').val(mealsSettleMode);
         if (groupid > 0) {
             $('#busGroupId').val(groupid);
         }

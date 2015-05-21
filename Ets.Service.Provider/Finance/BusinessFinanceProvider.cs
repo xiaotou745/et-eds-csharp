@@ -70,6 +70,10 @@ namespace Ets.Service.Provider.Finance
         {
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
+                if (withdrawBpm.WithdrawPrice < 500) //提现金额小于500 加2手续费
+                {
+                    withdrawBpm.WithdrawPrice = withdrawBpm.WithdrawPrice + 2;
+                }
                 Business business = new Business();
                 var businessFinanceAccount = new BusinessFinanceAccount();//商户金融账号信息
                 FinanceWithdrawB checkbool = CheckWithdrawB(withdrawBpm, ref business, ref businessFinanceAccount);
@@ -79,7 +83,11 @@ namespace Ets.Service.Provider.Finance
                 }
                 else
                 {
-                    _businessDao.UpdateForWithdrawC(withdrawBpm); //更新商户表的余额，可提现余额
+                    _businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
+                    {
+                        Id=withdrawBpm.BusinessId,
+                        Money = -withdrawBpm.WithdrawPrice
+                    }); //更新商户表的余额，可提现余额
                     string withwardNo = Helper.generateOrderCode(withdrawBpm.BusinessId);
                     #region 商户提现
                     long withwardId = _businessWithdrawFormDao.Insert(new BusinessWithdrawForm()
@@ -153,6 +161,10 @@ namespace Ets.Service.Provider.Finance
             else if (business.AllowWithdrawPrice < withdrawBpm.WithdrawPrice)//可提现金额小于提现金额，提现失败
             {
                 return FinanceWithdrawB.MoneyError;
+            }
+            else if (business.BalancePrice < business.AllowWithdrawPrice) //账户余额小于 可提现金额，提现失败 账号异常
+            {
+                return FinanceWithdrawB.FinanceAccountError;
             }
             businessFinanceAccount = _businessFinanceAccountDao.GetById(withdrawBpm.FinanceAccountId);//获取商户金融账号信息
             if (businessFinanceAccount == null || businessFinanceAccount.BusinessId != withdrawBpm.BusinessId)
@@ -468,7 +480,7 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public string CreateBusinessWithdrawFormExcel(List<BusinessWithdrawFormModel> list)
         {
-            StringBuilder strBuilder = new StringBuilder();
+            var strBuilder = new StringBuilder();
             strBuilder.AppendLine("<table border=1 cellspacing=0 cellpadding=5 rules=all>");
             //输出表头.
             strBuilder.AppendLine("<tr style=\"font-weight: bold; white-space: nowrap;\">");
@@ -486,7 +498,7 @@ namespace Ets.Service.Provider.Finance
                 strBuilder.AppendLine(string.Format("<td>{0}</td>",item.BusinessPhoneNo));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OpenBank));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.TrueName));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", ParseHelper.ToDecrypt(item.AccountNo)));
+                strBuilder.AppendLine(string.Format("<td>'{0}'</td>", ParseHelper.ToDecrypt(item.AccountNo)));
                 strBuilder.AppendLine(string.Format("<td>{0}</td></tr>", item.Amount));
             }
             strBuilder.AppendLine("</table>");
@@ -500,7 +512,7 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public string CreateBusinessBalanceRecordExcel(List<BusinessBalanceRecordModel> list)
         {
-            StringBuilder strBuilder = new StringBuilder();
+            var strBuilder = new StringBuilder();
             strBuilder.AppendLine("<table border=1 cellspacing=0 cellpadding=5 rules=all>");
             //输出表头.
             strBuilder.AppendLine("<tr style=\"font-weight: bold; white-space: nowrap;\">");
@@ -517,7 +529,7 @@ namespace Ets.Service.Provider.Finance
             {
                 strBuilder.AppendLine(string.Format("<tr><td>'{0}'</td>", item.RelationNo));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OpenBank));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", ParseHelper.ToDecrypt(item.AccountNo)));
+                strBuilder.AppendLine(string.Format("<td>'{0}'</td>", ParseHelper.ToDecrypt(item.AccountNo)));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Amount));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Balance));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OperateTime));
@@ -527,5 +539,9 @@ namespace Ets.Service.Provider.Finance
             return strBuilder.ToString();
         }
 
+        public decimal GetBusiBalance(string orderNo)
+        {
+            return businessFinanceDao.GetBusiBalance(orderNo);
+        }
     }
 }

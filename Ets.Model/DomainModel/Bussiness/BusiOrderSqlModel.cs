@@ -30,6 +30,12 @@ namespace Ets.Model.DomainModel.Bussiness
         public string SuperManName { get; set; }
         public string SuperManPhone { get; set; }
         public int OrderFrom { get; set; }
-        public string OriginalOrderNo { get; set; } 
+        public string OriginalOrderNo { get; set; }
+        public int OrderId { get; set; }
+        public int MealsSettleMode { get; set; }
+        /// <summary>
+        /// 订单总金额
+        /// </summary>
+        public decimal? TotalAmount { get; set; }
     }
 }

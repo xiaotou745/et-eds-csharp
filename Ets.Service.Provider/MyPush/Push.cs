@@ -66,7 +66,6 @@ namespace Ets.Service.Provider.MyPush
             }
             catch (Exception ex)
             {
-
             }
         }
 
@@ -91,8 +90,8 @@ namespace Ets.Service.Provider.MyPush
             }
             JPushClient client = new JPushClient(appKey, masterSecret);
             Audience audience = null;
-            if (model.TagId == 0)  //C端
-                audience = Audience.s_tag_and(model.City.Trim());
+            if (model.TagId == 0)  //发给C端
+                audience = Audience.s_tag_and(model.UserId.ToString());
             else if (model.TagId == 1 && !string.IsNullOrEmpty(model.RegistrationId)) //B端
                 audience = Audience.s_tag_and(model.RegistrationId);
             PushPayload pushPayload = new PushPayload();
@@ -100,60 +99,10 @@ namespace Ets.Service.Provider.MyPush
             pushPayload.audience = audience;
             Notification notification = new Notification().setAlert(model.Alert);
             notification.AndroidNotification = new AndroidNotification().setTitle(model.Title);
+            notification.AndroidNotification = new AndroidNotification().AddExtra("Content", model.Content);
             notification.IosNotification = new IosNotification().setAlert(model.Alert).setBadge(1).setSound("YourSound");
             pushPayload.notification = notification.Check();
             var response = client.SendPush(pushPayload);
-        }
-
-        /// <summary>
-        /// 临时方案，后期删除
-        /// </summary>
-        /// <param name="tagId"></param>
-        /// <param name="title"></param>
-        /// <param name="alert"></param>
-        /// <param name="content"></param>
-        /// <param name="RegistrationId"></param>
-        /// <param name="city"></param>
-        /// <param name="vipName"></param>
-        public static void PushMessageVip(int tagId, string title, string alert, string content, string RegistrationId, string city, string vipName)
-        {
-
-            try
-            {
-                string appKey = "";
-                string masterSecret = "";
-                if (tagId == 0) //C端
-                {
-                    appKey = "dce902893245e99461b9a5c8";// Your App Key from JPush
-                    masterSecret = "fdc95d37d67c9472ad4e0e96";// Your Master Secret from JPush
-                }
-                else if (tagId == 1) //B端
-                {
-                    appKey = "d794d51f2ffaf5de42001c4b";// Your App Key from JPush
-                    masterSecret = "03f956afaaeb086481aa3b7c";// Your Master Secret from JPush
-                }
-                JPushClient client = new JPushClient(appKey, masterSecret);
-                Audience audience = null;
-                if (tagId == 0)  //C端
-                {
-                    audience = Audience.s_tag_and(vipName, city.Trim());
-                }
-                else if (tagId == 1 && !string.IsNullOrEmpty(RegistrationId)) //B端
-                    audience = Audience.s_tag_and(RegistrationId);
-
-                PushPayload pushPayload = new PushPayload();
-                pushPayload.platform = Platform.android_ios();
-                pushPayload.audience = audience;
-                Notification notification = new Notification().setAlert(alert);
-                notification.AndroidNotification = new AndroidNotification().setTitle(title);
-                notification.IosNotification = new IosNotification().setAlert(alert).setBadge(1).setSound("YourSound");
-                pushPayload.notification = notification.Check();
-                var response = client.SendPush(pushPayload);
-            }
-            catch (Exception ex)
-            {
-
-            }
         }
     }
 }

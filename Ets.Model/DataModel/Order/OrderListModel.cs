@@ -244,5 +244,30 @@ namespace Ets.Model.DataModel.Order
         /// 子订单
         /// </summary>
         public List<OrderDetail> OrderDetailList { get; set; }
+        /// <summary>
+        /// 商户结算金额
+        /// </summary>
+        public decimal SettleMoney { get; set; }
+        /// <summary>
+        /// 应付商户金额
+        /// </summary>
+        public decimal ShouldPayBusiMoney { get; set; }
+        /// <summary>
+        /// 餐费结算方式（0：线下结算 1：线上结算）
+        /// </summary>
+        public int MealsSettleMode { get; set; }
+        /// <summary>
+        /// 订单是否已分账（0：否 1：是）
+        /// </summary>
+        public int IsJoinWithdraw { get; set; }
+        /// <summary>
+        /// 商户应收
+        /// </summary>
+        public decimal BusinessReceivable { get; set; }
+        /// <summary>
+        /// 操作人名称
+        /// </summary>
+        public string OptUserName { get; set; }
+        
     }
 }

@@ -83,6 +83,9 @@ namespace Ets.Dao.User
                                     c.TrueName as SuperManName,
                                     c.PhoneNo as SuperManPhone,
                                     o.OrderFrom,
+                                    o.id as OrderId,
+                                    o.MealsSettleMode,
+                                    (o.Amount+isnull(o.DistribSubsidy,0)*isnull(o.OrderCount,0)) as TotalAmount,
                                     isnull(o.OriginalOrderNo,'') as OriginalOrderNo";
             string tableList = @" [order](nolock) as o 
                                    LEFT join business(nolock) as b on o.businessId=b.Id
@@ -259,10 +262,10 @@ namespace Ets.Dao.User
                     }
                     else
                     {
-                        if (model.CommissionFixValue > 0)
-                        {
-                            sql += "CommissionFixValue=@CommissionFixValue,";
-                        }
+                        //if (model.CommissionFixValue > 0)
+                        //{
+                        sql += "CommissionFixValue=@CommissionFixValue,";
+                        //}
                     }
                     sql += "CommissionType=@CommissionType,";
                 }
@@ -353,7 +356,8 @@ namespace Ets.Dao.User
                                     ,b.CommissionType
                                     ,b.CommissionFixValue
                                     ,b.BusinessGroupId
-                                    ,bg.Name BusinessGroupName";
+                                    ,bg.Name BusinessGroupName
+                                    ,ISNULL(b.MealsSettleMode,0) MealsSettleMode";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrEmpty(criteria.businessName))
             {
@@ -366,6 +370,10 @@ namespace Ets.Dao.User
             if (criteria.Status != -1)
             {
                 sbSqlWhere.AppendFormat(" AND b.Status={0} ", criteria.Status);
+            }
+            if (criteria.MealsSettleMode != -1)
+            {
+                sbSqlWhere.AppendFormat(" AND ISNULL(b.MealsSettleMode,0)={0}  ", criteria.MealsSettleMode);
             }
             if (criteria.BusinessCommission > 0)
             {
@@ -532,13 +540,13 @@ namespace Ets.Dao.User
                                 b.CommissionType,
                                 b.CommissionFixValue,
                                 b.BusinessGroupId,
+                                b.MealsSettleMode,
                                 BusinessGroup.StrategyId
                                 FROM dbo.business as b WITH(NOLOCK)
                                 left join BusinessGroup on b.BusinessGroupId=BusinessGroup.Id
                                 WHERE b.Id = @busiId";
             ///TODO 类型？
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@busiId", busiId);
+            IDbParameters parm = DbHelper.CreateDbParameters("busiId", DbType.Int32, 4, busiId);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
             if (dt != null)
                 busi = DataTableHelper.ConvertDataTableList<BusListResultModel>(dt)[0];
@@ -1365,7 +1373,8 @@ namespace Ets.Dao.User
                                             SET Name=@Name,
                                                 GroupId=@GroupId,
                                                 OriginalBusiId=@OriginalBusiId,
-                                                PhoneNo=@PhoneNo
+                                                PhoneNo=@PhoneNo,
+                                                MealsSettleMode=@MealsSettleMode
                                             OUTPUT
                                               Inserted.Id,
                                               @OptId,
@@ -1391,7 +1400,8 @@ namespace Ets.Dao.User
             parm.AddWithValue("@OptName", orderOptionModel.OptUserName);
             parm.AddWithValue("@Platform", 3);
             parm.AddWithValue("@Remark", remark);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+            parm.AddWithValue("@MealsSettleMode", model.MealsSettleMode);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ;
         }
 
 
@@ -1416,19 +1426,19 @@ where  Id=@Id ";
         }
 
         /// <summary>
-        ///  超人提现功能 add by caoheyang 20150509
+        ///  商户 余额，可提现余额   add by caoheyang 20150509
         /// </summary>
-        /// <param name="withdrawBpm">超人信息</param>
+        /// <param name="model">超人信息</param>
         /// <returns></returns>
-        public void UpdateForWithdrawC(WithdrawBPM withdrawBpm)
+        public void UpdateForWithdrawC(UpdateForWithdrawPM model)
         {
             const string updateSql = @"
 update  business
-set  BalancePrice=BalancePrice-@WithdrawPrice,AllowWithdrawPrice=AllowWithdrawPrice-@WithdrawPrice
+set  BalancePrice=BalancePrice+@WithdrawPrice,AllowWithdrawPrice=AllowWithdrawPrice+@WithdrawPrice
 where  Id=@Id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("Id", withdrawBpm.BusinessId);
-            dbParameters.AddWithValue("WithdrawPrice", withdrawBpm.WithdrawPrice);
+            dbParameters.AddWithValue("Id", model.Id);
+            dbParameters.AddWithValue("WithdrawPrice", model.Money);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
@@ -1439,7 +1449,7 @@ where  Id=@Id ";
         /// <UpdateTime>20150511</UpdateTime>
         /// <param name="id">商家Id</param>
         /// <returns></returns>
-        public BusinessDM  GetDetails(int id)
+        public BusinessDM GetDetails(int id)
         {
             BusinessDM businessDM = new BusinessDM();
 
@@ -1453,7 +1463,7 @@ select  Id,Name,City,district,PhoneNo,PhoneNo2,Password,CheckPicUrl,IDCard,
 from  Business (nolock) 
 where Id=@Id";
 
-            IDbParameters dbBusinessParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);  
+            IDbParameters dbBusinessParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);
             businessDM = DbHelper.QueryForObject(SuperMan_Read, queryBusinessSql, dbBusinessParameters, new BusinessRowMapper());
             #endregion
 
@@ -1465,19 +1475,19 @@ where BusinessId=@BusinessId and IsEnable=1";
             IDbParameters dbBFAccountParameters = DbHelper.CreateDbParameters();
             dbBFAccountParameters.AddWithValue("BusinessId", id);
             DataTable dtBFAccount = DbHelper.ExecuteDataTable(SuperMan_Read, queryBFAccountSql, dbBFAccountParameters);
-            List<BusinessFinanceAccount> listBFAccount = new List<BusinessFinanceAccount>();            
+            List<BusinessFinanceAccount> listBFAccount = new List<BusinessFinanceAccount>();
             foreach (DataRow dataRow in dtBFAccount.Rows)
             {
                 BusinessFinanceAccount bf = new BusinessFinanceAccount();
                 bf.Id = ParseHelper.ToInt(dataRow["Id"]);
-                bf.BusinessId =ParseHelper.ToInt(dataRow["BusinessId"]);
+                bf.BusinessId = ParseHelper.ToInt(dataRow["BusinessId"]);
                 bf.TrueName = dataRow["TrueName"].ToString();
-                bf.AccountNo = ETS.Security.DES.Decrypt(dataRow["AccountNo"].ToString()); 
+                bf.AccountNo = ETS.Security.DES.Decrypt(dataRow["AccountNo"].ToString());
                 bf.IsEnable = ParseHelper.ToBool(dataRow["IsEnable"]);
                 bf.AccountType = ParseHelper.ToInt(dataRow["AccountType"]);
                 bf.BelongType = ParseHelper.ToInt(dataRow["BelongType"]);
-                if (dataRow["OpenBank"] != null && dataRow["OpenBank"]!=DBNull.Value)
-                { 
+                if (dataRow["OpenBank"] != null && dataRow["OpenBank"] != DBNull.Value)
+                {
                     bf.OpenBank = dataRow["OpenBank"].ToString();
                 }
                 if (dataRow["OpenSubBank"] != null && dataRow["OpenSubBank"] != DBNull.Value)
@@ -1489,10 +1499,10 @@ where BusinessId=@BusinessId and IsEnable=1";
                 bf.UpdateBy = dataRow["UpdateBy"].ToString();
                 bf.UpdateTime = ParseHelper.ToDatetime(dataRow["UpdateTime"]);
                 listBFAccount.Add(bf);
-            }            
-            businessDM.listBFAcount = listBFAccount;            
-            #endregion          
-             
+            }
+            businessDM.listBFAcount = listBFAccount;
+            #endregion
+
             return businessDM;
         }
 
@@ -1503,20 +1513,21 @@ where BusinessId=@BusinessId and IsEnable=1";
         /// <UpdateTime>20150511</UpdateTime>
         /// <param name="id">商家Id</param>
         /// <returns></returns>
-        public decimal GetDistribSubsidy(int id)
-        {           
-           decimal distribSubsidy;
-
+        public BusinessInfo GetDistribSubsidy(int id)
+        {          
             string querSql = @"
-select  isnull(DistribSubsidy,0) from  Business (nolock) 
+select  isnull(DistribSubsidy,0) as DistribSubsidy from  Business (nolock) 
 where Id=@Id";
 
-            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);
-            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querSql, dbParameters);
-            distribSubsidy=ParseHelper.ToDecimal(executeScalar, 0);
+            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);            
 
-            return distribSubsidy;
-       }
+            return DbHelper.QueryForObjectDelegate<BusinessInfo>(SuperMan_Read, querSql, dbParameters,
+             dataRow => new BusinessInfo
+             {
+                 DistribSubsidy = ParseHelper.ToDecimal(dataRow["DistribSubsidy"], 0)              
+                 
+             });            
+        }
 
 
         /// <summary>
@@ -1533,7 +1544,7 @@ where Id=@Id";
  FROM   dbo.[business] WITH ( NOLOCK ) 
  WHERE  id = @id";
 
-            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);              
+            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
             isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
 
@@ -1701,10 +1712,10 @@ WHERE b.Id = @BusinessId  ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@BusinessId", businessId);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
-            if (dt != null&&dt.Rows.Count>0)
-                return  DataTableHelper.ConvertDataTableList<BusinessDetailModel>(dt)[0];
+            if (dt != null && dt.Rows.Count > 0)
+                return DataTableHelper.ConvertDataTableList<BusinessDetailModel>(dt)[0];
             return null;
-        }        
+        }
 
         /// <summary>
         /// 更改可提现金额
@@ -1723,5 +1734,20 @@ WHERE b.Id = @BusinessId  ";
         }
 
 
+        public bool UpdateBusinessBalancePrice(int businessId, decimal shouldPayBusiMoney)
+        {
+            bool b = false;
+            //更新商户表中的 BalancePrice 余额字段
+            StringBuilder upStringBuilder = new StringBuilder(@"
+update  dbo.business
+set     BalancePrice = BalancePrice + @BalancePrice
+where   Id = @Id;");
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@BalancePrice", DbType.Decimal).Value = shouldPayBusiMoney;
+            parm.Add("@Id", DbType.Int32, 4).Value = businessId;
+            int iResult = DbHelper.ExecuteNonQuery(SuperMan_Write, upStringBuilder.ToString(), parm);
+            //更新商户流水表
+            return iResult > 0 ? true : false;
+        }
     }
 }

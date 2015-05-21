@@ -70,7 +70,19 @@ namespace Ets.Service.Provider.Pay
         /// <param name="model"></param>
         private static void FinishOrderPushMessage(OrderChildFinishModel model)
         {
-            Ets.Service.Provider.MyPush.Push.PushMessage(0, "订单提醒", "有订单完成了！", "有订单完成了！", string.Concat(model.orderId, "_", model.orderChildId), string.Empty);
+            OrderListModel orderListModel = new OrderDao().GetOrderById(model.orderId);
+            int allowFinish = ParseHelper.ToBool(orderListModel.IsPay, false) ? 1 : 0;
+            JPushModel jpushModel = new JPushModel()
+            {
+                Alert = "有订单完成了！",
+                City = string.Empty,
+                Content = string.Concat(model.orderId, "_", model.orderChildId, "_", allowFinish),
+                RegistrationId = orderListModel.clienterId.ToString(),//通过订单ID获取要发送的骑士ID
+                TagId = 0,
+                Title = "订单提醒"
+            };
+            //Ets.Service.Provider.MyPush.Push.PushMessage(0, "订单提醒", "有订单完成了！", "有订单完成了！", string.Concat(model.orderId, "_", model.orderChildId), string.Empty);
+            Ets.Service.Provider.MyPush.Push.PushMessage(jpushModel);
         }
 
         /// <summary>
@@ -137,7 +149,7 @@ namespace Ets.Service.Provider.Pay
             resultModel.orderNo = orderNo;
             resultModel.payAmount = payAmount;
             resultModel.payType = PayTypeEnum.ZhiFuBao.GetHashCode();
-            resultModel.notifyUrl =ETS.Config.NotifyUrl;
+            resultModel.notifyUrl = ETS.Config.NotifyUrl;
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.success, resultModel);
         }
 

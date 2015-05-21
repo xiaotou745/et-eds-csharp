@@ -63,6 +63,7 @@
     <Compile Include="DataModel\Bussiness\BusinessGroupModel.cs" />
     <Compile Include="DataModel\Bussiness\BusinessOptionLog.cs" />
     <Compile Include="DataModel\Clienter\ClienterCrossShopLogModel.cs" />
+    <Compile Include="DataModel\Clienter\ClienterLocation.cs" />
     <Compile Include="DataModel\Clienter\CrossShopStatisticLogModel.cs" />
     <Compile Include="DataModel\Order\OrderChildFinishModel.cs" />
     <Compile Include="DataModel\Order\PayStatusModel.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="DomainModel\Finance\ClienterWithdrawFormModel.cs" />
     <Compile Include="DomainModel\Finance\ClienterWithdrawLogModel.cs" />
     <Compile Include="DomainModel\Finance\FinanceRecordsDM.cs" />
+    <Compile Include="DomainModel\Order\GetJobCDM.cs" />
     <Compile Include="DomainModel\Order\NonJoinWithdrawModel.cs" />
     <Compile Include="DomainModel\Finance\FinanceRecordsDMList.cs" />
     <Compile Include="DomainModel\Order\OrderChildForTicket.cs" />
@@ -175,6 +177,7 @@
     <Compile Include="ParameterModel\Bussiness\BussinessStatusModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BussOrderParaModelApp.cs" />
     <Compile Include="ParameterModel\Bussiness\BusinessSearchCriteria.cs" />
+    <Compile Include="ParameterModel\Bussiness\ClienterPushLocaltionPM.cs" />
     <Compile Include="ParameterModel\Bussiness\LoginModel.cs" />
     <Compile Include="ParameterModel\Bussiness\NewBusiRegisterResultModel.cs" />
     <Compile Include="ParameterModel\Bussiness\NewRegisterInfoModel.cs" />
@@ -212,15 +215,19 @@
     <Compile Include="ParameterModel\Finance\ClienterWithdrawFormPM.cs" />
     <Compile Include="ParameterModel\Finance\ClienterWithdrawLogPM.cs" />
     <Compile Include="ParameterModel\Finance\ClienterWithdrawSearchCriteria.cs" />
+    <Compile Include="ParameterModel\Finance\UpdateForWithdrawPM.cs" />
     <Compile Include="ParameterModel\Finance\WithdrawBPM.cs" />
     <Compile Include="ParameterModel\Finance\WithdrawPM.cs" />
     <Compile Include="ParameterModel\Finance\WithdrawCPM.cs" />
     <Compile Include="ParameterModel\Group\GroupListModel.cs" />
     <Compile Include="ParameterModel\Group\GroupParaModel.cs" />
+    <Compile Include="ParameterModel\Order\CancelOrderBPM.cs" />
     <Compile Include="ParameterModel\Order\ChangeStatusPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\BusiOrderResultModel.cs" />
     <Compile Include="ParameterModel\Order\AsyncStatusPM_OpenApi.cs" />
+    <Compile Include="ParameterModel\Order\GetJobCPM.cs" />
     <Compile Include="ParameterModel\Order\OrderChildModel.cs" />
+    <Compile Include="ParameterModel\Order\OrderCompleteModel.cs" />
     <Compile Include="ParameterModel\Order\OrderPM.cs" />
     <Compile Include="ParameterModel\Order\OrderChildPM.cs" />
     <Compile Include="ParameterModel\Order\NewPostPublishOrderModel.cs" />
@@ -229,6 +236,7 @@
     <Compile Include="ParameterModel\Order\GetStatusPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\CreatePM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\OrderOptionModel.cs" />
+    <Compile Include="ParameterModel\Order\OrderReceiveModel.cs" />
     <Compile Include="ParameterModel\Order\OrderRecordsLog.cs" />
     <Compile Include="ParameterModel\Order\OrderSearchCriteria.cs" />
     <Compile Include="ParameterModel\Order\PullOrderInfoPM_OpenApi.cs" />

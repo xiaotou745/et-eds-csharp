@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Account\IAccountProvider..cs" />
     <Compile Include="AuthorityMenu\IAuhorityMenu.cs" />
+    <Compile Include="Clienter\IClienterLocationProvider.cs" />
     <Compile Include="Clienter\ICrossShopStatisticLogProvider.cs" />
     <Compile Include="Common\IAdminToolsProvider.cs" />
     <Compile Include="Common\IAreaProvider.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="Order\IAutoAdjustProvider.cs" />
     <Compile Include="Order\IOrderChildProvider.cs" />
     <Compile Include="Order\IOrderDetailProvider.cs" />
+    <Compile Include="Order\IOrderOtherProvider.cs" />
     <Compile Include="Order\IOrderProvider.cs" />
     <Compile Include="Clienter\IClienterProvider.cs" />
     <Compile Include="Pay\IPayProvider.cs" />

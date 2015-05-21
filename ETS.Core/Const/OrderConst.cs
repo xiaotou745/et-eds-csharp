@@ -28,6 +28,10 @@ namespace ETS.Const
         /// 订单已取消 
         /// </summary>
         public const int OrderStatus3 = 3;
+        /// <summary>
+        /// 订单已取货 
+        /// </summary>
+        public const int OrderStatus4 = 4;
 
         /// <summary>
         /// 第三方待接入订单 
@@ -175,5 +179,10 @@ namespace ETS.Const
 
         #endregion
         #endregion
+
+        /// <summary>
+        /// 该时间之后的订单才处理金额
+        /// </summary>
+        public const string ConstDateTime ="2015-05-24 00:00:00";
     }
 }

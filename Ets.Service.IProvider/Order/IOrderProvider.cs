@@ -30,7 +30,7 @@ namespace Ets.Service.IProvider.Order
         /// <param name="criteria"></param>
         /// <returns></returns>
         IList<ClientOrderNoLoginResultModel> GetOrdersNoLoginLatest(ClientOrderSearchCriteria criteria);
-        
+
         /// </summary>        /// 商户发布订单信息转换为数据库对应实体
         /// </summary>
         /// <param name="busiOrderInfoModel"></param>
@@ -85,7 +85,12 @@ namespace Ets.Service.IProvider.Order
         /// <param name="orderStatus">订单状态</param>
         /// <returns></returns>
         int UpdateOrderStatus(string orderNo, int orderStatus, string remakr, int? status);
-
+        /// <summary>
+        /// 获取订单状态
+        /// </summary>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        int GetOrderStatus(int orderId, int businessId);
 
         #region openapi 接口使用 add by caoheyang  20150325
 
@@ -149,13 +154,21 @@ namespace Ets.Service.IProvider.Order
         /// <param name="orderNo"></param>
         /// <returns></returns>
         OrderListModel GetOrderInfoByOrderNo(string orderNo, int orderId = 0);
+        ///// <summary>
+        ///// 取消订单
+        ///// danny-20150414
+        ///// </summary>
+        ///// <param name="orderOptionModel"></param>
+        ///// <returns></returns>
+        //bool CancelOrderByOrderNo(OrderOptionModel orderOptionModel);
         /// <summary>
-        /// 取消订单
-        /// danny-20150414
+        /// 取消订单 后台取消
+        /// danny-20150521
         /// </summary>
         /// <param name="orderOptionModel"></param>
         /// <returns></returns>
-        bool CancelOrderByOrderNo(OrderOptionModel orderOptionModel);
+        DealResultInfo CancelOrderByOrderNo(OrderOptionModel orderOptionModel);
+
         /// <summary>
         /// 获取订单操作日志
         /// danny-20150414
@@ -194,6 +207,31 @@ namespace Ets.Service.IProvider.Order
         /// <UpdateTime>20150512</UpdateTime>
         /// <param name="id">订单查询实体</param>
         /// <returns></returns>
-        OrderDM GetDetails(OrderPM modelPM);    
+        OrderDM GetDetails(OrderPM modelPM);
+
+        /// <summary>
+        /// 骑士端获取任务列表（最新/最近）任务   add by caoheyang 20150519
+        /// </summary>
+        /// <param name="model">订单查询实体</param>
+        /// <returns></returns>
+        ResultModel<object> GetJobC(GetJobCPM model);
+
+        void UpdateTake(OrderPM modelPM);
+
+        /// <summary>
+        /// 获取订单状态
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150520</UpdateTime>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        int GetStatus(int id);
+
+        /// <summary>
+        /// 商户端 取消订单  商户端只能取消 待接单的订单  add by caoehyang  20150521 
+        /// </summary>
+        /// <param name="paramodel"></param>
+        /// <returns></returns>
+        ResultModel<bool> CancelOrderB(CancelOrderBPM paramodel);
     }
 }

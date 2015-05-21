@@ -50,12 +50,15 @@ namespace Ets.Model.DomainModel.Order
         /// <summary>
         /// 发布时间
         /// </summary>
-        public DateTime? PubDate { get; set; }
-
+        public string PubDate { get; set; } 
         /// <summary>
         /// 发货人
         /// </summary>
         public string businessName { get; set; }
+        /// <summary>
+        /// 商户Id
+        /// </summary>
+        public int businessId { get; set; }
 
         /// <summary>
         /// 取货城市
@@ -170,7 +173,7 @@ namespace Ets.Model.DomainModel.Order
         /// <summary>
         /// 抢单时间
         /// </summary>
-        public DateTime GrabDate { get; set; }
+        public DateTime GrabTime { get; set; }
        
         /// <summary>
         /// 子订单集合
@@ -191,6 +194,16 @@ namespace Ets.Model.DomainModel.Order
         /// 是否有未完成子订单
         /// </summary>
         public bool IsExistsUnFinish{ get; set; }
+
+        /// <summary>
+        /// 订单总金额
+        /// </summary>
+        public decimal? TotalAmount { get; set; }
+
+        /// <summary>
+        /// 餐费结算方式（0：线下结算 1：线上结算）
+        /// </summary>
+        public int MealsSettleMode { get; set; }
     }
 
     public class OrderChildInfo
@@ -283,5 +296,16 @@ namespace Ets.Model.DomainModel.Order
         /// </summary>
         public int GroupID { get; set; }
 
-    }      
+    }
+
+    /// <summary>
+    /// 取消订单入口参数Model
+    /// </summary>
+    public class OrderCancelParam
+    {
+        public int businessId { get; set; }
+        public int orderId { get; set; }
+        public string orderNo { get; set; }
+        public string version { get; set; }
+    }
 }

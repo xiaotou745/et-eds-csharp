@@ -79,11 +79,18 @@ namespace Ets.Dao.Clienter
             }
             if (criteria.status != null && criteria.status.Value != -1)
             {
-                where += " and o.[Status]= " + criteria.status.Value;
+                if (criteria.status.Value == OrderQueryType.Success.GetHashCode())
+                {
+                    where += " and o.[Status]= " + criteria.status.Value;
+                }
+                if (criteria.status.Value == OrderQueryType.Working.GetHashCode())//此处查询的未进行中的订单（已接单，已取货）
+                {
+                    where += " and o.[Status] in (2,4)" ;
+                }
             }
             else
             {
-                where += " and o.[Status]= " + OrderConst.ORDER_ACCEPT;
+                where += " and o.[Status] in (2,4) ";
             }
             #endregion
 
@@ -118,7 +125,7 @@ namespace Ets.Dao.Clienter
                                     b.GroupId,ISNULL(oo.HadUploadCount,0) HadUploadCount ";
             string sql_from = @" [order](NOLOCK) AS o LEFT JOIN business(NOLOCK) AS b ON o.businessId=b.Id  
                                  left join dbo.OrderOther oo (nolock) on o.Id = oo.OrderId ";
-            return new PageHelper().GetPages<ClientOrderModel>(SuperMan_Read, criteria.PagingRequest.PageIndex, where, criteria.status == 1 ? "o.ActualDoneDate DESC " : " o.Id ", columnStr, sql_from, criteria.PagingRequest.PageSize, false);
+            return new PageHelper().GetPages<ClientOrderModel>(SuperMan_Read, criteria.PagingRequest.PageIndex, where, criteria.status == 1 ? "o.ActualDoneDate DESC " : " oo.GrabTime ", columnStr, sql_from, criteria.PagingRequest.PageSize, false);
         }
 
         /// <summary>
@@ -718,7 +725,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, ConstValues.OrderH
             }
             else
             {
-            orderOther = UpdateReceiptInfo(uploadReceiptModel);
+                orderOther = UpdateReceiptInfo(uploadReceiptModel);
             }
             orderOther.OrderStatus = oo.OrderStatus;
             orderOther.OrderCreateTime = oo.OrderCreateTime;
@@ -889,8 +896,8 @@ where   OrderId = @OrderId
         /// <returns>OrderOther</returns>
         public OrderOther GetReceiptInfo(int orderId)
         {
-            string sql = @"select  o.Id OrderId ,
-        ISNULL(oo.Id,0) Id ,
+            string sql = @"select  o.Id OrderId ,o.IsPay,
+        ISNULL(oo.Id,0) Id ,o.SettleMoney,
         o.[Status] OrderStatus,
         o.OrderCount NeedUploadCount,
         oo.ReceiptPic ,
@@ -994,19 +1001,19 @@ where  Id=@Id ";
         }
 
         /// <summary>
-        ///  超人提现功能 add by caoheyang 20150509
+        ///  骑士更新 余额，可提现余额 功能 add by caoheyang 20150509
         /// </summary>
-        /// <param name="withdrawCpm">超人信息</param>
+        /// <param name="model">骑士信息</param>
         /// <returns></returns>
-        public void UpdateForWithdrawC(WithdrawCPM withdrawCpm)
+        public void UpdateForWithdrawC(UpdateForWithdrawPM model)
         {
             const string updateSql = @"
 update  clienter
-set  AccountBalance=AccountBalance-@WithdrawPrice,AllowWithdrawPrice=AllowWithdrawPrice-@WithdrawPrice
+set  AccountBalance=AccountBalance+@WithdrawPrice,AllowWithdrawPrice=AllowWithdrawPrice+@WithdrawPrice
 where  Id=@Id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("Id", withdrawCpm.ClienterId);
-            dbParameters.AddWithValue("WithdrawPrice", withdrawCpm.WithdrawPrice);
+            dbParameters.AddWithValue("Id", model.Id);
+            dbParameters.AddWithValue("WithdrawPrice", model.Money);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
@@ -1165,7 +1172,8 @@ WHERE c.Id = @ClienterId  ";
                 result.Password = dataReader["Password"].ToString();
                 result.TrueName = dataReader["TrueName"].ToString();
                 result.IDCard = dataReader["IDCard"].ToString();
-                result.PicWithHandUrl = Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataReader["PicWithHandUrl"].ToString())[0];
+                if (dataReader["PicWithHandUrl"] != null && dataReader["PicWithHandUrl"].ToString()!="")
+                    result.PicWithHandUrl =Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataReader["PicWithHandUrl"].ToString())[0];
                 result.PicUrl = dataReader["PicUrl"].ToString();
                 obj = dataReader["Status"];
                 if (obj != null && obj != DBNull.Value)

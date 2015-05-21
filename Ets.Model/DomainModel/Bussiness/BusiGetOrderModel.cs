@@ -11,6 +11,10 @@ namespace Ets.Model.DomainModel.Bussiness
     public class BusiGetOrderModel
     {
         /// <summary>
+        /// 订单Id
+        /// </summary>
+        public int OrderId { get; set; }
+        /// <summary>
         /// 订单号
         /// </summary>
         public string OrderNo { get; set; }
@@ -79,5 +83,13 @@ namespace Ets.Model.DomainModel.Bussiness
         /// OriginalOrderNo原平台订单号
         /// </summary>
         public string OriginalOrderNo { get; set; }
+
+       public int MealsSettleMode { get; set; }
+
+       /// <summary>
+       /// 订单总金额
+       /// </summary>
+       public decimal? TotalAmount { get; set; }
+
     }
 }

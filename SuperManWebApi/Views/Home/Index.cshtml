@@ -4,7 +4,123 @@
     <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
 </div>
 <script src="~/Scripts/jquery-1.10.2.min.js"></script>
-<script>
+<script>     
+    //$.ajax({
+    //    type: 'POST',
+    //    dataType: 'json',
+    //    url: '/Order/Push',
+    //    data: {
+    //        "userId": 1776,
+    //        "ReceiveName": "健康快乐",
+    //        "receviceAddress": "别动我数据",
+    //        "recevicePhone": "13595555877",            
+    //        "Amount": 50,
+    //        "IsPay": false,
+    //        "Remark":null ,
+    //        "OrderCount": 1,
+    //        "OrderSign": "1431935133274",
+    //        "TimeSpan": 30008,
+    //        "Version": "1.1.0",
+    //        "PubLongitude": 0.011,
+    //        "PubLatitude": 0.021,
+    //        "listOrderChlid": [
+    //                   {
+    //                       "ChildId": 1,
+    //                       "GoodPrice": 50
+    //                   }
+    //        ]
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
+
+    //$.ajax({
+    //    type: 'POST',
+    //    dataType: 'json',
+    //    url: '/Order/Receive',
+    //    data: {
+    //        "userId": 3083,
+    //        "orderId": 142242,
+    //        "orderNo": "1776150521172026042",
+    //        "bussinessId": 1776,
+    //        "Version": "1.1.0",
+    //        "longitude":0.311,
+    //        "latitude":0.312            
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
+  
+
+    //$.ajax({
+    //    type: 'POST',
+    //    dataType: 'json',
+    //    url: '/Order/ConfirmTake',
+    //    data: {
+    //        "OrderId": 142242,
+    //        "ClienterId":3083,
+    //        "version": "1.0",
+    //        "longitude":0.301,
+    //        "latitude":0.302            
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
+
+    $.ajax({
+        type: 'POST',
+        dataType: 'json',
+        url: '/Order/Complete',
+        data: {
+            "userId": 3083,
+            "orderNo": "1776150521172026042",
+            "pickupCode": "",
+            "version": "1.0",
+            "longitude":0.201,
+            "latitude":0.202            
+        },
+        success: function (data) {
+            console.log(data);
+        },
+        error: function () { }
+    });
+
+    //$.ajax({
+    //    type: 'get',
+    //    dataType: 'json',
+    //    url: '/ClienterAPI/RushOrder_C?userId=3080&orderNo=1767150520111055077&longitude=0.142&latitude=0.143',
+    //    data: {        
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
+
+   
+
+
+    $.ajax({
+        type: 'Get',
+        dataType: 'json',
+        url: '/BusinessAPI/GetOrderList_B?userId=3083&pagedSize=10&pagedIndex=1&Status=1&orderfrom=1',
+        data: {          
+        },
+        success: function (data) {
+            console.log(data);
+        },
+        error: function () { }
+    }); 
+
+
+   
+
     //$.ajax({
     //    type: 'POST',
     //    dataType: 'json',
@@ -30,6 +146,21 @@
     //                       "GoodPrice": 23                          
     //                   }
     //               ]
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
+
+
+    //$.ajax({
+    //    type: 'POST',
+    //    dataType: 'json',
+    //    url: '/Business/GetDistribSubsidy',
+    //    data: {
+    //        "BussinessId": 172,
+    //        "Version": "1.0.1"
     //    },
     //    success: function (data) {
     //        console.log(data);
@@ -69,7 +200,7 @@
     //    dataType: 'json',
     //    url: '/Order/GetDetails',
     //    data: {
-    //        "OrderId": 1263,
+    //        "OrderId": 142201,
     //        "Version": "1.0.1"
     //    },
     //    success: function (data) {
@@ -564,7 +695,7 @@
     //        url: '/finance/WithdrawC',
     //        data: {
     //            "ClienterId": "114",
-    //                        "WithdrawPrice": "12",
+    //                        "WithdrawPrice": "502",
     //                        "FinanceAccountId": "3",
     //            "version":"17882"
     //        },

@@ -234,7 +234,7 @@ where   1=1 and o.Id = @OrderId
         /// <returns>不存在返回-1</returns>
         public PayStatusModel GetPayStatus(int orderId, int orderChildId)
         {
-            string sql = "SELECT PayStatus,TotalPrice,WxCodeUrl from dbo.OrderChild oc(nolock) where OrderId = @OrderId and ChildId = @ChildId ";
+            string sql = "SELECT ThirdPayStatus as PayStatus,TotalPrice,WxCodeUrl from dbo.OrderChild oc(nolock) where OrderId = @OrderId and ChildId = @ChildId ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("OrderId", DbType.Int32, 4).Value = orderId;
             parm.Add("ChildId", DbType.Int32, 4).Value = orderChildId;
@@ -260,9 +260,9 @@ where   1=1 and o.Id = @OrderId
         {
             //return ChangePayStatus(EnumOrderChildStatus.YiWanCheng.GetHashCode(), EnumOrderChildStatus.ZhiFuZhong.GetHashCode(), payStyle, orderId, orderChildId);
             string sql = @"
-update OrderChild set PayStatus=@PayStatus,PayStyle=@PayStyle,PayBy=@PayBy,PayTime=getdate(),
+update OrderChild set PayStatus=@PayStatus,ThirdPayStatus=@PayStatus,PayStyle=@PayStyle,PayBy=@PayBy,PayTime=getdate(),
 PayType=@PayType , OriginalOrderNo=@OriginalOrderNo
-where OrderId=@OrderId and ChildId=@ChildId and PayStatus!=@PayStatus";
+where OrderId=@OrderId and ChildId=@ChildId and ThirdPayStatus!=@PayStatus";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("PayStatus", DbType.Int32, 4).Value = PayStatusEnum.HadPay.GetHashCode();//变为已完成
             parm.Add("PayStyle", DbType.Int32, 4).Value = model.payStyle;
@@ -284,9 +284,9 @@ where OrderId=@OrderId and ChildId=@ChildId and PayStatus!=@PayStatus";
         /// <returns></returns>
         public bool ZhuFuZhongPayStatus(int orderId, int orderChildId)
         {
-            string sql = "update OrderChild set PayStatus=@PayStatus where OrderId=@OrderId and ChildId=@ChildId and PayStatus=@BeForeStatus";
+            string sql = "update OrderChild set ThirdPayStatus=@ThirdPayStatus where OrderId=@OrderId and ChildId=@ChildId and ThirdPayStatus=@BeForeStatus";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("PayStatus", DbType.Int32, 4).Value = PayStatusEnum.WaitingPay.GetHashCode();//变为支付中
+            parm.Add("ThirdPayStatus", DbType.Int32, 4).Value = PayStatusEnum.WaitingPay.GetHashCode();//变为支付中
             parm.Add("BeForeStatus", DbType.Int32, 4).Value = PayStatusEnum.WaitPay.GetHashCode();//条件为待支付
             parm.Add("OrderId", SqlDbType.Int, 4).Value = orderId;
             parm.Add("ChildId", SqlDbType.Int, 4).Value = orderChildId;
