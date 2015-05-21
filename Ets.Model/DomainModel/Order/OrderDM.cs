@@ -194,6 +194,11 @@ namespace Ets.Model.DomainModel.Order
         /// 是否有未完成子订单
         /// </summary>
         public bool IsExistsUnFinish{ get; set; }
+
+        /// <summary>
+        /// 订单总金额
+        /// </summary>
+        public decimal? TotalAmount { get; set; }
     }
 
     public class OrderChildInfo

@@ -43,7 +43,8 @@ using Ets.Model.ParameterModel.Bussiness;
 using Ets.Service.IProvider.Statistics;
 using Ets.Model.DataModel.Strategy;
 using Ets.Service.Provider.Order;
-using Ets.Model.DomainModel.Order;
+using Ets.Dao.Finance;
+using Ets.Model.DataModel.Finance;
 #endregion
 namespace Ets.Service.Provider.Order
 {
@@ -55,6 +56,8 @@ namespace Ets.Service.Provider.Order
 
         private ISubsidyProvider iSubsidyProvider = new SubsidyProvider();
         private IBusinessGroupProvider iBusinessGroupProvider = new BusinessGroupProvider();
+        private readonly BusinessDao _businessDao = new BusinessDao();
+        private readonly BusinessBalanceRecordDao _businessBalanceRecordDao = new BusinessBalanceRecordDao();
         //和区域有关的  wc
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
 
@@ -265,6 +268,7 @@ namespace Ets.Service.Provider.Order
                 to.CommissionType = business.CommissionType;//结算类型：1：固定比例 2：固定金额
                 to.CommissionFixValue = ParseHelper.ToDecimal(business.CommissionFixValue);//固定金额     
                 to.BusinessGroupId = business.BusinessGroupId;
+                to.MealsSettleMode = business.MealsSettleMode;
             }
             if (ConfigSettings.Instance.IsGroupPush)
             {
@@ -335,16 +339,29 @@ namespace Ets.Service.Provider.Order
                 {
                     return PubOrderStatus.OrderHasExist;
                 }
-                else
-                {
-                    result = orderDao.AddOrder(order);
-                }
-
+                
+                result = orderDao.AddOrder(order);              
                 if (result <= 0)//订单发布失败
                 {
                     return PubOrderStatus.InvalidPubOrder;
                 }
 
+                //写金额流水
+                //_businessDao.UpdateForWithdrawC(withdrawBpm); //更新商户表的余额，可提现余额
+
+                //#region 商户余额流水操作 更新骑士表的余额，可提现余额
+                //_businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
+                //{
+                //    BusinessId = withdrawBpm.BusinessId,//商户Id
+                //    Amount = -withdrawBpm.WithdrawPrice,//流水金额
+                //    Status = (int)BusinessBalanceRecordStatus.Tradeing, //流水状态(1、交易成功 2、交易中）
+                //    RecordType = (int)BusinessBalanceRecordRecordType.Withdraw,
+                //    Operator = business.Name,
+                //    WithwardId = withwardId,
+                //    RelationNo = withwardNo,
+                //    Remark = "商户提现"
+                //});
+                //#endregion
 
                 if (order.Adjustment > 0)
                 {
@@ -352,18 +369,11 @@ namespace Ets.Service.Provider.Order
                     if (!b)//写入日志失败
                     {
                         return PubOrderStatus.InvalidPubOrder;
-                    }
-
-                    tran.Complete();
-                    return PubOrderStatus.Success;
+                    }                                 
                 }
-                else
-                {
-                    tran.Complete();
-                    return PubOrderStatus.Success;
-                }
-            }
 
+                tran.Complete(); 
+            }         
             return PubOrderStatus.Success;
         }
 
@@ -1226,11 +1236,12 @@ namespace Ets.Service.Provider.Order
             orderDM.ClienterPhoneNo = order.ClienterPhoneNo;
             orderDM.GrabTime = order.GrabTime;
             orderDM.businessId = ParseHelper.ToInt(order.businessId, 0);
-            //if (order.businessId != null) orderDM.businessId = order.businessId.Value;
+            orderDM.TotalAmount = order.TotalAmount;
             if (order.NeedUploadCount >= order.OrderCount && order.Status == OrderStatus.订单完成.GetHashCode())
             {
                 orderDM.IsModifyTicket = false;
-            } CalculationLgAndLa(orderDM, modelPM, order);//计算经纬度
+            } 
+            CalculationLgAndLa(orderDM, modelPM, order);//计算经纬度
 
             Ets.Service.Provider.Order.OrderChildProvider orderChildPr = new OrderChildProvider();
             List<OrderChildInfo> listOrderChildInfo = orderChildPr.GetByOrderId(id);
@@ -1238,6 +1249,8 @@ namespace Ets.Service.Provider.Order
 
             Ets.Service.Provider.Order.OrderDetailProvider orderDetailPr = new OrderDetailProvider();
             orderDM.listOrderDetail = orderDetailPr.GetByOrderNo(order.OrderNo);
+
+
             orderDM.IsModifyTicket = true;
             bool IsExistsUnFinish = true;//默认是存在有未支付订单
             if (ParseHelper.ToBool(order.IsPay, false))
