@@ -17,5 +17,11 @@ namespace Ets.Model.ParameterModel.Finance
         /// </summary>
         [Range(1, int.MaxValue, ErrorMessage = "商家不能为空")]
         public int BusinessId { get; set; }
+
+        /// <summary>
+        /// 提现金额
+        /// </summary>
+        [Range(3, int.MaxValue, ErrorMessage = "提现金额不能为小于3")]
+        public decimal WithdrawPrice { get; set; }
     }
 }

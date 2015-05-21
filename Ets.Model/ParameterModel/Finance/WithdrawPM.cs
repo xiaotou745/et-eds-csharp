@@ -14,11 +14,6 @@ namespace Ets.Model.ParameterModel.Finance
     public class WithdrawPM
     {
         /// <summary>
-        /// 提现金额
-        /// </summary>
-        [Range(0.01, int.MaxValue, ErrorMessage = "提现金额不能为小于0")]
-        public decimal WithdrawPrice { get; set; }
-        /// <summary>
         /// 用于提现的金融帐号id
         /// </summary>
         [Range(1, int.MaxValue, ErrorMessage = "提现金融帐号不能为空")]

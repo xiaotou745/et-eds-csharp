@@ -1475,6 +1475,22 @@ where   1 = 1 and o.Id = @Id
             }
         }
 
+        /// <summary>
+        /// 返回订单信息
+        /// 窦海超
+        /// 2015年5月21日 16:11:35
+        /// </summary>
+        /// <param name="Id">订单ID</param>
+        /// <returns></returns>
+        public OrderListModel GetOrderById(int Id)
+        {
+            string sql = "SELECT clienterId FROM dbo.[order] o where id = @id";
+            IDbParameters parms = DbHelper.CreateDbParameters("id", DbType.Int32, 4, Id);
+            return DbHelper.QueryForObjectDelegate<OrderListModel>(SuperMan_Read, sql, row => new OrderListModel()
+            {
+                clienterId = ParseHelper.ToInt(row["clienterId"])
+            });
+        }
 
         /// <summary>
         /// 获取超过配置时间未抢单的订单
@@ -2153,7 +2169,7 @@ where  o.Id=@Id ";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
-            status = ParseHelper.ToInt(executeScalar, 0) ;
+            status = ParseHelper.ToInt(executeScalar, 0);
 
             return status;
         }
@@ -2187,7 +2203,7 @@ where businessId=@businessId and TimeSpan=@TimeSpan ";
         /// 2015年5月15日 16:40:05
         /// </summary>
         /// <param name="hour">多少小时内的数据</param>
-        public IList<NonJoinWithdrawModel> GetNonJoinWithdraw(int hour)
+        public IList<NonJoinWithdrawModel> GetNonJoinWithdraw(double hour)
         {
             string sql = @"
 select 
@@ -2201,7 +2217,7 @@ where   oo.IsJoinWithdraw = 0
         and oo.HadUploadCount = o.OrderCount --订单量=已上传
         and o.Status = 1 --已完成订单
         and datediff(hour, o.ActualDoneDate, getdate()) >= @hour";
-            IDbParameters parm = DbHelper.CreateDbParameters("@hour", DbType.Int32, 4, hour);
+            IDbParameters parm = DbHelper.CreateDbParameters("@hour", DbType.Int64, 4, hour);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             if (!dt.HasData())
             {
@@ -2232,6 +2248,8 @@ where   oo.IsJoinWithdraw = 0
         public IList<GetJobCDM> GetJobC(GetJobCPM model)
         {
             string sql = string.Format(@"
+declare @cliernterPoint geography ;
+select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
@@ -2242,15 +2260,16 @@ case convert(varchar(100), PubDate, 23)
 end
 +'  '+substring(convert(varchar(100),PubDate,24),1,5)
 as PubDate,
-round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(geography::Point(@Latitude,@Longitude,4326)),0) as DistanceToBusiness 
+round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) as DistanceToBusiness 
 from dbo.[order] a (nolock)
 join dbo.business b (nolock) on a.businessId=b.Id
-where a.status=0
+where a.status=0 and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
 order by {1}
-", model.TopNum, "a.Id desc");
+", model.TopNum, model.SearchType == 0 ? "a.Id desc" : " geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint) asc");
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Latitude", model.Latitude);
             dbParameters.AddWithValue("Longitude", model.Longitude);
+            dbParameters.AddWithValue("PushRadius", ParseHelper.ToInt(model.PushRadius)*1000);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters));
             if (DataTableHelper.CheckDt(dt))
             {
