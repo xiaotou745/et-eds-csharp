@@ -1470,6 +1470,22 @@ where   1 = 1 and o.Id = @Id
             }
         }
 
+        /// <summary>
+        /// 返回订单信息
+        /// 窦海超
+        /// 2015年5月21日 16:11:35
+        /// </summary>
+        /// <param name="Id">订单ID</param>
+        /// <returns></returns>
+        public OrderListModel GetOrderById(int Id)
+        {
+            string sql = "SELECT clienterId FROM dbo.[order] o where id = @id";
+            IDbParameters parms = DbHelper.CreateDbParameters("id", DbType.Int32, 4, Id);
+            return DbHelper.QueryForObjectDelegate<OrderListModel>(SuperMan_Read, sql, row => new OrderListModel()
+            {
+                clienterId = ParseHelper.ToInt(row["clienterId"])
+            });
+        }
 
         /// <summary>
         /// 获取超过配置时间未抢单的订单
@@ -2145,7 +2161,7 @@ where  o.Id=@Id ";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
-            status = ParseHelper.ToInt(executeScalar, 0) ;
+            status = ParseHelper.ToInt(executeScalar, 0);
 
             return status;
         }
@@ -2284,6 +2300,6 @@ where orderid=@orderid
             dbParameters.AddWithValue("@orderId", orderId);
             DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
         }
-        
+
     }
 }
