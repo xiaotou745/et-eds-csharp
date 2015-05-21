@@ -1893,7 +1893,8 @@ order by bb.Id desc;";
           BusinessCommission ,
           SettleMoney ,
           Adjustment ,
-          TimeSpan
+          TimeSpan,
+          MealsSettleMode
         )
 output  Inserted.Id ,
         getdate() ,
@@ -1937,7 +1938,8 @@ values  ( @OrderNo ,
           @BusinessCommission ,
           @SettleMoney ,
           @Adjustment ,
-          @TimeSpan
+          @TimeSpan,
+          @MealsSettleMode
         );select IDENT_CURRENT('order')", SuperPlatform.商家, ConstValues.PublishOrder, (int)SuperPlatform.商家, 0);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -1975,6 +1977,7 @@ values  ( @OrderNo ,
             dbParameters.AddWithValue("@SettleMoney", order.SettleMoney);
             dbParameters.AddWithValue("@Adjustment", order.Adjustment);
             dbParameters.AddWithValue("@TimeSpan", order.TimeSpan);
+            dbParameters.AddWithValue("@MealsSettleMode", order.MealsSettleMode);
 
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql.ToString(), dbParameters);
             int orderId = ParseHelper.ToInt(result);

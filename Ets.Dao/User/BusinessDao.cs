@@ -533,6 +533,7 @@ namespace Ets.Dao.User
                                 b.CommissionType,
                                 b.CommissionFixValue,
                                 b.BusinessGroupId,
+                                b.MealsSettleMode,
                                 BusinessGroup.StrategyId
                                 FROM dbo.business as b WITH(NOLOCK)
                                 left join BusinessGroup on b.BusinessGroupId=BusinessGroup.Id
