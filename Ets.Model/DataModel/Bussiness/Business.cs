@@ -138,6 +138,10 @@ namespace Ets.Model.DataModel.Bussiness
 
         public int oldOriginalBusiId { get; set; }
         public int oldGroupId { get; set; }
+        /// <summary>
+        /// 餐费结算方式（0：线下结算 1：线上结算）
+        /// </summary>
+        public int MealsSettleMode { get; set; }
     }
 
 }

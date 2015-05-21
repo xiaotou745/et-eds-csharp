@@ -129,15 +129,15 @@ namespace Ets.Dao.Order
         /// <summary>
         /// 订单状态查询功能  add by caoheyang 20150316
         /// </summary>
-        /// <param name="orderNo">订单号码</param>
+        /// <param name="originalOrderNo">第三方平台订单号码</param>
         /// <param name="orderfrom">订单来源</param>
         /// <returns>订单状态</returns>
-        public int GetStatus(string OriginalOrderNo, int orderfrom)
+        public int GetStatus(string originalOrderNo, int orderfrom)
         {
             const string querySql = @"SELECT top 1  a.Status FROM [order] a  WITH ( NOLOCK )  
             WHERE OriginalOrderNo=@OriginalOrderNo AND a.OrderFrom=@OrderFrom";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@OriginalOrderNo", OriginalOrderNo);    //第三方平台订单号
+            dbParameters.AddWithValue("@OriginalOrderNo", originalOrderNo);    //第三方平台订单号
             dbParameters.AddWithValue("@OrderFrom", orderfrom);    //订单来源
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
             return ParseHelper.ToInt(executeScalar, -1);
@@ -687,6 +687,9 @@ values( @OrderId,
                                         ,oo.ReceiptPic
                                         ,o.OtherCancelReason
                                         ,o.OriginalOrderNo
+                                        ,ISNULL(o.MealsSettleMode,0) MealsSettleMode
+                                        ,ISNULL(oo.IsJoinWithdraw,0) IsJoinWithdraw
+                                        ,o.BusinessReceivable
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     LEFT JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
@@ -1001,23 +1004,25 @@ where  o.OrderNo = @OrderNo");
         /// </summary>
         /// <param name="orderNo">订单号</param>
         /// <param name="orderStatus">订单状态</param>
+        /// <param name="remark">订单号</param>
+        /// <param name="status">原始订单状态</param>
+        ///  <param name="price">涉及金额</param>
         /// <returns></returns>
-        public int CancelOrderStatus(string orderNo, int orderStatus, string remark, int? status)
+        public int CancelOrderStatus(string orderNo, int orderStatus, string remark, int? status, decimal price=0)
         {
             StringBuilder upSql = new StringBuilder();
 
             upSql.AppendFormat(@" UPDATE dbo.[order]
  SET    [Status] = @status,OtherCancelReason=@OtherCancelReason
- output Inserted.Id,GETDATE(),'{0}',@OtherCancelReason,Inserted.businessId,Inserted.[Status],{1}
- into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
+ output Inserted.Id,@Price,GETDATE(),'{0}',@OtherCancelReason,Inserted.businessId,Inserted.[Status],{1}
+ into dbo.OrderSubsidiesLog(OrderId,Price,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
  WHERE  OrderNo = @orderNo", SuperPlatform.商家, (int)SuperPlatform.商家);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.Add("@orderNo", SqlDbType.NVarChar);
-            dbParameters.SetValue("@orderNo", orderNo);  //订单号  
-            dbParameters.AddWithValue("@status", orderStatus);
-            dbParameters.Add("@OtherCancelReason", SqlDbType.NVarChar);
-            dbParameters.SetValue("@OtherCancelReason", remark);  //订单号  
+            dbParameters.Add("orderNo", DbType.String, 45).Value = orderNo;
+            dbParameters.Add("status", DbType.Int32, 4).Value = orderStatus;
+            dbParameters.Add("Price", DbType.Decimal, 9).Value = price;
+            dbParameters.Add("OtherCancelReason", DbType.String, 500).Value = remark;
 
             if (status != null)
             {
@@ -1414,7 +1419,7 @@ where   1 = 1 and o.OrderNo = @OrderNo
         public int GetOrderStatus(int orderId,int businessId)
         {
             string sql = @"
-select top 1 o.[Status]
+select o.[Status]
 from    [order] o with ( nolock ) 
 where   o.Id = @Id and businessId=@businessId
 ";
@@ -1895,7 +1900,8 @@ order by bb.Id desc;";
           BusinessCommission ,
           SettleMoney ,
           Adjustment ,
-          TimeSpan
+          TimeSpan,
+          MealsSettleMode
         )
 output  Inserted.Id ,
         getdate() ,
@@ -1939,7 +1945,8 @@ values  ( @OrderNo ,
           @BusinessCommission ,
           @SettleMoney ,
           @Adjustment ,
-          @TimeSpan
+          @TimeSpan,
+          @MealsSettleMode
         );select IDENT_CURRENT('order')", SuperPlatform.商家, ConstValues.PublishOrder, (int)SuperPlatform.商家, 0);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -1977,6 +1984,7 @@ values  ( @OrderNo ,
             dbParameters.AddWithValue("@SettleMoney", order.SettleMoney);
             dbParameters.AddWithValue("@Adjustment", order.Adjustment);
             dbParameters.AddWithValue("@TimeSpan", order.TimeSpan);
+            dbParameters.AddWithValue("@MealsSettleMode", order.MealsSettleMode);
 
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql.ToString(), dbParameters);
             int orderId = ParseHelper.ToInt(result);
@@ -2087,10 +2095,10 @@ select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneN
     o.ReceiveCityCode,o.ReceiveAreaCode,o.OrderType,o.KM,o.GuoJuQty,o.LuJuQty,o.SongCanDate,o.OrderCount,o.CommissionRate,o.Payment,
     o.CommissionFormulaMode,o.Adjustment,o.BusinessCommission,o.SettleMoney,o.DealCount,o.PickupCode,o.OtherCancelReason,o.CommissionType,
     o.CommissionFixValue,o.BusinessGroupId,o.TimeSpan,o.RushOrderLongitude,o.RushOrderLandline,o.FinishOrderLongitude,o.FinishOrderLandline,o.Invoice,
-    isnull(o.DistribSubsidy,0)*isnull(o.OrderCount,0) as TotalDistribSubsidy,o.GrabDate,
+    isnull(o.DistribSubsidy,0)*isnull(o.OrderCount,0) as TotalDistribSubsidy,(o.Amount+isnull(o.DistribSubsidy,0)*isnull(o.OrderCount,0)) as TotalAmount,
     b.[City] BusinessCity,b.Name BusinessName,b.PhoneNo BusinessPhoneNo ,b.Address BusinessAddress ,b.GroupId, 
     b.Longitude, b.Latitude,REPLACE(b.City,'市','') AS pickUpCity,
-    oo.NeedUploadCount,oo.HadUploadCount,
+    oo.NeedUploadCount,oo.HadUploadCount,oo.GrabTime,
     c.TrueName ClienterName,c.PhoneNo ClienterPhoneNo
 from  dbo.[order] o (nolock)
     join business b (nolock) on b.Id=o.businessId
@@ -2179,7 +2187,7 @@ where businessId=@businessId and TimeSpan=@TimeSpan ";
         /// 2015年5月15日 16:40:05
         /// </summary>
         /// <param name="hour">多少小时内的数据</param>
-        public IList<NonJoinWithdrawModel> GetNonJoinWithdraw(int hour)
+        public IList<NonJoinWithdrawModel> GetNonJoinWithdraw(double hour)
         {
             string sql = @"
 select 
@@ -2193,7 +2201,7 @@ where   oo.IsJoinWithdraw = 0
         and oo.HadUploadCount = o.OrderCount --订单量=已上传
         and o.Status = 1 --已完成订单
         and datediff(hour, o.ActualDoneDate, getdate()) >= @hour";
-            IDbParameters parm = DbHelper.CreateDbParameters("@hour", DbType.Int32, 4, hour);
+            IDbParameters parm = DbHelper.CreateDbParameters("@hour", DbType.Int64, 4, hour);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             if (!dt.HasData())
             {
@@ -2286,21 +2294,167 @@ order by {1}
         /// <summary>
         /// 更新一条记录
         /// </summary>
-        public void UpdateTake(string orderId, float takeLongitude, float takeLatitude)
+        public void UpdateTake(int orderId,int clienterId, float takeLongitude, float takeLatitude)
         {
             const string UPDATE_SQL = @"
 update dbo.[Order] 
     set Status=4
-where id=@orderid and Status=2;
+where id=@orderid and Status=2 and clienterId=@clienterId;
 update OrderOther 
     set TakeTime=GETDATE(),TakeLongitude=@TakeLongitude,TakeLatitude=@TakeLatitude 
 where orderid=@orderid  
 ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@TakeLongitude", takeLongitude);
-            dbParameters.AddWithValue("@TakeLatitude", takeLatitude);
-            dbParameters.AddWithValue("@orderId", orderId);
+            dbParameters.Add("TakeLongitude",DbType.Int64,4).Value= takeLongitude;
+            dbParameters.Add("TakeLatitude", DbType.Int64, 4).Value = takeLatitude;
+            dbParameters.Add("orderId", DbType.Int32, 4).Value = orderId;
+            dbParameters.Add("clienterId", DbType.Int32, 4).Value = clienterId;
             DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
-        }        
+        }  
+        /// <summary>
+        /// 获取任务支付状态（0：未支付 1：部分支付 2：已支付）
+        /// danny-20150519
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public int GetOrderTaskPayStatus(int orderId)
+        {
+            string sql = @"  
+SELECT CASE SUM(oc.PayStatus) 
+			WHEN 0 
+			THEN 0 
+		ELSE 
+			CASE 
+				WHEN  SUM(oc.PayStatus)=COUNT(oc.PayStatus) 
+				THEN 2 
+				ELSE 1 
+			END 
+		END PayStatus
+  FROM OrderChild oc WITH(NOLOCK)
+  WHERE OrderId=@OrderId ;";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@OrderId", orderId);
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm));
+        }
+
+        /// <summary>
+        /// 根据订单号查询订单主表基本信息  add by caoheyang 20150521
+        /// </summary>
+        /// <param name="orderId">订单id</param>
+        /// <param name="businessId">订单id</param>
+        /// <param name="status">订单状态</param>
+        /// <returns></returns>
+        public order GetOrderById(int orderId, int businessId, int? status = null)
+        {
+            order order = null;
+            string sql = @" select * from [order] where Id=@OrderId and businessId=@BusinessId";
+            if (status != null)
+            {
+                sql = sql + " and status=" + status;
+            }
+            IDbParameters parm = DbHelper.CreateDbParameters("OrderId", DbType.Int32, 4, orderId);
+            parm.Add("BusinessId", SqlDbType.Int).Value = businessId;
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                order = DataTableHelper.ConvertDataTableList<order>(dt)[0];
+            }
+            return order;
+        }
+		/// <summary>
+        /// 订单取消返回商家应收和插入商家余额流水
+        /// danny-2015051921
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool OrderCancelReturnBusiness(OrderListModel model)
+        {
+            string sql = string.Format(@" 
+update b
+set    b.BalancePrice=ISNULL(b.BalancePrice, 0)+@Amount,
+       b.AllowWithdrawPrice=ISNULL(b.AllowWithdrawPrice,0)+@Amount
+OUTPUT
+  Inserted.Id,
+  @Amount,
+  @Status,
+  Inserted.BalancePrice,
+  @RecordType,
+  @Operator,
+  getdate(),
+  @WithwardId,
+  @RelationNo,
+  @Remark
+INTO BusinessBalanceRecord
+  ( [BusinessId]
+   ,[Amount]
+   ,[Status]
+   ,[Balance]
+   ,[RecordType]
+   ,[Operator]
+   ,[OperateTime]
+   ,[WithwardId]
+   ,[RelationNo]
+   ,[Remark])
+from business b
+where b.Id=@BusinessId;");
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Amount", model.BusinessReceivable);
+            parm.AddWithValue("@Status", BusinessBalanceRecordStatus.Success);
+            parm.AddWithValue("@RecordType", BusinessBalanceRecordRecordType.PostMoney);
+            parm.AddWithValue("@Operator", model.OptUserName);
+            parm.AddWithValue("@WithwardId", model.Id);
+            parm.AddWithValue("@RelationNo", model.OrderNo);
+            parm.AddWithValue("@Remark", model.Remark);
+            parm.AddWithValue("@BusinessId", model.businessId);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
+        /// <summary>
+        /// 订单取消扣除骑士佣金和插入骑士余额流水
+        /// danny-2015051921
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool OrderCancelReturnClienter(OrderListModel model)
+        {
+            string sql = string.Format(@" 
+update c
+set    c.AccountBalance=ISNULL(c.AccountBalance, 0)-@Amount,
+       c.AllowWithdrawPrice	=ISNULL(c.AllowWithdrawPrice,0)-@Amount
+OUTPUT
+  Inserted.Id,
+  -@Amount,
+  @Status,
+  Inserted.AccountBalance,
+  @RecordType,
+  @Operator,
+  getdate(),
+  @WithwardId,
+  @RelationNo,
+  @Remark
+INTO BusinessBalanceRecord
+  (  [ClienterId]
+    ,[Amount]
+    ,[Status]
+    ,[Balance]
+    ,[RecordType]
+    ,[Operator]
+    ,[OperateTime]
+    ,[WithwardId]
+    ,[RelationNo]
+    ,[Remark])
+from clienter c
+where c.Id=@ClienterId;");
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Amount", model.OrderCommission);
+            parm.AddWithValue("@Status", ClienterBalanceRecordStatus.Success);
+            parm.AddWithValue("@RecordType", ClienterBalanceRecordRecordType.Commission);
+            parm.AddWithValue("@Operator", model.OptUserName);
+            parm.AddWithValue("@WithwardId", model.Id);
+            parm.AddWithValue("@RelationNo", model.OrderNo);
+            parm.AddWithValue("@Remark", model.Remark);
+            parm.AddWithValue("@ClienterId", model.clienterId);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
+
     }
 }

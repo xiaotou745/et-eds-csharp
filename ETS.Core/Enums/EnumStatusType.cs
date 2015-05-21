@@ -23,15 +23,15 @@ namespace ETS.Enums
     /// </summary>
     public enum LoginModelStatus
     {
-        Success=1,
+        Success = 1,
         [DisplayText("用户名或密码错误")]
-        InvalidCredential=0
+        InvalidCredential = 0
     }
     public enum PubOrderStatus
     {
-        Success=1,
+        Success = 1,
         [DisplayText("订单发布失败")]
-        InvalidPubOrder=0,
+        InvalidPubOrder = 0,
         [DisplayText("订单数量不符合规则")]
         OrderCountError,
         [DisplayText("订单已经存在")]
@@ -55,7 +55,7 @@ namespace ETS.Enums
         [DisplayText("收货人手机号不能为空")]
         RecevicePhoneIsNULL,
         [DisplayText("收货人地址不能为空")]
-        ReceviceAddressIsNULL,  
+        ReceviceAddressIsNULL,
         [DisplayText("请传递版本号")]
         NoVersion = -10
 
@@ -71,10 +71,10 @@ namespace ETS.Enums
         [DisplayText("订单号错误")]
         ErrOderNo = 3,
         [DisplayText("获取订单失败")]
-        FailedGetOrders = 4       
+        FailedGetOrders = 4
     }
 
-     public enum OrdersStatus
+    public enum OrdersStatus
     {
         [DisplayText("待接单")]
         Status0 = 0,
@@ -93,11 +93,26 @@ namespace ETS.Enums
         [DisplayText("请传递版本号")]
         NoVersion = -3,
         [DisplayText("成功")]
-        Success = 100,  
+        Success = 100,
         [DisplayText("失败")]
-        Failed = 101     
+        Failed = 101
     }
-  
+    /// <summary>
+    /// 确认订单返回状态
+    /// </summary>
+    public enum ConfirmTakeStatus
+    {
+        [DisplayText("成功")]
+        Success = 1,
+        [DisplayText("失败")]
+        Failed = 0,
+        [DisplayText("订单Id错误")]
+        ErrId = -1,
+        [DisplayText("获取订单失败")]
+        FailedGet = -2,
+        [DisplayText("请传递版本号")]
+        NoVersion = -3,
+    }
 
 
     public enum GetBussinessStatus
@@ -105,33 +120,33 @@ namespace ETS.Enums
         [DisplayText("成功")]
         Success = 1,
         [DisplayText("未审核")]
-        Audit=0,
+        Audit = 0,
         [DisplayText("未审核且未添加地址")]
-        AuditAddress=2,
+        AuditAddress = 2,
         [DisplayText("审核中")]
-        Auditing=3,
+        Auditing = 3,
         [DisplayText("被拒绝")]
-        Refuse=4,     
+        Refuse = 4,
         [DisplayText("商户Id错误")]
         ErrNo = -1,
         [DisplayText("获取商户失败")]
-        FailedGet =-2,
+        FailedGet = -2,
         [DisplayText("请传递版本号")]
         NoVersion = -3,
         [DisplayText("失败")]
         Failed = 101
-     
+
     }
     public enum GetClienterStatus
     {
         [DisplayText("成功")]
         Success = 1,
         [DisplayText("被拒绝")]
-        Refuse=0,
+        Refuse = 0,
         [DisplayText("未审核")]
-        Audit=2,
+        Audit = 2,
         [DisplayText("审核中")]
-        Auditing=3,
+        Auditing = 3,
         [DisplayText("骑士Id错误")]
         ErrNo = -1,
         [DisplayText("获取骑士失败")]
@@ -177,7 +192,22 @@ namespace ETS.Enums
         [DisplayText("订单已被抢,无法取消")]
         FailedCancelOrder = 204,
         [DisplayText("取消失败")]
-        NotCancelOrder = 205
+        NotCancelOrder = 205,
+        [DisplayText("取消订单失败,订单已被抢或订单不存在")]
+        CancelOrderError = 206,
+        [DisplayText("版本号不能为空")]
+        VersionError = -3
+    }
+    /// <summary>
+    /// 订单查询类型 1：已完成订单 2：进行中订单（已接单和已取货）
+    /// danny-20150520
+    /// </summary>
+    public enum OrderQueryType
+    {
+        [DisplayText("已完成订单")]
+        Success = 1,
+        [DisplayText("进行中订单")]
+        Working = 2
 
     }
     public enum OrderStatus
@@ -185,7 +215,8 @@ namespace ETS.Enums
         订单待抢单 = 0,
         订单完成 = 1,
         订单已接单 = 2,
-        订单已取消 = 3
+        订单已取消 = 3,
+        订单已取货=4
     }
 
     public enum ModifyPwdStatus
@@ -243,21 +274,21 @@ namespace ETS.Enums
     }
     public enum FinishOrderStatus
     {
-        Success=1,
+        Success = 1,
         [DisplayText("完成订单失败")]
         Failed = 0,
         [DisplayText("超人不能为空")]
         UserIdEmpty = 101,
         [DisplayText("订单不能为空")]
-        OrderEmpty =102,
+        OrderEmpty = 102,
         [DisplayText("订单不存在")]
-        OrderIsNotExist=103,
+        OrderIsNotExist = 103,
         [DisplayText("此订单已经是完成状态")]
-        OrderIsNotAllowRush=104,
+        OrderIsNotAllowRush = 104,
         [DisplayText("取货码错误")]
-        PickupCodeError=105,
+        PickupCodeError = 105,
         [DisplayText("订单已取消")]
-        OrderHadCancel=106,
+        OrderHadCancel = 106,
         [DisplayText("请传递版本号")]
         NoVersion = 107,
         [DisplayText("存在未付款的子订单")]

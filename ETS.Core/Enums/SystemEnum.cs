@@ -16,6 +16,8 @@ namespace ETS.Enums
         [DisplayText("系统错误")]
         SystemError=0,
         [DisplayText("参数错误")]
-        ParaError = -2
+        ParaError = -2,
+        [DisplayText("版本号不能为空")]
+        VersionError = -3
     }
 }
