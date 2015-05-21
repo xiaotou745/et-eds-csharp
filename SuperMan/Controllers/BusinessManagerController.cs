@@ -39,7 +39,7 @@ namespace SuperMan.Controllers
         {
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
-            var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria() { Status = -1, GroupId = SuperMan.App_Start.UserContext.Current.GroupId };
+            var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria() { Status = -1, GroupId = SuperMan.App_Start.UserContext.Current.GroupId, MealsSettleMode=-1 };
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
            
             return View(pagedList);
@@ -155,7 +155,7 @@ namespace SuperMan.Controllers
         /// <param name="oldBusGroupId">之前的集团Id</param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult ModifyBusiness(int id, string businessName,string businessPhone,int businessSourceId, int groupId,int oldBusiSourceId, int oldBusGroupId)
+        public JsonResult ModifyBusiness(int id, string businessName,string businessPhone,int businessSourceId, int groupId,int oldBusiSourceId, int oldBusGroupId,int mealsSettleMode)
         {
             IBusinessProvider iBus = new BusinessProvider();
             //操作日志
@@ -173,7 +173,8 @@ namespace SuperMan.Controllers
                 Id = id,
                 PhoneNo = businessPhone,
                 oldGroupId = oldBusGroupId,
-                oldOriginalBusiId = oldBusiSourceId
+                oldOriginalBusiId = oldBusiSourceId,
+                MealsSettleMode = mealsSettleMode
             };
             return Json(new ResultModel(iBus.ModifyBusinessInfo(businessModel, model), "成功!"), JsonRequestBehavior.DenyGet);
         }

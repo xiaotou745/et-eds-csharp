@@ -57,6 +57,10 @@ namespace Ets.Model.DataModel.Bussiness
         /// 分组名称
         /// </summary>
         public string BusinessGroupName { get; set; }
+        /// <summary>
+        /// 餐费结算方式（0：线下结算 1：线上结算）
+        /// </summary>
+        public int MealsSettleMode { get; set; }
         
     }
 }

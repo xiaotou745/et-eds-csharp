@@ -354,7 +354,8 @@ namespace Ets.Dao.User
                                     ,b.CommissionType
                                     ,b.CommissionFixValue
                                     ,b.BusinessGroupId
-                                    ,bg.Name BusinessGroupName";
+                                    ,bg.Name BusinessGroupName
+                                    ,ISNULL(b.MealsSettleMode,0) MealsSettleMode";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrEmpty(criteria.businessName))
             {
@@ -367,6 +368,10 @@ namespace Ets.Dao.User
             if (criteria.Status != -1)
             {
                 sbSqlWhere.AppendFormat(" AND b.Status={0} ", criteria.Status);
+            }
+            if (criteria.MealsSettleMode != -1)
+            {
+                sbSqlWhere.AppendFormat(" AND ISNULL(b.MealsSettleMode,0)={0}  ", criteria.MealsSettleMode);
             }
             if (criteria.BusinessCommission > 0)
             {
@@ -1366,7 +1371,8 @@ namespace Ets.Dao.User
                                             SET Name=@Name,
                                                 GroupId=@GroupId,
                                                 OriginalBusiId=@OriginalBusiId,
-                                                PhoneNo=@PhoneNo
+                                                PhoneNo=@PhoneNo,
+                                                MealsSettleMode=@MealsSettleMode
                                             OUTPUT
                                               Inserted.Id,
                                               @OptId,
@@ -1392,7 +1398,8 @@ namespace Ets.Dao.User
             parm.AddWithValue("@OptName", orderOptionModel.OptUserName);
             parm.AddWithValue("@Platform", 3);
             parm.AddWithValue("@Remark", remark);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+            parm.AddWithValue("@MealsSettleMode", model.MealsSettleMode);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ;
         }
 
 
