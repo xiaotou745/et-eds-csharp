@@ -131,7 +131,8 @@ namespace Ets.Service.Provider.Finance
             {
                 return  FinanceWithdrawC.NoPara;
             }
-            if (withdrawCpm.WithdrawPrice % 500!=0) //提现金额小于500 加2手续费
+            if (withdrawCpm.WithdrawPrice % 500 != 0 || withdrawCpm.WithdrawPrice < 500 
+                || withdrawCpm.WithdrawPrice >3000) //提现金额小于500 加2手续费
             {
                 return FinanceWithdrawC.MoneyDoubleError;
             }
