@@ -9,6 +9,7 @@ using Ets.Model.DataModel.Finance;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DomainModel.Clienter;
 using Ets.Model.DomainModel.Order;
+using Ets.Model.ParameterModel.Finance;
 using Ets.Model.ParameterModel.Order;
 using Ets.Service.IProvider.Order;
 using Ets.Service.IProvider.Subsidy;
@@ -1357,6 +1358,12 @@ namespace Ets.Service.Provider.Order
                 int result = orderDao.CancelOrderStatus(paramodel.OrderNo, OrderConst.OrderStatus3, "商家取消订单", OrderConst.OrderStatus0);
                 if (result > 0 & AsyncOrderStatus(paramodel.OrderNo))
                 {
+                    BusinessDao businessDao = new BusinessDao();
+                    businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
+                    {
+                        Id = paramodel.BusinessId,
+                        Money = order.SettleMoney
+                    });
                     BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
                     businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
                     {
