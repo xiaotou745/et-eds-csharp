@@ -125,7 +125,7 @@ namespace Ets.Dao.Clienter
                                     b.GroupId,ISNULL(oo.HadUploadCount,0) HadUploadCount ";
             string sql_from = @" [order](NOLOCK) AS o LEFT JOIN business(NOLOCK) AS b ON o.businessId=b.Id  
                                  left join dbo.OrderOther oo (nolock) on o.Id = oo.OrderId ";
-            return new PageHelper().GetPages<ClientOrderModel>(SuperMan_Read, criteria.PagingRequest.PageIndex, where, criteria.status == 1 ? "o.ActualDoneDate DESC " : " o.Id ", columnStr, sql_from, criteria.PagingRequest.PageSize, false);
+            return new PageHelper().GetPages<ClientOrderModel>(SuperMan_Read, criteria.PagingRequest.PageIndex, where, criteria.status == 1 ? "o.ActualDoneDate DESC " : " oo.GrabTime ", columnStr, sql_from, criteria.PagingRequest.PageSize, false);
         }
 
         /// <summary>
