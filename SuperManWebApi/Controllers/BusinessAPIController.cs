@@ -1,10 +1,8 @@
 ﻿using ETS;
 using ETS.Enums;
-using ETS.Expand;
-using Ets.Model.Common;
 using Ets.Model.DataModel.Order;
 using Ets.Model.ParameterModel.Order;
-using ETS.Util;
+using SuperManCore;
 using SuperManWebApi.Models.Business;
 using System;
 using System.Collections.Generic;
@@ -14,6 +12,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Http;
 using Ets.Model.DomainModel.Order;
+using SuperManCommonModel;
 using Ets.Service.Provider.User;
 using Ets.Service.IProvider.Order;
 using Ets.Service.Provider.Order;
@@ -21,7 +20,6 @@ using Ets.Service.Provider.Common;
 using Ets.Service.IProvider.User;
 using ETS.Const;
 using SuperManWebApi.Providers;
-
 
 namespace SuperManWebApi.Controllers
 {
@@ -503,16 +501,35 @@ namespace SuperManWebApi.Controllers
 
 
         /// <summary>
-        /// 取消订单 Edit  caoheyang 20150521 
+        /// 取消订单 ado.net  wangchao
         /// </summary>
-        /// <remarks>取消订单时返给商家结算费，优化，大整改</remarks>
-        /// <param name="paramodel"></param>
+        /// <param name="userId"></param>
+        /// <param name="OrderId"></param>
         /// <returns></returns>
-        [HttpPost]
+        //[HttpGet]
+        //[HttpGet]
         [ActionStatus(typeof(ETS.Enums.CancelOrderStatus))]
-        public ResultModel<bool> CancelOrder_B(CancelOrderBPM paramodel)
+        public Ets.Model.Common.ResultModel<bool> CancelOrder_B(OrderCancelParam orderCancelParam)
         {
-            return iOrderProvider.CancelOrderB(paramodel);
+            if (orderCancelParam.orderId<=0)
+                return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.OrderEmpty);
+            //查询该订单是否存在
+            var selResult = iOrderProvider.GetOrderStatus(orderCancelParam.orderId,orderCancelParam.businessId);
+
+            if (selResult == ConstValues.ORDER_NEW)
+            {
+                //存在的情况下  取消订单  3
+                int cacelResult = iOrderProvider.UpdateOrderStatus(orderCancelParam.orderNo, Ets.Model.Common.ConstValues.ORDER_CANCEL, "", null);
+                if (cacelResult > 0)
+                    return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.Success, true);
+                else
+                    return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.FailedCancelOrder, true);
+            }
+            else
+            {
+                return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.FailedCancelOrder, true);
+            }
+
         }
         /// <summary>
         /// 流转图片

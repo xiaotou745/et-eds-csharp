@@ -17,6 +17,10 @@ namespace Ets.Model.ParameterModel.Finance
         /// </summary>
         [Range(1, int.MaxValue, ErrorMessage = "骑士不能为空")]
         public int ClienterId { get; set; }
-
+        /// <summary>
+        /// 提现金额
+        /// </summary>
+        [Range(0.01, int.MaxValue, ErrorMessage = "提现金额不能小于0.01元")]
+        public decimal WithdrawPrice { get; set; }
     }
 }

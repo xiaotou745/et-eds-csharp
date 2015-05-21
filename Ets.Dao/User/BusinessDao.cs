@@ -545,8 +545,7 @@ namespace Ets.Dao.User
                                 left join BusinessGroup on b.BusinessGroupId=BusinessGroup.Id
                                 WHERE b.Id = @busiId";
             ///TODO 类型？
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@busiId", busiId);
+            IDbParameters parm = DbHelper.CreateDbParameters("busiId", DbType.Int32, 4, busiId);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
             if (dt != null)
                 busi = DataTableHelper.ConvertDataTableList<BusListResultModel>(dt)[0];

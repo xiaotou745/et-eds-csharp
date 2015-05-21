@@ -9,6 +9,7 @@ using Ets.Model.DataModel.Finance;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DomainModel.Clienter;
 using Ets.Model.DomainModel.Order;
+using Ets.Model.ParameterModel.Finance;
 using Ets.Model.ParameterModel.Order;
 using Ets.Service.IProvider.Order;
 using Ets.Service.IProvider.Subsidy;
@@ -963,121 +964,35 @@ namespace Ets.Service.Provider.Order
         {
             return orderDao.GetOrderInfoByOrderNo(orderNo);
         }
-        /// <summary>
-        /// 通过订单号取消订单
-        /// danny-20150414
-        /// </summary>
-        /// <returns></returns>
-        public bool CancelOrderByOrderNo(OrderOptionModel orderOptionModel)
-        {
-            bool result = false;
-            var orderModel = orderDao.GetOrderByNo(orderOptionModel.OrderNo);
-            if (orderModel != null)
-            {
-                //如果是已取消
-                if (orderModel.Status == 3)
-                {
-                    return true;
-                }
-                #region 判断到底扣不扣钱
-
-                ETS.NoSql.RedisCache.RedisCache redisCache = new ETS.NoSql.RedisCache.RedisCache();
-                string orderKey = string.Format(RedissCacheKey.CheckOrderPay, orderOptionModel.OrderNo);
-                string CheckOrderPay = redisCache.Get<string>(orderKey);
-
-                #endregion
-
-                //如果订单状态是待接单|已接单|已完成+未上传完小票。则直接取消订单
-                using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
-                {
-                    result = orderDao.CancelOrder(orderModel, orderOptionModel);
-                    if (result && orderModel.Status == 1 && orderModel.HadUploadCount == orderModel.NeedUploadCount && CheckOrderPay == "1")
-                    {
-                        //需要上传的小票大于等于总数量+订单已完成则要扣钱
-                        //(因为订单小票有可能不传。所以用的是订单数量和需要上传小票数量对比判断)
-                        result = orderDao.UpdateAccountBalanceByClienterId(orderModel, orderOptionModel);
-                    }
-                    if (result)
-                    {
-                        tran.Complete();
-                    }
-                }
-                if (result)
-                {
-                    AsyncOrderStatus(orderModel.OrderNo);
-                }
-            }
-            return result;
-        }
-        /// <summary>
-        /// 通过订单号取消订单（新）
-        /// danny-20150419
-        /// </summary>
-        /// <returns></returns>
-        //public DealResultInfo CancelOrderByOrderNoNew(OrderOptionModel orderOptionModel)
+        ///// <summary>
+        ///// 通过订单号取消订单
+        ///// danny-20150414
+        ///// </summary>
+        ///// <returns></returns>
+        //public bool CancelOrderByOrderNo(OrderOptionModel orderOptionModel)
         //{
-        //    var dealResultInfo = new DealResultInfo();
+        //    bool result = false;
         //    var orderModel = orderDao.GetOrderByNo(orderOptionModel.OrderNo);
         //    if (orderModel != null)
         //    {
-        //        var orderTaskPayStatus = orderDao.GetOrderTaskPayStatus(orderModel.Id);
         //        //如果是已取消
         //        if (orderModel.Status == 3)
         //        {
-        //            dealResultInfo.DealFlag = false;
-        //            dealResultInfo.DealMsg = "订单已是取消状态，不能再次取消！";
-        //            return dealResultInfo;
-        //        }
-        //        //任务中部分订单完成
-        //        if (orderTaskPayStatus == 1)
-        //        {
-        //            dealResultInfo.DealFlag = false;
-        //            dealResultInfo.DealMsg = "订单为部分支付状态，不能取消订单！";
-        //            return dealResultInfo;
+        //            return true;
         //        }
         //        #region 判断到底扣不扣钱
-        //        //var redisCache = new ETS.NoSql.RedisCache.RedisCache();
-        //        //string orderKey = string.Format(RedissCacheKey.CheckOrderPay, orderOptionModel.OrderNo);
-        //        //var checkOrderPay = redisCache.Get<string>(orderKey);
+
+        //        ETS.NoSql.RedisCache.RedisCache redisCache = new ETS.NoSql.RedisCache.RedisCache();
+        //        string orderKey = string.Format(RedissCacheKey.CheckOrderPay, orderOptionModel.OrderNo);
+        //        string CheckOrderPay = redisCache.Get<string>(orderKey);
+
         //        #endregion
 
-        //        bool currentPayStatus = ParseHelper.ToBool(orderModel.IsPay.Value, false);
-        //        if (currentPayStatus)//顾客已付款
-        //        {
-
-        //            //先 返回配送费给商家 （修改商户表金额、添加商户金额流水,可提现）
-
-        //            //if (orderModel.Status == 0 || orderModel.Status == 2)//未抢单 或 已抢单
-        //            //{
-        //            //    //ToDo 返回配送费给商家（修改商户表金额、添加商户金额流水）
-        //            //    //给商家配送费,美团等第三方 待定. 
-        //            //    //增加可体现增加，商户表金额、添加商户金额流水
-        //            //}
-        //            if (orderTaskPayStatus == 2 && orderModel.HadUploadCount == orderModel.NeedUploadCount)//已完成 && 小票全部上传
-        //            {
-        //                //ToDo 返回配送费给商家和扣除骑士佣金（修改商户表金额、添加商户金额流水、修改骑士表金额、添加骑士金额流水）
-        //                //扣骑士 ??
-        //            }
-        //        }
-        //        else
-        //        {
-        //            //if (orderModel.Status == 2 )//已抢单（顾客未付款）
-        //            //{
-        //            //    //ToDo 扣除商家菜品金额（修改商户表金额、添加商户金额流水）
-        //            //}
-        //            if (orderTaskPayStatus == 2 && orderModel.HadUploadCount == orderModel.NeedUploadCount)//已完成（顾客未付款）
-        //            {
-        //                //ToDo 返回配送费给商家和扣除商家菜品金额（修改商户表金额、添加商户金额流水、修改骑士表金额、添加骑士金额流水）
-        //                //扣骑士钱, ??可提现
-        //            }
-        //        }
-
         //        //如果订单状态是待接单|已接单|已完成+未上传完小票。则直接取消订单
-        //        bool result = false;
         //        using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
         //        {
         //            result = orderDao.CancelOrder(orderModel, orderOptionModel);
-        //            if (result && orderModel.Status == 1 && orderModel.HadUploadCount == orderModel.NeedUploadCount && checkOrderPay == "1")
+        //            if (result && orderModel.Status == 1 && orderModel.HadUploadCount == orderModel.NeedUploadCount && CheckOrderPay == "1")
         //            {
         //                //需要上传的小票大于等于总数量+订单已完成则要扣钱
         //                //(因为订单小票有可能不传。所以用的是订单数量和需要上传小票数量对比判断)
@@ -1093,8 +1008,73 @@ namespace Ets.Service.Provider.Order
         //            AsyncOrderStatus(orderModel.OrderNo);
         //        }
         //    }
-        //    return dealResultInfo;
+        //    return result;
         //}
+        /// <summary>
+        /// 通过订单号取消订单（新）
+        /// danny-20150419
+        /// </summary>
+        /// <returns></returns>
+        public DealResultInfo CancelOrderByOrderNo(OrderOptionModel orderOptionModel)
+        {
+            var dealResultInfo = new DealResultInfo
+            {
+                DealFlag =false
+            };
+            var orderModel = orderDao.GetOrderByNo(orderOptionModel.OrderNo);
+            if (orderModel == null)
+            {
+                dealResultInfo.DealMsg = "未查询到订单信息！";
+                return dealResultInfo;
+            }
+            orderModel.OptUserName = orderOptionModel.OptUserName;
+            orderModel.Remark = "管理后台取消订单："+orderOptionModel.OptLog;
+            var orderTaskPayStatus = orderDao.GetOrderTaskPayStatus(orderModel.Id);
+            #region 订单不可取消
+            if (orderModel.Status == 3)//订单已为取消状态
+            {
+                dealResultInfo.DealMsg = "订单已为取消状态，不能再次取消操作！";
+                return dealResultInfo;
+            }
+            if (orderModel.IsJoinWithdraw == 1 )//订单已分账
+            {
+                dealResultInfo.DealMsg = "订单已分账，不能取消订单！";
+                return dealResultInfo;
+            }
+            if (orderModel.MealsSettleMode == 1 && orderTaskPayStatus > 0)//餐费未线上支付模式并且餐费有支付
+            {
+                dealResultInfo.DealMsg = "餐费有支付，不能取消订单！";
+                return dealResultInfo;
+            }
+            #endregion
+            //如果订单状态是待接单|已接单|已完成+未上传完小票。则直接取消订单
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (orderDao.CancelOrder(orderModel, orderOptionModel))
+                {
+                    if (orderModel.Status == 1 && orderTaskPayStatus == 2 && orderModel.HadUploadCount == orderModel.NeedUploadCount)//已完成订单
+                    {
+                        if (!orderDao.OrderCancelReturnClienter(orderModel))
+                        {
+                            dealResultInfo.DealMsg = "扣除骑士佣金失败！";
+                            return dealResultInfo;
+                        }
+                    }
+                    if (!orderDao.OrderCancelReturnBusiness(orderModel))
+                    {
+                        dealResultInfo.DealMsg = "商家应收返回失败！";
+                        return dealResultInfo;
+                    }
+                    AsyncOrderStatus(orderModel.OrderNo);
+                    dealResultInfo.DealFlag = true;
+                    dealResultInfo.DealMsg = "订单取消成功！";
+                    tran.Complete();
+                    return dealResultInfo;
+                }
+                dealResultInfo.DealMsg = "订单状态更新失败！";
+                return dealResultInfo;
+            }
+        }
         /// <summary>
         /// 获取订单操作日志
         /// danny-20150414
@@ -1363,24 +1343,24 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public ResultModel<bool> CancelOrderB(CancelOrderBPM paramodel)
         {
-            if (paramodel.OrderId <= 0 || string.IsNullOrWhiteSpace(paramodel.OrderNo))
-            {
-                return ResultModel<bool>.Conclude(CancelOrderStatus.OrderEmpty,true);
-            }
-            else if (string.IsNullOrWhiteSpace(paramodel.Version))
-            {
-                return ResultModel<bool>.Conclude(SystemEnum.VersionError,true);
-            }
+           
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                order order = orderDao.GetOrderById(paramodel.OrderId, OrderConst.OrderStatus0);
-                if (order == null)
+                order order = new order();
+                CancelOrderStatus tempresult = CheckCancelOrderB(paramodel, ref order);
+                if (tempresult != CancelOrderStatus.Success)
                 {
-                    return ResultModel<bool>.Conclude(CancelOrderStatus.CancelOrderError, true);
+                    return ResultModel<bool>.Conclude(tempresult, true); 
                 }
-                int result = orderDao.CancelOrderStatus(paramodel.OrderNo, OrderConst.OrderStatus3, "商家取消订单", OrderConst.OrderStatus0);
+                int result = orderDao.CancelOrderStatus(paramodel.OrderNo, OrderConst.OrderStatus3, "商家取消订单", OrderConst.OrderStatus0, order.SettleMoney);
                 if (result > 0 & AsyncOrderStatus(paramodel.OrderNo))
                 {
+                    BusinessDao businessDao = new BusinessDao();
+                    businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
+                    {
+                        Id = paramodel.BusinessId,
+                        Money = order.SettleMoney
+                    });
                     BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
                     businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
                     {
@@ -1401,6 +1381,30 @@ namespace Ets.Service.Provider.Order
                     return ResultModel<bool>.Conclude(CancelOrderStatus.CancelOrderError, true);
                 }
             }
+        }
+
+        /// <summary>
+        /// 商户端 取消订单数据验证  add by caoehyang  20150521 
+        /// </summary>
+        /// <param name="paramodel">参数</param>
+        /// <param name="order">订单实体 ref</param>
+        /// <returns></returns>
+        private CancelOrderStatus CheckCancelOrderB(CancelOrderBPM paramodel,ref order order)
+        {
+            if (paramodel.OrderId <= 0 || string.IsNullOrWhiteSpace(paramodel.OrderNo))
+            {
+                return CancelOrderStatus.OrderEmpty;
+            }
+            else if (string.IsNullOrWhiteSpace(paramodel.Version))
+            {
+                return CancelOrderStatus.VersionError;
+            }
+            order = orderDao.GetOrderById(paramodel.OrderId,paramodel.BusinessId,OrderConst.OrderStatus0);
+            if (order == null)
+            {
+                return CancelOrderStatus.CancelOrderError;
+            }
+            return CancelOrderStatus.Success;
         }
     }
 }

@@ -70,6 +70,10 @@ namespace Ets.Service.Provider.Finance
         {
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
+                if (withdrawBpm.WithdrawPrice < 500) //提现金额小于500 加2手续费
+                {
+                    withdrawBpm.WithdrawPrice = withdrawBpm.WithdrawPrice + 2;
+                }
                 Business business = new Business();
                 var businessFinanceAccount = new BusinessFinanceAccount();//商户金融账号信息
                 FinanceWithdrawB checkbool = CheckWithdrawB(withdrawBpm, ref business, ref businessFinanceAccount);
@@ -157,6 +161,10 @@ namespace Ets.Service.Provider.Finance
             else if (business.AllowWithdrawPrice < withdrawBpm.WithdrawPrice)//可提现金额小于提现金额，提现失败
             {
                 return FinanceWithdrawB.MoneyError;
+            }
+            else if (business.BalancePrice < business.AllowWithdrawPrice) //账户余额小于 可提现金额，提现失败 账号异常
+            {
+                return FinanceWithdrawB.FinanceAccountError;
             }
             businessFinanceAccount = _businessFinanceAccountDao.GetById(withdrawBpm.FinanceAccountId);//获取商户金融账号信息
             if (businessFinanceAccount == null || businessFinanceAccount.BusinessId != withdrawBpm.BusinessId)
@@ -490,7 +498,7 @@ namespace Ets.Service.Provider.Finance
                 strBuilder.AppendLine(string.Format("<td>{0}</td>",item.BusinessPhoneNo));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OpenBank));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.TrueName));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", ParseHelper.ToDecrypt(item.AccountNo)));
+                strBuilder.AppendLine(string.Format("<td>'{0}'</td>", ParseHelper.ToDecrypt(item.AccountNo)));
                 strBuilder.AppendLine(string.Format("<td>{0}</td></tr>", item.Amount));
             }
             strBuilder.AppendLine("</table>");
@@ -521,7 +529,7 @@ namespace Ets.Service.Provider.Finance
             {
                 strBuilder.AppendLine(string.Format("<tr><td>'{0}'</td>", item.RelationNo));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OpenBank));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", ParseHelper.ToDecrypt(item.AccountNo)));
+                strBuilder.AppendLine(string.Format("<td>'{0}'</td>", ParseHelper.ToDecrypt(item.AccountNo)));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Amount));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Balance));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OperateTime));

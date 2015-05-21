@@ -47,5 +47,10 @@ namespace Ets.Model.Common
         /// </summary>
         public int? GroupId { get; set; }
 
+        /// <summary>
+        /// 用户ID
+        /// </summary>
+        public int UserId { get; set; }
+
     }
 }

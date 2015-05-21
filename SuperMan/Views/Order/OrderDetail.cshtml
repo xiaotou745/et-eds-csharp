@@ -286,7 +286,7 @@
                 data: paramaters,
                 success: function (result) {
                     if (result.IsSuccess) {
-                        alert("订单取消成功!");
+                        alert(result.Message);
                         adminjs.closewinbox('.add-openbox');
                         window.location.href = "/Order/OrderDetail?orderNo=" + orderNo + "&orderId=" + orderId;
                     } else {

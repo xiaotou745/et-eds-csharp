@@ -24,6 +24,7 @@ namespace Ets.BandCWithdraw
 
         protected override void OnStart(string[] args)
         {
+            //System.Threading.Thread.Sleep(10000);
             scheduler.Start();         
         }
 

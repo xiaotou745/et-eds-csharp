@@ -131,6 +131,11 @@ namespace Ets.Service.Provider.Finance
             {
                 return  FinanceWithdrawC.NoPara;
             }
+            if (withdrawCpm.WithdrawPrice % 500 != 0 || withdrawCpm.WithdrawPrice < 500 
+                || withdrawCpm.WithdrawPrice >3000) //提现金额小于500 加2手续费
+            {
+                return FinanceWithdrawC.MoneyDoubleError;
+            }
             clienter = _clienterDao.GetById(withdrawCpm.ClienterId);//获取超人信息
             if (clienter == null || clienter.Status == null
                 || clienter.Status != ConstValues.CLIENTER_AUDITPASS)  //骑士状态为非 审核通过不允许 提现
@@ -140,6 +145,10 @@ namespace Ets.Service.Provider.Finance
             else if (clienter.AllowWithdrawPrice < withdrawCpm.WithdrawPrice) //可提现金额小于提现金额，提现失败
             {
                 return  FinanceWithdrawC.MoneyError;
+            }
+            else if (clienter.AccountBalance < clienter.AllowWithdrawPrice) //账户余额小于 可提现金额，提现失败 账号异常
+            {
+                return FinanceWithdrawC.FinanceAccountError;
             }
             clienterFinanceAccount = _clienterFinanceAccountDao.GetById(withdrawCpm.FinanceAccountId);//获取超人金融账号信息
             if (clienterFinanceAccount == null || clienterFinanceAccount.ClienterId != withdrawCpm.ClienterId)
@@ -484,7 +493,7 @@ namespace Ets.Service.Provider.Finance
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.ClienterPhoneNo));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OpenBank));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.TrueName));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", ParseHelper.ToDecrypt(item.AccountNo)));
+                strBuilder.AppendLine(string.Format("<td>'{0}'</td>", ParseHelper.ToDecrypt(item.AccountNo)));
                 strBuilder.AppendLine(string.Format("<td>{0}</td></tr>", item.Amount));
             }
             strBuilder.AppendLine("</table>");
@@ -515,7 +524,7 @@ namespace Ets.Service.Provider.Finance
             {
                 strBuilder.AppendLine(string.Format("<tr><td>'{0}'</td>", item.RelationNo));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OpenBank));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", ParseHelper.ToDecrypt(item.AccountNo)));
+                strBuilder.AppendLine(string.Format("<td>'{0}'</td>", ParseHelper.ToDecrypt(item.AccountNo)));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Amount));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Balance));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OperateTime));
