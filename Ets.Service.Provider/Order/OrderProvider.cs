@@ -1328,5 +1328,36 @@ namespace Ets.Service.Provider.Order
         {
             return orderDao.GetStatus(id);
         }
+
+
+        /// <summary>
+        /// 商户端 取消订单  商户端只能取消 待接单的订单  add by caoehyang  20150521 
+        /// </summary>
+        /// <param name="paramodel">参数实体</param>
+        /// <returns></returns>
+        public ResultModel<bool> CancelOrderB(CancelOrderBPM paramodel)
+        {
+            if (paramodel.OrderId <= 0 || string.IsNullOrWhiteSpace(paramodel.OrderNo))
+            {
+                return ResultModel<bool>.Conclude(CancelOrderStatus.OrderEmpty,true);
+            }
+            else if (string.IsNullOrWhiteSpace(paramodel.Version))
+            {
+                return ResultModel<bool>.Conclude(SystemEnum.VersionError,true);
+            }
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                int result = orderDao.CancelOrderStatus(paramodel.OrderNo, OrderConst.OrderStatus3, "商家取消订单", OrderConst.OrderStatus0);
+                if (result > 0 & AsyncOrderStatus(paramodel.OrderNo))
+                {
+                    tran.Complete();
+                    return ResultModel<bool>.Conclude(CancelOrderStatus.Success, true);
+                }
+                else
+                {
+                    return ResultModel<bool>.Conclude(CancelOrderStatus.CancelOrderError, true);
+                }
+            }
+        }
     }
 }

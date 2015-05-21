@@ -1001,6 +1001,8 @@ where  o.OrderNo = @OrderNo");
         /// </summary>
         /// <param name="orderNo">订单号</param>
         /// <param name="orderStatus">订单状态</param>
+        /// <param name="remark">订单号</param>
+        /// <param name="status">原始订单状态</param>
         /// <returns></returns>
         public int CancelOrderStatus(string orderNo, int orderStatus, string remark, int? status)
         {
