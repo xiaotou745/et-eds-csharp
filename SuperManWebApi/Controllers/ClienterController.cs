@@ -74,15 +74,15 @@ namespace SuperManWebApi.Controllers
                 ClienterDM clienterDM = clienterProvider.GetDetails(model.ClienterId);
                 if (clienterDM.Status == GetClienterStatus.Refuse.GetHashCode())
                 {
-                    return Ets.Model.Common.ResultModel<ClienterDM>.Conclude(GetClienterStatus.Refuse);
+                    return Ets.Model.Common.ResultModel<ClienterDM>.Conclude(GetClienterStatus.Refuse, clienterDM);
                 }
                 if (clienterDM.Status == GetClienterStatus.Audit.GetHashCode())
                 {
-                    return Ets.Model.Common.ResultModel<ClienterDM>.Conclude(GetClienterStatus.Audit);
+                    return Ets.Model.Common.ResultModel<ClienterDM>.Conclude(GetClienterStatus.Audit, clienterDM);
                 }
                 if (clienterDM.Status == GetClienterStatus.Auditing.GetHashCode())
                 {
-                    return Ets.Model.Common.ResultModel<ClienterDM>.Conclude(GetClienterStatus.Auditing);
+                    return Ets.Model.Common.ResultModel<ClienterDM>.Conclude(GetClienterStatus.Auditing, clienterDM);
                 }
                 return Ets.Model.Common.ResultModel<ClienterDM>.Conclude(GetClienterStatus.Success, clienterDM);
             }
