@@ -224,7 +224,9 @@ namespace ETS.Enums
         [DisplayText("充值")]
         Recharge = 4,
         [DisplayText("提现失败返现")]
-        Return = 5
+        Return = 5,
+        [DisplayText("取消订单返回配送费")]
+        CancelOrderReturn = 6
     }
 
     /// <summary>

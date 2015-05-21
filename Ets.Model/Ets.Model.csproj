@@ -215,6 +215,7 @@
     <Compile Include="ParameterModel\Finance\ClienterWithdrawFormPM.cs" />
     <Compile Include="ParameterModel\Finance\ClienterWithdrawLogPM.cs" />
     <Compile Include="ParameterModel\Finance\ClienterWithdrawSearchCriteria.cs" />
+    <Compile Include="ParameterModel\Finance\UpdateForWithdrawPM.cs" />
     <Compile Include="ParameterModel\Finance\WithdrawBPM.cs" />
     <Compile Include="ParameterModel\Finance\WithdrawPM.cs" />
     <Compile Include="ParameterModel\Finance\WithdrawCPM.cs" />

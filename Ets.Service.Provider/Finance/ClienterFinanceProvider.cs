@@ -62,7 +62,11 @@ namespace Ets.Service.Provider.Finance
                 }
                 else
                 {
-                    _clienterDao.UpdateForWithdrawC(withdrawCpm); //更新骑士表的余额，可提现余额
+                    _clienterDao.UpdateForWithdrawC(new UpdateForWithdrawPM
+                    {
+                        Id=withdrawCpm.ClienterId,
+                        Money = -withdrawCpm.WithdrawPrice
+                    }); //更新骑士表的余额，可提现余额
                     string withwardNo = Helper.generateOrderCode(withdrawCpm.ClienterId);
                     #region 骑士提现
                     long withwardId = _clienterWithdrawFormDao.Insert(new ClienterWithdrawForm()

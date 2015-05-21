@@ -1001,19 +1001,19 @@ where  Id=@Id ";
         }
 
         /// <summary>
-        ///  超人提现功能 add by caoheyang 20150509
+        ///  骑士更新 余额，可提现余额 功能 add by caoheyang 20150509
         /// </summary>
-        /// <param name="withdrawCpm">超人信息</param>
+        /// <param name="model">骑士信息</param>
         /// <returns></returns>
-        public void UpdateForWithdrawC(WithdrawCPM withdrawCpm)
+        public void UpdateForWithdrawC(UpdateForWithdrawPM model)
         {
             const string updateSql = @"
 update  clienter
-set  AccountBalance=AccountBalance-@WithdrawPrice,AllowWithdrawPrice=AllowWithdrawPrice-@WithdrawPrice
+set  AccountBalance=AccountBalance+@WithdrawPrice,AllowWithdrawPrice=AllowWithdrawPrice+@WithdrawPrice
 where  Id=@Id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("Id", withdrawCpm.ClienterId);
-            dbParameters.AddWithValue("WithdrawPrice", withdrawCpm.WithdrawPrice);
+            dbParameters.AddWithValue("Id", model.Id);
+            dbParameters.AddWithValue("WithdrawPrice", model.Money);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 

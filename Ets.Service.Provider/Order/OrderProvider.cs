@@ -1,9 +1,11 @@
 ﻿#region
 using CalculateCommon;
+using Ets.Dao.Finance;
 using Ets.Dao.Order;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Bussiness;
 using Ets.Model.DataModel.Clienter;
+using Ets.Model.DataModel.Finance;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DomainModel.Clienter;
 using Ets.Model.DomainModel.Order;
@@ -603,13 +605,13 @@ namespace Ets.Service.Provider.Order
         /// <summary>
         /// 订单状态查询功能  add by caoheyang 20150316
         /// </summary>
-        /// <param name="orderNo">订单号码</param>
+        /// <param name="originalOrderNo">第三方平台订单号码</param>
         /// <param name="orderfrom">订单来源</param>
         /// <returns>订单状态</returns>
-        public int GetStatus(string OriginalOrderNo, int orderfrom)
+        public int GetStatus(string originalOrderNo, int orderfrom)
         {
             OrderDao OrderDao = new OrderDao();
-            return OrderDao.GetStatus(OriginalOrderNo, orderfrom);
+            return OrderDao.GetStatus(originalOrderNo, orderfrom);
         }
 
 
@@ -1347,9 +1349,26 @@ namespace Ets.Service.Provider.Order
             }
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
+                order order = orderDao.GetOrderById(paramodel.OrderId, OrderConst.OrderStatus0);
+                if (order == null)
+                {
+                    return ResultModel<bool>.Conclude(CancelOrderStatus.CancelOrderError, true);
+                }
                 int result = orderDao.CancelOrderStatus(paramodel.OrderNo, OrderConst.OrderStatus3, "商家取消订单", OrderConst.OrderStatus0);
                 if (result > 0 & AsyncOrderStatus(paramodel.OrderNo))
                 {
+                    BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
+                    businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
+                    {
+                        BusinessId = paramodel.BusinessId,//商户Id
+                        Amount = order.SettleMoney,//流水金额  结算金额
+                        Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
+                        RecordType = (int)BusinessBalanceRecordRecordType.CancelOrderReturn,
+                        Operator = "E代送系统",
+                        WithwardId = paramodel.OrderId,
+                        RelationNo = paramodel.OrderNo,
+                        Remark = "商户取消订单返回配送费"
+                    });
                     tran.Complete();
                     return ResultModel<bool>.Conclude(CancelOrderStatus.Success, true);
                 }

@@ -1424,19 +1424,19 @@ where  Id=@Id ";
         }
 
         /// <summary>
-        ///  超人提现功能 add by caoheyang 20150509
+        ///  商户 余额，可提现余额   add by caoheyang 20150509
         /// </summary>
-        /// <param name="withdrawBpm">超人信息</param>
+        /// <param name="model">超人信息</param>
         /// <returns></returns>
-        public void UpdateForWithdrawC(WithdrawBPM withdrawBpm)
+        public void UpdateForWithdrawC(UpdateForWithdrawPM model)
         {
             const string updateSql = @"
 update  business
-set  BalancePrice=BalancePrice-@WithdrawPrice,AllowWithdrawPrice=AllowWithdrawPrice-@WithdrawPrice
+set  BalancePrice=BalancePrice+@WithdrawPrice,AllowWithdrawPrice=AllowWithdrawPrice+@WithdrawPrice
 where  Id=@Id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("Id", withdrawBpm.BusinessId);
-            dbParameters.AddWithValue("WithdrawPrice", withdrawBpm.WithdrawPrice);
+            dbParameters.AddWithValue("Id", model.Id);
+            dbParameters.AddWithValue("WithdrawPrice", model.Money);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 

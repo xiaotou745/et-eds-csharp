@@ -129,15 +129,15 @@ namespace Ets.Dao.Order
         /// <summary>
         /// 订单状态查询功能  add by caoheyang 20150316
         /// </summary>
-        /// <param name="orderNo">订单号码</param>
+        /// <param name="originalOrderNo">第三方平台订单号码</param>
         /// <param name="orderfrom">订单来源</param>
         /// <returns>订单状态</returns>
-        public int GetStatus(string OriginalOrderNo, int orderfrom)
+        public int GetStatus(string originalOrderNo, int orderfrom)
         {
             const string querySql = @"SELECT top 1  a.Status FROM [order] a  WITH ( NOLOCK )  
             WHERE OriginalOrderNo=@OriginalOrderNo AND a.OrderFrom=@OrderFrom";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@OriginalOrderNo", OriginalOrderNo);    //第三方平台订单号
+            dbParameters.AddWithValue("@OriginalOrderNo", originalOrderNo);    //第三方平台订单号
             dbParameters.AddWithValue("@OrderFrom", orderfrom);    //订单来源
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
             return ParseHelper.ToInt(executeScalar, -1);
@@ -2327,6 +2327,30 @@ SELECT CASE SUM(oc.PayStatus)
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OrderId", orderId);
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm));
-        }      
+        }
+
+        /// <summary>
+        /// 根据订单号查询订单主表基本信息  add by caoheyang 20150521
+        /// </summary>
+        /// <param name="orderId">订单id</param>
+        /// <param name="status">订单状态</param>
+        /// <returns></returns>
+        public order GetOrderById(int orderId,int? status=null)
+        {
+            order order = null;
+            string sql = @" select * from order where Id=@OrderId";
+            if (status != null)
+            {
+                sql = sql + " and status=" + status;
+            }
+            IDbParameters parm = DbHelper.CreateDbParameters("OrderId", DbType.Int32, 4, orderId);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                order = DataTableHelper.ConvertDataTableList<order>(dt)[0];
+            }
+            return order;
+        }
+
     }
 }
