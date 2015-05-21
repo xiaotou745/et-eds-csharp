@@ -15,6 +15,7 @@ namespace ETS.Enums
     /// </summary>
     public enum FinanceWithdrawC
     {
+        [DisplayText("提现申请已发送成功")]
         Success = 1,
         [DisplayText("骑士不存在,或当前骑士状态不允许提现")]
         ClienterError = 2,
@@ -33,6 +34,7 @@ namespace ETS.Enums
         /// <summary>
         /// 成功
         /// </summary>
+        [DisplayText("绑定金融账号成功")]
         Success = 1,
         /// <summary>
         /// 该骑士已绑定过金融账号
@@ -61,6 +63,7 @@ namespace ETS.Enums
     /// </summary>
     public enum FinanceCardModifyC
     {
+        [DisplayText("绑定金融账号成功")]
         Success = 1,
         /// <summary>
         /// 选择公司账户时开户行不能为空
@@ -154,6 +157,7 @@ namespace ETS.Enums
     /// </summary>
     public enum FinanceWithdrawB
     {
+        [DisplayText("提现申请已发送成功")]
         Success = 1,
         [DisplayText("商户不存在,或当前商户状态不允许提现")]
         BusinessError = 2,
@@ -169,6 +173,7 @@ namespace ETS.Enums
     /// </summary>
     public enum FinanceCardBindB
     {
+        [DisplayText("绑定金融账号成功")]
         Success = 1,
         [DisplayText("该商户已绑定过金融账号")]
         Exists = 2,
@@ -188,6 +193,7 @@ namespace ETS.Enums
     /// </summary>
     public enum FinanceCardModifyB
     {
+        [DisplayText("绑定金融账号成功")]
         Success = 1,
         /// <summary>
         /// 选择公司账户时开户行不能为空
