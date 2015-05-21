@@ -1362,7 +1362,7 @@ namespace Ets.Service.Provider.Order
                 {
                     return ResultModel<bool>.Conclude(tempresult, true); 
                 }
-                int result = orderDao.CancelOrderStatus(paramodel.OrderNo, OrderConst.OrderStatus3, "商家取消订单", OrderConst.OrderStatus0);
+                int result = orderDao.CancelOrderStatus(paramodel.OrderNo, OrderConst.OrderStatus3, "商家取消订单", OrderConst.OrderStatus0, order.SettleMoney);
                 if (result > 0 & AsyncOrderStatus(paramodel.OrderNo))
                 {
                     BusinessDao businessDao = new BusinessDao();

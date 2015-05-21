@@ -1003,20 +1003,22 @@ where  o.OrderNo = @OrderNo");
         /// <param name="orderStatus">订单状态</param>
         /// <param name="remark">订单号</param>
         /// <param name="status">原始订单状态</param>
+        ///  <param name="price">涉及金额</param>
         /// <returns></returns>
-        public int CancelOrderStatus(string orderNo, int orderStatus, string remark, int? status)
+        public int CancelOrderStatus(string orderNo, int orderStatus, string remark, int? status, decimal price=0)
         {
             StringBuilder upSql = new StringBuilder();
 
             upSql.AppendFormat(@" UPDATE dbo.[order]
  SET    [Status] = @status,OtherCancelReason=@OtherCancelReason
- output Inserted.Id,GETDATE(),'{0}',@OtherCancelReason,Inserted.businessId,Inserted.[Status],{1}
- into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
+ output Inserted.Id,@Price,GETDATE(),'{0}',@OtherCancelReason,Inserted.businessId,Inserted.[Status],{1}
+ into dbo.OrderSubsidiesLog(OrderId,Price,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
  WHERE  OrderNo = @orderNo", SuperPlatform.商家, (int)SuperPlatform.商家);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("orderNo", DbType.String, 45).Value = orderNo;
             dbParameters.Add("status", DbType.Int32, 4).Value = orderStatus;
+            dbParameters.Add("Price", DbType.Decimal, 9).Value = price;
             dbParameters.Add("OtherCancelReason", DbType.String, 500).Value = remark;
 
             if (status != null)
