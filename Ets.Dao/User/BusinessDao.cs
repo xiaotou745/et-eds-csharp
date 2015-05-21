@@ -85,6 +85,7 @@ namespace Ets.Dao.User
                                     o.OrderFrom,
                                     o.id as OrderId,
                                     o.MealsSettleMode,
+                                    (o.Amount+isnull(o.DistribSubsidy,0)*isnull(o.OrderCount,0)) as TotalAmount,
                                     isnull(o.OriginalOrderNo,'') as OriginalOrderNo";
             string tableList = @" [order](nolock) as o 
                                    LEFT join business(nolock) as b on o.businessId=b.Id

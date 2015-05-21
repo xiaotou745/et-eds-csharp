@@ -70,6 +70,7 @@ namespace Ets.Service.Provider.User
                 model.OrderFrom = from.OrderFrom.ToString();
                 model.OrderId = from.OrderId;
                 model.MealsSettleMode = from.MealsSettleMode;
+                model.TotalAmount = from.TotalAmount;
                 if (from.OrderFrom == 0)
                 {
                     model.OrderFromName = "B端";
