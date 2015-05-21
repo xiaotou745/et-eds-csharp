@@ -354,7 +354,8 @@ namespace Ets.Dao.User
                                     ,b.CommissionType
                                     ,b.CommissionFixValue
                                     ,b.BusinessGroupId
-                                    ,bg.Name BusinessGroupName";
+                                    ,bg.Name BusinessGroupName
+                                    ,ISNULL(b.MealsSettleMode,0) MealsSettleMode";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrEmpty(criteria.businessName))
             {
@@ -367,6 +368,10 @@ namespace Ets.Dao.User
             if (criteria.Status != -1)
             {
                 sbSqlWhere.AppendFormat(" AND b.Status={0} ", criteria.Status);
+            }
+            if (criteria.MealsSettleMode != -1)
+            {
+                sbSqlWhere.AppendFormat(" AND ISNULL(b.MealsSettleMode,0)={0}  ", criteria.MealsSettleMode);
             }
             if (criteria.BusinessCommission > 0)
             {
@@ -1367,7 +1372,8 @@ namespace Ets.Dao.User
                                             SET Name=@Name,
                                                 GroupId=@GroupId,
                                                 OriginalBusiId=@OriginalBusiId,
-                                                PhoneNo=@PhoneNo
+                                                PhoneNo=@PhoneNo,
+                                                MealsSettleMode=@MealsSettleMode
                                             OUTPUT
                                               Inserted.Id,
                                               @OptId,
@@ -1393,7 +1399,8 @@ namespace Ets.Dao.User
             parm.AddWithValue("@OptName", orderOptionModel.OptUserName);
             parm.AddWithValue("@Platform", 3);
             parm.AddWithValue("@Remark", remark);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+            parm.AddWithValue("@MealsSettleMode", model.MealsSettleMode);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ;
         }
 
 
@@ -1418,19 +1425,19 @@ where  Id=@Id ";
         }
 
         /// <summary>
-        ///  超人提现功能 add by caoheyang 20150509
+        ///  商户 余额，可提现余额   add by caoheyang 20150509
         /// </summary>
-        /// <param name="withdrawBpm">超人信息</param>
+        /// <param name="model">超人信息</param>
         /// <returns></returns>
-        public void UpdateForWithdrawC(WithdrawBPM withdrawBpm)
+        public void UpdateForWithdrawC(UpdateForWithdrawPM model)
         {
             const string updateSql = @"
 update  business
-set  BalancePrice=BalancePrice-@WithdrawPrice,AllowWithdrawPrice=AllowWithdrawPrice-@WithdrawPrice
+set  BalancePrice=BalancePrice+@WithdrawPrice,AllowWithdrawPrice=AllowWithdrawPrice+@WithdrawPrice
 where  Id=@Id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("Id", withdrawBpm.BusinessId);
-            dbParameters.AddWithValue("WithdrawPrice", withdrawBpm.WithdrawPrice);
+            dbParameters.AddWithValue("Id", model.Id);
+            dbParameters.AddWithValue("WithdrawPrice", model.Money);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 

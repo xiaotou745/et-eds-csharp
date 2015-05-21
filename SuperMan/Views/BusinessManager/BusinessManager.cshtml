@@ -51,6 +51,12 @@
                             <option value="1">固定比例</option>
                             <option value="2">固定金额</option>
                         </select>
+                        <span class="">餐费结算方式: </span>
+                        <select name="MealsSettleMode" class="selectw" id="MealsSettleMode" style="width:143px">
+                            <option value="-1" selected="selected">-请选择-</option>
+                            <option value="0">线下结算</option>
+                            <option value="1">线上结算</option>
+                        </select>
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                     </td>
                 </tr>
@@ -252,6 +258,13 @@
                 <input name="busiPhone" id="busiPhone" type="text">
             </div>
             <div class="control-group">
+                <label>餐费结算方式：</label>
+                <select name="busiMealsSettleMode" class="selectw" id="busiMealsSettleMode" style="width:143px">
+                    <option value="0">线下结算</option>
+                    <option value="1">线上结算</option>
+                </select>
+            </div>
+            <div class="control-group">
                 <label>绑定第三方ID：</label>
                 <input name="busiSourceId" id="busiSourceId" type="text">
                 <input type="hidden" name="oldBusiSourceId" id="oldBusiSourceId">
@@ -335,6 +348,7 @@
         var busiName = $("#busiName").val(); //商户电话
         var busiPhone = $("#busiPhone").val(); //商户电话
         var busiSourceId = $("#busiSourceId").val(); //商户原平台Id
+        var busiMealsSettleMode = $("#busiMealsSettleMode").val(); ////商户集团Id
         var busGroupId = $("#busGroupId").val(); ////商户集团Id
         var oldBusiSourceId = $("#oldBusiSourceId").val(); //商户原平台Id
         var oldBusGroupId = $("#oldBusGroupId").val(); ////商户集团Id
@@ -364,7 +378,7 @@
         var paramaters = {
             "id": busiId, "businessName": busiName, "businessPhone": busiPhone,
             "businessSourceId": busiSourceId, "groupId": busGroupId,
-            "oldBusiSourceId": oldBusiSourceId, "oldBusGroupId": oldBusGroupId,
+            "oldBusiSourceId": oldBusiSourceId, "oldBusGroupId": oldBusGroupId, "mealsSettleMode": busiMealsSettleMode
         };
         var url = "/BusinessManager/ModifyBusiness";
         $.ajax({

@@ -79,7 +79,11 @@ namespace Ets.Service.Provider.Finance
                 }
                 else
                 {
-                    _businessDao.UpdateForWithdrawC(withdrawBpm); //更新商户表的余额，可提现余额
+                    _businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
+                    {
+                        Id=withdrawBpm.BusinessId,
+                        Money = -withdrawBpm.WithdrawPrice
+                    }); //更新商户表的余额，可提现余额
                     string withwardNo = Helper.generateOrderCode(withdrawBpm.BusinessId);
                     #region 商户提现
                     long withwardId = _businessWithdrawFormDao.Insert(new BusinessWithdrawForm()
