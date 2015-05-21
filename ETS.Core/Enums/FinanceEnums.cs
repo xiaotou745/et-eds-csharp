@@ -23,7 +23,7 @@ namespace ETS.Enums
         FinanceAccountError = 3,
         [DisplayText("提现金额大于可提现金额")]
         MoneyError = 4,
-        [DisplayText("提现金额必须是500的倍数")]
+        [DisplayText("提现金额必须在500元-3000元之间，且为500的倍数。")]
         MoneyDoubleError = 5,
         [DisplayText("未传参")]
         NoPara = -2
