@@ -1008,7 +1008,7 @@ where  o.OrderNo = @OrderNo");
         /// <param name="status">原始订单状态</param>
         ///  <param name="price">涉及金额</param>
         /// <returns></returns>
-        public int CancelOrderStatus(string orderNo, int orderStatus, string remark, int? status, decimal price=0)
+        public int CancelOrderStatus(string orderNo, int orderStatus, string remark, int? status, decimal price = 0)
         {
             StringBuilder upSql = new StringBuilder();
 
@@ -1416,7 +1416,7 @@ where   1 = 1 and o.OrderNo = @OrderNo
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns></returns>
-        public int GetOrderStatus(int orderId,int businessId)
+        public int GetOrderStatus(int orderId, int businessId)
         {
             string sql = @"
 select o.[Status]
@@ -1484,11 +1484,17 @@ where   1 = 1 and o.Id = @Id
         /// <returns></returns>
         public OrderListModel GetOrderById(int Id)
         {
-            string sql = "SELECT clienterId FROM dbo.[order] o where id = @id";
+            //string sql = "SELECT clienterId FROM dbo.[order] o where id = @id";
+            string sql = @"
+SELECT clienterId,min(PayStatus) as IsPay FROM dbo.[order] o(nolock)
+join dbo.OrderChild oc(nolock) on o.Id= oc.OrderId
+ where o.id=@id group by PayStatus,clienterId
+ ";
             IDbParameters parms = DbHelper.CreateDbParameters("id", DbType.Int32, 4, Id);
             return DbHelper.QueryForObjectDelegate<OrderListModel>(SuperMan_Read, sql, row => new OrderListModel()
             {
-                clienterId = ParseHelper.ToInt(row["clienterId"])
+                clienterId = ParseHelper.ToInt(row["clienterId"]),
+                IsPay = ParseHelper.ToBool(row["IsPay"], false)//是否允许点击完成，1=允许，0=不允许 
             });
         }
 
@@ -2269,7 +2275,7 @@ order by {1}
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Latitude", model.Latitude);
             dbParameters.AddWithValue("Longitude", model.Longitude);
-            dbParameters.AddWithValue("PushRadius", ParseHelper.ToInt(model.PushRadius)*1000);
+            dbParameters.AddWithValue("PushRadius", ParseHelper.ToInt(model.PushRadius) * 1000);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters));
             if (DataTableHelper.CheckDt(dt))
             {
@@ -2285,7 +2291,7 @@ order by {1}
         /// <returns></returns>
         private IList<GetJobCDM> TranslateGetJobC(DataTable dt)
         {
-            IList<GetJobCDM> models = new List<GetJobCDM> ();
+            IList<GetJobCDM> models = new List<GetJobCDM>();
             foreach (DataRow dataRow in dt.Rows)
             {
                 GetJobCDM temp = new GetJobCDM();
@@ -2313,7 +2319,7 @@ order by {1}
         /// <summary>
         /// 更新一条记录
         /// </summary>
-        public void UpdateTake(int orderId,int clienterId, float takeLongitude, float takeLatitude)
+        public void UpdateTake(int orderId, int clienterId, float takeLongitude, float takeLatitude)
         {
             const string UPDATE_SQL = @"
 update dbo.[Order] 
@@ -2324,12 +2330,12 @@ update OrderOther
 where orderid=@orderid  
 ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.Add("TakeLongitude",DbType.Int64,4).Value= takeLongitude;
+            dbParameters.Add("TakeLongitude", DbType.Int64, 4).Value = takeLongitude;
             dbParameters.Add("TakeLatitude", DbType.Int64, 4).Value = takeLatitude;
             dbParameters.Add("orderId", DbType.Int32, 4).Value = orderId;
             dbParameters.Add("clienterId", DbType.Int32, 4).Value = clienterId;
             DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
-        }  
+        }
         /// <summary>
         /// 获取任务支付状态（0：未支付 1：部分支付 2：已支付）
         /// danny-20150519
@@ -2380,7 +2386,7 @@ SELECT CASE SUM(oc.PayStatus)
             }
             return order;
         }
-		/// <summary>
+        /// <summary>
         /// 订单取消返回商家应收和插入商家余额流水
         /// danny-2015051921
         /// </summary>
