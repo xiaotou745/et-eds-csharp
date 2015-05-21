@@ -104,7 +104,9 @@ namespace ETS.Enums
         [DisplayText("无效订单扣款")]
         WuXiaoOrder = 5,
         [DisplayText("提现失败返现")]
-        Return = 6
+        Return = 6,
+        [DisplayText("取消订单扣款")]
+        CancleOrderReturn = 7
     }
 
     /// <summary>
@@ -233,7 +235,7 @@ namespace ETS.Enums
         Recharge = 4,
         [DisplayText("提现失败返现")]
         Return = 5,
-        [DisplayText("取消订单返回配送费")]
+        [DisplayText("取消订单返现")]
         CancelOrderReturn = 6
     }
 

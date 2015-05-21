@@ -1,4 +1,5 @@
 ﻿@using ETS.Util;
+@using NPOI.HSSF.Record.Formula.Functions
 <table border="0" cellspacing="0" cellpadding="0" class="tbstyle" width="900">
     <thead>
         <tr class="tdbg">
@@ -39,10 +40,23 @@
                     {
                         recordTypeDes = "提现失败返现";
                     }
+                    else if (item.RecordType == ETS.Enums.BusinessBalanceRecordRecordType.CancelOrderReturn.GetHashCode())
+                    {
+                        recordTypeDes = "取消订单返现";
+                    }
                     i++;
                     <tr id="@item.Id">
                         <td>@recordTypeDes</td>
-                        <td><a href="javascript:funLookDetail(@item.WithwardId)">@item.RelationNo</a></td>
+                        <td>
+                            @if (item.RecordType == 3 || item.RecordType == 4 || item.RecordType == 5)
+                            {
+                                <a href="javascript:funLookDetail(@item.WithwardId)">@item.RelationNo</a>
+                            }
+                            else
+                            {
+                                <a href="/Order/OrderDetail?OrderNo=@item.RelationNo&OrderId=@item.WithwardId ">@item.RelationNo</a>
+                            }
+                        </td>
                         <td>@item.Amount</td>
                         <td>@item.Balance</td>
                         <td>@(item.Status == ETS.Enums.BusinessBalanceRecordStatus.Success.GetHashCode() ? "交易成功" : "交易中")</td>
