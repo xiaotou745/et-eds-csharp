@@ -76,19 +76,19 @@ namespace SuperManWebApi.Controllers
                 BusinessDM businessDM = _iBusinessProvider.GetDetails(model.BussinessId);
                 if (businessDM.Status == GetBussinessStatus.Audit.GetHashCode())//未审核
                 {
-                    return Ets.Model.Common.ResultModel<BusinessDM>.Conclude(GetBussinessStatus.Audit);
+                    return Ets.Model.Common.ResultModel<BusinessDM>.Conclude(GetBussinessStatus.Audit, businessDM);
                 }
                 if (businessDM.Status == GetBussinessStatus.AuditAddress.GetHashCode())//未审核且未添加地址
                 {
-                    return Ets.Model.Common.ResultModel<BusinessDM>.Conclude(GetBussinessStatus.AuditAddress);
+                    return Ets.Model.Common.ResultModel<BusinessDM>.Conclude(GetBussinessStatus.AuditAddress, businessDM);
                 }
                 if (businessDM.Status == GetBussinessStatus.Auditing.GetHashCode())//审核中
                 {
-                    return Ets.Model.Common.ResultModel<BusinessDM>.Conclude(GetBussinessStatus.Auditing);
+                    return Ets.Model.Common.ResultModel<BusinessDM>.Conclude(GetBussinessStatus.Auditing, businessDM);
                 }
                 if (businessDM.Status == GetBussinessStatus.Refuse.GetHashCode())//被拒决
                 {
-                    return Ets.Model.Common.ResultModel<BusinessDM>.Conclude(GetBussinessStatus.Refuse);
+                    return Ets.Model.Common.ResultModel<BusinessDM>.Conclude(GetBussinessStatus.Refuse, businessDM);
                 }
                 return Ets.Model.Common.ResultModel<BusinessDM>.Conclude(GetBussinessStatus.Success, businessDM);
             }

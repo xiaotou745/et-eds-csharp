@@ -1513,7 +1513,6 @@ where BusinessId=@BusinessId and IsEnable=1";
         /// <returns></returns>
         public BusinessInfo GetDistribSubsidy(int id)
         {          
-
             string querSql = @"
 select  isnull(DistribSubsidy,0) as DistribSubsidy from  Business (nolock) 
 where Id=@Id";
