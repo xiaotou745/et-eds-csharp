@@ -1,4 +1,5 @@
-﻿using Ets.Model.DataModel.Finance;
+﻿using ETS.Enums;
+using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 using ETS.Dao;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using Ets.Dao.Order;
+using Ets.Model.DataModel.Order;
 
 namespace Ets.Dao.Finance
 {
@@ -540,6 +542,7 @@ WHERE bbr.BusinessId=@BusinessId ";
              
             return 0m;
         }
+		
     }
        
 }

@@ -506,19 +506,20 @@ namespace SuperManWebApi.Controllers
         /// <param name="userId"></param>
         /// <param name="OrderId"></param>
         /// <returns></returns>
-        [HttpGet]
+        //[HttpGet]
+        //[HttpGet]
         [ActionStatus(typeof(ETS.Enums.CancelOrderStatus))]
         public Ets.Model.Common.ResultModel<bool> CancelOrder_B(OrderCancelParam orderCancelParam)
         {
-            if (string.IsNullOrWhiteSpace(orderCancelParam.OrderNo))
+            if (orderCancelParam.orderId<=0)
                 return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.OrderEmpty);
             //查询该订单是否存在
-            var selResult = iOrderProvider.GetOrderStatus(orderCancelParam.OrderNo);
+            var selResult = iOrderProvider.GetOrderStatus(orderCancelParam.orderId,orderCancelParam.businessId);
 
             if (selResult == ConstValues.ORDER_NEW)
             {
                 //存在的情况下  取消订单  3
-                int cacelResult = iOrderProvider.UpdateOrderStatus(orderCancelParam.OrderNo, Ets.Model.Common.ConstValues.ORDER_CANCEL, "", null);
+                int cacelResult = iOrderProvider.UpdateOrderStatus(orderCancelParam.orderNo, Ets.Model.Common.ConstValues.ORDER_CANCEL, "", null);
                 if (cacelResult > 0)
                     return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.Success, true);
                 else

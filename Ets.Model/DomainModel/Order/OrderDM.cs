@@ -194,6 +194,11 @@ namespace Ets.Model.DomainModel.Order
         /// 是否有未完成子订单
         /// </summary>
         public bool IsExistsUnFinish{ get; set; }
+
+        /// <summary>
+        /// 订单总金额
+        /// </summary>
+        public decimal? TotalAmount { get; set; }
     }
 
     public class OrderChildInfo
@@ -287,12 +292,15 @@ namespace Ets.Model.DomainModel.Order
         public int GroupID { get; set; }
 
     }
+
     /// <summary>
     /// 取消订单入口参数Model
     /// </summary>
     public class OrderCancelParam
     {
-        public int UserId { get; set; }
-        public string OrderNo { get; set; }
+        public int businessId { get; set; }
+        public int orderId { get; set; }
+        public string orderNo { get; set; }
+        public string version { get; set; }
     }
 }

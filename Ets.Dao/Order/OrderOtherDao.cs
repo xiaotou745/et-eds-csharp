@@ -32,7 +32,7 @@ namespace Ets.Dao.Order
         {
             const string UPDATE_SQL = @"
 update OrderOther 
-set GrabLongitude=@GrabLongitude,GrabLatitude=@GrabLatitude where orderid=(
+set GrabTime=GETDATE(), GrabLongitude=@GrabLongitude,GrabLatitude=@GrabLatitude where orderid=(
 select id from dbo.[order] where OrderNo=@OrderNo
 )";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -62,5 +62,4 @@ select id from dbo.[order] where OrderNo=@OrderNo
             DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
         }
     }
-
 }

@@ -59,7 +59,7 @@ namespace SuperManWebApi.Controllers
                 if (currResModel.Status == PubOrderStatus.VerificationSuccess.GetHashCode())
                 {                    
                     PubOrderStatus cuStatus = iOrderProvider.AddOrder(order);              
-                    if (cuStatus == PubOrderStatus.Success)//当前订单执行失败
+                    if (cuStatus == PubOrderStatus.Success)//当前订单执行成功
                     {
                         BusiOrderResultModel resultModel = new BusiOrderResultModel { userId = model.userId };
                         return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
@@ -161,12 +161,11 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <UpdateBy>hulingbo</UpdateBy>
         /// <UpdateTime>20150511</UpdateTime>
-        /// <param name="model">订单参数实体</param>
+        /// <param name="modelPM">订单参数实体</param>
         /// <returns></returns>        
         [HttpPost]
         public ResultModel<OrderDM> GetDetails(OrderPM modelPM)
         {
-
             #region 验证
             if (string.IsNullOrWhiteSpace(modelPM.Version)) //版本号 
             {
@@ -385,31 +384,31 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [ExecuteTimeLog]
-        public ResultModel<RushOrderResultModel> Receive()
+        public ResultModel<RushOrderResultModel> Receive(OrderReceiveModel model)
         {
-            var userId = ParseHelper.ToInt(HttpContext.Current.Request.Form["userId"], 0);   //骑士ID
-            var orderNo = HttpContext.Current.Request.Form["orderNo"];
-            var bussinessId = ParseHelper.ToInt(HttpContext.Current.Request.Form["bussinessId"], 0);
-            var version = HttpContext.Current.Request.Form["version"];
-            float grabLongitude = 0, grabLatitude = 0;
-            if(!string.IsNullOrEmpty(HttpContext.Current.Request.Form["Longitude"]))
-                grabLongitude =float.Parse( HttpContext.Current.Request.Form["Longitude"]);
-            if (!string.IsNullOrEmpty(HttpContext.Current.Request.Form["Latitude"]))
-                grabLatitude = float.Parse( HttpContext.Current.Request.Form["Latitude"]);
+            //var userId = ParseHelper.ToInt(HttpContext.Current.Request.Form["userId"], 0);   //骑士ID
+            //var orderNo = HttpContext.Current.Request.Form["orderNo"];
+            //var bussinessId = ParseHelper.ToInt(HttpContext.Current.Request.Form["bussinessId"], 0);
+            //var version = HttpContext.Current.Request.Form["version"];
+            //float grabLongitude = 0, grabLatitude = 0;
+            //if(!string.IsNullOrEmpty(HttpContext.Current.Request.Form["Longitude"]))
+            //    grabLongitude =float.Parse( HttpContext.Current.Request.Form["Longitude"]);
+            //if (!string.IsNullOrEmpty(HttpContext.Current.Request.Form["Latitude"]))
+            //    grabLatitude = float.Parse( HttpContext.Current.Request.Form["Latitude"]);
 
-            if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
+            if (model.orderId<=0) //订单号码非空验证
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
-            if (userId <= 0) //用户id验证
+            if (model.userId<= 0) //用户id验证
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
-            if (bussinessId <= 0)
+            if (model.userId <= 0)
             {
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
             }
-            if (string.IsNullOrWhiteSpace(version))
+            if (string.IsNullOrWhiteSpace(model.version))
             {
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.NoVersion);
             }
-            return new ClienterProvider().Receive_C(userId, orderNo, bussinessId,grabLongitude, grabLatitude);
+            return new ClienterProvider().Receive_C(model.userId, model.orderNo, model.bussinessId, model.Longitude, model.Latitude);
         }
 
         /// <summary>
@@ -417,35 +416,32 @@ namespace SuperManWebApi.Controllers
         /// </summary> 
         /// <returns></returns>
         [HttpPost]
-        public ResultModel<FinishOrderResultModel> Complete()
+        public ResultModel<FinishOrderResultModel> Complete(OrderCompleteModel parModel)
         {
-            var userId = ParseHelper.ToInt(HttpContext.Current.Request.Form["userId"], 0);   //骑士ID
-            var orderNo = HttpContext.Current.Request.Form["orderNo"];
-            var pickupCode = HttpContext.Current.Request.Form["pickupCode"];
-            var version = HttpContext.Current.Request.Form["version"];
-            float completeLongitude = 0, completeLatitude = 0;
-            if(!string.IsNullOrEmpty(HttpContext.Current.Request.Form["Longitude"]))
-                completeLongitude = float.Parse(HttpContext.Current.Request.Form["Longitude"]);
-            if (!string.IsNullOrEmpty(HttpContext.Current.Request.Form["Latitude"]))
-                completeLatitude = float.Parse(HttpContext.Current.Request.Form["Latitude"]);
-            if (userId == 0)  //用户id非空验证
+            //var userId = ParseHelper.ToInt(HttpContext.Current.Request.Form["userId"], 0);   //骑士ID
+            //var orderNo = HttpContext.Current.Request.Form["orderNo"];
+            //var pickupCode = HttpContext.Current.Request.Form["pickupCode"];
+            //var version = HttpContext.Current.Request.Form["version"];
+            //float completeLongitude = float.Parse(HttpContext.Current.Request.Form["Longitude"]);
+            //float completeLatitude = float.Parse(HttpContext.Current.Request.Form["Latitude"]);
+            if (parModel.userId == 0)  //用户id非空验证
                 return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.UserIdEmpty);
-            if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
+            if (string.IsNullOrEmpty(parModel.orderNo)) //订单号码非空验证
                 return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderEmpty);
-            if (string.IsNullOrWhiteSpace(version))
+            if (string.IsNullOrWhiteSpace(parModel.version))
             {
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.NoVersion);
             }
-            var myorder = new Ets.Dao.Order.OrderDao().IsOrNotFinish(orderNo);
-            if (myorder)
+            var myorder = new Ets.Dao.Order.OrderDao().IsOrNotFinish(parModel.orderNo);
+            if (!myorder)
             {
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.ExistNotPayChildOrder);
             }
-            string finishResult = iClienterProvider.FinishOrder(userId, orderNo, completeLongitude, completeLatitude, pickupCode);
+            string finishResult = iClienterProvider.FinishOrder(parModel.userId, parModel.orderNo, parModel.Longitude, parModel.Latitude, parModel.pickupCode);
             if (finishResult == "1")  //完成
             {
-                var clienter = iClienterProvider.GetUserInfoByUserId(userId);
-                var model = new FinishOrderResultModel { userId = userId };
+                var clienter = iClienterProvider.GetUserInfoByUserId(parModel.userId);
+                var model = new FinishOrderResultModel { userId = parModel.userId };
                 if (clienter.AccountBalance != null)
                     model.balanceAmount = clienter.AccountBalance.Value;
                 else
@@ -495,40 +491,33 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <UpdateBy>hulingbo</UpdateBy>
         /// <UpdateTime>20150520</UpdateTime>
-        /// <param name="model"></param>
+        /// <param name="modelPM"></param>
         /// <returns></returns>
-        //public ResultModel<string> ConfirmTake(OrderPM modelPM)
-        //{
+        public ResultModel<string> ConfirmTake(OrderPM modelPM)
+        {
 
-        //    #region 验证
-        //    if (string.IsNullOrWhiteSpace(modelPM.Version)) //版本号 
-        //    {
-        //        return ResultModel<string>.Conclude(OrdersStatus.NoVersion);
-        //    }
-        //    if (modelPM.OrderId < 0)//订单Id不合法
-        //    {
-        //        return ResultModel<string>.Conclude(GetOrdersStatus.ErrOderNo);
-        //    }
-        //    if (!iOrderProvider.IsExist(modelPM.OrderId)) //订单不存在
-        //    {
-        //        return ResultModel<string>.Conclude(GetOrdersStatus.FailedGetOrders);
-        //    }
-        //    ClienterDM clienterDM = clienterProvider.GetDetails(model.ClienterId);
+            #region 验证
+            if (string.IsNullOrWhiteSpace(modelPM.Version)) //版本号 
+            {
+                return ResultModel<string>.Conclude(ConfirmTakeStatus.NoVersion);
+            }
+            if (modelPM.OrderId < 0)//订单Id不合法
+            {
+                return ResultModel<string>.Conclude(ConfirmTakeStatus.ErrId);
+            }
+            #endregion
 
-        //    #endregion
-
-        //    try
-        //    {
-        //        iOrderProvider.UpdateTake(modelPM);
-        //        //OrderDM orderDM = iOrderProvider.GetDetails(modelPM);
-        //        return ResultModel<string>.Conclude(GetOrdersStatus.Success, "");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        LogHelper.LogWriter(" ResultModel<OrderDM> GetDetails", new { obj = "时间：" + DateTime.Now.ToString() + ex.Message });
-        //        return ResultModel<string>.Conclude(GetOrdersStatus.Failed);
-        //    }     
-        //}
+            try
+            {
+                iOrderProvider.UpdateTake(modelPM);
+                return ResultModel<string>.Conclude(ConfirmTakeStatus.Success, "");
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(" ResultModel<string> ConfirmTake", new { obj = "时间：" + DateTime.Now.ToString() + ex.Message });
+                return ResultModel<string>.Conclude(ConfirmTakeStatus.Failed);
+            }
+        }
         
     }
 }

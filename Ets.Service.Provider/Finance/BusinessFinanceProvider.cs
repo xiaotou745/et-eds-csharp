@@ -70,6 +70,10 @@ namespace Ets.Service.Provider.Finance
         {
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
+                if (withdrawBpm.WithdrawPrice < 500) //提现金额小于500 加2手续费
+                {
+                    withdrawBpm.WithdrawPrice = withdrawBpm.WithdrawPrice + 2;
+                }
                 Business business = new Business();
                 var businessFinanceAccount = new BusinessFinanceAccount();//商户金融账号信息
                 FinanceWithdrawB checkbool = CheckWithdrawB(withdrawBpm, ref business, ref businessFinanceAccount);
@@ -79,7 +83,11 @@ namespace Ets.Service.Provider.Finance
                 }
                 else
                 {
-                    _businessDao.UpdateForWithdrawC(withdrawBpm); //更新商户表的余额，可提现余额
+                    _businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
+                    {
+                        Id=withdrawBpm.BusinessId,
+                        Money = -withdrawBpm.WithdrawPrice
+                    }); //更新商户表的余额，可提现余额
                     string withwardNo = Helper.generateOrderCode(withdrawBpm.BusinessId);
                     #region 商户提现
                     long withwardId = _businessWithdrawFormDao.Insert(new BusinessWithdrawForm()
@@ -153,6 +161,10 @@ namespace Ets.Service.Provider.Finance
             else if (business.AllowWithdrawPrice < withdrawBpm.WithdrawPrice)//可提现金额小于提现金额，提现失败
             {
                 return FinanceWithdrawB.MoneyError;
+            }
+            else if (business.BalancePrice < business.AllowWithdrawPrice) //账户余额小于 可提现金额，提现失败 账号异常
+            {
+                return FinanceWithdrawB.FinanceAccountError;
             }
             businessFinanceAccount = _businessFinanceAccountDao.GetById(withdrawBpm.FinanceAccountId);//获取商户金融账号信息
             if (businessFinanceAccount == null || businessFinanceAccount.BusinessId != withdrawBpm.BusinessId)

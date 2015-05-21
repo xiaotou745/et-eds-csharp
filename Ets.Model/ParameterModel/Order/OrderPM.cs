@@ -15,6 +15,11 @@ namespace Ets.Model.ParameterModel.Order
         /// 订单ID
         /// </summary>
         public int OrderId { get; set; }
+         
+        /// <summary>
+        ///骑士ID
+        /// </summary>
+        public int ClienterId { get; set; }
         /// <summary>
         /// 版本
         /// </summary>

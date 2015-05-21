@@ -22,14 +22,20 @@ namespace Ets.BandCWithdraw
 
         //使用Common.Logging.dll日志接口实现日志记录        
         private ILog logger = LogManager.GetCurrentClassLogger();
+        private static bool threadSafe = true;//线程安全
         #region IJob 成员
 
         public void Execute(Quartz.IJobExecutionContext context)
         {
+            if (!threadSafe)
+            {
+                return;
+            }
+            threadSafe = false;
             try
             {
                 LogHelper.LogWriter("执行啦:" + DateTime.Now);
-                int hour = ParseHelper.ToInt(Config.ConfigKey("DataTime"), -1);
+                double hour = ParseHelper.ToDouble(Config.ConfigKey("DataTime"), -1);
                 if (hour == -1)
                 {
                     return;
@@ -38,15 +44,15 @@ namespace Ets.BandCWithdraw
                 BusinessDao businessDao = new BusinessDao();
                 OrderDao orderDao = new OrderDao();
                 IList<NonJoinWithdrawModel> list = orderDao.GetNonJoinWithdraw(hour);//获取没给可提现金额加钱的订单
-
                 foreach (var item in list)
                 {
                     using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                     {
                         try
                         {
+                            LogHelper.LogWriter(string.Concat("执行订单ID：", item.id, "，ClienterId：", item.clienterId));
                             clienterDao.UpdateAllowWithdrawPrice(item.clienterPrice, item.clienterId);
-                            businessDao.UpdateAllowWithdrawPrice(item.businessPrice, item.businessId);
+                            //businessDao.UpdateAllowWithdrawPrice(item.businessPrice, item.businessId);
                             orderDao.UpdateJoinWithdraw(item.id);
                             tran.Complete();
                         }
@@ -61,6 +67,10 @@ namespace Ets.BandCWithdraw
             catch (Exception ex)
             {
                 LogHelper.LogWriter(ex);
+            }
+            finally
+            {
+                threadSafe = true;
             }
 
         }
