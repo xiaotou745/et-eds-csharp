@@ -194,19 +194,19 @@
     //    error: function () { }
     //});
     
-    $.ajax({
-        type: 'POST',
-        dataType: 'json',
-        url: '/Order/GetDetails',
-        data: {
-            "OrderId": 142201,
-            "Version": "1.0.1"
-        },
-        success: function (data) {
-            console.log(data);
-        },
-        error: function () { }
-    });
+    //$.ajax({
+    //    type: 'POST',
+    //    dataType: 'json',
+    //    url: '/Order/GetDetails',
+    //    data: {
+    //        "OrderId": 142201,
+    //        "Version": "1.0.1"
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
     //$(function () {
     //    //alert(1);
     //    $.ajax({
@@ -687,23 +687,23 @@
     //});
     
 
-    //$(function() {
-    //    $.ajax({
-    //        type: 'POST',
-    //        dataType: 'json',
-    //        url: '/finance/WithdrawC',
-    //        data: {
-    //            "ClienterId": "114",
-    //                        "WithdrawPrice": "12",
-    //                        "FinanceAccountId": "3",
-    //            "version":"17882"
-    //        },
-    //        success: function (data) {
-    //            console.log(data);
-    //        },
-    //        error: function () { }
-    //    });
-    //});
+    $(function() {
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: '/finance/WithdrawC',
+            data: {
+                "ClienterId": "114",
+                            "WithdrawPrice": "502",
+                            "FinanceAccountId": "3",
+                "version":"17882"
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () { }
+        });
+    });
 
     //$(function () {
     //    $.ajax({
