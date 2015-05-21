@@ -212,11 +212,7 @@ namespace Ets.Model.DataModel.Order
         /// 订单总金额
         /// </summary>
         public decimal? TotalAmount { get; set; }
-
-        /// <summary>
-        /// 餐费结算方式（0：线下结算 1：线上结算）
-        /// </summary>
-        public int MealsSettleMode { get; set; }       
+      
 
     }
 }
