@@ -194,7 +194,9 @@ namespace ETS.Enums
         [DisplayText("取消失败")]
         NotCancelOrder = 205,
         [DisplayText("取消订单失败,订单已被抢或订单不存在")]
-        CancelOrderError = 206
+        CancelOrderError = 206,
+        [DisplayText("版本号不能为空")]
+        VersionError = -3
     }
     /// <summary>
     /// 订单查询类型 1：已完成订单 2：进行中订单（已接单和已取货）

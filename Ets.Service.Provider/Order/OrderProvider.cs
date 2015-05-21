@@ -1353,20 +1353,14 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public ResultModel<bool> CancelOrderB(CancelOrderBPM paramodel)
         {
-            if (paramodel.OrderId <= 0 || string.IsNullOrWhiteSpace(paramodel.OrderNo))
-            {
-                return ResultModel<bool>.Conclude(CancelOrderStatus.OrderEmpty,true);
-            }
-            else if (string.IsNullOrWhiteSpace(paramodel.Version))
-            {
-                return ResultModel<bool>.Conclude(SystemEnum.VersionError,true);
-            }
+           
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                order order = orderDao.GetOrderById(paramodel.OrderId, OrderConst.OrderStatus0);
-                if (order == null)
+                order order = new order();
+                CancelOrderStatus tempresult = CheckCancelOrderB(paramodel, ref order);
+                if (tempresult != CancelOrderStatus.Success)
                 {
-                    return ResultModel<bool>.Conclude(CancelOrderStatus.CancelOrderError, true);
+                    return ResultModel<bool>.Conclude(tempresult, true); 
                 }
                 int result = orderDao.CancelOrderStatus(paramodel.OrderNo, OrderConst.OrderStatus3, "商家取消订单", OrderConst.OrderStatus0);
                 if (result > 0 & AsyncOrderStatus(paramodel.OrderNo))
@@ -1397,6 +1391,30 @@ namespace Ets.Service.Provider.Order
                     return ResultModel<bool>.Conclude(CancelOrderStatus.CancelOrderError, true);
                 }
             }
+        }
+
+        /// <summary>
+        /// 商户端 取消订单数据验证  add by caoehyang  20150521 
+        /// </summary>
+        /// <param name="paramodel">参数</param>
+        /// <param name="order">订单实体 ref</param>
+        /// <returns></returns>
+        private CancelOrderStatus CheckCancelOrderB(CancelOrderBPM paramodel,ref order order)
+        {
+            if (paramodel.OrderId <= 0 || string.IsNullOrWhiteSpace(paramodel.OrderNo))
+            {
+                return CancelOrderStatus.OrderEmpty;
+            }
+            else if (string.IsNullOrWhiteSpace(paramodel.Version))
+            {
+                return CancelOrderStatus.VersionError;
+            }
+            order = orderDao.GetOrderById(paramodel.OrderId,paramodel.BusinessId,OrderConst.OrderStatus0);
+            if (order == null)
+            {
+                return CancelOrderStatus.CancelOrderError;
+            }
+            return CancelOrderStatus.Success;
         }
     }
 }

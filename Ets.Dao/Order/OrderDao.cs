@@ -2336,17 +2336,19 @@ SELECT CASE SUM(oc.PayStatus)
         /// 根据订单号查询订单主表基本信息  add by caoheyang 20150521
         /// </summary>
         /// <param name="orderId">订单id</param>
+        /// <param name="businessId">订单id</param>
         /// <param name="status">订单状态</param>
         /// <returns></returns>
-        public order GetOrderById(int orderId,int? status=null)
+        public order GetOrderById(int orderId, int businessId, int? status = null)
         {
             order order = null;
-            string sql = @" select * from order where Id=@OrderId";
+            string sql = @" select * from [order] where Id=@OrderId and businessId=@BusinessId";
             if (status != null)
             {
                 sql = sql + " and status=" + status;
             }
             IDbParameters parm = DbHelper.CreateDbParameters("OrderId", DbType.Int32, 4, orderId);
+            parm.Add("BusinessId", SqlDbType.Int).Value = businessId;
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
             if (DataTableHelper.CheckDt(dt))
             {
