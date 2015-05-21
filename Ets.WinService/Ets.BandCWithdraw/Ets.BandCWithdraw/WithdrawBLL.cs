@@ -46,7 +46,7 @@ namespace Ets.BandCWithdraw
                         try
                         {
                             clienterDao.UpdateAllowWithdrawPrice(item.clienterPrice, item.clienterId);
-                            businessDao.UpdateAllowWithdrawPrice(item.businessPrice, item.businessId);
+                            //businessDao.UpdateAllowWithdrawPrice(item.businessPrice, item.businessId);
                             orderDao.UpdateJoinWithdraw(item.id);
                             tran.Complete();
                         }
