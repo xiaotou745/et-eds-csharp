@@ -416,32 +416,32 @@ namespace SuperManWebApi.Controllers
         /// </summary> 
         /// <returns></returns>
         [HttpPost]
-        public ResultModel<FinishOrderResultModel> Complete()
+        public ResultModel<FinishOrderResultModel> Complete(OrderCompleteModel parModel)
         {
-            var userId = ParseHelper.ToInt(HttpContext.Current.Request.Form["userId"], 0);   //骑士ID
-            var orderNo = HttpContext.Current.Request.Form["orderNo"];
-            var pickupCode = HttpContext.Current.Request.Form["pickupCode"];
-            var version = HttpContext.Current.Request.Form["version"];
-            float completeLongitude = float.Parse(HttpContext.Current.Request.Form["Longitude"]);
-            float completeLatitude = float.Parse(HttpContext.Current.Request.Form["Latitude"]);
-            if (userId == 0)  //用户id非空验证
+            //var userId = ParseHelper.ToInt(HttpContext.Current.Request.Form["userId"], 0);   //骑士ID
+            //var orderNo = HttpContext.Current.Request.Form["orderNo"];
+            //var pickupCode = HttpContext.Current.Request.Form["pickupCode"];
+            //var version = HttpContext.Current.Request.Form["version"];
+            //float completeLongitude = float.Parse(HttpContext.Current.Request.Form["Longitude"]);
+            //float completeLatitude = float.Parse(HttpContext.Current.Request.Form["Latitude"]);
+            if (parModel.userId == 0)  //用户id非空验证
                 return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.UserIdEmpty);
-            if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
+            if (string.IsNullOrEmpty(parModel.orderNo)) //订单号码非空验证
                 return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderEmpty);
-            if (string.IsNullOrWhiteSpace(version))
+            if (string.IsNullOrWhiteSpace(parModel.version))
             {
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.NoVersion);
             }
-            var myorder = new Ets.Dao.Order.OrderDao().IsOrNotFinish(orderNo);
-            if (myorder)
+            var myorder = new Ets.Dao.Order.OrderDao().IsOrNotFinish(parModel.orderNo);
+            if (!myorder)
             {
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.ExistNotPayChildOrder);
             }
-            string finishResult = iClienterProvider.FinishOrder(userId, orderNo, completeLongitude, completeLatitude, pickupCode);
+            string finishResult = iClienterProvider.FinishOrder(parModel.userId, parModel.orderNo, parModel.Longitude, parModel.Latitude, parModel.pickupCode);
             if (finishResult == "1")  //完成
             {
-                var clienter = iClienterProvider.GetUserInfoByUserId(userId);
-                var model = new FinishOrderResultModel { userId = userId };
+                var clienter = iClienterProvider.GetUserInfoByUserId(parModel.userId);
+                var model = new FinishOrderResultModel { userId = parModel.userId };
                 if (clienter.AccountBalance != null)
                     model.balanceAmount = clienter.AccountBalance.Value;
                 else
@@ -499,44 +499,23 @@ namespace SuperManWebApi.Controllers
             #region 验证
             if (string.IsNullOrWhiteSpace(modelPM.Version)) //版本号 
             {
-                return ResultModel<string>.Conclude(OrdersStatus.NoVersion);
+                return ResultModel<string>.Conclude(ConfirmTakeStatus.NoVersion);
             }
             if (modelPM.OrderId < 0)//订单Id不合法
             {
-                return ResultModel<string>.Conclude(OrdersStatus.ErrId);
-            }
-            //if (!iOrderProvider.IsExist(modelPM.OrderId)) //订单不存在
-            //{
-            //    return ResultModel<string>.Conclude(OrdersStatus.FailedGet);
-            //}            
-            int status = iOrderProvider.GetStatus(modelPM.OrderId);
-            if (status == OrdersStatus.Status0.GetHashCode())//待接单
-            {
-                return Ets.Model.Common.ResultModel<string>.Conclude(OrdersStatus.Status0);
-            }
-            if (status == OrdersStatus.Status1.GetHashCode())//已完成
-            {
-                return Ets.Model.Common.ResultModel<string>.Conclude(OrdersStatus.Status1);
-            }         
-            if (status == OrdersStatus.Status3.GetHashCode())//已取消
-            {
-                return Ets.Model.Common.ResultModel<string>.Conclude(OrdersStatus.Status3);
-            }
-            if (status == OrdersStatus.Status4.GetHashCode())//送货中
-            {
-                return Ets.Model.Common.ResultModel<string>.Conclude(OrdersStatus.Status4);
+                return ResultModel<string>.Conclude(ConfirmTakeStatus.ErrId);
             }
             #endregion
 
             try
             {
                 iOrderProvider.UpdateTake(modelPM);
-                return ResultModel<string>.Conclude(OrdersStatus.Success, "");
+                return ResultModel<string>.Conclude(ConfirmTakeStatus.Success, "");
             }
             catch (Exception ex)
             {
                 LogHelper.LogWriter(" ResultModel<string> ConfirmTake", new { obj = "时间：" + DateTime.Now.ToString() + ex.Message });
-                return ResultModel<string>.Conclude(GetOrdersStatus.Failed);
+                return ResultModel<string>.Conclude(ConfirmTakeStatus.Failed);
             }
         }
         

@@ -1222,7 +1222,7 @@ namespace Ets.Service.Provider.Order
             orderDM.ClienterName = order.ClienterName;
             orderDM.ClienterPhoneNo = order.ClienterPhoneNo;
             orderDM.GrabTime = order.GrabTime;
-            orderDM.businessId = ParseHelper.ToInt(order.businessId,0);
+            orderDM.businessId = ParseHelper.ToInt(order.businessId, 0);
             //if (order.businessId != null) orderDM.businessId = order.businessId.Value;
             if (order.NeedUploadCount >= order.OrderCount && order.Status == OrderStatus.订单完成.GetHashCode())
             {
@@ -1236,8 +1236,17 @@ namespace Ets.Service.Provider.Order
             Ets.Service.Provider.Order.OrderDetailProvider orderDetailPr = new OrderDetailProvider();
             orderDM.listOrderDetail = orderDetailPr.GetByOrderNo(order.OrderNo);
             orderDM.IsModifyTicket = true;
-            orderDM.IsExistsUnFinish = listOrderChildInfo.Exists(t => t.PayStatus == PayStatusEnum.WaitingPay.GetHashCode() || t.PayStatus == PayStatusEnum.WaitPay.GetHashCode());
-
+            bool IsExistsUnFinish = true;//默认是存在有未支付订单
+            if (ParseHelper.ToBool(order.IsPay, false))
+            {
+                IsExistsUnFinish = false;//如果主任务是顾客已支付，就视认为没有未支付的订单
+            }
+            else
+            {
+                IsExistsUnFinish = listOrderChildInfo.Exists(t => t.PayStatus == PayStatusEnum.WaitingPay.GetHashCode() ||
+                         t.PayStatus == PayStatusEnum.WaitPay.GetHashCode());//如果顾客没支付，查询子订单是否有未支付子订单
+            }
+            orderDM.IsExistsUnFinish = IsExistsUnFinish;
 
             return orderDM;
         }
@@ -1296,16 +1305,16 @@ namespace Ets.Service.Provider.Order
         }
 
 
-        public int GetOrderStatus(int orderId,int businessId)
+        public int GetOrderStatus(int orderId, int businessId)
         {
-            return orderDao.GetOrderStatus(orderId,businessId);
+            return orderDao.GetOrderStatus(orderId, businessId);
         }
 
         public void UpdateTake(OrderPM modelPM)
-        {        
-             float takeLongitude =(float) modelPM.longitude;
-             float takeLatitude=(float)modelPM.latitude;
-             orderDao.UpdateTake(modelPM.OrderId.ToString(), takeLongitude, takeLatitude);
+        {
+            float takeLongitude = (float)modelPM.longitude;
+            float takeLatitude = (float)modelPM.latitude;
+            orderDao.UpdateTake(modelPM.OrderId, modelPM.ClienterId, takeLongitude, takeLatitude);
         }
 
         /// <summary>

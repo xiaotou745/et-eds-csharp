@@ -1013,11 +1013,9 @@ where  o.OrderNo = @OrderNo");
  WHERE  OrderNo = @orderNo", SuperPlatform.商家, (int)SuperPlatform.商家);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.Add("@orderNo", SqlDbType.NVarChar);
-            dbParameters.SetValue("@orderNo", orderNo);  //订单号  
-            dbParameters.AddWithValue("@status", orderStatus);
-            dbParameters.Add("@OtherCancelReason", SqlDbType.NVarChar);
-            dbParameters.SetValue("@OtherCancelReason", remark);  //订单号  
+            dbParameters.Add("orderNo", DbType.String, 45).Value = orderNo;
+            dbParameters.Add("status", DbType.Int32, 4).Value = orderStatus;
+            dbParameters.Add("OtherCancelReason", DbType.String, 500).Value = remark;
 
             if (status != null)
             {
@@ -1414,7 +1412,7 @@ where   1 = 1 and o.OrderNo = @OrderNo
         public int GetOrderStatus(int orderId,int businessId)
         {
             string sql = @"
-select top 1 o.[Status]
+select o.[Status]
 from    [order] o with ( nolock ) 
 where   o.Id = @Id and businessId=@businessId
 ";
@@ -2286,20 +2284,21 @@ order by {1}
         /// <summary>
         /// 更新一条记录
         /// </summary>
-        public void UpdateTake(string orderId, float takeLongitude, float takeLatitude)
+        public void UpdateTake(int orderId,int clienterId, float takeLongitude, float takeLatitude)
         {
             const string UPDATE_SQL = @"
 update dbo.[Order] 
     set Status=4
-where id=@orderid and Status=2;
+where id=@orderid and Status=2 and clienterId=@clienterId;
 update OrderOther 
     set TakeTime=GETDATE(),TakeLongitude=@TakeLongitude,TakeLatitude=@TakeLatitude 
 where orderid=@orderid  
 ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@TakeLongitude", takeLongitude);
-            dbParameters.AddWithValue("@TakeLatitude", takeLatitude);
-            dbParameters.AddWithValue("@orderId", orderId);
+            dbParameters.Add("TakeLongitude",DbType.Int64,4).Value= takeLongitude;
+            dbParameters.Add("TakeLatitude", DbType.Int64, 4).Value = takeLatitude;
+            dbParameters.Add("orderId", DbType.Int32, 4).Value = orderId;
+            dbParameters.Add("clienterId", DbType.Int32, 4).Value = clienterId;
             DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
         }  
         /// <summary>
