@@ -691,10 +691,10 @@ values( @OrderId,
                                         ,ISNULL(oo.IsJoinWithdraw,0) IsJoinWithdraw
                                         ,o.BusinessReceivable
                                     FROM [order] o WITH ( NOLOCK )
-                                    LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
-                                    LEFT JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
-                                    LEFT JOIN OrderOther oo WITH (NOLOCK) ON oo.OrderId=o.Id
-                                    LEFT JOIN [group] g WITH ( NOLOCK ) ON g.Id = o.orderfrom
+                                    JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
+                                    left JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
+                                    JOIN OrderOther oo WITH (NOLOCK) ON oo.OrderId=o.Id
+                                    JOIN [group] g WITH ( NOLOCK ) ON g.Id = o.orderfrom
                                     WHERE 1=1 ";
             #endregion
             IDbParameters parm = DbHelper.CreateDbParameters();
@@ -1737,7 +1737,7 @@ where   o.Id = @orderId;
                                     InsertTime,
                                     Platform,
                                     Remark
-                            FROM superman.dbo.OrderSubsidiesLog
+                            FROM OrderSubsidiesLog(nolock)
                             WHERE OrderId=@OrderId
                             ORDER BY Id;";
             IDbParameters parm = DbHelper.CreateDbParameters();
