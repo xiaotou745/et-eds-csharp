@@ -687,6 +687,9 @@ values( @OrderId,
                                         ,oo.ReceiptPic
                                         ,o.OtherCancelReason
                                         ,o.OriginalOrderNo
+                                        ,ISNULL(o.MealsSettleMode,0) MealsSettleMode
+                                        ,ISNULL(oo.IsJoinWithdraw,0) IsJoinWithdraw
+                                        ,o.BusinessReceivable
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     LEFT JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
@@ -2325,6 +2328,100 @@ SELECT CASE SUM(oc.PayStatus)
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OrderId", orderId);
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm));
-        }      
+        }
+        /// <summary>
+        /// 订单取消返回商家应收和插入商家余额流水
+        /// danny-2015051921
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool OrderCancelReturnBusiness(OrderListModel model)
+        {
+            string sql = string.Format(@" 
+update b
+set    b.BalancePrice=ISNULL(b.BalancePrice, 0)+@Amount,
+       b.AllowWithdrawPrice=ISNULL(b.AllowWithdrawPrice,0)+@Amount
+OUTPUT
+  Inserted.Id,
+  @Amount,
+  @Status,
+  Inserted.BalancePrice,
+  @RecordType,
+  @Operator,
+  getdate(),
+  @WithwardId,
+  @RelationNo,
+  @Remark
+INTO BusinessBalanceRecord
+  ( [BusinessId]
+   ,[Amount]
+   ,[Status]
+   ,[Balance]
+   ,[RecordType]
+   ,[Operator]
+   ,[OperateTime]
+   ,[WithwardId]
+   ,[RelationNo]
+   ,[Remark])
+from business b
+where b.Id=@BusinessId;");
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Amount", model.BusinessReceivable);
+            parm.AddWithValue("@Status", BusinessBalanceRecordStatus.Success);
+            parm.AddWithValue("@RecordType", BusinessBalanceRecordRecordType.PostMoney);
+            parm.AddWithValue("@Operator", model.OptUserName);
+            parm.AddWithValue("@WithwardId", model.Id);
+            parm.AddWithValue("@RelationNo", model.OrderNo);
+            parm.AddWithValue("@Remark", model.Remark);
+            parm.AddWithValue("@BusinessId", model.businessId);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
+        /// <summary>
+        /// 订单取消扣除骑士佣金和插入骑士余额流水
+        /// danny-2015051921
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool OrderCancelReturnClienter(OrderListModel model)
+        {
+            string sql = string.Format(@" 
+update c
+set    c.AccountBalance=ISNULL(c.AccountBalance, 0)-@Amount,
+       c.AllowWithdrawPrice	=ISNULL(c.AllowWithdrawPrice,0)-@Amount
+OUTPUT
+  Inserted.Id,
+  -@Amount,
+  @Status,
+  Inserted.AccountBalance,
+  @RecordType,
+  @Operator,
+  getdate(),
+  @WithwardId,
+  @RelationNo,
+  @Remark
+INTO BusinessBalanceRecord
+  (  [ClienterId]
+    ,[Amount]
+    ,[Status]
+    ,[Balance]
+    ,[RecordType]
+    ,[Operator]
+    ,[OperateTime]
+    ,[WithwardId]
+    ,[RelationNo]
+    ,[Remark])
+from clienter c
+where c.Id=@ClienterId;");
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Amount", model.OrderCommission);
+            parm.AddWithValue("@Status", ClienterBalanceRecordStatus.Success);
+            parm.AddWithValue("@RecordType", ClienterBalanceRecordRecordType.Commission);
+            parm.AddWithValue("@Operator", model.OptUserName);
+            parm.AddWithValue("@WithwardId", model.Id);
+            parm.AddWithValue("@RelationNo", model.OrderNo);
+            parm.AddWithValue("@Remark", model.Remark);
+            parm.AddWithValue("@ClienterId", model.clienterId);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
     }
 }
