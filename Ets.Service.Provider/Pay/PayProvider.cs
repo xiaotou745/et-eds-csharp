@@ -71,6 +71,10 @@ namespace Ets.Service.Provider.Pay
         private static void FinishOrderPushMessage(OrderChildFinishModel model)
         {
             OrderListModel orderListModel = new OrderDao().GetOrderById(model.orderId);
+            if (orderListModel == null)
+            {
+                return;
+            }
             int allowFinish = ParseHelper.ToBool(orderListModel.IsPay, false) ? 1 : 0;
             JPushModel jpushModel = new JPushModel()
             {
@@ -251,7 +255,7 @@ namespace Ets.Service.Provider.Pay
                     payBy = notify.buyer_email,
                     payStyle = payStyle,
                     payType = PayTypeEnum.ZhiFuBao.GetHashCode(),
-                    originalOrderNo = notify.trade_no
+                    originalOrderNo = notify.trade_no,
                 };
 
                 if (orderChildDao.FinishPayStatus(model))
