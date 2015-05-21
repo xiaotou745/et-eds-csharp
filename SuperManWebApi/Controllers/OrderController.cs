@@ -300,10 +300,10 @@ namespace SuperManWebApi.Controllers
                 List<string> listReceiptPic = ImageCommon.ReceiptPicConvert(uploadReceiptModel.ReceiptPic);
                 List<OrderChildImg> listOrderChild = new List<OrderChildImg>();
                 listOrderChild.Add(new OrderChildImg() { OrderChildId = orderChildId, TicketUrl = listReceiptPic[0] });
-                if (!string.IsNullOrWhiteSpace(uploadReceiptModel.ReceiptPic))  //当有地址的时候删除
+                if (!string.IsNullOrWhiteSpace(receiptPic))  //当有地址的时候删除
                 {
                     ImageHelper imgHelper = new ImageHelper();
-                    imgHelper.DeleteTicket(uploadReceiptModel.ReceiptPic);
+                    imgHelper.DeleteTicket(receiptPic);
                 }
                 //上传成功后返回图片全路径
                 return ResultModel<UploadReceiptResultModel>.Conclude(UploadIconStatus.Success, new UploadReceiptResultModel() { OrderId = orderId, OrderChildList = listOrderChild, HadUploadCount = orderOther.HadUploadCount, NeedUploadCount = orderOther.NeedUploadCount });

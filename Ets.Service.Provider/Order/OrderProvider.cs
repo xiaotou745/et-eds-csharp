@@ -964,6 +964,8 @@ namespace Ets.Service.Provider.Order
         {
             return orderDao.GetOrderInfoByOrderNo(orderNo);
         }
+
+        #region 旧方法已弃用
         ///// <summary>
         ///// 通过订单号取消订单
         ///// danny-20150414
@@ -1010,6 +1012,8 @@ namespace Ets.Service.Provider.Order
         //    }
         //    return result;
         //}
+        #endregion
+
         /// <summary>
         /// 通过订单号取消订单（新）
         /// danny-20150419
@@ -1047,7 +1051,6 @@ namespace Ets.Service.Provider.Order
                 return dealResultInfo;
             }
             #endregion
-            //如果订单状态是待接单|已接单|已完成+未上传完小票。则直接取消订单
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 if (orderDao.CancelOrder(orderModel, orderOptionModel))
