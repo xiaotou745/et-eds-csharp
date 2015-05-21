@@ -2182,7 +2182,7 @@ where businessId=@businessId and TimeSpan=@TimeSpan ";
         /// 2015年5月15日 16:40:05
         /// </summary>
         /// <param name="hour">多少小时内的数据</param>
-        public IList<NonJoinWithdrawModel> GetNonJoinWithdraw(int hour)
+        public IList<NonJoinWithdrawModel> GetNonJoinWithdraw(double hour)
         {
             string sql = @"
 select 
@@ -2196,7 +2196,7 @@ where   oo.IsJoinWithdraw = 0
         and oo.HadUploadCount = o.OrderCount --订单量=已上传
         and o.Status = 1 --已完成订单
         and datediff(hour, o.ActualDoneDate, getdate()) >= @hour";
-            IDbParameters parm = DbHelper.CreateDbParameters("@hour", DbType.Int32, 4, hour);
+            IDbParameters parm = DbHelper.CreateDbParameters("@hour", DbType.Int64, 4, hour);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             if (!dt.HasData())
             {
