@@ -202,7 +202,12 @@ namespace Ets.Model.DataModel.Order
         /// <summary>
         /// 商户发单纬度
         /// </summary>
-        public double PubLatitude { get; set; }  
+        public double PubLatitude { get; set; }
+
+        /// <summary>
+        /// 订单总金额
+        /// </summary>
+        public decimal? TotalAmount { get; set; }
 
     }
 }

@@ -1223,11 +1223,12 @@ namespace Ets.Service.Provider.Order
             orderDM.ClienterPhoneNo = order.ClienterPhoneNo;
             orderDM.GrabTime = order.GrabTime;
             orderDM.businessId = ParseHelper.ToInt(order.businessId, 0);
-            //if (order.businessId != null) orderDM.businessId = order.businessId.Value;
+            orderDM.TotalAmount = order.TotalAmount;
             if (order.NeedUploadCount >= order.OrderCount && order.Status == OrderStatus.订单完成.GetHashCode())
             {
                 orderDM.IsModifyTicket = false;
-            } CalculationLgAndLa(orderDM, modelPM, order);//计算经纬度
+            } 
+            CalculationLgAndLa(orderDM, modelPM, order);//计算经纬度
 
             Ets.Service.Provider.Order.OrderChildProvider orderChildPr = new OrderChildProvider();
             List<OrderChildInfo> listOrderChildInfo = orderChildPr.GetByOrderId(id);
@@ -1235,6 +1236,8 @@ namespace Ets.Service.Provider.Order
 
             Ets.Service.Provider.Order.OrderDetailProvider orderDetailPr = new OrderDetailProvider();
             orderDM.listOrderDetail = orderDetailPr.GetByOrderNo(order.OrderNo);
+
+
             orderDM.IsModifyTicket = true;
             bool IsExistsUnFinish = true;//默认是存在有未支付订单
             if (ParseHelper.ToBool(order.IsPay, false))
