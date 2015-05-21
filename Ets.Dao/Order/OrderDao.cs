@@ -1008,7 +1008,7 @@ where  o.OrderNo = @OrderNo");
         /// <param name="status">原始订单状态</param>
         ///  <param name="price">涉及金额</param>
         /// <returns></returns>
-        public int CancelOrderStatus(string orderNo, int orderStatus, string remark, int? status, decimal price=0)
+        public int CancelOrderStatus(string orderNo, int orderStatus, string remark, int? status, decimal price = 0)
         {
             StringBuilder upSql = new StringBuilder();
 
@@ -1390,7 +1390,11 @@ select top 1
         o.PickupCode ,
         o.OrderCount,
         c.TrueName ClienterName,
-        ISNULL(oo.HadUploadCount,0) HadUploadCount
+        ISNULL(oo.HadUploadCount,0) HadUploadCount,
+        o.MealsSettleMode,
+        o.BusinessReceivable,
+        o.IsPay,
+        b.Name BusinessName
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
@@ -1416,7 +1420,7 @@ where   1 = 1 and o.OrderNo = @OrderNo
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns></returns>
-        public int GetOrderStatus(int orderId,int businessId)
+        public int GetOrderStatus(int orderId, int businessId)
         {
             string sql = @"
 select o.[Status]
@@ -1484,11 +1488,17 @@ where   1 = 1 and o.Id = @Id
         /// <returns></returns>
         public OrderListModel GetOrderById(int Id)
         {
-            string sql = "SELECT clienterId FROM dbo.[order] o where id = @id";
+            //string sql = "SELECT clienterId FROM dbo.[order] o where id = @id";
+            string sql = @"
+SELECT clienterId,min(PayStatus) as IsPay FROM dbo.[order] o(nolock)
+join dbo.OrderChild oc(nolock) on o.Id= oc.OrderId
+ where o.id=@id group by PayStatus,clienterId
+ ";
             IDbParameters parms = DbHelper.CreateDbParameters("id", DbType.Int32, 4, Id);
             return DbHelper.QueryForObjectDelegate<OrderListModel>(SuperMan_Read, sql, row => new OrderListModel()
             {
-                clienterId = ParseHelper.ToInt(row["clienterId"])
+                clienterId = ParseHelper.ToInt(row["clienterId"]),
+                IsPay = ParseHelper.ToBool(row["IsPay"], false)//是否允许点击完成，1=允许，0=不允许 
             });
         }
 
@@ -1917,7 +1927,8 @@ order by bb.Id desc;";
           SettleMoney ,
           Adjustment ,
           TimeSpan,
-          MealsSettleMode
+          MealsSettleMode,
+          BusinessReceivable
         )
 output  Inserted.Id ,
         getdate() ,
@@ -1962,7 +1973,8 @@ values  ( @OrderNo ,
           @SettleMoney ,
           @Adjustment ,
           @TimeSpan,
-          @MealsSettleMode
+          @MealsSettleMode,
+          @BusinessReceivable
         );select IDENT_CURRENT('order')", SuperPlatform.商家, ConstValues.PublishOrder, (int)SuperPlatform.商家, 0);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -2001,6 +2013,7 @@ values  ( @OrderNo ,
             dbParameters.AddWithValue("@Adjustment", order.Adjustment);
             dbParameters.AddWithValue("@TimeSpan", order.TimeSpan);
             dbParameters.AddWithValue("@MealsSettleMode", order.MealsSettleMode);
+            dbParameters.AddWithValue("@BusinessReceivable", order.BusinessReceivable);
 
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql.ToString(), dbParameters);
             int orderId = ParseHelper.ToInt(result);
@@ -2112,6 +2125,7 @@ select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneN
     o.CommissionFormulaMode,o.Adjustment,o.BusinessCommission,o.SettleMoney,o.DealCount,o.PickupCode,o.OtherCancelReason,o.CommissionType,
     o.CommissionFixValue,o.BusinessGroupId,o.TimeSpan,o.RushOrderLongitude,o.RushOrderLandline,o.FinishOrderLongitude,o.FinishOrderLandline,o.Invoice,
     isnull(o.DistribSubsidy,0)*isnull(o.OrderCount,0) as TotalDistribSubsidy,(o.Amount+isnull(o.DistribSubsidy,0)*isnull(o.OrderCount,0)) as TotalAmount,
+    o.MealsSettleMode,
     b.[City] BusinessCity,b.Name BusinessName,b.PhoneNo BusinessPhoneNo ,b.Address BusinessAddress ,b.GroupId, 
     b.Longitude, b.Latitude,REPLACE(b.City,'市','') AS pickUpCity,
     oo.NeedUploadCount,oo.HadUploadCount,oo.GrabTime,
@@ -2269,7 +2283,7 @@ order by {1}
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Latitude", model.Latitude);
             dbParameters.AddWithValue("Longitude", model.Longitude);
-            dbParameters.AddWithValue("PushRadius", ParseHelper.ToInt(model.PushRadius)*1000);
+            dbParameters.AddWithValue("PushRadius", ParseHelper.ToInt(model.PushRadius) * 1000);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters));
             if (DataTableHelper.CheckDt(dt))
             {
@@ -2285,7 +2299,7 @@ order by {1}
         /// <returns></returns>
         private IList<GetJobCDM> TranslateGetJobC(DataTable dt)
         {
-            IList<GetJobCDM> models = new List<GetJobCDM> ();
+            IList<GetJobCDM> models = new List<GetJobCDM>();
             foreach (DataRow dataRow in dt.Rows)
             {
                 GetJobCDM temp = new GetJobCDM();
@@ -2313,7 +2327,7 @@ order by {1}
         /// <summary>
         /// 更新一条记录
         /// </summary>
-        public void UpdateTake(int orderId,int clienterId, float takeLongitude, float takeLatitude)
+        public void UpdateTake(int orderId, int clienterId, float takeLongitude, float takeLatitude)
         {
             const string UPDATE_SQL = @"
 update dbo.[Order] 
@@ -2324,12 +2338,12 @@ update OrderOther
 where orderid=@orderid  
 ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.Add("TakeLongitude",DbType.Int64,4).Value= takeLongitude;
+            dbParameters.Add("TakeLongitude", DbType.Int64, 4).Value = takeLongitude;
             dbParameters.Add("TakeLatitude", DbType.Int64, 4).Value = takeLatitude;
             dbParameters.Add("orderId", DbType.Int32, 4).Value = orderId;
             dbParameters.Add("clienterId", DbType.Int32, 4).Value = clienterId;
             DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
-        }  
+        }
         /// <summary>
         /// 获取任务支付状态（0：未支付 1：部分支付 2：已支付）
         /// danny-20150519
@@ -2380,7 +2394,7 @@ SELECT CASE SUM(oc.PayStatus)
             }
             return order;
         }
-		/// <summary>
+        /// <summary>
         /// 订单取消返回商家应收和插入商家余额流水
         /// danny-2015051921
         /// </summary>

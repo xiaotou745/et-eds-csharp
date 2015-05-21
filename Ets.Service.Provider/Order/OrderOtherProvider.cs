@@ -69,6 +69,13 @@ namespace Ets.Service.Provider.Order
         {
             orderOtherDao.UpdateComplete(orderNo, completeLongitude, completeLatitude);
         }
-    
+
+        /// <summary>
+        /// 更新已提现
+        /// </summary>
+        public void UpdateIsJoinWithdraw(int orderId)
+        {
+             orderOtherDao.UpdateIsJoinWithdraw(orderId);
+        }
     }
 }

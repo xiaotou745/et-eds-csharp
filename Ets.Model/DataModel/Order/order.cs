@@ -212,7 +212,12 @@ namespace Ets.Model.DataModel.Order
         /// 订单总金额
         /// </summary>
         public decimal? TotalAmount { get; set; }
-      
+
+
+         /// <summary>
+        /// 应退商家金额
+        /// </summary>
+        public decimal BusinessReceivable { get; set; }       
 
     }
 }
