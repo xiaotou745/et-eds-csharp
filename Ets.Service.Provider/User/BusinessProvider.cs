@@ -776,7 +776,7 @@ namespace Ets.Service.Provider.User
             oom.OptUserName = "第三方";
             oom.OrderNo = myOrder.OrderNo;
             oom.OptLog = string.Format("第三方调用取消订单,订单来源{0}", model.OrderFrom);
-            bool reg = new OrderProvider().CancelOrderByOrderNo(oom);
+            var reg = new OrderProvider().CancelOrderByOrderNo(oom);
             if (b)
             {
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.Success);

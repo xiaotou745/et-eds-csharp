@@ -234,8 +234,8 @@ namespace SuperMan.Controllers
                 OptLog=OrderOptionLog,
                 OrderNo = OrderNo
             };
-            bool reg = iOrderProvider.CancelOrderByOrderNo(orderOptionModel);
-            return Json(new ResultModel(reg, string.Empty), JsonRequestBehavior.AllowGet);
+            var reg = iOrderProvider.CancelOrderByOrderNo(orderOptionModel);
+            return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.AllowGet);
         }
     }
 }
