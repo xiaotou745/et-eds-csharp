@@ -158,6 +158,10 @@ namespace Ets.Service.Provider.Finance
             {
                 return FinanceWithdrawB.MoneyError;
             }
+            else if (business.BalancePrice < business.AllowWithdrawPrice) //账户余额小于 可提现金额，提现失败 账号异常
+            {
+                return FinanceWithdrawB.FinanceAccountError;
+            }
             businessFinanceAccount = _businessFinanceAccountDao.GetById(withdrawBpm.FinanceAccountId);//获取商户金融账号信息
             if (businessFinanceAccount == null || businessFinanceAccount.BusinessId != withdrawBpm.BusinessId)
             {

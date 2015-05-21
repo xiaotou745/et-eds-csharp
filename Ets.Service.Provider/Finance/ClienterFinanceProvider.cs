@@ -141,6 +141,10 @@ namespace Ets.Service.Provider.Finance
             {
                 return  FinanceWithdrawC.MoneyError;
             }
+            else if (clienter.AccountBalance < clienter.AllowWithdrawPrice) //账户余额小于 可提现金额，提现失败 账号异常
+            {
+                return FinanceWithdrawC.FinanceAccountError;
+            }
             clienterFinanceAccount = _clienterFinanceAccountDao.GetById(withdrawCpm.FinanceAccountId);//获取超人金融账号信息
             if (clienterFinanceAccount == null || clienterFinanceAccount.ClienterId != withdrawCpm.ClienterId)
             {
