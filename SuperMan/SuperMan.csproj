@@ -567,6 +567,8 @@
     <Content Include="Views\CommissionSubsidyStrategy\CommissionSubsidyStrategy.cshtml" />
     <Content Include="Views\Statistical\OrderCompleteTimeSpan.cshtml" />
     <Content Include="Views\Statistical\Active.cshtml" />
+    <Content Include="Views\Statistical\TaskCountPerHour.cshtml" />
+    <Content Include="Views\Statistical\JieDanTime.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
