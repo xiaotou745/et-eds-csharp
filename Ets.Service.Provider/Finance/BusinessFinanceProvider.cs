@@ -79,6 +79,10 @@ namespace Ets.Service.Provider.Finance
                 }
                 else
                 {
+                    if (withdrawBpm.WithdrawPrice < 500) //提现金额小于500 加2手续费
+                    {
+                        withdrawBpm.WithdrawPrice = withdrawBpm.WithdrawPrice + 2;
+                    }
                     _businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
                     {
                         Id=withdrawBpm.BusinessId,
