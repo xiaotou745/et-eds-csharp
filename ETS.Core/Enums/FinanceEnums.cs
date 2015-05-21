@@ -226,7 +226,11 @@ namespace ETS.Enums
         [DisplayText("提现失败返现")]
         Return = 5,
         [DisplayText("取消订单返回配送费")]
-        CancelOrderReturn = 6
+        CancelOrderReturn = 6,
+        [DisplayText("扣商家结算费")]
+        SettleMoney = 6,
+        [DisplayText("返还商家结算费")]
+        ReturnBusinessReceivable = 7
     }
 
     /// <summary>

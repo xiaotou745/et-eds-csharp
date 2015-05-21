@@ -44,6 +44,7 @@ using Ets.Model.DataModel.Strategy;
 using Ets.Service.Provider.Order;
 using Ets.Dao.Finance;
 using Ets.Model.DataModel.Finance;
+using Ets.Model.ParameterModel.Finance;
 #endregion
 namespace Ets.Service.Provider.Order
 {
@@ -312,12 +313,19 @@ namespace Ets.Service.Provider.Order
             to.CommissionRate = commProvider.GetCommissionRate(orderComm); //佣金比例 
             to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
             to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
-            to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
+            to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额            
             to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(business.BusinessGroupId).CommissionFormulaMode);
             to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额           
             to.Status = Convert.ToByte(OrderStatus.订单待抢单.GetHashCode());
             to.TimeSpan = busiOrderInfoModel.TimeSpan;
             to.listOrderChild = busiOrderInfoModel.listOrderChlid;
+
+            if (!(bool)to.IsPay && to.MealsSettleMode == MealsSettleMode.Status1.GetHashCode())//未付款且线上支付
+            {                      
+                    to.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(to.Amount) +
+                                   ParseHelper.ToDecimal(to.DistribSubsidy) * ParseHelper.ToInt(to.OrderCount), 2);
+            }
+           
             return to;
         }
 
@@ -345,22 +353,24 @@ namespace Ets.Service.Provider.Order
                     return PubOrderStatus.InvalidPubOrder;
                 }
 
-                //写金额流水
-                //_businessDao.UpdateForWithdrawC(withdrawBpm); //更新商户表的余额，可提现余额
+                //扣商户金额
+                _businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
+                {
+                    Id =Convert.ToInt32(order.businessId),
+                    Money = -order.SettleMoney
+                });
 
-                //#region 商户余额流水操作 更新骑士表的余额，可提现余额
-                //_businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
-                //{
-                //    BusinessId = withdrawBpm.BusinessId,//商户Id
-                //    Amount = -withdrawBpm.WithdrawPrice,//流水金额
-                //    Status = (int)BusinessBalanceRecordStatus.Tradeing, //流水状态(1、交易成功 2、交易中）
-                //    RecordType = (int)BusinessBalanceRecordRecordType.Withdraw,
-                //    Operator = business.Name,
-                //    WithwardId = withwardId,
-                //    RelationNo = withwardNo,
-                //    Remark = "商户提现"
-                //});
-                //#endregion
+                #region 商户余额流水操作 
+                _businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
+                {
+                    BusinessId = Convert.ToInt32(order.businessId),
+                    Amount = -order.SettleMoney,
+                    Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
+                    RecordType = (int)BusinessBalanceRecordRecordType.SettleMoney,
+                    Operator = order.BusinessName,              
+                    Remark = "扣商家结算费"
+                });
+                #endregion
 
                 if (order.Adjustment > 0)
                 {
@@ -1236,6 +1246,7 @@ namespace Ets.Service.Provider.Order
             orderDM.GrabTime = order.GrabTime;
             orderDM.businessId = ParseHelper.ToInt(order.businessId, 0);
             orderDM.TotalAmount = order.TotalAmount;
+            orderDM.MealsSettleMode = order.MealsSettleMode;
             if (order.NeedUploadCount >= order.OrderCount && order.Status == OrderStatus.订单完成.GetHashCode())
             {
                 orderDM.IsModifyTicket = false;

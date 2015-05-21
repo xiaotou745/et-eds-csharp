@@ -32,5 +32,7 @@ namespace Ets.Model.DomainModel.Bussiness
         public int OrderFrom { get; set; }
         public string OriginalOrderNo { get; set; }
         public int OrderId { get; set; }
+        public int MealsSettleMode { get; set; }
+        
     }
 }

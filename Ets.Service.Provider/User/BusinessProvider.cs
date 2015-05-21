@@ -69,6 +69,7 @@ namespace Ets.Service.Provider.User
                 model.superManPhone = from.SuperManPhone;
                 model.OrderFrom = from.OrderFrom.ToString();
                 model.OrderId = from.OrderId;
+                model.MealsSettleMode = from.MealsSettleMode;
                 if (from.OrderFrom == 0)
                 {
                     model.OrderFromName = "B端";

@@ -252,5 +252,16 @@ namespace Ets.Model.DataModel.Order
         /// 应付商户金额
         /// </summary>
         public decimal ShouldPayBusiMoney { get; set; }
+
+         /// <summary>
+        /// 餐费结算方式（0：线下结算 1：线上结算）
+        /// </summary>
+        public int MealsSettleMode { get; set; }
+        
+       /// <summary>
+        /// 应付商户金额
+        /// </summary>
+        public decimal BusinessReceivable { get; set; }
+        
     }
 }
