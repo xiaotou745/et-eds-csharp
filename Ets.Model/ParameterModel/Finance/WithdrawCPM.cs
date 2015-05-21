@@ -20,7 +20,7 @@ namespace Ets.Model.ParameterModel.Finance
         /// <summary>
         /// 提现金额
         /// </summary>
-        [Range(0.01, int.MaxValue, ErrorMessage = "提现金额不能为小于0")]
+        [Range(0.01, int.MaxValue, ErrorMessage = "提现金额不能小于0.01元")]
         public decimal WithdrawPrice { get; set; }
     }
 }
