@@ -369,7 +369,9 @@ namespace Ets.Service.Provider.Order
                     Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
                     RecordType = (int)BusinessBalanceRecordRecordType.SettleMoney,
                     Operator = order.BusinessName,              
-                    Remark = "扣商家结算费"
+                    Remark = "扣商家结算费",
+                    WithwardId = result,
+                    RelationNo=order.OrderNo
                 });
                 #endregion
 
@@ -1230,10 +1232,14 @@ namespace Ets.Service.Provider.Order
             orderDM.businessId = ParseHelper.ToInt(order.businessId, 0);
             orderDM.TotalAmount = order.TotalAmount;
             orderDM.MealsSettleMode = order.MealsSettleMode;
+            #region 是否允许修改小票
+            orderDM.IsModifyTicket = true;
             if (order.NeedUploadCount >= order.OrderCount && order.Status == OrderStatus.订单完成.GetHashCode())
             {
                 orderDM.IsModifyTicket = false;
-            } 
+            }
+            #endregion
+
             CalculationLgAndLa(orderDM, modelPM, order);//计算经纬度
 
             Ets.Service.Provider.Order.OrderChildProvider orderChildPr = new OrderChildProvider();
@@ -1244,7 +1250,7 @@ namespace Ets.Service.Provider.Order
             orderDM.listOrderDetail = orderDetailPr.GetByOrderNo(order.OrderNo);
 
 
-            orderDM.IsModifyTicket = true;
+            
             bool IsExistsUnFinish = true;//默认是存在有未支付订单
             if (ParseHelper.ToBool(order.IsPay, false))
             {

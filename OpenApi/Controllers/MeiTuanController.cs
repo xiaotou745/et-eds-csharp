@@ -67,7 +67,7 @@ namespace OpenApi.Controllers
         }
 
         /// <summary>
-        /// 美团更新E代送订单状态   add by caoheyang 20150421  目前美团专用  
+        /// 美团取消订单回调E代送接口  add by caoheyang 20150421    
         /// </summary>
         /// <returns></returns>
         [HttpGet]

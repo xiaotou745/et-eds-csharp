@@ -77,7 +77,7 @@ namespace Ets.Service.Provider.Pay
             }
             JPushModel jpushModel = new JPushModel()
             {
-                Alert = "有订单完成了！",
+                Alert = "订单支付完成！",
                 City = string.Empty,
                 Content = string.Concat(model.orderId, "_", model.orderChildId, "_", orderChildPayModel.PayStatus),
                 RegistrationId = orderChildPayModel.clienterId.ToString(),//通过订单ID获取要发送的骑士ID

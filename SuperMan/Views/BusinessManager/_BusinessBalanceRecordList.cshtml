@@ -20,30 +20,7 @@
                 var recordTypeDes = "";
                 foreach (var item in businessBalanceRecordList)
                 {
-                    if (item.RecordType == ETS.Enums.BusinessBalanceRecordRecordType.OrderMeals.GetHashCode())
-                    {
-                        recordTypeDes = "订单餐费";
-                    }
-                    else if (item.RecordType == ETS.Enums.BusinessBalanceRecordRecordType.PostMoney.GetHashCode())
-                    {
-                        recordTypeDes = "配送费";
-                    }
-                    else if (item.RecordType == ETS.Enums.BusinessBalanceRecordRecordType.Withdraw.GetHashCode())
-                    {
-                        recordTypeDes = "提现";
-                    }
-                    else if (item.RecordType == ETS.Enums.BusinessBalanceRecordRecordType.Recharge.GetHashCode())
-                    {
-                        recordTypeDes = "充值";
-                    }
-                    else if (item.RecordType == ETS.Enums.BusinessBalanceRecordRecordType.Return.GetHashCode())
-                    {
-                        recordTypeDes = "提现失败返现";
-                    }
-                    else if (item.RecordType == ETS.Enums.BusinessBalanceRecordRecordType.CancelOrderReturn.GetHashCode())
-                    {
-                        recordTypeDes = "取消订单返现";
-                    }
+                    recordTypeDes = ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.BusinessBalanceRecordRecordType) item.RecordType).GetType(), (ETS.Enums.BusinessBalanceRecordRecordType) item.RecordType).Text;
                     i++;
                     <tr id="@item.Id">
                         <td>@recordTypeDes</td>

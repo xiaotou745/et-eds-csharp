@@ -238,9 +238,9 @@ namespace ETS.Enums
         [DisplayText("取消订单返现")]
         CancelOrderReturn = 6,
         [DisplayText("扣商家结算费")]
-        SettleMoney = 6,
+        SettleMoney = 7,
         [DisplayText("返还商家结算费")]
-        ReturnBusinessReceivable = 7
+        ReturnBusinessReceivable = 8
     }
 
     /// <summary>

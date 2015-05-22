@@ -19,34 +19,7 @@
                 var recordTypeDes = "";
                 foreach (var item in clienterBalanceRecordList)
                 {
-                    if (item.RecordType == ETS.Enums.ClienterBalanceRecordRecordType.Commission.GetHashCode())
-                    {
-                        recordTypeDes = "佣金";
-                    }
-                    else if (item.RecordType == ETS.Enums.ClienterBalanceRecordRecordType.Award.GetHashCode())
-                    {
-                        recordTypeDes = "奖励";
-                    }
-                    else if (item.RecordType == ETS.Enums.ClienterBalanceRecordRecordType.Withdraw.GetHashCode())
-                    {
-                        recordTypeDes = "提现";
-                    }
-                    else if (item.RecordType == ETS.Enums.ClienterBalanceRecordRecordType.QuXiaoOrder.GetHashCode())
-                    {
-                        recordTypeDes = "取消订单赔偿";
-                    }
-                    else if (item.RecordType == ETS.Enums.ClienterBalanceRecordRecordType.WuXiaoOrder.GetHashCode())
-                    {
-                        recordTypeDes = "无效订单扣款";
-                    }
-                    else if (item.RecordType == ETS.Enums.ClienterBalanceRecordRecordType.Return.GetHashCode())
-                    {
-                        recordTypeDes = "提现失败返现";
-                    }
-                    else if (item.RecordType == ETS.Enums.ClienterBalanceRecordRecordType.CancleOrderReturn.GetHashCode())
-                    {
-                        recordTypeDes = "取消订单扣款";
-                    }
+                    recordTypeDes = ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.ClienterBalanceRecordRecordType)item.RecordType).GetType(), (ETS.Enums.ClienterBalanceRecordRecordType)item.RecordType).Text;
                     i++;
                     <tr id="@item.Id">
                         <td>@recordTypeDes</td>
