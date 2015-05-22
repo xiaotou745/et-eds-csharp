@@ -41,6 +41,9 @@ namespace Ets.Dao.User
             string whereStr = "1=1 ";  //where查询条件实体类
             if (paraModel.userId != null)  //订单商户id
                 whereStr += " and o.businessId=" + paraModel.userId.ToString();
+
+            string orderByColumn = " PubDate desc ";//排序
+
             //订单状态
             if (paraModel.Status != null)
             {
@@ -52,6 +55,12 @@ namespace Ets.Dao.User
                 {
                     whereStr += " and o.Status=" + paraModel.Status.ToString();
                 }
+
+                if (paraModel.Status == OrderConst.ORDER_FINISH)
+                {
+                    //如果是订单已完成就用完成时间倒序
+                    orderByColumn = " o.ActualDoneDate DESC ";  //排序条件
+                }
             }
             if (paraModel.OrderFrom > 0)
             {
@@ -60,7 +69,6 @@ namespace Ets.Dao.User
 
             #endregion
 
-            string orderByColumn = " o.ActualDoneDate DESC ";  //排序条件
             string columnList = @"
                                     CONVERT(VARCHAR(5),o.ActualDoneDate,108) AS ActualDoneDate,
                                     o.Amount,
@@ -88,8 +96,8 @@ namespace Ets.Dao.User
                                     (o.Amount+isnull(o.DistribSubsidy,0)*isnull(o.OrderCount,0)) as TotalAmount,
                                     isnull(o.OriginalOrderNo,'') as OriginalOrderNo";
             string tableList = @" [order](nolock) as o 
-                                   LEFT join business(nolock) as b on o.businessId=b.Id
-                                   LEFT join clienter(nolock) as c on o.clienterId=c.Id ";  //表名
+                                   join business(nolock) as b on o.businessId=b.Id
+                                   join clienter(nolock) as c on o.clienterId=c.Id ";  //表名
 
             return new PageHelper().GetPages<T>(SuperMan_Read, paraModel.PagingResult.PageIndex, whereStr, orderByColumn, columnList, tableList, paraModel.PagingResult.PageSize, true);
         }
@@ -1401,7 +1409,7 @@ namespace Ets.Dao.User
             parm.AddWithValue("@Platform", 3);
             parm.AddWithValue("@Remark", remark);
             parm.AddWithValue("@MealsSettleMode", model.MealsSettleMode);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
 
 
@@ -1514,19 +1522,19 @@ where BusinessId=@BusinessId and IsEnable=1";
         /// <param name="id">商家Id</param>
         /// <returns></returns>
         public BusinessInfo GetDistribSubsidy(int id)
-        {          
+        {
             string querSql = @"
 select  isnull(DistribSubsidy,0) as DistribSubsidy from  Business (nolock) 
 where Id=@Id";
 
-            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);            
+            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);
 
             return DbHelper.QueryForObjectDelegate<BusinessInfo>(SuperMan_Read, querSql, dbParameters,
              dataRow => new BusinessInfo
              {
-                 DistribSubsidy = ParseHelper.ToDecimal(dataRow["DistribSubsidy"], 0)              
-                 
-             });            
+                 DistribSubsidy = ParseHelper.ToDecimal(dataRow["DistribSubsidy"], 0)
+
+             });
         }
 
 

@@ -75,19 +75,19 @@ namespace Ets.Service.Provider.User
                 {
                     model.OrderFromName = "B端";
                 }
-                if (from.OrderFrom == 1)
+                else if (from.OrderFrom == 1)
                 {
                     model.OrderFromName = "易淘食";
                 }
-                if (from.OrderFrom == 2)
+                else if (from.OrderFrom == 2)
                 {
                     model.OrderFromName = "万达";
                 }
-                if (from.OrderFrom == 3)
+                else if (from.OrderFrom == 3)
                 {
                     model.OrderFromName = "全时";
                 }
-                if (from.OrderFrom == 4)
+                else if (from.OrderFrom == 4)
                 {
                     model.OrderFromName = "美团";
                 }
