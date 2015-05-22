@@ -486,7 +486,7 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <param name="paramodel">参数实体</param>
         /// <returns>订单号码</returns>
-        public ResultModel<object> Create(Ets.Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
+        public ResultModel<object> Create(CreatePM_OpenApi paramodel)
         {
             //查询缓存，看看当前店铺是否存在,缓存存储E代送的商户id
             var redis = new ETS.NoSql.RedisCache.RedisCache();
@@ -526,7 +526,7 @@ namespace Ets.Service.Provider.Order
               paramodel.store_info.store_id.ToString()));
             if (bussinessIdstr == null || ParseHelper.ToInt(bussinessIdstr) == 0) //缓存中无店铺id 
             {
-                ///当第三方未传递经纬的情况下，根据地址调用百度接口获取经纬度信息  add by caoheyang 20150416
+                //当第三方未传递经纬的情况下，根据地址调用百度接口获取经纬度信息  add by caoheyang 20150416
                 if (paramodel.store_info.longitude == 0 || paramodel.store_info.latitude == 0)  //店铺经纬度
                 {
                     Tuple<decimal, decimal> localtion = BaiDuHelper.GeoCoder(paramodel.store_info.province
@@ -603,12 +603,18 @@ namespace Ets.Service.Provider.Order
             {
                 using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                 {
+                    if (bussinessIdstr == null)
+                    {
+                        paramodel.businessId = orderDao.CreateToSqlAddBusiness(paramodel);  //商户id
+                    }
+                    orderNo = Helper.generateOrderCode(paramodel.businessId);
+                    paramodel.OrderNo = orderNo;  
                     //将当前订单插入到缓存中，设置过期时间30天
                     redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
-                        paramodel.order_id.ToString()), "True", DateTime.Now.AddDays(30));  //先加入缓存，相当于加锁
-                    orderNo = orderDao.CreateToSql(paramodel);
-                    redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
-                      paramodel.order_id.ToString()), orderNo, DateTime.Now.AddDays(30));  //更新缓存
+                        paramodel.order_id.ToString()), orderNo, DateTime.Now.AddDays(30));  //先加入缓存，相当于加锁
+                    int orderId = orderDao.CreateToSql(paramodel);  //插入订单返回订单id
+                    orderDao.AddOrderDetail(paramodel, orderNo); //操作插入OrderDetail表
+                    orderDao.AddOrderChild(paramodel, orderId); //插入订单子表
                     tran.Complete();
                 }
             }
@@ -623,6 +629,38 @@ namespace Ets.Service.Provider.Order
 
             return string.IsNullOrWhiteSpace(orderNo) ? ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :
              ResultModel<object>.Conclude(OrderApiStatusType.Success, new { order_no = orderNo });
+        }
+
+        /// <summary>
+        /// 插入订单时，操作商户商户金额相关操作 
+        /// </summary>
+        /// <AddBy>caoheyang 20150522</AddBy>
+        /// <param name="order"></param>
+        private void InsertOrderOptRecord(order order)
+        {
+            //扣商户金额
+            _businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
+            {
+                Id = Convert.ToInt32(order.businessId),
+                Money = -order.SettleMoney
+            });
+            #region 商户余额流水操作
+            _businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
+            {
+                BusinessId = Convert.ToInt32(order.businessId),
+                Amount = -order.SettleMoney,
+                Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
+                RecordType = (int)BusinessBalanceRecordRecordType.SettleMoney,
+                Operator = "系统",
+                Remark = "商户发单，系统自动扣商家结算费"
+            });
+            #endregion
+
+            //if (order.Adjustment > 0)
+            //{
+            //    bool b = orderDao.addOrderSubsidiesLog(order.Adjustment, result, "补贴加钱,订单金额:" + order.Amount + "-佣金补贴策略id:" + order.CommissionFormulaMode);
+              
+            //}
         }
 
         /// <summary>

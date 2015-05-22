@@ -476,24 +476,23 @@ namespace Ets.Service.Provider.Clienter
         /// 获取用户状态
         /// </summary>
         /// <param name="UserId"></param>
-        /// <param name="version"></param>
         /// <returns></returns>
-        public ClienterStatusModel GetUserStatus(int UserId, double version)
+        public ClienterStatusModel GetUserStatus(int UserId)
         {
             try
             {
-                ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
-                string cacheKey = string.Format(RedissCacheKey.ClienterProvider_GetUserStatus, UserId);
-                var cacheValue = redis.Get<string>(cacheKey);
-                if (!string.IsNullOrEmpty(cacheValue))
-                {
-                    return Letao.Util.JsonHelper.ToObject<ClienterStatusModel>(cacheValue);
-                }
+                //ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
+                //string cacheKey = string.Format(RedissCacheKey.ClienterProvider_GetUserStatus, UserId);
+                //var cacheValue = redis.Get<string>(cacheKey);
+                //if (!string.IsNullOrEmpty(cacheValue))
+                //{
+                //    return Letao.Util.JsonHelper.ToObject<ClienterStatusModel>(cacheValue);
+                //}
                 var UserInfo = clienterDao.GetUserStatus(UserId);
-                if (UserInfo != null)
-                {
-                    redis.Add(cacheKey, Letao.Util.JsonHelper.ToJson(UserInfo));
-                }
+                //if (UserInfo != null)
+                //{
+                //    redis.Add(cacheKey, Letao.Util.JsonHelper.ToJson(UserInfo));
+                //}
                 return UserInfo;
             }
             catch (Exception ex)

@@ -216,12 +216,9 @@ namespace Ets.Dao.Order
         /// </summary>
         /// <param name="paramodel">订单号码</param>
         /// <returns>订单号</returns>
-        public string CreateToSql(CreatePM_OpenApi paramodel)
+        public int CreateToSql(CreatePM_OpenApi paramodel)
         {
             var redis = new RedisCache();
-            int bussinessId = CreateToSqlAddBusiness(paramodel); ;//商户id
-
-            #region 操作插入order表
             //订单插入sql 订单不存在时
             const string insertOrdersql = @" 
                 INSERT INTO dbo.[order](OrderNo,
@@ -244,9 +241,7 @@ namespace Ets.Dao.Order
             //基本参数信息
 
             dbParameters.Add("@OrderNo", SqlDbType.NVarChar);
-            string orderNo = Helper.generateOrderCode(bussinessId);
-            dbParameters.SetValue("@OrderNo", orderNo); //根据商户id生成订单号(15位));
-
+            dbParameters.SetValue("@OrderNo", paramodel.OrderNo); //订单号
             dbParameters.AddWithValue("@OriginalOrderNo", paramodel.order_id);    //其它平台的来源订单号
             dbParameters.AddWithValue("@PubDate", paramodel.create_time);    //订单下单时间
             dbParameters.AddWithValue("@SongCanDate", paramodel.receive_time);  //要求送餐时间
@@ -266,7 +261,7 @@ namespace Ets.Dao.Order
             dbParameters.AddWithValue("@ReceviceAddress", paramodel.address.address);    //用户收货地址
             dbParameters.AddWithValue("@ReceviceLongitude", paramodel.address.longitude);    //用户收货地址所在区域经度
             dbParameters.AddWithValue("@ReceviceLatitude", paramodel.address.latitude);    //用户收货地址所在区域纬度
-            dbParameters.AddWithValue("@BusinessId", bussinessId);    //商户id
+            dbParameters.AddWithValue("@BusinessId", paramodel.businessId);    //商户id
             dbParameters.AddWithValue("@PickUpAddress", paramodel.store_info.address);    //取货地址即商户地址
             dbParameters.AddWithValue("@Payment", paramodel.payment);    //取货地址即商户地址
             dbParameters.AddWithValue("@OrderCommission", paramodel.ordercommission);    //订单骑士佣金
@@ -291,19 +286,8 @@ namespace Ets.Dao.Order
             dbParameters.AddWithValue("@Invoice", paramodel.invoice_title);//发票标题
 
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertOrdersql, dbParameters);
-            #endregion
+            return ParseHelper.ToInt(result);
 
-            AddOrderDetail(paramodel, orderNo); //操作插入OrderDetail表
-
-            #region 插入订单子表
-            int orderId = ParseHelper.ToInt(result);
-            if (orderId > 0)
-            {
-                AddOrderChild(paramodel, orderId);
-            }
-            #endregion
-
-            return orderNo;
         }
 
         /// <summary>
@@ -311,15 +295,9 @@ namespace Ets.Dao.Order
         /// </summary>
         /// <param name="paramodel"></param>
         /// <returns></returns>
-        private int CreateToSqlAddBusiness(CreatePM_OpenApi paramodel)
+        public int CreateToSqlAddBusiness(CreatePM_OpenApi paramodel)
         {
             var redis = new RedisCache();
-            string bussinessIdstr = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(),
-               paramodel.store_info.store_id.ToString()));  //查询缓存，看看当前店铺是否存在,缓存存储E代送的商户id
-            if (bussinessIdstr != null)
-            {
-                return ParseHelper.ToInt(bussinessIdstr);
-            }
             int bussinessId = 0;
             //商户插入sql
             const string insertBussinesssql = @"
@@ -358,7 +336,7 @@ namespace Ets.Dao.Order
             insertBdbParameters.AddWithValue("@CommissionType", paramodel.CommissionType);//结算类型
             insertBdbParameters.AddWithValue("@CommissionFixValue", paramodel.CommissionFixValue);//固定金额
             insertBdbParameters.AddWithValue("@BusinessGroupId", paramodel.BusinessGroupId);//分组ID
-            bussinessId = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, insertBussinesssql, insertBdbParameters));
+            bussinessId = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertBussinesssql, insertBdbParameters));
             redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString()
                 , paramodel.store_info.store_id.ToString()), bussinessId.ToString());//将商户id插入到缓存  key的形式为 OtherBusiness_集团id_第三方平台店铺id
             return bussinessId;
@@ -369,7 +347,7 @@ namespace Ets.Dao.Order
         /// </summary>
         /// <param name="paramodel"></param>
         /// <param name="orderNo"></param>
-        private void AddOrderDetail(CreatePM_OpenApi paramodel, string orderNo)
+        public void AddOrderDetail(CreatePM_OpenApi paramodel, string orderNo)
         {
             for (int i = 0; i < paramodel.order_details.Length; i++)
             {
@@ -388,11 +366,16 @@ namespace Ets.Dao.Order
                 insertOrderDetaiParas.AddWithValue("@Quantity", paramodel.order_details[i].quantity);    //商品数量
                 insertOrderDetaiParas.AddWithValue("@FormDetailID", paramodel.order_details[i].detail_id);    //第三方平台明细id,与GroupID组成联合唯一约束
                 insertOrderDetaiParas.AddWithValue("@GroupID", paramodel.store_info.group);    //集团id,与第三方平台明细id组成联合唯一约束
-                DbHelper.ExecuteNonQuery(SuperMan_Read, insertOrderDetailsql, insertOrderDetaiParas);
+                DbHelper.ExecuteNonQuery(SuperMan_Write, insertOrderDetailsql, insertOrderDetaiParas);
             }
         }
 
-        private void AddOrderChild(CreatePM_OpenApi paramodel, int orderId)
+        /// <summary>
+        /// CreateToSql  操作插入OrderChild表  hulingbo 
+        /// </summary>
+        /// <param name="paramodel"></param>
+        /// <param name="orderId"></param>
+        public void AddOrderChild(CreatePM_OpenApi paramodel, int orderId)
         {
             const string insertOrderChildSql = @"
 insert into OrderChild
