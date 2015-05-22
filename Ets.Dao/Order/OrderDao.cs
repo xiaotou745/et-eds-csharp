@@ -147,8 +147,8 @@ namespace Ets.Dao.Order
         /// <summary>
         /// 订单状态查询功能  add by caoheyang 20150316
         /// </summary>
-        /// <param name="orderNo">订单号码</param>
-        /// <param name="groupId">订单来源</param>
+        /// <param name="originalOrderNo">订单号码</param>
+        /// <param name="orderfrom">订单来源</param>
         /// <returns>订单状态</returns>
         public OrderListModel GetOpenOrder(string originalOrderNo, int orderfrom)
         {
@@ -197,7 +197,7 @@ namespace Ets.Dao.Order
                                         ,o.OriginalOrderNo
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
-                                     LEFT JOIN dbo.clienter c WITH (NOLOCK) ON o.clienterId=c.Id
+                                    LEFT JOIN dbo.clienter c WITH (NOLOCK) ON o.clienterId=c.Id
                                     WHERE 1=1 and o.OriginalOrderNo=@OriginalOrderNo and o.OrderFrom=@OrderFrom";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OriginalOrderNo", SqlDbType.NVarChar);
@@ -295,7 +295,7 @@ namespace Ets.Dao.Order
 
             AddOrderDetail(paramodel, orderNo); //操作插入OrderDetail表
 
-            #region 定入订单子表
+            #region 插入订单子表
             int orderId = ParseHelper.ToInt(result);
             if (orderId > 0)
             {
@@ -690,6 +690,7 @@ values( @OrderId,
                                         ,ISNULL(o.MealsSettleMode,0) MealsSettleMode
                                         ,ISNULL(oo.IsJoinWithdraw,0) IsJoinWithdraw
                                         ,o.BusinessReceivable
+                                        ,o.SettleMoney
                                     FROM [order] o WITH ( NOLOCK )
                                     JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     left JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
@@ -1398,8 +1399,8 @@ select top 1
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
-        left join dbo.OrderOther oo with(nolock) on o.Id = oo.OrderId
-where   1 = 1 and o.OrderNo = @OrderNo
+        join dbo.OrderOther oo with(nolock) on o.Id = oo.OrderId
+where and o.OrderNo = @OrderNo
 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderNo", SqlDbType.NVarChar).Value = orderNo;
@@ -1457,7 +1458,8 @@ select top 1
         ISNULL(oo.HadUploadCount,0) HadUploadCount,
         o.SettleMoney,
         b.Id businessId,
-        o.Amount - o.SettleMoney + o.DistribSubsidy * o.OrderCount as ShouldPayBusiMoney 
+        o.Amount - o.SettleMoney + o.DistribSubsidy * o.OrderCount as ShouldPayBusiMoney ,
+        o.ActualDoneDate
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
@@ -2439,7 +2441,7 @@ INTO BusinessBalanceRecord
 from business b
 where b.Id=@BusinessId;");
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@Amount", model.BusinessReceivable);
+            parm.AddWithValue("@Amount", model.SettleMoney);
             parm.AddWithValue("@Status", BusinessBalanceRecordStatus.Success);
             parm.AddWithValue("@RecordType", BusinessBalanceRecordRecordType.CancelOrderReturn);
             parm.AddWithValue("@Operator", model.OptUserName);
