@@ -328,6 +328,20 @@ namespace ETS.Enums
         Conpany = 1
     }
 
+    public enum OrderStatusCommon
+    {
+        [DisplayText("未接单")]
+        UnReceive = 0,
+        [DisplayText("已完成")]
+        Finish = 1,
+        [DisplayText("已接单")]
+        Received = 2,
+        [DisplayText("已取消")]
+        Cancel = 3,
+        [DisplayText("已取货")]
+        PickUp = 4
+    }
+
     #endregion
 
 
