@@ -67,6 +67,7 @@
     <Compile Include="DataModel\Clienter\ClienterLocation.cs" />
     <Compile Include="DataModel\Clienter\CrossShopStatisticLogModel.cs" />
     <Compile Include="DataModel\Order\OrderChildFinishModel.cs" />
+    <Compile Include="DataModel\Order\OrderChildPayModel.cs" />
     <Compile Include="DataModel\Order\PayStatusModel.cs" />
     <Compile Include="DataModel\Strategy\StrategyModel.cs" />
     <Compile Include="DataModel\Finance\Bank.cs" />

@@ -1486,20 +1486,28 @@ where   1 = 1 and o.Id = @Id
         /// </summary>
         /// <param name="Id">订单ID</param>
         /// <returns></returns>
-        public OrderListModel GetOrderById(int Id)
+        public OrderChildPayModel GetOrderById(int Id)
         {
             //string sql = "SELECT clienterId FROM dbo.[order] o where id = @id";
             string sql = @"
-SELECT clienterId,min(PayStatus) as IsPay FROM dbo.[order] o(nolock)
+SELECT clienterId,min(PayStatus) as PayStatus FROM dbo.[order] o(nolock)
 join dbo.OrderChild oc(nolock) on o.Id= oc.OrderId
  where o.id=@id group by PayStatus,clienterId
  ";
-            IDbParameters parms = DbHelper.CreateDbParameters("id", DbType.Int32, 4, Id);
-            return DbHelper.QueryForObjectDelegate<OrderListModel>(SuperMan_Read, sql, row => new OrderListModel()
+            //IDbParameters parms = DbHelper.CreateDbParameters("id", DbType.Int32, 4, Id);
+            IDbParameters parms = DbHelper.CreateDbParameters();
+            parms.Add("id", DbType.Int32, 4).Value = Id;
+            //return DbHelper.QueryForObjectDelegate<OrderListModel>(SuperMan_Read, sql, row => new OrderListModel()
+            //{
+            //    clienterId = ParseHelper.ToInt(row["clienterId"]),
+            //    IsPay = ParseHelper.ToBool(row["IsPay"], false)//是否允许点击完成，1=允许，0=不允许 
+            //});
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parms);
+            if (dt==null || dt.Rows.Count<=0)
             {
-                clienterId = ParseHelper.ToInt(row["clienterId"]),
-                IsPay = ParseHelper.ToBool(row["IsPay"], false)//是否允许点击完成，1=允许，0=不允许 
-            });
+                return null;
+            }
+            return MapRows<OrderChildPayModel>(dt)[0];
         }
 
         /// <summary>

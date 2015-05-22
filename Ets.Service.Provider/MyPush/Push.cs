@@ -76,6 +76,8 @@ namespace Ets.Service.Provider.MyPush
         /// <param name="model"></param>
         public static void PushMessage(JPushModel model)
         {
+            /*
+
             string appKey = "";
             string masterSecret = "";
             if (model.TagId == 0) //C端
@@ -91,7 +93,7 @@ namespace Ets.Service.Provider.MyPush
             JPushClient client = new JPushClient(appKey, masterSecret);
             Audience audience = null;
             if (model.TagId == 0)  //发给C端
-                audience = Audience.s_tag_and(model.UserId.ToString());
+                audience = Audience.s_tag_and(model.RegistrationId);
             else if (model.TagId == 1 && !string.IsNullOrEmpty(model.RegistrationId)) //B端
                 audience = Audience.s_tag_and(model.RegistrationId);
             PushPayload pushPayload = new PushPayload();
@@ -99,10 +101,40 @@ namespace Ets.Service.Provider.MyPush
             pushPayload.audience = audience;
             Notification notification = new Notification().setAlert(model.Alert);
             notification.AndroidNotification = new AndroidNotification().setTitle(model.Title);
-            notification.AndroidNotification = new AndroidNotification().AddExtra("Content", model.Content);
+            //notification.AndroidNotification = new AndroidNotification().AddExtra("Content", model.Content);
             notification.IosNotification = new IosNotification().setAlert(model.Alert).setBadge(1).setSound("YourSound");
             pushPayload.notification = notification.Check();
-            var response = client.SendPush(pushPayload);
+            var response = client.SendPush(pushPayload);*/
+
+            try
+            {
+                string appKey = "";
+                string masterSecret = "";
+                if (model.TagId == 0) //C端
+                {
+                    appKey = "dce902893245e99461b9a5c8";// Your App Key from JPush
+                    masterSecret = "fdc95d37d67c9472ad4e0e96";// Your Master Secret from JPush
+                }
+                else if (model.TagId == 1) //B端
+                {
+                    appKey = "d794d51f2ffaf5de42001c4b";// Your App Key from JPush
+                    masterSecret = "03f956afaaeb086481aa3b7c";// Your Master Secret from JPush
+                }
+                JPushClient client = new JPushClient(appKey, masterSecret);
+                Audience audience = Audience.s_alias(model.RegistrationId);
+                PushPayload pushPayload = new PushPayload();
+                pushPayload.platform = Platform.android_ios();
+                pushPayload.audience = audience;
+                Notification notification = new Notification().setAlert(model.Alert);
+                notification.AndroidNotification = new AndroidNotification().setTitle(model.Title);
+                notification.AndroidNotification = new AndroidNotification().AddExtra("Content", model.Content);
+                notification.IosNotification = new IosNotification().setAlert(model.Alert).setBadge(1).setSound("YourSound");
+                pushPayload.notification = notification.Check();
+                var response = client.SendPush(pushPayload);
+            }
+            catch (Exception ex)
+            {
+            }
         }
     }
 }
