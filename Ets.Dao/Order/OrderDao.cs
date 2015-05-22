@@ -2100,7 +2100,7 @@ values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude)";
                         dr["TotalPrice"] = totalPrice;
                         dr["GoodPrice"] = order.listOrderChild[i].GoodPrice;
                         dr["DeliveryPrice"] = order.DistribSubsidy;
-                        if ((bool)order.IsPay)
+                        if ((bool)order.IsPay || (!(bool)order.IsPay && order.MealsSettleMode == MealsSettleMode.Status0.GetHashCode()))
                             dr["PayStatus"] = 1;
                         else
                             dr["PayStatus"] = 0;
