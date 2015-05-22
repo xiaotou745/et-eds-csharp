@@ -613,8 +613,9 @@ namespace Ets.Service.Provider.Order
                     redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
                         paramodel.order_id.ToString()), orderNo, DateTime.Now.AddDays(30));  //先加入缓存，相当于加锁
                     int orderId = orderDao.CreateToSql(paramodel);  //插入订单返回订单id
-                    orderDao.AddOrderDetail(paramodel, orderNo); //操作插入OrderDetail表
-                    orderDao.AddOrderChild(paramodel, orderId); //插入订单子表
+                    orderDao.CreateToSqlAddOrderOther(paramodel.businessId, orderId); //操作插入rderOther表
+                    orderDao.CreateToSqlAddOrderDetail(paramodel, orderNo); //操作插入OrderDetail表
+                    orderDao.CreateToSqlAddOrderChild(paramodel, orderId); //插入订单子表
                     InsertOrderOptRecord(new order()
                     {
                         businessId = paramodel.businessId,
