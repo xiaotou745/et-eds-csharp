@@ -201,7 +201,17 @@ namespace Ets.Model.DataModel.Order
          /// <summary>
         /// 应退商家金额
         /// </summary>
-        public decimal BusinessReceivable { get; set; }       
+        public decimal BusinessReceivable { get; set; }
 
+
+        /// <summary>
+        /// 骑士到门店的距离  米
+        /// </summary>    
+        public double distance { get; set; }
+
+        /// <summary>
+        ///  商户到收货人的距离  千米
+        /// </summary>
+        public double distanceB2R { get; set; }
     }
 }
