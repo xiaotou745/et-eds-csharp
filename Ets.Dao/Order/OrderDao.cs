@@ -1383,7 +1383,7 @@ from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
         join dbo.OrderOther oo with(nolock) on o.Id = oo.OrderId
-where and o.OrderNo = @OrderNo
+where  o.OrderNo = @OrderNo
 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderNo", SqlDbType.NVarChar).Value = orderNo;
