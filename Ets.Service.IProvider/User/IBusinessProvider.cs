@@ -210,11 +210,11 @@ namespace Ets.Service.IProvider.User
 
         /// <summary>
         /// 用户状态信息
-        /// 平扬-20150331
+        /// 窦海超-20150331
         /// </summary>
-        /// <param name="criteria"></param>
+        /// <param name="userid"></param>
         /// <returns></returns>
-        Ets.Model.ParameterModel.Bussiness.BussinessStatusModel GetUserStatus(int userid, double version);
+        BussinessStatusModel GetUserStatus(int userid);
         /// <summary>
         /// 修改商户信息
         /// danny-20150417
