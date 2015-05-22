@@ -97,6 +97,7 @@ namespace ETS.Enums
         [DisplayText("失败")]
         Failed = 101
     }
+
     /// <summary>
     /// 确认订单返回状态
     /// </summary>
@@ -218,6 +219,8 @@ namespace ETS.Enums
         订单已取消 = 3,
         订单已取货=4
     }
+
+    
 
     public enum ModifyPwdStatus
     {

@@ -21,7 +21,6 @@
             <th>订单来源</th>
             <th>订单状态</th>
             <th>已上传/共需上传</th>
-            <th>操作</th>
         </tr>
     </thead>
     <tbody>
@@ -38,7 +37,7 @@
                     i++;
                 @*<tr id="@item.Id" style="background-color:@Html.Raw(val)" >*@
                     <tr id="@item.Id">
-                        <td>@item.OrderNo</td>
+                        <td><a href="/Order/OrderDetail?OrderNo=@item.OrderNo&OrderId=@item.Id ">@item.OrderNo</a></td>
                         <td>@item.OriginalOrderNo</td>
                         <td>@item.BusinessName <br> @item.BusinessPhoneNo</td>
                         <td>@item.ClienterName <br> @item.ClienterPhoneNo</td>
@@ -54,35 +53,8 @@
                         <td>@item.Adjustment</td>
                         <td>@item.BusinessCommission</td>
                         <td>@item.GroupName</td>
-                        @{
-                            var strstatus = "";
-                            if (@item.Status == ETS.Const.OrderConst.OrderStatus1)
-                            {
-                                strstatus = "已完成";
-                            }
-                            else if (@item.Status == ETS.Const.OrderConst.OrderStatus0)
-                            {
-                                strstatus = "未接单";
-                            }
-                            else if (@item.Status == ETS.Const.OrderConst.OrderStatus2)
-                            {
-                                strstatus = "已接单";
-                            }
-                            else if (@item.Status == ETS.Const.OrderConst.OrderStatus3)
-                            {
-                                strstatus = "已取消";
-                            }
-                            else if (@item.Status == ETS.Const.OrderConst.OrderStatus30)
-                            {
-                                strstatus = "待确认";
-                            }
-                            <td style="color:@Html.Raw(val)">@strstatus</td>
-                        }
+                        <td style="color:@Html.Raw(val)">@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.OrderStatusCommon)item.Status).GetType(), (ETS.Enums.OrderStatusCommon)item.Status).Text</td>
                         <td>@item.HadUploadCount.ToString()/@item.OrderCount.ToString()</td>  
-                        <td>
-                            <a href="/Order/OrderDetail?OrderNo=@item.OrderNo&OrderId=@item.Id ">查看</a>
-                            @*<a href="javascript:void(0)" orderid=@item.Id businessname=@item.BusinessName id="linkView" onclick="funcViewOrder('@item.OrderNo','@item.PubDate','@item.BusinessName','@item.BusinessPhoneNo','@item.BusinessAddress','@item.OrderCommission','@item.DistribSubsidy','@item.WebsiteSubsidy','@item.RecevicePhoneNo','@item.ReceviceName','@item.ReceviceAddress','@item.Amount','@item.IsPay','@item.clienterId','@item.Status','@item.ClienterName')">查看</a>*@
-                        </td>
                     </tr>
                 }
             }
