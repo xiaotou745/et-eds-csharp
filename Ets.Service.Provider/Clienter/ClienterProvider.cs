@@ -623,7 +623,7 @@ namespace Ets.Service.Provider.Clienter
                 Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
                 Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
                 Balance = accountBalance ?? 0,
-                RecordType = ClienterBalanceRecordRecordType.Commission.GetHashCode(),
+                RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
                 Operator = myOrderInfo.ClienterName,
                 RelationNo = myOrderInfo.OrderNo,
                 Remark = "骑士完成订单"
@@ -659,7 +659,7 @@ namespace Ets.Service.Provider.Clienter
                 Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
                 Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
                 Balance = accountBalance ?? 0,
-                RecordType = ClienterBalanceRecordRecordType.Commission.GetHashCode(),
+                RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
                 Operator = myOrderInfo.ClienterName,
                 RelationNo = myOrderInfo.OrderNo,
                 Remark = "骑士完成订单"
@@ -866,9 +866,9 @@ namespace Ets.Service.Provider.Clienter
                     BusinessId = Convert.ToInt32(myOrderInfo.businessId),
                     Amount = myOrderInfo.BusinessReceivable,
                     Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
-                    RecordType = (int)BusinessBalanceRecordRecordType.ReturnBusinessReceivable,
+                    RecordType = (int)BusinessBalanceRecordRecordType.OrderMeals,
                     Operator = myOrderInfo.BusinessName,
-                    Remark = "返还商家结算费",
+                    Remark = "返还商家订单菜品费",
                     WithwardId=myOrderInfo.Id,
                     RelationNo=myOrderInfo.OrderNo
                 });

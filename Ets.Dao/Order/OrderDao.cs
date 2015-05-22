@@ -2122,13 +2122,18 @@ values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude)";
         /// </summary>
         /// <UpdateBy>hulingbo</UpdateBy>
         /// <UpdateTime>20150512</UpdateTime>
-        /// <param name="id">订单Id</param>
+        /// <param name="orderPM">获取订单详情参数实体</param>
         /// <returns></returns>
-        public order GetById(int id)
+        public order GetById(OrderPM orderPM)
         {
             order modle = new order();
 
             const string querySql = @"
+declare @clienterLongitude FLOAT;
+declare @clienterLatitude FLOAT;
+set @clienterLongitude=@Longitude;
+set @clienterLatitude=@Latitude;
+
 select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneNo,o.ReceviceAddress,o.ActualDoneDate,o.IsPay,
     o.Amount,o.OrderCommission,o.DistribSubsidy,o.WebsiteSubsidy,o.Remark,o.Status,o.clienterId,o.businessId,o.ReceviceCity,o.ReceviceLongitude,
     o.ReceviceLatitude,o.OrderFrom,o.OriginalOrderId,o.OriginalOrderNo,o.Quantity,o.Weight,o.ReceiveProvince,o.ReceiveArea,o.ReceiveProvinceCode,
@@ -2140,14 +2145,21 @@ select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneN
     b.[City] BusinessCity,b.Name BusinessName,b.PhoneNo BusinessPhoneNo ,b.Address BusinessAddress ,b.GroupId, 
     b.Longitude, b.Latitude,REPLACE(b.City,'市','') AS pickUpCity,
     oo.NeedUploadCount,oo.HadUploadCount,oo.GrabTime,
-    c.TrueName ClienterName,c.PhoneNo ClienterPhoneNo
+    c.TrueName ClienterName,c.PhoneNo ClienterPhoneNo,
+   (case 
+    when  ISNULL(b.Latitude,0)=0 or ISNULL(b.Longitude,0)=0 or @clienterLongitude=0 or  @clienterLatitude=0  then -1
+    else round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(geography::Point(@clienterLatitude,@clienterLongitude,4326)),0)
+    end)
+    as distance
 from  dbo.[order] o (nolock)
     join business b (nolock) on b.Id=o.businessId
     left join dbo.OrderOther oo (nolock) on o.Id=oo.orderId
     left join clienter c on  o.clienterId=c.id
 where  o.Id=@Id ";
 
-            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);
+            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, orderPM.OrderId);
+            dbParameters.AddWithValue("Longitude", orderPM.longitude);
+            dbParameters.AddWithValue("Latitude", orderPM.latitude);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, querySql, dbParameters);
             if (dt == null || dt.Rows.Count <= 0)
                 return null;
@@ -2444,7 +2456,7 @@ where b.Id=@BusinessId;");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Amount", model.SettleMoney);
             parm.AddWithValue("@Status", BusinessBalanceRecordStatus.Success);
-            parm.AddWithValue("@RecordType", BusinessBalanceRecordRecordType.CancelOrderReturn);
+            parm.AddWithValue("@RecordType", BusinessBalanceRecordRecordType.CancelOrder);
             parm.AddWithValue("@Operator", model.OptUserName);
             parm.AddWithValue("@WithwardId", model.Id);
             parm.AddWithValue("@RelationNo", model.OrderNo);
@@ -2491,7 +2503,7 @@ where c.Id=@ClienterId;");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Amount", model.OrderCommission);
             parm.AddWithValue("@Status", ClienterBalanceRecordStatus.Success);
-            parm.AddWithValue("@RecordType", ClienterBalanceRecordRecordType.CancleOrderReturn);
+            parm.AddWithValue("@RecordType", ClienterBalanceRecordRecordType.CancelOrder);
             parm.AddWithValue("@Operator", model.OptUserName);
             parm.AddWithValue("@WithwardId", model.Id);
             parm.AddWithValue("@RelationNo", model.OrderNo);

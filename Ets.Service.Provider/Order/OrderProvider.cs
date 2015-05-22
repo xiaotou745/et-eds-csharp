@@ -367,9 +367,9 @@ namespace Ets.Service.Provider.Order
                     BusinessId = Convert.ToInt32(order.businessId),
                     Amount = -order.SettleMoney,
                     Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
-                    RecordType = (int)BusinessBalanceRecordRecordType.SettleMoney,
+                    RecordType = (int)BusinessBalanceRecordRecordType.PublishOrder,
                     Operator = order.BusinessName,              
-                    Remark = "扣商家结算费",
+                    Remark = "扣除商家结算费",
                     WithwardId = result,
                     RelationNo=order.OrderNo
                 });
@@ -661,7 +661,7 @@ namespace Ets.Service.Provider.Order
                 BusinessId = Convert.ToInt32(order.businessId),
                 Amount = -order.SettleMoney,
                 Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
-                RecordType = (int)BusinessBalanceRecordRecordType.SettleMoney,
+                RecordType = (int)BusinessBalanceRecordRecordType.PublishOrder,
                 Operator = "系统",
                 WithwardId=order.Id,
                 RelationNo=order.OrderNo,
@@ -1229,11 +1229,11 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <UpdateBy>hulingbo</UpdateBy>
         /// <UpdateTime>20150512</UpdateTime>
-        /// <param name="id">订单Id</param>
+        /// <param name="orderPM">获取订单详情参数实体</param>
         /// <returns></returns>
-        public order GetById(int id)
+        public order GetById(OrderPM orderPM)
         {
-            return orderDao.GetById(id);
+            return orderDao.GetById(orderPM);
         }
 
         /// <summary>
@@ -1248,7 +1248,7 @@ namespace Ets.Service.Provider.Order
             OrderDM orderDM = new OrderDM();
 
             int id = modelPM.OrderId;
-            order order = GetById(id);
+            order order = GetById(modelPM);
             orderDM.Id = order.Id;
             orderDM.OrderNo = order.OrderNo;
             orderDM.OriginalOrderNo = order.OriginalOrderNo;
@@ -1290,13 +1290,14 @@ namespace Ets.Service.Provider.Order
             }
             #endregion
 
-            CalculationLgAndLa(orderDM, modelPM, order);//计算经纬度
+            orderDM.distance =order.distance==-1?"--":  order.distance > 1000 ? Math.Round(order.distance * 0.001, 2) + "Km" : Math.Round(order.distance , 0)+"m";
 
-            Ets.Service.Provider.Order.OrderChildProvider orderChildPr = new OrderChildProvider();
+
+            OrderChildProvider orderChildPr = new OrderChildProvider();
             List<OrderChildInfo> listOrderChildInfo = orderChildPr.GetByOrderId(id);
             orderDM.listOrderChild = listOrderChildInfo;
 
-            Ets.Service.Provider.Order.OrderDetailProvider orderDetailPr = new OrderDetailProvider();
+            OrderDetailProvider orderDetailPr = new OrderDetailProvider();
             orderDM.listOrderDetail = orderDetailPr.GetByOrderNo(order.OrderNo);
 
 
@@ -1425,7 +1426,7 @@ namespace Ets.Service.Provider.Order
                         BusinessId = paramodel.BusinessId,//商户Id
                         Amount = order.SettleMoney,//流水金额  结算金额
                         Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
-                        RecordType = (int)BusinessBalanceRecordRecordType.CancelOrderReturn,
+                        RecordType = (int)BusinessBalanceRecordRecordType.CancelOrder,
                         Operator = "E代送系统",
                         WithwardId = paramodel.OrderId,
                         RelationNo = paramodel.OrderNo,
