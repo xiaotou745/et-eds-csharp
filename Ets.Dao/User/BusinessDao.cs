@@ -47,9 +47,10 @@ namespace Ets.Dao.User
             //订单状态
             if (paraModel.Status != null)
             {
-                if (paraModel.Status == 4)
+                if (paraModel.Status == 100)
                 {
-                    whereStr += " and (o.Status = " + OrderConst.ORDER_NEW + " or o.Status=" + OrderConst.ORDER_ACCEPT + ")";
+                    //whereStr += " and (o.Status = " + OrderConst.ORDER_NEW + " or o.Status=" + OrderConst.ORDER_ACCEPT + ")";
+                    whereStr += " and (o.Status = " + OrdersStatus.Status0.GetHashCode() + " or o.Status=" + OrdersStatus.Status2.GetHashCode() + " or o.Status="+OrdersStatus.Status4.GetHashCode()+")";
                 }
                 else
                 {
@@ -365,7 +366,8 @@ namespace Ets.Dao.User
                                     ,b.CommissionFixValue
                                     ,b.BusinessGroupId
                                     ,bg.Name BusinessGroupName
-                                    ,ISNULL(b.MealsSettleMode,0) MealsSettleMode";
+                                    ,ISNULL(b.MealsSettleMode,0) MealsSettleMode
+                                    ,ISNULL(b.BalancePrice,0) BalancePrice";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrEmpty(criteria.businessName))
             {

@@ -29,9 +29,9 @@
                         <td><a href="/BusinessWithdraw/BusinessWithdrawDetail?withwardId=@item.Id" style=" text-decoration-line: underline">@item.WithwardNo</a></td>
                         <td>@item.BusinessName</td>
                         <td>@item.BusinessPhoneNo</td>
-                        <td>@ParseHelper.ToSplitByPercentile(false, item.BalancePrice)</td>
-                        <td>@ParseHelper.ToSplitByPercentile(false, item.AllowWithdrawPrice)</td>
-                        <td style="color:green;font-weight:600">@ParseHelper.ToSplitByPercentile(false, item.Amount)</td>
+                        <td>￥@ParseHelper.ToSplitByPercentile(false, item.BalancePrice)</td>
+                        <td>￥@ParseHelper.ToSplitByPercentile(false, item.AllowWithdrawPrice)</td>
+                        <td style="color:green;font-weight:600">￥@ParseHelper.ToSplitByPercentile(false, item.Amount)</td>
                         <td>@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.BusinessWithdrawFormStatus)item.Status).GetType(), (ETS.Enums.BusinessWithdrawFormStatus)item.Status).Text</td>
                         <td>@item.WithdrawTime</td>
                         <td>

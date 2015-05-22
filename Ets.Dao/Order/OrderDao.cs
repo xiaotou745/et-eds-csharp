@@ -347,7 +347,7 @@ namespace Ets.Dao.Order
         /// </summary>
         /// <param name="paramodel"></param>
         /// <param name="orderNo"></param>
-        public void AddOrderDetail(CreatePM_OpenApi paramodel, string orderNo)
+        public void CreateToSqlAddOrderDetail(CreatePM_OpenApi paramodel, string orderNo)
         {
             for (int i = 0; i < paramodel.order_details.Length; i++)
             {
@@ -375,7 +375,7 @@ namespace Ets.Dao.Order
         /// </summary>
         /// <param name="paramodel"></param>
         /// <param name="orderId"></param>
-        public void AddOrderChild(CreatePM_OpenApi paramodel, int orderId)
+        public void CreateToSqlAddOrderChild(CreatePM_OpenApi paramodel, int orderId)
         {
             const string insertOrderChildSql = @"
 insert into OrderChild
@@ -408,6 +408,24 @@ values( @OrderId,
 
         #endregion
 
+        /// <summary>
+        /// CreateToSql  操作插入 OrderChild 表  caoheyang        
+        /// </summary>
+        /// <param name="businessId">商家id</param>
+        /// <param name="orderId">E代送平台内的订单id</param>
+        /// <returns></returns>
+        public int CreateToSqlAddOrderOther(int businessId, int orderId)
+        {
+            const string insertOtherSql = @"
+insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount,PubLongitude,PubLatitude)
+select @OrderId,1,0,b.Longitude,b.Latitude 
+from dbo.business as b where b.Id=@BusinessId
+select @@IDENTITY ";
+            IDbParameters dbOtherParameters = DbHelper.CreateDbParameters();
+            dbOtherParameters.AddWithValue("@OrderId", orderId); //商户ID
+            dbOtherParameters.AddWithValue("@BusinessId", businessId); 
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertOtherSql, dbOtherParameters));
+        }
 
 
         /// <summary>
