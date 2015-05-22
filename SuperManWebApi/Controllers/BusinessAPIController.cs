@@ -569,14 +569,12 @@ namespace SuperManWebApi.Controllers
         /// 平扬
         /// 2015年3月31日 
         /// </summary>
-        /// <param name="userId">用户id</param>
-        /// <param name="version">version</param>
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.UserStatus))]
-        [HttpGet]
-        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BussinessStatusModel> GetUserStatus(int userId, double version_api)
+        [HttpPost]
+        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BussinessStatusModel> GetUserStatus(UserStatusModel parModel)
         {
-            var model = iBusinessProvider.GetUserStatus(userId, version_api);
+            var model = iBusinessProvider.GetUserStatus(parModel.userId);
             if (model != null)
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BussinessStatusModel>.Conclude(

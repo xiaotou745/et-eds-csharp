@@ -411,8 +411,8 @@ namespace SuperManWebApi.Controllers
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderEmpty);
             //var myorder = new Ets.Dao.Order.OrderDao().GetOrderByNo(orderNo);
-            string finishResult = iClienterProvider.FinishOrder(userId, orderNo,completeLongitude, CompleteLatitude, pickupCode);
-            if (finishResult == "1")  //完成
+            Ets.Model.ParameterModel.Clienter.FinishOrderResultModel finishModel = iClienterProvider.FinishOrder(userId, orderNo, completeLongitude, CompleteLatitude, pickupCode);
+            if (finishModel.Message == "1")  //完成
             {
                 var clienter = iClienterProvider.GetUserInfoByUserId(userId);
                 var model = new FinishOrderResultModel();
@@ -423,11 +423,11 @@ namespace SuperManWebApi.Controllers
                     model.balanceAmount = 0.0m;
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Success, model);
             }
-            else if (finishResult == "3")
+            else if (finishModel.Message == "3")
             {
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderHadCancel);
             }
-            else if (finishResult == ETS.Enums.FinishOrderStatus.PickupCodeError.ToString())
+            else if (finishModel.Message == ETS.Enums.FinishOrderStatus.PickupCodeError.ToString())
                 return Ets.Model.Common.ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.PickupCodeError);
             else
             {
@@ -622,16 +622,16 @@ namespace SuperManWebApi.Controllers
 
         /// <summary>
         /// 获取用户状态
-        /// 平扬
+        /// 窦海超
         /// 2015年3月31日 
         /// </summary>
         /// <param name="userId">userId</param>
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.UserStatus))]
-        [HttpGet]
-        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.ClienterStatusModel> GetUserStatus(int userId, double version_api)
+        [HttpPost]
+        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.ClienterStatusModel> GetUserStatus(Ets.Model.ParameterModel.Order.UserStatusModel parModel)
         {
-            var model = new ClienterProvider().GetUserStatus(userId, version_api);
+            var model = new ClienterProvider().GetUserStatus(parModel.userId);
             if (model != null)
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.ClienterStatusModel>.Conclude(

@@ -8,7 +8,14 @@ namespace Ets.Model.ParameterModel.Clienter
     }
     public class FinishOrderResultModel
     {
-        public int userId { get; set; }
-        public decimal balanceAmount { get; set; }
+        /// <summary>
+        /// 返回信息
+        /// </summary>
+        public string Message { get; set; }
+
+        /// <summary>
+        /// 是否允许修改小票
+        /// </summary>
+        public bool IsModifyTicket { get; set; }
     }
 }

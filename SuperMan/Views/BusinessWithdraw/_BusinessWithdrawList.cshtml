@@ -32,30 +32,7 @@
                         <td>@ParseHelper.ToSplitByPercentile(false, item.BalancePrice)</td>
                         <td>@ParseHelper.ToSplitByPercentile(false, item.AllowWithdrawPrice)</td>
                         <td style="color:green;font-weight:600">@ParseHelper.ToSplitByPercentile(false, item.Amount)</td>
-                        @{
-                            var strstatus = "";
-                            if (item.Status == ETS.Enums.BusinessWithdrawFormStatus.WaitAllow.GetHashCode())
-                            {
-                                strstatus = "待审核";
-                            }
-                            else if (item.Status == ETS.Enums.BusinessWithdrawFormStatus.Allow.GetHashCode())
-                            {
-                                strstatus = "审核通过";
-                            }
-                            else if (item.Status == ETS.Enums.BusinessWithdrawFormStatus.Success.GetHashCode())
-                            {
-                                strstatus = "打款完成";
-                            }
-                            else if (item.Status == ETS.Enums.BusinessWithdrawFormStatus.TurnDown.GetHashCode())
-                            {
-                                strstatus = "审核拒绝";
-                            }
-                            else if (item.Status == ETS.Enums.BusinessWithdrawFormStatus.Error.GetHashCode())
-                            {
-                                strstatus = "打款失败";
-                            }
-                        }
-                        <td>@strstatus</td>
+                        <td>@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.BusinessWithdrawFormStatus)item.Status).GetType(), (ETS.Enums.BusinessWithdrawFormStatus)item.Status).Text</td>
                         <td>@item.WithdrawTime</td>
                         <td>
                             @if (item.Status == 1)
