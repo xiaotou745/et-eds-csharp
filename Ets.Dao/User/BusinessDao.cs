@@ -47,9 +47,10 @@ namespace Ets.Dao.User
             //订单状态
             if (paraModel.Status != null)
             {
-                if (paraModel.Status == 4)
+                if (paraModel.Status == 100)
                 {
-                    whereStr += " and (o.Status = " + OrderConst.ORDER_NEW + " or o.Status=" + OrderConst.ORDER_ACCEPT + ")";
+                    //whereStr += " and (o.Status = " + OrderConst.ORDER_NEW + " or o.Status=" + OrderConst.ORDER_ACCEPT + ")";
+                    whereStr += " and (o.Status = " + OrdersStatus.Status0.GetHashCode() + " or o.Status=" + OrdersStatus.Status2.GetHashCode() + " or o.Status="+OrdersStatus.Status4.GetHashCode()+")";
                 }
                 else
                 {
