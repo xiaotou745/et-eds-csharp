@@ -690,6 +690,7 @@ values( @OrderId,
                                         ,ISNULL(o.MealsSettleMode,0) MealsSettleMode
                                         ,ISNULL(oo.IsJoinWithdraw,0) IsJoinWithdraw
                                         ,o.BusinessReceivable
+                                        ,o.SettleMoney
                                     FROM [order] o WITH ( NOLOCK )
                                     JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     left JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
@@ -2440,7 +2441,7 @@ INTO BusinessBalanceRecord
 from business b
 where b.Id=@BusinessId;");
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@Amount", model.BusinessReceivable);
+            parm.AddWithValue("@Amount", model.SettleMoney);
             parm.AddWithValue("@Status", BusinessBalanceRecordStatus.Success);
             parm.AddWithValue("@RecordType", BusinessBalanceRecordRecordType.CancelOrderReturn);
             parm.AddWithValue("@Operator", model.OptUserName);
