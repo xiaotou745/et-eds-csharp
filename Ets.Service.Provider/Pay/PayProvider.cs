@@ -238,50 +238,56 @@ namespace Ets.Service.Provider.Pay
                     notify.trade_no = request["trade_no"];
                 }
                 #endregion
-
-                if (string.IsNullOrEmpty(notify.trade_status) || notify.trade_status != "TRADE_SUCCESS")
+                //如果状态为空或状态不等于同步成功和异步成功就认为是错误
+                if (string.IsNullOrEmpty(notify.trade_status))
                 {
                     string fail = string.Concat("错误啦trade_status：", notify.trade_status, "。sign:", sign, "。notify_data:", notify_data);
                     LogHelper.LogWriter(fail);
                     return "fail";
                 }
-                string orderNo = notify.out_trade_no;
-                if (string.IsNullOrEmpty(orderNo) || !orderNo.Contains("_"))
+                #region 回调完成状态
+                if (notify.trade_status == "TRADE_SUCCESS" || notify.trade_status == "TRADE_FINISHED")
                 {
-                    string fail = string.Concat("错误啦orderNo：", orderNo);
-                    LogHelper.LogWriter(fail);
-                    return "fail";
-                }
-                int productId = ParseHelper.ToInt(orderNo.Split('_')[0]);//产品编号
-                int orderId = ParseHelper.ToInt(orderNo.Split('_')[1]);//主订单号
-                int orderChildId = ParseHelper.ToInt(orderNo.Split('_')[2]);//子订单号
-                int payStyle = ParseHelper.ToInt(orderNo.Split('_')[3]);//支付方式(1 用户支付 2 骑士代付)
-                if (orderId <= 0 || orderChildId <= 0)
-                {
-                    string fail = string.Concat("错误啦orderId：", orderId, ",orderChildId:", orderChildId);
-                    LogHelper.LogWriter(fail);
-                    return "fail";
-                }
+                    string orderNo = notify.out_trade_no;
+                    if (string.IsNullOrEmpty(orderNo) || !orderNo.Contains("_"))
+                    {
+                        string fail = string.Concat("错误啦orderNo：", orderNo);
+                        LogHelper.LogWriter(fail);
+                        return "fail";
+                    }
+                    int productId = ParseHelper.ToInt(orderNo.Split('_')[0]);//产品编号
+                    int orderId = ParseHelper.ToInt(orderNo.Split('_')[1]);//主订单号
+                    int orderChildId = ParseHelper.ToInt(orderNo.Split('_')[2]);//子订单号
+                    int payStyle = ParseHelper.ToInt(orderNo.Split('_')[3]);//支付方式(1 用户支付 2 骑士代付)
+                    if (orderId <= 0 || orderChildId <= 0)
+                    {
+                        string fail = string.Concat("错误啦orderId：", orderId, ",orderChildId:", orderChildId);
+                        LogHelper.LogWriter(fail);
+                        return "fail";
+                    }
 
-                OrderChildFinishModel model = new OrderChildFinishModel()
-                {
-                    orderChildId = orderChildId,
-                    orderId = orderId,
-                    payBy = notify.buyer_email,
-                    payStyle = payStyle,
-                    payType = PayTypeEnum.ZhiFuBao.GetHashCode(),
-                    originalOrderNo = notify.trade_no,
-                };
+                    OrderChildFinishModel model = new OrderChildFinishModel()
+                    {
+                        orderChildId = orderChildId,
+                        orderId = orderId,
+                        payBy = notify.buyer_email,
+                        payStyle = payStyle,
+                        payType = PayTypeEnum.ZhiFuBao.GetHashCode(),
+                        originalOrderNo = notify.trade_no,
+                    };
 
-                if (orderChildDao.FinishPayStatus(model))
-                {
-                    //jpush
-                    //Ets.Service.Provider.MyPush.Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", myorder.businessId.ToString(), string.Empty);
-                    FinishOrderPushMessage(model);//完成后发送jpush消息
-                    string success = string.Concat("成功，当前订单OrderId:", orderId, ",OrderChild:", orderChildId);
-                    LogHelper.LogWriter(success);
-                    return "success";
+                    if (orderChildDao.FinishPayStatus(model))
+                    {
+                        //jpush
+                        //Ets.Service.Provider.MyPush.Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", myorder.businessId.ToString(), string.Empty);
+                        FinishOrderPushMessage(model);//完成后发送jpush消息
+                        string success = string.Concat("成功，当前订单OrderId:", orderId, ",OrderChild:", orderChildId);
+                        LogHelper.LogWriter(success);
+                        return "success";
+                    }
                 }
+                #endregion
+
             }
             catch (Exception ex)
             {
