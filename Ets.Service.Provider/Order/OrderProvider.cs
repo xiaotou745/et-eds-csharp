@@ -1303,14 +1303,13 @@ namespace Ets.Service.Provider.Order
 
             
             bool IsExistsUnFinish = true;//默认是存在有未支付订单
-            if (ParseHelper.ToBool(order.IsPay, false))
+            if (ParseHelper.ToBool(order.IsPay, false) || order.MealsSettleMode == MealsSettleMode.Status0.GetHashCode())  //线下
             {
                 IsExistsUnFinish = false;//如果主任务是顾客已支付，就视认为没有未支付的订单
             }
             else
-            {
-                IsExistsUnFinish = listOrderChildInfo.Exists(t => t.PayStatus == PayStatusEnum.WaitingPay.GetHashCode() ||
-                         t.PayStatus == PayStatusEnum.WaitPay.GetHashCode());//如果顾客没支付，查询子订单是否有未支付子订单
+            {               
+               IsExistsUnFinish = listOrderChildInfo.Exists(t => t.PayStatus == PayStatusEnum.WaitPay.GetHashCode());//如果顾客没支付，查询子订单是否有未支付子订单
             }
             orderDM.IsExistsUnFinish = IsExistsUnFinish;
 
