@@ -615,6 +615,16 @@ namespace Ets.Service.Provider.Order
                     int orderId = orderDao.CreateToSql(paramodel);  //插入订单返回订单id
                     orderDao.AddOrderDetail(paramodel, orderNo); //操作插入OrderDetail表
                     orderDao.AddOrderChild(paramodel, orderId); //插入订单子表
+                    InsertOrderOptRecord(new order()
+                    {
+                        businessId = paramodel.businessId,
+                        SettleMoney=paramodel.settlemoney,
+                        Adjustment=paramodel.adjustment,
+                        Id=orderId,
+                        Amount = paramodel.total_price,
+                        OrderNo=orderNo,
+                        CommissionFormulaMode = paramodel.CommissionFormulaMode
+                    });
                     tran.Complete();
                 }
             }
@@ -652,15 +662,16 @@ namespace Ets.Service.Provider.Order
                 Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
                 RecordType = (int)BusinessBalanceRecordRecordType.SettleMoney,
                 Operator = "系统",
+                WithwardId=order.Id,
+                RelationNo=order.OrderNo,
                 Remark = "商户发单，系统自动扣商家结算费"
             });
             #endregion
 
-            //if (order.Adjustment > 0)
-            //{
-            //    bool b = orderDao.addOrderSubsidiesLog(order.Adjustment, result, "补贴加钱,订单金额:" + order.Amount + "-佣金补贴策略id:" + order.CommissionFormulaMode);
-              
-            //}
+            if (order.Adjustment > 0)
+            {
+                bool b = orderDao.addOrderSubsidiesLog(order.Adjustment, order.Id, "补贴加钱,订单金额:" + order.Amount + "-佣金补贴策略id:" + order.CommissionFormulaMode);
+            }
         }
 
         /// <summary>
