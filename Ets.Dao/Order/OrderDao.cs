@@ -1457,7 +1457,8 @@ select top 1
         ISNULL(oo.HadUploadCount,0) HadUploadCount,
         o.SettleMoney,
         b.Id businessId,
-        o.Amount - o.SettleMoney + o.DistribSubsidy * o.OrderCount as ShouldPayBusiMoney 
+        o.Amount - o.SettleMoney + o.DistribSubsidy * o.OrderCount as ShouldPayBusiMoney ,
+        o.ActualDoneDate
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
