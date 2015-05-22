@@ -1,4 +1,6 @@
-﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Finance.ClienterWithdrawFormModel>
+﻿@using ETS.Enums
+@using ETS.Extension
+@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Finance.ClienterWithdrawFormModel>
 @{
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
 }
@@ -23,14 +25,7 @@
                         <span class="">骑士电话: </span>
                         <input id="clienterPhoneNo" type="tel" name="clienterPhoneNo" />
                         <span class="">审核状态: </span>
-                        <select name="withdrawStatus" class="selectw" id="withdrawStatus" style="width:157px">
-                            <option value="0">全部</option>
-                            <option value="1">待审核</option>
-                            <option value="2">审核通过</option>
-                            <option value="3">打款完成</option>
-                            <option value="-1">审核拒绝</option>
-                            <option value="-2">打款失败</option>
-                        </select>
+                        @Html.DropDownList("withdrawStatus", new SelectList(EnumExtenstion.GetEnumItems(typeof(ClienterWithdrawFormStatus)), "Value", "Text"), "全部", new { @class = "selectw", style = "width:157px" })
                     </td>
                 </tr>
                 <tr>
@@ -72,20 +67,6 @@
             alert("请输入时间范围!");
             return;
         }
-        //var url = "/ClienterWithdraw/ExportBusinessWithdrawForm";
-        //var paramaters = { "businessName": businessName, "BusinessPhoneNo": BusinessPhoneNo, "businessCity": businessCity, "withdrawStatus": withdrawStatus, "withwardNo": withwardNo, "withdrawDateStart": withdrawDateStart, "withdrawDateEnd": withdrawDateEnd };
-        //$.ajax({
-        //    type: 'POST',
-        //    url: url,
-        //    data: paramaters,
-        //    success: function (result) {
-        //        if (result.IsSuccess) {
-        //            alert(result.Message);
-        //        } else {
-        //            alert(result.Message);
-        //        }
-        //    }
-        //});
         var url = "/ClienterWithdraw/ExportClienterWithdrawForm?clienterName=" + clienterName + "&clienterPhoneNo=" + clienterPhoneNo + "&withdrawStatus=" + withdrawStatus + "&withwardNo=" + withwardNo + "&withdrawDateStart=" + withdrawDateStart + "&withdrawDateEnd=" + withdrawDateEnd;
         window.location.href = url;
         return true;
