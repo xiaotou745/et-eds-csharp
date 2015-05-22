@@ -147,8 +147,8 @@ namespace Ets.Dao.Order
         /// <summary>
         /// 订单状态查询功能  add by caoheyang 20150316
         /// </summary>
-        /// <param name="orderNo">订单号码</param>
-        /// <param name="groupId">订单来源</param>
+        /// <param name="originalOrderNo">订单号码</param>
+        /// <param name="orderfrom">订单来源</param>
         /// <returns>订单状态</returns>
         public OrderListModel GetOpenOrder(string originalOrderNo, int orderfrom)
         {
@@ -197,7 +197,7 @@ namespace Ets.Dao.Order
                                         ,o.OriginalOrderNo
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
-                                     LEFT JOIN dbo.clienter c WITH (NOLOCK) ON o.clienterId=c.Id
+                                    LEFT JOIN dbo.clienter c WITH (NOLOCK) ON o.clienterId=c.Id
                                     WHERE 1=1 and o.OriginalOrderNo=@OriginalOrderNo and o.OrderFrom=@OrderFrom";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OriginalOrderNo", SqlDbType.NVarChar);
@@ -295,7 +295,7 @@ namespace Ets.Dao.Order
 
             AddOrderDetail(paramodel, orderNo); //操作插入OrderDetail表
 
-            #region 定入订单子表
+            #region 插入订单子表
             int orderId = ParseHelper.ToInt(result);
             if (orderId > 0)
             {
