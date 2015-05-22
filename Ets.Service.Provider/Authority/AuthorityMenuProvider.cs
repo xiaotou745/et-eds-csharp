@@ -525,6 +525,54 @@ using ETS.Data.PageData;
         {
             return _dao.CheckPermission(accountId, menuid);
         }
+        ///// <summary>
+        ///// 添加用户
+        ///// danny-20150323
+        ///// </summary>
+        ///// <param name="criteria"></param>
+        ///// <returns></returns>
+        //public DealResultInfo AddAccountNew(AccountCriteria criteria)
+        //{
+            //var dealResultInfo = new DealResultInfo
+            //{
+            //    DealFlag = false
+            //};
+            //var accountModel = new account
+            //{
+            //    UserName =criteria.UserName,
+            //    LoginName =criteria.LoginName,
+            //    Password = MD5Helper.MD5(criteria.Password),
+            //    GroupId = criteria.GroupId,
+            //    Status = criteria.Status
+            //};
+            //if (_dao.CheckHasAccountName(accountModel))
+            //{
+            //    dealResultInfo.DealMsg = "用户名已存在";
+            //    return dealResultInfo;
+            //}
+            //var a = _dao.AddAccount(account);
+
+            
+            //if (!string.IsNullOrWhiteSpace(criteria.CityCodeList))
+            //{
+            //    var cityCodeList = criteria.CityCodeList.Split(',');
+            //    var accountCityRelation = new AccountCityRelation
+            //    {
+            //        AccountId = criteria.Id
+
+            //    };
+            //    var b = _dao.DeleteAccountCityRelation(accountCityRelation);
+            //    foreach (var cityCode in cityCodeList)
+            //    {
+            //        acc
+            //        var c = _dao.AddAccountCityRelation();
+            //    }
+                
+                
+               
+            //}
+            //return dealResultInfo;
+        //}
       
     }
 }

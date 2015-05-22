@@ -1,4 +1,5 @@
 ﻿using Ets.Model.DataModel.Authority;
+using Ets.Model.ParameterModel.Authority;
 using Ets.Service.IProvider.AuthorityMenu;
 using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Authority;
@@ -107,9 +108,8 @@ namespace SuperMan.Controllers
         ///// </summary>
         ///// <returns></returns>
         //[HttpPost]
-        //public JsonResult AddNew(AccountModel accountModel)
+        //public JsonResult AddNew(AccountCriteria criteria)
         //{
-            
         //    var account = new Ets.Model.DataModel.Authority.account();
         //    account.LoginName = loginName;
         //    account.UserName = accountName;
