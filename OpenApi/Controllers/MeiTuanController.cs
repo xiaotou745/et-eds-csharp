@@ -55,7 +55,8 @@ namespace OpenApi.Controllers
                     CreatePM_OpenApi model = meituan.TranslateModel(paramodel);
                     if (model == null)  //商户在E代送不存在等情况下导致实体translate失败
                         return new ResultModelToString(data: "fail");
-                    return meituan.AddOrder(model) > 0 ? new ResultModelToString(data: "ok") : new ResultModelToString(data: "fail");
+                    meituan.AddOrder(model);
+                    return new ResultModelToString(data: "ok");
                 }
                 return new ResultModelToString(data: "fail");  //推送失败
             }
@@ -67,7 +68,7 @@ namespace OpenApi.Controllers
         }
 
         /// <summary>
-        /// 美团更新E代送订单状态   add by caoheyang 20150421  目前美团专用  
+        /// 美团取消订单回调E代送接口  add by caoheyang 20150421    
         /// </summary>
         /// <returns></returns>
         [HttpGet]

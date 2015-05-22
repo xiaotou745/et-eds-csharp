@@ -480,4 +480,11 @@ namespace ETS.Enums
         [DisplayText("请传递版本号")]
         NoVersion
     }
+
+    public enum MealsSettleMode
+    {
+        [DisplayText("线下结算")]
+        Status0 = 0,
+        [DisplayText("线上结算")]
+        Status1 = 1    }
 }

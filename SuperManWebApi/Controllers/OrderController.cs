@@ -300,10 +300,10 @@ namespace SuperManWebApi.Controllers
                 List<string> listReceiptPic = ImageCommon.ReceiptPicConvert(uploadReceiptModel.ReceiptPic);
                 List<OrderChildImg> listOrderChild = new List<OrderChildImg>();
                 listOrderChild.Add(new OrderChildImg() { OrderChildId = orderChildId, TicketUrl = listReceiptPic[0] });
-                if (!string.IsNullOrWhiteSpace(uploadReceiptModel.ReceiptPic))  //当有地址的时候删除
+                if (!string.IsNullOrWhiteSpace(receiptPic))  //当有地址的时候删除
                 {
                     ImageHelper imgHelper = new ImageHelper();
-                    imgHelper.DeleteTicket(uploadReceiptModel.ReceiptPic);
+                    imgHelper.DeleteTicket(receiptPic);
                 }
                 //上传成功后返回图片全路径
                 return ResultModel<UploadReceiptResultModel>.Conclude(UploadIconStatus.Success, new UploadReceiptResultModel() { OrderId = orderId, OrderChildList = listOrderChild, HadUploadCount = orderOther.HadUploadCount, NeedUploadCount = orderOther.NeedUploadCount });
@@ -311,7 +311,7 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary>
-        /// 删除小票信息
+        /// 删除小票信息 不需要了
         /// wc
         /// </summary>
         /// <param name="Version"></param>
@@ -418,12 +418,6 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<FinishOrderResultModel> Complete(OrderCompleteModel parModel)
         {
-            //var userId = ParseHelper.ToInt(HttpContext.Current.Request.Form["userId"], 0);   //骑士ID
-            //var orderNo = HttpContext.Current.Request.Form["orderNo"];
-            //var pickupCode = HttpContext.Current.Request.Form["pickupCode"];
-            //var version = HttpContext.Current.Request.Form["version"];
-            //float completeLongitude = float.Parse(HttpContext.Current.Request.Form["Longitude"]);
-            //float completeLatitude = float.Parse(HttpContext.Current.Request.Form["Latitude"]);
             if (parModel.userId == 0)  //用户id非空验证
                 return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.UserIdEmpty);
             if (string.IsNullOrEmpty(parModel.orderNo)) //订单号码非空验证
@@ -437,22 +431,23 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.ExistNotPayChildOrder);
             }
-            string finishResult = iClienterProvider.FinishOrder(parModel.userId, parModel.orderNo, parModel.Longitude, parModel.Latitude, parModel.pickupCode);
-            if (finishResult == "1")  //完成
+            FinishOrderResultModel finishModel = iClienterProvider.FinishOrder(parModel.userId, parModel.orderNo, parModel.Longitude, parModel.Latitude, parModel.pickupCode);
+            if (finishModel.Message == "1")  //完成
             {
-                var clienter = iClienterProvider.GetUserInfoByUserId(parModel.userId);
-                var model = new FinishOrderResultModel { userId = parModel.userId };
-                if (clienter.AccountBalance != null)
-                    model.balanceAmount = clienter.AccountBalance.Value;
-                else
-                    model.balanceAmount = 0.0m;
-                return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Success, model);
+                //var clienter = iClienterProvider.GetUserInfoByUserId(parModel.userId);
+                //var model = new FinishOrderResultModel { userId = parModel.userId };
+                //if (clienter.AccountBalance != null)
+                //    model.balanceAmount = clienter.AccountBalance.Value;
+                //else
+                //    model.balanceAmount = 0.0m;
+
+                return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Success, finishModel);
             }
-            else if (finishResult == "3")
+            else if (finishModel.Message == "3")
             {
                 return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderHadCancel);
             }
-            else if (finishResult == ETS.Enums.FinishOrderStatus.PickupCodeError.ToString())
+            else if (finishModel.Message == ETS.Enums.FinishOrderStatus.PickupCodeError.ToString())
                 return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.PickupCodeError);
             else
             {

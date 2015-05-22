@@ -33,5 +33,11 @@ namespace Ets.Service.IProvider.Order
         /// <param name="completeLongitude"></param>
         /// <param name="completeLatitude"></param>
         void UpdateComplete(string orderNo, float completeLongitude, float completeLatitude);
+
+        /// <summary>
+        /// 更新已提现
+        /// </summary>
+        /// <param name="orderId"></param>
+        void UpdateIsJoinWithdraw(int orderId);
     }
 }

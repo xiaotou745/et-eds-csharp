@@ -1,11 +1,16 @@
-﻿using Ets.Model.Common;
+﻿using Ets.Dao.Order;
+using Ets.Model.Common;
 using Ets.Model.DataModel.Bussiness;
+using Ets.Model.DataModel.Order;
 using Ets.Model.ParameterModel.Order;
+using ETS.NoSql.RedisCache;
 using Ets.Service.IProvider.OpenApi;
 using Ets.Service.Provider.OpenApi;
 using Ets.Service.Provider.Order;
 using ETS.Const;
 using ETS.Enums;
+using ETS.Transaction;
+using ETS.Transaction.Common;
 using ETS.Util;
 using Letao.Util;
 using Newtonsoft.Json.Linq;
@@ -20,6 +25,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using OrderDetail = Ets.Model.ParameterModel.Order.OrderDetail;
 
 namespace Ets.Service.Provider.OpenApi
 {
@@ -193,7 +199,7 @@ namespace Ets.Service.Provider.OpenApi
         /// <summary>
         /// 返回美团当前请求对应的签名  add by caoheyang 20150421
         /// </summary>
-        /// <param name="fromModel">美团数据实体</param>
+        /// <param name="httpRequest">上下文数据对象</param>
         /// <returns></returns>
         public string PostGetSig(System.Web.HttpRequest httpRequest)
         {
@@ -203,7 +209,7 @@ namespace Ets.Service.Provider.OpenApi
                 if (key != "sig")
                 {
                     string valtemp = System.Web.HttpUtility.UrlDecode(System.Web.HttpUtility.UrlDecode(httpRequest.Form[key]));
-                    paras.Add(key + "=" + (valtemp == null ? "" : valtemp));
+                    paras.Add(key + "=" + (valtemp ?? ""));
                 }
             }
             paras.Sort();
@@ -217,7 +223,7 @@ namespace Ets.Service.Provider.OpenApi
         /// <summary>
         /// 返回美团当前请求对应的签名  add by caoheyang 20150421
         /// </summary>
-        /// <param name="fromModel">美团数据实体</param>
+        /// <param name="httpRequest">上下文数据对象</param>
         /// <returns></returns>
         public string GetSig(System.Web.HttpRequest httpRequest)
         {
@@ -227,7 +233,7 @@ namespace Ets.Service.Provider.OpenApi
                 if (key != "sig")
                 {
                     string valtemp = System.Web.HttpUtility.UrlDecode(System.Web.HttpUtility.UrlDecode(httpRequest.QueryString[key]));
-                    paras.Add(key + "=" + (valtemp == null ? "" : valtemp));
+                    paras.Add(key + "=" + (valtemp ?? ""));
                 }
             }
             paras.Sort(new NewStringComparer());  //TODO待长时间验证  目前慎用
@@ -245,22 +251,22 @@ namespace Ets.Service.Provider.OpenApi
         /// <param name="fromModel">美团数据实体</param>
         public CreatePM_OpenApi TranslateModel(MeiTuanOrdeModel fromModel)
         {
-            
-            #region 订单基础数据 
+
+            #region 订单基础数据
             CreatePM_OpenApi model = new CreatePM_OpenApi();
             model.order_id = fromModel.order_id; //订单ID
-            ///店铺信息  店铺是已经在E代送存在的，这里没有任何实际意义，数据用不到
+            //店铺信息  店铺是已经在E代送存在的，这里没有任何实际意义，数据用不到
             Store store = new Store();
             store.store_id = fromModel.app_poi_code;//对接方店铺id
             store.store_name = fromModel.wm_poi_name;//店铺名称
             store.address = fromModel.wm_poi_address;//店铺地址
             store.phone = fromModel.wm_poi_phone;//店铺电话
-         
+            store.group = OrderConst.OrderFrom4;//店铺电话
             model.remark = fromModel.caution;//备注
             model.status = OrderConst.OrderStatus30;//初始化订单状态 第三方代接入
             model.create_time = DateTime.Now;//订单发单时间 创建时间
             model.payment = fromModel.pay_type;//支付类型
-            model.is_pay = fromModel.pay_type == 1 ? false : true;//目前货到付款时取未支付，在线支付取已支付
+            model.is_pay = fromModel.pay_type != 1;//目前货到付款时取未支付，在线支付取已支付
             model.total_price = fromModel.total;//订单金额
             model.store_info = store; //店铺 
             model.invoice_title = fromModel.invoice_title;//发票标题
@@ -268,7 +274,7 @@ namespace Ets.Service.Provider.OpenApi
             //订单明细不为空时做处理 
             if (!string.IsNullOrWhiteSpace(fromModel.detail) && fromModel.detail != "")
             {
-                MeiTuanOrdeDetailModel[] meituandetails = Letao.Util.JsonHelper.JsonConvertToObject<MeiTuanOrdeDetailModel[]>(fromModel.detail);
+                MeiTuanOrdeDetailModel[] meituandetails = JsonHelper.JsonConvertToObject<MeiTuanOrdeDetailModel[]>(fromModel.detail);
                 OrderDetail[] details = new OrderDetail[meituandetails.Length];
                 for (int i = 0; i < meituandetails.Length; i++)
                 {
@@ -283,15 +289,22 @@ namespace Ets.Service.Provider.OpenApi
             }
 
             model.orderfrom = OrderConst.OrderFrom4;// 订单来源  美团订单的订单来源是 4
+
             model.receive_time = TimeHelper.TimeStampToDateTime(fromModel.ctime);//美团不传递，E代送必填 要求送餐时间 
             #endregion
 
-            #region 订单商户相关信息  
+            #region 订单商户相关信息
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             int businessId = ParseHelper.ToInt(redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, model.orderfrom,
             model.store_info.store_id.ToString()))); //缓存中取E代送商户id
             if (businessId == 0)
+            {
                 return null;
+            }
+            else
+            {
+                model.businessId = businessId;
+            }
             BusListResultModel business = new Ets.Dao.User.BusinessDao().GetBusiness(businessId);
             if (business.Status != ConstValues.BUSINESS_AUDITPASS)//商户非审核通过不允许接单
             {
@@ -299,7 +312,6 @@ namespace Ets.Service.Provider.OpenApi
             }
             model.store_info.delivery_fee = ParseHelper.ToDecimal(business.DistribSubsidy);//外送费
             model.store_info.businesscommission = ParseHelper.ToDecimal(business.BusinessCommission);//结算比例
-            model.businessId = businessId;
             model.CommissionType = business.CommissionType;
             model.CommissionFixValue = business.CommissionFixValue;
             model.BusinessGroupId = business.BusinessGroupId;
@@ -321,13 +333,13 @@ namespace Ets.Service.Provider.OpenApi
             model.address = address; //订单ID 
             #endregion
 
-            #region 佣金相关  
+            #region 佣金相关
             model.package_count = 1; //订单份数
             //佣金计算规则
             //model.CommissionFormulaMode = ParseHelper.ToInt(Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet(1).CommissionFormulaMode);
             model.CommissionFormulaMode = business.StrategyId;
             //计算获得订单骑士佣金
-            Ets.Model.DataModel.Order.OrderCommission orderComm = new Ets.Model.DataModel.Order.OrderCommission()
+            OrderCommission orderComm = new OrderCommission()
             {
                 Amount = model.total_price, /*订单金额*/
                 DistribSubsidy = model.store_info.delivery_fee,/*外送费*/
@@ -352,10 +364,35 @@ namespace Ets.Service.Provider.OpenApi
         /// <summary>
         /// 新增美团订单 add by caoheyang 20150421 
         /// </summary>
-        /// <param name="fromModel">paraModel</param>
-        public int AddOrder(CreatePM_OpenApi paramodel)
+        /// <param name="paramodel">paraModel</param>
+        public void AddOrder(CreatePM_OpenApi paramodel)
         {
-            return string.IsNullOrWhiteSpace(new Ets.Dao.Order.OrderDao().CreateToSql(paramodel)) ? 0 : 1;
+            string orderNo = Helper.generateOrderCode(paramodel.businessId);
+            RedisCache redis = new RedisCache();
+            try
+            {
+                using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+                {
+
+                    OrderDao orderDao = new OrderDao();
+                    paramodel.OrderNo = orderNo;
+                    //将当前订单插入到缓存中，设置过期时间30天
+                    redis.Set(string.Format(RedissCacheKey.OtherOrderInfo, paramodel.orderfrom.ToString(),
+                        paramodel.order_id.ToString()), orderNo, DateTime.Now.AddDays(30));  //先加入缓存，相当于加锁
+                    int orderId = orderDao.CreateToSql(paramodel);  //插入订单返回订单id
+                    orderDao.CreateToSqlAddOrderOther(paramodel.businessId, orderId); //操作插入OrderOther表
+                    orderDao.CreateToSqlAddOrderDetail(paramodel, orderNo); //操作插入OrderDetail表
+                    orderDao.CreateToSqlAddOrderChild(paramodel, orderId); //插入订单子表
+                    tran.Complete();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                redis.Delete(string.Format(RedissCacheKey.OtherOrderInfo, //同步失败，清除缓存内的订单信息信息
+                       paramodel.store_info.group.ToString(), paramodel.order_id.ToString()));
+                throw ex;
+            }
         }
     }
 

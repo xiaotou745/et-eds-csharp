@@ -132,7 +132,7 @@ namespace Ets.Service.Provider.Subsidy
                     Amount = withdraw.Amount,  //奖励的金额
                     Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
                     Balance = withdraw.Balance + withdraw.Amount ,  //奖励后的金额
-                    RecordType = ClienterBalanceRecordRecordType.Award.GetHashCode(),
+                    RecordType = ClienterBalanceRecordRecordType.SystemReward.GetHashCode(),
                     Operator = "系统服务",
                     RelationNo = "",
                     Remark = "跨店骑士奖励"

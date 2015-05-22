@@ -2,35 +2,14 @@
 @{
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
 }
+@using ETS.Enums
+@using ETS.Extension
 @using ETS.Util;
 <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
 <script src="~/Scripts/jquery-1.8.2.js"></script>
 <script src="~/Scripts/jquery-ui-1.8.20.js"></script>
 <script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
 <div style="width:1000px">
-    @{
-        var strstatus = "";
-        if (Model.Status == ETS.Enums.ClienterWithdrawFormStatus.WaitAllow.GetHashCode())
-        {
-            strstatus = "待审核";
-        }
-        else if (Model.Status == ETS.Enums.ClienterWithdrawFormStatus.Allow.GetHashCode())
-        {
-            strstatus = "审核通过";
-        }
-        else if (Model.Status == ETS.Enums.ClienterWithdrawFormStatus.Success.GetHashCode())
-        {
-            strstatus = "打款完成";
-        }
-        else if (Model.Status == ETS.Enums.ClienterWithdrawFormStatus.TurnDown.GetHashCode())
-        {
-            strstatus = "审核拒绝";
-        }
-        else if (Model.Status == ETS.Enums.ClienterWithdrawFormStatus.Error.GetHashCode())
-        {
-            strstatus = "打款失败";
-        }
-    }
     <h2 class="crumbs">
         您所在位置：骑士 > 骑士管理 > 收支记录
     </h2>
@@ -56,15 +35,7 @@
     </table>
     <div class="SearchMd">
         <span class="">交易类型: </span>
-        <select name="withdrawStatus" class="selectw" id="recordType" style="width:157px">
-            <option value="0">全部</option>
-            <option value="1">奖励</option>
-            <option value="2">配送费</option>
-            <option value="3">提现</option>
-            <option value="4">取消订单赔偿</option>
-            <option value="5">无效订单扣款</option>
-            <option value="6">提现失败返现</option>
-        </select>
+        @Html.DropDownList("recordType", new SelectList(EnumExtenstion.GetEnumItems(typeof(ClienterBalanceRecordRecordType)), "Value", "Text"), "全部", new { @class = "selectw", style = "width:143px" })
         <span class="">提款单号: </span>
         <input id="withwardNo" type="text" name="withwardNo" />
         <br />
@@ -115,20 +86,6 @@
             alert("请输入时间范围!");
             return;
         }
-        //var url = "/BusinessWithdraw/ExportBusinessWithdrawForm";
-        //var paramaters = { "businessName": businessName, "BusinessPhoneNo": BusinessPhoneNo, "businessCity": businessCity, "withdrawStatus": withdrawStatus, "withwardNo": withwardNo, "withdrawDateStart": withdrawDateStart, "withdrawDateEnd": withdrawDateEnd };
-        //$.ajax({
-        //    type: 'POST',
-        //    url: url,
-        //    data: paramaters,
-        //    success: function (result) {
-        //        if (result.IsSuccess) {
-        //            alert(result.Message);
-        //        } else {
-        //            alert(result.Message);
-        //        }
-        //    }
-        //});
         var url = "/SuperManManager/ExportClienterBalanceRecord?clienterId=" + clienterId + "&recordType=" + recordType + "&relationNo=" + relationNo + "&operateTimeStart=" + operateTimeStart + "&operateTimeEnd=" + operateTimeEnd;
         window.location.href = url;
         return true;

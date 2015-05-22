@@ -66,6 +66,7 @@
     <Compile Include="DataModel\Clienter\ClienterLocation.cs" />
     <Compile Include="DataModel\Clienter\CrossShopStatisticLogModel.cs" />
     <Compile Include="DataModel\Order\OrderChildFinishModel.cs" />
+    <Compile Include="DataModel\Order\OrderChildPayModel.cs" />
     <Compile Include="DataModel\Order\PayStatusModel.cs" />
     <Compile Include="DataModel\Strategy\StrategyModel.cs" />
     <Compile Include="DataModel\Finance\Bank.cs" />
@@ -240,6 +241,7 @@
     <Compile Include="ParameterModel\Order\OrderRecordsLog.cs" />
     <Compile Include="ParameterModel\Order\OrderSearchCriteria.cs" />
     <Compile Include="ParameterModel\Order\PullOrderInfoPM_OpenApi.cs" />
+    <Compile Include="ParameterModel\Order\UserStatusModel.cs" />
     <Compile Include="ParameterModel\Sms\SmsParaModel.cs" />
     <Compile Include="ParameterModel\Subsidy\CrossShopListModel.cs" />
     <Compile Include="ParameterModel\Subsidy\SubsidyModel.cs" />

@@ -4,6 +4,7 @@
         <tr class="tdbg">
             <th>交易类型</th>
             <th>任务单号/交易流水号</th>
+            <th>收支金额</th>
             <th>余额</th>
             <th>状态</th>
             <th>时间</th>
@@ -18,35 +19,23 @@
                 var recordTypeDes = "";
                 foreach (var item in clienterBalanceRecordList)
                 {
-                    if (item.RecordType == ETS.Enums.ClienterBalanceRecordRecordType.Commission.GetHashCode())
-                    {
-                        recordTypeDes = "佣金";
-                    }
-                    else if (item.RecordType == ETS.Enums.ClienterBalanceRecordRecordType.Award.GetHashCode())
-                    {
-                        recordTypeDes = "奖励";
-                    }
-                    else if (item.RecordType == ETS.Enums.ClienterBalanceRecordRecordType.Withdraw.GetHashCode())
-                    {
-                        recordTypeDes = "提现";
-                    }
-                    else if (item.RecordType == ETS.Enums.ClienterBalanceRecordRecordType.QuXiaoOrder.GetHashCode())
-                    {
-                        recordTypeDes = "取消订单赔偿";
-                    }
-                    else if (item.RecordType == ETS.Enums.ClienterBalanceRecordRecordType.WuXiaoOrder.GetHashCode())
-                    {
-                        recordTypeDes = "无效订单扣款";
-                    }
-                    else if (item.RecordType == ETS.Enums.ClienterBalanceRecordRecordType.Return.GetHashCode())
-                    {
-                        recordTypeDes = "提现失败返现";
-                    }
+                    recordTypeDes = ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.ClienterBalanceRecordRecordType)item.RecordType).GetType(), (ETS.Enums.ClienterBalanceRecordRecordType)item.RecordType).Text;
                     i++;
                     <tr id="@item.Id">
                         <td>@recordTypeDes</td>
-                        <td><a href="javascript:funLookDetail(@item.WithwardId)">@item.RelationNo</a></td>
-                        <td>@item.Balance</td>
+                        <td>
+                            @if (item.RecordType == 3 || item.RecordType == 4 || item.RecordType == 5)
+                            {
+                                <a href="javascript:funLookDetail(@item.WithwardId)">@item.RelationNo</a>
+
+                            }
+                            else
+                            {
+                                <a href="/Order/OrderDetail?OrderNo=@item.RelationNo&OrderId=@item.WithwardId ">@item.RelationNo</a>
+                            }
+                        </td>
+                        <td>￥@ParseHelper.ToSplitByPercentile(false,@item.Amount)</td>
+                        <td>￥@ParseHelper.ToSplitByPercentile(false,@item.Balance)</td>
                         <td>@(item.Status == ETS.Enums.ClienterBalanceRecordStatus.Success.GetHashCode() ? "交易成功" : "交易中")</td>
                         <td>@item.OperateTime</td>
                         <td>@item.Operator</td>
@@ -140,7 +129,7 @@
                     $('#labWithdrawTime').text(withdrawTime);
                     $('#labWithdrawStatus').text(strstatus);
                     $('#labWithdrawNo').text(jsonstr.WithwardNo);
-                    $('#labAmount').text(jsonstr.Amount);
+                    $('#labAmount').text('￥'+jsonstr.Amount);
                     $('#labClienterName').text(jsonstr.ClienterName);
                     $('#labClienterPhoneNo').text(jsonstr.ClienterPhoneNo);
                     $('#labClienterOpenBank').text(jsonstr.OpenBank);

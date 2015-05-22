@@ -61,5 +61,20 @@ select id from dbo.[order] where OrderNo=@OrderNo
             dbParameters.AddWithValue("@orderNo", orderNo);
             DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
         }
+
+        /// <summary>
+        /// 更新已提现
+        /// </summary>
+        /// <param name="orderId"></param>
+        public void UpdateIsJoinWithdraw(int orderId)
+        {
+            const string UPDATE_SQL = @"
+update OrderOther set IsJoinWithdraw=1 where orderId=@orderId";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@orderId", orderId);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
+        }
+
     }
 }

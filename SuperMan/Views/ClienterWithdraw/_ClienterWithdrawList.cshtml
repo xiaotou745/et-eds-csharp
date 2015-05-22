@@ -29,33 +29,10 @@
                         <td><a href="/ClienterWithdraw/ClienterWithdrawDetail?withwardId=@item.Id" style=" text-decoration-line: underline">@item.WithwardNo</a></td>
                         <td>@item.ClienterName</td>
                         <td>@item.ClienterPhoneNo</td>
-                        <td>@ParseHelper.ToSplitByPercentile(false, item.BalancePrice)</td>
-                        <td>@ParseHelper.ToSplitByPercentile(false, item.AllowWithdrawPrice)</td>
-                        <td style="color:green;font-weight:600">@ParseHelper.ToSplitByPercentile(false, item.Amount)</td>
-                        @{
-                    var strstatus = "";
-                    if (item.Status == ETS.Enums.ClienterWithdrawFormStatus.WaitAllow.GetHashCode())
-                    {
-                        strstatus = "待审核";
-                    }
-                    else if (item.Status == ETS.Enums.ClienterWithdrawFormStatus.Allow.GetHashCode())
-                    {
-                        strstatus = "审核通过";
-                    }
-                    else if (item.Status == ETS.Enums.ClienterWithdrawFormStatus.Success.GetHashCode())
-                    {
-                        strstatus = "打款完成";
-                    }
-                    else if (item.Status == ETS.Enums.ClienterWithdrawFormStatus.TurnDown.GetHashCode())
-                    {
-                        strstatus = "审核拒绝";
-                    }
-                    else if (item.Status == ETS.Enums.ClienterWithdrawFormStatus.Error.GetHashCode())
-                    {
-                        strstatus = "打款失败";
-                    }
-                        }
-                        <td>@strstatus</td>
+                        <td>￥@ParseHelper.ToSplitByPercentile(false, item.BalancePrice)</td>
+                        <td>￥@ParseHelper.ToSplitByPercentile(false, item.AllowWithdrawPrice)</td>
+                        <td style="color:green;font-weight:600">￥@ParseHelper.ToSplitByPercentile(false, item.Amount)</td>
+                        <td>@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.ClienterWithdrawFormStatus)item.Status).GetType(), (ETS.Enums.ClienterWithdrawFormStatus)item.Status).Text</td>
                         <td>@item.WithdrawTime</td>
                         <td>
                             @if (item.Status == 1)

@@ -186,7 +186,7 @@ namespace Ets.Model.DomainModel.Order
         public List<OrderDetailInfo> listOrderDetail { get; set; }
 
         /// <summary>
-        /// 是否允许修改
+        /// 是否允许修改小票
         /// </summary>
         public bool IsModifyTicket { get; set; }
 
@@ -199,6 +199,11 @@ namespace Ets.Model.DomainModel.Order
         /// 订单总金额
         /// </summary>
         public decimal? TotalAmount { get; set; }
+
+        /// <summary>
+        /// 餐费结算方式（0：线下结算 1：线上结算）
+        /// </summary>
+        public int MealsSettleMode { get; set; }
     }
 
     public class OrderChildInfo

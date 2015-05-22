@@ -69,23 +69,25 @@ namespace Ets.Service.Provider.User
                 model.superManPhone = from.SuperManPhone;
                 model.OrderFrom = from.OrderFrom.ToString();
                 model.OrderId = from.OrderId;
+                model.MealsSettleMode = from.MealsSettleMode;
+                model.TotalAmount = from.TotalAmount;
                 if (from.OrderFrom == 0)
                 {
                     model.OrderFromName = "B端";
                 }
-                if (from.OrderFrom == 1)
+                else if (from.OrderFrom == 1)
                 {
                     model.OrderFromName = "易淘食";
                 }
-                if (from.OrderFrom == 2)
+                else if (from.OrderFrom == 2)
                 {
                     model.OrderFromName = "万达";
                 }
-                if (from.OrderFrom == 3)
+                else if (from.OrderFrom == 3)
                 {
                     model.OrderFromName = "全时";
                 }
-                if (from.OrderFrom == 4)
+                else if (from.OrderFrom == 4)
                 {
                     model.OrderFromName = "美团";
                 }
@@ -776,7 +778,7 @@ namespace Ets.Service.Provider.User
             oom.OptUserName = "第三方";
             oom.OrderNo = myOrder.OrderNo;
             oom.OptLog = string.Format("第三方调用取消订单,订单来源{0}", model.OrderFrom);
-            bool reg = new OrderProvider().CancelOrderByOrderNo(oom);
+            var reg = new OrderProvider().CancelOrderByOrderNo(oom);
             if (b)
             {
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.Success);
@@ -790,24 +792,23 @@ namespace Ets.Service.Provider.User
         /// 获取用户状态信息
         /// </summary>
         /// <param name="userid"></param>
-        /// <param name="version"></param>
         /// <returns></returns>
-        public BussinessStatusModel GetUserStatus(int userid, double version)
+        public BussinessStatusModel GetUserStatus(int userid)
         {
             try
             {
-                ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
-                string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, userid);
-                var cacheValue = redis.Get<string>(cacheKey);
-                if (!string.IsNullOrEmpty(cacheValue))
-                {
-                    return Letao.Util.JsonHelper.ToObject<BussinessStatusModel>(cacheValue);
-                }
+                //ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
+                //string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, userid);
+                //var cacheValue = redis.Get<string>(cacheKey);
+                //if (!string.IsNullOrEmpty(cacheValue))
+                //{
+                //    return Letao.Util.JsonHelper.ToObject<BussinessStatusModel>(cacheValue);
+                //}
                 var UserInfo = dao.GetUserStatus(userid);
-                if (UserInfo != null)
-                {
-                    redis.Add(cacheKey, Letao.Util.JsonHelper.ToJson(UserInfo));
-                }
+                //if (UserInfo != null)
+                //{
+                //    redis.Add(cacheKey, Letao.Util.JsonHelper.ToJson(UserInfo));
+                //}
                 return UserInfo;
             }
             catch (Exception ex)

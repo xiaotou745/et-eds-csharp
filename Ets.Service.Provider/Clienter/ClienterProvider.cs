@@ -30,6 +30,9 @@ using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Order;
 using ETS.NoSql.RedisCache;
 using Ets.Model.DomainModel.Order;
+using Ets.Service.Provider.Order;
+using Ets.Service.IProvider.Order;
+using Ets.Model.ParameterModel.Finance;
 namespace Ets.Service.Provider.Clienter
 {
     public class ClienterProvider : IClienterProvider
@@ -42,6 +45,10 @@ namespace Ets.Service.Provider.Clienter
         private readonly BusinessDao businessDao = new BusinessDao();
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
         private readonly BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
+
+        readonly IOrderOtherProvider iOrderOtherProvider = new OrderOtherProvider();
+        private readonly BusinessDao _businessDao = new BusinessDao();
+        private readonly BusinessBalanceRecordDao _businessBalanceRecordDao = new BusinessBalanceRecordDao();
         /// <summary>
         /// 骑士上下班功能 add by caoheyang 20150312
         /// </summary>
@@ -467,24 +474,23 @@ namespace Ets.Service.Provider.Clienter
         /// 获取用户状态
         /// </summary>
         /// <param name="UserId"></param>
-        /// <param name="version"></param>
         /// <returns></returns>
-        public ClienterStatusModel GetUserStatus(int UserId, double version)
+        public ClienterStatusModel GetUserStatus(int UserId)
         {
             try
             {
-                ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
-                string cacheKey = string.Format(RedissCacheKey.ClienterProvider_GetUserStatus, UserId);
-                var cacheValue = redis.Get<string>(cacheKey);
-                if (!string.IsNullOrEmpty(cacheValue))
-                {
-                    return Letao.Util.JsonHelper.ToObject<ClienterStatusModel>(cacheValue);
-                }
+                //ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
+                //string cacheKey = string.Format(RedissCacheKey.ClienterProvider_GetUserStatus, UserId);
+                //var cacheValue = redis.Get<string>(cacheKey);
+                //if (!string.IsNullOrEmpty(cacheValue))
+                //{
+                //    return Letao.Util.JsonHelper.ToObject<ClienterStatusModel>(cacheValue);
+                //}
                 var UserInfo = clienterDao.GetUserStatus(UserId);
-                if (UserInfo != null)
-                {
-                    redis.Add(cacheKey, Letao.Util.JsonHelper.ToJson(UserInfo));
-                }
+                //if (UserInfo != null)
+                //{
+                //    redis.Add(cacheKey, Letao.Util.JsonHelper.ToJson(UserInfo));
+                //}
                 return UserInfo;
             }
             catch (Exception ex)
@@ -500,52 +506,73 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="orderNo">订单号码</param>
         /// <param name="pickupCode">取货码</param>
         /// <returns></returns>
-        public string FinishOrder(int userId, string orderNo,  float completeLongitude, float CompleteLatitude,string pickupCode = null)
+        public FinishOrderResultModel FinishOrder(int userId, string orderNo, float completeLongitude, float CompleteLatitude, string pickupCode = null)
         {
-            string result = "-1";
+            FinishOrderResultModel model = new FinishOrderResultModel() { Message="-1"};
+            //string result = "-1";
             int businessId = 0;
             OrderListModel myOrderInfo = orderDao.GetByOrderNo(orderNo);
+
+            #region 是否允许修改小票
+            model.IsModifyTicket = true;
+            if (myOrderInfo.NeedUploadCount >= myOrderInfo.OrderCount && myOrderInfo.Status == OrderStatus.订单完成.GetHashCode())
+            {
+                model.IsModifyTicket = false;
+            }
+            #endregion
+
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 //获取该订单信息和该  骑士现在的 收入金额
                 if (myOrderInfo.GroupId == SystemConst.Group3 && !string.IsNullOrWhiteSpace(myOrderInfo.PickupCode)
                     && pickupCode != myOrderInfo.PickupCode) //全时订单 判断 取货码是否正确
-                    return FinishOrderStatus.PickupCodeError.ToString();
+                    //return FinishOrderStatus.PickupCodeError.ToString();
+                {
+                    model.Message=FinishOrderStatus.PickupCodeError.ToString();
+                    return model;
+                }
                 //更新订单状态
                 if (myOrderInfo != null)
                 {
                     var upresult = orderDao.FinishOrderStatus(orderNo, userId, myOrderInfo);
                     if (upresult <= 0)
                     {
-                        return "3";
+                        model.Message = "3";
+                        return model;
                     }
                     //写入骑士完成坐标                 
                     orderOtherDao.UpdateComplete(orderNo, completeLongitude, CompleteLatitude);
 
-                    if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)  //当用户上传的小票数量 和 需要上传的小票数量一致的时候，更新用户金额
-                    {
-                        if (CheckOrderPay(orderNo))
-                        {
-                            UpdateClienterAccount(userId, myOrderInfo);
-                        }
-                    }
-                    businessId = myOrderInfo.businessId;
-                    ////完成任务的时候，当任务为未付款时，更新商户金额
-                    if (myOrderInfo.IsPay.HasValue && !myOrderInfo.IsPay.Value)
-                    {
-                        BusinessBalanceRecord businessBalanceRecord = new BusinessBalanceRecord();
-                        businessBalanceRecordDao.InsertSingle(businessBalanceRecord);
-                    }
+                    ///更新骑士和商家金额
+                    UpdateMoney(myOrderInfo, userId, orderNo);
+
+                    #region 临时
+                    //if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)  //当用户上传的小票数量 和 需要上传的小票数量一致的时候，更新用户金额
+                    //{
+                    //    if (CheckOrderPay(orderNo))
+                    //    {
+                    //        UpdateClienterAccount(userId, myOrderInfo);
+                    //    }
+                    //}
+                    //businessId = myOrderInfo.businessId;
+                    //////完成任务的时候，当任务为未付款时，更新商户金额
+                    //if (myOrderInfo.IsPay.HasValue && !myOrderInfo.IsPay.Value)
+                    //{
+                    //    BusinessBalanceRecord businessBalanceRecord = new BusinessBalanceRecord();
+                    //    businessBalanceRecordDao.InsertSingle(businessBalanceRecord);
+                    //}
+                    #endregion
+
                     tran.Complete();
-                    result = "1";
+                    model.Message = "1";
                 }
             }
             new OrderProvider().AsyncOrderStatus(orderNo);
-            if (businessId != 0 && result == "1")
+            if (businessId != 0 && model.Message == "1")
             {
                 Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", businessId.ToString(), string.Empty);
             }
-            return result;
+            return model;
         }
 
         /// <summary>
@@ -594,13 +621,50 @@ namespace Ets.Service.Provider.Clienter
                 Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
                 Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
                 Balance = accountBalance ?? 0,
-                RecordType = ClienterBalanceRecordRecordType.Commission.GetHashCode(),
+                RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
                 Operator = myOrderInfo.ClienterName,
                 RelationNo = myOrderInfo.OrderNo,
                 Remark = "骑士完成订单"
             };
             clienterBalanceRecordDao.Insert(cbrm);
         }
+
+
+        /// <summary>
+        /// 更新用户金额      
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="myOrderInfo"></param>
+        public void UpdateAccountBalanceAndWithdraw(int userId, OrderListModel myOrderInfo)
+        {
+            //更新骑士 金额  
+            bool b = clienterDao.UpdateAccountBalanceAndWithdraw(new WithdrawRecordsModel() { UserId = userId, Amount = myOrderInfo.OrderCommission.Value });
+            //增加记录 
+            decimal? accountBalance = 0;
+            //更新用户相关金额数据 
+            if (myOrderInfo.AccountBalance.HasValue)
+            {
+                accountBalance = myOrderInfo.AccountBalance.Value + (myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission));
+            }
+            else
+            {
+                accountBalance = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission);
+            }
+
+            ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
+            {
+                ClienterId = userId,
+                Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
+                Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
+                Balance = accountBalance ?? 0,
+                RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
+                Operator = myOrderInfo.ClienterName,
+                RelationNo = myOrderInfo.OrderNo,
+                Remark = "骑士完成订单"
+            };
+            clienterBalanceRecordDao.Insert(cbrm);
+        }
+
 
         public ClienterModel GetUserInfoByUserId(int UserId)
         {
@@ -663,37 +727,164 @@ namespace Ets.Service.Provider.Clienter
             {
                 orderOther = clienterDao.UpdateClientReceiptPicInfo(uploadReceiptModel);
                 //上传成功后， 判断 订单 创建时间在 2015-4-18 00：00 之前的订单不在增加佣金
-                string date = "2015-04-18 00:00:00"; 
-                if (orderOther.OrderCreateTime > Convert.ToDateTime(date) 
-                    && orderOther.OrderStatus == ConstValues.ORDER_FINISH 
-                    && orderOther.HadUploadCount == orderOther.NeedUploadCount)
+                string date = "2015-04-18 00:00:00";
+
+                //更新骑士金额
+
+                #region 是否给骑士加佣金，如果当前时间大于等于 上传小票的时间+24小时，就不增加佣金
+                DateTime doneDate = ParseHelper.ToDatetime(myOrderInfo.ActualDoneDate, DateTime.Now).AddDays(1);//完成时间加一天
+                bool IsPayOrderCommission = true;
+                if (myOrderInfo.ActualDoneDate != null && DateTime.Now >= doneDate)
+                {
+                    IsPayOrderCommission = false;
+                }
+                #endregion
+
+                if (IsPayOrderCommission && orderOther.OrderCreateTime > Convert.ToDateTime(date)
+                   && orderOther.OrderStatus == ConstValues.ORDER_FINISH)
+                {
+                    UpdateClienterMoney(myOrderInfo, uploadReceiptModel);
+                }
+
+                #region 临时
+                //if (orderOther.OrderCreateTime > Convert.ToDateTime(date) 
+                //    && orderOther.OrderStatus == ConstValues.ORDER_FINISH 
+                //    && orderOther.HadUploadCount == orderOther.NeedUploadCount)
+                //{
+                //    if (CheckOrderPay(myOrderInfo.OrderNo))
+                //    {
+                //        //更新骑士金额 
+                //        UpdateClienterAccount(uploadReceiptModel.ClienterId, myOrderInfo); 
+                //    }
+                //}               
+                ////更新商家金额 注意：和是否上传小票无关
+                //if (myOrderInfo.IsPay.HasValue && !myOrderInfo.IsPay.Value)  //订单未支付的时候，更新商家所得金额
+                //{
+                //    bool bResult = businessDao.UpdateBusinessBalancePrice(myOrderInfo.businessId, myOrderInfo.ShouldPayBusiMoney);
+                //    if (bResult)
+                //    {
+                //        businessBalanceRecordDao.InsertSingle(new BusinessBalanceRecord()
+                //        {
+                //            Amount = myOrderInfo.ShouldPayBusiMoney,
+                //            BusinessId = myOrderInfo.businessId,
+                //            Remark = "骑士完成订单且未支付",
+                //            RelationNo = myOrderInfo.OrderNo,
+                //            Operator = myOrderInfo.ClienterName,
+                //            RecordType = BusinessBalanceRecordRecordType.OrderMeals.GetHashCode()
+                //        });
+                //    }
+                //}                
+                #endregion
+
+                tran.Complete();
+            }
+            return orderOther;
+        }
+
+        void UpdateClienterMoney(OrderListModel myOrderInfo, UploadReceiptModel uploadReceiptModel)
+        {
+            if ((bool)myOrderInfo.IsPay)//已付款
+            {
+                //上传完小票
+                //(1)更新给骑士余额
+                if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)
                 {
                     if (CheckOrderPay(myOrderInfo.OrderNo))
                     {
-                        //更新骑士金额 
-                        UpdateClienterAccount(uploadReceiptModel.ClienterId, myOrderInfo); 
+                        UpdateClienterAccount(uploadReceiptModel.ClienterId, myOrderInfo);
                     }
                 }
-                //更新商家金额 注意：和是否上传小票无关
-                if (myOrderInfo.IsPay.HasValue && !myOrderInfo.IsPay.Value)  //订单未支付的时候，更新商家所得金额
+            }
+            else if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.Status0.GetHashCode())//未付款,骑士代付
+            {
+                //上传完小票
+                //(1)更新给骑士余额
+                if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)
                 {
-                    bool bResult = businessDao.UpdateBusinessBalancePrice(myOrderInfo.businessId, myOrderInfo.ShouldPayBusiMoney);
-                    if (bResult)
+                    if (CheckOrderPay(myOrderInfo.OrderNo))
                     {
-                        businessBalanceRecordDao.InsertSingle(new BusinessBalanceRecord()
-                        {
-                            Amount = myOrderInfo.ShouldPayBusiMoney,
-                            BusinessId = myOrderInfo.businessId,
-                            Remark = "骑士完成订单且未支付",
-                            RelationNo = myOrderInfo.OrderNo,
-                            Operator = myOrderInfo.ClienterName,
-                            RecordType = BusinessBalanceRecordRecordType.OrderMeals.GetHashCode()
-                        });
+                        UpdateClienterAccount(uploadReceiptModel.ClienterId, myOrderInfo);
                     }
                 }
-                tran.Complete();
-            } 
-            return orderOther;
+            }
+            else if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.Status1.GetHashCode())//未付款,线上结算
+            {
+                //上传完小票
+                //(1)更新给骑士余额、可提现余额
+                //(2)把OrderOther把IsJoinWithdraw状态改为1
+                if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)
+                {
+                    if (CheckOrderPay(myOrderInfo.OrderNo))
+                    {
+                        UpdateAccountBalanceAndWithdraw(uploadReceiptModel.ClienterId, myOrderInfo);
+                        iOrderOtherProvider.UpdateIsJoinWithdraw(myOrderInfo.Id);
+                    }
+                }
+            }
+        }
+
+        void UpdateMoney(OrderListModel myOrderInfo, int userId, string orderNo)
+        {
+            if ((bool)myOrderInfo.IsPay)//已付款
+            {
+                //上传完小票
+                //(1)更新给骑士余额
+                if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)
+                {
+                    if (CheckOrderPay(orderNo))
+                    {
+                        UpdateClienterAccount(userId, myOrderInfo);
+                    }
+                }
+            }
+            else if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.Status0.GetHashCode())//未付款,骑士代付
+            {
+                //上传完小票
+                //(1)更新给骑士余额
+                if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)
+                {
+                    if (CheckOrderPay(orderNo))
+                    {
+                        UpdateClienterAccount(userId, myOrderInfo);
+                    }
+                }
+            }
+            else if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.Status1.GetHashCode())//未付款,线上结算
+            {
+                //返还商户金额
+                _businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
+                {
+                    Id = Convert.ToInt32(myOrderInfo.businessId),
+                    Money = myOrderInfo.BusinessReceivable
+                });
+
+                #region 商户余额流水操作
+                _businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
+                {
+                    BusinessId = Convert.ToInt32(myOrderInfo.businessId),
+                    Amount = myOrderInfo.BusinessReceivable,
+                    Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
+                    RecordType = (int)BusinessBalanceRecordRecordType.OrderMeals,
+                    Operator = myOrderInfo.BusinessName,
+                    Remark = "返还商家订单菜品费",
+                    WithwardId=myOrderInfo.Id,
+                    RelationNo=myOrderInfo.OrderNo
+                });
+                #endregion
+
+                //上传完小票
+                //(1)更新给骑士余额、可提现余额
+                //(2)把OrderOther把IsJoinWithdraw状态改为1
+                if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)
+                {
+                    if (CheckOrderPay(orderNo))
+                    {
+                        UpdateAccountBalanceAndWithdraw(userId, myOrderInfo);
+                        iOrderOtherProvider.UpdateIsJoinWithdraw(myOrderInfo.Id);
+                    }
+                }
+            }
+
         }
 
         /// <summary>
@@ -780,7 +971,7 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="orderNo">订单号</param>
         /// <returns></returns>
         [ETS.Expand.ActionStatus(typeof(ETS.Enums.RushOrderStatus))]
-        public ResultModel<RushOrderResultModel> RushOrder_C(int userId, string orderNo )
+        public ResultModel<RushOrderResultModel> RushOrder_C(int userId, string orderNo)
         {
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
@@ -899,7 +1090,7 @@ namespace Ets.Service.Provider.Clienter
             bool bResult = orderDao.RushOrder(model);
             ///TODO 同步第三方状态和jpush 以后放到后台服务或mq进行。
             if (bResult)
-            {             
+            {
                 //写入骑士抢单坐标
                 orderOtherDao.UpdateGrab(orderNo, grabLongitude, grabLatitude);
 

@@ -154,13 +154,20 @@ namespace Ets.Service.IProvider.Order
         /// <param name="orderNo"></param>
         /// <returns></returns>
         OrderListModel GetOrderInfoByOrderNo(string orderNo, int orderId = 0);
+        ///// <summary>
+        ///// 取消订单
+        ///// danny-20150414
+        ///// </summary>
+        ///// <param name="orderOptionModel"></param>
+        ///// <returns></returns>
+        //bool CancelOrderByOrderNo(OrderOptionModel orderOptionModel);
         /// <summary>
         /// 取消订单 后台取消
-        /// danny-20150414
+        /// danny-20150521
         /// </summary>
         /// <param name="orderOptionModel"></param>
         /// <returns></returns>
-        bool CancelOrderByOrderNo(OrderOptionModel orderOptionModel);
+        DealResultInfo CancelOrderByOrderNo(OrderOptionModel orderOptionModel);
 
         /// <summary>
         /// 获取订单操作日志
@@ -190,9 +197,9 @@ namespace Ets.Service.IProvider.Order
         /// </summary>
         /// <UpdateBy>hulingbo</UpdateBy>
         /// <UpdateTime>20150512</UpdateTime>
-        /// <param name="id">订单Id</param>
+        /// <param name="orderPM">获取订单详情参数实体</param>
         /// <returns></returns>
-        order GetById(int id);
+        order GetById(OrderPM orderPM);
         /// <summary>
         /// 获取订单详情
         /// </summary>

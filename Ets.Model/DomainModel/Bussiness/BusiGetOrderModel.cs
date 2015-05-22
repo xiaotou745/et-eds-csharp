@@ -83,5 +83,13 @@ namespace Ets.Model.DomainModel.Bussiness
         /// OriginalOrderNo原平台订单号
         /// </summary>
         public string OriginalOrderNo { get; set; }
+
+       public int MealsSettleMode { get; set; }
+
+       /// <summary>
+       /// 订单总金额
+       /// </summary>
+       public decimal? TotalAmount { get; set; }
+
     }
 }

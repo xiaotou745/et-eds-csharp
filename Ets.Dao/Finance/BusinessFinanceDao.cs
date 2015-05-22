@@ -1,4 +1,5 @@
-﻿using Ets.Model.DataModel.Finance;
+﻿using ETS.Enums;
+using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 using ETS.Dao;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using Ets.Dao.Order;
+using Ets.Model.DataModel.Order;
 
 namespace Ets.Dao.Finance
 {
@@ -290,7 +292,7 @@ UPDATE BusinessBalanceRecord
  WHERE  WithwardId = @WithwardId AND [Status]=2;");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@WithwardId", withwardId);
-            parm.AddWithValue("@Status", ETS.Enums.BusinessBalanceRecordStatus.Success.GetHashCode());
+            parm.AddWithValue("@Status", BusinessBalanceRecordStatus.Success.GetHashCode());
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
 
@@ -331,10 +333,10 @@ select      bbr.[BusinessId]
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@WithwardId", model.WithwardId);
-            parm.AddWithValue("@Status", ETS.Enums.BusinessBalanceRecordStatus.Tradeing);
-            parm.AddWithValue("@RecordType", ETS.Enums.BusinessBalanceRecordRecordType.Withdraw);
-            parm.AddWithValue("@NewStatus", ETS.Enums.BusinessBalanceRecordStatus.Success);
-            parm.AddWithValue("@NewRecordType", ETS.Enums.BusinessBalanceRecordRecordType.Return);
+            parm.AddWithValue("@Status",BusinessBalanceRecordStatus.Tradeing);
+            parm.AddWithValue("@RecordType",BusinessBalanceRecordRecordType.WithdrawApply);
+            parm.AddWithValue("@NewStatus",BusinessBalanceRecordStatus.Success);
+            parm.AddWithValue("@NewRecordType", model.Status == BusinessWithdrawFormStatus.TurnDown.GetHashCode() ?BusinessBalanceRecordRecordType.WithdrawRefuse :BusinessBalanceRecordRecordType.PayFailure);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         
@@ -540,49 +542,7 @@ WHERE bbr.BusinessId=@BusinessId ";
              
             return 0m;
         }
-		/// <summary>
-        /// 添加商户余额流水记录
-        /// danny-20150519
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public bool AddBusinessBalanceRecord(BusinessBalanceRecordModel model)
-        {
-            string sql = string.Format(@" 
-insert into BusinessBalanceRecord
-          ( [BusinessId]
-           ,[Amount]
-           ,[Status]
-           ,[Balance]
-           ,[RecordType]
-           ,[Operator]
-           ,[OperateTime]
-           ,[WithwardId]
-           ,[RelationNo]
-           ,[Remark])
-values(     @BusinessId
-           ,@Amount
-           ,@Status
-           ,@Balance
-           ,@RecordType
-           ,@Operator
-           ,getdate()
-           ,@WithwardId
-           ,@RelationNo
-           ,@Remark
-);");
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@BusinessId", model.BusinessId);
-            parm.AddWithValue("@Amount", model.Amount);
-            parm.AddWithValue("@Status", model.Status);
-            parm.AddWithValue("@Balance", model.Balance);
-            parm.AddWithValue("@RecordType", model.RecordType);
-            parm.AddWithValue("@Operator", model.Operator);
-            parm.AddWithValue("@WithwardId", model.WithwardId);
-            parm.AddWithValue("@RelationNo", model.RelationNo);
-            parm.AddWithValue("@Remark", model.Remark);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
-        }
+		
     }
        
 }
