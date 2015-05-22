@@ -56,10 +56,8 @@ namespace Ets.Service.Provider.Clienter
                 if (ordercount > 0)
                     return ETS.Enums.ChangeWorkStatusEnum.OrderError;
             }
-            int changeResult = clienterDao.ChangeWorkStatusToSql(paraModel);
-
-
-            return clienterDao.ChangeWorkStatusToSql(paraModel) > 0 ? ETS.Enums.ChangeWorkStatusEnum.Success : ETS.Enums.ChangeWorkStatusEnum.Error;
+            int changeResult = clienterDao.ChangeWorkStatusToSql(paraModel);  
+            return changeResult > 0 ? ETS.Enums.ChangeWorkStatusEnum.Success : ETS.Enums.ChangeWorkStatusEnum.Error;
         }
 
         /// <summary>
