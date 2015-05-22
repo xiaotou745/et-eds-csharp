@@ -292,7 +292,7 @@ UPDATE BusinessBalanceRecord
  WHERE  WithwardId = @WithwardId AND [Status]=2;");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@WithwardId", withwardId);
-            parm.AddWithValue("@Status", ETS.Enums.BusinessBalanceRecordStatus.Success.GetHashCode());
+            parm.AddWithValue("@Status", BusinessBalanceRecordStatus.Success.GetHashCode());
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
 
