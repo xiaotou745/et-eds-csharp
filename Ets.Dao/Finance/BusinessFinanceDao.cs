@@ -333,10 +333,10 @@ select      bbr.[BusinessId]
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@WithwardId", model.WithwardId);
-            parm.AddWithValue("@Status", ETS.Enums.BusinessBalanceRecordStatus.Tradeing);
-            parm.AddWithValue("@RecordType", ETS.Enums.BusinessBalanceRecordRecordType.Withdraw);
-            parm.AddWithValue("@NewStatus", ETS.Enums.BusinessBalanceRecordStatus.Success);
-            parm.AddWithValue("@NewRecordType", ETS.Enums.BusinessBalanceRecordRecordType.Return);
+            parm.AddWithValue("@Status",BusinessBalanceRecordStatus.Tradeing);
+            parm.AddWithValue("@RecordType",BusinessBalanceRecordRecordType.WithdrawApply);
+            parm.AddWithValue("@NewStatus",BusinessBalanceRecordStatus.Success);
+            parm.AddWithValue("@NewRecordType", model.Status == BusinessWithdrawFormStatus.TurnDown.GetHashCode() ?BusinessBalanceRecordRecordType.WithdrawRefuse :BusinessBalanceRecordRecordType.PayFailure);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         
