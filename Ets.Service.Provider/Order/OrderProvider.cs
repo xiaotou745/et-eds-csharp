@@ -369,7 +369,9 @@ namespace Ets.Service.Provider.Order
                     Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
                     RecordType = (int)BusinessBalanceRecordRecordType.SettleMoney,
                     Operator = order.BusinessName,              
-                    Remark = "扣商家结算费"
+                    Remark = "扣商家结算费",
+                    WithwardId = result,
+                    RelationNo=order.OrderNo
                 });
                 #endregion
 

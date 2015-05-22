@@ -869,7 +869,9 @@ namespace Ets.Service.Provider.Clienter
                     Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
                     RecordType = (int)BusinessBalanceRecordRecordType.ReturnBusinessReceivable,
                     Operator = myOrderInfo.BusinessName,
-                    Remark = "返还商家结算费"
+                    Remark = "返还商家结算费",
+                    WithwardId=myOrderInfo.Id,
+                    RelationNo=myOrderInfo.OrderNo
                 });
                 #endregion
 
