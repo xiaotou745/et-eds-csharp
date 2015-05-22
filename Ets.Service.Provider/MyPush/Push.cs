@@ -121,7 +121,7 @@ namespace Ets.Service.Provider.MyPush
                     masterSecret = "03f956afaaeb086481aa3b7c";// Your Master Secret from JPush
                 }
                 JPushClient client = new JPushClient(appKey, masterSecret);
-                Audience audience = Audience.s_registrationId(model.RegistrationId);
+                Audience audience = Audience.s_alias(model.RegistrationId);
                 PushPayload pushPayload = new PushPayload();
                 pushPayload.platform = Platform.android_ios();
                 pushPayload.audience = audience;

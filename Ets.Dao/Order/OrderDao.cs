@@ -1486,11 +1486,11 @@ where   1 = 1 and o.Id = @Id
         /// </summary>
         /// <param name="Id">订单ID</param>
         /// <returns></returns>
-        public OrderListModel GetOrderById(int Id)
+        public OrderChildPayModel GetOrderById(int Id)
         {
             //string sql = "SELECT clienterId FROM dbo.[order] o where id = @id";
             string sql = @"
-SELECT clienterId,min(PayStatus) as IsPay FROM dbo.[order] o(nolock)
+SELECT clienterId,min(PayStatus) as PayStatus FROM dbo.[order] o(nolock)
 join dbo.OrderChild oc(nolock) on o.Id= oc.OrderId
  where o.id=@id group by PayStatus,clienterId
  ";
@@ -1507,7 +1507,7 @@ join dbo.OrderChild oc(nolock) on o.Id= oc.OrderId
             {
                 return null;
             }
-            return MapRows<OrderListModel>(dt)[0];
+            return MapRows<OrderChildPayModel>(dt)[0];
         }
 
         /// <summary>

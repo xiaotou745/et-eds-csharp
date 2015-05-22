@@ -1,5 +1,6 @@
 ﻿using ETS;
 using ETS.Enums;
+using Ets.Model.Common;
 using Ets.Model.DataModel.Order;
 using Ets.Model.ParameterModel.Order;
 using SuperManCore;
@@ -501,35 +502,16 @@ namespace SuperManWebApi.Controllers
 
 
         /// <summary>
-        /// 取消订单 ado.net  wangchao
+        /// 取消订单 Edit  caoheyang 20150521 
         /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="OrderId"></param>
+        /// <remarks>取消订单时返给商家结算费，优化，大整改</remarks>
+        /// <param name="paramodel"></param>
         /// <returns></returns>
-        //[HttpGet]
-        //[HttpGet]
+        [HttpPost]
         [ActionStatus(typeof(ETS.Enums.CancelOrderStatus))]
-        public Ets.Model.Common.ResultModel<bool> CancelOrder_B(OrderCancelParam orderCancelParam)
+        public ResultModel<bool> CancelOrder_B(CancelOrderBPM paramodel)
         {
-            if (orderCancelParam.orderId<=0)
-                return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.OrderEmpty);
-            //查询该订单是否存在
-            var selResult = iOrderProvider.GetOrderStatus(orderCancelParam.orderId,orderCancelParam.businessId);
-
-            if (selResult == ConstValues.ORDER_NEW)
-            {
-                //存在的情况下  取消订单  3
-                int cacelResult = iOrderProvider.UpdateOrderStatus(orderCancelParam.orderNo, Ets.Model.Common.ConstValues.ORDER_CANCEL, "", null);
-                if (cacelResult > 0)
-                    return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.Success, true);
-                else
-                    return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.FailedCancelOrder, true);
-            }
-            else
-            {
-                return Ets.Model.Common.ResultModel<bool>.Conclude(ETS.Enums.CancelOrderStatus.FailedCancelOrder, true);
-            }
-
+            return iOrderProvider.CancelOrderB(paramodel);
         }
         /// <summary>
         /// 流转图片

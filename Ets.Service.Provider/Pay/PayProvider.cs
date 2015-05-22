@@ -70,18 +70,17 @@ namespace Ets.Service.Provider.Pay
         /// <param name="model"></param>
         private static void FinishOrderPushMessage(OrderChildFinishModel model)
         {
-            OrderListModel orderListModel = new OrderDao().GetOrderById(model.orderId);
-            if (orderListModel == null)
+            OrderChildPayModel orderChildPayModel = new OrderDao().GetOrderById(model.orderId);
+            if (orderChildPayModel == null)
             {
                 return;
             }
-            int allowFinish = ParseHelper.ToBool(orderListModel.IsPay, false) ? 1 : 0;
             JPushModel jpushModel = new JPushModel()
             {
                 Alert = "有订单完成了！",
                 City = string.Empty,
-                Content = string.Concat(model.orderId, "_", model.orderChildId, "_", allowFinish),
-                RegistrationId = orderListModel.clienterId.ToString(),//通过订单ID获取要发送的骑士ID
+                Content = string.Concat(model.orderId, "_", model.orderChildId, "_", orderChildPayModel.PayStatus),
+                RegistrationId = orderChildPayModel.clienterId.ToString(),//通过订单ID获取要发送的骑士ID
                 TagId = 0,
                 Title = "订单提醒"
             };
