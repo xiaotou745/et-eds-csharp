@@ -1284,7 +1284,7 @@ namespace Ets.Service.Provider.Order
             orderDM.MealsSettleMode = order.MealsSettleMode;
             #region 是否允许修改小票
             orderDM.IsModifyTicket = true;
-            if (order.NeedUploadCount >= order.OrderCount && order.Status == OrderStatus.订单完成.GetHashCode())
+            if (order.HadUploadCount >= order.OrderCount && order.Status == OrderStatus.订单完成.GetHashCode())
             {
                 orderDM.IsModifyTicket = false;
             }
