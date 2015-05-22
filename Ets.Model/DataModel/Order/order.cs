@@ -148,22 +148,6 @@ namespace Ets.Model.DataModel.Order
         /// 美团订单（商户取消接单原因）
         /// </summary>
         public string OtherCancelReason { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public decimal? RushOrderLongitude { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public decimal? RushOrderLandline { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public decimal? FinishOrderLongitude { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public decimal? FinishOrderLandline { get; set; }
 
         /// <summary>
         /// 发票
