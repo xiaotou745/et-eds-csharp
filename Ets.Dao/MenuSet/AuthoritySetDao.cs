@@ -19,7 +19,7 @@ namespace Ets.Dao.MenuSet
     public class AuthoritySetDao : DaoBase
     {
         #region 角色管理
-        
+
         /// <summary>
         /// 增加角色
         /// </summary>
@@ -74,7 +74,7 @@ namespace Ets.Dao.MenuSet
         /// <returns></returns>
         public AuthorityRoleModel GetRoleById(int id)
         {
-            string sql = @" SELECT Id,RoleName,BeLock FROM AuthorityRole with(nolock) where Id=@id "; 
+            string sql = @" SELECT Id,RoleName,BeLock FROM AuthorityRole with(nolock) where Id=@id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Id", id);
             var dr = DbHelper.ExecuteReader(SuperMan_Read, sql, dbParameters);
@@ -103,13 +103,13 @@ namespace Ets.Dao.MenuSet
         public bool AddMenu(AuthorityMenuModel model)
         {
             string sql = @" INSERT INTO AuthorityMenuClass (ParId,MenuName,BeLock,Url,IsButton) VALUES (@ParId,@MenuName,@BeLock,@Url,@IsButton);select @@IDENTITY as InsertId; ";
-			
+
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("ParId", model.ParId);
             dbParameters.AddWithValue("MenuName", model.MenuName);
             dbParameters.AddWithValue("BeLock", model.BeLock);
             dbParameters.AddWithValue("Url", model.Url);
-            dbParameters.AddWithValue("IsButton", model.IsButton); 
+            dbParameters.AddWithValue("IsButton", model.IsButton);
             object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, dbParameters);
             if (i != null)
             {
@@ -125,13 +125,13 @@ namespace Ets.Dao.MenuSet
         /// <returns></returns>
         public bool UpdateMenu(AuthorityMenuModel model)
         {
-            string sql = @" UPDATE AuthorityMenuClass set MenuName=@MenuName,Url=@Url,IsButton=@IsButton where id=@id "; 
+            string sql = @" UPDATE AuthorityMenuClass set MenuName=@MenuName,Url=@Url,IsButton=@IsButton where id=@id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("id", model.Id);
             dbParameters.AddWithValue("MenuName", model.MenuName);
             dbParameters.AddWithValue("Url", model.Url);
             dbParameters.AddWithValue("IsButton", model.IsButton);
-            int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters); 
+            int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
             return i > 0;
         }
 
@@ -170,8 +170,8 @@ namespace Ets.Dao.MenuSet
         {
             string sql = @" SELECT Id,ParId,MenuName,BeLock,Url,IsButton FROM AuthorityMenuClass with(nolock) where ParId=@ParId ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("ParId", parId); 
-            var dt  = DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters).Tables[0];
+            dbParameters.AddWithValue("ParId", parId);
+            var dt = DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters).Tables[0];
             return (List<AuthorityMenuModel>)ConvertDataTableList<AuthorityMenuModel>(dt);
         }
 
@@ -321,7 +321,7 @@ namespace Ets.Dao.MenuSet
             {
                 list.AddRange(from DataRow row in dt.Rows select ParseHelper.ToInt(row["MenuId"]));
             }
-            return list; 
+            return list;
         }
 
         /// <summary>
@@ -370,7 +370,7 @@ namespace Ets.Dao.MenuSet
         /// <returns></returns>
         public bool CheckPermission(int accoutId, int menuId)
         {
-            string sql = "select Id from AuthorityAccountMenuSet with(nolock) where AccoutId=@AccoutId and MenuId = @MenuId"; 
+            string sql = "select Id from AuthorityAccountMenuSet with(nolock) where AccoutId=@AccoutId and MenuId = @MenuId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("AccoutId", accoutId);
             dbParameters.AddWithValue("MenuId", menuId);
@@ -412,9 +412,9 @@ namespace Ets.Dao.MenuSet
             string sql = "delete from AuthorityAccountMenuSet where AccoutId=@AccoutId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("AccoutId", accoutId);
-            int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql,dbParameters);
-            return i > 0; 
-        } 
+            int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
+            return i > 0;
+        }
 
         #endregion
 
@@ -473,8 +473,8 @@ namespace Ets.Dao.MenuSet
             dbParameters.AddWithValue("roleId", roleId);
             int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
             return i > 0;
-        }  
-          
+        }
+
         /// <summary>
         /// 根据roleid获取权限ID列表
         /// </summary>
@@ -486,14 +486,14 @@ namespace Ets.Dao.MenuSet
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("roleId", roleId);
             DataTable dt = DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters).Tables[0];
-            var list=new List<int>();
+            var list = new List<int>();
             if (dt.Rows.Count > 0)
             {
                 list.AddRange(from DataRow row in dt.Rows select ParseHelper.ToInt(row["MenuId"]));
             }
-            return list; 
-        } 
-        
+            return list;
+        }
+
         #endregion
 
         /// <summary>
@@ -518,7 +518,7 @@ namespace Ets.Dao.MenuSet
                                     ,a.[RoleId]
                                     ,g.GroupName";
             var sbSqlWhere = new StringBuilder(" 1=1 AND a.Status=1 ");
-            if (criteria.GroupId != null && criteria.GroupId!=0)
+            if (criteria.GroupId != null && criteria.GroupId != 0)
             {
                 sbSqlWhere.AppendFormat(" AND a.GroupId={0} ", criteria.GroupId);
             }
@@ -554,7 +554,7 @@ namespace Ets.Dao.MenuSet
                 throw;
             }
         }
-       
+
 
         /// <summary>
         /// 添加用户
@@ -696,10 +696,31 @@ namespace Ets.Dao.MenuSet
             }
         }
 
-       
-
-        
-
-
+        /// <summary>
+        /// 添加用户城市对应关系
+        /// danny-20150522
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool AddAccountCityRelation(AccountCityRelation model)
+        {
+            string sql = @"
+INSERT INTO [AccountCityRelation]
+    ([AccountId]
+    ,[CityId]
+    ,[CreateBy]
+    ,[UpdateBy])
+VALUES
+    (@AccountId
+    ,@CityId
+    ,@CreateBy
+    ,@UpdateBy)";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@AccountId", model.AccountId);
+            parm.AddWithValue("@CityId", model.CityId);
+            parm.AddWithValue("@CreateBy", model.CreateBy);
+            parm.AddWithValue("@UpdateBy", model.UpdateBy);
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm)) > 0;
+        }
     }
 }
