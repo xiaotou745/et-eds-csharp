@@ -69,6 +69,10 @@
                 alert("请输入大于零的值!");
                 return;
             }
+            if (clienterOrderPageSize >100) {
+                alert("最大值不能超过100!");
+                return;
+            }
             if (uploadTimeInterval == oldUploadTimeInterval && pushRadius == oldPushRadius && clienterOrderPageSize == oldClienterOrderPageSize) {
                 alert("没有需要修改的信息!");
                 return;
