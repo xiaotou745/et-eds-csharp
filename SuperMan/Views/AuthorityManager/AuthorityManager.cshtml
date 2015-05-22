@@ -78,11 +78,11 @@
                     <!-- Text input-->
                     <label class="control-label" for="input01">确认密码</label>
                     <div class="controls">
-                        <input placeholder="确认密码" name="confirmpassword" id="confirmpassword" class="input-xlarge" required="required" type="password"><i style="color:red">*</i>
+                        <input placeholder="确认密码" name="confirmPassword" id="confirmPassword" class="input-xlarge" required="required" type="password"><i style="color:red">*</i>
                         <p class="help-block"></p>
                     </div>
                 </div>
-                
+
                 @if (ViewBag.txtGroupId == null)
                 {
                     <div class="control-group">
@@ -121,9 +121,8 @@
                 <div style="float: left">
                     <!-- Text input-->
                     <label class="control-label" for="input01">是否启用</label>
-                   
-                        <input name="isenable" id="isenableY" type="radio" /> 启用
-                        <input name="isenable" id="isenableN" type="radio" /> 禁用
+                    <input name="isEnable" id="isEnableY" type="radio" value="1" checked="checked" /> 启用
+                    <input name="isEnable" id="isEnableN" type="radio" value="0" /> 禁用
                 </div>
             </fieldset>
             <p class="btnbox">
@@ -175,9 +174,6 @@
 </div>
 <script>
     var adminjs = new adminglass(); //实例化后台类
-    
-    //var DEFAULT_PAGESIZE = 15;
-    //var criteria = { PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }, GroupId: $("#txtGroupId").val() };
     $(document).ready(function () {
         ////查询
         //$("#btnSearch").on('click', function () {
@@ -197,21 +193,58 @@
         var checkedOfAll = $("#selectAll").prop("checked");
         $("input[name='checkMenus']").prop("checked", checkedOfAll);
     }
-    //////分页
-    //art.ui.control.NewPager.enablePaging(document, refresh);
-    //function refresh(pageIndex) {
-    //    var url = "/AuthorityManager/AuthorityManager";
-    //    if (pageIndex !== undefined) {
-    //        criteria.PagingRequest.PageIndex = pageIndex;
-    //    }
-    //    webExpress.utility.ajax.request
-    //        (
-    //            url,
-    //            criteria,
-    //            function (data) {
-    //                $("#dataList").html(data);
-    //            });
-    //};
-    
+    $("#btnAddAccount").click(function () {
+        if (confirm("确定要提交用户信息吗？")) {
+            var cityCodeList = "";
+            $("input[name='checkMenus']").each(function () {
+                if ($(this).is(':checked')) {
+                    cityCodeList = cityCodeList + $(this).val() + ",";
+                }
+            });
+            if (cityCodeList.length > 0)
+                cityCodeList = cityCodeList.substring(0, cityCodeList.length - 1);
+            var accountName = $("#accountName").val();//用户名称
+            var loginName = $("#loginName").val();//登陆名称
+            var password = $("#password").val();//密码
+            var confirmPassword = $("#confirmPassword").val();//确认密码
+            var groupId = $("#AddGroupId").val();//登陆名称
+            var status = $("input[name='isEnable']:checked").val();;//登陆名称
+            if (accountName == "") {
+                alert("请输入用户名称!");
+                return;
+            }
+            if (loginName == "") {
+                alert("请输入登陆名称!");
+                return;
+            }
+            if (password == "") {
+                alert("请输入登陆密码!");
+                return;
+            }
+            if (confirmPassword == "") {
+                alert("请输入确认密码!");
+                return;
+            }
+            if (password != confirmPassword) {
+                alert("两次密码输入不一致!");
+                return;
+            }
+            var paramaters = { "accountName": accountName, "loginName": loginName, "password": password, "groupId": groupId, "status": status, "cityCodeList": cityCodeList };
+            var url = "/OpenCityManager/ModifyOpenCity";
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: paramaters,
+                success: function (result) {
+                    if (result.IsSuccess) {
+                        alert("设置成功!");
+                        //window.location.href = "/OpenCityManager/OpenCityManager";
+                    } else {
+                        alert(result.Message);
+                    }
+                }
+            });
+        }
+    });
 </script>
 <script src="~/Scripts/mvcpager.js"></script>

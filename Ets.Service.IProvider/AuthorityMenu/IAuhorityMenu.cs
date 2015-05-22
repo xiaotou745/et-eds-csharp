@@ -129,13 +129,13 @@
         /// 获取角色列表
         /// </summary>
         /// <returns></returns>
-        List<AccountModel> GetListAccount();
+        List<Ets.Model.DataModel.Authority.AccountModel> GetListAccount();
         /// <summary>
         /// 获取角色
         /// </summary>
         /// <param name="loginName"></param>
         /// <returns></returns>
-        AccountModel GetAccountByName(string loginName);
+        Ets.Model.DataModel.Authority.AccountModel GetAccountByName(string loginName);
  
         /// <summary>
         /// 加入权限

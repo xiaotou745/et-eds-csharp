@@ -359,7 +359,7 @@ using ETS.Data.PageData;
         /// 获取个人账户列表
         /// </summary>
         /// <returns></returns>
-        public List<AccountModel> GetListAccount()
+        public List<Ets.Model.DataModel.Authority.AccountModel> GetListAccount()
         {
             try
             {
@@ -376,7 +376,7 @@ using ETS.Data.PageData;
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public AccountModel GetAccountByName(string name)
+        public Ets.Model.DataModel.Authority.AccountModel GetAccountByName(string name)
         {
             try
             {

@@ -714,13 +714,26 @@ VALUES
     (@AccountId
     ,@CityId
     ,@CreateBy
-    ,@UpdateBy)";
+    ,@UpdateBy);";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@AccountId", model.AccountId);
             parm.AddWithValue("@CityId", model.CityId);
             parm.AddWithValue("@CreateBy", model.CreateBy);
             parm.AddWithValue("@UpdateBy", model.UpdateBy);
-            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm)) > 0;
+            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm)) > 0;
+        }
+        /// <summary>
+        /// 删除用户城市对应关系
+        /// danny-20150522
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool DeleteAccountCityRelation(AccountCityRelation model)
+        {
+            string sql = @" DELETE FROM [AccountCityRelation] WHERE AccountId=@AccountId;";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@AccountId", model.AccountId);
+            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm)) > 0;
         }
     }
 }

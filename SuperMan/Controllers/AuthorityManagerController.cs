@@ -1,4 +1,5 @@
-﻿using Ets.Service.IProvider.AuthorityMenu;
+﻿using Ets.Model.DataModel.Authority;
+using Ets.Service.IProvider.AuthorityMenu;
 using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Authority;
 using Ets.Service.Provider.Common;
@@ -101,6 +102,27 @@ namespace SuperMan.Controllers
             iAuthorityMenuProvider.AddAccount(account);
             return Json(new Ets.Model.Common.ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
         }
+        ///// <summary>
+        ///// 添加用户 
+        ///// </summary>
+        ///// <returns></returns>
+        //[HttpPost]
+        //public JsonResult AddNew(AccountModel accountModel)
+        //{
+            
+        //    var account = new Ets.Model.DataModel.Authority.account();
+        //    account.LoginName = loginName;
+        //    account.UserName = accountName;
+        //    account.GroupId = groupId;//集团id  
+        //    account.Password = MD5Helper.MD5(password);
+        //    account.Status = Ets.Model.Common.ConstValues.AccountAvailable;
+        //    if (iAuthorityMenuProvider.CheckHasAccountName(account))
+        //    {
+        //        return Json(new Ets.Model.Common.ResultModel(true, "用户名已存在"), JsonRequestBehavior.AllowGet);
+        //    }
+        //    iAuthorityMenuProvider.AddAccount(account);
+        //    return Json(new Ets.Model.Common.ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
+        //}
         [HttpPost]
         public JsonResult saveAuthority(AuthorityListModel model)
         {
