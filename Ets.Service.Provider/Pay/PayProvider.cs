@@ -212,17 +212,33 @@ namespace Ets.Service.Provider.Pay
         {
             try
             {
+                #region 参数绑定
+
                 var request = System.Web.HttpContext.Current.Request;
                 string sign = request["sign"];
                 string sign_type = request["sign_type"];
                 string notify_data = request["notify_data"];
-                XmlDocument xmlDoc = new XmlDocument();
                 AlipayNotifyData notify = new AlipayNotifyData();
-                xmlDoc.LoadXml(notify_data);
-                notify.buyer_email = xmlDoc.SelectSingleNode("notify/buyer_email").InnerText;
-                notify.trade_status = xmlDoc.SelectSingleNode("notify/trade_status").InnerText;
-                notify.out_trade_no = xmlDoc.SelectSingleNode("notify/out_trade_no").InnerText;
-                notify.trade_no = xmlDoc.SelectSingleNode("notify/trade_no").InnerText;
+                if (!string.IsNullOrEmpty(notify_data))
+                {
+                    //如果是二维码支付
+                    XmlDocument xmlDoc = new XmlDocument();
+                    xmlDoc.LoadXml(notify_data);
+                    notify.buyer_email = xmlDoc.SelectSingleNode("notify/buyer_email").InnerText;
+                    notify.trade_status = xmlDoc.SelectSingleNode("notify/trade_status").InnerText;
+                    notify.out_trade_no = xmlDoc.SelectSingleNode("notify/out_trade_no").InnerText;
+                    notify.trade_no = xmlDoc.SelectSingleNode("notify/trade_no").InnerText;
+                }
+                else
+                {
+                    //否则是骑士代付
+                    notify.buyer_email = request["buyer_email"];
+                    notify.trade_status = request["trade_status"];
+                    notify.out_trade_no = request["out_trade_no"];
+                    notify.trade_no = request["trade_no"];
+                }
+                #endregion
+
                 if (string.IsNullOrEmpty(notify.trade_status) || notify.trade_status != "TRADE_SUCCESS")
                 {
                     string fail = string.Concat("错误啦trade_status：", notify.trade_status, "。sign:", sign, "。notify_data:", notify_data);
