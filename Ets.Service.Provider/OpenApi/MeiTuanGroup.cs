@@ -1,5 +1,6 @@
 ﻿using Ets.Model.Common;
 using Ets.Model.DataModel.Bussiness;
+using Ets.Model.DataModel.Order;
 using Ets.Model.ParameterModel.Order;
 using Ets.Service.IProvider.OpenApi;
 using Ets.Service.Provider.OpenApi;
@@ -20,6 +21,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using OrderDetail = Ets.Model.ParameterModel.Order.OrderDetail;
 
 namespace Ets.Service.Provider.OpenApi
 {
@@ -193,7 +195,7 @@ namespace Ets.Service.Provider.OpenApi
         /// <summary>
         /// 返回美团当前请求对应的签名  add by caoheyang 20150421
         /// </summary>
-        /// <param name="fromModel">美团数据实体</param>
+        /// <param name="httpRequest">上下文数据对象</param>
         /// <returns></returns>
         public string PostGetSig(System.Web.HttpRequest httpRequest)
         {
@@ -203,7 +205,7 @@ namespace Ets.Service.Provider.OpenApi
                 if (key != "sig")
                 {
                     string valtemp = System.Web.HttpUtility.UrlDecode(System.Web.HttpUtility.UrlDecode(httpRequest.Form[key]));
-                    paras.Add(key + "=" + (valtemp == null ? "" : valtemp));
+                    paras.Add(key + "=" + (valtemp ?? ""));
                 }
             }
             paras.Sort();
@@ -217,7 +219,7 @@ namespace Ets.Service.Provider.OpenApi
         /// <summary>
         /// 返回美团当前请求对应的签名  add by caoheyang 20150421
         /// </summary>
-        /// <param name="fromModel">美团数据实体</param>
+        /// <param name="httpRequest">上下文数据对象</param>
         /// <returns></returns>
         public string GetSig(System.Web.HttpRequest httpRequest)
         {
@@ -227,7 +229,7 @@ namespace Ets.Service.Provider.OpenApi
                 if (key != "sig")
                 {
                     string valtemp = System.Web.HttpUtility.UrlDecode(System.Web.HttpUtility.UrlDecode(httpRequest.QueryString[key]));
-                    paras.Add(key + "=" + (valtemp == null ? "" : valtemp));
+                    paras.Add(key + "=" + (valtemp ?? ""));
                 }
             }
             paras.Sort(new NewStringComparer());  //TODO待长时间验证  目前慎用
@@ -260,7 +262,7 @@ namespace Ets.Service.Provider.OpenApi
             model.status = OrderConst.OrderStatus30;//初始化订单状态 第三方代接入
             model.create_time = DateTime.Now;//订单发单时间 创建时间
             model.payment = fromModel.pay_type;//支付类型
-            model.is_pay = fromModel.pay_type == 1 ? false : true;//目前货到付款时取未支付，在线支付取已支付
+            model.is_pay = fromModel.pay_type != 1;//目前货到付款时取未支付，在线支付取已支付
             model.total_price = fromModel.total;//订单金额
             model.store_info = store; //店铺 
             model.invoice_title = fromModel.invoice_title;//发票标题
@@ -327,7 +329,7 @@ namespace Ets.Service.Provider.OpenApi
             //model.CommissionFormulaMode = ParseHelper.ToInt(Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet(1).CommissionFormulaMode);
             model.CommissionFormulaMode = business.StrategyId;
             //计算获得订单骑士佣金
-            Ets.Model.DataModel.Order.OrderCommission orderComm = new Ets.Model.DataModel.Order.OrderCommission()
+            OrderCommission orderComm = new OrderCommission()
             {
                 Amount = model.total_price, /*订单金额*/
                 DistribSubsidy = model.store_info.delivery_fee,/*外送费*/
@@ -352,7 +354,7 @@ namespace Ets.Service.Provider.OpenApi
         /// <summary>
         /// 新增美团订单 add by caoheyang 20150421 
         /// </summary>
-        /// <param name="fromModel">paraModel</param>
+        /// <param name="paramodel">paraModel</param>
         public int AddOrder(CreatePM_OpenApi paramodel)
         {
             return string.IsNullOrWhiteSpace(new Ets.Dao.Order.OrderDao().CreateToSql(paramodel)) ? 0 : 1;
