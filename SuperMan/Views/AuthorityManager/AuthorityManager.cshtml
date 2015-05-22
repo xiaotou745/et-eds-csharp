@@ -82,6 +82,7 @@
                         <p class="help-block"></p>
                     </div>
                 </div>
+                
                 @if (ViewBag.txtGroupId == null)
                 {
                     <div class="control-group">
@@ -96,11 +97,9 @@
                 {
                     <input name="AddGroupId" id="AddGroupId" type="hidden" value="@ViewBag.txtGroupId" />
                 }
-                <div class="control-group" style="width:500px">
-                    <!-- Text input-->
-                    <label class="control-label" for="input01">城市管理:<a>请选择</a></label>
-                </div>
+
                 <div style="width:500px">
+                    <label class="control-label" for="input01">城市管理:<a>请选择</a></label>
                     @{
                         var openCityList = ViewBag.openCityList.Result.AreaModels as List<AreaModel>;
                         if (openCityList != null && openCityList.Count > 0)
@@ -118,6 +117,13 @@
                         }
 
                     }
+                </div>
+                <div style="float: left">
+                    <!-- Text input-->
+                    <label class="control-label" for="input01">是否启用</label>
+                   
+                        <input name="isenable" id="isenableY" type="radio" /> 启用
+                        <input name="isenable" id="isenableN" type="radio" /> 禁用
                 </div>
             </fieldset>
             <p class="btnbox">
