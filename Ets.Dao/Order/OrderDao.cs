@@ -1460,7 +1460,9 @@ select top 1
         o.SettleMoney,
         b.Id businessId,
         o.Amount - o.SettleMoney + o.DistribSubsidy * o.OrderCount as ShouldPayBusiMoney ,
-        o.ActualDoneDate
+        o.ActualDoneDate,
+        o.IsPay,
+        o.MealsSettleMode
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id

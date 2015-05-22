@@ -5,6 +5,24 @@
 </div>
 <script src="~/Scripts/jquery-1.10.2.min.js"></script>
 <script>     
+    $.ajax({
+        type: 'POST',
+        dataType: 'json',
+        url: '/Order/TicketUpload',
+        data: {
+            "OrderId": 142392,
+            "ClienterId":3087,
+            "NeedUploadCount": 5,
+            "ReceiptPicAddress": "/2015/05/22/22/142392/1348249.jpg",
+            "Version": "1.1.0",
+            "OrderChildId": 330947
+        },
+        success: function (data) {
+            console.log(data);
+        },
+        error: function () { }
+    });
+
     //$.ajax({
     //    type: 'POST',
     //    dataType: 'json',
