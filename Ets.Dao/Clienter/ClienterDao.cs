@@ -54,10 +54,11 @@ namespace Ets.Dao.Clienter
         /// <param name="paraModel">参数实体</param>
         public virtual int QueryOrderount(Ets.Model.ParameterModel.Clienter.ChangeWorkStatusPM paraModel)
         {
-            const string querySql = @"select count(1) from dbo.[order](nolock)  WHERE clienterId=@clienterId and Status=@Status";
+            const string querySql = @"select count(1) from dbo.[order](nolock)  WHERE clienterId=@clienterId and (Status=@Status2 or Status=@Status4)";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@clienterId", paraModel.Id);    //超人id
-            dbParameters.AddWithValue("@Status", paraModel.OrderStatus);  //目标超人工作状态
+            dbParameters.AddWithValue("@Status2", OrdersStatus.Status2);  //取货中
+            dbParameters.AddWithValue("@Status4", OrdersStatus.Status4);  //送货中
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
             int a = ParseHelper.ToInt(executeScalar, 0);
             return a;
