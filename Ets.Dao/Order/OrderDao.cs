@@ -1398,8 +1398,8 @@ select top 1
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
-        left join dbo.OrderOther oo with(nolock) on o.Id = oo.OrderId
-where   1 = 1 and o.OrderNo = @OrderNo
+        join dbo.OrderOther oo with(nolock) on o.Id = oo.OrderId
+where and o.OrderNo = @OrderNo
 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderNo", SqlDbType.NVarChar).Value = orderNo;

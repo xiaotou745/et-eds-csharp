@@ -186,7 +186,7 @@ namespace Ets.Model.DomainModel.Order
         public List<OrderDetailInfo> listOrderDetail { get; set; }
 
         /// <summary>
-        /// 是否允许修改
+        /// 是否允许修改小票
         /// </summary>
         public bool IsModifyTicket { get; set; }
 

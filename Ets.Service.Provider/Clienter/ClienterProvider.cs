@@ -509,24 +509,39 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="orderNo">订单号码</param>
         /// <param name="pickupCode">取货码</param>
         /// <returns></returns>
-        public string FinishOrder(int userId, string orderNo, float completeLongitude, float CompleteLatitude, string pickupCode = null)
+        public FinishOrderResultModel FinishOrder(int userId, string orderNo, float completeLongitude, float CompleteLatitude, string pickupCode = null)
         {
-            string result = "-1";
+            FinishOrderResultModel model = new FinishOrderResultModel() { Message="-1"};
+            //string result = "-1";
             int businessId = 0;
             OrderListModel myOrderInfo = orderDao.GetByOrderNo(orderNo);
+
+            #region 是否允许修改小票
+            model.IsModifyTicket = true;
+            if (myOrderInfo.NeedUploadCount >= myOrderInfo.OrderCount && myOrderInfo.Status == OrderStatus.订单完成.GetHashCode())
+            {
+                model.IsModifyTicket = false;
+            }
+            #endregion
+
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 //获取该订单信息和该  骑士现在的 收入金额
                 if (myOrderInfo.GroupId == SystemConst.Group3 && !string.IsNullOrWhiteSpace(myOrderInfo.PickupCode)
                     && pickupCode != myOrderInfo.PickupCode) //全时订单 判断 取货码是否正确
-                    return FinishOrderStatus.PickupCodeError.ToString();
+                    //return FinishOrderStatus.PickupCodeError.ToString();
+                {
+                    model.Message=FinishOrderStatus.PickupCodeError.ToString();
+                    return model;
+                }
                 //更新订单状态
                 if (myOrderInfo != null)
                 {
                     var upresult = orderDao.FinishOrderStatus(orderNo, userId, myOrderInfo);
                     if (upresult <= 0)
                     {
-                        return "3";
+                        model.Message = "3";
+                        return model;
                     }
                     //写入骑士完成坐标                 
                     orderOtherDao.UpdateComplete(orderNo, completeLongitude, CompleteLatitude);
@@ -552,15 +567,15 @@ namespace Ets.Service.Provider.Clienter
                     #endregion
 
                     tran.Complete();
-                    result = "1";
+                    model.Message = "1";
                 }
             }
             new OrderProvider().AsyncOrderStatus(orderNo);
-            if (businessId != 0 && result == "1")
+            if (businessId != 0 && model.Message == "1")
             {
                 Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", businessId.ToString(), string.Empty);
             }
-            return result;
+            return model;
         }
 
         /// <summary>
