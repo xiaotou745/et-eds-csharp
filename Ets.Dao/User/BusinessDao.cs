@@ -97,7 +97,7 @@ namespace Ets.Dao.User
                                     isnull(o.OriginalOrderNo,'') as OriginalOrderNo";
             string tableList = @" [order](nolock) as o 
                                    join business(nolock) as b on o.businessId=b.Id
-                                   join clienter(nolock) as c on o.clienterId=c.Id ";  //表名
+                                   left join clienter(nolock) as c on o.clienterId=c.Id ";  //表名
 
             return new PageHelper().GetPages<T>(SuperMan_Read, paraModel.PagingResult.PageIndex, whereStr, orderByColumn, columnList, tableList, paraModel.PagingResult.PageSize, true);
         }

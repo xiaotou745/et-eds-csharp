@@ -35,14 +35,24 @@ namespace Ets.BandCWithdraw
             try
             {
                 LogHelper.LogWriter("执行啦:" + DateTime.Now);
-                double hour = ParseHelper.ToDouble(Config.ConfigKey("DataTime"), -1);
+              
+                ClienterDao clienterDao = new ClienterDao();
+                BusinessDao businessDao = new BusinessDao();
+                OrderDao orderDao = new OrderDao();
+
+               
+                #region 24小时不完成订单取消订单
+
+                #endregion
+
+
+                double hour = ParseHelper.ToDouble(Config.ConfigKey("DataTime"), -1);//取消订单的间隔时间
                 if (hour == -1)
                 {
                     return;
                 }
-                ClienterDao clienterDao = new ClienterDao();
-                BusinessDao businessDao = new BusinessDao();
-                OrderDao orderDao = new OrderDao();
+                #region 给骑士加可提现
+
                 IList<NonJoinWithdrawModel> list = orderDao.GetNonJoinWithdraw(hour);//获取没给可提现金额加钱的订单
                 foreach (var item in list)
                 {
@@ -62,6 +72,8 @@ namespace Ets.BandCWithdraw
                         }
                     }
                 }
+
+                #endregion
 
             }
             catch (Exception ex)
