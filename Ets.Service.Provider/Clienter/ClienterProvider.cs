@@ -623,6 +623,7 @@ namespace Ets.Service.Provider.Clienter
                 Balance = accountBalance ?? 0,
                 RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
                 Operator = "E代送系统",
+                WithwardId = myOrderInfo.Id,
                 RelationNo = myOrderInfo.OrderNo,
                 Remark = "骑士完成订单"
             };
