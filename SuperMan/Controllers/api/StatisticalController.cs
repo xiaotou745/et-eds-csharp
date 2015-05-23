@@ -7,6 +7,7 @@ using Ets.Service.Provider.Statistics;
 
 namespace SuperMan.Controllers.API
 {
+    [RoutePrefix("api/tongji")]
     public class StatisticalController : ApiController
     {
         /// <summary>
@@ -16,11 +17,13 @@ namespace SuperMan.Controllers.API
 
         private readonly IStatisticsProvider statisticsProvider = new StatisticsProvider();
 
+        #region 订单时间间隔统计
         /// <summary>
         /// 订单时间间隔统计
         /// </summary>
         /// <param name="queryInfo"></param>
         /// <returns></returns>
+        [Route("timespan")]
         [HttpPost]
         public object QueryCompleteTimeSpan([FromBody]ParamOrderCompleteTimeSpan queryInfo)
         {
@@ -38,8 +41,11 @@ namespace SuperMan.Controllers.API
 
             return new ResultModel(true, string.Empty, lstOrderTimeSpans);
         }
+        #endregion
 
+        #region 活跃数量统计
         [HttpPost]
+        [Route("active")]
         public object QueryActive([FromBody] ParamActiveInfo queryInfo)
         {
             if (queryInfo == null || !queryInfo.StartDate.HasValue || !queryInfo.EndDate.HasValue)
@@ -55,5 +61,46 @@ namespace SuperMan.Controllers.API
             var lstActives = statisticsProvider.QueryActiveBusinessClienter(queryInfo);
             return new ResultModel(true, string.Empty, lstActives);
         }
+        #endregion
+
+        #region 每小时发任务量统计
+        [HttpPost]
+        [Route("perhour")]
+        public object QueryTaskCountPerHour([FromBody] ParamTaskPerHour queryInfo)
+        {
+            if (queryInfo == null || !queryInfo.StartDate.HasValue || !queryInfo.EndDate.HasValue)
+            {
+                return Json(new ResultModel(false, "时间条件不允许为null", null));
+            }
+
+            if ((queryInfo.EndDate.Value.AddDays(1) - queryInfo.StartDate.Value).Days > 7)
+            {
+                return Json(new ResultModel(false, "最多查询7天数据，请更改查询条件", null));
+            }
+
+            var lstTaskCounts = orderProvider.QueryTaskCountPerHour(queryInfo);
+            return new ResultModel(true, string.Empty, lstTaskCounts);
+        }
+        #endregion
+
+        #region 每小时发任务量统计
+        [HttpPost]
+        [Route("jiedantime")]
+        public object QueryJieDanTime([FromBody] ParamJieDanTimeInfo queryInfo)
+        {
+            if (queryInfo == null || !queryInfo.StartDate.HasValue || !queryInfo.EndDate.HasValue)
+            {
+                return Json(new ResultModel(false, "时间条件不允许为null", null));
+            }
+
+            if ((queryInfo.EndDate.Value.AddDays(1) - queryInfo.StartDate.Value).Days > 3)
+            {
+                return Json(new ResultModel(false, "最多查询3天数据，请更改查询条件", null));
+            }
+
+            var lstJieDans = orderProvider.QueryJieDanTimeInfo(queryInfo);
+            return new ResultModel(true, string.Empty, lstJieDans);
+        }
+        #endregion
     }
 }

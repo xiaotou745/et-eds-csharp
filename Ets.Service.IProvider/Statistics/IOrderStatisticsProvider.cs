@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Ets.Model.DomainModel.Statistics;
 
 namespace Ets.Service.IProvider.Statistics
@@ -21,5 +17,18 @@ namespace Ets.Service.IProvider.Statistics
         /// <returns></returns>
         IList<OrderCompleteTimeSpanInfo> QueryOrderCompleteTimeSpan(ParamOrderCompleteTimeSpan queryInfo);
 
+        /// <summary>
+        /// 每小时任务数量查询
+        /// </summary>
+        /// <param name="queryInfo"></param>
+        /// <returns></returns>
+        IList<TaskStatisticsPerHourInfo> QueryTaskCountPerHour(ParamTaskPerHour queryInfo);
+
+        /// <summary>
+        /// 接单、完成时长统计
+        /// </summary>
+        /// <param name="queryInfo"></param>
+        /// <returns></returns>
+        IList<JieDanTimeInfo> QueryJieDanTimeInfo(ParamJieDanTimeInfo queryInfo);
     }
 }

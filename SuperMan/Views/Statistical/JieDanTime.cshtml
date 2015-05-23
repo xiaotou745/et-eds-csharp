@@ -1,13 +1,14 @@
 ﻿@using Ets.Model.DomainModel.Statistics
 @{
-    ViewBag.Title = "活跃数量统计";
+    ViewBag.Title = "接单配送时长";
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
 
     DateTime startDate = (DateTime)ViewBag.StartDate;
     DateTime endDate = (DateTime)ViewBag.EndDate;
 
-    IList<ActiveBusinessClienterInfo> lstActives = (IList<ActiveBusinessClienterInfo>)ViewBag.LstActiveInfo;
+    IList<JieDanTimeInfo> lstJieDanTimes = (IList<JieDanTimeInfo>)ViewBag.LstJieDanTimes;
 }
+
 @section styles{
     <style type="text/css">
         .none {
@@ -21,10 +22,10 @@
 <script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
 <div class="zpManage zpSh">
     <h2 class="crumbs">
-        您所在位置：数据统计 > 活跃数量统计
+        您所在位置：数据统计 > 接单配送时长
     </h2>
     <div class="SearchMd" style="width:1000px">
-        <h4 style="color:black;font-weight:600">活跃数量统计</h4>
+        <h4 style="color:black;font-weight:600">每天接单配送时长</h4>
         <table border="0" cellspacing="0" cellpadding="0" style="width:1080px">
             <tr>
                 <td>
@@ -32,40 +33,47 @@
                     <input id="txtOrderPubStart" readonly="readonly" type="text" name="OrderPubStart" value="@startDate.ToString("yyyy-MM-dd")" />
                     <span class="">到: </span>
                     <input id="txtOrderPubEnd" readonly="readonly" type="text" name="OrderPubEnd" value="@endDate.ToString("yyyy-MM-dd")" />
-                    <input id="chkCity" name="chkCity" type="checkbox" /><label for="chkCity">按城市统计</label>
+                    @*<input id="chkCity" name="chkCity" type="checkbox" />*@<label for="chkCity">按城市统计</label>
                     <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                 </td>
             </tr>
         </table>
         <hr />
+        @*}*@
+        @*<script type="text/javascript" src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>*@
         <div class="bd clearfix" id="dataList">
             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
                 <thead>
                     <tr class="tdbg">
                         <th width="%5">日期</th>
-                        <th class="J_City none">城市</th>
-                        <th>注册商家数量</th>
-                        <th>活跃商家数量</th>
-                        <th>活跃数量占比</th>
-                        <th>注册骑士数量</th>
+                        <th>任务数量</th>
+                        <th>总骑士数量</th>
+                        <th>日人均任务量</th>
                         <th>活跃骑士数量</th>
-                        <th>活跃骑士占比</th>
+                        <th>日在线人均任务量</th>
+                        <th>发单-接单总时长（秒）</th>
+                        <th>日均接单时长(分钟)</th>
+                        <th>发单-完成总时长（秒）</th>
+                        <th>日均配送时长(分钟)</th>
                     </tr>
                 </thead>
                 <tbody id="tbodyTimeSpan">
                     @{
-                        if (lstActives != null)
+                        if (lstJieDanTimes != null)
                         {
-                            foreach (var activeInfo in lstActives)
+                            foreach (var jieDanItem in lstJieDanTimes)
                             {
                                 <tr>
-                                    <td>@activeInfo.Date</td>
-                                    <td>@activeInfo.BusinessCount</td>
-                                    <td>@activeInfo.ActiveBusinessCount</td>
-                                    <td>@((activeInfo.ActiveBusinessRate * 100).ToString("f2"))%</td>
-                                    <td>@activeInfo.ClienterCount</td>
-                                    <td>@activeInfo.ActiveClienterCount</td>
-                                    <td>@((activeInfo.ActiveClienterRate * 100).ToString("f2"))%</td>
+                                    <td>@jieDanItem.Date</td>
+                                    <td>@jieDanItem.TaskCount</td>
+                                    <td>@jieDanItem.ClienterCount</td>
+                                    <td>@jieDanItem.AvgClienterCount</td>
+                                    <td>@jieDanItem.ActiveClienterCount</td>
+                                    <td>@jieDanItem.AvgActiveClienterCount</td>
+                                    <td>@jieDanItem.PubReciveTotalSeconds</td>
+                                    <td>@jieDanItem.AvgPubReceiveMinutes</td>
+                                    <td>@jieDanItem.PubCompleteTotalSeconds</td>
+                                    <td>@jieDanItem.AvgPubCompleteMinutes</td>
                                 </tr>
                             }
                         }
@@ -80,12 +88,12 @@
     @*<script type="text/javascript" src="~/Scripts/jquery.loadmask.js"></script>*@
     <script type="text/javascript" src="~/Scripts/jquery.blockUI.js"></script>
     <script type="text/javascript">
-        $(function () {
-            $(document).ready(function () {
+        $(function() {
+            $(document).ready(function() {
                 $('#txtOrderPubStart').datepicker();
                 $('#txtOrderPubEnd').datepicker();
 
-                $("#btnSearch").bind("click", function () {
+                $("#btnSearch").bind("click", function() {
                     search();
                 });
             });
@@ -103,18 +111,13 @@
                 StartDate: startDate,
                 EndDate: endDate,
             };
-            if ($("#chkCity").attr("checked")) {
-                params.AsCityQuery = true;
-            } else {
-                params.AsCityQuery = false;
-            }
 
             $.ajax({
-                url: "/api/tongji/active",
+                url: "/api/tongji/jiedantime",
                 type: "post",
                 data: params,
                 dataType: "json",
-                success: function (data) {
+                success: function(data) {
                     if (!data.IsSuccess) {
                         alert("查询错误：" + data.Message);
                         return;
@@ -124,45 +127,28 @@
                     if (data.Data != null) {
                         for (var i = 0; i < data.Data.length; i++) {
                             var item = data.Data[i];
+                            var $tr = $("<tr><td>{0}</td><td>{1}</td></tr>".format(item.Date, item.TaskCount));
+                            $("<td>{0}</td>".format(item.ClienterCount)).appendTo($tr);
+                            $("<td>{0}</td>".format(item.AvgClienterCount)).appendTo($tr);
+                            $("<td>{0}</td>".format(item.ActiveClienterCount)).appendTo($tr);
+                            $("<td>{0}</td>".format(item.AvgActiveClienterCount)).appendTo($tr);
+                            $("<td>{0}</td>".format(item.PubReciveTotalSeconds)).appendTo($tr);
+                            $("<td>{0}</td>".format(item.AvgPubReceiveMinutes)).appendTo($tr);
+                            $("<td>{0}</td>".format(item.PubCompleteTotalSeconds)).appendTo($tr);
+                            $("<td>{0}</td>".format(item.AvgPubCompleteMinutes)).appendTo($tr);
 
-                            if (params.AsCityQuery) { //如果选择了城市，显示隐藏的三列
-                                $(".J_City").removeClass("none");
-                                appendCityRow(item);
-                            } else {
-                                $(".J_City").addClass("none");
-                                appendRow(item);
-                            }
+                            $tr.appendTo($("#tbodyTimeSpan"));
                         }
                     }
                 },
-                beforeSend: function (xhr) {
+                beforeSend: function(xhr) {
                     $.blockUI();
                 },
-                complete: function (XMLHttpRequest, textStatus) {
+                complete: function(XMLHttpRequest, textStatus) {
                     //this; // 调用本次AJAX请求时传递的options参数
                     $.unblockUI();
                 }
             });
         }
-
-        function appendCityRow(item) {
-            var temp = "<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td>" +
-                "<td>{4}</td><td>{5}</td><td>{6}</td><td>{7}</td></tr>";
-
-            $("#tbodyTimeSpan").append(temp.format(item.Date, item.City,
-                item.BusinessCount, item.ActiveBusinessCount, (item.ActiveBusinessRate * 100).toFixed(2) + "%",
-                item.ClienterCount, item.ActiveClienterCount, (item.ActiveClienterRate * 100).toFixed(2) + "%"));
-        }
-
-        function appendRow(item) {
-            var temp = "<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td>" +
-                "<td>{4}</td><td>{5}</td><td>{6}</td></tr>";
-
-            $("#tbodyTimeSpan").append(temp.format(item.Date,
-                item.BusinessCount, item.ActiveBusinessCount, (item.ActiveBusinessRate * 100).toFixed(2) + "%",
-                item.ClienterCount, item.ActiveClienterCount, (item.ActiveClienterRate * 100).toFixed(2) + "%"));
-        }
     </script>
 }
-
-
