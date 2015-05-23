@@ -569,11 +569,21 @@
     <Content Include="Views\Statistical\Active.cshtml" />
     <Content Include="Views\Statistical\TaskCountPerHour.cshtml" />
     <Content Include="Views\Statistical\JieDanTime.cshtml" />
+    <Content Include="Views\Home\About.cshtml" />
+    <Content Include="Views\Home\Contact.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Manage\AddPhoneNumber.cshtml" />
+    <Content Include="Views\Manage\ChangePassword.cshtml" />
+    <Content Include="Views\Manage\Index.cshtml" />
+    <Content Include="Views\Manage\ManageLogins.cshtml" />
+    <Content Include="Views\Manage\SetPassword.cshtml" />
+    <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\app\" />
     <Folder Include="uploads\" />
+    <Folder Include="Views\BusinessDistributionStatistical\" />
     <Folder Include="Views\Test\" />
   </ItemGroup>
   <ItemGroup>
