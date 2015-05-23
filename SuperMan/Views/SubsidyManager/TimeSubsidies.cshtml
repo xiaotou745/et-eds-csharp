@@ -24,6 +24,7 @@
                 <th width="%5">编号</th>
                 <th>补贴时间(分钟)</th>
                 <th>补贴金额(元)</th>
+                <th>奖励总金额(元)</th>
                 <th>操作</th>
             </tr>
         </thead>
@@ -31,12 +32,15 @@
             @{
                 if (Model != null)
                 { 
+                    double allPrice=0;//计算总金额
                     foreach (var item in Model)
                     {
+                        allPrice += item.Value2;
                         <tr>
                             <td>@item.Id</td> 
                             <td>@item.Value1</td>
                             <td>@item.Value2</td>
+                            <td>@allPrice</td>
                             <td> 
                                 <a href="javascript:void(0)" onclick="showUpdate(@item.Id,'@item.Value1',@item.Value2)">修改</a>
                                 <a href="javascript:void(0)" onclick="deleteIt(@item.Id);">删除</a> 
