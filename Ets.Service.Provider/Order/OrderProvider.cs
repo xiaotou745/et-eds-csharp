@@ -368,7 +368,7 @@ namespace Ets.Service.Provider.Order
                     Amount = -order.SettleMoney,
                     Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
                     RecordType = (int)BusinessBalanceRecordRecordType.PublishOrder,
-                    Operator = "E代送系统",              
+                    Operator = order.BusinessName,
                     Remark = "扣除商家结算费",
                     WithwardId = result,
                     RelationNo=order.OrderNo
@@ -622,6 +622,7 @@ namespace Ets.Service.Provider.Order
                         SettleMoney=paramodel.settlemoney,
                         Adjustment=paramodel.adjustment,
                         Id=orderId,
+                        BusinessName = paramodel.store_info.store_name,
                         Amount = paramodel.total_price,
                         OrderNo=orderNo,
                         CommissionFormulaMode = paramodel.CommissionFormulaMode
@@ -1429,7 +1430,7 @@ namespace Ets.Service.Provider.Order
                         Amount = order.SettleMoney,//流水金额  结算金额
                         Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
                         RecordType = (int)BusinessBalanceRecordRecordType.CancelOrder,
-                        Operator = "E代送系统",
+                        Operator = string.Format("商家:{0}",paramodel.BusinessId),
                         WithwardId = paramodel.OrderId,
                         RelationNo = paramodel.OrderNo,
                         Remark = "商户取消订单返回配送费"
