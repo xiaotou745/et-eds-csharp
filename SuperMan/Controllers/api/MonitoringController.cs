@@ -18,6 +18,7 @@ namespace SuperMan.Controllers.api
         [HttpGet]
         public string Index()
         {
+
             return "success";
         }
     }
