@@ -318,6 +318,8 @@ where convert(char(10),o.PubDate,120) = convert(char(10), dateadd(day,-1,getdate
 
         #region 活跃商家、骑士数量统计
 
+
+
         /// <summary>
         /// 活跃数量统计
         /// </summary>
