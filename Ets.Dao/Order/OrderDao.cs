@@ -2475,8 +2475,7 @@ where b.Id=@BusinessId;");
         {
             string sql = string.Format(@" 
 update c
-set    c.AccountBalance=ISNULL(c.AccountBalance, 0)-@Amount,
-       c.AllowWithdrawPrice	=ISNULL(c.AllowWithdrawPrice,0)-@Amount
+set    c.AccountBalance=ISNULL(c.AccountBalance, 0)-@Amount
 OUTPUT
   Inserted.Id,
   -@Amount,
