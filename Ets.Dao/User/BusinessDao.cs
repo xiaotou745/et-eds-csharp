@@ -1583,7 +1583,20 @@ where Id=@Id";
                 result.PhoneNo = dataReader["PhoneNo"].ToString();
                 result.PhoneNo2 = dataReader["PhoneNo2"].ToString();
                 result.Password = dataReader["Password"].ToString();
-                result.CheckPicUrl = Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataReader["CheckPicUrl"].ToString())[0];
+                #region 绑定头像信息
+
+                string CheckPicUrl = dataReader["CheckPicUrl"].ToString();
+                if (string.IsNullOrEmpty(CheckPicUrl))
+                {
+                    CheckPicUrl = string.Empty;
+                }
+                else
+                {
+                    CheckPicUrl = Ets.Model.Common.ImageCommon.ReceiptPicConvert(CheckPicUrl)[0];
+                }
+                #endregion
+
+                result.CheckPicUrl = CheckPicUrl;
                 result.IDCard = dataReader["IDCard"].ToString();
                 result.Address = dataReader["Address"].ToString();
                 result.Landline = dataReader["Landline"].ToString();
