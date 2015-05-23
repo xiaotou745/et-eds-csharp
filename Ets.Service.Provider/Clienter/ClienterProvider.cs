@@ -744,7 +744,7 @@ namespace Ets.Service.Provider.Clienter
                 if (IsPayOrderCommission && orderOther.OrderCreateTime > Convert.ToDateTime(date)
                    && orderOther.OrderStatus == ConstValues.ORDER_FINISH)
                 {
-                    UpdateClienterMoney(myOrderInfo, uploadReceiptModel);
+                    UpdateClienterMoney(myOrderInfo, uploadReceiptModel, orderOther);
                 }
 
                 #region 临时
@@ -782,13 +782,13 @@ namespace Ets.Service.Provider.Clienter
             return orderOther;
         }
 
-        void UpdateClienterMoney(OrderListModel myOrderInfo, UploadReceiptModel uploadReceiptModel)
+        void UpdateClienterMoney(OrderListModel myOrderInfo, UploadReceiptModel uploadReceiptModel, OrderOther orderOther)
         {
             if ((bool)myOrderInfo.IsPay)//已付款
             {
                 //上传完小票
                 //(1)更新给骑士余额
-                if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)
+                if (orderOther.HadUploadCount >= orderOther.NeedUploadCount)
                 {
                     if (CheckOrderPay(myOrderInfo.OrderNo))
                     {
@@ -800,7 +800,7 @@ namespace Ets.Service.Provider.Clienter
             {
                 //上传完小票
                 //(1)更新给骑士余额
-                if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)
+                if (orderOther.HadUploadCount >= orderOther.NeedUploadCount)
                 {
                     if (CheckOrderPay(myOrderInfo.OrderNo))
                     {
@@ -813,7 +813,7 @@ namespace Ets.Service.Provider.Clienter
                 //上传完小票
                 //(1)更新给骑士余额、可提现余额
                 //(2)把OrderOther把IsJoinWithdraw状态改为1
-                if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)
+                if (orderOther.HadUploadCount >= orderOther.NeedUploadCount)
                 {
                     if (CheckOrderPay(myOrderInfo.OrderNo))
                     {
