@@ -9,6 +9,9 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ets.Model.DomainModel.Statistics;
+using ETS.Data.Generic;
+using ETS.Extension;
 
 namespace Ets.Dao.Statistics
 {
