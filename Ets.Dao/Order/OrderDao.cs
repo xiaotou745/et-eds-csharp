@@ -1458,10 +1458,8 @@ select top 1
         c.TrueName ClienterName,
         ISNULL(oo.HadUploadCount,0) HadUploadCount,
         o.SettleMoney,
-        b.Id businessId,     
-        o.ActualDoneDate,
-        o.IsPay,
-        o.MealsSettleMode
+           
+        o.ActualDoneDate
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
@@ -2100,7 +2098,7 @@ values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude)";
                         dr["TotalPrice"] = totalPrice;
                         dr["GoodPrice"] = order.listOrderChild[i].GoodPrice;
                         dr["DeliveryPrice"] = order.DistribSubsidy;
-                        if ((bool)order.IsPay || (!(bool)order.IsPay && order.MealsSettleMode == MealsSettleMode.Status0.GetHashCode()))
+                        if ((bool)order.IsPay)
                             dr["PayStatus"] = 1;
                         else
                             dr["PayStatus"] = 0;
