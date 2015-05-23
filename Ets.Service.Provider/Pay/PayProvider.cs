@@ -49,10 +49,10 @@ namespace Ets.Service.Provider.Pay
                 LogHelper.LogWriter("=============支付宝支付：");
                 ////支付宝支付
                 //数据库里查询订单信息
-                if (payStatusModel.PayStatus == PayStatusEnum.WaitPay.GetHashCode())//待支付
-                {
-                    return CreateAliPayOrder(orderNo, payStatusModel.TotalPrice, model.orderId);
-                }
+                //if (payStatusModel.PayStatus == PayStatusEnum.WaitPay.GetHashCode())//待支付
+                //{
+                return CreateAliPayOrder(orderNo, payStatusModel.TotalPrice, model.orderId);
+                //}
             }
             if (model.payType == PayTypeEnum.WeiXin.GetHashCode())
             {
