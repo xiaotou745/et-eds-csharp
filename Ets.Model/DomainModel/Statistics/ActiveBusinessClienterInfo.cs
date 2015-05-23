@@ -2,6 +2,8 @@
 
 namespace Ets.Model.DomainModel.Statistics
 {
+
+
     /// <summary>
     /// 活跃商家、骑士统计
     /// </summary>
