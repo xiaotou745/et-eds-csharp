@@ -368,7 +368,7 @@ namespace Ets.Service.Provider.Order
                     Amount = -order.SettleMoney,
                     Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
                     RecordType = (int)BusinessBalanceRecordRecordType.PublishOrder,
-                    Operator = order.BusinessName,              
+                    Operator = "E代送系统",              
                     Remark = "扣除商家结算费",
                     WithwardId = result,
                     RelationNo=order.OrderNo

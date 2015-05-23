@@ -622,7 +622,7 @@ namespace Ets.Service.Provider.Clienter
                 Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
                 Balance = accountBalance ?? 0,
                 RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
-                Operator = myOrderInfo.ClienterName,
+                Operator = "E代送系统",
                 RelationNo = myOrderInfo.OrderNo,
                 Remark = "骑士完成订单"
             };
@@ -658,7 +658,7 @@ namespace Ets.Service.Provider.Clienter
                 Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
                 Balance = accountBalance ?? 0,
                 RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
-                Operator = myOrderInfo.ClienterName,
+                Operator = "E代送系统",
                 RelationNo = myOrderInfo.OrderNo,
                 Remark = "骑士完成订单"
             };
@@ -866,7 +866,7 @@ namespace Ets.Service.Provider.Clienter
                     Amount = myOrderInfo.BusinessReceivable,
                     Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
                     RecordType = (int)BusinessBalanceRecordRecordType.OrderMeals,
-                    Operator = myOrderInfo.BusinessName,
+                    Operator = "E代送系统",
                     Remark = "返还商家订单菜品费",
                     WithwardId = myOrderInfo.Id,
                     RelationNo = myOrderInfo.OrderNo
