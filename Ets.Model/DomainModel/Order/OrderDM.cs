@@ -204,6 +204,11 @@ namespace Ets.Model.DomainModel.Order
         /// 餐费结算方式（0：线下结算 1：线上结算）
         /// </summary>
         public int MealsSettleMode { get; set; }
+
+        /// <summary>
+        /// 骑士Id
+        /// </summary>
+        public int ClienterId { get; set; }        
     }
 
     public class OrderChildInfo
@@ -256,7 +261,11 @@ namespace Ets.Model.DomainModel.Order
         /// <summary>
         /// 小票图片路径
         /// </summary>
-        public string TicketUrl { get; set; }     
+        public string TicketUrl { get; set; }
+        /// <summary>
+        /// 骑士Id
+        /// </summary>
+        public int ClienterId { get; set; }        
     
     }
 

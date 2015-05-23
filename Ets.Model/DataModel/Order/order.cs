@@ -213,5 +213,7 @@ namespace Ets.Model.DataModel.Order
         ///  商户到收货人的距离  千米
         /// </summary>
         public double distanceB2R { get; set; }
+       
+        
     }
 }
