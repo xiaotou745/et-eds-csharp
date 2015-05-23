@@ -57,5 +57,31 @@ namespace Ets.Service.Provider.Statistics
                 }
             }
         }
+
+
+
+
+        #region 活跃数量统计
+        /// <summary>
+        /// 活跃数量统计
+        /// </summary>
+        /// <param name="queryInfo"></param>
+        /// <returns></returns>
+        public IList<ActiveBusinessClienterInfo> QueryActiveBusinessClienter(ParamActiveInfo queryInfo)
+        {
+            AssertUtils.ArgumentNotNull(queryInfo, "queryInfo");
+            AssertUtils.ArgumentNotNull(queryInfo.StartDate, "queryInfo.StartDate");
+            AssertUtils.ArgumentNotNull(queryInfo.EndDate, "queryInfo.EndDate");
+
+            //向前加一天，取0点
+            queryInfo.EndDate = queryInfo.EndDate.Value.AddDays(1).Date;
+
+            if (queryInfo.AsCityQuery)
+            {
+                return statisticsDao.QueryCityActiveBusinessClienter(queryInfo);
+            }
+            return statisticsDao.QueryActiveBusinessClienter(queryInfo);
+        }
+        #endregion
     }
 }

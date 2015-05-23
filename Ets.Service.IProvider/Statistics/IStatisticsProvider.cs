@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Ets.Service.IProvider.Statistics
-{
+{ 
     public interface IStatisticsProvider
     {
         /// <summary>
