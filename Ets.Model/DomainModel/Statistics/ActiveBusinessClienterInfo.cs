@@ -84,6 +84,7 @@ namespace Ets.Model.DomainModel.Statistics
     /// </summary>
     public class ParamActiveInfo
     {
+
         /// <summary>
         /// 开始日期
         /// </summary>
