@@ -1458,7 +1458,7 @@ select top 1
         c.TrueName ClienterName,
         ISNULL(oo.HadUploadCount,0) HadUploadCount,
         o.SettleMoney,
-           
+        o.IsPay,   
         o.ActualDoneDate
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
