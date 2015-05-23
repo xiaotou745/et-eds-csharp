@@ -560,7 +560,7 @@ namespace SuperManWebApi.Controllers
         public Ets.Model.Common.ResultModel<Ets.Model.Common.ResultModelServicePhone> GetCustomerServicePhone(string CityName)
         {
             return Ets.Model.Common.ResultModel<Ets.Model.Common.ResultModelServicePhone>.Conclude(
-                ETS.Enums.GetOrdersStatus.Success,
+                ServicePhoneStatus.Success,
                 new ServicePhone().GetCustomerServicePhone(CityName)
                 );
         }
