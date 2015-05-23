@@ -423,7 +423,7 @@ from dbo.business as b where b.Id=@BusinessId
 select @@IDENTITY ";
             IDbParameters dbOtherParameters = DbHelper.CreateDbParameters();
             dbOtherParameters.AddWithValue("@OrderId", orderId); //商户ID
-            dbOtherParameters.AddWithValue("@BusinessId", businessId); 
+            dbOtherParameters.AddWithValue("@BusinessId", businessId);
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertOtherSql, dbOtherParameters));
         }
 
@@ -1505,7 +1505,7 @@ join dbo.OrderChild oc(nolock) on o.Id= oc.OrderId
             //    IsPay = ParseHelper.ToBool(row["IsPay"], false)//是否允许点击完成，1=允许，0=不允许 
             //});
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parms);
-            if (dt==null || dt.Rows.Count<=0)
+            if (dt == null || dt.Rows.Count <= 0)
             {
                 return null;
             }
@@ -2098,7 +2098,7 @@ values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude)";
                         dr["TotalPrice"] = totalPrice;
                         dr["GoodPrice"] = order.listOrderChild[i].GoodPrice;
                         dr["DeliveryPrice"] = order.DistribSubsidy;
-                        if ((bool)order.IsPay || 
+                        if ((bool)order.IsPay ||
                             (!(bool)order.IsPay && order.MealsSettleMode == MealsSettleMode.Status0.GetHashCode())
                             )//已付款 未付款线下付款
                             dr["PayStatus"] = 1;
@@ -2362,10 +2362,10 @@ update OrderOther
 where orderid=@orderid  
 ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.Add("TakeLongitude", DbType.Int64, 4).Value = takeLongitude;
-            dbParameters.Add("TakeLatitude", DbType.Int64, 4).Value = takeLatitude;
+            dbParameters.AddWithValue("TakeLongitude", takeLongitude);
+            dbParameters.AddWithValue("TakeLatitude", takeLatitude);
             dbParameters.Add("orderId", DbType.Int32, 4).Value = orderId;
-            dbParameters.Add("clienterId", DbType.Int32, 4).Value = clienterId;
+            dbParameters.AddWithValue("clienterId", clienterId);
             DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
         }
         /// <summary>
