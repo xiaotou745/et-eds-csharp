@@ -1097,7 +1097,7 @@ namespace Ets.Service.Provider.Order
                 dealResultInfo.DealMsg = "订单已分账，不能取消订单！";
                 return dealResultInfo;
             }
-            if (orderModel.MealsSettleMode == 1 && orderTaskPayStatus > 0)//餐费未线上支付模式并且餐费有支付
+            if (orderModel.MealsSettleMode == 1 && orderTaskPayStatus > 0 && !orderModel.IsPay.Value)//餐费未线上支付模式并且餐费有支付
             {
                 dealResultInfo.DealMsg = "餐费有支付，不能取消订单！";
                 return dealResultInfo;
