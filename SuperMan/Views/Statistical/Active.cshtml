@@ -1,0 +1,168 @@
+﻿@using Ets.Model.DomainModel.Statistics
+@{
+    ViewBag.Title = "活跃数量统计";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+
+    DateTime startDate = (DateTime)ViewBag.StartDate;
+    DateTime endDate = (DateTime)ViewBag.EndDate;
+
+    IList<ActiveBusinessClienterInfo> lstActives = (IList<ActiveBusinessClienterInfo>)ViewBag.LstActiveInfo;
+}
+@section styles{
+    <style type="text/css">
+        .none {
+            display: none;
+        }
+    </style>
+}
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：数据统计 > 活跃数量统计
+    </h2>
+    <div class="SearchMd" style="width:1000px">
+        <h4 style="color:black;font-weight:600">活跃数量统计</h4>
+        <table border="0" cellspacing="0" cellpadding="0" style="width:1080px">
+            <tr>
+                <td>
+                    <span class="">发布时间: </span>
+                    <input id="txtOrderPubStart" readonly="readonly" type="text" name="OrderPubStart" value="@startDate.ToString("yyyy-MM-dd")" />
+                    <span class="">到: </span>
+                    <input id="txtOrderPubEnd" readonly="readonly" type="text" name="OrderPubEnd" value="@endDate.ToString("yyyy-MM-dd")" />
+                    <input id="chkCity" name="chkCity" type="checkbox" /><label for="chkCity">按城市统计</label>
+                    <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                </td>
+            </tr>
+        </table>
+        <hr />
+        <div class="bd clearfix" id="dataList">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+                <thead>
+                    <tr class="tdbg">
+                        <th width="%5">日期</th>
+                        <th class="J_City none">城市</th>
+                        <th>注册商家数量</th>
+                        <th>活跃商家数量</th>
+                        <th>活跃数量占比</th>
+                        <th>注册骑士数量</th>
+                        <th>活跃骑士数量</th>
+                        <th>活跃骑士占比</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyTimeSpan">
+                    @{
+                        if (lstActives != null)
+                        {
+                            foreach (var activeInfo in lstActives)
+                            {
+                                <tr>
+                                    <td>@activeInfo.Date</td>
+                                    <td>@activeInfo.BusinessCount</td>
+                                    <td>@activeInfo.ActiveBusinessCount</td>
+                                    <td>@((activeInfo.ActiveBusinessRate * 100).ToString("f2"))%</td>
+                                    <td>@activeInfo.ClienterCount</td>
+                                    <td>@activeInfo.ActiveClienterCount</td>
+                                    <td>@((activeInfo.ActiveClienterRate * 100).ToString("f2"))%</td>
+                                </tr>
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@section scripts
+{
+    @*<script type="text/javascript" src="~/Scripts/jquery.loadmask.js"></script>*@
+    <script type="text/javascript" src="~/Scripts/jquery.blockUI.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $(document).ready(function () {
+                $('#txtOrderPubStart').datepicker();
+                $('#txtOrderPubEnd').datepicker();
+
+                $("#btnSearch").bind("click", function () {
+                    search();
+                });
+            });
+        });
+
+        function search() {
+            var startDate = $("#txtOrderPubStart").val();
+            var endDate = $("#txtOrderPubEnd").val();
+            if (startDate == "" || endDate == "") {
+                alert("请输入时间段。");
+                return;
+            }
+
+            var params = {
+                StartDate: startDate,
+                EndDate: endDate,
+            };
+            if ($("#chkCity").attr("checked")) {
+                params.AsCityQuery = true;
+            } else {
+                params.AsCityQuery = false;
+            }
+
+            $.ajax({
+                url: "/api/tongji/active",
+                type: "post",
+                data: params,
+                dataType: "json",
+                success: function (data) {
+                    if (!data.IsSuccess) {
+                        alert("查询错误：" + data.Message);
+                        return;
+                    }
+                    $("#tbodyTimeSpan").html("");
+
+                    if (data.Data != null) {
+                        for (var i = 0; i < data.Data.length; i++) {
+                            var item = data.Data[i];
+
+                            if (params.AsCityQuery) { //如果选择了城市，显示隐藏的三列
+                                $(".J_City").removeClass("none");
+                                appendCityRow(item);
+                            } else {
+                                $(".J_City").addClass("none");
+                                appendRow(item);
+                            }
+                        }
+                    }
+                },
+                beforeSend: function (xhr) {
+                    $.blockUI();
+                },
+                complete: function (XMLHttpRequest, textStatus) {
+                    //this; // 调用本次AJAX请求时传递的options参数
+                    $.unblockUI();
+                }
+            });
+        }
+
+        function appendCityRow(item) {
+            var temp = "<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td>" +
+                "<td>{4}</td><td>{5}</td><td>{6}</td><td>{7}</td></tr>";
+
+            $("#tbodyTimeSpan").append(temp.format(item.Date, item.City,
+                item.BusinessCount, item.ActiveBusinessCount, (item.ActiveBusinessRate * 100).toFixed(2) + "%",
+                item.ClienterCount, item.ActiveClienterCount, (item.ActiveClienterRate * 100).toFixed(2) + "%"));
+        }
+
+        function appendRow(item) {
+            var temp = "<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td>" +
+                "<td>{4}</td><td>{5}</td><td>{6}</td></tr>";
+
+            $("#tbodyTimeSpan").append(temp.format(item.Date,
+                item.BusinessCount, item.ActiveBusinessCount, (item.ActiveBusinessRate * 100).toFixed(2) + "%",
+                item.ClienterCount, item.ActiveClienterCount, (item.ActiveClienterRate * 100).toFixed(2) + "%"));
+        }
+    </script>
+}
+
+
