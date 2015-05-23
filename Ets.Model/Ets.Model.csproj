@@ -101,6 +101,8 @@
     <Compile Include="DomainModel\Finance\FinanceRecordsDMList.cs" />
     <Compile Include="DomainModel\Order\OrderChildForTicket.cs" />
     <Compile Include="DomainModel\Order\RushOrderModel.cs" />
+    <Compile Include="DomainModel\Statistics\JieDanTimeInfo.cs" />
+    <Compile Include="DomainModel\Statistics\TaskStatisticsPerHourInfo.cs" />
     <Compile Include="DomainModel\Subsidy\ShortMessageModel.cs" />
     <Compile Include="DomainModel\Subsidy\GrabOrderModel.cs" />
     <Compile Include="ParameterModel\AliPay\NotifyModel.cs" />
@@ -220,6 +222,7 @@
     <Compile Include="ParameterModel\Finance\WithdrawBPM.cs" />
     <Compile Include="ParameterModel\Finance\WithdrawPM.cs" />
     <Compile Include="ParameterModel\Finance\WithdrawCPM.cs" />
+    <Compile Include="ParameterModel\Group\GetJobCPM.cs" />
     <Compile Include="ParameterModel\Group\GroupListModel.cs" />
     <Compile Include="ParameterModel\Group\GroupParaModel.cs" />
     <Compile Include="ParameterModel\Order\CancelOrderBPM.cs" />
