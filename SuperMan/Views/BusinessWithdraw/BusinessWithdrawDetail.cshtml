@@ -40,7 +40,7 @@
             <td>开户行:@Model.OpenBank</td>
             <td>开户支行：@Model.OpenSubBank</td>
             <td>账户名:@Model.TrueName</td>
-            <td>银行账号:@ParseHelper.ToDecrypt(Model.WithwardNo)</td>
+            <td>银行账号:@ParseHelper.ToDecrypt(Model.AccountNo)</td>
         </tr>
     </table>
     @if (Model.Status == 1)

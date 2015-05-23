@@ -63,5 +63,11 @@ namespace Ets.Model.DataModel.Order
         /// </summary>
         public decimal? TakeLatitude { get; set; }
 
+        /// <summary>
+        /// 是否允许修改小票
+        /// </summary>
+        public bool IsModifyTicket { get; set; }
+
+
     }
 }
