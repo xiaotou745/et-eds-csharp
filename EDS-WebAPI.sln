@@ -1,10 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperMan", "SuperMan\SuperMan.csproj", "{FC62F0EE-873C-437E-B845-78F9ABC16145}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperManDataAccess", "SuperManDataAccess\SuperManDataAccess.csproj", "{F54D4C48-F635-42CA-9940-19873A691693}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperManCommonModel", "SuperManCommonModel\SuperManCommonModel.csproj", "{4E298C44-CA42-4074-8D27-6A1951BFD7E6}"
@@ -14,19 +12,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperManBusinessLogic", "SuperManBusinessLogic\SuperManBusinessLogic.csproj", "{72CA336E-DC5E-4F98-9275-3A3A258189D6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperManCore", "SuperManCore\SuperManCore.csproj", "{F52D02C9-103A-46B1-AEE7-3D11E64777D7}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{1D78A913-F249-45D5-BAA5-8D88B45864E3}"
-	ProjectSection(SolutionItems) = preProject
-		Doc\E代送订单流程.vsd = Doc\E代送订单流程.vsd
-		Doc\SuperMan.pdb = Doc\SuperMan.pdb
-		Doc\SuperMan.pdm = Doc\SuperMan.pdm
-		Doc\短信接口说明.docx = Doc\短信接口说明.docx
-		Doc\超人后台数据库表结构说明文档.docx = Doc\超人后台数据库表结构说明文档.docx
-		Doc\超人接收订单WebApi接口文档V1.0.docx = Doc\超人接收订单WebApi接口文档V1.0.docx
-		Doc\超人项目WebApi端接口文档.docx = Doc\超人项目WebApi端接口文档.docx
-		Doc\超人项目交接接口.docx = Doc\超人项目交接接口.docx
-		Doc\超人项目总结.xlsx = Doc\超人项目总结.xlsx
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "New", "New", "{EE99F08B-9284-4D4B-A832-AA91D252A46B}"
 EndProject
@@ -42,17 +27,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ets.Service.IProvider", "Et
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ets.Service.Provider", "Ets.Service.Provider\Ets.Service.Provider.csproj", "{61C59E53-67C8-44FE-B0AD-1E9025D7E568}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApi", "OpenApi\OpenApi.csproj", "{AB5CD24D-45A0-46E9-9CFE-9181D16A8671}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EdaiSong", "EdaiSong", "{F1A5BBA2-CC9A-4C6B-A8CB-735BDD084D87}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebEdaiSong", "EdaiSong\WebEdaiSong\WebEdaiSong.csproj", "{10A4B401-7F8F-490E-8221-E88050D0ABC6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WapEdaiSong", "EdaiSong\WapEdaiSong\WapEdaiSong.csproj", "{8D1025F8-CB54-4D46-94BF-E876F67F50DE}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{EA5FEC85-0946-4672-A37B-5ABCFE6C4AFF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ets.Provider.Tests", "Ets.Provider.Tests\Ets.Provider.Tests.csproj", "{990E16D5-7356-4EAC-9059-D5A676296AA5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{D61D4AF4-A9A7-4E9F-840B-D66881E468F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,10 +39,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{FC62F0EE-873C-437E-B845-78F9ABC16145}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FC62F0EE-873C-437E-B845-78F9ABC16145}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FC62F0EE-873C-437E-B845-78F9ABC16145}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FC62F0EE-873C-437E-B845-78F9ABC16145}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F54D4C48-F635-42CA-9940-19873A691693}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F54D4C48-F635-42CA-9940-19873A691693}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F54D4C48-F635-42CA-9940-19873A691693}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -108,18 +83,6 @@ Global
 		{61C59E53-67C8-44FE-B0AD-1E9025D7E568}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{61C59E53-67C8-44FE-B0AD-1E9025D7E568}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{61C59E53-67C8-44FE-B0AD-1E9025D7E568}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AB5CD24D-45A0-46E9-9CFE-9181D16A8671}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AB5CD24D-45A0-46E9-9CFE-9181D16A8671}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AB5CD24D-45A0-46E9-9CFE-9181D16A8671}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AB5CD24D-45A0-46E9-9CFE-9181D16A8671}.Release|Any CPU.Build.0 = Release|Any CPU
-		{10A4B401-7F8F-490E-8221-E88050D0ABC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{10A4B401-7F8F-490E-8221-E88050D0ABC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{10A4B401-7F8F-490E-8221-E88050D0ABC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{10A4B401-7F8F-490E-8221-E88050D0ABC6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8D1025F8-CB54-4D46-94BF-E876F67F50DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8D1025F8-CB54-4D46-94BF-E876F67F50DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8D1025F8-CB54-4D46-94BF-E876F67F50DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8D1025F8-CB54-4D46-94BF-E876F67F50DE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{990E16D5-7356-4EAC-9059-D5A676296AA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{990E16D5-7356-4EAC-9059-D5A676296AA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{990E16D5-7356-4EAC-9059-D5A676296AA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -129,14 +92,12 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{BBA67A86-AFD6-46F2-BBD9-5DFB5BFDAFE2} = {EE99F08B-9284-4D4B-A832-AA91D252A46B}
 		{DD95FA95-B979-4802-8F79-B08D35939F4E} = {EE99F08B-9284-4D4B-A832-AA91D252A46B}
-		{BE8B43E2-DF1E-4BFD-B4EF-63E3E0F53EA2} = {EE99F08B-9284-4D4B-A832-AA91D252A46B}
 		{B9D2361D-7E2C-45BA-89EC-4ECA1BF7C456} = {EE99F08B-9284-4D4B-A832-AA91D252A46B}
 		{73FF8127-9703-4D8C-BD1C-4190A926A5BA} = {EE99F08B-9284-4D4B-A832-AA91D252A46B}
 		{61C59E53-67C8-44FE-B0AD-1E9025D7E568} = {EE99F08B-9284-4D4B-A832-AA91D252A46B}
-		{10A4B401-7F8F-490E-8221-E88050D0ABC6} = {F1A5BBA2-CC9A-4C6B-A8CB-735BDD084D87}
-		{8D1025F8-CB54-4D46-94BF-E876F67F50DE} = {F1A5BBA2-CC9A-4C6B-A8CB-735BDD084D87}
 		{990E16D5-7356-4EAC-9059-D5A676296AA5} = {EA5FEC85-0946-4672-A37B-5ABCFE6C4AFF}
+		{BBA67A86-AFD6-46F2-BBD9-5DFB5BFDAFE2} = {D61D4AF4-A9A7-4E9F-840B-D66881E468F5}
+		{BE8B43E2-DF1E-4BFD-B4EF-63E3E0F53EA2} = {D61D4AF4-A9A7-4E9F-840B-D66881E468F5}
 	EndGlobalSection
 EndGlobal

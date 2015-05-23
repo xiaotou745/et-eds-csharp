@@ -34,5 +34,39 @@ namespace Ets.Service.Provider.Statistics
             }
             return orderStatisticsDao.QueryOrderCompleteTimeSpan(queryInfo);
         }
+
+        public IList<TaskStatisticsPerHourInfo> QueryTaskCountPerHour(ParamTaskPerHour queryInfo)
+        {
+            AssertUtils.ArgumentNotNull(queryInfo, "queryInfo");
+            AssertUtils.ArgumentNotNull(queryInfo.StartDate, "queryInfo.StartDate");
+            AssertUtils.ArgumentNotNull(queryInfo.EndDate, "queryInfo.EndDate");
+
+            //向前加一天，取0点
+            queryInfo.EndDate = queryInfo.EndDate.Value.AddDays(1).Date;
+
+            //如果是按照城市查询
+            if (queryInfo.AsCityQuery)
+            {
+                return orderStatisticsDao.QueryCityTaskCountPerHour(queryInfo);
+            }
+            return orderStatisticsDao.QueryTaskCountPerHour(queryInfo);
+        }
+
+        public IList<JieDanTimeInfo> QueryJieDanTimeInfo(ParamJieDanTimeInfo queryInfo)
+        {
+            AssertUtils.ArgumentNotNull(queryInfo, "queryInfo");
+            AssertUtils.ArgumentNotNull(queryInfo.StartDate, "queryInfo.StartDate");
+            AssertUtils.ArgumentNotNull(queryInfo.EndDate, "queryInfo.EndDate");
+
+            //向前加一天，取0点
+            queryInfo.EndDate = queryInfo.EndDate.Value.AddDays(1).Date;
+
+            //如果是按照城市查询
+            //if (queryInfo.AsCityQuery)
+            //{
+            //    return orderStatisticsDao.QueryCityTaskCountPerHour(queryInfo);
+            //}
+            return orderStatisticsDao.QueryJieDanTime(queryInfo);
+        }
     }
 }
