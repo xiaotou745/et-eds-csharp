@@ -63,7 +63,7 @@ namespace Ets.Service.Provider.Clienter
                 if (ordercount > 0)
                     return ETS.Enums.ChangeWorkStatusEnum.OrderError;
             }
-            int changeResult = clienterDao.ChangeWorkStatusToSql(paraModel);  
+            int changeResult = clienterDao.ChangeWorkStatusToSql(paraModel);
             return changeResult > 0 ? ETS.Enums.ChangeWorkStatusEnum.Success : ETS.Enums.ChangeWorkStatusEnum.Error;
         }
 
@@ -508,7 +508,7 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         public FinishOrderResultModel FinishOrder(int userId, string orderNo, float completeLongitude, float CompleteLatitude, string pickupCode = null)
         {
-            FinishOrderResultModel model = new FinishOrderResultModel() { Message="-1"};
+            FinishOrderResultModel model = new FinishOrderResultModel() { Message = "-1" };
             //string result = "-1";
             int businessId = 0;
             OrderListModel myOrderInfo = orderDao.GetByOrderNo(orderNo);
@@ -526,9 +526,9 @@ namespace Ets.Service.Provider.Clienter
                 //获取该订单信息和该  骑士现在的 收入金额
                 if (myOrderInfo.GroupId == SystemConst.Group3 && !string.IsNullOrWhiteSpace(myOrderInfo.PickupCode)
                     && pickupCode != myOrderInfo.PickupCode) //全时订单 判断 取货码是否正确
-                    //return FinishOrderStatus.PickupCodeError.ToString();
+                //return FinishOrderStatus.PickupCodeError.ToString();
                 {
-                    model.Message=FinishOrderStatus.PickupCodeError.ToString();
+                    model.Message = FinishOrderStatus.PickupCodeError.ToString();
                     return model;
                 }
                 //更新订单状态
@@ -731,12 +731,13 @@ namespace Ets.Service.Provider.Clienter
 
                 //更新骑士金额
 
-                #region 是否给骑士加佣金，如果当前时间大于等于 上传小票的时间+24小时，就不增加佣金
+                #region 是否给骑士加佣金，如果当前时间大于等于 上传小票的时间+24小时，就不增加佣金 && 把订单加入到已增加已提现里
                 DateTime doneDate = ParseHelper.ToDatetime(myOrderInfo.ActualDoneDate, DateTime.Now).AddDays(1);//完成时间加一天
                 bool IsPayOrderCommission = true;
                 if (myOrderInfo.ActualDoneDate != null && DateTime.Now >= doneDate)
                 {
                     IsPayOrderCommission = false;
+                    orderDao.UpdateJoinWithdraw(myOrderInfo.Id);//把订单加入到已增加可提现里
                 }
                 #endregion
 
@@ -867,8 +868,8 @@ namespace Ets.Service.Provider.Clienter
                     RecordType = (int)BusinessBalanceRecordRecordType.OrderMeals,
                     Operator = myOrderInfo.BusinessName,
                     Remark = "返还商家订单菜品费",
-                    WithwardId=myOrderInfo.Id,
-                    RelationNo=myOrderInfo.OrderNo
+                    WithwardId = myOrderInfo.Id,
+                    RelationNo = myOrderInfo.OrderNo
                 });
                 #endregion
 
