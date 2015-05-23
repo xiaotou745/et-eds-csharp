@@ -515,7 +515,7 @@ namespace Ets.Service.Provider.Clienter
 
             #region 是否允许修改小票
             model.IsModifyTicket = true;
-            if (myOrderInfo.NeedUploadCount >= myOrderInfo.OrderCount && myOrderInfo.Status == OrderStatus.订单完成.GetHashCode())
+            if (myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount && myOrderInfo.Status == OrderStatus.订单完成.GetHashCode())
             {
                 model.IsModifyTicket = false;
             }
