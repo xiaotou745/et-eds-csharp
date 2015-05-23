@@ -1096,7 +1096,7 @@ namespace Ets.Service.Provider.Clienter
                 //写入骑士抢单坐标
                 orderOtherDao.UpdateGrab(orderNo, grabLongitude, grabLatitude);
 
-                new OrderProvider().AsyncOrderStatus(orderNo);//同步第三方订单
+                new Ets.Service.Provider.Order.OrderProvider().AsyncOrderStatus(orderNo);//同步第三方订单
                 Ets.Service.Provider.MyPush.Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", bussinessId.ToString(), string.Empty);
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Success);
             }

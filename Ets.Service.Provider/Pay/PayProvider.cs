@@ -43,7 +43,7 @@ namespace Ets.Service.Provider.Pay
                 return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
             }
             //所属产品_主订单号_子订单号_支付方式
-            string orderNo = string.Concat(model.productId, "_", model.orderId, "_", model.childId, "_", PayStyleEnum.BuyerPay.GetHashCode());
+            string orderNo = string.Concat(model.productId, "_", model.orderId, "_", model.childId, "_", model.payStyle);
             if (model.payType == PayTypeEnum.ZhiFuBao.GetHashCode())
             {
                 LogHelper.LogWriter("=============支付宝支付：");
