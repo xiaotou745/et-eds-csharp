@@ -2,6 +2,7 @@
 
 namespace Ets.Model.DomainModel.Statistics
 {
+
     /// <summary>
     /// 订单完成时间间隔统计查询条件
     /// </summary>
