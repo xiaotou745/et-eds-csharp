@@ -1282,6 +1282,8 @@ namespace Ets.Service.Provider.Order
             orderDM.businessId = ParseHelper.ToInt(order.businessId, 0);
             orderDM.TotalAmount = order.TotalAmount;
             orderDM.MealsSettleMode = order.MealsSettleMode;
+            orderDM.ClienterId=order.ClienterId;
+             
             #region 是否允许修改小票
             orderDM.IsModifyTicket = true;
             if (order.HadUploadCount >= order.OrderCount && order.Status == OrderStatus.订单完成.GetHashCode())
