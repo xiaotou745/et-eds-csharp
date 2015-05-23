@@ -15,6 +15,7 @@ using System.Xml;
 using Ets.Dao.Order;
 using Ets.Model.DataModel.Order;
 using ETS.Pay.WxPay;
+using Ets.Model.DomainModel.Bussiness;
 
 namespace Ets.Service.Provider.Pay
 {
@@ -50,7 +51,7 @@ namespace Ets.Service.Provider.Pay
                 //数据库里查询订单信息
                 if (payStatusModel.PayStatus == PayStatusEnum.WaitPay.GetHashCode())//待支付
                 {
-                    return CreateAliPayOrder(orderNo, payStatusModel.TotalPrice);
+                    return CreateAliPayOrder(orderNo, payStatusModel.TotalPrice, model.orderId);
                 }
             }
             if (model.payType == PayTypeEnum.WeiXin.GetHashCode())
@@ -139,11 +140,25 @@ namespace Ets.Service.Provider.Pay
         /// </summary>
         /// <param name="orderNo">订单号</param>
         /// <param name="payAmount">支付金额</param>
+        /// <param name="orderId">订单ID，用于查询商家信息用</param>
         /// <returns></returns>
-        private ResultModel<PayResultModel> CreateAliPayOrder(string orderNo, decimal payAmount)
+        private ResultModel<PayResultModel> CreateAliPayOrder(string orderNo, decimal payAmount, int orderId)
         {
+            #region 通过订单ID，用于查询商家信息用
+            BusinessDM businessModel = new Ets.Dao.User.BusinessDao().GetByOrderId(orderId);
+            string businessName = string.Empty;
+            if (businessModel == null || string.IsNullOrEmpty(businessModel.Name))
+            {
+                businessName = "e代送收款";
+            }
+            else
+            {
+                businessName = businessModel.Name;
+            }
+            #endregion
+
             PayResultModel resultModel = new PayResultModel();
-            var qrcodeUrl = alipayIntegrate.GetQRCodeUrl(orderNo, payAmount);
+            var qrcodeUrl = alipayIntegrate.GetQRCodeUrl(orderNo, payAmount, businessName);
             if (string.IsNullOrEmpty(qrcodeUrl))
             {
                 return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
