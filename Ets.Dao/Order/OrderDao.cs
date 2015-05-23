@@ -1458,8 +1458,7 @@ select top 1
         c.TrueName ClienterName,
         ISNULL(oo.HadUploadCount,0) HadUploadCount,
         o.SettleMoney,
-        b.Id businessId,
-        o.Amount - o.SettleMoney + o.DistribSubsidy * o.OrderCount as ShouldPayBusiMoney ,
+        o.IsPay,   
         o.ActualDoneDate
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
@@ -2099,7 +2098,9 @@ values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude)";
                         dr["TotalPrice"] = totalPrice;
                         dr["GoodPrice"] = order.listOrderChild[i].GoodPrice;
                         dr["DeliveryPrice"] = order.DistribSubsidy;
-                        if ((bool)order.IsPay)
+                        if ((bool)order.IsPay || 
+                            (!(bool)order.IsPay && order.MealsSettleMode == MealsSettleMode.Status0.GetHashCode())
+                            )//已付款 未付款线下付款
                             dr["PayStatus"] = 1;
                         else
                             dr["PayStatus"] = 0;
@@ -2456,7 +2457,7 @@ where b.Id=@BusinessId;");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Amount", model.SettleMoney);
             parm.AddWithValue("@Status", BusinessBalanceRecordStatus.Success);
-            parm.AddWithValue("@RecordType", BusinessBalanceRecordRecordType.CancelOrderReturn);
+            parm.AddWithValue("@RecordType", BusinessBalanceRecordRecordType.CancelOrder);
             parm.AddWithValue("@Operator", model.OptUserName);
             parm.AddWithValue("@WithwardId", model.Id);
             parm.AddWithValue("@RelationNo", model.OrderNo);
@@ -2503,7 +2504,7 @@ where c.Id=@ClienterId;");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Amount", model.OrderCommission);
             parm.AddWithValue("@Status", ClienterBalanceRecordStatus.Success);
-            parm.AddWithValue("@RecordType", ClienterBalanceRecordRecordType.CancleOrderReturn);
+            parm.AddWithValue("@RecordType", ClienterBalanceRecordRecordType.CancelOrder);
             parm.AddWithValue("@Operator", model.OptUserName);
             parm.AddWithValue("@WithwardId", model.Id);
             parm.AddWithValue("@RelationNo", model.OrderNo);

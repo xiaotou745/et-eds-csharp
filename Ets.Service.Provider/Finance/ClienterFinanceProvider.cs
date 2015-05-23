@@ -93,7 +93,7 @@ namespace Ets.Service.Provider.Finance
                                 ClienterId = withdrawCpm.ClienterId,//骑士Id(Clienter表）
                                 Amount = -withdrawCpm.WithdrawPrice,//流水金额
                                 Status = (int)ClienterBalanceRecordStatus.Tradeing, //流水状态(1、交易成功 2、交易中）
-                                RecordType = (int)ClienterBalanceRecordRecordType.Withdraw,
+                                RecordType = (int)ClienterBalanceRecordRecordType.WithdrawApply,
                                 Operator = clienter.TrueName,
                                 WithwardId = withwardId,
                                 RelationNo = withwardNo,

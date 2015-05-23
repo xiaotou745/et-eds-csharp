@@ -110,7 +110,7 @@ namespace Ets.Service.Provider.Finance
                         BusinessId = withdrawBpm.BusinessId,//商户Id
                         Amount = -withdrawBpm.WithdrawPrice,//流水金额
                         Status = (int)BusinessBalanceRecordStatus.Tradeing, //流水状态(1、交易成功 2、交易中）
-                        RecordType = (int)BusinessBalanceRecordRecordType.Withdraw,
+                        RecordType = (int)BusinessBalanceRecordRecordType.WithdrawApply,
                         Operator = business.Name,
                         WithwardId = withwardId,
                         RelationNo = withwardNo,

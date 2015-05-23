@@ -8,23 +8,8 @@
 <script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
 <div style="width:1000px">
     @{
-        var strstatus = "";
-        if (Model.Status == Ets.Model.Common.ConstValues.ORDER_FINISH)
-        {
-            strstatus = "已完成";
-        }
-        else if (Model.Status == Ets.Model.Common.ConstValues.ORDER_NEW)
-        {
-            strstatus = "未接单";
-        }
-        else if (Model.Status == Ets.Model.Common.ConstValues.ORDER_ACCEPT)
-        {
-            strstatus = "已接单";
-        }
-        else if (Model.Status == Ets.Model.Common.ConstValues.ORDER_CANCEL)
-        {
-            strstatus = "已取消";
-        }
+        
+        
         var subsidy = "";
         if (Model.Status == 1 || Model.Status == 2 || Model.Status == 3)
         {
@@ -47,7 +32,7 @@
         <tr class="trclass">
             <td>任务单号：@Model.OrderNo</td>
             <td>是否已付款:@payStatus</td>
-            <td>订单状态：@strstatus</td>
+            <td>订单状态：@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.OrderStatusCommon)Model.Status).GetType(), (ETS.Enums.OrderStatusCommon)Model.Status).Text</td>
             <td>订单来源：@Model.GroupName</td>
         </tr>
         <tr class="trclass">
@@ -180,23 +165,6 @@
                     var strplatform = "";
                     foreach (var item in orderOptionLogList)
                     {
-                        if (item.OrderStatus == Ets.Model.Common.ConstValues.ORDER_FINISH)
-                        {
-                            orderstatus = "已完成";
-                        }
-                        else if (item.OrderStatus == Ets.Model.Common.ConstValues.ORDER_NEW)
-                        {
-                            orderstatus = "未接单";
-                        }
-                        else if (item.OrderStatus == Ets.Model.Common.ConstValues.ORDER_ACCEPT)
-                        {
-                            orderstatus = "已接单";
-                        }
-                        else if (item.OrderStatus == Ets.Model.Common.ConstValues.ORDER_CANCEL)
-                        {
-                            orderstatus = "已取消";
-                        }
-
                         if (item.Platform == 0)
                         {
                             strplatform = "商家端";
@@ -215,7 +183,7 @@
                         }
                         k++;
                         <tr id="@item.Id">
-                            <td>@orderstatus</td>
+                            <td>@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.OrderStatusCommon)item.OrderStatus).GetType(), (ETS.Enums.OrderStatusCommon)item.OrderStatus).Text</td>
                             <td>@item.OptName</td>
                             <td>@item.InsertTime</td>
                             <td>@item.Remark</td>

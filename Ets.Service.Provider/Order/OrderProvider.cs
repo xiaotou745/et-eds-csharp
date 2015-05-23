@@ -367,9 +367,9 @@ namespace Ets.Service.Provider.Order
                     BusinessId = Convert.ToInt32(order.businessId),
                     Amount = -order.SettleMoney,
                     Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
-                    RecordType = (int)BusinessBalanceRecordRecordType.SettleMoney,
+                    RecordType = (int)BusinessBalanceRecordRecordType.PublishOrder,
                     Operator = order.BusinessName,              
-                    Remark = "扣商家结算费",
+                    Remark = "扣除商家结算费",
                     WithwardId = result,
                     RelationNo=order.OrderNo
                 });
@@ -661,7 +661,7 @@ namespace Ets.Service.Provider.Order
                 BusinessId = Convert.ToInt32(order.businessId),
                 Amount = -order.SettleMoney,
                 Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
-                RecordType = (int)BusinessBalanceRecordRecordType.SettleMoney,
+                RecordType = (int)BusinessBalanceRecordRecordType.PublishOrder,
                 Operator = "系统",
                 WithwardId=order.Id,
                 RelationNo=order.OrderNo,
@@ -1284,7 +1284,7 @@ namespace Ets.Service.Provider.Order
             orderDM.MealsSettleMode = order.MealsSettleMode;
             #region 是否允许修改小票
             orderDM.IsModifyTicket = true;
-            if (order.NeedUploadCount >= order.OrderCount && order.Status == OrderStatus.订单完成.GetHashCode())
+            if (order.HadUploadCount >= order.OrderCount && order.Status == OrderStatus.订单完成.GetHashCode())
             {
                 orderDM.IsModifyTicket = false;
             }
@@ -1426,7 +1426,7 @@ namespace Ets.Service.Provider.Order
                         BusinessId = paramodel.BusinessId,//商户Id
                         Amount = order.SettleMoney,//流水金额  结算金额
                         Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
-                        RecordType = (int)BusinessBalanceRecordRecordType.CancelOrderReturn,
+                        RecordType = (int)BusinessBalanceRecordRecordType.CancelOrder,
                         Operator = "E代送系统",
                         WithwardId = paramodel.OrderId,
                         RelationNo = paramodel.OrderNo,

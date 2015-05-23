@@ -89,25 +89,46 @@ namespace ETS.Enums
     }
 
     /// <summary>
-    ///骑士余额流水   交易类型(1佣金 2奖励 3提现 4取消订单赔偿 5无效订单扣款 6提现失败返现) 枚举 add by caoheyang 20150509
+    ///骑士余额流水   交易类型(1：订单佣金 2：取消订单 3：提现申请 4：提现拒绝 5：打款失败 6：系统奖励 7：系统赔偿) 枚举 add by caoheyang 20150509
     /// </summary>
     public enum ClienterBalanceRecordRecordType
     {
-        [DisplayText("佣金")]
-        Commission = 1,
-        [DisplayText("奖励")]
-        Award = 2,
-        [DisplayText("提现")]
-        Withdraw = 3,
-        [DisplayText("取消订单赔偿")]
-        QuXiaoOrder = 4,
-        [DisplayText("无效订单扣款")]
-        WuXiaoOrder = 5,
-        [DisplayText("提现失败返现")]
-        Return = 6,
-        [DisplayText("取消订单扣款")]
-        CancleOrderReturn = 7
+        //[DisplayText("佣金")]
+        //Commission = 1,
+        //[DisplayText("奖励")]
+        //Award = 2,
+        //[DisplayText("提现")]
+        //Withdraw = 3,
+        //[DisplayText("取消订单赔偿")]
+        //QuXiaoOrder = 4,
+        //[DisplayText("无效订单扣款")]
+        //WuXiaoOrder = 5,
+        //[DisplayText("提现失败返现")]
+        //Return = 6,
+        //[DisplayText("取消订单扣款")]
+        //CancleOrderReturn = 7
+        [DisplayText("订单佣金")]
+        OrderCommission = 1,
+        [DisplayText("取消订单")]
+        CancelOrder = 2,
+        [DisplayText("提现申请")]
+        WithdrawApply = 3,
+        [DisplayText("提现拒绝")]
+        WithdrawRefuse = 4,
+        [DisplayText("打款失败")]
+        PayFailure = 5,
+        [DisplayText("系统奖励")]
+        SystemReward = 6,
+        [DisplayText("系统赔偿")]
+        SystemCompensation = 7
     }
+    
+
+
+
+
+
+
 
     /// <summary>
     ///骑士提现 提现状态(1待审核 2 审核通过 3打款完成 -1审核拒绝 -2 打款失败) 枚举 add by caoheyang 20150509
@@ -221,27 +242,46 @@ namespace ETS.Enums
     }
 
     /// <summary>
-    ///商户余额流水   交易类型(1订单餐费 2配送费 3提现 4充值 5提现失败返现) 枚举 add by caoheyang 20150511
+    ///交易类型(1：发布订单  2：取消订单 3：提款申请 4：提款拒绝 5：打款失败 6：系统奖励 7：系统赔偿 8：订单菜品费 9：充值) 枚举 add by caoheyang 20150511
     /// </summary>
     public enum BusinessBalanceRecordRecordType
     {
-        [DisplayText("订单餐费")]
-        OrderMeals = 1,
-        [DisplayText("配送费")]
-        PostMoney = 2,
-        [DisplayText("提现")]
-        Withdraw = 3,
+        //[DisplayText("订单餐费")]
+        //OrderMeals = 1,
+        //[DisplayText("配送费")]
+        //PostMoney = 2,
+        //[DisplayText("提现")]
+        //Withdraw = 3,
+        //[DisplayText("充值")]
+        //Recharge = 4,
+        //[DisplayText("提现失败返现")]
+        //Return = 5,
+        //[DisplayText("取消订单返现")]
+        //CancelOrderReturn = 6,
+        //[DisplayText("扣商家结算费")]
+        //SettleMoney = 7,
+        //[DisplayText("返还商家结算费")]
+        //ReturnBusinessReceivable = 8
+        [DisplayText("发布订单")]
+        PublishOrder = 1,
+        [DisplayText("取消订单")]
+        CancelOrder = 2,
+        [DisplayText("提款申请")]
+        WithdrawApply = 3,
+        [DisplayText("提款拒绝")]
+        WithdrawRefuse = 4,
+        [DisplayText("打款失败")]
+        PayFailure = 5,
+        [DisplayText("系统奖励")]
+        SystemReward = 6,
+        [DisplayText("系统赔偿")]
+        SystemCompensation = 7,
+        [DisplayText("订单菜品费")]
+        OrderMeals = 8,
         [DisplayText("充值")]
-        Recharge = 4,
-        [DisplayText("提现失败返现")]
-        Return = 5,
-        [DisplayText("取消订单返现")]
-        CancelOrderReturn = 6,
-        [DisplayText("扣商家结算费")]
-        SettleMoney = 7,
-        [DisplayText("返还商家结算费")]
-        ReturnBusinessReceivable = 8
+        Recharge = 9
     }
+
 
     /// <summary>
     ///商户提现 提现状态(1待审核 2 审核通过 3打款完成 -1审核拒绝 -2 打款失败) 枚举 add by caoheyang 20150509
@@ -286,6 +326,20 @@ namespace ETS.Enums
         Self = 0,
         [DisplayText("公司账户")]
         Conpany = 1
+    }
+
+    public enum OrderStatusCommon
+    {
+        [DisplayText("未接单")]
+        UnReceive = 0,
+        [DisplayText("已完成")]
+        Finish = 1,
+        [DisplayText("已接单")]
+        Received = 2,
+        [DisplayText("已取消")]
+        Cancel = 3,
+        [DisplayText("已取货")]
+        PickUp = 4
     }
 
     #endregion

@@ -1,4 +1,5 @@
-﻿using Ets.Model.DataModel.Finance;
+﻿using ETS.Enums;
+using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 using ETS.Dao;
@@ -326,10 +327,10 @@ select      cbr.[ClienterId]
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@WithwardId", model.WithwardId);
-            parm.AddWithValue("@Status", ETS.Enums.ClienterBalanceRecordStatus.Tradeing.GetHashCode());
-            parm.AddWithValue("@RecordType", ETS.Enums.ClienterBalanceRecordRecordType.Withdraw.GetHashCode());
-            parm.AddWithValue("@NewStatus", ETS.Enums.ClienterBalanceRecordStatus.Success.GetHashCode());
-            parm.AddWithValue("@NewRecordType", ETS.Enums.ClienterBalanceRecordRecordType.Return.GetHashCode());
+            parm.AddWithValue("@Status", ClienterBalanceRecordStatus.Tradeing.GetHashCode());
+            parm.AddWithValue("@RecordType", ClienterBalanceRecordRecordType.WithdrawApply.GetHashCode());
+            parm.AddWithValue("@NewStatus", ClienterBalanceRecordStatus.Success.GetHashCode());
+            parm.AddWithValue("@NewRecordType", model.Status == ClienterWithdrawFormStatus.TurnDown.GetHashCode() ? ClienterBalanceRecordRecordType.WithdrawRefuse : ClienterBalanceRecordRecordType.PayFailure);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
 

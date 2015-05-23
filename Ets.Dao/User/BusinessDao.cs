@@ -50,7 +50,7 @@ namespace Ets.Dao.User
                 if (paraModel.Status == 100)
                 {
                     //whereStr += " and (o.Status = " + OrderConst.ORDER_NEW + " or o.Status=" + OrderConst.ORDER_ACCEPT + ")";
-                    whereStr += " and (o.Status = " + OrdersStatus.Status0.GetHashCode() + " or o.Status=" + OrdersStatus.Status2.GetHashCode() + " or o.Status="+OrdersStatus.Status4.GetHashCode()+")";
+                    whereStr += " and (o.Status = " + OrdersStatus.Status0.GetHashCode() + " or o.Status=" + OrdersStatus.Status2.GetHashCode() + " or o.Status=" + OrdersStatus.Status4.GetHashCode() + ")";
                 }
                 else
                 {
@@ -1758,6 +1758,25 @@ where   Id = @Id;");
             int iResult = DbHelper.ExecuteNonQuery(SuperMan_Write, upStringBuilder.ToString(), parm);
             //更新商户流水表
             return iResult > 0 ? true : false;
+        }
+
+        /// <summary>
+        /// 通过订单ID，用于查询商家信息用
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public BusinessDM GetByOrderId(int orderId)
+        {
+            string sql = @"
+select Name FROM dbo.[order] o(nolock)
+join dbo.business b (nolock) on o.businessId = b.Id
+ where o.Id = @orderId
+            ";
+            IDbParameters parm = DbHelper.CreateDbParameters("orderId", DbType.Int32, 4, orderId);
+            return DbHelper.QueryForObjectDelegate<BusinessDM>(SuperMan_Read, sql, parm, datarow => new BusinessDM
+             {
+                 Name = datarow["Name"].ToString()
+             });
         }
     }
 }
