@@ -1458,8 +1458,7 @@ select top 1
         c.TrueName ClienterName,
         ISNULL(oo.HadUploadCount,0) HadUploadCount,
         o.SettleMoney,
-        b.Id businessId,
-        o.Amount - o.SettleMoney + o.DistribSubsidy * o.OrderCount as ShouldPayBusiMoney ,
+        b.Id businessId,     
         o.ActualDoneDate,
         o.IsPay,
         o.MealsSettleMode
