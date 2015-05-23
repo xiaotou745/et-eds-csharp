@@ -1282,7 +1282,7 @@ namespace Ets.Service.Provider.Order
             orderDM.businessId = ParseHelper.ToInt(order.businessId, 0);
             orderDM.TotalAmount = order.TotalAmount;
             orderDM.MealsSettleMode = order.MealsSettleMode;
-            orderDM.ClienterId=order.ClienterId;
+            orderDM.ClienterId = ParseHelper.ToInt(order.clienterId);
              
             #region 是否允许修改小票
             orderDM.IsModifyTicket = true;
