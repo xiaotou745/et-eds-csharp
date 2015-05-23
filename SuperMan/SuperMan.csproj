@@ -56,12 +56,24 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.2\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Http, Version=5.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.2\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.2\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
@@ -165,9 +177,12 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\UserContext.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Authority\AdminAuthenticationService.cs" />
     <Compile Include="Authority\IAuthenticationService.cs" />
     <Compile Include="Controllers\AdminToolsController.cs" />
+    <Compile Include="Controllers\api\MonitoringController.cs" />
+    <Compile Include="Controllers\api\StatisticalController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\BusinessCommissionController.cs" />
     <Compile Include="Controllers\BusinessStatisticalController.cs" />
@@ -180,6 +195,7 @@
     <Compile Include="Controllers\BusinessController.cs" />
     <Compile Include="Controllers\BusinessManagerController.cs" />
     <Compile Include="Controllers\DownloadController.cs" />
+    <Compile Include="Controllers\StatisticalController.cs" />
     <Compile Include="Controllers\StrategyManagerController.cs" />
     <Compile Include="Controllers\GroupManagerController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -445,6 +461,7 @@
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery-ui-1.8.20.js" />
     <Content Include="Scripts\jquery-ui-1.8.20.min.js" />
+    <Content Include="Scripts\jquery.blockUI.js" />
     <Content Include="Scripts\jquery.colorbox-min.js" />
     <Content Include="Scripts\jquery.loadmask.js" />
     <Content Include="Scripts\jquery.ui.datepicker-zh-CN.js" />
@@ -550,6 +567,10 @@
     <Content Include="Views\StrategyManager\StrategyManager.cshtml" />
     <Content Include="Views\StrategyManager\_StrategyManageList.cshtml" />
     <Content Include="Views\CommissionSubsidyStrategy\CommissionSubsidyStrategy.cshtml" />
+    <Content Include="Views\Statistical\OrderCompleteTimeSpan.cshtml" />
+    <Content Include="Views\Statistical\Active.cshtml" />
+    <Content Include="Views\Statistical\TaskCountPerHour.cshtml" />
+    <Content Include="Views\Statistical\JieDanTime.cshtml" />
     <Content Include="Views\BusinessWithdraw\BusinessWithdraw.cshtml" />
     <Content Include="Views\BusinessWithdraw\_BusinessWithdrawList.cshtml" />
     <Content Include="Views\BusinessWithdraw\BusinessWithdrawDetail.cshtml" />
@@ -561,11 +582,21 @@
     <Content Include="Views\SuperManManager\ClienterDetail.cshtml" />
     <Content Include="Views\SuperManManager\_ClienterBalanceRecordList.cshtml" />
     <Content Include="Views\AdminTools\GlobalConfigManager.cshtml" />
+    <Content Include="Views\Home\About.cshtml" />
+    <Content Include="Views\Home\Contact.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Manage\AddPhoneNumber.cshtml" />
+    <Content Include="Views\Manage\ChangePassword.cshtml" />
+    <Content Include="Views\Manage\Index.cshtml" />
+    <Content Include="Views\Manage\ManageLogins.cshtml" />
+    <Content Include="Views\Manage\SetPassword.cshtml" />
+    <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\app\" />
     <Folder Include="uploads\" />
+    <Folder Include="Views\BusinessDistributionStatistical\" />
     <Folder Include="Views\Test\" />
   </ItemGroup>
   <ItemGroup>
