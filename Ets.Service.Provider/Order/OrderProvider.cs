@@ -263,7 +263,7 @@ namespace Ets.Service.Provider.Order
                 to.PickUpAddress = business.Address;  //提取地址
                 to.PubDate = DateTime.Now; //提起时间
                 to.ReceviceCity = business.City; //城市
-                to.DistribSubsidy = business.DistribSubsidy;//设置外送费,从商户中找。
+                to.DistribSubsidy = business.DistribSubsidy.HasValue ? business.DistribSubsidy : 0; ;//设置外送费,从商户中找。
                 to.BusinessCommission = ParseHelper.ToDecimal(business.BusinessCommission);//商户结算比例
                 to.BusinessName = business.Name;
                 to.CommissionType = business.CommissionType;//结算类型：1：固定比例 2：固定金额
@@ -1367,16 +1367,26 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public ResultModel<object> GetJobC(GetJobCPM model)
         {
-            if (model.SearchType == 0)//最新订单
-            {
-                model.TopNum = ConstValues.App_PageSize.ToString();//50条
-            }
-            else//附近订单
-            {
-                model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;// top 值
-            }
+            IList<GetJobCDM> jobs;
             model.PushRadius = GlobalConfigDao.GlobalConfigGet(0).PushRadius; //距离
-            IList<GetJobCDM> jobs = model.SearchType == 0 ? orderDao.GetLastedJobC(model) : orderDao.GetJobC(model);
+            if (string.IsNullOrEmpty(model.city))//如果城市没有传，默认使用附近任务
+            {
+                model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;
+                jobs = orderDao.GetJobC(model);
+            }
+            else
+            {
+                if (model.SearchType == 0)//最新订单
+                {
+                    model.TopNum = ConstValues.App_PageSize.ToString();//50条
+                    jobs = orderDao.GetLastedJobC(model);
+                }
+                else//附近订单
+                {
+                    model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;// top 值
+                    jobs = orderDao.GetJobC(model);
+                }
+            }
             return ResultModel<object>.Conclude(SystemEnum.Success, jobs);
         }
 
