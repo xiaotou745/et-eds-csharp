@@ -2279,6 +2279,17 @@ where   oo.IsJoinWithdraw = 0
 
         public IList<GetJobCDM> GetLastedJobC(GetJobCPM model)
         {
+            StringBuilder whereStr = new StringBuilder();
+
+            if (model.city.Contains("北京"))
+            {
+                whereStr.AppendFormat(" AND a.ReceviceCity LIKE '北京%'", model.city);
+            }
+            else
+            {
+                whereStr.AppendFormat(" AND a.ReceviceCity = '{0}'", model.city);
+            }
+
             string sql = string.Format(@"
 declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
@@ -2296,12 +2307,12 @@ select top {0}
 from    dbo.[order] a ( nolock )
         join dbo.business b ( nolock ) on a.businessId = b.Id
 where   a.status = 0
-	    and a.ReceviceCity = @city
-order by a.Id desc", model.TopNum);
+        {1}
+order by a.Id desc", model.TopNum, whereStr.ToString());
+            
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Latitude", model.Latitude);
             dbParameters.AddWithValue("Longitude", model.Longitude);
-            dbParameters.AddWithValue("city", model.city);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters));
             if (DataTableHelper.CheckDt(dt))
             {
