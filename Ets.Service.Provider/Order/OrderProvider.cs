@@ -1367,9 +1367,17 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public ResultModel<object> GetJobC(GetJobCPM model)
         {
-            model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;// top 值
+            if (model.SearchType == 0)//最新订单
+            {
+                model.TopNum = ConstValues.App_PageSize.ToString();//50条
+            }
+            else//附近订单
+            {
+                model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;// top 值
+            }
             model.PushRadius = GlobalConfigDao.GlobalConfigGet(0).PushRadius; //距离
-            return ResultModel<object>.Conclude(SystemEnum.Success, orderDao.GetJobC(model));
+            IList<GetJobCDM> jobs = model.SearchType == 0 ? orderDao.GetLastedJobC(model) : orderDao.GetJobC(model);
+            return ResultModel<object>.Conclude(SystemEnum.Success, jobs);
         }
 
 
