@@ -1900,9 +1900,8 @@ order by bb.Id desc;";
         {
 
             #region 写入订单表、订单日志表
-            StringBuilder insertSql = new StringBuilder();
-            insertSql.AppendFormat(@"
- insert  into dbo.[order]
+            string insertSql = @"
+insert  into dbo.[order]
         ( OrderNo ,
           PickUpAddress ,
           PubDate ,
@@ -1940,18 +1939,9 @@ order by bb.Id desc;";
           MealsSettleMode,
           BusinessReceivable
         )
-output  Inserted.Id ,
-        getdate() ,
-        '{0}' ,
-        '{1}' ,
-        Inserted.businessId ,
-        Inserted.[Status] ,
-        {2}
-        into dbo.OrderSubsidiesLog ( OrderId, InsertTime, OptName, Remark,
-                                     OptId, OrderStatus, [Platform] )
 values  ( @OrderNo ,
           @PickUpAddress ,
-          @PubDate ,
+          getdate() ,
           @ReceviceName ,
           @RecevicePhoneNo ,
           @ReceviceAddress ,
@@ -1985,12 +1975,12 @@ values  ( @OrderNo ,
           @TimeSpan,
           @MealsSettleMode,
           @BusinessReceivable
-        );select IDENT_CURRENT('order')", SuperPlatform.商家, ConstValues.PublishOrder, (int)SuperPlatform.商家, 0);
+        )
+select @@identity";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@OrderNo", order.OrderNo);
             dbParameters.AddWithValue("@PickUpAddress", order.PickUpAddress);
-            dbParameters.AddWithValue("@PubDate", order.PubDate);
             dbParameters.AddWithValue("@ReceviceName", order.ReceviceName);
             dbParameters.AddWithValue("@RecevicePhoneNo", order.RecevicePhoneNo);
             dbParameters.AddWithValue("@ReceviceAddress", order.ReceviceAddress);
@@ -2025,12 +2015,27 @@ values  ( @OrderNo ,
             dbParameters.AddWithValue("@MealsSettleMode", order.MealsSettleMode);
             dbParameters.AddWithValue("@BusinessReceivable", order.BusinessReceivable);
 
-            object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql.ToString(), dbParameters);
-            int orderId = ParseHelper.ToInt(result);
+            object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);
+            int orderId = ParseHelper.ToInt(result, 0);
             if (orderId <= 0)//写入订单失败
             {
                 return 0;
             }
+
+            string sqlOrderLog = @"
+        insert into dbo.OrderSubsidiesLog ( OrderId, InsertTime, OptName, Remark,
+                                     OptId, OrderStatus, [Platform] )
+    values(@orderid,getdate(),@optname,@remark,@optid,@orderStatus,@platForm)";
+
+            IDbParameters orderLogParameters = DbHelper.CreateDbParameters();
+            orderLogParameters.AddWithValue("orderid",orderId);
+            orderLogParameters.AddWithValue("optname",order.BusinessName);
+            orderLogParameters.AddWithValue("remark", ConstValues.PublishOrder);
+            orderLogParameters.AddWithValue("optid", order.businessId);
+            orderLogParameters.AddWithValue("orderStatus", OrderStatus.订单待抢单.GetHashCode());
+            orderLogParameters.AddWithValue("platForm", SuperPlatform.商家.GetHashCode());
+
+            DbHelper.ExecuteNonQuery(SuperMan_Write,sqlOrderLog,orderLogParameters);
             #endregion
 
             #region 写子OrderOther表
