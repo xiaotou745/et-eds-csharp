@@ -21,56 +21,56 @@
 
     });
     //添加用户 
-    $("#btnAddAccount").click(function () {
+    //$("#btnAddAccount").click(function () {
 
-        $(".AddAccountfrom").validate({
-            rules: {
-                accountName: {
-                    required: true
-                },
-                loginName: {
-                    required: true
-                },
-                password: {
-                    required: true,
-                    minlength: 6
-                }
+    //    $(".AddAccountfrom").validate({
+    //        rules: {
+    //            accountName: {
+    //                required: true
+    //            },
+    //            loginName: {
+    //                required: true
+    //            },
+    //            password: {
+    //                required: true,
+    //                minlength: 6
+    //            }
 
-            },
-            messages: {
-                accountName: {
-                    required: "帐号不能为空"
-                },
-                loginName: {
-                    required: "登录不能为空"
-                },
-                password: {
-                    required: "密码不能为空",
-                    minlength: "密码长度必须大于等于6位"
-                }
-            },
-            submitHandler: function (form) {
-                var accountName = $('#accountName').val();
-                var loginName = $('#loginName').val();
-                var password = $('#password').val();
-                var groupId = $('#AddGroupId').val();
-                var paramaters = { "accountName": accountName, "loginName": loginName, "password": password, "GroupId": groupId };
-                var url = "/AuthorityManager/Add";
-                $.ajax({
-                    type: 'POST',
-                    url: url,
-                    data: paramaters,
-                    success: function (result) {
-                        if (result.IsSuccess) {
-                            window.location.href = "/AuthorityManager/AuthorityManager";
-                        } else {
-                            alert(result.Message);
-                        }
-                    }
-                });
-            }
-        });
-    });
+    //        },
+    //        messages: {
+    //            accountName: {
+    //                required: "帐号不能为空"
+    //            },
+    //            loginName: {
+    //                required: "登录不能为空"
+    //            },
+    //            password: {
+    //                required: "密码不能为空",
+    //                minlength: "密码长度必须大于等于6位"
+    //            }
+    //        },
+    //        submitHandler: function (form) {
+    //            var accountName = $('#accountName').val();
+    //            var loginName = $('#loginName').val();
+    //            var password = $('#password').val();
+    //            var groupId = $('#AddGroupId').val();
+    //            var paramaters = { "accountName": accountName, "loginName": loginName, "password": password, "GroupId": groupId };
+    //            var url = "/AuthorityManager/Add";
+    //            $.ajax({
+    //                type: 'POST',
+    //                url: url,
+    //                data: paramaters,
+    //                success: function (result) {
+    //                    if (result.IsSuccess) {
+    //                        window.location.href = "/AuthorityManager/AuthorityManager";
+    //                    } else {
+    //                        alert(result.Message);
+    //                    }
+    //                }
+    //            });
+    //        }
+    //    });
+    //});
     // close box 
     $(document).on("click",".J_closebox" ,function () {
         adminjs.closewinbox('.add-openbox');

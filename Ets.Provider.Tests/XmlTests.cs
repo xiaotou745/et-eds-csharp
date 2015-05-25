@@ -4,6 +4,7 @@ using Ets.Model.DataModel.Finance;
 using ETS.Util;
 using Letao.Util;
 using NUnit.Framework;
+using Ets.Dao.User;
 
 namespace Ets.Provider.Tests
 {
@@ -33,8 +34,14 @@ namespace Ets.Provider.Tests
         }
 
         [Test]
-        public void UnityTest() { 
-            
+        public void UnityTest()
+        {
+
+        }
+
+        public void businessTest()
+        {
+            Ets.Model.DomainModel.Bussiness.BusinessDM model = new BusinessDao().GetByOrderId(1424211);
         }
     }
 }

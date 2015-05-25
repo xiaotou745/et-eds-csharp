@@ -70,46 +70,27 @@ namespace SuperMan.Controllers
             var account = new Ets.Model.DataModel.Authority.account  {LoginName = loginName, UserName = accountName};
             return Json(iAuthorityMenuProvider.CheckHasAccountName(account) ? new Ets.Model.Common.ResultModel(true, "用户名已存在") : new Ets.Model.Common.ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
         }
-        /// <summary>
-        /// 添加用户 
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost]
-        public JsonResult Add(string accountName, string loginName, string password, int? groupId)
-        {
-            if (string.IsNullOrEmpty(accountName.Trim()))
-            {
-                return Json(new Ets.Model.Common.ResultModel(true, "用户名不能为空"), JsonRequestBehavior.AllowGet);
-            }
-            if (string.IsNullOrEmpty(loginName.Trim()))
-            {
-                return Json(new Ets.Model.Common.ResultModel(true, "登录名不能为空"), JsonRequestBehavior.AllowGet);
-            }
-            if (string.IsNullOrEmpty(password.Trim()))
-            {
-                return Json(new Ets.Model.Common.ResultModel(true, "密码不能为空"), JsonRequestBehavior.AllowGet);
-            }
-
-            var account = new Ets.Model.DataModel.Authority.account();
-            account.LoginName = loginName;
-            account.UserName = accountName;
-            account.GroupId = groupId;//集团id  
-            account.Password = MD5Helper.MD5(password);
-            account.Status = Ets.Model.Common.ConstValues.AccountAvailable;
-            if (iAuthorityMenuProvider.CheckHasAccountName(account))
-            {
-                return Json(new Ets.Model.Common.ResultModel(true, "用户名已存在"), JsonRequestBehavior.AllowGet);
-            }
-            iAuthorityMenuProvider.AddAccount(account);
-            return Json(new Ets.Model.Common.ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
-        }
+        #region 旧方法已停用
         ///// <summary>
         ///// 添加用户 
         ///// </summary>
         ///// <returns></returns>
         //[HttpPost]
-        //public JsonResult AddNew(AccountCriteria criteria)
+        //public JsonResult Add(string accountName, string loginName, string password, int? groupId)
         //{
+        //    if (string.IsNullOrEmpty(accountName.Trim()))
+        //    {
+        //        return Json(new Ets.Model.Common.ResultModel(true, "用户名不能为空"), JsonRequestBehavior.AllowGet);
+        //    }
+        //    if (string.IsNullOrEmpty(loginName.Trim()))
+        //    {
+        //        return Json(new Ets.Model.Common.ResultModel(true, "登录名不能为空"), JsonRequestBehavior.AllowGet);
+        //    }
+        //    if (string.IsNullOrEmpty(password.Trim()))
+        //    {
+        //        return Json(new Ets.Model.Common.ResultModel(true, "密码不能为空"), JsonRequestBehavior.AllowGet);
+        //    }
+
         //    var account = new Ets.Model.DataModel.Authority.account();
         //    account.LoginName = loginName;
         //    account.UserName = accountName;
@@ -123,6 +104,18 @@ namespace SuperMan.Controllers
         //    iAuthorityMenuProvider.AddAccount(account);
         //    return Json(new Ets.Model.Common.ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
         //}
+        #endregion
+        /// <summary>
+        /// 添加用户 
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult Add(AccountCriteria criteria)
+        {
+            criteria.OptUserName = UserContext.Current.Name;
+            var reg=iAuthorityMenuProvider.AddAccount(criteria);
+            return Json(new Ets.Model.Common.ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.AllowGet);
+        }
         [HttpPost]
         public JsonResult saveAuthority(AuthorityListModel model)
         {

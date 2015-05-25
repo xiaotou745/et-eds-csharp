@@ -102,6 +102,10 @@
     <Compile Include="DomainModel\Finance\FinanceRecordsDMList.cs" />
     <Compile Include="DomainModel\Order\OrderChildForTicket.cs" />
     <Compile Include="DomainModel\Order\RushOrderModel.cs" />
+    <Compile Include="DomainModel\Statistics\ActiveBusinessClienterInfo.cs" />
+    <Compile Include="DomainModel\Statistics\JieDanTimeInfo.cs" />
+    <Compile Include="DomainModel\Statistics\OrderCompleteTimeSpanInfo.cs" />
+    <Compile Include="DomainModel\Statistics\TaskStatisticsPerHourInfo.cs" />
     <Compile Include="DomainModel\Subsidy\ShortMessageModel.cs" />
     <Compile Include="DomainModel\Subsidy\GrabOrderModel.cs" />
     <Compile Include="ParameterModel\AliPay\NotifyModel.cs" />
@@ -222,6 +226,7 @@
     <Compile Include="ParameterModel\Finance\WithdrawBPM.cs" />
     <Compile Include="ParameterModel\Finance\WithdrawPM.cs" />
     <Compile Include="ParameterModel\Finance\WithdrawCPM.cs" />
+    <Compile Include="ParameterModel\Group\GetJobCPM.cs" />
     <Compile Include="ParameterModel\Group\GroupListModel.cs" />
     <Compile Include="ParameterModel\Group\GroupParaModel.cs" />
     <Compile Include="ParameterModel\Order\CancelOrderBPM.cs" />
@@ -243,6 +248,7 @@
     <Compile Include="ParameterModel\Order\OrderRecordsLog.cs" />
     <Compile Include="ParameterModel\Order\OrderSearchCriteria.cs" />
     <Compile Include="ParameterModel\Order\PullOrderInfoPM_OpenApi.cs" />
+    <Compile Include="ParameterModel\Order\UserStatusModel.cs" />
     <Compile Include="ParameterModel\Sms\SmsParaModel.cs" />
     <Compile Include="ParameterModel\Subsidy\CrossShopListModel.cs" />
     <Compile Include="ParameterModel\Subsidy\SubsidyModel.cs" />

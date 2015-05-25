@@ -1,26 +1,29 @@
 ﻿
+using ETS.Transaction;
+using ETS.Transaction.Common;
+
 namespace Ets.Service.Provider.Authority
 {
-using System;
-using System.Collections.Generic;
-using ETS.Util;
-using Dao.MenuSet; 
-using IProvider.AuthorityMenu;
-using Model.DataModel.Authority;
-using Ets.Model.DomainModel.Authority;
-using Ets.Model.ParameterModel.Authority;
-using Ets.Model.Common;
-using System.Linq;
-using ETS.Data.PageData;
+    using System;
+    using System.Collections.Generic;
+    using ETS.Util;
+    using Dao.MenuSet;
+    using IProvider.AuthorityMenu;
+    using Model.DataModel.Authority;
+    using Ets.Model.DomainModel.Authority;
+    using Ets.Model.ParameterModel.Authority;
+    using Ets.Model.Common;
+    using System.Linq;
+    using ETS.Data.PageData;
     /// <summary>
     /// 权限业务操作类-平扬 2015.3.18
     /// </summary>
     public class AuthorityMenuProvider : IAuthorityMenuProvider
     {
-        readonly AuthoritySetDao _dao=new AuthoritySetDao();
+        readonly AuthoritySetDao _dao = new AuthoritySetDao();
 
-        #region 菜单操作 
-        
+        #region 菜单操作
+
         /// <summary>
         /// 增加菜单
         /// </summary>
@@ -31,14 +34,14 @@ using ETS.Data.PageData;
             bool reslut;
             try
             {
-               reslut = _dao.AddMenu(model);
+                reslut = _dao.AddMenu(model);
             }
             catch (Exception ex)
             {
                 reslut = false;
                 LogHelper.LogWriterFromFilter(ex);
             }
-            return reslut; 
+            return reslut;
         }
 
         /// <summary>
@@ -58,7 +61,7 @@ using ETS.Data.PageData;
                 reslut = false;
                 LogHelper.LogWriterFromFilter(ex);
             }
-            return reslut; 
+            return reslut;
         }
         /// <summary>
         /// 获取菜单列表
@@ -70,7 +73,7 @@ using ETS.Data.PageData;
             List<AuthorityMenuModel> list;
             try
             {
-                list =_dao.GetListMenu(parId);
+                list = _dao.GetListMenu(parId);
             }
             catch (Exception ex)
             {
@@ -194,7 +197,7 @@ using ETS.Data.PageData;
                 reslut = false;
                 LogHelper.LogWriterFromFilter(ex);
             }
-            return reslut; 
+            return reslut;
         }
         /// <summary>
         /// 更新角色
@@ -213,7 +216,7 @@ using ETS.Data.PageData;
                 reslut = false;
                 LogHelper.LogWriterFromFilter(ex);
             }
-            return reslut; 
+            return reslut;
         }
         /// <summary>
         /// 获取角色列表
@@ -229,7 +232,7 @@ using ETS.Data.PageData;
             {
                 LogHelper.LogWriterFromFilter(ex);
             }
-            return null; 
+            return null;
         }
         /// <summary>
         /// 得到一条角色信息
@@ -246,7 +249,7 @@ using ETS.Data.PageData;
             {
                 LogHelper.LogWriterFromFilter(ex);
             }
-            return null; 
+            return null;
         }
 
         #endregion
@@ -270,7 +273,7 @@ using ETS.Data.PageData;
                 reslut = false;
                 LogHelper.LogWriterFromFilter(ex);
             }
-            return reslut; 
+            return reslut;
         }
 
         /// <summary>
@@ -290,7 +293,7 @@ using ETS.Data.PageData;
                 reslut = false;
                 LogHelper.LogWriterFromFilter(ex);
             }
-            return reslut; 
+            return reslut;
         }
 
         /// <summary>
@@ -334,7 +337,7 @@ using ETS.Data.PageData;
         #endregion
 
 
-        #region 个人权限操作 
+        #region 个人权限操作
         /// <summary>
         /// 获取个人权限
         /// </summary>
@@ -350,8 +353,8 @@ using ETS.Data.PageData;
             {
                 LogHelper.LogWriterFromFilter(ex);
             }
-            return null; 
-            
+            return null;
+
         }
 
 
@@ -369,7 +372,7 @@ using ETS.Data.PageData;
             {
                 LogHelper.LogWriterFromFilter(ex);
             }
-            return null; 
+            return null;
         }
         /// <summary>
         /// 获取个人账号信息
@@ -386,7 +389,7 @@ using ETS.Data.PageData;
             {
                 LogHelper.LogWriterFromFilter(ex);
             }
-            return null; 
+            return null;
         }
 
 
@@ -446,10 +449,10 @@ using ETS.Data.PageData;
             }
             return reslut;
         }
- 
 
-        #endregion 
-    
+
+        #endregion
+
         /// <summary>
         /// 后台用户列表查询
         /// danny-20150320
@@ -471,16 +474,16 @@ using ETS.Data.PageData;
         {
             return _dao.CheckHasAccountName(account);
         }
-        /// <summary>
-        /// 添加用户
-        /// danny-20150323
-        /// </summary>
-        /// <param name="account"></param>
-        /// <returns></returns>
-        public bool AddAccount(account account)
-        {
-            return _dao.AddAccount(account);
-        }
+        ///// <summary>
+        ///// 添加用户
+        ///// danny-20150323
+        ///// </summary>
+        ///// <param name="account"></param>
+        ///// <returns></returns>
+        //public bool AddAccount(account account)
+        //{
+        //    return _dao.AddAccount(account);
+        //}
         /// <summary>
         ///  删除用户
         /// danny-20150323
@@ -521,58 +524,70 @@ using ETS.Data.PageData;
         /// <param name="accountId"></param>
         /// <param name="menuid"></param>
         /// <returns></returns>
-        public bool HasAuthority(int accountId, int  menuid)
+        public bool HasAuthority(int accountId, int menuid)
         {
             return _dao.CheckPermission(accountId, menuid);
         }
-        ///// <summary>
-        ///// 添加用户
-        ///// danny-20150323
-        ///// </summary>
-        ///// <param name="criteria"></param>
-        ///// <returns></returns>
-        //public DealResultInfo AddAccountNew(AccountCriteria criteria)
-        //{
-            //var dealResultInfo = new DealResultInfo
-            //{
-            //    DealFlag = false
-            //};
-            //var accountModel = new account
-            //{
-            //    UserName =criteria.UserName,
-            //    LoginName =criteria.LoginName,
-            //    Password = MD5Helper.MD5(criteria.Password),
-            //    GroupId = criteria.GroupId,
-            //    Status = criteria.Status
-            //};
-            //if (_dao.CheckHasAccountName(accountModel))
-            //{
-            //    dealResultInfo.DealMsg = "用户名已存在";
-            //    return dealResultInfo;
-            //}
-            //var a = _dao.AddAccount(account);
+        /// <summary>
+        /// 添加用户
+        /// danny-20150323
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public DealResultInfo AddAccount(AccountCriteria criteria)
+        {
+            var dealResultInfo = new DealResultInfo
+            {
+                DealFlag = false
+            };
+            var accountModel = new account
+            {
+                UserName = criteria.UserName,
+                LoginName = criteria.LoginName,
+                Password = MD5Helper.MD5(criteria.Password),
+                GroupId = criteria.GroupId,
+                Status = criteria.Status
+            };
+            if (_dao.CheckHasAccountName(accountModel))
+            {
+                dealResultInfo.DealMsg = "用户名已存在!";
+                return dealResultInfo;
+            }
+            using (var tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                var accountCityRelation = new AccountCityRelation
+                {
+                    AccountId = criteria.Id,
+                    CreateBy = criteria.OptUserName,
+                    UpdateBy = criteria.OptUserName,
+                };
+                accountCityRelation.AccountId = _dao.AddAccount(accountModel);
+                if (accountCityRelation.AccountId==0)
+                {
+                    dealResultInfo.DealMsg="插入用户信息失败!";
+                    return dealResultInfo;
+                }
+                if (!string.IsNullOrWhiteSpace(criteria.CityCodeList))
+                {
+                    var cityCodeList = criteria.CityCodeList.Split(',');
+                    
+                    _dao.DeleteAccountCityRelation(accountCityRelation);
+                    foreach (var cityCode in cityCodeList)
+                    {
+                        accountCityRelation.CityId = ParseHelper.ToInt(cityCode);
+                        if (!_dao.AddAccountCityRelation(accountCityRelation))
+                        {
+                            dealResultInfo.DealMsg = "插入用户和城市关联信息失败!";
+                            return dealResultInfo;
+                        }
+                    }
+                }
+                tran.Complete();
+            }
+            dealResultInfo.DealMsg = "用户添加成功！";
+            dealResultInfo.DealFlag = true;
+            return dealResultInfo;
+        }
 
-            
-            //if (!string.IsNullOrWhiteSpace(criteria.CityCodeList))
-            //{
-            //    var cityCodeList = criteria.CityCodeList.Split(',');
-            //    var accountCityRelation = new AccountCityRelation
-            //    {
-            //        AccountId = criteria.Id
-
-            //    };
-            //    var b = _dao.DeleteAccountCityRelation(accountCityRelation);
-            //    foreach (var cityCode in cityCodeList)
-            //    {
-            //        acc
-            //        var c = _dao.AddAccountCityRelation();
-            //    }
-                
-                
-               
-            //}
-            //return dealResultInfo;
-        //}
-      
     }
 }

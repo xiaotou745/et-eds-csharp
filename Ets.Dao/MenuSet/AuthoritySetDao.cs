@@ -562,7 +562,7 @@ namespace Ets.Dao.MenuSet
         /// </summary>
         /// <param name="account"></param>
         /// <returns></returns>
-        public bool AddAccount(account account)
+        public int AddAccount(account account)
         {
             try
             {
@@ -592,7 +592,7 @@ namespace Ets.Dao.MenuSet
                                ,@GroupId
                                ,@RoleId)SELECT @@IDENTITY
                         ";
-                IDbParameters parm = DbHelper.CreateDbParameters();
+                var parm = DbHelper.CreateDbParameters();
                 parm.AddWithValue("@Password", account.Password);
                 parm.AddWithValue("@UserName", account.UserName);
                 parm.AddWithValue("@LoginName", account.LoginName);
@@ -604,12 +604,12 @@ namespace Ets.Dao.MenuSet
                 parm.AddWithValue("@LCUser", account.LCUser);
                 parm.AddWithValue("@GroupId", account.GroupId);
                 parm.AddWithValue("@RoleId", account.RoleId);
-                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm)) > 0 ? true : false;
+                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm)) ;
             }
             catch (Exception ex)
             {
                 LogHelper.LogWriter("添加用户", new { ex = ex, account = account });
-                return false;
+                return 0;
                 throw;
             }
         }
@@ -715,7 +715,7 @@ VALUES
     ,@CityId
     ,@CreateBy
     ,@UpdateBy);";
-            IDbParameters parm = DbHelper.CreateDbParameters();
+            var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@AccountId", model.AccountId);
             parm.AddWithValue("@CityId", model.CityId);
             parm.AddWithValue("@CreateBy", model.CreateBy);
@@ -731,7 +731,7 @@ VALUES
         public bool DeleteAccountCityRelation(AccountCityRelation model)
         {
             string sql = @" DELETE FROM [AccountCityRelation] WHERE AccountId=@AccountId;";
-            IDbParameters parm = DbHelper.CreateDbParameters();
+            var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@AccountId", model.AccountId);
             return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm)) > 0;
         }

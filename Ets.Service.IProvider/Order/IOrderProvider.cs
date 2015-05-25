@@ -197,9 +197,9 @@ namespace Ets.Service.IProvider.Order
         /// </summary>
         /// <UpdateBy>hulingbo</UpdateBy>
         /// <UpdateTime>20150512</UpdateTime>
-        /// <param name="id">订单Id</param>
+        /// <param name="orderPM">获取订单详情参数实体</param>
         /// <returns></returns>
-        order GetById(int id);
+        order GetById(OrderPM orderPM);
         /// <summary>
         /// 获取订单详情
         /// </summary>

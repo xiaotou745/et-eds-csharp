@@ -47,9 +47,10 @@ namespace Ets.Dao.User
             //订单状态
             if (paraModel.Status != null)
             {
-                if (paraModel.Status == 4)
+                if (paraModel.Status == 100)
                 {
-                    whereStr += " and (o.Status = " + OrderConst.ORDER_NEW + " or o.Status=" + OrderConst.ORDER_ACCEPT + ")";
+                    //whereStr += " and (o.Status = " + OrderConst.ORDER_NEW + " or o.Status=" + OrderConst.ORDER_ACCEPT + ")";
+                    whereStr += " and (o.Status = " + OrdersStatus.Status0.GetHashCode() + " or o.Status=" + OrdersStatus.Status2.GetHashCode() + " or o.Status=" + OrdersStatus.Status4.GetHashCode() + ")";
                 }
                 else
                 {
@@ -365,7 +366,8 @@ namespace Ets.Dao.User
                                     ,b.CommissionFixValue
                                     ,b.BusinessGroupId
                                     ,bg.Name BusinessGroupName
-                                    ,ISNULL(b.MealsSettleMode,0) MealsSettleMode";
+                                    ,ISNULL(b.MealsSettleMode,0) MealsSettleMode
+                                    ,ISNULL(b.BalancePrice,0) BalancePrice";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrEmpty(criteria.businessName))
             {
@@ -1581,7 +1583,20 @@ where Id=@Id";
                 result.PhoneNo = dataReader["PhoneNo"].ToString();
                 result.PhoneNo2 = dataReader["PhoneNo2"].ToString();
                 result.Password = dataReader["Password"].ToString();
-                result.CheckPicUrl = Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataReader["CheckPicUrl"].ToString())[0];
+                #region 绑定头像信息
+
+                string CheckPicUrl = dataReader["CheckPicUrl"].ToString();
+                if (string.IsNullOrEmpty(CheckPicUrl))
+                {
+                    CheckPicUrl = string.Empty;
+                }
+                else
+                {
+                    CheckPicUrl = Ets.Model.Common.ImageCommon.ReceiptPicConvert(CheckPicUrl)[0];
+                }
+                #endregion
+
+                result.CheckPicUrl = CheckPicUrl;
                 result.IDCard = dataReader["IDCard"].ToString();
                 result.Address = dataReader["Address"].ToString();
                 result.Landline = dataReader["Landline"].ToString();
@@ -1756,6 +1771,25 @@ where   Id = @Id;");
             int iResult = DbHelper.ExecuteNonQuery(SuperMan_Write, upStringBuilder.ToString(), parm);
             //更新商户流水表
             return iResult > 0 ? true : false;
+        }
+
+        /// <summary>
+        /// 通过订单ID，用于查询商家信息用
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public BusinessDM GetByOrderId(int orderId)
+        {
+            string sql = @"
+select Name FROM dbo.[order] o(nolock)
+join dbo.business b (nolock) on o.businessId = b.Id
+ where o.Id = @orderId
+            ";
+            IDbParameters parm = DbHelper.CreateDbParameters("orderId", DbType.Int32, 4, orderId);
+            return DbHelper.QueryForObjectDelegate<BusinessDM>(SuperMan_Read, sql, parm, datarow => new BusinessDM
+             {
+                 Name = datarow["Name"].ToString()
+             });
         }
     }
 }

@@ -55,7 +55,8 @@ namespace OpenApi.Controllers
                     CreatePM_OpenApi model = meituan.TranslateModel(paramodel);
                     if (model == null)  //商户在E代送不存在等情况下导致实体translate失败
                         return new ResultModelToString(data: "fail");
-                    return meituan.AddOrder(model) > 0 ? new ResultModelToString(data: "ok") : new ResultModelToString(data: "fail");
+                    meituan.AddOrder(model);
+                    return new ResultModelToString(data: "ok");
                 }
                 return new ResultModelToString(data: "fail");  //推送失败
             }

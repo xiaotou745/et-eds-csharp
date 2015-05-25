@@ -61,7 +61,12 @@ namespace Ets.Model.DataModel.Bussiness
         /// <summary>
         /// 餐费结算方式（0：线下结算 1：线上结算）
         /// </summary>
-        public int MealsSettleMode { get; set; }    
+        public int MealsSettleMode { get; set; }
+        /// <summary>
+        /// 账户余额
+        /// </summary>
+        public decimal BalancePrice { get; set; }
+        
         
     }
 }

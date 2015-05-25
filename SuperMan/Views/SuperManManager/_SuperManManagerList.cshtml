@@ -1,6 +1,7 @@
 ﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Clienter.ClienterListModel>
 @using Ets.Service.Provider.Clienter
 @using Ets.Service.Provider.Common
+@using ETS.Util
 @using SuperManBusinessLogic.Group_Logic
 @using Webdiyer.WebControls.Mvc
 
@@ -49,7 +50,7 @@
                         <a href="javascript:void(0)" class="businessOk" onclick="funcPicView('@String.Format("{0}{1}",PicHost,puth)','@item.PicWithHandUrl','@item.PicUrl')">查看</a>
                     </td>
                     <td>@item.InsertTime</td>
-                    <td style="color:red;font-weight:600">@item.AccountBalance</td>
+                    <td style="color:red;font-weight:600"><a href="/SuperManManager/ClienterDetail?clienterId=@item.Id ">￥@ParseHelper.ToSplitByPercentile(false,item.AccountBalance)</a></td>
                     <td>
                         @if (item.GroupId != null) //当前商户有集团信息
                         {
@@ -77,23 +78,23 @@
                         }
                     }
                     <td>@statusView</td>
-                    @{
-                        var recomname = "";
-                        if (string.IsNullOrEmpty(item.recommendPhone))
-                        {
-                            recomname = "无推荐人";
+                        @{
+                            var recomname = "";
+                            if (string.IsNullOrEmpty(item.recommendPhone))
+                            {
+                                recomname = "无推荐人";
+                            }
+                            var reslut = new ClienterProvider().GetUserInfoByUserPhoneNo(item.recommendPhone);
+                            if (reslut != null)
+                            {
+                                recomname = reslut.TrueName+"/"+reslut.PhoneNo;
+                            }
                         }
-                        var reslut = new ClienterProvider().GetUserInfoByUserPhoneNo(item.recommendPhone);
-                        if (reslut != null)
-                        {
-                            recomname = reslut.TrueName + "/" + reslut.PhoneNo;
-                        }
-                    }
                     <td>
                         @recomname
                     </td>
 
-                    <td>
+                    <td >
                         @{
                         int idCard = string.IsNullOrEmpty(item.IDCard) ? 0 : 1;
                         int picUrl = string.IsNullOrEmpty(item.PicUrl) ? 0 : 1;
@@ -125,7 +126,7 @@
                             }*@
                         }
                         }
-                        <a href="/SuperManManager/ClienterDetail?clienterId=@item.Id ">收支记录</a>
+                        
                     </td>
                 </tr>
             }

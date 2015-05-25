@@ -792,24 +792,23 @@ namespace Ets.Service.Provider.User
         /// 获取用户状态信息
         /// </summary>
         /// <param name="userid"></param>
-        /// <param name="version"></param>
         /// <returns></returns>
-        public BussinessStatusModel GetUserStatus(int userid, double version)
+        public BussinessStatusModel GetUserStatus(int userid)
         {
             try
             {
-                ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
-                string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, userid);
-                var cacheValue = redis.Get<string>(cacheKey);
-                if (!string.IsNullOrEmpty(cacheValue))
-                {
-                    return Letao.Util.JsonHelper.ToObject<BussinessStatusModel>(cacheValue);
-                }
+                //ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
+                //string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, userid);
+                //var cacheValue = redis.Get<string>(cacheKey);
+                //if (!string.IsNullOrEmpty(cacheValue))
+                //{
+                //    return Letao.Util.JsonHelper.ToObject<BussinessStatusModel>(cacheValue);
+                //}
                 var UserInfo = dao.GetUserStatus(userid);
-                if (UserInfo != null)
-                {
-                    redis.Add(cacheKey, Letao.Util.JsonHelper.ToJson(UserInfo));
-                }
+                //if (UserInfo != null)
+                //{
+                //    redis.Add(cacheKey, Letao.Util.JsonHelper.ToJson(UserInfo));
+                //}
                 return UserInfo;
             }
             catch (Exception ex)

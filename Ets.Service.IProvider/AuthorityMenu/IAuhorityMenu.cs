@@ -1,4 +1,6 @@
-﻿namespace Ets.Service.IProvider.AuthorityMenu
+﻿using Ets.Model.Common;
+
+namespace Ets.Service.IProvider.AuthorityMenu
 {
     using System.Collections.Generic;
     using Model.DataModel.Authority;
@@ -174,13 +176,14 @@
         /// <param name="account"></param>
         /// <returns></returns>
         bool CheckHasAccountName(account account);
+
         /// <summary>
         /// 添加用户
         /// danny-20150323
         /// </summary>
-        /// <param name="account"></param>
+        /// <param name="criteria"></param>
         /// <returns></returns>
-        bool AddAccount(account account);
+        DealResultInfo AddAccount(AccountCriteria criteria);
         /// <summary>
         /// 删除用户
         /// danny-20150323

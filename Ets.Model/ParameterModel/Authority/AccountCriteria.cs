@@ -13,5 +13,9 @@ namespace Ets.Model.ParameterModel.Authority
         /// 用户所有权限城市Code集合
         /// </summary>
         public string CityCodeList { get; set; }
+        /// <summary>
+        /// 操作人名称
+        /// </summary>
+        public string OptUserName { get; set; }
     }
 }

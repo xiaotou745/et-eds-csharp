@@ -138,21 +138,27 @@ namespace Ets.Model.ParameterModel.Order
         public int orderfrom { get; set; }
 
         /// <summary>
-        /// 结算类型：1：固定比例 2：固定金额
+        /// 结算类型：1：固定比例 2：固定金额  由业务逻辑层所得 
         /// </summary>
         public int CommissionType { get; set; }
         /// <summary>
-        /// 固定金额
+        /// 固定金额  由业务逻辑层所得 
         /// </summary>
         public decimal CommissionFixValue { get; set; }
         /// <summary>
-        /// 分组ID
+        /// 分组ID  由业务逻辑层所得 
         /// </summary>
         public int BusinessGroupId { get; set; }
+
         /// <summary>
         /// 发票抬头
         /// </summary>
         public string invoice_title { get; set; }
+
+        /// <summary>
+        /// 订单号  由业务逻辑层所得   
+        /// </summary>
+        public string OrderNo { get; set; }
         
     }
 

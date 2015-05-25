@@ -1,6 +1,7 @@
 ﻿@using System.Activities.Expressions
 @using System.Text.RegularExpressions
 @using Ets.Service.Provider.User
+@using ETS.Util
 @model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Bussiness.BusListResultModel>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
     <thead>
@@ -16,7 +17,7 @@
             <th>所属集团</th>
             <th>结算比例</th>
             <th>外送费</th>
-            @* <th>订单金额</th>*@
+            <th>账户余额</th>
             <th>审核状态</th>
             <th>分组</th>
             <th>结算类型</th>
@@ -73,6 +74,7 @@
                 decimal distribSubsidy = @item.DistribSubsidy ?? 0;
                         }@distribSubsidy
                     </td>
+                    <td><a href="/BusinessManager/BusinessDetail?businessId=@item.Id ">￥@ParseHelper.ToSplitByPercentile(false, item.BalancePrice)</a></td>
                     @{
                 var statusView = "";
                 if (@item.Status == Ets.Model.Common.ConstValues.BUSINESS_AUDITPASS)
@@ -103,7 +105,7 @@
                 var commissionTypeView = "";
                 if (item.CommissionType == 1)
                 {
-                    commissionTypeView = "固定比例";
+                    commissionTypeView = "结算比例";
                 }
 
                 else if (item.CommissionType == 2)
@@ -114,26 +116,26 @@
                     <td>@statusView</td>
                     <td>@item.BusinessGroupName</td>
                     <td>@commissionTypeView</td>
-                    <td>@(item.MealsSettleMode==0?"线下结算":"线上结算")</td>
+                    <td>@(item.MealsSettleMode == 0 ? "线下结算" : "线上结算")</td>
                     <td>
                         @{
-                            if (SuperMan.App_Start.UserContext.Current.HasAuthority(22))
-                            {
-                                int checkAddress = string.IsNullOrEmpty(item.Address) ? 0 : 1;
-                                int checkImage = string.IsNullOrEmpty(item.CheckPicUrl) ? 0 : 1;
+                if (SuperMan.App_Start.UserContext.Current.HasAuthority(22))
+                {
+                    int checkAddress = string.IsNullOrEmpty(item.Address) ? 0 : 1;
+                    int checkImage = string.IsNullOrEmpty(item.CheckPicUrl) ? 0 : 1;
 
-                                if (@item.Status == 1)
-                                {
-                                    <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage)" style="color:gray" businessid="@item.Id" class="businessOk">审核通过</a>
-                                        <a href="javascript:void(0)" businessid="@item.Id" class="businessCel">取消资格</a>
-                                }
-                                else
-                                {
-                                    <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage)" businessid="@item.Id" class="businessOk">审核通过</a>
-                                        <a href="javascript:void(0)" style="color:gray" businessid="@item.Id" class="businessCel">取消资格</a>
-                                }
-                    
-                            }
+                    if (@item.Status == 1)
+                    {
+                        <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage,@item.CommissionType)" style="color:gray" businessid="@item.Id" class="businessOk">审核通过</a>
+                            <a href="javascript:void(0)" businessid="@item.Id" class="businessCel">取消资格</a>
+                    }
+                    else
+                    {
+                        <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage,@item.CommissionType)" businessid="@item.Id" class="businessOk">审核通过</a>
+                            <a href="javascript:void(0)" style="color:gray" businessid="@item.Id" class="businessCel">取消资格</a>
+                    }
+
+                }
                         }
                         @if (SuperMan.App_Start.UserContext.Current.HasAuthority(24))
                         {
@@ -143,7 +145,7 @@
                         {
                             <a href="javascript:void(0)" onclick="funcUpdateBusinessInfo(@item.Id,'@item.Name','@item.PhoneNo','@item.OriginalBusiId','@item.GroupId','@item.MealsSettleMode')">修改信息</a>
                         }
-                        <a href="/BusinessManager/BusinessDetail?businessId=@item.Id ">收支记录</a>
+
                     </td>
                 </tr>
             }
@@ -178,7 +180,7 @@
         });
     });
     ///操作审核验证
-    function businessOk(checkAddress, businessId, Proportion, checkImage) {
+    function businessOk(checkAddress, businessId, Proportion, checkImage,commissionType) {
         if (!window.confirm("是否审核通过？")) {
             return;
         }
@@ -186,7 +188,7 @@
             alert("该商家未填写配送地址，不能通过审核。")
             return;
         }
-        if (Proportion < 10) {
+        if (Proportion < 10&&commissionType==1) {
             alert("该商家结算比例小于10%，不能通过审核。")
             return;
         }

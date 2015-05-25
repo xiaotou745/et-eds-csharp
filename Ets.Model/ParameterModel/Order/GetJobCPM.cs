@@ -22,6 +22,16 @@ namespace Ets.Model.ParameterModel.Order
         public decimal Latitude { get; set; }
 
         /// <summary>
+        /// 城市名称
+        /// </summary>
+        public string city { get; set; }
+
+        /// <summary>
+        /// 城市Id
+        /// </summary>
+        public string cityId { get; set; }
+        
+        /// <summary>
         /// 查询类型 0 最新订单 1最近订单
         /// </summary>
         public int SearchType { get; set; }

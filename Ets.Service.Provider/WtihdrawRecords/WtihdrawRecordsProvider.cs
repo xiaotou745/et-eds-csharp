@@ -51,7 +51,7 @@ namespace Ets.Service.Provider.WtihdrawRecords
                     Amount = Convert.ToDecimal(model.Amount),
                     Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
                     Balance = balance - Convert.ToDecimal(model.Amount), //最新余额 - 提现金额
-                    RecordType = ClienterBalanceRecordRecordType.Withdraw.GetHashCode(),
+                    RecordType = ClienterBalanceRecordRecordType.WithdrawApply.GetHashCode(),
                     Operator = cliterModel.TrueName,
                     RelationNo = "", //提现的时候没有关联单号吧
                     Remark = "骑士提现"

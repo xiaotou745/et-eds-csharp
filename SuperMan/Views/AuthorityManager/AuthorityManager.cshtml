@@ -45,49 +45,37 @@
             <p id="statusFin">添加帐号</p>
             <a class="J_closebox x_close"></a>
         </h2>
-
         <form class="AddAccountfrom">
             <fieldset>
                 <input type="hidden" name="Id" id="hddsupplierdishid" class="form-control">
                 <div class="control-group">
-                    <!-- Text input-->
-                    <label class="control-label" for="input01">帐号名称</label>
-
+                    <label class="control-label" >帐号名称</label>
                     <div class="controls">
-                        <input placeholder="帐号名称" name="accountName" id="accountName" class="input-xlarge" required="required" type="text"><i style="color:red">*</i>
-                        <p class="help-block"></p>
+                        <input placeholder="帐号名称" name="accountName" id="accountName"   type="text"><i style="color:red">*</i>
                     </div>
                 </div>
                 <div class="control-group">
-                    <!-- Text input-->
-                    <label class="control-label" for="input01">登录名</label>
+                    <label class="control-label" >登录名</label>
                     <div class="controls">
-                        <input placeholder="登录名" name="loginName" id="loginName" class="input-xlarge" required="required" type="text"><i style="color:red">*</i>
-                        <p class="help-block"></p>
+                        <input placeholder="登录名" name="loginName" id="loginName"   type="text"><i style="color:red">*</i>
                     </div>
                 </div>
                 <div class="control-group">
-                    <!-- Text input-->
-                    <label class="control-label" for="input01">密  码</label>
+                    <label class="control-label" >密  码</label>
                     <div class="controls">
-                        <input placeholder="密码" name="password" id="password" class="input-xlarge" required="required" type="password"><i style="color:red">*</i>
-                        <p class="help-block"></p>
+                        <input placeholder="密码" name="password" id="password"  type="password"><i style="color:red">*</i>
                     </div>
                 </div>
                 <div class="control-group">
-                    <!-- Text input-->
-                    <label class="control-label" for="input01">确认密码</label>
+                    <label class="control-label" >确认密码</label>
                     <div class="controls">
-                        <input placeholder="确认密码" name="confirmPassword" id="confirmPassword" class="input-xlarge" required="required" type="password"><i style="color:red">*</i>
-                        <p class="help-block"></p>
+                        <input placeholder="确认密码" name="confirmPassword" id="confirmPassword"  type="password"><i style="color:red">*</i>
                     </div>
                 </div>
-
                 @if (ViewBag.txtGroupId == null)
                 {
                     <div class="control-group">
-                        <!-- Text input-->
-                        <label class="control-label" for="input01">集团</label>
+                        <label class="control-label">集团</label>
                         <div class="controls">
                             @Html.DropDownList("AddGroupId", new SelectList(new BusinessProvider().GetGroups(), "Id", "GroupName"), "--无--", new { @class = "selectw", style = "width:143px" })
                         </div>
@@ -110,29 +98,107 @@
                             foreach (var item in openCityList)
                             {
                                 <div style="width: 100px;float: left">
-                                    <input type="checkbox" name="checkMenus" id="@item.Code" />
+                                    <input type="checkbox" name="checkMenus" id="@item.Code" value="@item.Code" />
                                     <label>@item.Name</label>
                                 </div>
                             }
                         }
-
                     }
                 </div>
                 <div style="float: left">
-                    <!-- Text input-->
                     <label class="control-label" for="input01">是否启用</label>
                     <input name="isEnable" id="isEnableY" type="radio" value="1" checked="checked" /> 启用
                     <input name="isEnable" id="isEnableN" type="radio" value="0" /> 禁用
                 </div>
             </fieldset>
             <p class="btnbox">
-                <input value="确定" type="submit" id="btnAddAccount" class="yesBtn" />
+                <input value="确定" type="button" id="btnAddAccount" class="yesBtn" />
                 <input value="关闭" type="button" class="J_closebox qxBtn" />
             </p>
         </form>
-
     </div>
 </div>
+@*@*修改信息*@
+@*<div class="selectSupplierDish">
+    <div class="add-openbox add-form" id="ModifyAccountShow" style="width:500px">
+        <h2>
+            <p id="statusFin">用户信息修改</p>
+            <a class="J_closebox x_close"></a>
+        </h2>
+        <form class="ModifyAccountfrom">
+            <fieldset>
+                <input type="hidden" name="Id" id="hddsupplierdishid" class="form-control">
+                <div class="control-group">
+                    <label class="control-label">帐号名称</label>
+                    <div class="controls">
+                        <input placeholder="帐号名称" name="accountName" id="accountName"  type="text"><i style="color:red">*</i>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" >登录名</label>
+                    <div class="controls">
+                        <input placeholder="登录名" name="loginName" id="loginName"  type="text"><i style="color:red">*</i>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" >密  码</label>
+                    <div class="controls">
+                        <input placeholder="密码" name="password" id="password"  type="password"><i style="color:red">*</i>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" >确认密码</label>
+                    <div class="controls">
+                        <input placeholder="确认密码" name="confirmPassword" id="confirmPassword"  type="password"><i style="color:red">*</i>
+                    </div>
+                </div>
+                @if (ViewBag.txtGroupId == null)
+                {
+                    <div class="control-group">
+                        <label class="control-label" >集团</label>
+                        <div class="controls">
+                            @Html.DropDownList("AddGroupId", new SelectList(new BusinessProvider().GetGroups(), "Id", "GroupName"), "--无--", new { @class = "selectw", style = "width:143px" })
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <input name="AddGroupId" id="AddGroupId" type="hidden" value="@ViewBag.txtGroupId" />
+                }
+
+                <div style="width:500px">
+                    <label class="control-label" for="input01">城市管理:<a>请选择</a></label>
+                    @{
+                        var openCityList = ViewBag.openCityList.Result.AreaModels as List<AreaModel>;
+                        if (openCityList != null && openCityList.Count > 0)
+                        {
+                            <div style="width: 100px;float: left">
+                                <input type="checkbox" name="checkMenus" id="selectAll" onclick="checkAll()" />全选/取消
+                            </div>
+                            foreach (var item in openCityList)
+                            {
+                                <div style="width: 100px;float: left">
+                                    <input type="checkbox" name="checkMenus" id="@item.Code" value="@item.Code" />
+                                    <label>@item.Name</label>
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+                <div style="float: left">
+                    <label class="control-label" for="input01">是否启用</label>
+                    <input name="isEnable" id="isEnableY" type="radio" value="1" checked="checked" /> 启用
+                    <input name="isEnable" id="isEnableN" type="radio" value="0" /> 禁用
+                </div>
+            </fieldset>
+            <p class="btnbox">
+                <input value="确定" type="button" id="btnModifyAccount" class="yesBtn" />
+                <input value="关闭" type="button" class="J_closebox qxBtn" />
+            </p>
+        </form>
+    </div>
+</div>*@*@
 @*修改密码*@
 <div class="selectSupplierDish">
     <div class="add-openbox add-form" id="ModifyPwdShow" style="width:500px">
@@ -194,54 +260,55 @@
         $("input[name='checkMenus']").prop("checked", checkedOfAll);
     }
     $("#btnAddAccount").click(function () {
+        var cityCodeList = "";
+        $("input[name='checkMenus']").each(function () {
+            if ($(this).is(':checked')) {
+                cityCodeList = cityCodeList + $(this).val() + ",";
+            }
+        });
+        if (cityCodeList.length > 0)
+            cityCodeList = cityCodeList.substring(0, cityCodeList.length - 1);
+        var accountName = $("#accountName").val();//用户名称
+        var loginName = $("#loginName").val();//登陆名称
+        var password = $("#password").val();//密码
+        var confirmPassword = $("#confirmPassword").val();//确认密码
+        var groupId = $("#AddGroupId").val();//登陆名称
+        var status = $("input[name='isEnable']:checked").val();;//登陆名称
+        if (accountName == "") {
+            alert("请输入用户名称!");
+            return;
+        }
+        if (loginName == "") {
+            alert("请输入登陆名称!");
+            return;
+        }
+        if (password == "") {
+            alert("请输入登陆密码!");
+            return;
+        }
+        if (confirmPassword == "") {
+            alert("请输入确认密码!");
+            return;
+        }
+        if (password != confirmPassword) {
+            alert("两次密码输入不一致!");
+            return;
+        }
         if (confirm("确定要提交用户信息吗？")) {
-            var cityCodeList = "";
-            $("input[name='checkMenus']").each(function () {
-                if ($(this).is(':checked')) {
-                    cityCodeList = cityCodeList + $(this).val() + ",";
-                }
-            });
-            if (cityCodeList.length > 0)
-                cityCodeList = cityCodeList.substring(0, cityCodeList.length - 1);
-            var accountName = $("#accountName").val();//用户名称
-            var loginName = $("#loginName").val();//登陆名称
-            var password = $("#password").val();//密码
-            var confirmPassword = $("#confirmPassword").val();//确认密码
-            var groupId = $("#AddGroupId").val();//登陆名称
-            var status = $("input[name='isEnable']:checked").val();;//登陆名称
-            if (accountName == "") {
-                alert("请输入用户名称!");
-                return;
-            }
-            if (loginName == "") {
-                alert("请输入登陆名称!");
-                return;
-            }
-            if (password == "") {
-                alert("请输入登陆密码!");
-                return;
-            }
-            if (confirmPassword == "") {
-                alert("请输入确认密码!");
-                return;
-            }
-            if (password != confirmPassword) {
-                alert("两次密码输入不一致!");
-                return;
-            }
-            var paramaters = { "accountName": accountName, "loginName": loginName, "password": password, "groupId": groupId, "status": status, "cityCodeList": cityCodeList };
-            var url = "/OpenCityManager/ModifyOpenCity";
+            var paramaters = { "userName": accountName, "loginName": loginName, "password": password, "groupId": groupId, "status": status, "cityCodeList": cityCodeList };
+            var url = "/AuthorityManager/Add";
             $.ajax({
                 type: 'POST',
                 url: url,
                 data: paramaters,
                 success: function (result) {
                     if (result.IsSuccess) {
-                        alert("设置成功!");
-                        //window.location.href = "/OpenCityManager/OpenCityManager";
+                        alert(result.Message);
+                        window.location.href = "/AuthorityManager/AuthorityManager";
                     } else {
                         alert(result.Message);
                     }
+                    
                 }
             });
         }

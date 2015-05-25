@@ -64,9 +64,7 @@ namespace Ets.Service.Provider.Clienter
                     return ETS.Enums.ChangeWorkStatusEnum.OrderError;
             }
             int changeResult = clienterDao.ChangeWorkStatusToSql(paraModel);
-
-
-            return clienterDao.ChangeWorkStatusToSql(paraModel) > 0 ? ETS.Enums.ChangeWorkStatusEnum.Success : ETS.Enums.ChangeWorkStatusEnum.Error;
+            return changeResult > 0 ? ETS.Enums.ChangeWorkStatusEnum.Success : ETS.Enums.ChangeWorkStatusEnum.Error;
         }
 
         /// <summary>
@@ -476,24 +474,23 @@ namespace Ets.Service.Provider.Clienter
         /// 获取用户状态
         /// </summary>
         /// <param name="UserId"></param>
-        /// <param name="version"></param>
         /// <returns></returns>
-        public ClienterStatusModel GetUserStatus(int UserId, double version)
+        public ClienterStatusModel GetUserStatus(int UserId)
         {
             try
             {
-                ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
-                string cacheKey = string.Format(RedissCacheKey.ClienterProvider_GetUserStatus, UserId);
-                var cacheValue = redis.Get<string>(cacheKey);
-                if (!string.IsNullOrEmpty(cacheValue))
-                {
-                    return Letao.Util.JsonHelper.ToObject<ClienterStatusModel>(cacheValue);
-                }
+                //ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
+                //string cacheKey = string.Format(RedissCacheKey.ClienterProvider_GetUserStatus, UserId);
+                //var cacheValue = redis.Get<string>(cacheKey);
+                //if (!string.IsNullOrEmpty(cacheValue))
+                //{
+                //    return Letao.Util.JsonHelper.ToObject<ClienterStatusModel>(cacheValue);
+                //}
                 var UserInfo = clienterDao.GetUserStatus(UserId);
-                if (UserInfo != null)
-                {
-                    redis.Add(cacheKey, Letao.Util.JsonHelper.ToJson(UserInfo));
-                }
+                //if (UserInfo != null)
+                //{
+                //    redis.Add(cacheKey, Letao.Util.JsonHelper.ToJson(UserInfo));
+                //}
                 return UserInfo;
             }
             catch (Exception ex)
@@ -511,14 +508,14 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         public FinishOrderResultModel FinishOrder(int userId, string orderNo, float completeLongitude, float CompleteLatitude, string pickupCode = null)
         {
-            FinishOrderResultModel model = new FinishOrderResultModel() { Message="-1"};
+            FinishOrderResultModel model = new FinishOrderResultModel() { Message = "-1" };
             //string result = "-1";
             int businessId = 0;
             OrderListModel myOrderInfo = orderDao.GetByOrderNo(orderNo);
 
             #region 是否允许修改小票
             model.IsModifyTicket = true;
-            if (myOrderInfo.NeedUploadCount >= myOrderInfo.OrderCount && myOrderInfo.Status == OrderStatus.订单完成.GetHashCode())
+            if (myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount)// && myOrderInfo.Status == OrderStatus.订单完成.GetHashCode()
             {
                 model.IsModifyTicket = false;
             }
@@ -529,9 +526,9 @@ namespace Ets.Service.Provider.Clienter
                 //获取该订单信息和该  骑士现在的 收入金额
                 if (myOrderInfo.GroupId == SystemConst.Group3 && !string.IsNullOrWhiteSpace(myOrderInfo.PickupCode)
                     && pickupCode != myOrderInfo.PickupCode) //全时订单 判断 取货码是否正确
-                    //return FinishOrderStatus.PickupCodeError.ToString();
+                //return FinishOrderStatus.PickupCodeError.ToString();
                 {
-                    model.Message=FinishOrderStatus.PickupCodeError.ToString();
+                    model.Message = FinishOrderStatus.PickupCodeError.ToString();
                     return model;
                 }
                 //更新订单状态
@@ -624,8 +621,9 @@ namespace Ets.Service.Provider.Clienter
                 Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
                 Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
                 Balance = accountBalance ?? 0,
-                RecordType = ClienterBalanceRecordRecordType.Commission.GetHashCode(),
-                Operator = myOrderInfo.ClienterName,
+                RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
+                Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName)?"骑士":myOrderInfo.ClienterName,
+                WithwardId = myOrderInfo.Id,
                 RelationNo = myOrderInfo.OrderNo,
                 Remark = "骑士完成订单"
             };
@@ -660,8 +658,8 @@ namespace Ets.Service.Provider.Clienter
                 Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
                 Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
                 Balance = accountBalance ?? 0,
-                RecordType = ClienterBalanceRecordRecordType.Commission.GetHashCode(),
-                Operator = myOrderInfo.ClienterName,
+                RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
+                Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName)?"骑士:"+userId:myOrderInfo.ClienterName,
                 RelationNo = myOrderInfo.OrderNo,
                 Remark = "骑士完成订单"
             };
@@ -734,19 +732,20 @@ namespace Ets.Service.Provider.Clienter
 
                 //更新骑士金额
 
-                #region 是否给骑士加佣金，如果当前时间大于等于 上传小票的时间+24小时，就不增加佣金
+                #region 是否给骑士加佣金，如果当前时间大于等于 上传小票的时间+24小时，就不增加佣金 && 把订单加入到已增加已提现里
                 DateTime doneDate = ParseHelper.ToDatetime(myOrderInfo.ActualDoneDate, DateTime.Now).AddDays(1);//完成时间加一天
                 bool IsPayOrderCommission = true;
                 if (myOrderInfo.ActualDoneDate != null && DateTime.Now >= doneDate)
                 {
                     IsPayOrderCommission = false;
+                    orderDao.UpdateJoinWithdraw(myOrderInfo.Id);//把订单加入到已增加可提现里
                 }
                 #endregion
 
                 if (IsPayOrderCommission && orderOther.OrderCreateTime > Convert.ToDateTime(date)
                    && orderOther.OrderStatus == ConstValues.ORDER_FINISH)
                 {
-                    UpdateClienterMoney(myOrderInfo, uploadReceiptModel);
+                    UpdateClienterMoney(myOrderInfo, uploadReceiptModel, orderOther);
                 }
 
                 #region 临时
@@ -780,17 +779,24 @@ namespace Ets.Service.Provider.Clienter
                 #endregion
 
                 tran.Complete();
+                #region 是否允许修改小票
+                orderOther.IsModifyTicket = true;
+                if (orderOther.HadUploadCount >= orderOther.NeedUploadCount && myOrderInfo.Status == OrderStatus.订单完成.GetHashCode())
+                {
+                    orderOther.IsModifyTicket = false;
+                }
+                #endregion
             }
             return orderOther;
         }
 
-        void UpdateClienterMoney(OrderListModel myOrderInfo, UploadReceiptModel uploadReceiptModel)
+        void UpdateClienterMoney(OrderListModel myOrderInfo, UploadReceiptModel uploadReceiptModel, OrderOther orderOther)
         {
             if ((bool)myOrderInfo.IsPay)//已付款
             {
                 //上传完小票
                 //(1)更新给骑士余额
-                if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)
+                if (orderOther.HadUploadCount >= orderOther.NeedUploadCount)
                 {
                     if (CheckOrderPay(myOrderInfo.OrderNo))
                     {
@@ -802,7 +808,7 @@ namespace Ets.Service.Provider.Clienter
             {
                 //上传完小票
                 //(1)更新给骑士余额
-                if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)
+                if (orderOther.HadUploadCount >= orderOther.NeedUploadCount)
                 {
                     if (CheckOrderPay(myOrderInfo.OrderNo))
                     {
@@ -815,7 +821,7 @@ namespace Ets.Service.Provider.Clienter
                 //上传完小票
                 //(1)更新给骑士余额、可提现余额
                 //(2)把OrderOther把IsJoinWithdraw状态改为1
-                if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)
+                if (orderOther.HadUploadCount >= orderOther.NeedUploadCount)
                 {
                     if (CheckOrderPay(myOrderInfo.OrderNo))
                     {
@@ -867,11 +873,11 @@ namespace Ets.Service.Provider.Clienter
                     BusinessId = Convert.ToInt32(myOrderInfo.businessId),
                     Amount = myOrderInfo.BusinessReceivable,
                     Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
-                    RecordType = (int)BusinessBalanceRecordRecordType.ReturnBusinessReceivable,
-                    Operator = myOrderInfo.BusinessName,
-                    Remark = "返还商家结算费",
-                    WithwardId=myOrderInfo.Id,
-                    RelationNo=myOrderInfo.OrderNo
+                    RecordType = (int)BusinessBalanceRecordRecordType.OrderMeals,
+                    Operator = myOrderInfo.ClienterName,
+                    Remark = "返还商家订单菜品费",
+                    WithwardId = myOrderInfo.Id,
+                    RelationNo = myOrderInfo.OrderNo
                 });
                 #endregion
 
@@ -1097,7 +1103,7 @@ namespace Ets.Service.Provider.Clienter
                 //写入骑士抢单坐标
                 orderOtherDao.UpdateGrab(orderNo, grabLongitude, grabLatitude);
 
-                new OrderProvider().AsyncOrderStatus(orderNo);//同步第三方订单
+                new Ets.Service.Provider.Order.OrderProvider().AsyncOrderStatus(orderNo);//同步第三方订单
                 Ets.Service.Provider.MyPush.Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", bussinessId.ToString(), string.Empty);
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Success);
             }

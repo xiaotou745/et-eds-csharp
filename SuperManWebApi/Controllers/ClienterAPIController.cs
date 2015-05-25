@@ -614,7 +614,7 @@ namespace SuperManWebApi.Controllers
         public Ets.Model.Common.ResultModel<Ets.Model.Common.ResultModelServicePhone> GetCustomerServicePhone(string CityName)
         {
             return Ets.Model.Common.ResultModel<Ets.Model.Common.ResultModelServicePhone>.Conclude(
-                ETS.Enums.GetOrdersStatus.Success,
+                ServicePhoneStatus.Success,
                 new ServicePhone().GetCustomerServicePhone(CityName)
                 );
 
@@ -622,16 +622,16 @@ namespace SuperManWebApi.Controllers
 
         /// <summary>
         /// 获取用户状态
-        /// 平扬
+        /// 窦海超
         /// 2015年3月31日 
         /// </summary>
         /// <param name="userId">userId</param>
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.UserStatus))]
-        [HttpGet]
-        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.ClienterStatusModel> GetUserStatus(int userId, double version_api)
+        [HttpPost]
+        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.ClienterStatusModel> GetUserStatus(Ets.Model.ParameterModel.Order.UserStatusModel parModel)
         {
-            var model = new ClienterProvider().GetUserStatus(userId, version_api);
+            var model = new ClienterProvider().GetUserStatus(parModel.userId);
             if (model != null)
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.ClienterStatusModel>.Conclude(

@@ -24,7 +24,7 @@
                     <tr id="@item.Id">
                         <td>@recordTypeDes</td>
                         <td>
-                            @if (item.RecordType == 3 || item.RecordType == 6 )
+                            @if (item.RecordType == 3 || item.RecordType == 4 || item.RecordType == 5)
                             {
                                 <a href="javascript:funLookDetail(@item.WithwardId)">@item.RelationNo</a>
 
@@ -34,8 +34,8 @@
                                 <a href="/Order/OrderDetail?OrderNo=@item.RelationNo&OrderId=@item.WithwardId ">@item.RelationNo</a>
                             }
                         </td>
-                        <td>@item.Amount</td>
-                        <td>@item.Balance</td>
+                        <td>￥@ParseHelper.ToSplitByPercentile(false,@item.Amount)</td>
+                        <td>￥@ParseHelper.ToSplitByPercentile(false,@item.Balance)</td>
                         <td>@(item.Status == ETS.Enums.ClienterBalanceRecordStatus.Success.GetHashCode() ? "交易成功" : "交易中")</td>
                         <td>@item.OperateTime</td>
                         <td>@item.Operator</td>
@@ -129,7 +129,7 @@
                     $('#labWithdrawTime').text(withdrawTime);
                     $('#labWithdrawStatus').text(strstatus);
                     $('#labWithdrawNo').text(jsonstr.WithwardNo);
-                    $('#labAmount').text(jsonstr.Amount);
+                    $('#labAmount').text('￥'+jsonstr.Amount);
                     $('#labClienterName').text(jsonstr.ClienterName);
                     $('#labClienterPhoneNo').text(jsonstr.ClienterPhoneNo);
                     $('#labClienterOpenBank').text(jsonstr.OpenBank);

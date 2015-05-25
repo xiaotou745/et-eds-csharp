@@ -8,6 +8,24 @@
     //$.ajax({
     //    type: 'POST',
     //    dataType: 'json',
+    //    url: '/Order/TicketUpload',
+    //    data: {
+    //        "OrderId": 142392,
+    //        "ClienterId":3087,
+    //        "NeedUploadCount": 5,
+    //        "ReceiptPicAddress": "/2015/05/22/22/142392/1348249.jpg",
+    //        "Version": "1.1.0",
+    //        "OrderChildId": 330947
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
+
+    //$.ajax({
+    //    type: 'POST',
+    //    dataType: 'json',
     //    url: '/ClienterAPI/PostForgetPwd_C',
     //    data: {
     //        "phoneNo": 1776,
@@ -26,16 +44,16 @@
     //    dataType: 'json',
     //    url: '/Order/Push',
     //    data: {
-    //        "userId": 1776,
+    //        "userId": 1814,
     //        "ReceiveName": "健康快乐",
     //        "receviceAddress": "别动我数据",
     //        "recevicePhone": "13595555877",            
     //        "Amount": 50,
-    //        "IsPay": false,
+    //        "IsPay":false,
     //        "Remark":null ,
     //        "OrderCount": 1,
     //        "OrderSign": "1431935133274",
-    //        "TimeSpan": 30008,
+    //        "TimeSpan": 20005,
     //        "Version": "1.1.0",
     //        "PubLongitude": 0.011,
     //        "PubLatitude": 0.021,
@@ -89,23 +107,23 @@
     //    error: function () { }
     //});
 
-    $.ajax({
-        type: 'POST',
-        dataType: 'json',
-        url: '/Order/Complete',
-        data: {
-            "userId": 3083,
-            "orderNo": "1776150521172026042",
-            "pickupCode": "",
-            "version": "1.0",
-            "longitude":0.201,
-            "latitude":0.202            
-        },
-        success: function (data) {
-            console.log(data);
-        },
-        error: function () { }
-    });
+    //$.ajax({
+    //    type: 'POST',
+    //    dataType: 'json',
+    //    url: '/Order/Complete',
+    //    data: {
+    //        "userId": 3083,
+    //        "orderNo": "1776150521172026042",
+    //        "pickupCode": "",
+    //        "version": "1.0",
+    //        "longitude":0.201,
+    //        "latitude":0.202            
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
 
     //$.ajax({
     //    type: 'get',
@@ -122,17 +140,17 @@
    
 
 
-    $.ajax({
-        type: 'Get',
-        dataType: 'json',
-        url: '/BusinessAPI/GetOrderList_B?userId=1790&pagedSize=10&pagedIndex=1&Status=1&orderfrom=0',
-        data: {          
-        },
-        success: function (data) {
-            console.log(data);
-        },
-        error: function () { }
-    }); 
+    //$.ajax({
+    //    type: 'Get',
+    //    dataType: 'json',
+    //    url: '/BusinessAPI/GetOrderList_B?userId=1790&pagedSize=10&pagedIndex=1&Status=1&orderfrom=0',
+    //    data: {          
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //}); 
 
 
    
@@ -211,19 +229,19 @@
     //    error: function () { }
     //});
     
-    //$.ajax({
-    //    type: 'POST',
-    //    dataType: 'json',
-    //    url: '/Order/GetDetails',
-    //    data: {
-    //        "OrderId": 142201,
-    //        "Version": "1.0.1"
-    //    },
-    //    success: function (data) {
-    //        console.log(data);
-    //    },
-    //    error: function () { }
-    //});
+    $.ajax({
+        type: 'POST',
+        dataType: 'json',
+        url: '/Order/GetDetails',
+        data: {
+            "OrderId": 142459,
+            "Version": "1.0.1"
+        },
+        success: function (data) {
+            console.log(data);
+        },
+        error: function () { }
+    });
     //$(function () {
     //    //alert(1);
     //    $.ajax({

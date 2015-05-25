@@ -30,7 +30,7 @@
                     <td> 
                       @if (UserContext.Current.HasAuthority(27))
                       {
-                              <a href="javascript:void(0)" businessid="@item.Id" class="modifyPwd">修改密码</a>
+                              <a href="javascript:void(0)" businessid="@item.Id" class="modifyPwd">修改</a>
                       } 
                        @if (UserContext.Current.HasAuthority(28))    
                         {
@@ -57,8 +57,19 @@
     var DEFAULT_PAGESIZE = 15;
     var criteria = { PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE } };
     var currentId;
-    $(document).ready(function () {        
-        
+    $(document).ready(function () {         
     });
+    //修改商家信息
+    function funcUpdateAccountInfo(accountName, loginName, accountStatus, originalbusiId, groupid, mealsSettleMode) {
+        $('#accountName').val(accountName);
+        $('#loginName').val(loginName);
+        if (accountStatus == 2) {
+            $("#isEnableY").attr("checked", "checked");
+        }
+        else {
+            $("#isEnableN").attr("checked", "checked");
+        }
+        adminjs.openwinbox('#AddAccountShow');
+    }
 
 </script>

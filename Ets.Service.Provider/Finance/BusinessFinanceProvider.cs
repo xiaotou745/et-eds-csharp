@@ -70,10 +70,6 @@ namespace Ets.Service.Provider.Finance
         {
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                if (withdrawBpm.WithdrawPrice < 500) //提现金额小于500 加2手续费
-                {
-                    withdrawBpm.WithdrawPrice = withdrawBpm.WithdrawPrice + 2;
-                }
                 Business business = new Business();
                 var businessFinanceAccount = new BusinessFinanceAccount();//商户金融账号信息
                 FinanceWithdrawB checkbool = CheckWithdrawB(withdrawBpm, ref business, ref businessFinanceAccount);
@@ -114,7 +110,7 @@ namespace Ets.Service.Provider.Finance
                         BusinessId = withdrawBpm.BusinessId,//商户Id
                         Amount = -withdrawBpm.WithdrawPrice,//流水金额
                         Status = (int)BusinessBalanceRecordStatus.Tradeing, //流水状态(1、交易成功 2、交易中）
-                        RecordType = (int)BusinessBalanceRecordRecordType.Withdraw,
+                        RecordType = (int)BusinessBalanceRecordRecordType.WithdrawApply,
                         Operator = business.Name,
                         WithwardId = withwardId,
                         RelationNo = withwardNo,
