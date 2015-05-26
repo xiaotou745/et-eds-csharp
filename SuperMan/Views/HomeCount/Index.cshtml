@@ -32,7 +32,7 @@
        
         var homeCountAllData = ViewBag.homeCountTitleToAllData as Ets.Model.Common.HomeCountTitleModel;
         <p>
-            <table class="tbstyle" width="1200" border="1">
+            <table class="tbstyle" width="1400" border="1">
                 <tr class="trclass">
                     <td width="150">
                         商家总数：@ParseHelper.ToSplitByPercentile(true, resultList.BusinessCount)<br />
@@ -79,7 +79,12 @@
                         }
                         盈亏总计：￥<span style="color:@ykStyle">@ParseHelper.ToSplitByPercentile(false, resultList.YkPrice)</span><br />
                     </td>
-                   
+                    <td>
+                        扫码支付总计：￥@ParseHelper.ToSplitByPercentile(false, resultList.userTotal)<br />
+                        骑士代付总计:￥@ParseHelper.ToSplitByPercentile(false, resultList.clienterTotal)<br />
+                        商户充值金额：￥0<br />
+                        账户收入总计：￥@ParseHelper.ToSplitByPercentile(false, resultList.incomeTotal)<br />
+                    </td>
                 </tr>
             </table>
         </p>
@@ -89,16 +94,24 @@
 <h3 style="color:black;font-weight:600">总数据统计</h3>
 <div>
     <p>
-        <table class="tbstyle" width="1200" border="1">
+        <table class="tbstyle" width="1400" border="1">
             <tr class="trclass">
                 <td>总任务量</td>
                 <td>总订单量</td>
                 <td>总订单金额</td>
-                <td>总商户结算金额（应收)</td>
-                <td>总骑士佣金总计（应付)</td>
-                <td>可提现佣金总计</td>
                 <td>客单价</td>
                 <td>任务单价</td>
+                <td>扫码/代付总计</td>
+                <td>商户充值总计</td>
+                <td>账户收入总计</td>
+                
+
+                <td>总商户结算金额（应收)</td>
+                <td>总骑士佣金总计（应付)</td>
+                @*<td>可提现佣金总计</td>*@
+                <td>骑士已提现佣金（实付)</td>
+                <td>商家余额总计（应付）</td>
+                <td>商家已提款金额（实付）</td>
                 <td>跨店抢单奖励</td>
                 <td>总盈亏总计</td>
             </tr>
@@ -107,16 +120,27 @@
                 double ykAllPirce = (double)Math.Round(homeCountAllData.YsPrice - homeCountAllData.YfPrice, 2);
                 string ykAllStyle = ykAllPirce > 0 ? "red" : "green";
                 <tr class="trclass">
-                    <td>@ParseHelper.ToSplitByPercentile(true,homeCountAllData.MisstionCount)</td>
-                    <td>@ParseHelper.ToSplitByPercentile(true,homeCountAllData.OrderCount)</td>
-                    <td>@ParseHelper.ToSplitByPercentile(false,homeCountAllData.OrderPrice)</td>
-                    <td>￥@ParseHelper.ToSplitByPercentile(false,Math.Round(homeCountAllData.YsPrice, 2))</td>
-                    <td>￥@ParseHelper.ToSplitByPercentile(false,Math.Round(homeCountAllData.YfPrice, 2))</td>
-                    <td>￥@ParseHelper.ToSplitByPercentile(false,Math.Round(homeCountAllData.WithdrawPrice, 2))</td>
-                    <td>@ParseHelper.ToSplitByPercentile(false,((homeCountAllData.OrderPrice / homeCountAllData.OrderCount).ToString("f2")))</td>
-                    <td>@ParseHelper.ToSplitByPercentile(false,((homeCountAllData.OrderPrice / homeCountAllData.MisstionCount).ToString("f2")))</td>
-                    <td>@ParseHelper.ToSplitByPercentile(false, Math.Round(homeCountAllData.CrossShopPrice, 2))</td>
-                    <td>￥<span style="color:@ykAllStyle">@ParseHelper.ToSplitByPercentile(false,ykAllPirce)</span></td>
+                    <td>@ParseHelper.ToSplitByPercentile(true,homeCountAllData.MisstionCount)</td>@*总任务量*@
+                    <td>@ParseHelper.ToSplitByPercentile(true,homeCountAllData.OrderCount)</td>@*总订单量*@
+                    <td>@ParseHelper.ToSplitByPercentile(false,homeCountAllData.OrderPrice)</td>@*总订单金额*@
+                    <td>@ParseHelper.ToSplitByPercentile(false, ((homeCountAllData.OrderPrice / homeCountAllData.OrderCount).ToString("f2")))</td>@*客单价*@
+                    <td>@ParseHelper.ToSplitByPercentile(false, ((homeCountAllData.OrderPrice / homeCountAllData.MisstionCount).ToString("f2")))</td>@*任务单价*@
+
+                    <td>￥@ParseHelper.ToSplitByPercentile(false, ((homeCountAllData.incomeTotal).ToString("f2")))</td>@*扫码/代付总计*@
+                    <td>￥@ParseHelper.ToSplitByPercentile(false, ((homeCountAllData.rechargeTotal).ToString("f2")))</td>@*商户充值总计*@
+                    <td>￥@ParseHelper.ToSplitByPercentile(false, ((homeCountAllData.allIncomeTotal).ToString("f2")))</td>@*账户收入总计*@
+
+                    <td>￥@ParseHelper.ToSplitByPercentile(false,Math.Round(homeCountAllData.YsPrice, 2))</td>@*总商户结算金额（应收)*@
+                    <td>￥@ParseHelper.ToSplitByPercentile(false,Math.Round(homeCountAllData.YfPrice, 2))</td>@*总骑士佣金总计（应付)*@
+                    @*<td>￥@ParseHelper.ToSplitByPercentile(false,Math.Round(homeCountAllData.WithdrawPrice, 2))</td>@*可提现佣金总计*@
+                    
+                    <td>￥@ParseHelper.ToSplitByPercentile(false, ((homeCountAllData.withdrawClienterPrice).ToString("f2")))</td>@*骑士已提现佣金（实付)*@
+                    <td>￥@ParseHelper.ToSplitByPercentile(false, ((homeCountAllData.businessBalance).ToString("f2")))</td>@*商家余额总计（应付）*@
+                    <td>￥@ParseHelper.ToSplitByPercentile(false, ((homeCountAllData.withdrawBusinessPrice).ToString("f2")))</td>@*商家已提款金额（实付）*@
+
+                    
+                    <td>￥@ParseHelper.ToSplitByPercentile(false, Math.Round(homeCountAllData.CrossShopPrice, 2))</td>@*跨店抢单奖励*@
+                    <td>￥<span style="color:@ykAllStyle">@ParseHelper.ToSplitByPercentile(false,ykAllPirce)</span></td>@*总盈亏总计*@
                 </tr>
             }
         </table>
