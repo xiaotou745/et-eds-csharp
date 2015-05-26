@@ -887,50 +887,59 @@ namespace Ets.Service.Provider.Order
             //}
             #endregion
 
-            #region 转换省市区
-            //转换省
-            var _province = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = model.Receive_Province, JiBie = 1 });
-            if (_province != null)
-            {
-                model.Receive_ProvinceCode = _province.NationalCode.ToString();
-            }
-            //转换市
-            var _city = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = model.Receive_City, JiBie = 2 });
-            if (_city != null)
-            {
+            try
+            { 
+            
+                #region 转换省市区
+                //转换省
+                var _province = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = model.Receive_Province, JiBie = 1 });
+                if (_province != null)
+                {
+                    model.Receive_ProvinceCode = _province.NationalCode.ToString();
+                }
+                //转换市
+                var _city = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = model.Receive_City, JiBie = 2 });
+                if (_city != null)
+                {
 
-                model.Receive_CityCode = _city.NationalCode.ToString();
-            }
-            //转换区
-            var _area = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = model.Receive_Area, JiBie = 3 });
-            if (_area != null)
-            {
-                model.Receive_AreaCode = _area.NationalCode.ToString();
-            }
-            #endregion
-            OrderChlidPM pm = new OrderChlidPM();
-            pm.ChildId = 1;
-            pm.GoodPrice = 15;
-            List<OrderChlidPM> list = new List<OrderChlidPM>();
-            model.listOrderChlid = list;
+                    model.Receive_CityCode = _city.NationalCode.ToString();
+                }
+                //转换区
+                var _area = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = model.Receive_Area, JiBie = 3 });
+                if (_area != null)
+                {
+                    model.Receive_AreaCode = _area.NationalCode.ToString();
+                }
+                #endregion
 
-            order dborder = OrderInstance(model);  //整合订单信息 
-            PubOrderStatus addResult = AddOrder(dborder);    //添加订单记录，并且触发极光推送。          
-            if (addResult == PubOrderStatus.Success)
-            {
-                NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { OriginalOrderNo = model.OriginalOrderNo, OrderNo = dborder.OrderNo };
-                LogHelper.LogWriter("订单发布成功", new { model = model, resultModel = resultModel });
-                return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Success, resultModel);
+                List<OrderChlidPM> list = new List<OrderChlidPM>
+                {
+                    new OrderChlidPM { ChildId=1,GoodPrice=model.Amount }
+                };           
+                model.listOrderChlid = list;
+
+                ResultModel<NewPostPublishOrderResultModel> currResModel = Verification(model);
+                if (currResModel.Status == OrderPublicshStatus.VerificationSuccess.GetHashCode())
+                {
+                    order dborder = OrderInstance(model);  //整合订单信息 
+                    PubOrderStatus addResult = AddOrder(dborder);    //添加订单记录，并且触发极光推送。          
+                    if (addResult == PubOrderStatus.Success)
+                    {
+                        NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { OriginalOrderNo = model.OriginalOrderNo, OrderNo = dborder.OrderNo };
+                        LogHelper.LogWriter("订单发布成功", new { model = model, resultModel = resultModel });
+                        return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Success, resultModel);
+                    }                  
+                }
+
+                return currResModel;
             }
-            else
+            catch (Exception ex)
             {
-                NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { Remark = "订单发布失败" };
-                LogHelper.LogWriter("订单发布失败", new { model = model });
+                LogHelper.LogWriter("ResultModel<NewPostPublishOrderResultModel> NewPostPublishOrder_B()方法出错", new { obj = "时间：" + DateTime.Now.ToString() + ex.Message });
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Failed);
-            }
+            }       
 
         }
-
         ResultModel<NewPostPublishOrderResultModel> Verification(NewPostPublishOrderModel model)
         {
             if (string.IsNullOrWhiteSpace(model.OriginalOrderNo))   //原始订单号非空验证
