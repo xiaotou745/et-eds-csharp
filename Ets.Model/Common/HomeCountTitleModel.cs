@@ -130,5 +130,52 @@ namespace Ets.Model.Common
         /// 跨店总金额
         /// </summary>
         public decimal CrossShopPrice { get; set; }
+
+        /// <summary>
+        /// 扫码支付总计
+        /// </summary>
+        public decimal userTotal { get; set; }
+
+        /// <summary>
+        /// 骑士代付总计
+        /// </summary>
+        public decimal clienterTotal { get; set; }
+
+        /// <summary>
+        /// 账户收入总计
+        /// </summary>
+        public decimal incomeTotal { get; set; }
+
+        /// <summary>
+        /// 扫码/代付总计
+        /// </summary>
+        //public decimal incomeTotal { get; set; }
+
+        /// <summary>
+        /// 商户充值总计
+        /// </summary>
+        public decimal rechargeTotal { get; set; }
+
+        /// <summary>
+        /// 账户收入总计
+        /// </summary>
+        public decimal allIncomeTotal { get; set; }
+
+        /// <summary>
+        /// 骑士已提现佣金-实付
+        /// </summary>
+        public decimal withdrawClienterPrice { get; set; }
+
+        /// <summary>
+        /// 商家余额总计-应付
+        /// </summary>
+        public decimal businessBalance { get; set; }
+
+        /// <summary>
+        /// 商家已提款金额-实付
+        /// </summary>
+        public decimal withdrawBusinessPrice { get; set; }
+    
+
     }
 }
