@@ -477,7 +477,7 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public int UpdateOrderStatus(string orderNo, int orderStatus, string remark, int? status)
         {
-            int result = 0;
+            int reurnRes = 0;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 OrderListModel order = orderDao.GetOrderByNo(orderNo);
@@ -485,7 +485,7 @@ namespace Ets.Service.Provider.Order
                 {
                     return 0;
                 }
-                result = orderDao.CancelOrderStatus(orderNo, orderStatus, remark, status);
+                int result = orderDao.CancelOrderStatus(orderNo, orderStatus, remark, status);
                 if (result > 0)
                 {
                     //确认接入订单时   扣除 商家结算费 
@@ -509,18 +509,19 @@ namespace Ets.Service.Provider.Order
                             Remark = "商户发单，系统自动扣商家结算费"
                         });
                     }
+                    reurnRes = 1;
                     tran.Complete();
                 }
             }
             //异步回调第三方，推送通知
             Task.Factory.StartNew(() =>
             {
-                if (result > 0)
+                if (reurnRes > 0)
                 {
                     AsyncOrderStatus(orderNo);
                 }
             });
-            return result;
+            return reurnRes;
         }
 
         #region openapi 接口使用 add by caoheyang  20150325
