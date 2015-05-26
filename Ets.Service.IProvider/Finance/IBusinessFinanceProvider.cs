@@ -1,4 +1,5 @@
 ﻿using Ets.Model.Common;
+using Ets.Model.DataModel.Bussiness;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;
@@ -129,6 +130,14 @@ namespace Ets.Service.IProvider.Finance
         /// <returns></returns>
         string CreateBusinessBalanceRecordExcel(List<BusinessBalanceRecordModel> list);
 
-      
+        /// <summary>
+        /// 商户充值增加商家余额可提现和插入商家余额流水
+        /// danny-20150526
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+         bool BusinessRecharge(BusinessOptionLog model);
+
+
     }
 }

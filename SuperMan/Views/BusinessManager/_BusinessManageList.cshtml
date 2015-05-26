@@ -119,23 +119,23 @@
                     <td>@(item.MealsSettleMode == 0 ? "线下结算" : "线上结算")</td>
                     <td>
                         @{
-                if (SuperMan.App_Start.UserContext.Current.HasAuthority(22))
-                {
-                    int checkAddress = string.IsNullOrEmpty(item.Address) ? 0 : 1;
-                    int checkImage = string.IsNullOrEmpty(item.CheckPicUrl) ? 0 : 1;
+                            if (SuperMan.App_Start.UserContext.Current.HasAuthority(22))
+                            {
+                                int checkAddress = string.IsNullOrEmpty(item.Address) ? 0 : 1;
+                                int checkImage = string.IsNullOrEmpty(item.CheckPicUrl) ? 0 : 1;
 
-                    if (@item.Status == 1)
-                    {
-                        <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage,@item.CommissionType)" style="color:gray" businessid="@item.Id" class="businessOk">审核通过</a>
-                            <a href="javascript:void(0)" businessid="@item.Id" class="businessCel">取消资格</a>
-                    }
-                    else
-                    {
-                        <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage,@item.CommissionType)" businessid="@item.Id" class="businessOk">审核通过</a>
-                            <a href="javascript:void(0)" style="color:gray" businessid="@item.Id" class="businessCel">取消资格</a>
-                    }
+                                if (@item.Status == 1)
+                                {
+                                    <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage,@item.CommissionType)" style="color:gray" businessid="@item.Id" class="businessOk">审核通过</a>
+                                        <a href="javascript:void(0)" businessid="@item.Id" class="businessCel">取消资格</a>
+                                }
+                                else
+                                {
+                                    <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage,@item.CommissionType)" businessid="@item.Id" class="businessOk">审核通过</a>
+                                        <a href="javascript:void(0)" style="color:gray" businessid="@item.Id" class="businessCel">取消资格</a>
+                                }
 
-                }
+                            }
                         }
                         @if (SuperMan.App_Start.UserContext.Current.HasAuthority(24))
                         {
@@ -145,7 +145,10 @@
                         {
                             <a href="javascript:void(0)" onclick="funcUpdateBusinessInfo(@item.Id,'@item.Name','@item.PhoneNo','@item.OriginalBusiId','@item.GroupId','@item.MealsSettleMode')">修改信息</a>
                         }
-
+                        @if (SuperMan.App_Start.UserContext.Current.HasAuthority(24))
+                        {
+                            <a href="javascript:void(0)" onclick="funcBusinessRecharge(@item.Id,'@item.Name', '@item.PhoneNo')">充值</a>
+                        }
                     </td>
                 </tr>
             }
@@ -315,6 +318,13 @@
         $('#oldBusiSourceId').val(originalbusiId);
         $('#oldBusGroupId').val(groupid);
         adminjs.openwinbox('#BusinessInfoUpdateDiv');
+    }
+    //商户充值
+    function funcBusinessRecharge(id, name, phone) {
+        $('#busId').val(id);
+        $('#busName').val(name);
+        $('#busPhone').val(phone);
+        adminjs.openwinbox('#BusinessRechargeShow');
     }
 
 </script>

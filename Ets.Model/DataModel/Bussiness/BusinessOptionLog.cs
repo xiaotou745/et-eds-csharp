@@ -36,6 +36,10 @@ namespace Ets.Model.DataModel.Bussiness
         /// 操作描述
         /// </summary>
         public string Remark { get; set; }
+        /// <summary>
+        /// 充值金额
+        /// </summary>
+        public decimal RechargeAmount { get; set; }
         
     }
 }

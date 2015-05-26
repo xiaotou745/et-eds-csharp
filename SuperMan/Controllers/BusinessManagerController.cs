@@ -31,9 +31,9 @@ namespace SuperMan.Controllers
         /// <summary>
         /// 商户业务类
         /// </summary>
-        Ets.Service.IProvider.User.IBusinessProvider iBusinessProvider = new BusinessProvider();
-        IAreaProvider iAreaProvider = new AreaProvider();
-        IBusinessFinanceProvider iBusinessFinanceProvider = new BusinessFinanceProvider();
+        readonly IBusinessProvider iBusinessProvider = new BusinessProvider();
+        readonly IAreaProvider iAreaProvider = new AreaProvider();
+        readonly IBusinessFinanceProvider iBusinessFinanceProvider = new BusinessFinanceProvider();
         // GET: BusinessManager
         [HttpGet]
         public ActionResult BusinessManager()
@@ -243,6 +243,19 @@ namespace SuperMan.Controllers
             };
             ViewBag.businessBalanceRecord = iBusinessFinanceProvider.GetBusinessBalanceRecordList(criteriaNew);
             return View("BusinessDetail", businessWithdrawFormModel);
+        }
+        /// <summary>
+        /// 商户充值
+        /// danny-20150526
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult BusinessRecharge(BusinessOptionLog model)
+        {
+            model.OptName = UserContext.Current.Name;
+            var reg = iBusinessFinanceProvider.BusinessRecharge(model);
+            return Json(new ResultModel(reg, reg?"充值成功！":"充值失败！"), JsonRequestBehavior.DenyGet);
         }
 
     }
