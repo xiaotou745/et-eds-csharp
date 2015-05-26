@@ -321,6 +321,11 @@
     }
     //商户充值
     function funcBusinessRecharge(id, name, phone) {
+        $('#busId').val(0);
+        $('#busName').val('');
+        $('#busPhone').val('');
+        $('#busRechargeAmount').val('');
+        $('#rechargeLog').val('');
         $('#busId').val(id);
         $('#busName').val(name);
         $('#busPhone').val(phone);
