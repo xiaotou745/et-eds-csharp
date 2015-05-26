@@ -464,9 +464,9 @@ namespace Ets.Service.Provider.Order
         }
 
         /// <summary>
-        /// 根据订单号 修改订单状态
-        /// wc
+        /// 第三方订单列表根据订单号 修改订单状态   平杨  TODO 目前支适用于美团
         /// </summary>
+        ///  <UpdateBy>确认接入时扣除商家结算费功能  caoheyang 20150526</UpdateBy>
         /// <param name="orderNo">订单号</param>
         /// <param name="orderStatus">订单状态</param>
         /// <returns></returns>
