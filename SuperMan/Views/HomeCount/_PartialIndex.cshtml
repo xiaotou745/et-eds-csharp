@@ -26,7 +26,7 @@
         <td>在线支付(扫码/代付)总计</td>
         <td>商户充值总计</td>
         <td>账户收入总计</td>
-        <td>商户余额总计（应付）</td>
+        <td>商户余额总计</td>
         <td>商户已提款金额（实付）</td>
 
 
@@ -67,7 +67,7 @@
 <td>@ParseHelper.ToSplitByPercentile(false, (item.incomeTotal.ToString("f2")))@*在线支付(扫码/代付)总计*@
 <td>@ParseHelper.ToSplitByPercentile(false, (item.rechargeTotal.ToString("f2")))@*商户充值总计*@
 <td>@ParseHelper.ToSplitByPercentile(false, (item.incomeTotal+item.rechargeTotal).ToString("f2"))@*账户收入总计*@
-<td>@ParseHelper.ToSplitByPercentile(false, (item.businessBalance.ToString("f2")))@*商户余额总计（应付）*@
+<td>@ParseHelper.ToSplitByPercentile(false, (item.businessBalance.ToString("f2")))@*商户余额总计*@
 <td>@ParseHelper.ToSplitByPercentile(false, (item.withdrawBusinessPrice.ToString("f2")))</td>@*商户已提款金额（实付）*@
 
                 <td>@ParseHelper.ToSplitByPercentile(false, item.YsPrice)</td>
