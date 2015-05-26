@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Linq;
+using Ets.Model.DomainModel.Authority;
 
 namespace Ets.Dao.MenuSet
 {
@@ -517,7 +518,7 @@ namespace Ets.Dao.MenuSet
                                     ,a.[GroupId]
                                     ,a.[RoleId]
                                     ,g.GroupName";
-            var sbSqlWhere = new StringBuilder(" 1=1 AND a.Status=1 ");
+            var sbSqlWhere = new StringBuilder(" 1=1  ");
             if (criteria.GroupId != null && criteria.GroupId != 0)
             {
                 sbSqlWhere.AppendFormat(" AND a.GroupId={0} ", criteria.GroupId);
@@ -541,7 +542,7 @@ namespace Ets.Dao.MenuSet
         {
             try
             {
-                string sql = "SELECT COUNT(*) FROM account WITH (NOLOCK) WHERE (UserName=@UserName OR LoginName=@LoginName) AND Status = 1 ";
+                string sql = "SELECT COUNT(*) FROM account WITH (NOLOCK) WHERE (UserName=@UserName OR LoginName=@LoginName)  ";
                 IDbParameters parm = DbHelper.CreateDbParameters();
                 parm.AddWithValue("@UserName", account.UserName);
                 parm.AddWithValue("@LoginName", account.LoginName);
@@ -604,7 +605,7 @@ namespace Ets.Dao.MenuSet
                 parm.AddWithValue("@LCUser", account.LCUser);
                 parm.AddWithValue("@GroupId", account.GroupId);
                 parm.AddWithValue("@RoleId", account.RoleId);
-                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm)) ;
+                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm));
             }
             catch (Exception ex)
             {
@@ -733,6 +734,63 @@ VALUES
             string sql = @" DELETE FROM [AccountCityRelation] WHERE AccountId=@AccountId;";
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@AccountId", model.AccountId);
+            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm)) > 0;
+        }
+        /// <summary>
+        /// 获取用户和城市对应关系列表
+        /// danny-20150525
+        /// </summary>
+        /// <param name="accountId"></param>
+        /// <returns></returns>
+        public IList<AccountCityRelationModel> GetAccountCityRel(int accountId)
+        {
+            string sql = @"  
+SELECT acr.[Id]
+      ,acr.[AccountId]
+      ,acr.[CityId]
+      ,acr.[IsEnable]
+      ,acr.[CreateBy]
+      ,acr.[CreateTime]
+      ,acr.[UpdateBy]
+      ,acr.[UpdateTime]
+      ,ppc.name CityName
+FROM [AccountCityRelation] acr with(nolock)
+JOIN PublicProvinceCity ppc with(nolock) on acr.CityId=ppc.code
+WHERE acr.AccountId=@AccountId;";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@AccountId", accountId);
+            var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            return MapRows<AccountCityRelationModel>(dt);
+        }
+        /// <summary>
+        /// 修改用户信息
+        /// danny-20150525
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ModifyAccount(account model)
+        {
+            string sql = " update account set ";
+            if (model.Status >= 0)
+            {
+                sql += " Status=@Status";
+            }
+            if (!string.IsNullOrWhiteSpace(model.Password))
+            {
+                if (model.Status >= 0)
+                {
+                    sql += " ,Password=@Password";
+                }
+                else
+                {
+                    sql += " Password=@Password";
+                }
+            }
+            sql += " where Id=@Id;";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Id", model.Id);
+            parm.AddWithValue("@Status", model.Status);
+            parm.AddWithValue("@Password", model.Password);
             return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm)) > 0;
         }
     }

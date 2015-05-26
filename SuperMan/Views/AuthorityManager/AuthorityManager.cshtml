@@ -10,7 +10,7 @@
 @*<script src="~/Scripts/view/authoritylist.js"></script>*@
 <div class="zpManage zpSh">
     <h2 class="crumbs">
-        您所在位置：账号管理 > 账号管理
+        您所在位置：用户设置 > 用户管理
     </h2>
     @using (Ajax.BeginForm("PostAuthorityManager", new RouteValueDictionary { { "pageindex", "" } },
         new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
@@ -20,7 +20,7 @@
             <table border="0" cellspacing="0" cellpadding="0">
                 <tr>
                     <td>
-                        <span class="">用户名: </span>
+                        <span class="">账号名称: </span>
                         <input id="txtName" type="text" name="UserName" />
                         <input name="GroupId" id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" />
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
@@ -40,36 +40,37 @@
 </div>
 @*添加帐号*@
 <div class="selectSupplierDish">
-    <div class="add-openbox add-form" id="AddAccountShow" style="width:500px">
+    <div class="add-openbox add-form" id="AddAccountShow" style="width:510px">
         <h2>
             <p id="statusFin">添加帐号</p>
             <a class="J_closebox x_close"></a>
         </h2>
-        <form class="AddAccountfrom">
+        <form class="AddAccountfrom" id="AddAccountfrom1">
             <fieldset>
-                <input type="hidden" name="Id" id="hddsupplierdishid" class="form-control">
+                <input type="hidden" name="optionType" id="optionType"  value="0">
+                <input type="hidden" name="accountId" id="accountId"  >
                 <div class="control-group">
-                    <label class="control-label" >帐号名称</label>
+                    <label class="control-label">帐号名称</label>
                     <div class="controls">
-                        <input placeholder="帐号名称" name="accountName" id="accountName"   type="text"><i style="color:red">*</i>
+                        <input placeholder="帐号名称" name="accountName" id="accountName" type="text">
                     </div>
                 </div>
                 <div class="control-group">
-                    <label class="control-label" >登录名</label>
+                    <label class="control-label">登录名</label>
                     <div class="controls">
-                        <input placeholder="登录名" name="loginName" id="loginName"   type="text"><i style="color:red">*</i>
+                        <input placeholder="登录名" name="loginName" id="loginName" type="text">
                     </div>
                 </div>
                 <div class="control-group">
-                    <label class="control-label" >密  码</label>
+                    <label class="control-label">密  码</label>
                     <div class="controls">
-                        <input placeholder="密码" name="password" id="password"  type="password"><i style="color:red">*</i>
+                        <input placeholder="密码" name="password" id="password" type="password">
                     </div>
                 </div>
                 <div class="control-group">
-                    <label class="control-label" >确认密码</label>
+                    <label class="control-label">确认密码</label>
                     <div class="controls">
-                        <input placeholder="确认密码" name="confirmPassword" id="confirmPassword"  type="password"><i style="color:red">*</i>
+                        <input placeholder="确认密码" name="confirmPassword" id="confirmPassword" type="password">
                     </div>
                 </div>
                 @if (ViewBag.txtGroupId == null)
@@ -87,25 +88,28 @@
                 }
 
                 <div style="width:500px">
-                    <label class="control-label" for="input01">城市管理:<a>请选择</a></label>
-                    @{
-                        var openCityList = ViewBag.openCityList.Result.AreaModels as List<AreaModel>;
-                        if (openCityList != null && openCityList.Count > 0)
-                        {
-                            <div style="width: 100px;float: left">
-                                <input type="checkbox" name="checkMenus" id="selectAll" onclick="checkAll()" />全选/取消
-                            </div>
-                            foreach (var item in openCityList)
+                    <label class="control-label" >城市管理</label>
+                    <a href="javascript:funControlCityList();"><div id="cityNameList">请选择</div></a>
+                    <div id="cityList" style="float: left">
+                        @{
+                            var openCityList = ViewBag.openCityList.Result.AreaModels as List<AreaModel>;
+                            if (openCityList != null && openCityList.Count > 0)
                             {
                                 <div style="width: 100px;float: left">
-                                    <input type="checkbox" name="checkMenus" id="@item.Code" value="@item.Code" />
-                                    <label>@item.Name</label>
+                                    <input type="checkbox" name="checkMenus" id="selectAll" onclick="checkAll()" />全选/取消
                                 </div>
+                                foreach (var item in openCityList)
+                                {
+                                    <div style="width: 100px;float: left">
+                                        <input type="checkbox" name="checkMenus" id="@item.Code" value="@item.Code" />
+                                        <label>@item.Name</label>
+                                    </div>
+                                }
                             }
                         }
-                    }
+                    </div>
                 </div>
-                <div style="float: left">
+                <div style="float: left;width:500px">
                     <label class="control-label" for="input01">是否启用</label>
                     <input name="isEnable" id="isEnableY" type="radio" value="1" checked="checked" /> 启用
                     <input name="isEnable" id="isEnableN" type="radio" value="0" /> 禁用
@@ -118,122 +122,7 @@
         </form>
     </div>
 </div>
-@*@*修改信息*@
-@*<div class="selectSupplierDish">
-    <div class="add-openbox add-form" id="ModifyAccountShow" style="width:500px">
-        <h2>
-            <p id="statusFin">用户信息修改</p>
-            <a class="J_closebox x_close"></a>
-        </h2>
-        <form class="ModifyAccountfrom">
-            <fieldset>
-                <input type="hidden" name="Id" id="hddsupplierdishid" class="form-control">
-                <div class="control-group">
-                    <label class="control-label">帐号名称</label>
-                    <div class="controls">
-                        <input placeholder="帐号名称" name="accountName" id="accountName"  type="text"><i style="color:red">*</i>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label" >登录名</label>
-                    <div class="controls">
-                        <input placeholder="登录名" name="loginName" id="loginName"  type="text"><i style="color:red">*</i>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label" >密  码</label>
-                    <div class="controls">
-                        <input placeholder="密码" name="password" id="password"  type="password"><i style="color:red">*</i>
-                        <p class="help-block"></p>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label" >确认密码</label>
-                    <div class="controls">
-                        <input placeholder="确认密码" name="confirmPassword" id="confirmPassword"  type="password"><i style="color:red">*</i>
-                    </div>
-                </div>
-                @if (ViewBag.txtGroupId == null)
-                {
-                    <div class="control-group">
-                        <label class="control-label" >集团</label>
-                        <div class="controls">
-                            @Html.DropDownList("AddGroupId", new SelectList(new BusinessProvider().GetGroups(), "Id", "GroupName"), "--无--", new { @class = "selectw", style = "width:143px" })
-                        </div>
-                    </div>
-                }
-                else
-                {
-                    <input name="AddGroupId" id="AddGroupId" type="hidden" value="@ViewBag.txtGroupId" />
-                }
 
-                <div style="width:500px">
-                    <label class="control-label" for="input01">城市管理:<a>请选择</a></label>
-                    @{
-                        var openCityList = ViewBag.openCityList.Result.AreaModels as List<AreaModel>;
-                        if (openCityList != null && openCityList.Count > 0)
-                        {
-                            <div style="width: 100px;float: left">
-                                <input type="checkbox" name="checkMenus" id="selectAll" onclick="checkAll()" />全选/取消
-                            </div>
-                            foreach (var item in openCityList)
-                            {
-                                <div style="width: 100px;float: left">
-                                    <input type="checkbox" name="checkMenus" id="@item.Code" value="@item.Code" />
-                                    <label>@item.Name</label>
-                                </div>
-                            }
-                        }
-                    }
-                </div>
-                <div style="float: left">
-                    <label class="control-label" for="input01">是否启用</label>
-                    <input name="isEnable" id="isEnableY" type="radio" value="1" checked="checked" /> 启用
-                    <input name="isEnable" id="isEnableN" type="radio" value="0" /> 禁用
-                </div>
-            </fieldset>
-            <p class="btnbox">
-                <input value="确定" type="button" id="btnModifyAccount" class="yesBtn" />
-                <input value="关闭" type="button" class="J_closebox qxBtn" />
-            </p>
-        </form>
-    </div>
-</div>*@*@
-@*修改密码*@
-<div class="selectSupplierDish">
-    <div class="add-openbox add-form" id="ModifyPwdShow" style="width:500px">
-        <h2>
-            <p id="statusFin">修改密码</p>
-            <a class="J_closebox x_close"></a>
-        </h2>
-
-        <form class="form-horizontal" role="form" id="ModifyPwdForm" method="post">
-            <fieldset>
-                <input type="hidden" name="Id" id="hddsupplierdishid" class="form-control">
-                <div class="control-group">
-                    <!-- Text input-->
-                    <label class="control-label" for="input01">密码</label>
-                    <div class="controls">
-                        <input placeholder="密码" name="modifypassword" id="modifypassword" class="input-xlarge" required="required" type="password"><i style="color:red">*</i>
-                        <p class="help-block"></p>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <!-- Text input-->
-                    <label class="control-label" for="input01">确认密码</label>
-                    <div class="controls">
-                        <input placeholder="确认密码" name="confirepassword" id="modifypassword" class="input-xlarge" required="required" type="password"><i style="color:red">*</i>
-                        <p class="help-block"></p>
-                    </div>
-                </div>
-            </fieldset>
-            <p class="btnbox">
-                <input value="确定" type="submit" id="btnModifyPwd" class="yesBtn" />
-                <input value="关闭" type="button" class="J_closebox qxBtn" />
-            </p>
-        </form>
-    </div>
-</div>
 @*设置权限*@
 <div class="selectSupplierDish" id="_AuthorityDiv">
     <div class="=J_closebox"></div>
@@ -251,6 +140,19 @@
         //});
         //添加帐户
         $("#btnAdd").on('click', function () {
+            $('#accountId').val('0');
+            $('#optionType').val('0');
+            $("#cityList").hide();
+            $("#accountName").removeAttr("disabled");
+            $("#loginName").removeAttr("disabled");
+            $('#accountName').val('');
+            $('#loginName').val('');
+            $('#password').val('');
+            $('#confirmPassword').val('');
+            $("#isEnableY").attr("checked", "checked");
+            $(":checkbox[name='checkMenus']").prop("checked", false);
+            $('#statusFin').text("添加账号");
+            $('#cityNameList').text("请选择");
             adminjs.openwinbox('#AddAccountShow');
         });
         window.location.hash = '';
@@ -258,6 +160,13 @@
     function checkAll() {
         var checkedOfAll = $("#selectAll").prop("checked");
         $("input[name='checkMenus']").prop("checked", checkedOfAll);
+    }
+    function funControlCityList() {
+        if ($("#cityList").is(":visible")) {
+            $("#cityList").hide();
+        } else {
+            $("#cityList").show();
+        }
     }
     $("#btnAddAccount").click(function () {
         var cityCodeList = "";
@@ -268,12 +177,15 @@
         });
         if (cityCodeList.length > 0)
             cityCodeList = cityCodeList.substring(0, cityCodeList.length - 1);
+        var id = $("#accountId").val();//用户Id
         var accountName = $("#accountName").val();//用户名称
         var loginName = $("#loginName").val();//登陆名称
         var password = $("#password").val();//密码
         var confirmPassword = $("#confirmPassword").val();//确认密码
         var groupId = $("#AddGroupId").val();//登陆名称
-        var status = $("input[name='isEnable']:checked").val();;//登陆名称
+        var status = $("input[name='isEnable']:checked").val();//是否启用
+        var optionType = $("#optionType").val();//操作类型
+        
         if (accountName == "") {
             alert("请输入用户名称!");
             return;
@@ -282,12 +194,16 @@
             alert("请输入登陆名称!");
             return;
         }
-        if (password == "") {
+        if (password == ""&& optionType=="0") {
             alert("请输入登陆密码!");
             return;
         }
-        if (confirmPassword == "") {
+        if (confirmPassword == ""&&optionType=="0") {
             alert("请输入确认密码!");
+            return;
+        }
+        if (password != "" && password.length < 6) {
+            alert("密码长度必须为六位及以上!");
             return;
         }
         if (password != confirmPassword) {
@@ -295,7 +211,7 @@
             return;
         }
         if (confirm("确定要提交用户信息吗？")) {
-            var paramaters = { "userName": accountName, "loginName": loginName, "password": password, "groupId": groupId, "status": status, "cityCodeList": cityCodeList };
+            var paramaters = {"Id":id, "userName": accountName, "loginName": loginName, "password": password, "groupId": groupId, "status": status, "cityCodeList": cityCodeList, "optionType": optionType };
             var url = "/AuthorityManager/Add";
             $.ajax({
                 type: 'POST',

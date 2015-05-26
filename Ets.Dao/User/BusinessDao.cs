@@ -405,6 +405,10 @@ namespace Ets.Dao.User
             {
                 sbSqlWhere.AppendFormat(" AND b.City='{0}' ", criteria.businessCity.Trim());
             }
+            else
+            {
+                sbSqlWhere.AppendFormat(" AND b.City IN ({0}) ", criteria.AuthorityCityNameListStr.Trim());
+            }
             string tableList = @" business  b WITH (NOLOCK)  
                                 LEFT JOIN dbo.[group] g WITH(NOLOCK) ON g.Id = b.GroupId 
                                 JOIN dbo.[BusinessGroup]  bg WITH ( NOLOCK ) ON  b.BusinessGroupId=bg.Id";

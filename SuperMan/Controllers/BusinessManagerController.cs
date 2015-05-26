@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using Ets.Service.IProvider.User;
 using Ets.Service.Provider.User;
+using ETS.Util;
 using SuperManBusinessLogic.B_Logic;
 using SuperManCommonModel.Entities;
 using SuperManCore.Common;
@@ -38,8 +39,14 @@ namespace SuperMan.Controllers
         public ActionResult BusinessManager()
         {
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
-            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
-            var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria() { Status = -1, GroupId = SuperMan.App_Start.UserContext.Current.GroupId, MealsSettleMode=-1 };
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserContext.Current.Id));
+            var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria()
+            {
+                Status = -1,
+                GroupId = UserContext.Current.GroupId,
+                MealsSettleMode = -1,
+                AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(ParseHelper.ToInt(UserContext.Current.Id))
+            };
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
            
             return View(pagedList);
@@ -49,10 +56,12 @@ namespace SuperMan.Controllers
         [HttpPost]
         public ActionResult PostBusinessManager(int pageindex = 1)
         {
-            Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria();
+            var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria();
             TryUpdateModel(criteria);
-            ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
-            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
+            criteria.AuthorityCityNameListStr =
+                iAreaProvider.GetAuthorityCityNameListStr(ParseHelper.ToInt(UserContext.Current.Id));
+            ViewBag.txtGroupId = UserContext.Current.GroupId;//集团id
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserContext.Current.Id));
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
             return PartialView("_BusinessManageList", pagedList);
         }

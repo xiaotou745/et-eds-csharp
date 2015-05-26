@@ -105,65 +105,89 @@
         });
     });
     //修改密码弹出框
-    $(".modifyPwd").bind("click", function () {
-        currentId = $(this).closest("tr").attr("id");
-        $("#hddsupplierdishid").val(currentId);
-        adminjs.openwinbox('#ModifyPwdShow');
-    });
+    //$(".modifyPwd").bind("click", function () {
+    //    currentId = $(this).closest("tr").attr("id");
+    //    $("#hddsupplierdishid").val(currentId);
+    //    adminjs.openwinbox('#ModifyPwdShow');
+    //});
     //修改密码
-    $("#btnModifyPwd").click(function () {
-        $("#ModifyPwdForm").validate({
+    //$("#btnModifyPwd").click(function () {
+    //    $("#ModifyPwdForm").validate({
 
-            rules: {
-                modifypassword: {
-                    required: true,
-                    minlength: 6
-                },
-                confirepassword: {
-                    required: true,
-                    minlength: 6,
-                    equalTo: "#modifypassword"
-                }
+    //        rules: {
+    //            modifypassword: {
+    //                required: true,
+    //                minlength: 6
+    //            },
+    //            confirepassword: {
+    //                required: true,
+    //                minlength: 6,
+    //                equalTo: "#modifypassword"
+    //            }
 
-            },
-            messages: {
-                modifypassword: {
-                    required: "密码不能为空",
-                    minlength: "密码长度必须大于等于6位"
-                },
-                confirepassword: {
-                    required: "确认密码不能为空",
-                    minlength: "密码长度必须大于等于6位",
-                    equalTo: "两次密码不一致"
-                }
-            },
-            submitHandler: function (form) {
-                var id = $("#hddsupplierdishid").val();
-                var modifypassword = $('#modifypassword').val();
-                var confirepassword = $('#confirepassword').val();
-                var paramaters = { "id": id, "modifypassword": modifypassword };
-                var url = "/AuthorityManager/ModifyPassword";
-                $.ajax({
-                    type: 'POST',
-                    url: url,
-                    data: paramaters,
-                    success: function (result) {
-                        if (result.IsSuccess) {
-                            alert(result.Message);
-                            window.location.href = "/AuthorityManager/AuthorityManager";
-                        } else {
-                            alert(result.Message);
-                        }
-                    }
-                });
-            }
-        });
-        //查看
-        $(".accountView").bind("click", function () {
+    //        },
+    //        messages: {
+    //            modifypassword: {
+    //                required: "密码不能为空",
+    //                minlength: "密码长度必须大于等于6位"
+    //            },
+    //            confirepassword: {
+    //                required: "确认密码不能为空",
+    //                minlength: "密码长度必须大于等于6位",
+    //                equalTo: "两次密码不一致"
+    //            }
+    //        },
+    //        submitHandler: function (form) {
+    //            var id = $("#hddsupplierdishid").val();
+    //            var modifypassword = $('#modifypassword').val();
+    //            var confirepassword = $('#confirepassword').val();
+    //            var paramaters = { "id": id, "modifypassword": modifypassword };
+    //            var url = "/AuthorityManager/ModifyPassword";
+    //            $.ajax({
+    //                type: 'POST',
+    //                url: url,
+    //                data: paramaters,
+    //                success: function (result) {
+    //                    if (result.IsSuccess) {
+    //                        alert(result.Message);
+    //                        window.location.href = "/AuthorityManager/AuthorityManager";
+    //                    } else {
+    //                        alert(result.Message);
+    //                    }
+    //                }
+    //            });
+    //        }
+    //    });
+    //    //查看
+    //    $(".accountView").bind("click", function () {
 
-        });
-        //删除
-        $(".accountDel").bind("click", function () {
+    //    });
+    //    //删除
+    //    $(".accountDel").bind("click", function () {
+    //        var id = $(this).closest("tr").attr("id");
+    //        var paramaters = { "id": id };
+    //        var url = "/AuthorityManager/Delete";
+    //        $.ajax({
+    //            type: 'POST',
+    //            url: url,
+    //            data: paramaters,
+    //            success: function (result) {
+    //                if (result.IsSuccess) {
+    //                    window.location.href = "/AuthorityManager/AuthorityManager";
+    //                } else {
+    //                    alert(result.Message);
+    //                }
+    //            }
+    //        });
+    //    });
+    //})
+    //查看
+    $(".accountView").bind("click", function () {
+
+    });
+    //删除
+    $(".accountDel").bind("click", function () {
+        if (confirm("确定要禁用此用户？")) {
             var id = $(this).closest("tr").attr("id");
             var paramaters = { "id": id };
             var url = "/AuthorityManager/Delete";
@@ -171,7 +195,7 @@
                 type: 'POST',
                 url: url,
                 data: paramaters,
-                success: function (result) {
+                success: function(result) {
                     if (result.IsSuccess) {
                         window.location.href = "/AuthorityManager/AuthorityManager";
                     } else {
@@ -179,30 +203,7 @@
                     }
                 }
             });
-        });
-    })
-    //查看
-    $(".accountView").bind("click", function () {
-
-    });
-    //删除
-    $(".accountDel").bind("click", function () {
-        
-        var id = $(this).closest("tr").attr("id");
-        var paramaters = { "id": id };
-        var url = "/AuthorityManager/Delete";
-        $.ajax({
-            type: 'POST',
-            url: url,
-            data: paramaters,
-            success: function (result) {
-                if (result.IsSuccess) {
-                    window.location.href = "/AuthorityManager/AuthorityManager";
-                } else {
-                    alert(result.Message);
-                }
-            }
-        });
+        }
     });
 
 });

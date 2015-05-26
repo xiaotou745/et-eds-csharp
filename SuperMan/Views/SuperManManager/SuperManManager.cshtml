@@ -42,17 +42,19 @@
                         <input id="txtSuperManPhone" type="text" name="clienterPhone" value="" />
                         <span class="">推荐人手机: </span>
                         <input id="recommonPhone" type="text" name="recommonPhone" value="" />
-                        @*<span class="">筛选城市: </span>
-    @Html.DropDownList("clienterCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Code", "Name"), "--无--", new { style = "width:155px" })*@
                         <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" name="GroupId" />
                        
                         @*<input id="btnAdd" class="searchBtn" type="button" value="新增骑士">*@ 
                     </td>
                 </tr>
                 <tr>
-                    <td> <span>提现时间: </span>
-                        <input id="txtPubStart" readonly="readonly" type="text" name="txtPubStart" />  
-                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" /></td>
+                    <td>
+                        <span class="">筛选城市: </span>
+                        @Html.DropDownList("businessCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), "--无--", new { style = "width:155px" })
+                        @*<span>提现时间: </span>
+                        <input id="txtPubStart" readonly="readonly" type="text" name="txtPubStart" />*@  
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                    </td>
                 </tr>
             </table>
         </div>

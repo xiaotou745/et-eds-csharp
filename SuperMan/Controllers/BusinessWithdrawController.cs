@@ -31,7 +31,7 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult BusinessWithdraw()
         {
-            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(0);
             var criteria = new BusinessWithdrawSearchCriteria() {WithdrawStatus=0};
             var pagedList = iBusinessFinanceProvider.GetBusinessWithdrawList(criteria);
             return View(pagedList);
@@ -45,7 +45,7 @@ namespace SuperMan.Controllers
         [HttpPost]
         public ActionResult PostBusinessWithdraw(int pageindex = 1)
         {
-            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(0);
             var criteria = new BusinessWithdrawSearchCriteria();
             TryUpdateModel(criteria);
             var pagedList = iBusinessFinanceProvider.GetBusinessWithdrawList(criteria);
@@ -179,7 +179,7 @@ namespace SuperMan.Controllers
                 byte[] data = Encoding.UTF8.GetBytes(iBusinessFinanceProvider.CreateBusinessWithdrawFormExcel(dtBusinessWithdraw.ToList()));
                 return File(data, "application/ms-excel", filname);
             }
-            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(0);
             var pagedList = iBusinessFinanceProvider.GetBusinessWithdrawList(criteria);
             return View("BusinessWithdraw", pagedList);
         }

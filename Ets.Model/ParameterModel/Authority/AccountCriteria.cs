@@ -17,5 +17,9 @@ namespace Ets.Model.ParameterModel.Authority
         /// 操作人名称
         /// </summary>
         public string OptUserName { get; set; }
+        /// <summary>
+        /// 操作类型（0：添加 1：修改）
+        /// </summary>
+        public string OptionType { get; set; }
     }
 }

@@ -41,7 +41,7 @@ namespace SuperMan.Controllers
            //}
 
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
-            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(0);
             var criteria = new Ets.Model.ParameterModel.Authority.AuthoritySearchCriteria() { GroupId = SuperMan.App_Start.UserContext.Current.GroupId };
             var authorityModel = iAuthorityMenuProvider.GetAuthorityManage(criteria);
             return View(authorityModel);
@@ -56,7 +56,7 @@ namespace SuperMan.Controllers
         {
             Ets.Model.ParameterModel.Authority.AuthoritySearchCriteria criteria = new Ets.Model.ParameterModel.Authority.AuthoritySearchCriteria();
             TryUpdateModel(criteria);
-            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(0);
             var authorityModel = iAuthorityMenuProvider.GetAuthorityManage(criteria);
             return PartialView("_AuthorityManagerList", authorityModel);
         }
@@ -179,7 +179,17 @@ namespace SuperMan.Controllers
 
             return PartialView("_AuthorityManagerShow");
         }
-
+        /// <summary>
+        /// 获取用户和城市的对应关系 
+        /// </summary>
+        /// <param name="accountid">用户Id</param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult GetAccountCityRel(int accountid)
+        {
+            var accountCityRelList = iAuthorityMenuProvider.GetAccountCityRel(accountid);
+            return Json(accountCityRelList, JsonRequestBehavior.DenyGet);
+        }
          
     }
 }

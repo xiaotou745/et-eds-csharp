@@ -207,5 +207,13 @@ namespace Ets.Service.IProvider.AuthorityMenu
         /// <param name="authorityName"></param>
         /// <returns></returns>
         bool HasAuthority(int accountId, string authorityName);
+
+        /// <summary>
+        /// 获取用户和城市对应关系列表
+        /// danny-20150525
+        /// </summary>
+        /// <param name="accountId"></param>
+        /// <returns></returns>
+        IList<AccountCityRelationModel> GetAccountCityRel(int accountId);
     }
 }

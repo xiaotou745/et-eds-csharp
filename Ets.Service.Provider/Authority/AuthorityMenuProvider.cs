@@ -542,16 +542,29 @@ namespace Ets.Service.Provider.Authority
             };
             var accountModel = new account
             {
+                Id = criteria.Id,
                 UserName = criteria.UserName,
                 LoginName = criteria.LoginName,
                 Password = MD5Helper.MD5(criteria.Password),
                 GroupId = criteria.GroupId,
                 Status = criteria.Status
             };
-            if (_dao.CheckHasAccountName(accountModel))
+            var isHave = _dao.CheckHasAccountName(accountModel);
+            if (criteria.OptionType == "0")//添加用户
             {
-                dealResultInfo.DealMsg = "用户名已存在!";
-                return dealResultInfo;
+                if (isHave)
+                {
+                    dealResultInfo.DealMsg = "用户名已存在!";
+                    return dealResultInfo; 
+                }
+            }
+            else//修改用户信息
+            {
+                if (!isHave)
+                {
+                    dealResultInfo.DealMsg = "此用户不存在!";
+                    return dealResultInfo;
+                }
             }
             using (var tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
@@ -561,11 +574,22 @@ namespace Ets.Service.Provider.Authority
                     CreateBy = criteria.OptUserName,
                     UpdateBy = criteria.OptUserName,
                 };
-                accountCityRelation.AccountId = _dao.AddAccount(accountModel);
-                if (accountCityRelation.AccountId==0)
+                if (criteria.OptionType == "0")//添加用户
                 {
-                    dealResultInfo.DealMsg="插入用户信息失败!";
-                    return dealResultInfo;
+                    accountCityRelation.AccountId = _dao.AddAccount(accountModel);
+                    if (accountCityRelation.AccountId == 0)
+                    {
+                        dealResultInfo.DealMsg = "插入用户信息失败!";
+                        return dealResultInfo;
+                    }
+                }
+                else//修改用户信息
+                {
+                    if (!_dao.ModifyAccount(accountModel))
+                    {
+                        dealResultInfo.DealMsg = "修改用户信息失败!";
+                        return dealResultInfo;
+                    }
                 }
                 if (!string.IsNullOrWhiteSpace(criteria.CityCodeList))
                 {
@@ -584,9 +608,20 @@ namespace Ets.Service.Provider.Authority
                 }
                 tran.Complete();
             }
-            dealResultInfo.DealMsg = "用户添加成功！";
+            dealResultInfo.DealMsg = "用户信息提交成功！";
             dealResultInfo.DealFlag = true;
             return dealResultInfo;
+        }
+
+        /// <summary>
+        /// 获取用户和城市对应关系列表
+        /// danny-20150525
+        /// </summary>
+        /// <param name="accountId"></param>
+        /// <returns></returns>
+        public IList<AccountCityRelationModel> GetAccountCityRel(int accountId)
+        {
+            return _dao.GetAccountCityRel(accountId);
         }
 
     }

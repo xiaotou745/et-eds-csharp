@@ -591,6 +591,10 @@ select @@IDENTITY ";
             {
                 sbSqlWhere.AppendFormat(" AND b.City='{0}' ", criteria.businessCity.Trim());
             }
+            else
+            {
+                sbSqlWhere.AppendFormat(" AND b.City IN({0}) ", criteria.AuthorityCityNameListStr.Trim());
+            }
             string tableList = @" [order] o WITH ( NOLOCK )
                                 LEFT JOIN clienter c WITH ( NOLOCK ) ON c.Id = o.clienterId
                                 LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId

@@ -1,10 +1,13 @@
 
 ﻿using System.Collections.Generic;
+﻿using System.Linq;
 ﻿using System.Text;
 ﻿using System.Web.Mvc;
 ﻿using ETS.Data.PageData;
 ﻿using Ets.Model.DataModel.Order;
 ﻿using Ets.Model.DomainModel.Bussiness;
+﻿using Ets.Service.IProvider.AuthorityMenu;
+﻿using Ets.Service.Provider.Authority;
 ﻿using SuperManCore.Common;
 using Ets.Service.Provider.Distribution;
 using Ets.Service.Provider.Order;
@@ -23,17 +26,23 @@ namespace SuperMan.Controllers
         Ets.Service.IProvider.Distribution.IDistributionProvider iDistributionProvider = new DistributionProvider();
         Ets.Service.IProvider.Order.IOrderProvider iOrderProvider = new OrderProvider();
         IAreaProvider iAreaProvider = new AreaProvider();
+        IAuthorityMenuProvider iAuthorityMenuProvider = new AuthorityMenuProvider();
         //Get: /Order  订单管理
         public ActionResult Order()
         {
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
-            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserContext.Current.Id));
             var superManModel = iDistributionProvider.GetClienterModelByGroupID(ViewBag.txtGroupId);
             if (superManModel != null)
             {
                 ViewBag.superManModel = superManModel;
             }
-            var criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria() { orderStatus = -1, GroupId = SuperMan.App_Start.UserContext.Current.GroupId };
+            var criteria = new OrderSearchCriteria()
+            {
+                orderStatus = -1,
+                GroupId = UserContext.Current.GroupId,
+                AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(ParseHelper.ToInt(UserContext.Current.Id))
+            };
             var pagedList = iOrderProvider.GetOrders(criteria);
             return View(pagedList);
         }
@@ -41,9 +50,11 @@ namespace SuperMan.Controllers
         public ActionResult PostOrder(int pageindex = 1)
         {
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId; ;//集团id
-            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
-            Ets.Model.ParameterModel.Order.OrderSearchCriteria criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria();
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserContext.Current.Id));
+            var criteria = new OrderSearchCriteria();
             TryUpdateModel(criteria);
+            criteria.AuthorityCityNameListStr =
+                iAreaProvider.GetAuthorityCityNameListStr(ParseHelper.ToInt(UserContext.Current.Id));
             //指派超人时  以下代码 有用，现在 注释掉  wc 
             //var superManModel = iDistributionProvider.GetClienterModelByGroupID(ViewBag.txtGroupId);
             //if (superManModel != null)
@@ -51,7 +62,7 @@ namespace SuperMan.Controllers
             //    ViewBag.superManModel = superManModel;
             //} 
             var pagedList = iOrderProvider.GetOrders(criteria);
-             
+
             return PartialView("_PartialOrderList", pagedList);
         }
 
@@ -62,16 +73,16 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         [HttpGet]
         public ActionResult PostDaoChuOrder(int pageindex = 1)
-        {  
+        {
             Ets.Model.ParameterModel.Order.OrderSearchCriteria criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria();
             TryUpdateModel(criteria);
             criteria.PageIndex = 1;
             criteria.PageSize = 65534;
-            if (criteria.businessCity=="--无--")
+            if (criteria.businessCity == "--无--")
             {
                 criteria.businessCity = "";
             }
- 
+
             var pagedList = iOrderProvider.GetOrders(criteria);
 
             if (pagedList != null && pagedList.Records.Count > 0)
@@ -87,8 +98,8 @@ namespace SuperMan.Controllers
                 }
                 if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))
                 {
-                    filname = string.Format(filname, criteria.orderPubStart+":"+criteria.orderPubEnd);
-                } 
+                    filname = string.Format(filname, criteria.orderPubStart + ":" + criteria.orderPubEnd);
+                }
                 if (pagedList.Records.Count > 3)
                 {
                     byte[] data = Encoding.UTF8.GetBytes(CreateExcel(pagedList));
@@ -120,8 +131,8 @@ namespace SuperMan.Controllers
             strBuilder.AppendLine("<td>商户信息</td>");
             strBuilder.AppendLine("<td>骑士信息</td>");
             strBuilder.AppendLine("<td>发布时间</td>");
-            strBuilder.AppendLine("<td>完成时间</td>"); 
-            strBuilder.AppendLine("<td>订单金额</td>"); 
+            strBuilder.AppendLine("<td>完成时间</td>");
+            strBuilder.AppendLine("<td>订单金额</td>");
             strBuilder.AppendLine("<td>订单总金额</td>");
             strBuilder.AppendLine("<td>订单佣金</td>");
             strBuilder.AppendLine("<td>订单数量</td>");
@@ -134,7 +145,7 @@ namespace SuperMan.Controllers
             foreach (var oOrderListModel in paraModel.Records)
             {
                 strBuilder.AppendLine(string.Format("<tr><td>'{0}'</td>", oOrderListModel.OrderNo));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.BusinessName+":"+oOrderListModel.BusinessPhoneNo));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.BusinessName + ":" + oOrderListModel.BusinessPhoneNo));
                 string clineter = "";
                 if (!string.IsNullOrEmpty(oOrderListModel.ClienterName))
                 {
@@ -142,11 +153,11 @@ namespace SuperMan.Controllers
                 }
                 if (!string.IsNullOrEmpty(oOrderListModel.ClienterPhoneNo))
                 {
-                    clineter +=":"+ oOrderListModel.ClienterPhoneNo;
+                    clineter += ":" + oOrderListModel.ClienterPhoneNo;
                 }
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", clineter));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.PubDate));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.ActualDoneDate)); 
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.ActualDoneDate));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.Amount));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.Amount + oOrderListModel.OrderCount * oOrderListModel.DistribSubsidy));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.OrderCommission));
@@ -165,7 +176,7 @@ namespace SuperMan.Controllers
         {
             return View();
 
-        }   
+        }
         /// <summary>
         /// 超人抢单--平扬 2015.3.2
         /// </summary>
@@ -184,11 +195,11 @@ namespace SuperMan.Controllers
             var order = iOrderProvider.GetOrderByNo(OrderNo);
             if (order == null) //查询订单是否存在
                 return Json(new ResultModel(false, "订单不存在"), JsonRequestBehavior.AllowGet);
-            if (order.Status !=Ets.Model.Common.ConstValues.ORDER_NEW)  //查询订单是否被抢
+            if (order.Status != Ets.Model.Common.ConstValues.ORDER_NEW)  //查询订单是否被抢
                 return Json(new ResultModel(false, "订单已被抢或者已完成"), JsonRequestBehavior.AllowGet);
             if (SuperID == -1) //未指派超人 ，触发极光推送  ，指派超人的情况下，建立订单和超人的关系
             {
-               Ets.Service.Provider.MyPush.Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.BusinessCity); // 极光推送
+                Ets.Service.Provider.MyPush.Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.BusinessCity); // 极光推送
                 return Json(new ResultModel(true, "有新订单可抢"), JsonRequestBehavior.AllowGet);
             }
             order.clienterId = SuperID;
@@ -208,9 +219,9 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <param name="orderNo"></param>
         /// <returns></returns>
-        public ActionResult OrderDetail(string orderNo,int orderId)
+        public ActionResult OrderDetail(string orderNo, int orderId)
         {
-            var orderModel = iOrderProvider.GetOrderByNo(orderNo,orderId);
+            var orderModel = iOrderProvider.GetOrderByNo(orderNo, orderId);
 
             ViewBag.orderOptionLog = iOrderProvider.GetOrderOptionLog(orderId);
             return View(orderModel);
@@ -231,7 +242,7 @@ namespace SuperMan.Controllers
             {
                 OptUserId = UserContext.Current.Id,
                 OptUserName = UserContext.Current.Name,
-                OptLog=OrderOptionLog,
+                OptLog = OrderOptionLog,
                 OrderNo = OrderNo
             };
             var reg = iOrderProvider.CancelOrderByOrderNo(orderOptionModel);
