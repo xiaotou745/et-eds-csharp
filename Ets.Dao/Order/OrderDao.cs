@@ -195,6 +195,7 @@ namespace Ets.Dao.Order
                                         ,c.TrueName ClienterName
                                         ,b.GroupId
                                         ,o.OriginalOrderNo
+                                        ,o.SettleMoney
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     LEFT JOIN dbo.clienter c WITH (NOLOCK) ON o.clienterId=c.Id
@@ -1012,10 +1013,8 @@ where  o.OrderNo = @OrderNo");
         /// <returns></returns>
         public int CancelOrderStatus(string orderNo, int orderStatus, string remark, int? status, decimal price = 0)
         {
-            StringBuilder upSql = new StringBuilder();
-
-            upSql.AppendFormat(@" UPDATE dbo.[order]
- SET    [Status] = @status,OtherCancelReason=@OtherCancelReason
+            string upSql =string.Format(@" UPDATE dbo.[order]
+ SET  [Status] = @status,OtherCancelReason=@OtherCancelReason
  output Inserted.Id,@Price,GETDATE(),'{0}',@OtherCancelReason,Inserted.businessId,Inserted.[Status],{1}
  into dbo.OrderSubsidiesLog(OrderId,Price,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
  WHERE  OrderNo = @orderNo", SuperPlatform.商家, (int)SuperPlatform.商家);
@@ -1028,7 +1027,7 @@ where  o.OrderNo = @OrderNo");
 
             if (status != null)
             {
-                upSql.Append(" and Status=" + status);
+                upSql = upSql+" and Status=" + status;
             }
 
             object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters);
@@ -1419,7 +1418,8 @@ select top 1
         o.MealsSettleMode,
         o.BusinessReceivable,
         o.IsPay,
-        b.Name BusinessName
+        b.Name BusinessName,
+        o.SettleMoney
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
@@ -2475,7 +2475,7 @@ SELECT CASE SUM(oc.PayStatus)
         }
 
         /// <summary>
-        /// 根据订单号查询订单主表基本信息  add by caoheyang 20150521
+        /// 根据订单id查询订单主表基本信息  add by caoheyang 20150521
         /// </summary>
         /// <param name="orderId">订单id</param>
         /// <param name="businessId">订单id</param>
@@ -2498,6 +2498,37 @@ SELECT CASE SUM(oc.PayStatus)
             }
             return order;
         }
+
+        /// <summary>
+        /// 根据订单号查询订单主表基本信息  add by caoheyang 20150521
+        /// </summary>
+        /// <param name="orderNo">订单号</param>
+        /// <param name="businessId">订单id</param>
+        /// <param name="status">订单状态</param>
+        /// <returns></returns>
+        public order GetOrderMainByNo(string orderNo, int? businessId=null, int? status = null)
+        {
+            order order = null;
+            string sql = @" select * from [order] where orderno=@OrderNo";
+            if (businessId != null)
+            {
+                sql = sql + "  and businessId=@BusinessId" + businessId;
+            }
+            if (status != null)
+            {
+                sql = sql + " and status=" + status;
+            }
+            IDbParameters parm = DbHelper.CreateDbParameters("OrderNo", SqlDbType.NVarChar, 90, orderNo);
+            parm.Add("BusinessId", SqlDbType.Int).Value = businessId;
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                order = DataTableHelper.ConvertDataTableList<order>(dt)[0];
+            }
+            return order;
+        }
+        
+
         /// <summary>
         /// 订单取消返回商家应收和插入商家余额流水
         /// danny-2015051921

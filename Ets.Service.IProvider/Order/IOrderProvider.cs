@@ -77,14 +77,18 @@ namespace Ets.Service.IProvider.Order
         /// <param name="orderNo"></param>
         /// <returns></returns>
         int GetOrderByOrderNo(string orderNo);
+
+
         /// <summary>
-        /// 根据订单号 修改订单状态
-        /// wc
+        /// 第三方订单列表根据订单号 修改订单状态   平杨  TODO 目前支适用于美团
         /// </summary>
+        ///  <UpdateBy>确认接入时扣除商家结算费功能  caoheyang 20150526</UpdateBy>
         /// <param name="orderNo">订单号</param>
-        /// <param name="orderStatus">订单状态</param>
+        /// <param name="orderStatus">目标订单状态</param>
+        /// <param name="remark"></param>
+        /// <param name="status">原始订单状态</param>
         /// <returns></returns>
-        int UpdateOrderStatus(string orderNo, int orderStatus, string remakr, int? status);
+        int UpdateOrderStatus(string orderNo, int orderStatus, string remark, int? status);
         /// <summary>
         /// 获取订单状态
         /// </summary>

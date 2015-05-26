@@ -1,6 +1,7 @@
 
 ﻿using System.Collections.Generic;
 ﻿using System.Text;
+﻿using System.Threading.Tasks;
 ﻿using System.Web.Mvc;
 ﻿using ETS.Data.PageData;
 ﻿using Ets.Model.DataModel.Order;
@@ -188,7 +189,12 @@ namespace SuperMan.Controllers
                 return Json(new ResultModel(false, "订单已被抢或者已完成"), JsonRequestBehavior.AllowGet);
             if (SuperID == -1) //未指派超人 ，触发极光推送  ，指派超人的情况下，建立订单和超人的关系
             {
-               Ets.Service.Provider.MyPush.Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty, order.BusinessCity); // 极光推送
+                  //异步回调第三方，推送通知
+                Task.Factory.StartNew(() =>
+                {
+                    Ets.Service.Provider.MyPush.Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty,
+                        order.BusinessCity); // 极光推送
+                });
                 return Json(new ResultModel(true, "有新订单可抢"), JsonRequestBehavior.AllowGet);
             }
             order.clienterId = SuperID;
