@@ -463,21 +463,51 @@ namespace Ets.Service.Provider.Order
             return orderDao.GetOrderByOrderNo(orderNo);
         }
 
+
+
         /// <summary>
         /// 第三方订单列表根据订单号 修改订单状态   平杨  TODO 目前支适用于美团
         /// </summary>
         ///  <UpdateBy>确认接入时扣除商家结算费功能  caoheyang 20150526</UpdateBy>
         /// <param name="orderNo">订单号</param>
-        /// <param name="orderStatus">订单状态</param>
+        /// <param name="orderStatus">目标订单状态</param>
+        /// <param name="remark"></param>
+        /// <param name="status">原始订单状态</param>
         /// <returns></returns>
         public int UpdateOrderStatus(string orderNo, int orderStatus, string remark, int? status)
         {
             int result = 0;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
+                OrderListModel order = orderDao.GetByOrderNo(orderNo);
+                if (order.Status != status)  //当前订单状态与原始订单状态不一致 返回0
+                {
+                    return 0;
+                }
                 result = orderDao.CancelOrderStatus(orderNo, orderStatus, remark, status);
                 if (result > 0)
                 {
+                    //确认接入订单时   扣除 商家结算费 
+                    if (orderStatus == OrderConst.OrderStatus0)
+                    {
+                        //扣商户金额
+                        _businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
+                        {
+                            Id = Convert.ToInt32(order.businessId),
+                            Money = -order.SettleMoney
+                        });
+                        _businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
+                        {
+                            BusinessId = Convert.ToInt32(order.businessId),
+                            Amount = -order.SettleMoney,
+                            Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
+                            RecordType = (int)BusinessBalanceRecordRecordType.PublishOrder,
+                            Operator = order.BusinessName,
+                            WithwardId = order.Id,
+                            RelationNo = order.OrderNo,
+                            Remark = "商户发单，系统自动扣商家结算费"
+                        });
+                    }
                     tran.Complete();
                 }
             }
@@ -684,6 +714,7 @@ namespace Ets.Service.Provider.Order
             });
             #endregion
 
+            //
             if (order.Adjustment > 0)
             {
                 bool b = orderDao.addOrderSubsidiesLog(order.Adjustment, order.Id, "补贴加钱,订单金额:" + order.Amount + "-佣金补贴策略id:" + order.CommissionFormulaMode);

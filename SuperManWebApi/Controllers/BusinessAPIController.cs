@@ -308,7 +308,7 @@ namespace SuperManWebApi.Controllers
             for (int i = 0; i < orders.Length; i++)
             {
                 int res = orderProvider.UpdateOrderStatus(orders[i], OrderConst.ORDER_NEW, "", OrderConst.OrderStatus30);
-                if (res < 0)
+                if (res <= 0)
                     errors.Add(orders[i]);
             }
             return ResultModel<List<string>>.Conclude(PubOrderStatus.Success, errors);
