@@ -66,6 +66,10 @@ namespace Ets.Model.DataModel.Bussiness
         /// 账户余额
         /// </summary>
         public decimal BalancePrice { get; set; }
+        /// <summary>
+        /// 可提现余额
+        /// </summary>
+        public decimal AllowWithdrawPrice { get; set; }
         
         
     }
