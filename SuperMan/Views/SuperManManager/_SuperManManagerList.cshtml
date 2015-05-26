@@ -26,60 +26,62 @@
     </thead>
     <tbody>
         @{
-            var i = 0;
-            var puth = SuperManCore.CustomerIconUploader.Instance.RelativePath;
-            var PicHost = SuperManCore.CustomerIconUploader.Instance.PicHost;
-            foreach (var item in Model.Records)
+            if (Model != null && Model.Records.Count > 0)
             {
-                i++;
-                <tr id="@item.Id">
-                    <td>@item.Id</td>
-                    <td>@item.TrueName</td>
-                    <td>
-                        @if (@item.WorkStatus == 0)
-                        {
-                            @Html.Raw("上班")
-                        }
-                        else if (@item.WorkStatus == 1)
-                        {
-                            @Html.Raw("下班")
-                        }
-                    </td>
-                    <td>@item.PhoneNo</td>
-                    <td>@item.IDCard</td>
-                    <td>
-                        <a href="javascript:void(0)" class="businessOk" onclick="funcPicView('@String.Format("{0}{1}",PicHost,puth)','@item.PicWithHandUrl','@item.PicUrl')">查看</a>
-                    </td>
-                    <td>@item.InsertTime</td>
-                    <td style="color:red;font-weight:600"><a href="/SuperManManager/ClienterDetail?clienterId=@item.Id ">￥@ParseHelper.ToSplitByPercentile(false,item.AccountBalance)</a></td>
-                    <td>￥@ParseHelper.ToSplitByPercentile(false, item.AllowWithdrawPrice)</td>
-                    <td>
-                        @if (item.GroupId != null) //当前商户有集团信息
-                        {
-                            @Html.Raw(new GroupProvider().GetGroupName(Convert.ToInt32(item.GroupId)))
-                        }
-                    </td>
-                    @{
-                        var statusView = "";
-                        if (@item.Status == Ets.Model.Common.ConstValues.CLIENTER_AUDITPASS)
-                        {
-                            statusView = "审核通过";
-                        }
+                var i = 0;
+                var puth = SuperManCore.CustomerIconUploader.Instance.RelativePath;
+                var PicHost = SuperManCore.CustomerIconUploader.Instance.PicHost;
+                foreach (var item in Model.Records)
+                {
+                    i++;
+                    <tr id="@item.Id">
+                        <td>@item.Id</td>
+                        <td>@item.TrueName</td>
+                        <td>
+                            @if (@item.WorkStatus == 0)
+                            {
+                                @Html.Raw("上班")
+                            }
+                            else if (@item.WorkStatus == 1)
+                            {
+                                @Html.Raw("下班")
+                            }
+                        </td>
+                        <td>@item.PhoneNo</td>
+                        <td>@item.IDCard</td>
+                        <td>
+                            <a href="javascript:void(0)" class="businessOk" onclick="funcPicView('@String.Format("{0}{1}",PicHost,puth)','@item.PicWithHandUrl','@item.PicUrl')">查看</a>
+                        </td>
+                        <td>@item.InsertTime</td>
+                        <td style="color:red;font-weight:600"><a href="/SuperManManager/ClienterDetail?clienterId=@item.Id ">￥@ParseHelper.ToSplitByPercentile(false, item.AccountBalance)</a></td>
+                        <td>￥@ParseHelper.ToSplitByPercentile(false, item.AllowWithdrawPrice)</td>
+                        <td>
+                            @if (item.GroupId != null) //当前商户有集团信息
+                            {
+                                @Html.Raw(new GroupProvider().GetGroupName(Convert.ToInt32(item.GroupId)))
+                            }
+                        </td>
+                        @{
+                            var statusView = "";
+                            if (@item.Status == Ets.Model.Common.ConstValues.CLIENTER_AUDITPASS)
+                            {
+                                statusView = "审核通过";
+                            }
 
-                        else if (@item.Status == Ets.Model.Common.ConstValues.CLIENTER_AUDITCANCEL)
-                        {
-                            statusView = "审核被拒绝";
+                            else if (@item.Status == Ets.Model.Common.ConstValues.CLIENTER_AUDITCANCEL)
+                            {
+                                statusView = "审核被拒绝";
+                            }
+                            else if (@item.Status == Ets.Model.Common.ConstValues.CLIENTER_AUDITPASSING)
+                            {
+                                statusView = "审核中";
+                            }
+                            else if (@item.Status == Ets.Model.Common.ConstValues.CLIENTER_NOAUDIT)
+                            {
+                                statusView = "未审核";
+                            }
                         }
-                        else if (@item.Status == Ets.Model.Common.ConstValues.CLIENTER_AUDITPASSING)
-                        {
-                            statusView = "审核中";
-                        }
-                        else if (@item.Status == Ets.Model.Common.ConstValues.CLIENTER_NOAUDIT)
-                        {
-                            statusView = "未审核";
-                        }
-                    }
-                    <td>@statusView</td>
+                        <td>@statusView</td>
                         @{
                             var recomname = "";
                             if (string.IsNullOrEmpty(item.recommendPhone))
@@ -89,60 +91,67 @@
                             var reslut = new ClienterProvider().GetUserInfoByUserPhoneNo(item.recommendPhone);
                             if (reslut != null)
                             {
-                                recomname = reslut.TrueName+"/"+reslut.PhoneNo;
+                                recomname = reslut.TrueName + "/" + reslut.PhoneNo;
                             }
                         }
-                    <td>
-                        @recomname
-                    </td>
+                        <td>
+                            @recomname
+                        </td>
 
-                    <td >
-                        @{
-                        int idCard = string.IsNullOrEmpty(item.IDCard) ? 0 : 1;
-                        int picUrl = string.IsNullOrEmpty(item.PicUrl) ? 0 : 1;
-                        int picWithHandUrl = string.IsNullOrEmpty(item.PicWithHandUrl) ? 0 : 1;
-                        int trueName = string.IsNullOrEmpty(item.TrueName) ? 0 : 1;
-                        if (@item.Status == 1)
-                        {
-
-                            if (SuperMan.App_Start.UserContext.Current.HasAuthority(18) || SuperMan.App_Start.UserContext.Current.HasAuthority(19))
+                        <td>
+                            @{
+                            int idCard = string.IsNullOrEmpty(item.IDCard) ? 0 : 1;
+                            int picUrl = string.IsNullOrEmpty(item.PicUrl) ? 0 : 1;
+                            int picWithHandUrl = string.IsNullOrEmpty(item.PicWithHandUrl) ? 0 : 1;
+                            int trueName = string.IsNullOrEmpty(item.TrueName) ? 0 : 1;
+                            if (@item.Status == 1)
                             {
-                                <a href="javascript:void(0)" style="color:gray" supermanid="@item.Id" class="superManOk" onclick="clientOk(@item.Id,@idCard,@trueName,@picUrl,@picWithHandUrl)">审核通过</a>
-                                <a href="javascript:void(0)" supermanid="@item.Id" class="superManCel">取消资格</a>
+
+                                if (SuperMan.App_Start.UserContext.Current.HasAuthority(18) || SuperMan.App_Start.UserContext.Current.HasAuthority(19))
+                                {
+                                    <a href="javascript:void(0)" style="color:gray" supermanid="@item.Id" class="superManOk" onclick="clientOk(@item.Id,@idCard,@trueName,@picUrl,@picWithHandUrl)">审核通过</a>
+                                    <a href="javascript:void(0)" supermanid="@item.Id" class="superManCel">取消资格</a>
+                                }
+                                @*if (SuperMan.App_Start.UserContext.Current.HasAuthority(20))
+                                    {
+                                        <a href="javascript:void(0)" amount="@item.AccountBalance" supermanid="@item.Id" class="superManClear">提现</a>
+                                    }*@
                             }
-                            @*if (SuperMan.App_Start.UserContext.Current.HasAuthority(20))
+                            else
                             {
-                                <a href="javascript:void(0)" amount="@item.AccountBalance" supermanid="@item.Id" class="superManClear">提现</a>
-                            }*@
-                        }
-                        else
-                        {
-                            if (SuperMan.App_Start.UserContext.Current.HasAuthority(18) || SuperMan.App_Start.UserContext.Current.HasAuthority(19))
-                            {
-                                <a href="javascript:void(0)" supermanid="@item.Id" class="superManOk" onclick="clientOk(@item.Id,@idCard,@trueName,@picUrl,@picWithHandUrl)">审核通过</a>
-                                <a href="javascript:void(0)" style="color:gray" supermanid="@item.Id" class="superManCel">取消资格</a>
+                                if (SuperMan.App_Start.UserContext.Current.HasAuthority(18) || SuperMan.App_Start.UserContext.Current.HasAuthority(19))
+                                {
+                                    <a href="javascript:void(0)" supermanid="@item.Id" class="superManOk" onclick="clientOk(@item.Id,@idCard,@trueName,@picUrl,@picWithHandUrl)">审核通过</a>
+                                    <a href="javascript:void(0)" style="color:gray" supermanid="@item.Id" class="superManCel">取消资格</a>
+                                }
+                                @*if (SuperMan.App_Start.UserContext.Current.HasAuthority(20))
+                                    {
+                                        <a href="javascript:void(0)" amount="@item.AccountBalance" supermanid="@item.Id" class="superManClear">提现</a>
+                                    }*@
                             }
-                            @*if (SuperMan.App_Start.UserContext.Current.HasAuthority(20))
-                            {
-                                <a href="javascript:void(0)" amount="@item.AccountBalance" supermanid="@item.Id" class="superManClear">提现</a>
-                            }*@
-                        }
-                        }
+                            }
 
-                        @if (SuperMan.App_Start.UserContext.Current.HasAuthority(56))
-                        {
-                        <a href="javascript:void(0)" onclick="funcClienterRecharge(@item.Id,'@item.TrueName', '@item.PhoneNo')">余额调整</a>
-                        }
-                        
-                    </td>
-                </tr>
+                            @if (SuperMan.App_Start.UserContext.Current.HasAuthority(56))
+                            {
+                                <a href="javascript:void(0)" onclick="funcClienterRecharge(@item.Id,'@item.TrueName', '@item.PhoneNo')">余额调整</a>
+                            }
+
+                        </td>
+                    </tr>
+                }
             }
+
         }
     </tbody>
 
 </table>
-@{ViewBag.ActionName = "PostSuperManManager";}
-@Html.Partial("~/views/shared/PagerControl.cshtml", Model)
+@{
+    if (Model != null)
+    {
+        ViewBag.ActionName = "PostSuperManManager";
+        @Html.Partial("~/views/shared/PagerControl.cshtml", Model)
+    }
+}
 
 @*弹出图片*@
 <div class="selectSupplierDish">
@@ -234,7 +243,7 @@
             });
         });
     });
-    function clientOk(clientId,idCard, trueName, picUrl, picWithHandUrl) {
+    function clientOk(clientId, idCard, trueName, picUrl, picWithHandUrl) {
         if (!window.confirm("是否审核通过？")) {
             return;
         }
@@ -257,7 +266,7 @@
             }
         });
     }
-    function funcPicView(puth, PicWithHandUrl,PicUrl) {
+    function funcPicView(puth, PicWithHandUrl, PicUrl) {
         $('#showPicHandWithUrl').attr('src', puth + PicWithHandUrl);
         $('#showPicUrl').attr('src', puth + PicUrl);
 
@@ -267,7 +276,7 @@
         //var handHouZhui = PicWithHandUrl.substr(handLastDot, PicWithHandUrl.length - handLastDot);
         //var bigHandName = PicWithHandUrl.substring(0, handLastDot) + originSize + handHouZhui;
 
-        $('#showBigPicHWU').attr('href', puth + BigPicName(PicWithHandUrl,originSize));
+        $('#showBigPicHWU').attr('href', puth + BigPicName(PicWithHandUrl, originSize));
 
         //var fileLastDot = PicUrl.lastIndexOf('.');
         //var fileHandHouZhui = PicUrl.substr(fileLastDot, PicUrl.length - fileLastDot);
@@ -275,14 +284,14 @@
 
         $('#showBigPicUrl').attr('href', puth + BigPicName(PicUrl, originSize));
         adminjs.openwinbox('#ClientPicShow');
-        if(PicWithHandUrl.length ==0){
+        if (PicWithHandUrl.length == 0) {
             $('#showBigPicHWU').hide();
-        }else{
+        } else {
             $('#showBigPicHWU').show();
         }
-        if(PicUrl.length ==0){
+        if (PicUrl.length == 0) {
             $('#showBigPicUrl').hide();
-        }else{
+        } else {
             $('#showBigPicUrl').show();
         }
     }
@@ -307,7 +316,7 @@
         $('#clienterPhone').val('');
         $('#clienterRechargeAmount').val('');
         $('#rechargeLog').val('');
-        $('#clienterId').val(id);        
+        $('#clienterId').val(id);
         $('#clienterName').val(name);
         $('#clienterPhone').val(phone);
         adminjs.openwinbox('#ClienterRechargeShow');
