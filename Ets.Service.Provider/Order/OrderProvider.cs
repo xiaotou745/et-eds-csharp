@@ -479,8 +479,8 @@ namespace Ets.Service.Provider.Order
             int result = 0;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                OrderListModel order = orderDao.GetByOrderNo(orderNo);
-                if (order.Status != status)  //当前订单状态与原始订单状态不一致 返回0
+                OrderListModel order = orderDao.GetOrderByNo(orderNo);
+                if (order==null||order.Status != status)  //当前订单状态与原始订单状态不一致 返回0
                 {
                     return 0;
                 }
