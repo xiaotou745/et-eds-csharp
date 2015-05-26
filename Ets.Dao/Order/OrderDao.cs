@@ -195,6 +195,7 @@ namespace Ets.Dao.Order
                                         ,c.TrueName ClienterName
                                         ,b.GroupId
                                         ,o.OriginalOrderNo
+                                        ,o.SettleMoney
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     LEFT JOIN dbo.clienter c WITH (NOLOCK) ON o.clienterId=c.Id

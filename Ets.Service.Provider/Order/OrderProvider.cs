@@ -155,7 +155,6 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        #region
         public IList<ClientOrderNoLoginResultModel> GetOrdersNoLoginLatest(ClientOrderSearchCriteria criteria)
         {
             IList<ClientOrderNoLoginResultModel> list = new List<ClientOrderNoLoginResultModel>();
@@ -243,7 +242,6 @@ namespace Ets.Service.Provider.Order
             }
             return list;
         }
-        #endregion
 
         /// <summary>
         /// 转换B端发布的订单信息为 数据库中需要的 订单 数据
@@ -400,6 +398,7 @@ namespace Ets.Service.Provider.Order
             PageInfo<OrderListModel> pageinfo = orderDao.GetOrders<OrderListModel>(criteria);
             return pageinfo;
         }
+
         /// <summary>
         /// 更新订单佣金
         /// danny-20150320
@@ -410,6 +409,7 @@ namespace Ets.Service.Provider.Order
         {
             return orderDao.UpdateOrderInfo(order);
         }
+
         /// <summary>
         /// 根据订单号查订单信息
         /// danny-20150320
@@ -420,6 +420,7 @@ namespace Ets.Service.Provider.Order
         {
             return orderDao.GetOrderByNo(orderNo);
         }
+
         /// <summary>
         /// 根据订单号查订单信息
         /// danny-20150320
@@ -430,6 +431,7 @@ namespace Ets.Service.Provider.Order
         {
             return orderDao.GetOrderByNo(orderNo, orderId);
         }
+
         /// <summary>
         /// 订单指派超人
         /// danny-20150320
@@ -460,6 +462,7 @@ namespace Ets.Service.Provider.Order
         {
             return orderDao.GetOrderByOrderNo(orderNo);
         }
+
         /// <summary>
         /// 根据订单号 修改订单状态
         /// wc
@@ -488,8 +491,6 @@ namespace Ets.Service.Provider.Order
             });
             return result;
         }
-
-
 
         #region openapi 接口使用 add by caoheyang  20150325
 
@@ -668,6 +669,7 @@ namespace Ets.Service.Provider.Order
                 Id = Convert.ToInt32(order.businessId),
                 Money = -order.SettleMoney
             });
+
             #region 商户余额流水操作
             _businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
             {
@@ -768,6 +770,7 @@ namespace Ets.Service.Provider.Order
             var orderCountManageList = new OrderCountManageList(list, pr);
             return orderCountManageList;
         }
+
         /// <summary>
         ///  首页最近数据统计
         /// danny-20150327
@@ -780,7 +783,6 @@ namespace Ets.Service.Provider.Order
             PageInfo<HomeCountTitleModel> pageinfo = orderDao.GetCurrentDateCountAndMoney<HomeCountTitleModel>(criteria);
             return pageinfo;
         }
-
 
         /// <summary>
         /// 接收订单，供第三方使用
@@ -1019,6 +1021,7 @@ namespace Ets.Service.Provider.Order
 
             return to;
         }
+
         /// <summary>
         /// 根据订单号 获取订单信息
         /// wc
@@ -1152,6 +1155,7 @@ namespace Ets.Service.Provider.Order
                 return dealResultInfo;
             }
         }
+
         /// <summary>
         /// 获取订单操作日志
         /// danny-20150414
@@ -1173,24 +1177,47 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public ResultModel<object> UpdateOrderStatus_Other(ChangeStatusPM_OpenApi paramodel)
         {
-            paramodel.status = OrderConst.OrderStatus3;
-            paramodel.remark = "第三方集团取消订单，同步E代送系统订单状态";
-            int currenStatus = orderDao.GetStatus(paramodel.order_no, paramodel.orderfrom);  //目前订单状态
-            if (currenStatus == -1) //订单不存在
-                return ResultModel<object>.Conclude(OrderApiStatusType.OrderNotExist);
-            else if (OrderConst.OrderStatus30 != currenStatus
-                && OrderConst.OrderStatus0 != currenStatus)  //订单状态非30，,不允许取消订单
-                return ResultModel<object>.Conclude(OrderApiStatusType.OrderIsJoin);
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                int result = orderDao.UpdateOrderStatus_Other(paramodel);
-                if (result > 0)
+                int currenStatus = orderDao.GetStatus(paramodel.order_no, paramodel.orderfrom);  //目前订单状态
+                if (currenStatus == -1) //订单不存在
+                    return ResultModel<object>.Conclude(OrderApiStatusType.OrderNotExist);
+                else if (OrderConst.OrderStatus30 != currenStatus
+                    && OrderConst.OrderStatus0 != currenStatus)  //订单状态非30，,不允许取消订单
+                    return ResultModel<object>.Conclude(OrderApiStatusType.OrderIsJoin);
+                int result = orderDao.UpdateOrderStatus_Other(paramodel);  //更新第三方订单在E代送的状态成功
+                if (result > 0 )
                 {
+                    //当第三方取消订单时订单的状态为待接单时，需要返还商家结算费 TODO 目前只供美团使用
+                    if (currenStatus == OrderConst.OrderStatus0)
+                    {
+                       OrderListModel order=  orderDao.GetOpenOrder(paramodel.order_no, paramodel.orderfrom);
+                          BusinessDao businessDao = new BusinessDao();
+                    businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
+                    {
+                        Id = order.businessId,
+                        Money = order.SettleMoney
+                    });
+                    BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
+                    businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
+                    {
+                        BusinessId = order.businessId,//商户Id
+                        Amount = order.SettleMoney,//流水金额  结算金额
+                        Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
+                        RecordType = (int)BusinessBalanceRecordRecordType.CancelOrder,
+                        Operator = order.BusinessName,
+                        WithwardId = order.Id,
+                        RelationNo = order.OrderNo,
+                        Remark = "第三方商户调用接口取消订单返回配送费"
+                    });
+                    }
                     tran.Complete();
                     return ResultModel<object>.Conclude(OrderApiStatusType.Success);
                 }
                 else
+                {
                     return ResultModel<object>.Conclude(OrderApiStatusType.SystemError);
+                }
             }
         }
 
@@ -1198,6 +1225,7 @@ namespace Ets.Service.Provider.Order
         {
             return orderDao.GetOrderRecords(originalOrderNo, group);
         }
+
         /// <summary>
         /// 获取订单拒绝原因
         /// 平扬-20150424
@@ -1380,7 +1408,6 @@ namespace Ets.Service.Provider.Order
             }
         }
 
-
         /// <summary>
         /// 骑士端获取任务列表（最新/最近）任务   add by caoheyang 20150519
         /// </summary>
@@ -1410,7 +1437,6 @@ namespace Ets.Service.Provider.Order
             }
             return ResultModel<object>.Conclude(SystemEnum.Success, jobs);
         }
-
 
         public int GetOrderStatus(int orderId, int businessId)
         {
@@ -1481,7 +1507,8 @@ namespace Ets.Service.Provider.Order
                 }
             }
             //异步同步第三方订单状态
-            Task.Factory.StartNew(() =>{
+            Task.Factory.StartNew(() =>
+            {
                 AsyncOrderStatus(paramodel.OrderNo);
             });
             return ResultModel<bool>.Conclude(CancelOrderStatus.Success, true);
