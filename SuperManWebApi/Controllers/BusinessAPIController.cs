@@ -290,27 +290,28 @@ namespace SuperManWebApi.Controllers
 
 
         /// <summary>
-        /// 商家确认第三方订单接口
+        /// 商家确认第三方订单接口  平杨
         /// </summary>
         /// <param name="orderlist"></param>
+        /// <UpdateBy>确认接入时扣除商家结算费功能  caoheyang 20150526</UpdateBy>
         /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
+        [ActionStatus(typeof(PubOrderStatus))]
         [HttpGet]
-        public Ets.Model.Common.ResultModel<List<string>> OtherOrderConfirm_B(string orderlist)
+        public ResultModel<List<string>> OtherOrderConfirm_B(string orderlist)
         {
             ETS.Util.LogHelper.LogWriterString("参数 ", orderlist);
             if (string.IsNullOrEmpty(orderlist))
-                return Ets.Model.Common.ResultModel<List<string>>.Conclude(ETS.Enums.PubOrderStatus.OrderCountError, null);
+                return ResultModel<List<string>>.Conclude(PubOrderStatus.OrderCountError, null);
             var orderProvider = new OrderProvider();
-            string[] aa = orderlist.Split(',');
+            string[] orders = orderlist.Split(',');
             List<string> errors = new List<string>();
-            for (int i = 0; i < aa.Length; i++)
+            for (int i = 0; i < orders.Length; i++)
             {
-                int res = orderProvider.UpdateOrderStatus(aa[i], OrderConst.ORDER_NEW, "", OrderConst.OrderStatus30);
-                if (res < 0)
-                    errors.Add(aa[i]);
+                int res = orderProvider.UpdateOrderStatus(orders[i], OrderConst.ORDER_NEW, "", OrderConst.OrderStatus30);
+                if (res <= 0)
+                    errors.Add(orders[i]);
             }
-            return Ets.Model.Common.ResultModel<List<string>>.Conclude(ETS.Enums.PubOrderStatus.Success, errors);
+            return ResultModel<List<string>>.Conclude(PubOrderStatus.Success, errors);
         }
 
         /// <summary>
@@ -321,16 +322,16 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
         [HttpGet]
-        public Ets.Model.Common.ResultModel<int> OtherOrderCancel_B(string orderlist, string note)
+        public ResultModel<int> OtherOrderCancel_B(string orderlist, string note)
         {
             if (string.IsNullOrEmpty(orderlist))
             {
-                return Ets.Model.Common.ResultModel<int>.Conclude(ETS.Enums.PubOrderStatus.OrderCountError, 0);
+                return ResultModel<int>.Conclude(PubOrderStatus.OrderCountError, 0);
             }
             var orderProvider = new OrderProvider();
-            string[] aa = orderlist.Split(',');
-            int i = aa.Count(s => orderProvider.UpdateOrderStatus(s, OrderConst.ORDER_CANCEL, note, OrderConst.OrderStatus30) > 0);
-            return Ets.Model.Common.ResultModel<int>.Conclude(ETS.Enums.PubOrderStatus.Success, i);
+            string[] orders = orderlist.Split(',');
+            int i = orders.Count(s => orderProvider.UpdateOrderStatus(s, OrderConst.ORDER_CANCEL, note, OrderConst.OrderStatus30) > 0);
+            return ResultModel<int>.Conclude(PubOrderStatus.Success, i);
         }
 
         /// <summary>
@@ -341,7 +342,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
         [HttpGet]
-        public Ets.Model.Common.ResultModel<OrderCancelReasonsModel> OtherOrderCancelReasons(string Version)
+        public ResultModel<OrderCancelReasonsModel> OtherOrderCancelReasons(string Version)
         {
             var orderProvider = new OrderProvider();
             string Ressons = orderProvider.OtherOrderCancelReasons();
@@ -350,7 +351,7 @@ namespace SuperManWebApi.Controllers
                 Reasons = Ressons.Split(';'),
                 GlobalVersion = Config.GlobalVersion
             };
-            return Ets.Model.Common.ResultModel<OrderCancelReasonsModel>.Conclude(ETS.Enums.PubOrderStatus.Success, model);
+            return ResultModel<OrderCancelReasonsModel>.Conclude(PubOrderStatus.Success, model);
         }
 
 

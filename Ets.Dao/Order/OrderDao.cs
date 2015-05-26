@@ -195,6 +195,7 @@ namespace Ets.Dao.Order
                                         ,c.TrueName ClienterName
                                         ,b.GroupId
                                         ,o.OriginalOrderNo
+                                        ,o.SettleMoney
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     LEFT JOIN dbo.clienter c WITH (NOLOCK) ON o.clienterId=c.Id
@@ -1016,10 +1017,8 @@ where  o.OrderNo = @OrderNo");
         /// <returns></returns>
         public int CancelOrderStatus(string orderNo, int orderStatus, string remark, int? status, decimal price = 0)
         {
-            StringBuilder upSql = new StringBuilder();
-
-            upSql.AppendFormat(@" UPDATE dbo.[order]
- SET    [Status] = @status,OtherCancelReason=@OtherCancelReason
+            string upSql =string.Format(@" UPDATE dbo.[order]
+ SET  [Status] = @status,OtherCancelReason=@OtherCancelReason
  output Inserted.Id,@Price,GETDATE(),'{0}',@OtherCancelReason,Inserted.businessId,Inserted.[Status],{1}
  into dbo.OrderSubsidiesLog(OrderId,Price,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
  WHERE  OrderNo = @orderNo", SuperPlatform.商家, (int)SuperPlatform.商家);
@@ -1032,7 +1031,7 @@ where  o.OrderNo = @OrderNo");
 
             if (status != null)
             {
-                upSql.Append(" and Status=" + status);
+                upSql = upSql+" and Status=" + status;
             }
 
             object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters);
@@ -1110,18 +1109,41 @@ WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL and Status = 4;", SuperPlat
         /// <returns></returns>
         public HomeCountTitleModel GetHomeCountTitleToAllDataSql()
         {
-            string sql = @"SELECT 
-                        (SELECT SUM (AccountBalance) FROM dbo.clienter(NOLOCK)  WHERE AccountBalance>=1000) AS  WithdrawPrice,--提现金额
-                        (select convert(decimal(18,2),sum(Amount)) from CrossShopLog(nolock)) as CrossShopPrice,--跨店奖励总金额
-                        SUM(ISNULL(Amount,0)) AS OrderPrice, --订单金额
-                        COUNT(1) AS MisstionCount,--总任务量
-                        SUM(ISNULL(OrderCount,0)) AS OrderCount,--总订单量
-                        sum(isnull(SettleMoney,0)) as YsPrice, --应收金额
-                        SUM(ISNULL( OrderCommission,0)) AS YfPrice  --应付金额
-                        FROM dbo.[order](NOLOCK) AS o
-                        JOIN dbo.business(NOLOCK) AS b ON o.businessId=b.Id
-                         WHERE  
-                        o.[Status]<>3 ";//不等于未完成的订单 
+            string sql = @"
+declare 
+@incomeTotal decimal(18,2),
+@withdrawClienterPrice decimal(18,2),
+@businessBalance decimal(18,2),
+@withdrawBusinessPrice decimal(18,2),
+@rechargeTotal decimal(18,2)
+set @incomeTotal =convert(decimal(18,2),(select sum(TotalPrice) from dbo.OrderChild oc(nolock) where ThirdPayStatus =1))
+set @withdrawClienterPrice = convert(decimal(18,2),(select isnull( sum(isnull(Amount,0)),0) withPirce FROM dbo.ClienterWithdrawForm(nolock) cwf where Status =3)) 
+set @businessBalance=convert(decimal(18,2),(SELECT sum(BalancePrice) FROM dbo.business b(nolock) where Status=1 ))
+set @withdrawBusinessPrice=convert( decimal(18,2),(SELECT sum(Amount) as withdrawBusinessPrice FROM dbo.BusinessWithdrawForm(nolock) bwf where Status =3 ))
+set @rechargeTotal = (select sum(Amount) from BusinessBalanceRecord(nolock) where RecordType = 4 ) --商户充值总计
+select  ( select    sum(AccountBalance)
+          from      dbo.clienter(nolock)
+          where     AccountBalance >= 1000
+        ) as WithdrawPrice,--提现金额
+        ( select    convert(decimal(18, 2), sum(Amount))
+          from      CrossShopLog(nolock)
+        ) as CrossShopPrice,--跨店奖励总金额
+        sum(isnull(Amount, 0)) as OrderPrice, --订单金额
+        count(1) as MisstionCount,--总任务量
+        sum(isnull(OrderCount, 0)) as OrderCount,--总订单量
+        sum(isnull(SettleMoney, 0)) as YsPrice, --应收金额
+        sum(isnull(OrderCommission, 0)) as YfPrice,  --应付金额
+        @incomeTotal incomeTotal, --扫码/代付总计
+		isnull(@rechargeTotal,0) rechargeTotal,--商户充值总计
+		(@incomeTotal+0) allIncomeTotal, --账户收入总计
+		-2348288.69-(@withdrawClienterPrice) withdrawClienterPrice, --骑士已提现佣金-实付
+		@businessBalance businessBalance,--商家余额总计-应付
+		isnull( @withdrawBusinessPrice,0) withdrawBusinessPrice --商家已提款金额-实付
+from    dbo.[order] (nolock) as o
+        join dbo.business (nolock) as b on o.businessId = b.Id
+where   o.[Status] <> 3 
+
+";//不等于未完成的订单 
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             return MapRows<HomeCountTitleModel>(dt)[0];
         }
@@ -1400,7 +1422,8 @@ select top 1
         o.MealsSettleMode,
         o.BusinessReceivable,
         o.IsPay,
-        b.Name BusinessName
+        b.Name BusinessName,
+        o.SettleMoney
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
@@ -1939,6 +1962,9 @@ insert  into dbo.[order]
           BusinessCommission ,
           SettleMoney ,
           Adjustment ,
+          CommissionType,
+          CommissionFixValue,
+          BusinessGroupId,
           TimeSpan,
           MealsSettleMode,
           BusinessReceivable
@@ -1976,6 +2002,9 @@ values  ( @OrderNo ,
           @BusinessCommission ,
           @SettleMoney ,
           @Adjustment ,
+          @CommissionType,
+          @CommissionFixValue,
+          @BusinessGroupId,
           @TimeSpan,
           @MealsSettleMode,
           @BusinessReceivable
@@ -2015,6 +2044,9 @@ select @@identity";
             dbParameters.AddWithValue("@BusinessCommission", order.BusinessCommission);
             dbParameters.AddWithValue("@SettleMoney", order.SettleMoney);
             dbParameters.AddWithValue("@Adjustment", order.Adjustment);
+            dbParameters.AddWithValue("@CommissionType", order.CommissionType);
+            dbParameters.AddWithValue("@CommissionFixValue", order.CommissionFixValue);
+            dbParameters.AddWithValue("@BusinessGroupId", order.BusinessGroupId);
             dbParameters.AddWithValue("@TimeSpan", order.TimeSpan);
             dbParameters.AddWithValue("@MealsSettleMode", order.MealsSettleMode);
             dbParameters.AddWithValue("@BusinessReceivable", order.BusinessReceivable);
@@ -2032,14 +2064,14 @@ select @@identity";
     values(@orderid,getdate(),@optname,@remark,@optid,@orderStatus,@platForm)";
 
             IDbParameters orderLogParameters = DbHelper.CreateDbParameters();
-            orderLogParameters.AddWithValue("orderid",orderId);
-            orderLogParameters.AddWithValue("optname",order.BusinessName);
+            orderLogParameters.AddWithValue("orderid", orderId);
+            orderLogParameters.AddWithValue("optname", order.BusinessName);
             orderLogParameters.AddWithValue("remark", ConstValues.PublishOrder);
             orderLogParameters.AddWithValue("optid", order.businessId);
             orderLogParameters.AddWithValue("orderStatus", OrderStatus.订单待抢单.GetHashCode());
             orderLogParameters.AddWithValue("platForm", SuperPlatform.商家.GetHashCode());
 
-            DbHelper.ExecuteNonQuery(SuperMan_Write,sqlOrderLog,orderLogParameters);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, sqlOrderLog, orderLogParameters);
             #endregion
 
             #region 写子OrderOther表
@@ -2447,7 +2479,7 @@ SELECT CASE SUM(oc.PayStatus)
         }
 
         /// <summary>
-        /// 根据订单号查询订单主表基本信息  add by caoheyang 20150521
+        /// 根据订单id查询订单主表基本信息  add by caoheyang 20150521
         /// </summary>
         /// <param name="orderId">订单id</param>
         /// <param name="businessId">订单id</param>
@@ -2470,6 +2502,37 @@ SELECT CASE SUM(oc.PayStatus)
             }
             return order;
         }
+
+        /// <summary>
+        /// 根据订单号查询订单主表基本信息  add by caoheyang 20150521
+        /// </summary>
+        /// <param name="orderNo">订单号</param>
+        /// <param name="businessId">订单id</param>
+        /// <param name="status">订单状态</param>
+        /// <returns></returns>
+        public order GetOrderMainByNo(string orderNo, int? businessId=null, int? status = null)
+        {
+            order order = null;
+            string sql = @" select * from [order] where orderno=@OrderNo";
+            if (businessId != null)
+            {
+                sql = sql + "  and businessId=@BusinessId" + businessId;
+            }
+            if (status != null)
+            {
+                sql = sql + " and status=" + status;
+            }
+            IDbParameters parm = DbHelper.CreateDbParameters("OrderNo", SqlDbType.NVarChar, 90, orderNo);
+            parm.Add("BusinessId", SqlDbType.Int).Value = businessId;
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                order = DataTableHelper.ConvertDataTableList<order>(dt)[0];
+            }
+            return order;
+        }
+        
+
         /// <summary>
         /// 订单取消返回商家应收和插入商家余额流水
         /// danny-2015051921

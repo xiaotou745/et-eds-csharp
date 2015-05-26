@@ -104,11 +104,11 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneIsNULL);
             }           
-            Regex dReg = new Regex("^1\\d{10}$");
-            if (!dReg.IsMatch(model.recevicePhone))//验证收货人手机号
-            {
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneErr);
-            }
+            //Regex dReg = new Regex("^1\\d{10}$");
+            //if (!dReg.IsMatch(model.recevicePhone))//验证收货人手机号
+            //{
+            //    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneErr);
+            //}
             if (string.IsNullOrEmpty(model.receviceAddress))
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.ReceviceAddressIsNULL);
