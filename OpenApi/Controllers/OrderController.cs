@@ -111,6 +111,8 @@ namespace OpenApi.Controllers
         [OpenApiActionError]
         public ResultModel<object> ChangeStatus(ParaModel<ChangeStatusPM_OpenApi> paramodel)
         {
+            paramodel.fields.groupid = paramodel.group;
+            paramodel.fields.remark = "取消订单";    //TODO 第三方调用该接口时根据实际目标状态处理
             paramodel.fields.orderfrom = paramodel.group; //设置订单来源,其实就是订单对应的集团是什么
             return new OrderProvider().UpdateOrderStatus_Other(paramodel.fields);
         }
