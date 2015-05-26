@@ -8,7 +8,7 @@ using ETS.Data.PageData;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
-
+using Ets.Model.DataModel.Clienter;
 namespace Ets.Dao.Finance
 {
     public class ClienterFinanceDao : DaoBase
@@ -522,6 +522,50 @@ WHERE cbr.ClienterId=@ClienterId ";
             parm.AddWithValue("@OperateTimeEnd", criteria.OperateTimeEnd);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             return MapRows<ClienterBalanceRecordModel>(dt);
-        } 
+        }
+
+
+        /// <summary>
+        /// 骑士 余额可提现和插入骑士余额流水     
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ClienterRecharge(ClienterOptionLog model)
+        {
+            string sql = string.Format(@" 
+update b
+set    b.AccountBalance=ISNULL(b.AccountBalance, 0)+@Amount,
+       b.AllowWithdrawPrice=ISNULL(b.AllowWithdrawPrice,0)+@Amount
+OUTPUT
+  Inserted.Id,
+  @Amount,
+  @Status,
+  Inserted.AccountBalance,
+  @RecordType,
+  @Operator,
+  getdate(),
+  '',
+  @Remark
+INTO ClienterBalanceRecord
+  ( [ClienterId]
+   ,[Amount]
+   ,[Status]
+   ,[Balance]
+   ,[RecordType]
+   ,[Operator]
+   ,[OperateTime]
+   ,[WithwardId]
+   ,[Remark])
+from clienter b WITH ( ROWLOCK )
+where b.Id=@ClienterId;");
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Amount", model.RechargeAmount);
+            parm.AddWithValue("@Status", BusinessBalanceRecordStatus.Success);
+            parm.AddWithValue("@RecordType", BusinessBalanceRecordRecordType.BalanceAdjustment);
+            parm.AddWithValue("@Operator", model.OptName);
+            parm.AddWithValue("@Remark", model.Remark);
+            parm.AddWithValue("@ClienterId", model.ClienterId);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
     }
 }

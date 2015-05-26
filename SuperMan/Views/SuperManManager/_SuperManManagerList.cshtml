@@ -126,6 +126,11 @@
                             }*@
                         }
                         }
+
+                        @*@if (SuperMan.App_Start.UserContext.Current.HasAuthority(24))
+                        {*@
+                        <a href="javascript:void(0)" onclick="funcClienterRecharge(@item.Id,'@item.TrueName', '@item.PhoneNo')">余额调整</a>
+                        @*}*@
                         
                     </td>
                 </tr>
@@ -291,5 +296,18 @@
         var houzhui = picFileName.substr(lastDot, picFileName.length - lastDot);
         var bigPicName = picFileName.substring(0, lastDot) + fileSize + houzhui;
         return bigPicName;
+    }
+
+    //骑士余额调整
+    function funcClienterRecharge(id, name, phone) {
+        $('#busId').val(0);
+        $('#busName').val('');
+        $('#busPhone').val('');
+        $('#busRechargeAmount').val('');
+        $('#rechargeLog').val('');
+        $('#busId').val(id);        
+        $('#busName').val(name);
+        $('#busPhone').val(phone);
+        adminjs.openwinbox('#ClienterRechargeShow');
     }
 </script>
