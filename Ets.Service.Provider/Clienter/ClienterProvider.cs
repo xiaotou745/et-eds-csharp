@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using ETS.Const;
 using Ets.Dao.Clienter;
 using Ets.Dao.User;
@@ -309,16 +310,21 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         public bool RushOrder(int userId, string orderNo)
         {
+            bool result = false;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                clienterDao.RushOrder(userId, orderNo);
-                if (new OrderProvider().AsyncOrderStatus(orderNo))
-                {
-                    tran.Complete();
-                    return true;
-                }
+                result = clienterDao.RushOrder(userId, orderNo);
+                tran.Complete();
             }
-            return false;
+            Task.Factory.StartNew(() =>
+            {
+                if (result)
+                {
+                    new OrderProvider().AsyncOrderStatus(orderNo);
+                }
+            });
+
+            return result;
         }
 
 
@@ -567,11 +573,15 @@ namespace Ets.Service.Provider.Clienter
                     model.Message = "1";
                 }
             }
-            new OrderProvider().AsyncOrderStatus(orderNo);
-            if (businessId != 0 && model.Message == "1")
+            //异步回调第三方，推送通知
+            Task.Factory.StartNew(() =>
             {
-                Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", businessId.ToString(), string.Empty);
-            }
+                if (businessId != 0 && model.Message == "1")
+                {
+                    Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", businessId.ToString(), string.Empty);
+                    new OrderProvider().AsyncOrderStatus(orderNo);
+                }
+            });
             return model;
         }
 
@@ -622,7 +632,7 @@ namespace Ets.Service.Provider.Clienter
                 Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
                 Balance = accountBalance ?? 0,
                 RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
-                Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName)?"骑士":myOrderInfo.ClienterName,
+                Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
                 WithwardId = myOrderInfo.Id,
                 RelationNo = myOrderInfo.OrderNo,
                 Remark = "骑士完成订单"
@@ -659,7 +669,7 @@ namespace Ets.Service.Provider.Clienter
                 Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
                 Balance = accountBalance ?? 0,
                 RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
-                Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName)?"骑士:"+userId:myOrderInfo.ClienterName,
+                Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士:" + userId : myOrderInfo.ClienterName,
                 RelationNo = myOrderInfo.OrderNo,
                 Remark = "骑士完成订单"
             };
@@ -1015,13 +1025,16 @@ namespace Ets.Service.Provider.Clienter
             bool bResult = orderDao.RushOrder(model);
             if (bResult)
             {
+                Task.Factory.StartNew(() =>
+                {
+                    new OrderProvider().AsyncOrderStatus(orderNo);//同步第三方订单
+                    Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", myorder.businessId.ToString(), string.Empty);
+                });
 
-                new OrderProvider().AsyncOrderStatus(orderNo);//同步第三方订单
-                Ets.Service.Provider.MyPush.Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", myorder.businessId.ToString(), string.Empty);
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.Success);
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Success);
             }
 
-            return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.Failed);
+            return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Failed);
         }
 
         /// <summary>
@@ -1100,11 +1113,15 @@ namespace Ets.Service.Provider.Clienter
             ///TODO 同步第三方状态和jpush 以后放到后台服务或mq进行。
             if (bResult)
             {
-                //写入骑士抢单坐标
-                orderOtherDao.UpdateGrab(orderNo, grabLongitude, grabLatitude);
+                //异步回调第三方，推送通知
+                Task.Factory.StartNew(() =>
+                {
+                    //写入骑士抢单坐标
+                    orderOtherDao.UpdateGrab(orderNo, grabLongitude, grabLatitude);
+                    new OrderProvider().AsyncOrderStatus(orderNo);//同步第三方订单
+                    Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", bussinessId.ToString(), string.Empty);
+                });
 
-                new Ets.Service.Provider.Order.OrderProvider().AsyncOrderStatus(orderNo);//同步第三方订单
-                Ets.Service.Provider.MyPush.Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", bussinessId.ToString(), string.Empty);
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Success);
             }
             //else  //失败的时候再去找原因

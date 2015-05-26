@@ -322,11 +322,11 @@ namespace Ets.Service.Provider.Order
             to.listOrderChild = busiOrderInfoModel.listOrderChlid;
 
             if (!(bool)to.IsPay && to.MealsSettleMode == MealsSettleMode.Status1.GetHashCode())//未付款且线上支付
-            {                      
-                    to.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(to.Amount) +
-                                   ParseHelper.ToDecimal(to.DistribSubsidy) * ParseHelper.ToInt(to.OrderCount), 2);
+            {
+                to.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(to.Amount) +
+                               ParseHelper.ToDecimal(to.DistribSubsidy) * ParseHelper.ToInt(to.OrderCount), 2);
             }
-           
+
             return to;
         }
 
@@ -347,8 +347,8 @@ namespace Ets.Service.Provider.Order
                 {
                     return PubOrderStatus.OrderHasExist;
                 }
-                
-                result = orderDao.AddOrder(order);              
+
+                result = orderDao.AddOrder(order);
                 if (result <= 0)//订单发布失败
                 {
                     return PubOrderStatus.InvalidPubOrder;
@@ -357,11 +357,11 @@ namespace Ets.Service.Provider.Order
                 //扣商户金额
                 _businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
                 {
-                    Id =Convert.ToInt32(order.businessId),
+                    Id = Convert.ToInt32(order.businessId),
                     Money = -order.SettleMoney
                 });
 
-                #region 商户余额流水操作 
+                #region 商户余额流水操作
                 _businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
                 {
                     BusinessId = Convert.ToInt32(order.businessId),
@@ -371,7 +371,7 @@ namespace Ets.Service.Provider.Order
                     Operator = order.BusinessName,
                     Remark = "扣除商家结算费",
                     WithwardId = result,
-                    RelationNo=order.OrderNo
+                    RelationNo = order.OrderNo
                 });
                 #endregion
 
@@ -381,11 +381,11 @@ namespace Ets.Service.Provider.Order
                     if (!b)//写入日志失败
                     {
                         return PubOrderStatus.InvalidPubOrder;
-                    }                                 
+                    }
                 }
 
-                tran.Complete(); 
-            }         
+                tran.Complete();
+            }
             return PubOrderStatus.Success;
         }
 
@@ -440,7 +440,11 @@ namespace Ets.Service.Provider.Order
         {
             if (orderDao.RushOrder(order))
             {
-                Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", order.businessId.ToString(), string.Empty);
+                //异步回调第三方，推送通知
+                Task.Factory.StartNew(() =>
+                {
+                    Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", order.businessId.ToString(), string.Empty);
+                });
                 return true;
             }
             return false;
@@ -465,16 +469,24 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public int UpdateOrderStatus(string orderNo, int orderStatus, string remark, int? status)
         {
+            int result = 0;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                int result = orderDao.CancelOrderStatus(orderNo, orderStatus, remark, status);
-                if (result > 0 & AsyncOrderStatus(orderNo))
+                result = orderDao.CancelOrderStatus(orderNo, orderStatus, remark, status);
+                if (result > 0)
                 {
                     tran.Complete();
-                    return 1;
                 }
             }
-            return 0;
+            //异步回调第三方，推送通知
+            Task.Factory.StartNew(() =>
+            {
+                if (result > 0)
+                {
+                    AsyncOrderStatus(orderNo);
+                }
+            });
+            return result;
         }
 
 
@@ -608,7 +620,7 @@ namespace Ets.Service.Provider.Order
                         paramodel.businessId = orderDao.CreateToSqlAddBusiness(paramodel);  //商户id
                     }
                     orderNo = Helper.generateOrderCode(paramodel.businessId);
-                    paramodel.OrderNo = orderNo;  
+                    paramodel.OrderNo = orderNo;
                     //将当前订单插入到缓存中，设置过期时间30天
                     redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
                         paramodel.order_id.ToString()), orderNo, DateTime.Now.AddDays(30));  //先加入缓存，相当于加锁
@@ -619,12 +631,12 @@ namespace Ets.Service.Provider.Order
                     InsertOrderOptRecord(new order()
                     {
                         businessId = paramodel.businessId,
-                        SettleMoney=paramodel.settlemoney,
-                        Adjustment=paramodel.adjustment,
-                        Id=orderId,
+                        SettleMoney = paramodel.settlemoney,
+                        Adjustment = paramodel.adjustment,
+                        Id = orderId,
                         BusinessName = paramodel.store_info.store_name,
                         Amount = paramodel.total_price,
-                        OrderNo=orderNo,
+                        OrderNo = orderNo,
                         CommissionFormulaMode = paramodel.CommissionFormulaMode
                     });
                     tran.Complete();
@@ -664,8 +676,8 @@ namespace Ets.Service.Provider.Order
                 Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
                 RecordType = (int)BusinessBalanceRecordRecordType.PublishOrder,
                 Operator = "系统",
-                WithwardId=order.Id,
-                RelationNo=order.OrderNo,
+                WithwardId = order.Id,
+                RelationNo = order.OrderNo,
                 Remark = "商户发单，系统自动扣商家结算费"
             });
             #endregion
@@ -1076,7 +1088,7 @@ namespace Ets.Service.Provider.Order
         {
             var dealResultInfo = new DealResultInfo
             {
-                DealFlag =false
+                DealFlag = false
             };
             var orderModel = orderDao.GetOrderByNo(orderOptionModel.OrderNo);
             if (orderModel == null)
@@ -1085,7 +1097,7 @@ namespace Ets.Service.Provider.Order
                 return dealResultInfo;
             }
             orderModel.OptUserName = orderOptionModel.OptUserName;
-            orderModel.Remark = "管理后台取消订单："+orderOptionModel.OptLog;
+            orderModel.Remark = "管理后台取消订单：" + orderOptionModel.OptLog;
             var orderTaskPayStatus = orderDao.GetOrderTaskPayStatus(orderModel.Id);
             #region 订单不可取消
             if (orderModel.Status == 3)//订单已为取消状态
@@ -1093,7 +1105,7 @@ namespace Ets.Service.Provider.Order
                 dealResultInfo.DealMsg = "订单已为取消状态，不能再次取消操作！";
                 return dealResultInfo;
             }
-            if (orderModel.IsJoinWithdraw == 1 )//订单已分账
+            if (orderModel.IsJoinWithdraw == 1)//订单已分账
             {
                 dealResultInfo.DealMsg = "订单已分账，不能取消订单！";
                 return dealResultInfo;
@@ -1108,7 +1120,8 @@ namespace Ets.Service.Provider.Order
             {
                 if (orderDao.CancelOrder(orderModel, orderOptionModel))
                 {
-                    if (orderModel.Status == 1 && orderTaskPayStatus == 2 && orderModel.HadUploadCount == orderModel.NeedUploadCount)//已完成订单
+                    if (orderModel.Status == 1 && orderTaskPayStatus == 2 &&
+                        orderModel.HadUploadCount == orderModel.NeedUploadCount) //已完成订单
                     {
                         if (!orderDao.OrderCancelReturnClienter(orderModel))
                         {
@@ -1121,13 +1134,21 @@ namespace Ets.Service.Provider.Order
                         dealResultInfo.DealMsg = "商家应收返回失败！";
                         return dealResultInfo;
                     }
-                    AsyncOrderStatus(orderModel.OrderNo);
                     dealResultInfo.DealFlag = true;
                     dealResultInfo.DealMsg = "订单取消成功！";
                     tran.Complete();
-                    return dealResultInfo;
                 }
-                dealResultInfo.DealMsg = "订单状态更新失败！";
+                else
+                {
+                    dealResultInfo.DealMsg = "订单状态更新失败！";
+                }
+                Task.Factory.StartNew(() =>
+                {
+                    if (dealResultInfo.DealFlag)
+                    {
+                        AsyncOrderStatus(orderModel.OrderNo);
+                    }
+                });
                 return dealResultInfo;
             }
         }
@@ -1284,7 +1305,7 @@ namespace Ets.Service.Provider.Order
             orderDM.TotalAmount = order.TotalAmount;
             orderDM.MealsSettleMode = order.MealsSettleMode;
             orderDM.ClienterId = ParseHelper.ToInt(order.clienterId);
-             
+
             #region 是否允许修改小票
             orderDM.IsModifyTicket = true;
             if (order.HadUploadCount >= order.OrderCount && order.Status == OrderStatus.订单完成.GetHashCode())
@@ -1293,7 +1314,7 @@ namespace Ets.Service.Provider.Order
             }
             #endregion
 
-            orderDM.distance =order.distance==-1?"--":  order.distance > 1000 ? Math.Round(order.distance * 0.001, 2) + "Km" : Math.Round(order.distance , 0)+"m";
+            orderDM.distance = order.distance == -1 ? "--" : order.distance > 1000 ? Math.Round(order.distance * 0.001, 2) + "Km" : Math.Round(order.distance, 0) + "m";
 
 
             OrderChildProvider orderChildPr = new OrderChildProvider();
@@ -1304,15 +1325,15 @@ namespace Ets.Service.Provider.Order
             orderDM.listOrderDetail = orderDetailPr.GetByOrderNo(order.OrderNo);
 
 
-            
+
             bool IsExistsUnFinish = true;//默认是存在有未支付订单
             if (ParseHelper.ToBool(order.IsPay, false) || order.MealsSettleMode == MealsSettleMode.Status0.GetHashCode())  //线下
             {
                 IsExistsUnFinish = false;//如果主任务是顾客已支付，就视认为没有未支付的订单
             }
             else
-            {               
-               IsExistsUnFinish = listOrderChildInfo.Exists(t => t.PayStatus == PayStatusEnum.WaitPay.GetHashCode());//如果顾客没支付，查询子订单是否有未支付子订单
+            {
+                IsExistsUnFinish = listOrderChildInfo.Exists(t => t.PayStatus == PayStatusEnum.WaitPay.GetHashCode());//如果顾客没支付，查询子订单是否有未支付子订单
             }
             orderDM.IsExistsUnFinish = IsExistsUnFinish;
 
@@ -1423,17 +1444,16 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public ResultModel<bool> CancelOrderB(CancelOrderBPM paramodel)
         {
-           
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 order order = new order();
                 CancelOrderStatus tempresult = CheckCancelOrderB(paramodel, ref order);
                 if (tempresult != CancelOrderStatus.Success)
                 {
-                    return ResultModel<bool>.Conclude(tempresult, true); 
+                    return ResultModel<bool>.Conclude(tempresult, false);
                 }
                 int result = orderDao.CancelOrderStatus(paramodel.OrderNo, OrderConst.OrderStatus3, "商家取消订单", OrderConst.OrderStatus0, order.SettleMoney);
-                if (result > 0 & AsyncOrderStatus(paramodel.OrderNo))
+                if (result > 0)
                 {
                     BusinessDao businessDao = new BusinessDao();
                     businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
@@ -1448,19 +1468,23 @@ namespace Ets.Service.Provider.Order
                         Amount = order.SettleMoney,//流水金额  结算金额
                         Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
                         RecordType = (int)BusinessBalanceRecordRecordType.CancelOrder,
-                        Operator = string.Format("商家:{0}",paramodel.BusinessId),
+                        Operator = string.Format("商家:{0}", paramodel.BusinessId),
                         WithwardId = paramodel.OrderId,
                         RelationNo = paramodel.OrderNo,
                         Remark = "商户取消订单返回配送费"
                     });
                     tran.Complete();
-                    return ResultModel<bool>.Conclude(CancelOrderStatus.Success, true);
                 }
                 else
                 {
-                    return ResultModel<bool>.Conclude(CancelOrderStatus.CancelOrderError, true);
+                    return ResultModel<bool>.Conclude(CancelOrderStatus.CancelOrderError, false);
                 }
             }
+            //异步同步第三方订单状态
+            Task.Factory.StartNew(() =>{
+                AsyncOrderStatus(paramodel.OrderNo);
+            });
+            return ResultModel<bool>.Conclude(CancelOrderStatus.Success, true);
         }
 
         /// <summary>
@@ -1469,7 +1493,7 @@ namespace Ets.Service.Provider.Order
         /// <param name="paramodel">参数</param>
         /// <param name="order">订单实体 ref</param>
         /// <returns></returns>
-        private CancelOrderStatus CheckCancelOrderB(CancelOrderBPM paramodel,ref order order)
+        private CancelOrderStatus CheckCancelOrderB(CancelOrderBPM paramodel, ref order order)
         {
             if (paramodel.OrderId <= 0 || string.IsNullOrWhiteSpace(paramodel.OrderNo))
             {
@@ -1479,7 +1503,7 @@ namespace Ets.Service.Provider.Order
             {
                 return CancelOrderStatus.VersionError;
             }
-            order = orderDao.GetOrderById(paramodel.OrderId,paramodel.BusinessId,OrderConst.OrderStatus0);
+            order = orderDao.GetOrderById(paramodel.OrderId, paramodel.BusinessId, OrderConst.OrderStatus0);
             if (order == null)
             {
                 return CancelOrderStatus.CancelOrderError;
