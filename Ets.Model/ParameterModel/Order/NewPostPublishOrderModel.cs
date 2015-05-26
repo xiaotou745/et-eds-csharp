@@ -114,6 +114,10 @@ namespace Ets.Model.ParameterModel.Order
         /// </summary>
         public int OrderCount { get; set; }
 
+        /// <summary>
+        /// 子订单列表
+        /// </summary>
+        public List<OrderChlidPM> listOrderChlid { get; set; }
 
     }
 }

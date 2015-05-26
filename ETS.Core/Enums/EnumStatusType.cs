@@ -439,7 +439,9 @@ namespace ETS.Enums
         [DisplayText("该订单已存在")]
         OrderHadExist = 312,
         [DisplayText("商户未审核")]
-        BusinessNotAudit = 313
+        BusinessNotAudit = 313,
+        [DisplayText("验证成功")]
+        VerificationSuccess
 
 
     }

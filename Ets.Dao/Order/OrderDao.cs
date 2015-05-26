@@ -1958,6 +1958,9 @@ insert  into dbo.[order]
           BusinessCommission ,
           SettleMoney ,
           Adjustment ,
+          CommissionType,
+          CommissionFixValue,
+          BusinessGroupId,
           TimeSpan,
           MealsSettleMode,
           BusinessReceivable
@@ -1995,6 +1998,9 @@ values  ( @OrderNo ,
           @BusinessCommission ,
           @SettleMoney ,
           @Adjustment ,
+          @CommissionType,
+          @CommissionFixValue,
+          @BusinessGroupId,
           @TimeSpan,
           @MealsSettleMode,
           @BusinessReceivable
@@ -2034,6 +2040,9 @@ select @@identity";
             dbParameters.AddWithValue("@BusinessCommission", order.BusinessCommission);
             dbParameters.AddWithValue("@SettleMoney", order.SettleMoney);
             dbParameters.AddWithValue("@Adjustment", order.Adjustment);
+            dbParameters.AddWithValue("@CommissionType", order.CommissionType);
+            dbParameters.AddWithValue("@CommissionFixValue", order.CommissionFixValue);
+            dbParameters.AddWithValue("@BusinessGroupId", order.BusinessGroupId);
             dbParameters.AddWithValue("@TimeSpan", order.TimeSpan);
             dbParameters.AddWithValue("@MealsSettleMode", order.MealsSettleMode);
             dbParameters.AddWithValue("@BusinessReceivable", order.BusinessReceivable);
@@ -2051,14 +2060,14 @@ select @@identity";
     values(@orderid,getdate(),@optname,@remark,@optid,@orderStatus,@platForm)";
 
             IDbParameters orderLogParameters = DbHelper.CreateDbParameters();
-            orderLogParameters.AddWithValue("orderid",orderId);
-            orderLogParameters.AddWithValue("optname",order.BusinessName);
+            orderLogParameters.AddWithValue("orderid", orderId);
+            orderLogParameters.AddWithValue("optname", order.BusinessName);
             orderLogParameters.AddWithValue("remark", ConstValues.PublishOrder);
             orderLogParameters.AddWithValue("optid", order.businessId);
             orderLogParameters.AddWithValue("orderStatus", OrderStatus.订单待抢单.GetHashCode());
             orderLogParameters.AddWithValue("platForm", SuperPlatform.商家.GetHashCode());
 
-            DbHelper.ExecuteNonQuery(SuperMan_Write,sqlOrderLog,orderLogParameters);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, sqlOrderLog, orderLogParameters);
             #endregion
 
             #region 写子OrderOther表
