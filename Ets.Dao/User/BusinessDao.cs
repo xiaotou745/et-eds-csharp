@@ -367,7 +367,8 @@ namespace Ets.Dao.User
                                     ,b.BusinessGroupId
                                     ,bg.Name BusinessGroupName
                                     ,ISNULL(b.MealsSettleMode,0) MealsSettleMode
-                                    ,ISNULL(b.BalancePrice,0) BalancePrice";
+                                    ,ISNULL(b.BalancePrice,0) BalancePrice
+                                    ,ISNULL(b.AllowWithdrawPrice,0) AllowWithdrawPrice";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrEmpty(criteria.businessName))
             {
