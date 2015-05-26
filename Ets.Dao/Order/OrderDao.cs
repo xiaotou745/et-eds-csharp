@@ -1935,6 +1935,9 @@ insert  into dbo.[order]
           BusinessCommission ,
           SettleMoney ,
           Adjustment ,
+          CommissionType,
+          CommissionFixValue,
+          BusinessGroupId,
           TimeSpan,
           MealsSettleMode,
           BusinessReceivable
@@ -1972,6 +1975,9 @@ values  ( @OrderNo ,
           @BusinessCommission ,
           @SettleMoney ,
           @Adjustment ,
+          @CommissionType,
+          @CommissionFixValue,
+          @BusinessGroupId,
           @TimeSpan,
           @MealsSettleMode,
           @BusinessReceivable
@@ -2011,6 +2017,9 @@ select @@identity";
             dbParameters.AddWithValue("@BusinessCommission", order.BusinessCommission);
             dbParameters.AddWithValue("@SettleMoney", order.SettleMoney);
             dbParameters.AddWithValue("@Adjustment", order.Adjustment);
+            dbParameters.AddWithValue("@CommissionType", order.CommissionType);
+            dbParameters.AddWithValue("@CommissionFixValue", order.CommissionFixValue);
+            dbParameters.AddWithValue("@BusinessGroupId", order.BusinessGroupId);
             dbParameters.AddWithValue("@TimeSpan", order.TimeSpan);
             dbParameters.AddWithValue("@MealsSettleMode", order.MealsSettleMode);
             dbParameters.AddWithValue("@BusinessReceivable", order.BusinessReceivable);
