@@ -106,7 +106,7 @@ where  Id=@Id ";
         /// <summary>
         /// 查询对象
         /// </summary>
-        public IList<OrderChild> Query(OrderChildPM orderChildPM)
+        public IList<OrderChild> Query(OrderChlidPM orderChildPM)
         {
             IList<OrderChild> models = new List<OrderChild>();
             string condition = BindQueryCriteria(orderChildPM);
@@ -154,7 +154,7 @@ where  Id=@Id ";
         /// <summary>
         /// 构造查询条件
         /// </summary>
-        public static string BindQueryCriteria(OrderChildPM orderChildQueryDTO)
+        public static string BindQueryCriteria(OrderChlidPM orderChildQueryDTO)
         {
             var stringBuilder = new StringBuilder(" where 1=1 ");
             if (orderChildQueryDTO == null)
