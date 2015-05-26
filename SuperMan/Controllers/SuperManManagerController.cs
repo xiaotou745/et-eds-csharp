@@ -263,7 +263,7 @@ namespace SuperMan.Controllers
         {
             model.OptName = UserContext.Current.Name;
             var reg = iClienterFinanceProvider.ClienterRecharge(model);
-            return Json(new ResultModel(reg, reg ? "余额调整成功！" : "余额调整失败！"), JsonRequestBehavior.DenyGet);
+            return Json(new ResultModel(reg, reg ? "骑士余额调整成功！" : "骑士余额调整失败！"), JsonRequestBehavior.DenyGet);
         }
 
     }
