@@ -39,12 +39,12 @@
                         已认证骑士数量：@ParseHelper.ToSplitByPercentile(true, resultList.RzqsCount) <br />
                         待认证骑士数量：@ParseHelper.ToSplitByPercentile(true, resultList.DdrzqsCount)  <br />
                         今日活跃商家数：@ParseHelper.ToSplitByPercentile(true, resultList.ActiveBusiness)
-
-                        (@Html.Raw((resultList.BusinessCount / resultList.ActiveBusiness).ToString("f2"))%)
+                        
+                        (@Html.Raw(((resultList.ActiveBusiness * 1.0) / (resultList.BusinessCount * 1.0) * 100).ToString("f2"))%)
                       
                         <br />
                         今日活跃骑士数：@ParseHelper.ToSplitByPercentile(true, resultList.ActiveClienter)
-                        (@Html.Raw((resultList.RzqsCount / resultList.ActiveClienter).ToString("f2"))%)
+                        (@Html.Raw(((resultList.ActiveClienter * 1.0) / (resultList.RzqsCount * 1.0) * 100).ToString("f2"))%)
                         <br />
                     </td>
                     <td>
