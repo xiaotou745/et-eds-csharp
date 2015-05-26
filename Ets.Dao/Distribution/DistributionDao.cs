@@ -50,6 +50,7 @@ namespace Ets.Dao.Distribution
                                     ,C.[Province]
                                     ,C.[BussinessID]
                                     ,C.[WorkStatus] 
+                                    ,C.[AllowWithdrawPrice] 
                                     ,isnull(cs.ClienterId,0) as CSID  --如果非0就存在跨店
                                     ";
             

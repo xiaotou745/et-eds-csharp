@@ -17,6 +17,7 @@
             <th>照片</th>
             <th>申请时间</th>
             <th>帐户余额</th>
+            <th>可提现余额</th>
             <th>集团名称</th>
             <th>审核状态</th>
             <th>推荐人</th>
@@ -51,6 +52,7 @@
                     </td>
                     <td>@item.InsertTime</td>
                     <td style="color:red;font-weight:600"><a href="/SuperManManager/ClienterDetail?clienterId=@item.Id ">￥@ParseHelper.ToSplitByPercentile(false,item.AccountBalance)</a></td>
+                    <td>￥@ParseHelper.ToSplitByPercentile(false, item.AllowWithdrawPrice)</td>
                     <td>
                         @if (item.GroupId != null) //当前商户有集团信息
                         {
@@ -127,10 +129,10 @@
                         }
                         }
 
-                        @*@if (SuperMan.App_Start.UserContext.Current.HasAuthority(24))
-                        {*@
+                        @if (SuperMan.App_Start.UserContext.Current.HasAuthority(56))
+                        {
                         <a href="javascript:void(0)" onclick="funcClienterRecharge(@item.Id,'@item.TrueName', '@item.PhoneNo')">余额调整</a>
-                        @*}*@
+                        }
                         
                     </td>
                 </tr>
@@ -300,14 +302,14 @@
 
     //骑士余额调整
     function funcClienterRecharge(id, name, phone) {
-        $('#busId').val(0);
-        $('#busName').val('');
-        $('#busPhone').val('');
-        $('#busRechargeAmount').val('');
+        $('#clienterId').val(0);
+        $('#clienterName').val('');
+        $('#clienterPhone').val('');
+        $('#clienterRechargeAmount').val('');
         $('#rechargeLog').val('');
-        $('#busId').val(id);        
-        $('#busName').val(name);
-        $('#busPhone').val(phone);
+        $('#clienterId').val(id);        
+        $('#clienterName').val(name);
+        $('#clienterPhone').val(phone);
         adminjs.openwinbox('#ClienterRechargeShow');
     }
 </script>
