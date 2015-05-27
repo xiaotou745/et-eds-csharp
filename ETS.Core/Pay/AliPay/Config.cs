@@ -38,7 +38,7 @@ namespace ETS.Pay.AliPay
             partner = "2088911703660069";//2088701474861893
 
             //交易安全检验码，由数字和字母组成的32位字符串
-            key = "x308rxivwttfzs431i4ogeme1mt1n5jz";//x308rxivwttfzs431i4ogeme1mt1n5jz
+            key = "g8a7v690cbfcu73688y99d9757k63q0n";//x308rxivwttfzs431i4ogeme1mt1n5jz
 
             //↑↑↑↑↑↑↑↑↑↑请在这里配置您的基本信息↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
