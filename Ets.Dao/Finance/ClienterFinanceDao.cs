@@ -560,8 +560,8 @@ from clienter b WITH ( ROWLOCK )
 where b.Id=@ClienterId;");
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Amount", model.RechargeAmount);
-            parm.AddWithValue("@Status", BusinessBalanceRecordStatus.Success);
-            parm.AddWithValue("@RecordType", BusinessBalanceRecordRecordType.BalanceAdjustment);
+            parm.AddWithValue("@Status", ClienterBalanceRecordStatus.Success);
+            parm.AddWithValue("@RecordType", ClienterBalanceRecordRecordType.BalanceAdjustment);
             parm.AddWithValue("@Operator", model.OptName);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@ClienterId", model.ClienterId);

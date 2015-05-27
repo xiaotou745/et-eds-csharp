@@ -120,7 +120,9 @@ namespace ETS.Enums
         [DisplayText("系统奖励")]
         SystemReward = 6,
         [DisplayText("系统赔偿")]
-        SystemCompensation = 7
+        SystemCompensation = 7,
+        [DisplayText("余额调整")]
+        BalanceAdjustment = 8
     }
     
 
@@ -279,9 +281,7 @@ namespace ETS.Enums
         [DisplayText("订单菜品费")]
         OrderMeals = 8,
         [DisplayText("充值")]
-        Recharge = 9,
-        [DisplayText("余额调整")]
-        BalanceAdjustment = 10,
+        Recharge = 9
         
     }
 
