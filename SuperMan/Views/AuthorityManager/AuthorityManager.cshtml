@@ -74,6 +74,17 @@
                         <input placeholder="确认密码" name="confirmPassword" id="confirmPassword" type="password">
                     </div>
                 </div>
+
+                <div class="control-group">
+                    <label class="control-label">城市权限类型</label>
+                    <div class="controls">
+                        <select id="selAcountType">
+                            <option value="1">全部城市权限</option>
+                            <option value="2">部分城市权限</option>
+                        </select>
+                    </div>
+                </div>
+
                 @if (ViewBag.txtGroupId == null)
                 {
                     <div class="control-group">
@@ -88,7 +99,7 @@
                     <input name="AddGroupId" id="AddGroupId" type="hidden" value="@ViewBag.txtGroupId" />
                 }
 
-                <div style="width:500px">
+                <div style="width:500px;display:none" id="divCity">
                     <label class="control-label">城市管理</label>
                     <a href="javascript:funControlCityList();"><div id="cityNameList">请选择</div></a>
                     <div id="cityList" style="float: left">
@@ -131,6 +142,15 @@
 <script>
     var adminjs = new adminglass(); //实例化后台类
     $(document).ready(function () {
+        $("#selAcountType").change(function () {
+            var val = $("#selAcountType").val();
+            if (val==1) {
+                $("#divCity").hide();
+                return;
+            }
+            $("#divCity").show();
+        });
+        //
         ////查询
         //$("#btnSearch").on('click', function () {
         //    criteria = {
@@ -141,6 +161,7 @@
         //});
         //添加帐户
         $("#btnAdd").on('click', function () {
+            $("#selAcountType").val('1');
             $('#accountId').val('0');
             $('#optionType').val('0');
             $("#cityList").hide();
@@ -187,7 +208,7 @@
         var groupId = $("#AddGroupId").val();//登陆名称
         var status = $("input[name='isEnable']:checked").val();//是否启用
         var optionType = $("#optionType").val();//操作类型
-        
+        var accountType = $("#selAcountType").val();
         if (accountName == "") {
             alert("请输入用户名称!");
             return;
@@ -213,7 +234,10 @@
             return;
         }
         if (confirm("确定要提交用户信息吗？")) {
-            var paramaters = {"Id":id, "userName": accountName, "loginName": loginName, "password": password, "groupId": groupId, "status": status, "cityCodeList": cityCodeList, "optionType": optionType };
+            var paramaters = {
+                "Id": id, "userName": accountName, "loginName": loginName, "password": password, "groupId": groupId, "status": status, "cityCodeList": cityCodeList, "optionType": optionType,
+                "accountType": accountType
+            };
             var url = "/AuthorityManager/Add";
             $.ajax({
                 type: 'POST',

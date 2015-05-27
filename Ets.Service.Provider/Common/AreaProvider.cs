@@ -45,7 +45,7 @@ namespace Ets.Service.Provider.Common
             {
                 areaList = Letao.Util.JsonHelper.JsonConvertToObject<AreaModelList>(strAreaList);
             }
-         
+
             else
             {
                 IList<Model.DomainModel.Area.AreaModel> list = dao.GetOpenCitySql();
@@ -100,11 +100,11 @@ namespace Ets.Service.Provider.Common
         /// danny-20150414
         /// </summary>
         /// <returns></returns>
-        public Model.Common.ResultModel<Model.DomainModel.Area.AreaModelList> GetOpenCityOfSingleCity(int accountId=0)
+        public Model.Common.ResultModel<Model.DomainModel.Area.AreaModelList> GetOpenCityOfSingleCity(int accountId = 0)
         {
+            var areaList = new AreaModelList();
             if (accountId == 0)
             {
-                var areaList = new AreaModelList();
                 var openCityList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 2).ToList();
                 areaList.AreaModels = openCityList;
                 areaList.Version = Config.ApiVersion;
@@ -113,7 +113,6 @@ namespace Ets.Service.Provider.Common
             else
             {
                 var authorityCityList = authoritySetDao.GetAccountCityRel(accountId).Select(i => i.CityId);
-                var areaList = new AreaModelList();
                 var openCityList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 2).Where(k => authorityCityList.Contains(k.Code)).ToList();
                 areaList.AreaModels = openCityList;
                 areaList.Version = Config.ApiVersion;
@@ -126,40 +125,45 @@ namespace Ets.Service.Provider.Common
         /// </summary>
         /// <param name="accountId"></param>
         /// <returns></returns>
-        public string GetAuthorityCityNameListStr(int accountId = 0)
+        public string GetAuthorityCityNameListStr(int accountId)
         {
-            var authorityCityNameListStr = "";
-            if (accountId == 0)
+            //var authorityCityNameListStr = "";
+            //if (accountId == 0)
+            //{
+            //    var openCityNameList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 2).Select(i => i.Name).ToList();
+            //    if ( openCityNameList.Count>0)
+            //    {
+            //        foreach (var openCityName in openCityNameList)
+            //        {
+            //            authorityCityNameListStr += "'"+openCityName+"',";
+            //        }
+            //        if (!string.IsNullOrWhiteSpace(authorityCityNameListStr))
+            //        {
+            //            authorityCityNameListStr = authorityCityNameListStr.TrimEnd(',');
+            //        }
+            //    }
+            //}
+            //else
+            //{
+            if (accountId<=0)
             {
-                var openCityNameList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 2).Select(i => i.Name).ToList();
-                if ( openCityNameList.Count>0)
+                return string.Empty;
+            }
+            string authorityCityNameListStr = string.Empty;
+            var authorityCityList = authoritySetDao.GetAccountCityRel(accountId).Select(i => i.CityId);
+            var openCityNameList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 2).Where(k => authorityCityList.Contains(k.Code)).Select(i => i.Name).ToList();
+            if (openCityNameList.Count > 0)
+            {
+                foreach (var openCityName in openCityNameList)
                 {
-                    foreach (var openCityName in openCityNameList)
-                    {
-                        authorityCityNameListStr += "'"+openCityName+"',";
-                    }
-                    if (!string.IsNullOrWhiteSpace(authorityCityNameListStr))
-                    {
-                        authorityCityNameListStr = authorityCityNameListStr.TrimEnd(',');
-                    }
+                    authorityCityNameListStr += "'" + openCityName + "',";
+                }
+                if (!string.IsNullOrWhiteSpace(authorityCityNameListStr))
+                {
+                    authorityCityNameListStr = authorityCityNameListStr.TrimEnd(',');
                 }
             }
-            else
-            {
-                var authorityCityList = authoritySetDao.GetAccountCityRel(accountId).Select(i => i.CityId);
-                var openCityNameList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 2).Where(k => authorityCityList.Contains(k.Code)).Select(i => i.Name).ToList();
-                if (openCityNameList.Count > 0)
-                {
-                    foreach (var openCityName in openCityNameList)
-                    {
-                        authorityCityNameListStr += "'"+openCityName + "',";
-                    }
-                    if (!string.IsNullOrWhiteSpace(authorityCityNameListStr))
-                    {
-                        authorityCityNameListStr = authorityCityNameListStr.TrimEnd(',');
-                    }
-                }
-            }
+            //}
             return authorityCityNameListStr;
         }
         /// <summary>

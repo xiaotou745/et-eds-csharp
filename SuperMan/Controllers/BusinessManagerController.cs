@@ -39,13 +39,16 @@ namespace SuperMan.Controllers
         public ActionResult BusinessManager()
         {
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
-            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserContext.Current.Id));
+
+            int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
+
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserType));
             var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria()
             {
                 Status = -1,
                 GroupId = UserContext.Current.GroupId,
                 MealsSettleMode = -1,
-                AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(ParseHelper.ToInt(UserContext.Current.Id))
+                AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType)
             };
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
            
@@ -58,10 +61,11 @@ namespace SuperMan.Controllers
         {
             var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria();
             TryUpdateModel(criteria);
+            int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
             criteria.AuthorityCityNameListStr =
-                iAreaProvider.GetAuthorityCityNameListStr(ParseHelper.ToInt(UserContext.Current.Id));
+                iAreaProvider.GetAuthorityCityNameListStr(ParseHelper.ToInt(UserType));
             ViewBag.txtGroupId = UserContext.Current.GroupId;//集团id
-            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserContext.Current.Id));
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(UserType);
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
             return PartialView("_BusinessManageList", pagedList);
         }
