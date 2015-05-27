@@ -141,7 +141,7 @@ namespace ETS.Pay.AliPay
         /// 查询
         /// </summary>
         /// <returns></returns>
-        public dynamic GetOrder(string out_trade_no,int orderId,int childId)
+        public dynamic GetOrder(string out_trade_no, int orderId, int childId, bool unFinish)
         {
             //业务数据
             //string biz_data = GetBizData1(out_trade_no);
@@ -189,7 +189,7 @@ namespace ETS.Pay.AliPay
                     //if (facePayment != null)
                     //{
                     //facePayment.UpdateOneForIsPay(facePayment, buyer_email, trade_no);
-                    return new { status_code = 1, status_message = string.Empty, data = new { pay_status = 1 }, orderId = orderId, childId = childId, };
+                    return new { status_code = 1, status_message = string.Empty, data = new { pay_status = 1 }, orderId = orderId, childId = childId, IsExistsUnFinish = unFinish };
                     //}
                     //else
                     //{
@@ -201,11 +201,11 @@ namespace ETS.Pay.AliPay
                 }
                 else if (trade_status.ToUpper() == "WAIT_BUYER_PAY")
                 {
-                    return new { status_code = 1, status_message = string.Empty, data = new { pay_status = 2 }, orderId = orderId, childId = childId, };
+                    return new { status_code = 1, status_message = string.Empty, data = new { pay_status = 2 }, orderId = orderId, childId = childId, IsExistsUnFinish = unFinish };
                 }
                 else
                 {
-                    return new { status_code = 1, status_message = string.Empty, data = new { pay_status = 0 },orderId=orderId,childId=childId, };
+                    return new { status_code = 1, status_message = string.Empty, data = new { pay_status = 0 }, orderId = orderId, childId = childId, };
                 }
 
             }

@@ -339,6 +339,29 @@ where  OrderId=@OrderId ";
             return list;
         }
 
+        /// <summary>
+        /// 通过订单ID获取是否有子订单未支付
+        /// 窦海超
+        /// 2015年5月27日 18:04:53
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public bool CheckOrderChildPayStatus(int orderId)
+        {
+            string sql = @"
+select  count(1)
+from    dbo.[order] o ( nolock )
+        join dbo.OrderChild oc ( nolock ) on o.Id = oc.OrderId
+where   o.Id = @orderId
+        and (o.IsPay = 1
+        or o.MealsSettleMode = 0
+        or oc.ThirdPayStatus = 0
+        or oc.ThirdPayStatus = 2)
+";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("orderId", DbType.Int32, 4).Value = orderId;
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm), 1) > 0 ? true : false;
+        }
     }
 
 }
