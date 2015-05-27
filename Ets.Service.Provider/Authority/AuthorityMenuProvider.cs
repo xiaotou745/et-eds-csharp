@@ -545,7 +545,7 @@ namespace Ets.Service.Provider.Authority
                 Id = criteria.Id,
                 UserName = criteria.UserName,
                 LoginName = criteria.LoginName,
-                Password = MD5Helper.MD5(criteria.Password),
+                Password =string.IsNullOrWhiteSpace(criteria.Password)?"":MD5Helper.MD5(criteria.Password),
                 GroupId = criteria.GroupId,
                 Status = criteria.Status
             };
