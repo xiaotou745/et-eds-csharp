@@ -65,6 +65,7 @@
                     <label class="control-label">密  码</label>
                     <div class="controls">
                         <input placeholder="密码" name="password" id="password" type="password">
+                        <label id="modifyRemind" style="font-size: 10px;color: red">不填写，密码保持不变!</label>
                     </div>
                 </div>
                 <div class="control-group">
@@ -145,6 +146,7 @@
             $("#cityList").hide();
             $("#accountName").removeAttr("disabled");
             $("#loginName").removeAttr("disabled");
+            $("#modifyRemind").hide();
             $('#accountName').val('');
             $('#loginName').val('');
             $('#password').val('');
