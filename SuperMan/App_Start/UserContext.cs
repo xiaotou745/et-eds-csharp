@@ -20,7 +20,7 @@ namespace SuperMan.App_Start
                 {
                     return UserContext.Empty;
                 }
-                var userInfo = Letao.Util.JsonHelper.ToObject<SimpleUserInfoModel>(cookie);
+                var userInfo = JsonHelper.ToObject<SimpleUserInfoModel>(cookie);
                 return new UserContext
                 {
                     Id = userInfo.Id,
@@ -60,7 +60,7 @@ namespace SuperMan.App_Start
             }
             else
             {
-                var list = Letao.Util.JsonHelper.ToObject<List<int>>(cookieValue);
+                var list =JsonHelper.ToObject<List<int>>(cookieValue);
                 return list.Contains(menuid);
             } 
         }

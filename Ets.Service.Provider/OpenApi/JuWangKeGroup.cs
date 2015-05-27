@@ -1,4 +1,5 @@
-﻿using Ets.Service.IProvider.OpenApi;
+﻿using Ets.Model.ParameterModel.Order;
+using Ets.Service.IProvider.OpenApi;
 using ETS.Const;
 using ETS.Enums;
 using ETS.Util;
@@ -82,7 +83,7 @@ namespace Ets.Service.Provider.OpenApi
         }
 
 
-        public Model.ParameterModel.Order.CreatePM_OpenApi SetCommissonInfo(Model.ParameterModel.Order.CreatePM_OpenApi paramodel)
+        public CreatePM_OpenApi SetCommissonInfo(CreatePM_OpenApi paramodel)
         {
             return paramodel;
         }

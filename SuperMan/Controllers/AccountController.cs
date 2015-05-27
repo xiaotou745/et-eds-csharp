@@ -89,7 +89,7 @@ namespace SuperMan.Controllers
                         RoleId = account.RoleId,
                         Password = model.Password
                     };
-                    string json = Letao.Util.JsonHelper.ToJson(userInfo); 
+                    string json = JsonHelper.ToJson(userInfo); 
                     _authenticationService.SignIn(json);
                     //获取用户权限菜单id数组，存入cookie中
                     List<int> myMenusR = authorityProvider.GetMenuIdsByRoloId(account.RoleId);
@@ -101,7 +101,7 @@ namespace SuperMan.Controllers
                             myMenus.Add(i);
                         }
                     }
-                    string menujson = Letao.Util.JsonHelper.ToJson(myMenus);
+                    string menujson = JsonHelper.ToJson(myMenus);
                     CookieHelper.WriteCookie("menulist", menujson, DateTime.Now.AddDays(10));
                     return Json(new ResultModel(true, "成功"));
                 case ETS.Enums.UserLoginResults.UserNotExist:

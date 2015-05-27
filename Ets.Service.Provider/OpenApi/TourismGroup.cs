@@ -88,8 +88,8 @@ namespace Ets.Service.Provider.OpenApi
         /// <returns></returns>
         public CreatePM_OpenApi SetCommissonInfo(CreatePM_OpenApi paramodel)
         {
-            paramodel.store_info.delivery_fee = 10;
-            paramodel.store_info.businesscommission = 0;
+            //paramodel.store_info.delivery_fee = 10;
+            //paramodel.store_info.businesscommission = 0;
             return paramodel;
         }
     }
