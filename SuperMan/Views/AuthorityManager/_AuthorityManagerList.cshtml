@@ -11,6 +11,7 @@
             <th>用户名</th>
             <th>登录名</th>
             <th>所属集团</th>
+            <th>状态</th>
             <th>操作</th>
         </tr>
     </thead>
@@ -24,17 +25,24 @@
                     <td>@i</td>
                     <td>@item.UserName</td>
                     <td>@item.LoginName</td>
-                    <td>
-                       @item.GroupName
-                    </td>
+                    <td>@item.GroupName</td>
+                    <td>@(item.Status == 0 ? "×" : "√")</td>
                     <td> 
                       @if (UserContext.Current.HasAuthority(27))
                       {
-                              <a href="javascript:void(0)" businessid="@item.Id" class="modifyPwd">修改密码</a>
+                        <a href="javascript:void(0)" onclick="funcUpdateAccountInfo(@item.Id,'@item.UserName','@item.LoginName','@item.Status')">修改</a>
                       } 
                        @if (UserContext.Current.HasAuthority(28))    
                         {
-                         <a href="javascript:void(0)" businessid="@item.Id" class="accountDel">删除</a>
+                            if (item.Status == 1)
+                            {
+                                <a href="javascript:void(0)" businessid="@item.Id" class="accountDel">禁用</a>
+                            }
+                            else
+                            {
+                                <a href="javascript:void(0)" style="color:gray">禁用</a>
+                            }
+                            
                        }
                     </td>
                 </tr>
@@ -57,8 +65,60 @@
     var DEFAULT_PAGESIZE = 15;
     var criteria = { PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE } };
     var currentId;
-    $(document).ready(function () {        
-        
+    $(document).ready(function () {         
     });
-
+    //修改用户信息
+    function funcUpdateAccountInfo(accountId, accountName, loginName, accountStatus) {
+        $('#accountName').val('');
+        $('#loginName').val('');
+        $('#password').val('');
+        $('#confirmPassword').val('');
+        $('#optionType').val('1');
+        $("#cityList").hide();
+        $('#accountId').val(accountId);
+        $("#isEnableY").attr("checked", "checked");
+        $(":checkbox[name='checkMenus']").prop("checked", false);
+        $("#accountName").attr("disabled", "true");
+        $("#loginName").attr("disabled", "true");
+        $('#accountName').val(accountName);
+        $('#loginName').val(loginName);
+        $('#statusFin').text("修改--" + accountName);
+        if (accountStatus == 1) {
+            $("#isEnableY").attr("checked", "checked");
+        }
+        else {
+            $("#isEnableN").attr("checked", "checked");
+        }
+        funcCheckCity(accountId);
+        adminjs.openwinbox('#AddAccountShow');
+    }
+    function funcCheckCity(accountId) {
+        var accountCityRef;
+        var paramaters = { "accountId": accountId };
+        var strCityNameList = "";
+        var url = "/AuthorityManager/GetAccountCityRel";
+        $.ajax({
+            type: 'POST',
+            async: false,
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                accountCityRef = result;
+            }
+        });
+        if (accountCityRef.length > 0) {
+            for (var i = 0; i < accountCityRef.length; i++) {
+                $(":checkbox[id='" + accountCityRef[i].CityId + "']").prop("checked", true);
+                strCityNameList = strCityNameList + accountCityRef[i].CityName + ",";
+            }
+        }
+        if (strCityNameList.length > 0) {
+            strCityNameList = strCityNameList.substring(0, strCityNameList.length - 1);
+        } else {
+            strCityNameList = "无开通城市";
+        }
+           
+        $('#cityNameList').text(strCityNameList);
+        
+    };
 </script>

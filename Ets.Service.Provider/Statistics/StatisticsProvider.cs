@@ -21,6 +21,7 @@ namespace Ets.Service.Provider.Statistics
         /// </summary>
         public void ExecStatistics()
         {
+            /*
             IList<HomeCountTitleModel> list = statisticsDao.GetStatistics();
             IList<HomeCountTitleModel> subsidyOrderCountList = statisticsDao.GetSubsidyOrderCountStatistics();
             foreach (var item in list)
@@ -56,6 +57,28 @@ namespace Ets.Service.Provider.Statistics
                 {
                     ETS.Util.LogHelper.LogWriter("出错了：" + ex.Message);
                 }
+            }*/
+            TimeSpan timeSpanNow = new TimeSpan(DateTime.Now.Day, 0, 0, 0);
+            TimeSpan timeBack = new TimeSpan(statisticsDao.MaxDate().Day, 0, 0, 0);
+            TimeSpan cha = timeSpanNow - timeBack;
+            int Day = cha.Days - 1;
+
+            //if (statisticsDao.CheckDateStatistics(item.PubDate))
+            //{
+            //    continue;
+            //}
+            IList<HomeCountTitleModel> list = statisticsDao.GetDayStatistics(Day);
+            if (list == null)
+            {
+                return;
+            }
+            foreach (HomeCountTitleModel model in list)
+            {
+                model.YkPrice = model.YsPrice - model.YfPrice;
+                model.BusinessAverageOrderCount = ParseHelper.ToDivision(model.OrderCount, model.ActiveBusiness);//商户平均发布订单
+                model.MissionAverageOrderCount = ParseHelper.ToDivision(model.OrderCount, model.MisstionCount);//任务平均订单量
+                model.ClienterAverageOrderCount = ParseHelper.ToDivision(model.OrderCount, model.ActiveClienter);//骑士平均完成订单量
+                statisticsDao.InsertDataStatistics(model);
             }
         }
 

@@ -532,6 +532,16 @@ namespace Ets.Service.Provider.Finance
             }
             strBuilder.AppendLine("</table>");
             return strBuilder.ToString();
-        } 
+        }
+
+        /// <summary>
+        /// 骑士余额调整
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ClienterRecharge(ClienterOptionLog model)
+        {
+            return clienterFinanceDao.ClienterRecharge(model);
+        }
     }
 }

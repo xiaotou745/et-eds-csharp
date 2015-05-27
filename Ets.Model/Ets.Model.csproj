@@ -59,9 +59,11 @@
     <Compile Include="Common\OrderCountManageList.cs" />
     <Compile Include="Common\PagedList.cs" />
     <Compile Include="Common\TestUserModel.cs" />
+    <Compile Include="DataModel\Authority\AccountCityRelation.cs" />
     <Compile Include="DataModel\Bussiness\BusinessGroupLogModel.cs" />
     <Compile Include="DataModel\Bussiness\BusinessGroupModel.cs" />
     <Compile Include="DataModel\Bussiness\BusinessOptionLog.cs" />
+    <Compile Include="DataModel\Clienter\ClienterOptionLog.cs" />
     <Compile Include="DataModel\Clienter\ClienterCrossShopLogModel.cs" />
     <Compile Include="DataModel\Clienter\ClienterLocation.cs" />
     <Compile Include="DataModel\Clienter\CrossShopStatisticLogModel.cs" />
@@ -85,6 +87,7 @@
     <Compile Include="DataModel\Order\OrderOther.cs" />
     <Compile Include="DataModel\Order\OrderSubsidiesLog.cs" />
     <Compile Include="DomainModel\Area\DMAreaCodeInfo.cs" />
+    <Compile Include="DomainModel\Authority\AccountCityRelationModel.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessDetailModel.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessDM.cs" />
     <Compile Include="DomainModel\Clienter\ClienterDetailModel.cs" />
@@ -172,6 +175,7 @@
     <Compile Include="DomainModel\Subsidy\SubsidyManage.cs" />
     <Compile Include="DomainModel\Subsidy\SubsidyResultModel.cs" />
     <Compile Include="DomainModel\WithdrawRecordsModel.cs" />
+    <Compile Include="ParameterModel\Authority\AccountCriteria.cs" />
     <Compile Include="ParameterModel\Authority\AuthoritySearchCriteria.cs" />
     <Compile Include="ParameterModel\Authority\LoginModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BusiAddAddressInfoModel.cs" />
@@ -189,7 +193,6 @@
     <Compile Include="ParameterModel\Bussiness\OrderCancelModel.cs" />
     <Compile Include="ParameterModel\Bussiness\OrderCancelResultModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BussinessPM.cs" />
-    <Compile Include="ParameterModel\Bussiness\OrderChlidPM.cs" />
     <Compile Include="ParameterModel\Bussiness\RegisterInfoModel.cs" />
     <Compile Include="ParameterModel\Clienter\ClienterRecordsPM.cs" />
     <Compile Include="ParameterModel\Clienter\ClienterPM.cs" />

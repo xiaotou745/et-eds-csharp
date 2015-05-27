@@ -6,11 +6,11 @@ using Ets.Service.Provider.Common;
 using Ets.Service.Provider.Distribution;
 using Ets.Service.Provider.Subsidy;
 using Ets.Service.Provider.WtihdrawRecords;
+using ETS.Util;
 using SuperMan.App_Start;
 using SuperManBusinessLogic.C_Logic;
 using SuperManCommonModel;
 using SuperManCommonModel.Entities;
-using SuperManCore;
 using SuperManCore.Common;
 using SuperManCore.Paging;
 using System;
@@ -22,16 +22,17 @@ using Ets.Service.Provider.Finance;
 using Ets.Service.IProvider.Finance;
 using Ets.Model.ParameterModel.Finance;
 using System.Text;
+using MD5Helper = SuperManCore.MD5Helper;
 
 namespace SuperMan.Controllers
 {
     [WebHandleError]
     public class SuperManManagerController : BaseController
     {
-        Ets.Service.IProvider.Distribution.IDistributionProvider iDistributionProvider = new DistributionProvider();
-        ClienterProvider cliterProvider = new ClienterProvider();
-        IClienterFinanceProvider iClienterFinanceProvider = new ClienterFinanceProvider();
-        IAreaProvider iAreaProvider = new AreaProvider();
+        readonly Ets.Service.IProvider.Distribution.IDistributionProvider iDistributionProvider = new DistributionProvider();
+        readonly ClienterProvider cliterProvider = new ClienterProvider();
+        readonly IClienterFinanceProvider iClienterFinanceProvider = new ClienterFinanceProvider();
+        readonly IAreaProvider iAreaProvider = new AreaProvider();
         // GET: BusinessManager
         public ActionResult SuperManManager()
         {
@@ -42,8 +43,15 @@ namespace SuperMan.Controllers
             //    return null;
             //}
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId; ;//集团id
-            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
-            var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria() {  Status = -1, GroupId = SuperMan.App_Start.UserContext.Current.GroupId };
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserContext.Current.Id));
+            var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria()
+            {
+                Status = -1,
+                GroupId = SuperMan.App_Start.UserContext.Current.GroupId,
+                AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(ParseHelper.ToInt(UserContext.Current.Id))
+                    
+            };
+            //ViewBag.openCityList.Result.AreaModels;
             var pagedList = iDistributionProvider.GetClienteres(criteria);
             return View(pagedList);
         }
@@ -52,9 +60,11 @@ namespace SuperMan.Controllers
         [HttpPost]
         public ActionResult PostSuperManManager(int pageindex=1)
         {
-            Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria();
+            var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria();
             TryUpdateModel(criteria);
-            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(); 
+            criteria.AuthorityCityNameListStr =
+                iAreaProvider.GetAuthorityCityNameListStr(ParseHelper.ToInt(UserContext.Current.Id));
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserContext.Current.Id)); 
             var pagedList = iDistributionProvider.GetClienteres(criteria);
             return PartialView("_SuperManManagerList", pagedList);
         }
@@ -240,6 +250,20 @@ namespace SuperMan.Controllers
                 ViewBag.clienterBalanceRecord = iClienterFinanceProvider.GetClienterBalanceRecordList(criteriaNew);
                 return View("ClienterDetail", clienterWithdrawFormModel);
             }
+        }
+
+
+        /// <summary>
+        /// 骑士余额调整        
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult BusinessRecharge(ClienterOptionLog model)
+        {
+            model.OptName = UserContext.Current.Name;
+            var reg = iClienterFinanceProvider.ClienterRecharge(model);
+            return Json(new ResultModel(reg, reg ? "骑士余额调整成功！" : "骑士余额调整失败！"), JsonRequestBehavior.DenyGet);
         }
 
     }

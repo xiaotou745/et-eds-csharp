@@ -4,18 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ets.Model.DataModel.Bussiness
+namespace Ets.Model.DataModel.Clienter
 {
-    public class BusinessOptionLog
+    public class ClienterOptionLog
     {
         /// <summary>
         /// 主键
         /// </summary>
         public int Id { get; set; }
         /// <summary>
-        /// 商户Id
+        /// 骑士Id
         /// </summary>
-        public int BusinessId { get; set; }
+        public int ClienterId { get; set; }
         /// <summary>
         /// 操作人Id
         /// </summary>
@@ -37,7 +37,7 @@ namespace Ets.Model.DataModel.Bussiness
         /// </summary>
         public string Remark { get; set; }
         /// <summary>
-        /// 充值金额
+        /// 调整金额
         /// </summary>
         public decimal RechargeAmount { get; set; }
         

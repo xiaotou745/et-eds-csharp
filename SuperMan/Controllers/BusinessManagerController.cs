@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using Ets.Service.IProvider.User;
 using Ets.Service.Provider.User;
+using ETS.Util;
 using SuperManBusinessLogic.B_Logic;
 using SuperManCommonModel.Entities;
 using SuperManCore.Common;
@@ -30,16 +31,22 @@ namespace SuperMan.Controllers
         /// <summary>
         /// 商户业务类
         /// </summary>
-        Ets.Service.IProvider.User.IBusinessProvider iBusinessProvider = new BusinessProvider();
-        IAreaProvider iAreaProvider = new AreaProvider();
-        IBusinessFinanceProvider iBusinessFinanceProvider = new BusinessFinanceProvider();
+        readonly IBusinessProvider iBusinessProvider = new BusinessProvider();
+        readonly IAreaProvider iAreaProvider = new AreaProvider();
+        readonly IBusinessFinanceProvider iBusinessFinanceProvider = new BusinessFinanceProvider();
         // GET: BusinessManager
         [HttpGet]
         public ActionResult BusinessManager()
         {
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
-            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
-            var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria() { Status = -1, GroupId = SuperMan.App_Start.UserContext.Current.GroupId, MealsSettleMode=-1 };
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserContext.Current.Id));
+            var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria()
+            {
+                Status = -1,
+                GroupId = UserContext.Current.GroupId,
+                MealsSettleMode = -1,
+                AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(ParseHelper.ToInt(UserContext.Current.Id))
+            };
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
            
             return View(pagedList);
@@ -49,10 +56,12 @@ namespace SuperMan.Controllers
         [HttpPost]
         public ActionResult PostBusinessManager(int pageindex = 1)
         {
-            Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria();
+            var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria();
             TryUpdateModel(criteria);
-            ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
-            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity();
+            criteria.AuthorityCityNameListStr =
+                iAreaProvider.GetAuthorityCityNameListStr(ParseHelper.ToInt(UserContext.Current.Id));
+            ViewBag.txtGroupId = UserContext.Current.GroupId;//集团id
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserContext.Current.Id));
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
             return PartialView("_BusinessManageList", pagedList);
         }
@@ -234,6 +243,19 @@ namespace SuperMan.Controllers
             };
             ViewBag.businessBalanceRecord = iBusinessFinanceProvider.GetBusinessBalanceRecordList(criteriaNew);
             return View("BusinessDetail", businessWithdrawFormModel);
+        }
+        /// <summary>
+        /// 商户充值
+        /// danny-20150526
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult BusinessRecharge(BusinessOptionLog model)
+        {
+            model.OptName = UserContext.Current.Name;
+            var reg = iBusinessFinanceProvider.BusinessRecharge(model);
+            return Json(new ResultModel(reg, reg?"充值成功！":"充值失败！"), JsonRequestBehavior.DenyGet);
         }
 
     }

@@ -33,5 +33,9 @@ namespace Ets.Model.Common
             get { return pagesize; }
             set { pagesize = value; }
         }
+        /// <summary>
+        /// 用户所有权限城市名称集合串
+        /// </summary>
+        public string AuthorityCityNameListStr { get; set; }
     }
 }

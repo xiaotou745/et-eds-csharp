@@ -1,5 +1,9 @@
-﻿using Ets.Service.IProvider.AuthorityMenu;
+﻿using Ets.Model.DataModel.Authority;
+using Ets.Model.ParameterModel.Authority;
+using Ets.Service.IProvider.AuthorityMenu;
+using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Authority;
+using Ets.Service.Provider.Common;
 using SuperMan.App_Start;
 using SuperManBusinessLogic.Authority_Logic;
 using SuperManCommonModel;
@@ -21,6 +25,7 @@ namespace SuperMan.Controllers
     public class AuthorityManagerController : BaseController
     {
         IAuthorityMenuProvider iAuthorityMenuProvider = new AuthorityMenuProvider();
+        IAreaProvider iAreaProvider = new AreaProvider();
         // GET: AuthorityManager
        /// <summary>
        /// 后台用户管理列表页面
@@ -36,6 +41,7 @@ namespace SuperMan.Controllers
            //}
 
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(0);
             var criteria = new Ets.Model.ParameterModel.Authority.AuthoritySearchCriteria() { GroupId = SuperMan.App_Start.UserContext.Current.GroupId };
             var authorityModel = iAuthorityMenuProvider.GetAuthorityManage(criteria);
             return View(authorityModel);
@@ -50,6 +56,7 @@ namespace SuperMan.Controllers
         {
             Ets.Model.ParameterModel.Authority.AuthoritySearchCriteria criteria = new Ets.Model.ParameterModel.Authority.AuthoritySearchCriteria();
             TryUpdateModel(criteria);
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(0);
             var authorityModel = iAuthorityMenuProvider.GetAuthorityManage(criteria);
             return PartialView("_AuthorityManagerList", authorityModel);
         }
@@ -63,38 +70,51 @@ namespace SuperMan.Controllers
             var account = new Ets.Model.DataModel.Authority.account  {LoginName = loginName, UserName = accountName};
             return Json(iAuthorityMenuProvider.CheckHasAccountName(account) ? new Ets.Model.Common.ResultModel(true, "用户名已存在") : new Ets.Model.Common.ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
         }
+        #region 旧方法已停用
+        ///// <summary>
+        ///// 添加用户 
+        ///// </summary>
+        ///// <returns></returns>
+        //[HttpPost]
+        //public JsonResult Add(string accountName, string loginName, string password, int? groupId)
+        //{
+        //    if (string.IsNullOrEmpty(accountName.Trim()))
+        //    {
+        //        return Json(new Ets.Model.Common.ResultModel(true, "用户名不能为空"), JsonRequestBehavior.AllowGet);
+        //    }
+        //    if (string.IsNullOrEmpty(loginName.Trim()))
+        //    {
+        //        return Json(new Ets.Model.Common.ResultModel(true, "登录名不能为空"), JsonRequestBehavior.AllowGet);
+        //    }
+        //    if (string.IsNullOrEmpty(password.Trim()))
+        //    {
+        //        return Json(new Ets.Model.Common.ResultModel(true, "密码不能为空"), JsonRequestBehavior.AllowGet);
+        //    }
+
+        //    var account = new Ets.Model.DataModel.Authority.account();
+        //    account.LoginName = loginName;
+        //    account.UserName = accountName;
+        //    account.GroupId = groupId;//集团id  
+        //    account.Password = MD5Helper.MD5(password);
+        //    account.Status = Ets.Model.Common.ConstValues.AccountAvailable;
+        //    if (iAuthorityMenuProvider.CheckHasAccountName(account))
+        //    {
+        //        return Json(new Ets.Model.Common.ResultModel(true, "用户名已存在"), JsonRequestBehavior.AllowGet);
+        //    }
+        //    iAuthorityMenuProvider.AddAccount(account);
+        //    return Json(new Ets.Model.Common.ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
+        //}
+        #endregion
         /// <summary>
         /// 添加用户 
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult Add(string accountName, string loginName, string password, int? groupId)
+        public JsonResult Add(AccountCriteria criteria)
         {
-            if (string.IsNullOrEmpty(accountName.Trim()))
-            {
-                return Json(new Ets.Model.Common.ResultModel(true, "用户名不能为空"), JsonRequestBehavior.AllowGet);
-            }
-            if (string.IsNullOrEmpty(loginName.Trim()))
-            {
-                return Json(new Ets.Model.Common.ResultModel(true, "登录名不能为空"), JsonRequestBehavior.AllowGet);
-            }
-            if (string.IsNullOrEmpty(password.Trim()))
-            {
-                return Json(new Ets.Model.Common.ResultModel(true, "密码不能为空"), JsonRequestBehavior.AllowGet);
-            }
-
-            var account = new Ets.Model.DataModel.Authority.account();
-            account.LoginName = loginName;
-            account.UserName = accountName;
-            account.GroupId = groupId;//集团id  
-            account.Password = MD5Helper.MD5(password);
-            account.Status = Ets.Model.Common.ConstValues.AccountAvailable;
-            if (iAuthorityMenuProvider.CheckHasAccountName(account))
-            {
-                return Json(new Ets.Model.Common.ResultModel(true, "用户名已存在"), JsonRequestBehavior.AllowGet);
-            }
-            iAuthorityMenuProvider.AddAccount(account);
-            return Json(new Ets.Model.Common.ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
+            criteria.OptUserName = UserContext.Current.Name;
+            var reg=iAuthorityMenuProvider.AddAccount(criteria);
+            return Json(new Ets.Model.Common.ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
         public JsonResult saveAuthority(AuthorityListModel model)
@@ -159,7 +179,17 @@ namespace SuperMan.Controllers
 
             return PartialView("_AuthorityManagerShow");
         }
-
+        /// <summary>
+        /// 获取用户和城市的对应关系 
+        /// </summary>
+        /// <param name="accountid">用户Id</param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult GetAccountCityRel(int accountid)
+        {
+            var accountCityRelList = iAuthorityMenuProvider.GetAccountCityRel(accountid);
+            return Json(accountCityRelList, JsonRequestBehavior.DenyGet);
+        }
          
     }
 }

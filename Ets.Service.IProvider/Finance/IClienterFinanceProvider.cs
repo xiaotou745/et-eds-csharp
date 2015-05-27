@@ -4,7 +4,7 @@ using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 using ETS.Data.PageData;
-
+using Ets.Model.DataModel.Clienter;
 namespace Ets.Service.IProvider.Finance
 {
     /// <summary>
@@ -126,6 +126,13 @@ namespace Ets.Service.IProvider.Finance
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
-        string CreateClienterBalanceRecordExcel(List<ClienterBalanceRecordModel> list); 
+        string CreateClienterBalanceRecordExcel(List<ClienterBalanceRecordModel> list);
+
+        /// <summary>
+        /// 骑士余额调整
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        bool ClienterRecharge(ClienterOptionLog model);
     }
 }
