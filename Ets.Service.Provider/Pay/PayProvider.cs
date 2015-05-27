@@ -112,7 +112,7 @@ namespace Ets.Service.Provider.Pay
                 //支付宝
                 if (model.payType == PayTypeEnum.ZhiFuBao.GetHashCode())
                 {
-                    return alipayIntegrate.GetOrder(orderNo);
+                    return alipayIntegrate.GetOrder(orderNo, model.orderId, model.childId);
                 }
                 //微信
                 if (model.payType == PayTypeEnum.WeiXin.GetHashCode())
