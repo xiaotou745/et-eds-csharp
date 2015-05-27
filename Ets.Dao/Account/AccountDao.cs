@@ -96,7 +96,7 @@ namespace Ets.Dao.Account
         public IList<AuthorityMenuModel> GetAuth(int AccountId)
         {
             string sql = @"
-SELECT AccoutId,MenuId,ParId FROM dbo.AuthorityAccountMenuSet  aam (nolock)
+SELECT AccoutId,MenuId,ParId,MenuName,Url FROM dbo.AuthorityAccountMenuSet  aam (nolock)
 JOIN AuthorityMenuClass amc(nolock) ON aam.MenuId = amc.Id
 WHERE aam.AccoutId=@AccountId";
             IDbParameters parm = DbHelper.CreateDbParameters();
