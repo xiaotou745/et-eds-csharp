@@ -278,6 +278,11 @@ VALUES
             parm.AddWithValue("@ThreeSubsidyOrderCount", model.ThreeSubsidyOrderCount);
             parm.AddWithValue("@ActiveBusiness", model.ActiveBusiness);
             parm.AddWithValue("@ActiveClienter", model.ActiveClienter);
+            //parm.AddWithValue("@incomeTotal", model.incomeTotal);
+            //parm.AddWithValue("@rechargeTotal", model.rechargeTotal);
+            //parm.AddWithValue("@businessBalance", model.businessBalance);
+            //parm.AddWithValue("@withdrawBusinessPrice", model.withdrawBusinessPrice);
+
             parm.Add("incomeTotal", DbType.Decimal, 18).Value = model.incomeTotal;
             parm.Add("rechargeTotal", DbType.Decimal, 18).Value = model.rechargeTotal;
             parm.Add("businessBalance", DbType.Decimal, 18).Value = model.businessBalance;
