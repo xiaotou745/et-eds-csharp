@@ -141,7 +141,7 @@ namespace ETS.Pay.AliPay
         /// 查询
         /// </summary>
         /// <returns></returns>
-        public dynamic GetOrder(string out_trade_no, int orderId, int childId, bool unFinish)
+        public dynamic GetOrder(string out_trade_no, int orderId, int childId, int unFinish)
         {
             //业务数据
             //string biz_data = GetBizData1(out_trade_no);

@@ -346,7 +346,7 @@ where  OrderId=@OrderId ";
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns></returns>
-        public bool CheckOrderChildPayStatus(int orderId)
+        public int CheckOrderChildPayStatus(int orderId)
         {
             string sql = @"
 select  count(1)
@@ -360,7 +360,7 @@ where   o.Id = @orderId
 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("orderId", DbType.Int32, 4).Value = orderId;
-            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm), 1) > 0 ? true : false;
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm), 0);
         }
     }
 
