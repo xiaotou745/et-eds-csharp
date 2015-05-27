@@ -35,7 +35,7 @@ namespace SuperMan.Controllers
         public ActionResult BusinessCommission()
         {
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;
-            ViewBag.openCityList = new AreaProvider().GetOpenCityOfSingleCity();
+            ViewBag.openCityList = new AreaProvider().GetOpenCityOfSingleCity(0);
             DateTime t1 = new DateTime(2014, 1, 1, 0, 0, 0);
             DateTime t2 =new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 59);
             var result = iBusinessProvider.GetBusinessCommission(t1, t2, "", "", SuperMan.App_Start.UserContext.Current.GroupId, "");
@@ -49,7 +49,7 @@ namespace SuperMan.Controllers
         [HttpPost]
         public ActionResult BusinessCommissions(BusinessCommissionSearchCriteria criteria)
         {
-            ViewBag.openCityList = new AreaProvider().GetOpenCityOfSingleCity();
+            ViewBag.openCityList = new AreaProvider().GetOpenCityOfSingleCity(0);
             DateTime date1 = DateTime.Now;
             DateTime date2 = DateTime.Now;  
             date1 = string.IsNullOrEmpty(criteria.txtDateStart) ? new DateTime(2014, 1, 1,0,0,0) : DateTime.Parse(criteria.txtDateStart);
@@ -77,7 +77,7 @@ namespace SuperMan.Controllers
         [HttpGet]
         public ActionResult CreateCommissionsExcel(BusinessCommissionSearchCriteria criteria)
         {
-            ViewBag.openCityList = new AreaProvider().GetOpenCityOfSingleCity();
+            ViewBag.openCityList = new AreaProvider().GetOpenCityOfSingleCity(0);
             DateTime date1 = DateTime.Now;
             DateTime date2 = DateTime.Now;
             date1 = string.IsNullOrEmpty(criteria.txtDateStart) ? new DateTime(2014, 1, 1, 0, 0, 0) : DateTime.Parse(criteria.txtDateStart);

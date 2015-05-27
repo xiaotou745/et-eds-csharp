@@ -37,5 +37,7 @@ namespace Ets.Model.DataModel.Clienter
         /// </summary>
         public int CSID { get; set; }
 
+        public decimal AllowWithdrawPrice { get; set; }
+
     }
 }

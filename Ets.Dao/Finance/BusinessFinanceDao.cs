@@ -1,4 +1,5 @@
 ﻿using ETS.Enums;
+using Ets.Model.DataModel.Bussiness;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;
@@ -541,6 +542,47 @@ WHERE bbr.BusinessId=@BusinessId ";
             OrderDao orderDao = new OrderDao();
              
             return 0m;
+        }
+        /// <summary>
+        /// 商户充值增加商家余额可提现和插入商家余额流水
+        /// danny-20150526
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool BusinessRecharge(BusinessOptionLog model)
+        {
+            string sql = string.Format(@" 
+update b
+set    b.BalancePrice=ISNULL(b.BalancePrice, 0)+@Amount,
+       b.AllowWithdrawPrice=ISNULL(b.AllowWithdrawPrice,0)+@Amount
+OUTPUT
+  Inserted.Id,
+  @Amount,
+  @Status,
+  Inserted.BalancePrice,
+  @RecordType,
+  @Operator,
+  getdate(),
+  @Remark
+INTO BusinessBalanceRecord
+  ( [BusinessId]
+   ,[Amount]
+   ,[Status]
+   ,[Balance]
+   ,[RecordType]
+   ,[Operator]
+   ,[OperateTime]
+   ,[Remark])
+from business b WITH ( ROWLOCK )
+where b.Id=@BusinessId;");
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Amount", model.RechargeAmount);
+            parm.AddWithValue("@Status", BusinessBalanceRecordStatus.Success);
+            parm.AddWithValue("@RecordType", BusinessBalanceRecordRecordType.Recharge);
+            parm.AddWithValue("@Operator", model.OptName);
+            parm.AddWithValue("@Remark", model.Remark);
+            parm.AddWithValue("@BusinessId", model.BusinessId);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
 		
     }

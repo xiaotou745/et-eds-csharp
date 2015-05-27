@@ -539,5 +539,16 @@ namespace Ets.Service.Provider.Finance
         {
             return businessFinanceDao.GetBusiBalance(orderNo);
         }
+
+        /// <summary>
+        /// 商户充值增加商家余额可提现和插入商家余额流水
+        /// danny-20150526
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool BusinessRecharge(BusinessOptionLog model)
+        {
+            return businessFinanceDao.BusinessRecharge(model);
+        }
     }
 }

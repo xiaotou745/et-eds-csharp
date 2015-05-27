@@ -367,7 +367,8 @@ namespace Ets.Dao.User
                                     ,b.BusinessGroupId
                                     ,bg.Name BusinessGroupName
                                     ,ISNULL(b.MealsSettleMode,0) MealsSettleMode
-                                    ,ISNULL(b.BalancePrice,0) BalancePrice";
+                                    ,ISNULL(b.BalancePrice,0) BalancePrice
+                                    ,ISNULL(b.AllowWithdrawPrice,0) AllowWithdrawPrice";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrEmpty(criteria.businessName))
             {
@@ -404,6 +405,10 @@ namespace Ets.Dao.User
             if (!string.IsNullOrEmpty(criteria.businessCity))
             {
                 sbSqlWhere.AppendFormat(" AND b.City='{0}' ", criteria.businessCity.Trim());
+            }
+            else
+            {
+                sbSqlWhere.AppendFormat(" AND b.City IN ({0}) ", criteria.AuthorityCityNameListStr.Trim());
             }
             string tableList = @" business  b WITH (NOLOCK)  
                                 LEFT JOIN dbo.[group] g WITH(NOLOCK) ON g.Id = b.GroupId 

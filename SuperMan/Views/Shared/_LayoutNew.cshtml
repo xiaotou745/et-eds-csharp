@@ -5,24 +5,25 @@
 @using SuperMan.App_Start
 @using Ets.Service.IProvider.AuthorityMenu;
 @{
-    Layout = null; 
-    IAuthorityMenuProvider iauthority=new AuthorityMenuProvider();
+    Layout = null;
+    IAuthorityMenuProvider iauthority = new AuthorityMenuProvider();
     List<AuthorityMenuModel> menus = iauthority.GetAllMenuList(); //所有菜单权限
-    List<int> myMenus = null;//我的权限菜单数组
-    string cookieValue =CookieHelper.ReadCookie("menulist");
-    if (cookieValue == "")
-    {
-        List<int> myMenusR = iauthority.GetMenuIdsByRoloId(UserContext.Current.RoleId);
-        myMenus = iauthority.GetMenuIdsByAccountId(UserContext.Current.Id);
-        if (myMenusR!=null)
-        {
-            myMenus.AddRange(myMenusR);
-        }  
-    }
-    else
-    {
-        myMenus = Letao.Util.JsonHelper.ToObject<List<int>>(cookieValue); 
-    } 
+    IList<AuthorityMenuModel> mymenus = new Ets.Service.Provider.Account.AccountProvider().GetAuth(UserContext.Current.Id);
+    //List<int> myMenus = null;//我的权限菜单数组
+    //string cookieValue =CookieHelper.ReadCookie("menulist");
+    //if (cookieValue == "")
+    //{
+    //    List<int> myMenusR = iauthority.GetMenuIdsByRoloId(UserContext.Current.RoleId);
+    //    myMenus = iauthority.GetMenuIdsByAccountId(UserContext.Current.Id);
+    //    if (myMenusR!=null)
+    //    {
+    //        myMenus.AddRange(myMenusR);
+    //    }  
+    //}
+    //else
+    //{
+    //    myMenus = Letao.Util.JsonHelper.ToObject<List<int>>(cookieValue); 
+    //} 
 }
 <!DOCTYPE html>
 
@@ -68,39 +69,48 @@
         <div class="main-container">
             <div class="sidebar">
                 <ul class="nav nav-list">
-                    <li>
-                        <a href="/HomeCount/Index">
-                            <i class="homeicon"></i>
-                            <span class="menu-text">后台首页</span>
-                        </a>
-                    </li> 
+                    @if (SuperMan.App_Start.UserContext.Current.HasAuthority(50))
+                    {
+                        <li>
+                            <a href="/HomeCount/Index">
+                                <i class="homeicon"></i>
+                                <span class="menu-text">后台首页</span>
+                            </a>
+                        </li>
+                    }
                     @{
                         if (menus != null)
                         { 
                             List<AuthorityMenuModel> partMenus = (from m in menus where m.ParId == 0 select m).ToList();
                             foreach (var pMenu in partMenus)
-                            { <li>
-                                <a class="dropdown-toggle" href="javascript:void(0);">
-                                    <i class="skuicon"></i>
-                                    <span class="menu-text">@pMenu.MenuName</span>
-                                    <b class="arrow icon-angle-down"></b>
-                                </a>
-                                <ul class="submenu">
-                                    @{
-                                        List<AuthorityMenuModel> childMenus = (from m in menus where m.ParId == pMenu.Id && pMenu.IsButton==false select m).ToList();
-                                        if (childMenus!=null && childMenus.Count > 0)
-                                        {
-                                            foreach(var cMenu in childMenus)
-                                            {
-                                                if(myMenus.Contains(cMenu.Id) && !cMenu.IsButton){<li><a href="@cMenu.Url" data-url-def="#">@cMenu.MenuName</a></li> }
-                                            }  
-                                        }
-                                    }  
-                                </ul> </li>  
+                            {
+                                List<AuthorityMenuModel> childMenus = (from m in mymenus where m.ParId == pMenu.Id && pMenu.IsButton == false select m).ToList();
+                                if (childMenus.Count<=0)
+                                {
+                                    continue;
+                                }
+                                <li>
+                                  <a class="dropdown-toggle" href="javascript:void(0);">
+                                      <i class="skuicon"></i>
+                                      <span class="menu-text">@pMenu.MenuName</span>
+                                      <b class="arrow icon-angle-down"></b>
+                                  </a>
+                                  <ul class="submenu">
+                                      @{
+                                        
+                                          if (childMenus!=null && childMenus.Count > 0)
+                                          {
+                                              foreach(var cMenu in childMenus)
+                                              {
+                                                  <li><a href="@cMenu.Url" data-url-def="#">@cMenu.MenuName</a></li> 
+                                              }  
+                                          }
+                                      }  
+                                  </ul> </li>  
                             }
-                            }
+                        }
 
-                        }  
+                    }  
                 </ul>
                 <div id="sidebar-collapse" class="sidebar-collapse">
                     <i data-icon2="icon-double-angle-right" data-icon1="icon-double-angle-left" class="icon-double-angle-left"></i>

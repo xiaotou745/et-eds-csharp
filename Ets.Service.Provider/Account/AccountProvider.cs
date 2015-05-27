@@ -1,4 +1,5 @@
 ﻿using Ets.Dao.Account;
+using Ets.Model.DataModel.Authority;
 using Ets.Service.IProvider.Account;
 using ETS.Enums;
 using System;
@@ -22,6 +23,13 @@ namespace Ets.Service.Provider.Account
         public UserLoginResults ValidateUser(string userName, string password)
         {
             return accountDao.ValidateUser(userName,password);
+        }
+
+
+
+        public IList<AuthorityMenuModel> GetAuth(int AccountId)
+        {
+            return accountDao.GetAuth(AccountId);
         }
     }
 }

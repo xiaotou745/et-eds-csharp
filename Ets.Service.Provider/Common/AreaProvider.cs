@@ -1,5 +1,6 @@
 ﻿using ETS.Const;
 using Ets.Dao.Common;
+using Ets.Dao.MenuSet;
 using Ets.Model.Common;
 using Ets.Model.DomainModel.Area;
 using Ets.Service.IProvider.Common;
@@ -79,19 +80,88 @@ namespace Ets.Service.Provider.Common
                 redis.Set(RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity_New,JsonHelper.ToJson(areaList));
             }
         }
+        ///// <summary>
+        ///// 获取开通城市(只有市)
+        ///// danny-20150414
+        ///// </summary>
+        ///// <returns></returns>
+        //public Model.Common.ResultModel<Model.DomainModel.Area.AreaModelList> GetOpenCityOfSingleCity()
+        //{
+        //    AreaModelList areaList = new AreaModelList();
+        //    var openCityList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 2).ToList();
+        //    areaList.AreaModels = openCityList;
+        //    areaList.Version = Config.ApiVersion;
+        //    return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.UnNewest, areaList);
+        //    //return ResultModel<List<AreaModelList>>.Conclude(ETS.Enums.CityStatus.Newest, areaList);
+        //}
+
+        readonly AuthoritySetDao authoritySetDao = new AuthoritySetDao();
         /// <summary>
         /// 获取开通城市(只有市)
         /// danny-20150414
         /// </summary>
         /// <returns></returns>
-        public Model.Common.ResultModel<Model.DomainModel.Area.AreaModelList> GetOpenCityOfSingleCity()
+        public Model.Common.ResultModel<Model.DomainModel.Area.AreaModelList> GetOpenCityOfSingleCity(int accountId=0)
         {
-            AreaModelList areaList = new AreaModelList();
-            var openCityList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 2).ToList();
-            areaList.AreaModels = openCityList;
-            areaList.Version = Config.ApiVersion;
-            return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.UnNewest, areaList);
-            //return ResultModel<List<AreaModelList>>.Conclude(ETS.Enums.CityStatus.Newest, areaList);
+            if (accountId == 0)
+            {
+                var areaList = new AreaModelList();
+                var openCityList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 2).ToList();
+                areaList.AreaModels = openCityList;
+                areaList.Version = Config.ApiVersion;
+                return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.UnNewest, areaList);
+            }
+            else
+            {
+                var authorityCityList = authoritySetDao.GetAccountCityRel(accountId).Select(i => i.CityId);
+                var areaList = new AreaModelList();
+                var openCityList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 2).Where(k => authorityCityList.Contains(k.Code)).ToList();
+                areaList.AreaModels = openCityList;
+                areaList.Version = Config.ApiVersion;
+                return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.UnNewest, areaList);
+            }
+        }
+        /// <summary>
+        /// 根据用户Id获取权限城市名称集合
+        /// danny-20150526
+        /// </summary>
+        /// <param name="accountId"></param>
+        /// <returns></returns>
+        public string GetAuthorityCityNameListStr(int accountId = 0)
+        {
+            var authorityCityNameListStr = "";
+            if (accountId == 0)
+            {
+                var openCityNameList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 2).Select(i => i.Name).ToList();
+                if ( openCityNameList.Count>0)
+                {
+                    foreach (var openCityName in openCityNameList)
+                    {
+                        authorityCityNameListStr += "'"+openCityName+"',";
+                    }
+                    if (!string.IsNullOrWhiteSpace(authorityCityNameListStr))
+                    {
+                        authorityCityNameListStr = authorityCityNameListStr.TrimEnd(',');
+                    }
+                }
+            }
+            else
+            {
+                var authorityCityList = authoritySetDao.GetAccountCityRel(accountId).Select(i => i.CityId);
+                var openCityNameList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 2).Where(k => authorityCityList.Contains(k.Code)).Select(i => i.Name).ToList();
+                if (openCityNameList.Count > 0)
+                {
+                    foreach (var openCityName in openCityNameList)
+                    {
+                        authorityCityNameListStr += "'"+openCityName + "',";
+                    }
+                    if (!string.IsNullOrWhiteSpace(authorityCityNameListStr))
+                    {
+                        authorityCityNameListStr = authorityCityNameListStr.TrimEnd(',');
+                    }
+                }
+            }
+            return authorityCityNameListStr;
         }
         /// <summary>
         /// 根据用户传递的  省、市、区名称、级别（省1，市2，区3）,转换为 国标码

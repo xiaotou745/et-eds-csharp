@@ -1,4 +1,6 @@
-﻿namespace Ets.Service.IProvider.AuthorityMenu
+﻿using Ets.Model.Common;
+
+namespace Ets.Service.IProvider.AuthorityMenu
 {
     using System.Collections.Generic;
     using Model.DataModel.Authority;
@@ -129,13 +131,13 @@
         /// 获取角色列表
         /// </summary>
         /// <returns></returns>
-        List<AccountModel> GetListAccount();
+        List<Ets.Model.DataModel.Authority.AccountModel> GetListAccount();
         /// <summary>
         /// 获取角色
         /// </summary>
         /// <param name="loginName"></param>
         /// <returns></returns>
-        AccountModel GetAccountByName(string loginName);
+        Ets.Model.DataModel.Authority.AccountModel GetAccountByName(string loginName);
  
         /// <summary>
         /// 加入权限
@@ -174,13 +176,14 @@
         /// <param name="account"></param>
         /// <returns></returns>
         bool CheckHasAccountName(account account);
+
         /// <summary>
         /// 添加用户
         /// danny-20150323
         /// </summary>
-        /// <param name="account"></param>
+        /// <param name="criteria"></param>
         /// <returns></returns>
-        bool AddAccount(account account);
+        DealResultInfo AddAccount(AccountCriteria criteria);
         /// <summary>
         /// 删除用户
         /// danny-20150323
@@ -204,5 +207,13 @@
         /// <param name="authorityName"></param>
         /// <returns></returns>
         bool HasAuthority(int accountId, string authorityName);
+
+        /// <summary>
+        /// 获取用户和城市对应关系列表
+        /// danny-20150525
+        /// </summary>
+        /// <param name="accountId"></param>
+        /// <returns></returns>
+        IList<AccountCityRelationModel> GetAccountCityRel(int accountId);
     }
 }

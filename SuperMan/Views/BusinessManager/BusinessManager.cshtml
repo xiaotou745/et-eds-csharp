@@ -207,10 +207,10 @@
             <div class="control-group">
                 <label style="font-size:15px">补贴策略设置(应付)</label>
             </div>
-                <div class="control-group" style="margin-left:30px">
-                    <label id="labGlobalConfig"></label>
-                </div>
-            
+            <div class="control-group" style="margin-left:30px">
+                <label id="labGlobalConfig"></label>
+            </div>
+
 
             <div class="control-group" style="margin-left:30px">
                 <label>补贴策略：</label>
@@ -270,11 +270,46 @@
                 <input type="hidden" name="oldBusiSourceId" id="oldBusiSourceId">
                 <input type="hidden" name="oldBusGroupId" id="oldBusGroupId">
                 @Html.DropDownList("busGroupId",
-                                           new SelectList(new BusinessProvider().GetGroups(), "Id", "GroupName"), "--请选择--", new { @class = "selectw", style = "width:100px" })
+                    new SelectList(new BusinessProvider().GetGroups(), "Id", "GroupName"), "--请选择--", new { @class = "selectw", style = "width:100px" })
             </div>
         </fieldset>
         <p class="btnbox">
             <input value="确认" type="button" id="btnUpdateBusinessInfo" class="yesBtn" />
+            <input value="关闭" type="button" class="J_closebox qxBtn" />
+        </p>
+    </div>
+</div>
+@*商户充值弹窗*@
+<div>
+    <div class="add-openbox add-form" id="BusinessRechargeShow" style="width:500px">
+        <h2>
+            <p id="statusFin">商户充值</p>
+        </h2>
+        <fieldset>
+            <br>
+            <div class="control-group">
+                <label>商家名称：</label>
+                <input name="busName" id="busName" disabled="disabled" type="text">
+                <input name="busId" id="busId" type="hidden">
+            </div>
+            <div class="control-group">
+                <label>商家电话：</label>
+                <input name="busPhone" id="busPhone" disabled="disabled" type="text">
+            </div>
+            <div class="control-group">
+                <label>充值金额：</label>
+                <input name="busRechargeAmount" id="busRechargeAmount" type="text">元
+                <label  style="font-size: 10px;color: red">（充值金额范围:1.00-50000.00元）</label>
+            </div>
+            <div class="control-group">
+                <label>操作描述：</label>
+                <div class="controls">
+                    <textarea cols="45" rows="5" id="rechargeLog"></textarea>
+                </div>
+            </div>
+        </fieldset>
+        <p class="btnbox">
+            <input value="确认" type="button" id="btnRechargeCommit" class="yesBtn" />
             <input value="关闭" type="button" class="J_closebox qxBtn" />
         </p>
     </div>
@@ -318,7 +353,7 @@
             return;
         }
 
-        if (busCommissionText == oldBusCommissionText && busCommissionWaiSong == oldBusCommissionWaiSong && commissionFixValue == oldCommissionFixValue && strategyID == oldStrategyID && oldCommissionType ==commissionType) {
+        if (busCommissionText == oldBusCommissionText && busCommissionWaiSong == oldBusCommissionWaiSong && commissionFixValue == oldCommissionFixValue && strategyID == oldStrategyID && oldCommissionType == commissionType) {
             alert("没有需要修改的信息!");
             return;
         }
@@ -343,8 +378,8 @@
     });
     //修改商家信息
     $("#btnUpdateBusinessInfo").on('click', function () {
-        
-        var busiId = $("#busiId").val(); //商户id
+
+        var busiId = $("#busId").val(); //商户id
         var busiName = $("#busiName").val(); //商户电话
         var busiPhone = $("#busiPhone").val(); //商户电话
         var busiSourceId = $("#busiSourceId").val(); //商户原平台Id
@@ -391,8 +426,6 @@
             }
         });
     });
-
-
     //添加商户
     $("#btnAddBusiness").on('click', function () {
         var businessName = $("#businessName").val(); //商户
@@ -461,11 +494,48 @@
             }
         });
     });
-
-
     function showaddBusiness() {
         adminjs.openwinbox('#BusinessAddDiv');
     }
+    //商户充值
+    $("#btnRechargeCommit").on('click', function () {
+        var busiId = $("#busId").val(); //商户id
+        var busiName = $("#busName").val(); //商户电话
+        var busiRechargeAmount = $("#busRechargeAmount").val(); //商户充值金额
+        var rechargeLog = $("#rechargeLog").val(); //充值描述
+        if (rechargeLog.trim().length == 0) {
+            alert("请输入充值操作描述!");
+            return;
+        }
+        var decimalFormat = /^[0-9]*(\.[0-9]{1,2})?$/;
+        if (!decimalFormat.test(busiRechargeAmount)) {
+            alert("请输入正确的金额！");
+            return;
+        }
+        if (busiRechargeAmount < 1 || busiRechargeAmount>50000) {
+            alert("充值金额须在1-50000元之间！");
+            return;
+        }
+        if (confirm("确定要为商户：" + busiName + "充值：" + busiRechargeAmount+"元？")) {
+            var paramaters = {
+                "BusinessId": busiId, "RechargeAmount": busiRechargeAmount, "Remark": rechargeLog
+            };
+            var url = "/BusinessManager/BusinessRecharge";
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: paramaters,
+                success: function (result) {
+                    if (result.IsSuccess) {
+                        alert(result.Message);
+                        window.location.href = "/BusinessManager/BusinessManager";
+                    } else {
+                        alert(result.Message);
+                    }
+                }
+            });
+        }
+    });
     //关闭弹层
     $('.J_closebox').click(function () {
         adminjs.closewinbox('.add-openbox');

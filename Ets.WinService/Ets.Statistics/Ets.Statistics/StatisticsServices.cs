@@ -1,4 +1,5 @@
 ﻿using ETS;
+using ETS.Util;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,7 +22,7 @@ namespace Ets.Statistics
 
         protected override void OnStart(string[] args)
         {
-            //Thread.Sleep(1000*10);
+            //Thread.Sleep(1000 * 10);
             Thread t = new Thread(ExecStatisticsProvider);
             t.Start();
         }
@@ -32,8 +33,15 @@ namespace Ets.Statistics
                 if (DateTime.Now.Hour.ToString().Equals(Config.ConfigKey("StartTime").ToString()))
                 {
                     ///凌晨一点执行
-                    Ets.Service.Provider.Statistics.StatisticsProvider statisticsProvider = new Service.Provider.Statistics.StatisticsProvider();
-                    statisticsProvider.ExecStatistics();
+                    try
+                    {
+                        Ets.Service.Provider.Statistics.StatisticsProvider statisticsProvider = new Service.Provider.Statistics.StatisticsProvider();
+                        statisticsProvider.ExecStatistics();
+                    }
+                    catch (Exception ex)
+                    {
+                        LogHelper.LogWriter(ex);
+                    }
                 }
                 Thread.Sleep(1000 * 60 * 60);//睡眠一小时
             }
