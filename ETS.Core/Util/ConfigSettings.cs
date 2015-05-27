@@ -259,6 +259,14 @@ namespace ETS.Util
             get { return ConfigurationManager.AppSettings["MeiTuanArrivedAsyncStatus"]; }
         }
 
+        /// <summary>
+        ///  美团回调同步订单到E代送地址 
+        /// </summary>
+        public string MeiTuanPullOrderInfo
+        {
+            get { return ConfigurationManager.AppSettings["MeiTuanPullOrderInfo"]; }
+        }
+  
 
         /// <summary>
         /// 聚网客appkey
@@ -282,15 +290,23 @@ namespace ETS.Util
         {
             get { return ConfigurationManager.AppSettings["JuWangKeOrderAsyncStatus"]; }
         }
-                /// <summary>
-        ///  美团回调同步订单到E代送地址 
+
+        /// <summary>
+        /// 首旅集团  appkey 
         /// </summary>
-        public string MeiTuanPullOrderInfo
+        public string TourismAppkey
         {
-            get { return ConfigurationManager.AppSettings["MeiTuanPullOrderInfo"]; }
+            get { return ConfigurationManager.AppSettings["TourismAppkey"]; }
         }
-  
-        
+
+        /// <summary>
+        /// 首旅集团 订单状态 回调接口地址
+        /// </summary>
+        public string TourismAsyncStatusUrl
+        {
+            get { return ConfigurationManager.AppSettings["TourismAsyncStatusUrl"]; }
+        }
+
         #endregion
     }
 }

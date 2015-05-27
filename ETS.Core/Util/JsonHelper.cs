@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Web.Script.Serialization;
 
-namespace Letao.Util
+namespace ETS.Util
 {
     public class JsonHelper
     {

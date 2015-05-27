@@ -52,6 +52,15 @@ namespace ETS.Const
         /// </summary>
         public const int Group1 = 1;
 
+        /// <summary>
+        /// 回家吃饭
+        /// </summary>
+        public const int Group5 = 5;
+
+        /// <summary>
+        /// 首旅
+        /// </summary>
+        public const int Group6 = 6;
 
         #endregion
     }

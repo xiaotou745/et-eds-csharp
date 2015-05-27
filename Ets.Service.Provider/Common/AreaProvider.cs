@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using ETS.Security;
 using ETS.Data.PageData;
 using Ets.Model.ParameterModel.Common;
+using ETS.Util;
 
 namespace Ets.Service.Provider.Common
 {
@@ -42,7 +43,7 @@ namespace Ets.Service.Provider.Common
             string strAreaList = redis.Get<string>(key);
             if (!string.IsNullOrEmpty(strAreaList))
             {
-                areaList = Letao.Util.JsonHelper.JsonConvertToObject<AreaModelList>(strAreaList);
+                areaList = JsonHelper.JsonConvertToObject<AreaModelList>(strAreaList);
             }
          
             else
@@ -53,7 +54,7 @@ namespace Ets.Service.Provider.Common
                 areaList.Version = Config.ApiVersion;
                 if (list != null)
                 {
-                    redis.Set(key, Letao.Util.JsonHelper.JsonConvertToString(areaList));
+                    redis.Set(key,JsonHelper.JsonConvertToString(areaList));
                     redis.Set(key, areaList);
                 }
             }
@@ -75,7 +76,7 @@ namespace Ets.Service.Provider.Common
             areaList.Version = Config.ApiVersion;
             if (list != null)
             {
-                redis.Set(RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity_New, Letao.Util.JsonHelper.ToJson(areaList));
+                redis.Set(RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity_New,JsonHelper.ToJson(areaList));
             }
         }
         /// <summary>
@@ -109,13 +110,13 @@ namespace Ets.Service.Provider.Common
             List<AreaModelTranslate> cacheAreaModelList = null;
             if (!string.IsNullOrEmpty(cacheValue))
             {
-                cacheAreaModelList = Letao.Util.JsonHelper.ToObject<List<AreaModelTranslate>>(cacheValue);
+                cacheAreaModelList =JsonHelper.ToObject<List<AreaModelTranslate>>(cacheValue);
 
             }
             else
             {
                 cacheAreaModelList = dao.GetRegionInfo().ToList();
-                redis.Add(key, Letao.Util.JsonHelper.ToJson(cacheAreaModelList));
+                redis.Add(key, JsonHelper.ToJson(cacheAreaModelList));
             }
             //cacheAreaModelList = CacheFactory.Instance[key] as List<AreaModelTranslate>;
             //if (cacheAreaModelList == null) //为null的时候，取数据库

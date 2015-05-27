@@ -4,7 +4,7 @@ using System.Data;
 using System.Text;
 using System.Web.Script.Serialization;
 
-namespace Letao.Util
+namespace ETS.Util
 {
     public static class JSON
     {

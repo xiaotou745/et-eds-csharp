@@ -20,93 +20,76 @@ using System.Threading.Tasks;
 namespace Ets.Service.Provider.OpenApi
 {
     /// <summary>
-    /// 首旅对接回调业务
-    /// 徐鹏程
-    /// 2015-05-04
+    /// 首旅对接回调业务 caoheyang  20150527
     /// </summary>
     public class TourismGroup : IGroupProviderOpenApi
     {
         public string app_key = ConfigSettings.Instance.TourismAppkey;
-        public string app_secret = ConfigSettings.Instance.TourismAppsecret;
-        public string asyncurl = ConfigSettings.Instance.TourismAsyncStatus;
         /// <summary>
-        /// 回调回家吃饭同步订单状态
-        /// 徐鹏程
-        /// 2015-04-23
+        /// 首旅对接同步订单状态 caoheyang  20150527
         /// </summary>
         /// <param name="paramodel"></param>
         /// <returns></returns>
         public OrderApiStatusType AsyncStatus(ParaModel<AsyncStatusPM_OpenApi> paramodel)
         {
-
             int status = 0; //第三方订单状态物流状态，1代表已发货，2代表已签收
-            LogHelper.LogWriter(System.DateTime.Now.ToString() + "回调-第三方订单状态:" + paramodel.fields.status);
+            string message = "";
             switch (paramodel.fields.status)
             {
                 case OrderConst.OrderStatus1:
-                    status = 2; //订单已完成(已送达)
+                    status = 1; //订单已完成(已送达)
+                    message = "订单已完成";
                     break;
                 case OrderConst.OrderStatus2:
-                    status = 1; //订单已接单(已抢单)
+                    status = 2; //订单已接单(已抢单)
+                    message = "订单已接单";
                     break;
                 case OrderConst.OrderStatus3:
-                    status = 3; //订单已取消
+                    status = 4; //订单已取消
+                    message = "订单已取消";
                     break;
                 default:
                     return OrderApiStatusType.OtherError;
             }
-            string ts = DateTime.Now.ToString();
-            string url = asyncurl;
+
+            var paras = new
+            {
+                method = "takenotify",
+                app_key = app_key,
+                fields = new object[] {  new
+                {
+                    order_id = paramodel.fields.OriginalOrderNo,
+                    order_status = status,
+                    message = message
+                }}
+            };
+            string url = ConfigSettings.Instance.TourismAsyncStatusUrl;
             if (url == null)
+            {
                 return OrderApiStatusType.SystemError;
-            ///order_id	string	Y	订单ID ，根据订单ID改变对应的订单物流状态，一个订单只能修改一次，修改过再修改会报错。
-            ///status	int	Y	物流状态，1代表已发货，2代表已签收
-            ///send_phone	string	Y/N	配送员电话，物流状态传参是（ststus=1）的时候，配送员电话必须写，如果为（ststus=2）的时候可以不写。
-            ///send_name	string	Y/N	配送员姓名，物流状态传参是（ststus=1）的时候，配送员姓名必须写，如果为（ststus=2）的时候可以不写。
-            string strPostData = "app_key=" + app_key + "&sign=" + GetSign(ts) + "&updatetime=" + ts + "&order_id=" + paramodel.fields.OriginalOrderNo + "&status=" + status + "&dm_name=" + paramodel.fields.ClienterTrueName
-                + "&dm_mobile=" + paramodel.fields.ClienterPhoneNo;
-            string json = HTTPHelper.HttpPost(url, strPostData);
-            LogHelper.LogWriter(System.DateTime.Now.ToString() + "回调-第三方url:" + url);
-            LogHelper.LogWriter(System.DateTime.Now.ToString() + "回调-第三方strPostData:" + strPostData);
+            }
+            string jsonss = JsonHelper.ToJson(paras);
+
+            string json = new HttpClient().PostAsJsonAsync(url, paras).Result.Content.ReadAsStringAsync().Result;
             if (string.IsNullOrWhiteSpace(json))
-            {   
-                LogHelper.LogWriter(System.DateTime.Now.ToString() + "回调-结果:ParaError");
+            {
                 return OrderApiStatusType.ParaError;
             }
-            else if (json == "null")
-            {
-                LogHelper.LogWriter(System.DateTime.Now.ToString() + "回调-结果:SystemError");
-                return OrderApiStatusType.SystemError;
-            }
             JObject jobject = JObject.Parse(json);
-            int result = jobject.Value<int>("status"); //接口调用状态 区分大小写
-            LogHelper.LogWriter(System.DateTime.Now.ToString() + "回调-结果:status=" + result);
-            return result == 1 ? OrderApiStatusType.Success : OrderApiStatusType.SystemError;
+            int result = jobject.Value<int>("Status"); //接口调用状态 区分大小写
+            return result == 0 ? OrderApiStatusType.Success : OrderApiStatusType.SystemError;
         }
 
+
         /// <summary>
-        /// 获取当前集团请求时的sign信息
-        /// 徐鹏程
-        /// 2015-04-23
-        /// </summary>
-        /// <param name="time">时间</param>
-        /// <returns></returns>
-        private string GetSign(string time)
-        {
-            string signStr = app_secret + "app_key" + app_key + "updatetime" + time + app_secret;
-            return ETS.Security.MD5.DefaultEncrypt(signStr);
-        }
-        /// <summary>
-        /// 新增商铺时根据集团id为店铺设置外送费，结算比例等财务相关信息
-        /// 徐鹏程
-        /// 2015-04-23
+        /// 新增商铺时根据集团id为店铺设置外送费，结算比例等财务相关信息  caoheyang  20150527
         /// </summary>
         /// <param name="paramodel"></param>
         /// <returns></returns>
         public CreatePM_OpenApi SetCommissonInfo(CreatePM_OpenApi paramodel)
         {
-            paramodel.store_info.delivery_fee = 10; //回家吃饭目前外送费统一10%
-            paramodel.store_info.businesscommission = 0;//万达目前结算比例统一0
+            paramodel.store_info.delivery_fee = 10;
+            paramodel.store_info.businesscommission = 0;
             return paramodel;
         }
     }
