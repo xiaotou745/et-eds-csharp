@@ -99,7 +99,7 @@
                     <input name="AddGroupId" id="AddGroupId" type="hidden" value="@ViewBag.txtGroupId" />
                 }
 
-                <div style="width:500px;display:none" id="divCity">
+                <div style="width:500px;" id="divCity">
                     <label class="control-label">城市管理</label>
                     <a href="javascript:funControlCityList();"><div id="cityNameList">请选择</div></a>
                     <div id="cityList" style="float: left">
@@ -161,10 +161,10 @@
         //});
         //添加帐户
         $("#btnAdd").on('click', function () {
+          
             $("#selAcountType").val('1');
             $('#accountId').val('0');
             $('#optionType').val('0');
-            $("#cityList").hide();
             $("#accountName").removeAttr("disabled");
             $("#loginName").removeAttr("disabled");
             $("#modifyRemind").hide();
@@ -176,7 +176,10 @@
             $(":checkbox[name='checkMenus']").prop("checked", false);
             $('#statusFin').text("添加账号");
             $('#cityNameList').text("请选择");
+            
             adminjs.openwinbox('#AddAccountShow');
+            $("#cityList").hide();
+
         });
         window.location.hash = '';
     })
@@ -255,5 +258,6 @@
             });
         }
     });
+    
 </script>
 <script src="~/Scripts/mvcpager.js"></script>

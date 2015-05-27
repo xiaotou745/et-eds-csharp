@@ -50,8 +50,11 @@ namespace SuperMan.Controllers
                 MealsSettleMode = -1,
                 AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType)
             };
+            if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
+            {
+                return View();
+            }
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
-           
             return View(pagedList);
         }
 
@@ -66,6 +69,10 @@ namespace SuperMan.Controllers
                 iAreaProvider.GetAuthorityCityNameListStr(ParseHelper.ToInt(UserType));
             ViewBag.txtGroupId = UserContext.Current.GroupId;//集团id
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(UserType);
+            if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
+            {
+                return PartialView("_BusinessManageList");
+            }
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
             return PartialView("_BusinessManageList", pagedList);
         }

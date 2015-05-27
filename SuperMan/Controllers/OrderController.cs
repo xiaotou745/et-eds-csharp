@@ -47,6 +47,10 @@ namespace SuperMan.Controllers
                 //GroupId = UserContext.Current.GroupId,
                 AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType)
             };
+            if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
+            {
+                return View();
+            }
             var pagedList = iOrderProvider.GetOrders(criteria);
             return View(pagedList);
         }
@@ -66,6 +70,10 @@ namespace SuperMan.Controllers
             //{
             //    ViewBag.superManModel = superManModel;
             //} 
+            if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
+            {
+                return PartialView("_PartialOrderList");
+            }
             var pagedList = iOrderProvider.GetOrders(criteria);
 
             return PartialView("_PartialOrderList", pagedList);

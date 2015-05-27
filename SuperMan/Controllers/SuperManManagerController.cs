@@ -54,6 +54,10 @@ namespace SuperMan.Controllers
                 AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType)
                     
             };
+            if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
+            {
+                return View();
+            }
             //ViewBag.openCityList.Result.AreaModels;
             var pagedList = iDistributionProvider.GetClienteres(criteria);
             return View(pagedList);
@@ -70,7 +74,11 @@ namespace SuperMan.Controllers
 
             criteria.AuthorityCityNameListStr =
                 iAreaProvider.GetAuthorityCityNameListStr(ParseHelper.ToInt(UserType));
-            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(UserType); 
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(UserType);
+            if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
+            {
+                return PartialView("_SuperManManagerList");
+            }
             var pagedList = iDistributionProvider.GetClienteres(criteria);
             return PartialView("_SuperManManagerList", pagedList);
         }
