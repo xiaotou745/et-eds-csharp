@@ -149,7 +149,7 @@
                             {
                                 <a href="javascript:void(0)" onclick="funcUpdateBusinessInfo(@item.Id,'@item.Name','@item.PhoneNo','@item.OriginalBusiId','@item.GroupId','@item.MealsSettleMode')">修改信息</a>
                             }
-                            @if (SuperMan.App_Start.UserContext.Current.HasAuthority(57))
+                            @if (SuperMan.App_Start.UserContext.Current.HasAuthority(52))
                             {
                                 <a href="javascript:void(0)" onclick="funcBusinessRecharge(@item.Id,'@item.Name', '@item.PhoneNo')">充值</a>
                             }
