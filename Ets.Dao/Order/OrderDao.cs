@@ -592,7 +592,7 @@ select @@IDENTITY ";
             {
                 sbSqlWhere.AppendFormat(" AND b.City='{0}' ", criteria.businessCity.Trim());
             }
-            else
+            if (criteria.AuthorityCityNameListStr!=null && !string.IsNullOrEmpty(criteria.AuthorityCityNameListStr.Trim()))
             {
                 sbSqlWhere.AppendFormat(" AND b.City IN({0}) ", criteria.AuthorityCityNameListStr.Trim());
             }

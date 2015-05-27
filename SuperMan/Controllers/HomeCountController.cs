@@ -26,14 +26,22 @@ namespace SuperMan.Controllers
         // GET: HomeCount
         public ActionResult Index()
         {
-            Ets.Service.Provider.Common.HomeCountProvider homeCountProvider = new Ets.Service.Provider.Common.HomeCountProvider();
-            var criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria();
-            ViewBag.homeCountTitleToAllData = homeCountProvider.GetHomeCountTitleToAllData();
-            ViewBag.homeCountTitleModel = homeCountProvider.GetCurrentDateModel();
-            IList<Ets.Model.DomainModel.Bussiness.BusinessesDistributionModel> clienteStorerGrabStatistical = iClienterProvider.GetClienteStorerGrabStatisticalInfo();
-            ViewBag.clienteStorerGrabStatistical = clienteStorerGrabStatistical.ToList();
-            var pagedList = iOrderProvider.GetCurrentDateCountAndMoney(criteria);
-            return View(pagedList);
+            if (UserContext.Current.HasAuthority(50))
+            {
+                Ets.Service.Provider.Common.HomeCountProvider homeCountProvider = new Ets.Service.Provider.Common.HomeCountProvider();
+                var criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria();
+                ViewBag.homeCountTitleToAllData = homeCountProvider.GetHomeCountTitleToAllData();
+                ViewBag.homeCountTitleModel = homeCountProvider.GetCurrentDateModel();
+                IList<Ets.Model.DomainModel.Bussiness.BusinessesDistributionModel> clienteStorerGrabStatistical = iClienterProvider.GetClienteStorerGrabStatisticalInfo();
+                ViewBag.clienteStorerGrabStatistical = clienteStorerGrabStatistical.ToList();
+                var pagedList = iOrderProvider.GetCurrentDateCountAndMoney(criteria);
+                return View(pagedList);
+            }
+            else
+            {
+                return RedirectToAction("order", "order");
+            }
+           
         }
         [HttpPost]
         public ActionResult PostIndex(int pageindex = 1)

@@ -39,16 +39,16 @@
     </div>
 </div>
 @*添加帐号*@
-<div class="selectSupplierDish">
-    <div class="add-openbox add-form" id="AddAccountShow" style="width:510px">
+<div class="selectSupplierDish" style="width:540px;height: 500px">
+    <div class="add-openbox add-form" id="AddAccountShow" style="min-width:540px;overflow-y:auto;max-height:500px;">
         <h2>
             <p id="statusFin">添加帐号</p>
             <a class="J_closebox x_close"></a>
         </h2>
         <form class="AddAccountfrom" id="AddAccountfrom1">
             <fieldset>
-                <input type="hidden" name="optionType" id="optionType"  value="0">
-                <input type="hidden" name="accountId" id="accountId"  >
+                <input type="hidden" name="optionType" id="optionType" value="0">
+                <input type="hidden" name="accountId" id="accountId">
                 <div class="control-group">
                     <label class="control-label">帐号名称</label>
                     <div class="controls">
@@ -65,6 +65,7 @@
                     <label class="control-label">密  码</label>
                     <div class="controls">
                         <input placeholder="密码" name="password" id="password" type="password">
+                        <label id="modifyRemind" style="font-size: 10px;color: red">不填写，密码保持不变!</label>
                     </div>
                 </div>
                 <div class="control-group">
@@ -88,7 +89,7 @@
                 }
 
                 <div style="width:500px">
-                    <label class="control-label" >城市管理</label>
+                    <label class="control-label">城市管理</label>
                     <a href="javascript:funControlCityList();"><div id="cityNameList">请选择</div></a>
                     <div id="cityList" style="float: left">
                         @{
@@ -145,6 +146,7 @@
             $("#cityList").hide();
             $("#accountName").removeAttr("disabled");
             $("#loginName").removeAttr("disabled");
+            $("#modifyRemind").hide();
             $('#accountName').val('');
             $('#loginName').val('');
             $('#password').val('');

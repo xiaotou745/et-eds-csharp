@@ -1,4 +1,5 @@
-﻿using ETS.Enums;
+﻿using Ets.Model.DataModel.Authority;
+using ETS.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,5 +18,7 @@ namespace Ets.Service.IProvider.Account
         /// <param name="password"></param>
         /// <returns></returns>
         UserLoginResults ValidateUser(string userName, string password);
+
+        IList<AuthorityMenuModel> GetAuth(int AccountId);
     }
 }

@@ -5,6 +5,7 @@ using ETS.Enums;
 using ETS.Util;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,7 +36,7 @@ namespace Ets.Dao.Account
             if (user.AccountType == (int)AccountType.AdminUser)
             {
                 //var admin = db.account.Single(i => i.Id == user.Id);
-                if (user.Status==0)
+                if (user.Status == 0)
                 {
                     return UserLoginResults.AccountClosed;
                 }
@@ -86,7 +87,27 @@ namespace Ets.Dao.Account
                 };
             }
             return null;
-        } 
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="AccountId"></param>
+        public IList<AuthorityMenuModel> GetAuth(int AccountId)
+        {
+            string sql = @"
+SELECT AccoutId,MenuId,ParId,MenuName,Url FROM dbo.AuthorityAccountMenuSet  aam (nolock)
+JOIN AuthorityMenuClass amc(nolock) ON aam.MenuId = amc.Id
+WHERE aam.AccoutId=@AccountId";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("AccountId", DbType.Int32, 4).Value = AccountId;
+            DataTable dt= DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (dt==null || dt.Rows.Count<=0)
+            {
+                return null;
+            }
+            return MapRows<AuthorityMenuModel>(dt);
+        }
 
     }
 }

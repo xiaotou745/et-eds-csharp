@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using ETS.Util;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -140,7 +141,7 @@ namespace ETS.Pay.AliPay
         /// 查询
         /// </summary>
         /// <returns></returns>
-        public dynamic GetOrder(string out_trade_no)
+        public dynamic GetOrder(string out_trade_no,int orderId,int childId)
         {
             //业务数据
             //string biz_data = GetBizData1(out_trade_no);
@@ -167,6 +168,18 @@ namespace ETS.Pay.AliPay
                     return new { status_code = 1, status_message = string.Empty, data = new { pay_status = 3 } };
                 }
 
+                //bool IsExistsUnFinish = true;//默认是存在有未支付订单
+                //if (ParseHelper.ToBool(order.IsPay, false) || order.MealsSettleMode == MealsSettleMode.Status0.GetHashCode())  //线下
+                //{
+                //    IsExistsUnFinish = false;//如果主任务是顾客已支付，就视认为没有未支付的订单
+                //}
+                //else
+                //{
+                //    IsExistsUnFinish = listOrderChildInfo.Exists(t => t.PayStatus == PayStatusEnum.WaitPay.GetHashCode());//如果顾客没支付，查询子订单是否有未支付子订单
+                //}
+                //IsExistsUnFinish;
+
+
                 string trade_status = xmlDoc.SelectSingleNode("/alipay/response/trade/trade_status").InnerText;
                 if (trade_status.ToUpper() == "TRADE_SUCCESS")
                 {
@@ -176,7 +189,7 @@ namespace ETS.Pay.AliPay
                     //if (facePayment != null)
                     //{
                     //facePayment.UpdateOneForIsPay(facePayment, buyer_email, trade_no);
-                    return new { status_code = 1, status_message = string.Empty, data = new { pay_status = 1 } };
+                    return new { status_code = 1, status_message = string.Empty, data = new { pay_status = 1 }, orderId = orderId, childId = childId, };
                     //}
                     //else
                     //{
@@ -188,11 +201,11 @@ namespace ETS.Pay.AliPay
                 }
                 else if (trade_status.ToUpper() == "WAIT_BUYER_PAY")
                 {
-                    return new { status_code = 1, status_message = string.Empty, data = new { pay_status = 2 } };
+                    return new { status_code = 1, status_message = string.Empty, data = new { pay_status = 2 }, orderId = orderId, childId = childId, };
                 }
                 else
                 {
-                    return new { status_code = 1, status_message = string.Empty, data = new { pay_status = 3 } };
+                    return new { status_code = 1, status_message = string.Empty, data = new { pay_status = 0 },orderId=orderId,childId=childId, };
                 }
 
             }
