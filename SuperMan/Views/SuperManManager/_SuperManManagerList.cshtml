@@ -133,7 +133,7 @@
 
                             @if (SuperMan.App_Start.UserContext.Current.HasAuthority(51))
                             {
-                                <a href="javascript:void(0)" onclick="funcClienterRecharge(@item.Id,'@item.TrueName', '@item.PhoneNo')">余额调整</a>
+                                <a href="javascript:void(0)" onclick="funcClienterRecharge(@item.Id,'@item.TrueName', '@item.PhoneNo')">余额变更</a>
                             }
 
                         </td>
@@ -309,7 +309,7 @@
         return bigPicName;
     }
 
-    //骑士余额调整
+    //骑士余额变更
     function funcClienterRecharge(id, name, phone) {
         $('#clienterId').val(0);
         $('#clienterName').val('');
