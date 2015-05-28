@@ -262,7 +262,7 @@ select
         PayStatus, OrderId, ChildId, ( select   min(PayStatus)
                                        from     dbo.OrderChild oc ( nolock )
                                        where    OrderId = @OrderId
-                                     )
+                                     ) unFinish
 from    dbo.OrderChild oc ( nolock )
 where   OrderId = @OrderId
         and ChildId = @ChildId
