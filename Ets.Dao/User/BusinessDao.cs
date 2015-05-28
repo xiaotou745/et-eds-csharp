@@ -1157,7 +1157,7 @@ namespace Ets.Dao.User
         /// <param name="busiId"></param>
         /// <param name="picName"></param>
         /// <returns></returns>
-        public int UpdateBusinessPicInfo(int busiId, string picName, string busiLicenPic)
+        public int UpdateBusinessPicInfo(int busiId, string picName)
         {
             string upSql = @"UPDATE  dbo.business
                             SET     CheckPicUrl = @CheckPicUrl

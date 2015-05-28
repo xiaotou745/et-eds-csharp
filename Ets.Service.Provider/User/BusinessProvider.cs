@@ -617,12 +617,12 @@ namespace Ets.Service.Provider.User
         /// <param name="busiId"></param>
         /// <param name="picName"></param>
         /// <returns></returns>
-        public int UpdateBusinessPicInfo(int busiId, string picName, string busiLicenPic)
+        public int UpdateBusinessPicInfo(int busiId, string picName)
         {
             ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
             string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, busiId);
             redis.Delete(cacheKey);
-            int upResult = dao.UpdateBusinessPicInfo(busiId, picName, busiLicenPic);
+            int upResult = dao.UpdateBusinessPicInfo(busiId, picName);
             return upResult;
 
         }
