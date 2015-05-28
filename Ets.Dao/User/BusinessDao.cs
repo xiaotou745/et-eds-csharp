@@ -151,7 +151,7 @@ namespace Ets.Dao.User
         /// <param name="name">商户姓名</param>
         /// <param name="phoneno">商户电话</param>
         /// <returns></returns>
-        public IList<BusinessCommissionModel> GetBusinessCommission(DateTime t1, DateTime t2, string name, string phoneno, int groupid, string businessCity)
+        public IList<BusinessCommissionModel> GetBusinessCommission(DateTime t1, DateTime t2, string name, string phoneno, int groupid, string businessCity, string authorityCityNameListStr)
         {
             IList<BusinessCommissionModel> list = new List<BusinessCommissionModel>();
             try
@@ -201,6 +201,10 @@ namespace Ets.Dao.User
                 {
                     where += " AND B.City=@City";
                     dbParameters.AddWithValue("City", businessCity);
+                }
+                if (authorityCityNameListStr != null && !string.IsNullOrEmpty(authorityCityNameListStr.Trim()))
+                {
+                    where += string.Format(" AND B.City IN({0}) ", authorityCityNameListStr);
                 }
                 sql = string.Format(sql, where);
                 DataTable dt = DbHelper.ExecuteDataset(Config.SuperMan_Read, sql, dbParameters).Tables[0];
@@ -394,11 +398,11 @@ namespace Ets.Dao.User
             {
                 sbSqlWhere.AppendFormat(" AND b.GroupId={0} ", criteria.GroupId);
             }
-            if (criteria.BusinessGroupId != null && criteria.BusinessGroupId > 0)
+            if (ParseHelper.ToInt(criteria.BusinessGroupId,0) > 0)
             {
                 sbSqlWhere.AppendFormat(" AND b.BusinessGroupId={0} ", criteria.BusinessGroupId);
             }
-            if (criteria.CommissionType != null && criteria.CommissionType > 0)
+            if (ParseHelper.ToInt(criteria.CommissionType,0) > 0)
             {
                 sbSqlWhere.AppendFormat(" AND b.CommissionType={0} ", criteria.CommissionType);
             }
@@ -406,7 +410,11 @@ namespace Ets.Dao.User
             {
                 sbSqlWhere.AppendFormat(" AND b.City='{0}' ", criteria.businessCity.Trim());
             }
-            else
+            //else
+            //{
+            //    sbSqlWhere.AppendFormat(" AND b.City IN ({0}) ", criteria.AuthorityCityNameListStr.Trim());
+            //}
+            if (!string.IsNullOrEmpty(criteria.AuthorityCityNameListStr))
             {
                 sbSqlWhere.AppendFormat(" AND b.City IN ({0}) ", criteria.AuthorityCityNameListStr.Trim());
             }

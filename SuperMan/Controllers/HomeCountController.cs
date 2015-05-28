@@ -39,7 +39,7 @@ namespace SuperMan.Controllers
             }
             else
             {
-                return RedirectToAction("order", "order");
+                return RedirectToRoute(new { controller = "order", action = "order" });
             }
            
         }

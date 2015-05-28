@@ -34,6 +34,8 @@ namespace Ets.Model.ParameterModel.Authority
         public string LoginName { get; set; }
         public int GroupId { get; set; }
         public int RoleId { get; set; }
+        public int AccountType { get; set; }
+
     }
 
 }

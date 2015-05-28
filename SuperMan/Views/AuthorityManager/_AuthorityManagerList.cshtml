@@ -30,7 +30,7 @@
                     <td> 
                       @if (UserContext.Current.HasAuthority(27))
                       {
-                        <a href="javascript:void(0)" onclick="funcUpdateAccountInfo(@item.Id,'@item.UserName','@item.LoginName','@item.Status')">修改</a>
+                        <a href="javascript:void(0)" onclick="funcUpdateAccountInfo(@item.Id,'@item.UserName','@item.LoginName','@item.Status',@item.AccountType)">修改</a>
                       } 
                        @if (UserContext.Current.HasAuthority(28))    
                         {
@@ -68,14 +68,15 @@
     $(document).ready(function () {         
     });
     //修改用户信息
-    function funcUpdateAccountInfo(accountId, accountName, loginName, accountStatus) {
+    function funcUpdateAccountInfo(accountId, accountName, loginName, accountStatus,accountType) {
+        $("#selAcountType").val('1');
         $('#accountName').val('');
         $('#loginName').val('');
         $('#password').val('');
         $('#confirmPassword').val('');
         $('#optionType').val('1');
-        $("#cityList").hide();
         $("#modifyRemind").show();
+        $("#selAcountType").val(accountType);
         $('#accountId').val(accountId);
         $("#isEnableY").attr("checked", "checked");
         $(":checkbox[name='checkMenus']").prop("checked", false);
@@ -92,6 +93,12 @@
         }
         funcCheckCity(accountId);
         adminjs.openwinbox('#AddAccountShow');
+        if (accountType == 1) {
+            $("#divCity").hide();
+        } else {
+            $("#divCity").show();
+        }
+
     }
     function funcCheckCity(accountId) {
         var accountCityRef;

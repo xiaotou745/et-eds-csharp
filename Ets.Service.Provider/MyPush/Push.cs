@@ -63,9 +63,20 @@ namespace Ets.Service.Provider.MyPush
                 notification.IosNotification = new IosNotification().setAlert(alert).setBadge(1).setSound("YourSound");
                 pushPayload.notification = notification.Check();
                 var response = client.SendPush(pushPayload);
+                if (!response.isResultOK())
+                {
+                    LogHelper.LogWriter("推送失败", response.msg_id);
+                }
+                else
+                {
+                    LogHelper.LogWriter("推送成功", response.msg_id);
+                }
+
             }
             catch (Exception ex)
             {
+                string parm = string.Concat("推送异常,参数：tagId", tagId, ",RegistrationId:", RegistrationId);
+                LogHelper.LogWriter(ex, "");
             }
         }
 

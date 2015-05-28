@@ -547,7 +547,8 @@ namespace Ets.Service.Provider.Authority
                 LoginName = criteria.LoginName,
                 Password =string.IsNullOrWhiteSpace(criteria.Password)?"":MD5Helper.MD5(criteria.Password),
                 GroupId = criteria.GroupId,
-                Status = criteria.Status
+                Status = criteria.Status,
+                AccountType=criteria.AccountType
             };
             var isHave = _dao.CheckHasAccountName(accountModel);
             if (criteria.OptionType == "0")//添加用户
