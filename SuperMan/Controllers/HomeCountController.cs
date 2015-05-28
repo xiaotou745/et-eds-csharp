@@ -26,22 +26,20 @@ namespace SuperMan.Controllers
         // GET: HomeCount
         public ActionResult Index()
         {
-            if (UserContext.Current.HasAuthority(50))
+            if (!UserContext.Current.HasAuthority(50))
             {
-                Ets.Service.Provider.Common.HomeCountProvider homeCountProvider = new Ets.Service.Provider.Common.HomeCountProvider();
-                var criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria();
-                ViewBag.homeCountTitleToAllData = homeCountProvider.GetHomeCountTitleToAllData();
-                ViewBag.homeCountTitleModel = homeCountProvider.GetCurrentDateModel();
-                IList<Ets.Model.DomainModel.Bussiness.BusinessesDistributionModel> clienteStorerGrabStatistical = iClienterProvider.GetClienteStorerGrabStatisticalInfo();
-                ViewBag.clienteStorerGrabStatistical = clienteStorerGrabStatistical.ToList();
-                var pagedList = iOrderProvider.GetCurrentDateCountAndMoney(criteria);
-                return View(pagedList);
+                return new ContentResult() { Content = "<script>window.location='/order/order'</script>" };
             }
-            else
-            {
-                return RedirectToRoute(new { controller = "order", action = "order" });
-            }
-           
+            Ets.Service.Provider.Common.HomeCountProvider homeCountProvider = new Ets.Service.Provider.Common.HomeCountProvider();
+            var criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria();
+            ViewBag.homeCountTitleToAllData = homeCountProvider.GetHomeCountTitleToAllData();
+            ViewBag.homeCountTitleModel = homeCountProvider.GetCurrentDateModel();
+            IList<Ets.Model.DomainModel.Bussiness.BusinessesDistributionModel> clienteStorerGrabStatistical = iClienterProvider.GetClienteStorerGrabStatisticalInfo();
+            ViewBag.clienteStorerGrabStatistical = clienteStorerGrabStatistical.ToList();
+            var pagedList = iOrderProvider.GetCurrentDateCountAndMoney(criteria);
+            return View(pagedList);
+
+
         }
         [HttpPost]
         public ActionResult PostIndex(int pageindex = 1)
