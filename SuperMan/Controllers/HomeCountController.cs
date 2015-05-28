@@ -39,7 +39,8 @@ namespace SuperMan.Controllers
             }
             else
             {
-                return RedirectToAction("order", "order");
+                HttpContext.Response.Redirect("~/order/order",false);
+                return null;
             }
            
         }
