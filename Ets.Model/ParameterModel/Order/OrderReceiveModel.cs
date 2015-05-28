@@ -10,7 +10,7 @@ namespace Ets.Model.ParameterModel.Order
     {
         public int userId { get; set; }
 
-        public int bussinessId { get; set; }
+        public int businessId { get; set; }
 
         public string orderNo { get; set; }
 
