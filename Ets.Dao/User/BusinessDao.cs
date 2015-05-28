@@ -1157,18 +1157,17 @@ namespace Ets.Dao.User
         /// <param name="busiId"></param>
         /// <param name="picName"></param>
         /// <returns></returns>
-        public int UpdateBusinessPicInfo(int busiId, string picName,string businessLicensePic)
+        public int UpdateBusinessPicInfo(int busiId, string picName)
         {
             string upSql = @"UPDATE  dbo.business
-                            SET     CheckPicUrl = @CheckPicUrl ,BusinessLicensePic=@BusinessLicensePic
+                            SET     CheckPicUrl = @CheckPicUrl
                                     [Status] = @Status
                             OUTPUT  Inserted.[Status]
                             WHERE   Id = @busiID ";
 
             IDbParameters parm = DbHelper.CreateDbParameters();
 
-            parm.AddWithValue("@CheckPicUrl", picName);
-            parm.AddWithValue("@BusinessLicensePic", businessLicensePic); 
+            parm.AddWithValue("@CheckPicUrl", picName); 
             parm.AddWithValue("@Status", ConstValues.BUSINESS_AUDITPASSING);
             parm.AddWithValue("@busiID", busiId);
 
