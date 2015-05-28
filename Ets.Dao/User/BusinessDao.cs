@@ -1160,7 +1160,7 @@ namespace Ets.Dao.User
         public int UpdateBusinessPicInfo(int busiId, string picName)
         {
             string upSql = @"UPDATE  dbo.business
-                            SET     CheckPicUrl = @CheckPicUrl
+                            SET     CheckPicUrl = @CheckPicUrl,
                                     [Status] = @Status
                             OUTPUT  Inserted.[Status]
                             WHERE   Id = @busiID ";
