@@ -27,7 +27,7 @@ namespace ETS.Pay.AliPay
         /// 修改者：
         /// 修改时间：
         /// ----------------------------------------------------------------------------------------
-        public dynamic GetQRCodeUrl(string orderNo, decimal customerTotal, string businessName)
+        public string GetQRCodeUrl(string orderNo, decimal customerTotal, string businessName)
         {
             //接口调用时间
             string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");

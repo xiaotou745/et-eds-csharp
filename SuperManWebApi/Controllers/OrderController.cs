@@ -464,7 +464,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="childId">子订单ID</param>
         /// <returns>成功返回1，支付中未支付返回0</returns>
         [HttpPost]
-        public ResultModel<PayResultModel> GetChildPayStatus(OrderChildModel model)
+        public ResultModel<PayStatusModel> GetChildPayStatus(OrderChildModel model)
         {
             return iOrderChildProvider.GetPayStatus(model.orderId, model.childId);
         }

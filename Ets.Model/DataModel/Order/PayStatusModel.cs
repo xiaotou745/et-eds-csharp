@@ -17,6 +17,21 @@ namespace Ets.Model.DataModel.Order
         public int PayStatus { get; set; }
 
         /// <summary>
+        /// 主订单ID
+        /// </summary>
+        public int OrderId { get; set; }
+
+        /// <summary>
+        /// 子订单ID
+        /// </summary>
+        public int ChildId { get; set; }
+
+        /// <summary>
+        /// 是否有未完成的子订单
+        /// </summary>
+        public int unFinish { get; set; }
+
+        /// <summary>
         /// 订单总金额
         /// </summary>
         public decimal TotalPrice { get; set; }

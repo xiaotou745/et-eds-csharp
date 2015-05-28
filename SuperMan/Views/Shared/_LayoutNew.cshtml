@@ -84,6 +84,10 @@
                             List<AuthorityMenuModel> partMenus = (from m in menus where m.ParId == 0 select m).ToList();
                             foreach (var pMenu in partMenus)
                             {
+                                if (mymenus==null)
+                                {
+                                    continue;
+                                }
                                 List<AuthorityMenuModel> childMenus = (from m in mymenus where m.ParId == pMenu.Id && pMenu.IsButton == false select m).ToList();
                                 if (childMenus.Count<=0)
                                 {

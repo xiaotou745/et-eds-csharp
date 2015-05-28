@@ -43,14 +43,21 @@ namespace SuperMan.Controllers
             //    return null;
             //}
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId; ;//集团id
-            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserContext.Current.Id));
+
+            int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
+
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserType));
             var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria()
             {
                 Status = -1,
                 GroupId = SuperMan.App_Start.UserContext.Current.GroupId,
-                AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(ParseHelper.ToInt(UserContext.Current.Id))
+                AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType)
                     
             };
+            if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
+            {
+                return View();
+            }
             //ViewBag.openCityList.Result.AreaModels;
             var pagedList = iDistributionProvider.GetClienteres(criteria);
             return View(pagedList);
@@ -62,9 +69,16 @@ namespace SuperMan.Controllers
         {
             var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria();
             TryUpdateModel(criteria);
+
+            int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
+
             criteria.AuthorityCityNameListStr =
-                iAreaProvider.GetAuthorityCityNameListStr(ParseHelper.ToInt(UserContext.Current.Id));
-            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserContext.Current.Id)); 
+                iAreaProvider.GetAuthorityCityNameListStr(ParseHelper.ToInt(UserType));
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(UserType);
+            if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
+            {
+                return PartialView("_SuperManManagerList");
+            }
             var pagedList = iDistributionProvider.GetClienteres(criteria);
             return PartialView("_SuperManManagerList", pagedList);
         }

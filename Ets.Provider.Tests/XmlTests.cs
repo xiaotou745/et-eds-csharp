@@ -5,6 +5,7 @@ using ETS.Util;
 using Letao.Util;
 using NUnit.Framework;
 using Ets.Dao.User;
+using Ets.Service.Provider.MyPush;
 
 namespace Ets.Provider.Tests
 {
@@ -41,7 +42,10 @@ namespace Ets.Provider.Tests
 
         public void businessTest()
         {
-            Ets.Model.DomainModel.Bussiness.BusinessDM model = new BusinessDao().GetByOrderId(1424211);
+            //Ets.Model.DomainModel.Bussiness.BusinessDM model = new BusinessDao().GetByOrderId(1424211);
         }
+
+
+
     }
 }

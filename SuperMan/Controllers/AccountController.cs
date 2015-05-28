@@ -87,7 +87,8 @@ namespace SuperMan.Controllers
                         LoginName = account.LoginName,
                         GroupId = account.GroupId,
                         RoleId = account.RoleId,
-                        Password = model.Password
+                        Password = model.Password,
+                        AccountType = ParseHelper.ToInt(account.AccountType,1)
                     };
                     string json = JsonHelper.ToJson(userInfo); 
                     _authenticationService.SignIn(json);
@@ -118,18 +119,18 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <returns></returns>
         public FileContentResult CaptchaImage()
-        { 
+        {
             var captcha = new LiteralCaptcha(80, 25, 4);
             var bytes = captcha.Generate();
             //验证码插入Redis缓存
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string cachekey = string.Format(RedissCacheKey.CaptchaImage, ETS.Util.Helper.Uuid());
-            redis.Add(cachekey, captcha.Captcha, DateTime.Now.AddHours(10));  
+            redis.Add(cachekey, captcha.Captcha, DateTime.Now.AddHours(10));
             //缓存key放入cookie里存储 
             CookieHelper.WriteCookie("Cookie_Verification", cachekey, DateTime.Now.AddMinutes(10));
             return new FileContentResult(bytes, "image/jpeg"); ;
-        } 
+        }
 
-        
+
     }
 }

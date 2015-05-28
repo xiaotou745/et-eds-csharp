@@ -394,11 +394,11 @@ namespace Ets.Dao.User
             {
                 sbSqlWhere.AppendFormat(" AND b.GroupId={0} ", criteria.GroupId);
             }
-            if (criteria.BusinessGroupId != null && criteria.BusinessGroupId > 0)
+            if (ParseHelper.ToInt(criteria.BusinessGroupId,0) > 0)
             {
                 sbSqlWhere.AppendFormat(" AND b.BusinessGroupId={0} ", criteria.BusinessGroupId);
             }
-            if (criteria.CommissionType != null && criteria.CommissionType > 0)
+            if (ParseHelper.ToInt(criteria.CommissionType,0) > 0)
             {
                 sbSqlWhere.AppendFormat(" AND b.CommissionType={0} ", criteria.CommissionType);
             }
@@ -406,7 +406,11 @@ namespace Ets.Dao.User
             {
                 sbSqlWhere.AppendFormat(" AND b.City='{0}' ", criteria.businessCity.Trim());
             }
-            else
+            //else
+            //{
+            //    sbSqlWhere.AppendFormat(" AND b.City IN ({0}) ", criteria.AuthorityCityNameListStr.Trim());
+            //}
+            if (!string.IsNullOrEmpty(criteria.AuthorityCityNameListStr))
             {
                 sbSqlWhere.AppendFormat(" AND b.City IN ({0}) ", criteria.AuthorityCityNameListStr.Trim());
             }

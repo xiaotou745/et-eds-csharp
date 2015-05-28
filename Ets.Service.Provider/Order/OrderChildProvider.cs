@@ -82,14 +82,15 @@ namespace Ets.Service.Provider.Order
         /// <param name="orderId">主订单ID</param>
         /// <param name="childId">子订单ID</param>
         /// <returns>成功返回1，支付中未支付返回0</returns>
-        public ResultModel<PayResultModel> GetPayStatus(int orderId, int childId)
+        public ResultModel<PayStatusModel> GetPayStatus(int orderId, int childId)
         {
-            PayStatusModel model = _orderChildDao.GetPayStatus(orderId, childId);
-            if (model != null && model.PayStatus == PayStatusEnum.HadPay.GetHashCode())
-            {
-                return ResultModel<PayResultModel>.Conclude(AliPayStatus.success);
-            }
-            return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
+            PayStatusModel model = _orderChildDao.GetChildPayStatus(orderId, childId);
+            //if (model != null && model.PayStatus == PayStatusEnum.HadPay.GetHashCode())
+            //{
+            //    return ResultModel<PayResultModel>.Conclude(AliPayStatus.success);
+            //}
+            //return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
+            return ResultModel<PayStatusModel>.Conclude(AliPayStatus.success, model);
         }
     }
 }
