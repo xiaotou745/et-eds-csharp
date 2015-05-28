@@ -136,15 +136,26 @@ namespace Ets.Service.Provider.MyPush
                 PushPayload pushPayload = new PushPayload();
                 pushPayload.platform = Platform.android_ios();
                 pushPayload.audience = audience;
-                Notification notification = new Notification();//.setAlert(model.Alert)不需要写弹出内容
+                Notification notification = new Notification().setAlert(model.Alert);//不需要写弹出内容
                 notification.AndroidNotification = new AndroidNotification().setTitle(model.Title);
                 notification.AndroidNotification = new AndroidNotification().AddExtra("Content", model.Content);
                 notification.IosNotification = new IosNotification().setAlert(model.Alert).setBadge(1).setSound("YourSound");
                 pushPayload.notification = notification.Check();
                 var response = client.SendPush(pushPayload);
+                if (!response.isResultOK())
+                {
+                    LogHelper.LogWriter("推送失败", response.msg_id);
+                }
+                else
+                {
+                    LogHelper.LogWriter("推送成功", response.msg_id);
+                }
+
             }
             catch (Exception ex)
             {
+                string parm = string.Concat("推送异常,参数：tagId", model.TagId, ",RegistrationId:", model.RegistrationId);
+                LogHelper.LogWriter(ex, parm);
             }
         }
     }
