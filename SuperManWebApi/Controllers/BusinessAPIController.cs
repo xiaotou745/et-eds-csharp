@@ -121,12 +121,11 @@ namespace SuperManWebApi.Controllers
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidUserId);
             }
-            if (HttpContext.Current.Request.Files.Count != 1)
+            if (HttpContext.Current.Request.Files.Count >= 1)
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidFileFormat);
             }
-            var file = HttpContext.Current.Request.Files[0];
-
+            var file = HttpContext.Current.Request.Files[0]; 
             System.Drawing.Image img;
             try
             {
@@ -166,12 +165,14 @@ namespace SuperManWebApi.Controllers
 
                 ImageHelper ih = new ImageHelper();
                 ImgInfo imgInfo = ih.UploadImg(file, 0);
+               
                 if (!string.IsNullOrWhiteSpace(imgInfo.FailRemark))
                 {
                     return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed);
                 }
                 //保存图片目录信息到数据库
                 var upResult = iBusinessProvider.UpdateBusinessPicInfo(userId, imgInfo.PicUrl);
+
                 if (upResult == -1)
                 {
                     return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed, new Ets.Model.ParameterModel.Clienter.UploadIconModel() { Id = userId, ImagePath = imgInfo.PicUrl, status = upResult.ToString() });
