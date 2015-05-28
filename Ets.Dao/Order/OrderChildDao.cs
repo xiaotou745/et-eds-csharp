@@ -234,7 +234,7 @@ where   1=1 and o.Id = @OrderId
         /// <returns>不存在返回-1</returns>
         public PayStatusModel GetPayStatus(int orderId, int orderChildId)
         {
-            string sql = "SELECT ThirdPayStatus as PayStatus,TotalPrice,WxCodeUrl from dbo.OrderChild oc(nolock) where OrderId = @OrderId and ChildId = @ChildId ";
+            string sql = "SELECT PayStatus,TotalPrice,WxCodeUrl from dbo.OrderChild oc(nolock) where OrderId = @OrderId and ChildId = @ChildId ";//ThirdPayStatus as 
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("OrderId", DbType.Int32, 4).Value = orderId;
             parm.Add("ChildId", DbType.Int32, 4).Value = orderChildId;
@@ -247,6 +247,38 @@ where   1=1 and o.Id = @OrderId
             return MapRows<PayStatusModel>(dt)[0];
         }
 
+        /// <summary>
+        /// 查询子订单状态，和是否有未完成的订单，APP刷新订单状态用
+        /// 窦海超
+        /// 2015年5月28日 14:33:12
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="orderChildId"></param>
+        /// <returns></returns>
+        public PayStatusModel GetChildPayStatus(int orderId, int orderChildId)
+        {
+            string sql = @"
+select
+        PayStatus, OrderId, ChildId, ( select   min(PayStatus)
+                                       from     dbo.OrderChild oc ( nolock )
+                                       where    OrderId = @OrderId
+                                     )
+from    dbo.OrderChild oc ( nolock )
+where   OrderId = @OrderId
+        and ChildId = @ChildId
+            
+            ";//ThirdPayStatus as 
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("OrderId", DbType.Int32, 4).Value = orderId;
+            parm.Add("ChildId", DbType.Int32, 4).Value = orderChildId;
+            //此表是要同步支付状态，请读写表
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql, parm);
+            if (!dt.HasData())
+            {
+                return null;
+            }
+            return MapRows<PayStatusModel>(dt)[0];
+        }
         /// <summary>
         /// 支付子订单完成
         /// 窦海超
