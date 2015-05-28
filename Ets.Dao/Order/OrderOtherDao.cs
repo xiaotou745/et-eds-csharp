@@ -33,7 +33,7 @@ namespace Ets.Dao.Order
             const string UPDATE_SQL = @"
 update OrderOther 
 set GrabTime=GETDATE(), GrabLongitude=@GrabLongitude,GrabLatitude=@GrabLatitude where orderid=(
-select id from dbo.[order] where OrderNo=@OrderNo
+select id from dbo.[order](nolock) where OrderNo=@OrderNo
 )";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@GrabLongitude", grabLongitude);
