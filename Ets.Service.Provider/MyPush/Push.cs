@@ -136,7 +136,7 @@ namespace Ets.Service.Provider.MyPush
                 PushPayload pushPayload = new PushPayload();
                 pushPayload.platform = Platform.android_ios();
                 pushPayload.audience = audience;
-                Notification notification = new Notification().setAlert(model.Alert);
+                Notification notification = new Notification();//.setAlert(model.Alert)不需要写弹出内容
                 notification.AndroidNotification = new AndroidNotification().setTitle(model.Title);
                 notification.AndroidNotification = new AndroidNotification().AddExtra("Content", model.Content);
                 notification.IosNotification = new IosNotification().setAlert(model.Alert).setBadge(1).setSound("YourSound");
