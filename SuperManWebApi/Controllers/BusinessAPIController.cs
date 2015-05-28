@@ -125,7 +125,8 @@ namespace SuperManWebApi.Controllers
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidFileFormat);
             }
-            var file = HttpContext.Current.Request.Files[0]; 
+            var file = HttpContext.Current.Request.Files[0];
+            var businessLicensePic = HttpContext.Current.Request.Files[1];
             System.Drawing.Image img;
             try
             {
@@ -165,13 +166,14 @@ namespace SuperManWebApi.Controllers
 
                 ImageHelper ih = new ImageHelper();
                 ImgInfo imgInfo = ih.UploadImg(file, 0);
+                ImgInfo busiLicenPic = ih.UploadImg(businessLicensePic, 0);
                
                 if (!string.IsNullOrWhiteSpace(imgInfo.FailRemark))
                 {
                     return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed);
                 }
                 //保存图片目录信息到数据库
-                var upResult = iBusinessProvider.UpdateBusinessPicInfo(userId, imgInfo.PicUrl);
+                var upResult = iBusinessProvider.UpdateBusinessPicInfo(userId, imgInfo.PicUrl,busiLicenPic.PicUrl);
 
                 if (upResult == -1)
                 {
