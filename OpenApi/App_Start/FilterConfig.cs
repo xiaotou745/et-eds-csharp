@@ -158,7 +158,7 @@ namespace OpenApi
         /// <param name="filterContext">上下文对象  该类继承于ControllerContext</param>
         public override void OnException(HttpActionExecutedContext filterContext)
         {
-            LogHelper.LogWriter("异常：", new { remark = filterContext });
+            LogHelper.LogWriterFromFilter(filterContext.Exception);
             filterContext.Response = filterContext.ActionContext.ActionDescriptor.ResultConverter.
               Convert(filterContext.ActionContext.ControllerContext, ResultModel<object>.Conclude(OrderApiStatusType.SystemError));
         }
