@@ -957,10 +957,9 @@ namespace Ets.Service.Provider.Order
                     model.Receive_AreaCode = _area.NationalCode.ToString();
                 }
                 #endregion
-                model.Amount = model.Amount - ParseHelper.ToDecimal(model.DistribSubsidy, 0);
                 List<OrderChlidPM> list = new List<OrderChlidPM>
                 {
-                    new OrderChlidPM { ChildId=1,GoodPrice=model.Amount}
+                    new OrderChlidPM { ChildId=1,GoodPrice=model.Amount- ParseHelper.ToDecimal(model.DistribSubsidy, 0) }
                 };
                 model.listOrderChlid = list;
 
