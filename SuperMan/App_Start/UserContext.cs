@@ -27,7 +27,7 @@ namespace SuperMan.App_Start
                     Name = userInfo.LoginName,
                     RoleId = userInfo.RoleId,
                     GroupId = ETS.Util.ParseHelper.ToInt(userInfo.GroupId, 0),
-                    AccountType = AccountType.AdminUser
+                    AccountType = userInfo.AccountType
                 };
             }
         }
@@ -69,7 +69,7 @@ namespace SuperMan.App_Start
         public int GroupId { get; set; }
         public int AppChannelId { get; set; }
         public int RoleId { get; set; }
-        public AccountType AccountType { get; set; }
+        public int AccountType { get; set; }
         public string Name { get; set; }
 
     }

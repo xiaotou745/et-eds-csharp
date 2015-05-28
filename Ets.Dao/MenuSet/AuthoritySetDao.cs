@@ -770,7 +770,7 @@ WHERE acr.AccountId=@AccountId;";
         /// <returns></returns>
         public bool ModifyAccount(account model)
         {
-            string sql = " update account set ";
+            string sql = " update account set AccountType=@AccountType,";
             if (model.Status >= 0)
             {
                 sql += " Status=@Status";
@@ -791,6 +791,7 @@ WHERE acr.AccountId=@AccountId;";
             parm.AddWithValue("@Id", model.Id);
             parm.AddWithValue("@Status", model.Status);
             parm.AddWithValue("@Password", model.Password);
+            parm.Add("AccountType", DbType.Int32, 4).Value = model.AccountType;
             return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm)) > 0;
         }
     }

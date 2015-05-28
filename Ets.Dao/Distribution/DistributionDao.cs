@@ -79,10 +79,14 @@ namespace Ets.Dao.Distribution
             {
                 sbSqlWhere.AppendFormat(" AND C.City='{0}' ", criteria.businessCity.Trim());
             }
-            else
+            if (!string.IsNullOrEmpty(criteria.AuthorityCityNameListStr))
             {
                 sbSqlWhere.AppendFormat(" AND C.City IN ({0}) ", criteria.AuthorityCityNameListStr.Trim());
             }
+            //else
+            //{
+            //    sbSqlWhere.AppendFormat(" AND C.City IN ({0}) ", criteria.AuthorityCityNameListStr.Trim());
+            //}
             //if (!string.IsNullOrEmpty(criteria.txtPubStart))
             //{
             //    sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),WR.CreateTime,120)=CONVERT(CHAR(10),'{0}',120) and WtihdrawRecords.Amount < 0", criteria.txtPubStart.Trim());

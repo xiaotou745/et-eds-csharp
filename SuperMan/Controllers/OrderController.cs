@@ -32,7 +32,10 @@ namespace SuperMan.Controllers
         public ActionResult Order()
         {
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
-            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserContext.Current.Id));
+
+
+            int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserType));
             var superManModel = iDistributionProvider.GetClienterModelByGroupID(ViewBag.txtGroupId);
             if (superManModel != null)
             {
@@ -41,9 +44,13 @@ namespace SuperMan.Controllers
             var criteria = new OrderSearchCriteria()
             {
                 orderStatus = -1,
-                GroupId = UserContext.Current.GroupId,
-                AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(ParseHelper.ToInt(UserContext.Current.Id))
+                //GroupId = UserContext.Current.GroupId,
+                AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType)
             };
+            if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
+            {
+                return View();
+            }
             var pagedList = iOrderProvider.GetOrders(criteria);
             return View(pagedList);
         }
@@ -51,17 +58,22 @@ namespace SuperMan.Controllers
         public ActionResult PostOrder(int pageindex = 1)
         {
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId; ;//集团id
-            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserContext.Current.Id));
+            int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserType));
             var criteria = new OrderSearchCriteria();
             TryUpdateModel(criteria);
             criteria.AuthorityCityNameListStr =
-                iAreaProvider.GetAuthorityCityNameListStr(ParseHelper.ToInt(UserContext.Current.Id));
+                iAreaProvider.GetAuthorityCityNameListStr(UserType);
             //指派超人时  以下代码 有用，现在 注释掉  wc 
             //var superManModel = iDistributionProvider.GetClienterModelByGroupID(ViewBag.txtGroupId);
             //if (superManModel != null)
             //{
             //    ViewBag.superManModel = superManModel;
             //} 
+            if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
+            {
+                return PartialView("_PartialOrderList");
+            }
             var pagedList = iOrderProvider.GetOrders(criteria);
 
             return PartialView("_PartialOrderList", pagedList);
@@ -200,7 +212,7 @@ namespace SuperMan.Controllers
                 return Json(new ResultModel(false, "订单已被抢或者已完成"), JsonRequestBehavior.AllowGet);
             if (SuperID == -1) //未指派超人 ，触发极光推送  ，指派超人的情况下，建立订单和超人的关系
             {
-                  //异步回调第三方，推送通知
+                //异步回调第三方，推送通知
                 Task.Factory.StartNew(() =>
                 {
                     Ets.Service.Provider.MyPush.Push.PushMessage(0, "有新订单了！", "有新的订单可以抢了！", "有新的订单可以抢了！", string.Empty,
