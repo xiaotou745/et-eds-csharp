@@ -53,7 +53,7 @@ namespace Ets.Service.Provider.MyPush
                 }
                 else if (tagId == 1 && !string.IsNullOrEmpty(RegistrationId)) //B端
                 {
-                    audience = Audience.s_tag_and(RegistrationId);
+                    audience = Audience.s_tag(RegistrationId);
                 }
                 PushPayload pushPayload = new PushPayload();
                 pushPayload.platform = Platform.android_ios();
@@ -76,7 +76,7 @@ namespace Ets.Service.Provider.MyPush
             catch (Exception ex)
             {
                 string parm = string.Concat("推送异常,参数：tagId", tagId, ",RegistrationId:", RegistrationId);
-                LogHelper.LogWriter(ex, "");
+                LogHelper.LogWriter(ex, parm);
             }
         }
 
