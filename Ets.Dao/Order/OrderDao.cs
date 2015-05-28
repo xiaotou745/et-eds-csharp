@@ -284,7 +284,7 @@ namespace Ets.Dao.Order
             dbParameters.AddWithValue("@CommissionType", paramodel.CommissionType);//结算类型
             dbParameters.AddWithValue("@CommissionFixValue", paramodel.CommissionFixValue);//固定金额
             dbParameters.AddWithValue("@BusinessGroupId", paramodel.BusinessGroupId);//分组ID
-            dbParameters.AddWithValue("@Invoice", paramodel.invoice_title);//发票标题
+            dbParameters.AddWithValue("@Invoice", paramodel.invoice_title ?? "");//发票标题
 
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertOrdersql, dbParameters);
             return ParseHelper.ToInt(result);
