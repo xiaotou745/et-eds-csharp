@@ -180,7 +180,7 @@ namespace Ets.Service.IProvider.User
         /// <param name="busiId">商户Id</param>
         /// <param name="picName">图片名称</param>
         /// <returns></returns>
-        int UpdateBusinessPicInfo(int busiId, string picName, string busiLicenPic);
+        int UpdateBusinessPicInfo(int busiId, string picName);
 
         /// <summary>
         /// 请求动态验证码  (找回密码)

@@ -1160,7 +1160,7 @@ namespace Ets.Dao.User
         public int UpdateBusinessPicInfo(int busiId, string picName, string busiLicenPic)
         {
             string upSql = @"UPDATE  dbo.business
-                            SET     CheckPicUrl = @CheckPicUrl,BusinessLicensePic=@BusinessLicensePic
+                            SET     CheckPicUrl = @CheckPicUrl
                                     [Status] = @Status
                             OUTPUT  Inserted.[Status]
                             WHERE   Id = @busiID ";
@@ -1168,7 +1168,6 @@ namespace Ets.Dao.User
             IDbParameters parm = DbHelper.CreateDbParameters();
 
             parm.AddWithValue("@CheckPicUrl", picName);
-            parm.Add("@BusinessLicensePic", DbType.String).Value = busiLicenPic; 
             parm.AddWithValue("@Status", ConstValues.BUSINESS_AUDITPASSING);
             parm.AddWithValue("@busiID", busiId);
 
