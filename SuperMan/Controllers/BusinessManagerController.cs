@@ -161,8 +161,6 @@ namespace SuperMan.Controllers
             }
             return Json(new ResultModel(false, result.Message), JsonRequestBehavior.DenyGet);
         }
-
-        
         /// <summary>
         /// 修改商户信息
         /// </summary>

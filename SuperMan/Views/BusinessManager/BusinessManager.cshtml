@@ -379,7 +379,7 @@
     //修改商家信息
     $("#btnUpdateBusinessInfo").on('click', function () {
 
-        var busiId = $("#busId").val(); //商户id
+        var busiId = $("#busiId").val(); //商户id
         var busiName = $("#busiName").val(); //商户电话
         var busiPhone = $("#busiPhone").val(); //商户电话
         var busiSourceId = $("#busiSourceId").val(); //商户原平台Id
@@ -406,6 +406,7 @@
         if (busGroupId <= 0) {
             busGroupId = 0;
         }
+        alert(1);
         var paramaters = {
             "id": busiId, "businessName": busiName, "businessPhone": busiPhone,
             "businessSourceId": busiSourceId, "groupId": busGroupId,
