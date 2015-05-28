@@ -125,7 +125,7 @@ namespace SuperManWebApi.Controllers
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidFileFormat);
             }
-            var file = HttpContext.Current.Request.Files[0]; 
+            var file = HttpContext.Current.Request.Files[0];
             System.Drawing.Image img;
             try
             {

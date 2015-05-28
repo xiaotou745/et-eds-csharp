@@ -1167,7 +1167,7 @@ namespace Ets.Dao.User
 
             IDbParameters parm = DbHelper.CreateDbParameters();
 
-            parm.AddWithValue("@CheckPicUrl", picName); 
+            parm.AddWithValue("@CheckPicUrl", picName);
             parm.AddWithValue("@Status", ConstValues.BUSINESS_AUDITPASSING);
             parm.AddWithValue("@busiID", busiId);
 
