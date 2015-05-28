@@ -75,11 +75,6 @@
         $('#password').val('');
         $('#confirmPassword').val('');
         $('#optionType').val('1');
-        if (accountType == 1) {
-            $("#cityList").hide();
-        } else {
-            $("#cityList").show();
-        }
         $("#modifyRemind").show();
         $("#selAcountType").val(accountType);
         $('#accountId').val(accountId);
@@ -98,6 +93,12 @@
         }
         funcCheckCity(accountId);
         adminjs.openwinbox('#AddAccountShow');
+        if (accountType == 1) {
+            $("#divCity").hide();
+        } else {
+            $("#divCity").show();
+        }
+
     }
     function funcCheckCity(accountId) {
         var accountCityRef;

@@ -142,14 +142,10 @@
 <script>
     var adminjs = new adminglass(); //实例化后台类
     $(document).ready(function () {
-        $("#selAcountType").change(function () {
-            var val = $("#selAcountType").val();
-            if (val==1) {
-                $("#divCity").hide();
-                return;
-            }
-            $("#divCity").show();
-        });
+        $("#selAcountType").change(fn);
+        function fn() {
+            $("#divCity").toggle($("#selAcountType").val() != 1);
+        }
         //
         ////查询
         //$("#btnSearch").on('click', function () {
@@ -161,7 +157,6 @@
         //});
         //添加帐户
         $("#btnAdd").on('click', function () {
-          
             $("#selAcountType").val('1');
             $('#accountId').val('0');
             $('#optionType').val('0');
@@ -176,10 +171,8 @@
             $(":checkbox[name='checkMenus']").prop("checked", false);
             $('#statusFin').text("添加账号");
             $('#cityNameList').text("请选择");
-            
             adminjs.openwinbox('#AddAccountShow');
-            $("#cityList").hide();
-
+            $("#divCity").hide();
         });
         window.location.hash = '';
     })
