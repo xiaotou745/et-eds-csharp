@@ -481,7 +481,7 @@ namespace Ets.Service.Provider.Order
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 OrderListModel order = orderDao.GetOrderByNo(orderNo);
-                if (order==null||order.Status != status)  //当前订单状态与原始订单状态不一致 返回0
+                if (order == null || order.Status != status)  //当前订单状态与原始订单状态不一致 返回0
                 {
                     return 0;
                 }
@@ -934,8 +934,8 @@ namespace Ets.Service.Provider.Order
             #endregion
 
             try
-            { 
-            
+            {
+
                 #region 转换省市区
                 //转换省
                 var _province = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = model.Receive_Province, JiBie = 1 });
@@ -957,11 +957,11 @@ namespace Ets.Service.Provider.Order
                     model.Receive_AreaCode = _area.NationalCode.ToString();
                 }
                 #endregion
-
+                model.Amount = model.Amount - ParseHelper.ToDecimal(model.DistribSubsidy, 0);
                 List<OrderChlidPM> list = new List<OrderChlidPM>
                 {
-                    new OrderChlidPM { ChildId=1,GoodPrice=model.Amount }
-                };           
+                    new OrderChlidPM { ChildId=1,GoodPrice=model.Amount}
+                };
                 model.listOrderChlid = list;
 
                 ResultModel<NewPostPublishOrderResultModel> currResModel = Verification(model);
@@ -974,7 +974,7 @@ namespace Ets.Service.Provider.Order
                         NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { OriginalOrderNo = model.OriginalOrderNo, OrderNo = dborder.OrderNo };
                         LogHelper.LogWriter("订单发布成功", new { model = model, resultModel = resultModel });
                         return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Success, resultModel);
-                    }                  
+                    }
                 }
 
                 return currResModel;
@@ -983,7 +983,7 @@ namespace Ets.Service.Provider.Order
             {
                 LogHelper.LogWriter("ResultModel<NewPostPublishOrderResultModel> NewPostPublishOrder_B()方法出错", new { obj = "时间：" + DateTime.Now.ToString() + ex.Message });
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Failed);
-            }       
+            }
 
         }
         ResultModel<NewPostPublishOrderResultModel> Verification(NewPostPublishOrderModel model)
@@ -1035,7 +1035,7 @@ namespace Ets.Service.Provider.Order
             //验证该平台 商户 订单号 是否存在
             Ets.Dao.Order.OrderDao orderDao = new Dao.Order.OrderDao();
             var order = orderDao.GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom, model.OrderType);
-            
+
             if (order != null)
             {
                 if (order.Status == ConstValues.ORDER_CANCEL)    // 在存在订单的情况下如果是去掉订单的状态，直接修改为订单待接单状态
@@ -1057,7 +1057,7 @@ namespace Ets.Service.Provider.Order
             }
 
             return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.VerificationSuccess);
-            
+
         }
 
         /// <summary>
@@ -1116,7 +1116,7 @@ namespace Ets.Service.Provider.Order
             to.businessId = abusiness.Id; //当前发布者
             BusListResultModel business = businessDao.GetBusiness(abusiness.Id);  //根据发布者id,获取发布者的相关信息实体
             if (business != null)
-            {           
+            {
                 to.PickUpCity = business.City;  //商户所在城市
                 to.PickUpAddress = business.Address;  //提取地址
                 to.PubDate = DateTime.Now; //提起时间
@@ -1367,30 +1367,30 @@ namespace Ets.Service.Provider.Order
                     && OrderConst.OrderStatus0 != currenStatus)  //订单状态非30，,不允许取消订单
                     return ResultModel<object>.Conclude(OrderApiStatusType.OrderIsJoin);
                 int result = orderDao.UpdateOrderStatus_Other(paramodel);  //更新第三方订单在E代送的状态成功
-                if (result > 0 )
+                if (result > 0)
                 {
                     //当第三方取消订单时订单的状态为待接单时，需要返还商家结算费 TODO 目前只供美团使用
                     if (currenStatus == OrderConst.OrderStatus0)
                     {
-                       OrderListModel order=  orderDao.GetOpenOrder(paramodel.order_no, paramodel.orderfrom);
-                          BusinessDao businessDao = new BusinessDao();
-                    businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
-                    {
-                        Id = order.businessId,
-                        Money = order.SettleMoney
-                    });
-                    BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
-                    businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
-                    {
-                        BusinessId = order.businessId,//商户Id
-                        Amount = order.SettleMoney,//流水金额  结算金额
-                        Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
-                        RecordType = (int)BusinessBalanceRecordRecordType.CancelOrder,
-                        Operator = order.BusinessName,
-                        WithwardId = order.Id,
-                        RelationNo = order.OrderNo,
-                        Remark = "第三方商户调用接口取消订单返回配送费"
-                    });
+                        OrderListModel order = orderDao.GetOpenOrder(paramodel.order_no, paramodel.orderfrom);
+                        BusinessDao businessDao = new BusinessDao();
+                        businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
+                        {
+                            Id = order.businessId,
+                            Money = order.SettleMoney
+                        });
+                        BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
+                        businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
+                        {
+                            BusinessId = order.businessId,//商户Id
+                            Amount = order.SettleMoney,//流水金额  结算金额
+                            Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
+                            RecordType = (int)BusinessBalanceRecordRecordType.CancelOrder,
+                            Operator = order.BusinessName,
+                            WithwardId = order.Id,
+                            RelationNo = order.OrderNo,
+                            Remark = "第三方商户调用接口取消订单返回配送费"
+                        });
                     }
                     tran.Complete();
                     return ResultModel<object>.Conclude(OrderApiStatusType.Success);
