@@ -560,7 +560,7 @@ namespace Ets.Service.Provider.Clienter
                     //        UpdateClienterAccount(userId, myOrderInfo);
                     //    }
                     //}
-                    //businessId = myOrderInfo.businessId;
+                    businessId = myOrderInfo.businessId;
                     //////完成任务的时候，当任务为未付款时，更新商户金额
                     //if (myOrderInfo.IsPay.HasValue && !myOrderInfo.IsPay.Value)
                     //{

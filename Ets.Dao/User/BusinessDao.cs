@@ -151,7 +151,7 @@ namespace Ets.Dao.User
         /// <param name="name">商户姓名</param>
         /// <param name="phoneno">商户电话</param>
         /// <returns></returns>
-        public IList<BusinessCommissionModel> GetBusinessCommission(DateTime t1, DateTime t2, string name, string phoneno, int groupid, string businessCity)
+        public IList<BusinessCommissionModel> GetBusinessCommission(DateTime t1, DateTime t2, string name, string phoneno, int groupid, string businessCity, string authorityCityNameListStr)
         {
             IList<BusinessCommissionModel> list = new List<BusinessCommissionModel>();
             try
@@ -201,6 +201,10 @@ namespace Ets.Dao.User
                 {
                     where += " AND B.City=@City";
                     dbParameters.AddWithValue("City", businessCity);
+                }
+                if (authorityCityNameListStr != null && !string.IsNullOrEmpty(authorityCityNameListStr.Trim()))
+                {
+                    where += string.Format(" AND B.City IN({0}) ", authorityCityNameListStr);
                 }
                 sql = string.Format(sql, where);
                 DataTable dt = DbHelper.ExecuteDataset(Config.SuperMan_Read, sql, dbParameters).Tables[0];
@@ -1156,7 +1160,7 @@ namespace Ets.Dao.User
         public int UpdateBusinessPicInfo(int busiId, string picName)
         {
             string upSql = @"UPDATE  dbo.business
-                            SET     CheckPicUrl = @CheckPicUrl ,
+                            SET     CheckPicUrl = @CheckPicUrl
                                     [Status] = @Status
                             OUTPUT  Inserted.[Status]
                             WHERE   Id = @busiID ";

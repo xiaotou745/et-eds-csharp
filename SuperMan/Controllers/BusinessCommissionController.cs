@@ -10,8 +10,10 @@ using System.Web.WebPages;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DomainModel.Bussiness;
+using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
 using Ets.Service.Provider.User;
+using SuperMan.App_Start;
 using SuperManCommonModel.Entities;
 
 
@@ -26,7 +28,8 @@ namespace SuperMan.Controllers
         /// <summary>
         /// 商户业务类
         /// </summary>
-        Ets.Service.IProvider.User.IBusinessProvider iBusinessProvider = new BusinessProvider(); 
+        Ets.Service.IProvider.User.IBusinessProvider iBusinessProvider = new BusinessProvider();
+        IAreaProvider iAreaProvider = new AreaProvider();
 
         /// <summary>
         /// 默认视图
@@ -35,10 +38,16 @@ namespace SuperMan.Controllers
         public ActionResult BusinessCommission()
         {
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;
-            ViewBag.openCityList = new AreaProvider().GetOpenCityOfSingleCity(0);
+            int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
+            ViewBag.openCityList = new AreaProvider().GetOpenCityOfSingleCity(UserType);
             DateTime t1 = new DateTime(2014, 1, 1, 0, 0, 0);
             DateTime t2 =new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 59);
-            var result = iBusinessProvider.GetBusinessCommission(t1, t2, "", "", SuperMan.App_Start.UserContext.Current.GroupId, "");
+            string authorityCityNameListStr=iAreaProvider.GetAuthorityCityNameListStr(UserType);
+            if (UserType > 0 && string.IsNullOrWhiteSpace(authorityCityNameListStr))
+            {
+                return View();
+            }
+            var result = iBusinessProvider.GetBusinessCommission(t1, t2, "", "", SuperMan.App_Start.UserContext.Current.GroupId, "", authorityCityNameListStr);
             return View(result);
         }
         /// <summary>
@@ -50,6 +59,7 @@ namespace SuperMan.Controllers
         public ActionResult BusinessCommissions(BusinessCommissionSearchCriteria criteria)
         {
             ViewBag.openCityList = new AreaProvider().GetOpenCityOfSingleCity(0);
+            int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
             DateTime date1 = DateTime.Now;
             DateTime date2 = DateTime.Now;  
             date1 = string.IsNullOrEmpty(criteria.txtDateStart) ? new DateTime(2014, 1, 1,0,0,0) : DateTime.Parse(criteria.txtDateStart);
@@ -61,11 +71,16 @@ namespace SuperMan.Controllers
             ViewBag.name = criteria.txtBusinessName;
             ViewBag.phoneno = criteria.txtBusinessPhoneNo;
             ViewBag.BusinessCity = criteria.BusinessCity;
-            if (criteria.BusinessCity == "所有城市")
+            if (criteria.BusinessCity == "--无--")
             {
                 criteria.BusinessCity = "";
             }
-            var result = iBusinessProvider.GetBusinessCommission(date1, date2, criteria.txtBusinessName, criteria.txtBusinessPhoneNo, criteria.txtGroupId, criteria.BusinessCity);
+            string authorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType);
+            if (UserType > 0 && string.IsNullOrWhiteSpace(authorityCityNameListStr))
+            {
+                return View("BusinessCommission");
+            }
+            var result = iBusinessProvider.GetBusinessCommission(date1, date2, criteria.txtBusinessName, criteria.txtBusinessPhoneNo, criteria.txtGroupId, criteria.BusinessCity, authorityCityNameListStr);
             return View("BusinessCommission", result);
         }
 
@@ -78,6 +93,7 @@ namespace SuperMan.Controllers
         public ActionResult CreateCommissionsExcel(BusinessCommissionSearchCriteria criteria)
         {
             ViewBag.openCityList = new AreaProvider().GetOpenCityOfSingleCity(0);
+            int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
             DateTime date1 = DateTime.Now;
             DateTime date2 = DateTime.Now;
             date1 = string.IsNullOrEmpty(criteria.txtDateStart) ? new DateTime(2014, 1, 1, 0, 0, 0) : DateTime.Parse(criteria.txtDateStart);
@@ -88,11 +104,16 @@ namespace SuperMan.Controllers
             ViewBag.endDate = criteria.txtDateEnd;
             ViewBag.name = criteria.txtBusinessName;
             ViewBag.BusinessCity = criteria.BusinessCity;
-            if (criteria.BusinessCity == "所有城市")
+            if (criteria.BusinessCity == "--无--")
             {
                 criteria.BusinessCity = "";
             }
-            var result = iBusinessProvider.GetBusinessCommission(date1, date2, criteria.txtBusinessName, criteria.txtBusinessPhoneNo, criteria.txtGroupId, criteria.BusinessCity);
+            string authorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType);
+            if (UserType > 0 && string.IsNullOrWhiteSpace(authorityCityNameListStr))
+            {
+                return View("BusinessCommission");
+            }
+            var result = iBusinessProvider.GetBusinessCommission(date1, date2, criteria.txtBusinessName, criteria.txtBusinessPhoneNo, criteria.txtGroupId, criteria.BusinessCity, authorityCityNameListStr);
             if (result.Result && result.Data.Count > 0)
             {
                 string filname = "e代送商户订单结算_" + date1.ToShortDateString() + "-" + date2.ToShortDateString() + ".xls";
