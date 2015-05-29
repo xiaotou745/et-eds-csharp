@@ -16,6 +16,7 @@ using Ets.Dao.Order;
 using Ets.Model.DataModel.Order;
 using ETS.Pay.WxPay;
 using Ets.Model.DomainModel.Bussiness;
+using Ets.Model.ParameterModel.Bussiness;
 
 namespace Ets.Service.Provider.Pay
 {
@@ -317,7 +318,53 @@ namespace Ets.Service.Provider.Pay
         }
 
 
+        /// <summary>
+        /// 商家充值
+        /// 窦海超
+        /// 2015年5月29日 15:09:29
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public ResultModel<BusinessRechargeResultModel> BusinessRecharge(BusinessRechargeModel model)
+        {
+            LogHelper.LogWriter("=============商家充值支付请求数据：", model);
 
+            // string.Concat(model.productId, "_", model.orderId, "_", model.childId, "_", model.payStyle);
+            string orderNo = Helper.generateOrderCode(model.Businessid);
+            BusinessRechargeResultModel resultModel = new BusinessRechargeResultModel()
+            {
+                notifyUrl = ETS.Config.NotifyUrl.Replace("Notify", "BusinessRechargeNotify"),
+                orderNo = orderNo,
+                payAmount = model.payAmount,
+                PayType = model.PayType
+            };
+            //所属产品_主订单号_子订单号_支付方式
+           
+            if (model.PayType == PayTypeEnum.ZhiFuBao.GetHashCode())
+            {
+                LogHelper.LogWriter("=============商家充值支付宝支付：");
+                ////支付宝支付
+                //数据库里查询订单信息
+                //if (payStatusModel.PayStatus == PayStatusEnum.WaitPay.GetHashCode())//待支付
+                //{
+                //return CreateAliPayOrder(orderNo, payStatusModel.TotalPrice, model.orderId, model.payStyle);
+                //}
+                return ResultModel<BusinessRechargeResultModel>.Conclude(AliPayStatus.fail, resultModel);
+            }
+            return ResultModel<BusinessRechargeResultModel>.Conclude(AliPayStatus.fail);
+        }
+
+
+        /// <summary>
+        /// 商家充值回调方法 
+        /// 窦海超
+        /// 2015年5月29日 15:17:07
+        /// </summary>
+        /// <returns></returns>
+        public ResultModel<BusinessRechargeResultModel> BusinessRechargeNotify()
+        {
+            return null;
+        }
         #endregion
 
         #region 微信相关
