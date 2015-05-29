@@ -1,6 +1,7 @@
 ﻿using Ets.Model.DataModel.Bussiness;
 using ETS.Dao;
 using ETS.Data.Core;
+using ETS.Util;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -44,6 +45,22 @@ values  (
             parm.Add("PayBy", DbType.String, 200).Value = model.PayBy;
             parm.Add("OriginalOrderNo", DbType.String, 100).Value = model.OriginalOrderNo;
             DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
+        }
+
+        /// <summary>
+        /// 判断第三方平台的充值单号存不存在 
+        /// 窦海超 
+        /// 2015年5月29日 21:39:10
+        /// </summary>
+        /// <param name="OriginalOrderNo"></param>
+        /// <returns>true=存在</returns>
+        public bool Check(string OriginalOrderNo)
+        {
+            string sql = @"
+SELECT count(1) FROM dbo.BusinessRecharge(nolock) br where OriginalOrderNo=@OriginalOrderNo";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("OriginalOrderNo", DbType.String, 100).Value = OriginalOrderNo;
+            return ParseHelper.ToInt(DbHelper.ExecuteReader(SuperMan_Read, sql, parm), 0) > 0 ? true : false;
         }
     }
 }

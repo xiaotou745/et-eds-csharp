@@ -395,6 +395,14 @@ namespace Ets.Service.Provider.Pay
                 #region 回调完成状态
                 if (notify.trade_status == "TRADE_SUCCESS" || notify.trade_status == "TRADE_FINISHED")
                 {
+                    if (new BusinessRechargeDao().Check(notify.trade_no))
+                    {
+                        //如果存在就退出，这里写的很扯，因为支付宝要的是success不带双引号.
+                        //但WEBAPI直接返回时带引号，所以现在要去库里查一次。
+                        //回头找到原因一定要改
+                        return "success";
+                    }
+
                     string orderNo = notify.out_trade_no;
                     if (string.IsNullOrEmpty(orderNo) || notify.out_biz_no <= 0)
                     {
