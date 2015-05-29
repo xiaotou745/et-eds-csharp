@@ -111,7 +111,7 @@ namespace Ets.Service.Provider.Subsidy
                 }
 
                 withdraw.Amount = ParseHelper.ToDecimal(businessPrice, 0);
-                withdraw.Balance = ParseHelper.ToDecimal(item.AccountBalance, 0);
+                withdraw.Balance = ParseHelper.ToDecimal(item.AccountBalance, 0) + withdraw.Amount;
                 withdraw.Remark = string.Format("跨店抢单奖励{0}元", withdraw.Amount);
 
                 //记录跨店日志
