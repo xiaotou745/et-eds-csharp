@@ -11,6 +11,11 @@ namespace Ets.Model.DataModel.Bussiness
         public int Id{ get; set; }
 
         /// <summary>
+        /// 商家ID
+        /// </summary>
+        public int BusinessId { get; set; }
+
+        /// <summary>
         /// 支付方式：1：支付宝；2微信
         /// </summary>
         public int PayType { get; set; }

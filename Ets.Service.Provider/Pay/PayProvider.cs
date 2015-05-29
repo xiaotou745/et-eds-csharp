@@ -380,7 +380,7 @@ namespace Ets.Service.Provider.Pay
                 notify.out_trade_no = request["out_trade_no"];
                 notify.trade_no = request["trade_no"];
                 notify.total_fee = ParseHelper.ToDecimal(request["total_fee"], 0);
-                notify.out_biz_no = ParseHelper.ToInt(request["out_biz_no"], 0);//businessid
+                notify.out_biz_no = ParseHelper.ToInt(request["body"], 0);//businessid
                 #endregion
                 //如果状态为空或状态不等于同步成功和异步成功就认为是错误
                 if (string.IsNullOrEmpty(notify.trade_status) || notify.total_fee <= 0)
@@ -393,16 +393,16 @@ namespace Ets.Service.Provider.Pay
                 if (notify.trade_status == "TRADE_SUCCESS" || notify.trade_status == "TRADE_FINISHED")
                 {
                     string orderNo = notify.out_trade_no;
-                    if (string.IsNullOrEmpty(orderNo) || !orderNo.Contains("_"))
+                    if (string.IsNullOrEmpty(orderNo) || notify.out_biz_no <= 0)
                     {
-                        string fail = string.Concat("商家充值错误啦orderNo：", orderNo);
+                        string fail = string.Concat("商家充值错误啦orderNo：", orderNo, "，商家ID为：", notify.out_biz_no);
                         LogHelper.LogWriter(fail);
                         return "fail";
                     }
 
                     Ets.Model.DataModel.Bussiness.BusinessRechargeModel businessRechargeModel = new Ets.Model.DataModel.Bussiness.BusinessRechargeModel()
                     {
-                        Id = notify.out_biz_no,//businessid
+                        BusinessId = notify.out_biz_no,
                         OrderNo = orderNo,
                         OriginalOrderNo = notify.trade_no,//第三方的订单号
                         PayAmount = notify.total_fee,
@@ -436,7 +436,7 @@ namespace Ets.Service.Provider.Pay
             BusinessBalanceRecord businessBalanceRecord = new BusinessBalanceRecord()
             {
                 Amount = model.PayAmount,
-                BusinessId = model.Id,
+                BusinessId = model.BusinessId,
                 Operator = model.PayBy,
                 RecordType = 4,
                 RelationNo = model.OrderNo,
@@ -446,7 +446,7 @@ namespace Ets.Service.Provider.Pay
             };
             UpdateForWithdrawPM forWithdrawPM = new UpdateForWithdrawPM()
             {
-                Id = model.Id,
+                Id = model.BusinessId,
                 Money = model.PayAmount
             };
             #endregion
@@ -464,7 +464,7 @@ namespace Ets.Service.Provider.Pay
                 Alert = string.Concat("已成功充值", model.PayAmount, "元"),
                 City = string.Empty,
                 RegistrationId = model.Id.ToString(),//通过订单ID获取要发送的骑士ID
-                TagId = 0,
+                TagId = 1,
                 Title = "充值成功提醒"
             };
             Ets.Service.Provider.MyPush.Push.PushMessage(jpushModel);

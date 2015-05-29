@@ -22,9 +22,11 @@ namespace Ets.Dao.User
         public void Insert(BusinessRechargeModel model)
         {
             string sql = @"
-insert into dbo.BusinessRecharge ( PayType, OrderNo, payAmount, PayStatus,
+insert into dbo.BusinessRecharge ( BusinessId , PayType, OrderNo, payAmount, PayStatus,
                                     PayBy, PayTime, OriginalOrderNo )
-values  ( @PayType, -- PayType - int
+values  (
+          @BusinessId, --int
+          @PayType, -- PayType - int
           @OrderNo, -- OrderNo - varchar(100)
           @payAmount, --  - decimal
           @PayStatus , -- PayStatus - int
@@ -34,10 +36,12 @@ values  ( @PayType, -- PayType - int
           )";
             IDbParameters parm = DbHelper.CreateDbParameters();
 
+            parm.Add("BusinessId", DbType.Int32, 4).Value = model.BusinessId;
             parm.Add("PayType", DbType.Int32, 4).Value = model.PayType;
             parm.Add("OrderNo", DbType.String, 100).Value = model.OrderNo;
             parm.Add("payAmount", DbType.Decimal, 18).Value = model.PayAmount;
             parm.Add("PayStatus", DbType.Int32, 4).Value = model.PayStatus;
+            parm.Add("PayBy", DbType.String, 200).Value = model.PayBy;
             parm.Add("OriginalOrderNo", DbType.String, 100).Value = model.OriginalOrderNo;
             DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
         }
