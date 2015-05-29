@@ -83,17 +83,20 @@ namespace Ets.Service.Provider.Pay
             {
                 return;
             }
-            JPushModel jpushModel = new JPushModel()
+
+            Task.Factory.StartNew(() =>
             {
-                Alert = "订单支付完成！",
-                City = string.Empty,
-                Content = string.Concat(model.orderId, "_", model.orderChildId, "_", orderChildPayModel.PayStatus),
-                RegistrationId = orderChildPayModel.clienterId.ToString(),//通过订单ID获取要发送的骑士ID
-                TagId = 0,
-                Title = "订单提醒"
-            };
-            //Ets.Service.Provider.MyPush.Push.PushMessage(0, "订单提醒", "有订单完成了！", "有订单完成了！", string.Concat(model.orderId, "_", model.orderChildId), string.Empty);
-            Ets.Service.Provider.MyPush.Push.PushMessage(jpushModel);
+                JPushModel jpushModel = new JPushModel()
+                {
+                    Alert = "订单支付完成！",
+                    City = string.Empty,
+                    Content = string.Concat(model.orderId, "_", model.orderChildId, "_", orderChildPayModel.PayStatus),
+                    RegistrationId = orderChildPayModel.clienterId.ToString(),//通过订单ID获取要发送的骑士ID
+                    TagId = 0,
+                    Title = "订单提醒"
+                };
+                Ets.Service.Provider.MyPush.Push.PushMessage(jpushModel);
+            });
         }
 
         /// <summary>
@@ -459,15 +462,19 @@ namespace Ets.Service.Provider.Pay
                 tran.Complete();
             }
             #region jpush推送
-            JPushModel jpushModel = new JPushModel()
+
+            Task.Factory.StartNew(() =>
             {
-                Alert = string.Concat("已成功充值", model.PayAmount, "元"),
-                City = string.Empty,
-                RegistrationId = model.BusinessId.ToString(),//发送商家ID
-                TagId = 1,
-                Title = "充值成功提醒"
-            };
-            Ets.Service.Provider.MyPush.Push.PushMessage(jpushModel);
+                JPushModel jpushModel = new JPushModel()
+                {
+                    Alert = string.Concat("已成功充值", model.PayAmount, "元"),
+                    City = string.Empty,
+                    RegistrationId = model.BusinessId.ToString(),//发送商家ID
+                    TagId = 1,
+                    Title = "充值成功提醒"
+                };
+                Ets.Service.Provider.MyPush.Push.PushMessage(jpushModel);
+            });
             #endregion
 
             string success = string.Concat("成功完成商家充值订单号:", model.OrderNo);
