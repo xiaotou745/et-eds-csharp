@@ -60,7 +60,7 @@ values  (
 SELECT count(1) FROM dbo.BusinessRecharge(nolock) br where OriginalOrderNo=@OriginalOrderNo";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("OriginalOrderNo", DbType.String, 100).Value = OriginalOrderNo;
-            return ParseHelper.ToInt(DbHelper.ExecuteReader(SuperMan_Read, sql, parm), 0) > 0 ? true : false;
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm), 0) > 0 ? true : false;
         }
     }
 }
