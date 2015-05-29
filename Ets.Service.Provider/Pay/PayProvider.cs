@@ -463,7 +463,7 @@ namespace Ets.Service.Provider.Pay
             {
                 Alert = string.Concat("已成功充值", model.PayAmount, "元"),
                 City = string.Empty,
-                RegistrationId = model.Id.ToString(),//通过订单ID获取要发送的骑士ID
+                RegistrationId = model.BusinessId.ToString(),//发送商家ID
                 TagId = 1,
                 Title = "充值成功提醒"
             };
