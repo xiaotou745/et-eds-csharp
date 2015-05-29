@@ -54,7 +54,7 @@ namespace Ets.Service.IProvider.Pay
         /// 2015年5月29日 15:17:07
         /// </summary>
         /// <returns></returns>
-        ResultModel<BusinessRechargeResultModel> BusinessRechargeNotify();
+        dynamic BusinessRechargeNotify();
 
         /// <summary>
         /// 查询支付状态

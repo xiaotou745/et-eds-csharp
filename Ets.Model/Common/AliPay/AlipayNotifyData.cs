@@ -16,6 +16,10 @@ namespace Ets.Model.Common.AliPay
         /// 修改者：
         /// 修改时间：
         /// ----------------------------------------------------------------------------------------
+
+        //商户业务号
+        public int out_biz_no { get; set; }
+
         public string partner { set; get; }
 
         /// <summary>
@@ -66,7 +70,7 @@ namespace Ets.Model.Common.AliPay
         /// 修改者：
         /// 修改时间：
         /// ----------------------------------------------------------------------------------------
-        public string total_fee { set; get; }
+        public decimal total_fee { set; get; }
 
         /// <summary>
         /// 交易状态

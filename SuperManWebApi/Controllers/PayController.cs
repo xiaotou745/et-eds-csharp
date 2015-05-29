@@ -86,7 +86,6 @@ namespace SuperManWebApi.Controllers
         /// 窦海超
         /// 2015年5月29日 15:09:29
         /// <param name="model"></param>
-        /// <returns></returns>
         public ResultModel<BusinessRechargeResultModel> BusinessRecharge(BusinessRechargeModel model)
         {
             return payProvider.BusinessRecharge(model);
@@ -98,7 +97,7 @@ namespace SuperManWebApi.Controllers
         /// 2015年5月29日 15:17:07
         /// </summary>
         /// <returns></returns>
-        public ResultModel<BusinessRechargeResultModel> BusinessRechargeNotify()
+        public dynamic BusinessRechargeNotify()
         {
             return payProvider.BusinessRechargeNotify();
         }
