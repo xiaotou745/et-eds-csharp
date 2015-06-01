@@ -62,11 +62,11 @@ namespace Ets.Service.Provider.Statistics
             TimeSpan timeBack = new TimeSpan(statisticsDao.MaxDate().Day, 0, 0, 0);
             TimeSpan cha = timeSpanNow - timeBack;
             int Day = cha.Days - 1;
+            Day = Day <= 0 ? 1 : Day;
 
-            //if (statisticsDao.CheckDateStatistics(item.PubDate))
-            //{
-            //    continue;
-            //}
+            //int Day = 1;
+            LogHelper.LogWriter("执行第几天：" + Day.ToString());
+           
             IList<HomeCountTitleModel> list = statisticsDao.GetDayStatistics(Day);
             if (list == null)
             {
@@ -74,6 +74,10 @@ namespace Ets.Service.Provider.Statistics
             }
             foreach (HomeCountTitleModel model in list)
             {
+                if (statisticsDao.CheckDateStatistics(model.PubDate))
+                {
+                    continue;
+                }
                 model.YkPrice = model.YsPrice - model.YfPrice;
                 model.BusinessAverageOrderCount = ParseHelper.ToDivision(model.OrderCount, model.ActiveBusiness);//商户平均发布订单
                 model.MissionAverageOrderCount = ParseHelper.ToDivision(model.OrderCount, model.MisstionCount);//任务平均订单量
