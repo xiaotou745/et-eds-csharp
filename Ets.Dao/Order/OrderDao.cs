@@ -386,14 +386,17 @@ insert into OrderChild
         GoodPrice,
         DeliveryPrice,
         CreateBy,
-        UpdateBy)
+        UpdateBy,
+        PayStatus
+)
 values( @OrderId,
         @ChildId,
         @TotalPrice,
         @GoodPrice,
         @DeliveryPrice,
         @CreateBy,
-        @UpdateBy)";
+        @UpdateBy,
+        @PayStatus)";
             IDbParameters dbOrderChildParameters = DbHelper.CreateDbParameters();
             dbOrderChildParameters.AddWithValue("@OrderId", orderId);
             dbOrderChildParameters.AddWithValue("@ChildId", 1);
@@ -403,6 +406,7 @@ values( @OrderId,
             dbOrderChildParameters.AddWithValue("@DeliveryPrice", paramodel.delivery_fee);//外送费
             dbOrderChildParameters.AddWithValue("@CreateBy", SuperPlatform.第三方对接平台.ToString());
             dbOrderChildParameters.AddWithValue("@UpdateBy", SuperPlatform.第三方对接平台.ToString());
+            dbOrderChildParameters.AddWithValue("@PayStatus", 1);//临时
 
             DbHelper.ExecuteScalar(SuperMan_Write, insertOrderChildSql, dbOrderChildParameters);
         }
