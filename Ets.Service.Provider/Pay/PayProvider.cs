@@ -449,7 +449,7 @@ namespace Ets.Service.Provider.Pay
                 Amount = model.PayAmount,
                 BusinessId = model.BusinessId,
                 Operator = model.PayBy,
-                RecordType = 4,
+                RecordType = BusinessBalanceRecordRecordType.Recharge.GetHashCode(),
                 RelationNo = model.OrderNo,
                 Remark = "商家客户端充值",
                 Status = 1,
