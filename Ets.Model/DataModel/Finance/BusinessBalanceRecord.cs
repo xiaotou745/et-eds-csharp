@@ -43,7 +43,7 @@ namespace Ets.Model.DataModel.Finance
         public decimal Balance { get; set; }
 
         /// <summary>
-        /// 交易类型(1订单餐费 2配送费 3提现 4充值)
+        /// 交易类型(1：发布订单  2：取消订单 3：提款申请 4：提款拒绝 5：打款失败 6：系统奖励 7：系统赔偿 8：订单菜品费 9：充值)
         /// </summary>
         public int RecordType { get; set; }
 

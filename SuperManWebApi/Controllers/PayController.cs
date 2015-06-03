@@ -1,6 +1,8 @@
 ﻿using Ets.Model.Common;
 using Ets.Model.Common.AliPay;
+using Ets.Model.DomainModel.Bussiness;
 using Ets.Model.ParameterModel.AliPay;
+using Ets.Model.ParameterModel.Bussiness;
 using Ets.Service.IProvider.Pay;
 using Ets.Service.Provider.Pay;
 using ETS.Enums;
@@ -79,6 +81,26 @@ namespace SuperManWebApi.Controllers
             return payProvider.GetOrderPayStatus(model);
         }
 
+        /// <summary>
+        /// 商家充值
+        /// 窦海超
+        /// 2015年5月29日 15:09:29
+        /// <param name="model"></param>
+        public ResultModel<BusinessRechargeResultModel> BusinessRecharge(BusinessRechargeModel model)
+        {
+            return payProvider.BusinessRecharge(model);
+        }
+
+        /// <summary>
+        /// 商家充值回调方法 
+        /// 窦海超
+        /// 2015年5月29日 15:17:07
+        /// </summary>
+        /// <returns></returns>
+        public dynamic BusinessRechargeNotify()
+        {
+            return payProvider.BusinessRechargeNotify();
+        }
         #endregion
 
         #region 微信

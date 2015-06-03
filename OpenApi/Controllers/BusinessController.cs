@@ -130,6 +130,10 @@ namespace OpenApi.Controllers
             {
                 return ResultModel<object>.Conclude(BusiStatus.BusiPass);
             }
+            else if (busi.Status == ConstValues.BUSINESS_AUDITCANCEL)//审核被拒绝
+            {
+                return ResultModel<object>.Conclude(BusiStatus.BusiReject);
+            }
             else
             {
                 return ResultModel<object>.Conclude(BusiStatus.BusiPassing);

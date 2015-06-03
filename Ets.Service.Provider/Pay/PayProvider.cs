@@ -16,6 +16,13 @@ using Ets.Dao.Order;
 using Ets.Model.DataModel.Order;
 using ETS.Pay.WxPay;
 using Ets.Model.DomainModel.Bussiness;
+using Ets.Model.ParameterModel.Bussiness;
+using Ets.Dao.User;
+using ETS.Transaction.Common;
+using ETS.Transaction;
+using Ets.Dao.Finance;
+using Ets.Model.DataModel.Finance;
+using Ets.Model.ParameterModel.Finance;
 
 namespace Ets.Service.Provider.Pay
 {
@@ -76,17 +83,20 @@ namespace Ets.Service.Provider.Pay
             {
                 return;
             }
-            JPushModel jpushModel = new JPushModel()
+
+            Task.Factory.StartNew(() =>
             {
-                Alert = "订单支付完成！",
-                City = string.Empty,
-                Content = string.Concat(model.orderId, "_", model.orderChildId, "_", orderChildPayModel.PayStatus),
-                RegistrationId = orderChildPayModel.clienterId.ToString(),//通过订单ID获取要发送的骑士ID
-                TagId = 0,
-                Title = "订单提醒"
-            };
-            //Ets.Service.Provider.MyPush.Push.PushMessage(0, "订单提醒", "有订单完成了！", "有订单完成了！", string.Concat(model.orderId, "_", model.orderChildId), string.Empty);
-            Ets.Service.Provider.MyPush.Push.PushMessage(jpushModel);
+                JPushModel jpushModel = new JPushModel()
+                {
+                    Alert = "订单支付完成！",
+                    City = string.Empty,
+                    Content = string.Concat(model.orderId, "_", model.orderChildId, "_", orderChildPayModel.PayStatus),
+                    RegistrationId = orderChildPayModel.clienterId.ToString(),//通过订单ID获取要发送的骑士ID
+                    TagId = 0,
+                    Title = "订单提醒"
+                };
+                Ets.Service.Provider.MyPush.Push.PushMessage(jpushModel);
+            });
         }
 
         /// <summary>
@@ -317,7 +327,168 @@ namespace Ets.Service.Provider.Pay
         }
 
 
+        /// <summary>
+        /// 商家充值
+        /// 窦海超
+        /// 2015年5月29日 15:09:29
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public ResultModel<BusinessRechargeResultModel> BusinessRecharge(BusinessRechargeModel model)
+        {
+            LogHelper.LogWriter("=============商家充值支付请求数据：", model);
 
+            // string.Concat(model.productId, "_", model.orderId, "_", model.childId, "_", model.payStyle);
+            string orderNo = Helper.generateOrderCode(model.Businessid);
+            BusinessRechargeResultModel resultModel = new BusinessRechargeResultModel()
+            {
+                notifyUrl = ETS.Config.NotifyUrl.Replace("Notify", "BusinessRechargeNotify"),
+                orderNo = orderNo,
+                payAmount = model.payAmount,
+                PayType = model.PayType
+            };
+            //所属产品_主订单号_子订单号_支付方式
+
+            if (model.PayType == PayTypeEnum.ZhiFuBao.GetHashCode())
+            {
+                LogHelper.LogWriter("=============商家充值支付宝支付：");
+                ////支付宝支付
+                //数据库里查询订单信息
+                //if (payStatusModel.PayStatus == PayStatusEnum.WaitPay.GetHashCode())//待支付
+                //{
+                //return CreateAliPayOrder(orderNo, payStatusModel.TotalPrice, model.orderId, model.payStyle);
+                //}
+                return ResultModel<BusinessRechargeResultModel>.Conclude(AliPayStatus.success, resultModel);
+            }
+            return ResultModel<BusinessRechargeResultModel>.Conclude(AliPayStatus.fail);
+        }
+
+
+        /// <summary>
+        /// 商家充值回调方法 
+        /// 窦海超
+        /// 2015年5月29日 15:17:07
+        /// </summary>
+        /// <returns></returns>
+        public dynamic BusinessRechargeNotify()
+        {
+            try
+            {
+                #region 参数绑定
+
+                var request = System.Web.HttpContext.Current.Request;
+                AlipayNotifyData notify = new AlipayNotifyData();
+                notify.buyer_email = request["buyer_email"];
+                notify.trade_status = request["trade_status"];
+                notify.out_trade_no = request["out_trade_no"];
+                notify.trade_no = request["trade_no"];
+                notify.total_fee = ParseHelper.ToDecimal(request["total_fee"], 0);
+                notify.out_biz_no = ParseHelper.ToInt(request["body"], 0);//businessid
+                #endregion
+                //如果状态为空或状态不等于同步成功和异步成功就认为是错误
+                if (string.IsNullOrEmpty(notify.trade_status) || notify.total_fee <= 0)
+                {
+                    string fail = string.Concat("商家充值状态是空或金额<=0");
+                    LogHelper.LogWriter(fail);
+                    return "fail";
+                }
+                #region 回调完成状态
+                if (notify.trade_status == "TRADE_SUCCESS" || notify.trade_status == "TRADE_FINISHED")
+                {
+                    if (new BusinessRechargeDao().Check(notify.trade_no))
+                    {
+                        //如果存在就退出，这里写的很扯，因为支付宝要的是success不带双引号.
+                        //但WEBAPI直接返回时带引号，所以现在要去库里查一次。
+                        //回头找到原因一定要改
+                        return "success";
+                    }
+
+                    string orderNo = notify.out_trade_no;
+                    if (string.IsNullOrEmpty(orderNo) || notify.out_biz_no <= 0)
+                    {
+                        string fail = string.Concat("商家充值错误啦orderNo：", orderNo, "，商家ID为：", notify.out_biz_no);
+                        LogHelper.LogWriter(fail);
+                        return "fail";
+                    }
+
+                    Ets.Model.DataModel.Bussiness.BusinessRechargeModel businessRechargeModel = new Ets.Model.DataModel.Bussiness.BusinessRechargeModel()
+                    {
+                        BusinessId = notify.out_biz_no,
+                        OrderNo = orderNo,
+                        OriginalOrderNo = notify.trade_no,//第三方的订单号
+                        PayAmount = notify.total_fee,
+                        PayBy = notify.buyer_email,
+                        PayStatus = 1,
+                        PayType = 1
+                    };
+                    BusinessRechargeSusess(businessRechargeModel);
+                }
+                #endregion
+
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex, "Alipay自动返回异常");
+                return "fail";
+            }
+            return "fail";
+        }
+
+
+        /// <summary>
+        /// 商家充值成功方法
+        /// 窦海超 
+        /// 2015年5月29日 16:00:07
+        /// </summary>
+        /// <param name="model"></param>
+        private dynamic BusinessRechargeSusess(Ets.Model.DataModel.Bussiness.BusinessRechargeModel model)
+        {
+            #region 充值、流水、商家金额实体组装
+            BusinessBalanceRecord businessBalanceRecord = new BusinessBalanceRecord()
+            {
+                Amount = model.PayAmount,
+                BusinessId = model.BusinessId,
+                Operator = model.PayBy,
+                RecordType = BusinessBalanceRecordRecordType.Recharge.GetHashCode(),
+                RelationNo = model.OrderNo,
+                Remark = "商家客户端充值",
+                Status = 1,
+                WithwardId = 0
+            };
+            UpdateForWithdrawPM forWithdrawPM = new UpdateForWithdrawPM()
+            {
+                Id = model.BusinessId,
+                Money = model.PayAmount
+            };
+            #endregion
+
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                new BusinessRechargeDao().Insert(model);//写入充值 
+                new BusinessBalanceRecordDao().Insert(businessBalanceRecord);//写商家流水
+                new BusinessDao().UpdateForWithdrawC(forWithdrawPM); //更新商家金额、可提现金额
+                tran.Complete();
+            }
+            #region jpush推送
+
+            Task.Factory.StartNew(() =>
+            {
+                JPushModel jpushModel = new JPushModel()
+                {
+                    Alert = string.Concat("已成功充值", model.PayAmount, "元"),
+                    City = string.Empty,
+                    RegistrationId = model.BusinessId.ToString(),//发送商家ID
+                    TagId = 1,
+                    Title = "充值成功提醒"
+                };
+                Ets.Service.Provider.MyPush.Push.PushMessage(jpushModel);
+            });
+            #endregion
+
+            string success = string.Concat("成功完成商家充值订单号:", model.OrderNo);
+            LogHelper.LogWriter(success);
+            return "success";
+        }
         #endregion
 
         #region 微信相关

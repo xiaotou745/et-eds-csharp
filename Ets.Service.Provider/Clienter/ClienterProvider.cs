@@ -848,7 +848,7 @@ namespace Ets.Service.Provider.Clienter
             {
                 //上传完小票
                 //(1)更新给骑士余额
-                if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)
+                if (myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount)
                 {
                     if (CheckOrderPay(orderNo))
                     {
@@ -860,7 +860,7 @@ namespace Ets.Service.Provider.Clienter
             {
                 //上传完小票
                 //(1)更新给骑士余额
-                if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)
+                if (myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount)
                 {
                     if (CheckOrderPay(orderNo))
                     {
@@ -894,7 +894,7 @@ namespace Ets.Service.Provider.Clienter
                 //上传完小票
                 //(1)更新给骑士余额、可提现余额
                 //(2)把OrderOther把IsJoinWithdraw状态改为1
-                if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)
+                if (myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount)
                 {
                     if (CheckOrderPay(orderNo))
                     {
@@ -903,7 +903,6 @@ namespace Ets.Service.Provider.Clienter
                     }
                 }
             }
-
         }
 
         /// <summary>
