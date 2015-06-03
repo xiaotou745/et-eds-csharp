@@ -394,6 +394,25 @@ where   o.Id = @orderId
             parm.Add("orderId", DbType.Int32, 4).Value = orderId;
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm), 0);
         }
+
+        /// <summary>
+        /// 获取子订单是否完成上传小票
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150602</UpdateTime>
+        /// <param name="uploadReceiptModel"></param>
+        /// <returns></returns>
+        public bool GetHasUploadTicket(int orderId, int childId)
+        {
+            //事务中 去nolock，用写串
+            string querySql = @"
+select HasUploadTicket from  OrderChild oc     
+where   oc.OrderId = @OrderId and ChildId=@ChildId ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("OrderId", orderId);
+            dbParameters.AddWithValue("ChildId", childId);
+            return ParseHelper.ToBool(DbHelper.ExecuteScalar(SuperMan_Write, querySql, dbParameters),false);
+        }
     }
 
 }

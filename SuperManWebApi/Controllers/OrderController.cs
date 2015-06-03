@@ -282,14 +282,14 @@ namespace SuperManWebApi.Controllers
                 NeedUploadCount = needUploadCount,
                 ReceiptPic = imgInfo.PicUrl
             };
-            if (string.IsNullOrWhiteSpace(receiptPic))  
-            {
-                uploadReceiptModel.HadUploadCount = 1;
-            }
-            else
-            {
-                uploadReceiptModel.HadUploadCount = 0;  //有地址说明是更新换的小票，数量不变
-            }
+            //if (string.IsNullOrWhiteSpace(receiptPic))  
+            //{
+            //    uploadReceiptModel.HadUploadCount = 1;
+            //}
+            //else
+            //{
+            //    uploadReceiptModel.HadUploadCount = 0;  //有地址说明是更新换的小票，数量不变
+            //}
             var orderOther = iClienterProvider.UpdateClientReceiptPicInfo(uploadReceiptModel);
             if (orderOther == null)
             {

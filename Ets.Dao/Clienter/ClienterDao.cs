@@ -719,15 +719,15 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, ConstValues.OrderH
         {
             OrderOther orderOther = new OrderOther();
             var oo = GetReceiptInfo(uploadReceiptModel.OrderId);
-            uploadReceiptModel.NeedUploadCount = oo.NeedUploadCount;
-            if (oo.Id == 0)
-            {
-                orderOther = InsertReceiptInfo(uploadReceiptModel);
-            }
-            else
-            {
+            //uploadReceiptModel.NeedUploadCount = oo.NeedUploadCount;
+            //if (oo.Id == 0)
+            //{
+            //    orderOther = InsertReceiptInfo(uploadReceiptModel);
+            //}
+            //else
+            //{
                 orderOther = UpdateReceiptInfo(uploadReceiptModel);
-            }
+            //}
             orderOther.OrderStatus = oo.OrderStatus;
             orderOther.OrderCreateTime = oo.OrderCreateTime;
             return orderOther;
@@ -794,47 +794,95 @@ where   OrderId = @OrderId
         /// <returns></returns>
         public OrderOther UpdateReceiptInfo(UploadReceiptModel uploadReceiptModel)
         {
-            OrderOther oo = new OrderOther();
-            //ReceiptPic + '|' + @ReceiptPic
-            StringBuilder sql = new StringBuilder(@"
+            //try
+            //{
+                OrderOther orderOther = new OrderOther();
+
+                //更新orderOther
+                const string updateSql = @"
  update dbo.OrderOther
- set    ReceiptPic = '' ,
-        HadUploadCount = HadUploadCount + @HadUploadCount,
-        NeedUploadCount = @NeedUploadCount
- output Inserted.Id ,
-        Inserted.OrderId ,
-        Inserted.NeedUploadCount ,
-        Inserted.ReceiptPic ,
-        Inserted.HadUploadCount
- where  OrderId = @OrderId;");
-            sql.Append(@"
+ set HadUploadCount = HadUploadCount + @HadUploadCount
+where  OrderId=@OrderId ";
+                IDbParameters dbParameters = DbHelper.CreateDbParameters();
+                dbParameters.AddWithValue("@OrderId", uploadReceiptModel.OrderId);
+                dbParameters.AddWithValue("@HadUploadCount", uploadReceiptModel.HadUploadCount);
+                DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+
+                //更新OrderChild
+                const string updateSqlOrderChild = @"
 update  dbo.OrderChild
-set     HasUploadTicket = 1,
-        TicketUrl = @ReceiptPic
-where   OrderId = @OrderId
-        and ChildId = @OrderChildId;
-");
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@OrderId", SqlDbType.Int).Value = uploadReceiptModel.OrderId;
-            parm.Add("@NeedUploadCount", SqlDbType.Int).Value = uploadReceiptModel.NeedUploadCount;
-            parm.Add("@HadUploadCount", SqlDbType.Int).Value = uploadReceiptModel.HadUploadCount;
-            parm.Add("@ReceiptPic", SqlDbType.VarChar).Value = uploadReceiptModel.ReceiptPic;
-            parm.Add("@OrderChildId", SqlDbType.Int).Value = uploadReceiptModel.OrderChildId;
-            try
-            {
-                DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql.ToString(), parm);
+set     HasUploadTicket = 1, TicketUrl = @ReceiptPic
+where    OrderId = @OrderId  and ChildId = @OrderChildId ";
+
+                IDbParameters dbParametersOrderChild = DbHelper.CreateDbParameters();
+                dbParametersOrderChild.AddWithValue("@ReceiptPic", uploadReceiptModel.ReceiptPic);
+                dbParametersOrderChild.AddWithValue("@OrderId", uploadReceiptModel.OrderId);
+                dbParametersOrderChild.AddWithValue("@OrderChildId", uploadReceiptModel.OrderChildId);
+                DbHelper.ExecuteNonQuery(SuperMan_Write, updateSqlOrderChild, dbParametersOrderChild);
+
+                //返回OrderOther实体
+                const string querysql = @"
+select Id ,OrderId,NeedUploadCount,ReceiptPic,HadUploadCount
+from OrderOther (nolock)
+where  OrderId=@OrderId ";
+                IDbParameters dbParametersQuerysql = DbHelper.CreateDbParameters();
+                dbParametersQuerysql.AddWithValue("@OrderId", uploadReceiptModel.OrderId);
+                DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, querysql, dbParametersQuerysql);
                 var ooList = MapRows<OrderOther>(dt);
                 if (ooList != null && ooList.Count == 1)
                 {
-                    return ooList[0];
+                    orderOther = ooList[0];
                 }
-            }
-            catch (Exception ex)
-            {
-                //LogHelper.LogWriter("更新orderOther表异常：", new { ex = ex });
-                throw ex;
-            }
-            return oo;
+                return orderOther;
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw ex;
+            //}
+
+            #region 王超
+//            OrderOther oo = new OrderOther();
+//            //ReceiptPic + '|' + @ReceiptPic
+//            StringBuilder sql = new StringBuilder(@"
+// update dbo.OrderOther
+// set    ReceiptPic = '' ,
+//        HadUploadCount = HadUploadCount + @HadUploadCount,
+//        NeedUploadCount = @NeedUploadCount
+// output Inserted.Id ,
+//        Inserted.OrderId ,
+//        Inserted.NeedUploadCount ,
+//        Inserted.ReceiptPic ,
+//        Inserted.HadUploadCount
+// where  OrderId = @OrderId;");
+//            sql.Append(@"
+//update  dbo.OrderChild
+//set     HasUploadTicket = 1,
+//        TicketUrl = @ReceiptPic
+//where   OrderId = @OrderId
+//        and ChildId = @OrderChildId;
+//");
+//            IDbParameters parm = DbHelper.CreateDbParameters();
+//            parm.Add("@OrderId", SqlDbType.Int).Value = uploadReceiptModel.OrderId;
+//            parm.Add("@NeedUploadCount", SqlDbType.Int).Value = uploadReceiptModel.NeedUploadCount;
+//            parm.Add("@HadUploadCount", SqlDbType.Int).Value = uploadReceiptModel.HadUploadCount;
+//            parm.Add("@ReceiptPic", SqlDbType.VarChar).Value = uploadReceiptModel.ReceiptPic;
+//            parm.Add("@OrderChildId", SqlDbType.Int).Value = uploadReceiptModel.OrderChildId;
+//            try
+//            {
+//                DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql.ToString(), parm);
+//                var ooList = MapRows<OrderOther>(dt);
+//                if (ooList != null && ooList.Count == 1)
+//                {
+//                    return ooList[0];
+//                }
+//            }
+//            catch (Exception ex)
+//            {
+//                //LogHelper.LogWriter("更新orderOther表异常：", new { ex = ex });
+//                throw ex;
+//            }
+            //            return oo;
+            #endregion
         }
         /// <summary>
         /// 删除小票信息OrderChild表

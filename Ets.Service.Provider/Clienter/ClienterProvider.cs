@@ -736,6 +736,17 @@ namespace Ets.Service.Provider.Clienter
             ///TODO 事务里有多个库的连接串
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
+                bool HasUploadTicket = orderChildDao.GetHasUploadTicket(uploadReceiptModel.OrderId,uploadReceiptModel.OrderChildId);
+                 if(HasUploadTicket)
+                 {
+                     uploadReceiptModel.HadUploadCount = 0;
+                 }
+                 else
+                 {
+                     uploadReceiptModel.HadUploadCount = 1;
+                 }
+                 
+
                 orderOther = clienterDao.UpdateClientReceiptPicInfo(uploadReceiptModel);
                 //上传成功后， 判断 订单 创建时间在 2015-4-18 00：00 之前的订单不在增加佣金
                 string date = "2015-04-18 00:00:00";
