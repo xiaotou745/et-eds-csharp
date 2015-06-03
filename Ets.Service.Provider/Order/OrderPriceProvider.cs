@@ -26,7 +26,7 @@ namespace Ets.Service.Provider.Order
         /// <param name="model">订单</param>
         /// <returns></returns>
         public abstract decimal GetOrderWebSubsidy(OrderCommission model);
-        
+
         /// <summary>
         /// 获取订单的佣金比例 add by caoheyang 20150402
         /// </summary>
@@ -47,14 +47,14 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <param name="model">参数实体</param>
         /// <returns></returns>
-        public  decimal GetSettleMoney(OrderCommission model)
+        public decimal GetSettleMoney(OrderCommission model)
         {
             decimal sumsettleMoney = 0;
 
             decimal settleMoney = 0;
             if (model.CommissionType == 2)//固定金额
             {
-                settleMoney = Decimal.Round(ParseHelper.ToDecimal(model.CommissionFixValue) * ParseHelper.ToDecimal(model.OrderCount),2);     
+                settleMoney = Decimal.Round(ParseHelper.ToDecimal(model.CommissionFixValue) * ParseHelper.ToDecimal(model.OrderCount), 2);
                 sumsettleMoney = Decimal.Round(ParseHelper.ToDecimal(model.DistribSubsidy)
                 * ParseHelper.ToInt(model.OrderCount) + settleMoney, 2);
             }
@@ -62,7 +62,7 @@ namespace Ets.Service.Provider.Order
             {
                 settleMoney = model.BusinessCommission == 0 ?
                     0 : Decimal.Round(ParseHelper.ToDecimal(model.BusinessCommission / 100m) * ParseHelper.ToDecimal(model.Amount), 2);
-                sumsettleMoney=Decimal.Round(ParseHelper.ToDecimal(model.DistribSubsidy)
+                sumsettleMoney = Decimal.Round(ParseHelper.ToDecimal(model.DistribSubsidy)
                 * ParseHelper.ToInt(model.OrderCount) + settleMoney, 2);
             }
 

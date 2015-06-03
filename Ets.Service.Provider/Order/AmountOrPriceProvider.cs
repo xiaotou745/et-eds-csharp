@@ -12,7 +12,7 @@ namespace Ets.Service.Provider.Order
     /// <summary>
     /// 金额补贴方案 佣金计算方式 add by caoheyang 20150409
     /// </summary>
-    public class AmountOrPriceProvider:OrderPriceProvider
+    public class AmountOrPriceProvider : OrderPriceProvider
     {
         /// <summary>
         /// 金额补贴方案订单的骑士佣金 add by caoheyang 20150409
@@ -41,7 +41,11 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public override decimal GetOrderWebSubsidy(OrderCommission model)
         {
-            return ParseHelper.ToDecimal(GlobalConfigDao.GlobalConfigGet(model.BusinessGroupId).PriceSiteSubsidies);   
+            if (model.OrderWebSubsidy != null && model.OrderWebSubsidy != 0)
+            {
+                return ParseHelper.ToDecimal(model.OrderWebSubsidy);
+            }
+            return ParseHelper.ToDecimal(GlobalConfigDao.GlobalConfigGet(model.BusinessGroupId).PriceSiteSubsidies);
         }
 
         /// <summary>
@@ -55,7 +59,7 @@ namespace Ets.Service.Provider.Order
             if (temp == 0)
                 return 0;
             else
-                return Decimal.Round(temp / 100m, 2);  
+                return Decimal.Round(temp / 100m, 2);
         }
 
         /// <summary>
@@ -73,7 +77,8 @@ namespace Ets.Service.Provider.Order
                 string[] tempInfo = globalConfigList[i].Split(',');
                 decimal money = ParseHelper.ToDecimal(tempInfo[0]);  //满金额
                 decimal addmony = ParseHelper.ToDecimal(tempInfo[1]); //补贴金额
-                if (ParseHelper.ToDecimal(model.Amount) >= money) {
+                if (ParseHelper.ToDecimal(model.Amount) >= money)
+                {
                     adjustment = addmony;
                     break;
                 }

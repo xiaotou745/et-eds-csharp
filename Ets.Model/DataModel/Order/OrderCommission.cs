@@ -10,16 +10,16 @@ namespace Ets.Model.DataModel.Order
     {  /// <summary>
         ///订单金额
         /// </summary>
-        public Nullable<decimal> Amount { get; set; }
+        public decimal? Amount { get; set; }
         /// <summary>
         /// 外送费
         /// </summary>
-        public Nullable<decimal> DistribSubsidy { get; set; }
+        public decimal? DistribSubsidy { get; set; }
 
         /// <summary>
         /// 订单数量
         /// </summary>
-        public Nullable<int> OrderCount { get; set; }
+        public int? OrderCount { get; set; }
 
         /// <summary>
         /// 商户结算比例
@@ -34,7 +34,7 @@ namespace Ets.Model.DataModel.Order
         /// <summary>
         /// 固定金额
         /// </summary>
-        public Nullable<decimal> CommissionFixValue { get; set; }
+        public decimal? CommissionFixValue { get; set; }
 
         /// <summary>
         /// 商家分组ID
@@ -44,6 +44,11 @@ namespace Ets.Model.DataModel.Order
         /// 策略ID
         /// </summary>
         public int StrategyId { get; set; }
+
+        /// <summary>
+        /// 网站补贴
+        /// </summary>
+        public decimal? OrderWebSubsidy { get; set; }
 
     }
 }

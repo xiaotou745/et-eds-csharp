@@ -90,6 +90,7 @@ namespace Ets.Service.Provider.OpenApi
         {
             paramodel.store_info.delivery_fee = 0;
             paramodel.store_info.businesscommission = 10;
+            paramodel.websitesubsidy = 6;   //网站补贴
             return paramodel;
         }
     }

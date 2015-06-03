@@ -14,7 +14,7 @@ namespace Ets.Service.Provider.Order
     /// 默认佣金计算规则
     /// </summary>
     public class DefaultOrPriceProvider : OrderPriceProvider
-    {     
+    {
         /// <summary>
         /// 获取订单的骑士佣金 add by caoheyang 20150305
         /// </summary>
@@ -27,10 +27,14 @@ namespace Ets.Service.Provider.Order
             decimal distribe = 0;  //默认外送费，网站补贴都为0
             decimal commissionRate = GetCommissionRate(model); //佣金比例 
             int orderCount = ParseHelper.ToInt(model.OrderCount); //订单数量 
-            if (model.DistribSubsidy != null && model.DistribSubsidy > 0)//如果外送费有数据，按照外送费计算骑士佣金
+            if (model.DistribSubsidy != null && model.DistribSubsidy > 0) //如果外送费有数据，按照外送费计算骑士佣金
+            {
                 distribe = Convert.ToDecimal(model.DistribSubsidy);
+            }
             else //如果外送费没数据，按照网站补贴计算骑士佣金
-                distribe = ParseHelper.ToDecimal(GlobalConfigDao.GlobalConfigGet(model.BusinessGroupId).CommonSiteSubsidies);
+            {
+                distribe = GetOrderWebSubsidy(model);
+            }
             return Decimal.Round(Convert.ToDecimal(model.Amount) * commissionRate + distribe * orderCount, 2);//计算佣金
         }
 
@@ -41,6 +45,10 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public override decimal GetOrderWebSubsidy(OrderCommission model)
         {
+            if (model.OrderWebSubsidy != null && model.OrderWebSubsidy != 0)
+            {
+                return ParseHelper.ToDecimal(model.OrderWebSubsidy);
+            }
             return ParseHelper.ToDecimal(GlobalConfigDao.GlobalConfigGet(model.BusinessGroupId).CommonSiteSubsidies);
         }
 
@@ -50,7 +58,7 @@ namespace Ets.Service.Provider.Order
         /// <param name="model">订单</param>
         /// <returns></returns>
         public override decimal GetCommissionRate(OrderCommission model)
-        {          
+        {
             return ParseHelper.ToDecimal(GlobalConfigDao.GlobalConfigGet(model.BusinessGroupId).CommonCommissionRatio);
         }
 

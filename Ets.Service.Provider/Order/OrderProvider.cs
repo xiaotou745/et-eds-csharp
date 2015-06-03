@@ -618,7 +618,7 @@ namespace Ets.Service.Provider.Order
             #endregion
 
             #region 佣金相关  add by caoheyang 20150416
-            paramodel.CommissionFormulaMode = 0;//默认第三方策略，是普通策略 //ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet.CommissionFormulaMode);
+            paramodel.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(1).CommissionFormulaMode);//默认第三方策略，是默认组下的默认策略，目前即是普通策略 
             paramodel.CommissionType = 1;//结算类型：1：固定比例 2：固定金额
             paramodel.CommissionFixValue = 0;//固定金额
             paramodel.BusinessGroupId = 1;//分组ID
@@ -631,7 +631,8 @@ namespace Ets.Service.Provider.Order
                 OrderCount = paramodel.package_count ?? 1,/*订单数量，默认为1*/
                 BusinessCommission = paramodel.store_info.businesscommission,/*商户结算比例*/
                 BusinessGroupId = paramodel.BusinessGroupId,
-                StrategyId = 0
+                StrategyId = 0,
+                OrderWebSubsidy = paramodel.websitesubsidy
 
             }/*网站补贴*/;
             OrderPriceProvider commissonPro = CommissionFactory.GetCommission(0);//万达、全时采用默认分组下策略

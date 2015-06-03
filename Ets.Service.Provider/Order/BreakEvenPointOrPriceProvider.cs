@@ -12,7 +12,7 @@ namespace Ets.Service.Provider.Order
     /// <summary>
     /// 收支平衡保本佣金计算方式 add by caoheyang 20150402
     /// </summary>
-    public class BreakEvenPointOrPriceProvider:OrderPriceProvider
+    public class BreakEvenPointOrPriceProvider : OrderPriceProvider
     {
         /// <summary>
         /// 保本算法订单的骑士佣金 add by caoheyang 20150402
@@ -25,13 +25,15 @@ namespace Ets.Service.Provider.Order
                 return 0;
             decimal commissionRate = GetCommissionRate(model);//佣金比例 
             int orderCount = ParseHelper.ToInt(model.OrderCount); //订单数量 
-            if (model.DistribSubsidy != null && model.DistribSubsidy > 0)//如果外送费有数据，按照外送费计算骑士佣金
+            if (model.DistribSubsidy != null && model.DistribSubsidy > 0) //如果外送费有数据，按照外送费计算骑士佣金
             {
                 return Decimal.Round(Convert.ToDecimal(model.Amount) * commissionRate
-                    + ParseHelper.ToDecimal(model.DistribSubsidy) * orderCount, 2);//计算佣金
+                                     + ParseHelper.ToDecimal(model.DistribSubsidy) * orderCount, 2); //计算佣金
             }
-            else  //无外送费按照网站补贴计算佣金金额
+            else //无外送费按照网站补贴计算佣金金额
+            {
                 return Decimal.Round(Convert.ToDecimal(model.Amount) * commissionRate + GetOrderWebSubsidy(model) * orderCount, 2);//计算佣金
+            }
         }
 
         /// <summary>
@@ -41,7 +43,11 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public override decimal GetOrderWebSubsidy(OrderCommission model)
         {
-            return ParseHelper.ToDecimal(GlobalConfigDao.GlobalConfigGet(model.BusinessGroupId).SiteSubsidies);  
+            if (model.OrderWebSubsidy != null && model.OrderWebSubsidy != 0)
+            {
+                return ParseHelper.ToDecimal(model.OrderWebSubsidy);
+            }
+            return ParseHelper.ToDecimal(GlobalConfigDao.GlobalConfigGet(model.BusinessGroupId).SiteSubsidies);
         }
 
         /// <summary>
@@ -64,7 +70,8 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <param name="model">订单</param>
         /// <returns></returns>
-        public override decimal GetAdjustment(OrderCommission model) {
+        public override decimal GetAdjustment(OrderCommission model)
+        {
             return 0m;
         }
     }
