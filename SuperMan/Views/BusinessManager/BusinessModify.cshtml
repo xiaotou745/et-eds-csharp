@@ -7,8 +7,7 @@
 }
 @using ETS.Enums
 @using ETS.Extension
-@using Ets.Model.DataModel.Business
-@using Ets.Service.Provider.Business
+@using Ets.Model.DataModel.Bussiness
 @using Ets.Service.Provider.User
 @using ETS.Util;
 <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
@@ -99,6 +98,11 @@
                 </select>
             </div>
             <div class="control-group" style="margin-bottom: 10px">
+                <label style="margin-left: 14px">第三方平台：@Model.GroupName</label><br>
+                <label style="margin-left: 24px">第三方ID：@Model.OriginalBusiId</label>
+                
+            </div>
+            @*<div class="control-group" style="margin-bottom: 10px">
                 <label>绑定第三方ID：点击添加，绑定第三方商铺ID信息</label>
                 <input name="btnAddThird" num="0" id="btnAddThird" type="button" value="添加第三方" class="searchBtn" style="margin-left:25px"><br />
                 <div style="background-color:lightgray;width: 530px" id="big-third">
@@ -122,7 +126,7 @@
                         }
                     }
                 </div>
-            </div>
+            </div>*@
         </div>
         <div class="SearchMd">
             <div style="margin-left: 100px;float: left"><input type="button" value="保存" class="searchBtn" id="btnModifyCommit" /></div>
@@ -198,13 +202,13 @@
         $('#operateTimeStart').datepicker();
         $('#operateTimeEnd').datepicker();
         $('#busiMealsSettleMode').val(@Model.MealsSettleMode);
-        $("#btnAddThird").attr("num", @busiThirdRelationList.Count);
+        @*$("#btnAddThird").attr("num", @busiThirdRelationList.Count);
         $(".third-list").each(function() {
             var v = $(this).attr("v"); //第三方
             if (v == 0) {
                 $(this).find(".selectw,input[name=busiSourceId],input[type=radio]").attr("disabled", true);
             }
-        });
+        });*@
     });
 
     //添加第三方绑定关系

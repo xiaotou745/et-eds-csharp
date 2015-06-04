@@ -1663,9 +1663,11 @@ SELECT   b.Id ,
          bfa.AccountNo,
          bfa.AccountType,
          bfa.OpenBank,
-         bfa.OpenSubBank
+         bfa.OpenSubBank,
+         g.GroupName
 FROM business b WITH(NOLOCK) 
 	Left join BusinessFinanceAccount bfa WITH(NOLOCK) ON b.Id=bfa.BusinessId AND bfa.IsEnable=1
+    Left join [group] g WITH(NOLOCK) on g.Id=b.GroupId 
 WHERE b.Id = @BusinessId  ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@BusinessId", businessId);
