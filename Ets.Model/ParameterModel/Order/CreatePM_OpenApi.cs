@@ -159,6 +159,13 @@ namespace Ets.Model.ParameterModel.Order
         /// 订单号  由业务逻辑层所得   
         /// </summary>
         public string OrderNo { get; set; }
+
+        public int MealsSettleMode { get; set; }
+
+        /// <summary>
+        /// 应退商家金额
+        /// </summary>
+        public decimal BusinessReceivable { get; set; }
         
     }
 

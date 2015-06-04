@@ -915,7 +915,14 @@ namespace Ets.Service.Provider.User
             to.IDCard = paramodel.fields.B_IdCard;
             to.Password = paramodel.fields.B_Password;
             to.PhoneNo = paramodel.fields.PhoneNo.Trim();
-            to.PhoneNo2 = paramodel.fields.PhoneNo2;
+            if (string.IsNullOrEmpty(paramodel.fields.PhoneNo2))
+            {
+                to.PhoneNo2 = paramodel.fields.PhoneNo;
+            }
+            else
+            {
+                to.PhoneNo2 = paramodel.fields.PhoneNo2;
+            }
             to.Latitude = paramodel.fields.B_Latitude;
             to.Longitude = paramodel.fields.B_Longitude;
             to.Name = paramodel.fields.B_Name;

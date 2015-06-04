@@ -604,10 +604,21 @@ namespace Ets.Service.Provider.Order
                     paramodel.store_info.area_code = storeCodes[2];
                 }
                 #endregion
+
+                paramodel.businessId = orderDao.CreateToSqlAddBusiness(paramodel);  //商户id
             }
             else
                 paramodel.businessId = ParseHelper.ToInt(bussinessIdstr);
             #endregion
+            BusListResultModel business = iBusinessProvider.GetBusiness(paramodel.businessId);
+            if (business != null)
+            {
+                paramodel.CommissionType = business.CommissionType;//结算类型：1：固定比例 2：固定金额
+                paramodel.CommissionFixValue = business.CommissionFixValue;//固定金额     
+                paramodel.BusinessGroupId = business.BusinessGroupId;
+                paramodel.MealsSettleMode = business.MealsSettleMode;
+            }
+
 
             #region 根据集团id为店铺设置外送费，结算比例等财务相关信息add by caoheyang 20150417
 
@@ -619,9 +630,9 @@ namespace Ets.Service.Provider.Order
 
             #region 佣金相关  add by caoheyang 20150416
             paramodel.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(1).CommissionFormulaMode);//默认第三方策略，是默认组下的默认策略，目前即是普通策略 
-            paramodel.CommissionType = 1;//结算类型：1：固定比例 2：固定金额
-            paramodel.CommissionFixValue = 0;//固定金额
-            paramodel.BusinessGroupId = 1;//分组ID
+            //paramodel.CommissionType = 1;//结算类型：1：固定比例 2：固定金额
+            //paramodel.CommissionFixValue = 0;//固定金额
+            //paramodel.BusinessGroupId = 1;//分组ID
 
             //计算获得订单骑士佣金
             OrderCommission orderComm = new OrderCommission()
@@ -631,7 +642,7 @@ namespace Ets.Service.Provider.Order
                 OrderCount = paramodel.package_count ?? 1,/*订单数量，默认为1*/
                 BusinessCommission = paramodel.store_info.businesscommission,/*商户结算比例*/
                 BusinessGroupId = paramodel.BusinessGroupId,
-                StrategyId = 0,
+                StrategyId = business.StrategyId,
                 OrderWebSubsidy = paramodel.websitesubsidy
 
             }/*网站补贴*/;
@@ -643,6 +654,14 @@ namespace Ets.Service.Provider.Order
             paramodel.adjustment = commissonPro.GetAdjustment(orderComm);//订单额外补贴金额
 
             #endregion
+            if (!(bool)paramodel.is_pay && paramodel.MealsSettleMode == MealsSettleMode.Status1.GetHashCode())//未付款且线上支付
+            {
+                //paramodel.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(paramodel.total_price) +
+                //               ParseHelper.ToDecimal(paramodel.store_info.delivery_fee) * ParseHelper.ToInt(paramodel.package_count), 2);
+                //只有一个子订单
+                paramodel.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(paramodel.total_price) +
+                              ParseHelper.ToDecimal(paramodel.store_info.delivery_fee), 2);
+            }
 
             string orderNo = null; //订单号码
             try
@@ -651,8 +670,10 @@ namespace Ets.Service.Provider.Order
                 {
                     if (bussinessIdstr == null)
                     {
-                        paramodel.businessId = orderDao.CreateToSqlAddBusiness(paramodel);  //商户id
+                        
                     }
+                    //
+
                     orderNo = Helper.generateOrderCode(paramodel.businessId);
                     paramodel.OrderNo = orderNo;
                     //将当前订单插入到缓存中，设置过期时间30天
@@ -1184,7 +1205,10 @@ namespace Ets.Service.Provider.Order
             to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
             to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
             to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
-
+            if (!(bool)to.IsPay && to.MealsSettleMode == MealsSettleMode.Status1.GetHashCode())//未付款且线上支付
+            {             
+                to.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(from.Amount) , 2);
+            }
 
             to.CommissionFormulaMode = business.StrategyId;
             to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额

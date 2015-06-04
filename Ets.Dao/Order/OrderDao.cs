@@ -228,7 +228,8 @@ namespace Ets.Dao.Order
                 RecevicePhoneNo,ReceiveProvinceCode,ReceiveCityCode,ReceiveAreaCode,ReceviceAddress,
                 ReceviceLongitude,ReceviceLatitude,businessId,PickUpAddress,Payment,OrderCommission,
                 WebsiteSubsidy,CommissionRate,CommissionFormulaMode,ReceiveProvince,ReceviceCity,ReceiveArea,
-                PickupCode,BusinessCommission,SettleMoney,Adjustment,OrderFrom,Status,CommissionType,CommissionFixValue,BusinessGroupId,Invoice)
+                PickupCode,BusinessCommission,SettleMoney,Adjustment,OrderFrom,Status,CommissionType,CommissionFixValue,BusinessGroupId,Invoice,
+                MealsSettleMode,BusinessReceivable)
                 output Inserted.Id,GETDATE(),@OptName,'新增订单',Inserted.businessId,Inserted.[Status],@Platform
                 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
                 Values(@OrderNo,
@@ -237,7 +238,9 @@ namespace Ets.Dao.Order
                 @RecevicePhoneNo,@ReceiveProvinceCode,@ReceiveCityCode,@ReceiveAreaCode,@ReceviceAddress,
                 @ReceviceLongitude,@ReceviceLatitude,@BusinessId,@PickUpAddress,@Payment,@OrderCommission,
                 @WebsiteSubsidy,@CommissionRate,@CommissionFormulaMode,@ReceiveProvince,@ReceviceCity,@ReceiveArea,
-                @PickupCode,@BusinessCommission,@SettleMoney,@Adjustment,@OrderFrom,@Status,@CommissionType,@CommissionFixValue,@BusinessGroupId,@Invoice);select  IDENT_CURRENT('order') ";
+                @PickupCode,@BusinessCommission,@SettleMoney,@Adjustment,@OrderFrom,@Status,@CommissionType,@CommissionFixValue,@BusinessGroupId,@Invoice,
+                @MealsSettleMode,@BusinessReceivable);
+               select  IDENT_CURRENT('order') ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             //基本参数信息
 
@@ -285,6 +288,8 @@ namespace Ets.Dao.Order
             dbParameters.AddWithValue("@CommissionFixValue", paramodel.CommissionFixValue);//固定金额
             dbParameters.AddWithValue("@BusinessGroupId", paramodel.BusinessGroupId);//分组ID
             dbParameters.AddWithValue("@Invoice", paramodel.invoice_title ?? "");//发票标题
+            dbParameters.AddWithValue("@MealsSettleMode", paramodel.MealsSettleMode);
+            dbParameters.AddWithValue("@BusinessReceivable", paramodel.BusinessReceivable);
 
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertOrdersql, dbParameters);
             return ParseHelper.ToInt(result);
@@ -372,43 +377,36 @@ namespace Ets.Dao.Order
         }
 
         /// <summary>
-        /// CreateToSql  操作插入OrderChild表  hulingbo 
+        /// 操作插入OrderChild表
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150604</UpdateTime>
         /// <param name="paramodel"></param>
         /// <param name="orderId"></param>
         public void CreateToSqlAddOrderChild(CreatePM_OpenApi paramodel, int orderId)
         {
-            const string insertOrderChildSql = @"
-insert into OrderChild
-        (OrderId,
-        ChildId,
-        TotalPrice,
-        GoodPrice,
-        DeliveryPrice,
-        CreateBy,
-        UpdateBy,
-        PayStatus
-)
-values( @OrderId,
-        @ChildId,
-        @TotalPrice,
-        @GoodPrice,
-        @DeliveryPrice,
-        @CreateBy,
-        @UpdateBy,
-        @PayStatus)";
-            IDbParameters dbOrderChildParameters = DbHelper.CreateDbParameters();
-            dbOrderChildParameters.AddWithValue("@OrderId", orderId);
-            dbOrderChildParameters.AddWithValue("@ChildId", 1);
+            const string insertSql = @"
+insert into OrderChild(OrderId,ChildId,TotalPrice,GoodPrice, DeliveryPrice,CreateBy,
+        UpdateBy, PayStatus)
+values( @OrderId,  @ChildId,@TotalPrice,@GoodPrice,@DeliveryPrice,@CreateBy,
+        @UpdateBy, @PayStatus)";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@OrderId", orderId);
+            dbParameters.AddWithValue("@ChildId", 1);
             decimal totalPrice = paramodel.total_price + Convert.ToDecimal(paramodel.delivery_fee);
-            dbOrderChildParameters.AddWithValue("@TotalPrice", totalPrice);
-            dbOrderChildParameters.AddWithValue("@GoodPrice", paramodel.total_price);//订单金额
-            dbOrderChildParameters.AddWithValue("@DeliveryPrice", paramodel.delivery_fee);//外送费
-            dbOrderChildParameters.AddWithValue("@CreateBy", SuperPlatform.第三方对接平台.ToString());
-            dbOrderChildParameters.AddWithValue("@UpdateBy", SuperPlatform.第三方对接平台.ToString());
-            dbOrderChildParameters.AddWithValue("@PayStatus", 1);//临时
+            dbParameters.AddWithValue("@TotalPrice", totalPrice);
+            dbParameters.AddWithValue("@GoodPrice", paramodel.total_price);//订单金额
+            dbParameters.AddWithValue("@DeliveryPrice", paramodel.delivery_fee);//外送费
+            dbParameters.AddWithValue("@CreateBy", SuperPlatform.第三方对接平台.ToString());
+            dbParameters.AddWithValue("@UpdateBy", SuperPlatform.第三方对接平台.ToString());
+            if ((bool)paramodel.is_pay ||
+                           (!(bool)paramodel.is_pay && paramodel.MealsSettleMode == MealsSettleMode.Status0.GetHashCode())
+                           )//已付款 未付款线下付款
+                dbParameters.AddWithValue("@PayStatus", "1");
+            else
+                dbParameters.AddWithValue("@PayStatus", "0");
 
-            DbHelper.ExecuteScalar(SuperMan_Write, insertOrderChildSql, dbOrderChildParameters);
+            DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);
         }
 
         #endregion
@@ -2137,7 +2135,9 @@ values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude)";
                     for (int i = 0; i < order.listOrderChild.Count; i++)
                     {
                         DataRow dr = dt.NewRow();
-                        dr["OrderId"] = orderId;
+                        //dr["OrderId"] = orderId;
+                        int num = i + 1;
+                        dr["OrderId"] = num;
                         dr["ChildId"] = order.listOrderChild[i].ChildId;
                         decimal totalPrice = order.listOrderChild[i].GoodPrice + Convert.ToDecimal(order.DistribSubsidy);
                         dr["TotalPrice"] = totalPrice;

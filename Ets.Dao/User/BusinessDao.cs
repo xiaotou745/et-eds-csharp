@@ -425,77 +425,26 @@ namespace Ets.Dao.User
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
         /// <summary>
-        ///  新增店铺
-        ///  窦海超
-        ///  2015年3月16日 15:19:47
+        ///  新增店铺  
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150604</UpdateTime>
         /// <param name="model"></param>
         /// <returns>返回商铺ID</returns>
         public int InsertBusiness(RegisterInfoModel model)
         {
-            string sql = @"
-                           INSERT INTO dbo.business
-                            ( Name ,
-                              City ,
-                              district ,
-                              PhoneNo ,
-                              PhoneNo2 ,
-                              Password ,
-                              CheckPicUrl ,
-                              IDCard ,
-                              Address ,
-                              Landline ,
-                              Longitude ,
-                              Latitude ,
-                              Status ,
-                              InsertTime ,
-                              districtId ,
-                              CityId ,
-                              GroupId ,
-                              OriginalBusiId ,
-                              ProvinceCode ,
-                              CityCode ,
-                              AreaCode ,
-                              Province ,
-                              CommissionTypeId ,
-                              DistribSubsidy ,
-                              BusinessCommission
-                            )
-                    VALUES  ( N'' , -- Name - nvarchar(100)
-                              @City , -- City - nvarchar(100)
-                              N'' , -- district - nvarchar(200)
-                              @PhoneNo , -- PhoneNo - nvarchar(20)
-                              N'' , -- PhoneNo2 - nvarchar(20)
-                              @Password , -- Password - nvarchar(255)
-                              N'' , -- CheckPicUrl - nvarchar(255)
-                              N'' , -- IDCard - nvarchar(45)
-                              N'' , -- Address - nvarchar(255)
-                              N'' , -- Landline - nvarchar(15)
-                              0.0 , -- Longitude - float
-                              0.0 , -- Latitude - float
-                              0 , -- Status - tinyint
-                              GETDATE() , -- InsertTime - datetime
-                              '0' , -- districtId - nvarchar(45)
-                              @CityId , -- CityId - nvarchar(45)
-                              @GroupId , -- GroupId - int
-                              0 , -- OriginalBusiId - int
-                              N'' , -- ProvinceCode - nvarchar(20)
-                              N'' , -- CityCode - nvarchar(20)
-                              N'' , -- AreaCode - nvarchar(20)
-                              N'' , -- Province - nvarchar(20)
-                              1 , -- CommissionTypeId - int
-                              NULL , -- DistribSubsidy - numeric
-                              NULL  -- BusinessCommission - decimal
-                            )SELECT @@IDENTITY
-                        ";
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@City", model.city);
-            parm.AddWithValue("@Password", model.passWord);
-            parm.Add("@PhoneNo", SqlDbType.NVarChar);
-            parm.SetValue("@PhoneNo", model.phoneNo);
-            parm.AddWithValue("@CityId", model.CityId);
-            parm.AddWithValue("@GroupId", model.GroupId);
-            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm));
+            const string insertSql = @"         
+insert into dbo.business (City,PhoneNo,PhoneNo2,Password,CityId )
+values( @City,@PhoneNo,@PhoneNo2,@Password,@CityId )
+select @@IDENTITY";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@City", model.city);
+            dbParameters.AddWithValue("@Password", model.passWord);
+            dbParameters.AddWithValue("@PhoneNo", model.phoneNo);
+            dbParameters.AddWithValue("@PhoneNo2", model.phoneNo);
+            dbParameters.AddWithValue("@CityId", model.CityId);
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
         }
 
 
@@ -958,104 +907,45 @@ namespace Ets.Dao.User
 
 
         /// <summary>
-        ///  新增第三方店铺
-        ///  窦海超
-        ///  2015年3月16日 15:19:47
+        ///  新增第三方店铺   
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150601</UpdateTime>
         /// <param name="model"></param>
         /// <returns>返回商铺ID</returns>
         public int InsertOtherBusiness(Business model)
         {
-            string sql = @"
-                           INSERT INTO dbo.business
-                            ( Name ,
-                              City ,
-                              district ,
-                              PhoneNo ,
-                              PhoneNo2 ,
-                              Password ,
-                              CheckPicUrl ,
-                              IDCard ,
-                              Address ,
-                              Landline ,
-                              Longitude ,
-                              Latitude ,
-                              Status ,
-                              InsertTime ,
-                              districtId ,
-                              CityId ,
-                              GroupId ,
-                              OriginalBusiId ,
-                              ProvinceCode ,
-                              CityCode ,
-                              AreaCode ,
-                              Province ,
-                              CommissionTypeId ,
-                              DistribSubsidy ,
-                              BusinessCommission
-                            )
-                    VALUES  ( @Name , -- Name - nvarchar(100)
-                              @City , -- City - nvarchar(100)
-                              @district , -- district - nvarchar(200)
-                              @PhoneNo , -- PhoneNo - nvarchar(20)
-                              @PhoneNo2 , -- PhoneNo2 - nvarchar(20)
-                              @Password , -- Password - nvarchar(255)
-                              @CheckPicUrl , -- CheckPicUrl - nvarchar(255)
-                              @IDCard , -- IDCard - nvarchar(45)
-                              @Address , -- Address - nvarchar(255)
-                              N'' , -- Landline - nvarchar(15)
-                              @Longitude , -- Longitude - float
-                              @Latitude , -- Latitude - float
-                              @Status, -- Status - tinyint
-                              GETDATE() , -- InsertTime - datetime
-                              @districtId , -- districtId - nvarchar(45)
-                              @CityId , -- CityId - nvarchar(45)
-                              @GroupId , -- GroupId - int
-                              @OriginalBusiId , -- OriginalBusiId - int
-                              @ProvinceCode , -- ProvinceCode - nvarchar(20)
-                              @CityCode , -- CityCode - nvarchar(20)
-                              @AreaCode , -- AreaCode - nvarchar(20)
-                              @Province , -- Province - nvarchar(20)
-                              @CommissionTypeId , -- CommissionTypeId - int
-                              @DistribSubsidy , -- DistribSubsidy - numeric
-                              NULL  -- BusinessCommission - decimal
-                            );select SCOPE_IDENTITY() as id;
-                        ";
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@Name", model.Name);
-            parm.AddWithValue("@City", model.City);
-            parm.AddWithValue("@district", model.district);
-            parm.Add("@PhoneNo", SqlDbType.NVarChar);
-            parm.SetValue("@PhoneNo", model.PhoneNo);
-
-            parm.Add("@PhoneNo2", SqlDbType.NVarChar);
-            parm.SetValue("@PhoneNo2", model.PhoneNo2);
-
-            parm.AddWithValue("@Password", model.Password);
-            parm.AddWithValue("@CheckPicUrl", model.CheckPicUrl);
-
-
-            parm.AddWithValue("@IDCard", model.IDCard);
-            parm.AddWithValue("@Address", model.Address);
-            parm.AddWithValue("@Longitude", model.Longitude);
-            parm.AddWithValue("@Latitude", model.Latitude);
-            parm.AddWithValue("@Status", model.Status);
-            parm.AddWithValue("@districtId", model.districtId);
-            parm.AddWithValue("@CityId", model.CityId);
-            parm.AddWithValue("@GroupId", model.GroupId);
-            parm.AddWithValue("@OriginalBusiId", model.OriginalBusiId);
-            parm.AddWithValue("@CityCode", model.CityCode);
-            parm.AddWithValue("@AreaCode", model.AreaCode);
-            parm.AddWithValue("@Province", model.Province);
-            parm.AddWithValue("@CommissionTypeId", model.CommissionTypeId);
-            parm.AddWithValue("@ProvinceCode", model.ProvinceCode);
-            parm.AddWithValue("@DistribSubsidy", model.DistribSubsidy);
-            object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, parm);
-            if (i != null)
-            {
-                return ParseHelper.ToInt(i.ToString());
-            }
-            return 0;
+            string insertSql = @"
+insert into dbo.business(Name,City,district,PhoneNo,PhoneNo2,Password,CheckPicUrl,
+            IDCard,Address,Longitude,Latitude,Status,districtId,CityId, 
+            ProvinceCode,CityCode,AreaCode,Province,CommissionTypeId,DistribSubsidy)
+            values(@Name,@City,@district,@PhoneNo,@PhoneNo2,@Password,@CheckPicUrl,@IDCard , 
+            @Address,@Longitude,@Latitude,@Status,@districtId,@CityId,
+            @ProvinceCode,@CityCode,@AreaCode,@Province,@CommissionTypeId ,@DistribSubsidy);
+select SCOPE_IDENTITY() as id;    
+";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@Name", model.Name);
+            dbParameters.AddWithValue("@City", model.City);
+            dbParameters.AddWithValue("@district", model.district);
+            dbParameters.AddWithValue("@PhoneNo", model.PhoneNo);
+            dbParameters.AddWithValue("@PhoneNo2", model.PhoneNo2);//写PhoneNo2
+            dbParameters.AddWithValue("@Password", model.Password);
+            dbParameters.AddWithValue("@CheckPicUrl", model.CheckPicUrl);
+            dbParameters.AddWithValue("@IDCard", model.IDCard);
+            dbParameters.AddWithValue("@Address", model.Address);
+            dbParameters.AddWithValue("@Longitude", model.Longitude);
+            dbParameters.AddWithValue("@Latitude", model.Latitude);
+            dbParameters.AddWithValue("@Status", model.Status);
+            dbParameters.AddWithValue("@districtId", model.districtId);
+            dbParameters.AddWithValue("@CityId", model.CityId);  
+            dbParameters.AddWithValue("@CityCode", model.CityCode);
+            dbParameters.AddWithValue("@AreaCode", model.AreaCode);
+            dbParameters.AddWithValue("@Province", model.Province);
+            dbParameters.AddWithValue("@CommissionTypeId", model.CommissionTypeId);
+            dbParameters.AddWithValue("@ProvinceCode", model.ProvinceCode);
+            dbParameters.AddWithValue("@DistribSubsidy", model.DistribSubsidy);
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));  
         }
         /// <summary>
         /// 商户统计
@@ -1304,81 +1194,33 @@ namespace Ets.Dao.User
 
 
         /// <summary>
-        ///  后台新增店铺
-        ///  平扬
-        ///  2015年4月17日 17:19:47
+        ///  后台新增店铺   
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>2015064</UpdateTime>
         /// <param name="model"></param>
         /// <returns>返回商铺ID</returns>
         public int addBusiness(AddBusinessModel model)
         {
-            string sql = @"
-                           INSERT INTO dbo.business
-                            ( Name ,
-                              City ,
-                              district ,
-                              PhoneNo ,
-                              PhoneNo2 ,
-                              Password ,
-                              CheckPicUrl ,
-                              IDCard ,
-                              Address ,
-                              Landline ,
-                              Longitude ,
-                              Latitude ,
-                              Status ,
-                              InsertTime ,
-                              districtId ,
-                              CityId ,
-                              GroupId ,
-                              OriginalBusiId ,
-                              ProvinceCode ,
-                              CityCode ,
-                              AreaCode ,
-                              Province ,
-                              CommissionTypeId ,
-                              DistribSubsidy ,
-                              BusinessCommission
-                            )
-                    VALUES  ( @Name, -- Name - nvarchar(100)
-                              @City , -- City - nvarchar(100)
-                              N'' , -- district - nvarchar(200)
-                              @PhoneNo , -- PhoneNo - nvarchar(20)
-                              N'' , -- PhoneNo2 - nvarchar(20)
-                              @Password , -- Password - nvarchar(255)
-                              N'' , -- CheckPicUrl - nvarchar(255)
-                              N'' , -- IDCard - nvarchar(45)
-                              @Address, -- Address - nvarchar(255)
-                              N'' , -- Landline - nvarchar(15)
-                              0.0 , -- Longitude - float
-                              0.0 , -- Latitude - float
-                              1 , -- Status - tinyint
-                              GETDATE() , -- InsertTime - datetime
-                              '0' , -- districtId - nvarchar(45)
-                              @CityId , -- CityId - nvarchar(45)
-                              @GroupId , -- GroupId - int
-                              0 , -- OriginalBusiId - int
-                              N'' , -- ProvinceCode - nvarchar(20)
-                              N'' , -- CityCode - nvarchar(20)
-                              N'' , -- AreaCode - nvarchar(20)
-                              N'' , -- Province - nvarchar(20)
-                              1 , -- CommissionTypeId - int
-                              @DistribSubsidy , -- DistribSubsidy - numeric
-                              @BusinessCommission  -- BusinessCommission - decimal
-                            )SELECT @@IDENTITY
-                        ";
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@City", model.city);
-            parm.AddWithValue("@Password", "A06F6A211CBEDF374FC367FA231865DE");
-            parm.Add("@PhoneNo", SqlDbType.NVarChar);
-            parm.SetValue("@PhoneNo", model.phoneNo);
-            parm.AddWithValue("@CityId", model.CityId);
-            parm.AddWithValue("@GroupId", model.GroupId);
-            parm.AddWithValue("@Name", model.businessName);
-            parm.AddWithValue("@Address", model.businessaddr);
-            parm.AddWithValue("@DistribSubsidy", model.businessWaisong);
-            parm.AddWithValue("@BusinessCommission", model.businessCommission);
-            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm));
+            const string insertSql = @"
+insert into dbo.business(City,PhoneNo,PhoneNo2,Password,CityId ,         
+                          Name,Address,GroupId ,DistribSubsidy,BusinessCommission)
+values  ( @City , @PhoneNo,@PhoneNo2, @Password ,@CityId , 
+                          @Name,@Address, @GroupId,@DistribSubsidy, @BusinessCommission)
+select @@IDENTITY ";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@City", model.city);
+            dbParameters.AddWithValue("@Password", "A06F6A211CBEDF374FC367FA231865DE");
+            dbParameters.AddWithValue("@PhoneNo", model.phoneNo);
+            dbParameters.AddWithValue("@PhoneNo2", model.phoneNo);
+            dbParameters.AddWithValue("@CityId", model.CityId);
+            dbParameters.AddWithValue("@Name", model.businessName);
+            dbParameters.AddWithValue("@Address", model.businessaddr);
+            dbParameters.AddWithValue("@GroupId", model.GroupId);
+            dbParameters.AddWithValue("@DistribSubsidy", model.businessWaisong);
+            dbParameters.AddWithValue("@BusinessCommission", model.businessCommission);
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
         }
 
 
