@@ -1086,6 +1086,72 @@ select SCOPE_IDENTITY() as id;
             }
         }
 
+
+        /// <summary>
+        /// B端修改商户信息 caoheyang
+        /// </summary>
+        /// <param name="business"></param>
+        /// <returns></returns>
+        public int UpdateBusinessInfoB(UpdateBusinessInfoBPM business)
+        {
+            string sqlCheckPicUrl = !string.IsNullOrWhiteSpace(business.CheckPicUrl)
+                ? ",CheckPicUrl='" + business.CheckPicUrl + "'"
+                : "";
+            string sqlBusinessLicensePic = !string.IsNullOrWhiteSpace(business.BusinessLicensePic)
+                ? ",BusinessLicensePic='" + business.BusinessLicensePic + "'"
+                : "";
+            string upSql = string.Format(@"UPDATE  dbo.business
+                            SET     [Address] = @Address ,
+                                    PhoneNo2 = @PhoneNo2 ,
+                                    [Name] = @Name ,
+                                    Landline = @Landline ,
+                                    district = @district ,
+                                    districtId = @districtId ,
+                                    Longitude = @Longitude ,
+                                    Latitude = @Latitude ,
+                                    [Status]= @Status,
+                                    AreaCode = @AreaCode ,
+                                    ProvinceCode = @ProvinceCode ,
+                                    Province = @Province ,
+                                    CityId = @CityId ,
+                                    CityCode = @CityCode ,
+                                    City = @City
+                                    {0}{1}
+                            OUTPUT  Inserted.[Status]
+                            WHERE   Id = @busiID", sqlCheckPicUrl, sqlBusinessLicensePic);
+
+            IDbParameters parm = DbHelper.CreateDbParameters();
+
+            parm.AddWithValue("@Address", business.Address);
+            parm.Add("@PhoneNo2", SqlDbType.NVarChar);
+            parm.SetValue("@PhoneNo2", business.PhoneNo2);
+            parm.AddWithValue("@Name", business.Name);
+            parm.AddWithValue("@Landline", business.Landline);
+            parm.AddWithValue("@district", business.district);
+            parm.AddWithValue("@districtId", business.districtId);
+            parm.AddWithValue("@Longitude", business.Longitude);
+            parm.AddWithValue("@Latitude", business.Latitude);
+            parm.AddWithValue("@Status", business.Status);
+            parm.AddWithValue("@AreaCode", business.AreaCode);
+            parm.AddWithValue("@ProvinceCode", business.ProvinceCode);
+            parm.AddWithValue("@Province", business.Province);
+            parm.AddWithValue("@CityId", business.CityId);
+            parm.AddWithValue("@CityCode", business.CityCode);
+            parm.AddWithValue("@City", business.City);
+            parm.AddWithValue("@busiID", business.Id);
+            try
+            {
+                object executeScalar = DbHelper.ExecuteScalar(SuperMan_Write, upSql, parm);
+                return ParseHelper.ToInt(executeScalar, -1);
+            }
+            catch (Exception ex)
+            {
+                //记日志
+                return -1;
+            }
+
+        }
+
         /// <summary>
         /// 根据原平台商户Id和订单来源获取该商户信息
         /// 窦海超

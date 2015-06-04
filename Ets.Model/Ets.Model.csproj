@@ -60,6 +60,7 @@
     <Compile Include="Common\PagedList.cs" />
     <Compile Include="Common\TestUserModel.cs" />
     <Compile Include="DataModel\Authority\AccountCityRelation.cs" />
+    <Compile Include="DataModel\Bussiness\BusiModifyResultModelDM.cs" />
     <Compile Include="DataModel\Bussiness\BusinessGroupLogModel.cs" />
     <Compile Include="DataModel\Bussiness\BusinessGroupModel.cs" />
     <Compile Include="DataModel\Bussiness\BusinessOptionLog.cs" />
@@ -198,6 +199,7 @@
     <Compile Include="ParameterModel\Bussiness\OrderCancelResultModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BussinessPM.cs" />
     <Compile Include="ParameterModel\Bussiness\RegisterInfoModel.cs" />
+    <Compile Include="ParameterModel\Bussiness\UpdateBusinessInfoBPM.cs" />
     <Compile Include="ParameterModel\Clienter\ClienterRecordsPM.cs" />
     <Compile Include="ParameterModel\Clienter\ClienterPM.cs" />
     <Compile Include="ParameterModel\Clienter\ChangeWorkStatusPM.cs" />

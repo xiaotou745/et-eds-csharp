@@ -351,18 +351,39 @@ namespace ETS.Enums
     public enum BusiAddAddressStatus : int
     {
         Success = 0,
+        /// <summary>
+        /// 地址不能为空
+        /// </summary>
         [DisplayText("地址不能为空")]
         AddressEmpty,
+        /// <summary>
+        /// 手机号不能为空
+        /// </summary>
         [DisplayText("手机号不能为空")]
         PhoneNumberEmpty,
-        [DisplayText("商务地址不能为空")]
-        businessNameEmpty,
+        /// <summary>
+        ///  商务地址不能为空
+        /// </summary>
+        [DisplayText("店铺名称不能为空")]
+        BusinessNameEmpty,
+        /// <summary>
+        /// 验证码不正确
+        /// </summary>
         [DisplayText("验证码不正确")]
         IncorrectCheckCode,
+        /// <summary>
+        /// 昵称已被注册
+        /// </summary>
         [DisplayText("昵称已被注册")]
         NickNameAlreadyRegistered,
+        /// <summary>
+        /// 手机号已被注册
+        /// </summary>
         [DisplayText("手机号已被注册")]
         PhoneNumberRegistered,
+        /// <summary>
+        /// 更新信息失败
+        /// </summary>
         [DisplayText("更新信息失败")]
         UpdateFailed
     }
@@ -378,8 +399,14 @@ namespace ETS.Enums
         InvalidOrderId,
         [DisplayText("真实姓名不能为空")]
         TrueNameEmpty,
+        /// <summary>
+        /// 无效的文件格式
+        /// </summary>
         [DisplayText("无效的文件格式")]
         InvalidFileFormat,
+        /// <summary>
+        /// 图片的尺寸最小为150px*150px
+        /// </summary>
         [DisplayText("图片的尺寸最小为150px*150px")]
         InvalidImageSize,
         [DisplayText("上传图片失败")]

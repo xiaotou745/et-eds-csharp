@@ -174,6 +174,13 @@ namespace Ets.Service.IProvider.User
         /// <param name="businessModel"></param>
         /// <returns>商户的当前状态</returns>
         int UpdateBusinessAddressInfo(BusiAddAddressInfoModel businessModel);
+
+          /// <summary>
+        /// B端修改商户信息 caoheyang
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>商户的当前状态</returns>
+        ResultModel<BusiModifyResultModelDM> UpdateBusinessInfoB(BusiAddAddressInfoModel model);
         /// <summary>
         /// 更新商户上传图片信息
         /// </summary>

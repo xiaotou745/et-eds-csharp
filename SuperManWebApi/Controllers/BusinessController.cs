@@ -19,6 +19,9 @@ using Ets.Service.Provider.Finance;
 using Ets.Service.IProvider.User;
 using Ets.Service.Provider.User;
 using SuperManWebApi.App_Start.Filters;
+using Ets.Model.ParameterModel.Bussiness;
+using Ets.Model.DataModel.Bussiness;
+using SuperManWebApi.Providers;
 
 namespace SuperManWebApi.Controllers
 {
@@ -136,6 +139,64 @@ namespace SuperManWebApi.Controllers
                 LogHelper.LogWriter("ResultModel<decimal> GetDistribSubsidy", new { obj = "时间：" + DateTime.Now.ToString() + ex.Message });
                 return ResultModel<BusinessInfo>.Conclude(GetBussinessStatus.Failed);
             }
+        }
+
+
+        /// <summary>
+        /// B端修改商户信息 caoheyang
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ResultModel<BusiModifyResultModelDM> UpdateBusinessInfoB(BusiAddAddressInfoModel model)
+        {
+            model.CheckPicUrl = null;
+            model.BusinessLicensePic = null;  //防止移动端或者不安全情况下给该参数传了值
+            //照片有所更新 
+            if (model.IsUpdateCheckPicUrl == 0 || model.IsUpdateBusinessLicensePic == 0)
+            {
+                //只更新了 手持照片或者只更新了 门店照片
+                if ((model.IsUpdateCheckPicUrl == 1 && model.IsUpdateBusinessLicensePic == 0) ||
+                    (model.IsUpdateCheckPicUrl == 0 && model.IsUpdateBusinessLicensePic == 1))
+                {
+                    if (HttpContext.Current.Request.Files.Count != 1)
+                    {
+                        return ResultModel<BusiModifyResultModelDM>.Conclude(UploadIconStatus.InvalidFileFormat);
+                    }
+                    var file = HttpContext.Current.Request.Files[0];
+                    ImageHelper ih = new ImageHelper();
+                    ImgInfo imgInfo = ih.UploadImg(file, 0);
+                    if (!string.IsNullOrWhiteSpace(imgInfo.FailRemark))
+                    {
+                        return ResultModel<BusiModifyResultModelDM>.Conclude(UploadIconStatus.UpFailed);
+                    }
+                    //更新了手持照片
+                    if (model.IsUpdateCheckPicUrl == 1 && model.IsUpdateBusinessLicensePic == 0)
+                    {
+                        model.CheckPicUrl = imgInfo.PicUrl;
+                    }
+                    else if (model.IsUpdateCheckPicUrl == 0 && model.IsUpdateBusinessLicensePic == 1)
+                    {
+                        model.BusinessLicensePic = imgInfo.PicUrl;
+                    }
+                }
+                else if (model.IsUpdateCheckPicUrl == 0 && model.IsUpdateBusinessLicensePic == 0)
+                {
+                    if (HttpContext.Current.Request.Files.Count != 2)
+                    {
+                        return ResultModel<BusiModifyResultModelDM>.Conclude(UploadIconStatus.InvalidFileFormat);
+                    }
+                    var file1 = HttpContext.Current.Request.Files[0];
+                    var file2 = HttpContext.Current.Request.Files[1]; //卫生许可证
+                    ImageHelper ih = new ImageHelper();
+                    ImgInfo imgInfo1 = ih.UploadImg(file1, 0);
+                    ImgInfo imgInfo2 = ih.UploadImg(file2, 0);
+                    model.CheckPicUrl = imgInfo1.PicUrl;
+                    model.BusinessLicensePic = imgInfo2.PicUrl;
+                }
+            }
+            //修改商户地址信息，返回当前商户的状态
+            return _iBusinessProvider.UpdateBusinessInfoB(model);
         }
     }
 }
