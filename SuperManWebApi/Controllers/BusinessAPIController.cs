@@ -377,7 +377,7 @@ namespace SuperManWebApi.Controllers
             }
             if (string.IsNullOrWhiteSpace(model.businessName))
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel>.Conclude(ETS.Enums.BusiAddAddressStatus.businessNameEmpty);
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel>.Conclude(ETS.Enums.BusiAddAddressStatus.BusinessNameEmpty);
             }
             //修改商户地址信息，返回当前商户的状态
             int upResult = iBusinessProvider.UpdateBusinessAddressInfo(model);

@@ -26,6 +26,7 @@ using Ets.Model.ParameterModel.User;
 using Ets.Model.ParameterModel.Order;
 using Ets.Service.Provider.Order;
 using Ets.Model.DataModel.Order;
+using Ets.Model.DomainModel.Area;
 namespace Ets.Service.Provider.User
 {
 
@@ -624,6 +625,95 @@ namespace Ets.Service.Provider.User
             redis.Delete(cacheKey);
             return upResult;
         }
+
+
+        /// <summary>
+        /// B端修改商户信息 caoheyang
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>商户的当前状态</returns>
+        public ResultModel<BusiModifyResultModelDM> UpdateBusinessInfoB(BusiAddAddressInfoModel model)
+        {
+            if (model.userId <= 0)  //判断 商户id是否正确
+            {
+                return ResultModel<BusiModifyResultModelDM>.Conclude(UploadIconStatus.InvalidUserId);
+            }
+            if (string.IsNullOrWhiteSpace(model.phoneNo))
+            {
+                return ResultModel<BusiModifyResultModelDM>.Conclude(BusiAddAddressStatus.PhoneNumberEmpty);
+            }
+            if (string.IsNullOrWhiteSpace(model.Address))
+            {
+                return ResultModel<BusiModifyResultModelDM>.Conclude(BusiAddAddressStatus.AddressEmpty);
+            }
+            if (string.IsNullOrWhiteSpace(model.businessName))
+            {
+                return ResultModel<BusiModifyResultModelDM>.Conclude(BusiAddAddressStatus.BusinessNameEmpty);
+            }
+            UpdateBusinessInfoBPM business = UpdateBusinessInfoBTranslate(model);
+            var busi = dao.GetBusiness(model.userId); //查询商户信息
+            if (busi == null)
+            {
+                return ResultModel<BusiModifyResultModelDM>.Conclude(UploadIconStatus.InvalidUserId);
+            }
+            if (busi.Status == ConstValues.BUSINESS_NOADDRESS)  //如果商户的状态 为未审核未添加地址，则修改商户状态为 未审核
+            {
+                business.Status = ConstValues.BUSINESS_NOAUDIT;
+            }
+
+            int upResult = dao.UpdateBusinessInfoB(business);
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, model.userId);
+            redis.Delete(cacheKey);
+            return ResultModel<BusiModifyResultModelDM>.Conclude(upResult == -1 ? BusiAddAddressStatus.UpdateFailed : BusiAddAddressStatus.Success,
+               new BusiModifyResultModelDM() { userId = model.userId, status = upResult });
+        }
+
+        /// <summary>
+        /// 将入口参数转换为对应的 数据库 Business 实体
+        /// wc 注意这里有商户状态的转换
+        /// </summary>
+        /// <param name="businessModel"></param>
+        /// <returns></returns>
+        private UpdateBusinessInfoBPM UpdateBusinessInfoBTranslate(BusiAddAddressInfoModel businessModel)
+        {
+            var to = new UpdateBusinessInfoBPM();
+            to.Id = businessModel.userId;  //用户id
+            to.Address = businessModel.Address.Trim(); //地址
+            to.Name = businessModel.businessName.Trim(); //商户名称
+            to.Landline = businessModel.landLine; //座机
+            to.PhoneNo2 = businessModel.phoneNo.Trim(); //手机号2
+            to.City = businessModel.City.Trim(); //市
+            to.district = businessModel.districtName.Trim();  //区域名称
+            to.Province = businessModel.Province.Trim();  //省份名称
+            //修改地址转换 区域编码
+            if (!string.IsNullOrWhiteSpace(businessModel.districtName))
+            {
+                AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = businessModel.districtName.Trim(), JiBie = 3 });
+                to.districtId = areaModel != null ? areaModel.NationalCode.ToString() : "";
+                to.AreaCode = areaModel != null ? areaModel.NationalCode.ToString() : "";
+            }
+            //修改地址转换 市编码
+            if (!string.IsNullOrWhiteSpace(businessModel.City))
+            {
+                AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = businessModel.City.Trim(), JiBie = 2 });
+                to.CityId = areaModel != null ? areaModel.NationalCode.ToString() : "";
+                to.CityCode = areaModel != null ? areaModel.NationalCode.ToString() : "";
+            }
+            //修改地址转换 省份编码
+            if (!string.IsNullOrWhiteSpace(businessModel.Province))
+            {
+                AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = businessModel.Province.Trim(), JiBie = 1 });
+                to.ProvinceCode = areaModel != null ? areaModel.NationalCode.ToString() : "";
+            }
+
+            to.Longitude = businessModel.longitude; //经度
+            to.Latitude = businessModel.latitude; //纬度 
+            to.Status = ConstValues.BUSINESS_NOAUDIT;  //用户状态待审核
+            return to;
+        }
+
+
         /// <summary>
         /// 更新图片地址信息
         /// wc
