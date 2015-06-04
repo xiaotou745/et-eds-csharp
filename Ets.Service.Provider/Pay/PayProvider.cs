@@ -28,7 +28,7 @@ namespace Ets.Service.Provider.Pay
 {
     public class PayProvider : IPayProvider
     {
-        AlipayIntegrate alipayIntegrate = new AlipayIntegrate();
+        //AlipayIntegrate alipayIntegrate = new AlipayIntegrate();
         OrderChildDao orderChildDao = new OrderChildDao();
         #region 生成支付宝、微信二维码订单
 
@@ -69,6 +69,7 @@ namespace Ets.Service.Provider.Pay
             }
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
         }
+
 
         /// <summary>
         /// 完成订单后发送jpush消息 
@@ -123,7 +124,8 @@ namespace Ets.Service.Provider.Pay
                 if (model.payType == PayTypeEnum.ZhiFuBao.GetHashCode())
                 {
                     int unfinish = new OrderChildDao().CheckOrderChildPayStatus(model.orderId);
-                    return alipayIntegrate.GetOrder(orderNo, model.orderId, model.childId, unfinish);
+                    //return alipayIntegrate.GetOrder(orderNo, model.orderId, model.childId, unfinish);
+                    return null;
                 }
                 //微信
                 if (model.payType == PayTypeEnum.WeiXin.GetHashCode())
@@ -142,6 +144,7 @@ namespace Ets.Service.Provider.Pay
         #endregion
 
         #region 支付宝相关
+
 
 
         /// <summary>
@@ -171,7 +174,15 @@ namespace Ets.Service.Provider.Pay
             string qrcodeUrl = string.Empty;
             if (payStyle == 1)//用户扫二维码
             {
-                qrcodeUrl = alipayIntegrate.GetQRCodeUrl(orderNo, payAmount, businessName);
+                //qrcodeUrl = alipayIntegrate.GetQRCodeUrl(orderNo, payAmount, businessName);
+                AliModel aliModel = new AliModel()
+                {
+                    body = string.Empty,
+                    orderNo = orderNo,
+                    payMoney = payAmount,
+                    productName = businessName
+                };
+                qrcodeUrl = new AliCallBack().GetOrder(aliModel);
                 if (string.IsNullOrEmpty(qrcodeUrl))
                 {
                     return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
@@ -184,6 +195,7 @@ namespace Ets.Service.Provider.Pay
             resultModel.notifyUrl = ETS.Config.NotifyUrl;
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.success, resultModel);
         }
+
 
         /// <summary>
         /// 支付宝创建订单
