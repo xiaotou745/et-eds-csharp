@@ -46,5 +46,10 @@ namespace Ets.Model.DomainModel.Bussiness
         /// 第三方绑定集合
         /// </summary>
         public string ThirdBindListStr { get; set; }
+        /// <summary>
+        /// 第三方平台名称
+        /// </summary>
+        public string GroupName { get; set; }
+        
     }
 }
