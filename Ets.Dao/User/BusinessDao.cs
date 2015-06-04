@@ -722,7 +722,7 @@ order by id desc
 
 
         /// <summary>
-        /// 根据手机号获取用商家信息
+        /// 根据手机号获取用商家信息  B修改商户密码 用到
         /// 窦海超
         /// 2015年3月23日 19:00:52
         /// </summary>
@@ -730,7 +730,9 @@ order by id desc
         /// <returns>商家信息</returns>
         public BusListResultModel GetBusinessByPhoneNo(string PhoneNo)
         {
-            string sql = @"SELECT Id FROM dbo.business(NOLOCK) WHERE PhoneNo=@PhoneNo";
+            string sql = @"SELECT Id  FROM dbo.business(NOLOCK) a
+LEFT join dbo.[group] b on a.GroupId=b.Id
+where a.PhoneNo=@PhoneNo and b.IsModifyBind=1";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@PhoneNo", SqlDbType.NVarChar);
             parm.SetValue("@PhoneNo", PhoneNo);
