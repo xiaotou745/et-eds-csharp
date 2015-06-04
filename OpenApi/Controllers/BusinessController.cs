@@ -56,21 +56,38 @@ namespace OpenApi.Controllers
             Business busi = iBusiProvider.CheckExistBusiness(paramodel.fields.B_OriginalBusiId, paramodel.group);
             if (busi != null)
             {
-                if(busi.Status == ConstValues.BUSINESS_NOADDRESS || busi.Status == ConstValues.BUSINESS_AUDITCANCEL )
+                //if(busi.Status == ConstValues.BUSINESS_NOADDRESS || busi.Status == ConstValues.BUSINESS_AUDITCANCEL )
+                //{
+                //   bool upresult = iBusiProvider.UpdateAuditStatus(busi.Id, ConstValues.BUSINESS_NOAUDIT);
+                //    if (upresult)
+                //    {
+                //        return ResultModel<object>.Conclude(CustomerRegisterStatus.Success, busi.Id);
+                //    }
+                //    else
+                //    {
+                //        return ResultModel<object>.Conclude(CustomerRegisterStatus.Faild);
+                //    }
+                //}
+                //else
+                //{
+                //    return ResultModel<object>.Conclude(CustomerRegisterStatus.Success, busi.Id);
+                //}
+                bool upresult = false;
+                if (busi.Status == ConstValues.BUSINESS_NOADDRESS || busi.Status == ConstValues.BUSINESS_AUDITCANCEL)
                 {
-                    bool upresult = iBusiProvider.UpdateAuditStatus(busi.Id, ConstValues.BUSINESS_NOAUDIT);
-                    if (upresult)
-                    {
-                        return ResultModel<object>.Conclude(CustomerRegisterStatus.Success, busi.Id);
-                    }
-                    else
-                    {
-                        return ResultModel<object>.Conclude(CustomerRegisterStatus.Faild);
-                    }
+                    upresult = iBusiProvider.UpdateAuditStatus(busi.Id, ConstValues.BUSINESS_NOAUDIT);
                 }
                 else
                 {
+                    upresult = iBusiProvider.UpdateAuditStatus(busi.Id, ConstValues.BUSINESS_NOAUDIT);
+                }
+                if (upresult)
+                {
                     return ResultModel<object>.Conclude(CustomerRegisterStatus.Success, busi.Id);
+                }
+                else
+                {
+                    return ResultModel<object>.Conclude(CustomerRegisterStatus.Faild);
                 }
             }
             //if (iBusiProvider.CheckExistBusiness(paramodel.fields.B_OriginalBusiId, paramodel.group))
