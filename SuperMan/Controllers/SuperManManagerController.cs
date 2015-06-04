@@ -258,6 +258,7 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <param name="pageindex"></param>
         /// <returns></returns>
+        [HttpPost]
         public ActionResult PostClienterBalanceRecord(int pageindex = 1)
         {
             var criteria = new ClienterBalanceRecordSerchCriteria();
