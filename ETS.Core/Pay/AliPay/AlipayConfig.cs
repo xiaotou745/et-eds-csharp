@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Web;
 using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using System.Net;
+using System;
+using System.Collections.Generic;
 
 namespace ETS.Pay.AliPay
 {
@@ -35,10 +36,10 @@ namespace ETS.Pay.AliPay
             //↓↓↓↓↓↓↓↓↓↓请在这里配置您的基本信息↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
 
             //合作身份者ID，以2088开头由16位纯数字组成的字符串
-            partner = "2088701474861893";//2088701474861893
+            partner = "2088911703660069";
 
             //交易安全检验码，由数字和字母组成的32位字符串
-            key = @"x308rxivwttfzs431i4ogeme1mt1n5jz";//x308rxivwttfzs431i4ogeme1mt1n5jz
+            key = "c7r4nf8yx9wimj7usojo6v3b57ieaqus";
 
             //↑↑↑↑↑↑↑↑↑↑请在这里配置您的基本信息↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 

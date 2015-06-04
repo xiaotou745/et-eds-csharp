@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
+﻿using System.Web;
 using System.Text;
-using System.Threading.Tasks;
-using System.Web;
+using System.Security.Cryptography;
+using System.IO;
+using System.Net;
+using System;
+using System.Collections.Generic;
+using System.Xml;
 
 namespace ETS.Pay.AliPay
 {
@@ -60,7 +60,7 @@ namespace ETS.Pay.AliPay
 
             //去掉最後一個&字符
             int nLen = prestr.Length;
-            prestr.Remove(nLen - 1, 1);
+            prestr.Remove(nLen-1,1);
 
             return prestr.ToString();
         }
