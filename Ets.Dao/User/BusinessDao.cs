@@ -650,7 +650,7 @@ namespace Ets.Dao.User
                 }
                 else if (enumStatusType == EnumStatusType.审核取消)
                 {
-                    sql = string.Format(" update business set Status={0} where id=@id;", ConstValues.BUSINESS_AUDITCANCEL);
+                    sql = string.Format(" update business set Status={0} where id=@id;", ConstValues.BUSINESS_NOAUDIT);//BUSINESS_AUDITCANCEL
                 }
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
                 dbParameters.AddWithValue("id", id);
