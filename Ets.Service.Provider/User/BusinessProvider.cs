@@ -1003,5 +1003,61 @@ namespace Ets.Service.Provider.User
         {
             return dao.GetBusinessDetailById(businessId);
         }
+        /// <summary>
+        /// 获取商户第三方绑定关系记录
+        /// danny-20150602
+        /// </summary>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        public IList<BusinessThirdRelationModel> GetBusinessThirdRelation(int businessId)
+        {
+            return dao.GetBusinessThirdRelation(businessId);
+        }
+        /// <summary>
+        /// 修改商户详细信息
+        /// danny-20150602
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public DealResultInfo ModifyBusinessDetail(BusinessDetailModel model)
+        {
+            var dealResultInfo = new DealResultInfo
+            {
+                DealFlag = false
+            };
+            using (var tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (!dao.ModifyBusinessDetail(model))
+                {
+                    dealResultInfo.DealMsg = "修改商户信息失败！";
+                    return dealResultInfo;
+                }
+                if (!string.IsNullOrWhiteSpace(model.ThirdBindListStr))
+                {
+                    dao.DeleteBusinessThirdRelation(model.Id);
+                    var thirdBindModel = model.ThirdBindListStr.TrimEnd(';').Split(';');
+                    foreach (var item in thirdBindModel)
+                    {
+                        var businessThirdRelationModel = new BusinessThirdRelationModel
+                        {
+                            OriginalBusiId = ParseHelper.ToInt(item.Split(',')[0]),
+                            BusinessId = model.Id,
+                            GroupId = ParseHelper.ToInt(item.Split(',')[1]),
+                            GroupName = item.Split(',')[2],
+                            AuditStatus = ParseHelper.ToInt(item.Split(',')[3])
+                        };
+                        if (!dao.AddBusinessThirdRelation(businessThirdRelationModel))
+                        {
+                            dealResultInfo.DealMsg = "插入商户第三方绑定关系失败！";
+                            return dealResultInfo;
+                        }
+                    }
+                }
+                tran.Complete();
+                dealResultInfo.DealMsg = "修改商户信息成功！";
+                dealResultInfo.DealFlag = true;
+                return dealResultInfo;
+            }
+        }
     }
 }

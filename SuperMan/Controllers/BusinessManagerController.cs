@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using Ets.Model.DomainModel.Bussiness;
 using Ets.Service.IProvider.User;
 using Ets.Service.Provider.User;
 using ETS.Util;
@@ -196,6 +197,23 @@ namespace SuperMan.Controllers
             };
             return Json(new ResultModel(iBus.ModifyBusinessInfo(businessModel, model), "成功!"), JsonRequestBehavior.DenyGet);
         }
+        ///// <summary>
+        ///// 查看商户详细信息
+        ///// danny-20150512
+        ///// </summary>
+        ///// <param name="businessId">商户Id</param>
+        ///// <returns></returns>
+        //public ActionResult BusinessDetail(string businessId)
+        //{
+        //    var businessWithdrawFormModel = iBusinessProvider.GetBusinessDetailById(businessId);
+        //    var criteria = new BusinessBalanceRecordSerchCriteria()
+        //    {
+        //        BusinessId = Convert.ToInt32(businessId)
+        //    };
+        //    ViewBag.businessBalanceRecord = iBusinessFinanceProvider.GetBusinessBalanceRecordList(criteria);
+        //    return View(businessWithdrawFormModel);
+        //}
+
         /// <summary>
         /// 查看商户详细信息
         /// danny-20150512
@@ -207,9 +225,9 @@ namespace SuperMan.Controllers
             var businessWithdrawFormModel = iBusinessProvider.GetBusinessDetailById(businessId);
             var criteria = new BusinessBalanceRecordSerchCriteria()
             {
-                BusinessId =Convert.ToInt32(businessId)
+                BusinessId = Convert.ToInt32(businessId)
             };
-            ViewBag.businessBalanceRecord = iBusinessFinanceProvider.GetBusinessBalanceRecordList(criteria);
+            ViewBag.businessBalanceRecord = iBusinessFinanceProvider.GetBusinessBalanceRecordListOfPaging(criteria);
             return View(businessWithdrawFormModel);
         }
 
@@ -222,6 +240,15 @@ namespace SuperMan.Controllers
         public ActionResult BusinessBalanceRecord(BusinessBalanceRecordSerchCriteria criteria)
         {
             ViewBag.businessBalanceRecord = iBusinessFinanceProvider.GetBusinessBalanceRecordList(criteria);
+            return PartialView("_BusinessBalanceRecordList");
+        }
+
+        [HttpPost]
+        public ActionResult PostBusinessBalanceRecord(int pageindex = 1)
+        {
+            var criteria = new BusinessBalanceRecordSerchCriteria();
+            TryUpdateModel(criteria);
+            ViewBag.businessBalanceRecord = iBusinessFinanceProvider.GetBusinessBalanceRecordListOfPaging(criteria);
             return PartialView("_BusinessBalanceRecordList");
         }
         /// <summary>
@@ -265,6 +292,88 @@ namespace SuperMan.Controllers
             model.OptName = UserContext.Current.Name;
             var reg = iBusinessFinanceProvider.BusinessRecharge(model);
             return Json(new ResultModel(reg, reg?"充值成功！":"充值失败！"), JsonRequestBehavior.DenyGet);
+        }
+        /// <summary>
+        /// 查询商户综合信息
+        /// danny-20150601
+        /// </summary>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        public ActionResult QueryBusinessDetail(string businessId)
+        {
+            var businessDetailModel = iBusinessProvider.GetBusinessDetailById(businessId);
+            var userType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
+            var isStarTimeSubsidies = new GlobalConfigProvider().GlobalConfigMethod(businessDetailModel.BusinessGroupId).IsStarTimeSubsidies;
+            var isStartOverStoreSubsidies = new GlobalConfigProvider().GlobalConfigMethod(businessDetailModel.BusinessGroupId).IsStartOverStoreSubsidies;
+            var subsidyConfig = "";
+            if (isStartOverStoreSubsidies == "1")
+            {
+                subsidyConfig = "全局补贴：跨店抢单奖励";
+            }
+            if (isStarTimeSubsidies == "1")
+            {
+                subsidyConfig = string.IsNullOrWhiteSpace(subsidyConfig) ? "全局补贴：动态时间奖励" : "全局补贴：跨店抢单奖励和动态时间奖励";
+            }
+            ViewBag.subsidyConfig = subsidyConfig;
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(userType));
+            ViewBag.openAreaList = iAreaProvider.GetOpenCityDistrict(ParseHelper.ToInt(businessDetailModel.CityId));
+            ViewBag.businessThirdRelation = iBusinessProvider.GetBusinessThirdRelation(ParseHelper.ToInt(businessId));
+            return View("BusinessModify", businessDetailModel);
+        }
+        /// <summary>
+        /// 根据城市Id获取区县信息
+        /// danny-20150601
+        /// </summary>
+        /// <param name="cityId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult GetOpenCityDistrict(int cityId)
+        {
+            return Json(iAreaProvider.GetOpenCityDistrict(cityId), JsonRequestBehavior.DenyGet);
+        }
+        /// <summary>
+        /// 修改商户综合信息
+        /// danny-20150601
+        /// </summary>
+        /// <param name="businessDetailModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult ModifyBusinessDetail(BusinessDetailModel businessDetailModel)
+        {
+            businessDetailModel.OptUserId = UserContext.Current.Id;
+            businessDetailModel.OptUserName = UserContext.Current.Name;
+            var reg = iBusinessProvider.ModifyBusinessDetail(businessDetailModel);
+            return Json(new Ets.Model.Common.ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
+        }
+        /// <summary>
+        /// 根据商户Id获取收支记录
+        /// danny-20150604
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <returns></returns>
+        public ActionResult GetBusinessBalanceRecordListOfPaging(string businessId)
+        {
+            var criteria = new BusinessBalanceRecordSerchCriteria()
+            {
+                BusinessId = Convert.ToInt32(businessId)
+            };
+            var pagedList = iBusinessFinanceProvider.GetBusinessBalanceRecordListOfPaging(criteria);
+            return View(pagedList);
+        }
+        /// <summary>
+        /// 根据商户Id获取收支记录
+        /// danny-20150604
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <returns></returns>
+        public ActionResult PostGetBusinessBalanceRecordListOfPaging(string businessId)
+        {
+            var criteria = new BusinessBalanceRecordSerchCriteria()
+            {
+                BusinessId = Convert.ToInt32(businessId)
+            };
+            var pagedList = iBusinessFinanceProvider.GetBusinessBalanceRecordListOfPaging(criteria);
+            return View(pagedList);
         }
 
     }

@@ -584,6 +584,50 @@ where b.Id=@BusinessId;");
             parm.AddWithValue("@BusinessId", model.BusinessId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
+        /// <summary>
+        /// 获取商户提款收支记录列表分页版
+        /// danny-20150604
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<T> GetBusinessBalanceRecordListOfPaging<T>(BusinessBalanceRecordSerchCriteria criteria)
+        {
+            string columnList = @"   bbr.[Id]
+                                    ,bbr.[BusinessId]
+                                    ,bbr.[Amount]
+                                    ,bbr.[Status]
+                                    ,bbr.[Balance]
+                                    ,bbr.[RecordType]
+                                    ,bbr.[Operator]
+                                    ,bbr.[OperateTime]
+                                    ,bbr.[WithwardId]
+                                    ,bbr.[RelationNo]
+                                    ,bbr.[Remark]";
+            var sbSqlWhere = new StringBuilder(" 1=1 ");
+            if (criteria.BusinessId != 0)
+            {
+                sbSqlWhere.AppendFormat("AND bbr.[BusinessId]={0}", criteria.BusinessId);
+            }
+            if (criteria.RecordType != 0)
+            {
+                sbSqlWhere.AppendFormat("AND bbr.[RecordType]={0}", criteria.RecordType);
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.RelationNo))
+            {
+                sbSqlWhere.AppendFormat("AND bbr.[RelationNo]='{0}'", criteria.RelationNo);
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.OperateTimeStart))
+            {
+                sbSqlWhere.AppendFormat("AND CONVERT(CHAR(10),bbr.OperateTime,120)>=CONVERT(CHAR(10),'{0}',120)", criteria.OperateTimeStart.Trim());
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.OperateTimeEnd))
+            {
+                sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),bbr.OperateTime,120)<=CONVERT(CHAR(10),'{0}',120)", criteria.OperateTimeEnd.Trim());
+            }
+            string tableList = @" [BusinessBalanceRecord] bbr WITH(NOLOCK)";
+            string orderByColumn = " bbr.Id DESC";
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
+        }
 		
     }
        

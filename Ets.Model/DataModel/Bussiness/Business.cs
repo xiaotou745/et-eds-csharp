@@ -142,6 +142,10 @@ namespace Ets.Model.DataModel.Bussiness
         /// 餐费结算方式（0：线下结算 1：线上结算）
         /// </summary>
         public int MealsSettleMode { get; set; }
+        /// <summary>
+        /// 营业执照图片
+        /// </summary>
+        public string BusinessLicensePic { get; set; }
     }
 
 }

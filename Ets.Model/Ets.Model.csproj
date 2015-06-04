@@ -64,6 +64,7 @@
     <Compile Include="DataModel\Bussiness\BusinessGroupModel.cs" />
     <Compile Include="DataModel\Bussiness\BusinessOptionLog.cs" />
     <Compile Include="DataModel\Bussiness\BusinessRechargeModel.cs" />
+    <Compile Include="DataModel\Bussiness\BusinessThirdRelationModel.cs" />
     <Compile Include="DataModel\Clienter\ClienterOptionLog.cs" />
     <Compile Include="DataModel\Clienter\ClienterCrossShopLogModel.cs" />
     <Compile Include="DataModel\Clienter\ClienterLocation.cs" />

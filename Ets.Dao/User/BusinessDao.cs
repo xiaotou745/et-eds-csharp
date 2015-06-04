@@ -1577,21 +1577,22 @@ SELECT   b.Id ,
          b.[Status] ,
          b.InsertTime ,
          b.districtId ,
-         b.CityId ,
-         b.GroupId , 
+         b.CityId ,         
          b.ProvinceCode ,
          b.CityCode ,
          b.AreaCode ,
          b.Province ,
          b.DistribSubsidy,
-         b.BusinessCommission ,
-         b.OriginalBusiId,
+         b.BusinessCommission ,     
          b.CommissionType,
          b.CommissionFixValue,
          b.BusinessGroupId,
          b.BalancePrice,
          b.AllowWithdrawPrice,
          b.HasWithdrawPrice,
+         b.CheckPicUrl,
+         b.BusinessLicensePic,
+         b.MealsSettleMode,
          bfa.TrueName,
          bfa.AccountNo,
          bfa.AccountType,
@@ -1658,6 +1659,145 @@ join dbo.business b (nolock) on o.businessId = b.Id
              {
                  Name = datarow["Name"].ToString()
              });
+        }
+        /// <summary>
+        /// 获取商户第三方绑定关系记录
+        /// danny-20150602
+        /// </summary>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        public IList<BusinessThirdRelationModel> GetBusinessThirdRelation(int businessId)
+        {
+            string sql = @"  
+SELECT btr.[Id]
+      ,btr.[BusinessId]
+      ,btr.[OriginalBusiId]
+      ,btr.[GroupId]
+      ,btr.[GroupName]
+      ,btr.[AuditStatus]
+      ,ISNULL(g.IsModifyBind,0) IsModifyBind
+FROM BusinessThirdRelation btr with(nolock)
+JOIN [group] g with(nolock) on btr.GroupId=g.Id
+WHERE btr.BusinessId=@BusinessId
+ORDER BY btr.Id;";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@BusinessId", businessId);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            return MapRows<BusinessThirdRelationModel>(dt);
+        }
+        /// <summary>
+        /// 修改商户详细信息
+        /// danny-20150602
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ModifyBusinessDetail(BusinessDetailModel model)
+        {
+
+            string remark = model.OptUserName + "通过后台管理系统修改商户信息";
+            string sql = @"UPDATE business 
+                            SET Name=@Name,
+                                PhoneNo=@PhoneNo,
+                                PhoneNo2=@PhoneNo2,
+                                DistribSubsidy=@DistribSubsidy,
+                                CityId=@CityId,
+                                districtId=@districtId,
+                                City=@City,
+                                district=@district,
+                                Address=@Address,
+                                Latitude=@Latitude,
+                                Longitude=@Longitude,
+                                BusinessGroupId=@BusinessGroupId,
+                                MealsSettleMode=@MealsSettleMode,
+                                CommissionType=@CommissionType,
+                                           ";
+            if (model.CommissionType == 1)
+            {
+                sql += " BusinessCommission=@BusinessCommission ";
+            }
+            else
+            {
+                sql += " CommissionFixValue=@CommissionFixValue ";
+            }
+            sql += @" OUTPUT
+                        Inserted.Id,
+                        @OptId,
+                        @OptName,
+                        GETDATE(),
+                        3,
+                        @Remark
+                    INTO BusinessOptionLog
+                        (BusinessId,
+                        OptId,
+                        OptName,
+                        InsertTime,
+                        Platform,
+                        Remark)
+                        WHERE  Id = @Id;";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Name", model.Name);
+            parm.AddWithValue("@PhoneNo", model.PhoneNo);
+            parm.AddWithValue("@PhoneNo2", model.PhoneNo2);
+            parm.AddWithValue("@DistribSubsidy", model.DistribSubsidy);
+            parm.AddWithValue("@CityId", model.CityId);
+            parm.AddWithValue("@districtId", model.districtId);
+            parm.AddWithValue("@City", model.City);
+            parm.AddWithValue("@district", model.district);
+            parm.AddWithValue("@Address", model.Address);
+            parm.AddWithValue("@Latitude", model.Latitude);
+            parm.AddWithValue("@Longitude", model.Longitude);
+            parm.AddWithValue("@CommissionType", model.CommissionType);
+            parm.AddWithValue("@BusinessCommission", model.BusinessCommission);
+            parm.AddWithValue("@CommissionFixValue", model.CommissionFixValue);
+            parm.AddWithValue("@BusinessGroupId", model.BusinessGroupId);
+            parm.AddWithValue("@MealsSettleMode", model.MealsSettleMode);
+            parm.AddWithValue("@Id", model.Id);
+            parm.AddWithValue("@OptId", model.OptUserId);
+            parm.AddWithValue("@OptName", model.OptUserName);
+            parm.AddWithValue("@Remark", remark);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
+        /// <summary>
+        /// 删除商户第三方绑定关系记录
+        /// danny-20150602
+        /// </summary>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        public bool DeleteBusinessThirdRelation(int businessId)
+        {
+            string sql = @" DELETE FROM [BusinessThirdRelation] WHERE BusinessId=@BusinessId;";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@BusinessId", businessId);
+            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm)) > 0;
+        }
+        /// <summary>
+        /// 添加商户第三方绑定关系记录
+        /// danny-20150602
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool AddBusinessThirdRelation(BusinessThirdRelationModel model)
+        {
+            string sql = string.Format(@" 
+insert into BusinessThirdRelation
+            ([BusinessId]
+           ,[OriginalBusiId]
+           ,[GroupId]
+           ,[GroupName]
+           ,[AuditStatus])
+VALUES
+           (@BusinessId, 
+            @OriginalBusiId,
+            @GroupId,
+            @GroupName,
+            @AuditStatus);");
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@BusinessId", model.BusinessId);
+            parm.AddWithValue("@OriginalBusiId", model.OriginalBusiId);
+            parm.AddWithValue("@GroupId", model.GroupId);
+            parm.AddWithValue("@GroupName", model.GroupName);
+            parm.AddWithValue("@AuditStatus", model.AuditStatus);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
 
 

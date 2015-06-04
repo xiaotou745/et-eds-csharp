@@ -275,6 +275,20 @@ namespace Ets.Service.IProvider.User
         /// <param name="businessId">商户Id</param>
         /// <returns></returns>
         BusinessDetailModel GetBusinessDetailById(string businessId);
+        /// <summary>
+        /// 获取商户第三方绑定关系记录
+        /// danny-20150602
+        /// </summary>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        IList<BusinessThirdRelationModel> GetBusinessThirdRelation(int businessId);
+        /// <summary>
+        /// 修改商户详细信息
+        /// danny-20150602
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        DealResultInfo ModifyBusinessDetail(BusinessDetailModel model);
     }
 }
 

@@ -78,5 +78,12 @@ namespace Ets.Service.IProvider.Common
         /// <param name="accountId"></param>
         /// <returns></returns>
         string GetAuthorityCityNameListStr(int accountId = 0);
+        /// <summary>
+        /// 根据城市Id获取对应的区县列表
+        /// danny-20150601
+        /// </summary>
+        /// <param name="cityId"></param>
+        /// <returns></returns>
+        IList<AreaModel> GetOpenCityDistrict(int cityId);
     }
 }

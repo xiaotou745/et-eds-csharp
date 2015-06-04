@@ -303,5 +303,15 @@ namespace Ets.Service.Provider.Common
         {
             return dao.ModifyOpenCityByCode(openCityCodeList, closeCityCodeList);
         }
+        /// <summary>
+        /// 根据城市Id获取对应的区县列表
+        /// danny-20150601
+        /// </summary>
+        /// <param name="cityId"></param>
+        /// <returns></returns>
+        public IList<AreaModel> GetOpenCityDistrict(int cityId)
+        {
+            return GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 3 && t.ParentId == cityId).ToList();
+        }
     }
 }

@@ -137,6 +137,13 @@ namespace Ets.Service.IProvider.Finance
         /// <param name="model"></param>
         /// <returns></returns>
          bool BusinessRecharge(BusinessOptionLog model);
+         /// <summary>
+         /// 获取商户提款收支记录列表分页版
+         /// danny-20150604
+         /// </summary>
+         /// <param name="criteria"></param>
+         /// <returns></returns>
+         PageInfo<BusinessBalanceRecord> GetBusinessBalanceRecordListOfPaging(BusinessBalanceRecordSerchCriteria criteria);
 
 
     }
