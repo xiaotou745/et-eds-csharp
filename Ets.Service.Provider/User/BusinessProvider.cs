@@ -228,16 +228,21 @@ namespace Ets.Service.Provider.User
             var code = redis.Get<string>("PostRegisterInfo_B_" + model.phoneNo);
             Enum returnEnum = null;
             if (string.IsNullOrEmpty(model.phoneNo))
+            {
                 returnEnum = CustomerRegisterStatusEnum.PhoneNumberEmpty; //手机号非空验证
+            }
             else if (string.IsNullOrEmpty(model.passWord))
+            {
                 returnEnum = CustomerRegisterStatusEnum.PasswordEmpty;//密码非空验证 
+            }
             else if (string.IsNullOrEmpty(code) || code != model.verifyCode) //验证码正确性验证
             {
                 returnEnum = CustomerRegisterStatusEnum.IncorrectCheckCode; //判断验证法录入是否正确
             }
             else if (dao.CheckBusinessExistPhone(model.phoneNo))
+            {
                 returnEnum = CustomerRegisterStatusEnum.PhoneNumberRegistered;//判断该手机号是否已经注册过
-
+            }
             else if (string.IsNullOrEmpty(model.city) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
                 returnEnum = CustomerRegisterStatusEnum.cityIdEmpty;
             if (returnEnum != null)
