@@ -228,16 +228,21 @@ namespace Ets.Service.Provider.User
             var code = redis.Get<string>("PostRegisterInfo_B_" + model.phoneNo);
             Enum returnEnum = null;
             if (string.IsNullOrEmpty(model.phoneNo))
+            {
                 returnEnum = CustomerRegisterStatusEnum.PhoneNumberEmpty; //手机号非空验证
+            }
             else if (string.IsNullOrEmpty(model.passWord))
+            {
                 returnEnum = CustomerRegisterStatusEnum.PasswordEmpty;//密码非空验证 
+            }
             else if (string.IsNullOrEmpty(code) || code != model.verifyCode) //验证码正确性验证
             {
                 returnEnum = CustomerRegisterStatusEnum.IncorrectCheckCode; //判断验证法录入是否正确
             }
             else if (dao.CheckBusinessExistPhone(model.phoneNo))
+            {
                 returnEnum = CustomerRegisterStatusEnum.PhoneNumberRegistered;//判断该手机号是否已经注册过
-
+            }
             else if (string.IsNullOrEmpty(model.city) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
                 returnEnum = CustomerRegisterStatusEnum.cityIdEmpty;
             if (returnEnum != null)
@@ -383,7 +388,7 @@ namespace Ets.Service.Provider.User
         /// </summary>
         /// <param name="model">用户名，密码对象</param>
         /// <returns>登录后返回实体对象</returns>
-        public ResultModel<BusiLoginResultModel> PostLogin_B(Model.ParameterModel.Bussiness.LoginModel model)
+        public ResultModel<BusiLoginResultModel> PostLogin_B(LoginModel model)
         {
             try
             {
@@ -504,8 +509,11 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model)
         {
-            if (string.IsNullOrEmpty(model.password))  //密码非空验证
+            if (string.IsNullOrEmpty(model.password))
+            {
+                //密码非空验证
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.NewPwdEmpty);
+            }
             if (string.IsNullOrEmpty(model.checkCode)) //验证码非空验证
             {
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeIsEmpty);
@@ -514,16 +522,22 @@ namespace Ets.Service.Provider.User
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             var code = redis.Get<string>("CheckCodeFindPwd_" + model.phoneNumber);
             if (string.IsNullOrEmpty(code) || code != model.checkCode) //验证码正确性验证
-                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong);
+            { return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong); }
 
             BusinessDao businessDao = new BusinessDao();
             var business = businessDao.GetBusinessByPhoneNo(model.phoneNumber);
-            if (business == null)  //用户是否存在
+            if (business == null) //用户是否存在
+            {
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.ClienterIsNotExist);
+            }
             if (businessDao.UpdateBusinessPwdSql(business.Id, model.password))
+            {
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.Success);
+            }
             else
+            {
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.FailedModifyPwd);
+            }
         }
 
         /// <summary>

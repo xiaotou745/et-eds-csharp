@@ -318,7 +318,10 @@ namespace Ets.Dao.User
         {
             try
             {
-                string sql = "SELECT COUNT(*) FROM dbo.business(NOLOCK) WHERE PhoneNo=@PhoneNo";
+                string sql = @"SELECT COUNT(1)  FROM dbo.business  a
+LEFT join dbo.[group] b on a.GroupId=b.Id
+where  b.IsModifyBind=1
+and a.PhoneNo=@PhoneNo";
                 IDbParameters parm = DbHelper.CreateDbParameters();
                 parm.Add("@PhoneNo", SqlDbType.NVarChar);
                 parm.SetValue("@PhoneNo", PhoneNo);
@@ -506,21 +509,28 @@ namespace Ets.Dao.User
         /// <returns>返回该用户实体</returns>
         public DataTable LoginSql(LoginModel model)
         {
-            string sql = @"SELECT  top 1 
-                        Id AS userId,
-                        status,
-                        city ,
-                        districtId,
-                        district,
-                        Address,
-                        Landline,
-                        Name,
-                        cityId,
-                        phoneNo,
-                        PhoneNo2,
-                        DistribSubsidy,ISNULL(OriginalBusiId,0) AS OriginalBusiId
-                        FROM business(nolock) where PhoneNo=@PhoneNo AND Password=@Password order by id desc";
-
+            string sql = @"
+select top 1
+        a.Id as userId ,
+        a.status ,
+        a.city ,
+        a.districtId ,
+        a.district ,
+        a.Address ,
+        a.Landline ,
+        a.Name ,
+        a.cityId ,
+        a.phoneNo ,
+        a.PhoneNo2 ,
+        a.DistribSubsidy ,
+        ISNULL(a.OriginalBusiId, 0) as OriginalBusiId
+from    business (nolock) a
+        left join dbo.[group] (nolock) b on a.GroupId = b.Id
+where   PhoneNo = @PhoneNo
+        and Password = @Password
+        and b.IsModifyBind = 1
+order by id desc
+";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@PhoneNo", SqlDbType.NVarChar);
             parm.SetValue("@PhoneNo", model.phoneNo);
@@ -712,7 +722,7 @@ namespace Ets.Dao.User
 
 
         /// <summary>
-        /// 根据手机号获取用商家信息
+        /// 根据手机号获取用商家信息  B修改商户密码 用到
         /// 窦海超
         /// 2015年3月23日 19:00:52
         /// </summary>
@@ -720,7 +730,9 @@ namespace Ets.Dao.User
         /// <returns>商家信息</returns>
         public BusListResultModel GetBusinessByPhoneNo(string PhoneNo)
         {
-            string sql = @"SELECT Id FROM dbo.business(NOLOCK) WHERE PhoneNo=@PhoneNo";
+            string sql = @"SELECT Id  FROM dbo.business(NOLOCK) a
+LEFT join dbo.[group] b on a.GroupId=b.Id
+where a.PhoneNo=@PhoneNo and b.IsModifyBind=1";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@PhoneNo", SqlDbType.NVarChar);
             parm.SetValue("@PhoneNo", PhoneNo);
