@@ -134,5 +134,13 @@ namespace Ets.Service.IProvider.Finance
         /// <param name="model"></param>
         /// <returns></returns>
         bool ClienterRecharge(ClienterOptionLog model);
+
+        /// <summary>
+        /// 获取骑士提款收支记录列表分页版
+        /// danny-20150604
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        PageInfo<ClienterBalanceRecord> GetClienterBalanceRecordListOfPaging(ClienterBalanceRecordSerchCriteria criteria);
     }
 }

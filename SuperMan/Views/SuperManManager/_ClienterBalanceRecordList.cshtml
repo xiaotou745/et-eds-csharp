@@ -1,23 +1,26 @@
-﻿@using ETS.Util;
+﻿@using ETS.Data.PageData
+@using Ets.Model.DataModel.Finance
+@using ETS.Util;
 <table border="0" cellspacing="0" cellpadding="0" class="tbstyle" width="900">
     <thead>
         <tr class="tdbg">
-            <th>交易类型</th>
-            <th>任务单号/交易流水号</th>
-            <th>收支金额</th>
-            <th>余额</th>
-            <th>状态</th>
-            <th>时间</th>
-            <th>操作人</th>
+        <th>交易类型</th>
+        <th>任务单号/交易流水号</th>
+        <th>收支金额</th>
+        <th>余额</th>
+        <th>状态</th>
+        <th>时间</th>
+        <th>操作人</th>
     </thead>
     <tbody>
         @{
-            var clienterBalanceRecordList = ViewBag.clienterBalanceRecord as List<Ets.Model.DataModel.Finance.ClienterBalanceRecord>;
-            if (clienterBalanceRecordList != null && clienterBalanceRecordList.Count > 0)
+            //var clienterBalanceRecordList = ViewBag.clienterBalanceRecord as List<Ets.Model.DataModel.Finance.ClienterBalanceRecord>;
+            var clienterBalanceRecord = ViewBag.clienterBalanceRecord as PageInfo<ClienterBalanceRecord>;
+            if (clienterBalanceRecord != null && clienterBalanceRecord.Records.Count > 0)
             {
                 var i = 0;
                 var recordTypeDes = "";
-                foreach (var item in clienterBalanceRecordList)
+                foreach (var item in clienterBalanceRecord.Records)
                 {
                     recordTypeDes = ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.ClienterBalanceRecordRecordType)item.RecordType).GetType(), (ETS.Enums.ClienterBalanceRecordRecordType)item.RecordType).Text;
                     i++;
@@ -45,6 +48,13 @@
         }
     </tbody>
 </table>
+@{
+    if (clienterBalanceRecord != null)
+    {
+        ViewBag.ActionName = "PostClienterBalanceRecord";
+        @Html.Partial("~/views/shared/PagerControl.cshtml", clienterBalanceRecord)
+    }
+}
 @*查看申请单详情*@
 <div class="selectSupplierDish">
     <div class="add-openbox add-form" id="WithdrawDetailShow" style="width:480px">

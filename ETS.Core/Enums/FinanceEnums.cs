@@ -123,6 +123,8 @@ namespace ETS.Enums
         SystemCompensation = 7,
         [DisplayText("余额调整")]
         BalanceAdjustment = 8
+
+
     }
     
 

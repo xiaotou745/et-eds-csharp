@@ -242,7 +242,12 @@ namespace SuperMan.Controllers
             ViewBag.businessBalanceRecord = iBusinessFinanceProvider.GetBusinessBalanceRecordList(criteria);
             return PartialView("_BusinessBalanceRecordList");
         }
-
+        /// <summary>
+        /// 查看商户余额流水记录分页版
+        /// danny-20150604
+        /// </summary>
+        /// <param name="pageindex"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult PostBusinessBalanceRecord(int pageindex = 1)
         {

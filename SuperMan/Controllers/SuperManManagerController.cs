@@ -205,6 +205,24 @@ namespace SuperMan.Controllers
             return View();
         }
 
+        ///// <summary>
+        ///// 查看骑士详细信息
+        ///// danny-20150513
+        ///// </summary>
+        ///// <param name="clienterId">骑士Id</param>
+        ///// <returns></returns>
+        //public ActionResult ClienterDetail(string clienterId)
+        //{
+
+        //    var clienterWithdrawFormModel = cliterProvider.GetClienterDetailById(clienterId);
+        //    var criteria = new ClienterBalanceRecordSerchCriteria()
+        //    {
+        //        ClienterId = Convert.ToInt32(clienterId)
+        //    };
+        //    ViewBag.clienterBalanceRecord = iClienterFinanceProvider.GetClienterBalanceRecordList(criteria);
+        //    return View(clienterWithdrawFormModel);
+        //}
+
         /// <summary>
         /// 查看骑士详细信息
         /// danny-20150513
@@ -219,7 +237,7 @@ namespace SuperMan.Controllers
             {
                 ClienterId = Convert.ToInt32(clienterId)
             };
-            ViewBag.clienterBalanceRecord = iClienterFinanceProvider.GetClienterBalanceRecordList(criteria);
+            ViewBag.clienterBalanceRecord = iClienterFinanceProvider.GetClienterBalanceRecordListOfPaging(criteria);
             return View(clienterWithdrawFormModel);
         }
 
@@ -232,6 +250,19 @@ namespace SuperMan.Controllers
         public ActionResult ClienterBalanceRecord(ClienterBalanceRecordSerchCriteria criteria)
         {
             ViewBag.clienterBalanceRecord = iClienterFinanceProvider.GetClienterBalanceRecordList(criteria);
+            return PartialView("_ClienterBalanceRecordList");
+        }
+        /// <summary>
+        /// 查看骑士余额流水记录分页版
+        /// danny-20150604
+        /// </summary>
+        /// <param name="pageindex"></param>
+        /// <returns></returns>
+        public ActionResult PostClienterBalanceRecord(int pageindex = 1)
+        {
+            var criteria = new ClienterBalanceRecordSerchCriteria();
+            TryUpdateModel(criteria);
+            ViewBag.clienterBalanceRecord = iClienterFinanceProvider.GetClienterBalanceRecordListOfPaging(criteria);
             return PartialView("_ClienterBalanceRecordList");
         }
         /// <summary>
@@ -278,6 +309,36 @@ namespace SuperMan.Controllers
             model.OptName = UserContext.Current.Name;
             var reg = iClienterFinanceProvider.ClienterRecharge(model);
             return Json(new ResultModel(reg, reg ? "骑士余额变更成功！" : "骑士余额变更失败！"), JsonRequestBehavior.DenyGet);
+        }
+        /// <summary>
+        /// 根据骑士Id获取收支记录
+        /// danny-20150604
+        /// </summary>
+        /// <param name="clienterId"></param>
+        /// <returns></returns>
+        public ActionResult GetClienterBalanceRecordListOfPaging(string clienterId)
+        {
+            var criteria = new ClienterBalanceRecordSerchCriteria()
+            {
+                ClienterId = Convert.ToInt32(clienterId)
+            };
+            var pagedList = iClienterFinanceProvider.GetClienterBalanceRecordListOfPaging(criteria);
+            return View(pagedList);
+        }
+        /// <summary>
+        /// 根据骑士Id获取收支记录分页版
+        /// danny-20150604
+        /// </summary>
+        /// <param name="clienterId"></param>
+        /// <returns></returns>
+        public ActionResult PostGetClienterBalanceRecordListOfPaging(string clienterId)
+        {
+            var criteria = new ClienterBalanceRecordSerchCriteria()
+            {
+                ClienterId = Convert.ToInt32(clienterId)
+            };
+            var pagedList = iClienterFinanceProvider.GetClienterBalanceRecordListOfPaging(criteria);
+            return View(pagedList);
         }
 
     }
