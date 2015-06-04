@@ -398,11 +398,11 @@ namespace Ets.Dao.User
             {
                 sbSqlWhere.AppendFormat(" AND b.GroupId={0} ", criteria.GroupId);
             }
-            if (ParseHelper.ToInt(criteria.BusinessGroupId,0) > 0)
+            if (ParseHelper.ToInt(criteria.BusinessGroupId, 0) > 0)
             {
                 sbSqlWhere.AppendFormat(" AND b.BusinessGroupId={0} ", criteria.BusinessGroupId);
             }
-            if (ParseHelper.ToInt(criteria.CommissionType,0) > 0)
+            if (ParseHelper.ToInt(criteria.CommissionType, 0) > 0)
             {
                 sbSqlWhere.AppendFormat(" AND b.CommissionType={0} ", criteria.CommissionType);
             }
@@ -652,6 +652,7 @@ namespace Ets.Dao.User
                 {
                     sql = string.Format(" update business set Status={0} where id=@id;", ConstValues.BUSINESS_AUDITCANCEL);
                 }
+
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
                 dbParameters.AddWithValue("id", id);
                 int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Write, sql, dbParameters);
@@ -678,6 +679,34 @@ namespace Ets.Dao.User
             }
             return reslut;
         }
+
+        /// <summary>
+        /// 更新审核状态
+        /// danny-20150317
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="enumStatusType"></param>
+        /// <returns></returns>
+        public bool UpdateAuditStatus(int id, int enumStatus)
+        {
+            bool reslut = false;
+            try
+            {
+                string sql = "update business set Status=@enumStatus where id=@id";
+                IDbParameters parm = DbHelper.CreateDbParameters();
+                parm.Add("id", DbType.Int32, 4).Value = id;
+                parm.Add("enumStatus", DbType.Int32, 4).Value = enumStatus;
+                return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm)) > 0 ? true : false;
+            }
+            catch (Exception ex)
+            {
+                reslut = false;
+                LogHelper.LogWriter(ex, "更新审核状态");
+                throw;
+            }
+            return reslut;
+        }
+
         /// <summary>
         /// 根据城市信息查询当前城市下该集团的所有商户信息
         ///  danny-20150317

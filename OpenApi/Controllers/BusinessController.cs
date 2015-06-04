@@ -72,15 +72,11 @@ namespace OpenApi.Controllers
                 //{
                 //    return ResultModel<object>.Conclude(CustomerRegisterStatus.Success, busi.Id);
                 //}
-                bool upresult = false;
-                if (busi.Status == ConstValues.BUSINESS_NOADDRESS || busi.Status == ConstValues.BUSINESS_AUDITCANCEL)
-                {
-                    upresult = iBusiProvider.UpdateAuditStatus(busi.Id, ConstValues.BUSINESS_NOAUDIT);
-                }
-                else
-                {
-                    upresult = iBusiProvider.UpdateAuditStatus(busi.Id, ConstValues.BUSINESS_NOAUDIT);
-                }
+                //if (busi.Status != ConstValues.BUSINESS_NOADDRESS && busi.Status == ConstValues.BUSINESS_AUDITCANCEL)
+                //{
+                LogHelper.LogWriter("商户注册---：", new { busid = busi.Id,BusiStatus=BusiStatus.BusiNoPass.GetHashCode() });
+                bool upresult = iBusiProvider.UpdateAuditStatus(busi.Id, BusiStatus.BusiNoPass.GetHashCode());
+                //}
                 if (upresult)
                 {
                     return ResultModel<object>.Conclude(CustomerRegisterStatus.Success, busi.Id);
