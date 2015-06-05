@@ -2324,17 +2324,22 @@ where   oo.IsJoinWithdraw = 0
             DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public IList<GetJobCDM> GetLastedJobC(GetJobCPM model)
         {
             StringBuilder whereStr = new StringBuilder();
 
-            if (model.city.Contains("北京"))
+            if (model.City.Contains("北京"))
             {
-                whereStr.AppendFormat(" AND a.ReceviceCity LIKE '北京%'", model.city);
+                whereStr.AppendFormat(" AND a.ReceviceCity LIKE '北京%'", model.City);
             }
             else
             {
-                whereStr.AppendFormat(" AND a.ReceviceCity = '{0}'", model.city);
+                whereStr.AppendFormat(" AND a.ReceviceCity = '{0}'", model.City);
             }
 
             string sql = string.Format(@"

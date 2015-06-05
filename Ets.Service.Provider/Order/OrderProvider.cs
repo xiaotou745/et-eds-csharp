@@ -1625,7 +1625,7 @@ namespace Ets.Service.Provider.Order
         {
             IList<GetJobCDM> jobs;
             model.PushRadius = GlobalConfigDao.GlobalConfigGet(0).PushRadius; //距离
-            if (string.IsNullOrEmpty(model.city))//如果城市没有传，默认使用附近任务
+            if (string.IsNullOrEmpty(model.City))//如果城市没有传，默认使用附近任务
             {
                 model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;
                 jobs = orderDao.GetJobC(model);

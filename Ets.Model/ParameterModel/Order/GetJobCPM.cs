@@ -24,15 +24,15 @@ namespace Ets.Model.ParameterModel.Order
         /// <summary>
         /// 城市名称
         /// </summary>
-        public string city { get; set; }
+        public string City { get; set; }
 
         /// <summary>
         /// 城市Id
         /// </summary>
-        public string cityId { get; set; }
+        public string CityId { get; set; }
         
         /// <summary>
-        /// 查询类型 0 最新订单 1最近订单
+        /// 查询类型 0 最新订单 1最近订单 2雇主任务
         /// </summary>
         public int SearchType { get; set; }
 
