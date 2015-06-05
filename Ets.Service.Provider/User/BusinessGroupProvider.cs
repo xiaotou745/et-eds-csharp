@@ -209,6 +209,16 @@ namespace Ets.Service.Provider.User
                         return false;
                     }
                 }
+                if (globalConfigModel.ExclusiveOrderTime != "0")
+                {
+                    globalConfig.KeyName = "ExclusiveOrderTime";
+                    globalConfig.Value = globalConfigModel.ExclusiveOrderTime;
+                    reg = dao.UpdateGlobalConfig(globalConfig);
+                    if (!reg)
+                    {
+                        return false;
+                    }
+                }
                 if (globalConfigModel.ClienterOrderPageSize != "0")
                 {
                     globalConfig.KeyName = "ClienterOrderPageSize";

@@ -105,6 +105,10 @@ namespace Ets.Model.DomainModel.GlobalConfig
         ///骑士订单列表每页显示条数
         /// </summary>
         public string ClienterOrderPageSize { get; set; }
+        /// <summary>
+        ///商家专属骑士接单响应时间
+        /// </summary>
+        public string ExclusiveOrderTime { get; set; }
 
         /// <summary>
         /// 策略Id
