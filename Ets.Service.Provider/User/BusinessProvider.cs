@@ -1122,27 +1122,27 @@ namespace Ets.Service.Provider.User
                     dealResultInfo.DealMsg = "修改商户信息失败！";
                     return dealResultInfo;
                 }
-                if (!string.IsNullOrWhiteSpace(model.ThirdBindListStr))
-                {
-                    dao.DeleteBusinessThirdRelation(model.Id);
-                    var thirdBindModel = model.ThirdBindListStr.TrimEnd(';').Split(';');
-                    foreach (var item in thirdBindModel)
-                    {
-                        var businessThirdRelationModel = new BusinessThirdRelationModel
-                        {
-                            OriginalBusiId = ParseHelper.ToInt(item.Split(',')[0]),
-                            BusinessId = model.Id,
-                            GroupId = ParseHelper.ToInt(item.Split(',')[1]),
-                            GroupName = item.Split(',')[2],
-                            AuditStatus = ParseHelper.ToInt(item.Split(',')[3])
-                        };
-                        if (!dao.AddBusinessThirdRelation(businessThirdRelationModel))
-                        {
-                            dealResultInfo.DealMsg = "插入商户第三方绑定关系失败！";
-                            return dealResultInfo;
-                        }
-                    }
-                }
+                //if (!string.IsNullOrWhiteSpace(model.ThirdBindListStr))
+                //{
+                //    dao.DeleteBusinessThirdRelation(model.Id);
+                //    var thirdBindModel = model.ThirdBindListStr.TrimEnd(';').Split(';');
+                //    foreach (var item in thirdBindModel)
+                //    {
+                //        var businessThirdRelationModel = new BusinessThirdRelationModel
+                //        {
+                //            OriginalBusiId = ParseHelper.ToInt(item.Split(',')[0]),
+                //            BusinessId = model.Id,
+                //            GroupId = ParseHelper.ToInt(item.Split(',')[1]),
+                //            GroupName = item.Split(',')[2],
+                //            AuditStatus = ParseHelper.ToInt(item.Split(',')[3])
+                //        };
+                //        if (!dao.AddBusinessThirdRelation(businessThirdRelationModel))
+                //        {
+                //            dealResultInfo.DealMsg = "插入商户第三方绑定关系失败！";
+                //            return dealResultInfo;
+                //        }
+                //    }
+                //}
                 tran.Complete();
                 dealResultInfo.DealMsg = "修改商户信息成功！";
                 dealResultInfo.DealFlag = true;

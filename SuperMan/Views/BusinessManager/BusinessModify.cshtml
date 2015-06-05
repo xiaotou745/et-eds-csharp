@@ -98,9 +98,17 @@
                 </select>
             </div>
             <div class="control-group" style="margin-bottom: 10px">
-                <label style="margin-left: 14px">第三方平台：@Model.GroupName</label><br>
-                <label style="margin-left: 24px">第三方ID：@Model.OriginalBusiId</label>
-                
+                <label style="margin-left: 24px">第三方ID：</label>
+                <input name="busiSourceId" id="busiSourceId" type="text" value="@Model.OriginalBusiId" @(Model.IsModifyBind == 0 && Model.GroupId>0 ? "disabled" : "") />   
+                @if (Model.GroupId > 0)
+                {
+                    <label>来源平台：@Model.GroupName</label>
+                }
+                else
+                {
+                    @Html.DropDownList("busGroupId" ,
+                                                  new SelectList(new BusinessProvider().GetGroups().Where(i=>i.IsModifyBind==1).ToList(), "Id", "GroupName"), "--请选择--", htmlAttributes: new { @class = "selectw", style = "width:100px; " })
+                }
             </div>
             @*<div class="control-group" style="margin-bottom: 10px">
                 <label>绑定第三方ID：点击添加，绑定第三方商铺ID信息</label>
@@ -321,13 +329,21 @@
         var commissionFixValue = $('#CommissionFixValue').val();
         var businessGroupId = $('#businessGroupID').val();
         var mealsSettleMode = $('#busiMealsSettleMode').val();
-        var thirdBindListStr = "";
+        var groupId = 0;
+        var originalBusiId = $('#busiSourceId').val();
+        if (@Model.GroupId == 0) {
+            groupId=$('#busGroupId').val();
+        }
         if (name.trim().length == 0) {
             alert("请输入商户名称！");
             return;
         }
         if (name.trim().length > 20) {
             alert("商户名称长度不超过20！");
+            return;
+        }
+        if (originalBusiId.trim().length && isNaN(originalBusiId)) {
+            alert("请输入正确的第三方Id!");
             return;
         }
         var reg = /^0?1\d{10}$/;
@@ -378,28 +394,28 @@
             }
         }
 
-        var dealflag = false;
-        $(".third-list").each(function () {
-            var busiSourceId = $(this).find("input[name=busiSourceId]").val().trim();
-            var busGroupId = $(this).find(".selectw").val().trim();
-            var busGroupName = $(this).find(".selectw option:selected").text().trim();
-            var rAuditStatus = $(this).find("input[type=radio]:checked").val().trim();
+        //var dealflag = false;
+        //$(".third-list").each(function () {
+        //    var busiSourceId = $(this).find("input[name=busiSourceId]").val().trim();
+        //    var busGroupId = $(this).find(".selectw").val().trim();
+        //    var busGroupName = $(this).find(".selectw option:selected").text().trim();
+        //    var rAuditStatus = $(this).find("input[type=radio]:checked").val().trim();
 
-            if (busiSourceId.trim().length == 0) {
-                dealflag = true;
-            }
-            if (busGroupId.length == 0) {
-                dealflag = true;
-            }
-            thirdBindListStr += busiSourceId + "," + busGroupId+","+busGroupName + "," + rAuditStatus + ";";
-        });
-        if (dealflag == true) {
-            alert("请输入第三方Id或平台!");
-            return false ;
-        }
+        //    if (busiSourceId.trim().length == 0) {
+        //        dealflag = true;
+        //    }
+        //    if (busGroupId.length == 0) {
+        //        dealflag = true;
+        //    }
+        //    thirdBindListStr += busiSourceId + "," + busGroupId+","+busGroupName + "," + rAuditStatus + ";";
+        //});
+        //if (dealflag == true) {
+        //    alert("请输入第三方Id或平台!");
+        //    return false ;
+        //}
         var paramaters = { "Id": id, "Name": name, "PhoneNo": phoneNo, "PhoneNo2": phoneNo2, "DistribSubsidy": distribSubsidy, "CityId": cityId, "districtId": districtId, "City": cityName,
             "district": districtName, "Address": adress, "Latitude": latitude, "Longitude": longitude, "CommissionType": commissionType, "BusinessCommission": commissionText,
-            "CommissionFixValue": commissionFixValue, "BusinessGroupId": businessGroupId, "MealsSettleMode": mealsSettleMode,"thirdBindListStr":thirdBindListStr };
+            "CommissionFixValue": commissionFixValue, "BusinessGroupId": businessGroupId, "MealsSettleMode": mealsSettleMode,"groupId":groupId,"originalBusiId":originalBusiId };
         var url = "/BusinessManager/ModifyBusinessDetail";
         $.ajax({
             type: 'POST',

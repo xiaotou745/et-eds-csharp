@@ -50,6 +50,12 @@ namespace Ets.Model.DomainModel.Bussiness
         /// 第三方平台名称
         /// </summary>
         public string GroupName { get; set; }
+
+        /// <summary>
+        /// 是否可修改绑定第三方绑定
+        /// </summary>
+        public int IsModifyBind { get; set; }
+        
         
     }
 }

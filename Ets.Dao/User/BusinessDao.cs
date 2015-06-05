@@ -806,6 +806,7 @@ where a.PhoneNo=@PhoneNo and b.IsModifyBind=1";
         {
             string sql = @"SELECT    [Id]
                                     ,[GroupName]
+                                    ,IsModifyBind
                           FROM [group] WHERE IsValid=@IsValid";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@IsValid", ConstValues.GroupIsIsValid);
@@ -1659,12 +1660,15 @@ SELECT   b.Id ,
          b.CheckPicUrl,
          b.BusinessLicensePic,
          b.MealsSettleMode,
+         b.GroupId,
+         b.OriginalBusiId,
          bfa.TrueName,
          bfa.AccountNo,
          bfa.AccountType,
          bfa.OpenBank,
          bfa.OpenSubBank,
-         g.GroupName
+         g.GroupName,
+         ISNULL(g.IsModifyBind,0) IsModifyBind
 FROM business b WITH(NOLOCK) 
 	Left join BusinessFinanceAccount bfa WITH(NOLOCK) ON b.Id=bfa.BusinessId AND bfa.IsEnable=1
     Left join [group] g WITH(NOLOCK) on g.Id=b.GroupId 
@@ -1778,7 +1782,12 @@ ORDER BY btr.Id;";
                                 BusinessGroupId=@BusinessGroupId,
                                 MealsSettleMode=@MealsSettleMode,
                                 CommissionType=@CommissionType,
+                                OriginalBusiId=@OriginalBusiId,
                                            ";
+            if (model.GroupId > 0)
+            {
+                sql += " GroupId=@GroupId, ";
+            }
             if (model.CommissionType == 1)
             {
                 sql += " BusinessCommission=@BusinessCommission ";
@@ -1819,6 +1828,8 @@ ORDER BY btr.Id;";
             parm.AddWithValue("@CommissionFixValue", model.CommissionFixValue);
             parm.AddWithValue("@BusinessGroupId", model.BusinessGroupId);
             parm.AddWithValue("@MealsSettleMode", model.MealsSettleMode);
+            parm.AddWithValue("@GroupId", model.GroupId);
+            parm.AddWithValue("@OriginalBusiId", model.OriginalBusiId ?? 0);
             parm.AddWithValue("@Id", model.Id);
             parm.AddWithValue("@OptId", model.OptUserId);
             parm.AddWithValue("@OptName", model.OptUserName);
