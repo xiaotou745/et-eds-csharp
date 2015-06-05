@@ -19,3 +19,8 @@ update business set PhoneNo2=PhoneNo
 where Id in(
 select id from business where isnull(PhoneNo2,'')=''
 )
+
+
+----------------更新商家所属集团是否允许修改
+update dbo.[group] set IsModifyBind=0
+update dbo.[group] set IsModifyBind=1 where id =4
