@@ -101,6 +101,7 @@ namespace Ets.Service.Provider.Clienter
 
                     model.businessName = item.BusinessName;
                     model.businessPhone = item.BusinessPhone;
+                    model.businessPhone2 = item.BusinessPhone2;
                     model.pickUpCity = item.pickUpCity;
                     model.pubDate = item.PubDate;
 
@@ -368,6 +369,7 @@ namespace Ets.Service.Provider.Clienter
 
                     resultModel.businessName = item.BusinessName;
                     resultModel.businessPhone = item.BusinessPhone;
+                    resultModel.businessPhone2 = item.BusinessPhone2;
                     resultModel.pickUpCity = item.PickUpCity;
                     resultModel.pubDate = item.PubDate.ToString();
 

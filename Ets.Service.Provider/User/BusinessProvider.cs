@@ -489,6 +489,10 @@ namespace Ets.Service.Provider.User
             return dao.UpdateAuditStatus(id, enumStatusType);
         }
 
+        public bool UpdateAuditStatus(int id, int enumStatus)
+        {
+            return dao.UpdateAuditStatus(id, enumStatus);
+        }
         /// <summary>
         ///  根据城市信息查询当前城市下该集团的所有商户信息
         ///  danny-20150317

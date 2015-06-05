@@ -170,6 +170,11 @@ namespace Ets.Model.DataModel.Order
         /// 商家手机号
         /// </summary>
         public string BusinessPhoneNo { get; set; }
+
+        /// <summary>
+        /// 商家手机号2
+        /// </summary>
+        public string BusinessPhoneNo2 { get; set; }
         /// <summary>
         /// 商家地址
         /// </summary>
