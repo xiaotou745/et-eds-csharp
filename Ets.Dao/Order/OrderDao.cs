@@ -2140,7 +2140,7 @@ values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude)";
                         dr["OrderId"] = orderId;
                         //dr["ChildId"] = order.listOrderChild[i].ChildId;
                         int num = i + 1;
-                        dr["OrderId"] = num;
+                        dr["ChildId"] = num;
                         decimal totalPrice = order.listOrderChild[i].GoodPrice + Convert.ToDecimal(order.DistribSubsidy);
                         dr["TotalPrice"] = totalPrice;
                         dr["GoodPrice"] = order.listOrderChild[i].GoodPrice;
