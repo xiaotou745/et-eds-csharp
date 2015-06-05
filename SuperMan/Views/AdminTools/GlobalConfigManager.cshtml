@@ -27,8 +27,16 @@
                     <input type="text" name="clienterOrderPageSize" value="@globalConfigModel.ClienterOrderPageSize" id="clienterOrderPageSize" style="width: 100px" />条
                     <input type="hidden" name="oldClienterOrderPageSize" value="@globalConfigModel.ClienterOrderPageSize" id="oldClienterOrderPageSize" />
                 </td>
+                
                 <td>
                     <input  type="button" value="提交修改" class="searchBtn" id="btnCommit" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>商家专属骑士接单响应时间:</span>
+                    <input type="text" name="exclusiveOrderTime" value="@globalConfigModel.ExclusiveOrderTime" id="exclusiveOrderTime" style="width: 100px" />分
+                    <input type="hidden" name="oldExclusiveOrderTime" value="@globalConfigModel.ExclusiveOrderTime" id="oldExclusiveOrderTime" />
                 </td>
             </tr>
         </table>
@@ -38,12 +46,14 @@
 <script type="text/javascript">
     $(function () {
         $("#btnCommit").click(function () {
-            var uploadTimeInterval = $("#uploadTimeInterval").val(); //上传时间间隔
+            var uploadTimeInterval = $("#uploadTimeInterval").val(); //上传时间间隔ExclusiveOrderTime
             var pushRadius = $("#pushRadius").val(); //推送半径
             var clienterOrderPageSize = $("#clienterOrderPageSize").val(); //骑士订单列表每页显示条数
+            var exclusiveOrderTime = $("#exclusiveOrderTime").val(); //商家专属骑士接单响应时间
             var oldUploadTimeInterval = $("#oldUploadTimeInterval").val(); //上传时间间隔（之前）
             var oldPushRadius = $("#oldPushRadius").val(); //推送半径（之前）
             var oldClienterOrderPageSize = $("#oldClienterOrderPageSize").val(); //骑士订单列表每页显示条数（之前）
+            var oldExclusiveOrderTime = $("#oldExclusiveOrderTime").val(); //商家专属骑士接单响应时间（之前）
             if (isNaN(uploadTimeInterval)) {
                 alert("请输入正确的数字!");
                 return;
@@ -73,12 +83,20 @@
                 alert("最大值不能超过100!");
                 return;
             }
-            if (uploadTimeInterval == oldUploadTimeInterval && pushRadius == oldPushRadius && clienterOrderPageSize == oldClienterOrderPageSize) {
+            if (isNaN(exclusiveOrderTime)) {
+                alert("请输入正确的商家专属骑士接单响应时间!");
+                return;
+            }
+            if (exclusiveOrderTime < 1 || exclusiveOrderTime > 30) {
+                alert("商家专属骑士接单响应时间为1-30分钟之间!");
+                return;
+            }
+            if (uploadTimeInterval == oldUploadTimeInterval && pushRadius == oldPushRadius && clienterOrderPageSize == oldClienterOrderPageSize && exclusiveOrderTime == oldExclusiveOrderTime) {
                 alert("没有需要修改的信息!");
                 return;
             }
             if (confirm("确定提交修改?")) {
-                var pars = { "uploadTimeInterval": uploadTimeInterval, "pushRadius": pushRadius, "clienterOrderPageSize": clienterOrderPageSize };
+                var pars = { "uploadTimeInterval": uploadTimeInterval, "pushRadius": pushRadius, "clienterOrderPageSize": clienterOrderPageSize, "exclusiveOrderTime": exclusiveOrderTime };
                 var url = "/AdminTools/ModifyGlobalConfig";
                 $.ajax({
                     type: 'POST',
