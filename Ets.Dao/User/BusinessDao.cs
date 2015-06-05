@@ -477,8 +477,8 @@ from    business (nolock) a
         left join dbo.[group] (nolock) b on a.GroupId = b.Id
 where   PhoneNo = @PhoneNo
         and Password = @Password
-        and b.IsModifyBind = 1
-order by id desc
+        and ISNULL(b.IsModifyBind,1) = 1
+order by a.id desc
 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@PhoneNo", SqlDbType.NVarChar);
