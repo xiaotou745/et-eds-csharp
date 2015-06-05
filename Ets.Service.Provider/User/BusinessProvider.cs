@@ -683,13 +683,13 @@ namespace Ets.Service.Provider.User
         {
             var to = new UpdateBusinessInfoBPM();
             to.Id = businessModel.userId;  //用户id
-            to.Address = businessModel.Address.Trim(); //地址
-            to.Name = businessModel.businessName.Trim(); //商户名称
+            to.Address = string.IsNullOrWhiteSpace(businessModel.Address) ? "" : businessModel.Address.Trim(); //地址
+            to.Name = string.IsNullOrWhiteSpace(businessModel.businessName)?"":businessModel.businessName.Trim(); //商户名称
             to.Landline = businessModel.landLine; //座机
             to.PhoneNo2 = businessModel.phoneNo.Trim(); //手机号2
-            to.City = businessModel.City.Trim(); //市
-            to.district = businessModel.districtName.Trim();  //区域名称
-            to.Province = businessModel.Province.Trim();  //省份名称
+            to.City = string.IsNullOrWhiteSpace(businessModel.City) ? "" : businessModel.City.Trim(); //市
+            to.district = string.IsNullOrWhiteSpace(businessModel.districtName) ? "" : businessModel.districtName.Trim();  //区域名称
+            to.Province = string.IsNullOrWhiteSpace(businessModel.Province) ? "" : businessModel.Province.Trim();  //省份名称
             //修改地址转换 区域编码
             if (!string.IsNullOrWhiteSpace(businessModel.districtName))
             {
