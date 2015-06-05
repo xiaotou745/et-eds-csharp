@@ -255,7 +255,7 @@ namespace Ets.Service.Provider.Order
         {
             order to = new order();
             ///TODO 订单号生成规则，定了以后要改；
-            to.OrderNo = Helper.generateOrderCode(busiOrderInfoModel.userId);  //根据userId生成订单号(15位)
+            to.OrderNo = Helper.generateOrderCode(busiOrderInfoModel.userId,busiOrderInfoModel.TimeSpan);  //根据userId生成订单号(15位)
             to.businessId = busiOrderInfoModel.userId; //当前发布者
             BusListResultModel business = iBusinessProvider.GetBusiness(busiOrderInfoModel.userId);
             if (business != null)
