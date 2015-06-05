@@ -452,7 +452,7 @@ declare
 		 as (
 			select convert(char(10),OperateTime,120) PubDate, 
 			sum(Amount) rechargeTotal
-			from BusinessBalanceRecord(nolock) where RecordType = 4 
+			from BusinessBalanceRecord(nolock) where RecordType = 9 and  OperateTime  between @startime  and @endtime
 			group by convert(char(10),OperateTime,120)
 			 --商户充值总计
 		 )
@@ -473,8 +473,8 @@ declare
             isnull(t6.YfPrice, 0) YfPrice,
             isnull(t7.userTotal,0) userTotal,
             isnull(t8.clienterTotal,0) clienterTotal,
-            (isnull( userTotal,0)+isnull(clienterTotal,0)) incomeTotal,
-            isnull(t9.rechargeTotal,0) rechargeTotal 
+            isnull(t9.rechargeTotal,0) rechargeTotal,
+            (isnull( userTotal,0)+isnull(clienterTotal,0))+isnull(t9.rechargeTotal,0) incomeTotal
     from    t
             left join t2 on t.PubDate = t2.PubDate
             left join t3 on t.PubDate = t3.PubDate
