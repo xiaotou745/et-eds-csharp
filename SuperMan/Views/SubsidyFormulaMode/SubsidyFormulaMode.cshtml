@@ -572,19 +572,55 @@
         {
             CommonCommissionRatio = $("#txtptCommonCommissionRatio").val();
             CommonSiteSubsidies = $("#txttpCommonSiteSubsidies").val();
+            if (CommonCommissionRatio < 0) {
+                alert("配置数据不能小于0！");
+                return;
+            }
+            if (CommonSiteSubsidies < 0) {
+                alert("配置数据不能小于0！");
+                return;
+            }
         }
         if (StrategyId == 1) {
             TimeSpanCommissionRatio = $("#txtTimeSpanCommissionRatio").val();
             TimeSpanInPrice = $("#txttpTimeSpanInPrice").val();
             TimeSpanOutPrice = $("#txttpTimeSpanOutPrice").val();
+            if (TimeSpanCommissionRatio < 0) {
+                alert("配置数据不能小于0！");
+                return;
+            }
+            if (TimeSpanInPrice < 0) {
+                alert("配置数据不能小于0！");
+                return;
+            }
+            if (TimeSpanOutPrice < 0) {
+                alert("配置数据不能小于0！");
+                return;
+            }
         }
         if (StrategyId == 2) {
             CommissionRatio = $("#txtCommissionRatio").val();
             SiteSubsidies = $("#txtSiteSubsidies").val();
+            if (CommissionRatio < 0) {
+                alert("配置数据不能小于0！");
+                return;
+            }
+            if (SiteSubsidies < 0) {
+                alert("配置数据不能小于0！");
+                return;
+            }
         }
         if (StrategyId == 3) {
             PriceCommissionRatio = $("#txtPriceCommissionRatio").val();
             PriceSiteSubsidies = $("#txtPriceSiteSubsidies").val();
+            if (PriceCommissionRatio < 0) {
+                alert("配置数据不能小于0！");
+                return;
+            }
+            if (PriceSiteSubsidies < 0) {
+                alert("配置数据不能小于0！");
+                return;
+            }
         }
         var pars = { "IsStarTimeSubsidies": IsStarTimeSubsidies, "IsStartOverStoreSubsidies": IsStartOverStoreSubsidies, "CommonCommissionRatio": CommonCommissionRatio, "CommonSiteSubsidies": CommonSiteSubsidies, "TimeSpanCommissionRatio": TimeSpanCommissionRatio, "TimeSpanInPrice": TimeSpanInPrice, "TimeSpanOutPrice": TimeSpanOutPrice, "CommissionRatio": CommissionRatio, "SiteSubsidies": SiteSubsidies, "PriceCommissionRatio": PriceCommissionRatio, "PriceSiteSubsidies": PriceSiteSubsidies, "StrategyId": StrategyId, "GroupId": groupid, "GroupName": groupname };
         var url = "/SubsidyFormulaMode/ModifySubsidyFormulaMode";
