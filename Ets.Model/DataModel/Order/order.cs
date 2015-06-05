@@ -58,6 +58,8 @@ namespace Ets.Model.DataModel.Order
 
         public string BusinessPhone { get; set; }
 
+        public string BusinessPhone2 { get; set; }
+
         /// <summary>
         /// 发货人地址
         /// </summary>

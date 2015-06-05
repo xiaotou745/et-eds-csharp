@@ -58,6 +58,9 @@ namespace Ets.Model.DomainModel.Clienter
         /// 发布电话
         /// </summary>
         public string businessPhone { get; set; }
+
+        public string businessPhone2 { get; set; }
+        
         /// <summary>
         /// 收货人名称
         /// </summary>
@@ -168,6 +171,7 @@ namespace Ets.Model.DomainModel.Clienter
         /// 发布电话
         /// </summary>
         public string businessPhone { get; set; }
+        public string businessPhone2 { get; set; }        
         /// <summary>
         /// 收货人名称
         /// </summary>

@@ -74,6 +74,10 @@ namespace Ets.Model.DomainModel.Order
         /// 发布电话
         /// </summary>
         public string businessPhone { get; set; }
+        /// <summary>
+        /// 发布电话2
+        /// </summary>
+        public string businessPhone2 { get; set; }
 
         /// <summary>
         /// 发货人地址
@@ -93,6 +97,7 @@ namespace Ets.Model.DomainModel.Order
         /// 收货人电话
         /// </summary>
         public string RecevicePhoneNo { get; set; }
+
         /// <summary>
         /// 收货地址
         /// </summary>

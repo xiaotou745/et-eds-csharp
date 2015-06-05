@@ -94,6 +94,7 @@ namespace Ets.Service.Provider.Order
 
                     resultModel.businessName = from.BusinessName;
                     resultModel.businessPhone = from.BusinessPhone;
+                    resultModel.businessPhone2 = from.BusinessPhone2;                    
                     if (from.PickUpCity != null)
                     {
                         resultModel.pickUpCity = from.PickUpCity.Replace("市", "");
@@ -179,6 +180,7 @@ namespace Ets.Service.Provider.Order
                     resultModel.Amount = amount; //C端 获取订单的金额 Edit bycaoheyang 20150305
                     resultModel.businessName = from.BusinessName;
                     resultModel.businessPhone = from.BusinessPhone;
+                    resultModel.businessPhone2 = from.BusinessPhone2;
                     resultModel.HadUploadCount = from.HadUploadCount;
                     resultModel.GroupId = from.GroupId;
                     if (from.GroupId == SystemConst.Group3)
@@ -1514,6 +1516,7 @@ namespace Ets.Service.Provider.Order
             orderDM.pickUpCity = order.PickUpCity;
             orderDM.PickUpAddress = order.PickUpAddress;
             orderDM.businessPhone = order.BusinessPhone;
+            orderDM.businessPhone2 = order.BusinessPhone2;
             orderDM.BusinessAddress = order.BusinessAddress;
             orderDM.ReceviceName = order.ReceviceName;
             orderDM.receviceCity = order.ReceviceCity;
