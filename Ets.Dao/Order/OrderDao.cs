@@ -2137,10 +2137,10 @@ values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude)";
                     for (int i = 0; i < order.listOrderChild.Count; i++)
                     {
                         DataRow dr = dt.NewRow();
-                        //dr["OrderId"] = orderId;
+                        dr["OrderId"] = orderId;
+                        //dr["ChildId"] = order.listOrderChild[i].ChildId;
                         int num = i + 1;
                         dr["OrderId"] = num;
-                        dr["ChildId"] = order.listOrderChild[i].ChildId;
                         decimal totalPrice = order.listOrderChild[i].GoodPrice + Convert.ToDecimal(order.DistribSubsidy);
                         dr["TotalPrice"] = totalPrice;
                         dr["GoodPrice"] = order.listOrderChild[i].GoodPrice;
