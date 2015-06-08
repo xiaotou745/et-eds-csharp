@@ -2342,7 +2342,7 @@ select top {0}
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
         b.Name as BusinessName, b.City as BusinessCity,
         b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
-        isnull(a.ReceviceAddress, '') as UserAddress,
+        isnull(a.ReceviceAddress, '') as UserAddress,b.Longitude,b.Latitude,
         case convert(varchar(100), PubDate, 23)
           when convert(varchar(100), getdate(), 23) then '今日 '
           else substring(convert(varchar(100), PubDate, 23), 6, 5)
@@ -2378,6 +2378,7 @@ select top {0} a.Id,a.OrderCommission,a.OrderCount,
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
 ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'') as UserAddress,
+b.Longitude,b.Latitude,
 case convert(varchar(100), PubDate, 23) 
 	when convert(varchar(100), getdate(), 23) then '今日 '
     else substring(convert(varchar(100), PubDate, 23),6,5) 
@@ -2416,6 +2417,7 @@ select top {0}  a.BusinessId, a.Id,a.OrderCommission,a.OrderCount,
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
 ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'') as UserAddress,
+b.Longitude,b.Latitude,
 case convert(varchar(100), PubDate, 23) 
 	when convert(varchar(100), getdate(), 23) then '今日 '
     else substring(convert(varchar(100), PubDate, 23),6,5) 

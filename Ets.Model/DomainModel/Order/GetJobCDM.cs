@@ -56,5 +56,15 @@ namespace Ets.Model.DomainModel.Order
         /// </summary>
         public string DistanceToBusiness { get; set; }
 
+        /// <summary>
+        ///  商家经度
+        /// </summary>
+        public decimal Longitude { get; set; }
+
+        /// <summary>
+        /// 商家纬度
+        /// </summary>
+        public decimal Latitude { get; set; }
+
     }
 }
