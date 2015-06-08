@@ -1910,7 +1910,52 @@ VALUES
             parm.AddWithValue("@AuditStatus", model.AuditStatus);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
+        /// <summary>
+        /// 获取商户绑定的骑士列表
+        /// danny-20150608
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<T> GetBusinessClienterRelationList<T>(BusinessSearchCriteria criteria)
+        {
+            string columnList = @"  c.TrueName ClienterName,
+		                            c.PhoneNo,
+		                            bcr.CreateTime,
+		                            bcr.IsBind,
+		                            bcr.CreateBy,
+		                            bcr.UpdateBy,
+		                            bcr.UpdateTime";
+            var sbSqlWhere = new StringBuilder(" bcr.IsEnable=1 ");
+            if (criteria.BusinessId != 0)
+            {
+                sbSqlWhere.AppendFormat("AND bcr.[BusinessId]={0}", criteria.BusinessId);
+            }
+            string tableList = @" BusinessClienterRelation bcr WITH(NOLOCK)
+  JOIN dbo.clienter c WITH(NOLOCK) ON bcr.ClienterId=c.Id";
+            string orderByColumn = " bcr.Id DESC";
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
+        }
 
-
+        /// <summary>
+        /// 查询商户绑定骑士数量
+        /// danny-20150608
+        /// </summary>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        public int GetBusinessBindClienterQty(int businessId)
+        {
+            try
+            {
+                string sql = "SELECT COUNT(1) FROM BusinessClienterRelation bcr WITH(NOLOCK) WHERE bcr.IsBind = 1 AND bcr.IsEnable=1 AND BusinessId=@BusinessId;";
+                var parm = DbHelper.CreateDbParameters();
+                parm.AddWithValue("@BusinessId",businessId);
+                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm));
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex, "查询商户绑定骑士数量");
+                return 0;
+            }
+        }
     }
 }
