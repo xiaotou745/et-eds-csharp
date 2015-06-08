@@ -1,4 +1,5 @@
-﻿using Ets.Model.Common;
+﻿using System.Diagnostics;
+using Ets.Model.Common;
 using Ets.Model.DomainModel.Group;
 using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
@@ -29,13 +30,15 @@ namespace OpenApi
     [System.AttributeUsage(System.AttributeTargets.Method | System.AttributeTargets.Class)]
     public class SignOpenApiAttribute : System.Web.Http.Filters.ActionFilterAttribute
     {
-        System.Diagnostics.Stopwatch stop = new System.Diagnostics.Stopwatch();
+        private const string Key = "__action_duration__";
         /// <summary>
         /// 重写OnActionExecuting方法   在进入控制器之前验证 sign以及 参数合法性信息 add by caoheyang 20150318
         /// </summary>
         /// <param name="actionContext"></param>
         public override void OnActionExecuting(System.Web.Http.Controllers.HttpActionContext actionContext)
         {
+            Stopwatch stop = new Stopwatch();
+            actionContext.Request.Properties[Key] = stop; 
             stop.Start();
             dynamic paramodel = actionContext.ActionArguments["paramodel"]; //当前请求的参数对象 
             lock (paramodel)
@@ -85,12 +88,20 @@ namespace OpenApi
         /// <param name="actionExecutedContext"></param>
         public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
         {
-            System.Threading.Tasks.Task.Factory.StartNew(() =>
+            if (!actionExecutedContext.Request.Properties.ContainsKey(Key))
+            {
+                return;
+            }
+            var stop = actionExecutedContext.Request.Properties[Key] as Stopwatch;
+            if (stop != null)
+            {
+                System.Threading.Tasks.Task.Factory.StartNew(() =>
                 {
                     stop.Stop();
                     LogHelper.LogWriter("接口" + actionExecutedContext.Request.RequestUri + "请求时间：" + stop.Elapsed);
                     stop.Reset();
                 });
+            }
             base.OnActionExecuted(actionExecutedContext);
         }
     }
@@ -103,13 +114,15 @@ namespace OpenApi
     [System.AttributeUsage(System.AttributeTargets.Method | System.AttributeTargets.Class)]
     public class ExecuteTimeApiAttribute : System.Web.Http.Filters.ActionFilterAttribute
     {
-        System.Diagnostics.Stopwatch stop = new System.Diagnostics.Stopwatch();
+        private const string Key = "__action_duration__";
         /// <summary>
         /// 重写OnActionExecuting方法   在进入控制器之前验证 sign以及 参数合法性信息 add by caoheyang 20150318
         /// </summary>
         /// <param name="actionContext"></param>
         public override void OnActionExecuting(System.Web.Http.Controllers.HttpActionContext actionContext)
         {
+            Stopwatch stop = new Stopwatch();
+            actionContext.Request.Properties[Key] = stop;
             stop.Start();
         }
         /// <summary>
@@ -118,12 +131,20 @@ namespace OpenApi
         /// <param name="actionExecutedContext"></param>
         public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
         {
-            System.Threading.Tasks.Task.Factory.StartNew(() =>
+            if (!actionExecutedContext.Request.Properties.ContainsKey(Key))
             {
-                stop.Stop();
-                LogHelper.LogWriter("接口" + actionExecutedContext.Request.RequestUri + "请求时间：" + stop.Elapsed);
-                stop.Reset();
-            });
+                return;
+            }
+            var stop = actionExecutedContext.Request.Properties[Key] as Stopwatch;
+            if (stop != null)
+            {
+                System.Threading.Tasks.Task.Factory.StartNew(() =>
+                {
+                    stop.Stop();
+                    LogHelper.LogWriter("接口" + actionExecutedContext.Request.RequestUri + "请求时间：" + stop.Elapsed);
+                    stop.Reset();
+                });
+            }
             base.OnActionExecuted(actionExecutedContext);
         }
     }
