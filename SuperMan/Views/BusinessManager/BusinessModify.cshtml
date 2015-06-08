@@ -359,7 +359,7 @@
             return;
         }
         if (!decimalFormat.test(distribSubsidy) || distribSubsidy == '') {
-            alert("请输入正确的金额！");
+            alert("请输入正确的配送费，且不小于0元！");
             return;
         }
         if (cityId == "") {
@@ -391,7 +391,7 @@
         } else {
 
             if (!decimalFormat.test(commissionFixValue) || commissionFixValue == '') {
-                alert("请输入正确的金额!");
+                alert("请输入正确的固定金额，且不小于0元!");
                 return;
             }
         }
