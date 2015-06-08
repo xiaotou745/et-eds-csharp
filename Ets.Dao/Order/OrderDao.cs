@@ -2335,7 +2335,7 @@ where   oo.IsJoinWithdraw = 0
                 ? " and a.ReceviceCity LIKE '北京%'"
                 : string.Format(" and a.ReceviceCity = '{0}'", model.City);
             string sql = null;
-            if (model.ClienterId == 0)     //未登录时，查询所有 无雇佣骑士的商家发布的订单，以及有雇佣骑士的商家发布的超过了五分钟无人抢单的订单 
+            if (model.ClienterId == 0 || model.IsBind == (int)IsBindBC.No)  // 查询所有 无雇佣骑士的商家发布的订单，以及有雇佣骑士的商家发布的超过了五分钟无人抢单的订单 
             {
                  sql = string.Format(@"
 declare @cliernterPoint geography ;
@@ -2412,7 +2412,7 @@ order by a.Id desc", model.TopNum,model.ClienterId, whereStr);
         public IList<GetJobCDM> GetJobC(GetJobCPM model)
         {
             string sql = null;
-            if (model.ClienterId == 0)  //未登录时以及非雇佣骑士，查询所有 无雇佣骑士的商家发布的订单，以及有雇佣骑士的商家发布的超过了五分钟无人抢单的订单 
+            if (model.ClienterId == 0 || model.IsBind == (int)IsBindBC.No) //未登录时以及非雇佣骑士，查询所有 无雇佣骑士的商家发布的订单，以及有雇佣骑士的商家发布的超过了五分钟无人抢单的订单 
             {
                 sql = string.Format(@"
 declare @cliernterPoint geography ;
