@@ -1,0 +1,23 @@
+
+
+use superman
+go
+declare @countrow INT
+  --受影响行数
+set @countrow = 6  --预计受影响行数
+
+begin transaction
+--更新商家所属集团是否允许修改
+update dbo.[group] set IsModifyBind=0
+if ( @@error <> 0
+     or @@rowcount <> @countrow
+   ) 
+    begin
+        rollback
+        print 'RollBack'
+        return
+    end
+
+print 'Commit Start'
+commit
+print 'Commit Over'
