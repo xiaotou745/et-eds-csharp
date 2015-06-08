@@ -1,6 +1,9 @@
 ﻿using System.Text.RegularExpressions;
 using Ets.Model.DataModel.Clienter;
+using Ets.Model.ParameterModel.Bussiness;
+using Ets.Service.IProvider.Bussiness;
 using Ets.Service.IProvider.Common;
+using Ets.Service.Provider.Bussiness;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.Provider.Common;
 using Ets.Service.Provider.Distribution;
@@ -33,6 +36,9 @@ namespace SuperMan.Controllers
         readonly ClienterProvider cliterProvider = new ClienterProvider();
         readonly IClienterFinanceProvider iClienterFinanceProvider = new ClienterFinanceProvider();
         readonly IAreaProvider iAreaProvider = new AreaProvider();
+
+        private readonly IBusinessClienterRelationProvider iBusinessClienterRelationProvider =
+            new BusinessClienterRelationProvider();
         // GET: BusinessManager
         public ActionResult SuperManManager()
         {
@@ -52,7 +58,7 @@ namespace SuperMan.Controllers
                 Status = -1,
                 GroupId = SuperMan.App_Start.UserContext.Current.GroupId,
                 AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType)
-                    
+
             };
             if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
             {
@@ -62,10 +68,10 @@ namespace SuperMan.Controllers
             var pagedList = iDistributionProvider.GetClienteres(criteria);
             return View(pagedList);
         }
-           
- 
+
+
         [HttpPost]
-        public ActionResult PostSuperManManager(int pageindex=1)
+        public ActionResult PostSuperManManager(int pageindex = 1)
         {
             var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria();
             TryUpdateModel(criteria);
@@ -153,7 +159,7 @@ namespace SuperMan.Controllers
         /// <param name="UserId">用户ID</param>
         /// <returns></returns>
         public ActionResult WtihdrawRecords(int UserId)
-        { 
+        {
             var pagedList = cliterProvider.WtihdrawRecords(UserId);
             ViewBag.pagedList = pagedList;
             ViewBag.UserId = UserId;
@@ -175,7 +181,7 @@ namespace SuperMan.Controllers
             {
                 return Json(new ResultModel(false, "提现失败，提现金额错误"), JsonRequestBehavior.AllowGet);
             }
-            if ((0-Price) < 1000)
+            if ((0 - Price) < 1000)
             {
                 return Json(new ResultModel(false, "提现失败，提现金额需大于1000元"), JsonRequestBehavior.AllowGet);
             }
@@ -200,7 +206,7 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult CrossShopLog(int UserId)
         {
-            var pagedList = new SubsidyProvider().GetCrossShopListByCid(UserId); 
+            var pagedList = new SubsidyProvider().GetCrossShopListByCid(UserId);
             ViewBag.pagedList = pagedList;
             return View();
         }
@@ -342,5 +348,27 @@ namespace SuperMan.Controllers
             return View(pagedList);
         }
 
+        /// <summary>
+        /// 根据骑士id查询骑士绑定商家列表   caoheyang 20150608
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult GetRelationByClienterId()
+        {
+            BCRelationGetByClienterIdPM model = new BCRelationGetByClienterIdPM();
+            TryUpdateModel(model);
+            return View(iBusinessClienterRelationProvider.GetByClienterId(model));
+        }
+
+        /// <summary>
+        /// 根据骑士id查询骑士绑定商家列表   caoheyang 20150608
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult PostGetRelationByClienterId(BCRelationGetByClienterIdPM model)
+        {
+            return View(iBusinessClienterRelationProvider.GetByClienterId(model));
+        }
     }
 }

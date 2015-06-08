@@ -25,9 +25,9 @@ namespace Ets.Dao.Bussiness
         /// </summary>
         public PageInfo<BCRelationGetByClienterIdDM> GetByClienterId(BCRelationGetByClienterIdPM model)
         {
-            string where = string.Format(" ClienterId=", model.ClienterId);
-            return new PageHelper().GetPages<BCRelationGetByClienterIdDM>(SuperMan_Read, model.PageIndex, where, "Id desc", " BusinessId,ClienterId,IsEnable,UpdateBy,UpdateTime",
-                " BusinessClienterRelation a (nolock)", SystemConst.PageSize, true);
+            string where = string.Format(" ClienterId={0}", model.ClienterId);
+            return new PageHelper().GetPages<BCRelationGetByClienterIdDM>(SuperMan_Read, model.PageIndex, where, "a.Id desc", "a.BusinessId,a.ClienterId,b.Name as BusinessName,b.PhoneNo as BusinessPhoneNo,b.Address as BusinessAddress,a.IsBind,a.UpdateBy,a.UpdateTime,c.TrueName as ClienterName",
+                "dbo.BusinessClienterRelation a ( nolock )  join dbo.business b ( nolock ) on a.BusinessId = b.Id join dbo.clienter c ( nolock ) on c.Id = a.ClienterId", SystemConst.PageSize, true);
         }
     }
 }
