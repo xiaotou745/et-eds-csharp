@@ -162,34 +162,39 @@ namespace SuperManWebApi.Controllers
             model.businessName = HttpContext.Current.Request.Form["businessName"];
 
             ImageHelper ih = new ImageHelper();
-            if (HttpContext.Current.Request.Files["CheckPicUrl"] == null)
+            var file = HttpContext.Current.Request.Files["CheckPicUrl"];
+            if (file == null)
             {
                 return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.InvalidFileFormat);
             }
-            var file = HttpContext.Current.Request.Files["CheckPicUrl"];
+            var fileLicen = HttpContext.Current.Request.Files["BusinessLicensePic"];
+            if (fileLicen == null)
+            {
+                return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.InvalidFileFormat);
+            }
 
-            ImgInfo imgInfo = ih.UploadImg(file, 0);
+            #region 更新商家头像
+
+            ImgInfo imgInfo = ih.UploadImg(file, model.userId);
             if (!string.IsNullOrWhiteSpace(imgInfo.FailRemark))
             {
                 return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.UpFailed);
             }
             model.CheckPicUrl = imgInfo.PicUrl;
-            //}
+            #endregion
 
+            //}
             //if (model.IsUpdateBusinessLicensePic == 0)
             //{
-            if (HttpContext.Current.Request.Files["BusinessLicensePic"] == null)
-            {
-                return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.InvalidFileFormat);
-            }
-            var fileLicen = HttpContext.Current.Request.Files["BusinessLicensePic"];
             //ImageHelper ih = new ImageHelper();
-            ImgInfo imgInfoLicen = ih.UploadImg(fileLicen, 0);
+            #region 更新执照
+            ImgInfo imgInfoLicen = ih.UploadImg(fileLicen, model.userId);
             if (!string.IsNullOrWhiteSpace(imgInfoLicen.FailRemark))
             {
                 return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.UpFailed);
             }
             model.BusinessLicensePic = imgInfo.PicUrl;
+            #endregion
             //}
             //修改商户地址信息，返回当前商户的状态
             return _iBusinessProvider.UpdateBusinessInfoB(model);
