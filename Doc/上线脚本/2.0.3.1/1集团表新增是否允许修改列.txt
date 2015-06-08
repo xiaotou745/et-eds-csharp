@@ -1,0 +1,2 @@
+alter table dbo.[group] add IsModifyBind int default 0 not null;
+go
