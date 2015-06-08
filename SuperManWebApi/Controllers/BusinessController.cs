@@ -28,7 +28,7 @@ namespace SuperManWebApi.Controllers
     /// <summary>
     /// 商户相关接口 add by caoheyang
     /// </summary>
-    [ExecuteTimeLog]  
+    [ExecuteTimeLog]
     public class BusinessController : ApiController
     {
         private readonly IBusinessFinanceProvider _businessFinanceProvider = new BusinessFinanceProvider();
@@ -99,7 +99,7 @@ namespace SuperManWebApi.Controllers
             {
                 LogHelper.LogWriter("ResultModel<BusinessDM> Get", new { obj = "时间：" + DateTime.Now.ToString() + ex.Message });
                 return ResultModel<BusinessDM>.Conclude(GetBussinessStatus.Failed);
-            }    
+            }
         }
 
         /// <summary>
@@ -148,42 +148,44 @@ namespace SuperManWebApi.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public ResultModel<BusiModifyResultModelDM> UpdateBusinessInfoB(BusiAddAddressInfoModel model)
+        public ResultModel<BusiModifyResultModelDM> UpdateBusinessInfoB()//BusiAddAddressInfoModel model
         {
-            model.CheckPicUrl = null;
-            model.BusinessLicensePic = null;  //防止移动端或者不安全情况下给该参数传了值
+            //model.CheckPicUrl = null;
+            //model.BusinessLicensePic = null;  //防止移动端或者不安全情况下给该参数传了值
             //照片有所更新 
-            if (model.IsUpdateCheckPicUrl == 0)
+            //if (model.IsUpdateCheckPicUrl == 0)
+            //{
+            BusiAddAddressInfoModel model = new BusiAddAddressInfoModel();
+            ImageHelper ih = new ImageHelper();
+            if (HttpContext.Current.Request.Files["CheckPicUrl"] == null)
             {
-                if (HttpContext.Current.Request.Files["CheckPicUrl"] ==null)
-                {
-                    return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.InvalidFileFormat);
-                }
-                var file = HttpContext.Current.Request.Files["CheckPicUrl"];
-                ImageHelper ih = new ImageHelper();
-                ImgInfo imgInfo = ih.UploadImg(file, 0);
-                if (!string.IsNullOrWhiteSpace(imgInfo.FailRemark))
-                {
-                    return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.UpFailed);
-                }
-                 model.CheckPicUrl = imgInfo.PicUrl;
+                return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.InvalidFileFormat);
             }
+            var file = HttpContext.Current.Request.Files["CheckPicUrl"];
+          
+            ImgInfo imgInfo = ih.UploadImg(file, 0);
+            if (!string.IsNullOrWhiteSpace(imgInfo.FailRemark))
+            {
+                return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.UpFailed);
+            }
+            model.CheckPicUrl = imgInfo.PicUrl;
+            //}
 
-            if (model.IsUpdateBusinessLicensePic == 0)
+            //if (model.IsUpdateBusinessLicensePic == 0)
+            //{
+            if (HttpContext.Current.Request.Files["BusinessLicensePic"] == null)
             {
-                if (HttpContext.Current.Request.Files["BusinessLicensePic"] == null)
-                {
-                    return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.InvalidFileFormat);
-                }
-                var file = HttpContext.Current.Request.Files["BusinessLicensePic"];
-                ImageHelper ih = new ImageHelper();
-                ImgInfo imgInfo = ih.UploadImg(file, 0);
-                if (!string.IsNullOrWhiteSpace(imgInfo.FailRemark))
-                {
-                    return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.UpFailed);
-                }
-                model.BusinessLicensePic = imgInfo.PicUrl;
+                return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.InvalidFileFormat);
             }
+            var fileLicen = HttpContext.Current.Request.Files["BusinessLicensePic"];
+            //ImageHelper ih = new ImageHelper();
+            ImgInfo imgInfoLicen = ih.UploadImg(fileLicen, 0);
+            if (!string.IsNullOrWhiteSpace(imgInfoLicen.FailRemark))
+            {
+                return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.UpFailed);
+            }
+            model.BusinessLicensePic = imgInfo.PicUrl;
+            //}
             //修改商户地址信息，返回当前商户的状态
             return _iBusinessProvider.UpdateBusinessInfoB(model);
         }
