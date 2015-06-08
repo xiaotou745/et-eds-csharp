@@ -377,7 +377,7 @@ namespace SuperManWebApi.Controllers
             }
             if (string.IsNullOrWhiteSpace(model.businessName))
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel>.Conclude(ETS.Enums.BusiAddAddressStatus.businessNameEmpty);
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel>.Conclude(ETS.Enums.BusiAddAddressStatus.BusinessNameEmpty);
             }
             //修改商户地址信息，返回当前商户的状态
             int upResult = iBusinessProvider.UpdateBusinessAddressInfo(model);
@@ -592,8 +592,8 @@ namespace SuperManWebApi.Controllers
 
 
         /// <summary>
-        /// 获取开通城市的省市区
-        /// 窦海超
+        /// 获取开通城市的省市区 
+        /// 窦海超  
         /// 2015年3月16日 11:44:54
         /// </summary>
         /// <param name="Version">版本号</param>
@@ -605,7 +605,7 @@ namespace SuperManWebApi.Controllers
         {
             AreaProvider area = new AreaProvider();
 
-            return area.GetOpenCity(Version);
+            return area.GetOpenCity(Version,false);
         }
 
     }

@@ -1,0 +1,44 @@
+﻿@model  ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Order.DistributionAnalyzeResult>
+@if (Model != null)
+{
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+    <thead>
+        <tr class="tdbg">
+            <th width="%5">任务单号</th>
+            <th>城市</th>
+            <th>商户信息</th>
+            <th>超人信息</th>
+            <th width="%5">取货地址</th>
+            <th width="%5">送货地址</th>
+            <th>发布时间</th>
+            <th>接单时间</th>
+            <th>取餐时间</th>
+            <th>完成时间</th>
+            <th>订单数量</th>
+            <th>任务金额</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Records)
+        {
+            <tr>
+                <td>@item.OrderNo</td>
+                <td>@item.ReceviceCity</td>
+                <td>@item.Business <br /> @item.BusinessPhone</td>
+                <td>@item.clienter<br />@item.clienterPhone</td>
+                <td>@item.PickUpAddress</td>
+                <td>@item.ReceviceAddress</td>
+                <td>@item.PubDate</td>
+                <td>@item.GrabTime</td>
+                <td>@item.TakeTime</td>
+                <td>@item.ActualDoneDate</td>
+                <td>@item.OrderCount</td>
+                <td>@item.TaskMoney</td>
+            </tr>
+        }
+    </tbody>
+</table>
+    ViewBag.ActionName = "DistributionAnalyze";
+    @Html.Partial("~/views/shared/PagerControl.cshtml", Model);
+}
+<script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>

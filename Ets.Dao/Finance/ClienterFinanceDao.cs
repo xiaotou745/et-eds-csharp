@@ -419,7 +419,47 @@ WHERE ClienterId=@ClienterId ";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             return MapRows<ClienterBalanceRecord>(dt);
         }
+        /// <summary>
+        /// 获取骑士提款收支记录列表分页版
+        /// danny-20150604
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<T> GetClienterBalanceRecordListOfPaging<T>(ClienterBalanceRecordSerchCriteria criteria)
+        {
+            string columnList = @"   cbr.[Id]
+                                    ,cbr.[ClienterId]
+                                    ,cbr.[Amount]
+                                    ,cbr.[Status]
+                                    ,cbr.[Balance]
+                                    ,cbr.[RecordType]
+                                    ,cbr.[Operator]
+                                    ,cbr.[OperateTime]
+                                    ,cbr.[WithwardId]
+                                    ,cbr.[RelationNo]
+                                    ,cbr.[Remark]";
+            var sbSqlWhere = new StringBuilder(" 1=1 ");
+            if (criteria.RecordType != 0)
+            {
+                sbSqlWhere.AppendFormat("AND cbr.[RecordType]={0}", criteria.RecordType);
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.RelationNo))
+            {
+                sbSqlWhere.AppendFormat("AND cbr.[RelationNo]='{0}'", criteria.RelationNo);
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.OperateTimeStart))
+            {
+                sbSqlWhere.AppendFormat("AND CONVERT(CHAR(10),cbr.OperateTime,120)>=CONVERT(CHAR(10),'{0}',120)", criteria.OperateTimeStart.Trim());
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.OperateTimeEnd))
+            {
+                sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),cbr.OperateTime,120)<=CONVERT(CHAR(10),'{0}',120)", criteria.OperateTimeEnd.Trim());
+            }
 
+            string tableList = @" [ClienterBalanceRecord] cbr WITH(NOLOCK)";
+            string orderByColumn = " cbr.Id DESC";
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
+        }
         /// <summary>
         /// 获取要导出的骑士提现申请单
         /// danny-20150513

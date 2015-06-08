@@ -315,6 +315,7 @@ namespace Ets.Service.Provider.OpenApi
             model.CommissionType = business.CommissionType;
             model.CommissionFixValue = business.CommissionFixValue;
             model.BusinessGroupId = business.BusinessGroupId;
+            model.MealsSettleMode = business.MealsSettleMode;   
             #endregion
 
             #region 订单地址信息
@@ -356,6 +357,14 @@ namespace Ets.Service.Provider.OpenApi
             model.settlemoney = commissonPro.GetSettleMoney(orderComm);//订单结算金额
             model.adjustment = commissonPro.GetAdjustment(orderComm);//订单额外补贴金额
             #endregion
+            if (!(bool)model.is_pay && model.MealsSettleMode == MealsSettleMode.Status1.GetHashCode())//未付款且线上支付
+            {
+                //paramodel.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(paramodel.total_price) +
+                //               ParseHelper.ToDecimal(paramodel.store_info.delivery_fee) * ParseHelper.ToInt(paramodel.package_count), 2);
+                //只有一个子订单
+                model.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(model.total_price) +
+                              ParseHelper.ToDecimal(model.store_info.delivery_fee), 2);
+            }
 
             //fromModel.extras 说明，暂时不用 
             return model;

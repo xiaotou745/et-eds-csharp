@@ -33,6 +33,7 @@ namespace Ets.Model.DomainModel.Clienter
         public int BusinessId { get; set; }
         public string BusinessName { get; set; }
         public string BusinessPhone { get; set; }
+        public string BusinessPhone2 { get; set; }
         public string pickUpCity { get; set; }
         public double? Longitude { get; set; }
         public double? Latitude { get; set; }

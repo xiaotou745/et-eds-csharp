@@ -107,6 +107,9 @@ namespace Ets.Service.IProvider.User
         /// <param name="enumStatusType"></param>
         /// <returns></returns>
         bool UpdateAuditStatus(int id, EnumStatusType enumStatusType);
+
+        bool UpdateAuditStatus(int id, int enumStatus);
+
         /// <summary>
         /// 根据城市信息查询当前城市下该集团的所有商户信息
         ///  danny-20150317
@@ -174,6 +177,13 @@ namespace Ets.Service.IProvider.User
         /// <param name="businessModel"></param>
         /// <returns>商户的当前状态</returns>
         int UpdateBusinessAddressInfo(BusiAddAddressInfoModel businessModel);
+
+          /// <summary>
+        /// B端修改商户信息 caoheyang
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>商户的当前状态</returns>
+        ResultModel<BusiModifyResultModelDM> UpdateBusinessInfoB(BusiAddAddressInfoModel model);
         /// <summary>
         /// 更新商户上传图片信息
         /// </summary>
@@ -275,6 +285,20 @@ namespace Ets.Service.IProvider.User
         /// <param name="businessId">商户Id</param>
         /// <returns></returns>
         BusinessDetailModel GetBusinessDetailById(string businessId);
+        /// <summary>
+        /// 获取商户第三方绑定关系记录
+        /// danny-20150602
+        /// </summary>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        IList<BusinessThirdRelationModel> GetBusinessThirdRelation(int businessId);
+        /// <summary>
+        /// 修改商户详细信息
+        /// danny-20150602
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        DealResultInfo ModifyBusinessDetail(BusinessDetailModel model);
     }
 }
 

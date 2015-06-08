@@ -447,6 +447,17 @@ namespace Ets.Service.Provider.Finance
         {
             return clienterFinanceDao.GetClienterBalanceRecordList(criteria);
         }
+
+        /// <summary>
+        /// 获取骑士提款收支记录列表分页版
+        /// danny-20150604
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<ClienterBalanceRecord> GetClienterBalanceRecordListOfPaging(ClienterBalanceRecordSerchCriteria criteria)
+        {
+            return clienterFinanceDao.GetClienterBalanceRecordListOfPaging<ClienterBalanceRecord>(criteria);
+        }
         /// <summary>
         /// 获取要导出的骑士提现申请单
         /// danny-20150513

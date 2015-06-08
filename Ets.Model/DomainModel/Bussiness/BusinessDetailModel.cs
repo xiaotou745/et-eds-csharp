@@ -29,5 +29,33 @@ namespace Ets.Model.DomainModel.Bussiness
         /// 开户支行
         /// </summary>
         public string OpenSubBank { get; set; }
+        /// <summary>
+        /// 操作人id
+        /// </summary>
+        public int OptUserId { get; set; }
+
+        /// <summary>
+        /// 操作人名称
+        /// </summary>
+        public string OptUserName { get; set; }
+        /// <summary>
+        /// 操作描述
+        /// </summary>
+        public string OptLog { get; set; }
+        /// <summary>
+        /// 第三方绑定集合
+        /// </summary>
+        public string ThirdBindListStr { get; set; }
+        /// <summary>
+        /// 第三方平台名称
+        /// </summary>
+        public string GroupName { get; set; }
+
+        /// <summary>
+        /// 是否可修改绑定第三方绑定
+        /// </summary>
+        public int IsModifyBind { get; set; }
+        
+        
     }
 }

@@ -1,24 +1,27 @@
-﻿@using ETS.Util;
+﻿@using ETS.Data.PageData
+@using Ets.Model.DataModel.Finance
+@using ETS.Util;
 @using NPOI.HSSF.Record.Formula.Functions
 <table border="0" cellspacing="0" cellpadding="0" class="tbstyle" width="900">
     <thead>
         <tr class="tdbg">
-            <th>交易类型</th>
-            <th>任务单号/交易流水号</th>
-            <th>收支金额</th>
-            <th>余额</th>
-            <th>状态</th>
-            <th>时间</th>
-            <th>操作人</th>
+        <th>交易类型</th>
+        <th>任务单号/交易流水号</th>
+        <th>收支金额</th>
+        <th>余额</th>
+        <th>状态</th>
+        <th>时间</th>
+        <th>操作人</th>
     </thead>
     <tbody>
         @{
-            var businessBalanceRecordList = ViewBag.businessBalanceRecord as List<Ets.Model.DataModel.Finance.BusinessBalanceRecord>;
-            if (businessBalanceRecordList != null && businessBalanceRecordList.Count > 0)
+            //var businessBalanceRecordList = ViewBag.businessBalanceRecord as List<Ets.Model.DataModel.Finance.BusinessBalanceRecord>;
+            var businessBalanceRecord = ViewBag.businessBalanceRecord as PageInfo<BusinessBalanceRecord>;
+            if (businessBalanceRecord != null && businessBalanceRecord.Records.Count > 0)
             {
                 var i = 0;
                 var recordTypeDes = "";
-                foreach (var item in businessBalanceRecordList)
+                foreach (var item in businessBalanceRecord.Records)
                 {
                     recordTypeDes = ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.BusinessBalanceRecordRecordType) item.RecordType).GetType(), (ETS.Enums.BusinessBalanceRecordRecordType) item.RecordType).Text;
                     i++;
@@ -45,6 +48,13 @@
         }
     </tbody>
 </table>
+@{
+    if (businessBalanceRecord != null)
+    {
+        ViewBag.ActionName = "PostBusinessBalanceRecord";
+        @Html.Partial("~/views/shared/PagerControl.cshtml", businessBalanceRecord)
+    }
+}
 @*查看申请单详情*@
 <div class="selectSupplierDish">
     <div class="add-openbox add-form" id="WithdrawDetailShow" style="width:480px">

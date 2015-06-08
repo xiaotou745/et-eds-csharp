@@ -120,6 +120,7 @@ namespace Ets.Dao.Clienter
                                     o.BusinessId,
                                     b.Name AS BusinessName,
                                     b.PhoneNo AS BusinessPhone,
+                                    b.PhoneNo2 AS BusinessPhone2,
                                     REPLACE(b.City,'市','') AS pickUpCity,
                                     b.Longitude,
                                     b.Latitude,o.OrderCommission,

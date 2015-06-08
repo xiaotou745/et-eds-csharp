@@ -135,6 +135,10 @@ namespace Ets.Service.Provider.Common
             model.OneSubsidyOrderCount = currentDateModel.OneSubsidyOrderCount;
             model.TwoSubsidyOrderCount = currentDateModel.TwoSubsidyOrderCount;
             model.ThreeSubsidyOrderCount = currentDateModel.ThreeSubsidyOrderCount;
+            model.rechargeTotal = currentDateModel.rechargeTotal;
+            model.incomeTotal = currentDateModel.incomeTotal;
+            model.userTotal = currentDateModel.userTotal;
+            model.clienterTotal = currentDateModel.clienterTotal;
             return model;
         }
 

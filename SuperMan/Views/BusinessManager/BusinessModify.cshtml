@@ -1,0 +1,444 @@
+﻿@model Ets.Model.DomainModel.Bussiness.BusinessDetailModel
+@{
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+    var busiThirdRelationList = ViewBag.businessThirdRelation as IList<BusinessThirdRelationModel>;
+    var puth = SuperManCore.CustomerIconUploader.Instance.RelativePath;
+    var PicHost = SuperManCore.CustomerIconUploader.Instance.PicHost;
+}
+@using ETS.Enums
+@using ETS.Extension
+@using Ets.Model.DataModel.Bussiness
+@using Ets.Service.Provider.User
+@using ETS.Util;
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+<div style="width:1015px;height:auto;border: 1px #dcdcdc solid">
+
+    <h2 class="crumbs">
+        您所在位置：商户 > 商户管理 > 修改商铺信息
+    </h2>
+
+    <div id="left" style="float: left;width:750px;height: auto;border-right: 1px #dcdcdc solid;margin-top: -10px; ">
+        <div style="width:750px;height: auto;  border-bottom:solid 1px #dcdcdc;padding-left:10px;">
+            <div class="control-group" style="margin-top: 10px">
+                <label>注册账号：@Model.PhoneNo</label>
+            </div>
+            <div class="control-group">
+                <label>商铺名称：</label>
+                <input name="busiName" id="busiName" type="text" value="@Model.Name">
+                <input name="busiId" id="busiId" type="hidden" value="@Model.Id">
+            </div>
+            <div class="control-group">
+                <label>联系手机：</label>
+                <input name="busiPhoneNo" id="busiPhoneNo" type="text" value="@Model.PhoneNo">
+            </div>
+            <div class="control-group">
+                <label>联系电话：</label>
+                <input name="busiPhoneNo2" id="busiPhoneNo2" type="text" value="@Model.PhoneNo2">
+            </div>
+            <div class="control-group">
+                <label>配  送  费：</label>
+                <input name="busiWaisong" id="busiWaisong" type="text" value="@Model.DistribSubsidy" style="margin-left: 5px">
+            </div>
+            <div class="control-group">
+                <label>城市：</label>
+                @Html.DropDownList("busiCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Code", "Name", Model.CityId), "-请选择-", new { style = "width:77px" })
+                <label>区域：</label>
+                @Html.DropDownList("busiDistrict", new SelectList(ViewBag.openAreaList, "Code", "Name", Model.districtId), "-请选择-", new { style = "width:78px" })
+            </div>
+            <div class="control-group">
+                <label>地址：</label>
+                <input name="busiAddr" id="busiAddr" style="width: 200px;" type="text" value="@Model.Address">
+            </div>
+            <div class="control-group" style="margin-bottom: 10px">
+                <label>经  纬  度：</label>
+                <input name="busiLongitude" id="busiLongitude" style="width: 86px;margin-left: 5px" type="text" value="@Model.Longitude" disabled="disabled">
+                <input name="busiLatitude" id="busiLatitude" style="width: 86px;" type="text" value="@Model.Latitude" disabled="disabled">
+                <a id="postion" style="margin-left: 15px"><b>地图定位</b></a>
+            </div>
+        </div>
+        <div style="width:750px;height: auto;border-bottom:solid 1px #dcdcdc;padding-left:10px;">
+            <div class="control-group" style="margin-top: 10px">
+                <label style="font-size:15px">结算比例设置(应收)</label>
+            </div>
+            <div class="control-group">
+                <input id="rCommissionFormulaMode0" name="rCommissionFormulaMode" type="radio" value="1" @(Model.CommissionType == 1 ? "checked" : "")>
+                <label for="rCommissionFormulaMode0">结算比例：</label>
+                <input id="rCommissionFormulaMode1" name="rCommissionFormulaMode" type="radio" value="2" style="margin-left:30px" @(Model.CommissionType == 2 ? "checked" : "")>
+                <label for="rCommissionFormulaMode1">固定金额：</label>
+                <input type="hidden" id="oldCommissionType" name="oldCommissionType">
+            </div>
+            <div class="control-group" style="margin-bottom: 10px">
+                <div id="divbusCommissionText" @(Model.CommissionType == 2 ? "hidden" : "")>
+                    <input name="busCommissionText" id="busCommissionText" style="width: 120px;" type="text" value="@Model.BusinessCommission">%
+                </div>
+                <div id="divCommissionFixValue" @(Model.CommissionType == 1 ? "hidden" : "")>
+                    <input name="CommissionFixValue" id="CommissionFixValue" style="width: 120px;" type="text" value="@Model.CommissionFixValue">元/单
+                </div>
+            </div>
+        </div>
+        <div style="width:750px;height: auto;border-bottom:solid 1px #dcdcdc;padding-left:10px;">
+            <div class="control-group" style="margin-top: 10px">
+                <label style="font-size:15px">补贴策略设置(应付)</label>
+            </div>
+            <div class="control-group" style="margin-left:27px">
+                <label id="labGlobalConfig">@ViewBag.subsidyConfig</label>
+            </div>
+            <div class="control-group" style="margin-left:27px">
+                <label>补贴策略：</label>
+                @Html.DropDownList("businessGroupID", new SelectList(new BusinessGroupProvider().GetBusinessGroupList(), "Id", "Name",@Model.BusinessGroupId), new { @class = "selectw", style = "width:143px" })
+            </div>
+            <div class="control-group" style="margin-left:2px">
+                <label>餐费结算方式：</label>
+                <select name="busiMealsSettleMode" class="selectw" id="busiMealsSettleMode" style="width:143px" >
+                    <option value="0">线下结算</option>
+                    <option value="1">线上结算</option>
+                </select>
+            </div>
+            <div class="control-group" style="margin-bottom: 10px">
+                <label style="margin-left: 24px">第三方ID：</label>
+                <input name="busiSourceId" id="busiSourceId" type="text" value="@Model.OriginalBusiId" @(Model.IsModifyBind == 0 && Model.GroupId>0 ? "disabled" : "") />  
+                <input type="hidden" id="hidGroupId" name="hidGroupId" value="@Model.GroupId" /> 
+                @if (Model.GroupId > 0)
+                {
+                    <label>来源平台：@Model.GroupName</label>
+                }
+                else
+                {
+                    @Html.DropDownList("busGroupId" ,
+                                                  new SelectList(new BusinessProvider().GetGroups().Where(i=>i.IsModifyBind==1).ToList(), "Id", "GroupName"), "--请选择--", htmlAttributes: new { @class = "selectw", style = "width:100px; " })
+                }
+            </div>
+            @*<div class="control-group" style="margin-bottom: 10px">
+                <label>绑定第三方ID：点击添加，绑定第三方商铺ID信息</label>
+                <input name="btnAddThird" num="0" id="btnAddThird" type="button" value="添加第三方" class="searchBtn" style="margin-left:25px"><br />
+                <div style="background-color:lightgray;width: 530px" id="big-third">
+                    @{
+                        if (busiThirdRelationList.Count > 0)
+                        {
+                            int i = 0;
+                            foreach (var businessThirdRelationModel in busiThirdRelationList)
+                            {
+                                i++;
+                    <div class="third-list third_n_@i" style="display" v="@businessThirdRelationModel.IsModifyBind">
+                        <label>第三方ID：</label>
+                        <input name="busiSourceId" id="busiSourceId_@i" type="text" value="@businessThirdRelationModel.OriginalBusiId" />
+                        @Html.DropDownList("busGroupId_" + i,
+                                         new SelectList(new BusinessProvider().GetGroups(), "Id", "GroupName", businessThirdRelationModel.GroupId), "--请选择--", htmlAttributes: new { @class = "selectw", style = "width:100px; " })
+                        <input id="rrAuditStatusY_@i" name="rAuditStatus_@i" type="radio" value="1" style="margin-left: 15px" @(businessThirdRelationModel.AuditStatus == 1 ? "checked" : "") @(businessThirdRelationModel.IsModifyBind == 0 ? "disabled" : "")>通 过
+                        <input id="rrAuditStatusY_@i" name="rAuditStatus_@i" type="radio" value="0" style="margin-left: 15px" @(businessThirdRelationModel.AuditStatus == 0 ? "checked" : "") @(businessThirdRelationModel.IsModifyBind == 0 ? "disabled" : "")>拒 绝
+                        <a class="remove" style="margin-right: 15px;margin-left: 25px" num="NaN">移 除</a><br>
+                    </div>
+                            }
+                        }
+                    }
+                </div>
+            </div>*@
+        </div>
+        <div class="SearchMd">
+            <div style="margin-left: 100px;float: left"><input type="button" value="保存" class="searchBtn" id="btnModifyCommit" /></div>
+            <div style="margin-left: 180px;float: left"><input type="button" value="返回" class="searchBtn" id="btnReturn" /></div>
+            <br />
+        </div>
+        @*第三方绑定关系模板div*@
+        <div id="clone">
+            <div class="third hide" v="1">
+                <label>第三方ID：</label>
+                <input name="busiSourceId" id="busiSourceId" type="text">
+                @Html.DropDownList("busGroupId",
+                    new SelectList(new BusinessProvider().GetGroups(), "Id", "GroupName"), "--请选择--", new { @class = "selectw", style = "width:100px" })
+                <input id="rAuditStatusY" name="rAuditStatus" type="radio" value="1" style="margin-left: 15px" checked="checked">通 过
+                <input id="rAuditStatusN" name="rAuditStatus" type="radio" value="0" style="margin-left: 15px">拒 绝
+                <a class="remove" style="margin-right: 15px;margin-left: 25px">移 除</a><br />
+            </div>
+        </div>
+    </div>
+    @{
+        var originSize = "_0_0";
+        var bigFileName = "/nopic.jpg";
+        var bigFileNameb = "/nopic.jpg";
+        var checkPicUrl = "/nopic.jpg";
+        var businessLicensePic = "/nopic.jpg";
+        if (!string.IsNullOrWhiteSpace(Model.CheckPicUrl))
+        {
+            var fileLastDot = Model.CheckPicUrl.LastIndexOf('.');
+            var fileHandHouZhui = Model.CheckPicUrl.Substring(fileLastDot, Model.CheckPicUrl.Length - fileLastDot);
+            bigFileName = Model.CheckPicUrl.Substring(0, fileLastDot) + originSize + fileHandHouZhui;
+            checkPicUrl = Model.CheckPicUrl;
+        }
+        if (!string.IsNullOrWhiteSpace(Model.BusinessLicensePic))
+        {
+            var fileLastDotb = Model.BusinessLicensePic.LastIndexOf('.');
+            var fileHandHouZhuib = Model.BusinessLicensePic.Substring(fileLastDotb, Model.BusinessLicensePic.Length - fileLastDotb);
+            bigFileNameb = Model.BusinessLicensePic.Substring(0, fileLastDotb) + originSize + fileHandHouZhuib;
+            businessLicensePic = Model.BusinessLicensePic;
+        }
+
+    }
+    <div id="right" style="float: left;width: 250px;height: auto;">
+        <div id="BusiImage" style="width: 250px;margin-left: 20px">
+            <div style="width: 200px;height:200px">
+                <img id="showBusiImage" src="@PicHost@puth@checkPicUrl" width="200px" height="200px" />
+            </div>
+            店主手持身份证照片<a id="showBigBusiImage" href="@PicHost@puth@bigFileName" target="_blank" style="margin-left: 15px">查看大图</a>
+        </div>
+        <div id="BusinessLicensePic" style="width: 250px;margin-left: 20px">
+            <div style="width: 200px;height:200px">
+                <img id="showBusiImage" src="@PicHost@puth@businessLicensePic" width="200px" height="200px" />
+            </div>
+            营业执照（或卫生许可证）<a id="showBigBusinessLicensePic" href="@PicHost@puth@bigFileNameb" target="_blank">查看大图</a>
+        </div>
+    </div>
+    <div style="clear:both"></div>
+</div>
+
+@*百度地图弹层*@
+<div class="add-openbox add-form" id="MapShow" style="width:600px;height:580px">
+    <h2>
+        <p id="statusFin">地图选择位置</p>
+    </h2>
+    <div id="map" style="width:600px;height:430px;"></div>
+    <p class="btnbox">
+        <input value="关闭" type="button" class="J_closebox qxBtn" />
+    </p>
+</div>
+<script type="text/javascript">
+    var adminjs = new adminglass();
+    //实例化后台类
+    $(document).ready(function() {
+        $('#operateTimeStart').datepicker();
+        $('#operateTimeEnd').datepicker();
+        $('#busiMealsSettleMode').val(@Model.MealsSettleMode);
+        @*$("#btnAddThird").attr("num", @busiThirdRelationList.Count);
+        $(".third-list").each(function() {
+            var v = $(this).attr("v"); //第三方
+            if (v == 0) {
+                $(this).find(".selectw,input[name=busiSourceId],input[type=radio]").attr("disabled", true);
+            }
+        });*@
+    });
+
+    //添加第三方绑定关系
+    $("#btnAddThird").click(function () {
+        funAddThirdRelation();
+    });
+
+    function funAddThirdRelation() {
+        var num = Number($("#btnAddThird").attr("num")) + 1;
+        if ($(".third-list").length > 9) {
+            alert('每个商户最多可绑定10个第三方平台！');
+            return false;
+        }
+        var obj = $("#clone").find(".third").clone(true).attr('class', "third-list third_n_" + num).show();
+        obj.find("input[name=busiSourceId]").attr("id", "busiSourceId_" + num);
+        obj.find(".selectw").attr("id", "busGroupId_" + num);
+        obj.find("input[name=rAuditStatus]").attr({ "id": "rrAuditStatusY_" + num, "name": "rAuditStatus_" + num });
+        obj.find("input[name=rAuditStatus]").attr({ "id": "rrAuditStatusN_" + num, "name": "rAuditStatus_" + num });
+        obj.find(".remove").attr("num", num);
+        $("#big-third").append(obj);
+        $("#btnAddThird").attr("num", num);
+    }
+
+    //移除第三方绑定关系
+    $(".remove").live("click").on("click", function () {
+        var num = $(this).attr("num");
+        $(this).parent(".third_n_" + num).remove();
+    });
+    //百度地图
+    $("#postion").live("click").on("click", function() {
+        adminjs.openwinbox('#MapShow');
+        var longitude = $('#busiLongitude').val();
+        var latitude = $('#busiLatitude').val();
+        var map = new BMap.Map("map", { enableMapClick: false });
+        map.centerAndZoom(new BMap.Point(longitude,latitude), 13);
+        map.enableScrollWheelZoom();
+        var marker = new BMap.Marker(new BMap.Point(longitude,latitude)); // 创建点
+        map.addOverlay(marker);
+        map.addEventListener("click", function(e) {
+            map.clearOverlays();
+            var markernew = new BMap.Marker(new BMap.Point(e.point.lng, e.point.lat)); // 创建新点
+            map.addOverlay(markernew);
+            var geoc = new BMap.Geocoder();
+            var pt = e.point;
+            geoc.getLocation(pt, function(rs) {
+                var addComp = rs.addressComponents;
+                var address = addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber;
+                //TODO..城市是否开通
+                addComp.city
+                //TODO..城区是否存在
+                addComp.district
+
+
+                if (confirm("是否使用地址【" + address + "】？")) {
+                    $('#busiLongitude').val(e.point.lng);
+                    $('#busiLatitude').val(e.point.lat);
+                    $('#busiAddr').val(address);
+                    adminjs.closewinbox('.add-openbox');
+                    //e.point.lng, e.point.lat
+                }
+            });
+        });
+    });
+    //结算比例选择
+    $('input[name="rCommissionFormulaMode"]').click(function () {
+        var a = $('input[name="rCommissionFormulaMode"]:checked').val();
+        if (a == 1) {
+            $("#divCommissionFixValue").hide();
+            $("#divbusCommissionText").show();
+        }
+        else {
+            $("#divbusCommissionText").hide();
+            $("#divCommissionFixValue").show();
+        }
+    });
+    //市区联动
+    $('#busiCity').change(function () {
+        var selDistrictCode = $("#busiDistrict");
+        selDistrictCode.empty();  //清除选择的城市信息
+        selDistrictCode.append('<option value="" >--城市--</option>');
+        if ($(this).val() != null && $(this).val() != "") {
+            $.post("/BusinessManager/GetOpenCityDistrict", { cityId: $(this).val() }, function (data) {
+                $.each(data, function (i, item) {
+                    selDistrictCode.append('<option  value="' + item.Code + '">' + item.Name + '</option>');
+                });
+                selDistrictCode.val(@Model.districtId);
+            });
+        }
+    });
+    //返回
+    $("#btnReturn").click(function () {
+        window.location.href = "/BusinessManager/BusinessManager";
+    });
+    //保存
+    $("#btnModifyCommit").click(function () {
+        var id = $('#busiId').val();
+        var name = $('#busiName').val();
+        var phoneNo = $('#busiPhoneNo').val();
+        var phoneNo2 = $('#busiPhoneNo2').val();
+        var distribSubsidy = $('#busiWaisong').val();
+        var cityId = $('#busiCity').val();
+        var districtId = $('#busiDistrict').val();
+        var cityName = $('#busiCity option:selected').text();
+        var districtName = $('#busiDistrict option:selected').text();
+        var adress = $('#busiAddr').val();
+        var latitude = $('#busiLatitude').val();
+        var longitude = $('#busiLongitude').val();
+        var commissionType = $('input[name="rCommissionFormulaMode"]:checked').val();
+        var commissionText = $('#busCommissionText').val();
+        var commissionFixValue = $('#CommissionFixValue').val();
+        var businessGroupId = $('#businessGroupID').val();
+        var mealsSettleMode = $('#busiMealsSettleMode').val();
+        var groupId = 0;
+        var originalBusiId = $('#busiSourceId').val();
+        var hidGroupId = $('#hidGroupId').val();
+        if (hidGroupId == 0) {
+            groupId=$('#busGroupId').val();
+        }
+        if (name.trim().length == 0) {
+            alert("请输入商户名称！");
+            return;
+        }
+        if (name.trim().length > 20) {
+            alert("商户名称长度不超过20！");
+            return;
+        }
+        if (originalBusiId.trim().length && isNaN(originalBusiId)) {
+            alert("请输入正确的第三方Id!");
+            return;
+        }
+        var reg = /^0?1\d{10}$/;
+        var decimalFormat = /^[0-9]*(\.[0-9]{1,2})?$/;
+        if (!reg.test(phoneNo)) {
+            alert("请输入正确的手机号!");
+            return;
+        }
+        if (!reg.test(phoneNo2) && phoneNo2.trim().length > 0) {
+            alert("请输入正确的手机号!");
+            return;
+        }
+        if (!decimalFormat.test(distribSubsidy) || distribSubsidy == '') {
+            alert("请输入正确的配送费，且不小于0元！");
+            return;
+        }
+        if (cityId == "") {
+            alert("请选择城市！");
+            return;
+        }
+
+        if (districtId == "") {
+            alert("请选择区域！");
+            return;
+        }
+        if (adress.trim().length == 0) {
+            alert("请输入详细地址！");
+            return;
+        }
+        if (longitude.trim().length == 0) {
+            alert("请输入经度！");
+            return;
+        }
+        if (latitude.trim().length == 0) {
+            alert("请输入纬度！");
+            return;
+        }
+        if (commissionType == 1) {
+            if (commissionText == '' || Number(commissionText) < 1 || Number(commissionText) > 100) {
+                alert("结算比例的区间为1-100!");
+                return;
+            }
+        } else {
+
+            if (!decimalFormat.test(commissionFixValue) || commissionFixValue == '') {
+                alert("请输入正确的固定金额，且不小于0元!");
+                return;
+            }
+        }
+
+        //var dealflag = false;
+        //$(".third-list").each(function () {
+        //    var busiSourceId = $(this).find("input[name=busiSourceId]").val().trim();
+        //    var busGroupId = $(this).find(".selectw").val().trim();
+        //    var busGroupName = $(this).find(".selectw option:selected").text().trim();
+        //    var rAuditStatus = $(this).find("input[type=radio]:checked").val().trim();
+
+        //    if (busiSourceId.trim().length == 0) {
+        //        dealflag = true;
+        //    }
+        //    if (busGroupId.length == 0) {
+        //        dealflag = true;
+        //    }
+        //    thirdBindListStr += busiSourceId + "," + busGroupId+","+busGroupName + "," + rAuditStatus + ";";
+        //});
+        //if (dealflag == true) {
+        //    alert("请输入第三方Id或平台!");
+        //    return false ;
+        //}
+        var paramaters = { "Id": id, "Name": name, "PhoneNo": phoneNo, "PhoneNo2": phoneNo2, "DistribSubsidy": distribSubsidy, "CityId": cityId, "districtId": districtId, "City": cityName,
+            "district": districtName, "Address": adress, "Latitude": latitude, "Longitude": longitude, "CommissionType": commissionType, "BusinessCommission": commissionText,
+            "CommissionFixValue": commissionFixValue, "BusinessGroupId": businessGroupId, "MealsSettleMode": mealsSettleMode,"groupId":groupId,"originalBusiId":originalBusiId };
+        var url = "/BusinessManager/ModifyBusinessDetail";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert(result.Message);
+                    //window.location.href = "/BusinessManager/BusinessManager";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+
+    });
+    //关闭弹层
+    $('.J_closebox').click(function () {
+        adminjs.closewinbox('.add-openbox');
+        return false;
+    });
+</script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=dAeaG6HwIFGlkbqtyKkyFGEC"></script>
+

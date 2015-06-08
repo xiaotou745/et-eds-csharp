@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
+﻿using System.Web;
 using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using System.Net;
+using System;
+using System.Collections.Generic;
 using System.Xml;
 
 namespace ETS.Pay.AliPay
@@ -148,7 +147,7 @@ namespace ETS.Pay.AliPay
             Encoding code = Encoding.GetEncoding(_input_charset);
 
             //待请求参数数组字符串
-            string strRequestData = BuildRequestParaToString(sParaTemp, code);
+            string strRequestData = BuildRequestParaToString(sParaTemp,code);
 
             //把数组转换成流中所需字节数组类型
             byte[] bytesRequestData = code.GetBytes(strRequestData);
@@ -191,7 +190,7 @@ namespace ETS.Pay.AliPay
             }
             catch (Exception exp)
             {
-                strResult = "报错：" + exp.Message;
+                strResult = "报错："+exp.Message;
             }
 
             return strResult;

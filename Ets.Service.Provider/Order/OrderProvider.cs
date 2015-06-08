@@ -47,6 +47,8 @@ using Ets.Dao.Finance;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 using Ets.Model.DomainModel.Area;
+using System.Data;
+using Ets.Dao.Clienter;
 #endregion
 namespace Ets.Service.Provider.Order
 {
@@ -59,6 +61,8 @@ namespace Ets.Service.Provider.Order
         private ISubsidyProvider iSubsidyProvider = new SubsidyProvider();
         private IBusinessGroupProvider iBusinessGroupProvider = new BusinessGroupProvider();
         private readonly BusinessDao _businessDao = new BusinessDao();
+        private readonly ClienterDao clienterDao = new ClienterDao();
+
         private readonly BusinessBalanceRecordDao _businessBalanceRecordDao = new BusinessBalanceRecordDao();
         //和区域有关的  wc
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
@@ -94,6 +98,7 @@ namespace Ets.Service.Provider.Order
 
                     resultModel.businessName = from.BusinessName;
                     resultModel.businessPhone = from.BusinessPhone;
+                    resultModel.businessPhone2 = from.BusinessPhone2;                    
                     if (from.PickUpCity != null)
                     {
                         resultModel.pickUpCity = from.PickUpCity.Replace("市", "");
@@ -179,6 +184,7 @@ namespace Ets.Service.Provider.Order
                     resultModel.Amount = amount; //C端 获取订单的金额 Edit bycaoheyang 20150305
                     resultModel.businessName = from.BusinessName;
                     resultModel.businessPhone = from.BusinessPhone;
+                    resultModel.businessPhone2 = from.BusinessPhone2;
                     resultModel.HadUploadCount = from.HadUploadCount;
                     resultModel.GroupId = from.GroupId;
                     if (from.GroupId == SystemConst.Group3)
@@ -253,7 +259,7 @@ namespace Ets.Service.Provider.Order
         {
             order to = new order();
             ///TODO 订单号生成规则，定了以后要改；
-            to.OrderNo = Helper.generateOrderCode(busiOrderInfoModel.userId);  //根据userId生成订单号(15位)
+            to.OrderNo = Helper.generateOrderCode(busiOrderInfoModel.userId,busiOrderInfoModel.TimeSpan);  //根据userId生成订单号(15位)
             to.businessId = busiOrderInfoModel.userId; //当前发布者
             BusListResultModel business = iBusinessProvider.GetBusiness(busiOrderInfoModel.userId);
             if (business != null)
@@ -604,10 +610,21 @@ namespace Ets.Service.Provider.Order
                     paramodel.store_info.area_code = storeCodes[2];
                 }
                 #endregion
+
+                paramodel.businessId = orderDao.CreateToSqlAddBusiness(paramodel);  //商户id
             }
             else
                 paramodel.businessId = ParseHelper.ToInt(bussinessIdstr);
             #endregion
+            BusListResultModel business = iBusinessProvider.GetBusiness(paramodel.businessId);
+            if (business != null)
+            {
+                paramodel.CommissionType = business.CommissionType;//结算类型：1：固定比例 2：固定金额
+                paramodel.CommissionFixValue = business.CommissionFixValue;//固定金额     
+                paramodel.BusinessGroupId = business.BusinessGroupId;
+                paramodel.MealsSettleMode = business.MealsSettleMode;
+            }
+
 
             #region 根据集团id为店铺设置外送费，结算比例等财务相关信息add by caoheyang 20150417
 
@@ -619,9 +636,9 @@ namespace Ets.Service.Provider.Order
 
             #region 佣金相关  add by caoheyang 20150416
             paramodel.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(1).CommissionFormulaMode);//默认第三方策略，是默认组下的默认策略，目前即是普通策略 
-            paramodel.CommissionType = 1;//结算类型：1：固定比例 2：固定金额
-            paramodel.CommissionFixValue = 0;//固定金额
-            paramodel.BusinessGroupId = 1;//分组ID
+            //paramodel.CommissionType = 1;//结算类型：1：固定比例 2：固定金额
+            //paramodel.CommissionFixValue = 0;//固定金额
+            //paramodel.BusinessGroupId = 1;//分组ID
 
             //计算获得订单骑士佣金
             OrderCommission orderComm = new OrderCommission()
@@ -631,7 +648,7 @@ namespace Ets.Service.Provider.Order
                 OrderCount = paramodel.package_count ?? 1,/*订单数量，默认为1*/
                 BusinessCommission = paramodel.store_info.businesscommission,/*商户结算比例*/
                 BusinessGroupId = paramodel.BusinessGroupId,
-                StrategyId = 0,
+                StrategyId = business.StrategyId,
                 OrderWebSubsidy = paramodel.websitesubsidy
 
             }/*网站补贴*/;
@@ -643,6 +660,14 @@ namespace Ets.Service.Provider.Order
             paramodel.adjustment = commissonPro.GetAdjustment(orderComm);//订单额外补贴金额
 
             #endregion
+            if (!(bool)paramodel.is_pay && paramodel.MealsSettleMode == MealsSettleMode.Status1.GetHashCode())//未付款且线上支付
+            {
+                //paramodel.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(paramodel.total_price) +
+                //               ParseHelper.ToDecimal(paramodel.store_info.delivery_fee) * ParseHelper.ToInt(paramodel.package_count), 2);
+                //只有一个子订单
+                paramodel.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(paramodel.total_price) +
+                              ParseHelper.ToDecimal(paramodel.store_info.delivery_fee), 2);
+            }
 
             string orderNo = null; //订单号码
             try
@@ -651,8 +676,10 @@ namespace Ets.Service.Provider.Order
                 {
                     if (bussinessIdstr == null)
                     {
-                        paramodel.businessId = orderDao.CreateToSqlAddBusiness(paramodel);  //商户id
+                        
                     }
+                    //
+
                     orderNo = Helper.generateOrderCode(paramodel.businessId);
                     paramodel.OrderNo = orderNo;
                     //将当前订单插入到缓存中，设置过期时间30天
@@ -1184,7 +1211,10 @@ namespace Ets.Service.Provider.Order
             to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
             to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
             to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
-
+            if (!(bool)to.IsPay && to.MealsSettleMode == MealsSettleMode.Status1.GetHashCode())//未付款且线上支付
+            {             
+                to.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(from.Amount) , 2);
+            }
 
             to.CommissionFormulaMode = business.StrategyId;
             to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额
@@ -1490,6 +1520,7 @@ namespace Ets.Service.Provider.Order
             orderDM.pickUpCity = order.PickUpCity;
             orderDM.PickUpAddress = order.PickUpAddress;
             orderDM.businessPhone = order.BusinessPhone;
+            orderDM.businessPhone2 = order.BusinessPhone2;
             orderDM.BusinessAddress = order.BusinessAddress;
             orderDM.ReceviceName = order.ReceviceName;
             orderDM.receviceCity = order.ReceviceCity;
@@ -1717,6 +1748,76 @@ namespace Ets.Service.Provider.Order
                 return CancelOrderStatus.CancelOrderError;
             }
             return CancelOrderStatus.Success;
+        }
+        /// <summary>
+        /// 查询配送数据列表
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="totalRows"></param>
+        /// <returns></returns>
+        public IList<DistributionAnalyzeResult> DistributionAnalyze(OrderDistributionAnalyze model, int pageIndex,int pageSize, out int totalRows)
+        {
+            totalRows = 0;
+            DataTable dt = orderDao.DistributionAnalyze(model, pageIndex,pageSize, out totalRows);
+            IList<DistributionAnalyzeResult> list = new List<DistributionAnalyzeResult>();
+            foreach (DataRow item in dt.Rows)
+            {
+                var data = new DistributionAnalyzeResult()
+                {
+                    Id = int.Parse(item["Id"].ToString()),
+                    OrderNo = item["OrderNo"].ToString(),
+                    OrderCount = Int32.Parse(item["OrderCount"].ToString()),
+                    ActualDoneDate = GetDate(item["ActualDoneDate"].ToString()),
+                    PubDate = GetDate(item["PubDate"].ToString()),
+                    GrabTime = GetDate(item["GrabTime"].ToString()),
+                    PickUpAddress = item["PickUpAddress"].ToString(),
+                    ReceviceAddress = item["ReceviceAddress"].ToString(),
+                    TakeTime = GetDate(item["TakeTime"].ToString()),
+                    ReceviceCity = item["ReceviceCity"].ToString(),
+                    TaskMoney = Decimal.Parse(item["OrderCommission"].ToString())
+                };
+                int businessId = GetInt(item["businessId"].ToString());
+                BusListResultModel business = _businessDao.GetBusiness(businessId);
+                if (business != null)
+                {
+                    data.Business = business.Address;
+                    data.BusinessPhone = business.PhoneNo;
+                }
+
+                int supperId = GetInt(item["clienterId"].ToString());
+                clienter clienter = clienterDao.GetById(supperId);
+                if (clienter != null)
+                {
+                    data.clienter = clienter.TrueName;
+                    data.clienterPhone = clienter.PhoneNo;
+                }
+                list.Add(data);
+            }
+            return list;
+        }
+        private int GetInt(string number)
+        {
+            if (string.IsNullOrWhiteSpace(number))
+            {
+                return 0;
+            }
+            return int.Parse(number);
+        }
+        private DateTime? GetDate(string datetime)
+        {
+            if (string.IsNullOrWhiteSpace(datetime))
+            {
+                return null;
+            }
+            return DateTime.Parse(datetime);
+        }
+        /// <summary>
+        /// 获得订单去重城市列表
+        /// </summary>
+        /// <returns></returns>
+        public IList<string> OrderReceviceCity()
+        {
+            return orderDao.OrderReceviceCity();
         }
     }
 }

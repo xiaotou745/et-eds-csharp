@@ -27,7 +27,6 @@ namespace Ets.Dao.Statistics
         public IList<HomeCountTitleModel> GetDayStatistics(int Day)
         {
             string sql = string.Format(@"
-
 declare @starttime varchar(10),@endtime varchar(10),@BusinessCount int,
 @RzqsCount int , @DdrzqsCount int,@businessPrice decimal(18,2),
 @incomeTotal decimal(18,2),@rechargeTotal decimal(18,2),
@@ -67,19 +66,19 @@ t2 as (
 t3 as (
 	 select convert(char(10),CreateTime ,120) PubDate,
 	 sum(TotalPrice)  incomeTotal
-	 from OrderChild(nolock) where ThirdPayStatus=1 
+	 from OrderChild(nolock) where ThirdPayStatus=1 and PayTime between @starttime and @endtime
 	 group by convert(char(10),CreateTime ,120)--在线支付(扫码/代付)总计
 ),
 t4 as (
 	select convert(char(10),OperateTime,120) PubDate,
 	 sum(Amount) rechargeTotal from BusinessBalanceRecord(nolock)
-	 where RecordType = 4 
+	 where RecordType = 9 and OperateTime between @starttime and @endtime
 	group by convert(char(10),OperateTime ,120) 
 	 --商户充值总计
 ),
 t5 as (
 	 (select  convert(char(10),PayTime,120) PubDate,
-	  sum(BalancePrice) withdrawBusinessPrice from BusinessWithdrawForm(nolock) where  Status =3 
+	  sum(BalancePrice) withdrawBusinessPrice from BusinessWithdrawForm(nolock) where  Status =3 and PayTime  between @starttime and @endtime
 	  group by convert(char(10),PayTime,120) 
 	  )
 )
@@ -99,7 +98,7 @@ select
 	min(t1.ThreeSubsidyOrderCount) ThreeSubsidyOrderCount,--三次抢
 	min(t2.ActiveClienter) ActiveClienter, --活跃骑士
 	min(t2.ActiveBusiness) ActiveBusiness, --活跃商家
-	min(t3.incomeTotal) incomeTotal,--在线支付(扫码/代付)总计
+	isnull(min(t3.incomeTotal),0) incomeTotal,--在线支付(扫码/代付)总计
  	isnull( min(t4.rechargeTotal),0) rechargeTotal, --商户充值总计
 	@businessPrice businessBalance, --商户余额总计（应付）
  	isnull( min(t5.withdrawBusinessPrice),0) withdrawBusinessPrice --商户已提款金额（实付）
@@ -452,7 +451,7 @@ declare
 		 as (
 			select convert(char(10),OperateTime,120) PubDate, 
 			sum(Amount) rechargeTotal
-			from BusinessBalanceRecord(nolock) where RecordType = 4 
+			from BusinessBalanceRecord(nolock) where RecordType = 9 and  OperateTime  between @startime  and @endtime
 			group by convert(char(10),OperateTime,120)
 			 --商户充值总计
 		 )
@@ -473,8 +472,8 @@ declare
             isnull(t6.YfPrice, 0) YfPrice,
             isnull(t7.userTotal,0) userTotal,
             isnull(t8.clienterTotal,0) clienterTotal,
-            (isnull( userTotal,0)+isnull(clienterTotal,0)) incomeTotal,
-            isnull(t9.rechargeTotal,0) rechargeTotal 
+            isnull(t9.rechargeTotal,0) rechargeTotal,
+            (isnull( userTotal,0)+isnull(clienterTotal,0))+isnull(t9.rechargeTotal,0) incomeTotal
     from    t
             left join t2 on t.PubDate = t2.PubDate
             left join t3 on t.PubDate = t3.PubDate

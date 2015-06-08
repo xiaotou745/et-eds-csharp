@@ -19,8 +19,9 @@ namespace Ets.Service.IProvider.Common
         /// 2015年3月19日 17:09:53
         /// </summary>
         /// <param name="version">当前版本号</param>
+        /// <param name="isResultData">是否返回所有数据，因为APP端调用时如果是最新则不需要返回AreaModelList的值</param>
         /// <returns></returns>
-        ResultModel<AreaModelList> GetOpenCity(string version);
+        ResultModel<AreaModelList> GetOpenCity(string version, bool isResultData = true);
         /// <summary>
         /// 获取开通城市(只有市)
         /// danny-20150414
@@ -78,5 +79,12 @@ namespace Ets.Service.IProvider.Common
         /// <param name="accountId"></param>
         /// <returns></returns>
         string GetAuthorityCityNameListStr(int accountId = 0);
+        /// <summary>
+        /// 根据城市Id获取对应的区县列表
+        /// danny-20150601
+        /// </summary>
+        /// <param name="cityId"></param>
+        /// <returns></returns>
+        IList<AreaModel> GetOpenCityDistrict(int cityId);
     }
 }

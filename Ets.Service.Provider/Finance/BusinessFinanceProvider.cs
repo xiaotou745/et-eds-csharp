@@ -550,5 +550,15 @@ namespace Ets.Service.Provider.Finance
         {
             return businessFinanceDao.BusinessRecharge(model);
         }
+        /// <summary>
+        /// 获取商户提款收支记录列表分页版
+        /// danny-20150604
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<BusinessBalanceRecord> GetBusinessBalanceRecordListOfPaging(BusinessBalanceRecordSerchCriteria criteria)
+        {
+            return businessFinanceDao.GetBusinessBalanceRecordListOfPaging<BusinessBalanceRecord>(criteria);
+        }
     }
 }

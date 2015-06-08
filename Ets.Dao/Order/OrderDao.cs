@@ -75,6 +75,7 @@ namespace Ets.Dao.Order
         o.CommissionRate ,
         b.Name BusinessName,
         b.PhoneNo BusinessPhone,
+        b.PhoneNo2 BusinessPhone2,
         b.City PickUpCity,
         b.Longitude BusiLongitude,
         b.Latitude BusiLatitude,
@@ -228,7 +229,8 @@ namespace Ets.Dao.Order
                 RecevicePhoneNo,ReceiveProvinceCode,ReceiveCityCode,ReceiveAreaCode,ReceviceAddress,
                 ReceviceLongitude,ReceviceLatitude,businessId,PickUpAddress,Payment,OrderCommission,
                 WebsiteSubsidy,CommissionRate,CommissionFormulaMode,ReceiveProvince,ReceviceCity,ReceiveArea,
-                PickupCode,BusinessCommission,SettleMoney,Adjustment,OrderFrom,Status,CommissionType,CommissionFixValue,BusinessGroupId,Invoice)
+                PickupCode,BusinessCommission,SettleMoney,Adjustment,OrderFrom,Status,CommissionType,CommissionFixValue,BusinessGroupId,Invoice,
+                MealsSettleMode,BusinessReceivable)
                 output Inserted.Id,GETDATE(),@OptName,'新增订单',Inserted.businessId,Inserted.[Status],@Platform
                 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
                 Values(@OrderNo,
@@ -237,7 +239,9 @@ namespace Ets.Dao.Order
                 @RecevicePhoneNo,@ReceiveProvinceCode,@ReceiveCityCode,@ReceiveAreaCode,@ReceviceAddress,
                 @ReceviceLongitude,@ReceviceLatitude,@BusinessId,@PickUpAddress,@Payment,@OrderCommission,
                 @WebsiteSubsidy,@CommissionRate,@CommissionFormulaMode,@ReceiveProvince,@ReceviceCity,@ReceiveArea,
-                @PickupCode,@BusinessCommission,@SettleMoney,@Adjustment,@OrderFrom,@Status,@CommissionType,@CommissionFixValue,@BusinessGroupId,@Invoice);select  IDENT_CURRENT('order') ";
+                @PickupCode,@BusinessCommission,@SettleMoney,@Adjustment,@OrderFrom,@Status,@CommissionType,@CommissionFixValue,@BusinessGroupId,@Invoice,
+                @MealsSettleMode,@BusinessReceivable);
+               select  IDENT_CURRENT('order') ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             //基本参数信息
 
@@ -285,6 +289,8 @@ namespace Ets.Dao.Order
             dbParameters.AddWithValue("@CommissionFixValue", paramodel.CommissionFixValue);//固定金额
             dbParameters.AddWithValue("@BusinessGroupId", paramodel.BusinessGroupId);//分组ID
             dbParameters.AddWithValue("@Invoice", paramodel.invoice_title ?? "");//发票标题
+            dbParameters.AddWithValue("@MealsSettleMode", paramodel.MealsSettleMode);
+            dbParameters.AddWithValue("@BusinessReceivable", paramodel.BusinessReceivable);
 
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertOrdersql, dbParameters);
             return ParseHelper.ToInt(result);
@@ -372,43 +378,36 @@ namespace Ets.Dao.Order
         }
 
         /// <summary>
-        /// CreateToSql  操作插入OrderChild表  hulingbo 
+        /// 操作插入OrderChild表
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150604</UpdateTime>
         /// <param name="paramodel"></param>
         /// <param name="orderId"></param>
         public void CreateToSqlAddOrderChild(CreatePM_OpenApi paramodel, int orderId)
         {
-            const string insertOrderChildSql = @"
-insert into OrderChild
-        (OrderId,
-        ChildId,
-        TotalPrice,
-        GoodPrice,
-        DeliveryPrice,
-        CreateBy,
-        UpdateBy,
-        PayStatus
-)
-values( @OrderId,
-        @ChildId,
-        @TotalPrice,
-        @GoodPrice,
-        @DeliveryPrice,
-        @CreateBy,
-        @UpdateBy,
-        @PayStatus)";
-            IDbParameters dbOrderChildParameters = DbHelper.CreateDbParameters();
-            dbOrderChildParameters.AddWithValue("@OrderId", orderId);
-            dbOrderChildParameters.AddWithValue("@ChildId", 1);
+            const string insertSql = @"
+insert into OrderChild(OrderId,ChildId,TotalPrice,GoodPrice, DeliveryPrice,CreateBy,
+        UpdateBy, PayStatus)
+values( @OrderId,  @ChildId,@TotalPrice,@GoodPrice,@DeliveryPrice,@CreateBy,
+        @UpdateBy, @PayStatus)";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@OrderId", orderId);
+            dbParameters.AddWithValue("@ChildId", 1);
             decimal totalPrice = paramodel.total_price + Convert.ToDecimal(paramodel.delivery_fee);
-            dbOrderChildParameters.AddWithValue("@TotalPrice", totalPrice);
-            dbOrderChildParameters.AddWithValue("@GoodPrice", paramodel.total_price);//订单金额
-            dbOrderChildParameters.AddWithValue("@DeliveryPrice", paramodel.delivery_fee);//外送费
-            dbOrderChildParameters.AddWithValue("@CreateBy", SuperPlatform.第三方对接平台.ToString());
-            dbOrderChildParameters.AddWithValue("@UpdateBy", SuperPlatform.第三方对接平台.ToString());
-            dbOrderChildParameters.AddWithValue("@PayStatus", 1);//临时
+            dbParameters.AddWithValue("@TotalPrice", totalPrice);
+            dbParameters.AddWithValue("@GoodPrice", paramodel.total_price);//订单金额
+            dbParameters.AddWithValue("@DeliveryPrice", paramodel.delivery_fee);//外送费
+            dbParameters.AddWithValue("@CreateBy", SuperPlatform.第三方对接平台.ToString());
+            dbParameters.AddWithValue("@UpdateBy", SuperPlatform.第三方对接平台.ToString());
+            if ((bool)paramodel.is_pay ||
+                           (!(bool)paramodel.is_pay && paramodel.MealsSettleMode == MealsSettleMode.Status0.GetHashCode())
+                           )//已付款 未付款线下付款
+                dbParameters.AddWithValue("@PayStatus", "1");
+            else
+                dbParameters.AddWithValue("@PayStatus", "0");
 
-            DbHelper.ExecuteScalar(SuperMan_Write, insertOrderChildSql, dbOrderChildParameters);
+            DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);
         }
 
         #endregion
@@ -684,6 +683,7 @@ select @@IDENTITY ";
                                         ,b.[City] BusinessCity
                                         ,b.Name BusinessName
                                         ,b.PhoneNo BusinessPhoneNo
+                                        ,b.PhoneNo2 BusinessPhoneNo2
                                         ,b.Address BusinessAddress
                                         ,c.PhoneNo ClienterPhoneNo
                                         ,c.TrueName ClienterTrueName
@@ -1139,7 +1139,7 @@ select  ( select    sum(AccountBalance)
         sum(isnull(OrderCommission, 0)) as YfPrice,  --应付金额
         @incomeTotal incomeTotal, --扫码/代付总计
 		isnull(@rechargeTotal,0) rechargeTotal,--商户充值总计
-		(@incomeTotal+0) allIncomeTotal, --账户收入总计
+		(@incomeTotal+@rechargeTotal) allIncomeTotal, --账户收入总计
 		-2348288.69-(@withdrawClienterPrice) withdrawClienterPrice, --骑士已提现佣金-实付
 		@businessBalance businessBalance,--商家余额总计-应付
 		isnull( @withdrawBusinessPrice,0) withdrawBusinessPrice --商家已提款金额-实付
@@ -2138,7 +2138,9 @@ values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude)";
                     {
                         DataRow dr = dt.NewRow();
                         dr["OrderId"] = orderId;
-                        dr["ChildId"] = order.listOrderChild[i].ChildId;
+                        //dr["ChildId"] = order.listOrderChild[i].ChildId;
+                        int num = i + 1;
+                        dr["ChildId"] = num;
                         decimal totalPrice = order.listOrderChild[i].GoodPrice + Convert.ToDecimal(order.DistribSubsidy);
                         dr["TotalPrice"] = totalPrice;
                         dr["GoodPrice"] = order.listOrderChild[i].GoodPrice;
@@ -2188,7 +2190,7 @@ select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneN
     o.CommissionFixValue,o.BusinessGroupId,o.TimeSpan,o.Invoice,
     isnull(o.DistribSubsidy,0)*isnull(o.OrderCount,0) as TotalDistribSubsidy,(o.Amount+isnull(o.DistribSubsidy,0)*isnull(o.OrderCount,0)) as TotalAmount,
     o.MealsSettleMode,
-    b.[City] BusinessCity,b.Name BusinessName,b.PhoneNo BusinessPhone ,b.Address BusinessAddress ,b.GroupId, 
+    b.[City] BusinessCity,b.Name BusinessName,b.PhoneNo BusinessPhone ,b.PhoneNo2 BusinessPhone2,b.Address BusinessAddress ,b.GroupId, 
     b.Longitude, b.Latitude,REPLACE(b.City,'市','') AS pickUpCity,
     oo.NeedUploadCount,oo.HadUploadCount,oo.GrabTime,
     c.TrueName ClienterName,c.PhoneNo ClienterPhoneNo,
@@ -2630,6 +2632,179 @@ where c.Id=@ClienterId;");
             parm.AddWithValue("@ClienterId", model.clienterId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
+        /// <summary>
+        /// 获得配送数据列表
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="pageIndex"></param>
+        /// <param name="totalRows"></param>
+        /// <returns></returns>
+        public DataTable DistributionAnalyze(OrderDistributionAnalyze model, int pageIndex,int pageSize, out int totalRows)
+        {
+            string sql = @"SELECT {0}
+FROM (
+SELECT 
+oth.PubLatitude,oth.PubLongitude,oth.GrabLatitude,oth.GrabLongitude,oth.CompleteLongitude,oth.CompleteLatitude,
+o.Id,OrderNo,businessId,clienterId,PickUpAddress,ReceviceAddress,ReceviceCity ,OrderCommission
+,PubDate,ActualDoneDate,OrderCount,TakeTime,GrabTime, DATEDIFF(MINUTE,o.PubDate,o.ActualDoneDate) AS FinishDateLength,
+round(geography::Point(ISNULL(oth.PubLatitude,0),ISNULL(oth.PubLongitude,0),4326).STDistance(geography::Point(ISNULL(oth.GrabLatitude,0),ISNULL(oth.GrabLongitude,0),4326)),0)  as PubToGrabDistance,
+round(geography::Point(ISNULL(oth.GrabLatitude,0),ISNULL(oth.GrabLongitude,0),4326).STDistance(geography::Point(ISNULL(oth.CompleteLatitude,0),ISNULL(oth.CompleteLongitude,0),4326)),0)  as GrabToCompleteDistance,
+round(geography::Point(ISNULL(oth.PubLatitude,0),ISNULL(oth.PubLongitude,0),4326).STDistance(geography::Point(ISNULL(oth.CompleteLatitude,0),ISNULL(oth.CompleteLongitude,0),4326)),0)  as PubToCompleteDistance
+FROM [order] o(nolock)
+INNER JOIN [OrderOther] oth(nolock) ON o.Id = oth.OrderId) out
+WHERE 1=1";
 
+            string dataSql = string.Format(sql, " top " + pageSize + " * ");
+            string notTopSql = string.Format(sql, " top " + ((pageIndex - 1) * pageSize).ToString() + " out.Id ");
+            string countSql = string.Format(sql, " count(*) ");
+            if (pageIndex > 1)
+            {
+                dataSql += " AND out.Id not IN({0})";
+
+                //notTopSql = string.Format(sql, " top " + ((pageIndex - 1) * 20).ToString() + " out.Id ") + " order by out.id desc)";
+                //dataSql += " AND out.Id not IN(" + string.Format(sql, " top " + ((pageIndex - 1) * 20).ToString() + " out.Id ") + " order by out.id desc)";
+            }
+
+            IDbParameters parm = DbHelper.CreateDbParameters();
+
+            string[] dataRange = model.GetDataRange();
+            if (dataRange.Length > 1)
+            {
+                if (!string.IsNullOrWhiteSpace(dataRange[0]))
+                {
+                    dataSql += " and out.FinishDateLength>@FinishDateLength1";
+                    notTopSql += " and out.FinishDateLength>@FinishDateLength1";
+                    countSql += " and out.FinishDateLength>@FinishDateLength1";
+                    parm.Add("FinishDateLength1", DbType.Int32, 4).Value = dataRange[0];
+                }
+                if (!string.IsNullOrWhiteSpace(dataRange[1]))
+                {
+                    dataSql += " and out.FinishDateLength<@FinishDateLength2";
+                    notTopSql += " and out.FinishDateLength<@FinishDateLength2";
+                    countSql += " and out.FinishDateLength<@FinishDateLength2";
+                    parm.Add("FinishDateLength2", DbType.Int32, 4).Value = dataRange[1];
+
+                }
+            }
+            string[] grabToComplete = model.GetGrabToComplete();
+            if (grabToComplete.Length > 1)
+            {
+                if (!string.IsNullOrWhiteSpace(grabToComplete[0]))
+                {
+                    dataSql += " and out.GrabToCompleteDistance>@GrabToCompleteDistance1";
+                    notTopSql += " and out.GrabToCompleteDistance>@GrabToCompleteDistance1";
+                    countSql += " and out.GrabToCompleteDistance>@GrabToCompleteDistance1";
+                    parm.Add("GrabToCompleteDistance1", DbType.Int32, 4).Value = grabToComplete[0];
+                }
+                if (!string.IsNullOrWhiteSpace(grabToComplete[1]))
+                {
+                    dataSql += " and out.GrabToCompleteDistance<@GrabToCompleteDistance2";
+                    notTopSql += " and out.GrabToCompleteDistance<@GrabToCompleteDistance2";
+                    countSql += " and out.GrabToCompleteDistance<@GrabToCompleteDistance2";
+                    parm.Add("GrabToCompleteDistance2", DbType.Int32, 4).Value = grabToComplete[1];
+                }
+            }
+            string[] pubToComplete = model.GetPubToComplete();
+            if (pubToComplete.Length > 1)
+            {
+                if (!string.IsNullOrWhiteSpace(pubToComplete[0]))
+                {
+                    dataSql += " and out.PubToCompleteDistance>@PubToCompleteDistance1";
+                    notTopSql += " and out.PubToCompleteDistance>@PubToCompleteDistance1";
+                    countSql += " and out.PubToCompleteDistance>@PubToCompleteDistance1";
+                    parm.Add("PubToCompleteDistance1", DbType.Int32, 4).Value = pubToComplete[0];
+
+                }
+                if (!string.IsNullOrWhiteSpace(pubToComplete[1]))
+                {
+                    dataSql += " and out.PubToCompleteDistance<@PubToCompleteDistance2";
+                    notTopSql += " and out.PubToCompleteDistance<@PubToCompleteDistance2";
+                    countSql += " and out.PubToCompleteDistance<@PubToCompleteDistance2";
+                    parm.Add("PubToCompleteDistance2", DbType.Int32, 4).Value = pubToComplete[1];
+
+                }
+            }
+            string[] pubToGrab = model.GetPubToGrabDistance();
+            if (pubToGrab.Length > 1)
+            {
+                if (!string.IsNullOrWhiteSpace(pubToGrab[0]))
+                {
+                    dataSql += " and out.PubToGrabDistance>@PubToGrabDistance1";
+                    notTopSql += " and out.PubToGrabDistance>@PubToGrabDistance1";
+                    countSql += " and out.PubToGrabDistance>@PubToGrabDistance1";
+                    parm.Add("PubToGrabDistance1", DbType.Int32, 4).Value = pubToGrab[0];
+                }
+                if (!string.IsNullOrWhiteSpace(pubToGrab[1]))
+                {
+                    dataSql += " and out.PubToGrabDistance<@PubToGrabDistance2";
+                    notTopSql += " and out.PubToGrabDistance<@PubToGrabDistance2";
+                    countSql += " and out.PubToGrabDistance<@PubToGrabDistance2";
+                    parm.Add("PubToGrabDistance2", DbType.Int32, 4).Value = pubToGrab[1];
+
+                }
+            }
+            if (model.StartDate != null)
+            {
+                dataSql += " and out.ActualDoneDate>=@StartDate";
+                notTopSql += " and out.ActualDoneDate>=@StartDate";
+                countSql += " and out.ActualDoneDate>=@StartDate";
+                parm.Add("StartDate", DbType.DateTime).Value = model.StartDate.Value.Date.ToString();
+
+            }
+            if (model.EndDate != null)
+            {
+                dataSql += " and out.ActualDoneDate<=@EndDate";
+                notTopSql += " and out.ActualDoneDate<=@EndDate";
+                countSql += " and out.ActualDoneDate<=@EndDate";
+                parm.Add("EndDate", DbType.DateTime).Value = model.EndDate.Value.Date.ToString();
+
+            }
+            if (!string.IsNullOrWhiteSpace(model.City))
+            {
+                dataSql += " and out.ReceviceCity=@ReceiveCity";
+                notTopSql += " and out.ReceviceCity=@ReceiveCity";
+                countSql += " and out.ReceviceCity=@ReceiveCity";
+                parm.Add("ReceiveCity", DbType.String, 45).Value = model.City;
+            }
+            dataSql += " order by out.id desc";
+            notTopSql += " order by out.id desc";
+
+            if (pageIndex > 1)
+            {
+                dataSql = string.Format(dataSql, notTopSql);
+            }
+
+            object count = DbHelper.ExecuteScalar(SuperMan_Read, countSql, parm);
+            totalRows = Convert.ToInt32(count);
+
+            return DbHelper.ExecuteDataTable(SuperMan_Read, dataSql, parm);
+        }
+        /// <summary>
+        /// 订单中所有城市去重列表
+        /// </summary>
+        /// <returns></returns>
+        public IList<string> OrderReceviceCity()
+        {
+            string sql = "select distinct  ReceviceCity from [order] where ReceviceCity is not null";
+
+            IList<string> cities = new List<string>();
+            IDataReader reader = null;
+            try
+            {
+                reader = DbHelper.ExecuteReader(SuperMan_Read, sql);
+                if (reader != null)
+                {
+                    while (reader.Read())
+                    {
+                        string city = reader.GetString(0);
+                        cities.Add(city);
+                    }
+                }
+            }
+            catch { }
+            finally { reader.Close(); }
+
+            return cities;
+        }
     }
 }

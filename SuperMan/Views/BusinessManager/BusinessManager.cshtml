@@ -332,7 +332,7 @@
         var oldCommissionFixValue = $("#oldCommissionFixValue").val(); ////原来商户外送费
         var strategyID = $("#businessGroupID").val();
         var oldStrategyID = $("#oldStrategyID").val();
-        var commissionType = $('input[name="rCommissionFormulaMode"]:checked').val();;
+        var commissionType = $('input[name="rCommissionFormulaMode"]:checked').val();
         var oldBusCommissionWaiSong = $("#oldBusCommissionWaiSong").val();
         var oldCommissionType = $('#oldCommissionType').val();
         if (isNaN(busCommissionText)) {
@@ -393,10 +393,6 @@
         }
         var reg = /^0?1\d{10}$/;
         if (!reg.test(busiPhone)) {
-            alert("请输入正确的手机号!");
-            return;
-        }
-        if (isNaN(busiPhone) && busiPhone.length == 11) {
             alert("请输入正确的手机号!");
             return;
         }

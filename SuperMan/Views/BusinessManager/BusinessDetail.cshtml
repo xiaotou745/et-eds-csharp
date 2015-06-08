@@ -17,7 +17,7 @@
         <tr class="trclass">
             <td>商户名称：@Model.Name</td>
             <td>电话：@Model.PhoneNo</td>
-            <td><input type="hidden" value="@Model.Id" id="hidBusinessId"></td>
+            <td></td>
             <td></td>
         </tr>
         <tr class="trclass">
@@ -33,11 +33,34 @@
             <td>银行账号:@ParseHelper.ToDecrypt(Model.AccountNo)</td>
         </tr>
     </table>
-    <div class="SearchMd">
+    @using (Ajax.BeginForm("PostBusinessBalanceRecord", new RouteValueDictionary { { "pageindex", "" } },
+    new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+    new RouteValueDictionary { { "id", "searchForm" } }))
+    {
+        <div class="SearchMd">
+            <span class="">交易类型: </span>
+            @Html.DropDownList("recordType", new SelectList(EnumExtenstion.GetEnumItems(typeof(BusinessBalanceRecordRecordType)), "Value", "Text"), "全部", new { @class = "selectw", style = "width:143px" })
+            <span class="">提款单号: </span>
+            <input id="relationNo" type="text" name="relationNo" />
+            <br />
+            <span class="">提款日期: </span>
+            <input id="operateTimeStart" readonly="readonly" type="text" name="operateTimeStart" style="width: 191px" />
+            <span class="">到: </span>
+            <input id="operateTimeEnd" readonly="readonly" type="text" name="operateTimeEnd" style="width: 191px" />
+            <input type="hidden" value="@Model.Id" id="businessId" name="businessId">
+            <input type="button" value="查 询" class="searchBtn" id="btnQueryBalanceRecord" />
+            <input type="button" value="导 出" class="searchBtn" id="btnExportBalanceRecord" onclick=" return funExport() " />
+        </div>
+    }
+    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <div style="float:left;width:900px;padding-top:30px" class="control-group" id="dataList">
+        @Html.Partial("_BusinessBalanceRecordList", Model)
+    </div>
+    @*<div class="SearchMd">
         <span class="">交易类型: </span>
         @Html.DropDownList("recordType", new SelectList(EnumExtenstion.GetEnumItems(typeof (BusinessBalanceRecordRecordType)), "Value", "Text"), "全部", new { @class = "selectw", style = "width:143px" })
         <span class="">提款单号: </span>
-        <input id="withwardNo" type="text" name="withwardNo" />
+        <input id="relationNo" type="text" name="relationNo" />
         <br />
         <span class="">提款日期: </span>
         <input id="operateTimeStart" readonly="readonly" type="text" name="operateTimeStart" style="width:191px" />
@@ -48,7 +71,7 @@
     </div>
     <div style="float:left;width:900px;padding-top:30px" class="control-group" id="detaiDiv">
         @Html.Partial("_BusinessBalanceRecordList", Model)
-    </div>
+    </div>*@
 </div>
 <script type="text/javascript">
     var adminjs = new adminglass(); //实例化后台类
@@ -58,28 +81,28 @@
         window.location.hash = '';
     });
     //查询流水记录
-    $("#btnQueryBalanceRecord").click(function () {
-        var operateTimeStart = $('#operateTimeStart').val();
-        var operateTimeEnd = $('#operateTimeEnd').val();
-        var businessId = $('#hidBusinessId').val();
-        var recordType = $('#recordType').val();
-        var relationNo = $('#withwardNo').val();
-        var paramaters = { "businessId": businessId, "relationNo": relationNo, "recordType": recordType, "operateTimeStart": operateTimeStart, "operateTimeEnd": operateTimeEnd };
-        var url = "/BusinessManager/BusinessBalanceRecord";
-        $.ajax({
-            type: 'POST',
-            url: url,
-            data: paramaters,
-            success: function (result) {
-                $("#detaiDiv").html(result);
-            }
-        });
+    //$("#btnQueryBalanceRecord").click(function () {
+    //    var operateTimeStart = $('#operateTimeStart').val();
+    //    var operateTimeEnd = $('#operateTimeEnd').val();
+    //    var businessId = $('#businessId').val();
+    //    var recordType = $('#recordType').val();
+    //    var relationNo = $('#relationNo').val();
+    //    var paramaters = { "businessId": businessId, "relationNo": relationNo, "recordType": recordType, "operateTimeStart": operateTimeStart, "operateTimeEnd": operateTimeEnd };
+    //    var url = "/BusinessManager/BusinessBalanceRecord";
+    //    $.ajax({
+    //        type: 'POST',
+    //        url: url,
+    //        data: paramaters,
+    //        success: function (result) {
+    //            $("#detaiDiv").html(result);
+    //        }
+    //    });
 
-    });
+    //});
     function funExport() {
-        var businessId = $("#hidBusinessId").val();
+        var businessId = $("#businessId").val();
         var recordType = $("#recordType").val();
-        var relationNo = $("#withwardNo").val();
+        var relationNo = $("#relationNo").val();
         var operateTimeStart = $("#operateTimeStart").val();
         var operateTimeEnd = $("#operateTimeEnd").val();
         if (operateTimeStart == "" || operateTimeEnd == "") {
@@ -96,6 +119,7 @@
         return false;
     });
 </script>
+<script src="~/Scripts/mvcpager.js"></script>
 
 
 

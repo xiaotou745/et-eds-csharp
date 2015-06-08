@@ -26,6 +26,7 @@ using Ets.Model.ParameterModel.User;
 using Ets.Model.ParameterModel.Order;
 using Ets.Service.Provider.Order;
 using Ets.Model.DataModel.Order;
+using Ets.Model.DomainModel.Area;
 namespace Ets.Service.Provider.User
 {
 
@@ -228,16 +229,21 @@ namespace Ets.Service.Provider.User
             var code = redis.Get<string>("PostRegisterInfo_B_" + model.phoneNo);
             Enum returnEnum = null;
             if (string.IsNullOrEmpty(model.phoneNo))
+            {
                 returnEnum = CustomerRegisterStatusEnum.PhoneNumberEmpty; //手机号非空验证
+            }
             else if (string.IsNullOrEmpty(model.passWord))
+            {
                 returnEnum = CustomerRegisterStatusEnum.PasswordEmpty;//密码非空验证 
+            }
             else if (string.IsNullOrEmpty(code) || code != model.verifyCode) //验证码正确性验证
             {
                 returnEnum = CustomerRegisterStatusEnum.IncorrectCheckCode; //判断验证法录入是否正确
             }
             else if (dao.CheckBusinessExistPhone(model.phoneNo))
+            {
                 returnEnum = CustomerRegisterStatusEnum.PhoneNumberRegistered;//判断该手机号是否已经注册过
-
+            }
             else if (string.IsNullOrEmpty(model.city) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
                 returnEnum = CustomerRegisterStatusEnum.cityIdEmpty;
             if (returnEnum != null)
@@ -383,7 +389,7 @@ namespace Ets.Service.Provider.User
         /// </summary>
         /// <param name="model">用户名，密码对象</param>
         /// <returns>登录后返回实体对象</returns>
-        public ResultModel<BusiLoginResultModel> PostLogin_B(Model.ParameterModel.Bussiness.LoginModel model)
+        public ResultModel<BusiLoginResultModel> PostLogin_B(LoginModel model)
         {
             try
             {
@@ -483,6 +489,10 @@ namespace Ets.Service.Provider.User
             return dao.UpdateAuditStatus(id, enumStatusType);
         }
 
+        public bool UpdateAuditStatus(int id, int enumStatus)
+        {
+            return dao.UpdateAuditStatus(id, enumStatus);
+        }
         /// <summary>
         ///  根据城市信息查询当前城市下该集团的所有商户信息
         ///  danny-20150317
@@ -504,8 +514,11 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model)
         {
-            if (string.IsNullOrEmpty(model.password))  //密码非空验证
+            if (string.IsNullOrEmpty(model.password))
+            {
+                //密码非空验证
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.NewPwdEmpty);
+            }
             if (string.IsNullOrEmpty(model.checkCode)) //验证码非空验证
             {
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeIsEmpty);
@@ -514,16 +527,22 @@ namespace Ets.Service.Provider.User
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             var code = redis.Get<string>("CheckCodeFindPwd_" + model.phoneNumber);
             if (string.IsNullOrEmpty(code) || code != model.checkCode) //验证码正确性验证
-                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong);
+            { return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong); }
 
             BusinessDao businessDao = new BusinessDao();
             var business = businessDao.GetBusinessByPhoneNo(model.phoneNumber);
-            if (business == null)  //用户是否存在
+            if (business == null) //用户是否存在
+            {
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.ClienterIsNotExist);
+            }
             if (businessDao.UpdateBusinessPwdSql(business.Id, model.password))
+            {
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.Success);
+            }
             else
+            {
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.FailedModifyPwd);
+            }
         }
 
         /// <summary>
@@ -610,6 +629,95 @@ namespace Ets.Service.Provider.User
             redis.Delete(cacheKey);
             return upResult;
         }
+
+
+        /// <summary>
+        /// B端修改商户信息 caoheyang
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>商户的当前状态</returns>
+        public ResultModel<BusiModifyResultModelDM> UpdateBusinessInfoB(BusiAddAddressInfoModel model)
+        {
+            if (model.userId <= 0)  //判断 商户id是否正确
+            {
+                return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.InvalidUserId);
+            }
+            if (string.IsNullOrWhiteSpace(model.phoneNo))
+            {
+                return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.PhoneNumberEmpty);
+            }
+            if (string.IsNullOrWhiteSpace(model.Address))
+            {
+                return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.AddressEmpty);
+            }
+            if (string.IsNullOrWhiteSpace(model.businessName))
+            {
+                return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.BusinessNameEmpty);
+            }
+            UpdateBusinessInfoBPM business = UpdateBusinessInfoBTranslate(model);
+            var busi = dao.GetBusiness(model.userId); //查询商户信息
+            if (busi == null)
+            {
+                return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.InvalidUserId);
+            }
+            if (busi.Status == ConstValues.BUSINESS_NOADDRESS)  //如果商户的状态 为未审核未添加地址，则修改商户状态为 未审核
+            {
+                business.Status = ConstValues.BUSINESS_NOAUDIT;
+            }
+
+            int upResult = dao.UpdateBusinessInfoB(business);
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, model.userId);
+            redis.Delete(cacheKey);
+            return ResultModel<BusiModifyResultModelDM>.Conclude(upResult == -1 ? UpdateBusinessInfoBReturnEnums.UpdateFailed : UpdateBusinessInfoBReturnEnums.Success,
+               new BusiModifyResultModelDM() { userId = model.userId, status = upResult });
+        }
+
+        /// <summary>
+        /// 将入口参数转换为对应的 数据库 Business 实体
+        /// wc 注意这里有商户状态的转换
+        /// </summary>
+        /// <param name="businessModel"></param>
+        /// <returns></returns>
+        private UpdateBusinessInfoBPM UpdateBusinessInfoBTranslate(BusiAddAddressInfoModel businessModel)
+        {
+            var to = new UpdateBusinessInfoBPM();
+            to.Id = businessModel.userId;  //用户id
+            to.Address = string.IsNullOrWhiteSpace(businessModel.Address) ? "" : businessModel.Address.Trim(); //地址
+            to.Name = string.IsNullOrWhiteSpace(businessModel.businessName)?"":businessModel.businessName.Trim(); //商户名称
+            to.Landline = businessModel.landLine; //座机
+            to.PhoneNo2 = businessModel.phoneNo.Trim(); //手机号2
+            to.City = string.IsNullOrWhiteSpace(businessModel.City) ? "" : businessModel.City.Trim(); //市
+            to.district = string.IsNullOrWhiteSpace(businessModel.districtName) ? "" : businessModel.districtName.Trim();  //区域名称
+            to.Province = string.IsNullOrWhiteSpace(businessModel.Province) ? "" : businessModel.Province.Trim();  //省份名称
+            //修改地址转换 区域编码
+            if (!string.IsNullOrWhiteSpace(businessModel.districtName))
+            {
+                AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = businessModel.districtName.Trim(), JiBie = 3 });
+                to.districtId = areaModel != null ? areaModel.NationalCode.ToString() : "";
+                to.AreaCode = areaModel != null ? areaModel.NationalCode.ToString() : "";
+            }
+            //修改地址转换 市编码
+            if (!string.IsNullOrWhiteSpace(businessModel.City))
+            {
+                AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = businessModel.City.Trim(), JiBie = 2 });
+                to.CityId = areaModel != null ? areaModel.NationalCode.ToString() : "";
+                to.CityCode = areaModel != null ? areaModel.NationalCode.ToString() : "";
+            }
+            //修改地址转换 省份编码
+            if (!string.IsNullOrWhiteSpace(businessModel.Province))
+            {
+                AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = businessModel.Province.Trim(), JiBie = 1 });
+                to.ProvinceCode = areaModel != null ? areaModel.NationalCode.ToString() : "";
+            }
+
+            to.Longitude = businessModel.longitude; //经度
+            to.Latitude = businessModel.latitude; //纬度 
+            to.Status = ConstValues.BUSINESS_NOAUDIT;  //用户状态待审核
+            return to;
+        }
+
+
         /// <summary>
         /// 更新图片地址信息
         /// wc
@@ -915,7 +1023,14 @@ namespace Ets.Service.Provider.User
             to.IDCard = paramodel.fields.B_IdCard;
             to.Password = paramodel.fields.B_Password;
             to.PhoneNo = paramodel.fields.PhoneNo.Trim();
-            to.PhoneNo2 = paramodel.fields.PhoneNo2;
+            if (string.IsNullOrEmpty(paramodel.fields.PhoneNo2))
+            {
+                to.PhoneNo2 = paramodel.fields.PhoneNo;
+            }
+            else
+            {
+                to.PhoneNo2 = paramodel.fields.PhoneNo2;
+            }
             to.Latitude = paramodel.fields.B_Latitude;
             to.Longitude = paramodel.fields.B_Longitude;
             to.Name = paramodel.fields.B_Name;
@@ -981,6 +1096,62 @@ namespace Ets.Service.Provider.User
         public BusinessDetailModel GetBusinessDetailById(string businessId)
         {
             return dao.GetBusinessDetailById(businessId);
+        }
+        /// <summary>
+        /// 获取商户第三方绑定关系记录
+        /// danny-20150602
+        /// </summary>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        public IList<BusinessThirdRelationModel> GetBusinessThirdRelation(int businessId)
+        {
+            return dao.GetBusinessThirdRelation(businessId);
+        }
+        /// <summary>
+        /// 修改商户详细信息
+        /// danny-20150602
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public DealResultInfo ModifyBusinessDetail(BusinessDetailModel model)
+        {
+            var dealResultInfo = new DealResultInfo
+            {
+                DealFlag = false
+            };
+            using (var tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (!dao.ModifyBusinessDetail(model))
+                {
+                    dealResultInfo.DealMsg = "修改商户信息失败！";
+                    return dealResultInfo;
+                }
+                //if (!string.IsNullOrWhiteSpace(model.ThirdBindListStr))
+                //{
+                //    dao.DeleteBusinessThirdRelation(model.Id);
+                //    var thirdBindModel = model.ThirdBindListStr.TrimEnd(';').Split(';');
+                //    foreach (var item in thirdBindModel)
+                //    {
+                //        var businessThirdRelationModel = new BusinessThirdRelationModel
+                //        {
+                //            OriginalBusiId = ParseHelper.ToInt(item.Split(',')[0]),
+                //            BusinessId = model.Id,
+                //            GroupId = ParseHelper.ToInt(item.Split(',')[1]),
+                //            GroupName = item.Split(',')[2],
+                //            AuditStatus = ParseHelper.ToInt(item.Split(',')[3])
+                //        };
+                //        if (!dao.AddBusinessThirdRelation(businessThirdRelationModel))
+                //        {
+                //            dealResultInfo.DealMsg = "插入商户第三方绑定关系失败！";
+                //            return dealResultInfo;
+                //        }
+                //    }
+                //}
+                tran.Complete();
+                dealResultInfo.DealMsg = "修改商户信息成功！";
+                dealResultInfo.DealFlag = true;
+                return dealResultInfo;
+            }
         }
     }
 }

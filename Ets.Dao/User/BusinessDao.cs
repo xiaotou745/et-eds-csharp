@@ -318,7 +318,10 @@ namespace Ets.Dao.User
         {
             try
             {
-                string sql = "SELECT COUNT(*) FROM dbo.business(NOLOCK) WHERE PhoneNo=@PhoneNo";
+                string sql = @"SELECT COUNT(1)  FROM dbo.business  a
+LEFT join dbo.[group] b on a.GroupId=b.Id
+where isnull(b.IsModifyBind,1)=1
+and a.PhoneNo=@PhoneNo";
                 IDbParameters parm = DbHelper.CreateDbParameters();
                 parm.Add("@PhoneNo", SqlDbType.NVarChar);
                 parm.SetValue("@PhoneNo", PhoneNo);
@@ -363,7 +366,7 @@ namespace Ets.Dao.User
                                     ,b.AreaCode
                                     ,b.Province
                                     ,b.CommissionTypeId
-                                    ,b.DistribSubsidy
+                                    ,ISNULL(b.DistribSubsidy,0.00) DistribSubsidy
                                     ,b.BusinessCommission
                                     ,g.GroupName
                                     ,b.CommissionType
@@ -398,11 +401,11 @@ namespace Ets.Dao.User
             {
                 sbSqlWhere.AppendFormat(" AND b.GroupId={0} ", criteria.GroupId);
             }
-            if (ParseHelper.ToInt(criteria.BusinessGroupId,0) > 0)
+            if (ParseHelper.ToInt(criteria.BusinessGroupId, 0) > 0)
             {
                 sbSqlWhere.AppendFormat(" AND b.BusinessGroupId={0} ", criteria.BusinessGroupId);
             }
-            if (ParseHelper.ToInt(criteria.CommissionType,0) > 0)
+            if (ParseHelper.ToInt(criteria.CommissionType, 0) > 0)
             {
                 sbSqlWhere.AppendFormat(" AND b.CommissionType={0} ", criteria.CommissionType);
             }
@@ -425,77 +428,26 @@ namespace Ets.Dao.User
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
         /// <summary>
-        ///  新增店铺
-        ///  窦海超
-        ///  2015年3月16日 15:19:47
+        ///  新增店铺  
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150604</UpdateTime>
         /// <param name="model"></param>
         /// <returns>返回商铺ID</returns>
         public int InsertBusiness(RegisterInfoModel model)
         {
-            string sql = @"
-                           INSERT INTO dbo.business
-                            ( Name ,
-                              City ,
-                              district ,
-                              PhoneNo ,
-                              PhoneNo2 ,
-                              Password ,
-                              CheckPicUrl ,
-                              IDCard ,
-                              Address ,
-                              Landline ,
-                              Longitude ,
-                              Latitude ,
-                              Status ,
-                              InsertTime ,
-                              districtId ,
-                              CityId ,
-                              GroupId ,
-                              OriginalBusiId ,
-                              ProvinceCode ,
-                              CityCode ,
-                              AreaCode ,
-                              Province ,
-                              CommissionTypeId ,
-                              DistribSubsidy ,
-                              BusinessCommission
-                            )
-                    VALUES  ( N'' , -- Name - nvarchar(100)
-                              @City , -- City - nvarchar(100)
-                              N'' , -- district - nvarchar(200)
-                              @PhoneNo , -- PhoneNo - nvarchar(20)
-                              N'' , -- PhoneNo2 - nvarchar(20)
-                              @Password , -- Password - nvarchar(255)
-                              N'' , -- CheckPicUrl - nvarchar(255)
-                              N'' , -- IDCard - nvarchar(45)
-                              N'' , -- Address - nvarchar(255)
-                              N'' , -- Landline - nvarchar(15)
-                              0.0 , -- Longitude - float
-                              0.0 , -- Latitude - float
-                              0 , -- Status - tinyint
-                              GETDATE() , -- InsertTime - datetime
-                              '0' , -- districtId - nvarchar(45)
-                              @CityId , -- CityId - nvarchar(45)
-                              @GroupId , -- GroupId - int
-                              0 , -- OriginalBusiId - int
-                              N'' , -- ProvinceCode - nvarchar(20)
-                              N'' , -- CityCode - nvarchar(20)
-                              N'' , -- AreaCode - nvarchar(20)
-                              N'' , -- Province - nvarchar(20)
-                              1 , -- CommissionTypeId - int
-                              NULL , -- DistribSubsidy - numeric
-                              NULL  -- BusinessCommission - decimal
-                            )SELECT @@IDENTITY
-                        ";
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@City", model.city);
-            parm.AddWithValue("@Password", model.passWord);
-            parm.Add("@PhoneNo", SqlDbType.NVarChar);
-            parm.SetValue("@PhoneNo", model.phoneNo);
-            parm.AddWithValue("@CityId", model.CityId);
-            parm.AddWithValue("@GroupId", model.GroupId);
-            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm));
+            const string insertSql = @"         
+insert into dbo.business (City,PhoneNo,PhoneNo2,Password,CityId )
+values( @City,@PhoneNo,@PhoneNo2,@Password,@CityId )
+select @@IDENTITY";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@City", model.city);
+            dbParameters.AddWithValue("@Password", model.passWord);
+            dbParameters.AddWithValue("@PhoneNo", model.phoneNo);
+            dbParameters.AddWithValue("@PhoneNo2", model.phoneNo);
+            dbParameters.AddWithValue("@CityId", model.CityId);
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
         }
 
 
@@ -506,21 +458,28 @@ namespace Ets.Dao.User
         /// <returns>返回该用户实体</returns>
         public DataTable LoginSql(LoginModel model)
         {
-            string sql = @"SELECT  top 1 
-                        Id AS userId,
-                        status,
-                        city ,
-                        districtId,
-                        district,
-                        Address,
-                        Landline,
-                        Name,
-                        cityId,
-                        phoneNo,
-                        PhoneNo2,
-                        DistribSubsidy,ISNULL(OriginalBusiId,0) AS OriginalBusiId
-                        FROM business(nolock) where PhoneNo=@PhoneNo AND Password=@Password order by id desc";
-
+            string sql = @"
+select top 1
+        a.Id as userId ,
+        a.status ,
+        a.city ,
+        a.districtId ,
+        a.district ,
+        a.Address ,
+        a.Landline ,
+        a.Name ,
+        a.cityId ,
+        a.phoneNo ,
+        a.PhoneNo2 ,
+        a.DistribSubsidy ,
+        ISNULL(a.OriginalBusiId, 0) as OriginalBusiId
+from    business (nolock) a
+        left join dbo.[group] (nolock) b on a.GroupId = b.Id
+where   PhoneNo = @PhoneNo
+        and Password = @Password
+        and ISNULL(b.IsModifyBind,1) = 1
+order by a.id desc
+";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@PhoneNo", SqlDbType.NVarChar);
             parm.SetValue("@PhoneNo", model.phoneNo);
@@ -572,7 +531,7 @@ namespace Ets.Dao.User
             ///TODO 类型？
             IDbParameters parm = DbHelper.CreateDbParameters("busiId", DbType.Int32, 4, busiId);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
-            if (dt != null)
+            if (dt != null && dt.Rows.Count > 0)
                 busi = DataTableHelper.ConvertDataTableList<BusListResultModel>(dt)[0];
             return busi;
         }
@@ -650,8 +609,9 @@ namespace Ets.Dao.User
                 }
                 else if (enumStatusType == EnumStatusType.审核取消)
                 {
-                    sql = string.Format(" update business set Status={0} where id=@id;", ConstValues.BUSINESS_NOAUDIT);//BUSINESS_AUDITCANCEL
+                    sql = string.Format(" update business set Status={0} where id=@id;", ConstValues.BUSINESS_AUDITCANCEL);
                 }
+
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
                 dbParameters.AddWithValue("id", id);
                 int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Write, sql, dbParameters);
@@ -678,6 +638,34 @@ namespace Ets.Dao.User
             }
             return reslut;
         }
+
+        /// <summary>
+        /// 更新审核状态
+        /// danny-20150317
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="enumStatusType"></param>
+        /// <returns></returns>
+        public bool UpdateAuditStatus(int id, int enumStatus)
+        {
+            bool reslut = false;
+            try
+            {
+                string sql = "update business set Status=@enumStatus where id=@id";
+                IDbParameters parm = DbHelper.CreateDbParameters();
+                parm.Add("id", DbType.Int32, 4).Value = id;
+                parm.Add("enumStatus", DbType.Int32, 4).Value = enumStatus;
+                return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm)) > 0 ? true : false;
+            }
+            catch (Exception ex)
+            {
+                reslut = false;
+                LogHelper.LogWriter(ex, "更新审核状态");
+                throw;
+            }
+            return reslut;
+        }
+
         /// <summary>
         /// 根据城市信息查询当前城市下该集团的所有商户信息
         ///  danny-20150317
@@ -712,7 +700,7 @@ namespace Ets.Dao.User
 
 
         /// <summary>
-        /// 根据手机号获取用商家信息
+        /// 根据手机号获取用商家信息  B修改商户密码 用到
         /// 窦海超
         /// 2015年3月23日 19:00:52
         /// </summary>
@@ -720,7 +708,9 @@ namespace Ets.Dao.User
         /// <returns>商家信息</returns>
         public BusListResultModel GetBusinessByPhoneNo(string PhoneNo)
         {
-            string sql = @"SELECT Id FROM dbo.business(NOLOCK) WHERE PhoneNo=@PhoneNo";
+            string sql = @"SELECT Id  FROM dbo.business(NOLOCK) a
+LEFT join dbo.[group] b on a.GroupId=b.Id
+where a.PhoneNo=@PhoneNo and b.IsModifyBind=1";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@PhoneNo", SqlDbType.NVarChar);
             parm.SetValue("@PhoneNo", PhoneNo);
@@ -845,6 +835,7 @@ namespace Ets.Dao.User
         {
             string sql = @"SELECT    [Id]
                                     ,[GroupName]
+                                    ,IsModifyBind
                           FROM [group] WHERE IsValid=@IsValid";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@IsValid", ConstValues.GroupIsIsValid);
@@ -958,104 +949,45 @@ namespace Ets.Dao.User
 
 
         /// <summary>
-        ///  新增第三方店铺
-        ///  窦海超
-        ///  2015年3月16日 15:19:47
+        ///  新增第三方店铺   
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150601</UpdateTime>
         /// <param name="model"></param>
         /// <returns>返回商铺ID</returns>
         public int InsertOtherBusiness(Business model)
         {
-            string sql = @"
-                           INSERT INTO dbo.business
-                            ( Name ,
-                              City ,
-                              district ,
-                              PhoneNo ,
-                              PhoneNo2 ,
-                              Password ,
-                              CheckPicUrl ,
-                              IDCard ,
-                              Address ,
-                              Landline ,
-                              Longitude ,
-                              Latitude ,
-                              Status ,
-                              InsertTime ,
-                              districtId ,
-                              CityId ,
-                              GroupId ,
-                              OriginalBusiId ,
-                              ProvinceCode ,
-                              CityCode ,
-                              AreaCode ,
-                              Province ,
-                              CommissionTypeId ,
-                              DistribSubsidy ,
-                              BusinessCommission
-                            )
-                    VALUES  ( @Name , -- Name - nvarchar(100)
-                              @City , -- City - nvarchar(100)
-                              @district , -- district - nvarchar(200)
-                              @PhoneNo , -- PhoneNo - nvarchar(20)
-                              @PhoneNo2 , -- PhoneNo2 - nvarchar(20)
-                              @Password , -- Password - nvarchar(255)
-                              @CheckPicUrl , -- CheckPicUrl - nvarchar(255)
-                              @IDCard , -- IDCard - nvarchar(45)
-                              @Address , -- Address - nvarchar(255)
-                              N'' , -- Landline - nvarchar(15)
-                              @Longitude , -- Longitude - float
-                              @Latitude , -- Latitude - float
-                              @Status, -- Status - tinyint
-                              GETDATE() , -- InsertTime - datetime
-                              @districtId , -- districtId - nvarchar(45)
-                              @CityId , -- CityId - nvarchar(45)
-                              @GroupId , -- GroupId - int
-                              @OriginalBusiId , -- OriginalBusiId - int
-                              @ProvinceCode , -- ProvinceCode - nvarchar(20)
-                              @CityCode , -- CityCode - nvarchar(20)
-                              @AreaCode , -- AreaCode - nvarchar(20)
-                              @Province , -- Province - nvarchar(20)
-                              @CommissionTypeId , -- CommissionTypeId - int
-                              @DistribSubsidy , -- DistribSubsidy - numeric
-                              NULL  -- BusinessCommission - decimal
-                            );select SCOPE_IDENTITY() as id;
-                        ";
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@Name", model.Name);
-            parm.AddWithValue("@City", model.City);
-            parm.AddWithValue("@district", model.district);
-            parm.Add("@PhoneNo", SqlDbType.NVarChar);
-            parm.SetValue("@PhoneNo", model.PhoneNo);
-
-            parm.Add("@PhoneNo2", SqlDbType.NVarChar);
-            parm.SetValue("@PhoneNo2", model.PhoneNo2);
-
-            parm.AddWithValue("@Password", model.Password);
-            parm.AddWithValue("@CheckPicUrl", model.CheckPicUrl);
-
-
-            parm.AddWithValue("@IDCard", model.IDCard);
-            parm.AddWithValue("@Address", model.Address);
-            parm.AddWithValue("@Longitude", model.Longitude);
-            parm.AddWithValue("@Latitude", model.Latitude);
-            parm.AddWithValue("@Status", model.Status);
-            parm.AddWithValue("@districtId", model.districtId);
-            parm.AddWithValue("@CityId", model.CityId);
-            parm.AddWithValue("@GroupId", model.GroupId);
-            parm.AddWithValue("@OriginalBusiId", model.OriginalBusiId);
-            parm.AddWithValue("@CityCode", model.CityCode);
-            parm.AddWithValue("@AreaCode", model.AreaCode);
-            parm.AddWithValue("@Province", model.Province);
-            parm.AddWithValue("@CommissionTypeId", model.CommissionTypeId);
-            parm.AddWithValue("@ProvinceCode", model.ProvinceCode);
-            parm.AddWithValue("@DistribSubsidy", model.DistribSubsidy);
-            object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, parm);
-            if (i != null)
-            {
-                return ParseHelper.ToInt(i.ToString());
-            }
-            return 0;
+            string insertSql = @"
+insert into dbo.business(Name,City,district,PhoneNo,PhoneNo2,Password,CheckPicUrl,
+            IDCard,Address,Longitude,Latitude,Status,districtId,CityId, 
+            ProvinceCode,CityCode,AreaCode,Province,CommissionTypeId,DistribSubsidy)
+            values(@Name,@City,@district,@PhoneNo,@PhoneNo2,@Password,@CheckPicUrl,@IDCard , 
+            @Address,@Longitude,@Latitude,@Status,@districtId,@CityId,
+            @ProvinceCode,@CityCode,@AreaCode,@Province,@CommissionTypeId ,@DistribSubsidy);
+select SCOPE_IDENTITY() as id;    
+";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@Name", model.Name);
+            dbParameters.AddWithValue("@City", model.City);
+            dbParameters.AddWithValue("@district", model.district);
+            dbParameters.AddWithValue("@PhoneNo", model.PhoneNo);
+            dbParameters.AddWithValue("@PhoneNo2", model.PhoneNo2);//写PhoneNo2
+            dbParameters.AddWithValue("@Password", model.Password);
+            dbParameters.AddWithValue("@CheckPicUrl", model.CheckPicUrl);
+            dbParameters.AddWithValue("@IDCard", model.IDCard);
+            dbParameters.AddWithValue("@Address", model.Address);
+            dbParameters.AddWithValue("@Longitude", model.Longitude);
+            dbParameters.AddWithValue("@Latitude", model.Latitude);
+            dbParameters.AddWithValue("@Status", model.Status);
+            dbParameters.AddWithValue("@districtId", model.districtId);
+            dbParameters.AddWithValue("@CityId", model.CityId);  
+            dbParameters.AddWithValue("@CityCode", model.CityCode);
+            dbParameters.AddWithValue("@AreaCode", model.AreaCode);
+            dbParameters.AddWithValue("@Province", model.Province);
+            dbParameters.AddWithValue("@CommissionTypeId", model.CommissionTypeId);
+            dbParameters.AddWithValue("@ProvinceCode", model.ProvinceCode);
+            dbParameters.AddWithValue("@DistribSubsidy", model.DistribSubsidy);
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));  
         }
         /// <summary>
         /// 商户统计
@@ -1184,6 +1116,72 @@ namespace Ets.Dao.User
             }
         }
 
+
+        /// <summary>
+        /// B端修改商户信息 caoheyang
+        /// </summary>
+        /// <param name="business"></param>
+        /// <returns></returns>
+        public int UpdateBusinessInfoB(UpdateBusinessInfoBPM business)
+        {
+            string sqlCheckPicUrl = !string.IsNullOrWhiteSpace(business.CheckPicUrl)
+                ? ",CheckPicUrl='" + business.CheckPicUrl + "'"
+                : "";
+            string sqlBusinessLicensePic = !string.IsNullOrWhiteSpace(business.BusinessLicensePic)
+                ? ",BusinessLicensePic='" + business.BusinessLicensePic + "'"
+                : "";
+            string upSql = string.Format(@"UPDATE  dbo.business
+                            SET     [Address] = @Address ,
+                                    PhoneNo2 = @PhoneNo2 ,
+                                    [Name] = @Name ,
+                                    Landline = @Landline ,
+                                    district = @district ,
+                                    districtId = @districtId ,
+                                    Longitude = @Longitude ,
+                                    Latitude = @Latitude ,
+                                    [Status]= @Status,
+                                    AreaCode = @AreaCode ,
+                                    ProvinceCode = @ProvinceCode ,
+                                    Province = @Province ,
+                                    CityId = @CityId ,
+                                    CityCode = @CityCode ,
+                                    City = @City
+                                    {0}{1}
+                            OUTPUT  Inserted.[Status]
+                            WHERE   Id = @busiID", sqlCheckPicUrl, sqlBusinessLicensePic);
+
+            IDbParameters parm = DbHelper.CreateDbParameters();
+
+            parm.AddWithValue("@Address", business.Address);
+            parm.Add("@PhoneNo2", SqlDbType.NVarChar);
+            parm.SetValue("@PhoneNo2", business.PhoneNo2);
+            parm.AddWithValue("@Name", business.Name);
+            parm.AddWithValue("@Landline", business.Landline);
+            parm.AddWithValue("@district", business.district);
+            parm.AddWithValue("@districtId", business.districtId);
+            parm.AddWithValue("@Longitude", business.Longitude);
+            parm.AddWithValue("@Latitude", business.Latitude);
+            parm.AddWithValue("@Status", business.Status);
+            parm.AddWithValue("@AreaCode", business.AreaCode);
+            parm.AddWithValue("@ProvinceCode", business.ProvinceCode);
+            parm.AddWithValue("@Province", business.Province);
+            parm.AddWithValue("@CityId", business.CityId);
+            parm.AddWithValue("@CityCode", business.CityCode);
+            parm.AddWithValue("@City", business.City);
+            parm.AddWithValue("@busiID", business.Id);
+            try
+            {
+                object executeScalar = DbHelper.ExecuteScalar(SuperMan_Write, upSql, parm);
+                return ParseHelper.ToInt(executeScalar, -1);
+            }
+            catch (Exception ex)
+            {
+                //记日志
+                return -1;
+            }
+
+        }
+
         /// <summary>
         /// 根据原平台商户Id和订单来源获取该商户信息
         /// 窦海超
@@ -1304,81 +1302,33 @@ namespace Ets.Dao.User
 
 
         /// <summary>
-        ///  后台新增店铺
-        ///  平扬
-        ///  2015年4月17日 17:19:47
+        ///  后台新增店铺   
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>2015064</UpdateTime>
         /// <param name="model"></param>
         /// <returns>返回商铺ID</returns>
         public int addBusiness(AddBusinessModel model)
         {
-            string sql = @"
-                           INSERT INTO dbo.business
-                            ( Name ,
-                              City ,
-                              district ,
-                              PhoneNo ,
-                              PhoneNo2 ,
-                              Password ,
-                              CheckPicUrl ,
-                              IDCard ,
-                              Address ,
-                              Landline ,
-                              Longitude ,
-                              Latitude ,
-                              Status ,
-                              InsertTime ,
-                              districtId ,
-                              CityId ,
-                              GroupId ,
-                              OriginalBusiId ,
-                              ProvinceCode ,
-                              CityCode ,
-                              AreaCode ,
-                              Province ,
-                              CommissionTypeId ,
-                              DistribSubsidy ,
-                              BusinessCommission
-                            )
-                    VALUES  ( @Name, -- Name - nvarchar(100)
-                              @City , -- City - nvarchar(100)
-                              N'' , -- district - nvarchar(200)
-                              @PhoneNo , -- PhoneNo - nvarchar(20)
-                              N'' , -- PhoneNo2 - nvarchar(20)
-                              @Password , -- Password - nvarchar(255)
-                              N'' , -- CheckPicUrl - nvarchar(255)
-                              N'' , -- IDCard - nvarchar(45)
-                              @Address, -- Address - nvarchar(255)
-                              N'' , -- Landline - nvarchar(15)
-                              0.0 , -- Longitude - float
-                              0.0 , -- Latitude - float
-                              1 , -- Status - tinyint
-                              GETDATE() , -- InsertTime - datetime
-                              '0' , -- districtId - nvarchar(45)
-                              @CityId , -- CityId - nvarchar(45)
-                              @GroupId , -- GroupId - int
-                              0 , -- OriginalBusiId - int
-                              N'' , -- ProvinceCode - nvarchar(20)
-                              N'' , -- CityCode - nvarchar(20)
-                              N'' , -- AreaCode - nvarchar(20)
-                              N'' , -- Province - nvarchar(20)
-                              1 , -- CommissionTypeId - int
-                              @DistribSubsidy , -- DistribSubsidy - numeric
-                              @BusinessCommission  -- BusinessCommission - decimal
-                            )SELECT @@IDENTITY
-                        ";
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@City", model.city);
-            parm.AddWithValue("@Password", "A06F6A211CBEDF374FC367FA231865DE");
-            parm.Add("@PhoneNo", SqlDbType.NVarChar);
-            parm.SetValue("@PhoneNo", model.phoneNo);
-            parm.AddWithValue("@CityId", model.CityId);
-            parm.AddWithValue("@GroupId", model.GroupId);
-            parm.AddWithValue("@Name", model.businessName);
-            parm.AddWithValue("@Address", model.businessaddr);
-            parm.AddWithValue("@DistribSubsidy", model.businessWaisong);
-            parm.AddWithValue("@BusinessCommission", model.businessCommission);
-            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm));
+            const string insertSql = @"
+insert into dbo.business(City,PhoneNo,PhoneNo2,Password,CityId ,         
+                          Name,Address,GroupId ,DistribSubsidy,BusinessCommission)
+values  ( @City , @PhoneNo,@PhoneNo2, @Password ,@CityId , 
+                          @Name,@Address, @GroupId,@DistribSubsidy, @BusinessCommission)
+select @@IDENTITY ";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@City", model.city);
+            dbParameters.AddWithValue("@Password", "A06F6A211CBEDF374FC367FA231865DE");
+            dbParameters.AddWithValue("@PhoneNo", model.phoneNo);
+            dbParameters.AddWithValue("@PhoneNo2", model.phoneNo);
+            dbParameters.AddWithValue("@CityId", model.CityId);
+            dbParameters.AddWithValue("@Name", model.businessName);
+            dbParameters.AddWithValue("@Address", model.businessaddr);
+            dbParameters.AddWithValue("@GroupId", model.GroupId);
+            dbParameters.AddWithValue("@DistribSubsidy", model.businessWaisong);
+            dbParameters.AddWithValue("@BusinessCommission", model.businessCommission);
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
         }
 
 
@@ -1723,28 +1673,34 @@ SELECT   b.Id ,
          b.[Status] ,
          b.InsertTime ,
          b.districtId ,
-         b.CityId ,
-         b.GroupId , 
+         b.CityId ,         
          b.ProvinceCode ,
          b.CityCode ,
          b.AreaCode ,
          b.Province ,
-         b.DistribSubsidy,
-         b.BusinessCommission ,
-         b.OriginalBusiId,
+         ISNULL(b.DistribSubsidy,0.00) DistribSubsidy,
+         b.BusinessCommission ,     
          b.CommissionType,
          b.CommissionFixValue,
          b.BusinessGroupId,
          b.BalancePrice,
          b.AllowWithdrawPrice,
          b.HasWithdrawPrice,
+         b.CheckPicUrl,
+         b.BusinessLicensePic,
+         b.MealsSettleMode,
+         b.GroupId,
+         b.OriginalBusiId,
          bfa.TrueName,
          bfa.AccountNo,
          bfa.AccountType,
          bfa.OpenBank,
-         bfa.OpenSubBank
+         bfa.OpenSubBank,
+         g.GroupName,
+         ISNULL(g.IsModifyBind,0) IsModifyBind
 FROM business b WITH(NOLOCK) 
 	Left join BusinessFinanceAccount bfa WITH(NOLOCK) ON b.Id=bfa.BusinessId AND bfa.IsEnable=1
+    Left join [group] g WITH(NOLOCK) on g.Id=b.GroupId 
 WHERE b.Id = @BusinessId  ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@BusinessId", businessId);
@@ -1804,6 +1760,152 @@ join dbo.business b (nolock) on o.businessId = b.Id
              {
                  Name = datarow["Name"].ToString()
              });
+        }
+        /// <summary>
+        /// 获取商户第三方绑定关系记录
+        /// danny-20150602
+        /// </summary>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        public IList<BusinessThirdRelationModel> GetBusinessThirdRelation(int businessId)
+        {
+            string sql = @"  
+SELECT btr.[Id]
+      ,btr.[BusinessId]
+      ,btr.[OriginalBusiId]
+      ,btr.[GroupId]
+      ,btr.[GroupName]
+      ,btr.[AuditStatus]
+      ,ISNULL(g.IsModifyBind,0) IsModifyBind
+FROM BusinessThirdRelation btr with(nolock)
+JOIN [group] g with(nolock) on btr.GroupId=g.Id
+WHERE btr.BusinessId=@BusinessId
+ORDER BY btr.Id;";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@BusinessId", businessId);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            return MapRows<BusinessThirdRelationModel>(dt);
+        }
+        /// <summary>
+        /// 修改商户详细信息
+        /// danny-20150602
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ModifyBusinessDetail(BusinessDetailModel model)
+        {
+
+            string remark = model.OptUserName + "通过后台管理系统修改商户信息";
+            string sql = @"UPDATE business 
+                            SET Name=@Name,
+                                PhoneNo=@PhoneNo,
+                                PhoneNo2=@PhoneNo2,
+                                DistribSubsidy=@DistribSubsidy,
+                                CityId=@CityId,
+                                districtId=@districtId,
+                                City=@City,
+                                district=@district,
+                                Address=@Address,
+                                Latitude=@Latitude,
+                                Longitude=@Longitude,
+                                BusinessGroupId=@BusinessGroupId,
+                                MealsSettleMode=@MealsSettleMode,
+                                CommissionType=@CommissionType,
+                                OriginalBusiId=@OriginalBusiId,
+                                           ";
+            if (model.GroupId > 0)
+            {
+                sql += " GroupId=@GroupId, ";
+            }
+            if (model.CommissionType == 1)
+            {
+                sql += " BusinessCommission=@BusinessCommission ";
+            }
+            else
+            {
+                sql += " CommissionFixValue=@CommissionFixValue ";
+            }
+            sql += @" OUTPUT
+                        Inserted.Id,
+                        @OptId,
+                        @OptName,
+                        GETDATE(),
+                        3,
+                        @Remark
+                    INTO BusinessOptionLog
+                        (BusinessId,
+                        OptId,
+                        OptName,
+                        InsertTime,
+                        Platform,
+                        Remark)
+                        WHERE  Id = @Id;";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Name", model.Name);
+            parm.AddWithValue("@PhoneNo", model.PhoneNo);
+            parm.AddWithValue("@PhoneNo2", model.PhoneNo2);
+            parm.AddWithValue("@DistribSubsidy", model.DistribSubsidy);
+            parm.AddWithValue("@CityId", model.CityId);
+            parm.AddWithValue("@districtId", model.districtId);
+            parm.AddWithValue("@City", model.City);
+            parm.AddWithValue("@district", model.district);
+            parm.AddWithValue("@Address", model.Address);
+            parm.AddWithValue("@Latitude", model.Latitude);
+            parm.AddWithValue("@Longitude", model.Longitude);
+            parm.AddWithValue("@CommissionType", model.CommissionType);
+            parm.AddWithValue("@BusinessCommission", model.BusinessCommission);
+            parm.AddWithValue("@CommissionFixValue", model.CommissionFixValue);
+            parm.AddWithValue("@BusinessGroupId", model.BusinessGroupId);
+            parm.AddWithValue("@MealsSettleMode", model.MealsSettleMode);
+            parm.AddWithValue("@GroupId", model.GroupId);
+            parm.AddWithValue("@OriginalBusiId", model.OriginalBusiId ?? 0);
+            parm.AddWithValue("@Id", model.Id);
+            parm.AddWithValue("@OptId", model.OptUserId);
+            parm.AddWithValue("@OptName", model.OptUserName);
+            parm.AddWithValue("@Remark", remark);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
+        /// <summary>
+        /// 删除商户第三方绑定关系记录
+        /// danny-20150602
+        /// </summary>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        public bool DeleteBusinessThirdRelation(int businessId)
+        {
+            string sql = @" DELETE FROM [BusinessThirdRelation] WHERE BusinessId=@BusinessId;";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@BusinessId", businessId);
+            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm)) > 0;
+        }
+        /// <summary>
+        /// 添加商户第三方绑定关系记录
+        /// danny-20150602
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool AddBusinessThirdRelation(BusinessThirdRelationModel model)
+        {
+            string sql = string.Format(@" 
+insert into BusinessThirdRelation
+            ([BusinessId]
+           ,[OriginalBusiId]
+           ,[GroupId]
+           ,[GroupName]
+           ,[AuditStatus])
+VALUES
+           (@BusinessId, 
+            @OriginalBusiId,
+            @GroupId,
+            @GroupName,
+            @AuditStatus);");
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@BusinessId", model.BusinessId);
+            parm.AddWithValue("@OriginalBusiId", model.OriginalBusiId);
+            parm.AddWithValue("@GroupId", model.GroupId);
+            parm.AddWithValue("@GroupName", model.GroupName);
+            parm.AddWithValue("@AuditStatus", model.AuditStatus);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
 
 
