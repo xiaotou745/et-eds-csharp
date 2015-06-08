@@ -366,7 +366,7 @@ and a.PhoneNo=@PhoneNo";
                                     ,b.AreaCode
                                     ,b.Province
                                     ,b.CommissionTypeId
-                                    ,b.DistribSubsidy
+                                    ,ISNULL(b.DistribSubsidy,0.00) DistribSubsidy
                                     ,b.BusinessCommission
                                     ,g.GroupName
                                     ,b.CommissionType
