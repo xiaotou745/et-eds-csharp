@@ -1755,10 +1755,10 @@ namespace Ets.Service.Provider.Order
         /// <param name="model"></param>
         /// <param name="totalRows"></param>
         /// <returns></returns>
-        public IList<DistributionAnalyzeResult> DistributionAnalyze(OrderDistributionAnalyze model, int pageIndex, out int totalRows)
+        public IList<DistributionAnalyzeResult> DistributionAnalyze(OrderDistributionAnalyze model, int pageIndex,int pageSize, out int totalRows)
         {
             totalRows = 0;
-            DataTable dt = orderDao.DistributionAnalyze(model, pageIndex, out totalRows);
+            DataTable dt = orderDao.DistributionAnalyze(model, pageIndex,pageSize, out totalRows);
             IList<DistributionAnalyzeResult> list = new List<DistributionAnalyzeResult>();
             foreach (DataRow item in dt.Rows)
             {

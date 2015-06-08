@@ -2639,7 +2639,7 @@ where c.Id=@ClienterId;");
         /// <param name="pageIndex"></param>
         /// <param name="totalRows"></param>
         /// <returns></returns>
-        public DataTable DistributionAnalyze(OrderDistributionAnalyze model, int pageIndex, out int totalRows)
+        public DataTable DistributionAnalyze(OrderDistributionAnalyze model, int pageIndex,int pageSize, out int totalRows)
         {
             string sql = @"SELECT {0}
 FROM (
@@ -2654,8 +2654,8 @@ FROM [order] o(nolock)
 INNER JOIN [OrderOther] oth(nolock) ON o.Id = oth.OrderId) out
 WHERE 1=1";
 
-            string dataSql = string.Format(sql, " top 20 * ");
-            string notTopSql = string.Format(sql, " top " + ((pageIndex - 1) * 20).ToString() + " out.Id ");
+            string dataSql = string.Format(sql, " top " + pageSize + " * ");
+            string notTopSql = string.Format(sql, " top " + ((pageIndex - 1) * pageSize).ToString() + " out.Id ");
             string countSql = string.Format(sql, " count(*) ");
             if (pageIndex > 1)
             {
