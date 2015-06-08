@@ -1,0 +1,160 @@
+﻿@using ETS.Data.PageData
+@using Ets.Model.DataModel.Finance
+@using ETS.Util;
+@using NPOI.HSSF.Record.Formula.Functions
+<table border="0" cellspacing="0" cellpadding="0" class="tbstyle" width="900">
+    <thead>
+        <tr class="tdbg">
+            <th>编号</th>
+            <th>骑士姓名</th>
+            <th>骑士电话</th>
+            <th>时间</th>
+            <th>状态</th>
+            <th>操作人</th>
+            <th>操作</th>
+    </thead>
+    <tbody>
+        @{
+            //var businessBalanceRecordList = ViewBag.businessBalanceRecord as List<Ets.Model.DataModel.Finance.BusinessBalanceRecord>;
+            var businessBalanceRecord = ViewBag.businessBalanceRecord as PageInfo<BusinessBalanceRecord>;
+            if (businessBalanceRecord != null && businessBalanceRecord.Records.Count > 0)
+            {
+                var i = 0;
+                var recordTypeDes = "";
+                foreach (var item in businessBalanceRecord.Records)
+                {
+                    recordTypeDes = ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.BusinessBalanceRecordRecordType)item.RecordType).GetType(), (ETS.Enums.BusinessBalanceRecordRecordType)item.RecordType).Text;
+                    i++;
+                    <tr id="@item.Id">
+                        <td>@recordTypeDes</td>
+                        <td>
+                            @if (item.RecordType == 3 || item.RecordType == 4 || item.RecordType == 5 || item.RecordType == 9)
+                            {
+                                <a href="javascript:funLookDetail(@item.WithwardId)">@item.RelationNo</a>
+                            }
+                            else
+                            {
+                                <a href="/Order/OrderDetail?OrderNo=@item.RelationNo&OrderId=@item.WithwardId ">@item.RelationNo</a>
+                            }
+                        </td>
+                        <td>￥@ParseHelper.ToSplitByPercentile(false, item.Amount)</td>
+                        <td>￥@ParseHelper.ToSplitByPercentile(false, item.Balance)</td>
+                        <td>@(item.Status == ETS.Enums.BusinessBalanceRecordStatus.Success.GetHashCode() ? "交易成功" : "交易中")</td>
+                        <td>@item.OperateTime</td>
+                        <td>@item.Operator</td>
+                    </tr>
+                }
+            }
+        }
+    </tbody>
+</table>
+@{
+    if (businessBalanceRecord != null)
+    {
+        ViewBag.ActionName = "PostBusinessBalanceRecord";
+        @Html.Partial("~/views/shared/PagerControl.cshtml", businessBalanceRecord)
+    }
+}
+@*查看申请单详情*@
+<div class="selectSupplierDish">
+    <div class="add-openbox add-form" id="WithdrawDetailShow" style="width:480px">
+        <fieldset>
+            <div style="font-size:18px;"><center><b>商户提款详情</b></center></div>
+        </fieldset>
+        <fieldset style="border-top:hidden">
+            <table border="0" cellspacing="0" cellpadding="0" style="font-size:16px;width:450px">
+                <tr>
+                    <td><span class="">提现日期: <label id="labWithdrawTime"></label></span></td>
+                </tr>
+                <tr>
+                    <td><span class="">提现状态: <label id="labWithdrawStatus"></label></span></td>
+                </tr>
+                <tr>
+                    <td><span class="">交易流水号: <label id="labWithdrawNo"></label></span> </td>
+                </tr>
+                <tr>
+                    <td><span class="">提现金额: <label id="labAmount"></label></span></td>
+                </tr>
+                <tr>
+                    <td><span class="">提款商铺: <label id="labBusinessName"></label></span></td>
+                </tr>
+                <tr>
+                    <td><span class="">商铺电话: <label id="labBusinessPhoneNo"></label></span></td>
+                </tr>
+                <tr>
+                    <td><span class="">开户银行: <label id="labBusinessOpenBank"></label></span></td>
+                </tr>
+                <tr>
+                    <td><span class="">开户支行: <label id="labBusinessOpenSubBank"></label></span></td>
+                </tr>
+                <tr>
+                    <td><span class="">账户名: <label id="labTrueName"></label></span></td>
+                </tr>
+                <tr>
+                    <td><span class="">银行卡号: <label id="labAccountNo"></label></span></td>
+                </tr>
+            </table>
+        </fieldset>
+        <p class="btnbox">
+            <input value="关闭" type="button" class="J_closebox qxBtn" />
+        </p>
+    </div>
+</div>
+<script type="text/javascript">
+    var adminjs = new adminglass(); //实例化后台类
+    //查看提款单详情弹框
+    function funLookDetail(withwardId) {
+        funGetBusinessWithdrawForm(withwardId);
+        adminjs.openwinbox('#WithdrawDetailShow');
+    }
+    //查看提款单详情
+    function funGetBusinessWithdrawForm(withwardId) {
+
+        var paramaters = { "withwardId": withwardId };
+        var url = "/BusinessWithdraw/GetBusinessWithdrawForm";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result != null) {
+                    var jsonstr = $.parseJSON(result);
+                    var withdrawTime = jsonstr.WithdrawTime.replace("T", " ");
+                    var strstatus = "";
+                    if (jsonstr.Status == 1) {
+                        strstatus = "待审核";
+                    }
+                    else if (jsonstr.Status == 2) {
+                        strstatus = "审核通过";
+                    }
+                    else if (jsonstr.Status == 3) {
+                        strstatus = "打款完成";
+                    }
+                    else if (jsonstr.Status == -1) {
+                        strstatus = "审核拒绝";
+                    }
+                    else if (jsonstr.Status == -2) {
+                        strstatus = "打款失败";
+                    }
+                    $('#labWithdrawTime').text(withdrawTime);
+                    $('#labWithdrawStatus').text(strstatus);
+                    $('#labWithdrawNo').text(jsonstr.WithwardNo);
+                    $('#labAmount').text('￥'+jsonstr.Amount);
+                    $('#labBusinessName').text(jsonstr.BusinessName);
+                    $('#labBusinessPhoneNo').text(jsonstr.BusinessPhoneNo);
+                    $('#labBusinessOpenBank').text(jsonstr.OpenBank);
+                    $('#labBusinessOpenSubBank').text(jsonstr.OpenSubBank);
+                    $('#labTrueName').text(jsonstr.TrueName);
+                    $('#labAccountNo').text(jsonstr.AccountNo);
+                }
+            }
+        });
+    }
+    //关闭弹层
+    $('.J_closebox').click(function () {
+        adminjs.closewinbox('.add-openbox');
+        return false;
+    });
+</script>
+
+
