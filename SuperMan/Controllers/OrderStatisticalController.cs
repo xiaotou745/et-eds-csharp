@@ -41,7 +41,7 @@ namespace SuperMan.Controllers
         public ActionResult DistributionAnalyze()
         {
             int totalRows;
-            IList<DistributionAnalyzeResult> list = iOrderProvider.DistributionAnalyze(new OrderDistributionAnalyze(), 1, out totalRows);
+            IList<DistributionAnalyzeResult> list = iOrderProvider.DistributionAnalyze(new OrderDistributionAnalyze(), 1,20, out totalRows);
 
             int pagecount = (int)Math.Ceiling(totalRows / 20d);
             var pageinfo = new PageInfo<DistributionAnalyzeResult>(totalRows, 1, list, pagecount);
@@ -58,7 +58,7 @@ namespace SuperMan.Controllers
         public ActionResult DistributionAnalyze(OrderDistributionAnalyze model)
         {
             int totalRows;
-            IList<DistributionAnalyzeResult> list = iOrderProvider.DistributionAnalyze(model, model.PageIndex, out totalRows);
+            IList<DistributionAnalyzeResult> list = iOrderProvider.DistributionAnalyze(model, model.PageIndex, 20, out totalRows);
 
             int pagecount = (int)Math.Ceiling(totalRows / 20d);
             var pageinfo = new PageInfo<DistributionAnalyzeResult>(totalRows, model.PageIndex, list, pagecount);
@@ -67,7 +67,7 @@ namespace SuperMan.Controllers
         public ActionResult DistributionAnalyzeExport(OrderDistributionAnalyze model)
         {
             int totalRows;
-            IList<DistributionAnalyzeResult> list = iOrderProvider.DistributionAnalyze(model, model.PageIndex, out totalRows);
+            IList<DistributionAnalyzeResult> list = iOrderProvider.DistributionAnalyze(model, 1, 99999, out totalRows);
 
             string excelContent = this.CreateExcel(list);
 

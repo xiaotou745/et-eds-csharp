@@ -103,11 +103,27 @@
         $('#endDate').datepicker();
 
         $("#btnImport").click(function () {
+            var startDate = $("#startDate").val();
+            var endDate = $("#endDate").val();
+            
+            if (startDate == "" || endDate == "") {
+                alert("请输入时间范围!");
+                return;
+            }
+            var timespan = new Date(endDate) - new Date(startDate);
+            var day = timespan / 1000 / 60 / 60 / 24;
+
+            if (day > 3) {
+                alert("只能导出四天以内的信息");
+                return;
+                return;
+            }
+
+
             var data = $("#searchForm").serialize();
             var url ="@Url.Action("DistributionAnalyzeExport")";
             url = url + "?" + data;
 
-            alert(url);
             window.location.href = url;
         });
     });

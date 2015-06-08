@@ -241,7 +241,7 @@ namespace Ets.Service.IProvider.Order
         /// 配送数据分析
         /// </summary>
         /// <param name="model"></param>
-        IList<DistributionAnalyzeResult> DistributionAnalyze(OrderDistributionAnalyze model, int pageIndex, out int totalRows);
+        IList<DistributionAnalyzeResult> DistributionAnalyze(OrderDistributionAnalyze model, int pageIndex,int pageSize, out int totalRows);
         /// <summary>
         /// 订单中所有城市去重列表
         /// </summary>
