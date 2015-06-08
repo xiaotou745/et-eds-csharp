@@ -156,13 +156,18 @@ namespace SuperManWebApi.Controllers
             //if (model.IsUpdateCheckPicUrl == 0)
             //{
             BusiAddAddressInfoModel model = new BusiAddAddressInfoModel();
+            model.userId = ParseHelper.ToInt(HttpContext.Current.Request.Form["UserId"], 0);
+            model.phoneNo = HttpContext.Current.Request.Form["phoneNo"];
+            model.Address = HttpContext.Current.Request.Form["Address"];
+            model.businessName = HttpContext.Current.Request.Form["businessName"];
+
             ImageHelper ih = new ImageHelper();
             if (HttpContext.Current.Request.Files["CheckPicUrl"] == null)
             {
                 return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.InvalidFileFormat);
             }
             var file = HttpContext.Current.Request.Files["CheckPicUrl"];
-          
+
             ImgInfo imgInfo = ih.UploadImg(file, 0);
             if (!string.IsNullOrWhiteSpace(imgInfo.FailRemark))
             {
