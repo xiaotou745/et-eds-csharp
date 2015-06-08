@@ -156,10 +156,10 @@ namespace SuperManWebApi.Controllers
             //if (model.IsUpdateCheckPicUrl == 0)
             //{
             BusiAddAddressInfoModel model = new BusiAddAddressInfoModel();
-            model.userId = ParseHelper.ToInt(HttpContext.Current.Request.Form["UserId"], 0);
-            model.phoneNo = HttpContext.Current.Request.Form["phoneNo"];
-            model.Address = HttpContext.Current.Request.Form["Address"];
-            model.businessName = HttpContext.Current.Request.Form["businessName"];
+            model.userId = ParseHelper.ToInt(HttpUtility.UrlDecode(HttpContext.Current.Request.Form["UserId"]), 0);
+            model.phoneNo = HttpUtility.UrlDecode(HttpContext.Current.Request.Form["phoneNo"]);
+            model.Address = HttpUtility.UrlDecode(HttpContext.Current.Request.Form["Address"]);
+            model.businessName = HttpUtility.UrlDecode(HttpContext.Current.Request.Form["businessName"]);
 
             ImageHelper ih = new ImageHelper();
             var file = HttpContext.Current.Request.Files["CheckPicUrl"];
@@ -193,7 +193,7 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.UpFailed);
             }
-            model.BusinessLicensePic = imgInfo.PicUrl;
+            model.BusinessLicensePic = imgInfoLicen.PicUrl;
             #endregion
             //}
             //修改商户地址信息，返回当前商户的状态

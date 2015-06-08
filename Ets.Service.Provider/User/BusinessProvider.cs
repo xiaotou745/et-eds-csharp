@@ -665,6 +665,9 @@ namespace Ets.Service.Provider.User
                 business.Status = ConstValues.BUSINESS_NOAUDIT;
             }
 
+            business.CheckPicUrl = model.CheckPicUrl;
+            business.BusinessLicensePic = model.BusinessLicensePic;
+
             int upResult = dao.UpdateBusinessInfoB(business);
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, model.userId);
@@ -684,7 +687,7 @@ namespace Ets.Service.Provider.User
             var to = new UpdateBusinessInfoBPM();
             to.Id = businessModel.userId;  //用户id
             to.Address = string.IsNullOrWhiteSpace(businessModel.Address) ? "" : businessModel.Address.Trim(); //地址
-            to.Name = string.IsNullOrWhiteSpace(businessModel.businessName)?"":businessModel.businessName.Trim(); //商户名称
+            to.Name = string.IsNullOrWhiteSpace(businessModel.businessName) ? "" : businessModel.businessName.Trim(); //商户名称
             to.Landline = businessModel.landLine; //座机
             to.PhoneNo2 = businessModel.phoneNo.Trim(); //手机号2
             to.City = string.IsNullOrWhiteSpace(businessModel.City) ? "" : businessModel.City.Trim(); //市
