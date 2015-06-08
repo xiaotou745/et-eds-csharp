@@ -1433,7 +1433,7 @@ select  Id,Name,City,district,PhoneNo,PhoneNo2,Password,CheckPicUrl,IDCard,
         Address,Landline,Longitude,Latitude,Status,InsertTime,districtId,CityId,GroupId,
         OriginalBusiId,ProvinceCode,CityCode,AreaCode,Province,CommissionTypeId,DistribSubsidy,
         BusinessCommission,CommissionType,CommissionFixValue,BusinessGroupId,BalancePrice,
-        AllowWithdrawPrice,HasWithdrawPrice
+        AllowWithdrawPrice,HasWithdrawPrice,BusinessLicensePic
 from  Business (nolock) 
 where Id=@Id";
 
@@ -1561,6 +1561,9 @@ where Id=@Id";
                 #endregion
 
                 result.CheckPicUrl = CheckPicUrl;
+                result.BusinessLicensePic = dataReader["BusinessLicensePic"] == null ? 
+                    string.Empty : 
+                    Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataReader["BusinessLicensePic"].ToString())[0];
                 result.IDCard = dataReader["IDCard"].ToString();
                 result.Address = dataReader["Address"].ToString();
                 result.Landline = dataReader["Landline"].ToString();
