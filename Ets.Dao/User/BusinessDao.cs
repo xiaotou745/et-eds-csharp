@@ -366,7 +366,7 @@ and a.PhoneNo=@PhoneNo";
                                     ,b.AreaCode
                                     ,b.Province
                                     ,b.CommissionTypeId
-                                    ,b.DistribSubsidy
+                                    ,ISNULL(b.DistribSubsidy,0.00) DistribSubsidy
                                     ,b.BusinessCommission
                                     ,g.GroupName
                                     ,b.CommissionType
@@ -1678,7 +1678,7 @@ SELECT   b.Id ,
          b.CityCode ,
          b.AreaCode ,
          b.Province ,
-         b.DistribSubsidy,
+         ISNULL(b.DistribSubsidy,0.00) DistribSubsidy,
          b.BusinessCommission ,     
          b.CommissionType,
          b.CommissionFixValue,
