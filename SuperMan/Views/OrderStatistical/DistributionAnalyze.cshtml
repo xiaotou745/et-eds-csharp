@@ -1,0 +1,130 @@
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Order.DistributionAnalyzeResult>
+@using Webdiyer.WebControls.Mvc;
+@{
+    ViewBag.Title = "骑士统计";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+<script src="~/Scripts/mvcpager.js"></script>
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：数据统计 > 配送数据分析
+    </h2>
+    <div class="SearchMd" style="width:1000px">
+        <h4 style="color:black;font-weight:600">任务配送数据分析</h4>
+@using (Ajax.BeginForm("DistributionAnalyze", new RouteValueDictionary { { "pageindex", "1" } },
+    new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+    new RouteValueDictionary { { "id", "searchForm" } }))
+{
+        <table border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td>配送距离范围：</td>
+                <td>发货位置—抢单位置：</td>
+                <td>
+                    <select name="PubToGrabDistance" style="width:143px" class="selectw">
+                        <option value="0">全部</option>
+                        <option value="-100">100米内</option>
+                        <option value="100-500">100米-500米</option>
+                        <option value="500-">500米以上</option>    
+                    </select>
+                </td>
+                <td>抢单位置—送达位置：</td>
+                <td><select name="GrabToComplete" style="width:143px" class="selectw">
+                        <option value="0">全部</option>
+                        <option value="-100">100米内</option>
+                        <option value="100-500">100米-500米</option>
+                        <option value="500-">500米以上</option>    
+                    </select></td>
+                <td>发货位置—送达位置：</td>
+                <td>
+                    <select name="PubToComplete" style="width:143px" class="selectw">
+                        <option value="0">全部</option>
+                        <option value="-100">100米内</option>
+                        <option value="100-500">100米-500米</option>
+                        <option value="500-">500米以上</option>
+                        <option value="1000-">1公里以上</option>    
+                    </select></td>
+            </tr>
+            <tr>
+                <td>任务完成时长：</td>
+                <td><select name="DateLength" style="width:143px" class="selectw">
+                        <option value="0">全部</option>
+                        <option value="-5">5分钟内</option>
+                        <option value="5-10">5-10分钟</option>
+                        <option value="10-15">10-15分钟</option>
+                        <option value="15-">大于15分钟</option>
+                        <option value="120-">大于2小时</option>
+                        <option value="1440-">大于24小时</option>
+                    </select></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td >日期：</td>
+                <td><input id="startDate" name="StartDate"  style="width:143px" /></td>
+                <td style="text-align:center">到</td>
+                <td><input id="endDate" name="EndDate" style="width:143px" /></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>筛选城市：</td>
+                <td><select name="City" style="width:143px" class="selectw">
+                    <option value="">全部</option>
+                    @foreach (var c in ViewBag.Cities)
+                    {
+                        <option value="@c">@c</option>
+                    }
+                    </select></td>
+                <td><input value="查询" class="searchBtn" type="submit"></td>
+                <td><input value="导出" class="searchBtn" type="button" id="btnImport"></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+}
+            <div class="bd clearfix" id="dataList">
+                @Html.Partial("_PartialDistributionAnalyze", Model)
+            </div>
+     </div>
+</div>
+<iframe id="proxy" name="proxy" height="0" width="0"></iframe>
+<script>
+    $(document).ready(function () {
+        $('#startDate').datepicker();
+        $('#endDate').datepicker();
+
+        $("#btnImport").click(function () {
+            var startDate = $("#startDate").val();
+            var endDate = $("#endDate").val();
+            
+            if (startDate == "" || endDate == "") {
+                alert("请输入时间范围!");
+                return;
+            }
+            var timespan = new Date(endDate) - new Date(startDate);
+            var day = timespan / 1000 / 60 / 60 / 24;
+
+            if (day > 3) {
+                alert("只能导出四天以内的信息");
+                return;
+                return;
+            }
+
+
+            var data = $("#searchForm").serialize();
+            var url ="@Url.Action("DistributionAnalyzeExport")";
+            url = url + "?" + data;
+
+            window.location.href = url;
+        });
+    });
+</script>
