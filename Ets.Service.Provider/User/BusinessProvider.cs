@@ -1153,5 +1153,27 @@ namespace Ets.Service.Provider.User
                 return dealResultInfo;
             }
         }
+
+        /// <summary>
+        /// 获取商户绑定的骑士列表
+        /// danny-20150608
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<BusinessClienterRelationModel> GetBusinessClienterRelationList(BusinessSearchCriteria criteria)
+        {
+            return dao.GetBusinessClienterRelationList<BusinessClienterRelationModel>(criteria);
+        }
+
+        /// <summary>
+        /// 查询商户绑定骑士数量
+        /// danny-20150608
+        /// </summary>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        public int GetBusinessBindClienterQty(int businessId)
+        {
+            return dao.GetBusinessBindClienterQty(businessId);
+        }
     }
 }

@@ -14,7 +14,6 @@ namespace Ets.Model.DataModel.Bussiness
 
     public partial class BusinessThirdRelationModel
     {
-        public BusinessThirdRelationModel() { }
         /// <summary>
         /// 主键Id
         /// </summary>

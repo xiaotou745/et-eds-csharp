@@ -55,6 +55,10 @@ namespace Ets.Model.DomainModel.Bussiness
         /// 是否可修改绑定第三方绑定
         /// </summary>
         public int IsModifyBind { get; set; }
+        /// <summary>
+        /// 商户绑定骑士数量
+        /// </summary>
+        public int BindClienterQty { get; set; }
         
         
     }

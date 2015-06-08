@@ -64,6 +64,10 @@ namespace Ets.Model.ParameterModel.Bussiness
         /// 餐费结算方式（0：线下结算 1：线上结算）
         /// </summary>
         public int MealsSettleMode { get; set; }
+        /// <summary>
+        /// 商户Id
+        /// </summary>
+        public int BusinessId { get; set; }
         
     }
     public class OrderByItem<Tentity>
