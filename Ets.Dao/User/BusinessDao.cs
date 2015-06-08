@@ -320,7 +320,7 @@ namespace Ets.Dao.User
             {
                 string sql = @"SELECT COUNT(1)  FROM dbo.business  a
 LEFT join dbo.[group] b on a.GroupId=b.Id
-where  b.IsModifyBind=1
+where isnull(b.IsModifyBind,1)=1
 and a.PhoneNo=@PhoneNo";
                 IDbParameters parm = DbHelper.CreateDbParameters();
                 parm.Add("@PhoneNo", SqlDbType.NVarChar);
