@@ -47,6 +47,8 @@ using Ets.Dao.Finance;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 using Ets.Model.DomainModel.Area;
+using System.Data;
+using Ets.Dao.Clienter;
 #endregion
 namespace Ets.Service.Provider.Order
 {
@@ -59,6 +61,8 @@ namespace Ets.Service.Provider.Order
         private ISubsidyProvider iSubsidyProvider = new SubsidyProvider();
         private IBusinessGroupProvider iBusinessGroupProvider = new BusinessGroupProvider();
         private readonly BusinessDao _businessDao = new BusinessDao();
+        private readonly ClienterDao clienterDao = new ClienterDao();
+
         private readonly BusinessBalanceRecordDao _businessBalanceRecordDao = new BusinessBalanceRecordDao();
         //和区域有关的  wc
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
@@ -1744,6 +1748,76 @@ namespace Ets.Service.Provider.Order
                 return CancelOrderStatus.CancelOrderError;
             }
             return CancelOrderStatus.Success;
+        }
+        /// <summary>
+        /// 查询配送数据列表
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="totalRows"></param>
+        /// <returns></returns>
+        public IList<DistributionAnalyzeResult> DistributionAnalyze(OrderDistributionAnalyze model, int pageIndex, out int totalRows)
+        {
+            totalRows = 0;
+            DataTable dt = orderDao.DistributionAnalyze(model, pageIndex, out totalRows);
+            IList<DistributionAnalyzeResult> list = new List<DistributionAnalyzeResult>();
+            foreach (DataRow item in dt.Rows)
+            {
+                var data = new DistributionAnalyzeResult()
+                {
+                    Id = int.Parse(item["Id"].ToString()),
+                    OrderNo = item["OrderNo"].ToString(),
+                    OrderCount = Int32.Parse(item["OrderCount"].ToString()),
+                    ActualDoneDate = GetDate(item["ActualDoneDate"].ToString()),
+                    PubDate = GetDate(item["PubDate"].ToString()),
+                    GrabTime = GetDate(item["GrabTime"].ToString()),
+                    PickUpAddress = item["PickUpAddress"].ToString(),
+                    ReceviceAddress = item["ReceviceAddress"].ToString(),
+                    TakeTime = GetDate(item["TakeTime"].ToString()),
+                    ReceviceCity = item["ReceviceCity"].ToString(),
+                    TaskMoney = Decimal.Parse(item["OrderCommission"].ToString())
+                };
+                int businessId = GetInt(item["businessId"].ToString());
+                BusListResultModel business = _businessDao.GetBusiness(businessId);
+                if (business != null)
+                {
+                    data.Business = business.Address;
+                    data.BusinessPhone = business.PhoneNo;
+                }
+
+                int supperId = GetInt(item["clienterId"].ToString());
+                clienter clienter = clienterDao.GetById(supperId);
+                if (clienter != null)
+                {
+                    data.clienter = clienter.TrueName;
+                    data.clienterPhone = clienter.PhoneNo;
+                }
+                list.Add(data);
+            }
+            return list;
+        }
+        private int GetInt(string number)
+        {
+            if (string.IsNullOrWhiteSpace(number))
+            {
+                return 0;
+            }
+            return int.Parse(number);
+        }
+        private DateTime? GetDate(string datetime)
+        {
+            if (string.IsNullOrWhiteSpace(datetime))
+            {
+                return null;
+            }
+            return DateTime.Parse(datetime);
+        }
+        /// <summary>
+        /// 获得订单去重城市列表
+        /// </summary>
+        /// <returns></returns>
+        public IList<string> OrderReceviceCity()
+        {
+            return orderDao.OrderReceviceCity();
         }
     }
 }

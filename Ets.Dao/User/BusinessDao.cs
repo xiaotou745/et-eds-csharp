@@ -366,7 +366,7 @@ and a.PhoneNo=@PhoneNo";
                                     ,b.AreaCode
                                     ,b.Province
                                     ,b.CommissionTypeId
-                                    ,b.DistribSubsidy
+                                    ,ISNULL(b.DistribSubsidy,0.00) DistribSubsidy
                                     ,b.BusinessCommission
                                     ,g.GroupName
                                     ,b.CommissionType
@@ -531,7 +531,7 @@ order by a.id desc
             ///TODO 类型？
             IDbParameters parm = DbHelper.CreateDbParameters("busiId", DbType.Int32, 4, busiId);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
-            if (dt != null)
+            if (dt != null && dt.Rows.Count > 0)
                 busi = DataTableHelper.ConvertDataTableList<BusListResultModel>(dt)[0];
             return busi;
         }
@@ -1678,7 +1678,7 @@ SELECT   b.Id ,
          b.CityCode ,
          b.AreaCode ,
          b.Province ,
-         b.DistribSubsidy,
+         ISNULL(b.DistribSubsidy,0.00) DistribSubsidy,
          b.BusinessCommission ,     
          b.CommissionType,
          b.CommissionFixValue,
