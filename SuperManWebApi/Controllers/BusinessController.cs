@@ -158,28 +158,42 @@ namespace SuperManWebApi.Controllers
             model.phoneNo = HttpUtility.UrlDecode(HttpContext.Current.Request.Form["phoneNo"]);
             model.Address = HttpUtility.UrlDecode(HttpContext.Current.Request.Form["Address"]);
             model.businessName = HttpUtility.UrlDecode(HttpContext.Current.Request.Form["businessName"]);
+            model.landLine = HttpUtility.UrlDecode(HttpContext.Current.Request.Form["landLine"]);
+            
             model.IsUpdateCheckPicUrl = ParseHelper.ToInt(HttpUtility.UrlDecode(HttpContext.Current.Request.Form["IsUpdateCheckPicUrl"]), 0);
+            model.IsUpdateBusinessLicensePic = ParseHelper.ToInt(HttpUtility.UrlDecode(HttpContext.Current.Request.Form["IsUpdateBusinessLicensePic"]), 0);
+            
             //照片有所更新 
-            #region 更新商家头像、执照
+            #region 更新商家头像
+            ImageHelper ih = new ImageHelper();
             if (model.IsUpdateCheckPicUrl == 0)
             {
-                ImageHelper ih = new ImageHelper();
+              
                 var file = HttpContext.Current.Request.Files["CheckPicUrl"];
                 if (file == null)
                 {
                     return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.InvalidFileFormat);
                 }
-                var fileLicen = HttpContext.Current.Request.Files["BusinessLicensePic"];
-                if (fileLicen == null)
-                {
-                    return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.InvalidFileFormat);
-                }
+               
                 ImgInfo imgInfo = ih.UploadImg(file, model.userId);
                 if (!string.IsNullOrWhiteSpace(imgInfo.FailRemark))
                 {
                     return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.UpFailed);
                 }
                 model.CheckPicUrl = imgInfo.PicUrl;
+             
+            }
+            #endregion
+
+            #region 更新商家执照
+
+            if (model.IsUpdateBusinessLicensePic == 0)
+            {
+                var fileLicen = HttpContext.Current.Request.Files["BusinessLicensePic"];
+                if (fileLicen == null)
+                {
+                    return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.InvalidFileFormat);
+                }
                 //执照
                 ImgInfo imgInfoLicen = ih.UploadImg(fileLicen, model.userId);
                 if (!string.IsNullOrWhiteSpace(imgInfoLicen.FailRemark))
@@ -189,7 +203,6 @@ namespace SuperManWebApi.Controllers
                 model.BusinessLicensePic = imgInfoLicen.PicUrl;
             }
             #endregion
-
             //}
             //if (model.IsUpdateBusinessLicensePic == 0)
             //{
