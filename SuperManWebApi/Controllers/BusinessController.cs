@@ -157,14 +157,14 @@ namespace SuperManWebApi.Controllers
             {
                 if (HttpContext.Current.Request.Files["CheckPicUrl"] ==null)
                 {
-                    return ResultModel<BusiModifyResultModelDM>.Conclude(UploadIconStatus.InvalidFileFormat);
+                    return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.InvalidFileFormat);
                 }
                 var file = HttpContext.Current.Request.Files["CheckPicUrl"];
                 ImageHelper ih = new ImageHelper();
                 ImgInfo imgInfo = ih.UploadImg(file, 0);
                 if (!string.IsNullOrWhiteSpace(imgInfo.FailRemark))
                 {
-                    return ResultModel<BusiModifyResultModelDM>.Conclude(UploadIconStatus.UpFailed);
+                    return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.UpFailed);
                 }
                  model.CheckPicUrl = imgInfo.PicUrl;
             }
@@ -173,14 +173,14 @@ namespace SuperManWebApi.Controllers
             {
                 if (HttpContext.Current.Request.Files["BusinessLicensePic"] == null)
                 {
-                    return ResultModel<BusiModifyResultModelDM>.Conclude(UploadIconStatus.InvalidFileFormat);
+                    return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.InvalidFileFormat);
                 }
                 var file = HttpContext.Current.Request.Files["BusinessLicensePic"];
                 ImageHelper ih = new ImageHelper();
                 ImgInfo imgInfo = ih.UploadImg(file, 0);
                 if (!string.IsNullOrWhiteSpace(imgInfo.FailRemark))
                 {
-                    return ResultModel<BusiModifyResultModelDM>.Conclude(UploadIconStatus.UpFailed);
+                    return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.UpFailed);
                 }
                 model.BusinessLicensePic = imgInfo.PicUrl;
             }
