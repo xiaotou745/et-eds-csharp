@@ -51,6 +51,9 @@ namespace Ets.Model.ParameterModel.Order
         /// </summary>
         public int ClienterId { get; set; }
 
-
+        /// <summary>
+        /// 是否绑定了商户（0：否 1：是）
+        /// </summary>
+        public int IsBind { get; set; }
     }
 }

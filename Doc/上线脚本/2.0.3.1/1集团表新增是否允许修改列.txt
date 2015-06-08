@@ -1,2 +1,4 @@
 alter table dbo.[group] add IsModifyBind int default 0 not null;
 go
+alter table dbo.[business] add BusinessLicensePic nvarchar(500);
+go

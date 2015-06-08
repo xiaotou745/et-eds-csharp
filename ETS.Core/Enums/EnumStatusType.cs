@@ -590,4 +590,21 @@ namespace ETS.Enums
         EmployerJob = 2
     }
 
+
+    /// <summary>
+    /// 骑士是否绑定了商户（0：否 1：是）  或者 商户是否绑定了骑士（0：否 1：是）
+    /// </summary>
+    public enum IsBindBC
+    {
+        /// <summary>
+        /// 最新订单
+        /// </summary>
+        [DisplayText("是")]
+        Yes = 1,
+        /// <summary>
+        /// 附近订单
+        /// </summary>
+        [DisplayText("否")]
+        No = 0,
+    }
 }
