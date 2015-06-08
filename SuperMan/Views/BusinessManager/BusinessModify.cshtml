@@ -88,54 +88,54 @@
             </div>
             <div class="control-group" style="margin-left:27px">
                 <label>补贴策略：</label>
-                @Html.DropDownList("businessGroupID", new SelectList(new BusinessGroupProvider().GetBusinessGroupList(), "Id", "Name",@Model.BusinessGroupId), new { @class = "selectw", style = "width:143px" })
+                @Html.DropDownList("businessGroupID", new SelectList(new BusinessGroupProvider().GetBusinessGroupList(), "Id", "Name", @Model.BusinessGroupId), new { @class = "selectw", style = "width:143px" })
             </div>
             <div class="control-group" style="margin-left:2px">
                 <label>餐费结算方式：</label>
-                <select name="busiMealsSettleMode" class="selectw" id="busiMealsSettleMode" style="width:143px" >
+                <select name="busiMealsSettleMode" class="selectw" id="busiMealsSettleMode" style="width:143px">
                     <option value="0">线下结算</option>
                     <option value="1">线上结算</option>
                 </select>
             </div>
             <div class="control-group" style="margin-bottom: 10px">
                 <label style="margin-left: 24px">第三方ID：</label>
-                <input name="busiSourceId" id="busiSourceId" type="text" value="@Model.OriginalBusiId" @(Model.IsModifyBind == 0 && Model.GroupId>0 ? "disabled" : "") />
-                <input type="hidden" id="hidGroupId" name="hidGroupId" value="@Model.GroupId" />   
+                <input name="busiSourceId" id="busiSourceId" type="text" value="@Model.OriginalBusiId" @(Model.IsModifyBind == 0 && Model.GroupId > 0 ? "disabled" : "") />
+                <input type="hidden" id="hidGroupId" name="hidGroupId" value="@Model.GroupId" />
                 @if (Model.GroupId > 0)
                 {
                     <label>来源平台：@Model.GroupName</label>
                 }
                 else
                 {
-                    @Html.DropDownList("busGroupId" ,
-                                                  new SelectList(new BusinessProvider().GetGroups().Where(i=>i.IsModifyBind==1).ToList(), "Id", "GroupName"), "--请选择--", htmlAttributes: new { @class = "selectw", style = "width:100px; " })
+                    @Html.DropDownList("busGroupId",
+                                                  new SelectList(new BusinessProvider().GetGroups().Where(i => i.IsModifyBind == 1).ToList(), "Id", "GroupName"), "--请选择--", htmlAttributes: new { @class = "selectw", style = "width:100px; " })
                 }
             </div>
             @*<div class="control-group" style="margin-bottom: 10px">
-                <label>绑定第三方ID：点击添加，绑定第三方商铺ID信息</label>
-                <input name="btnAddThird" num="0" id="btnAddThird" type="button" value="添加第三方" class="searchBtn" style="margin-left:25px"><br />
-                <div style="background-color:lightgray;width: 530px" id="big-third">
-                    @{
-                        if (busiThirdRelationList.Count > 0)
-                        {
-                            int i = 0;
-                            foreach (var businessThirdRelationModel in busiThirdRelationList)
+                    <label>绑定第三方ID：点击添加，绑定第三方商铺ID信息</label>
+                    <input name="btnAddThird" num="0" id="btnAddThird" type="button" value="添加第三方" class="searchBtn" style="margin-left:25px"><br />
+                    <div style="background-color:lightgray;width: 530px" id="big-third">
+                        @{
+                            if (busiThirdRelationList.Count > 0)
                             {
-                                i++;
-                    <div class="third-list third_n_@i" style="display" v="@businessThirdRelationModel.IsModifyBind">
-                        <label>第三方ID：</label>
-                        <input name="busiSourceId" id="busiSourceId_@i" type="text" value="@businessThirdRelationModel.OriginalBusiId" />
-                        @Html.DropDownList("busGroupId_" + i,
-                                         new SelectList(new BusinessProvider().GetGroups(), "Id", "GroupName", businessThirdRelationModel.GroupId), "--请选择--", htmlAttributes: new { @class = "selectw", style = "width:100px; " })
-                        <input id="rrAuditStatusY_@i" name="rAuditStatus_@i" type="radio" value="1" style="margin-left: 15px" @(businessThirdRelationModel.AuditStatus == 1 ? "checked" : "") @(businessThirdRelationModel.IsModifyBind == 0 ? "disabled" : "")>通 过
-                        <input id="rrAuditStatusY_@i" name="rAuditStatus_@i" type="radio" value="0" style="margin-left: 15px" @(businessThirdRelationModel.AuditStatus == 0 ? "checked" : "") @(businessThirdRelationModel.IsModifyBind == 0 ? "disabled" : "")>拒 绝
-                        <a class="remove" style="margin-right: 15px;margin-left: 25px" num="NaN">移 除</a><br>
-                    </div>
+                                int i = 0;
+                                foreach (var businessThirdRelationModel in busiThirdRelationList)
+                                {
+                                    i++;
+                        <div class="third-list third_n_@i" style="display" v="@businessThirdRelationModel.IsModifyBind">
+                            <label>第三方ID：</label>
+                            <input name="busiSourceId" id="busiSourceId_@i" type="text" value="@businessThirdRelationModel.OriginalBusiId" />
+                            @Html.DropDownList("busGroupId_" + i,
+                                             new SelectList(new BusinessProvider().GetGroups(), "Id", "GroupName", businessThirdRelationModel.GroupId), "--请选择--", htmlAttributes: new { @class = "selectw", style = "width:100px; " })
+                            <input id="rrAuditStatusY_@i" name="rAuditStatus_@i" type="radio" value="1" style="margin-left: 15px" @(businessThirdRelationModel.AuditStatus == 1 ? "checked" : "") @(businessThirdRelationModel.IsModifyBind == 0 ? "disabled" : "")>通 过
+                            <input id="rrAuditStatusY_@i" name="rAuditStatus_@i" type="radio" value="0" style="margin-left: 15px" @(businessThirdRelationModel.AuditStatus == 0 ? "checked" : "") @(businessThirdRelationModel.IsModifyBind == 0 ? "disabled" : "")>拒 绝
+                            <a class="remove" style="margin-right: 15px;margin-left: 25px" num="NaN">移 除</a><br>
+                        </div>
+                                }
                             }
                         }
-                    }
-                </div>
-            </div>*@
+                    </div>
+                </div>*@
         </div>
         <div class="SearchMd">
             <div style="margin-left: 100px;float: left"><input type="button" value="保存" class="searchBtn" id="btnModifyCommit" /></div>
@@ -207,7 +207,7 @@
 <script type="text/javascript">
     var adminjs = new adminglass();
     //实例化后台类
-    $(document).ready(function() {
+    $(document).ready(function () {
         $('#operateTimeStart').datepicker();
         $('#operateTimeEnd').datepicker();
         $('#busiMealsSettleMode').val(@Model.MealsSettleMode);
@@ -247,22 +247,22 @@
         $(this).parent(".third_n_" + num).remove();
     });
     //百度地图
-    $("#postion").live("click").on("click", function() {
+    $("#postion").live("click").on("click", function () {
         adminjs.openwinbox('#MapShow');
         var longitude = $('#busiLongitude').val();
         var latitude = $('#busiLatitude').val();
         var map = new BMap.Map("map", { enableMapClick: false });
-        map.centerAndZoom(new BMap.Point(longitude,latitude), 13);
+        map.centerAndZoom(new BMap.Point(longitude, latitude), 13);
         map.enableScrollWheelZoom();
-        var marker = new BMap.Marker(new BMap.Point(longitude,latitude)); // 创建点
+        var marker = new BMap.Marker(new BMap.Point(longitude, latitude)); // 创建点
         map.addOverlay(marker);
-        map.addEventListener("click", function(e) {
+        map.addEventListener("click", function (e) {
             map.clearOverlays();
             var markernew = new BMap.Marker(new BMap.Point(e.point.lng, e.point.lat)); // 创建新点
             map.addOverlay(markernew);
             var geoc = new BMap.Geocoder();
             var pt = e.point;
-            geoc.getLocation(pt, function(rs) {
+            geoc.getLocation(pt, function (rs) {
                 var addComp = rs.addressComponents;
                 var address = addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber;
                 //TODO..城市是否开通
@@ -332,9 +332,9 @@
         var mealsSettleMode = $('#busiMealsSettleMode').val();
         var groupId = 0;
         var originalBusiId = $('#busiSourceId').val();
-        var hidGroupId = $("#hidGroupId").val();
+        var hidGroupId = $('#hidGroupId').val();
         if (hidGroupId == 0) {
-            groupId=$('#busGroupId').val();
+            groupId = $('#busGroupId').val();
         }
         if (name.trim().length == 0) {
             alert("请输入商户名称！");
@@ -359,7 +359,7 @@
             return;
         }
         if (!decimalFormat.test(distribSubsidy) || distribSubsidy == '') {
-            alert("请输入大于0正确的金额！");
+            alert("请输入正确的配送费，且不小于0元！");
             return;
         }
         if (cityId == "") {
@@ -391,7 +391,7 @@
         } else {
 
             if (!decimalFormat.test(commissionFixValue) || commissionFixValue == '') {
-                alert("请输入正确的金额!");
+                alert("请输入正确的固定金额，且不小于0元!");
                 return;
             }
         }
@@ -415,9 +415,11 @@
         //    alert("请输入第三方Id或平台!");
         //    return false ;
         //}
-        var paramaters = { "Id": id, "Name": name, "PhoneNo": phoneNo, "PhoneNo2": phoneNo2, "DistribSubsidy": distribSubsidy, "CityId": cityId, "districtId": districtId, "City": cityName,
+        var paramaters = {
+            "Id": id, "Name": name, "PhoneNo": phoneNo, "PhoneNo2": phoneNo2, "DistribSubsidy": distribSubsidy, "CityId": cityId, "districtId": districtId, "City": cityName,
             "district": districtName, "Address": adress, "Latitude": latitude, "Longitude": longitude, "CommissionType": commissionType, "BusinessCommission": commissionText,
-            "CommissionFixValue": commissionFixValue, "BusinessGroupId": businessGroupId, "MealsSettleMode": mealsSettleMode,"groupId":groupId,"originalBusiId":originalBusiId };
+            "CommissionFixValue": commissionFixValue, "BusinessGroupId": businessGroupId, "MealsSettleMode": mealsSettleMode, "groupId": groupId, "originalBusiId": originalBusiId
+        };
         var url = "/BusinessManager/ModifyBusinessDetail";
         $.ajax({
             type: 'POST',

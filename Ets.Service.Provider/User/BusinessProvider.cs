@@ -640,25 +640,25 @@ namespace Ets.Service.Provider.User
         {
             if (model.userId <= 0)  //判断 商户id是否正确
             {
-                return ResultModel<BusiModifyResultModelDM>.Conclude(UploadIconStatus.InvalidUserId);
+                return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.InvalidUserId);
             }
             if (string.IsNullOrWhiteSpace(model.phoneNo))
             {
-                return ResultModel<BusiModifyResultModelDM>.Conclude(BusiAddAddressStatus.PhoneNumberEmpty);
+                return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.PhoneNumberEmpty);
             }
             if (string.IsNullOrWhiteSpace(model.Address))
             {
-                return ResultModel<BusiModifyResultModelDM>.Conclude(BusiAddAddressStatus.AddressEmpty);
+                return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.AddressEmpty);
             }
             if (string.IsNullOrWhiteSpace(model.businessName))
             {
-                return ResultModel<BusiModifyResultModelDM>.Conclude(BusiAddAddressStatus.BusinessNameEmpty);
+                return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.BusinessNameEmpty);
             }
             UpdateBusinessInfoBPM business = UpdateBusinessInfoBTranslate(model);
             var busi = dao.GetBusiness(model.userId); //查询商户信息
             if (busi == null)
             {
-                return ResultModel<BusiModifyResultModelDM>.Conclude(UploadIconStatus.InvalidUserId);
+                return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.InvalidUserId);
             }
             if (busi.Status == ConstValues.BUSINESS_NOADDRESS)  //如果商户的状态 为未审核未添加地址，则修改商户状态为 未审核
             {
@@ -669,7 +669,7 @@ namespace Ets.Service.Provider.User
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, model.userId);
             redis.Delete(cacheKey);
-            return ResultModel<BusiModifyResultModelDM>.Conclude(upResult == -1 ? BusiAddAddressStatus.UpdateFailed : BusiAddAddressStatus.Success,
+            return ResultModel<BusiModifyResultModelDM>.Conclude(upResult == -1 ? UpdateBusinessInfoBReturnEnums.UpdateFailed : UpdateBusinessInfoBReturnEnums.Success,
                new BusiModifyResultModelDM() { userId = model.userId, status = upResult });
         }
 
@@ -683,13 +683,13 @@ namespace Ets.Service.Provider.User
         {
             var to = new UpdateBusinessInfoBPM();
             to.Id = businessModel.userId;  //用户id
-            to.Address = businessModel.Address.Trim(); //地址
-            to.Name = businessModel.businessName.Trim(); //商户名称
+            to.Address = string.IsNullOrWhiteSpace(businessModel.Address) ? "" : businessModel.Address.Trim(); //地址
+            to.Name = string.IsNullOrWhiteSpace(businessModel.businessName)?"":businessModel.businessName.Trim(); //商户名称
             to.Landline = businessModel.landLine; //座机
             to.PhoneNo2 = businessModel.phoneNo.Trim(); //手机号2
-            to.City = businessModel.City.Trim(); //市
-            to.district = businessModel.districtName.Trim();  //区域名称
-            to.Province = businessModel.Province.Trim();  //省份名称
+            to.City = string.IsNullOrWhiteSpace(businessModel.City) ? "" : businessModel.City.Trim(); //市
+            to.district = string.IsNullOrWhiteSpace(businessModel.districtName) ? "" : businessModel.districtName.Trim();  //区域名称
+            to.Province = string.IsNullOrWhiteSpace(businessModel.Province) ? "" : businessModel.Province.Trim();  //省份名称
             //修改地址转换 区域编码
             if (!string.IsNullOrWhiteSpace(businessModel.districtName))
             {

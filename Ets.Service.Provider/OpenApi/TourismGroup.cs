@@ -60,7 +60,9 @@ namespace Ets.Service.Provider.OpenApi
                 {
                     order_id = paramodel.fields.OriginalOrderNo,
                     order_status = status,
-                    message = message
+                    message = message,
+                    dis_name=paramodel.fields.ClienterTrueName,
+                    dis_phone=paramodel.fields.ClienterPhoneNo
                 }}
             };
             string url = ConfigSettings.Instance.TourismAsyncStatusUrl;

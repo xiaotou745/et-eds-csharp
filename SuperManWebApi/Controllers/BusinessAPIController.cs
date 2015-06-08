@@ -592,8 +592,8 @@ namespace SuperManWebApi.Controllers
 
 
         /// <summary>
-        /// 获取开通城市的省市区
-        /// 窦海超
+        /// 获取开通城市的省市区 
+        /// 窦海超  
         /// 2015年3月16日 11:44:54
         /// </summary>
         /// <param name="Version">版本号</param>
@@ -605,7 +605,7 @@ namespace SuperManWebApi.Controllers
         {
             AreaProvider area = new AreaProvider();
 
-            return area.GetOpenCity(Version);
+            return area.GetOpenCity(Version,false);
         }
 
     }

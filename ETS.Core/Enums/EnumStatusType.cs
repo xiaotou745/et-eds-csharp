@@ -473,6 +473,53 @@ namespace ETS.Enums
 
     }
 
+    /// <summary>
+    /// B端修改商家中心接口 返回值枚举
+    /// </summary>
+    public enum UpdateBusinessInfoBReturnEnums
+    {
+        /// <summary>
+        /// 成功
+        /// </summary>
+        [DisplayText("成功")]
+        Success = 1,
+        /// <summary>
+        /// 无效的文件格式
+        /// </summary>
+        [DisplayText("无效的文件格式")]
+        InvalidFileFormat = 2,
+        /// <summary>
+        /// 上传图片失败
+        /// </summary>
+        [DisplayText("上传图片失败")]
+        UpFailed = 3,
+        /// <summary>
+        /// 无效的用户
+        /// </summary>
+        [DisplayText("无效的用户")]
+        InvalidUserId = 4,
+        /// <summary>
+        /// 手机号不能为空
+        /// </summary>
+        [DisplayText("手机号不能为空")]
+        PhoneNumberEmpty = 5,
+        /// <summary>
+        /// 地址不能为空
+        /// </summary>
+        [DisplayText("地址不能为空")]
+        AddressEmpty = 6,
+        /// <summary>
+        ///  商务地址不能为空
+        /// </summary>
+        [DisplayText("店铺名称不能为空")]
+        BusinessNameEmpty = 7,
+        ///<summary>
+        /// 更新信息失败
+        /// </summary>
+        [DisplayText("更新信息失败")]
+        UpdateFailed = 8
+    }
+
     public enum UserStatus
     {
         Success,
@@ -518,7 +565,7 @@ namespace ETS.Enums
         [DisplayText("线下结算")]
         Status0 = 0,
         [DisplayText("线上结算")]
-        Status1 = 1
+        Status1 = 1   
     }
 
     /// <summary>

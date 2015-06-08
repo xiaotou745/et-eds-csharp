@@ -1139,7 +1139,7 @@ select  ( select    sum(AccountBalance)
         sum(isnull(OrderCommission, 0)) as YfPrice,  --应付金额
         @incomeTotal incomeTotal, --扫码/代付总计
 		isnull(@rechargeTotal,0) rechargeTotal,--商户充值总计
-		(@incomeTotal+0) allIncomeTotal, --账户收入总计
+		(@incomeTotal+@rechargeTotal) allIncomeTotal, --账户收入总计
 		-2348288.69-(@withdrawClienterPrice) withdrawClienterPrice, --骑士已提现佣金-实付
 		@businessBalance businessBalance,--商家余额总计-应付
 		isnull( @withdrawBusinessPrice,0) withdrawBusinessPrice --商家已提款金额-实付
@@ -2137,10 +2137,10 @@ values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude)";
                     for (int i = 0; i < order.listOrderChild.Count; i++)
                     {
                         DataRow dr = dt.NewRow();
-                        //dr["OrderId"] = orderId;
+                        dr["OrderId"] = orderId;
+                        //dr["ChildId"] = order.listOrderChild[i].ChildId;
                         int num = i + 1;
-                        dr["OrderId"] = num;
-                        dr["ChildId"] = order.listOrderChild[i].ChildId;
+                        dr["ChildId"] = num;
                         decimal totalPrice = order.listOrderChild[i].GoodPrice + Convert.ToDecimal(order.DistribSubsidy);
                         dr["TotalPrice"] = totalPrice;
                         dr["GoodPrice"] = order.listOrderChild[i].GoodPrice;
