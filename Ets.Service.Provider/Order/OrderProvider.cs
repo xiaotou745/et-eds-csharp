@@ -94,7 +94,7 @@ namespace Ets.Service.Provider.Order
 
                     resultModel.businessName = from.BusinessName;
                     resultModel.businessPhone = from.BusinessPhone;
-                    resultModel.businessPhone2 = from.BusinessPhone2;                    
+                    resultModel.businessPhone2 = from.BusinessPhone2;
                     if (from.PickUpCity != null)
                     {
                         resultModel.pickUpCity = from.PickUpCity.Replace("市", "");
@@ -672,7 +672,7 @@ namespace Ets.Service.Provider.Order
                 {
                     if (bussinessIdstr == null)
                     {
-                        
+
                     }
                     //
 
@@ -1208,8 +1208,8 @@ namespace Ets.Service.Provider.Order
             to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
             to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
             if (!(bool)to.IsPay && to.MealsSettleMode == MealsSettleMode.Status1.GetHashCode())//未付款且线上支付
-            {             
-                to.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(from.Amount) , 2);
+            {
+                to.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(from.Amount), 2);
             }
 
             to.CommissionFormulaMode = business.StrategyId;
@@ -1623,25 +1623,22 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public ResultModel<object> GetJobC(GetJobCPM model)
         {
-            IList<GetJobCDM> jobs;
+            IList<GetJobCDM> jobs=new List<GetJobCDM>();
             model.PushRadius = GlobalConfigDao.GlobalConfigGet(0).PushRadius; //距离
-            if (string.IsNullOrEmpty(model.city))//如果城市没有传，默认使用附近任务
+            if (model.SearchType == (int)GetJobCMode.NewJob)//最新订单
             {
-                model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;
+                model.TopNum = ConstValues.App_PageSize.ToString();//50条
+                jobs = orderDao.GetLastedJobC(model);
+            }
+            else if (model.SearchType == (int)GetJobCMode.NearbyJob)//附近订单
+            {
+                model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;// top 值
                 jobs = orderDao.GetJobC(model);
             }
-            else
+            else if (model.SearchType == (int)GetJobCMode.EmployerJob)//附近订单
             {
-                if (model.SearchType == 0)//最新订单
-                {
-                    model.TopNum = ConstValues.App_PageSize.ToString();//50条
-                    jobs = orderDao.GetLastedJobC(model);
-                }
-                else//附近订单
-                {
-                    model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;// top 值
-                    jobs = orderDao.GetJobC(model);
-                }
+                model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;// top 值
+                jobs = orderDao.GetEmployerJobC(model);
             }
             return ResultModel<object>.Conclude(SystemEnum.Success, jobs);
         }

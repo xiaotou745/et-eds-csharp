@@ -2324,19 +2324,16 @@ where   oo.IsJoinWithdraw = 0
             DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
         }
 
+        /// <summary>
+        /// 最新任务列表 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public IList<GetJobCDM> GetLastedJobC(GetJobCPM model)
         {
-            StringBuilder whereStr = new StringBuilder();
-
-            if (model.city.Contains("北京"))
-            {
-                whereStr.AppendFormat(" AND a.ReceviceCity LIKE '北京%'", model.city);
-            }
-            else
-            {
-                whereStr.AppendFormat(" AND a.ReceviceCity = '{0}'", model.city);
-            }
-
+            string whereStr = model.City.Contains("北京")
+                ? " and a.ReceviceCity LIKE '北京%'"
+                : string.Format(" and a.ReceviceCity = '{0}'", model.City);
             string sql = string.Format(@"
 declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
@@ -2355,8 +2352,7 @@ from    dbo.[order] a ( nolock )
         join dbo.business b ( nolock ) on a.businessId = b.Id
 where   a.status = 0
         {1}
-order by a.Id desc", model.TopNum, whereStr.ToString());
-            
+order by a.Id desc", model.TopNum, whereStr);
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Latitude", model.Latitude);
             dbParameters.AddWithValue("Longitude", model.Longitude);
@@ -2392,8 +2388,8 @@ round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistan
 from dbo.[order] a (nolock)
 join dbo.business b (nolock) on a.businessId=b.Id
 where a.status=0 and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
-order by {1}
-", model.TopNum, model.SearchType == 0 ? "a.Id desc" : " geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint) asc");
+order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint) asc
+", model.TopNum);
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Latitude", model.Latitude);
             dbParameters.AddWithValue("Longitude", model.Longitude);
@@ -2406,6 +2402,44 @@ order by {1}
             return new List<GetJobCDM>();
         }
 
+        /// <summary>
+        /// 骑士端获取任务列表雇主任务 add by caoheyang 20150519
+        /// </summary>
+        /// <param name="model">订单查询实体</param>
+        /// <returns></returns>
+        public IList<GetJobCDM> GetEmployerJobC(GetJobCPM model)
+        {
+            string sql = string.Format(@"
+declare @cliernterPoint geography ;
+select @cliernterPoint=geography::Point(30.25522,129.22222,4326) ;
+select top {0}  a.BusinessId, a.Id,a.OrderCommission,a.OrderCount,   
+(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
+b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
+ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'') as UserAddress,
+case convert(varchar(100), PubDate, 23) 
+	when convert(varchar(100), getdate(), 23) then '今日 '
+    else substring(convert(varchar(100), PubDate, 23),6,5) 
+end
++'  '+substring(convert(varchar(100),PubDate,24),1,5)
+as PubDate,
+round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) as DistanceToBusiness 
+from dbo.[order] a (nolock)
+join dbo.business b (nolock) on a.businessId=b.Id
+join (select  distinct(temp.BusinessId) from  BusinessClienterRelation  temp where temp.IsEnable=1 and  temp.IsBind =1 and temp.ClienterId={1} ) as c on a.BusinessId=c.BusinessId
+where a.status=0 
+order by a.id desc 
+", model.TopNum, model.ClienterId);
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("Latitude", model.Latitude);
+            dbParameters.AddWithValue("Longitude", model.Longitude);
+            dbParameters.AddWithValue("PushRadius", ParseHelper.ToInt(model.PushRadius) * 1000);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                return TranslateGetJobC(dt);
+            }
+            return new List<GetJobCDM>();
+        }
         /// <summary>
         ///  骑士端获取任务列表（最新/最近）任务   add by caoheyang 20150519
         /// </summary>

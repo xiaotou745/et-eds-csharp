@@ -217,10 +217,10 @@ namespace ETS.Enums
         订单完成 = 1,
         订单已接单 = 2,
         订单已取消 = 3,
-        订单已取货=4
+        订单已取货 = 4
     }
 
-    
+
 
     public enum ModifyPwdStatus
     {
@@ -518,5 +518,29 @@ namespace ETS.Enums
         [DisplayText("线下结算")]
         Status0 = 0,
         [DisplayText("线上结算")]
-        Status1 = 1    }
+        Status1 = 1
+    }
+
+    /// <summary>
+    /// C端获取任务列表 类型 枚举
+    /// </summary>
+    public enum GetJobCMode
+    {
+        /// <summary>
+        /// 最新订单
+        /// </summary>
+        [DisplayText("最新订单")]
+        NewJob = 0,
+        /// <summary>
+        /// 附近订单
+        /// </summary>
+        [DisplayText("附近订单")]
+        NearbyJob = 1,
+        /// <summary>
+        /// 雇主任务
+        /// </summary>
+        [DisplayText("雇主任务")]
+        EmployerJob = 2
+    }
+
 }

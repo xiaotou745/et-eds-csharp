@@ -24,15 +24,15 @@ namespace Ets.Model.ParameterModel.Order
         /// <summary>
         /// 城市名称
         /// </summary>
-        public string city { get; set; }
+        public string City { get; set; }
 
         /// <summary>
         /// 城市Id
         /// </summary>
-        public string cityId { get; set; }
+        public string CityId { get; set; }
         
         /// <summary>
-        /// 查询类型 0 最新订单 1最近订单
+        /// 查询类型 0 最新订单 1附近订单 2雇主任务
         /// </summary>
         public int SearchType { get; set; }
 
@@ -45,6 +45,12 @@ namespace Ets.Model.ParameterModel.Order
         /// 订单推送给骑士的区域半径(单位为公里)
         /// </summary>
         public string PushRadius { get; set; }
+
+        /// <summary>
+        /// 骑士id   雇主任务查询需要使用
+        /// </summary>
+        public int ClienterId { get; set; }
+
 
     }
 }
