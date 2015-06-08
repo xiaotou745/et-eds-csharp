@@ -61,6 +61,7 @@
     <Compile Include="Common\TestUserModel.cs" />
     <Compile Include="DataModel\Authority\AccountCityRelation.cs" />
     <Compile Include="DataModel\Bussiness\BusiModifyResultModelDM.cs" />
+    <Compile Include="DataModel\Bussiness\BusinessClienterRelation.cs" />
     <Compile Include="DataModel\Bussiness\BusinessGroupLogModel.cs" />
     <Compile Include="DataModel\Bussiness\BusinessGroupModel.cs" />
     <Compile Include="DataModel\Bussiness\BusinessOptionLog.cs" />

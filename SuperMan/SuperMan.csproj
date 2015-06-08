@@ -592,6 +592,8 @@
     <Content Include="Views\Manage\SetPassword.cshtml" />
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\BusinessManager\BusinessModify.cshtml" />
+    <Content Include="Views\BusinessManager\ClienterBindManage.cshtml" />
+    <Content Include="Views\BusinessManager\_ClienterBindList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
