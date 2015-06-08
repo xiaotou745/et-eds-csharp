@@ -4,7 +4,6 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
     <thead>
         <tr class="tdbg">
-            <th>内部ID</th>
             <th width="%5">任务单号</th>
             <th>城市</th>
             <th>商户信息</th>
@@ -23,7 +22,6 @@
         @foreach (var item in Model.Records)
         {
             <tr>
-                <td>@item.Id</td>
                 <td>@item.OrderNo</td>
                 <td>@item.ReceviceCity</td>
                 <td>@item.Business <br /> @item.BusinessPhone</td>
