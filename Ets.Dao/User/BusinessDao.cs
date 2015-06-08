@@ -531,7 +531,7 @@ order by a.id desc
             ///TODO 类型？
             IDbParameters parm = DbHelper.CreateDbParameters("busiId", DbType.Int32, 4, busiId);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
-            if (dt != null)
+            if (dt != null && dt.Rows.Count > 0)
                 busi = DataTableHelper.ConvertDataTableList<BusListResultModel>(dt)[0];
             return busi;
         }

@@ -625,7 +625,7 @@ namespace SuperManWebApi.Controllers
         /// 窦海超
         /// 2015年3月31日 
         /// </summary>
-        /// <param name="userId">userId</param>
+        /// <param name="parModel">userId</param>
         /// <returns></returns>
         [ActionStatus(typeof(ETS.Enums.UserStatus))]
         [HttpPost]

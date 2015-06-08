@@ -237,5 +237,15 @@ namespace Ets.Service.IProvider.Order
         /// <param name="paramodel"></param>
         /// <returns></returns>
         ResultModel<bool> CancelOrderB(CancelOrderBPM paramodel);
+        /// <summary>
+        /// 配送数据分析
+        /// </summary>
+        /// <param name="model"></param>
+        IList<DistributionAnalyzeResult> DistributionAnalyze(OrderDistributionAnalyze model, int pageIndex, out int totalRows);
+        /// <summary>
+        /// 订单中所有城市去重列表
+        /// </summary>
+        /// <returns></returns>
+        IList<string> OrderReceviceCity();
     }
 }

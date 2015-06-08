@@ -1,6 +1,11 @@
 ﻿using System.Web.Mvc;
 using Ets.Service.IProvider.Order;
 using Ets.Service.Provider.Order;
+using System;
+using Ets.Model.DomainModel.Order;
+using System.Collections.Generic;
+using ETS.Data.PageData;
+using Ets.Model.ParameterModel.Order;
 
 namespace SuperMan.Controllers
 {
@@ -27,6 +32,36 @@ namespace SuperMan.Controllers
             //TryUpdateModel(criteria);
             var pagedList = iOrderProvider.GetOrderCount(criteria);
             return PartialView("_PartialOrderStatistical", pagedList);
+        }
+        /// <summary>
+        /// 配送数据分析
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult DistributionAnalyze()
+        {
+            int totalRows;
+            IList<DistributionAnalyzeResult> list = iOrderProvider.DistributionAnalyze(new OrderDistributionAnalyze(), 1, out totalRows);
+
+            int pagecount = (int)Math.Ceiling(totalRows / 20d);
+            var pageinfo = new PageInfo<DistributionAnalyzeResult>(totalRows, 1, list, pagecount);
+
+            ViewBag.Cities = iOrderProvider.OrderReceviceCity();
+
+            return PartialView("DistributionAnalyze", pageinfo);
+        }
+        /// <summary>
+        /// 配送数据分析
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult DistributionAnalyze(OrderDistributionAnalyze model)
+        {
+            int totalRows;
+            IList<DistributionAnalyzeResult> list = iOrderProvider.DistributionAnalyze(model, model.PageIndex, out totalRows);
+
+            int pagecount = (int)Math.Ceiling(totalRows / 20d);
+            var pageinfo = new PageInfo<DistributionAnalyzeResult>(totalRows, model.PageIndex, list, pagecount);
+            return PartialView("_PartialDistributionAnalyze", pageinfo);
         }
     }
 }

@@ -106,10 +106,15 @@
                                           {
                                               foreach(var cMenu in childMenus)
                                               {
-                                                  <li><a href="@cMenu.Url" data-url-def="#">@cMenu.MenuName</a></li> 
-                                              }  
+                                                  <li><a href="@cMenu.Url" data-url-def="#">@cMenu.MenuName</a></li>
+                                              }
                                           }
-                                      }  
+                                          if (pMenu.MenuName == "数据统计")
+                                          {
+                                            <li><a href="/OrderStatistical/DistributionAnalyze" data-url-def="#">配送数据分析</a></li>
+
+                                          }
+}  
                                   </ul> </li>  
                             }
                         }
