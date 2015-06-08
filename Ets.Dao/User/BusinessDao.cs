@@ -1433,7 +1433,7 @@ select  Id,Name,City,district,PhoneNo,PhoneNo2,Password,CheckPicUrl,IDCard,
         Address,Landline,Longitude,Latitude,Status,InsertTime,districtId,CityId,GroupId,
         OriginalBusiId,ProvinceCode,CityCode,AreaCode,Province,CommissionTypeId,DistribSubsidy,
         BusinessCommission,CommissionType,CommissionFixValue,BusinessGroupId,BalancePrice,
-        AllowWithdrawPrice,HasWithdrawPrice
+        AllowWithdrawPrice,HasWithdrawPrice,BusinessLicensePic
 from  Business (nolock) 
 where Id=@Id";
 
@@ -1561,6 +1561,9 @@ where Id=@Id";
                 #endregion
 
                 result.CheckPicUrl = CheckPicUrl;
+                result.BusinessLicensePic = dataReader["BusinessLicensePic"] == null ? 
+                    string.Empty : 
+                    Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataReader["BusinessLicensePic"].ToString())[0];
                 result.IDCard = dataReader["IDCard"].ToString();
                 result.Address = dataReader["Address"].ToString();
                 result.Landline = dataReader["Landline"].ToString();
@@ -1921,7 +1924,10 @@ VALUES
 		                            bcr.IsBind,
 		                            bcr.CreateBy,
 		                            bcr.UpdateBy,
-		                            bcr.UpdateTime";
+		                            bcr.UpdateTime,
+		                            bcr.BusinessId,
+		                            bcr.ClienterId,
+                                    bcr.IsEnable";
             var sbSqlWhere = new StringBuilder(" bcr.IsEnable=1 ");
             if (criteria.BusinessId != 0)
             {
@@ -1953,6 +1959,78 @@ VALUES
                 LogHelper.LogWriter(ex, "查询商户绑定骑士数量");
                 return 0;
             }
+        }
+        /// <summary>
+        /// 修改骑士绑定关系
+        /// danny-20150608
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ModifyClienterBind(ClienterBindOptionLogModel model)
+        {
+            string sql = string.Format(@" 
+update bcr
+set    bcr.IsBind=@IsBind
+OUTPUT
+  Inserted.BusinessId,
+  Inserted.ClienterId,
+  @OptId,
+  @OptName,
+  getdate(),
+  @Remark
+INTO ClienterBindOptionLog
+  ( BusinessId
+   ,ClienterId
+   ,OptId
+   ,OptName
+   ,InsertTime
+   ,Remark)
+from BusinessClienterRelation bcr WITH ( ROWLOCK )
+where bcr.BusinessId=@BusinessId AND bcr.ClienterId=@ClienterId;");
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@OptId", model.OptId);
+            parm.AddWithValue("@OptName", model.OptName);
+            parm.AddWithValue("@Remark", model.Remark);
+            parm.AddWithValue("@IsBind", model.IsBind);
+            parm.AddWithValue("@BusinessId", model.BusinessId);
+            parm.AddWithValue("@ClienterId", model.ClienterId);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
+        /// <summary>
+        /// 删除骑士绑定关系
+        /// danny-20150608
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool RemoveClienterBind(ClienterBindOptionLogModel model)
+        {
+            string sql = string.Format(@" 
+update bcr
+set    bcr.IsEnable=@IsEnable
+OUTPUT
+  Inserted.BusinessId,
+  Inserted.ClienterId,
+  @OptId,
+  @OptName,
+  getdate(),
+  @Remark
+INTO ClienterBindOptionLog
+  ( BusinessId
+   ,ClienterId
+   ,OptId
+   ,OptName
+   ,InsertTime
+   ,Remark)
+from BusinessClienterRelation bcr WITH ( ROWLOCK )
+where bcr.BusinessId=@BusinessId AND bcr.ClienterId=@ClienterId;");
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@OptId", model.OptId);
+            parm.AddWithValue("@OptName", model.OptName);
+            parm.AddWithValue("@Remark", model.Remark);
+            parm.AddWithValue("@IsEnable", 0);
+            parm.AddWithValue("@BusinessId", model.BusinessId);
+            parm.AddWithValue("@ClienterId", model.ClienterId);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
     }
 }

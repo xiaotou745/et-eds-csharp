@@ -33,11 +33,26 @@
                         <td>
                             @if (SuperMan.App_Start.UserContext.Current.HasAuthority(24))
                             {
-                                <a href="/BusinessManager/QueryBusinessDetail?businessId=@item.Id">解除绑定</a>
+                                if (item.IsBind == 0)
+                                {
+                                    <a href="javascript:funModifyClienterBind(@item.BusinessId,@item.ClienterId,1)">绑定</a>
+                                }
+                                else
+                                {
+                                    <a href="javascript:funModifyClienterBind(@item.BusinessId,@item.ClienterId,0)">解除绑定</a>
+                                }
                             }
                             @if (SuperMan.App_Start.UserContext.Current.HasAuthority(52))
                             {
-                                <a href="javascript:void(0)">删除</a>
+                                if (item.IsEnable == 0)
+                                {
+                                    <a href="javascript:void(0)" style="color:gray">删除</a>
+                                }
+                                else
+                                {
+                                    <a href="javascript:funRemoveClienterBind(@item.BusinessId,@item.ClienterId)">删除</a>
+                                }
+
                             }
                         </td>
                     </tr>
@@ -55,6 +70,48 @@
 }
 
 <script type="text/javascript">
+    ///修改骑士绑定
+    function funModifyClienterBind(businessId, clienterId, isBind) {
+        if (!window.confirm("是否修改绑定？")) {
+            return;
+        }
+        var paramaters = { "businessId": businessId, "clienterId": clienterId, "isBind": isBind };
+        var url = "/BusinessManager/ModifyClienterBind";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert(result.Message);
+                    window.location.href = "/BusinessManager/ClienterBindManage?businessId=" + businessId;
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    }
+    ///删除骑士绑定
+    function funRemoveClienterBind(businessId, clienterId) {
+        if (!window.confirm("是否删除绑定？")) {
+            return;
+        }
+        var paramaters = { "businessId": businessId, "clienterId": clienterId };
+        var url = "/BusinessManager/RemoveClienterBind";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert(result.Message);
+                    window.location.href = "/BusinessManager/ClienterBindManage?businessId=" + businessId;
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    }
 </script>
 
 

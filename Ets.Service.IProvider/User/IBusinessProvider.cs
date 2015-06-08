@@ -315,6 +315,22 @@ namespace Ets.Service.IProvider.User
         /// <param name="businessId">商户Id</param>
         /// <returns></returns>
         int GetBusinessBindClienterQty(int businessId);
+
+        /// <summary>
+        /// 修改骑士绑定关系
+        /// danny-20150608
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        bool ModifyClienterBind(ClienterBindOptionLogModel model);
+
+        /// <summary>
+        /// 删除骑士绑定关系
+        /// danny-20150608
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        bool RemoveClienterBind(ClienterBindOptionLogModel model);
     }
 }
 
