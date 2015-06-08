@@ -415,6 +415,37 @@ namespace SuperMan.Controllers
             ViewBag.businessClienterRelationList = iBusinessProvider.GetBusinessClienterRelationList(criteria);
             return PartialView("_ClienterBindList");
         }
+
+        /// <summary>
+        /// 修改骑士绑定
+        /// danny-20150608
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult ModifyClienterBind(ClienterBindOptionLogModel model)
+        {
+            model.OptId = UserContext.Current.Id;
+            model.OptName = UserContext.Current.Name;
+            model.Remark = "修改绑定";
+            var reg = iBusinessProvider.ModifyClienterBind(model);
+            return Json(new Ets.Model.Common.ResultModel(reg, reg ? "修改绑定成功！" : "修改绑定失败！"), JsonRequestBehavior.DenyGet);
+        }
+        /// <summary>
+        /// 修改骑士绑定
+        /// danny-20150608
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult RemoveClienterBind(ClienterBindOptionLogModel model)
+        {
+            model.OptId = UserContext.Current.Id;
+            model.OptName = UserContext.Current.Name;
+            model.Remark = "删除骑士绑定";
+            var reg = iBusinessProvider.RemoveClienterBind(model);
+            return Json(new Ets.Model.Common.ResultModel(reg, reg ? "删除骑士绑定成功！" : "删除骑士绑定失败！"), JsonRequestBehavior.DenyGet);
+        }
         ///// <summary>
         ///// 查看商户余额流水记录
         ///// danny-20150512

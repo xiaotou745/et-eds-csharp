@@ -1175,5 +1175,27 @@ namespace Ets.Service.Provider.User
         {
             return dao.GetBusinessBindClienterQty(businessId);
         }
+
+        /// <summary>
+        /// 修改骑士绑定关系
+        /// danny-20150608
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ModifyClienterBind(ClienterBindOptionLogModel model)
+        {
+            return dao.ModifyClienterBind(model);
+        }
+
+        /// <summary>
+        /// 删除骑士绑定关系
+        /// danny-20150608
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool RemoveClienterBind(ClienterBindOptionLogModel model)
+        {
+            return dao.RemoveClienterBind(model);
+        }
     }
 }
