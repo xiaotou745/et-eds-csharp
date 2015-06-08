@@ -2325,7 +2325,7 @@ where   oo.IsJoinWithdraw = 0
         }
 
         /// <summary>
-        /// 最新任务列表 
+        /// 最新任务列表 即 全部订单  
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -2334,7 +2334,10 @@ where   oo.IsJoinWithdraw = 0
             string whereStr = model.City.Contains("北京")
                 ? " and a.ReceviceCity LIKE '北京%'"
                 : string.Format(" and a.ReceviceCity = '{0}'", model.City);
-            string sql = string.Format(@"
+            string sql = null;
+            if (model.ClienterId == 0)     //未登录时，查询所有 无雇佣骑士的商家发布的订单，以及有雇佣骑士的商家发布的超过了五分钟无人抢单的订单 
+            {
+                 sql = string.Format(@"
 declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}
@@ -2350,9 +2353,46 @@ select top {0}
 		round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) as DistanceToBusiness 
 from    dbo.[order] a ( nolock )
         join dbo.business b ( nolock ) on a.businessId = b.Id
-where   a.status = 0
+where   a.status = 0  and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>5))
         {1}
 order by a.Id desc", model.TopNum, whereStr);
+            }
+            else  //查询所有 无雇佣骑士的商家发布的订单，以及 非当前骑士的雇主 里 有雇佣骑士的商家 发布的超过了 五分钟 无人抢单的订单 以及当前骑士所属雇主的所有订单
+            {
+                 sql = string.Format(@"
+declare @cliernterPoint geography ;
+select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
+select top {0}
+        a.Id, a.OrderCommission, a.OrderCount,
+        ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
+        b.Name as BusinessName, b.City as BusinessCity,
+        b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
+        isnull(a.ReceviceAddress, '') as UserAddress,b.Longitude,b.Latitude,
+        case convert(varchar(100), PubDate, 23)
+          when convert(varchar(100), getdate(), 23) then '今日 '
+          else substring(convert(varchar(100), PubDate, 23), 6, 5)
+        end + '  ' + substring(convert(varchar(100), PubDate, 24), 1, 5) as PubDate,
+		round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) as DistanceToBusiness 
+from    dbo.[order] a ( nolock )
+        join dbo.business b ( nolock ) on a.businessId = b.Id
+        left join ( select  distinct
+                            ( temp.BusinessId )
+                    from    BusinessClienterRelation temp
+                    where   temp.IsEnable = 1
+                            and temp.IsBind = 1
+                            and temp.ClienterId = {1}
+                  ) as c on a.BusinessId = c.BusinessId        
+where   a.status = 0
+        and ( b.IsBind = 0
+              or ( b.IsBind = 1
+                   and DATEDIFF(minute, a.PubDate, GETDATE()) > 5
+                 )
+              or c.BusinessId is not null
+            )
+        {2}
+order by a.Id desc", model.TopNum,model.ClienterId, whereStr);
+            }
+
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Latitude", model.Latitude);
             dbParameters.AddWithValue("Longitude", model.Longitude);
@@ -2371,7 +2411,10 @@ order by a.Id desc", model.TopNum, whereStr);
         /// <returns></returns>
         public IList<GetJobCDM> GetJobC(GetJobCPM model)
         {
-            string sql = string.Format(@"
+            string sql = null;
+            if (model.ClienterId == 0)  //未登录时以及非雇佣骑士，查询所有 无雇佣骑士的商家发布的订单，以及有雇佣骑士的商家发布的超过了五分钟无人抢单的订单 
+            {
+                sql = string.Format(@"
 declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
@@ -2388,9 +2431,48 @@ as PubDate,
 round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) as DistanceToBusiness 
 from dbo.[order] a (nolock)
 join dbo.business b (nolock) on a.businessId=b.Id
-where a.status=0 and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
+where a.status=0  and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>5))
+and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
 order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint) asc
 ", model.TopNum);
+            }
+            else //查询所有 无雇佣骑士的商家发布的订单，以及 非当前骑士的雇主 里 有雇佣骑士的商家 发布的超过了 五分钟 无人抢单的订单 以及当前骑士所属雇主的所有订单
+            {
+                sql = string.Format(@"
+declare @cliernterPoint geography ;
+select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
+select top {0} a.Id,a.OrderCommission,a.OrderCount,   
+(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
+b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
+ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'') as UserAddress,
+b.Longitude,b.Latitude,
+case convert(varchar(100), PubDate, 23) 
+	when convert(varchar(100), getdate(), 23) then '今日 '
+    else substring(convert(varchar(100), PubDate, 23),6,5) 
+end
++'  '+substring(convert(varchar(100),PubDate,24),1,5)
+as PubDate,
+round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) as DistanceToBusiness 
+from dbo.[order] a (nolock)
+join dbo.business b (nolock) on a.businessId=b.Id
+left join ( select  distinct
+                            ( temp.BusinessId )
+                    from    BusinessClienterRelation temp
+                    where   temp.IsEnable = 1
+                            and temp.IsBind = 1
+                            and temp.ClienterId = {1}
+                  ) as c on a.BusinessId = c.BusinessId        
+where a.status=0 
+and ( b.IsBind = 0
+              or ( b.IsBind = 1
+                   and DATEDIFF(minute, a.PubDate, GETDATE()) > 5
+                 )
+              or c.BusinessId is not null
+            )
+and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
+order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint) asc
+", model.TopNum,model.ClienterId);
+            }
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Latitude", model.Latitude);
             dbParameters.AddWithValue("Longitude", model.Longitude);
@@ -2427,7 +2509,7 @@ as PubDate,
 round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) as DistanceToBusiness 
 from dbo.[order] a (nolock)
 join dbo.business b (nolock) on a.businessId=b.Id
-join (select  distinct(temp.BusinessId) from  BusinessClienterRelation  temp where temp.IsEnable=1 and  temp.IsBind =1 and temp.ClienterId={1} ) as c on a.BusinessId=c.BusinessId
+join (select  distinct(temp.BusinessId) from BusinessClienterRelation  temp where temp.IsEnable=1 and  temp.IsBind =1 and temp.ClienterId={1} ) as c on a.BusinessId=c.BusinessId
 where a.status=0 
 order by a.id desc 
 ", model.TopNum, model.ClienterId);
