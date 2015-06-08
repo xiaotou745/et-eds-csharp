@@ -67,6 +67,7 @@
     <Compile Include="DataModel\Bussiness\BusinessOptionLog.cs" />
     <Compile Include="DataModel\Bussiness\BusinessRechargeModel.cs" />
     <Compile Include="DataModel\Bussiness\BusinessThirdRelationModel.cs" />
+    <Compile Include="DataModel\Bussiness\ClienterBindOptionLog.cs" />
     <Compile Include="DataModel\Clienter\ClienterOptionLog.cs" />
     <Compile Include="DataModel\Clienter\ClienterCrossShopLogModel.cs" />
     <Compile Include="DataModel\Clienter\ClienterLocation.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="DomainModel\Area\DMAreaCodeInfo.cs" />
     <Compile Include="DomainModel\Authority\AccountCityRelationModel.cs" />
     <Compile Include="DomainModel\Bussiness\BCRelationGetByClienterIdDM.cs" />
+    <Compile Include="DomainModel\Bussiness\BusinessClienterRelationModel.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessDetailModel.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessDM.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessRechargeResultModel.cs" />

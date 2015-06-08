@@ -23,6 +23,7 @@ using Ets.Service.Provider.Finance;
 using Ets.Service.IProvider.Finance;
 using Ets.Model.ParameterModel.Finance;
 using System.Text;
+using BusinessSearchCriteria = Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria;
 
 namespace SuperMan.Controllers
 {
@@ -380,6 +381,65 @@ namespace SuperMan.Controllers
             var pagedList = iBusinessFinanceProvider.GetBusinessBalanceRecordListOfPaging(criteria);
             return View(pagedList);
         }
+
+
+        /// <summary>
+        /// 查看商户绑定骑士列表（初始化）
+        /// danny-20150608
+        /// </summary>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        public ActionResult ClienterBindManage(string businessId)
+        {
+            var businessDetailModel = iBusinessProvider.GetBusinessDetailById(businessId);
+            businessDetailModel.BindClienterQty =
+                iBusinessProvider.GetBusinessBindClienterQty(ParseHelper.ToInt(businessId));
+            var criteria = new BusinessSearchCriteria()
+            {
+               BusinessId =ParseHelper.ToInt(businessId) 
+            };
+            ViewBag.businessClienterRelationList = iBusinessProvider.GetBusinessClienterRelationList(criteria);
+            return View(businessDetailModel);
+        }
+        /// <summary>
+        /// 查看商户绑定骑士列表(翻页)
+        /// danny-20150608
+        /// </summary>
+        /// <param name="pageindex"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult PostClienterBindManage(int pageindex = 1)
+        {
+            var criteria = new BusinessSearchCriteria();
+            TryUpdateModel(criteria);
+            ViewBag.businessClienterRelationList = iBusinessProvider.GetBusinessClienterRelationList(criteria);
+            return PartialView("_ClienterBindList");
+        }
+        ///// <summary>
+        ///// 查看商户余额流水记录
+        ///// danny-20150512
+        ///// </summary>
+        ///// <param name="criteria"></param>
+        ///// <returns></returns>
+        //public ActionResult BusinessBalanceRecord(BusinessBalanceRecordSerchCriteria criteria)
+        //{
+        //    ViewBag.businessBalanceRecord = iBusinessFinanceProvider.GetBusinessBalanceRecordList(criteria);
+        //    return PartialView("_BusinessBalanceRecordList");
+        //}
+        ///// <summary>
+        ///// 查看商户余额流水记录分页版
+        ///// danny-20150604
+        ///// </summary>
+        ///// <param name="pageindex"></param>
+        ///// <returns></returns>
+        //[HttpPost]
+        //public ActionResult PostBusinessBalanceRecord(int pageindex = 1)
+        //{
+        //    var criteria = new BusinessBalanceRecordSerchCriteria();
+        //    TryUpdateModel(criteria);
+        //    ViewBag.businessBalanceRecord = iBusinessFinanceProvider.GetBusinessBalanceRecordListOfPaging(criteria);
+        //    return PartialView("_BusinessBalanceRecordList");
+        //}
 
     }
 }

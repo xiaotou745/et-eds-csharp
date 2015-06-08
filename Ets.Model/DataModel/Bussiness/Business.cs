@@ -146,6 +146,11 @@ namespace Ets.Model.DataModel.Bussiness
         /// 营业执照图片
         /// </summary>
         public string BusinessLicensePic { get; set; }
+        /// <summary>
+        /// 是否绑定了骑士（0：否 1：是）
+        /// </summary>
+        public int IsBind { get; set; }
+        
     }
 
 }
