@@ -1561,7 +1561,7 @@ where Id=@Id";
                 #endregion
 
                 result.CheckPicUrl = CheckPicUrl;
-                result.BusinessLicensePic = dataReader["BusinessLicensePic"] == null ? 
+                result.BusinessLicensePic = string.IsNullOrEmpty(Convert.ToString(dataReader["BusinessLicensePic"])) ? 
                     string.Empty : 
                     Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataReader["BusinessLicensePic"].ToString())[0];
                 result.IDCard = dataReader["IDCard"].ToString();
