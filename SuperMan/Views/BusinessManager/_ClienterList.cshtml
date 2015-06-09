@@ -1,9 +1,5 @@
 ﻿@using ETS.Data.PageData
 @using Ets.Model.DataModel.Clienter
-@using Ets.Model.DataModel.Finance
-@using Ets.Model.DomainModel.Bussiness
-@using ETS.Util;
-@using NPOI.HSSF.Record.Formula.Functions
 <table border="0" cellspacing="0" cellpadding="0" class="tbstyle" width="900">
     <thead>
         <tr class="tdbg">
@@ -26,30 +22,14 @@
                         <td>@item.TrueName</td>
                         <td>@item.PhoneNo</td>
                         <td>
-                            <a href="javascript:void(0)" style="color:gray">已绑定</a>
-                            @*@if (SuperMan.App_Start.UserContext.Current.HasAuthority(24))
+                            @if (item.IsBind == 1)
                             {
-                                if (item.IsBind == 0)
-                                {
-                                    <a href="javascript:funModifyClienterBind(@item.BusinessId,@item.ClienterId,1)">绑定</a>
-                                }
-                                else
-                                {
-                                    <a href="javascript:funModifyClienterBind(@item.BusinessId,@item.ClienterId,0)">解除绑定</a>
-                                }
+                                <a href="javascript:void(0)" style="color:gray">已绑定</a>
                             }
-                            @if (SuperMan.App_Start.UserContext.Current.HasAuthority(52))
+                            else
                             {
-                                if (item.IsEnable == 0)
-                                {
-                                    <a href="javascript:void(0)" style="color:gray">已绑定</a>
-                                }
-                                else
-                                {
-                                    <a href="javascript:funRemoveClienterBind(@item.BusinessId,@item.ClienterId)">删除</a>
-                                }
-
-                            }*@
+                                <a href="javascript:funAddClienterBind(@item.Id)">绑定</a>
+                            }
                         </td>
                     </tr>
                 }
@@ -68,12 +48,14 @@
 
 <script type="text/javascript">
     ///修改骑士绑定
-    function funModifyClienterBind(businessId, clienterId, isBind) {
-        if (!window.confirm("是否修改绑定？")) {
+    function funAddClienterBind(clienterId) {
+        var businessId = $("#businessId").val();
+        alert(businessId);
+        if (!window.confirm("是否添加绑定？")) {
             return;
         }
-        var paramaters = { "businessId": businessId, "clienterId": clienterId, "isBind": isBind };
-        var url = "/BusinessManager/ModifyClienterBind";
+        var paramaters = { "businessId": businessId, "clienterId": clienterId };
+        var url = "/BusinessManager/AddClienterBind";
         $.ajax({
             type: 'POST',
             url: url,
@@ -81,7 +63,7 @@
             success: function (result) {
                 if (result.IsSuccess) {
                     alert(result.Message);
-                    window.location.href = "/BusinessManager/ClienterBindManage?businessId=" + businessId;
+                    window.location.href = "/BusinessManager/AddClienterBindManage?businessId=" + businessId;
                 } else {
                     alert(result.Message);
                 }

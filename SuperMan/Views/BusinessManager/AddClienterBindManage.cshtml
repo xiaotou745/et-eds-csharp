@@ -2,9 +2,6 @@
 @{
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
 }
-@using ETS.Enums
-@using ETS.Extension
-@using ETS.Util;
 <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
 <script src="~/Scripts/jquery-1.8.2.js"></script>
 <script src="~/Scripts/jquery-ui-1.8.20.js"></script>
@@ -30,7 +27,8 @@
             <input id="clienterName" type="text" name="clienterName" />
             <span class="">骑士电话: </span>
             <input id="clienterPhone" type="text" name="clienterPhone" />
-            <input type="submit" value="搜 索" class="searchBtn" id="btnQueryClienter" />
+            <input type="button" value="搜 索" class="searchBtn" id="btnQueryClienter" />
+            <input type="hidden" id="businessId" name="businessId" value="@Model.Id" />
         </div>
     }
     <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
@@ -39,7 +37,20 @@
     </div>
 </div>
 <script type="text/javascript">
-    
+    $("#btnQueryClienter").click(function () {
+        var clienterPhone = $("#clienterPhone").val();
+        var clienterName = $("#clienterName").val();
+        var reg = /^0?1\d{10}$/;
+        if (clienterName.trim().length == 0 && clienterPhone.trim().length == 0) {
+            alert("请输入骑士名称或骑士电话！");
+            return;
+        }
+        if (!reg.test(clienterPhone) && clienterPhone.trim().length > 0) {
+            alert("请输入正确的手机号!");
+            return;
+        }
+        $("#searchForm").submit();
+    });
 </script>
 <script src="~/Scripts/mvcpager.js"></script>
 

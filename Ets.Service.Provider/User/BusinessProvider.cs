@@ -1200,5 +1200,16 @@ namespace Ets.Service.Provider.User
         {
             return dao.RemoveClienterBind(model);
         }
+
+        /// <summary>
+        /// 添加骑士绑定关系
+        /// danny-20150609
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool AddClienterBind(ClienterBindOptionLogModel model)
+        {
+            return dao.AddClienterBind(model);
+        }
     }
 }

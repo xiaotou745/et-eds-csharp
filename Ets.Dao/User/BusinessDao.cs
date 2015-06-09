@@ -1561,7 +1561,7 @@ where Id=@Id";
                 #endregion
 
                 result.CheckPicUrl = CheckPicUrl;
-                result.BusinessLicensePic = dataReader["BusinessLicensePic"] == null ? 
+                result.BusinessLicensePic = string.IsNullOrEmpty(Convert.ToString(dataReader["BusinessLicensePic"])) ? 
                     string.Empty : 
                     Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataReader["BusinessLicensePic"].ToString())[0];
                 result.IDCard = dataReader["IDCard"].ToString();
@@ -2028,6 +2028,47 @@ where bcr.BusinessId=@BusinessId AND bcr.ClienterId=@ClienterId;");
             parm.AddWithValue("@OptName", model.OptName);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@IsEnable", 0);
+            parm.AddWithValue("@BusinessId", model.BusinessId);
+            parm.AddWithValue("@ClienterId", model.ClienterId);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
+        /// <summary>
+        /// 添加骑士绑定关系
+        /// danny-20150609
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool AddClienterBind(ClienterBindOptionLogModel model)
+        {
+            string sql = string.Format(@" 
+INSERT INTO [BusinessClienterRelation]
+           ([BusinessId]
+           ,[ClienterId]
+           ,[CreateBy]
+           ,[UpdateBy])
+	OUTPUT
+	  Inserted.BusinessId,
+	  Inserted.ClienterId,
+	  @OptId,
+	  @OptName,
+	  getdate(),
+	  @Remark
+	INTO ClienterBindOptionLog
+	  ( BusinessId
+	   ,ClienterId
+	   ,OptId
+	   ,OptName
+	   ,InsertTime
+	   ,Remark)
+VALUES
+       (@BusinessId
+       ,@ClienterId
+       ,@OptName
+       ,@OptName);");
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@OptId", model.OptId);
+            parm.AddWithValue("@OptName", model.OptName);
+            parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@BusinessId", model.BusinessId);
             parm.AddWithValue("@ClienterId", model.ClienterId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;

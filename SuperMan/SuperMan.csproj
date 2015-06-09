@@ -620,6 +620,7 @@
     <Content Include="Views\SuperManManager\PostGetRelationByClienterId.cshtml" />
     <Content Include="Views\BusinessManager\AddClienterBindManage.cshtml" />
     <Content Include="Views\BusinessManager\_ClienterList.cshtml" />
+    <Content Include="Views\BusinessManager\ClienterBatchBind.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

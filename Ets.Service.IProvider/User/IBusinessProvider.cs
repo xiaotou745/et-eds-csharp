@@ -331,6 +331,14 @@ namespace Ets.Service.IProvider.User
         /// <param name="model"></param>
         /// <returns></returns>
         bool RemoveClienterBind(ClienterBindOptionLogModel model);
+
+        /// <summary>
+        /// 添加骑士绑定关系
+        /// danny-20150609
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        bool AddClienterBind(ClienterBindOptionLogModel model);
     }
 }
 

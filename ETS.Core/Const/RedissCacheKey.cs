@@ -91,5 +91,10 @@ namespace ETS.Const
         /// b端找回密码语音验证码缓存key
         /// </summary>
         public const string PostForgetPwdSoundCode_B = "PostForgetPwdSoundCode_b_";
+
+        /// <summary>
+        /// 商户对应骑士
+        /// </summary>
+        public const string BusinessClienter = "BusinessClienter_{0}";
     }
 }

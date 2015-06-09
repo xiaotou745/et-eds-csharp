@@ -72,11 +72,12 @@ select @@IDENTITY";
         {
             const string updateSql = @"
 update  BusinessClienterRelation
-set  IsEnable=1,IsBind=1
+set  IsEnable=1,IsBind=1,UpdateBy=@UpdateBy,UpdateTime=getdate()
 where  BusinessId=@BusinessId  and ClienterId=@ClienterId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("BusinessId", businessClienterRelation.BusinessId);
-            dbParameters.AddWithValue("ClienterId", businessClienterRelation.ClienterId); 
+            dbParameters.AddWithValue("ClienterId", businessClienterRelation.ClienterId);
+            dbParameters.AddWithValue("UpdateBy", businessClienterRelation.UpdateBy); 
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
