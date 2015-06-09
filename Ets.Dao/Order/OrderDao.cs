@@ -2345,7 +2345,7 @@ select top {0}
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
         b.Name as BusinessName, b.City as BusinessCity,
         b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
-        isnull(a.ReceviceAddress, '') as UserAddress,b.Longitude,b.Latitude,
+        isnull(a.ReceviceAddress, '') as UserAddress,ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
         case convert(varchar(100), PubDate, 23)
           when convert(varchar(100), getdate(), 23) then '今日 '
           else substring(convert(varchar(100), PubDate, 23), 6, 5)
@@ -2367,7 +2367,7 @@ select top {0}
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
         b.Name as BusinessName, b.City as BusinessCity,
         b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
-        isnull(a.ReceviceAddress, '') as UserAddress,b.Longitude,b.Latitude,
+        isnull(a.ReceviceAddress, '') as UserAddress,ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
         case convert(varchar(100), PubDate, 23)
           when convert(varchar(100), getdate(), 23) then '今日 '
           else substring(convert(varchar(100), PubDate, 23), 6, 5)
@@ -2421,7 +2421,7 @@ select top {0} a.Id,a.OrderCommission,a.OrderCount,
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
 ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'') as UserAddress,
-b.Longitude,b.Latitude,
+ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
 case convert(varchar(100), PubDate, 23) 
 	when convert(varchar(100), getdate(), 23) then '今日 '
     else substring(convert(varchar(100), PubDate, 23),6,5) 
@@ -2445,7 +2445,7 @@ select top {0} a.Id,a.OrderCommission,a.OrderCount,
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
 ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'') as UserAddress,
-b.Longitude,b.Latitude,
+ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
 case convert(varchar(100), PubDate, 23) 
 	when convert(varchar(100), getdate(), 23) then '今日 '
     else substring(convert(varchar(100), PubDate, 23),6,5) 
@@ -2499,7 +2499,7 @@ select top {0}  a.BusinessId, a.Id,a.OrderCommission,a.OrderCount,
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
 ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'') as UserAddress,
-b.Longitude,b.Latitude,
+ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
 case convert(varchar(100), PubDate, 23) 
 	when convert(varchar(100), getdate(), 23) then '今日 '
     else substring(convert(varchar(100), PubDate, 23),6,5) 
@@ -2542,6 +2542,8 @@ order by a.id desc
                 temp.Amount = ParseHelper.ToDecimal(dataRow["Amount"]);
                 temp.BusinessName = dataRow["BusinessName"].ToString();
                 temp.BusinessCity = dataRow["BusinessCity"].ToString();
+                temp.Longitude = ParseHelper.ToDecimal(dataRow["Longitude"]);
+                temp.Latitude = ParseHelper.ToDecimal(dataRow["Latitude"]);
                 temp.BusinessAddress = dataRow["BusinessAddress"] == null
                     ? ""
                     : dataRow["BusinessAddress"].ToString();
