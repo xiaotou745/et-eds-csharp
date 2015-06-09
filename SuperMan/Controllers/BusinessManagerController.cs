@@ -45,6 +45,8 @@ namespace SuperMan.Controllers
         readonly IClienterProvider iClienterProvider = new ClienterProvider();
         readonly IAreaProvider iAreaProvider = new AreaProvider();
         readonly IBusinessFinanceProvider iBusinessFinanceProvider = new BusinessFinanceProvider();
+        readonly IBusinessClienterRelationProvider iBusinessClienterRelationProvider = new BusinessClienterRelationProvider();
+        
         readonly Ets.Service.IProvider.Distribution.IDistributionProvider iDistributionProvider = new DistributionProvider();
         // GET: BusinessManager
         [HttpGet]
