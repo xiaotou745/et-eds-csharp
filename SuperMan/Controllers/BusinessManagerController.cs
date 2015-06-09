@@ -481,10 +481,28 @@ namespace SuperMan.Controllers
         {
             var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria();
             TryUpdateModel(criteria);
-            ViewBag.clienterList = iDistributionProvider.GetClienteres(criteria);
+            ViewBag.clienterList = iClienterProvider.GetClienterList(criteria);
             return PartialView("_ClienterList");
         }
-    
+        /// <summary>
+        /// 添加骑士绑定
+        /// danny-20150609
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public JsonResult AddClienterBind(ClienterBindOptionLogModel model)
+        {
+            if (iBusinessProvider.CheckHaveBind(model))
+            {
+                return Json(new Ets.Model.Common.ResultModel(false, "此条绑定关系已存在！", JsonRequestBehavior.DenyGet));
+            }
+            model.OptId = UserContext.Current.Id;
+            model.OptName = UserContext.Current.Name;
+            model.Remark = "添加绑定";
+            var reg = iBusinessProvider.AddClienterBind(model);
+            return Json(new Ets.Model.Common.ResultModel(reg, reg ? "添加绑定成功！" : "添加绑定失败！"), JsonRequestBehavior.DenyGet);
+        }
+  
         public ActionResult ClienterBatchBind(string businessId)
         {
             var businessDetailModel = iBusinessProvider.GetBusinessDetailById(businessId);

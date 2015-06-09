@@ -46,6 +46,10 @@ namespace Ets.Model.ParameterModel.Clienter
         /// 时间
         /// </summary>
         public string txtPubStart { get; set; }
+        /// <summary>
+        /// 商户Id
+        /// </summary>
+        public int businessId { get; set; }
         
     }
 }

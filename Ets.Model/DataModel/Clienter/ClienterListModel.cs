@@ -38,6 +38,10 @@ namespace Ets.Model.DataModel.Clienter
         public int CSID { get; set; }
 
         public decimal AllowWithdrawPrice { get; set; }
+        /// <summary>
+        /// 是否绑定（0：否 1：是）
+        /// </summary>
+        public int IsBind { get; set; }
 
     }
 }

@@ -1184,6 +1184,16 @@ namespace Ets.Service.Provider.Clienter
         {
             return clienterDao.GetId(phoneNo,trueName);
         }
+		/// <summary>
+        /// 查询骑士列表
+        /// danny-20150609
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<ClienterListModel> GetClienterList(ClienterSearchCriteria criteria)
+        {
+            return clienterDao.GetClienterList<ClienterListModel>(criteria);
+        }
     }
 
 }

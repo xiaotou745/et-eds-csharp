@@ -109,21 +109,10 @@
             secureuri: false, //一般设置为false
             fileElementId: 'file1', //文件上传空间的id属性  <input type="file" id="file" name="file" />
             url: url,
-            data: "", //此参数非常严谨，写错一个引号都不行
-            //success: function (result) {
-            //    console.log(result);
-            //    if (result.IsSuccess) {
-            //        //alert(result.Message);
-            //        window.location.href = "/BusinessManager/ClienterBatchBind";
-            //    } else {
-            //        //alert(result.Message);
-            //        alert("aa");
-            //    }
-            //}
-
+            data: "", //此参数非常严谨，写错一个引号都不行          
             success: function (data, status)  //服务器成功响应处理函数
             {            
-                //window.location.href = "/BusinessManager/ClienterBatchBind";
+                window.location.href = "/BusinessManager/ClienterBatchBind";
             },
             error: function (data, status, e)//服务器响应失败处理函数
             {

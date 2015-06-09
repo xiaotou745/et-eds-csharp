@@ -253,6 +253,13 @@ namespace Ets.Service.IProvider.Clienter
         /// <UpdateBy>hulingbo</UpdateBy>
         /// <UpdateTime>20150609</UpdateTime>
         int GetId(string phoneNo, string trueName);
+		/// <summary>
+        /// 查询骑士列表
+        /// danny-20150609
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        PageInfo<ClienterListModel> GetClienterList(ClienterSearchCriteria criteria);
     
     }
 }
