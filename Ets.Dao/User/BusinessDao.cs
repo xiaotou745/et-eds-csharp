@@ -1700,7 +1700,8 @@ SELECT   b.Id ,
          bfa.OpenBank,
          bfa.OpenSubBank,
          g.GroupName,
-         ISNULL(g.IsModifyBind,0) IsModifyBind
+         ISNULL(g.IsModifyBind,0) IsModifyBind,
+         ISNULL(b.OneKeyPubOrder,0) OneKeyPubOrder
 FROM business b WITH(NOLOCK) 
 	Left join BusinessFinanceAccount bfa WITH(NOLOCK) ON b.Id=bfa.BusinessId AND bfa.IsEnable=1
     Left join [group] g WITH(NOLOCK) on g.Id=b.GroupId 
@@ -1815,6 +1816,7 @@ ORDER BY btr.Id;";
                                 MealsSettleMode=@MealsSettleMode,
                                 CommissionType=@CommissionType,
                                 OriginalBusiId=@OriginalBusiId,
+                                OneKeyPubOrder=@OneKeyPubOrder,
                                            ";
             if (model.GroupId > 0)
             {
@@ -1866,6 +1868,7 @@ ORDER BY btr.Id;";
             parm.AddWithValue("@OptId", model.OptUserId);
             parm.AddWithValue("@OptName", model.OptUserName);
             parm.AddWithValue("@Remark", remark);
+            parm.AddWithValue("@OneKeyPubOrder", model.OneKeyPubOrder);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>
