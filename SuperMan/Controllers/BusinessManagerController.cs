@@ -492,6 +492,10 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public JsonResult AddClienterBind(ClienterBindOptionLogModel model)
         {
+            if (iBusinessProvider.CheckHaveBind(model))
+            {
+                return Json(new Ets.Model.Common.ResultModel(false, "此条绑定关系已存在！", JsonRequestBehavior.DenyGet));
+            }
             model.OptId = UserContext.Current.Id;
             model.OptName = UserContext.Current.Name;
             model.Remark = "添加绑定";

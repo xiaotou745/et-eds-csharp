@@ -2073,5 +2073,20 @@ VALUES
             parm.AddWithValue("@ClienterId", model.ClienterId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
+
+        /// <summary>
+        /// 验证是否有绑定关系
+        /// danny-20150609
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool CheckHaveBind(ClienterBindOptionLogModel model)
+        {
+            string sql = "SELECT COUNT(1) FROM BusinessClienterRelation bcr WITH(NOLOCK) WHERE  bcr.IsEnable=1 AND BusinessId=@BusinessId AND ClienterId=@ClienterId;";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@BusinessId", model.BusinessId);
+            parm.AddWithValue("@ClienterId", model.ClienterId);
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm))>0;
+        }
     }
 }

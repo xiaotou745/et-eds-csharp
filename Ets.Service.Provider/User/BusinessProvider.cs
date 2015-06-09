@@ -1211,5 +1211,16 @@ namespace Ets.Service.Provider.User
         {
             return dao.AddClienterBind(model);
         }
+
+        /// <summary>
+        /// 验证是否有绑定关系
+        /// danny-20150609
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool CheckHaveBind(ClienterBindOptionLogModel model)
+        {
+            return dao.CheckHaveBind(model);
+        }
     }
 }

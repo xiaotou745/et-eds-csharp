@@ -47,36 +47,14 @@
 }
 
 <script type="text/javascript">
-    ///修改骑士绑定
+    ///添加骑士绑定
     function funAddClienterBind(clienterId) {
         var businessId = $("#businessId").val();
-        alert(businessId);
         if (!window.confirm("是否添加绑定？")) {
             return;
         }
         var paramaters = { "businessId": businessId, "clienterId": clienterId };
         var url = "/BusinessManager/AddClienterBind";
-        $.ajax({
-            type: 'POST',
-            url: url,
-            data: paramaters,
-            success: function (result) {
-                if (result.IsSuccess) {
-                    alert(result.Message);
-                    window.location.href = "/BusinessManager/AddClienterBindManage?businessId=" + businessId;
-                } else {
-                    alert(result.Message);
-                }
-            }
-        });
-    }
-    ///删除骑士绑定
-    function funRemoveClienterBind(businessId, clienterId) {
-        if (!window.confirm("是否删除绑定？")) {
-            return;
-        }
-        var paramaters = { "businessId": businessId, "clienterId": clienterId };
-        var url = "/BusinessManager/RemoveClienterBind";
         $.ajax({
             type: 'POST',
             url: url,
