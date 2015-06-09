@@ -195,6 +195,7 @@
     <Compile Include="ParameterModel\Bussiness\BusiAddAddressResultModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BusinessRegisterModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BusiOrderInfoModel.cs" />
+    <Compile Include="ParameterModel\Bussiness\BusinessClienterRelationPM.cs" />
     <Compile Include="ParameterModel\Bussiness\BussinessRecordsPM.cs" />
     <Compile Include="ParameterModel\Bussiness\BussinessStatusModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BussOrderParaModelApp.cs" />
