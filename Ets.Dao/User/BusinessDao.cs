@@ -708,9 +708,9 @@ order by a.id desc
         /// <returns>商家信息</returns>
         public BusListResultModel GetBusinessByPhoneNo(string PhoneNo)
         {
-            string sql = @"SELECT Id  FROM dbo.business(NOLOCK) a
+            string sql = @"SELECT a.Id  FROM dbo.business(NOLOCK) a
 LEFT join dbo.[group] b on a.GroupId=b.Id
-where a.PhoneNo=@PhoneNo and b.IsModifyBind=1";
+where a.PhoneNo=@PhoneNo and isnull(b.IsModifyBind,1)=1";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@PhoneNo", SqlDbType.NVarChar);
             parm.SetValue("@PhoneNo", PhoneNo);
