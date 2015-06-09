@@ -1,0 +1,99 @@
+﻿@using Ets.Model.DomainModel.Bussiness
+@model  List<BusinessBindClienterDM>
+
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+@using (Html.BeginForm("ClienterBatchBind", "BusinessManager", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+<div class="SearchMd">
+    <table border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td>                     
+                <input id="FileUpload" type="file" name="file" style="width: 250px; height: 24px;">        
+                <input type="submit" value="导入" class="searchBtn" id="btnImport" />                        
+                @*<input type="submit" value="导入" onclick="Import();" class="searchBtn" id="btnImport" />*@            
+                @*<input type="button" value="导入" onclick="return funImport()" class="searchBtn" id="btnImport" />*@
+                <input type="button" value="保存绑定" class="searchBtn" id="btnSave" />             
+                @Html.ActionLink("保存绑定", "ClienterBatchSave", "BusinessManager", new { list=Model})   
+            </td>
+        </tr>
+       
+    </table>
+</div>
+}
+
+<table border="0" cellspacing="0" cellpadding="0" class="tbstyle" width="900">
+    <thead>
+        <tr class="tdbg">
+        <th>行号</th>
+        <th>骑士姓名</th>
+        <th>骑士手机号</th>
+        <th>是否绑定</th>
+        <th>状态</th>
+        <th>备注</th>     
+    </thead>
+    <tbody>
+      @{          
+          if (Model != null && Model.Count > 0)
+          {                     
+              foreach (var item in Model)
+              { 
+                    <tr>
+                        <td>@item.RowCount</td>
+                        <td>@item.ClienterName</td>
+                        <td>@item.ClienterPhoneNo</td>
+                        <td>
+                            @if (item.IsBind)
+                            {
+                                <input id="Checkbox1" type="checkbox"  checked="checked" />                                
+                            }
+                        </td>
+                        <td>
+                            @if (item.IsEnable)
+                            {
+                                @Html.Label("成功");
+                            }
+                            else
+                            {
+                                @Html.Label("失败");
+                            }
+                        </td>                      
+                        <td style="color:red;font-weight:600">@item.ClienterRemarks</td>
+                      </tr>
+              }
+          }     
+      }
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    //商户充值
+    $("#btnSave").on('click', function () {
+
+        var busiId = 246;
+        alert("a"); 
+        var paramaters = {
+            "BusinessId": busiId         
+        };
+
+        var url = "/BusinessManager/ClienterBatchSave";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert(result.Message);
+                    window.location.href = "/BusinessManager/ClienterBatchSave";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    }
+        )
+
+
+ </script>

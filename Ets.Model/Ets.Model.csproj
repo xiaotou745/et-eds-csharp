@@ -96,6 +96,7 @@
     <Compile Include="DomainModel\Bussiness\BCRelationGetByClienterIdDM.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessClienterRelationModel.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessDetailModel.cs" />
+    <Compile Include="DomainModel\Bussiness\BusinessBindClienterDM.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessDM.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessRechargeResultModel.cs" />
     <Compile Include="DomainModel\Bussiness\ClienterBindOptionLogModel.cs" />
