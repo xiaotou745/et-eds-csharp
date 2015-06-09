@@ -30,5 +30,14 @@ namespace Ets.Model.ParameterModel.Bussiness
         /// 骑士id
         /// </summary>
         public int ClienterId { get; set; }
+
+        /// <summary>
+        /// 骑士姓名
+        /// </summary>
+        public string Name { get; set; }
+        /// <summary>
+        /// 电话
+        /// </summary>
+        public string Phone { get; set; }
     }
 }

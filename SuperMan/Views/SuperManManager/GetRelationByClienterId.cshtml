@@ -11,20 +11,23 @@
 <script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.iframe-transport.js"></script>
 <div class="zpManage zpSh">
     <h2 class="crumbs">
-        您所在位置 商户 > 骑士管理 > 骑士绑定商家列表
-    </h2>
+        您所在位置 商户 > <a href="/SuperManManager/SuperManManager">骑士管理</a> > 骑士绑定商家列表
+</h2>
     @using (Ajax.BeginForm("PostGetRelationByClienterId", new RouteValueDictionary { { "pageindex", "" } },
         new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
         new RouteValueDictionary { { "id", "searchForm" } }))
     {
         <div class="SearchMd">
+            <p style="font-size: 27px;height:40px;">
+                骑士绑定商家列表
+            </p>
             <table>
                 <tr>
                     <td>
-                        <span class="">模板名称: </span>
-                        <span class=""> </span>
-                        <span class="">模板名称: </span>
-                        <span class=""> </span>
+                        <span class="">骑士姓名: </span>
+                        <span class="">@ViewBag.Name</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span class="">骑士电话: </span>
+                        <span class="">@ViewBag.Phone</span>
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" style="display:none;"/>
                     </td>
                 </tr>
