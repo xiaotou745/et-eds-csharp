@@ -1312,7 +1312,7 @@ WHERE c.Id = @ClienterId  ";
             string querySql = @"
 select TrueName
 from   dbo.[clienter] (nolock) 
-where  phoneNo = @phoneNo and Status=1";
+where  phoneNo = @phoneNo ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@phoneNo", phoneNo);
           
@@ -1321,6 +1321,29 @@ where  phoneNo = @phoneNo and Status=1";
                 name = executeScalar.ToString();
 
             return name;
+        }
+
+        /// <summary>
+        /// 获取骑士Id
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150609</UpdateTime>
+        /// <param name="phoneNo"></param>
+        /// <param name="trueName"></param>
+        /// <returns></returns>
+        public int GetId(string phoneNo, string trueName)
+        {           
+            string querySql = @"
+select Id
+from   dbo.[clienter] (nolock) 
+where  phoneNo = @phoneNo and TrueName=@TrueName ";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@phoneNo", phoneNo);
+            dbParameters.AddWithValue("@phoneNo", phoneNo);
+
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
+            return  ParseHelper.ToInt(executeScalar, 0);
 
         }
     }

@@ -1166,6 +1166,17 @@ namespace Ets.Service.Provider.Clienter
         {
             return clienterDao.GetName(phoneNo);
         }
+
+        /// <summary>
+        /// 获取骑士Id
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150609</UpdateTime>
+        public int GetId(string phoneNo, string trueName)
+        {
+            return clienterDao.GetId(phoneNo,trueName);
+        }
+
     }
 
 }

@@ -242,6 +242,12 @@ namespace Ets.Service.IProvider.Clienter
         /// <returns></returns>
         string GetName(string phoneNo);
 
+        /// <summary>
+        /// 获取骑士Id
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150609</UpdateTime>
+        int GetId(string phoneNo, string trueName);
     
     }
 }

@@ -30,6 +30,8 @@ using NPOI.XSSF.UserModel;
 using NPOI.HSSF.UserModel;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.IProvider.Clienter;
+using  Ets.Service.IProvider.Bussiness;
+using  Ets.Service.Provider.Bussiness;
 namespace SuperMan.Controllers
 {
     [WebHandleError]
@@ -42,6 +44,8 @@ namespace SuperMan.Controllers
         readonly IClienterProvider iClienterProvider = new ClienterProvider();
         readonly IAreaProvider iAreaProvider = new AreaProvider();
         readonly IBusinessFinanceProvider iBusinessFinanceProvider = new BusinessFinanceProvider();
+        readonly IBusinessClienterRelationProvider iBusinessClienterRelationProvider = new BusinessClienterRelationProvider();
+        
         // GET: BusinessManager
         [HttpGet]
         public ActionResult BusinessManager()
@@ -477,6 +481,7 @@ namespace SuperMan.Controllers
         //    ViewBag.businessBalanceRecord = iBusinessFinanceProvider.GetBusinessBalanceRecordListOfPaging(criteria);
         //    return PartialView("_BusinessBalanceRecordList");
         //}
+      [HttpPost]
       public ActionResult ClienterBatchBind()
         {
             List<BusinessBindClienterDM> list = new List<BusinessBindClienterDM>();
@@ -493,10 +498,13 @@ namespace SuperMan.Controllers
                 wk = new XSSFWorkbook(fs);                          
                 ISheet st = wk.GetSheetAt(0);
                 int rowCount = st.LastRowNum;
-                //if(rowCount>100)
-                //    return Json(new ResultModel(rowCount>100, reg ? "充值成功！" : "充值失败！"), JsonRequestBehavior.DenyGet);
+                if (rowCount > 50)
+                {
+                    rowCount = 50;
+                    return Json(new Ets.Model.Common.ResultModel(false, "每次最多导入50行数据"), JsonRequestBehavior.DenyGet);
+                }
 
-                for (int i = 1; i < rowCount; i++)
+                for (int i = 1; i <= rowCount; i++)
                 {
                     string name="",phone="";
                     if(st.GetRow(i)!=null && st.GetRow(i).GetCell(0)!=null)//用户名
@@ -530,7 +538,7 @@ namespace SuperMan.Controllers
                     string trueName = iClienterProvider.GetName(phone);
                     if (string.IsNullOrEmpty(trueName))
                     {
-                        model.ClienterRemarks = "骑士手机不存在或未审核";
+                        model.ClienterRemarks = "骑士手机不存在";
                         model.IsBind = false;
                         model.IsEnable = false;
                         list.Add(model);
@@ -552,10 +560,10 @@ namespace SuperMan.Controllers
                     list.Add(model);           
                 }
 
-                         var redis = new ETS.NoSql.RedisCache.RedisCache();
-                    //redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
-                    //    paramodel.order_id.ToString()), orderNo, DateTime.Now.AddDays(30));  //先加入缓存，相当于加锁
-                    redis.Set("piliang", list ,  DateTime.Now.AddDays(30));  //先加入缓存，相当于加锁
+                 var redis = new ETS.NoSql.RedisCache.RedisCache();
+                 string businessId="246";
+                 redis.Set(string.Format(ETS.Const.RedissCacheKey.BusinessClienter, businessId), list, DateTime.Now.AddHours(1));  
+                 //redis.Set("piliang", list, DateTime.Now.AddHours(1));  //先加入缓存，相当于加锁
             }
             catch (Exception ex)
             {         
@@ -569,12 +577,59 @@ namespace SuperMan.Controllers
         /// 保存
         /// </summary>
         /// <returns></returns>
+        [HttpPost]
         public ActionResult ClienterBatchSave()
         {
             var redis = new ETS.NoSql.RedisCache.RedisCache();
-            List<BusinessBindClienterDM> list=redis.Get<List<BusinessBindClienterDM>>("piliang");  
+            string businessId = "246";
+            List<BusinessBindClienterDM> list = redis.Get<List<BusinessBindClienterDM>>(string.Format(ETS.Const.RedissCacheKey.BusinessClienter, businessId));  
+            //List<BusinessBindClienterDM> list=redis.Get<List<BusinessBindClienterDM>>("piliang");
 
-            return View();
+            List<BusinessBindClienterDM> listSurplus = new List<BusinessBindClienterDM>();
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (list[i].IsEnable)//成功
+                {
+                    string phone = list[i].ClienterPhoneNo;
+                    string name = list[i].ClienterName;
+                    int clienterId =  iClienterProvider.GetId(phone,name);
+
+                    BusinessClienterRelation model=iBusinessClienterRelationProvider.GetDetails(new BusinessClienterRelationPM
+                                                    {
+                                                        BusinessId = Convert.ToInt32(businessId),
+                                                        ClienterId = clienterId
+                                                    });
+                    if (model == null)
+                    {
+                        iBusinessClienterRelationProvider.Create(new BusinessClienterRelation
+                                                        {
+                                                            BusinessId = Convert.ToInt32(businessId),
+                                                            ClienterId = clienterId,
+                                                            CreateBy = "系统",
+                                                            UpdateBy = "系统"
+                                                        });
+                    }
+
+                    if (model != null && model.IsEnable == 0)//
+                    {
+                        iBusinessClienterRelationProvider.Modify(new BusinessClienterRelationPM
+                        {
+                            BusinessId = Convert.ToInt32(businessId),
+                            ClienterId = clienterId,                            
+                            UpdateBy = "系统"
+                        });
+                    }                    
+                }
+                else
+                {
+                    listSurplus.Add(list[i]);
+                }              
+            }
+
+            redis.Set(string.Format(ETS.Const.RedissCacheKey.BusinessClienter, businessId), listSurplus, DateTime.Now.AddHours(1));  
+
+            return Json(new Ets.Model.Common.ResultModel(true, "保存成功"), JsonRequestBehavior.DenyGet);    
+   
         }
         
     }
