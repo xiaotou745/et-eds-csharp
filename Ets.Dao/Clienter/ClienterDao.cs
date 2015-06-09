@@ -1340,7 +1340,7 @@ where  phoneNo = @phoneNo and TrueName=@TrueName ";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@phoneNo", phoneNo);
-            dbParameters.AddWithValue("@phoneNo", phoneNo);
+            dbParameters.AddWithValue("@TrueName", trueName);
 
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
             return  ParseHelper.ToInt(executeScalar, 0);

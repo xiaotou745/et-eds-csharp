@@ -47,6 +47,25 @@ namespace SuperMan.Controllers
             return View();
         }
 
+        public ActionResult ClienterBatchImport()
+        {
+            string userAgent = HttpContext.Request.UserAgent;
+            //微信浏览器
+            if (userAgent.ToLower().Contains("micromessenger"))
+            {
+                ViewBag.IsWeixin = true;
+            }
+            else
+            {
+                ViewBag.IsWeixin = false;
+                Response.Redirect("/Content/Template/BatchImport.xlsx?v=" + ETS.Util.TimeHelper.GetTimeStamp());
+                return null;
+            }
+            ViewBag.UserAgent = userAgent;
+
+            return View();
+        }
+
         public ActionResult ViewPage1()
         {
             return View();
