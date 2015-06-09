@@ -148,33 +148,31 @@ namespace SuperManWebApi.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public ResultModel<BusiModifyResultModelDM> UpdateBusinessInfoB()//BusiAddAddressInfoModel model
+        public ResultModel<BusiModifyResultModelDM> UpdateBusinessInfoB()
         {
-            //model.CheckPicUrl = null;
-            //model.BusinessLicensePic = null;  //防止移动端或者不安全情况下给该参数传了值
-
             BusiAddAddressInfoModel model = new BusiAddAddressInfoModel();
-            model.userId = ParseHelper.ToInt(HttpUtility.UrlDecode(HttpContext.Current.Request.Form["UserId"]), 0);
-            model.phoneNo = HttpUtility.UrlDecode(HttpContext.Current.Request.Form["phoneNo"]);
-            model.Address = HttpUtility.UrlDecode(HttpContext.Current.Request.Form["Address"]);
-            model.businessName = HttpUtility.UrlDecode(HttpContext.Current.Request.Form["businessName"]);
-            model.landLine = HttpUtility.UrlDecode(HttpContext.Current.Request.Form["landLine"]);
-            
+            model.userId = ParseHelper.ToInt(HttpUtility.UrlDecode(HttpContext.Current.Request.Form["UserId"]), 0); //商户id
+            model.businessName = HttpUtility.UrlDecode(HttpContext.Current.Request.Form["businessName"]); //商户名称
+            model.Address = HttpUtility.UrlDecode(HttpContext.Current.Request.Form["Address"]);//详细地址
+            model.phoneNo = HttpUtility.UrlDecode(HttpContext.Current.Request.Form["phoneNo"]);  // 手机号  2
+            model.landLine = HttpUtility.UrlDecode(HttpContext.Current.Request.Form["landLine"]); // 座机
+            model.Province = HttpUtility.UrlDecode(HttpContext.Current.Request.Form["Province"]); // 省份
+            model.City = HttpUtility.UrlDecode(HttpContext.Current.Request.Form["City"]);// 城市
+            model.districtName = HttpUtility.UrlDecode(HttpContext.Current.Request.Form["districtName"]);// 区
+            model.longitude = ParseHelper.ToDouble(HttpUtility.UrlDecode(HttpContext.Current.Request.Form["longitude"]));//经度
+            model.latitude = ParseHelper.ToDouble(HttpUtility.UrlDecode(HttpContext.Current.Request.Form["latitude"])); //纬度
             model.IsUpdateCheckPicUrl = ParseHelper.ToInt(HttpUtility.UrlDecode(HttpContext.Current.Request.Form["IsUpdateCheckPicUrl"]), 0);
             model.IsUpdateBusinessLicensePic = ParseHelper.ToInt(HttpUtility.UrlDecode(HttpContext.Current.Request.Form["IsUpdateBusinessLicensePic"]), 0);
-            
             //照片有所更新 
             #region 更新商家头像
             ImageHelper ih = new ImageHelper();
             if (model.IsUpdateCheckPicUrl == 0)
             {
-              
                 var file = HttpContext.Current.Request.Files["CheckPicUrl"];
                 if (file == null)
                 {
                     return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.InvalidFileFormat);
                 }
-               
                 ImgInfo imgInfo = ih.UploadImg(file, model.userId);
                 if (!string.IsNullOrWhiteSpace(imgInfo.FailRemark))
                 {
@@ -203,12 +201,7 @@ namespace SuperManWebApi.Controllers
                 model.BusinessLicensePic = imgInfoLicen.PicUrl;
             }
             #endregion
-            //}
-            //if (model.IsUpdateBusinessLicensePic == 0)
-            //{
-            //ImageHelper ih = new ImageHelper();
-
-            //}
+           
             //修改商户地址信息，返回当前商户的状态
             return _iBusinessProvider.UpdateBusinessInfoB(model);
         }
