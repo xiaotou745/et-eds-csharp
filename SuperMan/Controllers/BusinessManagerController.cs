@@ -23,7 +23,12 @@ using Ets.Service.Provider.Finance;
 using Ets.Service.IProvider.Finance;
 using Ets.Model.ParameterModel.Finance;
 using System.Text;
-
+using System.IO;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using NPOI.HSSF.UserModel;
+using Ets.Service.Provider.Clienter;
+using Ets.Service.IProvider.Clienter;
 namespace SuperMan.Controllers
 {
     [WebHandleError]
@@ -33,6 +38,7 @@ namespace SuperMan.Controllers
         /// 商户业务类
         /// </summary>
         readonly IBusinessProvider iBusinessProvider = new BusinessProvider();
+        readonly IClienterProvider iClienterProvider = new ClienterProvider();
         readonly IAreaProvider iAreaProvider = new AreaProvider();
         readonly IBusinessFinanceProvider iBusinessFinanceProvider = new BusinessFinanceProvider();
         // GET: BusinessManager
@@ -381,5 +387,105 @@ namespace SuperMan.Controllers
             return View(pagedList);
         }
 
+        public ActionResult ClienterBatchBind()
+        {
+            List<BusinessBindClienterDM> list = new List<BusinessBindClienterDM>();
+            
+            Stream fs=null;
+            IWorkbook wk=null;
+            try
+            {
+                if(Request.Files["file"]==null)  return View();
+                if (Request.Files["file"].FileName == "") return View();
+
+                HttpPostedFileBase file = Request.Files["file"];
+                fs = file.InputStream;
+                wk = new XSSFWorkbook(fs);                          
+                ISheet st = wk.GetSheetAt(0);
+                int rowCount = st.LastRowNum;
+                //if(rowCount>100)
+                //    return Json(new ResultModel(rowCount>100, reg ? "充值成功！" : "充值失败！"), JsonRequestBehavior.DenyGet);
+
+                for (int i = 1; i < rowCount; i++)
+                {
+                    string name="",phone="";
+                    if(st.GetRow(i)!=null && st.GetRow(i).GetCell(0)!=null)//用户名
+                        name=st.GetRow(i).GetCell(0).ToString();
+                    if (st.GetRow(i) != null && st.GetRow(i).GetCell(1) != null)//手机号
+                     phone=st.GetRow(i).GetCell(1).ToString();
+                    BusinessBindClienterDM model = new BusinessBindClienterDM();
+                    model.RowCount = i;
+                    model.ClienterName = name;
+                    model.ClienterPhoneNo = phone;
+
+                    if (string.IsNullOrEmpty(phone))//手机号为空
+                    {                        
+                        model.ClienterRemarks = "骑士手机错误";                 
+                        model.IsBind = false;
+                        model.IsEnable = false;
+                        list.Add(model);
+                        continue;
+                    }
+
+                    Regex dReg = new Regex("^1\\d{10}$");
+                    if (!dReg.IsMatch(phone))//验证收货人手机号
+                    {
+                        model.ClienterRemarks = "骑士手机错误";
+                        model.IsBind = false;
+                        model.IsEnable = false;
+                        list.Add(model);
+                        continue;
+                    }
+
+                    string trueName = iClienterProvider.GetName(phone);
+                    if (string.IsNullOrEmpty(trueName))
+                    {
+                        model.ClienterRemarks = "骑士手机不存在或未审核";
+                        model.IsBind = false;
+                        model.IsEnable = false;
+                        list.Add(model);
+                        continue;
+                    }
+
+                    if (name != trueName)
+                    {
+                        model.ClienterRemarks = "骑士名称错误";
+                        model.IsBind = false;
+                        model.IsEnable = false;
+                        list.Add(model);
+                        continue;
+                    }
+
+                    model.ClienterRemarks = "";
+                    model.IsBind = true;
+                    model.IsEnable = true;
+                    list.Add(model);           
+                }
+
+                         var redis = new ETS.NoSql.RedisCache.RedisCache();
+                    //redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
+                    //    paramodel.order_id.ToString()), orderNo, DateTime.Now.AddDays(30));  //先加入缓存，相当于加锁
+                    redis.Set("piliang", list ,  DateTime.Now.AddDays(30));  //先加入缓存，相当于加锁
+            }
+            catch (Exception ex)
+            {         
+                fs.Close();
+            }
+
+            return View(list);
+        }
+
+        /// <summary>
+        /// 保存
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult ClienterBatchSave()
+        {
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            List<BusinessBindClienterDM> list=redis.Get<List<BusinessBindClienterDM>>("piliang");  
+
+            return View();
+        }
+        
     }
 }

@@ -1154,6 +1154,18 @@ namespace Ets.Service.Provider.Clienter
             //} 
             //return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.Failed);
         }
+
+        /// <summary>
+        /// 获取骑士用户名
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
+        /// <param name="phoneNo"></param>
+        /// <returns></returns>
+        public string GetName(string phoneNo)
+        {
+            return clienterDao.GetName(phoneNo);
+        }
     }
 
 }
