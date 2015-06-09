@@ -484,96 +484,199 @@ namespace SuperMan.Controllers
             ViewBag.clienterList = iDistributionProvider.GetClienteres(criteria);
             return PartialView("_ClienterList");
         }
-      [HttpPost]
-      public ActionResult ClienterBatchBind()
+    
+        public ActionResult ClienterBatchBind(string businessId)
         {
+            var businessDetailModel = iBusinessProvider.GetBusinessDetailById(businessId);
+            //ViewBag.clienterList = null;
+            //return View(businessDetailModel);          
+            return View(businessDetailModel);
+
+
+            //#region 
+            //List<BusinessBindClienterDM> list = new List<BusinessBindClienterDM>();            
+            //Stream fs=null;
+            //IWorkbook wk=null;
+            //try
+            //{
+            //    if (Request.Files["file"] != null && Request.Files["file"].FileName != "")
+            //    {
+            //        HttpPostedFileBase file = Request.Files["file"];
+            //        fs = file.InputStream;
+            //        wk = new XSSFWorkbook(fs);
+            //        ISheet st = wk.GetSheetAt(0);
+            //        int rowCount = st.LastRowNum;
+            //        if (rowCount > 50)
+            //        {
+            //            rowCount = 50;
+            //            return Json(new Ets.Model.Common.ResultModel(false, "每次最多导入50行数据"), JsonRequestBehavior.DenyGet);
+            //        }
+
+            //        for (int i = 1; i <= rowCount; i++)
+            //        {
+            //            string name = "", phone = "";
+            //            if (st.GetRow(i) != null && st.GetRow(i).GetCell(0) != null)//用户名
+            //                name = st.GetRow(i).GetCell(0).ToString();
+            //            if (st.GetRow(i) != null && st.GetRow(i).GetCell(1) != null)//手机号
+            //                phone = st.GetRow(i).GetCell(1).ToString();
+            //            BusinessBindClienterDM model = new BusinessBindClienterDM();
+            //            model.RowCount = i;
+            //            model.ClienterName = name;
+            //            model.ClienterPhoneNo = phone;
+
+            //            if (string.IsNullOrEmpty(phone))//手机号为空
+            //            {
+            //                model.ClienterRemarks = "骑士手机错误";
+            //                model.IsBind = false;
+            //                model.IsEnable = false;
+            //                list.Add(model);
+            //                continue;
+            //            }
+
+            //            Regex dReg = new Regex("^1\\d{10}$");
+            //            if (!dReg.IsMatch(phone))//验证收货人手机号
+            //            {
+            //                model.ClienterRemarks = "骑士手机错误";
+            //                model.IsBind = false;
+            //                model.IsEnable = false;
+            //                list.Add(model);
+            //                continue;
+            //            }
+
+            //            string trueName = iClienterProvider.GetName(phone);
+            //            if (string.IsNullOrEmpty(trueName))
+            //            {
+            //                model.ClienterRemarks = "骑士手机不存在";
+            //                model.IsBind = false;
+            //                model.IsEnable = false;
+            //                list.Add(model);
+            //                continue;
+            //            }
+
+            //            if (name != trueName)
+            //            {
+            //                model.ClienterRemarks = "骑士名称错误";
+            //                model.IsBind = false;
+            //                model.IsEnable = false;
+            //                list.Add(model);
+            //                continue;
+            //            }
+
+            //            model.ClienterRemarks = "";
+            //            model.IsBind = true;
+            //            model.IsEnable = true;
+            //            list.Add(model);
+            //        }
+
+            //        var redis = new ETS.NoSql.RedisCache.RedisCache();
+            //        //string businessId = Request.Form["busId"].ToString();
+            //        redis.Set(string.Format(ETS.Const.RedissCacheKey.BusinessClienter, businessId), list, DateTime.Now.AddHours(1));
+            //    }
+            //}
+            //catch (Exception ex)
+            //{         
+            //    fs.Close();
+            //}
+
+            //#endregion
+
+        
+        }
+
+         [HttpPost]
+        public ActionResult ClienterImport()
+        {
+            string businessId = Request.Params["BusinessId"].ToString();
+
             List<BusinessBindClienterDM> list = new List<BusinessBindClienterDM>();
-            
-            Stream fs=null;
-            IWorkbook wk=null;
+            Stream fs = null;
+            IWorkbook wk = null;
             try
             {
-                if(Request.Files["file"]==null)  return View();
-                if (Request.Files["file"].FileName == "") return View();
-
-                HttpPostedFileBase file = Request.Files["file"];
-                fs = file.InputStream;
-                wk = new XSSFWorkbook(fs);                          
-                ISheet st = wk.GetSheetAt(0);
-                int rowCount = st.LastRowNum;
-                if (rowCount > 50)
+                if (Request.Files["file1"] != null && Request.Files["file1"].FileName != "")
                 {
-                    rowCount = 50;
-                    return Json(new Ets.Model.Common.ResultModel(false, "每次最多导入50行数据"), JsonRequestBehavior.DenyGet);
+                    HttpPostedFileBase file = Request.Files["file1"];
+                    fs = file.InputStream;
+                    wk = new XSSFWorkbook(fs);
+                    ISheet st = wk.GetSheetAt(0);
+                    int rowCount = st.LastRowNum;
+                    if (rowCount > 50)
+                    {
+                        rowCount = 50;
+                        return Json(new Ets.Model.Common.ResultModel(false, "每次最多导入50行数据"), JsonRequestBehavior.DenyGet);
+                    }
+
+                    for (int i = 1; i <= rowCount; i++)
+                    {
+                        string name = "", phone = "";
+                        if (st.GetRow(i) != null && st.GetRow(i).GetCell(0) != null)//用户名
+                            name = st.GetRow(i).GetCell(0).ToString();
+                        if (st.GetRow(i) != null && st.GetRow(i).GetCell(1) != null)//手机号
+                            phone = st.GetRow(i).GetCell(1).ToString();
+                        BusinessBindClienterDM model = new BusinessBindClienterDM();
+                        model.RowCount = i;
+                        model.ClienterName = name;
+                        model.ClienterPhoneNo = phone;
+
+                        if (string.IsNullOrEmpty(phone))//手机号为空
+                        {
+                            model.ClienterRemarks = "骑士手机错误";
+                            model.IsBind = false;
+                            model.IsEnable = false;
+                            list.Add(model);
+                            continue;
+                        }
+
+                        Regex dReg = new Regex("^1\\d{10}$");
+                        if (!dReg.IsMatch(phone))//验证收货人手机号
+                        {
+                            model.ClienterRemarks = "骑士手机错误";
+                            model.IsBind = false;
+                            model.IsEnable = false;
+                            list.Add(model);
+                            continue;
+                        }
+
+                        string trueName = iClienterProvider.GetName(phone);
+                        if (string.IsNullOrEmpty(trueName))
+                        {
+                            model.ClienterRemarks = "骑士手机不存在";
+                            model.IsBind = false;
+                            model.IsEnable = false;
+                            list.Add(model);
+                            continue;
+                        }
+
+                        if (name != trueName)
+                        {
+                            model.ClienterRemarks = "骑士名称错误";
+                            model.IsBind = false;
+                            model.IsEnable = false;
+                            list.Add(model);
+                            continue;
+                        }
+
+                        model.ClienterRemarks = "";
+                        model.IsBind = true;
+                        model.IsEnable = true;
+                        list.Add(model);
+                    }
+
+                    var redis = new ETS.NoSql.RedisCache.RedisCache();                 
+                    redis.Set(string.Format(ETS.Const.RedissCacheKey.BusinessClienter, businessId), list, DateTime.Now.AddHours(1));
                 }
-
-                for (int i = 1; i <= rowCount; i++)
-                {
-                    string name="",phone="";
-                    if(st.GetRow(i)!=null && st.GetRow(i).GetCell(0)!=null)//用户名
-                        name=st.GetRow(i).GetCell(0).ToString();
-                    if (st.GetRow(i) != null && st.GetRow(i).GetCell(1) != null)//手机号
-                     phone=st.GetRow(i).GetCell(1).ToString();
-                    BusinessBindClienterDM model = new BusinessBindClienterDM();
-                    model.RowCount = i;
-                    model.ClienterName = name;
-                    model.ClienterPhoneNo = phone;
-
-                    if (string.IsNullOrEmpty(phone))//手机号为空
-                    {                        
-                        model.ClienterRemarks = "骑士手机错误";                 
-                        model.IsBind = false;
-                        model.IsEnable = false;
-                        list.Add(model);
-                        continue;
-                    }
-
-                    Regex dReg = new Regex("^1\\d{10}$");
-                    if (!dReg.IsMatch(phone))//验证收货人手机号
-                    {
-                        model.ClienterRemarks = "骑士手机错误";
-                        model.IsBind = false;
-                        model.IsEnable = false;
-                        list.Add(model);
-                        continue;
-                    }
-
-                    string trueName = iClienterProvider.GetName(phone);
-                    if (string.IsNullOrEmpty(trueName))
-                    {
-                        model.ClienterRemarks = "骑士手机不存在";
-                        model.IsBind = false;
-                        model.IsEnable = false;
-                        list.Add(model);
-                        continue;
-                    }
-
-                    if (name != trueName)
-                    {
-                        model.ClienterRemarks = "骑士名称错误";
-                        model.IsBind = false;
-                        model.IsEnable = false;
-                        list.Add(model);
-                        continue;
-                    }
-
-                    model.ClienterRemarks = "";
-                    model.IsBind = true;
-                    model.IsEnable = true;
-                    list.Add(model);           
-                }
-
-                 var redis = new ETS.NoSql.RedisCache.RedisCache();
-                 string businessId="246";
-                 redis.Set(string.Format(ETS.Const.RedissCacheKey.BusinessClienter, businessId), list, DateTime.Now.AddHours(1));  
-                 //redis.Set("piliang", list, DateTime.Now.AddHours(1));  //先加入缓存，相当于加锁
             }
             catch (Exception ex)
-            {         
+            {
                 fs.Close();
             }
 
-            return View(list);
+            ViewBag.ClienterList = list;
+            //return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.DenyGet);
+            //return View(businessDetailModel);
+            var businessDetailModel = iBusinessProvider.GetBusinessDetailById(businessId);
+            return PartialView("ClienterBatchBind",businessDetailModel);
+            
         }
 
         /// <summary>
