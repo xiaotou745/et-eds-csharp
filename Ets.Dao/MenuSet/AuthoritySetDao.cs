@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Linq;
 using Ets.Model.DomainModel.Authority;
+using Ets.Model.ParameterModel.Clienter;
 
 namespace Ets.Dao.MenuSet
 {
@@ -793,6 +794,35 @@ WHERE acr.AccountId=@AccountId;";
             parm.AddWithValue("@Password", model.Password);
             parm.Add("AccountType", DbType.Int32, 4).Value = model.AccountType;
             return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm)) > 0;
+        }
+        /// <summary>
+        /// 查询后台账号信息列表（分页）
+        /// danny-20150609
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<T> GetAccountListOfPaging<T>(AuthoritySearchCriteria criteria)
+        {
+            string columnList = @"   [Id]
+                                  ,[Password]
+                                  ,[UserName]
+                                  ,[LoginName]
+                                  ,[Status]
+                                  ,[AccountType]
+                                  ,[FADateTime]
+                                  ,[FAUser]
+                                  ,[LCDateTime]
+                                  ,[LCUser]
+                                  ,[GroupId] 
+                                    ";
+            var sbSqlWhere = new StringBuilder(" 1=1 ");
+            if (!string.IsNullOrWhiteSpace(criteria.LoginName))
+            {
+                sbSqlWhere.AppendFormat(@" AND LoginName='{0}' ",criteria.LoginName);
+            }
+            string tableList = @" account with(nolock) ";
+            string orderByColumn = " Id ASC";
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
     }
 }

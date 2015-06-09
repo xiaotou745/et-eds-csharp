@@ -708,9 +708,9 @@ order by a.id desc
         /// <returns>商家信息</returns>
         public BusListResultModel GetBusinessByPhoneNo(string PhoneNo)
         {
-            string sql = @"SELECT Id  FROM dbo.business(NOLOCK) a
+            string sql = @"SELECT a.Id  FROM dbo.business(NOLOCK) a
 LEFT join dbo.[group] b on a.GroupId=b.Id
-where a.PhoneNo=@PhoneNo and b.IsModifyBind=1";
+where a.PhoneNo=@PhoneNo and isnull(b.IsModifyBind,1)=1";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@PhoneNo", SqlDbType.NVarChar);
             parm.SetValue("@PhoneNo", PhoneNo);
@@ -1700,7 +1700,8 @@ SELECT   b.Id ,
          bfa.OpenBank,
          bfa.OpenSubBank,
          g.GroupName,
-         ISNULL(g.IsModifyBind,0) IsModifyBind
+         ISNULL(g.IsModifyBind,0) IsModifyBind,
+         ISNULL(b.OneKeyPubOrder,0) OneKeyPubOrder
 FROM business b WITH(NOLOCK) 
 	Left join BusinessFinanceAccount bfa WITH(NOLOCK) ON b.Id=bfa.BusinessId AND bfa.IsEnable=1
     Left join [group] g WITH(NOLOCK) on g.Id=b.GroupId 
@@ -1801,7 +1802,7 @@ ORDER BY btr.Id;";
             string remark = model.OptUserName + "通过后台管理系统修改商户信息";
             string sql = @"UPDATE business 
                             SET Name=@Name,
-                                PhoneNo=@PhoneNo,
+                                Landline=@Landline,
                                 PhoneNo2=@PhoneNo2,
                                 DistribSubsidy=@DistribSubsidy,
                                 CityId=@CityId,
@@ -1815,6 +1816,7 @@ ORDER BY btr.Id;";
                                 MealsSettleMode=@MealsSettleMode,
                                 CommissionType=@CommissionType,
                                 OriginalBusiId=@OriginalBusiId,
+                                OneKeyPubOrder=@OneKeyPubOrder,
                                            ";
             if (model.GroupId > 0)
             {
@@ -1845,7 +1847,7 @@ ORDER BY btr.Id;";
                         WHERE  Id = @Id;";
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Name", model.Name);
-            parm.AddWithValue("@PhoneNo", model.PhoneNo);
+            parm.AddWithValue("@Landline", model.Landline);
             parm.AddWithValue("@PhoneNo2", model.PhoneNo2);
             parm.AddWithValue("@DistribSubsidy", model.DistribSubsidy);
             parm.AddWithValue("@CityId", model.CityId);
@@ -1866,6 +1868,7 @@ ORDER BY btr.Id;";
             parm.AddWithValue("@OptId", model.OptUserId);
             parm.AddWithValue("@OptName", model.OptUserName);
             parm.AddWithValue("@Remark", remark);
+            parm.AddWithValue("@OneKeyPubOrder", model.OneKeyPubOrder);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>

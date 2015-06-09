@@ -665,9 +665,6 @@ namespace Ets.Service.Provider.User
                 business.Status = ConstValues.BUSINESS_NOAUDIT;
             }
 
-            business.CheckPicUrl = model.CheckPicUrl;
-            business.BusinessLicensePic = model.BusinessLicensePic;
-
             int upResult = dao.UpdateBusinessInfoB(business);
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, model.userId);
@@ -717,6 +714,9 @@ namespace Ets.Service.Provider.User
             to.Longitude = businessModel.longitude; //经度
             to.Latitude = businessModel.latitude; //纬度 
             to.Status = ConstValues.BUSINESS_NOAUDIT;  //用户状态待审核
+            to.CheckPicUrl = businessModel.CheckPicUrl;
+            to.BusinessLicensePic = businessModel.BusinessLicensePic;
+
             return to;
         }
 

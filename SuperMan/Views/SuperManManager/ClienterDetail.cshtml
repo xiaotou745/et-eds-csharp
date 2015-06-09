@@ -48,7 +48,7 @@
             <span class="">到: </span>
             <input id="operateTimeEnd" readonly="readonly" type="text" name="operateTimeEnd" style="width: 191px" />
             <input type="hidden" value="@Model.Id" id="clienterId" name="clienterId">
-            <input type="button" value="查 询" class="searchBtn" id="btnQueryBalanceRecord" />
+            <input type="submit" value="查 询" class="searchBtn" id="btnQueryBalanceRecord" />
             <input type="button" value="导 出" class="searchBtn" id="btnExportBalanceRecord" onclick=" return funExport() " />
         </div>
     }
@@ -84,9 +84,9 @@
 
     //});
     function funExport() {
-        var clienterId = $("#hidClienterId").val();
+        var clienterId = $("#clienterId").val();
         var recordType = $("#recordType").val();
-        var relationNo = $("#withwardNo").val();
+        var relationNo = $("#relationNo").val();
         var operateTimeStart = $("#operateTimeStart").val();
         var operateTimeEnd = $("#operateTimeEnd").val();
         if (operateTimeStart == "" || operateTimeEnd == "") {

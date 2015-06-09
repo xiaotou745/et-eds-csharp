@@ -15,5 +15,9 @@ namespace Ets.Model.ParameterModel.Authority
         /// 集团id
         /// </summary>
         public int? GroupId { get; set; }
+        /// <summary>
+        /// 登陆账号
+        /// </summary>
+        public string LoginName { get; set; }
     }
 }

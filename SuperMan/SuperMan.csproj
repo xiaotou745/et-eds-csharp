@@ -622,7 +622,7 @@
     <Content Include="Views\BusinessManager\AddClienterBindManage.cshtml" />
     <Content Include="Views\BusinessManager\_ClienterList.cshtml" />
     <Content Include="Views\BusinessManager\ClienterBatchBind.cshtml" />
-    <Content Include="Content\Template\商家绑定骑士模板.xlsx" />
+    <Content Include="Views\MenuManager\_AccountManagerList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
