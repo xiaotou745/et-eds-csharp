@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Ets.Model.ParameterModel.Authority;
 using Ets.Model.ParameterModel.Clienter;
 using SuperMan.App_Start;
 
@@ -194,7 +195,7 @@ namespace SuperMan.Controllers
         /// danny-20150609
         /// </summary>
         /// <returns></returns>
-        public ActionResult AccountManager(ClienterSearchCriteria criteria)
+        public ActionResult AccountManager(AuthoritySearchCriteria criteria)
         {
             var list = _iAuhority.GetAccountListOfPaging(criteria);
             ViewBag.AllMenu = _iAuhority.GetAllMenuList();
@@ -211,7 +212,7 @@ namespace SuperMan.Controllers
         [HttpPost]
         public ActionResult PostAccountManager(int pageindex = 1)
         {
-            var criteria = new ClienterSearchCriteria();
+            var criteria = new AuthoritySearchCriteria();
             TryUpdateModel(criteria);
             var list = _iAuhority.GetAccountListOfPaging(criteria);
             ViewBag.AllMenu = _iAuhority.GetAllMenuList();

@@ -632,7 +632,7 @@ namespace Ets.Service.Provider.Authority
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        public PageInfo<AccountModel> GetAccountListOfPaging(ClienterSearchCriteria criteria)
+        public PageInfo<AccountModel> GetAccountListOfPaging(AuthoritySearchCriteria criteria)
         {
             return _dao.GetAccountListOfPaging<AccountModel>(criteria);
         }

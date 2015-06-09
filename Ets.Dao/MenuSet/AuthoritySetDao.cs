@@ -801,7 +801,7 @@ WHERE acr.AccountId=@AccountId;";
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        public PageInfo<T> GetAccountListOfPaging<T>(ClienterSearchCriteria criteria)
+        public PageInfo<T> GetAccountListOfPaging<T>(AuthoritySearchCriteria criteria)
         {
             string columnList = @"   [Id]
                                   ,[Password]
@@ -816,6 +816,10 @@ WHERE acr.AccountId=@AccountId;";
                                   ,[GroupId] 
                                     ";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
+            if (!string.IsNullOrWhiteSpace(criteria.LoginName))
+            {
+                sbSqlWhere.AppendFormat(@" AND LoginName='{0}' ",criteria.LoginName);
+            }
             string tableList = @" account with(nolock) ";
             string orderByColumn = " Id ASC";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);

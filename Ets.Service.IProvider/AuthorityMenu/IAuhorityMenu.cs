@@ -223,6 +223,6 @@ namespace Ets.Service.IProvider.AuthorityMenu
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        PageInfo<AccountModel> GetAccountListOfPaging(ClienterSearchCriteria criteria);
+        PageInfo<AccountModel> GetAccountListOfPaging(AuthoritySearchCriteria criteria);
     }
 }

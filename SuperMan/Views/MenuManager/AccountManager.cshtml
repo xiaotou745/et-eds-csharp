@@ -7,56 +7,28 @@
 
 <div class="zpManage zpSh">
     <h2 class="crumbs">
-        您所在位置：权限 > 账号设置
+        您所在位置：管理员 > 个人账户权限管理
     </h2>
-    <div class="SearchMd">
-        <table border="0" cellspacing="0" cellpadding="0">
-            <tr>
-                <td> 
-                    个人权限设置
-                </td>
-            </tr>
-        </table>
-    </div>
+    @using (Ajax.BeginForm("PostAccountManager", new RouteValueDictionary { { "pageindex", "" } },
+    new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+    new RouteValueDictionary { { "id", "searchForm" } }))
+    {
+        <div class="SearchMd">
+            <table border="0" cellspacing="0" cellpadding="0" style="width:1080px">
+                <tr>
+                    <td>
+                        <span class="">登陆账号: </span>
+                        <input id="loginName" type="text" name="loginName" />
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
     <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
     <div class="bd clearfix" id="dataList">
         @Html.Partial("_AccountManagerList", Model)
     </div>
-    @*<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
-        <thead> 
-            <tr class="tdbg">
-                <th width="%5">编号</th>
-                <th>名称</th> 
-                <th>状态</th> 
-                <th>操作</th>
-            </tr>
-        </thead>
-        <tbody>
-            @{
-                if (Model != null)
-                { 
-                    foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>@item.Id</td> 
-                            <td>@item.LoginName</td>
-                            @if (@item.Status > 0)
-                            {
-                                <td>可用</td>
-                            }
-                            else
-                            {
-                                <td>锁定</td>
-                            }
-                            <td>
-                                <a href="javascript:void(0)" onclick="showMenu(@item.Id,'@item.LoginName')">分配权限</a>
-                            </td>
-                        </tr> 
-                    }
-                }
-            }
-        </tbody> 
-    </table>*@
 </div>
 <div>
     <div class="add-openbox add-form" id="MenuDiv" style="width:500px">
