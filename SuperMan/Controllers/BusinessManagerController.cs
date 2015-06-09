@@ -477,7 +477,7 @@ namespace SuperMan.Controllers
         {
             var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria();
             TryUpdateModel(criteria);
-            ViewBag.clienterList = iDistributionProvider.GetClienteres(criteria);
+            ViewBag.clienterList = iClienterProvider.GetClienterList(criteria);
             return PartialView("_ClienterList");
         }
       public ActionResult ClienterBatchBind()
