@@ -357,6 +357,8 @@ namespace SuperMan.Controllers
         {
             BCRelationGetByClienterIdPM model = new BCRelationGetByClienterIdPM();
             TryUpdateModel(model);
+            ViewBag.Name = model.Name;
+            ViewBag.Phone = model.Phone;
             return View(iBusinessClienterRelationProvider.GetByClienterId(model));
         }
 
