@@ -19,5 +19,11 @@ namespace Ets.Model.ParameterModel.Order
         /// 版本
         /// </summary>
         public int ClienterId { get; set; }
+
+        /// <summary>
+        /// 修改人
+        /// </summary>
+        public string UpdateBy { get; set; }
+        
     }
 }

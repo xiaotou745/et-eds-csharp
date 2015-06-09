@@ -247,6 +247,12 @@ namespace Ets.Service.IProvider.Clienter
         /// </summary>
         /// <param name="model"></param>
         IList<ClienterListModel> GetClienterList(ClienterListModel model);
+        /// <summary>
+        /// 获取骑士Id
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150609</UpdateTime>
+        int GetId(string phoneNo, string trueName);
     
     }
 }
