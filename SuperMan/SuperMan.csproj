@@ -445,6 +445,7 @@
     <None Include="Properties\PublishProfiles\chuan.admin.edaisong.com.pubxml" />
     <None Include="Properties\PublishProfiles\HDLWEB.pubxml" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
+    <Content Include="Scripts\ajaxfileupload.js" />
     <Content Include="Scripts\bootbox.js" />
     <Content Include="Scripts\bootstrap-datepicker.js" />
     <Content Include="Scripts\bootstrap-datetimepicker.fr.js" />
@@ -618,6 +619,9 @@
     <Content Include="Views\BusinessManager\_ClienterBindList.cshtml" />
     <Content Include="Views\SuperManManager\GetRelationByClienterId.cshtml" />
     <Content Include="Views\SuperManManager\PostGetRelationByClienterId.cshtml" />
+    <Content Include="Views\BusinessManager\AddClienterBindManage.cshtml" />
+    <Content Include="Views\BusinessManager\_ClienterList.cshtml" />
+    <Content Include="Views\BusinessManager\ClienterBatchBind.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

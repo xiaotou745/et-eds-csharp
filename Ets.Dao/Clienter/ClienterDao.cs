@@ -1312,7 +1312,7 @@ WHERE c.Id = @ClienterId  ";
             string querySql = @"
 select TrueName
 from   dbo.[clienter] (nolock) 
-where  phoneNo = @phoneNo and Status=1";
+where  phoneNo = @phoneNo ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@phoneNo", phoneNo);
           
@@ -1321,7 +1321,107 @@ where  phoneNo = @phoneNo and Status=1";
                 name = executeScalar.ToString();
 
             return name;
+        }
 
+        /// <summary>
+        /// 获取骑士Id
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150609</UpdateTime>
+        /// <param name="phoneNo"></param>
+        /// <param name="trueName"></param>
+        /// <returns></returns>
+        public int GetId(string phoneNo, string trueName)
+        {           
+            string querySql = @"
+select Id
+from   dbo.[clienter] (nolock) 
+where  phoneNo = @phoneNo and TrueName=@TrueName ";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@phoneNo", phoneNo);
+            dbParameters.AddWithValue("@phoneNo", phoneNo);
+
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
+            return  ParseHelper.ToInt(executeScalar, 0);
+
+        }
+        /// <summary>
+        /// 获取骑士列表
+        /// danny-20150608
+        /// </summary>
+        /// <param name="model"></param>
+        public IList<ClienterListModel> GetClienterList(ClienterListModel model)
+        {
+            string sql = @"SELECT  [Id]
+                                  ,[PhoneNo]
+                                  ,[LoginName]
+                                  ,[recommendPhone]
+                                  ,[Password]
+                                  ,[TrueName]
+                                  ,[IDCard]
+                                  ,[PicWithHandUrl]
+                                  ,[PicUrl]
+                                  ,[Status]
+                                  ,[AccountBalance]
+                                  ,[InsertTime]
+                                  ,[InviteCode]
+                                  ,[City]
+                                  ,[CityId]
+                                  ,[GroupId]
+                                  ,[HealthCardID]
+                                  ,[InternalDepart]
+                                  ,[ProvinceCode]
+                                  ,[AreaCode]
+                                  ,[CityCode]
+                                  ,[Province]
+                                  ,[BussinessID]
+                                  ,[WorkStatus]
+                              FROM clienter WITH (NOLOCK) 
+                              WHERE 1=1 AND Status = 1";
+            if (!string.IsNullOrWhiteSpace(model.TrueName))
+            {
+                sql += " AND TrueName LIKE '%@TrueName%' ";
+            }
+            if (!string.IsNullOrWhiteSpace(model.TrueName))
+            {
+                sql += " AND PhoneNo=@TrueName ";
+            }
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@TrueName", model.TrueName);
+            parm.AddWithValue("@PhoneNo", model.PhoneNo);
+            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
+            var list = ConvertDataTableList<ClienterListModel>(dt);
+            return list;
+        }
+
+        /// <summary>
+        /// 查询骑士列表
+        /// danny-20150609
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<T> GetClienterList<T>(ClienterSearchCriteria criteria)
+        {
+            string columnList = @"   C.[Id]
+                                    ,C.[PhoneNo]
+                                    ,C.[TrueName]
+                                    ,ISNULL(bcr.IsBind,0) IsBind 
+                                    ";
+            var sbSqlWhere = new StringBuilder(" 1=1 AND C.[Status]=1");
+            if (!string.IsNullOrEmpty(criteria.clienterName))
+            {
+                sbSqlWhere.AppendFormat(" AND C.TrueName LIKE '%{0}%' ", criteria.clienterName);
+            }
+            if (!string.IsNullOrEmpty(criteria.clienterPhone))
+            {
+                sbSqlWhere.AppendFormat(" AND C.PhoneNo='{0}' ", criteria.clienterPhone);
+            }
+            string tableList =string.Format(@" clienter C WITH (NOLOCK)  
+                                  left JOIN BusinessClienterRelation bcr with(nolock) on  C.Id=bcr.ClienterId and bcr.BusinessId={0} and bcr.IsEnable=1 and bcr.IsBind=1
+                                ", criteria.businessId);
+            string orderByColumn = " C.Id DESC";
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
     }
 }

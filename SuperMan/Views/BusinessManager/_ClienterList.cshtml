@@ -1,0 +1,75 @@
+﻿@using ETS.Data.PageData
+@using Ets.Model.DataModel.Clienter
+<table border="0" cellspacing="0" cellpadding="0" class="tbstyle" width="900">
+    <thead>
+        <tr class="tdbg">
+            <th>编号</th>
+            <th>骑士姓名</th>
+            <th>骑士电话</th>
+            <th>操作</th>
+    </thead>
+    <tbody>
+        @{
+            var clienterList = ViewBag.clienterList as PageInfo<ClienterListModel>;
+            if (clienterList != null && clienterList.Records.Count > 0)
+            {
+                var i = 0;
+                foreach (var item in clienterList.Records)
+                {
+                    i++;
+                    <tr id="@item.Id">
+                        <td>@i</td>
+                        <td>@item.TrueName</td>
+                        <td>@item.PhoneNo</td>
+                        <td>
+                            @if (item.IsBind == 1)
+                            {
+                                <a href="javascript:void(0)" style="color:gray">已绑定</a>
+                            }
+                            else
+                            {
+                                <a href="javascript:funAddClienterBind(@item.Id)">绑定</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+        }
+    </tbody>
+</table>
+
+@{
+    if (clienterList != null)
+    {
+        ViewBag.ActionName = "GetClienterList";
+        @Html.Partial("~/views/shared/PagerControl.cshtml", clienterList)
+    }
+}
+
+<script type="text/javascript">
+    ///添加骑士绑定
+    function funAddClienterBind(clienterId) {
+        var businessId = $("#businessId").val();
+        if (!window.confirm("是否添加绑定？")) {
+            return;
+        }
+        var paramaters = { "businessId": businessId, "clienterId": clienterId };
+        var url = "/BusinessManager/AddClienterBind";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert(result.Message);
+                    window.location.href = "/BusinessManager/ClienterBindManage?businessId=" + businessId;
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    }
+</script>
+
+
+

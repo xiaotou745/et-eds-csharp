@@ -18,7 +18,7 @@
             <td>商铺名称：@Model.Name</td>
             <td>商铺电话：@Model.PhoneNo</td>
             <td>商铺地址：@Model.Address</td>
-            <td></td>
+            <td><input type="hidden" id="businessId" name="businessId" value="@Model.Id"/></td>
         </tr>
         <tr class="trclass">
             <td>已绑定骑士：@Model.BindClienterQty</td>
@@ -32,7 +32,7 @@
     new RouteValueDictionary { { "id", "searchForm" } }))
     {
         <div class="SearchMd">
-            <input type="button" value="添加骑士绑定" class="searchBtn" id="btnBindClienter" />
+            <input type="button" value="添加骑士绑定" class="searchBtn" id="btnBindClienter" onclick="addClienterBindManage();" />
             @*<input type="button" value="导 出" class="searchBtn" id="btnExportBalanceRecord" onclick=" return funExport() " />*@
         </div>
     }
@@ -42,32 +42,12 @@
     </div>
 </div>
 <script type="text/javascript">
-    var adminjs = new adminglass(); //实例化后台类
-    $(document).ready(function () {
-        $('#operateTimeStart').datepicker();
-        $('#operateTimeEnd').datepicker();
-        window.location.hash = '';
-    });
-
-    function funExport() {
-        var businessId = $("#businessId").val();
-        var recordType = $("#recordType").val();
-        var relationNo = $("#relationNo").val();
-        var operateTimeStart = $("#operateTimeStart").val();
-        var operateTimeEnd = $("#operateTimeEnd").val();
-        if (operateTimeStart == "" || operateTimeEnd == "") {
-            alert("请输入时间范围!");
-            return;
-        }
-        var url = "/BusinessManager/ExportBusinessBalanceRecord?businessId=" + businessId + "&recordType=" + recordType + "&relationNo=" + relationNo + "&operateTimeStart=" + operateTimeStart + "&operateTimeEnd=" + operateTimeEnd;
-        window.location.href = url;
-        return true;
+    //添加骑士绑定
+    function addClienterBindManage() {
+        var businessId = $('#businessId').val();
+        window.location.href = "/BusinessManager/AddClienterBindManage?businessId="+businessId;
     }
-    //关闭弹层
-    $('.J_closebox').click(function () {
-        adminjs.closewinbox('.add-openbox');
-        return false;
-    });
+    
 </script>
 <script src="~/Scripts/mvcpager.js"></script>
 

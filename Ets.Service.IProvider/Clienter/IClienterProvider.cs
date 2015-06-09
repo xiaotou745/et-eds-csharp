@@ -229,7 +229,7 @@ namespace Ets.Service.IProvider.Clienter
         /// 获取骑士详细信息
         /// danny-20150513
         /// </summary>
-        /// <param name="businessId">骑士Id</param>
+        /// <param name="clienterId">骑士Id</param>
         /// <returns></returns>
         ClienterDetailModel GetClienterDetailById(string clienterId);
 
@@ -241,7 +241,25 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="phoneNo"></param>
         /// <returns></returns>
         string GetName(string phoneNo);
-
+        /// <summary>
+        /// 获取骑士列表
+        /// danny-20150608
+        /// </summary>
+        /// <param name="model"></param>
+        IList<ClienterListModel> GetClienterList(ClienterListModel model);
+        /// <summary>
+        /// 获取骑士Id
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150609</UpdateTime>
+        int GetId(string phoneNo, string trueName);
+		/// <summary>
+        /// 查询骑士列表
+        /// danny-20150609
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        PageInfo<ClienterListModel> GetClienterList(ClienterSearchCriteria criteria);
     
     }
 }
