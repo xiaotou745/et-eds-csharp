@@ -1156,6 +1156,17 @@ namespace Ets.Service.Provider.Clienter
         }
 
         /// <summary>
+        /// 获取骑士用户名
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
+        /// <param name="phoneNo"></param>
+        /// <returns></returns>
+        public string GetName(string phoneNo)
+        {
+            return clienterDao.GetName(phoneNo);
+        }
+        /// <summary>
         /// 获取骑士列表
         /// danny-20150608
         /// </summary>

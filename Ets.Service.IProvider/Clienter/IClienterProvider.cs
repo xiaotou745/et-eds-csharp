@@ -234,11 +234,19 @@ namespace Ets.Service.IProvider.Clienter
         ClienterDetailModel GetClienterDetailById(string clienterId);
 
         /// <summary>
+        /// 获取骑士用户名
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
+        /// <param name="phoneNo"></param>
+        /// <returns></returns>
+        string GetName(string phoneNo);
+        /// <summary>
         /// 获取骑士列表
         /// danny-20150608
         /// </summary>
         /// <param name="model"></param>
         IList<ClienterListModel> GetClienterList(ClienterListModel model);
-
+    
     }
 }

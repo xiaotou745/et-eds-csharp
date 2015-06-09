@@ -1,0 +1,52 @@
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Bussiness.BCRelationGetByClienterIdDM>
+@{
+    Layout = null;
+}
+@if (Model.Records.Count == 0)
+{
+    <p style="font-weight: 200;font-size: 30px;margin: 15px;">
+        暂无绑定商家！
+    </p>
+}
+else
+{
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+        <thead>
+            <tr class="tdbg">
+                <th style="width:70px;">编号</th>
+                <th>骑士名称</th>
+                <th>商家名称</th>
+                <th>商家电话</th>
+                <th>商家地址</th>
+                <th>绑定状态</th>
+                <th>时间</th>
+                <th>操作人</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                if (Model != null)
+                {
+                    for (int i = 0; i < Model.Records.Count; i++)
+                    {
+                        <tr id="@Model.Records[i].Id">
+                            <td>@(i + 1)</td>
+                            <td>@Model.Records[i].ClienterName</td>
+                            <td>@Model.Records[i].BusinessName</td>
+                            <td>@Model.Records[i].BusinessPhoneNo</td>
+                            <td>@Model.Records[i].BusinessAddress</td>
+                            <td>@Html.Raw(Model.Records[i].IsBind == 0 ? "未绑定" : "已绑定")</td>
+                            <td>@Model.Records[i].UpdateTime</td>
+                            <td>@Model.Records[i].UpdateBy</td>
+                        </tr>
+                    }
+                }
+            }
+        </tbody>
+    </table>
+    
+
+      ViewBag.ActionName = "PostGetRelationByClienterId";
+      @Html.Partial("~/views/shared/PagerControl.cshtml", Model);
+
+}

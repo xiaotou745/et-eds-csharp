@@ -1299,6 +1299,31 @@ WHERE c.Id = @ClienterId  ";
         }
 
         /// <summary>
+        /// 获取骑士用户名
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150511</UpdateTime>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public string GetName(string phoneNo)
+        {
+            string name = "";
+
+            string querySql = @"
+select TrueName
+from   dbo.[clienter] (nolock) 
+where  phoneNo = @phoneNo and Status=1";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@phoneNo", phoneNo);
+          
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
+            if (executeScalar!=null)
+                name = executeScalar.ToString();
+
+            return name;
+
+        }
+        /// <summary>
         /// 获取骑士列表
         /// danny-20150608
         /// </summary>
