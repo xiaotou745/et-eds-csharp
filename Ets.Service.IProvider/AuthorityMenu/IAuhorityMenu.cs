@@ -1,4 +1,5 @@
 ﻿using Ets.Model.Common;
+using Ets.Model.ParameterModel.Clienter;
 
 namespace Ets.Service.IProvider.AuthorityMenu
 {
@@ -215,5 +216,13 @@ namespace Ets.Service.IProvider.AuthorityMenu
         /// <param name="accountId"></param>
         /// <returns></returns>
         IList<AccountCityRelationModel> GetAccountCityRel(int accountId);
+
+        /// <summary>
+        /// 查询后台账号信息列表（分页）
+        /// danny-20150609
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        PageInfo<AccountModel> GetAccountListOfPaging(ClienterSearchCriteria criteria);
     }
 }

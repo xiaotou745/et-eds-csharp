@@ -1,5 +1,5 @@
 ﻿ @using Ets.Model.DataModel.Authority;
-@model List<AccountModel>
+@model ETS.Data.PageData.PageInfo<AccountModel>
 @{
     ViewBag.Title = "Account";
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
@@ -18,7 +18,11 @@
             </tr>
         </table>
     </div>
-    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <div class="bd clearfix" id="dataList">
+        @Html.Partial("_AccountManagerList", Model)
+    </div>
+    @*<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
         <thead> 
             <tr class="tdbg">
                 <th width="%5">编号</th>
@@ -52,7 +56,7 @@
                 }
             }
         </tbody> 
-    </table>
+    </table>*@
 </div>
 <div>
     <div class="add-openbox add-form" id="MenuDiv" style="width:500px">
@@ -172,5 +176,6 @@
         return false;
     });
 </script>
+<script src="~/Scripts/mvcpager.js"></script>
 
 

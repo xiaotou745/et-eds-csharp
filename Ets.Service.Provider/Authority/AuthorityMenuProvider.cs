@@ -1,4 +1,5 @@
 ﻿
+using Ets.Model.ParameterModel.Clienter;
 using ETS.Transaction;
 using ETS.Transaction.Common;
 
@@ -623,6 +624,17 @@ namespace Ets.Service.Provider.Authority
         public IList<AccountCityRelationModel> GetAccountCityRel(int accountId)
         {
             return _dao.GetAccountCityRel(accountId);
+        }
+
+        /// <summary>
+        /// 查询后台账号信息列表（分页）
+        /// danny-20150609
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<AccountModel> GetAccountListOfPaging(ClienterSearchCriteria criteria)
+        {
+            return _dao.GetAccountListOfPaging<AccountModel>(criteria);
         }
 
     }

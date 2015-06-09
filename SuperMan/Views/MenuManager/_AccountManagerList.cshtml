@@ -1,0 +1,48 @@
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Authority.AccountModel>
+@using ETS.Util;
+<script src="~/Scripts/view/orderList.js"></script>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+    <thead>
+        <tr class="tdbg">
+            <th width="%5">编号</th>
+            <th>名称</th>
+            <th>状态</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            if (Model != null)
+            {
+                foreach (var item in Model.Records)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.LoginName</td>
+                        @if (@item.Status > 0)
+                        {
+                            <td>可用</td>
+                        }
+                        else
+                        {
+                            <td>锁定</td>
+                        }
+                        <td>
+                            <a href="javascript:void(0)" onclick="showMenu(@item.Id,'@item.LoginName')">分配权限</a>
+                        </td>
+                    </tr>
+                }
+            }
+        }
+    </tbody>
+</table>
+
+@{
+    if (Model != null)
+    {
+        ViewBag.ActionName = "PostAccountManager";
+        @Html.Partial("~/views/shared/PagerControl.cshtml", Model)
+    }
+}
+
+
