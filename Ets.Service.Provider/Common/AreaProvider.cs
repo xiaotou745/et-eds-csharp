@@ -28,8 +28,9 @@ namespace Ets.Service.Provider.Common
         /// 2015年3月19日 17:09:53
         /// </summary>
         /// <param name="version">当前版本号</param>
+        /// <param name="isResultData">是否返回所有数据，因为APP端调用时如果是最新则不需要返回AreaModelList的值</param>
         /// <returns></returns>
-        public Model.Common.ResultModel<Model.DomainModel.Area.AreaModelList> GetOpenCity(string version)
+        public Model.Common.ResultModel<Model.DomainModel.Area.AreaModelList> GetOpenCity(string version, bool isResultData = true)
         {
 
             AreaModelList areaList = new AreaModelList();
@@ -42,24 +43,26 @@ namespace Ets.Service.Provider.Common
             //    return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.Newest, null);
             //}
             string strAreaList = redis.Get<string>(key);
-            if (!string.IsNullOrEmpty(strAreaList))
+            areaList = JsonHelper.JsonConvertToObject<AreaModelList>(strAreaList);
+            if (areaList.AreaModels.Count <= 0)
             {
-                areaList = JsonHelper.JsonConvertToObject<AreaModelList>(strAreaList);
-            }
-
-            else
-            {
-                IList<Model.DomainModel.Area.AreaModel> list = dao.GetOpenCitySql();
+                IList<AreaModel> list = dao.GetOpenCitySql();
                 areaList = new AreaModelList();
                 areaList.AreaModels = list;
-                areaList.Version = Config.ApiVersion;
+                //areaList.Version = Config.ApiVersion;
                 if (list != null)
                 {
-                    redis.Set(key,JsonHelper.JsonConvertToString(areaList));
-                    redis.Set(key, areaList);
+                    redis.Set(key, JsonHelper.JsonConvertToString(areaList));
+                    //redis.Set(key, areaList);
                 }
             }
-            return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.UnNewest, areaList);
+            areaList.Version = Config.ApiVersion;
+            if (Config.ApiVersion == version && !isResultData)
+            {
+                areaList.AreaModels = null;
+                return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.UnNewest, areaList);
+            }
+            return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.Newest, areaList);
         }
         /// <summary>
         /// 修改开发城市后更新Redis缓存
@@ -77,7 +80,7 @@ namespace Ets.Service.Provider.Common
             areaList.Version = Config.ApiVersion;
             if (list != null)
             {
-                redis.Set(RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity_New,JsonHelper.ToJson(areaList));
+                redis.Set(RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity_New, JsonHelper.ToJson(areaList));
             }
         }
         ///// <summary>
@@ -146,7 +149,7 @@ namespace Ets.Service.Provider.Common
             //}
             //else
             //{
-            if (accountId<=0)
+            if (accountId <= 0)
             {
                 return string.Empty;
             }
@@ -184,7 +187,7 @@ namespace Ets.Service.Provider.Common
             List<AreaModelTranslate> cacheAreaModelList = null;
             if (!string.IsNullOrEmpty(cacheValue))
             {
-                cacheAreaModelList =JsonHelper.ToObject<List<AreaModelTranslate>>(cacheValue);
+                cacheAreaModelList = JsonHelper.ToObject<List<AreaModelTranslate>>(cacheValue);
 
             }
             else

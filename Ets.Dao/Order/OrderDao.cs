@@ -1139,7 +1139,7 @@ select  ( select    sum(AccountBalance)
         sum(isnull(OrderCommission, 0)) as YfPrice,  --应付金额
         @incomeTotal incomeTotal, --扫码/代付总计
 		isnull(@rechargeTotal,0) rechargeTotal,--商户充值总计
-		(@incomeTotal+0) allIncomeTotal, --账户收入总计
+		(@incomeTotal+@rechargeTotal) allIncomeTotal, --账户收入总计
 		-2348288.69-(@withdrawClienterPrice) withdrawClienterPrice, --骑士已提现佣金-实付
 		@businessBalance businessBalance,--商家余额总计-应付
 		isnull( @withdrawBusinessPrice,0) withdrawBusinessPrice --商家已提款金额-实付
@@ -2137,10 +2137,10 @@ values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude)";
                     for (int i = 0; i < order.listOrderChild.Count; i++)
                     {
                         DataRow dr = dt.NewRow();
-                        //dr["OrderId"] = orderId;
+                        dr["OrderId"] = orderId;
+                        //dr["ChildId"] = order.listOrderChild[i].ChildId;
                         int num = i + 1;
-                        dr["OrderId"] = num;
-                        dr["ChildId"] = order.listOrderChild[i].ChildId;
+                        dr["ChildId"] = num;
                         decimal totalPrice = order.listOrderChild[i].GoodPrice + Convert.ToDecimal(order.DistribSubsidy);
                         dr["TotalPrice"] = totalPrice;
                         dr["GoodPrice"] = order.listOrderChild[i].GoodPrice;
@@ -2325,7 +2325,7 @@ where   oo.IsJoinWithdraw = 0
         }
 
         /// <summary>
-        /// 最新任务列表 
+        /// 最新任务列表 即 全部订单  
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -2334,7 +2334,10 @@ where   oo.IsJoinWithdraw = 0
             string whereStr = model.City.Contains("北京")
                 ? " and a.ReceviceCity LIKE '北京%'"
                 : string.Format(" and a.ReceviceCity = '{0}'", model.City);
-            string sql = string.Format(@"
+            string sql = null;
+            if (model.ClienterId == 0 || model.IsBind == (int)IsBindBC.No)  // 查询所有 无雇佣骑士的商家发布的订单，以及有雇佣骑士的商家发布的超过了五分钟无人抢单的订单 
+            {
+                 sql = string.Format(@"
 declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}
@@ -2342,7 +2345,7 @@ select top {0}
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
         b.Name as BusinessName, b.City as BusinessCity,
         b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
-        isnull(a.ReceviceAddress, '') as UserAddress,
+        isnull(a.ReceviceAddress, '') as UserAddress,b.Longitude,b.Latitude,
         case convert(varchar(100), PubDate, 23)
           when convert(varchar(100), getdate(), 23) then '今日 '
           else substring(convert(varchar(100), PubDate, 23), 6, 5)
@@ -2350,9 +2353,46 @@ select top {0}
 		round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) as DistanceToBusiness 
 from    dbo.[order] a ( nolock )
         join dbo.business b ( nolock ) on a.businessId = b.Id
-where   a.status = 0
+where   a.status = 0  and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>5))
         {1}
 order by a.Id desc", model.TopNum, whereStr);
+            }
+            else  //查询所有 无雇佣骑士的商家发布的订单，以及 非当前骑士的雇主 里 有雇佣骑士的商家 发布的超过了 五分钟 无人抢单的订单 以及当前骑士所属雇主的所有订单
+            {
+                 sql = string.Format(@"
+declare @cliernterPoint geography ;
+select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
+select top {0}
+        a.Id, a.OrderCommission, a.OrderCount,
+        ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
+        b.Name as BusinessName, b.City as BusinessCity,
+        b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
+        isnull(a.ReceviceAddress, '') as UserAddress,b.Longitude,b.Latitude,
+        case convert(varchar(100), PubDate, 23)
+          when convert(varchar(100), getdate(), 23) then '今日 '
+          else substring(convert(varchar(100), PubDate, 23), 6, 5)
+        end + '  ' + substring(convert(varchar(100), PubDate, 24), 1, 5) as PubDate,
+		round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) as DistanceToBusiness 
+from    dbo.[order] a ( nolock )
+        join dbo.business b ( nolock ) on a.businessId = b.Id
+        left join ( select  distinct
+                            ( temp.BusinessId )
+                    from    BusinessClienterRelation temp
+                    where   temp.IsEnable = 1
+                            and temp.IsBind = 1
+                            and temp.ClienterId = {1}
+                  ) as c on a.BusinessId = c.BusinessId        
+where   a.status = 0
+        and ( b.IsBind = 0
+              or ( b.IsBind = 1
+                   and DATEDIFF(minute, a.PubDate, GETDATE()) > 5
+                 )
+              or c.BusinessId is not null
+            )
+        {2}
+order by a.Id desc", model.TopNum,model.ClienterId, whereStr);
+            }
+
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Latitude", model.Latitude);
             dbParameters.AddWithValue("Longitude", model.Longitude);
@@ -2371,13 +2411,17 @@ order by a.Id desc", model.TopNum, whereStr);
         /// <returns></returns>
         public IList<GetJobCDM> GetJobC(GetJobCPM model)
         {
-            string sql = string.Format(@"
+            string sql = null;
+            if (model.ClienterId == 0 || model.IsBind == (int)IsBindBC.No) //未登录时以及非雇佣骑士，查询所有 无雇佣骑士的商家发布的订单，以及有雇佣骑士的商家发布的超过了五分钟无人抢单的订单 
+            {
+                sql = string.Format(@"
 declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
 ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'') as UserAddress,
+b.Longitude,b.Latitude,
 case convert(varchar(100), PubDate, 23) 
 	when convert(varchar(100), getdate(), 23) then '今日 '
     else substring(convert(varchar(100), PubDate, 23),6,5) 
@@ -2387,9 +2431,48 @@ as PubDate,
 round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) as DistanceToBusiness 
 from dbo.[order] a (nolock)
 join dbo.business b (nolock) on a.businessId=b.Id
-where a.status=0 and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
+where a.status=0  and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>5))
+and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
 order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint) asc
 ", model.TopNum);
+            }
+            else //查询所有 无雇佣骑士的商家发布的订单，以及 非当前骑士的雇主 里 有雇佣骑士的商家 发布的超过了 五分钟 无人抢单的订单 以及当前骑士所属雇主的所有订单
+            {
+                sql = string.Format(@"
+declare @cliernterPoint geography ;
+select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
+select top {0} a.Id,a.OrderCommission,a.OrderCount,   
+(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
+b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
+ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'') as UserAddress,
+b.Longitude,b.Latitude,
+case convert(varchar(100), PubDate, 23) 
+	when convert(varchar(100), getdate(), 23) then '今日 '
+    else substring(convert(varchar(100), PubDate, 23),6,5) 
+end
++'  '+substring(convert(varchar(100),PubDate,24),1,5)
+as PubDate,
+round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) as DistanceToBusiness 
+from dbo.[order] a (nolock)
+join dbo.business b (nolock) on a.businessId=b.Id
+left join ( select  distinct
+                            ( temp.BusinessId )
+                    from    BusinessClienterRelation temp
+                    where   temp.IsEnable = 1
+                            and temp.IsBind = 1
+                            and temp.ClienterId = {1}
+                  ) as c on a.BusinessId = c.BusinessId        
+where a.status=0 
+and ( b.IsBind = 0
+              or ( b.IsBind = 1
+                   and DATEDIFF(minute, a.PubDate, GETDATE()) > 5
+                 )
+              or c.BusinessId is not null
+            )
+and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
+order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint) asc
+", model.TopNum,model.ClienterId);
+            }
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Latitude", model.Latitude);
             dbParameters.AddWithValue("Longitude", model.Longitude);
@@ -2416,6 +2499,7 @@ select top {0}  a.BusinessId, a.Id,a.OrderCommission,a.OrderCount,
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
 ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'') as UserAddress,
+b.Longitude,b.Latitude,
 case convert(varchar(100), PubDate, 23) 
 	when convert(varchar(100), getdate(), 23) then '今日 '
     else substring(convert(varchar(100), PubDate, 23),6,5) 
@@ -2425,7 +2509,7 @@ as PubDate,
 round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) as DistanceToBusiness 
 from dbo.[order] a (nolock)
 join dbo.business b (nolock) on a.businessId=b.Id
-join (select  distinct(temp.BusinessId) from  BusinessClienterRelation  temp where temp.IsEnable=1 and  temp.IsBind =1 and temp.ClienterId={1} ) as c on a.BusinessId=c.BusinessId
+join (select  distinct(temp.BusinessId) from BusinessClienterRelation  temp where temp.IsEnable=1 and  temp.IsBind =1 and temp.ClienterId={1} ) as c on a.BusinessId=c.BusinessId
 where a.status=0 
 order by a.id desc 
 ", model.TopNum, model.ClienterId);
@@ -2666,6 +2750,179 @@ where c.Id=@ClienterId;");
             parm.AddWithValue("@ClienterId", model.clienterId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
+        /// <summary>
+        /// 获得配送数据列表
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="pageIndex"></param>
+        /// <param name="totalRows"></param>
+        /// <returns></returns>
+        public DataTable DistributionAnalyze(OrderDistributionAnalyze model, int pageIndex,int pageSize, out int totalRows)
+        {
+            string sql = @"SELECT {0}
+FROM (
+SELECT 
+oth.PubLatitude,oth.PubLongitude,oth.GrabLatitude,oth.GrabLongitude,oth.CompleteLongitude,oth.CompleteLatitude,
+o.Id,OrderNo,businessId,clienterId,PickUpAddress,ReceviceAddress,ReceviceCity ,OrderCommission
+,PubDate,ActualDoneDate,OrderCount,TakeTime,GrabTime, DATEDIFF(MINUTE,o.PubDate,o.ActualDoneDate) AS FinishDateLength,
+round(geography::Point(ISNULL(oth.PubLatitude,0),ISNULL(oth.PubLongitude,0),4326).STDistance(geography::Point(ISNULL(oth.GrabLatitude,0),ISNULL(oth.GrabLongitude,0),4326)),0)  as PubToGrabDistance,
+round(geography::Point(ISNULL(oth.GrabLatitude,0),ISNULL(oth.GrabLongitude,0),4326).STDistance(geography::Point(ISNULL(oth.CompleteLatitude,0),ISNULL(oth.CompleteLongitude,0),4326)),0)  as GrabToCompleteDistance,
+round(geography::Point(ISNULL(oth.PubLatitude,0),ISNULL(oth.PubLongitude,0),4326).STDistance(geography::Point(ISNULL(oth.CompleteLatitude,0),ISNULL(oth.CompleteLongitude,0),4326)),0)  as PubToCompleteDistance
+FROM [order] o(nolock)
+INNER JOIN [OrderOther] oth(nolock) ON o.Id = oth.OrderId) out
+WHERE 1=1";
 
+            string dataSql = string.Format(sql, " top " + pageSize + " * ");
+            string notTopSql = string.Format(sql, " top " + ((pageIndex - 1) * pageSize).ToString() + " out.Id ");
+            string countSql = string.Format(sql, " count(*) ");
+            if (pageIndex > 1)
+            {
+                dataSql += " AND out.Id not IN({0})";
+
+                //notTopSql = string.Format(sql, " top " + ((pageIndex - 1) * 20).ToString() + " out.Id ") + " order by out.id desc)";
+                //dataSql += " AND out.Id not IN(" + string.Format(sql, " top " + ((pageIndex - 1) * 20).ToString() + " out.Id ") + " order by out.id desc)";
+            }
+
+            IDbParameters parm = DbHelper.CreateDbParameters();
+
+            string[] dataRange = model.GetDataRange();
+            if (dataRange.Length > 1)
+            {
+                if (!string.IsNullOrWhiteSpace(dataRange[0]))
+                {
+                    dataSql += " and out.FinishDateLength>@FinishDateLength1";
+                    notTopSql += " and out.FinishDateLength>@FinishDateLength1";
+                    countSql += " and out.FinishDateLength>@FinishDateLength1";
+                    parm.Add("FinishDateLength1", DbType.Int32, 4).Value = dataRange[0];
+                }
+                if (!string.IsNullOrWhiteSpace(dataRange[1]))
+                {
+                    dataSql += " and out.FinishDateLength<@FinishDateLength2";
+                    notTopSql += " and out.FinishDateLength<@FinishDateLength2";
+                    countSql += " and out.FinishDateLength<@FinishDateLength2";
+                    parm.Add("FinishDateLength2", DbType.Int32, 4).Value = dataRange[1];
+
+                }
+            }
+            string[] grabToComplete = model.GetGrabToComplete();
+            if (grabToComplete.Length > 1)
+            {
+                if (!string.IsNullOrWhiteSpace(grabToComplete[0]))
+                {
+                    dataSql += " and out.GrabToCompleteDistance>@GrabToCompleteDistance1";
+                    notTopSql += " and out.GrabToCompleteDistance>@GrabToCompleteDistance1";
+                    countSql += " and out.GrabToCompleteDistance>@GrabToCompleteDistance1";
+                    parm.Add("GrabToCompleteDistance1", DbType.Int32, 4).Value = grabToComplete[0];
+                }
+                if (!string.IsNullOrWhiteSpace(grabToComplete[1]))
+                {
+                    dataSql += " and out.GrabToCompleteDistance<@GrabToCompleteDistance2";
+                    notTopSql += " and out.GrabToCompleteDistance<@GrabToCompleteDistance2";
+                    countSql += " and out.GrabToCompleteDistance<@GrabToCompleteDistance2";
+                    parm.Add("GrabToCompleteDistance2", DbType.Int32, 4).Value = grabToComplete[1];
+                }
+            }
+            string[] pubToComplete = model.GetPubToComplete();
+            if (pubToComplete.Length > 1)
+            {
+                if (!string.IsNullOrWhiteSpace(pubToComplete[0]))
+                {
+                    dataSql += " and out.PubToCompleteDistance>@PubToCompleteDistance1";
+                    notTopSql += " and out.PubToCompleteDistance>@PubToCompleteDistance1";
+                    countSql += " and out.PubToCompleteDistance>@PubToCompleteDistance1";
+                    parm.Add("PubToCompleteDistance1", DbType.Int32, 4).Value = pubToComplete[0];
+
+                }
+                if (!string.IsNullOrWhiteSpace(pubToComplete[1]))
+                {
+                    dataSql += " and out.PubToCompleteDistance<@PubToCompleteDistance2";
+                    notTopSql += " and out.PubToCompleteDistance<@PubToCompleteDistance2";
+                    countSql += " and out.PubToCompleteDistance<@PubToCompleteDistance2";
+                    parm.Add("PubToCompleteDistance2", DbType.Int32, 4).Value = pubToComplete[1];
+
+                }
+            }
+            string[] pubToGrab = model.GetPubToGrabDistance();
+            if (pubToGrab.Length > 1)
+            {
+                if (!string.IsNullOrWhiteSpace(pubToGrab[0]))
+                {
+                    dataSql += " and out.PubToGrabDistance>@PubToGrabDistance1";
+                    notTopSql += " and out.PubToGrabDistance>@PubToGrabDistance1";
+                    countSql += " and out.PubToGrabDistance>@PubToGrabDistance1";
+                    parm.Add("PubToGrabDistance1", DbType.Int32, 4).Value = pubToGrab[0];
+                }
+                if (!string.IsNullOrWhiteSpace(pubToGrab[1]))
+                {
+                    dataSql += " and out.PubToGrabDistance<@PubToGrabDistance2";
+                    notTopSql += " and out.PubToGrabDistance<@PubToGrabDistance2";
+                    countSql += " and out.PubToGrabDistance<@PubToGrabDistance2";
+                    parm.Add("PubToGrabDistance2", DbType.Int32, 4).Value = pubToGrab[1];
+
+                }
+            }
+            if (model.StartDate != null)
+            {
+                dataSql += " and out.ActualDoneDate>=@StartDate";
+                notTopSql += " and out.ActualDoneDate>=@StartDate";
+                countSql += " and out.ActualDoneDate>=@StartDate";
+                parm.Add("StartDate", DbType.DateTime).Value = model.StartDate.Value.Date.ToString();
+
+            }
+            if (model.EndDate != null)
+            {
+                dataSql += " and out.ActualDoneDate<=@EndDate";
+                notTopSql += " and out.ActualDoneDate<=@EndDate";
+                countSql += " and out.ActualDoneDate<=@EndDate";
+                parm.Add("EndDate", DbType.DateTime).Value = model.EndDate.Value.Date.ToString();
+
+            }
+            if (!string.IsNullOrWhiteSpace(model.City))
+            {
+                dataSql += " and out.ReceviceCity=@ReceiveCity";
+                notTopSql += " and out.ReceviceCity=@ReceiveCity";
+                countSql += " and out.ReceviceCity=@ReceiveCity";
+                parm.Add("ReceiveCity", DbType.String, 45).Value = model.City;
+            }
+            dataSql += " order by out.id desc";
+            notTopSql += " order by out.id desc";
+
+            if (pageIndex > 1)
+            {
+                dataSql = string.Format(dataSql, notTopSql);
+            }
+
+            object count = DbHelper.ExecuteScalar(SuperMan_Read, countSql, parm);
+            totalRows = Convert.ToInt32(count);
+
+            return DbHelper.ExecuteDataTable(SuperMan_Read, dataSql, parm);
+        }
+        /// <summary>
+        /// 订单中所有城市去重列表
+        /// </summary>
+        /// <returns></returns>
+        public IList<string> OrderReceviceCity()
+        {
+            string sql = "select distinct  ReceviceCity from [order] where ReceviceCity is not null";
+
+            IList<string> cities = new List<string>();
+            IDataReader reader = null;
+            try
+            {
+                reader = DbHelper.ExecuteReader(SuperMan_Read, sql);
+                if (reader != null)
+                {
+                    while (reader.Read())
+                    {
+                        string city = reader.GetString(0);
+                        cities.Add(city);
+                    }
+                }
+            }
+            catch { }
+            finally { reader.Close(); }
+
+            return cities;
+        }
     }
 }

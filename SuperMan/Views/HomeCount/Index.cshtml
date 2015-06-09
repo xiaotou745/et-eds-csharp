@@ -88,7 +88,7 @@
                     <td>
                         扫码支付总计：￥@ParseHelper.ToSplitByPercentile(false, resultList.userTotal)<br />
                         骑士代付总计:￥@ParseHelper.ToSplitByPercentile(false, resultList.clienterTotal)<br />
-                        商户充值金额：￥0<br />
+                        商户充值金额：￥@ParseHelper.ToSplitByPercentile(false, resultList.rechargeTotal)<br />
                         账户收入总计：￥@ParseHelper.ToSplitByPercentile(false, resultList.incomeTotal)<br />
                     </td>
                 </tr>

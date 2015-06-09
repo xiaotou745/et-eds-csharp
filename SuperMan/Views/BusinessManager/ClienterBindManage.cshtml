@@ -21,24 +21,24 @@
             <td></td>
         </tr>
         <tr class="trclass">
-            <td>已绑定骑士：￥@ParseHelper.ToSplitByPercentile(false, Model.BalancePrice)</td>
+            <td>已绑定骑士：@Model.BindClienterQty</td>
             <td></td>
             <td></td>
             <td></td>
         </tr>
     </table>
-    @using (Ajax.BeginForm("PostBusinessBalanceRecord", new RouteValueDictionary { { "pageindex", "" } },
+    @using (Ajax.BeginForm("PostClienterBindManage", new RouteValueDictionary { { "pageindex", "" } },
     new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
     new RouteValueDictionary { { "id", "searchForm" } }))
     {
         <div class="SearchMd">
-            <input type="button" value="添加骑士绑定" class="searchBtn" id="btnQueryBalanceRecord" />
+            <input type="button" value="添加骑士绑定" class="searchBtn" id="btnBindClienter" />
             @*<input type="button" value="导 出" class="searchBtn" id="btnExportBalanceRecord" onclick=" return funExport() " />*@
         </div>
     }
     <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
     <div style="float:left;width:900px;padding-top:30px" class="control-group" id="dataList">
-        @Html.Partial("_BusinessBalanceRecordList", Model)
+        @Html.Partial("_ClienterBindList", Model)
     </div>
 </div>
 <script type="text/javascript">
@@ -48,25 +48,7 @@
         $('#operateTimeEnd').datepicker();
         window.location.hash = '';
     });
-    //查询流水记录
-    //$("#btnQueryBalanceRecord").click(function () {
-    //    var operateTimeStart = $('#operateTimeStart').val();
-    //    var operateTimeEnd = $('#operateTimeEnd').val();
-    //    var businessId = $('#businessId').val();
-    //    var recordType = $('#recordType').val();
-    //    var relationNo = $('#relationNo').val();
-    //    var paramaters = { "businessId": businessId, "relationNo": relationNo, "recordType": recordType, "operateTimeStart": operateTimeStart, "operateTimeEnd": operateTimeEnd };
-    //    var url = "/BusinessManager/BusinessBalanceRecord";
-    //    $.ajax({
-    //        type: 'POST',
-    //        url: url,
-    //        data: paramaters,
-    //        success: function (result) {
-    //            $("#detaiDiv").html(result);
-    //        }
-    //    });
 
-    //});
     function funExport() {
         var businessId = $("#businessId").val();
         var recordType = $("#recordType").val();

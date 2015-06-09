@@ -24,5 +24,10 @@ namespace Ets.Model.ParameterModel.Clienter
         /// 余额
         /// </summary>
         public decimal amount { get; set; }
+
+        /// <summary>
+        /// 是否绑定了商户（0：否 1：是）
+        /// </summary>
+        public int IsBind { get; set; }
     }
 }

@@ -608,9 +608,12 @@
     <Content Include="Views\Manage\SetPassword.cshtml" />
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\BusinessManager\BusinessModify.cshtml" />
+    <Content Include="Views\OrderStatistical\DistributionAnalyze.cshtml" />
+    <Content Include="Views\OrderStatistical\_PartialDistributionAnalyze.cshtml" />
     <Content Include="Views\BusinessManager\ClienterBindManage.cshtml" />
     <Content Include="Views\BusinessManager\_ClienterBindList.cshtml" />
-    <Content Include="Views\BusinessManager\ClienterBatchBind.cshtml" />
+    <Content Include="Views\SuperManManager\GetRelationByClienterId.cshtml" />
+    <Content Include="Views\SuperManManager\PostGetRelationByClienterId.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Account\IAccountProvider..cs" />
     <Compile Include="AuthorityMenu\IAuhorityMenu.cs" />
+    <Compile Include="Bussiness\IBusinessClienterRelationProvider.cs" />
     <Compile Include="Clienter\IClienterLocationProvider.cs" />
     <Compile Include="Clienter\ICrossShopStatisticLogProvider.cs" />
     <Compile Include="Common\IAdminToolsProvider.cs" />
@@ -89,9 +90,7 @@
       <Name>Ets.Model</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Bussiness\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

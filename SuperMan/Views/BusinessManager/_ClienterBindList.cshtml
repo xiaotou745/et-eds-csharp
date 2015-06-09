@@ -1,5 +1,6 @@
 ﻿@using ETS.Data.PageData
 @using Ets.Model.DataModel.Finance
+@using Ets.Model.DomainModel.Bussiness
 @using ETS.Util;
 @using NPOI.HSSF.Record.Formula.Functions
 <table border="0" cellspacing="0" cellpadding="0" class="tbstyle" width="900">
@@ -15,33 +16,45 @@
     </thead>
     <tbody>
         @{
-            //var businessBalanceRecordList = ViewBag.businessBalanceRecord as List<Ets.Model.DataModel.Finance.BusinessBalanceRecord>;
-            var businessBalanceRecord = ViewBag.businessBalanceRecord as PageInfo<BusinessBalanceRecord>;
-            if (businessBalanceRecord != null && businessBalanceRecord.Records.Count > 0)
+            var businessClienterRelationList = ViewBag.businessClienterRelationList as PageInfo<BusinessClienterRelationModel>;
+            if (businessClienterRelationList != null && businessClienterRelationList.Records.Count > 0)
             {
                 var i = 0;
-                var recordTypeDes = "";
-                foreach (var item in businessBalanceRecord.Records)
+                foreach (var item in businessClienterRelationList.Records)
                 {
-                    recordTypeDes = ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.BusinessBalanceRecordRecordType)item.RecordType).GetType(), (ETS.Enums.BusinessBalanceRecordRecordType)item.RecordType).Text;
                     i++;
                     <tr id="@item.Id">
-                        <td>@recordTypeDes</td>
+                        <td>@i</td>
+                        <td>@item.ClienterName</td>
+                        <td>@item.PhoneNo</td>
+                        <td>@item.UpdateTime</td>
+                        <td>@(item.IsBind==0?"未绑定":"已绑定")</td>
+                        <td>@item.UpdateBy</td>
                         <td>
-                            @if (item.RecordType == 3 || item.RecordType == 4 || item.RecordType == 5 || item.RecordType == 9)
+                            @if (SuperMan.App_Start.UserContext.Current.HasAuthority(24))
                             {
-                                <a href="javascript:funLookDetail(@item.WithwardId)">@item.RelationNo</a>
+                                if (item.IsBind == 0)
+                                {
+                                    <a href="javascript:funModifyClienterBind(@item.BusinessId,@item.ClienterId,1)">绑定</a>
+                                }
+                                else
+                                {
+                                    <a href="javascript:funModifyClienterBind(@item.BusinessId,@item.ClienterId,0)">解除绑定</a>
+                                }
                             }
-                            else
+                            @if (SuperMan.App_Start.UserContext.Current.HasAuthority(52))
                             {
-                                <a href="/Order/OrderDetail?OrderNo=@item.RelationNo&OrderId=@item.WithwardId ">@item.RelationNo</a>
+                                if (item.IsEnable == 0)
+                                {
+                                    <a href="javascript:void(0)" style="color:gray">删除</a>
+                                }
+                                else
+                                {
+                                    <a href="javascript:funRemoveClienterBind(@item.BusinessId,@item.ClienterId)">删除</a>
+                                }
+
                             }
                         </td>
-                        <td>￥@ParseHelper.ToSplitByPercentile(false, item.Amount)</td>
-                        <td>￥@ParseHelper.ToSplitByPercentile(false, item.Balance)</td>
-                        <td>@(item.Status == ETS.Enums.BusinessBalanceRecordStatus.Success.GetHashCode() ? "交易成功" : "交易中")</td>
-                        <td>@item.OperateTime</td>
-                        <td>@item.Operator</td>
                     </tr>
                 }
             }
@@ -49,14 +62,56 @@
     </tbody>
 </table>
 @{
-    if (businessBalanceRecord != null)
+    if (businessClienterRelationList != null)
     {
-        ViewBag.ActionName = "PostBusinessBalanceRecord";
-        @Html.Partial("~/views/shared/PagerControl.cshtml", businessBalanceRecord)
+        ViewBag.ActionName = "PostClienterBindManage";
+        @Html.Partial("~/views/shared/PagerControl.cshtml", businessClienterRelationList)
     }
 }
 
 <script type="text/javascript">
+    ///修改骑士绑定
+    function funModifyClienterBind(businessId, clienterId, isBind) {
+        if (!window.confirm("是否修改绑定？")) {
+            return;
+        }
+        var paramaters = { "businessId": businessId, "clienterId": clienterId, "isBind": isBind };
+        var url = "/BusinessManager/ModifyClienterBind";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert(result.Message);
+                    window.location.href = "/BusinessManager/ClienterBindManage?businessId=" + businessId;
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    }
+    ///删除骑士绑定
+    function funRemoveClienterBind(businessId, clienterId) {
+        if (!window.confirm("是否删除绑定？")) {
+            return;
+        }
+        var paramaters = { "businessId": businessId, "clienterId": clienterId };
+        var url = "/BusinessManager/RemoveClienterBind";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert(result.Message);
+                    window.location.href = "/BusinessManager/ClienterBindManage?businessId=" + businessId;
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    }
 </script>
 
 

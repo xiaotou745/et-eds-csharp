@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Web.Http.Controllers;
 using System.Web.Mvc.Async;
@@ -56,13 +57,15 @@ namespace SuperManWebApi
     [System.AttributeUsage(System.AttributeTargets.Method|AttributeTargets.Class)]
     public class ExecuteTimeLogAttribute : System.Web.Http.Filters.ActionFilterAttribute
     {
-        System.Diagnostics.Stopwatch stop = new System.Diagnostics.Stopwatch();
+        private const string Key = "__action_duration__";
         /// <summary>
         /// 重写OnActionExecuting方法
         /// </summary>
         /// <param name="actionContext"></param>
         public override void OnActionExecuting(HttpActionContext actionContext)
         {
+            Stopwatch stop = new Stopwatch();
+            actionContext.Request.Properties[Key] = stop;
             stop.Start();
             base.OnActionExecuting(actionContext);
         }
@@ -72,27 +75,46 @@ namespace SuperManWebApi
         /// <param name="actionExecutedContext"></param>
         public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
         {
-            System.Threading.Tasks.Task.Factory.StartNew(() =>
+            if (!actionExecutedContext.Request.Properties.ContainsKey(Key))
             {
-                stop.Stop();
-                LogHelper.LogWriter("接口" + actionExecutedContext.Request.RequestUri + "请求时间：" + stop.Elapsed);
-                stop.Reset();
-            });
+                return;
+            }
+            var stop = actionExecutedContext.Request.Properties[Key] as Stopwatch;
+            if (stop != null)
+            {
+                Task.Factory.StartNew(() =>
+                {
+                    stop.Stop();
+                    LogHelper.LogWriter("接口" + actionExecutedContext.Request.RequestUri + "请求时间：" + stop.Elapsed);
+                    stop.Reset();
+                });
+            }
             base.OnActionExecuted(actionExecutedContext);
         }
     }
 
     /// <summary>
-    /// 自定义异常处理类  add by caoheyang 20150205
+    /// 自定义全局异常处理类  add by caoheyang 20150205
     /// </summary>
     public class ApiHandleErrorAttribute : ExceptionFilterAttribute
     {
+        private const string Key = "__action_duration__";
         /// <summary>
         /// 重写异常处理方法 add by caoheyang 20150205
         /// </summary>
         /// <param name="filterContext">上下文对象  该类继承于ControllerContext</param>
         public override void OnException(HttpActionExecutedContext filterContext)
         {
+            var stop = filterContext.Request.Properties[Key] as Stopwatch;
+            if (stop != null)
+            {
+                Task.Factory.StartNew(() =>
+                {
+                    stop.Stop();
+                    ETS.Util.LogHelper.LogWriter("接口" + filterContext.Request.RequestUri + "请求时间：" + stop.Elapsed);
+                    stop.Reset();
+                });
+            }
             LogHelper.LogWriterFromFilter(filterContext.Exception);
         }
     }

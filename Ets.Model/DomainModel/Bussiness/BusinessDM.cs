@@ -37,6 +37,10 @@ namespace Ets.Model.DomainModel.Bussiness
 		/// 系统登录密码
 		/// </summary>
 		public string Password { get; set; }
+        /// <summary>
+        /// 执照照片
+        /// </summary>
+        public string BusinessLicensePic { get; set; }
 		/// <summary>
 		/// 验证照片
 		/// </summary>

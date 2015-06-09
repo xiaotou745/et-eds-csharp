@@ -320,7 +320,7 @@ namespace Ets.Dao.User
             {
                 string sql = @"SELECT COUNT(1)  FROM dbo.business  a
 LEFT join dbo.[group] b on a.GroupId=b.Id
-where  b.IsModifyBind=1
+where isnull(b.IsModifyBind,1)=1
 and a.PhoneNo=@PhoneNo";
                 IDbParameters parm = DbHelper.CreateDbParameters();
                 parm.Add("@PhoneNo", SqlDbType.NVarChar);
@@ -366,7 +366,7 @@ and a.PhoneNo=@PhoneNo";
                                     ,b.AreaCode
                                     ,b.Province
                                     ,b.CommissionTypeId
-                                    ,b.DistribSubsidy
+                                    ,ISNULL(b.DistribSubsidy,0.00) DistribSubsidy
                                     ,b.BusinessCommission
                                     ,g.GroupName
                                     ,b.CommissionType
@@ -477,8 +477,8 @@ from    business (nolock) a
         left join dbo.[group] (nolock) b on a.GroupId = b.Id
 where   PhoneNo = @PhoneNo
         and Password = @Password
-        and b.IsModifyBind = 1
-order by id desc
+        and ISNULL(b.IsModifyBind,1) = 1
+order by a.id desc
 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@PhoneNo", SqlDbType.NVarChar);
@@ -531,7 +531,7 @@ order by id desc
             ///TODO 类型？
             IDbParameters parm = DbHelper.CreateDbParameters("busiId", DbType.Int32, 4, busiId);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
-            if (dt != null)
+            if (dt != null && dt.Rows.Count > 0)
                 busi = DataTableHelper.ConvertDataTableList<BusListResultModel>(dt)[0];
             return busi;
         }
@@ -1433,7 +1433,7 @@ select  Id,Name,City,district,PhoneNo,PhoneNo2,Password,CheckPicUrl,IDCard,
         Address,Landline,Longitude,Latitude,Status,InsertTime,districtId,CityId,GroupId,
         OriginalBusiId,ProvinceCode,CityCode,AreaCode,Province,CommissionTypeId,DistribSubsidy,
         BusinessCommission,CommissionType,CommissionFixValue,BusinessGroupId,BalancePrice,
-        AllowWithdrawPrice,HasWithdrawPrice
+        AllowWithdrawPrice,HasWithdrawPrice,BusinessLicensePic
 from  Business (nolock) 
 where Id=@Id";
 
@@ -1561,6 +1561,9 @@ where Id=@Id";
                 #endregion
 
                 result.CheckPicUrl = CheckPicUrl;
+                result.BusinessLicensePic = dataReader["BusinessLicensePic"] == null ? 
+                    string.Empty : 
+                    Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataReader["BusinessLicensePic"].ToString())[0];
                 result.IDCard = dataReader["IDCard"].ToString();
                 result.Address = dataReader["Address"].ToString();
                 result.Landline = dataReader["Landline"].ToString();
@@ -1678,7 +1681,7 @@ SELECT   b.Id ,
          b.CityCode ,
          b.AreaCode ,
          b.Province ,
-         b.DistribSubsidy,
+         ISNULL(b.DistribSubsidy,0.00) DistribSubsidy,
          b.BusinessCommission ,     
          b.CommissionType,
          b.CommissionFixValue,
@@ -1907,7 +1910,127 @@ VALUES
             parm.AddWithValue("@AuditStatus", model.AuditStatus);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
+        /// <summary>
+        /// 获取商户绑定的骑士列表
+        /// danny-20150608
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<T> GetBusinessClienterRelationList<T>(BusinessSearchCriteria criteria)
+        {
+            string columnList = @"  c.TrueName ClienterName,
+		                            c.PhoneNo,
+		                            bcr.CreateTime,
+		                            bcr.IsBind,
+		                            bcr.CreateBy,
+		                            bcr.UpdateBy,
+		                            bcr.UpdateTime,
+		                            bcr.BusinessId,
+		                            bcr.ClienterId,
+                                    bcr.IsEnable";
+            var sbSqlWhere = new StringBuilder(" bcr.IsEnable=1 ");
+            if (criteria.BusinessId != 0)
+            {
+                sbSqlWhere.AppendFormat("AND bcr.[BusinessId]={0}", criteria.BusinessId);
+            }
+            string tableList = @" BusinessClienterRelation bcr WITH(NOLOCK)
+  JOIN dbo.clienter c WITH(NOLOCK) ON bcr.ClienterId=c.Id";
+            string orderByColumn = " bcr.Id DESC";
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
+        }
 
-
+        /// <summary>
+        /// 查询商户绑定骑士数量
+        /// danny-20150608
+        /// </summary>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        public int GetBusinessBindClienterQty(int businessId)
+        {
+            try
+            {
+                string sql = "SELECT COUNT(1) FROM BusinessClienterRelation bcr WITH(NOLOCK) WHERE bcr.IsBind = 1 AND bcr.IsEnable=1 AND BusinessId=@BusinessId;";
+                var parm = DbHelper.CreateDbParameters();
+                parm.AddWithValue("@BusinessId",businessId);
+                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm));
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex, "查询商户绑定骑士数量");
+                return 0;
+            }
+        }
+        /// <summary>
+        /// 修改骑士绑定关系
+        /// danny-20150608
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ModifyClienterBind(ClienterBindOptionLogModel model)
+        {
+            string sql = string.Format(@" 
+update bcr
+set    bcr.IsBind=@IsBind
+OUTPUT
+  Inserted.BusinessId,
+  Inserted.ClienterId,
+  @OptId,
+  @OptName,
+  getdate(),
+  @Remark
+INTO ClienterBindOptionLog
+  ( BusinessId
+   ,ClienterId
+   ,OptId
+   ,OptName
+   ,InsertTime
+   ,Remark)
+from BusinessClienterRelation bcr WITH ( ROWLOCK )
+where bcr.BusinessId=@BusinessId AND bcr.ClienterId=@ClienterId;");
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@OptId", model.OptId);
+            parm.AddWithValue("@OptName", model.OptName);
+            parm.AddWithValue("@Remark", model.Remark);
+            parm.AddWithValue("@IsBind", model.IsBind);
+            parm.AddWithValue("@BusinessId", model.BusinessId);
+            parm.AddWithValue("@ClienterId", model.ClienterId);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
+        /// <summary>
+        /// 删除骑士绑定关系
+        /// danny-20150608
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool RemoveClienterBind(ClienterBindOptionLogModel model)
+        {
+            string sql = string.Format(@" 
+update bcr
+set    bcr.IsEnable=@IsEnable
+OUTPUT
+  Inserted.BusinessId,
+  Inserted.ClienterId,
+  @OptId,
+  @OptName,
+  getdate(),
+  @Remark
+INTO ClienterBindOptionLog
+  ( BusinessId
+   ,ClienterId
+   ,OptId
+   ,OptName
+   ,InsertTime
+   ,Remark)
+from BusinessClienterRelation bcr WITH ( ROWLOCK )
+where bcr.BusinessId=@BusinessId AND bcr.ClienterId=@ClienterId;");
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@OptId", model.OptId);
+            parm.AddWithValue("@OptName", model.OptName);
+            parm.AddWithValue("@Remark", model.Remark);
+            parm.AddWithValue("@IsEnable", 0);
+            parm.AddWithValue("@BusinessId", model.BusinessId);
+            parm.AddWithValue("@ClienterId", model.ClienterId);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
     }
 }

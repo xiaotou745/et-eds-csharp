@@ -67,6 +67,7 @@
     <Compile Include="DataModel\Bussiness\BusinessOptionLog.cs" />
     <Compile Include="DataModel\Bussiness\BusinessRechargeModel.cs" />
     <Compile Include="DataModel\Bussiness\BusinessThirdRelationModel.cs" />
+    <Compile Include="DataModel\Bussiness\ClienterBindOptionLog.cs" />
     <Compile Include="DataModel\Clienter\ClienterOptionLog.cs" />
     <Compile Include="DataModel\Clienter\ClienterCrossShopLogModel.cs" />
     <Compile Include="DataModel\Clienter\ClienterLocation.cs" />
@@ -92,10 +93,13 @@
     <Compile Include="DataModel\Order\OrderSubsidiesLog.cs" />
     <Compile Include="DomainModel\Area\DMAreaCodeInfo.cs" />
     <Compile Include="DomainModel\Authority\AccountCityRelationModel.cs" />
+    <Compile Include="DomainModel\Bussiness\BCRelationGetByClienterIdDM.cs" />
+    <Compile Include="DomainModel\Bussiness\BusinessClienterRelationModel.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessDetailModel.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessBindClienterDM.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessDM.cs" />
     <Compile Include="DomainModel\Bussiness\BusinessRechargeResultModel.cs" />
+    <Compile Include="DomainModel\Bussiness\ClienterBindOptionLogModel.cs" />
     <Compile Include="DomainModel\Clienter\ClienterDetailModel.cs" />
     <Compile Include="DomainModel\Clienter\ClienterDM.cs" />
     <Compile Include="DomainModel\Finance\BusinessBalanceRecordModel.cs" />
@@ -105,6 +109,7 @@
     <Compile Include="DomainModel\Finance\ClienterWithdrawFormModel.cs" />
     <Compile Include="DomainModel\Finance\ClienterWithdrawLogModel.cs" />
     <Compile Include="DomainModel\Finance\FinanceRecordsDM.cs" />
+    <Compile Include="DomainModel\Order\DistributionAnalyzeResult.cs" />
     <Compile Include="DomainModel\Order\GetJobCDM.cs" />
     <Compile Include="DomainModel\Order\NonJoinWithdrawModel.cs" />
     <Compile Include="DomainModel\Finance\FinanceRecordsDMList.cs" />
@@ -117,6 +122,7 @@
     <Compile Include="DomainModel\Subsidy\ShortMessageModel.cs" />
     <Compile Include="DomainModel\Subsidy\GrabOrderModel.cs" />
     <Compile Include="ParameterModel\AliPay\NotifyModel.cs" />
+    <Compile Include="ParameterModel\Bussiness\BCRelationGetByClienterIdPM.cs" />
     <Compile Include="ParameterModel\Bussiness\BusinessRechargeModel.cs" />
     <Compile Include="ParameterModel\AliPay\PayModel.cs" />
     <Compile Include="ParameterModel\Area\ParaAreaNameInfo.cs" />
@@ -245,6 +251,7 @@
     <Compile Include="ParameterModel\Order\GetJobCPM.cs" />
     <Compile Include="ParameterModel\Order\OrderChildModel.cs" />
     <Compile Include="ParameterModel\Order\OrderCompleteModel.cs" />
+    <Compile Include="ParameterModel\Order\OrderDistributionAnalyze.cs" />
     <Compile Include="ParameterModel\Order\OrderPM.cs" />
     <Compile Include="ParameterModel\Order\OrderChildPM.cs" />
     <Compile Include="ParameterModel\Order\NewPostPublishOrderModel.cs" />

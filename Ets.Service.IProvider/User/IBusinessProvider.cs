@@ -299,6 +299,38 @@ namespace Ets.Service.IProvider.User
         /// <param name="model"></param>
         /// <returns></returns>
         DealResultInfo ModifyBusinessDetail(BusinessDetailModel model);
+
+        /// <summary>
+        /// 获取商户绑定的骑士列表
+        /// danny-20150608
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        PageInfo<BusinessClienterRelationModel> GetBusinessClienterRelationList(BusinessSearchCriteria criteria);
+
+        /// <summary>
+        /// 查询商户绑定骑士数量
+        /// danny-20150608
+        /// </summary>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        int GetBusinessBindClienterQty(int businessId);
+
+        /// <summary>
+        /// 修改骑士绑定关系
+        /// danny-20150608
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        bool ModifyClienterBind(ClienterBindOptionLogModel model);
+
+        /// <summary>
+        /// 删除骑士绑定关系
+        /// danny-20150608
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        bool RemoveClienterBind(ClienterBindOptionLogModel model);
     }
 }
 

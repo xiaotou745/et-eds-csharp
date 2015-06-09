@@ -1,0 +1,39 @@
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Bussiness.BCRelationGetByClienterIdDM>
+@using Webdiyer.WebControls.Mvc;
+@{
+    ViewBag.Title = "骑士绑定商家列表";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+<script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.iframe-transport.js"></script>
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置 商户 > 骑士管理 > 骑士绑定商家列表
+    </h2>
+    @using (Ajax.BeginForm("PostGetRelationByClienterId", new RouteValueDictionary { { "pageindex", "" } },
+        new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+        new RouteValueDictionary { { "id", "searchForm" } }))
+    {
+        <div class="SearchMd">
+            <table>
+                <tr>
+                    <td>
+                        <span class="">模板名称: </span>
+                        <span class=""> </span>
+                        <span class="">模板名称: </span>
+                        <span class=""> </span>
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" style="display:none;"/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <div class="bd clearfix" id="dataList">
+        @Html.Partial("PostGetRelationByClienterId", Model)
+    </div>
+</div>
+<script src="~/Scripts/mvcpager.js"></script>
