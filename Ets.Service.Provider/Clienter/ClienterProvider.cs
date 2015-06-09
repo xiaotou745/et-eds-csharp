@@ -1166,7 +1166,15 @@ namespace Ets.Service.Provider.Clienter
         {
             return clienterDao.GetName(phoneNo);
         }
-
+        /// <summary>
+        /// 获取骑士列表
+        /// danny-20150608
+        /// </summary>
+        /// <param name="model"></param>
+        public IList<ClienterListModel> GetClienterList(ClienterListModel model)
+        {
+            return clienterDao.GetClienterList(model);
+        }
         /// <summary>
         /// 获取骑士Id
         /// </summary>
@@ -1176,7 +1184,6 @@ namespace Ets.Service.Provider.Clienter
         {
             return clienterDao.GetId(phoneNo,trueName);
         }
-
     }
 
 }

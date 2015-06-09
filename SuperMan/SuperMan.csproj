@@ -618,6 +618,8 @@
     <Content Include="Views\BusinessManager\_ClienterBindList.cshtml" />
     <Content Include="Views\SuperManManager\GetRelationByClienterId.cshtml" />
     <Content Include="Views\SuperManManager\PostGetRelationByClienterId.cshtml" />
+    <Content Include="Views\BusinessManager\AddClienterBindManage.cshtml" />
+    <Content Include="Views\BusinessManager\_ClienterList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

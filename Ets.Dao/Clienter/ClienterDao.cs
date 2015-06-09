@@ -1346,5 +1346,53 @@ where  phoneNo = @phoneNo and TrueName=@TrueName ";
             return  ParseHelper.ToInt(executeScalar, 0);
 
         }
+        /// <summary>
+        /// 获取骑士列表
+        /// danny-20150608
+        /// </summary>
+        /// <param name="model"></param>
+        public IList<ClienterListModel> GetClienterList(ClienterListModel model)
+        {
+            string sql = @"SELECT  [Id]
+                                  ,[PhoneNo]
+                                  ,[LoginName]
+                                  ,[recommendPhone]
+                                  ,[Password]
+                                  ,[TrueName]
+                                  ,[IDCard]
+                                  ,[PicWithHandUrl]
+                                  ,[PicUrl]
+                                  ,[Status]
+                                  ,[AccountBalance]
+                                  ,[InsertTime]
+                                  ,[InviteCode]
+                                  ,[City]
+                                  ,[CityId]
+                                  ,[GroupId]
+                                  ,[HealthCardID]
+                                  ,[InternalDepart]
+                                  ,[ProvinceCode]
+                                  ,[AreaCode]
+                                  ,[CityCode]
+                                  ,[Province]
+                                  ,[BussinessID]
+                                  ,[WorkStatus]
+                              FROM clienter WITH (NOLOCK) 
+                              WHERE 1=1 AND Status = 1";
+            if (!string.IsNullOrWhiteSpace(model.TrueName))
+            {
+                sql += " AND TrueName LIKE '%@TrueName%' ";
+            }
+            if (!string.IsNullOrWhiteSpace(model.TrueName))
+            {
+                sql += " AND PhoneNo=@TrueName ";
+            }
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@TrueName", model.TrueName);
+            parm.AddWithValue("@PhoneNo", model.PhoneNo);
+            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
+            var list = ConvertDataTableList<ClienterListModel>(dt);
+            return list;
+        }
     }
 }

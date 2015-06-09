@@ -37,12 +37,12 @@ namespace Ets.Model.ParameterModel.Order
         public int SearchType { get; set; }
 
         /// <summary>
-        /// top值
+        /// top值  业务逻辑层获取
         /// </summary>
         public string TopNum { get; set; }
 
         /// <summary>
-        /// 订单推送给骑士的区域半径(单位为公里)
+        /// 订单推送给骑士的区域半径(单位为公里)  业务逻辑层获取
         /// </summary>
         public string PushRadius { get; set; }
 

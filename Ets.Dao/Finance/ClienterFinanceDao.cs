@@ -455,7 +455,10 @@ WHERE ClienterId=@ClienterId ";
             {
                 sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),cbr.OperateTime,120)<=CONVERT(CHAR(10),'{0}',120)", criteria.OperateTimeEnd.Trim());
             }
-
+            if (criteria.ClienterId>0)
+            {
+                sbSqlWhere.AppendFormat(" AND ClienterId={0}", criteria.ClienterId);
+            }
             string tableList = @" [ClienterBalanceRecord] cbr WITH(NOLOCK)";
             string orderByColumn = " cbr.Id DESC";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);

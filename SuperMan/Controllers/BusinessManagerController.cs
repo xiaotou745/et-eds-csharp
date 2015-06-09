@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using Ets.Model.DomainModel.Bussiness;
 using Ets.Service.IProvider.User;
+using Ets.Service.Provider.Distribution;
 using Ets.Service.Provider.User;
 using ETS.Util;
 using SuperManBusinessLogic.B_Logic;
@@ -44,8 +45,7 @@ namespace SuperMan.Controllers
         readonly IClienterProvider iClienterProvider = new ClienterProvider();
         readonly IAreaProvider iAreaProvider = new AreaProvider();
         readonly IBusinessFinanceProvider iBusinessFinanceProvider = new BusinessFinanceProvider();
-        readonly IBusinessClienterRelationProvider iBusinessClienterRelationProvider = new BusinessClienterRelationProvider();
-        
+        readonly Ets.Service.IProvider.Distribution.IDistributionProvider iDistributionProvider = new DistributionProvider();
         // GET: BusinessManager
         [HttpGet]
         public ActionResult BusinessManager()
@@ -456,31 +456,32 @@ namespace SuperMan.Controllers
             var reg = iBusinessProvider.RemoveClienterBind(model);
             return Json(new Ets.Model.Common.ResultModel(reg, reg ? "删除骑士绑定成功！" : "删除骑士绑定失败！"), JsonRequestBehavior.DenyGet);
         }
-        ///// <summary>
-        ///// 查看商户余额流水记录
-        ///// danny-20150512
-        ///// </summary>
-        ///// <param name="criteria"></param>
-        ///// <returns></returns>
-        //public ActionResult BusinessBalanceRecord(BusinessBalanceRecordSerchCriteria criteria)
-        //{
-        //    ViewBag.businessBalanceRecord = iBusinessFinanceProvider.GetBusinessBalanceRecordList(criteria);
-        //    return PartialView("_BusinessBalanceRecordList");
-        //}
-        ///// <summary>
-        ///// 查看商户余额流水记录分页版
-        ///// danny-20150604
-        ///// </summary>
-        ///// <param name="pageindex"></param>
-        ///// <returns></returns>
-        //[HttpPost]
-        //public ActionResult PostBusinessBalanceRecord(int pageindex = 1)
-        //{
-        //    var criteria = new BusinessBalanceRecordSerchCriteria();
-        //    TryUpdateModel(criteria);
-        //    ViewBag.businessBalanceRecord = iBusinessFinanceProvider.GetBusinessBalanceRecordListOfPaging(criteria);
-        //    return PartialView("_BusinessBalanceRecordList");
-        //}
+        /// <summary>
+        /// 添加骑士绑定查询
+        /// danny-20150609
+        /// </summary>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        public ActionResult AddClienterBindManage(string businessId)
+        {
+            var businessDetailModel = iBusinessProvider.GetBusinessDetailById(businessId);
+            ViewBag.clienterList = null;
+            return View(businessDetailModel);
+        }
+        /// <summary>
+        /// 查询骑士列表
+        /// danny-20150609
+        /// </summary>
+        /// <param name="pageindex"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult GetClienterList(int pageindex = 1)
+        {
+            var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria();
+            TryUpdateModel(criteria);
+            ViewBag.clienterList = iDistributionProvider.GetClienteres(criteria);
+            return PartialView("_ClienterList");
+        }
       [HttpPost]
       public ActionResult ClienterBatchBind()
         {
