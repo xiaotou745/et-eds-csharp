@@ -1,0 +1,115 @@
+﻿@using ETS.Data.PageData
+@using Ets.Model.DataModel.Clienter
+@using Ets.Model.DataModel.Finance
+@using Ets.Model.DomainModel.Bussiness
+@using ETS.Util;
+@using NPOI.HSSF.Record.Formula.Functions
+<table border="0" cellspacing="0" cellpadding="0" class="tbstyle" width="900">
+    <thead>
+        <tr class="tdbg">
+            <th>编号</th>
+            <th>骑士姓名</th>
+            <th>骑士电话</th>
+            <th>操作</th>
+    </thead>
+    <tbody>
+        @{
+            var clienterList = ViewBag.clienterList as PageInfo<ClienterListModel>;
+            if (clienterList != null && clienterList.Records.Count > 0)
+            {
+                var i = 0;
+                foreach (var item in clienterList.Records)
+                {
+                    i++;
+                    <tr id="@item.Id">
+                        <td>@i</td>
+                        <td>@item.TrueName</td>
+                        <td>@item.PhoneNo</td>
+                        <td>
+                            <a href="javascript:void(0)" style="color:gray">已绑定</a>
+                            @*@if (SuperMan.App_Start.UserContext.Current.HasAuthority(24))
+                            {
+                                if (item.IsBind == 0)
+                                {
+                                    <a href="javascript:funModifyClienterBind(@item.BusinessId,@item.ClienterId,1)">绑定</a>
+                                }
+                                else
+                                {
+                                    <a href="javascript:funModifyClienterBind(@item.BusinessId,@item.ClienterId,0)">解除绑定</a>
+                                }
+                            }
+                            @if (SuperMan.App_Start.UserContext.Current.HasAuthority(52))
+                            {
+                                if (item.IsEnable == 0)
+                                {
+                                    <a href="javascript:void(0)" style="color:gray">已绑定</a>
+                                }
+                                else
+                                {
+                                    <a href="javascript:funRemoveClienterBind(@item.BusinessId,@item.ClienterId)">删除</a>
+                                }
+
+                            }*@
+                        </td>
+                    </tr>
+                }
+            }
+        }
+    </tbody>
+</table>
+
+@{
+    if (clienterList != null)
+    {
+        ViewBag.ActionName = "GetClienterList";
+        @Html.Partial("~/views/shared/PagerControl.cshtml", clienterList)
+    }
+}
+
+<script type="text/javascript">
+    ///修改骑士绑定
+    function funModifyClienterBind(businessId, clienterId, isBind) {
+        if (!window.confirm("是否修改绑定？")) {
+            return;
+        }
+        var paramaters = { "businessId": businessId, "clienterId": clienterId, "isBind": isBind };
+        var url = "/BusinessManager/ModifyClienterBind";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert(result.Message);
+                    window.location.href = "/BusinessManager/ClienterBindManage?businessId=" + businessId;
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    }
+    ///删除骑士绑定
+    function funRemoveClienterBind(businessId, clienterId) {
+        if (!window.confirm("是否删除绑定？")) {
+            return;
+        }
+        var paramaters = { "businessId": businessId, "clienterId": clienterId };
+        var url = "/BusinessManager/RemoveClienterBind";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert(result.Message);
+                    window.location.href = "/BusinessManager/ClienterBindManage?businessId=" + businessId;
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    }
+</script>
+
+
+

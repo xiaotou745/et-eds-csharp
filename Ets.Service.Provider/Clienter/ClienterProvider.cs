@@ -1154,6 +1154,16 @@ namespace Ets.Service.Provider.Clienter
             //} 
             //return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.Failed);
         }
+
+        /// <summary>
+        /// 获取骑士列表
+        /// danny-20150608
+        /// </summary>
+        /// <param name="model"></param>
+        public IList<ClienterListModel> GetClienterList(ClienterListModel model)
+        {
+            return clienterDao.GetClienterList(model);
+        }
     }
 
 }
