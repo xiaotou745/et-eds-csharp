@@ -31,12 +31,12 @@
                 <input name="busiId" id="busiId" type="hidden" value="@Model.Id">
             </div>
             <div class="control-group">
-                <label>联系手机：</label>
-                <input name="busiPhoneNo" id="busiPhoneNo" type="text" value="@Model.PhoneNo">
-            </div>
-            <div class="control-group">
                 <label>联系电话：</label>
                 <input name="busiPhoneNo2" id="busiPhoneNo2" type="text" value="@Model.PhoneNo2">
+            </div>
+            <div class="control-group">
+                <label>联系座机：</label>
+                <input name="busiLandline" id="busiLandline" type="text" value="@Model.Landline">
             </div>
             <div class="control-group">
                 <label>配  送  费：</label>
@@ -315,8 +315,8 @@
     $("#btnModifyCommit").click(function () {
         var id = $('#busiId').val();
         var name = $('#busiName').val();
-        var phoneNo = $('#busiPhoneNo').val();
         var phoneNo2 = $('#busiPhoneNo2').val();
+        var landline = $('#busiLandline').val();
         var distribSubsidy = $('#busiWaisong').val();
         var cityId = $('#busiCity').val();
         var districtId = $('#busiDistrict').val();
@@ -349,13 +349,14 @@
             return;
         }
         var reg = /^0?1\d{10}$/;
+        var regLandLine = /^(([0\+]\d{2,3}-)?(0\d{2,3})-)?(\d{7,8})(-(\d{3,}))?$/;
         var decimalFormat = /^[0-9]*(\.[0-9]{1,2})?$/;
-        if (!reg.test(phoneNo)) {
+        if (!reg.test(phoneNo2)) {
             alert("请输入正确的手机号!");
             return;
         }
-        if (!reg.test(phoneNo2) && phoneNo2.trim().length > 0) {
-            alert("请输入正确的手机号!");
+        if (!regLandLine.test(landline) && landline.trim().length > 0) {
+            alert("请输入正确的座机号!");
             return;
         }
         if (!decimalFormat.test(distribSubsidy) || distribSubsidy == '') {
@@ -416,7 +417,7 @@
         //    return false ;
         //}
         var paramaters = {
-            "Id": id, "Name": name, "PhoneNo": phoneNo, "PhoneNo2": phoneNo2, "DistribSubsidy": distribSubsidy, "CityId": cityId, "districtId": districtId, "City": cityName,
+            "Id": id, "Name": name, "Landline": landline, "PhoneNo2": phoneNo2, "DistribSubsidy": distribSubsidy, "CityId": cityId, "districtId": districtId, "City": cityName,
             "district": districtName, "Address": adress, "Latitude": latitude, "Longitude": longitude, "CommissionType": commissionType, "BusinessCommission": commissionText,
             "CommissionFixValue": commissionFixValue, "BusinessGroupId": businessGroupId, "MealsSettleMode": mealsSettleMode, "groupId": groupId, "originalBusiId": originalBusiId
         };

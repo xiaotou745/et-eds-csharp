@@ -1801,7 +1801,7 @@ ORDER BY btr.Id;";
             string remark = model.OptUserName + "通过后台管理系统修改商户信息";
             string sql = @"UPDATE business 
                             SET Name=@Name,
-                                PhoneNo=@PhoneNo,
+                                Landline=@Landline,
                                 PhoneNo2=@PhoneNo2,
                                 DistribSubsidy=@DistribSubsidy,
                                 CityId=@CityId,
@@ -1845,7 +1845,7 @@ ORDER BY btr.Id;";
                         WHERE  Id = @Id;";
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Name", model.Name);
-            parm.AddWithValue("@PhoneNo", model.PhoneNo);
+            parm.AddWithValue("@Landline", model.Landline);
             parm.AddWithValue("@PhoneNo2", model.PhoneNo2);
             parm.AddWithValue("@DistribSubsidy", model.DistribSubsidy);
             parm.AddWithValue("@CityId", model.CityId);
