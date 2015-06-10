@@ -2091,5 +2091,59 @@ VALUES
             parm.AddWithValue("@ClienterId", model.ClienterId);
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm))>0;
         }
+        /// <summary>
+        /// 查询商户结算列表（分页）
+        /// danny-20150609
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<T> GetBusinessCommissionOfPaging<T>(Ets.Model.ParameterModel.Bussiness.BusinessCommissionSearchCriteria criteria)
+        {
+
+            string columnList =string.Format( @"   BB.id ,
+                                        BB.Name ,
+                                        BB.PhoneNo,
+                                        T.Amount ,
+                                        T.OrderCount ,
+                                        ISNULL(BB.BusinessCommission, 0) BusinessCommission ,
+                                        T.TotalAmount,
+                                        '{0}' AS T1,
+                                        '{1}' AS T2 ", criteria.T1, criteria.T2);
+            string sqlwhere = string.Format(" AND DATEDIFF(s, O.ActualDoneDate,'{1}')>1 AND DATEDIFF(s,'{0}',O.ActualDoneDate)>1 ", criteria.T1, criteria.T2); ;
+            if (!string.IsNullOrEmpty(criteria.Name))
+            {
+                sqlwhere += string.Format(" AND Name='{0}' ", criteria.Name);
+            }
+            if (!string.IsNullOrEmpty(criteria.PhoneNo))
+            {
+                sqlwhere += string.Format(" AND PhoneNo='{0}' ", criteria.PhoneNo);
+            }
+            if (criteria.GroupId != 0)
+            {
+                sqlwhere += string.Format(" AND groupid={0} ", criteria.GroupId);
+            }
+            if (!string.IsNullOrEmpty(criteria.BusinessCity))
+            {
+                sqlwhere += string.Format(" AND B.City='{0}' ", criteria.BusinessCity);
+            }
+            if (criteria.AuthorityCityNameListStr != null && !string.IsNullOrEmpty(criteria.AuthorityCityNameListStr.Trim()))
+            {
+                sqlwhere += string.Format("  AND B.City IN({0}) ", criteria.AuthorityCityNameListStr);
+            }
+            string tableList = string.Format(@" business BB WITH ( NOLOCK )
+                                        INNER JOIN ( SELECT B.Id AS id ,
+                                                            SUM(O.Amount) AS Amount ,
+                                                            SUM(ISNULL(O.OrderCount, 0)) AS OrderCount ,
+                                                            SUM(ISNULL(O.SettleMoney, 0)) AS TotalAmount
+                                                     FROM   dbo.[order] O WITH ( NOLOCK )
+                                                            INNER JOIN dbo.business B ON B.Id = o.businessId
+                                                     WHERE  O.[Status] = 1 {0}
+                                                     GROUP BY B.Id
+                                                   ) AS T ON BB.Id = T.Id ", sqlwhere);
+            var sbSqlWhere = new StringBuilder(" 1=1 ");
+            string orderByColumn = " BB.Id ASC";
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true); 
+        }
     }
 }
