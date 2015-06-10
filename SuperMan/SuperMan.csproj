@@ -623,6 +623,7 @@
     <Content Include="Views\BusinessManager\_ClienterList.cshtml" />
     <Content Include="Views\BusinessManager\ClienterBatchBind.cshtml" />
     <Content Include="Views\MenuManager\_AccountManagerList.cshtml" />
+    <Content Include="Views\BusinessCommission\_BusinessCommissionList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

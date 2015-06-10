@@ -47,7 +47,7 @@ namespace Ets.Model.DomainModel.Bussiness
         /// <summary>
         /// 开始时间
         /// </summary>
-        public DateTime T1
+        public string T1
         {
             get;
             set;
@@ -55,7 +55,7 @@ namespace Ets.Model.DomainModel.Bussiness
         /// <summary>
         /// 结束时间
         /// </summary>
-        public DateTime T2
+        public string T2
         {
             get;
             set;

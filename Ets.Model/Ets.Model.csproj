@@ -123,6 +123,7 @@
     <Compile Include="DomainModel\Subsidy\GrabOrderModel.cs" />
     <Compile Include="ParameterModel\AliPay\NotifyModel.cs" />
     <Compile Include="ParameterModel\Bussiness\BCRelationGetByClienterIdPM.cs" />
+    <Compile Include="ParameterModel\Bussiness\BusinessCommissionSearchCriteria.cs" />
     <Compile Include="ParameterModel\Bussiness\BusinessRechargeModel.cs" />
     <Compile Include="ParameterModel\AliPay\PayModel.cs" />
     <Compile Include="ParameterModel\Area\ParaAreaNameInfo.cs" />

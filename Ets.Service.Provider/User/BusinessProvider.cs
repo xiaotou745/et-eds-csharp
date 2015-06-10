@@ -208,8 +208,10 @@ namespace Ets.Service.Provider.User
             strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.Amount));
             strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.OrderCount));
             strBuilder.AppendLine(string.Format("<td>{0}%</td>", paraModel.BusinessCommission));
-            strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.T1.ToShortDateString()));
-            strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.T2.ToShortDateString()));
+            strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.T1));
+            strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.T2));
+            //strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.T1.ToShortDateString()));
+            //strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.T2.ToShortDateString()));
             strBuilder.AppendLine(string.Format("<td>{0}</td></tr>", paraModel.TotalAmount));
             strBuilder.AppendLine("</table>");
             return strBuilder.ToString();
@@ -1221,6 +1223,16 @@ namespace Ets.Service.Provider.User
         public bool CheckHaveBind(ClienterBindOptionLogModel model)
         {
             return dao.CheckHaveBind(model);
+        }
+        /// <summary>
+        /// 查询商户结算列表（分页）
+        /// danny-20150609
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<BusinessCommissionModel> GetBusinessCommissionOfPaging(Ets.Model.ParameterModel.Bussiness.BusinessCommissionSearchCriteria criteria)
+        {
+            return dao.GetBusinessCommissionOfPaging<BusinessCommissionModel>(criteria);
         }
     }
 }

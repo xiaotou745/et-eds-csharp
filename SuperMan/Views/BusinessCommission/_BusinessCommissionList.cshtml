@@ -1,0 +1,57 @@
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Bussiness.BusinessCommissionModel>
+@using ETS.Util;
+<script src="~/Scripts/view/orderList.js"></script>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+    <thead>
+        <tr class="tdbg">
+            <th width="%5">序号</th>
+            <th>商户名称</th>
+            <th>商户电话</th>
+            <th>订单金额</th>
+            <th>订单数量</th>
+            <th>结算比例</th>
+            <th>开始时间</th>
+            <th>结束时间</th>
+            <th>结算金额</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var i = 0;
+            if (Model != null )
+            {
+                foreach (var item in Model.Records)
+                {
+                    i++;
+                    <tr id="@item.id">
+                        <td>@i</td>
+                        <td>@item.Name</td>
+                        <td>@item.PhoneNo</td>
+                        <td>@item.Amount</td>
+                        <td>@item.OrderCount</td>
+                        <td>@item.BusinessCommission</td>
+                        <td>@item.T1</td>
+                        <td>@item.T2</td>
+                        <td>@item.TotalAmount</td>
+                        <td>
+                            <a href="javascript:void(0)" onclick=" datadaochu(@item.id, '@item.Name' , '@item.Amount' , '@item.OrderCount' , '@item.BusinessCommission' , '@item.T1' , '@item.T2' , '@item.TotalAmount' ) ">导出</a>
+                        </td>
+                    </tr>
+                }
+            }
+        }
+    </tbody>
+</table>
+
+@{
+    if (Model != null)
+    {
+        ViewBag.ActionName = "PostBusinessCommissions";
+        @Html.Partial("~/views/shared/PagerControl.cshtml", Model)
+    }
+}
+
+
+
+
