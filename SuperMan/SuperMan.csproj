@@ -442,6 +442,7 @@
     <Content Include="Content\i\img-x.psd" />
     <Content Include="Content\i\sprite-icon.psd" />
     <Content Include="Nlog.config" />
+    <Content Include="Content\Template\BatchImport.xls" />
     <None Include="Properties\PublishProfiles\admin.edaisong.com.pubxml" />
     <None Include="Properties\PublishProfiles\chuan.admin.edaisong.com.pubxml" />
     <None Include="Properties\PublishProfiles\HDLWEB.pubxml" />
