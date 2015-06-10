@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Ets.Model.DomainModel.Order
 {
     /// <summary>
-    ///  骑士端获取任务列表（最新/最近）任务返回数据实体  add by caoheyang 20150519
+    ///  骑士端获取任务列表（最新/最近）任务返回数据实体  add by caoheyang 20150610    TODO 方案搁置
     /// </summary>
     public class GetJobCDMRedis
     {
