@@ -637,7 +637,7 @@ namespace SuperMan.Controllers
                                                     Remark = "添加绑定"
                                                 });
                     }
-                    else                   
+                    else if(model!=null && model.IsBind==0)                   
                     {                     
                         iBusinessProvider.ModifyClienterBind(new ClienterBindOptionLogModel 
                                             {
