@@ -94,22 +94,22 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         ResultModel<BusiOrderResultModel> Verification(BussinessOrderInfoPM model, out  order order)
         {
+            bool isOneKeyPubOrder = false; 
+            BussinessStatusModel buStatus = iBusinessProvider.GetUserStatus(model.userId);
+            if (buStatus != null && buStatus.OneKeyPubOrder == 1)
+                isOneKeyPubOrder = true;
+
             order = null;
             var version = model.Version;
             if (string.IsNullOrWhiteSpace(version)) //版本号 
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.NoVersion);
             }
-            if (string.IsNullOrEmpty(model.recevicePhone))//手机号
+            if (!isOneKeyPubOrder && string.IsNullOrEmpty(model.recevicePhone))//手机号
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneIsNULL);
-            }           
-            //Regex dReg = new Regex("^1\\d{10}$");
-            //if (!dReg.IsMatch(model.recevicePhone))//验证收货人手机号
-            //{
-            //    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneErr);
-            //}
-            if (string.IsNullOrEmpty(model.receviceAddress))
+            }
+            if (!isOneKeyPubOrder &&  string.IsNullOrEmpty(model.receviceAddress))
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.ReceviceAddressIsNULL);
             }     

@@ -88,6 +88,7 @@
 </table>
 
 <script type="text/javascript">
+    var OverallS;
     //导入
     $("#btnImport").on('click', function () {
 
@@ -105,12 +106,13 @@
                 if (json.IsSuccess != undefined && !json.IsSuccess) {
                     alert(json.Message);
                     return;
-                }
+                }          
+                OverallS = json;
                 $("#tbody").html("");
                 for (var i = 0; i < json.length; i++) {
                     var isBindText, isEnableText, clienterRemarksText;
                     if (json[i].IsBind)
-                        isBindText = " <input id='Checkbox1' type='checkbox' checked='checked' />"
+                    isBindText = " <input id='Checkbox1' name='"+i+"' type='checkbox' onchange='SetCheck(this)'   checked='checked' />"
                     else
                         isBindText = "";
                     if (json[i].IsEnable)
@@ -126,7 +128,8 @@
                         + "</td><td>" + isBindText
                         + "</td><td>" + isEnableText
                         + "</td><td>" + clienterRemarksText
-                        + "</td></tr>");
+                        + "</td></tr>");             
+
                 }
             },
             error: function (data, status, e)//服务器响应失败处理函数
@@ -136,12 +139,26 @@
 
         });
     })
+    function SetCheck(row)
+    {
+        if (row.checked)
+        {        
+            OverallS[row.name].IsBind = true;          
+        }
+        else
+        {    
+            OverallS[row.name].IsBind = false;           
+        }        
+          
+    }
     //保存绑定
     $("#btnSave").on('click', function () {
         var businessId = $('#businessId').val();
         var paramaters = {
-            "BusinessId": businessId
+            "BusinessId": businessId,
+            "OverallS": JSON.stringify(OverallS)
         };
+
 
         var url = "/BusinessManager/ClienterBatchSave";
         $.ajax({
