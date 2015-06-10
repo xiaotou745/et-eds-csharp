@@ -2405,7 +2405,7 @@ order by a.Id desc", model.TopNum,model.ClienterId, whereStr);
         }
 
         /// <summary>
-        /// 骑士端获取任务列表（最新/最近）任务   add by caoheyang 20150519
+        /// 骑士端获取任务列表最近任务   add by caoheyang 20150519
         /// </summary>
         /// <param name="model">订单查询实体</param>
         /// <returns></returns>
@@ -2526,7 +2526,7 @@ order by a.id desc
         }
 
         /// <summary>
-        /// 骑士端获取所有待抢单任务 add by caoheyang 20150610
+        /// 骑士端获取所有待抢单任务 add by caoheyang 20150610    TODO 方案搁置
         /// </summary>
         /// <param name="model">订单查询实体</param>
         /// <returns></returns>

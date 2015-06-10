@@ -660,11 +660,11 @@ namespace Ets.Service.Provider.User
             {
                 return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.InvalidUserId);
             }
-            if (busi.Status == ConstValues.BUSINESS_NOADDRESS)  //如果商户的状态 为未审核未添加地址，则修改商户状态为 未审核
-            {
-                business.Status = ConstValues.BUSINESS_NOAUDIT;
-            }
-
+            //if (busi.Status == ConstValues.BUSINESS_NOADDRESS)  //如果商户的状态 为未审核未添加地址，则修改商户状态为 未审核
+            //{
+            //    business.Status = ConstValues.BUSINESS_NOAUDIT;
+            //}
+            business.Status = Convert.ToByte(GetBussinessStatus.Auditing.GetHashCode());//审核中
             int upResult = dao.UpdateBusinessInfoB(business);
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, model.userId);
