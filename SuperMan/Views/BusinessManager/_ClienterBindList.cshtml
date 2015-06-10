@@ -35,11 +35,11 @@
                             {
                                 if (item.IsBind == 0)
                                 {
-                                    <a href="javascript:funModifyClienterBind(@item.BusinessId,@item.ClienterId,1)">绑定</a>
+                                    <a href="javascript:funModifyClienterBind(@item.BusinessId,@item.ClienterId,1,'是否绑定？')">绑定</a>
                                 }
                                 else
                                 {
-                                    <a href="javascript:funModifyClienterBind(@item.BusinessId,@item.ClienterId,0)">解除绑定</a>
+                                    <a href="javascript:funModifyClienterBind(@item.BusinessId,@item.ClienterId,0,'是否解除绑定？')">解除绑定</a>
                                 }
                             }
                             @if (SuperMan.App_Start.UserContext.Current.HasAuthority(52))
@@ -71,8 +71,8 @@
 
 <script type="text/javascript">
     ///修改骑士绑定
-    function funModifyClienterBind(businessId, clienterId, isBind) {
-        if (!window.confirm("是否修改绑定？")) {
+    function funModifyClienterBind(businessId, clienterId, isBind,msg) {
+        if (!window.confirm(msg)) {
             return;
         }
         var paramaters = { "businessId": businessId, "clienterId": clienterId, "isBind": isBind };

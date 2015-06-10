@@ -17,11 +17,11 @@
         <tr class="trclass">
             <td>商铺名称：@Model.Name</td>
             <td>商铺电话：@Model.PhoneNo</td>
-            <td>商铺地址：@Model.Address</td>
+            <td>商铺地址：@Model.City @Model.district @Model.Address</td>
             <td><input type="hidden" id="businessId" name="businessId" value="@Model.Id"/></td>
         </tr>
         <tr class="trclass">
-            <td>已绑定骑士：@Model.BindClienterQty</td>
+            <td>已绑定骑士：@Model.BindClienterQty 个</td>
             <td></td>
             <td></td>
             <td></td>
