@@ -83,12 +83,12 @@ namespace Ets.Model.Common
         /// <summary>
         /// 代送商家版
         /// </summary>
-        public const string MessageBusiness = "e代送商家版";
+        public const string MessageBusiness = "E代送商家版";
 
         /// <summary>
         /// 代送外送员版
         /// </summary>
-        public const string MessageClinenter = "e代送外送员版";
+        public const string MessageClinenter = "E代送外送员版";
 
         #endregion
 
