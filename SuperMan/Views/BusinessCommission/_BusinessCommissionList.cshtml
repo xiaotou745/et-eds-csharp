@@ -13,7 +13,6 @@
             <th>开始时间</th>
             <th>结束时间</th>
             <th>结算金额</th>
-            <th>操作</th>
         </tr>
     </thead>
     <tbody>
@@ -34,9 +33,6 @@
                         <td>@item.T1</td>
                         <td>@item.T2</td>
                         <td>@item.TotalAmount</td>
-                        <td>
-                            <a href="javascript:void(0)" onclick=" datadaochu(@item.id, '@item.Name' , '@item.Amount' , '@item.OrderCount' , '@item.BusinessCommission' , '@item.T1' , '@item.T2' , '@item.TotalAmount' ) ">导出</a>
-                        </td>
                     </tr>
                 }
             }
