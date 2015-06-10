@@ -30,16 +30,16 @@ namespace ETS.Util
             return SendEmailTo(body, emailAddress, "来自e代送项目预警:" + Environment.MachineName, copyto, false, null);
         }
 
-        public static bool SendEmailTo<ExportList>(string body, string emailAddress, string title, string copyto, bool isBodyHtml, string attachment, Dictionary<string, string> dicHead, IList<ExportList> exportList)
-        {
-            using (var ms = new MemoryStream())
-            {
-                //生成excel文件
-                ExcelHelper.ExportExcel(ms, exportList, dicHead);
-                return SendEmailTo(body, emailAddress, title, copyto, isBodyHtml, stream: ms, attachName: attachment);
-            }
+        //public static bool SendEmailTo<ExportList>(string body, string emailAddress, string title, string copyto, bool isBodyHtml, string attachment, Dictionary<string, string> dicHead, IList<ExportList> exportList)
+        //{
+        //    using (var ms = new MemoryStream())
+        //    {
+        //        //生成excel文件
+        //        ExcelHelper.ExportExcel(ms, exportList, dicHead);
+        //        return SendEmailTo(body, emailAddress, title, copyto, isBodyHtml, stream: ms, attachName: attachment);
+        //    }
 
-        }
+        //}
 
         /// <summary>
         ///     发送邮件<B>(Dictionary<string, string> dicHead, IList<B> b)
