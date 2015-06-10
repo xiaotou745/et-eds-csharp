@@ -1189,7 +1189,44 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public bool ModifyClienterBind(ClienterBindOptionLogModel model)
         {
-            return dao.ModifyClienterBind(model);
+            var reg = false;
+            using (var tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (dao.ModifyClienterBind(model))
+                {
+                    if (model.IsBind == 1)//绑定
+                    {
+                        if (dao.UpdateBusinessIsBind(model.BusinessId, 1))
+                        {
+                            if (dao.UpdateClienterIsBind(model.ClienterId, 1))
+                            {
+                                reg = true;
+                                tran.Complete();
+                            }
+                        }
+                    }
+                    else//解绑
+                    {
+                        if (dao.UpdateClienterIsBind(model.ClienterId, 0))
+                        {
+                            if (dao.GetBusinessBindClienterQty(model.BusinessId) == 0)
+                            {
+                                if (dao.UpdateBusinessIsBind(model.BusinessId, 0))
+                                {
+                                    reg = true;
+                                    tran.Complete();
+                                }
+                            }
+                            else
+                            {
+                                reg = true;
+                                tran.Complete();
+                            }
+                        }
+                    }
+                }
+            }
+            return reg;
         }
 
         /// <summary>
@@ -1211,7 +1248,23 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public bool AddClienterBind(ClienterBindOptionLogModel model)
         {
-            return dao.AddClienterBind(model);
+            var reg = false;
+            using (var tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (dao.AddClienterBind(model))
+                {
+                    if (dao.UpdateBusinessIsBind(model.BusinessId, 1))
+                    {
+                        if (dao.UpdateClienterIsBind(model.ClienterId, 1))
+                        {
+                            reg = true;
+                            tran.Complete();
+                        }
+                    }
+
+                }
+            }
+            return reg;
         }
 
         /// <summary>

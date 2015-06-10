@@ -1955,7 +1955,7 @@ VALUES
                 string sql = "SELECT COUNT(1) FROM BusinessClienterRelation bcr WITH(NOLOCK) WHERE bcr.IsBind = 1 AND bcr.IsEnable=1 AND BusinessId=@BusinessId;";
                 var parm = DbHelper.CreateDbParameters();
                 parm.AddWithValue("@BusinessId",businessId);
-                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm));
+                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm));
             }
             catch (Exception ex)
             {
@@ -2076,7 +2076,36 @@ VALUES
             parm.AddWithValue("@ClienterId", model.ClienterId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
-
+        /// <summary>
+        /// 修改商户绑定骑士标志
+        /// danny-20150610
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <param name="isBind"></param>
+        /// <returns></returns>
+        public bool UpdateBusinessIsBind(int businessId, int isBind)
+        {
+            string updateSql = @"update business set IsBind = @IsBind where Id = @BusinessId;";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@BusinessId", businessId);
+            parm.AddWithValue("@IsBind", isBind);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, parm)>0;
+        }
+        /// <summary>
+        /// 修改骑士绑定标志
+        /// danny-20150610
+        /// </summary>
+        /// <param name="clienterId"></param>
+        /// <param name="isBind"></param>
+        /// <returns></returns>
+        public bool UpdateClienterIsBind(int clienterId, int isBind)
+        {
+            string updateSql = @"update clienter set IsBind = @IsBind where Id = @ClienterId;";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@ClienterId", clienterId);
+            parm.AddWithValue("@IsBind", isBind);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, parm) > 0;
+        }
         /// <summary>
         /// 验证是否有绑定关系
         /// danny-20150609
