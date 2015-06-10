@@ -17,9 +17,5 @@ namespace Ets.Model.ParameterModel.Clienter
         ///目标工作状态
         /// </summary>
         public int? WorkStatus { get; set; }
-        /// <summary>
-        /// 订单状态    
-        /// </summary>
-        public int? OrderStatus { get; set; }
     }
 }

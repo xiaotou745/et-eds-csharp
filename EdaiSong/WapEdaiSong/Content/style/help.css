@@ -44,14 +44,14 @@
 .duty_list{
 	margin-top: 10px;
 }
-.duty_list ul li{
+.duty_list a{
 	border-top:1px solid #ccc; 
 	border-bottom:1px solid #ccc;
 	background: #fff;
 	padding: 10px 15px;
 	margin-bottom: 10px;
 }
-.duty_list ul li span{
+.duty_list a span{
 	background: url(../img/ex_jt.png) no-repeat right;
 	display: block;
 }
