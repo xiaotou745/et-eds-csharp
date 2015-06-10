@@ -8,6 +8,7 @@ using ETS.Transaction.Common;
 using ETS.Util;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -46,6 +47,12 @@ namespace Ets.Dao.User
              * */
             #endregion
 
+        }
+
+        public DataTable GetAll()
+        {
+            string sql = "SELECT Id,OrderNo,PickUpAddress FROM dbo.[order] o(nolock) where Status=0";
+            return DbHelper.ExecuteDataTable(SuperMan_Read, sql);
         }
     }
 }

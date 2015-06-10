@@ -1145,7 +1145,8 @@ select SCOPE_IDENTITY() as id;
                                     Province = @Province ,
                                     CityId = @CityId ,
                                     CityCode = @CityCode ,
-                                    City = @City
+                                    City = @City,
+                                    OneKeyPubOrder=@OneKeyPubOrder
                                     {0}{1}
                             OUTPUT  Inserted.[Status]
                             WHERE   Id = @busiID", sqlCheckPicUrl, sqlBusinessLicensePic);
@@ -1169,6 +1170,7 @@ select SCOPE_IDENTITY() as id;
             parm.AddWithValue("@CityCode", business.CityCode);
             parm.AddWithValue("@City", business.City);
             parm.AddWithValue("@busiID", business.Id);
+            parm.Add("@OneKeyPubOrder",DbType.Int32,4).Value=business.OneKeyPubOrder;
             try
             {
                 object executeScalar = DbHelper.ExecuteScalar(SuperMan_Write, upSql, parm);
