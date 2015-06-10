@@ -618,7 +618,7 @@ namespace SuperMan.Controllers
 
             for (int i = 0; i < list.Count; i++)
             {
-                if (list[i].IsBind)//成功
+                if (list[i].IsBind)//前台选中绑定记录
                 {
                     string phone = list[i].ClienterPhoneNo;
                     string name = list[i].ClienterName;
@@ -629,7 +629,7 @@ namespace SuperMan.Controllers
                                                         BusinessId = Convert.ToInt32(businessId),
                                                         ClienterId = clienterId
                                                     });
-                    if (model == null)
+                    if (model == null)//插入
                     {                               
 
                         iBusinessProvider.AddClienterBind(new ClienterBindOptionLogModel { 
@@ -640,7 +640,7 @@ namespace SuperMan.Controllers
                                                     Remark = "添加绑定"
                                                 });
                     }
-                    else if(model!=null && model.IsBind==0)                   
+                    else if(model!=null && model.IsBind==0)//更新                   
                     {                     
                         iBusinessProvider.ModifyClienterBind(new ClienterBindOptionLogModel 
                                             {
@@ -648,7 +648,8 @@ namespace SuperMan.Controllers
                                                 ClienterId = clienterId,
                                                 OptId = UserContext.Current.Id,
                                                 OptName = UserContext.Current.Name,
-                                                Remark = "修改绑定"
+                                                Remark = "修改绑定",
+                                                IsBind=1
                                             });                
                     }
                 }             
