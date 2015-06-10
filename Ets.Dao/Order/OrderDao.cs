@@ -2190,7 +2190,7 @@ select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneN
     o.CommissionFixValue,o.BusinessGroupId,o.TimeSpan,o.Invoice,
     isnull(o.DistribSubsidy,0)*isnull(o.OrderCount,0) as TotalDistribSubsidy,(o.Amount+isnull(o.DistribSubsidy,0)*isnull(o.OrderCount,0)) as TotalAmount,
     o.MealsSettleMode,
-    b.[City] BusinessCity,b.Name BusinessName,b.PhoneNo BusinessPhone ,b.PhoneNo2 BusinessPhone2,b.Address BusinessAddress ,b.GroupId, 
+    b.[City] BusinessCity,b.Name BusinessName,b.PhoneNo BusinessPhone ,b.PhoneNo2 BusinessPhone2,b.Address BusinessAddress ,b.GroupId, b.Landline,
     b.Longitude, b.Latitude,REPLACE(b.City,'市','') AS pickUpCity,
     oo.NeedUploadCount,oo.HadUploadCount,oo.GrabTime,
     c.TrueName ClienterName,c.PhoneNo ClienterPhoneNo,

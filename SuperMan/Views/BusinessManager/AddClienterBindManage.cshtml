@@ -18,6 +18,20 @@
             <td></td>
         </tr>
     </table>
+    <div class="SearchMd">
+        <table border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td>
+                    <input type="button" value="手动绑定" class="searchBtn" id="btnBindClienter" onclick="addClienterBind();" />
+                </td>
+                <td>&nbsp;</td>
+                <td>
+                    <input type="button" value="批量绑定" class="searchBtn" id="btnBindClienter" onclick="addClienterBatchBind();" />
+                </td>
+            </tr>
+        </table>
+    </div>
+
     @using (Ajax.BeginForm("GetClienterList", new RouteValueDictionary { { "pageindex", "" } },
     new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
     new RouteValueDictionary { { "id", "searchForm" } }))
@@ -51,6 +65,15 @@
         }
         $("#searchForm").submit();
     });
+    function addClienterBind() {
+        var businessId = $('#businessId').val();
+        window.location.href = "/BusinessManager/AddClienterBindManage?businessId=" + businessId;
+    }
+    //添加骑士绑定
+    function addClienterBatchBind() {
+        var businessId = $('#businessId').val();
+        window.location.href = "/BusinessManager/ClienterBatchBind?businessId=" + businessId;
+    }
 </script>
 <script src="~/Scripts/mvcpager.js"></script>
 

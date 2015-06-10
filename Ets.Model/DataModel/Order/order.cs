@@ -61,6 +61,11 @@ namespace Ets.Model.DataModel.Order
         public string BusinessPhone2 { get; set; }
 
         /// <summary>
+        /// 固定电话
+        /// </summary>
+        public string Landline { get; set; }        
+
+        /// <summary>
         /// 发货人地址
         /// </summary>
         public string BusinessAddress { get; set; }     

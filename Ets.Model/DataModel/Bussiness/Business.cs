@@ -150,6 +150,11 @@ namespace Ets.Model.DataModel.Bussiness
         /// 是否绑定了骑士（0：否 1：是）
         /// </summary>
         public int IsBind { get; set; }
+        /// <summary>
+        /// 是否一键发单（0：否 1：是）
+        /// </summary>
+        public int OneKeyPubOrder { get; set; }
+        
         
     }
 

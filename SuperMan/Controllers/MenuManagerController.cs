@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Ets.Model.ParameterModel.Authority;
+using Ets.Model.ParameterModel.Clienter;
 using SuperMan.App_Start;
 
 namespace SuperMan.Controllers
@@ -177,18 +179,45 @@ namespace SuperMan.Controllers
 
         #region 个人账户操作
         
+        ///// <summary>
+        ///// 返回账号视图
+        ///// </summary>
+        ///// <returns></returns>
+        //public ActionResult AccountManager()
+        //{
+        //    var list = _iAuhority.GetListAccount();
+        //    ViewBag.AllMenu = _iAuhority.GetAllMenuList();
+        //    return View(list);
+        //}
+
         /// <summary>
-        /// 返回账号视图
+        /// 首次加载用户列表（分页）
+        /// danny-20150609
         /// </summary>
         /// <returns></returns>
-        public ActionResult AccountManager()
+        public ActionResult AccountManager(AuthoritySearchCriteria criteria)
         {
-            var list = _iAuhority.GetListAccount();
+            var list = _iAuhority.GetAccountListOfPaging(criteria);
             ViewBag.AllMenu = _iAuhority.GetAllMenuList();
             return View(list);
         }
 
 
+        /// <summary>
+        /// 查询用户列表（分页）
+        /// danny-20150609
+        /// </summary>
+        /// <param name="pageindex"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult PostAccountManager(int pageindex = 1)
+        {
+            var criteria = new AuthoritySearchCriteria();
+            TryUpdateModel(criteria);
+            var list = _iAuhority.GetAccountListOfPaging(criteria);
+            ViewBag.AllMenu = _iAuhority.GetAllMenuList();
+            return PartialView("_AccountManagerList", list);
+        }
         /// <summary>
         /// 返回账户权限菜单
         /// </summary>
