@@ -78,6 +78,10 @@ namespace Ets.Model.DomainModel.Order
         /// 发布电话2
         /// </summary>
         public string businessPhone2 { get; set; }
+        /// <summary>
+        /// 固定电话
+        /// </summary>
+        public string Landline { get; set; }
 
         /// <summary>
         /// 发货人地址
@@ -213,7 +217,16 @@ namespace Ets.Model.DomainModel.Order
         /// <summary>
         /// 骑士Id
         /// </summary>
-        public int ClienterId { get; set; }        
+        public int ClienterId { get; set; }
+
+        /// <summary>
+        /// 经度
+        /// </summary>
+        public double? Longitude { get; set; }
+        /// <summary>
+        ///  纬度
+        /// </summary>
+        public double? Latitude { get; set; }
     }
 
     public class OrderChildInfo

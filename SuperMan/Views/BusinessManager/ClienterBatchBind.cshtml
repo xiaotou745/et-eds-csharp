@@ -82,10 +82,10 @@
 </table>
 
 <script type="text/javascript">
-    //商户充值
+    //导入
     $("#btnImport").on('click', function () {
 
-        var BusinessId = $('#businessId').val();
+        var BusinessId = $('#businessId').val();        
         var url = "/BusinessManager/ClienterImport?BusinessId=" + BusinessId;
         $.ajaxFileUpload({
             type: 'POST',
@@ -94,7 +94,7 @@
             url: url,
             data: "", //此参数非常严谨，写错一个引号都不行
             success: function (data, status)  //服务器成功响应处理函数
-            {
+            {               
                 var json = eval("(" + data.body.innerText + ")");
                 if (json.IsSuccess != undefined && !json.IsSuccess) {
                     alert(json.Message);
@@ -130,7 +130,7 @@
 
         });
     })
-    //商户充值
+    //保存绑定
     $("#btnSave").on('click', function () {
         var businessId = $('#businessId').val();
         var paramaters = {
