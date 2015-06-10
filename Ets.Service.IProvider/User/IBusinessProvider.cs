@@ -347,6 +347,15 @@ namespace Ets.Service.IProvider.User
         /// <param name="model"></param>
         /// <returns></returns>
         bool CheckHaveBind(ClienterBindOptionLogModel model);
+
+        /// <summary>
+        /// 查询商户结算列表（分页）
+        /// danny-20150609
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        PageInfo<BusinessCommissionModel> GetBusinessCommissionOfPaging(
+            Ets.Model.ParameterModel.Bussiness.BusinessCommissionSearchCriteria criteria);
     }
 }
 

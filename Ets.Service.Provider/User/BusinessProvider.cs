@@ -208,8 +208,10 @@ namespace Ets.Service.Provider.User
             strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.Amount));
             strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.OrderCount));
             strBuilder.AppendLine(string.Format("<td>{0}%</td>", paraModel.BusinessCommission));
-            strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.T1.ToShortDateString()));
-            strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.T2.ToShortDateString()));
+            strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.T1));
+            strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.T2));
+            //strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.T1.ToShortDateString()));
+            //strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.T2.ToShortDateString()));
             strBuilder.AppendLine(string.Format("<td>{0}</td></tr>", paraModel.TotalAmount));
             strBuilder.AppendLine("</table>");
             return strBuilder.ToString();
@@ -660,11 +662,11 @@ namespace Ets.Service.Provider.User
             {
                 return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.InvalidUserId);
             }
-            if (busi.Status == ConstValues.BUSINESS_NOADDRESS)  //如果商户的状态 为未审核未添加地址，则修改商户状态为 未审核
-            {
-                business.Status = ConstValues.BUSINESS_NOAUDIT;
-            }
-
+            //if (busi.Status == ConstValues.BUSINESS_NOADDRESS)  //如果商户的状态 为未审核未添加地址，则修改商户状态为 未审核
+            //{
+            //    business.Status = ConstValues.BUSINESS_NOAUDIT;
+            //}
+            business.Status = Convert.ToByte(GetBussinessStatus.Auditing.GetHashCode());//审核中
             int upResult = dao.UpdateBusinessInfoB(business);
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, model.userId);
@@ -1221,6 +1223,16 @@ namespace Ets.Service.Provider.User
         public bool CheckHaveBind(ClienterBindOptionLogModel model)
         {
             return dao.CheckHaveBind(model);
+        }
+        /// <summary>
+        /// 查询商户结算列表（分页）
+        /// danny-20150609
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<BusinessCommissionModel> GetBusinessCommissionOfPaging(Ets.Model.ParameterModel.Bussiness.BusinessCommissionSearchCriteria criteria)
+        {
+            return dao.GetBusinessCommissionOfPaging<BusinessCommissionModel>(criteria);
         }
     }
 }
