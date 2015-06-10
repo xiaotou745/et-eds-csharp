@@ -1,0 +1,33 @@
+﻿  /*菜单模块 */
+    .tab {
+        border-bottom: 1px solid #ccc; /* 菜单模块的底部边框，也就是内容模块的上边框 */
+        list-style: none;
+        padding: 4px 5px 3px 5px;
+    }
+
+        .tab li {
+            display: inline; /* 【重点】让li横向排列。*/
+            font-size: 14px;
+        }
+
+            .tab li a {
+                padding: 3px 4px; /* 因为没有固定高度，所以用填充来调整显示效果。 */
+                border: 1px solid #ccc; /* 菜单项的边框 */
+                color: #888;
+                border-bottom: none; /* 底部无边框 */
+                text-decoration: none;
+                background: #f7f7f7;
+            }
+                /*鼠标经过时的样式 */
+                .tab li a:hover {
+                    background: #fff;
+                }
+            /*选中时的样式 */
+            .tab li.no a {
+                background: #fff;
+                border-bottom: none; /*  隐藏菜单项的底部边框 */
+                position: relative; /* 【重点】菜单项里面的连接使用了相对定位 */
+                top: 1px; /* 【重点】相对于外层顶部为1像素，正好是底部边框的像素。所以就遮住了ul的底部边框 */
+                color: #000000;
+                font-weight: bold;
+            }

@@ -90,11 +90,11 @@ where  BusinessId=@BusinessId  and ClienterId=@ClienterId";
         /// <returns></returns>
         public BusinessClienterRelation GetDetails(BusinessClienterRelationPM businessClienterRelation)
         {
-            BusinessClienterRelation model = new BusinessClienterRelation();
+            BusinessClienterRelation model=null ;
             
             string querySql = @" 
 select Id,BusinessId,ClienterId,IsEnable,CreateBy,CreateTime,UpdateBy,UpdateTime,IsBind
- FROM   dbo.[business] (nolock ) 
+ FROM   dbo.[BusinessClienterRelation] (nolock ) 
  WHERE  BusinessId=@BusinessId  and ClienterId=@ClienterId";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -102,7 +102,7 @@ select Id,BusinessId,ClienterId,IsEnable,CreateBy,CreateTime,UpdateBy,UpdateTime
             dbParameters.AddWithValue("ClienterId", businessClienterRelation.ClienterId);
 
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querySql, dbParameters));
-            if (DataTableHelper.CheckDt(dt))
+            if (DataTableHelper.CheckDt(dt) && dt.Rows.Count>0)
             {
                 model = MapRows<BusinessClienterRelation>(dt)[0];
             }

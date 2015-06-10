@@ -31,8 +31,8 @@ using NPOI.XSSF.UserModel;
 using NPOI.HSSF.UserModel;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.IProvider.Clienter;
-using  Ets.Service.IProvider.Bussiness;
-using  Ets.Service.Provider.Bussiness;
+using Ets.Service.IProvider.Bussiness;
+using Ets.Service.Provider.Bussiness;
 namespace SuperMan.Controllers
 {
     [WebHandleError]
@@ -46,7 +46,7 @@ namespace SuperMan.Controllers
         readonly IAreaProvider iAreaProvider = new AreaProvider();
         readonly IBusinessFinanceProvider iBusinessFinanceProvider = new BusinessFinanceProvider();
         readonly IBusinessClienterRelationProvider iBusinessClienterRelationProvider = new BusinessClienterRelationProvider();
-        
+
         readonly Ets.Service.IProvider.Distribution.IDistributionProvider iDistributionProvider = new DistributionProvider();
         // GET: BusinessManager
         [HttpGet]
@@ -145,9 +145,9 @@ namespace SuperMan.Controllers
                 UserType = 1, //被操作人类型
                 Remark = string.Format(string.Format("将商户id为{0}的商户外送费设置为{1},结算比例设置为{2}", id, waisongfei, commission))
             };
-            BusListResultModel busListResultModel = new BusListResultModel() 
+            BusListResultModel busListResultModel = new BusListResultModel()
             {
-                Id=id,
+                Id = id,
                 BusinessCommission = commission,
                 DistribSubsidy = waisongfei,
                 CommissionType = commissionType,
@@ -166,10 +166,10 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult AddBusiness(AddBusinessModel model)
         {
-            TryUpdateModel(model);  
+            TryUpdateModel(model);
 
             var result = iBusinessProvider.AddBusiness(model);
-            if (result.Status==0)
+            if (result.Status == 0)
             {
                 return Json(new ResultModel(true, "成功!"), JsonRequestBehavior.DenyGet);
             }
@@ -187,14 +187,14 @@ namespace SuperMan.Controllers
         /// <param name="oldBusGroupId">之前的集团Id</param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult ModifyBusiness(int id, string businessName,string businessPhone,int businessSourceId, int groupId,int oldBusiSourceId, int oldBusGroupId,int mealsSettleMode)
+        public JsonResult ModifyBusiness(int id, string businessName, string businessPhone, int businessSourceId, int groupId, int oldBusiSourceId, int oldBusGroupId, int mealsSettleMode)
         {
             IBusinessProvider iBus = new BusinessProvider();
             //操作日志
             OrderOptionModel model = new OrderOptionModel()
             {
                 OptUserId = UserContext.Current.Id,
-                OptUserName = UserContext.Current.Name, 
+                OptUserName = UserContext.Current.Name,
             };
             //商户操作实体
             Business businessModel = new Business()
@@ -281,7 +281,7 @@ namespace SuperMan.Controllers
             var dtBusinessBalanceRecord = iBusinessFinanceProvider.GetBusinessBalanceRecordListForExport(criteria);
             if (dtBusinessBalanceRecord != null && dtBusinessBalanceRecord.Count > 0)
             {
-                
+
                 string filname = "商户提款流水记录{0}.xls";
                 if (!string.IsNullOrWhiteSpace(criteria.OperateTimeStart))
                 {
@@ -309,7 +309,7 @@ namespace SuperMan.Controllers
         {
             model.OptName = UserContext.Current.Name;
             var reg = iBusinessFinanceProvider.BusinessRecharge(model);
-            return Json(new ResultModel(reg, reg?"充值成功！":"充值失败！"), JsonRequestBehavior.DenyGet);
+            return Json(new ResultModel(reg, reg ? "充值成功！" : "充值失败！"), JsonRequestBehavior.DenyGet);
         }
         /// <summary>
         /// 查询商户综合信息
@@ -408,7 +408,7 @@ namespace SuperMan.Controllers
                 iBusinessProvider.GetBusinessBindClienterQty(ParseHelper.ToInt(businessId));
             var criteria = new BusinessSearchCriteria()
             {
-               BusinessId =ParseHelper.ToInt(businessId) 
+                BusinessId = ParseHelper.ToInt(businessId)
             };
             ViewBag.businessClienterRelationList = iBusinessProvider.GetBusinessClienterRelationList(criteria);
             return View(businessDetailModel);
@@ -502,107 +502,15 @@ namespace SuperMan.Controllers
             var reg = iBusinessProvider.AddClienterBind(model);
             return Json(new Ets.Model.Common.ResultModel(reg, reg ? "添加绑定成功！" : "添加绑定失败！"), JsonRequestBehavior.DenyGet);
         }
-  
+
         public ActionResult ClienterBatchBind(string businessId)
         {
-            var businessDetailModel = iBusinessProvider.GetBusinessDetailById(businessId);
-            //ViewBag.clienterList = null;
-            //return View(businessDetailModel);          
+            var businessDetailModel = iBusinessProvider.GetBusinessDetailById(businessId);               
             return View(businessDetailModel);
-
-
-            //#region 
-            //List<BusinessBindClienterDM> list = new List<BusinessBindClienterDM>();            
-            //Stream fs=null;
-            //IWorkbook wk=null;
-            //try
-            //{
-            //    if (Request.Files["file"] != null && Request.Files["file"].FileName != "")
-            //    {
-            //        HttpPostedFileBase file = Request.Files["file"];
-            //        fs = file.InputStream;
-            //        wk = new XSSFWorkbook(fs);
-            //        ISheet st = wk.GetSheetAt(0);
-            //        int rowCount = st.LastRowNum;
-            //        if (rowCount > 50)
-            //        {
-            //            rowCount = 50;
-            //            return Json(new Ets.Model.Common.ResultModel(false, "每次最多导入50行数据"), JsonRequestBehavior.DenyGet);
-            //        }
-
-            //        for (int i = 1; i <= rowCount; i++)
-            //        {
-            //            string name = "", phone = "";
-            //            if (st.GetRow(i) != null && st.GetRow(i).GetCell(0) != null)//用户名
-            //                name = st.GetRow(i).GetCell(0).ToString();
-            //            if (st.GetRow(i) != null && st.GetRow(i).GetCell(1) != null)//手机号
-            //                phone = st.GetRow(i).GetCell(1).ToString();
-            //            BusinessBindClienterDM model = new BusinessBindClienterDM();
-            //            model.RowCount = i;
-            //            model.ClienterName = name;
-            //            model.ClienterPhoneNo = phone;
-
-            //            if (string.IsNullOrEmpty(phone))//手机号为空
-            //            {
-            //                model.ClienterRemarks = "骑士手机错误";
-            //                model.IsBind = false;
-            //                model.IsEnable = false;
-            //                list.Add(model);
-            //                continue;
-            //            }
-
-            //            Regex dReg = new Regex("^1\\d{10}$");
-            //            if (!dReg.IsMatch(phone))//验证收货人手机号
-            //            {
-            //                model.ClienterRemarks = "骑士手机错误";
-            //                model.IsBind = false;
-            //                model.IsEnable = false;
-            //                list.Add(model);
-            //                continue;
-            //            }
-
-            //            string trueName = iClienterProvider.GetName(phone);
-            //            if (string.IsNullOrEmpty(trueName))
-            //            {
-            //                model.ClienterRemarks = "骑士手机不存在";
-            //                model.IsBind = false;
-            //                model.IsEnable = false;
-            //                list.Add(model);
-            //                continue;
-            //            }
-
-            //            if (name != trueName)
-            //            {
-            //                model.ClienterRemarks = "骑士名称错误";
-            //                model.IsBind = false;
-            //                model.IsEnable = false;
-            //                list.Add(model);
-            //                continue;
-            //            }
-
-            //            model.ClienterRemarks = "";
-            //            model.IsBind = true;
-            //            model.IsEnable = true;
-            //            list.Add(model);
-            //        }
-
-            //        var redis = new ETS.NoSql.RedisCache.RedisCache();
-            //        //string businessId = Request.Form["busId"].ToString();
-            //        redis.Set(string.Format(ETS.Const.RedissCacheKey.BusinessClienter, businessId), list, DateTime.Now.AddHours(1));
-            //    }
-            //}
-            //catch (Exception ex)
-            //{         
-            //    fs.Close();
-            //}
-
-            //#endregion
-
-        
         }
 
-         [HttpPost]
-        public ActionResult ClienterImport()
+        [HttpPost]
+        public JsonResult ClienterImport()
         {
             string businessId = Request.Params["BusinessId"].ToString();
 
@@ -620,8 +528,8 @@ namespace SuperMan.Controllers
                     int rowCount = st.LastRowNum;
                     if (rowCount > 50)
                     {
-                        rowCount = 50;
-                        return Json(new Ets.Model.Common.ResultModel(false, "每次最多导入50行数据"), JsonRequestBehavior.DenyGet);
+                        rowCount = 50;                        
+                        return Json(new Ets.Model.Common.ResultModel(false, "每次最多导入50行数据！", JsonRequestBehavior.DenyGet));
                     }
 
                     for (int i = 1; i <= rowCount; i++)
@@ -688,12 +596,8 @@ namespace SuperMan.Controllers
             {
                 fs.Close();
             }
-
-            ViewBag.ClienterList = list;
-            //return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.DenyGet);
-            //return View(businessDetailModel);
-            var businessDetailModel = iBusinessProvider.GetBusinessDetailById(businessId);
-            return PartialView("ClienterBatchBind",businessDetailModel);
+    
+            return Json(list);
             
         }
 
@@ -704,10 +608,9 @@ namespace SuperMan.Controllers
         [HttpPost]
         public ActionResult ClienterBatchSave()
         {
-            var redis = new ETS.NoSql.RedisCache.RedisCache();
-            string businessId = "246";
-            List<BusinessBindClienterDM> list = redis.Get<List<BusinessBindClienterDM>>(string.Format(ETS.Const.RedissCacheKey.BusinessClienter, businessId));  
-            //List<BusinessBindClienterDM> list=redis.Get<List<BusinessBindClienterDM>>("piliang");
+            var redis = new ETS.NoSql.RedisCache.RedisCache();            
+            string businessId = Request.Params["BusinessId"].ToString();
+            List<BusinessBindClienterDM> list = redis.Get<List<BusinessBindClienterDM>>(string.Format(ETS.Const.RedissCacheKey.BusinessClienter, businessId));            
 
             List<BusinessBindClienterDM> listSurplus = new List<BusinessBindClienterDM>();
             for (int i = 0; i < list.Count; i++)
@@ -716,45 +619,40 @@ namespace SuperMan.Controllers
                 {
                     string phone = list[i].ClienterPhoneNo;
                     string name = list[i].ClienterName;
-                    int clienterId =  iClienterProvider.GetId(phone,name);
+                    int clienterId = iClienterProvider.GetId(phone, name);
 
-                    BusinessClienterRelation model=iBusinessClienterRelationProvider.GetDetails(new BusinessClienterRelationPM
+                    BusinessClienterRelation model = iBusinessClienterRelationProvider.GetDetails(new BusinessClienterRelationPM
                                                     {
                                                         BusinessId = Convert.ToInt32(businessId),
                                                         ClienterId = clienterId
                                                     });
                     if (model == null)
-                    {
-                        iBusinessClienterRelationProvider.Create(new BusinessClienterRelation
-                                                        {
-                                                            BusinessId = Convert.ToInt32(businessId),
-                                                            ClienterId = clienterId,
-                                                            CreateBy = "系统",
-                                                            UpdateBy = "系统"
-                                                        });
+                    {                               
+
+                        iBusinessProvider.AddClienterBind(new ClienterBindOptionLogModel { 
+                                                    BusinessId=Convert.ToInt32(businessId),
+                                                    ClienterId=clienterId,
+                                                    OptId = UserContext.Current.Id,
+                                                    OptName = UserContext.Current.Name,
+                                                    Remark = "添加绑定"
+                                                });
                     }
-
-                    if (model != null && model.IsEnable == 0)//
-                    {
-                        iBusinessClienterRelationProvider.Modify(new BusinessClienterRelationPM
-                        {
-                            BusinessId = Convert.ToInt32(businessId),
-                            ClienterId = clienterId,                            
-                            UpdateBy = "系统"
-                        });
-                    }                    
-                }
-                else
-                {
-                    listSurplus.Add(list[i]);
-                }              
+                    else                   
+                    {                     
+                        iBusinessProvider.ModifyClienterBind(new ClienterBindOptionLogModel 
+                                            {
+                                                BusinessId = Convert.ToInt32(businessId),
+                                                ClienterId = clienterId,
+                                                OptId = UserContext.Current.Id,
+                                                OptName = UserContext.Current.Name,
+                                                Remark = "修改绑定"
+                                            });                
+                    }
+                }             
             }
-
-            redis.Set(string.Format(ETS.Const.RedissCacheKey.BusinessClienter, businessId), listSurplus, DateTime.Now.AddHours(1));  
-
-            return Json(new Ets.Model.Common.ResultModel(true, "保存成功"), JsonRequestBehavior.DenyGet);    
-   
+          
+            return Json(new Ets.Model.Common.ResultModel(true, "保存成功！", JsonRequestBehavior.DenyGet));           
         }
-        
+
     }
 }

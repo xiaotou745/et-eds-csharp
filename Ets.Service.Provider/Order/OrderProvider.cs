@@ -1521,6 +1521,7 @@ namespace Ets.Service.Provider.Order
             orderDM.PickUpAddress = order.PickUpAddress;
             orderDM.businessPhone = order.BusinessPhone;
             orderDM.businessPhone2 = order.BusinessPhone2;
+            orderDM.Landline= order.Landline;
             orderDM.BusinessAddress = order.BusinessAddress;
             orderDM.ReceviceName = order.ReceviceName;
             orderDM.receviceCity = order.ReceviceCity;
@@ -1544,6 +1545,8 @@ namespace Ets.Service.Provider.Order
             orderDM.businessId = ParseHelper.ToInt(order.businessId, 0);
             orderDM.TotalAmount = order.TotalAmount;
             orderDM.MealsSettleMode = order.MealsSettleMode;
+            orderDM.Longitude = order.Longitude;
+            orderDM.Latitude = order.Latitude;
             orderDM.ClienterId = ParseHelper.ToInt(order.clienterId);
 
             #region 是否允许修改小票

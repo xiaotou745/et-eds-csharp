@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperMan", "SuperMan\SuperMan.csproj", "{FC62F0EE-873C-437E-B845-78F9ABC16145}"
 EndProject
@@ -53,6 +53,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{EA5FEC85-0946-4672-A37B-5ABCFE6C4AFF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ets.Provider.Tests", "Ets.Provider.Tests\Ets.Provider.Tests.csproj", "{990E16D5-7356-4EAC-9059-D5A676296AA5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ETS.Library", "ETS.Library\ETS.Library.csproj", "{799CD8B8-A1BD-4FA7-8BEF-8D8BFCF2ABD6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -124,6 +126,10 @@ Global
 		{990E16D5-7356-4EAC-9059-D5A676296AA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{990E16D5-7356-4EAC-9059-D5A676296AA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{990E16D5-7356-4EAC-9059-D5A676296AA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{799CD8B8-A1BD-4FA7-8BEF-8D8BFCF2ABD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{799CD8B8-A1BD-4FA7-8BEF-8D8BFCF2ABD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{799CD8B8-A1BD-4FA7-8BEF-8D8BFCF2ABD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{799CD8B8-A1BD-4FA7-8BEF-8D8BFCF2ABD6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -138,5 +144,6 @@ Global
 		{10A4B401-7F8F-490E-8221-E88050D0ABC6} = {F1A5BBA2-CC9A-4C6B-A8CB-735BDD084D87}
 		{8D1025F8-CB54-4D46-94BF-E876F67F50DE} = {F1A5BBA2-CC9A-4C6B-A8CB-735BDD084D87}
 		{990E16D5-7356-4EAC-9059-D5A676296AA5} = {EA5FEC85-0946-4672-A37B-5ABCFE6C4AFF}
+		{799CD8B8-A1BD-4FA7-8BEF-8D8BFCF2ABD6} = {EE99F08B-9284-4D4B-A832-AA91D252A46B}
 	EndGlobalSection
 EndGlobal

@@ -2190,7 +2190,7 @@ select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneN
     o.CommissionFixValue,o.BusinessGroupId,o.TimeSpan,o.Invoice,
     isnull(o.DistribSubsidy,0)*isnull(o.OrderCount,0) as TotalDistribSubsidy,(o.Amount+isnull(o.DistribSubsidy,0)*isnull(o.OrderCount,0)) as TotalAmount,
     o.MealsSettleMode,
-    b.[City] BusinessCity,b.Name BusinessName,b.PhoneNo BusinessPhone ,b.PhoneNo2 BusinessPhone2,b.Address BusinessAddress ,b.GroupId, 
+    b.[City] BusinessCity,b.Name BusinessName,b.PhoneNo BusinessPhone ,b.PhoneNo2 BusinessPhone2,b.Address BusinessAddress ,b.GroupId, b.Landline,
     b.Longitude, b.Latitude,REPLACE(b.City,'市','') AS pickUpCity,
     oo.NeedUploadCount,oo.HadUploadCount,oo.GrabTime,
     c.TrueName ClienterName,c.PhoneNo ClienterPhoneNo,
@@ -2405,7 +2405,7 @@ order by a.Id desc", model.TopNum,model.ClienterId, whereStr);
         }
 
         /// <summary>
-        /// 骑士端获取任务列表（最新/最近）任务   add by caoheyang 20150519
+        /// 骑士端获取任务列表最近任务   add by caoheyang 20150519
         /// </summary>
         /// <param name="model">订单查询实体</param>
         /// <returns></returns>
@@ -2524,6 +2524,17 @@ order by a.id desc
             }
             return new List<GetJobCDM>();
         }
+
+        /// <summary>
+        /// 骑士端获取所有待抢单任务 add by caoheyang 20150610    TODO 方案搁置
+        /// </summary>
+        /// <param name="model">订单查询实体</param>
+        /// <returns></returns>
+        public IList<GetJobCDMRedis> GetJobC()
+        {
+            return null;
+        }
+
         /// <summary>
         ///  骑士端获取任务列表（最新/最近）任务   add by caoheyang 20150519
         /// </summary>

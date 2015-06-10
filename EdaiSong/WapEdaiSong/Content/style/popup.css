@@ -1,0 +1,265 @@
+@charset "utf-8";
+/*dkfsdksdfj*/
+.popup {
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: 11;
+  display: none;
+}
+.dialog {
+  width: 100%;
+  height: 100%;
+  background: #ededed;
+  -webkit-transition: all 400ms ease-out;
+  -o-transition: all 400ms ease-out;
+  transition: all 400ms ease-out;
+  overflow: auto;
+}
+.popboxul {
+  border: 1px solid #ebebeb;
+  margin: 0px 5px;
+}
+.popboxul li {
+  padding: 0px 15px;
+}
+.dialog p {
+  padding-bottom: 5px;
+}
+.dialog div.listsd {
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+.wb80 {
+  width: 80%;
+}
+.wb95 {
+  width: 95%;
+}
+.wb70 {
+  width: 70%;
+}
+.wb60 {
+  width: 60%;
+}
+.dialog-content {
+  padding: 3px 6px;
+}
+.dialog-title {
+  height: 45px;
+  line-height: 45px;
+  font-size: 16px;
+  position: relative;
+  text-align: center;
+  border-bottom: 1px solid #dcdcdc;
+}
+.titlnonbtn .dialog-title {
+  border-bottom: none;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+.titlnonbtn .popupbtnbox {
+  padding: 15px 0px;
+}
+.titlnonbtn .popupbtnbox {
+  padding: 10px 0px;
+}
+.qx {
+  border: 1px solid #dcdcdc!important;
+}
+.dialog-title .close {
+  width: 67.5px;
+  height: 45px;
+  text-align:center;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  background: url(ico.png) no-repeat 14px -209px;
+  background-size: 115px;
+  color:#fff;
+}
+.dialog-title .close span{
+  font-size:20px;
+  font-weight:bold;
+  margin-right:3px;
+}
+.dialog-content .warp {
+  min-height: 30px;
+  background:#ededed;
+}
+.warpimg .warp {
+  padding: 0px 0px 0px 0px;
+}
+.warpimg .warp img {
+  display: block;
+  margin: 5px 0px 5px 0px;
+}
+.warpimg .dialog-title {
+  height: 32px;
+  line-height: 30px;
+}
+.warpimg .dialog-title .close {
+  background: url(ico.png) no-repeat 14px -211px;
+  background-size: 115px;
+}
+.citypopup .dialog-content {
+  padding: 0px;
+}
+.citypopup .dialog-title {
+  border-bottom: 1px solid #d9d9d9;
+  color: #ffffff;
+  background:#d63232;
+}
+.citypopup .dialog-title .close {
+  background: url(ico.png) no-repeat -20px -209px;
+  background-size: 115px;
+}
+.popupalertbox {
+  padding: 10px 15px 0px 15px;
+  line-height: 22px;
+}
+.popupbtnbox {
+  padding: 15px 10px;
+}
+.popupbtnbox span,
+.popupbtnbox a {
+  display: block;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.popupbtn {
+  height: 26px;
+  text-align: center;
+  border-radius: 3px;
+  border: 1px solid #c8c8c8;
+  background: #fff;
+  -webkit-box-flex: 1;
+  line-height: 26px;
+  min-width: 48%;
+}
+.popuplogin {
+  height: 180px;
+  overflow: hidden;
+}
+.w280 {
+  width: 280px;
+}
+.aritcl {
+  /*padding:15px 10px;*/
+  -webkit-transform-origin: top left;
+  -webkit-transition: all 300ms ease-in;
+  -webkit-transform: scaleY(1);
+}
+.aritcls {
+  padding: 15px 10px;
+  -webkit-transform-origin: top left;
+  -webkit-transition: all 300ms ease-in;
+  -webkit-transform: scaleY(0);
+  -webkit-transform: scaleY(0) translate3d(0px, -320px, 0px);
+}
+.poplogin {
+  padding: 0px;
+  /*border: 1px solid #dcdcdc;*/
+  border-radius: 0px 0px 3px 3px;
+  height: 162px;
+  -webkit-transform-origin: bottom left;
+  -webkit-transition: all 300ms ease-out;
+  -webkit-transform: scaleY(0) translate3d(0px, -162px, 0px);
+}
+.poplogin article {
+  height: 100px;
+}
+.popuplogin_on .aritcl {
+  -webkit-transform: scaleY(0);
+  -webkit-transition: all 300ms ease-out;
+}
+.popuplogin_ons .aritcls {
+  -webkit-transform: scaleY(0);
+  -webkit-transition: all 300ms ease-out;
+}
+.popuplogin_on .poplogin {
+  -webkit-transform: scaleY(1) translate3d(0px, -123px, 0px);
+  -webkit-transition: all 300ms ease-out;
+}
+.popuplogin_on_on .poplogin {
+  -webkit-transform: scaleY(1) translate3d(0px, -318px, 0px);
+  -webkit-transition: all 300ms ease-out;
+}
+.popuplogin_on_on .aritcls {
+  -webkit-transform: scaleY(1) translate3d(0px, -316px, 0px);
+  -webkit-transition: all 300ms ease-out;
+}
+.aritcl > div {
+  height: 45px;
+  margin: 0px 10px;
+  border-bottom: 1px solid #dcdcdc;
+}
+a.atria {
+  display: block;
+  padding: 7px 7px 5px 7px;
+}
+.aritcl > div:last-child {
+  border-bottom: none;
+}
+.inputpopup {
+  border: none;
+  height: 35px;
+  line-height: 35px;
+}
+.texbox {
+  padding: 12px 10px;
+  font-size: 16px;
+  border: 1px solid #dcdcdc;
+  background: #fafafa;
+  margin-top: 0px;
+  -webkit-appearance: none;
+  border-radius: 2px;
+}
+.cp-xq-new {
+  max-height: 55px;
+  min-height: 20px;
+  width: 100%;
+  overflow: hidden;
+}
+/*动画*/
+
+.citylist{
+  background:#fff;
+  border-top:1px solid #d9d9d9;
+  border-bottom:1px solid #d9d9d9;
+}
+.citylist li{
+  height:45px;
+  line-height:45px;
+  color:#666;
+  font-size:15px;
+  margin: 0 15px;
+  padding-left:5px;
+  border-top:1px solid #d9d9d9;
+}
+.bpN{
+  border-top:none!important;
+}
+
+.listcitywarp h5,
+.listcitywarp h6{
+  height:45px;
+  line-height:45px;
+  color:#d63232;
+  font-size:15px;
+  margin: 0 15px;
+  background:url(../img/nowcity.png) no-repeat right center #fff;
+  background-size:16px;
+}
+.listcitywarp h6{
+  background:#fff;
+}
+
+/*城市选中效果*/
+.AimFtOn{
+  background:url(../img/cityon.png) no-repeat right center #fff9dd;
+  background-size:15px;
+}
