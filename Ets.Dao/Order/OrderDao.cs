@@ -2524,6 +2524,17 @@ order by a.id desc
             }
             return new List<GetJobCDM>();
         }
+
+        /// <summary>
+        /// 骑士端获取所有待抢单任务 add by caoheyang 20150610
+        /// </summary>
+        /// <param name="model">订单查询实体</param>
+        /// <returns></returns>
+        public IList<GetJobCDMRedis> GetJobC()
+        {
+            return null;
+        }
+
         /// <summary>
         ///  骑士端获取任务列表（最新/最近）任务   add by caoheyang 20150519
         /// </summary>
