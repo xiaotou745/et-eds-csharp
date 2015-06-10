@@ -596,9 +596,13 @@ namespace SuperManWebApi.Controllers
         public Ets.Model.Common.SimpleResultModel ChangeWorkStatus(Ets.Model.ParameterModel.Clienter.ChangeWorkStatusPM paraModel)
         {
             if (paraModel.WorkStatus == null) //检查非空
+            {
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.ChangeWorkStatusEnum.WorkStatusError);
+            }
             if (paraModel.Id == null) //检查非空
+            {
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.ChangeWorkStatusEnum.ClienterError);
+            }
             return Ets.Model.Common.SimpleResultModel.Conclude(iClienterProvider.ChangeWorkStatus(paraModel));
         }
 

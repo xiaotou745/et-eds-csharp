@@ -60,12 +60,32 @@ namespace Ets.Service.Provider.Clienter
             if (paraModel.WorkStatus == ETS.Const.ClienterConst.ClienterWorkStatus1)  //如果要下班，先判断超人是否还有未完成的订单
             {
                 //查询当前超人有无已接单但是未完成的订单
-                int ordercount = clienterDao.QueryOrderount(new Model.ParameterModel.Clienter.ChangeWorkStatusPM() { Id = paraModel.Id, OrderStatus = ETS.Const.OrderConst.OrderStatus2 });
+                int ordercount = clienterDao.QueryOrderount(new Model.ParameterModel.Clienter.ChangeWorkStatusPM() { Id = paraModel.Id});
                 if (ordercount > 0)
                     return ETS.Enums.ChangeWorkStatusEnum.OrderError;
             }
             int changeResult = clienterDao.ChangeWorkStatusToSql(paraModel);
-            return changeResult > 0 ? ETS.Enums.ChangeWorkStatusEnum.Success : ETS.Enums.ChangeWorkStatusEnum.Error;
+            if (changeResult <= 0)
+            {
+                if (paraModel.WorkStatus == ETS.Const.ClienterConst.ClienterWorkStatus0)
+                {
+                    return ChangeWorkStatusEnum.WorkError; //上班失败
+                }
+                else {
+                    return ChangeWorkStatusEnum.StatusError; //休息失败
+                }
+            }
+            else
+            {
+                if (paraModel.WorkStatus == ETS.Const.ClienterConst.ClienterWorkStatus0)
+                {
+                    return ChangeWorkStatusEnum.WorkSuccess;  //上班成功
+                }
+                else
+                {
+                    return ChangeWorkStatusEnum.StatusSuccess; //休息成功
+                }
+            }
         }
 
         /// <summary>
