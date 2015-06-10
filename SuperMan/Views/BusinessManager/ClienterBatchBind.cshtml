@@ -141,13 +141,13 @@
     })
     function SetCheck(row)
     {
-        if (row.checked=="true")
+        if (row.checked)
         {        
-            OverallS[row.name].IsBind = true;           
+            OverallS[row.name].IsBind = true;          
         }
         else
-        {                 
-            OverallS[row.name].IsBind = false;        
+        {    
+            OverallS[row.name].IsBind = false;           
         }        
           
     }

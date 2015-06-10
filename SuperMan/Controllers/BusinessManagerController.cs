@@ -608,8 +608,7 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         [HttpPost]
         public ActionResult ClienterBatchSave()
-        {
-            var redis = new ETS.NoSql.RedisCache.RedisCache();            
+        {                      
             string businessId = Request.Params["BusinessId"].ToString();
             string OverallS = Request.Params["OverallS"].ToString();
 
