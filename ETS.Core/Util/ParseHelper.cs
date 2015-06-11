@@ -1,6 +1,8 @@
 ﻿#region
 
 using System;
+using System.Collections.Generic;
+using System.Web.Script.Serialization;
 
 #endregion
 
@@ -281,7 +283,18 @@ namespace ETS.Util
            
         }
 
-        
+        /// <summary>
+        /// JsonStr转集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="JsonStr"></param>
+        /// <returns></returns>
+        public static List<T> JSONStringToList<T>(string JsonStr)
+        {
+            JavaScriptSerializer Serializer = new JavaScriptSerializer();
+            List<T> objs = Serializer.Deserialize<List<T>>(JsonStr);
+            return objs;
+        }     
 
 
     }

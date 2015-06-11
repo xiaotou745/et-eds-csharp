@@ -511,14 +511,20 @@ namespace SuperMan.Controllers
             return View(businessDetailModel);
         }
 
+        /// <summary>
+        /// 批量添加骑士绑定
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150610</UpdateTime>
+        /// <returns></returns>
         [HttpPost]
         public JsonResult ClienterImport()
         {
             string businessId = Request.Params["BusinessId"].ToString();
-
             List<BusinessBindClienterDM> list = new List<BusinessBindClienterDM>();
             Stream fs = null;
             IWorkbook wk = null;
+
             try
             {
                 if (Request.Files["file1"] != null && Request.Files["file1"].FileName != "")
@@ -530,7 +536,7 @@ namespace SuperMan.Controllers
                     int rowCount = st.LastRowNum;
                     if (rowCount > 50)
                     {
-                        rowCount = 50;                        
+                        rowCount = 50;
                         return Json(new Ets.Model.Common.ResultModel(false, "每次最多导入50行数据！", JsonRequestBehavior.DenyGet));
                     }
 
@@ -589,31 +595,30 @@ namespace SuperMan.Controllers
                         model.IsEnable = true;
                         list.Add(model);
                     }
-
-                    //var redis = new ETS.NoSql.RedisCache.RedisCache();                 
-                    //redis.Set(string.Format(ETS.Const.RedissCacheKey.BusinessClienter, businessId), list, DateTime.Now.AddHours(1));
                 }
             }
             catch (Exception ex)
             {
                 fs.Close();
             }
-    
+
             return Json(list);
             
         }  
+
+   
         /// <summary>
-        /// 保存
+        /// 批量保存骑士绑定
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150610</UpdateTime>
         /// <returns></returns>
         [HttpPost]
         public ActionResult ClienterBatchSave()
         {                      
             string businessId = Request.Params["BusinessId"].ToString();
             string OverallS = Request.Params["OverallS"].ToString();
-
-            List<BusinessBindClienterDM> list = JSONStringToList<BusinessBindClienterDM>(Request.Params["OverallS"].ToString());
-            //List<BusinessBindClienterDM> list = redis.Get<List<BusinessBindClienterDM>>(string.Format(ETS.Const.RedissCacheKey.BusinessClienter, businessId));           
+            List<BusinessBindClienterDM> list = ETS.Util.ParseHelper.JSONStringToList<BusinessBindClienterDM>(Request.Params["OverallS"].ToString());              
 
             for (int i = 0; i < list.Count; i++)
             {
@@ -655,13 +660,6 @@ namespace SuperMan.Controllers
             }
           
             return Json(new Ets.Model.Common.ResultModel(true, "保存成功！", JsonRequestBehavior.DenyGet));           
-        }
-
-        public List<T> JSONStringToList<T>(string JsonStr)
-        {
-            JavaScriptSerializer Serializer = new JavaScriptSerializer();
-            List<T> objs = Serializer.Deserialize<List<T>>(JsonStr);
-            return objs;
         }      
 
     }
