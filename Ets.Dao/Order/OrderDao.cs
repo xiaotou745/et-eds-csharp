@@ -2788,15 +2788,15 @@ where c.Id=@ClienterId;");
 			    GrabTime,
 			    OrderCommission";
 
-            string sql = @"SELECT {0} FROM [order] o JOIN [OrderOther] oth ON o.Id = oth.OrderId WHERE o.Status=1 ";
+            string sql = @"SELECT {0} FROM [order] o INNER JOIN [OrderOther] oth ON o.Id = oth.OrderId WHERE o.Status=1 ";
 
             string dataSql = string.Format(sql, " TOP " + pageSize + "  " + fields);
 
-            string notTopSql = string.Format(sql, " TOP " + ((pageIndex - 1) * pageSize).ToString() + " o.Id ");
+            string notTopSql = "SELECT MIN(t.Id) FROM ("+string.Format(sql, " TOP " + ((pageIndex - 1) * pageSize).ToString() + " o.Id ");
             string countSql = string.Format(sql, " COUNT(*) ");
             if (pageIndex > 1)
             {
-                dataSql += " AND o.Id not IN({0})";
+                dataSql += " AND o.Id <({0})";
             }
 
             IDbParameters parm = DbHelper.CreateDbParameters();
@@ -2901,7 +2901,7 @@ where c.Id=@ClienterId;");
                 parm.Add("ReceiveCity", DbType.String, 45).Value = model.City;
             }
             dataSql += " order by oth.id desc";
-            notTopSql += " order by oth.id desc";
+            notTopSql += " order by oth.id desc ) AS t";
 
             if (pageIndex > 1)
             {
