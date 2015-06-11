@@ -33,6 +33,8 @@ using Ets.Service.Provider.Clienter;
 using Ets.Service.IProvider.Clienter;
 using Ets.Service.IProvider.Bussiness;
 using Ets.Service.Provider.Bussiness;
+using System.Runtime.Serialization.Json;
+using System.Web.Script.Serialization;
 namespace SuperMan.Controllers
 {
     [WebHandleError]
@@ -588,8 +590,8 @@ namespace SuperMan.Controllers
                         list.Add(model);
                     }
 
-                    var redis = new ETS.NoSql.RedisCache.RedisCache();                 
-                    redis.Set(string.Format(ETS.Const.RedissCacheKey.BusinessClienter, businessId), list, DateTime.Now.AddHours(1));
+                    //var redis = new ETS.NoSql.RedisCache.RedisCache();                 
+                    //redis.Set(string.Format(ETS.Const.RedissCacheKey.BusinessClienter, businessId), list, DateTime.Now.AddHours(1));
                 }
             }
             catch (Exception ex)
@@ -599,23 +601,23 @@ namespace SuperMan.Controllers
     
             return Json(list);
             
-        }
-
+        }  
         /// <summary>
         /// 保存
         /// </summary>
         /// <returns></returns>
         [HttpPost]
         public ActionResult ClienterBatchSave()
-        {
-            var redis = new ETS.NoSql.RedisCache.RedisCache();            
+        {                      
             string businessId = Request.Params["BusinessId"].ToString();
-            List<BusinessBindClienterDM> list = redis.Get<List<BusinessBindClienterDM>>(string.Format(ETS.Const.RedissCacheKey.BusinessClienter, businessId));            
+            string OverallS = Request.Params["OverallS"].ToString();
 
-            List<BusinessBindClienterDM> listSurplus = new List<BusinessBindClienterDM>();
+            List<BusinessBindClienterDM> list = JSONStringToList<BusinessBindClienterDM>(Request.Params["OverallS"].ToString());
+            //List<BusinessBindClienterDM> list = redis.Get<List<BusinessBindClienterDM>>(string.Format(ETS.Const.RedissCacheKey.BusinessClienter, businessId));           
+
             for (int i = 0; i < list.Count; i++)
             {
-                if (list[i].IsEnable)//成功
+                if (list[i].IsBind)//前台选中绑定记录
                 {
                     string phone = list[i].ClienterPhoneNo;
                     string name = list[i].ClienterName;
@@ -626,7 +628,7 @@ namespace SuperMan.Controllers
                                                         BusinessId = Convert.ToInt32(businessId),
                                                         ClienterId = clienterId
                                                     });
-                    if (model == null)
+                    if (model == null)//插入
                     {                               
 
                         iBusinessProvider.AddClienterBind(new ClienterBindOptionLogModel { 
@@ -637,7 +639,7 @@ namespace SuperMan.Controllers
                                                     Remark = "添加绑定"
                                                 });
                     }
-                    else if(model!=null && model.IsBind==0)                   
+                    else if(model!=null && model.IsBind==0)//更新                   
                     {                     
                         iBusinessProvider.ModifyClienterBind(new ClienterBindOptionLogModel 
                                             {
@@ -645,7 +647,8 @@ namespace SuperMan.Controllers
                                                 ClienterId = clienterId,
                                                 OptId = UserContext.Current.Id,
                                                 OptName = UserContext.Current.Name,
-                                                Remark = "修改绑定"
+                                                Remark = "修改绑定",
+                                                IsBind=1
                                             });                
                     }
                 }             
@@ -653,6 +656,13 @@ namespace SuperMan.Controllers
           
             return Json(new Ets.Model.Common.ResultModel(true, "保存成功！", JsonRequestBehavior.DenyGet));           
         }
+
+        public List<T> JSONStringToList<T>(string JsonStr)
+        {
+            JavaScriptSerializer Serializer = new JavaScriptSerializer();
+            List<T> objs = Serializer.Deserialize<List<T>>(JsonStr);
+            return objs;
+        }      
 
     }
 }

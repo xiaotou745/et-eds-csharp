@@ -151,5 +151,10 @@ namespace Ets.Model.ParameterModel.Bussiness
         /// 营业执照图片
         /// </summary>
         public string BusinessLicensePic { get; set; }
+
+        /// <summary>
+        /// 一键发单
+        /// </summary>
+        public int OneKeyPubOrder { get; set; }
     }
 }

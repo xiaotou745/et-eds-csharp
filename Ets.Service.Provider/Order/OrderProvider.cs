@@ -1643,7 +1643,7 @@ namespace Ets.Service.Provider.Order
                 model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;// top 值
                 jobs = orderDao.GetJobC(model);
             }
-            else if (model.SearchType == (int)GetJobCMode.EmployerJob)//附近订单
+            else if (model.SearchType == (int)GetJobCMode.EmployerJob)//店内任务
             {
                 model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;// top 值
                 jobs = orderDao.GetEmployerJobC(model);

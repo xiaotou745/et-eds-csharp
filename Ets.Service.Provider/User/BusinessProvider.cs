@@ -117,9 +117,9 @@ namespace Ets.Service.Provider.User
         /// <param name="phoneno"></param>
         /// <param name="authorityCityNameListStr"></param>
         /// <returns></returns>
-        public ResultInfo<IList<BusinessCommissionModel>> GetBusinessCommission(DateTime t1, DateTime t2, string name, string phoneno, int groupid, string BusinessCity, string authorityCityNameListStr)
+        public ResultInfo<IList<BusinessCommissionDM>> GetBusinessCommission(DateTime t1, DateTime t2, string name, string phoneno, int groupid, string BusinessCity, string authorityCityNameListStr)
         {
-            var result = new ResultInfo<IList<BusinessCommissionModel>> { Data = null, Result = false, Message = "" };
+            var result = new ResultInfo<IList<BusinessCommissionDM>> { Data = null, Result = false, Message = "" };
             try
             {
                 if (t1 > t2)
@@ -667,6 +667,17 @@ namespace Ets.Service.Provider.User
             //    business.Status = ConstValues.BUSINESS_NOAUDIT;
             //}
             business.Status = Convert.ToByte(GetBussinessStatus.Auditing.GetHashCode());//审核中
+
+            #region 判断是否可以一键发单
+            business.OneKeyPubOrder = 1;//默认为全部允许一键发单
+            Business checkBusiness = dao.GetById(business.Id);
+            if (string.IsNullOrEmpty(checkBusiness.City) && (model.City == "北京市" || model.City == "上海市"))
+            {
+                //如果城市是空或北京或上海，则不允许一键发单
+                business.OneKeyPubOrder = 0;
+            }
+            #endregion
+
             int upResult = dao.UpdateBusinessInfoB(business);
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, model.userId);
@@ -1189,7 +1200,44 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public bool ModifyClienterBind(ClienterBindOptionLogModel model)
         {
-            return dao.ModifyClienterBind(model);
+            var reg = false;
+            using (var tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (dao.ModifyClienterBind(model))
+                {
+                    if (model.IsBind == 1)//绑定
+                    {
+                        if (dao.UpdateBusinessIsBind(model.BusinessId, 1))
+                        {
+                            if (dao.UpdateClienterIsBind(model.ClienterId, 1))
+                            {
+                                reg = true;
+                                tran.Complete();
+                            }
+                        }
+                    }
+                    else//解绑
+                    {
+                        if (dao.UpdateClienterIsBind(model.ClienterId, 0))
+                        {
+                            if (dao.GetBusinessBindClienterQty(model.BusinessId) == 0)
+                            {
+                                if (dao.UpdateBusinessIsBind(model.BusinessId, 0))
+                                {
+                                    reg = true;
+                                    tran.Complete();
+                                }
+                            }
+                            else
+                            {
+                                reg = true;
+                                tran.Complete();
+                            }
+                        }
+                    }
+                }
+            }
+            return reg;
         }
 
         /// <summary>
@@ -1200,7 +1248,23 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public bool RemoveClienterBind(ClienterBindOptionLogModel model)
         {
-            return dao.RemoveClienterBind(model);
+            var reg = false;
+            using (var tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (dao.RemoveClienterBind(model))
+                {
+                    if (dao.UpdateBusinessIsBind(model.BusinessId, 0))
+                    {
+                        if (dao.UpdateClienterIsBind(model.ClienterId, 0))
+                        {
+                            reg = true;
+                            tran.Complete();
+                        }
+                    }
+
+                }
+            }
+            return reg;
         }
 
         /// <summary>
@@ -1211,7 +1275,23 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public bool AddClienterBind(ClienterBindOptionLogModel model)
         {
-            return dao.AddClienterBind(model);
+            var reg = false;
+            using (var tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (dao.AddClienterBind(model))
+                {
+                    if (dao.UpdateBusinessIsBind(model.BusinessId, 1))
+                    {
+                        if (dao.UpdateClienterIsBind(model.ClienterId, 1))
+                        {
+                            reg = true;
+                            tran.Complete();
+                        }
+                    }
+
+                }
+            }
+            return reg;
         }
 
         /// <summary>
