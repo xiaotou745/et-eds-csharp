@@ -22,7 +22,6 @@ using ETS.Enums;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Group;
 using Ets.Model.ParameterModel.Order;
-using Ets.Model.DomainModel.Bussiness;
 using Ets.Model.DataModel.Finance;
 using ETS.Data.Generic;
 using Ets.Model.ParameterModel.WtihdrawRecords;
@@ -1399,6 +1398,31 @@ where  Id=@Id ";
                 model = MapRows<Business>(dt)[0];
             }
             return model;
+        }
+        /// <summary>
+        /// 根据商品户ID集合查询商户信息
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        public IDictionary<int,Business> GetByIds(IList<int> ids)
+        {
+            const string getbyidSql = @"
+select  Id,Name,City,district,PhoneNo,PhoneNo2,Password,CheckPicUrl,IDCard,Address,Landline,Longitude,Latitude,Status,InsertTime,districtId,CityId,GroupId,OriginalBusiId,ProvinceCode,CityCode,AreaCode,Province,CommissionTypeId,DistribSubsidy,BusinessCommission,CommissionType,CommissionFixValue,BusinessGroupId,BalancePrice,AllowWithdrawPrice,HasWithdrawPrice
+from  business (nolock)
+where  Id IN({0})";
+
+            if (ids == null || ids.Count == 0)
+            {
+                return new Dictionary<int, Business>();
+            }
+
+            return DbHelper.QueryWithRowMapperDelegate<Business>(SuperMan_Read, string.Format(getbyidSql,string.Join(",", ids)), datarow => new Business()
+            {
+                Id = ParseHelper.ToInt(datarow["Id"]),
+                Name = ParseHelper.ToString(datarow["Name"]),
+                PhoneNo = ParseHelper.ToString(datarow["PhoneNo"])
+
+            }).ToDictionary(m => m.Id);
         }
 
         /// <summary>
