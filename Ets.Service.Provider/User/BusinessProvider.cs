@@ -117,9 +117,9 @@ namespace Ets.Service.Provider.User
         /// <param name="phoneno"></param>
         /// <param name="authorityCityNameListStr"></param>
         /// <returns></returns>
-        public ResultInfo<IList<BusinessCommissionModel>> GetBusinessCommission(DateTime t1, DateTime t2, string name, string phoneno, int groupid, string BusinessCity, string authorityCityNameListStr)
+        public ResultInfo<IList<BusinessCommissionDM>> GetBusinessCommission(DateTime t1, DateTime t2, string name, string phoneno, int groupid, string BusinessCity, string authorityCityNameListStr)
         {
-            var result = new ResultInfo<IList<BusinessCommissionModel>> { Data = null, Result = false, Message = "" };
+            var result = new ResultInfo<IList<BusinessCommissionDM>> { Data = null, Result = false, Message = "" };
             try
             {
                 if (t1 > t2)

@@ -515,7 +515,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, ConstValues.OrderH
         /// <returns></returns>
         public ClienterStatusModel GetUserStatus(int userId)
         {
-            string sql = @" select id as userid,status,phoneno,AccountBalance,IsBind as amount from dbo.clienter with(nolock) where Id=@clienterId ";
+            string sql = @" select id as userid,status,phoneno,AccountBalance as amount,IsBind from dbo.clienter with(nolock) where Id=@clienterId ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@clienterId", userId);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);

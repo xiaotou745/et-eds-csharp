@@ -47,6 +47,12 @@ namespace Ets.Model.ParameterModel.Order
         public string PushRadius { get; set; }
 
         /// <summary>
+        ///商家专属骑士接单响应时间
+        /// </summary>
+        public int ExclusiveOrderTime { get; set; }
+
+
+        /// <summary>
         /// 骑士id   雇主任务查询需要使用
         /// </summary>
         public int ClienterId { get; set; }

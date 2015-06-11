@@ -33,7 +33,7 @@
                         <td>
                             <span class="">筛选城市: </span>
                             @Html.DropDownList("BusinessCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name", ViewBag.BusinessCity), "--无--", new { style = "width:155px" })
-                            <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                            <input type="button" value="查询" class="searchBtn" id="btnSearch" />
                             <input type="hidden" id="txtGroupId" name="txtGroupId" value="@ViewBag.txtGroupId">
                             <input type="button" onclick="DaoCHu();" value="导出" class="searchBtn" id="btnDaochu" />
                         </td>
@@ -52,45 +52,52 @@
         //查询
         $('#t1').datepicker();
         $('#t2').datepicker();
-        //$("#btnSearch").on('click', function() {
-        //    var txtBusinessName = $("#txtBusinessName").val(); //商户名称
-        //    var groupId = $("#txtGroupId").val();
-        //    if (groupId == "") {
-        //        groupId = 0; }
-        //    var startDate = $('#txtDateStart').val();
-        //    var endDate = $('#txtDateEnd').val();
-            
-        //    if (startDate!="" && endDate=="") {
-        //        alert("请输入结束时间!");
-        //        return false;
-        //    }
-        //    if (endDate != "" && startDate == "") {
-        //        alert("请输入开始时间!");
-        //        return false;
-        //    }
-        //    var start = new Date(startDate);
-        //    var end = new Date(endDate);
-            
-        //    if (end < start) {
-        //        alert("开始日期不能大于结束日期");
-        //        return false;
-        //    }
-        //    return true;
-
-        //});
+        $("#btnSearch").on('click', function() {
+            var startDate = $('#t1').val();
+            var endDate = $('#t2').val();
+            if (startDate=="" ) {
+                alert("请输入开始时间!");
+                return ;
+            }
+            if (endDate == "" ) {
+                alert("请输入结束时间!");
+                return ;
+            }
+            var start = new Date(startDate);
+            var end = new Date(endDate);
+            if (end < start) {
+                alert("开始日期不能大于结束日期");
+                return ;
+            }
+            $("#btnSearch").submit();
+        });
     });
     function DaoCHu() {
         var txtBusinessName = $("#name").val();
-        var txtDateStart = $("#phoneNo").val();
-        var txtDateEnd = $("#t1").val();
-        var txtGroupId = $("#t2").val();
+        var txtDateStart = $("#t1").val();
+        var txtDateEnd = $("#t2").val();
+        var txtGroupId = $("#txtGroupId").val();
         var BusinessCity = $("#BusinessCity").find("option:selected").text();
+        if (txtDateStart == "") {
+            alert("请输入开始时间!");
+            return;
+        }
+        if (txtDateEnd == "") {
+            alert("请输入结束时间!");
+            return;
+        }
+        var startDate = new Date(txtDateStart);
+        var endDate = new Date(txtDateEnd);
+        if (startDate > endDate) {
+            alert("开始日期不能大于结束日期");
+            return;
+        }
         var url = "/BusinessCommission/CreateCommissionsExcel?txtBusinessName=" + txtBusinessName + "&txtGroupId=" + txtGroupId + "&txtDateStart=" + txtDateStart + "&txtDateEnd=" + txtDateEnd + "&BusinessCity=" + BusinessCity;
         window.location.href = url;
     }
-    function DataDaoCHu(id,name,amount,count,commission,t1,t2,total) {
-        var url = "/BusinessCommission/CreateBusinessCommissionsExcel?id=" + id + "&name=" + name + "&amount=" + amount + "&ordercount=" + count + "&BusinessCommission=" + commission + "&TotalAmount=" + total + "&T1=" + t1 + "&T2=" + t2;
-        window.location.href = url;
-    }
+    //function DataDaoCHu(id,name,amount,count,commission,t1,t2,total) {
+    //    var url = "/BusinessCommission/CreateBusinessCommissionsExcel?id=" + id + "&name=" + name + "&amount=" + amount + "&ordercount=" + count + "&BusinessCommission=" + commission + "&TotalAmount=" + total + "&T1=" + t1 + "&T2=" + t2;
+    //    window.location.href = url;
+    //}
 </script>
 <script src="~/Scripts/mvcpager.js"></script>

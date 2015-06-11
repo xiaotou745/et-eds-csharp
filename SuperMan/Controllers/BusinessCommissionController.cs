@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.WebPages;
 using Ets.Model.Common;
+using Ets.Model.DataModel.Bussiness;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DomainModel.Bussiness;
 using Ets.Service.IProvider.Common;
@@ -40,7 +41,7 @@ namespace SuperMan.Controllers
             ViewBag.txtGroupId = UserContext.Current.GroupId;
             var userType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
             ViewBag.openCityList = new AreaProvider().GetOpenCityOfSingleCity(userType);
-            var t1 = new DateTime(2014, 1, 1, 0, 0, 0);
+            var t1 = new DateTime(DateTime.Now.AddDays(-7).Year, DateTime.Now.AddDays(-7).Month, DateTime.Now.AddDays(-7).Day, 0, 0, 0);
             var t2 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 59);
             var authorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(userType);
             var criteria =
@@ -136,7 +137,7 @@ namespace SuperMan.Controllers
             int userType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
             DateTime date1 = DateTime.Now;
             DateTime date2 = DateTime.Now;
-            date1 = string.IsNullOrEmpty(criteria.T1) ? new DateTime(2014, 1, 1, 0, 0, 0) : DateTime.Parse(criteria.T1.ToString());
+            date1 = string.IsNullOrEmpty(criteria.T1) ? new DateTime(DateTime.Now.AddDays(-7).Year, DateTime.Now.AddDays(-7).Month, DateTime.Now.AddDays(-7).Day, 0, 0, 0) : DateTime.Parse(criteria.T1.ToString());
             date2 = string.IsNullOrEmpty(criteria.T2) ? DateTime.Now : DateTime.Parse(criteria.T2.ToString());
             date1 = new DateTime(date1.Year, date1.Month, date1.Day, 0, 0, 0);
             date2 = new DateTime(date2.Year, date2.Month, date2.Day, 23, 59, 59);
@@ -208,7 +209,7 @@ namespace SuperMan.Controllers
         /// 生成商户结算excel文件
         /// </summary>
         /// <returns></returns>
-        private string CreateExcel(IList<BusinessCommissionModel> paraModel)
+        private string CreateExcel(IList<BusinessCommissionDM> paraModel)
         {
             StringBuilder strBuilder = new StringBuilder();
             strBuilder.AppendLine("<table border=1 cellspacing=0 cellpadding=5 rules=all>");
