@@ -1,3 +1,4 @@
+--公共配置里新增商家专属骑士接单响应时间
 use superman
 INSERT dbo.GlobalConfig
         ( KeyName ,

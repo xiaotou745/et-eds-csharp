@@ -1,20 +1,3 @@
-if exists (select 1
-            from  sysobjects
-           where  id = object_id('dbo.ClienterBindOptionLog')
-            and   type = 'U')
-   drop table dbo.ClienterBindOptionLog
-go
-
-/****** Object:  Table [dbo].[ClienterBindOptionLog]    Script Date: 06/11/2015 10:14:38 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-SET ANSI_PADDING ON
-GO
-
 CREATE TABLE [dbo].[ClienterBindOptionLog](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[BusinessId] [int] NOT NULL,
