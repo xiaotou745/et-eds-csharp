@@ -24,5 +24,10 @@ namespace Ets.Model.DataModel.Clienter
         /// 城市编码
         /// </summary>
         public string cityId { get; set; }
+
+        /// <summary>
+        /// 是否已绑定商家
+        /// </summary>
+        public int IsBind { get; set; }
     }
 }

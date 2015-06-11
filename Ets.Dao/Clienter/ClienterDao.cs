@@ -138,33 +138,24 @@ namespace Ets.Dao.Clienter
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public ClienterLoginResultModel PostLogin_CSql(LoginModel model)
+        public ClienterLoginResultModel PostLogin_CSql(LoginModel loginModel)
         {
-            string sql = @"SELECT 
-                        Id AS userId ,
-                        PhoneNo,
-                        status,
-                        AccountBalance AS Amount,
-                        city,
-                        cityId 
-                        FROM dbo.clienter(NOLOCK) WHERE PhoneNo=@PhoneNo AND [Password]=@Password";
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@PhoneNo", SqlDbType.NVarChar);
-            parm.SetValue("@PhoneNo", model.phoneNo);
-            parm.AddWithValue("@Password", model.passWord);
-            DataSet set = DbHelper.ExecuteDataset(SuperMan_Read, sql, parm);
 
-            DataTable dt = DataTableHelper.GetTable(set);
-            if (dt == null || dt.Rows.Count <= 0)
+            ClienterLoginResultModel model = null;
+            const string querysql = @"
+select Id AS userId,PhoneNo,status,AccountBalance AS Amount,city,cityId,IsBind 
+from dbo.clienter(nolock) 
+where PhoneNo=@PhoneNo and [Password]=@Password";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("PhoneNo", loginModel.phoneNo);
+            dbParameters.AddWithValue("@Password", loginModel.passWord);
+
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
+            if (DataTableHelper.CheckDt(dt))
             {
-                return null;
+                model = DataTableHelper.ConvertDataTableList<ClienterLoginResultModel>(dt)[0];
             }
-            IList<ClienterLoginResultModel> list = MapRows<ClienterLoginResultModel>(dt);
-            if (list == null || list.Count <= 0)
-            {
-                return null;
-            }
-            return list[0];
+            return model;
         }
 
         /// <summary>
