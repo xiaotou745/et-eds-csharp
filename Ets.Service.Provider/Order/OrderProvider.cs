@@ -1526,7 +1526,10 @@ namespace Ets.Service.Provider.Order
             orderDM.ReceviceName = order.ReceviceName;
             orderDM.receviceCity = order.ReceviceCity;
             orderDM.RecevicePhoneNo = order.RecevicePhoneNo;
-            orderDM.ReceviceAddress = order.ReceviceAddress;
+            if (!string.IsNullOrEmpty(order.ReceviceAddress))
+                orderDM.ReceviceAddress = order.ReceviceAddress;
+            else
+                orderDM.ReceviceAddress = "附近3公里左右，由商户指定";
             orderDM.Amount = order.Amount;
             orderDM.IsPay = Convert.ToBoolean(order.IsPay);
             orderDM.Remark = order.Remark;

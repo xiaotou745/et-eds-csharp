@@ -28,7 +28,7 @@ namespace ETS.Data.PageData
                 int TotalRecord = 0;
                 int TotalPage = 0;
                 var _table = GetPages(connectionString, currentPage, where_, OrderByColumn, ColumnList, TableList, PageSize, IsAccounte, out TotalRecord, out TotalPage);
-                var pageInfo = new PageInfo<T>(TotalRecord, currentPage, DataTableHelper.ConvertDataTableList<T>(_table), TotalPage);
+                var pageInfo = new PageInfo<T>(TotalRecord, currentPage, DataTableHelper.ConvertDataTableList<T>(_table), TotalPage,PageSize);
                 return pageInfo;
             }
             catch(Exception ex)

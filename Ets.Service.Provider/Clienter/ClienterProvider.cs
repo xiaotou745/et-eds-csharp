@@ -1211,7 +1211,7 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="criteria"></param>
         /// <returns></returns>
         public PageInfo<ClienterListModel> GetClienterList(ClienterSearchCriteria criteria)
-        {
+		{
             return clienterDao.GetClienterList<ClienterListModel>(criteria);
         }
     }

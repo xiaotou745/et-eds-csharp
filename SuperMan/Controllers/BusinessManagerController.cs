@@ -410,7 +410,8 @@ namespace SuperMan.Controllers
                 iBusinessProvider.GetBusinessBindClienterQty(ParseHelper.ToInt(businessId));
             var criteria = new BusinessSearchCriteria()
             {
-                BusinessId = ParseHelper.ToInt(businessId)
+                BusinessId = ParseHelper.ToInt(businessId),
+                PageSize = 20
             };
             ViewBag.businessClienterRelationList = iBusinessProvider.GetBusinessClienterRelationList(criteria);
             return View(businessDetailModel);
@@ -426,6 +427,7 @@ namespace SuperMan.Controllers
         {
             var criteria = new BusinessSearchCriteria();
             TryUpdateModel(criteria);
+            criteria.PageSize = 20;
             ViewBag.businessClienterRelationList = iBusinessProvider.GetBusinessClienterRelationList(criteria);
             return PartialView("_ClienterBindList");
         }
@@ -469,7 +471,10 @@ namespace SuperMan.Controllers
         public ActionResult AddClienterBindManage(string businessId)
         {
             var businessDetailModel = iBusinessProvider.GetBusinessDetailById(businessId);
-            ViewBag.clienterList = null;
+
+            var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria();
+
+            ViewBag.clienterList = iClienterProvider.GetClienterList(criteria);
             return View(businessDetailModel);
         }
         /// <summary>
@@ -531,7 +536,11 @@ namespace SuperMan.Controllers
                 {
                     HttpPostedFileBase file = Request.Files["file1"];
                     fs = file.InputStream;
-                    wk = new XSSFWorkbook(fs);
+                    if (Path.GetExtension(Request.Files["file1"].FileName) == ".xls")
+                        wk = new HSSFWorkbook(fs);                                      
+                    else
+                        wk = new XSSFWorkbook(fs);
+                     
                     ISheet st = wk.GetSheetAt(0);
                     int rowCount = st.LastRowNum;
                     if (rowCount > 50)

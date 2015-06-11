@@ -19,23 +19,10 @@
             <td></td>
         </tr>
     </table>
-    @*<div class="SearchMd">
-        <table border="0" cellspacing="0" cellpadding="0">
-            <tr>
-                <td>
-                    <input type="button" value="手动绑定" class="searchBtn" id="btnBindClienter" onclick="addClienterBind();" />
-                </td>
-                <td>&nbsp;</td>
-                <td>
-                    <input type="button" value="批量绑定" class="searchBtn" id="btnBindClienter" onclick="addClienterBatchBind();" />
-                </td>
-            </tr>
-        </table>
-    </div>*@
     <div class="page">
         <ul class="tab">
-            <li id="tab_to_1" class="no"><a href="#" onclick="tab('tab',2,1)">手动绑定</a></li>
-            <li id="tab_to_2" ><a href="#" onclick="tab('tab',2,2)">批量绑定</a></li>
+            <li class="no"><a href="/BusinessManager/AddClienterBindManage?businessId=@Model.Id">手动绑定</a></li>
+            <li ><a href="/BusinessManager/ClienterBatchBind?businessId=@Model.Id">批量绑定</a></li>
         </ul>
     </div>
 
@@ -72,30 +59,6 @@
         }
         $("#searchForm").submit();
     });
-    function addClienterBind() {
-        var businessId = $('#businessId').val();
-        window.location.href = "/BusinessManager/AddClienterBindManage?businessId=" + businessId;
-    }
-    //添加骑士绑定
-    function addClienterBatchBind() {
-        var businessId = $('#businessId').val();
-        window.location.href = "/BusinessManager/ClienterBatchBind?businessId=" + businessId;
-    }
-    function tab(a, b, c) {
-        for (i = 1; i <= b; i++) {
-            if (c == i) {
-                var businessId = $('#businessId').val();
-                window.location.href = "/BusinessManager/ClienterBatchBind?businessId=" + businessId;
-
-
-            }
-            else {
-                var businessId = $('#businessId').val();
-                window.location.href = "/BusinessManager/AddClienterBindManage?businessId=" + businessId;
-
-            }
-        }
-    }
 </script>
 <script src="~/Scripts/mvcpager.js"></script>
 

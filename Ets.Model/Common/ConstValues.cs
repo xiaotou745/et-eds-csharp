@@ -88,7 +88,7 @@ namespace Ets.Model.Common
         /// <summary>
         /// 代送外送员版
         /// </summary>
-        public const string MessageClinenter = "E代送外送员版";
+        public const string MessageClinenter = "E代送骑士版";
 
         #endregion
 
