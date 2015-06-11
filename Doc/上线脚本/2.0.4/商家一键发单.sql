@@ -1,7 +1,7 @@
 --商家绑定、一键发单列
 use superman
 alter table dbo.business add IsBind smallint not null default 0; 
-alter table dbo.business add OneKeyPubOrder int not null default 1; 
+alter table dbo.business add OneKeyPubOrder int not null default 0; 
 alter table dbo.clienter add IsBind smallint not null default 0; 
 go
 
