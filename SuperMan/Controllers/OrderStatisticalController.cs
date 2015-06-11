@@ -107,8 +107,8 @@ namespace SuperMan.Controllers
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.PubDate));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.GrabTime));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.TakeTime));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.OrderCount));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.ActualDoneDate));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.OrderCount));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.TaskMoney));
                 strBuilder.AppendLine("</tr>");
             }
