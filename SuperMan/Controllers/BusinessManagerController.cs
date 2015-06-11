@@ -471,7 +471,10 @@ namespace SuperMan.Controllers
         public ActionResult AddClienterBindManage(string businessId)
         {
             var businessDetailModel = iBusinessProvider.GetBusinessDetailById(businessId);
-            ViewBag.clienterList = null;
+
+            var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria();
+
+            ViewBag.clienterList = iClienterProvider.GetClienterList(criteria);
             return View(businessDetailModel);
         }
         /// <summary>
