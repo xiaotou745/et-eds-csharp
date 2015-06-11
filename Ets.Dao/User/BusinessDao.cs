@@ -707,19 +707,25 @@ order by a.id desc
         /// <returns>商家信息</returns>
         public BusListResultModel GetBusinessByPhoneNo(string PhoneNo)
         {
-            string sql = @"SELECT a.Id  FROM dbo.business(NOLOCK) a
-LEFT join dbo.[group] b on a.GroupId=b.Id
-where a.PhoneNo=@PhoneNo and isnull(b.IsModifyBind,1)=1";
+            string sql = @"
+SELECT b.Id  FROM dbo.business(NOLOCK) b
+LEFT join dbo.[group] g on b.GroupId=g.Id and g.IsModifyBind=1
+where b.PhoneNo=@PhoneNo";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@PhoneNo", SqlDbType.NVarChar);
-            parm.SetValue("@PhoneNo", PhoneNo);
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
-            IList<BusListResultModel> list = MapRows<BusListResultModel>(dt);
-            if (list == null || list.Count <= 0)
+            parm.Add("PhoneNo", DbType.String, 40).Value = PhoneNo;
+
+            int tmpId = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm), 0);
+            //DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+
+            if (tmpId <= 0)
             {
                 return null;
             }
-            return list[0];
+            BusListResultModel model = new BusListResultModel()
+            {
+                Id = tmpId
+            };
+            return model;
         }
 
         /// <summary>
@@ -979,14 +985,14 @@ select SCOPE_IDENTITY() as id;
             dbParameters.AddWithValue("@Latitude", model.Latitude);
             dbParameters.AddWithValue("@Status", model.Status);
             dbParameters.AddWithValue("@districtId", model.districtId);
-            dbParameters.AddWithValue("@CityId", model.CityId);  
+            dbParameters.AddWithValue("@CityId", model.CityId);
             dbParameters.AddWithValue("@CityCode", model.CityCode);
             dbParameters.AddWithValue("@AreaCode", model.AreaCode);
             dbParameters.AddWithValue("@Province", model.Province);
             dbParameters.AddWithValue("@CommissionTypeId", model.CommissionTypeId);
             dbParameters.AddWithValue("@ProvinceCode", model.ProvinceCode);
             dbParameters.AddWithValue("@DistribSubsidy", model.DistribSubsidy);
-            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));  
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
         }
         /// <summary>
         /// 商户统计
