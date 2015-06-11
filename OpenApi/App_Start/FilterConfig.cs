@@ -98,7 +98,7 @@ namespace OpenApi
                 System.Threading.Tasks.Task.Factory.StartNew(() =>
                 {
                     stop.Stop();
-                    LogHelper.LogWriter("接口" + actionExecutedContext.Request.RequestUri + "请求时间：" + stop.Elapsed);
+                   LogHelper.LogWriter("接口" + actionExecutedContext.Request.RequestUri + "请求时间：" + stop.ElapsedMilliseconds);
                     stop.Reset();
                 });
             }
@@ -141,7 +141,7 @@ namespace OpenApi
                 System.Threading.Tasks.Task.Factory.StartNew(() =>
                 {
                     stop.Stop();
-                    LogHelper.LogWriter("接口" + actionExecutedContext.Request.RequestUri + "请求时间：" + stop.Elapsed);
+                    LogHelper.LogWriter("接口" + actionExecutedContext.Request.RequestUri + "请求时间：" + stop.ElapsedMilliseconds);
                     stop.Reset();
                 });
             }
@@ -170,7 +170,7 @@ namespace OpenApi
                 System.Threading.Tasks.Task.Factory.StartNew(() =>
                 {
                     stop.Stop();
-                    LogHelper.LogWriter("接口" + filterContext.Request.RequestUri + "请求时间：" + stop.Elapsed);
+                    LogHelper.LogWriter("接口" + filterContext.Request.RequestUri + "请求时间：" + stop.ElapsedMilliseconds);
                     stop.Reset();
                 });
             }
