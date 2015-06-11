@@ -1530,8 +1530,7 @@ namespace Ets.Service.Provider.Order
                 orderDM.ReceviceAddress = order.ReceviceAddress;
             else
             {
-                orderDM.ReceviceAddress = ConstValues.ReceviceAddress;
-                orderDM.receviceCity = "";
+                orderDM.ReceviceAddress = ConstValues.ReceviceAddress;                
             }
             orderDM.Amount = order.Amount;
             orderDM.IsPay = Convert.ToBoolean(order.IsPay);

@@ -133,8 +133,7 @@ namespace Ets.Service.Provider.Clienter
                         model.receviceAddress = item.ReceviceAddress;
                     else
                     {
-                        model.receviceAddress = ConstValues.ReceviceAddress;
-                        model.receviceCity = "";
+                        model.receviceAddress = ConstValues.ReceviceAddress;                        
                     }
 
                     model.recevicePhone = item.RecevicePhoneNo;
