@@ -1,12 +1,3 @@
-use superman
-go
-if exists (select 1
-            from  sysobjects
-           where  id = object_id('dbo.BusinessClienterRelation')
-            and   type = 'U')
-   drop table dbo.BusinessClienterRelation
-go
-
 /*==============================================================*/
 /* Table: BusinessClienterRelation                                   */
 /*==============================================================*/

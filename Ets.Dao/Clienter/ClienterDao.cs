@@ -24,6 +24,7 @@ using System.IO;
 using ETS.Util;
 using ETS.Data.Generic;
 using Ets.Model.DataModel.Finance;
+using System.Linq;
 namespace Ets.Dao.Clienter
 {
 
@@ -137,33 +138,24 @@ namespace Ets.Dao.Clienter
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public ClienterLoginResultModel PostLogin_CSql(LoginModel model)
+        public ClienterLoginResultModel PostLogin_CSql(LoginModel loginModel)
         {
-            string sql = @"SELECT 
-                        Id AS userId ,
-                        PhoneNo,
-                        status,
-                        AccountBalance AS Amount,
-                        city,
-                        cityId 
-                        FROM dbo.clienter(NOLOCK) WHERE PhoneNo=@PhoneNo AND [Password]=@Password";
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@PhoneNo", SqlDbType.NVarChar);
-            parm.SetValue("@PhoneNo", model.phoneNo);
-            parm.AddWithValue("@Password", model.passWord);
-            DataSet set = DbHelper.ExecuteDataset(SuperMan_Read, sql, parm);
 
-            DataTable dt = DataTableHelper.GetTable(set);
-            if (dt == null || dt.Rows.Count <= 0)
+            ClienterLoginResultModel model = null;
+            const string querysql = @"
+select Id AS userId,PhoneNo,status,AccountBalance AS Amount,city,cityId,IsBind 
+from dbo.clienter(nolock) 
+where PhoneNo=@PhoneNo and [Password]=@Password";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("PhoneNo", loginModel.phoneNo);
+            dbParameters.AddWithValue("@Password", loginModel.passWord);
+
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
+            if (DataTableHelper.CheckDt(dt))
             {
-                return null;
+                model = DataTableHelper.ConvertDataTableList<ClienterLoginResultModel>(dt)[0];
             }
-            IList<ClienterLoginResultModel> list = MapRows<ClienterLoginResultModel>(dt);
-            if (list == null || list.Count <= 0)
-            {
-                return null;
-            }
-            return list[0];
+            return model;
         }
 
         /// <summary>
@@ -1048,6 +1040,25 @@ where  Id=@Id ";
                 model = MapRows<clienter>(dt)[0];
             }
             return model;
+        }
+        public IDictionary<int, clienter> GetByIds(IList<int> ids)
+        {
+            const string querysql = @"
+select  Id,PhoneNo,LoginName,recommendPhone,Password,TrueName,IDCard,PicWithHandUrl,PicUrl,[Status],AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode,AreaCode,CityCode,Province,BussinessID,WorkStatus,AllowWithdrawPrice,HasWithdrawPrice
+from  clienter (nolock)
+where  Id IN({0}) ";
+
+            if (ids == null || ids.Count == 0)
+            {
+                return new Dictionary<int, clienter>();
+            }
+           return DbHelper.QueryWithRowMapperDelegate<clienter>(SuperMan_Read, string.Format(querysql,string.Join(",", ids)), datarow => new clienter()
+            {
+                Id = ParseHelper.ToInt(datarow["Id"]),
+                TrueName = ParseHelper.ToString(datarow["TrueName"]),
+                PhoneNo = ParseHelper.ToString(datarow["PhoneNo"])
+
+            }).ToDictionary(m => m.Id);
         }
 
         /// <summary>

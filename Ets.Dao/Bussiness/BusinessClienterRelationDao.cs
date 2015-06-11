@@ -94,8 +94,8 @@ where  BusinessId=@BusinessId  and ClienterId=@ClienterId";
             
             string querySql = @" 
 select Id,BusinessId,ClienterId,IsEnable,CreateBy,CreateTime,UpdateBy,UpdateTime,IsBind
- FROM   dbo.[BusinessClienterRelation] (nolock ) 
- WHERE  BusinessId=@BusinessId  and ClienterId=@ClienterId";
+ from   dbo.[BusinessClienterRelation] (nolock ) 
+ where IsEnable=1 and  BusinessId=@BusinessId  and ClienterId=@ClienterId";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("BusinessId", businessClienterRelation.BusinessId);
