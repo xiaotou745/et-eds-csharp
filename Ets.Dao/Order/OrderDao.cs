@@ -2759,30 +2759,31 @@ where c.Id=@ClienterId;");
         /// <param name="pageIndex"></param>
         /// <param name="totalRows"></param>
         /// <returns></returns>
-        public DataTable DistributionAnalyze(OrderDistributionAnalyze model, int pageIndex,int pageSize, out int totalRows)
+        public DataTable DistributionAnalyze(OrderDistributionAnalyze model, int pageIndex, int pageSize, out int totalRows)
         {
-            string sql = @"SELECT {0}
-FROM (
-SELECT 
-oth.PubLatitude,oth.PubLongitude,oth.GrabLatitude,oth.GrabLongitude,oth.CompleteLongitude,oth.CompleteLatitude,
-o.Id,OrderNo,businessId,clienterId,PickUpAddress,ReceviceAddress,ReceviceCity ,OrderCommission
-,PubDate,ActualDoneDate,OrderCount,TakeTime,GrabTime, DATEDIFF(MINUTE,o.PubDate,o.ActualDoneDate) AS FinishDateLength,
-round(geography::Point(ISNULL(oth.PubLatitude,0),ISNULL(oth.PubLongitude,0),4326).STDistance(geography::Point(ISNULL(oth.GrabLatitude,0),ISNULL(oth.GrabLongitude,0),4326)),0)  as PubToGrabDistance,
-round(geography::Point(ISNULL(oth.GrabLatitude,0),ISNULL(oth.GrabLongitude,0),4326).STDistance(geography::Point(ISNULL(oth.CompleteLatitude,0),ISNULL(oth.CompleteLongitude,0),4326)),0)  as GrabToCompleteDistance,
-round(geography::Point(ISNULL(oth.PubLatitude,0),ISNULL(oth.PubLongitude,0),4326).STDistance(geography::Point(ISNULL(oth.CompleteLatitude,0),ISNULL(oth.CompleteLongitude,0),4326)),0)  as PubToCompleteDistance
-FROM [order] o(nolock)
-INNER JOIN [OrderOther] oth(nolock) ON o.Id = oth.OrderId) out
-WHERE 1=1";
+            string fields = @"o.Id,
+			    OrderNo,
+			    businessId,
+			    clienterId,
+			    PickUpAddress,
+			    ReceviceAddress,
+			    ReceviceCity ,
+			    PubDate,
+			    ActualDoneDate,
+			    OrderCount,
+			    TakeTime,
+			    GrabTime,
+			    OrderCommission";
 
-            string dataSql = string.Format(sql, " top " + pageSize + " * ");
-            string notTopSql = string.Format(sql, " top " + ((pageIndex - 1) * pageSize).ToString() + " out.Id ");
-            string countSql = string.Format(sql, " count(*) ");
+            string sql = @"SELECT {0} FROM [order] o JOIN [OrderOther] oth ON o.Id = oth.OrderId WHERE 1=1";
+
+            string dataSql = string.Format(sql, " TOP " + pageSize + "  " + fields);
+
+            string notTopSql = string.Format(sql, " TOP " + ((pageIndex - 1) * pageSize).ToString() + " o.Id ");
+            string countSql = string.Format(sql, " COUNT(*) ");
             if (pageIndex > 1)
             {
-                dataSql += " AND out.Id not IN({0})";
-
-                //notTopSql = string.Format(sql, " top " + ((pageIndex - 1) * 20).ToString() + " out.Id ") + " order by out.id desc)";
-                //dataSql += " AND out.Id not IN(" + string.Format(sql, " top " + ((pageIndex - 1) * 20).ToString() + " out.Id ") + " order by out.id desc)";
+                dataSql += " AND o.Id not IN({0})";
             }
 
             IDbParameters parm = DbHelper.CreateDbParameters();
@@ -2792,16 +2793,16 @@ WHERE 1=1";
             {
                 if (!string.IsNullOrWhiteSpace(dataRange[0]))
                 {
-                    dataSql += " and out.FinishDateLength>@FinishDateLength1";
-                    notTopSql += " and out.FinishDateLength>@FinishDateLength1";
-                    countSql += " and out.FinishDateLength>@FinishDateLength1";
+                    dataSql += " and o.FinishDateLength>@FinishDateLength1";
+                    notTopSql += " and o.FinishDateLength>@FinishDateLength1";
+                    countSql += " and o.FinishDateLength>@FinishDateLength1";
                     parm.Add("FinishDateLength1", DbType.Int32, 4).Value = dataRange[0];
                 }
                 if (!string.IsNullOrWhiteSpace(dataRange[1]))
                 {
-                    dataSql += " and out.FinishDateLength<@FinishDateLength2";
-                    notTopSql += " and out.FinishDateLength<@FinishDateLength2";
-                    countSql += " and out.FinishDateLength<@FinishDateLength2";
+                    dataSql += " and o.FinishDateLength<@FinishDateLength2";
+                    notTopSql += " and o.FinishDateLength<@FinishDateLength2";
+                    countSql += " and o.FinishDateLength<@FinishDateLength2";
                     parm.Add("FinishDateLength2", DbType.Int32, 4).Value = dataRange[1];
 
                 }
@@ -2811,16 +2812,16 @@ WHERE 1=1";
             {
                 if (!string.IsNullOrWhiteSpace(grabToComplete[0]))
                 {
-                    dataSql += " and out.GrabToCompleteDistance>@GrabToCompleteDistance1";
-                    notTopSql += " and out.GrabToCompleteDistance>@GrabToCompleteDistance1";
-                    countSql += " and out.GrabToCompleteDistance>@GrabToCompleteDistance1";
+                    dataSql += " and oth.GrabToCompleteDistance>@GrabToCompleteDistance1";
+                    notTopSql += " and oth.GrabToCompleteDistance>@GrabToCompleteDistance1";
+                    countSql += " and oth.GrabToCompleteDistance>@GrabToCompleteDistance1";
                     parm.Add("GrabToCompleteDistance1", DbType.Int32, 4).Value = grabToComplete[0];
                 }
                 if (!string.IsNullOrWhiteSpace(grabToComplete[1]))
                 {
-                    dataSql += " and out.GrabToCompleteDistance<@GrabToCompleteDistance2";
-                    notTopSql += " and out.GrabToCompleteDistance<@GrabToCompleteDistance2";
-                    countSql += " and out.GrabToCompleteDistance<@GrabToCompleteDistance2";
+                    dataSql += " and oth.GrabToCompleteDistance<@GrabToCompleteDistance2";
+                    notTopSql += " and oth.GrabToCompleteDistance<@GrabToCompleteDistance2";
+                    countSql += " and oth.GrabToCompleteDistance<@GrabToCompleteDistance2";
                     parm.Add("GrabToCompleteDistance2", DbType.Int32, 4).Value = grabToComplete[1];
                 }
             }
@@ -2829,17 +2830,17 @@ WHERE 1=1";
             {
                 if (!string.IsNullOrWhiteSpace(pubToComplete[0]))
                 {
-                    dataSql += " and out.PubToCompleteDistance>@PubToCompleteDistance1";
-                    notTopSql += " and out.PubToCompleteDistance>@PubToCompleteDistance1";
-                    countSql += " and out.PubToCompleteDistance>@PubToCompleteDistance1";
+                    dataSql += " and oth.PubToCompleteDistance>@PubToCompleteDistance1";
+                    notTopSql += " and oth.PubToCompleteDistance>@PubToCompleteDistance1";
+                    countSql += " and oth.PubToCompleteDistance>@PubToCompleteDistance1";
                     parm.Add("PubToCompleteDistance1", DbType.Int32, 4).Value = pubToComplete[0];
 
                 }
                 if (!string.IsNullOrWhiteSpace(pubToComplete[1]))
                 {
-                    dataSql += " and out.PubToCompleteDistance<@PubToCompleteDistance2";
-                    notTopSql += " and out.PubToCompleteDistance<@PubToCompleteDistance2";
-                    countSql += " and out.PubToCompleteDistance<@PubToCompleteDistance2";
+                    dataSql += " and oth.PubToCompleteDistance<@PubToCompleteDistance2";
+                    notTopSql += " and oth.PubToCompleteDistance<@PubToCompleteDistance2";
+                    countSql += " and oth.PubToCompleteDistance<@PubToCompleteDistance2";
                     parm.Add("PubToCompleteDistance2", DbType.Int32, 4).Value = pubToComplete[1];
 
                 }
@@ -2849,45 +2850,45 @@ WHERE 1=1";
             {
                 if (!string.IsNullOrWhiteSpace(pubToGrab[0]))
                 {
-                    dataSql += " and out.PubToGrabDistance>@PubToGrabDistance1";
-                    notTopSql += " and out.PubToGrabDistance>@PubToGrabDistance1";
-                    countSql += " and out.PubToGrabDistance>@PubToGrabDistance1";
+                    dataSql += " and oth.PubToGrabDistance>@PubToGrabDistance1";
+                    notTopSql += " and oth.PubToGrabDistance>@PubToGrabDistance1";
+                    countSql += " and oth.PubToGrabDistance>@PubToGrabDistance1";
                     parm.Add("PubToGrabDistance1", DbType.Int32, 4).Value = pubToGrab[0];
                 }
                 if (!string.IsNullOrWhiteSpace(pubToGrab[1]))
                 {
-                    dataSql += " and out.PubToGrabDistance<@PubToGrabDistance2";
-                    notTopSql += " and out.PubToGrabDistance<@PubToGrabDistance2";
-                    countSql += " and out.PubToGrabDistance<@PubToGrabDistance2";
+                    dataSql += " and oth.PubToGrabDistance<@PubToGrabDistance2";
+                    notTopSql += " and oth.PubToGrabDistance<@PubToGrabDistance2";
+                    countSql += " and oth.PubToGrabDistance<@PubToGrabDistance2";
                     parm.Add("PubToGrabDistance2", DbType.Int32, 4).Value = pubToGrab[1];
 
                 }
             }
             if (model.StartDate != null)
             {
-                dataSql += " and out.ActualDoneDate>=@StartDate";
-                notTopSql += " and out.ActualDoneDate>=@StartDate";
-                countSql += " and out.ActualDoneDate>=@StartDate";
+                dataSql += " and o.ActualDoneDate>=@StartDate";
+                notTopSql += " and o.ActualDoneDate>=@StartDate";
+                countSql += " and o.ActualDoneDate>=@StartDate";
                 parm.Add("StartDate", DbType.DateTime).Value = model.StartDate.Value.Date.ToString();
 
             }
             if (model.EndDate != null)
             {
-                dataSql += " and out.ActualDoneDate<=@EndDate";
-                notTopSql += " and out.ActualDoneDate<=@EndDate";
-                countSql += " and out.ActualDoneDate<=@EndDate";
+                dataSql += " and o.ActualDoneDate<=@EndDate";
+                notTopSql += " and o.ActualDoneDate<=@EndDate";
+                countSql += " and o.ActualDoneDate<=@EndDate";
                 parm.Add("EndDate", DbType.DateTime).Value = model.EndDate.Value.Date.ToString();
 
             }
             if (!string.IsNullOrWhiteSpace(model.City))
             {
-                dataSql += " and out.ReceviceCity=@ReceiveCity";
-                notTopSql += " and out.ReceviceCity=@ReceiveCity";
-                countSql += " and out.ReceviceCity=@ReceiveCity";
+                dataSql += " and oth.ReceviceCity=@ReceiveCity";
+                notTopSql += " and oth.ReceviceCity=@ReceiveCity";
+                countSql += " and oth.ReceviceCity=@ReceiveCity";
                 parm.Add("ReceiveCity", DbType.String, 45).Value = model.City;
             }
-            dataSql += " order by out.id desc";
-            notTopSql += " order by out.id desc";
+            dataSql += " order by oth.id desc";
+            notTopSql += " order by oth.id desc";
 
             if (pageIndex > 1)
             {
@@ -2899,6 +2900,147 @@ WHERE 1=1";
 
             return DbHelper.ExecuteDataTable(SuperMan_Read, dataSql, parm);
         }
+        
+//        public DataTable DistributionAnalyze(OrderDistributionAnalyze model, int pageIndex,int pageSize, out int totalRows)
+//        {
+//            string sql = @"SELECT {0}
+//FROM (
+//SELECT 
+//oth.PubLatitude,oth.PubLongitude,oth.GrabLatitude,oth.GrabLongitude,oth.CompleteLongitude,oth.CompleteLatitude,
+//o.Id,OrderNo,businessId,clienterId,PickUpAddress,ReceviceAddress,ReceviceCity ,OrderCommission
+//,PubDate,ActualDoneDate,OrderCount,TakeTime,GrabTime, DATEDIFF(MINUTE,o.PubDate,o.ActualDoneDate) AS FinishDateLength,
+//round(geography::Point(ISNULL(oth.PubLatitude,0),ISNULL(oth.PubLongitude,0),4326).STDistance(geography::Point(ISNULL(oth.GrabLatitude,0),ISNULL(oth.GrabLongitude,0),4326)),0)  as PubToGrabDistance,
+//round(geography::Point(ISNULL(oth.GrabLatitude,0),ISNULL(oth.GrabLongitude,0),4326).STDistance(geography::Point(ISNULL(oth.CompleteLatitude,0),ISNULL(oth.CompleteLongitude,0),4326)),0)  as GrabToCompleteDistance,
+//round(geography::Point(ISNULL(oth.PubLatitude,0),ISNULL(oth.PubLongitude,0),4326).STDistance(geography::Point(ISNULL(oth.CompleteLatitude,0),ISNULL(oth.CompleteLongitude,0),4326)),0)  as PubToCompleteDistance
+//FROM [order] o(nolock)
+//INNER JOIN [OrderOther] oth(nolock) ON o.Id = oth.OrderId) out
+//WHERE 1=1";
+
+//            string dataSql = string.Format(sql, " top " + pageSize + " * ");
+//            string notTopSql = string.Format(sql, " top " + ((pageIndex - 1) * pageSize).ToString() + " out.Id ");
+//            string countSql = string.Format(sql, " count(*) ");
+//            if (pageIndex > 1)
+//            {
+//                dataSql += " AND out.Id not IN({0})";
+
+//                //notTopSql = string.Format(sql, " top " + ((pageIndex - 1) * 20).ToString() + " out.Id ") + " order by out.id desc)";
+//                //dataSql += " AND out.Id not IN(" + string.Format(sql, " top " + ((pageIndex - 1) * 20).ToString() + " out.Id ") + " order by out.id desc)";
+//            }
+
+//            IDbParameters parm = DbHelper.CreateDbParameters();
+
+//            string[] dataRange = model.GetDataRange();
+//            if (dataRange.Length > 1)
+//            {
+//                if (!string.IsNullOrWhiteSpace(dataRange[0]))
+//                {
+//                    dataSql += " and out.FinishDateLength>@FinishDateLength1";
+//                    notTopSql += " and out.FinishDateLength>@FinishDateLength1";
+//                    countSql += " and out.FinishDateLength>@FinishDateLength1";
+//                    parm.Add("FinishDateLength1", DbType.Int32, 4).Value = dataRange[0];
+//                }
+//                if (!string.IsNullOrWhiteSpace(dataRange[1]))
+//                {
+//                    dataSql += " and out.FinishDateLength<@FinishDateLength2";
+//                    notTopSql += " and out.FinishDateLength<@FinishDateLength2";
+//                    countSql += " and out.FinishDateLength<@FinishDateLength2";
+//                    parm.Add("FinishDateLength2", DbType.Int32, 4).Value = dataRange[1];
+
+//                }
+//            }
+//            string[] grabToComplete = model.GetGrabToComplete();
+//            if (grabToComplete.Length > 1)
+//            {
+//                if (!string.IsNullOrWhiteSpace(grabToComplete[0]))
+//                {
+//                    dataSql += " and out.GrabToCompleteDistance>@GrabToCompleteDistance1";
+//                    notTopSql += " and out.GrabToCompleteDistance>@GrabToCompleteDistance1";
+//                    countSql += " and out.GrabToCompleteDistance>@GrabToCompleteDistance1";
+//                    parm.Add("GrabToCompleteDistance1", DbType.Int32, 4).Value = grabToComplete[0];
+//                }
+//                if (!string.IsNullOrWhiteSpace(grabToComplete[1]))
+//                {
+//                    dataSql += " and out.GrabToCompleteDistance<@GrabToCompleteDistance2";
+//                    notTopSql += " and out.GrabToCompleteDistance<@GrabToCompleteDistance2";
+//                    countSql += " and out.GrabToCompleteDistance<@GrabToCompleteDistance2";
+//                    parm.Add("GrabToCompleteDistance2", DbType.Int32, 4).Value = grabToComplete[1];
+//                }
+//            }
+//            string[] pubToComplete = model.GetPubToComplete();
+//            if (pubToComplete.Length > 1)
+//            {
+//                if (!string.IsNullOrWhiteSpace(pubToComplete[0]))
+//                {
+//                    dataSql += " and out.PubToCompleteDistance>@PubToCompleteDistance1";
+//                    notTopSql += " and out.PubToCompleteDistance>@PubToCompleteDistance1";
+//                    countSql += " and out.PubToCompleteDistance>@PubToCompleteDistance1";
+//                    parm.Add("PubToCompleteDistance1", DbType.Int32, 4).Value = pubToComplete[0];
+
+//                }
+//                if (!string.IsNullOrWhiteSpace(pubToComplete[1]))
+//                {
+//                    dataSql += " and out.PubToCompleteDistance<@PubToCompleteDistance2";
+//                    notTopSql += " and out.PubToCompleteDistance<@PubToCompleteDistance2";
+//                    countSql += " and out.PubToCompleteDistance<@PubToCompleteDistance2";
+//                    parm.Add("PubToCompleteDistance2", DbType.Int32, 4).Value = pubToComplete[1];
+
+//                }
+//            }
+//            string[] pubToGrab = model.GetPubToGrabDistance();
+//            if (pubToGrab.Length > 1)
+//            {
+//                if (!string.IsNullOrWhiteSpace(pubToGrab[0]))
+//                {
+//                    dataSql += " and out.PubToGrabDistance>@PubToGrabDistance1";
+//                    notTopSql += " and out.PubToGrabDistance>@PubToGrabDistance1";
+//                    countSql += " and out.PubToGrabDistance>@PubToGrabDistance1";
+//                    parm.Add("PubToGrabDistance1", DbType.Int32, 4).Value = pubToGrab[0];
+//                }
+//                if (!string.IsNullOrWhiteSpace(pubToGrab[1]))
+//                {
+//                    dataSql += " and out.PubToGrabDistance<@PubToGrabDistance2";
+//                    notTopSql += " and out.PubToGrabDistance<@PubToGrabDistance2";
+//                    countSql += " and out.PubToGrabDistance<@PubToGrabDistance2";
+//                    parm.Add("PubToGrabDistance2", DbType.Int32, 4).Value = pubToGrab[1];
+
+//                }
+//            }
+//            if (model.StartDate != null)
+//            {
+//                dataSql += " and out.ActualDoneDate>=@StartDate";
+//                notTopSql += " and out.ActualDoneDate>=@StartDate";
+//                countSql += " and out.ActualDoneDate>=@StartDate";
+//                parm.Add("StartDate", DbType.DateTime).Value = model.StartDate.Value.Date.ToString();
+
+//            }
+//            if (model.EndDate != null)
+//            {
+//                dataSql += " and out.ActualDoneDate<=@EndDate";
+//                notTopSql += " and out.ActualDoneDate<=@EndDate";
+//                countSql += " and out.ActualDoneDate<=@EndDate";
+//                parm.Add("EndDate", DbType.DateTime).Value = model.EndDate.Value.Date.ToString();
+
+//            }
+//            if (!string.IsNullOrWhiteSpace(model.City))
+//            {
+//                dataSql += " and out.ReceviceCity=@ReceiveCity";
+//                notTopSql += " and out.ReceviceCity=@ReceiveCity";
+//                countSql += " and out.ReceviceCity=@ReceiveCity";
+//                parm.Add("ReceiveCity", DbType.String, 45).Value = model.City;
+//            }
+//            dataSql += " order by out.id desc";
+//            notTopSql += " order by out.id desc";
+
+//            if (pageIndex > 1)
+//            {
+//                dataSql = string.Format(dataSql, notTopSql);
+//            }
+
+//            object count = DbHelper.ExecuteScalar(SuperMan_Read, countSql, parm);
+//            totalRows = Convert.ToInt32(count);
+
+//            return DbHelper.ExecuteDataTable(SuperMan_Read, dataSql, parm);
+//        }
         /// <summary>
         /// 订单中所有城市去重列表
         /// </summary>
