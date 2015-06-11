@@ -153,6 +153,8 @@
     }
     //保存绑定
     $("#btnSave").on('click', function () {
+        if (OverallS.length < 1) return;
+
         var businessId = $('#businessId').val();
         var paramaters = {
             "BusinessId": businessId,
