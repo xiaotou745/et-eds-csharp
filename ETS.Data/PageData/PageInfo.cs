@@ -27,6 +27,27 @@ namespace ETS.Data.PageData
             _Index = index;
             _totalPage = totalPage;
         }
+
+  
+        /// <summary>
+        /// 构造器
+        /// </summary>
+        /// <param name="Count">总记录数</param>
+        /// <param name="index">页码</param>
+        /// <param name="dt">当前页的记录</param>
+        /// <param name="totalPage">总页数</param>
+        /// <param name="pageSize">页容量</param>
+        public PageInfo(int Count, int index, IList<T> dt, int totalPage,int pageSize)
+        {
+            _dt = dt;
+            if (_dt == null)
+                _dt = new List<T>();
+            _Count = Count;
+            _Index = index;
+            _totalPage = totalPage;
+            _pageSize = pageSize;
+        }
+
         /// <summary>
         /// 总记录数
         /// </summary>
@@ -64,8 +85,17 @@ namespace ETS.Data.PageData
         {
             get
             {
-                //return _Count % _pageSize == 0 ? _Count / _pageSize : (_Count / _pageSize) + 1;
                 return _totalPage;
+            }
+        }
+        /// <summary>
+        /// 页容量
+        /// </summary>
+        public int PageSize
+        {
+            get
+            {
+                return _pageSize;
             }
         }
     }

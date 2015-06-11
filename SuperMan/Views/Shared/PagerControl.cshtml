@@ -5,6 +5,7 @@
     int all = Model.All; //总记录数
     int index = Model.Index; //页码
     int recordsCount = Model.Records.Count; //本页容量
+    int pageSize = Model.PageSize;
 }
 <link rel="stylesheet" type="text/css" href="~/Content/pagestyle/pagerstyles.css" />
 <div>
@@ -13,7 +14,7 @@
             共 @pageCount 页 @all 条记录，当前为第 @index 页,本页 @recordsCount 条
         </span>
     </div>
-    @Ajax.Pager(all, ETS.Const.SystemConst.PageSize, index, (string)ViewBag.ActionName, null, null,
+    @Ajax.Pager(all, pageSize, index, (string)ViewBag.ActionName, null, null,
           new PagerOptions
           {
               PageIndexParameterName = "pageindex",

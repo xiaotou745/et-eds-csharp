@@ -410,7 +410,8 @@ namespace SuperMan.Controllers
                 iBusinessProvider.GetBusinessBindClienterQty(ParseHelper.ToInt(businessId));
             var criteria = new BusinessSearchCriteria()
             {
-                BusinessId = ParseHelper.ToInt(businessId)
+                BusinessId = ParseHelper.ToInt(businessId),
+                PageSize = 20
             };
             ViewBag.businessClienterRelationList = iBusinessProvider.GetBusinessClienterRelationList(criteria);
             return View(businessDetailModel);
@@ -426,6 +427,7 @@ namespace SuperMan.Controllers
         {
             var criteria = new BusinessSearchCriteria();
             TryUpdateModel(criteria);
+            criteria.PageSize = 20;
             ViewBag.businessClienterRelationList = iBusinessProvider.GetBusinessClienterRelationList(criteria);
             return PartialView("_ClienterBindList");
         }
