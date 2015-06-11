@@ -85,7 +85,7 @@ namespace SuperManWebApi
                 Task.Factory.StartNew(() =>
                 {
                     stop.Stop();
-                    LogHelper.LogWriter("接口" + actionExecutedContext.Request.RequestUri + "请求时间：" + stop.Elapsed);
+                    LogHelper.LogWriter("接口" + actionExecutedContext.Request.RequestUri + "请求时间：" + stop.ElapsedMilliseconds);
                     stop.Reset();
                 });
             }
@@ -111,7 +111,7 @@ namespace SuperManWebApi
                 Task.Factory.StartNew(() =>
                 {
                     stop.Stop();
-                    ETS.Util.LogHelper.LogWriter("接口" + filterContext.Request.RequestUri + "请求时间：" + stop.Elapsed);
+                    ETS.Util.LogHelper.LogWriter("接口" + filterContext.Request.RequestUri + "请求时间：" + stop.ElapsedMilliseconds);
                     stop.Reset();
                 });
             }
