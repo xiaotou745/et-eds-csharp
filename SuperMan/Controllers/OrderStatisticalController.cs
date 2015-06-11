@@ -44,7 +44,7 @@ namespace SuperMan.Controllers
             IList<DistributionAnalyzeResult> list = iOrderProvider.DistributionAnalyze(new OrderDistributionAnalyze(), 1, 15, out totalRows);
 
             int pagecount = (int)Math.Ceiling(totalRows / 15d);
-            var pageinfo = new PageInfo<DistributionAnalyzeResult>(totalRows, 1, list, pagecount);
+            var pageinfo = new PageInfo<DistributionAnalyzeResult>(totalRows, 1, list, pagecount,15);
 
             ViewBag.Cities = iOrderProvider.OrderReceviceCity();
 
@@ -61,7 +61,7 @@ namespace SuperMan.Controllers
             IList<DistributionAnalyzeResult> list = iOrderProvider.DistributionAnalyze(model, model.PageIndex, 15, out totalRows);
 
             int pagecount = (int)Math.Ceiling(totalRows / 15d);
-            var pageinfo = new PageInfo<DistributionAnalyzeResult>(totalRows, model.PageIndex, list, pagecount);
+            var pageinfo = new PageInfo<DistributionAnalyzeResult>(totalRows, model.PageIndex, list, pagecount,15);
             return PartialView("_PartialDistributionAnalyze", pageinfo);
         }
         public ActionResult DistributionAnalyzeExport(OrderDistributionAnalyze model)

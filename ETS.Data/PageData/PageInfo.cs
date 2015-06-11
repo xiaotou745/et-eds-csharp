@@ -18,15 +18,15 @@ namespace ETS.Data.PageData
         /// </summary>
         /// <param name="Count">总记录数</param>
         /// <param name="dt">当前页的记录</param>
-        public PageInfo(int Count, int index, IList<T> dt, int totalPage)
-        {
-            _dt = dt;
-            if (_dt == null)
-                _dt = new List<T>();
-            _Count = Count;
-            _Index = index;
-            _totalPage = totalPage;
-        }
+        //public PageInfo(int Count, int index, IList<T> dt, int totalPage)
+        //{
+        //    _dt = dt;
+        //    if (_dt == null)
+        //        _dt = new List<T>();
+        //    _Count = Count;
+        //    _Index = index;
+        //    _totalPage = totalPage;
+        //}
 
   
         /// <summary>
