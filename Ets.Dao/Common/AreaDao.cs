@@ -149,7 +149,9 @@ where   p.name =@ProvinceName
                         JiBie = 1
                FROM     dbo.region a ( NOLOCK )
                WHERE    a.Depth = 2
-                        AND a.NationalCode IN ( {0} )
+                        AND a.NationalCode IN ( 
+                      SELECT code FROM dbo.PublicProvinceCity ppc2(nolock) where parentid=0 and IsPublic=1
+                )
              )
     SELECT  t.NationalCode ,
             t.Name ,
@@ -175,11 +177,19 @@ where   p.name =@ProvinceName
               FROM      t
                         LEFT JOIN dbo.region (NOLOCK) AS b ON t.Id = b.Fid
             ) t1
-            LEFT JOIN dbo.region (NOLOCK) AS c ON t1.Id = c.Fid", Config.OpenCityCode);
+            LEFT JOIN dbo.region (NOLOCK) AS c ON t1.Id = c.Fid");
 
 
             DataSet ds = DbHelper.ExecuteDataset(SuperMan_Read, sql);
-            return MapRows<AreaModelTranslate>(DataTableHelper.GetTable(ds));
+            IList<AreaModelTranslate> list= MapRows<AreaModelTranslate>(DataTableHelper.GetTable(ds));
+            //AreaModelTranslate beijing = new AreaModelTranslate() {
+            //    Code = 110100,
+            //    JiBie=2,
+            //    Name="北京市",
+            //    NationalCode=
+
+            //};
+            return list;
         }
         /// <summary>
         /// 获取开放城市列表（非分页）

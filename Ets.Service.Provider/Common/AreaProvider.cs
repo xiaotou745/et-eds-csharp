@@ -206,8 +206,8 @@ namespace Ets.Service.Provider.Common
             AreaModelTranslate resultAreaModel = new AreaModelTranslate();
             if (from.JiBie == 2)
             {
-                if (from.Name.Contains("北京")) { from.Name = "北京城区"; }
-                if (from.Name.Contains("上海")) { from.Name = "上海城区"; }
+                if (from.Name.Contains("北京")) { from.Name = "北京市"; }
+                if (from.Name.Contains("上海")) { from.Name = "上海市"; }
             }
             areaModel = cacheAreaModelList.FirstOrDefault(s => s.Name == from.Name.Trim() && s.JiBie == from.JiBie);
 
