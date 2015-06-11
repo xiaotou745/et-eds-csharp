@@ -41,7 +41,7 @@ namespace SuperMan.Controllers
         public ActionResult DistributionAnalyze()
         {
             int totalRows;
-            IList<DistributionAnalyzeResult> list = iOrderProvider.DistributionAnalyze(new OrderDistributionAnalyze(), 1,20, out totalRows);
+            IList<DistributionAnalyzeResult> list = iOrderProvider.DistributionAnalyze(new OrderDistributionAnalyze(), 1, 15, out totalRows);
 
             int pagecount = (int)Math.Ceiling(totalRows / 15d);
             var pageinfo = new PageInfo<DistributionAnalyzeResult>(totalRows, 1, list, pagecount);

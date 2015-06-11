@@ -3058,7 +3058,7 @@ where c.Id=@ClienterId;");
         /// <returns></returns>
         public IList<string> OrderReceviceCity()
         {
-            string sql = "select distinct  ReceviceCity from [order] where ReceviceCity is not null";
+            string sql = "select distinct  ReceviceCity from [order](nolock) where ReceviceCity is not null";
 
             IList<string> cities = new List<string>();
             IDataReader reader = null;
