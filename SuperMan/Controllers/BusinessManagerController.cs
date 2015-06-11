@@ -635,7 +635,6 @@ namespace SuperMan.Controllers
                                                     });
                     if (model == null)//插入
                     {                               
-
                         iBusinessProvider.AddClienterBind(new ClienterBindOptionLogModel { 
                                                     BusinessId=Convert.ToInt32(businessId),
                                                     ClienterId=clienterId,
