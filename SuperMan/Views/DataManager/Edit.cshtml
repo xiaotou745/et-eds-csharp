@@ -1,0 +1,46 @@
+﻿@model Ets.Model.DataModel.Common.ExportSqlManage
+@{
+    Layout = null;
+    string title = Model.Id == 0 ? "新增模板" : "编辑模板";
+    string button = Model.Id == 0 ? "btnAddSure" : "btnEditSure";
+    Dictionary<int,string> select = new Dictionary<int, string>();
+    select.Add(0, "有效");
+    select.Add(1, "无效");
+}
+<div class="add-openbox add-form" id="AddDivShow" style="width:auto;">
+    <h2>
+        <p>@title</p>
+    </h2>
+    <fieldset style="padding-top:15px;">
+        <div class="control-group">
+            <label>模板名称<span style="color:red">*</span></label>
+            <input name="Name" id="_Name" type="text" value="@Model.Name" />
+        </div>
+        <div class="control-group">
+            <label>执行时间<span style="color:red">*</span></label>
+            <input name="Executetime" id="_Executetime" type="text" value="@Model.Executetime" />
+        </div>
+        <div class="control-group">
+            <label>是否生效<span style="color:red">*</span></label>
+            @Html.DropDownList("IsEnable", new SelectList(select, "key", "value",Model.IsEnable),new { id = "_IsEnable" })
+            @*<select name="IsEnable" id="_IsEnable">
+                <option value="0">有效</option>
+                <option value="1">无效</option>
+            </select>*@
+        </div>
+        <div class="control-group">
+            <label>收件人&nbsp;&nbsp;<span style="color:red">*</span></label>
+            <input name="ReceiveEmail" id="_ReceiveEmail" type="text" value="@Model.ReceiveEmail" />
+            <label><span style="color:red">(多个收件人以";"分隔)</span></label>
+        </div>
+        <div class="control-group">
+            <label>sql语句<span style="color:red">*</span></label>
+            <textarea name="SqlText" id="_SqlText" style=" width:600px;height:500px;">@Model.SqlText</textarea>
+        </div>
+        <input type="hidden" value="@Model.Id" name="Id" id="_Id" />
+    </fieldset>
+    <p class="btnbox">
+        <input value="确认" type="button" id="@button" class="yesBtn" />
+        <input value="关闭" type="button" id="btnCanel" class="qxBtn" />
+    </p>
+</div>

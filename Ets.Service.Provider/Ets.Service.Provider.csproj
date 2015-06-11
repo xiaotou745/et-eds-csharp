@@ -68,6 +68,7 @@
     <Compile Include="Common\ApiVersionProvider.cs" />
     <Compile Include="Common\AreaProvider.cs" />
     <Compile Include="Common\BaiDuHelper.cs" />
+    <Compile Include="Common\ExportSqlManageProvider.cs" />
     <Compile Include="Common\GlobalConfigProvider.cs" />
     <Compile Include="Common\GroupProvider.cs" />
     <Compile Include="Common\HomeCountProvider.cs" />

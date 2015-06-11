@@ -215,6 +215,7 @@
     <Compile Include="Controllers\AuthorityManagerController.cs" />
     <Compile Include="Controllers\BusinessController.cs" />
     <Compile Include="Controllers\BusinessManagerController.cs" />
+    <Compile Include="Controllers\DataManagerController.cs" />
     <Compile Include="Controllers\DownloadController.cs" />
     <Compile Include="Controllers\StatisticalController.cs" />
     <Compile Include="Controllers\StrategyManagerController.cs" />
@@ -507,6 +508,7 @@
     <Content Include="Scripts\usaarea.retriever.js" />
     <Content Include="Scripts\view\authoritylist.js" />
     <Content Include="Scripts\view\categorylist.js" />
+    <Content Include="Scripts\view\DataManagerIndex.js" />
     <Content Include="Scripts\view\supplierAccountAdd.js" />
     <Content Include="Scripts\view\supplierAccountList.js" />
     <Content Include="Scripts\view\supplierEdit.js" />
@@ -626,6 +628,9 @@
     <Content Include="Views\BusinessManager\ClienterBatchBind.cshtml" />
     <Content Include="Views\MenuManager\_AccountManagerList.cshtml" />
     <Content Include="Views\BusinessCommission\_BusinessCommissionList.cshtml" />
+    <Content Include="Views\DataManager\Edit.cshtml" />
+    <Content Include="Views\DataManager\Index.cshtml" />
+    <Content Include="Views\DataManager\PostIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
