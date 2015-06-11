@@ -24,6 +24,7 @@ using System.IO;
 using ETS.Util;
 using ETS.Data.Generic;
 using Ets.Model.DataModel.Finance;
+using System.Linq;
 namespace Ets.Dao.Clienter
 {
 
@@ -1048,6 +1049,25 @@ where  Id=@Id ";
                 model = MapRows<clienter>(dt)[0];
             }
             return model;
+        }
+        public IDictionary<int, clienter> GetByIds(IList<int> ids)
+        {
+            const string querysql = @"
+select  Id,PhoneNo,LoginName,recommendPhone,Password,TrueName,IDCard,PicWithHandUrl,PicUrl,[Status],AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode,AreaCode,CityCode,Province,BussinessID,WorkStatus,AllowWithdrawPrice,HasWithdrawPrice
+from  clienter (nolock)
+where  Id IN({0}) ";
+
+            if (ids == null || ids.Count == 0)
+            {
+                return new Dictionary<int, clienter>();
+            }
+           return DbHelper.QueryWithRowMapperDelegate<clienter>(SuperMan_Read, string.Format(querysql,string.Join(",", ids)), datarow => new clienter()
+            {
+                Id = ParseHelper.ToInt(datarow["Id"]),
+                TrueName = ParseHelper.ToString(datarow["TrueName"]),
+                PhoneNo = ParseHelper.ToString(datarow["PhoneNo"])
+
+            }).ToDictionary(m => m.Id);
         }
 
         /// <summary>

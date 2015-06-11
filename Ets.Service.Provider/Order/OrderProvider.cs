@@ -1759,6 +1759,31 @@ namespace Ets.Service.Provider.Order
         {
             totalRows = 0;
             DataTable dt = orderDao.DistributionAnalyze(model, pageIndex,pageSize, out totalRows);
+
+            List<int> clienterIds = new List<int>();
+            List<int> businessIds = new List<int>();
+            foreach (DataRow item in dt.Rows)
+            {
+                int clienterid = ParseHelper.ToInt(item["clienterId"], 0);
+                if (clienterid == 0)
+                {
+                    continue;
+                }
+                clienterIds.Add(clienterid);
+
+                int businessid = ParseHelper.ToInt(item["businessId"],0);
+                if (businessid == 0)
+                {
+                    continue;
+                }
+                businessIds.Add(businessid);
+            }
+            clienterIds = clienterIds.Distinct().ToList();
+            businessIds = businessIds.Distinct().ToList();
+
+            IDictionary<int,Business> businessDic = _businessDao.GetByIds(businessIds);
+            IDictionary<int, clienter> clienterDic = clienterDao.GetByIds(clienterIds);
+
             IList<DistributionAnalyzeResult> list = new List<DistributionAnalyzeResult>();
             foreach (DataRow item in dt.Rows)
             {
@@ -1766,50 +1791,34 @@ namespace Ets.Service.Provider.Order
                 {
                     Id = int.Parse(item["Id"].ToString()),
                     OrderNo = item["OrderNo"].ToString(),
-                    OrderCount = Int32.Parse(item["OrderCount"].ToString()),
-                    ActualDoneDate = GetDate(item["ActualDoneDate"].ToString()),
-                    PubDate = GetDate(item["PubDate"].ToString()),
-                    GrabTime = GetDate(item["GrabTime"].ToString()),
-                    PickUpAddress = item["PickUpAddress"].ToString(),
-                    ReceviceAddress = item["ReceviceAddress"].ToString(),
-                    TakeTime = GetDate(item["TakeTime"].ToString()),
+                    OrderCount = ParseHelper.ToInt(item["OrderCount"],0),
+                    ActualDoneDate = ParseHelper.ToDatetime(item["ActualDoneDate"]),
+                    PubDate = ParseHelper.ToDatetime(item["PubDate"]),
+                    GrabTime = ParseHelper.ToDatetime(item["GrabTime"]),
+                    PickUpAddress = ParseHelper.ToString(item["PickUpAddress"]),
+                    ReceviceAddress = ParseHelper.ToString(item["ReceviceAddress"]),
+                    TakeTime = ParseHelper.ToDatetime(item["TakeTime"]),
                     ReceviceCity = item["ReceviceCity"].ToString(),
-                    TaskMoney = Decimal.Parse(item["OrderCommission"].ToString())
+                    TaskMoney = ParseHelper.ToDecimal(item["OrderCommission"],0)
                 };
-                int businessId = GetInt(item["businessId"].ToString());
-                BusListResultModel business = _businessDao.GetBusiness(businessId);
-                if (business != null)
+
+                int businessId = ParseHelper.ToInt(item["businessId"]);
+                if (businessDic.ContainsKey(businessId))
                 {
-                    data.Business = business.Address;
-                    data.BusinessPhone = business.PhoneNo;
+                    data.Business = businessDic[businessId].Address;
+                    data.BusinessPhone = businessDic[businessId].PhoneNo;
                 }
 
-                int supperId = GetInt(item["clienterId"].ToString());
-                clienter clienter = clienterDao.GetById(supperId);
-                if (clienter != null)
+                int supperId = ParseHelper.ToInt(item["clienterId"]);
+
+                if (clienterDic.ContainsKey(supperId))
                 {
-                    data.clienter = clienter.TrueName;
-                    data.clienterPhone = clienter.PhoneNo;
+                    data.clienter = clienterDic[supperId].TrueName;
+                    data.clienterPhone = clienterDic[supperId].PhoneNo;
                 }
                 list.Add(data);
             }
             return list;
-        }
-        private int GetInt(string number)
-        {
-            if (string.IsNullOrWhiteSpace(number))
-            {
-                return 0;
-            }
-            return int.Parse(number);
-        }
-        private DateTime? GetDate(string datetime)
-        {
-            if (string.IsNullOrWhiteSpace(datetime))
-            {
-                return null;
-            }
-            return DateTime.Parse(datetime);
         }
         /// <summary>
         /// 获得订单去重城市列表

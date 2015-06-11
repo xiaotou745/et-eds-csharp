@@ -2786,7 +2786,7 @@ where c.Id=@ClienterId;");
 			    GrabTime,
 			    OrderCommission";
 
-            string sql = @"SELECT {0} FROM [order] o JOIN [OrderOther] oth ON o.Id = oth.OrderId WHERE 1=1";
+            string sql = @"SELECT {0} FROM [order] o JOIN [OrderOther] oth ON o.Id = oth.OrderId WHERE o.Status=1 ";
 
             string dataSql = string.Format(sql, " TOP " + pageSize + "  " + fields);
 
