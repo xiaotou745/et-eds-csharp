@@ -127,5 +127,10 @@ namespace Ets.Model.Common
         public const string PublishOrder = "任务已发布";
         public const string OrderHadRush = "任务已被抢";
         public const string OrderFinish = "任务已完成";
+
+        public const string ReceviceAddress = "附近3公里左右，由商户指定";
+
+        
+
     }
 }
