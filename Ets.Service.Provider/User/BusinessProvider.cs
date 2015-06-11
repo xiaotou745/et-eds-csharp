@@ -117,9 +117,9 @@ namespace Ets.Service.Provider.User
         /// <param name="phoneno"></param>
         /// <param name="authorityCityNameListStr"></param>
         /// <returns></returns>
-        public ResultInfo<IList<BusinessCommissionModel>> GetBusinessCommission(DateTime t1, DateTime t2, string name, string phoneno, int groupid, string BusinessCity, string authorityCityNameListStr)
+        public ResultInfo<IList<BusinessCommissionDM>> GetBusinessCommission(DateTime t1, DateTime t2, string name, string phoneno, int groupid, string BusinessCity, string authorityCityNameListStr)
         {
-            var result = new ResultInfo<IList<BusinessCommissionModel>> { Data = null, Result = false, Message = "" };
+            var result = new ResultInfo<IList<BusinessCommissionDM>> { Data = null, Result = false, Message = "" };
             try
             {
                 if (t1 > t2)
@@ -208,8 +208,10 @@ namespace Ets.Service.Provider.User
             strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.Amount));
             strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.OrderCount));
             strBuilder.AppendLine(string.Format("<td>{0}%</td>", paraModel.BusinessCommission));
-            strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.T1.ToShortDateString()));
-            strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.T2.ToShortDateString()));
+            strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.T1));
+            strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.T2));
+            //strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.T1.ToShortDateString()));
+            //strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.T2.ToShortDateString()));
             strBuilder.AppendLine(string.Format("<td>{0}</td></tr>", paraModel.TotalAmount));
             strBuilder.AppendLine("</table>");
             return strBuilder.ToString();
@@ -244,29 +246,29 @@ namespace Ets.Service.Provider.User
             {
                 returnEnum = CustomerRegisterStatusEnum.PhoneNumberRegistered;//判断该手机号是否已经注册过
             }
-            else if (string.IsNullOrEmpty(model.city) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
-                returnEnum = CustomerRegisterStatusEnum.cityIdEmpty;
+            //else if (string.IsNullOrEmpty(model.city) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
+            //    returnEnum = CustomerRegisterStatusEnum.cityIdEmpty;
             if (returnEnum != null)
             {
                 return ResultModel<BusiRegisterResultModel>.Conclude(returnEnum);
             }
 
             //转换 编码
-            try
-            {
-                if (!string.IsNullOrWhiteSpace(model.city))
-                {
-                    Model.DomainModel.Area.AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new Model.DomainModel.Area.AreaModelTranslate() { Name = model.city.Trim(), JiBie = 2 });
-                    if (areaModel != null)
-                    {
-                        model.CityId = areaModel.NationalCode.ToString();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                LogHelper.LogWriter("商户注册异常转换区域：", new { ex = ex });
-            }
+            //try
+            //{
+            //    if (!string.IsNullOrWhiteSpace(model.city))
+            //    {
+            //        Model.DomainModel.Area.AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new Model.DomainModel.Area.AreaModelTranslate() { Name = model.city.Trim(), JiBie = 2 });
+            //        if (areaModel != null)
+            //        {
+            //            model.CityId = areaModel.NationalCode.ToString();
+            //        }
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    LogHelper.LogWriter("商户注册异常转换区域：", new { ex = ex });
+            //}
 
             BusiRegisterResultModel resultModel = new BusiRegisterResultModel()
             {
@@ -660,10 +662,21 @@ namespace Ets.Service.Provider.User
             {
                 return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.InvalidUserId);
             }
-            if (busi.Status == ConstValues.BUSINESS_NOADDRESS)  //如果商户的状态 为未审核未添加地址，则修改商户状态为 未审核
+            //if (busi.Status == ConstValues.BUSINESS_NOADDRESS)  //如果商户的状态 为未审核未添加地址，则修改商户状态为 未审核
+            //{
+            //    business.Status = ConstValues.BUSINESS_NOAUDIT;
+            //}
+            business.Status = Convert.ToByte(GetBussinessStatus.Auditing.GetHashCode());//审核中
+
+            #region 判断是否可以一键发单
+            business.OneKeyPubOrder = 1;//默认为全部允许一键发单
+            Business checkBusiness = dao.GetById(business.Id);
+            if (string.IsNullOrEmpty(checkBusiness.City) && (model.City == "北京市" || model.City == "上海市"))
             {
-                business.Status = ConstValues.BUSINESS_NOAUDIT;
+                //如果城市是空或北京或上海，则不允许一键发单
+                business.OneKeyPubOrder = 0;
             }
+            #endregion
 
             int upResult = dao.UpdateBusinessInfoB(business);
             var redis = new ETS.NoSql.RedisCache.RedisCache();
@@ -1187,7 +1200,44 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public bool ModifyClienterBind(ClienterBindOptionLogModel model)
         {
-            return dao.ModifyClienterBind(model);
+            var reg = false;
+            using (var tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (dao.ModifyClienterBind(model))
+                {
+                    if (model.IsBind == 1)//绑定
+                    {
+                        if (dao.UpdateBusinessIsBind(model.BusinessId, 1))
+                        {
+                            if (dao.UpdateClienterIsBind(model.ClienterId, 1))
+                            {
+                                reg = true;
+                                tran.Complete();
+                            }
+                        }
+                    }
+                    else//解绑
+                    {
+                        if (dao.UpdateClienterIsBind(model.ClienterId, 0))
+                        {
+                            if (dao.GetBusinessBindClienterQty(model.BusinessId) == 0)
+                            {
+                                if (dao.UpdateBusinessIsBind(model.BusinessId, 0))
+                                {
+                                    reg = true;
+                                    tran.Complete();
+                                }
+                            }
+                            else
+                            {
+                                reg = true;
+                                tran.Complete();
+                            }
+                        }
+                    }
+                }
+            }
+            return reg;
         }
 
         /// <summary>
@@ -1198,7 +1248,23 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public bool RemoveClienterBind(ClienterBindOptionLogModel model)
         {
-            return dao.RemoveClienterBind(model);
+            var reg = false;
+            using (var tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (dao.RemoveClienterBind(model))
+                {
+                    if (dao.UpdateBusinessIsBind(model.BusinessId, 0))
+                    {
+                        if (dao.UpdateClienterIsBind(model.ClienterId, 0))
+                        {
+                            reg = true;
+                            tran.Complete();
+                        }
+                    }
+
+                }
+            }
+            return reg;
         }
 
         /// <summary>
@@ -1209,7 +1275,23 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public bool AddClienterBind(ClienterBindOptionLogModel model)
         {
-            return dao.AddClienterBind(model);
+            var reg = false;
+            using (var tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (dao.AddClienterBind(model))
+                {
+                    if (dao.UpdateBusinessIsBind(model.BusinessId, 1))
+                    {
+                        if (dao.UpdateClienterIsBind(model.ClienterId, 1))
+                        {
+                            reg = true;
+                            tran.Complete();
+                        }
+                    }
+
+                }
+            }
+            return reg;
         }
 
         /// <summary>
@@ -1221,6 +1303,16 @@ namespace Ets.Service.Provider.User
         public bool CheckHaveBind(ClienterBindOptionLogModel model)
         {
             return dao.CheckHaveBind(model);
+        }
+        /// <summary>
+        /// 查询商户结算列表（分页）
+        /// danny-20150609
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<BusinessCommissionModel> GetBusinessCommissionOfPaging(Ets.Model.ParameterModel.Bussiness.BusinessCommissionSearchCriteria criteria)
+        {
+            return dao.GetBusinessCommissionOfPaging<BusinessCommissionModel>(criteria);
         }
     }
 }

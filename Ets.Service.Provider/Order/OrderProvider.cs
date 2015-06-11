@@ -1521,6 +1521,7 @@ namespace Ets.Service.Provider.Order
             orderDM.PickUpAddress = order.PickUpAddress;
             orderDM.businessPhone = order.BusinessPhone;
             orderDM.businessPhone2 = order.BusinessPhone2;
+            orderDM.Landline= order.Landline;
             orderDM.BusinessAddress = order.BusinessAddress;
             orderDM.ReceviceName = order.ReceviceName;
             orderDM.receviceCity = order.ReceviceCity;
@@ -1544,6 +1545,8 @@ namespace Ets.Service.Provider.Order
             orderDM.businessId = ParseHelper.ToInt(order.businessId, 0);
             orderDM.TotalAmount = order.TotalAmount;
             orderDM.MealsSettleMode = order.MealsSettleMode;
+            orderDM.Longitude = order.Longitude;
+            orderDM.Latitude = order.Latitude;
             orderDM.ClienterId = ParseHelper.ToInt(order.clienterId);
 
             #region 是否允许修改小票
@@ -1629,7 +1632,7 @@ namespace Ets.Service.Provider.Order
         {
             IList<GetJobCDM> jobs=new List<GetJobCDM>();
             model.PushRadius = GlobalConfigDao.GlobalConfigGet(0).PushRadius; //距离
-            if (model.SearchType == (int)GetJobCMode.NewJob)//最新订单
+            if (model.SearchType == (int)GetJobCMode.NewJob)//全部任务
             {
                 model.TopNum = ConstValues.App_PageSize.ToString();//50条
                 jobs = orderDao.GetLastedJobC(model);
@@ -1639,7 +1642,7 @@ namespace Ets.Service.Provider.Order
                 model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;// top 值
                 jobs = orderDao.GetJobC(model);
             }
-            else if (model.SearchType == (int)GetJobCMode.EmployerJob)//附近订单
+            else if (model.SearchType == (int)GetJobCMode.EmployerJob)//店内任务
             {
                 model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;// top 值
                 jobs = orderDao.GetEmployerJobC(model);

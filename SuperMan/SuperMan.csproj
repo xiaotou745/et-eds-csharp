@@ -80,6 +80,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.2\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -362,6 +363,7 @@
     <Content Include="Content\select2.css" />
     <Content Include="Content\select2.png" />
     <Content Include="Content\sesite.css" />
+    <Content Include="Content\tab.css" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
@@ -623,10 +625,12 @@
     <Content Include="Views\BusinessManager\_ClienterList.cshtml" />
     <Content Include="Views\BusinessManager\ClienterBatchBind.cshtml" />
     <Content Include="Views\MenuManager\_AccountManagerList.cshtml" />
+    <Content Include="Views\BusinessCommission\_BusinessCommissionList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\app\" />
+    <Folder Include="Content\Template\" />
     <Folder Include="uploads\" />
     <Folder Include="Views\BusinessDistributionStatistical\" />
     <Folder Include="Views\Test\" />

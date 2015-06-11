@@ -1,7 +1,5 @@
-﻿@model Ets.Model.Common.ResultInfo<IList<Ets.Model.DomainModel.Bussiness.BusinessCommissionModel>>
-
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Bussiness.BusinessCommissionModel>
  @{
-    ViewBag.Title = "BusinessCommission";
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
  } 
 <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
@@ -12,123 +10,94 @@
     <h2 class="crumbs">
         您所在位置：商户 > 商户结算
     </h2>
-    <div class="SearchMd">
-@using (Html.BeginForm("BusinessCommissions", "BusinessCommission", FormMethod.Post, new {id="from1",name="from1"}))
-        { 
-            <table border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                    <td>
-                        <span class="">商户名称: </span>
-                        <input id="txtBusinessName" name="txtBusinessName" type="text" value="@ViewBag.name" />
-                        <span class="">商户电话: </span>
-                        <input id="txtBusinessPhoneNo" name="txtBusinessPhoneNo" type="tel" value="@ViewBag.phoneno" />  
-                        <span class="">开始时间: </span>
-                        <input id="txtDateStart" name="txtDateStart" readonly="readonly" type="text" value="@ViewBag.startDate" />
-                        <span class="">到: </span>
-                        <input id="txtDateEnd" name="txtDateEnd" readonly="readonly" type="text" value="@ViewBag.endDate" />
-                        <input id="txtGroupId" name="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" /> 
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                          <span class="">筛选城市: </span>
-                        @Html.DropDownList("BusinessCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name", ViewBag.BusinessCity), "--无--", new { style = "width:155px" })
-                        <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" name="GroupId" />
-                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
-                        <input type="button" onclick="DaoCHu();" value="导出" class="searchBtn" id="btnDaochu" />
-                    </td>
-                </tr>
-            </table>
-  } 
-    </div>
-    <div class="bd clearfix" id="dataList">
-         <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
-    <thead> 
-        <tr class="tdbg">
-            <th width="%5">序号</th>
-            <th>商户名称</th>
-            <th>商户电话</th>
-            <th>订单金额</th>
-            <th>订单数量</th>
-            <th>结算比例</th>
-            <th>开始时间</th>
-            <th>结束时间</th>
-            <th>结算金额</th>
-            <th>操作</th>
-        </tr>
-    </thead>
-    <tbody>
-        @{
-            var i = 0;
-            if (Model!=null && Model.Result)
-            { 
-                foreach (var item in Model.Data)
-                {
-                    i++;
-                    <tr id="@item.id">
-                        <td>@i</td>
-                        <td>@item.Name</td>
-                        <td>@item.PhoneNo</td>
-                        <td>@item.Amount</td>
-                        <td>@item.OrderCount</td>
-                        <td>@item.BusinessCommission</td>
-                        <td>@item.T1</td>
-                        <td>@item.T2</td>
-                        <td>@item.TotalAmount</td> 
+    
+        @using (Ajax.BeginForm("PostBusinessCommissions", new RouteValueDictionary { { "pageindex", "" } },
+            new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+            new RouteValueDictionary { { "id", "searchForm" } }))
+        {
+            <div class="SearchMd">
+                <table border="0" cellspacing="0" cellpadding="0">
+                    <tr>
                         <td>
-                            <a href="javascript:void(0)" onclick=" DataDaoCHu(@item.id, '@item.Name', '@item.Amount', '@item.OrderCount', '@item.BusinessCommission', '@item.T1', '@item.T2', '@item.TotalAmount') ">导出</a> 
+                            <span class="">商户名称: </span>
+                            <input id="name" name="name" type="text" />
+                            <span class="">商户电话: </span>
+                            <input id="phoneNo" name="phoneNo" type="tel" />
+                            <span class="">开始时间: </span>
+                            <input id="t1" name="t1" readonly="readonly" type="text" />
+                            <span class="">到: </span>
+                            <input id="t2" name="t2" readonly="readonly" type="text" />
                         </td>
                     </tr>
-                }
-            }
-        }
-    </tbody> 
-</table>
+                    <tr>
+                        <td>
+                            <span class="">筛选城市: </span>
+                            @Html.DropDownList("BusinessCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name", ViewBag.BusinessCity), "--无--", new { style = "width:155px" })
+                            <input type="button" value="查询" class="searchBtn" id="btnSearch" />
+                            <input type="hidden" id="txtGroupId" name="txtGroupId" value="@ViewBag.txtGroupId">
+                            <input type="button" onclick="DaoCHu();" value="导出" class="searchBtn" id="btnDaochu" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        } 
+    
+    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <div class="bd clearfix" id="dataList">
+        @Html.Partial("_BusinessCommissionList", Model)
     </div>
 </div>
 <script>
     $(document).ready(function() {
         //查询
-        $('#txtDateStart').datepicker();
-        $('#txtDateEnd').datepicker();
+        $('#t1').datepicker();
+        $('#t2').datepicker();
         $("#btnSearch").on('click', function() {
-            var txtBusinessName = $("#txtBusinessName").val(); //商户名称
-            var groupId = $("#txtGroupId").val();
-            if (groupId == "") {
-                groupId = 0; }
-            var startDate = $('#txtDateStart').val();
-            var endDate = $('#txtDateEnd').val();
-            
-            if (startDate!="" && endDate=="") {
-                alert("请输入结束时间!");
-                return false;
-            }
-            if (endDate != "" && startDate == "") {
+            var startDate = $('#t1').val();
+            var endDate = $('#t2').val();
+            if (startDate=="" ) {
                 alert("请输入开始时间!");
-                return false;
+                return ;
+            }
+            if (endDate == "" ) {
+                alert("请输入结束时间!");
+                return ;
             }
             var start = new Date(startDate);
             var end = new Date(endDate);
-            
             if (end < start) {
                 alert("开始日期不能大于结束日期");
-                return false;
+                return ;
             }
-            return true;
-
+            $("#btnSearch").submit();
         });
     });
     function DaoCHu() {
-        var txtBusinessName = $("#txtBusinessName").val();
-        var txtDateStart = $("#txtDateStart").val();
-        var txtDateEnd = $("#txtDateEnd").val();
+        var txtBusinessName = $("#name").val();
+        var txtDateStart = $("#t1").val();
+        var txtDateEnd = $("#t2").val();
         var txtGroupId = $("#txtGroupId").val();
         var BusinessCity = $("#BusinessCity").find("option:selected").text();
+        if (txtDateStart == "") {
+            alert("请输入开始时间!");
+            return;
+        }
+        if (txtDateEnd == "") {
+            alert("请输入结束时间!");
+            return;
+        }
+        var startDate = new Date(txtDateStart);
+        var endDate = new Date(txtDateEnd);
+        if (startDate > endDate) {
+            alert("开始日期不能大于结束日期");
+            return;
+        }
         var url = "/BusinessCommission/CreateCommissionsExcel?txtBusinessName=" + txtBusinessName + "&txtGroupId=" + txtGroupId + "&txtDateStart=" + txtDateStart + "&txtDateEnd=" + txtDateEnd + "&BusinessCity=" + BusinessCity;
         window.location.href = url;
     }
-    function DataDaoCHu(id,name,amount,count,commission,t1,t2,total) {
-        var url = "/BusinessCommission/CreateBusinessCommissionsExcel?id=" + id + "&name=" + name + "&amount=" + amount + "&ordercount=" + count + "&BusinessCommission=" + commission + "&TotalAmount=" + total + "&T1=" + t1 + "&T2=" + t2;
-        window.location.href = url;
-    }
+    //function DataDaoCHu(id,name,amount,count,commission,t1,t2,total) {
+    //    var url = "/BusinessCommission/CreateBusinessCommissionsExcel?id=" + id + "&name=" + name + "&amount=" + amount + "&ordercount=" + count + "&BusinessCommission=" + commission + "&TotalAmount=" + total + "&T1=" + t1 + "&T2=" + t2;
+    //    window.location.href = url;
+    //}
 </script>
+<script src="~/Scripts/mvcpager.js"></script>

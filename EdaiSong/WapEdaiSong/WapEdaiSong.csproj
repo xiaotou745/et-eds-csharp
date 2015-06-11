@@ -136,9 +136,30 @@
     <Content Include="businessprotocol.html" />
     <Content Include="clienterprotocol.html" />
     <Content Include="Content\box.css" />
+    <Content Include="Content\img\ex_jt.png" />
+    <Content Include="Content\img\help\img_01.jpg" />
+    <Content Include="Content\img\help\img_02.jpg" />
+    <Content Include="Content\img\help\img_03.jpg" />
+    <Content Include="Content\img\help\img_04.jpg" />
+    <Content Include="Content\img\help\img_05.jpg" />
+    <Content Include="Content\img\help\img_06.jpg" />
+    <Content Include="Content\img\help\img_07.jpg" />
     <Content Include="Content\page.css" />
     <Content Include="Content\rcg.css" />
+    <Content Include="Content\style\c3.css" />
+    <Content Include="Content\style\common.css" />
+    <Content Include="Content\style\help.css" />
+    <Content Include="Content\style\normalize.css" />
+    <Content Include="Content\style\popup.css" />
     <Content Include="Global.asax" />
+    <Content Include="htmls\help1.html" />
+    <Content Include="htmls\help2.html" />
+    <Content Include="htmls\help3.html" />
+    <Content Include="htmls\help4.html" />
+    <Content Include="htmls\help5.html" />
+    <Content Include="htmls\help6.html" />
+    <Content Include="htmls\help7.html" />
+    <Content Include="htmls\help.html" />
     <Content Include="Images\apk.png" />
     <Content Include="Images\gotop.png" />
     <Content Include="Images\img1-1.jpg" />
@@ -177,6 +198,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\PublishProfiles\wap.pubxml" />
+    <None Include="Properties\PublishProfiles\WapEdaisong.pubxml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

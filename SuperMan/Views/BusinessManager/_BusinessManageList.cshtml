@@ -12,7 +12,7 @@
             @*<th>第三方ID</th>*@
             <th>电话</th>
             <th>地址</th>
-            <th>照片</th>
+            
             <th>申请时间</th>
             <th>所属集团</th>
             <th>结算比例</th>
@@ -48,9 +48,6 @@
                         @*<td>@item.OriginalBusiId</td>*@
                         <td>@item.PhoneNo</td>
                         <td>@address</td>
-                        <td>
-                            <a href="javascript:void(0)" onclick="funcPicView('@String.Format("{0}{1}",PicHost,puth)','@item.CheckPicUrl')">查看</a>
-                        </td>
                         <td>@item.InsertTime</td>
                         <td>
                             @item.GroupName

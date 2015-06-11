@@ -151,9 +151,9 @@ namespace Ets.Dao.User
         /// <param name="name">商户姓名</param>
         /// <param name="phoneno">商户电话</param>
         /// <returns></returns>
-        public IList<BusinessCommissionModel> GetBusinessCommission(DateTime t1, DateTime t2, string name, string phoneno, int groupid, string businessCity, string authorityCityNameListStr)
+        public IList<BusinessCommissionDM> GetBusinessCommission(DateTime t1, DateTime t2, string name, string phoneno, int groupid, string businessCity, string authorityCityNameListStr)
         {
-            IList<BusinessCommissionModel> list = new List<BusinessCommissionModel>();
+            IList<BusinessCommissionDM> list = new List<BusinessCommissionDM>();
             try
             {
                 string sql = @"  SELECT 
@@ -175,7 +175,7 @@ namespace Ets.Dao.User
                                                      GROUP BY B.Id
                                                    ) AS T ON BB.Id = T.Id 
                                   ";
-                string where = " and DATEDIFF(s, O.ActualDoneDate,@t2)>1 and DATEDIFF(s, @t1,O.ActualDoneDate)>1 ";
+                string where = string.Format(" and O.ActualDoneDate between '{0}' and '{1}' ", t1, t2);
 
 
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -208,7 +208,7 @@ namespace Ets.Dao.User
                 }
                 sql = string.Format(sql, where);
                 DataTable dt = DbHelper.ExecuteDataset(Config.SuperMan_Read, sql, dbParameters).Tables[0];
-                list = ConvertDataTableList<BusinessCommissionModel>(dt);
+                list = ConvertDataTableList<BusinessCommissionDM>(dt);
             }
             catch (Exception)
             {
@@ -1145,7 +1145,8 @@ select SCOPE_IDENTITY() as id;
                                     Province = @Province ,
                                     CityId = @CityId ,
                                     CityCode = @CityCode ,
-                                    City = @City
+                                    City = @City,
+                                    OneKeyPubOrder=@OneKeyPubOrder
                                     {0}{1}
                             OUTPUT  Inserted.[Status]
                             WHERE   Id = @busiID", sqlCheckPicUrl, sqlBusinessLicensePic);
@@ -1169,6 +1170,7 @@ select SCOPE_IDENTITY() as id;
             parm.AddWithValue("@CityCode", business.CityCode);
             parm.AddWithValue("@City", business.City);
             parm.AddWithValue("@busiID", business.Id);
+            parm.Add("@OneKeyPubOrder",DbType.Int32,4).Value=business.OneKeyPubOrder;
             try
             {
                 object executeScalar = DbHelper.ExecuteScalar(SuperMan_Write, upSql, parm);
@@ -1234,7 +1236,7 @@ select SCOPE_IDENTITY() as id;
         /// <returns></returns>
         public BussinessStatusModel GetUserStatus(int userid)
         {
-            string sql = @"select  Id as userid,[status] as status from dbo.business with(nolock) WHERE id=@id ";
+            string sql = @"select  Id as userid,[status] as status,OneKeyPubOrder from dbo.business with(nolock) WHERE id=@id ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@id", userid);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
@@ -1955,7 +1957,7 @@ VALUES
                 string sql = "SELECT COUNT(1) FROM BusinessClienterRelation bcr WITH(NOLOCK) WHERE bcr.IsBind = 1 AND bcr.IsEnable=1 AND BusinessId=@BusinessId;";
                 var parm = DbHelper.CreateDbParameters();
                 parm.AddWithValue("@BusinessId",businessId);
-                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm));
+                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm));
             }
             catch (Exception ex)
             {
@@ -2076,7 +2078,36 @@ VALUES
             parm.AddWithValue("@ClienterId", model.ClienterId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
-
+        /// <summary>
+        /// 修改商户绑定骑士标志
+        /// danny-20150610
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <param name="isBind"></param>
+        /// <returns></returns>
+        public bool UpdateBusinessIsBind(int businessId, int isBind)
+        {
+            string updateSql = @"update business set IsBind = @IsBind where Id = @BusinessId;";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@BusinessId", businessId);
+            parm.AddWithValue("@IsBind", isBind);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, parm)>0;
+        }
+        /// <summary>
+        /// 修改骑士绑定标志
+        /// danny-20150610
+        /// </summary>
+        /// <param name="clienterId"></param>
+        /// <param name="isBind"></param>
+        /// <returns></returns>
+        public bool UpdateClienterIsBind(int clienterId, int isBind)
+        {
+            string updateSql = @"update clienter set IsBind = @IsBind where Id = @ClienterId;";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@ClienterId", clienterId);
+            parm.AddWithValue("@IsBind", isBind);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, parm) > 0;
+        }
         /// <summary>
         /// 验证是否有绑定关系
         /// danny-20150609
@@ -2090,6 +2121,61 @@ VALUES
             parm.AddWithValue("@BusinessId", model.BusinessId);
             parm.AddWithValue("@ClienterId", model.ClienterId);
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm))>0;
+        }
+        /// <summary>
+        /// 查询商户结算列表（分页）
+        /// danny-20150609
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<T> GetBusinessCommissionOfPaging<T>(Ets.Model.ParameterModel.Bussiness.BusinessCommissionSearchCriteria criteria)
+        {
+
+            string columnList =string.Format( @"   BB.id ,
+                                        BB.Name ,
+                                        BB.PhoneNo,
+                                        T.Amount ,
+                                        T.OrderCount ,
+                                        ISNULL(BB.BusinessCommission, 0) BusinessCommission ,
+                                        T.TotalAmount,
+                                        '{0}' AS T1,
+                                        '{1}' AS T2 ", criteria.T1, criteria.T2);
+            string sqlwhere = "";
+            if (!string.IsNullOrEmpty(criteria.Name))
+            {
+                sqlwhere += string.Format(" AND Name='{0}' ", criteria.Name);
+            }
+            if (!string.IsNullOrEmpty(criteria.PhoneNo))
+            {
+                sqlwhere += string.Format(" AND PhoneNo='{0}' ", criteria.PhoneNo);
+            }
+            if (criteria.GroupId != 0)
+            {
+                sqlwhere += string.Format(" AND groupid={0} ", criteria.GroupId);
+            }
+            if (!string.IsNullOrEmpty(criteria.BusinessCity))
+            {
+                sqlwhere += string.Format(" AND B.City='{0}' ", criteria.BusinessCity);
+            }
+            if (criteria.AuthorityCityNameListStr != null && !string.IsNullOrEmpty(criteria.AuthorityCityNameListStr.Trim()))
+            {
+                sqlwhere += string.Format("  AND B.City IN({0}) ", criteria.AuthorityCityNameListStr);
+            }
+            sqlwhere += string.Format(" AND O.ActualDoneDate BETWEEN '{0}' AND '{1}' ", criteria.T1, criteria.T2); ;
+            string tableList = string.Format(@" business BB WITH ( NOLOCK )
+                                        JOIN ( SELECT B.Id AS id ,
+                                                            SUM(O.Amount) AS Amount ,
+                                                            SUM(ISNULL(O.OrderCount, 0)) AS OrderCount ,
+                                                            SUM(ISNULL(O.SettleMoney, 0)) AS TotalAmount
+                                                     FROM   dbo.[order] O WITH ( NOLOCK )
+                                                            JOIN dbo.business B ON B.Id = o.businessId
+                                                     WHERE  O.[Status] = 1 {0}
+                                                     GROUP BY B.Id
+                                                   ) AS T ON BB.Id = T.Id ", sqlwhere);
+            var sbSqlWhere = new StringBuilder(" 1=1 ");
+            string orderByColumn = " BB.Id ASC";
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true); 
         }
     }
 }

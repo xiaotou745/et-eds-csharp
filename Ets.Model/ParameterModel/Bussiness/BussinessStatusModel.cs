@@ -18,6 +18,12 @@ namespace Ets.Model.ParameterModel.Bussiness
         /// <summary>
         /// 状态
         /// </summary>
-        public int status { get; set; } 
+        public int status { get; set; }
+
+        /// <summary>
+        /// 一健发单
+        /// </summary>
+        public int OneKeyPubOrder { get; set; } 
+        
     }
 }

@@ -8,7 +8,7 @@
 <script src="~/Scripts/jquery-ui-1.8.20.js"></script>
 <script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
 <script src="~/Scripts/ajaxfileupload.js"></script>
-
+<link href="~/Content/tab.css" rel="stylesheet" />
 <h2 class="crumbs">
     您所在位置：商户 > 商户管理 > 绑定骑士管理 > 添加骑士绑定
 </h2>
@@ -21,7 +21,7 @@
         <td></td>
     </tr>
 </table>
-<div class="SearchMd">
+@*<div class="SearchMd">
     <table border="0" cellspacing="0" cellpadding="0">
         <tr>
             <td>
@@ -33,6 +33,12 @@
             </td>
         </tr>
     </table>
+</div>*@
+<div class="page">
+    <ul class="tab">
+        <li id="tab_to_1"><a href="#" onclick="tab('tab',2,1)">手动绑定</a></li>
+        <li id="tab_to_2" class="no"><a href="#" onclick="tab('tab',2,2)">批量绑定</a></li>
+    </ul>
 </div>
 
 @using (Html.BeginForm("ClienterBatchBind", "BusinessManager", FormMethod.Post, new { enctype = "multipart/form-data" }))
@@ -48,7 +54,7 @@
                     (导入必须为excel，字段：骑士姓名、手机号，每次最多导入50条数据)&nbsp;&nbsp;
                 </td>             
                 <td>         
-                    <a href="http://admin.edaisong.com.cn/download/ClienterBatchImport" target="_blank">下载模板</a>
+                    <a href="/Content/Template/BatchImport.xls" target="_blank">下载模板</a>
                 </td>
             </tr>
             <tr>
@@ -82,10 +88,11 @@
 </table>
 
 <script type="text/javascript">
-    //商户充值
+    var OverallS;
+    //导入
     $("#btnImport").on('click', function () {
 
-        var BusinessId = $('#businessId').val();
+        var BusinessId = $('#businessId').val();        
         var url = "/BusinessManager/ClienterImport?BusinessId=" + BusinessId;
         $.ajaxFileUpload({
             type: 'POST',
@@ -94,17 +101,18 @@
             url: url,
             data: "", //此参数非常严谨，写错一个引号都不行
             success: function (data, status)  //服务器成功响应处理函数
-            {
+            {               
                 var json = eval("(" + data.body.innerText + ")");
                 if (json.IsSuccess != undefined && !json.IsSuccess) {
                     alert(json.Message);
                     return;
-                }
+                }          
+                OverallS = json;
                 $("#tbody").html("");
                 for (var i = 0; i < json.length; i++) {
                     var isBindText, isEnableText, clienterRemarksText;
                     if (json[i].IsBind)
-                        isBindText = " <input id='Checkbox1' type='checkbox' checked='checked' />"
+                    isBindText = " <input id='Checkbox1' name='"+i+"' type='checkbox' onchange='SetCheck(this)'   checked='checked' />"
                     else
                         isBindText = "";
                     if (json[i].IsEnable)
@@ -120,7 +128,8 @@
                         + "</td><td>" + isBindText
                         + "</td><td>" + isEnableText
                         + "</td><td>" + clienterRemarksText
-                        + "</td></tr>");
+                        + "</td></tr>");             
+
                 }
             },
             error: function (data, status, e)//服务器响应失败处理函数
@@ -130,12 +139,26 @@
 
         });
     })
-    //商户充值
+    function SetCheck(row)
+    {
+        if (row.checked)
+        {        
+            OverallS[row.name].IsBind = true;          
+        }
+        else
+        {    
+            OverallS[row.name].IsBind = false;           
+        }        
+          
+    }
+    //保存绑定
     $("#btnSave").on('click', function () {
         var businessId = $('#businessId').val();
         var paramaters = {
-            "BusinessId": businessId
+            "BusinessId": businessId,
+            "OverallS": JSON.stringify(OverallS)
         };
+
 
         var url = "/BusinessManager/ClienterBatchSave";
         $.ajax({
@@ -163,5 +186,22 @@
         var businessId = $('#businessId').val();
         window.location.href = "/BusinessManager/ClienterBatchBind?businessId=" + businessId;
     }
+
+    function tab(a, b, c) {
+        for (i = 1; i <= b; i++) {
+            if (c == i) {          
+                var businessId = $('#businessId').val();
+                window.location.href = "/BusinessManager/ClienterBatchBind?businessId=" + businessId;
+             
+           
+            }
+            else {         
+                var businessId = $('#businessId').val();
+                window.location.href = "/BusinessManager/AddClienterBindManage?businessId=" + businessId;               
+            
+            }
+        }
+    }
+
 
 </script>

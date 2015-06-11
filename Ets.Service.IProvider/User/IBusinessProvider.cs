@@ -58,7 +58,7 @@ namespace Ets.Service.IProvider.User
         /// <param name="name">商户姓名</param>
         /// <param name="phoneno">商户电话</param>
         /// <returns></returns>
-        ResultInfo<IList<BusinessCommissionModel>> GetBusinessCommission(DateTime t1, DateTime t2, string name, string phoneno, int groupid, string BusinessCity, string authorityCityNameListStr);
+        ResultInfo<IList<BusinessCommissionDM>> GetBusinessCommission(DateTime t1, DateTime t2, string name, string phoneno, int groupid, string BusinessCity, string authorityCityNameListStr);
 
         /// <summary>
         /// B端注册 
@@ -347,6 +347,15 @@ namespace Ets.Service.IProvider.User
         /// <param name="model"></param>
         /// <returns></returns>
         bool CheckHaveBind(ClienterBindOptionLogModel model);
+
+        /// <summary>
+        /// 查询商户结算列表（分页）
+        /// danny-20150609
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        PageInfo<BusinessCommissionModel> GetBusinessCommissionOfPaging(
+            Ets.Model.ParameterModel.Bussiness.BusinessCommissionSearchCriteria criteria);
     }
 }
 

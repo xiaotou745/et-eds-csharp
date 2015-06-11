@@ -110,7 +110,7 @@
                                 if (SuperMan.App_Start.UserContext.Current.HasAuthority(18) || SuperMan.App_Start.UserContext.Current.HasAuthority(19))
                                 {
                                     <a href="javascript:void(0)" style="color:gray" supermanid="@item.Id" class="superManOk" onclick="clientOk(@item.Id,@idCard,@trueName,@picUrl,@picWithHandUrl)">审核通过</a>
-                                    <a href="javascript:void(0)" supermanid="@item.Id" class="superManCel">取消资格</a>
+                                    <a href="javascript:void(0)" supermanid="@item.Id" class="superManCel">审核拒绝</a>
                                 }
                                 @*if (SuperMan.App_Start.UserContext.Current.HasAuthority(20))
                                     {
@@ -122,7 +122,7 @@
                                 if (SuperMan.App_Start.UserContext.Current.HasAuthority(18) || SuperMan.App_Start.UserContext.Current.HasAuthority(19))
                                 {
                                     <a href="javascript:void(0)" supermanid="@item.Id" class="superManOk" onclick="clientOk(@item.Id,@idCard,@trueName,@picUrl,@picWithHandUrl)">审核通过</a>
-                                    <a href="javascript:void(0)" style="color:gray" supermanid="@item.Id" class="superManCel">取消资格</a>
+                                    <a href="javascript:void(0)" style="color:gray" supermanid="@item.Id" class="superManCel">审核拒绝</a>
                                 }
                                 @*if (SuperMan.App_Start.UserContext.Current.HasAuthority(20))
                                     {
