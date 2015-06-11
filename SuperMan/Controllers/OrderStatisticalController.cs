@@ -67,7 +67,7 @@ namespace SuperMan.Controllers
         public ActionResult DistributionAnalyzeExport(OrderDistributionAnalyze model)
         {
             int totalRows;
-            IList<DistributionAnalyzeResult> list = iOrderProvider.DistributionAnalyze(model, 1, 99999, out totalRows);
+            IList<DistributionAnalyzeResult> list = iOrderProvider.DistributionAnalyze(model, 1, 65534, out totalRows);
 
             string excelContent = this.CreateExcel(list);
 
