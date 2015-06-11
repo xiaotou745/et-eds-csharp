@@ -16,7 +16,7 @@ select  @countrow=COUNT(1) from dbo.business where City='北京市' or City='上海市
 
 
 begin transaction
-update dbo.business set OneKeyPubOrder=0 where City='北京市' or City='上海市'
+update dbo.business set OneKeyPubOrder=1 where City!='北京市' or City!='上海市'
 if ( @@error <> 0
      or @@rowcount <> @countrow
    ) 
