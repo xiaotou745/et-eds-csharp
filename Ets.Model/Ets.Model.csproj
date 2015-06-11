@@ -73,6 +73,7 @@
     <Compile Include="DataModel\Clienter\ClienterCrossShopLogModel.cs" />
     <Compile Include="DataModel\Clienter\ClienterLocation.cs" />
     <Compile Include="DataModel\Clienter\CrossShopStatisticLogModel.cs" />
+    <Compile Include="DataModel\Common\ExportSqlManage.cs" />
     <Compile Include="DataModel\Order\OrderChildFinishModel.cs" />
     <Compile Include="DataModel\Order\OrderChildPayModel.cs" />
     <Compile Include="DataModel\Order\PayStatusModel.cs" />
@@ -223,6 +224,7 @@
     <Compile Include="ParameterModel\Clienter\RushOrderResultModel.cs" />
     <Compile Include="ParameterModel\Clienter\UploadIconModel.cs" />
     <Compile Include="ParameterModel\Clienter\CustomerIconUploader.cs" />
+    <Compile Include="ParameterModel\Common\DataManageSearchCriteria.cs" />
     <Compile Include="ParameterModel\Common\OpenCitySearchCriteria.cs" />
     <Compile Include="ParameterModel\Clienter\UploadReceiptModel.cs" />
     <Compile Include="ParameterModel\Clienter\UploadReceiptResultModel.cs" />
