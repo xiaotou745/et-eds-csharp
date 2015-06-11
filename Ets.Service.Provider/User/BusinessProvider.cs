@@ -61,7 +61,11 @@ namespace Ets.Service.Provider.User
                     model.PubDate = from.PubDate;
                 }
                 model.PickUpName = from.BusinessName;
-                model.ReceviceAddress = from.ReceviceAddress;
+
+                if (!string.IsNullOrEmpty(from.ReceviceAddress))
+                    model.ReceviceAddress = from.ReceviceAddress;
+                else
+                    model.ReceviceAddress = "附近3公里左右，由商户指定";                
                 model.ReceviceName = from.ReceviceName == null ? "" : from.ReceviceName.Trim();
                 model.RecevicePhoneNo = from.RecevicePhoneNo;
                 model.Remark = from.Remark;
