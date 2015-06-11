@@ -671,7 +671,7 @@ namespace Ets.Service.Provider.User
             #region 判断是否可以一键发单
             business.OneKeyPubOrder = 1;//默认为全部允许一键发单
             Business checkBusiness = dao.GetById(business.Id);
-            if (string.IsNullOrEmpty(checkBusiness.City) && (model.City == "北京市" || model.City == "上海市"))
+            if (string.IsNullOrEmpty(checkBusiness.City) || model.City == "北京市" || model.City == "上海市")
             {
                 //如果城市是空或北京或上海，则不允许一键发单
                 business.OneKeyPubOrder = 0;
