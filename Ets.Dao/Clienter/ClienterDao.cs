@@ -104,7 +104,7 @@ namespace Ets.Dao.Clienter
                                     o.PickUpAddress,
                                     o.ReceviceName,
                                     o.ReceviceCity,
-                                    isnull(o.ReceviceAddress,'附近3公里左右，由商户指定'),
+                                    o.ReceviceAddress,
                                     o.RecevicePhoneNo,
                                     o.IsPay,
                                     o.Remark,

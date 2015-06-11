@@ -128,7 +128,15 @@ namespace Ets.Service.Provider.Clienter
                     model.pickUpAddress = item.PickUpAddress;
                     model.receviceName = item.ReceviceName;
                     model.receviceCity = item.ReceviceCity;
-                    model.receviceAddress = item.ReceviceAddress;
+                    //model.receviceAddress = item.ReceviceAddress;
+                    if (!string.IsNullOrEmpty(item.ReceviceAddress))
+                        model.receviceAddress = item.ReceviceAddress;
+                    else
+                    {
+                        model.receviceAddress = ConstValues.ReceviceAddress;
+                        model.receviceCity = "";
+                    }
+
                     model.recevicePhone = item.RecevicePhoneNo;
                     model.IsPay = item.IsPay;
                     model.Remark = item.Remark;
