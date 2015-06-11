@@ -193,7 +193,7 @@ namespace Ets.Service.Provider.Common
             else
             {
                 cacheAreaModelList = dao.GetRegionInfo().ToList();
-                redis.Add(key, JsonHelper.ToJson(cacheAreaModelList));
+                redis.Add(key, JsonHelper.ToJson(cacheAreaModelList),DateTime.Now.AddDays(1));
             }
             //cacheAreaModelList = CacheFactory.Instance[key] as List<AreaModelTranslate>;
             //if (cacheAreaModelList == null) //为null的时候，取数据库
@@ -208,6 +208,8 @@ namespace Ets.Service.Provider.Common
             {
                 if (from.Name.Contains("北京")) { from.Name = "北京市"; }
                 if (from.Name.Contains("上海")) { from.Name = "上海市"; }
+                if (from.Name.Contains("天津")) { from.Name = "天津市"; }
+                if (from.Name.Contains("重庆")) { from.Name = "重庆市"; }
             }
             areaModel = cacheAreaModelList.FirstOrDefault(s => s.Name == from.Name.Trim() && s.JiBie == from.JiBie);
 

@@ -709,8 +709,8 @@ order by a.id desc
         {
             string sql = @"
 SELECT b.Id  FROM dbo.business(NOLOCK) b
-LEFT join dbo.[group] g on b.GroupId=g.Id and g.IsModifyBind=1
-where b.PhoneNo=@PhoneNo";
+LEFT join dbo.[group] g on b.GroupId=g.Id 
+where b.PhoneNo=@PhoneNo and isnull(g.IsModifyBind,1)=1";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("PhoneNo", DbType.String, 40).Value = PhoneNo;
 
