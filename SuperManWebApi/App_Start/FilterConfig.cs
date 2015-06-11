@@ -54,7 +54,7 @@ namespace SuperManWebApi
     /// <summary>
     /// 用于记录接口请求总耗时 add by caoheyang 
     /// </summary>
-    [System.AttributeUsage(System.AttributeTargets.Method|AttributeTargets.Class)]
+    [System.AttributeUsage(System.AttributeTargets.Method | AttributeTargets.Class)]
     public class ExecuteTimeLogAttribute : System.Web.Http.Filters.ActionFilterAttribute
     {
         private const string Key = "__action_duration__";
@@ -98,23 +98,12 @@ namespace SuperManWebApi
     /// </summary>
     public class ApiHandleErrorAttribute : ExceptionFilterAttribute
     {
-        private const string Key = "__action_duration__";
         /// <summary>
         /// 重写异常处理方法 add by caoheyang 20150205
         /// </summary>
         /// <param name="filterContext">上下文对象  该类继承于ControllerContext</param>
         public override void OnException(HttpActionExecutedContext filterContext)
         {
-            var stop = filterContext.Request.Properties[Key] as Stopwatch;
-            if (stop != null)
-            {
-                Task.Factory.StartNew(() =>
-                {
-                    stop.Stop();
-                    ETS.Util.LogHelper.LogWriter("接口" + filterContext.Request.RequestUri + "请求时间：" + stop.Elapsed);
-                    stop.Reset();
-                });
-            }
             LogHelper.LogWriterFromFilter(filterContext.Exception);
         }
     }
