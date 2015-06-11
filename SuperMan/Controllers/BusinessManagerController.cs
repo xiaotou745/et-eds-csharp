@@ -533,7 +533,11 @@ namespace SuperMan.Controllers
                 {
                     HttpPostedFileBase file = Request.Files["file1"];
                     fs = file.InputStream;
-                    wk = new XSSFWorkbook(fs);
+                    if (Path.GetExtension(Request.Files["file1"].FileName) == ".xls")
+                        wk = new HSSFWorkbook(fs);                                      
+                    else
+                        wk = new XSSFWorkbook(fs);
+                     
                     ISheet st = wk.GetSheetAt(0);
                     int rowCount = st.LastRowNum;
                     if (rowCount > 50)
