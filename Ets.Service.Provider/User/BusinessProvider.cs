@@ -65,7 +65,10 @@ namespace Ets.Service.Provider.User
                 if (!string.IsNullOrEmpty(from.ReceviceAddress))
                     model.ReceviceAddress = from.ReceviceAddress;
                 else
-                    model.ReceviceAddress = "附近3公里左右，由商户指定";                
+                {
+                    model.ReceviceAddress = ConstValues.ReceviceAddress;
+                }
+         
                 model.ReceviceName = from.ReceviceName == null ? "" : from.ReceviceName.Trim();
                 model.RecevicePhoneNo = from.RecevicePhoneNo;
                 model.Remark = from.Remark;
