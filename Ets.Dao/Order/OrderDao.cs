@@ -2353,9 +2353,9 @@ select top {0}
 		round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) as DistanceToBusiness 
 from    dbo.[order] a ( nolock )
         join dbo.business b ( nolock ) on a.businessId = b.Id
-where   a.status = 0  and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>5))
-        {1}
-order by a.Id desc", model.TopNum, whereStr);
+where   a.status = 0  and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1}))
+        {2}
+order by a.Id desc", model.TopNum,model.ExclusiveOrderTime, whereStr);
             }
             else  //查询所有 无雇佣骑士的商家发布的订单，以及 非当前骑士的雇主 里 有雇佣骑士的商家 发布的超过了 五分钟 无人抢单的订单 以及当前骑士所属雇主的所有订单
             {
@@ -2385,12 +2385,12 @@ from    dbo.[order] a ( nolock )
 where   a.status = 0
         and ( b.IsBind = 0
               or ( b.IsBind = 1
-                   and DATEDIFF(minute, a.PubDate, GETDATE()) > 5
+                   and DATEDIFF(minute, a.PubDate, GETDATE()) > {2}
                  )
               or c.BusinessId is not null
             )
-        {2}
-order by a.Id desc", model.TopNum,model.ClienterId, whereStr);
+        {3}
+order by a.Id desc", model.TopNum,model.ClienterId,model.ExclusiveOrderTime, whereStr);
             }
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -2431,10 +2431,10 @@ as PubDate,
 round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) as DistanceToBusiness 
 from dbo.[order] a (nolock)
 join dbo.business b (nolock) on a.businessId=b.Id
-where a.status=0  and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>5))
+where a.status=0  and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1}))
 and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
 order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint) asc
-", model.TopNum);
+", model.TopNum,model.ExclusiveOrderTime);
             }
             else //查询所有 无雇佣骑士的商家发布的订单，以及 非当前骑士的雇主 里 有雇佣骑士的商家 发布的超过了 五分钟 无人抢单的订单 以及当前骑士所属雇主的所有订单
             {
@@ -2465,13 +2465,13 @@ left join ( select  distinct
 where a.status=0 
 and ( b.IsBind = 0
               or ( b.IsBind = 1
-                   and DATEDIFF(minute, a.PubDate, GETDATE()) > 5
+                   and DATEDIFF(minute, a.PubDate, GETDATE()) > {2}
                  )
               or c.BusinessId is not null
             )
 and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
 order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint) asc
-", model.TopNum,model.ClienterId);
+", model.TopNum,model.ClienterId,model.ExclusiveOrderTime);
             }
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Latitude", model.Latitude);
