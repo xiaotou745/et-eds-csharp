@@ -2496,7 +2496,7 @@ order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDis
         {
             string sql = string.Format(@"
 declare @cliernterPoint geography ;
-select @cliernterPoint=geography::Point(30.25522,129.22222,4326) ;
+select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}  a.BusinessId, a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
@@ -2511,14 +2511,14 @@ as PubDate,
 round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) as DistanceToBusiness 
 from dbo.[order] a (nolock)
 join dbo.business b (nolock) on a.businessId=b.Id
-join (select  distinct(temp.BusinessId) from BusinessClienterRelation  temp where temp.IsEnable=1 and  temp.IsBind =1 and temp.ClienterId={1} ) as c on a.BusinessId=c.BusinessId
+join (select  distinct(temp.BusinessId) from BusinessClienterRelation  temp where temp.IsEnable=1 and  temp.IsBind =1 and temp.ClienterId=@ClienterId ) as c on a.BusinessId=c.BusinessId
 where a.status=0 
 order by a.id desc 
-", model.TopNum, model.ClienterId);
+", model.TopNum);
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Latitude", model.Latitude);
             dbParameters.AddWithValue("Longitude", model.Longitude);
-            dbParameters.AddWithValue("PushRadius", ParseHelper.ToInt(model.PushRadius) * 1000);
+            dbParameters.AddWithValue("ClienterId", model.ClienterId);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters));
             if (DataTableHelper.CheckDt(dt))
             {
