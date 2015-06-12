@@ -22,14 +22,22 @@ namespace Ets.AccountCheck.Service
 
         protected override void OnStart(string[] args)
         {
-            if (RepositoryService.TestConnection())
+            if (RepositoryService.TestReadConnection())
             {
-                LogHelper.Log.Info("数据库连接正常");
+                LogHelper.Log.Info("读数据库连接正常");
             }
             else
             {
-                LogHelper.Log.Info("数据库连接异常");
-
+                LogHelper.Log.Info("读数据库连接正常");
+                return;
+            }
+            if (RepositoryService.TestWriteConnection())
+            {
+                LogHelper.Log.Info("写数据库连接正常");
+            }
+            else
+            {
+                LogHelper.Log.Info("写数据库连接异常");
                 return;
             }
 

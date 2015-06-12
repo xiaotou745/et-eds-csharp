@@ -18,9 +18,24 @@ namespace Ets.AccountCheck
         /// 测试连接数据库
         /// </summary>
         /// <returns></returns>
-        public static bool TestConnection()
+        public static bool TestReadConnection()
         {
             using (var conn = GetConnection(ReadConnectionString))
+            {
+                if (conn.State == ConnectionState.Open)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        /// <summary>
+        /// 测试连接数据库
+        /// </summary>
+        /// <returns></returns>
+        public static bool TestWriteConnection()
+        {
+            using (var conn = GetConnection(WriteConnectionString))
             {
                 if (conn.State == ConnectionState.Open)
                 {
