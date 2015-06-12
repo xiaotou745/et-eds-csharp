@@ -353,7 +353,6 @@ and a.PhoneNo=@PhoneNo";
                                     ,b.Address
                                     ,ISNULL(b.Latitude,0) Latitude
                                     ,ISNULL(b.Longitude,0) Longitude
-                                    ,b.Latitude
                                     ,b.Status
                                     ,b.InsertTime
                                     ,b.districtId

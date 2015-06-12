@@ -132,7 +132,7 @@
                         }
                         else
                         {
-                            <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage,@item.CommissionType)" businessid="@item.Id" class="businessOk">审核通过</a>
+                            <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage,@item.CommissionType,@item.Latitude,@item.Longitude)" businessid="@item.Id" class="businessOk">审核通过</a>
                                 <a href="javascript:void(0)" style="color:gray" businessid="@item.Id" class="businessCel">取消资格</a>
                         }
 
@@ -213,7 +213,10 @@
             alert("该商家未上传图片，不能通过审核。")
             return;
         }
-        if (Longitude < 73.40 || Longitude > 135.230 || Latitude < 3.52 || Latitude > 53.33) {
+        //debugger
+        var lng = parseFloat(Longitude);
+        var lat = parseFloat(Latitude);
+        if (lng < 73.40 || lng > 135.230 || lat < 3.52 || lat > 53.33) {
             alert("该商家地址有误，不能通过审核。")
             return;
         }
