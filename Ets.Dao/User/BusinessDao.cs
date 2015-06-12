@@ -965,10 +965,10 @@ where b.PhoneNo=@PhoneNo and isnull(g.IsModifyBind,1)=1";
             string insertSql = @"
 insert into dbo.business(Name,City,district,PhoneNo,PhoneNo2,Password,CheckPicUrl,
             IDCard,Address,Longitude,Latitude,Status,districtId,CityId, 
-            ProvinceCode,CityCode,AreaCode,Province,CommissionTypeId,DistribSubsidy)
+            ProvinceCode,CityCode,AreaCode,Province,CommissionTypeId,DistribSubsidy,GroupId, OriginalBusiId)
             values(@Name,@City,@district,@PhoneNo,@PhoneNo2,@Password,@CheckPicUrl,@IDCard , 
             @Address,@Longitude,@Latitude,@Status,@districtId,@CityId,
-            @ProvinceCode,@CityCode,@AreaCode,@Province,@CommissionTypeId ,@DistribSubsidy);
+            @ProvinceCode,@CityCode,@AreaCode,@Province,@CommissionTypeId ,@DistribSubsidy,@GroupId, @OriginalBusiId);
 select SCOPE_IDENTITY() as id;    
 ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -992,6 +992,8 @@ select SCOPE_IDENTITY() as id;
             dbParameters.AddWithValue("@CommissionTypeId", model.CommissionTypeId);
             dbParameters.AddWithValue("@ProvinceCode", model.ProvinceCode);
             dbParameters.AddWithValue("@DistribSubsidy", model.DistribSubsidy);
+            dbParameters.AddWithValue("@GroupId", model.GroupId);
+            dbParameters.AddWithValue("@OriginalBusiId", model.OriginalBusiId);
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
         }
         /// <summary>
