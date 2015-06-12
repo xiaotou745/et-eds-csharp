@@ -351,8 +351,8 @@ and a.PhoneNo=@PhoneNo";
                                     ,b.CheckPicUrl
                                     ,b.IDCard
                                     ,b.Address
-                                    ,b.Landline
-                                    ,b.Longitude
+                                    ,ISNULL(b.Latitude,0) Latitude
+                                    ,ISNULL(b.Longitude,0) Longitude
                                     ,b.Latitude
                                     ,b.Status
                                     ,b.InsertTime
@@ -965,10 +965,10 @@ where b.PhoneNo=@PhoneNo and isnull(g.IsModifyBind,1)=1";
             string insertSql = @"
 insert into dbo.business(Name,City,district,PhoneNo,PhoneNo2,Password,CheckPicUrl,
             IDCard,Address,Longitude,Latitude,Status,districtId,CityId, 
-            ProvinceCode,CityCode,AreaCode,Province,CommissionTypeId,DistribSubsidy,GroupId, OriginalBusiId)
+            ProvinceCode,CityCode,AreaCode,Province,CommissionTypeId,DistribSubsidy)
             values(@Name,@City,@district,@PhoneNo,@PhoneNo2,@Password,@CheckPicUrl,@IDCard , 
             @Address,@Longitude,@Latitude,@Status,@districtId,@CityId,
-            @ProvinceCode,@CityCode,@AreaCode,@Province,@CommissionTypeId ,@DistribSubsidy,@GroupId, @OriginalBusiId);
+            @ProvinceCode,@CityCode,@AreaCode,@Province,@CommissionTypeId ,@DistribSubsidy);
 select SCOPE_IDENTITY() as id;    
 ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -992,8 +992,6 @@ select SCOPE_IDENTITY() as id;
             dbParameters.AddWithValue("@CommissionTypeId", model.CommissionTypeId);
             dbParameters.AddWithValue("@ProvinceCode", model.ProvinceCode);
             dbParameters.AddWithValue("@DistribSubsidy", model.DistribSubsidy);
-            dbParameters.AddWithValue("@GroupId", model.GroupId);
-            dbParameters.AddWithValue("@OriginalBusiId", model.OriginalBusiId);
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
         }
         /// <summary>
