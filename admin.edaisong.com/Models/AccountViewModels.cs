@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace tools.edaisong.com.Models
+namespace admin.edaisong.com.Models
 {
     public class ExternalLoginConfirmationViewModel
     {

@@ -11,8 +11,8 @@
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>tools.edaisong.com</RootNamespace>
-    <AssemblyName>tools.edaisong.com</AssemblyName>
+    <RootNamespace>admin.edaisong.com</RootNamespace>
+    <AssemblyName>admin.edaisong.com</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
@@ -164,11 +164,15 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
-    <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="App_Start\UserContext.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Authority\AdminAuthenticationService.cs" />
+    <Compile Include="Authority\IAuthenticationService.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\api\AccountController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -286,6 +290,7 @@
     <Content Include="img\email_1.jpg" />
     <Content Include="img\email_2.jpg" />
     <Content Include="img\email_3.jpg" />
+    <Content Include="img\logo.jpg" />
     <Content Include="img\full_height.jpg" />
     <Content Include="img\gallery\10s.jpg" />
     <Content Include="img\gallery\11s.jpg" />
@@ -407,33 +412,39 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
-    <Content Include="Views\Account\_ChangePasswordPartial.cshtml" />
-    <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
-    <Content Include="Views\Account\_RemoveAccountPartial.cshtml" />
-    <Content Include="Views\Account\_SetPasswordPartial.cshtml" />
-    <Content Include="Views\Account\ConfirmEmail.cshtml" />
-    <Content Include="Views\Account\ExternalLoginConfirmation.cshtml" />
-    <Content Include="Views\Account\ExternalLoginFailure.cshtml" />
-    <Content Include="Views\Account\ForgotPassword.cshtml" />
-    <Content Include="Views\Account\ForgotPasswordConfirmation.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
-    <Content Include="Views\Account\Manage.cshtml" />
-    <Content Include="Views\Account\Register.cshtml" />
-    <Content Include="Views\Account\ResetPassword.cshtml" />
-    <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\_Layout_New.cshtml" />
-    <Content Include="Views\Home\Demo.cshtml" />
     <Content Include="Views\Shared\_Layout_Demo.cshtml" />
     <Content Include="Views\Shared\_Layout_New_Nav.cshtml" />
+    <Content Include="Views\Shared\_Layout_LeftNav.cshtml" />
+    <Content Include="Views\Shared\_Layout_TopNav.cshtml" />
+    <Content Include="Views\Shared\_Layout_Footer.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Controllers\api\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ETS.Core\ETS.Core.csproj">
+      <Project>{BBA67A86-AFD6-46F2-BBD9-5DFB5BFDAFE2}</Project>
+      <Name>ETS.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Ets.Model\Ets.Model.csproj">
+      <Project>{B9D2361D-7E2C-45BA-89EC-4ECA1BF7C456}</Project>
+      <Name>Ets.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Ets.Service.IProvider\Ets.Service.IProvider.csproj">
+      <Project>{73FF8127-9703-4D8C-BD1C-4190A926A5BA}</Project>
+      <Name>Ets.Service.IProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Ets.Service.Provider\Ets.Service.Provider.csproj">
+      <Project>{61C59E53-67C8-44FE-B0AD-1E9025D7E568}</Project>
+      <Name>Ets.Service.Provider</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

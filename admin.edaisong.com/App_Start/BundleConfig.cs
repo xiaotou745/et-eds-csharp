@@ -1,7 +1,6 @@
-﻿using System.Web;
-using System.Web.Optimization;
+﻿using System.Web.Optimization;
 
-namespace tools.edaisong.com
+namespace admin.edaisong.com.App_Start
 {
     public class BundleConfig
     {

@@ -1,63 +1,68 @@
-﻿@using tools.edaisong.com.Models
-@model LoginViewModel
-
-@{
+﻿@{
     ViewBag.Title = "登录";
+    Layout = null;
 }
+<!DOCTYPE html>
+<html>
 
-<h2>@ViewBag.Title.</h2>
-<div class="row">
-    <div class="col-md-8">
-        <section id="loginForm">
-            @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-            {
-                @Html.AntiForgeryToken()
-                <h4>使用本地帐户登录。</h4>
-                <hr />
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>登录 - E代送管理后台</title>
+    
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    
+    <link href="~/Content/animate.css" rel="stylesheet" />
+    <link href="~/Content/style.css" rel="stylesheet" />
+</head>
+
+<body class="gray-bg">
+    <div class="middle-box text-center loginscreen animated fadeInDown">
+        <div>
+            <div>
+                @*<h1 class="logo-name">E代送</h1>*@
+                @*<img width="300px" src="~/img/logo.jpg" />*@
+            </div>
+            <h3>E代送管理系统</h3>
+            <p>
+                快递乐乐地使用吧
+                <!--Continually expanded and constantly improved Inspinia Admin Them (IN+)-->
+            </p>
+            @*<p>Login in. To see it in action.</p>*@
+            <form class="m-t" role="form" action="/api/login">
                 <div class="form-group">
-                    @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
-                    </div>
+                    <input name="UserName" id="UserName" type="text" class="form-control" placeholder="用户名" required="">
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
-                    </div>
+                    <input name="Password" id="Password" type="password" class="form-control" placeholder="密码" required="">
                 </div>
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10">
-                        <div class="checkbox">
-                            @Html.CheckBoxFor(m => m.RememberMe)
-                            @Html.LabelFor(m => m.RememberMe)
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10">
-                        <input type="submit" value="登录" class="btn btn-default" />
-                    </div>
-                </div>
-                <p>
-                    @Html.ActionLink("注册为新用户", "Register")
-                </p>
-                @* 为密码重置功能启用帐户确认后，请启用此项一次
-                <p>
-                    @Html.ActionLink("Forgot your password?", "ForgotPassword")
-                </p>*@
-            }
-        </section>
+                @*<div class="form-group">
+                    <input type="text" name="Captcha" id="Captcha" placeholder="验证码">
+                    <span class="yzm" style="width: 110px; height: 52px; margin-bottom: 10px">
+                        <img src="@Url.Action("CaptchaImage")" class="captcha" style="margin:10px" />
+                    </span>
+                </div>*@
+                @*<p class="clearfix">
+                    <input type="text" name="Captcha" id="Captcha" class="inp-yzm" maxlength="4" placeholder="验证码" autocomplete="off" />
+                    <span class="yzm" style="width: 110px; height: 52px; margin-bottom: 10px">
+                        <img src="@Url.Action("CaptchaImage")" class="captcha" style="margin:10px" />
+                    </span>
+                </p>*@ 
+                <button type="submit" class="btn btn-primary block full-width m-b">登录</button>
+
+                @*<a href="#"><small>Forgot password?</small></a>*@
+                @*<p class="text-muted text-center"><small>Do not have an account?</small></p>*@
+                @*<a class="btn btn-sm btn-white btn-block" href="register.html">Create an account</a>*@
+            </form>
+            <p class="m-t"> <small>Copyright Reserved 2014-2015<br>
+                北京易淘无限网络技术有限公司<br /></small> </p>
+        </div>
     </div>
-    <div class="col-md-4">
-        <section id="socialLoginForm">
-            @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { Action = "ExternalLogin", ReturnUrl = ViewBag.ReturnUrl })
-        </section>
-    </div>
-</div>
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
+
+    <!-- Mainly scripts -->
+    <script src="~/Scripts/jquery-2.1.1.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+</body>
+</html>

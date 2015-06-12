@@ -1,8 +1,10 @@
-﻿using Microsoft.Owin;
+﻿using admin.edaisong.com;
+using admin.edaisong.com.App_Start;
+using Microsoft.Owin;
 using Owin;
 
-[assembly: OwinStartupAttribute(typeof(tools.edaisong.com.Startup))]
-namespace tools.edaisong.com
+[assembly: OwinStartup(typeof(Startup))]
+namespace admin.edaisong.com
 {
     public partial class Startup
     {
