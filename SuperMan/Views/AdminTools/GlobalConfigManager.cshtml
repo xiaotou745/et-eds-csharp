@@ -87,8 +87,8 @@
                 alert("请输入正确的商家专属骑士接单响应时间!");
                 return;
             }
-            if (exclusiveOrderTime < 1 || exclusiveOrderTime > 30) {
-                alert("商家专属骑士接单响应时间为1-30分钟之间!");
+            if (exclusiveOrderTime < 1 || exclusiveOrderTime > 120) {
+                alert("商家专属骑士接单响应时间为1-120分钟之间!");
                 return;
             }
             if (uploadTimeInterval == oldUploadTimeInterval && pushRadius == oldPushRadius && clienterOrderPageSize == oldClienterOrderPageSize && exclusiveOrderTime == oldExclusiveOrderTime) {
