@@ -2333,9 +2333,15 @@ where   oo.IsJoinWithdraw = 0
         /// <returns></returns>
         public IList<GetJobCDM> GetLastedJobC(GetJobCPM model)
         {
-            string whereStr = model.City.Contains("北京")
-                ? " and a.ReceviceCity LIKE '北京%'"
-                : string.Format(" and a.ReceviceCity = '{0}'", model.City);
+            //string whereStr = model.City.Contains("北京")
+            //    ? " and a.ReceviceCity LIKE '北京%'"
+            //    : string.Format(" and a.ReceviceCity = '{0}'", model.City);
+
+            //string whereStr = model.City.Contains("北京")
+            //    ? " and (a.ReceviceCity = '北京市' or a.ReceviceCity = '北京郊区' or a.ReceviceCity = '北京城区') "
+            //    : string.Format(" and a.ReceviceCity = '{0}'", model.City);
+
+            string whereStr = string.Format(" and a.ReceviceCity = '{0}' ", model.City);
             string sql = null;
             if (model.ClienterId == 0 || model.IsBind == (int)IsBindBC.No)  // 查询所有 无雇佣骑士的商家发布的订单，以及有雇佣骑士的商家发布的超过了五分钟无人抢单的订单 
             {
