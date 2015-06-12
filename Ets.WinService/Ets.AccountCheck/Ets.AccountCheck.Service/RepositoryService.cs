@@ -74,7 +74,7 @@ namespace Ets.AccountCheck
         {
             string sql = @"INSERT INTO ClienterAccountChecking(ClienterId, CreateDate, FlowStatMoney, ClienterTotalMoney, StartDate, EndDate,LastTotalMoney)
 	VALUES (@ClienterId, @CreateDate, @FlowStatMoney, @ClienterTotalMoney, @StartDate, @EndDate,@LastTotalMoney)";
-            using (var conn = GetConnection(ReadConnectionString))
+            using (var conn = GetConnection(WriteConnectionString))
             {
                 conn.Execute(sql, checking);
             }
