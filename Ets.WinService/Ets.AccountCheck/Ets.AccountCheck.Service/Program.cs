@@ -1,4 +1,5 @@
-﻿using Quartz.Impl;
+﻿using Quartz;
+using Quartz.Impl;
 using Quartz.Impl.Calendar;
 using System;
 using System.Collections.Generic;
@@ -16,19 +17,32 @@ namespace Ets.AccountCheck.Service
         /// </summary>
         static void Main(string[] args)
         {
-              var dailyCalendar = new DailyCalendar("00:01", "23:59");
-            dailyCalendar.InvertTimeRange = true;
-            sched.AddCalendar("cal1", dailyCalendar, false, false);
-
-            Quartz.IScheduler sch= StdSchedulerFactory.GetDefaultScheduler();
-            sch.AddCalendar("test",new )
-
-                Quartz.CalendarIntervalScheduleBuilder.Create()
+            
 
 
             if (args.Length > 0)
             {
-                Console.Read();
+                string[] lines = new string[3];
+                lines[0] = "1,1,1,1,1,1,1,1,1";
+                lines[1] = "1,1,1,1,1,1,1,1,1";
+                lines[2] = "1,1,1,1,1,1,1,1,1";
+
+                CheckAccountService.SendEmail(lines);
+
+                //DateTimeOffset runTime = DateBuilder.TodayAt(00, 59, 59);
+                //ITrigger trigger = TriggerBuilder.Create()
+                //   .WithIdentity("trigger1", "group1")
+                //   .StartAt(runTime).WithSchedule(SimpleScheduleBuilder.RepeatSecondlyForever(10))
+                //   .Build();
+
+                //IJobDetail detail = JobBuilder.Create<CheckAccoutJob>().WithIdentity("job1", "group1").Build();
+
+                //ISchedulerFactory sf = new StdSchedulerFactory();
+                //IScheduler sched = sf.GetScheduler();
+                //sched.ScheduleJob(detail, trigger);
+
+                //sched.Start();
+                Console.ReadLine();
 
             }
             else

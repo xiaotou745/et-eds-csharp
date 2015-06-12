@@ -11,7 +11,14 @@ namespace Ets.AccountCheck.Service
     {
         public void Execute(IJobExecutionContext context)
         {
-            throw new NotImplementedException();
+            try
+            {
+                CheckAccountService.Check();
+            }
+            catch (Exception e)
+            {
+                LogHelper.Log.Error("检查失败" + e.Message + e.StackTrace);
+            }
         }
     }
 }
