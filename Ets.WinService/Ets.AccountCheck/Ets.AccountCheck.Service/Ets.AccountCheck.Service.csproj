@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="BouncyCastle">
       <HintPath>..\lib\BouncyCastle.dll</HintPath>
@@ -48,6 +51,10 @@
     <Reference Include="MimeKit">
       <HintPath>..\lib\MimeKit.dll</HintPath>
     </Reference>
+    <Reference Include="Quartz, Version=2.3.2.0, Culture=neutral, PublicKeyToken=f6b8c98a402cc8a4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Quartz.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Configuration.Install" />
@@ -63,6 +70,7 @@
   <ItemGroup>
     <Compile Include="AccountCheckError.cs" />
     <Compile Include="CheckAccountService.cs" />
+    <Compile Include="CheckAccoutJob.cs" />
     <Compile Include="ClienterAccountBalance.cs" />
     <Compile Include="ClienterAccountChecking.cs" />
     <Compile Include="ClienterFlowStat.cs" />
@@ -89,7 +97,15 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="log4net.config" />
+    <None Include="installer.bat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="log4net.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="uninstaller.bat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ProjectInstaller.resx">

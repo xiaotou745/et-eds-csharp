@@ -15,6 +15,37 @@ namespace Ets.AccountCheck
         private static readonly string WriteConnectionString = ConfigurationManager.ConnectionStrings["SuperMan_Write"].ConnectionString;
 
         /// <summary>
+        /// 测试连接数据库
+        /// </summary>
+        /// <returns></returns>
+        public static bool TestReadConnection()
+        {
+            using (var conn = GetConnection(ReadConnectionString))
+            {
+                if (conn.State == ConnectionState.Open)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        /// <summary>
+        /// 测试连接数据库
+        /// </summary>
+        /// <returns></returns>
+        public static bool TestWriteConnection()
+        {
+            using (var conn = GetConnection(WriteConnectionString))
+            {
+                if (conn.State == ConnectionState.Open)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
         /// 获得所有骑士
         /// </summary>
         /// <returns></returns>
@@ -58,7 +89,7 @@ namespace Ets.AccountCheck
         {
             string sql = @"INSERT INTO ClienterAccountChecking(ClienterId, CreateDate, FlowStatMoney, ClienterTotalMoney, StartDate, EndDate,LastTotalMoney)
 	VALUES (@ClienterId, @CreateDate, @FlowStatMoney, @ClienterTotalMoney, @StartDate, @EndDate,@LastTotalMoney)";
-            using (var conn = GetConnection(ReadConnectionString))
+            using (var conn = GetConnection(WriteConnectionString))
             {
                 conn.Execute(sql, checking);
             }

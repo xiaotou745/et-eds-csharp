@@ -11,7 +11,7 @@ namespace Ets.AccountCheck
 {
     static class EmailService
     {
-        public static void SendEmail(string tomail,string subject,string content)
+        public static void SendEmail(string[] tomail,string subject,string content)
         {
             try
             {
@@ -24,7 +24,12 @@ namespace Ets.AccountCheck
 
                 var message = new MimeMessage();
                 message.From.Add(new MailboxAddress(sendEmail, sendEmail));
-                message.To.Add(new MailboxAddress(tomail, tomail));
+
+                foreach (var mail in tomail)
+                {
+                    message.To.Add(new MailboxAddress(mail, mail));
+                }
+
                 message.Subject = subject;
                 message.Body = new TextPart("html") { Text = content };
 
