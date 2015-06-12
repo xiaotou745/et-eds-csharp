@@ -22,6 +22,17 @@ namespace Ets.AccountCheck.Service
 
         protected override void OnStart(string[] args)
         {
+            if (RepositoryService.TestConnection())
+            {
+                LogHelper.Log.Info("数据库连接正常");
+            }
+            else
+            {
+                LogHelper.Log.Info("数据库连接异常");
+
+                return;
+            }
+
             LogHelper.Log.Info("服务已启动");
 
             DateTimeOffset runTime = DateBuilder.TodayAt(01, 00, 00);

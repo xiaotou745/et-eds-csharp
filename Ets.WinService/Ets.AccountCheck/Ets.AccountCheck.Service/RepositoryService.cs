@@ -15,6 +15,22 @@ namespace Ets.AccountCheck
         private static readonly string WriteConnectionString = ConfigurationManager.ConnectionStrings["SuperMan_Write"].ConnectionString;
 
         /// <summary>
+        /// 测试连接数据库
+        /// </summary>
+        /// <returns></returns>
+        public static bool TestConnection()
+        {
+            using (var conn = GetConnection(ReadConnectionString))
+            {
+                if (conn.State == ConnectionState.Open)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
         /// 获得所有骑士
         /// </summary>
         /// <returns></returns>

@@ -11,6 +11,7 @@ namespace Ets.AccountCheck.Service
     {
         public void Execute(IJobExecutionContext context)
         {
+            LogHelper.Log.Info("任务开发执行");
             try
             {
                 CheckAccountService.Check();
@@ -19,6 +20,8 @@ namespace Ets.AccountCheck.Service
             {
                 LogHelper.Log.Error("检查失败" + e.Message + e.StackTrace);
             }
+            LogHelper.Log.Info("任务执行完成");
+
         }
     }
 }
