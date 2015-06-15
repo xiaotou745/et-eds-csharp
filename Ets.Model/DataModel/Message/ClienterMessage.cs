@@ -9,7 +9,7 @@ namespace Ets.Model.DataModel.Message
     /// <summary>
     /// 骑士app通知表  add by caoheyang  20150615
     /// </summary>
-    class ClienterMessage
+   public class ClienterMessage
     {
         	
 		/// <summary>

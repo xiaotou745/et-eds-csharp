@@ -66,6 +66,8 @@
     <Compile Include="GlobalConfig\GlobalConfigDao.cs" />
     <Compile Include="MenuSet\AuthoritySetDao.cs" />
     <Compile Include="Distribution\DistributionDao.cs" />
+    <Compile Include="Message\BusinessMessageDao.cs" />
+    <Compile Include="Message\ClienterMessageDao.cs" />
     <Compile Include="Order\OrderOtherDao.cs" />
     <Compile Include="Order\OrderDetailDao.cs" />
     <Compile Include="Order\OrderChildDao.cs" />
