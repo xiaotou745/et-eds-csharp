@@ -36,12 +36,12 @@ namespace Ets.AccountCheck
         public static void SendEmail(string[] lines)
         {
             var stringbuilder = new StringBuilder();
-            stringbuilder.AppendLine(ClienterAccountChecking.Header());
+            stringbuilder.AppendLine(ClienterAccountChecking.Header()+"<br />");
             if (lines != null && lines.Length > 0)
             {
                 foreach (var item in lines)
                 {
-                    stringbuilder.AppendLine(item + "</br>");
+                    stringbuilder.AppendLine(item + "<br />");
                 }
             }
             string[] emails = ConfigurationManager.AppSettings["receiveEmailList"].Split(';');
