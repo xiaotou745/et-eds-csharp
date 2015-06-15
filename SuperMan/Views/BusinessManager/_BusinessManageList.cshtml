@@ -127,12 +127,12 @@
 
                         if (@item.Status == 1)
                         {
-                            <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage,@item.CommissionType)" style="color:gray" businessid="@item.Id" class="businessOk">审核通过</a>
+                            <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage,@item.CommissionType,@item.Latitude,@item.Longitude)" style="color:gray" businessid="@item.Id" class="businessOk">审核通过</a>
                                 <a href="javascript:void(0)" businessid="@item.Id" class="businessCel">取消资格</a>
                         }
                         else
                         {
-                            <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage,@item.CommissionType)" businessid="@item.Id" class="businessOk">审核通过</a>
+                            <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage,@item.CommissionType,@item.Latitude,@item.Longitude)" businessid="@item.Id" class="businessOk">审核通过</a>
                                 <a href="javascript:void(0)" style="color:gray" businessid="@item.Id" class="businessCel">取消资格</a>
                         }
 
@@ -197,7 +197,7 @@
         });
     });
     ///操作审核验证
-    function businessOk(checkAddress, businessId, Proportion, checkImage, commissionType) {
+    function businessOk(checkAddress, businessId, Proportion, checkImage, commissionType, Latitude, Longitude) {
         if (!window.confirm("是否审核通过？")) {
             return;
         }
@@ -211,6 +211,13 @@
         }
         if (checkImage == 0) {
             alert("该商家未上传图片，不能通过审核。")
+            return;
+        }
+        //debugger
+        var lng = parseFloat(Longitude);
+        var lat = parseFloat(Latitude);
+        if (lng < 73.40 || lng > 135.230 || lat < 3.52 || lat > 53.33) {
+            alert("该商家地址有误，不能通过审核。")
             return;
         }
         //currentId = $(this).attr("businessId");
