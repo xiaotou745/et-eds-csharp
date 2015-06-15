@@ -1,45 +1,136 @@
-﻿@{
-    ViewBag.Title = "Home Page";
-}
- <!--内容html开始-->
-	<div class="index_center">
-		<div class="center_wd1">
-			<div class="wd1_left">
-				<span><img src="~/Images/iphone_1.jpg" alt="e代送商家版"/></span>
-			</div>
-			<div class="wd1_right">
-				<h3><img src="images/ed.png" /></h3>
-				<p>商家版APP是一款供商家直接下订单的手机客户端，成功抢单的配送员会在20分钟内到达商家门店取货，并安全快速地送到消费者手上。</p>
-				<p>e代送平台配送员会按照商家订单上要求送达时间，去商家取货，“直拿直送”送到收货人，无中转流程。</p>
-				<div class="ewm">
-					<div class="ewm_left"><img src="~/Images/ewm.png" alt="e代送商家版APP二维码"/><p>扫描二维码</p></div>
-					<div class="ewm_right">
-						<span><a href="http://admin.edaisong.com.cn/download/edsb" target="_blank">安卓客户端下载</a></span>
-						<span><a class="ground" href="javascript:;">苹果客户端下载</a></span>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="clear"></div>
-	</div>
-	<div class="xx"></div>
-	<div class="index_center2">
-		<div class="center_wd1">
-			<div class="wd1_left">
-				<span><img src="~/Images/iphone_2.jpg" alt="e代送配送版"/></span>
-			</div>
-			<div class="wd1_right">
-				<h3><img src="images/red.png" /></h3>
-				<p>下载e代送配送版手机应用，注册成为e代送平台配送员，就能通过手机应用看到你附近需要配送的订单，只要你平时有空闲时间，就可以抢单并按照订单要求，为商家配送货品赚钱。工作时间灵活自由。</p>
-				<div class="ewm_2">
-					<div class="ewm_left"><img src="~/Images/wem1.png" alt="e代送配送版APP二维码"/><p>扫描二维码</p></div>
-					<div class="ewm_right2">
-						<span><a href="http://admin.edaisong.com.cn/download/edsc" target="_blank">安卓客户端下载</a></span>
-						<span><a class="ground" href="javascript:;">苹果客户端下载</a></span>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="clear"></div>
-	</div>
-	<!--内容html结束-->
+﻿
+    <script src="/Content/js/jquery.min.js"></script>
+    <script src="/Content/js/jquery-ui.min.js"></script>
+
+    <script type="text/javascript" src="/Content/js/jquery.fullPage.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#fullpage').fullpage({
+                'verticalCentered': false,
+                'css3': true,
+                'sectionsColor': ['#0bd5c0', '#0bd5c0', '#0bd5c0', '#009bd5','#009bd5','#009bd5','#009bd5','#f47c0b','#f47c0b','#f47c0b','#f47c0b'],
+                'navigation': true,
+                'navigationPosition': 'right',
+                'navigationTooltips': [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
+                'afterLoad': function(anchorLink, index){
+
+                },
+                'onLeave': function(index, nextIndex, direction){
+                    posCaption(nextIndex);
+                }
+            });
+            posCaption(1);
+            function posCaption(i){
+                var act = $('.caption .active');
+                var li = i>7?$('.caption li:eq(2)'):(i>3?$('.caption li:eq(1)'):'');
+                if(li){
+                	if(!li.hasClass('active')){
+	                    act.removeClass('active');
+	                    li.addClass('active');
+	                }
+	            }else{
+                    act.removeClass('active');
+                }
+            }
+        });
+    </script>
+    <link rel="stylesheet" type="text/css" href="/Content/css/jquery.fullPage.css" />
+    <link href="/Content/css/base.css" rel="stylesheet" type="text/css" />
+
+    <ul class="caption" style="position:absolute;">
+        <li class="bn"><a href="#1"><img src="/Images/logo_01.png" alt="E代送"></a></li>
+        <li>
+            <a href="#4">发货版</a>
+        </li>
+        <li>
+            <a href="#8">骑士版</a>
+        </li>
+        <li class="right">客服热线：<span>4006-380-177</span></li>
+    </ul>
+    <div id="fullpage">
+        <div class="section main_01" id="section01">
+            <div class="content">
+                <div class="text"><img src="/Images/1_l.jpg" alt=""></div>
+                <div class="right" style="position:relative">
+                    <img src="/Images/1_i1.png" alt="" style="position:absolute" class="ai a1">
+                    <img src="/Images/1_i2.png" alt="" style="position:absolute" class="ai a2">
+                    <img src="/Images/1_bg.jpg" alt="">
+                </div>
+            </div>
+        </div>
+        <div class="section main_02" id="section02">
+            <div class="content">
+                <div class="text"><img src="/Images/2_l.jpg" alt=""></div>
+                <div class="right"><img src="/Images/2_r.png" alt=""></div>
+            </div>
+        </div>
+        <div class="section main_03" id="section03">
+            <div class="content">
+                <div class="text"><img src="/Images/3_l.jpg" alt=""></div>
+                <div class="right">
+                    <img src="/Images/3_ai.jpg" class="img_bg" alt="">
+                    <img src="/Images/3_bg.png" class="img_ai ai" alt="">
+                </div>
+            </div>
+        </div>
+        <div class="section main_04" id="section04">
+            <div class="content">
+                <div class="text"><img src="/Images/4_l.jpg" alt=""></div>
+                <div class="right" style="position:relative">
+                    <img src="/Images/4_r.png" alt="">
+                    <div class="circle circle1"></div>
+                    <div class="circle circle2"></div>
+                </div>
+            </div>
+        </div>
+        <div class="section main_05" id="section05">
+            <div class="content">
+                <div class="text"><img src="/Images/5_l.png" alt=""></div>
+                <div class="right"><img src="/Images/5_r.jpg" alt=""></div>
+            </div>
+        </div>
+        <div class="section main_06" id="section06">
+            <div class="content">
+                <div class="text"><img src="/Images/6_l.jpg" alt=""></div>
+                <div class="right">
+                    <img src="/Images/6_r.jpg" alt="">
+                    <div class="r2">
+                        <img src="/Images/6_r-1.png" alt="" class="r2-1">
+                        <span class="r2-2">
+                            <img src="/Images/6_r-2.png" alt="">
+                        </span>
+                    </div>
+                    <img src="/Images/6_r-3.png" alt="" class="r3">
+                </div>
+            </div>
+        </div>
+        <div class="section main_07" id="section07">
+            <div class="center">
+                <img src="/Images/7_c.jpg" alt="">
+            </div>
+        </div>
+        <div class="section main_08" id="section08">
+            <div class="content">
+                <div class="text"><img src="/Images/8_l.jpg" alt=""></div>
+                <div class="right"><img src="/Images/8_r.jpg" alt=""></div>
+            </div>
+        </div>
+        <div class="section main_09" id="section09">
+            <div class="content">
+                <div class="text"><img src="/Images/9_l.jpg" alt=""></div>
+                <div class="right"><img src="/Images/9_r.jpg" alt=""></div>
+            </div>
+        </div>
+        <div class="section main_10" id="section10">
+            <div class="content">
+                <div class="text"><img src="/Images/10_l.jpg" alt=""></div>
+                <div class="right"><img src="/Images/10_r.jpg" alt=""></div>
+            </div>
+        </div>
+        <div class="section main_11" id="section11">
+            <div class="center">
+                <img src="/Images/11_c.jpg" alt="">
+            </div>
+            <div class="footer">京ICP备15014116号-1 Copyright©2011-2015易代送网络科技（北京）有限公司,All rights reserved.</div>
+        </div>
+    </div>

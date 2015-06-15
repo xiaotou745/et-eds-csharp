@@ -163,11 +163,14 @@
     <Content Include="Images\apk.png" />
     <Content Include="Images\gotop.png" />
     <Content Include="Images\img1-1.jpg" />
+    <Content Include="Images\img1-1.png" />
     <Content Include="Images\img1.jpg" />
     <Content Include="Images\img2.jpg" />
+    <Content Include="Images\img2.png" />
     <Content Include="Images\img3.jpg" />
     <Content Include="Images\img4.jpg" />
     <Content Include="Images\img5.jpg" />
+    <Content Include="Images\img5.png" />
     <Content Include="Images\img6.jpg" />
     <Content Include="Images\img7.jpg" />
     <Content Include="Images\t2.jpg" />

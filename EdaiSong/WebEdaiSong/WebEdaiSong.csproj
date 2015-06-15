@@ -133,19 +133,60 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\css\base.css" />
     <Content Include="Content\index.css" />
+    <Content Include="Content\css\jquery.fullPage.css" />
+    <Content Include="Content\js\jquery-1.8.2.min.js" />
+    <Content Include="Content\js\jquery-ui.min.js" />
+    <Content Include="Content\js\jquery.easings.min.js" />
+    <Content Include="Content\js\jquery.fullPage.min.js" />
+    <Content Include="Content\js\jquery.min.js" />
+    <Content Include="Content\js\jquery.slimscroll.js" />
+    <Content Include="Content\js\jquery.slimscroll.min.js" />
     <Content Include="Global.asax" />
     <None Include="Properties\PublishProfiles\www.edaisong.com.cn.pubxml" />
     <None Include="Properties\PublishProfiles\www.edaisong.com.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
+    <Content Include="Images\1.png" />
+    <Content Include="Images\10_l.jpg" />
+    <Content Include="Images\10_r.jpg" />
+    <Content Include="Images\11_c.jpg" />
+    <Content Include="Images\17_c.jpg" />
+    <Content Include="Images\1_bg.jpg" />
+    <Content Include="Images\1_i1.png" />
+    <Content Include="Images\1_i2.png" />
+    <Content Include="Images\1_l.jpg" />
+    <Content Include="Images\2.png" />
+    <Content Include="Images\2_l.jpg" />
+    <Content Include="Images\2_r.png" />
+    <Content Include="Images\3.png" />
+    <Content Include="Images\3_ai.jpg" />
+    <Content Include="Images\3_bg.png" />
+    <Content Include="Images\3_l.jpg" />
+    <Content Include="Images\4_l.jpg" />
+    <Content Include="Images\4_r.png" />
+    <Content Include="Images\5_l.png" />
+    <Content Include="Images\5_r.jpg" />
+    <Content Include="Images\6_l.jpg" />
+    <Content Include="Images\6_r-1.png" />
+    <Content Include="Images\6_r-2.png" />
+    <Content Include="Images\6_r-3.png" />
+    <Content Include="Images\6_r.jpg" />
+    <Content Include="Images\7_c.jpg" />
+    <Content Include="Images\8_l.jpg" />
+    <Content Include="Images\8_r.jpg" />
+    <Content Include="Images\9_l.jpg" />
+    <Content Include="Images\9_r.jpg" />
     <Content Include="Images\body.jpg" />
     <Content Include="Images\ed.png" />
     <Content Include="Images\ewm.png" />
     <Content Include="Images\iphone.png" />
     <Content Include="Images\iphone_1.jpg" />
+    <Content Include="Images\iphone_1.png" />
     <Content Include="Images\iphone_2.jpg" />
     <Content Include="Images\iphone_2.png" />
     <Content Include="Images\logo.png" />
+    <Content Include="Images\logo_01.png" />
     <Content Include="Images\peisong.png" />
     <Content Include="Images\red.png" />
     <Content Include="Images\shop.png" />
@@ -166,6 +207,9 @@
     <Content Include="Scripts\knockout-2.2.0.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\_references.js" />
+    <Content Include="Views\Shared\_Layout.cshtml">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -176,7 +220,6 @@
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
-    <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>

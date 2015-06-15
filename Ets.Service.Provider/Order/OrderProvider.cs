@@ -259,7 +259,7 @@ namespace Ets.Service.Provider.Order
         {
             order to = new order();
             ///TODO 订单号生成规则，定了以后要改；
-            to.OrderNo = Helper.generateOrderCode(busiOrderInfoModel.userId,busiOrderInfoModel.TimeSpan);  //根据userId生成订单号(15位)
+            to.OrderNo = Helper.generateOrderCode(busiOrderInfoModel.userId, busiOrderInfoModel.TimeSpan);  //根据userId生成订单号(15位)
             to.businessId = busiOrderInfoModel.userId; //当前发布者
             BusListResultModel business = iBusinessProvider.GetBusiness(busiOrderInfoModel.userId);
             if (business != null)
@@ -855,112 +855,6 @@ namespace Ets.Service.Provider.Order
         [ETS.Expand.ActionStatus(typeof(OrderPublicshStatus))]
         public Ets.Model.Common.ResultModel<NewPostPublishOrderResultModel> NewPostPublishOrder_B(NewPostPublishOrderModel model)
         {
-            #region 临时
-            //if (string.IsNullOrWhiteSpace(model.OriginalOrderNo))   //原始订单号非空验证
-            //    return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OriginalOrderNoEmpty);
-            //if (model.OriginalBusinessId == 0)   //原平台商户Id非空验证
-            //    return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OriginalBusinessIdEmpty);
-            //if (string.IsNullOrWhiteSpace(model.OrderFrom.ToString()))   //订单来源
-            //    return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OrderFromEmpty);
-            //if (string.IsNullOrWhiteSpace(model.IsPay.ToString()))   //请确认是否已付款
-            //    return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.IsPayEmpty);
-
-            //if (string.IsNullOrWhiteSpace(model.ReceiveName))    //收货人名称
-            //    return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.ReceiveNameEmpty);
-
-            //if (string.IsNullOrWhiteSpace(model.ReceivePhoneNo)) //手机号
-            //    return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.ReceivePhoneEmpty);
-
-            //if (string.IsNullOrWhiteSpace(model.Receive_Province) || string.IsNullOrWhiteSpace(model.Receive_ProvinceCode))  //所在省
-            //    return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.ReceiveProvinceEmpty);
-
-            //if (string.IsNullOrWhiteSpace(model.Receive_City) || string.IsNullOrWhiteSpace(model.Receive_CityCode))  //所在市
-            //    return ResultModel<NewPostPublishOrderResultModel>.Conclude
-            //        (OrderPublicshStatus.ReceiveCityEmpty);
-
-            //if (string.IsNullOrWhiteSpace(model.Receive_Area) || string.IsNullOrWhiteSpace(model.Receive_AreaCode))  //所在区
-            //    return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.ReceiveAreaEmpty);
-
-            //if (string.IsNullOrWhiteSpace(model.Receive_Address))   //收货地址
-            //    return ResultModel<NewPostPublishOrderResultModel>.Conclude
-            //        (OrderPublicshStatus.ReceiveAddressEmpty);
-            ////验证原平台商户是否已经注册
-            ////var busi = BusiLogic.busiLogic().GetBusiByOriIdAndOrderFrom(model.OriginalBusinessId, model.OrderFrom);
-            //BusinessDao busDao = new BusinessDao();
-            //Business busi = busDao.GetBusiByOriIdAndOrderFrom(model.OriginalBusinessId, model.OrderFrom);
-            //if (busi == null)
-            //{
-            //    return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.BusinessNoExist);
-            //}
-            //else
-            //{
-            //    //商户必须是审核通过的， 商户审核通过 意味着 已经设置结算比例， 因为在后台管理系统中 商户审核通过时会验证商户结算比例是否设置
-            //    if (busi.Status != ConstValues.BUSINESS_AUDITPASS)
-            //    {
-            //        return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.BusinessNotAudit);
-            //    }
-
-            //}
-            ////验证该平台 商户 订单号 是否存在
-            //Ets.Dao.Order.OrderDao orderDao = new Dao.Order.OrderDao();
-            //var order = orderDao.GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom, model.OrderType);
-            ////var order = OrderLogic.orderLogic().GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom, model.OrderType);
-            //if (order != null)
-            //{
-            //    if (order.Status == ConstValues.ORDER_CANCEL)    // 在存在订单的情况下如果是去掉订单的状态，直接修改为订单待接单状态
-            //    {
-            //        int upResult = orderDao.UpdateOrderStatus_Other(new ChangeStatusPM_OpenApi() { groupid = model.OrderFrom, order_no = order.OriginalOrderNo, orderfrom = model.OrderFrom, remark = "第三方再次推送", status = 0 });
-            //        if (upResult > 0)
-            //        {
-            //            return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Success);
-            //        }
-            //        else
-            //        {
-            //            return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Failed);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.OrderHadExist);
-            //    }
-            //}
-            //#region 转换省市区
-            ////转换省
-            //var _province = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.Receive_Province, JiBie = 1 });
-            //if (_province != null)
-            //{
-            //    model.Receive_ProvinceCode = _province.NationalCode.ToString();
-            //}
-            ////转换市
-            //var _city = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.Receive_City, JiBie = 2 });
-            //if (_city != null)
-            //{
-
-            //    model.Receive_CityCode = _city.NationalCode.ToString();
-            //}
-            ////转换区
-            //var _area = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.Receive_Area, JiBie = 3 });
-            //if (_area != null)
-            //{
-            //    model.Receive_AreaCode = _area.NationalCode.ToString();
-            //}
-            //#endregion
-            //order dborder = OrderInstance(model);  //整合订单信息
-            //PubOrderStatus addResult = AddOrder(dborder);    //添加订单记录，并且触发极光推送。          
-            //if (addResult == PubOrderStatus.Success)
-            //{
-            //    NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { OriginalOrderNo = model.OriginalOrderNo, OrderNo = dborder.OrderNo };
-            //    LogHelper.LogWriter("订单发布成功", new { model = model, resultModel = resultModel });
-            //    return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Success, resultModel);
-            //}
-            //else
-            //{
-            //    NewPostPublishOrderResultModel resultModel = new NewPostPublishOrderResultModel { Remark = "订单发布失败" };
-            //    LogHelper.LogWriter("订单发布失败", new { model = model });
-            //    return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.Failed);
-            //}
-            #endregion
-
             try
             {
 
@@ -971,6 +865,8 @@ namespace Ets.Service.Provider.Order
                 {
                     model.Receive_ProvinceCode = _province.NationalCode.ToString();
                 }
+                string cityName = model.Receive_City;
+                model.Receive_City = string.IsNullOrEmpty(cityName) ? string.Empty : cityName.Trim().Replace("城区", "市").Replace("郊区", "市");
                 //转换市
                 var _city = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = model.Receive_City, JiBie = 2 });
                 if (_city != null)
@@ -1521,7 +1417,7 @@ namespace Ets.Service.Provider.Order
             orderDM.PickUpAddress = order.PickUpAddress;
             orderDM.businessPhone = order.BusinessPhone;
             orderDM.businessPhone2 = order.BusinessPhone2;
-            orderDM.Landline= order.Landline;
+            orderDM.Landline = order.Landline;
             orderDM.BusinessAddress = order.BusinessAddress;
             orderDM.ReceviceName = order.ReceviceName;
             orderDM.receviceCity = order.ReceviceCity;
@@ -1530,7 +1426,7 @@ namespace Ets.Service.Provider.Order
                 orderDM.ReceviceAddress = order.ReceviceAddress;
             else
             {
-                orderDM.ReceviceAddress = ConstValues.ReceviceAddress;                
+                orderDM.ReceviceAddress = ConstValues.ReceviceAddress;
             }
             orderDM.Amount = order.Amount;
             orderDM.IsPay = Convert.ToBoolean(order.IsPay);
@@ -1635,7 +1531,7 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public ResultModel<object> GetJobC(GetJobCPM model)
         {
-            IList<GetJobCDM> jobs=new List<GetJobCDM>();
+            IList<GetJobCDM> jobs = new List<GetJobCDM>();
             model.PushRadius = GlobalConfigDao.GlobalConfigGet(0).PushRadius; //距离
             model.ExclusiveOrderTime = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(0).ExclusiveOrderTime); //商家专属骑士接单响应时间
             if (model.SearchType == (int)GetJobCMode.NewJob)//最新订单
@@ -1761,10 +1657,10 @@ namespace Ets.Service.Provider.Order
         /// <param name="model"></param>
         /// <param name="totalRows"></param>
         /// <returns></returns>
-        public IList<DistributionAnalyzeResult> DistributionAnalyze(OrderDistributionAnalyze model, int pageIndex,int pageSize, out int totalRows)
+        public IList<DistributionAnalyzeResult> DistributionAnalyze(OrderDistributionAnalyze model, int pageIndex, int pageSize, out int totalRows)
         {
             totalRows = 0;
-            DataTable dt = orderDao.DistributionAnalyze(model, pageIndex,pageSize, out totalRows);
+            DataTable dt = orderDao.DistributionAnalyze(model, pageIndex, pageSize, out totalRows);
 
             List<int> clienterIds = new List<int>();
             List<int> businessIds = new List<int>();
@@ -1777,7 +1673,7 @@ namespace Ets.Service.Provider.Order
                 }
                 clienterIds.Add(clienterid);
 
-                int businessid = ParseHelper.ToInt(item["businessId"],0);
+                int businessid = ParseHelper.ToInt(item["businessId"], 0);
                 if (businessid == 0)
                 {
                     continue;
@@ -1787,7 +1683,7 @@ namespace Ets.Service.Provider.Order
             clienterIds = clienterIds.Distinct().ToList();
             businessIds = businessIds.Distinct().ToList();
 
-            IDictionary<int,Business> businessDic = _businessDao.GetByIds(businessIds);
+            IDictionary<int, Business> businessDic = _businessDao.GetByIds(businessIds);
             IDictionary<int, clienter> clienterDic = clienterDao.GetByIds(clienterIds);
 
             IList<DistributionAnalyzeResult> list = new List<DistributionAnalyzeResult>();
@@ -1797,7 +1693,7 @@ namespace Ets.Service.Provider.Order
                 {
                     Id = int.Parse(item["Id"].ToString()),
                     OrderNo = item["OrderNo"].ToString(),
-                    OrderCount = ParseHelper.ToInt(item["OrderCount"],0),
+                    OrderCount = ParseHelper.ToInt(item["OrderCount"], 0),
                     ActualDoneDate = ParseHelper.ToDatetime(item["ActualDoneDate"]),
                     PubDate = ParseHelper.ToDatetime(item["PubDate"]),
                     GrabTime = ParseHelper.ToDatetime(item["GrabTime"]),
@@ -1805,7 +1701,7 @@ namespace Ets.Service.Provider.Order
                     ReceviceAddress = ParseHelper.ToString(item["ReceviceAddress"]),
                     TakeTime = ParseHelper.ToDatetime(item["TakeTime"]),
                     ReceviceCity = item["ReceviceCity"].ToString(),
-                    TaskMoney = ParseHelper.ToDecimal(item["OrderCommission"],0)
+                    TaskMoney = ParseHelper.ToDecimal(item["OrderCommission"], 0)
                 };
 
                 int businessId = ParseHelper.ToInt(item["businessId"]);

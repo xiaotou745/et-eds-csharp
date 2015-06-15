@@ -580,3 +580,8 @@ p {
   .wrap { display:block; }
   .tips { display:none; }
 }
+@media screen and (max-height: 568px) {
+    .img img{
+        width:50%
+    }
+}
