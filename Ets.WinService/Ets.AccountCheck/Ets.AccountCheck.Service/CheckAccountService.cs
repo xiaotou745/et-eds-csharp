@@ -41,7 +41,7 @@ namespace Ets.AccountCheck
             {
                 foreach (var item in lines)
                 {
-                    stringbuilder.AppendLine(item);
+                    stringbuilder.AppendLine(item + "</br>");
                 }
             }
             string[] emails = ConfigurationManager.AppSettings["receiveEmailList"].Split(';');
