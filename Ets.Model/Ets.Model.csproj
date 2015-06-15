@@ -74,6 +74,8 @@
     <Compile Include="DataModel\Clienter\ClienterLocation.cs" />
     <Compile Include="DataModel\Clienter\CrossShopStatisticLogModel.cs" />
     <Compile Include="DataModel\Common\ExportSqlManage.cs" />
+    <Compile Include="DataModel\Message\BusinessMessage.cs" />
+    <Compile Include="DataModel\Message\ClienterMessage.cs" />
     <Compile Include="DataModel\Order\OrderChildFinishModel.cs" />
     <Compile Include="DataModel\Order\OrderChildPayModel.cs" />
     <Compile Include="DataModel\Order\PayStatusModel.cs" />
@@ -250,6 +252,10 @@
     <Compile Include="ParameterModel\Group\GetJobCPM.cs" />
     <Compile Include="ParameterModel\Group\GroupListModel.cs" />
     <Compile Include="ParameterModel\Group\GroupParaModel.cs" />
+    <Compile Include="ParameterModel\Message\ListBPM.cs" />
+    <Compile Include="ParameterModel\Message\ReadBPM.cs" />
+    <Compile Include="ParameterModel\Message\ListCPM.cs" />
+    <Compile Include="ParameterModel\Message\ReadCPM.cs" />
     <Compile Include="ParameterModel\Order\CancelOrderBPM.cs" />
     <Compile Include="ParameterModel\Order\ChangeStatusPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\BusiOrderResultModel.cs" />
