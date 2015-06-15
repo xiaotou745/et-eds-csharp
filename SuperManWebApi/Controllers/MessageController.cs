@@ -6,6 +6,8 @@ using System.Net.Http;
 using System.Web.Http;
 using Ets.Model.Common;
 using Ets.Model.ParameterModel.Message;
+using Ets.Service.IProvider.Message;
+using Ets.Service.Provider.Message;
 
 namespace SuperManWebApi.Controllers
 {
@@ -14,7 +16,7 @@ namespace SuperManWebApi.Controllers
     /// </summary>
     public class MessageController : ApiController
     {
-
+        private readonly IMessageProvider messageProvider = new MessageProvider();
         /// <summary>
         /// 商户阅读接口更新消息状态接口 add by caoheyang 20150615
         /// </summary>
@@ -22,7 +24,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         public ResultModel<object> ReadB(ReadBPM model)
         {
-            return null;
+            return messageProvider.ReadB(model);
         }
 
         /// <summary>
@@ -32,7 +34,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         public ResultModel<object> ReadC(ReadCPM model)
         {
-            return null;
+            return messageProvider.ReadC(model);
         }
 
         /// <summary>
@@ -42,7 +44,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         public ResultModel<object> ListB(ListBPM model)
         {
-            return null;
+            return messageProvider.ListB(model);
         }
 
         /// <summary>
@@ -52,7 +54,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         public ResultModel<object> ListC(ListCPM model)
         {
-            return null;
+            return messageProvider.ListC(model);
         }
     }
 }
