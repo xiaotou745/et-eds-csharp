@@ -134,7 +134,7 @@ namespace Ets.AccountCheck
         {
             string sql = "SELECT TOP 1 * FROM ClienterAccountChecking WHERE ClienterId=@ClienterId ORDER BY id DESC";
 
-            using (var conn = GetConnection(ReadConnectionString))
+            using (var conn = GetConnection(WriteConnectionString))
             {
                 return conn.Query<ClienterAccountChecking>(sql, new { ClienterId = clienterId }).FirstOrDefault();
             }

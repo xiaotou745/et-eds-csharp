@@ -14,6 +14,25 @@ namespace Ets.AccountCheck.Service
             LogHelper.Log.Info("任务开发执行");
             try
             {
+                if (RepositoryService.TestWriteConnection())
+                {
+                  
+                    LogHelper.Log.Info("写数据库连接正常");
+                }
+                else
+                {
+                    LogHelper.Log.Info("写数据库连接异常");
+                    return;
+                }
+                if (RepositoryService.TestReadConnection())
+                {
+                    LogHelper.Log.Info("读数据库连接正常");
+                }
+                else
+                {
+                    LogHelper.Log.Info("读数据库连接异常");
+                    return;
+                }
                 CheckAccountService.Check();
             }
             catch (Exception e)

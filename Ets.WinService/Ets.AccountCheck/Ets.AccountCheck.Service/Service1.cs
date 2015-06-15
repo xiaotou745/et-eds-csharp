@@ -22,15 +22,7 @@ namespace Ets.AccountCheck.Service
 
         protected override void OnStart(string[] args)
         {
-            if (RepositoryService.TestReadConnection())
-            {
-                LogHelper.Log.Info("读数据库连接正常");
-            }
-            else
-            {
-                LogHelper.Log.Info("读数据库连接正常");
-                return;
-            }
+            LogHelper.Log.Info("正在启动....");
             if (RepositoryService.TestWriteConnection())
             {
                 LogHelper.Log.Info("写数据库连接正常");
@@ -40,7 +32,15 @@ namespace Ets.AccountCheck.Service
                 LogHelper.Log.Info("写数据库连接异常");
                 return;
             }
-
+            if (RepositoryService.TestReadConnection())
+            {
+                LogHelper.Log.Info("读数据库连接正常");
+            }
+            else
+            {
+                LogHelper.Log.Info("读数据库连接异常");
+                return;
+            }
             LogHelper.Log.Info("服务已启动");
 
             DateTimeOffset runTime = DateBuilder.TodayAt(01, 00, 00);

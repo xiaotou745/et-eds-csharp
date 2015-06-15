@@ -22,26 +22,31 @@ namespace Ets.AccountCheck.Service
 
             if (args.Length > 0)
             {
-                string[] lines = new string[3];
-                lines[0] = "1,1,1,1,1,1,1,1,1";
-                lines[1] = "1,1,1,1,1,1,1,1,1";
-                lines[2] = "1,1,1,1,1,1,1,1,1";
+                if (RepositoryService.TestWriteConnection())
+                {
+                    Console.WriteLine("写数据库连接正常");
+                    LogHelper.Log.Info("写数据库连接正常");
+                }
+                else
+                {
+                    Console.WriteLine("写数据库连接异常");
 
-                CheckAccountService.SendEmail(lines);
+                    LogHelper.Log.Info("写数据库连接异常");
+                    return;
+                }
+                if (RepositoryService.TestReadConnection())
+                {
+                    Console.WriteLine("读数据库连接正常");
+                    LogHelper.Log.Info("读数据库连接正常");
+                }
+                else
+                {
+                    Console.WriteLine("读数据库连接异常");
+                    LogHelper.Log.Info("读数据库连接异常");
+                    return;
+                }
+                CheckAccountService.Check();
 
-                //DateTimeOffset runTime = DateBuilder.TodayAt(00, 59, 59);
-                //ITrigger trigger = TriggerBuilder.Create()
-                //   .WithIdentity("trigger1", "group1")
-                //   .StartAt(runTime).WithSchedule(SimpleScheduleBuilder.RepeatSecondlyForever(10))
-                //   .Build();
-
-                //IJobDetail detail = JobBuilder.Create<CheckAccoutJob>().WithIdentity("job1", "group1").Build();
-
-                //ISchedulerFactory sf = new StdSchedulerFactory();
-                //IScheduler sched = sf.GetScheduler();
-                //sched.ScheduleJob(detail, trigger);
-
-                //sched.Start();
                 Console.ReadLine();
 
             }
