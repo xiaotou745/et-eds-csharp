@@ -24,7 +24,7 @@ namespace admin.edaisong.com.Controllers.api
         /// <param name="returnUrl"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("/login")]
+        [Route("api/login")]
         public ResultModel LoginOn(LoginModel model, string returnUrl)
         {
             var redis = new ETS.NoSql.RedisCache.RedisCache();

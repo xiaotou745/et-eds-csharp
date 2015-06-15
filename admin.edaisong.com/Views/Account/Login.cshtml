@@ -31,7 +31,7 @@
                 <!--Continually expanded and constantly improved Inspinia Admin Them (IN+)-->
             </p>
             @*<p>Login in. To see it in action.</p>*@
-            <form class="m-t" role="form" action="/api/login">
+            <form class="m-t" role="form" action="">
                 <div class="form-group">
                     <input name="UserName" id="UserName" type="text" class="form-control" placeholder="用户名" required="">
                 </div>
@@ -50,7 +50,7 @@
                         <img src="@Url.Action("CaptchaImage")" class="captcha" style="margin:10px" />
                     </span>
                 </p>*@ 
-                <button type="submit" class="btn btn-primary block full-width m-b">登录</button>
+                <button type="submit" id="btnLogin" class="btn btn-primary block full-width m-b">登录</button>
 
                 @*<a href="#"><small>Forgot password?</small></a>*@
                 @*<p class="text-muted text-center"><small>Do not have an account?</small></p>*@
@@ -64,5 +64,63 @@
     <!-- Mainly scripts -->
     <script src="~/Scripts/jquery-2.1.1.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        function getCookie(objName) {//获取指定名称的cookie的值 
+            var arrStr = document.cookie.split("; ");
+            for (var i = 0; i < arrStr.length; i++) {
+                var temp = arrStr[i].split("=");
+                if (temp[0] == objName) return unescape(temp[1]);
+            }
+        };
+        document.onkeydown = function (event) {
+            var e = event || window.event || arguments.callee.caller.arguments[0];
+            if (e && e.keyCode == 13) { // enter 键
+                login();
+            }
+        };
+        $(document).ready(function () {
+            //$("img.captcha").click(function () {
+            //    $(this).attr("src", $(this).attr("src") + "?a=" + new Date().getTime());
+            //});
+            var cookies = getCookie('userinfo');
+            if (cookies != null) {
+                var user = eval('(' + cookies + ')');
+                $("#UserName").val(user.LoginName);
+                $("#Password").val(user.Password);
+            }
+
+            $("#btnLogin").bind("click", login);
+        });
+        function login() {
+
+            var uname = $("#UserName").val();
+            var Password = $("#Password").val();
+            //var Captcha = $("#Captcha").val();
+            var pars = { "UserName": uname, "Password": Password, "Captcha": '', "RememberMe": true };
+            var url = "/api/login";
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: pars,
+                dataType: 'json',
+                success: function (result) {
+                    if (result.IsSuccess) {
+                        window.location.href = "/home/index";
+                    } else {
+                        var mess = result.Message;
+                        if (mess.indexOf("验证码") > -1) {
+                            $("#Captcha").nextAll(".wrongMsg").removeClass("hidden").html(mess);
+                        } else if (mess.indexOf("密码") > -1) {
+                            $("#Password").nextAll(".wrongMsg").removeClass("hidden").html(mess);
+                        } else if (mess.indexOf("用户") > -1) {
+                            $("#UserName").nextAll(".wrongMsg").removeClass("hidden").html(mess);
+                        } else if (mess.indexOf("帐号已关闭") > -1) {
+                            alert("您的账号已被锁定");
+                        }
+                    }
+                }
+            });
+        }
+    </script>
 </body>
 </html>
