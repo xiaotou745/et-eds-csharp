@@ -217,6 +217,7 @@
     <Compile Include="Controllers\BusinessManagerController.cs" />
     <Compile Include="Controllers\DataManagerController.cs" />
     <Compile Include="Controllers\DownloadController.cs" />
+    <Compile Include="Controllers\MessageManagerController.cs" />
     <Compile Include="Controllers\StatisticalController.cs" />
     <Compile Include="Controllers\StrategyManagerController.cs" />
     <Compile Include="Controllers\GroupManagerController.cs" />
@@ -631,6 +632,7 @@
     <Content Include="Views\DataManager\Edit.cshtml" />
     <Content Include="Views\DataManager\Index.cshtml" />
     <Content Include="Views\DataManager\PostIndex.cshtml" />
+    <Content Include="Views\MessageManager\MessageEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
