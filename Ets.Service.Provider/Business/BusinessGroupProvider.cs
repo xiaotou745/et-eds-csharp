@@ -7,6 +7,7 @@ using ETS.Transaction.Common;
 using ETS.Transaction;
 using Ets.Model.DomainModel.GlobalConfig;
 using Ets.Service.IProvider.Business;
+using Ets.Dao.Business;
 namespace Ets.Service.Provider.Business
 {
     /// <summary>

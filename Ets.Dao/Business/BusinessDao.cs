@@ -26,7 +26,7 @@ using Ets.Model.ParameterModel.Order;
 using Ets.Model.DataModel.Finance;
 using ETS.Data.Generic;
 using Ets.Model.ParameterModel.WtihdrawRecords;
-namespace Ets.Dao.User
+namespace Ets.Dao.Business
 {
     public class BusinessDao : DaoBase
     {

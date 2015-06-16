@@ -27,6 +27,7 @@ using Ets.Service.Provider.Order;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DomainModel.Area;
 using Ets.Service.IProvider.Business;
+using Ets.Dao.Business;
 namespace Ets.Service.Provider.Business
 {
 
