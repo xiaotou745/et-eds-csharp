@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Text;
 using ETS.Const;
+using Ets.Dao.Message;
 using Ets.Dao.User;
 using Ets.Model.Common;
 using Ets.Model.DomainModel.Bussiness;
@@ -1089,7 +1090,9 @@ namespace Ets.Service.Provider.User
         /// <returns></returns>
         public BusinessDM GetDetails(int id)
         {
-            return dao.GetDetails(id);
+            BusinessDM model = dao.GetDetails(id);
+            model.HasMessage = new BusinessMessageDao().HasMessage(id);
+            return model;
         }
 
         /// <summary>
