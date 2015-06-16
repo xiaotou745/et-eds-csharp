@@ -1,4 +1,5 @@
-﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Message.MessageModel>
+﻿@using ETS.Enums
+@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Message.MessageModel>
 @{
     Layout = null;
 }
@@ -25,13 +26,13 @@
                 {
                     <tr id="@Model.Records[i].Id">
                         <td>@i</td>
-                        <td>@Model.Records[i].PushWay</td>
-                        <td>@Model.Records[i].MessageType</td>
-                        <td>@Model.Records[i].SendType</td>
+                        <td>@Enum.GetName(typeof(MessagePushWay),Model.Records[i].PushWay)</td>
+                        <td>@Enum.GetName(typeof(MessageMessageType), Model.Records[i].MessageType)</td>
+                        <td>@Enum.GetName(typeof(MessageSendType), Model.Records[i].SendType)</td>
                         <td>@Model.Records[i].Content</td>
                         <td>@Model.Records[i].CreateTime</td>   
                         <td>@Model.Records[i].SendTime</td>    
-                        <td>@Model.Records[i].SentStatus</td>    
+                        <td>@Enum.GetName(typeof(MessageSentStatus), Model.Records[i].SentStatus)</td>    
                         <td>@Model.Records[i].UpdateBy</td>  
                         <td></td>  
                     </tr>
