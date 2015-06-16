@@ -53,9 +53,12 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult> PostList()
+        public async Task<ActionResult> PostList(int pageindex = 1)
         {
-            return View();
+            WebListSearch search = new WebListSearch();
+            TryUpdateModel(search);
+            PageInfo<MessageModel> models = messageProvider.WebList(search);
+            return View(models);
         }
 
         ///// <summary>
