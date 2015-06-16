@@ -490,22 +490,25 @@ namespace Ets.Service.Provider.Finance
             strBuilder.AppendLine("<table border=1 cellspacing=0 cellpadding=5 rules=all>");
             //输出表头.
             strBuilder.AppendLine("<tr style=\"font-weight: bold; white-space: nowrap;\">");
+            strBuilder.AppendLine("<td>卡号</td>");
             strBuilder.AppendLine("<td>骑士姓名</td>");
+            strBuilder.AppendLine("<td>提款金额</td>");
+            strBuilder.AppendLine("<td>申请时间</td>");
             strBuilder.AppendLine("<td>电话</td>");
             strBuilder.AppendLine("<td>开户行</td>");
             strBuilder.AppendLine("<td>账户名</td>");
-            strBuilder.AppendLine("<td>卡号</td>");
-            strBuilder.AppendLine("<td>提款金额</td>");
             strBuilder.AppendLine("</tr>");
             //输出数据.
             foreach (var item in list)
             {
-                strBuilder.AppendLine(string.Format("<tr><td>{0}</td>", item.ClienterName));
+                strBuilder.AppendLine(string.Format("<tr><td>'{0}</td>", ParseHelper.ToDecrypt(item.AccountNo)));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.ClienterName));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Amount.ToString("F2")));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.WithdrawDateStart));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.ClienterPhoneNo));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OpenBank));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.TrueName));
-                strBuilder.AppendLine(string.Format("<td>'{0}'</td>", ParseHelper.ToDecrypt(item.AccountNo)));
-                strBuilder.AppendLine(string.Format("<td>{0}</td></tr>", item.Amount));
+                strBuilder.AppendLine(string.Format("<td>{0}</td></tr>", item.TrueName));
+                
             }
             strBuilder.AppendLine("</table>");
             return strBuilder.ToString();
@@ -533,9 +536,9 @@ namespace Ets.Service.Provider.Finance
             //输出数据.
             foreach (var item in list)
             {
-                strBuilder.AppendLine(string.Format("<tr><td>'{0}'</td>", item.RelationNo));
+                strBuilder.AppendLine(string.Format("<tr><td>'{0}</td>", item.RelationNo));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OpenBank));
-                strBuilder.AppendLine(string.Format("<td>'{0}'</td>", ParseHelper.ToDecrypt(item.AccountNo)));
+                strBuilder.AppendLine(string.Format("<td>'{0}</td>", ParseHelper.ToDecrypt(item.AccountNo)));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Amount));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Balance));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OperateTime));

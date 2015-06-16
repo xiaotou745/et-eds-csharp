@@ -1,9 +1,9 @@
-﻿using SuperManCore;
+﻿
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web; 
-using SuperManCommonModel;
+using System.Web;
+using ETS.Expand;
 namespace SuperManWebApi.Models.Business
 {
     public class BusiAddAddressResultModel

@@ -15,7 +15,7 @@ using Ets.Model.Common;
 using ETS.Util;
 using Ets.Model.ParameterModel.Clienter;
 using ETS.Expand;
-using Ets.Model.ParameterModel.Bussiness;
+using Ets.Model.ParameterModel.Business;
 using Ets.Model.DomainModel.Order;
 using Ets.Service.IProvider.Clienter;
 using Ets.Service.Provider.Clienter;
@@ -53,7 +53,8 @@ namespace SuperManWebApi.Controllers
             try
             {           
                 //通过传过来的字符串序列化对象                
-                model.listOrderChlid = Deserialize<List<OrderChlidPM>>(model.OrderChlidJson);             
+                model.listOrderChlid = ParseHelper.Deserialize<List<OrderChlidPM>>(model.OrderChlidJson);             
+                
                 order order;             
                 ResultModel<BusiOrderResultModel> currResModel = Verification(model, out order);
                 if (currResModel.Status == PubOrderStatus.VerificationSuccess.GetHashCode())
@@ -75,15 +76,6 @@ namespace SuperManWebApi.Controllers
             }
         }
 
-        private T Deserialize<T>(string json)
-        {
-            T obj = Activator.CreateInstance<T>();
-            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(json)))
-            {
-                DataContractJsonSerializer serializer = new DataContractJsonSerializer(obj.GetType());
-                return (T)serializer.ReadObject(ms);
-            }
-        }
         /// <summary>
         /// 订单合法性验证
         /// </summary>
@@ -282,14 +274,7 @@ namespace SuperManWebApi.Controllers
                 NeedUploadCount = needUploadCount,
                 ReceiptPic = imgInfo.PicUrl
             };
-            //if (string.IsNullOrWhiteSpace(receiptPic))  
-            //{
-            //    uploadReceiptModel.HadUploadCount = 1;
-            //}
-            //else
-            //{
-            //    uploadReceiptModel.HadUploadCount = 0;  //有地址说明是更新换的小票，数量不变
-            //}
+         
             var orderOther = iClienterProvider.UpdateClientReceiptPicInfo(uploadReceiptModel);
             if (orderOther == null)
             {
@@ -337,7 +322,7 @@ namespace SuperManWebApi.Controllers
             if (!receiptPic.StartsWith("http", StringComparison.OrdinalIgnoreCase))
                 return ResultModel<UploadReceiptResultModel>.Conclude(UploadIconStatus.ReceiptAddressInvalid);
             UploadReceiptModel uploadReceiptModel = new UploadReceiptModel() { OrderId = orderId, ReceiptPic = receiptPic, HadUploadCount = -1 };
-            SuperManCore.LogHelper.LogWriter("删除小票参数", new { version = version, receiptPic = receiptPic, orderId = orderId, orderChildId = orderChildId });
+            ETS.Util.LogHelper.LogWriter("删除小票参数", new { version = version, receiptPic = receiptPic, orderId = orderId, orderChildId = orderChildId });
             //删除前先判断   订单状态已完成 和已经上传的小票数量 等于需要上传的小票数量相等 时 不允许删除小票
             OrderOther orderOther = iClienterProvider.GetReceipt(orderId);
             //判断订单信息，状态是否为已完成， 已经上传的小票数量是否和 需要上传的一样， 若一样则无法删除
@@ -386,16 +371,6 @@ namespace SuperManWebApi.Controllers
         [ExecuteTimeLog]
         public ResultModel<RushOrderResultModel> Receive(OrderReceiveModel model)
         {
-            //var userId = ParseHelper.ToInt(HttpContext.Current.Request.Form["userId"], 0);   //骑士ID
-            //var orderNo = HttpContext.Current.Request.Form["orderNo"];
-            //var bussinessId = ParseHelper.ToInt(HttpContext.Current.Request.Form["bussinessId"], 0);
-            //var version = HttpContext.Current.Request.Form["version"];
-            //float grabLongitude = 0, grabLatitude = 0;
-            //if(!string.IsNullOrEmpty(HttpContext.Current.Request.Form["Longitude"]))
-            //    grabLongitude =float.Parse( HttpContext.Current.Request.Form["Longitude"]);
-            //if (!string.IsNullOrEmpty(HttpContext.Current.Request.Form["Latitude"]))
-            //    grabLatitude = float.Parse( HttpContext.Current.Request.Form["Latitude"]);
-
             if (model.orderId<=0) //订单号码非空验证
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
             if (model.userId<= 0) //用户id验证
@@ -433,14 +408,7 @@ namespace SuperManWebApi.Controllers
             }
             FinishOrderResultModel finishModel = iClienterProvider.FinishOrder(parModel.userId, parModel.orderNo, parModel.Longitude, parModel.Latitude, parModel.pickupCode);
             if (finishModel.Message == "1")  //完成
-            {
-                //var clienter = iClienterProvider.GetUserInfoByUserId(parModel.userId);
-                //var model = new FinishOrderResultModel { userId = parModel.userId };
-                //if (clienter.AccountBalance != null)
-                //    model.balanceAmount = clienter.AccountBalance.Value;
-                //else
-                //    model.balanceAmount = 0.0m;
-
+            {       
                 return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Success, finishModel);
             }
             else if (finishModel.Message == "3")

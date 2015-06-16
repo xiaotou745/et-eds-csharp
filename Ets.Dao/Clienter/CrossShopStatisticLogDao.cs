@@ -9,7 +9,7 @@ using Ets.Model.DataModel.Clienter;
 using ETS.Data.Core;
 using System.Data;
 using ETS.Util;
-using Ets.Model.DomainModel.Bussiness;
+using Ets.Model.DomainModel.Business;
 
 
 namespace Ets.Dao.Clienter

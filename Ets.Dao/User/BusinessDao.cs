@@ -12,11 +12,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ETS.Const;
-using Ets.Model.DomainModel.Bussiness;
+using Ets.Model.DomainModel.Business;
 using Ets.Model.DomainModel.Clienter;
-using Ets.Model.ParameterModel.Bussiness;
+using Ets.Model.ParameterModel.Business;
 using Ets.Model.DataModel.Order;
-using Ets.Model.DataModel.Bussiness;
+using Ets.Model.DataModel.Business;
 using ETS.Extension;
 using ETS.Enums;
 using Ets.Model.Common;
@@ -34,7 +34,7 @@ namespace Ets.Dao.User
         /// 商户获取订单   add by caoheyang 20150311
         /// </summary>
         /// <param name="paraModel">查询条件实体</param>
-        public virtual PageInfo<T> GetOrdersAppToSql<T>(Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp paraModel)
+        public virtual PageInfo<T> GetOrdersAppToSql<T>(Ets.Model.ParameterModel.Business.BussOrderParaModelApp paraModel)
         {
             #region where
             string whereStr = "1=1 ";  //where查询条件实体类
@@ -2160,7 +2160,7 @@ VALUES
         /// <typeparam name="T"></typeparam>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        public PageInfo<T> GetBusinessCommissionOfPaging<T>(Ets.Model.ParameterModel.Bussiness.BusinessCommissionSearchCriteria criteria)
+        public PageInfo<T> GetBusinessCommissionOfPaging<T>(Ets.Model.ParameterModel.Business.BusinessCommissionSearchCriteria criteria)
         {
 
             string columnList =string.Format( @"   BB.id ,

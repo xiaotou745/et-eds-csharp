@@ -5,19 +5,14 @@ using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Authority;
 using Ets.Service.Provider.Common;
 using SuperMan.App_Start;
-using SuperManBusinessLogic.Authority_Logic;
-using SuperManCommonModel;
-using SuperManCommonModel.Entities;
-using SuperManCommonModel.Models;
-using SuperManCore;
-using SuperManCore.Common;
-using SuperManCore.Paging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
+using ETS.Util;
+using Ets.Model.Common;
 
 namespace SuperMan.Controllers
 {
@@ -116,15 +111,15 @@ namespace SuperMan.Controllers
             var reg=iAuthorityMenuProvider.AddAccount(criteria);
             return Json(new Ets.Model.Common.ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.AllowGet);
         }
-        [HttpPost]
-        public JsonResult saveAuthority(AuthorityListModel model)
-        {
-            if (model != null)
-            {
-                AuthorityLogic.authorityLogic().UpdateAuthority(model);
-            }
-            return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
-        }
+        //[HttpPost]
+        //public JsonResult saveAuthority(AuthorityListPM model)
+        //{
+        //    if (model != null)
+        //    {
+        //        AuthorityLogic.authorityLogic().UpdateAuthority(model);
+        //    }
+        //    return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
+        //}
 
         /// <summary>
         /// 删除用户
@@ -157,12 +152,12 @@ namespace SuperMan.Controllers
                 return Json(new ResultModel(false, "修改失败"), JsonRequestBehavior.AllowGet);
             }
         }
-        [HttpPost]
-        public ActionResult GetAuthorityById(int accountId)
-        {
-            var authorities = AuthorityLogic.authorityLogic().GetAuthorities(accountId);
-            return Json(authorities);
-        }
+        //[HttpPost]
+        //public ActionResult GetAuthorityById(int accountId)
+        //{
+        //    var authorities = AuthorityLogic.authorityLogic().GetAuthorities(accountId);
+        //    return Json(authorities);
+        //}
         
         /// <summary>
         /// 修改后台用户权限
@@ -171,14 +166,14 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         [HttpGet]
         [ActionName("AuthorityEdit")]
-        public PartialViewResult _AuthorityManagerShow(int id)
-        {
-            var authorities = AuthorityLogic.authorityLogic().GetAuthorities(id);
+        //public PartialViewResult _AuthorityManagerShow(int id)
+        //{
+        //    var authorities = AuthorityLogic.authorityLogic().GetAuthorities(id);
 
-            ViewBag.auth = authorities.ToArray();
+        //    ViewBag.auth = authorities.ToArray();
 
-            return PartialView("_AuthorityManagerShow");
-        }
+        //    return PartialView("_AuthorityManagerShow");
+        //}
         /// <summary>
         /// 获取用户和城市的对应关系 
         /// </summary>

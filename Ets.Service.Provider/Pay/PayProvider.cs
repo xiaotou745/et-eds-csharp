@@ -15,8 +15,8 @@ using System.Xml;
 using Ets.Dao.Order;
 using Ets.Model.DataModel.Order;
 using ETS.Pay.WxPay;
-using Ets.Model.DomainModel.Bussiness;
-using Ets.Model.ParameterModel.Bussiness;
+using Ets.Model.DomainModel.Business;
+using Ets.Model.ParameterModel.Business;
 using Ets.Dao.User;
 using ETS.Transaction.Common;
 using ETS.Transaction;
@@ -423,7 +423,7 @@ namespace Ets.Service.Provider.Pay
                         return "fail";
                     }
 
-                    Ets.Model.DataModel.Bussiness.BusinessRechargeModel businessRechargeModel = new Ets.Model.DataModel.Bussiness.BusinessRechargeModel()
+                    Ets.Model.DataModel.Business.BusinessRechargeModel businessRechargeModel = new Ets.Model.DataModel.Business.BusinessRechargeModel()
                     {
                         BusinessId = notify.out_biz_no,
                         OrderNo = orderNo,
@@ -453,7 +453,7 @@ namespace Ets.Service.Provider.Pay
         /// 2015年5月29日 16:00:07
         /// </summary>
         /// <param name="model"></param>
-        private dynamic BusinessRechargeSusess(Ets.Model.DataModel.Bussiness.BusinessRechargeModel model)
+        private dynamic BusinessRechargeSusess(Ets.Model.DataModel.Business.BusinessRechargeModel model)
         {
             #region 充值、流水、商家金额实体组装
             BusinessBalanceRecord businessBalanceRecord = new BusinessBalanceRecord()

@@ -49,7 +49,7 @@ namespace SuperManWebApi.Providers
             var fullFilePath = Path.Combine(fullFileDir, rFileName);  
             httpPostedFile.SaveAs(fullFilePath); 
             //裁图
-            var transformer = new SuperManCore.FixedDimensionTransformerAttribute(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.Width, Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.Height, Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.MaxBytesLength / 1024);
+            var transformer = new ETS.Compress.FixedDimensionTransformerAttribute(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.Width, Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.Height, Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.MaxBytesLength / 1024);
             //保存到数据库的图片路径
             var destFullFileName = System.IO.Path.Combine(fullFileDir, fileName);
             transformer.Transform(fullFilePath, destFullFileName);

@@ -8,14 +8,13 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.WebPages;
 using Ets.Model.Common;
-using Ets.Model.DataModel.Bussiness;
+using Ets.Model.DataModel.Business;
 using Ets.Model.DataModel.Clienter;
-using Ets.Model.DomainModel.Bussiness;
+using Ets.Model.DomainModel.Business;
 using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
 using Ets.Service.Provider.User;
 using SuperMan.App_Start;
-using SuperManCommonModel.Entities;
 
 
 namespace SuperMan.Controllers
@@ -45,7 +44,7 @@ namespace SuperMan.Controllers
             var t2 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 59);
             var authorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(userType);
             var criteria =
-               new Ets.Model.ParameterModel.Bussiness.BusinessCommissionSearchCriteria
+               new Ets.Model.ParameterModel.Business.BusinessCommissionSearchCriteria
                {
                    T1 = t1.ToString(),
                    T2 = t2.ToString(),
@@ -131,7 +130,7 @@ namespace SuperMan.Controllers
         [HttpPost]
         public ActionResult PostBusinessCommissions(int pageindex = 1)
         {
-            var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessCommissionSearchCriteria();
+            var criteria = new Ets.Model.ParameterModel.Business.BusinessCommissionSearchCriteria();
             TryUpdateModel(criteria);
             ViewBag.openCityList = new AreaProvider().GetOpenCityOfSingleCity(0);
             int userType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id

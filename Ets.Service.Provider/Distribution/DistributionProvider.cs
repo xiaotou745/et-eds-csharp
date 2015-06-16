@@ -2,7 +2,7 @@
 using Ets.Dao.Distribution;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Clienter;
-using Ets.Model.DomainModel.Bussiness;
+using Ets.Model.DomainModel.Business;
 using Ets.Model.DomainModel.Clienter;
 using Ets.Model.ParameterModel.Clienter;
 using Ets.Service.IProvider.Distribution;

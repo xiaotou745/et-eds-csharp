@@ -1,8 +1,4 @@
-﻿using SuperManBusinessLogic.B_Logic;
-using SuperManBusinessLogic.Subsidy_Logic;
-using SuperManCommonModel;
-using SuperManCore; 
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;

@@ -4,7 +4,7 @@ using Ets.Dao.User;
 using ETS.Enums;
 using ETS.Extension;
 using Ets.Model.Common;
-using Ets.Model.DataModel.Bussiness;
+using Ets.Model.DataModel.Business;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;

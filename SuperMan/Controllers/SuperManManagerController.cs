@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Ets.Model.DataModel.Clienter;
-using Ets.Model.ParameterModel.Bussiness;
+using Ets.Model.ParameterModel.Business;
 using Ets.Service.IProvider.Bussiness;
 using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Bussiness;
@@ -11,11 +11,6 @@ using Ets.Service.Provider.Subsidy;
 using Ets.Service.Provider.WtihdrawRecords;
 using ETS.Util;
 using SuperMan.App_Start;
-using SuperManBusinessLogic.C_Logic;
-using SuperManCommonModel;
-using SuperManCommonModel.Entities;
-using SuperManCore.Common;
-using SuperManCore.Paging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,8 +20,8 @@ using Ets.Service.Provider.Finance;
 using Ets.Service.IProvider.Finance;
 using Ets.Model.ParameterModel.Finance;
 using System.Text;
-using MD5Helper = SuperManCore.MD5Helper;
-
+using ETS.Util;  
+using Ets.Model.Common;
 namespace SuperMan.Controllers
 {
     [WebHandleError]

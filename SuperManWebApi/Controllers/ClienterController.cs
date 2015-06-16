@@ -8,7 +8,7 @@ using System.Web.Http;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
-using Ets.Model.ParameterModel.Bussiness;
+using Ets.Model.ParameterModel.Business;
 using Ets.Service.IProvider.Finance;
 using Ets.Service.Provider.Finance;
 using ETS.Util;

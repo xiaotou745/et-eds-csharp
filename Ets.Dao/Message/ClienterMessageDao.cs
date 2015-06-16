@@ -3,9 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ETS.Const;
 using ETS.Dao;
 using ETS.Data.Core;
+using ETS.Data.PageData;
 using Ets.Model.DataModel.Message;
+using Ets.Model.DomainModel.Message;
+using Ets.Model.ParameterModel.Message;
+using ETS.Util;
 
 namespace Ets.Dao.Message
 {
@@ -38,17 +43,40 @@ values(@ClienterId,@Content,@IsRead)
         /// <summary>
         /// 更新一条记录
         /// </summary>
-        public void Update(ClienterMessage clienterMessage)
+        public void Update(long id)
         {
             const string updateSql = @"
 update  ClienterMessage
-set  IsRead=@IsRead
+set  IsRead=1
 where  Id=@Id";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("Id", clienterMessage.Id);
-            dbParameters.AddWithValue("IsRead", clienterMessage.IsRead);
+            dbParameters.AddWithValue("Id", id);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
+        /// <summary>
+        /// 查询对象
+        /// </summary>
+        public PageInfo<ListCDM> Query(ListCPM search)
+        {
+            string where = " ClienterId=" + search.ClienterId;
+            return new PageHelper().GetPages<ListCDM>(SuperMan_Read, search.PageIndex, where,
+                "IsRead asc ,id desc ", "Id,Content,IsRead", " ClienterMessage (nolock)", SystemConst.PageSize, true);
+        }
+
+        /// <summary>
+        /// 查询当前骑士是否有未读消息  add by caoheyang 20150616
+        /// </summary>
+        public bool HasMessage(int clienterId)
+        {
+            const string insertSql = @"
+select  count(1)
+from    dbo.ClienterMessage
+where   IsRead = 0 and clienterId=@ClienterId 
+";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("ClienterId", clienterId);
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters)) > 0;
+        }
     }
 }

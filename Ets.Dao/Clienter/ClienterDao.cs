@@ -16,7 +16,7 @@ using Ets.Model.ParameterModel.WtihdrawRecords;
 using Ets.Model.Common;
 using Ets.Model.ParameterModel.Order;
 using System.Text;
-using Ets.Model.DomainModel.Bussiness;
+using Ets.Model.DomainModel.Business;
 using Ets.Dao.Order;
 using System.Text.RegularExpressions;
 using ETS.IO;

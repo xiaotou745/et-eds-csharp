@@ -477,7 +477,8 @@ select c.[TrueName] ClienterName,
        cwf.OpenBank ,
        cwf.TrueName ,
        cwf.AccountNo ,
-       cwf.Amount 
+       cwf.Amount,
+       cwf.WithdrawTime WithdrawDateStart
 from ClienterWithdrawForm cwf with(nolock)
   join clienter c with(nolock) on cwf.ClienterId=c.Id 
 where 1=1";

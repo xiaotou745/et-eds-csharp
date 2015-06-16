@@ -1,6 +1,6 @@
 ﻿using Ets.Dao.Order;
 using Ets.Model.Common;
-using Ets.Model.DataModel.Bussiness;
+using Ets.Model.DataModel.Business;
 using Ets.Model.DataModel.Order;
 using Ets.Model.ParameterModel.Order;
 using ETS.NoSql.RedisCache;

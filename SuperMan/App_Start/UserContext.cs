@@ -4,7 +4,6 @@ using ETS.Const;
 using Ets.Model.ParameterModel.Authority;
 using Ets.Service.Provider.Authority;
 using ETS.Util;
-using SuperManCommonModel;
 
 namespace SuperMan.App_Start
 {

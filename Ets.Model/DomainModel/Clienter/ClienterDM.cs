@@ -114,7 +114,15 @@ namespace Ets.Model.DomainModel.Clienter
 		/// </summary>
 		public decimal HasWithdrawPrice { get; set; }
 
+        /// <summary>
+        /// 金融账号
+        /// </summary>
         public List<ClienterFinanceAccount> listcFAcount { get; set; }
+
+        /// <summary>
+        /// 当前骑士消息中心是否有未读消息
+        /// </summary>
+        public bool HasMessage { get; set; }
 
     }
 }
