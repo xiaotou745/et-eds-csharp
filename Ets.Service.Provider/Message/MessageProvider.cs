@@ -22,7 +22,7 @@ namespace Ets.Service.Provider.Message
         private readonly BusinessMessageDao businessMessageDao = new BusinessMessageDao();
         private readonly ClienterMessageDao clienterMessageDao = new ClienterMessageDao();
         private readonly MessageDao messageDao = new MessageDao();
-        
+
         /// <summary>
         /// 商户阅读接口更新消息状态接口 add by caoheyang 20150615
         /// </summary>
@@ -30,8 +30,8 @@ namespace Ets.Service.Provider.Message
         /// <returns></returns>
         public ResultModel<object> ReadB(ReadBPM model)
         {
-            businessMessageDao.Update(model.MessageId);
-            return ResultModel<object>.Conclude(SystemEnum.Success);
+            string message = businessMessageDao.ReadB(model.MessageId);
+            return ResultModel<object>.Conclude(SystemEnum.Success, new {Content=message});
         }
 
         /// <summary>
@@ -41,8 +41,8 @@ namespace Ets.Service.Provider.Message
         /// <returns></returns>
         public ResultModel<object> ReadC(ReadCPM model)
         {
-            clienterMessageDao.Update(model.MessageId);
-            return ResultModel<object>.Conclude(SystemEnum.Success);
+            string message = clienterMessageDao.Update(model.MessageId);
+            return ResultModel<object>.Conclude(SystemEnum.Success, new { Content = message });
         }
 
         /// <summary>

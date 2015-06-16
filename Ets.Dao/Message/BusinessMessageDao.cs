@@ -42,15 +42,16 @@ values(@BusinessId,@Content,@IsRead)
         /// <summary>
         /// 更新消息为已读
         /// </summary>
-        public void Update(long id)
+        public string ReadB(long id)
         {
             const string updateSql = @"
 update  BusinessMessage
 set  IsRead=1
+OutPut INSERTED.[Content]
 where  Id=@Id";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Id", id);
-            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+            return DbHelper.ExecuteScalar(SuperMan_Write, updateSql, dbParameters).ToString();
         }
 
 
