@@ -17,8 +17,8 @@
                 <label>推送方式：</label>
             </div>
             <div style="float: left;width:700px;">
-                <input name="chkMessage" id="chkMessage" type="checkbox">短  信
-                <input name="chkApp" id="chkApp" type="checkbox" style="margin-left:20px">app通知
+                <input name="chkPushWay" id="chkMessage" type="checkbox" value="1">短  信
+                <input name="chkPushWay" id="chkApp" type="checkbox" style="margin-left:20px" value="2">app通知
             </div>
         </div>
         <div style="width:780px;height:25px;margin-top:10px">
@@ -26,7 +26,7 @@
                 <label>消息类型：</label>
             </div>
             <div style="float: left;width:700px">
-                <select id="selAcountType">
+                <select id="selMessageType">
                     <option value="1">通知</option>
                     <option value="2">策略调整</option>
                     <option value="3">活动</option>
@@ -38,14 +38,15 @@
                 <label>内  容：</label>
             </div>
             <div style="float:left;width:700px">
-                <textarea cols="70" rows="5" id="txtMessageContent"></textarea><br />
+                <textarea cols="70" rows="5" id="txtContent"></textarea><br />
                 内容长度：70/200
             </div>
         </div>
         <div style="width:243px;height:27px;margin-top:10px;border:1px #dcdcdc solid;">
             <div style="background-color:lightgrey;float:left;font-size:16px;width:120px" id="systemMass"><center>系统群发</center></div>
             <div style="background-color:Window;float:left;font-size:16px;width:120px;margin-left:1px" id="appointObject"><center>指定对象</center></div>
-        </div>
+            <input type="hidden" id="hidPushType" name="hidPushType" value="1">
+        </input>
     </div>
     <div style="width:800px;height: auto;padding-left:10px;" id="systemMassShow">
         <div style="width:780px;height:25px;margin-top:10px">
@@ -53,8 +54,8 @@
                 <label>推送对象：</label>
             </div>
             <div style="float:left;width:700px">
-                <input name="chkBusiness" id="chkBusiness" type="checkbox">商  家
-                <input name="chkClienter" id="chkClienter" type="checkbox" style="margin-left:20px">骑  士
+                <input name="chkPushTarget" id="chkBusiness" type="checkbox">商  家
+                <input name="chkPushTarget" id="chkClienter" type="checkbox" style="margin-left:20px">骑  士
             </div>
         </div>
         <div style="width:780px;height:125px;overflow:auto;margin-top:10px" id="divCity">
@@ -67,7 +68,7 @@
                     if (openCityList != null && openCityList.Count > 0)
                     {
                 <div style="width: 100px;height:25px;float: left">
-                    <input type="checkbox" name="checkMenus" id="selectAll" onclick="checkAll()" />全部
+                    <input type="checkbox" name="checkAllMenus" id="selectAll" onclick="checkAll()" />全部
                 </div>
                         foreach (var item in openCityList)
                         {
@@ -92,7 +93,7 @@
             </div>
             <div style="color:red;float:left;margin-left:20px">(导入必须为excel，只需一列手机号)</div>
             <div style="float:left;margin-left:20px">
-                <a href="/Content/Template/BatchImport.xls" target="_blank">下载模板</a>
+                <a href="/Content/Template/phoneNoTemplate.xlsx" target="_blank">下载模板</a>
             </div>
         </div>
         <div style="width:780px;height:120px;margin-top:10px">
@@ -100,7 +101,7 @@
                 <label>输入手机号码：</label>
             </div>
             <div style="float:left;width:600px">
-                <textarea cols="70" rows="5" id="txtPhoneNoList"></textarea><br />
+                <textarea cols="70" rows="5" id="txtPushPhone"></textarea><br />
                 <div style="color:red">(手机号码必须英文逗号隔开，如：15212111111,13777777777)</div>
             </div>
         </div>
@@ -111,8 +112,8 @@
                 <label>发布类型：</label>
             </div>
             <div style="float:left;width:700px">
-                <input name="pubType" id="rTiming" type="radio" value="1" checked="checked" /> 定时发布
-                <input name="pubType" id="rRealtime" type="radio" value="2" /> 实时发布
+                <input name="rSendType" id="rTiming" type="radio" value="1" checked="checked" /> 定时发布
+                <input name="rSendType" id="rRealtime" type="radio" value="2" /> 实时发布
             </div>
         </div>
         <div style="width:780px;height:25px;margin-top:10px">
@@ -120,23 +121,24 @@
                 <label>设置发布时间：</label>
             </div>
             <div style="float:left;width:650px">
-                <input id="txtPubDate" readonly="readonly" type="text" name="txtPubDate" />
+                <input id="txtSendTime" readonly="readonly" type="text" name="txtPubDate" />
             </div>
         </div>
         <div class="SearchMd" style="border-bottom:hidden;width:780px;height:65px;margin-top:10px">
-            <div style="margin-left: 100px;float: left"><input type="button" value="确认" class="searchBtn" id="btnModifyCommit" /></div>
-            <div style="margin-left: 180px;float: left"><input type="button" value="关闭" class="searchBtn" id="btnReturn" /></div>
+            <div style="margin-left: 100px;float: left"><input type="button" value="确认" class="searchBtn" id="btnCommit" /></div>
+            <div style="margin-left: 180px;float: left"><input type="button" value="关闭" class="searchBtn" id="btnClose" /></div>
             <br />
         </div>
     </div>
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#txtPubDate').datepicker();
+        $('#txtSendTime').datepicker();
         $("#systemMass").css("background-color", "lightgrey");
         $("#appointObject").css("background-color", "Window");
         $("#systemMassShow").show();
         $("#appointObjectShow").hide();
+        $("#hidPushType").val(1);
         window.location.hash = '';
     });
     //全选
@@ -144,18 +146,22 @@
         var checkedOfAll = $("#selectAll").prop("checked");
         $("input[name='checkMenus']").prop("checked", checkedOfAll);
     }
+    //Tab页切换
     $("#systemMass").click(function () {
         $("#systemMass").css("background-color", "lightgrey");
         $("#appointObject").css("background-color", "Window");
         $('#systemMassShow').show();
         $('#appointObjectShow').hide();
+        $("#hidPushType").val(1);
     });
     $("#appointObject").click(function () {
         $("#systemMass").css("background-color", "Window");
         $("#appointObject").css("background-color", "lightgrey");
         $('#systemMassShow').hide();
         $('#appointObjectShow').show();
+        $("#hidPushType").val(2);
     })
+    //批量导入手机号
     $("#btnImport").click(function () {
         var url = "/MessageManager/PhoneNoImport";
         $.ajaxFileUpload({
@@ -174,5 +180,101 @@
             } 
         });
     });
+    $("#btnCommit").click(function () {
+        var pushWay;
+        var messageType = $("#selMessageType").val();
+        var content = $("#txtContent").val();
+        var pushType = $("#hidPushType").val();
+        var pushTarget;
+        var pushCity;
+        var pushPhone;
+        var sendType = $('input[name="rSendType"]:checked').val();
+        if(!$("#chkMessage").is(':checked')&&!$("#chkApp").is(':checked'))
+        {
+            alert("请选择推送方式！")
+            return;
+        }
+        if($("#chkMessage").is(':checked')&&$("#chkApp").is(':checked'))
+        {
+            pushWay = 3;
+        }
+        else
+        {
+            if($("#chkMessage").is(':checked'))
+            {
+                pushWay = $("#chkMessage").val();
+            }
+            else
+            {
+                pushWay = $("#chkApp").val();
+            }
+        }
+        if (content.trim().length < 15 || content.trim().length>200)
+        {
+            alert("消息内容，必须在15字-200字之间!");
+            return;
+        }
+        if(pushType==1)//系统群发
+        {
+            if (!$("#chkBusiness").is(':checked') && !$("#chkClienter").is(':checked')) {
+                alert("请选择推送对象！")
+                return;
+            }
+            if ($("#chkBusiness").is(':checked') && $("#chkClienter").is(':checked')) {
+                pushTarget = 3;
+            }
+            else {
+                if ($("#chkBusiness").is(':checked')) {
+                    pushTarget = $("#chkBusiness").val();
+                }
+                else {
+                    pushTarget = $("#chkClienter").val();
+                }
+            }
+            var cityCodeList = "";
+            $("input[name='checkMenus']").each(function () {
+                if ($(this).is(':checked')) {
+                    cityCodeList = cityCodeList + $(this).val() + ",";
+                }
+            });
+            if (cityCodeList.length > 0)
+            {
+                pushCity=cityCodeList.substring(0, cityCodeList.length - 1);
+            }
+            else
+            {
+                alert("请选择推送城市！")
+                return;
+            }
+        }
+        else//指定对象
+        {
+            pushTarget = 4;
+            pushPhone = $("#txtPushPhone").val();
+            if(pushPhone.trim().length==0)
+            {
+                alert("手机号码不能为空！")
+                return;
+            }
+            var reg = /^0?1\d{10}$/;
+            var checkflag = true;
+            var phoneArr = pushPhone.split(",");
+            $.each(phoneArr, function (i, n) {
+                if (!reg.test(n)) {
+                    checkflag = false;
+                }
+            });
+            if(!checkflag)
+            {
+                alert("手机号码格式有误，请重新输入！");
+                return;
+            }
+            if(phoneArr.length>1000)
+            {
+                alert("指定对象群发每次最多1000条！");
+                return;
+            }
+        }
+    })
 </script>
 
