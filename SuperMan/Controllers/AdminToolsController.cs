@@ -1,17 +1,12 @@
 ﻿using Ets.Model.Common;
 using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using SuperMan.App_Start;
 using Ets.Model.DomainModel.GlobalConfig;
-using Ets.Service.IProvider.User;
-using Ets.Service.Provider.User;
-
+using Ets.Service.IProvider.Business;
+using Ets.Service.Provider.Business;
 namespace SuperMan.Controllers
 {
     public class AdminToolsController : Controller

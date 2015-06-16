@@ -23,7 +23,8 @@ using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
 using ETS.Security;
 using Ets.Model.DataModel.Business;
-
+using Ets.Service.IProvider.Business;
+using Ets.Service.Provider.Business;
 namespace OpenApi.Controllers
 {
     public class BusinessController : ApiController
@@ -53,7 +54,7 @@ namespace OpenApi.Controllers
             if (string.IsNullOrWhiteSpace(paramodel.fields.Address) || string.IsNullOrWhiteSpace(paramodel.fields.B_Province) || string.IsNullOrWhiteSpace(paramodel.fields.B_City) || string.IsNullOrWhiteSpace(paramodel.fields.B_Area) || string.IsNullOrWhiteSpace(paramodel.fields.B_AreaCode) || string.IsNullOrWhiteSpace(paramodel.fields.B_CityCode) || string.IsNullOrWhiteSpace(paramodel.fields.B_ProvinceCode))  //商户地址 省市区 不能为空
                 return ResultModel<object>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
 
-            Business busi = iBusiProvider.CheckExistBusiness(paramodel.fields.B_OriginalBusiId, paramodel.group);
+            BusinessModel busi = iBusiProvider.CheckExistBusiness(paramodel.fields.B_OriginalBusiId, paramodel.group);
             if (busi != null)
             {
                 //if(busi.Status == ConstValues.BUSINESS_NOADDRESS || busi.Status == ConstValues.BUSINESS_AUDITCANCEL )
@@ -130,7 +131,7 @@ namespace OpenApi.Controllers
         [HttpPost]
         [SignOpenApi]
         [OpenApiActionError]
-        public ResultModel<object> GetBusinessStatus(ParaModel<BusinessModel> paramodel)
+        public ResultModel<object> GetBusinessStatus(ParaModel<BusinessModeltemp> paramodel)
         {
             LogHelper.LogWriter("获取商户状态：", new { Busi = paramodel });
             var busi = iBusiProvider.GetBusiness(paramodel.fields.B_OriginalBusiId, paramodel.group);

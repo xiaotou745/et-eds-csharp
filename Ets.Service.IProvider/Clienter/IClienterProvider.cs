@@ -41,7 +41,7 @@ namespace Ets.Service.IProvider.Clienter
         /// </summary>
         /// <param name="model">用户名称，用户密码</param>
         /// <returns>用户信息</returns>
-        ResultModel<ClienterLoginResultModel> PostLogin_C(LoginModel model);
+        ResultModel<ClienterLoginResultModel> PostLogin_C(LoginCPM model);
 
         /// <summary>
         /// 获取当前配送员的流水信息

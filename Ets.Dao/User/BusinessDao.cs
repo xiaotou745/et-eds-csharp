@@ -432,7 +432,7 @@ and a.PhoneNo=@PhoneNo";
         /// <UpdateTime>20150604</UpdateTime>
         /// <param name="model"></param>
         /// <returns>返回商铺ID</returns>
-        public int InsertBusiness(RegisterInfoModel model)
+        public int InsertBusiness(RegisterInfoPM model)
         {
             const string insertSql = @"         
 insert into dbo.business (City,PhoneNo,PhoneNo2,Password,CityId )
@@ -888,7 +888,7 @@ where b.PhoneNo=@PhoneNo and isnull(g.IsModifyBind,1)=1";
         /// <param name="bid">原平台商户Id</param>
         /// <param name="groupid">集团id</param>
         /// <returns>商家信息</returns>
-        public Business CheckExistBusiness(int bid, int groupid)
+        public BusinessModel CheckExistBusiness(int bid, int groupid)
         {
             string sql = @"select Id,Status from dbo.business where OriginalBusiId=@OriginalBusiId and GroupId=@GroupId";
             IDbParameters parm = DbHelper.CreateDbParameters();
@@ -899,7 +899,7 @@ where b.PhoneNo=@PhoneNo and isnull(g.IsModifyBind,1)=1";
             {
                 return null;
             }
-            return MapRows<Business>(dt)[0];
+            return MapRows<BusinessModel>(dt)[0];
         }
 
         /// <summary>
@@ -959,7 +959,7 @@ where b.PhoneNo=@PhoneNo and isnull(g.IsModifyBind,1)=1";
         /// <UpdateTime>20150601</UpdateTime>
         /// <param name="model"></param>
         /// <returns>返回商铺ID</returns>
-        public int InsertOtherBusiness(Business model)
+        public int InsertOtherBusiness(BusinessModel model)
         {
             string insertSql = @"
 insert into dbo.business(Name,City,district,PhoneNo,PhoneNo2,Password,CheckPicUrl,
@@ -1049,7 +1049,7 @@ select SCOPE_IDENTITY() as id;
         /// </summary>
         /// <param name="business"></param>
         /// <returns>商户的当前状态</returns>
-        public int UpdateBusinessAddressInfo(Business business)
+        public int UpdateBusinessAddressInfo(BusinessModel business)
         {
             string upSql = @"UPDATE  dbo.business
                             SET     [Address] = @Address ,
@@ -1198,7 +1198,7 @@ select SCOPE_IDENTITY() as id;
         /// <param name="oriBusiId">商户ID</param>
         /// <param name="orderFrom">集团ID</param>
         /// <returns></returns>
-        public Business GetBusiByOriIdAndOrderFrom(int oriBusiId, int orderFrom)
+        public BusinessModel GetBusiByOriIdAndOrderFrom(int oriBusiId, int orderFrom)
         {
             string sql = @"SELECT Id,[Status] FROM dbo.business(nolock) WHERE OriginalBusiId=@OriginalBusiId AND GroupId=@GroupId";
             IDbParameters parm = DbHelper.CreateDbParameters();
@@ -1209,7 +1209,7 @@ select SCOPE_IDENTITY() as id;
             {
                 return null;
             }
-            return MapRows<Business>(dt)[0];
+            return MapRows<BusinessModel>(dt)[0];
         }
         /// <summary>
         /// 检查号码是否存在
@@ -1348,7 +1348,7 @@ select @@IDENTITY ";
         /// <param name="model"></param>
         /// <param name="orderOptionModel"></param>
         /// <returns></returns>
-        public bool ModifyBusinessInfo(Business model, OrderOptionModel orderOptionModel)
+        public bool ModifyBusinessInfo(BusinessModel model, OrderOptionModel orderOptionModel)
         {
             string remark = orderOptionModel.OptUserName + "通过后台管理系统修改商户信息";
             string sql = string.Format(@"UPDATE business 
@@ -1390,9 +1390,9 @@ select @@IDENTITY ";
         /// <summary>
         /// 根据ID获取对象
         /// </summary>
-        public Business GetById(int id)
+        public BusinessModel GetById(int id)
         {
-            Business model = null;
+            BusinessModel model = null;
             const string getbyidSql = @"
 select  Id,Name,City,district,PhoneNo,PhoneNo2,Password,CheckPicUrl,IDCard,Address,Landline,Longitude,Latitude,Status,InsertTime,districtId,CityId,GroupId,OriginalBusiId,ProvinceCode,CityCode,AreaCode,Province,CommissionTypeId,DistribSubsidy,BusinessCommission,CommissionType,CommissionFixValue,BusinessGroupId,BalancePrice,AllowWithdrawPrice,HasWithdrawPrice
 from  business (nolock)
@@ -1402,7 +1402,7 @@ where  Id=@Id ";
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, getbyidSql, dbParameters));
             if (DataTableHelper.CheckDt(dt))
             {
-                model = MapRows<Business>(dt)[0];
+                model = MapRows<BusinessModel>(dt)[0];
             }
             return model;
         }
@@ -1411,7 +1411,7 @@ where  Id=@Id ";
         /// </summary>
         /// <param name="ids"></param>
         /// <returns></returns>
-        public IDictionary<int,Business> GetByIds(IList<int> ids)
+        public IDictionary<int, BusinessModel> GetByIds(IList<int> ids)
         {
             const string getbyidSql = @"
 select  Id,Name,City,district,PhoneNo,PhoneNo2,Password,CheckPicUrl,IDCard,Address,Landline,Longitude,Latitude,Status,InsertTime,districtId,CityId,GroupId,OriginalBusiId,ProvinceCode,CityCode,AreaCode,Province,CommissionTypeId,DistribSubsidy,BusinessCommission,CommissionType,CommissionFixValue,BusinessGroupId,BalancePrice,AllowWithdrawPrice,HasWithdrawPrice
@@ -1420,10 +1420,10 @@ where  Id IN({0})";
 
             if (ids == null || ids.Count == 0)
             {
-                return new Dictionary<int, Business>();
+                return new Dictionary<int, BusinessModel>();
             }
 
-            return DbHelper.QueryWithRowMapperDelegate<Business>(SuperMan_Read, string.Format(getbyidSql,string.Join(",", ids)), datarow => new Business()
+            return DbHelper.QueryWithRowMapperDelegate<BusinessModel>(SuperMan_Read, string.Format(getbyidSql, string.Join(",", ids)), datarow => new BusinessModel()
             {
                 Id = ParseHelper.ToInt(datarow["Id"]),
                 Name = ParseHelper.ToString(datarow["Name"]),

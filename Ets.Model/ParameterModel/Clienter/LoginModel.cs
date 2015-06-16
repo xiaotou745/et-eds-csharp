@@ -9,7 +9,7 @@ namespace Ets.Model.ParameterModel.Clienter
     /// <summary>
     /// 登录实体
     /// </summary>
-    public class LoginModel
+    public class LoginCPM
     {
         /// <summary>
         /// 登录手机号

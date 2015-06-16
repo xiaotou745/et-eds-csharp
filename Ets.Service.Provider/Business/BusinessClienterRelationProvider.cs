@@ -7,11 +7,11 @@ using Ets.Dao.Bussiness;
 using ETS.Data.PageData;
 using Ets.Model.DomainModel.Business;
 using Ets.Model.ParameterModel.Business;
-using Ets.Service.IProvider.Bussiness;
+using Ets.Service.IProvider.Business;
 using Ets.Model.DataModel.Business;
 using Ets.Model.ParameterModel.Order;
 
-namespace Ets.Service.Provider.Bussiness
+namespace Ets.Service.Provider.Business
 {
     /// <summary>
     /// 商户绑定骑士关系   caoheyang 20150608

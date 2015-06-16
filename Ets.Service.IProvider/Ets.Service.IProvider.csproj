@@ -42,7 +42,7 @@
   <ItemGroup>
     <Compile Include="Account\IAccountProvider..cs" />
     <Compile Include="AuthorityMenu\IAuhorityMenu.cs" />
-    <Compile Include="Bussiness\IBusinessClienterRelationProvider.cs" />
+    <Compile Include="Business\IBusinessClienterRelationProvider.cs" />
     <Compile Include="Clienter\IClienterLocationProvider.cs" />
     <Compile Include="Clienter\ICrossShopStatisticLogProvider.cs" />
     <Compile Include="Common\IAdminToolsProvider.cs" />

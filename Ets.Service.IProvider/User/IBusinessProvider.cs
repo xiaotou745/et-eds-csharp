@@ -6,14 +6,11 @@ using Ets.Model.Common;
 using Ets.Model.DomainModel.Business;
 using Ets.Model.DataModel.Business;
 using ETS.Enums;
-using System.Data;
 using Ets.Model.DataModel.Group;
 using Ets.Model.ParameterModel.User;
 using Ets.Model.ParameterModel.Order;
-//using Ets.Model.DomainModel.Order;
-//using Ets.Model.ParameterModel.Order;
 
-namespace Ets.Service.IProvider.User
+namespace Ets.Service.IProvider.Business
 {
     /// <summary>
     /// 商户业务逻辑接口 add by caoheyang 20150311
@@ -67,7 +64,7 @@ namespace Ets.Service.IProvider.User
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(RegisterInfoModel model);
+        ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(RegisterInfoPM model);
 
         /// <summary>
         /// B端登录
@@ -232,7 +229,7 @@ namespace Ets.Service.IProvider.User
         /// <param name="model"></param>
         /// <param name="orderOptionModel"></param>
         /// <returns></returns>
-        bool ModifyBusinessInfo(Business model, OrderOptionModel orderOptionModel);
+        bool ModifyBusinessInfo(BusinessModel model, OrderOptionModel orderOptionModel);
 
         /// <summary>
         /// 后台添加商户
@@ -243,7 +240,7 @@ namespace Ets.Service.IProvider.User
         /// <returns></returns>
         ResultModel<BusiRegisterResultModel> AddBusiness(AddBusinessModel model);
 
-        Business CheckExistBusiness(int originalId,int groupId);
+        BusinessModel CheckExistBusiness(int originalId, int groupId);
 
 
         int AddThirdBusiness(ParaModel<BusinessRegisterModel> paramodel);
@@ -252,7 +249,7 @@ namespace Ets.Service.IProvider.User
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        int InsertOtherBusiness(Business model);
+        int InsertOtherBusiness(BusinessModel model);
 
         /// <summary>
         /// 获取商户详情        

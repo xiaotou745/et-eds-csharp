@@ -93,7 +93,7 @@ namespace Ets.Model.ParameterModel.Business
         public decimal DistribSubsidy { get; set; }
     }
 
-    public class BusinessModel
+    public class BusinessModeltemp
     {
         public int B_OriginalBusiId { get; set; }
     }
