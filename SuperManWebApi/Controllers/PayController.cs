@@ -1,8 +1,8 @@
 ﻿using Ets.Model.Common;
 using Ets.Model.Common.AliPay;
-using Ets.Model.DomainModel.Bussiness;
+using Ets.Model.DomainModel.Business;
 using Ets.Model.ParameterModel.AliPay;
-using Ets.Model.ParameterModel.Bussiness;
+using Ets.Model.ParameterModel.Business;
 using Ets.Service.IProvider.Pay;
 using Ets.Service.Provider.Pay;
 using ETS.Enums;

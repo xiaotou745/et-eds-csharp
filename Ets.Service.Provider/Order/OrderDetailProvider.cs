@@ -1,7 +1,7 @@
 ﻿using CalculateCommon;
 using Ets.Dao.Order;
 using Ets.Model.Common;
-using Ets.Model.DataModel.Bussiness;
+using Ets.Model.DataModel.Business;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DomainModel.Clienter;
@@ -35,7 +35,7 @@ using Ets.Service.Provider.Common;
 using ETS.Const;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.IProvider.OpenApi;
-using Ets.Model.ParameterModel.Bussiness;
+using Ets.Model.ParameterModel.Business;
 using Ets.Service.IProvider.Statistics;
 using Ets.Model.DataModel.Strategy;
 namespace Ets.Service.Provider.Order

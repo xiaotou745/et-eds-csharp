@@ -1,6 +1,6 @@
 ﻿using Ets.Model.Common;
 using Ets.Model.DomainModel.Clienter;
-using Ets.Model.ParameterModel.Bussiness;
+using Ets.Model.ParameterModel.Business;
 using System;
 using System.Collections.Generic;
 using System.Linq;

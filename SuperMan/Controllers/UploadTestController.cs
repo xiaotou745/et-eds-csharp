@@ -4,9 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using SuperManCore;
-using SuperManCore.Common;
-
+using Ets.Model.Common;
+using Ets.Model.ParameterModel.Clienter;
 namespace SuperMan.Controllers
 {
     [WebHandleError]
@@ -51,16 +50,16 @@ namespace SuperMan.Controllers
                 }
 
                 var fileName = string.Format("{0}_{1}", DateTime.Now.ToString("yyyyMMddhhmmss"), file.FileName);
- 
-                if (!System.IO.Directory.Exists(CustomerIconUploader.Instance.PhysicalPath))
+
+                if (!System.IO.Directory.Exists(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath))
                 {
-                    System.IO.Directory.CreateDirectory(CustomerIconUploader.Instance.PhysicalPath);
+                    System.IO.Directory.CreateDirectory(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath);
                 }
-                var fullFilePath = Path.Combine(CustomerIconUploader.Instance.PhysicalPath, fileName);
+                var fullFilePath = Path.Combine(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath, fileName);
  
                 file.SaveAs(fullFilePath);
-    
-                var transformer = new FixedDimensionTransformerAttribute(CustomerIconUploader.Instance.Width, CustomerIconUploader.Instance.Height, CustomerIconUploader.Instance.MaxBytesLength / 1024);
+
+                var transformer = new ETS.Compress.FixedDimensionTransformerAttribute(CustomerIconUploader.Instance.Width, CustomerIconUploader.Instance.Height, CustomerIconUploader.Instance.MaxBytesLength / 1024);
 
                 var destFileName = string.Format("{0}_{1}{2}", DateTime.Now.ToString("yyyyMMddhhmmss"), new Random().Next(1000), Path.GetExtension(file.FileName));
                 var destFullFileName = System.IO.Path.Combine(CustomerIconUploader.Instance.PhysicalPath, destFileName);

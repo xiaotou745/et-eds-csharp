@@ -14,7 +14,7 @@ using System.Text;
 using System.IO;
 using System.Web.Script.Serialization;
 using Ets.Model.Common;
-using Ets.Model.ParameterModel.Bussiness;
+using Ets.Model.ParameterModel.Business;
 using ETS.Enums;
 using Ets.Service.Provider.User;
 using Ets.Service.IProvider.User;
@@ -22,7 +22,7 @@ using ETS.Util;
 using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
 using ETS.Security;
-using Ets.Model.DataModel.Bussiness;
+using Ets.Model.DataModel.Business;
 
 namespace OpenApi.Controllers
 {

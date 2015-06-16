@@ -3,32 +3,19 @@ using ETS.Enums;
 using Ets.Model.Common;
 using Ets.Service.Provider.Order;
 using Ets.Service.Provider.WtihdrawRecords;
-using Microsoft.Ajax.Utilities;
-using SuperManCore.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
 using SuperManWebApi.Models.Clienter;
-using SuperManCore;
-using SuperManWebApi.Models.Business;
-using SuperManBusinessLogic.C_Logic;
-using System.IO;
-using SuperManCore.Paging;
-using SuperManCommonModel.Entities;
-using SuperManBusinessLogic.CommonLogic;
 using System.Threading.Tasks;
-using SuperManBusinessLogic.B_Logic;
-using System.ComponentModel;
 using ETS.Util;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.Provider.Common;
-using SuperManDataAccess;
 using SuperManWebApi.Providers;
 using Ets.Model.DataModel.Order;
-using System.Text.RegularExpressions;
-using ETS.IO;
+using ETS.Extension;
 namespace SuperManWebApi.Controllers
 {
 
@@ -44,8 +31,7 @@ namespace SuperManWebApi.Controllers
         /// C端注册 -平扬 2015.3.30
         /// </summary>
         /// <param name="model"></param>
-        /// <returns></returns>
-        [ActionStatus(typeof(Ets.Model.ParameterModel.Bussiness.CustomerRegisterStatus))]
+        /// <returns></returns>        
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.ClientRegisterResultModel> PostRegisterInfo_C(Ets.Model.ParameterModel.Clienter.ClientRegisterInfoModel model)
         {
@@ -58,8 +44,7 @@ namespace SuperManWebApi.Controllers
         /// C端登录
         /// </summary>
         /// <param name="model"></param>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.LoginModelStatus))]
+        /// <returns></returns>        
         public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterLoginResultModel> PostLogin_C(Ets.Model.ParameterModel.Clienter.LoginModel model)
         {
             return new ClienterProvider().PostLogin_C(model);
@@ -161,8 +146,7 @@ namespace SuperManWebApi.Controllers
         /// 获取我的任务   根据状态判断是已完成任务还是我的任务
         /// </summary>
         /// <param name="model"></param>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.GetOrdersStatus))]
+        /// <returns></returns>        
         [ExecuteTimeLog]
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]> GetMyJobList_C(Ets.Model.ParameterModel.Clienter.ClientOrderInfoModel model)
@@ -196,8 +180,7 @@ namespace SuperManWebApi.Controllers
         /// C端获取我的任务列表 最近任务 登录未登录根据城市有没有值判断。
         /// </summary>
         /// <param name="model"></param>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.GetOrdersStatus))]
+        /// <returns></returns>      
         [ExecuteTimeLog]
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderResultModel[]> GetJobList_C(Ets.Model.ParameterModel.Clienter.ClientOrderInfoModel model)
@@ -236,8 +219,7 @@ namespace SuperManWebApi.Controllers
         /// Ado.net add 王超
         /// 未登录时获取最新任务     登录未登录根据城市有没有值判断。
         /// </summary>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.GetOrdersNoLoginStatus))]
+        /// <returns></returns>        
         [ExecuteTimeLog]
         [HttpGet]
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Clienter.ClientOrderNoLoginResultModel[]> GetJobListNoLoginLatest_C()
@@ -283,8 +265,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="phoneNo"></param>
         /// <param name="newPassword"></param>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.ModifyPwdStatus))]
+        /// <returns></returns>        
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel> PostModifyPwd_C(Ets.Model.DataModel.Clienter.ModifyPwdInfoModel model)
         {
@@ -298,8 +279,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="phoneNo"></param>
         /// <param name="newPassword"></param>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.ForgetPwdStatus))]
+        /// <returns></returns>        
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.ClienterModifyPwdResultModel> PostForgetPwd_C(Ets.Model.DataModel.Clienter.ForgetPwdInfoModel model)
         {
@@ -401,8 +381,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="userId">C端用户id</param>
         /// <param name="orderNo">订单号码</param>
         /// <param name="pickupCode">取货码</param>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.FinishOrderStatus))]
+        /// <returns></returns>        
         [HttpGet]
         public Ets.Model.Common.ResultModel<FinishOrderResultModel> FinishOrder_C(int userId, string orderNo, float completeLongitude, float CompleteLatitude, string pickupCode = null)
         {
@@ -439,8 +418,7 @@ namespace SuperManWebApi.Controllers
         /// 获取我的余额
         /// </summary>
         /// <param name="phoneNo">手机号</param>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.RushOrderStatus))]
+        /// <returns></returns>     
         [HttpGet]
         public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Clienter.MyBalanceResultModel> GetMyBalance(string phoneNo)
         {
@@ -460,8 +438,7 @@ namespace SuperManWebApi.Controllers
         /// 获取我的余额动态
         /// </summary>
         /// <param name="phoneNo">手机号</param>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.RushOrderStatus))]
+        /// <returns></returns>        
         [HttpGet]
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.MyBalanceListResultModel[]> GetMyBalanceDynamic(string phoneNo, int? pagedSize, int? pagedIndex)
         {
@@ -486,12 +463,11 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="PhoneNumber">手机号</param>
         /// <param name="type">操作类型： 0 注册 1修改密码</param>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.SendCheckCodeStatus))]
+        /// <returns></returns>      
         [HttpGet]
         public Ets.Model.Common.SimpleResultModel CheckCode(string PhoneNumber, string type)
         {
-            if (!CommonValidator.IsValidPhoneNumber(PhoneNumber))
+            if (!ETS.Validator.CommonValidator.IsValidPhoneNumber(PhoneNumber))
             {
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
             }
@@ -542,12 +518,11 @@ namespace SuperManWebApi.Controllers
         /// 语音请求动态验证码
         /// </summary>
         /// <param name="model"></param>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.SendCheckCodeStatus))]
+        /// <returns></returns>   
         [HttpPost]
         public Ets.Model.Common.SimpleResultModel VoiceCheckCode(Ets.Model.ParameterModel.Sms.SmsParaModel model)
         {
-            if (!CommonValidator.IsValidPhoneNumber(model.PhoneNumber))
+            if (!ETS.Validator.CommonValidator.IsValidPhoneNumber(model.PhoneNumber))
             {
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
             }
@@ -612,8 +587,7 @@ namespace SuperManWebApi.Controllers
         /// 2015年3月16日 11:44:54
         /// </summary>
         /// <param name="CityName">城市名称</param>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.ServicePhoneStatus))]
+        /// <returns></returns>      
         [HttpGet]
         public Ets.Model.Common.ResultModel<Ets.Model.Common.ResultModelServicePhone> GetCustomerServicePhone(string CityName)
         {
@@ -630,8 +604,7 @@ namespace SuperManWebApi.Controllers
         /// 2015年3月31日 
         /// </summary>
         /// <param name="parModel">userId</param>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.UserStatus))]
+        /// <returns></returns>    
         [HttpPost]
         public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.ClienterStatusModel> GetUserStatus(Ets.Model.ParameterModel.Order.UserStatusModel parModel)
         {
@@ -845,7 +818,6 @@ namespace SuperManWebApi.Controllers
         /// 获取订单详细
         /// </summary>
         /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.GetOrdersStatus))]
         [HttpGet]
         public Ets.Model.Common.ResultModel<ListOrderDetailModel> GetOrderDetail(string orderno)
         {
