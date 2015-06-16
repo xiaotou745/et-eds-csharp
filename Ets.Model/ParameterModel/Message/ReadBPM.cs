@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,9 +16,11 @@ namespace Ets.Model.ParameterModel.Message
         /// 消息ID
         /// </summary>
         public int MessageId { get; set; }
+     
         /// <summary>
-        /// 版本号1.0
+        /// 版本
         /// </summary>
+        [Required(ErrorMessage = "版本号不能为空")]
         public string Version { get; set; }
 
     }
