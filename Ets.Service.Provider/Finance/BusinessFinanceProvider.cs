@@ -17,7 +17,7 @@ using System.Text;
 using ETS.Transaction;
 using ETS.Transaction.Common;
 using ETS.Util;
-
+using Ets.Dao.Business;
 namespace Ets.Service.Provider.Finance
 {
     public class BusinessFinanceProvider : IBusinessFinanceProvider

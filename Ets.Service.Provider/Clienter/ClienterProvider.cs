@@ -32,9 +32,9 @@ using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Order;
 using ETS.NoSql.RedisCache;
 using Ets.Model.DomainModel.Order;
-using Ets.Service.Provider.Order;
 using Ets.Service.IProvider.Order;
 using Ets.Model.ParameterModel.Finance;
+using Ets.Dao.Business;
 namespace Ets.Service.Provider.Clienter
 {
     public class ClienterProvider : IClienterProvider

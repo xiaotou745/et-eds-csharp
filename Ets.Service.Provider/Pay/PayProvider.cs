@@ -23,7 +23,7 @@ using ETS.Transaction;
 using Ets.Dao.Finance;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.ParameterModel.Finance;
-
+using Ets.Dao.Business;
 namespace Ets.Service.Provider.Pay
 {
     public class PayProvider : IPayProvider
@@ -159,7 +159,7 @@ namespace Ets.Service.Provider.Pay
         private ResultModel<PayResultModel> CreateAliPayOrder(string orderNo, decimal payAmount, int orderId, int payStyle)
         {
             #region 通过订单ID，用于查询商家信息用
-            BusinessDM businessModel = new Ets.Dao.User.BusinessDao().GetByOrderId(orderId);
+            BusinessDM businessModel = new BusinessDao().GetByOrderId(orderId);
             string businessName = string.Empty;
             if (businessModel == null || string.IsNullOrEmpty(businessModel.Name))
             {

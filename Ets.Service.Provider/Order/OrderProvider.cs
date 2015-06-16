@@ -40,6 +40,7 @@ using System.Data;
 using Ets.Dao.Clienter;
 using Ets.Service.IProvider.Business;
 using Ets.Service.Provider.Business;
+using Ets.Dao.Business;
 #endregion
 namespace Ets.Service.Provider.Order
 {
