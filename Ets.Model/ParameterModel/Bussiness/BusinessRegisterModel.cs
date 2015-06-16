@@ -8,8 +8,7 @@ using System.Threading.Tasks;
 namespace Ets.Model.ParameterModel.Bussiness
 {
     public class BusinessRegisterModel
-    {
-
+    { 
         /// <summary>
         /// 商户名称
         /// </summary>

@@ -41,18 +41,16 @@ namespace OpenApi.Controllers
         {
             LogHelper.LogWriter("商户注册：", new { Busi = paramodel });
             if (string.IsNullOrWhiteSpace(paramodel.fields.PhoneNo))   //手机号非空验证
-                return ResultModel<object>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
-
+                return ResultModel<object>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty); 
             if (string.IsNullOrWhiteSpace(paramodel.fields.B_OriginalBusiId.ToString()))  //判断原平台商户Id不能为空
-                return ResultModel<object>.Conclude(CustomerRegisterStatus.OriginalBusiIdEmpty);
-
+                return ResultModel<object>.Conclude(CustomerRegisterStatus.OriginalBusiIdEmpty); 
             if (string.IsNullOrWhiteSpace(paramodel.fields.B_City) || string.IsNullOrWhiteSpace(paramodel.fields.B_CityCode.ToString())) //城市以及城市编码非空验证
                 return ResultModel<object>.Conclude(CustomerRegisterStatus.cityIdEmpty);
             if (string.IsNullOrEmpty(paramodel.fields.B_Name.Trim())) //商户名称
                 return ResultModel<object>.Conclude(CustomerRegisterStatus.BusiNameEmpty);
             if (string.IsNullOrWhiteSpace(paramodel.fields.Address) || string.IsNullOrWhiteSpace(paramodel.fields.B_Province) || string.IsNullOrWhiteSpace(paramodel.fields.B_City) || string.IsNullOrWhiteSpace(paramodel.fields.B_Area) || string.IsNullOrWhiteSpace(paramodel.fields.B_AreaCode) || string.IsNullOrWhiteSpace(paramodel.fields.B_CityCode) || string.IsNullOrWhiteSpace(paramodel.fields.B_ProvinceCode))  //商户地址 省市区 不能为空
                 return ResultModel<object>.Conclude(CustomerRegisterStatus.BusiAddressEmpty);
-
+            
             Business busi = iBusiProvider.CheckExistBusiness(paramodel.fields.B_OriginalBusiId, paramodel.group);
             if (busi != null)
             {
@@ -75,7 +73,8 @@ namespace OpenApi.Controllers
                 //if (busi.Status != ConstValues.BUSINESS_NOADDRESS && busi.Status == ConstValues.BUSINESS_AUDITCANCEL)
                 //{
                 LogHelper.LogWriter("商户注册---：", new { busid = busi.Id,BusiStatus=BusiStatus.BusiNoPass.GetHashCode() });
-                bool upresult = iBusiProvider.UpdateAuditStatus(busi.Id, BusiStatus.BusiNoPass.GetHashCode());
+
+                bool upresult = iBusiProvider.UpdateAuditStatus(busi.Id, BusiStatus.BusiNoPass.GetHashCode(), paramodel.fields.Address);
                 //}
                 if (upresult)
                 {
@@ -124,7 +123,7 @@ namespace OpenApi.Controllers
 
 
         /// <summary>
-        /// 商户注册
+        /// 获取商户状态
         /// </summary>
         /// <returns></returns>
         [HttpPost]

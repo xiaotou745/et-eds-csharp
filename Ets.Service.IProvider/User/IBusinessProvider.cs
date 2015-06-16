@@ -108,7 +108,7 @@ namespace Ets.Service.IProvider.User
         /// <returns></returns>
         bool UpdateAuditStatus(int id, EnumStatusType enumStatusType);
 
-        bool UpdateAuditStatus(int id, int enumStatus);
+        bool UpdateAuditStatus(int id, int enumStatus,string busiAddress);
 
         /// <summary>
         /// 根据城市信息查询当前城市下该集团的所有商户信息

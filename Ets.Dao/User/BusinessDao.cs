@@ -8,6 +8,7 @@ using Ets.Model.ParameterModel.Finance;
 using ETS.Util;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -592,6 +593,7 @@ order by a.id desc
         /// </summary>
         /// <param name="id"></param>
         /// <param name="enumStatusType"></param>
+        /// <param name="busiAddress"></param>
         /// <returns></returns>
         public bool UpdateAuditStatus(int id, EnumStatusType enumStatusType)
         {
@@ -599,20 +601,20 @@ order by a.id desc
             bool reslut = false;
             try
             {
-                string sql = string.Empty;
+                StringBuilder sql = new StringBuilder();
                 if (enumStatusType == EnumStatusType.审核通过)
                 {
-
-                    sql = string.Format(" update business set Status={0} where id=@id;", ConstValues.BUSINESS_AUDITPASS);
+                    sql.AppendFormat(" update business set Status={0} ", ConstValues.BUSINESS_AUDITPASS);
                 }
                 else if (enumStatusType == EnumStatusType.审核取消)
                 {
-                    sql = string.Format(" update business set Status={0} where id=@id;", ConstValues.BUSINESS_AUDITCANCEL);
+                    sql.AppendFormat(" update business set Status={0} ", ConstValues.BUSINESS_AUDITCANCEL);
                 }
-
+               
+                sql.Append(" where id=@id;");
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
-                dbParameters.AddWithValue("id", id);
-                int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Write, sql, dbParameters);
+                dbParameters.AddWithValue("id", id); 
+                int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Write, sql.ToString(), dbParameters);
 
                 if (i > 0)
                 {
@@ -644,16 +646,23 @@ order by a.id desc
         /// <param name="id"></param>
         /// <param name="enumStatusType"></param>
         /// <returns></returns>
-        public bool UpdateAuditStatus(int id, int enumStatus)
+        public bool UpdateAuditStatus(int id, int enumStatus, string busiAddress)
         {
             bool reslut = false;
             try
             {
-                string sql = "update business set Status=@enumStatus where id=@id";
+                StringBuilder sql = new StringBuilder("update business set Status=@enumStatus ");
+
+                if (!string.IsNullOrWhiteSpace(busiAddress))  //当商户地址不为空的时候，修改商户地址
+                {
+                    sql.Append(" ,Address=@Address ");
+                }
+                sql.Append(" where id=@id");
                 IDbParameters parm = DbHelper.CreateDbParameters();
                 parm.Add("id", DbType.Int32, 4).Value = id;
+                parm.Add("@Address", DbType.String).Value = busiAddress; //商户地址
                 parm.Add("enumStatus", DbType.Int32, 4).Value = enumStatus;
-                return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm)) > 0 ? true : false;
+                return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql.ToString(), parm)) > 0 ? true : false;
             }
             catch (Exception ex)
             {
