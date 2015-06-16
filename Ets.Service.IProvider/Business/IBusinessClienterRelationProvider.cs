@@ -9,7 +9,7 @@ using Ets.Model.ParameterModel.Business;
 using Ets.Model.DataModel.Business;
 using Ets.Model.ParameterModel.Order;
 
-namespace Ets.Service.IProvider.Bussiness
+namespace Ets.Service.IProvider.Business
 {
     /// <summary>
     /// 商户绑定骑士关系接口caoheyang 20150608

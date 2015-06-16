@@ -42,7 +42,7 @@
   <ItemGroup>
     <Compile Include="Account\IAccountProvider..cs" />
     <Compile Include="AuthorityMenu\IAuhorityMenu.cs" />
-    <Compile Include="Bussiness\IBusinessClienterRelationProvider.cs" />
+    <Compile Include="Business\IBusinessClienterRelationProvider.cs" />
     <Compile Include="Clienter\IClienterLocationProvider.cs" />
     <Compile Include="Clienter\ICrossShopStatisticLogProvider.cs" />
     <Compile Include="Common\IAdminToolsProvider.cs" />
@@ -73,8 +73,8 @@
     <Compile Include="Statistics\IStatisticsProvider.cs" />
     <Compile Include="Strategy\IStrategyProvider.cs" />
     <Compile Include="Subsidy\ISubsidyProvider.cs" />
-    <Compile Include="User\IBusinessGroupProvider.cs" />
-    <Compile Include="User\IBusinessProvider.cs" />
+    <Compile Include="Business\IBusinessGroupProvider.cs" />
+    <Compile Include="Business\IBusinessProvider.cs" />
     <Compile Include="User\IUser.cs" />
     <Compile Include="WtihdrawRecords\IWtihdrawRecordsProvider.cs" />
   </ItemGroup>

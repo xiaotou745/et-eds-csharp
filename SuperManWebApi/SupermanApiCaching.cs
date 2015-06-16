@@ -6,9 +6,9 @@ using System.Web;
 using System.Web.Caching;
 namespace SuperManWebApi
 {
-    public class SupermanApiCaching
+    public class SupermanApiCaching1
     {
-        public static readonly SupermanApiCaching Instance = new SupermanApiCaching();
+        public static readonly SupermanApiCaching1 Instance = new SupermanApiCaching1();
 
         public void Add(string key, string value)
         {
@@ -29,9 +29,9 @@ namespace SuperManWebApi
             return obj.ToString();
         }
     }
-    public class SupermanApiConfig
+    public class SupermanApiConfig1
     {
-        public static readonly SupermanApiConfig Instance = new SupermanApiConfig();
+        public static readonly SupermanApiConfig1 Instance = new SupermanApiConfig1();
 
         private string _smsContentCheckCode;
         public string SmsContentCheckCode

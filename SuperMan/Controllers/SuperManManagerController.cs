@@ -1,9 +1,8 @@
-﻿using System.Text.RegularExpressions;
-using Ets.Model.DataModel.Clienter;
+﻿using Ets.Model.DataModel.Clienter;
 using Ets.Model.ParameterModel.Business;
-using Ets.Service.IProvider.Bussiness;
+using Ets.Service.IProvider.Business;
 using Ets.Service.IProvider.Common;
-using Ets.Service.Provider.Bussiness;
+using Ets.Service.Provider.Business;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.Provider.Common;
 using Ets.Service.Provider.Distribution;
@@ -12,15 +11,12 @@ using Ets.Service.Provider.WtihdrawRecords;
 using ETS.Util;
 using SuperMan.App_Start;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Ets.Service.Provider.Finance;
 using Ets.Service.IProvider.Finance;
 using Ets.Model.ParameterModel.Finance;
 using System.Text;
-using ETS.Util;  
 using Ets.Model.Common;
 namespace SuperMan.Controllers
 {

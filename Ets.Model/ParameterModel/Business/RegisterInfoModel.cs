@@ -9,7 +9,7 @@ namespace Ets.Model.ParameterModel.Business
     /// <summary>
     /// B端注册时提供的信息
     /// </summary>
-    public class RegisterInfoModel
+    public class RegisterInfoPM
     {
         /// <summary>
         /// 城市

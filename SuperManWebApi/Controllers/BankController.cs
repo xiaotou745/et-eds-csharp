@@ -21,7 +21,8 @@ using System.Xml;
 using System.Xml.Linq;
 using ETS.Enums;
 using Ets.Model.ParameterModel.Finance;
-
+using Ets.Model.Common;
+using Ets.Model.DataModel.Finance;
 namespace SuperManWebApi.Controllers
 {
     public class BankController : ApiController
@@ -32,12 +33,12 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Finance.BankModel[]> Get(BankCriteria bankCriteria)
+        public ResultModel<BankModel[]> Get(BankCriteria bankCriteria)
         {
-            List<Ets.Model.DataModel.Finance.BankModel> listBank = new List<Ets.Model.DataModel.Finance.BankModel>(); 
+            List<BankModel> listBank = new List<BankModel>(); 
             if (string.IsNullOrWhiteSpace(bankCriteria.Version))
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Finance.BankModel[]>.Conclude(BankStatus.NoVersion, listBank.ToArray());
+                return ResultModel<BankModel[]>.Conclude(BankStatus.NoVersion, listBank.ToArray());
             } 
             try
             {
@@ -45,19 +46,19 @@ namespace SuperManWebApi.Controllers
                 IEnumerable<XElement> listElement = root.Descendants("bank");
                 foreach (XElement x in listElement)
                 {
-                    Ets.Model.DataModel.Finance.BankModel abank = new Ets.Model.DataModel.Finance.BankModel();
+                    BankModel abank = new BankModel();
                     var id = x.Element("Id").Value;
                     var name = x.Element("Name").Value;
                     abank.Id = ParseHelper.ToInt(id, -1);
                     abank.Name = name;
                     listBank.Add(abank);
                 }
-                return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Finance.BankModel[]>.Conclude(BankStatus.Success, listBank.ToArray());
+                return ResultModel<BankModel[]>.Conclude(BankStatus.Success, listBank.ToArray());
             }
             catch (Exception ex)
             {
                 LogHelper.LogWriter("载入银行出错：", new { obj = "bank.xml配置文件缺失"+ex.Message });
-                return Ets.Model.Common.ResultModel<Ets.Model.DataModel.Finance.BankModel[]>.Conclude(BankStatus.NoXmlConfig, listBank.ToArray());
+                return ResultModel<BankModel[]>.Conclude(BankStatus.NoXmlConfig, listBank.ToArray());
             }
         }
     }

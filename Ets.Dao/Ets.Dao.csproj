@@ -40,7 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Account\AccountDao.cs" />
-    <Compile Include="Bussiness\BusinessClienterRelationDao.cs" />
+    <Compile Include="Business\BusinessClienterRelationDao.cs" />
     <Compile Include="Clienter\CrossShopStatisticLogDao.cs" />
     <Compile Include="Clienter\ClienterDao.cs" />
     <Compile Include="Clienter\ClienterLocationDao.cs" />
@@ -68,6 +68,7 @@
     <Compile Include="Distribution\DistributionDao.cs" />
     <Compile Include="Message\BusinessMessageDao.cs" />
     <Compile Include="Message\ClienterMessageDao.cs" />
+    <Compile Include="Message\MessageDao.cs" />
     <Compile Include="Order\OrderOtherDao.cs" />
     <Compile Include="Order\OrderDetailDao.cs" />
     <Compile Include="Order\OrderChildDao.cs" />
@@ -77,8 +78,8 @@
     <Compile Include="Statistics\StatisticsDao.cs" />
     <Compile Include="Strategy\StrategyDao.cs" />
     <Compile Include="Subsidy\SubsidyDao.cs" />
-    <Compile Include="User\BusinessGroupDao.cs" />
-    <Compile Include="User\BusinessDao.cs" />
+    <Compile Include="Business\BusinessGroupDao.cs" />
+    <Compile Include="Business\BusinessDao.cs" />
     <Compile Include="User\BusinessRechargeDao.cs" />
     <Compile Include="User\UserDao.cs" />
     <Compile Include="User\UserOptRecordDao.cs" />

@@ -60,7 +60,7 @@
   <ItemGroup>
     <Compile Include="Account\AccountProvider.cs" />
     <Compile Include="Authority\AuthorityMenuProvider.cs" />
-    <Compile Include="Bussiness\BusinessClienterRelationProvider.cs" />
+    <Compile Include="Business\BusinessClienterRelationProvider.cs" />
     <Compile Include="Clienter\ClienterLocationProvider.cs" />
     <Compile Include="Clienter\CrossShopStatisticLogProvider.cs" />
     <Compile Include="Clienter\ClienterProvider.cs" />
@@ -107,8 +107,8 @@
     <Compile Include="Statistics\StatisticsProvider.cs" />
     <Compile Include="Strategy\StrategyProvider.cs" />
     <Compile Include="Subsidy\SubsidyProvider.cs" />
-    <Compile Include="User\BusinessGroupProvider.cs" />
-    <Compile Include="User\BusinessProvider.cs" />
+    <Compile Include="Business\BusinessGroupProvider.cs" />
+    <Compile Include="Business\BusinessProvider.cs" />
     <Compile Include="User\UserProvider.cs" />
     <Compile Include="WtihdrawRecords\WtihdrawRecordsProvider.cs" />
   </ItemGroup>

@@ -43,15 +43,16 @@ values(@ClienterId,@Content,@IsRead)
         /// <summary>
         /// 更新一条记录
         /// </summary>
-        public void Update(long id)
+        public string Update(long id)
         {
             const string updateSql = @"
 update  ClienterMessage
 set  IsRead=1
+OutPut INSERTED.[Content]
 where  Id=@Id";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Id", id);
-            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+           return  DbHelper.ExecuteScalar(SuperMan_Write, updateSql, dbParameters).ToString();
         }
 
         /// <summary>

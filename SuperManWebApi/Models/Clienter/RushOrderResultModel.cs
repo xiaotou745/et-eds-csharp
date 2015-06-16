@@ -9,7 +9,7 @@ namespace SuperManWebApi.Models.Clienter
     {
         public string userId { get; set; }
     }
-    public class FinishOrderResultModel
+    public class FinishOrderResultModel1
     {
         public int userId { get; set; }
         public decimal balanceAmount { get; set; }

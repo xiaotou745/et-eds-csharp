@@ -22,7 +22,7 @@ using Ets.Model.Common;
 using Ets.Model.DataModel.Group;
 
 
-namespace Ets.Dao.User
+namespace Ets.Dao.Business
 {
     public class BusinessGroupDao : DaoBase
     {

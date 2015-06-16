@@ -15,7 +15,7 @@ using Ets.Model.ParameterModel.Business;
 using ETS.Util;
 using Ets.Model.ParameterModel.Order;
 
-namespace Ets.Dao.Bussiness
+namespace Ets.Dao.Business
 {
     /// <summary>
     /// 商户绑定骑士关系dao  caoheyang 20150608

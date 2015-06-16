@@ -1,4 +1,9 @@
-﻿using Ets.Service.IProvider.Common;
+﻿using System.Threading.Tasks;
+using ETS.Data.PageData;
+using Ets.Model.DataModel.Message;
+using Ets.Model.ParameterModel.Message;
+using Ets.Service.IProvider.Common;
+using Ets.Service.IProvider.Message;
 using Ets.Service.Provider.Common;
 using ETS.Util;
 using System;
@@ -8,12 +13,14 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Ets.Service.Provider.Message;
 
 namespace SuperMan.Controllers
 {
     public class MessageManagerController : Controller
     {
         IAreaProvider iAreaProvider = new AreaProvider();
+        private readonly IMessageProvider messageProvider = new MessageProvider();
         // GET: MessageManager
         public ActionResult MessageManager()
         {

@@ -12,7 +12,7 @@ using Ets.Model.ParameterModel.User;
 using Ets.Model.ParameterModel.Order;
 using Ets.Model.DomainModel.GlobalConfig;
 
-namespace Ets.Service.IProvider.User
+namespace Ets.Service.IProvider.Business
 {
     /// <summary>
     /// 商家分组业务逻辑接口实现类 

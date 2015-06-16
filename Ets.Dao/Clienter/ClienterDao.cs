@@ -138,7 +138,7 @@ namespace Ets.Dao.Clienter
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public ClienterLoginResultModel PostLogin_CSql(LoginModel loginModel)
+        public ClienterLoginResultModel PostLogin_CSql(LoginCPM loginModel)
         {
 
             ClienterLoginResultModel model = null;

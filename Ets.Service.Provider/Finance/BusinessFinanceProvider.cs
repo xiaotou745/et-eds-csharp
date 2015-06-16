@@ -17,7 +17,7 @@ using System.Text;
 using ETS.Transaction;
 using ETS.Transaction.Common;
 using ETS.Util;
-
+using Ets.Dao.Business;
 namespace Ets.Service.Provider.Finance
 {
     public class BusinessFinanceProvider : IBusinessFinanceProvider
@@ -70,7 +70,7 @@ namespace Ets.Service.Provider.Finance
         {
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                Business business = new Business();
+                BusinessModel business = new BusinessModel();
                 var businessFinanceAccount = new BusinessFinanceAccount();//商户金融账号信息
                 FinanceWithdrawB checkbool = CheckWithdrawB(withdrawBpm, ref business, ref businessFinanceAccount);
                 if (checkbool!=FinanceWithdrawB.Success)  //验证失败 此次提款操作无效 直接返回相关错误信息
@@ -141,7 +141,7 @@ namespace Ets.Service.Provider.Finance
         /// <param name="business">商户</param>
         /// <param name="businessFinanceAccount">骑士金融账号信息</param>
         /// <returns></returns>
-        private FinanceWithdrawB CheckWithdrawB(WithdrawBPM withdrawBpm, ref Business business,
+        private FinanceWithdrawB CheckWithdrawB(WithdrawBPM withdrawBpm, ref BusinessModel business,
             ref  BusinessFinanceAccount businessFinanceAccount)
         {
             if (withdrawBpm == null)

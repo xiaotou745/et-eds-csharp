@@ -509,6 +509,7 @@
     <Content Include="Scripts\usaarea.retriever.js" />
     <Content Include="Scripts\view\authoritylist.js" />
     <Content Include="Scripts\view\categorylist.js" />
+    <Content Include="Scripts\view\MessageManagerList.js" />
     <Content Include="Scripts\view\DataManagerIndex.js" />
     <Content Include="Scripts\view\supplierAccountAdd.js" />
     <Content Include="Scripts\view\supplierAccountList.js" />
@@ -633,6 +634,8 @@
     <Content Include="Views\DataManager\Index.cshtml" />
     <Content Include="Views\DataManager\PostIndex.cshtml" />
     <Content Include="Views\MessageManager\MessageEdit.cshtml" />
+    <Content Include="Views\MessageManager\List.cshtml" />
+    <Content Include="Views\MessageManager\PostList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
