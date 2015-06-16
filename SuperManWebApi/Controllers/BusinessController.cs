@@ -13,14 +13,14 @@ using Ets.Service.Provider.Finance;
 using ETS.Util;
 using Ets.Model.Common;
 using ETS.Enums;
-using Ets.Model.DomainModel.Bussiness;
+using Ets.Model.DomainModel.Business;
 using Ets.Model.ParameterModel.Order;
 using Ets.Service.Provider.Finance;
 using Ets.Service.IProvider.User;
 using Ets.Service.Provider.User;
 using SuperManWebApi.App_Start.Filters;
-using Ets.Model.ParameterModel.Bussiness;
-using Ets.Model.DataModel.Bussiness;
+using Ets.Model.ParameterModel.Business;
+using Ets.Model.DataModel.Business;
 using SuperManWebApi.Providers;
 
 namespace SuperManWebApi.Controllers

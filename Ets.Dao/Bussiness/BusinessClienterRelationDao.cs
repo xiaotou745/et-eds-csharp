@@ -9,9 +9,9 @@ using ETS.Dao;
 using ETS.Data.Core;
 using ETS.Data.PageData;
 using ETS.Extension;
-using Ets.Model.DataModel.Bussiness;
-using Ets.Model.DomainModel.Bussiness;
-using Ets.Model.ParameterModel.Bussiness;
+using Ets.Model.DataModel.Business;
+using Ets.Model.DomainModel.Business;
+using Ets.Model.ParameterModel.Business;
 using ETS.Util;
 using Ets.Model.ParameterModel.Order;
 

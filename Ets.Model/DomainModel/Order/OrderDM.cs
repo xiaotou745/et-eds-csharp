@@ -1,4 +1,4 @@
-﻿using Ets.Model.DomainModel.Bussiness;
+﻿using Ets.Model.DomainModel.Business;
 using Ets.Model.DomainModel.Clienter;
 using System;
 using System.Collections.Generic;

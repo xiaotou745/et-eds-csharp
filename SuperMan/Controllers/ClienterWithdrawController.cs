@@ -5,12 +5,11 @@ using Ets.Service.Provider.Finance;
 using ETS.Enums;
 using ETS.Util;
 using SuperMan.App_Start;
-using SuperManCore.Common;
 using System;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
-
+using Ets.Model.Common;
 namespace SuperMan.Controllers
 {
     public class ClienterWithdrawController : Controller

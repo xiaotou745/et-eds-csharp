@@ -6,10 +6,9 @@
 ﻿using System.Web.Mvc;
 ﻿using ETS.Data.PageData;
 ﻿using Ets.Model.DataModel.Order;
-﻿using Ets.Model.DomainModel.Bussiness;
+﻿using Ets.Model.DomainModel.Business;
 ﻿using Ets.Service.IProvider.AuthorityMenu;
 ﻿using Ets.Service.Provider.Authority;
-﻿using SuperManCore.Common;
 using Ets.Service.Provider.Distribution;
 using Ets.Service.Provider.Order;
 using Ets.Service.IProvider.Common;
@@ -18,7 +17,7 @@ using SuperMan.App_Start;
 using Ets.Model.ParameterModel.User;
 using Ets.Model.ParameterModel.Order;
 using ETS.Util;
-
+using Ets.Model.Common;
 namespace SuperMan.Controllers
 {
     [WebHandleError]

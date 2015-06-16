@@ -361,9 +361,9 @@ namespace SuperManBusinessLogic.B_Logic
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public Ets.Model.DomainModel.Bussiness.BusiOrderCountResultModel GetOrderCountData(int businessId)
+        public Ets.Model.DomainModel.Business.BusiOrderCountResultModel GetOrderCountData(int businessId)
         {
-            Ets.Model.DomainModel.Bussiness.BusiOrderCountResultModel model = new Ets.Model.DomainModel.Bussiness.BusiOrderCountResultModel();
+            Ets.Model.DomainModel.Business.BusiOrderCountResultModel model = new Ets.Model.DomainModel.Business.BusiOrderCountResultModel();
             if (businessId <= 0)
             {
                 return model;

@@ -1,7 +1,7 @@
 ﻿using Ets.Dao.Clienter;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Clienter;
-using Ets.Model.DomainModel.Bussiness;
+using Ets.Model.DomainModel.Business;
 using Ets.Service.IProvider.Clienter;
 using Ets.Service.IProvider.Statistics;
 using Ets.Service.Provider.Clienter;
@@ -30,7 +30,7 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         public bool InsertDataCrossShopStatisticLog(int daysAgo)
         {          
-            IList<Ets.Model.DomainModel.Bussiness.BusinessesDistributionModel> clienteStorerGrabStatistical = clienterDao.GetClienteStorerGrabStatisticalInfo(daysAgo);
+            IList<Ets.Model.DomainModel.Business.BusinessesDistributionModel> clienteStorerGrabStatistical = clienterDao.GetClienteStorerGrabStatisticalInfo(daysAgo);
             CrossShopStatisticLogModel model = new CrossShopStatisticLogModel();
 
             foreach (var item in clienteStorerGrabStatistical)

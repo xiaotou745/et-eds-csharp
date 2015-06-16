@@ -4,16 +4,16 @@ using ETS.Const;
 using Ets.Dao.Message;
 using Ets.Dao.User;
 using Ets.Model.Common;
-using Ets.Model.DomainModel.Bussiness;
+using Ets.Model.DomainModel.Business;
 using Ets.Service.IProvider.User;
 using ETS.Data.PageData;
 using System;
 using System.Collections.Generic;
 using CalculateCommon;
-using Ets.Model.ParameterModel.Bussiness;
+using Ets.Model.ParameterModel.Business;
 using System.Linq;
 using ETS.Enums;
-using Ets.Model.DataModel.Bussiness;
+using Ets.Model.DataModel.Business;
 using ETS.Util;
 using ETS.Cacheing;
 using Ets.Model.DataModel.Group;
@@ -43,15 +43,15 @@ namespace Ets.Service.Provider.User
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public IList<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel> GetOrdersApp(Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp paraModel)
+        public IList<Ets.Model.DomainModel.Business.BusiGetOrderModel> GetOrdersApp(Ets.Model.ParameterModel.Business.BussOrderParaModelApp paraModel)
         {
             PageInfo<BusiOrderSqlModel> pageinfo = dao.GetOrdersAppToSql<BusiOrderSqlModel>(paraModel);
             IList<BusiOrderSqlModel> list = pageinfo.Records;
 
-            List<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel> listOrder = new List<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel>();
+            List<Ets.Model.DomainModel.Business.BusiGetOrderModel> listOrder = new List<Ets.Model.DomainModel.Business.BusiGetOrderModel>();
             foreach (BusiOrderSqlModel from in list)
             {
-                Ets.Model.DomainModel.Bussiness.BusiGetOrderModel model = new Ets.Model.DomainModel.Bussiness.BusiGetOrderModel();
+                Ets.Model.DomainModel.Business.BusiGetOrderModel model = new Ets.Model.DomainModel.Business.BusiGetOrderModel();
                 model.ActualDoneDate = from.ActualDoneDate;
                 model.Amount = from.Amount;
                 model.IsPay = from.IsPay;
@@ -233,7 +233,7 @@ namespace Ets.Service.Provider.User
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(Model.ParameterModel.Bussiness.RegisterInfoModel model)
+        public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(Ets.Model.ParameterModel.Business.RegisterInfoModel model)
         {
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             var code = redis.Get<string>("PostRegisterInfo_B_" + model.phoneNo);
@@ -1323,7 +1323,7 @@ namespace Ets.Service.Provider.User
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        public PageInfo<BusinessCommissionModel> GetBusinessCommissionOfPaging(Ets.Model.ParameterModel.Bussiness.BusinessCommissionSearchCriteria criteria)
+        public PageInfo<BusinessCommissionModel> GetBusinessCommissionOfPaging(Ets.Model.ParameterModel.Business.BusinessCommissionSearchCriteria criteria)
         {
             return dao.GetBusinessCommissionOfPaging<BusinessCommissionModel>(criteria);
         }

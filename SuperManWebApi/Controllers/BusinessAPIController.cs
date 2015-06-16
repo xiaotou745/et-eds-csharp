@@ -3,7 +3,6 @@ using ETS.Enums;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Order;
 using Ets.Model.ParameterModel.Order;
-using SuperManCore;
 using SuperManWebApi.Models.Business;
 using System;
 using System.Collections.Generic;
@@ -13,7 +12,6 @@ using System.Linq;
 using System.Web;
 using System.Web.Http;
 using Ets.Model.DomainModel.Order;
-using SuperManCommonModel;
 using Ets.Service.Provider.User;
 using Ets.Service.IProvider.Order;
 using Ets.Service.Provider.Order;
@@ -38,10 +36,9 @@ namespace SuperManWebApi.Controllers
         ///  B端注册 
         /// </summary>
         /// <param name="model">注册用户基本数据信息</param>
-        /// <returns></returns>
-        [ActionStatus(typeof(CustomerRegisterStatus))]
+        /// <returns></returns>        
         [HttpPost]
-        public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Bussiness.BusiRegisterResultModel> PostRegisterInfo_B(Ets.Model.ParameterModel.Bussiness.RegisterInfoModel model)
+        public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Business.BusiRegisterResultModel> PostRegisterInfo_B(Ets.Model.ParameterModel.Business.RegisterInfoModel model)
         {
             BusinessProvider bprovider = new BusinessProvider();
             return bprovider.PostRegisterInfo_B(model);
@@ -53,10 +50,9 @@ namespace SuperManWebApi.Controllers
         /// B端注册，供第三方使用-平扬 2015.3.27修改成 ado方式
         /// </summary>
         /// <param name="model">注册用户基本数据信息</param>
-        /// <returns></returns>
-        [ActionStatus(typeof(Ets.Model.ParameterModel.Bussiness.CustomerRegisterStatus))]
+        /// <returns></returns>        
         [HttpPost]
-        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.NewBusiRegisterResultModel> NewPostRegisterInfo_B(Ets.Model.ParameterModel.Bussiness.NewRegisterInfoModel model)
+        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Business.NewBusiRegisterResultModel> NewPostRegisterInfo_B(Ets.Model.ParameterModel.Business.NewRegisterInfoModel model)
         {
             var bprovider = new BusinessProvider();
             return bprovider.NewPostRegisterInfo_B(model);
@@ -67,10 +63,9 @@ namespace SuperManWebApi.Controllers
         /// B端取消订单，供第三方使用-2015.3.27-平扬改
         /// </summary>
         /// <param name="model">订单基本数据信息</param>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.CancelOrderStatus))]
+        /// <returns></returns>        
         [HttpPost]
-        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.OrderCancelResultModel> NewOrderCancel(Ets.Model.ParameterModel.Bussiness.OrderCancelModel model)
+        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Business.OrderCancelResultModel> NewOrderCancel(Ets.Model.ParameterModel.Business.OrderCancelModel model)
         {
 
             var bprovider = new BusinessProvider();
@@ -94,10 +89,9 @@ namespace SuperManWebApi.Controllers
         /// B端登录
         /// </summary>
         /// <param name="model"></param>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.LoginModelStatus))]
+        /// <returns></returns>        
         [HttpPost]
-        public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Bussiness.BusiLoginResultModel> PostLogin_B(Ets.Model.ParameterModel.Bussiness.LoginModel model)
+        public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Business.BusiLoginResultModel> PostLogin_B(Ets.Model.ParameterModel.Business.LoginModel model)
         {
             return new BusinessProvider().PostLogin_B(model);
 
@@ -184,7 +178,7 @@ namespace SuperManWebApi.Controllers
             }
             catch (Exception ex)
             {
-                LogHelper.LogWriter("上传失败：", new { ex = ex });
+                ETS.Util.LogHelper.LogWriter("上传失败：", new { ex = ex });
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadIconModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidFileFormat);
             }
         }
@@ -199,7 +193,7 @@ namespace SuperManWebApi.Controllers
         ///// <returns></returns>
         //[ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
         //[HttpPost]
-        //public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel> PostPublishOrder_B(Ets.Model.ParameterModel.Bussiness.BussinessOrderInfoPM model)
+        //public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Order.BusiOrderResultModel> PostPublishOrder_B(Ets.Model.ParameterModel.Business.BussinessOrderInfoPM model)
         //{      
         //    //首先验证该 商户有无 资格 发布订单 wc
         //    if (!iBusinessProvider.HaveQualification(model.userId))
@@ -248,24 +242,23 @@ namespace SuperManWebApi.Controllers
         /// <summary>
         /// 获取订单列表
         /// </summary>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.GetOrdersStatus))]
+        /// <returns></returns>        
         [HttpGet]
-        public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]> GetOrderList_B(int userId, int? pagedSize, int? pagedIndex, sbyte? Status, int? orderfrom)
+        public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Business.BusiGetOrderModel[]> GetOrderList_B(int userId, int? pagedSize, int? pagedIndex, sbyte? Status, int? orderfrom)
         {
             var pIndex = ETS.Util.ParseHelper.ToInt(pagedIndex, 1);
             pIndex = pIndex <= 0 ? 1 : pIndex;
             var pSize = ETS.Util.ParseHelper.ToInt(pagedSize, 100);
 
-            Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp criteria = new Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp()
+            Ets.Model.ParameterModel.Business.BussOrderParaModelApp criteria = new Ets.Model.ParameterModel.Business.BussOrderParaModelApp()
             {
                 PagingResult = new Ets.Model.Common.PagingResult(pIndex, pSize),
                 userId = userId,
                 Status = Status,
                 OrderFrom = orderfrom ?? 0
             };
-            IList<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel> list = new BusinessProvider().GetOrdersApp(criteria);
-            return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiGetOrderModel[]>.Conclude(ETS.Enums.GetOrdersStatus.Success, list.ToArray());
+            IList<Ets.Model.DomainModel.Business.BusiGetOrderModel> list = new BusinessProvider().GetOrdersApp(criteria);
+            return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Business.BusiGetOrderModel[]>.Conclude(ETS.Enums.GetOrdersStatus.Success, list.ToArray());
         }
 
 
@@ -276,8 +269,7 @@ namespace SuperManWebApi.Controllers
         /// <summary>
         /// 获取订单详细
         /// </summary>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.GetOrdersStatus))]
+        /// <returns></returns>       
         [HttpGet]
         public Ets.Model.Common.ResultModel<ListOrderDetailModel> GetOrderDetail(string orderno)
         {
@@ -295,8 +287,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="orderlist"></param>
         /// <UpdateBy>确认接入时扣除商家结算费功能  caoheyang 20150526</UpdateBy>
-        /// <returns></returns>
-        [ActionStatus(typeof(PubOrderStatus))]
+        /// <returns></returns>  
         [HttpGet]
         public ResultModel<List<string>> OtherOrderConfirm_B(string orderlist)
         {
@@ -320,8 +311,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="orderlist"></param>
         /// <param name="note"></param>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
+        /// <returns></returns>   
         [HttpGet]
         public ResultModel<int> OtherOrderCancel_B(string orderlist, string note)
         {
@@ -340,8 +330,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="orderlist"></param>
         /// <param name="note"></param>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
+        /// <returns></returns>   
         [HttpGet]
         public ResultModel<OrderCancelReasonsModel> OtherOrderCancelReasons(string Version)
         {
@@ -362,38 +351,37 @@ namespace SuperManWebApi.Controllers
         /// 改 ado.net wc
         /// </summary>
         /// <param name="model"></param>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.BusiAddAddressStatus))]
+        /// <returns></returns>        
         [HttpPost]
-        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel> PostManagerAddress_B(Ets.Model.ParameterModel.Bussiness.BusiAddAddressInfoModel model)
+        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Business.BusiAddAddressResultModel> PostManagerAddress_B(Ets.Model.ParameterModel.Business.BusiAddAddressInfoModel model)
         {
             if (string.IsNullOrWhiteSpace(model.phoneNo))
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel>.Conclude(ETS.Enums.BusiAddAddressStatus.PhoneNumberEmpty);
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Business.BusiAddAddressResultModel>.Conclude(ETS.Enums.BusiAddAddressStatus.PhoneNumberEmpty);
             }
             if (string.IsNullOrWhiteSpace(model.Address))
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel>.Conclude(ETS.Enums.BusiAddAddressStatus.AddressEmpty);
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Business.BusiAddAddressResultModel>.Conclude(ETS.Enums.BusiAddAddressStatus.AddressEmpty);
             }
             if (string.IsNullOrWhiteSpace(model.businessName))
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel>.Conclude(ETS.Enums.BusiAddAddressStatus.BusinessNameEmpty);
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Business.BusiAddAddressResultModel>.Conclude(ETS.Enums.BusiAddAddressStatus.BusinessNameEmpty);
             }
             //修改商户地址信息，返回当前商户的状态
             int upResult = iBusinessProvider.UpdateBusinessAddressInfo(model);
 
-            var resultModel = new Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel
+            var resultModel = new Ets.Model.ParameterModel.Business.BusiAddAddressResultModel
             {
                 userId = model.userId,
                 status = upResult.ToString()
             };
             if (upResult == -1)  //-1表示更新状态失败
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel>.Conclude(ETS.Enums.BusiAddAddressStatus.UpdateFailed, resultModel);
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Business.BusiAddAddressResultModel>.Conclude(ETS.Enums.BusiAddAddressStatus.UpdateFailed, resultModel);
             }
             else
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BusiAddAddressResultModel>.Conclude
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Business.BusiAddAddressResultModel>.Conclude
                     (ETS.Enums.BusiAddAddressStatus.Success, resultModel);
             }
         }
@@ -402,21 +390,20 @@ namespace SuperManWebApi.Controllers
         /// 改 ado.net
         /// wc
         /// </summary>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.LoginModelStatus))]
+        /// <returns></returns>        
         [HttpGet]
-        public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiOrderCountResultModel> OrderCount_B(int userId)
+        public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Business.BusiOrderCountResultModel> OrderCount_B(int userId)
         {
             if (userId <= 0)
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiOrderCountResultModel>.Conclude(ETS.Enums.GetOrdersStatus.FailedGetOrders, null);
+                return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Business.BusiOrderCountResultModel>.Conclude(ETS.Enums.GetOrdersStatus.FailedGetOrders, null);
             }
             var resultModel = new BusinessProvider().GetOrderCountData(userId);
             if (resultModel == null)
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiOrderCountResultModel>.Conclude(ETS.Enums.GetOrdersStatus.FailedGetOrders, null);
+                return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Business.BusiOrderCountResultModel>.Conclude(ETS.Enums.GetOrdersStatus.FailedGetOrders, null);
             }
-            return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Bussiness.BusiOrderCountResultModel>.Conclude(ETS.Enums.GetOrdersStatus.Success, resultModel);
+            return Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Business.BusiOrderCountResultModel>.Conclude(ETS.Enums.GetOrdersStatus.Success, resultModel);
         }
 
         /// <summary>
@@ -425,8 +412,7 @@ namespace SuperManWebApi.Controllers
         /// 2015年3月26日 17:46:08
         /// </summary>
         /// <param name="PhoneNumber">手机号码</param>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.SendCheckCodeStatus))]
+        /// <returns></returns>        
         [HttpGet]
         public Ets.Model.Common.SimpleResultModel CheckCode(string PhoneNumber)
         {
@@ -438,8 +424,7 @@ namespace SuperManWebApi.Controllers
         /// 请求动态验证码  (找回密码)
         /// </summary>
         /// <param name="PhoneNumber"></param>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.SendCheckCodeStatus))]
+        /// <returns></returns>        
         [HttpGet]
         public Ets.Model.Common.SimpleResultModel CheckCodeFindPwd(string PhoneNumber)
         {
@@ -451,8 +436,7 @@ namespace SuperManWebApi.Controllers
         /// 请求语音动态验证码
         /// </summary>
         /// <param name="model"></param>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.SendCheckCodeStatus))]
+        /// <returns></returns>        
         [HttpPost]
         public Ets.Model.Common.SimpleResultModel VoiceCheckCode(Ets.Model.ParameterModel.Sms.SmsParaModel model)
         {
@@ -465,10 +449,9 @@ namespace SuperManWebApi.Controllers
         /// b端修改密码 edit by caoheyang 20150203 
         /// </summary>
         /// <param name="model"></param>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.ForgetPwdStatus))]
+        /// <returns></returns>        
         [HttpPost]
-        public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Bussiness.BusiModifyPwdResultModel> PostForgetPwd_B(Ets.Model.DataModel.Bussiness.BusiForgetPwdInfoModel model)
+        public Ets.Model.Common.ResultModel<Ets.Model.DataModel.Business.BusiModifyPwdResultModel> PostForgetPwd_B(Ets.Model.DataModel.Business.BusiForgetPwdInfoModel model)
         {
             return new BusinessProvider().PostForgetPwd_B(model);
         }
@@ -478,8 +461,7 @@ namespace SuperManWebApi.Controllers
         /// 商家设置外卖费 平扬 2015.3.5
         /// wangchao  改 ado.net 
         /// </summary>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.DistribSubsidyStatus))]
+        /// <returns></returns>        
         [HttpPost]
         public Ets.Model.Common.SimpleResultModel PostDistribSubsidy_B(BusiDistribInfoModel mod)
         {
@@ -509,8 +491,7 @@ namespace SuperManWebApi.Controllers
         /// <remarks>取消订单时返给商家结算费，优化，大整改</remarks>
         /// <param name="paramodel"></param>
         /// <returns></returns>
-        [HttpPost]
-        [ActionStatus(typeof(ETS.Enums.CancelOrderStatus))]
+        [HttpPost]        
         public ResultModel<bool> CancelOrder_B(CancelOrderBPM paramodel)
         {
             return iOrderProvider.CancelOrderB(paramodel);
@@ -556,8 +537,7 @@ namespace SuperManWebApi.Controllers
         /// 2015年3月16日 11:44:54
         /// </summary>
         /// <param name="CityName">城市名称</param>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.ServicePhoneStatus))]
+        /// <returns></returns>        
         [HttpGet]
         public Ets.Model.Common.ResultModel<Ets.Model.Common.ResultModelServicePhone> GetCustomerServicePhone(string CityName)
         {
@@ -571,20 +551,19 @@ namespace SuperManWebApi.Controllers
         /// 平扬
         /// 2015年3月31日 
         /// </summary>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.UserStatus))]
+        /// <returns></returns>        
         [HttpPost]
-        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BussinessStatusModel> GetUserStatus(UserStatusModel parModel)
+        public Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Business.BussinessStatusModel> GetUserStatus(UserStatusModel parModel)
         {
             var model = iBusinessProvider.GetUserStatus(parModel.userId);
             if (model != null)
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BussinessStatusModel>.Conclude(
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Business.BussinessStatusModel>.Conclude(
                 UserStatus.Success,
                 model
                 );
             }
-            return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Bussiness.BussinessStatusModel>.Conclude(
+            return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Business.BussinessStatusModel>.Conclude(
                 UserStatus.Error,
                 null
                 );
@@ -597,8 +576,7 @@ namespace SuperManWebApi.Controllers
         /// 2015年3月16日 11:44:54
         /// </summary>
         /// <param name="Version">版本号</param>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.CityStatus))]
+        /// <returns></returns>        
         [HttpGet]
         [ApiVersionStatistic]
         public Ets.Model.Common.ResultModel<Ets.Model.DomainModel.Area.AreaModelList> GetOpenCity(string Version)

@@ -4,7 +4,7 @@ using Ets.Model.DataModel.Order;
 using Ets.Model.DomainModel.Clienter;
 using Ets.Model.DomainModel.Order;
 using Ets.Model.DomainModel.Subsidy;
-using Ets.Model.ParameterModel.Bussiness;
+using Ets.Model.ParameterModel.Business;
 using Ets.Model.ParameterModel.Order;
 using ETS.Data.PageData;
 using ETS.Util;
