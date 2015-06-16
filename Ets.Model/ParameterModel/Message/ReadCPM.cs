@@ -11,5 +11,17 @@ namespace Ets.Model.ParameterModel.Message
     /// </summary>
     public class ReadCPM
     {
+        /// <summary>
+        /// 骑士Id
+        /// </summary>
+        public int ClienterId { get; set; }
+        /// <summary>
+        /// 消息ID
+        /// </summary>
+        public int MessageId { get; set; }
+        /// <summary>
+        /// 版本号1.0
+        /// </summary>
+        public string Version { get; set; }
     }
 }

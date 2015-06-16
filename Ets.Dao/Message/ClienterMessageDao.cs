@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ETS.Const;
 using ETS.Dao;
 using ETS.Data.Core;
+using ETS.Data.PageData;
 using Ets.Model.DataModel.Message;
+using Ets.Model.ParameterModel.Message;
 
 namespace Ets.Dao.Message
 {
@@ -38,17 +41,25 @@ values(@ClienterId,@Content,@IsRead)
         /// <summary>
         /// 更新一条记录
         /// </summary>
-        public void Update(ClienterMessage clienterMessage)
+        public void Update(long id)
         {
             const string updateSql = @"
 update  ClienterMessage
-set  IsRead=@IsRead
+set  IsRead=1
 where  Id=@Id";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("Id", clienterMessage.Id);
-            dbParameters.AddWithValue("IsRead", clienterMessage.IsRead);
+            dbParameters.AddWithValue("Id", id);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
+        /// <summary>
+        /// 查询对象
+        /// </summary>
+        public PageInfo<ClienterMessage> Query(ListCPM search)
+        {
+            string where = " BusinessId=" + search.ClienterId;
+            return new PageHelper().GetPages<ClienterMessage>(SuperMan_Read, search.PageIndex, where,
+                "Id desc", " Id,ClienterId,Content,IsRead", " ClienterMessage (nolock)", SystemConst.PageSize, true);
+        }
     }
 }
