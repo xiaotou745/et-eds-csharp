@@ -6,6 +6,7 @@
 <script src="~/Scripts/jquery-1.8.2.js"></script>
 <script src="~/Scripts/jquery-ui-1.8.20.js"></script>
 <script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+<script src="~/Scripts/ajaxfileupload.js"></script>
 <div style="width:800px;height:auto;border: 1px #dcdcdc solid">
     <h2 class="crumbs">
         您所在位置：消息管理 > 消息群发管理 > 添加消息模板
@@ -83,8 +84,8 @@
 
     <div style="width:800px;height: auto;padding-left:10px;" id="appointObjectShow">
         <div style="width:780px;height:30px;margin-top:10px">
-            <div style="float:left;">
-                <input id="file1" type="file" name="file1">
+            <div style="float:left;padding:0px;border-bottom:hidden" class="SearchMd" >
+                <input id="file1" type="file" name="file1" >
             </div>
             <div class="SearchMd" style="float:left;border-bottom:hidden;padding:0px;margin-top:-5px">
                 <input type="button" value="导入" class="searchBtn" id="btnImport" style="" />
@@ -155,5 +156,29 @@
         $('#systemMassShow').hide();
         $('#appointObjectShow').show();
     })
+    $("#btnImport").click(function () {
+        var url = "/MessageManager/PhoneNoImport";
+        $.ajaxFileUpload({
+            type: 'POST',
+            secureuri: false, //一般设置为false
+            fileElementId: 'file1', //文件上传空间的id属性  <input type="file" id="file" name="file" />
+            url: url,
+            data: "", //此参数非常严谨，写错一个引号都不行
+            success: function (data, status)  //服务器成功响应处理函数
+            {               
+                var json = eval("(" + data.body.innerText + ")");
+                if (json.IsSuccess != undefined && !json.IsSuccess) {
+                    alert(json.Message);
+                    return;
+                }          
+                OverallS = json;
+                $("#tbody").html(""); 
+            },
+            error: function (data, status, e)//服务器响应失败处理函数
+            {
+                alert(data);
+            }
+        });
+    });
 </script>
 
