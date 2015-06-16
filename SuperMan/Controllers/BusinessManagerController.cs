@@ -1,30 +1,26 @@
 ﻿using System.Text.RegularExpressions;
-using Ets.Model.DomainModel.Bussiness;
+using Ets.Model.DomainModel.Business;
 using Ets.Service.IProvider.User;
 using Ets.Service.Provider.Distribution;
 using Ets.Service.Provider.User;
 using ETS.Util;
-using SuperManBusinessLogic.B_Logic;
-using SuperManCommonModel.Entities;
-using SuperManCore.Common;
-using SuperManCore.Paging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Ets.Model.ParameterModel.Bussiness;
+using Ets.Model.ParameterModel.Business;
 using Ets.Service.Provider.Common;
 using Ets.Service.IProvider.Common;
 using Ets.Model.ParameterModel.User;
 using SuperMan.App_Start;
 using Ets.Model.ParameterModel.Order;
-using Ets.Model.DataModel.Bussiness;
+using Ets.Model.DataModel.Business;
 using Ets.Service.Provider.Finance;
 using Ets.Service.IProvider.Finance;
 using Ets.Model.ParameterModel.Finance;
 using System.Text;
-using BusinessSearchCriteria = Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria;
+using BusinessSearchCriteria = Ets.Model.ParameterModel.Business.BusinessSearchCriteria;
 using System.IO;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
@@ -35,6 +31,7 @@ using Ets.Service.IProvider.Bussiness;
 using Ets.Service.Provider.Bussiness;
 using System.Runtime.Serialization.Json;
 using System.Web.Script.Serialization;
+using Ets.Model.Common;
 namespace SuperMan.Controllers
 {
     [WebHandleError]
@@ -59,7 +56,7 @@ namespace SuperMan.Controllers
             int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
 
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserType));
-            var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria()
+            var criteria = new Ets.Model.ParameterModel.Business.BusinessSearchCriteria()
             {
                 Status = -1,
                 GroupId = UserContext.Current.GroupId,
@@ -78,7 +75,7 @@ namespace SuperMan.Controllers
         [HttpPost]
         public ActionResult PostBusinessManager(int pageindex = 1)
         {
-            var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria();
+            var criteria = new Ets.Model.ParameterModel.Business.BusinessSearchCriteria();
             TryUpdateModel(criteria);
             int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
             criteria.AuthorityCityNameListStr =
@@ -113,7 +110,7 @@ namespace SuperMan.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult GetBussinessByCityInfo(Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria model)
+        public JsonResult GetBussinessByCityInfo(Ets.Model.ParameterModel.Business.BusinessSearchCriteria model)
         {
             return Json(iBusinessProvider.GetBussinessByCityInfo(model).ToList(), JsonRequestBehavior.DenyGet);
         }

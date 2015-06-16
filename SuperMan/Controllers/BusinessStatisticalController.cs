@@ -15,13 +15,13 @@ namespace SuperMan.Controllers
         IBusinessProvider iBusinessProvider = new BusinessProvider(); 
         public ActionResult BusinessStatistical()
         {
-            var criteria = new Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria() { PagingRequest = new Ets.Model.Common.NewPagingResult(1, Ets.Model.Common.ConstValues.Web_PageSize), searchType = 1 };
+            var criteria = new Ets.Model.ParameterModel.Business.BusinessSearchCriteria() { PagingRequest = new Ets.Model.Common.NewPagingResult(1, Ets.Model.Common.ConstValues.Web_PageSize), searchType = 1 };
             var pagedList = iBusinessProvider.GetBusinessesCount(criteria);
             return View(pagedList);
         }
 
         [HttpPost]
-        public ActionResult BusinessStatistical(Ets.Model.ParameterModel.Bussiness.BusinessSearchCriteria criteria)
+        public ActionResult BusinessStatistical(Ets.Model.ParameterModel.Business.BusinessSearchCriteria criteria)
         {
             var pagedList = iBusinessProvider.GetBusinessesCount(criteria);
             return PartialView("_PartialBusinessStatistical", pagedList);

@@ -1,10 +1,10 @@
 using ETS.Data.PageData;
 using System.Collections.Generic;
-using Ets.Model.ParameterModel.Bussiness;
+using Ets.Model.ParameterModel.Business;
 using System;
 using Ets.Model.Common;
-using Ets.Model.DomainModel.Bussiness;
-using Ets.Model.DataModel.Bussiness;
+using Ets.Model.DomainModel.Business;
+using Ets.Model.DataModel.Business;
 using ETS.Enums;
 using System.Data;
 using Ets.Model.DataModel.Group;

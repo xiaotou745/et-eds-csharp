@@ -5,10 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Ets.Dao.Bussiness;
 using ETS.Data.PageData;
-using Ets.Model.DomainModel.Bussiness;
-using Ets.Model.ParameterModel.Bussiness;
+using Ets.Model.DomainModel.Business;
+using Ets.Model.ParameterModel.Business;
 using Ets.Service.IProvider.Bussiness;
-using Ets.Model.DataModel.Bussiness;
+using Ets.Model.DataModel.Business;
 using Ets.Model.ParameterModel.Order;
 
 namespace Ets.Service.Provider.Bussiness

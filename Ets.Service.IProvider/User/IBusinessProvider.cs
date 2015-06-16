@@ -1,10 +1,10 @@
 using ETS.Data.PageData;
 using System.Collections.Generic;
-using Ets.Model.ParameterModel.Bussiness;
+using Ets.Model.ParameterModel.Business;
 using System;
 using Ets.Model.Common;
-using Ets.Model.DomainModel.Bussiness;
-using Ets.Model.DataModel.Bussiness;
+using Ets.Model.DomainModel.Business;
+using Ets.Model.DataModel.Business;
 using ETS.Enums;
 using System.Data;
 using Ets.Model.DataModel.Group;
@@ -24,7 +24,7 @@ namespace Ets.Service.IProvider.User
         /// 商户获取订单   add by caoheyang 20150311
         /// </summary>
         /// <returns></returns>
-        IList<BusiGetOrderModel> GetOrdersApp(Ets.Model.ParameterModel.Bussiness.BussOrderParaModelApp paraModel);
+        IList<BusiGetOrderModel> GetOrdersApp(Ets.Model.ParameterModel.Business.BussOrderParaModelApp paraModel);
 
         /// <summary>
         /// 生成商户结算excel文件2015.3.12 平扬
@@ -355,7 +355,7 @@ namespace Ets.Service.IProvider.User
         /// <param name="criteria"></param>
         /// <returns></returns>
         PageInfo<BusinessCommissionModel> GetBusinessCommissionOfPaging(
-            Ets.Model.ParameterModel.Bussiness.BusinessCommissionSearchCriteria criteria);
+            Ets.Model.ParameterModel.Business.BusinessCommissionSearchCriteria criteria);
     }
 }
 

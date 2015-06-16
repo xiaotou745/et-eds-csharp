@@ -1,5 +1,5 @@
 ﻿using Ets.Model.Common;
-using Ets.Model.DataModel.Bussiness;
+using Ets.Model.DataModel.Business;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;
@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Ets.Model.DomainModel.Bussiness;
+using Ets.Model.DomainModel.Business;
 
 namespace Ets.Service.IProvider.Finance
 {

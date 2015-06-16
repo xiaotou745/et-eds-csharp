@@ -1,4 +1,4 @@
-﻿using Ets.Model.DataModel.Bussiness;
+﻿using Ets.Model.DataModel.Business;
 using ETS.Dao;
 using ETS.Data.Core;
 using ETS.Util;

@@ -377,22 +377,6 @@
       <Project>{61c59e53-67c8-44fe-b0ad-1e9025d7e568}</Project>
       <Name>Ets.Service.Provider</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SuperManBusinessLogic\SuperManBusinessLogic.csproj">
-      <Project>{72ca336e-dc5e-4f98-9275-3a3a258189d6}</Project>
-      <Name>SuperManBusinessLogic</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SuperManCommonModel\SuperManCommonModel.csproj">
-      <Project>{4e298c44-ca42-4074-8d27-6a1951bfd7e6}</Project>
-      <Name>SuperManCommonModel</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SuperManCore\SuperManCore.csproj">
-      <Project>{f52d02c9-103a-46b1-aee7-3d11e64777d7}</Project>
-      <Name>SuperManCore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SuperManDataAccess\SuperManDataAccess.csproj">
-      <Project>{f54d4c48-f635-42ca-9940-19873a691693}</Project>
-      <Name>SuperManDataAccess</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

@@ -1,8 +1,8 @@
 ﻿using Ets.Model.Common;
 using Ets.Model.Common.AliPay;
-using Ets.Model.DomainModel.Bussiness;
+using Ets.Model.DomainModel.Business;
 using Ets.Model.ParameterModel.AliPay;
-using Ets.Model.ParameterModel.Bussiness;
+using Ets.Model.ParameterModel.Business;
 using System;
 using System.Collections.Generic;
 using System.Linq;

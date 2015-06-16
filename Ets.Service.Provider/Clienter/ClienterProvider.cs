@@ -3,10 +3,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using ETS.Const;
 using Ets.Dao.Clienter;
+using Ets.Dao.Message;
 using Ets.Dao.User;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Order;
-using Ets.Model.ParameterModel.Bussiness;
+using Ets.Model.ParameterModel.Business;
 using Ets.Model.ParameterModel.Clienter;
 using Ets.Service.IProvider.Clienter;
 using Ets.Model.DomainModel.Clienter;
@@ -26,7 +27,7 @@ using Ets.Model.DataModel.Finance;
 using Ets.Model.ParameterModel.WtihdrawRecords;
 using Ets.Service.Provider.WtihdrawRecords;
 using Ets.Service.Provider.MyPush;
-using Ets.Model.DomainModel.Bussiness;
+using Ets.Model.DomainModel.Business;
 using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Order;
 using ETS.NoSql.RedisCache;
@@ -1086,7 +1087,9 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         public ClienterDM GetDetails(int id)
         {
-            return clienterDao.GetDetails(id);
+            ClienterDM model = clienterDao.GetDetails(id);
+            model.HasMessage = new ClienterMessageDao().HasMessage(id);
+            return model;
         }
 
         /// <summary>

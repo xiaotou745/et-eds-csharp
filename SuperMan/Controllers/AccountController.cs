@@ -7,12 +7,12 @@ using Ets.Model.Common;
 using Ets.Model.ParameterModel.Authority;
 using Ets.Service.Provider.Authority;
 using ETS.Util;
-using SuperManCore;
+
 using SuperMan.Authority;
 using Ets.Service.IProvider.Account;
 using Ets.Service.Provider.Account;
 using LoginModel = Ets.Model.ParameterModel.Authority.LoginModel;
-using MD5Helper = SuperManCore.MD5Helper;
+using ETS.Util;
 
 namespace SuperMan.Controllers
 {

@@ -5,7 +5,7 @@ using Ets.Model.DomainModel.Clienter;
 using Ets.Model.Common;
 using Ets.Model.ParameterModel.Clienter;
 using ETS.Data.PageData;
-using Ets.Model.DomainModel.Bussiness;
+using Ets.Model.DomainModel.Business;
 using Ets.Model.ParameterModel.Order;
 using Ets.Model.DomainModel.Order;
 

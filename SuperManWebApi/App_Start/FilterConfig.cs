@@ -5,7 +5,6 @@ using System.Web.Http.Controllers;
 using System.Web.Mvc.Async;
 using Ets.Model.Common;
 using Ets.Service.Provider.Common;
-using SuperManCore;
 using System.Web;
 using System.Web.Http.Filters;
 using System.Web.Mvc;
@@ -85,7 +84,7 @@ namespace SuperManWebApi
                 Task.Factory.StartNew(() =>
                 {
                     stop.Stop();
-                    LogHelper.LogWriter("接口" + actionExecutedContext.Request.RequestUri + "请求时间：" + stop.ElapsedMilliseconds);
+                    ETS.Util.LogHelper.LogWriter("接口" + actionExecutedContext.Request.RequestUri + "请求时间：" + stop.ElapsedMilliseconds);
                     stop.Reset();
                 });
             }
@@ -104,7 +103,7 @@ namespace SuperManWebApi
         /// <param name="filterContext">上下文对象  该类继承于ControllerContext</param>
         public override void OnException(HttpActionExecutedContext filterContext)
         {
-            LogHelper.LogWriterFromFilter(filterContext.Exception);
+            ETS.Util.LogHelper.LogWriterFromFilter(filterContext.Exception);
         }
     }
 }

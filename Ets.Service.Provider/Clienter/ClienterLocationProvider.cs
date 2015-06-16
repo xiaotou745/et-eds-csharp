@@ -8,7 +8,7 @@ using Ets.Dao.GlobalConfig;
 using ETS.Enums;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Clienter;
-using Ets.Model.ParameterModel.Bussiness;
+using Ets.Model.ParameterModel.Business;
 using Ets.Service.IProvider.Clienter;
 using ETS.Util;
 

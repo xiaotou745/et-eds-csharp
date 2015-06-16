@@ -70,6 +70,7 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
@@ -110,6 +111,9 @@
     <Compile Include="Extension\DataTableHelper.cs" />
     <Compile Include="Extension\ListExtensions.cs" />
     <Compile Include="Extension\StringExtension.cs" />
+    <Compile Include="Compress\FixedDimensionTransformerAttribute.cs" />
+    <Compile Include="Compress\IImageFileTransformer.cs" />
+    <Compile Include="Compress\ImageSizeTransformManager.cs" />
     <Compile Include="IO\Common.cs" />
     <Compile Include="IO\Excel.cs" />
     <Compile Include="IO\ExcelWriter.cs" />
@@ -167,6 +171,7 @@
     <Compile Include="Util\ITranslator.cs" />
     <Compile Include="Util\JSON.cs" />
     <Compile Include="Util\JsonHelper.cs" />
+    <Compile Include="Util\LiteralCaptcha.cs" />
     <Compile Include="Util\LogHelper.cs" />
     <Compile Include="Util\MailUtils.cs" />
     <Compile Include="Util\MD5Helper.cs" />
