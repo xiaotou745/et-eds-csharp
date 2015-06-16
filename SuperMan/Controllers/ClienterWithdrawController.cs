@@ -153,14 +153,14 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <param name="pageindex">页码</param>
         /// <returns></returns>
-        public ActionResult ExportClienterWithdrawForm(int pageindex = 1)
+        public FileContentResult ExportClienterWithdrawForm(int pageindex = 1)
         {
             var criteria = new Ets.Model.ParameterModel.Finance.ClienterWithdrawSearchCriteria();
             TryUpdateModel(criteria);
             var dtClienterWithdraw = iClienterFinanceProvider.GetClienterWithdrawForExport(criteria);
             if (dtClienterWithdraw != null && dtClienterWithdraw.Count > 0)
             {
-                string filname = "商户提款申请单{0}.xls";
+                string filname = "骑士提款申请单{0}.xls";
                 if (!string.IsNullOrWhiteSpace(criteria.WithdrawDateStart))
                 {
                     filname = string.Format(filname, criteria.WithdrawDateStart + "~" + criteria.WithdrawDateEnd);
@@ -168,8 +168,9 @@ namespace SuperMan.Controllers
                 var data = Encoding.UTF8.GetBytes(iClienterFinanceProvider.CreateClienterWithdrawFormExcel(dtClienterWithdraw.ToList()));
                 return File(data, "application/ms-excel", filname);
             }
-            var pagedList = iClienterFinanceProvider.GetClienterWithdrawList(criteria);
-            return View("ClienterWithdraw", pagedList);
+            return null;
+            //var pagedList = iClienterFinanceProvider.GetClienterWithdrawList(criteria);
+            //return View("ClienterWithdraw", pagedList);
         }
     }
 }

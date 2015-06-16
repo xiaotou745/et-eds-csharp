@@ -8,12 +8,16 @@ using Ets.Model.Common;
 using Ets.Model.ParameterModel.Message;
 using Ets.Service.IProvider.Message;
 using Ets.Service.Provider.Message;
+using SuperManWebApi.App_Start.Filters;
 
 namespace SuperManWebApi.Controllers
 {
     /// <summary>
     /// 消息中心模块接口
     /// </summary>
+    [ExecuteTimeLog]
+    [Validate]
+    [ApiVersion]
     public class MessageController : ApiController
     {
         private readonly IMessageProvider messageProvider = new MessageProvider();
@@ -22,7 +26,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model">参数实体</param>
         /// <returns></returns>
-        public ResultModel<object> ReadB(ReadBPM model)
+        public ResultModel<object> ReadB([FromBody]ReadBPM model)
         {
             return messageProvider.ReadB(model);
         }
@@ -32,7 +36,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model">参数实体</param>
         /// <returns></returns>
-        public ResultModel<object> ReadC(ReadCPM model)
+        public ResultModel<object> ReadC([FromBody]ReadCPM model)
         {
             return messageProvider.ReadC(model);
         }
@@ -42,7 +46,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model">参数实体</param>
         /// <returns></returns>
-        public ResultModel<object> ListB(ListBPM model)
+        public ResultModel<object> ListB([FromBody]ListBPM model)
         {
             return messageProvider.ListB(model);
         }
@@ -52,7 +56,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model">参数实体</param>
         /// <returns></returns>
-        public ResultModel<object> ListC(ListCPM model)
+        public ResultModel<object> ListC([FromBody]ListCPM model)
         {
             return messageProvider.ListC(model);
         }
