@@ -11,6 +11,7 @@ using Ets.Model.DataModel.Message;
 using Ets.Model.DomainModel.Message;
 using Ets.Model.ParameterModel.Common;
 using Ets.Model.ParameterModel.Message;
+using ETS.Util;
 
 namespace Ets.Dao.Message
 {
@@ -62,6 +63,21 @@ where  Id=@Id";
             string where = " BusinessId=" + search.BusinessId;
             return new PageHelper().GetPages<ListBDM>(SuperMan_Read, search.PageIndex, where,
                 "IsRead asc ,id desc ", " Id,Content,IsRead", " BusinessMessage (nolock)", SystemConst.PageSize, true);
+        }
+
+        /// <summary>
+        /// 查询当前商户是否有未读消息  add by caoheyang 20150616
+        /// </summary>
+        public bool HasMessage(int businessId)
+        {
+            const string insertSql = @"
+select  count(1)
+from    dbo.BusinessMessage
+where   IsRead = 0 and businessId=@BusinessId 
+";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("BusinessId", businessId);
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters)) > 0;
         }
     }
 }

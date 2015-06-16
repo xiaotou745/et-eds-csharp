@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ETS.Const;
 using Ets.Dao.Clienter;
+using Ets.Dao.Message;
 using Ets.Dao.User;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Order;
@@ -1086,7 +1087,9 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         public ClienterDM GetDetails(int id)
         {
-            return clienterDao.GetDetails(id);
+            ClienterDM model = clienterDao.GetDetails(id);
+            model.HasMessage = new ClienterMessageDao().HasMessage(id);
+            return model;
         }
 
         /// <summary>

@@ -147,6 +147,11 @@ namespace Ets.Model.DomainModel.Business
         /// </summary>
         public List<BusinessFinanceAccount> listBFAcount { get; set; }
 
+        /// <summary>
+        /// 当前商家消息中心是否有未读消息
+        /// </summary>
+        public bool HasMessage { get; set; }
+
     }
 
     public class BusinessInfo

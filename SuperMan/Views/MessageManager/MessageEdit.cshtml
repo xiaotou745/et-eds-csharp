@@ -6,26 +6,26 @@
 <script src="~/Scripts/jquery-1.8.2.js"></script>
 <script src="~/Scripts/jquery-ui-1.8.20.js"></script>
 <script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+<script src="~/Scripts/ajaxfileupload.js"></script>
 <div style="width:800px;height:auto;border: 1px #dcdcdc solid">
     <h2 class="crumbs">
         您所在位置：消息管理 > 消息群发管理 > 添加消息模板
     </h2>
-    <div style="width:780px;height: auto;padding-left:10px;">
-        <div style="width:750px;height:auto;">
+    <div style="width:798px;height:auto;padding-left:10px;border:1px #dcdcdc solid;border-left:hidden;border-right:hidden;border-top:hidden">
+        <div style="width:780px;height:25px;">
             <div style="float: left">
                 <label>推送方式：</label>
             </div>
-            <div style="float: left;width:680px;">
-                <input name="chkMessage" id="chkMessage" type="checkbox">短 信
-                <input name="chkApp" id="chkApp" type="checkbox">app通知
+            <div style="float: left;width:700px;">
+                <input name="chkMessage" id="chkMessage" type="checkbox">短  信
+                <input name="chkApp" id="chkApp" type="checkbox" style="margin-left:20px">app通知
             </div>
         </div>
-        <div style="clear:both;"></div>
-        <div style="width:750px">
+        <div style="width:780px;height:25px;margin-top:10px">
             <div style="float: left">
                 <label>消息类型：</label>
             </div>
-            <div style="float: left;width:680px">
+            <div style="float: left;width:700px">
                 <select id="selAcountType">
                     <option value="1">通知</option>
                     <option value="2">策略调整</option>
@@ -33,79 +33,152 @@
                 </select>
             </div>
         </div>
-        <div style="clear:both;"></div>
-        <div style="width:780px;height:auto;">
+        <div style="width:780px;height:120px;margin-top:10px">
             <div style="float:left;margin-left:20px;">
                 <label>内  容：</label>
             </div>
             <div style="float:left;width:700px">
-                <textarea cols="70" rows="5" id="txtMessageContent"></textarea><br/>
-                <label>内容长度：70/200</label>
+                <textarea cols="70" rows="5" id="txtMessageContent"></textarea><br />
+                内容长度：70/200
             </div>
         </div>
-        <div style="clear:both;"></div>
-
-        <div style="width:700px;height: auto;padding-left:10px;">
-            <div style="width:700px">
-                <div style="float: left">
-                    <label>推送对象：</label>
-                </div>
-                <input name="chkBusiness" id="chkBusiness" type="checkbox">商家
-                <input name="chkClienter" id="chkClienter" type="checkbox">骑士
+        <div style="width:243px;height:27px;margin-top:10px;border:1px #dcdcdc solid;">
+            <div style="background-color:lightgrey;float:left;font-size:16px;width:120px" id="systemMass"><center>系统群发</center></div>
+            <div style="background-color:Window;float:left;font-size:16px;width:120px;margin-left:1px" id="appointObject"><center>指定对象</center></div>
+        </div>
+    </div>
+    <div style="width:800px;height: auto;padding-left:10px;" id="systemMassShow">
+        <div style="width:780px;height:25px;margin-top:10px">
+            <div style="float: left">
+                <label>推送对象：</label>
             </div>
-            <div style="clear:both;"></div>
-            <div style="width:700px;" id="divCity">
-                <div style="float: left"><label>推送城市：</label></div>
-                <div id="cityList" style="float: left;width:500px">
-                    @{
-                        var openCityList = ViewBag.openCityList.Result.AreaModels as List<AreaModel>;
-                        if (openCityList != null && openCityList.Count > 0)
+            <div style="float:left;width:700px">
+                <input name="chkBusiness" id="chkBusiness" type="checkbox">商  家
+                <input name="chkClienter" id="chkClienter" type="checkbox" style="margin-left:20px">骑  士
+            </div>
+        </div>
+        <div style="width:780px;height:125px;overflow:auto;margin-top:10px" id="divCity">
+            <div style="float: left">
+                <label>推送城市：</label>
+            </div>
+            <div id="cityList" style="float: left;width:500px">
+                @{
+                    var openCityList = ViewBag.openCityList.Result.AreaModels as List<AreaModel>;
+                    if (openCityList != null && openCityList.Count > 0)
+                    {
+                <div style="width: 100px;height:25px;float: left">
+                    <input type="checkbox" name="checkMenus" id="selectAll" onclick="checkAll()" />全部
+                </div>
+                        foreach (var item in openCityList)
                         {
-                            <div style="width: 100px;float: left">
-                                <input type="checkbox" name="checkMenus" id="selectAll" onclick="checkAll()" />全部
-                            </div>
-                            foreach (var item in openCityList)
-                            {
-                                <div style="width: 100px;float: left">
-                                    <input type="checkbox" name="checkMenus" id="@item.Code" value="@item.Code" />
-                                    <label>@item.Name</label>
-                                </div>
-                            }
+                <div style="width: 100px;height:25px;float: left">
+                    <input type="checkbox" name="checkMenus" id="@item.Code" value="@item.Code" />
+                    <label>@item.Name</label>
+                </div>
                         }
                     }
-                </div>
+                }
             </div>
-            <div style="clear:both;"></div>
-            <div style="float: left;width:750px">
-                <label for="input01">发布类型：</label>
-                <input name="pubType" id="rTiming" type="radio" value="1" checked="checked" /> 定时发布
-                <input name="pubType" id="rRealtime" type="radio" value="2" /> 实时发布
-            </div>
-            <div style="clear:both;"></div>
-            <div style="float: left;width:750px">
-                <label>设置发布时间：</label>
-                <input id="txtPubDate" readonly="readonly" type="text" name="txtPubDate" />
-            </div>
-            <div style="clear:both;"></div>
-            <div class="SearchMd" style="border-bottom:hidden;">
-                <div style="margin-left: 100px;float: left"><input type="button" value="确认" class="searchBtn" id="btnModifyCommit" /></div>
-                <div style="margin-left: 180px;float: left"><input type="button" value="关闭" class="searchBtn" id="btnReturn" /></div>
-                <br />
-            </div>
-
         </div>
     </div>
 
-
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#txtPubDate').datepicker();
-            window.location.hash = '';
+    <div style="width:800px;height: auto;padding-left:10px;" id="appointObjectShow">
+        <div style="width:780px;height:30px;margin-top:10px">
+            <div style="float:left;padding:0px;border-bottom:hidden" class="SearchMd" >
+                <input id="file1" type="file" name="file1" >
+            </div>
+            <div class="SearchMd" style="float:left;border-bottom:hidden;padding:0px;margin-top:-5px">
+                <input type="button" value="导入" class="searchBtn" id="btnImport" style="" />
+            </div>
+            <div style="color:red;float:left;margin-left:20px">(导入必须为excel，只需一列手机号)</div>
+            <div style="float:left;margin-left:20px">
+                <a href="/Content/Template/BatchImport.xls" target="_blank">下载模板</a>
+            </div>
+        </div>
+        <div style="width:780px;height:120px;margin-top:10px">
+            <div style="float:left;">
+                <label>输入手机号码：</label>
+            </div>
+            <div style="float:left;width:600px">
+                <textarea cols="70" rows="5" id="txtPhoneNoList"></textarea><br />
+                <div style="color:red">(手机号码必须英文逗号隔开，如：15212111111,13777777777)</div>
+            </div>
+        </div>
+    </div>
+    <div style="width:800px;height: auto;padding-left:10px;" >
+        <div style="width:780px;height:25px;margin-top:10px">
+            <div style="float: left">
+                <label>发布类型：</label>
+            </div>
+            <div style="float:left;width:700px">
+                <input name="pubType" id="rTiming" type="radio" value="1" checked="checked" /> 定时发布
+                <input name="pubType" id="rRealtime" type="radio" value="2" /> 实时发布
+            </div>
+        </div>
+        <div style="width:780px;height:25px;margin-top:10px">
+            <div style="float: left">
+                <label>设置发布时间：</label>
+            </div>
+            <div style="float:left;width:650px">
+                <input id="txtPubDate" readonly="readonly" type="text" name="txtPubDate" />
+            </div>
+        </div>
+        <div class="SearchMd" style="border-bottom:hidden;width:780px;height:65px;margin-top:10px">
+            <div style="margin-left: 100px;float: left"><input type="button" value="确认" class="searchBtn" id="btnModifyCommit" /></div>
+            <div style="margin-left: 180px;float: left"><input type="button" value="关闭" class="searchBtn" id="btnReturn" /></div>
+            <br />
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#txtPubDate').datepicker();
+        $("#systemMass").css("background-color", "lightgrey");
+        $("#appointObject").css("background-color", "Window");
+        $("#systemMassShow").show();
+        $("#appointObjectShow").hide();
+        window.location.hash = '';
+    });
+    //全选
+    function checkAll() {
+        var checkedOfAll = $("#selectAll").prop("checked");
+        $("input[name='checkMenus']").prop("checked", checkedOfAll);
+    }
+    $("#systemMass").click(function () {
+        $("#systemMass").css("background-color", "lightgrey");
+        $("#appointObject").css("background-color", "Window");
+        $('#systemMassShow').show();
+        $('#appointObjectShow').hide();
+    });
+    $("#appointObject").click(function () {
+        $("#systemMass").css("background-color", "Window");
+        $("#appointObject").css("background-color", "lightgrey");
+        $('#systemMassShow').hide();
+        $('#appointObjectShow').show();
+    })
+    $("#btnImport").click(function () {
+        var url = "/MessageManager/PhoneNoImport";
+        $.ajaxFileUpload({
+            type: 'POST',
+            secureuri: false, //一般设置为false
+            fileElementId: 'file1', //文件上传空间的id属性  <input type="file" id="file" name="file" />
+            url: url,
+            data: "", //此参数非常严谨，写错一个引号都不行
+            success: function (data, status)  //服务器成功响应处理函数
+            {               
+                var json = eval("(" + data.body.innerText + ")");
+                if (json.IsSuccess != undefined && !json.IsSuccess) {
+                    alert(json.Message);
+                    return;
+                }          
+                OverallS = json;
+                $("#tbody").html(""); 
+            },
+            error: function (data, status, e)//服务器响应失败处理函数
+            {
+                alert(data);
+            }
         });
-        //全选
-        function checkAll() {
-            var checkedOfAll = $("#selectAll").prop("checked");
-            $("input[name='checkMenus']").prop("checked", checkedOfAll);
-        }
-    </script>
+    });
+</script>
 

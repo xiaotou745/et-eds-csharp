@@ -1,0 +1,38 @@
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Message.MessageModel>
+@using Webdiyer.WebControls.Mvc;
+@{
+    ViewBag.Title = "消息群发管理";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+<script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.iframe-transport.js"></script>
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置 消息管理> 消息群发管理 
+    </h2>
+    @using (Ajax.BeginForm("PostList", new RouteValueDictionary { { "pageindex", "" } },
+        new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+        new RouteValueDictionary { { "id", "searchForm" } }))
+    {
+        <div class="SearchMd">
+            <table>
+                <tr>
+                    <td>
+                        <span class="">模板名称: </span>
+                        <input id="SearchName" type="text" name="Name" />
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <div class="bd clearfix" id="dataList">
+        @Html.Partial("PostList", Model)
+    </div>
+</div>
+<script src="~/Scripts/view/MessageManagerList.js" type="text/javascript"></script>
+<script src="~/Scripts/mvcpager.js"></script>

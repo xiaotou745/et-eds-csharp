@@ -5,8 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using ETS.Const;
 using Ets.Dao.Message;
+using ETS.Data.PageData;
 using ETS.Enums;
 using Ets.Model.Common;
+using Ets.Model.DataModel.Message;
 using Ets.Model.ParameterModel.Message;
 using Ets.Service.IProvider.Message;
 
@@ -19,7 +21,8 @@ namespace Ets.Service.Provider.Message
     {
         private readonly BusinessMessageDao businessMessageDao = new BusinessMessageDao();
         private readonly ClienterMessageDao clienterMessageDao = new ClienterMessageDao();
-
+        private readonly MessageDao messageDao = new MessageDao();
+        
         /// <summary>
         /// 商户阅读接口更新消息状态接口 add by caoheyang 20150615
         /// </summary>
@@ -60,6 +63,14 @@ namespace Ets.Service.Provider.Message
         public ResultModel<object> ListC(ListCPM model)
         {
             return ResultModel<object>.Conclude(SystemEnum.Success, clienterMessageDao.Query(model).Records);
+        }
+
+        /// <summary>
+        /// web后台列表页功能 add by caoheyang 20150616
+        /// </summary>
+        public PageInfo<MessageModel> WebList(WebListSearch model)
+        {
+            return messageDao.WebList(model);
         }
     }
 }
