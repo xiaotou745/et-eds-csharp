@@ -8,6 +8,7 @@ using ETS.Dao;
 using ETS.Data.Core;
 using ETS.Data.PageData;
 using Ets.Model.DataModel.Message;
+using Ets.Model.DomainModel.Message;
 using Ets.Model.ParameterModel.Common;
 using Ets.Model.ParameterModel.Message;
 
@@ -56,11 +57,11 @@ where  Id=@Id";
         /// <summary>
         /// 查询对象
         /// </summary>
-        public PageInfo<ClienterMessage> Query(ListBPM search)
+        public PageInfo<ListBDM> Query(ListBPM search)
         {
             string where = " BusinessId=" + search.BusinessId;
-            return new PageHelper().GetPages<ClienterMessage>(SuperMan_Read, search.PageIndex, where,
-                "Id desc", " Id,BusinessId,Content,IsRead", " BusinessMessage (nolock)", SystemConst.PageSize, true);
+            return new PageHelper().GetPages<ListBDM>(SuperMan_Read, search.PageIndex, where,
+                "IsRead asc ,id desc ", " Id,Content,IsRead", " BusinessMessage (nolock)", SystemConst.PageSize, true);
         }
     }
 }
