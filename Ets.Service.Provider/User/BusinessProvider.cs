@@ -499,9 +499,9 @@ namespace Ets.Service.Provider.User
             return dao.UpdateAuditStatus(id, enumStatusType);
         }
 
-        public bool UpdateAuditStatus(int id, int enumStatus)
+        public bool UpdateAuditStatus(int id, int enumStatus, string busiAddress)
         {
-            return dao.UpdateAuditStatus(id, enumStatus);
+            return dao.UpdateAuditStatus(id, enumStatus,busiAddress);
         }
         /// <summary>
         ///  根据城市信息查询当前城市下该集团的所有商户信息
