@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ETS.Data.PageData;
 using Ets.Model.Common;
+using Ets.Model.DataModel.Message;
 using Ets.Model.ParameterModel.Message;
 
 namespace Ets.Service.IProvider.Message
@@ -40,5 +42,10 @@ namespace Ets.Service.IProvider.Message
         /// <param name="model">参数实体</param>
         /// <returns></returns>
         ResultModel<object> ListC(ListCPM model);
+
+        /// <summary>
+        /// web后台列表页功能 add by caoheyang 20150616
+        /// </summary>
+        PageInfo<MessageModel> WebList(WebListSearch model);
     }
 }

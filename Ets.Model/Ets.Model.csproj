@@ -76,6 +76,7 @@
     <Compile Include="DataModel\Common\ExportSqlManage.cs" />
     <Compile Include="DataModel\Message\BusinessMessage.cs" />
     <Compile Include="DataModel\Message\ClienterMessage.cs" />
+    <Compile Include="DataModel\Message\MessageModel.cs" />
     <Compile Include="DataModel\Order\OrderChildFinishModel.cs" />
     <Compile Include="DataModel\Order\OrderChildPayModel.cs" />
     <Compile Include="DataModel\Order\PayStatusModel.cs" />
@@ -259,6 +260,7 @@
     <Compile Include="ParameterModel\Message\ReadBPM.cs" />
     <Compile Include="ParameterModel\Message\ListCPM.cs" />
     <Compile Include="ParameterModel\Message\ReadCPM.cs" />
+    <Compile Include="ParameterModel\Message\WebListSearch.cs" />
     <Compile Include="ParameterModel\Order\CancelOrderBPM.cs" />
     <Compile Include="ParameterModel\Order\ChangeStatusPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\BusiOrderResultModel.cs" />

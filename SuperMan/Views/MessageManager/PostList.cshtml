@@ -1,0 +1,44 @@
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Message.MessageModel>
+@{
+    Layout = null;
+}
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+    <thead>
+        <tr class="tdbg">
+            <th style="width:70px;">编码</th>
+            <th>推送方式</th>
+            <th>消息类型</th>
+            <th>发布类型</th>
+            <th>消息内容</th>
+            <th>添加时间</th>
+            <th>发布时间</th>
+            <th>消息状态</th>
+            <th>操作人</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            if (Model != null)
+            {
+                for (int i = 0; i < Model.Records.Count; i++)
+                {
+                    <tr id="@Model.Records[i].Id">
+                        <td>@i</td>
+                        <td>@Model.Records[i].PushWay</td>
+                        <td>@Model.Records[i].MessageType</td>
+                        <td>@Model.Records[i].SendType</td>
+                        <td>@Model.Records[i].Content</td>
+                        <td>@Model.Records[i].CreateTime</td>   
+                        <td>@Model.Records[i].SendTime</td>    
+                        <td>@Model.Records[i].SentStatus</td>    
+                        <td>@Model.Records[i].UpdateBy</td>  
+                        <td></td>  
+                    </tr>
+                }
+            }
+        }
+    </tbody>
+</table>
+@{ViewBag.ActionName = "PostIndex";}
+@Html.Partial("~/views/shared/PagerControl.cshtml", Model)
