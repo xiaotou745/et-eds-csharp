@@ -12,10 +12,6 @@ namespace Ets.Model.ParameterModel.Message
     public class ReadBPM
     {
         /// <summary>
-        /// 商户Id
-        /// </summary>
-        public long BusinessId { get; set; }
-        /// <summary>
         /// 消息ID
         /// </summary>
         public int MessageId { get; set; }
