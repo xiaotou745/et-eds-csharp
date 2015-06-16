@@ -10,16 +10,17 @@
     <h2 class="crumbs">
         您所在位置：消息管理 > 消息群发管理 > 添加消息模板
     </h2>
-    <div style="width:780px;height: auto;  border-bottom:solid 1px #dcdcdc;padding-left:10px;">
-        <div style="width:750px">
+    <div style="width:780px;height: auto;padding-left:10px;">
+        <div style="width:750px;height:auto;">
             <div style="float: left">
                 <label>推送方式：</label>
             </div>
-            <div style="float: left;width:680px">
+            <div style="float: left;width:680px;">
                 <input name="chkMessage" id="chkMessage" type="checkbox">短 信
                 <input name="chkApp" id="chkApp" type="checkbox">app通知
             </div>
         </div>
+        <div style="clear:both;"></div>
         <div style="width:750px">
             <div style="float: left">
                 <label>消息类型：</label>
@@ -32,18 +33,19 @@
                 </select>
             </div>
         </div>
-        <div style="width:780px">
-            <div style="float: left;margin-left:20px">
+        <div style="clear:both;"></div>
+        <div style="width:780px;height:auto;">
+            <div style="float:left;margin-left:20px;">
                 <label>内  容：</label>
             </div>
-            <div style="float: left;width:700px">
-                <textarea cols="70" rows="5" id="txtMessageContent"></textarea>
+            <div style="float:left;width:700px">
+                <textarea cols="70" rows="5" id="txtMessageContent"></textarea><br/>
                 <label>内容长度：70/200</label>
             </div>
         </div>
+        <div style="clear:both;"></div>
 
-
-        <div style="width:700px;height: auto;border-bottom:solid 1px #dcdcdc;padding-left:10px;">
+        <div style="width:700px;height: auto;padding-left:10px;">
             <div style="width:700px">
                 <div style="float: left">
                     <label>推送对象：</label>
@@ -51,6 +53,7 @@
                 <input name="chkBusiness" id="chkBusiness" type="checkbox">商家
                 <input name="chkClienter" id="chkClienter" type="checkbox">骑士
             </div>
+            <div style="clear:both;"></div>
             <div style="width:700px;" id="divCity">
                 <div style="float: left"><label>推送城市：</label></div>
                 <div id="cityList" style="float: left;width:500px">
@@ -72,20 +75,24 @@
                     }
                 </div>
             </div>
+            <div style="clear:both;"></div>
             <div style="float: left;width:750px">
                 <label for="input01">发布类型：</label>
                 <input name="pubType" id="rTiming" type="radio" value="1" checked="checked" /> 定时发布
                 <input name="pubType" id="rRealtime" type="radio" value="2" /> 实时发布
             </div>
+            <div style="clear:both;"></div>
             <div style="float: left;width:750px">
                 <label>设置发布时间：</label>
                 <input id="txtPubDate" readonly="readonly" type="text" name="txtPubDate" />
             </div>
-            <div class="SearchMd">
+            <div style="clear:both;"></div>
+            <div class="SearchMd" style="border-bottom:hidden;">
                 <div style="margin-left: 100px;float: left"><input type="button" value="确认" class="searchBtn" id="btnModifyCommit" /></div>
                 <div style="margin-left: 180px;float: left"><input type="button" value="关闭" class="searchBtn" id="btnReturn" /></div>
                 <br />
             </div>
+
         </div>
     </div>
 
