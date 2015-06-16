@@ -700,7 +700,7 @@ namespace ETS.Util
                     headerRow = sheet.GetRow(HeaderRowIndex);
                     cellCount = headerRow.LastCellNum;
 
-                    for (int i = headerRow.FirstCellNum; i <= cellCount; i++)
+                    for (int i = headerRow.FirstCellNum; i < cellCount; i++)
                     {
                         if (headerRow.GetCell(i) == null)
                         {
