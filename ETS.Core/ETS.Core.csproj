@@ -148,7 +148,7 @@
     <Compile Include="Util\EncodeAndDecode.cs" />
     <Compile Include="Util\EnumItem.cs" />
     <Compile Include="Util\EnumUtils.cs" />
-    <Compile Include="Util\Excel.cs" />
+    <Compile Include="Util\ExcelHelperNew.cs" />
     <Compile Include="Util\DataTableRenderToExcel.cs" />
     <Compile Include="Util\FileHelper.cs" />
     <Compile Include="Util\Helper.cs" />

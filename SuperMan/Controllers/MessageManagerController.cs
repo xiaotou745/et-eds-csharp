@@ -1,7 +1,9 @@
 ﻿using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
+using ETS.Util;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -27,5 +29,38 @@ namespace SuperMan.Controllers
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(0);
             return View();
         }
+        ///// <summary>
+        /////  批量导入电话号码
+        ///// </summary>
+        ///// <returns></returns>
+        //[HttpPost]
+        //public JsonResult PhoneNoImport()
+        //{
+        //    Stream fs = null;
+        //    try
+        //    {
+        //        if (Request.Files["file1"] != null && Request.Files["file1"].FileName != "")
+        //        {
+        //            HttpPostedFileBase file = Request.Files["file1"];
+        //            fs = file.InputStream;
+        //            var dtPhoneNo=ExcelHelperNew.GetExcelDataToDataTable(fs);
+        //            if(dtPhoneNo!=null&&dtPhoneNo.Rows.Count>0)
+        //            {
+        //                //dtPhoneNo.Columns[0] == "手机号码";
+        //                //if(dtPhoneNo[0][0]!="手机号码")
+        //                //{
+
+        //                //}
+        //            }
+                   
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        fs.Close();
+        //    }
+        //    return Json("");
+
+        //}
     }
 }
