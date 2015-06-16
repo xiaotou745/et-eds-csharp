@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace SuperManWebApi.Models.Business
+namespace Ets.Model.ParameterModel.Business
 {
-    public class BusiDistribInfoModel1
+    public class BusiDistribInfoPM
     {
         /// <summary>
         /// 商户id

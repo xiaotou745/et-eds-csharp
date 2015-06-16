@@ -132,6 +132,7 @@
     <Compile Include="ParameterModel\AliPay\NotifyModel.cs" />
     <Compile Include="ParameterModel\Authority\AuthorityListPMcs.cs" />
     <Compile Include="ParameterModel\Business\BCRelationGetByClienterIdPM.cs" />
+    <Compile Include="ParameterModel\Business\BusiDistribInfoPM.cs" />
     <Compile Include="ParameterModel\Business\BusinessCommissionSearchCriteria.cs" />
     <Compile Include="ParameterModel\Business\BusinessRechargeModel.cs" />
     <Compile Include="ParameterModel\AliPay\PayModel.cs" />

@@ -3,7 +3,6 @@ using ETS.Enums;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Order;
 using Ets.Model.ParameterModel.Order;
-using SuperManWebApi.Models.Business;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -379,7 +378,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <returns></returns>        
         [HttpPost]
-        public SimpleResultModel PostDistribSubsidy_B(BusiDistribInfoModel mod)
+        public SimpleResultModel PostDistribSubsidy_B(BusiDistribInfoPM mod)
         {
             if (mod.userId <= 0 || mod.price < 0) //判断传入参数是否正常
                 return SimpleResultModel.Conclude(DistribSubsidyStatus.Failed);
