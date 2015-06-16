@@ -80,20 +80,20 @@ namespace Ets.Model.ParameterModel.Business
         /// </summary>
         public decimal DistribSubsidy { get; set; }
     }
-    public class NewRegisterInfoModelTranslator : TranslatorBase<Ets.Model.DataModel.Business.Business, NewRegisterInfoModel>
+    public class NewRegisterInfoModelTranslator : TranslatorBase<BusinessModel, NewRegisterInfoModel>
     {
         public static readonly NewRegisterInfoModelTranslator Instance = new NewRegisterInfoModelTranslator();
 
-        public override NewRegisterInfoModel Translate(Ets.Model.DataModel.Business.Business from)
+        public override NewRegisterInfoModel Translate(BusinessModel from)
         {
             throw new NotImplementedException();
         }
 
 
 
-        public override Ets.Model.DataModel.Business.Business Translate(NewRegisterInfoModel from)
+        public override BusinessModel Translate(NewRegisterInfoModel from)
         {
-            var to = new Ets.Model.DataModel.Business.Business();
+            var to = new BusinessModel();
             to.Province = from.B_Province;
             to.ProvinceCode = from.B_ProvinceCode.Trim();
 

@@ -1,22 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
-using System.IO;
-using System.Linq;
 using System.Text;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.WebPages;
-using Ets.Model.Common;
 using Ets.Model.DataModel.Business;
-using Ets.Model.DataModel.Clienter;
 using Ets.Model.DomainModel.Business;
 using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
-using Ets.Service.Provider.User;
 using SuperMan.App_Start;
-
-
+using Ets.Service.IProvider.Business;
+using Ets.Service.Provider.Business;
 namespace SuperMan.Controllers
 {
     /// <summary>
@@ -28,7 +20,7 @@ namespace SuperMan.Controllers
         /// <summary>
         /// 商户业务类
         /// </summary>
-        Ets.Service.IProvider.User.IBusinessProvider iBusinessProvider = new BusinessProvider();
+       IBusinessProvider iBusinessProvider = new BusinessProvider();
         IAreaProvider iAreaProvider = new AreaProvider();
 
         /// <summary>

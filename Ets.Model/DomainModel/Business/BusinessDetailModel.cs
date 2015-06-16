@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ets.Model.DomainModel.Business
 {
-    public class BusinessDetailModel : Ets.Model.DataModel.Business.Business
+    public class BusinessDetailModel : BusinessModel
     {
         /// <summary>
         /// 户名

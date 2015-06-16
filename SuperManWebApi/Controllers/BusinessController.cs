@@ -1,28 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web;
 using System.Web.Http;
 using Ets.Model.Common;
-using Ets.Model.DataModel.Finance;
-using Ets.Model.DomainModel.Finance;
 using Ets.Service.IProvider.Finance;
 using Ets.Service.Provider.Finance;
 using ETS.Util;
-using Ets.Model.Common;
 using ETS.Enums;
 using Ets.Model.DomainModel.Business;
-using Ets.Model.ParameterModel.Order;
-using Ets.Service.Provider.Finance;
-using Ets.Service.IProvider.User;
-using Ets.Service.Provider.User;
 using SuperManWebApi.App_Start.Filters;
 using Ets.Model.ParameterModel.Business;
 using Ets.Model.DataModel.Business;
 using SuperManWebApi.Providers;
-
+using Ets.Service.IProvider.Business;
+using Ets.Service.Provider.Business;
 namespace SuperManWebApi.Controllers
 {
     /// <summary>
@@ -76,23 +66,7 @@ namespace SuperManWebApi.Controllers
 
             try
             {
-                BusinessDM businessDM = _iBusinessProvider.GetDetails(model.BussinessId);
-                //if (businessDM.Status == GetBussinessStatus.Audit.GetHashCode())//未审核
-                //{
-                //    return Ets.Model.Common.ResultModel<BusinessDM>.Conclude(GetBussinessStatus.Audit);
-                //}
-                //if (businessDM.Status == GetBussinessStatus.AuditAddress.GetHashCode())//未审核且未添加地址
-                //{
-                //    return Ets.Model.Common.ResultModel<BusinessDM>.Conclude(GetBussinessStatus.AuditAddress);
-                //}
-                //if (businessDM.Status == GetBussinessStatus.Auditing.GetHashCode())//审核中
-                //{
-                //    return Ets.Model.Common.ResultModel<BusinessDM>.Conclude(GetBussinessStatus.Auditing);
-                //}
-                //if (businessDM.Status == GetBussinessStatus.Refuse.GetHashCode())//被拒决
-                //{
-                //    return Ets.Model.Common.ResultModel<BusinessDM>.Conclude(GetBussinessStatus.Refuse);
-                //}
+                BusinessDM businessDM = _iBusinessProvider.GetDetails(model.BussinessId);               
                 return Ets.Model.Common.ResultModel<BusinessDM>.Conclude(GetBussinessStatus.Success, businessDM);
             }
             catch (Exception ex)

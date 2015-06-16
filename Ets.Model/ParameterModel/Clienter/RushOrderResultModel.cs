@@ -17,5 +17,8 @@ namespace Ets.Model.ParameterModel.Clienter
         /// 是否允许修改小票
         /// </summary>
         public bool IsModifyTicket { get; set; }
+
+        public int userId { get; set; }
+        public decimal balanceAmount { get; set; }
     }
 }

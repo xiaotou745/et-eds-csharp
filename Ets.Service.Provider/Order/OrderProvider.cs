@@ -13,20 +13,16 @@ using Ets.Model.ParameterModel.Finance;
 using Ets.Model.ParameterModel.Order;
 using Ets.Service.IProvider.Order;
 using Ets.Service.IProvider.Subsidy;
-using Ets.Service.IProvider.User;
 using Ets.Service.Provider.MyPush;
 using Ets.Service.Provider.Subsidy;
-using Ets.Service.Provider.User;
 using ETS.Enums;
 using ETS.Data.PageData;
-using ETS.Page;
 using ETS.Transaction;
 using ETS.Transaction.Common;
 using ETS.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Ets.Model.DomainModel.Subsidy;
 using Newtonsoft.Json.Linq;
@@ -39,23 +35,18 @@ using Ets.Service.Provider.Common;
 using ETS.Const;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.IProvider.OpenApi;
-using Ets.Model.ParameterModel.Business;
-using Ets.Service.IProvider.Statistics;
-using Ets.Model.DataModel.Strategy;
-using Ets.Service.Provider.Order;
-using Ets.Dao.Finance;
-using Ets.Model.DataModel.Finance;
-using Ets.Model.ParameterModel.Finance;
 using Ets.Model.DomainModel.Area;
 using System.Data;
 using Ets.Dao.Clienter;
+using Ets.Service.IProvider.Business;
+using Ets.Service.Provider.Business;
 #endregion
 namespace Ets.Service.Provider.Order
 {
     public class OrderProvider : IOrderProvider
     {
         private OrderDao orderDao = new OrderDao();
-        private BusinessProvider iBusinessProvider = new BusinessProvider();
+        private IBusinessProvider iBusinessProvider = new BusinessProvider();
         private ClienterProvider iClienterProvider = new ClienterProvider();
 
         private ISubsidyProvider iSubsidyProvider = new SubsidyProvider();
@@ -941,7 +932,7 @@ namespace Ets.Service.Provider.Order
                     (OrderPublicshStatus.ReceiveAddressEmpty);
 
             BusinessDao busDao = new BusinessDao();
-            Business busi = busDao.GetBusiByOriIdAndOrderFrom(model.OriginalBusinessId, model.OrderFrom);
+            BusinessModel busi = busDao.GetBusiByOriIdAndOrderFrom(model.OriginalBusinessId, model.OrderFrom);
             if (busi == null)
             {
                 return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.BusinessNoExist);
@@ -1024,7 +1015,7 @@ namespace Ets.Service.Provider.Order
             order to = new order();
 
             BusinessDao businessDao = new BusinessDao();
-            Business abusiness = businessDao.GetBusiByOriIdAndOrderFrom(from.OriginalBusinessId, from.OrderFrom);
+            BusinessModel abusiness = businessDao.GetBusiByOriIdAndOrderFrom(from.OriginalBusinessId, from.OrderFrom);
 
             if (abusiness == null) return null;
             //if (abusiness != null)
@@ -1683,7 +1674,7 @@ namespace Ets.Service.Provider.Order
             clienterIds = clienterIds.Distinct().ToList();
             businessIds = businessIds.Distinct().ToList();
 
-            IDictionary<int, Business> businessDic = _businessDao.GetByIds(businessIds);
+            IDictionary<int, BusinessModel> businessDic = _businessDao.GetByIds(businessIds);
             IDictionary<int, clienter> clienterDic = clienterDao.GetByIds(clienterIds);
 
             IList<DistributionAnalyzeResult> list = new List<DistributionAnalyzeResult>();

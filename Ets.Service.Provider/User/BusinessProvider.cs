@@ -5,7 +5,6 @@ using Ets.Dao.Message;
 using Ets.Dao.User;
 using Ets.Model.Common;
 using Ets.Model.DomainModel.Business;
-using Ets.Service.IProvider.User;
 using ETS.Data.PageData;
 using System;
 using System.Collections.Generic;
@@ -15,7 +14,6 @@ using System.Linq;
 using ETS.Enums;
 using Ets.Model.DataModel.Business;
 using ETS.Util;
-using ETS.Cacheing;
 using Ets.Model.DataModel.Group;
 using ETS.Validator;
 using ETS;
@@ -28,7 +26,8 @@ using Ets.Model.ParameterModel.Order;
 using Ets.Service.Provider.Order;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DomainModel.Area;
-namespace Ets.Service.Provider.User
+using Ets.Service.IProvider.Business;
+namespace Ets.Service.Provider.Business
 {
 
     /// <summary>
@@ -233,7 +232,7 @@ namespace Ets.Service.Provider.User
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(Ets.Model.ParameterModel.Business.RegisterInfoModel model)
+        public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(RegisterInfoPM model)
         {
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             var code = redis.Get<string>("PostRegisterInfo_B_" + model.phoneNo);
@@ -337,7 +336,7 @@ namespace Ets.Service.Provider.User
             if (string.IsNullOrWhiteSpace(model.B_GroupId.ToString()))  //集团Id不能为空
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.GroupIdEmpty);
             //是否存在该商户
-            Business busi = dao.CheckExistBusiness(model.B_OriginalBusiId, model.B_GroupId);
+            BusinessModel busi = dao.CheckExistBusiness(model.B_OriginalBusiId, model.B_GroupId);
             return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.OriginalBusiIdRepeat);
 
             if (string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_CityCode.ToString())) //城市以及城市编码非空验证
@@ -387,7 +386,7 @@ namespace Ets.Service.Provider.User
 
         }
 
-        public Business CheckExistBusiness(int originalId, int groupId)
+        public BusinessModel CheckExistBusiness(int originalId, int groupId)
         {
             return dao.CheckExistBusiness(originalId, groupId);
         }
@@ -626,7 +625,7 @@ namespace Ets.Service.Provider.User
         /// <returns>商户的当前状态</returns>
         public int UpdateBusinessAddressInfo(BusiAddAddressInfoModel businessModel)
         {
-            Business business = TranslateBusiness(businessModel);
+            BusinessModel business = TranslateBusiness(businessModel);
 
             var busi = dao.GetBusiness(businessModel.userId); //查询商户信息
             if (busi.Status == ConstValues.BUSINESS_NOADDRESS)  //如果商户的状态 为未审核未添加地址，则修改商户状态为 未审核
@@ -767,9 +766,9 @@ namespace Ets.Service.Provider.User
         /// </summary>
         /// <param name="businessModel"></param>
         /// <returns></returns>
-        private Business TranslateBusiness(BusiAddAddressInfoModel businessModel)
+        private BusinessModel TranslateBusiness(BusiAddAddressInfoModel businessModel)
         {
-            var to = new Business();
+            var to = new BusinessModel();
             to.Id = businessModel.userId;
             to.Address = businessModel.Address.Trim();
             to.Name = businessModel.businessName.Trim();
@@ -962,7 +961,7 @@ namespace Ets.Service.Provider.User
         /// <param name="model"></param>
         /// <param name="orderOptionModel"></param>
         /// <returns></returns>
-        public bool ModifyBusinessInfo(Business model, OrderOptionModel orderOptionModel)
+        public bool ModifyBusinessInfo(BusinessModel model, OrderOptionModel orderOptionModel)
         {
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             redis.Delete(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo,  //清空之前的关系缓存
@@ -1031,7 +1030,7 @@ namespace Ets.Service.Provider.User
 
         public int AddThirdBusiness(ParaModel<BusinessRegisterModel> paramodel)
         {
-            var to = new Business();
+            var to = new BusinessModel();
             to.Province = paramodel.fields.B_Province;
             to.ProvinceCode = paramodel.fields.B_ProvinceCode.Trim();
             to.CityCode = paramodel.fields.B_CityCode;
@@ -1076,7 +1075,7 @@ namespace Ets.Service.Provider.User
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public int InsertOtherBusiness(Business model)
+        public int InsertOtherBusiness(BusinessModel model)
         {
             return dao.InsertOtherBusiness(model);
         }

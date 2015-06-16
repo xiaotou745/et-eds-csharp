@@ -3,29 +3,20 @@ using Ets.Model.DataModel.Order;
 using Ets.Model.ParameterModel.Order;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Web;
 using System.Web.Http;
-using Ets.Service.Provider.User;
 using Ets.Service.IProvider.Order;
 using Ets.Service.Provider.Order;
-using Ets.Service.IProvider.User;
-using ETS.Const;
 using Ets.Model.Common;
 using ETS.Util;
 using Ets.Model.ParameterModel.Clienter;
-using ETS.Expand;
 using Ets.Model.ParameterModel.Business;
 using Ets.Model.DomainModel.Order;
 using Ets.Service.IProvider.Clienter;
 using Ets.Service.Provider.Clienter;
-using Ets.Model.DomainModel.Clienter;
-using SuperManWebApi.App_Start.Filters;
-using System.Text.RegularExpressions;
 using SuperManWebApi.Providers;
-using Ets.Model.Common.AliPay;
-using System.Text;
-using System.Runtime.Serialization.Json;
+using Ets.Service.IProvider.Business;
+using Ets.Service.Provider.Business;
 
 namespace SuperManWebApi.Controllers
 {
@@ -45,8 +36,7 @@ namespace SuperManWebApi.Controllers
         /// <UpdateBy>hulingbo</UpdateBy>
         /// <UpdateTime>20150511</UpdateTime>
         /// <param name="model">订单参数实体</param>
-        /// <returns></returns>
-        [ActionStatus(typeof(ETS.Enums.PubOrderStatus))]
+        /// <returns></returns> 
         [HttpPost]
         public ResultModel<BusiOrderResultModel> Push(BussinessOrderInfoPM model)
         {
