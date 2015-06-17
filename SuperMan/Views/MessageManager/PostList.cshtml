@@ -39,7 +39,7 @@
             <td>
                 @(((MessageSendType)Enum.Parse(typeof(MessageSendType), Model.Records[i].SendType.ToString(), false)).GetDisplayText())
             </td>
-                <td><a href="/MessageManager/detail?messageId=@Model.Records[i].Id">@Model.Records[i].Content</a></td>
+            <td><a href="javascript:void;" onclick="detail(@Model.Records[i].Id)">@Model.Records[i].Content</a></td>
             <td>@Model.Records[i].CreateTime</td>
             <td>@Model.Records[i].SendTime</td>
             <td>
