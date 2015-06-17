@@ -68,6 +68,39 @@ select @@identity
         }
 
         /// <summary>
+        /// 查询今日尚未执行的服务 
+        /// </summary>
+        public IList<ExportSqlManage> QueryForWindows(DataManageSearchCriteria search)
+        {
+            IList<ExportSqlManage> models = new List<ExportSqlManage>();
+            const string querysql = @"
+select  Id,Name,SqlText,Executetime,ReceiveEmail,IsEnable 
+from  ExportSqlManage (nolock) where IsEnable=0
+and ABS(datediff(minute,getdate(),CONVERT(DATETIME, CONVERT(varchar(100), GETDATE(), 23)+' '+Executetime) ) ) <8
+and ABS( datediff(minute,getdate(),CONVERT(DATETIME, CONVERT(varchar(100), GETDATE(), 23)+' '+Executetime) )) >0";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                models = DataTableHelper.ConvertDataTableList<ExportSqlManage>(dt);
+            }
+            return models;
+        }
+
+        /// <summary>
+        /// 获取当前sql执行之后的datatable  add by caoheyang 20150603
+        /// </summary>
+        public DataTable ExecuteForExport(string sql)
+        {
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                return dt;
+            }
+            return null;
+        }
+
+        /// <summary>
         /// 根据id查询对象
         /// </summary>
         public ExportSqlManage GetById(long id)

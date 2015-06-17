@@ -39,5 +39,10 @@ namespace Ets.Service.IProvider.Common
         /// 修改一条记录
         /// </summary>
         int Update(ExportSqlManage model);
+
+        /// <summary>
+        /// 查询今日尚未执行的服务 
+        /// </summary>
+        IList<ExportSqlManage> QueryForWindows(DataManageSearchCriteria search);
     }
 }
