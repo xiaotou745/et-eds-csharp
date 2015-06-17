@@ -375,10 +375,10 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
             if (model.userId<= 0) //用户id验证
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
-            if (model.userId <= 0)
+            if (model.businessId <= 0)  //商户Id
             {
-                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
-            }
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.BussinessEmpty);
+            } 
             if (string.IsNullOrWhiteSpace(model.version))
             {
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.NoVersion);
@@ -407,6 +407,10 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.ExistNotPayChildOrder);
             }
             FinishOrderResultModel finishModel = iClienterProvider.FinishOrder(parModel.userId, parModel.orderNo, parModel.Longitude, parModel.Latitude, parModel.pickupCode);
+            if (finishModel.Message == "500") //在查询订单信息关联表时数据不完成造成
+            {
+                return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.DataError, finishModel);
+            }
             if (finishModel.Message == "1")  //完成
             {       
                 return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Success, finishModel);
