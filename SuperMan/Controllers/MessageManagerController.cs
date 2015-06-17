@@ -184,6 +184,7 @@ namespace SuperMan.Controllers
         public JsonResult EditMessageTask(MessageModelDM model)
         {
             model.OptUserName = UserContext.Current.Name;
+
             var reg = messageProvider.EditMessageTask(model);
             return Json(new Ets.Model.Common.ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
         }

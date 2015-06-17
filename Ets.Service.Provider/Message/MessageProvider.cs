@@ -89,6 +89,11 @@ namespace Ets.Service.Provider.Message
                 dealReg.DealFlag = messageDao.AddMessageTask(model);
                 dealReg.DealMsg = dealReg.DealFlag ? "消息任务添加成功！" : "消息任务添加失败！";
             }
+            else
+            {
+                dealReg.DealFlag = messageDao.ModifyMessageTask(model);
+                dealReg.DealMsg = dealReg.DealFlag ? "消息任务修改成功！" : "消息任务修改失败！";
+            }
             return dealReg;
 
         }
