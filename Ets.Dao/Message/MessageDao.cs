@@ -12,6 +12,7 @@ using Ets.Model.ParameterModel.Message;
 using Ets.Model.DomainModel.Message;
 using ETS.Data.Core;
 using System.Data;
+using ETS.Extension;
 
 namespace Ets.Dao.Message
 {
@@ -23,7 +24,7 @@ namespace Ets.Dao.Message
         /// <summary>
         /// web后台列表页功能 add by caoheyang 20150616
         /// </summary>
-        public PageInfo<MessageModel> WebList(WebListSearch model)
+        public async Task<PageInfo<MessageModel>> WebList(WebListSearch model)
         {
             string where = " 1=1 ";
             where = where + (model.SendType == -1 ? "" : string.Format(" and SendType={0}", model.SendType));
@@ -130,7 +131,40 @@ where  Id=@Id ";
             dbParameters.AddWithValue("@Id", id);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
-
+        /// <summary>
+        /// 根据消息Id获取消息信息
+        /// danny-20150617
+        /// </summary>
+        /// <param name="messageId">消息Id</param>
+        /// <returns></returns>
+        public MessageModel GetMessageById(int messageId)
+        {
+            string selSql = @" 
+SELECT [Id]
+      ,[PushWay]
+      ,[MessageType]
+      ,[Content]
+      ,[SentStatus]
+      ,[PushType]
+      ,[PushTarget]
+      ,[PushCity]
+      ,[PushPhone]
+      ,[SendType]
+      ,[SendTime]
+      ,[OverTime]
+      ,[CreateBy]
+      ,[CreateTime]
+      ,[UpdateBy]
+      ,[UpdateTime]
+  FROM [Message] msg WITH(NOLOCK)
+  WHERE Id=@MessageId;  ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@MessageId", messageId);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
+            if (dt != null && dt.Rows.Count > 0)
+                return DataTableHelper.ConvertDataTableList<MessageModel>(dt)[0];
+            return null;
+        }
 
         /// <summary>
         /// 取消发布 add by caoheyang  20150617
@@ -138,7 +172,7 @@ where  Id=@Id ";
         /// <param name="id"></param>
         /// <param name="updateby"></param>
         /// <returns></returns>
-        public int CanelMessage(long id, string updateby)
+        public async Task<int> CanelMessage(long id, string updateby)
         {
             const string updateSql = @"
 update  message

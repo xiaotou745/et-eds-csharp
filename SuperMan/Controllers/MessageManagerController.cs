@@ -39,6 +39,7 @@ namespace SuperMan.Controllers
         public ActionResult MessageEdit()
         {
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(0);
+            ViewBag.dealType = 1;//新增
             return View();
         }
 
@@ -51,11 +52,14 @@ namespace SuperMan.Controllers
         {
             ListSetSelect();
             //默认全部
-            PageInfo<MessageModel> models = messageProvider.WebList(new WebListSearch(){ MessageType=-1,SendType=-1,SentStatus=-1,PushWay=-1});
+            PageInfo<MessageModel> models =await  messageProvider.WebList(new WebListSearch(){ MessageType=-1,SendType=-1,SentStatus=-1,PushWay=-1});
             return View(models);
         }
 
-        public async void ListSetSelect()
+        /// <summary>
+        /// 绑定下拉框
+        /// </summary>
+        public void ListSetSelect()
         {
             EnumItem item = new EnumItem()
             {
@@ -92,7 +96,7 @@ namespace SuperMan.Controllers
         {
             WebListSearch search = new WebListSearch();
             TryUpdateModel(search);
-            PageInfo<MessageModel> models = messageProvider.WebList(search);
+            PageInfo<MessageModel> models = await messageProvider.WebList(search);
             return View(models);
         }
 
@@ -101,9 +105,9 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult CanelMessage(long id)
+        public async Task<JsonResult> CanelMessage(long id)
         {
-            return new JsonResult(){ Data=messageProvider.CanelMessage(id, UserContext.Current.Name)};
+            return new JsonResult(){ Data=await messageProvider.CanelMessage(id, UserContext.Current.Name)};
         }
 
         /// <summary>
@@ -182,6 +186,19 @@ namespace SuperMan.Controllers
             model.OptUserName = UserContext.Current.Name;
             var reg = messageProvider.EditMessageTask(model);
             return Json(new Ets.Model.Common.ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
+        }
+        /// <summary>
+        /// 添加骑士绑定查询
+        /// danny-20150609
+        /// </summary>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        public ActionResult MessageDetail(int messageId)
+        {
+            var messageDetailModel = messageProvider.GetMessageById(messageId);
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(0);
+            ViewBag.dealType = 2;//修改
+            return View("MessageEdit", messageDetailModel);
         }
     }
 }
