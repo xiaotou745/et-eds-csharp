@@ -1446,7 +1446,7 @@ where  phoneNo = @phoneNo and TrueName=@TrueName ";
         {
             string querysql = @"  
 select id, PhoneNo from dbo.clienter 
-where  Status=1 and  cityid in('" + pushCity + "')";
+where  Status=1 and  cityid in(" + pushCity + ")";
 
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, querysql);
             return dt;

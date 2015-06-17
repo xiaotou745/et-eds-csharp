@@ -144,8 +144,8 @@ INSERT INTO [Message]
         public IList<MessageModel> GetMessageList(int sentStatus)
         {
             string querysql = @"  
-select id, [Content],PushTarget,PushCity,PushPhone 
-from dbo.[Message]
+select id, PushWay,[Content],PushTarget,PushCity,PushPhone 
+from dbo.[Message](nolock)
 where SentStatus=@SentStatus
 order by SendType";
 
@@ -168,8 +168,8 @@ order by SendType";
 update  message
 set  SentStatus=2,OverTime=getdate()
 where  Id=@Id ";
-            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int64, 8, id);
-            dbParameters.AddWithValue("@Id", id);
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("Id", DbType.Int64, 8).Value = id;
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
         /// <summary>
@@ -218,10 +218,10 @@ SELECT [Id]
             const string updateSql = @"
 update  message
 set  SentStatus=3,OverTime=getdate(),UpdateTime=getdate(),UpdateBy=@UpdateBy
-where  Id=@Id ";
-            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int64, 8, id);
-            dbParameters.AddWithValue("@Id", id);
+where  Id=@Id and SentStatus=0";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("UpdateBy", updateby);
+            dbParameters.AddWithValue("@Id", id);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
     }

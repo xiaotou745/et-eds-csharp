@@ -103,8 +103,13 @@
                 <label >是否一键发单：</label>
                 <input id="rOneKeyPubOrderY" name="rOneKeyPubOrder" type="radio" value="1" @(Model.OneKeyPubOrder == 1 ? "checked" : "")>
                 <label >是</label>
-                <input id="rOneKeyPubOrderN" name="rOneKeyPubOrder" type="radio" value="0" style="margin-left:30px" @(Model.OneKeyPubOrder == 0? "checked" : "")>
+                <input id="rOneKeyPubOrderN" name="rOneKeyPubOrder" type="radio" value="0" style="margin-left: 30px" @(Model.OneKeyPubOrder == 0 ? "checked" : "")>
                 <label >否</label>
+            </div>
+            <div class="control-group">
+                <label>余额是否可以透支：</label>
+                <input id="rBbalanceAllowOverDraftY" name="rBalanceAllowOverDraft" type="radio" value="1" @(Model.IsAllowOverdraft == 1?"checked":"") /><label for="rBbalanceAllowOverDraftY">是</label>
+                <input id="rBbalanceAllowOverDraftN" name="rBalanceAllowOverDraft" type="radio" value="0" style="margin-left: 30px" @(Model.IsAllowOverdraft == 0 ? "checked" : "") /><label for="rBbalanceAllowOverDraftN">否</label>
             </div>
             <div class="control-group" style="margin-bottom: 10px">
                 <label style="margin-left: 24px">第三方ID：</label>
@@ -343,6 +348,7 @@
         var originalBusiId = $('#busiSourceId').val();
         var hidGroupId = $('#hidGroupId').val();
         var oneKeyPubOrder = $('input[name="rOneKeyPubOrder"]:checked').val();
+        var isAllowOverdraft = $('input[name="rBalanceAllowOverDraft"]:checked').val();
         if (hidGroupId == 0) {
             groupId = $('#busGroupId').val();
         }
@@ -429,7 +435,7 @@
         var paramaters = {
             "Id": id, "Name": name, "Landline": landline, "PhoneNo2": phoneNo2, "DistribSubsidy": distribSubsidy, "CityId": cityId, "districtId": districtId, "City": cityName,
             "district": districtName, "Address": adress, "Latitude": latitude, "Longitude": longitude, "CommissionType": commissionType, "BusinessCommission": commissionText,
-            "CommissionFixValue": commissionFixValue, "BusinessGroupId": businessGroupId, "MealsSettleMode": mealsSettleMode, "groupId": groupId, "originalBusiId": originalBusiId, "oneKeyPubOrder": oneKeyPubOrder
+            "CommissionFixValue": commissionFixValue, "BusinessGroupId": businessGroupId, "MealsSettleMode": mealsSettleMode, "groupId": groupId, "originalBusiId": originalBusiId, "oneKeyPubOrder": oneKeyPubOrder, "isAllowOverdraft": isAllowOverdraft
         };
         var url = "/BusinessManager/ModifyBusinessDetail";
         $.ajax({

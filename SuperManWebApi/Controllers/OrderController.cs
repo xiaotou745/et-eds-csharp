@@ -8,6 +8,7 @@ using System.Web.Http;
 using Ets.Service.IProvider.Order;
 using Ets.Service.Provider.Order;
 using Ets.Model.Common;
+using Ets.Model.DataModel.Business;
 using ETS.Util;
 using Ets.Model.ParameterModel.Clienter;
 using Ets.Model.ParameterModel.Business;
@@ -137,13 +138,29 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.CountIsNotEqual);
             }
+            BusListResultModel business = null;
+            //= iBusinessProvider.GetBusiness(model.userId)
 
-            order = iOrderProvider.TranslateOrder(model);
+            order = iOrderProvider.TranslateOrder(model, out business);
             if (order.CommissionType == OrderCommissionType.FixedRatio.GetHashCode() && order.BusinessCommission < 10m) //商户结算比例不能小于10
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusiSettlementRatioError);
             }
 
+            if (business ==null) //如果商户不允许可透支发单，验证余额是否满足结算费用，如果不满足，提示：“您的余额不足，请及时充值!”
+            {
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusinessEmpty);  //未取到商户信息
+            }
+            else
+            {
+                if (buStatus.IsAllowOverdraft == 0) //0不允许透支
+                {
+                    if (business.BalancePrice < order.SettleMoney)
+                    {
+                        return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusiBalancePriceLack);
+                    }
+                }
+            }
             return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.VerificationSuccess);
         }
 
