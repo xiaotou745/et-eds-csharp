@@ -21,7 +21,7 @@ using SuperMan.App_Start;
 
 namespace SuperMan.Controllers
 {
-    public class MessageManagerController : Controller
+    public class MessageManagerController : BaseController
     {
         IAreaProvider iAreaProvider = new AreaProvider();
         private readonly IMessageProvider messageProvider = new MessageProvider();
@@ -94,6 +94,16 @@ namespace SuperMan.Controllers
             TryUpdateModel(search);
             PageInfo<MessageModel> models = messageProvider.WebList(search);
             return View(models);
+        }
+
+        /// <summary>
+        /// 列表页异步加载区域 add by caoheyang 20150616
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult CanelMessage(long id)
+        {
+            return new JsonResult(){ Data=messageProvider.CanelMessage(id, UserContext.Current.Name)};
         }
 
         /// <summary>

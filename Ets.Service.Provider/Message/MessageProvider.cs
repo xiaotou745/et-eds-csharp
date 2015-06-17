@@ -92,5 +92,17 @@ namespace Ets.Service.Provider.Message
             return dealReg;
 
         }
+
+
+        /// <summary>
+        /// 取消发布 add by caoheyang  20150617
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="updateby"></param>
+        /// <returns></returns>
+        public bool CanelMessage(long id, string updateby)
+        {
+            return messageDao.CanelMessage(id, updateby) > 0;
+        }
     }
 }
