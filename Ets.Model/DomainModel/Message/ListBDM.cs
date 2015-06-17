@@ -24,5 +24,10 @@ namespace Ets.Model.DomainModel.Message
         /// 是否已读 0未读 1 已读
         /// </summary>
         public int IsRead { get; set; }
+
+        /// <summary>
+        /// 时间
+        /// </summary>
+        public string PubDate { get; set; }
     }
 }
