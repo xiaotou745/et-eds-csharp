@@ -14,6 +14,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Ets.Service.Provider.Message;
+using Ets.Model.DomainModel.Message;
+using SuperMan.App_Start;
 
 namespace SuperMan.Controllers
 {
@@ -64,6 +66,7 @@ namespace SuperMan.Controllers
 
         /// <summary>
         ///  批量导入电话号码
+        ///  danny-20150617
         /// </summary>
         /// <returns></returns>
         [HttpPost]
@@ -121,6 +124,22 @@ namespace SuperMan.Controllers
                 strMsg = ex.Message;
             }
             return Json(new Ets.Model.Common.ResultModel(reg, reg ? strPhoneNo:strMsg), JsonRequestBehavior.DenyGet);
+        }
+
+        
+
+        /// <summary>
+        /// 编辑消息任务（新增和修改公用）
+        /// danny-20150617
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult EditMessageTask(MessageModelDM model)
+        {
+            model.OptUserName = UserContext.Current.Name;
+            var reg = messageProvider.EditMessageTask(model);
+            return Json(new Ets.Model.Common.ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
         }
     }
 }

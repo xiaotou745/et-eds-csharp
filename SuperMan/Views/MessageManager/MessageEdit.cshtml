@@ -113,8 +113,8 @@
                     <label>发布类型：</label>
                 </div>
                 <div style="float:left;width:700px">
-                    <input name="rSendType" id="rTiming" type="radio" value="1" checked="checked" /> 定时发布
-                    <input name="rSendType" id="rRealtime" type="radio" value="2" /> 实时发布
+                    <input name="rSendType" id="rTiming" type="radio" value="2" checked="checked" /> 定时发布
+                    <input name="rSendType" id="rRealtime" type="radio" value="1" /> 实时发布
                 </div>
             </div>
             <div style="width:780px;height:25px;margin-top:10px">
@@ -186,6 +186,7 @@
         var pushWay;
         var messageType = $("#selMessageType").val();
         var content = $("#txtContent").val();
+        var sentStatus;
         var pushType = $("#hidPushType").val();
         var pushTarget;
         var pushCity;
@@ -267,9 +268,38 @@
                 return;
             }
         }
-        if (sendTime.trim().length == 0 && sendType == 1) {
+        if (sendTime.trim().length == 0 && sendType == 2) {
             alert("请设定发布时间！");
             return;
+        }
+        if (sendType == 1)
+        {
+            sentStatus = 1;
+        }
+        else
+        {
+            sentStatus = 0;
+        }
+        if (confirm("确定提交吗？")) {
+            var paramaters = {
+                "pushWay": pushWay, "messageType": messageType, "content": content, "sentStatus": sentStatus, "pushType": pushType, "pushTarget": pushTarget, "pushCity": pushCity, "pushPhone": pushPhone,
+                "sendType": sendType, "sendTime": sendTime
+            };
+            var url = "/MessageManager/EditMessageTask";
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: paramaters,
+                success: function (result) {
+                    if (result.IsSuccess) {
+                        alert(result.Message);
+                        //window.location.href = "/AuthorityManager/AuthorityManager";
+                    } else {
+                        alert(result.Message);
+                    }
+
+                }
+            });
         }
     });
 </script>

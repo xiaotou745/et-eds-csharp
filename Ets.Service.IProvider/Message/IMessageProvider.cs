@@ -7,6 +7,7 @@ using ETS.Data.PageData;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Message;
 using Ets.Model.ParameterModel.Message;
+using Ets.Model.DomainModel.Message;
 
 namespace Ets.Service.IProvider.Message
 {
@@ -47,5 +48,12 @@ namespace Ets.Service.IProvider.Message
         /// web后台列表页功能 add by caoheyang 20150616
         /// </summary>
         PageInfo<MessageModel> WebList(WebListSearch model);
+        /// <summary>
+        /// 添加消息任务
+        /// danny-20150617
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        DealResultInfo EditMessageTask(MessageModelDM model);
     }
 }
