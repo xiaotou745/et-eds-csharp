@@ -27,11 +27,10 @@ using NPOI.XSSF.UserModel;
 using NPOI.HSSF.UserModel;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.IProvider.Clienter;
-using Ets.Service.IProvider.Bussiness;
-using Ets.Service.Provider.Bussiness;
-using System.Runtime.Serialization.Json;
-using System.Web.Script.Serialization;
+using Ets.Service.IProvider.Business;
+using Ets.Service.Provider.Business;
 using Ets.Model.Common;
+using Ets.Service.IProvider.Distribution;
 namespace SuperMan.Controllers
 {
     [WebHandleError]
@@ -45,8 +44,8 @@ namespace SuperMan.Controllers
         readonly IAreaProvider iAreaProvider = new AreaProvider();
         readonly IBusinessFinanceProvider iBusinessFinanceProvider = new BusinessFinanceProvider();
         readonly IBusinessClienterRelationProvider iBusinessClienterRelationProvider = new BusinessClienterRelationProvider();
+        readonly IDistributionProvider iDistributionProvider = new DistributionProvider();
 
-        readonly Ets.Service.IProvider.Distribution.IDistributionProvider iDistributionProvider = new DistributionProvider();
         // GET: BusinessManager
         [HttpGet]
         public ActionResult BusinessManager()
@@ -56,7 +55,7 @@ namespace SuperMan.Controllers
             int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
 
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserType));
-            var criteria = new Ets.Model.ParameterModel.Business.BusinessSearchCriteria()
+            var criteria = new BusinessSearchCriteria()
             {
                 Status = -1,
                 GroupId = UserContext.Current.GroupId,
@@ -75,7 +74,7 @@ namespace SuperMan.Controllers
         [HttpPost]
         public ActionResult PostBusinessManager(int pageindex = 1)
         {
-            var criteria = new Ets.Model.ParameterModel.Business.BusinessSearchCriteria();
+            var criteria = new BusinessSearchCriteria();
             TryUpdateModel(criteria);
             int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
             criteria.AuthorityCityNameListStr =
@@ -110,7 +109,7 @@ namespace SuperMan.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult GetBussinessByCityInfo(Ets.Model.ParameterModel.Business.BusinessSearchCriteria model)
+        public JsonResult GetBussinessByCityInfo(BusinessSearchCriteria model)
         {
             return Json(iBusinessProvider.GetBussinessByCityInfo(model).ToList(), JsonRequestBehavior.DenyGet);
         }
@@ -196,7 +195,7 @@ namespace SuperMan.Controllers
                 OptUserName = UserContext.Current.Name,
             };
             //商户操作实体
-            Business businessModel = new Business()
+            BusinessModel businessModel = new BusinessModel()
             {
                 Name = businessName,
                 GroupId = groupId,
@@ -208,23 +207,7 @@ namespace SuperMan.Controllers
                 MealsSettleMode = mealsSettleMode
             };
             return Json(new ResultModel(iBus.ModifyBusinessInfo(businessModel, model), "成功!"), JsonRequestBehavior.DenyGet);
-        }
-        ///// <summary>
-        ///// 查看商户详细信息
-        ///// danny-20150512
-        ///// </summary>
-        ///// <param name="businessId">商户Id</param>
-        ///// <returns></returns>
-        //public ActionResult BusinessDetail(string businessId)
-        //{
-        //    var businessWithdrawFormModel = iBusinessProvider.GetBusinessDetailById(businessId);
-        //    var criteria = new BusinessBalanceRecordSerchCriteria()
-        //    {
-        //        BusinessId = Convert.ToInt32(businessId)
-        //    };
-        //    ViewBag.businessBalanceRecord = iBusinessFinanceProvider.GetBusinessBalanceRecordList(criteria);
-        //    return View(businessWithdrawFormModel);
-        //}
+        }       
 
         /// <summary>
         /// 查看商户详细信息

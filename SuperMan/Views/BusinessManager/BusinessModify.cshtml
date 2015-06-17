@@ -1,15 +1,17 @@
 ﻿@model Ets.Model.DomainModel.Business.BusinessDetailModel
 @{
-    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";    
     var busiThirdRelationList = ViewBag.businessThirdRelation as IList<BusinessThirdRelationModel>;
-    var puth = SuperManCore.CustomerIconUploader.Instance.RelativePath;
-    var PicHost = SuperManCore.CustomerIconUploader.Instance.PicHost;
+    var puth = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.RelativePath;
+    var PicHost = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PicHost;
 }
 @using ETS.Enums
 @using ETS.Extension
 @using Ets.Model.DataModel.Business
 @using Ets.Service.Provider.User
 @using ETS.Util;
+@using Ets.Service.Provider.Business
+
 <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
 <script src="~/Scripts/jquery-1.8.2.js"></script>
 <script src="~/Scripts/jquery-ui-1.8.20.js"></script>

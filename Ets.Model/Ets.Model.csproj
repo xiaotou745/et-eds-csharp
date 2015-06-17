@@ -76,6 +76,7 @@
     <Compile Include="DataModel\Common\ExportSqlManage.cs" />
     <Compile Include="DataModel\Message\BusinessMessage.cs" />
     <Compile Include="DataModel\Message\ClienterMessage.cs" />
+    <Compile Include="DataModel\Message\MessageModel.cs" />
     <Compile Include="DataModel\Order\OrderChildFinishModel.cs" />
     <Compile Include="DataModel\Order\OrderChildPayModel.cs" />
     <Compile Include="DataModel\Order\PayStatusModel.cs" />
@@ -115,6 +116,8 @@
     <Compile Include="DomainModel\Finance\FinanceRecordsDM.cs" />
     <Compile Include="DomainModel\Message\ListBDM.cs" />
     <Compile Include="DomainModel\Message\ListCDM.cs" />
+    <Compile Include="DomainModel\Message\ReadBDM.cs" />
+    <Compile Include="DomainModel\Message\ReadCDM.cs" />
     <Compile Include="DomainModel\Order\DistributionAnalyzeResult.cs" />
     <Compile Include="DomainModel\Order\GetJobCDM.cs" />
     <Compile Include="DomainModel\Order\GetJobCDMRedis.cs" />
@@ -131,6 +134,7 @@
     <Compile Include="ParameterModel\AliPay\NotifyModel.cs" />
     <Compile Include="ParameterModel\Authority\AuthorityListPMcs.cs" />
     <Compile Include="ParameterModel\Business\BCRelationGetByClienterIdPM.cs" />
+    <Compile Include="ParameterModel\Business\BusiDistribInfoPM.cs" />
     <Compile Include="ParameterModel\Business\BusinessCommissionSearchCriteria.cs" />
     <Compile Include="ParameterModel\Business\BusinessRechargeModel.cs" />
     <Compile Include="ParameterModel\AliPay\PayModel.cs" />
@@ -259,6 +263,7 @@
     <Compile Include="ParameterModel\Message\ReadBPM.cs" />
     <Compile Include="ParameterModel\Message\ListCPM.cs" />
     <Compile Include="ParameterModel\Message\ReadCPM.cs" />
+    <Compile Include="ParameterModel\Message\WebListSearch.cs" />
     <Compile Include="ParameterModel\Order\CancelOrderBPM.cs" />
     <Compile Include="ParameterModel\Order\ChangeStatusPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\BusiOrderResultModel.cs" />

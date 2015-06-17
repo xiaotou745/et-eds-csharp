@@ -32,9 +32,9 @@ using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Order;
 using ETS.NoSql.RedisCache;
 using Ets.Model.DomainModel.Order;
-using Ets.Service.Provider.Order;
 using Ets.Service.IProvider.Order;
 using Ets.Model.ParameterModel.Finance;
+using Ets.Dao.Business;
 namespace Ets.Service.Provider.Clienter
 {
     public class ClienterProvider : IClienterProvider
@@ -192,7 +192,7 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public Model.Common.ResultModel<ClienterLoginResultModel> PostLogin_C(Model.ParameterModel.Clienter.LoginModel model)
+        public Model.Common.ResultModel<ClienterLoginResultModel> PostLogin_C(Model.ParameterModel.Clienter.LoginCPM model)
         {
             try
             {

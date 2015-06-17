@@ -5,7 +5,7 @@ using System.Web;
 
 namespace SuperManWebApi.Models.Business
 {
-    public class BusiDistribInfoModel
+    public class BusiDistribInfoModel1
     {
         /// <summary>
         /// 商户id

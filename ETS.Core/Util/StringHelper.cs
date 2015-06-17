@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Letao.Util
 {
@@ -234,7 +235,7 @@ namespace Letao.Util
             return CreateRandomStr(codeLen, arr);
         }
 
-       
+
 
         /// <summary>
         /// Creates the random STR.
@@ -295,6 +296,18 @@ namespace Letao.Util
                 lastDateStr = "<span class='t time'>" + dtTime.ToString("yy-MM-dd hh:mm") + "</span>";
             }
             return lastDateStr;// +dtTime + ":::" + tsDiff.Days;
+        }
+
+        /// <summary>
+        /// 验证手机号是否有效
+        /// 2015年6月17日 10:54:01
+        /// 窦海超
+        /// </summary>
+        /// <param name="phoneNo">手机号</param>
+        /// <returns></returns>
+        public static bool CheckPhone(string phoneNo)
+        {
+            return Regex.IsMatch(phoneNo, @"^1(\d{10})$");//只验证了第一位手机是1，且满足11位
         }
 
     }

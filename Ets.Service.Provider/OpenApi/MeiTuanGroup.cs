@@ -26,7 +26,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using OrderDetail = Ets.Model.ParameterModel.Order.OrderDetail;
-
+using Ets.Dao.Business;
 namespace Ets.Service.Provider.OpenApi
 {
 
@@ -305,7 +305,7 @@ namespace Ets.Service.Provider.OpenApi
             {
                 model.businessId = businessId;
             }
-            BusListResultModel business = new Ets.Dao.User.BusinessDao().GetBusiness(businessId);
+            BusListResultModel business = new BusinessDao().GetBusiness(businessId);
             if (business.Status != ConstValues.BUSINESS_AUDITPASS)//商户非审核通过不允许接单
             {
                 return null;

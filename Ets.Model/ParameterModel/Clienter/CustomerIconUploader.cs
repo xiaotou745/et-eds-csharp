@@ -63,5 +63,9 @@ namespace Ets.Model.ParameterModel.Clienter
         {
             get { return Path.Combine("/", Path.GetFileName(ConfigSettings.Instance.FileUploadPath), this.FolderName).ToForwardSlashPath(); }
         }
+        public string PicHost
+        {
+            get { return ConfigSettings.Instance.PicHost; }
+        }
     }
 }
