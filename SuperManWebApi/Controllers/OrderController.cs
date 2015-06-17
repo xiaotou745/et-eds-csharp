@@ -377,7 +377,11 @@ namespace SuperManWebApi.Controllers
             if (model.businessId <= 0)  //商户Id
             {
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.BussinessEmpty);
-            } 
+            }
+            if (string.IsNullOrWhiteSpace(model.orderNo))
+            {
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderNoEmpty);
+            }
             if (string.IsNullOrWhiteSpace(model.version))
             {
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.NoVersion);
@@ -392,10 +396,14 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<FinishOrderResultModel> Complete(OrderCompleteModel parModel)
         {
-            if (parModel.userId == 0)  //用户id非空验证
+            if (parModel.userId <= 0)  //用户id非空验证 骑士Id
                 return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.UserIdEmpty);
             if (string.IsNullOrEmpty(parModel.orderNo)) //订单号码非空验证
                 return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderEmpty);
+            if (parModel.orderId <= 0) //订单Id
+            {
+                return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderIdEmpty);
+            } 
             if (string.IsNullOrWhiteSpace(parModel.version))
             {
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.NoVersion);
@@ -467,9 +475,13 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<string>.Conclude(ConfirmTakeStatus.NoVersion);
             }
-            if (modelPM.OrderId < 0)//订单Id不合法
+            if (modelPM.OrderId <= 0)//订单Id不合法
             {
                 return ResultModel<string>.Conclude(ConfirmTakeStatus.ErrId);
+            }
+            if (modelPM.ClienterId <= 0)  //骑士Id不合法
+            {
+                return ResultModel<string>.Conclude(ConfirmTakeStatus.ClienterIdEmpty);
             }
             #endregion
 
