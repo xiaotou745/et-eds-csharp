@@ -27,11 +27,11 @@ namespace Ets.SendMessage
 
         public void Execute(Quartz.IJobExecutionContext context)
         {
-            //if (!threadSafe)
-            //{
-            //    return;
-            //}
-            //threadSafe = false;
+            if (!threadSafe)
+            {
+                return;
+            }
+            threadSafe = false;
             try
             {
                 LogHelper.LogWriter("执行啦:" + DateTime.Now);

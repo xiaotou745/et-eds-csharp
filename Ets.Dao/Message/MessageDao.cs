@@ -127,8 +127,8 @@ order by SendType";
 update  message
 set  SentStatus=2,OverTime=getdate()
 where  Id=@Id ";
-            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int64, 8, id);
-            dbParameters.AddWithValue("@Id", id);
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("Id", DbType.Int64, 8).Value = id;
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
         /// <summary>
