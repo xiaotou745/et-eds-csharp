@@ -2,7 +2,6 @@
 @using Ets.Service.Provider.Clienter
 @using Ets.Service.Provider.Common
 @using ETS.Util
-@using SuperManBusinessLogic.Group_Logic
 @using Webdiyer.WebControls.Mvc
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
@@ -29,8 +28,8 @@
             if (Model != null && Model.Records.Count > 0)
             {
                 var i = 0;
-                var puth = SuperManCore.CustomerIconUploader.Instance.RelativePath;
-                var PicHost = SuperManCore.CustomerIconUploader.Instance.PicHost;
+                var puth = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.RelativePath;
+                var PicHost = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PicHost;
                 foreach (var item in Model.Records)
                 {
                     i++;
@@ -267,6 +266,7 @@
         });
     }
     function funcPicView(puth, PicWithHandUrl, PicUrl) {
+  
         $('#showPicHandWithUrl').attr('src', puth + PicWithHandUrl);
         $('#showPicUrl').attr('src', puth + PicUrl);
 
