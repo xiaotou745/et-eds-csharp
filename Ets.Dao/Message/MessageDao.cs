@@ -104,7 +104,7 @@ INSERT INTO [Message]
         {
             string querysql = @"  
 select id, PushWay,[Content],PushTarget,PushCity,PushPhone 
-from dbo.[Message]
+from dbo.[Message](nolock)
 where SentStatus=@SentStatus
 order by SendType";
 
