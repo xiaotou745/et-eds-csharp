@@ -11,6 +11,7 @@ using Ets.Model.Common;
 using Ets.Model.DataModel.Message;
 using Ets.Model.ParameterModel.Message;
 using Ets.Service.IProvider.Message;
+using Ets.Model.DomainModel.Message;
 
 namespace Ets.Service.Provider.Message
 {
@@ -69,6 +70,27 @@ namespace Ets.Service.Provider.Message
         public PageInfo<MessageModel> WebList(WebListSearch model)
         {
             return messageDao.WebList(model);
+        }
+
+        /// <summary>
+        /// 添加消息任务
+        /// danny-20150617
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public DealResultInfo EditMessageTask(MessageModelDM model)
+        {
+            var dealReg = new DealResultInfo
+            {
+                DealFlag = false
+            };
+            //if(model.DealType==1)
+            //{
+                dealReg.DealFlag=messageDao.AddMessageTask(model);
+                dealReg.DealMsg = dealReg.DealFlag ? "消息任务添加成功！" : "消息任务添加失败！";
+            //}
+            return dealReg;
+
         }
     }
 }
