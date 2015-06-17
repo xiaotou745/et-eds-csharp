@@ -30,8 +30,7 @@ namespace Ets.Service.Provider.Message
         /// <returns></returns>
         public ResultModel<object> ReadB(ReadBPM model)
         {
-            string message = businessMessageDao.ReadB(model.MessageId);
-            return ResultModel<object>.Conclude(SystemEnum.Success, new {Content=message});
+            return ResultModel<object>.Conclude(SystemEnum.Success, businessMessageDao.ReadB(model.MessageId));
         }
 
         /// <summary>
@@ -41,8 +40,7 @@ namespace Ets.Service.Provider.Message
         /// <returns></returns>
         public ResultModel<object> ReadC(ReadCPM model)
         {
-            string message = clienterMessageDao.Update(model.MessageId);
-            return ResultModel<object>.Conclude(SystemEnum.Success, new { Content = message });
+            return ResultModel<object>.Conclude(SystemEnum.Success, clienterMessageDao.ReadC(model.MessageId));
         }
 
         /// <summary>

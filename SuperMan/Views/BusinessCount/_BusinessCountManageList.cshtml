@@ -1,4 +1,4 @@
-﻿@model SuperManCommonModel.Models.BusinessCountManageList
+﻿@model  Ets.Model.DomainModel.Business.BusinessCountManageList      
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
     <thead>
@@ -31,20 +31,20 @@
                     <td style="color:red;font-weight:600">@item.OrderAmountCount</td>
                     @{
                         var statusView = "";
-                        if (@item.Status == SuperManCommonModel.ConstValues.BUSINESS_AUDITPASS)
+                        if (@item.Status == Ets.Model.Common.ConstValues.BUSINESS_AUDITPASS)
                         {
                             statusView = "审核通过";
                         }
 
-                        else if (@item.Status == SuperManCommonModel.ConstValues.BUSINESS_AUDITPASSING)
+                        else if (@item.Status == Ets.Model.Common.ConstValues.BUSINESS_AUDITPASSING)
                         {
                             statusView = "审核中";
                         }
-                        else if (@item.Status == SuperManCommonModel.ConstValues.BUSINESS_NOADDRESS)
+                        else if (@item.Status == Ets.Model.Common.ConstValues.BUSINESS_NOADDRESS)
                         {
                             statusView = "未审核且未添加地址";
                         }
-                        else if (@item.Status == SuperManCommonModel.ConstValues.BUSINESS_NOAUDIT)
+                        else if (@item.Status == Ets.Model.Common.ConstValues.BUSINESS_NOAUDIT)
                         {
                             statusView = "未审核";
                         }

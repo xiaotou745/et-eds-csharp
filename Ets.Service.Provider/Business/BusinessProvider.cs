@@ -69,7 +69,7 @@ namespace Ets.Service.Provider.Business
                 {
                     model.ReceviceAddress = ConstValues.ReceviceAddress;
                 }
-         
+
                 model.ReceviceName = from.ReceviceName == null ? "" : from.ReceviceName.Trim();
                 model.RecevicePhoneNo = from.RecevicePhoneNo;
                 model.Remark = from.Remark;
@@ -501,7 +501,7 @@ namespace Ets.Service.Provider.Business
 
         public bool UpdateAuditStatus(int id, int enumStatus, string busiAddress)
         {
-            return dao.UpdateAuditStatus(id, enumStatus,busiAddress);
+            return dao.UpdateAuditStatus(id, enumStatus, busiAddress);
         }
         /// <summary>
         ///  根据城市信息查询当前城市下该集团的所有商户信息
@@ -674,7 +674,7 @@ namespace Ets.Service.Provider.Business
             //{
             //    business.Status = ConstValues.BUSINESS_NOAUDIT;
             //}
-          
+
 
             #region 判断是否可以一键发单
             /*
@@ -981,7 +981,7 @@ namespace Ets.Service.Provider.Business
 
         /// <summary>
         /// 请求语音验证码
-        /// 平扬
+        /// 窦海超
         /// 2015年4月20日 
         /// </summary>
         /// <param name="model"></param>
@@ -996,16 +996,24 @@ namespace Ets.Service.Provider.Business
             string msg = string.Empty;
             string key = "";
             string tempcode = randomCode.Aggregate("", (current, c) => current + (c.ToString() + ','));
-
+            bool userStatus = dao.CheckBusinessExistPhone(model.PhoneNumber);
             if (model.Stype == "0")//注册
             {
-                if (dao.CheckBusinessExistPhone(model.PhoneNumber))  //判断该手机号是否已经注册过  .CheckBusinessExistPhone(PhoneNumber)
+                //判断该手机号是否已经注册过
+                if (userStatus)
+                {
                     return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.AlreadyExists);
+                }
                 key = RedissCacheKey.PostRegisterInfoSoundCode_B + model.PhoneNumber;
                 msg = string.Format(ETS.Util.SupermanApiConfig.Instance.SmsContentCheckCodeVoice, tempcode, ConstValues.MessageClinenter);
             }
             else //修改密码
             {
+                //判断该手机号是否已经注册过
+                if (!userStatus)
+                {
+                    return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.NotExists);
+                }
                 key = RedissCacheKey.PostForgetPwdSoundCode_B + model.PhoneNumber;
                 msg = string.Format(ETS.Util.SupermanApiConfig.Instance.SmsContentCheckCodeFindPwdVoice, tempcode, ConstValues.MessageClinenter);
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using ETS.Const;
 using ETS.Dao;
 using ETS.Data.Core;
 using ETS.Data.PageData;
+using ETS.Extension;
 using Ets.Model.DataModel.Message;
 using Ets.Model.DomainModel.Message;
 using Ets.Model.ParameterModel.Common;
@@ -42,16 +44,21 @@ values(@BusinessId,@Content,@IsRead)
         /// <summary>
         /// 更新消息为已读
         /// </summary>
-        public string ReadB(long id)
+        public ReadBDM ReadB(long id)
         {
             const string updateSql = @"
 update  BusinessMessage
 set  IsRead=1
-OutPut INSERTED.[Content]
+OutPut INSERTED.[Content],INSERTED.PubDate
 where  Id=@Id";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Id", id);
-            return DbHelper.ExecuteScalar(SuperMan_Write, updateSql, dbParameters).ToString();
+            return DbHelper.QueryForObjectDelegate<ReadBDM>(SuperMan_Write, updateSql, dbParameters,
+              dataRow => new ReadBDM
+              {
+                  Content = dataRow["Content"] == null ? "" : dataRow["Content"].ToString(),
+                  PubDate = Convert.ToDateTime(dataRow["PubDate"]).ToString("yyyy-MM-dd hh:mm"),
+              });
         }
 
 

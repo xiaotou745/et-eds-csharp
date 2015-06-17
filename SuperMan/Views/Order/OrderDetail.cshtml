@@ -95,8 +95,8 @@
             <tbody>
                 @{
                     var orderChildList = @Model.OrderChildList;
-                    var curPuth = SuperManCore.CustomerIconUploader.Instance.RelativePath;
-                    var curPhost = SuperManCore.CustomerIconUploader.Instance.PicHost;
+                    var curPuth = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.RelativePath;
+                    var curPhost = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PicHost;
                 }
                 @foreach (var curOrderChild in orderChildList)
                 {
