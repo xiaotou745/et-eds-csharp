@@ -83,16 +83,57 @@ INSERT INTO [Message]
             parm.AddWithValue("@SentStatus", model.SentStatus);
             parm.AddWithValue("@PushType", model.PushType);
             parm.AddWithValue("@PushTarget", model.PushTarget);
-            parm.AddWithValue("@PushCity", model.PushCity);
+            parm.AddWithValue("@PushCity", model.PushCity??"");
             parm.AddWithValue("@PushPhone", model.PushPhone);
             parm.AddWithValue("@SendType", model.SendType);
-            parm.AddWithValue("@SendTime", model.SendTime);
+            parm.AddWithValue("@SendTime", model.SendTime.ToString("yyyy-MM-dd HH:mm:ss").StartsWith("0001") ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") : model.SendTime.ToString("yyyy-MM-dd HH:mm:ss"));
             parm.AddWithValue("@OverTime", model.OverTime);
             parm.AddWithValue("@CreateBy", model.OptUserName);
             parm.AddWithValue("@UpdateBy", model.OptUserName);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
-
+        /// <summary>
+        /// 修改消息任务
+        /// danny-20150617
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ModifyMessageTask(MessageModelDM model)
+        {
+            string sql = @"UPDATE Message 
+                            SET PushWay=@PushWay,
+                                MessageType=@MessageType,
+                                Content=@Content,
+                                PushType=@PushType,
+                                
+                                           ";
+            if (model.PushType ==1)
+            {
+                sql += " PushTarget=@PushTarget,PushCity=@PushCity, ";
+            }
+            else
+            {
+                sql += " PushPhone=@PushPhone, ";
+            }
+            if(model.SendType==2)
+            {
+                sql += " SendTime=@SendTime, ";
+            }
+            sql += @" SendType=@SendType
+                        WHERE  Id = @Id;";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@PushWay", model.PushWay);
+            parm.AddWithValue("@MessageType", model.MessageType);
+            parm.AddWithValue("@Content", model.Content);
+            parm.AddWithValue("@PushType", model.PushType);
+            parm.AddWithValue("@PushTarget", model.PushTarget);
+            parm.AddWithValue("@PushCity", model.PushCity);
+            parm.AddWithValue("@PushPhone", model.PushPhone);
+            parm.AddWithValue("@SendTime", model.SendTime.ToString("yyyy-MM-dd HH:mm:ss").StartsWith("0001") ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") : model.SendTime.ToString("yyyy-MM-dd HH:mm:ss"));
+            parm.AddWithValue("@SendType", model.SendType);
+            parm.AddWithValue("@Id", model.Id);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
         /// <summary>
         /// 获取消息列表
         /// </summary>

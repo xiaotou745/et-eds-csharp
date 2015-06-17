@@ -52,7 +52,7 @@ namespace SuperMan.Controllers
         {
             ListSetSelect();
             //默认全部
-            PageInfo<MessageModel> models =await  messageProvider.WebList(new WebListSearch(){ MessageType=-1,SendType=-1,SentStatus=-1,PushWay=-1});
+            PageInfo<MessageModel> models =await  messageProvider.WebList(new WebListSearch());
             return View(models);
         }
 
@@ -184,6 +184,7 @@ namespace SuperMan.Controllers
         public JsonResult EditMessageTask(MessageModelDM model)
         {
             model.OptUserName = UserContext.Current.Name;
+
             var reg = messageProvider.EditMessageTask(model);
             return Json(new Ets.Model.Common.ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
         }
