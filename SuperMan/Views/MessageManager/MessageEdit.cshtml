@@ -54,7 +54,7 @@
             </div>
             <div style="float:left;width:700px">
                 <textarea cols="70" rows="5" id="txtContent"></textarea><br />
-                内容长度：70/200
+                <label id="labContent">内容长度：0/200</label>
                 @if (dealType == 2)
                 {
                     <input type="hidden" id="hidContent" name="hidContent" value="@Model.Content" />
@@ -263,6 +263,11 @@
         $('#appointObjectShow').show();
         $("#PushType").val(2);
     });
+    
+    $('#txtContent').on('blur', function () {
+        var conLng = $('#txtContent').val().length;
+        $("#labContent").text("内容长度："+conLng+"/200");
+    });
     //批量导入手机号
     $("#btnImport").click(function () {
         if ($("#file1").val().length <= 0) {
@@ -280,9 +285,10 @@
             success: function (data, status) {
                 var mydata = $.parseJSON(data.body.innerText);
                 if (mydata.IsSuccess) {
-                    $("#txtPushPhone").text(mydata.Message);
+                    $("#txtPushPhone").val(mydata.Message);
                 } else {
-                    $("#txtPushPhone").text("");
+                    alert(2);
+                    $("#txtPushPhone").val("");
                     alert(mydata.Message);
                 }
             }
