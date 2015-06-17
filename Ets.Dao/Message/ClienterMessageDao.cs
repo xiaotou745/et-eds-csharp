@@ -45,7 +45,7 @@ values(@ClienterId,@Content,@IsRead)
         /// <summary>
         /// 更新一条记录
         /// </summary>
-        public ReadCDM ReadC(long id)
+        public async Task<ReadCDM> ReadC(long id)
         {
             const string updateSql = @"
 update  ClienterMessage
@@ -65,7 +65,7 @@ where  Id=@Id";
         /// <summary>
         /// 查询对象
         /// </summary>
-        public PageInfo<ListCDM> Query(ListCPM search)
+        public async Task<PageInfo<ListCDM>> Query(ListCPM search)
         {
             string where = " ClienterId=" + search.ClienterId;
             return new PageHelper().GetPages<ListCDM>(SuperMan_Read, search.PageIndex, where,

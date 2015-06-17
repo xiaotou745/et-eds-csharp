@@ -51,11 +51,14 @@ namespace SuperMan.Controllers
         {
             ListSetSelect();
             //默认全部
-            PageInfo<MessageModel> models = messageProvider.WebList(new WebListSearch(){ MessageType=-1,SendType=-1,SentStatus=-1,PushWay=-1});
+            PageInfo<MessageModel> models =await  messageProvider.WebList(new WebListSearch(){ MessageType=-1,SendType=-1,SentStatus=-1,PushWay=-1});
             return View(models);
         }
 
-        public async void ListSetSelect()
+        /// <summary>
+        /// 绑定下拉框
+        /// </summary>
+        public void ListSetSelect()
         {
             EnumItem item = new EnumItem()
             {
@@ -92,7 +95,7 @@ namespace SuperMan.Controllers
         {
             WebListSearch search = new WebListSearch();
             TryUpdateModel(search);
-            PageInfo<MessageModel> models = messageProvider.WebList(search);
+            PageInfo<MessageModel> models = await messageProvider.WebList(search);
             return View(models);
         }
 
@@ -101,9 +104,9 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult CanelMessage(long id)
+        public async Task<JsonResult> CanelMessage(long id)
         {
-            return new JsonResult(){ Data=messageProvider.CanelMessage(id, UserContext.Current.Name)};
+            return new JsonResult(){ Data=await messageProvider.CanelMessage(id, UserContext.Current.Name)};
         }
 
         /// <summary>

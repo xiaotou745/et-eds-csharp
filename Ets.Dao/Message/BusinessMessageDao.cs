@@ -44,7 +44,7 @@ values(@BusinessId,@Content,@IsRead)
         /// <summary>
         /// 更新消息为已读
         /// </summary>
-        public ReadBDM ReadB(long id)
+        public async Task<ReadBDM> ReadB(long id)
         {
             const string updateSql = @"
 update  BusinessMessage
@@ -66,7 +66,7 @@ where  Id=@Id";
         /// <summary>
         /// 查询对象
         /// </summary>
-        public PageInfo<ListBDM> Query(ListBPM search)
+        public async Task<PageInfo<ListBDM>> Query(ListBPM search)
         {
             string where = " BusinessId=" + search.BusinessId;
             return new PageHelper().GetPages<ListBDM>(SuperMan_Read, search.PageIndex, where,

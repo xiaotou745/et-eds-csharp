@@ -23,7 +23,7 @@ namespace Ets.Dao.Message
         /// <summary>
         /// web后台列表页功能 add by caoheyang 20150616
         /// </summary>
-        public PageInfo<MessageModel> WebList(WebListSearch model)
+        public async Task<PageInfo<MessageModel>> WebList(WebListSearch model)
         {
             string where = " 1=1 ";
             where = where + (model.SendType == -1 ? "" : string.Format(" and SendType={0}", model.SendType));
@@ -138,7 +138,7 @@ where  Id=@Id ";
         /// <param name="id"></param>
         /// <param name="updateby"></param>
         /// <returns></returns>
-        public int CanelMessage(long id, string updateby)
+        public async Task<int> CanelMessage(long id, string updateby)
         {
             const string updateSql = @"
 update  message
