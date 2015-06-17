@@ -116,6 +116,8 @@
     <Compile Include="DomainModel\Finance\FinanceRecordsDM.cs" />
     <Compile Include="DomainModel\Message\ListBDM.cs" />
     <Compile Include="DomainModel\Message\ListCDM.cs" />
+    <Compile Include="DomainModel\Message\ReadBDM.cs" />
+    <Compile Include="DomainModel\Message\ReadCDM.cs" />
     <Compile Include="DomainModel\Order\DistributionAnalyzeResult.cs" />
     <Compile Include="DomainModel\Order\GetJobCDM.cs" />
     <Compile Include="DomainModel\Order\GetJobCDMRedis.cs" />

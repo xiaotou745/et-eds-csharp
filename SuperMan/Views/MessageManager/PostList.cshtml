@@ -27,7 +27,7 @@
                 for (int i = 0; i < Model.Records.Count; i++)
                 {
                     <tr id="@Model.Records[i].Id">
-                        <td>@i</td>
+                        <td>@(i+1)</td>
                         <td>
                             @(((MessagePushWay)Enum.Parse(typeof(MessagePushWay), Model.Records[i].PushWay.ToString(), false)).GetDisplayText())
                         </td>

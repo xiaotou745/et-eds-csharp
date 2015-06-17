@@ -17,6 +17,7 @@ using Ets.Service.Provider.Clienter;
 using SuperManWebApi.Providers;
 using Ets.Service.IProvider.Business;
 using Ets.Service.Provider.Business;
+using Letao.Util;
 
 namespace SuperManWebApi.Controllers
 {
@@ -87,6 +88,10 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.NoVersion);
             }
+            if (!StringHelper.CheckPhone(model.recevicePhone))
+            {
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneErr);
+            }
             if (!isOneKeyPubOrder && string.IsNullOrEmpty(model.recevicePhone))//手机号
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneIsNULL);
@@ -100,9 +105,13 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.HadCancelQualification);
             }
-
+            int orderChileCount=model.listOrderChlid.Count;
+            if (orderChileCount >= 16 || orderChileCount<=0)
+            {
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
+            }
             decimal amount = 0;
-            for (int i = 0; i < model.listOrderChlid.Count; i++)//子订单价格
+            for (int i = 0; i < orderChileCount; i++)//子订单价格
             {
                 if (model.listOrderChlid[i].GoodPrice < 5m)
                 {

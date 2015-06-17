@@ -1,4 +1,6 @@
 ﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Message.MessageModel>
+@using ETS.Enums
+@using ETS.Extension
 @using Webdiyer.WebControls.Mvc;
 @{
     ViewBag.Title = "消息群发管理";
@@ -11,7 +13,7 @@
 <script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.iframe-transport.js"></script>
 <div class="zpManage zpSh">
     <h2 class="crumbs">
-        您所在位置 消息管理> 消息群发管理 
+        您所在位置 消息管理> 消息群发管理
     </h2>
     @using (Ajax.BeginForm("PostList", new RouteValueDictionary { { "pageindex", "" } },
         new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
@@ -21,8 +23,23 @@
             <table>
                 <tr>
                     <td>
-                        <span class="">模板名称: </span>
-                        <input id="SearchName" type="text" name="Name" />
+                        <span class="">推送方式: </span>
+                        @Html.DropDownList("PushWay", new SelectList(EnumExtenstion.GetEnumItems(typeof(MessagePushWay)), "Value", "Text"), "全部", new { @class = "selectw", style = "width:143px" })
+                        <span class="">消息类型: </span>
+                        @Html.DropDownList("MessageType", new SelectList(EnumExtenstion.GetEnumItems(typeof(MessageMessageType)), "Value", "Text"), "全部", new { @class = "selectw", style = "width:143px" })
+                        <span class="">消息状态: </span>
+                        @Html.DropDownList("SentStatus", new SelectList(EnumExtenstion.GetEnumItems(typeof(MessageSentStatus)), "Value", "Text"), "全部", new { @class = "selectw", style = "width:143px" })
+                        <span class="">发布类型: </span>
+                        @Html.DropDownList("SendType", new SelectList(EnumExtenstion.GetEnumItems(typeof(MessageSendType)), "Value", "Text"), "全部", new { @class = "selectw", style = "width:143px" })
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>
+                        <span class="">推送时间: </span>
+                        <input id="txtPubDateStart" readonly="readonly" type="text" name="PubDateStart" />
+                        <span class="">到: </span>
+                        <input id="txtPubDateEnd" readonly="readonly" type="text" name="PubDateEnd" />
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                     </td>
                 </tr>
