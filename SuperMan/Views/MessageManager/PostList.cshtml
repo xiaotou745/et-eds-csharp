@@ -39,7 +39,7 @@
             <td>
                 @(((MessageSendType)Enum.Parse(typeof(MessageSendType), Model.Records[i].SendType.ToString(), false)).GetDisplayText())
             </td>
-            <td>@Model.Records[i].Content</td>
+            <td><a href="javascript:void;" onclick="detail(@Model.Records[i].Id)">@Model.Records[i].Content</a></td>
             <td>@Model.Records[i].CreateTime</td>
             <td>@Model.Records[i].SendTime</td>
             <td>
@@ -63,7 +63,6 @@
 
     ViewBag.ActionName = "PostList";
     @Html.Partial("~/views/shared/PagerControl.cshtml", Model)
-    ;
 }
 else
 {

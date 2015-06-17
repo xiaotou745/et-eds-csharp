@@ -201,5 +201,19 @@ namespace SuperMan.Controllers
             ViewBag.dealType = 2;//修改
             return View("MessageEdit", messageDetailModel);
         }
+
+
+
+        /// <summary>
+        /// 添加骑士绑定查询
+        /// danny-20150609
+        /// </summary>
+        /// <param name="messageId">商户Id</param>
+        /// <returns></returns>
+        public ActionResult Detail(int messageId)
+        {
+            var messageDetailModel = messageProvider.GetMessageById(messageId);
+            return View(messageDetailModel);
+        }
     }
 }

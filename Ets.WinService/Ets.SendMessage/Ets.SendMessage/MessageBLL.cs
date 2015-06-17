@@ -12,6 +12,7 @@ using System.Data;
 using ETS.Sms;
 using Ets.Service.Provider.MyPush;
 using Ets.Model.Common;
+using Letao.Util;
 namespace Ets.SendMessage
 {
     public class MessageBLL : Quartz.IJob
@@ -120,7 +121,11 @@ namespace Ets.SendMessage
             DataTable dt= businessDao.GetPhoneNoList(model.PushCity);
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-                string phoneNo = dt.Rows[i]["PhoneNo"].ToString();
+                if(dt.Rows[i]["PhoneNo"]==null || dt.Rows[i]["PhoneNo"].ToString()=="") continue;
+                
+                string phoneNo="";
+                if(StringHelper.CheckPhone(dt.Rows[i]["PhoneNo"].ToString()))
+                phoneNo = dt.Rows[i]["PhoneNo"].ToString();
                 //string phoneNo = "13520860798"; 
                 Task.Factory.StartNew(() =>
                 {
@@ -136,7 +141,11 @@ namespace Ets.SendMessage
             DataTable dt = clienterDao.GetPhoneNoList(model.PushCity);
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-                string phoneNo = dt.Rows[i]["PhoneNo"].ToString();        
+                if (dt.Rows[i]["PhoneNo"] == null || dt.Rows[i]["PhoneNo"].ToString() == "") continue;
+
+                string phoneNo = "";
+                if (StringHelper.CheckPhone(dt.Rows[i]["PhoneNo"].ToString()))
+                    phoneNo = dt.Rows[i]["PhoneNo"].ToString();    
                 Task.Factory.StartNew(() =>
                 {
                     SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
@@ -152,9 +161,15 @@ namespace Ets.SendMessage
                 string []sp =model.PushPhone.Split(',');
                 for(int i=0;i<sp.Length;i++)
                 {
+                    if (sp[i] == null || sp[i].ToString() == "") continue;
+
+                    string phoneNo = "";
+                    if (StringHelper.CheckPhone(sp[i].ToString()))
+                        phoneNo = sp[i].ToString();   
+
                     Task.Factory.StartNew(() =>
                     {
-                        SendSmsHelper.SendSendSmsSaveLog(sp[i].ToString(), model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
+                        SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
                         //写日志
                     });
                 }

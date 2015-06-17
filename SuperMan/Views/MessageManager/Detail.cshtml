@@ -1,0 +1,74 @@
+﻿@model Ets.Model.DataModel.Message.MessageModel
+@using System.Collections
+@using ETS.Enums
+@using ETS.Extension
+@using Ets.Model.DomainModel.Area
+@using Ets.Service.IProvider.Common
+@using Ets.Service.Provider.Common
+@{
+    Layout = null;
+
+}
+<div class="add-openbox add-form" id="AddDivShow" style="width:auto;">
+    <div style="width:800px;height:auto;border: 1px #dcdcdc solid">
+        <h2 class="crumbs">
+             查看消息
+        </h2>
+        <div style="width:798px;height:auto;padding-left:10px;border:1px #dcdcdc solid;border-left:hidden;border-right:hidden;border-top:hidden">
+            <div style="width:780px;height:25px;">
+                <div style="float: left">
+                    <label>消息类型：</label>
+                    @(((MessagePushWay)Enum.Parse(typeof(MessagePushWay), Model.PushWay.ToString(), false)).GetDisplayText())
+                </div>
+            </div>
+            <div style="width:780px;height:25px;">
+                <div style="float: left">
+                    <label>群发方式：</label>
+                    @(((MessagePushType)Enum.Parse(typeof(MessagePushType), Model.PushType.ToString(), false)).GetDisplayText())
+                </div>
+            </div>
+            @if (Model.PushType == 1)
+            {
+                <div style="width:780px;height:25px;">
+                    <div style="float: left">
+                        <label>推送对象：</label>
+                        @(((MessagePushTarget)Enum.Parse(typeof(MessagePushTarget), Model.PushTarget.ToString(), false)).GetDisplayText())
+                    </div>
+                </div>
+
+
+                IAreaProvider area = new AreaProvider();
+                string result = area.GetOpenCity("").Result.AreaModels.Where(t => Model.PushCity.IndexOf(t.Code.ToString()) > 0).ToList()
+                    .Aggregate("", (current, action) => current + (action.Name.ToString() + ","));
+
+
+                    <div style="width:780px;height: auto;overflow: hidden;max-height: 150px;">
+                        <div style="float: left">
+                            <label>推送城市：</label>
+                            @result.Substring(0, result.Length - 1)
+                        </div>
+                    </div>
+
+            }
+
+
+            <div style="width:780px;height:25px;">
+                <div style="float: left">
+                    <label>发布类型：</label>
+                    @(((MessageSendType)Enum.Parse(typeof(MessageSendType), Model.SendType.ToString(), false)).GetDisplayText())
+                </div>
+            </div>
+
+            <div style="width:780px;height:25px;">
+                <div style="float: left">
+                    <label>内容：</label>
+                    @Model.Content
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p class="btnbox">
+        <input value="关闭" type="button" id="btnCanel" class="qxBtn" />
+    </p>
+</div>

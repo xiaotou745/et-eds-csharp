@@ -659,6 +659,7 @@
     <Content Include="Views\MessageManager\MessageEdit.cshtml" />
     <Content Include="Views\MessageManager\List.cshtml" />
     <Content Include="Views\MessageManager\PostList.cshtml" />
+    <Content Include="Views\MessageManager\Detail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
