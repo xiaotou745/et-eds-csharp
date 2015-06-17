@@ -3,6 +3,7 @@ $(document).ready(function () {
     $('#txtPubDateStart').datepicker();
     $('#txtPubDateEnd').datepicker();
     window.location.hash = '';
+
 });
 
 

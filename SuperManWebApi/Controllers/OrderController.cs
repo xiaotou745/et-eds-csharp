@@ -161,7 +161,6 @@ namespace SuperManWebApi.Controllers
                     }
                 }
             }
-
             return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.VerificationSuccess);
         }
 

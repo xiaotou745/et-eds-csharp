@@ -1252,7 +1252,7 @@ select SCOPE_IDENTITY() as id;
         /// <returns></returns>
         public BussinessStatusModel GetUserStatus(int userid)
         {
-            string sql = @"select  Id as userid,[status] as status,OneKeyPubOrder,IsAllowOverdraft from dbo.business with(nolock) WHERE id=@id ";
+            string sql = @"select  Id as userid,[status] as status,OneKeyPubOrder,IsAllowOverdraft,BalancePrice from dbo.business with(nolock) WHERE id=@id ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@id", userid);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
@@ -1859,7 +1859,7 @@ ORDER BY btr.Id;";
                                 MealsSettleMode=@MealsSettleMode,
                                 CommissionType=@CommissionType,
                                 OriginalBusiId=@OriginalBusiId,
-                                OneKeyPubOrder=@OneKeyPubOrder,
+                                OneKeyPubOrder=@OneKeyPubOrder,IsAllowOverdraft=@IsAllowOverdraft,
                                            ";
             if (model.GroupId > 0)
             {
@@ -1912,6 +1912,7 @@ ORDER BY btr.Id;";
             parm.AddWithValue("@OptName", model.OptUserName);
             parm.AddWithValue("@Remark", remark);
             parm.AddWithValue("@OneKeyPubOrder", model.OneKeyPubOrder);
+            parm.Add("@IsAllowOverdraft", DbType.Int16).Value = model.IsAllowOverdraft;
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>

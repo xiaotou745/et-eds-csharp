@@ -52,7 +52,7 @@ namespace SuperMan.Controllers
         {
             ListSetSelect();
             //默认全部
-            PageInfo<MessageModel> models =await  messageProvider.WebList(new WebListSearch(){ MessageType=-1,SendType=-1,SentStatus=-1,PushWay=-1});
+            PageInfo<MessageModel> models =await  messageProvider.WebList(new WebListSearch());
             return View(models);
         }
 
@@ -167,7 +167,7 @@ namespace SuperMan.Controllers
             catch (Exception ex)
             {
                 fs.Close();
-                strMsg = ex.Message;
+                strMsg = "文件格式有误，请按模板导入数据！";
             }
             return Json(new Ets.Model.Common.ResultModel(reg, reg ? strPhoneNo : strMsg), JsonRequestBehavior.DenyGet);
         }
@@ -184,6 +184,7 @@ namespace SuperMan.Controllers
         public JsonResult EditMessageTask(MessageModelDM model)
         {
             model.OptUserName = UserContext.Current.Name;
+
             var reg = messageProvider.EditMessageTask(model);
             return Json(new Ets.Model.Common.ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
         }
@@ -199,6 +200,20 @@ namespace SuperMan.Controllers
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(0);
             ViewBag.dealType = 2;//修改
             return View("MessageEdit", messageDetailModel);
+        }
+
+
+
+        /// <summary>
+        /// 添加骑士绑定查询
+        /// danny-20150609
+        /// </summary>
+        /// <param name="messageId">商户Id</param>
+        /// <returns></returns>
+        public ActionResult Detail(int messageId)
+        {
+            var messageDetailModel = messageProvider.GetMessageById(messageId);
+            return View(messageDetailModel);
         }
     }
 }
