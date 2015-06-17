@@ -225,7 +225,7 @@ namespace Ets.SendMessage
                         ContentKey="Notice",
                         RegistrationId = businessId,
                         TagId = 1,
-                        Title = "消息提醒",
+                        Title = "新消息",
                         PushType=1
                     };
                    Push.PushMessage(jpushModel);
@@ -258,8 +258,8 @@ namespace Ets.SendMessage
                         Content = id.ToString(),
                         ContentKey = "Notice",
                         RegistrationId = clienterId,
-                        TagId = 1,
-                        Title = "消息提醒",
+                        TagId = 0,
+                        Title = "新消息",
                         PushType = 1
                     };
                     Push.PushMessage(jpushModel);
