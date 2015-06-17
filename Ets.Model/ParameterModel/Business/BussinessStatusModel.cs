@@ -23,7 +23,10 @@ namespace Ets.Model.ParameterModel.Business
         /// <summary>
         /// 一健发单
         /// </summary>
-        public int OneKeyPubOrder { get; set; } 
-        
+        public int OneKeyPubOrder { get; set; }
+        /// <summary>
+        /// 是否允许透支，1允许，0不允许
+        /// </summary>
+        public int IsAllowOverdraft { get; set; }
     }
 }
