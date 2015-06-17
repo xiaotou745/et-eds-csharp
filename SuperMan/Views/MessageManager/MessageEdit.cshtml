@@ -19,7 +19,7 @@
             <div style="float: left">
                 <label>推送方式：</label>
                 <input type="hidden" id="hidDealType" name="hidDealType" value="@dealType">
-                <input type="hidden" id="msgId" name="msgId" value="0" />
+                <input type="hidden" id="msgId" name="msgId" value="@(Model!=null?Model.Id:0)" />
             </div>
             <div style="float: left;width:700px;">
                 <input name="chkPushWay" id="chkMessage" type="checkbox" value="1">短  信
@@ -54,7 +54,7 @@
             </div>
             <div style="float:left;width:700px">
                 <textarea cols="70" rows="5" id="txtContent"></textarea><br />
-                内容长度：70/200
+                <label id="labContent">内容长度：0/200</label>
                 @if (dealType == 2)
                 {
                     <input type="hidden" id="hidContent" name="hidContent" value="@Model.Content" />
@@ -199,7 +199,6 @@
             var hidSendType = $("#hidSendType").val();
             var hidSendTime = $("#hidSendTime").val();
             var hidPushType = $("#hidPushType").val();
-            $("#msgId").val(@Model.Id);
             if (hidPushWay == 3 || hidPushWay == 1) {
                 $(":checkbox[id='chkMessage']").prop("checked", true);
             }
@@ -264,6 +263,11 @@
         $('#appointObjectShow').show();
         $("#PushType").val(2);
     });
+    
+    $('#txtContent').on('blur', function () {
+        var conLng = $('#txtContent').val().length;
+        $("#labContent").text("内容长度："+conLng+"/200");
+    });
     //批量导入手机号
     $("#btnImport").click(function () {
         if ($("#file1").val().length <= 0) {
@@ -281,9 +285,10 @@
             success: function (data, status) {
                 var mydata = $.parseJSON(data.body.innerText);
                 if (mydata.IsSuccess) {
-                    $("#txtPushPhone").text(mydata.Message);
+                    $("#txtPushPhone").val(mydata.Message);
                 } else {
-                    $("#txtPushPhone").text("");
+                    alert(2);
+                    $("#txtPushPhone").val("");
                     alert(mydata.Message);
                 }
             }
@@ -401,7 +406,7 @@
                 success: function (result) {
                     if (result.IsSuccess) {
                         alert(result.Message);
-                        //window.location.href = "/AuthorityManager/AuthorityManager";
+                        window.location.href = "/MessageManager/List";
                     } else {
                         alert(result.Message);
                     }
