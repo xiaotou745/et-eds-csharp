@@ -30,8 +30,9 @@ namespace Ets.Dao.Message
             where = where + (model.MessageType == -1 ? "" : string.Format(" and MessageType={0}", model.MessageType));
             where = where + (model.PushWay == -1 ? "" : string.Format(" and PushWay={0}", model.PushWay));
             where = where + (model.SentStatus == -1 ? "" : string.Format(" and SentStatus={0}", model.SentStatus));
-
-            return new PageHelper().GetPages<MessageModel>(SuperMan_Read, model.PageIndex, where, "Id desc", "Id,PushWay,MessageType,SendType,Content,CreateBy,SendTime,SentStatus,CreateTime", " message (nolock)", SystemConst.PageSize, true);
+            where = where + (model.PubDateStart == null ? "" : string.Format(" and SendTime>='{0} 00:00:00'", model.PubDateStart.Value.ToString("yyyy-MM-dd")));
+            where = where + (model.PubDateEnd == null ? "" : string.Format(" and SendTime<='{0} 23:59:59'", model.PubDateEnd.Value.ToString("yyyy-MM-dd")));
+            return new PageHelper().GetPages<MessageModel>(SuperMan_Read, model.PageIndex, where, "Id desc", "Id,PushWay,MessageType,SendType,substring(Content,1,15) as Content,UpdateBy,SendTime,SentStatus,CreateTime", " message (nolock)", SystemConst.PageSize, true);
         }
         /// <summary>
         /// 添加消息任务
@@ -127,8 +128,26 @@ set  SentStatus=2,OverTime=getdate()
 where  Id=@Id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int64, 8, id);
             dbParameters.AddWithValue("@Id", id);
-            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters); 
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
+
+        /// <summary>
+        /// 取消发布 add by caoheyang  20150617
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="updateby"></param>
+        /// <returns></returns>
+        public int CanelMessage(long id, string updateby)
+        {
+            const string updateSql = @"
+update  message
+set  SentStatus=3,OverTime=getdate(),UpdateTime=getdate(),UpdateBy=@UpdateBy
+where  Id=@Id ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int64, 8, id);
+            dbParameters.AddWithValue("@Id", id);
+            dbParameters.AddWithValue("UpdateBy", updateby);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }
     }
 }

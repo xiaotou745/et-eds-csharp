@@ -972,10 +972,10 @@ where b.PhoneNo=@PhoneNo and isnull(g.IsModifyBind,1)=1";
             string insertSql = @"
 insert into dbo.business(Name,City,district,PhoneNo,PhoneNo2,Password,CheckPicUrl,
             IDCard,Address,Longitude,Latitude,Status,districtId,CityId, 
-            ProvinceCode,CityCode,AreaCode,Province,CommissionTypeId,DistribSubsidy, GroupId,OriginalBusiId )
+            ProvinceCode,CityCode,AreaCode,Province,CommissionTypeId,DistribSubsidy, GroupId,OriginalBusiId,IsAllowOverdraft )
             values(@Name,@City,@district,@PhoneNo,@PhoneNo2,@Password,@CheckPicUrl,@IDCard , 
             @Address,@Longitude,@Latitude,@Status,@districtId,@CityId,
-            @ProvinceCode,@CityCode,@AreaCode,@Province,@CommissionTypeId ,@DistribSubsidy,@GroupId,@OriginalBusiId );
+            @ProvinceCode,@CityCode,@AreaCode,@Province,@CommissionTypeId ,@DistribSubsidy,@GroupId,@OriginalBusiId,@IsAllowOverdraft );
 select SCOPE_IDENTITY() as id;    
 ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -1001,6 +1001,8 @@ select SCOPE_IDENTITY() as id;
             dbParameters.AddWithValue("@DistribSubsidy", model.DistribSubsidy);
             dbParameters.AddWithValue("@GroupId", model.GroupId);
             dbParameters.AddWithValue("@OriginalBusiId", model.OriginalBusiId);
+            dbParameters.Add("@IsAllowOverdraft", DbType.Int16).Value = model.IsAllowOverdraft;
+
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
         }
         /// <summary>

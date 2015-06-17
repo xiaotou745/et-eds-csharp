@@ -72,7 +72,7 @@ where  Id=@Id";
         {
             string where = " BusinessId=" + search.BusinessId;
             return new PageHelper().GetPages<ListBDM>(SuperMan_Read, search.PageIndex, where,
-                "IsRead asc ,id desc ", " Id,Content,IsRead", " BusinessMessage (nolock)", SystemConst.PageSize, true);
+                "IsRead asc ,id desc ", " Id,SUBSTRING(Content,1,15) as Content,IsRead,CONVERT(varchar(100),PubDate,20) as PubDate", " BusinessMessage (nolock)", SystemConst.PageSize, true);
         }
 
         /// <summary>
