@@ -28,16 +28,16 @@ namespace Ets.Dao.Message
         /// <summary>
         /// 增加一条记录
         /// </summary>
-        public void Insert(ClienterMessage clienterMessage)
+        public void Insert(BusinessMessage businessMessage)
         {
             const string insertSql = @"
 insert into BusinessMessage(BusinessId,Content,IsRead)
 values(@BusinessId,@Content,@IsRead)
 ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("BusinessId", clienterMessage.ClienterId);
-            dbParameters.AddWithValue("Content", clienterMessage.Content);
-            dbParameters.AddWithValue("IsRead", clienterMessage.IsRead);
+            dbParameters.AddWithValue("BusinessId", businessMessage.BusinessId);
+            dbParameters.AddWithValue("Content", businessMessage.Content);
+            dbParameters.AddWithValue("IsRead", businessMessage.IsRead);
             DbHelper.ExecuteNonQuery(SuperMan_Write, insertSql, dbParameters);
         }
 
