@@ -146,7 +146,7 @@ INSERT INTO [Message]
             string querysql = @"  
 select id, PushWay,[Content],PushTarget,PushCity,PushPhone 
 from dbo.[Message](nolock)
-where SentStatus=@SentStatus
+where SentStatus=0 or SentStatus=1
 order by SendType";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
