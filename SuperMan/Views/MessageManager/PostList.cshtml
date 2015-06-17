@@ -26,29 +26,35 @@
         <tbody>
             @{
 
-                for (int i = 0; i < Model.Records.Count; i++)
+    for (int i = 0; i < Model.Records.Count; i++)
+    {
+        <tr id="@Model.Records[i].Id">
+            <td>@(i + 1)</td>
+            <td>
+                @(((MessagePushWay)Enum.Parse(typeof(MessagePushWay), Model.Records[i].PushWay.ToString(), false)).GetDisplayText())
+            </td>
+            <td>
+                @(((MessageMessageType)Enum.Parse(typeof(MessageMessageType), Model.Records[i].MessageType.ToString(), false)).GetDisplayText())
+            </td>
+            <td>
+                @(((MessageSendType)Enum.Parse(typeof(MessageSendType), Model.Records[i].SendType.ToString(), false)).GetDisplayText())
+            </td>
+            <td>@Model.Records[i].Content</td>
+            <td>@Model.Records[i].CreateTime</td>
+            <td>@Model.Records[i].SendTime</td>
+            <td>
+                @(((MessageSentStatus)Enum.Parse(typeof(MessageSentStatus), Model.Records[i].SentStatus.ToString(), false)).GetDisplayText())
+            </td>
+            <td>@Model.Records[i].UpdateBy</td>
+            <td>
+                @if (Model.Records[i].SentStatus == 0)
                 {
-                    <tr id="@Model.Records[i].Id">
-                        <td>@(i + 1)</td>
-                        <td>
-                            @(((MessagePushWay) Enum.Parse(typeof (MessagePushWay), Model.Records[i].PushWay.ToString(), false)).GetDisplayText())
-                        </td>
-                        <td>
-                            @(((MessageMessageType) Enum.Parse(typeof (MessageMessageType), Model.Records[i].MessageType.ToString(), false)).GetDisplayText())
-                        </td>
-                        <td>
-                            @(((MessageSendType) Enum.Parse(typeof (MessageSendType), Model.Records[i].SendType.ToString(), false)).GetDisplayText())
-                        </td>
-                        <td>@Model.Records[i].Content</td>
-                        <td>@Model.Records[i].CreateTime</td>
-                        <td>@Model.Records[i].SendTime</td>
-                        <td>
-                            @(((MessageSentStatus) Enum.Parse(typeof (MessageSentStatus), Model.Records[i].SentStatus.ToString(), false)).GetDisplayText())
-                        </td>
-                        <td>@Model.Records[i].UpdateBy</td>
-                        <td></td>
-                    </tr>
+                    <a href="/MessageManager/MessageDetail?messageId=@Model.Records[i].Id">编辑</a>
+                    <a href="javascript:void;" onclick="Canel(@Model.Records[i].Id)">取消发布</a>
                 }
+            </td>
+        </tr>
+    }
 
             }
         </tbody>

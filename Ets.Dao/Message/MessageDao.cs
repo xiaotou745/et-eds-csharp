@@ -12,6 +12,7 @@ using Ets.Model.ParameterModel.Message;
 using Ets.Model.DomainModel.Message;
 using ETS.Data.Core;
 using System.Data;
+using ETS.Extension;
 
 namespace Ets.Dao.Message
 {
@@ -23,15 +24,16 @@ namespace Ets.Dao.Message
         /// <summary>
         /// web后台列表页功能 add by caoheyang 20150616
         /// </summary>
-        public PageInfo<MessageModel> WebList(WebListSearch model)
+        public async Task<PageInfo<MessageModel>> WebList(WebListSearch model)
         {
             string where = " 1=1 ";
             where = where + (model.SendType == -1 ? "" : string.Format(" and SendType={0}", model.SendType));
             where = where + (model.MessageType == -1 ? "" : string.Format(" and MessageType={0}", model.MessageType));
             where = where + (model.PushWay == -1 ? "" : string.Format(" and PushWay={0}", model.PushWay));
             where = where + (model.SentStatus == -1 ? "" : string.Format(" and SentStatus={0}", model.SentStatus));
-
-            return new PageHelper().GetPages<MessageModel>(SuperMan_Read, model.PageIndex, where, "Id desc", "Id,PushWay,MessageType,SendType,Content,CreateBy,SendTime,SentStatus,CreateTime", " message (nolock)", SystemConst.PageSize, true);
+            where = where + (model.PubDateStart == null ? "" : string.Format(" and SendTime>='{0} 00:00:00'", model.PubDateStart.Value.ToString("yyyy-MM-dd")));
+            where = where + (model.PubDateEnd == null ? "" : string.Format(" and SendTime<='{0} 23:59:59'", model.PubDateEnd.Value.ToString("yyyy-MM-dd")));
+            return new PageHelper().GetPages<MessageModel>(SuperMan_Read, model.PageIndex, where, "Id desc", "Id,PushWay,MessageType,SendType,substring(Content,1,15) as Content,UpdateBy,SendTime,SentStatus,CreateTime", " message (nolock)", SystemConst.PageSize, true);
         }
         /// <summary>
         /// 添加消息任务
@@ -101,7 +103,7 @@ INSERT INTO [Message]
         public IList<MessageModel> GetMessageList(int sentStatus)
         {
             string querysql = @"  
-select id, [Content],PushTarget,PushCity,PushPhone 
+select id, PushWay,[Content],PushTarget,PushCity,PushPhone 
 from dbo.[Message]
 where SentStatus=@SentStatus
 order by SendType";
@@ -125,10 +127,61 @@ order by SendType";
 update  message
 set  SentStatus=2,OverTime=getdate()
 where  Id=@Id ";
-            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int64, 8, id);
-            dbParameters.AddWithValue("@Id", id);
-            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters); 
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("Id", DbType.Int64, 8).Value = id;
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }
+        /// <summary>
+        /// 根据消息Id获取消息信息
+        /// danny-20150617
+        /// </summary>
+        /// <param name="messageId">消息Id</param>
+        /// <returns></returns>
+        public MessageModel GetMessageById(int messageId)
+        {
+            string selSql = @" 
+SELECT [Id]
+      ,[PushWay]
+      ,[MessageType]
+      ,[Content]
+      ,[SentStatus]
+      ,[PushType]
+      ,[PushTarget]
+      ,[PushCity]
+      ,[PushPhone]
+      ,[SendType]
+      ,[SendTime]
+      ,[OverTime]
+      ,[CreateBy]
+      ,[CreateTime]
+      ,[UpdateBy]
+      ,[UpdateTime]
+  FROM [Message] msg WITH(NOLOCK)
+  WHERE Id=@MessageId;  ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@MessageId", messageId);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
+            if (dt != null && dt.Rows.Count > 0)
+                return DataTableHelper.ConvertDataTableList<MessageModel>(dt)[0];
+            return null;
         }
 
+        /// <summary>
+        /// 取消发布 add by caoheyang  20150617
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="updateby"></param>
+        /// <returns></returns>
+        public async Task<int> CanelMessage(long id, string updateby)
+        {
+            const string updateSql = @"
+update  message
+set  SentStatus=3,OverTime=getdate(),UpdateTime=getdate(),UpdateBy=@UpdateBy
+where  Id=@Id and SentStatus=0";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("UpdateBy", updateby);
+            dbParameters.AddWithValue("@Id", id);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }
     }
 }

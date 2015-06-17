@@ -107,6 +107,7 @@ namespace Ets.Service.Provider.MyPush
                 {
                     //0：标签,因为一个应用只能有一个标签，现有支付已经使用，其它应用请使用别名
                     audience = Audience.s_alias(model.RegistrationId);
+                    model.ContentKey = "Content";
                 }
                 if (model.PushType == 1)
                 {
@@ -120,7 +121,7 @@ namespace Ets.Service.Provider.MyPush
                 notification.AndroidNotification = new AndroidNotification().setTitle(model.Title);
                 if (!string.IsNullOrEmpty(model.Content))
                 {
-                    notification.AndroidNotification = new AndroidNotification().AddExtra("Content", model.Content);
+                    notification.AndroidNotification = new AndroidNotification().AddExtra(model.ContentKey, model.Content);
                 }
                 notification.IosNotification = new IosNotification().setAlert(model.Alert).setBadge(1).setSound("YourSound");
                 pushPayload.notification = notification.Check();

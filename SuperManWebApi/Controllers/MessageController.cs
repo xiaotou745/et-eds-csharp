@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
 using Ets.Model.Common;
 using Ets.Model.ParameterModel.Message;
@@ -26,9 +27,9 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model">参数实体</param>
         /// <returns></returns>
-        public ResultModel<object> ReadB([FromBody]ReadBPM model)
+        public async Task<ResultModel<object>> ReadB([FromBody]ReadBPM model)
         {
-            return messageProvider.ReadB(model);
+            return await messageProvider.ReadB(model);
         }
 
         /// <summary>
@@ -36,9 +37,9 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model">参数实体</param>
         /// <returns></returns>
-        public ResultModel<object> ReadC([FromBody]ReadCPM model)
+        public async Task<ResultModel<object>> ReadC([FromBody]ReadCPM model)
         {
-            return messageProvider.ReadC(model);
+            return await messageProvider.ReadC(model);
         }
 
         /// <summary>
@@ -46,9 +47,9 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model">参数实体</param>
         /// <returns></returns>
-        public ResultModel<object> ListB([FromBody]ListBPM model)
+        public async Task<ResultModel<object>> ListB([FromBody]ListBPM model)
         {
-            return messageProvider.ListB(model);
+            return await messageProvider.ListB(model);
         }
 
         /// <summary>
@@ -56,9 +57,9 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model">参数实体</param>
         /// <returns></returns>
-        public ResultModel<object> ListC([FromBody]ListCPM model)
+        public async Task<ResultModel<object>> ListC([FromBody]ListCPM model)
         {
-            return messageProvider.ListC(model);
+            return await  messageProvider.ListC(model);
         }
     }
 }

@@ -43,11 +43,11 @@ namespace Ets.Model.ParameterModel.Message
         /// <summary>
         /// 发布时间
         /// </summary>
-        public DateTime PubDateStart { get; set; }
+        public DateTime? PubDateStart { get; set; }
 
         /// <summary>
         /// 发布时间
         /// </summary>
-        public DateTime PubDateEnd { get; set; }
+        public DateTime? PubDateEnd { get; set; }
     }
 }

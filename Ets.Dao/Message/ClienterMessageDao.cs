@@ -29,23 +29,25 @@ namespace Ets.Dao.Message
         /// <summary>
         /// 增加一条记录
         /// </summary>
-        public void Insert(ClienterMessage clienterMessage)
+        public long Insert(ClienterMessage clienterMessage)
         {
             const string insertSql = @"
 insert into ClienterMessage(ClienterId,Content,IsRead)
 values(@ClienterId,@Content,@IsRead)
+select @@IDENTITY
 ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("ClienterId", clienterMessage.ClienterId);
             dbParameters.AddWithValue("Content", clienterMessage.Content);
             dbParameters.AddWithValue("IsRead", clienterMessage.IsRead);
-            DbHelper.ExecuteNonQuery(SuperMan_Write, insertSql, dbParameters);
+            object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters); //提现单号
+            return ParseHelper.ToLong(result);
         }
 
         /// <summary>
         /// 更新一条记录
         /// </summary>
-        public ReadCDM ReadC(long id)
+        public async Task<ReadCDM> ReadC(long id)
         {
             const string updateSql = @"
 update  ClienterMessage
@@ -65,7 +67,7 @@ where  Id=@Id";
         /// <summary>
         /// 查询对象
         /// </summary>
-        public PageInfo<ListCDM> Query(ListCPM search)
+        public async Task<PageInfo<ListCDM>> Query(ListCPM search)
         {
             string where = " ClienterId=" + search.ClienterId;
             return new PageHelper().GetPages<ListCDM>(SuperMan_Read, search.PageIndex, where,

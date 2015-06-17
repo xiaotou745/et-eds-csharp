@@ -586,6 +586,8 @@ namespace Ets.Service.Provider.Clienter
                     ///更新骑士和商家金额
                     UpdateMoney(myOrderInfo, userId, orderNo);
 
+                    businessId = myOrderInfo.businessId;
+
                     #region 临时
                     //if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)  //当用户上传的小票数量 和 需要上传的小票数量一致的时候，更新用户金额
                     //{
@@ -594,7 +596,7 @@ namespace Ets.Service.Provider.Clienter
                     //        UpdateClienterAccount(userId, myOrderInfo);
                     //    }
                     //}
-                    businessId = myOrderInfo.businessId;
+                   
                     //////完成任务的时候，当任务为未付款时，更新商户金额
                     //if (myOrderInfo.IsPay.HasValue && !myOrderInfo.IsPay.Value)
                     //{
@@ -640,23 +642,6 @@ namespace Ets.Service.Provider.Clienter
             {
                 accountBalance = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission);
             }
-
-            #region 不往这个表里插数据了
-
-            //var model = new WithdrawRecordsModel
-            //{
-            //    AdminId = 1,
-            //    Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
-            //    Balance = accountBalance ?? 0,
-            //    UserId = userId,
-            //    Platform = 1,
-            //    RecordType = 1,
-            //    OrderId = myOrderInfo.Id
-            //}; 
-            //Ets.Service.IProvider.WtihdrawRecords.IWtihdrawRecordsProvider iRecords = new WtihdrawRecordsProvider();
-            //iRecords.AddRecords(model);
-
-            #endregion
 
             ///TODO 骑士余额流水表，不是这个吧？
             ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
@@ -802,36 +787,6 @@ namespace Ets.Service.Provider.Clienter
                 {
                     UpdateClienterMoney(myOrderInfo, uploadReceiptModel, orderOther);
                 }
-
-                #region 临时
-                //if (orderOther.OrderCreateTime > Convert.ToDateTime(date) 
-                //    && orderOther.OrderStatus == ConstValues.ORDER_FINISH 
-                //    && orderOther.HadUploadCount == orderOther.NeedUploadCount)
-                //{
-                //    if (CheckOrderPay(myOrderInfo.OrderNo))
-                //    {
-                //        //更新骑士金额 
-                //        UpdateClienterAccount(uploadReceiptModel.ClienterId, myOrderInfo); 
-                //    }
-                //}               
-                ////更新商家金额 注意：和是否上传小票无关
-                //if (myOrderInfo.IsPay.HasValue && !myOrderInfo.IsPay.Value)  //订单未支付的时候，更新商家所得金额
-                //{
-                //    bool bResult = businessDao.UpdateBusinessBalancePrice(myOrderInfo.businessId, myOrderInfo.ShouldPayBusiMoney);
-                //    if (bResult)
-                //    {
-                //        businessBalanceRecordDao.InsertSingle(new BusinessBalanceRecord()
-                //        {
-                //            Amount = myOrderInfo.ShouldPayBusiMoney,
-                //            BusinessId = myOrderInfo.businessId,
-                //            Remark = "骑士完成订单且未支付",
-                //            RelationNo = myOrderInfo.OrderNo,
-                //            Operator = myOrderInfo.ClienterName,
-                //            RecordType = BusinessBalanceRecordRecordType.OrderMeals.GetHashCode()
-                //        });
-                //    }
-                //}                
-                #endregion
 
                 tran.Complete();
                 #region 是否允许修改小票

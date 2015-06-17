@@ -28,23 +28,25 @@ namespace Ets.Dao.Message
         /// <summary>
         /// 增加一条记录
         /// </summary>
-        public void Insert(BusinessMessage businessMessage)
+        public long Insert(BusinessMessage businessMessage)
         {
             const string insertSql = @"
 insert into BusinessMessage(BusinessId,Content,IsRead)
 values(@BusinessId,@Content,@IsRead)
+select @@IDENTITY
 ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("BusinessId", businessMessage.BusinessId);
             dbParameters.AddWithValue("Content", businessMessage.Content);
-            dbParameters.AddWithValue("IsRead", businessMessage.IsRead);
-            DbHelper.ExecuteNonQuery(SuperMan_Write, insertSql, dbParameters);
+            dbParameters.AddWithValue("IsRead", businessMessage.IsRead);            
+            object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters); //提现单号
+            return ParseHelper.ToLong(result);
         }
 
         /// <summary>
         /// 更新消息为已读
         /// </summary>
-        public ReadBDM ReadB(long id)
+        public async Task<ReadBDM> ReadB(long id)
         {
             const string updateSql = @"
 update  BusinessMessage
@@ -66,7 +68,7 @@ where  Id=@Id";
         /// <summary>
         /// 查询对象
         /// </summary>
-        public PageInfo<ListBDM> Query(ListBPM search)
+        public async Task<PageInfo<ListBDM>> Query(ListBPM search)
         {
             string where = " BusinessId=" + search.BusinessId;
             return new PageHelper().GetPages<ListBDM>(SuperMan_Read, search.PageIndex, where,
