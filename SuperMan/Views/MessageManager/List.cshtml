@@ -24,13 +24,13 @@
                 <tr>
                     <td>
                         <span class="">推送方式: </span>
-                        @Html.DropDownList("PushWay", new SelectList(EnumExtenstion.GetEnumItems(typeof(MessagePushWay)), "Value", "Text"), "全部", new { @class = "selectw", style = "width:143px" })
+                        @Html.DropDownList("PushWay", ViewData["PushWaySelect"] as SelectList, new { @class = "selectw", style = "width:143px" })
                         <span class="">消息类型: </span>
-                        @Html.DropDownList("MessageType", new SelectList(EnumExtenstion.GetEnumItems(typeof(MessageMessageType)), "Value", "Text"), "全部", new { @class = "selectw", style = "width:143px" })
+                        @Html.DropDownList("MessageType", ViewData["MessageTypeSelect"] as SelectList, new { @class = "selectw", style = "width:143px" })
                         <span class="">消息状态: </span>
-                        @Html.DropDownList("SentStatus", new SelectList(EnumExtenstion.GetEnumItems(typeof(MessageSentStatus)), "Value", "Text"), "全部", new { @class = "selectw", style = "width:143px" })
+                        @Html.DropDownList("SentStatus", ViewData["SentStatusSelect"] as SelectList, new { @class = "selectw", style = "width:143px" })
                         <span class="">发布类型: </span>
-                        @Html.DropDownList("SendType", new SelectList(EnumExtenstion.GetEnumItems(typeof(MessageSendType)), "Value", "Text"), "全部", new { @class = "selectw", style = "width:143px" })
+                        @Html.DropDownList("SendType", ViewData["SendTypeSelect"] as SelectList, new { @class = "selectw", style = "width:143px" })
                     </td>
 
                 </tr>
