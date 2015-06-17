@@ -129,8 +129,8 @@
                     <td>@ParseHelper.ToSplitByPercentile(true,homeCountAllData.MisstionCount)</td>@*总任务量*@
                     <td>@ParseHelper.ToSplitByPercentile(true,homeCountAllData.OrderCount)</td>@*总订单量*@
                     <td>@ParseHelper.ToSplitByPercentile(false,homeCountAllData.OrderPrice)</td>@*总订单金额*@
-                    <td>@ParseHelper.ToSplitByPercentile(false, ((homeCountAllData.OrderPrice / homeCountAllData.OrderCount).ToString("f2")))</td>@*客单价*@
-                    <td>@ParseHelper.ToSplitByPercentile(false, ((homeCountAllData.OrderPrice / homeCountAllData.MisstionCount).ToString("f2")))</td>@*任务单价*@
+                    <td>@ParseHelper.ToDivision(homeCountAllData.OrderPrice, homeCountAllData.OrderCount)</td>@*客单价*@
+                    <td>@ParseHelper.ToDivision(homeCountAllData.OrderPrice, homeCountAllData.MisstionCount)</td>@*任务单价*@
 
                     <td>￥@ParseHelper.ToSplitByPercentile(false, ((homeCountAllData.incomeTotal).ToString("f2")))</td>@*扫码/代付总计*@
                     <td>￥@ParseHelper.ToSplitByPercentile(false, ((homeCountAllData.rechargeTotal).ToString("f2")))</td>@*商户充值总计*@
