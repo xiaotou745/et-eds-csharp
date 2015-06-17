@@ -2217,5 +2217,31 @@ VALUES
             string orderByColumn = " BB.Id ASC";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true); 
         }
+
+        /// <summary>
+        /// 获取商家电话号码
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150617</UpdateTime>
+        /// <param name="sentStatus"></param>
+        /// <returns></returns>
+        public DataTable GetPhoneNoList(string pushCity)
+        {
+                    string querysql = @"  
+        select id, PhoneNo from dbo.business 
+        where  Status=1 and  cityid in('" + pushCity + "')";
+
+        //            string querysql =string.Format( @"  
+        //select PhoneNo from dbo.business 
+        //where  Status=1 and  cityid in('{0}')",pushCity);
+
+            //IDbParameters dbParameters = DbHelper.CreateDbParameters();          
+            //dbParameters.AddWithValue("@SentStatus", sentStatus);
+            //DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, querysql, dbParameters);
+            //return MapRows<MessageModel>(dt);
+
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, querysql);
+            return dt;
+        }
     }
 }
