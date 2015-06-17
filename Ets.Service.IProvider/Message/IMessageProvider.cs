@@ -55,5 +55,12 @@ namespace Ets.Service.IProvider.Message
         /// <param name="model"></param>
         /// <returns></returns>
         DealResultInfo EditMessageTask(MessageModelDM model);
+        /// <summary>
+        /// 根据消息Id获取消息信息
+        /// danny-20150617
+        /// </summary>
+        /// <param name="messageId">消息Id</param>
+        /// <returns></returns>
+        MessageModel GetMessageById(int messageId);
     }
 }

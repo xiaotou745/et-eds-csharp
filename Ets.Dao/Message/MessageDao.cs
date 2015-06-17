@@ -12,6 +12,7 @@ using Ets.Model.ParameterModel.Message;
 using Ets.Model.DomainModel.Message;
 using ETS.Data.Core;
 using System.Data;
+using ETS.Extension;
 
 namespace Ets.Dao.Message
 {
@@ -125,6 +126,39 @@ where  Id=@Id ";
             dbParameters.AddWithValue("@Id", id);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters); 
         }
-
+        /// <summary>
+        /// 根据消息Id获取消息信息
+        /// danny-20150617
+        /// </summary>
+        /// <param name="messageId">消息Id</param>
+        /// <returns></returns>
+        public MessageModel GetMessageById(int messageId)
+        {
+            string selSql = @" 
+SELECT [Id]
+      ,[PushWay]
+      ,[MessageType]
+      ,[Content]
+      ,[SentStatus]
+      ,[PushType]
+      ,[PushTarget]
+      ,[PushCity]
+      ,[PushPhone]
+      ,[SendType]
+      ,[SendTime]
+      ,[OverTime]
+      ,[CreateBy]
+      ,[CreateTime]
+      ,[UpdateBy]
+      ,[UpdateTime]
+  FROM [Message] msg WITH(NOLOCK)
+  WHERE Id=@MessageId;  ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@MessageId", messageId);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
+            if (dt != null && dt.Rows.Count > 0)
+                return DataTableHelper.ConvertDataTableList<MessageModel>(dt)[0];
+            return null;
+        }
     }
 }

@@ -44,7 +44,7 @@
                             @(((MessageSentStatus)Enum.Parse(typeof(MessageSentStatus), Model.Records[i].SentStatus.ToString(), false)).GetDisplayText())
                         </td>
                         <td>@Model.Records[i].UpdateBy</td>
-                        <td></td>
+                        <td><a href="/MessageManager/MessageDetail?messageId=@Model.Records[i].Id">编辑</a></td>
                     </tr>
                 }
             }

@@ -37,6 +37,7 @@ namespace SuperMan.Controllers
         public ActionResult MessageEdit()
         {
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(0);
+            ViewBag.dealType = 1;//新增
             return View();
         }
 
@@ -140,6 +141,19 @@ namespace SuperMan.Controllers
             model.OptUserName = UserContext.Current.Name;
             var reg = messageProvider.EditMessageTask(model);
             return Json(new Ets.Model.Common.ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
+        }
+        /// <summary>
+        /// 添加骑士绑定查询
+        /// danny-20150609
+        /// </summary>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        public ActionResult MessageDetail(int messageId)
+        {
+            var messageDetailModel = messageProvider.GetMessageById(messageId);
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(0);
+            ViewBag.dealType = 2;//修改
+            return View("MessageEdit", messageDetailModel);
         }
     }
 }

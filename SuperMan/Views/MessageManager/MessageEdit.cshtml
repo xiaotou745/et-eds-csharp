@@ -1,9 +1,11 @@
-﻿@using Ets.Model.DomainModel.Area
+﻿@model Ets.Model.DataModel.Message.MessageModel
+@using Ets.Model.DomainModel.Area
 @{
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
+    var dealType = @ViewBag.dealType;
 }
 <script src="~/Scripts/ajaxfileupload.js"></script>
-<link href="~/Content/jquery-ui-1.7.3.custom.css" rel="stylesheet" type="text/css" />
+@*<link href="~/Content/jquery-ui-1.7.3.custom.css" rel="stylesheet" type="text/css" />*@
 <script src="~/Content/My97DatePicker/WdatePicker.js"></script>
 <script src="~/Scripts/jquery-1.8.2.js"></script>
 <script src="~/Scripts/jquery-ui-1.8.20.js"></script>
@@ -15,10 +17,15 @@
         <div style="width:780px;height:25px;">
             <div style="float: left">
                 <label>推送方式：</label>
+                <input type="hidden" id="hidDealType" name="hidDealType" value="@dealType">
             </div>
             <div style="float: left;width:700px;">
                 <input name="chkPushWay" id="chkMessage" type="checkbox" value="1">短  信
                 <input name="chkPushWay" id="chkApp" type="checkbox" style="margin-left:20px" value="2">app通知
+                @if (dealType == 2)
+                {
+                    <input type="hidden" id="hidPushWay" name="hidPushWay" value="@Model.PushWay" />
+                }
             </div>
         </div>
 
@@ -32,8 +39,13 @@
                     <option value="2">策略调整</option>
                     <option value="3">活动</option>
                 </select>
+                @if (dealType == 2)
+                {
+                    <input type="hidden" id="hidMessageType" name="hidMessageType" value="@Model.MessageType" />
+                }
             </div>
         </div>
+
         <div style="width:780px;height:120px;margin-top:10px">
             <div style="float:left;margin-left:20px;">
                 <label>内  容：</label>
@@ -41,15 +53,25 @@
             <div style="float:left;width:700px">
                 <textarea cols="70" rows="5" id="txtContent"></textarea><br />
                 内容长度：70/200
+                @if (dealType == 2)
+                {
+                    <input type="hidden" id="hidContent" name="hidContent" value="@Model.Content" />
+                }
             </div>
         </div>
+
         <div style="width:243px;height:27px;margin-top:10px;border:1px #dcdcdc solid;">
             <div style="background-color:lightgrey;float:left;font-size:16px;width:120px" id="systemMass"><center>系统群发</center></div>
             <div style="background-color:Window;float:left;font-size:16px;width:120px;margin-left:1px" id="appointObject"><center>指定对象</center></div>
-            <input type="hidden" id="hidPushType" name="hidPushType" value="1">
-            </input>
+            <input type="hidden" name="PushType" id="PushType" value="1" />
+            @if (dealType == 2)
+            {
+                <input type="hidden" id="hidPushType" name="hidPushType" value="@Model.PushType" />
+            }
         </div>
+
         <div style="width:800px;height: auto;padding-left:10px;" id="systemMassShow">
+
             <div style="width:780px;height:25px;margin-top:10px">
                 <div style="float: left">
                     <label>推送对象：</label>
@@ -57,8 +79,13 @@
                 <div style="float:left;width:700px">
                     <input name="chkPushTarget" id="chkBusiness" type="checkbox">商  家
                     <input name="chkPushTarget" id="chkClienter" type="checkbox" style="margin-left:20px">骑  士
+                    @if (dealType == 2)
+                    {
+                        <input type="hidden" id="hidPushTarget" name="hidPushTarget" value="@Model.PushTarget" />
+                    }
                 </div>
             </div>
+
             <div style="width:780px;height:125px;overflow:auto;margin-top:10px" id="divCity">
                 <div style="float: left">
                     <label>推送城市：</label>
@@ -80,8 +107,14 @@
                             }
                         }
                     }
+                    @if (dealType == 2)
+                    {
+                        <input type="hidden" name="hidPushCity" id="hidPushCity" value="@Model.PushCity" />
+                    }
+
                 </div>
             </div>
+
         </div>
 
         <div style="width:800px;height: auto;padding-left:10px;" id="appointObjectShow">
@@ -97,6 +130,7 @@
                     <a href="/Content/Template/phoneNoTemplate.xlsx" target="_blank">下载模板</a>
                 </div>
             </div>
+
             <div style="width:780px;height:120px;margin-top:10px">
                 <div style="float:left;">
                     <label>输入手机号码：</label>
@@ -104,6 +138,10 @@
                 <div style="float:left;width:600px">
                     <textarea cols="70" rows="5" id="txtPushPhone"></textarea><br />
                     <div style="color:red">(手机号码必须英文逗号隔开，如：15212111111,13777777777)</div>
+                    @if (dealType == 2)
+                    {
+                        <input type="hidden" name="hidPushPhone" id="hidPushPhone" value="@Model.PushPhone" />
+                    }
                 </div>
             </div>
         </div>
@@ -113,8 +151,12 @@
                     <label>发布类型：</label>
                 </div>
                 <div style="float:left;width:700px">
-                    <input name="rSendType" id="rTiming" type="radio" value="2" checked="checked" /> 定时发布
+                    <input name="rSendType" id="rTiming" type="radio" value="2" /> 定时发布
                     <input name="rSendType" id="rRealtime" type="radio" value="1" /> 实时发布
+                    @if (dealType == 2)
+                    {
+                        <input type="hidden" name="hidSendType" id="hidSendType" value="@Model.SendType" />
+                    }
                 </div>
             </div>
             <div style="width:780px;height:25px;margin-top:10px">
@@ -123,6 +165,10 @@
                 </div>
                 <div id="datepicker" style="float:left;width:350px">
                     <input type="text" name="txtSendTime" id="txtSendTime" onfocus="WdatePicker({ dateFmt: 'yyyy-MM-dd HH:mm:ss' })" class="Wdate" />
+                    @if (dealType == 2)
+                    {
+                        <input type="hidden" name="hidSendTime" id="hidSendTime" value="@Model.SendTime" />
+                    }
                 </div>
             </div>
             <div class="SearchMd" style="border-bottom:hidden;width:780px;height:65px;margin-top:10px">
@@ -139,7 +185,59 @@
         $("#appointObject").css("background-color", "Window");
         $("#systemMassShow").show();
         $("#appointObjectShow").hide();
-        $("#hidPushType").val(1);
+        $("#PushType").val(1);
+        var hidDealType = $("#hidDealType").val();
+        if (hidDealType == 2) {
+            var hidPushWay = $("#hidPushWay").val();
+            var hidMessageType = $("#hidMessageType").val();
+            var hidContent = $("#hidContent").val();
+            var hidPushTarget = $("#hidPushTarget").val();
+            var hidPushCity = $("#hidPushCity").val();
+            var hidPushPhone = $("#hidPushPhone").val();
+            var hidSendType = $("#hidSendType").val();
+            var hidSendTime = $("#hidSendTime").val();
+            var hidPushType = $("#hidPushType").val();
+            if (hidPushWay == 3 || hidPushWay == 1) {
+                $(":checkbox[id='chkMessage']").prop("checked", true);
+            }
+            if (hidPushWay == 3 || hidPushWay == 2) {
+                $(":checkbox[id='chkApp']").prop("checked", true);
+            }
+            $('#selMessageType').val(hidMessageType);
+            $('#txtContent').text(hidContent);
+            if (hidPushTarget == 3 || hidPushTarget == 1) {
+                $(":checkbox[id='chkBusiness']").prop("checked", true);
+            }
+            if (hidPushTarget == 3 || hidPushTarget == 2) {
+                $(":checkbox[id='chkClienter']").prop("checked", true);
+            }
+            var cityArr = hidPushCity.split(",");
+            $.each(cityArr, function (i, n) {
+                $(":checkbox[id='" + n + "']").prop("checked", true);
+            });
+            $("#txtPushPhone").val(hidPushPhone);
+            if (hidSendType == 1) {
+                $("#rRealtime").attr("checked", "checked");
+            }
+            else {
+                $("#rTiming").attr("checked", "checked");
+            }
+            $("#txtSendTime").val(hidSendTime);
+            if (hidPushType) {
+                $("#systemMass").css("background-color", "lightgrey");
+                $("#appointObject").css("background-color", "Window");
+                $('#systemMassShow').show();
+                $('#appointObjectShow').hide();
+                $("#PushType").val(1);
+            }
+            else {
+                $("#systemMass").css("background-color", "Window");
+                $("#appointObject").css("background-color", "lightgrey");
+                $('#systemMassShow').hide();
+                $('#appointObjectShow').show();
+                $("#PushType").val(2);
+            }
+        }
         window.location.hash = '';
     });
 
@@ -272,12 +370,10 @@
             alert("请设定发布时间！");
             return;
         }
-        if (sendType == 1)
-        {
+        if (sendType == 1) {
             sentStatus = 1;
         }
-        else
-        {
+        else {
             sentStatus = 0;
         }
         if (confirm("确定提交吗？")) {
