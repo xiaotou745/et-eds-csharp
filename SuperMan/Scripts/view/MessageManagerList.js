@@ -3,7 +3,7 @@ $(document).ready(function () {
     $('#txtPubDateStart').datepicker();
     $('#txtPubDateEnd').datepicker();
     window.location.hash = '';
-
+ 
 });
 
 
@@ -20,3 +20,23 @@ function Canel(id) {
         });
     }
 }
+
+//详情
+function detail(id) {
+    $.ajax({
+        type: 'POST',
+        url: "/messagemanager/detail?messageId="+id,
+        data: {},
+        success: function (data) {
+            $('#divshow').html(data);
+            adminjs.openwinbox('#AddDivShow');
+        }
+    });
+}
+
+
+//关闭弹层
+$('#btnCanel').live("click", function () {
+    adminjs.closewinbox('.add-openbox');
+    return false;
+});
