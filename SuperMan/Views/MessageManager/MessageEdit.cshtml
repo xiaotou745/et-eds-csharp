@@ -2,11 +2,11 @@
 @{
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
 }
-<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/ajaxfileupload.js"></script>
+<link href="~/Content/jquery-ui-1.7.3.custom.css" rel="stylesheet" type="text/css" />
+<script src="~/Content/My97DatePicker/WdatePicker.js"></script>
 <script src="~/Scripts/jquery-1.8.2.js"></script>
 <script src="~/Scripts/jquery-ui-1.8.20.js"></script>
-<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
-<script src="~/Scripts/ajaxfileupload.js"></script>
 <div style="width:800px;height:auto;border: 1px #dcdcdc solid">
     <h2 class="crumbs">
         您所在位置：消息管理 > 消息群发管理 > 添加消息模板
@@ -21,6 +21,7 @@
                 <input name="chkPushWay" id="chkApp" type="checkbox" style="margin-left:20px" value="2">app通知
             </div>
         </div>
+
         <div style="width:780px;height:25px;margin-top:10px">
             <div style="float: left">
                 <label>消息类型：</label>
@@ -46,94 +47,94 @@
             <div style="background-color:lightgrey;float:left;font-size:16px;width:120px" id="systemMass"><center>系统群发</center></div>
             <div style="background-color:Window;float:left;font-size:16px;width:120px;margin-left:1px" id="appointObject"><center>指定对象</center></div>
             <input type="hidden" id="hidPushType" name="hidPushType" value="1">
-        </input>
-    </div>
-    <div style="width:800px;height: auto;padding-left:10px;" id="systemMassShow">
-        <div style="width:780px;height:25px;margin-top:10px">
-            <div style="float: left">
-                <label>推送对象：</label>
-            </div>
-            <div style="float:left;width:700px">
-                <input name="chkPushTarget" id="chkBusiness" type="checkbox">商  家
-                <input name="chkPushTarget" id="chkClienter" type="checkbox" style="margin-left:20px">骑  士
-            </div>
+            </input>
         </div>
-        <div style="width:780px;height:125px;overflow:auto;margin-top:10px" id="divCity">
-            <div style="float: left">
-                <label>推送城市：</label>
+        <div style="width:800px;height: auto;padding-left:10px;" id="systemMassShow">
+            <div style="width:780px;height:25px;margin-top:10px">
+                <div style="float: left">
+                    <label>推送对象：</label>
+                </div>
+                <div style="float:left;width:700px">
+                    <input name="chkPushTarget" id="chkBusiness" type="checkbox">商  家
+                    <input name="chkPushTarget" id="chkClienter" type="checkbox" style="margin-left:20px">骑  士
+                </div>
             </div>
-            <div id="cityList" style="float: left;width:500px">
-                @{
-                    var openCityList = ViewBag.openCityList.Result.AreaModels as List<AreaModel>;
-                    if (openCityList != null && openCityList.Count > 0)
-                    {
-                <div style="width: 100px;height:25px;float: left">
-                    <input type="checkbox" name="checkAllMenus" id="selectAll" onclick="checkAll()" />全部
+            <div style="width:780px;height:125px;overflow:auto;margin-top:10px" id="divCity">
+                <div style="float: left">
+                    <label>推送城市：</label>
                 </div>
-                        foreach (var item in openCityList)
+                <div id="cityList" style="float: left;width:500px">
+                    @{
+                        var openCityList = ViewBag.openCityList.Result.AreaModels as List<AreaModel>;
+                        if (openCityList != null && openCityList.Count > 0)
                         {
-                <div style="width: 100px;height:25px;float: left">
-                    <input type="checkbox" name="checkMenus" id="@item.Code" value="@item.Code" />
-                    <label>@item.Name</label>
-                </div>
+                            <div style="width: 100px;height:25px;float: left">
+                                <input type="checkbox" name="checkAllMenus" id="selectAll" onclick="checkAll()" />全部
+                            </div>
+                            foreach (var item in openCityList)
+                            {
+                                <div style="width: 100px;height:25px;float: left">
+                                    <input type="checkbox" name="checkMenus" id="@item.Code" value="@item.Code" />
+                                    <label>@item.Name</label>
+                                </div>
+                            }
                         }
                     }
-                }
+                </div>
             </div>
         </div>
-    </div>
 
-    <div style="width:800px;height: auto;padding-left:10px;" id="appointObjectShow">
-        <div style="width:780px;height:30px;margin-top:10px">
-            <div style="float:left;padding:0px;border-bottom:hidden" class="SearchMd" >
-                <input id="file1" type="file" name="file1" >
+        <div style="width:800px;height: auto;padding-left:10px;" id="appointObjectShow">
+            <div style="width:780px;height:30px;margin-top:10px">
+                <div style="float:left;padding:0px;border-bottom:hidden" class="SearchMd">
+                    <input id="file1" type="file" name="file1">
+                </div>
+                <div class="SearchMd" style="float:left;border-bottom:hidden;padding:0px;margin-top:-5px">
+                    <input type="button" value="导入" class="searchBtn" id="btnImport" style="" />
+                </div>
+                <div style="color:red;float:left;margin-left:20px">(导入必须为excel，只需一列手机号)</div>
+                <div style="float:left;margin-left:20px">
+                    <a href="/Content/Template/phoneNoTemplate.xlsx" target="_blank">下载模板</a>
+                </div>
             </div>
-            <div class="SearchMd" style="float:left;border-bottom:hidden;padding:0px;margin-top:-5px">
-                <input type="button" value="导入" class="searchBtn" id="btnImport" style="" />
-            </div>
-            <div style="color:red;float:left;margin-left:20px">(导入必须为excel，只需一列手机号)</div>
-            <div style="float:left;margin-left:20px">
-                <a href="/Content/Template/phoneNoTemplate.xlsx" target="_blank">下载模板</a>
-            </div>
-        </div>
-        <div style="width:780px;height:120px;margin-top:10px">
-            <div style="float:left;">
-                <label>输入手机号码：</label>
-            </div>
-            <div style="float:left;width:600px">
-                <textarea cols="70" rows="5" id="txtPushPhone"></textarea><br />
-                <div style="color:red">(手机号码必须英文逗号隔开，如：15212111111,13777777777)</div>
-            </div>
-        </div>
-    </div>
-    <div style="width:800px;height: auto;padding-left:10px;" >
-        <div style="width:780px;height:25px;margin-top:10px">
-            <div style="float: left">
-                <label>发布类型：</label>
-            </div>
-            <div style="float:left;width:700px">
-                <input name="rSendType" id="rTiming" type="radio" value="1" checked="checked" /> 定时发布
-                <input name="rSendType" id="rRealtime" type="radio" value="2" /> 实时发布
+            <div style="width:780px;height:120px;margin-top:10px">
+                <div style="float:left;">
+                    <label>输入手机号码：</label>
+                </div>
+                <div style="float:left;width:600px">
+                    <textarea cols="70" rows="5" id="txtPushPhone"></textarea><br />
+                    <div style="color:red">(手机号码必须英文逗号隔开，如：15212111111,13777777777)</div>
+                </div>
             </div>
         </div>
-        <div style="width:780px;height:25px;margin-top:10px">
-            <div style="float: left">
-                <label>设置发布时间：</label>
+        <div style="width:800px;height: auto;padding-left:10px;">
+            <div style="width:780px;height:25px;margin-top:10px">
+                <div style="float: left">
+                    <label>发布类型：</label>
+                </div>
+                <div style="float:left;width:700px">
+                    <input name="rSendType" id="rTiming" type="radio" value="1" checked="checked" /> 定时发布
+                    <input name="rSendType" id="rRealtime" type="radio" value="2" /> 实时发布
+                </div>
             </div>
-            <div style="float:left;width:650px">
-                <input id="txtSendTime" readonly="readonly" type="text" name="txtPubDate" />
+            <div style="width:780px;height:25px;margin-top:10px">
+                <div style="float: left">
+                    <label>设置发布时间：</label>
+                </div>
+                <div id="datepicker" style="float:left;width:350px">
+                    <input type="text" name="txtSendTime" id="txtSendTime" onfocus="WdatePicker({ dateFmt: 'yyyy-MM-dd HH:mm:ss' })" class="Wdate" />
+                </div>
             </div>
-        </div>
-        <div class="SearchMd" style="border-bottom:hidden;width:780px;height:65px;margin-top:10px">
-            <div style="margin-left: 100px;float: left"><input type="button" value="确认" class="searchBtn" id="btnCommit" /></div>
-            <div style="margin-left: 180px;float: left"><input type="button" value="关闭" class="searchBtn" id="btnClose" /></div>
-            <br />
+            <div class="SearchMd" style="border-bottom:hidden;width:780px;height:65px;margin-top:10px">
+                <div style="margin-left: 100px;float: left"><input type="button" value="确认" class="searchBtn" id="btnCommit" /></div>
+                <div style="margin-left: 180px;float: left"><input type="button" value="关闭" class="searchBtn" id="btnClose" /></div>
+                <br />
+            </div>
         </div>
     </div>
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#txtSendTime').datepicker();
         $("#systemMass").css("background-color", "lightgrey");
         $("#appointObject").css("background-color", "Window");
         $("#systemMassShow").show();
@@ -141,6 +142,7 @@
         $("#hidPushType").val(1);
         window.location.hash = '';
     });
+
     //全选
     function checkAll() {
         var checkedOfAll = $("#selectAll").prop("checked");
@@ -177,7 +179,7 @@
                 } else {
                     alert(mydata.Message);
                 }
-            } 
+            }
         });
     });
     $("#btnCommit").click(function () {
@@ -189,32 +191,27 @@
         var pushCity;
         var pushPhone;
         var sendType = $('input[name="rSendType"]:checked').val();
-        if(!$("#chkMessage").is(':checked')&&!$("#chkApp").is(':checked'))
-        {
+        var sendTime = $("#txtSendTime").val();
+        if (!$("#chkMessage").is(':checked') && !$("#chkApp").is(':checked')) {
             alert("请选择推送方式！")
             return;
         }
-        if($("#chkMessage").is(':checked')&&$("#chkApp").is(':checked'))
-        {
+        if ($("#chkMessage").is(':checked') && $("#chkApp").is(':checked')) {
             pushWay = 3;
         }
-        else
-        {
-            if($("#chkMessage").is(':checked'))
-            {
+        else {
+            if ($("#chkMessage").is(':checked')) {
                 pushWay = $("#chkMessage").val();
             }
-            else
-            {
+            else {
                 pushWay = $("#chkApp").val();
             }
         }
-        if (content.trim().length < 15 || content.trim().length>200)
-        {
+        if (content.trim().length < 15 || content.trim().length > 200) {
             alert("消息内容，必须在15字-200字之间!");
             return;
         }
-        if(pushType==1)//系统群发
+        if (pushType == 1)//系统群发
         {
             if (!$("#chkBusiness").is(':checked') && !$("#chkClienter").is(':checked')) {
                 alert("请选择推送对象！")
@@ -237,12 +234,10 @@
                     cityCodeList = cityCodeList + $(this).val() + ",";
                 }
             });
-            if (cityCodeList.length > 0)
-            {
-                pushCity=cityCodeList.substring(0, cityCodeList.length - 1);
+            if (cityCodeList.length > 0) {
+                pushCity = cityCodeList.substring(0, cityCodeList.length - 1);
             }
-            else
-            {
+            else {
                 alert("请选择推送城市！")
                 return;
             }
@@ -251,8 +246,7 @@
         {
             pushTarget = 4;
             pushPhone = $("#txtPushPhone").val();
-            if(pushPhone.trim().length==0)
-            {
+            if (pushPhone.trim().length == 0) {
                 alert("手机号码不能为空！")
                 return;
             }
@@ -264,17 +258,20 @@
                     checkflag = false;
                 }
             });
-            if(!checkflag)
-            {
+            if (!checkflag) {
                 alert("手机号码格式有误，请重新输入！");
                 return;
             }
-            if(phoneArr.length>1000)
-            {
+            if (phoneArr.length > 1000) {
                 alert("指定对象群发每次最多1000条！");
                 return;
             }
         }
-    })
+        if (sendTime.trim().length == 0 && sendType == 1) {
+            alert("请设定发布时间！");
+            return;
+
+        }
+    });
 </script>
 
