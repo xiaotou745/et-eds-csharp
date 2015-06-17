@@ -54,5 +54,10 @@ namespace Ets.Model.Common
         /// </summary>
         public int PushType { get; set; }
 
+        /// <summary>
+        /// 额外参数的KEY
+        /// </summary>
+        public string ContentKey { get; set; }
+
     }
 }
