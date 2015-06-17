@@ -189,7 +189,6 @@
         $("#appointObjectShow").hide();
         $("#PushType").val(1);
         var hidDealType = $("#hidDealType").val();
-        alert(hidDealType);
         if (hidDealType == 2) {
             var hidPushWay = $("#hidPushWay").val();
             var hidMessageType = $("#hidMessageType").val();
@@ -200,7 +199,6 @@
             var hidSendType = $("#hidSendType").val();
             var hidSendTime = $("#hidSendTime").val();
             var hidPushType = $("#hidPushType").val();
-            
             if (hidPushWay == 3 || hidPushWay == 1) {
                 $(":checkbox[id='chkMessage']").prop("checked", true);
             }
