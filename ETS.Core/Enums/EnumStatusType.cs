@@ -113,6 +113,9 @@ namespace ETS.Enums
         FailedGet = -2,
         [DisplayText("请传递版本号")]
         NoVersion = -3,
+        [DisplayText("请传递骑士Id")]
+        ClienterIdEmpty = -4
+
     }
 
 
@@ -272,8 +275,9 @@ namespace ETS.Enums
         [DisplayText("商户ID不能为空")]
         BussinessEmpty = 106,
         [DisplayText("请传递版本号")]
-        NoVersion = 107
-
+        NoVersion = 107,
+        [DisplayText("订单号不能为空")]
+        OrderNoEmpty = 108
     }
     public enum FinishOrderStatus
     {
@@ -297,9 +301,9 @@ namespace ETS.Enums
         [DisplayText("存在未付款的子订单")]
         ExistNotPayChildOrder = 108,
         [DisplayText("数据错误")]
-        DataError
-
-
+        DataError = 109,
+        [DisplayText("订单Id为空")]
+        OrderIdEmpty = 110
     }
 
     public enum GetMyBalanceStatus

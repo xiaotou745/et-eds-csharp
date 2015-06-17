@@ -1075,7 +1075,7 @@ namespace Ets.Service.Provider.Business
             to.CommissionTypeId = 0;   //商户的佣金类型 
             to.DistribSubsidy = paramodel.fields.DistribSubsidy;  //商户外送费
             to.Status = ConstValues.BUSINESS_NOAUDIT;  //商户默认未审核
-
+            to.IsAllowOverdraft = 1; //第三方商户是否允许透支，默认允许1,0不允许
             return InsertOtherBusiness(to);
         }
 
