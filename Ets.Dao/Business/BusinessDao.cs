@@ -1252,7 +1252,7 @@ select SCOPE_IDENTITY() as id;
         /// <returns></returns>
         public BussinessStatusModel GetUserStatus(int userid)
         {
-            string sql = @"select  Id as userid,[status] as status,OneKeyPubOrder from dbo.business with(nolock) WHERE id=@id ";
+            string sql = @"select  Id as userid,[status] as status,OneKeyPubOrder,IsAllowOverdraft from dbo.business with(nolock) WHERE id=@id ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@id", userid);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
