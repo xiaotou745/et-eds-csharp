@@ -105,12 +105,12 @@ INSERT INTO [Message]
             string querysql = @"  
 select id, PushWay,[Content],PushTarget,PushCity,PushPhone 
 from dbo.[Message]
-where SentStatus=@SentStatus
+where SentStatus=0 or SentStatus=1
 order by SendType";
 
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@SentStatus", sentStatus);
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, querysql, dbParameters);
+            //IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            //dbParameters.AddWithValue("@SentStatus", sentStatus);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, querysql);
             return MapRows<MessageModel>(dt);
         }
 
