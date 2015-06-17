@@ -130,7 +130,7 @@ namespace SuperManWebApi.Controllers
 
             System.Drawing.Image img;
             try
-            {            
+            {
                 ImageHelper ih = new ImageHelper();
                 ImgInfo imgInfo = ih.UploadImg(file, 0);
                 if (!string.IsNullOrWhiteSpace(imgInfo.FailRemark))
@@ -155,7 +155,7 @@ namespace SuperManWebApi.Controllers
             }
         }
 
-    
+
         /// <summary>
         /// 获取订单列表
         /// </summary>
@@ -177,7 +177,7 @@ namespace SuperManWebApi.Controllers
             IList<BusiGetOrderModel> list = new BusinessProvider().GetOrdersApp(criteria);
             return ResultModel<BusiGetOrderModel[]>.Conclude(GetOrdersStatus.Success, list.ToArray());
         }
-        
+
 
         #region 美团等第三方订单处理
 
@@ -309,7 +309,7 @@ namespace SuperManWebApi.Controllers
         [HttpGet]
         public ResultModel<BusiOrderCountResultModel> OrderCount_B(int userId)
         {
-            if (userId <= 0)
+            if (ParseHelper.ToInt(userId, 0) <= 0)
             {
                 return ResultModel<BusiOrderCountResultModel>.Conclude(GetOrdersStatus.FailedGetOrders, null);
             }
@@ -406,7 +406,7 @@ namespace SuperManWebApi.Controllers
         /// <remarks>取消订单时返给商家结算费，优化，大整改</remarks>
         /// <param name="paramodel"></param>
         /// <returns></returns>
-        [HttpPost]        
+        [HttpPost]
         public ResultModel<bool> CancelOrder_B(CancelOrderBPM paramodel)
         {
             return iOrderProvider.CancelOrderB(paramodel);
@@ -498,7 +498,7 @@ namespace SuperManWebApi.Controllers
         {
             AreaProvider area = new AreaProvider();
 
-            return area.GetOpenCity(Version,false);
+            return area.GetOpenCity(Version, false);
         }
 
     }

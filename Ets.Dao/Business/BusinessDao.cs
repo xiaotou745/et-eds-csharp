@@ -782,10 +782,9 @@ where b.PhoneNo=@PhoneNo and isnull(g.IsModifyBind,1)=1";
                     WHERE businessId=@businessId
                 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@businessId", BusinessId);
-            parm.AddWithValue("@order_new", ConstValues.ORDER_NEW);
-            parm.AddWithValue("@order_Finish", ConstValues.ORDER_FINISH);
-
+            parm.Add("businessId",DbType.Int32,4).Value=BusinessId;
+            parm.Add("order_new", DbType.Int32, 4).Value = ConstValues.ORDER_NEW;
+            parm.Add("order_Finish", DbType.Int32, 4).Value = ConstValues.ORDER_FINISH;
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             IList<BusiOrderCountResultModel> list = MapRows<BusiOrderCountResultModel>(dt);
             if (list == null || list.Count <= 0)
