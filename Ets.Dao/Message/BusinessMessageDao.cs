@@ -28,17 +28,19 @@ namespace Ets.Dao.Message
         /// <summary>
         /// 增加一条记录
         /// </summary>
-        public void Insert(BusinessMessage businessMessage)
+        public long Insert(BusinessMessage businessMessage)
         {
             const string insertSql = @"
 insert into BusinessMessage(BusinessId,Content,IsRead)
 values(@BusinessId,@Content,@IsRead)
+select @@IDENTITY
 ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("BusinessId", businessMessage.BusinessId);
             dbParameters.AddWithValue("Content", businessMessage.Content);
-            dbParameters.AddWithValue("IsRead", businessMessage.IsRead);
-            DbHelper.ExecuteNonQuery(SuperMan_Write, insertSql, dbParameters);
+            dbParameters.AddWithValue("IsRead", businessMessage.IsRead);            
+            object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters); //提现单号
+            return ParseHelper.ToLong(result);
         }
 
         /// <summary>

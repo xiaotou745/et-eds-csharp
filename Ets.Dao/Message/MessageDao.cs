@@ -101,7 +101,7 @@ INSERT INTO [Message]
         public IList<MessageModel> GetMessageList(int sentStatus)
         {
             string querysql = @"  
-select id, [Content],PushTarget,PushCity,PushPhone 
+select id, PushWay,[Content],PushTarget,PushCity,PushPhone 
 from dbo.[Message]
 where SentStatus=@SentStatus
 order by SendType";

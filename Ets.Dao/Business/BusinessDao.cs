@@ -2228,7 +2228,7 @@ VALUES
         {
                     string querysql = @"  
         select id, PhoneNo from dbo.business 
-        where  Status=1 and  cityid in('" + pushCity + "')";
+        where  Status=1 and  cityid in(" + pushCity + ")";
 
         //            string querysql =string.Format( @"  
         //select PhoneNo from dbo.business 

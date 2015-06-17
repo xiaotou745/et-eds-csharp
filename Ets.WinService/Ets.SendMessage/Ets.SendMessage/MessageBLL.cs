@@ -27,11 +27,11 @@ namespace Ets.SendMessage
 
         public void Execute(Quartz.IJobExecutionContext context)
         {
-            if (!threadSafe)
-            {
-                return;
-            }
-            threadSafe = false;
+            //if (!threadSafe)
+            //{
+            //    return;
+            //}
+            //threadSafe = false;
             try
             {
                 LogHelper.LogWriter("执行啦:" + DateTime.Now);
@@ -119,10 +119,12 @@ namespace Ets.SendMessage
             BusinessDao businessDao = new BusinessDao();
             DataTable dt= businessDao.GetPhoneNoList(model.PushCity);
             for (int i = 0; i < dt.Rows.Count; i++)
-            {                
+            {
+                string phoneNo = dt.Rows[i]["PhoneNo"].ToString();
+                //string phoneNo = "13520860798"; 
                 Task.Factory.StartNew(() =>
                 {
-                    SendSmsHelper.SendSendSmsSaveLog(dt.Rows[i]["PhoneNo"].ToString(), model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
+                    SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
                     //写日志
                 });
             }
@@ -134,9 +136,10 @@ namespace Ets.SendMessage
             DataTable dt = clienterDao.GetPhoneNoList(model.PushCity);
             for (int i = 0; i < dt.Rows.Count; i++)
             {
+                string phoneNo = dt.Rows[i]["PhoneNo"].ToString();        
                 Task.Factory.StartNew(() =>
                 {
-                    SendSmsHelper.SendSendSmsSaveLog(dt.Rows[i]["PhoneNo"].ToString(), model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
+                    SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
                     //写日志
                 });
             }
@@ -204,7 +207,7 @@ namespace Ets.SendMessage
             for (int i = 0; i < dt.Rows.Count; i++)
             {
                 string businessId = dt.Rows[i]["id"].ToString();
-                businessMessageDao.Insert(new BusinessMessage
+                long id=businessMessageDao.Insert(new BusinessMessage
                                         {
                                             BusinessId = Convert.ToInt32(businessId),
                                             Content = model.Content,
@@ -218,10 +221,12 @@ namespace Ets.SendMessage
                     {
                         Alert = "发送App消息完成！",
                         City = string.Empty,
-                        Content = model.Content,//string.Concat(model.orderId, "_", model.orderChildId, "_", orderChildPayModel.PayStatus),
+                        //Content = model.Content,//string.Concat(model.orderId, "_", model.orderChildId, "_", orderChildPayModel.PayStatus),
+                        Content = id.ToString(),
                         RegistrationId = businessId,
                         TagId = 1,
-                        Title = "消息提醒"
+                        Title = "消息提醒",
+                        PushType=1
                     };
                    Push.PushMessage(jpushModel);
                 });                
@@ -250,7 +255,7 @@ namespace Ets.SendMessage
                     {
                         Alert = "发送App消息完成！",
                         City = string.Empty,
-                        Content = model.Content,//string.Concat(model.orderId, "_", model.orderChildId, "_", orderChildPayModel.PayStatus),
+                        Content = model.Content,
                         RegistrationId = clienterId,
                         TagId = 1,
                         Title = "消息提醒"
