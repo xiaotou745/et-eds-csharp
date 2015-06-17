@@ -79,7 +79,7 @@ where  Id=@Id";
         {
             const string insertSql = @"
 select  count(1)
-from    dbo.ClienterMessage
+from    dbo.ClienterMessage(nolock)
 where   IsRead = 0 and clienterId=@ClienterId 
 ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
