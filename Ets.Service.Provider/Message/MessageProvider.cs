@@ -29,9 +29,9 @@ namespace Ets.Service.Provider.Message
         /// </summary>
         /// <param name="model">参数实体</param>
         /// <returns></returns>
-        public ResultModel<object> ReadB(ReadBPM model)
+        public async Task<ResultModel<object>> ReadB(ReadBPM model)
         {
-            return ResultModel<object>.Conclude(SystemEnum.Success, businessMessageDao.ReadB(model.MessageId));
+            return ResultModel<object>.Conclude(SystemEnum.Success,await businessMessageDao.ReadB(model.MessageId));
         }
 
         /// <summary>
@@ -39,9 +39,9 @@ namespace Ets.Service.Provider.Message
         /// </summary>
         /// <param name="model">参数实体</param>
         /// <returns></returns>
-        public ResultModel<object> ReadC(ReadCPM model)
+        public async Task<ResultModel<object>> ReadC(ReadCPM model)
         {
-            return ResultModel<object>.Conclude(SystemEnum.Success, clienterMessageDao.ReadC(model.MessageId));
+            return ResultModel<object>.Conclude(SystemEnum.Success, await clienterMessageDao.ReadC(model.MessageId));
         }
 
         /// <summary>
@@ -49,9 +49,9 @@ namespace Ets.Service.Provider.Message
         /// </summary>
         /// <param name="model">参数实体</param>
         /// <returns></returns>
-        public ResultModel<object> ListB(ListBPM model)
+        public async Task<ResultModel<object>> ListB(ListBPM model)
         {
-            return ResultModel<object>.Conclude(SystemEnum.Success, businessMessageDao.Query(model).Records);
+            return ResultModel<object>.Conclude(SystemEnum.Success, (await businessMessageDao.Query(model)).Records);
         }
 
         /// <summary>
@@ -59,17 +59,17 @@ namespace Ets.Service.Provider.Message
         /// </summary>
         /// <param name="model">参数实体</param>
         /// <returns></returns>
-        public ResultModel<object> ListC(ListCPM model)
+        public async Task<ResultModel<object>> ListC(ListCPM model)
         {
-            return ResultModel<object>.Conclude(SystemEnum.Success, clienterMessageDao.Query(model).Records);
+            return ResultModel<object>.Conclude(SystemEnum.Success, (await clienterMessageDao.Query(model)).Records);
         }
 
         /// <summary>
         /// web后台列表页功能 add by caoheyang 20150616
         /// </summary>
-        public PageInfo<MessageModel> WebList(WebListSearch model)
+        public async Task<PageInfo<MessageModel>> WebList(WebListSearch model)
         {
-            return messageDao.WebList(model);
+            return await messageDao.WebList(model);
         }
 
         /// <summary>
@@ -92,7 +92,20 @@ namespace Ets.Service.Provider.Message
             return dealReg;
 
         }
+
+
         /// <summary>
+        /// 取消发布 add by caoheyang  20150617
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="updateby"></param>
+        /// <returns></returns>
+        public async Task<bool> CanelMessage(long id, string updateby)
+        {
+            int res = await messageDao.CanelMessage(id, updateby);
+            return res > 0;
+        }
+		/// <summary>
         /// 根据消息Id获取消息信息
         /// danny-20150617
         /// </summary>

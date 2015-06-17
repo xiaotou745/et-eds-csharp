@@ -19,16 +19,21 @@ namespace Ets.Dao.Message
     /// <summary>
     /// 消息dao   add caoheyang 20150516
     /// </summary>
-    public  class MessageDao : DaoBase
+    public class MessageDao : DaoBase
     {
         /// <summary>
         /// web后台列表页功能 add by caoheyang 20150616
         /// </summary>
-        public PageInfo<MessageModel> WebList(WebListSearch model)
+        public async Task<PageInfo<MessageModel>> WebList(WebListSearch model)
         {
             string where = " 1=1 ";
-
-            return new PageHelper().GetPages<MessageModel>(SuperMan_Read, model.PageIndex, where, "Id desc", "Id,PushWay,MessageType,SendType,Content,CreateBy,SendTime,SentStatus", " message (nolock)", SystemConst.PageSize, true);
+            where = where + (model.SendType == -1 ? "" : string.Format(" and SendType={0}", model.SendType));
+            where = where + (model.MessageType == -1 ? "" : string.Format(" and MessageType={0}", model.MessageType));
+            where = where + (model.PushWay == -1 ? "" : string.Format(" and PushWay={0}", model.PushWay));
+            where = where + (model.SentStatus == -1 ? "" : string.Format(" and SentStatus={0}", model.SentStatus));
+            where = where + (model.PubDateStart == null ? "" : string.Format(" and SendTime>='{0} 00:00:00'", model.PubDateStart.Value.ToString("yyyy-MM-dd")));
+            where = where + (model.PubDateEnd == null ? "" : string.Format(" and SendTime<='{0} 23:59:59'", model.PubDateEnd.Value.ToString("yyyy-MM-dd")));
+            return new PageHelper().GetPages<MessageModel>(SuperMan_Read, model.PageIndex, where, "Id desc", "Id,PushWay,MessageType,SendType,substring(Content,1,15) as Content,UpdateBy,SendTime,SentStatus,CreateTime", " message (nolock)", SystemConst.PageSize, true);
         }
         /// <summary>
         /// 添加消息任务
@@ -124,7 +129,7 @@ set  SentStatus=2,OverTime=getdate()
 where  Id=@Id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int64, 8, id);
             dbParameters.AddWithValue("@Id", id);
-            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters); 
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
         /// <summary>
         /// 根据消息Id获取消息信息
@@ -159,6 +164,24 @@ SELECT [Id]
             if (dt != null && dt.Rows.Count > 0)
                 return DataTableHelper.ConvertDataTableList<MessageModel>(dt)[0];
             return null;
+        }
+
+        /// <summary>
+        /// 取消发布 add by caoheyang  20150617
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="updateby"></param>
+        /// <returns></returns>
+        public async Task<int> CanelMessage(long id, string updateby)
+        {
+            const string updateSql = @"
+update  message
+set  SentStatus=3,OverTime=getdate(),UpdateTime=getdate(),UpdateBy=@UpdateBy
+where  Id=@Id ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int64, 8, id);
+            dbParameters.AddWithValue("@Id", id);
+            dbParameters.AddWithValue("UpdateBy", updateby);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
     }
 }

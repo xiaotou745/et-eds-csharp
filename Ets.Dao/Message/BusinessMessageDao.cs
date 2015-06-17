@@ -28,23 +28,23 @@ namespace Ets.Dao.Message
         /// <summary>
         /// 增加一条记录
         /// </summary>
-        public void Insert(ClienterMessage clienterMessage)
+        public void Insert(BusinessMessage businessMessage)
         {
             const string insertSql = @"
 insert into BusinessMessage(BusinessId,Content,IsRead)
 values(@BusinessId,@Content,@IsRead)
 ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("BusinessId", clienterMessage.ClienterId);
-            dbParameters.AddWithValue("Content", clienterMessage.Content);
-            dbParameters.AddWithValue("IsRead", clienterMessage.IsRead);
+            dbParameters.AddWithValue("BusinessId", businessMessage.BusinessId);
+            dbParameters.AddWithValue("Content", businessMessage.Content);
+            dbParameters.AddWithValue("IsRead", businessMessage.IsRead);
             DbHelper.ExecuteNonQuery(SuperMan_Write, insertSql, dbParameters);
         }
 
         /// <summary>
         /// 更新消息为已读
         /// </summary>
-        public ReadBDM ReadB(long id)
+        public async Task<ReadBDM> ReadB(long id)
         {
             const string updateSql = @"
 update  BusinessMessage
@@ -66,11 +66,11 @@ where  Id=@Id";
         /// <summary>
         /// 查询对象
         /// </summary>
-        public PageInfo<ListBDM> Query(ListBPM search)
+        public async Task<PageInfo<ListBDM>> Query(ListBPM search)
         {
             string where = " BusinessId=" + search.BusinessId;
             return new PageHelper().GetPages<ListBDM>(SuperMan_Read, search.PageIndex, where,
-                "IsRead asc ,id desc ", " Id,Content,IsRead", " BusinessMessage (nolock)", SystemConst.PageSize, true);
+                "IsRead asc ,id desc ", " Id,SUBSTRING(Content,1,15) as Content,IsRead,CONVERT(varchar(100),PubDate,20) as PubDate", " BusinessMessage (nolock)", SystemConst.PageSize, true);
         }
 
         /// <summary>

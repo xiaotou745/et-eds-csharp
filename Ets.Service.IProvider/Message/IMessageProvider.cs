@@ -21,33 +21,33 @@ namespace Ets.Service.IProvider.Message
         /// </summary>
         /// <param name="model">参数实体</param>
         /// <returns></returns>
-        ResultModel<object> ReadB(ReadBPM model);
+        Task<ResultModel<object>> ReadB(ReadBPM model);
 
         /// <summary>
         /// 骑士阅读接口更新消息状态接口 add by caoheyang 20150615
         /// </summary>
         /// <param name="model">参数实体</param>
         /// <returns></returns>
-        ResultModel<object> ReadC(ReadCPM model);
+        Task<ResultModel<object>> ReadC(ReadCPM model);
 
         /// <summary>
         /// 商户端获取消息列表接口 add by caoheyang 20150615
         /// </summary>
         /// <param name="model">参数实体</param>
         /// <returns></returns>
-        ResultModel<object> ListB(ListBPM model);
+        Task<ResultModel<object>> ListB(ListBPM model);
 
         /// <summary>
         /// 骑士端获取消息列表接口 add by caoheyang 20150615
         /// </summary>
         /// <param name="model">参数实体</param>
         /// <returns></returns>
-        ResultModel<object> ListC(ListCPM model);
+        Task<ResultModel<object>> ListC(ListCPM model);
 
         /// <summary>
         /// web后台列表页功能 add by caoheyang 20150616
         /// </summary>
-        PageInfo<MessageModel> WebList(WebListSearch model);
+        Task< PageInfo<MessageModel>> WebList(WebListSearch model);
         /// <summary>
         /// 添加消息任务
         /// danny-20150617
@@ -55,7 +55,16 @@ namespace Ets.Service.IProvider.Message
         /// <param name="model"></param>
         /// <returns></returns>
         DealResultInfo EditMessageTask(MessageModelDM model);
+
+
         /// <summary>
+        /// 取消发布 add by caoheyang  20150617
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="updateby"></param>
+        /// <returns></returns>
+        Task<bool> CanelMessage(long id, string updateby);
+		/// <summary>
         /// 根据消息Id获取消息信息
         /// danny-20150617
         /// </summary>

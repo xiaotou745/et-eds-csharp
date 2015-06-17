@@ -154,8 +154,11 @@ namespace Ets.Model.DataModel.Business
         /// 是否一键发单（0：否 1：是）
         /// </summary>
         public int OneKeyPubOrder { get; set; }
-        
-        
+
+        /// <summary>
+        /// 是否允许透支 0不可透支，1可以透支
+        /// </summary>
+        public int IsAllowOverdraft { get; set; }
     }
 
 }

@@ -47,5 +47,17 @@ namespace Ets.Model.Common
         /// </summary>
         public int? GroupId { get; set; }
 
+        /// <summary>
+        /// 发送消息类型
+        /// 0：标签
+        /// 1：别名
+        /// </summary>
+        public int PushType { get; set; }
+
+        /// <summary>
+        /// 额外参数的KEY
+        /// </summary>
+        public string ContentKey { get; set; }
+
     }
 }

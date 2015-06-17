@@ -45,7 +45,7 @@ values(@ClienterId,@Content,@IsRead)
         /// <summary>
         /// 更新一条记录
         /// </summary>
-        public ReadCDM ReadC(long id)
+        public async Task<ReadCDM> ReadC(long id)
         {
             const string updateSql = @"
 update  ClienterMessage
@@ -65,11 +65,11 @@ where  Id=@Id";
         /// <summary>
         /// 查询对象
         /// </summary>
-        public PageInfo<ListCDM> Query(ListCPM search)
+        public async Task<PageInfo<ListCDM>> Query(ListCPM search)
         {
             string where = " ClienterId=" + search.ClienterId;
             return new PageHelper().GetPages<ListCDM>(SuperMan_Read, search.PageIndex, where,
-                "IsRead asc ,id desc ", "Id,Content,IsRead", " ClienterMessage (nolock)", SystemConst.PageSize, true);
+                "IsRead asc ,id desc ", "Id,SUBSTRING(Content,1,15) as Content,IsRead,CONVERT(varchar(100),PubDate, 20) as PubDate", " ClienterMessage (nolock)", SystemConst.PageSize, true);
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ where  Id=@Id";
         {
             const string insertSql = @"
 select  count(1)
-from    dbo.ClienterMessage
+from    dbo.ClienterMessage(nolock)
 where   IsRead = 0 and clienterId=@ClienterId 
 ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();

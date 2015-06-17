@@ -1,60 +1,45 @@
-if exists (select 1
-            from  sysobjects
-           where  id = object_id('ClienterMessage')
-            and   type = 'U')
-   drop table ClienterMessage
-go
+USE [superman]
+GO
 
-/*==============================================================*/
-/* Table: ClienterMessage                                       */
-/*==============================================================*/
-create table ClienterMessage (
-   Id                   bigint               identity,
-   ClienterId           int                  not null,
-   Content              nvarchar(1024)       not null,
-   IsRead               smallint             not null default 0,
-   PubDate              datetime             not null default getdate()
-)
-go
+/****** Object:  Table [dbo].[ClienterMessage]    Script Date: 06/17/2015 14:55:45 ******/
+SET ANSI_NULLS ON
+GO
 
-declare @CurrentUser sysname
-select @CurrentUser = user_name()
-execute sp_addextendedproperty 'MS_Description', 
-   '骑士app消息表',
-   'user', @CurrentUser, 'table', 'ClienterMessage'
-go
+SET QUOTED_IDENTIFIER ON
+GO
 
-declare @CurrentUser sysname
-select @CurrentUser = user_name()
-execute sp_addextendedproperty 'MS_Description', 
-   '自增ID(PK)',
-   'user', @CurrentUser, 'table', 'ClienterMessage', 'column', 'Id'
-go
+CREATE TABLE [dbo].[ClienterMessage](
+	[Id] [bigint] IDENTITY(1,1) NOT NULL,
+	[ClienterId] [int] NOT NULL,
+	[Content] [nvarchar](1024) NOT NULL,
+	[IsRead] [smallint] NOT NULL,
+	[PubDate] [datetime] NOT NULL
+) ON [PRIMARY]
 
-declare @CurrentUser sysname
-select @CurrentUser = user_name()
-execute sp_addextendedproperty 'MS_Description', 
-   '骑士Id',
-   'user', @CurrentUser, 'table', 'ClienterMessage', 'column', 'ClienterId'
-go
+GO
 
-declare @CurrentUser sysname
-select @CurrentUser = user_name()
-execute sp_addextendedproperty 'MS_Description', 
-   '消息体',
-   'user', @CurrentUser, 'table', 'ClienterMessage', 'column', 'Content'
-go
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'自增ID(PK)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ClienterMessage', @level2type=N'COLUMN',@level2name=N'Id'
+GO
 
-declare @CurrentUser sysname
-select @CurrentUser = user_name()
-execute sp_addextendedproperty 'MS_Description', 
-   '是否已读 0未读 1 已读',
-   'user', @CurrentUser, 'table', 'ClienterMessage', 'column', 'IsRead'
-go
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'骑士Id' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ClienterMessage', @level2type=N'COLUMN',@level2name=N'ClienterId'
+GO
 
-declare @CurrentUser sysname
-select @CurrentUser = user_name()
-execute sp_addextendedproperty 'MS_Description', 
-   '推送时间',
-   'user', @CurrentUser, 'table', 'ClienterMessage', 'column', 'PubDate'
-go
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'消息体' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ClienterMessage', @level2type=N'COLUMN',@level2name=N'Content'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'是否已读 0未读 1 已读' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ClienterMessage', @level2type=N'COLUMN',@level2name=N'IsRead'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'推送时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ClienterMessage', @level2type=N'COLUMN',@level2name=N'PubDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'骑士app消息表' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ClienterMessage'
+GO
+
+ALTER TABLE [dbo].[ClienterMessage] ADD  DEFAULT ((0)) FOR [IsRead]
+GO
+
+ALTER TABLE [dbo].[ClienterMessage] ADD  DEFAULT (getdate()) FOR [PubDate]
+GO
+
+
