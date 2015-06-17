@@ -548,7 +548,11 @@ namespace Ets.Service.Provider.Clienter
             //string result = "-1";
             int businessId = 0;
             OrderListModel myOrderInfo = orderDao.GetByOrderNo(orderNo);
-
+            if (myOrderInfo == null)  //关联表用的join,数据不完整关联表时会查不到数据
+            {
+                model.Message = "500";
+                return model;
+            }
             #region 是否允许修改小票
             model.IsModifyTicket = true;
             if (myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount)// && myOrderInfo.Status == OrderStatus.订单完成.GetHashCode()

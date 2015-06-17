@@ -1434,5 +1434,22 @@ where  phoneNo = @phoneNo and TrueName=@TrueName ";
             string orderByColumn = " C.Id DESC";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
+
+        /// <summary>
+        /// 获取骑士电话号码
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150617</UpdateTime>
+        /// <param name="sentStatus"></param>
+        /// <returns></returns>
+        public DataTable GetPhoneNoList(string pushCity)
+        {
+            string querysql = @"  
+select PhoneNo from dbo.clienter 
+where  Status=1 and  cityid in('" + pushCity + "')";
+
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, querysql);
+            return dt;
+        }
     }
 }

@@ -295,7 +295,10 @@ namespace ETS.Enums
         [DisplayText("请传递版本号")]
         NoVersion = 107,
         [DisplayText("存在未付款的子订单")]
-        ExistNotPayChildOrder = 108
+        ExistNotPayChildOrder = 108,
+        [DisplayText("数据错误")]
+        DataError
+
 
     }
 
