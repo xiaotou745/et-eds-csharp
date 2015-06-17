@@ -177,10 +177,10 @@ SELECT [Id]
             const string updateSql = @"
 update  message
 set  SentStatus=3,OverTime=getdate(),UpdateTime=getdate(),UpdateBy=@UpdateBy
-where  Id=@Id ";
-            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int64, 8, id);
-            dbParameters.AddWithValue("@Id", id);
+where  Id=@Id and SentStatus=0";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("UpdateBy", updateby);
+            dbParameters.AddWithValue("@Id", id);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
     }

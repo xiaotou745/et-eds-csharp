@@ -246,14 +246,15 @@ namespace Ets.Service.Provider.Order
         /// 转换B端发布的订单信息为 数据库中需要的 订单 数据
         /// </summary>
         /// <param name="busiOrderInfoModel"></param>
+        /// <param name="business">返回商户信息</param>
         /// <returns></returns>
-        public order TranslateOrder(Ets.Model.ParameterModel.Business.BussinessOrderInfoPM busiOrderInfoModel)
+        public order TranslateOrder(Ets.Model.ParameterModel.Business.BussinessOrderInfoPM busiOrderInfoModel,out BusListResultModel business)
         {
             order to = new order();
             ///TODO 订单号生成规则，定了以后要改；
             to.OrderNo = Helper.generateOrderCode(busiOrderInfoModel.userId, busiOrderInfoModel.TimeSpan);  //根据userId生成订单号(15位)
             to.businessId = busiOrderInfoModel.userId; //当前发布者
-            BusListResultModel business = iBusinessProvider.GetBusiness(busiOrderInfoModel.userId);
+            business = iBusinessProvider.GetBusiness(busiOrderInfoModel.userId);
             if (business != null)
             {
                 to.PickUpCity = business.City;  //商户所在城市

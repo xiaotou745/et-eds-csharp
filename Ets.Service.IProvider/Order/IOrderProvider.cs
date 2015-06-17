@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ets.Model.DataModel.Business;
 using ETS.Enums;
 namespace Ets.Service.IProvider.Order
 {
@@ -31,11 +32,12 @@ namespace Ets.Service.IProvider.Order
         /// <returns></returns>
         IList<ClientOrderNoLoginResultModel> GetOrdersNoLoginLatest(ClientOrderSearchCriteria criteria);
 
-        /// </summary>        /// 商户发布订单信息转换为数据库对应实体
+        /// <summary>        
+        /// 商户发布订单信息转换为数据库对应实体
         /// </summary>
         /// <param name="busiOrderInfoModel"></param>
         /// <returns></returns>
-        order TranslateOrder(BussinessOrderInfoPM busiOrderInfoModel);
+        order TranslateOrder(BussinessOrderInfoPM busiOrderInfoModel,out BusListResultModel business);
 
         /// <summary>
         /// 添加一条订单记录
