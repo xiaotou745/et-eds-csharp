@@ -37,6 +37,31 @@ namespace SuperMan.Controllers
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(0);
             return View();
         }
+
+        /// <summary>
+        /// 列表页 add by caoheyang 20150616
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<ActionResult> List()
+        {
+            PageInfo<MessageModel> models = messageProvider.WebList(new WebListSearch());
+            return View(models);
+        }
+
+        /// <summary>
+        /// 列表页异步加载区域 add by caoheyang 20150616
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<ActionResult> PostList(int pageindex = 1)
+        {
+            WebListSearch search = new WebListSearch();
+            TryUpdateModel(search);
+            PageInfo<MessageModel> models = messageProvider.WebList(search);
+            return View(models);
+        }
+
         /// <summary>
         ///  批量导入电话号码
         /// </summary>
