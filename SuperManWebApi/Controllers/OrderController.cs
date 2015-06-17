@@ -17,6 +17,7 @@ using Ets.Service.Provider.Clienter;
 using SuperManWebApi.Providers;
 using Ets.Service.IProvider.Business;
 using Ets.Service.Provider.Business;
+using Letao.Util;
 
 namespace SuperManWebApi.Controllers
 {
@@ -86,6 +87,10 @@ namespace SuperManWebApi.Controllers
             if (string.IsNullOrWhiteSpace(version)) //版本号 
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.NoVersion);
+            }
+            if (!StringHelper.CheckPhone(model.recevicePhone))
+            {
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneErr);
             }
             if (!isOneKeyPubOrder && string.IsNullOrEmpty(model.recevicePhone))//手机号
             {
