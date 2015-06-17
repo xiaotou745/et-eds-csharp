@@ -43,8 +43,11 @@ namespace Ets.Service.Provider.Common
             //    return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.Newest, null);
             //}
             string strAreaList = redis.Get<string>(key);
-            areaList = JsonHelper.JsonConvertToObject<AreaModelList>(strAreaList);
-            if (areaList.AreaModels.Count <= 0)
+            if (!string.IsNullOrEmpty(strAreaList))
+            {
+                areaList = JsonHelper.JsonConvertToObject<AreaModelList>(strAreaList);
+            }
+            if (areaList.AreaModels == null || areaList.AreaModels.Count <= 0)
             {
                 IList<AreaModel> list = dao.GetOpenCitySql();
                 areaList = new AreaModelList();

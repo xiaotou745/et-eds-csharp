@@ -161,7 +161,7 @@
                     }
                 </div>
             </div>
-            <div style="width:780px;height:25px;margin-top:10px">
+            <div style="width:780px;height:25px;margin-top:10px" id="divSendTime">
                 <div style="float: left">
                     <label>设置发布时间：</label>
                 </div>
@@ -239,6 +239,12 @@
                 $('#appointObjectShow').show();
                 $("#PushType").val(2);
             }
+            if (hidSendType == 1) {
+                $("#divSendTime").hide();
+            }
+            else {
+                $("#divSendTime").show();
+            }
         }
         window.location.hash = '';
     });
@@ -263,8 +269,16 @@
         $('#appointObjectShow').show();
         $("#PushType").val(2);
     });
-    
-    $('#txtContent').on('blur', function () {
+    $('input[name="rSendType"]').click(function () {
+        var chkSendType = $('input[name="rSendType"]:checked').val();
+        if (chkSendType == 1) {
+            $("#divSendTime").hide();
+        }
+        else {
+            $("#divSendTime").show();
+        }
+    });
+    $('#txtContent').on('onchange', function () {
         var conLng = $('#txtContent').val().length;
         $("#labContent").text("内容长度："+conLng+"/200");
     });
@@ -287,7 +301,6 @@
                 if (mydata.IsSuccess) {
                     $("#txtPushPhone").val(mydata.Message);
                 } else {
-                    alert(2);
                     $("#txtPushPhone").val("");
                     alert(mydata.Message);
                 }
@@ -393,7 +406,13 @@
         else {
             sentStatus = 0;
         }
-        if (confirm("确定提交吗？")) {
+        var remStr = "";
+        if (sendType == 1) {
+            remStr = "确认现在发布？";
+        } else {
+            remStr = "确定提交吗？";
+        }
+        if (confirm(remStr)) {
             var paramaters = {
                 "Id": msgId, "pushWay": pushWay, "messageType": messageType, "content": content, "sentStatus": sentStatus, "pushType": pushType, "pushTarget": pushTarget, "pushCity": pushCity, "pushPhone": pushPhone,
                 "sendType": sendType, "sendTime": sendTime, "dealType": dealType
@@ -414,6 +433,9 @@
                 }
             });
         }
+    });
+    $("#btnClose").click(function () {
+        window.location.href = "/MessageManager/List";
     });
 </script>
 

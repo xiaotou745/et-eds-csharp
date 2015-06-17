@@ -167,7 +167,7 @@ namespace SuperMan.Controllers
             catch (Exception ex)
             {
                 fs.Close();
-                strMsg = ex.Message;
+                strMsg = "文件格式有误，请按模板导入数据！";
             }
             return Json(new Ets.Model.Common.ResultModel(reg, reg ? strPhoneNo : strMsg), JsonRequestBehavior.DenyGet);
         }
