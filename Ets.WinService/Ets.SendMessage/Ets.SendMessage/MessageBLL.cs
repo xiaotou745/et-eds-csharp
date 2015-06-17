@@ -220,9 +220,9 @@ namespace Ets.SendMessage
                     JPushModel jpushModel = new JPushModel()
                     {
                         Alert = "发送App消息完成！",
-                        City = string.Empty,
-                        //Content = model.Content,//string.Concat(model.orderId, "_", model.orderChildId, "_", orderChildPayModel.PayStatus),
+                        City = string.Empty,                        
                         Content = id.ToString(),
+                        ContentKey="Notice",
                         RegistrationId = businessId,
                         TagId = 1,
                         Title = "消息提醒",
@@ -241,7 +241,7 @@ namespace Ets.SendMessage
             for (int i = 0; i < dt.Rows.Count; i++)
             {
                 string clienterId = dt.Rows[i]["id"].ToString();
-                clienterMessageDao.Insert(new ClienterMessage
+                long id = clienterMessageDao.Insert(new ClienterMessage
                                         {
                                             ClienterId = Convert.ToInt32(clienterId),
                                             Content = model.Content,
@@ -255,10 +255,12 @@ namespace Ets.SendMessage
                     {
                         Alert = "发送App消息完成！",
                         City = string.Empty,
-                        Content = model.Content,
+                        Content = id.ToString(),
+                        ContentKey = "Notice",
                         RegistrationId = clienterId,
                         TagId = 1,
-                        Title = "消息提醒"
+                        Title = "消息提醒",
+                        PushType = 1
                     };
                     Push.PushMessage(jpushModel);
                 });
