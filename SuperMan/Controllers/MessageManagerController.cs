@@ -1,5 +1,7 @@
 ﻿using System.Threading.Tasks;
 using ETS.Data.PageData;
+using ETS.Enums;
+using ETS.Extension;
 using Ets.Model.DataModel.Message;
 using Ets.Model.ParameterModel.Message;
 using Ets.Service.IProvider.Common;
@@ -47,8 +49,38 @@ namespace SuperMan.Controllers
         [HttpGet]
         public async Task<ActionResult> List()
         {
-            PageInfo<MessageModel> models = messageProvider.WebList(new WebListSearch());
+            ListSetSelect();
+            //默认全部
+            PageInfo<MessageModel> models = messageProvider.WebList(new WebListSearch(){ MessageType=-1,SendType=-1,SentStatus=-1,PushWay=-1});
             return View(models);
+        }
+
+        public async void ListSetSelect()
+        {
+            EnumItem item = new EnumItem()
+            {
+                Text = "全部",
+                Value = -1
+            };
+            //推送方式
+            var pushWaySelect = EnumExtenstion.GetEnumItems(typeof(MessagePushWay)).ToList();
+            pushWaySelect.Insert(0,item);
+            ViewData["PushWaySelect"] = new SelectList(pushWaySelect, "Value", "Text");
+
+            //消息类型
+            var messageTypeSelect = EnumExtenstion.GetEnumItems(typeof(MessageMessageType)).ToList();
+            messageTypeSelect.Insert(0,item);
+            ViewData["MessageTypeSelect"] = new SelectList(messageTypeSelect, "Value", "Text");
+
+            //状态
+            var sentStatusSelect = EnumExtenstion.GetEnumItems(typeof(MessageSentStatus)).ToList();
+            sentStatusSelect.Insert(0,item);
+            ViewData["SentStatusSelect"] = new SelectList(sentStatusSelect, "Value", "Text");
+
+            //推送类型
+            var sendTypeSelect = EnumExtenstion.GetEnumItems(typeof(MessageSendType)).ToList();
+            sendTypeSelect.Insert(0,item);
+            ViewData["SendTypeSelect"] = new SelectList(sendTypeSelect, "Value", "Text");
         }
 
         /// <summary>
@@ -83,10 +115,10 @@ namespace SuperMan.Controllers
                     HttpPostedFileBase file = Request.Files["file1"];
                     fs = file.InputStream;
                     var dsPhoneNo = NPOIHelper.ImportExceltoDs(fs);
-                    if(dsPhoneNo!=null)
+                    if (dsPhoneNo != null)
                     {
                         var dtPhoneNo = dsPhoneNo.Tables[0];
-                        if(dtPhoneNo!=null&&dtPhoneNo.Rows.Count>0)
+                        if (dtPhoneNo != null && dtPhoneNo.Rows.Count > 0)
                         {
                             dtPhoneNo = dtPhoneNo.DefaultView.ToTable(true, new[] { "手机号码" });
                             foreach (DataRow item in dtPhoneNo.Rows)
@@ -106,7 +138,7 @@ namespace SuperMan.Controllers
                         {
                             strMsg = "未获取到电话号码！";
                         }
-                        
+
                     }
                     else
                     {
@@ -123,7 +155,7 @@ namespace SuperMan.Controllers
                 fs.Close();
                 strMsg = ex.Message;
             }
-            return Json(new Ets.Model.Common.ResultModel(reg, reg ? strPhoneNo:strMsg), JsonRequestBehavior.DenyGet);
+            return Json(new Ets.Model.Common.ResultModel(reg, reg ? strPhoneNo : strMsg), JsonRequestBehavior.DenyGet);
         }
 
         
