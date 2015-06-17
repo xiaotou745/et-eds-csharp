@@ -32,7 +32,7 @@ namespace Ets.Dao.Message
             where = where + (model.SentStatus == -1 ? "" : string.Format(" and SentStatus={0}", model.SentStatus));
             where = where + (model.PubDateStart == null ? "" : string.Format(" and SendTime>='{0} 00:00:00'", model.PubDateStart.Value.ToString("yyyy-MM-dd")));
             where = where + (model.PubDateEnd == null ? "" : string.Format(" and SendTime<='{0} 23:59:59'", model.PubDateEnd.Value.ToString("yyyy-MM-dd")));
-            return new PageHelper().GetPages<MessageModel>(SuperMan_Read, model.PageIndex, where, "Id desc", "Id,PushWay,MessageType,SendType,Content,CreateBy,SendTime,SentStatus,CreateTime", " message (nolock)", SystemConst.PageSize, true);
+            return new PageHelper().GetPages<MessageModel>(SuperMan_Read, model.PageIndex, where, "Id desc", "Id,PushWay,MessageType,SendType,substring(Content,1,15) as Content,UpdateBy,SendTime,SentStatus,CreateTime", " message (nolock)", SystemConst.PageSize, true);
         }
         /// <summary>
         /// 添加消息任务
