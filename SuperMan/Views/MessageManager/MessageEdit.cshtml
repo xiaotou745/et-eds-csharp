@@ -4,11 +4,12 @@
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
     var dealType = @ViewBag.dealType;
 }
-<script src="~/Scripts/ajaxfileupload.js"></script>
-@*<link href="~/Content/jquery-ui-1.7.3.custom.css" rel="stylesheet" type="text/css" />*@
+
 <script src="~/Content/My97DatePicker/WdatePicker.js"></script>
 <script src="~/Scripts/jquery-1.8.2.js"></script>
 <script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/ajaxfileupload.js"></script>
 <div style="width:800px;height:auto;border: 1px #dcdcdc solid">
     <h2 class="crumbs">
         您所在位置：消息管理 > 消息群发管理 > 添加消息模板
@@ -18,6 +19,7 @@
             <div style="float: left">
                 <label>推送方式：</label>
                 <input type="hidden" id="hidDealType" name="hidDealType" value="@dealType">
+                <input type="hidden" id="msgId" name="msgId" value="0" />
             </div>
             <div style="float: left;width:700px;">
                 <input name="chkPushWay" id="chkMessage" type="checkbox" value="1">短  信
@@ -151,7 +153,7 @@
                     <label>发布类型：</label>
                 </div>
                 <div style="float:left;width:700px">
-                    <input name="rSendType" id="rTiming" type="radio" value="2" /> 定时发布
+                    <input name="rSendType" id="rTiming" type="radio" value="2" checked="checked"/> 定时发布
                     <input name="rSendType" id="rRealtime" type="radio" value="1" /> 实时发布
                     @if (dealType == 2)
                     {
@@ -197,6 +199,7 @@
             var hidSendType = $("#hidSendType").val();
             var hidSendTime = $("#hidSendTime").val();
             var hidPushType = $("#hidPushType").val();
+            $("#msgId").val(@Model.Id);
             if (hidPushWay == 3 || hidPushWay == 1) {
                 $(":checkbox[id='chkMessage']").prop("checked", true);
             }
@@ -223,7 +226,7 @@
                 $("#rTiming").attr("checked", "checked");
             }
             $("#txtSendTime").val(hidSendTime);
-            if (hidPushType) {
+            if (hidPushType==1) {
                 $("#systemMass").css("background-color", "lightgrey");
                 $("#appointObject").css("background-color", "Window");
                 $('#systemMassShow').show();
@@ -252,18 +255,23 @@
         $("#appointObject").css("background-color", "Window");
         $('#systemMassShow').show();
         $('#appointObjectShow').hide();
-        $("#hidPushType").val(1);
+        $("#PushType").val(1);
     });
-    $("#appointObject").click(function () {
+    $("#appointObject").click(function() {
         $("#systemMass").css("background-color", "Window");
         $("#appointObject").css("background-color", "lightgrey");
         $('#systemMassShow').hide();
         $('#appointObjectShow').show();
-        $("#hidPushType").val(2);
-    })
+        $("#PushType").val(2);
+    });
     //批量导入手机号
     $("#btnImport").click(function () {
+        if ($("#file1").val().length <= 0) {
+            alert("请选择导入文件！");
+            return;
+        }
         var url = "/MessageManager/PhoneNoImport";
+        
         $.ajaxFileUpload({
             type: 'POST',
             secureuri: false, //一般设置为false
@@ -273,8 +281,9 @@
             success: function (data, status) {
                 var mydata = $.parseJSON(data.body.innerText);
                 if (mydata.IsSuccess) {
-                    $("#txtPhoneNoList").text(mydata.Message);
+                    $("#txtPushPhone").text(mydata.Message);
                 } else {
+                    $("#txtPushPhone").text("");
                     alert(mydata.Message);
                 }
             }
@@ -285,14 +294,16 @@
         var messageType = $("#selMessageType").val();
         var content = $("#txtContent").val();
         var sentStatus;
-        var pushType = $("#hidPushType").val();
+        var pushType = $("#PushType").val();
         var pushTarget;
         var pushCity;
         var pushPhone;
         var sendType = $('input[name="rSendType"]:checked').val();
         var sendTime = $("#txtSendTime").val();
+        var dealType = $("#hidDealType").val();
+        var msgId = $("#msgId").val();
         if (!$("#chkMessage").is(':checked') && !$("#chkApp").is(':checked')) {
-            alert("请选择推送方式！")
+            alert("请选择推送方式！");
             return;
         }
         if ($("#chkMessage").is(':checked') && $("#chkApp").is(':checked')) {
@@ -310,10 +321,11 @@
             alert("消息内容，必须在15字-200字之间!");
             return;
         }
+        
         if (pushType == 1)//系统群发
         {
             if (!$("#chkBusiness").is(':checked') && !$("#chkClienter").is(':checked')) {
-                alert("请选择推送对象！")
+                alert("请选择推送对象！");
                 return;
             }
             if ($("#chkBusiness").is(':checked') && $("#chkClienter").is(':checked')) {
@@ -337,7 +349,7 @@
                 pushCity = cityCodeList.substring(0, cityCodeList.length - 1);
             }
             else {
-                alert("请选择推送城市！")
+                alert("请选择推送城市！");
                 return;
             }
         }
@@ -346,7 +358,7 @@
             pushTarget = 4;
             pushPhone = $("#txtPushPhone").val();
             if (pushPhone.trim().length == 0) {
-                alert("手机号码不能为空！")
+                alert("手机号码不能为空！");
                 return;
             }
             var reg = /^0?1\d{10}$/;
@@ -378,8 +390,8 @@
         }
         if (confirm("确定提交吗？")) {
             var paramaters = {
-                "pushWay": pushWay, "messageType": messageType, "content": content, "sentStatus": sentStatus, "pushType": pushType, "pushTarget": pushTarget, "pushCity": pushCity, "pushPhone": pushPhone,
-                "sendType": sendType, "sendTime": sendTime
+                "Id": msgId, "pushWay": pushWay, "messageType": messageType, "content": content, "sentStatus": sentStatus, "pushType": pushType, "pushTarget": pushTarget, "pushCity": pushCity, "pushPhone": pushPhone,
+                "sendType": sendType, "sendTime": sendTime, "dealType": dealType
             };
             var url = "/MessageManager/EditMessageTask";
             $.ajax({
