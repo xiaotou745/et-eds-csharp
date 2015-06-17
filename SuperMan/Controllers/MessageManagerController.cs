@@ -52,7 +52,7 @@ namespace SuperMan.Controllers
         {
             ListSetSelect();
             //默认全部
-            PageInfo<MessageModel> models =await  messageProvider.WebList(new WebListSearch(){ MessageType=-1,SendType=-1,SentStatus=-1,PushWay=-1});
+            PageInfo<MessageModel> models =await  messageProvider.WebList(new WebListSearch());
             return View(models);
         }
 

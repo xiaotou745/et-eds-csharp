@@ -28,5 +28,9 @@ namespace Ets.Model.ParameterModel.Business
         /// 是否允许透支，1允许，0不允许
         /// </summary>
         public int IsAllowOverdraft { get; set; }
+        /// <summary>
+        /// 商户余额
+        /// </summary>
+        public decimal BalancePrice { get; set; }
     }
 }
