@@ -1859,7 +1859,7 @@ ORDER BY btr.Id;";
                                 MealsSettleMode=@MealsSettleMode,
                                 CommissionType=@CommissionType,
                                 OriginalBusiId=@OriginalBusiId,
-                                OneKeyPubOrder=@OneKeyPubOrder,
+                                OneKeyPubOrder=@OneKeyPubOrder,IsAllowOverdraft=@IsAllowOverdraft,
                                            ";
             if (model.GroupId > 0)
             {
@@ -1912,6 +1912,7 @@ ORDER BY btr.Id;";
             parm.AddWithValue("@OptName", model.OptUserName);
             parm.AddWithValue("@Remark", remark);
             parm.AddWithValue("@OneKeyPubOrder", model.OneKeyPubOrder);
+            parm.Add("@IsAllowOverdraft", DbType.Int16).Value = model.IsAllowOverdraft;
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>
