@@ -19,7 +19,7 @@
             <div style="float: left">
                 <label>推送方式：</label>
                 <input type="hidden" id="hidDealType" name="hidDealType" value="@dealType">
-                <input type="hidden" id="msgId" name="msgId" value="0" />
+                <input type="hidden" id="msgId" name="msgId" value="@(Model!=null?Model.Id:0)" />
             </div>
             <div style="float: left;width:700px;">
                 <input name="chkPushWay" id="chkMessage" type="checkbox" value="1">短  信
@@ -189,6 +189,7 @@
         $("#appointObjectShow").hide();
         $("#PushType").val(1);
         var hidDealType = $("#hidDealType").val();
+        alert(hidDealType);
         if (hidDealType == 2) {
             var hidPushWay = $("#hidPushWay").val();
             var hidMessageType = $("#hidMessageType").val();
@@ -199,7 +200,7 @@
             var hidSendType = $("#hidSendType").val();
             var hidSendTime = $("#hidSendTime").val();
             var hidPushType = $("#hidPushType").val();
-            $("#msgId").val(@Model.Id);
+            
             if (hidPushWay == 3 || hidPushWay == 1) {
                 $(":checkbox[id='chkMessage']").prop("checked", true);
             }
@@ -401,7 +402,7 @@
                 success: function (result) {
                     if (result.IsSuccess) {
                         alert(result.Message);
-                        //window.location.href = "/AuthorityManager/AuthorityManager";
+                        window.location.href = "/MessageManager/List";
                     } else {
                         alert(result.Message);
                     }
