@@ -807,7 +807,7 @@ namespace Ets.Service.Provider.Clienter
                 //上传完小票
                 //(1)更新给骑士余额
                 if (orderOther.HadUploadCount >= orderOther.NeedUploadCount)
-                {
+                {                   
                     if (CheckOrderPay(myOrderInfo.OrderNo))
                     {
                         UpdateClienterAccount(uploadReceiptModel.ClienterId, myOrderInfo);
@@ -908,19 +908,36 @@ namespace Ets.Service.Provider.Clienter
         /// <summary>
         /// 验证该订单是否支付
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>2015061</UpdateTime>
         /// <param name="OrderId"></param>
         /// <returns></returns>
-        private bool CheckOrderPay(string OrderNo)
+        private bool CheckOrderPay(string orderNo)
         {
-            RedisCache redisCache = new RedisCache();
-            string orderKey = string.Format(RedissCacheKey.CheckOrderPay, OrderNo);
-            string CheckOrderPay = redisCache.Get<string>(orderKey);
-            if (CheckOrderPay != "1")
+            #region 临时缓存
+            //RedisCache redisCache = new RedisCache();
+            //string orderKey = string.Format(RedissCacheKey.CheckOrderPay, OrderNo);
+            //string CheckOrderPay = redisCache.Get<string>(orderKey);         
+
+            //if (CheckOrderPay != "1")
+            //{
+            //    redisCache.Set(orderKey, "1");
+            //    return true;
+            //}
+            //return false;
+            #endregion
+
+            bool isPay = false;
+
+            string finishAll = orderDao.GetFinishAllById(orderNo);
+            if (finishAll != "1")
             {
-                redisCache.Set(orderKey, "1");
-                return true;
+                orderDao.UpdateFinishAll(orderNo);
+                isPay = true;
             }
-            return false;
+
+            return isPay;
+
         }
 
         /// <summary>
