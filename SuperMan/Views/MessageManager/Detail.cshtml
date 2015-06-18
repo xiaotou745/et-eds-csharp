@@ -38,7 +38,7 @@
 
 
                 IAreaProvider area = new AreaProvider();
-                string result = area.GetOpenCity("").Result.AreaModels.Where(t => Model.PushCity.IndexOf(t.Code.ToString()) > 0).ToList()
+                string result = area.GetOpenCity("").Result.AreaModels.Where(t => Model.PushCity.IndexOf(t.Code.ToString()) >= 0).ToList()
                     .Aggregate("", (current, action) => current + (action.Name.ToString() + ","));
 
 
@@ -59,7 +59,7 @@
                 </div>
             </div>
 
-            <div style="width:780px;height:25px;">
+            <div style="width:780px;height: auto;overflow: hidden;max-height: 150px;">
                 <div style="float: left">
                     <label>内容：</label>
                     @Model.Content
