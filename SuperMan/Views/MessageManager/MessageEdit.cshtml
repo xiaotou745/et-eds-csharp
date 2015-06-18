@@ -22,8 +22,12 @@
                 <input type="hidden" id="msgId" name="msgId" value="@(Model!=null?Model.Id:0)" />
             </div>
             <div style="float: left;width:700px;">
-                <input name="chkPushWay" id="chkMessage" type="checkbox" value="1">短  信
-                <input name="chkPushWay" id="chkApp" type="checkbox" style="margin-left:20px" value="2">app通知
+                <div id="divchkMessage" style="float: left;">
+                    <input name="chkPushWay" id="chkMessage" type="checkbox" value="1">短  信
+                </div>
+                <div id="divchkApp" style="float: left;margin-left:20px">
+                    <input name="chkPushWay" id="chkApp" type="checkbox"  value="2">app通知
+                </div>
                 @if (dealType == 2)
                 {
                     <input type="hidden" id="hidPushWay" name="hidPushWay" value="@Model.PushWay" />
@@ -92,17 +96,17 @@
                 <div style="float: left">
                     <label>推送城市：</label>
                 </div>
-                <div id="cityList" style="float: left;width:500px">
+                <div id="cityList" style="float: left;width:700px">
                     @{
                         var openCityList = ViewBag.openCityList.Result.AreaModels as List<AreaModel>;
                         if (openCityList != null && openCityList.Count > 0)
                         {
-                            <div style="width: 100px;height:25px;float: left">
+                            <div style="width: 140px;height:25px;float: left">
                                 <input type="checkbox" name="checkAllMenus" id="selectAll" onclick="checkAll()" />全部
                             </div>
                             foreach (var item in openCityList)
                             {
-                                <div style="width: 100px;height:25px;float: left">
+                                <div style="width: 140px;height:25px;float: left">
                                     <input type="checkbox" name="checkMenus" id="@item.Code" value="@item.Code" />
                                     <label>@item.Name</label>
                                 </div>
@@ -188,6 +192,7 @@
         $("#systemMassShow").show();
         $("#appointObjectShow").hide();
         $("#PushType").val(1);
+        $("#divchkApp").show();
         var hidDealType = $("#hidDealType").val();
         if (hidDealType == 2) {
             var hidPushWay = $("#hidPushWay").val();
@@ -231,6 +236,8 @@
                 $('#systemMassShow').show();
                 $('#appointObjectShow').hide();
                 $("#PushType").val(1);
+                $("#divchkApp").show();
+                
             }
             else {
                 $("#systemMass").css("background-color", "Window");
@@ -238,6 +245,8 @@
                 $('#systemMassShow').hide();
                 $('#appointObjectShow').show();
                 $("#PushType").val(2);
+                $("#divchkApp").hide();
+                $(":checkbox[id='chkApp']").prop("checked", false);
             }
             if (hidSendType == 1) {
                 $("#divSendTime").hide();
@@ -261,6 +270,7 @@
         $('#systemMassShow').show();
         $('#appointObjectShow').hide();
         $("#PushType").val(1);
+        $("#divchkApp").show();
     });
     $("#appointObject").click(function() {
         $("#systemMass").css("background-color", "Window");
@@ -268,6 +278,8 @@
         $('#systemMassShow').hide();
         $('#appointObjectShow').show();
         $("#PushType").val(2);
+        $("#divchkApp").hide();
+        $(":checkbox[id='chkApp']").prop("checked", false);
     });
     //根据发布类型控制发布时间的显示隐藏
     $('input[name="rSendType"]').click(function () {
