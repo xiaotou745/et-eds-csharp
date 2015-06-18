@@ -3087,5 +3087,33 @@ where c.Id=@ClienterId;");
 
             return cities;
         }
+
+        /// <summary>
+        /// 根据ID获取对象
+        /// </summary>
+        public string GetFinishAllById(string orderNo)
+        {
+            const string querysql = @"
+select  FinishAll from  Order
+where  OrderNo=@OrderNo ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("OrderNo", orderNo);
+
+            object result = DbHelper.ExecuteScalar(SuperMan_Write, querysql, dbParameters); //用SuperMan_Write,不加nolock
+            return result.ToString();
+        }
+        /// <summary>
+        /// 更新已提现
+        /// </summary>
+        /// <param name="orderId"></param>
+        public void UpdateFinishAll(string orderNo)
+        {
+            const string updateSql = @"
+update Order set FinishAll=1 where OrderNo=@OrderNo";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@OrderNo", orderNo);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }
     }
 }
