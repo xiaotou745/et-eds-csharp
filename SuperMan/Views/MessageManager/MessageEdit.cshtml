@@ -79,8 +79,8 @@
                     <label>推送对象：</label>
                 </div>
                 <div style="float:left;width:700px">
-                    <input name="chkPushTarget" id="chkBusiness" type="checkbox">商  家
-                    <input name="chkPushTarget" id="chkClienter" type="checkbox" style="margin-left:20px">骑  士
+                    <input name="chkPushTarget" id="chkBusiness" type="checkbox" value="1">商  家
+                    <input name="chkPushTarget" id="chkClienter" type="checkbox" style="margin-left:20px" value="2">骑  士
                     @if (dealType == 2)
                     {
                         <input type="hidden" id="hidPushTarget" name="hidPushTarget" value="@Model.PushTarget" />
@@ -166,7 +166,7 @@
                     <label>设置发布时间：</label>
                 </div>
                 <div id="datepicker" style="float:left;width:350px">
-                    <input type="text" name="txtSendTime" id="txtSendTime" onfocus="WdatePicker({ dateFmt: 'yyyy-MM-dd HH:mm:ss' })" class="Wdate" />
+                    <input type="text" name="txtSendTime" id="txtSendTime" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'%y-%M-%d %H:{%m+5}:%s'})"  class="Wdate" />
                     @if (dealType == 2)
                     {
                         <input type="hidden" name="hidSendTime" id="hidSendTime" value="@Model.SendTime" />
@@ -269,6 +269,7 @@
         $('#appointObjectShow').show();
         $("#PushType").val(2);
     });
+    //根据发布类型控制发布时间的显示隐藏
     $('input[name="rSendType"]').click(function () {
         var chkSendType = $('input[name="rSendType"]:checked').val();
         if (chkSendType == 1) {
@@ -278,8 +279,13 @@
             $("#divSendTime").show();
         }
     });
-    $('#txtContent').on('onchange', function () {
+    //消息内容文字提示
+    $('#txtContent').keyup(function () {
         var conLng = $('#txtContent').val().length;
+        if (conLng > 200) {
+            $(this).val($(this).val().substring(0, 200));
+            conLng = $('#txtContent').val().length;
+        }
         $("#labContent").text("内容长度："+conLng+"/200");
     });
     //批量导入手机号
@@ -307,7 +313,7 @@
             }
         });
     });
-    $("#btnCommit").click(function () {
+    $("#btnCommit").click(function() {
         var pushWay;
         var messageType = $("#selMessageType").val();
         var content = $("#txtContent").val();
@@ -370,6 +376,7 @@
                 alert("请选择推送城市！");
                 return;
             }
+           
         }
         else//指定对象
         {
