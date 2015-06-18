@@ -631,6 +631,8 @@
     <Content Include="Views\DataManager\Edit.cshtml" />
     <Content Include="Views\DataManager\Index.cshtml" />
     <Content Include="Views\DataManager\PostIndex.cshtml" />
+    <Content Include="Views\Statistical\BussinessBalanceStatistical.cshtml" />
+    <Content Include="Views\Statistical\BussinessBalanceList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

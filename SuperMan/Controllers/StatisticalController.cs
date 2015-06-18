@@ -4,6 +4,10 @@ using System.Web.Mvc;
 using Ets.Model.DomainModel.Statistics;
 using Ets.Service.IProvider.Statistics;
 using Ets.Service.Provider.Statistics;
+using ETS.Data.PageData;
+using Ets.Model.Common;
+using ETS.Util;
+using Ets.Model.ParameterModel.Common;
 
 namespace SuperMan.Controllers
 {
@@ -120,6 +124,25 @@ namespace SuperMan.Controllers
 
             return View();
         }
+        #endregion
+
+        #region 商家充值统计
+        public ActionResult BussinessBalanceStatistical()
+        {
+            var criteria = new BussinessBalanceQuery();
+            criteria.PageIndex = 1;
+            PageInfo<BusinessBalanceInfo> resultData = statisticsProvider.QueryBusinessBalance(criteria);
+            return View(resultData);
+        }
+        public ActionResult PostBussinessBalanceStatistical(int PageIndex = 1)
+        {
+            var criteria = new BussinessBalanceQuery();
+            TryUpdateModel(criteria);
+            criteria.PageIndex = PageIndex;
+            PageInfo<BusinessBalanceInfo> resultData = statisticsProvider.QueryBusinessBalance(criteria);
+            return PartialView("BussinessBalanceList", resultData);
+        }
+
         #endregion
     }
 }
