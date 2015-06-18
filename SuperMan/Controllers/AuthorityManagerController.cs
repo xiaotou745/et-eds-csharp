@@ -164,8 +164,8 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <param name="id">后台用户id</param>
         /// <returns></returns>
-        [HttpGet]
-        [ActionName("AuthorityEdit")]
+        //[HttpGet]
+        //[ActionName("AuthorityEdit")]
         //public PartialViewResult _AuthorityManagerShow(int id)
         //{
         //    var authorities = AuthorityLogic.authorityLogic().GetAuthorities(id);
@@ -174,6 +174,7 @@ namespace SuperMan.Controllers
 
         //    return PartialView("_AuthorityManagerShow");
         //}
+
         /// <summary>
         /// 获取用户和城市的对应关系 
         /// </summary>
