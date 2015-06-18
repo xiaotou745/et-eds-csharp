@@ -232,5 +232,66 @@ namespace ETS.Util
                 throw;
             }
         }
+
+        /// <summary>
+        /// Trace日志
+        /// </summary>
+        /// <param name="dec"></param>
+        /// <param name="rmark">描述操作</param>
+        public static void LogTraceStart(string type,string rmark)
+        {
+            try
+            {
+                //写日志
+                string logstr = "\r\n-----------------start----------------------\r\n";
+                logstr = logstr + DateTime.Now.ToString() + "\r\n";
+                logstr = logstr + "推送对象:" + type + "\r\n";
+                logstr = logstr + "短信内容:" + rmark + "\r\n";
+                logger.Trace(logstr);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Trace日志
+        /// </summary>
+        /// <param name="dec"></param>
+        /// <param name="rmark">描述操作</param>
+        public static void LogTraceEnd()
+        {
+            try
+            {
+                //写日志
+                string logstr = "\r\n--------------------end---------------------\r\n";
+                logger.Trace(logstr);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        //写入手机号码
+        public static void LogTraceWriterPhone(string rmark = "")
+        {
+            try
+            {
+                //写日志      
+                string logstr = "\r\n";
+                logstr = logstr + DateTime.Now.ToString() + "  ";
+                logstr = logstr + "手机号码:" + rmark + "\r\n";
+                logger.Trace(logstr);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
     }
 }

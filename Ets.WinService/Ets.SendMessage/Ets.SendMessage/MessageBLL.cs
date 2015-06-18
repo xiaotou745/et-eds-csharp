@@ -36,16 +36,16 @@ namespace Ets.SendMessage
             try
             {
                 LogHelper.LogWriter("执行啦:" + DateTime.Now);
-           
+
                 //获取未发送短信集合
-                IList<MessageModel> list=messageDao.GetMessageList(0);
+                IList<MessageModel> list = messageDao.GetMessageList(0);
                 foreach (var item in list)
                 {
-                    switch(item.PushWay)
+                    switch (item.PushWay)
                     {
                         case (int)MessagePushWay.Message:
                             {
-                                SendMessageTarget(item);                                                              
+                                SendMessageTarget(item);
                             }
                             break;
                         case (int)MessagePushWay.App:
@@ -58,9 +58,9 @@ namespace Ets.SendMessage
                                 SendMessageTarget(item);
                                 SendAppTarget(item);
                             }
-                            break;              
-                        default:break;
-                    }                  
+                            break;
+                        default: break;
+                    }
                 }             
 
             }
@@ -119,6 +119,8 @@ namespace Ets.SendMessage
         {
             BusinessDao businessDao = new BusinessDao();
             DataTable dt= businessDao.GetPhoneNoList(model.PushCity);
+            LogHelper.LogTraceStart("商家",model.Content);
+
             for (int i = 0; i < dt.Rows.Count; i++)
             {
                 if(dt.Rows[i]["PhoneNo"]==null || dt.Rows[i]["PhoneNo"].ToString()=="") continue;
@@ -131,14 +133,18 @@ namespace Ets.SendMessage
                 {
                     SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
                     //写日志
+                    LogHelper.LogTraceWriterPhone(phoneNo);                  
                 });
             }
+            LogHelper.LogTraceEnd();
         }
         //发送骑士短信
         void SendMessagClienter(MessageModel model)
         {
             ClienterDao clienterDao = new ClienterDao();
             DataTable dt = clienterDao.GetPhoneNoList(model.PushCity);
+            LogHelper.LogTraceStart("骑士",model.Content);
+
             for (int i = 0; i < dt.Rows.Count; i++)
             {
                 if (dt.Rows[i]["PhoneNo"] == null || dt.Rows[i]["PhoneNo"].ToString() == "") continue;
@@ -150,14 +156,19 @@ namespace Ets.SendMessage
                 {
                     SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
                     //写日志
-                });
+                    LogHelper.LogTraceWriterPhone( phoneNo); 
+
+                });                
             }
+            LogHelper.LogTraceEnd();
         }
         //发送批量导入短信
         void SendMessImport(MessageModel model)
         {
             if (!string.IsNullOrEmpty(model.PushPhone))
             {
+                LogHelper.LogTraceStart("指定对象", model.Content);
+
                 string []sp =model.PushPhone.Split(',');
                 for(int i=0;i<sp.Length;i++)
                 {
@@ -171,8 +182,11 @@ namespace Ets.SendMessage
                     {
                         SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
                         //写日志
+                        LogHelper.LogTraceWriterPhone(phoneNo); 
                     });
                 }
+
+                LogHelper.LogTraceEnd();
             }
         }
 
