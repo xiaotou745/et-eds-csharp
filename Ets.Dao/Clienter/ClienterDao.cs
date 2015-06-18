@@ -1445,7 +1445,7 @@ where  phoneNo = @phoneNo and TrueName=@TrueName ";
         public DataTable GetPhoneNoList(string pushCity)
         {
             string querysql = @"  
-select id, PhoneNo from dbo.clienter 
+select id, PhoneNo from dbo.clienter(nolock) 
 where  cityid in(" + pushCity + ")";
 
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, querysql);
