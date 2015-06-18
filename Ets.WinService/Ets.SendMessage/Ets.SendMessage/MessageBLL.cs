@@ -61,7 +61,7 @@ namespace Ets.SendMessage
                             break;
                         default: break;
                     }
-                }             
+                }
 
             }
             catch (Exception ex)
@@ -83,7 +83,7 @@ namespace Ets.SendMessage
             {
                 case (int)MessagePushTarget.Business:
                     {
-                        SendMessageBusiness(model);    
+                        SendMessageBusiness(model);
                         //更新发布状态和完成时间
                         messageDao.Update(model.Id);
                     }
@@ -111,38 +111,15 @@ namespace Ets.SendMessage
                     }
                     break;
                 default: break;
-            }                  
+            }
         }
 
         //发送商家短信
         void SendMessageBusiness(MessageModel model)
         {
             BusinessDao businessDao = new BusinessDao();
-            DataTable dt= businessDao.GetPhoneNoList(model.PushCity);
-            LogHelper.LogTraceStart("商家",model.Content);
-
-            for (int i = 0; i < dt.Rows.Count; i++)
-            {
-                if(dt.Rows[i]["PhoneNo"]==null || dt.Rows[i]["PhoneNo"].ToString()=="") continue;
-                
-                string phoneNo="";
-                if(StringHelper.CheckPhone(dt.Rows[i]["PhoneNo"].ToString()))
-                phoneNo = dt.Rows[i]["PhoneNo"].ToString();
-                //string phoneNo = "13520860798"; 
-                Task.Factory.StartNew(() =>
-                {
-                    SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
-                    //写日志
-                    LogHelper.LogTraceWriterPhone(phoneNo);                  
-                });
-            }    
-        }
-        //发送骑士短信
-        void SendMessagClienter(MessageModel model)
-        {
-            ClienterDao clienterDao = new ClienterDao();
-            DataTable dt = clienterDao.GetPhoneNoList(model.PushCity);
-            LogHelper.LogTraceStart("骑士",model.Content);
+            DataTable dt = businessDao.GetPhoneNoList(model.PushCity);
+            LogHelper.LogTraceStart("商家", model.Content);
 
             for (int i = 0; i < dt.Rows.Count; i++)
             {
@@ -150,15 +127,38 @@ namespace Ets.SendMessage
 
                 string phoneNo = "";
                 if (StringHelper.CheckPhone(dt.Rows[i]["PhoneNo"].ToString()))
-                    phoneNo = dt.Rows[i]["PhoneNo"].ToString();    
+                    phoneNo = dt.Rows[i]["PhoneNo"].ToString();
+                //string phoneNo = "13520860798"; 
                 Task.Factory.StartNew(() =>
                 {
                     SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
                     //写日志
-                    LogHelper.LogTraceWriterPhone( phoneNo); 
+                    LogHelper.LogTraceWriterPhone(phoneNo);
+                });
+            }
+        }
+        //发送骑士短信
+        void SendMessagClienter(MessageModel model)
+        {
+            ClienterDao clienterDao = new ClienterDao();
+            DataTable dt = clienterDao.GetPhoneNoList(model.PushCity);
+            LogHelper.LogTraceStart("骑士", model.Content);
 
-                });                
-            }     
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                if (dt.Rows[i]["PhoneNo"] == null || dt.Rows[i]["PhoneNo"].ToString() == "") continue;
+
+                string phoneNo = "";
+                if (StringHelper.CheckPhone(dt.Rows[i]["PhoneNo"].ToString()))
+                    phoneNo = dt.Rows[i]["PhoneNo"].ToString();
+                Task.Factory.StartNew(() =>
+                {
+                    SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
+                    //写日志
+                    LogHelper.LogTraceWriterPhone(phoneNo);
+
+                });
+            }
         }
         //发送批量导入短信
         void SendMessImport(MessageModel model)
@@ -167,23 +167,23 @@ namespace Ets.SendMessage
             {
                 LogHelper.LogTraceStart("指定对象", model.Content);
 
-                string []sp =model.PushPhone.Split(',');
-                for(int i=0;i<sp.Length;i++)
+                string[] sp = model.PushPhone.Split(',');
+                for (int i = 0; i < sp.Length; i++)
                 {
                     if (sp[i] == null || sp[i].ToString() == "") continue;
 
                     string phoneNo = "";
                     if (StringHelper.CheckPhone(sp[i].ToString()))
-                        phoneNo = sp[i].ToString();   
+                        phoneNo = sp[i].ToString();
 
                     Task.Factory.StartNew(() =>
                     {
                         SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
                         //写日志
-                        LogHelper.LogTraceWriterPhone(phoneNo); 
+                        LogHelper.LogTraceWriterPhone(phoneNo);
                     });
                 }
-              
+
             }
         }
 
@@ -233,7 +233,7 @@ namespace Ets.SendMessage
             for (int i = 0; i < dt.Rows.Count; i++)
             {
                 string businessId = dt.Rows[i]["id"].ToString();
-                long id=businessMessageDao.Insert(new BusinessMessage
+                long id = businessMessageDao.Insert(new BusinessMessage
                                         {
                                             BusinessId = Convert.ToInt32(businessId),
                                             Content = model.Content,
@@ -246,16 +246,16 @@ namespace Ets.SendMessage
                     JPushModel jpushModel = new JPushModel()
                     {
                         Alert = "发送App消息完成！",
-                        City = string.Empty,                        
+                        City = string.Empty,
                         Content = id.ToString(),
-                        ContentKey="Notice",
-                        RegistrationId = businessId,
+                        ContentKey = "Notice",
+                        RegistrationId = "B_" + businessId,
                         TagId = 1,
                         Title = "新消息",
-                        PushType=1
+                        PushType = 1
                     };
-                   Push.PushMessage(jpushModel);
-                });                
+                    Push.PushMessage(jpushModel);
+                });
             }
         }
 
@@ -266,7 +266,7 @@ namespace Ets.SendMessage
             DataTable dt = clienterDao.GetPhoneNoList(model.PushCity);
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-                string clienterId = dt.Rows[i]["id"].ToString();
+                string clienterId = dt.Rows[i]["id"].ToString();              
                 long id = clienterMessageDao.Insert(new ClienterMessage
                                         {
                                             ClienterId = Convert.ToInt32(clienterId),
@@ -283,7 +283,7 @@ namespace Ets.SendMessage
                         City = string.Empty,
                         Content = id.ToString(),
                         ContentKey = "Notice",
-                        RegistrationId = clienterId,
+                        RegistrationId = "C_" + clienterId,
                         TagId = 0,
                         Title = "新消息",
                         PushType = 1
