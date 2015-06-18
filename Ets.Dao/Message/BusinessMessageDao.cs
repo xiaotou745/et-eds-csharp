@@ -59,7 +59,7 @@ where  Id=@Id";
               dataRow => new ReadBDM
               {
                   Content = dataRow["Content"] == null ? "" : dataRow["Content"].ToString(),
-                  PubDate = Convert.ToDateTime(dataRow["PubDate"]).ToString("yyyy-MM-dd hh:mm"),
+                  PubDate = Convert.ToDateTime(dataRow["PubDate"]).ToString("yyyy-MM-dd HH:mm")
               });
         }
 
