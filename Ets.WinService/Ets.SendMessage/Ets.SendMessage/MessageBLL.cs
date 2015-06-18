@@ -135,8 +135,7 @@ namespace Ets.SendMessage
                     //写日志
                     LogHelper.LogTraceWriterPhone(phoneNo);                  
                 });
-            }
-            LogHelper.LogTraceEnd();
+            }    
         }
         //发送骑士短信
         void SendMessagClienter(MessageModel model)
@@ -159,8 +158,7 @@ namespace Ets.SendMessage
                     LogHelper.LogTraceWriterPhone( phoneNo); 
 
                 });                
-            }
-            LogHelper.LogTraceEnd();
+            }     
         }
         //发送批量导入短信
         void SendMessImport(MessageModel model)
@@ -185,8 +183,7 @@ namespace Ets.SendMessage
                         LogHelper.LogTraceWriterPhone(phoneNo); 
                     });
                 }
-
-                LogHelper.LogTraceEnd();
+              
             }
         }
 
