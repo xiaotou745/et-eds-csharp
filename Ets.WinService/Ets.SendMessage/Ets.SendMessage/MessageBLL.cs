@@ -118,8 +118,7 @@ namespace Ets.SendMessage
         void SendMessageBusiness(MessageModel model)
         {
             BusinessDao businessDao = new BusinessDao();
-            DataTable dt = businessDao.GetPhoneNoList(model.PushCity);
-            LogHelper.LogTraceStart("商家", model.Content);
+            DataTable dt = businessDao.GetPhoneNoList(model.PushCity);        
 
             for (int i = 0; i < dt.Rows.Count; i++)
             {
@@ -133,7 +132,7 @@ namespace Ets.SendMessage
                 {
                     SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
                     //写日志
-                    LogHelper.LogTraceWriterPhone(phoneNo);
+                    LogHelper.LogTraceWriterPhone(model.Content+"  商家:"+ phoneNo);
                 });
             }
         }
@@ -141,8 +140,7 @@ namespace Ets.SendMessage
         void SendMessagClienter(MessageModel model)
         {
             ClienterDao clienterDao = new ClienterDao();
-            DataTable dt = clienterDao.GetPhoneNoList(model.PushCity);
-            LogHelper.LogTraceStart("骑士", model.Content);
+            DataTable dt = clienterDao.GetPhoneNoList(model.PushCity);         
 
             for (int i = 0; i < dt.Rows.Count; i++)
             {
@@ -154,8 +152,8 @@ namespace Ets.SendMessage
                 Task.Factory.StartNew(() =>
                 {
                     SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
-                    //写日志
-                    LogHelper.LogTraceWriterPhone(phoneNo);
+                    //写日志                    
+                    LogHelper.LogTraceWriterPhone(model.Content + "  骑士:" + phoneNo);
 
                 });
             }
@@ -180,7 +178,7 @@ namespace Ets.SendMessage
                     {
                         SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
                         //写日志
-                        LogHelper.LogTraceWriterPhone(phoneNo);
+                        LogHelper.LogTraceWriterPhone(model.Content+"  指定对象:"+phoneNo);
                     });
                 }
 
