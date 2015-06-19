@@ -1744,7 +1744,8 @@ SELECT   b.Id ,
          bfa.OpenSubBank,
          g.GroupName,
          ISNULL(g.IsModifyBind,0) IsModifyBind,
-         ISNULL(b.OneKeyPubOrder,0) OneKeyPubOrder
+         ISNULL(b.OneKeyPubOrder,0) OneKeyPubOrder,
+         b.IsAllowOverdraft
 FROM business b WITH(NOLOCK) 
 	Left join BusinessFinanceAccount bfa WITH(NOLOCK) ON b.Id=bfa.BusinessId AND bfa.IsEnable=1
     Left join [group] g WITH(NOLOCK) on g.Id=b.GroupId 
