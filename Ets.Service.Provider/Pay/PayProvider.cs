@@ -485,8 +485,8 @@ namespace Ets.Service.Provider.Pay
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 new BusinessRechargeDao().Insert(model);//写入充值 
-                new BusinessBalanceRecordDao().Insert(businessBalanceRecord);//写商家流水
                 new BusinessDao().UpdateForWithdrawC(forWithdrawPM); //更新商家金额、可提现金额
+                new BusinessBalanceRecordDao().Insert(businessBalanceRecord);//写商家流水                
                 tran.Complete();
             }
             #region jpush推送
