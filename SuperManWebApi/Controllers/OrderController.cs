@@ -84,11 +84,11 @@ namespace SuperManWebApi.Controllers
                 isOneKeyPubOrder = true;
 
             order = null;
-            var version = model.Version;
-            if (string.IsNullOrWhiteSpace(version)) //版本号 
-            {
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.NoVersion);
-            }
+            //var version = model.Version;
+            //if (string.IsNullOrWhiteSpace(version)) //版本号 
+            //{
+            //    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.NoVersion);
+            //}
             if (!StringHelper.CheckPhone(model.recevicePhone))
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneErr);
