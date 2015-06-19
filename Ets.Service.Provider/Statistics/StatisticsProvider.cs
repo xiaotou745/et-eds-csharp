@@ -111,5 +111,16 @@ namespace Ets.Service.Provider.Statistics
             return statisticsDao.QueryActiveBusinessClienter(queryInfo);
         }
         #endregion
+
+        /// <summary>
+        /// 查询商家充值记录信息
+        /// </summary>
+        /// <param name="queryInfo"></param>
+        /// <returns></returns>
+        ETS.Data.PageData.PageInfo<BusinessBalanceInfo> IStatisticsProvider.QueryBusinessBalance(BussinessBalanceQuery queryInfo)
+        {
+            //AssertUtils.ArgumentNotNull(queryInfo, "queryInfo");
+            return statisticsDao.QueryBusinessBalance(queryInfo);
+        }
     }
 }

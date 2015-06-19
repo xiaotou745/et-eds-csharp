@@ -656,7 +656,9 @@
     <Content Include="Views\DataManager\Edit.cshtml" />
     <Content Include="Views\DataManager\Index.cshtml" />
     <Content Include="Views\DataManager\PostIndex.cshtml" />
-    <Content Include="Views\MessageManager\MessageEdit.cshtml" />
+    <Content Include="Views\Statistical\BussinessBalanceStatistical.cshtml" />
+    <Content Include="Views\Statistical\BussinessBalanceList.cshtml" />
+	<Content Include="Views\MessageManager\MessageEdit.cshtml" />
     <Content Include="Views\MessageManager\List.cshtml" />
     <Content Include="Views\MessageManager\PostList.cshtml" />
     <Content Include="Views\MessageManager\Detail.cshtml" />
