@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Quartz.Impl;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,19 +13,34 @@ namespace Ets.ExportData
 {
     partial class ExportDataService : ServiceBase
     {
+        private Quartz.IScheduler scheduler;
         public ExportDataService()
         {
             InitializeComponent();
+            Quartz.ISchedulerFactory schedulerFactory = new StdSchedulerFactory();
+            scheduler = schedulerFactory.GetScheduler();
         }
 
         protected override void OnStart(string[] args)
         {
-            // TODO:  在此处添加代码以启动服务。
+            System.Threading.Thread.Sleep(10000);
+            scheduler.Start();         
         }
+
 
         protected override void OnStop()
         {
-            // TODO:  在此处添加代码以执行停止服务所需的关闭操作。
+            scheduler.Shutdown();
+        }
+
+        protected override void OnPause()
+        {
+            scheduler.PauseAll();
+        }
+
+        protected override void OnContinue()
+        {
+            scheduler.ResumeAll();
         }
     }
 }

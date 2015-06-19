@@ -9,23 +9,23 @@
   </processing-directives>
 
   <schedule>
-    <!--跨店奖励统计-->
+    <!--定时导出发送邮件-->
     <job>
-      <name>WithdrawBLL</name>
-      <group>DeomJobGroup</group>
-      <description>可提现金额变更</description>
-      <job-type>Ets.BandCWithdraw.WithdrawBLL,Ets.BandCWithdraw</job-type>
+      <name>ExportData</name>
+      <group>ExportDataGroup</group>
+      <description>定时导出发送邮件</description>
+      <job-type>Ets.ExportData.ExportBLL,Ets.ExportData</job-type>
       <durable>true</durable>
       <recover>false</recover>
     </job>
 
-    <!--跨店奖励统计 触发器 每天凌晨02:00执行一次跨店奖励统计任务-->
+    <!--定时导出发送邮件-->
     <trigger>
       <cron>
-        <name>WithdrawBLLTrigger</name>
-        <group>DeomJobTriggerGroup</group>
-        <job-name>WithdrawBLL</job-name>
-        <job-group>DeomJobGroup</job-group>
+        <name>ExportDataTrigger</name>
+        <group>ExportDataTriggerGroup</group>
+        <job-name>ExportData</job-name>
+        <job-group>ExportDataGroup</job-group>
         <cron-expression>* 0/10 * * * ?</cron-expression>
       </cron>
     </trigger>
