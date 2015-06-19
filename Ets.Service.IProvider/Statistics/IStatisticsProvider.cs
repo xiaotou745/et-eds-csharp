@@ -28,5 +28,11 @@ namespace Ets.Service.IProvider.Statistics
         /// <param name="queryInfo"></param>
         /// <returns></returns>
         PageInfo<BusinessBalanceInfo> QueryBusinessBalance(BussinessBalanceQuery queryInfo);
+        /// <summary>
+        /// 查询给定条件下商家充值总金额
+        /// </summary>
+        /// <param name="queryInfo"></param>
+        /// <returns></returns>
+        decimal QueryBusinessTotalAmount(BussinessBalanceQuery queryInfo);
     }
 }

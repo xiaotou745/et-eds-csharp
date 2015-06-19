@@ -8,6 +8,8 @@ using ETS.Data.PageData;
 using Ets.Model.Common;
 using ETS.Util;
 using Ets.Model.ParameterModel.Common;
+using Ets.Service.Provider.Common;
+using Ets.Service.IProvider.Common;
 
 namespace SuperMan.Controllers
 {
@@ -25,6 +27,8 @@ namespace SuperMan.Controllers
         /// 统计提供Service
         /// </summary>
         private readonly IStatisticsProvider statisticsProvider = new StatisticsProvider();
+
+        private readonly IAreaProvider areaProvider = new AreaProvider();
 
         #region 订单完成时间间隔统计
 
@@ -130,7 +134,10 @@ namespace SuperMan.Controllers
         public ActionResult BussinessBalanceStatistical()
         {
             var criteria = new BussinessBalanceQuery();
+            TryUpdateModel(criteria);
             criteria.PageIndex = 1;
+            ViewBag.openCityList = areaProvider.GetOpenCityOfSingleCity(0);
+            ViewBag.TotalAmount = statisticsProvider.QueryBusinessTotalAmount(criteria);
             PageInfo<BusinessBalanceInfo> resultData = statisticsProvider.QueryBusinessBalance(criteria);
             return View(resultData);
         }

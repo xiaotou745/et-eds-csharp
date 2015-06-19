@@ -31,6 +31,9 @@ using Ets.Service.IProvider.Business;
 using Ets.Service.Provider.Business;
 using Ets.Model.Common;
 using Ets.Service.IProvider.Distribution;
+using Ets.Model.DomainModel.Statistics;
+using Ets.Service.Provider.Statistics;
+using Ets.Service.IProvider.Statistics;
 namespace SuperMan.Controllers
 {
     [WebHandleError]
@@ -45,6 +48,7 @@ namespace SuperMan.Controllers
         readonly IBusinessFinanceProvider iBusinessFinanceProvider = new BusinessFinanceProvider();
         readonly IBusinessClienterRelationProvider iBusinessClienterRelationProvider = new BusinessClienterRelationProvider();
         readonly IDistributionProvider iDistributionProvider = new DistributionProvider();
+        private readonly IStatisticsProvider statisticsProvider = new StatisticsProvider();
 
         // GET: BusinessManager
         [HttpGet]
@@ -217,12 +221,17 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult BusinessDetail(string businessId)
         {
-            var businessWithdrawFormModel = iBusinessProvider.GetBusinessDetailById(businessId);
             var criteria = new BusinessBalanceRecordSerchCriteria()
             {
                 BusinessId = Convert.ToInt32(businessId)
             };
             ViewBag.businessBalanceRecord = iBusinessFinanceProvider.GetBusinessBalanceRecordListOfPaging(criteria);
+
+            var queryCriteria = new BussinessBalanceQuery();
+            queryCriteria.BusinessId = businessId;
+            ViewBag.TotalAmount = statisticsProvider.QueryBusinessTotalAmount(queryCriteria);
+
+            var businessWithdrawFormModel = iBusinessProvider.GetBusinessDetailById(businessId);
             return View(businessWithdrawFormModel);
         }
 

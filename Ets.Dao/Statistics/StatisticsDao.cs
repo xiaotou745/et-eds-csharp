@@ -639,28 +639,86 @@ order by o.Date desc, o.ActiveClienterCount desc";
         public PageInfo<BusinessBalanceInfo> QueryBusinessBalance(BussinessBalanceQuery queryInfo)
         {
             string columnList = @"
-bbr.Id
-,bbr.BusinessId
-,b.Name
-,b.PhoneNo
-,b.Address
-,bbr.OperateTime
-,bbr.Amount
-,bbr.Balance";
+                                    bbr.Id
+                                    ,bbr.BusinessId
+                                    ,b.Name
+                                    ,b.PhoneNo
+                                    ,b.Address
+                                    ,bbr.OperateTime
+                                    ,bbr.Amount
+                                    ,bbr.Balance";
             string tables = " dbo.BusinessBalanceRecord bbr(nolock) join dbo.business b(nolock) on bbr.BusinessId = b.Id";
+            var sbSqlWhere = GetQueryWhere(queryInfo);
+
+            //0为充值时间倒序，1为充值金额降序，2为充值金额升序
+            string orderByColumn = " bbr.operatetime desc  ";
+            switch (queryInfo.OrderType)
+            {
+                case 1: orderByColumn = " bbr.Amount desc  ";
+                    break;
+                case 2: orderByColumn = " bbr.Amount asc  ";
+                    break;
+                default:
+                    break;
+            }
+            return new PageHelper().GetPages<BusinessBalanceInfo>(SuperMan_Read, queryInfo.PageIndex, sbSqlWhere,
+                orderByColumn, columnList, tables, ETS.Const.SystemConst.PageSize, true);
+        }
+
+        private static string GetQueryWhere(BussinessBalanceQuery queryInfo)
+        {
             var sbSqlWhere = new StringBuilder(" bbr.RecordType=9  ");
+            if (!string.IsNullOrWhiteSpace(queryInfo.BusinessId))
+            {
+                sbSqlWhere.AppendFormat(" AND bbr.BusinessId='{0}' ", queryInfo.BusinessId);
+            }
             if (!string.IsNullOrWhiteSpace(queryInfo.StartDate))
             {
-                sbSqlWhere.AppendFormat(" AND operatetime>='{0}' ", queryInfo.StartDate);
+                sbSqlWhere.AppendFormat(" AND bbr.operatetime>='{0}' ", queryInfo.StartDate);
             }
             if (!string.IsNullOrWhiteSpace(queryInfo.EndDate))
             {
-                sbSqlWhere.AppendFormat(" AND operatetime<='{0}' ", ParseHelper.ToDatetime(queryInfo.EndDate).AddDays(1).ToString("yyyy-MM-dd"));
+                DateTime finalDt = ParseHelper.ToDatetime(queryInfo.EndDate);
+                if (finalDt != DateTime.MaxValue)
+                {
+                    finalDt = finalDt.AddDays(1);
+                }
+                sbSqlWhere.AppendFormat(" AND bbr.operatetime<='{0}' ", finalDt.ToString("yyyy-MM-dd"));
             }
-            string orderByColumn = " bbr.Id desc  ";
-
-            return new PageHelper().GetPages<BusinessBalanceInfo>(SuperMan_Read, queryInfo.PageIndex, sbSqlWhere.ToString(),
-                orderByColumn, columnList, tables, ETS.Const.SystemConst.PageSize, true);
+            if (!string.IsNullOrWhiteSpace(queryInfo.Name))
+            {
+                sbSqlWhere.AppendFormat(" AND Name='{0}' ", queryInfo.Name);
+            }
+            if (!string.IsNullOrWhiteSpace(queryInfo.PhoneNo))
+            {
+                sbSqlWhere.AppendFormat(" AND PhoneNo='{0}' ", queryInfo.PhoneNo);
+            }
+            if (!string.IsNullOrWhiteSpace(queryInfo.CityId))
+            {
+                sbSqlWhere.AppendFormat(" AND CityId='{0}' ", queryInfo.CityId);
+            }
+            return sbSqlWhere.ToString();
+        }
+        /// <summary>
+        /// 查询给定条件下商家充值总金额
+        /// </summary>
+        /// <param name="queryInfo"></param>
+        /// <returns></returns>
+        public decimal QueryBusinessTotalAmount(BussinessBalanceQuery queryInfo)
+        {
+            string sql = @"
+                            SELECT  SUM(bbr.amount) AS totalAmount
+                            FROM    BusinessBalanceRecord bbr ( NOLOCK )
+                                    INNER JOIN dbo.business b ( NOLOCK ) ON bbr.BusinessId = b.Id where ";
+            if (!string.IsNullOrWhiteSpace(queryInfo.BusinessId))
+            {
+                sql = @"
+                            SELECT  SUM(bbr.amount) AS totalAmount
+                            FROM    BusinessBalanceRecord bbr ( NOLOCK ) where ";
+            }
+            var sbSqlWhere = GetQueryWhere(queryInfo);
+            object obj = DbHelper.ExecuteScalar(SuperMan_Read, sql + sbSqlWhere);
+            return ParseHelper.ToDecimal(obj, 0);
         }
         #endregion
     }
