@@ -57,8 +57,8 @@ namespace SuperManWebApi.Controllers
                         BusiOrderResultModel resultModel = new BusiOrderResultModel { userId = model.userId };
                         return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
                     }
+                    return ResultModel<BusiOrderResultModel>.Conclude(cuStatus);
                 }
-
                 return currResModel;
             }
             catch (Exception ex)
@@ -89,10 +89,10 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.NoVersion);
             }
-            if (!StringHelper.CheckPhone(model.recevicePhone))
-            {
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneErr);
-            }
+            //if (!isOneKeyPubOrder && !StringHelper.CheckPhone(model.recevicePhone))
+            //{
+            //    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneErr);
+            //}
             if (!isOneKeyPubOrder && string.IsNullOrEmpty(model.recevicePhone))//手机号
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneIsNULL);
