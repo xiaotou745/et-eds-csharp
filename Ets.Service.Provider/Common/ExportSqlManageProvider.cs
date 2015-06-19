@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Ets.Dao.Common;
 using ETS.Data.PageData;
+using ETS.Extension;
 using ETS.IO;
 using Ets.Model.DataModel.Common;
 using Ets.Model.ParameterModel.Common;
@@ -87,17 +88,16 @@ namespace Ets.Service.Provider.Common
                         DataTable dt = exportSqlManageDao.ExecuteForExport(temp.SqlText);
                         if (dt != null)
                         {
-                            var dics = new Dictionary<string, string>();
-                            foreach (DataColumn colucmns in dt.Columns)
+                            if (Excel.OutputXLSFromDataTable(null, dt,
+                                urlPath + temp.Name + DateTime.Now.ToString("yyyyMMdd") + ".xls"))
                             {
-                                dics.Add(colucmns.ColumnName, colucmns.ColumnName);
+                                EmailHelper.SendEmailTo("", temp.ReceiveEmail, "数据", "edsdev@etaostars.com", false,
+                                    attachName: urlPath + temp.Name + DateTime.Now.ToString("yyyyMMdd") + ".xls",displayName:"导出数据");
                             }
-                            //ExcelHelper.ExportExcel(urlPath + temp.Name + DateTime.Now.ToString("yyyyMMdd") + ".xls", dt, dics, temp.Name);
                         }
                     }
                     catch (Exception ex)
                     {
-                        
                         throw;
                     }
                 }
