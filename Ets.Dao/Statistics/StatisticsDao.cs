@@ -640,6 +640,7 @@ order by o.Date desc, o.ActiveClienterCount desc";
         {
             string columnList = @"
                                     bbr.Id
+                                    ,bbr.RelationNo
                                     ,bbr.BusinessId
                                     ,b.Name
                                     ,b.PhoneNo

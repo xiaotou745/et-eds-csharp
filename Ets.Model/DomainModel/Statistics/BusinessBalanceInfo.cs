@@ -13,6 +13,10 @@ namespace Ets.Model.DomainModel.Statistics
         /// </summary>
         public Int64 Id { get; set; }
         /// <summary>
+        /// 流水号
+        /// </summary>
+        public string RelationNo { get; set; }
+        /// <summary>
         /// 商家id
         /// </summary>
         public Int64 BusinessId { get; set; }
