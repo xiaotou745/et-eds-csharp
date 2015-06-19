@@ -1,0 +1,85 @@
+﻿@model ETS.Data.PageData.PageInfo<BusinessBalanceInfo>
+@using Ets.Model.DomainModel.Statistics;
+@{
+    ViewBag.Title = "商家充值统计";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：数据统计 >商家充值统计
+    </h2>
+
+    @using (Ajax.BeginForm("PostBussinessBalanceStatistical", new RouteValueDictionary { { "pageindex", "" } },
+    new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+    new RouteValueDictionary { { "id", "searchForm" } }))
+    {
+        <div class="SearchMd" style="width:1000px">
+            <h4 style="color:black;font-weight:600">商家充值统计</h4>
+            <table border="0" cellspacing="0" cellpadding="0" style="width:700px">
+                <tr>
+                    <td>
+                        <span class="">充值时间: </span>
+                        <input id="txtBalanceStart" readonly="readonly" name="StartDate" />
+                    </td>
+                    <td>
+                        <span class="">到: </span>
+                        <input id="txtBalanceEnd" readonly="readonly" name="EndDate" />
+                    </td>
+                    <td>
+                        <span class="">充值总金额: @ViewBag.TotalAmount.ToString("F2")</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="">商户名称: </span>
+                        <input id="txtName" name="Name" />
+                    </td>
+                    <td>
+                        <span class="">注册账号: </span>
+                        <input id="txtPhoneNo" name="PhoneNo" />
+                    </td>
+                    <td>
+                        <span class="">排序方式: </span>
+                        <select name="OrderType" id="OrderType">
+                            <option value="0">充值时间降序</option>
+                            <option value="1">充值金额降序</option>
+                            <option value="2">充值金额升序</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="">城市筛选: </span>
+                        @Html.DropDownList("CityId", new SelectList(ViewBag.openCityList.Result.AreaModels, "Code", "Name"), "全部城市", new { style = "width:155px" })
+                    </td>
+                    <td>
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+    <hr />
+    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <div class="bd clearfix" id="dataList">
+        @Html.Partial("BussinessBalanceList", Model)
+    </div>
+</div>
+@section scripts
+{
+    @*<script type="text/javascript" src="~/Scripts/jquery.loadmask.js"></script>*@
+    <script type="text/javascript" src="~/Scripts/jquery.blockUI.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $(document).ready(function () {
+                $('#txtBalanceStart').datepicker();
+                $('#txtBalanceEnd').datepicker();
+            });
+        });
+    </script>
+}
+<script src="~/Scripts/mvcpager.js"></script>

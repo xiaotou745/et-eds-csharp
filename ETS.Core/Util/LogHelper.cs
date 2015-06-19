@@ -283,7 +283,7 @@ namespace ETS.Util
                 //写日志      
                 string logstr = "\r\n";
                 logstr = logstr + DateTime.Now.ToString() + "  ";
-                logstr = logstr + "手机号码:" + rmark + "\r\n";
+                logstr = logstr + rmark + "\r\n";
                 logger.Trace(logstr);
             }
             catch (Exception)

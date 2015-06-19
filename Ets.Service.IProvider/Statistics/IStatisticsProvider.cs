@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ets.Model.DomainModel.Statistics;
+using ETS.Data.PageData;
 
 namespace Ets.Service.IProvider.Statistics
 { 
@@ -21,5 +22,17 @@ namespace Ets.Service.IProvider.Statistics
         /// <param name="queryInfo"></param>
         /// <returns></returns>
         IList<ActiveBusinessClienterInfo> QueryActiveBusinessClienter(ParamActiveInfo queryInfo);
+        /// <summary>
+        /// 查询商家充值记录信息和分页信息
+        /// </summary>
+        /// <param name="queryInfo"></param>
+        /// <returns></returns>
+        PageInfo<BusinessBalanceInfo> QueryBusinessBalance(BussinessBalanceQuery queryInfo);
+        /// <summary>
+        /// 查询给定条件下商家充值总金额
+        /// </summary>
+        /// <param name="queryInfo"></param>
+        /// <returns></returns>
+        decimal QueryBusinessTotalAmount(BussinessBalanceQuery queryInfo);
     }
 }

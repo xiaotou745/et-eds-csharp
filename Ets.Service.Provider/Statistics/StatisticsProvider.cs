@@ -111,5 +111,39 @@ namespace Ets.Service.Provider.Statistics
             return statisticsDao.QueryActiveBusinessClienter(queryInfo);
         }
         #endregion
+
+        /// <summary>
+        /// 查询商家充值记录信息
+        /// </summary>
+        /// <param name="queryInfo"></param>
+        /// <returns></returns>
+        ETS.Data.PageData.PageInfo<BusinessBalanceInfo> IStatisticsProvider.QueryBusinessBalance(BussinessBalanceQuery queryInfo)
+        {
+            if (queryInfo!=null&&
+                !string.IsNullOrWhiteSpace(queryInfo.StartDate) &&
+                !string.IsNullOrWhiteSpace(queryInfo.EndDate))
+            {
+                if (ParseHelper.ToDatetime(queryInfo.StartDate) > ParseHelper.ToDatetime(queryInfo.EndDate))
+                {
+                    return null;
+                }
+            }
+            return statisticsDao.QueryBusinessBalance(queryInfo);
+        }
+
+
+        public decimal QueryBusinessTotalAmount(BussinessBalanceQuery queryInfo)
+        {
+            if (queryInfo != null &&
+                !string.IsNullOrWhiteSpace(queryInfo.StartDate) &&
+                !string.IsNullOrWhiteSpace(queryInfo.EndDate))
+            {
+                if (ParseHelper.ToDatetime(queryInfo.StartDate) > ParseHelper.ToDatetime(queryInfo.EndDate))
+                {
+                    return 0;
+                }
+            }
+            return statisticsDao.QueryBusinessTotalAmount(queryInfo);
+        }
     }
 }
