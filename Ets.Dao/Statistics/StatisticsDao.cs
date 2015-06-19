@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Ets.Model.DomainModel.Statistics;
 using ETS.Data.Generic;
 using ETS.Extension;
+using ETS.Data.PageData;
 
 namespace Ets.Dao.Statistics
 {
@@ -627,6 +628,40 @@ order by o.Date desc, o.ActiveClienterCount desc";
             }
         }
 
+        #endregion
+        #region
+
+        /// <summary>
+        /// 查询商家充值记录信息和分业信息
+        /// </summary>
+        /// <param name="queryInfo"></param>
+        /// <returns></returns>
+        public PageInfo<BusinessBalanceInfo> QueryBusinessBalance(BussinessBalanceQuery queryInfo)
+        {
+            string columnList = @"
+bbr.Id
+,bbr.BusinessId
+,b.Name
+,b.PhoneNo
+,b.Address
+,bbr.OperateTime
+,bbr.Amount
+,bbr.Balance";
+            string tables = " dbo.BusinessBalanceRecord bbr(nolock) join dbo.business b(nolock) on bbr.BusinessId = b.Id";
+            var sbSqlWhere = new StringBuilder(" bbr.RecordType=9  ");
+            if (!string.IsNullOrWhiteSpace(queryInfo.StartDate))
+            {
+                sbSqlWhere.AppendFormat(" AND operatetime>='{0}' ", queryInfo.StartDate);
+            }
+            if (!string.IsNullOrWhiteSpace(queryInfo.EndDate))
+            {
+                sbSqlWhere.AppendFormat(" AND operatetime<='{0}' ", ParseHelper.ToDatetime(queryInfo.EndDate).AddDays(1).ToString("yyyy-MM-dd"));
+            }
+            string orderByColumn = " bbr.Id desc  ";
+
+            return new PageHelper().GetPages<BusinessBalanceInfo>(SuperMan_Read, queryInfo.PageIndex, sbSqlWhere.ToString(),
+                orderByColumn, columnList, tables, ETS.Const.SystemConst.PageSize, true);
+        }
         #endregion
     }
 }

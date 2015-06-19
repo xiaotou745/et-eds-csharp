@@ -1,0 +1,38 @@
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Statistics.BusinessBalanceInfo>
+@using Webdiyer.WebControls.Mvc;
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+    <thead>
+        <tr class="tdbg">
+            <th width="%5">编号</th>
+            <th>商户名称</th>
+            <th class="J_City none">注册帐号</th>
+            <th class="J_City none">地址</th>
+            <th class="J_City none">充值时间</th>
+            <th>充值金额</th>
+            <th>余额</th>
+        </tr>
+    </thead>
+    <tbody id="tbodyTimeSpan">
+        @{
+            foreach (var item in Model.Records)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Name</td>
+                    <td>@item.PhoneNo</td>
+                    <td>@item.Address</td>
+                    <td>@item.OperateTime</td>
+                    <td><a target="_blank" href="/BusinessManager/BusinessDetail?businessId=@item.BusinessId">@item.Amount.ToString("F2")</a></td>
+                    <td>@item.Balance.ToString("F2")</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+@{
+    if (Model != null)
+    {
+        ViewBag.ActionName = "PostBussinessBalanceStatistical";
+        @Html.Partial("~/views/shared/PagerControl.cshtml", Model)
+    }
+}
