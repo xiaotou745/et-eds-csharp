@@ -23,8 +23,7 @@ namespace Ets.ExportData
                 new ExportDataService() 
             };
 
-            IExportSqlManageProvider xx = new ExportSqlManageProvider();
-            xx.QueryForWindows( new DataManageSearchCriteria());
+        
             ServiceBase.Run(ServicesToRun);
         }
     }
