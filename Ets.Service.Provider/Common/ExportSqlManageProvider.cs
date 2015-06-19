@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Ets.Dao.Common;
 using ETS.Data.PageData;
 using ETS.IO;
-using ETS.Library.Util;
 using Ets.Model.DataModel.Common;
 using Ets.Model.ParameterModel.Common;
 using Ets.Service.IProvider.Common;
@@ -83,13 +82,24 @@ namespace Ets.Service.Provider.Common
                 }
                 else
                 {
-                    DataTable dt = exportSqlManageDao.ExecuteForExport(temp.SqlText);
-                    var dics = new Dictionary<string, string>();
-                    foreach (DataColumn colucmns in dt.Columns)
+                    try
                     {
-                        dics.Add(colucmns.ColumnName, colucmns.ColumnName);
+                        DataTable dt = exportSqlManageDao.ExecuteForExport(temp.SqlText);
+                        if (dt != null)
+                        {
+                            var dics = new Dictionary<string, string>();
+                            foreach (DataColumn colucmns in dt.Columns)
+                            {
+                                dics.Add(colucmns.ColumnName, colucmns.ColumnName);
+                            }
+                            //ExcelHelper.ExportExcel(urlPath + temp.Name + DateTime.Now.ToString("yyyyMMdd") + ".xls", dt, dics, temp.Name);
+                        }
                     }
-                    ExcelHelper.ExportExcel(urlPath + temp.Name + DateTime.Now.ToString("yyyyMMdd") + ".xls", dt, dics, temp.Name);
+                    catch (Exception ex)
+                    {
+                        
+                        throw;
+                    }
                 }
             }
             return results;
