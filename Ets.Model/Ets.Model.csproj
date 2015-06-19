@@ -127,6 +127,8 @@
     <Compile Include="DomainModel\Order\OrderChildForTicket.cs" />
     <Compile Include="DomainModel\Order\RushOrderModel.cs" />
     <Compile Include="DomainModel\Statistics\ActiveBusinessClienterInfo.cs" />
+    <Compile Include="DomainModel\Statistics\BusinessBalanceInfo.cs" />
+    <Compile Include="DomainModel\Statistics\BussinessBalanceQuery.cs" />
     <Compile Include="DomainModel\Statistics\JieDanTimeInfo.cs" />
     <Compile Include="DomainModel\Statistics\OrderCompleteTimeSpanInfo.cs" />
     <Compile Include="DomainModel\Statistics\TaskStatisticsPerHourInfo.cs" />

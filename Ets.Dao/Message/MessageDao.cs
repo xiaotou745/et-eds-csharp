@@ -73,7 +73,7 @@ INSERT INTO [Message]
            ,@SendTime
            ,@OverTime
            ,@CreateBy
-           ,getdate()
+           ,@CreateTime
            ,@UpdateBy
            ,getdate());");
             var parm = DbHelper.CreateDbParameters();
@@ -83,10 +83,11 @@ INSERT INTO [Message]
             parm.AddWithValue("@SentStatus", model.SentStatus);
             parm.AddWithValue("@PushType", model.PushType);
             parm.AddWithValue("@PushTarget", model.PushTarget);
-            parm.AddWithValue("@PushCity", model.PushCity??"");
+            parm.AddWithValue("@PushCity", model.PushCity ?? "");
             parm.AddWithValue("@PushPhone", model.PushPhone);
             parm.AddWithValue("@SendType", model.SendType);
-            parm.AddWithValue("@SendTime", model.SendTime.ToString("yyyy-MM-dd HH:mm:ss").StartsWith("0001") ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") : model.SendTime.ToString("yyyy-MM-dd HH:mm:ss"));
+            parm.AddWithValue("@CreateTime", DateTime.Now);
+            parm.AddWithValue("@SendTime", model.SendType == 1 ? DateTime.Now : model.SendTime);//如果=1 实时发布
             parm.AddWithValue("@OverTime", model.OverTime);
             parm.AddWithValue("@CreateBy", model.OptUserName);
             parm.AddWithValue("@UpdateBy", model.OptUserName);
@@ -107,7 +108,7 @@ INSERT INTO [Message]
                                 PushType=@PushType,
                                 
                                            ";
-            if (model.PushType ==1)
+            if (model.PushType == 1)
             {
                 sql += " PushTarget=@PushTarget,PushCity=@PushCity, ";
             }
@@ -115,7 +116,7 @@ INSERT INTO [Message]
             {
                 sql += " PushPhone=@PushPhone, ";
             }
-            if(model.SendType==2)
+            if (model.SendType == 2)
             {
                 sql += " SendTime=@SendTime, ";
             }

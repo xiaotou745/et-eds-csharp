@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Ets.Dao.Common;
 using ETS.Data.PageData;
 using ETS.IO;
+using ETS.Library.Util;
 using Ets.Model.DataModel.Common;
 using Ets.Model.ParameterModel.Common;
 using Ets.Service.IProvider.Common;
@@ -88,7 +89,7 @@ namespace Ets.Service.Provider.Common
                     {
                         dics.Add(colucmns.ColumnName, colucmns.ColumnName);
                     }
-                    //ExcelHelper.ExportExcel(urlPath + temp.Name + DateTime.Now.ToString("yyyyMMdd") + ".xls", dt, dics, temp.Name);
+                    ExcelHelper.ExportExcel(urlPath + temp.Name + DateTime.Now.ToString("yyyyMMdd") + ".xls", dt, dics, temp.Name);
                 }
             }
             return results;

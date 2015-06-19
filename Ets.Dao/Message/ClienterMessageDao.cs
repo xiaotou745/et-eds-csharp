@@ -60,7 +60,7 @@ where  Id=@Id";
                 dataRow => new ReadCDM
                 {
                     Content = dataRow["Content"]==null?"":dataRow["Content"].ToString(),
-                    PubDate = Convert.ToDateTime(dataRow["PubDate"]).ToString("yyyy-MM-dd hh:mm"),
+                    PubDate = Convert.ToDateTime(dataRow["PubDate"]).ToString("yyyy-MM-dd HH:mm"),
                 });
         }
 
