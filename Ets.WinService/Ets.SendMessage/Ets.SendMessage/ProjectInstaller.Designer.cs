@@ -1,4 +1,4 @@
-﻿namespace Ets.SendMessage
+﻿namespace Ets.SendMessages
 {
     partial class ProjectInstaller
     {
@@ -39,9 +39,7 @@
             // 
             // serviceInstaller1
             // 
-            this.serviceInstaller1.Description = "Ets.SendMessage";
-            this.serviceInstaller1.DisplayName = "Ets.SendMessage";
-            this.serviceInstaller1.ServiceName = "Ets.SendMessage";
+            this.serviceInstaller1.ServiceName = "MessageService";
             // 
             // ProjectInstaller
             // 

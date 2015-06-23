@@ -1,5 +1,4 @@
-﻿using Common.Logging;
-using Ets.Dao.Business;
+﻿using Ets.Dao.Business;
 using Ets.Dao.Clienter;
 using ETS.Util;
 using System;
@@ -18,7 +17,6 @@ namespace Ets.SendMessage
     public class MessageBLL : Quartz.IJob
     {
         //使用Common.Logging.dll日志接口实现日志记录        
-        private ILog logger = LogManager.GetCurrentClassLogger();
         private static bool threadSafe = true;//线程安全
         MessageDao messageDao = new MessageDao();
         BusinessMessageDao businessMessageDao = new BusinessMessageDao();
