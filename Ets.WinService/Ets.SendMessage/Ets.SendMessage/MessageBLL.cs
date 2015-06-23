@@ -243,7 +243,7 @@ namespace Ets.SendMessage
                 {
                     JPushModel jpushModel = new JPushModel()
                     {
-                        Alert = "发送App消息完成！",
+                        Alert = "您有新消息啦，请及时查收！",
                         City = string.Empty,
                         Content = id.ToString(),
                         ContentKey = "Notice",
@@ -277,7 +277,7 @@ namespace Ets.SendMessage
                 {
                     JPushModel jpushModel = new JPushModel()
                     {
-                        Alert = "发送App消息完成！",
+                        Alert = "您有新消息啦，请及时查收！",
                         City = string.Empty,
                         Content = id.ToString(),
                         ContentKey = "Notice",
