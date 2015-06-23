@@ -1,7 +1,7 @@
 USE [superman]
 GO
 
-/****** Object:  Table [dbo].[ClienterMessage]    Script Date: 06/17/2015 14:55:45 ******/
+/****** Object:  Table [dbo].[ClienterMessage]    Script Date: 06/23/2015 16:53:49 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -13,7 +13,11 @@ CREATE TABLE [dbo].[ClienterMessage](
 	[ClienterId] [int] NOT NULL,
 	[Content] [nvarchar](1024) NOT NULL,
 	[IsRead] [smallint] NOT NULL,
-	[PubDate] [datetime] NOT NULL
+	[PubDate] [datetime] NOT NULL,
+ CONSTRAINT [PK_ClienterMessage] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
 GO
