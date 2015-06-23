@@ -58,8 +58,6 @@ namespace Ets.Model.DomainModel.Business
         /// <summary>
         /// 商户绑定骑士数量
         /// </summary>
-        public int BindClienterQty { get; set; }
-        
-        
+        public int BindClienterQty { get; set; } 
     }
 }

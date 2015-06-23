@@ -57,8 +57,8 @@ namespace SuperManWebApi.Controllers
                         BusiOrderResultModel resultModel = new BusiOrderResultModel { userId = model.userId };
                         return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.Success, resultModel);
                     }
+                    return ResultModel<BusiOrderResultModel>.Conclude(cuStatus);
                 }
-
                 return currResModel;
             }
             catch (Exception ex)
@@ -84,15 +84,15 @@ namespace SuperManWebApi.Controllers
                 isOneKeyPubOrder = true;
 
             order = null;
-            //var version = model.Version;
-            //if (string.IsNullOrWhiteSpace(version)) //版本号 
-            //{
-            //    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.NoVersion);
-            //}
-            if (!StringHelper.CheckPhone(model.recevicePhone))
+            var version = model.Version;
+            if (string.IsNullOrWhiteSpace(version)) //版本号 
             {
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneErr);
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.NoVersion);
             }
+            //if (!isOneKeyPubOrder && !StringHelper.CheckPhone(model.recevicePhone))
+            //{
+            //    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneErr);
+            //}
             if (!isOneKeyPubOrder && string.IsNullOrEmpty(model.recevicePhone))//手机号
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneIsNULL);
@@ -151,14 +151,11 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusinessEmpty);  //未取到商户信息
             }
-            else
+            if (buStatus.IsAllowOverdraft == 0) //0不允许透支
             {
-                if (buStatus.IsAllowOverdraft == 0) //0不允许透支
+                if (business.BalancePrice < order.SettleMoney)
                 {
-                    if (business.BalancePrice < order.SettleMoney)
-                    {
-                        return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusiBalancePriceLack);
-                    }
+                    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusiBalancePriceLack);
                 }
             }
             return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.VerificationSuccess);

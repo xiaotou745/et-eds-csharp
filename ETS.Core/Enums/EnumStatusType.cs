@@ -61,7 +61,7 @@ namespace ETS.Enums
         [DisplayText("获取商户信息失败")]
         BusinessEmpty= -11,
         [DisplayText("您的余额不足，请及时充值!")]
-        BusiBalancePriceLack
+        BusiBalancePriceLack=-12
 
 
     }

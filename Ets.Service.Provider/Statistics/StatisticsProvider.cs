@@ -119,8 +119,31 @@ namespace Ets.Service.Provider.Statistics
         /// <returns></returns>
         ETS.Data.PageData.PageInfo<BusinessBalanceInfo> IStatisticsProvider.QueryBusinessBalance(BussinessBalanceQuery queryInfo)
         {
-            //AssertUtils.ArgumentNotNull(queryInfo, "queryInfo");
+            if (queryInfo!=null&&
+                !string.IsNullOrWhiteSpace(queryInfo.StartDate) &&
+                !string.IsNullOrWhiteSpace(queryInfo.EndDate))
+            {
+                if (ParseHelper.ToDatetime(queryInfo.StartDate) > ParseHelper.ToDatetime(queryInfo.EndDate))
+                {
+                    return null;
+                }
+            }
             return statisticsDao.QueryBusinessBalance(queryInfo);
+        }
+
+
+        public decimal QueryBusinessTotalAmount(BussinessBalanceQuery queryInfo)
+        {
+            if (queryInfo != null &&
+                !string.IsNullOrWhiteSpace(queryInfo.StartDate) &&
+                !string.IsNullOrWhiteSpace(queryInfo.EndDate))
+            {
+                if (ParseHelper.ToDatetime(queryInfo.StartDate) > ParseHelper.ToDatetime(queryInfo.EndDate))
+                {
+                    return 0;
+                }
+            }
+            return statisticsDao.QueryBusinessTotalAmount(queryInfo);
         }
     }
 }
