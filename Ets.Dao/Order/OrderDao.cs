@@ -2794,7 +2794,7 @@ where c.Id=@ClienterId;");
 			    GrabTime,
 			    OrderCommission";
 
-            string sql = @"SELECT {0} FROM [order] o INNER JOIN [OrderOther] oth ON o.Id = oth.OrderId WHERE o.Status=1 ";
+            string sql = @"SELECT {0} FROM [order](nolock) o JOIN [OrderOther](nolock) oth ON o.Id = oth.OrderId WHERE o.Status=1 ";
 
             string dataSql = string.Format(sql, " TOP " + pageSize + "  " + fields);
 
@@ -3094,7 +3094,7 @@ where c.Id=@ClienterId;");
         public string GetFinishAllById(string orderNo)
         {
             const string querysql = @"
-select  FinishAll from  [Order]
+select  FinishAll from  [Order](nolock)
 where  OrderNo=@OrderNo ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("OrderNo", orderNo);
