@@ -3094,7 +3094,7 @@ where c.Id=@ClienterId;");
         public string GetFinishAllById(string orderNo)
         {
             const string querysql = @"
-select  FinishAll from  Order
+select  FinishAll from  [Order]
 where  OrderNo=@OrderNo ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("OrderNo", orderNo);
@@ -3109,7 +3109,7 @@ where  OrderNo=@OrderNo ";
         public void UpdateFinishAll(string orderNo)
         {
             const string updateSql = @"
-update Order set FinishAll=1 where OrderNo=@OrderNo";
+update [Order] set FinishAll=1 where OrderNo=@OrderNo";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@OrderNo", orderNo);
