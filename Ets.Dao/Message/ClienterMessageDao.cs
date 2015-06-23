@@ -71,7 +71,7 @@ where  Id=@Id";
         {
             string where = " ClienterId=" + search.ClienterId;
             return new PageHelper().GetPages<ListCDM>(SuperMan_Read, search.PageIndex, where,
-                "IsRead asc ,id desc ", "Id,SUBSTRING(Content,1,15) as Content,IsRead,CONVERT(varchar(100),PubDate, 20) as PubDate", " ClienterMessage (nolock)", SystemConst.PageSize, true);
+                "IsRead asc ,id desc ", "Id,SUBSTRING(Content,1,15) as Content,IsRead,CONVERT(varchar(16),PubDate, 20) as PubDate", " ClienterMessage (nolock)", SystemConst.PageSize, true);
         }
 
         /// <summary>
