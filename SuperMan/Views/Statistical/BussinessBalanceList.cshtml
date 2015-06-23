@@ -1,5 +1,11 @@
 ﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Statistics.BusinessBalanceInfo>
 @using Webdiyer.WebControls.Mvc;
+                                     <div style="padding:20px 0 0 30px">
+                                         <span style="padding-left:20px">充值总金额: @ViewBag.TotalAmount.ToString("F2")</span>
+                                         <span style="padding-left:20px">充值商户个数: @ViewBag.TotalNum.ToString()</span>
+                                         <span style="padding-left:20px">商户总余额: @ViewBag.TotalBalance.ToString("F2")</span>
+                                     </div>
+                                     <hr />
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
     <thead>
         <tr class="tdbg">

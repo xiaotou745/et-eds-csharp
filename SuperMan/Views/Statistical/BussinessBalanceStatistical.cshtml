@@ -29,9 +29,6 @@
                         <span class="">到: </span>
                         <input id="txtBalanceEnd" readonly="readonly" name="EndDate" />
                     </td>
-                    <td>
-                        <span class="">充值总金额: @ViewBag.TotalAmount.ToString("F2")</span>
-                    </td>
                 </tr>
                 <tr>
                     <td>
@@ -63,7 +60,7 @@
             </table>
         </div>
     }
-    <hr />
+
     <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
     <div class="bd clearfix" id="dataList">
         @Html.Partial("BussinessBalanceList", Model)

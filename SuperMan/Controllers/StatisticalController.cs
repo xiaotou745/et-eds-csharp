@@ -137,7 +137,8 @@ namespace SuperMan.Controllers
             TryUpdateModel(criteria);
             criteria.PageIndex = 1;
             ViewBag.openCityList = areaProvider.GetOpenCityOfSingleCity(0);
-            ViewBag.TotalAmount = statisticsProvider.QueryBusinessTotalAmount(criteria);
+            GetStaticData(criteria);
+
             PageInfo<BusinessBalanceInfo> resultData = statisticsProvider.QueryBusinessBalance(criteria);
             return View(resultData);
         }
@@ -146,10 +147,16 @@ namespace SuperMan.Controllers
             var criteria = new BussinessBalanceQuery();
             TryUpdateModel(criteria);
             criteria.PageIndex = PageIndex;
+            GetStaticData(criteria);
             PageInfo<BusinessBalanceInfo> resultData = statisticsProvider.QueryBusinessBalance(criteria);
             return PartialView("BussinessBalanceList", resultData);
         }
-
+        private void GetStaticData(BussinessBalanceQuery criteria)
+        {
+            ViewBag.TotalAmount = statisticsProvider.QueryBusinessTotalAmount(criteria);
+            ViewBag.TotalBalance = statisticsProvider.QueryBusinessTotalBalance();
+            ViewBag.TotalNum = statisticsProvider.QueryBusinessNum(criteria);
+        }
         #endregion
     }
 }

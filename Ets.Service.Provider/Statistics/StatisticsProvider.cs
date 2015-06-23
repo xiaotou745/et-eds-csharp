@@ -145,5 +145,16 @@ namespace Ets.Service.Provider.Statistics
             }
             return statisticsDao.QueryBusinessTotalAmount(queryInfo);
         }
+
+
+        public decimal QueryBusinessTotalBalance()
+        {
+            return statisticsDao.QueryBusinessTotalBalance();
+        }
+
+        public long QueryBusinessNum(BussinessBalanceQuery queryInfo)
+        {
+            return statisticsDao.QueryBusinessNum(queryInfo);
+        }
     }
 }

@@ -711,15 +711,37 @@ order by o.Date desc, o.ActiveClienterCount desc";
                             SELECT  SUM(bbr.amount) AS totalAmount
                             FROM    BusinessBalanceRecord bbr ( NOLOCK )
                                     INNER JOIN dbo.business b ( NOLOCK ) ON bbr.BusinessId = b.Id where ";
-            if (!string.IsNullOrWhiteSpace(queryInfo.BusinessId))
-            {
-                sql = @"
-                            SELECT  SUM(bbr.amount) AS totalAmount
-                            FROM    BusinessBalanceRecord bbr ( NOLOCK ) where ";
-            }
             var sbSqlWhere = GetQueryWhere(queryInfo);
             object obj = DbHelper.ExecuteScalar(SuperMan_Read, sql + sbSqlWhere);
             return ParseHelper.ToDecimal(obj, 0);
+        }
+        /// <summary>
+        /// 查询商户总余额
+        /// </summary>
+        /// <returns></returns>
+        public decimal QueryBusinessTotalBalance()
+        {
+              string   sql = @"
+                            SELECT  SUM(bbr.Balance) AS totalBalance
+                            FROM    BusinessBalanceRecord bbr ( NOLOCK ) 
+                            INNER JOIN dbo.business b ( NOLOCK ) ON bbr.BusinessId = b.Id";
+            object obj = DbHelper.ExecuteScalar(SuperMan_Read, sql);
+            return ParseHelper.ToDecimal(obj, 0);
+        }
+        /// <summary>
+        /// 查询给定条件下充值商户的个数
+        /// </summary>
+        /// <returns></returns>
+        public long QueryBusinessNum(BussinessBalanceQuery queryInfo)
+        {
+            string sql = @"select count(BusinessId) as num from (
+                            SELECT distinct bbr.BusinessId from 
+                            BusinessBalanceRecord bbr(nolock) join business b(nolock) on bbr.BusinessId = b.Id where ";
+            var sbSqlWhere = GetQueryWhere(queryInfo);
+            string totalsql = sql + sbSqlWhere + ") tb";
+
+            object obj = DbHelper.ExecuteScalar(SuperMan_Read, totalsql);
+            return ParseHelper.ToLong(obj, 0);
         }
         #endregion
     }
