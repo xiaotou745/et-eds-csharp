@@ -9,7 +9,7 @@
   </processing-directives>
 
   <schedule>
-    <!--发送消息-->
+    <!--跨店奖励统计-->
     <job>
       <name>MessageBLL</name>
       <group>DeomJobGroup</group>
@@ -19,7 +19,7 @@
       <recover>false</recover>
     </job>
 
-    <!--发送消息，每分钟执行1次-->
+    <!--跨店奖励统计 触发器 每天凌晨02:00执行一次跨店奖励统计任务-->
     <trigger>
       <cron>
         <name>MessageBLLTrigger</name>

@@ -115,71 +115,89 @@ namespace Ets.SendMessage
         //发送商家短信
         void SendMessageBusiness(MessageModel model)
         {
-            BusinessDao businessDao = new BusinessDao();
-            DataTable dt = businessDao.GetPhoneNoList(model.PushCity);        
-
-            for (int i = 0; i < dt.Rows.Count; i++)
+            try
             {
-                if (dt.Rows[i]["PhoneNo"] == null || dt.Rows[i]["PhoneNo"].ToString() == "") continue;
+                BusinessDao businessDao = new BusinessDao();
+                DataTable dt = businessDao.GetPhoneNoList(model.PushCity);
 
-                string phoneNo = "";
-                if (StringHelper.CheckPhone(dt.Rows[i]["PhoneNo"].ToString()))
-                    phoneNo = dt.Rows[i]["PhoneNo"].ToString();
-                //string phoneNo = "13520860798"; 
-                Task.Factory.StartNew(() =>
+                for (int i = 0; i < dt.Rows.Count; i++)
                 {
-                    SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
-                    //写日志
-                    LogHelper.LogTraceWriterPhone(model.Content+"  商家:"+ phoneNo);
-                });
+                    if (dt.Rows[i]["PhoneNo"] == null || dt.Rows[i]["PhoneNo"].ToString() == "") continue;
+
+                    string phoneNo = "";
+                    if (StringHelper.CheckPhone(dt.Rows[i]["PhoneNo"].ToString()))
+                        phoneNo = dt.Rows[i]["PhoneNo"].ToString();
+                    //string phoneNo = "13520860798"; 
+                    Task.Factory.StartNew(() =>
+                    {
+                        SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
+                        //写日志
+                        LogHelper.LogTraceWriterPhone(model.Content + "  商家:" + phoneNo);
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex);
             }
         }
         //发送骑士短信
         void SendMessagClienter(MessageModel model)
         {
-            ClienterDao clienterDao = new ClienterDao();
-            DataTable dt = clienterDao.GetPhoneNoList(model.PushCity);         
-
-            for (int i = 0; i < dt.Rows.Count; i++)
+            try
             {
-                if (dt.Rows[i]["PhoneNo"] == null || dt.Rows[i]["PhoneNo"].ToString() == "") continue;
+                ClienterDao clienterDao = new ClienterDao();
+                DataTable dt = clienterDao.GetPhoneNoList(model.PushCity);
 
-                string phoneNo = "";
-                if (StringHelper.CheckPhone(dt.Rows[i]["PhoneNo"].ToString()))
-                    phoneNo = dt.Rows[i]["PhoneNo"].ToString();
-                Task.Factory.StartNew(() =>
+                for (int i = 0; i < dt.Rows.Count; i++)
                 {
-                    SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
-                    //写日志                    
-                    LogHelper.LogTraceWriterPhone(model.Content + "  骑士:" + phoneNo);
+                    if (dt.Rows[i]["PhoneNo"] == null || dt.Rows[i]["PhoneNo"].ToString() == "") continue;
 
-                });
+                    string phoneNo = "";
+                    if (StringHelper.CheckPhone(dt.Rows[i]["PhoneNo"].ToString()))
+                        phoneNo = dt.Rows[i]["PhoneNo"].ToString();
+                    Task.Factory.StartNew(() =>
+                    {
+                        SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
+                        //写日志                    
+                        LogHelper.LogTraceWriterPhone(model.Content + "  骑士:" + phoneNo);
+
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex);
             }
         }
         //发送批量导入短信
         void SendMessImport(MessageModel model)
         {
-            if (!string.IsNullOrEmpty(model.PushPhone))
-            {
-                LogHelper.LogTraceStart("指定对象", model.Content);
+            try
+            { 
+                if (!string.IsNullOrEmpty(model.PushPhone))
+                {                
+                    string[] sp = model.PushPhone.Split(',');                 
+                    for (int i = 0; i < sp.Length; i++)
+                    {               
+                        if (sp[i] == null || sp[i].ToString() == "") continue;
 
-                string[] sp = model.PushPhone.Split(',');
-                for (int i = 0; i < sp.Length; i++)
-                {
-                    if (sp[i] == null || sp[i].ToString() == "") continue;
-
-                    string phoneNo = "";
-                    if (StringHelper.CheckPhone(sp[i].ToString()))
-                        phoneNo = sp[i].ToString();
-
-                    Task.Factory.StartNew(() =>
-                    {
-                        SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
-                        //写日志
-                        LogHelper.LogTraceWriterPhone(model.Content+"  指定对象:"+phoneNo);
-                    });
+                        string phoneNo = "";
+                        if (StringHelper.CheckPhone(sp[i].ToString()))
+                            phoneNo = sp[i].ToString();
+                        
+                        Task.Factory.StartNew(() =>
+                        {
+                            SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
+                            //写日志
+                            LogHelper.LogTraceWriterPhone(model.Content+"  指定对象:"+phoneNo);
+                        });
+                    }
                 }
-
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex);
             }
         }
 
@@ -224,68 +242,82 @@ namespace Ets.SendMessage
         //发送商家app
         void SendAppBusiness(MessageModel model)
         {
-            BusinessDao businessDao = new BusinessDao();
-            DataTable dt = businessDao.GetPhoneNoList(model.PushCity);
-            for (int i = 0; i < dt.Rows.Count; i++)
+            try
             {
-                string businessId = dt.Rows[i]["id"].ToString();
-                long id = businessMessageDao.Insert(new BusinessMessage
-                                        {
-                                            BusinessId = Convert.ToInt32(businessId),
-                                            Content = model.Content,
-                                            IsRead = 0
-                                        }
-                            );
-
-                Task.Factory.StartNew(() =>
+                BusinessDao businessDao = new BusinessDao();
+                DataTable dt = businessDao.GetPhoneNoList(model.PushCity);
+                for (int i = 0; i < dt.Rows.Count; i++)
                 {
-                    JPushModel jpushModel = new JPushModel()
+                    string businessId = dt.Rows[i]["id"].ToString();
+                    long id = businessMessageDao.Insert(new BusinessMessage
+                                            {
+                                                BusinessId = Convert.ToInt32(businessId),
+                                                Content = model.Content,
+                                                IsRead = 0
+                                            }
+                                );
+
+                    Task.Factory.StartNew(() =>
                     {
-                        Alert = "您有新消息啦，请及时查收！",
-                        City = string.Empty,
-                        Content = id.ToString(),
-                        ContentKey = "Notice",
-                        RegistrationId = "B_" + businessId,
-                        TagId = 1,
-                        Title = "新消息",
-                        PushType = 1
-                    };
-                    Push.PushMessage(jpushModel);
-                });
+                        JPushModel jpushModel = new JPushModel()
+                        {
+                            Alert = "您有新消息啦，请及时查收！",
+                            City = string.Empty,
+                            Content = id.ToString(),
+                            ContentKey = "Notice",
+                            RegistrationId = "B_" + businessId,
+                            TagId = 1,
+                            Title = "新消息",
+                            PushType = 1
+                        };
+                        Push.PushMessage(jpushModel);
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex);
             }
         }
 
         //发送骑士app
         void SendAPPClienter(MessageModel model)
         {
-            ClienterDao clienterDao = new ClienterDao();
-            DataTable dt = clienterDao.GetPhoneNoList(model.PushCity);
-            for (int i = 0; i < dt.Rows.Count; i++)
+            try
             {
-                string clienterId = dt.Rows[i]["id"].ToString();              
-                long id = clienterMessageDao.Insert(new ClienterMessage
-                                        {
-                                            ClienterId = Convert.ToInt32(clienterId),
-                                            Content = model.Content,
-                                            IsRead = 0
-                                        }
-                            );
-
-                Task.Factory.StartNew(() =>
+                ClienterDao clienterDao = new ClienterDao();
+                DataTable dt = clienterDao.GetPhoneNoList(model.PushCity);
+                for (int i = 0; i < dt.Rows.Count; i++)
                 {
-                    JPushModel jpushModel = new JPushModel()
+                    string clienterId = dt.Rows[i]["id"].ToString();
+                    long id = clienterMessageDao.Insert(new ClienterMessage
+                                            {
+                                                ClienterId = Convert.ToInt32(clienterId),
+                                                Content = model.Content,
+                                                IsRead = 0
+                                            }
+                                );
+
+                    Task.Factory.StartNew(() =>
                     {
-                        Alert = "您有新消息啦，请及时查收！",
-                        City = string.Empty,
-                        Content = id.ToString(),
-                        ContentKey = "Notice",
-                        RegistrationId = "C_" + clienterId,
-                        TagId = 0,
-                        Title = "新消息",
-                        PushType = 1
-                    };
-                    Push.PushMessage(jpushModel);
-                });
+                        JPushModel jpushModel = new JPushModel()
+                        {
+                            Alert = "您有新消息啦，请及时查收！",
+                            City = string.Empty,
+                            Content = id.ToString(),
+                            ContentKey = "Notice",
+                            RegistrationId = "C_" + clienterId,
+                            TagId = 0,
+                            Title = "新消息",
+                            PushType = 1
+                        };
+                        Push.PushMessage(jpushModel);
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex);
             }
         }
         #endregion

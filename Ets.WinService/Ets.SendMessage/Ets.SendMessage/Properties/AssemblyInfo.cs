@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // 有关程序集的常规信息通过以下
 // 特性集控制。更改这些特性值可修改
 // 与程序集关联的信息。
-[assembly: AssemblyTitle("Ets.SendMessages")]
+[assembly: AssemblyTitle("Ets.SendMessage")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("Ets.SendMessages")]
+[assembly: AssemblyProduct("Ets.SendMessage")]
 [assembly: AssemblyCopyright("Copyright © Microsoft 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // 如果此项目向 COM 公开，则下列 GUID 用于类型库的 ID
-[assembly: Guid("f04f7d86-bc28-4d4a-ba93-392b25358aba")]
+[assembly: Guid("5840182E-785F-4AB4-86F8-1757FDD5A871")]
 
 // 程序集的版本信息由下面四个值组成: 
 //

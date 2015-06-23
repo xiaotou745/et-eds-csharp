@@ -15,7 +15,7 @@ namespace Ets.SendMessage
     {
        private Quartz.IScheduler scheduler;
 
-        public MessageService()
+       public MessageService()
         {
             InitializeComponent();
             Quartz.ISchedulerFactory schedulerFactory = new StdSchedulerFactory();
