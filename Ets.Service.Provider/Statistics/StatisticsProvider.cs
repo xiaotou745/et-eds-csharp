@@ -112,9 +112,12 @@ namespace Ets.Service.Provider.Statistics
         }
         #endregion
 
+        #region 商家充值统计
         /// <summary>
-        /// 查询商家充值记录信息
+        ///  查询分页后的商家成功充值的记录信息
         /// </summary>
+        /// <UpdateBy>zhaohailong</UpdateBy>
+        /// <UpdateTime>20150623</UpdateTime>
         /// <param name="queryInfo"></param>
         /// <returns></returns>
         ETS.Data.PageData.PageInfo<BusinessBalanceInfo> IStatisticsProvider.QueryBusinessBalance(BussinessBalanceQuery queryInfo)
@@ -131,7 +134,13 @@ namespace Ets.Service.Provider.Statistics
             return statisticsDao.QueryBusinessBalance(queryInfo);
         }
 
-
+        /// <summary>
+        /// 查询给定条件下商家成功充值的总金额
+        /// </summary>
+        /// <UpdateBy>zhaohailong</UpdateBy>
+        /// <UpdateTime>20150623</UpdateTime>
+        /// <param name="queryInfo"></param>
+        /// <returns></returns>
         public decimal QueryBusinessTotalAmount(BussinessBalanceQuery queryInfo)
         {
             if (queryInfo != null &&
@@ -146,15 +155,17 @@ namespace Ets.Service.Provider.Statistics
             return statisticsDao.QueryBusinessTotalAmount(queryInfo);
         }
 
-
-        public decimal QueryBusinessTotalBalance()
-        {
-            return statisticsDao.QueryBusinessTotalBalance();
-        }
-
+        /// <summary>
+        /// 查询给定条件下充值成功的商户的个数
+        /// </summary>
+        /// <UpdateBy>zhaohailong</UpdateBy>
+        /// <UpdateTime>20150623</UpdateTime>
+        /// <returns></returns>
         public long QueryBusinessNum(BussinessBalanceQuery queryInfo)
         {
             return statisticsDao.QueryBusinessNum(queryInfo);
         }
+        #endregion
+
     }
 }
