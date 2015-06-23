@@ -1335,5 +1335,17 @@ namespace Ets.Service.Provider.Business
         {
             return dao.GetBusinessCommissionOfPaging<BusinessCommissionModel>(criteria);
         }
+
+        /// <summary>
+        /// 查询所有有效商户的总余额
+        /// </summary>
+        /// <UpdateBy>zhaohailong</UpdateBy>
+        /// <UpdateTime>20150623</UpdateTime>
+        /// <param name="pushCity"></param>
+        /// <returns></returns>
+        public decimal QueryAllBusinessTotalBalance()
+        {
+            return dao.QueryAllBusinessTotalBalance();
+        }
     }
 }

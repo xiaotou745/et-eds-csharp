@@ -23,7 +23,7 @@ namespace Ets.Service.IProvider.Statistics
         /// <returns></returns>
         IList<ActiveBusinessClienterInfo> QueryActiveBusinessClienter(ParamActiveInfo queryInfo);
         /// <summary>
-        /// 查询商家充值记录信息和分页信息
+        ///  查询分页后的商家成功充值的记录信息
         /// </summary>
         /// <param name="queryInfo"></param>
         /// <returns></returns>
@@ -31,17 +31,17 @@ namespace Ets.Service.IProvider.Statistics
         /// <summary>
         /// 查询给定条件下商家充值总金额
         /// </summary>
+        /// <UpdateBy>zhaohailong</UpdateBy>
+        /// <UpdateTime>20150623</UpdateTime>
         /// <param name="queryInfo"></param>
         /// <returns></returns>
         decimal QueryBusinessTotalAmount(BussinessBalanceQuery queryInfo);
-        /// <summary>
-        /// 查询商户总余额
-        /// </summary>
-        /// <returns></returns>
-        decimal QueryBusinessTotalBalance();
+
         /// <summary>
         /// 查询给定条件下充值商户的个数
         /// </summary>
+        /// <UpdateBy>zhaohailong</UpdateBy>
+        /// <UpdateTime>20150623</UpdateTime>
         /// <param name="queryInfo"></param>
         /// <returns></returns>
         long QueryBusinessNum(BussinessBalanceQuery queryInfo);

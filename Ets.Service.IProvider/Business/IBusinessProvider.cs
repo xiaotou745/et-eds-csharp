@@ -353,6 +353,15 @@ namespace Ets.Service.IProvider.Business
         /// <returns></returns>
         PageInfo<BusinessCommissionModel> GetBusinessCommissionOfPaging(
             Ets.Model.ParameterModel.Business.BusinessCommissionSearchCriteria criteria);
+
+        /// <summary>
+        /// 查询所有有效商户的总余额
+        /// </summary>
+        /// <UpdateBy>zhaohailong</UpdateBy>
+        /// <UpdateTime>20150623</UpdateTime>
+        /// <param name="pushCity"></param>
+        /// <returns></returns>
+        decimal QueryAllBusinessTotalBalance();
     }
 }
 

@@ -629,11 +629,14 @@ order by o.Date desc, o.ActiveClienterCount desc";
         }
 
         #endregion
-        #region
+
+        #region 商家充值统计
 
         /// <summary>
-        /// 查询商家充值记录信息和分业信息
+        /// 查询分页后的商家成功充值的记录信息
         /// </summary>
+        /// <UpdateBy>zhaohailong</UpdateBy>
+        /// <UpdateTime>20150623</UpdateTime>
         /// <param name="queryInfo"></param>
         /// <returns></returns>
         public PageInfo<BusinessBalanceInfo> QueryBusinessBalance(BussinessBalanceQuery queryInfo)
@@ -666,9 +669,16 @@ order by o.Date desc, o.ActiveClienterCount desc";
                 orderByColumn, columnList, tables, ETS.Const.SystemConst.PageSize, true);
         }
 
+        /// <summary>
+        /// 根据查询条件组装过滤的sql语句
+        /// </summary>
+        /// <UpdateBy>zhaohailong</UpdateBy>
+        /// <UpdateTime>20150623</UpdateTime>
+        /// <param name="queryInfo"></param>
+        /// <returns></returns>
         private static string GetQueryWhere(BussinessBalanceQuery queryInfo)
         {
-            var sbSqlWhere = new StringBuilder(" bbr.RecordType=9  ");
+            var sbSqlWhere = new StringBuilder(" bbr.RecordType=9 and bbr.status=1  ");
             if (!string.IsNullOrWhiteSpace(queryInfo.BusinessId))
             {
                 sbSqlWhere.AppendFormat(" AND bbr.BusinessId='{0}' ", queryInfo.BusinessId);
@@ -700,9 +710,12 @@ order by o.Date desc, o.ActiveClienterCount desc";
             }
             return sbSqlWhere.ToString();
         }
+
         /// <summary>
-        /// 查询给定条件下商家充值总金额
+        /// 查询给定条件下商家成功充值的总金额
         /// </summary>
+        /// <UpdateBy>zhaohailong</UpdateBy>
+        /// <UpdateTime>20150623</UpdateTime>
         /// <param name="queryInfo"></param>
         /// <returns></returns>
         public decimal QueryBusinessTotalAmount(BussinessBalanceQuery queryInfo)
@@ -715,32 +728,21 @@ order by o.Date desc, o.ActiveClienterCount desc";
             object obj = DbHelper.ExecuteScalar(SuperMan_Read, sql + sbSqlWhere);
             return ParseHelper.ToDecimal(obj, 0);
         }
+
         /// <summary>
-        /// 查询商户总余额
+        /// 查询给定条件下充值成功的商户的个数
         /// </summary>
-        /// <returns></returns>
-        public decimal QueryBusinessTotalBalance()
-        {
-              string   sql = @"
-                            SELECT  SUM(bbr.Balance) AS totalBalance
-                            FROM    BusinessBalanceRecord bbr ( NOLOCK ) 
-                            INNER JOIN dbo.business b ( NOLOCK ) ON bbr.BusinessId = b.Id";
-            object obj = DbHelper.ExecuteScalar(SuperMan_Read, sql);
-            return ParseHelper.ToDecimal(obj, 0);
-        }
-        /// <summary>
-        /// 查询给定条件下充值商户的个数
-        /// </summary>
+        /// <UpdateBy>zhaohailong</UpdateBy>
+        /// <UpdateTime>20150623</UpdateTime>
         /// <returns></returns>
         public long QueryBusinessNum(BussinessBalanceQuery queryInfo)
         {
-            string sql = @"select count(BusinessId) as num from (
-                            SELECT distinct bbr.BusinessId from 
+            string sql = @"
+                            SELECT count(distinct bbr.BusinessId) as num from 
                             BusinessBalanceRecord bbr(nolock) join business b(nolock) on bbr.BusinessId = b.Id where ";
             var sbSqlWhere = GetQueryWhere(queryInfo);
-            string totalsql = sql + sbSqlWhere + ") tb";
 
-            object obj = DbHelper.ExecuteScalar(SuperMan_Read, totalsql);
+            object obj = DbHelper.ExecuteScalar(SuperMan_Read, sql + sbSqlWhere);
             return ParseHelper.ToLong(obj, 0);
         }
         #endregion
