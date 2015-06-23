@@ -132,7 +132,7 @@ namespace Ets.SendMessage
                     {
                         SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
                         //写日志
-                        LogHelper.LogTraceWriterPhone(model.Content + "  商家:" + phoneNo);
+                        LogHelper.LogTraceWriterPhone(model.Id + "  商家:" + phoneNo);
                     });
                 }
             }
@@ -160,7 +160,7 @@ namespace Ets.SendMessage
                     {
                         SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
                         //写日志                    
-                        LogHelper.LogTraceWriterPhone(model.Content + "  骑士:" + phoneNo);
+                        LogHelper.LogTraceWriterPhone(model.Id + "  骑士:" + phoneNo);
 
                     });
                 }
@@ -190,7 +190,7 @@ namespace Ets.SendMessage
                         {
                             SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
                             //写日志
-                            LogHelper.LogTraceWriterPhone(model.Content+"  指定对象:"+phoneNo);
+                            LogHelper.LogTraceWriterPhone(model.Id+"  指定对象:"+phoneNo);
                         });
                     }
                 }
