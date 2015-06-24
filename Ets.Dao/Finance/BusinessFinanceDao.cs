@@ -628,7 +628,38 @@ where b.Id=@BusinessId;");
             string orderByColumn = " bbr.Id DESC";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
-		
+        /// <summary>
+        /// 根据单号查询充值详情
+        /// </summary>
+        /// <UpdateBy>zhaohailong</UpdateBy>
+        /// <UpdateTime>20150624</UpdateTime>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        public BusinessRechargeDetail GetBusinessRechargeDetailByNo(string orderNo)
+        {
+            string sql = @"
+                        SELECT  b.BusinessId ,
+                                a.Name ,
+                                c.PayTime ,
+                                b.Amount ,
+                                b.Balance ,
+                                c.OrderNo ,
+                                c.PayType ,
+                                c.PayStatus
+                        FROM    dbo.business a ( NOLOCK )
+                                JOIN BusinessBalanceRecord b ( NOLOCK ) ON a.id = b.BusinessId
+                                JOIN BusinessRecharge c ( NOLOCK ) ON a.id = c.BusinessId AND b.RelationNo=c.OrderNo 
+                        WHERE   c.OrderNo=@OrderNo
+                ";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@OrderNo", orderNo);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+                return null;
+            }
+            return MapRows<BusinessRechargeDetail>(dt)[0];
+        }
     }
        
 }

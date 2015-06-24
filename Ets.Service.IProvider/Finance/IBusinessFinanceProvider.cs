@@ -145,6 +145,13 @@ namespace Ets.Service.IProvider.Finance
          /// <returns></returns>
          PageInfo<BusinessBalanceRecord> GetBusinessBalanceRecordListOfPaging(BusinessBalanceRecordSerchCriteria criteria);
 
-
+        /// <summary>
+        /// 根据单号查询充值详情
+        /// </summary>
+         /// <UpdateBy>zhaohailong</UpdateBy>
+         /// <UpdateTime>20150624</UpdateTime>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+         BusinessRechargeDetail GetBusinessRechargeDetailByNo(string orderNo);
     }
 }

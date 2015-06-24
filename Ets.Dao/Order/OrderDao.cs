@@ -844,20 +844,19 @@ where   oc.OrderId = @OrderId;
             var ds = DbHelper.ExecuteDataset(SuperMan_Read, sql.ToString(), parm);
 
             var order = ConvertDataTableList<OrderListModel>(ds.Tables[0]);
-
-            var orderDetailList = ConvertDataTableList<Ets.Model.DataModel.Order.OrderDetail>(ds.Tables[1]);
-            var orderChildList = ConvertDataTableList<OrderChild>(ds.Tables[2]);
-
-            order[0].OrderDetailList = orderDetailList.ToList();
-            order[0].OrderChildList = orderChildList.ToList();
             if (order != null && order.Count > 0)
             {
+                var orderDetailList = ConvertDataTableList<Ets.Model.DataModel.Order.OrderDetail>(ds.Tables[1]);
+                var orderChildList = ConvertDataTableList<OrderChild>(ds.Tables[2]);
+
+                order[0].OrderDetailList = orderDetailList.ToList();
+                order[0].OrderChildList = orderChildList.ToList();
                 return order[0];
             }
             else
             {
                 return new OrderListModel();
-            }
+            } 
         }
 
         /// <summary>

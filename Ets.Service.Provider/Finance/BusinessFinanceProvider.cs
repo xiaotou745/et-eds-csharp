@@ -560,5 +560,16 @@ namespace Ets.Service.Provider.Finance
         {
             return businessFinanceDao.GetBusinessBalanceRecordListOfPaging<BusinessBalanceRecord>(criteria);
         }
+        /// <summary>
+        /// 根据单号查询充值详情
+        /// </summary>
+        /// <UpdateBy>zhaohailong</UpdateBy>
+        /// <UpdateTime>20150624</UpdateTime>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        public BusinessRechargeDetail GetBusinessRechargeDetailByNo(string orderNo)
+        {
+            return businessFinanceDao.GetBusinessRechargeDetailByNo(orderNo);
+        }
     }
 }

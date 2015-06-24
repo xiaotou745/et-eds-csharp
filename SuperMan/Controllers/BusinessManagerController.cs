@@ -677,5 +677,22 @@ namespace SuperMan.Controllers
         }
         #endregion
 
+        /// <summary>
+        /// 根据单号查询充值详情
+        /// </summary>
+        /// <UpdateBy>zhaohailong</UpdateBy>
+        /// <UpdateTime>20150624</UpdateTime>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        public ContentResult GetBusinessRechargeDetailByNo(string orderNo)
+        {
+            BusinessRechargeDetail detailModel = iBusinessFinanceProvider.GetBusinessRechargeDetailByNo(orderNo);
+            if (detailModel==null)
+            {
+                return new ContentResult { Content=""};
+            }
+            return new ContentResult { Content = Newtonsoft.Json.JsonConvert.SerializeObject(detailModel) };
+        }
+
     }
 }
