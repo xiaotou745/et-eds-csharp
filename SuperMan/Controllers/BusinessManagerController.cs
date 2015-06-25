@@ -689,7 +689,7 @@ namespace SuperMan.Controllers
             BusinessRechargeDetail detailModel = iBusinessFinanceProvider.GetBusinessRechargeDetailByNo(orderNo);
             if (detailModel==null)
             {
-                return new ContentResult { Content=""};
+                return null;
             }
             return new ContentResult { Content = Newtonsoft.Json.JsonConvert.SerializeObject(detailModel) };
         }
