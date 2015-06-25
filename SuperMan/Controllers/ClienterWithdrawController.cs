@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using Ets.Model.Common;
+using System.Collections.Generic;
 namespace SuperMan.Controllers
 {
     public class ClienterWithdrawController : Controller
@@ -71,6 +72,47 @@ namespace SuperMan.Controllers
             };
             var reg = iClienterFinanceProvider.ClienterWithdrawAudit(clienterWithdrawLog);
             return Json(new ResultModel(reg, reg ? "审核通过！" : "审核失败！"), JsonRequestBehavior.DenyGet);
+        }
+        /// <summary>
+        /// 骑士批量审核通过（只审核待审核状态的数据）
+        /// </summary>
+        /// <UpdateBy>zhaohailong</UpdateBy>
+        /// <UpdateTime>20150625</UpdateTime>
+        /// <param name="withwardIds"></param>
+        /// <returns></returns>
+        public JsonResult BatchWithdrawAuditOk(string withwardIds)
+        {
+            bool hasError = false;
+            string totalMsg = "审核成功";
+            if (!string.IsNullOrEmpty(withwardIds))
+            {
+                string[] ids = withwardIds.Split('#');
+
+                Dictionary<string, bool> result = new Dictionary<string, bool>();
+                foreach (string item in ids)
+                {
+                    string[] realids = item.Split(',');
+                    var businessWithdrawLog = new ClienterWithdrawLog()
+                    {
+                        Operator = UserContext.Current.Name,
+                        Remark = "商户提款申请单审核通过",
+                        Status = ClienterWithdrawFormStatus.Allow.GetHashCode(),
+                        WithwardId = Convert.ToInt64(realids[0])
+                    };
+                    bool reg = iClienterFinanceProvider.ClienterWithdrawAudit(businessWithdrawLog);
+                    if (reg == false)
+                    {
+                        hasError = true;
+                    }
+                    result.Add(realids[1], reg);
+                }
+                if (hasError)
+                {
+                    string[] error = result.Where(p => p.Value == false).Select(p => p.Key).ToArray();
+                    totalMsg = string.Join(",", error) + "审核失败,请重试！";
+                }
+            }
+            return Json(new ResultModel(!hasError, totalMsg), JsonRequestBehavior.DenyGet);
         }
         /// <summary>
         /// 骑士提款申请单确认打款
