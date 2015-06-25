@@ -270,6 +270,11 @@ namespace Ets.Model.DataModel.Order
         /// 操作人名称
         /// </summary>
         public string OptUserName { get; set; }
+
+        /// <summary>
+        /// 抢单-完成的距离
+        /// </summary>
+        public double GrabToCompleteDistance { get; set; }
         
     }
 }

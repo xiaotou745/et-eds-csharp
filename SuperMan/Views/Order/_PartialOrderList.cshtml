@@ -21,6 +21,7 @@
             <th>订单来源</th>
             <th>订单状态</th>
             <th>已上传/共需上传</th>
+            <th>取餐-完成</th>
         </tr>
     </thead>
     <tbody>
@@ -32,6 +33,8 @@
            
                 foreach (var item in Model.Records)
                 {
+                    string grabToCompleteStyle = ETS.Util.ParseHelper.ToDouble(item.GrabToCompleteDistance) == 0.0 ? "color:red;font-weight:900" : "color:green";
+                    string grabToCompleteStr = ETS.Util.ParseHelper.ToDouble(item.GrabToCompleteDistance) == 0.0 ? "重合" : "不重合";
                     var diffHour = (DateTime.Now - DateTime.Parse(item.PubDate != null ? item.PubDate.ToString() : DateTime.Now.ToString())).TotalHours;
                     string val = diffHour > 10 && item.Status == 0 ? "red" : diffHour > 8 && item.Status == 0 ? "blue" : diffHour > 5 && item.Status == 0 ? "yellow" : "none";
                     i++;
@@ -55,6 +58,8 @@
                         <td>@item.GroupName</td>
                         <td style="color:@Html.Raw(val)">@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.OrderStatusCommon)item.Status).GetType(), (ETS.Enums.OrderStatusCommon)item.Status).Text</td>
                         <td>@item.HadUploadCount.ToString()/@item.OrderCount.ToString()</td>  
+
+                        <td style="@grabToCompleteStyle">@grabToCompleteStr</td>
                     </tr>
                 }
             }
