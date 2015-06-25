@@ -23,7 +23,7 @@ namespace Ets.ExportData
 
         protected override void OnStart(string[] args)
         {
-            System.Threading.Thread.Sleep(10000);
+            //System.Threading.Thread.Sleep(10000);
             scheduler.Start();         
         }
 
