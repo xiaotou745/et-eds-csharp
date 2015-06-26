@@ -38,6 +38,16 @@
                     <input type="text" name="exclusiveOrderTime" value="@globalConfigModel.ExclusiveOrderTime" id="exclusiveOrderTime" style="width: 100px" />分
                     <input type="hidden" name="oldExclusiveOrderTime" value="@globalConfigModel.ExclusiveOrderTime" id="oldExclusiveOrderTime" />
                 </td>
+                <td>
+                    <span>骑士完成任务时间限制:</span>
+                    <input type="text" name="completeTimeSet" value="@globalConfigModel.CompleteTimeSet" id="completeTimeSet" style="width: 100px" />分
+                    <input type="hidden" name="oldCompleteTimeSet" value="@globalConfigModel.CompleteTimeSet" id="oldCompleteTimeSet" />
+                </td>
+                <td>
+                    <span>雇主任务时间限制:</span>
+                    <input type="text" name="employerTaskTimeSet" value="@globalConfigModel.EmployerTaskTimeSet" id="employerTaskTimeSet" style="width: 100px" />分
+                    <input type="hidden" name="oldEmployerTaskTimeSet" value="@globalConfigModel.EmployerTaskTimeSet" id="oldEmployerTaskTimeSet" />
+                </td>
             </tr>
         </table>
     </div>
@@ -50,10 +60,16 @@
             var pushRadius = $("#pushRadius").val(); //推送半径
             var clienterOrderPageSize = $("#clienterOrderPageSize").val(); //骑士订单列表每页显示条数
             var exclusiveOrderTime = $("#exclusiveOrderTime").val(); //商家专属骑士接单响应时间
+            var completeTimeSet = $("#completeTimeSet").val(); //骑士完成任务时间限制
+            var employerTaskTimeSet = $("#employerTaskTimeSet").val(); //雇主任务时间限制
+
             var oldUploadTimeInterval = $("#oldUploadTimeInterval").val(); //上传时间间隔（之前）
             var oldPushRadius = $("#oldPushRadius").val(); //推送半径（之前）
             var oldClienterOrderPageSize = $("#oldClienterOrderPageSize").val(); //骑士订单列表每页显示条数（之前）
             var oldExclusiveOrderTime = $("#oldExclusiveOrderTime").val(); //商家专属骑士接单响应时间（之前）
+            var oldCompleteTimeSet = $("#oldCompleteTimeSet").val(); //骑士完成任务时间限制（之前）
+            var oldEmployerTaskTimeSet = $("#oldEmployerTaskTimeSet").val(); //雇主任务时间限制（之前）
+
             if (isNaN(uploadTimeInterval)) {
                 alert("请输入正确的数字!");
                 return;
@@ -91,12 +107,21 @@
                 alert("商家专属骑士接单响应时间为1-120分钟之间!");
                 return;
             }
-            if (uploadTimeInterval == oldUploadTimeInterval && pushRadius == oldPushRadius && clienterOrderPageSize == oldClienterOrderPageSize && exclusiveOrderTime == oldExclusiveOrderTime) {
+            if (isNaN(completeTimeSet)) {
+                alert("骑士完成任务时间限制!");
+                return;
+            }
+            if (completeTimeSet < 1 || completeTimeSet > 120) {
+                alert("骑士完成任务时间限制1-60分钟之间!");
+                return;
+            }
+
+            if (uploadTimeInterval == oldUploadTimeInterval && pushRadius == oldPushRadius && clienterOrderPageSize == oldClienterOrderPageSize && exclusiveOrderTime == oldExclusiveOrderTime && completeTimeSet == oldCompleteTimeSet && employerTaskTimeSet == oldEmployerTaskTimeSet) {
                 alert("没有需要修改的信息!");
                 return;
             }
             if (confirm("确定提交修改?")) {
-                var pars = { "uploadTimeInterval": uploadTimeInterval, "pushRadius": pushRadius, "clienterOrderPageSize": clienterOrderPageSize, "exclusiveOrderTime": exclusiveOrderTime };
+                var pars = { "uploadTimeInterval": uploadTimeInterval, "pushRadius": pushRadius, "clienterOrderPageSize": clienterOrderPageSize, "exclusiveOrderTime": exclusiveOrderTime, "completeTimeSet": completeTimeSet, "employerTaskTimeSet": employerTaskTimeSet };
                 var url = "/AdminTools/ModifyGlobalConfig";
                 $.ajax({
                     type: 'POST',

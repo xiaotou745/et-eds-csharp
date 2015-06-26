@@ -212,6 +212,26 @@ namespace Ets.Service.Provider.Business
                         return false;
                     }
                 }
+                if (globalConfigModel.CompleteTimeSet != "0")
+                {
+                    globalConfig.KeyName = "CompleteTimeSet";
+                    globalConfig.Value = globalConfigModel.CompleteTimeSet;
+                    reg = dao.UpdateGlobalConfig(globalConfig);
+                    if (!reg)
+                    {
+                        return false;
+                    }
+                }
+                if (globalConfigModel.EmployerTaskTimeSet != "0")
+                {
+                    globalConfig.KeyName = "EmployerTaskTimeSet";
+                    globalConfig.Value = globalConfigModel.EmployerTaskTimeSet;
+                    reg = dao.UpdateGlobalConfig(globalConfig);
+                    if (!reg)
+                    {
+                        return false;
+                    }
+                }
                 tran.Complete();
                 DeleteGlobalConfigRedisByGroupId(globalConfigModel.GroupId);
                 return true;
