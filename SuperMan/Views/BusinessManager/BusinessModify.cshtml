@@ -112,6 +112,13 @@
                 <input id="rBbalanceAllowOverDraftY" name="rBalanceAllowOverDraft" type="radio" value="1" @(Model.IsAllowOverdraft == 1?"checked":"") /><label for="rBbalanceAllowOverDraftY">是</label>
                 <input id="rBbalanceAllowOverDraftN" name="rBalanceAllowOverDraft" type="radio" value="0" style="margin-left: 30px" @(Model.IsAllowOverdraft == 0 ? "checked" : "") /><label for="rBbalanceAllowOverDraftN">否</label>
             </div>
+            <div class="control-group">
+                <label> 是否雇主任务：</label>
+                <input id="rIsEmployerTaskY" name="rIsEmployerTask" type="radio" value="1" @(Model.IsEmployerTask == 1 ? "checked" : "")>
+                <label>是</label>
+                <input id="rIsEmployerTaskN" name="rIsEmployerTask" type="radio" value="0" style="margin-left: 30px" @(Model.IsEmployerTask == 0 ? "checked" : "")>
+                <label>否</label>
+            </div>
             <div class="control-group" style="margin-bottom: 10px">
                 <label style="margin-left: 24px">第三方ID：</label>
                 <input name="busiSourceId" id="busiSourceId" type="text" value="@Model.OriginalBusiId" @(Model.IsModifyBind == 0 && Model.GroupId > 0 ? "disabled" : "") />
@@ -152,6 +159,8 @@
                     </div>
                 </div>*@
         </div>
+         <div style="width:750px;height: auto;border-bottom:solid 1px #dcdcdc;padding-left:10px;">
+         </div>
         <div class="SearchMd">
             <div style="margin-left: 100px;float: left"><input type="button" value="保存" class="searchBtn" id="btnModifyCommit" /></div>
             <div style="margin-left: 180px;float: left"><input type="button" value="返回" class="searchBtn" id="btnReturn" /></div>
@@ -169,6 +178,7 @@
                 <a class="remove" style="margin-right: 15px;margin-left: 25px">移 除</a><br />
             </div>
         </div>
+
     </div>
     @{
         var originSize = "_0_0";
@@ -376,6 +386,8 @@
         var originalBusiId = $('#busiSourceId').val();
         var hidGroupId = $('#hidGroupId').val();
         var oneKeyPubOrder = $('input[name="rOneKeyPubOrder"]:checked').val();
+        var IsEmployerTask = $('input[name="rIsEmployerTask"]:checked').val();
+        
         var isAllowOverdraft = $('input[name="rBalanceAllowOverDraft"]:checked').val();
         if (hidGroupId == 0) {
             groupId = $('#busGroupId').val();
@@ -463,7 +475,7 @@
         var paramaters = {
             "Id": id, "Name": name, "Landline": landline, "PhoneNo2": phoneNo2, "DistribSubsidy": distribSubsidy, "CityId": cityId, "districtId": districtId, "City": cityName,
             "district": districtName, "Address": adress, "Latitude": latitude, "Longitude": longitude, "CommissionType": commissionType, "BusinessCommission": commissionText,
-            "CommissionFixValue": commissionFixValue, "BusinessGroupId": businessGroupId, "MealsSettleMode": mealsSettleMode, "groupId": groupId, "originalBusiId": originalBusiId, "oneKeyPubOrder": oneKeyPubOrder, "isAllowOverdraft": isAllowOverdraft
+            "CommissionFixValue": commissionFixValue, "BusinessGroupId": businessGroupId, "MealsSettleMode": mealsSettleMode, "groupId": groupId, "originalBusiId": originalBusiId, "oneKeyPubOrder": oneKeyPubOrder,"IsEmployerTask":IsEmployerTask, "isAllowOverdraft": isAllowOverdraft
         };
         var url = "/BusinessManager/ModifyBusinessDetail";
         $.ajax({
