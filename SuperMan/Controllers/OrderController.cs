@@ -265,5 +265,15 @@ namespace SuperMan.Controllers
             var reg = iOrderProvider.CancelOrderByOrderNo(orderOptionModel);
             return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.AllowGet);
         }
+/// <summary>
+/// 查看订单地图
+/// </summary>
+/// <param name="OrderId"></param>
+/// <returns></returns>
+        public ActionResult OrderMap(long OrderId)
+        {
+            OrderMapDetail mapDetail = iOrderProvider.GetOrderMapDetail(OrderId);
+            return View(mapDetail);
+        }
     }
 }

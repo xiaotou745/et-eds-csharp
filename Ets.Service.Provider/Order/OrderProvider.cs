@@ -1723,5 +1723,15 @@ namespace Ets.Service.Provider.Order
         {
             return orderDao.OrderReceviceCity();
         }
+
+        /// <summary>
+        /// 根据orderID获取订单地图数据
+        /// </summary>
+        /// <param name="orderID"></param>
+        /// <returns></returns>
+        public OrderMapDetail GetOrderMapDetail(long orderID)
+        {
+            return orderDao.GetOrderMapDetail(orderID);
+        }
     }
 }

@@ -22,6 +22,7 @@
             <th>订单状态</th>
             <th>已上传/共需上传</th>
             <th>取餐-完成</th>
+            <th>操作</th>
         </tr>
     </thead>
     <tbody>
@@ -60,6 +61,7 @@
                         <td>@item.HadUploadCount.ToString()/@item.OrderCount.ToString()</td>  
 
                         <td style="@grabToCompleteStyle">@grabToCompleteStr</td>
+                        <td><a href="/Order/OrderMap?OrderId=@item.Id ">查看地图</a></td>
                     </tr>
                 }
             }

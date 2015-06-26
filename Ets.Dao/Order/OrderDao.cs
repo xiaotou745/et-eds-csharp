@@ -3115,5 +3115,40 @@ update [Order] set FinishAll=1 where OrderNo=@OrderNo";
             dbParameters.AddWithValue("@OrderNo", orderNo);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
+        /// <summary>
+        /// 根据orderID获取订单地图数据
+        /// </summary>
+        /// <param name="orderID"></param>
+        /// <returns></returns>
+        public OrderMapDetail GetOrderMapDetail(long orderID)
+        {
+            string sql = @" 
+                            SELECT  ord.OrderId,
+                                    ISNULL(PubLongitude, 0) AS PubLongitude,
+                                    ISNULL(PubLatitude, 0) AS PubLatitude,
+                                    ISNULL(ab.PubDate, '') AS PubDate,
+                                    ISNULL(GrabLongitude, 0) AS GrabLongitude,
+                                    ISNULL(GrabLatitude, 0) AS GrabLatitude,
+                                    ISNULL(GrabTime, '') AS GrabTime,
+                                    ISNULL(TakeLongitude, 0) AS TakeLongitude ,
+                                    ISNULL(TakeLatitude, 0) AS TakeLatitude,
+                                    ISNULL(TakeTime, '') AS TakeTime,
+                                    ISNULL(CompleteLongitude, 0) AS CompleteLongitude,
+                                    ISNULL(CompleteLatitude, 0) AS CompleteLatitude,
+                                    ISNULL(ab.ActualDoneDate, '') AS ActualDoneDate
+                            FROM    OrderOther (NOLOCK) ord
+                                    JOIN [order] (NOLOCK) ab ON ord.OrderId = ab.Id
+                            WHERE   ord.OrderId = @orderID
+                            ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@orderID", orderID);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, dbParameters);
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+                return null;
+            }
+            return MapRows<OrderMapDetail>(dt)[0];
+        }
+        
     }
 }

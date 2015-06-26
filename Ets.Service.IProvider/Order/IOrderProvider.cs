@@ -249,5 +249,12 @@ namespace Ets.Service.IProvider.Order
         /// </summary>
         /// <returns></returns>
         IList<string> OrderReceviceCity();
+
+        /// <summary>
+        /// 根据orderID获取订单地图数据
+        /// </summary>
+        /// <param name="orderID"></param>
+        /// <returns></returns>
+        OrderMapDetail GetOrderMapDetail(long orderID);
     }
 }
