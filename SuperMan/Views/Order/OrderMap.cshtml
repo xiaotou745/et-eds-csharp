@@ -1,0 +1,92 @@
+﻿
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=您的密钥"></script>
+<style type="text/css">
+    body, html {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        font-family: "微软雅黑";
+    }
+
+    #map_canvas {
+        height: 500px;
+        width: 100%;
+    }
+
+    #control {
+        width: 100%;
+    }
+</style>
+<div id="map_canvas"></div>
+<div>
+    @{
+        string orerDetail = "";
+        if (Model != null)
+        {
+            orerDetail = Newtonsoft.Json.JsonConvert.SerializeObject(Model);
+        }
+
+    }
+    <input type="hidden" id="orerDetail" value="@orerDetail" />
+</div>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=dAeaG6HwIFGlkbqtyKkyFGEC"></script>
+<script type="text/javascript">
+    var orerDetail = $("#orerDetail").val();
+    if (orerDetail == "") {
+        alert("没取到订单的地图数据！");
+    } else {
+        var jsonstr = $.parseJSON(orerDetail);
+        // 百度地图API功能
+        //发单的坐标作为地图的中心点
+        var map = new BMap.Map("map_canvas");
+        map.centerAndZoom(new BMap.Point(jsonstr.PubLongitude, jsonstr.PubLatitude), 16);
+        //map.centerAndZoom(new BMap.Point(116.404, 39.915), 16);
+        map.enableScrollWheelZoom();
+
+        var polyline = new BMap.Polyline([
+            new BMap.Point(jsonstr.PubLongitude, jsonstr.PubLatitude),
+            new BMap.Point(jsonstr.GrabLongitude, jsonstr.GrabLatitude),
+            new BMap.Point(jsonstr.TakeLongitude, jsonstr.TakeLatitude),
+            new BMap.Point(jsonstr.CompleteLongitude, jsonstr.CompleteLatitude)
+        ], { strokeColor: "red", strokeWeight: 2, strokeOpacity: 0.5 });   //创建折线
+        map.addOverlay(polyline);   //增加折线
+
+        //发单
+        var marker = new BMap.Marker(new BMap.Point(jsonstr.PubLongitude, jsonstr.PubLatitude)); // 创建点
+        map.addOverlay(marker);
+        var label = new BMap.Label("发单-" + jsonstr.PubDate, { offset: new BMap.Size(-125, -10) });
+        marker.setLabel(label);
+
+        //抢单
+        var marker1 = new BMap.Marker(new BMap.Point(jsonstr.GrabLongitude, jsonstr.GrabLatitude)); // 创建点
+        map.addOverlay(marker1);
+        var label = new BMap.Label("抢单-" + jsonstr.GrabTime, { offset: new BMap.Size(20, -10) });
+        marker1.setLabel(label);
+
+        //取货
+        var marker2 = new BMap.Marker(new BMap.Point(jsonstr.TakeLongitude, jsonstr.TakeLatitude)); // 创建点
+        map.addOverlay(marker2);
+        var label = new BMap.Label("取货-" + jsonstr.TakeTime, { offset: new BMap.Size(-125, 20) });
+        marker2.setLabel(label);
+
+
+        //完成
+        var marker3 = new BMap.Marker(new BMap.Point(jsonstr.CompleteLongitude, jsonstr.CompleteLatitude)); // 创建点
+        map.addOverlay(marker3);
+        var label = new BMap.Label("完成-" + jsonstr.ActualDoneDate, { offset: new BMap.Size(20, 20) });
+        marker3.setLabel(label);
+        alert("加载完成");
+    }
+</script>
+
+
+
+
+
+
+
+
+
