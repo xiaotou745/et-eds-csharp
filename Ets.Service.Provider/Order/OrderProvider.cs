@@ -1731,7 +1731,29 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public OrderMapDetail GetOrderMapDetail(long orderID)
         {
-            return orderDao.GetOrderMapDetail(orderID);
+            OrderMapDetail detail= orderDao.GetOrderMapDetail(orderID);
+            if (detail!=null)
+            {
+                DateTime d = DateTime.Parse("1900-01-01");
+                if (DateTime.Parse(detail.PubDate)==d)
+                {
+                    detail.PubDate = "暂无";
+                }
+                if (DateTime.Parse(detail.GrabTime) == d)
+                {
+                    detail.GrabTime = "暂无";
+                }
+                if (DateTime.Parse(detail.ActualDoneDate) == d)
+                {
+                    detail.ActualDoneDate = "暂无";
+                }
+                if (DateTime.Parse(detail.TakeTime) == d)
+                {
+                    detail.TakeTime = "暂无";
+                }
+            }
+            return detail;
+                
         }
     }
 }
