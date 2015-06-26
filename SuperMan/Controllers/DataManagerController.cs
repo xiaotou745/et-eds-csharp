@@ -14,7 +14,7 @@ namespace SuperMan.Controllers
     /// <summary>
     /// 到处数据管理器   add by caoheyang 20150601
     /// </summary>
-    public class DataManagerController : Controller
+    public class DataManagerController : BaseController
     {
 
         private readonly IExportSqlManageProvider exportSqlManageProvider = new ExportSqlManageProvider();

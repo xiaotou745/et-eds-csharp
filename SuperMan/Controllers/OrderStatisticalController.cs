@@ -10,7 +10,7 @@ using System.Text;
 
 namespace SuperMan.Controllers
 {
-    public class OrderStatisticalController : Controller
+    public class OrderStatisticalController : BaseController
     {
         // GET: OrderCount
         private readonly IOrderProvider iOrderProvider = new OrderProvider();

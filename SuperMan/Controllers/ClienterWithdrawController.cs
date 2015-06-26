@@ -13,7 +13,7 @@ using Ets.Model.Common;
 using System.Collections.Generic;
 namespace SuperMan.Controllers
 {
-    public class ClienterWithdrawController : Controller
+    public class ClienterWithdrawController : BaseController
     {
         IClienterFinanceProvider iClienterFinanceProvider = new ClienterFinanceProvider();
         // GET: ClienterWithdraw

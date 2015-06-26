@@ -9,7 +9,7 @@ using Ets.Service.IProvider.Business;
 using Ets.Service.Provider.Business;
 namespace SuperMan.Controllers
 {
-    public class AdminToolsController : Controller
+    public class AdminToolsController : BaseController
     {
         readonly IBusinessGroupProvider iBusinessGroupProvider = new BusinessGroupProvider();
         private static IAdminToolsProvider adminToolsProvider

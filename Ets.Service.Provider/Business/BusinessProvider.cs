@@ -54,6 +54,7 @@ namespace Ets.Service.Provider.Business
                 Ets.Model.DomainModel.Business.BusiGetOrderModel model = new Ets.Model.DomainModel.Business.BusiGetOrderModel();
                 model.ActualDoneDate = from.ActualDoneDate;
                 model.Amount = from.Amount;
+                model.OrderCount = from.OrderCount;
                 model.IsPay = from.IsPay;
                 model.OrderNo = from.OrderNo;
                 model.PickUpAddress = from.PickUpAddress;

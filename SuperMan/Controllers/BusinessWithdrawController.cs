@@ -20,7 +20,7 @@ using System.Web.Mvc;
 
 namespace SuperMan.Controllers
 {
-    public class BusinessWithdrawController : Controller
+    public class BusinessWithdrawController : BaseController
     {
         readonly IAreaProvider iAreaProvider = new AreaProvider();
         readonly IBusinessFinanceProvider iBusinessFinanceProvider=new BusinessFinanceProvider();

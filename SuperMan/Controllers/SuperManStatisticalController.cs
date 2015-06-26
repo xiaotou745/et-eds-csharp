@@ -8,7 +8,7 @@ using System.Web.Mvc;
 
 namespace SuperMan.Controllers
 {
-    public class SuperManStatisticalController : Controller
+    public class SuperManStatisticalController : BaseController
     {
         // GET: SuperManStatistical
         IDistributionProvider iDistributionProvider = new DistributionProvider();
