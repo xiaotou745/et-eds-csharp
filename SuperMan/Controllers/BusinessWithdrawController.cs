@@ -20,7 +20,7 @@ using System.Web.Mvc;
 
 namespace SuperMan.Controllers
 {
-    public class BusinessWithdrawController : Controller
+    public class BusinessWithdrawController : BaseController
     {
         readonly IAreaProvider iAreaProvider = new AreaProvider();
         readonly IBusinessFinanceProvider iBusinessFinanceProvider=new BusinessFinanceProvider();
@@ -82,6 +82,47 @@ namespace SuperMan.Controllers
             };
             bool reg = iBusinessFinanceProvider.BusinessWithdrawAudit(businessWithdrawLog);
             return Json(new ResultModel(reg, reg?"审核通过！":"审核失败！"), JsonRequestBehavior.DenyGet);
+        }
+         /// <summary>
+        /// 商家批量审核通过（只审核待审核状态的数据）
+        /// </summary>
+        /// <UpdateBy>zhaohailong</UpdateBy>
+        /// <UpdateTime>20150625</UpdateTime>
+        /// <param name="withwardIds"></param>
+        /// <returns></returns>
+        public JsonResult BatchWithdrawAuditOk(string withwardIds)
+        {
+            bool hasError = false;
+            string totalMsg = "审核成功";
+            if (!string.IsNullOrEmpty(withwardIds))
+            {
+                string[] ids = withwardIds.Split('#');
+
+                Dictionary<string, bool> result = new Dictionary<string, bool>();
+                foreach (string item in ids)
+                {
+                    string[] realids = item.Split(',');
+                    var businessWithdrawLog = new BusinessWithdrawLog()
+                    {
+                        Operator = UserContext.Current.Name,
+                        Remark = "商户提款申请单审核通过",
+                        Status = BusinessWithdrawFormStatus.Allow.GetHashCode(),
+                        WithwardId = Convert.ToInt64(realids[0])
+                    };
+                    bool reg = iBusinessFinanceProvider.BusinessWithdrawAudit(businessWithdrawLog);
+                    if (reg == false)
+                    {
+                        hasError = true;
+                    }
+                    result.Add(realids[1], reg);
+                }
+                if (hasError)
+                {
+                    string[] error = result.Where(p => p.Value == false).Select(p => p.Key).ToArray();
+                    totalMsg = "以下单号审核失败,请重试！\n" + string.Join("\n", error);
+                }
+            }
+            return Json(new ResultModel(!hasError, totalMsg), JsonRequestBehavior.DenyGet);
         }
         /// <summary>
         /// 商户提款申请单确认打款

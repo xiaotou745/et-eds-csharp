@@ -4,6 +4,7 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
     <thead>
         <tr class="tdbg">
+            <th><input type="checkbox" id="checkAll"/>全选/全消</th>
             <th>编号</th>
             <th>提款单号</th>
             <th>商户名称</th>
@@ -25,6 +26,15 @@
                 {
                     i++;
                     <tr id="@item.Id">
+                        <td>@if (item.Status == (int)ETS.Enums.BusinessWithdrawFormStatus.WaitAllow)
+                                {
+                                    <input type="checkbox" name="checkItem" orderno="@item.WithwardNo" value="@item.Id" />
+                                }
+                                else
+                                {
+                                 <input type="checkbox" name="checkItem" disabled="disabled"/>
+                            }
+                        </td>
                         <td>@i</td>
                         <td><a href="/BusinessWithdraw/BusinessWithdrawDetail?withwardId=@item.Id" style=" text-decoration-line: underline">@item.WithwardNo</a></td>
                         <td>@item.BusinessName</td>
@@ -220,4 +230,5 @@
         adminjs.closewinbox('.add-openbox');
         return false;
     });
+
 </script>

@@ -10,7 +10,7 @@ using Ets.Model.DomainModel.Group;
 using Ets.Service.IProvider.Strategy;
 using Ets.Model.DataModel.Strategy;
 namespace SuperMan.Controllers
-{    
+{
     public class StrategyManagerController : BaseController
     {
         //胡灵波

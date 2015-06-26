@@ -40,6 +40,8 @@
                         <input id="withdrawDateEnd" readonly="readonly" type="text" name="withdrawDateEnd" style="width:164px" />
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                         <input type="button" value="导出" onclick="return funExport()" class="searchBtn" id="btnExport" />
+                        <input type="button" value="批量审核通过" onclick="return funBatchAuditPass()" class="searchBtn" id="btnBatchAuditPass" />
+                        <span id="tip"></span>
                     </td>
                 </tr>
             </table>
@@ -57,6 +59,19 @@
         $('#withdrawDateStart').datepicker();
         $('#withdrawDateEnd').datepicker();
         window.location.hash = '';
+        $("#checkAll").change(function () {
+            $('input[type="checkbox"][name="checkItem"]').each(function (index, obj) {
+                if (!obj.disabled&&obj.value!="") {
+                    if ($("#checkAll").attr("checked") == "checked") {
+                        $(obj).attr("checked", "checked");
+                    }
+                    else
+                    {
+                        $(obj).removeAttr("checked");
+                    }
+                }
+            });
+        });
     });
     function funExport() {
         var businessName = $("#businessName").val();
@@ -73,6 +88,42 @@
         var url = "/BusinessWithdraw/ExportBusinessWithdrawForm?businessName=" + businessName + "&BusinessPhoneNo=" + BusinessPhoneNo + "&businessCity=" + businessCity + "&withdrawStatus=" + withdrawStatus + "&withwardNo=" + withwardNo + "&withdrawDateStart=" + withdrawDateStart + "&withdrawDateEnd=" + withdrawDateEnd;
         window.location.href = url;
         return true;
+    }
+
+    function funBatchAuditPass()
+    {
+        var ids = "";
+        $('input[type="checkbox"][name="checkItem"]:checked').each(function (index, obj) {
+            if (!obj.disabled) {
+                ids += (obj.value + "," + $(obj).attr("orderno") + "#");
+            }
+        });
+        if (ids=="") {
+            alert("请选择要审核的记录");
+            return;
+        }
+        ids = ids.substring(0, ids.length - 1);
+       
+        if (!window.confirm("确认要提交审核？")) {
+            return;
+        }
+        $("#tip").html("正在审核...");
+        var paramaters = { "withwardIds": ids };
+        var url = "/BusinessWithdraw/BatchWithdrawAuditOk";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                $("#tip").html("");
+                alert(result.Message);
+                window.location.href = "/BusinessWithdraw/BusinessWithdraw";
+            },
+            error: function (a) {
+                $("#tip").html("");
+                alert(a.responseText);
+            }
+        });
     }
 </script>
 <script src="~/Scripts/mvcpager.js"></script>

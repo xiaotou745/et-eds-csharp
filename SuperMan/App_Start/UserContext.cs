@@ -9,7 +9,7 @@ namespace SuperMan.App_Start
 {
     public class UserContext
     {
-        private static readonly UserContext Empty = new UserContext(); 
+        private static readonly UserContext Empty = new UserContext();
         public static UserContext Current
         {
             get
@@ -59,16 +59,39 @@ namespace SuperMan.App_Start
             }
             else
             {
-                var list =JsonHelper.ToObject<List<int>>(cookieValue);
+                var list = JsonHelper.ToObject<List<int>>(cookieValue);
                 return list.Contains(menuid);
-            } 
+            }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public int Id { get; set; }
+        
+        /// <summary>
+        /// 
+        /// </summary>
         public int GroupId { get; set; }
+        
+        /// <summary>
+        /// 
+        /// </summary>
         public int AppChannelId { get; set; }
+        
+        /// <summary>
+        /// 
+        /// </summary>
         public int RoleId { get; set; }
+        
+        /// <summary>
+        /// 
+        /// </summary>
         public int AccountType { get; set; }
+ 
+        /// <summary>
+        /// 
+        /// </summary>
         public string Name { get; set; }
 
     }

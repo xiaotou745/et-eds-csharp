@@ -3,7 +3,7 @@ using Ets.Service.IProvider.Business;
 using Ets.Service.Provider.Business;
 namespace SuperMan.Controllers
 {
-    public class CommissionSubsidyStrategyController : Controller
+    public class CommissionSubsidyStrategyController : BaseController
     {
         IBusinessGroupProvider iBusinessGroupProvide = new BusinessGroupProvider();
         // GET: CommissionSubsidyStrategy

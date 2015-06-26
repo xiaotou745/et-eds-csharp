@@ -548,6 +548,7 @@ select @@IDENTITY ";
                                     ,case when o.OrderFrom=0 then '客户端' else g.GroupName end GroupName
                                     ,o.[Adjustment]
                                     ,ISNULL(oo.HadUploadCount,0) HadUploadCount
+                                    ,oo.GrabToCompleteDistance
                                     ,o.BusinessCommission --商家结算比例
                                     ";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
@@ -2300,8 +2301,9 @@ o.clienterId, o.businessId
 from    dbo.[order] o ( nolock )
         join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
 where   oo.IsJoinWithdraw = 0
-        and oo.HadUploadCount = o.OrderCount --订单量=已上传
+        and oo.HadUploadCount >= o.OrderCount --订单量=已上传
         and o.Status = 1 --已完成订单
+        and o.FinishAll=1
         and datediff(hour, o.ActualDoneDate, getdate()) >= @hour";
             IDbParameters parm = DbHelper.CreateDbParameters("@hour", DbType.Int64, 4, hour);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);

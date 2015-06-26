@@ -9,7 +9,7 @@ using System.Web.Mvc;
 
 namespace SuperMan.Controllers
 {
-    public class OpenCityManagerController : Controller
+    public class OpenCityManagerController : BaseController
     {
         IAreaProvider iAreaProvider = new AreaProvider();
         // GET: OpenCityManager
