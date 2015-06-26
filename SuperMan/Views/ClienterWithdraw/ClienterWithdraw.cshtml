@@ -97,8 +97,6 @@
             return;
         }
         ids = ids.substring(0, ids.length - 1);
-
-        alert(ids);
         if (!window.confirm("确认要提交审核？")) {
             return;
         }
@@ -113,6 +111,10 @@
                 $("#tip").html("");
                 alert(result.Message);
                 window.location.href = "/ClienterWithdraw/ClienterWithdraw";
+            },
+            error: function (a) {
+                $("#tip").html("");
+                alert(a.responseText);
             }
         });
     }
