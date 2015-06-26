@@ -12,7 +12,7 @@ using System.Web.Mvc;
 using Ets.Model.Common;
 namespace SuperMan.Controllers
 {
-    public class ClienterWithdrawController : Controller
+    public class ClienterWithdrawController : BaseController
     {
         IClienterFinanceProvider iClienterFinanceProvider = new ClienterFinanceProvider();
         // GET: ClienterWithdraw

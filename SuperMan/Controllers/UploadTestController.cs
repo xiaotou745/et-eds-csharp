@@ -9,7 +9,7 @@ using Ets.Model.ParameterModel.Clienter;
 namespace SuperMan.Controllers
 {
     [WebHandleError]
-    public class UploadTestController : Controller
+    public class UploadTestController : BaseController
     { 
         public ActionResult Index()
         {

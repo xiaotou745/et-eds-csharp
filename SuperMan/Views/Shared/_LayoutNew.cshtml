@@ -9,21 +9,6 @@
     IAuthorityMenuProvider iauthority = new AuthorityMenuProvider();
     List<AuthorityMenuModel> menus = iauthority.GetAllMenuList(); //所有菜单权限
     IList<AuthorityMenuModel> mymenus = new Ets.Service.Provider.Account.AccountProvider().GetAuth(UserContext.Current.Id);
-    //List<int> myMenus = null;//我的权限菜单数组
-    //string cookieValue =CookieHelper.ReadCookie("menulist");
-    //if (cookieValue == "")
-    //{
-    //    List<int> myMenusR = iauthority.GetMenuIdsByRoloId(UserContext.Current.RoleId);
-    //    myMenus = iauthority.GetMenuIdsByAccountId(UserContext.Current.Id);
-    //    if (myMenusR!=null)
-    //    {
-    //        myMenus.AddRange(myMenusR);
-    //    }  
-    //}
-    //else
-    //{
-    //    myMenus = Letao.Util.JsonHelper.ToObject<List<int>>(cookieValue); 
-    //} 
 }
 <!DOCTYPE html>
 
