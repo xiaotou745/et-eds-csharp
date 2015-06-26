@@ -1348,5 +1348,16 @@ namespace Ets.Service.Provider.Business
         {
             return dao.QueryAllBusinessTotalBalance();
         }
+
+        /// <summary>
+        /// 获取商户操作记录
+        /// wc
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <returns></returns> 
+        List<BusinessOptionLog> IBusinessProvider.GetBusinessOpLog(int businessId)
+        {
+            return dao.GetBusinessOpLog(businessId);
+        }
     }
 }

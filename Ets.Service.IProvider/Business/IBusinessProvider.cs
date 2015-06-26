@@ -362,6 +362,13 @@ namespace Ets.Service.IProvider.Business
         /// <param name="pushCity"></param>
         /// <returns></returns>
         decimal QueryAllBusinessTotalBalance();
+        /// <summary>
+        /// 获取商户操作记录
+        /// wc
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <returns></returns>
+        List<BusinessOptionLog> GetBusinessOpLog(int businessId);
     }
 }
 

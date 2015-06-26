@@ -552,7 +552,7 @@ namespace Ets.Service.Provider.Clienter
             {
                 model.Message = "500";
                 return model;
-            }
+            } 
             #region 是否允许修改小票
             model.IsModifyTicket = true;
             if (myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount)// && myOrderInfo.Status == OrderStatus.订单完成.GetHashCode()
