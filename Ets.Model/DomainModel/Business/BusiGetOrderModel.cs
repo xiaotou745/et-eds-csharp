@@ -91,5 +91,7 @@ namespace Ets.Model.DomainModel.Business
        /// </summary>
        public decimal? TotalAmount { get; set; }
 
+       public int OrderCount { get; set; }
+
     }
 }
