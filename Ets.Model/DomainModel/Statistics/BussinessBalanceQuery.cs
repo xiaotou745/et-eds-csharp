@@ -40,5 +40,15 @@ namespace Ets.Model.DomainModel.Statistics
        /// 页码（从1开始）
        /// </summary>
        public int PageIndex { get; set; }
+
+       /// <summary>
+       /// 充值类型:1系统充值；2客户端充值
+       /// </summary>
+       public int RechargeType { get; set; }
+
+       /// <summary>
+       /// 充值金额
+       /// </summary>
+       public decimal RechargePrice { get; set; }
     }
 }
