@@ -20,7 +20,7 @@ using System.Web.Mvc;
 
 namespace SuperMan.Controllers
 {
-    public class BusinessWithdrawController : Controller
+    public class BusinessWithdrawController : BaseController
     {
         readonly IAreaProvider iAreaProvider = new AreaProvider();
         readonly IBusinessFinanceProvider iBusinessFinanceProvider=new BusinessFinanceProvider();
@@ -119,7 +119,7 @@ namespace SuperMan.Controllers
                 if (hasError)
                 {
                     string[] error = result.Where(p => p.Value == false).Select(p => p.Key).ToArray();
-                    totalMsg = string.Join(",", error) + "审核失败,请重试！";
+                    totalMsg = "以下单号审核失败,请重试！\n" + string.Join("\n", error);
                 }
             }
             return Json(new ResultModel(!hasError, totalMsg), JsonRequestBehavior.DenyGet);

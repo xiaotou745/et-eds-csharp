@@ -18,7 +18,7 @@ namespace SuperMan.Controllers
     /// <summary>
     /// 数据统计
     /// </summary>
-    public class StatisticalController : Controller
+    public class StatisticalController : BaseController
     {
         /// <summary>
         /// 订单统计提供者

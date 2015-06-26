@@ -13,7 +13,7 @@ using Ets.Model.Common;
 using System.Collections.Generic;
 namespace SuperMan.Controllers
 {
-    public class ClienterWithdrawController : Controller
+    public class ClienterWithdrawController : BaseController
     {
         IClienterFinanceProvider iClienterFinanceProvider = new ClienterFinanceProvider();
         // GET: ClienterWithdraw
@@ -109,7 +109,7 @@ namespace SuperMan.Controllers
                 if (hasError)
                 {
                     string[] error = result.Where(p => p.Value == false).Select(p => p.Key).ToArray();
-                    totalMsg = string.Join(",", error) + "审核失败,请重试！";
+                    totalMsg = "以下单号审核失败,请重试！\n" + string.Join("\n", error);
                 }
             }
             return Json(new ResultModel(!hasError, totalMsg), JsonRequestBehavior.DenyGet);
