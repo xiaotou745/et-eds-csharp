@@ -156,6 +156,10 @@
                                 <a href="/BusinessManager/ClienterBindManage?businessId=@item.Id">骑士绑定</a>
                                 @*<a href="javascript:void(0)" onclick="funcUpdateBusinessInfo(@item.Id,'@item.Name','@item.PhoneNo','@item.OriginalBusiId','@item.GroupId','@item.MealsSettleMode')">修改信息</a>*@
                             }
+                            @*@if (SuperMan.App_Start.UserContext.Current.HasAuthority(24))
+                            {*@
+                                <a href="javascript:void(0)" onclick="funcBusinessRecharge(@item.Id,'@item.Name', '@item.PhoneNo')">提款申请</a>
+                            @*  *@}
                         </td>
                     </tr>
                 }
