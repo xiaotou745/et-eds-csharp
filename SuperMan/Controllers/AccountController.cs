@@ -17,7 +17,7 @@ using ETS.Util;
 namespace SuperMan.Controllers
 {
     [WebHandleError]
-    public class AccountController : BaseController
+    public class AccountController : Controller
     {
         private IAuthenticationService _authenticationService;
         IAccountProvider iAccountProvider = new AccountProvider();
