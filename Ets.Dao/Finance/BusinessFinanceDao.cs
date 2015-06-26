@@ -148,6 +148,7 @@ ORDER BY Id;";
         /// <returns></returns>
         public bool BusinessWithdrawAudit(BusinessWithdrawLog model)
         {
+            //只更新待审状态的数据
             string sql = string.Format(@" 
 UPDATE BusinessWithdrawForm
  SET    [Status] = @Status,
@@ -165,7 +166,7 @@ INTO BusinessWithdrawLog
   [Remark],
   [Operator],
   [OperatTime])
- WHERE  Id = @Id");
+ WHERE  Id = @Id and [Status]=1");
 
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Status", model.Status);

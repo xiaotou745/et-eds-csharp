@@ -548,6 +548,7 @@ select @@IDENTITY ";
                                     ,case when o.OrderFrom=0 then '客户端' else g.GroupName end GroupName
                                     ,o.[Adjustment]
                                     ,ISNULL(oo.HadUploadCount,0) HadUploadCount
+                                    ,oo.GrabToCompleteDistance
                                     ,o.BusinessCommission --商家结算比例
                                     ";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
