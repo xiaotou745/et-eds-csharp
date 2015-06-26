@@ -621,8 +621,9 @@ namespace Ets.Dao.MenuSet
         /// danny-20150323
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="status">状态 0不可用1可用</param>
         /// <returns></returns>
-        public bool DeleteAccountById(int id)
+        public bool ChangStatus(int id, int status)
         {
             bool reslut = false;
             try
@@ -630,7 +631,7 @@ namespace Ets.Dao.MenuSet
                 string sql = " update account set Status=@Status where Id=@id ";
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
                 dbParameters.AddWithValue("id", id);
-                dbParameters.AddWithValue("Status", Ets.Model.Common.ConstValues.AccountDisabled);
+                dbParameters.AddWithValue("Status", status);
                 int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
                 if (i > 0) reslut = true;
             }
