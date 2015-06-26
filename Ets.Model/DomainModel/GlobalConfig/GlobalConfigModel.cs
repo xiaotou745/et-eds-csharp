@@ -126,6 +126,16 @@ namespace Ets.Model.DomainModel.GlobalConfig
         /// 操作人
         /// </summary>
         public string OptName { get; set; }
+
+        /// <summary>
+        /// 骑士完成任务时间限制
+        /// </summary>
+        public string CompleteTimeSet { get; set; }
+
+        /// <summary>
+        /// 雇主任务时间限制
+        /// </summary>
+        public string EmployerTaskTimeSet { get; set; }
         
 
     }

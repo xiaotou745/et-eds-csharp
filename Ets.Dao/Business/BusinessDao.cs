@@ -73,6 +73,7 @@ namespace Ets.Dao.Business
             string columnList = @"
                                     CONVERT(VARCHAR(5),o.ActualDoneDate,108) AS ActualDoneDate,
                                     o.Amount,
+                                    o.OrderCount,
                                     o.IsPay,
                                     o.OrderNo,
                                     o.PickUpAddress,

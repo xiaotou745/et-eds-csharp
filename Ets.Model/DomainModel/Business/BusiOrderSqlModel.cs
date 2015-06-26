@@ -37,5 +37,6 @@ namespace Ets.Model.DomainModel.Business
         /// 订单总金额
         /// </summary>
         public decimal? TotalAmount { get; set; }
+        public int OrderCount { get; set; }
     }
 }
