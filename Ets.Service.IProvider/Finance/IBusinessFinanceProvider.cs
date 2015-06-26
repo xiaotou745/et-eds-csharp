@@ -15,6 +15,7 @@ namespace Ets.Service.IProvider.Finance
 {
     public interface IBusinessFinanceProvider
     {
+        int GetBFinanceAccountId(int businessId);
         /// <summary>
         /// 根据参数获取商家提现申请单列表
         /// danny-20150509
@@ -29,6 +30,15 @@ namespace Ets.Service.IProvider.Finance
         /// <param name="withdrawBpm">参数实体</param>
         /// <returns></returns>
         ResultModel<object> WithdrawB(WithdrawBPM withdrawBpm);
+
+        /// <summary>
+        /// 商户提现功能 后台
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150626</UpdateTime>
+        /// <param name="withdrawBBackPM"></param>
+        /// <returns></returns>
+        ResultModel<object> WithdrawB(WithdrawBBackPM withdrawBBackPM);
 
         /// <summary>
         /// 商户绑定银行卡功能 add by caoheyang 20150511

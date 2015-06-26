@@ -159,6 +159,11 @@ namespace Ets.Model.DataModel.Business
         /// 是否允许透支 0不可透支，1可以透支
         /// </summary>
         public int IsAllowOverdraft { get; set; }
+
+        /// <summary>
+        ///  是否雇主任务
+        /// </summary>
+        public int IsEmployerTask { get; set; }
     }
 
 }

@@ -1402,11 +1402,16 @@ select @@IDENTITY ";
         /// <summary>
         /// 根据ID获取对象
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150626</UpdateTime>
         public BusinessModel GetById(int id)
         {
             BusinessModel model = null;
             const string getbyidSql = @"
-select  Id,Name,City,district,PhoneNo,PhoneNo2,Password,CheckPicUrl,IDCard,Address,Landline,Longitude,Latitude,Status,InsertTime,districtId,CityId,GroupId,OriginalBusiId,ProvinceCode,CityCode,AreaCode,Province,CommissionTypeId,DistribSubsidy,BusinessCommission,CommissionType,CommissionFixValue,BusinessGroupId,BalancePrice,AllowWithdrawPrice,HasWithdrawPrice
+select  Id,Name,City,district,PhoneNo,PhoneNo2,Password,CheckPicUrl,IDCard,Address,
+Landline,Longitude,Latitude,Status,InsertTime,districtId,CityId,GroupId,OriginalBusiId,
+ProvinceCode,CityCode,AreaCode,Province,CommissionTypeId,DistribSubsidy,BusinessCommission,
+CommissionType,CommissionFixValue,BusinessGroupId,BalancePrice,AllowWithdrawPrice,HasWithdrawPrice
 from  business (nolock)
 where  Id=@Id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -1421,12 +1426,18 @@ where  Id=@Id ";
         /// <summary>
         /// 根据商品户ID集合查询商户信息
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150626</UpdateTime>
         /// <param name="ids"></param>
         /// <returns></returns>
         public IDictionary<int, BusinessModel> GetByIds(IList<int> ids)
         {
             const string getbyidSql = @"
-select  Id,Name,City,district,PhoneNo,PhoneNo2,Password,CheckPicUrl,IDCard,Address,Landline,Longitude,Latitude,Status,InsertTime,districtId,CityId,GroupId,OriginalBusiId,ProvinceCode,CityCode,AreaCode,Province,CommissionTypeId,DistribSubsidy,BusinessCommission,CommissionType,CommissionFixValue,BusinessGroupId,BalancePrice,AllowWithdrawPrice,HasWithdrawPrice
+select  Id,Name,City,district,PhoneNo,PhoneNo2,Password,CheckPicUrl,
+IDCard,Address,Landline,Longitude,Latitude,Status,InsertTime,districtId,
+CityId,GroupId,OriginalBusiId,ProvinceCode,CityCode,AreaCode,Province,
+CommissionTypeId,DistribSubsidy,BusinessCommission,CommissionType,
+CommissionFixValue,BusinessGroupId,BalancePrice,AllowWithdrawPrice,HasWithdrawPrice
 from  business (nolock)
 where  Id IN({0})";
 
@@ -1747,7 +1758,8 @@ SELECT   b.Id ,
          g.GroupName,
          ISNULL(g.IsModifyBind,0) IsModifyBind,
          ISNULL(b.OneKeyPubOrder,0) OneKeyPubOrder,
-         b.IsAllowOverdraft
+         b.IsAllowOverdraft,
+         b.IsEmployerTask
 FROM business b WITH(NOLOCK) 
 	Left join BusinessFinanceAccount bfa WITH(NOLOCK) ON b.Id=bfa.BusinessId AND bfa.IsEnable=1
     Left join [group] g WITH(NOLOCK) on g.Id=b.GroupId 
@@ -1862,7 +1874,9 @@ ORDER BY btr.Id;";
                                 MealsSettleMode=@MealsSettleMode,
                                 CommissionType=@CommissionType,
                                 OriginalBusiId=@OriginalBusiId,
-                                OneKeyPubOrder=@OneKeyPubOrder,IsAllowOverdraft=@IsAllowOverdraft,
+                                OneKeyPubOrder=@OneKeyPubOrder,
+                                IsEmployerTask=@IsEmployerTask,
+IsAllowOverdraft=@IsAllowOverdraft,
                                            ";
             if (model.GroupId > 0)
             {
@@ -1915,6 +1929,7 @@ ORDER BY btr.Id;";
             parm.AddWithValue("@OptName", model.OptUserName);
             parm.AddWithValue("@Remark", remark);
             parm.AddWithValue("@OneKeyPubOrder", model.OneKeyPubOrder);
+            parm.AddWithValue("@IsEmployerTask", model.IsEmployerTask);
             parm.Add("@IsAllowOverdraft", DbType.Int16).Value = model.IsAllowOverdraft;
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
@@ -2233,18 +2248,8 @@ VALUES
         public DataTable GetPhoneNoList(string pushCity)
         {
                     string querysql = @"  
-        select id, PhoneNo from dbo.business 
-        where   cityid in(" + pushCity + ")";
-
-        //            string querysql =string.Format( @"  
-        //select PhoneNo from dbo.business 
-        //where  Status=1 and  cityid in('{0}')",pushCity);
-
-            //IDbParameters dbParameters = DbHelper.CreateDbParameters();          
-            //dbParameters.AddWithValue("@SentStatus", sentStatus);
-            //DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, querysql, dbParameters);
-            //return MapRows<MessageModel>(dt);
-
+ select id, PhoneNo from dbo.business 
+ where   cityid in(" + pushCity + ")";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, querysql);
             return dt;
         }
