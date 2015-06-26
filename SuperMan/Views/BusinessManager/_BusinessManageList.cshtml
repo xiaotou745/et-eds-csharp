@@ -158,8 +158,8 @@
                             }
                             @*@if (SuperMan.App_Start.UserContext.Current.HasAuthority(24))
                             {*@
-                                <a href="javascript:void(0)" onclick="funcBusinessRecharge(@item.Id,'@item.Name', '@item.PhoneNo')">提款申请</a>
-                            @*  *@}
+                            <a href="javascript:void(0)" onclick="funcBusinessWithdraw(@item.Id,'@item.Name', '@item.PhoneNo')">提款申请</a>
+                            @* } *@
                         </td>
                     </tr>
                 }
@@ -355,6 +355,18 @@
         $('#busName').val(name);
         $('#busPhone').val(phone);
         adminjs.openwinbox('#BusinessRechargeShow');
+    }
+    
+    function funcBusinessWithdraw(id, name, phone) {
+        $('#withdrawId').val(0);
+        $('#withdrawName').val('');
+        $('#withdrawPhone').val('');
+        $('#withdrawAmount').val('');
+        $('#withdrawLog').val('');
+        $('#withdrawId').val(id);
+        $('#withdrawName').val(name);
+        $('#withdrawPhone').val(phone);
+        adminjs.openwinbox('#BusinessWithdraw');
     }
 
 </script>

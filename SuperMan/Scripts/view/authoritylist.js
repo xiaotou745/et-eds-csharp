@@ -197,6 +197,7 @@
                 data: paramaters,
                 success: function(result) {
                     if (result.IsSuccess) {
+                        alert("用户已禁用！");
                         window.location.href = "/AuthorityManager/AuthorityManager";
                     } else {
                         alert(result.Message);

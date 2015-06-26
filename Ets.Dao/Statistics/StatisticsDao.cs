@@ -708,6 +708,21 @@ order by o.Date desc, o.ActiveClienterCount desc";
             {
                 sbSqlWhere.AppendFormat(" AND CityId='{0}' ", queryInfo.CityId);
             }
+            if (queryInfo.RechargePrice > 0)
+            {
+                sbSqlWhere.AppendFormat(" AND Amount>='{0}' ", queryInfo.RechargePrice);
+            }
+            if (queryInfo.RechargeType > 0)
+            {
+                if (queryInfo.RechargeType == 1)//系统充值
+                {
+                    sbSqlWhere.AppendFormat(" AND Remark!='商家客户端充值'");
+                }
+                else if (queryInfo.RechargeType == 2)//客户端充值
+                {
+                    sbSqlWhere.AppendFormat(" AND Remark='商家客户端充值'");
+                }
+            }
             return sbSqlWhere.ToString();
         }
 

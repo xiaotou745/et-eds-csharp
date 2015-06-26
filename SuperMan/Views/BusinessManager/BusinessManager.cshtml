@@ -314,6 +314,42 @@
         </p>
     </div>
 </div>
+@*商户提现弹窗*@
+<div>
+    <div class="add-openbox add-form" id="BusinessWithdraw" style="width:500px">
+        <h2>
+            <p id="statusFin">发起商户提款申请</p>
+        </h2>
+        <fieldset>
+            <br>
+            <div class="control-group">
+                <label>商家名称：</label>
+                <input name="withdrawName" id="withdrawName" disabled="disabled" type="text">
+                <input name="withdrawId" id="withdrawId" type="hidden">
+            </div>
+            <div class="control-group">
+                <label>登陆账号：</label>
+                <input name="withdrawPhone" id="withdrawPhone" disabled="disabled" type="text">
+            </div>
+            <div class="control-group">
+                <label>提款金额：</label>
+                <input name="withdrawAmount" id="withdrawAmount" type="text">元
+                <label style="font-size: 10px;color: red">（提款金额范围:1-1,000,000元）</label>
+            </div>
+            <div class="control-group">
+                <label>备注：</label>
+                <div class="controls">
+                    <textarea cols="45" rows="5" id="withdrawLog"></textarea>
+                </div>
+            </div>
+        </fieldset>
+        <p class="btnbox">
+            <input value="确认" type="button" id="btnWithdrawCommit" class="yesBtn" />
+            <input value="关闭" type="button" class="J_closebox qxBtn" />
+        </p>
+    </div>
+</div>
+
 <script>
     var adminjs = new adminglass(); //实例化后台类
     $(document).ready(function () {
@@ -523,6 +559,47 @@
                 data: paramaters,
                 success: function (result) {
                     if (result.IsSuccess) {
+                        alert(result.Message);
+                        window.location.href = "/BusinessManager/BusinessManager";
+                    } else {
+                        alert(result.Message);
+                    }
+                }
+            });
+        }
+    });
+
+    //商户提现
+    $("#btnWithdrawCommit").on('click', function () {
+        var withdrawId = $("#withdrawId").val(); //商户id
+        var busiName = $("#withdrawPhone").val(); //商户电话
+        var withdrawAmount = $("#withdrawAmount").val();
+        var withdrawLog = $("#withdrawLog").val();
+        //if (rechargeLog.trim().length == 0) {
+        //    alert("请输入充值操作描述!");
+        //    return;
+        //}
+        //var decimalFormat = /^[0-9]*(\.[0-9]{1,2})?$/;
+        //if (!decimalFormat.test(busiRechargeAmount)) {
+        //    alert("请输入正确的金额！");
+        //    return;
+        //}
+        //if (busiRechargeAmount < 1 || busiRechargeAmount > 50000) {
+        //    alert("充值金额须在1-50000元之间！");
+        //    return;
+        //}
+        if (confirm("是否确认提款?")) {
+            var paramaters = {
+                "BusinessId": withdrawId, "WithdrawPrice": withdrawAmount, "Remarks": withdrawLog
+            };
+            var url = "/BusinessManager/Withdraw";
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: paramaters,
+                success: function (result) {
+                    if (result.IsSuccess) {
+                        alert("aaaaa");
                         alert(result.Message);
                         window.location.href = "/BusinessManager/BusinessManager";
                     } else {
