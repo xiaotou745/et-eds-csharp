@@ -303,6 +303,25 @@ namespace SuperMan.Controllers
             return Json(new ResultModel(reg, reg ? "充值成功！" : "充值失败！"), JsonRequestBehavior.DenyGet);
         }
         /// <summary>
+        /// 商户提现        
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150626</UpdateTime>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult Withdraw(WithdrawBBackPM model)
+        {
+            int FinanceAccountId= iBusinessFinanceProvider.GetBFinanceAccountId(model.BusinessId);
+            if(FinanceAccountId==0)
+                return Json(new ResultModel(false, "商户金融账号不存在！"), JsonRequestBehavior.DenyGet);
+
+            model.FinanceAccountId = FinanceAccountId;
+            var reg = iBusinessFinanceProvider.WithdrawB(model);            
+
+            return Json(reg, JsonRequestBehavior.DenyGet);            
+        }
+        /// <summary>
         /// 查询商户综合信息
         /// danny-20150601
         /// </summary>

@@ -134,6 +134,25 @@ where  BusinessId=@BusinessId and IsEnable=1";  //事物内不加锁
            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, querysql, dbParameters));     
         }
 
+        /// <summary>
+        /// 获取商家账号Id
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150626</UpdateTime>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public int GetBFinanceAccountId(int businessId)
+        {
+            string querysql = @"  
+select id from BusinessFinanceAccount nolock
+where BusinessId=@businessId";
+
+            var dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@businessId", businessId);
+
+            object obj = DbHelper.ExecuteScalar(SuperMan_Read, querysql, dbParameters);
+            return ParseHelper.ToInt(obj, 0);
+        }
         #endregion
     }
 }

@@ -1,2 +1,2 @@
 insert into GlobalConfig(KeyName,Value,Remark,GroupId,StrategyId) values('CompleteTimeSet',5,'骑士完成任务时间限制',0,-1)
-insert into GlobalConfig(KeyName,Value,Remark,GroupId,StrategyId) values('EmployerTaskTimeSet','0：00-23:59','雇主任务时间限制',0,-1)
+insert into GlobalConfig(KeyName,Value,Remark,GroupId,StrategyId) values('EmployerTaskTimeSet','0:00-23:59','雇主任务时间限制',0,-1)

@@ -49,6 +49,19 @@ namespace Ets.Service.Provider.Finance
         #endregion
 
         /// <summary>
+        /// 获取金额账号Id
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150626</UpdateTime>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public int GetBFinanceAccountId(int businessId)
+        {
+            return _businessFinanceAccountDao.GetBFinanceAccountId(businessId);
+        }
+   
+
+        /// <summary>
         /// 根据参数获取商家提现申请单列表
         /// danny-20150509
         /// </summary>
@@ -133,7 +146,80 @@ namespace Ets.Service.Provider.Finance
                 return ResultModel<object>.Conclude(FinanceWithdrawB.Success); ;
             }
         }
+        /// <summary>
+        /// 商户提现功能 后台
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150626</UpdateTime>
+        /// <param name="withdrawBBackPM"></param>
+        /// <returns></returns>
+        public ResultModel<object> WithdrawB(WithdrawBBackPM withdrawBBackPM)
+        {
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                BusinessModel business = new BusinessModel();
+                var businessFinanceAccount = new BusinessFinanceAccount();//商户金融账号信息
+                FinanceWithdrawB checkbool = CheckWithdrawB(withdrawBBackPM, ref business, ref businessFinanceAccount);
+                if (checkbool != FinanceWithdrawB.Success)  //验证失败 此次提款操作无效 直接返回相关错误信息
+                {                    
+                    return ResultModel<object>.Conclude(checkbool);
+                }
+                else
+                {
+                    _businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
+                    {
+                        Id = withdrawBBackPM.BusinessId,
+                        Money = -withdrawBBackPM.WithdrawPrice
+                    }); //更新商户表的余额，可提现余额
+                    string withwardNo = Helper.generateOrderCode(withdrawBBackPM.BusinessId);
+                    #region 商户提现
+                    long withwardId = _businessWithdrawFormDao.Insert(new BusinessWithdrawForm()
+                    {
+                        WithwardNo = withwardNo,//单号 规则待定
+                        BusinessId = withdrawBBackPM.BusinessId,//商户Id
+                        BalancePrice = business.BalancePrice,//提现前商户余额
+                        AllowWithdrawPrice = business.AllowWithdrawPrice,//提现前商户可提现金额
+                        Status = (int)BusinessWithdrawFormStatus.WaitAllow,//待审核
+                        Amount = withdrawBBackPM.WithdrawPrice,//提现金额
+                        Balance = business.BalancePrice - withdrawBBackPM.WithdrawPrice, //提现后余额
+                        TrueName = businessFinanceAccount.TrueName,//商户收款户名
+                        AccountNo = businessFinanceAccount.AccountNo, //卡号(DES加密)
+                        AccountType = businessFinanceAccount.AccountType, //账号类型：
+                        BelongType = businessFinanceAccount.BelongType,//账号类别  0 个人账户 1 公司账户  
+                        OpenBank = businessFinanceAccount.OpenBank,//开户行
+                        OpenSubBank = businessFinanceAccount.OpenSubBank //开户支行
+                    });
+                    #endregion
 
+                    #region 商户余额流水操作 更新骑士表的余额，可提现余额
+                    _businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
+                    {
+                        BusinessId = withdrawBBackPM.BusinessId,//商户Id
+                        Amount = -withdrawBBackPM.WithdrawPrice,//流水金额
+                        Status = (int)BusinessBalanceRecordStatus.Tradeing, //流水状态(1、交易成功 2、交易中）
+                        RecordType = (int)BusinessBalanceRecordRecordType.WithdrawApply,
+                        Operator = business.Name,
+                        WithwardId = withwardId,
+                        RelationNo = withwardNo,
+                        Remark = "商户提现"
+                    });
+                    #endregion
+
+                    #region 商户提现记录
+
+                    _businessWithdrawLogDao.Insert(new BusinessWithdrawLog()
+                    {
+                        WithwardId = withwardId,
+                        Status = (int)BusinessWithdrawFormStatus.WaitAllow,//待审核
+                        Remark = withdrawBBackPM.Remarks,
+                        Operator = business.Name,
+                    }); //更新商户表的余额，可提现余额 
+                    #endregion
+                    tran.Complete();
+                }
+                return ResultModel<object>.Conclude(FinanceWithdrawB.Success); ;
+            }
+        }
         /// <summary>
         /// 商户提现功能检查数据合法性，判断是否满足提现要求 add by caoheyang 20150511
         /// </summary>
@@ -571,5 +657,45 @@ namespace Ets.Service.Provider.Finance
         {
             return businessFinanceDao.GetBusinessRechargeDetailByNo(orderNo);
         }
+
+        #region 用户自定义方法
+        /// <summary>
+        /// 商户提现功能检查数据合法性
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150626</UpdateTime>
+        /// <param name="withdrawBpm">参数实体</param>
+        /// <param name="business">商户</param>
+        /// <param name="businessFinanceAccount">商家金融账号信息</param>
+        /// <returns></returns>
+        private FinanceWithdrawB CheckWithdrawB(WithdrawBBackPM withdrawBpm, ref BusinessModel business,
+            ref  BusinessFinanceAccount businessFinanceAccount)
+        {
+            if (withdrawBpm == null)
+            {
+                return FinanceWithdrawB.NoPara;
+            }
+            business = _businessDao.GetById(withdrawBpm.BusinessId);//获取商户信息
+            if (business == null || business.Status == null
+                || business.Status != ConstValues.BUSINESS_AUDITPASS)  //商户状态为非 审核通过不允许 提现
+            {
+                return FinanceWithdrawB.BusinessError;
+            }
+            else if (business.AllowWithdrawPrice < withdrawBpm.WithdrawPrice)//可提现金额小于提现金额，提现失败
+            {
+                return FinanceWithdrawB.MoneyError;
+            }
+            else if (business.BalancePrice < business.AllowWithdrawPrice) //账户余额小于 可提现金额，提现失败 账号异常
+            {
+                return FinanceWithdrawB.FinanceAccountError;
+            }
+            businessFinanceAccount = _businessFinanceAccountDao.GetById(withdrawBpm.FinanceAccountId);//获取商户金融账号信息
+            if (businessFinanceAccount == null || businessFinanceAccount.BusinessId != withdrawBpm.BusinessId)
+            {
+                return FinanceWithdrawB.FinanceAccountError;
+            }
+            return FinanceWithdrawB.Success;
+        }
+        #endregion
     }
 }

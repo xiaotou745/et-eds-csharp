@@ -35,6 +35,8 @@ using Ets.Model.DomainModel.Order;
 using Ets.Service.IProvider.Order;
 using Ets.Model.ParameterModel.Finance;
 using Ets.Dao.Business;
+using Ets.Service.Provider.Common;
+using Ets.Model.DomainModel.GlobalConfig;
 namespace Ets.Service.Provider.Clienter
 {
     public class ClienterProvider : IClienterProvider
@@ -51,6 +53,7 @@ namespace Ets.Service.Provider.Clienter
         readonly IOrderOtherProvider iOrderOtherProvider = new OrderOtherProvider();
         private readonly BusinessDao _businessDao = new BusinessDao();
         private readonly BusinessBalanceRecordDao _businessBalanceRecordDao = new BusinessBalanceRecordDao();
+        private readonly BusinessClienterRelationDao businessClienterDao = new BusinessClienterRelationDao();
         /// <summary>
         /// 骑士上下班功能 add by caoheyang 20150312
         /// </summary>
@@ -523,6 +526,10 @@ namespace Ets.Service.Provider.Clienter
                 //    return Letao.Util.JsonHelper.ToObject<ClienterStatusModel>(cacheValue);
                 //}
                 var UserInfo = clienterDao.GetUserStatus(UserId);
+                if (UserInfo != null && UserInfo.IsBind == 1)
+                {
+                    UserInfo.IsOnlyShowBussinessTask = IsOnlyShowBussinessTask(UserId);
+                }
                 //if (UserInfo != null)
                 //{
                 //    redis.Add(cacheKey, Letao.Util.JsonHelper.ToJson(UserInfo));
@@ -534,6 +541,39 @@ namespace Ets.Service.Provider.Clienter
                 LogHelper.LogWriterFromFilter(ex);
             }
             return null;
+        }
+        /// <summary>
+        /// 判断给定骑士是否只显示雇主任务
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        private int IsOnlyShowBussinessTask(int userId)
+        {
+            try
+            {
+                bool isSetting = clienterDao.IsSettingOnlyShowBussinessTask(userId);
+                if (isSetting)
+                {
+                    GlobalConfigModel globalSetting = new GlobalConfigProvider().GlobalConfigMethod(0);
+                    if (globalSetting != null && !string.IsNullOrEmpty(globalSetting.EmployerTaskTimeSet))
+                    {
+                        string[] settings = globalSetting.EmployerTaskTimeSet.Split('-');
+                        string date = DateTime.Now.ToString("yyyy-MM-dd");
+                        DateTime beginDate = DateTime.Parse(date + " " + settings[0]);
+                        DateTime endDate = DateTime.Parse(date + " " + settings[1]);
+                        DateTime currentDate = DateTime.Now;
+                        if (beginDate <= currentDate && currentDate <= endDate)
+                        {
+                            return 1;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+
+            return 0;
         }
         /// <summary>
         /// 超人完成订单  

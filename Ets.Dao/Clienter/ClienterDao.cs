@@ -1451,5 +1451,26 @@ where  cityid in(" + pushCity + ")";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, querysql);
             return dt;
         }
+        /// <summary>
+        /// 查询一个骑士绑定的商家中，是否有任何一个开启了IsEmployerTask
+        /// </summary>
+        /// <param name="UserId"></param>
+        /// <returns></returns>
+        public bool IsSettingOnlyShowBussinessTask(int UserId)
+        {
+            string querysql = @"
+                              SELECT    SUM(b.IsEmployerTask) AS IsSettingOnlyShowBussinessTask
+                              FROM      BusinessClienterRelation a ( NOLOCK )
+                                        JOIN business b ( NOLOCK ) ON a.BusinessId = b.Id
+                              WHERE     a.ClienterId = @ClienterId
+                                        AND a.IsBind = 1
+                                        AND a.IsEnable = 1
+                                        AND b.IsBind = 1
+                              ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@ClienterId", UserId);
+            object obj = DbHelper.ExecuteScalar(SuperMan_Read, querysql, dbParameters);
+            return ParseHelper.ToLong(obj) > 0;
+        }
     }
 }
