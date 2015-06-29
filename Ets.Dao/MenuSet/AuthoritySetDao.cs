@@ -343,7 +343,7 @@ namespace Ets.Dao.MenuSet
                                   ,[FAUser]
                                   ,[LCDateTime]
                                   ,[LCUser]
-                                  ,[GroupId],RoleId FROM account with(nolock) where LoginName=@loginName ";
+                                  ,[GroupId],RoleId FROM account with(nolock) where LoginName=@loginName and [Status] = 1";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("LoginName", loginName);
             var dr = DbHelper.ExecuteReader(SuperMan_Read, sql, dbParameters);
