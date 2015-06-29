@@ -857,24 +857,24 @@ where   oc.OrderId = @OrderId;
             else
             {
                 return new OrderListModel();
-            } 
+            }
         }
 
         /// <summary>
         /// 根据任务号判断该任务是否可以完成
         /// wc 获取该任务下的子订单是否全部付款
         /// </summary>
-        /// <param name="orderNo"></param>
+        /// <param name="orderId"></param>
         /// <returns></returns>
-        public bool IsOrNotFinish(string orderNo)
+        public bool IsOrNotFinish(int orderId)
         {
             StringBuilder sql = new StringBuilder(@" 
 select min(convert(int, oc.PayStatus)) IsPay
 from   dbo.[order] o ( nolock )
 join dbo.OrderChild oc ( nolock ) on o.Id = oc.OrderId
-where  o.OrderNo = @OrderNo");
+where  o.Id = @orderId");
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.Add("OrderNo", DbType.String).Value = orderNo;
+            dbParameters.Add("orderId", DbType.Int32, 4).Value = orderId;
             int isPay = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql.ToString(), dbParameters), 0);
             if (isPay == 0)  //最小是0 说明还有未付款的子订单
             {
@@ -2800,7 +2800,7 @@ where c.Id=@ClienterId;");
 
             string dataSql = string.Format(sql, " TOP " + pageSize + "  " + fields);
 
-            string notTopSql = "SELECT MIN(t.Id) FROM ("+string.Format(sql, " TOP " + ((pageIndex - 1) * pageSize).ToString() + " o.Id ");
+            string notTopSql = "SELECT MIN(t.Id) FROM (" + string.Format(sql, " TOP " + ((pageIndex - 1) * pageSize).ToString() + " o.Id ");
             string countSql = string.Format(sql, " COUNT(*) ");
             if (pageIndex > 1)
             {
@@ -3151,6 +3151,6 @@ update [Order] set FinishAll=1 where OrderNo=@OrderNo";
             }
             return MapRows<OrderMapDetail>(dt)[0];
         }
-        
+
     }
 }
