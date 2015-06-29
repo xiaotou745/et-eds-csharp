@@ -599,6 +599,7 @@ namespace Ets.Service.Provider.Clienter
                 model.Message = "500";
                 return model;
             }
+
             GlobalConfigModel globalSetting = new GlobalConfigProvider().GlobalConfigMethod(0);
             int limitFinish = ParseHelper.ToInt(globalSetting.CompleteTimeSet, 5);
             //取到任务的接单时间、从缓存中读取完成任务时间限制，判断要用户点击完成时间>接单时间+限制时间  
@@ -609,6 +610,12 @@ namespace Ets.Service.Provider.Clienter
                 model.Message = "501";
                 return model;
             }
+            if (!new Ets.Dao.Order.OrderDao().IsOrNotFinish(myOrderInfo.Id))//是否有未完成子订单
+            {
+                model.Message = "502";
+                return model;
+            }
+
             #region 是否允许修改小票
             model.IsModifyTicket = true;
             if (myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount)// && myOrderInfo.Status == OrderStatus.订单完成.GetHashCode()
@@ -642,24 +649,7 @@ namespace Ets.Service.Provider.Clienter
                     ///更新骑士和商家金额
                     UpdateMoney(myOrderInfo, userId, orderNo);
 
-                    businessId = myOrderInfo.businessId;
-
-                    #region 临时
-                    //if (myOrderInfo.HadUploadCount == myOrderInfo.OrderCount)  //当用户上传的小票数量 和 需要上传的小票数量一致的时候，更新用户金额
-                    //{
-                    //    if (CheckOrderPay(orderNo))
-                    //    {
-                    //        UpdateClienterAccount(userId, myOrderInfo);
-                    //    }
-                    //}
-
-                    //////完成任务的时候，当任务为未付款时，更新商户金额
-                    //if (myOrderInfo.IsPay.HasValue && !myOrderInfo.IsPay.Value)
-                    //{
-                    //    BusinessBalanceRecord businessBalanceRecord = new BusinessBalanceRecord();
-                    //    businessBalanceRecordDao.InsertSingle(businessBalanceRecord);
-                    //}
-                    #endregion
+                    businessId = myOrderInfo.businessId;//为当前的商户发送jpush用
 
                     tran.Complete();
                     model.Message = "1";
