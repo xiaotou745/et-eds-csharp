@@ -11,6 +11,7 @@
 @using Ets.Service.Provider.User
 @using ETS.Util;
 @using Ets.Service.Provider.Business
+@using NServiceKit.Common.Web
 
 <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
 <script src="~/Scripts/jquery-1.8.2.js"></script>
@@ -215,7 +216,34 @@
             营业执照（或卫生许可证）<a id="showBigBusinessLicensePic" href="@PicHost@puth@bigFileNameb" target="_blank">查看大图</a>
         </div>
     </div>
-    <div style="clear:both"></div>
+    <div style="clear: both"></div>
+    <div class="control-group">
+        <label style="font-size: 15px;margin-left: 10px">商户操作记录：</label>
+        <table width="100%" cellspacing="0" cellpadding="0" class="tbstyle" style="border: 0">
+            <thead>
+                <tr class="tdbg">
+                    <th>时间</th>
+                    <th>操作</th>
+                    <th>操作人</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (ViewBag.BusinessOpLog != null && ViewBag.BusinessOpLog.Count > 0)
+                {
+                    List<BusinessOptionLog> businessOptionLogs = ViewBag.BusinessOpLog as List<BusinessOptionLog>;
+                    foreach (var btl in businessOptionLogs)
+                    {
+                        <tr>
+                            <td>@btl.InsertTime</td>
+                            <td>@btl.Remark</td>
+                            <td>@btl.OptName</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
+    </div>
 </div>
 
 @*百度地图弹层*@

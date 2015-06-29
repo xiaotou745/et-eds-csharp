@@ -1429,7 +1429,8 @@ select top 1
         o.BusinessReceivable,
         o.IsPay,
         b.Name BusinessName,
-        o.SettleMoney
+        o.SettleMoney,
+        oo.GrabTime
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id

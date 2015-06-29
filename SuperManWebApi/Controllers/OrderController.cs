@@ -432,6 +432,10 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.DataError, finishModel);
             }
+            if (finishModel.Message == "501")  //完成时间
+            {
+                return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.TooQuickly, finishModel);
+            }
             if (finishModel.Message == "1")  //完成
             {       
                 return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Success, finishModel);
