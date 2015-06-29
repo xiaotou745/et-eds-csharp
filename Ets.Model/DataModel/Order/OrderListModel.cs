@@ -275,6 +275,9 @@ namespace Ets.Model.DataModel.Order
         /// 抢单-完成的距离
         /// </summary>
         public double GrabToCompleteDistance { get; set; }
-        
+        /// <summary>
+        /// 任务接单时间
+        /// </summary>
+        public DateTime? GrabTime { get; set; }
     }
 }

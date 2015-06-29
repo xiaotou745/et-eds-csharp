@@ -35,8 +35,9 @@ using Ets.Model.DomainModel.Order;
 using Ets.Service.IProvider.Order;
 using Ets.Model.ParameterModel.Finance;
 using Ets.Dao.Business;
-using Ets.Service.Provider.Common;
 using Ets.Model.DomainModel.GlobalConfig;
+using Ets.Service.Provider.Common;
+
 namespace Ets.Service.Provider.Clienter
 {
     public class ClienterProvider : IClienterProvider
@@ -64,7 +65,7 @@ namespace Ets.Service.Provider.Clienter
             if (paraModel.WorkStatus == ETS.Const.ClienterConst.ClienterWorkStatus1)  //如果要下班，先判断超人是否还有未完成的订单
             {
                 //查询当前超人有无已接单但是未完成的订单
-                int ordercount = clienterDao.QueryOrderount(new Model.ParameterModel.Clienter.ChangeWorkStatusPM() { Id = paraModel.Id});
+                int ordercount = clienterDao.QueryOrderount(new Model.ParameterModel.Clienter.ChangeWorkStatusPM() { Id = paraModel.Id });
                 if (ordercount > 0)
                     return ETS.Enums.ChangeWorkStatusEnum.OrderError;
             }
@@ -75,7 +76,8 @@ namespace Ets.Service.Provider.Clienter
                 {
                     return ChangeWorkStatusEnum.WorkError; //上班失败
                 }
-                else {
+                else
+                {
                     return ChangeWorkStatusEnum.StatusError; //休息失败
                 }
             }
@@ -137,7 +139,7 @@ namespace Ets.Service.Provider.Clienter
                         model.receviceAddress = item.ReceviceAddress;
                     else
                     {
-                        model.receviceAddress = ConstValues.ReceviceAddress;                        
+                        model.receviceAddress = ConstValues.ReceviceAddress;
                     }
 
                     model.recevicePhone = item.RecevicePhoneNo;
@@ -203,6 +205,10 @@ namespace Ets.Service.Provider.Clienter
                 if (resultModel == null)
                 {
                     return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
+                }
+                if (resultModel.IsBind == 1)
+                {
+                    resultModel.IsOnlyShowBussinessTask = IsOnlyShowBussinessTask(resultModel.userId);
                 }
                 return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.Success, resultModel);
             }
@@ -593,6 +599,16 @@ namespace Ets.Service.Provider.Clienter
                 model.Message = "500";
                 return model;
             }
+            GlobalConfigModel globalSetting = new GlobalConfigProvider().GlobalConfigMethod(0);
+            int limitFinish = ParseHelper.ToInt(globalSetting.CompleteTimeSet, 5);
+            //取到任务的接单时间、从缓存中读取完成任务时间限制，判断要用户点击完成时间>接单时间+限制时间  
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            DateTime yuJiFinish = myOrderInfo.GrabTime.Value.AddMinutes(limitFinish);
+            if (DateTime.Compare(DateTime.Now, yuJiFinish) < 0)  //小于0说明用户完成时间 太快
+            {
+                model.Message = "501";
+                return model;
+            }
             #region 是否允许修改小票
             model.IsModifyTicket = true;
             if (myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount)// && myOrderInfo.Status == OrderStatus.订单完成.GetHashCode()
@@ -636,7 +652,7 @@ namespace Ets.Service.Provider.Clienter
                     //        UpdateClienterAccount(userId, myOrderInfo);
                     //    }
                     //}
-                   
+
                     //////完成任务的时候，当任务为未付款时，更新商户金额
                     //if (myOrderInfo.IsPay.HasValue && !myOrderInfo.IsPay.Value)
                     //{
@@ -795,16 +811,16 @@ namespace Ets.Service.Provider.Clienter
             ///TODO 事务里有多个库的连接串
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                bool HasUploadTicket = orderChildDao.GetHasUploadTicket(uploadReceiptModel.OrderId,uploadReceiptModel.OrderChildId);
-                 if(HasUploadTicket)
-                 {
-                     uploadReceiptModel.HadUploadCount = 0;
-                 }
-                 else
-                 {
-                     uploadReceiptModel.HadUploadCount = 1;
-                 }
-                 
+                bool HasUploadTicket = orderChildDao.GetHasUploadTicket(uploadReceiptModel.OrderId, uploadReceiptModel.OrderChildId);
+                if (HasUploadTicket)
+                {
+                    uploadReceiptModel.HadUploadCount = 0;
+                }
+                else
+                {
+                    uploadReceiptModel.HadUploadCount = 1;
+                }
+
 
                 orderOther = clienterDao.UpdateClientReceiptPicInfo(uploadReceiptModel);
                 //上传成功后， 判断 订单 创建时间在 2015-4-18 00：00 之前的订单不在增加佣金
@@ -847,7 +863,7 @@ namespace Ets.Service.Provider.Clienter
                 //上传完小票
                 //(1)更新给骑士余额
                 if (orderOther.HadUploadCount >= orderOther.NeedUploadCount)
-                {                   
+                {
                     if (CheckOrderPay(myOrderInfo.OrderNo))
                     {
                         UpdateClienterAccount(uploadReceiptModel.ClienterId, myOrderInfo);
@@ -1228,16 +1244,16 @@ namespace Ets.Service.Provider.Clienter
         /// <UpdateTime>20150609</UpdateTime>
         public int GetId(string phoneNo, string trueName)
         {
-            return clienterDao.GetId(phoneNo,trueName);
+            return clienterDao.GetId(phoneNo, trueName);
         }
-		/// <summary>
+        /// <summary>
         /// 查询骑士列表
         /// danny-20150609
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
         public PageInfo<ClienterListModel> GetClienterList(ClienterSearchCriteria criteria)
-		{
+        {
             return clienterDao.GetClienterList<ClienterListModel>(criteria);
         }
     }
