@@ -48,7 +48,8 @@ namespace SuperMan.Controllers
         readonly IBusinessFinanceProvider iBusinessFinanceProvider = new BusinessFinanceProvider();
         readonly IBusinessClienterRelationProvider iBusinessClienterRelationProvider = new BusinessClienterRelationProvider();
         readonly IDistributionProvider iDistributionProvider = new DistributionProvider();
-        private readonly IStatisticsProvider statisticsProvider = new StatisticsProvider();
+        readonly IStatisticsProvider statisticsProvider = new StatisticsProvider();
+        readonly IBusinessFinanceAccountProvider iBusinessFinanceAccountProvider = new BusinessFinanceAccountProvider();
 
         // GET: BusinessManager
         [HttpGet]
@@ -312,7 +313,7 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult Withdraw(WithdrawBBackPM model)
         {
-            int FinanceAccountId= iBusinessFinanceProvider.GetBFinanceAccountId(model.BusinessId);
+            int FinanceAccountId = iBusinessFinanceAccountProvider.GetBFinanceAccountId(model.BusinessId);
             if(FinanceAccountId==0)
                 return Json(new ResultModel(false, "商户金融账号不存在！"), JsonRequestBehavior.DenyGet);
 

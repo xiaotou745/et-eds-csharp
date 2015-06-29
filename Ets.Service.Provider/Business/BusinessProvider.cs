@@ -28,6 +28,9 @@ using Ets.Model.DataModel.Order;
 using Ets.Model.DomainModel.Area;
 using Ets.Service.IProvider.Business;
 using Ets.Dao.Business;
+using Ets.Service.IProvider.Common;
+using Ets.Service.Provider.Common;
+using Ets.Model.DomainModel.Business;
 namespace Ets.Service.Provider.Business
 {
 
@@ -36,22 +39,22 @@ namespace Ets.Service.Provider.Business
     /// </summary>
     public class BusinessProvider : IBusinessProvider
     {
-        readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
-        BusinessDao dao = new BusinessDao();
+        readonly IAreaProvider iAreaProvider = new AreaProvider();
+        readonly BusinessDao businessDao = new BusinessDao();
         /// <summary>
         /// app端商户获取订单   add by caoheyang 20150311
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public IList<Ets.Model.DomainModel.Business.BusiGetOrderModel> GetOrdersApp(Ets.Model.ParameterModel.Business.BussOrderParaModelApp paraModel)
+        public IList<BusiGetOrderModel> GetOrdersApp(BussOrderParaModelApp paraModel)
         {
-            PageInfo<BusiOrderSqlModel> pageinfo = dao.GetOrdersAppToSql<BusiOrderSqlModel>(paraModel);
+            PageInfo<BusiOrderSqlModel> pageinfo = businessDao.GetOrdersAppToSql<BusiOrderSqlModel>(paraModel);
             IList<BusiOrderSqlModel> list = pageinfo.Records;
 
-            List<Ets.Model.DomainModel.Business.BusiGetOrderModel> listOrder = new List<Ets.Model.DomainModel.Business.BusiGetOrderModel>();
+            List<BusiGetOrderModel> listOrder = new List<BusiGetOrderModel>();
             foreach (BusiOrderSqlModel from in list)
             {
-                Ets.Model.DomainModel.Business.BusiGetOrderModel model = new Ets.Model.DomainModel.Business.BusiGetOrderModel();
+                BusiGetOrderModel model = new BusiGetOrderModel();
                 model.ActualDoneDate = from.ActualDoneDate;
                 model.Amount = from.Amount;
                 model.OrderCount = from.OrderCount;
@@ -137,7 +140,7 @@ namespace Ets.Service.Provider.Business
                     result.Message = "开始时间不能大于结束时间";
                     return result;
                 }
-                var list = dao.GetBusinessCommission(t1, t2, name, phoneno, groupid, BusinessCity, authorityCityNameListStr);
+                var list = businessDao.GetBusinessCommission(t1, t2, name, phoneno, groupid, BusinessCity, authorityCityNameListStr);
                 if (list != null && list.Count > 0)
                 {
                     result.Data = list;
@@ -154,8 +157,6 @@ namespace Ets.Service.Provider.Business
             return result;
         }
 
-
-
         /// <summary>
         /// 设置商家结算比例-外送费    设置结算比例2015.3.12 平扬
         /// </summary>
@@ -168,12 +169,11 @@ namespace Ets.Service.Provider.Business
         {
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                bool res = dao.setCommission(id, price, waisongfei);
+                bool res = businessDao.setCommission(id, price, waisongfei);
                 int result = new UserOptRecordDao().InsertUserOptRecord(model);
                 tran.Complete();
                 return res;
             }
-
         }
 
         /// <summary>
@@ -186,12 +186,11 @@ namespace Ets.Service.Provider.Business
         {
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                bool res = dao.ModifyCommission(busListResultModel);
+                bool res = businessDao.ModifyCommission(busListResultModel);
                 int result = new UserOptRecordDao().InsertUserOptRecord(model);
                 tran.Complete();
                 return res;
             }
-
         }
 
         /// <summary>
@@ -218,9 +217,7 @@ namespace Ets.Service.Provider.Business
             strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.OrderCount));
             strBuilder.AppendLine(string.Format("<td>{0}%</td>", paraModel.BusinessCommission));
             strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.T1));
-            strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.T2));
-            //strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.T1.ToShortDateString()));
-            //strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.T2.ToShortDateString()));
+            strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.T2)); 
             strBuilder.AppendLine(string.Format("<td>{0}</td></tr>", paraModel.TotalAmount));
             strBuilder.AppendLine("</table>");
             return strBuilder.ToString();
@@ -251,36 +248,18 @@ namespace Ets.Service.Provider.Business
             {
                 returnEnum = CustomerRegisterStatusEnum.IncorrectCheckCode; //判断验证法录入是否正确
             }
-            else if (dao.CheckBusinessExistPhone(model.phoneNo))
+            else if (businessDao.CheckBusinessExistPhone(model.phoneNo))
             {
                 returnEnum = CustomerRegisterStatusEnum.PhoneNumberRegistered;//判断该手机号是否已经注册过
-            }
-            //else if (string.IsNullOrEmpty(model.city) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
-            //    returnEnum = CustomerRegisterStatusEnum.cityIdEmpty;
+            }  
             if (returnEnum != null)
             {
                 return ResultModel<BusiRegisterResultModel>.Conclude(returnEnum);
-            }
-            //转换 编码
-            //try
-            //{
-            //    if (!string.IsNullOrWhiteSpace(model.city))
-            //    {
-            //        Model.DomainModel.Area.AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new Model.DomainModel.Area.AreaModelTranslate() { Name = model.city.Trim(), JiBie = 2 });
-            //        if (areaModel != null)
-            //        {
-            //            model.CityId = areaModel.NationalCode.ToString();
-            //        }
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    LogHelper.LogWriter("商户注册异常转换区域：", new { ex = ex });
-            //}
+            }          
 
             BusiRegisterResultModel resultModel = new BusiRegisterResultModel()
             {
-                userId = dao.InsertBusiness(model)
+                userId = businessDao.InsertBusiness(model)
             };
             return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatusEnum.Success, resultModel);// CustomerRegisterStatusEnum.Success;//默认是成功状态
 
@@ -302,7 +281,7 @@ namespace Ets.Service.Provider.Business
             else if (string.IsNullOrEmpty(model.passWord))
                 returnEnum = CustomerRegisterStatusEnum.PasswordEmpty;//密码非空验证  
 
-            else if (dao.CheckBusinessExistPhone(model.phoneNo))
+            else if (businessDao.CheckBusinessExistPhone(model.phoneNo))
                 returnEnum = CustomerRegisterStatusEnum.PhoneNumberRegistered;//判断该手机号是否已经注册过
 
             else if (string.IsNullOrEmpty(model.city) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
@@ -314,7 +293,7 @@ namespace Ets.Service.Provider.Business
             model.passWord = ETS.Security.MD5.Encrypt(model.passWord);
             BusiRegisterResultModel resultModel = new BusiRegisterResultModel()
             {
-                userId = dao.addBusiness(model)
+                userId = businessDao.addBusiness(model)
             };
             return ResultModel<BusiRegisterResultModel>.Conclude(CustomerRegisterStatusEnum.Success, resultModel);// CustomerRegisterStatusEnum.Success;//默认是成功状态
 
@@ -337,7 +316,7 @@ namespace Ets.Service.Provider.Business
             if (string.IsNullOrWhiteSpace(model.B_GroupId.ToString()))  //集团Id不能为空
                 return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.GroupIdEmpty);
             //是否存在该商户
-            BusinessModel busi = dao.CheckExistBusiness(model.B_OriginalBusiId, model.B_GroupId);
+            BusinessModel busi = businessDao.CheckExistBusiness(model.B_OriginalBusiId, model.B_GroupId);
             return ResultModel<NewBusiRegisterResultModel>.Conclude(CustomerRegisterStatus.OriginalBusiIdRepeat);
 
             if (string.IsNullOrWhiteSpace(model.B_City) || string.IsNullOrWhiteSpace(model.B_CityCode.ToString())) //城市以及城市编码非空验证
@@ -373,7 +352,7 @@ namespace Ets.Service.Provider.Business
             #endregion
             var business = NewRegisterInfoModelTranslator.Instance.Translate(model);
             business.Status = ConstValues.BUSINESS_AUDITPASS;
-            int businessid = dao.InsertOtherBusiness(business);
+            int businessid = businessDao.InsertOtherBusiness(business);
             if (businessid > 0)
             {
                 var resultModel = new NewBusiRegisterResultModel
@@ -389,7 +368,7 @@ namespace Ets.Service.Provider.Business
 
         public BusinessModel CheckExistBusiness(int originalId, int groupId)
         {
-            return dao.CheckExistBusiness(originalId, groupId);
+            return businessDao.CheckExistBusiness(originalId, groupId);
         }
 
         /// <summary>
@@ -404,7 +383,7 @@ namespace Ets.Service.Provider.Business
             try
             {
                 BusiLoginResultModel resultMode = new BusiLoginResultModel();
-                DataTable dt = dao.LoginSql(model);
+                DataTable dt = businessDao.LoginSql(model);
                 if (dt == null || dt.Rows.Count <= 0)
                 {
                     return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential, resultMode);
@@ -449,7 +428,7 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public BusListResultModel GetBusiness(int busiId)
         {
-            return dao.GetBusiness(busiId);
+            return businessDao.GetBusiness(busiId);
         }
 
         /// <summary>
@@ -459,7 +438,7 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public BusListResultModel GetBusiness(int originalBusiId, int groupId)
         {
-            return dao.GetBusiness(originalBusiId, groupId);
+            return businessDao.GetBusiness(originalBusiId, groupId);
         }
         /// <summary>
         /// 获取商户信息
@@ -469,7 +448,7 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public PageInfo<BusListResultModel> GetBusinesses(BusinessSearchCriteria criteria)
         {
-            PageInfo<BusListResultModel> pageinfo = dao.GetBusinesses<BusListResultModel>(criteria);
+            PageInfo<BusListResultModel> pageinfo = businessDao.GetBusinesses<BusListResultModel>(criteria);
             return pageinfo;
         }
         /// <summary>
@@ -481,7 +460,7 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public PageInfo<BusinessesDistributionModel> GetBusinessesDistributionStatisticalInfo(OrderSearchCriteria criteria)
         {
-            PageInfo<BusinessesDistributionModel> pageinfo = dao.GetBusinessesDistributionStatisticalInfo<BusinessesDistributionModel>(criteria);
+            PageInfo<BusinessesDistributionModel> pageinfo = businessDao.GetBusinessesDistributionStatisticalInfo<BusinessesDistributionModel>(criteria);
             return pageinfo;
         }
         /// <summary>
@@ -496,12 +475,12 @@ namespace Ets.Service.Provider.Business
             ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
             string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, id);
             redis.Delete(cacheKey);
-            return dao.UpdateAuditStatus(id, enumStatusType);
+            return businessDao.UpdateAuditStatus(id, enumStatusType);
         }
 
         public bool UpdateAuditStatus(int id, int enumStatus, string busiAddress)
         {
-            return dao.UpdateAuditStatus(id, enumStatus, busiAddress);
+            return businessDao.UpdateAuditStatus(id, enumStatus, busiAddress);
         }
         /// <summary>
         ///  根据城市信息查询当前城市下该集团的所有商户信息
@@ -512,7 +491,7 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public IList<BusListResultModel> GetBussinessByCityInfo(BusinessSearchCriteria criteria)
         {
-            return dao.GetBussinessByCityInfo(criteria);
+            return businessDao.GetBussinessByCityInfo(criteria);
         }
 
         /// <summary>
@@ -532,14 +511,12 @@ namespace Ets.Service.Provider.Business
             if (string.IsNullOrEmpty(model.checkCode)) //验证码非空验证
             {
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeIsEmpty);
-            }
-            // var code = CacheFactory.Instance[model.phoneNumber];
+            } 
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             var code = redis.Get<string>("CheckCodeFindPwd_" + model.phoneNumber);
             if (string.IsNullOrEmpty(code) || code != model.checkCode) //验证码正确性验证
             { return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong); }
-
-            BusinessDao businessDao = new BusinessDao();
+                        
             var business = businessDao.GetBusinessByPhoneNo(model.phoneNumber);
             if (business == null) //用户是否存在
             {
@@ -564,18 +541,9 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public BusiOrderCountResultModel GetOrderCountData(int BusinessId)
         {
-            return dao.GetOrderCountDataSql(BusinessId);
+            return businessDao.GetOrderCountDataSql(BusinessId);
         }
-        /// <summary>
-        /// 验证 商户 手机号 是否注册
-        /// wc
-        /// </summary>
-        /// <param name="PhoneNo"></param>
-        /// <returns></returns>
-        //public bool CheckBusinessExistPhone(string PhoneNo)
-        //{
-        //    return dao.CheckBusinessExistPhone(PhoneNo);
-        //}
+       
         /// <summary>
         /// 判断该 商户是否有资格 
         /// wc
@@ -584,7 +552,7 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public bool HaveQualification(int businessId)
         {
-            return dao.HaveQualification(businessId);
+            return businessDao.HaveQualification(businessId);
         }
         /// <summary>
         /// 根据集团id获取集团名称
@@ -594,7 +562,7 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public string GetGroupNameById(int groupId)
         {
-            return dao.GetGroupNameById(groupId);
+            return businessDao.GetGroupNameById(groupId);
         }
         /// <summary>
         /// 获取所有可用的集团信息数据
@@ -603,7 +571,7 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public IList<GroupModel> GetGroups()
         {
-            return dao.GetGroups();
+            return businessDao.GetGroups();
         }
 
         /// <summary>
@@ -615,7 +583,7 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public int ModifyWaiMaiPrice(int businessId, decimal waiSongFei)
         {
-            return dao.ModifyWaiMaiPrice(businessId, waiSongFei);
+            return businessDao.ModifyWaiMaiPrice(businessId, waiSongFei);
         }
         /// <summary>
         /// 修改商户地址信息 
@@ -628,12 +596,12 @@ namespace Ets.Service.Provider.Business
         {
             BusinessModel business = TranslateBusiness(businessModel);
 
-            var busi = dao.GetBusiness(businessModel.userId); //查询商户信息
+            var busi = businessDao.GetBusiness(businessModel.userId); //查询商户信息
             if (busi.Status == ConstValues.BUSINESS_NOADDRESS)  //如果商户的状态 为未审核未添加地址，则修改商户状态为 未审核
             {
                 business.Status = ConstValues.BUSINESS_NOAUDIT;
             }
-            int upResult = dao.UpdateBusinessAddressInfo(business);
+            int upResult = businessDao.UpdateBusinessAddressInfo(business);
             ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
             string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, businessModel.userId);
             redis.Delete(cacheKey);
@@ -665,29 +633,14 @@ namespace Ets.Service.Provider.Business
                 return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.BusinessNameEmpty);
             }
             UpdateBusinessInfoBPM business = UpdateBusinessInfoBTranslate(model);
-            var busi = dao.GetBusiness(model.userId); //查询商户信息
+            var busi = businessDao.GetBusiness(model.userId); //查询商户信息
             if (busi == null)
             {
                 return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.InvalidUserId);
-            }
-            //if (busi.Status == ConstValues.BUSINESS_NOADDRESS)  //如果商户的状态 为未审核未添加地址，则修改商户状态为 未审核
-            //{
-            //    business.Status = ConstValues.BUSINESS_NOAUDIT;
-            //}
+            }          
 
-
-            #region 判断是否可以一键发单
-            /*
-            business.OneKeyPubOrder = 1;//默认为全部允许一键发单
-            Business checkBusiness = dao.GetById(business.Id);
-            if (string.IsNullOrEmpty(checkBusiness.City) || model.City == "北京市" || model.City == "上海市")
-            {
-                //如果城市是空或北京或上海，则不允许一键发单
-                business.OneKeyPubOrder = 0;
-            }*/
-            #endregion
-
-            int upResult = dao.UpdateBusinessInfoB(business);
+   
+            int upResult = businessDao.UpdateBusinessInfoB(business);
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, model.userId);
             redis.Delete(cacheKey);
@@ -757,7 +710,7 @@ namespace Ets.Service.Provider.Business
             ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
             string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, busiId);
             redis.Delete(cacheKey);
-            int upResult = dao.UpdateBusinessPicInfo(busiId, picName);
+            int upResult = businessDao.UpdateBusinessPicInfo(busiId, picName);
             return upResult;
 
         }
@@ -809,7 +762,7 @@ namespace Ets.Service.Provider.Business
             {
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
             }
-            if (!dao.CheckBusinessExistPhone(PhoneNumber))
+            if (!businessDao.CheckBusinessExistPhone(PhoneNumber))
             {
                 //账号不存在 
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.NotExists);
@@ -853,7 +806,7 @@ namespace Ets.Service.Provider.Business
             var msg = string.Format(Config.SmsContentCheckCode, randomCode, Ets.Model.Common.ConstValues.MessageBusiness);  //获取提示用语信息
             try
             {
-                if (dao.CheckBusinessExistPhone(PhoneNumber))  //判断该手机号是否已经注册过  .CheckBusinessExistPhone(PhoneNumber)
+                if (businessDao.CheckBusinessExistPhone(PhoneNumber))  //判断该手机号是否已经注册过  .CheckBusinessExistPhone(PhoneNumber)
                     return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.AlreadyExists);
                 else
                 {
@@ -882,7 +835,7 @@ namespace Ets.Service.Provider.Business
         public Ets.Model.Common.BusinessCountManageList GetBusinessesCount(BusinessSearchCriteria criteria)
         {
 
-            PageInfo<BusinessViewModel> pageinfo = dao.GetBusinessesCount<BusinessViewModel>(criteria);
+            PageInfo<BusinessViewModel> pageinfo = businessDao.GetBusinessesCount<BusinessViewModel>(criteria);
             NewPagingResult pr = new NewPagingResult() { PageIndex = criteria.PagingRequest.PageIndex, PageSize = criteria.PagingRequest.PageSize, RecordCount = pageinfo.All, TotalCount = pageinfo.All };
             List<BusinessViewModel> list = pageinfo.Records.ToList();
             var businessCountManageList = new Ets.Model.Common.BusinessCountManageList(list, pr);
@@ -903,13 +856,13 @@ namespace Ets.Service.Provider.Business
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderEmpty);
             if (string.IsNullOrEmpty(model.OrderFrom.ToString()))   //订单来源非空验证
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderFromEmpty);
-            order myOrder = dao.GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom, model.OrderType);
+            order myOrder = businessDao.GetOrderByOrderNoAndOrderFrom(model.OriginalOrderNo, model.OrderFrom, model.OrderType);
             if (myOrder == null)//订单不存在
             {
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderIsNotExist);
             }
 
-            bool b = dao.UpdateOrder(model.OriginalOrderNo, model.OrderFrom, OrderStatus.订单已取消);
+            bool b = businessDao.UpdateOrder(model.OriginalOrderNo, model.OrderFrom, OrderStatus.订单已取消);
             OrderOptionModel oom = new OrderOptionModel();
             oom.OptUserId = myOrder.businessId.Value;
             oom.OptUserName = "第三方";
@@ -934,18 +887,7 @@ namespace Ets.Service.Provider.Business
         {
             try
             {
-                //ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
-                //string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, userid);
-                //var cacheValue = redis.Get<string>(cacheKey);
-                //if (!string.IsNullOrEmpty(cacheValue))
-                //{
-                //    return Letao.Util.JsonHelper.ToObject<BussinessStatusModel>(cacheValue);
-                //}
-                var UserInfo = dao.GetUserStatus(userid);
-                //if (UserInfo != null)
-                //{
-                //    redis.Add(cacheKey, Letao.Util.JsonHelper.ToJson(UserInfo));
-                //}
+                var UserInfo = businessDao.GetUserStatus(userid);             
                 return UserInfo;
             }
             catch (Exception ex)
@@ -967,7 +909,7 @@ namespace Ets.Service.Provider.Business
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             redis.Delete(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo,  //清空之前的关系缓存
                 ParseHelper.ToInt(model.oldGroupId), ParseHelper.ToInt(model.oldOriginalBusiId)));
-            bool result = dao.ModifyBusinessInfo(model, orderOptionModel);
+            bool result = businessDao.ModifyBusinessInfo(model, orderOptionModel);
             if (result == true && ParseHelper.ToInt(model.GroupId) != 0)
             { //添加到缓存
 
@@ -996,7 +938,7 @@ namespace Ets.Service.Provider.Business
             string msg = string.Empty;
             string key = "";
             string tempcode = randomCode.Aggregate("", (current, c) => current + (c.ToString() + ','));
-            bool userStatus = dao.CheckBusinessExistPhone(model.PhoneNumber);
+            bool userStatus = businessDao.CheckBusinessExistPhone(model.PhoneNumber);
             if (model.Stype == "0")//注册
             {
                 //判断该手机号是否已经注册过
@@ -1086,7 +1028,7 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public int InsertOtherBusiness(BusinessModel model)
         {
-            return dao.InsertOtherBusiness(model);
+            return businessDao.InsertOtherBusiness(model);
         }
 
         /// <summary>
@@ -1098,7 +1040,7 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public BusinessDM GetDetails(int id)
         {
-            BusinessDM model = dao.GetDetails(id);
+            BusinessDM model = businessDao.GetDetails(id);
             model.HasMessage = new BusinessMessageDao().HasMessage(id);
             return model;
         }
@@ -1112,7 +1054,7 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public BusinessInfo GetDistribSubsidy(int id)
         {
-            return dao.GetDistribSubsidy(id);
+            return businessDao.GetDistribSubsidy(id);
         }
         /// <summary>
         /// 判断商户是否存在
@@ -1123,7 +1065,7 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public bool IsExist(int id)
         {
-            return dao.IsExist(id);
+            return businessDao.IsExist(id);
         }
         /// <summary>
         /// 获取商户详细信息
@@ -1132,7 +1074,7 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public BusinessDetailModel GetBusinessDetailById(string businessId)
         {
-            return dao.GetBusinessDetailById(businessId);
+            return businessDao.GetBusinessDetailById(businessId);
         }
         /// <summary>
         /// 获取商户第三方绑定关系记录
@@ -1142,7 +1084,7 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public IList<BusinessThirdRelationModel> GetBusinessThirdRelation(int businessId)
         {
-            return dao.GetBusinessThirdRelation(businessId);
+            return businessDao.GetBusinessThirdRelation(businessId);
         }
         /// <summary>
         /// 修改商户详细信息
@@ -1158,32 +1100,11 @@ namespace Ets.Service.Provider.Business
             };
             using (var tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                if (!dao.ModifyBusinessDetail(model))
+                if (!businessDao.ModifyBusinessDetail(model))
                 {
                     dealResultInfo.DealMsg = "修改商户信息失败！";
                     return dealResultInfo;
-                }
-                //if (!string.IsNullOrWhiteSpace(model.ThirdBindListStr))
-                //{
-                //    dao.DeleteBusinessThirdRelation(model.Id);
-                //    var thirdBindModel = model.ThirdBindListStr.TrimEnd(';').Split(';');
-                //    foreach (var item in thirdBindModel)
-                //    {
-                //        var businessThirdRelationModel = new BusinessThirdRelationModel
-                //        {
-                //            OriginalBusiId = ParseHelper.ToInt(item.Split(',')[0]),
-                //            BusinessId = model.Id,
-                //            GroupId = ParseHelper.ToInt(item.Split(',')[1]),
-                //            GroupName = item.Split(',')[2],
-                //            AuditStatus = ParseHelper.ToInt(item.Split(',')[3])
-                //        };
-                //        if (!dao.AddBusinessThirdRelation(businessThirdRelationModel))
-                //        {
-                //            dealResultInfo.DealMsg = "插入商户第三方绑定关系失败！";
-                //            return dealResultInfo;
-                //        }
-                //    }
-                //}
+                }             
                 tran.Complete();
                 dealResultInfo.DealMsg = "修改商户信息成功！";
                 dealResultInfo.DealFlag = true;
@@ -1199,7 +1120,7 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public PageInfo<BusinessClienterRelationModel> GetBusinessClienterRelationList(BusinessSearchCriteria criteria)
         {
-            return dao.GetBusinessClienterRelationList<BusinessClienterRelationModel>(criteria);
+            return businessDao.GetBusinessClienterRelationList<BusinessClienterRelationModel>(criteria);
         }
 
         /// <summary>
@@ -1210,7 +1131,7 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public int GetBusinessBindClienterQty(int businessId)
         {
-            return dao.GetBusinessBindClienterQty(businessId);
+            return businessDao.GetBusinessBindClienterQty(businessId);
         }
 
         /// <summary>
@@ -1224,13 +1145,13 @@ namespace Ets.Service.Provider.Business
             var reg = false;
             using (var tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                if (dao.ModifyClienterBind(model))
+                if (businessDao.ModifyClienterBind(model))
                 {
                     if (model.IsBind == 1)//绑定
                     {
-                        if (dao.UpdateBusinessIsBind(model.BusinessId, 1))
+                        if (businessDao.UpdateBusinessIsBind(model.BusinessId, 1))
                         {
-                            if (dao.UpdateClienterIsBind(model.ClienterId, 1))
+                            if (businessDao.UpdateClienterIsBind(model.ClienterId, 1))
                             {
                                 reg = true;
                                 tran.Complete();
@@ -1239,11 +1160,11 @@ namespace Ets.Service.Provider.Business
                     }
                     else//解绑
                     {
-                        if (dao.UpdateClienterIsBind(model.ClienterId, 0))
+                        if (businessDao.UpdateClienterIsBind(model.ClienterId, 0))
                         {
-                            if (dao.GetBusinessBindClienterQty(model.BusinessId) == 0)
+                            if (businessDao.GetBusinessBindClienterQty(model.BusinessId) == 0)
                             {
-                                if (dao.UpdateBusinessIsBind(model.BusinessId, 0))
+                                if (businessDao.UpdateBusinessIsBind(model.BusinessId, 0))
                                 {
                                     reg = true;
                                     tran.Complete();
@@ -1272,11 +1193,11 @@ namespace Ets.Service.Provider.Business
             var reg = false;
             using (var tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                if (dao.RemoveClienterBind(model))
+                if (businessDao.RemoveClienterBind(model))
                 {
-                    if (dao.UpdateBusinessIsBind(model.BusinessId, 0))
+                    if (businessDao.UpdateBusinessIsBind(model.BusinessId, 0))
                     {
-                        if (dao.UpdateClienterIsBind(model.ClienterId, 0))
+                        if (businessDao.UpdateClienterIsBind(model.ClienterId, 0))
                         {
                             reg = true;
                             tran.Complete();
@@ -1299,11 +1220,11 @@ namespace Ets.Service.Provider.Business
             var reg = false;
             using (var tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                if (dao.AddClienterBind(model))
+                if (businessDao.AddClienterBind(model))
                 {
-                    if (dao.UpdateBusinessIsBind(model.BusinessId, 1))
+                    if (businessDao.UpdateBusinessIsBind(model.BusinessId, 1))
                     {
-                        if (dao.UpdateClienterIsBind(model.ClienterId, 1))
+                        if (businessDao.UpdateClienterIsBind(model.ClienterId, 1))
                         {
                             reg = true;
                             tran.Complete();
@@ -1323,7 +1244,7 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public bool CheckHaveBind(ClienterBindOptionLogModel model)
         {
-            return dao.CheckHaveBind(model);
+            return businessDao.CheckHaveBind(model);
         }
         /// <summary>
         /// 查询商户结算列表（分页）
@@ -1333,7 +1254,7 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public PageInfo<BusinessCommissionModel> GetBusinessCommissionOfPaging(Ets.Model.ParameterModel.Business.BusinessCommissionSearchCriteria criteria)
         {
-            return dao.GetBusinessCommissionOfPaging<BusinessCommissionModel>(criteria);
+            return businessDao.GetBusinessCommissionOfPaging<BusinessCommissionModel>(criteria);
         }
 
         /// <summary>
@@ -1345,7 +1266,7 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public decimal QueryAllBusinessTotalBalance()
         {
-            return dao.QueryAllBusinessTotalBalance();
+            return businessDao.QueryAllBusinessTotalBalance();
         }
 
         /// <summary>
@@ -1356,7 +1277,7 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns> 
         List<BusinessOptionLog> IBusinessProvider.GetBusinessOpLog(int businessId)
         {
-            return dao.GetBusinessOpLog(businessId);
+            return businessDao.GetBusinessOpLog(businessId);
         }
     }
 }

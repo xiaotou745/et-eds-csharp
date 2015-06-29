@@ -4,18 +4,12 @@ using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 using ETS.Data.PageData;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Ets.Model.DomainModel.Business;
 
 namespace Ets.Service.IProvider.Finance
 {
     public interface IBusinessFinanceProvider
     {
-        int GetBFinanceAccountId(int businessId);
         /// <summary>
         /// 根据参数获取商家提现申请单列表
         /// danny-20150509
@@ -38,29 +32,8 @@ namespace Ets.Service.IProvider.Finance
         /// <UpdateTime>20150626</UpdateTime>
         /// <param name="withdrawBBackPM"></param>
         /// <returns></returns>
-        ResultModel<object> WithdrawB(WithdrawBBackPM withdrawBBackPM);
+        ResultModel<object> WithdrawB(WithdrawBBackPM withdrawBBackPM);              
 
-        /// <summary>
-        /// 商户绑定银行卡功能 add by caoheyang 20150511
-        /// </summary>
-        /// <param name="cardBindBpm">参数实体</param>
-        /// <returns></returns>
-        ResultModel<object> CardBindB(CardBindBPM cardBindBpm);
-
-
-        /// <summary>
-        /// 商户修改绑定银行卡功能 add by caoheyang 20150511
-        /// </summary>
-        /// <param name="cardModifyBpm">参数实体</param>
-        /// <returns></returns>
-        ResultModel<object> CardModifyB(CardModifyBPM cardModifyBpm);
-
-        /// <summary>
-        ///  商户交易流水API add by caoheyang 20150512
-        /// </summary>
-        /// <returns></returns>
-        ResultModel<object> GetRecords(int businessId);
-       
         /// <summary>
         /// 根据申请单Id获取商家提现申请单
         /// danny-20150511

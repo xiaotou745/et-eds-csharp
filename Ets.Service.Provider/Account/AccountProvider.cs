@@ -12,7 +12,7 @@ namespace Ets.Service.Provider.Account
 {
     public class AccountProvider:IAccountProvider
     {
-        AccountDao accountDao=new AccountDao();
+        readonly AccountDao accountDao = new AccountDao();
         /// <summary>
         /// 用户登录
         /// danny-20150324
@@ -24,8 +24,6 @@ namespace Ets.Service.Provider.Account
         {
             return accountDao.ValidateUser(userName,password);
         }
-
-
 
         public IList<AuthorityMenuModel> GetAuth(int AccountId)
         {
