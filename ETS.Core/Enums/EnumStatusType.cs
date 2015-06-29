@@ -309,7 +309,7 @@ namespace ETS.Enums
         DataError = 109,
         [DisplayText("订单Id为空")]
         OrderIdEmpty = 110,
-        [DisplayText("亲,完成的太快了吧！")]
+        [DisplayText("亲，您完成的太快了！")]
         TooQuickly = 501
 
     }
