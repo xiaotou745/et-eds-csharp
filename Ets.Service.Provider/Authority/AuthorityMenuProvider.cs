@@ -490,10 +490,11 @@ namespace Ets.Service.Provider.Authority
         /// danny-20150323
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="status">状态 0不可用1可用</param>
         /// <returns></returns>
-        public bool DeleteAccountById(int id)
+        public bool ChangStatus(int id, int status)
         {
-            return _dao.DeleteAccountById(id);
+            return _dao.ChangStatus(id,status);
         }
         /// <summary>
         /// 用户修改密码
