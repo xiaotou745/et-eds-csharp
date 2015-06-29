@@ -186,7 +186,7 @@ namespace ETS.Enums
     /// </summary>
     public enum FinanceWithdrawB
     {
-        [DisplayText("提现申请已发送成功")]
+        [DisplayText("发起提款成功，待财务审核！")]
         Success = 1,
         [DisplayText("商户不存在,或当前商户状态不允许提现")]
         BusinessError = 2,

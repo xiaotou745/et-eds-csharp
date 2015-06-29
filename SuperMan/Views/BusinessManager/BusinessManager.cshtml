@@ -328,7 +328,7 @@
                 <input name="withdrawId" id="withdrawId" type="hidden">
             </div>
             <div class="control-group">
-                <label>登陆账号：</label>
+                <label>登录账号：</label>
                 <input name="withdrawPhone" id="withdrawPhone" disabled="disabled" type="text">
             </div>
             <div class="control-group">
@@ -585,7 +585,7 @@
             return;
         }
         if (withdrawAmount < 1 || withdrawAmount > 1000000) {
-            alert("提款金额需在1-1,000,000元之间！");
+            alert("请输入正确的提款金额，大于1元小于1,000,000！");
             return;
         }
         if (confirm("是否确认提款?")) {
