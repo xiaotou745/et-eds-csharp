@@ -20,25 +20,33 @@ namespace ReceiveAddressRepair
                 DateTime pubDate = ParseHelper.ToDatetime(ConfigurationManager.AppSettings["StartTime"]);
                 ReceiveAddress ra = new ReceiveAddress();
                 var kk = ra.GetNoReceiveAddress(pubDate);
-                StringBuilder upStringBuilder = new StringBuilder();
-                int noaddres = 0;
-                for (int i = 0; i < kk.Rows.Count; i++)
+                if (kk.Rows.Count == 0)
                 {
-                    DataRow dr = kk.Rows[i];
-                    string addres = ra.GetAddress(dr[1].ToString(), dr[2].ToString());
-                    if (!string.IsNullOrWhiteSpace(addres) && !addres.StartsWith("0"))
-                    {
-                        upStringBuilder.Append(ra.CreateAddressSql(ParseHelper.ToInt(dr[0]), addres));
-                    }
-                    else
-                    {
-                        noaddres++;
-                    }
+                    Console.WriteLine("没有需要处理的数据");
+                    break;
                 }
-                if (noaddres == kk.Rows.Count)
+                else
                 {
-                    Console.WriteLine("剩余数据无法获取地址");
-                    b = false;
+                    StringBuilder upStringBuilder = new StringBuilder();
+                    int noaddres = 0;
+                    for (int i = 0; i < kk.Rows.Count; i++)
+                    {
+                        DataRow dr = kk.Rows[i];
+                        string addres = ra.GetAddress(dr[1].ToString(), dr[2].ToString());
+                        if (!string.IsNullOrWhiteSpace(addres) && !addres.StartsWith("0"))
+                        {
+                            upStringBuilder.Append(ra.CreateAddressSql(ParseHelper.ToInt(dr[0]), addres));
+                        }
+                        else
+                        {
+                            noaddres++;
+                        }
+                    }
+                    if (noaddres == kk.Rows.Count)
+                    {
+                        Console.WriteLine("剩余数据无法获取地址");
+                        b = false;
+                    }
                 }
             }
             Console.Read();
