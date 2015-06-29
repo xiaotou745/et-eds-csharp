@@ -308,7 +308,10 @@ namespace ETS.Enums
         [DisplayText("数据错误")]
         DataError = 109,
         [DisplayText("订单Id为空")]
-        OrderIdEmpty = 110
+        OrderIdEmpty = 110,
+        [DisplayText("亲,完成的太快了吧！")]
+        TooQuickly = 501
+
     }
 
     public enum GetMyBalanceStatus

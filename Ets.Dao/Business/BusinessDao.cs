@@ -2268,5 +2268,20 @@ VALUES
             object obj = DbHelper.ExecuteScalar(SuperMan_Read, querysql);
             return ParseHelper.ToDecimal(obj,0);
         }
+        /// <summary>
+        /// 获取商户操作记录
+        /// wc
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <returns></returns> 
+        public List<BusinessOptionLog> GetBusinessOpLog(int businessId)
+        {
+            string querySql = @"select OptName,InsertTime,Remark from dbo.BusinessOptionLog(nolock) where BusinessId = @BusinessId order by Id desc";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@BusinessId", DbType.Int32).Value = businessId;
+            DataTable dt = DbHelper.ExecuteDataTable(Config.SuperMan_Read, querySql, parm);
+            IList<BusinessOptionLog> list = ConvertDataTableList<BusinessOptionLog>(dt);
+            return list.ToList();
+        }
     }
 }
