@@ -185,12 +185,12 @@
     $(".accountView").bind("click", function () {
 
     });
-    //删除
+    //禁用用户
     $(".accountDel").bind("click", function () {
         if (confirm("确定要禁用此用户？")) {
             var id = $(this).closest("tr").attr("id");
-            var paramaters = { "id": id };
-            var url = "/AuthorityManager/Delete";
+            var paramaters = { "id": id,status:0 };
+            var url = "/AuthorityManager/ChangStatus";
             $.ajax({
                 type: 'POST',
                 url: url,
@@ -206,5 +206,27 @@
             });
         }
     });
+    //启用用户
+    $(".accountUsed").bind("click", function () {
+        if (confirm("确定要启用此用户？")) {
+            var id = $(this).closest("tr").attr("id");
+            var paramaters = { "id": id, status: 1 };
+            var url = "/AuthorityManager/ChangStatus";
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: paramaters,
+                success: function (result) {
+                    if (result.IsSuccess) {
+                        alert("用户已启用！");
+                        window.location.href = "/AuthorityManager/AuthorityManager";
+                    } else {
+                        alert(result.Message);
+                    }
+                }
+            });
+        }
+    });
+    
 
 });

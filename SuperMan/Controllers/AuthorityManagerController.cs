@@ -125,18 +125,19 @@ namespace SuperMan.Controllers
         /// 删除用户
         /// </summary>
         /// <param name="id"></param>
+        ///  <param name="status">状态 0不可用1可用</param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult Delete(int id)
+        public JsonResult ChangStatus(int id,int status)
         {
-            bool b = iAuthorityMenuProvider.DeleteAccountById(id);
+            bool b = iAuthorityMenuProvider.ChangStatus(id,status);
             if (b)
             {
-                return Json(new Ets.Model.Common.ResultModel(true, "删除成功"), JsonRequestBehavior.AllowGet);
+                return Json(new Ets.Model.Common.ResultModel(true, "成功"), JsonRequestBehavior.AllowGet);
             }
             else
             {
-                return Json(new Ets.Model.Common.ResultModel(false, "删除失败"), JsonRequestBehavior.AllowGet);
+                return Json(new Ets.Model.Common.ResultModel(false, "失败"), JsonRequestBehavior.AllowGet);
             }
         }
         [HttpPost]

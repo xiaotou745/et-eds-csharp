@@ -261,7 +261,6 @@ namespace Ets.Service.Provider.Business
             {
                 return ResultModel<BusiRegisterResultModel>.Conclude(returnEnum);
             }
-
             //转换 编码
             //try
             //{

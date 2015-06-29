@@ -29,5 +29,9 @@ namespace Ets.Model.DataModel.Clienter
         /// 是否已绑定商家
         /// </summary>
         public int IsBind { get; set; }
+        /// <summary>
+        /// 是否只显示雇主任务
+        /// </summary>
+        public int IsOnlyShowBussinessTask { get; set; }
     }
 }

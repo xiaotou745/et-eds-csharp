@@ -8,6 +8,7 @@ namespace ETS.Enums
 {
     public enum CustomerRegisterStatusEnum : int
     {
+        [DisplayText("注册成功")]
         Success = 0,
         [DisplayText("商户名称不能为空")]
         BusiNameEmpty = 101,
