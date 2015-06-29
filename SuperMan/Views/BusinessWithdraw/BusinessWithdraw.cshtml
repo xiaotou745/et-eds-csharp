@@ -59,19 +59,6 @@
         $('#withdrawDateStart').datepicker();
         $('#withdrawDateEnd').datepicker();
         window.location.hash = '';
-        $("#checkAll").change(function () {
-            $('input[type="checkbox"][name="checkItem"]').each(function (index, obj) {
-                if (!obj.disabled&&obj.value!="") {
-                    if ($("#checkAll").attr("checked") == "checked") {
-                        $(obj).attr("checked", "checked");
-                    }
-                    else
-                    {
-                        $(obj).removeAttr("checked");
-                    }
-                }
-            });
-        });
     });
     function funExport() {
         var businessName = $("#businessName").val();
