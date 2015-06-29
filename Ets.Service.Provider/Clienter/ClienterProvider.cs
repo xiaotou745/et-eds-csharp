@@ -204,6 +204,10 @@ namespace Ets.Service.Provider.Clienter
                 {
                     return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
                 }
+                if (resultModel.IsBind == 1)
+                {
+                    resultModel.IsOnlyShowBussinessTask = IsOnlyShowBussinessTask(resultModel.userId);
+                }
                 return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.Success, resultModel);
             }
             catch (Exception ex)
