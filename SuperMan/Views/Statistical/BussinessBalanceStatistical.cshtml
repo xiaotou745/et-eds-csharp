@@ -22,12 +22,20 @@
             <table border="0" cellspacing="0" cellpadding="0" style="width:700px">
                 <tr>
                     <td>
-                        <span class="">充值时间: </span>
+                        <span>充值时间: </span>
                         <input id="txtBalanceStart" readonly="readonly" name="StartDate" />
                     </td>
                     <td>
-                        <span class="">到: </span>
+                        <span>到: </span>
                         <input id="txtBalanceEnd" readonly="readonly" name="EndDate" />
+                    </td>
+                    <td>
+                        <span>充值类型: </span>
+                        <select name="RechargeType" id="selRechargeType">
+                            <option value="0">--请选择--</option>
+                            <option value="1">系统充值</option>
+                            <option value="2">客户端充值</option>
+                        </select>
                     </td>
                 </tr>
                 <tr>
@@ -52,6 +60,9 @@
                     <td>
                         <span class="">城市筛选: </span>
                         @Html.DropDownList("CityId", new SelectList(ViewBag.openCityList.Result.AreaModels, "Code", "Name"), "全部城市", new { style = "width:155px" })
+                    </td>
+                    <td>
+                        充值金额：<input name="RechargePrice" id="txtRechargePrice" />
                     </td>
                     <td>
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />

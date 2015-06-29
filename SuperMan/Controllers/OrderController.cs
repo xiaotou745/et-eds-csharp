@@ -18,6 +18,7 @@ using Ets.Model.ParameterModel.User;
 using Ets.Model.ParameterModel.Order;
 using ETS.Util;
 using Ets.Model.Common;
+using Ets.Service.Provider.Clienter;
 namespace SuperMan.Controllers
 {
     [WebHandleError]
@@ -264,6 +265,16 @@ namespace SuperMan.Controllers
             };
             var reg = iOrderProvider.CancelOrderByOrderNo(orderOptionModel);
             return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.AllowGet);
+        }
+        /// <summary>
+        /// 查看订单地图
+        /// </summary>
+        /// <param name="OrderId"></param>
+        /// <returns></returns>
+        public JsonResult OrderMap(long OrderId)
+        {
+            OrderMapDetail mapDetail = iOrderProvider.GetOrderMapDetail(OrderId);
+            return Json(mapDetail);
         }
     }
 }

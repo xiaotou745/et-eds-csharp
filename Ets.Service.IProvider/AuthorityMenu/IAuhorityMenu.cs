@@ -174,7 +174,7 @@ namespace Ets.Service.IProvider.AuthorityMenu
         /// 检查当前用户是否存在
         /// danny-20150323
         /// </summary>
-        /// <param name="account"></param>
+        /// <param name="account">状态 0不可用1可用</param>
         /// <returns></returns>
         bool CheckHasAccountName(account account);
 
@@ -190,8 +190,9 @@ namespace Ets.Service.IProvider.AuthorityMenu
         /// danny-20150323
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="status"></param>
         /// <returns></returns>
-        bool DeleteAccountById(int id);
+        bool ChangStatus(int id, int status);
         /// <summary>
         /// 用户修改密码
         /// danny-20150323

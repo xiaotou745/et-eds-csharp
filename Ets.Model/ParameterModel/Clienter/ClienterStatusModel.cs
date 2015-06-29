@@ -29,5 +29,10 @@ namespace Ets.Model.ParameterModel.Clienter
         /// 是否绑定了商户（0：否 1：是）
         /// </summary>
         public int IsBind { get; set; }
+
+        /// <summary>
+        /// 是否只显示雇主任务
+        /// </summary>
+        public int IsOnlyShowBussinessTask { get; set; }
     }
 }
