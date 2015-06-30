@@ -3109,7 +3109,7 @@ where  OrderNo=@OrderNo ";
         /// 更新已提现
         /// </summary>
         /// <param name="orderId"></param>
-        public bool UpdateFinishAll(string orderNo)
+        public void UpdateFinishAll(string orderNo)
         {
             try
             {
@@ -3123,7 +3123,7 @@ update [Order] set FinishAll=1 where OrderNo=@OrderNo";
             catch (Exception err)
             {
                 LogHelper.LogWriter(" UpdateFinishAll", new { obj = "时间：" + DateTime.Now.ToString() + err.Message });
-            }
+            }             
         }
         /// <summary>
         /// 根据orderID获取订单地图数据
