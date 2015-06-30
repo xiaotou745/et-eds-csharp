@@ -3111,12 +3111,19 @@ where  OrderNo=@OrderNo ";
         /// <param name="orderId"></param>
         public void UpdateFinishAll(string orderNo)
         {
-            const string updateSql = @"
+            try
+            {
+                const string updateSql = @"
 update [Order] set FinishAll=1 where OrderNo=@OrderNo";
 
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@OrderNo", orderNo);
-            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+                IDbParameters dbParameters = DbHelper.CreateDbParameters();
+                dbParameters.AddWithValue("@OrderNo", orderNo);
+                DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+            }
+            catch (Exception err)
+            {
+                LogHelper.LogWriter(" UpdateFinishAll", new { obj = "时间：" + DateTime.Now.ToString() + err.Message });
+            }
         }
         /// <summary>
         /// 根据orderID获取订单地图数据

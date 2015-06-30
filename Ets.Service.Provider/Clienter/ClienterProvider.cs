@@ -850,6 +850,12 @@ namespace Ets.Service.Provider.Clienter
 
         void UpdateClienterMoney(OrderListModel myOrderInfo, UploadReceiptModel uploadReceiptModel, OrderOther orderOther)
         {
+            string mess = "付款方式:" + myOrderInfo.IsPay;
+            mess += " 订单编号:" + myOrderInfo.OrderNo;
+            mess += " HadUploadCount:" + myOrderInfo.HadUploadCount;
+            mess += " NeedUploadCount:" + myOrderInfo.NeedUploadCount;
+            LogHelper.LogWriter(" UpdateClienterMoney", new { obj = "时间：" + DateTime.Now.ToString() + mess });
+
             if ((bool)myOrderInfo.IsPay)//已付款
             {
                 //上传完小票
@@ -892,6 +898,12 @@ namespace Ets.Service.Provider.Clienter
 
         void UpdateMoney(OrderListModel myOrderInfo, int userId, string orderNo)
         {
+            string mess = "付款方式:" + myOrderInfo.IsPay;
+            mess += " 订单编号:" + orderNo;
+            mess += " HadUploadCount:" + myOrderInfo.HadUploadCount;
+            mess += " OrderCount:" + myOrderInfo.OrderCount;
+            LogHelper.LogWriter(" UpdateMoney", new { obj = "时间：" + DateTime.Now.ToString() + mess });
+
             if ((bool)myOrderInfo.IsPay)//已付款
             {
                 //上传完小票
@@ -975,15 +987,21 @@ namespace Ets.Service.Provider.Clienter
             //return false;
             #endregion
 
+            string mess = " 订单编号:" + orderNo;          
+
             bool isPay = false;
 
             string finishAll = orderDao.GetFinishAllById(orderNo);
+            mess += " finishAll:" + finishAll;      
+
             if (finishAll != "1")
             {
                 orderDao.UpdateFinishAll(orderNo);
                 isPay = true;
+                mess += " isPay:" + isPay;  
             }
 
+            LogHelper.LogWriter(" CheckOrderPay", new { obj = "时间：" + DateTime.Now.ToString() + mess });
             return isPay;
 
         }
