@@ -2201,7 +2201,7 @@ select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneN
     when  ISNULL(b.Latitude,0)=0 or ISNULL(b.Longitude,0)=0 or @clienterLongitude=0 or  @clienterLatitude=0  then -1
     else round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(geography::Point(@clienterLatitude,@clienterLongitude,4326)),0)
     end)
-    as distance
+    as distance,o.OneKeyPubOrder 
 from  dbo.[order] o (nolock)
     join business b (nolock) on b.Id=o.businessId
     left join dbo.OrderOther oo (nolock) on o.Id=oo.orderId
@@ -3152,5 +3152,34 @@ update [Order] set FinishAll=1 where OrderNo=@OrderNo";
             return MapRows<OrderMapDetail>(dt)[0];
         }
 
+        /// <summary>
+        /// 一键发单修改地址和电话
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="newAddress"></param>
+        /// <param name="newPhone"></param>
+        /// <returns></returns>
+        public bool UpdateOrderAddressAndPhone(string orderId, string newAddress, string newPhone)
+        {
+            bool reslut = false;
+            string sql = @" select 1 from  [order] where id=@orderId and OneKeyPubOrder=1";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@OrderId", orderId);
+            object obj = DbHelper.ExecuteScalar(SuperMan_Write, sql, dbParameters);
+            if (ParseHelper.ToInt(obj, 0) == 1)
+            {
+                sql = @" update [order] set ReceviceAddress=@ReceviceAddress,RecevicePhoneNo=@RecevicePhoneNo where id=@orderId";
+                dbParameters.AddWithValue("@ReceviceAddress", newAddress);
+                dbParameters.AddWithValue("@RecevicePhoneNo", newPhone);
+                int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
+                if (i > 0) reslut = true;
+            }
+            else
+            {
+                throw new Exception("只有一键发单才可以修改收货人的地址和电话");
+            }
+            return reslut;
+        }
     }
 }
