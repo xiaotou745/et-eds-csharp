@@ -3162,7 +3162,7 @@ update [Order] set FinishAll=1 where OrderNo=@OrderNo";
         /// <returns></returns>
         public int UpdateOrderAddressAndPhone(string orderId, string newAddress, string newPhone)
         {
-            string sql = @" select OneKeyPubOrder from  [OrderOther] (nolock) where id=@orderId";
+            string sql = @" select OneKeyPubOrder from  [OrderOther] (nolock) where orderid=@orderId";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@OrderId", orderId);
