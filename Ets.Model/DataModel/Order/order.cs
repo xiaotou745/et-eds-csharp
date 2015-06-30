@@ -220,7 +220,10 @@ namespace Ets.Model.DataModel.Order
         ///  商户到收货人的距离  千米
         /// </summary>
         public double distanceB2R { get; set; }
-       
-        
+
+        /// <summary>
+        /// 是否一键发单（0否，1是）
+        /// </summary>
+        public int OneKeyPubOrder { get; set; }
     }
 }

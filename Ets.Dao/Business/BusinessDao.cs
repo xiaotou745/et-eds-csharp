@@ -1612,14 +1612,14 @@ where Id=@Id";
                 }
                 else
                 {
-                    CheckPicUrl = Ets.Model.Common.ImageCommon.ReceiptPicConvert(CheckPicUrl)[0];
+                    CheckPicUrl = Ets.Model.Common.ImageCommon.ReceiptPicConvert(CheckPicUrl);
                 }
                 #endregion
 
                 result.CheckPicUrl = CheckPicUrl;
                 result.BusinessLicensePic = string.IsNullOrEmpty(Convert.ToString(dataReader["BusinessLicensePic"])) ? 
                     string.Empty : 
-                    Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataReader["BusinessLicensePic"].ToString())[0];
+                    Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataReader["BusinessLicensePic"].ToString());
                 result.IDCard = dataReader["IDCard"].ToString();
                 result.Address = dataReader["Address"].ToString();
                 result.Landline = dataReader["Landline"].ToString();

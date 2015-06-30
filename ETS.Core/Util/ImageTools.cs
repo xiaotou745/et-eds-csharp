@@ -19,7 +19,7 @@ namespace ETS.Util
             //Random rdom = new Random();
             //DateTime dtime = DateTime.Now; 
             //string filename = string.Format("{0}_{1}_{2}{3}", dtime.ToString("yyyyMMddhhmmssfff"), rdom.Next(10000), fileMark, fileExt); 
-            string fileName = Path.GetFileName(ETS.Util.Helper.CreateImageName(fileExt));
+            string fileName = ETS.Util.Helper.CreateImageName(fileExt);
 
             return fileName;
         }

@@ -65,9 +65,10 @@ namespace ETS.Util
         /// <returns></returns>
         public static string CreateImageName(string fileExt = ".jpg")
         {
-            ETS.NoSql.RedisCache.RedisCache redis = new NoSql.RedisCache.RedisCache();
-            long imgName = redis.Incr(ETS.Const.RedissCacheKey.ImageIdentity, DateTime.Now.AddHours(1));//为当前图片增加每小时内的唯一标识
-            return string.Concat(DateTime.Now.ToString("yyyy/MM/dd/HH/mmss"), imgName, fileExt);
+            //ETS.NoSql.RedisCache.RedisCache redis = new NoSql.RedisCache.RedisCache();
+            //long imgName = redis.Incr(ETS.Const.RedissCacheKey.ImageIdentity, DateTime.Now.AddHours(1));//为当前图片增加每小时内的唯一标识 
+            //return string.Concat(DateTime.Now.ToString("yyyy/MM/dd/HH/mmss"), new Random().Next(100).ToString("D3"), fileExt);
+            return string.Concat(new Random().Next(1000).ToString("D4"), fileExt);
         }
         #region 生成订单号专用
 
