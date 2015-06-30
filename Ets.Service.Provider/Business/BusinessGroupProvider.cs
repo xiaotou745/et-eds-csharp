@@ -8,6 +8,7 @@ using ETS.Transaction;
 using Ets.Model.DomainModel.GlobalConfig;
 using Ets.Service.IProvider.Business;
 using Ets.Dao.Business;
+using ETS.Util;
 namespace Ets.Service.Provider.Business
 {
     /// <summary>
@@ -212,7 +213,7 @@ namespace Ets.Service.Provider.Business
                         return false;
                     }
                 }
-                if (globalConfigModel.CompleteTimeSet != "0")
+                if (ParseHelper.ToInt(globalConfigModel.CompleteTimeSet) >= 0)
                 {
                     globalConfig.KeyName = "CompleteTimeSet";
                     globalConfig.Value = globalConfigModel.CompleteTimeSet;
