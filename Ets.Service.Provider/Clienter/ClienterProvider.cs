@@ -676,7 +676,7 @@ namespace Ets.Service.Provider.Clienter
         public void UpdateClienterAccount(int userId, OrderListModel myOrderInfo)
         {
             //更新骑士 金额  
-            bool b = clienterDao.UpdateClienterAccountBalance(new WithdrawRecordsModel() { UserId = userId, Amount = myOrderInfo.OrderCommission.Value });
+            bool b = clienterDao.UpdateClienterAccountBalanceForFinish(new WithdrawRecordsModel() { UserId = userId, Amount = myOrderInfo.OrderCommission.Value });
             //增加记录 
             decimal? accountBalance = 0;
             //更新用户相关金额数据 
@@ -974,16 +974,14 @@ namespace Ets.Service.Provider.Clienter
             //return false;
             #endregion
 
-            bool isPay = false;
-
-            string finishAll = orderDao.GetFinishAllById(orderNo);
-            if (finishAll != "1")
-            {
-                orderDao.UpdateFinishAll(orderNo);
-                isPay = true;
-            }
-
-            return isPay;
+            //bool isPay = false; 
+            //string finishAll = orderDao.GetFinishAllById(orderNo);
+            //if (finishAll != "1")
+            //{
+                //orderDao.UpdateFinishAll(orderNo);
+            //    isPay = true;
+            //} 
+            return orderDao.UpdateFinishAll(orderNo);  
 
         }
 

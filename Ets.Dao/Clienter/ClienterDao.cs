@@ -245,6 +245,22 @@ where PhoneNo=@PhoneNo and [Password]=@Password";
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
 
+        public bool UpdateClienterAccountBalanceForFinish(WithdrawRecordsModel model)
+        {
+            //Ets.Model.DomainModel.Clienter.ClienterModel cliterModel = new ClienterDao().GetUserInfoByUserId(model.UserId);//获取当前用户余额
+            //decimal balance = ParseHelper.ToDecimal(cliterModel.AccountBalance, 0);
+            //decimal Money = balance + model.Amount;
+            //if (Money < 0)//如果提现金额大于当前余额则不能提现
+            //{
+            //    return false;
+            //}
+            //model.Balance = balance;
+            string sql = @"UPDATE dbo.clienter SET AccountBalance=AccountBalance + @Money WHERE id=" + model.UserId;
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Money", model.Amount);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+        }
+
         /// <summary>
         /// 更新用户余额以及可提现金额
         /// 窦海超
@@ -797,7 +813,7 @@ where  OrderId=@OrderId;");
             updateSql.Append(@"
 update  dbo.OrderChild
 set     HasUploadTicket = 1, TicketUrl = @ReceiptPic
-where    OrderId = @OrderId  and ChildId = @OrderChildId; "); 
+where    OrderId = @OrderId  and ChildId = @OrderChildId; ");
             dbParameters.Add("@OrderId", DbType.Int32, 4).Value = uploadReceiptModel.OrderId;
             dbParameters.Add("@ReceiptPic", DbType.String, 256).Value = uploadReceiptModel.ReceiptPic;
 
@@ -928,7 +944,8 @@ where   OrderId = @OrderId
         public OrderOther GetReceiptInfo(int orderId)
         {
             string sql = @"select  o.Id OrderId ,o.IsPay,
-        ISNULL(oo.Id,0) Id ,o.SettleMoney,
+        oo.Id ,
+        o.SettleMoney,
         o.[Status] OrderStatus,
         o.OrderCount NeedUploadCount,
         oo.ReceiptPic ,
@@ -938,18 +955,14 @@ from    dbo.[order] o ( nolock )
         join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
 where   o.Id = @OrderId";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@OrderId", SqlDbType.Int).Value = orderId;
+            parm.Add("@OrderId", DbType.Int32, 4).Value = orderId;
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql, parm);
-            var ooList = MapRows<OrderOther>(dt);
-
-            if (ooList != null && ooList.Count > 0)
-            {
-                return ooList[0];
-            }
-            else
+            if (!dt.HasData())
             {
                 return null;
             }
+            var ooList = MapRows<OrderOther>(dt);
+            return ooList[0];
         }
         /// <summary>
         /// 删除小票信息
@@ -1468,7 +1481,7 @@ where  cityid in(" + pushCity + ")";
         /// <param name="drawType">0是商户提款单，1是骑士提款单</param>
         /// <param name="withDrawID">提款单id</param>
         /// <returns></returns>
-        public bool IsBussinessOrClienterValidByID(int drawType,long withDrawID)
+        public bool IsBussinessOrClienterValidByID(int drawType, long withDrawID)
         {
 
             string querysql = @"

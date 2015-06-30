@@ -3099,23 +3099,36 @@ where c.Id=@ClienterId;");
 select  FinishAll from  [Order](nolock)
 where  OrderNo=@OrderNo ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("OrderNo", orderNo);
+            dbParameters.Add("OrderNo", DbType.String, 90).Value = orderNo;
 
-            object result = DbHelper.ExecuteScalar(SuperMan_Write, querysql, dbParameters); //用SuperMan_Write,不加nolock
-            return result.ToString();
+            return DbHelper.ExecuteScalar(SuperMan_Write, querysql, dbParameters).ToString(); //用SuperMan_Write,不加nolock
+
         }
         /// <summary>
         /// 更新已提现
         /// </summary>
         /// <param name="orderId"></param>
-        public void UpdateFinishAll(string orderNo)
+        public bool UpdateFinishAll(string orderNo)
         {
+            //            const string updateSql = @"
+            //update [Order] set FinishAll=1 where OrderNo=@OrderNo";
             const string updateSql = @"
-update [Order] set FinishAll=1 where OrderNo=@OrderNo";
-
+declare @FinishAll int;
+select  @FinishAll = FinishAll
+from    [order](nolock)
+where   OrderNo = @OrderNo; 
+if ( @FinishAll <> 1 )
+    begin
+        update  [order]
+        set     FinishAll = 1
+        where   OrderNo = @OrderNo;
+        select  1;
+        return;
+    end;
+select  0;";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@OrderNo", orderNo);
-            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+            dbParameters.Add("@OrderNo", DbType.String, 90).Value = orderNo;
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, updateSql, dbParameters), 1) == 1 ? true : false;
         }
         /// <summary>
         /// 根据orderID获取订单地图数据
