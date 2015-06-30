@@ -104,7 +104,9 @@
             success: function (result) {
                 $("#tip").html("");
                 alert(result.Message);
-                window.location.href = "/BusinessWithdraw/BusinessWithdraw";
+                if (result.IsSuccess) {
+                    window.location.href = "/BusinessWithdraw/BusinessWithdraw";
+                }
             },
             error: function (a) {
                 $("#tip").html("");

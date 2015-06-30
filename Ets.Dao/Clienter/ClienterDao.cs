@@ -1472,5 +1472,40 @@ where  cityid in(" + pushCity + ")";
             object obj = DbHelper.ExecuteScalar(SuperMan_Read, querysql, dbParameters);
             return ParseHelper.ToLong(obj) > 0;
         }
+
+        /// <summary>
+        /// 判断提款单对应的商家或骑士是否有效
+        /// </summary>
+        /// <param name="drawType">0是商户提款单，1是骑士提款单</param>
+        /// <param name="withDrawID">提款单id</param>
+        /// <returns></returns>
+        public bool IsBussinessOrClienterValidByID(int drawType,long withDrawID)
+        {
+
+            string querysql = @"
+                             SELECT  a.BusinessId
+                                FROM    BusinessWithdrawForm a
+                                        INNER JOIN business b ON a.BusinessId = b.id
+                                WHERE   a.id = @id
+                                        AND b.Status = 1
+                              ";
+
+            if (drawType > 0)
+            {
+                querysql = @"
+                             SELECT  a.ClienterId
+                                FROM    ClienterWithdrawForm a
+                                        INNER JOIN Clienter b ON a.ClienterId = b.id
+                                WHERE   a.id = @id
+                                        AND b.Status = 1
+                              ";
+            }
+
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@id", withDrawID);
+            object obj = DbHelper.ExecuteScalar(SuperMan_Read, querysql, dbParameters);
+            return ParseHelper.ToLong(obj) > 0;
+        }
     }
 }

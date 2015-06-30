@@ -4,6 +4,7 @@ using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 using Ets.Service.IProvider.Common;
 using Ets.Service.IProvider.Finance;
+using Ets.Service.Provider.Clienter;
 using Ets.Service.Provider.Common;
 using Ets.Service.Provider.Distribution;
 using Ets.Service.Provider.Finance;
@@ -80,8 +81,16 @@ namespace SuperMan.Controllers
                 Status = BusinessWithdrawFormStatus.Allow.GetHashCode(),
                 WithwardId =Convert.ToInt64(withwardId)
             };
-            bool reg = iBusinessFinanceProvider.BusinessWithdrawAudit(businessWithdrawLog);
-            return Json(new ResultModel(reg, reg?"审核通过！":"审核失败！"), JsonRequestBehavior.DenyGet);
+            try
+            {
+                bool reg = iBusinessFinanceProvider.BusinessWithdrawAudit(businessWithdrawLog);
+                return Json(new ResultModel(true, reg ? "审核通过！" : "审核失败！"), JsonRequestBehavior.DenyGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new ResultModel(false,"审核失败！" + ex.Message), JsonRequestBehavior.DenyGet);
+            }
+
         }
          /// <summary>
         /// 商家批量审核通过（只审核待审核状态的数据）
@@ -93,12 +102,12 @@ namespace SuperMan.Controllers
         public JsonResult BatchWithdrawAuditOk(string withwardIds)
         {
             bool hasError = false;
+            bool hasSuccess = false;
             string totalMsg = "审核成功";
             if (!string.IsNullOrEmpty(withwardIds))
             {
                 string[] ids = withwardIds.Split('#');
-
-                Dictionary<string, bool> result = new Dictionary<string, bool>();
+                Dictionary<string, string> errorResult = new Dictionary<string, string>();
                 foreach (string item in ids)
                 {
                     string[] realids = item.Split(',');
@@ -109,20 +118,46 @@ namespace SuperMan.Controllers
                         Status = BusinessWithdrawFormStatus.Allow.GetHashCode(),
                         WithwardId = Convert.ToInt64(realids[0])
                     };
-                    bool reg = iBusinessFinanceProvider.BusinessWithdrawAudit(businessWithdrawLog);
-                    if (reg == false)
+
+                    try
+                    {
+                        bool reg = iBusinessFinanceProvider.BusinessWithdrawAudit(businessWithdrawLog);
+                        if (reg == false)
+                        {
+                            hasError = true;
+                            errorResult.Add(realids[1], "");
+                        }
+                        else
+                        {
+                            hasSuccess = true;
+                        }
+                    }
+                    catch (Exception ex)
                     {
                         hasError = true;
+                        errorResult.Add(realids[1], ex.Message);
                     }
-                    result.Add(realids[1], reg);
                 }
                 if (hasError)
                 {
-                    string[] error = result.Where(p => p.Value == false).Select(p => p.Key).ToArray();
-                    totalMsg = "以下单号审核失败,请重试！\n" + string.Join("\n", error);
+                    totalMsg = "";
+                    string[] error = errorResult.Where(p => p.Value == "").Select(p => p.Key).ToArray();
+                    if (error!=null&&error.Length>0)
+                    {
+                        totalMsg = "以下单号审核失败,请重试！\n" + string.Join("\n", error);
+                    }
+                   
+                  
+                    string excepptionMsg= errorResult.Where(p => p.Value != "").Select(p=>p.Value).FirstOrDefault();
+                    if (!string.IsNullOrEmpty(excepptionMsg))
+	                {
+		                string[] exceptionIDs = errorResult.Where(p => p.Value != "").Select(p => p.Key).ToArray();
+                        totalMsg += string.Format("\n以下单号审核失败:{0}！\n{1}\n", excepptionMsg, string.Join("\n", exceptionIDs));
+	                }
+                   
                 }
             }
-            return Json(new ResultModel(!hasError, totalMsg), JsonRequestBehavior.DenyGet);
+            return Json(new ResultModel(hasSuccess, totalMsg), JsonRequestBehavior.DenyGet);
         }
         /// <summary>
         /// 商户提款申请单确认打款

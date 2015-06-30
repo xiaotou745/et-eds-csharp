@@ -98,7 +98,9 @@
             success: function (result) {
                 $("#tip").html("");
                 alert(result.Message);
-                window.location.href = "/ClienterWithdraw/ClienterWithdraw";
+                if (result.IsSuccess) {
+                    window.location.href = "/ClienterWithdraw/ClienterWithdraw";
+                }
             },
             error: function (a) {
                 $("#tip").html("");
