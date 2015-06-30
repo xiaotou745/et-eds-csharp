@@ -26,7 +26,7 @@ namespace SuperManWebApi.Providers
             {
                 imgInfo.FailRemark = "无图片流";
                 return imgInfo;
-            } 
+            }
             var fileName = ETS.Util.ImageTools.GetFileName(Path.GetExtension(httpPostedFile.FileName)); 
             imgInfo.FileName = fileName; 
             int fileNameLastDot = fileName.LastIndexOf('.');
@@ -45,7 +45,8 @@ namespace SuperManWebApi.Providers
                 imgInfo.FailRemark = "创建目录失败";
                 return imgInfo;
             }
-            //保存原图
+            //保存原图，
+            ///TODO记录图片大小
             var fullFilePath = Path.Combine(fullFileDir, rFileName);  
             httpPostedFile.SaveAs(fullFilePath); 
             //裁图

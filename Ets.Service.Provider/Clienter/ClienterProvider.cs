@@ -806,7 +806,6 @@ namespace Ets.Service.Provider.Clienter
         public OrderOther UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel)
         {
             OrderOther orderOther = null;
-            ///TODO 单一职责，GetById GetByNo
             var myOrderInfo = orderDao.GetByOrderId(uploadReceiptModel.OrderId);
             ///TODO 事务里有多个库的连接串
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
@@ -823,6 +822,8 @@ namespace Ets.Service.Provider.Clienter
 
 
                 orderOther = clienterDao.UpdateClientReceiptPicInfo(uploadReceiptModel);
+                if (orderOther == null) return null;
+
                 //上传成功后， 判断 订单 创建时间在 2015-4-18 00：00 之前的订单不在增加佣金
                 string date = "2015-04-18 00:00:00";
 
@@ -1023,10 +1024,10 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="uploadReceiptModel"></param>
         /// <returns></returns>
-        public OrderOther UpdateReceiptInfo(UploadReceiptModel uploadReceiptModel)
-        {
-            return clienterDao.UpdateReceiptInfo(uploadReceiptModel);
-        }
+        //public OrderOther UpdateReceiptInfo(UploadReceiptModel uploadReceiptModel)
+        //{
+        //    return clienterDao.UpdateReceiptInfo(uploadReceiptModel);
+        //}
 
         /// <summary>
         /// 根据订单Id获取小票信息

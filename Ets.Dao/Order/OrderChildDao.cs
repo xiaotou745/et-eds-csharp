@@ -364,7 +364,7 @@ where  OrderId=@OrderId ";
                 ochildInfo.PayPrice = ParseHelper.ToDecimal(dataRow["PayPrice"]);
                 ochildInfo.HasUploadTicket = ParseHelper.ToBool(dataRow["HasUploadTicket"]);
                 if (dataRow["TicketUrl"] != null && dataRow["TicketUrl"] != DBNull.Value && dataRow["TicketUrl"].ToString() != "")
-                    ochildInfo.TicketUrl = Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataRow["TicketUrl"].ToString())[0];
+                    ochildInfo.TicketUrl = Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataRow["TicketUrl"].ToString());
                 list.Add(ochildInfo);
             }
 
