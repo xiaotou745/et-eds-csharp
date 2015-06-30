@@ -256,5 +256,13 @@ namespace Ets.Service.IProvider.Order
         /// <param name="orderID"></param>
         /// <returns></returns>
         OrderMapDetail GetOrderMapDetail(long orderID);
+        /// <summary>
+        /// 一键发单修改地址和电话
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="newAddress"></param>
+        /// <param name="newPhone"></param>
+        /// <returns></returns>
+        bool UpdateOrderAddressAndPhone(string orderId, string newAddress, string newPhone);
     }
 }

@@ -227,6 +227,10 @@ namespace Ets.Model.DomainModel.Order
         ///  纬度
         /// </summary>
         public double? Latitude { get; set; }
+        /// <summary>
+        /// 是否一键发单（0否，1是）
+        /// </summary>
+        public int OneKeyPubOrder { get; set; }
     }
 
     public class OrderChildInfo
