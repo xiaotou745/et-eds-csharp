@@ -409,9 +409,11 @@ where   o.Id = @orderId
 select HasUploadTicket from  OrderChild oc     
 where   oc.OrderId = @OrderId and ChildId=@ChildId ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("OrderId", orderId);
-            dbParameters.AddWithValue("ChildId", childId);
-            return ParseHelper.ToBool(DbHelper.ExecuteScalar(SuperMan_Write, querySql, dbParameters),false);
+            //dbParameters.AddWithValue("OrderId", orderId);
+            //dbParameters.AddWithValue("ChildId", childId);
+            dbParameters.Add("OrderId", DbType.Int32, 4).Value = orderId;
+            dbParameters.Add("ChildId", DbType.Int32, 4).Value = childId;
+            return ParseHelper.ToBool(DbHelper.ExecuteScalar(SuperMan_Write, querySql, dbParameters), false);
         }
     }
 

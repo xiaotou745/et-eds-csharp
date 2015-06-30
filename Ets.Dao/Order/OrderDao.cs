@@ -3100,16 +3100,16 @@ where c.Id=@ClienterId;");
 select  FinishAll from  [Order](nolock)
 where  OrderNo=@OrderNo ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("OrderNo", orderNo);
+            dbParameters.Add("OrderNo", DbType.String, 90).Value = orderNo;
 
-            object result = DbHelper.ExecuteScalar(SuperMan_Write, querysql, dbParameters); //用SuperMan_Write,不加nolock
-            return result.ToString();
+            return DbHelper.ExecuteScalar(SuperMan_Write, querysql, dbParameters).ToString(); //用SuperMan_Write,不加nolock
+
         }
         /// <summary>
         /// 更新已提现
         /// </summary>
         /// <param name="orderId"></param>
-        public void UpdateFinishAll(string orderNo)
+        public bool UpdateFinishAll(string orderNo)
         {
             try
             {

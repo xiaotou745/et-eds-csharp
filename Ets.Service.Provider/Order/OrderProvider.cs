@@ -1752,6 +1752,23 @@ namespace Ets.Service.Provider.Order
                 {
                     detail.TakeTime = "暂无";
                 }
+                #region 如果抢单，取货，完成地点的经度或纬度为0，则其经纬度都取发单经纬度
+                if (detail.GrabLatitude==0||detail.GrabLongitude==0)
+                {
+                    detail.GrabLongitude=detail.PubLongitude;
+                    detail.GrabLatitude = detail.PubLatitude;
+                }
+                if (detail.TakeLatitude == 0 || detail.TakeLongitude == 0)
+                {
+                    detail.TakeLongitude = detail.PubLongitude;
+                    detail.TakeLatitude = detail.PubLatitude;
+                }
+                if (detail.CompleteLatitude == 0 || detail.CompleteLongitude == 0)
+                {
+                    detail.CompleteLongitude = detail.PubLongitude;
+                    detail.CompleteLatitude = detail.PubLatitude;
+                }
+                #endregion
             }
             return detail;
                 

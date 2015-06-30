@@ -4,8 +4,8 @@
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=dAeaG6HwIFGlkbqtyKkyFGEC"></script>
 <style type="text/css">
 #map_contain {
-    height: 600px;
-    width: 800px;
+    height: 90%;
+    width: 100%;
     max-width: none;
 }
 label {
@@ -91,7 +91,7 @@ width: 100%;
     }
 }
 <div class="selectSupplierDish">
-<div class="add-openbox add-form" id="orderMapShow" style="width:800px">
+<div class="add-openbox add-form" id="orderMapShow" style="width: 60%;height:80%">
     <div id="map_contain" ></div>
     <p class="btnbox">
         <input value="关闭" type="button" class="J_closebox qxBtn" />
@@ -206,10 +206,16 @@ width: 100%;
     };
     //关闭弹层
     $('.J_closebox').click(function () {
+        //关闭地图时，恢复滚动条
+        document.documentElement.style.overflow = "auto";
+        document.body.style.overflow = "auto";
         adminjs.closewinbox('.add-openbox');
         return false;
     });
     function showMapData(orderid) {
+        //弹出地图时，禁用滚动条
+        document.documentElement.style.overflow = "hidden";
+        document.body.style.overflow = "hidden";
         var paramaters = { "OrderId": orderid };
         var url = "/Order/OrderMap";
         $.ajax({
