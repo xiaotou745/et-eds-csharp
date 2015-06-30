@@ -223,7 +223,7 @@ namespace Ets.Service.Provider.Business
                         return false;
                     }
                 }
-                if (globalConfigModel.EmployerTaskTimeSet != "0")
+                if (!string.IsNullOrEmpty(globalConfigModel.EmployerTaskTimeSet))
                 {
                     globalConfig.KeyName = "EmployerTaskTimeSet";
                     globalConfig.Value = globalConfigModel.EmployerTaskTimeSet;
