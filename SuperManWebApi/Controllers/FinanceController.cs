@@ -26,8 +26,9 @@ namespace SuperManWebApi.Controllers
     public class FinanceController : ApiController
     {
         #region 声明对象
-        private readonly IClienterFinanceProvider _clienterFinanceProvider = new ClienterFinanceProvider();
-        private readonly IBusinessFinanceProvider _iBusinessFinanceProvider = new BusinessFinanceProvider();
+        readonly IClienterFinanceProvider iClienterFinanceProvider = new ClienterFinanceProvider();
+        readonly IBusinessFinanceProvider iBusinessFinanceProvider = new BusinessFinanceProvider();
+        readonly IBusinessFinanceAccountProvider iBusinessFinanceAccountProvider = new BusinessFinanceAccountProvider();
         
         #endregion
 
@@ -40,7 +41,7 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<object> WithdrawC([FromBody]WithdrawCPM withdrawCpm)
         {
-            return _clienterFinanceProvider.WithdrawC(withdrawCpm);
+            return iClienterFinanceProvider.WithdrawC(withdrawCpm);
         }
 
         /// <summary>
@@ -51,7 +52,7 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<object> CardBindC([FromBody]CardBindCPM cardBindCpm)
         {
-            return _clienterFinanceProvider.CardBindC(cardBindCpm);
+            return iClienterFinanceProvider.CardBindC(cardBindCpm);
         }
 
         /// <summary>
@@ -62,7 +63,7 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<object> CardModifyC([FromBody]CardModifyCPM cardModifyCpm)
         {
-            return _clienterFinanceProvider.CardModifyC(cardModifyCpm);
+            return iClienterFinanceProvider.CardModifyC(cardModifyCpm);
         }
 
         #endregion
@@ -77,7 +78,7 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<object> WithdrawB([FromBody]WithdrawBPM withdrawBpm)
         {
-            return _iBusinessFinanceProvider.WithdrawB(withdrawBpm);
+            return iBusinessFinanceProvider.WithdrawB(withdrawBpm);
         }
 
         /// <summary>
@@ -88,7 +89,7 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<object> CardBindB([FromBody]CardBindBPM cardBindBpm)
         {
-            return _iBusinessFinanceProvider.CardBindB(cardBindBpm);
+            return iBusinessFinanceAccountProvider.CardBindB(cardBindBpm);
         }
 
         /// <summary>
@@ -99,7 +100,7 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<object> CardModifyB([FromBody]CardModifyBPM cardModifyBpm)
         {
-            return _iBusinessFinanceProvider.CardModifyB(cardModifyBpm);
+            return iBusinessFinanceAccountProvider.CardModifyB(cardModifyBpm);
         }
 
         #endregion

@@ -17,7 +17,7 @@ namespace Ets.Service.Provider.Clienter
     public class ClienterLocationProvider : IClienterLocationProvider
     {
 
-        private readonly ClienterLocationDao clienterLocationDao = new ClienterLocationDao();
+        readonly ClienterLocationDao clienterLocationDao = new ClienterLocationDao();
 
         /// <summary>
         /// 插入骑士运行轨迹
