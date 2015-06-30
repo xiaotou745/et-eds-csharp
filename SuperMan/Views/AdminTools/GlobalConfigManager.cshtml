@@ -107,6 +107,12 @@
                 alert("商家专属骑士接单响应时间为1-120分钟之间!");
                 return;
             }
+
+            if (completeTimeSet == "") {
+                alert("骑士完成任务时间限制不能为空!");
+                return;
+            }
+
             if (isNaN(completeTimeSet)) {
                 alert("骑士完成任务时间限制!");
                 return;
