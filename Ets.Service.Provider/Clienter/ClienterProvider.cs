@@ -37,7 +37,8 @@ using Ets.Model.ParameterModel.Finance;
 using Ets.Dao.Business;
 using Ets.Model.DomainModel.GlobalConfig;
 using Ets.Service.Provider.Common;
-
+using Ets.Service.IProvider.Common;
+using Ets.Service.Provider.Common;
 namespace Ets.Service.Provider.Clienter
 {
     public class ClienterProvider : IClienterProvider
@@ -46,15 +47,15 @@ namespace Ets.Service.Provider.Clienter
         readonly OrderDao orderDao = new OrderDao();
         readonly OrderOtherDao orderOtherDao = new OrderOtherDao();
         readonly OrderChildDao orderChildDao = new OrderChildDao();
-        private readonly ClienterBalanceRecordDao clienterBalanceRecordDao = new ClienterBalanceRecordDao();
-        private readonly BusinessDao businessDao = new BusinessDao();
-        readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
+        readonly ClienterBalanceRecordDao clienterBalanceRecordDao = new ClienterBalanceRecordDao();
+        readonly BusinessDao businessDao = new BusinessDao();
+        readonly IAreaProvider iAreaProvider = new AreaProvider();
         private readonly BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
 
         readonly IOrderOtherProvider iOrderOtherProvider = new OrderOtherProvider();
-        private readonly BusinessDao _businessDao = new BusinessDao();
-        private readonly BusinessBalanceRecordDao _businessBalanceRecordDao = new BusinessBalanceRecordDao();
-        private readonly BusinessClienterRelationDao businessClienterDao = new BusinessClienterRelationDao();
+        readonly BusinessDao _businessDao = new BusinessDao();
+        readonly BusinessBalanceRecordDao _businessBalanceRecordDao = new BusinessBalanceRecordDao();
+        readonly BusinessClienterRelationDao businessClienterDao = new BusinessClienterRelationDao();
         /// <summary>
         /// 骑士上下班功能 add by caoheyang 20150312
         /// </summary>

@@ -107,6 +107,12 @@
                 alert("商家专属骑士接单响应时间为1-120分钟之间!");
                 return;
             }
+
+            if (completeTimeSet == "") {
+                alert("骑士完成任务时间限制不能为空!");
+                return;
+            }
+
             if (isNaN(completeTimeSet)) {
                 alert("骑士完成任务时间限制!");
                 return;
@@ -115,7 +121,17 @@
                 alert("骑士完成任务时间限制1-60分钟之间!");
                 return;
             }
-
+            if (employerTaskTimeSet == "") {
+                alert("雇主任务时间限制不能为空!");
+                return;
+            }
+            var reg = /^\d{1,2}:\d{2}-\d{1,2}:\d{2}$/;          
+            if (!reg.test(employerTaskTimeSet)) {
+                alert('对不起，您输入的雇主任务时间格式不正确!');
+                return;
+            }
+                               
+       
             if (uploadTimeInterval == oldUploadTimeInterval && pushRadius == oldPushRadius && clienterOrderPageSize == oldClienterOrderPageSize && exclusiveOrderTime == oldExclusiveOrderTime && completeTimeSet == oldCompleteTimeSet && employerTaskTimeSet == oldEmployerTaskTimeSet) {
                 alert("没有需要修改的信息!");
                 return;
