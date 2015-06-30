@@ -70,7 +70,9 @@ namespace Ets.Model.DataModel.Business
         /// 可提现余额
         /// </summary>
         public decimal AllowWithdrawPrice { get; set; }
-        
-        
+        /// <summary>
+        /// 是否一键发单
+        /// </summary>
+        public int OneKeyPubOrder { get; set; }
     }
 }

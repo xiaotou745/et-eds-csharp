@@ -525,7 +525,8 @@ order by a.id desc
                                 b.MealsSettleMode,
                                 b.OriginalBusiId,
                                 BusinessGroup.StrategyId,
-                                b.BalancePrice
+                                b.BalancePrice,
+                                b.OneKeyPubOrder 
                                 FROM dbo.business as b WITH(NOLOCK)
                                 left join BusinessGroup on b.BusinessGroupId=BusinessGroup.Id
                                 WHERE b.Id = @busiId";
