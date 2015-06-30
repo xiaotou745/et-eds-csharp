@@ -21,7 +21,7 @@ namespace Ets.Service.Provider.Authority
     /// </summary>
     public class AuthorityMenuProvider : IAuthorityMenuProvider
     {
-        readonly AuthoritySetDao _dao = new AuthoritySetDao();
+        readonly AuthoritySetDao authoritySetDao = new AuthoritySetDao();
 
         #region 菜单操作
 
@@ -35,7 +35,7 @@ namespace Ets.Service.Provider.Authority
             bool reslut;
             try
             {
-                reslut = _dao.AddMenu(model);
+                reslut = authoritySetDao.AddMenu(model);
             }
             catch (Exception ex)
             {
@@ -55,7 +55,7 @@ namespace Ets.Service.Provider.Authority
             bool reslut;
             try
             {
-                reslut = _dao.UpdateMenu(model);
+                reslut = authoritySetDao.UpdateMenu(model);
             }
             catch (Exception ex)
             {
@@ -74,7 +74,7 @@ namespace Ets.Service.Provider.Authority
             List<AuthorityMenuModel> list;
             try
             {
-                list = _dao.GetListMenu(parId);
+                list = authoritySetDao.GetListMenu(parId);
             }
             catch (Exception ex)
             {
@@ -94,7 +94,7 @@ namespace Ets.Service.Provider.Authority
             List<AuthorityMenuModel> list;
             try
             {
-                list = _dao.GetAllListMenu();
+                list = authoritySetDao.GetAllListMenu();
             }
             catch (Exception ex)
             {
@@ -113,7 +113,7 @@ namespace Ets.Service.Provider.Authority
         {
             try
             {
-                return _dao.GetMenuById(id);
+                return authoritySetDao.GetMenuById(id);
             }
             catch (Exception ex)
             {
@@ -136,7 +136,7 @@ namespace Ets.Service.Provider.Authority
             List<int> list;
             try
             {
-                list = _dao.GetMenuIdsByRoloId(roleId);
+                list = authoritySetDao.GetMenuIdsByRoloId(roleId);
             }
             catch (Exception ex)
             {
@@ -161,13 +161,13 @@ namespace Ets.Service.Provider.Authority
                 if (mids.Length > 0)
                 {
                     //清楚旧权限
-                    _dao.ClareGroupPermission(roleId);
+                    authoritySetDao.ClareGroupPermission(roleId);
                     foreach (var i in mids)
                     {
                         int mid = ParseHelper.ToInt(i);
-                        if (!_dao.CheckGroupPermission(roleId, mid))
+                        if (!authoritySetDao.CheckGroupPermission(roleId, mid))
                         {
-                            _dao.AddGroupPermission(roleId, mid);
+                            authoritySetDao.AddGroupPermission(roleId, mid);
                         }
                     }
                     reslut = true;
@@ -191,7 +191,7 @@ namespace Ets.Service.Provider.Authority
             bool reslut;
             try
             {
-                reslut = _dao.AddRole(model);
+                reslut = authoritySetDao.AddRole(model);
             }
             catch (Exception ex)
             {
@@ -210,7 +210,7 @@ namespace Ets.Service.Provider.Authority
             bool reslut;
             try
             {
-                reslut = _dao.updateRole(model);
+                reslut = authoritySetDao.updateRole(model);
             }
             catch (Exception ex)
             {
@@ -227,7 +227,7 @@ namespace Ets.Service.Provider.Authority
         {
             try
             {
-                return _dao.GetListRoles();
+                return authoritySetDao.GetListRoles();
             }
             catch (Exception ex)
             {
@@ -244,7 +244,7 @@ namespace Ets.Service.Provider.Authority
         {
             try
             {
-                return _dao.GetRoleById(id);
+                return authoritySetDao.GetRoleById(id);
             }
             catch (Exception ex)
             {
@@ -267,7 +267,7 @@ namespace Ets.Service.Provider.Authority
             bool reslut;
             try
             {
-                reslut = _dao.AddDepart(model);
+                reslut = authoritySetDao.AddDepart(model);
             }
             catch (Exception ex)
             {
@@ -287,7 +287,7 @@ namespace Ets.Service.Provider.Authority
             bool reslut;
             try
             {
-                reslut = _dao.UpdateDepart(model);
+                reslut = authoritySetDao.UpdateDepart(model);
             }
             catch (Exception ex)
             {
@@ -306,7 +306,7 @@ namespace Ets.Service.Provider.Authority
         {
             try
             {
-                return _dao.GetDepartById(id);
+                return authoritySetDao.GetDepartById(id);
             }
             catch (Exception ex)
             {
@@ -325,7 +325,7 @@ namespace Ets.Service.Provider.Authority
             List<AuthorityDepartmentModel> list;
             try
             {
-                list = _dao.GetListDepart(parId);
+                list = authoritySetDao.GetListDepart(parId);
             }
             catch (Exception ex)
             {
@@ -348,7 +348,7 @@ namespace Ets.Service.Provider.Authority
         {
             try
             {
-                return _dao.GetMenusByAccountId(aId);
+                return authoritySetDao.GetMenusByAccountId(aId);
             }
             catch (Exception ex)
             {
@@ -367,7 +367,7 @@ namespace Ets.Service.Provider.Authority
         {
             try
             {
-                return _dao.GetListAccount();
+                return authoritySetDao.GetListAccount();
             }
             catch (Exception ex)
             {
@@ -384,7 +384,7 @@ namespace Ets.Service.Provider.Authority
         {
             try
             {
-                return _dao.GetAccountByName(name);
+                return authoritySetDao.GetAccountByName(name);
             }
             catch (Exception ex)
             {
@@ -404,7 +404,7 @@ namespace Ets.Service.Provider.Authority
             List<int> list;
             try
             {
-                list = _dao.GetMenuIdsByAccountId(aId);
+                list = authoritySetDao.GetMenuIdsByAccountId(aId);
             }
             catch (Exception ex)
             {
@@ -430,13 +430,13 @@ namespace Ets.Service.Provider.Authority
                 if (mids.Length > 0)
                 {
                     //清除旧权限
-                    _dao.ClarePermission(accoutId);
+                    authoritySetDao.ClarePermission(accoutId);
                     foreach (var i in mids)
                     {
                         int mid = ParseHelper.ToInt(i);
-                        if (!_dao.CheckPermission(accoutId, mid))
+                        if (!authoritySetDao.CheckPermission(accoutId, mid))
                         {
-                            _dao.AddPermission(accoutId, mid);
+                            authoritySetDao.AddPermission(accoutId, mid);
                         }
                     }
                     reslut = true;
@@ -462,7 +462,7 @@ namespace Ets.Service.Provider.Authority
         /// <returns></returns>
         public PageInfo<account> GetAuthorityManage(AuthoritySearchCriteria criteria)
         {
-            PageInfo<account> pageinfo = _dao.GetAuthorityManage<account>(criteria);
+            PageInfo<account> pageinfo = authoritySetDao.GetAuthorityManage<account>(criteria);
             return pageinfo;
         }
         /// <summary>
@@ -473,18 +473,9 @@ namespace Ets.Service.Provider.Authority
         /// <returns></returns>
         public bool CheckHasAccountName(account account)
         {
-            return _dao.CheckHasAccountName(account);
+            return authoritySetDao.CheckHasAccountName(account);
         }
-        ///// <summary>
-        ///// 添加用户
-        ///// danny-20150323
-        ///// </summary>
-        ///// <param name="account"></param>
-        ///// <returns></returns>
-        //public bool AddAccount(account account)
-        //{
-        //    return _dao.AddAccount(account);
-        //}
+       
         /// <summary>
         ///  删除用户
         /// danny-20150323
@@ -494,7 +485,7 @@ namespace Ets.Service.Provider.Authority
         /// <returns></returns>
         public bool ChangStatus(int id, int status)
         {
-            return _dao.ChangStatus(id,status);
+            return authoritySetDao.ChangStatus(id,status);
         }
         /// <summary>
         /// 用户修改密码
@@ -505,7 +496,7 @@ namespace Ets.Service.Provider.Authority
         /// <returns></returns>
         public bool ModifyPwdById(int id, string modifypassword)
         {
-            return _dao.ModifyPwdById(id, modifypassword);
+            return authoritySetDao.ModifyPwdById(id, modifypassword);
         }
         /// <summary>
         /// 验证用户权限
@@ -516,7 +507,7 @@ namespace Ets.Service.Provider.Authority
         /// <returns></returns>
         public bool HasAuthority(int accountId, string authorityName)
         {
-            return _dao.HasAuthority(accountId, authorityName);
+            return authoritySetDao.HasAuthority(accountId, authorityName);
         }
 
         /// <summary>
@@ -528,7 +519,7 @@ namespace Ets.Service.Provider.Authority
         /// <returns></returns>
         public bool HasAuthority(int accountId, int menuid)
         {
-            return _dao.CheckPermission(accountId, menuid);
+            return authoritySetDao.CheckPermission(accountId, menuid);
         }
         /// <summary>
         /// 添加用户
@@ -552,7 +543,7 @@ namespace Ets.Service.Provider.Authority
                 Status = criteria.Status,
                 AccountType=criteria.AccountType
             };
-            var isHave = _dao.CheckHasAccountName(accountModel);
+            var isHave = authoritySetDao.CheckHasAccountName(accountModel);
             if (criteria.OptionType == "0")//添加用户
             {
                 if (isHave)
@@ -579,7 +570,7 @@ namespace Ets.Service.Provider.Authority
                 };
                 if (criteria.OptionType == "0")//添加用户
                 {
-                    accountCityRelation.AccountId = _dao.AddAccount(accountModel);
+                    accountCityRelation.AccountId = authoritySetDao.AddAccount(accountModel);
                     if (accountCityRelation.AccountId == 0)
                     {
                         dealResultInfo.DealMsg = "插入用户信息失败!";
@@ -588,7 +579,7 @@ namespace Ets.Service.Provider.Authority
                 }
                 else//修改用户信息
                 {
-                    if (!_dao.ModifyAccount(accountModel))
+                    if (!authoritySetDao.ModifyAccount(accountModel))
                     {
                         dealResultInfo.DealMsg = "修改用户信息失败!";
                         return dealResultInfo;
@@ -598,11 +589,11 @@ namespace Ets.Service.Provider.Authority
                 {
                     var cityCodeList = criteria.CityCodeList.Split(',');
                     
-                    _dao.DeleteAccountCityRelation(accountCityRelation);
+                    authoritySetDao.DeleteAccountCityRelation(accountCityRelation);
                     foreach (var cityCode in cityCodeList)
                     {
                         accountCityRelation.CityId = ParseHelper.ToInt(cityCode);
-                        if (!_dao.AddAccountCityRelation(accountCityRelation))
+                        if (!authoritySetDao.AddAccountCityRelation(accountCityRelation))
                         {
                             dealResultInfo.DealMsg = "插入用户和城市关联信息失败!";
                             return dealResultInfo;
@@ -624,7 +615,7 @@ namespace Ets.Service.Provider.Authority
         /// <returns></returns>
         public IList<AccountCityRelationModel> GetAccountCityRel(int accountId)
         {
-            return _dao.GetAccountCityRel(accountId);
+            return authoritySetDao.GetAccountCityRel(accountId);
         }
 
         /// <summary>
@@ -635,7 +626,7 @@ namespace Ets.Service.Provider.Authority
         /// <returns></returns>
         public PageInfo<AccountModel> GetAccountListOfPaging(AuthoritySearchCriteria criteria)
         {
-            return _dao.GetAccountListOfPaging<AccountModel>(criteria);
+            return authoritySetDao.GetAccountListOfPaging<AccountModel>(criteria);
         }
 
     }

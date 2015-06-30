@@ -15,7 +15,7 @@ namespace Ets.Service.Provider.Business
     /// </summary>
     public class BusinessGroupProvider : IBusinessGroupProvider
     {
-        private BusinessGroupDao dao = new BusinessGroupDao();
+        readonly BusinessGroupDao businessGroupDao = new BusinessGroupDao();
 
         /// <summary>
         /// 获取商家分组列表
@@ -24,12 +24,12 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public IList<BusinessGroupModel> GetBusinessGroupList()
         {
-            return dao.GetBusinessGroupList();
+            return businessGroupDao.GetBusinessGroupList();
         }
 
         public BusinessGroupModel GetCurrenBusinessGroup(int businessId)
         {
-            return dao.GetCurrenBusinessGroup(businessId);
+            return businessGroupDao.GetCurrenBusinessGroup(businessId);
         }
 
         /// <summary>
@@ -51,10 +51,10 @@ namespace Ets.Service.Provider.Business
                         StrategyId = globalConfigModel.StrategyId,
                         CreateBy = globalConfigModel.OptName
                     };
-                    globalConfigModel.GroupId = dao.AddBusinessGroup(businessGroupModel);
+                    globalConfigModel.GroupId = businessGroupDao.AddBusinessGroup(businessGroupModel);
                     if (globalConfigModel.GroupId > 0)
                     {
-                        var r = dao.CopyGlobalConfigMode(globalConfigModel.GroupId, globalConfigModel.OptName);
+                        var r = businessGroupDao.CopyGlobalConfigMode(globalConfigModel.GroupId, globalConfigModel.OptName);
                     }
                 }
                 else //修改
@@ -67,7 +67,7 @@ namespace Ets.Service.Provider.Business
                         UpdateBy = globalConfigModel.OptName
 
                     };
-                    dao.UpdateBusinessGroup(businessGroupModel);
+                    businessGroupDao.UpdateBusinessGroup(businessGroupModel);
                 }
 
                 #region 动态时间补贴
@@ -80,7 +80,7 @@ namespace Ets.Service.Provider.Business
                     StrategyId = globalConfigModel.StrategyId,
                     OptName = globalConfigModel.OptName
                 };
-                dao.UpdateGlobalConfig(globalConfig);
+                businessGroupDao.UpdateGlobalConfig(globalConfig);
 
                 #endregion
 
@@ -88,7 +88,7 @@ namespace Ets.Service.Provider.Business
 
                 globalConfig.KeyName = "IsStartOverStoreSubsidies";
                 globalConfig.Value = globalConfigModel.IsStartOverStoreSubsidies;
-                dao.UpdateGlobalConfig(globalConfig);
+                businessGroupDao.UpdateGlobalConfig(globalConfig);
 
                 #endregion
 
@@ -99,37 +99,37 @@ namespace Ets.Service.Provider.Business
                     case 0: //普通补贴
                         globalConfig.KeyName = "CommonCommissionRatio";
                         globalConfig.Value = globalConfigModel.CommonCommissionRatio;
-                        dao.UpdateGlobalConfig(globalConfig);
+                        businessGroupDao.UpdateGlobalConfig(globalConfig);
                         globalConfig.KeyName = "CommonSiteSubsidies";
                         globalConfig.Value = globalConfigModel.CommonSiteSubsidies;
-                        dao.UpdateGlobalConfig(globalConfig);
+                        businessGroupDao.UpdateGlobalConfig(globalConfig);
                         break;
                     case 1: //时间段补贴
                         globalConfig.KeyName = "TimeSpanCommissionRatio";
                         globalConfig.Value = globalConfigModel.TimeSpanCommissionRatio;
-                        dao.UpdateGlobalConfig(globalConfig);
+                        businessGroupDao.UpdateGlobalConfig(globalConfig);
                         globalConfig.KeyName = "TimeSpanInPrice";
                         globalConfig.Value = globalConfigModel.TimeSpanInPrice;
-                        dao.UpdateGlobalConfig(globalConfig);
+                        businessGroupDao.UpdateGlobalConfig(globalConfig);
                         globalConfig.KeyName = "TimeSpanOutPrice";
                         globalConfig.Value = globalConfigModel.TimeSpanOutPrice;
-                        dao.UpdateGlobalConfig(globalConfig);
+                        businessGroupDao.UpdateGlobalConfig(globalConfig);
                         break;
                     case 2: //保本补贴
                         globalConfig.KeyName = "CommissionRatio";
                         globalConfig.Value = globalConfigModel.CommissionRatio;
-                        dao.UpdateGlobalConfig(globalConfig);
+                        businessGroupDao.UpdateGlobalConfig(globalConfig);
                         globalConfig.KeyName = "SiteSubsidies";
                         globalConfig.Value = globalConfigModel.SiteSubsidies;
-                        dao.UpdateGlobalConfig(globalConfig);
+                        businessGroupDao.UpdateGlobalConfig(globalConfig);
                         break;
                     case 3: //满金额补贴
                         globalConfig.KeyName = "PriceCommissionRatio";
                         globalConfig.Value = globalConfigModel.PriceCommissionRatio;
-                        dao.UpdateGlobalConfig(globalConfig);
+                        businessGroupDao.UpdateGlobalConfig(globalConfig);
                         globalConfig.KeyName = "PriceSiteSubsidies";
                         globalConfig.Value = globalConfigModel.PriceSiteSubsidies;
-                        dao.UpdateGlobalConfig(globalConfig);
+                        businessGroupDao.UpdateGlobalConfig(globalConfig);
                         break;
                 }
 
@@ -176,7 +176,7 @@ namespace Ets.Service.Provider.Business
                 {
                     globalConfig.KeyName = "PushRadius";
                     globalConfig.Value = globalConfigModel.PushRadius;
-                    reg = dao.UpdateGlobalConfig(globalConfig);
+                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
                     if (!reg)
                     {
                         return false;
@@ -186,7 +186,7 @@ namespace Ets.Service.Provider.Business
                 {
                     globalConfig.KeyName = "UploadTimeInterval";
                     globalConfig.Value = globalConfigModel.UploadTimeInterval;
-                    reg = dao.UpdateGlobalConfig(globalConfig);
+                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
                     if (!reg)
                     {
                         return false;
@@ -196,7 +196,7 @@ namespace Ets.Service.Provider.Business
                 {
                     globalConfig.KeyName = "ExclusiveOrderTime";
                     globalConfig.Value = globalConfigModel.ExclusiveOrderTime;
-                    reg = dao.UpdateGlobalConfig(globalConfig);
+                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
                     if (!reg)
                     {
                         return false;
@@ -206,7 +206,7 @@ namespace Ets.Service.Provider.Business
                 {
                     globalConfig.KeyName = "ClienterOrderPageSize";
                     globalConfig.Value = globalConfigModel.ClienterOrderPageSize;
-                    reg = dao.UpdateGlobalConfig(globalConfig);
+                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
                     if (!reg)
                     {
                         return false;
@@ -216,7 +216,7 @@ namespace Ets.Service.Provider.Business
                 {
                     globalConfig.KeyName = "CompleteTimeSet";
                     globalConfig.Value = globalConfigModel.CompleteTimeSet;
-                    reg = dao.UpdateGlobalConfig(globalConfig);
+                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
                     if (!reg)
                     {
                         return false;
@@ -226,7 +226,7 @@ namespace Ets.Service.Provider.Business
                 {
                     globalConfig.KeyName = "EmployerTaskTimeSet";
                     globalConfig.Value = globalConfigModel.EmployerTaskTimeSet;
-                    reg = dao.UpdateGlobalConfig(globalConfig);
+                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
                     if (!reg)
                     {
                         return false;

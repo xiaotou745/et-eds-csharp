@@ -2083,13 +2083,14 @@ select @@identity";
 
             #region 写子OrderOther表
             const string insertOtherSql = @"
-insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount,PubLongitude,PubLatitude)
-values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude)";
+insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount,PubLongitude,PubLatitude,OneKeyPubOrder)
+values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder)";
             IDbParameters dbOtherParameters = DbHelper.CreateDbParameters();
             dbOtherParameters.AddWithValue("@OrderId", orderId); //商户ID
             dbOtherParameters.AddWithValue("@NeedUploadCount", order.OrderCount); //需上传数量
             dbOtherParameters.AddWithValue("@PubLongitude", order.PubLongitude);
             dbOtherParameters.AddWithValue("@PubLatitude", order.PubLatitude);
+            dbOtherParameters.AddWithValue("@OneKeyPubOrder", order.OneKeyPubOrder);
             DbHelper.ExecuteScalar(SuperMan_Write, insertOtherSql, dbOtherParameters);
             #endregion
 
@@ -2201,7 +2202,7 @@ select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneN
     when  ISNULL(b.Latitude,0)=0 or ISNULL(b.Longitude,0)=0 or @clienterLongitude=0 or  @clienterLatitude=0  then -1
     else round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(geography::Point(@clienterLatitude,@clienterLongitude,4326)),0)
     end)
-    as distance,o.OneKeyPubOrder 
+    as distance,isnull(oo.OneKeyPubOrder,0) as OneKeyPubOrder 
 from  dbo.[order] o (nolock)
     join business b (nolock) on b.Id=o.businessId
     left join dbo.OrderOther oo (nolock) on o.Id=oo.orderId
@@ -3099,23 +3100,36 @@ where c.Id=@ClienterId;");
 select  FinishAll from  [Order](nolock)
 where  OrderNo=@OrderNo ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("OrderNo", orderNo);
+            dbParameters.Add("OrderNo", DbType.String, 90).Value = orderNo;
 
-            object result = DbHelper.ExecuteScalar(SuperMan_Write, querysql, dbParameters); //用SuperMan_Write,不加nolock
-            return result.ToString();
+            return DbHelper.ExecuteScalar(SuperMan_Write, querysql, dbParameters).ToString(); //用SuperMan_Write,不加nolock
+
         }
         /// <summary>
         /// 更新已提现
         /// </summary>
         /// <param name="orderId"></param>
-        public void UpdateFinishAll(string orderNo)
+        public bool UpdateFinishAll(string orderNo)
         {
+            //            const string updateSql = @"
+            //update [Order] set FinishAll=1 where OrderNo=@OrderNo";
             const string updateSql = @"
-update [Order] set FinishAll=1 where OrderNo=@OrderNo";
-
+declare @FinishAll int;
+select  @FinishAll = FinishAll
+from    [order](nolock)
+where   OrderNo = @OrderNo; 
+if ( @FinishAll <> 1 )
+    begin
+        update  [order]
+        set     FinishAll = 1
+        where   OrderNo = @OrderNo;
+        select  1;
+        return;
+    end;
+select  0;";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@OrderNo", orderNo);
-            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+            dbParameters.Add("@OrderNo", DbType.String, 90).Value = orderNo;
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, updateSql, dbParameters), 1) == 1 ? true : false;
         }
         /// <summary>
         /// 根据orderID获取订单地图数据
@@ -3161,12 +3175,12 @@ update [Order] set FinishAll=1 where OrderNo=@OrderNo";
         /// <returns></returns>
         public int UpdateOrderAddressAndPhone(string orderId, string newAddress, string newPhone)
         {
-            string sql = @" select 1 from  [order] where id=@orderId and OneKeyPubOrder=1";
+            string sql = @" select OneKeyPubOrder from  [OrderOther] (nolock) where orderid=@orderId";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@OrderId", orderId);
-            object obj = DbHelper.ExecuteScalar(SuperMan_Write, sql, dbParameters);
-            if (ParseHelper.ToInt(obj, 0) == 1)
+            object obj = DbHelper.ExecuteScalar(SuperMan_Read, sql, dbParameters);
+            if (ParseHelper.ToInt(obj, -1) == 1)
             {
                 sql = @" update [order] set ReceviceAddress=@ReceviceAddress,RecevicePhoneNo=@RecevicePhoneNo where id=@orderId";
                 dbParameters.AddWithValue("@ReceviceAddress", newAddress);

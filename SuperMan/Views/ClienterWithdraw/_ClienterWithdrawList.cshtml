@@ -49,7 +49,7 @@
                         <td>
                             @if (item.Status == 1)
                             {
-                                <a href="javascript:funWithdrawAuditOk(@item.Id)">审核通过</a>
+                                <a href="javascript:funWithdrawAuditOk('@item.Id','@item.WithwardNo')">审核通过</a>
                                 <a href="javascript:funWithdrawAuditRefuse(@item.Id,@item.Amount)">拒绝</a>
                                 <a href="javascript:void(0)" style="color:gray">确认打款</a>
                                 <a href="javascript:void(0)" style="color:gray">打款失败</a>
@@ -143,11 +143,14 @@
     });
     var adminjs = new adminglass(); //实例化后台类
     ///审核通过
-    function funWithdrawAuditOk(withwardId) {
+    function funWithdrawAuditOk(withwardId,withwardNo) {
         if (!window.confirm("确认要提交审核？")) {
             return;
         }
-        var paramaters = { "withwardId": withwardId };
+        var paramaters = {
+            "withwardId": withwardId,
+            "withwardNo": withwardNo
+        };
         var url = "/ClienterWithdraw/WithdrawAuditOk";
         $.ajax({
             type: 'POST',

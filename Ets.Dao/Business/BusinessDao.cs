@@ -525,7 +525,8 @@ order by a.id desc
                                 b.MealsSettleMode,
                                 b.OriginalBusiId,
                                 BusinessGroup.StrategyId,
-                                b.BalancePrice
+                                b.BalancePrice,
+                                b.OneKeyPubOrder 
                                 FROM dbo.business as b WITH(NOLOCK)
                                 left join BusinessGroup on b.BusinessGroupId=BusinessGroup.Id
                                 WHERE b.Id = @busiId";
@@ -1612,14 +1613,14 @@ where Id=@Id";
                 }
                 else
                 {
-                    CheckPicUrl = Ets.Model.Common.ImageCommon.ReceiptPicConvert(CheckPicUrl)[0];
+                    CheckPicUrl = Ets.Model.Common.ImageCommon.ReceiptPicConvert(CheckPicUrl);
                 }
                 #endregion
 
                 result.CheckPicUrl = CheckPicUrl;
                 result.BusinessLicensePic = string.IsNullOrEmpty(Convert.ToString(dataReader["BusinessLicensePic"])) ? 
                     string.Empty : 
-                    Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataReader["BusinessLicensePic"].ToString())[0];
+                    Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataReader["BusinessLicensePic"].ToString());
                 result.IDCard = dataReader["IDCard"].ToString();
                 result.Address = dataReader["Address"].ToString();
                 result.Landline = dataReader["Landline"].ToString();

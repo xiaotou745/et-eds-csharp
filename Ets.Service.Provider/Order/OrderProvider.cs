@@ -268,6 +268,7 @@ namespace Ets.Service.Provider.Order
                 to.CommissionFixValue = ParseHelper.ToDecimal(business.CommissionFixValue);//固定金额     
                 to.BusinessGroupId = business.BusinessGroupId;
                 to.MealsSettleMode = business.MealsSettleMode;
+                to.OneKeyPubOrder = business.OneKeyPubOrder;
             }
             if (ConfigSettings.Instance.IsGroupPush)
             {
