@@ -3159,9 +3159,8 @@ update [Order] set FinishAll=1 where OrderNo=@OrderNo";
         /// <param name="newAddress"></param>
         /// <param name="newPhone"></param>
         /// <returns></returns>
-        public bool UpdateOrderAddressAndPhone(string orderId, string newAddress, string newPhone)
+        public int UpdateOrderAddressAndPhone(string orderId, string newAddress, string newPhone)
         {
-            bool reslut = false;
             string sql = @" select 1 from  [order] where id=@orderId and OneKeyPubOrder=1";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -3173,13 +3172,12 @@ update [Order] set FinishAll=1 where OrderNo=@OrderNo";
                 dbParameters.AddWithValue("@ReceviceAddress", newAddress);
                 dbParameters.AddWithValue("@RecevicePhoneNo", newPhone);
                 int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
-                if (i > 0) reslut = true;
+                return i;
             }
             else
             {
-                throw new Exception("只有一键发单才可以修改收货人的地址和电话");
+                return -1;
             }
-            return reslut;
         }
     }
 }

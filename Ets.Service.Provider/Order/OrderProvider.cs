@@ -1763,14 +1763,8 @@ namespace Ets.Service.Provider.Order
         /// <param name="newAddress">新的收货人地址</param>
         /// <param name="newPhone">新的收货人电话</param>
         /// <returns>是否修改成功</returns>
-        public bool UpdateOrderAddressAndPhone(string orderId, string newAddress, string newPhone)
+        public int UpdateOrderAddressAndPhone(string orderId, string newAddress, string newPhone)
         {
-            if (string.IsNullOrEmpty(orderId)||
-                string.IsNullOrEmpty(newAddress)||
-                string.IsNullOrEmpty(newPhone))
-            {
-                throw new Exception("传入的参数不全，请修改");
-            }
             return orderDao.UpdateOrderAddressAndPhone(orderId,newAddress,newPhone);
         }
     }

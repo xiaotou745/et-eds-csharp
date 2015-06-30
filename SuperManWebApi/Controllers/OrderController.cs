@@ -514,6 +514,32 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<string>.Conclude(ConfirmTakeStatus.Failed);
             }
         }
-
+        /// <summary>
+        /// 一键发单修改地址和电话
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="newAddress"></param>
+        /// <param name="newPhone"></param>
+        /// <returns></returns>
+        public ResultModel<string> UpdateOrderAddressAndPhone(string orderId, string newAddress, string newPhone)
+        {
+            if (string.IsNullOrEmpty(orderId) ||
+               string.IsNullOrEmpty(newAddress) ||
+               string.IsNullOrEmpty(newPhone))
+            {
+                return ResultModel<string>.Conclude(OneKeyPubOrderUpdateStatus.ParamEmpty);
+            }
+            int result = iOrderProvider.UpdateOrderAddressAndPhone(orderId, newAddress, newPhone);
+            switch (result)
+            {
+                case -1:
+                    return ResultModel<string>.Conclude(OneKeyPubOrderUpdateStatus.OnlyOneKeyPubOrder);
+                case 0:
+                    return ResultModel<string>.Conclude(OneKeyPubOrderUpdateStatus.Failed);
+                case 1:
+                default:
+                    return ResultModel<string>.Conclude(OneKeyPubOrderUpdateStatus.Success);
+            }
+        }
     }
 }

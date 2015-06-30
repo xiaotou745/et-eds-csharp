@@ -263,6 +263,6 @@ namespace Ets.Service.IProvider.Order
         /// <param name="newAddress"></param>
         /// <param name="newPhone"></param>
         /// <returns></returns>
-        bool UpdateOrderAddressAndPhone(string orderId, string newAddress, string newPhone);
+        int UpdateOrderAddressAndPhone(string orderId, string newAddress, string newPhone);
     }
 }
