@@ -604,7 +604,7 @@ namespace Ets.Service.Provider.Clienter
             GlobalConfigModel globalSetting = new GlobalConfigProvider().GlobalConfigMethod(0);
             int limitFinish = ParseHelper.ToInt(globalSetting.CompleteTimeSet, 5);
             //取到任务的接单时间、从缓存中读取完成任务时间限制，判断要用户点击完成时间>接单时间+限制时间  
-            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            //var redis = new ETS.NoSql.RedisCache.RedisCache();
             DateTime yuJiFinish = myOrderInfo.GrabTime.Value.AddMinutes(limitFinish);
             if (DateTime.Compare(DateTime.Now, yuJiFinish) < 0)  //小于0说明用户完成时间 太快
             {
