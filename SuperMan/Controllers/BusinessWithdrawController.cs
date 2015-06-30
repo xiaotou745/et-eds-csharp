@@ -72,7 +72,7 @@ namespace SuperMan.Controllers
         /// <param name="withwardId">提款单Id</param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult WithdrawAuditOk(string withwardId)
+        public JsonResult WithdrawAuditOk(string withwardId, string withwardNo)
         {
             var businessWithdrawLog = new BusinessWithdrawLog()
             {
@@ -84,11 +84,11 @@ namespace SuperMan.Controllers
             try
             {
                 bool reg = iBusinessFinanceProvider.BusinessWithdrawAudit(businessWithdrawLog);
-                return Json(new ResultModel(true, reg ? "审核通过！" : "审核失败！"), JsonRequestBehavior.DenyGet);
+                return Json(new ResultModel(true, reg ? "审核通过！" : "以下单号审核失败,请重试！\n" + withwardNo), JsonRequestBehavior.DenyGet);
             }
             catch (Exception ex)
             {
-                return Json(new ResultModel(false,"审核失败！" + ex.Message), JsonRequestBehavior.DenyGet);
+                return Json(new ResultModel(false, "以下单号审核失败:" + ex.Message + "！\n" + withwardNo), JsonRequestBehavior.DenyGet);
             }
 
         }

@@ -18,7 +18,7 @@ namespace Ets.Service.Provider.Business
     /// </summary>
    public class BusinessClienterRelationProvider : IBusinessClienterRelationProvider
     {
-        private readonly BusinessClienterRelationDao businessClienterRelationDao = new BusinessClienterRelationDao();
+        readonly BusinessClienterRelationDao businessClienterRelationDao = new BusinessClienterRelationDao();
        /// <summary> 
        /// 根据骑士id查询骑士绑定商家列表   caoheyang 20150608
        /// </summary>

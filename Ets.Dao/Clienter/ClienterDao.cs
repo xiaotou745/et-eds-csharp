@@ -87,7 +87,7 @@ namespace Ets.Dao.Clienter
                 }
                 if (criteria.status.Value == OrderQueryType.Working.GetHashCode())//此处查询的未进行中的订单（已接单，已取货）
                 {
-                    where += " and o.[Status] in (2,4)" ;
+                    where += " and o.[Status] in (2,4)";
                 }
             }
             else
@@ -242,6 +242,22 @@ where PhoneNo=@PhoneNo and [Password]=@Password";
             string sql = @"UPDATE dbo.clienter SET AccountBalance=@Money WHERE id=" + model.UserId;
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Money", Money);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+        }
+
+        public bool UpdateClienterAccountBalanceForFinish(WithdrawRecordsModel model)
+        {
+            //Ets.Model.DomainModel.Clienter.ClienterModel cliterModel = new ClienterDao().GetUserInfoByUserId(model.UserId);//获取当前用户余额
+            //decimal balance = ParseHelper.ToDecimal(cliterModel.AccountBalance, 0);
+            //decimal Money = balance + model.Amount;
+            //if (Money < 0)//如果提现金额大于当前余额则不能提现
+            //{
+            //    return false;
+            //}
+            //model.Balance = balance;
+            string sql = @"UPDATE dbo.clienter SET AccountBalance=AccountBalance + @Money WHERE id=" + model.UserId;
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Money", model.Amount);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
 
@@ -710,17 +726,14 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, ConstValues.OrderH
         /// <returns></returns>
         public OrderOther UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel)
         {
-            OrderOther orderOther = new OrderOther();
             var oo = GetReceiptInfo(uploadReceiptModel.OrderId);
-            //uploadReceiptModel.NeedUploadCount = oo.NeedUploadCount;
-            //if (oo.Id == 0)
-            //{
-            //    orderOther = InsertReceiptInfo(uploadReceiptModel);
-            //}
-            //else
-            //{
-                orderOther = UpdateReceiptInfo(uploadReceiptModel);
-            //}
+
+            var orderOther = UpdateReceiptInfo(uploadReceiptModel);
+
+            if (orderOther == null)
+            {
+                return null;
+            }
             orderOther.OrderStatus = oo.OrderStatus;
             orderOther.OrderCreateTime = oo.OrderCreateTime;
             return orderOther;
@@ -787,94 +800,86 @@ where   OrderId = @OrderId
         /// <returns></returns>
         public OrderOther UpdateReceiptInfo(UploadReceiptModel uploadReceiptModel)
         {
-            //try
-            //{
-                OrderOther orderOther = new OrderOther();
-
-                //更新orderOther
-                const string updateSql = @"
- update dbo.OrderOther
+            //更新orderOther
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            StringBuilder updateSql = new StringBuilder();
+            if (uploadReceiptModel.HadUploadCount == 1)
+            {
+                updateSql.Append(@" update dbo.OrderOther
  set HadUploadCount = HadUploadCount + @HadUploadCount
-where  OrderId=@OrderId ";
-                IDbParameters dbParameters = DbHelper.CreateDbParameters();
-                dbParameters.AddWithValue("@OrderId", uploadReceiptModel.OrderId);
-                dbParameters.AddWithValue("@HadUploadCount", uploadReceiptModel.HadUploadCount);
-                DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
-
-                //更新OrderChild
-                const string updateSqlOrderChild = @"
+where  OrderId=@OrderId;");
+                dbParameters.Add("@HadUploadCount", DbType.Int32, 4).Value = uploadReceiptModel.HadUploadCount;
+            }
+            updateSql.Append(@"
 update  dbo.OrderChild
 set     HasUploadTicket = 1, TicketUrl = @ReceiptPic
-where    OrderId = @OrderId  and ChildId = @OrderChildId ";
+where    OrderId = @OrderId  and ChildId = @OrderChildId; ");
+            dbParameters.Add("@OrderId", DbType.Int32, 4).Value = uploadReceiptModel.OrderId;
+            dbParameters.Add("@ReceiptPic", DbType.String, 256).Value = uploadReceiptModel.ReceiptPic;
 
-                IDbParameters dbParametersOrderChild = DbHelper.CreateDbParameters();
-                dbParametersOrderChild.AddWithValue("@ReceiptPic", uploadReceiptModel.ReceiptPic);
-                dbParametersOrderChild.AddWithValue("@OrderId", uploadReceiptModel.OrderId);
-                dbParametersOrderChild.AddWithValue("@OrderChildId", uploadReceiptModel.OrderChildId);
-                DbHelper.ExecuteNonQuery(SuperMan_Write, updateSqlOrderChild, dbParametersOrderChild);
+            dbParameters.Add("@OrderChildId", DbType.Int32, 4).Value = uploadReceiptModel.OrderChildId;
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql.ToString(), dbParameters);
 
-                //返回OrderOther实体
-                const string querysql = @"
+            //返回OrderOther实体
+            const string querysql = @"
 select Id ,OrderId,NeedUploadCount,ReceiptPic,HadUploadCount
 from OrderOther (nolock)
 where  OrderId=@OrderId ";
-                IDbParameters dbParametersQuerysql = DbHelper.CreateDbParameters();
-                dbParametersQuerysql.AddWithValue("@OrderId", uploadReceiptModel.OrderId);
-                DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, querysql, dbParametersQuerysql);
-                var ooList = MapRows<OrderOther>(dt);
-                if (ooList != null && ooList.Count == 1)
-                {
-                    orderOther = ooList[0];
-                }
-                return orderOther;
-            //}
-            //catch (Exception ex)
-            //{
-            //    throw ex;
-            //}
+            IDbParameters dbParametersQuerysql = DbHelper.CreateDbParameters();
+            dbParametersQuerysql.Add("@OrderId", DbType.Int32, 4).Value = uploadReceiptModel.OrderId;
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, querysql, dbParametersQuerysql);
+            if (!dt.HasData())
+            {
+                return null;
+            }
+            var ooList = MapRows<OrderOther>(dt);
+            return ooList[0];
+
 
             #region 王超
-//            OrderOther oo = new OrderOther();
-//            //ReceiptPic + '|' + @ReceiptPic
-//            StringBuilder sql = new StringBuilder(@"
-// update dbo.OrderOther
-// set    ReceiptPic = '' ,
-//        HadUploadCount = HadUploadCount + @HadUploadCount,
-//        NeedUploadCount = @NeedUploadCount
-// output Inserted.Id ,
-//        Inserted.OrderId ,
-//        Inserted.NeedUploadCount ,
-//        Inserted.ReceiptPic ,
-//        Inserted.HadUploadCount
-// where  OrderId = @OrderId;");
-//            sql.Append(@"
-//update  dbo.OrderChild
-//set     HasUploadTicket = 1,
-//        TicketUrl = @ReceiptPic
-//where   OrderId = @OrderId
-//        and ChildId = @OrderChildId;
-//");
-//            IDbParameters parm = DbHelper.CreateDbParameters();
-//            parm.Add("@OrderId", SqlDbType.Int).Value = uploadReceiptModel.OrderId;
-//            parm.Add("@NeedUploadCount", SqlDbType.Int).Value = uploadReceiptModel.NeedUploadCount;
-//            parm.Add("@HadUploadCount", SqlDbType.Int).Value = uploadReceiptModel.HadUploadCount;
-//            parm.Add("@ReceiptPic", SqlDbType.VarChar).Value = uploadReceiptModel.ReceiptPic;
-//            parm.Add("@OrderChildId", SqlDbType.Int).Value = uploadReceiptModel.OrderChildId;
-//            try
-//            {
-//                DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql.ToString(), parm);
-//                var ooList = MapRows<OrderOther>(dt);
-//                if (ooList != null && ooList.Count == 1)
-//                {
-//                    return ooList[0];
-//                }
-//            }
-//            catch (Exception ex)
-//            {
-//                //LogHelper.LogWriter("更新orderOther表异常：", new { ex = ex });
-//                throw ex;
-//            }
+
+            //            OrderOther oo = new OrderOther();
+            //            //ReceiptPic + '|' + @ReceiptPic
+            //            StringBuilder sql = new StringBuilder(@"
+            // update dbo.OrderOther
+            // set    ReceiptPic = '' ,
+            //        HadUploadCount = HadUploadCount + @HadUploadCount,
+            //        NeedUploadCount = @NeedUploadCount
+            // output Inserted.Id ,
+            //        Inserted.OrderId ,
+            //        Inserted.NeedUploadCount ,
+            //        Inserted.ReceiptPic ,
+            //        Inserted.HadUploadCount
+            // where  OrderId = @OrderId;");
+            //            sql.Append(@"
+            //update  dbo.OrderChild
+            //set     HasUploadTicket = 1,
+            //        TicketUrl = @ReceiptPic
+            //where   OrderId = @OrderId
+            //        and ChildId = @OrderChildId;
+            //");
+            //            IDbParameters parm = DbHelper.CreateDbParameters();
+            //            parm.Add("@OrderId", SqlDbType.Int).Value = uploadReceiptModel.OrderId;
+            //            parm.Add("@NeedUploadCount", SqlDbType.Int).Value = uploadReceiptModel.NeedUploadCount;
+            //            parm.Add("@HadUploadCount", SqlDbType.Int).Value = uploadReceiptModel.HadUploadCount;
+            //            parm.Add("@ReceiptPic", SqlDbType.VarChar).Value = uploadReceiptModel.ReceiptPic;
+            //            parm.Add("@OrderChildId", SqlDbType.Int).Value = uploadReceiptModel.OrderChildId;
+            //            try
+            //            {
+            //                DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql.ToString(), parm);
+            //                var ooList = MapRows<OrderOther>(dt);
+            //                if (ooList != null && ooList.Count == 1)
+            //                {
+            //                    return ooList[0];
+            //                }
+            //            }
+            //            catch (Exception ex)
+            //            {
+            //                //LogHelper.LogWriter("更新orderOther表异常：", new { ex = ex });
+            //                throw ex;
+            //            }
             //            return oo;
+
             #endregion
         }
         /// <summary>
@@ -939,7 +944,8 @@ where   OrderId = @OrderId
         public OrderOther GetReceiptInfo(int orderId)
         {
             string sql = @"select  o.Id OrderId ,o.IsPay,
-        ISNULL(oo.Id,0) Id ,o.SettleMoney,
+        oo.Id ,
+        o.SettleMoney,
         o.[Status] OrderStatus,
         o.OrderCount NeedUploadCount,
         oo.ReceiptPic ,
@@ -949,18 +955,14 @@ from    dbo.[order] o ( nolock )
         join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
 where   o.Id = @OrderId";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@OrderId", SqlDbType.Int).Value = orderId;
+            parm.Add("@OrderId", DbType.Int32, 4).Value = orderId;
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql, parm);
-            var ooList = MapRows<OrderOther>(dt);
-
-            if (ooList != null && ooList.Count > 0)
-            {
-                return ooList[0];
-            }
-            else
+            if (!dt.HasData())
             {
                 return null;
             }
+            var ooList = MapRows<OrderOther>(dt);
+            return ooList[0];
         }
         /// <summary>
         /// 删除小票信息
@@ -1052,13 +1054,13 @@ where  Id IN({0}) ";
             {
                 return new Dictionary<int, clienter>();
             }
-           return DbHelper.QueryWithRowMapperDelegate<clienter>(SuperMan_Read, string.Format(querysql,string.Join(",", ids)), datarow => new clienter()
-            {
-                Id = ParseHelper.ToInt(datarow["Id"]),
-                TrueName = ParseHelper.ToString(datarow["TrueName"]),
-                PhoneNo = ParseHelper.ToString(datarow["PhoneNo"])
+            return DbHelper.QueryWithRowMapperDelegate<clienter>(SuperMan_Read, string.Format(querysql, string.Join(",", ids)), datarow => new clienter()
+             {
+                 Id = ParseHelper.ToInt(datarow["Id"]),
+                 TrueName = ParseHelper.ToString(datarow["TrueName"]),
+                 PhoneNo = ParseHelper.ToString(datarow["PhoneNo"])
 
-            }).ToDictionary(m => m.Id);
+             }).ToDictionary(m => m.Id);
         }
 
         /// <summary>
@@ -1233,8 +1235,8 @@ WHERE c.Id = @ClienterId  ";
                 result.Password = dataReader["Password"].ToString();
                 result.TrueName = dataReader["TrueName"].ToString();
                 result.IDCard = dataReader["IDCard"].ToString();
-                if (dataReader["PicWithHandUrl"] != null && dataReader["PicWithHandUrl"].ToString()!="")
-                    result.PicWithHandUrl =Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataReader["PicWithHandUrl"].ToString())[0];
+                if (dataReader["PicWithHandUrl"] != null && dataReader["PicWithHandUrl"].ToString() != "")
+                    result.PicWithHandUrl = Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataReader["PicWithHandUrl"].ToString());
                 result.PicUrl = dataReader["PicUrl"].ToString();
                 obj = dataReader["Status"];
                 if (obj != null && obj != DBNull.Value)
@@ -1326,9 +1328,9 @@ from   dbo.[clienter] (nolock)
 where  phoneNo = @phoneNo ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@phoneNo", phoneNo);
-          
+
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
-            if (executeScalar!=null)
+            if (executeScalar != null)
                 name = executeScalar.ToString();
 
             return name;
@@ -1343,7 +1345,7 @@ where  phoneNo = @phoneNo ";
         /// <param name="trueName"></param>
         /// <returns></returns>
         public int GetId(string phoneNo, string trueName)
-        {           
+        {
             string querySql = @"
 select Id
 from   dbo.[clienter] (nolock) 
@@ -1354,7 +1356,7 @@ where  phoneNo = @phoneNo and TrueName=@TrueName ";
             dbParameters.AddWithValue("@TrueName", trueName);
 
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
-            return  ParseHelper.ToInt(executeScalar, 0);
+            return ParseHelper.ToInt(executeScalar, 0);
 
         }
         /// <summary>
@@ -1428,7 +1430,7 @@ where  phoneNo = @phoneNo and TrueName=@TrueName ";
             {
                 sbSqlWhere.AppendFormat(" AND C.PhoneNo='{0}' ", criteria.clienterPhone);
             }
-            string tableList =string.Format(@" clienter C WITH (NOLOCK)  
+            string tableList = string.Format(@" clienter C WITH (NOLOCK)  
                                   left JOIN BusinessClienterRelation bcr with(nolock) on  C.Id=bcr.ClienterId and bcr.BusinessId={0} and bcr.IsEnable=1 and bcr.IsBind=1
                                 ", criteria.businessId);
             string orderByColumn = " C.Id DESC";
@@ -1479,7 +1481,7 @@ where  cityid in(" + pushCity + ")";
         /// <param name="drawType">0是商户提款单，1是骑士提款单</param>
         /// <param name="withDrawID">提款单id</param>
         /// <returns></returns>
-        public bool IsBussinessOrClienterValidByID(int drawType,long withDrawID)
+        public bool IsBussinessOrClienterValidByID(int drawType, long withDrawID)
         {
 
             string querysql = @"

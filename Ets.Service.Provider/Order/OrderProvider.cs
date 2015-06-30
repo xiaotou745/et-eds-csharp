@@ -268,6 +268,7 @@ namespace Ets.Service.Provider.Order
                 to.CommissionFixValue = ParseHelper.ToDecimal(business.CommissionFixValue);//固定金额     
                 to.BusinessGroupId = business.BusinessGroupId;
                 to.MealsSettleMode = business.MealsSettleMode;
+                to.OneKeyPubOrder = business.OneKeyPubOrder;
             }
             if (ConfigSettings.Instance.IsGroupPush)
             {
@@ -1442,6 +1443,7 @@ namespace Ets.Service.Provider.Order
             orderDM.Longitude = order.Longitude;
             orderDM.Latitude = order.Latitude;
             orderDM.ClienterId = ParseHelper.ToInt(order.clienterId);
+            orderDM.OneKeyPubOrder = orderDM.OneKeyPubOrder;
 
             #region 是否允许修改小票
             orderDM.IsModifyTicket = true;
@@ -1473,7 +1475,6 @@ namespace Ets.Service.Provider.Order
                 IsExistsUnFinish = listOrderChildInfo.Exists(t => t.PayStatus == PayStatusEnum.WaitPay.GetHashCode());//如果顾客没支付，查询子订单是否有未支付子订单
             }
             orderDM.IsExistsUnFinish = IsExistsUnFinish;
-
             return orderDM;
         }
 
@@ -1754,6 +1755,18 @@ namespace Ets.Service.Provider.Order
             }
             return detail;
                 
+        }
+
+        /// <summary>
+        /// 一键发单修改地址和电话（内部会抛业务异常）
+        /// </summary>
+        /// <param name="orderId">订单id</param>
+        /// <param name="newAddress">新的收货人地址</param>
+        /// <param name="newPhone">新的收货人电话</param>
+        /// <returns>是否修改成功</returns>
+        public int UpdateOrderAddressAndPhone(string orderId, string newAddress, string newPhone)
+        {
+            return orderDao.UpdateOrderAddressAndPhone(orderId,newAddress,newPhone);
         }
     }
 }

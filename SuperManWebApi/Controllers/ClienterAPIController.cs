@@ -88,9 +88,9 @@ namespace SuperManWebApi.Controllers
 
             ImageHelper ih = new ImageHelper();
             //手持照片
-            ImgInfo handImg = ih.UploadImg(fileHand, 0);
+            ImgInfo handImg = ih.UploadImg(fileHand, ParseHelper.ToInt(strUserId,0));
             //身份证照片
-            ImgInfo sfhImg = ih.UploadImg(file, 0);
+            ImgInfo sfhImg = ih.UploadImg(file, ParseHelper.ToInt(strUserId,0));
   
             var upResult = iClienterProvider.UpdateClientPicInfo(new ClienterModel { Id = int.Parse(strUserId), PicUrl = sfhImg.PicUrl, PicWithHandUrl = handImg.PicUrl, TrueName = trueName, IDCard = strIdCard });
             if (!upResult)

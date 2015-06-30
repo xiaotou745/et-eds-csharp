@@ -212,71 +212,37 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<UploadReceiptResultModel>.Conclude(UploadIconStatus.NOFormParameter);
             }
+
+            #region 参数验证
+
             var orderId = ParseHelper.ToInt(HttpContext.Current.Request.Form["OrderId"], 0); //订单号
+            if (orderId == 0) // 订单id
+            {
+                return ResultModel<UploadReceiptResultModel>.Conclude(UploadIconStatus.InvalidOrderId);
+            }
             var clienterId = ParseHelper.ToInt(HttpContext.Current.Request.Form["ClienterId"], 0); //骑士的id
-            var needUploadCount = ParseHelper.ToInt(HttpContext.Current.Request.Form["NeedUploadCount"], 1); //该订单总共需要上传的 小票数量
-            var receiptPic = HttpContext.Current.Request.Form["ReceiptPicAddress"];  //小票地址更新时
-            var version = HttpContext.Current.Request.Form["Version"]; //版本号  1.0 
-            var orderChildId = ParseHelper.ToInt(HttpContext.Current.Request.Form["OrderChildId"], 0); //子单号
             if (clienterId == 0) // 骑士Id
             {
                 return ResultModel<UploadReceiptResultModel>.Conclude(UploadIconStatus.ClienterIdInvalid);
             }
-            if (orderId == 0)  // 订单id
-            {
-                return ResultModel<UploadReceiptResultModel>.Conclude(UploadIconStatus.InvalidOrderId);
-            }
-            if (string.IsNullOrWhiteSpace(version))  //版本号
-            {
-                return ResultModel<UploadReceiptResultModel>.Conclude(UploadIconStatus.NoVersion);
-            }
+            var needUploadCount = ParseHelper.ToInt(HttpContext.Current.Request.Form["NeedUploadCount"], 1);
+                //该订单总共需要上传的 小票数量
+            var receiptPic = HttpContext.Current.Request.Form["ReceiptPicAddress"]; //小票地址更新时
+            //var version = HttpContext.Current.Request.Form["Version"]; //版本号  1.0 
+            var orderChildId = ParseHelper.ToInt(HttpContext.Current.Request.Form["OrderChildId"], 0); //子单号 
             if (orderChildId == 0) //子订单号
             {
                 return ResultModel<UploadReceiptResultModel>.Conclude(UploadIconStatus.NoOrderChildId);
             }
-            if (HttpContext.Current.Request.Files.Count == 0)  //图片
+
+            if (HttpContext.Current.Request.Files.Count == 0) //图片
             {
                 return ResultModel<UploadReceiptResultModel>.Conclude(UploadIconStatus.InvalidFileFormat);
             }
             var file = HttpContext.Current.Request.Files[0]; //照片
 
-            #region 暂时注释
-
-            //System.Drawing.Image img;
-            //try
-            //{
-            //    img = System.Drawing.Image.FromStream(file.InputStream);
-            //}
-            //catch (Exception)
-            //{
-            //    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.InvalidFileFormat);
-            //}
-            //var fileName = ETS.Util.ImageTools.GetFileName(Path.GetExtension(file.FileName));
-            //int fileNameLastDot = fileName.LastIndexOf('.');
-            ////原图 
-            //string rFileName = string.Format("{0}{1}{2}", fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
-
-            //string saveDbFilePath;
-
-            //string fullFileDir = ETS.Util.ImageTools.CreateDirectory(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath, orderId.ToString(), out saveDbFilePath);
-
-            //if (fullFileDir == "0")
-            //{ 
-            //    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.UploadReceiptResultModel>.Conclude(ETS.Enums.UploadIconStatus.UpFailed);
-            //}
-            ////保存原图
-            //var fullFilePath = Path.Combine(fullFileDir, rFileName);
-
-            //file.SaveAs(fullFilePath);
-
-            ////裁图
-            //var transformer = new SuperManCore.FixedDimensionTransformerAttribute(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.Width, Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.Height, CustomerIconUploader.Instance.MaxBytesLength / 1024);
-            ////保存到数据库的图片路径
-            //var destFullFileName = System.IO.Path.Combine(fullFileDir, fileName);
-            //transformer.Transform(fullFilePath, destFullFileName); 
-            //var picUrl = saveDbFilePath + fileName; 
-
             #endregion
+           
             //上传图片
             ImgInfo imgInfo = new ImageHelper().UploadImg(file, orderId);
             var uploadReceiptModel = new UploadReceiptModel
@@ -287,7 +253,7 @@ namespace SuperManWebApi.Controllers
                 NeedUploadCount = needUploadCount,
                 ReceiptPic = imgInfo.PicUrl
             };
-
+            LogHelper.LogWriter("上传小票", new { orderId = orderId, clienterId = clienterId, orderChildId = orderChildId, ReceiptPic = imgInfo.PicUrl });
             var orderOther = iClienterProvider.UpdateClientReceiptPicInfo(uploadReceiptModel);
             if (orderOther == null)
             {
@@ -295,9 +261,12 @@ namespace SuperManWebApi.Controllers
             }
             else
             {
-                List<string> listReceiptPic = ImageCommon.ReceiptPicConvert(uploadReceiptModel.ReceiptPic);
                 List<OrderChildImg> listOrderChild = new List<OrderChildImg>();
-                listOrderChild.Add(new OrderChildImg() { OrderChildId = orderChildId, TicketUrl = listReceiptPic[0] });
+                listOrderChild.Add(new OrderChildImg()
+                {
+                    OrderChildId = orderChildId, 
+                    TicketUrl = ImageCommon.ReceiptPicConvert(uploadReceiptModel.ReceiptPic)
+                });
                 if (!string.IsNullOrWhiteSpace(receiptPic))  //当有地址的时候删除
                 {
                     ImageHelper imgHelper = new ImageHelper();
@@ -514,6 +483,32 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<string>.Conclude(ConfirmTakeStatus.Failed);
             }
         }
-
+        /// <summary>
+        /// 一键发单修改地址和电话
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="newAddress"></param>
+        /// <param name="newPhone"></param>
+        /// <returns></returns>
+        public ResultModel<string> UpdateOrderAddressAndPhone(string orderId, string newAddress, string newPhone)
+        {
+            if (string.IsNullOrEmpty(orderId) ||
+               string.IsNullOrEmpty(newAddress) ||
+               string.IsNullOrEmpty(newPhone))
+            {
+                return ResultModel<string>.Conclude(OneKeyPubOrderUpdateStatus.ParamEmpty);
+            }
+            int result = iOrderProvider.UpdateOrderAddressAndPhone(orderId, newAddress, newPhone);
+            switch (result)
+            {
+                case -1:
+                    return ResultModel<string>.Conclude(OneKeyPubOrderUpdateStatus.OnlyOneKeyPubOrder);
+                case 0:
+                    return ResultModel<string>.Conclude(OneKeyPubOrderUpdateStatus.Failed);
+                case 1:
+                default:
+                    return ResultModel<string>.Conclude(OneKeyPubOrderUpdateStatus.Success);
+            }
+        }
     }
 }

@@ -21,7 +21,7 @@ namespace SuperManWebApi.Controllers
     [ExecuteTimeLog]
     public class BusinessController : ApiController
     {
-        private readonly IBusinessFinanceProvider _businessFinanceProvider = new BusinessFinanceProvider();
+        private readonly IBusinessBalanceRecordProvider _iBusinessBalanceRecordProvider = new BusinessBalanceRecordProvider();
         private readonly IBusinessProvider _iBusinessProvider = new BusinessProvider();
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace SuperManWebApi.Controllers
         [ApiVersion]
         public ResultModel<object> Records(BussinessRecordsPM model)
         {
-            return _businessFinanceProvider.GetRecords(model.BusinessId);
+            return _iBusinessBalanceRecordProvider.GetRecords(model.BusinessId);
         }
 
         /// <summary>

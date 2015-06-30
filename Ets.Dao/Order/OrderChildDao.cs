@@ -364,7 +364,7 @@ where  OrderId=@OrderId ";
                 ochildInfo.PayPrice = ParseHelper.ToDecimal(dataRow["PayPrice"]);
                 ochildInfo.HasUploadTicket = ParseHelper.ToBool(dataRow["HasUploadTicket"]);
                 if (dataRow["TicketUrl"] != null && dataRow["TicketUrl"] != DBNull.Value && dataRow["TicketUrl"].ToString() != "")
-                    ochildInfo.TicketUrl = Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataRow["TicketUrl"].ToString())[0];
+                    ochildInfo.TicketUrl = Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataRow["TicketUrl"].ToString());
                 list.Add(ochildInfo);
             }
 
@@ -409,9 +409,11 @@ where   o.Id = @orderId
 select HasUploadTicket from  OrderChild oc     
 where   oc.OrderId = @OrderId and ChildId=@ChildId ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("OrderId", orderId);
-            dbParameters.AddWithValue("ChildId", childId);
-            return ParseHelper.ToBool(DbHelper.ExecuteScalar(SuperMan_Write, querySql, dbParameters),false);
+            //dbParameters.AddWithValue("OrderId", orderId);
+            //dbParameters.AddWithValue("ChildId", childId);
+            dbParameters.Add("OrderId", DbType.Int32, 4).Value = orderId;
+            dbParameters.Add("ChildId", DbType.Int32, 4).Value = childId;
+            return ParseHelper.ToBool(DbHelper.ExecuteScalar(SuperMan_Write, querySql, dbParameters), false);
         }
     }
 

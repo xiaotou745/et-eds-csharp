@@ -37,7 +37,8 @@ using Ets.Model.ParameterModel.Finance;
 using Ets.Dao.Business;
 using Ets.Model.DomainModel.GlobalConfig;
 using Ets.Service.Provider.Common;
-
+using Ets.Service.IProvider.Common;
+using Ets.Service.Provider.Common;
 namespace Ets.Service.Provider.Clienter
 {
     public class ClienterProvider : IClienterProvider
@@ -46,15 +47,15 @@ namespace Ets.Service.Provider.Clienter
         readonly OrderDao orderDao = new OrderDao();
         readonly OrderOtherDao orderOtherDao = new OrderOtherDao();
         readonly OrderChildDao orderChildDao = new OrderChildDao();
-        private readonly ClienterBalanceRecordDao clienterBalanceRecordDao = new ClienterBalanceRecordDao();
-        private readonly BusinessDao businessDao = new BusinessDao();
-        readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
+        readonly ClienterBalanceRecordDao clienterBalanceRecordDao = new ClienterBalanceRecordDao();
+        readonly BusinessDao businessDao = new BusinessDao();
+        readonly IAreaProvider iAreaProvider = new AreaProvider();
         private readonly BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
 
         readonly IOrderOtherProvider iOrderOtherProvider = new OrderOtherProvider();
-        private readonly BusinessDao _businessDao = new BusinessDao();
-        private readonly BusinessBalanceRecordDao _businessBalanceRecordDao = new BusinessBalanceRecordDao();
-        private readonly BusinessClienterRelationDao businessClienterDao = new BusinessClienterRelationDao();
+        readonly BusinessDao _businessDao = new BusinessDao();
+        readonly BusinessBalanceRecordDao _businessBalanceRecordDao = new BusinessBalanceRecordDao();
+        readonly BusinessClienterRelationDao businessClienterDao = new BusinessClienterRelationDao();
         /// <summary>
         /// 骑士上下班功能 add by caoheyang 20150312
         /// </summary>
@@ -676,7 +677,7 @@ namespace Ets.Service.Provider.Clienter
         public void UpdateClienterAccount(int userId, OrderListModel myOrderInfo)
         {
             //更新骑士 金额  
-            bool b = clienterDao.UpdateClienterAccountBalance(new WithdrawRecordsModel() { UserId = userId, Amount = myOrderInfo.OrderCommission.Value });
+            bool b = clienterDao.UpdateClienterAccountBalanceForFinish(new WithdrawRecordsModel() { UserId = userId, Amount = myOrderInfo.OrderCommission.Value });
             //增加记录 
             decimal? accountBalance = 0;
             //更新用户相关金额数据 
@@ -796,7 +797,6 @@ namespace Ets.Service.Provider.Clienter
         public OrderOther UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel)
         {
             OrderOther orderOther = null;
-            ///TODO 单一职责，GetById GetByNo
             var myOrderInfo = orderDao.GetByOrderId(uploadReceiptModel.OrderId);
             ///TODO 事务里有多个库的连接串
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
@@ -813,6 +813,8 @@ namespace Ets.Service.Provider.Clienter
 
 
                 orderOther = clienterDao.UpdateClientReceiptPicInfo(uploadReceiptModel);
+                if (orderOther == null) return null;
+
                 //上传成功后， 判断 订单 创建时间在 2015-4-18 00：00 之前的订单不在增加佣金
                 string date = "2015-04-18 00:00:00";
 
@@ -973,16 +975,14 @@ namespace Ets.Service.Provider.Clienter
             //return false;
             #endregion
 
-            bool isPay = false;
-
-            string finishAll = orderDao.GetFinishAllById(orderNo);
-            if (finishAll != "1")
-            {
-                orderDao.UpdateFinishAll(orderNo);
-                isPay = true;
-            }
-
-            return isPay;
+            //bool isPay = false; 
+            //string finishAll = orderDao.GetFinishAllById(orderNo);
+            //if (finishAll != "1")
+            //{
+                //orderDao.UpdateFinishAll(orderNo);
+            //    isPay = true;
+            //} 
+            return orderDao.UpdateFinishAll(orderNo);  
 
         }
 
@@ -1013,10 +1013,10 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="uploadReceiptModel"></param>
         /// <returns></returns>
-        public OrderOther UpdateReceiptInfo(UploadReceiptModel uploadReceiptModel)
-        {
-            return clienterDao.UpdateReceiptInfo(uploadReceiptModel);
-        }
+        //public OrderOther UpdateReceiptInfo(UploadReceiptModel uploadReceiptModel)
+        //{
+        //    return clienterDao.UpdateReceiptInfo(uploadReceiptModel);
+        //}
 
         /// <summary>
         /// 根据订单Id获取小票信息
