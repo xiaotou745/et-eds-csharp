@@ -127,6 +127,20 @@
     }
 }
 <script type="text/javascript">
+    $(document).ready(function () {
+        $("#checkAll").change(function () {
+            $('input[type="checkbox"][name="checkItem"]').each(function (index, obj) {
+                if (!obj.disabled && obj.value != "") {
+                    if ($("#checkAll").attr("checked") == "checked") {
+                        $(obj).attr("checked", "checked");
+                    }
+                    else {
+                        $(obj).removeAttr("checked");
+                    }
+                }
+            });
+        });
+    });
     var adminjs = new adminglass(); //实例化后台类
     ///审核通过
     function funWithdrawAuditOk(withwardId) {

@@ -857,24 +857,24 @@ where   oc.OrderId = @OrderId;
             else
             {
                 return new OrderListModel();
-            } 
+            }
         }
 
         /// <summary>
         /// 根据任务号判断该任务是否可以完成
         /// wc 获取该任务下的子订单是否全部付款
         /// </summary>
-        /// <param name="orderNo"></param>
+        /// <param name="orderId"></param>
         /// <returns></returns>
-        public bool IsOrNotFinish(string orderNo)
+        public bool IsOrNotFinish(int orderId)
         {
             StringBuilder sql = new StringBuilder(@" 
 select min(convert(int, oc.PayStatus)) IsPay
 from   dbo.[order] o ( nolock )
 join dbo.OrderChild oc ( nolock ) on o.Id = oc.OrderId
-where  o.OrderNo = @OrderNo");
+where  o.Id = @orderId");
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.Add("OrderNo", DbType.String).Value = orderNo;
+            dbParameters.Add("orderId", DbType.Int32, 4).Value = orderId;
             int isPay = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql.ToString(), dbParameters), 0);
             if (isPay == 0)  //最小是0 说明还有未付款的子订单
             {
@@ -2201,7 +2201,7 @@ select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneN
     when  ISNULL(b.Latitude,0)=0 or ISNULL(b.Longitude,0)=0 or @clienterLongitude=0 or  @clienterLatitude=0  then -1
     else round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(geography::Point(@clienterLatitude,@clienterLongitude,4326)),0)
     end)
-    as distance
+    as distance,o.OneKeyPubOrder 
 from  dbo.[order] o (nolock)
     join business b (nolock) on b.Id=o.businessId
     left join dbo.OrderOther oo (nolock) on o.Id=oo.orderId
@@ -2800,7 +2800,7 @@ where c.Id=@ClienterId;");
 
             string dataSql = string.Format(sql, " TOP " + pageSize + "  " + fields);
 
-            string notTopSql = "SELECT MIN(t.Id) FROM ("+string.Format(sql, " TOP " + ((pageIndex - 1) * pageSize).ToString() + " o.Id ");
+            string notTopSql = "SELECT MIN(t.Id) FROM (" + string.Format(sql, " TOP " + ((pageIndex - 1) * pageSize).ToString() + " o.Id ");
             string countSql = string.Format(sql, " COUNT(*) ");
             if (pageIndex > 1)
             {
@@ -3151,6 +3151,33 @@ update [Order] set FinishAll=1 where OrderNo=@OrderNo";
             }
             return MapRows<OrderMapDetail>(dt)[0];
         }
-        
+
+        /// <summary>
+        /// 一键发单修改地址和电话
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="newAddress"></param>
+        /// <param name="newPhone"></param>
+        /// <returns></returns>
+        public int UpdateOrderAddressAndPhone(string orderId, string newAddress, string newPhone)
+        {
+            string sql = @" select 1 from  [order] where id=@orderId and OneKeyPubOrder=1";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@OrderId", orderId);
+            object obj = DbHelper.ExecuteScalar(SuperMan_Write, sql, dbParameters);
+            if (ParseHelper.ToInt(obj, 0) == 1)
+            {
+                sql = @" update [order] set ReceviceAddress=@ReceviceAddress,RecevicePhoneNo=@RecevicePhoneNo where id=@orderId";
+                dbParameters.AddWithValue("@ReceviceAddress", newAddress);
+                dbParameters.AddWithValue("@RecevicePhoneNo", newPhone);
+                int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
+                return i;
+            }
+            else
+            {
+                return -1;
+            }
+        }
     }
 }

@@ -18,6 +18,7 @@ using ETS.Transaction;
 using ETS.Transaction.Common;
 using ETS.Util;
 using Ets.Dao.Business;
+using Ets.Dao.Clienter;
 namespace Ets.Service.Provider.Finance
 {
     public class BusinessFinanceProvider : IBusinessFinanceProvider
@@ -46,6 +47,8 @@ namespace Ets.Service.Provider.Finance
         /// 财务dao
         /// </summary>
         private BusinessFinanceDao businessFinanceDao = new BusinessFinanceDao();
+
+        private ClienterDao clienterDao = new ClienterDao();
         #endregion
 
         /// <summary>
@@ -439,7 +442,12 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public bool BusinessWithdrawAudit(BusinessWithdrawLog model)
         {
-            return businessFinanceDao.BusinessWithdrawAudit(model);
+           bool isBussinessIDValid= clienterDao.IsBussinessOrClienterValidByID(0, model.WithwardId);
+           if (isBussinessIDValid)
+           {
+               return businessFinanceDao.BusinessWithdrawAudit(model);
+           }
+           throw new Exception("提款单对应的商户已经被取消资格，请联系客服");
         }
         /// <summary>
         /// 商户提现申请单确认打款

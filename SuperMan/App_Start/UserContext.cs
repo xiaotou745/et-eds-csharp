@@ -52,16 +52,17 @@ namespace SuperMan.App_Start
             {
                 return false;
             }
-            string cookieValue = CookieHelper.ReadCookie("menulist");
-            if (cookieValue == "")
-            {
-                return new AuthorityMenuProvider().HasAuthority(UserContext.Current.Id, menuid);
-            }
-            else
-            {
-                var list = JsonHelper.ToObject<List<int>>(cookieValue);
-                return list.Contains(menuid);
-            }
+            return new AuthorityMenuProvider().HasAuthority(UserContext.Current.Id, menuid);
+            //string cookieValue = CookieHelper.ReadCookie("menulist");
+            //if (cookieValue == "")
+            //{
+            //    return new AuthorityMenuProvider().HasAuthority(UserContext.Current.Id, menuid);
+            //}
+            //else
+            //{
+            //    var list = JsonHelper.ToObject<List<int>>(cookieValue);
+            //    return list.Contains(menuid);
+            //}
         }
 
         /// <summary>

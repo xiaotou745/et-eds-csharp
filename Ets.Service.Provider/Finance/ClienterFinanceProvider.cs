@@ -352,7 +352,12 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public bool ClienterWithdrawAudit(ClienterWithdrawLog model)
         {
-            return clienterFinanceDao.ClienterWithdrawAudit(model);
+            bool isClienterIDValid = _clienterDao.IsBussinessOrClienterValidByID(1, model.WithwardId);
+            if (isClienterIDValid)
+            {
+                return clienterFinanceDao.ClienterWithdrawAudit(model);
+            }
+            throw new Exception("提款单对应的骑士已经被取消资格，请联系客服");
         }
         /// <summary>
         /// 骑士提现申请单确认打款

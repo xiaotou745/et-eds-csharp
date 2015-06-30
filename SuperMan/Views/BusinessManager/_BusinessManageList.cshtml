@@ -142,7 +142,7 @@
                                 {
                                     <a href="javascript:void(0)" onclick="funcComView(@item.Id,'@item.Name','@distribSubsidy','@item.PhoneNo','@commission',@item.CommissionType,@item.CommissionFixValue,@item.BusinessGroupId)">设置结算</a>
                                 }*@
-                            @if (SuperMan.App_Start.UserContext.Current.HasAuthority(24))
+                            @if (SuperMan.App_Start.UserContext.Current.HasAuthority(60))
                             {
                                 <a href="/BusinessManager/QueryBusinessDetail?businessId=@item.Id">修改信息</a>
                                 @*<a href="javascript:void(0)" onclick="funcUpdateBusinessInfo(@item.Id,'@item.Name','@item.PhoneNo','@item.OriginalBusiId','@item.GroupId','@item.MealsSettleMode')">修改信息</a>*@

@@ -43,15 +43,15 @@ namespace SuperManWebApi.Controllers
         public ResultModel<BusiOrderResultModel> Push(BussinessOrderInfoPM model)
         {
             try
-            {           
+            {
                 //通过传过来的字符串序列化对象                
-                model.listOrderChlid = ParseHelper.Deserialize<List<OrderChlidPM>>(model.OrderChlidJson);             
-                
-                order order;             
+                model.listOrderChlid = ParseHelper.Deserialize<List<OrderChlidPM>>(model.OrderChlidJson);
+
+                order order;
                 ResultModel<BusiOrderResultModel> currResModel = Verification(model, out order);
                 if (currResModel.Status == PubOrderStatus.VerificationSuccess.GetHashCode())
-                {                    
-                    PubOrderStatus cuStatus = iOrderProvider.AddOrder(order);              
+                {
+                    PubOrderStatus cuStatus = iOrderProvider.AddOrder(order);
                     if (cuStatus == PubOrderStatus.Success)//当前订单执行成功
                     {
                         BusiOrderResultModel resultModel = new BusiOrderResultModel { userId = model.userId };
@@ -78,7 +78,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         ResultModel<BusiOrderResultModel> Verification(BussinessOrderInfoPM model, out  order order)
         {
-            bool isOneKeyPubOrder = false; 
+            bool isOneKeyPubOrder = false;
             BussinessStatusModel buStatus = iBusinessProvider.GetUserStatus(model.userId);
             if (buStatus != null && buStatus.OneKeyPubOrder == 1)
                 isOneKeyPubOrder = true;
@@ -97,17 +97,17 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneIsNULL);
             }
-            if (!isOneKeyPubOrder &&  string.IsNullOrEmpty(model.receviceAddress))
+            if (!isOneKeyPubOrder && string.IsNullOrEmpty(model.receviceAddress))
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.ReceviceAddressIsNULL);
-            }     
+            }
 
             if (!iBusinessProvider.HaveQualification(model.userId))//验证该商户有无发布订单资格 
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.HadCancelQualification);
             }
-            int orderChileCount=model.listOrderChlid.Count;
-            if (orderChileCount >= 16 || orderChileCount<=0)
+            int orderChileCount = model.listOrderChlid.Count;
+            if (orderChileCount >= 16 || orderChileCount <= 0)
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
             }
@@ -116,7 +116,7 @@ namespace SuperManWebApi.Controllers
             {
                 if (model.listOrderChlid[i].GoodPrice < 5m)
                 {
-                     return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountLessThanTen);
+                    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountLessThanTen);
                 }
                 if (model.listOrderChlid[i].GoodPrice > 1000m)
                 {
@@ -124,7 +124,7 @@ namespace SuperManWebApi.Controllers
                 }
                 amount += model.listOrderChlid[i].GoodPrice;
 
-            }           
+            }
             if (model.Amount != amount)
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountIsNotEqual);
@@ -147,7 +147,7 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusiSettlementRatioError);
             }
 
-            if (business ==null) //如果商户不允许可透支发单，验证余额是否满足结算费用，如果不满足，提示：“您的余额不足，请及时充值!”
+            if (business == null) //如果商户不允许可透支发单，验证余额是否满足结算费用，如果不满足，提示：“您的余额不足，请及时充值!”
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusinessEmpty);  //未取到商户信息
             }
@@ -353,9 +353,9 @@ namespace SuperManWebApi.Controllers
         [ExecuteTimeLog]
         public ResultModel<RushOrderResultModel> Receive(OrderReceiveModel model)
         {
-            if (model.orderId<=0) //订单号码非空验证
+            if (model.orderId <= 0) //订单号码非空验证
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
-            if (model.userId<= 0) //用户id验证
+            if (model.userId <= 0) //用户id验证
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
             if (model.businessId <= 0)  //商户Id
             {
@@ -386,16 +386,12 @@ namespace SuperManWebApi.Controllers
             if (parModel.orderId <= 0) //订单Id
             {
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderIdEmpty);
-            } 
+            }
             if (string.IsNullOrWhiteSpace(parModel.version))
             {
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.NoVersion);
             }
-            var myorder = new Ets.Dao.Order.OrderDao().IsOrNotFinish(parModel.orderNo);
-            if (!myorder)
-            {
-                return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.ExistNotPayChildOrder);
-            }
+
             FinishOrderResultModel finishModel = iClienterProvider.FinishOrder(parModel.userId, parModel.orderNo, parModel.Longitude, parModel.Latitude, parModel.pickupCode);
             if (finishModel.Message == "500") //在查询订单信息关联表时数据不完成造成
             {
@@ -405,8 +401,12 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.TooQuickly, finishModel);
             }
+            if (finishModel.Message == "502")//有未完成子订单
+            {
+                return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.ExistNotPayChildOrder);
+            }
             if (finishModel.Message == "1")  //完成
-            {       
+            {
                 return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Success, finishModel);
             }
             else if (finishModel.Message == "3")
@@ -483,6 +483,32 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<string>.Conclude(ConfirmTakeStatus.Failed);
             }
         }
-        
+        /// <summary>
+        /// 一键发单修改地址和电话
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="newAddress"></param>
+        /// <param name="newPhone"></param>
+        /// <returns></returns>
+        public ResultModel<string> UpdateOrderAddressAndPhone(string orderId, string newAddress, string newPhone)
+        {
+            if (string.IsNullOrEmpty(orderId) ||
+               string.IsNullOrEmpty(newAddress) ||
+               string.IsNullOrEmpty(newPhone))
+            {
+                return ResultModel<string>.Conclude(OneKeyPubOrderUpdateStatus.ParamEmpty);
+            }
+            int result = iOrderProvider.UpdateOrderAddressAndPhone(orderId, newAddress, newPhone);
+            switch (result)
+            {
+                case -1:
+                    return ResultModel<string>.Conclude(OneKeyPubOrderUpdateStatus.OnlyOneKeyPubOrder);
+                case 0:
+                    return ResultModel<string>.Conclude(OneKeyPubOrderUpdateStatus.Failed);
+                case 1:
+                default:
+                    return ResultModel<string>.Conclude(OneKeyPubOrderUpdateStatus.Success);
+            }
+        }
     }
 }
