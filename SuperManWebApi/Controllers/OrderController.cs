@@ -491,19 +491,18 @@ namespace SuperManWebApi.Controllers
         /// <summary>
         /// 一键发单修改地址和电话
         /// </summary>
-        /// <param name="orderId"></param>
-        /// <param name="newAddress"></param>
-        /// <param name="newPhone"></param>
+        /// <param name="model"></param>
         /// <returns></returns>
-        public ResultModel<string> UpdateOrderAddressAndPhone(string orderId, string newAddress, string newPhone)
+        [HttpPost]
+        public ResultModel<string> UpdateOrderAddressAndPhone(NewAddressPM model)
         {
-            if (string.IsNullOrEmpty(orderId) ||
-               string.IsNullOrEmpty(newAddress) ||
-               string.IsNullOrEmpty(newPhone))
+            if (string.IsNullOrEmpty(model.OrderId) ||
+               string.IsNullOrEmpty(model.NewAddress) ||
+               string.IsNullOrEmpty(model.NewPhone))
             {
                 return ResultModel<string>.Conclude(OneKeyPubOrderUpdateStatus.ParamEmpty);
             }
-            int result = iOrderProvider.UpdateOrderAddressAndPhone(orderId, newAddress, newPhone);
+            int result = iOrderProvider.UpdateOrderAddressAndPhone(model.OrderId, model.NewAddress, model.NewPhone);
             switch (result)
             {
                 case -1:
