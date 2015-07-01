@@ -45,10 +45,12 @@ select id from dbo.[order](nolock) where OrderNo=@OrderNo
         /// <summary>
         /// 更新一条记录
         /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150701</UpdateTime>
         /// <param name="orderNo"></param>
         /// <param name="completeLongitude"></param>
         /// <param name="completeLatitude"></param>
-        public void UpdateComplete(string orderNo, float completeLongitude, float completeLatitude)
+        public void UpdateComplete(OrderCompleteModel parModel)
         {
             const string UPDATE_SQL = @"
 update OrderOther 
@@ -56,9 +58,9 @@ set CompleteLongitude=@CompleteLongitude,CompleteLatitude=@CompleteLatitude wher
 select id from dbo.[order] where OrderNo=@OrderNo
 )";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@CompleteLongitude", completeLongitude);
-            dbParameters.AddWithValue("@CompleteLatitude", completeLatitude);
-            dbParameters.AddWithValue("@orderNo", orderNo);
+            dbParameters.AddWithValue("@CompleteLongitude", parModel.Longitude);
+            dbParameters.AddWithValue("@CompleteLatitude", parModel.Latitude);
+            dbParameters.AddWithValue("@orderNo", parModel.orderNo);
             DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
         }
 

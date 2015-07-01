@@ -207,13 +207,12 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         [ApiVersionStatistic]
         public ResultModel<UploadReceiptResultModel> TicketUpload()
-        {
+        {    
+            #region 参数验证
             if (HttpContext.Current.Request.Form.Count == 0)
             {
                 return ResultModel<UploadReceiptResultModel>.Conclude(UploadIconStatus.NOFormParameter);
-            }
-
-            #region 参数验证
+            }     
 
             var orderId = ParseHelper.ToInt(HttpContext.Current.Request.Form["OrderId"], 0); //订单号
             if (orderId == 0) // 订单id
@@ -227,8 +226,7 @@ namespace SuperManWebApi.Controllers
             }
             var needUploadCount = ParseHelper.ToInt(HttpContext.Current.Request.Form["NeedUploadCount"], 1);
                 //该订单总共需要上传的 小票数量
-            var receiptPic = HttpContext.Current.Request.Form["ReceiptPicAddress"]; //小票地址更新时
-            //var version = HttpContext.Current.Request.Form["Version"]; //版本号  1.0 
+            var receiptPic = HttpContext.Current.Request.Form["ReceiptPicAddress"]; //小票地址更新时           
             var orderChildId = ParseHelper.ToInt(HttpContext.Current.Request.Form["OrderChildId"], 0); //子单号 
             if (orderChildId == 0) //子订单号
             {
@@ -353,6 +351,7 @@ namespace SuperManWebApi.Controllers
         [ExecuteTimeLog]
         public ResultModel<RushOrderResultModel> Receive(OrderReceiveModel model)
         {
+            #region 验证
             if (model.orderId <= 0) //订单号码非空验证
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
             if (model.userId <= 0) //用户id验证
@@ -369,6 +368,8 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.NoVersion);
             }
+            #endregion
+
             return new ClienterProvider().Receive_C(model.userId, model.orderNo, model.businessId, model.Longitude, model.Latitude);
         }
 
@@ -380,9 +381,9 @@ namespace SuperManWebApi.Controllers
         public ResultModel<FinishOrderResultModel> Complete(OrderCompleteModel parModel)
         {
             if (parModel.userId <= 0)  //用户id非空验证 骑士Id
-                return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.UserIdEmpty);
+                return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.UserIdEmpty);
             if (string.IsNullOrEmpty(parModel.orderNo)) //订单号码非空验证
-                return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderEmpty);
+                return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderEmpty);
             if (parModel.orderId <= 0) //订单Id
             {
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderIdEmpty);
@@ -392,33 +393,38 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.NoVersion);
             }
 
-            FinishOrderResultModel finishModel = iClienterProvider.FinishOrder(parModel.userId, parModel.orderNo, parModel.Longitude, parModel.Latitude, parModel.pickupCode);
-            if (finishModel.Message == "500") //在查询订单信息关联表时数据不完成造成
-            {
-                return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.DataError, finishModel);
-            }
-            if (finishModel.Message == "501")  //完成时间
-            {
-                return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.TooQuickly, finishModel);
-            }
-            if (finishModel.Message == "502")//有未完成子订单
-            {
-                return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.ExistNotPayChildOrder);
-            }
-            if (finishModel.Message == "1")  //完成
-            {
-                return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Success, finishModel);
-            }
-            else if (finishModel.Message == "3")
-            {
-                return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.OrderHadCancel);
-            }
-            else if (finishModel.Message == ETS.Enums.FinishOrderStatus.PickupCodeError.ToString())
-                return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.PickupCodeError);
-            else
-            {
-                return ResultModel<FinishOrderResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Failed);
-            }
+            FinishOrderResultModel finishModel = iClienterProvider.FinishOrder(parModel);
+            return ResultModel<FinishOrderResultModel>.Conclude(finishModel.FinishOrderStatus, finishModel);
+
+            #region 临时
+            //if (finishModel.Message == "1")  //完成
+            //{
+            //    return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.Success, finishModel);
+            //}
+
+            //if (finishModel.Message == "500") //在查询订单信息关联表时数据不完成造成
+            //{
+            //    return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.DataError);
+            //}
+            //if (finishModel.Message == "501")  //完成时间
+            //{
+            //    return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.TooQuickly);
+            //}
+            //if (finishModel.Message == "502")//有未完成子订单
+            //{
+            //    return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.ExistNotPayChildOrder);
+            //}           
+            //if (finishModel.Message == "3")
+            //{
+            //    return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderHadCancel);
+            //}
+            //if (finishModel.Message == FinishOrderStatus.PickupCodeError.ToString())
+            //{
+            //    return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.PickupCodeError);
+            //}
+
+            //return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.Failed);          
+            #endregion
         }
 
         /// <summary>
@@ -456,7 +462,6 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         public ResultModel<string> ConfirmTake(OrderPM modelPM)
         {
-
             #region 验证
             if (string.IsNullOrWhiteSpace(modelPM.Version)) //版本号 
             {

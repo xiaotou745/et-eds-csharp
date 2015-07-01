@@ -589,83 +589,154 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="orderNo">订单号码</param>
         /// <param name="pickupCode">取货码</param>
         /// <returns></returns>
-        public FinishOrderResultModel FinishOrder(int userId, string orderNo, float completeLongitude, float CompleteLatitude, string pickupCode = null)
-        {
-            FinishOrderResultModel model = new FinishOrderResultModel() { Message = "-1" };
-            //string result = "-1";
-            int businessId = 0;
+        public FinishOrderResultModel FinishOrder(OrderCompleteModel parModel)
+        {          
+            string orderNo = parModel.orderNo;   
+            string pickupCode = parModel.pickupCode;
+            #region 验证
+            FinishOrderResultModel model = new FinishOrderResultModel() { };
+
             OrderListModel myOrderInfo = orderDao.GetByOrderNo(orderNo);
             if (myOrderInfo == null)  //关联表用的join,数据不完整关联表时会查不到数据
+            {              
+                model.FinishOrderStatus = FinishOrderStatus.DataError;
+                return model;
+            }
+            //获取该订单信息和该  骑士现在的 收入金额
+            if (myOrderInfo.GroupId == SystemConst.Group3 && !string.IsNullOrWhiteSpace(myOrderInfo.PickupCode)
+                && pickupCode != myOrderInfo.PickupCode) //全时订单 判断 取货码是否正确             
             {
-                model.Message = "500";
+                model.FinishOrderStatus = FinishOrderStatus.PickupCodeError;
                 return model;
             }
 
             GlobalConfigModel globalSetting = new GlobalConfigProvider().GlobalConfigMethod(0);
             int limitFinish = ParseHelper.ToInt(globalSetting.CompleteTimeSet, 5);
-            //取到任务的接单时间、从缓存中读取完成任务时间限制，判断要用户点击完成时间>接单时间+限制时间  
-            //var redis = new ETS.NoSql.RedisCache.RedisCache();
+            //取到任务的接单时间、从缓存中读取完成任务时间限制，判断要用户点击完成时间>接单时间+限制时间           
             DateTime yuJiFinish = myOrderInfo.GrabTime.Value.AddMinutes(limitFinish);
             if (DateTime.Compare(DateTime.Now, yuJiFinish) < 0)  //小于0说明用户完成时间 太快
-            {
-                model.Message = "501";
+            {             
+                model.FinishOrderStatus = FinishOrderStatus.TooQuickly;
                 return model;
             }
-            if (!new Ets.Dao.Order.OrderDao().IsOrNotFinish(myOrderInfo.Id))//是否有未完成子订单
-            {
-                model.Message = "502";
+            if (!new OrderDao().IsOrNotFinish(myOrderInfo.Id))//是否有未完成子订单
+            {           
+                model.FinishOrderStatus = FinishOrderStatus.ExistNotPayChildOrder;
                 return model;
-            }
-
-            #region 是否允许修改小票
-            model.IsModifyTicket = true;
-            if (myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount)// && myOrderInfo.Status == OrderStatus.订单完成.GetHashCode()
-            {
-                model.IsModifyTicket = false;
             }
             #endregion
 
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                //获取该订单信息和该  骑士现在的 收入金额
-                if (myOrderInfo.GroupId == SystemConst.Group3 && !string.IsNullOrWhiteSpace(myOrderInfo.PickupCode)
-                    && pickupCode != myOrderInfo.PickupCode) //全时订单 判断 取货码是否正确
-                //return FinishOrderStatus.PickupCodeError.ToString();
+                //更新订单状态                
+                var upresult = orderDao.FinishOrderStatus(myOrderInfo);
+                if (upresult <= 0)
                 {
-                    model.Message = FinishOrderStatus.PickupCodeError.ToString();
+                    model.FinishOrderStatus = FinishOrderStatus.OrderHadCancel;
                     return model;
                 }
-                //更新订单状态
-                if (myOrderInfo != null)
-                {
-                    var upresult = orderDao.FinishOrderStatus(myOrderInfo);
-                    if (upresult <= 0)
-                    {
-                        model.Message = "3";
-                        return model;
-                    }
-                    //写入骑士完成坐标                 
-                    orderOtherDao.UpdateComplete(orderNo, completeLongitude, CompleteLatitude);
 
-                    ///更新骑士和商家金额
-                    UpdateMoney(myOrderInfo);
+                //写入骑士完成坐标                 
+                orderOtherDao.UpdateComplete(parModel);
 
-                    businessId = myOrderInfo.businessId;//为当前的商户发送jpush用
+                //更新骑士和商家金额
+                UpdateMoney(myOrderInfo);
 
-                    tran.Complete();
-                    model.Message = "1";
-                }
+                tran.Complete();
+
             }
             //异步回调第三方，推送通知
             Task.Factory.StartNew(() =>
             {
-                if (businessId != 0 && model.Message == "1")
+                if (myOrderInfo.businessId != 0 && model.Message == "1")
                 {
-                    Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", businessId.ToString(), string.Empty);
+                    Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", myOrderInfo.businessId.ToString(), string.Empty);
                     new OrderProvider().AsyncOrderStatus(orderNo);
                 }
             });
+
+            model.IsModifyTicket = myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount ? true : false;//是否允许修改小票     
+            model.FinishOrderStatus = FinishOrderStatus.Success;
             return model;
+
+            #region 临时
+            ////int userId=parModel.userId;
+            //string orderNo= parModel.orderNo;
+            //float completeLongitude=parModel.Longitude; 
+            //float CompleteLatitude=parModel.Latitude; 
+            //string pickupCode = parModel.pickupCode;
+            //FinishOrderResultModel model = new FinishOrderResultModel() {};
+        
+            //OrderListModel myOrderInfo = orderDao.GetByOrderNo(orderNo);
+            //if (myOrderInfo == null)  //关联表用的join,数据不完整关联表时会查不到数据
+            //{
+            //    //model.Message = "500";
+            //    model.FinishOrderStatus = FinishOrderStatus.DataError;
+            //    return model;
+            //}
+
+            //GlobalConfigModel globalSetting = new GlobalConfigProvider().GlobalConfigMethod(0);
+            //int limitFinish = ParseHelper.ToInt(globalSetting.CompleteTimeSet, 5);
+            ////取到任务的接单时间、从缓存中读取完成任务时间限制，判断要用户点击完成时间>接单时间+限制时间           
+            //DateTime yuJiFinish = myOrderInfo.GrabTime.Value.AddMinutes(limitFinish);
+            //if (DateTime.Compare(DateTime.Now, yuJiFinish) < 0)  //小于0说明用户完成时间 太快
+            //{
+            //    //model.Message = "501";
+            //    model.FinishOrderStatus = FinishOrderStatus.TooQuickly;
+            //    return model;
+            //}
+            //if (!new OrderDao().IsOrNotFinish(myOrderInfo.Id))//是否有未完成子订单
+            //{
+            //    //model.Message = "502";
+            //    model.FinishOrderStatus = FinishOrderStatus.ExistNotPayChildOrder;
+            //    return model;
+            //}
+
+            ////获取该订单信息和该  骑士现在的 收入金额
+            //if (myOrderInfo.GroupId == SystemConst.Group3 && !string.IsNullOrWhiteSpace(myOrderInfo.PickupCode)
+            //    && pickupCode != myOrderInfo.PickupCode) //全时订单 判断 取货码是否正确             
+            //{
+            //    //model.Message = FinishOrderStatus.PickupCodeError.ToString();
+            //    model.FinishOrderStatus = FinishOrderStatus.PickupCodeError;
+            //    return model;
+            //}
+
+            //using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            //{               
+            //    //更新订单状态                
+            //    var upresult = orderDao.FinishOrderStatus(myOrderInfo);
+            //    if (upresult <= 0)
+            //    {
+            //        //model.Message = "3";
+            //        model.FinishOrderStatus = FinishOrderStatus.OrderHadCancel;
+            //        return model;
+            //    }
+
+            //     //写入骑士完成坐标                 
+            //    //orderOtherDao.UpdateComplete(orderNo, completeLongitude, CompleteLatitude);
+            //    orderOtherDao.UpdateComplete(parModel);
+
+            //    //更新骑士和商家金额
+            //    UpdateMoney(myOrderInfo);                
+
+            //    tran.Complete();          
+             
+            //}
+            ////异步回调第三方，推送通知
+            //Task.Factory.StartNew(() =>
+            //{
+            //    if (myOrderInfo.businessId != 0 && model.Message == "1")
+            //    {
+            //        Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", myOrderInfo.businessId.ToString(), string.Empty);
+            //        new OrderProvider().AsyncOrderStatus(orderNo);
+            //    }
+            //});
+
+            //model.IsModifyTicket = myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount ? true : false;//是否允许修改小票     
+            ////model.Message = "1";
+            //model.FinishOrderStatus = FinishOrderStatus.Success;
+            //return model;
+            #endregion
         }
 
         /// <summary>
@@ -1203,23 +1274,8 @@ namespace Ets.Service.Provider.Clienter
 
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Success);
             }
-            //else  //失败的时候再去找原因
-            //{ 
-            //var myorder = new Ets.Dao.Order.OrderDao().GetOrderDetailByOrderNo(orderNo);
-            //if (myorder == null)
-            //{
-            //    return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.OrderIsNotExist);  //订单不存在 
-            //}
-            //if (myorder.Status == ConstValues.ORDER_CANCEL)   //判断订单状态是否为 已取消
-            //{
-            //return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.OrderHadCancel);  //订单已被取消
-            //}
-            //if (myorder.Status == ConstValues.ORDER_ACCEPT || myorder.Status == ConstValues.ORDER_FINISH)  //订单已接单，被抢  或 已完成
-            //{
-            return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
-            //}
-            //} 
-            //return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.Failed);
+           
+            return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);           
         }
 
         /// <summary>

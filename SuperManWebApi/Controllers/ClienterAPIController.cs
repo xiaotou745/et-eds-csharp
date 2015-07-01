@@ -266,44 +266,44 @@ namespace SuperManWebApi.Controllers
         {         
             return new ClienterProvider().RushOrder_C(userId, orderNo);
         }
-        /// <summary>
-        /// 完成订单 
-        /// wc 该 ado
-        /// </summary>
-        /// <param name="userId">C端用户id</param>
-        /// <param name="orderNo">订单号码</param>
-        /// <param name="pickupCode">取货码</param>
-        /// <returns></returns>        
-        [HttpGet]
-        public ResultModel<FinishOrderResultModel> FinishOrder_C(int userId, string orderNo, float completeLongitude, float CompleteLatitude, string pickupCode = null)
-        {
-            if (userId == 0)  //用户id非空验证
-                return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.UserIdEmpty);
-            if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
-                return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderEmpty);           
-            FinishOrderResultModel finishModel = iClienterProvider.FinishOrder(userId, orderNo, completeLongitude, CompleteLatitude, pickupCode);
-            if (finishModel.Message == "1")  //完成
-            {
-                var clienter = iClienterProvider.GetUserInfoByUserId(userId);
-                var model = new FinishOrderResultModel();
-                model.userId = userId;
-                if (clienter.AccountBalance != null)
-                    model.balanceAmount = clienter.AccountBalance.Value;
-                else
-                    model.balanceAmount = 0.0m;
-                return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.Success, model);
-            }
-            else if (finishModel.Message == "3")
-            {
-                return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderHadCancel);
-            }
-            else if (finishModel.Message == FinishOrderStatus.PickupCodeError.ToString())
-                return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.PickupCodeError);
-            else
-            {
-                return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.Failed);
-            }
-        }
+        ///// <summary>
+        ///// 完成订单 
+        ///// wc 该 ado
+        ///// </summary>
+        ///// <param name="userId">C端用户id</param>
+        ///// <param name="orderNo">订单号码</param>
+        ///// <param name="pickupCode">取货码</param>
+        ///// <returns></returns>        
+        //[HttpGet]
+        //public ResultModel<FinishOrderResultModel> FinishOrder_C(int userId, string orderNo, float completeLongitude, float CompleteLatitude, string pickupCode = null)
+        //{
+        //    if (userId == 0)  //用户id非空验证
+        //        return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.UserIdEmpty);
+        //    if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
+        //        return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderEmpty);           
+        //    FinishOrderResultModel finishModel = iClienterProvider.FinishOrder(userId, orderNo, completeLongitude, CompleteLatitude, pickupCode);
+        //    if (finishModel.Message == "1")  //完成
+        //    {
+        //        var clienter = iClienterProvider.GetUserInfoByUserId(userId);
+        //        var model = new FinishOrderResultModel();
+        //        model.userId = userId;
+        //        if (clienter.AccountBalance != null)
+        //            model.balanceAmount = clienter.AccountBalance.Value;
+        //        else
+        //            model.balanceAmount = 0.0m;
+        //        return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.Success, model);
+        //    }
+        //    else if (finishModel.Message == "3")
+        //    {
+        //        return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderHadCancel);
+        //    }
+        //    else if (finishModel.Message == FinishOrderStatus.PickupCodeError.ToString())
+        //        return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.PickupCodeError);
+        //    else
+        //    {
+        //        return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.Failed);
+        //    }
+        //}
 
         /// <summary>
         /// 获取我的余额

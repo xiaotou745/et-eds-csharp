@@ -222,6 +222,12 @@ namespace Ets.Service.IProvider.Order
         /// <returns></returns>
         ResultModel<object> GetJobC(GetJobCPM model);
 
+        /// <summary>
+        /// 更新取货坐标
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150701</UpdateTime>
+        /// <param name="modelPM"></param>
         void UpdateTake(OrderPM modelPM);
 
         /// <summary>

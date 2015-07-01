@@ -65,9 +65,9 @@ namespace Ets.Service.Provider.Order
         /// <param name="orderNo"></param>
         /// <param name="completeLongitude"></param>
         /// <param name="completeLatitude"></param>
-        public void UpdateComplete(string orderNo, float completeLongitude, float completeLatitude)
+        public void UpdateComplete(OrderCompleteModel parModel)
         {
-            orderOtherDao.UpdateComplete(orderNo, completeLongitude, completeLatitude);
+            orderOtherDao.UpdateComplete(parModel);
         }
 
         /// <summary>
