@@ -96,11 +96,7 @@ namespace ETS.Util
                 {
                     mail.Attachments.Add(new Attachment(stream, attachName));
                 }
-                else
-                {
-                    mail.Attachments.Add(new Attachment(attachName));
-                }
-
+             
                 // 回复至
                 mail.ReplyToList.Add(ConfigSettings.Instance.EmailFromAdress);
                 client.DeliveryMethod = SmtpDeliveryMethod.Network;
