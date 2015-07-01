@@ -982,6 +982,7 @@ namespace Ets.Service.Provider.Clienter
                 //orderDao.UpdateFinishAll(orderNo);
             //    isPay = true;
             //} 
+
             return orderDao.UpdateFinishAll(orderNo);  
 
         }
