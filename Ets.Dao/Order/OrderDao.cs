@@ -3109,7 +3109,7 @@ where  OrderNo=@OrderNo ";
         /// 更新已提现
         /// </summary>
         /// <param name="orderId"></param>
-        public bool UpdateFinishAll(string orderNo)
+        public void UpdateFinishAll(string orderNo)
         {
 
             //            const string updateSql = @"

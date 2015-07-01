@@ -6,7 +6,7 @@ using System.Web.Mvc;
 
 namespace SuperMan.Controllers
 {
-    public class DownloadController : BaseController
+    public class DownloadController : Controller
     {
         // GET: Download
         public ActionResult edsB()

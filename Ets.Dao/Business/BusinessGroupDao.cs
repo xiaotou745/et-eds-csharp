@@ -277,7 +277,7 @@ namespace Ets.Dao.Business
 			                            INSERTED.Value ,
 			                            getdate(),
                                         @OptName,
-                                        DELETED.Value,
+                                        ISNULL(DELETED.Value,''),
                                         INSERTED.GroupId ,
 			                            INSERTED.StrategyId 
 			                    INTO GlobalConfigLog(KeyName, Value,InsertTime,OptName,Remark,GroupId,StrategyId)

@@ -101,19 +101,19 @@
                 </select>
             </div>
             <div class="control-group">
-                <label >是否一键发单：</label>
+                <label >一键发单：</label>
                 <input id="rOneKeyPubOrderY" name="rOneKeyPubOrder" type="radio" value="1" @(Model.OneKeyPubOrder == 1 ? "checked" : "")>
                 <label >是</label>
                 <input id="rOneKeyPubOrderN" name="rOneKeyPubOrder" type="radio" value="0" style="margin-left: 30px" @(Model.OneKeyPubOrder == 0 ? "checked" : "")>
                 <label >否</label>
             </div>
             <div class="control-group">
-                <label>余额是否可以透支：</label>
+                <label>余额可以透支：</label>
                 <input id="rBbalanceAllowOverDraftY" name="rBalanceAllowOverDraft" type="radio" value="1" @(Model.IsAllowOverdraft == 1?"checked":"") /><label for="rBbalanceAllowOverDraftY">是</label>
                 <input id="rBbalanceAllowOverDraftN" name="rBalanceAllowOverDraft" type="radio" value="0" style="margin-left: 30px" @(Model.IsAllowOverdraft == 0 ? "checked" : "") /><label for="rBbalanceAllowOverDraftN">否</label>
             </div>
             <div class="control-group">
-                <label> 是否雇主任务：</label>
+                <label>使用雇主任务时间限制：</label>
                 <input id="rIsEmployerTaskY" name="rIsEmployerTask" type="radio" value="1" @(Model.IsEmployerTask == 1 ? "checked" : "")>
                 <label>是</label>
                 <input id="rIsEmployerTaskN" name="rIsEmployerTask" type="radio" value="0" style="margin-left: 30px" @(Model.IsEmployerTask == 0 ? "checked" : "")>
