@@ -3140,8 +3140,12 @@ select  0;";
         {
             string sql = @" 
                             SELECT  ord.OrderId,
-                                    ISNULL(PubLongitude, 0) AS PubLongitude,
-                                    ISNULL(PubLatitude, 0) AS PubLatitude,
+                                    CASE WHEN ISNULL(PubLongitude, 0) = 0 THEN c.Longitude
+                                         ELSE PubLongitude
+                                    END AS PubLongitude ,
+                                    CASE WHEN ISNULL(PubLatitude, 0) = 0 THEN c.Latitude
+                                         ELSE PubLatitude
+                                    END AS PubLatitude ,
                                     ISNULL(ab.PubDate, '') AS PubDate,
                                     ISNULL(GrabLongitude, 0) AS GrabLongitude,
                                     ISNULL(GrabLatitude, 0) AS GrabLatitude,
@@ -3152,9 +3156,10 @@ select  0;";
                                     ISNULL(CompleteLongitude, 0) AS CompleteLongitude,
                                     ISNULL(CompleteLatitude, 0) AS CompleteLatitude,
                                     ISNULL(ab.ActualDoneDate, '') AS ActualDoneDate
-                            FROM    OrderOther (NOLOCK) ord
-                                    JOIN [order] (NOLOCK) ab ON ord.OrderId = ab.Id
-                            WHERE   ord.OrderId = @orderID
+                            FROM  [order] (NOLOCK) ab  
+                                    JOIN OrderOther (NOLOCK) ord ON ord.OrderId = ab.Id
+                                    JOIN business (NOLOCK) c ON c.id = ab.businessId 
+                            WHERE   ab.Id = @orderID
                             ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@orderID", orderID);
