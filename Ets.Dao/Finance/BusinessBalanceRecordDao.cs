@@ -110,52 +110,52 @@ order by OperateTime desc";
         }
 
 
-        /// <summary>
-        /// 增加一条记录
-        /// wc
-        /// </summary>
-        /// <param name="businessBalanceRecord">参数实体</param>
-        /// <returns></returns>
-        public long InsertSingle(BusinessBalanceRecord businessBalanceRecord)
-        {
-            //流水余额是传递过来的
-            //交易后余额 = 商户原来的余额 + 流水余额
-            const string insertSql = @"
-insert  into BusinessBalanceRecord
-        ( BusinessId ,
-          Amount ,
-          [Status] ,
-          Balance ,
-          RecordType ,
-          Operator ,
-          WithwardId ,
-          RelationNo ,
-          Remark
-        )
-        select  @BusinessId ,
-                @Amount ,
-                @Status ,
-                @Amount + b.BalancePrice ,
-                @RecordType ,
-                @Operator ,
-                @WithwardId ,
-                @RelationNo ,
-                @Remark
-        from    dbo.business as b
-        where   Id = @BusinessId;
-";
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("BusinessId", businessBalanceRecord.BusinessId);//商户id
-            dbParameters.AddWithValue("Amount", businessBalanceRecord.Amount);//流水金额
-            dbParameters.AddWithValue("Status", businessBalanceRecord.Status); //流水状态(1、交易成功 2、交易中）
-            dbParameters.AddWithValue("RecordType", businessBalanceRecord.RecordType); //交易类型(1佣金 2奖励 3提现 4取消订单赔偿 5无效订单扣款)
-            dbParameters.AddWithValue("Operator", businessBalanceRecord.Operator); //操作人 
-            dbParameters.AddWithValue("WithwardId", businessBalanceRecord.WithwardId); //关联ID
-            dbParameters.AddWithValue("RelationNo", businessBalanceRecord.RelationNo); //关联单号
-            dbParameters.AddWithValue("Remark", businessBalanceRecord.Remark); //描述
-            object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);
-            return ParseHelper.ToLong(result);
-        }
+//        /// <summary>
+//        /// 增加一条记录
+//        /// wc
+//        /// </summary>
+//        /// <param name="businessBalanceRecord">参数实体</param>
+//        /// <returns></returns>
+//        public long InsertSingle(BusinessBalanceRecord businessBalanceRecord)
+//        {
+//            //流水余额是传递过来的
+//            //交易后余额 = 商户原来的余额 + 流水余额
+//            const string insertSql = @"
+//insert  into BusinessBalanceRecord
+//        ( BusinessId ,
+//          Amount ,
+//          [Status] ,
+//          Balance ,
+//          RecordType ,
+//          Operator ,
+//          WithwardId ,
+//          RelationNo ,
+//          Remark
+//        )
+//        select  @BusinessId ,
+//                @Amount ,
+//                @Status ,
+//                @Amount + b.BalancePrice ,
+//                @RecordType ,
+//                @Operator ,
+//                @WithwardId ,
+//                @RelationNo ,
+//                @Remark
+//        from    dbo.business as b
+//        where   Id = @BusinessId;
+//";
+//            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+//            dbParameters.AddWithValue("BusinessId", businessBalanceRecord.BusinessId);//商户id
+//            dbParameters.AddWithValue("Amount", businessBalanceRecord.Amount);//流水金额
+//            dbParameters.AddWithValue("Status", businessBalanceRecord.Status); //流水状态(1、交易成功 2、交易中）
+//            dbParameters.AddWithValue("RecordType", businessBalanceRecord.RecordType); //交易类型(1佣金 2奖励 3提现 4取消订单赔偿 5无效订单扣款)
+//            dbParameters.AddWithValue("Operator", businessBalanceRecord.Operator); //操作人 
+//            dbParameters.AddWithValue("WithwardId", businessBalanceRecord.WithwardId); //关联ID
+//            dbParameters.AddWithValue("RelationNo", businessBalanceRecord.RelationNo); //关联单号
+//            dbParameters.AddWithValue("Remark", businessBalanceRecord.Remark); //描述
+//            object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);
+//            return ParseHelper.ToLong(result);
+//        }
         #endregion
     }
 }

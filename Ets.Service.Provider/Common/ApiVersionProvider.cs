@@ -13,17 +13,18 @@ namespace Ets.Service.Provider.Common
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public bool AddApiRecords(ApiVersionStatisticModel model)
+        public int AddApiRecords(ApiVersionStatisticModel model)
         {
+            int id = 0;
             try
             {
-                return new ApiVersionDao().Add(model);
+                id = new ApiVersionDao().Add(model);               
             }
             catch (Exception ex)
             {
-                LogHelper.LogWriterFromFilter(ex);
-                return false;
+                LogHelper.LogWriterFromFilter(ex);                
             }
+            return id;
         }
     }
 }

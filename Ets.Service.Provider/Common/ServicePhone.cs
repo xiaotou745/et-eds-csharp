@@ -41,7 +41,7 @@ namespace Ets.Service.Provider.Common
             //var cacheList = ETS.Cacheing.CacheFactory.Instance[cacheKey];
             if (cacheList == null)
             {
-                dt = sPhoneDao.GetCustomerServicePhone();
+                dt = sPhoneDao.Query();
                 redis.Add(cacheKey, dt, DateTime.Now.AddYears(365));//添加一年的生命周期
                 //ETS.Cacheing.CacheFactory.Instance.AddObject(cacheKey, dt, DateTime.Now.AddYears(365));//添加一年的生命周期
             }
