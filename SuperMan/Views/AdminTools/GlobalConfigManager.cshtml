@@ -117,8 +117,8 @@
                 alert("骑士完成任务时间限制!");
                 return;
             }
-            if (completeTimeSet < 1 || completeTimeSet > 120) {
-                alert("骑士完成任务时间限制1-60分钟之间!");
+            if (completeTimeSet < 0 || completeTimeSet > 60) {
+                alert("骑士完成任务时间限制0-60分钟之间!");
                 return;
             }
             if (employerTaskTimeSet == "") {
