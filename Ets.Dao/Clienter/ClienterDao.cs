@@ -245,16 +245,15 @@ where PhoneNo=@PhoneNo and [Password]=@Password";
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
 
+        /// <summary>
+        /// 更新骑士 金额  
+        /// 王超
+        /// 2015年7月1日 12:02:57
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public bool UpdateClienterAccountBalanceForFinish(WithdrawRecordsModel model)
         {
-            //Ets.Model.DomainModel.Clienter.ClienterModel cliterModel = new ClienterDao().GetUserInfoByUserId(model.UserId);//获取当前用户余额
-            //decimal balance = ParseHelper.ToDecimal(cliterModel.AccountBalance, 0);
-            //decimal Money = balance + model.Amount;
-            //if (Money < 0)//如果提现金额大于当前余额则不能提现
-            //{
-            //    return false;
-            //}
-            //model.Balance = balance;
             string sql = @"UPDATE dbo.clienter SET AccountBalance=AccountBalance + @Money WHERE id=" + model.UserId;
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Money", model.Amount);

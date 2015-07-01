@@ -638,7 +638,7 @@ namespace Ets.Service.Provider.Clienter
                 //更新订单状态
                 if (myOrderInfo != null)
                 {
-                    var upresult = orderDao.FinishOrderStatus(orderNo, userId, myOrderInfo);
+                    var upresult = orderDao.FinishOrderStatus(myOrderInfo);
                     if (upresult <= 0)
                     {
                         model.Message = "3";
@@ -648,7 +648,7 @@ namespace Ets.Service.Provider.Clienter
                     orderOtherDao.UpdateComplete(orderNo, completeLongitude, CompleteLatitude);
 
                     ///更新骑士和商家金额
-                    UpdateMoney(myOrderInfo, userId, orderNo);
+                    UpdateMoney(myOrderInfo);
 
                     businessId = myOrderInfo.businessId;//为当前的商户发送jpush用
 
@@ -674,10 +674,10 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="myOrderInfo"></param>
-        public void UpdateClienterAccount(int userId, OrderListModel myOrderInfo)
+        public void UpdateClienterAccount(OrderListModel myOrderInfo)
         {
             //更新骑士 金额  
-            bool b = clienterDao.UpdateClienterAccountBalanceForFinish(new WithdrawRecordsModel() { UserId = userId, Amount = myOrderInfo.OrderCommission.Value });
+            bool b = clienterDao.UpdateClienterAccountBalanceForFinish(new WithdrawRecordsModel() { UserId = myOrderInfo.clienterId, Amount = myOrderInfo.OrderCommission.Value });
             //增加记录 
             decimal? accountBalance = 0;
             //更新用户相关金额数据 
@@ -693,7 +693,7 @@ namespace Ets.Service.Provider.Clienter
             ///TODO 骑士余额流水表，不是这个吧？
             ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
             {
-                ClienterId = userId,
+                ClienterId = myOrderInfo.clienterId,
                 Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
                 Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
                 Balance = accountBalance ?? 0,
@@ -848,6 +848,16 @@ namespace Ets.Service.Provider.Clienter
             return orderOther;
         }
 
+        #region 更改上传小票、完成任务余额
+
+        /// <summary>
+        /// 更新上传小票余额
+        /// 2015年7月1日 11:24:08
+        /// 胡灵波
+        /// </summary>
+        /// <param name="myOrderInfo"></param>
+        /// <param name="uploadReceiptModel"></param>
+        /// <param name="orderOther"></param>
         void UpdateClienterMoney(OrderListModel myOrderInfo, UploadReceiptModel uploadReceiptModel, OrderOther orderOther)
         {
             string mess = "付款方式:" + myOrderInfo.IsPay;
@@ -862,9 +872,9 @@ namespace Ets.Service.Provider.Clienter
                 //(1)更新给骑士余额
                 if (orderOther.HadUploadCount >= orderOther.NeedUploadCount)
                 {
-                    if (CheckOrderPay(myOrderInfo.OrderNo))
+                    if (CheckOrderPay(myOrderInfo.Id))
                     {
-                        UpdateClienterAccount(uploadReceiptModel.ClienterId, myOrderInfo);
+                        UpdateClienterAccount(myOrderInfo);
                     }
                 }
             }
@@ -874,9 +884,9 @@ namespace Ets.Service.Provider.Clienter
                 //(1)更新给骑士余额
                 if (orderOther.HadUploadCount >= orderOther.NeedUploadCount)
                 {
-                    if (CheckOrderPay(myOrderInfo.OrderNo))
+                    if (CheckOrderPay(myOrderInfo.Id))
                     {
-                        UpdateClienterAccount(uploadReceiptModel.ClienterId, myOrderInfo);
+                        UpdateClienterAccount(myOrderInfo);
                     }
                 }
             }
@@ -887,7 +897,7 @@ namespace Ets.Service.Provider.Clienter
                 //(2)把OrderOther把IsJoinWithdraw状态改为1
                 if (orderOther.HadUploadCount >= orderOther.NeedUploadCount)
                 {
-                    if (CheckOrderPay(myOrderInfo.OrderNo))
+                    if (CheckOrderPay(myOrderInfo.Id))
                     {
                         UpdateAccountBalanceAndWithdraw(uploadReceiptModel.ClienterId, myOrderInfo);
                         iOrderOtherProvider.UpdateIsJoinWithdraw(myOrderInfo.Id);
@@ -896,25 +906,35 @@ namespace Ets.Service.Provider.Clienter
             }
         }
 
-        void UpdateMoney(OrderListModel myOrderInfo, int userId, string orderNo)
+
+        /// <summary>
+        /// 更新完成订单余额
+        /// 2015年7月1日 11:24:08
+        /// 胡灵波
+        /// </summary>
+        /// <param name="myOrderInfo"></param>
+        /// <param name="uploadReceiptModel"></param>
+        /// <param name="orderOther"></param>
+        bool UpdateMoney(OrderListModel myOrderInfo)
         {
             string mess = "付款方式:" + myOrderInfo.IsPay;
-            mess += " 订单编号:" + orderNo;
+            mess += " 订单编ID:" + myOrderInfo.Id;
             mess += " HadUploadCount:" + myOrderInfo.HadUploadCount;
             mess += " OrderCount:" + myOrderInfo.OrderCount;
             LogHelper.LogWriter(" UpdateMoney", new { obj = "时间：" + DateTime.Now.ToString() + mess });
 
-            if ((bool)myOrderInfo.IsPay)//已付款
+            if (ParseHelper.ToBool(myOrderInfo.IsPay, false))//已付款
             {
                 //上传完小票
                 //(1)更新给骑士余额
                 if (myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount)
                 {
-                    if (CheckOrderPay(orderNo))
+                    if (CheckOrderPay(myOrderInfo.Id))
                     {
-                        UpdateClienterAccount(userId, myOrderInfo);
+                        UpdateClienterAccount(myOrderInfo);
                     }
                 }
+                return true;
             }
             else if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.Status0.GetHashCode())//未付款,骑士代付
             {
@@ -922,11 +942,12 @@ namespace Ets.Service.Provider.Clienter
                 //(1)更新给骑士余额
                 if (myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount)
                 {
-                    if (CheckOrderPay(orderNo))
+                    if (CheckOrderPay(myOrderInfo.Id))
                     {
-                        UpdateClienterAccount(userId, myOrderInfo);
+                        UpdateClienterAccount(myOrderInfo);
                     }
                 }
+                return true;
             }
             else if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.Status1.GetHashCode())//未付款,线上结算
             {
@@ -956,62 +977,28 @@ namespace Ets.Service.Provider.Clienter
                 //(2)把OrderOther把IsJoinWithdraw状态改为1
                 if (myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount)
                 {
-                    if (CheckOrderPay(orderNo))
+                    if (CheckOrderPay(myOrderInfo.Id))
                     {
-                        UpdateAccountBalanceAndWithdraw(userId, myOrderInfo);
+                        UpdateAccountBalanceAndWithdraw(myOrderInfo.clienterId, myOrderInfo);
                         iOrderOtherProvider.UpdateIsJoinWithdraw(myOrderInfo.Id);
                     }
                 }
+                return true;
             }
+            return false;
         }
+        #endregion
 
         /// <summary>
         /// 验证该订单是否支付
         /// </summary>
         /// <UpdateBy>hulingbo</UpdateBy>
         /// <UpdateTime>2015061</UpdateTime>
-        /// <param name="OrderId"></param>
+        /// <param name="orderId"></param>
         /// <returns></returns>
-        private bool CheckOrderPay(string orderNo)
+        private bool CheckOrderPay(int orderId)
         {
-            #region 临时缓存
-            //RedisCache redisCache = new RedisCache();
-            //string orderKey = string.Format(RedissCacheKey.CheckOrderPay, OrderNo);
-            //string CheckOrderPay = redisCache.Get<string>(orderKey);         
-
-            //if (CheckOrderPay != "1")
-            //{
-            //    redisCache.Set(orderKey, "1");
-            //    return true;
-            //}
-            //return false;
-            #endregion
-
-            //bool isPay = false; 
-            //string finishAll = orderDao.GetFinishAllById(orderNo);
-            //if (finishAll != "1")
-            //{
-                //orderDao.UpdateFinishAll(orderNo);
-            //    isPay = true;
-            //} 
-
-            return orderDao.UpdateFinishAll(orderNo);  
-
-            //bool isPay = false;
-
-            //string finishAll = orderDao.GetFinishAllById(orderNo);
-            //mess += " finishAll:" + finishAll;      
-
-            //if (finishAll != "1")
-            //{
-            //    orderDao.UpdateFinishAll(orderNo);
-            //    isPay = true;
-            //    mess += " isPay:" + isPay;  
-            //}
-
-            //LogHelper.LogWriter(" CheckOrderPay", new { obj = "时间：" + DateTime.Now.ToString() + mess });
-            //return isPay;
-
+            return orderDao.UpdateFinishAll(orderId);
         }
 
         /// <summary>
