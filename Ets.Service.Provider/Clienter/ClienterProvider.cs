@@ -997,20 +997,20 @@ namespace Ets.Service.Provider.Clienter
 
             return orderDao.UpdateFinishAll(orderNo);  
 
-            bool isPay = false;
+            //bool isPay = false;
 
-            string finishAll = orderDao.GetFinishAllById(orderNo);
-            mess += " finishAll:" + finishAll;      
+            //string finishAll = orderDao.GetFinishAllById(orderNo);
+            //mess += " finishAll:" + finishAll;      
 
-            if (finishAll != "1")
-            {
-                orderDao.UpdateFinishAll(orderNo);
-                isPay = true;
-                mess += " isPay:" + isPay;  
-            }
+            //if (finishAll != "1")
+            //{
+            //    orderDao.UpdateFinishAll(orderNo);
+            //    isPay = true;
+            //    mess += " isPay:" + isPay;  
+            //}
 
-            LogHelper.LogWriter(" CheckOrderPay", new { obj = "时间：" + DateTime.Now.ToString() + mess });
-            return isPay;
+            //LogHelper.LogWriter(" CheckOrderPay", new { obj = "时间：" + DateTime.Now.ToString() + mess });
+            //return isPay;
 
         }
 
