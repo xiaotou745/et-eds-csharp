@@ -1,5 +1,6 @@
 ﻿ 
 
+using ETS.Enums;
 namespace Ets.Model.ParameterModel.Clienter
 {
     public class RushOrderResultModel
@@ -20,5 +21,7 @@ namespace Ets.Model.ParameterModel.Clienter
 
         public int userId { get; set; }
         public decimal balanceAmount { get; set; }
+
+        public FinishOrderStatus FinishOrderStatus { get; set; }
     }
 }

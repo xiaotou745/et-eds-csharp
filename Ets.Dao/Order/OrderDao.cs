@@ -2589,22 +2589,23 @@ order by a.id desc
         /// <summary>
         /// 更新一条记录
         /// </summary>
-        public void UpdateTake(int orderId, int clienterId, float takeLongitude, float takeLatitude)
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150701</UpdateTime>
+        public void UpdateTake(OrderPM modelPM)
         {
-            const string UPDATE_SQL = @"
+            const string updateSql = @"
 update dbo.[Order] 
     set Status=4
 where id=@orderid and Status=2 and clienterId=@clienterId;
 update OrderOther 
     set TakeTime=GETDATE(),TakeLongitude=@TakeLongitude,TakeLatitude=@TakeLatitude 
-where orderid=@orderid  
-";
+where orderid=@orderid";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("TakeLongitude", takeLongitude);
-            dbParameters.AddWithValue("TakeLatitude", takeLatitude);
-            dbParameters.Add("orderId", DbType.Int32, 4).Value = orderId;
-            dbParameters.AddWithValue("clienterId", clienterId);
-            DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
+            dbParameters.AddWithValue("TakeLongitude", modelPM.longitude);
+            dbParameters.AddWithValue("TakeLatitude", modelPM.latitude);
+            dbParameters.Add("orderId", DbType.Int32, 4).Value = modelPM.OrderId;
+            dbParameters.AddWithValue("clienterId", modelPM.ClienterId);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
         /// <summary>
         /// 获取任务支付状态（0：未支付 1：部分支付 2：已支付）
@@ -3150,8 +3151,12 @@ select @@ROWCOUNT
         {
             string sql = @" 
                             SELECT  ord.OrderId,
-                                    ISNULL(PubLongitude, 0) AS PubLongitude,
-                                    ISNULL(PubLatitude, 0) AS PubLatitude,
+                                    CASE WHEN ISNULL(PubLongitude, 0) = 0 THEN c.Longitude
+                                         ELSE PubLongitude
+                                    END AS PubLongitude ,
+                                    CASE WHEN ISNULL(PubLatitude, 0) = 0 THEN c.Latitude
+                                         ELSE PubLatitude
+                                    END AS PubLatitude ,
                                     ISNULL(ab.PubDate, '') AS PubDate,
                                     ISNULL(GrabLongitude, 0) AS GrabLongitude,
                                     ISNULL(GrabLatitude, 0) AS GrabLatitude,
@@ -3162,9 +3167,10 @@ select @@ROWCOUNT
                                     ISNULL(CompleteLongitude, 0) AS CompleteLongitude,
                                     ISNULL(CompleteLatitude, 0) AS CompleteLatitude,
                                     ISNULL(ab.ActualDoneDate, '') AS ActualDoneDate
-                            FROM    OrderOther (NOLOCK) ord
-                                    JOIN [order] (NOLOCK) ab ON ord.OrderId = ab.Id
-                            WHERE   ord.OrderId = @orderID
+                            FROM  [order] (NOLOCK) ab  
+                                    JOIN OrderOther (NOLOCK) ord ON ord.OrderId = ab.Id
+                                    JOIN business (NOLOCK) c ON c.id = ab.businessId 
+                            WHERE   ab.Id = @orderID
                             ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@orderID", orderID);
