@@ -22,16 +22,6 @@ namespace Ets.Dao.Business
     /// </summary>
     public class BusinessClienterRelationDao : DaoBase
     {
-        /// <summary> 
-        /// 根据骑士id查询骑士绑定商家列表   caoheyang 20150608
-        /// </summary>
-        public PageInfo<BCRelationGetByClienterIdDM> GetByClienterId(BCRelationGetByClienterIdPM model)
-        {
-            string where = string.Format(" ClienterId={0}", model.ClienterId);
-            return new PageHelper().GetPages<BCRelationGetByClienterIdDM>(SuperMan_Read, model.PageIndex, where, "a.Id desc", "a.BusinessId,a.ClienterId,b.Name as BusinessName,b.PhoneNo as BusinessPhoneNo,b.Address as BusinessAddress,a.IsBind,a.UpdateBy,a.UpdateTime,c.TrueName as ClienterName",
-                "dbo.BusinessClienterRelation a ( nolock )  join dbo.business b ( nolock ) on a.BusinessId = b.Id join dbo.clienter c ( nolock ) on c.Id = a.ClienterId", SystemConst.PageSize, true);
-        }
-
         /// <summary>
         /// 增加一条记录
         /// </summary>
@@ -81,6 +71,19 @@ where  BusinessId=@BusinessId  and ClienterId=@ClienterId";
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
+        /// <summary> 
+        /// 根据骑士id查询骑士绑定商家列表   caoheyang 20150608
+        /// </summary>
+        public PageInfo<BCRelationGetByClienterIdDM> GetByClienterId(BCRelationGetByClienterIdPM model)
+        {
+            string where = string.Format(" ClienterId={0}", model.ClienterId);
+            string columnList = "a.BusinessId,a.ClienterId,b.Name as BusinessName,b.PhoneNo as BusinessPhoneNo,"
+                             + " b.Address as BusinessAddress,a.IsBind,a.UpdateBy,a.UpdateTime,c.TrueName as ClienterName";
+            string tableList = "dbo.BusinessClienterRelation a ( nolock )  join dbo.business b ( nolock )"
+                            + " on a.BusinessId = b.Id join dbo.clienter c ( nolock ) on c.Id = a.ClienterId";
+            return new PageHelper().GetPages<BCRelationGetByClienterIdDM>(SuperMan_Read, model.PageIndex, where, "a.Id desc", columnList,
+                tableList, SystemConst.PageSize, true);
+        }
         /// <summary>
         /// 获取商户骑士对应关系     
         /// </summary>

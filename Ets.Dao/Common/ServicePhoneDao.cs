@@ -17,10 +17,11 @@ namespace Ets.Dao.Common
         /// 2015年3月16日 13:35:29
         /// </summary>
         /// <returns></returns>
-        public DataTable GetCustomerServicePhone()
+        public DataTable Query()
         {
-            string sql = "SELECT id,Phone,CityName FROM ServicePhone(NOLOCK)";
-            return DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql));
+            const string querysql = @"
+select  id,Phone,CityName from ServicePhone nolock";
+            return DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql));
         }
     }
 }
