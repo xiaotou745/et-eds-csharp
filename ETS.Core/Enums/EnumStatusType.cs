@@ -624,10 +624,10 @@ namespace ETS.Enums
     }
     public enum OneKeyPubOrderUpdateStatus
     {
-        [DisplayText("失败")]
-        Failed = 0,
         [DisplayText("成功")]
-        Success = 1,
+        Success = 0,
+        [DisplayText("失败")]
+        Failed = 1,
         [DisplayText("只有一键发单才可以修改收货人的地址和电话")]
         OnlyOneKeyPubOrder=2,
         [DisplayText("传入的参数不全")]
