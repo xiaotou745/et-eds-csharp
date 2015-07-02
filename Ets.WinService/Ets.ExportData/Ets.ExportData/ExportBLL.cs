@@ -7,7 +7,7 @@ using Ets.Model.ParameterModel.Common;
 using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
 using ETS.Util;
-using NLog;
+//using NLog;
 
 namespace Ets.ExportData
 {

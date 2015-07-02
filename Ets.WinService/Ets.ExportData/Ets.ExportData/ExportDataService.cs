@@ -1,4 +1,5 @@
-﻿using Quartz.Impl;
+﻿using Quartz;
+using Quartz.Impl;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,15 +8,17 @@ using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ets.ExportData
 {
-    partial class ExportDataService : ServiceBase
+    public partial class ExportDataService : ServiceBase
     {
         private Quartz.IScheduler scheduler;
         public ExportDataService()
         {
+            Thread.Sleep(10000);
             InitializeComponent();
             Quartz.ISchedulerFactory schedulerFactory = new StdSchedulerFactory();
             scheduler = schedulerFactory.GetScheduler();
@@ -24,7 +27,7 @@ namespace Ets.ExportData
         protected override void OnStart(string[] args)
         {
             //System.Threading.Thread.Sleep(10000);
-            scheduler.Start();         
+            scheduler.Start();
         }
 
 

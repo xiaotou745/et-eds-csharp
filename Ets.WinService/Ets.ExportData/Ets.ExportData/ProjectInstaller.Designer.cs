@@ -39,6 +39,9 @@
             // 
             // serviceInstaller1
             // 
+            this.serviceInstaller1.DelayedAutoStart = true;
+            this.serviceInstaller1.Description = "Ets.ExportDataService";
+            this.serviceInstaller1.DisplayName = "Ets.ExportDataService";
             this.serviceInstaller1.ServiceName = "ExportDataService";
             // 
             // ProjectInstaller

@@ -4,9 +4,6 @@ using System.Linq;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
-using Ets.Model.ParameterModel.Common;
-using Ets.Service.IProvider.Common;
-using Ets.Service.Provider.Common;
 
 namespace Ets.ExportData
 {
@@ -22,8 +19,6 @@ namespace Ets.ExportData
             { 
                 new ExportDataService() 
             };
-
-        
             ServiceBase.Run(ServicesToRun);
         }
     }

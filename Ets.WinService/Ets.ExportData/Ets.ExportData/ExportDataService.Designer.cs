@@ -28,11 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            // 
-            // ExportDataService
-            // 
+            components = new System.ComponentModel.Container();
             this.ServiceName = "ExportDataService";
-
         }
 
         #endregion
