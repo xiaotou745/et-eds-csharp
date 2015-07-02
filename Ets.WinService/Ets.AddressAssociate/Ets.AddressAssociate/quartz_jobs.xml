@@ -9,17 +9,17 @@
   </processing-directives>
 
   <schedule>
-    <!--地址扫描匹配-->
+    <!--地址扫描录入-->
     <job>
       <name>AdressAssociateBLL</name>
       <group>DeomJobGroup</group>
-      <description>可提现金额变更</description>
+      <description>地址扫描录入</description>
       <job-type>Ets.AddressAssociate.AdressAssociateBLL,Ets.AddressAssociate</job-type>
       <durable>true</durable>
       <recover>false</recover>
     </job>
 
-    <!--地址扫描匹配 触发器 每一个小时执行一次-->
+    <!--地址扫描录入 触发器 每一个小时执行一次-->
     <trigger>
       <cron>
         <name>AdressAssociateBLLTrigger</name>
