@@ -3136,11 +3136,10 @@ where c.Id=@ClienterId;");
 update  [order]
         set     FinishAll = 1 
         where   Id = @OrderId and FinishAll = 0;
-select @@ROWCOUNT
 ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("OrderId", DbType.Int32, 4).Value = orderId;
-            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, updateSql, dbParameters), 1) == 1 ? true : false;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters) == 1 ? true : false;
         }
         /// <summary>
         /// 根据orderID获取订单地图数据
