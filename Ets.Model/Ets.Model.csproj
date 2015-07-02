@@ -82,6 +82,7 @@
     <Compile Include="DataModel\Order\OrderChildPayModel.cs" />
     <Compile Include="DataModel\Order\OrderMapDetail.cs" />
     <Compile Include="DataModel\Order\PayStatusModel.cs" />
+    <Compile Include="DataModel\Order\ReceviceAddress.cs" />
     <Compile Include="DataModel\Strategy\StrategyModel.cs" />
     <Compile Include="DataModel\Finance\Bank.cs" />
     <Compile Include="DataModel\Finance\BusinessBalanceRecord.cs" />
@@ -121,6 +122,7 @@
     <Compile Include="DomainModel\Message\MessageModelDM.cs" />
     <Compile Include="DomainModel\Message\ReadBDM.cs" />
     <Compile Include="DomainModel\Message\ReadCDM.cs" />
+    <Compile Include="DomainModel\Order\ConsigneeAddressBDM.cs" />
     <Compile Include="DomainModel\Order\DistributionAnalyzeResult.cs" />
     <Compile Include="DomainModel\Order\GetJobCDM.cs" />
     <Compile Include="DomainModel\Order\GetJobCDMRedis.cs" />
@@ -274,6 +276,7 @@
     <Compile Include="ParameterModel\Order\ChangeStatusPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\BusiOrderResultModel.cs" />
     <Compile Include="ParameterModel\Order\AsyncStatusPM_OpenApi.cs" />
+    <Compile Include="ParameterModel\Order\ConsigneeAddressBPM.cs" />
     <Compile Include="ParameterModel\Order\GetJobCPM.cs" />
     <Compile Include="ParameterModel\Order\NewAddressPM.cs" />
     <Compile Include="ParameterModel\Order\OrderChildModel.cs" />
