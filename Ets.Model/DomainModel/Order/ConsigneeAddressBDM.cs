@@ -26,7 +26,7 @@ namespace Ets.Model.DomainModel.Order
         /// <summary>
         /// 订单发布日期
         /// </summary>
-        public DateTime PubDate { get; set; }
+        public string PubDate { get; set; }
 
     }
 }

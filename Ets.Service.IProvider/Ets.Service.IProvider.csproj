@@ -69,6 +69,7 @@
     <Compile Include="Order\IOrderOtherProvider.cs" />
     <Compile Include="Order\IOrderProvider.cs" />
     <Compile Include="Clienter\IClienterProvider.cs" />
+    <Compile Include="Order\IReceviceAddressProvider.cs" />
     <Compile Include="Pay\IPayProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Statistics\IOrderStatisticsProvider.cs" />

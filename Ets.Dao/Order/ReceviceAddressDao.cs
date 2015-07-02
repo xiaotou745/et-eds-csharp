@@ -20,20 +20,22 @@ namespace Ets.Dao.Order
     public class ReceviceAddressDao : DaoBase
     {
 
-        /// <summary>
+       /// <summary>
         ///  B端商户拉取收货人地址缓存到本地 add By  caoheyang   20150702 
-        /// </summary>
+       /// </summary>
+       /// <param name="model">参数实体</param>
+       /// <returns></returns>
         public IList<ConsigneeAddressBDM> ConsigneeAddressB(ConsigneeAddressBPM model)
         {
             IList<ConsigneeAddressBDM> models = new List<ConsigneeAddressBDM>();
             const string querysql = @"
-select  Id ,PhoneNo,Address,PubDate
+select  Id ,PhoneNo,Address,CONVERT(varchar(100),PubDate, 120) as PubDate
 from    dbo.ReceviceAddress
-where   Id > @AddressId
+where   PubDate > @PubDate
         and BusinessId = @BusinessId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("BusinessId", model.BusinessId);
-            dbParameters.AddWithValue("AddressId", model.AddressId);
+            dbParameters.AddWithValue("PubDate", model.PubDate == null ? "2015-01-01 00:00:00" : model.PubDate.Value.ToString());
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
             if (DataTableHelper.CheckDt(dt))
             {
@@ -43,6 +45,19 @@ where   Id > @AddressId
         }
 
         /// <summary>
+        ///  B端商户拉取收货人地址缓存到本地 add By  caoheyang   20150702 
+        /// </summary>
+        /// <param name="model">参数实体</param>
+        /// <returns></returns>
+        public void RemoveAddressB(RemoveAddressBPM model)
+        {
+            const string deleteSql = @"delete from ReceviceAddress where Id = @AddressId and BusinessId= @BusinessId";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("AddressId", model.AddresssId);
+            dbParameters.AddWithValue("BusinessId", model.BusinessId);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, deleteSql, dbParameters);
+        }
+		/// <summary>
         /// 扫描地址数据
         /// </summary>
         /// <param name="beginDate">上次扫描结束时间</param>

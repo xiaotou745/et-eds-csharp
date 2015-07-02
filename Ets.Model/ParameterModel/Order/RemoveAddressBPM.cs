@@ -7,10 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ets.Model.ParameterModel.Order
 {
-    /// <summary>
-    ///  B端商户拉取收货人地址缓存到本地接口参数实体 add By  caoheyang   20150702
-    /// </summary>
-    public class ConsigneeAddressBPM
+    public class RemoveAddressBPM
     {
         ///<summary>
         /// 商户ID
@@ -19,9 +16,9 @@ namespace Ets.Model.ParameterModel.Order
         public int BusinessId { get; set; }
 
         ///<summary>
-        /// 本次拉取地址的数据库开始id，第一次或者app端无缓存数据时拉取传0
+        /// 数据库地址id
         /// </summary>
-        public DateTime? PubDate { get; set; }
+        public long AddresssId { get; set; }
         ///<summary>
         /// 版本号1.0
         /// </summary>
