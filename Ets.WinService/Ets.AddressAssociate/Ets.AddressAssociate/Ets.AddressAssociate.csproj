@@ -78,15 +78,26 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="date.xml" />
+    <Content Include="date.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="quartz_jobs.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\ETS.Core\ETS.Core.csproj">
       <Project>{BBA67A86-AFD6-46F2-BBD9-5DFB5BFDAFE2}</Project>
       <Name>ETS.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Ets.Dao\Ets.Dao.csproj">
+      <Project>{DD95FA95-B979-4802-8F79-B08D35939F4E}</Project>
+      <Name>Ets.Dao</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\ETS.Data\ETS.Data.csproj">
+      <Project>{BE8B43E2-DF1E-4BFD-B4EF-63E3E0F53EA2}</Project>
+      <Name>ETS.Data</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

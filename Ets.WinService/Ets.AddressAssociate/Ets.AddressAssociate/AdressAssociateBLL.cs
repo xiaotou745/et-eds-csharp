@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using Common.Logging;
+using Ets.Dao.Order;
 using ETS.Util;
 
 namespace Ets.AddressAssociate
@@ -21,19 +22,20 @@ namespace Ets.AddressAssociate
                 return;
             }
             threadSafe = false;
-
             try
             {
                 XmlDocument xdoc = new XmlDocument();
                 xdoc.Load(@"date.xml");
-                XmlNode root = xdoc.SelectSingleNode("date");
-                DateTime nowdate = DateTime.Now;
+                XmlNode dateNode = xdoc.SelectSingleNode("date");
+                DateTime lastdate = DateTime.Now;
                 // 按照 sqldate 查询数据库
-
-
-                //查询成功
-                XmlElement nodeElement = (XmlElement)root;
-                nodeElement.InnerText = nowdate.ToString();
+                var receviceAddressDao=new ReceviceAddressDao();
+                if (receviceAddressDao.GetAddress(lastdate) > 0)
+                {
+                    //本次查询的ID大于上次查询的ID查询成功
+                    XmlElement dateElement = (XmlElement)dateNode;
+                    dateElement.InnerText = lastdate.ToString();
+                } 
                 xdoc.Save(@"date.xml");
             }
             catch (Exception ex)
@@ -44,7 +46,7 @@ namespace Ets.AddressAssociate
             {
                 threadSafe = true;
             }
-            //throw new NotImplementedException();
         }
+
     }
 }
