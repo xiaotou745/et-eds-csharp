@@ -11,7 +11,7 @@
   <schedule>
     <!--定时导出发送邮件-->
     <job>
-      <name>ExportData</name>
+      <name>ExportBLL</name>
       <group>ExportDataGroup</group>
       <description>定时导出发送邮件</description>
       <job-type>Ets.ExportData.ExportBLL,Ets.ExportData</job-type>
@@ -22,9 +22,9 @@
     <!--定时导出发送邮件-->
     <trigger>
       <cron>
-        <name>ExportDataTrigger</name>
+        <name>ExportBLLTrigger</name>
         <group>ExportDataTriggerGroup</group>
-        <job-name>ExportData</job-name>
+        <job-name>ExportBLL</job-name>
         <job-group>ExportDataGroup</job-group>
         <cron-expression>0/30 * * * * ?</cron-expression>
       </cron>
