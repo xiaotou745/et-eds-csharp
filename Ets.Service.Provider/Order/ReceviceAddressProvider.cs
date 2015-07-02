@@ -27,9 +27,10 @@ namespace Ets.Service.Provider.Order
         public ResultModel<object> ConsigneeAddressB(ConsigneeAddressBPM model)
         {
             IList<ConsigneeAddressBDM> models = receviceAddressDao.ConsigneeAddressB(model);
+           
             var res = new
             {
-                MaxId = models.Max(item=>item.Id), 
+                MaxId = models.Count==0?-1:models.Max(item => item.Id),
                 Data = models
             };
             return ResultModel<object>.Conclude(SystemEnum.Success, res);
