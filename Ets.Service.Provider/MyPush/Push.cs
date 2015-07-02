@@ -122,7 +122,7 @@ namespace Ets.Service.Provider.MyPush
                 notification.IosNotification = new IosNotification().setAlert(model.Alert).setBadge(1).setSound("YourSound");
                 if (!string.IsNullOrEmpty(model.Content))
                 {
-                    notification.IosNotification = new IosNotification().setAlert(model.Alert).setBadge(1).setSound("YourSound").AddExtra(model.ContentKey, model.Content);
+                    //notification.IosNotification = new IosNotification().setAlert(model.Alert).setBadge(1).setSound("YourSound").AddExtra(model.ContentKey, model.Content);
                     notification.AndroidNotification = new AndroidNotification().AddExtra(model.ContentKey, model.Content);
                 }
 

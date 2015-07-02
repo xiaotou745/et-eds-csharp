@@ -649,7 +649,7 @@ namespace Ets.Service.Provider.Clienter
             //异步回调第三方，推送通知
             Task.Factory.StartNew(() =>
             {
-                if (myOrderInfo.businessId != 0 && model.Message == "1")
+                if (myOrderInfo.businessId != 0)
                 {
                     Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", myOrderInfo.businessId.ToString(), string.Empty);
                     new OrderProvider().AsyncOrderStatus(orderNo);
