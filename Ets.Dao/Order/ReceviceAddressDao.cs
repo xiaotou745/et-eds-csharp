@@ -20,9 +20,11 @@ namespace Ets.Dao.Order
     public class ReceviceAddressDao : DaoBase
     {
 
-        /// <summary>
+       /// <summary>
         ///  B端商户拉取收货人地址缓存到本地 add By  caoheyang   20150702 
-        /// </summary>
+       /// </summary>
+       /// <param name="model">参数实体</param>
+       /// <returns></returns>
         public IList<ConsigneeAddressBDM> ConsigneeAddressB(ConsigneeAddressBPM model)
         {
             IList<ConsigneeAddressBDM> models = new List<ConsigneeAddressBDM>();

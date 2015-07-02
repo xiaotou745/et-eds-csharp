@@ -22,10 +22,7 @@ using Letao.Util;
 
 namespace SuperManWebApi.Controllers
 {
-    [ExecuteTimeLog]
-    /// <summary>
-    /// TODO:每个API的日志、异常之类
-    /// </summary>
+    [ExecuteTimeLog]// TODO:每个API的日志、异常之类
     public class OrderController : ApiController
     {
         IOrderProvider iOrderProvider = new OrderProvider();
@@ -514,5 +511,16 @@ namespace SuperManWebApi.Controllers
                     return ResultModel<string>.Conclude(OneKeyPubOrderUpdateStatus.Success);
             }
         }
+        /// <summary>
+        /// 一键发单修改地址和电话
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ResultModel<object> ConsigneeAddressB(ConsigneeAddressBPM model)
+        {
+            return null;
+        }
+
     }
 }
