@@ -29,13 +29,13 @@ namespace Ets.Dao.Order
         {
             IList<ConsigneeAddressBDM> models = new List<ConsigneeAddressBDM>();
             const string querysql = @"
-select  Id ,PhoneNo,Address,PubDate
+select  Id ,PhoneNo,Address,CONVERT(varchar(100),PubDate, 120) as PubDate
 from    dbo.ReceviceAddress
-where   Id > @AddressId
+where   PubDate > @PubDate
         and BusinessId = @BusinessId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("BusinessId", model.BusinessId);
-            dbParameters.AddWithValue("AddressId", model.AddressId);
+            dbParameters.AddWithValue("PubDate", model.PubDate == null ? "2015-01-01 00:00:00" : model.PubDate.Value.ToString());
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
             if (DataTableHelper.CheckDt(dt))
             {

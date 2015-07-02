@@ -21,7 +21,7 @@ namespace Ets.Model.ParameterModel.Order
         ///<summary>
         /// 本次拉取地址的数据库开始id，第一次或者app端无缓存数据时拉取传0
         /// </summary>
-        public long AddressId { get; set; }
+        public DateTime? PubDate { get; set; }
         ///<summary>
         /// 版本号1.0
         /// </summary>

@@ -26,11 +26,11 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public ResultModel<object> ConsigneeAddressB(ConsigneeAddressBPM model)
         {
+            string maxDate =DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             IList<ConsigneeAddressBDM> models = receviceAddressDao.ConsigneeAddressB(model);
-           
             var res = new
             {
-                MaxId = models.Count==0?-1:models.Max(item => item.Id),
+                MaxDate = maxDate,
                 Data = models
             };
             return ResultModel<object>.Conclude(SystemEnum.Success, res);
