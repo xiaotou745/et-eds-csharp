@@ -34,8 +34,10 @@ from    dbo.ReceviceAddress
 where   PubDate > @PubDate
         and BusinessId = @BusinessId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("BusinessId", model.BusinessId);
-            dbParameters.AddWithValue("PubDate", model.PubDate == null ? "2015-01-01 00:00:00" : model.PubDate.Value.ToString());
+            dbParameters.Add("BusinessId", DbType.Int32, 4).Value = model.BusinessId;
+           dbParameters.Add("PubDate", DbType.DateTime).Value = (model.PubDate == null
+               ? Convert.ToDateTime("2015-01-01 00:00:00")
+               : Convert.ToDateTime(model.PubDate));
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
             if (DataTableHelper.CheckDt(dt))
             {
@@ -53,8 +55,8 @@ where   PubDate > @PubDate
         {
             const string deleteSql = @"delete from ReceviceAddress where Id = @AddressId and BusinessId= @BusinessId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("AddressId", model.AddresssId);
-            dbParameters.AddWithValue("BusinessId", model.BusinessId);
+            dbParameters.Add("AddressId", DbType.Int64, 8).Value = model.AddresssId;
+            dbParameters.Add("BusinessId", DbType.Int32, 4).Value = model.BusinessId;
             DbHelper.ExecuteNonQuery(SuperMan_Write, deleteSql, dbParameters);
         }
 		/// <summary>
