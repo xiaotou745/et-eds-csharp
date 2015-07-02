@@ -32,7 +32,7 @@ namespace Ets.Service.IProvider.Order
         /// <param name="orderNo"></param>
         /// <param name="completeLongitude"></param>
         /// <param name="completeLatitude"></param>
-        void UpdateComplete(string orderNo, float completeLongitude, float completeLatitude);
+        void UpdateComplete(OrderCompleteModel parModel);
 
         /// <summary>
         /// 更新已提现

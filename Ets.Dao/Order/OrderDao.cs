@@ -1085,26 +1085,32 @@ where   a.OriginalOrderNo = @OriginalOrderNo
         /// <summary>
         /// 完成订单
         /// wc
+        /// 窦海超更改
+        /// 2015年7月1日 11:59:28
         /// </summary>
-        /// <param name="orderNo">订单号</param>
         /// <param name="orderStatus">订单状态</param>
         /// <returns></returns>
-        public int FinishOrderStatus(string orderNo, int clientId, OrderListModel myOrderInfo)
+        public int FinishOrderStatus(OrderListModel myOrderInfo)
         {
             //更新订单状态
             StringBuilder upSql = new StringBuilder();
 
-            upSql.AppendFormat(@" UPDATE dbo.[order]
+            upSql.AppendFormat(@"
+UPDATE dbo.[order]
  SET [Status] = @status,ActualDoneDate=getdate()
 output Inserted.Id,GETDATE(),'{0}','任务已完成',Inserted.clienterId,Inserted.[Status],{1}
 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform]) 
-WHERE  OrderNo = @orderNo AND clienterId IS NOT NULL and Status = 4;", SuperPlatform.骑士, (int)SuperPlatform.骑士);
+WHERE  dbo.[order].Id = @orderId AND clienterId =@clienterId and Status = 4;
+", SuperPlatform.骑士, (int)SuperPlatform.骑士);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.Add("@orderNo", SqlDbType.NVarChar).Value = orderNo;
-            dbParameters.AddWithValue("@status", ConstValues.ORDER_FINISH);
-            object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters);
-            return ParseHelper.ToInt(executeScalar, -1);
+            dbParameters.Add("orderId", DbType.Int32, 4).Value = myOrderInfo.Id;
+            dbParameters.Add("clienterId", DbType.Int32, 4).Value = myOrderInfo.clienterId;
+            dbParameters.Add("status", DbType.Int32, 4).Value = ConstValues.ORDER_FINISH;
+            return ParseHelper.ToInt(
+                DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters),
+                -1
+                );
         }
 
         /// <summary>
@@ -1501,7 +1507,7 @@ from    [order] o with ( nolock )
 where   1 = 1 and o.Id = @Id
 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@Id", SqlDbType.Int).Value = orderId;
+            parm.Add("@Id", DbType.Int32, 4).Value = orderId;
 
             var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             var list = ConvertDataTableList<OrderListModel>(dt);
@@ -2583,22 +2589,23 @@ order by a.id desc
         /// <summary>
         /// 更新一条记录
         /// </summary>
-        public void UpdateTake(int orderId, int clienterId, float takeLongitude, float takeLatitude)
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150701</UpdateTime>
+        public void UpdateTake(OrderPM modelPM)
         {
-            const string UPDATE_SQL = @"
+            const string updateSql = @"
 update dbo.[Order] 
     set Status=4
 where id=@orderid and Status=2 and clienterId=@clienterId;
 update OrderOther 
     set TakeTime=GETDATE(),TakeLongitude=@TakeLongitude,TakeLatitude=@TakeLatitude 
-where orderid=@orderid  
-";
+where orderid=@orderid";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("TakeLongitude", takeLongitude);
-            dbParameters.AddWithValue("TakeLatitude", takeLatitude);
-            dbParameters.Add("orderId", DbType.Int32, 4).Value = orderId;
-            dbParameters.AddWithValue("clienterId", clienterId);
-            DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
+            dbParameters.AddWithValue("TakeLongitude", modelPM.longitude);
+            dbParameters.AddWithValue("TakeLatitude", modelPM.latitude);
+            dbParameters.Add("orderId", DbType.Int32, 4).Value = modelPM.OrderId;
+            dbParameters.AddWithValue("clienterId", modelPM.ClienterId);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
         /// <summary>
         /// 获取任务支付状态（0：未支付 1：部分支付 2：已支付）
@@ -3094,43 +3101,45 @@ where c.Id=@ClienterId;");
         /// <summary>
         /// 根据ID获取对象
         /// </summary>
-        public string GetFinishAllById(string orderNo)
-        {
-            const string querysql = @"
-select  FinishAll from  [Order](nolock)
-where  OrderNo=@OrderNo ";
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.Add("OrderNo", DbType.String, 90).Value = orderNo;
+//        public string GetFinishAllById(string orderNo)
+//        {
+//            const string querysql = @"
+//select  FinishAll from  [Order](nolock)
+//where  OrderNo=@OrderNo ";
+//            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+//            dbParameters.Add("OrderNo", DbType.String, 90).Value = orderNo;
 
-            return DbHelper.ExecuteScalar(SuperMan_Write, querysql, dbParameters).ToString(); //用SuperMan_Write,不加nolock
+//            return DbHelper.ExecuteScalar(SuperMan_Write, querysql, dbParameters).ToString(); //用SuperMan_Write,不加nolock
 
-        }
+//        }
         /// <summary>
         /// 更新已提现
         /// </summary>
         /// <param name="orderId"></param>
-        public bool UpdateFinishAll(string orderNo)
+        public bool UpdateFinishAll(int orderId)
         {
-
-            //            const string updateSql = @"
-            //update [Order] set FinishAll=1 where OrderNo=@OrderNo";
+//            const string updateSql = @"
+//declare @FinishAll int;
+//select  @FinishAll = FinishAll
+//from    [order]
+//where   Id = @OrderId; 
+//if ( @FinishAll <> 1 )
+//    begin
+//        update  [order]
+//        set     FinishAll = 1
+//        where   Id = @OrderId;
+//        select  1;
+//        return;
+//    end;
+//select  0;";
             const string updateSql = @"
-declare @FinishAll int;
-select  @FinishAll = FinishAll
-from    [order](nolock)
-where   OrderNo = @OrderNo; 
-if ( @FinishAll <> 1 )
-    begin
-        update  [order]
-        set     FinishAll = 1
-        where   OrderNo = @OrderNo;
-        select  1;
-        return;
-    end;
-select  0;";
+update  [order]
+        set     FinishAll = 1 
+        where   Id = @OrderId and FinishAll = 0;
+";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.Add("@OrderNo", DbType.String, 90).Value = orderNo;
-            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, updateSql, dbParameters), 1) == 1 ? true : false;
+            dbParameters.Add("OrderId", DbType.Int32, 4).Value = orderId;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters) == 1 ? true : false;
         }
         /// <summary>
         /// 根据orderID获取订单地图数据
@@ -3141,8 +3150,12 @@ select  0;";
         {
             string sql = @" 
                             SELECT  ord.OrderId,
-                                    ISNULL(PubLongitude, 0) AS PubLongitude,
-                                    ISNULL(PubLatitude, 0) AS PubLatitude,
+                                    CASE WHEN ISNULL(PubLongitude, 0) = 0 THEN c.Longitude
+                                         ELSE PubLongitude
+                                    END AS PubLongitude ,
+                                    CASE WHEN ISNULL(PubLatitude, 0) = 0 THEN c.Latitude
+                                         ELSE PubLatitude
+                                    END AS PubLatitude ,
                                     ISNULL(ab.PubDate, '') AS PubDate,
                                     ISNULL(GrabLongitude, 0) AS GrabLongitude,
                                     ISNULL(GrabLatitude, 0) AS GrabLatitude,
@@ -3153,9 +3166,10 @@ select  0;";
                                     ISNULL(CompleteLongitude, 0) AS CompleteLongitude,
                                     ISNULL(CompleteLatitude, 0) AS CompleteLatitude,
                                     ISNULL(ab.ActualDoneDate, '') AS ActualDoneDate
-                            FROM    OrderOther (NOLOCK) ord
-                                    JOIN [order] (NOLOCK) ab ON ord.OrderId = ab.Id
-                            WHERE   ord.OrderId = @orderID
+                            FROM  [order] (NOLOCK) ab  
+                                    JOIN OrderOther (NOLOCK) ord ON ord.OrderId = ab.Id
+                                    JOIN business (NOLOCK) c ON c.id = ab.businessId 
+                            WHERE   ab.Id = @orderID
                             ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@orderID", orderID);

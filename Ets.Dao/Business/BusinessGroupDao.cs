@@ -1,65 +1,15 @@
 ﻿using System.Data;
-using ETS;
 using ETS.Dao;
 using ETS.Data;
 using ETS.Data.Core;
-using ETS.Data.PageData;
 using ETS.Util;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ETS.Const;
-using Ets.Model.DomainModel.Business;
-using Ets.Model.DomainModel.Clienter;
-using Ets.Model.ParameterModel.Business;
-using Ets.Model.DataModel.Order;
 using Ets.Model.DataModel.Business;
-using ETS.Extension;
-using ETS.Enums;
-using Ets.Model.Common;
-using Ets.Model.DataModel.Group;
-
 
 namespace Ets.Dao.Business
 {
     public class BusinessGroupDao : DaoBase
     {
-        /// <summary>
-        /// 创建商家分组
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public bool InsertDataBusinessGroup(BusinessGroupModel model)
-        {
-            string sql = @"INSERT INTO [dbo].[BusinessGroup]
-                            ([Name]
-                            ,[StrategyId]
-                            ,[CreateBy]
-                            ,[CreateTime]
-                            ,[UpdateBy]
-                            ,[UpdateTime]                            
-                            )
-                            VALUES
-                            (@Name
-                            ,@StrategyId
-                            ,@CreateBy
-                            ,@CreateTime
-                            ,@UpdateBy
-                            ,@UpdateTime
-                            )
-                            ";
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@Name", model.Name);
-            parm.AddWithValue("@StrategyId", model.StrategyId);
-            parm.AddWithValue("@CreateBy", model.CreateBy);
-            parm.AddWithValue("@CreateTime", model.CreateTime);
-            parm.AddWithValue("@UpdateBy", model.UpdateBy);
-            parm.AddWithValue("@UpdateTime", model.UpdateTime);         
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
-        }
-
         /// <summary>
         /// 获取商家分组集合列表
         /// </summary>

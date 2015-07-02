@@ -275,6 +275,7 @@
     <Compile Include="ParameterModel\Order\BusiOrderResultModel.cs" />
     <Compile Include="ParameterModel\Order\AsyncStatusPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\GetJobCPM.cs" />
+    <Compile Include="ParameterModel\Order\NewAddressPM.cs" />
     <Compile Include="ParameterModel\Order\OrderChildModel.cs" />
     <Compile Include="ParameterModel\Order\OrderCompleteModel.cs" />
     <Compile Include="ParameterModel\Order\OrderDistributionAnalyze.cs" />

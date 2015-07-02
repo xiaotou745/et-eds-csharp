@@ -1443,7 +1443,7 @@ namespace Ets.Service.Provider.Order
             orderDM.Longitude = order.Longitude;
             orderDM.Latitude = order.Latitude;
             orderDM.ClienterId = ParseHelper.ToInt(order.clienterId);
-            orderDM.OneKeyPubOrder = orderDM.OneKeyPubOrder;
+            orderDM.OneKeyPubOrder = order.OneKeyPubOrder;
 
             #region 是否允许修改小票
             orderDM.IsModifyTicket = true;
@@ -1551,11 +1551,17 @@ namespace Ets.Service.Provider.Order
             return orderDao.GetOrderStatus(orderId, businessId);
         }
 
+        /// <summary>
+        /// 更新取货坐标
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150701</UpdateTime>
+        /// <param name="modelPM"></param>
         public void UpdateTake(OrderPM modelPM)
         {
             float takeLongitude = (float)modelPM.longitude;
             float takeLatitude = (float)modelPM.latitude;
-            orderDao.UpdateTake(modelPM.OrderId, modelPM.ClienterId, takeLongitude, takeLatitude);
+            orderDao.UpdateTake(modelPM);
         }
 
         /// <summary>

@@ -17,9 +17,8 @@ namespace Ets.Service.IProvider.Clienter
         /// 更新添加骑士佣金金额
         /// wc
         /// </summary>
-        /// <param name="userId"></param>
         /// <param name="myOrderInfo"></param>
-        void UpdateClienterAccount(int userId, OrderListModel myOrderInfo);
+        void UpdateClienterAccount(OrderListModel myOrderInfo);
         /// <summary>
         /// 骑士上下班功能 add by caoheyang 20150312
         /// </summary>
@@ -133,7 +132,7 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="orderNo"></param>
         /// <param name="pickupCode">取货码 可空</param>
         /// <returns></returns>
-        FinishOrderResultModel FinishOrder(int userId, string orderNo, float completeLongitude, float CompleteLatitude, string pickupCode = null);
+        FinishOrderResultModel FinishOrder(OrderCompleteModel parModel);
 
         ClienterModel GetUserInfoByUserId(int UserId);
         /// <summary>
