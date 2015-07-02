@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- This file contains job definitions in schema version 2.0 format -->
+
+<job-scheduling-data xmlns="http://quartznet.sourceforge.net/JobSchedulingData" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0">
+
+  <processing-directives>
+    <overwrite-existing-data>true</overwrite-existing-data>
+  </processing-directives>
+
+  <schedule>
+    <!--地址扫描匹配-->
+    <job>
+      <name>AdressAssociateBLL</name>
+      <group>DeomJobGroup</group>
+      <description>可提现金额变更</description>
+      <job-type>Ets.AddressAssociate.AdressAssociateBLL,Ets.AddressAssociate</job-type>
+      <durable>true</durable>
+      <recover>false</recover>
+    </job>
+
+    <!--地址扫描匹配 触发器 每一个小时执行一次-->
+    <trigger>
+      <cron>
+        <name>AdressAssociateBLLTrigger</name>
+        <group>DeomJobTriggerGroup</group>
+        <job-name>AdressAssociateBLL</job-name>
+        <job-group>DeomJobGroup</job-group>
+        <cron-expression>0 0 * * * ?</cron-expression><!--每天每小时触发一次-->
+      </cron>
+    </trigger>
+
+  </schedule>
+</job-scheduling-data>
