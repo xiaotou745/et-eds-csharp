@@ -43,5 +43,19 @@ where   Id > @AddressId
             }
             return models;
         }
+
+        /// <summary>
+        ///  B端商户拉取收货人地址缓存到本地 add By  caoheyang   20150702 
+        /// </summary>
+        /// <param name="model">参数实体</param>
+        /// <returns></returns>
+        public void RemoveAddressB(RemoveAddressBPM model)
+        {
+            const string deleteSql = @"delete from ReceviceAddress where Id = @AddressId and BusinessId= @BusinessId";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("AddressId", model.AddresssId);
+            dbParameters.AddWithValue("BusinessId", model.BusinessId);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, deleteSql, dbParameters);
+        }
     }
 }

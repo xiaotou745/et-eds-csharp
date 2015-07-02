@@ -20,5 +20,13 @@ namespace Ets.Service.IProvider.Order
         /// <param name="model">参数实体</param>
         /// <returns></returns>
         ResultModel<object> ConsigneeAddressB(ConsigneeAddressBPM model);
+
+          /// <summary>
+        ///  B端商户删除收货人地址 add By  caoheyang   20150702 
+        /// </summary>
+        /// <param name="model">参数实体</param>
+        /// <returns></returns>
+        ResultModel<object> RemoveAddressB(RemoveAddressBPM model);
+        
     }
 }

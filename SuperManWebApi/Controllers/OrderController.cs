@@ -514,7 +514,7 @@ namespace SuperManWebApi.Controllers
             }
         }
         /// <summary>
-        /// 一键发单修改地址和电话
+        ///  B端商户拉取收货人地址缓存到本地 add By  caoheyang   20150702 
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -526,5 +526,17 @@ namespace SuperManWebApi.Controllers
             return receviceAddressProvider.ConsigneeAddressB(model);
         }
 
+        /// <summary>
+        ///  B端商户删除收货人地址 add By  caoheyang   20150702 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Validate]
+        [ApiVersion]
+        public ResultModel<object> RemoveAddressB([FromBody]RemoveAddressBPM model)
+        {
+            return receviceAddressProvider.RemoveAddressB(model);
+        }
     }
 }

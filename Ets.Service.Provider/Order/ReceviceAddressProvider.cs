@@ -34,5 +34,16 @@ namespace Ets.Service.Provider.Order
             };
             return ResultModel<object>.Conclude(SystemEnum.Success, res);
         }
+
+        /// <summary>
+        ///   B端商户删除收货人地址 add By  caoheyang   20150702 
+        /// </summary>
+        /// <param name="model">参数实体</param>
+        /// <returns></returns>
+        public ResultModel<object> RemoveAddressB(RemoveAddressBPM model)
+        {
+            receviceAddressDao.RemoveAddressB(model);
+            return ResultModel<object>.Conclude(SystemEnum.Success);
+        }
     }
 }
