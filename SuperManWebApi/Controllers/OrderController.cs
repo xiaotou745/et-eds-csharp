@@ -15,6 +15,7 @@ using Ets.Model.ParameterModel.Business;
 using Ets.Model.DomainModel.Order;
 using Ets.Service.IProvider.Clienter;
 using Ets.Service.Provider.Clienter;
+using SuperManWebApi.App_Start.Filters;
 using SuperManWebApi.Providers;
 using Ets.Service.IProvider.Business;
 using Ets.Service.Provider.Business;
@@ -29,6 +30,7 @@ namespace SuperManWebApi.Controllers
         IBusinessProvider iBusinessProvider = new BusinessProvider();
         readonly IClienterProvider iClienterProvider = new ClienterProvider();
         IOrderChildProvider iOrderChildProvider = new OrderChildProvider();
+        private IReceviceAddressProvider receviceAddressProvider = new ReceviceAddressProvider();
         /// <summary>
         /// 商户发布订单   
         /// </summary>
@@ -517,9 +519,11 @@ namespace SuperManWebApi.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public ResultModel<object> ConsigneeAddressB(ConsigneeAddressBPM model)
+        [Validate]
+        [ApiVersion]
+        public ResultModel<object> ConsigneeAddressB([FromBody]ConsigneeAddressBPM model)
         {
-            return null;
+            return receviceAddressProvider.ConsigneeAddressB(model);
         }
 
     }

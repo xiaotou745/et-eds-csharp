@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ETS.Const;
 using Ets.Dao.Order;
+using ETS.Enums;
 using Ets.Model.Common;
 using Ets.Model.DomainModel.Order;
 using Ets.Model.ParameterModel.Order;
@@ -24,8 +26,13 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public ResultModel<object> ConsigneeAddressB(ConsigneeAddressBPM model)
         {
-            IList<ConsigneeAddressBDM> models = receviceAddressDao.ConsigneeAddressB(model); 
-            return null;
+            IList<ConsigneeAddressBDM> models = receviceAddressDao.ConsigneeAddressB(model);
+            var res = new
+            {
+                MaxId = models.Max(item=>item.Id), 
+                Data = models
+            };
+            return ResultModel<object>.Conclude(SystemEnum.Success, res);
         }
     }
 }
