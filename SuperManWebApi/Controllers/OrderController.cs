@@ -15,6 +15,7 @@ using Ets.Model.ParameterModel.Business;
 using Ets.Model.DomainModel.Order;
 using Ets.Service.IProvider.Clienter;
 using Ets.Service.Provider.Clienter;
+using SuperManWebApi.App_Start.Filters;
 using SuperManWebApi.Providers;
 using Ets.Service.IProvider.Business;
 using Ets.Service.Provider.Business;
@@ -22,16 +23,14 @@ using Letao.Util;
 
 namespace SuperManWebApi.Controllers
 {
-    [ExecuteTimeLog]
-    /// <summary>
-    /// TODO:每个API的日志、异常之类
-    /// </summary>
+    [ExecuteTimeLog]// TODO:每个API的日志、异常之类
     public class OrderController : ApiController
     {
         IOrderProvider iOrderProvider = new OrderProvider();
         IBusinessProvider iBusinessProvider = new BusinessProvider();
         readonly IClienterProvider iClienterProvider = new ClienterProvider();
         IOrderChildProvider iOrderChildProvider = new OrderChildProvider();
+        private IReceviceAddressProvider receviceAddressProvider = new ReceviceAddressProvider();
         /// <summary>
         /// 商户发布订单   
         /// </summary>
@@ -513,6 +512,31 @@ namespace SuperManWebApi.Controllers
                 default:
                     return ResultModel<string>.Conclude(OneKeyPubOrderUpdateStatus.Success);
             }
+        }
+        /// <summary>
+        ///  B端商户拉取收货人地址缓存到本地 add By  caoheyang   20150702 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Validate]
+        [ApiVersion]
+        public ResultModel<object> ConsigneeAddressB([FromBody]ConsigneeAddressBPM model)
+        {
+            return receviceAddressProvider.ConsigneeAddressB(model);
+        }
+
+        /// <summary>
+        ///  B端商户删除收货人地址 add By  caoheyang   20150702 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Validate]
+        [ApiVersion]
+        public ResultModel<object> RemoveAddressB([FromBody]RemoveAddressBPM model)
+        {
+            return receviceAddressProvider.RemoveAddressB(model);
         }
     }
 }

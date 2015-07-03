@@ -46,6 +46,7 @@
     <Compile Include="Clienter\ClienterLocationDao.cs" />
     <Compile Include="Common\AdminToolsDao.cs" />
     <Compile Include="Common\ApiVersionDao.cs" />
+    <Compile Include="Common\AppVersionDao.cs" />
     <Compile Include="Common\AreaDao.cs" />
     <Compile Include="Common\ExportSqlManageDao.cs" />
     <Compile Include="Common\GroupApiConfigDao.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="Order\OrderDetailDao.cs" />
     <Compile Include="Order\OrderChildDao.cs" />
     <Compile Include="Order\OrderDao.cs" />
+    <Compile Include="Order\ReceviceAddressDao.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Statistics\OrderStatisticsDao.cs" />
     <Compile Include="Statistics\StatisticsDao.cs" />

@@ -1443,7 +1443,7 @@ namespace Ets.Service.Provider.Order
             orderDM.Longitude = order.Longitude;
             orderDM.Latitude = order.Latitude;
             orderDM.ClienterId = ParseHelper.ToInt(order.clienterId);
-            orderDM.OneKeyPubOrder = orderDM.OneKeyPubOrder;
+            orderDM.OneKeyPubOrder = order.OneKeyPubOrder;
 
             #region 是否允许修改小票
             orderDM.IsModifyTicket = true;

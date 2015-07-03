@@ -175,6 +175,7 @@
     <Content Include="htmls\help6.html" />
     <Content Include="htmls\help7.html" />
     <Content Include="htmls\help.html" />
+    <Content Include="htmls\ios\about.html" />
     <Content Include="htmls\ios\help.html" />
     <Content Include="htmls\ios\help1.html" />
     <Content Include="htmls\ios\help2.html" />

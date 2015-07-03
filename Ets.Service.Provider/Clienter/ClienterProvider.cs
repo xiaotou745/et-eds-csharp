@@ -590,15 +590,15 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="pickupCode">取货码</param>
         /// <returns></returns>
         public FinishOrderResultModel FinishOrder(OrderCompleteModel parModel)
-        {          
-            string orderNo = parModel.orderNo;   
+        {
+            string orderNo = parModel.orderNo;
             string pickupCode = parModel.pickupCode;
             #region 验证
             FinishOrderResultModel model = new FinishOrderResultModel() { };
 
             OrderListModel myOrderInfo = orderDao.GetByOrderNo(orderNo);
             if (myOrderInfo == null)  //关联表用的join,数据不完整关联表时会查不到数据
-            {              
+            {
                 model.FinishOrderStatus = FinishOrderStatus.DataError;
                 return model;
             }
@@ -615,12 +615,12 @@ namespace Ets.Service.Provider.Clienter
             //取到任务的接单时间、从缓存中读取完成任务时间限制，判断要用户点击完成时间>接单时间+限制时间           
             DateTime yuJiFinish = myOrderInfo.GrabTime.Value.AddMinutes(limitFinish);
             if (DateTime.Compare(DateTime.Now, yuJiFinish) < 0)  //小于0说明用户完成时间 太快
-            {             
+            {
                 model.FinishOrderStatus = FinishOrderStatus.TooQuickly;
                 return model;
             }
             if (!new OrderDao().IsOrNotFinish(myOrderInfo.Id))//是否有未完成子订单
-            {           
+            {
                 model.FinishOrderStatus = FinishOrderStatus.ExistNotPayChildOrder;
                 return model;
             }
@@ -640,10 +640,11 @@ namespace Ets.Service.Provider.Clienter
                 orderOtherDao.UpdateComplete(parModel);
 
                 //更新骑士和商家金额
-                UpdateMoney(myOrderInfo);
-
+                if (!UpdateMoney(myOrderInfo))
+                {
+                    return model;
+                }
                 tran.Complete();
-
             }
             //异步回调第三方，推送通知
             Task.Factory.StartNew(() =>
@@ -666,7 +667,7 @@ namespace Ets.Service.Provider.Clienter
             //float CompleteLatitude=parModel.Latitude; 
             //string pickupCode = parModel.pickupCode;
             //FinishOrderResultModel model = new FinishOrderResultModel() {};
-        
+
             //OrderListModel myOrderInfo = orderDao.GetByOrderNo(orderNo);
             //if (myOrderInfo == null)  //关联表用的join,数据不完整关联表时会查不到数据
             //{
@@ -720,7 +721,7 @@ namespace Ets.Service.Provider.Clienter
             //    UpdateMoney(myOrderInfo);                
 
             //    tran.Complete();          
-             
+
             //}
             ////异步回调第三方，推送通知
             //Task.Factory.StartNew(() =>
@@ -1274,8 +1275,8 @@ namespace Ets.Service.Provider.Clienter
 
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Success);
             }
-           
-            return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);           
+
+            return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
         }
 
         /// <summary>
