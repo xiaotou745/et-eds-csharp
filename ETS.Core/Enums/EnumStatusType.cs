@@ -633,4 +633,17 @@ namespace ETS.Enums
         [DisplayText("传入的参数不全")]
         ParamEmpty=3
     }
+    public enum VersionStatus
+    {
+        [DisplayText("获取成功")]
+        Success = 0,
+        [DisplayText("获取失败")]
+        Failed = 1,
+        [DisplayText("缺少UserType参数")]
+        NoUserType = 2,
+        [DisplayText("缺少PlatForm参数")]
+        NoPlatForm = 3,
+        [DisplayText("暂无数据")]
+        NoData=4
+    }
 }
