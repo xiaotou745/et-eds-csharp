@@ -36,6 +36,7 @@ a {
   color:#1c2831;
   text-decoration:none;
   outline:none;
+  cursor:pointer;
 }
 a:hover {
   color:#006699;
@@ -280,10 +281,11 @@ body { min-width:1100px; }
   color:#006699;
 }
 /*骑士css*/
-.index_one{
+
+.index_qs{
   width:100%;
   height:570px;
-  background:url(../images/banner.jpg) #e8eaf1 center center no-repeat;
+  background:url(../img/banner.jpg) #e8eaf1 center center no-repeat;
 }
 .one_cent{
   width:1066px;
@@ -305,6 +307,7 @@ body { min-width:1100px; }
   width:1066px;
   margin:0 auto;
   padding-top:90px;
+  overflow: hidden;
 }
 .two_left{
   float:left;
@@ -334,7 +337,7 @@ body { min-width:1100px; }
   text-align:center;
   line-height:18px;
   margin-right:8px;
-  background:url(../images/banner_6.png) no-repeat;
+  background:url(../img/banner_6.png) no-repeat;
 }
 .two_right dl dd{
   width:540px;
@@ -344,7 +347,7 @@ body { min-width:1100px; }
 .index_one{
   width:100%;
   height:570px;
-  background:url(../images/banner_two.jpg) #e8eaf1 center center no-repeat;
+  background:url(../img/banner_two.jpg) #e8eaf1 center center no-repeat;
 }
 .one_cent{
   width:1066px;
@@ -397,7 +400,7 @@ body { min-width:1100px; }
   text-align:center;
   line-height:18px;
   margin-right:8px;
-  background:url(../images/banner_6.png) no-repeat;
+  background:url(../img/banner_6.png) no-repeat;
 }
 .two_right dl dd{
   width:540px;
