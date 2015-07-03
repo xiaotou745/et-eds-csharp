@@ -3,8 +3,8 @@
 <div id="eds">
 			<!-- 头部模块start -->
 	    	<div id="hd">
-	    		<div class="header">
-	    			<a href="#" class="logo">logo</a>
+	    		<div class="header">	    			
+                    @Html.ActionLink("logo", "Index", "Home", null, new { @class = "logo" })
 	    			<ul class="nav">                      
                         <li>@Html.ActionLink("首页", "Index", "Home")</li>
                         <li>@Html.ActionLink("商户版", "Business", "Home")</li>
