@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -24,8 +25,11 @@ namespace Ets.AddressAssociate
             threadSafe = false;
             try
             {
+                LogHelper.LogWriterString("扫表开始:时间:" + DateTime.Now.ToString());
                 XmlDocument xdoc = new XmlDocument();
-                xdoc.Load(@"date.xml");
+                string path = System.AppDomain.CurrentDomain.BaseDirectory + @"\date.xml";
+                logger.Info("时间XML路径:"+path);
+                xdoc.Load(path);
                 XmlNode dateNode = xdoc.SelectSingleNode("date");
                 DateTime lastdate = DateTime.Now;
                 // 按照 sqldate 查询数据库
@@ -35,8 +39,9 @@ namespace Ets.AddressAssociate
                     //本次查询的ID大于上次查询的ID查询成功
                     XmlElement dateElement = (XmlElement)dateNode;
                     dateElement.InnerText = lastdate.ToString();
-                } 
-                xdoc.Save(@"date.xml");
+                }
+                xdoc.Save(path);
+                LogHelper.LogWriterString("扫表结束:时间:" + DateTime.Now.ToString());
             }
             catch (Exception ex)
             {
