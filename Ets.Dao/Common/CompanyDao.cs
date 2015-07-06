@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ETS.Extension;
 using Ets.Model.Common;
-using Ets.Model.DomainModel.Company;
+using Ets.Model.DomainModel.DeliveryCompany;
 
 namespace Ets.Dao.Common
 {

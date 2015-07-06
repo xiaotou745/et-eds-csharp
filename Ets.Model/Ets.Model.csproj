@@ -77,7 +77,6 @@
     <Compile Include="DataModel\Clienter\ClienterLocation.cs" />
     <Compile Include="DataModel\Clienter\CrossShopStatisticLogModel.cs" />
     <Compile Include="DataModel\Common\ExportSqlManage.cs" />
-    <Compile Include="DataModel\DeliveryCompany\DeliveryCompanyInfo.cs" />
     <Compile Include="DataModel\Message\BusinessMessage.cs" />
     <Compile Include="DataModel\Message\ClienterMessage.cs" />
     <Compile Include="DataModel\Message\MessageModel.cs" />
@@ -114,8 +113,8 @@
     <Compile Include="DomainModel\Business\ClienterBindOptionLogModel.cs" />
     <Compile Include="DomainModel\Clienter\ClienterDetailModel.cs" />
     <Compile Include="DomainModel\Clienter\ClienterDM.cs" />
-    <Compile Include="DomainModel\Company\CompanyModel.cs" />
-    <Compile Include="DomainModel\Company\CompanyModelList.cs" />
+    <Compile Include="DomainModel\DeliveryCompany\CompanyModel.cs" />
+    <Compile Include="DomainModel\DeliveryCompany\CompanyModelList.cs" />
     <Compile Include="DomainModel\Finance\BusinessBalanceRecordModel.cs" />
     <Compile Include="DomainModel\Finance\BusinessWithdrawFormModel.cs" />
     <Compile Include="DomainModel\Finance\BusinessWithdrawLogModel.cs" />
@@ -312,7 +311,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserModel.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="DataModel\DeliveryCompany\" />
+    <Folder Include="DomainModel\Company\" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ETS.Core\ETS.Core.csproj">
       <Project>{bba67a86-afd6-46f2-bbd9-5dfb5bfdafe2}</Project>
