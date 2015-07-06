@@ -116,13 +116,8 @@
     <Compile Include="DomainModel\Business\ClienterBindOptionLogModel.cs" />
     <Compile Include="DomainModel\Clienter\ClienterDetailModel.cs" />
     <Compile Include="DomainModel\Clienter\ClienterDM.cs" />
-<<<<<<< .mine
     <Compile Include="DomainModel\DeliveryCompany\CompanyModel.cs" />
     <Compile Include="DomainModel\DeliveryCompany\CompanyModelList.cs" />
-=======
-
-
->>>>>>> .theirs
     <Compile Include="DomainModel\Finance\BusinessBalanceRecordModel.cs" />
     <Compile Include="DomainModel\Finance\BusinessWithdrawFormModel.cs" />
     <Compile Include="DomainModel\Finance\BusinessWithdrawLogModel.cs" />
