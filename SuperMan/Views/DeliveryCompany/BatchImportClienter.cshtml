@@ -6,6 +6,7 @@
 <script src="~/Scripts/jquery-1.8.2.js"></script>
 <script src="~/Scripts/jquery-ui-1.8.20.js"></script>
 <script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+<script src="~/Scripts/ajaxfileupload.js"></script>
 <link href="~/Content/tab.css" rel="stylesheet" />
 <div style="width:1000px">
     <h2 class="crumbs">
@@ -43,8 +44,7 @@
     var OverallS;
     //导入
     $("#btnImport").on('click', function () {
-        var BusinessId = $('#businessId').val();
-        var url = "/BusinessManager/BatchImportClienterExcel?companyId=" + 1;
+        var url = "/DeliveryCompany/BatchImportClienterExcel?companyId=" + 1;
         $.ajaxFileUpload({
             type: 'POST',
             secureuri: false, //一般设置为false

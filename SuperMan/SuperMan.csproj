@@ -471,6 +471,7 @@
     <Content Include="Nlog.config" />
     <Content Include="Content\Template\phoneNoTemplate.xlsx" />
     <Content Include="Content\Template\BatchImport.xls" />
+    <Content Include="Content\Template\物流公司批量导入配送员.xls" />
     <None Include="Properties\PublishProfiles\admin.edaisong.com.pubxml" />
     <None Include="Properties\PublishProfiles\chuan.admin.edaisong.com.pubxml" />
     <None Include="Properties\PublishProfiles\HDLWEB.pubxml" />

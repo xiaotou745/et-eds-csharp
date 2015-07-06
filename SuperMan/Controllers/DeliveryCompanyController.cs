@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Ets.Model.DeliveryCompan;
+using NPOI.HSSF.UserModel;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 
 namespace SuperMan.Controllers
 {
@@ -37,7 +42,30 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult BatchImportClienterExcel(int companyId)
         {
-            return View();
+            string businessId = Request.Params["BusinessId"].ToString();
+            List<BatchImportClienterExcelDM> list = new List<BatchImportClienterExcelDM>();
+            Stream fs = null;
+            IWorkbook wk = null;
+
+            if (Request.Files["file1"] != null && Request.Files["file1"].FileName != "")
+            {
+                HttpPostedFileBase file = Request.Files["file1"];
+                fs = file.InputStream;
+                if (Path.GetExtension(Request.Files["file1"].FileName) == ".xls")
+                    wk = new HSSFWorkbook(fs);
+                else
+                    wk = new XSSFWorkbook(fs);
+
+                ISheet st = wk.GetSheetAt(0);
+                int rowCount = st.LastRowNum;
+                if (rowCount > 50)
+                {
+                    rowCount = 50;
+                    return Json(new Ets.Model.Common.ResultModel(false, "每次最多导入50行数据！", JsonRequestBehavior.DenyGet));
+                }
+                //list = GetList(st, rowCount);
+            }
+            return Json(list);
         }
     }
 }
