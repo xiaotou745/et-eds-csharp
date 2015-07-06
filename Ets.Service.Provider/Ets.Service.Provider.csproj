@@ -77,6 +77,7 @@
     <Compile Include="Common\HomeCountProvider.cs" />
     <Compile Include="Common\ServicePhone.cs" />
     <Compile Include="Common\TestUserProvider.cs" />
+    <Compile Include="DeliveryCompany\DeliveryCompanyProvider.cs" />
     <Compile Include="Finance\BusinessBalanceRecordProvider.cs" />
     <Compile Include="Finance\BusinessFinanceProvider.cs" />
     <Compile Include="Finance\ClienterBalanceRecordProvider.cs" />

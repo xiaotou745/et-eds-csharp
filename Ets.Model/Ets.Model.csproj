@@ -65,7 +65,6 @@
     <Compile Include="DataModel\Business\BusiModifyResultModelDM.cs" />
     <Compile Include="DataModel\Business\BusinessClienterRelation.cs" />
     <Compile Include="DataModel\Business\BusinessCommissionDM.cs" />
-    <Compile Include="DataModel\Business\BusinessExpressRelation.cs" />
     <Compile Include="DataModel\Business\BusinessGroupLogModel.cs" />
     <Compile Include="DataModel\Business\BusinessGroupModel.cs" />
     <Compile Include="DataModel\Business\BusinessOptionLog.cs" />
@@ -78,6 +77,7 @@
     <Compile Include="DataModel\Clienter\ClienterLocation.cs" />
     <Compile Include="DataModel\Clienter\CrossShopStatisticLogModel.cs" />
     <Compile Include="DataModel\Common\ExportSqlManage.cs" />
+    <Compile Include="DataModel\DeliveryCompany\DeliveryCompanyInfo.cs" />
     <Compile Include="DataModel\Message\BusinessMessage.cs" />
     <Compile Include="DataModel\Message\ClienterMessage.cs" />
     <Compile Include="DataModel\Message\MessageModel.cs" />
