@@ -1,0 +1,34 @@
+﻿@model  List<Ets.Model.DomainModel.DeliveryCompany.BatchImportClienterExcelDM>
+@{
+    Layout = null;
+}
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+    <thead>
+        <tr class="tdbg">
+            <th>行号</th>
+            <th>骑士姓名</th>
+            <th>骑士手机号</th>
+            <th>城市</th>
+            <th>身份证号</th>
+            <th>是否导入</th>
+            <th>备注</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+            {
+                for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr>
+                        <td>@(i+1)</td>
+                        <td>@Model[i].Name</td>
+                        <td>@Model[i].Phone</td>
+                        <td>@Model[i].City</td>
+                        <td>@Model[i].IdCard</td>
+                        <td></td>
+                        <td>@Model[i].Remark</td>
+                    </tr>
+                }
+            }
+    </tbody>
+</table>
