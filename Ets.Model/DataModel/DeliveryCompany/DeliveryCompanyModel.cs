@@ -8,12 +8,9 @@ namespace Ets.Model.DataModel.DeliveryCompany
 {
     /// <summary>
 
-    /// 实体类DeliveryCompanyInfo 。(属性说明自动提取数据库字段的描述信息)
-
-    /// Generate By: tools.etaoshi.com
-
-    /// Generate Time: 2015-07-06 13:28:46
-
+    /// 实体类DeliveryCompanyInfo 。(属性说明自动提取数据库字段的描述信息) 
+    /// Generate By: tools.etaoshi.com 
+    /// Generate Time: 2015-07-06 13:28:46 
     /// </summary>
 
     public class DeliveryCompanyModel
