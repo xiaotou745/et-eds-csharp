@@ -16,10 +16,10 @@ namespace Ets.Model.DataModel.DeliveryCompany
 
     /// </summary>
 
-    public class DeliveryCompanyInfo
+    public class DeliveryCompanyModel
     {
 
-        public DeliveryCompanyInfo() { }
+        public DeliveryCompanyModel() { }
 
         /// <summary>
 
