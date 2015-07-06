@@ -65,6 +65,7 @@
     <Compile Include="DataModel\Business\BusiModifyResultModelDM.cs" />
     <Compile Include="DataModel\Business\BusinessClienterRelation.cs" />
     <Compile Include="DataModel\Business\BusinessCommissionDM.cs" />
+    <Compile Include="DataModel\Business\BusinessExpressRelation.cs" />
     <Compile Include="DataModel\Business\BusinessGroupLogModel.cs" />
     <Compile Include="DataModel\Business\BusinessGroupModel.cs" />
     <Compile Include="DataModel\Business\BusinessOptionLog.cs" />
