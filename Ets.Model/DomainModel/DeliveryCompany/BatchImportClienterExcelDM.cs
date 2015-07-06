@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ets.Model.DeliveryCompan
+namespace Ets.Model.DomainModel.DeliveryCompany
 {
     /// <summary>
     /// 批量导入骑士返回页面实体（异步确人excel数据是否合法部分）  excel  处理  add by caoheyang 20150706

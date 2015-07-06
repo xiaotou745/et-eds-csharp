@@ -51,6 +51,7 @@
     <Compile Include="Common\IGroupProvider.cs" />
     <Compile Include="Common\IHomeCountProvider.cs" />
     <Compile Include="Common\IServicePhone.cs" />
+    <Compile Include="DeliveryCompany\IDeliveryCompanyProvider.cs" />
     <Compile Include="Distribution\IDistributionProvider.cs" />
     <Compile Include="Finance\IBusinessFinanceAccountProvider.cs" />
     <Compile Include="Finance\IBusinessFinanceProvider.cs" />
