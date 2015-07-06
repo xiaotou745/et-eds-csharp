@@ -32,6 +32,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+<<<<<<< HEAD
+=======
     <Reference Include="C5">
       <HintPath>..\lib\C5.dll</HintPath>
     </Reference>
@@ -46,11 +48,15 @@
     <Reference Include="log4net">
       <HintPath>..\lib\log4net.dll</HintPath>
     </Reference>
+>>>>>>> 60667e98cadf7fbde80a00cb894de57d7aa8fe87
     <Reference Include="Quartz">
       <HintPath>..\lib\Quartz.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+<<<<<<< HEAD
+=======
     <Reference Include="System.Configuration" />
+>>>>>>> 60667e98cadf7fbde80a00cb894de57d7aa8fe87
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
@@ -80,12 +86,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+<<<<<<< HEAD
+    <None Include="log4net.config" />
+=======
     <None Include="log4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Nlog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+>>>>>>> 60667e98cadf7fbde80a00cb894de57d7aa8fe87
     <None Include="quartz.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -16,5 +16,20 @@ namespace WebEdaiSong.Controllers
             return View();
         }
 
+        public ActionResult About()
+        {           
+            return View();
+        }
+
+        public ActionResult Business()
+        {            
+            return View();
+        }
+
+        public ActionResult Clienter()
+        {
+            return View();
+        }
+
     }
 }

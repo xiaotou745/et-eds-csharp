@@ -46,6 +46,7 @@
     <Compile Include="Common\AliPay\PayResultModel.cs" />
     <Compile Include="Common\AliPay\ReturnApliPayModel.cs" />
     <Compile Include="Common\ApiVersionStatisticModel.cs" />
+    <Compile Include="Common\AppVerionModel.cs" />
     <Compile Include="Common\BusinessCountManageList.cs" />
     <Compile Include="Common\ClienterCountManageList.cs" />
     <Compile Include="Common\ConstValues.cs" />
@@ -59,6 +60,7 @@
     <Compile Include="Common\OrderCountManageList.cs" />
     <Compile Include="Common\PagedList.cs" />
     <Compile Include="Common\TestUserModel.cs" />
+    <Compile Include="Common\VersionCheckModel.cs" />
     <Compile Include="DataModel\Authority\AccountCityRelation.cs" />
     <Compile Include="DataModel\Business\BusiModifyResultModelDM.cs" />
     <Compile Include="DataModel\Business\BusinessClienterRelation.cs" />

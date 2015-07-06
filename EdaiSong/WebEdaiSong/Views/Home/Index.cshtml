@@ -1,136 +1,66 @@
-﻿
-    <script src="/Content/js/jquery.min.js"></script>
-    <script src="/Content/js/jquery-ui.min.js"></script>
+﻿<link rel="stylesheet" href="~/css/eds.css" />
 
-    <script type="text/javascript" src="/Content/js/jquery.fullPage.min.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $('#fullpage').fullpage({
-                'verticalCentered': false,
-                'css3': true,
-                'sectionsColor': ['#0bd5c0', '#0bd5c0', '#0bd5c0', '#009bd5','#009bd5','#009bd5','#009bd5','#f47c0b','#f47c0b','#f47c0b','#f47c0b'],
-                'navigation': true,
-                'navigationPosition': 'right',
-                'navigationTooltips': [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-                'afterLoad': function(anchorLink, index){
-
-                },
-                'onLeave': function(index, nextIndex, direction){
-                    posCaption(nextIndex);
-                }
-            });
-            posCaption(1);
-            function posCaption(i){
-                var act = $('.caption .active');
-                var li = i>7?$('.caption li:eq(2)'):(i>3?$('.caption li:eq(1)'):'');
-                if(li){
-                	if(!li.hasClass('active')){
-	                    act.removeClass('active');
-	                    li.addClass('active');
-	                }
-	            }else{
-                    act.removeClass('active');
-                }
-            }
-        });
-    </script>
-    <link rel="stylesheet" type="text/css" href="/Content/css/jquery.fullPage.css" />
-    <link href="/Content/css/base.css" rel="stylesheet" type="text/css" />
-
-    <ul class="caption" style="position:absolute;">
-        <li class="bn"><a href="#1"><img src="/Images/logo_01.png" alt="E代送"></a></li>
-        <li>
-            <a href="#4">商户版</a>
-        </li>
-        <li>
-            <a href="#8">骑士版</a>
-        </li>
-        <li class="right">客服热线：<span>4006-380-177</span></li>
-    </ul>
-    <div id="fullpage">
-        <div class="section main_01" id="section01">
-            <div class="content">
-                <div class="text"><img src="/Images/1_l.jpg" alt=""></div>
-                <div class="right" style="position:relative">
-                    <img src="/Images/1_i1.png" alt="" style="position:absolute" class="ai a1">
-                    <img src="/Images/1_i2.png" alt="" style="position:absolute" class="ai a2">
-                    <img src="/Images/1_bg.jpg" alt="">
-                </div>
-            </div>
-        </div>
-        <div class="section main_02" id="section02">
-            <div class="content">
-                <div class="text"><img src="/Images/2_l.jpg" alt=""></div>
-                <div class="right"><img src="/Images/2_r.png" alt=""></div>
-            </div>
-        </div>
-        <div class="section main_03" id="section03">
-            <div class="content">
-                <div class="text"><img src="/Images/3_l.jpg" alt=""></div>
-                <div class="right">
-                    <img src="/Images/3_ai.jpg" class="img_bg" alt="">
-                    <img src="/Images/3_bg.png" class="img_ai ai" alt="">
-                </div>
-            </div>
-        </div>
-        <div class="section main_04" id="section04">
-            <div class="content">
-                <div class="text"><img src="/Images/4_l.jpg" alt=""></div>
-                <div class="right" style="position:relative">
-                    <img src="/Images/4_r.png" alt="">
-                    <div class="circle circle1"></div>
-                    <div class="circle circle2"></div>
-                </div>
-            </div>
-        </div>
-        <div class="section main_05" id="section05">
-            <div class="content">
-                <div class="text"><img src="/Images/5_l.png" alt=""></div>
-                <div class="right"><img src="/Images/5_r.jpg" alt=""></div>
-            </div>
-        </div>
-        <div class="section main_06" id="section06">
-            <div class="content">
-                <div class="text"><img src="/Images/6_l.jpg" alt=""></div>
-                <div class="right">
-                    <img src="/Images/6_r.jpg" alt="">
-                    <div class="r2">
-                        <img src="/Images/6_r-1.png" alt="" class="r2-1">
-                        <span class="r2-2">
-                            <img src="/Images/6_r-2.png" alt="">
-                        </span>
-                    </div>
-                    <img src="/Images/6_r-3.png" alt="" class="r3">
-                </div>
-            </div>
-        </div>
-        <div class="section main_07" id="section07">
-            <div class="center">
-                <img src="/Images/7_c.jpg" alt="">
-            </div>
-        </div>
-        <div class="section main_08" id="section08">
-            <div class="content">
-                <div class="text"><img src="/Images/8_l.jpg" alt=""></div>
-                <div class="right"><img src="/Images/8_r.jpg" alt=""></div>
-            </div>
-        </div>
-        <div class="section main_09" id="section09">
-            <div class="content">
-                <div class="text"><img src="/Images/9_l.jpg" alt=""></div>
-                <div class="right"><img src="/Images/9_r.jpg" alt=""></div>
-            </div>
-        </div>
-        <div class="section main_10" id="section10">
-            <div class="content">
-                <div class="text"><img src="/Images/10_l.jpg" alt=""></div>
-                <div class="right"><img src="/Images/10_r.jpg" alt=""></div>
-            </div>
-        </div>
-        <div class="section main_11" id="section11">
-            <div class="center">
-                <img src="/Images/11_c.jpg" alt="">
-            </div>
-            <div class="footer">京ICP备15014116号-1 Copyright©2011-2015易代送网络科技（北京）有限公司,All rights reserved.</div>
-        </div>
-    </div>
+		<div id="demo">
+			<!-- 头部模块start -->
+	    	<div id="hd">
+	    		<div class="header">
+                   @Html.ActionLink("logo", "Index", "Home", null, new { @class = "logo" })
+	    			<ul class="nav">	    					
+                        <li>@Html.ActionLink("首页", "Index", "Home")</li>	
+                        <li>@Html.ActionLink("商户版", "Business", "Home")</li>     
+                        <li>@Html.ActionLink("骑士版", "Clienter", "Home")</li>
+                        <li>@Html.ActionLink("关于Ｅ代送", "About", "Home")</li>
+	    			</ul>
+	    		</div>
+	    	</div>
+			<!-- 头部模块end -->
+			<div id="bd">
+				<div id="bd-inner">
+					<div class="section1">
+						<div class="slider swiper-container">
+							<ul class="swiper-wrapper">
+								<li class="s1 swiper-slide">
+									<div class="img"><a href="http://admin.edaisong.com.cn/download/edsb"></a><img src="~/img/s1.png" alt=""></div>
+								</li>
+								<li class="s2 swiper-slide">
+									<div class="img"><a href="http://admin.edaisong.com.cn/download/edsc"></a><img src="~/img/s2.png" alt=""></div>
+								</li>			
+							</ul>
+							<div class="slider-bar"><a href="#" class="on">1</a><a href="#">2</a></div>
+						</div>
+					</div>
+					<div class="section2">
+                        <img src="~/img/s3.jpg" alt="">
+					</div>
+					<div class="section3">
+                        <img src="~/img/s4.jpg" alt="">
+						<div class="code">
+							<ul>
+								<li><h5>骑士端</h5><img src="~/img/code1.jpg" alt=""><p>做飞翔的骑士</p></li>
+								<li><h5>商户端</h5><img src="~/img/code2.jpg" alt=""><p>您身边的翅膀</p></li>
+							</ul>
+							<div class="intro">
+								<p>扫描二维码下载App</p>
+								<p class="tips">(目前仅支持Android手机，iOS版敬请期待)</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- 底部模块start -->
+			<div id="ft">
+				<div class="footer">
+					<div class="phone"><i class="i-phone"></i>客服热线：4006-380-177</div>
+					<div class="copyright"><p>京ICP备15014116号-1 Copyright©2011-2015</p>
+					<p>易代送网络科技（北京）有限公司,All rights reserved.</p></div>
+				</div>
+			</div>
+			<!-- 底部模块end -->
+		</div>
+		<script src="~/js/jquery-1.11.3.min.js"></script>
+		<script src="~/js/slidesjs.min.js"></script>
+		<script type="text/javascript">
+		$(".swiper-wrapper").slidesjs({
+        	height: 570
+	      });    
+		</script>
