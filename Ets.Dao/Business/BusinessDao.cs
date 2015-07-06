@@ -377,6 +377,10 @@ and a.PhoneNo=@PhoneNo";
                                     ,ISNULL(b.BalancePrice,0) BalancePrice
                                     ,ISNULL(b.AllowWithdrawPrice,0) AllowWithdrawPrice";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
+            if (!string.IsNullOrWhiteSpace(criteria.RecommendPhone))
+            {
+                sbSqlWhere.AppendFormat(" AND b.RecommendPhone='{0}' ", criteria.RecommendPhone.Trim());
+            }
             if (!string.IsNullOrEmpty(criteria.businessName))
             {
                 sbSqlWhere.AppendFormat(" AND b.Name='{0}' ", criteria.businessName.Trim());
@@ -437,8 +441,8 @@ and a.PhoneNo=@PhoneNo";
         public int InsertBusiness(RegisterInfoPM model)
         {
             const string insertSql = @"         
-insert into dbo.business (City,PhoneNo,PhoneNo2,Password,CityId )
-values( @City,@PhoneNo,@PhoneNo2,@Password,@CityId )
+insert into dbo.business (City,PhoneNo,PhoneNo2,Password,CityId,RecommendPhone)
+values( @City,@PhoneNo,@PhoneNo2,@Password,@CityId ,@RecommendPhone)
 select @@IDENTITY";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -447,6 +451,7 @@ select @@IDENTITY";
             dbParameters.AddWithValue("@PhoneNo", model.phoneNo);
             dbParameters.AddWithValue("@PhoneNo2", model.phoneNo);
             dbParameters.AddWithValue("@CityId", model.CityId);
+            dbParameters.AddWithValue("@RecommendPhone", model.RecommendPhone);
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
         }
 
@@ -2283,6 +2288,20 @@ VALUES
             DataTable dt = DbHelper.ExecuteDataTable(Config.SuperMan_Read, querySql, parm);
             IList<BusinessOptionLog> list = ConvertDataTableList<BusinessOptionLog>(dt);
             return list.ToList();
+        }
+
+        /// <summary>
+        /// 判断推荐人手机号是否正确 2015年7月6日14:51:38 茹化肖
+        /// </summary>
+        /// <param name="phoneNum"></param>
+        /// <returns></returns>
+        public bool CheckRecommendPhone(string phoneNum)
+        {
+            const string sql = @"SELECT COUNT(1) FROM dbo.business(NOLOCK) WHERE Status=1 AND PhoneNo=@PhoneNo";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@PhoneNo", DbType.String).Value = phoneNum;
+            object obj = DbHelper.ExecuteScalar(SuperMan_Read, sql,parm);
+            return ParseHelper.ToInt(obj, 0) > 0;
         }
     }
 }

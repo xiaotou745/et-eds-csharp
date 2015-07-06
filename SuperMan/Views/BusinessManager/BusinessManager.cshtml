@@ -57,11 +57,13 @@
                             <option value="0">线下结算</option>
                             <option value="1">线上结算</option>
                         </select>
-                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                        
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td><span class="">推荐人电话: </span>
+                        <input id="txtRecommendPhone" type="text" name="RecommendPhone" />
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                         @if (SuperMan.App_Start.UserContext.Current.HasAuthority(40))
                         {
                             <input type="submit" value="添加商户" onclick="showaddBusiness();" class="searchBtn" id="btnAddShop" />

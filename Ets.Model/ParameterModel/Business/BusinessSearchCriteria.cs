@@ -68,7 +68,10 @@ namespace Ets.Model.ParameterModel.Business
         /// 商户Id
         /// </summary>
         public int BusinessId { get; set; }
-        
+        /// <summary>
+        /// 推荐人电话
+        /// </summary>
+        public string RecommendPhone { get; set; }
     }
     public class OrderByItem<Tentity>
     {
