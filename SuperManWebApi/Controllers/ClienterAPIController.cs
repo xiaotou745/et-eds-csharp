@@ -113,7 +113,7 @@ namespace SuperManWebApi.Controllers
             degree.latitude = model.latitude;
             var pIndex = ParseHelper.ToInt(model.pageIndex, 1);
 
-            var pSize = ParseHelper.ToInt(model.pageSize, ConstValues.App_PageSize);
+            var pSize = ParseHelper.ToInt(model.pageSize,PageSizeEnum.App_PageSize.GetHashCode());
 
             var criteria = new ClientOrderSearchCriteria()
             {
@@ -145,7 +145,7 @@ namespace SuperManWebApi.Controllers
             degree.longitude = model.longitude;
             degree.latitude = model.latitude;
             var pIndex = ParseHelper.ToInt(model.pageIndex, 1);
-            var pSize = ParseHelper.ToInt(model.pageSize, ConstValues.App_PageSize);
+            var pSize = ParseHelper.ToInt(model.pageSize, PageSizeEnum.App_PageSize.GetHashCode());
             var criteria = new ClientOrderSearchCriteria()
             {
                 PagingRequest = new PagingResult(pIndex, pSize),
@@ -176,7 +176,7 @@ namespace SuperManWebApi.Controllers
             degree.longitude = ParseHelper.ToDouble(HttpContext.Current.Request["longitude"]);
             degree.latitude = ParseHelper.ToDouble(HttpContext.Current.Request["latitude"]);
             var pIndex = ParseHelper.ToInt(model.pageIndex, 1);
-            var pSize = ParseHelper.ToInt(model.pageSize, ConstValues.App_PageSize);
+            var pSize = ParseHelper.ToInt(model.pageSize, PageSizeEnum.App_PageSize.GetHashCode());
             var criteria = new ClientOrderSearchCriteria()
             {
                 PagingRequest = new PagingResult(pIndex, pSize),
@@ -334,7 +334,7 @@ namespace SuperManWebApi.Controllers
         public ResultModel<MyBalanceListResultModel[]> GetMyBalanceDynamic(string phoneNo, int? pagedSize, int? pagedIndex)
         {
             int pIndex = ParseHelper.ToInt(pagedIndex.HasValue, 1);
-            int pSize = ParseHelper.ToInt(pagedSize.HasValue, ConstValues.App_PageSize);
+            int pSize = ParseHelper.ToInt(pagedSize.HasValue, PageSizeEnum.App_PageSize.GetHashCode());
             var criteria = new MyIncomeSearchCriteria()
             {
                 PagingRequest = new PagingResult(pIndex, pSize),

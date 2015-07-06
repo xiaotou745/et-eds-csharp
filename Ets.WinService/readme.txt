@@ -16,3 +16,7 @@
 	Ets.SendMessage
 9、定时导出数据并发邮件服务
 	Ets.ExportData
+10、地址联想
+	Ets.AddressAssociate
+11、地址补全服务
+	Ets.ReceiveAddressRepair

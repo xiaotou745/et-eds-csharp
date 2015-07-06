@@ -21,4 +21,15 @@ namespace ETS.Enums
         [DisplayText("版本号不能为空")]
         VersionError = -3
     }
+    /// <summary>
+    /// 设置显示页数
+    /// </summary>
+    /// <UpdateBy>hulingbo</UpdateBy>
+    /// <UpdateTime>20150706</UpdateTime>
+    public enum PageSizeEnum
+    {
+        Web_PageSize = 15,
+        App_PageSize = 50
+    }
+
 }

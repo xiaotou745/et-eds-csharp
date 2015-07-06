@@ -69,7 +69,8 @@ namespace Ets.Service.Provider.Common
         public IList<ExportSqlManage> QueryForWindows(DataManageSearchCriteria search)
         {
             IList<ExportSqlManage> results = exportSqlManageDao.QueryForWindows(search);
-            string urlPath = "E:\\Export\\" + DateTime.Now.ToString("yyyyMMdd") + "\\";
+            //string urlPath = "E:\\Export\\" + DateTime.Now.ToString("yyyyMMdd") + "\\";
+            string urlPath = ETS.Config.ConfigKey("ExportPath").TrimEnd('\\') + "\\" + DateTime.Now.ToString("yyyyMMdd") + "\\";
             if (!System.IO.Directory.Exists(urlPath))
             {
                 System.IO.Directory.CreateDirectory(urlPath);
@@ -92,7 +93,7 @@ namespace Ets.Service.Provider.Common
                                 urlPath + temp.Name + DateTime.Now.ToString("yyyyMMdd") + ".xls"))
                             {
                                 EmailHelper.SendEmailTo("", temp.ReceiveEmail, "数据", "edsdev@etaostars.com", false,
-                                    attachName: urlPath + temp.Name + DateTime.Now.ToString("yyyyMMdd") + ".xls",displayName:"导出数据");
+                                    attachName: urlPath + temp.Name + DateTime.Now.ToString("yyyyMMdd") + ".xls", displayName: "导出数据");
                             }
                         }
                     }

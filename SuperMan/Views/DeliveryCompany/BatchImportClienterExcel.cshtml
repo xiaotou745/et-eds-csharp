@@ -1,0 +1,44 @@
+﻿
+@{
+    Layout = null;
+}
+@if (ViewBag.Message!=null)
+{
+    <span style="font-weight:100; font-size:20px;">@ViewBag.Message</span>
+}
+else
+{
+    var models= ViewBag.Datas;
+    
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+        <thead>
+            <tr class="tdbg">
+                <th>行号</th>
+                <th>骑士姓名</th>
+                <th>骑士手机号</th>
+                <th>城市</th>
+                <th>身份证号</th>
+                <th>是否导入</th>
+                <th>备注</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (models != null)
+            {
+                for (int i = 0; i < models.Count; i++)
+                {
+                    <tr>
+                        <td>@(i + 1)</td>
+                        <td>@models[i].Name</td>
+                        <td>@models[i].Phone</td>
+                        <td>@models[i].City</td>
+                        <td>@models[i].IdCard</td>
+                        <td></td>
+                        <td><span style="color:red;">@models[i].Remark</span></td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+
