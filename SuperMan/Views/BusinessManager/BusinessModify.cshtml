@@ -174,7 +174,11 @@
                     {
                         <div style="width: 140px;height:25px;float: left">
                             <input type="checkbox" name="checkAllMenus" id="selectAll" onclick="checkAll()" />全部
-                        </div>
+                        </div> //全选
+    function checkAll() {
+        var checkedOfAll = $("#selectAll").prop("checked");
+        $("input[name='checkMenus']").prop("checked", checkedOfAll);
+    }
                         foreach (var item in openCityList)
                         {
                             <div style="width: 140px;height:25px;float: left">
