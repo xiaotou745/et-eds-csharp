@@ -139,34 +139,18 @@ namespace OpenApi.Controllers
             {
                 return ResultModel<object>.Conclude(BusiStatus.BusiNoRegiste);
             }
-            else if (busi.Status == ConstValues.BUSINESS_AUDITPASS) //1
+            else if (busi.Status == (byte)BusinessStatus.Status1.GetHashCode()) //1
             {
                 return ResultModel<object>.Conclude(BusiStatus.BusiPass);
             }
-            else if (busi.Status == ConstValues.BUSINESS_AUDITCANCEL)//审核被拒绝
+            else if (busi.Status == BusinessStatus.Status4.GetHashCode())//审核被拒绝
             {
                 return ResultModel<object>.Conclude(BusiStatus.BusiReject);
             }
             else
             {
                 return ResultModel<object>.Conclude(BusiStatus.BusiPassing);
-            }
-            //else if (busi.Status == ConstValues.BUSINESS_AUDITPASSING)
-            //{
-            //    return ResultModel<object>.Conclude(BusiStatus.BusiPassing);
-            //}
-            //else if (busi.Status == ConstValues.BUSINESS_NOADDRESS)
-            //{
-            //    return ResultModel<object>.Conclude(BusiStatus.BusiNoAddress);
-            //}
-            //else if (busi.Status == ConstValues.BUSINESS_NOAUDIT)
-            //{
-            //    return ResultModel<object>.Conclude(BusiStatus.BusiReject);
-            //}
-            //else
-            //{
-            //    return ResultModel<object>.Conclude(BusiStatus.BusiError);
-            //}
+            }          
 
         }
     }

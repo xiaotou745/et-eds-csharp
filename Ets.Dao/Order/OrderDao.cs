@@ -283,8 +283,8 @@ namespace Ets.Dao.Order
             dbParameters.AddWithValue("@OrderFrom", paramodel.orderfrom);//订单来源
             dbParameters.AddWithValue("@Status", paramodel.status);//订单状态
             //订单操作记录表
-            dbParameters.AddWithValue("@OptName", (SuperPlatform.第三方对接平台.ToString()));//操作人
-            dbParameters.AddWithValue("@Platform", (int)SuperPlatform.第三方对接平台);//操作平台
+            dbParameters.AddWithValue("@OptName", "第三方对接平台");//操作人
+            dbParameters.AddWithValue("@Platform", SuperPlatform.ThirdParty.GetHashCode());//操作平台
             dbParameters.AddWithValue("@CommissionType", paramodel.CommissionType);//结算类型
             dbParameters.AddWithValue("@CommissionFixValue", paramodel.CommissionFixValue);//固定金额
             dbParameters.AddWithValue("@BusinessGroupId", paramodel.BusinessGroupId);//分组ID
@@ -398,8 +398,8 @@ values( @OrderId,  @ChildId,@TotalPrice,@GoodPrice,@DeliveryPrice,@CreateBy,
             dbParameters.AddWithValue("@TotalPrice", totalPrice);
             dbParameters.AddWithValue("@GoodPrice", paramodel.total_price);//订单金额
             dbParameters.AddWithValue("@DeliveryPrice", paramodel.delivery_fee);//外送费
-            dbParameters.AddWithValue("@CreateBy", SuperPlatform.第三方对接平台.ToString());
-            dbParameters.AddWithValue("@UpdateBy", SuperPlatform.第三方对接平台.ToString());
+            dbParameters.AddWithValue("@CreateBy", "第三方对接平台");
+            dbParameters.AddWithValue("@UpdateBy", "第三方对接平台");
             if ((bool)paramodel.is_pay ||
                            (!(bool)paramodel.is_pay && paramodel.MealsSettleMode == MealsSettleMode.Status0.GetHashCode())
                            )//已付款 未付款线下付款
@@ -961,9 +961,9 @@ where  o.Id = @orderId");
             select 0";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("clienterId", DbType.Int32, 4).Value = order.clienterId;// userId;
-            dbParameters.Add("Status", DbType.Int32, 4).Value = ConstValues.ORDER_ACCEPT;
+            dbParameters.Add("Status", DbType.Int32, 4).Value = OrderStatus.Status2.GetHashCode();
             dbParameters.Add("OrderNo", DbType.String, 50).Value = order.OrderNo;
-            dbParameters.Add("Platform", DbType.Int32, 4).Value = SuperPlatform.骑士.GetHashCode();
+            dbParameters.Add("Platform", DbType.Int32, 4).Value = SuperPlatform.FromClienter.GetHashCode();
             object obj = DbHelper.ExecuteScalar(SuperMan_Write, sqlText, dbParameters);
             return ParseHelper.ToInt(obj, 1) == 0 ? true : false;
         }
@@ -1027,7 +1027,7 @@ where  o.Id = @orderId");
  SET  [Status] = @status,OtherCancelReason=@OtherCancelReason
  output Inserted.Id,@Price,GETDATE(),'{0}',@OtherCancelReason,Inserted.businessId,Inserted.[Status],{1}
  into dbo.OrderSubsidiesLog(OrderId,Price,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
- WHERE  OrderNo = @orderNo", SuperPlatform.商家, (int)SuperPlatform.商家);
+ WHERE  OrderNo = @orderNo", SuperPlatform.FromBusiness, (int)SuperPlatform.FromBusiness);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("orderNo", DbType.String, 45).Value = orderNo;
@@ -1067,7 +1067,7 @@ output  Inserted.Id ,
 from    dbo.[order] as a
 where   a.OriginalOrderNo = @OriginalOrderNo
         and a.OrderFrom=@OrderFrom
-", SuperPlatform.商家, (int)SuperPlatform.商家);
+", SuperPlatform.FromBusiness, (int)SuperPlatform.FromBusiness);
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@Status", SqlDbType.Int);
             dbParameters.SetValue("@Status", paramodel.status);
@@ -1101,12 +1101,12 @@ UPDATE dbo.[order]
 output Inserted.Id,GETDATE(),'{0}','任务已完成',Inserted.clienterId,Inserted.[Status],{1}
 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform]) 
 WHERE  dbo.[order].Id = @orderId AND clienterId =@clienterId and Status = 4;
-", SuperPlatform.骑士, (int)SuperPlatform.骑士);
+", SuperPlatform.FromClienter, (int)SuperPlatform.FromClienter);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("orderId", DbType.Int32, 4).Value = myOrderInfo.Id;
             dbParameters.Add("clienterId", DbType.Int32, 4).Value = myOrderInfo.clienterId;
-            dbParameters.Add("status", DbType.Int32, 4).Value = ConstValues.ORDER_FINISH;
+            dbParameters.Add("status", DbType.Int32, 4).Value = OrderStatus.Status1.GetHashCode();
             return ParseHelper.ToInt(
                 DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters),
                 -1
@@ -2079,10 +2079,10 @@ select @@identity";
             IDbParameters orderLogParameters = DbHelper.CreateDbParameters();
             orderLogParameters.AddWithValue("orderid", orderId);
             orderLogParameters.AddWithValue("optname", order.BusinessName);
-            orderLogParameters.AddWithValue("remark", ConstValues.PublishOrder);
+            orderLogParameters.AddWithValue("remark", OrderConst.PublishOrder);
             orderLogParameters.AddWithValue("optid", order.businessId);
             orderLogParameters.AddWithValue("orderStatus", OrderStatus.Status0.GetHashCode());
-            orderLogParameters.AddWithValue("platForm", SuperPlatform.商家.GetHashCode());
+            orderLogParameters.AddWithValue("platForm", SuperPlatform.FromBusiness.GetHashCode());
 
             DbHelper.ExecuteNonQuery(SuperMan_Write, sqlOrderLog, orderLogParameters);
             #endregion

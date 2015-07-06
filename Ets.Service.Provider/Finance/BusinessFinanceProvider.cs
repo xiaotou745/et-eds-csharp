@@ -228,7 +228,7 @@ namespace Ets.Service.Provider.Finance
             }
             business = _businessDao.GetById(withdrawBpm.BusinessId);//获取商户信息
             if (business == null || business.Status == null
-                || business.Status != ConstValues.BUSINESS_AUDITPASS)  //商户状态为非 审核通过不允许 提现
+                || business.Status != BusinessStatus.Status1.GetHashCode())  //商户状态为非 审核通过不允许 提现
             {
                 return FinanceWithdrawB.BusinessError;
             }
@@ -522,7 +522,7 @@ namespace Ets.Service.Provider.Finance
             }
             business = _businessDao.GetById(withdrawBpm.BusinessId);//获取商户信息
             if (business == null || business.Status == null
-                || business.Status != ConstValues.BUSINESS_AUDITPASS)  //商户状态为非 审核通过不允许 提现
+                || business.Status != (byte)BusinessStatus.Status1.GetHashCode())  //商户状态为非 审核通过不允许 提现
             {
                 return FinanceWithdrawB.BusinessError;
             }

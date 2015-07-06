@@ -18,6 +18,7 @@ using Ets.Service.IProvider.Finance;
 using Ets.Model.ParameterModel.Finance;
 using System.Text;
 using Ets.Model.Common;
+using ETS.Enums;
 namespace SuperMan.Controllers
 {
     [WebHandleError]
@@ -89,7 +90,7 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult AuditOK(int id)
         {
-            iDistributionProvider.UpdateAuditStatus(id, ETS.Enums.EnumStatusType.审核通过);
+            iDistributionProvider.UpdateAuditStatus(id, AuditStatus.Status1);
             return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
         }
 
@@ -101,7 +102,7 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult AuditCel(int id)
         {
-            iDistributionProvider.UpdateAuditStatus(id, ETS.Enums.EnumStatusType.审核取消);
+            iDistributionProvider.UpdateAuditStatus(id, AuditStatus.Status0);
             return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
         }
 
@@ -138,7 +139,7 @@ namespace SuperMan.Controllers
             if (string.IsNullOrWhiteSpace(clienter.Password))
                 clienter.Password = "edaisong";
             clienter.Password = MD5Helper.MD5(clienter.Password);
-            clienter.Status = ConstValues.CLIENTER_AUDITPASS;
+            clienter.Status = (byte)ClienteStatus.Status1.GetHashCode();
             return Json(new ResultModel(iDistributionProvider.AddClienter(clienter), ""));
         }
 

@@ -31,7 +31,7 @@ namespace SuperManWebApi.Providers
             imgInfo.FileName = fileName; 
             int fileNameLastDot = fileName.LastIndexOf('.');
             //原图 
-            string rFileName = string.Format("{0}{1}{2}", fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
+            string rFileName = string.Format("{0}{1}{2}", fileName.Substring(0, fileNameLastDot), SystemConst.OriginSize, Path.GetExtension(fileName));
             //原始的
             imgInfo.OriginFileName = rFileName;
             string saveDbFilePath;
@@ -80,7 +80,7 @@ namespace SuperManWebApi.Providers
             var fileName = Path.GetFileName(delDir);
             int fileNameLastDot = fileName.LastIndexOf('.');
             //原图 
-            string orginalFileName = string.Format("{0}{1}{2}", Path.GetDirectoryName(delDir) + "\\" + fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
+            string orginalFileName = string.Format("{0}{1}{2}", Path.GetDirectoryName(delDir) + "\\" + fileName.Substring(0, fileNameLastDot), SystemConst.OriginSize, Path.GetExtension(fileName));
 
             //删除磁盘中的裁图
             FileHelper.DeleteFile(delDir);

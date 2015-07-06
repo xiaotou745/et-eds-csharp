@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ETS.Enums
 {
-    public enum GroupEnum
+    public enum GroupType
     {
         [DisplayText("聚网客")]
         Group1 = 1,
@@ -21,5 +21,14 @@ namespace ETS.Enums
         Group5 = 5,
         [DisplayText("首旅")]
         Group6 = 6     
+    }
+
+    /// <summary>
+    /// 集团状态枚举  add by caohehang 20150212
+    /// </summary>
+    public enum GroupIsValidStatus
+    {
+        正常 = 1,
+        不可用 = 0
     }
 }

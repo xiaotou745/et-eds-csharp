@@ -13,7 +13,7 @@ namespace SuperMan.Controllers
         IBusinessProvider iBusinessProvider = new BusinessProvider(); 
         public ActionResult BusinessStatistical()
         {
-            var criteria = new BusinessSearchCriteria() { PagingRequest = new NewPagingResult(1, PageSizeEnum.Web_PageSize.GetHashCode()), searchType = 1 };
+            var criteria = new BusinessSearchCriteria() { PagingRequest = new NewPagingResult(1, PageSizeType.Web_PageSize.GetHashCode()), searchType = 1 };
             var pagedList = iBusinessProvider.GetBusinessesCount(criteria);
             return View(pagedList);
         }

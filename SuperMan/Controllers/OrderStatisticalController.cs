@@ -20,7 +20,7 @@ namespace SuperMan.Controllers
         {
             var criteria = new Ets.Model.DomainModel.Subsidy.HomeCountCriteria()
             {
-                PagingRequest = new Ets.Model.Common.NewPagingResult(1, PageSizeEnum.Web_PageSize.GetHashCode()),
+                PagingRequest = new Ets.Model.Common.NewPagingResult(1, PageSizeType.Web_PageSize.GetHashCode()),
                 searchType = 1
             };
             var pagedList = iOrderProvider.GetOrderCount(criteria);

@@ -35,7 +35,7 @@ namespace Ets.Service.Provider.Finance
         public ResultModel<object> GetRecords(int businessId)
         {
             IList<FinanceRecordsDM> records = _businessBalanceRecordDao.GetByBusinessId(businessId);
-            return ResultModel<object>.Conclude(SystemEnum.Success,
+            return ResultModel<object>.Conclude(SystemState.Success,
               TranslateRecords(records));
         }
 

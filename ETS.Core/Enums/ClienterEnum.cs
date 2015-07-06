@@ -53,7 +53,7 @@ namespace ETS.Enums
     /// <UpdateBy>hulingbo</UpdateBy>
     /// <UpdateTime>20150706</UpdateTime>
 
-    public enum WorkStatus
+    public enum ClienteWorkStatus
     {   
         /// <summary>
         /// 上班
@@ -63,5 +63,55 @@ namespace ETS.Enums
         /// 下班
         /// </summary>
         Status1 = 1
+    }
+
+    /// <summary>
+    /// 骑士审核状态
+    /// </summary>
+    /// <UpdateBy>hulingbo</UpdateBy>
+    /// <UpdateTime>20150706</UpdateTime>
+    public enum ClienteStatus
+    {
+        [DisplayText("被拒绝")]
+        Status0 = 0,
+        [DisplayText("已通过")]
+        Status1 = 1,
+        [DisplayText("未审核")]
+        Status2 = 2,
+        [DisplayText("审核中")]
+        Status3 = 3
+    }
+
+    public enum GetClienterStatus
+    {
+        [DisplayText("成功")]
+        Success = 1,
+        [DisplayText("被拒绝")]
+        Refuse = 0,
+        [DisplayText("未审核")]
+        Audit = 2,
+        [DisplayText("审核中")]
+        Auditing = 3,
+        [DisplayText("骑士Id错误")]
+        ErrNo = -1,
+        [DisplayText("获取骑士失败")]
+        FailedGet = -2,
+        [DisplayText("请传递版本号")]
+        NoVersion = -3,
+        [DisplayText("失败")]
+        Failed = 101
+    }
+
+    public enum ModifyPwdStatus
+    {
+        Success,
+        [DisplayText("修改密码失败")]
+        FailedModifyPwd,
+        [DisplayText("新密码不能为空")]
+        NewPwdEmpty,
+        [DisplayText("用户不存在")]
+        ClienterIsNotExist,
+        [DisplayText("两次密码不能相同")]
+        PwdIsSame,
     }
 }

@@ -16,7 +16,7 @@ namespace SuperMan.Controllers
         IDistributionProvider iDistributionProvider = new DistributionProvider();
         public ActionResult SuperManStatistical()
         {
-            var criteria = new ClienterSearchCriteria() { PagingRequest = new NewPagingResult(1, PageSizeEnum.Web_PageSize.GetHashCode() ), searchType = 1 };
+            var criteria = new ClienterSearchCriteria() { PagingRequest = new NewPagingResult(1, PageSizeType.Web_PageSize.GetHashCode()), searchType = 1 };
             var pagedList = iDistributionProvider.GetClienteresCount(criteria);
             return View(pagedList);
         }

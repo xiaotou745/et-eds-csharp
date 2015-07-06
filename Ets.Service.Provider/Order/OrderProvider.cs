@@ -110,7 +110,7 @@ namespace Ets.Service.Provider.Order
                     resultModel.Status = from.Status.Value;
                     resultModel.HadUploadCount = from.HadUploadCount;
                     resultModel.GroupId = from.GroupId;
-                    if (from.GroupId == GroupEnum.Group3.GetHashCode()) //全时 需要做验证码验证
+                    if (from.GroupId == GroupType.Group3.GetHashCode()) //全时 需要做验证码验证
                         resultModel.NeedPickupCode = 1;
 
                     if (from.BusiLatitude == null || from.BusiLatitude == 0 || from.BusiLongitude == null || from.BusiLongitude == 0)
@@ -179,7 +179,7 @@ namespace Ets.Service.Provider.Order
                     resultModel.businessPhone2 = from.BusinessPhone2;
                     resultModel.HadUploadCount = from.HadUploadCount;
                     resultModel.GroupId = from.GroupId;
-                    if (from.GroupId == GroupEnum.Group3.GetHashCode())
+                    if (from.GroupId == GroupType.Group3.GetHashCode())
                         resultModel.NeedPickupCode = 1;
 
                     if (from.PickUpCity != null)
@@ -942,7 +942,7 @@ namespace Ets.Service.Provider.Order
             else
             {
                 //商户必须是审核通过的， 商户审核通过 意味着 已经设置结算比例， 因为在后台管理系统中 商户审核通过时会验证商户结算比例是否设置
-                if (busi.Status != ConstValues.BUSINESS_AUDITPASS)
+                if (busi.Status != (byte)BusinessStatus.Status1.GetHashCode())
                 {
                     return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.BusinessNotAudit);
                 }
@@ -954,7 +954,7 @@ namespace Ets.Service.Provider.Order
 
             if (order != null)
             {
-                if (order.Status == ConstValues.ORDER_CANCEL)    // 在存在订单的情况下如果是去掉订单的状态，直接修改为订单待接单状态
+                if (order.Status == OrderStatus.Status3.GetHashCode())    // 在存在订单的情况下如果是去掉订单的状态，直接修改为订单待接单状态
                 {
                     int upResult = orderDao.UpdateOrderStatus_Other(new ChangeStatusPM_OpenApi() { groupid = model.OrderFrom, order_no = order.OriginalOrderNo, orderfrom = model.OrderFrom, remark = "第三方再次推送", status = 0 });
                     if (upResult > 0)
@@ -1108,8 +1108,7 @@ namespace Ets.Service.Provider.Order
             to.CommissionFormulaMode = business.StrategyId;
             to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额
 
-            to.Status = ConstValues.ORDER_NEW;
-
+            to.Status = (byte)OrderStatus.Status0.GetHashCode(); 
 
             //to.TimeSpan = busiOrderInfoModel.TimeSpan;
             to.listOrderChild = from.listOrderChlid;
@@ -1341,7 +1340,7 @@ namespace Ets.Service.Provider.Order
             var order = orderDao.GetOrderByOrderNoAndOrderFrom(originalOrderNo, group, 0);    
             if (order.Status == OrderStatus.Status0.GetHashCode())
             {
-                var k = orderDao.CancelOrderStatus(order.OrderNo, ConstValues.ORDER_CANCEL, "第三方取消订单", null);
+                var k = orderDao.CancelOrderStatus(order.OrderNo, OrderStatus.Status3.GetHashCode(), "第三方取消订单", null);
                 if (k > 0)
                 {
                     return "1"; //取消成功
@@ -1415,7 +1414,7 @@ namespace Ets.Service.Provider.Order
                 orderDM.ReceviceAddress = order.ReceviceAddress;
             else
             {
-                orderDM.ReceviceAddress = ConstValues.ReceviceAddress;
+                orderDM.ReceviceAddress = OrderConst.ReceviceAddress;
             }
             orderDM.Amount = order.Amount;
             orderDM.IsPay = Convert.ToBoolean(order.IsPay);
@@ -1525,7 +1524,7 @@ namespace Ets.Service.Provider.Order
             model.ExclusiveOrderTime = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(0).ExclusiveOrderTime); //商家专属骑士接单响应时间
             if (model.SearchType == (int)GetJobCMode.NewJob)//最新订单
             {
-                model.TopNum = PageSizeEnum.App_PageSize.GetHashCode().ToString() ;//50条
+                model.TopNum = PageSizeType.App_PageSize.GetHashCode().ToString();//50条
                 jobs = orderDao.GetLastedJobC(model);
             }
             else if (model.SearchType == (int)GetJobCMode.NearbyJob)//附近订单
@@ -1538,7 +1537,7 @@ namespace Ets.Service.Provider.Order
                 model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;// top 值
                 jobs = orderDao.GetEmployerJobC(model);
             }
-            return ResultModel<object>.Conclude(SystemEnum.Success, jobs);
+            return ResultModel<object>.Conclude(SystemState.Success, jobs);
         }
 
         public int GetOrderStatus(int orderId, int businessId)

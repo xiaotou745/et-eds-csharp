@@ -35,7 +35,15 @@ namespace ETS.Const
         /// <summary>
         /// 第三方待接入订单 
         /// </summary>
-        public const int OrderStatus30 = 30;       
+        public const int OrderStatus30 = 30;
+
+
+        public const string CancelOrder = "取消任务";
+        public const string PublishOrder = "任务已发布";
+        public const string OrderHadRush = "任务已被抢";
+        public const string OrderFinish = "任务已完成";
+
+        public const string ReceviceAddress = "附近3公里左右，由商户指定";
     } 
    
 }
