@@ -118,21 +118,22 @@ namespace SuperMan.Controllers
                 if (string.IsNullOrEmpty(phone) || string.IsNullOrEmpty(name) || string.IsNullOrEmpty(city) ||
                     string.IsNullOrEmpty(idCard))
                 {
-                    model.Remark = model.Remark + "骑士信息不全。";
+                    model.Remark = model.Remark + "信息不全。";
+                    list.Add(model);
                     continue;
                 }
                 if (string.IsNullOrEmpty(phone)||!phoneReg.IsMatch(phone))//验证骑士手机号
                 {
-                    model.Remark = model.Remark + "骑士手机号不合法。";
+                    model.Remark = model.Remark + "手机号不合法。";
                 }
                 if (string.IsNullOrEmpty(idCard) || !idcardReg.IsMatch(idCard))//验证
                 {
-                    model.Remark = model.Remark + "骑士身份证号不合法。";
+                    model.Remark = model.Remark + "身份证号不合法。";
                 }
                 if ((!string.IsNullOrWhiteSpace(model.Remark))
                     &&(list.Count(item => item.Phone == phone || item.IdCard == idCard) > 0))//验证xls中身份证号或者手机号是否重复
                 {
-                    model.Remark = model.Remark + "骑士信息重复。";
+                    model.Remark = model.Remark + "信息重复。";
                 }
                 list.Add(model);
             }
