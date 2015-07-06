@@ -216,6 +216,7 @@
     <Compile Include="Controllers\BusinessController.cs" />
     <Compile Include="Controllers\BusinessManagerController.cs" />
     <Compile Include="Controllers\DataManagerController.cs" />
+    <Compile Include="Controllers\DeliveryCompanyController.cs" />
     <Compile Include="Controllers\DownloadController.cs" />
     <Compile Include="Controllers\MessageManagerController.cs" />
     <Compile Include="Controllers\StatisticalController.cs" />
@@ -658,10 +659,11 @@
     <Content Include="Views\DataManager\PostIndex.cshtml" />
     <Content Include="Views\Statistical\BussinessBalanceStatistical.cshtml" />
     <Content Include="Views\Statistical\BussinessBalanceList.cshtml" />
-	<Content Include="Views\MessageManager\MessageEdit.cshtml" />
+    <Content Include="Views\MessageManager\MessageEdit.cshtml" />
     <Content Include="Views\MessageManager\List.cshtml" />
     <Content Include="Views\MessageManager\PostList.cshtml" />
     <Content Include="Views\MessageManager\Detail.cshtml" />
+    <Content Include="Views\DeliveryCompany\BatchImportClienter.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
