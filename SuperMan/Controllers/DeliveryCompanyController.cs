@@ -30,5 +30,14 @@ namespace SuperMan.Controllers
             return View();
         }
 
+        /// <summary>
+        /// 批量导入骑士  excel  处理  add by caoheyang 20150706
+        /// </summary>
+        /// <param name="companyId">公司id</param>
+        /// <returns></returns>
+        public ActionResult BatchImportClienterExcel(int companyId)
+        {
+            return View();
+        }
     }
 }
