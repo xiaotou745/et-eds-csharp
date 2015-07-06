@@ -57,21 +57,25 @@ namespace SuperMan.Controllers
                 }
                 else
                 {
-                    return Json(new ResultModel(false, "文件格式不正确,支持.xls文件！", JsonRequestBehavior.DenyGet));
+                    ViewBag.Message = "文件格式不正确,支持.xls文件！";
+                    return PartialView();
                 }
                 ISheet st = wk.GetSheetAt(0);
                 int rowCount = st.LastRowNum;
-                if (rowCount > 50)
+                if (rowCount > 100)
                 {
-                    return Json(new ResultModel(false, "每次最多导入50行数据！", JsonRequestBehavior.DenyGet));
+                    ViewBag.Message = "每次最多导入100行数据！";
+                    return PartialView();
                 }
                 else
                 {
                     IList<BatchImportClienterExcelDM> models=ValatiteBatchImportClienterExcel(st, rowCount);
-                    return PartialView(models);
+                    ViewBag.Datas = models;
+                    return PartialView();
                 }
             }
-              return Json(new ResultModel(false, "请选择文件！", JsonRequestBehavior.DenyGet));
+            ViewBag.Message = "请选择文件！";
+            return PartialView();
         }
 
 

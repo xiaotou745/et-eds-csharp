@@ -17,32 +17,35 @@
             <td><span style="font-size: 25px;">物流公司名称:</span><span style="font-size: 25px;">如风达</span></td>
         </tr>
     </table>
+@using (Html.BeginForm("", "", FormMethod.Post, new {enctype = "multipart/form-data"}))
+{
     <div class="SearchMd">
-        <div style="margin-bottom:10px;"><input id="file1" type="file" name="file1"><span style="color:red">(导入必须为excel，字段：骑士姓名、手机号、城市、身份证号 ，每次最多导入50条数据)</span>
+        <div style="margin-bottom: 10px;"><input id="file1" type="file" name="file1"><span style="color: red">(导入必须为excel，字段：骑士姓名、手机号、城市、身份证号 ，每次最多导入50条数据)</span>
             <a href="/Content/Template/物流公司批量导入配送员.xls" target="_blank">下载模板</a></div>
         <div>
             <input type="button" value="导入" class="searchBtn" id="btnImport" />
             <input type="button" value="确认导入" class="searchBtn" id="btnSave" />
         </div>
     </div>
+}
 </div>
 
 <div id="bodys"></div>
 <script type="text/javascript">
     //导入
     $("#btnImport").on('click', function () {
-        var url = "/DeliveryCompany/BatchImportClienterExcel?companyId=" + 1;
+        var resdis=Math.random();
+        var url = "/DeliveryCompany/BatchImportClienterExcel?companyId=1&resdis=" + resdis;
         $.ajaxFileUpload({
             type: 'POST',
             secureuri: false, //一般设置为false
             fileElementId: 'file1', //文件上传空间的id属性  <input type="file" id="file" name="file" />
             url: url,
             data: "", //此参数非常严谨，写错一个引号都不行
-            success: function (data)  //服务器成功响应处理函数
+            dataType: 'HTML',
+            success: function (data,status)  //服务器成功响应处理函数
             {
-                console.log(data);
-                alert(data);
-                //$("#bodys").html(data);
+                $("#bodys").html(data);
             },
             error: function (data, status, e)//服务器响应失败处理函数
             {
