@@ -18,7 +18,7 @@ else
                 <th>手机号</th>
                 <th>城市</th>
                 <th>身份证号</th>
-                <th>是否导入</th>
+                <th>是否允许导入</th>
                 <th>备注</th>
             </tr>
         </thead>
@@ -33,7 +33,15 @@ else
                         <td>@models[i].Phone</td>
                         <td>@models[i].City</td>
                         <td>@models[i].IdCard</td>
-                        <td></td>
+                        <td>@if (string.IsNullOrWhiteSpace(models[i].Remark))
+                            {
+                                <span> √</span>
+                            }
+                            else
+                            {
+                                <span style="color:red"> ☓</span>   
+                            }
+                        </td>
                         <td><span style="color:red;">@models[i].Remark</span></td>
                     </tr>
                 }
