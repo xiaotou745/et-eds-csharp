@@ -44,6 +44,7 @@ namespace Ets.ReceiveAddressRepair
                         }
                         else
                         {
+                            Console.WriteLine("无地址不需要更新");
                             noaddres++;
                         }
                     }
