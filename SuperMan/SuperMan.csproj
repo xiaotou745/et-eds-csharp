@@ -216,6 +216,7 @@
     <Compile Include="Controllers\BusinessController.cs" />
     <Compile Include="Controllers\BusinessManagerController.cs" />
     <Compile Include="Controllers\DataManagerController.cs" />
+    <Compile Include="Controllers\DeliveryCompanyController.cs" />
     <Compile Include="Controllers\DownloadController.cs" />
     <Compile Include="Controllers\MessageManagerController.cs" />
     <Compile Include="Controllers\StatisticalController.cs" />
@@ -468,6 +469,8 @@
     <Content Include="Content\i\img-x.psd" />
     <Content Include="Content\i\sprite-icon.psd" />
     <Content Include="Nlog.config" />
+    <Content Include="Content\Template\phoneNoTemplate.xlsx" />
+    <Content Include="Content\Template\BatchImport.xls" />
     <None Include="Properties\PublishProfiles\admin.edaisong.com.pubxml" />
     <None Include="Properties\PublishProfiles\chuan.admin.edaisong.com.pubxml" />
     <None Include="Properties\PublishProfiles\HDLWEB.pubxml" />
@@ -658,15 +661,15 @@
     <Content Include="Views\DataManager\PostIndex.cshtml" />
     <Content Include="Views\Statistical\BussinessBalanceStatistical.cshtml" />
     <Content Include="Views\Statistical\BussinessBalanceList.cshtml" />
-	<Content Include="Views\MessageManager\MessageEdit.cshtml" />
+    <Content Include="Views\MessageManager\MessageEdit.cshtml" />
     <Content Include="Views\MessageManager\List.cshtml" />
     <Content Include="Views\MessageManager\PostList.cshtml" />
     <Content Include="Views\MessageManager\Detail.cshtml" />
+    <Content Include="Views\DeliveryCompany\BatchImportClienter.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\app\" />
-    <Folder Include="Content\Template\" />
     <Folder Include="uploads\" />
     <Folder Include="Views\BusinessDistributionStatistical\" />
     <Folder Include="Views\Test\" />

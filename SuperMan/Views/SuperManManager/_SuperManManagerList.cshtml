@@ -18,6 +18,7 @@
             <th>帐户余额</th>
             <th>可提现余额</th>
             <th>集团名称</th>
+            <th>物流公司名称</th>
             <th>审核状态</th>
             <th>推荐人</th>
             <th>操作</th>
@@ -60,6 +61,7 @@
                                 @Html.Raw(new GroupProvider().GetGroupName(Convert.ToInt32(item.GroupId)))
                             }
                         </td>
+                        <td>@item.CompanyName</td>
                         @{
                             var statusView = "";
                             if (@item.Status == Ets.Model.Common.ConstValues.CLIENTER_AUDITPASS)

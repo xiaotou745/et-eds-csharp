@@ -50,6 +50,8 @@ namespace Ets.Model.ParameterModel.Clienter
         /// 商户Id
         /// </summary>
         public int businessId { get; set; }
-        
+
+        public string deliveryCompany { get; set; }
+
     }
 }

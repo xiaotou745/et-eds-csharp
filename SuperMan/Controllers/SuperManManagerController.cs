@@ -44,6 +44,7 @@ namespace SuperMan.Controllers
             int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
 
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserType));
+            ViewBag.deliveryCompanyList = new CompanyProvider().GetCompanyList();//获取物流公司
             var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria()
             {
                 Status = -1,
