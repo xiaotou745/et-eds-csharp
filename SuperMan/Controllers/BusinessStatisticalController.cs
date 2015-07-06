@@ -3,6 +3,7 @@ using Ets.Model.ParameterModel.Business;
 using Ets.Model.Common;
 using Ets.Service.IProvider.Business;
 using Ets.Service.Provider.Business;
+using ETS.Enums;
 
 namespace SuperMan.Controllers
 {
@@ -12,7 +13,7 @@ namespace SuperMan.Controllers
         IBusinessProvider iBusinessProvider = new BusinessProvider(); 
         public ActionResult BusinessStatistical()
         {
-            var criteria = new BusinessSearchCriteria() { PagingRequest = new NewPagingResult(1, ConstValues.Web_PageSize), searchType = 1 };
+            var criteria = new BusinessSearchCriteria() { PagingRequest = new NewPagingResult(1, PageSizeEnum.Web_PageSize.GetHashCode()), searchType = 1 };
             var pagedList = iBusinessProvider.GetBusinessesCount(criteria);
             return View(pagedList);
         }

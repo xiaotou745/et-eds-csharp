@@ -219,14 +219,14 @@ namespace ETS.Enums
         Working = 2
 
     }
-    public enum OrderStatus
-    {
-        订单待抢单 = 0,
-        订单完成 = 1,
-        订单已接单 = 2,
-        订单已取消 = 3,
-        订单已取货 = 4
-    }
+    //public enum OrderStatus
+    //{
+    //    订单待抢单 = 0,
+    //    订单完成 = 1,
+    //    订单已接单 = 2,
+    //    订单已取消 = 3,
+    //    订单已取货 = 4
+    //}
 
 
 

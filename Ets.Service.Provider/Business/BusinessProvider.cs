@@ -862,7 +862,7 @@ namespace Ets.Service.Provider.Business
                 return ResultModel<OrderCancelResultModel>.Conclude(CancelOrderStatus.OrderIsNotExist);
             }
 
-            bool b = businessDao.UpdateOrder(model.OriginalOrderNo, model.OrderFrom, OrderStatus.订单已取消);
+            bool b = businessDao.UpdateOrder(model.OriginalOrderNo, model.OrderFrom, OrderStatus.Status3);
             OrderOptionModel oom = new OrderOptionModel();
             oom.OptUserId = myOrder.businessId.Value;
             oom.OptUserName = "第三方";
