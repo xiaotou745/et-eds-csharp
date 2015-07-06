@@ -8,9 +8,9 @@ namespace Ets.Model.Common
 {
     public class ConstValues
     {
-        public const int Web_PageSize = 15;
+        //public const int Web_PageSize = 15;
 
-        public const int App_PageSize = 50;
+        //public const int App_PageSize = 50;
         /// <summary>
         /// 订单新增
         /// </summary>

@@ -45,8 +45,23 @@ namespace ETS.Enums
         /// 骑士不能为空
         /// </summary>
         [DisplayText("骑士不能为空")]
-        ClienterError = 7,
-      
+        ClienterError = 7,      
     }
+    /// <summary>
+    /// 骑士工作状态
+    /// </summary>
+    /// <UpdateBy>hulingbo</UpdateBy>
+    /// <UpdateTime>20150706</UpdateTime>
 
+    public enum WorkStatus
+    {   
+        /// <summary>
+        /// 上班
+        /// </summary>
+        Status0 = 0,
+        /// <summary>
+        /// 下班
+        /// </summary>
+        Status1 = 1
+    }
 }

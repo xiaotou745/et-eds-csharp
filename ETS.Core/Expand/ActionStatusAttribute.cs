@@ -5,12 +5,12 @@ using System.Text;
 
 namespace ETS.Expand
 {
-    public class ActionStatusAttribute : Attribute
-    {
-        private Type _type;
-        public ActionStatusAttribute(Type status)
-        {
+    //public class ActionStatusAttribute : Attribute
+    //{
+    //    private Type _type;
+    //    public ActionStatusAttribute(Type status)
+    //    {
 
-        }
-    }
+    //    }
+    //}
 }

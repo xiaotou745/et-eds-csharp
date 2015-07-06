@@ -57,7 +57,7 @@ namespace Ets.Dao.Business
                     whereStr += " and o.Status=" + paraModel.Status.ToString();
                 }
 
-                if (paraModel.Status == OrderConst.ORDER_FINISH)
+                if (paraModel.Status == OrderStatus.Status1.GetHashCode())
                 {
                     //如果是订单已完成就用完成时间倒序
                     orderByColumn = " o.ActualDoneDate DESC ";  //排序条件

@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using ETS.Const;
 using Ets.Dao.Clienter;
 using Ets.Dao.Message;
-using Ets.Dao.User;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Order;
 using Ets.Model.ParameterModel.Business;
@@ -25,12 +24,9 @@ using ETS.Transaction;
 using Ets.Dao.Order;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.ParameterModel.WtihdrawRecords;
-using Ets.Service.Provider.WtihdrawRecords;
 using Ets.Service.Provider.MyPush;
 using Ets.Model.DomainModel.Business;
-using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Order;
-using ETS.NoSql.RedisCache;
 using Ets.Model.DomainModel.Order;
 using Ets.Service.IProvider.Order;
 using Ets.Model.ParameterModel.Finance;
@@ -38,7 +34,6 @@ using Ets.Dao.Business;
 using Ets.Model.DomainModel.GlobalConfig;
 using Ets.Service.Provider.Common;
 using Ets.Service.IProvider.Common;
-using Ets.Service.Provider.Common;
 namespace Ets.Service.Provider.Clienter
 {
     public class ClienterProvider : IClienterProvider
@@ -49,31 +44,30 @@ namespace Ets.Service.Provider.Clienter
         readonly OrderChildDao orderChildDao = new OrderChildDao();
         readonly ClienterBalanceRecordDao clienterBalanceRecordDao = new ClienterBalanceRecordDao();
         readonly BusinessDao businessDao = new BusinessDao();
-        readonly IAreaProvider iAreaProvider = new AreaProvider();
-        private readonly BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
-
-        readonly IOrderOtherProvider iOrderOtherProvider = new OrderOtherProvider();
-        readonly BusinessDao _businessDao = new BusinessDao();
-        readonly BusinessBalanceRecordDao _businessBalanceRecordDao = new BusinessBalanceRecordDao();
         readonly BusinessClienterRelationDao businessClienterDao = new BusinessClienterRelationDao();
+        readonly BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
+
+        readonly IAreaProvider iAreaProvider = new AreaProvider();
+        readonly IOrderOtherProvider iOrderOtherProvider = new OrderOtherProvider();
+
         /// <summary>
         /// 骑士上下班功能 add by caoheyang 20150312
         /// </summary>
         /// <param name="paraModel"></param>
         /// <returns></returns>
-        public ETS.Enums.ChangeWorkStatusEnum ChangeWorkStatus(Ets.Model.ParameterModel.Clienter.ChangeWorkStatusPM paraModel)
+        public ChangeWorkStatusEnum ChangeWorkStatus(Ets.Model.ParameterModel.Clienter.ChangeWorkStatusPM paraModel)
         {
-            if (paraModel.WorkStatus == ETS.Const.ClienterConst.ClienterWorkStatus1)  //如果要下班，先判断超人是否还有未完成的订单
+            if (paraModel.WorkStatus == WorkStatus.Status1.GetHashCode())  //如果要下班，先判断超人是否还有未完成的订单
             {
                 //查询当前超人有无已接单但是未完成的订单
                 int ordercount = clienterDao.QueryOrderount(new Model.ParameterModel.Clienter.ChangeWorkStatusPM() { Id = paraModel.Id });
                 if (ordercount > 0)
-                    return ETS.Enums.ChangeWorkStatusEnum.OrderError;
+                    return ChangeWorkStatusEnum.OrderError;
             }
             int changeResult = clienterDao.ChangeWorkStatusToSql(paraModel);
             if (changeResult <= 0)
             {
-                if (paraModel.WorkStatus == ETS.Const.ClienterConst.ClienterWorkStatus0)
+                if (paraModel.WorkStatus == WorkStatus.Status0.GetHashCode())
                 {
                     return ChangeWorkStatusEnum.WorkError; //上班失败
                 }
@@ -84,7 +78,7 @@ namespace Ets.Service.Provider.Clienter
             }
             else
             {
-                if (paraModel.WorkStatus == ETS.Const.ClienterConst.ClienterWorkStatus0)
+                if (paraModel.WorkStatus == WorkStatus.Status0.GetHashCode())
                 {
                     return ChangeWorkStatusEnum.WorkSuccess;  //上班成功
                 }
@@ -150,7 +144,7 @@ namespace Ets.Service.Provider.Clienter
                     model.OrderCount = item.OrderCount;
                     model.GroupId = item.GroupId;
                     model.HadUploadCount = item.HadUploadCount;
-                    if (item.GroupId == SystemConst.Group3) //全时 需要做验证码验证
+                    if (item.GroupId == GroupEnum.Group3.GetHashCode()) //全时 需要做验证码验证
                         model.NeedPickupCode = 1;
                     #region 计算经纬度     待封装  add by caoheyang 20150313
 
@@ -198,7 +192,7 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public Model.Common.ResultModel<ClienterLoginResultModel> PostLogin_C(Model.ParameterModel.Clienter.LoginCPM model)
+        public ResultModel<ClienterLoginResultModel> PostLogin_C(Model.ParameterModel.Clienter.LoginCPM model)
         {
             try
             {
@@ -603,7 +597,7 @@ namespace Ets.Service.Provider.Clienter
                 return model;
             }
             //获取该订单信息和该  骑士现在的 收入金额
-            if (myOrderInfo.GroupId == SystemConst.Group3 && !string.IsNullOrWhiteSpace(myOrderInfo.PickupCode)
+            if (myOrderInfo.GroupId == GroupEnum.Group3.GetHashCode() && !string.IsNullOrWhiteSpace(myOrderInfo.PickupCode)
                 && pickupCode != myOrderInfo.PickupCode) //全时订单 判断 取货码是否正确             
             {
                 model.FinishOrderStatus = FinishOrderStatus.PickupCodeError;
@@ -911,7 +905,7 @@ namespace Ets.Service.Provider.Clienter
                 tran.Complete();
                 #region 是否允许修改小票
                 orderOther.IsModifyTicket = true;
-                if (orderOther.HadUploadCount >= orderOther.NeedUploadCount && myOrderInfo.Status == OrderStatus.订单完成.GetHashCode())
+                if (orderOther.HadUploadCount >= orderOther.NeedUploadCount && myOrderInfo.Status == OrderStatus.Status1.GetHashCode())
                 {
                     orderOther.IsModifyTicket = false;
                 }
@@ -1024,14 +1018,14 @@ namespace Ets.Service.Provider.Clienter
             else if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.Status1.GetHashCode())//未付款,线上结算
             {
                 //返还商户金额
-                _businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
+                businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
                 {
                     Id = Convert.ToInt32(myOrderInfo.businessId),
                     Money = myOrderInfo.BusinessReceivable
                 });
 
                 #region 商户余额流水操作
-                _businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
+                businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
                 {
                     BusinessId = Convert.ToInt32(myOrderInfo.businessId),
                     Amount = myOrderInfo.BusinessReceivable,
@@ -1094,16 +1088,7 @@ namespace Ets.Service.Provider.Clienter
         public OrderOther InsertReceiptInfo(UploadReceiptModel uploadReceiptModel)
         {
             return clienterDao.InsertReceiptInfo(uploadReceiptModel);
-        }
-        /// <summary>
-        /// 更新小票信息
-        /// </summary>
-        /// <param name="uploadReceiptModel"></param>
-        /// <returns></returns>
-        //public OrderOther UpdateReceiptInfo(UploadReceiptModel uploadReceiptModel)
-        //{
-        //    return clienterDao.UpdateReceiptInfo(uploadReceiptModel);
-        //}
+        }      
 
         /// <summary>
         /// 根据订单Id获取小票信息
@@ -1116,7 +1101,6 @@ namespace Ets.Service.Provider.Clienter
             return clienterDao.GetReceiptInfo(orderId);
 
         }
-
 
         /// <summary>
         /// 根据订单id获取订单信息 和 小票相关
@@ -1137,8 +1121,7 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="userId">骑士ID</param>
         /// <param name="orderNo">订单号</param>
-        /// <returns></returns>
-        [ETS.Expand.ActionStatus(typeof(ETS.Enums.RushOrderStatus))]
+        /// <returns></returns>     
         public ResultModel<RushOrderResultModel> RushOrder_C(int userId, string orderNo)
         {
             if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
@@ -1155,16 +1138,16 @@ namespace Ets.Service.Provider.Clienter
             var myorder = new Ets.Dao.Order.OrderDao().GetOrderDetailByOrderNo(orderNo);
             if (myorder == null)
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.OrderIsNotExist);  //订单不存在
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotExist);  //订单不存在
 
             }
             if (myorder.Status == ConstValues.ORDER_CANCEL)   //判断订单状态是否为 已取消
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.OrderHadCancel);  //订单已被取消
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(RushOrderStatus.OrderHadCancel);  //订单已被取消
             }
             if (myorder.Status == ConstValues.ORDER_ACCEPT || myorder.Status == ConstValues.ORDER_FINISH)  //订单已接单，被抢  或 已完成
             {
-                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(ETS.Enums.RushOrderStatus.OrderIsNotAllowRush);
+                return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
             }
             OrderListModel model = new OrderListModel()
             {
@@ -1243,8 +1226,7 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="userId">骑士ID</param>
         /// <param name="orderNo">订单号</param>
         /// <param name="bussinessId"></param>
-        /// <returns></returns>
-        [ETS.Expand.ActionStatus(typeof(RushOrderStatus))]
+        /// <returns></returns>       
         public ResultModel<RushOrderResultModel> Receive_C(int userId, string orderNo, int bussinessId, float grabLongitude, float grabLatitude)
         {
             //这里可以优化，去掉提前验证用户信息，当失败的时候在去验证 
