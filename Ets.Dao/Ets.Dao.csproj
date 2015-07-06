@@ -48,6 +48,7 @@
     <Compile Include="Common\ApiVersionDao.cs" />
     <Compile Include="Common\AppVersionDao.cs" />
     <Compile Include="Common\AreaDao.cs" />
+    <Compile Include="Common\CompanyDao.cs" />
     <Compile Include="Common\ExportSqlManageDao.cs" />
     <Compile Include="Common\GroupApiConfigDao.cs" />
     <Compile Include="Common\GroupDao.cs" />

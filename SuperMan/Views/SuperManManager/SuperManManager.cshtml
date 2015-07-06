@@ -49,6 +49,8 @@
                     <td>
                         <span class="">筛选城市: </span>
                         @Html.DropDownList("businessCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), "--无--", new { style = "width:155px" })
+                        <span class="">物流公司: </span>
+                        @Html.DropDownList("deliveryCompany", new SelectList(ViewBag.deliveryCompanyList, "CompanyId", "CompanyName"), "--无--", new { style = "width:155px" })
                         @*<span>提现时间: </span>
                         <input id="txtPubStart" readonly="readonly" type="text" name="txtPubStart" />*@  
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />

@@ -52,7 +52,8 @@ namespace Ets.Dao.Distribution
                                     ,C.[WorkStatus] 
                                     ,C.[AllowWithdrawPrice] 
                                     ,isnull(cs.ClienterId,0) as CSID  --如果非0就存在跨店
-                                    ";
+                                    ,ISNULL(DC.DeliveryCompanyName,'') AS CompanyName
+";
             
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrEmpty(criteria.clienterName))
@@ -79,6 +80,10 @@ namespace Ets.Dao.Distribution
             {
                 sbSqlWhere.AppendFormat(" AND C.City='{0}' ", criteria.businessCity.Trim());
             }
+            if (!string.IsNullOrWhiteSpace(criteria.deliveryCompany) && criteria.deliveryCompany != "0")
+            {
+                sbSqlWhere.AppendFormat(" AND DC.Id={0} ", criteria.deliveryCompany);
+            }
             if (!string.IsNullOrEmpty(criteria.AuthorityCityNameListStr))
             {
                 sbSqlWhere.AppendFormat(" AND C.City IN ({0}) ", criteria.AuthorityCityNameListStr.Trim());
@@ -100,6 +105,7 @@ namespace Ets.Dao.Distribution
                                   left Join (SELECT ClienterId 
                                                FROM CrossShopLog csl WITH(NOLOCK) 
                                                 GROUP BY csl.ClienterId) cs on c.Id=cs.ClienterId
+                                  LEFT JOIN DeliveryCompany DC (NOLOCK) ON c.DeliveryCompanyId=DC.Id
                                   --left JOIN  dbo.WtihdrawRecords ON WtihdrawRecords.UserId = C.Id 
                                   --left join dbo.CrossShopLog cs on c.Id=cs.ClienterId
                                 ";
