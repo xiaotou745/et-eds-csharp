@@ -17,7 +17,10 @@ namespace ReceiveAddressRepair
     {
         public DataTable GetNoReceiveAddress(DateTime startTime)
         {
-            string querySql = @"select top 200 Id,ReceviceLongitude,ReceviceLatitude from dbo.[order] (nolock) where PubDate > @PubDate and (ReceviceAddress is null or ReceviceAddress ='')  and ReceviceLongitude>0 and ReceviceLongitude>0";
+            string querySql = @"select top 200 o.Id,oo.CompleteLongitude,oo.CompleteLatitude from dbo.[order] o(nolock)
+join dbo.OrderOther oo(nolock) on o.id=oo.OrderId
+ where PubDate > @PubDate and 
+(ReceviceAddress is null or ReceviceAddress ='')  and CompleteLongitude>0 and CompleteLatitude>0";
 
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@PubDate", SqlDbType.DateTime).Value = startTime;

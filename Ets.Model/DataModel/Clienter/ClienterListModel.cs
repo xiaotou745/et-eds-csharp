@@ -42,6 +42,10 @@ namespace Ets.Model.DataModel.Clienter
         /// 是否绑定（0：否 1：是）
         /// </summary>
         public int IsBind { get; set; }
+        /// <summary>
+        /// 物流公司名称
+        /// </summary>
+        public string CompanyName { get; set; }
 
     }
 }

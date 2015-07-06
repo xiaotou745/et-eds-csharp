@@ -26,11 +26,12 @@
     <div id="left" style="float: left;width:750px;height: auto;border-right: 1px #dcdcdc solid;margin-top: -10px; ">
         <div style="width:750px;height: auto;  border-bottom:solid 1px #dcdcdc;padding-left:10px;">
             <div class="control-group" style="margin-top: 10px">
-                <label>注册账号：@Model.PhoneNo</label>
+                <label>注册账号：</label>
+                <label>@Model.PhoneNo</label>
             </div>
             <div class="control-group">
                 <label>商铺名称：</label>
-                <input name="busiName" id="busiName" type="text" value="@Model.Name">
+                <input name="busiName" id="busiName" type="text" value="@Model.Name" >
                 <input name="busiId" id="busiId" type="hidden" value="@Model.Id">
             </div>
             <div class="control-group">
@@ -42,23 +43,23 @@
                 <input name="busiLandline" id="busiLandline" type="text" value="@Model.Landline">
             </div>
             <div class="control-group">
-                <label>配  送  费：</label>
-                <input name="busiWaisong" id="busiWaisong" type="text" value="@Model.DistribSubsidy" style="margin-left: 5px">
+                <label style="margin-left: 5px">配  送  费：</label>
+                <input name="busiWaisong" id="busiWaisong" type="text" value="@Model.DistribSubsidy" >
             </div>
             <div class="control-group">
-                <label>城市：</label>
+                <label style="margin-left: 20px">城  市：</label>
                 @Html.DropDownList("busiCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Code", "Name", Model.CityId), "-请选择-", new { style = "width:77px" })
-                <label>区域：</label>
+                <label>区  域：</label>
                 @Html.DropDownList("busiDistrict", new SelectList(ViewBag.openAreaList, "Code", "Name", Model.districtId), "-请选择-", new { style = "width:78px" })
             </div>
             <div class="control-group">
-                <label>地址：</label>
+                <label style="margin-left: 20px">地  址：</label>
                 <input name="busiAddr" id="busiAddr" style="width: 200px;" type="text" value="@Model.Address">
             </div>
             <div class="control-group" style="margin-bottom: 10px">
-                <label>经  纬  度：</label>
-                <input name="busiLongitude" id="busiLongitude" style="width: 86px;margin-left: 5px" type="text" value="@Model.Longitude" disabled="disabled">
-                <input name="busiLatitude" id="busiLatitude" style="width: 86px;" type="text" value="@Model.Latitude" disabled="disabled">
+                <label style="margin-left: 5px">经  纬  度：</label>
+                <input name="busiLongitude" id="busiLongitude" style="width: 120px;" type="text" value="@Model.Longitude" disabled="disabled">
+                <input name="busiLatitude" id="busiLatitude" style="width: 120px;" type="text" value="@Model.Latitude" disabled="disabled">
                 <a id="postion" style="margin-left: 15px"><b>地图定位</b></a>
             </div>
         </div>
@@ -87,30 +88,32 @@
                 <label style="font-size:15px">补贴策略设置(应付)</label>
             </div>
             <div class="control-group" style="margin-left:27px">
-                <label id="labGlobalConfig">@ViewBag.subsidyConfig</label>
+                <label id="labGlobalConfig" style="margin-left: 48px">@ViewBag.subsidyConfig</label>
             </div>
-            <div class="control-group" style="margin-left:27px">
-                <label>补贴策略：</label>
+            <div class="control-group" >
+                <label style="margin-left:74px">补贴策略：</label>
                 @Html.DropDownList("businessGroupID", new SelectList(new BusinessGroupProvider().GetBusinessGroupList(), "Id", "Name", @Model.BusinessGroupId), new { @class = "selectw", style = "width:143px" })
             </div>
             <div class="control-group" style="margin-left:2px">
-                <label>餐费结算方式：</label>
+                <label style="margin-left: 48px">餐费结算方式：</label>
                 <select name="busiMealsSettleMode" class="selectw" id="busiMealsSettleMode" style="width:143px">
                     <option value="0">线下结算</option>
                     <option value="1">线上结算</option>
                 </select>
             </div>
             <div class="control-group">
-                <label >一键发单：</label>
+                <label style="margin-left: 73px">一键发单：</label>
                 <input id="rOneKeyPubOrderY" name="rOneKeyPubOrder" type="radio" value="1" @(Model.OneKeyPubOrder == 1 ? "checked" : "")>
                 <label >是</label>
                 <input id="rOneKeyPubOrderN" name="rOneKeyPubOrder" type="radio" value="0" style="margin-left: 30px" @(Model.OneKeyPubOrder == 0 ? "checked" : "")>
                 <label >否</label>
             </div>
             <div class="control-group">
-                <label>余额可以透支：</label>
-                <input id="rBbalanceAllowOverDraftY" name="rBalanceAllowOverDraft" type="radio" value="1" @(Model.IsAllowOverdraft == 1?"checked":"") /><label for="rBbalanceAllowOverDraftY">是</label>
-                <input id="rBbalanceAllowOverDraftN" name="rBalanceAllowOverDraft" type="radio" value="0" style="margin-left: 30px" @(Model.IsAllowOverdraft == 0 ? "checked" : "") /><label for="rBbalanceAllowOverDraftN">否</label>
+                <label style="margin-left: 48px">余额可以透支：</label>
+                <input id="rBbalanceAllowOverDraftY" name="rBalanceAllowOverDraft" type="radio" value="1" @(Model.IsAllowOverdraft == 1?"checked":"")>
+                <label >是</label>
+                <input id="rBbalanceAllowOverDraftN" name="rBalanceAllowOverDraft" type="radio" value="0" style="margin-left: 30px" @(Model.IsAllowOverdraft == 0 ? "checked" : "") >
+                <label>否</label>
             </div>
             <div class="control-group">
                 <label>使用雇主任务时间限制：</label>
@@ -120,7 +123,7 @@
                 <label>否</label>
             </div>
             <div class="control-group" style="margin-bottom: 10px">
-                <label style="margin-left: 24px">第三方ID：</label>
+                <label style="margin-left: 70px">第三方ID：</label>
                 <input name="busiSourceId" id="busiSourceId" type="text" value="@Model.OriginalBusiId" @(Model.IsModifyBind == 0 && Model.GroupId > 0 ? "disabled" : "") />
                 <input type="hidden" id="hidGroupId" name="hidGroupId" value="@Model.GroupId" />
                 @if (Model.GroupId > 0)
@@ -130,7 +133,7 @@
                 else
                 {
                     @Html.DropDownList("busGroupId",
-                                                  new SelectList(new BusinessProvider().GetGroups().Where(i => i.IsModifyBind == 1).ToList(), "Id", "GroupName"), "--请选择--", htmlAttributes: new { @class = "selectw", style = "width:100px; " })
+                        new SelectList(new BusinessProvider().GetGroups().Where(i => i.IsModifyBind == 1).ToList(), "Id", "GroupName"), "--请选择--", htmlAttributes: new { @class = "selectw", style = "width:100px; " })
                 }
             </div>
             @*<div class="control-group" style="margin-bottom: 10px">
@@ -159,7 +162,41 @@
                     </div>
                 </div>*@
         </div>
-         <div style="width:750px;height: auto;border-bottom:solid 1px #dcdcdc;padding-left:10px;">
+        
+        <div style="width:750px;height:125px;overflow:auto;margin-top:10px" id="divCity">
+            <div style="float: left">
+                <label>绑定配送公司：</label>
+            </div>
+            @*<div id="cityList" style="float: left;width:700px">
+                @{
+                    var openCityList = ViewBag.openCityList.Result.AreaModels as List<AreaModel>;
+                    if (openCityList != null && openCityList.Count > 0)
+                    {
+                        <div style="width: 140px;height:25px;float: left">
+                            <input type="checkbox" name="checkAllMenus" id="selectAll" onclick="checkAll()" />全部
+                        </div> //全选
+    function checkAll() {
+        var checkedOfAll = $("#selectAll").prop("checked");
+        $("input[name='checkMenus']").prop("checked", checkedOfAll);
+    }
+                        foreach (var item in openCityList)
+                        {
+                            <div style="width: 140px;height:25px;float: left">
+                                <input type="checkbox" name="checkMenus" id="@item.Code" value="@item.Code" />
+                                <label>@item.Name</label>
+                            </div>
+                        }
+                    }
+                }
+                @if (dealType == 2)
+                {
+                    <input type="hidden" name="hidPushCity" id="hidPushCity" value="@Model.PushCity" />
+                }
+
+            </div>*@
+        </div>
+
+        <div style="width:750px;height: auto;border-bottom:solid 1px #dcdcdc;padding-left:10px;">
          </div>
         <div class="SearchMd">
             <div style="margin-left: 100px;float: left"><input type="button" value="保存" class="searchBtn" id="btnModifyCommit" /></div>
@@ -359,6 +396,11 @@
             });
         }
     });
+    //全选
+    function checkAll() {
+        var checkedOfAll = $("#selectAll").prop("checked");
+        $("input[name='checkMenus']").prop("checked", checkedOfAll);
+    }
     //返回
     $("#btnReturn").click(function () {
         window.location.href = "/BusinessManager/BusinessManager";

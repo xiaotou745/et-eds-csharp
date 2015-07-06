@@ -70,6 +70,7 @@
     <Compile Include="Common\AppVersionProvider.cs" />
     <Compile Include="Common\AreaProvider.cs" />
     <Compile Include="Common\BaiDuHelper.cs" />
+    <Compile Include="Common\CompanyProvider.cs" />
     <Compile Include="Common\ExportSqlManageProvider.cs" />
     <Compile Include="Common\GlobalConfigProvider.cs" />
     <Compile Include="Common\GroupProvider.cs" />
