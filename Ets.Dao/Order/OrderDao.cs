@@ -1431,6 +1431,7 @@ select top 1
         o.OrderCount,
         c.TrueName ClienterName,
         ISNULL(oo.HadUploadCount,0) HadUploadCount,
+        ISNULL(oo.NeedUploadCount,0) NeedUploadCount,
         o.MealsSettleMode,
         o.BusinessReceivable,
         o.IsPay,
