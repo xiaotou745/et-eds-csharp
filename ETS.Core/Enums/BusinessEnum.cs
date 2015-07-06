@@ -84,7 +84,11 @@ namespace ETS.Enums
         [DisplayText("集团Id不能为空")]
         GroupIdEmpty = 112,
         [DisplayText("请填写佣金类型")]
-        CommissionTypeIdEmpty = 113
+        CommissionTypeIdEmpty = 113,
+        [DisplayText("推荐人手机号不存在")]
+        RecommendPhoneNoExist= 114,
+        [DisplayText("推荐人手机号有误")]
+        RecommendPhoneError = 115
     }
 
 

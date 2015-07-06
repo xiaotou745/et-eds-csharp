@@ -632,9 +632,15 @@ namespace Ets.Service.Provider.Clienter
 
                 //写入骑士完成坐标                 
                 orderOtherDao.UpdateComplete(parModel);
+                string mess = "更新坐标:" + parModel.orderId;               
+                LogHelper.LogWriter(" FinishOrder", new { obj = "时间：" + DateTime.Now.ToString() + mess });
 
                 //更新骑士和商家金额
-                if (!UpdateMoney(myOrderInfo))
+                bool blUpdate = UpdateMoney(myOrderInfo);
+                mess = "更新骑士和商家金额订单Id:" + myOrderInfo.Id;
+                mess += "列新状态:" + blUpdate.ToString();
+                LogHelper.LogWriter(" FinishOrder", new { obj = "时间：" + DateTime.Now.ToString() + mess });
+                if (!blUpdate)
                 {
                     return model;
                 }
@@ -893,6 +899,11 @@ namespace Ets.Service.Provider.Clienter
                 {
                     IsPayOrderCommission = false;
                     orderDao.UpdateJoinWithdraw(myOrderInfo.Id);//把订单加入到已增加可提现里
+
+                    if (orderOther.HadUploadCount >= orderOther.NeedUploadCount && orderOther.OrderStatus ==OrderStatus.Status1.GetHashCode())
+                    {
+                        CheckOrderPay(myOrderInfo.Id);
+                    }
                 }
                 #endregion
 
@@ -903,6 +914,7 @@ namespace Ets.Service.Provider.Clienter
                 }
 
                 tran.Complete();
+
                 #region 是否允许修改小票
                 orderOther.IsModifyTicket = true;
                 if (orderOther.HadUploadCount >= orderOther.NeedUploadCount && myOrderInfo.Status == OrderStatus.Status1.GetHashCode())

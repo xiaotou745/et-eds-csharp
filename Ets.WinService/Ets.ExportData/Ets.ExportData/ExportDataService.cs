@@ -1,4 +1,5 @@
-﻿using Quartz;
+﻿using ETS.Util;
+using Quartz;
 using Quartz.Impl;
 using System;
 using System.Collections.Generic;
@@ -18,10 +19,17 @@ namespace Ets.ExportData
         private Quartz.IScheduler scheduler;
         public ExportDataService()
         {
-            Thread.Sleep(10000);
-            InitializeComponent();
-            Quartz.ISchedulerFactory schedulerFactory = new StdSchedulerFactory();
-            scheduler = schedulerFactory.GetScheduler();
+            Thread.Sleep(5000);
+            try
+            {
+                InitializeComponent();
+                Quartz.ISchedulerFactory schedulerFactory = new StdSchedulerFactory();
+                scheduler = schedulerFactory.GetScheduler();
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter("异常啦：" + ex);
+            }
         }
 
         protected override void OnStart(string[] args)

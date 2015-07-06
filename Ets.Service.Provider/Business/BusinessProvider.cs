@@ -251,7 +251,17 @@ namespace Ets.Service.Provider.Business
             else if (businessDao.CheckBusinessExistPhone(model.phoneNo))
             {
                 returnEnum = BusinessRegisterStatus.PhoneNumberRegistered;//判断该手机号是否已经注册过
-            }  
+            }
+            else if (!string.IsNullOrWhiteSpace(model.RecommendPhone)&&
+                (model.RecommendPhone.Length!=11||model.RecommendPhone[0]!='1'))
+            {
+                returnEnum = BusinessRegisterStatus.RecommendPhoneError;//填入的推荐人手机号有误
+            }
+            else if (!string.IsNullOrWhiteSpace(model.RecommendPhone) &&
+                     !businessDao.CheckRecommendPhone(model.RecommendPhone))
+            {
+                returnEnum = BusinessRegisterStatus.RecommendPhoneNoExist; //推荐人手机号不存在
+            }
             if (returnEnum != null)
             {
                 return ResultModel<BusiRegisterResultModel>.Conclude(returnEnum);
