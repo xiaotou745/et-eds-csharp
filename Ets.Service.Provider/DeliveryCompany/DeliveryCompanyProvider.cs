@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Ets.Dao.Clienter;
 using Ets.Dao.DeliveryCompany;
+using ETS.Enums;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.DeliveryCompany;
@@ -53,29 +54,17 @@ namespace Ets.Service.Provider.DeliveryCompany
                 ClienterModel clienterInfo= clienterDao.GetUserInfoByUserPhoneNo(temp.Phone);
                 if (clienterInfo == null) //骑士尚未存在，做insert操作。
                 {
-                    string cityCode = "";
-                        //修改地址转换 市编码
-                    if (!string.IsNullOrWhiteSpace(temp.City))
-                    {
-                        IAreaProvider iAreaProvider = new AreaProvider();
-                        AreaModelTranslate areaModel =
-                            iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate()
-                            {
-                                Name = temp.City.Trim(),
-                                JiBie = 2
-                            });
-                        cityCode = areaModel != null ? areaModel.NationalCode.ToString() : "";
-                    }
+                    
                     int id = clienterDao.DeliveryCompanyInsertClienter(new clienter()
                     {
                         PhoneNo = temp.Phone, //真实姓名
                         Password = temp.Phone, //手机号
                         TrueName = temp.Name, //真实姓名
                         IDCard = temp.IdCard, //身份证号
-                        Status = 2,
+                        Status =(byte) ClienteStatus.Status2.GetHashCode(),
                         City = temp.City, //城市
-                        CityId = cityCode,
-                        CityCode = cityCode, //城市编码
+                        CityId = temp.CityCode,
+                        CityCode = temp.CityCode, //城市编码
                         DeliveryCompanyId = companyId //物流公司id
                     });
                     res.InsertCount = id > 0 ? (res.InsertCount + 1) : res.InsertCount; //新增数量+1
@@ -93,7 +82,7 @@ namespace Ets.Service.Provider.DeliveryCompany
                     }
                 }
             }
-            return null;
+            return ResultModel<object>.Conclude(SystemState.Success,res);
         }
     }
 }
