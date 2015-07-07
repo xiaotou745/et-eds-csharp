@@ -234,7 +234,7 @@ namespace Ets.Service.Provider.Business
         public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(RegisterInfoPM model)
         {
             var redis = new ETS.NoSql.RedisCache.RedisCache();
-            var code = redis.Get<string>("PostRegisterInfo_B_" + model.phoneNo);
+            var code = redis.Get<string>(RedissCacheKey.PostRegisterInfo_B + model.phoneNo);
             Enum returnEnum = null;
             if (string.IsNullOrEmpty(model.phoneNo))
             {
