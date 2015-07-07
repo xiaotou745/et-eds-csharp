@@ -115,6 +115,11 @@ namespace Ets.Model.DataModel.Clienter
         /// </summary>
         public decimal HasWithdrawPrice { get; set; }
 
+        /// <summary>
+        /// 所属物流公司ID
+        /// </summary>
+        public int DeliveryCompanyId { get; set; }
+
     }
 
     public class ClientOrderSearchCriteria

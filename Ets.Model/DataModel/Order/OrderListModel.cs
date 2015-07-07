@@ -279,7 +279,6 @@ namespace Ets.Model.DataModel.Order
         /// 任务接单时间
         /// </summary>
         public DateTime? GrabTime { get; set; }
-
         /// <summary>
         /// 是否无效订单
         /// </summary>

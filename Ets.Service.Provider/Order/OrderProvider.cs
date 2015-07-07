@@ -1218,7 +1218,6 @@ namespace Ets.Service.Provider.Order
                 return dealResultInfo;
             }
             #endregion
-
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 if (orderDao.CancelOrder(orderModel, orderOptionModel))
