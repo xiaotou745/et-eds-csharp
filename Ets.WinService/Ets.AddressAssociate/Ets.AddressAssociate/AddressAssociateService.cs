@@ -11,10 +11,10 @@ using Quartz.Impl;
 
 namespace Ets.AddressAssociate
 {
-    public partial class Service1 : ServiceBase
+    public partial class AddressAssociateService : ServiceBase
     {
         private Quartz.IScheduler scheduler;
-        public Service1()
+        public AddressAssociateService()
         {
             InitializeComponent();
             Quartz.ISchedulerFactory schedulerFactory = new StdSchedulerFactory();

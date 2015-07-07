@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using Ets.Model.Common;
 using Ets.Model.DomainModel.Area;
 using Ets.Model.DomainModel.DeliveryCompany;
+using Ets.Model.ParameterModel.DeliveryCompany;
 using Ets.Service.IProvider.Common;
 using Ets.Service.IProvider.DeliveryCompany;
 using Ets.Service.Provider.Common;
@@ -17,6 +18,7 @@ using ETS.Util;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using SuperMan.App_Start;
 
 namespace SuperMan.Controllers
 {
@@ -179,9 +181,16 @@ namespace SuperMan.Controllers
         public JsonResult DoBatchImportClienter(int companyId)
         {
             string jsondatas = Request.Form["datas"];  //得到页面上可导入的数据
+ 
             //序列化得到数据
             var models = JsonHelper.JsonConvertToObject<List<BatchImportClienterExcelDM>>(jsondatas);
-            ResultModel<string> res = deliveryCompanyProvider.DoBatchImportClienter(companyId, models);
+            ResultModel<string> res = deliveryCompanyProvider.DoBatchImportClienter(new DoBatchImportClienterPM()
+            {
+                Datas=models,
+                OptId=UserContext.Current.Id,
+                OptName=UserContext.Current.Name,
+                CompanyId=companyId
+            });
             return new JsonResult()
             {
                 Data = res
