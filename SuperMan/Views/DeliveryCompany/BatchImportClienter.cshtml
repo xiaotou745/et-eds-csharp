@@ -14,7 +14,7 @@
     </h2>
     <table style="font-size:14px;font-weight:bold;line-height:300%;width:900px ">
         <tr class="trclass">
-            <td><span style="font-size: 25px;">物流公司名称:</span><span style="font-size: 25px;">如风达</span></td>
+            <td><span style="font-size: 25px;">物流公司名称:</span><span style="font-size: 25px;">@ViewBag.CompanyName</span></td>
         </tr>
     </table>
     @using (Html.BeginForm("", "", FormMethod.Post, new { enctype = "multipart/form-data" }))
@@ -48,7 +48,7 @@
     var adminjs = new adminglass(); //实例化后台类
     //上传
     $("#btnImport").on('click', function () {
-        var url = "/DeliveryCompany/BatchImportClienterExcel?companyId=1";
+        var url = "/DeliveryCompany/BatchImportClienterExcel?companyId=@ViewBag.CompanyId";
         $.ajaxFileUpload({
             type: 'POST',
             secureuri: false, //一般设置为false
@@ -74,7 +74,7 @@
         } else {
             $.ajax({
                 type: 'POST',
-                url: "/deliveryCompany/DoBatchImportClienter?companyId=1",
+                url: "/deliveryCompany/DoBatchImportClienter?companyId=@ViewBag.CompanyId",
                 data: {datas: $("#_jsondata").val()} ,
                 success: function (data) {
                     $('#message').html(data.Result);
@@ -83,7 +83,7 @@
             });
         }
     });
-    
+
     //关闭弹层
     $('#btnCanel').live("click", function () {
         adminjs.closewinbox('.add-openbox');
