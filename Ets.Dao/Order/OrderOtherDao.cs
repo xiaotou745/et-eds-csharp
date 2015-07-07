@@ -77,6 +77,41 @@ update OrderOther set IsJoinWithdraw=1 where orderId=@orderId";
             dbParameters.AddWithValue("@orderId", orderId);
             DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
         }
+        /// <summary>
+        /// 更新订单是否无效的标记
+        /// zhaohailong20150706
+        /// </summary>
+        /// <param name="orderId"></param>
+        public void UpdateOrderIsReal(int orderId)
+        {
+            const string UPDATE_SQL = @"
+                                        update OrderOther 
+                                        set IsNotRealOrder=1 where orderid=@orderId
+                                        ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@orderId", orderId);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
+        }
+
+//        /// <summary>
+//        /// 获取是否无效订单
+//        /// </summary>
+//        /// <UpdateBy>hulingbo</UpdateBy>
+//        /// <UpdateTime>20150706</UpdateTime>
+//        /// <param name="id"></param>
+//        /// <returns></returns>
+//        public int GetIsNotRealOrder(int orderId)
+//        {
+//            string querysql = @"  
+//select IDbParameters from OrderOther nolock
+//where OrderId=@OrderId";
+
+//            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+//            dbParameters.AddWithValue("@OrderId", orderId);
+
+//            object obj = DbHelper.ExecuteScalar(SuperMan_Read, querysql, dbParameters);
+//            return ParseHelper.ToInt(obj, 0);
+//        }
 
     }
 }

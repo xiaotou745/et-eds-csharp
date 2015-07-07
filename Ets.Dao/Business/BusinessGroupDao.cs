@@ -122,56 +122,6 @@ namespace Ets.Dao.Business
             parm.AddWithValue("@Remark","修改商家分组信息");
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
-        /// <summary>
-        /// 添加全局配置
-        /// danny-20150506
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public int AddGlobalConfig(Model.Common.GlobalConfig model)
-        {
-            string sql = @"INSERT INTO [GlobalConfig]
-                            (
-                             [KeyName]
-                            ,[Value]
-                            ,[LastUpdateTime]
-                            ,[Remark]
-                            ,[GroupId]
-                            ,[StrategyId]                            
-                            )
-                                OUTPUT  Inserted.KeyName,
-                                        Inserted.Value,
-                                        getdate(),
-                                        @OptName,
-                                        @LogRemark,
-                                        Inserted.GroupId,
-                                        Inserted.StrategyId
-                                INTO BusinessGroupLog
-                                       (KeyName,
-                                        Value,
-                                        InsertTime,
-                                        OptName,
-                                        Remark,
-                                        GroupId,
-                                        StrategyId)
-                            VALUES
-                            (@KeyName
-                            ,@Value
-                            ,getdate()
-                            ,@Remark
-                            ,@GroupId
-                            ,@StrategyId
-                            ); SELECT @@IDENTITY";
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@KeyName", model.KeyName);
-            parm.AddWithValue("@Value", model.Value);
-            parm.AddWithValue("@Remark", model.Remark);
-            parm.AddWithValue("@GroupId", model.GroupId);
-            parm.AddWithValue("@StrategyId", model.StrategyId);
-            parm.AddWithValue("@LogRemark", model.Remark);
-            parm.AddWithValue("@OptName", model.Remark);
-            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm));
-        }
 
         /// <summary>
         /// 复制全局配置默认模板

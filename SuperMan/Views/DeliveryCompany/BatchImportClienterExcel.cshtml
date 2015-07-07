@@ -14,8 +14,13 @@ else if (ViewBag.Datas.Count == 0)
 }
 else
 {
-    var models = ViewBag.Datas;
+    var models = (List<BatchImportClienterExcelDM>)ViewBag.Datas;
     List<BatchImportClienterExcelDM> canadds = new List<BatchImportClienterExcelDM>();
+
+    <span style="font-weight:100; font-size:20px;">
+        总计包含骑士数量：@models.Count   &nbsp;&nbsp;&nbsp;&nbsp;
+        有效骑士数量：@models.Count(item => !string.IsNullOrWhiteSpace(item.Remark))
+    </span>
 
     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
         <thead>
@@ -64,4 +69,3 @@ else
 
 }
 
-    
