@@ -30,13 +30,9 @@ namespace SuperManWebApi.Controllers
 {
     public class BusinessAPIController : ApiController
     {
-        IOrderProvider iOrderProvider = new OrderProvider();
-        IBusinessProvider iBusinessProvider = new BusinessProvider();
+        readonly IOrderProvider iOrderProvider = new OrderProvider();
+        readonly IBusinessProvider iBusinessProvider = new BusinessProvider();
         readonly IAreaProvider iAreaProvider = new AreaProvider();
-        /// <summary>
-        /// 线程安全
-        /// </summary>
-        private static object lockHelper = new object();
 
         /// <summary>
         ///  B端注册 
@@ -411,38 +407,38 @@ namespace SuperManWebApi.Controllers
         {
             return iOrderProvider.CancelOrderB(paramodel);
         }
-        /// <summary>
-        /// 流转图片
-        /// </summary>
-        /// <param name="Bytes"></param>
-        /// <returns></returns>
-        private Image byteArrayToImage(byte[] Bytes)
-        {
-            using (MemoryStream ms = new MemoryStream(Bytes))
-            {
-                Image outputImg = Image.FromStream(ms);
-                return outputImg;
-            }
-        }
-        /// <summary>
-        /// 文件转图片
-        /// </summary>
-        /// <param name="FilePath">文件路径</param>
-        /// <returns></returns>
-        private byte[] imageToByteArray(string FilePath)
-        {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                using (Image imageIn = Image.FromFile(FilePath))
-                {
-                    using (Bitmap bmp = new Bitmap(imageIn))
-                    {
-                        bmp.Save(ms, imageIn.RawFormat);
-                    }
-                }
-                return ms.ToArray();
-            }
-        }
+        ///// <summary>
+        ///// 流转图片
+        ///// </summary>
+        ///// <param name="Bytes"></param>
+        ///// <returns></returns>
+        //private Image byteArrayToImage(byte[] Bytes)
+        //{
+        //    using (MemoryStream ms = new MemoryStream(Bytes))
+        //    {
+        //        Image outputImg = Image.FromStream(ms);
+        //        return outputImg;
+        //    }
+        //}
+        ///// <summary>
+        ///// 文件转图片
+        ///// </summary>
+        ///// <param name="FilePath">文件路径</param>
+        ///// <returns></returns>
+        //private byte[] imageToByteArray(string FilePath)
+        //{
+        //    using (MemoryStream ms = new MemoryStream())
+        //    {
+        //        using (Image imageIn = Image.FromFile(FilePath))
+        //        {
+        //            using (Bitmap bmp = new Bitmap(imageIn))
+        //            {
+        //                bmp.Save(ms, imageIn.RawFormat);
+        //            }
+        //        }
+        //        return ms.ToArray();
+        //    }
+        //}
 
 
 

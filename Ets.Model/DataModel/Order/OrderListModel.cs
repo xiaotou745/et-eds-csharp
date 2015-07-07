@@ -280,6 +280,11 @@ namespace Ets.Model.DataModel.Order
         /// </summary>
         public DateTime? GrabTime { get; set; }
         /// <summary>
+        /// 是否无效订单
+        /// </summary>
+        public int IsNotRealOrder { get; set; }
+
+        /// <summary>
         /// 最终给骑士的佣金
         /// </summary>
         public decimal RealOrderCommission { get; set; }

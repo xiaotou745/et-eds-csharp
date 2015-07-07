@@ -1,4 +1,5 @@
 ﻿using Ets.Dao.Statistics;
+using ETS.Data.PageData;
 using Ets.Model.Common;
 using Ets.Service.IProvider.Statistics;
 using ETS.Util;
@@ -166,6 +167,24 @@ namespace Ets.Service.Provider.Statistics
             return statisticsDao.QueryBusinessNum(queryInfo);
         }
         #endregion
+
+        /// <summary>
+        /// 获取推荐统计分页列表
+        /// </summary>
+        /// <param name="recommendQuery"></param>
+        /// <returns></returns>
+        public PageInfo<RecommendDataModel> GetRecommendList(RecommendQuery recommendQuery)
+        {
+            if (string.IsNullOrWhiteSpace(recommendQuery.EndDate))
+                recommendQuery.EndDate = "";
+            if (string.IsNullOrWhiteSpace(recommendQuery.StartDate))
+                recommendQuery.StartDate = "";
+            if (string.IsNullOrWhiteSpace(recommendQuery.RecommendPhone))
+                recommendQuery.RecommendPhone = "";
+            if (recommendQuery.PageIndex < 1)
+                recommendQuery.PageIndex = 1;
+            return statisticsDao.GetRecommendList(recommendQuery); ;
+        }
 
     }
 }

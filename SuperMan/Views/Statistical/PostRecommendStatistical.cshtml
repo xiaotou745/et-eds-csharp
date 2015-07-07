@@ -1,0 +1,89 @@
+﻿@using ETS.Util
+@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Statistics.RecommendDataModel>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+    <thead>
+
+        <tr class="tdbg">
+            <th width="%5">编号</th>
+            <th>商户名称</th>
+            <th>电话</th>
+            <th>地址</th>
+            <th>注册时间</th>
+            <th>状态</th>
+            <th>推荐人手机号</th>
+            <th>订单数量</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            if (Model != null && Model.Records.Count > 0)
+            {
+                var i = 0;
+                foreach (var item in Model.Records)
+                {
+                    <tr id="@item.ID">
+                        <td>
+                            @item.ID  
+                        </td>
+                        <td>
+                            @item.Name
+                        </td>
+                        <td>
+                            @item.PhoneNo
+                        </td>
+                        <td>
+                            @item.Address
+                        </td>
+                        <td>
+                            @item.InsertTime
+                        </td>
+                        @{
+                            var statusView = "";
+                            if (@item.Status == ETS.Enums.BusinessStatus.Status1.GetHashCode())
+                            {
+                                statusView = "审核通过";
+                            }
+
+                            else if (@item.Status == ETS.Enums.BusinessStatus.Status3.GetHashCode())
+                            {
+                                statusView = "审核中";
+                            }
+                            else if (@item.Status == ETS.Enums.BusinessStatus.Status2.GetHashCode())
+                            {
+                                statusView = "未审核且未添加地址";
+                            }
+                            else if (@item.Status == ETS.Enums.BusinessStatus.Status0.GetHashCode())
+                            {
+                                statusView = "未审核";
+                            }
+                            else if (@item.Status == ETS.Enums.BusinessStatus.Status4.GetHashCode())
+                            {
+                                statusView = "审核被拒绝";
+                            }}
+                        <td>
+                            @statusView
+                        </td>
+                        <td>
+                            @item.RecommendPhone
+                        </td>
+                        <td>
+                            @item.OrderCount
+                        </td>
+                    </tr>
+                }
+            }
+
+        }
+    </tbody>
+</table>
+@{
+    if (Model != null)
+    {
+        ViewBag.ActionName = "PostRecommendStatistical";
+        @Html.Partial("~/views/shared/PagerControl.cshtml", Model)
+    }
+}
+
+<script type="text/javascript">
+   
+</script>
