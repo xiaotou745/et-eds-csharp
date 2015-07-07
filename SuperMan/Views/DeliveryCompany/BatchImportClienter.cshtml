@@ -64,8 +64,10 @@
                 type: 'POST',
                 url: "/deliveryCompany/DoBatchImportClienter?companyId=1",
                 data: {datas: $("#_jsondata").val()} ,
-                success: function (result) {
-                    
+                success: function (data) {
+       
+                    alert(data.Result);
+
                 }
             });
         }
