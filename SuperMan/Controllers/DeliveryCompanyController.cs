@@ -139,5 +139,19 @@ namespace SuperMan.Controllers
             }
            return list;
         }
+
+       /// <summary>
+       /// 批量导入骑士  excel  处理  add by caoheyang 20150706
+       /// </summary>
+       /// <param name="companyId">公司id</param>
+       /// <returns></returns>
+       [HttpPost]
+       public JsonResult DoBatchImportClienter(int companyId)
+       {
+           List<BatchImportClienterExcelDM> mdols = new List<BatchImportClienterExcelDM>();
+           TryUpdateModel(mdols);
+           return new JsonResult (){  Data="成功"};
+       }
+
     }
 }
