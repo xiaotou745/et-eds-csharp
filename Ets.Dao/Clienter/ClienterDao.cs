@@ -451,7 +451,7 @@ SELECT PhoneNo AS Phone,0 AS PemType FROM clienter(NOLOCK) WHERE Status=1
             parm.AddWithValue("@City", model.City);
             parm.AddWithValue("@CityId", model.CityId);
             parm.AddWithValue("@GroupId", model.GroupId);
-            parm.AddWithValue("@GroupId", (object)model.DeliveryCompanyId);
+            parm.AddWithValue("@DeliveryCompanyId", (object)model.DeliveryCompanyId);
             object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, parm);
             if (i != null)
             {
