@@ -1514,14 +1514,22 @@ where  cityid in(" + pushCity + ")";
         /// </summary>
         /// <param name="clienterId">骑士id</param>
         /// <param name="deliveryCompanyId">物流公司id</param>
+        /// <param name="optId">操作人id</param>
+        /// <param name="optName">操作人名</param>
         /// <returns></returns>
-        public int BindDeliveryCompany(int clienterId, int deliveryCompanyId)
+        public int BindDeliveryCompany(int clienterId, int deliveryCompanyId, int optId, string optName)
         {
-            string sql = @"
-                          update dbo.clienter set DeliveryCompanyId=@DeliveryCompanyId where Id=@Id";
+            const string sql = @"
+update dbo.clienter set DeliveryCompanyId=@DeliveryCompanyId 
+output Inserted.Id,@OptId,@OptName,'配送公司批量导入骑士,更新已有骑士所属物流公司信息'
+into dbo.ClienterOptionLog(ClienterId,OptId,OptName,Remark) 
+where Id=@Id ";
+
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("DeliveryCompanyId", DbType.Int32, 4).Value = clienterId;
             dbParameters.Add("Id", DbType.Int32, 4).Value = clienterId;
+            dbParameters.Add("OptId", DbType.Int32, 4).Value = optId;
+            dbParameters.Add("OptName", DbType.String, 50).Value = optName;
             return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters));
         }
 
@@ -1529,19 +1537,30 @@ where  cityid in(" + pushCity + ")";
         /// <summary>
         /// 物流公司新增骑士功能  add by caoheyang  20150707
         /// </summary>
-        public int DeliveryCompanyInsertClienter(clienter model)
+        /// <param name="model">骑士实体</param>
+        /// <param name="optId">操作人id</param>
+        /// <param name="optName">操作人名</param>
+        /// <returns></returns>
+        public int DeliveryCompanyInsertClienter(clienter model,int optId, string optName)
         {
             const string insertSql = @"
 insert into clienter(PhoneNo,Password,TrueName,IDCard,
 Status,InsertTime,City,CityId,
 CityCode,DeliveryCompanyId)
+
+output Inserted.Id,@OptId,@OptName,'配送公司批量导入骑士'
+into dbo.ClienterOptionLog(ClienterId,OptId,OptName,Remark)
+
 values(@PhoneNo,@Password,@TrueName,@IDCard,
 @Status,getdate(),@City,@CityId,
 @CityCode,@DeliveryCompanyId)
 
-select @@IDENTITY";
+SELECT IDENT_CURRENT('clienter')"
+;
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("OptId", optId);
+            dbParameters.AddWithValue("OptName", optName);
             dbParameters.AddWithValue("PhoneNo", model.PhoneNo);
             dbParameters.AddWithValue("Password", model.Password);
             dbParameters.AddWithValue("TrueName", model.TrueName);
