@@ -281,6 +281,7 @@ namespace Ets.Service.Provider.Clienter
 
         /// <summary>
         /// 骑士注册 平扬 2015.3.30
+        /// 2015年7月7日10:18:44 茹化肖 修改推荐人B端验证
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -300,7 +301,7 @@ namespace Ets.Service.Provider.Clienter
             else if (string.IsNullOrEmpty(code) || model.verifyCode != code) //判断验码法录入是否正确
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode);
             else if (!string.IsNullOrEmpty(model.recommendPhone) && (!clienterDao.CheckClienterExistPhone(model.recommendPhone))
-                && (!new BusinessDao().CheckExistPhone(model.recommendPhone))) //如果推荐人手机号在B端C端都不存在提示信息
+                && (!new BusinessDao().CheckRecommendPhone(model.recommendPhone))) //如果推荐人手机号在B端C端都不存在提示信息 
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberNotExist);
 
 

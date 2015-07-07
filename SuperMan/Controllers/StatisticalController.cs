@@ -182,5 +182,24 @@ namespace SuperMan.Controllers
             ViewBag.TotalNum = statisticsProvider.QueryBusinessNum(criteria);
         }
         #endregion
+        #region 推荐统计
+        /// <summary>
+        /// 推荐统计页面
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult RecommendStatistical()
+        {
+            return View("RecommendStatistical");
+        }
+
+        public ActionResult PostRecommendStatistical(RecommendQuery recommendQuery)
+        {
+            //var criteria=new
+            StatisticsProvider statisticsProvider  = new StatisticsProvider();
+            var pagelist= statisticsProvider.GetRecommendList(recommendQuery);
+            return View();
+        }
+
+        #endregion
     }
 }

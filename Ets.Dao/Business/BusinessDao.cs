@@ -2297,7 +2297,11 @@ VALUES
         /// <returns></returns>
         public bool CheckRecommendPhone(string phoneNum)
         {
-            const string sql = @"SELECT COUNT(1) FROM dbo.business(NOLOCK) WHERE Status=1 AND PhoneNo=@PhoneNo";
+            const string sql = @"SELECT COUNT(Phone) FROM (
+SELECT DeliveryCompanyCode AS Phone FROM DeliveryCompany (NOLOCK) WHERE IsEnable=1
+UNION
+SELECT PhoneNo AS Phone FROM business(NOLOCK) WHERE Status=1
+) AS T WHERE T.Phone = @PhoneNo";
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@PhoneNo", DbType.String).Value = phoneNum;
             object obj = DbHelper.ExecuteScalar(SuperMan_Read, sql,parm);

@@ -1,0 +1,65 @@
+﻿@using Webdiyer.WebControls.Mvc;
+@{
+    ViewBag.Title = "推荐统计";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+<script src="~/Scripts/mvcpager.js"></script>
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：数据统计 > 推荐统计
+    </h2>
+    <div class="SearchMd" style="width:1000px">
+        <h4 style="color:black;font-weight:600">推荐统计</h4>
+        <span>日期:</span>
+        <input id="startDate" name="StartDate" style="width:143px" />
+        <span>到</span>
+        <input id="endDate" name="EndDate" style="width:143px" />
+        <span>推荐人:</span><input type="text" id="recommendPhone" name="RecommendPhone" />
+        <input value="查询" class="searchBtn" type="button">
+        <br/>
+    </div>
+    <div class="bd clearfix" id="dataList">
+        数据
+    </div>
+    <hr />
+    
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#startDate').datepicker();
+        $('#endDate').datepicker();
+
+        @*$("#btnImport").click(function () {
+            var startDate = $("#startDate").val();
+            var endDate = $("#endDate").val();
+            
+            if (startDate == "" || endDate == "") {
+                alert("请输入时间范围!");
+                return;
+            }
+            var timespan = new Date(endDate) - new Date(startDate);
+            var day = timespan / 1000 / 60 / 60 / 24;
+
+            if (day > 3) {
+                alert("只能导出四天以内的信息");
+                return;
+            }
+
+
+            var data = $("#searchForm").serialize();
+            var url ="@Url.Action("DistributionAnalyzeExport")";
+            url = url + "?" + data;
+
+            window.location.href = url;
+        });*@
+    });
+    //获取数据
+    function GetList(par) {
+
+        $.post
+    }
+</script>

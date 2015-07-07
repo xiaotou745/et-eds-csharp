@@ -761,5 +761,43 @@ order by o.Date desc, o.ActiveClienterCount desc";
             return ParseHelper.ToLong(obj, 0);
         }
         #endregion
+
+
+        #region 获取推荐人统计
+        /// <summary>
+        /// 分页获取推荐人统计列表
+        /// </summary>
+        /// <param name="recommendQuery"></param>
+        /// <returns></returns>
+        public PageInfo<RecommendDataModel> GetRecommendList(RecommendQuery recommendQuery)
+        {
+            string columnList = @"
+                                    MIN(b.Name) AS Name,
+                                    MIN(b.PhoneNo) AS PhoneNo,
+                                    MIN (b.address) AS [Address],
+                                    MIN(b.InsertTime) AS InsertTime,
+                                    MIN(b.RecommendPhone) AS RecommendPhone,
+                                    sum(o.OrderCount) AS  OrderCount,
+                                    MIN(b.Status) AS Stauts";
+            string tables = @" dbo.business b(nolock)
+                                join dbo.[order] o (nolock) on b.Id=o.businessId";
+            StringBuilder sbSqlWhere = new StringBuilder(" 1=1 ");
+            if (!string.IsNullOrWhiteSpace(recommendQuery.StartDate))
+            {
+                sbSqlWhere.AppendFormat(" AND o.PubDate>='{0}' ", recommendQuery.StartDate);
+            }
+            if (!string.IsNullOrWhiteSpace(recommendQuery.EndDate))
+            {
+                sbSqlWhere.AppendFormat(" AND o.PubDate<='{0}' ", recommendQuery.EndDate);
+            }
+            if (!string.IsNullOrWhiteSpace(recommendQuery.RecommendPhone))
+            {
+                sbSqlWhere.AppendFormat(" AND B.RecommendPhone='{0}' ", recommendQuery.RecommendPhone.Trim());
+            }
+            string orderByColumn = " b.Id   ";
+            return new PageHelper().GetPages<RecommendDataModel>(SuperMan_Read, recommendQuery.PageIndex, sbSqlWhere.ToString(),
+                orderByColumn, columnList, tables, ETS.Const.SystemConst.PageSize, true);
+        }
+        #endregion
     }
 }
