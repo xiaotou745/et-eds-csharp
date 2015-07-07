@@ -1430,7 +1430,8 @@ namespace Ets.Service.Provider.Order
             orderDM.TotalDistribSubsidy = order.TotalDistribSubsidy;
             orderDM.ClienterName = order.ClienterName;
             orderDM.ClienterPhoneNo = order.ClienterPhoneNo;
-            orderDM.GrabTime = order.GrabTime;
+            //orderDM.GrabTime = order.GrabTime;
+            orderDM.GrabTime = ParseHelper.ToDatetime(order.GrabTime, DateTime.Now).ToString("yyyy-MM-dd HH:mm");
             orderDM.businessId = ParseHelper.ToInt(order.businessId, 0);
             orderDM.TotalAmount = order.TotalAmount;
             orderDM.MealsSettleMode = order.MealsSettleMode;
