@@ -26,11 +26,7 @@
         <group>DeomJobTriggerGroup</group>
         <job-name>AdressAssociateBLL</job-name>
         <job-group>DeomJobGroup</job-group>
-<<<<<<< HEAD
-        <cron-expression>0 0 * * * ?</cron-expression><!--每天每小时触发一次-->
-=======
-        <cron-expression>0 0 0/1 * * ?</cron-expression><!--每天每小时触发一次-->
->>>>>>> 60667e98cadf7fbde80a00cb894de57d7aa8fe87
+        <cron-expression>0/30 * * * * ?</cron-expression>
       </cron>
     </trigger>
 

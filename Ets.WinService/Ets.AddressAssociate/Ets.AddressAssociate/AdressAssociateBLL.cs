@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
-using Common.Logging;
 using Ets.Dao.Order;
 using ETS.Util;
 
@@ -14,7 +13,6 @@ namespace Ets.AddressAssociate
 {
     public class AdressAssociateBLL : Quartz.IJob
     {
-        private ILog logger = LogManager.GetCurrentClassLogger();
         private static bool threadSafe = true;//线程安全
         public void Execute(Quartz.IJobExecutionContext context)
         {
@@ -28,7 +26,6 @@ namespace Ets.AddressAssociate
                 LogHelper.LogWriterString("扫表开始:时间:" + DateTime.Now.ToString());
                 XmlDocument xdoc = new XmlDocument();
                 string path = System.AppDomain.CurrentDomain.BaseDirectory + @"\date.xml";
-                logger.Info("时间XML路径:"+path);
                 xdoc.Load(path);
                 XmlNode dateNode = xdoc.SelectSingleNode("date");
                 DateTime lastdate = DateTime.Now;
