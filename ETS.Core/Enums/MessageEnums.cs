@@ -89,19 +89,16 @@ namespace ETS.Enums
     public enum SendCheckCodeStatus
     {
         [DisplayText("正在发送")]
-        Sending,
-
+        Sending = 0,
         [DisplayText("手机号码无效")]
-        InvlidPhoneNumber,
-
+        InvlidPhoneNumber = 1,
         [DisplayText("发送失败")]
-        SendFailure,
+        SendFailure = 2,
         [DisplayText("该用户已注册")]
-        AlreadyExists,
-
+        AlreadyExists = 3,
         [DisplayText("该用户不存在")]
-        NotExists,
+        NotExists = 4,
         [DisplayText("验证码不存在")]
-        CodeNotExists
+        CodeNotExists = 5
     }
 }
