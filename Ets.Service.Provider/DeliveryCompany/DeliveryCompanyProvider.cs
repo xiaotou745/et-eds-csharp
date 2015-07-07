@@ -81,10 +81,11 @@ namespace Ets.Service.Provider.DeliveryCompany
                     }
                 }
             }
-            string message = string.Format("新增成功骑士:{0}人，更新成功骑士{1}人，更新失败骑士{2}人。<br/>", insertCount, updateCount, errorCount);
+            string message = string.Format(@"新增成功骑士:<font style='color:red'>
+{0}</font>人，更新成功骑士<font style='color:red'>{1}</font>人，更新失败骑士<font style='color:red'>{2}</font>人。<br/>", insertCount, updateCount, errorCount);
             if (errorPhones.Count > 0)
             {
-                message = message + ",更新失败骑士的手机号码为:" + string.Join(",",errorPhones);
+                message = message + "更新失败骑士的手机号码为:" + string.Join(",",errorPhones);
             }
             return ResultModel<string>.Conclude(SystemState.Success,message);
         }

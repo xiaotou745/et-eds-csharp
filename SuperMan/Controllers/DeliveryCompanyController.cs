@@ -41,9 +41,12 @@ namespace SuperMan.Controllers
         /// 批量导入骑士页面 add by caoheyang 20150706
         /// </summary>
         /// <param name="companyId">公司id</param>
+        /// <param name="companyName">公司名称</param>
         /// <returns></returns>
-        public ActionResult BatchImportClienter(int companyId)
+        public ActionResult BatchImportClienter(int companyId, string companyName)
         {
+            ViewBag.CompanyId = companyId;
+            ViewBag.CompanyName = companyName;
             return View();
         }
 
