@@ -1533,11 +1533,11 @@ where  cityid in(" + pushCity + ")";
         {
             const string insertSql = @"
 insert into clienter(PhoneNo,Password,TrueName,IDCard,
-Status,InsertTime,City,CityId,ProvinceCode,AreaCode,
-CityCode,Province,DeliveryCompanyId)
+Status,InsertTime,City,CityId,
+CityCode,DeliveryCompanyId)
 values(@PhoneNo,@Password,@TrueName,@IDCard,
-@Status,@InsertTime,@City,@CityId,@ProvinceCode,@AreaCode,
-@CityCode,@Province,@DeliveryCompanyId)
+@Status,getdate(),@City,@CityId,
+@CityCode,@DeliveryCompanyId)
 
 select @@IDENTITY";
 
@@ -1547,14 +1547,9 @@ select @@IDENTITY";
             dbParameters.AddWithValue("TrueName", model.TrueName);
             dbParameters.AddWithValue("IDCard", model.IDCard);
             dbParameters.AddWithValue("Status", model.Status);
-            dbParameters.AddWithValue("InsertTime", model.InsertTime);
-            dbParameters.AddWithValue("InviteCode", model.InviteCode);
             dbParameters.AddWithValue("City", model.City);
             dbParameters.AddWithValue("CityId", model.CityId);
-            dbParameters.AddWithValue("ProvinceCode", model.ProvinceCode);
-            dbParameters.AddWithValue("AreaCode", model.AreaCode);
             dbParameters.AddWithValue("CityCode", model.CityCode);
-            dbParameters.AddWithValue("Province", model.Province);
             dbParameters.AddWithValue("DeliveryCompanyId", model.DeliveryCompanyId);
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
         }
