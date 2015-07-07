@@ -42,6 +42,17 @@ namespace ETS.Const
         /// C端找回密码验证码缓存key
         /// </summary>
         public const string PostForgetPwd_C = "PostForgetPwd_C_";
+
+        /// <summary>
+        /// 商家端找回密码缓存KEY
+        /// </summary>
+        public const string CheckCodeFindPwd_B = "CheckCodeFindPwd_B_";
+
+        /// <summary>
+        /// 商家注册缓存key
+        /// </summary>
+        public const string PostRegisterInfo_B = "PostRegisterInfo_B_";
+
         /// <summary>
         /// 后台获取开放城市
         /// </summary>

@@ -100,6 +100,8 @@ namespace ETS.Enums
         AlreadyExists,
 
         [DisplayText("该用户不存在")]
-        NotExists
+        NotExists,
+        [DisplayText("验证码不存在")]
+        CodeNotExists
     }
 }

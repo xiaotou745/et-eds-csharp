@@ -217,7 +217,7 @@ namespace Ets.Service.Provider.Business
             strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.OrderCount));
             strBuilder.AppendLine(string.Format("<td>{0}%</td>", paraModel.BusinessCommission));
             strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.T1));
-            strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.T2)); 
+            strBuilder.AppendLine(string.Format("<td>{0}</td>", paraModel.T2));
             strBuilder.AppendLine(string.Format("<td>{0}</td></tr>", paraModel.TotalAmount));
             strBuilder.AppendLine("</table>");
             return strBuilder.ToString();
@@ -252,8 +252,8 @@ namespace Ets.Service.Provider.Business
             {
                 returnEnum = BusinessRegisterStatus.PhoneNumberRegistered;//判断该手机号是否已经注册过
             }
-            else if (!string.IsNullOrWhiteSpace(model.RecommendPhone)&&
-                (model.RecommendPhone.Length!=11||model.RecommendPhone[0]!='1'))
+            else if (!string.IsNullOrWhiteSpace(model.RecommendPhone) &&
+                (model.RecommendPhone.Length != 11 || model.RecommendPhone[0] != '1'))
             {
                 returnEnum = BusinessRegisterStatus.RecommendPhoneError;//填入的推荐人手机号有误
             }
@@ -265,7 +265,7 @@ namespace Ets.Service.Provider.Business
             if (returnEnum != null)
             {
                 return ResultModel<BusiRegisterResultModel>.Conclude(returnEnum);
-            }          
+            }
 
             BusiRegisterResultModel resultModel = new BusiRegisterResultModel()
             {
@@ -521,12 +521,12 @@ namespace Ets.Service.Provider.Business
             if (string.IsNullOrEmpty(model.checkCode)) //验证码非空验证
             {
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeIsEmpty);
-            } 
+            }
             var redis = new ETS.NoSql.RedisCache.RedisCache();
-            var code = redis.Get<string>("CheckCodeFindPwd_" + model.phoneNumber);
+            var code = redis.Get<string>(RedissCacheKey.CheckCodeFindPwd_B + model.phoneNumber);
             if (string.IsNullOrEmpty(code) || code != model.checkCode) //验证码正确性验证
             { return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong); }
-                        
+
             var business = businessDao.GetBusinessByPhoneNo(model.phoneNumber);
             if (business == null) //用户是否存在
             {
@@ -553,7 +553,7 @@ namespace Ets.Service.Provider.Business
         {
             return businessDao.GetOrderCountDataSql(BusinessId);
         }
-       
+
         /// <summary>
         /// 判断该 商户是否有资格 
         /// wc
@@ -647,9 +647,9 @@ namespace Ets.Service.Provider.Business
             if (busi == null)
             {
                 return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.InvalidUserId);
-            }          
+            }
 
-   
+
             int upResult = businessDao.UpdateBusinessInfoB(business);
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, model.userId);
@@ -782,7 +782,7 @@ namespace Ets.Service.Provider.Business
             try
             {
                 var redis = new ETS.NoSql.RedisCache.RedisCache();
-                redis.Add("CheckCodeFindPwd_" + PhoneNumber, randomCode, DateTime.Now.AddHours(1));
+                redis.Add(RedissCacheKey.CheckCodeFindPwd_B + PhoneNumber, randomCode, DateTime.Now.AddHours(1));
                 // CacheFactory.Instance.AddObject(PhoneNumber, randomCode);
                 // 更新短信通道 
                 Task.Factory.StartNew(() =>
@@ -821,7 +821,7 @@ namespace Ets.Service.Provider.Business
                 else
                 {
                     var redis = new ETS.NoSql.RedisCache.RedisCache();
-                    redis.Add("PostRegisterInfo_B_" + PhoneNumber, randomCode, DateTime.Now.AddHours(1));
+                    redis.Add(RedissCacheKey.PostRegisterInfo_B + PhoneNumber, randomCode, DateTime.Now.AddHours(1));
                     //CacheFactory.Instance.AddObject(PhoneNumber, randomCode);
                     //更新短信通道 
                     Task.Factory.StartNew(() =>
@@ -897,7 +897,7 @@ namespace Ets.Service.Provider.Business
         {
             try
             {
-                var UserInfo = businessDao.GetUserStatus(userid);             
+                var UserInfo = businessDao.GetUserStatus(userid);
                 return UserInfo;
             }
             catch (Exception ex)
@@ -1114,7 +1114,7 @@ namespace Ets.Service.Provider.Business
                 {
                     dealResultInfo.DealMsg = "修改商户信息失败！";
                     return dealResultInfo;
-                }             
+                }
                 tran.Complete();
                 dealResultInfo.DealMsg = "修改商户信息成功！";
                 dealResultInfo.DealFlag = true;
