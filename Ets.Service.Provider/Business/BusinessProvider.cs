@@ -945,7 +945,7 @@ namespace Ets.Service.Provider.Business
                 return SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
             }
             string msg = string.Empty;
-            string key = model.Stype == "0" ? RedissCacheKey.PostRegisterInfo_B : RedissCacheKey.CheckCodeFindPwd_B;
+            string key = model.Stype == "0" ? RedissCacheKey.PostRegisterInfo_B + model.PhoneNumber : RedissCacheKey.CheckCodeFindPwd_B + model.PhoneNumber;
             var redis = new ETS.NoSql.RedisCache.RedisCache();
 
             object obj = redis.Get<object>(key);
