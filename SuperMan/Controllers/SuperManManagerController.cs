@@ -1,10 +1,13 @@
 ﻿using Ets.Model.DataModel.Clienter;
+using Ets.Model.DomainModel.Clienter;
 using Ets.Model.ParameterModel.Business;
 using Ets.Service.IProvider.Business;
 using Ets.Service.IProvider.Common;
+using Ets.Service.IProvider.DeliveryCompany;
 using Ets.Service.Provider.Business;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.Provider.Common;
+using Ets.Service.Provider.DeliveryCompany;
 using Ets.Service.Provider.Distribution;
 using Ets.Service.Provider.Subsidy;
 using Ets.Service.Provider.WtihdrawRecords;
@@ -28,7 +31,7 @@ namespace SuperMan.Controllers
         readonly ClienterProvider cliterProvider = new ClienterProvider();
         readonly IClienterFinanceProvider iClienterFinanceProvider = new ClienterFinanceProvider();
         readonly IAreaProvider iAreaProvider = new AreaProvider();
-
+        readonly IDeliveryCompanyProvider iDeliveryCompanyProvider = new DeliveryCompanyProvider();
         private readonly IBusinessClienterRelationProvider iBusinessClienterRelationProvider =
             new BusinessClienterRelationProvider();
         // GET: BusinessManager
@@ -364,6 +367,32 @@ namespace SuperMan.Controllers
         public ActionResult PostGetRelationByClienterId(BCRelationGetByClienterIdPM model)
         {
             return View(iBusinessClienterRelationProvider.GetByClienterId(model));
+        }
+        /// <summary>
+        /// 查询骑士综合信息
+        /// danny-20150707
+        /// </summary>
+        /// <param name="clienterId"></param>
+        /// <returns></returns>
+        public ActionResult QueryClienterDetail(string clienterId)
+        {
+            var clienterDetailModel = cliterProvider.GetClienterDetailById(clienterId);
+            ViewBag.deliveryCompanyList = iDeliveryCompanyProvider.GetDeliveryCompanyList();
+            return View("ClienterModify", clienterDetailModel);
+        }
+        /// <summary>
+        /// 修改骑士综合信息
+        /// danny-20150707
+        /// </summary>
+        /// <param name="clienterDetailModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult ModifyClienterDetail(ClienterDetailModel clienterDetailModel)
+        {
+            clienterDetailModel.OptUserId = UserContext.Current.Id;
+            clienterDetailModel.OptUserName = UserContext.Current.Name;
+            var reg = cliterProvider.ModifyClienterDetail(clienterDetailModel);
+            return Json(new Ets.Model.Common.ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
         }
     }
 }

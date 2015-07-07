@@ -114,9 +114,8 @@ namespace Ets.Model.DataModel.Clienter
         /// 累计提现金额
         /// </summary>
         public decimal HasWithdrawPrice { get; set; }
-
-        /// <summary>
-        /// 所属物流公司ID
+         /// <summary>
+        /// 配送公司Id
         /// </summary>
         public int DeliveryCompanyId { get; set; }
 

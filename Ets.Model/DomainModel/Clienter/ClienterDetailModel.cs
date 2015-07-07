@@ -29,5 +29,14 @@ namespace Ets.Model.DomainModel.Clienter
         /// 开户支行
         /// </summary>
         public string OpenSubBank { get; set; }
+        /// <summary>
+        /// 操作人id
+        /// </summary>
+        public int OptUserId { get; set; }
+
+        /// <summary>
+        /// 操作人名称
+        /// </summary>
+        public string OptUserName { get; set; }
     }
 }
