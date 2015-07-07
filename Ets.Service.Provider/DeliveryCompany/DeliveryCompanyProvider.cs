@@ -13,6 +13,7 @@ using Ets.Model.DataModel.DeliveryCompany;
 using Ets.Model.DomainModel.Area;
 using Ets.Model.DomainModel.Clienter;
 using Ets.Model.DomainModel.DeliveryCompany;
+using Ets.Model.ParameterModel.DeliveryCompany;
 using Ets.Service.IProvider.Common;
 using Ets.Service.IProvider.DeliveryCompany;
 using Ets.Service.Provider.Common;
@@ -39,16 +40,15 @@ namespace Ets.Service.Provider.DeliveryCompany
         /// <summary>
         /// 物流公司批量导入骑士  add by caoheyang 20150707
         /// </summary>
-        /// <param name="companyId">公司id</param>
-        /// <param name="models">骑士集合</param>
+        /// <param name="model">参数实体</param>
         /// <returns></returns>
-        public ResultModel<string> DoBatchImportClienter(int companyId, List<BatchImportClienterExcelDM> models)
+        public ResultModel<string> DoBatchImportClienter(DoBatchImportClienterPM model)
         {
             int insertCount = 0; //成功数量
             int updateCount = 0; //更新数量
             int errorCount = 0; //失败数量
              List<string> errorPhones = new List<string>(); //失败数量
-            foreach (BatchImportClienterExcelDM temp in models)
+             foreach (BatchImportClienterExcelDM temp in model.Datas)
             {
                 ClienterModel clienterInfo= clienterDao.GetUserInfoByUserPhoneNo(temp.Phone);
                 if (clienterInfo == null) //骑士尚未存在，做insert操作。
@@ -64,15 +64,15 @@ namespace Ets.Service.Provider.DeliveryCompany
                         City = temp.City, //城市
                         CityId = temp.CityCode,
                         CityCode = temp.CityCode, //城市编码
-                        DeliveryCompanyId = companyId //物流公司id
-                    });
+                        DeliveryCompanyId = model.CompanyId //物流公司id
+                    },model.OptId,model.OptName);
                    insertCount = id > 0 ? (insertCount + 1) : insertCount; //新增数量+1
                 }
                 else
                 {
                     if (clienterInfo.TrueName == temp.Name && clienterInfo.IDCard == temp.IdCard) //做更新操作
                     {
-                       updateCount = updateCount + clienterDao.BindDeliveryCompany(clienterInfo.Id, companyId); // 成功  更新数量+1
+                        updateCount = updateCount + clienterDao.BindDeliveryCompany(clienterInfo.Id, model.CompanyId, model.OptId, model.OptName); // 成功  更新数量+1
                     }
                     else
                     {
