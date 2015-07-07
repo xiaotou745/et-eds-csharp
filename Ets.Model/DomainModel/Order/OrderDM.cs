@@ -182,7 +182,7 @@ namespace Ets.Model.DomainModel.Order
         /// <summary>
         /// 抢单时间
         /// </summary>
-        public DateTime GrabTime { get; set; }
+        public string GrabTime { get; set; }
        
         /// <summary>
         /// 子订单集合

@@ -357,7 +357,7 @@ namespace Ets.Service.Provider.OpenApi
             model.settlemoney = commissonPro.GetSettleMoney(orderComm);//订单结算金额
             model.adjustment = commissonPro.GetAdjustment(orderComm);//订单额外补贴金额
             #endregion
-            if (!(bool)model.is_pay && model.MealsSettleMode == MealsSettleMode.Status1.GetHashCode())//未付款且线上支付
+            if (!(bool)model.is_pay && model.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())//未付款且线上支付
             {
                 //paramodel.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(paramodel.total_price) +
                 //               ParseHelper.ToDecimal(paramodel.store_info.delivery_fee) * ParseHelper.ToInt(paramodel.package_count), 2);

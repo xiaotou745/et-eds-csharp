@@ -24,6 +24,10 @@ namespace Ets.Model.DomainModel.DeliveryCompany
         /// </summary>
         public string City { get; set; }
         /// <summary>
+        /// 城市编码
+        /// </summary>
+        public string CityCode { get; set; }
+        /// <summary>
         /// 身份证号
         /// </summary>
         public string IdCard { get; set; }

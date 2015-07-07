@@ -46,29 +46,7 @@ namespace Ets.Service.Provider.Order
 {
     public class OrderOtherProvider : IOrderOtherProvider
     {
-        readonly OrderOtherDao orderOtherDao = new OrderOtherDao(); 
-
-        ///// <summary>
-        ///// 更新一条记录
-        ///// </summary>
-        ///// <param name="orderNo"></param>
-        ///// <param name="grabLongitude"></param>
-        ///// <param name="grabLatitude"></param>
-        //public void Update(string orderNo, float grabLongitude, float grabLatitude)
-        //{
-        //     orderOtherDao.UpdateGrab(orderNo, grabLongitude, grabLatitude);
-        //}
-
-        ///// <summary>
-        ///// 更新一条记录
-        ///// </summary>
-        ///// <param name="orderNo"></param>
-        ///// <param name="completeLongitude"></param>
-        ///// <param name="completeLatitude"></param>
-        //public void UpdateComplete(OrderCompleteModel parModel)
-        //{
-        //    orderOtherDao.UpdateComplete(parModel);
-        //}
+        readonly OrderOtherDao orderOtherDao = new OrderOtherDao();    
 
         /// <summary>
         /// 更新已提现
@@ -76,11 +54,6 @@ namespace Ets.Service.Provider.Order
         public void UpdateIsJoinWithdraw(int orderId)
         {
              orderOtherDao.UpdateIsJoinWithdraw(orderId);
-        }
-
-        public int GetIsNotRealOrder(int orderId)
-        {
-            return orderOtherDao.GetIsNotRealOrder(orderId);
         }
     }
 }

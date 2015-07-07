@@ -27,9 +27,9 @@ namespace SuperManWebApi.Controllers
     [ExecuteTimeLog]
     public class ClienterController : ApiController
     {
-        private readonly IClienterFinanceProvider clienterFinanceProvider = new ClienterFinanceProvider();
-        private readonly IClienterProvider clienterProvider = new ClienterProvider();
-        private readonly IClienterLocationProvider clienterLocationProvider = new ClienterLocationProvider();
+        readonly IClienterFinanceProvider clienterFinanceProvider = new ClienterFinanceProvider();
+        readonly IClienterProvider clienterProvider = new ClienterProvider();
+        readonly IClienterLocationProvider clienterLocationProvider = new ClienterLocationProvider();
 
         /// <summary>
         /// 骑士交易流水API caoheyang 20150512
