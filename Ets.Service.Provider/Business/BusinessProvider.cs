@@ -234,7 +234,7 @@ namespace Ets.Service.Provider.Business
         public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(RegisterInfoPM model)
         {
             var redis = new ETS.NoSql.RedisCache.RedisCache();
-            var code = redis.Get<string>("PostRegisterInfo_B_" + model.phoneNo);
+            var code = redis.Get<string>(RedissCacheKey.PostRegisterInfo_B + model.phoneNo);
             Enum returnEnum = null;
             if (string.IsNullOrEmpty(model.phoneNo))
             {
@@ -257,11 +257,11 @@ namespace Ets.Service.Provider.Business
             {
                 returnEnum = BusinessRegisterStatus.RecommendPhoneError;//填入的推荐人手机号有误
             }
-            else if (!string.IsNullOrWhiteSpace(model.RecommendPhone) &&
-                     !businessDao.CheckRecommendPhone(model.RecommendPhone))
-            {
-                returnEnum = BusinessRegisterStatus.RecommendPhoneNoExist; //推荐人手机号不存在
-            }
+            //else if (!string.IsNullOrWhiteSpace(model.RecommendPhone) &&
+            //         !businessDao.CheckRecommendPhone(model.RecommendPhone))
+            //{
+            //    returnEnum = BusinessRegisterStatus.RecommendPhoneNoExist; //推荐人手机号不存在
+            //}
             if (returnEnum != null)
             {
                 return ResultModel<BusiRegisterResultModel>.Conclude(returnEnum);
@@ -945,7 +945,7 @@ namespace Ets.Service.Provider.Business
                 return SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
             }
             string msg = string.Empty;
-            string key = model.Stype == "0" ? RedissCacheKey.PostRegisterInfo_B : RedissCacheKey.CheckCodeFindPwd_B;
+            string key = model.Stype == "0" ? RedissCacheKey.PostRegisterInfo_B + model.PhoneNumber : RedissCacheKey.CheckCodeFindPwd_B + model.PhoneNumber;
             var redis = new ETS.NoSql.RedisCache.RedisCache();
 
             object obj = redis.Get<object>(key);

@@ -45,6 +45,8 @@ namespace Ets.Model.ParameterModel.Clienter
         /// </summary>
         public int GroupId { get; set; }
 
+        public int DeliveryCompanyId { get; set; }
+
     }
     public class ClientRegisterResultModel
     {
@@ -81,6 +83,7 @@ namespace Ets.Model.ParameterModel.Clienter
             to.City = from.City;
             to.CityId = from.CityId;
             to.recommendPhone = from.recommendPhone;
+            to.DeliveryCompanyId = from.DeliveryCompanyId;
             if (from.GroupId != 0)
             {
                 to.GroupId = from.GroupId;

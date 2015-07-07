@@ -282,30 +282,27 @@ namespace Ets.Service.Provider.Clienter
 
         /// <summary>
         /// 骑士注册 平扬 2015.3.30
+        /// 
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         public ResultModel<ClientRegisterResultModel> PostRegisterInfo_C(ClientRegisterInfoModel model)
         {
             var redis = new ETS.NoSql.RedisCache.RedisCache();
+
             var code = redis.Get<string>(RedissCacheKey.PostRegisterInfo_C + model.phoneNo);
             if (string.IsNullOrEmpty(model.phoneNo))  //手机号非空验证
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberEmpty);
-            else if (clienterDao.CheckClienterExistPhone(model.phoneNo))  //判断该手机号是否已经注册过
+            if (clienterDao.CheckClienterExistPhone(model.phoneNo))  //判断该手机号是否已经注册过
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberRegistered);
-            else if (string.IsNullOrEmpty(model.passWord)) //密码非空验证
+            if (string.IsNullOrEmpty(model.passWord)) //密码非空验证
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PasswordEmpty);
-            //else if (string.IsNullOrEmpty(model.City) || string.IsNullOrEmpty(model.CityId)) //城市以及城市编码非空验证
-            //    return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.cityIdEmpty);
-
-            else if (string.IsNullOrEmpty(code) || model.verifyCode != code) //判断验码法录入是否正确
+            if (string.IsNullOrEmpty(code) || model.verifyCode != code) //判断验码法录入是否正确
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode);
-            else if (!string.IsNullOrEmpty(model.recommendPhone) && (!clienterDao.CheckClienterExistPhone(model.recommendPhone))
-                && (!new BusinessDao().CheckExistPhone(model.recommendPhone))) //如果推荐人手机号在B端C端都不存在提示信息
+            var wuliuCode =string.IsNullOrWhiteSpace(model.recommendPhone)?0:clienterDao.CheckRecommendPhone(model.recommendPhone);//获取物流公司编码
+                model.DeliveryCompanyId = wuliuCode;
+            if (!string.IsNullOrEmpty(model.recommendPhone) && (wuliuCode==-1))//如果推荐人手机号在B端C端都不存在提示信息 
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberNotExist);
-
-
-
             var clienter = ClientRegisterInfoModelTranslator.Instance.Translate(model);
             //根据用户传递的  名称，取得 国标编码 wc,这里的 city 是二级 ，已和康珍 确认过
             //新版的 骑士 注册， 城市 非 必填
@@ -1420,6 +1417,28 @@ namespace Ets.Service.Provider.Clienter
                 Remark = "无效订单"
             };
             clienterBalanceRecordDao.Insert(cbrm);
+        }
+        /// <summary>
+        /// 修改骑士详细信息
+        /// danny-20150707
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public DealResultInfo ModifyClienterDetail(ClienterDetailModel model)
+        {
+            var dealResultInfo = new DealResultInfo
+            {
+                DealFlag = false
+            };
+            if (!clienterDao.ModifyClienterDetail(model))
+            {
+                dealResultInfo.DealMsg = "修改骑士信息失败！";
+                return dealResultInfo;
+            }
+            dealResultInfo.DealMsg = "修改骑士信息成功！";
+            dealResultInfo.DealFlag = true;
+            return dealResultInfo;
+            
         }
     }
 

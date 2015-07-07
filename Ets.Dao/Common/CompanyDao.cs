@@ -25,7 +25,7 @@ namespace Ets.Dao.Common
                     FROM DeliveryCompany (NOLOCK)
                     WHERE IsEnable=1";
             DataSet ds = DbHelper.ExecuteDataset(SuperMan_Read, sql);
-            IList<CompanyModel> list = null;
+            IList<CompanyModel> list = new List<CompanyModel>();
             if (!ds.HasData())
             {
                 list=MapRows<CompanyModel>(DataTableHelper.GetTable(ds));
