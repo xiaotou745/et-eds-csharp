@@ -34,6 +34,7 @@ using Quartz.Impl.Matchers;
 using Quartz.Simpl;
 using Quartz.Spi;
 using Quartz.Util;
+using ETS.Util;
 
 namespace Quartz.Impl
 {
@@ -1099,7 +1100,6 @@ Please add configuration to your application config file to correctly initialize
         {
 
             Log.Error("GetSchedulerstars");
-
             if (cfg == null)
             {
                 Initialize();
@@ -1120,7 +1120,6 @@ Please add configuration to your application config file to correctly initialize
                     return sched;
                 }
             }
-
             sched = Instantiate();
 
             return sched;
