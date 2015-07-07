@@ -279,5 +279,9 @@ namespace Ets.Model.DataModel.Order
         /// 任务接单时间
         /// </summary>
         public DateTime? GrabTime { get; set; }
+        /// <summary>
+        /// 最终给骑士的佣金
+        /// </summary>
+        public decimal RealOrderCommission { get; set; }
     }
 }
