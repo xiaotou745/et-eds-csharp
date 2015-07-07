@@ -32,7 +32,7 @@ using Ets.Model.ParameterModel.Order;
 namespace SuperManWebApi.Controllers
 {
     public class ClienterAPIController : ApiController
-    {  
+    {
         readonly IClienterProvider iClienterProvider = new ClienterProvider();
         readonly IAreaProvider iAreaProvider = new AreaProvider();
         readonly IOrderProvider iOrderProvider = new OrderProvider();
@@ -88,10 +88,10 @@ namespace SuperManWebApi.Controllers
 
             ImageHelper ih = new ImageHelper();
             //手持照片
-            ImgInfo handImg = ih.UploadImg(fileHand, ParseHelper.ToInt(strUserId,0));
+            ImgInfo handImg = ih.UploadImg(fileHand, ParseHelper.ToInt(strUserId, 0));
             //身份证照片
-            ImgInfo sfhImg = ih.UploadImg(file, ParseHelper.ToInt(strUserId,0));
-  
+            ImgInfo sfhImg = ih.UploadImg(file, ParseHelper.ToInt(strUserId, 0));
+
             var upResult = iClienterProvider.UpdateClientPicInfo(new ClienterModel { Id = int.Parse(strUserId), PicUrl = sfhImg.PicUrl, PicWithHandUrl = handImg.PicUrl, TrueName = trueName, IDCard = strIdCard });
             if (!upResult)
             {
@@ -124,7 +124,7 @@ namespace SuperManWebApi.Controllers
             };
             IList<ClientOrderResultModel> lists = new ClienterProvider().GetMyOrders(criteria);
             if (model.status != null && model.status != 1)
-            {            
+            {
                 lists = lists.OrderBy(i => i.distance_OrderBy).ToList();
             }
             return ResultModel<ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, lists.ToArray());
@@ -155,7 +155,7 @@ namespace SuperManWebApi.Controllers
                 city = string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
                 cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim()
             };
- 
+
             var pagedList = new OrderProvider().GetOrders(criteria);
             pagedList = pagedList.OrderBy(i => i.distance_OrderBy).ToList();
             return ResultModel<ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, pagedList.ToArray());
@@ -182,11 +182,11 @@ namespace SuperManWebApi.Controllers
                 PagingRequest = new PagingResult(pIndex, pSize),
                 city = model.city,
                 cityId = model.cityId
-            };          
+            };
 
             var pagedList = new OrderProvider().GetOrdersNoLoginLatest(criteria);
             pagedList = pagedList.OrderBy(i => i.distance_OrderBy).ToList();
-     
+
             return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, pagedList.ToArray());
         }
 
@@ -230,7 +230,7 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong);
             }
             //end
-          
+
             var clienter = iClienterProvider.GetUserInfoByUserPhoneNo(model.phoneNo);
             if (clienter == null)
             {
@@ -240,7 +240,7 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.PwdIsSave);
             }
-         
+
             bool b = iClienterProvider.UpdateClienterPwdByUserId(clienter.Id, model.password);
             if (b)
             {
@@ -263,9 +263,9 @@ namespace SuperManWebApi.Controllers
         [ExecuteTimeLog]
         [HttpGet]
         public ResultModel<RushOrderResultModel> RushOrder_C(int userId, string orderNo)
-        {         
+        {
             return new ClienterProvider().RushOrder_C(userId, orderNo);
-        }    
+        }
 
         /// <summary>
         /// 获取我的余额
@@ -377,26 +377,34 @@ namespace SuperManWebApi.Controllers
             {
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.InvlidPhoneNumber);
             }
-            var randomCode = new Random().Next(100000).ToString("D6");
+            var redis = new RedisCache();
             string msg = string.Empty;
-            string key = "";
-            string tempcode = randomCode.Aggregate("", (current, c) => current + (c.ToString() + ','));
+            string key = model.Stype == "0" ? RedissCacheKey.PostRegisterInfo_C + model.PhoneNumber : RedissCacheKey.PostForgetPwd_C + model.PhoneNumber;
+
+
+            object obj = redis.Get<object>(key);
+            if (obj == null)
+            {
+                return SimpleResultModel.Conclude(SendCheckCodeStatus.CodeNotExists);
+            }
+            string tempcode = obj.ToString().Aggregate("", (current, c) => current + (c.ToString() + ','));
+
+            bool userStatus = iClienterProvider.CheckClienterExistPhone(model.PhoneNumber);
+
             if (model.Stype == "0")//注册
             {
-                if (iClienterProvider.CheckClienterExistPhone(model.PhoneNumber))  //判断该手机号是否已经注册过
+                if (userStatus)  //判断该手机号是否已经注册过
                     return SimpleResultModel.Conclude(SendCheckCodeStatus.AlreadyExists);
-                key = RedissCacheKey.PostRegisterInfoSoundCode_C + model.PhoneNumber;
                 msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCodeVoice, tempcode, SystemConst.MessageClinenter);
             }
             else //修改密码
             {
-                key = RedissCacheKey.PostForgetPwdSoundCode_C + model.PhoneNumber;
+                if (!userStatus)
+                    return SimpleResultModel.Conclude(SendCheckCodeStatus.NotExists);
                 msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCodeFindPwdVoice, tempcode, SystemConst.MessageClinenter);
             }
             try
             {
-                var redis = new RedisCache();
-                redis.Add(key, randomCode, DateTime.Now.AddHours(1));
 
                 // 更新短信通道 
                 Task.Factory.StartNew(() =>
@@ -471,7 +479,7 @@ namespace SuperManWebApi.Controllers
                 UserStatus.Error,
                 null
                 );
-        }   
+        }
 
         /// <summary>
         /// 获取订单详细
