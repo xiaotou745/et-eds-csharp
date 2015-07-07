@@ -1421,6 +1421,28 @@ namespace Ets.Service.Provider.Clienter
             };
             clienterBalanceRecordDao.Insert(cbrm);
         }
+        /// <summary>
+        /// 修改骑士详细信息
+        /// danny-20150707
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public DealResultInfo ModifyClienterDetail(ClienterDetailModel model)
+        {
+            var dealResultInfo = new DealResultInfo
+            {
+                DealFlag = false
+            };
+            if (!clienterDao.ModifyClienterDetail(model))
+            {
+                dealResultInfo.DealMsg = "修改骑士信息失败！";
+                return dealResultInfo;
+            }
+            dealResultInfo.DealMsg = "修改骑士信息成功！";
+            dealResultInfo.DealFlag = true;
+            return dealResultInfo;
+            
+        }
     }
 
 }

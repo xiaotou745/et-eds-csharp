@@ -1,0 +1,133 @@
+﻿@model Ets.Model.DomainModel.Clienter.ClienterDetailModel
+@{
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+    var puth = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.RelativePath;
+    var PicHost = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PicHost;
+}
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+<div style="width:702px;height:auto;border: 1px #dcdcdc solid">
+
+    <h2 class="crumbs">
+        您所在位置：骑士 > 骑士管理 > 修改骑士信息
+    </h2>
+
+    <div id="left" style="float: left;width:700px;height: auto;border-right: 1px #dcdcdc solid;margin-top: -10px; ">
+        <div style="float: left;width:350px;height: 200px;  border-bottom:solid 0px #dcdcdc;padding-left:10px;">
+            <div class="control-group" style="margin-top: 15px">
+                <label style="margin-left: 29px">手 机 号：</label>
+                <label>@Model.PhoneNo</label>
+                <input name="hidId" id="hidId" type="hidden" value="@Model.Id">
+            </div>
+            <div class="control-group" style="margin-top: 15px">
+                <label style="margin-left: 29px">推 荐 人：</label>
+                <label>@(string.IsNullOrEmpty(Model.recommendPhone) ? "-----------" : Model.recommendPhone)</label>
+            </div>
+            <div class="control-group" style="margin-top: 15px">
+                <label style="margin-left: 44px">姓  名：</label>
+                <input name="trueName" id="trueName" type="text" value="@Model.TrueName">
+            </div>
+            <div class="control-group" style="margin-top: 15px">
+                <label style="margin-left: 29px">身 份 证：</label>
+                <input name="idCard" id="idCard" type="text" value="@Model.IDCard">
+            </div>
+            <div class="control-group" style="margin-top: 15px">
+                <label>所属物流公司：</label>
+                @Html.DropDownList("deliveryCompany", new SelectList(ViewBag.deliveryCompanyList, "Id", "DeliveryCompanyName", Model.DeliveryCompanyId), "-请选择-", new { style = "width:167px" })
+            </div>
+        </div>
+        @{
+            var originSize = "_0_0";
+            var bigFileName = "/nopic.jpg";
+            var checkPicUrl = "/nopic.jpg";
+            if (!string.IsNullOrWhiteSpace(Model.PicWithHandUrl))
+            {
+                var fileLastDot = Model.PicWithHandUrl.LastIndexOf('.');
+                var fileHandHouZhui = Model.PicWithHandUrl.Substring(fileLastDot, Model.PicWithHandUrl.Length - fileLastDot);
+                bigFileName = Model.PicWithHandUrl.Substring(0, fileLastDot) + originSize + fileHandHouZhui;
+                checkPicUrl = Model.PicWithHandUrl;
+            }
+
+        }
+        <div id="BusiImage" style="float: left;width: 250px;margin-left: 20px">
+            <div style="width: 200px;height:200px">
+                <img id="showBusiImage" src="@PicHost@puth@checkPicUrl" width="200px" height="200px" />
+            </div>
+            店主手持身份证照片<a id="showBigBusiImage" href="@PicHost@puth@bigFileName" target="_blank" style="margin-left: 15px">查看大图</a>
+        </div>
+        <div style="clear: both"></div>
+        <div class="SearchMd" style="float: left;width:700px;border-top:solid 1px #dcdcdc;padding-left:10px;margin-top: 15px">
+            <div style="margin-left: 100px;float: left"><input type="button" value="保存" class="searchBtn" id="btnModifyCommit" /></div>
+            <div style="margin-left: 180px;float: left"><input type="button" value="返回" class="searchBtn" id="btnReturn" /></div>
+            <br />
+        </div>
+
+    </div>
+    @*<div id="right" style="float: left;width: 250px;height: auto;">
+        
+    </div>*@
+    <div style="clear: both"></div>
+</div>
+<script type="text/javascript">
+    var adminjs = new adminglass();
+    //实例化后台类
+    $(document).ready(function () {
+        
+        var businessId = $('#busiId').val();
+    });
+
+    //返回
+    $("#btnReturn").click(function () {
+        window.location.href = "/SuperManManager/SuperManManager";
+    });
+    //保存
+    $("#btnModifyCommit").click(function () {
+        var id = $('#hidId').val();
+        var trueName = $('#trueName').val();
+        var idCard = $('#idCard').val();
+        var deliveryCompany = $('#deliveryCompany').val();
+        if (trueName.trim().length == 0) {
+            alert("请输入骑士名称！");
+            return;
+        }
+        if (idCard.trim().length == 0) {
+            alert("请输入骑士身份证号！");
+            return;
+        }
+        var reg = /^(\d{15}$|^\d{18}$|^\d{17}(\d|X|x))$/;
+        if (!reg.test(idCard)) {
+            alert("请输入正确的身份证号!");
+            return;
+        }
+        alert(deliveryCompany);
+        //if (deliveryCompany == "") {
+        //    alert("请选择配送公司！");
+        //    return;
+        //}
+        var paramaters = {
+            "Id": id, "TrueName": trueName, "IDcard": idCard, "DeliveryCompanyId": deliveryCompany
+        };
+        var url = "/SuperManManager/ModifyClienterDetail";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert(result.Message);
+                    //window.location.href = "/BusinessManager/BusinessManager";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+
+    });
+    //关闭弹层
+    $('.J_closebox').click(function () {
+        adminjs.closewinbox('.add-openbox');
+        return false;
+    });
+</script>

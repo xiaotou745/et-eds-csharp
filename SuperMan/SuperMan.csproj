@@ -668,6 +668,7 @@
     <Content Include="Views\MessageManager\Detail.cshtml" />
     <Content Include="Views\DeliveryCompany\BatchImportClienter.cshtml" />
     <Content Include="Views\DeliveryCompany\BatchImportClienterExcel.cshtml" />
+    <Content Include="Views\SuperManManager\ClienterModify.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

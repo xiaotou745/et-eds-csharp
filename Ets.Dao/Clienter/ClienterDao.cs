@@ -1508,5 +1508,45 @@ where  cityid in(" + pushCity + ")";
             object obj = DbHelper.ExecuteScalar(SuperMan_Read, querysql, dbParameters);
             return ParseHelper.ToLong(obj) > 0;
         }
+        /// <summary>
+        /// 修改商户详细信息
+        /// danny-20150602
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ModifyClienterDetail(ClienterDetailModel model)
+        {
+
+            string remark = model.OptUserName + "通过后台管理系统修改骑士信息";
+            string sql = @"UPDATE clienter 
+                            SET IDCard=@IDCard,
+                                TrueName=@TrueName,
+                                DeliveryCompanyId=@DeliveryCompanyId ";
+            sql += @" OUTPUT
+                        Inserted.Id,
+                        @OptId,
+                        @OptName,
+                        GETDATE(),
+                        @Platform,
+                        @Remark
+                    INTO ClienterOptionLog
+                        (ClienterId,
+                        OptId,
+                        OptName,
+                        InsertTime,
+                        Platform,
+                        Remark)
+                        WHERE  Id = @Id;";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@IDCard", model.IDCard);
+            parm.AddWithValue("@TrueName", model.TrueName);
+            parm.AddWithValue("@DeliveryCompanyId", model.DeliveryCompanyId);
+            parm.AddWithValue("@Id", model.Id);
+            parm.AddWithValue("@OptId", model.OptUserId);
+            parm.AddWithValue("@OptName", model.OptUserName);
+            parm.AddWithValue("@Platform", 3);
+            parm.AddWithValue("@Remark", remark);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
     }
 }
