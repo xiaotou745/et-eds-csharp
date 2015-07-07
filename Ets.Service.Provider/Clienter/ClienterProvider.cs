@@ -57,7 +57,7 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         public ChangeWorkStatusEnum ChangeWorkStatus(Ets.Model.ParameterModel.Clienter.ChangeWorkStatusPM paraModel)
         {
-            if (paraModel.WorkStatus == ClienteWorkStatus.Status1.GetHashCode())  //如果要下班，先判断超人是否还有未完成的订单
+            if (paraModel.WorkStatus == ClienteWorkStatus.WorkOff.GetHashCode())  //如果要下班，先判断超人是否还有未完成的订单
             {
                 //查询当前超人有无已接单但是未完成的订单
                 int ordercount = clienterDao.QueryOrderount(new Model.ParameterModel.Clienter.ChangeWorkStatusPM() { Id = paraModel.Id });
@@ -67,7 +67,7 @@ namespace Ets.Service.Provider.Clienter
             int changeResult = clienterDao.ChangeWorkStatusToSql(paraModel);
             if (changeResult <= 0)
             {
-                if (paraModel.WorkStatus == ClienteWorkStatus.Status0.GetHashCode())
+                if (paraModel.WorkStatus == ClienteWorkStatus.WorkOn.GetHashCode())
                 {
                     return ChangeWorkStatusEnum.WorkError; //上班失败
                 }
@@ -78,7 +78,7 @@ namespace Ets.Service.Provider.Clienter
             }
             else
             {
-                if (paraModel.WorkStatus == ClienteWorkStatus.Status0.GetHashCode())
+                if (paraModel.WorkStatus == ClienteWorkStatus.WorkOn.GetHashCode())
                 {
                     return ChangeWorkStatusEnum.WorkSuccess;  //上班成功
                 }
@@ -956,7 +956,7 @@ namespace Ets.Service.Provider.Clienter
                     }
                 }
             }
-            else if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.Status0.GetHashCode())//未付款,骑士代付
+            else if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.LineOff.GetHashCode())//未付款,骑士代付
             {
                 //上传完小票
                 //(1)更新给骑士余额
@@ -968,7 +968,7 @@ namespace Ets.Service.Provider.Clienter
                     }
                 }
             }
-            else if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.Status1.GetHashCode())//未付款,线上结算
+            else if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())//未付款,线上结算
             {
                 //上传完小票
                 //(1)更新给骑士余额、可提现余额
@@ -1014,7 +1014,7 @@ namespace Ets.Service.Provider.Clienter
                 }
                 return true;
             }
-            else if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.Status0.GetHashCode())//未付款,骑士代付
+            else if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.LineOff.GetHashCode())//未付款,骑士代付
             {
                 //上传完小票
                 //(1)更新给骑士余额
@@ -1027,7 +1027,7 @@ namespace Ets.Service.Provider.Clienter
                 }
                 return true;
             }
-            else if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.Status1.GetHashCode())//未付款,线上结算
+            else if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())//未付款,线上结算
             {
                 //返还商户金额
                 businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()

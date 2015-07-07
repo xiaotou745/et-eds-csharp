@@ -12,6 +12,7 @@ using ETS.Sms;
 using Ets.Service.Provider.MyPush;
 using Ets.Model.Common;
 using Letao.Util;
+using ETS.Const;
 namespace Ets.SendMessage
 {
     public class MessageBLL : Quartz.IJob
@@ -130,7 +131,7 @@ namespace Ets.SendMessage
                     //string phoneNo = "13520860798"; 
                     Task.Factory.StartNew(() =>
                     {
-                        SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
+                        SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, SystemConst.SMSSOURCE);
                         //写日志
                         LogHelper.LogTraceWriterPhone(model.Id + "  商家:" + phoneNo);
                     });
@@ -158,7 +159,7 @@ namespace Ets.SendMessage
                         phoneNo = dt.Rows[i]["PhoneNo"].ToString();
                     Task.Factory.StartNew(() =>
                     {
-                        SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
+                        SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content,SystemConst.SMSSOURCE);
                         //写日志                    
                         LogHelper.LogTraceWriterPhone(model.Id + "  骑士:" + phoneNo);
 
@@ -188,7 +189,7 @@ namespace Ets.SendMessage
                         
                         Task.Factory.StartNew(() =>
                         {
-                            SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, Ets.Model.Common.ConstValues.SMSSOURCE);
+                            SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, SystemConst.SMSSOURCE);
                             //写日志
                             LogHelper.LogTraceWriterPhone(model.Id+"  指定对象:"+phoneNo);
                         });

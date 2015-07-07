@@ -21,8 +21,8 @@ namespace SuperManWebApi.Controllers
     [ExecuteTimeLog]
     public class BusinessController : ApiController
     {
-        private readonly IBusinessBalanceRecordProvider _iBusinessBalanceRecordProvider = new BusinessBalanceRecordProvider();
-        private readonly IBusinessProvider _iBusinessProvider = new BusinessProvider();
+        readonly IBusinessBalanceRecordProvider iBusinessBalanceRecordProvider = new BusinessBalanceRecordProvider();
+        readonly IBusinessProvider iBusinessProvider = new BusinessProvider();
 
         /// <summary>
         /// 商户交易流水API caoheyang 20150512
@@ -34,7 +34,7 @@ namespace SuperManWebApi.Controllers
         [ApiVersion]
         public ResultModel<object> Records(BussinessRecordsPM model)
         {
-            return _iBusinessBalanceRecordProvider.GetRecords(model.BusinessId);
+            return iBusinessBalanceRecordProvider.GetRecords(model.BusinessId);
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<BusinessDM>.Conclude(GetBussinessStatus.ErrNo);
             }
-            if (!_iBusinessProvider.IsExist(model.BussinessId)) //商户不存在
+            if (!iBusinessProvider.IsExist(model.BussinessId)) //商户不存在
             {
                 return ResultModel<BusinessDM>.Conclude(GetBussinessStatus.FailedGet);
             }
@@ -66,7 +66,7 @@ namespace SuperManWebApi.Controllers
 
             try
             {
-                BusinessDM businessDM = _iBusinessProvider.GetDetails(model.BussinessId);               
+                BusinessDM businessDM = iBusinessProvider.GetDetails(model.BussinessId);               
                 return Ets.Model.Common.ResultModel<BusinessDM>.Conclude(GetBussinessStatus.Success, businessDM);
             }
             catch (Exception ex)
@@ -96,7 +96,7 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<BusinessInfo>.Conclude(GetBussinessStatus.ErrNo);
             }
-            if (!_iBusinessProvider.IsExist(model.BussinessId)) //商户不存在
+            if (!iBusinessProvider.IsExist(model.BussinessId)) //商户不存在
             {
                 return ResultModel<BusinessInfo>.Conclude(GetBussinessStatus.FailedGet);
             }
@@ -105,7 +105,7 @@ namespace SuperManWebApi.Controllers
 
             try
             {
-                BusinessInfo busInfo = _iBusinessProvider.GetDistribSubsidy(model.BussinessId);
+                BusinessInfo busInfo = iBusinessProvider.GetDistribSubsidy(model.BussinessId);
                 return Ets.Model.Common.ResultModel<BusinessInfo>.Conclude(GetBussinessStatus.Success, busInfo);
             }
             catch (Exception ex)
@@ -177,7 +177,7 @@ namespace SuperManWebApi.Controllers
             #endregion
            
             //修改商户地址信息，返回当前商户的状态
-            return _iBusinessProvider.UpdateBusinessInfoB(model);
+            return iBusinessProvider.UpdateBusinessInfoB(model);
         }
     }
 }

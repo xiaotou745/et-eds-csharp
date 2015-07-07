@@ -21,7 +21,7 @@ namespace SuperManWebApi.Controllers
     [ApiVersion]
     public class MessageController : ApiController
     {
-        private readonly IMessageProvider messageProvider = new MessageProvider();
+        readonly IMessageProvider messageProvider = new MessageProvider();
         /// <summary>
         /// 商户阅读接口更新消息状态接口 add by caoheyang 20150615
         /// </summary>

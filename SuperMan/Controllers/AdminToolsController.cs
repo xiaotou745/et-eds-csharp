@@ -96,7 +96,7 @@ namespace SuperMan.Controllers
         [HttpGet]
         public ActionResult GlobalConfigManager()
         {
-            ViewBag.GloglConfig = new GlobalConfigProvider().GlobalConfigMethod(0);
+            ViewBag.GloglConfig = new Ets.Service.Provider.GlobalConfig.GlobalConfigProvider().GetGlobalConfig(0);
             return View();
         }
         /// <summary>

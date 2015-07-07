@@ -58,11 +58,11 @@ namespace ETS.Enums
         /// <summary>
         /// 上班
         /// </summary>
-        Status0 = 0,
+        WorkOn = 0,
         /// <summary>
         /// 下班
         /// </summary>
-        Status1 = 1
+        WorkOff = 1
     }
 
     /// <summary>

@@ -269,7 +269,7 @@ namespace Ets.Service.Provider.Business
 
             BusiRegisterResultModel resultModel = new BusiRegisterResultModel()
             {
-                userId = businessDao.InsertBusiness(model)
+                userId = businessDao.Insert(model)
             };
             return ResultModel<BusiRegisterResultModel>.Conclude(BusinessRegisterStatus.Success, resultModel);// CustomerRegisterStatusEnum.Success;//默认是成功状态
 

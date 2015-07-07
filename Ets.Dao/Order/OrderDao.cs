@@ -401,7 +401,7 @@ values( @OrderId,  @ChildId,@TotalPrice,@GoodPrice,@DeliveryPrice,@CreateBy,
             dbParameters.AddWithValue("@CreateBy", "第三方对接平台");
             dbParameters.AddWithValue("@UpdateBy", "第三方对接平台");
             if ((bool)paramodel.is_pay ||
-                           (!(bool)paramodel.is_pay && paramodel.MealsSettleMode == MealsSettleMode.Status0.GetHashCode())
+                           (!(bool)paramodel.is_pay && paramodel.MealsSettleMode == MealsSettleMode.LineOff.GetHashCode())
                            )//已付款 未付款线下付款
                 dbParameters.AddWithValue("@PayStatus", "1");
             else
@@ -683,6 +683,7 @@ select @@IDENTITY ";
                                         ,o.[SongCanDate]
                                         ,o.[OrderCount]
                                         ,o.[CommissionRate] 
+                                        ,o.[RealOrderCommission] 
                                         ,b.[City] BusinessCity
                                         ,b.Name BusinessName
                                         ,b.PhoneNo BusinessPhoneNo
@@ -698,6 +699,7 @@ select @@IDENTITY ";
                                         ,oo.NeedUploadCount
                                         ,oo.HadUploadCount
                                         ,oo.ReceiptPic
+                                        ,oo.IsNotRealOrder IsNotRealOrder
                                         ,o.OtherCancelReason
                                         ,o.OriginalOrderNo
                                         ,ISNULL(o.MealsSettleMode,0) MealsSettleMode
@@ -788,14 +790,13 @@ select @@IDENTITY ";
                                         ,c.PhoneNo ClienterPhoneNo
                                         ,c.TrueName ClienterTrueName
                                         ,c.TrueName ClienterName
-                                        ,c.AccountBalance AccountBalance
-                                        ,c.IsNotRealOrder IsNotRealOrder
+                                        ,c.AccountBalance AccountBalance                                      
                                         ,b.GroupId
                                         ,case when o.orderfrom=0 then '客户端' else g.GroupName end GroupName
                                         ,o.OriginalOrderNo
                                         ,oo.NeedUploadCount
                                         ,oo.HadUploadCount
-                                        ,oo.ReceiptPic
+                                        ,oo.ReceiptPic                                        
                                         ,o.OtherCancelReason
                                         ,o.OriginalOrderNo
                                     FROM [order] o WITH ( NOLOCK )
@@ -2158,7 +2159,7 @@ values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder)";
                         dr["GoodPrice"] = order.listOrderChild[i].GoodPrice;
                         dr["DeliveryPrice"] = order.DistribSubsidy;
                         if ((bool)order.IsPay ||
-                            (!(bool)order.IsPay && order.MealsSettleMode == MealsSettleMode.Status0.GetHashCode())
+                            (!(bool)order.IsPay && order.MealsSettleMode == MealsSettleMode.LineOff.GetHashCode())
                             )//已付款 未付款线下付款
                             dr["PayStatus"] = 1;
                         else
@@ -2765,7 +2766,8 @@ INTO ClienterBalanceRecord
 from clienter c
 where c.Id=@ClienterId;");
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@Amount", model.OrderCommission);
+            //parm.AddWithValue("@Amount", model.OrderCommission);
+            parm.AddWithValue("@Amount", model.RealOrderCommission);
             parm.AddWithValue("@Status", ClienterBalanceRecordStatus.Success);
             parm.AddWithValue("@RecordType", ClienterBalanceRecordRecordType.CancelOrder);
             parm.AddWithValue("@Operator", model.OptUserName);

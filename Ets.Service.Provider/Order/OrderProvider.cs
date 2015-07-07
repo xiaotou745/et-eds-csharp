@@ -320,7 +320,7 @@ namespace Ets.Service.Provider.Order
             to.TimeSpan = busiOrderInfoModel.TimeSpan;
             to.listOrderChild = busiOrderInfoModel.listOrderChlid;
 
-            if (!(bool)to.IsPay && to.MealsSettleMode == MealsSettleMode.Status1.GetHashCode())//未付款且线上支付
+            if (!(bool)to.IsPay && to.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())//未付款且线上支付
             {
                 to.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(to.Amount) +
                                ParseHelper.ToDecimal(to.DistribSubsidy) * ParseHelper.ToInt(to.OrderCount), 2);
@@ -654,7 +654,7 @@ namespace Ets.Service.Provider.Order
             paramodel.adjustment = commissonPro.GetAdjustment(orderComm);//订单额外补贴金额
 
             #endregion
-            if (!(bool)paramodel.is_pay && paramodel.MealsSettleMode == MealsSettleMode.Status1.GetHashCode())//未付款且线上支付
+            if (!(bool)paramodel.is_pay && paramodel.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())//未付款且线上支付
             {
                 //paramodel.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(paramodel.total_price) +
                 //               ParseHelper.ToDecimal(paramodel.store_info.delivery_fee) * ParseHelper.ToInt(paramodel.package_count), 2);
@@ -1100,7 +1100,7 @@ namespace Ets.Service.Provider.Order
             to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
             to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
             to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
-            if (!(bool)to.IsPay && to.MealsSettleMode == MealsSettleMode.Status1.GetHashCode())//未付款且线上支付
+            if (!(bool)to.IsPay && to.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())//未付款且线上支付
             {
                 to.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(from.Amount), 2);
             }
@@ -1113,7 +1113,7 @@ namespace Ets.Service.Provider.Order
             //to.TimeSpan = busiOrderInfoModel.TimeSpan;
             to.listOrderChild = from.listOrderChlid;
 
-            if (!(bool)to.IsPay && to.MealsSettleMode == MealsSettleMode.Status1.GetHashCode())//未付款且线上支付
+            if (!(bool)to.IsPay && to.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())//未付款且线上支付
             {
                 to.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(to.Amount) +
                                ParseHelper.ToDecimal(to.DistribSubsidy) * ParseHelper.ToInt(to.OrderCount), 2);
@@ -1461,7 +1461,7 @@ namespace Ets.Service.Provider.Order
 
 
             bool IsExistsUnFinish = true;//默认是存在有未支付订单
-            if (ParseHelper.ToBool(order.IsPay, false) || order.MealsSettleMode == MealsSettleMode.Status0.GetHashCode())  //线下
+            if (ParseHelper.ToBool(order.IsPay, false) || order.MealsSettleMode == MealsSettleMode.LineOff.GetHashCode())  //线下
             {
                 IsExistsUnFinish = false;//如果主任务是顾客已支付，就视认为没有未支付的订单
             }

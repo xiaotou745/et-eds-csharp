@@ -73,7 +73,7 @@ namespace Ets.Service.Provider.Business
 
                 #region 动态时间补贴
 
-                GlobalConfig globalConfig = new GlobalConfig()
+                Ets.Model.Common.GlobalConfig globalConfig = new Ets.Model.Common.GlobalConfig()
                 {
                     KeyName = "IsStarTimeSubsidies",
                     Value = globalConfigModel.IsStarTimeSubsidies,
@@ -164,7 +164,7 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public bool ModifyGlobalConfig(GlobalConfigModel globalConfigModel)
         {
-            var globalConfig = new GlobalConfig()
+            var globalConfig = new Ets.Model.Common.GlobalConfig()
             {
                 OptName = globalConfigModel.OptName,
                 GroupId = 0,
