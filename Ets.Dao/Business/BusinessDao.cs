@@ -438,7 +438,7 @@ and a.PhoneNo=@PhoneNo";
         /// <UpdateTime>20150604</UpdateTime>
         /// <param name="model"></param>
         /// <returns>返回商铺ID</returns>
-        public int InsertBusiness(RegisterInfoPM model)
+        public int Insert(RegisterInfoPM model)
         {
             const string insertSql = @"         
 insert into dbo.business (City,PhoneNo,PhoneNo2,Password,CityId,RecommendPhone)
@@ -496,6 +496,7 @@ order by a.id desc
         /// <summary>
         /// 根据商户id获取商户
         /// </summary>
+        
         /// <param name="busiId"></param>
         /// <returns></returns>
         public BusListResultModel GetBusiness(int busiId)

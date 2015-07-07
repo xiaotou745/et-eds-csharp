@@ -668,7 +668,8 @@
     <Content Include="Views\MessageManager\Detail.cshtml" />
     <Content Include="Views\DeliveryCompany\BatchImportClienter.cshtml" />
     <Content Include="Views\DeliveryCompany\BatchImportClienterExcel.cshtml" />
-    <Content Include="Views\Statistical\RecommendStatistical.cshtml" />
+	<Content Include="Views\SuperManManager\ClienterModify.cshtml" />
+	<Content Include="Views\Statistical\RecommendStatistical.cshtml" />
     <Content Include="Views\Statistical\PostRecommendStatistical.cshtml" />
   </ItemGroup>
   <ItemGroup>

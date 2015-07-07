@@ -1216,6 +1216,7 @@ SELECT   c.[Id],
          c.[Province],
          c.[BussinessID],
          c.[WorkStatus], 
+         c.DeliveryCompanyId,
          cfa.TrueName AccountName,
          cfa.AccountNo,
          cfa.AccountType,
@@ -1528,5 +1529,91 @@ where  cityid in(" + pushCity + ")";
             object obj = DbHelper.ExecuteScalar(SuperMan_Read, querysql, dbParameters);
             return ParseHelper.ToLong(obj) > 0;
         }
+
+        /// <summary>
+        /// 根据骑士id为骑士绑定物流公司  add by caoheyang  20150707
+        /// </summary>
+        /// <param name="clienterId">骑士id</param>
+        /// <param name="deliveryCompanyId">物流公司id</param>
+        /// <returns></returns>
+        public int BindDeliveryCompany(int clienterId, int deliveryCompanyId)
+        {
+            string sql = @"
+                          update dbo.clienter set DeliveryCompanyId=@DeliveryCompanyId where Id=@Id";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("DeliveryCompanyId", DbType.Int32, 4).Value = clienterId;
+            dbParameters.Add("Id", DbType.Int32, 4).Value = clienterId;
+            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters));
+        }
+
+
+        /// <summary>
+        /// 物流公司新增骑士功能  add by caoheyang  20150707
+        /// </summary>
+        public int DeliveryCompanyInsertClienter(clienter model)
+        {
+            const string insertSql = @"
+insert into clienter(PhoneNo,Password,TrueName,IDCard,
+Status,InsertTime,City,CityId,
+CityCode,DeliveryCompanyId)
+values(@PhoneNo,@Password,@TrueName,@IDCard,
+@Status,getdate(),@City,@CityId,
+@CityCode,@DeliveryCompanyId)
+
+select @@IDENTITY";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("PhoneNo", model.PhoneNo);
+            dbParameters.AddWithValue("Password", model.Password);
+            dbParameters.AddWithValue("TrueName", model.TrueName);
+            dbParameters.AddWithValue("IDCard", model.IDCard);
+            dbParameters.AddWithValue("Status", model.Status);
+            dbParameters.AddWithValue("City", model.City);
+            dbParameters.AddWithValue("CityId", model.CityId);
+            dbParameters.AddWithValue("CityCode", model.CityCode);
+            dbParameters.AddWithValue("DeliveryCompanyId", model.DeliveryCompanyId);
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
+        }
+		/// <summary>
+        /// 修改骑士详细信息
+        /// danny-20150707
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ModifyClienterDetail(ClienterDetailModel model)
+        {
+
+            string remark = model.OptUserName + "通过后台管理系统修改骑士信息";
+            string sql = @"UPDATE clienter 
+                            SET IDCard=@IDCard,
+                                TrueName=@TrueName,
+                                DeliveryCompanyId=@DeliveryCompanyId ";
+            sql += @" OUTPUT
+                        Inserted.Id,
+                        @OptId,
+                        @OptName,
+                        GETDATE(),
+                        @Platform,
+                        @Remark
+                    INTO ClienterOptionLog
+                        (ClienterId,
+                        OptId,
+                        OptName,
+                        InsertTime,
+                        Platform,
+                        Remark)
+                        WHERE  Id = @Id;";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@IDCard", model.IDCard);
+            parm.AddWithValue("@TrueName", model.TrueName);
+            parm.AddWithValue("@DeliveryCompanyId", model.DeliveryCompanyId);
+            parm.AddWithValue("@Id", model.Id);
+            parm.AddWithValue("@OptId", model.OptUserId);
+            parm.AddWithValue("@OptName", model.OptUserName);
+            parm.AddWithValue("@Platform", 3);
+            parm.AddWithValue("@Remark", remark);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
+
     }
 }

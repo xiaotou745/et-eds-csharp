@@ -26,11 +26,11 @@ namespace SuperManWebApi.Controllers
     [ExecuteTimeLog]// TODO:每个API的日志、异常之类
     public class OrderController : ApiController
     {
-        IOrderProvider iOrderProvider = new OrderProvider();
-        IBusinessProvider iBusinessProvider = new BusinessProvider();
+        readonly IOrderProvider iOrderProvider = new OrderProvider();
+        readonly IBusinessProvider iBusinessProvider = new BusinessProvider();
         readonly IClienterProvider iClienterProvider = new ClienterProvider();
-        IOrderChildProvider iOrderChildProvider = new OrderChildProvider();
-        private IReceviceAddressProvider receviceAddressProvider = new ReceviceAddressProvider();
+        readonly IOrderChildProvider iOrderChildProvider = new OrderChildProvider();
+        readonly IReceviceAddressProvider receviceAddressProvider = new ReceviceAddressProvider();
         /// <summary>
         /// 商户发布订单   
         /// </summary>

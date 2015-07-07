@@ -61,6 +61,7 @@
     <Compile Include="Finance\IClienterFinanceProvider.cs" />
     <Compile Include="Finance\IClienterWithdrawFormProvider.cs" />
     <Compile Include="Finance\IClienterWithdrawLogProvider.cs" />
+    <Compile Include="GlobalConfig\IGlobalConfigProvider.cs" />
     <Compile Include="Message\IMessageProvider.cs" />
     <Compile Include="OpenApi\IGroupProviderOpenApi.cs" />
     <Compile Include="OpenApi\IPullOrderInfoOpenApi.cs" />

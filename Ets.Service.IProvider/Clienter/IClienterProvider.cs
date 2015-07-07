@@ -259,6 +259,14 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="criteria"></param>
         /// <returns></returns>
         PageInfo<ClienterListModel> GetClienterList(ClienterSearchCriteria criteria);
-    
+
+        /// <summary>
+        /// 修改骑士详细信息
+        /// danny-20150707
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        DealResultInfo ModifyClienterDetail(ClienterDetailModel model);
+
     }
 }
