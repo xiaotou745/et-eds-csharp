@@ -204,14 +204,14 @@ where PhoneNo=@PhoneNo and [Password]=@Password";
         /// 窦海超
         /// 2015年3月20日 16:55:11
         /// </summary>
-        /// <param name="PhoneNo">用户手机号</param>
+        /// <param name="phoneNo">用户手机号</param>
         /// <returns></returns>
-        public ClienterModel GetUserInfoByUserPhoneNo(string PhoneNo)
+        public ClienterModel GetUserInfoByUserPhoneNo(string phoneNo)
         {
-            string sql = "SELECT Id,TrueName,PhoneNo,AccountBalance FROM dbo.clienter(NOLOCK) WHERE PhoneNo=@PhoneNo";
+            string sql = "SELECT Id,TrueName,PhoneNo,AccountBalance,IDCard FROM dbo.clienter(NOLOCK) WHERE PhoneNo=@PhoneNo";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@PhoneNo", SqlDbType.NVarChar);
-            parm.SetValue("@PhoneNo", PhoneNo);
+            parm.SetValue("@PhoneNo", phoneNo);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             IList<ClienterModel> list = MapRows<ClienterModel>(dt);
             if (list == null || list.Count <= 0)
