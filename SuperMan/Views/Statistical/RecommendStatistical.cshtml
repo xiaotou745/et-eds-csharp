@@ -1,0 +1,76 @@
+﻿@using Webdiyer.WebControls.Mvc;
+@using ETS.Util
+@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Statistics.RecommendDataModel>
+@{
+    ViewBag.Title = "推荐统计";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+<script src="~/Scripts/mvcpager.js"></script>
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：数据统计 > 推荐统计
+    </h2>
+@using (Ajax.BeginForm("PostRecommendStatistical", new RouteValueDictionary { { "pageindex", "" } },
+    new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+    new RouteValueDictionary { { "id", "searchForm" } }))
+{
+    <div class="SearchMd" style="width:1000px">
+        <h4 style="color:black;font-weight:600">推荐统计</h4>
+        <span>发单日期:</span>
+        <input id="startDate" name="StartDate" style="width:143px" />
+        <span>到</span>
+        <input id="endDate" name="EndDate" style="width:143px" />
+        <span>推荐人:</span><input type="text" id="recommendPhone" name="RecommendPhone" />
+        <input value="查询" class="searchBtn" type="submit" id="btnSearch">
+        <br />
+    </div>
+
+}
+    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <div class="bd clearfix" id="dataList">
+        @Html.Partial("PostRecommendStatistical", Model)
+    </div>
+    <hr />
+    
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#startDate').datepicker();
+        $('#endDate').datepicker();
+
+
+        //$('#btnSearch').click(function() {
+        //    var par = {
+        //        StartDate: $("#startDate").val(),
+        //        EndDate: $("#endDate").val(),
+        //        PageIndex: 1,
+        //        RecommendPhone: $('#recommendPhone').val()
+        //    };
+        //    GetList(par);
+        //});
+        //var parInit = {
+        //    StartDate: "",
+        //    EndDate: "",
+        //    PageIndex: 1,
+        //    RecommendPhone:""
+        //};
+       // GetList(parInit);//页面第一次打开的时候加载
+    });
+    //获取数据
+    //function GetList(par) {
+    //    $.ajax({
+    //        url: "/Statistical/PostRecommendStatistical",
+    //        type: "post",
+    //        data: par,
+    //        dataType: "html",
+    //        success: function (data) {
+    //            alert(data);
+    //            $('#dataList').html(data);
+    //        }
+    //    });
+    //};
+</script>

@@ -257,11 +257,11 @@ namespace Ets.Service.Provider.Business
             {
                 returnEnum = BusinessRegisterStatus.RecommendPhoneError;//填入的推荐人手机号有误
             }
-            else if (!string.IsNullOrWhiteSpace(model.RecommendPhone) &&
-                     !businessDao.CheckRecommendPhone(model.RecommendPhone))
-            {
-                returnEnum = BusinessRegisterStatus.RecommendPhoneNoExist; //推荐人手机号不存在
-            }
+            //else if (!string.IsNullOrWhiteSpace(model.RecommendPhone) &&
+            //         !businessDao.CheckRecommendPhone(model.RecommendPhone))
+            //{
+            //    returnEnum = BusinessRegisterStatus.RecommendPhoneNoExist; //推荐人手机号不存在
+            //}
             if (returnEnum != null)
             {
                 return ResultModel<BusiRegisterResultModel>.Conclude(returnEnum);

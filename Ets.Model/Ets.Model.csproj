@@ -142,6 +142,8 @@
     <Compile Include="DomainModel\Statistics\BussinessBalanceQuery.cs" />
     <Compile Include="DomainModel\Statistics\JieDanTimeInfo.cs" />
     <Compile Include="DomainModel\Statistics\OrderCompleteTimeSpanInfo.cs" />
+    <Compile Include="DomainModel\Statistics\RecommendDataModel.cs" />
+    <Compile Include="DomainModel\Statistics\RecommendQuery.cs" />
     <Compile Include="DomainModel\Statistics\TaskStatisticsPerHourInfo.cs" />
     <Compile Include="DomainModel\Subsidy\ShortMessageModel.cs" />
     <Compile Include="DomainModel\Subsidy\GrabOrderModel.cs" />
