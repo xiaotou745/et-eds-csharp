@@ -13,7 +13,7 @@
     <job>
       <name>ExportBLL</name>
       <group>ExportDataGroup</group>
-      <description>email Services</description>
+      <description>emailServices</description>
       <job-type>Ets.ExportData.ExportBLL,Ets.ExportData</job-type>
       <durable>true</durable>
       <recover>false</recover>
