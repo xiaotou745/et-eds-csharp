@@ -63,14 +63,9 @@
             $.ajax({
                 type: 'POST',
                 url: "/deliveryCompany/DoBatchImportClienter?companyId=1",
-                data: $("#_jsondata").val(),
+                data: {datas: $("#_jsondata").val()} ,
                 success: function (result) {
-                    alert(result.data)
-                    if (data.Result == "success") {
-                        alert("添加成功!");
-                    } else {
-                        alert("添加失败!");
-                    }
+                    
                 }
             });
         }

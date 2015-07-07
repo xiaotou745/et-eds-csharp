@@ -1114,13 +1114,64 @@ namespace Ets.Service.Provider.Business
                 {
                     dealResultInfo.DealMsg = "修改商户信息失败！";
                     return dealResultInfo;
-                }             
+                }
                 tran.Complete();
                 dealResultInfo.DealMsg = "修改商户信息成功！";
                 dealResultInfo.DealFlag = true;
                 return dealResultInfo;
             }
         }
+
+        /// <summary>
+        /// 修改商户配送公司绑定关系
+        /// danny-20150706
+        /// </summary>
+        /// <param name="busiId"></param>
+        /// <param name="deliveryCompanyList"></param>
+        /// <param name="optName"></param>
+        /// <returns></returns>
+        public DealResultInfo ModifyBusinessExpress(int busiId, string deliveryCompanyList, string optName)
+        {
+            var dealResultInfo = new DealResultInfo
+            {
+                DealFlag = false
+            };
+            if (!string.IsNullOrEmpty(deliveryCompanyList))
+            {
+
+                var deliveryCompanyReg = deliveryCompanyList.Split(';');
+                using (var tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+                {
+                    foreach (var item in deliveryCompanyReg)
+                    {
+                        if (!string.IsNullOrEmpty(item))
+                        {
+                            var deliveryCompany = item.Split(',');
+                            var berm = new BusinessExpressRelationModel
+                            {
+                                ExpressId = Convert.ToInt32(deliveryCompany[0]),
+                                IsEnable = Convert.ToInt32(deliveryCompany[1]),
+                                BusinessId = busiId,
+                                OptName = optName
+                            };
+                            if (!businessDao.EditBusinessExpressRelation(berm))
+                            {
+                                dealResultInfo.DealMsg = "编辑商户物流公司配置信息失败！";
+                                return dealResultInfo;
+                            } 
+                        }
+                    }
+                    tran.Complete();
+                    dealResultInfo.DealMsg = "编辑商户物流公司配置信息成功！";
+                    dealResultInfo.DealFlag = true;
+                    return dealResultInfo;
+                }
+            }
+            dealResultInfo.DealMsg = "未获取到商户物流公司配置信息！";
+            return dealResultInfo;
+        }
+        
+
 
         /// <summary>
         /// 获取商户绑定的骑士列表
@@ -1288,6 +1339,17 @@ namespace Ets.Service.Provider.Business
         List<BusinessOptionLog> IBusinessProvider.GetBusinessOpLog(int businessId)
         {
             return businessDao.GetBusinessOpLog(businessId);
+        }
+
+        /// <summary>
+        /// 获取商户和快递公司关系列表
+        /// danny-20150706
+        /// </summary>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        public IList<BusinessExpressRelation> GetBusinessExpressRelationList(int businessId)
+        {
+            return businessDao.GetBusinessExpressRelationList(businessId);
         }
     }
 }

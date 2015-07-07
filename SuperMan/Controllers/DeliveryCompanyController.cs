@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using Ets.Model.Common;
 using Ets.Model.DomainModel.DeliveryCompany;
+using ETS.Util;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
@@ -148,10 +149,10 @@ namespace SuperMan.Controllers
        [HttpPost]
        public JsonResult DoBatchImportClienter(int companyId)
        {
-           List<BatchImportClienterExcelDM> mdols = new List<BatchImportClienterExcelDM>();
-           TryUpdateModel(mdols);
+           string jsondatas = Request.Form["datas"];  //得到页面上可导入的数据
+           //序列化得到数据
+           var models = JsonHelper.JsonConvertToObject<List<BatchImportClienterExcelDM>>(jsondatas); 
            return new JsonResult (){  Data="成功"};
        }
-
     }
 }
