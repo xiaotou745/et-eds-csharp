@@ -1,29 +1,17 @@
-﻿@using System.Activities.Expressions
-@using System.Text.RegularExpressions
-@using Ets.Service.Provider.User
-@using ETS.Util
-@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Business.BusListResultModel>
+﻿@using ETS.Util
+@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Statistics.RecommendDataModel>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
     <thead>
 
         <tr class="tdbg">
             <th width="%5">编号</th>
             <th>商户名称</th>
-            @*<th>第三方ID</th>*@
             <th>电话</th>
             <th>地址</th>
-
-            <th>申请时间</th>
-            <th>所属集团</th>
-            <th>结算比例</th>
-            <th>外送费</th>
-            <th>账户余额</th>
-            <th>可提现余额</th>
-            <th>审核状态</th>
-            <th>分组</th>
-            <th>结算类型</th>
-            <th>餐费结算方式</th>
-            <th>操作</th>
+            <th>注册时间</th>
+            <th>状态</th>
+            <th>推荐人手机号</th>
+            <th>订单数量</th>
         </tr>
     </thead>
     <tbody>
@@ -31,135 +19,55 @@
             if (Model != null && Model.Records.Count > 0)
             {
                 var i = 0;
-                //var puth = SuperManCore.CustomerIconUploader.Instance.RelativePath;
-                //var PicHost = SuperManCore.CustomerIconUploader.Instance.PicHost;
-                //var path=System.IO.Path.Combine(SuperManCore.CustomerIconUploader.Instance.RelativePath,).ToForwardSlashPath();
                 foreach (var item in Model.Records)
                 {
-
-                    var address = !string.IsNullOrEmpty(@item.Address) ? @item.Address : "无地址";
-                    address = address.Replace((char)13, (char)0);
-                    address = address.Replace((char)10, (char)0);
-                    i++;
-                    <tr id="@item.Id">
-                        <td>@item.Id</td>
-                        @*<td>@i</td>*@
-                        <td>@item.Name</td>
-                        @*<td>@item.OriginalBusiId</td>*@
-                        <td>@item.PhoneNo</td>
-                        <td>@address</td>
-                        <td>@item.InsertTime</td>
+                    <tr id="@item.ID">
                         <td>
-                            @item.GroupName
+                            @item.ID  
+                        </td>
+                        <td>
+                            @item.Name
+                        </td>
+                        <td>
+                            @item.PhoneNo
+                        </td>
+                        <td>
+                            @item.Address
+                        </td>
+                        <td>
+                            @item.InsertTime
                         </td>
                         @{
-                    decimal? commission = item.BusinessCommission ?? 0;
-                        }
+                            var statusView = "";
+                            if (@item.Status == ETS.Enums.BusinessStatus.Status1.GetHashCode())
+                            {
+                                statusView = "审核通过";
+                            }
 
-                        @if (item.CommissionType == 1)
-                        {
-                            <td>
-                                @commission%
-                            </td>
-                        }
-                        else
-                        {
-                            <td>
-                                ￥@item.CommissionFixValue
-                            </td>
-                        }
-
+                            else if (@item.Status == ETS.Enums.BusinessStatus.Status3.GetHashCode())
+                            {
+                                statusView = "审核中";
+                            }
+                            else if (@item.Status == ETS.Enums.BusinessStatus.Status2.GetHashCode())
+                            {
+                                statusView = "未审核且未添加地址";
+                            }
+                            else if (@item.Status == ETS.Enums.BusinessStatus.Status0.GetHashCode())
+                            {
+                                statusView = "未审核";
+                            }
+                            else if (@item.Status == ETS.Enums.BusinessStatus.Status4.GetHashCode())
+                            {
+                                statusView = "审核被拒绝";
+                            }}
                         <td>
-                            @{
-                    decimal distribSubsidy = @item.DistribSubsidy ?? 0;
-                            }@distribSubsidy
+                            @statusView
                         </td>
-                        <td><a href="/BusinessManager/BusinessDetail?businessId=@item.Id ">￥@ParseHelper.ToSplitByPercentile(false, item.BalancePrice)</a></td>
-                        <td>￥@ParseHelper.ToSplitByPercentile(false, item.AllowWithdrawPrice)</td>
-                        @{
-                    var statusView = "";
-                    if (@item.Status == ETS.Enums.BusinessStatus.Status1.GetHashCode())
-                    {
-                        statusView = "审核通过";
-                    }
-
-                    else if (@item.Status == ETS.Enums.BusinessStatus.Status3.GetHashCode())
-                    {
-                        statusView = "审核中";
-                    }
-                    else if (@item.Status == ETS.Enums.BusinessStatus.Status2.GetHashCode())
-                    {
-                        statusView = "未审核且未添加地址";
-                    }
-                    else if (@item.Status == ETS.Enums.BusinessStatus.Status0.GetHashCode())
-                    {
-                        statusView = "未审核";
-                    }
-                    else if (@item.Status == ETS.Enums.BusinessStatus.Status4.GetHashCode())
-                    {
-                        statusView = "审核被拒绝";
-                    }
-
-                        }
-
-                        @{
-                    var commissionTypeView = "";
-                    if (item.CommissionType == 1)
-                    {
-                        commissionTypeView = "结算比例";
-                    }
-
-                    else if (item.CommissionType == 2)
-                    {
-                        commissionTypeView = "固定金额";
-                    }
-                        }
-                        <td>@statusView</td>
-                        <td>@item.BusinessGroupName</td>
-                        <td>@commissionTypeView</td>
-                        <td>@(item.MealsSettleMode == 0 ? "线下结算" : "线上结算")</td>
                         <td>
-                            @{
-                    if (SuperMan.App_Start.UserContext.Current.HasAuthority(22))
-                    {
-                        int checkAddress = string.IsNullOrEmpty(item.Address) ? 0 : 1;
-                        int checkImage = string.IsNullOrEmpty(item.CheckPicUrl) ? 0 : 1;
-
-                        if (@item.Status == 1)
-                        {
-                            <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage,@item.CommissionType,@item.Latitude,@item.Longitude)" style="color:gray" businessid="@item.Id" class="businessOk">审核通过</a>
-                                <a href="javascript:void(0)" businessid="@item.Id" class="businessCel">取消资格</a>
-                        }
-                        else
-                        {
-                            <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage,@item.CommissionType,@item.Latitude,@item.Longitude)" businessid="@item.Id" class="businessOk">审核通过</a>
-                                <a href="javascript:void(0)" style="color:gray" businessid="@item.Id" class="businessCel">取消资格</a>
-                        }
-
-                    }
-                            }
-                            @*@if (SuperMan.App_Start.UserContext.Current.HasAuthority(24))
-                                {
-                                    <a href="javascript:void(0)" onclick="funcComView(@item.Id,'@item.Name','@distribSubsidy','@item.PhoneNo','@commission',@item.CommissionType,@item.CommissionFixValue,@item.BusinessGroupId)">设置结算</a>
-                                }*@
-                            @if (SuperMan.App_Start.UserContext.Current.HasAuthority(60))
-                            {
-                                <a href="/BusinessManager/QueryBusinessDetail?businessId=@item.Id">修改信息</a>
-                                @*<a href="javascript:void(0)" onclick="funcUpdateBusinessInfo(@item.Id,'@item.Name','@item.PhoneNo','@item.OriginalBusiId','@item.GroupId','@item.MealsSettleMode')">修改信息</a>*@
-                            }
-                            @if (SuperMan.App_Start.UserContext.Current.HasAuthority(52))
-                            {
-                                <a href="javascript:void(0)" onclick="funcBusinessRecharge(@item.Id,'@item.Name', '@item.PhoneNo')">充值</a>
-                            }
-                            @if (SuperMan.App_Start.UserContext.Current.HasAuthority(24))
-                            {
-                                <a href="/BusinessManager/ClienterBindManage?businessId=@item.Id">骑士绑定</a>
-                                @*<a href="javascript:void(0)" onclick="funcUpdateBusinessInfo(@item.Id,'@item.Name','@item.PhoneNo','@item.OriginalBusiId','@item.GroupId','@item.MealsSettleMode')">修改信息</a>*@
-                            }
-                            @if (SuperMan.App_Start.UserContext.Current.HasAuthority(61))
-                            {
-                                <a href="javascript:void(0)" onclick="funcBusinessWithdraw(@item.Id,'@item.Name', '@item.PhoneNo')">提款申请</a>
-                            }
+                            @item.RecommendPhone
+                        </td>
+                        <td>
+                            @item.OrderCount
                         </td>
                     </tr>
                 }
@@ -171,202 +79,11 @@
 @{
     if (Model != null)
     {
-        ViewBag.ActionName = "PostBusinessManager";
+        ViewBag.ActionName = "PostRecommendStatistical";
         @Html.Partial("~/views/shared/PagerControl.cshtml", Model)
     }
 }
 
 <script type="text/javascript">
-    var currentId;
-    $(document).ready(function () {
-        $(".businessCel").bind("click", function () {
-            if (!window.confirm("是否取消审核？")) {
-                return;
-            }
-            currentId = $(this).attr("businessId");
-            var paramaters = { "id": currentId };
-            var url = "/BusinessManager/AuditCel";
-            $.ajax({
-                type: 'POST',
-                url: url,
-                data: paramaters,
-                success: function (result) {
-                    if (result.IsSuccess) {
-                        window.location.href = "/BusinessManager/BusinessManager";
-                    } else {
-                        alert(result.Message);
-                    }
-                }
-            });
-        });
-    });
-    ///操作审核验证
-    function businessOk(checkAddress, businessId, Proportion, checkImage, commissionType, Latitude, Longitude) {
-        if (!window.confirm("是否审核通过？")) {
-            return;
-        }
-        if (checkAddress == 0) {
-            alert("该商家未填写配送地址，不能通过审核。")
-            return;
-        }
-        if (Proportion < 10 && commissionType == 1) {
-            alert("该商家结算比例小于10%，不能通过审核。")
-            return;
-        }
-        if (checkImage == 0) {
-            alert("该商家未上传图片，不能通过审核。")
-            return;
-        }
-        //debugger
-        var lng = parseFloat(Longitude);
-        var lat = parseFloat(Latitude);
-        if (lng < 73.40 || lng > 135.230 || lat < 3.52 || lat > 53.33) {
-            alert("该商家地址有误，不能通过审核。")
-            return;
-        }
-        //currentId = $(this).attr("businessId");
-        var paramaters = { "id": businessId };
-        var url = "/BusinessManager/AuditOK";
-        $.ajax({
-            type: 'POST',
-            url: url,
-            data: paramaters,
-            success: function (result) {
-                if (result.IsSuccess) {
-                    window.location.href = "/BusinessManager/BusinessManager";
-                } else {
-                    alert(result.Message);
-                }
-            }
-        });
-    }
-    function funcPicView(puth, CheckPicUrl) {
-        $('#showBusiImage').attr('src', puth + CheckPicUrl);
-        var originSize = '_0_0';
-        var fileLastDot = CheckPicUrl.lastIndexOf('.');
-        var fileHandHouZhui = CheckPicUrl.substr(fileLastDot, CheckPicUrl.length - fileLastDot);
-        var bigFileName = CheckPicUrl.substring(0, fileLastDot) + originSize + fileHandHouZhui;
-        $('#showBigBusiImage').attr('href', puth + bigFileName);
-        adminjs.openwinbox('#BusiPicShow');
-        if (CheckPicUrl.length == 0) {
-            $('#showBigBusiImage').hide();
-        } else {
-            $('#showBigBusiImage').show();
-        }
-    }
-
-    //弹出结算比例-外送费层
-    function funcComView(id, name, distribSubsidy, phone, businessCommission, commissionType, commissionFixValue, businessGroupId) {
-        if (businessCommission == null || businessCommission == "") {
-            businessCommission = 0;
-        }
-        var strreg = "";
-        var paramaters = { "GroupId": businessGroupId };
-        var url = "/SubsidyFormulaMode/GlobalConfigInfo";
-        $.ajax({
-            type: 'POST',
-            async: false,
-            url: url,
-            data: paramaters,
-            success: function (result) {
-                strreg = result;
-            }
-        });
-
-        var isStarTimeSubsidies = strreg.split(",")[0];
-        var isStartOverStoreSubsidies = strreg.split(",")[1];
-        var subsidyConfig;
-        if (isStarTimeSubsidies == "1" || isStartOverStoreSubsidies == "1") {
-            if (isStartOverStoreSubsidies == "1") {
-                subsidyConfig = "全局补贴：跨店抢单奖励";
-            }
-            if (isStarTimeSubsidies == "1") {
-                if (subsidyConfig == null || subsidyConfig.length == 0) {
-                    subsidyConfig = "全局补贴：动态时间奖励";
-                }
-                else {
-                    subsidyConfig = "全局补贴：跨店抢单奖励和动态时间奖励";
-                }
-            }
-            $('#labGlobalConfig').text(subsidyConfig);
-        }
-        $('#busCommissionHid').val(id);
-        $('#busCommissionName').val(name);
-        $('#busCommissionWaiSong').val(distribSubsidy);
-        $('#oldBusCommissionWaiSong').val(distribSubsidy);
-        $('#busCommissionPhone').val(phone);
-        $('#busCommissionText').val(businessCommission);
-        $('#oldBusCommissionText').val(businessCommission);
-        //$('#statusFin').text("设置[" + name + "]结算比例-外送费");
-        $('#CommissionFixValue').val(commissionFixValue);
-        $('#oldCommissionFixValue').val(commissionFixValue);
-        $('#oldStrategyID').val(businessGroupId);
-        $('#oldCommissionType').val(commissionType);
-        if (commissionType == 2) {
-            $("#rCommissionFormulaMode1").attr("checked", "checked");
-        }
-        else {
-            $("#rCommissionFormulaMode0").attr("checked", "checked");
-        }
-
-        if (businessGroupId > 0) {
-
-            $('#businessGroupID').val(businessGroupId);
-        }
-        else {
-            $('select#businessGroupID option:first').attr('selected', 'true');
-        }
-        var a = $('input[name="rCommissionFormulaMode"]:checked').val();
-        if (a == 1) {
-            $("#divCommissionFixValue").hide();
-            $("#divbusCommissionText").show();
-        }
-        else {
-            $("#divbusCommissionText").hide();
-            $("#divCommissionFixValue").show();
-        }
-        adminjs.openwinbox('#BusinessCommissionDiv');
-    }
-    //修改商家信息
-    function funcUpdateBusinessInfo(id, name, phone, originalbusiId, groupid, mealsSettleMode) {
-        $('#busiId').val(id);
-        $('#busiName').val(name);
-        $('#busiPhone').val(phone);
-        $('#busiSourceId').val(originalbusiId);
-        $('#busiMealsSettleMode').val(mealsSettleMode);
-        if (groupid > 0) {
-            $('#busGroupId').val(groupid);
-        }
-        else {
-            $('select#busGroupId option:first').attr('selected', 'true');
-        }
-        $('#oldBusiSourceId').val(originalbusiId);
-        $('#oldBusGroupId').val(groupid);
-        adminjs.openwinbox('#BusinessInfoUpdateDiv');
-    }
-    //商户充值
-    function funcBusinessRecharge(id, name, phone) {
-        $('#busId').val(0);
-        $('#busName').val('');
-        $('#busPhone').val('');
-        $('#busRechargeAmount').val('');
-        $('#rechargeLog').val('');
-        $('#busId').val(id);
-        $('#busName').val(name);
-        $('#busPhone').val(phone);
-        adminjs.openwinbox('#BusinessRechargeShow');
-    }
-
-    function funcBusinessWithdraw(id, name, phone) {
-        $('#withdrawId').val(0);
-        $('#withdrawName').val('');
-        $('#withdrawPhone').val('');
-        $('#withdrawAmount').val('');
-        $('#withdrawLog').val('');
-        $('#withdrawId').val(id);
-        $('#withdrawName').val(name);
-        $('#withdrawPhone').val(phone);
-        adminjs.openwinbox('#BusinessWithdraw');
-    }
-
+   
 </script>

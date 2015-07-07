@@ -324,6 +324,23 @@ where PhoneNo=@PhoneNo and [Password]=@Password";
             }
         }
         /// <summary>
+        /// 骑士注册判断推荐人手机号是否正确 2015年7月6日14:51:38 茹化肖
+        /// </summary>
+        /// <param name="phoneNum"></param>
+        /// <returns>-1 :不存在 0:骑士 其他:物流公司的ID</returns>
+        public int CheckRecommendPhone(string phoneNum)
+        {
+            const string sql = @"SELECT ISNULL(MIN(T.PemType),-1) FROM (
+SELECT DeliveryCompanyCode AS Phone,id AS PemType FROM DeliveryCompany (NOLOCK) WHERE IsEnable=1
+UNION
+SELECT PhoneNo AS Phone,0 AS PemType FROM clienter(NOLOCK) WHERE Status=1
+) AS T WHERE T.Phone = @PhoneNo";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@PhoneNo", DbType.String).Value = phoneNum;
+            object obj = DbHelper.ExecuteScalar(SuperMan_Read, sql, parm);
+            return ParseHelper.ToInt(obj, -1);
+        }
+        /// <summary>
         /// 判断该骑士是否有资格 
         /// wc
         /// </summary>
@@ -418,9 +435,11 @@ where PhoneNo=@PhoneNo and [Password]=@Password";
                            ,[InviteCode]
                            ,[City]
                            ,[CityId]
-                           ,[GroupId])
+                           ,[GroupId]
+                           ,[DeliveryCompanyId])
                      VALUES
-                       (@PhoneNo,@recommendPhone,@Password,@Status,@InsertTime,@InviteCode,@City,@CityId,@GroupId );select SCOPE_IDENTITY() as id;";
+                       (@PhoneNo,@recommendPhone,@Password,@Status,@InsertTime,@InviteCode,@City,@CityId,@GroupId,@DeliveryCompanyId );
+                    select SCOPE_IDENTITY() as id;";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@PhoneNo", SqlDbType.NVarChar);
             parm.SetValue("@PhoneNo", model.PhoneNo);
@@ -432,6 +451,7 @@ where PhoneNo=@PhoneNo and [Password]=@Password";
             parm.AddWithValue("@City", model.City);
             parm.AddWithValue("@CityId", model.CityId);
             parm.AddWithValue("@GroupId", model.GroupId);
+            parm.AddWithValue("@GroupId", (object)model.DeliveryCompanyId);
             object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, parm);
             if (i != null)
             {

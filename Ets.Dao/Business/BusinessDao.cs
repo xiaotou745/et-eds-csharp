@@ -2294,18 +2294,18 @@ VALUES
         /// 判断推荐人手机号是否正确 2015年7月6日14:51:38 茹化肖
         /// </summary>
         /// <param name="phoneNum"></param>
-        /// <returns></returns>
-        public bool CheckRecommendPhone(string phoneNum)
+        /// <returns>-1 :不存在 0:骑士 其他:物流公司的ID</returns>
+        public int CheckRecommendPhone(string phoneNum)
         {
-            const string sql = @"SELECT COUNT(Phone) FROM (
-SELECT DeliveryCompanyCode AS Phone FROM DeliveryCompany (NOLOCK) WHERE IsEnable=1
+            const string sql = @"SELECT ISNULL(MIN(T.PemType),-1) FROM (
+SELECT DeliveryCompanyCode AS Phone,id AS PemType FROM DeliveryCompany (NOLOCK) WHERE IsEnable=1
 UNION
-SELECT PhoneNo AS Phone FROM business(NOLOCK) WHERE Status=1
+SELECT PhoneNo AS Phone,0 AS PemType FROM clienter(NOLOCK) WHERE Status=1
 ) AS T WHERE T.Phone = @PhoneNo";
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@PhoneNo", DbType.String).Value = phoneNum;
             object obj = DbHelper.ExecuteScalar(SuperMan_Read, sql,parm);
-            return ParseHelper.ToInt(obj, 0) > 0;
+            return ParseHelper.ToInt(obj, -1);
         }
 		/// <summary>
         /// 获取商户和快递公司关系列表

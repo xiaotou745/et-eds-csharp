@@ -11,6 +11,8 @@ namespace Ets.Model.DomainModel.Statistics
     /// </summary>
     public class RecommendDataModel
     {
+        public int ID { get; set; }
+
         /// <summary>
         /// 商家名称
         /// </summary>
@@ -26,7 +28,7 @@ namespace Ets.Model.DomainModel.Statistics
         /// <summary>
         /// 注册时间
         /// </summary>
-        public string InsertTime { get; set; }
+        public DateTime InsertTime { get; set; }
         /// <summary>
         /// 推荐人手机号
         /// </summary>
@@ -38,7 +40,7 @@ namespace Ets.Model.DomainModel.Statistics
         /// <summary>
         /// 商家审核状态
         /// </summary>
-        public int Stauts { get; set; }
+        public int Status { get; set; }
     }
 
 

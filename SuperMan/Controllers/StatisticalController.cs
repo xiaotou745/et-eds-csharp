@@ -189,15 +189,24 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult RecommendStatistical()
         {
-            return View("RecommendStatistical");
+            RecommendQuery recommendQuery=new RecommendQuery();
+            recommendQuery.PageIndex = 1;
+            StatisticsProvider statisticsProvider = new StatisticsProvider();
+            var pagelist = statisticsProvider.GetRecommendList(recommendQuery);
+            return View(pagelist);
         }
-
+        /// <summary>
+        /// Post推荐统计分页列表
+        /// </summary>
+        /// <param name="recommendQuery"></param>
+        /// <returns></returns>
         public ActionResult PostRecommendStatistical(RecommendQuery recommendQuery)
         {
             //var criteria=new
             StatisticsProvider statisticsProvider  = new StatisticsProvider();
             var pagelist= statisticsProvider.GetRecommendList(recommendQuery);
-            return View();
+            return PartialView("PostRecommendStatistical", pagelist);
+            //return View();
         }
 
         #endregion
