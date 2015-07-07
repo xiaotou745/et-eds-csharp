@@ -8,6 +8,7 @@
 @using ETS.Enums
 @using ETS.Extension
 @using Ets.Model.DataModel.Business
+@using Ets.Model.DataModel.DeliveryCompany
 @using Ets.Service.Provider.User
 @using ETS.Util;
 @using Ets.Service.Provider.Business
@@ -24,10 +25,13 @@
     </h2>
 
     <div id="left" style="float: left;width:750px;height: auto;border-right: 1px #dcdcdc solid;margin-top: -10px; ">
-        <div style="width:750px;height: auto;  border-bottom:solid 1px #dcdcdc;padding-left:10px;">
+        <div style="width:750px;height: auto;  border-bottom:solid 0px #dcdcdc;padding-left:10px;">
             <div class="control-group" style="margin-top: 10px">
                 <label>注册账号：</label>
                 <label>@Model.PhoneNo</label>
+                <div class="SearchMd" style="padding:0px;border-bottom:solid 0px #dcdcdc;">
+                    <div style="margin-left: 630px;margin-top: -22px"><input type="button" value="保存" class="searchBtn" id="btnModifyCommit" /></div>
+                </div>
             </div>
             <div class="control-group">
                 <label>商铺名称：</label>
@@ -63,7 +67,7 @@
                 <a id="postion" style="margin-left: 15px"><b>地图定位</b></a>
             </div>
         </div>
-        <div style="width:750px;height: auto;border-bottom:solid 1px #dcdcdc;padding-left:10px;">
+        <div style="width:750px;height: auto;border-bottom:solid 0px #dcdcdc;padding-left:10px;">
             <div class="control-group" style="margin-top: 10px">
                 <label style="font-size:15px">结算比例设置(应收)</label>
             </div>
@@ -163,45 +167,42 @@
                 </div>*@
         </div>
         
-        <div style="width:750px;height:125px;overflow:auto;margin-top:10px" id="divCity">
+        
+
+        @*<div style="width:750px;height: auto;border-bottom:solid 1px #dcdcdc;padding-left:10px;">
+         </div>*@
+        @*<div class="SearchMd">
+            <div style="margin-left: 100px;float: left"><input type="button" value="保存" class="searchBtn" id="btnModifyCommit" /></div>
+            <div style="margin-left: 180px;float: left"><input type="button" value="返回" class="searchBtn" id="btnReturn" /></div>
+            <br />
+        </div>*@
+        
+        <div style="width:750px;height:auto;overflow:auto;margin-top:10px;border-bottom:solid 1px #dcdcdc;" id="divDeliveryCompany">
             <div style="float: left">
                 <label>绑定配送公司：</label>
             </div>
-            @*<div id="cityList" style="float: left;width:700px">
+            <div id="deliveryCompanyList" style="float: left;width:550px">
                 @{
-                    var openCityList = ViewBag.openCityList.Result.AreaModels as List<AreaModel>;
-                    if (openCityList != null && openCityList.Count > 0)
+                    var deliveryCompany = ViewBag.deliveryCompany as List<DeliveryCompanyModel>;
+                    if (deliveryCompany != null && deliveryCompany.Count > 0)
                     {
-                        <div style="width: 140px;height:25px;float: left">
+                        <div style="width: 110px;height:25px;float: left">
                             <input type="checkbox" name="checkAllMenus" id="selectAll" onclick="checkAll()" />全部
-                        </div> //全选
-    function checkAll() {
-        var checkedOfAll = $("#selectAll").prop("checked");
-        $("input[name='checkMenus']").prop("checked", checkedOfAll);
-    }
-                        foreach (var item in openCityList)
+                        </div>
+                        foreach (var item in deliveryCompany)
                         {
-                            <div style="width: 140px;height:25px;float: left">
-                                <input type="checkbox" name="checkMenus" id="@item.Code" value="@item.Code" />
-                                <label>@item.Name</label>
+                            <div style="width: 110px;height:25px;float: left">
+                                <input type="checkbox" name="checkMenus" id="@item.Id" value="@item.Id" />
+                                <label>@item.DeliveryCompanyName</label>
                             </div>
                         }
                     }
                 }
-                @if (dealType == 2)
-                {
-                    <input type="hidden" name="hidPushCity" id="hidPushCity" value="@Model.PushCity" />
-                }
-
-            </div>*@
-        </div>
-
-        <div style="width:750px;height: auto;border-bottom:solid 1px #dcdcdc;padding-left:10px;">
-         </div>
-        <div class="SearchMd">
-            <div style="margin-left: 100px;float: left"><input type="button" value="保存" class="searchBtn" id="btnModifyCommit" /></div>
-            <div style="margin-left: 180px;float: left"><input type="button" value="返回" class="searchBtn" id="btnReturn" /></div>
-            <br />
+                @*<input type="hidden" name="hidDeliveryCompany" id="hidDeliveryCompany" value="@Model.PushCity" />*@
+            </div>
+            <div class="SearchMd" style="padding:0px;border-bottom:solid 0px #dcdcdc;">
+                <div style="margin-left: 640px;margin-top: 0px"><input type="button" value="保存" class="searchBtn" id="btnModifyExpress" /></div>
+            </div>
         </div>
         @*第三方绑定关系模板div*@
         <div id="clone">
@@ -300,6 +301,13 @@
         $('#operateTimeStart').datepicker();
         $('#operateTimeEnd').datepicker();
         $('#busiMealsSettleMode').val(@Model.MealsSettleMode);
+        var businessId = $('#busiId').val();
+        funcCheckExpress(businessId);
+        //var hidPushCity = $("#hidPushCity").val();
+        //var cityArr = hidPushCity.split(",");
+        //$.each(cityArr, function (i, n) {
+        //    $(":checkbox[id='" + n + "']").prop("checked", true);
+        //});
         @*$("#btnAddThird").attr("num", @busiThirdRelationList.Count);
         $(".third-list").each(function() {
             var v = $(this).attr("v"); //第三方
@@ -313,6 +321,26 @@
     $("#btnAddThird").click(function () {
         funAddThirdRelation();
     });
+    
+    function funcCheckExpress(businessId) {
+        var businessExpressRef;
+        var paramaters = { "businessId": businessId };
+        var url = "/BusinessManager/GetBusinessExpressRel";
+        $.ajax({
+            type: 'POST',
+            async: false,
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                businessExpressRef = result;
+            }
+        });
+        if (businessExpressRef.length > 0) {
+            for (var i = 0; i < businessExpressRef.length; i++) {
+                $(":checkbox[id='" + businessExpressRef[i].Id + "']").prop("checked", true);
+            }
+        }
+    };
 
     function funAddThirdRelation() {
         var num = Number($("#btnAddThird").attr("num")) + 1;
@@ -533,6 +561,37 @@
                 }
             }
         });
+
+    });
+    //保存物流公司配置
+    $("#btnModifyExpress").click(function () {
+        if (confirm("确定要提交保存吗？")) {
+            var busiId = $('#busiId').val();
+            var deliveryCompanyList = "";
+            $("input[name='checkMenus']").each(function () {
+                if ($(this).is(':checked')) {
+                    deliveryCompanyList = deliveryCompanyList + $(this).val() + ",1;";
+                }
+                else {
+                    deliveryCompanyList = deliveryCompanyList + $(this).val() + ",0;";
+                }
+            });
+            var paramaters = { "busiId": busiId, "deliveryCompanyList": deliveryCompanyList };
+            var url = "/BusinessManager/ModifyBusinessExpress";
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: paramaters,
+                success: function (result) {
+                    if (result.IsSuccess) {
+                        alert(result.Message);
+                        //window.location.href = "/OpenCityManager/OpenCityManager";
+                    } else {
+                        alert(result.Message);
+                    }
+                }
+            });
+        }
 
     });
     //关闭弹层
