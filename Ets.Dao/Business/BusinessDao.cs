@@ -2307,5 +2307,67 @@ SELECT PhoneNo AS Phone FROM business(NOLOCK) WHERE Status=1
             object obj = DbHelper.ExecuteScalar(SuperMan_Read, sql,parm);
             return ParseHelper.ToInt(obj, 0) > 0;
         }
+		/// <summary>
+        /// 获取商户和快递公司关系列表
+        /// danny-20150706
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <returns></returns>
+        public IList<BusinessExpressRelation> GetBusinessExpressRelationList(int businessId)
+        {
+            string sql = @"  
+SELECT [Id]
+      ,[BusinessId]
+      ,[ExpressId]
+      ,[IsEnable]
+      ,[CreateBy]
+      ,[CreateTime]
+      ,[UpdateBy]
+      ,[UpdateTime]
+FROM BusinessExpressRelation with(nolock)
+WHERE BusinessId=@BusinessId
+ORDER BY Id;";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@BusinessId", businessId);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            return MapRows<BusinessExpressRelation>(dt);
+        }
+        /// <summary>
+        /// 编辑商户和快递公司绑定关系
+        /// danny-20150706
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool EditBusinessExpressRelation(BusinessExpressRelationModel model)
+        {
+            string updateSql = @"
+MERGE INTO BusinessExpressRelation ber
+	USING(values(@BusinessId,@ExpressId)) AS berNew(BusinessId,ExpressId)
+		ON ber.BusinessId=berNew.BusinessId AND  ber.ExpressId=berNew.ExpressId
+	WHEN MATCHED 
+	THEN UPDATE 
+		 SET ber.IsEnable=@IsEnable,
+             ber.UpdateBy=@OptName,
+             ber.UpdateTime=getdate()
+	WHEN NOT MATCHED 
+		  THEN INSERT
+					(BusinessId,
+					 ExpressId,
+                     CreateBy,
+                     UpdateBy,
+                     IsEnable) 
+					VALUES 
+					(@BusinessId,
+					 @ExpressId,
+                     @OptName,
+                     @OptName,
+                     @IsEnable);";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@BusinessId", model.BusinessId);
+            parm.AddWithValue("@ExpressId", model.ExpressId);
+            parm.AddWithValue("@IsEnable", model.IsEnable);
+            parm.AddWithValue("@OptName", model.OptName);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, parm) > 0;
+        }
     }
 }

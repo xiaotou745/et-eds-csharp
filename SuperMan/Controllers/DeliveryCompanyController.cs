@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using Ets.Model.Common;
 using Ets.Model.DomainModel.DeliveryCompany;
+using ETS.Util;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
@@ -139,5 +140,19 @@ namespace SuperMan.Controllers
             }
            return list;
         }
+
+       /// <summary>
+       /// 批量导入骑士  excel  处理  add by caoheyang 20150706
+       /// </summary>
+       /// <param name="companyId">公司id</param>
+       /// <returns></returns>
+       [HttpPost]
+       public JsonResult DoBatchImportClienter(int companyId)
+       {
+           string jsondatas = Request.Form["datas"];  //得到页面上可导入的数据
+           //序列化得到数据
+           var models = JsonHelper.JsonConvertToObject<List<BatchImportClienterExcelDM>>(jsondatas); 
+           return new JsonResult (){  Data="成功"};
+       }
     }
 }

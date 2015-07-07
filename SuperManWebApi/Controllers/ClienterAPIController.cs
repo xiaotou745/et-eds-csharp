@@ -282,7 +282,7 @@ namespace SuperManWebApi.Controllers
             var item = iClienterProvider.GetUserInfoByUserPhoneNo(phoneNo);
             var result = new Ets.Model.DataModel.Clienter.MyBalanceResultModel()
             {
-                MyBalance = item.AccountBalance == null ? 0 : item.AccountBalance
+                MyBalance = item.AccountBalance ?? 0
             };
             return ResultModel<Ets.Model.DataModel.Clienter.MyBalanceResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Success, result);
         }

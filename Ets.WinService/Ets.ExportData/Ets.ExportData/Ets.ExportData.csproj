@@ -150,12 +150,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <NativeReference Include="MyApplication.app, Version=1.0.0.0">
-      <Name>Quartz.Net.Service.vshost.exe.manifest</Name>
-      <HintPath>..\..\..\lib\Quartz.Net.Service.vshost.exe.manifest</HintPath>
-    </NativeReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
