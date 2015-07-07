@@ -18,7 +18,7 @@ namespace SuperManWebApi.Controllers
 {
     public class PayController : ApiController
     {
-        IPayProvider payProvider = new PayProvider();
+        readonly IPayProvider payProvider = new PayProvider();
         /// <summary>
         /// 生成支付宝订单
         /// 窦海超

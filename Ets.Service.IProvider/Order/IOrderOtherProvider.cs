@@ -18,28 +18,10 @@ namespace Ets.Service.IProvider.Order
 {
     public interface IOrderOtherProvider
     {
-        ///// <summary>
-        ///// 更新一条记录
-        ///// </summary>
-        ///// <param name="orderNo"></param>
-        ///// <param name="grabLongitude"></param>
-        ///// <param name="grabLatitude"></param>
-        //void Update(string orderNo, float grabLongitude, float grabLatitude);
-
-        ///// <summary>
-        ///// 更新一条记录
-        ///// </summary>
-        ///// <param name="orderNo"></param>
-        ///// <param name="completeLongitude"></param>
-        ///// <param name="completeLatitude"></param>
-        //void UpdateComplete(OrderCompleteModel parModel);
-
         /// <summary>
         /// 更新已提现
         /// </summary>
         /// <param name="orderId"></param>
         void UpdateIsJoinWithdraw(int orderId);
-
-        int GetIsNotRealOrder(int orderId);
     }
 }
