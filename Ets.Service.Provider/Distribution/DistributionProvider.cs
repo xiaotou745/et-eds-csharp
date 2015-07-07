@@ -42,7 +42,7 @@ namespace Ets.Service.Provider.Distribution
         /// <param name="id"></param>
         /// <param name="price"></param>
         /// <returns></returns>
-        public bool UpdateAuditStatus(int id, EnumStatusType enumStatusType)
+        public bool UpdateAuditStatus(int id, AuditStatus enumStatusType)
         {
             ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
             string cacheKey = string.Format(RedissCacheKey.ClienterProvider_GetUserStatus, id);

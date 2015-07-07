@@ -31,7 +31,7 @@ namespace Ets.Service.Provider.Message
         /// <returns></returns>
         public async Task<ResultModel<object>> ReadB(ReadBPM model)
         {
-            return ResultModel<object>.Conclude(SystemEnum.Success,await businessMessageDao.ReadB(model.MessageId));
+            return ResultModel<object>.Conclude(SystemState.Success, await businessMessageDao.ReadB(model.MessageId));
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace Ets.Service.Provider.Message
         /// <returns></returns>
         public async Task<ResultModel<object>> ReadC(ReadCPM model)
         {
-            return ResultModel<object>.Conclude(SystemEnum.Success, await clienterMessageDao.ReadC(model.MessageId));
+            return ResultModel<object>.Conclude(SystemState.Success, await clienterMessageDao.ReadC(model.MessageId));
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace Ets.Service.Provider.Message
         /// <returns></returns>
         public async Task<ResultModel<object>> ListB(ListBPM model)
         {
-            return ResultModel<object>.Conclude(SystemEnum.Success, (await businessMessageDao.Query(model)).Records);
+            return ResultModel<object>.Conclude(SystemState.Success, (await businessMessageDao.Query(model)).Records);
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace Ets.Service.Provider.Message
         /// <returns></returns>
         public async Task<ResultModel<object>> ListC(ListCPM model)
         {
-            return ResultModel<object>.Conclude(SystemEnum.Success, (await clienterMessageDao.Query(model)).Records);
+            return ResultModel<object>.Conclude(SystemState.Success, (await clienterMessageDao.Query(model)).Records);
         }
 
         /// <summary>

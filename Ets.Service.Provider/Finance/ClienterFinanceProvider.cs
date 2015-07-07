@@ -138,7 +138,7 @@ namespace Ets.Service.Provider.Finance
             }
             clienter = _clienterDao.GetById(withdrawCpm.ClienterId);//获取超人信息
             if (clienter == null || clienter.Status == null
-                || clienter.Status != ConstValues.CLIENTER_AUDITPASS)  //骑士状态为非 审核通过不允许 提现
+                || clienter.Status != ClienteStatus.Status1.GetHashCode())  //骑士状态为非 审核通过不允许 提现
             {
                 return FinanceWithdrawC.ClienterError;
             }
@@ -247,7 +247,7 @@ namespace Ets.Service.Provider.Finance
                     UpdateBy = cardModifyCpm.UpdateBy//修改人  当前登录人
                 });
                 tran.Complete();
-                return ResultModel<object>.Conclude(SystemEnum.Success);
+                return ResultModel<object>.Conclude(SystemState.Success);
             }
         }
 
@@ -280,7 +280,7 @@ namespace Ets.Service.Provider.Finance
         public ResultModel<object> GetRecords(int clienterId)
          {
              IList<FinanceRecordsDM> records = _clienterBalanceRecordDao.GetByClienterId(clienterId);
-             return ResultModel<object>.Conclude(SystemEnum.Success,
+             return ResultModel<object>.Conclude(SystemState.Success,
                TranslateRecords(records));
          }
 

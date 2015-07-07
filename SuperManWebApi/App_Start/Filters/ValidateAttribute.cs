@@ -32,7 +32,7 @@ namespace SuperManWebApi.App_Start.Filters
                     }
                 }
                 actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
-                    (actionContext.ControllerContext, ResultModel<object>.Conclude(SystemEnum.ParaError, errors));
+                    (actionContext.ControllerContext, ResultModel<object>.Conclude(SystemState.ParaError, errors));
             }
         }
 

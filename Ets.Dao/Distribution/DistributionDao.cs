@@ -119,20 +119,20 @@ namespace Ets.Dao.Distribution
         /// <param name="id"></param>
         /// <param name="enumStatusType"></param>
         /// <returns></returns>
-        public bool UpdateAuditStatus(int id, EnumStatusType enumStatusType)
+        public bool UpdateAuditStatus(int id, AuditStatus enumStatusType)
         {
             bool reslut = false;
             try
             {
                 string sql = string.Empty;
-                if (enumStatusType == EnumStatusType.审核通过)
+                if (enumStatusType == AuditStatus.Status1)
                 {
 
-                    sql = string.Format(" update clienter set Status={0} where Id=@id ", ConstValues.CLIENTER_AUDITPASS);
+                    sql = string.Format(" update clienter set Status={0} where Id=@id ", ClienteStatus.Status1.GetHashCode());
                 }
-                else if (enumStatusType == EnumStatusType.审核取消)
+                else if (enumStatusType == AuditStatus.Status0)
                 {
-                    sql = string.Format(" update clienter set Status={0} where Id=@id ", ConstValues.CLIENTER_AUDITCANCEL);
+                    sql = string.Format(" update clienter set Status={0} where Id=@id ", ClienteStatus.Status0.GetHashCode());
                 }
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
                 dbParameters.AddWithValue("id", id);

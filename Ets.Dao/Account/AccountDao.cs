@@ -33,7 +33,7 @@ namespace Ets.Dao.Account
             {
                 return UserLoginResults.WrongPassword;
             }
-            if (user.AccountType == (int)AccountType.AdminUser)
+            if (user.AccountType == AccountType.AdminUser.GetHashCode())
             {
                 //var admin = db.account.Single(i => i.Id == user.Id);
                 if (user.Status == 0)

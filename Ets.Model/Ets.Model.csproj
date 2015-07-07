@@ -49,7 +49,6 @@
     <Compile Include="Common\AppVerionModel.cs" />
     <Compile Include="Common\BusinessCountManageList.cs" />
     <Compile Include="Common\ClienterCountManageList.cs" />
-    <Compile Include="Common\ConstValues.cs" />
     <Compile Include="Common\DealResultInfo.cs" />
     <Compile Include="Common\GlobalConfig.cs" />
     <Compile Include="Common\HomeCountTitleModel.cs" />

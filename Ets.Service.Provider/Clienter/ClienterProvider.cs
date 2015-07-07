@@ -57,7 +57,7 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         public ChangeWorkStatusEnum ChangeWorkStatus(Ets.Model.ParameterModel.Clienter.ChangeWorkStatusPM paraModel)
         {
-            if (paraModel.WorkStatus == WorkStatus.Status1.GetHashCode())  //如果要下班，先判断超人是否还有未完成的订单
+            if (paraModel.WorkStatus == ClienteWorkStatus.Status1.GetHashCode())  //如果要下班，先判断超人是否还有未完成的订单
             {
                 //查询当前超人有无已接单但是未完成的订单
                 int ordercount = clienterDao.QueryOrderount(new Model.ParameterModel.Clienter.ChangeWorkStatusPM() { Id = paraModel.Id });
@@ -67,7 +67,7 @@ namespace Ets.Service.Provider.Clienter
             int changeResult = clienterDao.ChangeWorkStatusToSql(paraModel);
             if (changeResult <= 0)
             {
-                if (paraModel.WorkStatus == WorkStatus.Status0.GetHashCode())
+                if (paraModel.WorkStatus == ClienteWorkStatus.Status0.GetHashCode())
                 {
                     return ChangeWorkStatusEnum.WorkError; //上班失败
                 }
@@ -78,7 +78,7 @@ namespace Ets.Service.Provider.Clienter
             }
             else
             {
-                if (paraModel.WorkStatus == WorkStatus.Status0.GetHashCode())
+                if (paraModel.WorkStatus == ClienteWorkStatus.Status0.GetHashCode())
                 {
                     return ChangeWorkStatusEnum.WorkSuccess;  //上班成功
                 }
@@ -134,7 +134,7 @@ namespace Ets.Service.Provider.Clienter
                         model.receviceAddress = item.ReceviceAddress;
                     else
                     {
-                        model.receviceAddress = ConstValues.ReceviceAddress;
+                        model.receviceAddress = OrderConst.ReceviceAddress;
                     }
 
                     model.recevicePhone = item.RecevicePhoneNo;
@@ -144,7 +144,7 @@ namespace Ets.Service.Provider.Clienter
                     model.OrderCount = item.OrderCount;
                     model.GroupId = item.GroupId;
                     model.HadUploadCount = item.HadUploadCount;
-                    if (item.GroupId == GroupEnum.Group3.GetHashCode()) //全时 需要做验证码验证
+                    if (item.GroupId == GroupType.Group3.GetHashCode()) //全时 需要做验证码验证
                         model.NeedPickupCode = 1;
                     #region 计算经纬度     待封装  add by caoheyang 20150313
 
@@ -597,7 +597,7 @@ namespace Ets.Service.Provider.Clienter
                 return model;
             }
             //获取该订单信息和该  骑士现在的 收入金额
-            if (myOrderInfo.GroupId == GroupEnum.Group3.GetHashCode() && !string.IsNullOrWhiteSpace(myOrderInfo.PickupCode)
+            if (myOrderInfo.GroupId == GroupType.Group3.GetHashCode() && !string.IsNullOrWhiteSpace(myOrderInfo.PickupCode)
                 && pickupCode != myOrderInfo.PickupCode) //全时订单 判断 取货码是否正确             
             {
                 model.FinishOrderStatus = FinishOrderStatus.PickupCodeError;
@@ -900,7 +900,7 @@ namespace Ets.Service.Provider.Clienter
                     IsPayOrderCommission = false;
                     orderDao.UpdateJoinWithdraw(myOrderInfo.Id);//把订单加入到已增加可提现里
 
-                    if (orderOther.HadUploadCount >= orderOther.NeedUploadCount && orderOther.OrderStatus == ConstValues.ORDER_FINISH)
+                    if (orderOther.HadUploadCount >= orderOther.NeedUploadCount && orderOther.OrderStatus ==OrderStatus.Status1.GetHashCode())
                     {
                         CheckOrderPay(myOrderInfo.Id);
                     }
@@ -908,7 +908,7 @@ namespace Ets.Service.Provider.Clienter
                 #endregion
 
                 if (IsPayOrderCommission && orderOther.OrderCreateTime > Convert.ToDateTime(date)
-                   && orderOther.OrderStatus == ConstValues.ORDER_FINISH)
+                   && orderOther.OrderStatus == OrderStatus.Status1.GetHashCode())
                 {
                     UpdateClienterMoney(myOrderInfo, uploadReceiptModel, orderOther);
                 }
@@ -1153,11 +1153,11 @@ namespace Ets.Service.Provider.Clienter
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotExist);  //订单不存在
 
             }
-            if (myorder.Status == ConstValues.ORDER_CANCEL)   //判断订单状态是否为 已取消
+            if (myorder.Status == OrderStatus.Status3.GetHashCode())   //判断订单状态是否为 已取消
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(RushOrderStatus.OrderHadCancel);  //订单已被取消
             }
-            if (myorder.Status == ConstValues.ORDER_ACCEPT || myorder.Status == ConstValues.ORDER_FINISH)  //订单已接单，被抢  或 已完成
+            if (myorder.Status == OrderStatus.Status2.GetHashCode() || myorder.Status == OrderStatus.Status1.GetHashCode())  //订单已接单，被抢  或 已完成
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotAllowRush);
             }

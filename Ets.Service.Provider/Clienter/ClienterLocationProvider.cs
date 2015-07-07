@@ -31,13 +31,13 @@ namespace Ets.Service.Provider.Clienter
             try
             {
                 long id = clienterLocationDao.Insert(TranslateInsertModel(model));
-                return ResultModel<object>.Conclude(SystemEnum.Success,
+                return ResultModel<object>.Conclude(SystemState.Success,
                     new { PushTime = GlobalConfigDao.GlobalConfigGet(0).UploadTimeInterval });
             }
             catch (Exception ex)
             {
                 LogHelper.LogWriterFromFilter(ex);
-                return ResultModel<object>.Conclude(SystemEnum.SystemError,
+                return ResultModel<object>.Conclude(SystemState.SystemError,
                       new { PushTime = 0});
             }
 
