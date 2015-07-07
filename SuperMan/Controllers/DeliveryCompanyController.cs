@@ -5,9 +5,13 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Ets.Model.DomainModel.DeliveryCompany;
+using Ets.Service.Provider.Common;
+using Ets.Service.Provider.DeliveryCompany;
+using ETS.Util;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using SuperMan.App_Start;
 
 namespace SuperMan.Controllers
 {
@@ -15,14 +19,46 @@ namespace SuperMan.Controllers
     /// <summary>
     /// 物流公司相关业务 
     /// </summary>
+    [WebHandleError]
     public class DeliveryCompanyController : BaseController
     {
-        // GET: DeliveryCompany
-        public ActionResult Index()
-        {
+
+        public ActionResult DeliveryCompany()
+        { 
+            int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
+
+             
+            ViewBag.deliveryCompanyList = new DeliveryCompanyProvider().Get();//获取物流公司
+            var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria()
+            {
+                Status = -1,
+                GroupId = SuperMan.App_Start.UserContext.Current.GroupId 
+
+            };
+            if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
+            {
+                return View();
+            }
             return View();
+            //ViewBag.openCityList.Result.AreaModels;
+            //var pagedList = iDistributionProvider.GetClienteres(criteria);
+            //return System.Web.UI.WebControls.View();
         }
 
+        [HttpPost]
+        public ActionResult PostDeliveryCompany(int pageindex = 1)
+        {
+            var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria();
+            TryUpdateModel(criteria);
+
+            int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
+             
+            if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
+            {
+                return PartialView("_DeliveryCompanyList");
+            } 
+            return PartialView("_DeliveryCompanyList", null);
+        }
 
 
         /// <summary>

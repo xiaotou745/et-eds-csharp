@@ -97,9 +97,35 @@ namespace Ets.Model.DataModel.DeliveryCompany
         /// </summary>
 
         public int ClienterQuantity { get; set; }
+        /// <summary> 
+        /// 商家数量 
+        /// </summary> 
+        public int BusinessQuantity { get; set; }
 
+        /// <summary>
 
+        /// 创建时间
 
+        /// </summary>
+
+        public DateTime CreateTime { get; set; }
+
+        /// <summary>
+
+        /// 创建人 
+        /// </summary> 
+        public string CreateName { get; set; }
+
+        /// <summary> 
+        /// 修改人 
+        /// </summary>
+
+        public string ModifyName { get; set; }
+
+        /// <summary> 
+        /// 修改时间 
+        /// </summary> 
+        public DateTime ModifyTime { get; set; } 
     }
 
 }

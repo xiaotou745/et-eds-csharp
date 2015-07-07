@@ -1,0 +1,38 @@
+﻿
+@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.DeliveryCompany.DeliveryCompanyModel>
+
+@using Ets.Service.Provider.Common
+@using ETS.Util
+@using Webdiyer.WebControls.Mvc
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+    <thead> 
+        <tr class="tdbg">
+            <th width="%5">编号</th>
+            <th>物流公司名称</th>
+            <th>物流公司Code</th>
+            <th>结算类型</th>
+            <th>骑士固定金额值</th>
+            <th>骑士结算比例值</th>
+            <th>物流公司固定金额值</th>
+            <th>物流公司结算比例值</th>
+            <th>商家数量</th>
+            <th>骑士数量</th>
+            <th>创建人</th>
+            <th>创建时间</th>
+            <th>修改人</th>
+            <th>修改时间</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+    </tbody>
+
+</table>
+@{
+    if (Model != null)
+    {
+        ViewBag.ActionName = "PostDeliveryCompany";
+        @Html.Partial("~/views/shared/PagerControl.cshtml", Model)
+    }
+}
