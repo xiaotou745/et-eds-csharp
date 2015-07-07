@@ -36,6 +36,7 @@ using Ets.Service.IProvider.Distribution;
 using Ets.Model.DomainModel.Statistics;
 using Ets.Service.Provider.Statistics;
 using Ets.Service.IProvider.Statistics;
+using ETS.Enums;
 namespace SuperMan.Controllers
 {
     [WebHandleError]
@@ -100,13 +101,13 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult AuditOK(int id)
         {
-            bool b = iBusinessProvider.UpdateAuditStatus(id, ETS.Enums.EnumStatusType.审核通过);
+            bool b = iBusinessProvider.UpdateAuditStatus(id, AuditStatus.Status1);
             return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.DenyGet);
         }
         [HttpPost]
         public JsonResult AuditCel(int id)
         {
-            iBusinessProvider.UpdateAuditStatus(id, ETS.Enums.EnumStatusType.审核取消);
+            iBusinessProvider.UpdateAuditStatus(id, AuditStatus.Status0);
             return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.DenyGet);
         }
 

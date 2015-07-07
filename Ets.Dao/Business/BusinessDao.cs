@@ -57,7 +57,7 @@ namespace Ets.Dao.Business
                     whereStr += " and o.Status=" + paraModel.Status.ToString();
                 }
 
-                if (paraModel.Status == OrderConst.ORDER_FINISH)
+                if (paraModel.Status == OrderStatus.Status1.GetHashCode())
                 {
                     //如果是订单已完成就用完成时间倒序
                     orderByColumn = " o.ActualDoneDate DESC ";  //排序条件
@@ -377,6 +377,10 @@ and a.PhoneNo=@PhoneNo";
                                     ,ISNULL(b.BalancePrice,0) BalancePrice
                                     ,ISNULL(b.AllowWithdrawPrice,0) AllowWithdrawPrice";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
+            if (!string.IsNullOrWhiteSpace(criteria.RecommendPhone))
+            {
+                sbSqlWhere.AppendFormat(" AND b.RecommendPhone='{0}' ", criteria.RecommendPhone.Trim());
+            }
             if (!string.IsNullOrEmpty(criteria.businessName))
             {
                 sbSqlWhere.AppendFormat(" AND b.Name='{0}' ", criteria.businessName.Trim());
@@ -437,8 +441,8 @@ and a.PhoneNo=@PhoneNo";
         public int InsertBusiness(RegisterInfoPM model)
         {
             const string insertSql = @"         
-insert into dbo.business (City,PhoneNo,PhoneNo2,Password,CityId )
-values( @City,@PhoneNo,@PhoneNo2,@Password,@CityId )
+insert into dbo.business (City,PhoneNo,PhoneNo2,Password,CityId,RecommendPhone)
+values( @City,@PhoneNo,@PhoneNo2,@Password,@CityId ,@RecommendPhone)
 select @@IDENTITY";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -447,6 +451,7 @@ select @@IDENTITY";
             dbParameters.AddWithValue("@PhoneNo", model.phoneNo);
             dbParameters.AddWithValue("@PhoneNo2", model.phoneNo);
             dbParameters.AddWithValue("@CityId", model.CityId);
+            dbParameters.AddWithValue("@RecommendPhone", model.RecommendPhone);
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
         }
 
@@ -598,20 +603,20 @@ order by a.id desc
         /// <param name="enumStatusType"></param>
         /// <param name="busiAddress"></param>
         /// <returns></returns>
-        public bool UpdateAuditStatus(int id, EnumStatusType enumStatusType)
+        public bool UpdateAuditStatus(int id, AuditStatus enumStatusType)
         {
             var juWangKeBusiAuditUrl = ConfigSettings.Instance.JuWangKeBusiAuditCallBack;
             bool reslut = false;
             try
             {
                 StringBuilder sql = new StringBuilder();
-                if (enumStatusType == EnumStatusType.审核通过)
+                if (enumStatusType == AuditStatus.Status1)
                 {
-                    sql.AppendFormat(" update business set Status={0} ", ConstValues.BUSINESS_AUDITPASS);
+                    sql.AppendFormat(" update business set Status={0} ", BusinessStatus.Status1.GetHashCode());
                 }
-                else if (enumStatusType == EnumStatusType.审核取消)
+                else if (enumStatusType == AuditStatus.Status0)
                 {
-                    sql.AppendFormat(" update business set Status={0} ", ConstValues.BUSINESS_AUDITCANCEL);
+                    sql.AppendFormat(" update business set Status={0} ", BusinessStatus.Status4.GetHashCode());
                 }
                
                 sql.Append(" where id=@id;");
@@ -624,7 +629,7 @@ order by a.id desc
                     //调用第三方接口 ，聚网客商户审核通过后调用接口
                     //这里不建议使用 1 数字，而是根据 配置文件中的 appkey来获取 groupid
                     var busi = GetBusiness(id);
-                    if (busi.GroupId == 1 && busi.OriginalBusiId > 0 && enumStatusType == EnumStatusType.审核通过)
+                    if (busi.GroupId == 1 && busi.OriginalBusiId > 0 && enumStatusType == AuditStatus.Status1)
                     {
                         string str = HTTPHelper.HttpPost(juWangKeBusiAuditUrl, "supplier_id=" + busi.OriginalBusiId);
                     }
@@ -786,8 +791,8 @@ where b.PhoneNo=@PhoneNo and isnull(g.IsModifyBind,1)=1";
                 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("businessId",DbType.Int32,4).Value=BusinessId;
-            parm.Add("order_new", DbType.Int32, 4).Value = ConstValues.ORDER_NEW;
-            parm.Add("order_Finish", DbType.Int32, 4).Value = ConstValues.ORDER_FINISH;
+            parm.Add("order_new", DbType.Int32, 4).Value = OrderStatus.Status0.GetHashCode();
+            parm.Add("order_Finish", DbType.Int32, 4).Value = OrderStatus.Status1.GetHashCode();
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             IList<BusiOrderCountResultModel> list = MapRows<BusiOrderCountResultModel>(dt);
             if (list == null || list.Count <= 0)
@@ -853,7 +858,7 @@ where b.PhoneNo=@PhoneNo and isnull(g.IsModifyBind,1)=1";
                                     ,IsModifyBind
                           FROM [group] WHERE IsValid=@IsValid";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@IsValid", ConstValues.GroupIsIsValid);
+            parm.AddWithValue("@IsValid", 1);
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
             var list = ConvertDataTableList<GroupModel>(dt);
             return list;
@@ -954,7 +959,7 @@ where b.PhoneNo=@PhoneNo and isnull(g.IsModifyBind,1)=1";
             string sql = string.Format(@"UPDATE dbo.[order] SET [Status]=@Status 
                             output Inserted.Id,GETDATE(),'{0}','{1}',Inserted.businessId,Inserted.[Status],{2}
                             into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
-                            WHERE OriginalOrderNo=@OriginalOrderNo and OrderFrom=@OrderFrom ", SuperPlatform.商家, ConstValues.CancelOrder, (int)SuperPlatform.商家);
+                            WHERE OriginalOrderNo=@OriginalOrderNo and OrderFrom=@OrderFrom ", SuperPlatform.FromBusiness, OrderConst.CancelOrder, (int)SuperPlatform.FromBusiness);
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OriginalOrderNo", oriOrderNo);
             parm.AddWithValue("@OrderFrom", orderFrom);
@@ -1120,7 +1125,7 @@ select SCOPE_IDENTITY() as id;
             IDbParameters parm = DbHelper.CreateDbParameters();
 
             parm.AddWithValue("@CheckPicUrl", picName);
-            parm.AddWithValue("@Status", ConstValues.BUSINESS_AUDITPASSING);
+            parm.AddWithValue("@Status", BusinessStatus.Status3.GetHashCode());
             parm.AddWithValue("@busiID", busiId);
 
             try
@@ -2284,7 +2289,21 @@ VALUES
             IList<BusinessOptionLog> list = ConvertDataTableList<BusinessOptionLog>(dt);
             return list.ToList();
         }
+
         /// <summary>
+        /// 判断推荐人手机号是否正确 2015年7月6日14:51:38 茹化肖
+        /// </summary>
+        /// <param name="phoneNum"></param>
+        /// <returns></returns>
+        public bool CheckRecommendPhone(string phoneNum)
+        {
+            const string sql = @"SELECT COUNT(1) FROM dbo.business(NOLOCK) WHERE Status=1 AND PhoneNo=@PhoneNo";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@PhoneNo", DbType.String).Value = phoneNum;
+            object obj = DbHelper.ExecuteScalar(SuperMan_Read, sql,parm);
+            return ParseHelper.ToInt(obj, 0) > 0;
+        }
+		/// <summary>
         /// 获取商户和快递公司关系列表
         /// danny-20150706
         /// </summary>

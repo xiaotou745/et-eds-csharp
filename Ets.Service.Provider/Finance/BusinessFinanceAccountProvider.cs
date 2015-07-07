@@ -64,7 +64,7 @@ namespace Ets.Service.Provider.Finance
                     UpdateBy = cardBindBpm.CreateBy//新增时最后修改人与新增人一致  当前登录人
                 });
                 tran.Complete();
-                return ResultModel<object>.Conclude(SystemEnum.Success);
+                return ResultModel<object>.Conclude(SystemState.Success);
             }
         }
 
@@ -94,7 +94,7 @@ namespace Ets.Service.Provider.Finance
                     UpdateBy = cardModifyBpm.UpdateBy//修改人  当前登录人
                 });
                 tran.Complete();
-                return ResultModel<object>.Conclude(SystemEnum.Success);
+                return ResultModel<object>.Conclude(SystemState.Success);
             }
         }      
 

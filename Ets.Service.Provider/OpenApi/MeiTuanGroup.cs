@@ -261,9 +261,9 @@ namespace Ets.Service.Provider.OpenApi
             store.store_name = fromModel.wm_poi_name;//店铺名称
             store.address = fromModel.wm_poi_address;//店铺地址
             store.phone = fromModel.wm_poi_phone;//店铺电话
-            store.group = OrderConst.OrderFrom4;//店铺电话
+            store.group = GroupType.Group4.GetHashCode();//店铺电话
             model.remark = fromModel.caution;//备注
-            model.status = OrderConst.OrderStatus30;//初始化订单状态 第三方代接入
+            model.status =OrderStatus.Status30.GetHashCode();//初始化订单状态 第三方代接入
             model.create_time = DateTime.Now;//订单发单时间 创建时间
             model.payment = fromModel.pay_type;//支付类型
             model.is_pay = fromModel.pay_type != 1;//目前货到付款时取未支付，在线支付取已支付
@@ -288,7 +288,7 @@ namespace Ets.Service.Provider.OpenApi
                 model.order_details = details; //订单ID
             }
 
-            model.orderfrom = OrderConst.OrderFrom4;// 订单来源  美团订单的订单来源是 4
+            model.orderfrom = GroupType.Group4.GetHashCode();// 订单来源  美团订单的订单来源是 4
 
             model.receive_time = TimeHelper.TimeStampToDateTime(fromModel.ctime);//美团不传递，E代送必填 要求送餐时间 
             #endregion
@@ -306,7 +306,7 @@ namespace Ets.Service.Provider.OpenApi
                 model.businessId = businessId;
             }
             BusListResultModel business = new BusinessDao().GetBusiness(businessId);
-            if (business.Status != ConstValues.BUSINESS_AUDITPASS)//商户非审核通过不允许接单
+            if (business.Status != BusinessStatus.Status1.GetHashCode())//商户非审核通过不允许接单
             {
                 return null;
             }

@@ -92,21 +92,7 @@ namespace ETS.Enums
     ///骑士余额流水   交易类型(1：订单佣金 2：取消订单 3：提现申请 4：提现拒绝 5：打款失败 6：系统奖励 7：系统赔偿) 枚举 add by caoheyang 20150509
     /// </summary>
     public enum ClienterBalanceRecordRecordType
-    {
-        //[DisplayText("佣金")]
-        //Commission = 1,
-        //[DisplayText("奖励")]
-        //Award = 2,
-        //[DisplayText("提现")]
-        //Withdraw = 3,
-        //[DisplayText("取消订单赔偿")]
-        //QuXiaoOrder = 4,
-        //[DisplayText("无效订单扣款")]
-        //WuXiaoOrder = 5,
-        //[DisplayText("提现失败返现")]
-        //Return = 6,
-        //[DisplayText("取消订单扣款")]
-        //CancleOrderReturn = 7
+    {    
         [DisplayText("订单佣金")]
         OrderCommission = 1,
         [DisplayText("取消订单")]
@@ -123,16 +109,7 @@ namespace ETS.Enums
         SystemCompensation = 7,
         [DisplayText("余额调整")]
         BalanceAdjustment = 8
-
-
     }
-    
-
-
-
-
-
-
 
     /// <summary>
     ///骑士提现 提现状态(1待审核 2 审核通过 3打款完成 -1审核拒绝 -2 打款失败) 枚举 add by caoheyang 20150509
@@ -250,22 +227,6 @@ namespace ETS.Enums
     /// </summary>
     public enum BusinessBalanceRecordRecordType
     {
-        //[DisplayText("订单餐费")]
-        //OrderMeals = 1,
-        //[DisplayText("配送费")]
-        //PostMoney = 2,
-        //[DisplayText("提现")]
-        //Withdraw = 3,
-        //[DisplayText("充值")]
-        //Recharge = 4,
-        //[DisplayText("提现失败返现")]
-        //Return = 5,
-        //[DisplayText("取消订单返现")]
-        //CancelOrderReturn = 6,
-        //[DisplayText("扣商家结算费")]
-        //SettleMoney = 7,
-        //[DisplayText("返还商家结算费")]
-        //ReturnBusinessReceivable = 8
         [DisplayText("发布订单")]
         PublishOrder = 1,
         [DisplayText("取消订单")]
@@ -286,7 +247,6 @@ namespace ETS.Enums
         Recharge = 9
         
     }
-
 
     /// <summary>
     ///商户提现 提现状态(1待审核 2 审核通过 3打款完成 -1审核拒绝 -2 打款失败) 枚举 add by caoheyang 20150509
@@ -398,4 +358,38 @@ namespace ETS.Enums
         OrderChildPay = 1
     }
     #endregion
+
+    /// <summary>
+    /// 获取银行列表
+    /// wc
+    /// </summary>
+    public enum BankStatus
+    {
+        [DisplayText("成功")]
+        Success = 1,
+        [DisplayText("请传递版本号")]
+        NoVersion = 100,
+        [DisplayText("无配置文件")]
+        NoXmlConfig = 101,
+        [DisplayText("失败")]
+        Failed = 102
+    }
+
+    public enum AliPayStatus
+    {
+        [DisplayText("成功")]
+        success = 1,
+        [DisplayText("失败")]
+        fail = 0
+    }
+
+
+    public enum GetMyBalanceStatus
+    {
+        Success,
+        [DisplayText("失败")]
+        Failed,
+        [DisplayText("手机号不能为空")]
+        PhoneEmpty
+    }   
 }

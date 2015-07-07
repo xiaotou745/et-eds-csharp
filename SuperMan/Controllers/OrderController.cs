@@ -19,6 +19,7 @@ using Ets.Model.ParameterModel.Order;
 using ETS.Util;
 using Ets.Model.Common;
 using Ets.Service.Provider.Clienter;
+using ETS.Enums;
 namespace SuperMan.Controllers
 {
     [WebHandleError]
@@ -200,7 +201,7 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult RushOrder(int SuperID, string OrderNo)
         {
-            //if (SuperID == -1) //超人id验证
+            //if (SuperID == -1) //超人id验证 
             //    return Json(new ResultModel(false, "超人不能为空"), JsonRequestBehavior.AllowGet);
 
             if (string.IsNullOrEmpty(OrderNo)) //订单号码非空验证
@@ -208,7 +209,7 @@ namespace SuperMan.Controllers
             var order = iOrderProvider.GetOrderByNo(OrderNo);
             if (order == null) //查询订单是否存在
                 return Json(new ResultModel(false, "订单不存在"), JsonRequestBehavior.AllowGet);
-            if (order.Status != Ets.Model.Common.ConstValues.ORDER_NEW)  //查询订单是否被抢
+            if (order.Status !=OrderStatus.Status0.GetHashCode())  //查询订单是否被抢
                 return Json(new ResultModel(false, "订单已被抢或者已完成"), JsonRequestBehavior.AllowGet);
             if (SuperID == -1) //未指派超人 ，触发极光推送  ，指派超人的情况下，建立订单和超人的关系
             {

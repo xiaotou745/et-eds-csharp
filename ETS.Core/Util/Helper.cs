@@ -19,11 +19,11 @@ namespace ETS.Util
         public static string generateCode(string phoneNo, AppType appType)
         {
             string result = "";
-            if (appType == AppType.B端)
+            if (appType == AppType.FormB)
             {
                 result = "1" + DateTime.Now.ToString("MMddHHmm") + phoneNo.Substring(6);
             }
-            if (appType == AppType.C端)
+            if (appType == AppType.FormC)
             {
                 result = "0" + DateTime.Now.ToString("MMddHHmm") + phoneNo.Substring(6);
             }

@@ -1,0 +1,67 @@
+﻿@using Ets.Model.DomainModel.DeliveryCompany
+@using ETS.Util
+
+@{
+    Layout = null;
+}
+@if (ViewBag.Message != null)
+{
+    <span style="font-weight:100; font-size:20px;">@ViewBag.Message</span>
+}
+else if (ViewBag.Datas.Count == 0)
+{
+    <span style="font-weight:100; font-size:20px;">不能上传空的文件！</span>
+}
+else
+{
+    var models = ViewBag.Datas;
+    List<BatchImportClienterExcelDM> canadds = new List<BatchImportClienterExcelDM>();
+
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+        <thead>
+            <tr class="tdbg">
+                <th>行号</th>
+                <th>姓名</th>
+                <th>手机号</th>
+                <th>城市</th>
+                <th>身份证号</th>
+                <th>是否允许导入</th>
+                <th>备注</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @for (int i = 0; i < models.Count; i++)
+            {
+                <tr>
+                    <td>@(i + 1)</td>
+                    <td>@models[i].Name</td>
+                    <td>@models[i].Phone</td>
+                    <td>@models[i].City</td>
+                    <td>@models[i].IdCard</td>
+                    <td>
+                        @if (string.IsNullOrWhiteSpace(models[i].Remark))
+                        {
+                            <span> √</span>
+                            canadds.Add(models[i]);
+                        }
+                        else
+                        {
+                            <span style="color: red"> ☓</span>
+                        }
+                    </td>
+                    <td><span style="color: red;">@models[i].Remark</span></td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+    if (canadds.Count > 0)
+    {
+        <input type="hidden" name="jsondata" id="_jsondata" value="@JsonHelper.ToJson(canadds)">
+    }
+
+}
+
+    

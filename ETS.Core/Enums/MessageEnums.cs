@@ -85,4 +85,21 @@ namespace ETS.Enums
         [DisplayText("定时发布")]
         OnTime = 2
     }
+
+    public enum SendCheckCodeStatus
+    {
+        [DisplayText("正在发送")]
+        Sending,
+
+        [DisplayText("手机号码无效")]
+        InvlidPhoneNumber,
+
+        [DisplayText("发送失败")]
+        SendFailure,
+        [DisplayText("该用户已注册")]
+        AlreadyExists,
+
+        [DisplayText("该用户不存在")]
+        NotExists
+    }
 }
