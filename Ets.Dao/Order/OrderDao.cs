@@ -790,6 +790,7 @@ select @@IDENTITY ";
                                         ,c.TrueName ClienterTrueName
                                         ,c.TrueName ClienterName
                                         ,c.AccountBalance AccountBalance
+                                        ,c.IsNotRealOrder IsNotRealOrder
                                         ,b.GroupId
                                         ,case when o.orderfrom=0 then '客户端' else g.GroupName end GroupName
                                         ,o.OriginalOrderNo
