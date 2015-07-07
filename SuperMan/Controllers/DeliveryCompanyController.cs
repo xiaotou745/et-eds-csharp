@@ -7,6 +7,8 @@ using System.Web;
 using System.Web.Mvc;
 using Ets.Model.Common;
 using Ets.Model.DomainModel.DeliveryCompany;
+using Ets.Service.IProvider.DeliveryCompany;
+using Ets.Service.Provider.DeliveryCompany;
 using ETS.Util;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
@@ -20,6 +22,8 @@ namespace SuperMan.Controllers
     /// </summary>
     public class DeliveryCompanyController : BaseController
     {
+
+        private readonly IDeliveryCompanyProvider deliveryCompanyProvider = new DeliveryCompanyProvider();
         // GET: DeliveryCompany
         public ActionResult Index()
         {
@@ -151,7 +155,8 @@ namespace SuperMan.Controllers
        {
            string jsondatas = Request.Form["datas"];  //得到页面上可导入的数据
            //序列化得到数据
-           var models = JsonHelper.JsonConvertToObject<List<BatchImportClienterExcelDM>>(jsondatas); 
+           var models = JsonHelper.JsonConvertToObject<List<BatchImportClienterExcelDM>>(jsondatas);
+           deliveryCompanyProvider.DoBatchImportClienter(companyId, models);
            return new JsonResult (){  Data="成功"};
        }
     }
