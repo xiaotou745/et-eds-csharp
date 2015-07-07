@@ -518,6 +518,7 @@ select @@IDENTITY ";
                                     ,o.[IsPay]
                                     ,o.[Amount]
                                     ,o.[OrderCommission]
+                                    ,o.[RealOrderCommission]
                                     ,o.[DistribSubsidy]
                                     ,o.[WebsiteSubsidy]
                                     ,o.[Remark]
@@ -789,6 +790,7 @@ select @@IDENTITY ";
                                         ,c.TrueName ClienterTrueName
                                         ,c.TrueName ClienterName
                                         ,c.AccountBalance AccountBalance
+                                        ,c.IsNotRealOrder IsNotRealOrder
                                         ,b.GroupId
                                         ,case when o.orderfrom=0 then '客户端' else g.GroupName end GroupName
                                         ,o.OriginalOrderNo
@@ -3031,6 +3033,58 @@ where   Id = @OrderId and FinishAll = 0";
             {
                 return -1;
             }
+        }
+        /// <summary>
+        /// 更新订单是真实佣金
+        /// zhaohailong20150706
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="realOrderCommission"></param>
+        /// <returns></returns>
+        public int UpdateOrderRealOrderCommission(string orderId, decimal realOrderCommission)
+        {
+            string sql = @" update [Order] set RealOrderCommission=@realOrderCommission where id=@orderId";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@realOrderCommission", realOrderCommission);
+            dbParameters.AddWithValue("@OrderId", orderId);
+            return DbHelper.ExecuteNonQuery(SuperMan_Read, sql, dbParameters);
+        }
+
+        /// <summary>
+        /// 记录扣除网站补贴日志
+        ///  zhaohailong20150706
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="price"></param>
+        /// <returns></returns>
+        public bool InsertNotRealOrderLog(int orderId, decimal price)
+        {
+            string sql =
+                @"INSERT INTO OrderSubsidiesLog
+                                (Price
+                                ,OrderId
+                                ,InsertTime
+                                ,OptName
+                                ,Remark
+                                ,OrderStatus
+                                ,Platform 
+                                )
+                     VALUES
+                                (@Price
+                                ,@OrderId
+                                ,Getdate()
+                                ,'admin'
+                                ,@Remark
+                                ,1
+                                ,3);";
+            string remark = string.Format("扣除网站补贴{0}元", price);
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Price", price);
+            parm.AddWithValue("@OrderId", orderId);
+            parm.AddWithValue("@Remark", remark);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+
         }
     }
 }
