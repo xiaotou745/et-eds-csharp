@@ -79,7 +79,7 @@ namespace ETS.Enums
         [DisplayText("未审核")]
         Status2 = 2,
         [DisplayText("审核中")]
-        Status3 = 3
+        Status3 = 3        
     }
 
     public enum GetClienterStatus
