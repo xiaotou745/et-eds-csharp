@@ -42,13 +42,12 @@ namespace Ets.Service.Provider.DeliveryCompany
         /// <param name="companyId">公司id</param>
         /// <param name="models">骑士集合</param>
         /// <returns></returns>
-        public ResultModel<object> DoBatchImportClienter(int companyId, List<BatchImportClienterExcelDM> models)
+        public ResultModel<string> DoBatchImportClienter(int companyId, List<BatchImportClienterExcelDM> models)
         {
-            dynamic res = new ExpandoObject();
-            res.InsertCount = 0; //成功数量
-            res.UpdateCount = 0; //更新数量
-            res.ErrorCount = 0; //失败数量
-            res.ErrorPhones = new List<string>(); //失败数量
+            int insertCount = 0; //成功数量
+            int updateCount = 0; //更新数量
+            int errorCount = 0; //失败数量
+             List<string> errorPhones = new List<string>(); //失败数量
             foreach (BatchImportClienterExcelDM temp in models)
             {
                 ClienterModel clienterInfo= clienterDao.GetUserInfoByUserPhoneNo(temp.Phone);
@@ -67,22 +66,27 @@ namespace Ets.Service.Provider.DeliveryCompany
                         CityCode = temp.CityCode, //城市编码
                         DeliveryCompanyId = companyId //物流公司id
                     });
-                    res.InsertCount = id > 0 ? (res.InsertCount + 1) : res.InsertCount; //新增数量+1
+                   insertCount = id > 0 ? (insertCount + 1) : insertCount; //新增数量+1
                 }
                 else
                 {
                     if (clienterInfo.TrueName == temp.Name && clienterInfo.IDCard == temp.IdCard) //做更新操作
                     {
-                        res.UpdateCount = res.UpdateCount + clienterDao.BindDeliveryCompany(clienterInfo.Id, companyId); // 成功  更新数量+1
+                       updateCount = updateCount + clienterDao.BindDeliveryCompany(clienterInfo.Id, companyId); // 成功  更新数量+1
                     }
                     else
                     {
-                        res.ErrorCount = res.ErrorCount + 1; //失败数量+1
-                        res.ErrorPhones.Add(temp.Phone);
+                        errorCount = errorCount+ 1; //失败数量+1
+                        errorPhones.Add(temp.Phone);
                     }
                 }
             }
-            return ResultModel<object>.Conclude(SystemState.Success,res);
+            string message = string.Format("新增成功骑士:{0}人，更新成功骑士{1}人，更新失败骑士{2}人。<br/>", insertCount, updateCount, errorCount);
+            if (errorPhones.Count > 0)
+            {
+                message = message + ",更新失败骑士的手机号码为:" + string.Join(",",errorPhones);
+            }
+            return ResultModel<string>.Conclude(SystemState.Success,message);
         }
     }
 }

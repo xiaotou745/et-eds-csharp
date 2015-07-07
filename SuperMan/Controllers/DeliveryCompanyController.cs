@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
 using Ets.Model.Common;
 using Ets.Model.DomainModel.Area;
@@ -34,6 +35,7 @@ namespace SuperMan.Controllers
         }
 
 
+        #region 物流公司批量导入骑士功能 add by caoheyang 20150706
 
         /// <summary>
         /// 批量导入骑士页面 add by caoheyang 20150706
@@ -156,7 +158,7 @@ namespace SuperMan.Controllers
                 }
 
                 if (string.IsNullOrWhiteSpace(model.Remark)
-                    && (list.Count(item => item.Phone == phone ) > 0))//验证xls中手机号是否重复
+                    && (list.Count(item => item.Phone == phone) > 0))//验证xls中手机号是否重复
                 {
                     model.Remark = model.Remark + "信息重复。";
                 }
@@ -176,8 +178,12 @@ namespace SuperMan.Controllers
             string jsondatas = Request.Form["datas"];  //得到页面上可导入的数据
             //序列化得到数据
             var models = JsonHelper.JsonConvertToObject<List<BatchImportClienterExcelDM>>(jsondatas);
-            ResultModel<object> res = deliveryCompanyProvider.DoBatchImportClienter(companyId, models);
-            return new JsonResult() { Data = "成功" };
-        }
+            ResultModel<string> res = deliveryCompanyProvider.DoBatchImportClienter(companyId, models);
+            return new JsonResult()
+            {
+                Data = res
+            };
+        } 
+        #endregion
     }
 }

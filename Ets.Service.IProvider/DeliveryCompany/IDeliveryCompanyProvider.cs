@@ -23,6 +23,6 @@ namespace Ets.Service.IProvider.DeliveryCompany
         /// <param name="companyId">公司id</param>
         /// <param name="models">骑士集合</param>
         /// <returns></returns>
-        ResultModel<object> DoBatchImportClienter(int companyId, List<BatchImportClienterExcelDM> models);
+        ResultModel<string> DoBatchImportClienter(int companyId, List<BatchImportClienterExcelDM> models);
     }
 }
