@@ -103,7 +103,7 @@ namespace Ets.Service.IProvider.Business
         /// <param name="id"></param>
         /// <param name="enumStatusType"></param>
         /// <returns></returns>
-        bool UpdateAuditStatus(int id, EnumStatusType enumStatusType);
+        bool UpdateAuditStatus(int id, AuditStatus enumStatusType);
 
         bool UpdateAuditStatus(int id, int enumStatus,string busiAddress);
 
@@ -369,6 +369,24 @@ namespace Ets.Service.IProvider.Business
         /// <param name="businessId"></param>
         /// <returns></returns>
         List<BusinessOptionLog> GetBusinessOpLog(int businessId);
+
+        /// <summary>
+        /// 获取商户和快递公司关系列表
+        /// danny-20150706
+        /// </summary>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        IList<BusinessExpressRelation> GetBusinessExpressRelationList(int businessId);
+
+        /// <summary>
+        /// 修改商户配送公司绑定关系
+        /// danny-20150706
+        /// </summary>
+        /// <param name="busiId">商户Id</param>
+        /// <param name="deliveryCompanyList">配送公司列表</param>
+        /// /// <param name="optName">操作人</param>
+        /// <returns></returns>
+        DealResultInfo ModifyBusinessExpress(int busiId, string deliveryCompanyList, string optName);
     }
 }
 

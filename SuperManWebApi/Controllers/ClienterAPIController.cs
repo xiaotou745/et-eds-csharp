@@ -113,7 +113,7 @@ namespace SuperManWebApi.Controllers
             degree.latitude = model.latitude;
             var pIndex = ParseHelper.ToInt(model.pageIndex, 1);
 
-            var pSize = ParseHelper.ToInt(model.pageSize, ConstValues.App_PageSize);
+            var pSize = ParseHelper.ToInt(model.pageSize, PageSizeType.App_PageSize.GetHashCode());
 
             var criteria = new ClientOrderSearchCriteria()
             {
@@ -145,7 +145,7 @@ namespace SuperManWebApi.Controllers
             degree.longitude = model.longitude;
             degree.latitude = model.latitude;
             var pIndex = ParseHelper.ToInt(model.pageIndex, 1);
-            var pSize = ParseHelper.ToInt(model.pageSize, ConstValues.App_PageSize);
+            var pSize = ParseHelper.ToInt(model.pageSize, PageSizeType.App_PageSize.GetHashCode());
             var criteria = new ClientOrderSearchCriteria()
             {
                 PagingRequest = new PagingResult(pIndex, pSize),
@@ -176,7 +176,7 @@ namespace SuperManWebApi.Controllers
             degree.longitude = ParseHelper.ToDouble(HttpContext.Current.Request["longitude"]);
             degree.latitude = ParseHelper.ToDouble(HttpContext.Current.Request["latitude"]);
             var pIndex = ParseHelper.ToInt(model.pageIndex, 1);
-            var pSize = ParseHelper.ToInt(model.pageSize, ConstValues.App_PageSize);
+            var pSize = ParseHelper.ToInt(model.pageSize, PageSizeType.App_PageSize.GetHashCode());
             var criteria = new ClientOrderSearchCriteria()
             {
                 PagingRequest = new PagingResult(pIndex, pSize),
@@ -265,45 +265,7 @@ namespace SuperManWebApi.Controllers
         public ResultModel<RushOrderResultModel> RushOrder_C(int userId, string orderNo)
         {         
             return new ClienterProvider().RushOrder_C(userId, orderNo);
-        }
-        ///// <summary>
-        ///// 完成订单 
-        ///// wc 该 ado
-        ///// </summary>
-        ///// <param name="userId">C端用户id</param>
-        ///// <param name="orderNo">订单号码</param>
-        ///// <param name="pickupCode">取货码</param>
-        ///// <returns></returns>        
-        //[HttpGet]
-        //public ResultModel<FinishOrderResultModel> FinishOrder_C(int userId, string orderNo, float completeLongitude, float CompleteLatitude, string pickupCode = null)
-        //{
-        //    if (userId == 0)  //用户id非空验证
-        //        return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.UserIdEmpty);
-        //    if (string.IsNullOrEmpty(orderNo)) //订单号码非空验证
-        //        return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderEmpty);           
-        //    FinishOrderResultModel finishModel = iClienterProvider.FinishOrder(userId, orderNo, completeLongitude, CompleteLatitude, pickupCode);
-        //    if (finishModel.Message == "1")  //完成
-        //    {
-        //        var clienter = iClienterProvider.GetUserInfoByUserId(userId);
-        //        var model = new FinishOrderResultModel();
-        //        model.userId = userId;
-        //        if (clienter.AccountBalance != null)
-        //            model.balanceAmount = clienter.AccountBalance.Value;
-        //        else
-        //            model.balanceAmount = 0.0m;
-        //        return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.Success, model);
-        //    }
-        //    else if (finishModel.Message == "3")
-        //    {
-        //        return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderHadCancel);
-        //    }
-        //    else if (finishModel.Message == FinishOrderStatus.PickupCodeError.ToString())
-        //        return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.PickupCodeError);
-        //    else
-        //    {
-        //        return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.Failed);
-        //    }
-        //}
+        }    
 
         /// <summary>
         /// 获取我的余额
@@ -320,7 +282,7 @@ namespace SuperManWebApi.Controllers
             var item = iClienterProvider.GetUserInfoByUserPhoneNo(phoneNo);
             var result = new Ets.Model.DataModel.Clienter.MyBalanceResultModel()
             {
-                MyBalance = item.AccountBalance == null ? 0 : item.AccountBalance
+                MyBalance = item.AccountBalance ?? 0
             };
             return ResultModel<Ets.Model.DataModel.Clienter.MyBalanceResultModel>.Conclude(ETS.Enums.FinishOrderStatus.Success, result);
         }
@@ -334,7 +296,7 @@ namespace SuperManWebApi.Controllers
         public ResultModel<MyBalanceListResultModel[]> GetMyBalanceDynamic(string phoneNo, int? pagedSize, int? pagedIndex)
         {
             int pIndex = ParseHelper.ToInt(pagedIndex.HasValue, 1);
-            int pSize = ParseHelper.ToInt(pagedSize.HasValue, ConstValues.App_PageSize);
+            int pSize = ParseHelper.ToInt(pagedSize.HasValue, PageSizeType.App_PageSize.GetHashCode());
             var criteria = new MyIncomeSearchCriteria()
             {
                 PagingRequest = new PagingResult(pIndex, pSize),
@@ -372,7 +334,7 @@ namespace SuperManWebApi.Controllers
                     return SimpleResultModel.Conclude(SendCheckCodeStatus.AlreadyExists);
                 }
                 key = RedissCacheKey.PostRegisterInfo_C + PhoneNumber;
-                msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode, ConstValues.MessageClinenter);
+                msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode, SystemConst.MessageClinenter);
             }
             else //修改密码
             {
@@ -382,7 +344,7 @@ namespace SuperManWebApi.Controllers
                     return SimpleResultModel.Conclude(SendCheckCodeStatus.NotExists);
                 }
                 key = RedissCacheKey.PostForgetPwd_C + PhoneNumber;
-                msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode, ConstValues.MessageClinenter);
+                msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode, SystemConst.MessageClinenter);
             }
             try
             {
@@ -392,7 +354,7 @@ namespace SuperManWebApi.Controllers
                 // 更新短信通道 
                 Task.Factory.StartNew(() =>
                 {
-                    SendSmsHelper.SendSendSmsSaveLog(PhoneNumber, msg, ConstValues.SMSSOURCE);
+                    SendSmsHelper.SendSendSmsSaveLog(PhoneNumber, msg, SystemConst.SMSSOURCE);
                 });
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.Sending);
 
@@ -424,12 +386,12 @@ namespace SuperManWebApi.Controllers
                 if (iClienterProvider.CheckClienterExistPhone(model.PhoneNumber))  //判断该手机号是否已经注册过
                     return SimpleResultModel.Conclude(SendCheckCodeStatus.AlreadyExists);
                 key = RedissCacheKey.PostRegisterInfoSoundCode_C + model.PhoneNumber;
-                msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCodeVoice, tempcode, ConstValues.MessageClinenter);
+                msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCodeVoice, tempcode, SystemConst.MessageClinenter);
             }
             else //修改密码
             {
                 key = RedissCacheKey.PostForgetPwdSoundCode_C + model.PhoneNumber;
-                msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCodeFindPwdVoice, tempcode, ConstValues.MessageClinenter);
+                msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCodeFindPwdVoice, tempcode, SystemConst.MessageClinenter);
             }
             try
             {
@@ -439,7 +401,7 @@ namespace SuperManWebApi.Controllers
                 // 更新短信通道 
                 Task.Factory.StartNew(() =>
                 {
-                    SendSmsHelper.SendSmsSaveLogNew(model.PhoneNumber, msg, ConstValues.SMSSOURCE);
+                    SendSmsHelper.SendSmsSaveLogNew(model.PhoneNumber, msg, SystemConst.SMSSOURCE);
                 });
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.Sending);
 

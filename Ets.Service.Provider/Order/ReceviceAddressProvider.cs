@@ -33,7 +33,7 @@ namespace Ets.Service.Provider.Order
                 MaxDate = maxDate,
                 Data = models
             };
-            return ResultModel<object>.Conclude(SystemEnum.Success, res);
+            return ResultModel<object>.Conclude(SystemState.Success, res);
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Ets.Service.Provider.Order
         public ResultModel<object> RemoveAddressB(RemoveAddressBPM model)
         {
             receviceAddressDao.RemoveAddressB(model);
-            return ResultModel<object>.Conclude(SystemEnum.Success);
+            return ResultModel<object>.Conclude(SystemState.Success);
         }
     }
 }

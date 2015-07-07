@@ -667,6 +667,7 @@
     <Content Include="Views\MessageManager\PostList.cshtml" />
     <Content Include="Views\MessageManager\Detail.cshtml" />
     <Content Include="Views\DeliveryCompany\BatchImportClienter.cshtml" />
+<Content Include="Views\DeliveryCompany\BatchImportClienterExcel.cshtml" />
     <Content Include="Views\DeliveryCompany\DeliveryCompany.cshtml" />
     <Content Include="Views\DeliveryCompany\_DeliveryCompanyList.cshtml" />
   </ItemGroup>

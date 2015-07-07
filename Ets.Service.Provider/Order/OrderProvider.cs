@@ -110,7 +110,7 @@ namespace Ets.Service.Provider.Order
                     resultModel.Status = from.Status.Value;
                     resultModel.HadUploadCount = from.HadUploadCount;
                     resultModel.GroupId = from.GroupId;
-                    if (from.GroupId == SystemConst.Group3) //全时 需要做验证码验证
+                    if (from.GroupId == GroupType.Group3.GetHashCode()) //全时 需要做验证码验证
                         resultModel.NeedPickupCode = 1;
 
                     if (from.BusiLatitude == null || from.BusiLatitude == 0 || from.BusiLongitude == null || from.BusiLongitude == 0)
@@ -179,7 +179,7 @@ namespace Ets.Service.Provider.Order
                     resultModel.businessPhone2 = from.BusinessPhone2;
                     resultModel.HadUploadCount = from.HadUploadCount;
                     resultModel.GroupId = from.GroupId;
-                    if (from.GroupId == SystemConst.Group3)
+                    if (from.GroupId == GroupType.Group3.GetHashCode())
                         resultModel.NeedPickupCode = 1;
 
                     if (from.PickUpCity != null)
@@ -316,7 +316,7 @@ namespace Ets.Service.Provider.Order
             to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额            
             to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(business.BusinessGroupId).CommissionFormulaMode);
             to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额           
-            to.Status = Convert.ToByte(OrderStatus.订单待抢单.GetHashCode());
+            to.Status = Convert.ToByte(OrderStatus.Status0.GetHashCode());
             to.TimeSpan = busiOrderInfoModel.TimeSpan;
             to.listOrderChild = busiOrderInfoModel.listOrderChlid;
 
@@ -489,7 +489,7 @@ namespace Ets.Service.Provider.Order
                 if (result > 0)
                 {
                     //确认接入订单时   扣除 商家结算费 
-                    if (orderStatus == OrderConst.OrderStatus0)
+                    if (orderStatus == OrderStatus.Status0.GetHashCode())
                     {
                         //扣商户金额
                         _businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
@@ -845,8 +845,7 @@ namespace Ets.Service.Provider.Order
         /// 2015年3月30日 11:44:28
         /// </summary>
         /// <param name="model"></param>
-        /// <returns></returns>
-        [ETS.Expand.ActionStatus(typeof(OrderPublicshStatus))]
+        /// <returns></returns>     
         public Ets.Model.Common.ResultModel<NewPostPublishOrderResultModel> NewPostPublishOrder_B(NewPostPublishOrderModel model)
         {
             try
@@ -943,7 +942,7 @@ namespace Ets.Service.Provider.Order
             else
             {
                 //商户必须是审核通过的， 商户审核通过 意味着 已经设置结算比例， 因为在后台管理系统中 商户审核通过时会验证商户结算比例是否设置
-                if (busi.Status != ConstValues.BUSINESS_AUDITPASS)
+                if (busi.Status != (byte)BusinessStatus.Status1.GetHashCode())
                 {
                     return ResultModel<NewPostPublishOrderResultModel>.Conclude(OrderPublicshStatus.BusinessNotAudit);
                 }
@@ -955,7 +954,7 @@ namespace Ets.Service.Provider.Order
 
             if (order != null)
             {
-                if (order.Status == ConstValues.ORDER_CANCEL)    // 在存在订单的情况下如果是去掉订单的状态，直接修改为订单待接单状态
+                if (order.Status == OrderStatus.Status3.GetHashCode())    // 在存在订单的情况下如果是去掉订单的状态，直接修改为订单待接单状态
                 {
                     int upResult = orderDao.UpdateOrderStatus_Other(new ChangeStatusPM_OpenApi() { groupid = model.OrderFrom, order_no = order.OriginalOrderNo, orderfrom = model.OrderFrom, remark = "第三方再次推送", status = 0 });
                     if (upResult > 0)
@@ -1109,8 +1108,7 @@ namespace Ets.Service.Provider.Order
             to.CommissionFormulaMode = business.StrategyId;
             to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额
 
-            to.Status = ConstValues.ORDER_NEW;
-
+            to.Status = (byte)OrderStatus.Status0.GetHashCode(); 
 
             //to.TimeSpan = busiOrderInfoModel.TimeSpan;
             to.listOrderChild = from.listOrderChlid;
@@ -1283,14 +1281,14 @@ namespace Ets.Service.Provider.Order
                 int currenStatus = orderDao.GetStatus(paramodel.order_no, paramodel.orderfrom);  //目前订单状态
                 if (currenStatus == -1) //订单不存在
                     return ResultModel<object>.Conclude(OrderApiStatusType.OrderNotExist);
-                else if (OrderConst.OrderStatus30 != currenStatus
-                    && OrderConst.OrderStatus0 != currenStatus)  //订单状态非30，,不允许取消订单
+                else if (OrderStatus.Status30.GetHashCode() != currenStatus
+                    && OrderStatus.Status0.GetHashCode() != currenStatus)  //订单状态非30，,不允许取消订单
                     return ResultModel<object>.Conclude(OrderApiStatusType.OrderIsJoin);
                 int result = orderDao.UpdateOrderStatus_Other(paramodel);  //更新第三方订单在E代送的状态成功
                 if (result > 0)
                 {
                     //当第三方取消订单时订单的状态为待接单时，需要返还商家结算费 TODO 目前只供美团使用
-                    if (currenStatus == OrderConst.OrderStatus0)
+                    if (currenStatus == OrderStatus.Status0.GetHashCode())
                     {
                         OrderListModel order = orderDao.GetOpenOrder(paramodel.order_no, paramodel.orderfrom);
                         BusinessDao businessDao = new BusinessDao();
@@ -1339,14 +1337,10 @@ namespace Ets.Service.Provider.Order
 
         public string CanOrder(string originalOrderNo, int group)
         {
-            var order = orderDao.GetOrderByOrderNoAndOrderFrom(originalOrderNo, group, 0);
-            //if (order.Status == OrderConst.ORDER_CANCEL)
-            //{
-            //    return "订单已经取消";
-            //}
-            if (order.Status == OrderConst.ORDER_NEW)
+            var order = orderDao.GetOrderByOrderNoAndOrderFrom(originalOrderNo, group, 0);    
+            if (order.Status == OrderStatus.Status0.GetHashCode())
             {
-                var k = orderDao.CancelOrderStatus(order.OrderNo, ConstValues.ORDER_CANCEL, "第三方取消订单", null);
+                var k = orderDao.CancelOrderStatus(order.OrderNo, OrderStatus.Status3.GetHashCode(), "第三方取消订单", null);
                 if (k > 0)
                 {
                     return "1"; //取消成功
@@ -1420,7 +1414,7 @@ namespace Ets.Service.Provider.Order
                 orderDM.ReceviceAddress = order.ReceviceAddress;
             else
             {
-                orderDM.ReceviceAddress = ConstValues.ReceviceAddress;
+                orderDM.ReceviceAddress = OrderConst.ReceviceAddress;
             }
             orderDM.Amount = order.Amount;
             orderDM.IsPay = Convert.ToBoolean(order.IsPay);
@@ -1447,7 +1441,7 @@ namespace Ets.Service.Provider.Order
 
             #region 是否允许修改小票
             orderDM.IsModifyTicket = true;
-            if (order.HadUploadCount >= order.OrderCount && order.Status == OrderStatus.订单完成.GetHashCode())
+            if (order.HadUploadCount >= order.OrderCount && order.Status == OrderStatus.Status1.GetHashCode())
             {
                 orderDM.IsModifyTicket = false;
             }
@@ -1530,7 +1524,7 @@ namespace Ets.Service.Provider.Order
             model.ExclusiveOrderTime = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(0).ExclusiveOrderTime); //商家专属骑士接单响应时间
             if (model.SearchType == (int)GetJobCMode.NewJob)//最新订单
             {
-                model.TopNum = ConstValues.App_PageSize.ToString();//50条
+                model.TopNum = PageSizeType.App_PageSize.GetHashCode().ToString();//50条
                 jobs = orderDao.GetLastedJobC(model);
             }
             else if (model.SearchType == (int)GetJobCMode.NearbyJob)//附近订单
@@ -1543,7 +1537,7 @@ namespace Ets.Service.Provider.Order
                 model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;// top 值
                 jobs = orderDao.GetEmployerJobC(model);
             }
-            return ResultModel<object>.Conclude(SystemEnum.Success, jobs);
+            return ResultModel<object>.Conclude(SystemState.Success, jobs);
         }
 
         public int GetOrderStatus(int orderId, int businessId)
@@ -1592,7 +1586,7 @@ namespace Ets.Service.Provider.Order
                 {
                     return ResultModel<bool>.Conclude(tempresult, false);
                 }
-                int result = orderDao.CancelOrderStatus(paramodel.OrderNo, OrderConst.OrderStatus3, "商家取消订单", OrderConst.OrderStatus0, order.SettleMoney);
+                int result = orderDao.CancelOrderStatus(paramodel.OrderNo,OrderStatus.Status3.GetHashCode(), "商家取消订单",OrderStatus.Status0.GetHashCode(), order.SettleMoney);
                 if (result > 0)
                 {
                     BusinessDao businessDao = new BusinessDao();
@@ -1644,7 +1638,7 @@ namespace Ets.Service.Provider.Order
             {
                 return CancelOrderStatus.VersionError;
             }
-            order = orderDao.GetOrderById(paramodel.OrderId, paramodel.BusinessId, OrderConst.OrderStatus0);
+            order = orderDao.GetOrderById(paramodel.OrderId, paramodel.BusinessId,OrderStatus.Status0.GetHashCode());
             if (order == null)
             {
                 return CancelOrderStatus.CancelOrderError;

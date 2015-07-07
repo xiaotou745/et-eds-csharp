@@ -79,8 +79,8 @@ namespace OpenApi.Controllers
             {
                 MeiTuanGroup mgroup = new MeiTuanGroup();
                 ChangeStatusPM_OpenApi model = new ChangeStatusPM_OpenApi();
-                model.orderfrom = OrderConst.OrderFrom4;// 订单来源  美团订单的订单来源是 4
-                model.status = OrderConst.OrderStatus3;// 取消订单
+                model.orderfrom = GroupType.Group4.GetHashCode();// 订单来源  美团订单的订单来源是 4
+                model.status =OrderStatus.Status3.GetHashCode();// 取消订单
                 model.remark = "第三方集团取消订单，同步E代送系统订单状态";
                 model.order_no = HttpContext.Current.Request["order_id"];// 订单号
                 if (HttpContext.Current.Request["sig"] == mgroup.GetSig(HttpContext.Current.Request))

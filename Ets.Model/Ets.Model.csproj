@@ -49,7 +49,6 @@
     <Compile Include="Common\AppVerionModel.cs" />
     <Compile Include="Common\BusinessCountManageList.cs" />
     <Compile Include="Common\ClienterCountManageList.cs" />
-    <Compile Include="Common\ConstValues.cs" />
     <Compile Include="Common\DealResultInfo.cs" />
     <Compile Include="Common\GlobalConfig.cs" />
     <Compile Include="Common\HomeCountTitleModel.cs" />
@@ -65,6 +64,7 @@
     <Compile Include="DataModel\Business\BusiModifyResultModelDM.cs" />
     <Compile Include="DataModel\Business\BusinessClienterRelation.cs" />
     <Compile Include="DataModel\Business\BusinessCommissionDM.cs" />
+    <Compile Include="DataModel\Business\BusinessExpressRelation.cs" />
     <Compile Include="DataModel\Business\BusinessGroupLogModel.cs" />
     <Compile Include="DataModel\Business\BusinessGroupModel.cs" />
     <Compile Include="DataModel\Business\BusinessOptionLog.cs" />
@@ -102,6 +102,7 @@
     <Compile Include="DataModel\Subsidy\CrossShopModel.cs" />
     <Compile Include="DataModel\Order\OrderOther.cs" />
     <Compile Include="DataModel\Order\OrderSubsidiesLog.cs" />
+    <Compile Include="DomainModel\Business\BusinessExpressRelationModel.cs" />
     <Compile Include="DomainModel\DeliveryCompany\BatchImportClienterExcelDM.cs" />
     <Compile Include="DomainModel\Area\DMAreaCodeInfo.cs" />
     <Compile Include="DomainModel\Authority\AccountCityRelationModel.cs" />
@@ -114,8 +115,8 @@
     <Compile Include="DomainModel\Business\ClienterBindOptionLogModel.cs" />
     <Compile Include="DomainModel\Clienter\ClienterDetailModel.cs" />
     <Compile Include="DomainModel\Clienter\ClienterDM.cs" />
-    <Compile Include="DomainModel\Company\CompanyModel.cs" />
-    <Compile Include="DomainModel\Company\CompanyModelList.cs" />
+    <Compile Include="DomainModel\DeliveryCompany\CompanyModel.cs" />
+    <Compile Include="DomainModel\DeliveryCompany\CompanyModelList.cs" />
     <Compile Include="DomainModel\Finance\BusinessBalanceRecordModel.cs" />
     <Compile Include="DomainModel\Finance\BusinessWithdrawFormModel.cs" />
     <Compile Include="DomainModel\Finance\BusinessWithdrawLogModel.cs" />

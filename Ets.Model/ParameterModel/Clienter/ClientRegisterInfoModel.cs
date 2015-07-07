@@ -76,7 +76,7 @@ namespace Ets.Model.ParameterModel.Clienter
             to.Password = from.passWord;
             to.PhoneNo = from.phoneNo;
             to.InviteCode = from.inviteCode;
-            to.Status = ConstValues.CLIENTER_NOAUDIT;
+            to.Status = 2;
             to.InsertTime = DateTime.Now;
             to.City = from.City;
             to.CityId = from.CityId;

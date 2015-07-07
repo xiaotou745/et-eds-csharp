@@ -37,8 +37,7 @@ namespace Ets.Service.Provider.Pay
         /// 窦海超
         /// 2015年5月12日 14:35:05
         /// </summary>
-        /// <param name="model"></param>
-        [ActionStatus(typeof(AliPayStatus))]
+        /// <param name="model"></param>       
         public ResultModel<PayResultModel> CreatePay(Model.ParameterModel.AliPay.PayModel model)
         {
             LogHelper.LogWriter("=============支付请求数据：", model);

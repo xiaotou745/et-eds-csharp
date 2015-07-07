@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ets.Model.DomainModel.Company
+namespace Ets.Model.DomainModel.DeliveryCompany
 {
     public class CompanyModelList
     {

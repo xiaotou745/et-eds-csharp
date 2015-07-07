@@ -307,7 +307,7 @@ namespace SuperManWebApi.Controllers
             //判断订单信息，状态是否为已完成， 已经上传的小票数量是否和 需要上传的一样， 若一样则无法删除
             if (orderOther != null)
             {
-                if (orderOther.OrderStatus == ConstValues.ORDER_FINISH && orderOther.NeedUploadCount == orderOther.HadUploadCount)
+                if (orderOther.OrderStatus ==OrderStatus.Status1.GetHashCode() && orderOther.NeedUploadCount == orderOther.HadUploadCount)
                 {
                     return ResultModel<UploadReceiptResultModel>.Conclude(UploadIconStatus.DeleteFailed);
                 }

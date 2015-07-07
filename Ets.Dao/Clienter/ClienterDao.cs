@@ -204,14 +204,14 @@ where PhoneNo=@PhoneNo and [Password]=@Password";
         /// 窦海超
         /// 2015年3月20日 16:55:11
         /// </summary>
-        /// <param name="PhoneNo">用户手机号</param>
+        /// <param name="phoneNo">用户手机号</param>
         /// <returns></returns>
-        public ClienterModel GetUserInfoByUserPhoneNo(string PhoneNo)
+        public ClienterModel GetUserInfoByUserPhoneNo(string phoneNo)
         {
-            string sql = "SELECT Id,TrueName,PhoneNo,AccountBalance FROM dbo.clienter(NOLOCK) WHERE PhoneNo=@PhoneNo";
+            string sql = "SELECT Id,TrueName,PhoneNo,AccountBalance,IDCard FROM dbo.clienter(NOLOCK) WHERE PhoneNo=@PhoneNo";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@PhoneNo", SqlDbType.NVarChar);
-            parm.SetValue("@PhoneNo", PhoneNo);
+            parm.SetValue("@PhoneNo", phoneNo);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             IList<ClienterModel> list = MapRows<ClienterModel>(dt);
             if (list == null || list.Count <= 0)
@@ -385,7 +385,7 @@ where PhoneNo=@PhoneNo and [Password]=@Password";
                 dbParameters.AddWithValue("@PicWithHandUrl", clienter.PicWithHandUrl);
                 dbParameters.AddWithValue("@TrueName", clienter.TrueName);
                 dbParameters.AddWithValue("@IDCard", clienter.IDCard);
-                dbParameters.AddWithValue("@Status", ConstValues.CLIENTER_AUDITPASSING);
+                dbParameters.AddWithValue("@Status", ClienteStatus.Status3.GetHashCode());
                 dbParameters.AddWithValue("@Id", clienter.Id);
                 int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
                 if (i > 0)
@@ -456,10 +456,10 @@ where PhoneNo=@PhoneNo and [Password]=@Password";
             sql.AppendFormat(@"update [order] set clienterId=@clienterId,Status=@Status 
 output Inserted.Id,GETDATE(),'{0}','{1}',Inserted.clienterId,Inserted.[Status],{2}
 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
-where OrderNo=@OrderNo and [Status]=0", SuperPlatform.骑士, ConstValues.OrderHadRush, (int)SuperPlatform.骑士);//未抢订单才更新
+where OrderNo=@OrderNo and [Status]=0", SuperPlatform.FromClienter, OrderConst.OrderHadRush, (int)SuperPlatform.FromClienter);//未抢订单才更新
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@clienterId", userId);
-            parm.AddWithValue("@Status", ConstValues.ORDER_ACCEPT);
+            parm.AddWithValue("@Status", OrderStatus.Status2.GetHashCode());
             parm.Add("@OrderNo", SqlDbType.NVarChar);
             parm.SetValue("@OrderNo", orderNo);
 
@@ -997,7 +997,7 @@ where   o.Id = @OrderId";
                 var fileName = Path.GetFileName(delDir);
                 int fileNameLastDot = fileName.LastIndexOf('.');
                 //原图 
-                string orginalFileName = string.Format("{0}{1}{2}", Path.GetDirectoryName(delDir) + "\\" + fileName.Substring(0, fileNameLastDot), ImageConst.OriginSize, Path.GetExtension(fileName));
+                string orginalFileName = string.Format("{0}{1}{2}", Path.GetDirectoryName(delDir) + "\\" + fileName.Substring(0, fileNameLastDot), SystemConst.OriginSize, Path.GetExtension(fileName));
 
                 uploadReceiptModel.ReceiptPic = String.Join("|", listReceiptPic.ToArray());
 

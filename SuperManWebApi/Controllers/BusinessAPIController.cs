@@ -214,7 +214,7 @@ namespace SuperManWebApi.Controllers
             List<string> errors = new List<string>();
             for (int i = 0; i < orders.Length; i++)
             {
-                int res = orderProvider.UpdateOrderStatus(orders[i], OrderConst.ORDER_NEW, "", OrderConst.OrderStatus30);
+                int res = orderProvider.UpdateOrderStatus(orders[i],OrderStatus.Status0.GetHashCode(), "",OrderStatus.Status30.GetHashCode());
                 if (res <= 0)
                     errors.Add(orders[i]);
             }
@@ -236,7 +236,7 @@ namespace SuperManWebApi.Controllers
             }
             var orderProvider = new OrderProvider();
             string[] orders = orderlist.Split(',');
-            int i = orders.Count(s => orderProvider.UpdateOrderStatus(s, OrderConst.ORDER_CANCEL, note, OrderConst.OrderStatus30) > 0);
+            int i = orders.Count(s => orderProvider.UpdateOrderStatus(s, OrderStatus.Status3.GetHashCode(), note,OrderStatus.Status30.GetHashCode()) > 0);
             return ResultModel<int>.Conclude(PubOrderStatus.Success, i);
         }
 

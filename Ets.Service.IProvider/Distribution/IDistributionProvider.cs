@@ -31,7 +31,7 @@ namespace Ets.Service.IProvider.Distribution
         /// <param name="id"></param>
         /// <param name="enumStatusType"></param>
         /// <returns></returns>
-        bool UpdateAuditStatus(int id, EnumStatusType enumStatusType);
+        bool UpdateAuditStatus(int id, AuditStatus enumStatusType);
         /// <summary>
         ///  清空帐户余额
         /// danny-20150318

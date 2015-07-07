@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using ETS.Data.PageData;
 using Ets.Model.ParameterModel.Order;
 using System.Text;
+using ETS.Enums;
 
 namespace SuperMan.Controllers
 {
@@ -19,7 +20,7 @@ namespace SuperMan.Controllers
         {
             var criteria = new Ets.Model.DomainModel.Subsidy.HomeCountCriteria()
             {
-                PagingRequest = new Ets.Model.Common.NewPagingResult(1, Ets.Model.Common.ConstValues.Web_PageSize),
+                PagingRequest = new Ets.Model.Common.NewPagingResult(1, PageSizeType.Web_PageSize.GetHashCode()),
                 searchType = 1
             };
             var pagedList = iOrderProvider.GetOrderCount(criteria);
@@ -28,9 +29,7 @@ namespace SuperMan.Controllers
 
         [HttpPost]
         public ActionResult OrderStatistical(Ets.Model.DomainModel.Subsidy.HomeCountCriteria criteria)
-        {
-            //var criteria = new Ets.Model.DomainModel.Subsidy.HomeCountCriteria();
-            //TryUpdateModel(criteria);
+        {        
             var pagedList = iOrderProvider.GetOrderCount(criteria);
             return PartialView("_PartialOrderStatistical", pagedList);
         }

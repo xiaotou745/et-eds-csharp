@@ -1,6 +1,8 @@
 ﻿using System.Text.RegularExpressions;
 using Ets.Model.DomainModel.Business;
+using Ets.Service.IProvider.DeliveryCompany;
 using Ets.Service.IProvider.User;
+using Ets.Service.Provider.DeliveryCompany;
 using Ets.Service.Provider.Distribution;
 using Ets.Service.Provider.User;
 using ETS.Util;
@@ -34,6 +36,7 @@ using Ets.Service.IProvider.Distribution;
 using Ets.Model.DomainModel.Statistics;
 using Ets.Service.Provider.Statistics;
 using Ets.Service.IProvider.Statistics;
+using ETS.Enums;
 namespace SuperMan.Controllers
 {
     [WebHandleError]
@@ -50,6 +53,7 @@ namespace SuperMan.Controllers
         readonly IDistributionProvider iDistributionProvider = new DistributionProvider();
         readonly IStatisticsProvider statisticsProvider = new StatisticsProvider();
         readonly IBusinessFinanceAccountProvider iBusinessFinanceAccountProvider = new BusinessFinanceAccountProvider();
+        readonly IDeliveryCompanyProvider iDeliveryCompanyProvider = new DeliveryCompanyProvider();
 
         // GET: BusinessManager
         [HttpGet]
@@ -97,13 +101,13 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult AuditOK(int id)
         {
-            bool b = iBusinessProvider.UpdateAuditStatus(id, ETS.Enums.EnumStatusType.审核通过);
+            bool b = iBusinessProvider.UpdateAuditStatus(id, AuditStatus.Status1);
             return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.DenyGet);
         }
         [HttpPost]
         public JsonResult AuditCel(int id)
         {
-            iBusinessProvider.UpdateAuditStatus(id, ETS.Enums.EnumStatusType.审核取消);
+            iBusinessProvider.UpdateAuditStatus(id, AuditStatus.Status0);
             return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.DenyGet);
         }
 
@@ -227,7 +231,6 @@ namespace SuperMan.Controllers
                 BusinessId = Convert.ToInt32(businessId)
             };
             ViewBag.businessBalanceRecord = iBusinessFinanceProvider.GetBusinessBalanceRecordListOfPaging(criteria);
-
             var queryCriteria = new BussinessBalanceQuery();
             queryCriteria.BusinessId = businessId;
             ViewBag.TotalAmount = statisticsProvider.QueryBusinessTotalAmount(queryCriteria);
@@ -347,7 +350,8 @@ namespace SuperMan.Controllers
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(userType));
             ViewBag.openAreaList = iAreaProvider.GetOpenCityDistrict(ParseHelper.ToInt(businessDetailModel.CityId));
             ViewBag.businessThirdRelation = iBusinessProvider.GetBusinessThirdRelation(ParseHelper.ToInt(businessId));
-            ViewBag.BusinessOpLog = iBusinessProvider.GetBusinessOpLog(ParseHelper.ToInt(businessId,0));
+            ViewBag.BusinessOpLog = iBusinessProvider.GetBusinessOpLog(ParseHelper.ToInt(businessId,0));//add by wangchao
+            ViewBag.deliveryCompany = iDeliveryCompanyProvider.GetDeliveryCompanyList();
             return View("BusinessModify", businessDetailModel);
         }
         /// <summary>
@@ -715,5 +719,30 @@ namespace SuperMan.Controllers
             return new ContentResult { Content = Newtonsoft.Json.JsonConvert.SerializeObject(detailModel) };
         }
 
+        /// <summary>
+        ///  获取商户和快递公司关系列表
+        /// danny-20150706
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult GetBusinessExpressRel(int businessId)
+        {
+            var businessExpressRelationList = iBusinessProvider.GetBusinessExpressRelationList(businessId);
+            return Json(businessExpressRelationList, JsonRequestBehavior.DenyGet);
+        }
+        /// <summary>
+        /// 修改商户配送公司绑定
+        /// danny-20150706
+        /// </summary>
+        /// <param name="busiId"></param>
+        /// <param name="deliveryCompanyList"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult ModifyBusinessExpress(int busiId, string deliveryCompanyList)
+        {
+            var reg = iBusinessProvider.ModifyBusinessExpress(busiId, deliveryCompanyList, UserContext.Current.Name);
+            return Json(new Ets.Model.Common.ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
+        }
     }
 }

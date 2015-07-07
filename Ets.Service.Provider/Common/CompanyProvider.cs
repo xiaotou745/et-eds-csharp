@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ets.Dao.Common;
-using Ets.Model.DomainModel.Company;
+using Ets.Model.DomainModel.DeliveryCompany;
 
 namespace Ets.Service.Provider.Common
 {

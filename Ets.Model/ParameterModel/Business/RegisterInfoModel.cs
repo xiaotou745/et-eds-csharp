@@ -32,6 +32,8 @@ namespace Ets.Model.ParameterModel.Business
         /// 集团Id
         /// </summary>
         public int GroupId { get; set; }
+
+        public string RecommendPhone { get; set; }
     }
 
     /// <summary>
