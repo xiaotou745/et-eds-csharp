@@ -84,26 +84,6 @@ namespace ETS.Const
         public const string CheckOrderPay = "CheckOrderPay_{0}";
 
         /// <summary>
-        /// C端注册语音验证码缓存key
-        /// </summary>
-        public const string PostRegisterInfoSoundCode_C = "PostRegisterInfoSoundCode_C_";
-
-        /// <summary>
-        /// C端找回密码语音验证码缓存key
-        /// </summary>
-        public const string PostForgetPwdSoundCode_C = "PostForgetPwdSoundCode_C_";
-
-        /// <summary>
-        /// b端注册语音验证码缓存key
-        /// </summary>
-        public const string PostRegisterInfoSoundCode_B = "PostRegisterInfoSoundCode_b_";
-
-        /// <summary>
-        /// b端找回密码语音验证码缓存key
-        /// </summary>
-        public const string PostForgetPwdSoundCode_B = "PostForgetPwdSoundCode_b_";
-
-        /// <summary>
         /// 商户对应骑士
         /// </summary>
         public const string BusinessClienter = "BusinessClienter_{0}";

@@ -944,10 +944,17 @@ namespace Ets.Service.Provider.Business
             {
                 return SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
             }
-            var randomCode = new Random().Next(100000).ToString("D6");
             string msg = string.Empty;
-            string key = "";
-            string tempcode = randomCode.Aggregate("", (current, c) => current + (c.ToString() + ','));
+            string key = model.Stype == "0" ? RedissCacheKey.PostRegisterInfo_B : RedissCacheKey.CheckCodeFindPwd_B;
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+
+            object obj = redis.Get<object>(key);
+            if (obj == null)
+            {
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.CodeNotExists);
+            }
+            string tempcode = obj.ToString().Aggregate("", (current, c) => current + (c.ToString() + ','));
+
             bool userStatus = businessDao.CheckBusinessExistPhone(model.PhoneNumber);
             if (model.Stype == "0")//注册
             {
@@ -956,7 +963,6 @@ namespace Ets.Service.Provider.Business
                 {
                     return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.AlreadyExists);
                 }
-                key = RedissCacheKey.PostRegisterInfoSoundCode_B + model.PhoneNumber;
                 msg = string.Format(ETS.Util.SupermanApiConfig.Instance.SmsContentCheckCodeVoice, tempcode, SystemConst.MessageClinenter);
             }
             else //修改密码
@@ -966,14 +972,10 @@ namespace Ets.Service.Provider.Business
                 {
                     return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.NotExists);
                 }
-                key = RedissCacheKey.PostForgetPwdSoundCode_B + model.PhoneNumber;
                 msg = string.Format(ETS.Util.SupermanApiConfig.Instance.SmsContentCheckCodeFindPwdVoice, tempcode, SystemConst.MessageClinenter);
             }
             try
             {
-                var redis = new ETS.NoSql.RedisCache.RedisCache();
-                redis.Add(key, randomCode, DateTime.Now.AddHours(1));
-
                 // 更新短信通道 
                 Task.Factory.StartNew(() =>
                 {
@@ -1158,7 +1160,7 @@ namespace Ets.Service.Provider.Business
                             {
                                 dealResultInfo.DealMsg = "编辑商户物流公司配置信息失败！";
                                 return dealResultInfo;
-                            } 
+                            }
                         }
                     }
                     tran.Complete();
@@ -1170,7 +1172,7 @@ namespace Ets.Service.Provider.Business
             dealResultInfo.DealMsg = "未获取到商户物流公司配置信息！";
             return dealResultInfo;
         }
-        
+
 
 
         /// <summary>

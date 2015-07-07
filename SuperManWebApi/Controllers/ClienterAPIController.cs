@@ -388,14 +388,19 @@ namespace SuperManWebApi.Controllers
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.CodeNotExists);
             }
             string tempcode = obj.ToString().Aggregate("", (current, c) => current + (c.ToString() + ','));
+
+            bool userStatus = iClienterProvider.CheckClienterExistPhone(model.PhoneNumber);
+
             if (model.Stype == "0")//注册
             {
-                if (iClienterProvider.CheckClienterExistPhone(model.PhoneNumber))  //判断该手机号是否已经注册过
+                if (userStatus)  //判断该手机号是否已经注册过
                     return SimpleResultModel.Conclude(SendCheckCodeStatus.AlreadyExists);
                 msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCodeVoice, tempcode, SystemConst.MessageClinenter);
             }
             else //修改密码
             {
+                if (!userStatus)
+                    return SimpleResultModel.Conclude(SendCheckCodeStatus.NotExists);
                 msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCodeFindPwdVoice, tempcode, SystemConst.MessageClinenter);
             }
             try
