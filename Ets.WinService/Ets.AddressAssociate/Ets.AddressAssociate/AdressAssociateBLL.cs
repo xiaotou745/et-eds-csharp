@@ -28,17 +28,20 @@ namespace Ets.AddressAssociate
                 string path = System.AppDomain.CurrentDomain.BaseDirectory + @"\date.xml";
                 xdoc.Load(path);
                 XmlNode dateNode = xdoc.SelectSingleNode("date");
+                DateTime sqldate = DateTime.MinValue;
+                DateTime.TryParse(dateNode.Value, out sqldate);
                 DateTime lastdate = DateTime.Now;
                 // 按照 sqldate 查询数据库
                 var receviceAddressDao=new ReceviceAddressDao();
-                if (receviceAddressDao.GetAddress(lastdate) > 0)
+                var resultcount = receviceAddressDao.GetAddress(sqldate);
+                if ( resultcount> 0)
                 {
                     //本次查询的ID大于上次查询的ID查询成功
                     XmlElement dateElement = (XmlElement)dateNode;
                     dateElement.InnerText = lastdate.ToString();
                 }
                 xdoc.Save(path);
-                LogHelper.LogWriterString("扫表结束:时间:" + DateTime.Now.ToString());
+                LogHelper.LogWriterString("扫表结束:时间:" + DateTime.Now.ToString()+"本次影响行数:"+resultcount);
             }
             catch (Exception ex)
             {
