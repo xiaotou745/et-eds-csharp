@@ -157,9 +157,9 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <returns></returns>        
         [HttpGet]
-        public ResultModel<BusiGetOrderModel[]> GetOrderList_B(int userId, int? pagedSize, int? pagedIndex, sbyte? Status, int? orderfrom,bool isCheckStatus=false)
+        public ResultModel<BusiGetOrderModel[]> GetOrderList_B(int userId, int? pagedSize, int? pagedIndex, sbyte? Status, int? orderfrom,int isCheckStatus=0)
         {
-            if (isCheckStatus)
+            if (isCheckStatus==1)
             {
                 BussinessStatusModel bStatusModel= iBusinessProvider.GetUserStatus(userId);
                 if (bStatusModel.status != 1)
