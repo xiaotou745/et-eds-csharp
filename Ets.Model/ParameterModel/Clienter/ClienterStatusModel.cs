@@ -34,5 +34,17 @@ namespace Ets.Model.ParameterModel.Clienter
         /// 是否只显示雇主任务
         /// </summary>
         public int IsOnlyShowBussinessTask { get; set; }
+        /// <summary>
+        /// 配送公司Id
+        /// </summary>
+        public int DeliveryCompanyId { get; set; }
+        /// <summary>
+        /// 配送公司名称
+        /// </summary>
+        public string DeliveryCompanyName { get; set; }
+        /// <summary>
+        /// 是否显示 金额 0隐藏 1 显示
+        /// </summary>
+        public int IsDisplay { get; set; }
     }
 }
