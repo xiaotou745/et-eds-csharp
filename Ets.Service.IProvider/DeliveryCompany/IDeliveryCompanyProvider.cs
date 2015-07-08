@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Ets.Model.Common;
 using Ets.Model.DataModel.DeliveryCompany;
 using Ets.Model.DomainModel.DeliveryCompany;
+using Ets.Model.ParameterModel.DeliveryCompany;
+using ETS.Data.PageData;
 
 namespace Ets.Service.IProvider.DeliveryCompany
 {
@@ -24,6 +26,9 @@ namespace Ets.Service.IProvider.DeliveryCompany
         /// <param name="models">骑士集合</param>
         /// <returns></returns>
         ResultModel<object> DoBatchImportClienter(int companyId, List<BatchImportClienterExcelDM> models);
-IList<DeliveryCompanyModel> Get();
+
+        PageInfo<DeliveryCompanyModel> Get(DeliveryCompanyCriteria deliveryCompanyCriteria);
+
+        ResultModel<DeliveryCompanyResultModel> Add(DeliveryCompanyModel deliveryCompanyModel);
     }
 }

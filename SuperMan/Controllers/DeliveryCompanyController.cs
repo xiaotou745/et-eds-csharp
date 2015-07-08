@@ -6,7 +6,10 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using Ets.Model.Common;
+using Ets.Model.DataModel.DeliveryCompany;
 using Ets.Model.DomainModel.DeliveryCompany;
+using Ets.Model.ParameterModel.DeliveryCompany;
+using Ets.Service.Provider.DeliveryCompany;
 using ETS.Util;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
@@ -22,44 +25,92 @@ namespace SuperMan.Controllers
     [WebHandleError]
     public class DeliveryCompanyController : BaseController
     {
-
+        private DeliveryCompanyProvider deliveryCompanyProvider = new DeliveryCompanyProvider();
+        /// <summary>
+        /// 获取数据
+        /// </summary>
+        /// <returns></returns>
         public ActionResult DeliveryCompany()
         { 
             int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
 
-             
-            ViewBag.deliveryCompanyList = new DeliveryCompanyProvider().Get();//获取物流公司
-            var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria()
-            {
-                Status = -1,
-                GroupId = SuperMan.App_Start.UserContext.Current.GroupId 
+            DeliveryCompanyCriteria deliveryCompanyCriteria = new DeliveryCompanyCriteria();
+            TryUpdateModel(deliveryCompanyCriteria);
+            var dcList = new DeliveryCompanyProvider().Get(deliveryCompanyCriteria);//获取物流公司
 
-            };
-            if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
-            {
-                return View();
-            }
-            return View();
-            //ViewBag.openCityList.Result.AreaModels;
-            //var pagedList = iDistributionProvider.GetClienteres(criteria);
-            //return System.Web.UI.WebControls.View();
+            return View(dcList); 
         }
-
+        /// <summary>
+        /// 获取数据 分页
+        /// </summary>
+        /// <param name="pageindex"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult PostDeliveryCompany(int pageindex = 1)
         {
-            var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria();
-            TryUpdateModel(criteria);
-
+            DeliveryCompanyCriteria deliveryCompanyCriteria = new DeliveryCompanyCriteria();
+            TryUpdateModel(deliveryCompanyCriteria); 
             int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
-             
-            if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
+            var dcList = new DeliveryCompanyProvider().Get(deliveryCompanyCriteria);//获取物流公司
+            return PartialView("_DeliveryCompanyList", dcList);
+        }
+        /// <summary>
+        /// 添加配送公司
+        /// </summary>
+        /// <param name="deliveryCompanyModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult AddDeliveryCompany(DeliveryCompanyModel deliveryCompanyModel)
+        {
+            TryUpdateModel(deliveryCompanyModel);
+            deliveryCompanyModel.CreateName = UserContext.Current.Name;
+            if (deliveryCompanyModel.ClienterSettleRatio != 0 || deliveryCompanyModel.ClienterFixMoney != 0)
             {
-                return PartialView("_DeliveryCompanyList");
-            } 
-            return PartialView("_DeliveryCompanyList", null);
+                deliveryCompanyModel.IsDisplay = 1;
+            }
+            else
+            {
+                deliveryCompanyModel.IsDisplay = 0;
+            }
+            var result = deliveryCompanyProvider.Add(deliveryCompanyModel);
+            if (result.Status == 0)
+            {
+                return Json(new ResultModel(true, "成功!"), JsonRequestBehavior.DenyGet);
+            }
+            return Json(new ResultModel(false, result.Message), JsonRequestBehavior.DenyGet);
         }
 
+        public ActionResult Modify(int Id)
+        {
+
+            return View("DeliveryCompanyModify");
+        }
+
+        /// <summary>
+        /// 修改配送公司
+        /// </summary>
+        /// <param name="deliveryCompanyModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult ModifyDeliveryCompany(DeliveryCompanyModel deliveryCompanyModel)
+        {
+            TryUpdateModel(deliveryCompanyModel);
+            deliveryCompanyModel.ModifyName = UserContext.Current.Name;
+            if (deliveryCompanyModel.ClienterSettleRatio != 0 || deliveryCompanyModel.ClienterFixMoney != 0)
+            {
+                deliveryCompanyModel.IsDisplay = 1;
+            }
+            else
+            {
+                deliveryCompanyModel.IsDisplay = 0;
+            }
+            var result = deliveryCompanyProvider.Modify(deliveryCompanyModel);
+            if (result.Status == 0)
+            {
+                return Json(new ResultModel(true, "修改成功!"), JsonRequestBehavior.DenyGet);
+            }
+            return Json(new ResultModel(false, result.Message), JsonRequestBehavior.DenyGet);
+        }
 
         /// <summary>
         /// 批量导入骑士页面 add by caoheyang 20150706

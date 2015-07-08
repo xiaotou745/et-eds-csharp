@@ -108,7 +108,7 @@ namespace Ets.Model.DataModel.DeliveryCompany
 
         /// </summary>
 
-        public DateTime CreateTime { get; set; }
+        public DateTime? CreateTime { get; set; }
 
         /// <summary>
 
@@ -125,7 +125,11 @@ namespace Ets.Model.DataModel.DeliveryCompany
         /// <summary> 
         /// 修改时间 
         /// </summary> 
-        public DateTime ModifyTime { get; set; } 
+        public DateTime? ModifyTime { get; set; }
+        /// <summary>
+        /// 是否显示骑士金额 0隐藏 1显示
+        /// </summary>
+        public int IsDisplay { get; set; }
     }
 
 }

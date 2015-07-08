@@ -113,6 +113,13 @@ namespace ETS.Enums
         [DisplayText("失败")]
         Failed = 101
     }
+    public enum DeliveryStatus
+    {
+        [DisplayText("成功")]
+        Success = 1,
+        [DisplayText("失败")]
+        Fail = 0 
+    }
 
     public enum BusiAddAddressStatus : int
     {

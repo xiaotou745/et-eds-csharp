@@ -7,7 +7,11 @@ using Ets.Dao.DeliveryCompany;
 using Ets.Model.Common;
 using Ets.Model.DataModel.DeliveryCompany;
 using Ets.Model.DomainModel.DeliveryCompany;
+using Ets.Model.ParameterModel.DeliveryCompany;
 using Ets.Service.IProvider.DeliveryCompany;
+using ETS.Data;
+using ETS.Data.PageData;
+using ETS.Enums;
 
 namespace Ets.Service.Provider.DeliveryCompany
 {
@@ -41,9 +45,44 @@ namespace Ets.Service.Provider.DeliveryCompany
         /// 获取物流公司
         /// </summary>
         /// <returns></returns>
-        public IList<DeliveryCompanyModel> Get()
+        public PageInfo<DeliveryCompanyModel> Get(DeliveryCompanyCriteria deliveryCompanyCriteria)
         {
-            return null;
+            return dao.Get<DeliveryCompanyModel>(deliveryCompanyCriteria);
+        }
+
+        public DeliveryCompanyModel GetById(int Id)
+        {
+            return dao.GetById(Id);
+        }
+        public ResultModel<DeliveryCompanyResultModel> Add(DeliveryCompanyModel deliveryCompanyModel)
+        {
+            int addId = dao.Add(deliveryCompanyModel);
+            DeliveryCompanyResultModel dcrm = new DeliveryCompanyResultModel();
+
+            if (addId > 0)
+            {
+                dcrm.Id = addId;
+                return ResultModel<DeliveryCompanyResultModel>.Conclude(DeliveryStatus.Success, dcrm);
+            }
+            else
+            {
+                return ResultModel<DeliveryCompanyResultModel>.Conclude(DeliveryStatus.Fail, null);
+            }
+        }
+
+        public ResultModel<DeliveryCompanyResultModel> Modify(DeliveryCompanyModel deliveryCompanyModel)
+        {
+            int modifyResult = dao.Modify(deliveryCompanyModel);
+            DeliveryCompanyResultModel dcrm = new DeliveryCompanyResultModel();
+
+            if (modifyResult > 0)
+            { 
+                return ResultModel<DeliveryCompanyResultModel>.Conclude(DeliveryStatus.Success, null);
+            }
+            else
+            {
+                return ResultModel<DeliveryCompanyResultModel>.Conclude(DeliveryStatus.Fail, null);
+            }
         }
     }
 }

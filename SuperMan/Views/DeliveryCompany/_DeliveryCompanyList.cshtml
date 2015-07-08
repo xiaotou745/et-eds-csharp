@@ -22,11 +22,62 @@
             <th>创建时间</th>
             <th>修改人</th>
             <th>修改时间</th>
+            <th>是否启用</th>
+            <th>操作</th>
         </tr>
     </thead>
     <tbody>
-        
-    </tbody>
+        @{
+            if (Model != null && Model.Records.Count > 0)
+            {
+                var i = 0;
+                foreach (var item in Model.Records)
+                {
+                    i++;
+                    <tr id="@item.Id">
+                        <td>@item.Id</td>
+                        <td>@item.DeliveryCompanyName</td>
+                        <td>@item.DeliveryCompanyCode</td>
+                        <td>
+                            @if (@item.SettleType == 1)
+                            {
+                                @Html.Raw("结算比例")
+                            }
+                            else if (@item.SettleType == 2)
+                            {
+                                @Html.Raw("固定金额")
+                            }
+                        </td>
+                        <td>@item.ClienterFixMoney</td>
+                        <td>@item.ClienterSettleRatio</td>
+                        <td>@item.DeliveryCompanySettleMoney</td>
+                        <td>@item.DeliveryCompanyRatio</td>
+                        <td>@item.BusinessQuantity</td>
+                        <td>@item.ClienterQuantity</td>
+                        <td>@item.CreateName</td>
+                        <td>@item.CreateTime</td>
+                        <td>@item.ModifyName</td>
+                        <td>@item.ModifyTime</td>
+                        <td>
+                            @if (@item.IsEnable == 1)
+                            {
+                                @Html.Raw("启用")
+                            }
+                            else if (@item.IsEnable == 0)
+                            {
+                                @Html.Raw("未启用")
+                            }
+                            else { @Html.Raw("未知状态")}
+                        </td>
+                        <td>
+                            <a href="/DeliveryCompany/Modify?Id=@item.Id">修改</a>
+                            <a href="/DeliveryCompany/BatchImportClienter?companyId=@item.Id&CompanyName=@item.DeliveryCompanyName">导入骑士</a>
+                        </td>
+                    </tr>
+                }
+            }
+        }
+    <tbody>
 
 </table>
 @{

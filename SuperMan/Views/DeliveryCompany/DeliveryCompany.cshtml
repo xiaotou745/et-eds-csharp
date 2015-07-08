@@ -8,7 +8,6 @@
 <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
 <link href="~/Content/jQuery-File-Upload/css/jquery.fileupload-ui.css" rel="stylesheet" />
 <script src="~/Scripts/jquery-2.1.1.js"></script>
-<script src="~/Scripts/jquery-1.8.2.js"></script>
 <script src="~/Scripts/jquery-ui-1.8.20.js"></script>
 <script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
 <script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.ui.widget.js"></script>
@@ -16,11 +15,11 @@
 <script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.fileupload.js"></script>
 <div class="zpManage zpSh">
     <h2 class="crumbs">
-        您所在位置：物流公司 > 物流公司管理
+        您所在位置：配送公司管理 > 配送公司管理
     </h2>
-    @using (Ajax.BeginForm("PostDeliveryCompany", new RouteValueDictionary { { "pageindex", "" } },
-        new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
-        new RouteValueDictionary { { "id", "searchForm" } }))
+    @using (Ajax.BeginForm("PostDeliveryCompany", new RouteValueDictionary {{"pageindex", ""}},
+        new AjaxOptions {UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace},
+        new RouteValueDictionary {{"id", "searchForm"}}))
     {
         <div class="SearchMd">
             <table border="0" cellspacing="0" cellpadding="0">
@@ -28,17 +27,160 @@
                     <td>
                         <span class="">物流公司名称: </span>
                         <input id="txtDeliveryCompanyName" type="text" name="DeliveryCompanyName"/>
-                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch"/>&nbsp;&nbsp;
+                        <input type="submit" value="添加物流公司" class="searchBtn" onclick=" showAddDelivery() " />
                     </td>
-                </tr> 
+                </tr>
             </table>
         </div>
     }
-    @*@section Scripts{@{Html.RegisterMvcPagerScriptResource();}}*@
     <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
     <div class="bd clearfix" id="dataList">
         @Html.Partial("_DeliveryCompanyList", Model)
     </div>
 </div>
 
+<div class="addDeliveryDiv">
+    <div class="add-openbox add-form" id="addDeliveryDiv" style="width: 500px">
+        <h2>
+            <p id="addDeliveryFin">添加配送公司</p>
+        </h2>
+        <fieldset>
+            <div class="control-group">
+                <label>物流公司Code：</label>
+                <input name="deliveryCompanyCode" id="deliveryCompanyCode" type="text" disabled="disabled"/>
+            </div>
+            <div class="control-group">
+                <label>物流公司名称：</label>
+                <input name="deliveryCompanyName" id="deliveryCompanyName" type="text">
+            </div>
+            <div>
+                <label>结算类型：</label>
+                <input id="rDeliveryCheck1" name="rDeliveryCheck" type="radio" value="1" checked="checked"/>
+                <label for="rDeliveryCheck1">结算比例</label>
+                <input id="rDeliveryCheck2" name="rDeliveryCheck" type="radio" value="2"/>
+                <label for="rDeliveryCheck2">固定金额</label>
+            </div>
+            <div class="control-group">
+                <label>骑士结算：</label>
 
+                <input name="clienterSettlementFix" id="clienterSettlementFix" style="display: none" type="text"/>
+                <input name="clienterSettlementRatio" id="clienterSettlementRatio" type="text"/>
+                <label id="lblClienterSettlement">%</label>
+
+            </div>
+            <div class="control-group">
+                <label>物流公司结算：</label>
+                <input name="deliverySettlementFix" id="deliverySettlementFix" style="display: none" type="text"/>
+                <input name="deliverySettlementRatio" id="deliverySettlementRatio" type="text"/>
+                <label id="lblDeliverySettlement">%</label>
+            </div>
+        </fieldset>
+        <p class="btnbox">
+            <input value="确认" type="button" id="btnAddDelivery" class="yesBtn"/>
+            <input value="关闭" type="button" class="J_closebox qxBtn"/>
+        </p>
+    </div>
+</div>
+
+
+<script>
+    var adminjs = new adminglass(); //实例化后台类
+      
+    function showAddDelivery() {
+        adminjs.openwinbox('#addDeliveryDiv');
+        $("#deliveryCompanyCode").val("1" + Date.now().toString().substr(3, 10));
+    } 
+    $("#btnAddDelivery").click(function() { 
+        var deliveryCompanyName = $("#deliveryCompanyName").val();
+        var clienterSettlementFix = $("#clienterSettlementFix").val();
+        var clienterSettlementRatio = $("#clienterSettlementRatio").val();
+        var deliverySettlementFix = $("#deliverySettlementFix").val();
+        var deliverySettlementRatio = $("#deliverySettlementRatio").val();
+        var deliveryCode = $("#deliveryCompanyCode").val();
+        if (deliveryCompanyName == null || deliveryCompanyName == "") {
+            alert("物流公司名称!");
+            return;
+        }
+        var decimalFormat = /^[0-9]*(\.[0-9]{1,2})?$/;
+        var settleType = $('input[name="rDeliveryCheck"]:checked').val();
+        alert(settleType)
+        if (settleType == 1) {
+            if (clienterSettlementRatio == null || clienterSettlementRatio == "" || deliverySettlementRatio == null || deliverySettlementRatio == "") {
+                alert("骑士结算和物流公司结算必须填写!");
+                return;
+            }
+            if (!decimalFormat.test(clienterSettlementRatio)) {
+                alert("请输入正确的骑士结算金额！");
+                return;
+            } 
+            if (!decimalFormat.test(deliverySettlementRatio)) {
+                alert("请输入正确的物流公司金额！");
+                return;
+            }
+        } else {
+            alert(clienterSettlementFix);
+            alert(deliverySettlementFix);
+
+            if (clienterSettlementFix == null || clienterSettlementFix == "" || deliverySettlementFix == null || deliverySettlementFix == "") {
+                alert("骑士结算和物流公司结算必须填写!");
+                return;
+            }
+            if (!decimalFormat.test(clienterSettlementFix)) {
+                alert("请输入正确的骑士结算金额！");
+                return;
+            }
+            if (!decimalFormat.test(deliverySettlementFix)) {
+                alert("请输入正确的物流公司金额！");
+                return;
+            }
+        }
+        var paramaters = { "SettleType": settleType, "DeliveryCompanyName": deliveryCompanyName, "DeliveryCompanyCode": deliveryCode, "ClienterFixMoney": clienterSettlementFix, "ClienterSettleRatio": clienterSettlementRatio, "DeliveryCompanySettleMoney": deliverySettlementFix, "DeliveryCompanyRatio": deliverySettlementRatio };
+        var url = "/DeliveryCompany/AddDeliveryCompany";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function(result) {
+                if (result.IsSuccess) {
+                    alert("添加成功!");
+                    window.location.href = "/DeliveryCompany/DeliveryCompany";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    });
+    $('input[name="rDeliveryCheck"]').click(function () {
+        var a = $('input[name="rDeliveryCheck"]:checked').val(); 
+        if (a == 1) {  //结算比例
+            $("#clienterSettlementFix").val('');
+            $("#deliverySettlementFix").val('');
+
+            $("#clienterSettlementFix").hide();
+            $("#deliverySettlementFix").hide();
+            
+            $("#clienterSettlementRatio").show();
+            $("#deliverySettlementRatio").show();  
+            $("#lblClienterSettlement").html("%");
+            $("#lblDeliverySettlement").html("%");
+        } else {
+            $("#clienterSettlementRatio").show();
+            $("#deliverySettlementRatio").show();
+
+            $("#clienterSettlementFix").val('');
+            $("#deliverySettlementFix").val('');
+            $("#clienterSettlementFix").hide();
+            $("#deliverySettlementFix").hide(); 
+            $("#lblClienterSettlement").html("元/单");
+            $("#lblDeliverySettlement").html("元/单");
+        }
+    });
+    //关闭弹层
+    $('.J_closebox').click(function() {
+        adminjs.closewinbox('.add-openbox');
+        return false;
+    });
+</script>
+
+<script src="~/Scripts/mvcpager.js"></script>
