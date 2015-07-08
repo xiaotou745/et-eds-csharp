@@ -315,10 +315,8 @@
             url: url,
             data: "", //此参数非常严谨，写错一个引号都不行
             success: function (data, status) {
-                var mydata = data.body.innerHTML.replace("<pre>", "");
-                mydata = mydata.replace("</pre>","");
-                var mydata = eval("(" + mydata + ")");
-               
+                var obj = $(data.body.innerHTML);
+                var mydata = eval("(" + obj.text() + ")");
                 if (mydata.IsSuccess) {
                     $("#txtPushPhone").val(mydata.Message);
                 } else {
